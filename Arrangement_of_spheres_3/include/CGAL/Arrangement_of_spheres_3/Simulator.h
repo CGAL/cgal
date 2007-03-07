@@ -8,6 +8,6 @@
 #include <CGAL/Kinetic/Default_simulator.h>
 
 typedef CGAL::Kinetic::Default_simulator<Function_kernel,
-				 CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> > Simulator;
+					 CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel, true> > Simulator;
 typedef CGAL::Kinetic::Qt_widget_2<Simulator> Qt_gui;
 #endif

@@ -514,7 +514,9 @@ Arrangement_of_spheres_traits_3::intersection_2_events(Key a, Key b) const {
     //<< "eqpoint= " << eqpoint << std::endl;
   Line_3 l;
   if (!CGAL::assign(l,o)){
-    CGAL_assertion(0);
+    std::cout << "Two spheres with same center" << std::endl;
+    Event_point_3 ep(table_->equipower_point(a,b));
+    return Event_pair(ep, Event_point_3());
   }
   Line_3 lf, lb;
   

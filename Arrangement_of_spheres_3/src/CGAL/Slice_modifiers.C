@@ -44,67 +44,14 @@ Slice::find_rule_vertex(const T::Sphere_point_3 &t,
     }
   }
   clean_edge(h);
-  Vertex_handle v=sds_.insert_vertex_in_edge(h, Sds::Point(rule, h->curve()));
+  Halfedge_handle v= insert_vertex(Sds::Point(rule, h->curve()), h);
   //check_edge_collapse(h);
-  CGAL_assertion(h->prev()->vertex()==v);
-  return sds_.find_halfedge(v,f);
+  //CGAL_assertion(h->prev()->vertex()==v);
+  CGAL_assertion(v->face() == f);
+  return v;
 }
 
 
-Slice::T::Key Slice::roll_back_rule(const T::Sphere_point_3 &ep,
-				    Halfedge_handle cur) {
-  std::cout << "Rolling back, rolling back..." << cur->curve()
-	    << " at " << cur->vertex()->point() << std::endl;
-    //<< " with last of ";
-  /*if ( last==Halfedge_handle()) std::cout << "null";
-    else std::cout << last->curve();*/
-  T::Key k;
-  Halfedge_handle next= sds_.next_edge_on_curve(cur);
-  if (next != Halfedge_handle()) {
-    if (next->curve().key() == cur->curve().key()) {
-      std::cout << "Recursing..." << std::endl;
-      k=roll_back_rule(ep, next);
-    } else {
-      std::cout << "terminating on..." << next->curve() << std::endl;
-      k= next->curve().key();
-    }
-  } else {
-    if (cur->vertex()->point().is_sphere_rule()) {
-      // we hit another sphere;
-      /*CGAL_assertion(cur->vertex()->point().sphere(0).key() 
-	!= cur->vertex()->point().rule(0).key());*/
-      if (cur->vertex()->point().is_sphere_extremum()
-	  && !cur->next()->curve().is_inside()) {
-	k= cur->next()->curve().key();
-      } 
-    } 
-  }
-   
-
-  if (!cur->opposite()->vertex()->point().is_sphere_extremum()) {
-    if (k != T::Key() && cur->curve().key() != k) {
-      cur->curve().flip_rule(k);
-    } else {
-      Halfedge_handle vhh= cur->opposite()->prev();
-      //sds_.write(vhh, std::cout);
-      CGAL_assertion(vhh->vertex() == cur->vertex());
-      rotate_rule(ep, cur->opposite());
-      /*std::cout << "Checking ";
-      sds_.write(vhh, std::cout);
-      std::cout << std::endl;
-      if (sds_.is_redundant(vhh->vertex())) {
-	clean_edge(vhh);
-	clean_edge(vhh->next());
-	Halfedge_handle h= sds_.remove_redundant_vertex(vhh);
-	check_edge_collapse(h);
-      } else {
-	std::cout << "Vertex " << vhh->vertex()->point() 
-		  << " does not need to be removed." << std::endl;
-		  }*/
-    }
-  }
-  return k;
-}							   
 
 Slice::Face_handle Slice::erase_sphere(const T::Sphere_point_3 &ep,
 				       T::Key k) {
@@ -211,18 +158,15 @@ Slice::Face_handle Slice::erase_sphere(const T::Sphere_point_3 &ep,
       }
       Halfedge_handle nh;
       if (i==0 || i == 3) {
-	nh=sds_.split_face(hv,vertices[i], c);
+	nh=sds_.split_face(c, hv,vertices[i]);
       } else {
-	nh=sds_.split_face(vertices[i], hv, c);
+	nh=sds_.split_face(c, vertices[i], hv);
       }
       check_edge_collapse(nh);
     } 
   }
   for (unsigned int i=0; i< 4; ++i){ 
-    if (sds_.is_redundant(vertices[i]->vertex())) {
-      clean_edge(vertices[i]);
-      clean_edge(vertices[i]->next());
-      Halfedge_handle h= sds_.remove_redundant_vertex(vertices[i]);
+    if (check_remove_vertex(vertices[i]) != vertices[i]) {
       if (sds_.is_redundant(h->vertex())
 	  || sds_.is_redundant(h->opposite()->vertex())) {
 	// skipping since it is adjacent to another vertex which will be removed
@@ -242,23 +186,6 @@ Slice::Face_handle Slice::erase_sphere(const T::Sphere_point_3 &ep,
   return fr;
 }
 
-
-
-Slice::Halfedge_handle Slice::check_remove_redundant(Halfedge_handle h) {
-  if (sds_.is_redundant(h->vertex())) {
-    CGAL_assertion(h->curve()
-		   == h->next()->curve());
-    // fails for degeneracies, I'll fix that elsewhere (in the degeneracy handler)
-    clean_edge(h);
-    clean_edge(h->next());
-    Halfedge_handle hn= sds_.remove_redundant_vertex(h);
-    check_edge_collapse(hn);
-    return hn;
-  } else {
-    std::cout << "Not removing vertex " <<h->vertex()->point() << std::endl;
-    return h;
-  }
-}
 
 
 
@@ -292,9 +219,10 @@ Slice::Face_handle Slice::insert_sphere_on_rule_prep(const T::Sphere_point_3 &ep
  
 
   clean_edge(h);
-  std::pair<Halfedge_handle, Halfedge_handle> hh= sds_.remove_rule(h);
+  Halfedge_handle hn= h->next();
+  sds_.merge_faces(h);
 
-  return hh.first->face();
+  return hn->face();
 }
 
 
@@ -323,9 +251,12 @@ Slice::Face_handle Slice::insert_sphere_on_rr_prep(const T::Sphere_point_3 &ep,
     // clean up extensions
     clean_edge(h->opposite());
     if (h->opposite()->curve().is_inside()) {
-      sds_.relabel_rule(h->opposite(), Sds::Curve::make_rule(k, Rule_direction(base)).other_side());
+      sds_.relabel_rule(h->opposite(),
+			Sds::Curve::make_rule(k,
+					      Rule_direction(base)).other_side());
     } else {
-      sds_.relabel_rule(h->opposite(), Sds::Curve::make_rule(k, Rule_direction(base)));
+      sds_.relabel_rule(h->opposite(), 
+			Sds::Curve::make_rule(k, Rule_direction(base)));
     }
     h=h->next()->opposite();
   } while (h != end);
@@ -346,7 +277,8 @@ Slice::Face_handle Slice::insert_sphere_on_rr_prep(const T::Sphere_point_3 &ep,
     std::cout << "Searching for anchor " << i << " in face ";
     sds_.write_face(fh, std::cout) << std::endl;
     Halfedge_handle ht=find_rule_vertex(ep, fh->face(),
-					Sds::Curve::make_rule(k, Rule_direction(i)));
+					Sds::Curve::make_rule(k,
+							      Rule_direction(i)));
     vhs[i]= ht->vertex();
     std::cout << "Got " << vhs[i]->point() << std::endl;
   }
@@ -354,22 +286,22 @@ Slice::Face_handle Slice::insert_sphere_on_rr_prep(const T::Sphere_point_3 &ep,
   if (missing==-1) {
     missing=0;
     clean_edge(hes[0]);
-    sds_.remove_rule(hes[0]);
+    sds_.merge_faces(hes[0]);
     hes[0]= Halfedge_handle();
   }
   {
     int curi = (missing+2)%4;
     clean_edge(hes[curi]);
-    sds_.remove_rule(hes[curi]);
+    sds_.merge_faces(hes[curi]);
   }
   clean_edge(hes[(missing+1)%4]);
   clean_edge(hes[(missing+3)%4]);
-  Halfedge_handle ht=sds_.remove_redundant_vertex(v->halfedge());
-  std::pair<Halfedge_handle, Halfedge_handle> hh = sds_.remove_rule(ht);
+  Halfedge_handle ht=check_remove_vertex(v->halfedge());
+  Halfedge_handle hn= ht->next();
+  sds_.merge_faces(ht);
   
-  Face_handle f= hh.first->face();
-
-  return f;
+  
+  return hn->face();
 }
 
 
@@ -399,16 +331,17 @@ Slice::Face_handle Slice::insert_sphere(const T::Sphere_point_3 &ep,
       std::cout << std::endl;
       int start= h->curve().arc_index();
       clean_edge(h);
-      vhs[start]=
-	sds_.insert_vertex_in_edge(h,
-				   Sds::Point(Sds::Curve::make_rule(k, Rule_direction(start)),
-					      h->curve()));
-      h= sds_.find_halfedge(vhs[start], f)->next();
+      h =
+	sds_.insert_vertex(Sds::Point(Sds::Curve::make_rule(k,
+							    Rule_direction(start)),
+				      h->curve()), h);
+      vhs[start] = h->vertex();
+      //h= sds_.find_halfedge(vhs[start], f)->next();
+      h=h->next();
       vhs[(start+1)%4]=
-	sds_.insert_vertex_in_edge(h, 
-				   Sds::Point(Sds::Curve::make_rule(k,
-								    Rule_direction((start+1)%4)),
-					      h->curve()));
+	insert_vertex(Sds::Point(Sds::Curve::make_rule(k,
+						       Rule_direction((start+1)%4)),
+		      h->curve()), h)->vertex();
     }
   } catch (On_vertex_exception e) {
     std::cerr << "Point hit vertex " << e.vertex_handle()->point() << std::endl;
@@ -468,50 +401,7 @@ Slice::Face_handle Slice::insert_sphere(const T::Sphere_point_3 &ep,
 }
 
 
-// makes rule go away
-Slice::Halfedge_handle Slice::rotate_rule(const T::Event_point_3 &ep,
-					  Halfedge_handle rule) {
-  CGAL_precondition(rule->curve().is_rule());
-  CGAL_precondition(rule->vertex()->point().is_rule_rule());
-  
-  std::cout << "Rotating rule " << rule->curve() << " about vertex "
-	    << rule->vertex()->point() << std::endl;
 
-  Halfedge_handle oe;
-  Face_handle f;
-  Sds::Curve ec;
-  if (rule->next()->curve().key() == rule->curve().key()) {
-    oe= rule;
-    f= rule->face();
-    ec= rule->opposite()->prev()->curve();
-  } else {
-    oe= rule->opposite()->prev();
-    f= rule->opposite()->face();
-    ec= rule->next()->opposite()->curve();
-  }
-      
-  Halfedge_handle hv= find_rule_vertex(ep, f,   ec);
-  std::cout << "New edge supported by " << ec 
-	    << " from " << oe->vertex()->point() << " to " 
-	    << hv->vertex()->point() << std::endl;
-  Halfedge_handle nh=sds_.split_face(oe, hv, ec);
-  check_edge_collapse(nh);
-  
-  Vertex_handle t= rule->vertex();
-  std::cout << "Removing rule ";
-  sds_.write(rule, std::cout);
-  std::cout << std::endl;
-  clean_edge(rule);
-    
-  Halfedge_handle th= rule->opposite()->prev();
-  CGAL_assertion(th->vertex() == t);
-
-  check_merged_faces(rule->face(), rule->opposite()->face());
-  std::pair<Halfedge_handle, Halfedge_handle>hp= sds_.remove_rule(rule);
-  check_remove_redundant(hp.first);
-  check_remove_redundant(hp.second);
-  return hv;
-}
 
 
 
@@ -538,8 +428,6 @@ Slice::Face_handle Slice::intersect_spheres(const T::Event_point_3 &t,
   qt_debug_examiner_viewer_2__->show();
   *qt_debug_examiner_viewer_2__ << std::flush;
 
-  sds_.audit();
-
   std::cout << "inside face is ";
   sds_.write_face(nf.first, std::cout) << std::endl;
   std::cout << "first outside face is ";
@@ -550,6 +438,8 @@ Slice::Face_handle Slice::intersect_spheres(const T::Event_point_3 &t,
   sds_.write_face(nf.first->opposite()->prev()->opposite(), std::cout) << std::endl;
   std::cout << "second corner face is ";
   sds_.write_face(nf.second->opposite()->prev()->opposite(), std::cout) << std::endl;
+  
+  sds_.audit();
 
   // update edges
   check_edge_collapse(nf.first);
@@ -582,7 +472,7 @@ Slice::Face_handle Slice::unintersect_spheres(const T::Event_point_3 &ep,
 }
 
 
-
+/*
 Slice::Face_handle Slice::collapse_edge(const T::Event_point_3 &ep,
 					Halfedge_handle rule,
 					Halfedge_handle c,
@@ -601,10 +491,10 @@ Slice::Face_handle Slice::collapse_edge(const T::Event_point_3 &ep,
   }
 
   check_merged_faces(rule->face(), rule->opposite()->face());
-
+  
   clean_edge(c);
   Vertex_handle vc= sds_.insert_vertex_in_edge(c, Sds::Point(c->curve(),
-							    rule->curve()));
+							     rule->curve()))->vertex();
   Vertex_handle vo= rule->opposite()->vertex();
 
   clean_edge(rule->next());
@@ -612,15 +502,8 @@ Slice::Face_handle Slice::collapse_edge(const T::Event_point_3 &ep,
 
   Halfedge_handle cp= c->prev();
 
-  /*rule=*/ sds_.move_rule(rule, ne, cp); 
+  sds_.move_rule(rule, ne, cp); 
   check_edge_collapse(cp);
-
-  /*{
-    Qt_examiner_viewer_2 *qt= new Qt_examiner_viewer_2();
-    draw_rz(qt, CGAL::to_double(sim_->current_time()) + .1);
-    qt->show_everything();
-    qt->show();
-    }*/
 
   if (sds_.is_redundant(vo)) {
     clean_edge(vo->halfedge());
@@ -665,4 +548,88 @@ Slice::Halfedge_handle Slice::uncollapse_edge(const T::Event_point_3 &ep,
   check_edge_collapse(ob);
   CGAL_assertion(0);
   return ov;
+}
+*/
+
+
+
+Slice::Halfedge_handle Slice::collapse_rule(const T::Event_point_3 &ep,
+					    Halfedge_handle rule,
+					    Halfedge_handle circle1) {
+  CGAL_precondition(rule->vertex()->point().is_sphere_extremum());
+  CGAL_precondition(!circle1->curve().is_inside());
+
+  roll_back_rule(ep, rule->opposite());
+  //CGAL_assertion(ok== T::Key());
+  //bool right=false;
+  Halfedge_handle arc0, arc1, circle0, circle2, c;
+  if (rule->vertex() != circle1->vertex()) {
+    // RHS case
+    arc1= circle1->next();
+    circle2= arc1->opposite()->next();
+    circle0= rule->opposite()->prev();
+    arc0=circle1->opposite()->prev();
+    c= insert_vertex(circle1->vertex()->point(),
+		 circle0);
+  } else {
+    //right=true;
+    arc1=circle1->prev();
+    circle2= arc1->opposite()->prev();
+    circle0= rule->next();
+    arc0=circle1->opposite()->next();
+
+    c= insert_vertex(circle2->vertex()->point(),
+				      circle0);
+  }
+  circle0= Halfedge_handle();//
+  Halfedge_handle r0= insert_vertex(Sds::Point(rule->curve(),//
+					       arc1->curve()),
+				    rule->opposite());
+  Halfedge_handle r1= r0->next();//
+  rule= Halfedge_handle();//
+  
+  arc0 = move_edge_target(arc0, c->opposite()->prev());//
+  split_face(arc0->curve(), c, r0);//
+  move_edge_target(arc1, r0);//
+  if (!r1->vertex()->point().is_sphere_extremum()) {//
+    Halfedge_handle v= r1->opposite()->prev();
+    merge_faces(r1);
+    check_remove_vertex(v);
+  }
+  
+  check_remove_vertex(circle1);
+ 
+  return r0;
+}
+
+Slice::Halfedge_handle Slice::uncollapse_rule(const T::Event_point_3 &ep,
+					      Halfedge_handle r,
+					      Halfedge_handle c1) {
+  Halfedge_handle c2, c0, a0, r0, r1, a2, a1;
+  Vertex_handle vh;
+  if (c1->vertex() == r->vertex()) {
+    c2= r->next();
+    a2= c1->prev();
+    a1= c1->opposite()->next();
+    c0= a1->opposite()->prev();
+    a0= c1->opposite()->next()->opposite();
+  } else {
+    c1= r->opposite()->next();
+    c2= r->prev();
+    a2= r->next()->opposite();
+    a1= r->opposite()->prev();
+    c0= a1->opposite()->next();
+    a0= c1->opposite()->prev();
+  }
+  // handle degeneracy later
+  if (sds_.degree(r->opposite()->vertex()) ==3) {
+    Halfedge_handle v= find_rule_vertex(ep, c0->face(), r->curve());
+    split_face(r->curve(), r->prev()->opposite()->prev(), v);
+  }
+  Halfedge_handle c= insert_vertex(a1->vertex()->point(), c2);
+  move_edge_target(a0, c);
+  merge_faces(a1);
+  check_remove_vertex(vh->halfedge());
+  move_edge_target(a2, c);
+  check_remove_vertex(r->opposite());
 }

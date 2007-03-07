@@ -37,7 +37,7 @@ LDFLAGS =   \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: libs random_point_locate
+all: libs random_point_locate perturbation
 
 #interactive_ray_shooting interactive_point_location random_ray_shoot random_point_locate point_locate
 
@@ -56,9 +56,13 @@ random_point_locate$(EXE_EXT): random_point_locate$(OBJ_EXT) libs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)random_point_locate random_point_locate$(OBJ_EXT) $(LDFLAGS)
 
 
+perturbation$(EXE_EXT): perturbation$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)perturbation perturbation$(OBJ_EXT) $(LDFLAGS)
 
 
-clean:  random_point_locate.clean
+
+
+clean:  random_point_locate.clean perturbation.clean
 	cd ../../src/CGAL;  $(MAKE) -f makefile.internal clean
 	cd ../../src/CGALQt;$(MAKE) -f  makefile.internal clean
 

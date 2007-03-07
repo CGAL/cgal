@@ -32,7 +32,7 @@ struct Slice::One_sphere_event: public Event_base {
   }
   
   void write(std::ostream &out) const {
-    out << k_;
+    out << "I/R " << k_;
   }
 
   void audit(Slice::Event_key k) const {
@@ -53,7 +53,7 @@ struct Slice::Two_sphere_event: public Event_base {
   }
   
   void write(std::ostream &out) const {
-    out << a_ << " " << b_ << " (" << first_ << ")"; 
+    out << "I/U" << a_ << " " << b_ << " (" << first_ << ")"; 
   }
 
   void audit(Slice::Event_key k) const {
@@ -77,7 +77,7 @@ struct Slice::Three_sphere_event: public Event_base {
   }
   
   void write(std::ostream &out) const {
-    out << a_ << " " << b_ << " " << c_ << " (" << first_ << ")"; 
+    out << "P " << a_ << " " << b_ << " " << c_ << " (" << first_ << ")"; 
   }
 
   void audit(Slice::Event_key k) const {
@@ -100,7 +100,7 @@ struct Slice::Rule_event: public Event_base {
   }
   
   void write(std::ostream &out) const {
-    out << a_ << " " << rule_ << " " << ok_; 
+    out << "Rule " << a_ << " " << rule_ << " " << ok_; 
   }
 
   void audit(Slice::Event_key k) const {
@@ -118,11 +118,11 @@ struct Slice::Edge_event: public Event_base {
   Edge_event(Slice *sw, Halfedge_handle a): P(sw/*, T::EDGE*/), h_(a){}
 
   void process() {
-    P::kds()->process_edge_collapse_event(h_);
+    P::kds()->process_vertex_crossing_event(h_);
   }
   
   void write(std::ostream &out) const {
-    out << h_->vertex()->point() << "--" << h_->curve() << "--"
+    out << "Edge " << h_->vertex()->point() << "--" << h_->curve() << "--"
 	<< h_->opposite()->vertex()->point(); 
   }
 
@@ -135,8 +135,7 @@ struct Slice::Edge_event: public Event_base {
 
 
 Slice::Slice(T tr): t_(tr), sds_(t_.number_of_spheres()),
-		    sim_(new Simulator(Simulator::Time(tr.bbox_3().xmin()-1), 
-				       Simulator::Time(tr.bbox_3().xmax()+1))),
+		    sim_(new Simulator(Simulator::Time(tr.bbox_3().xmin()-1))),
 		    siml_(sim_, this), guil_(NULL){
   /*double d0(tr.bbox_3().xmin()-1); 
     double d1(tr.bbox_3().xmax()+1);
@@ -150,7 +149,7 @@ Slice::Slice(T tr): t_(tr), sds_(t_.number_of_spheres()),
   Simulator::Time t0(d0); 
   Simulator::Time t1(d1);
   std::cout << d0 << " " << d1 << " " << t0 << " " << t1 << std::endl;
-  sim_->set_interval(t0, t1);
+  //sim_->set_interval(t0, t1);
   initialize_certificates();
 }
 
@@ -214,6 +213,7 @@ void Slice::set_gui(Qt_gui::Handle qt){
 }
 
 bool Slice::has_degeneracy() const {
+  if (sim_->empty()) return false;
   if (sim_->next_event_time().compare(sim_->current_time(),
 				      sweep_coordinate()) == CGAL::EQUAL
       && sim_->next_event_time().compare(sim_->current_time(),
@@ -268,10 +268,11 @@ void Slice::process_equal_centers_two_sphere_event(T::Key k, T::Key l, bool f) {
   if (t_.compare_sphere_centers_c(k,l, sweep_coordinate()) == CGAL::LARGER) {
     std::swap(k,l);
   }
-  sds_.exchange_spheres(k,l);
+  exchange_circles(k,l);
   sim_->delete_event(intersections_2_[i2].second);
-  intersections_2_.erase(i2);
-  {
+  intersections_2_[i2].first= Event_key();
+  intersections_2_[i2].second= Event_key();
+  /*{
     Halfedge_handle kc= sds_.a_halfedge(k), ke=kc;
     do {
       kc->curve().set_key(l);
@@ -284,13 +285,11 @@ void Slice::process_equal_centers_two_sphere_event(T::Key k, T::Key l, bool f) {
       lc->curve().set_key(k);
       lc= sds_.next_edge_on_curve(lc);
     } while (lc != le);
-  }
+    }*/
   Halfedge_handle keh[4];
   for (unsigned int i=0; i< 4; ++i) {
     Halfedge_handle rh= sds_.rule_halfedge(k, Rule_direction(i));
     keh[i]= rh;
-    sds_.set_extremum_halfedge(k,Rule_direction(i),
-			       sds_.extremum_halfedge(l,Rule_direction(i)));
     // now outside
     clean_edge(rh);
     check_edge_collapse(rh);
@@ -298,7 +297,6 @@ void Slice::process_equal_centers_two_sphere_event(T::Key k, T::Key l, bool f) {
   for (unsigned int i=0; i< 4; ++i) {
     Halfedge_handle rh= sds_.rule_halfedge(l, Rule_direction(i));
     // now outside
-    sds_.set_extremum_halfedge(l,Rule_direction(i),keh[i]);
     clean_edge(rh);
     if (!(rh->vertex()->point().is_sphere_rule() 
 	  && rh->vertex()->point().sphere_key() == k)) {
@@ -329,7 +327,7 @@ void Slice::process_aligned_centers_two_sphere_event(T::Key k, T::Key l, bool f,
       CGAL_assertion(rule_k->opposite() == rule_l); //otherwise degeneracy
       CGAL_assertion(rule_k->event() == Event_key());
       
-      sds_.remove_rule(rule_k);
+      merge_faces(rule_k);
     }
     Halfedge_handle extr_k = sds_.extremum_halfedge(k, Rule_direction(rk));
     Halfedge_handle extr_l = sds_.extremum_halfedge(l, Rule_direction(rl));
@@ -337,19 +335,15 @@ void Slice::process_aligned_centers_two_sphere_event(T::Key k, T::Key l, bool f,
     // name them for who connects later
     Halfedge_handle rule_vertex_l;
     if (extr_k->next()->curve().key() != k) {
-      clean_edge(extr_k->next());
-      std::pair<Halfedge_handle, Halfedge_handle> hr
-	= sds_.remove_rule(extr_k->next());
-      rule_vertex_l= hr.first;
-      CGAL_assertion(hr.second == extr_k);
+      rule_vertex_l= extr_k->next()->opposite()->prev();;
+      merge_faces(extr_k->next());
+      
+      //CGAL_assertion(hr.second == extr_k);
     }
     Halfedge_handle rule_vertex_k;
     if (extr_l->next()->curve().key() != l) {
-      clean_edge(extr_l->next());
-      std::pair<Halfedge_handle, Halfedge_handle> hr
-	= sds_.remove_rule(extr_l->next());
-      rule_vertex_k= hr.first;
-      CGAL_assertion(hr.second == extr_l);
+      rule_vertex_k= extr_l->next()->opposite()->prev();;
+      merge_faces(extr_l->next());
     }
     // maybe replace by two pinch operations
     clean_edge(extr_l->opposite());
@@ -376,19 +370,20 @@ void Slice::process_aligned_centers_two_sphere_event(T::Key k, T::Key l, bool f,
 				      hp.first->opposite()->face(),
 				      Sds::Curve::make_rule(k, Rule_direction(rk)));
     } 
-    sds_.split_face(hp.first->prev(), rule_vertex_k,
-		    Sds::Curve::make_rule(k, Rule_direction(rk)));
+    sds_.split_face(Sds::Curve::make_rule(k, Rule_direction(rk)),
+		    hp.first->prev(), rule_vertex_k);
     if (rule_vertex_l== Halfedge_handle()) {
       rule_vertex_l= find_rule_vertex(sim_->current_time(),
 				      hp.second->opposite()->face(),
 				      Sds::Curve::make_rule(l, Rule_direction(rl)));
     } 
-    sds_.split_face(hp.second->prev(), rule_vertex_l,
-		    Sds::Curve::make_rule(l, Rule_direction(rl)));
+    sds_.split_face(Sds::Curve::make_rule(l, Rule_direction(rl)),
+		    hp.second->prev(), rule_vertex_l);
       
     // set halfedges for spheres
-    sds_.set_extremum_halfedge(k, Rule_direction(rk), hp.first->prev());
-    sds_.set_extremum_halfedge(l, Rule_direction(rl), hp.second->prev());
+    CGAL_assertion(0);
+    //sds_.set_extremum_halfedge(hp.first->prev());
+    //sds_.set_extremum_halfedge(hp.second->prev());
   } else {
     // first figure out which case we are in
     const T::Event_point_3 &ep = sim_->current_time();
@@ -415,29 +410,47 @@ void Slice::process_intersect_event(T::Key k, T::Key l) {
   {
     std::vector<Face_handle> shared_faces;
     typedef  std::vector<Face_handle>::iterator SFIT;
-    Halfedge_handle ke, le;
+    // Halfedge_handle ke, le;
     Halfedge_handle kh= sds_.a_halfedge(k), kh_end=kh;
     do {
-      Halfedge_handle oh= kh->opposite()->next()->next();
-      do {
-	if (oh->curve().key() == l && oh->curve().is_arc()) {
-	  shared_faces.push_back(oh->face());
-	  ke= kh->opposite();
-	  le= oh;
-	}
-	oh= oh->next();
-      } while (oh != kh->opposite());
-	
+      {
+	Halfedge_handle oh= kh->opposite()->next()->next();
+	do {
+	  if (oh->curve().key() == l && oh->curve().is_arc()) {
+	    shared_faces.push_back(oh->face());
+	    //ke= kh->opposite();
+	    //le= oh;
+	  }
+	  oh= oh->next();
+	} while (oh != kh->opposite());
+      }
+      {
+	Halfedge_handle oh= kh->next()->next();
+	do {
+	  if (oh->curve().key() == l && oh->curve().is_arc()) {
+	    shared_faces.push_back(oh->face());
+	    //ke= kh->opposite();
+	    //le= oh;
+	  }
+	  oh= oh->next();
+	} while (oh != kh);
+      }
       kh= sds_.next_edge_on_curve(kh);
       CGAL_assertion(kh != Halfedge_handle());
     } while (kh != kh_end);
     // find edges
     CGAL_assertion(!shared_faces.empty());
     if (shared_faces.size() != 1) {
+      std::cout << "Have several shared faces " << std::endl;
       shared_faces.erase(std::unique(shared_faces.begin(), shared_faces.end()),
 			 shared_faces.end());
+      for (unsigned int i=0; i< shared_faces.size(); ++i) {
+	sds_.write_face(shared_faces[i]->halfedge(), std::cout) << std::endl;
+      }
       fh= locate_point(SFIT(shared_faces.begin()), SFIT(shared_faces.end()),
 		       sim_->current_time());
+      std::cout << "Got ";
+      sds_.write_face(fh->halfedge(), std::cout) << std::endl;
     } else {
       fh= shared_faces[0];
     }
@@ -518,7 +531,8 @@ void Slice::process_two_sphere_event(T::Key k, T::Key l, bool f) {
   std::cout << "Two sphere kds " << k << " " << l << " " << f << std::endl;
   Intersection_2 i2(k,l);
   if (!f) {
-    intersections_2_.erase(i2);
+    //intersections_2_.erase(i2);
+    intersections_2_[i2].second=Event_key();
   } else {
     intersections_2_[i2].first=Event_key();
   }
@@ -552,6 +566,7 @@ void Slice::process_three_sphere_event(T::Key k, T::Key l, T::Key m, bool f) {
   } else {
     intersections_3_[i3].first=Event_key();
   }
+  CGAL_assertion(0);
 }
 
 //must maintain hafledges_
@@ -566,7 +581,7 @@ void Slice::process_rule_collapse_event(T::Key k, Rule_direction rule, T::Key o)
   Rule_event_rep rep(k, rule, o);
   CGAL_precondition(rule_events_.find(rep) != rule_events_.end());
   if (rule_events_[rep].first == Event_key()) {
-    rule_events_.erase(rep);
+    rule_events_[rep].second= Event_key();
   } else {
     rule_events_[rep].first= Event_key();
   }
@@ -585,7 +600,7 @@ void Slice::process_rule_collapse_event(T::Key k, Rule_direction rule, T::Key o)
   if (base != Halfedge_handle()) {
     // we have a uncollapse
     CGAL_assertion(0);
-    //uncollapse_edge(sim_->current_time(), h, base);
+    uncollapse_rule(sim_->current_time(), h, base);
   } else {
     if (h->next()->next()->curve().key() == o) {
       CGAL_assertion(h->next()->next()->curve().is_arc());
@@ -593,21 +608,12 @@ void Slice::process_rule_collapse_event(T::Key k, Rule_direction rule, T::Key o)
     } else {
       base= h->opposite()->prev();
     }
-    CGAL_assertion(0);
     
-    //collapse_edge(h, base);
+    collapse_rule(sim_->current_time(), h, base);
   }
-  //CGAL_assertion(oh->vertex()->point().is_extremum());
-  //CGAL_assertion(oh->curve().key() == k);
-  
-  
-  // see which way it goes
-  // erase rule 
-  // insert new rule
-  // clear event
 }
 
-void Slice::process_edge_collapse_event(Halfedge_handle h) {
+void Slice::process_vertex_crossing_event(Halfedge_handle h) {
   if (has_degeneracy()) {
     sim_->new_event(sim_->current_time(), Edge_event(this, h));
     process_degeneracy();
@@ -618,76 +624,62 @@ void Slice::process_edge_collapse_event(Halfedge_handle h) {
   sds_.unset_event(h);
 
   if (h->curve().is_rule()) {
-    Halfedge_handle nh= sds_.next_edge_on_curve(h);
-    if (nh == Halfedge_handle()) {
-      h=h->opposite();
-      nh= sds_.next_edge_on_curve(h);
+    Halfedge_handle hd= h;
+    if (!h->vertex()->point().is_rule_rule()) {
+      hd=h->opposite();
     }
+    Halfedge_handle nh= sds_.next_edge_on_curve(hd);
     if (nh == Halfedge_handle()) {
-      Halfedge_handle remove= h->next()->opposite();
+      Halfedge_handle remove= hd->next()->opposite();
       if (remove->curve().is_outward_rule()) {
-	remove= h->opposite()->prev();
+	remove= hd->opposite()->prev();
       }
       CGAL_precondition(!remove->curve().is_outward_rule());
-      CGAL_precondition(remove->curve().key() != h->curve().key());
+      CGAL_precondition(remove->curve().key() != hd->curve().key());
       /*Halfedge_handle nr=*/ rotate_rule(sim_->current_time(), remove);
     }
-    
   }
-  
-  Halfedge_handle p= sds_.cross_edge(h)->opposite();
+
+  Halfedge_handle p;
+  Halfedge_handle t;
+  // bool lefty;
+  do {
+    if (h->next()->curve().is_rule() && h->next()->curve() != h->curve()) {
+      //lefty=false;
+      p= h->next()->opposite();
+      t= h->prev();
+      break;
+    } else if (h->prev()->curve().is_rule() && h->prev()->curve() != h->curve()) {
+      //lefty=true;
+      p=h->prev();
+      t=h->next()->opposite();
+      break;
+    } else {
+      h=h->opposite();
+    } 
+  } while(true);
+
+  Halfedge_handle nt=insert_vertex(p->vertex()->point(), t);
+  move_edge_target(p, nt);
+  check_remove_vertex(h);
+
+  p= sds_.cross_edge(h)->opposite();
   CGAL_assertion(p != Halfedge_handle());
   if (!p->curve().is_rule()) {
     // h=h->opposite();
     p= sds_.cross_edge(h->opposite())->opposite();
   }
+  CGAL_assertion(p->curve().is_rule());
   // simplify?
   if (h->opposite()->face() == p->face() 
       || h->opposite()->face() == p->opposite()->face()) {
     h=h->opposite();
   }
-
-  CGAL_assertion(p->curve().is_rule());
-  //CGAL_assertion(p->vertex() == h->vertex());
-
-  clean_edge(h->prev());
-  clean_edge(h->next());
-  clean_edge(h->opposite()->prev());
-  clean_edge(h->opposite()->next());
-  bool left=false;
-  if (p==h->prev()) {
-    left=true;
-    clean_edge(p->opposite()->prev());
-  } else {
-    clean_edge(p->next());
-  }
-  
-  //Halfedge_handle rule, prev, next;
-  
-  // rule->vertex() is constant
-  // all faces are constant
-
-  sds_.exchange_vertices(h, p);
-  
   
   Qt_examiner_viewer_2 *qt= new Qt_examiner_viewer_2();
   draw_rz(qt, CGAL::to_double(sim_->current_time()) + .1);
   qt->show_everything();
   qt->show();
-  
-
-  check_edge_face(h);
-  check_edge_collapse(h);
-  check_edge_collapse(h->prev());
-  check_edge_collapse(h->next());
-  if (left) {
-    check_edge_collapse(h->next()->opposite()->next());
-    check_reduced_face(h->prev()->opposite()->face());
-  } else {
-    check_edge_collapse(h->prev()->opposite()->prev());
-    check_reduced_face(h->next()->opposite()->face());
-  }
-  //audit();
 }
 
 
@@ -706,10 +698,14 @@ void Slice::check_edge_pair(Halfedge_handle h,
 								i2.first(),
 								i2.second(),
 								true));
-      Event_key ek1= sim_->new_event(ep.second, Two_sphere_event(this,
-								 i2.first(),
-								 i2.second(),
-								 false));
+      Event_key ek1;
+      if (ep.second.is_valid()) {
+	// for degeneracy
+	ek1= sim_->new_event(ep.second, Two_sphere_event(this,
+							 i2.first(),
+							 i2.second(),
+							 false));
+      }
       //std::cout << *sim_;
       intersections_2_[i2]= Event_key_pair(ek0, ek1);
     } else {
@@ -751,139 +747,92 @@ void Slice::check_merged_faces(Face_handle f, Face_handle g) {
 
 
 void Slice::check_edge_collapse(Halfedge_handle h) {
-  // complicated a bit
-  // elimitate two SS endpoints
-  std::cout << "Checking edge collapse for " << h->vertex()->point() 
-	    << "--" << h->curve() << "--" << h->opposite()->vertex()->point()
-	    << std::endl;
+  // There is an edge collapse if this edge and its endpoints are
+  // defined by an arc and two rules (of different direction) or
+  // by two arcs and one rule (h must be an arc in this case)
+
+  // complicated a bit elimitate two SS endpoints
+  std::cout << "Checking edge collapse for ";
+  sds_.write(h, std::cout) << std::endl;
   CGAL_precondition(sds_.event(h)== Event_key());
   if (!h->curve().is_finite()) return;
-  // an arc connecting spheres will be checked elsewhere
-  if (h->vertex()->point().is_sphere_sphere() 
-      && h->opposite()->vertex()->point().is_sphere_sphere()) return;
   // an arc on a sphere with its two rules (but they might be called
   // something else
   if (h->vertex()->point().is_sphere_extremum() 
-      && h->opposite()->vertex()->point().is_sphere_extremum()) return;
-  // rule collapse will be detected separately
-  if (h->curve().is_rule() && h->vertex()->point().is_sphere_rule()
-      && h->opposite()->vertex()->point().is_sphere_rule()){
-    if (h->vertex()->point().is_sphere_extremum() 
-	&& h->opposite()->vertex()->point().is_sphere_extremum()) {
-      // degenerate edge check separately, ick.
-      CGAL_assertion(0);
-    }
-    return;
+      && h->opposite()->vertex()->point().is_sphere_extremum())  return;
+  
+  T::Key rules[2];
+  T::Key arc, oarc;
+  if (h->curve().is_arc()) {
+    arc= h->curve().key();
+  } else {
+    rules[project(h->curve().constant_coordinate())]= h->curve().key();
   }
 
-  Halfedge_handle rh= sds_.cross_edge(h)->opposite();
-  Halfedge_handle oh= sds_.cross_edge(h->opposite())->opposite();
-  if (!rh->curve().is_rule()) std::swap(rh, oh);
-  
-  if (!oh->curve().is_finite()) return;
-  if (!rh->curve().is_finite()) return;
-  std::cout << "Found " << rh->curve() 
-	    << ", " << h->curve() << "--" << oh->curve()
-	    << std::endl;
-  CGAL_assertion(h->curve() != rh->curve());
-  CGAL_assertion(oh->curve() != rh->curve());
-  CGAL_assertion(h->curve() != oh->curve());
-  CGAL_assertion(rh->curve().is_rule());
-  if (h->curve().key() == rh->curve().key()
-      && h->curve().key() == oh->curve().key()) return;
-  if (h->curve().key() == rh->curve().key() && !oh->curve().is_rule()) {
-    // extremum
-    Rule_event_rep re(rh->curve().key(), rh->curve().rule_direction(), oh->curve().key());
-    if (rule_events_.find(re) == rule_events_.end()) {
-      T::Event_pair ep
-	= t_.sphere_intersect_extremum_events(re.rule_key(), 
-					      re.rule_coordinate(),
-					      re.other_key());
-      if (ep.first.is_valid() && ep.first != ep.second) {
-	// not handling degeneracies
-	Event_key ek0, ek1;
-	if (ep.first > sim_->current_time()) {
-	  ek0= sim_->new_event(ep.first, Rule_event(this,
-						    re.rule_key(), 
-						    re.rule_direction(),
-						    re.other_key()));
-	} 
-	if (ep.second > sim_->current_time()) {
-	  ek1= sim_->new_event(ep.second, Rule_event(this,
-						     re.rule_key(), 
-						     re.rule_direction(),
-						     re.other_key()));
-	}
-	rule_events_[re]= Event_key_pair(ek0, ek1);
-	//std::cout << *sim_;
-	std::cout << "Created rule events " << ek0 << " " << ek1 << std::endl;
+  {
+    Vertex_handle v= h->vertex();
+    if (!v->point().other_curve_is_rule(h->curve())) {
+      oarc= hvc.key();
+    } else {
+      int pc= project(v->point().other_curve_rule_coordinate(h->curve()));
+      if (rules[pc] == T::Key()) {
+	rules[pc]= hvc.key();
       } else {
-	rule_events_[re]= Event_key_pair();
-      } 
-    }
-  } else if (h->curve().is_rule()) {
-    //SR cross RR
-    T::Key ks[2];
-    ks[project(h->curve().constant_coordinate())]= h->curve().key();
-    ks[project(rh->curve().constant_coordinate())]= rh->curve().key();
-    T::Event_pair ep= t_.sphere_intersect_rule_rule_events(oh->curve().key(),
-							   ks[0],
-							   ks[1]);
-    Event_key ek= sim_->null_event();
-    // handle degeneracy here by looking at whether I am inside already
-    if (ep.first.is_valid() && ep.first != ep.second) {
-      if (ep.first  > sim_->current_time()) {
-	ek = sim_->new_event(ep.first, Edge_event(this, h));
-      } else if (ep.second > sim_->current_time()) {
-	ek= sim_->new_event(ep.second, Edge_event(this,h));
+	// two rules in the same direction
+	std::cout << "Two same rules." << std::endl;
+	return;
       }
     }
-    // std::cout << *sim_;
-    sds_.set_event(h, ek);
-    std::cout << "Created SR RR collapse event " << ek << std::endl;
-  } else if (oh->curve().is_rule()) {
-    // parallel rules
-    if (oh->curve().constant_coordinate() == rh->curve().constant_coordinate()) {
-      return;
-    }
-    // SR cross SR
-    T::Key ks[2];
-    ks[project(oh->curve().constant_coordinate())]= oh->curve().key();
-    ks[project(rh->curve().constant_coordinate())]= rh->curve().key();
-    T::Event_pair ep= t_.sphere_intersect_rule_rule_events(h->curve().key(),
-							   ks[0],
-							   ks[1]);
-    Event_key ek= sim_->null_event();
-    // handle degeneracy here by looking at whether I am inside already
-    if (ep.first.is_valid()  && ep.first != ep.second) {
-      if (ep.first  > sim_->current_time()) {
-	ek = sim_->new_event(ep.first, Edge_event(this, h));
-      } else if (ep.second > sim_->current_time()) {
-	ek= sim_->new_event(ep.second, Edge_event(this,h));
-      }
-    }
-    //std::cout << *sim_;
-    sds_.set_event(h, ek);
-    std::cout << "Created SR SR collapse event " << ek << std::endl;
-  } else {
-    // SS cross SR
-    T::Event_pair ep= t_.circle_cross_rule_events(h->curve().key(),
-						  oh->curve().key(),
-						  rh->curve().key(),
-						  rh->curve().constant_coordinate());
-    Event_key ek= sim_->null_event();
-    // handle degeneracy here by looking at whether I am inside already
-    if (ep.first.is_valid() && ep.first != ep.second) {
-      if (ep.first  > sim_->current_time()) {
-	ek = sim_->new_event(ep.first, Edge_event(this, h));
-      } else if (ep.second > sim_->current_time()) {
-	ek= sim_->new_event(ep.second, Edge_event(this,h));
-      }
-    }
-    //std::cout << *sim_;
-    sds_.set_event(h, ek);
-    std::cout << "Created SS SR collapse event " << ek << std::endl;
   }
+
+  {
+    Vertex_handle v= h->opposite()->vertex();
+    if (!v->point().other_curve_is_rule(h->curve())) {
+      oarc= hvc.key();
+    } else {
+      int pc= project(v->point().other_curve_rule_coordinate(h->curve()));
+      if (rules[pc] == T::Key()) {
+	rules[pc]= hvc.key();
+      } else {
+	// two rules in the same direction
+	std::cout << "Two same rules." << std::endl;
+	return;
+      }
+    }
+  }
+
+  T::Event_pair ep;
+  if (oarc == Sds::Curve::Key()) {
+    CGAL_assertion(rules[0] != T::Key() && rules[1] != T::Key());
+    T::Event_pair ep= t_.sphere_intersect_rule_rule_events(arc,
+							   rules[0],
+							   rules[1]);
+  } else {
+    CGAL_assertion(rules[0] != T::Key() || rules[1] != T::Key());
+    CGAL_assertion(rules[0] == T::Key() || rules[1] == T::Key());
+    Coordinate_index ci;
+    T::Key rule;
+    if (rules[0] != T::Key()) {
+      rule=rules[0];
+      ci= plane_coordinate(0);
+    } else {
+      rule= rules[1];
+      ci= plane_coordinate(1);
+    }
+    ep= t_.circle_cross_rule_events(arc, oarc, rule, ci);
+  }
+  
+  Event_key ek= sim_->null_event();
+  // degeneracy?
+  if (ep.first.is_valid() && ep.first != ep.second) {
+    if (ep.first  > sim_->current_time()) {
+      ek = sim_->new_event(ep.first, Edge_event(this, h));
+    } else if (ep.second > sim_->current_time()) {
+      ek= sim_->new_event(ep.second, Edge_event(this,h));
+    }
+  }
+  sds_.set_event(h, ek);
+  std::cout << "Created event " << ek << std::endl;
 }
 
 

@@ -129,7 +129,57 @@ public:
     k_[1]=k;
   }
 
-  int extremum_index() const ;
+
+  void set_rule_key(Combinatorial_curve::Key k) {
+    CGAL_precondition(is_sphere_rule());
+    if (type_&R_BIT) k_[1]=k;
+    else k_[0]=k;
+  }
+
+  void swap_key(Combinatorial_curve::Key a, Combinatorial_curve::Key b) {
+    if (k_[0]==a) k_[0]=b;
+    if (k_[1]==a) k_[1]=b;
+  }
+
+  Combinatorial_curve::Key other_key(Combinatorial_curve::Key a) const {
+    if (k_[0]== a) return k_[1];
+    else return k_[0];
+  }
+
+  Coordinate_index other_curve_constant_coordinate(Combinatorial_curve a) const {
+    CGAL_precondition(is_sphere_rule() || is_rule_rule());
+    if (a.is_arc()) {
+      return rule_coordinate();
+    } else {
+      CGAL_precondition(is_rule_rule());
+      return other_plane_coordinate(a.constant_coordinate());
+    }
+  }
+
+  bool other_curve_is_rule(Combinatorial_curve a) const {
+    if (a.is_arc()) {
+      CGAL_precondition(is_sphere_rule() || is_sphere_sphere());
+      return is_sphere_rule();
+    } else {
+      CGAL_precondition(is_sphere_rule() || is_rule_rule());
+      return is_rule_rule();
+    }
+  }
+
+
+  bool other_curve_key(Combinatorial_curve a) const {
+    if (a.is_arc()) {
+      CGAL_precondition(is_sphere_rule() || is_sphere_sphere());
+      return is_sphere_rule();
+    } else {
+      CGAL_precondition(is_sphere_rule() || is_rule_rule());
+      return is_rule_rule();
+    }
+  }
+
+  
+
+  Rule_direction sphere_extremum_index() const ;
 
   /*const Combinatorial_curve sphere(int i) const {
     CGAL_precondition(type()== SR || type()== SS);

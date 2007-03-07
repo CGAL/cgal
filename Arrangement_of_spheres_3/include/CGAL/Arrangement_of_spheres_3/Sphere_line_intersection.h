@@ -106,42 +106,52 @@ public:
       
       NT disc= b*b-4*a*c;
       CGAL_assertion(disc >= 0);
-      CGAL_precondition(a!=0);
-      
-      int coord =sweep_coordinate().index();
-      CGAL::Sign sn= CGAL::sign(lv[coord]);
-      bool first;
-      if (sn != CGAL::ZERO) {
-	first= sn == CGAL::POSITIVE;
-      } else {
-	coord =plane_coordinate(0).index();
-	sn = CGAL::sign(lv[coord]);
+      if (a==0) {
+	std::cout << l_ << std::endl << s_ << std::endl;
+      }
+      /*if (a==0) { 
+	CGAL_assertion(s_.squared_radius() ==0);
+	exact_[0]= s_.center()[0];
+	exact_[1]= s_.center()[1];
+	exact_[2]= s_.center()[2];
+	} else {*/
+	CGAL_precondition(a!=0);
+	
+	int coord =sweep_coordinate().index();
+	CGAL::Sign sn= CGAL::sign(lv[coord]);
+	bool first;
 	if (sn != CGAL::ZERO) {
 	  first= sn == CGAL::POSITIVE;
 	} else {
-	  coord =plane_coordinate(1).index();
+	  coord =plane_coordinate(0).index();
 	  sn = CGAL::sign(lv[coord]);
-	  first = sn == CGAL::POSITIVE;
+	  if (sn != CGAL::ZERO) {
+	    first= sn == CGAL::POSITIVE;
+	  } else {
+	    coord =plane_coordinate(1).index();
+	    sn = CGAL::sign(lv[coord]);
+	    first = sn == CGAL::POSITIVE;
+	  }
 	}
+	bool rt= first && CGAL::sign(lv[coord]) == CGAL::POSITIVE 
+	  || !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE;
+	CGAL_assertion(first && CGAL::sign(lv[coord]) == CGAL::POSITIVE
+		       || !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE);
+	/*|| !first && CGAL::sign(lv[C]) == CGAL::NEGATIVE;*/
+	Quadratic_NT t=CGAL::make_root_of_2(a,b,c,rt);
+	
+	
+	/*if (first) {
+	  CGAL_assertion(t*lv[C] <= lv[C] *CGAL::make_root_of_2(a,b,c, !rt));
+	  } else {
+	  CGAL_assertion(t*lv[C] >= lv[C] *CGAL::make_root_of_2(a,b,c, !rt)); 
+	  }*/
+	exact_[0]= lp[0] + lv[0]*t;
+	exact_[1]= lp[1] + lv[1]*t;
+	exact_[2]= lp[2] + lv[2]*t;
+	has_exact_=true;
       }
-      bool rt= first && CGAL::sign(lv[coord]) == CGAL::POSITIVE 
-	|| !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE;
-      CGAL_assertion(first && CGAL::sign(lv[coord]) == CGAL::POSITIVE
-		     || !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE);
-      /*|| !first && CGAL::sign(lv[C]) == CGAL::NEGATIVE;*/
-      Quadratic_NT t=CGAL::make_root_of_2(a,b,c,rt);
-      
-      
-      /*if (first) {
-	CGAL_assertion(t*lv[C] <= lv[C] *CGAL::make_root_of_2(a,b,c, !rt));
-	} else {
-	CGAL_assertion(t*lv[C] >= lv[C] *CGAL::make_root_of_2(a,b,c, !rt)); 
-	}*/
-      exact_[0]= lp[0] + lv[0]*t;
-      exact_[1]= lp[1] + lv[1]*t;
-      exact_[2]= lp[2] + lv[2]*t;
-      has_exact_=true;
-    }
+    //}
   }
   
   bool is_valid() const {

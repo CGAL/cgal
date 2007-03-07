@@ -197,7 +197,7 @@ struct Slice {
   void process_two_sphere_event(T::Key k, T::Key l, bool first);
   void process_three_sphere_event(T::Key k, T::Key l, T::Key m, bool first);
   void process_rule_collapse_event(T::Key k, Rule_direction r, T::Key o);
-  void process_edge_collapse_event(Halfedge_handle h);
+  void process_vertex_crossing_event(Halfedge_handle h);
   // check for a degeneracy and return true if this handles it.
   void process_degeneracy();
   void rebuild_degenerate(const T::Sphere_point_3 &sp3, Vertex_handle a_vertex);
@@ -231,6 +231,44 @@ struct Slice {
   void set_is_editing(bool tf);
 
 
+  /*
+    Operations ---------------------------------------------------------
+  */
+  Halfedge_handle insert_vertex(Sds::Point pt,
+					      Sds::Curve c0,
+					      Sds::Curve c1,
+					      Halfedge_handle h) ;
+
+  Halfedge_handle insert_vertex(Sds::Point pt,
+					      Halfedge_handle h) ;
+
+  /*Halfedge_handle move_edge(Halfedge_handle edge,
+    Halfedge_handle new_source,
+    Halfedge_handle new_target);*/
+  Halfedge_handle check_remove_vertex(Halfedge_handle h);
+  
+  void exchange_circles(Sds::Curve::Key k, Sds::Curve::Key l);
+  
+  Halfedge_handle
+  move_edge_target(Halfedge_handle edge, 
+		   Halfedge_handle new_target);
+
+  void merge_faces(Halfedge_handle h);
+
+  void split_face(Sds::Curve c, Halfedge_handle a, Halfedge_handle b);
+
+  
+
+  /*
+    Replace rule with a rule rotate 90 degres around rule->vertex().
+  */
+  Halfedge_handle rotate_rule(const T::Event_point_3 &ep,
+			      Halfedge_handle rule);
+  
+  // cur should point out
+  T::Key roll_back_rule(const T::Sphere_point_3 &ep,
+			Halfedge_handle cur);
+
 
   /*
     Modifiers ----------------------------------------------------------
@@ -245,9 +283,7 @@ struct Slice {
   // return the face inside the sphere
   Face_handle insert_sphere(const T::Sphere_point_3 &fp, T::Key k);
 
-  // cur should point out
-  T::Key roll_back_rule(const T::Sphere_point_3 &ep,
-			Halfedge_handle cur);
+
 
   Face_handle erase_sphere(const T::Sphere_point_3 &ep,
 			   T::Key k);
@@ -273,7 +309,7 @@ struct Slice {
 				       Vertex_handle v,
 				       Halfedge_handle rvs[]);*/
 
-  Halfedge_handle check_remove_redundant(Halfedge_handle v);
+  // Halfedge_handle check_remove_redundant(Halfedge_handle v);
 
   Face_handle intersect_spheres(const T::Event_point_3 &t,
 				Halfedge_handle ha, Halfedge_handle hb);
@@ -295,11 +331,15 @@ struct Slice {
 				  Halfedge_handle c,
 				  Halfedge_handle base);
 
-  /*
-    Replace rule with a rule rotate 90 degres around rule->vertex().
-  */
-  Halfedge_handle rotate_rule(const T::Event_point_3 &ep,
-			      Halfedge_handle rule);
+  Halfedge_handle collapse_rule(const T::Event_point_3 &ep,
+				Halfedge_handle irule,
+				Halfedge_handle base);
+
+  Halfedge_handle uncollapse_rule(const T::Event_point_3 &ep,
+				  Halfedge_handle irule,
+				  Halfedge_handle base);
+
+
 
   T::Key debug_new_sphere(T::Sphere_3 s);
   /*

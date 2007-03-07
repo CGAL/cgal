@@ -148,14 +148,14 @@ Combinatorial_vertex Combinatorial_vertex::make_extremum(Key k,
   return ret;
 }
 
-int Combinatorial_vertex::extremum_index() const {
+Rule_direction Combinatorial_vertex::sphere_extremum_index() const {
   CGAL_precondition(is_sphere_extremum());
   if (rule_coordinate() == plane_coordinate(1)){
-    if (!is_smaller()) return 0;
-    else return 2;
+    if (!is_smaller()) return Rule_direction(0);
+    else return Rule_direction(2);
   } else {
-    if (!is_smaller()) return 1;
-    else return 3;
+    if (!is_smaller()) return Rule_direction(1);
+    else return Rule_direction(3);
   }
 }
 
@@ -174,15 +174,15 @@ std::ostream &Combinatorial_vertex::write(std::ostream &out) const {
     out << k_[0] << "," << k_[1];
   } else if (is_sphere_extremum()) {
     out << k_[0];
-    switch(extremum_index()) {
-    case 0:
-      out << "R"; break;
-    case 1:
-      out << "T"; break;
-    case 2: 
-      out << "L"; break;
-    default:
-      out << "B"; break;
+    Rule_direction d= sphere_extremum_index();
+    if (d== Rule_direction(0)) {
+      out << "R";
+    } else if (d== Rule_direction(1)) {
+      out << "T";
+    } else if (d== Rule_direction(2)) {
+      out << "L";
+    } else {
+      out << "B";
     }
   } else if (type_ & SR_BIT) {
    

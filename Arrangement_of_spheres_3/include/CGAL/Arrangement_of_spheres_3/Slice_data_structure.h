@@ -151,11 +151,9 @@ public:
   Halfedge_handle find_halfedge(Vertex_handle v, Face_handle f);
 
   // the first is the target of h, second the source
-  std::pair<Halfedge_handle, Halfedge_handle> remove_rule(Halfedge_handle h);
+  std::pair<Halfedge_handle, Halfedge_handle> remove_edge(Halfedge_handle h);
 
   bool has_vertex(Face_const_handle fh, Vertex_const_handle vh) const;
-
-  void connect(Halfedge_handle a, Halfedge_handle b);
 
   void set_curve(Halfedge_handle h, Curve c);
 
@@ -177,52 +175,30 @@ public:
     h->opposite()->set_event(Simulator::Event_key());
   }
 
-  void new_circle(Curve::Key k, Face_handle f, Halfedge_handle c[]);
+  void merge_faces(Halfedge_handle e);
   
-  /*typedef boost::tuple<Halfedge_handle, Halfedge_handle,
-    Halfedge_handle, Halfedge_handle> Halfedge_handle_quadruple;*/
-
-  void new_target(Curve::Key k, Halfedge_handle tar[]);
+  Halfedge_handle split_face(Curve c, Halfedge_handle source,
+			     Halfedge_handle target);
   
   void insert_target(Curve::Key k,
 		     Halfedge_handle cps[]);
 
   Face_handle remove_target(Halfedge_handle ts[],
 			    Halfedge_handle vert[]);
+  /*// move old_edge to have the vertices be in new_source and new_target
+  // return the new edge
+  Halfedge_handle move_edge(Halfedge_handle old_edge,
+			    Halfedge_handle new_source,
+			    Halfedge_handle new_target,
+			    Halfedge_handle &blank_old_source,
+			    Halfedge_handle &blank_old_target);*/
+	
+  // remove the rule from the endpoint
+  // attach it to the new one
+  void move_edge_target(Halfedge_handle edge,
+			Halfedge_handle new_target); 
 
-  Halfedge_handle split_face(Halfedge_handle o, Halfedge_handle d,
-			     Curve c);
-
-  void relabel_target(Halfedge_handle v[], Curve::Key k);
-
-  
-  void exchange_vertices(Halfedge_handle h, Halfedge_handle p);
-
-  
-  std::pair<Halfedge_handle,Halfedge_handle> 
-  intersect(Halfedge_handle ha, Halfedge_handle hb);
-
-  std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
-
-  // remove the rule from where it is connected
-  // attach it to point a a new vertex in ne, starting from t->vertex()
-  // the old target is removed, the old source is not. 
-  // OK, this is really screwy
-  // the new rule is returned
-  void move_rule(Halfedge_handle r,
-		 Halfedge_handle ne, 
-		 Halfedge_handle t); 
-
-
-  void audit() const ;
-
-  void audit_vertex(Vertex_const_handle v) const ;
-  
-  Halfedge_handle next_edge_on_curve(Halfedge_handle) const;
-  Halfedge_const_handle next_edge_on_curve(Halfedge_const_handle) const;
-  Halfedge_handle cross_edge(Halfedge_handle) const;
-
-  //void audit_halfedge(Halfedge_const_handle v) const ;
+  void audit() const ;	 
 
   void set_is_building(bool tf);
   
@@ -244,65 +220,35 @@ public:
 
   bool is_redundant(Vertex_const_handle v) const;
 
-  Halfedge_handle remove_redundant_vertex(Halfedge_handle v);
+  Halfedge_handle remove_vertex(Halfedge_handle v);
 
-  void exchange_spheres(Curve::Key k, Curve::Key l);
+  void exchange_sphere_extremums(Curve::Key k, Curve::Key l);
 
-  void clear();
+  Halfedge_handle next_edge_on_curve(Halfedge_handle) const;
 
-  // a halfedge on the curve (an inside one)
+  Halfedge_handle cross_edge(Halfedge_handle) const;
+
+ // a halfedge on the curve (an inside one)
   Halfedge_handle a_halfedge(Curve::Key k) const;
 
   // a halfedge on the rule pointing to the extremal vertex
   Halfedge_handle rule_halfedge(Curve::Key k, Rule_direction i) const;
 
-  // a halfedge on the circle pointing to the extremal vertex
+  // a halfedge on the circle pointing to the extremal vertex (inside)
   Halfedge_handle extremum_halfedge(Curve::Key k, Rule_direction i) const;
   
-  void set_extremum_halfedge(Curve::Key k, Rule_direction i, Halfedge_handle h);
-
-
-  template <class Out>
-  void find_halfedges(Curve c, Out o) const {
-    for (Halfedge_const_iterator it= halfedges_begin();
-	 it != halfedges_end(); ++it) {
-      if (it->curve() == c) {
-	*o=it;
-	++o;
-      }
-    }
-  }
-  
- void relabel_rule(Halfedge_handle h, Curve nl);
-
   // insert the vertex so that h->opposite points to it
-  Vertex_handle insert_vertex_in_edge(Halfedge_handle h, Point p);
+  Halfedge_handle insert_vertex( Point p, Halfedge_handle h);
 
-  // insert the vertex so that h->opposite points to it
-  Halfedge_handle insert_vertex_in_edge_unsafe(Halfedge_handle h,
-					     Vertex_handle  vh);
 
-  // insert a vertex for p in both edges
-  // merge the two vertices
-  std::pair<Halfedge_handle, Halfedge_handle> pinch_bl(Halfedge_handle a, Halfedge_handle b, Point p);
+  std::pair<Halfedge_handle,Halfedge_handle> 
+  intersect(Halfedge_handle ha, Halfedge_handle hb);
 
-  // a and b go to the same vertex. Make them go to different vertices
-  // return the new vertex on b
-  Vertex_handle unpinch_bl(Halfedge_handle a, Halfedge_handle b);
+  std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
 
-  void merge_vertices_bl(Halfedge_handle a, Halfedge_handle b);
+  void clear();
 
-  Halfedge_handle new_halfedge(Curve c);
-
-  //typedef std::pair<Point,Point>  ED;
-
-  Vertex_handle new_vertex(Point p);
-
-  Vertex_handle new_vertex_cached(Point p);
-
-  Halfedge_handle new_halfedge(Point s, Curve ff, Point f);
-
-  template <class It>
+ template <class It>
   void new_face(It b, It e) {
     // vt must be a pair, ick 
     CGAL_assertion(std::distance(b,e)>=2);
@@ -332,6 +278,92 @@ public:
     le->set_next(fst);
     fst->set_prev(le);
   }
+
+  void relabel_rule(Halfedge_handle h, Curve nl);
+
+
+
+private:
+  void connect(Halfedge_handle a, Halfedge_handle b);
+
+  void new_circle(Curve::Key k, Face_handle f, Halfedge_handle c[]);
+  
+  /*typedef boost::tuple<Halfedge_handle, Halfedge_handle,
+    Halfedge_handle, Halfedge_handle> Halfedge_handle_quadruple;*/
+
+  void new_target(Curve::Key k, Halfedge_handle tar[]);
+  
+  void set_extremum_halfedge(Halfedge_handle h);
+
+
+  /*Halfedge_handle split_face(Halfedge_handle o, Halfedge_handle d,
+    Curve c);*/
+
+  void relabel_target(Halfedge_handle v[], Curve::Key k);
+
+  
+  //void exchange_vertices(Halfedge_handle h, Halfedge_handle p);
+
+  
+
+
+ 
+
+
+ 
+
+  void audit_vertex(Vertex_const_handle v) const ;
+  
+
+
+  //void audit_halfedge(Halfedge_const_handle v) const ;
+
+
+
+
+
+  void delete_edge(Halfedge_handle h);
+
+  template <class Out>
+  void find_halfedges(Curve c, Out o) const {
+    for (Halfedge_const_iterator it= halfedges_begin();
+	 it != halfedges_end(); ++it) {
+      if (it->curve() == c) {
+	*o=it;
+	++o;
+      }
+    }
+  }
+  
+  
+
+
+  // insert the vertex so that h->opposite points to it
+  Halfedge_handle insert_vertex_in_edge_unsafe(Halfedge_handle h,
+					     Vertex_handle  vh);
+
+  // insert a vertex for p in both edges
+  // merge the two vertices
+  std::pair<Halfedge_handle, Halfedge_handle> pinch_bl(Halfedge_handle a,
+						       Halfedge_handle b, Point p);
+
+  // a and b go to the same vertex. Make them go to different vertices
+  // return the new vertex on b
+  Vertex_handle unpinch_bl(Halfedge_handle a, Halfedge_handle b);
+
+  void merge_vertices_bl(Halfedge_handle a, Halfedge_handle b);
+
+  Halfedge_handle new_halfedge(Curve c);
+
+  //typedef std::pair<Point,Point>  ED;
+
+  Vertex_handle new_vertex(Point p);
+
+  Vertex_handle new_vertex_cached(Point p);
+
+  Halfedge_handle new_halfedge(Point s, Curve ff, Point f);
+
+ 
 
 
   struct Edge {

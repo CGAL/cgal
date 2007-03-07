@@ -94,13 +94,13 @@ Slice::T::Sphere_point_3 Slice::sphere_point_rz(Sds::Point pt, NT z) const {
     in_line_rz(rule, z));*/
     return T::Sphere_point_3();
   } else {
-    std::cout << "Computing point for " << pt << std::endl;
+    //std::cout << "Computing point for " << pt << std::endl;
     CGAL_precondition(pt.sphere_key(0) != pt.sphere_key(1));
     T::Point_2 cp= center_point_rz(pt.sphere_key(0), pt.sphere_key(1), z);
     T::Vector_3 v= t_.sphere(pt.sphere_key(0)).center() 
       - t_.sphere(pt.sphere_key(1)).center();
-    std::cout << "cp = " << cp << std::endl;
-    std::cout << "v = " << v << std::endl;
+    //std::cout << "cp = " << cp << std::endl;
+    //std::cout << "v = " << v << std::endl;
     T::FT p[3],vv[3];
     p[plane_coordinate(0).index()]= cp[0];
     p[plane_coordinate(1).index()]= cp[1];
@@ -108,8 +108,8 @@ Slice::T::Sphere_point_3 Slice::sphere_point_rz(Sds::Point pt, NT z) const {
     vv[plane_coordinate(0).index()]= -v[plane_coordinate(1).index()];
     vv[plane_coordinate(1).index()]= v[plane_coordinate(0).index()];
     vv[sweep_coordinate().index()]=0;
-    std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl;
-    std::cout << vv[0] << " " << vv[1] << " " << vv[2] << std::endl;
+    //std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl;
+    //std::cout << vv[0] << " " << vv[1] << " " << vv[2] << std::endl;
     T::Line_3 l(T::Point_3(p[0], p[1], p[2]), T::Vector_3(vv[0], vv[1], vv[2]));
     
     T::Sphere_point_3 sli(t_.sphere(pt.sphere_key(1)), l);

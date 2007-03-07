@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
     //std::cout << spheres.back() << std::endl;
   }
 
-
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
 
   std::cout << "Read " << spheres.size() << " spheres." << std::endl;
   Arrangement_of_spheres_traits_3 tr(spheres.begin(), spheres.end());

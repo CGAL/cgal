@@ -30,6 +30,9 @@ struct Rule_direction {
   bool operator==(const Rule_direction&o) const {
     return dir_== o.dir_;
   }
+  Rule_direction opposite() const {
+    return Rule_direction((dir_+2)%4);
+  }
   const char *to_str() const ;
   void write(std::ostream& out) const;
 
