@@ -199,8 +199,8 @@ int main(int argc, char *argv[]){
     
     for (unsigned int i=0;i< pdb.number_of_models(); ++i){
       CGAL_PDB_NS::Model &m= pdb.model(i);
-      CGAL_PDB_NS::Model &rm= rpdb.model(std::min BOOST_PREVENT_MACRO_SUBSTITUTION (rpdb.number_of_models(), 
-						  static_cast<size_t>(i)));
+      CGAL_PDB_NS::Model &rm= rpdb.model((std::min)(rpdb.number_of_models(), 
+						    static_cast<size_t>(i)));
       for (unsigned int j=0; j< m.number_of_chains(); ++j){
 	CGAL_PDB_NS::Protein &p= m.chain(j);
 	CGAL_PDB_NS::Protein &rp= rm.chain(j);
