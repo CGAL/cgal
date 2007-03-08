@@ -29,14 +29,14 @@
 #define CGAL_SQRT_EXTENSION_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/type_traits.h>
 
-#include <numeric> // for std::accumulate
-#include <boost/type_traits/is_same.hpp>
+#include <numeric> // fro std::accumulate
 #include <boost/numeric/interval.hpp> // Needed by To_interval
 
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/mpl/if.hpp>
+//#include <boost/iterator/transform_iterator.hpp>
+//#include <boost/mpl/if.hpp>
+
+//#include <CGAL/CGAL/number_type_basic.h>
 
 // We have to define the macros befor including Polynomials, 
 // since they cause a doxygen error otherwise.. (version 1.2.4)
@@ -165,7 +165,13 @@ public:
     //! Default constructor of \c Sqrt_extension 
     Sqrt_extension()
         : a0_( NT(0)), a1_( NT(0)), root_(ROOT(0)), is_extended_(false) {}
-  
+    
+    Sqrt_extension(int i) 
+        : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
+    
+    Sqrt_extension(const NT& i) 
+        : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
+
     /*!\brief Explicit constructor of Sqrt_extension, from any type NTX.
      * \pre NT must constructible from NTX */ 
     template <class NTX>
@@ -312,7 +318,7 @@ public:
     }
 
 //------------------------------------------------------------------
-// SPECIALIZE_MEMBERS
+// SPECIALIZE_MEMBERS NT
     
     Self& operator += (const NT& num) { 
         a0() += NT(num); 
@@ -334,6 +340,28 @@ public:
         a1() /= NT(num);
         return *this; 
     }
+
+   Self& operator += (int num) { 
+        a0() += NT(num); 
+        return *this; 
+    }
+    Self& operator -= (int num) { 
+        a0() -= NT(num); 
+        return *this; 
+    }
+    Self& operator *= (int num) { 
+        a0() *= NT(num); 
+        a1() *= NT(num);
+        return *this; 
+    }
+    Self& operator /= (int num) { 
+        typename Real_embeddable_traits_nt::Sign sign;       
+        CGAL_assert(sign(num) != 0);
+        a0() /= NT(num); 
+        a1() /= NT(num);
+        return *this; 
+    }
+
 public:    
     void output_maple(std::ostream& os) const;
 public:    
@@ -362,6 +390,112 @@ public:
      * \c <TT>Self[4,-2,5]</TT> for this function.
      */
     static Sqrt_extension<NT,ROOT> input_ascii(std::istream& is);
+
+public:
+// compare of two values with different extension
+CGAL::Comparison_result 
+compare(const Self& y, bool in_same_extension = false ) const {
+
+    if (!this->is_extended() || !y.is_extended() || in_same_extension)
+        return ((*this)-y).sign();
+    
+
+  // Perform the exact comparison:
+  // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
+  // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
+  // We first determine the signs of these terms.
+ 
+  const NT          diff_a0 = this->a0() - y.a0();
+  const CGAL::Sign  sign_left = CGAL::sign (diff_a0);
+  const NT          x_sqr = this->a1()*this->a1() * this->root();
+  const NT          y_sqr = y.a1()*y.a1() * y.root();
+  Comparison_result right_res = CGAL::compare (y_sqr, x_sqr);
+  CGAL::Sign        sign_right = ZERO;
+  
+  if (right_res == LARGER)
+  {
+    // Take the sign of b2:
+    sign_right = CGAL::sign (y.a1());
+  }
+  else if (right_res == SMALLER)
+  {
+    // Take the opposite sign of b1:
+    switch (CGAL::sign (this->a1()))
+    {
+    case POSITIVE :
+      sign_right = NEGATIVE;
+      break;
+    case NEGATIVE:
+      sign_right = POSITIVE;
+      break;
+    case ZERO:
+      sign_right = ZERO;
+      break;
+    default:
+      // We should never reach here.
+      CGAL_assertion (false);
+    }
+  }
+  else
+  {
+    // We take the sign of (b2*sqrt(c2) -  b1*sqrt(c1)), where both terms
+    // have the same absolute value. The sign is equal to the sign of b2,
+    // unless both terms have the same sign, so the whole expression is 0.
+    sign_right = CGAL::sign (y.a1());
+    if (sign_right == CGAL::sign (this->a1()))
+      sign_right = ZERO;
+  }
+
+  // Check whether on of the terms is zero. In this case, the comparsion
+  // result is simpler:
+  if (sign_left == ZERO)
+  {
+    if (sign_right == POSITIVE)
+      return (SMALLER);
+    else if (sign_right == NEGATIVE)
+      return (LARGER);
+    else
+      return (EQUAL);
+  }
+  else if (sign_right == ZERO)
+  {
+    if (sign_left == POSITIVE)
+      return (LARGER);
+    else if (sign_left == NEGATIVE)
+      return (SMALLER);
+    else
+      return (EQUAL);
+  }
+
+  // If the signs are not equal, we can determine the comparison result:
+  if (sign_left != sign_right)
+  {
+    if (sign_left == POSITIVE)
+      return (LARGER);
+    else
+      return (SMALLER);
+  }
+
+  // We now square both terms and look at the sign of the one-root number:
+  //   ((a1 - a2)2 - (b12*c1 + b22*c2)) + 2*b1*b2*sqrt(c1*c2)
+  //
+  // If both signs are negative, we should swap the comparsion result
+  // we eventually compute.
+  const NT          A = diff_a0*diff_a0 - (x_sqr + y_sqr);
+  const NT          B = 2 * this->a1() * y.a1();
+  const NT          C = this->root() * y.root();
+  const CGAL::Sign  sgn = (Self(A, B, C)).sign();
+  const bool        swap_res = (sign_left == NEGATIVE);
+
+  if (sgn == POSITIVE)
+    return (swap_res ? SMALLER : LARGER);
+  else if (sgn == NEGATIVE)
+    return (swap_res ? LARGER : SMALLER);
+  
+  return (EQUAL);
+}
+
+    
 };
 
 template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
@@ -481,13 +615,14 @@ template <class NT,class ROOT> bool
 operator <= (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
 { return ( (p1-p2).sign() <= 0 ); }    
 
-template <class NT,class ROOT> bool operator >  
-(const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
+template <class NT,class ROOT> bool 
+operator >  (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
 { return ( (p1-p2).sign() > 0 ); }    
 
-template <class NT,class ROOT> bool operator >= 
-(const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
-  { return ( (p1-p2).sign() >= 0 ); }    
+template <class NT,class ROOT> bool 
+operator >= (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
+  { return ( (p1-p2).sign() >= 0 ); }
+
 
 // lefthand side
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
@@ -1500,9 +1635,14 @@ template <class A, class B> class CT_ext_not_to_fwsqrt;
 //<EXT,ANY>
 template <class Coeff, class Root, class B>
 struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT> 
-:public ::boost::mpl::if_< 
+:public ::boost::mpl::if_c< 
              // if B is fwsqrt
-            ::CGAL::is_same_or_derived< Field_with_sqrt_tag, typename Algebraic_structure_traits<B>::Algebraic_category > 
+              ::boost::is_base_and_derived< 
+                  Field_with_sqrt_tag, 
+typename Algebraic_structure_traits<B>::Algebraic_category >::value || 
+              ::boost::is_same< 
+                  Field_with_sqrt_tag, 
+typename Algebraic_structure_traits<B>::Algebraic_category >::value
             ,
             //then take Intern::Coercion_traits for fwsqrt
             INTERN_CT::CT_ext_to_fwsqrt<Sqrt_extension<Coeff,Root>, B>
@@ -1699,6 +1839,82 @@ public:
 };
 #endif
 /////////// ALGEBRAIC_NUMER_TRAITS BEGIN
+
+// lefthand side
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
+(int num, const Sqrt_extension<NT,ROOT>& p2)
+{ return (Sqrt_extension<NT,ROOT>(num) + p2); }
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
+(int num, const Sqrt_extension<NT,ROOT>& p2)
+{ return (Sqrt_extension<NT,ROOT>(num) - p2); }
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
+(int num, const Sqrt_extension<NT,ROOT>& p2)
+{ return (Sqrt_extension<NT,ROOT>(num) * p2); }
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
+(int num, const Sqrt_extension<NT,ROOT>& p2)
+{ return (Sqrt_extension<NT,ROOT>(num)/p2); }
+
+// righthand side
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
+(const Sqrt_extension<NT,ROOT>& p1, int num)
+{ return (p1 + Sqrt_extension<NT,ROOT>(num)); }
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
+(const Sqrt_extension<NT,ROOT>& p1, int num)
+{ return (p1 - Sqrt_extension<NT,ROOT>(num)); }
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
+(const Sqrt_extension<NT,ROOT>& p1, int num)
+{ return (p1 * Sqrt_extension<NT,ROOT>(num)); }
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
+(const Sqrt_extension<NT,ROOT>& p1, int num)
+{ return (p1 / Sqrt_extension<NT,ROOT>(num)); }
+
+// lefthand side
+template <class NT,class ROOT>    bool operator ==  
+(int num, const Sqrt_extension<NT,ROOT>& p) 
+{ return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() == 0 );}
+template <class NT,class ROOT>    bool operator != 
+(int num, const Sqrt_extension<NT,ROOT>& p) 
+{ return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() != 0 );}
+template <class NT,class ROOT>    bool operator <  
+(int num, const Sqrt_extension<NT,ROOT>& p) 
+{ return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() < 0 );}
+template <class NT,class ROOT>    bool operator <=  
+(int num, const Sqrt_extension<NT,ROOT>& p) 
+{ return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() <= 0 );}
+template <class NT,class ROOT>    bool operator >  
+(int num, const Sqrt_extension<NT,ROOT>& p) 
+{ return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() > 0 );}
+template <class NT,class ROOT>    bool operator >=  
+(int num, const Sqrt_extension<NT,ROOT>& p) 
+{ return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() >= 0 );}
+
+// righthand side
+template <class NT,class ROOT>    bool operator ==
+(const Sqrt_extension<NT,ROOT>& p, int num) 
+{ return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() == 0 );}
+template <class NT,class ROOT>    bool operator !=
+(const Sqrt_extension<NT,ROOT>& p, int num) 
+{ return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() != 0 );}
+template <class NT,class ROOT>    bool operator < 
+(const Sqrt_extension<NT,ROOT>& p, int num) 
+{ return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() < 0 );}
+template <class NT,class ROOT>    bool operator <= 
+(const Sqrt_extension<NT,ROOT>& p, int num) 
+{ return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() <= 0 );}
+template <class NT,class ROOT>    bool operator > 
+(const Sqrt_extension<NT,ROOT>& p, int num) 
+{ return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() > 0 );}
+template <class NT,class ROOT>    bool operator >=
+(const Sqrt_extension<NT,ROOT>& p, int num) 
+{ return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() >= 0 );}
+
+
+
+
+
+
+
+
 
 CGAL_END_NAMESPACE
 
