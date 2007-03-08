@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-
+#include <cctype>
 #include <boost/program_options.hpp>
 
 /*!
