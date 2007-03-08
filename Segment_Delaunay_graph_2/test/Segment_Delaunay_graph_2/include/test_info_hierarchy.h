@@ -9,7 +9,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class SDG>
-bool test_info_hierarchy(SDG& sdg, char* fname)
+bool test_info_hierarchy(SDG& sdg, const char* fname)
 { 
   typedef typename SDG::Finite_vertices_iterator   FVIT;
 

@@ -193,7 +193,7 @@ struct Get_sites
 };
 
 template<class Gt>
-bool test_traits(char* title)
+bool test_traits(const char* title)
 {
   typedef typename Gt::Site_2              Site_2;
   typedef typename Gt::Vertex_conflict_2   Vertex_conflict_2;

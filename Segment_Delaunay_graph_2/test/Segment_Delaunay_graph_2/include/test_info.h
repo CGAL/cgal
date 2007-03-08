@@ -8,7 +8,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class SDG>
-bool test_info(SDG& sdg, char* fname)
+bool test_info(SDG& sdg, const char* fname)
 {
   CGAL::Random r(static_cast<int>(0));
 

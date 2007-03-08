@@ -7,7 +7,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class InputStream>
-bool test_x(InputStream& is, char* ifname, bool test_remove = true)
+bool test_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2 sdg;
   return test_base(is, sdg, ifname, "sdg.tmp", test_remove);
@@ -15,7 +15,7 @@ bool test_x(InputStream& is, char* ifname, bool test_remove = true)
 
 
 template<class InputStream>
-bool test_no_x(InputStream& is, char* ifname, bool test_remove = true)
+bool test_no_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2_wi sdg;
   return test_base(is, sdg, ifname, "sdg_wi.tmp", test_remove);
@@ -24,7 +24,7 @@ bool test_no_x(InputStream& is, char* ifname, bool test_remove = true)
 //=====================================================================
 
 template<class InputStream>
-bool test_hierarchy_x(InputStream& is, char* ifname, bool test_remove = true)
+bool test_hierarchy_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2 sdg;
   return test_base(is, sdg, ifname, "sdgh.tmp", test_remove);
@@ -32,7 +32,7 @@ bool test_hierarchy_x(InputStream& is, char* ifname, bool test_remove = true)
 
 
 template<class InputStream>
-bool test_hierarchy_no_x(InputStream& is, char* ifname, bool test_remove = true)
+bool test_hierarchy_no_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2_wi sdg;
   return test_base(is, sdg, ifname, "sdgh_wi.tmp", test_remove);
@@ -43,7 +43,7 @@ bool test_hierarchy_no_x(InputStream& is, char* ifname, bool test_remove = true)
 
 
 template<class SDG, class InputStream>
-bool test_base(InputStream& is, const SDG& sdg, char* ifname, char* ofname,
+bool test_base(InputStream& is, const SDG& sdg, const char* ifname, const char* ofname,
 	       bool test_remove)
 {
   print_separator();

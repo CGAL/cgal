@@ -14,7 +14,7 @@
 //========================================================================
 
 template<class NT>
-char* get_fname(const NT&, char* ifname) {
+char* get_fname(const NT&, const char* ifname) {
   char* fname = new char[50];
   strcpy(fname, "data/");
   strcat(fname, ifname);
@@ -26,7 +26,7 @@ char* get_fname(const NT&, char* ifname) {
 #include <CGAL/Gmpq.h>
 
 template<>
-char* get_fname(const CGAL::Gmpq&, char* ifname) {
+char* get_fname(const CGAL::Gmpq&, const char* ifname) {
   char* fname = new char[50];
   strcpy(fname, "data/");
   strcat(fname, ifname);
@@ -73,7 +73,7 @@ struct Level_finder< Segment_Delaunay_graph_2<Gt,SDGDS,LTag> >
 //========================================================================
 
 template<class SDG, class InputStream>
-bool test_sdg(InputStream& is, const SDG&, char* ifname, char* ofname,
+bool test_sdg(InputStream& is, const SDG&, const char* ifname, const char* ofname,
 	      bool test_remove)
 {
   char* ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
