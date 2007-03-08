@@ -51,6 +51,10 @@ public:
   //! null
   Cartesian_moving_point_1(){}
 
+  bool operator==(const Cartesian_moving_point_1 &o) const {
+    return x() == o.x();
+  }
+
   //! homogeneous x
   const Coordinate &hx() const
   {
