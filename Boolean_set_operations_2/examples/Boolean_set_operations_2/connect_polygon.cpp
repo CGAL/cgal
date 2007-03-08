@@ -14,7 +14,7 @@ typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
 int main (int argc, char **argv)
 {
   // Open the input file.
-  char   *filename = "pgn_holes.dat";
+  const char   *filename = "pgn_holes.dat";
 
   if (argc >= 2)
     filename = argv[1];

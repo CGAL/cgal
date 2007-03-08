@@ -29,7 +29,7 @@ static const int DEFAULT_GROUP_SIZE = 5;
 int main (int argc, char **argv)
 {
   // Open the input DXF file.
-  char   *filename = "test.dxf";
+  const char   *filename = "test.dxf";
 
   if (argc >= 2)
     filename = argv[1];
