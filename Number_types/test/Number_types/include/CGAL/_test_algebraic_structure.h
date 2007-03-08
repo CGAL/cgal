@@ -614,12 +614,14 @@ void test_Type_functions( const CGAL::Euclidean_ring_tag&) {
     test_Type_functions< AS >(
             CGAL::Unique_factorization_domain_tag());
     //std::cerr << CGAL_NTS mod( AS(14), AS(5) ) << std::endl;
-    CGAL_test_assert(CGAL_NTS mod( AS (14), AS (5))== unit_normal( AS (4) ));
-    CGAL_test_assert(CGAL_NTS div( AS (14), AS (5))== AS (2));
-     AS  q,r;
-    CGAL_NTS div_mod( AS (14), AS (5),q,r);
-    CGAL_test_assert(q== AS (2));
-    CGAL_test_assert(r== AS (4));
+    AS  q,r,a,b;
+    a = AS(14);
+    b = AS(5);
+    r = CGAL_NTS mod(a,b); 
+    q = CGAL_NTS div(a,b);
+    CGAL_test_assert( a == b*q+r);
+    CGAL_NTS div_mod(a,b,q,r);
+    CGAL_test_assert( a == b*q+r);
 };
  
 template <class  AS >
