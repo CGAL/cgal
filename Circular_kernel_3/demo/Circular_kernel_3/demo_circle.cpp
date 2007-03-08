@@ -59,9 +59,8 @@ int main (int argc, char** argv) {
 
 #include <iostream>
 
-int main(int, char*)
+int main()
 {
-
   std::cout << "Sorry, this demo needs QT ..." << std::endl;
   return (0);
 }
