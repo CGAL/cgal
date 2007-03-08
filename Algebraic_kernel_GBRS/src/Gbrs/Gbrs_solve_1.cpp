@@ -300,7 +300,9 @@ int get_root (mpfi_ptr x, int n) {
 // TODO: rewrite using gcd
 Comparison_result compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
 	if(r1.overlaps(r2)){
-		if((r1.pol()==r2.pol())||(sign_1(r2.pol(),r1)==ZERO))
+		if((r1.pol()==r2.pol())&&(r1.nr()==r2.nr()))
+			return EQUAL;
+		if(sign_1(r2.pol(),r1)==ZERO)
 			return EQUAL;
 		else{
 			do{
