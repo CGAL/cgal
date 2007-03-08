@@ -314,7 +314,7 @@ real_which()
     for i in `echo ${PATH} | sed 's/ //g' | awk 'BEGIN {RS=":"}{print $0}'`
     do
 	i=`echo $i | sed 's// /g'`
-	if [ -x "${i}/$1" ]; then
+	if [ -x "${i}/$1" -a ! -d "${i}/$1" ]; then
 	    echo ${i}/$1
 	    return
 	fi
@@ -389,7 +389,7 @@ _check_for_util()
 _check_for_sysutil()
 {
     _tmp2=''
-    for _path in /bin /usr/bin /opt/sfw/bin /usr/sfw/bin /usr/gnu/bin; do
+    for _path in /bin /usr/bin /opt/sfw/bin /usr/sfw/bin; do
         if [ -x "${_path}/$1" ]; then
 	    eval "${3:-_$1}=\"${_path}/$1\""
 	    _tmp2=${_path}
