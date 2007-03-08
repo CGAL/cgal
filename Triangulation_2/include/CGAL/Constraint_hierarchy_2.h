@@ -139,7 +139,7 @@ private:
 			 H_context_iterator& ctxt, 
 			 H_context_iterator& past) const;
 
-  bool      get_contexts(T va, T vb, H_context_list*&) const;
+  H_context_list * get_contexts(T va, T vb) const;
 
   //to_debug
 public:
@@ -327,8 +327,8 @@ int
 Constraint_hierarchy_2<T,Data>::
 number_of_enclosing_constraints(T va, T vb)
 {
-  H_context_list* hcl;
-  if (! get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
+  H_context_list* hcl = get_contexts(va, vb);
+  CGAL_triangulation_assertion(hcl != NULL);
   return hcl->size();
 }
 
@@ -525,10 +525,10 @@ remove_Steiner(T v, T va, T vb)
   // remove a Steiner point
   CGAL_precondition(!is_constrained_vertex(v));
  
-  H_context_list*  hcl1;
-  H_context_list*  hcl2;
-  if(!get_contexts(va,v,hcl1)) CGAL_triangulation_assertion(false);
-  if(!get_contexts(v,vb,hcl2)) CGAL_triangulation_assertion(false);
+  H_context_list*  hcl1 = get_contexts(va, v);
+  CGAL_triangulation_assertion(hcl1 != NULL);
+  H_context_list*  hcl2 = get_contexts(v, vb);
+  CGAL_triangulation_assertion(hcl2 != NULL);
 
   H_vertex_it      pos;
   for(H_context_iterator ctit=hcl1->begin(); ctit != hcl1->end(); ctit++){
@@ -561,8 +561,8 @@ template <class T, class Data>
 void 
 Constraint_hierarchy_2<T,Data>::
 add_Steiner(T va, T vb, T vc){
-  H_context_list* hcl;
-  if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
+  H_context_list* hcl = get_contexts(va, vb);
+  CGAL_triangulation_assertion(hcl != NULL);
 
   H_context_list* hcl2 = new  H_context_list;
 
@@ -590,8 +590,7 @@ add_Steiner(T va, T vb, T vc){
     hcl2->push_back(ctxt);
   }
 
-  H_context_list* hcl3;
-  if (get_contexts(va,vc,hcl3)) { // (va,vc) is already a subconstraint
+  if (H_context_list* hcl3 = get_contexts(va,vc)) { // (va,vc) is already a subconstraint
 #ifdef __SUNPRO_CC
     std::copy(hcl->begin(), hcl->end(), std::back_inserter(*hcl3));
 #else
@@ -601,7 +600,7 @@ add_Steiner(T va, T vb, T vc){
   }
   else   sc_to_c_map.insert(std::make_pair(make_edge(va,vc), hcl));
 
-  if (get_contexts(vc,vb,hcl3)) {// (vc,vb) is already a subconstraint
+  if (H_context_list* hcl3 = get_contexts(vc,vb)) {// (vc,vb) is already a subconstraint
 #ifdef __SUNPRO_CC    
     std::copy(hcl2->begin(), hcl2->end(), std::back_inserter(*hcl3));
 #else
@@ -628,14 +627,14 @@ make_edge(T va, T vb) const
 
 template <class T, class Data>
 inline
-bool
+typename Constraint_hierarchy_2<T,Data>::H_context_list*
 Constraint_hierarchy_2<T,Data>::
-get_contexts(T va, T vb, H_context_list* & hcl) const
+get_contexts(T va, T vb) const
 {
   H_sc_iterator sc_iter = sc_to_c_map.find(make_edge(va,vb));
-  if( sc_iter == sc_to_c_map.end() )    return(false);
-  hcl = (*sc_iter).second;
-  return true;
+  if ( sc_iter == sc_to_c_map.end() ) 
+    return NULL;
+  return (*sc_iter).second;
 }
 
 template <class T, class Data>
@@ -646,11 +645,12 @@ get_contexts(T va, T vb,
 	     H_context_iterator& ctxt, 
 	     H_context_iterator& past) const
 {
-  H_context_list* hcl;
-  if (!get_contexts(va,vb,hcl)) return false;
-  ctxt = hcl->begin();
-  past = hcl->end();
-  return true;    
+  if (H_context_list * hcl = get_contexts(va, vb)) {
+    ctxt = hcl->begin();
+    past = hcl->end();
+    return true;    
+  }
+  return false;
 }
 
 
