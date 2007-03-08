@@ -166,7 +166,8 @@ public:
     new_objects_.push_back(storage_.back().first);
 
     CGAL_expensive_assertion_code(for (unsigned int i=0; i< storage_.size()-1; ++i) ) {
-      CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second) CGAL_KINETIC_LOG(LOG_SOME, "WARNING Objects " << Key(i) << " and " << storage_.back().first << " have equal trajectories.\n"));
+      
+CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second) CGAL_KINETIC_LOG(LOG_SOME, "WARNING Objects " << Key(i) << " and " << storage_.back().first << " have equal trajectories.\n"));
     }
     if (!editing_) finish_editing();
     return storage_.back().first;
