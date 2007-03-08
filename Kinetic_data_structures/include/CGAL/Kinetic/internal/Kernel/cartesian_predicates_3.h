@@ -139,20 +139,20 @@ struct Cartesian_power_test_3
 			const fourth_argument_type &)const
   {
     CGAL_assertion(0);
-    return a.x();
+    return result_type();
   }
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &,
 			 const third_argument_type &)const
   {
     CGAL_assertion(0);
-    return a.x();
+    return result_type();
   }
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &)const
   {
     CGAL_assertion(0);
-    return a.x();
+    return result_type();
   }
 };
 
@@ -373,6 +373,8 @@ typename Pt::Coordinate co3(const Pt &a, const Pt &b, const Pt &c, const Pt &d)
 }
 
 
+
+
 template <class KK>
 struct Cartesian_orientation_3
 {
@@ -394,7 +396,7 @@ struct Cartesian_orientation_3
 };
 
 template <class KK>
-struct Cartesian_weighted_orientation_3
+struct Cartesian_weighted_orientation_3: public Cartesian_orientation_3<KK>
 {
   Cartesian_weighted_orientation_3(){}
   typedef typename KK::Certificate_function result_type;
@@ -410,6 +412,7 @@ struct Cartesian_weighted_orientation_3
   {
     return co3(a.point(), b.point(), c.point(), d.point());
   }
+  using Cartesian_orientation_3<KK>::operator();
 };
 
 template <class KK>

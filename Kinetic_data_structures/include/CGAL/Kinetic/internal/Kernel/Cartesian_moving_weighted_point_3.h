@@ -27,7 +27,7 @@
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE;
 
 template <class Coordinate_t>
-class Cartesian_moving_weighted_point_3: public Cartesian_moving_point_3<Coordinate_t> 
+class Cartesian_moving_weighted_point_3
 {
 protected:
   typedef Cartesian_moving_weighted_point_3<Coordinate_t> This;
@@ -37,18 +37,22 @@ public:
   typedef typename Point::Coordinate Coordinate;
   //! initialize it from polys
   Cartesian_moving_weighted_point_3(const Point &pt,
-				    const Coordinate &w): Point(pt), weight_(w) {
+				    const Coordinate &w): point_(pt), weight_(w) {
   }
 
   Cartesian_moving_weighted_point_3(const Coordinate &x,
 				    const Coordinate &y,
-				    const Coordinate &z): Point(x,y,z), weight_(0) {
+				    const Coordinate &z): point_(x,y,z), weight_(0) {
   }
 
   //! initialize it from a still point
   template <class Static_point>
-  Cartesian_moving_weighted_point_3(const Static_point &pt): Point(pt.point()),
+  Cartesian_moving_weighted_point_3(const Static_point &pt): point_(pt.point()),
 							     weight_(pt.weight()) {
+  }
+
+  bool operator==(const This & o) const {
+    return weight() == o.weight() && point() == o.point();
   }
 
   //! null
@@ -61,20 +65,20 @@ public:
 
   const Point &point() const
   {
-    return *this;
+    return point_;
   }
 
   bool is_constant() const
   {
     if (weight_.degree() >0) return false;
-    return Point::is_constant();
+    return point_.is_constant();
   }
 
   //! Reverse the motion
   template <class NV>
   This transformed_coordinates(const NV &nv) const
   {
-    This ret(Point::transformed_coordinates(nv), nv(weight_));
+    This ret(point_.transformed_coordinates(nv), nv(weight_));
     return ret;
   }
 
@@ -108,6 +112,7 @@ public:
   };
 
 protected:
+  Point point_;
   Coordinate weight_;
 };
 

@@ -133,7 +133,8 @@ int main(int argc, char *argv[])
 	 }
 	 if (0) {
 	   Simulation_traits::Static_kernel::FT ct(0);
-	   SWP sp(BP(p.x()(ct), p.y()(ct), p.z()(ct)), p.weight()(ct));
+	   SWP sp(BP(p.point().x()(ct), p.point().y()(ct),
+		     p.point().z()(ct)), p.weight()(ct));
 	   ST::Cell_handle h= st.locate(sp);
 	   if (h!= ST::Cell_handle()
 	       && h->vertex(0) != ST::Vertex_handle()

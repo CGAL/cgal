@@ -97,7 +97,7 @@ public:
   /*!
     Takes 4 Point_3.
   */
-  typedef Certificate_generator<This, Cartesian_orientation_3<This> > Orientation_3;
+  typedef Certificate_generator<This, Cartesian_weighted_orientation_3<This> > Orientation_3;
   Orientation_3 orientation_3_object() const
   {
     return Orientation_3(k_);
@@ -152,21 +152,25 @@ public:
     typedef Arg fourth_argument_type;
     typedef Certificate_function result_type;
     
-    result_type operator()(const argument_type &) const {
+    template <class AT>
+    result_type operator()(const AT &) const {
       CGAL_assertion(0);
       return result_type(0);
     }
-    result_type operator()(const first_argument_type &, const second_argument_type &) const {
+    template <class AT0, class AT1>
+    result_type operator()(const AT0 &, const AT1 &) const {
       CGAL_assertion(0);
       return result_type(0);
     }
-    result_type operator()(const first_argument_type &, const second_argument_type &,
-			   const third_argument_type &) const {
+    template <class AT0, class AT1, class AT2>
+    result_type operator()(const AT0 &, const AT1 &,
+			   const AT2 &) const {
       CGAL_assertion(0);
       return result_type(0);
     }
-    result_type operator()(const first_argument_type &, const second_argument_type &,
-			   const third_argument_type &, const fourth_argument_type &) const {
+    template <class AT0, class AT1, class AT2, class AT3>
+    result_type operator()(const AT0 &, const AT1 &,
+			   const AT2 &, const AT3 &) const {
       CGAL_assertion(0);
       return result_type(0);
     }
