@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
 	}
       }
       dists[i][j]=dists[j][i]=d;
-      max= std::max(d, max);
+      max= std::max BOOST_PREVENT_MACRO_SUBSTITUTION(d, max);
     }
   }
 

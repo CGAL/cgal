@@ -179,17 +179,17 @@ int main(int argc, char *argv[]){
 	  }
 	}
       } else {
-	double max=0;
+	double lmax=0;
 	for (int i=0; i< arr.dim1(); ++i){
 	  for (int j=0; j< arr.dim2(); ++j){
-	    max=std::max(max, arr[i][j]);
+	    lmax=std::max BOOST_PREVENT_MACRO_SUBSTITUTION(max, arr[i][j]);
 	    //min=std::min(min, arr[i][j]);
 	  }
 	}
 	//std::cout << "Maximum distance is " << max << std::endl;
 	for (int i=0; i< arr.dim1(); ++i){
 	  for (int j=0; j< arr.dim2(); ++j){
-	    im.pixelColor(i,j, Magick::ColorGray(arr[i][j]/max));
+	    im.pixelColor(i,j, Magick::ColorGray(arr[i][j]/lmax));
 	  }
 	}
       }
@@ -198,7 +198,7 @@ int main(int argc, char *argv[]){
     }
   }
   return EXIT_SUCCESS;
-  }
+}
 
 #else
 
