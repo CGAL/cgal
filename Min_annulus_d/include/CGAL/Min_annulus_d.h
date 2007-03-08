@@ -128,7 +128,7 @@ namespace MA_detail {
    <int, A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator> > >
   { 
-    typedef A_column
+    typedef typename MA_detail::A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator> A_column;
   public:
     typedef CGAL::Transform_diff_const_iterator
