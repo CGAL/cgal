@@ -24,6 +24,8 @@
 #include <string>
 #include <fstream>
 
+#include <boost/format.hpp>
+
 #define CGAL_CHECK_EXPENSIVE
 
 //#define TRACE
@@ -78,12 +80,15 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
+
 template<class T>
-ostream&  operator << ( ostream& os, optional<T> const& o )
+string opt2str ( optional<T> const& o )
 {
+  ostringstream ss ;
   if ( o )
-       return os << *o ; 
-  else return os << "<null>" ;
+       ss << *o ; 
+  else ss << "<none>" ;
+  return ss.str(); 
 }
 
 template<class P>
@@ -110,20 +115,47 @@ string edge2str ( E const& e )
   return ss.str(); 
 }
 
-#define SHOW_ERROR(msg) \
-          { \
-            cerr << "\nError: " << msg << endl \
-                 << "  File:" << __FILE__ << endl \
-                 << "  Line:" << __LINE__ << endl ; \
-            throw runtime_error("test error"); \
-          }
+template<class D>
+string audit2str ( shared_ptr<D> const& d )
+{
+  ostringstream ss ;
+  ss << "[id:" << d->id  ;
+  if ( d->selected )
+  {
+     ss << " (S" << " at step " << d->order ;
+     if ( d->cost ) 
+          ss << " <" << *(d->cost) << ">" ;
+     else ss << " <no-cost>" ;
+     ss << ")";
+
+     if ( d->is_collapsable ) 
+     {
+        ss << " (C " ;
+        if ( d->placement ) 
+             ss << " <" << *(d->placement) << "> ";
+        else ss << " <no-new-placement>" ;
+        ss << ")";
+     }
+     else ss << " (not collapsed)" ;
+  }
+  else ss << " (not selected)" ;
+
+  ss << "]" ;  
+  return ss.str(); 
+}
+
+template<class T> ostream&  operator << ( ostream& os, optional<T> const& o ) { return os << opt2str(o); }
+
+#define REPORT_ERROR(msg) error(__FILE__,__LINE__,0,msg);
+
+#define REPORT_ERROR2(pred,msg) REPORT_ERROR(msg)
           
-#define CHECK_MSG(pred,msg) if (!(pred)) SHOW_ERROR(msg) 
+#define CHECK_MSG(pred,msg) if (!(pred)) REPORT_ERROR2(#pred,msg) 
          
-#define CHECK(pred) CHECK_MSG(pred,#pred)
+#define CHECK(pred) CHECK_MSG(pred,string(""))
         
-#define CHECK_EQUAL(x,y)       CHECK_MSG(((x)==(y)),"assertion " << #x << ":(" << x << ")==" << #y << ":(" << y << ") FAILED")
-#define CHECK_NOT_EQUAL(x,y)   CHECK_MSG(((x)!=(y)),"assertion " << #x << ":(" << x << ")!=" << #y << ":(" << y << ") FAILED")
+#define CHECK_EQUAL(x,y)       CHECK_MSG(((x)==(y)), str(format("Assertion failed: %1%(=%2%)==%3%(=%4%)") % (#x) % (x) % (#y) % (y) ) )
+#define CHECK_NOT_EQUAL(x,y)   CHECK_MSG(((x)!=(y)), str(format("Assertion failed: %1%(=%2%)!=%3%(=%4%)") % (#x) % (x) % (#y) % (y) ) )
 
 #include VISITOR
 
@@ -189,7 +221,9 @@ bool Test ( string aName )
   }
   catch ( exception const& x ) 
   {
-    cerr << "Exception caught: " << x.what() << endl ;
+    string what(x.what());
+    if ( what.length() > 0 )
+      cerr << "Exception caught: " << what << endl ;
   }
   
   
@@ -237,6 +271,24 @@ int aux_main( int argc, char** argv )
             
     return lOK == lCases.size() ? 0 : 1 ;
   }
+}
+
+namespace CGAL
+{
+
+void assertion_fail( const char* expr, const char* file, int line )
+{
+  assertion_fail(expr,file,line,"");
+}
+void precondition_fail( const char* expr, const char* file, int line )
+{
+  precondition_fail(expr,file,line,"");
+}
+void postcondition_fail( const char* expr, const char* file, int line )
+{
+  postcondition_fail(expr,file,line,"");
+}
+
 }
 
 // EOF //
