@@ -457,13 +457,13 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
        ! eq_source && ! eq_target,
        "The given halfedge must contain the unbounded left end.");
 
-    CGAL_precondition_msg 
-      ((inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY && 
+    CGAL_precondition_msg
+      ((inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY &&
         fict_he2 == Halfedge_handle()) ||
-       _is_on_fictitious_edge (cv, MAX_END, inf_x2, inf_y2,
-                               _halfedge (fict_he2),
-                               eq_source, eq_target) &&
-       ! eq_source && ! eq_target,
+       (_is_on_fictitious_edge (cv, MAX_END, inf_x2, inf_y2,
+                                _halfedge (fict_he2),
+                                eq_source, eq_target) &&
+        ! eq_source && ! eq_target),
        "The given halfedge must contain the unbounded right end.");
 
     fict_prev1 = _split_fictitious_edge (fict_prev1,
