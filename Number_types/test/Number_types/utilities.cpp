@@ -1,6 +1,9 @@
-
-
 #include <CGAL/basic.h>
+
+// TODO: solve conflict of CORE with GMPXX
+#ifdef CGAL_USE_CORE
+#undef CGAL_USE_GMPXX
+#endif 
 
 #include <CGAL/Quotient.h> 
 #include <CGAL/MP_Float.h> 
@@ -108,12 +111,14 @@ int main()
 
        // TEST Sqrt_extension 
 #ifdef CGAL_USE_GMP
+      typedef CGAL::Sqrt_extension<int,int> Ext_int;
+      TESTIT(Ext_int     , "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");
       typedef CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz> Ext_int_int;
-      TESTIT(Ext_int_int, "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");
+      TESTIT(Ext_int_int , "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");
       typedef CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpz> Ext_rat_int;
-      TESTIT(Ext_rat_int, "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpz>");
+      TESTIT(Ext_rat_int , "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpz>");
       typedef CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq> Ext_rat_rat;
-      TESTIT(Ext_rat_rat, "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq>");
+      TESTIT(Ext_rat_rat , "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq>");
 #endif // CGAL_USE_GMP
 
 
