@@ -273,6 +273,7 @@ int aux_main( int argc, char** argv )
   }
 }
 
+#ifdef WHY_DO_THESE_DONT_EXIST_IN_CGAL_UNDER_LINUX
 namespace CGAL
 {
 
@@ -290,5 +291,7 @@ void postcondition_fail( const char* expr, const char* file, int line )
 }
 
 }
+
+#endif
 
 // EOF //
