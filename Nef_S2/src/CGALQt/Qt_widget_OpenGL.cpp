@@ -125,11 +125,12 @@ void Qt_widget_OpenGL::mousePressEvent(QMouseEvent* event) {
     else
       interaction = motion_mode;
   }
-  if(event->stateAfter() & QMouseEvent::MidButton)
+  if(event->stateAfter() & QMouseEvent::MidButton) {
     if (event->stateAfter() & QMouseEvent::ShiftButton)
       interaction = TRANS_Z;
     else
       interaction = TRANSLATE;
+  }
   if(event->stateAfter() & QMouseEvent::RightButton)
     main->exec(QPoint(event->globalX(),event->globalY()));
 }
