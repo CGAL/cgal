@@ -459,18 +459,18 @@ class Trapezoidal_decomposition_2
 #ifndef CGAL_TD_DEBUG
       
 	  CGAL_precondition(curr);
-	  CGAL_warning(!curr->is_left_unbounded() &&
-		       traits->equal_2_object()(curr->left(), fixed) ||
-		       !curr->is_right_unbounded() &&
-		       traits->equal_2_object()(curr->right(), fixed));
+	  CGAL_warning( ( !curr->is_left_unbounded() &&
+		          traits->equal_2_object()(curr->left(), fixed) ) ||
+		        ( !curr->is_right_unbounded() &&
+		          traits->equal_2_object()(curr->right(), fixed) ) );
       
 #else
       
 	  CGAL_precondition(curr);
-	  CGAL_warning(!curr->is_left_unbounded() &&
-		       traits->equal_2_object()(curr->left(),fixed) ||
-		       !curr->is_right_unbounded() &&
-		       traits->equal_2_object()(curr->right(),fixed));
+	  CGAL_warning( ( !curr->is_left_unbounded() &&
+		          traits->equal_2_object()(curr->left(),fixed) ) ||
+		        ( !curr->is_right_unbounded() &&
+		          traits->equal_2_object()(curr->right(),fixed) ) );
       
 #endif
       
@@ -511,18 +511,18 @@ class Trapezoidal_decomposition_2
 #ifndef CGAL_TD_DEBUG
       
 	  CGAL_precondition(curr);
-	  CGAL_warning(!curr->is_left_unbounded() &&
-		       traits->equal_2_object()(curr->left(),fixed) ||
-		       !curr->is_right_unbounded() &&
-		       traits->equal_2_object()(curr->right(),fixed));
+	  CGAL_warning((!curr->is_left_unbounded() &&
+		        traits->equal_2_object()(curr->left(),fixed)) ||
+		       (!curr->is_right_unbounded() &&
+		        traits->equal_2_object()(curr->right(),fixed)));
       
 #else
       
 	  CGAL_precondition(curr);
-	  CGAL_precondition(!curr->is_left_unbounded() &&
-			    traits->equal_2_object()(curr->left(),fixed) ||
-			    !curr->is_right_unbounded() &&
-			    traits->equal_2_object()(curr->right(),fixed));
+	  CGAL_precondition((!curr->is_left_unbounded() &&
+			     traits->equal_2_object()(curr->left(),fixed)) ||
+			    (!curr->is_right_unbounded() &&
+			     traits->equal_2_object()(curr->right(),fixed)));
       
 #endif
       
