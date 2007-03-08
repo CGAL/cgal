@@ -198,9 +198,11 @@ public:
     { CGAL_assertion(base() != Base_iterator());
       tf = (z == NEAREST ? lower_hull : upper_hull); 
       bool cocirc = DT->is_S_cocircular();
+      // Note [Sylvain,2007-03-08] : I added some parentheses to fix a warning,
+      // I hope I got the logic right.
       while ( base() != DT->simplices_end() &&
-              !( cocirc && DT->is_bounded_simplex(base()) ||
-                 !cocirc && DT->is_unbounded_simplex(base()) && 
+              !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
+                 ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
                  DT->type_of(base()) == tf ) ) {
          Base_iterator::operator++();
       }
@@ -215,9 +217,11 @@ public:
       bool cocirc = DT->is_S_cocircular();
       do {
         Base_iterator::operator++();
+      // Note [Sylvain,2007-03-08] : I added some parentheses to fix a warning,
+      // I hope I got the logic right.
       } while ( base() != DT->simplices_end() &&
-                !( cocirc && DT->is_bounded_simplex(base()) ||
-                   !cocirc && DT->is_unbounded_simplex(base()) && 
+                !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
+                   ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
                    DT->type_of(base()) == tf ) );
       return *this; 
     }
