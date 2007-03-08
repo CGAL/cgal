@@ -31,10 +31,10 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <typename Kernel, typename K2, typename Coordinate>
+template <typename Kernel, typename Coordinate>
 class ComparePoints {
 
-  typedef typename K2::Point_3  Point_3;
+  typedef typename Kernel::Point_3  Point_3;
  public:
   ComparePoints(Coordinate c) : coord(c) {
     CGAL_assertion( c >= 0 && c <=2);
@@ -59,10 +59,11 @@ private:
 };
 
 
-template <typename K2, typename EK, typename Coordinate>
-class ComparePoints<CGAL::Lazy_kernel<EK>, K2, Coordinate> {
+template <typename Coordinate, typename EK>
+class ComparePoints<CGAL::Lazy_kernel<EK>, Coordinate> {
 
-  typedef typename K2::Point_3  Point_3;
+  typedef CGAL::Lazy_kernel<EK>     Kernel;
+  typedef typename Kernel::Point_3  Point_3;
  public:
   ComparePoints(Coordinate c) : coord(c) {
     CGAL_assertion( c >= 0 && c <=2);
@@ -134,7 +135,7 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;  
   typedef typename Kernel::RT  RT;
 
-  typedef ComparePoints<Kernel, Kernel, int> ComparePoints_;
+  typedef ComparePoints<Kernel, int> ComparePoints_;
   
   Side_of_plane(bool rc = false)
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING    

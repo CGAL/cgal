@@ -210,9 +210,9 @@ bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
 }; // Halffacet_geometry
 
 
-template<class K1, class K2, typename SHalfedge_handle> class SmallerXYZ {
+template<class Kernel, typename SHalfedge_handle> class SmallerXYZ {
   
-  typedef typename K2::Point_3  Point_3;
+  typedef typename Kernel::Point_3  Point_3;
  public:
   SmallerXYZ() {}
 
@@ -221,10 +221,11 @@ template<class K1, class K2, typename SHalfedge_handle> class SmallerXYZ {
   }
 };
 
-template<class K2, typename EK, typename SHalfedge_handle> 
-class SmallerXYZ<CGAL::Lazy_kernel<EK>, K2, SHalfedge_handle> {
+template<typename SHalfedge_handle, typename EK> 
+class SmallerXYZ<CGAL::Lazy_kernel<EK>, SHalfedge_handle> {
 
-  typedef typename K2::Point_3  Point_3;
+  typedef CGAL::Lazy_kernel<EK> Kernel;
+  typedef typename Kernel::Point_3  Point_3;
  public:
   SmallerXYZ() {}
 
@@ -434,7 +435,8 @@ template <typename SNC_>
 void SNC_FM_decorator<SNC_>::
 create_facet_objects(const Plane_3& plane_supporting_facet,
   Object_list_iterator start, Object_list_iterator end) const
-{ CGAL_NEF_TRACEN(">>>>>create_facet_objects");
+{ CGAL_NEF_TRACEN(">>>>>create_facet_objects "
+		  << normalized(plane_supporting_facet));
   CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
   std::vector<SHalfedge_handle> MinimalEdge;
   std::list<SHalfedge_handle> SHalfedges; 
@@ -478,7 +480,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      |MinimalEdge[c]|. */
   int i=0; 
   //  bool xyplane = plane_supporting_facet.b() != 0 || plane_supporting_facet.c() != 0;
-  SmallerXYZ<Kernel, Kernel, SHalfedge_handle> smallerXYZ;
+  SmallerXYZ<Kernel, SHalfedge_handle> smallerXYZ;
   CGAL_forall_iterators(eit,SHalfedges) { 
     e = *eit;
     if ( FacetCycle[e] >= 0 ) continue; // already assigned

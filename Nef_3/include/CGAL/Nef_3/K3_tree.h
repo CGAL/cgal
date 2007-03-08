@@ -87,8 +87,8 @@ template <class Traits>
 class K3_tree
 {
 
-template <typename Kernel, typename K2, 
-  typename Object, typename Vertex, typename Coordinate>
+template <typename Kernel, typename Object, 
+          typename Vertex, typename Coordinate>
 class Smaller_than
 {
 public:
@@ -122,8 +122,9 @@ private:
 };
 
 
-template <typename K2, typename EK, typename Object, typename Vertex, typename Coordinate>
-  class Smaller_than<CGAL::Lazy_kernel<EK>, K2, Object, Vertex, Coordinate>
+template <typename Object, typename Vertex, 
+          typename Coordinate, typename EK>
+  class Smaller_than<CGAL::Lazy_kernel<EK>, Object, Vertex, Coordinate>
 {
 public:
   Smaller_than(Coordinate c) : coord(c) {
@@ -285,19 +286,9 @@ typedef typename Kernel::RT RT;
 
 typedef Smaller_than<
   Kernel,
-  Kernel,
   Object_handle,
   Vertex_handle, 
   int> Smaller_;
-
-/*
-typedef Compare<
-  Kernel,
-  typename Kernel::FT, 
-  Object_handle,
-  Vertex_handle, 
-  int> Compare_;
-*/
 
 class Node {
   friend class K3_tree<Traits>;
