@@ -1,5 +1,5 @@
 /* XPM */
-static char *del_P_xpm[] = {
+static const char *del_P_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 8 1",
 /* colors */

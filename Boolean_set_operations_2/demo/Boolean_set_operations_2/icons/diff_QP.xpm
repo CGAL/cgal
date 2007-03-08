@@ -1,5 +1,5 @@
 /* XPM */
-static char *diff_QP_xpm[] = {
+static const char *diff_QP_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 27 1",
 /* colors */
