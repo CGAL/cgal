@@ -42,6 +42,7 @@
 \newcommand{\lciIfRef}{\ccFalse}
 
 \gdef\lciInsideListOfRefPages{\lcFalse}
+\gdef\lciCloseCommentHeadingTable{}%
 
 \newcommand{\ccUserChapter}[1]{\chapter{#1}\lciChapterPartTocEntry{User Manual}}
 \newcommand{\ccRefChapter}[1]{%
@@ -352,8 +353,8 @@
 \newcommand{\ccHeading}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}}
 \newcommand{\ccCommentHeading}[1]{%
 \lciCloseCommentHeadingTable%
-\lcRawHtml{<table border="0" cellspacing="0" cellpadding="0"><tr valign="top"><td><em>}#1:\lcRawHtml{</em>&nbsp;</td><td>}%
-\gdef\lciCloseCommentHeadingTable{\lcRawHtml{</td></tr></table>}}%
+\lcRawHtml{<table border="0" cellspacing="0" cellpadding="0"><tr valign="top"><td><u>}#1:\lcRawHtml{</u>&nbsp;</td><td>}%
+\gdef\lciCloseCommentHeadingTable{\lcRawHtml{</td></tr></table>}\gdef\lciCloseCommentHeadingTable{}}%
 }
 
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
@@ -870,7 +871,9 @@
     {\lciTwoColumnX{#1}}}
 \newcommand{\lciTwoColumnX}[2]{\lciGluePostProcessing
     \lciTwoColumnLayout{#1}\lciIfEmpty{#C2}
-    {\lciTwoColsEndEmpty}{\lciTwoColsSecond #C2\lciTwoColsEnd}%
+    {\lciTwoColsEndEmpty}{\lciTwoColsSecond #C2%
+    \lciCloseCommentHeadingTable%
+     \lciTwoColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \lciPushOutput{comments}%
@@ -913,7 +916,6 @@
 \newcommand{\lciThreeColumnX}[2]{\lciGluePostProcessing\lciIfEmpty{#C2}
     {\lciThreeColumnLayout{#1}{1}\lciThreeColsEndEmpty}
     {\lciThreeColumnLayout{#1}{0}%
-    \gdef\lciCloseCommentHeadingTable{}%
     #C2%
     \lciCloseCommentHeadingTable%
     \lciThreeColsEnd}%
