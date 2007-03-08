@@ -33,60 +33,7 @@
 #include <numeric> // fro std::accumulate
 #include <boost/numeric/interval.hpp> // Needed by To_interval
 
-//#include <boost/iterator/transform_iterator.hpp>
-//#include <boost/mpl/if.hpp>
-
-//#include <CGAL/CGAL/number_type_basic.h>
-
-// We have to define the macros befor including Polynomials, 
-// since they cause a doxygen error otherwise.. (version 1.2.4)
-// the error does not appear for doxygen version 1.2.6
-/*! 
-  \ingroup CGAL_Arithmetic_traits
-  \brief locally define names from \c Arithmetic_traits_sqrt_extension
-  
-  This macro helps to keep your source code readable if used in the
-  following way:
-  
-  <PRE>
-  template \< class ArithmeticTraitsSqrtExtension \>
-  class my_class {
-  public:
-      CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(ArithmeticTraitsSqrtExtension);
-      // ...
-  };
-  </PRE>
-  
-  It will declare all typedefs from the ArithmeticTraitsSqrtExtension template
-  argument within the class. This makes them accessible for users
-  of your class and saves typing the lengthy ArithmeticTraits::
-  prefix.
-*/
-#define CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(AT) \
-  CGAL_SNAP_ARITHMETIC_TRAITS_TYPEDEFS(AT) \
-  typedef typename AT::Extn Extn; \
-  typedef typename AT::Nested_extn Nested_extn; \
-  typedef typename AT::Poly_extn1 Poly_extn1; \
-  typedef typename AT::Poly_extn2 Poly_extn2; \
-  typedef typename AT::Poly_extn3 Poly_extn3; \
-  typedef typename AT::Poly_nested_extn1 Poly_nested_extn1; \
-  typedef typename AT::Poly_nested_extn2 Poly_nested_extn2; \
-  typedef typename AT::Poly_nested_extn3 Poly_nested_extn3; \
-
-
-/*#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Scalar_factor_traits.h>
-#include <CGAL/Cofraction_traits.h>
-#include <CGAL/number_type_utils.h>
-#include <CGAL/Modular.h>
-#include <functional> // only for conversion function at the end
-#include <CGAL/Coercion_traits.h>
-#include <CGAL/Polynomial.h>
-#include <CGAL/Arithmetic_traits.h>
-#include <CGAL/Algebraic_extension_traits.h>*/
-//#include <CGAL/LiS/Mapping_iterator.h> // only for conversion function at the end
-//#include <functional>
-//#include <numeric> // only for Algebraic_extension_traits (std::accumulate)
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
 CGAL_BEGIN_NAMESPACE
 
@@ -98,9 +45,6 @@ inline static void swallow(std::istream &is, char d) {
                              "input error: unexpected character in polynomial");
 }
 //// END: From polynomial.h
-
-
-
 
 template <class NT,class ROOT> class Sqrt_extension;
     
@@ -166,7 +110,7 @@ public:
     Sqrt_extension()
         : a0_( NT(0)), a1_( NT(0)), root_(ROOT(0)), is_extended_(false) {}
     
-    Sqrt_extension(int i) 
+    Sqrt_extension(CGAL_int(NT) i) 
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
     
     Sqrt_extension(const NT& i) 
@@ -341,20 +285,20 @@ public:
         return *this; 
     }
 
-   Self& operator += (int num) { 
+   Self& operator += (CGAL_int(NT) num) { 
         a0() += NT(num); 
         return *this; 
     }
-    Self& operator -= (int num) { 
+    Self& operator -= (CGAL_int(NT) num) { 
         a0() -= NT(num); 
         return *this; 
     }
-    Self& operator *= (int num) { 
+    Self& operator *= (CGAL_int(NT) num) { 
         a0() *= NT(num); 
         a1() *= NT(num);
         return *this; 
     }
-    Self& operator /= (int num) { 
+    Self& operator /= (CGAL_int(NT) num) { 
         typename Real_embeddable_traits_nt::Sign sign;       
         CGAL_assert(sign(num) != 0);
         a0() /= NT(num); 
@@ -1842,81 +1786,75 @@ public:
 
 // lefthand side
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
-(int num, const Sqrt_extension<NT,ROOT>& p2)
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) + p2); }
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
-(int num, const Sqrt_extension<NT,ROOT>& p2)
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) - p2); }
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
-(int num, const Sqrt_extension<NT,ROOT>& p2)
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) * p2); }
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
-(int num, const Sqrt_extension<NT,ROOT>& p2)
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num)/p2); }
 
 // righthand side
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
-(const Sqrt_extension<NT,ROOT>& p1, int num)
+(const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 + Sqrt_extension<NT,ROOT>(num)); }
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
-(const Sqrt_extension<NT,ROOT>& p1, int num)
+(const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 - Sqrt_extension<NT,ROOT>(num)); }
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
-(const Sqrt_extension<NT,ROOT>& p1, int num)
+(const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 * Sqrt_extension<NT,ROOT>(num)); }
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
-(const Sqrt_extension<NT,ROOT>& p1, int num)
+(const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 / Sqrt_extension<NT,ROOT>(num)); }
 
 // lefthand side
 template <class NT,class ROOT>    bool operator ==  
-(int num, const Sqrt_extension<NT,ROOT>& p) 
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() == 0 );}
 template <class NT,class ROOT>    bool operator != 
-(int num, const Sqrt_extension<NT,ROOT>& p) 
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() != 0 );}
 template <class NT,class ROOT>    bool operator <  
-(int num, const Sqrt_extension<NT,ROOT>& p) 
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() < 0 );}
 template <class NT,class ROOT>    bool operator <=  
-(int num, const Sqrt_extension<NT,ROOT>& p) 
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() <= 0 );}
 template <class NT,class ROOT>    bool operator >  
-(int num, const Sqrt_extension<NT,ROOT>& p) 
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() > 0 );}
 template <class NT,class ROOT>    bool operator >=  
-(int num, const Sqrt_extension<NT,ROOT>& p) 
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() >= 0 );}
 
 // righthand side
 template <class NT,class ROOT>    bool operator ==
-(const Sqrt_extension<NT,ROOT>& p, int num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() == 0 );}
 template <class NT,class ROOT>    bool operator !=
-(const Sqrt_extension<NT,ROOT>& p, int num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() != 0 );}
 template <class NT,class ROOT>    bool operator < 
-(const Sqrt_extension<NT,ROOT>& p, int num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() < 0 );}
 template <class NT,class ROOT>    bool operator <= 
-(const Sqrt_extension<NT,ROOT>& p, int num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() <= 0 );}
 template <class NT,class ROOT>    bool operator > 
-(const Sqrt_extension<NT,ROOT>& p, int num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() > 0 );}
 template <class NT,class ROOT>    bool operator >=
-(const Sqrt_extension<NT,ROOT>& p, int num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() >= 0 );}
 
-
-
-
-
-
-
-
-
 CGAL_END_NAMESPACE
+
+#undef CGAL_int
 
 #endif  // CGAL_SQRT_EXTENSION_H
 
