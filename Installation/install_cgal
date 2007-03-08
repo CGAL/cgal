@@ -1031,7 +1031,7 @@ set_compiler_flags()
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
 	    ;;
-	*Linux*pgCC*)
+	*Linux*pgCC*|*Linux*pgcpp*)
 	    #### settings for Portland Group Compiler on linux
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    # PGCC has long name problems with "-g".
@@ -2168,7 +2168,7 @@ EOF4
 	*ICL*|*icl*)            EXE_OPT="-TP -GR  -nologo -Fe";;
 	*CL*|*cl*)              EXE_OPT="-TP -GR  -nologo -Fe";;
         *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";;
-        *pgCC*) PGCC_VERSION=`$1 -V | ${_grep} pgCC | cut -d' ' -f2`
+        *pgCC*|*pgcpp*) PGCC_VERSION=`$1 -V | ${_grep} -i pgc | ${_sed} -e 's/ (.*)//g' | cut -d' ' -f2`
                 EXE_OPT="-DCGAL_PGCC_VERSION='\"$PGCC_VERSION\"' -o ";;
     esac
     _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.cpp"
@@ -5091,6 +5091,7 @@ _sed=sed
 _tr=tr
 _printf=printf
 _rm=rm
+_grep=grep
 CGAL_INSTALL_VERSION="`_install_version_number`"
 
 # first quickly process "trivial" commandline options
