@@ -159,7 +159,7 @@ namespace CGAL {
 	{
 	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
 	    if ((*qit) >= (r.min_coord(i) + 
-			 r.max_coord(i))/FT(2.0))
+			 r.max_coord(i))/FT(2.0)) {
 	      if (the_weights[i] * ((*qit) - 
 				    r.min_coord(i)) > distance)
 		distance = the_weights[i] * 
@@ -169,6 +169,7 @@ namespace CGAL {
 		    (r.max_coord(i) - (*qit)) > distance)
 		  distance = the_weights[i] * 
 		    ( r.max_coord(i)-(*qit));
+            }
 	  }
 	}
       else
