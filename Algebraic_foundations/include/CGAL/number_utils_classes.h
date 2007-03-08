@@ -53,8 +53,6 @@ template < class NT > struct Is_negative;
 template < class NT > struct Is_positive;
 template < class NT > struct Sgn;
 template < class NT > struct Abs;
-template < class NT, class Compare > struct Min;
-template < class NT, class Compare > struct Max;
 template < class NT > struct Compare;
 template < class NT > struct Square;
 template < class NT > struct Sqrt;
