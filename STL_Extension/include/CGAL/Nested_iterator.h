@@ -130,8 +130,10 @@ public:
   }
 
   Nested_iterator(const Self& other)
+    : Filter_base_iterator(other)
   {
-    copy_from(other);
+    if ( !other.is_end() )
+      nested_it_ = other.nested_it_;
   }
 
   Self& operator=(const Self& other)
