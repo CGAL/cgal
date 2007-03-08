@@ -13,13 +13,14 @@
 int main() {
     typedef CGAL::MP_Float NT;
 
-    typedef CGAL::Euclidean_ring_tag Tag;
+    //typedef CGAL::Euclidean_ring_tag Tag;
+    typedef CGAL::Unique_factorization_domain_tag Tag;
     typedef CGAL::Tag_true Is_exact;
 
     BOOST_STATIC_ASSERT( CGAL::CGALi::Is_integral_domain_without_division<NT>::value);
     BOOST_STATIC_ASSERT( CGAL::CGALi::Is_integral_domain<NT>::value);
     BOOST_STATIC_ASSERT( CGAL::CGALi::Is_unique_factorization_domain<NT>::value);
-    BOOST_STATIC_ASSERT( CGAL::CGALi::Is_euclidean_ring<NT>::value);
+    BOOST_STATIC_ASSERT(!CGAL::CGALi::Is_euclidean_ring<NT>::value);
     BOOST_STATIC_ASSERT(!CGAL::CGALi::Is_field<NT>::value);
     BOOST_STATIC_ASSERT(!CGAL::CGALi::Is_field_with_sqrt<NT>::value);
     BOOST_STATIC_ASSERT(!CGAL::CGALi::Is_field_with_root_of<NT>::value);

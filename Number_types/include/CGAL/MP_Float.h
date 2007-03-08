@@ -306,6 +306,15 @@ public:
       exp -= scale;
   }
 
+  // Accessory function that finds the least significant bit set (its position).
+  static std::size_t lsb(limb l)
+  {
+    std::size_t nb = 0;
+    for (; (l&1)==0; ++nb, l>>=1)
+      ;
+    return nb;
+  }
+
   // This one is needed for normalizing gcd so that the mantissa is odd
   // and non-negative, and the exponent is 0.
   void gcd_normalize()
@@ -314,16 +323,25 @@ public:
     if (is_zero())
       return;
     // First find how many least significant bits are 0 in the last digit.
-    limb l = v[0];
-    std::size_t nb = 0;
-    for (; (l&1)==0; ++nb, l>>=1)
-      ;
+    std::size_t nb = lsb(v[0]);
     if (nb != 0)
       *this = *this * (1<<(log_limb-nb));
     CGAL_assertion((v[0]&1) != 0);
     exp=0;
     if (sign() == NEGATIVE)
       *this = - *this;
+  }
+
+  MP_Float unit_normal() const
+  {
+    if (is_zero())
+      return 0;
+    MP_Float r = (sign() == POSITIVE) ? *this : - *this;
+    CGAL_assertion(r.v.begin() != r.v.end());
+    std::size_t nb = lsb(r.v[0]);
+    r.v.clear();
+    r.v.push_back(1<<nb);
+    return r.sign() > 0 ? r : -r;
   }
 
   V v;
@@ -384,7 +402,8 @@ template <> class Algebraic_structure_traits< MP_Float >
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
                                             Field_with_sqrt_tag
 #else                                            
-                                            Euclidean_ring_tag
+                                            Unique_factorization_domain_tag
+	    // with some work on mod/div it could be Euclidean_ring_tag
 #endif
                                           >  {
   public:
@@ -670,8 +689,21 @@ namespace INTERN_MP_FLOAT {
   MP_Float
   gcd( const MP_Float& a, const MP_Float& b)
   {
-    CGAL_precondition( a != 0 );
-    CGAL_precondition( b != 0 );
+    if (a == 0) {
+      if (b == 0)
+        return 0;
+      //return b.unit_normal();
+      MP_Float tmp=b;
+      tmp.gcd_normalize();
+      return tmp;
+    }
+    if (b == 0) {
+      //return a.unit_normal();
+      MP_Float tmp=a;
+      tmp.gcd_normalize();
+      return tmp;
+    }
+
     MP_Float x = a, y = b;
     while (true) {
       x = x % y;
