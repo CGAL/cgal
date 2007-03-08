@@ -1559,7 +1559,7 @@ template <typename Items, typename SNC_structure_>
 class SNC_constructor : public SNC_constructor_base<Items, SNC_structure_>
 {
 public:
-  SNC_constructor( SNC_structure& W)
+  SNC_constructor( SNC_structure_& W)
     : SNC_constructor_base<Items, SNC_structure_>(W)
   {}
 
