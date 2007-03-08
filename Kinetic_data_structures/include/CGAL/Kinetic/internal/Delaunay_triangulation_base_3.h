@@ -1105,7 +1105,7 @@ protected:
     ++fc;
     ef=fc;
     do {
-      if (fc != h && pfc != h) {
+      if( (h != fc) && ( h != pfc) ) {
 	for (unsigned int i=0; i< 4; ++i) {
 	  if (pfc->neighbor(i) == fc){
 	    Facet f(pfc, i);
