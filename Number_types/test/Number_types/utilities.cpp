@@ -1,9 +1,12 @@
+
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Quotient.h> 
 #include <CGAL/MP_Float.h> 
 #include <CGAL/Lazy_exact_nt.h> 
 #include <CGAL/Interval_nt.h> 
+#include <CGAL/Sqrt_extension.h> 
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
@@ -11,15 +14,15 @@
 #include <CGAL/Gmpq.h>
 #endif
 
-#ifdef CGAL_USE_GMPXX
-#include <CGAL/gmpxx.h>
-#endif
-
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_Expr.h>
+#endif
+
+#ifdef CGAL_USE_GMPXX
+#include <CGAL/gmpxx.h>
 #endif
 
 #ifdef CGAL_USE_LEDA
@@ -77,7 +80,6 @@ int main()
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
   TESTIT(CGAL::Gmpz, "Gmpzf")
-      //TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Gmpq, "Gmpq")
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
@@ -103,6 +105,17 @@ int main()
       typedef CGAL::Number_type_checker<leda_rational,leda_real> NT_checker;
       TESTIT(NT_checker, "NT_checker");
 #endif // CGAL_USE_LEDA
-      
+
+       // TEST Sqrt_extension 
+#ifdef CGAL_USE_GMP
+      typedef CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz> Ext_int_int;
+      TESTIT(Ext_int_int, "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");
+      typedef CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpz> Ext_rat_int;
+      TESTIT(Ext_rat_int, "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpz>");
+      typedef CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq> Ext_rat_rat;
+      TESTIT(Ext_rat_rat, "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq>");
+#endif // CGAL_USE_GMP
+
+
   return 0;
 }
