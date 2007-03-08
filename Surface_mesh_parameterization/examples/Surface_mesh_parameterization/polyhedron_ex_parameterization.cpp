@@ -52,22 +52,21 @@
     #include <CGAL/Taucs_solver_traits.h>
 #endif
 
-#include "options.h"
 #include "Polyhedron_ex.h"
 #include "Mesh_cutter.h"
 #include "Parameterization_polyhedron_adaptor_ex.h"
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <fstream>
 #include <cassert>
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
+
 #ifdef WIN32
     #include <Windows.h>
 #endif
-
 
 // ----------------------------------------------------------------------------
 // Private types
@@ -192,12 +191,12 @@ template<
 >
 typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
 parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
-             const char *type,              // type of parameterization (see usage)
-             const char *border)            // type of border parameterization (see usage)
+             const std::string& type,              // type of parameterization (see usage)
+             const std::string& border)            // type of border parameterization (see usage)
 {
     typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code err;
 
-    if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
+    if ( (type == std::string("floater"))  && (border == std::string("circle")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -207,7 +206,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
+    else if ( (type == std::string("floater")) && (border == std::string("square")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -217,7 +216,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"barycentric") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
+    else if ( (type == std::string("barycentric")) && (border == std::string("circle")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -227,7 +226,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"barycentric") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
+    else if ( (type == std::string("barycentric")) && (border == std::string("square")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -237,7 +236,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
+    else if ( (type == std::string("conformal")) && (border == std::string("circle")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -247,7 +246,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
+    else if ( (type == std::string("conformal")) && (border == std::string("square")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -257,7 +256,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
+    else if ( (type == std::string("authalic")) && (border == std::string("circle")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -267,7 +266,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
+    else if ( (type == std::string("authalic")) && (border == std::string("square")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -277,7 +276,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
                 GeneralSparseLinearAlgebraTraits_d
             >());
     }
-    else if ( (CGAL_CLIB_STD::strcmp(type,"lscm") == 0) && (CGAL_CLIB_STD::strcmp(border,"2pts") == 0) )
+    else if ( (type == std::string("lscm")) && (border == std::string("2pts")) )
     {
         err = CGAL::parameterize(
             mesh,
@@ -362,89 +361,62 @@ int main(int argc, char * argv[])
     std::cerr << "PARAMETERIZATION" << std::endl;
 
     // options
-    const char *type = "floater";       // default: Floater param
-    const char *border = "circle";      // default: circular border param.
-    const char *solver = "opennl";      // default: OpenNL solver
-    const char *output = "";            // default: no output
+    std::string type;       // default: Floater param
+    std::string border;      // default: circular border param.
+    std::string solver;      // default: OpenNL solver
+    std::string output;            // default: no output
 
+    // File names are:
+    std::string input_filename;
+    std::string output_filename;
     // misc
     char  optchar;
     const char *optarg;
     int  errors = 0;
     int  npos = 0;
+try {
+    po::options_description desc("Allowed options");
+    desc.add_options()
+      ("help,h", "produce help message.")
+      ("border,b", po::value<std::string>(&border)->default_value("circle"),
+       "circle, square or 2pts")
+      ("type,t", po::value<std::string>(&type)->default_value("floater"),
+       "floater (default), conformal, barycentric, authalic or lscm")
+      ("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
+       "opennl (default) or taucs")
+      ("output,o", po::value<std::string>(&output)->default_value("eps"),
+       "eps or obj")
+      ;
 
-    //***************************************
-    // decode parameters
-    //***************************************
 
-    Options opts(*argv, optv);
-    OptArgvIter iter(--argc,++argv);
-    while ((optchar = opts(iter,optarg)) != 0)
-    {
-        switch(optchar)
-        {
-        // type of param.
-        case 't' :
-            type = optarg;
-            std::cerr << "  " << type << " parameterization" << std::endl;
-            break;
+    po::positional_options_description p;
+    p.add("input", 1);
+    p.add("output", 2);
+    
+    po::variables_map vm; 
+    po::store(po::command_line_parser(argc, argv).
+	      options(desc).positional(p).run(), vm);       
 
-        // output: "eps" or "obj"
-        case 'o' :
-            output = optarg;
-            std::cerr << "  " << "output: " << output << std::endl;
-            break;
-
-        // border parameterization (for fixed border algorithms)
-        case 'b' :
-            border = optarg;
-            std::cerr << "  " << border << " border" << std::endl;
-            break;
-
-        // solver
-        case 's' :
-            solver = optarg;
-            std::cerr << "  " << solver << " solver" << std::endl;
-            break;
-
-        // help
-        case '?' :
-        case 'H' :
-            opts.usage(cerr, usage);
-            return(EXIT_SUCCESS);
-            //break;
-
-        default :
-            ++errors;
-            break;
-        } // end switch
-    }
-
-    // Get file name arguments
-    int index = iter.index();
-    int first_file_arg = 0;             // index of 1st file name argument
-    int file_args_end   = 0;            // index of last file name argument + 1
-    if ((npos > 0) || (index < argc))
-    {
-        first_file_arg = (npos > 0) ? 0    : index;
-        file_args_end   = (npos > 0) ? npos : argc;
-    }
-    int nb_filename_arguments = file_args_end - first_file_arg;
-    assert(nb_filename_arguments >= 0);
-
-    // check options
-    int nb_filenames_needed = 1 /* input*/ + (CGAL_CLIB_STD::strlen(output) > 0) /* output? */;
-    if (errors || nb_filename_arguments != nb_filenames_needed)
-    {
-        opts.usage(cerr, usage);
-        return(EXIT_FAILURE);
+    po::notify(vm);    
+    
+    if (vm.count("help")) {
+      std::cout << desc << "\n";
+      return 1;
     }
 
     // File names are:
-    const char* input_filename  = argv[first_file_arg];
-    const char* output_filename = (CGAL_CLIB_STD::strlen(output) > 0) ? argv[first_file_arg+1]
-                                                                      : NULL;
+    input_filename  = vm["input"].as<std::string>();
+    output_filename = vm["output"].as<std::string>();
+  }
+  catch(std::exception& e) {
+    std::cerr << "error: " << e.what() << "\n";
+    return 1;
+  }
+  catch(...) {
+    std::cerr << "Exception of unknown type!\n";
+  }
 
+     
     //***************************************
     // Read the mesh
     //***************************************
@@ -453,7 +425,7 @@ int main(int argc, char * argv[])
     task_timer.start();
 
     // Read the mesh
-    std::ifstream stream(input_filename);
+    std::ifstream stream(input_filename.c_str());
     Polyhedron mesh;
     stream >> mesh;
     if(!stream || !mesh.is_valid() || mesh.empty())
@@ -508,7 +480,7 @@ int main(int argc, char * argv[])
     typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
     Parameterizer::Error_code err;
 
-    if (CGAL_CLIB_STD::strcmp(solver,"opennl") == 0)
+    if (solver == std::string("opennl"))
     {
         err = parameterize<Mesh_patch_polyhedron,
                            OpenNL::DefaultLinearSolverTraits<double>,
@@ -517,7 +489,7 @@ int main(int argc, char * argv[])
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
     }
-    else if (CGAL_CLIB_STD::strcmp(solver,"taucs") == 0)
+    else if (solver == std::string("taucs"))
     {
 #ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
@@ -545,21 +517,21 @@ int main(int argc, char * argv[])
     //***************************************
 
     // Save mesh
-    if (err == Parameterizer::OK && CGAL_CLIB_STD::strcmp(output,"") != 0)
+    if (err == Parameterizer::OK)
     {
-        if(CGAL_CLIB_STD::strcmp(output,"eps") == 0)
+        if(output == std::string("eps"))
         {
             // write Postscript file
-            if ( ! mesh.write_file_eps(output_filename) )
+            if ( ! mesh.write_file_eps(output_filename.c_str()) )
             {
                 std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
                 return EXIT_FAILURE;
             }
         }
-        else if(CGAL_CLIB_STD::strcmp(output,"obj") == 0)
+        else if(output == std::string("obj"))
         {
             // write Wavefront obj file
-            if ( ! mesh.write_file_obj(output_filename) )
+            if ( ! mesh.write_file_obj(output_filename.c_str()) )
             {
                 std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
                 return EXIT_FAILURE;
