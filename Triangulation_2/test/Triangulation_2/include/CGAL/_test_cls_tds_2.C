@@ -210,7 +210,7 @@ _test_cls_tds_2( const Tds &)
   assert(tds2c.is_valid());
   Tds tds2d;
   tds2d.swap(tds2c);
-  assert(tds2d.is_valid() & tds2d.number_of_vertices()==2);
+  assert(tds2d.is_valid() && tds2d.number_of_vertices()==2);
   Tds tds2e;
   Vertex_handle w2e= tds2e.copy_tds(tds2,w2);
   assert(tds2e.is_valid() && tds2e.is_vertex(w2e));
@@ -221,7 +221,7 @@ _test_cls_tds_2( const Tds &)
   assert(tds3c.is_valid());
   Tds tds3d;
   tds3d.swap(tds3c);
-  assert(tds3d.is_valid() & tds3d.number_of_vertices()==4);
+  assert(tds3d.is_valid() && tds3d.number_of_vertices()==4);
   Tds tds3e;
   Vertex_handle w3e= tds3e.copy_tds(tds3,w3);
   assert(tds3e.is_valid()&& tds3e.is_vertex(w3e));
