@@ -144,8 +144,8 @@ struct Predicate_traits_d : public BoxTraits {
     }
     static bool is_lo_less_lo(Box_parameter a, Box_parameter b, int dim) {
         return BoxTraits::min_coord(a,dim)  < BoxTraits::min_coord(b,dim) ||
-               BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) && 
-               BoxTraits::id(a) < BoxTraits::id(b);
+               ( BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) && 
+                 BoxTraits::id(a) < BoxTraits::id(b) );
     }
 
     static bool is_lo_less_hi(Box_parameter a, Box_parameter b, int dim) {

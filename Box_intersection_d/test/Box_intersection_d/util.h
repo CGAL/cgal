@@ -94,8 +94,8 @@ struct Util {
     
     static bool
     areEqual( const Box_pair& a, const Box_pair& b ) {
-        return( areEqual(a.first,b.first)  && areEqual(a.second,b.second) ||
-                areEqual(a.first,b.second) && areEqual(a.second,b.first ));
+        return ( areEqual(a.first,b.first)  && areEqual(a.second,b.second) ) ||
+               ( areEqual(a.first,b.second) && areEqual(a.second,b.first ) );
     }
 
     template< class Storage >

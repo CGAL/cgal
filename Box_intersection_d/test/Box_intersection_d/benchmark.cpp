@@ -123,8 +123,8 @@ test_n( unsigned int n, std::ostream& outfile )
                 cutoff -= stepsize;
             else
                 cutoff = 0;
-            if( problemsize < 2000 && problemsize/stepsize > 10 ||
-                                      problemsize/stepsize > 50 )
+            if( ( problemsize < 2000 && problemsize/stepsize > 10 ) ||
+                                        problemsize/stepsize > 50 )
                 break;
             if( cutoff > stepsize )
                 cutoff -= stepsize;

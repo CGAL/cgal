@@ -99,7 +99,7 @@ test_n( unsigned int n,
               << timer.time() << " seconds." << std::endl;
 
     if( callback1.get_counter() != callback2.get_counter() ||
-        n < allpairs_max && callback0.get_counter() != callback1.get_counter() )
+        ( n < allpairs_max && callback0.get_counter() != callback1.get_counter() ) )
     {
         ++failed;
         std::cout << "!! failed !! " << std::endl;
