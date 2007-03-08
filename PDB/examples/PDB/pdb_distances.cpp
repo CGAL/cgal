@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
 	}
       }
       dists[i][j]=dists[j][i]=d;
-      max= std::max BOOST_PREVENT_MACRO_SUBSTITUTION(d, max);
+      max= (std::max)(d, max);
     }
   }
 
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]){
     Magick::Image im(geom, "red");
     for (int j=0; j< dists.dim1(); ++j){
       for (int k=0; k< dists.dim2(); ++k){
-	double v= std::min BOOST_PREVENT_MACRO_SUBSTITUTION (1.0, dists[j][k]/6.0);
+	double v= (std::min) (1.0, dists[j][k]/6.0);
 	im.pixelColor(j, k, Magick::ColorGray(1-v));
 	
       }
