@@ -46,7 +46,7 @@ template<>
 class Is_valid< long double > 
   : public Unary_function< long double, bool > {
   public :
-    bool operator()( const long_double& x ) const {
+    bool operator()( const long double& x ) const {
       switch (fp_class_d(x)) {
       case FP_POS_NORM:
       case FP_NEG_NORM:
@@ -91,7 +91,7 @@ template<>
 class Is_valid< long double > 
   : public Unary_function< long double, bool > {
   public :
-    bool operator()( const long_double& x ) const {
+    bool operator()( const long double& x ) const {
       double d = x;
       IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
       return ! ( is_nan_by_mask_long_double( p->c.H, p->c.L ));
