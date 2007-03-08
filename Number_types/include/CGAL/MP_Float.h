@@ -306,6 +306,26 @@ public:
       exp -= scale;
   }
 
+  // This one is needed for normalizing gcd so that the mantissa is odd
+  // and non-negative, and the exponent is 0.
+  void gcd_normalize()
+  {
+    const unsigned log_limb = 8 * sizeof(MP_Float::limb);
+    if (is_zero())
+      return;
+    // First find how many least significant bits are 0 in the last digit.
+    limb l = v[0];
+    std::size_t nb = 0;
+    for (; (l&1)==0; ++nb, l>>=1)
+      ;
+    if (nb != 0)
+      *this = *this * (1<<(log_limb-nb));
+    CGAL_assertion((v[0]&1) != 0);
+    exp=0;
+    if (sign() == NEGATIVE)
+      *this = - *this;
+  }
+
   V v;
   exponent_type exp;
 };
@@ -657,6 +677,7 @@ namespace INTERN_MP_FLOAT {
       x = x % y;
       if (x == 0) {
         CGAL_postcondition(divides(a, y) && divides(b, y));
+        y.gcd_normalize();
         return y;
       }
       swap(x, y);
