@@ -175,7 +175,7 @@ void subdiv_border( Polyhedron& P) {
 using namespace std;
 
 int main( int argc, char* argv[]) {
-    if ( argc > 2 || argc == 2 && ! isdigit( argv[1][0])) {
+    if ( argc > 2 || (argc == 2 && ! isdigit( argv[1][0]))) {
         cerr << "Usage: " << argv[0] << " [<n>]" << endl;
         cerr << "    subdivides <n> times the polyhedron read from stdin."
              << endl;
