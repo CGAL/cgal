@@ -950,7 +950,7 @@ public:
 
    template<class OutputIterator> 
    OutputIterator   
-   filtration_output( NT alpha,  
+   filtration_output( const NT & /*alpha*/,  
  		     Vertex_handle vh,  
  		     OutputIterator it,  
  		     Tag_true)   const 
