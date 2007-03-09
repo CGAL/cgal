@@ -21,7 +21,7 @@ public:
     typedef typename GT::Site_2 Site_2;
 
     Check_traits (const GT &gt = GT(), const GT_test &gt_test = GT_test())
-        : GT(), test (gt_test)
+        : GT(gt), test (gt_test)
     {}
 
     template <class Predicate, class New_predicate>

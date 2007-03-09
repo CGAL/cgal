@@ -34,7 +34,7 @@ struct CK : public CGAL::Simple_cartesian<double> {};
 struct EK : public CGAL::Simple_cartesian<CGAL::MP_Float> {};
 
 
-int main(int argc, char* argv[])
+int main()
 {
 #ifndef DONT_USE_FILTERED_EXACT
   {

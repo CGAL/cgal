@@ -50,7 +50,7 @@ protected:
                             const Inverted_weighted_point &p3,
                             const Inverted_weighted_point &p4,
                             const Inverted_weighted_point &q,
-                            bool b, int i23Q, int i24Q) const
+                            bool b, int /*i23Q*/, int /*i24Q*/) const
     {
 
         // orientations

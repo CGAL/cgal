@@ -34,7 +34,7 @@ struct CK : public CGAL::Simple_cartesian<inexact_type> {};
 struct EK : public CGAL::Simple_cartesian<exact_type> {};
 
 
-int main(int argc, char* argv[])
+int main()
 {
 #ifndef DONT_USE_FILTERED_EXACT
   {
