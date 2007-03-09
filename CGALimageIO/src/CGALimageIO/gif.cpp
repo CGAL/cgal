@@ -73,6 +73,9 @@ PTRIMAGE_FORMAT createGifFormat() {
   strcpy(f->realName,"Gif");
   return f;
 }
+
+void use(int) {} // warning killer
+
 /*****************************/
 int readGifImage(const char *name,_image *im) {
   register byte ch, ch1;
@@ -148,6 +151,8 @@ int readGifImage(const char *name,_image *im) {
   RWidth = ch + 0x100 * NEXTBYTE;	/* screen dimensions... not used. */
   ch = NEXTBYTE;
   RHeight = ch + 0x100 * NEXTBYTE;
+  use(RWidth);
+  use(RHeight);
   
   ch = NEXTBYTE;
   HasColormap = ((ch & COLORMAPMASK) ? TRUE : FALSE);
@@ -157,6 +162,7 @@ int readGifImage(const char *name,_image *im) {
   BitMask = ColorMapSize - 1;
   
   Background = NEXTBYTE;		/* background color... not used. */
+  use(Background);
 
 
   aspect = NEXTBYTE;

@@ -345,6 +345,7 @@ void *_readBmpImage( const char *name,
 
 
 
+#if 0
     /*
      * old stuff from test.c
      */
@@ -456,6 +457,7 @@ void *_readBmpImage( const char *name,
     free(heights);
     
     return( buf );
+#endif
 }
 
 

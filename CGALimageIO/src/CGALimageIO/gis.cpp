@@ -719,5 +719,4 @@ int writeGisHeader( const _image* inr )
 int writeGisData( const _image*) 
 {
   return -1;
-  return 1;
 }

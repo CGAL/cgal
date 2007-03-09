@@ -369,7 +369,6 @@ int _readAnalyzeHeader( _image* im, const char* name,
 		     "_readAnalyzeHeader: error: data type not supported (%d)...\n",
 		     analyzeHeader->dime.datatype );
 	    return -1;
-	    break ;
       }
       
       switch(analyzeHeader->dime.datatype)
@@ -393,7 +392,6 @@ int _readAnalyzeHeader( _image* im, const char* name,
 		     "_readAnalyzeHeader: error: data type not supported (%d)...\n",
 		     analyzeHeader->dime.datatype );
 	    return -1;
-	    break ;
       }
       
       switch(analyzeHeader->dime.datatype)
@@ -417,7 +415,6 @@ int _readAnalyzeHeader( _image* im, const char* name,
 		     "_readAnalyzeHeader: error: data type not supported (%d)...\n",
 		     analyzeHeader->dime.datatype );
 	    return -1;
-	    break ;
       }
       
       im->wdim = analyzeHeader->dime.bitpix;

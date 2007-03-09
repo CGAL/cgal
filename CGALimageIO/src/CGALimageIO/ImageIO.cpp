@@ -94,17 +94,14 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
 #else 
     return fwrite(buf, 1, len, im->fd);
 #endif
-    break;
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
     return gzwrite(im->fd, (void *) buf, len);
-    break;
 #endif
   case OM_FILE:
     return fwrite(buf, 1, len, (FILE*)im->fd);
-    break;
   }
-  return 0;
+  //return 0;
 }
 
 
@@ -139,7 +136,6 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     }
 #endif
     return ( len - to_be_read );
-    break;
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
@@ -147,7 +143,6 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
       b += l;
     }
     return ( len - to_be_read );
-    break;
 #else
   case OM_FILE :
     while ( (to_be_read > 0) && ((l = fread( b, 1, to_be_read, im->fd )) > 0) ) {
@@ -155,11 +150,10 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
       b += l;
     }
     return ( len - to_be_read );
-    break;
 #endif
   }
 
-  return 0;
+  //return 0;
 }
 
 
@@ -230,7 +224,7 @@ int ImageIO_error( const _image *im )
   case OM_FILE :
     return( ferror( (FILE*)im->fd ) || feof( (FILE*)im->fd ) );
   }
-  return 0;
+  //return 0;
 }
 
 
