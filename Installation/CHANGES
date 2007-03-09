@@ -1,7 +1,71 @@
 $CGAL/CHANGES
 ----------------------------- Release 3.3 ----------------------------------
+The following functionality has been added or changed:
+
+1  General
+
+Additional supported platforms:
+ -  g++
+
+2 Installation
+
+On Windows the libraries built in Developer Studio now have names
+which encode the compiler version, the runtime and whether it was
+built in release or debug mode. The libraries to link against are
+chosen with linker pragmas in header files.
+
+
+3 Algebraic Foundations (new package)
+
+
+4 Number Types
 
 - Fixed_precision_nt and Filtered_exact number types removed.
+
+
+5 Kernels
+
+
+6 Data Structures and Algorithms
+
+6.1 Surface Mesh Simplification (new package)
+
+This package provides a mesh simplification framework using edge collapse
+operations, and provides the Turk/Lindstom simplification algorithm.
+
+
+6.2 Estimation of Local Differential Properties (new package)
+
+This package allows to compute local differential quantities of a surface from a point sample
+
+
+6.3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes  (new package)
+
+This package enables the approximation of differential features on
+triangulated surface meshes. Such curvature related features are
+lines: ridges or crests, and points: umbilics.
+
+
+6.4 Surface Mesh Parametrization
+
+Added Jacobi and SSOR preconditioners to OpenNL solver, which makes it
+much faster and more stable.
+
+
+7 Support Library
+
+
+7.1 CGAL and the Boost Graph Library (BGL)
+
+This package provides the glue layer for several CGAL data structures such that
+they become models of the BGL graph concept.
+ 
+
+7.2 Spatial Sorting (new package)
+
+This package allows to sort points and other objects along a Hilbert curve
+which can improve the performance of algorithms like triangulations.
+
 
 
 ----------------------------- Release 3.2.1---------------------------------
