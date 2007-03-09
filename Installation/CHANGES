@@ -5,7 +5,9 @@ The following functionality has been added or changed:
 1  General
 
 Additional supported platforms:
- -  g++
+ - GNU g++ 4.1 and 4.2 supported
+ - Intel C++ compiler 9
+ - Microsoft Visual C++ compiler 8.0
 
 2 Installation
 
@@ -20,7 +22,7 @@ chosen with linker pragmas in header files.
 
 4 Number Types
 
-- Fixed_precision_nt and Filtered_exact number types removed.
+- Fixed_precision_nt and Filtered_exact number types have been removed.
 
 
 5 Kernels
