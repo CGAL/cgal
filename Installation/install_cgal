@@ -671,7 +671,7 @@ check_for_utils()
 
     # Verify that GNU Make exists:
     # Check the content of the current ${MAKE} variable.
-    if [ -n "${MAKE}" -a -x "${MAKE}" ] && test_gmake "${MAKE}"; then 
+    if [ -n "${MAKE}" ] && test_gmake "${MAKE}"; then 
         log_print 'GNU Make found in the environment variable \${MAKE}.'
     # Search gmake in PATH
     elif _check_for_util gmake n MAKE && test_gmake "${MAKE}"; then
