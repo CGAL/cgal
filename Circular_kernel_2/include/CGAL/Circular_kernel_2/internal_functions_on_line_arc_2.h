@@ -146,7 +146,7 @@ namespace CircularFunctors {
   Comparison_result 
   compare_y_to_right(const typename CK::Line_arc_2 &A1,
 		     const typename CK::Line_arc_2 &A2, 
-		     const typename CK::Circular_arc_point_2 &p)
+		     const typename CK::Circular_arc_point_2 &/*p*/)
   {
     if(A1.supporting_line().is_vertical()){
       if(A2.supporting_line().is_vertical())

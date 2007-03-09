@@ -1017,7 +1017,7 @@ void _test_compare_y_at_x(CK ck)
 
 
 template <class CK>
-void _test_has_on(CK ck)
+void _test_has_on(CK)
 {
   typedef typename CK::FT                      FT;
   typedef typename CK::Circle_2                Circle_2;

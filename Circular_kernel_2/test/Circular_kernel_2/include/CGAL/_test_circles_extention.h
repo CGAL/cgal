@@ -61,7 +61,7 @@ void _test_circle_bbox(CK ck)
   }
 }
   template <class CK>
-    void _test_circular_arc_bbox(CK ck)
+    void _test_circular_arc_bbox(CK)
   {
     typedef typename CK::Circle_2                    Circle_2;
     typedef typename CK::Circular_arc_2              Circular_arc_2;
