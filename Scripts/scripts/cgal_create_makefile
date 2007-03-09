@@ -29,10 +29,8 @@
 # Usage: cgal_create_makefile [-options] [outputfile]
 #
 # -d   create a default CGAL makefile
-# -t   create a makefile for the test suite
-# -w   create a makefile with flags for LEDA windows
-# -g   create a makefile with flags for GEOWIN
-# -q   create a makefile with support for QT
+# -t   create a CGAL makefile for the test suite
+# -q   create a CGAL makefile with Qt support
 
 
 #VERSION=2.0
@@ -112,26 +110,14 @@ create_makefile()
   if [ ! -z "$TESTSUITE" ] ; then
     echo    "          \$(TESTSUITE_LIBPATH) \\"
   fi
-  if [ -z "$LEDAWINDOWS" ] ; then
-    echo    "          \$(CGAL_LIBPATH)"
-  else
-    echo    "          \$(CGAL_WINDOW_LIBPATH)"
-  fi
+  echo    "          \$(CGAL_LIBPATH)"
   echo
   echo    "LDFLAGS = \\"
   if [ ! -z "$TESTSUITE" ] ; then
     echo    "          \$(TESTSUITE_LDFLAGS) \\"
   fi
   echo    "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\"
-  if [ -n "$QT" ] ; then
-    echo    "          \$(CGAL_QT_LDFLAGS)"
-  elif [ -n "$GEOWIN" ] ; then
-    echo    "          \$(CGAL_GEOWIN_LDFLAGS)"
-  elif [ -z "$LEDAWINDOWS" ] ; then
-    echo    "          \$(CGAL_LDFLAGS)"
-  else
-    echo    "          \$(CGAL_WINDOW_LDFLAGS)"
-  fi
+  echo    "          \$(CGAL_LDFLAGS)"
 
   echo
   header "target entries"
@@ -185,10 +171,8 @@ usage()
      echo "Usage: cgal_create_makefile [-options] [outputfile]"
      echo
      echo "-d   create a default CGAL makefile"
-     echo "-t   create a makefile for the test suite"
-     echo "-w   create a makefile with flags for LEDA windows"
-     echo "-g   create a makefile with flags for GEOWIN"
-     echo "-q   create a makefile with flags for QT"
+     echo "-t   create a CGAL makefile for the test suite"
+     echo "-q   create a CGAL makefile with Qt support"
 }
 
 
@@ -202,8 +186,6 @@ for i do
   case $i in
     -d) ;;
     -t) TESTSUITE='y';;
-    -w) LEDAWINDOWS='y';;
-    -g) GEOWIN='y';;
     -q) QT='y';;
     -*) usage
         exit 1;;

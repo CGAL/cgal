@@ -4004,12 +4004,6 @@ write_linker_flags()
   fi
   ${_printf} "\n\n" >> ${FILE}
 
-
-  print_as_shell_comment " The following flags are obsolete" >> ${FILE}
-  ${_printf} "%s\n\n" "CGAL_WINDOW_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
-  ${_printf} "%s\n\n" "CGAL_GEOWIN_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
-  ${_printf} "%s\n\n" "CGAL_QT_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
-
   for i in ${SUPPORT_FEATURES}; do
       if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
 	  print_as_shell_comment "*** linker flags for feature ${i} ***" >> ${FILE}
