@@ -1,10 +1,9 @@
 #! /bin/sh
 #
 # =============================================================================
-# file          : scripts/create_cgal_test
-# source        :
-# revision      : 1.1
-# revision_date : 02 Mar 1998
+# $URL$
+# $Id$
+#
 # author(s)     : Wieger Wesselink, Geert-Jan Giezeman
 #
 # coordinator   : Utrecht University
@@ -14,6 +13,25 @@
 # files in the current test directory.
 
 VERSION=1.1
+
+DO_RUN="y"
+
+while [ $1 ]; do
+    case "$1" in
+        -h|-help|--h|--help)
+            echo 'Usage : create_cgal_test [--no-run]'
+            echo
+            echo '    --help    : prints this usage help'
+            echo '    --no-run  : produces a cgal_test script that only does compilation, no execution'
+            exit
+        ;;
+        --no-run)
+            DO_RUN=""
+            shift; continue
+        ;;
+    esac
+done
+
 
 header()
 {
@@ -38,6 +56,7 @@ create_script()
   echo "# - the script should clean up object files and executables"
   echo
   echo "ERRORFILE=error.txt"
+  echo "DO_RUN=${DO_RUN}"
   echo
   header "compile_and_run <target>"
   echo
@@ -55,26 +74,28 @@ compile_and_run()
     SUCCES=""
   fi
 
-  if [ -n "\${SUCCES}" ] ; then
-     OUTPUTFILE=ProgramOutput.\$1.\$PLATFORM
-    rm -f \$OUTPUTFILE
-    COMMAND="./\$1"
-    if [ -f \$1.cmd ] ; then
-      COMMAND="\$COMMAND \`cat \$1.cmd\`"
-    fi
-    if [ -f \$1.cin ] ; then
-      COMMAND="cat \$1.cin | \$COMMAND"
-    fi
-    echo "Executing \$1 ... "
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval \$COMMAND > \$OUTPUTFILE 2>&1 ; then
-      echo "   succesful execution   of \$1" >> \$ERRORFILE
+  if [ -n "\$DO_RUN" ] ; then
+    if [ -n "\${SUCCES}" ] ; then
+      OUTPUTFILE=ProgramOutput.\$1.\$PLATFORM
+      rm -f \$OUTPUTFILE
+      COMMAND="./\$1"
+      if [ -f \$1.cmd ] ; then
+        COMMAND="\$COMMAND \`cat \$1.cmd\`"
+      fi
+      if [ -f \$1.cin ] ; then
+        COMMAND="cat \$1.cin | \$COMMAND"
+      fi
+      echo "Executing \$1 ... "
+      echo
+      ulimit -t 3600 2> /dev/null
+      if eval \$COMMAND > \$OUTPUTFILE 2>&1 ; then
+        echo "   succesful execution   of \$1" >> \$ERRORFILE
+      else
+        echo "   ERROR:    execution   of \$1" >> \$ERRORFILE
+      fi
     else
-      echo "   ERROR:    execution   of \$1" >> \$ERRORFILE
+      echo   "   ERROR:    not executed   \$1" >> \$ERRORFILE
     fi
-  else
-    echo   "   ERROR:    not executed   \$1" >> \$ERRORFILE
   fi
 
   eval "make CGAL_MAKEFILE=\$CGAL_MAKEFILE clean > /dev/null 2>&1 "
