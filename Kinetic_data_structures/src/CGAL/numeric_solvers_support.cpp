@@ -150,12 +150,12 @@ template <class NT>
     typedef typename IFn::NT INT;
     
 
-    bool popped=false;
+    /*bool popped=false;*/
     // if the last valid root is closer than last, consider it as doubtful instead
     if (lb-last_root > roots.back()-lb) {
       last_root= roots.back();
       roots.pop_back();
-      popped=true;
+      /*popped=true;*/
     } /*else {
       last_root=lb;
       }*/
