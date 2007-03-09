@@ -332,16 +332,16 @@ public:
       *this = - *this;
   }
 
-  MP_Float unit_normal() const
+  MP_Float unit_part() const
   {
     if (is_zero())
-      return 0;
-    MP_Float r = (sign() == POSITIVE) ? *this : - *this;
+      return 1;
+    MP_Float r = (sign() > 0) ? *this : - *this;
     CGAL_assertion(r.v.begin() != r.v.end());
     std::size_t nb = lsb(r.v[0]);
     r.v.clear();
     r.v.push_back(1<<nb);
-    return r.sign() > 0 ? r : -r;
+    return (sign() > 0) ? r : -r;
   }
 
   V v;
@@ -415,6 +415,14 @@ template <> class Algebraic_structure_traits< MP_Float >
 #endif
     typedef Tag_true            Is_numerical_sensitive;
                                     
+    struct Unit_part
+      : public Unary_function< Type , Type >
+    {
+      Type operator()(const Type &x) const {
+        return x.unit_part();
+      }
+    };
+
     struct Integral_division
         : public Binary_function< Type, 
                                  Type,
@@ -692,13 +700,11 @@ namespace INTERN_MP_FLOAT {
     if (a == 0) {
       if (b == 0)
         return 0;
-      //return b.unit_normal();
       MP_Float tmp=b;
       tmp.gcd_normalize();
       return tmp;
     }
     if (b == 0) {
-      //return a.unit_normal();
       MP_Float tmp=a;
       tmp.gcd_normalize();
       return tmp;
