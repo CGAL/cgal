@@ -1255,7 +1255,7 @@ BigFloat pow(const BigFloat& r, unsigned long n) {
       if ((n % 2) == 1) // n is odd
         u *= x;
     }
-    return u;
+    //return u; // unreachable
   }
 }//pow
 
