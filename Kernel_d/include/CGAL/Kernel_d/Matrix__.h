@@ -431,8 +431,7 @@ Matrix_<NT_,AL_>& operator-=(const Matrix_<NT_,AL_>&);
 Matrix_<NT_,AL_>& operator+=(const Matrix_<NT_,AL_>&); 
 
 Matrix_<NT_,AL_> operator*(const Matrix_<NT_,AL_>& M1) const; 
-/*{\Mbinop Multiplication. \precond \\ 
-|\Mvar.column_dimension() = M1.row_dimension()|. }*/
+/*{\Mbinop Multiplication. \precond \\ |\Mvar.column_dimension() = M1.row_dimension()|. }*/
 
 Vector_<NT_,AL_> 
 operator*(const Vector_<NT_,AL_>& vec) const

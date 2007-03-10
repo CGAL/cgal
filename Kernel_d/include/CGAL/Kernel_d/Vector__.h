@@ -240,16 +240,13 @@ const_iterator begin() const { return v_; }
 const_iterator end() const { return v_+d_; }
 
 Vector_<NT_,AL_>  operator+(const Vector_<NT_,AL_>& v1) const;
-/*{\Mbinop Addition. \precond\\ 
-|v.dimension() == v1.dimension()|.}*/
+/*{\Mbinop Addition. \precond\\ |v.dimension() == v1.dimension()|.}*/
 
 Vector_<NT_,AL_>  operator-(const Vector_<NT_,AL_>& v1) const;
-/*{\Mbinop Subtraction. \precond\\ 
-|v.dimension() = v1.dimension()|.}*/
+/*{\Mbinop Subtraction. \precond\\ |v.dimension() = v1.dimension()|.}*/
 
 NT operator*(const Vector_<NT_,AL_>& v1) const;
-/*{\Mbinop Inner Product. \precond\\ 
-|v.dimension() = v1.dimension()|.}*/
+/*{\Mbinop Inner Product. \precond\\ |v.dimension() = v1.dimension()|.}*/
 
 Vector_<NT_,AL_> compmul(const NT& r) const;
 
@@ -261,8 +258,7 @@ Vector_<NT_,AL_>& operator+=(const Vector_<NT_,AL_>& v1);
 |v.dimension() == v1.dimension()|.}*/
 
 Vector_<NT_,AL_>& operator-=(const Vector_<NT_,AL_>& v1);
-/*{\Mbinop Subtraction plus assignment. \precond\\ 
-|v.dimension() == v1.dimension()|.}*/
+/*{\Mbinop Subtraction plus assignment. \precond\\ |v.dimension() == v1.dimension()|.}*/
 
 Vector_<NT_,AL_>& operator*=(const NT& s);
 /*{\Mbinop Scalar multiplication plus assignment.}*/
