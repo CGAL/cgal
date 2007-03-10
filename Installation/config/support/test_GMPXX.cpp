@@ -31,6 +31,8 @@ int main()
     mpz_class a = 1;
     mpq_class b = 2/a;
 
+    std::cout << a << std::endl; // test ABI of libgmpxx
+
     std::cout << "version=" << __GNU_MP_VERSION << "."
                             << __GNU_MP_VERSION_MINOR << "."
                             << __GNU_MP_VERSION_PATCHLEVEL << std::endl;
