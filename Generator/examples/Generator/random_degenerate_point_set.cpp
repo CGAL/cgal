@@ -1,4 +1,4 @@
-// file: examples/Generator/generators_example1.C          
+// file: examples/Generator/random_degenerate_point_set.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>

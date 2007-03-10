@@ -1,4 +1,4 @@
-//file: examples/Interpolation/surface_neighbor_coordinates_3.C 
+//file: examples/Interpolation/surface_neighbor_coordinates_3.cpp
 // example with random points on a sphere
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

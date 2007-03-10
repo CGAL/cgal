@@ -1,4 +1,4 @@
-//file: examples/Interpolation/nn_coordinates_3.C 
+//file: examples/Interpolation/nn_coordinates_3.cpp
 // author(s)     : Raphaelle Chaine <Raphaelle.Chaine@sophia.inria.fr, raphaelle.chaine@liris.cnrs.fr>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
