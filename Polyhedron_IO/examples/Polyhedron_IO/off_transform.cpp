@@ -1,4 +1,4 @@
-// file: examples/Polyhedron_IO/off_transform.C
+// file: examples/Polyhedron_IO/off_transform.cpp
 
 // Applies translation and scaling to an OFF object.
 

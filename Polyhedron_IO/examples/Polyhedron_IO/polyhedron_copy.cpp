@@ -1,4 +1,4 @@
-// file: examples/Polyhedron_IO/polyhedron_copy.C
+// file: examples/Polyhedron_IO/polyhedron_copy.cpp
 
 // Copies a CGAL::Polyhedron_3 from OFF format to OFF format.
 

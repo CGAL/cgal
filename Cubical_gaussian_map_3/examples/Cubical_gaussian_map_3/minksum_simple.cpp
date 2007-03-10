@@ -1,4 +1,4 @@
-// file: examples/Polyhedron/polyhedron_prog_simple.C
+// file: examples/Polyhedron/polyhedron_prog_simple.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Gmpq.h>

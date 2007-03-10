@@ -1,4 +1,4 @@
-// file: examples/Spatial_searching/Using_fair_splitting_rule.C
+// file: examples/Spatial_searching/Using_fair_splitting_rule.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>

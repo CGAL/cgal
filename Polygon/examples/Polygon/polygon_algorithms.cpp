@@ -1,4 +1,4 @@
-// file: examples/Polygon/polygon_algorithms.C
+// file: examples/Polygon/polygon_algorithms.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2_algorithms.h>

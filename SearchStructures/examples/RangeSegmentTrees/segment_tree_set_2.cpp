@@ -1,4 +1,4 @@
-// file: examples/SearchStructures/segment_tree_set_2.C
+// file: examples/SearchStructures/segment_tree_set_2.cpp
 
 // Implementation: Testprogram for 2-dimensional Segment Trees
 // Example for the construction of a two dimensional segment tree.

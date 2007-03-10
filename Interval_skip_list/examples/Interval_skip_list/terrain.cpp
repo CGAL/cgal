@@ -1,4 +1,4 @@
-// file: examples/Interval_skip_list/terrain.C
+// file: examples/Interval_skip_list/terrain.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>

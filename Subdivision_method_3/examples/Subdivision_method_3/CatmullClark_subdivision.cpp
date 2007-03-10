@@ -1,4 +1,4 @@
-// file: examples/Subdivision_method_3/CatmullClark_subdivision.C
+// file: examples/Subdivision_method_3/CatmullClark_subdivision.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Subdivision_method_3.h>

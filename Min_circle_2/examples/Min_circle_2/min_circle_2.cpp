@@ -1,4 +1,4 @@
-// file: examples/Min_circle_2/min_circle_2.C
+// file: examples/Min_circle_2/min_circle_2.cpp
 
 // includes
 #include <CGAL/Homogeneous.h>

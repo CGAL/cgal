@@ -1,4 +1,4 @@
-// file: examples/Polyhedron/polyhedron_prog_incr_builder.C
+// file: examples/Polyhedron/polyhedron_prog_incr_builder.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>

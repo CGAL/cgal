@@ -1,4 +1,4 @@
-// file: examples/HalfedgeDS/hds_prog_graph2.C
+// file: examples/HalfedgeDS/hds_prog_graph2.cpp
 
 #include <CGAL/HalfedgeDS_min_items.h>
 #include <CGAL/HalfedgeDS_default.h>

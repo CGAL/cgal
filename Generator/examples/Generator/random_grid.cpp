@@ -1,4 +1,4 @@
-// file: examples/Generator/generators_example2.C
+// file: examples/Generator/generators_example2.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>

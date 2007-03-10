@@ -1,4 +1,4 @@
-// file: examples/Nef_3/simple.C
+// file: examples/Nef_3/simple.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>

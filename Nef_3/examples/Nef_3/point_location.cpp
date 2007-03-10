@@ -1,4 +1,4 @@
-// file: examples/Nef_3/point_location.C
+// file: examples/Nef_3/point_location.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>

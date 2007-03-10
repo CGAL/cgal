@@ -1,4 +1,4 @@
-// file: examples/Triangulation_3/example_tds.C
+// file: examples/Triangulation_3/example_tds.cpp
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <iostream>

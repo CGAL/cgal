@@ -1,4 +1,4 @@
-//file: examples/Polyhedron_IO/terr_trian.C
+//file: examples/Polyhedron_IO/terr_trian.cpp
 
 // Delaunay Triangulation of a set of 3D points in the xy-plane. 
 // (Terrain triangulation)

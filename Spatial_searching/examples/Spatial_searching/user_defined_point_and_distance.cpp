@@ -1,4 +1,4 @@
-//file: examples/Spatial_searching/User_defined_point_and_distance.C
+//file: examples/Spatial_searching/User_defined_point_and_distance.cpp
 
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>

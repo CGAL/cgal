@@ -1,4 +1,4 @@
-// file: examples/Convex_hull_3/incremental_hull_3_ex.C
+// file: examples/Convex_hull_3/incremental_hull_3_ex.cpp
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>

@@ -1,4 +1,4 @@
-// file: examples/Spatial_searching/Weighted_Minkowski_distance.C
+// file: examples/Spatial_searching/Weighted_Minkowski_distance.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>

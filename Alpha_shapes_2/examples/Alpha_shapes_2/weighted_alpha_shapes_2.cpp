@@ -1,4 +1,4 @@
-// file: examples/Alpha_shapes_2/example_weight.C
+// file: examples/Alpha_shapes_2/example_weight.cpp
 
 /***********************************************************************
 

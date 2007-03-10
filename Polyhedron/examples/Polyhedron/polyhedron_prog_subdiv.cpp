@@ -1,4 +1,4 @@
-// file: examples/Polyhedron/polyhedron_prog_subdiv.C
+// file: examples/Polyhedron/polyhedron_prog_subdiv.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

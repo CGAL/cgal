@@ -1,4 +1,4 @@
-// file: examples/Convex_hull_3/dynamic_hull_3_ex.C
+// file: examples/Convex_hull_3/dynamic_hull_3_ex.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>

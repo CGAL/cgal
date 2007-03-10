@@ -1,4 +1,4 @@
-// file: examples/Polyhedron_IO/polyhedron2vrml.C
+// file: examples/Polyhedron_IO/polyhedron2vrml.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>

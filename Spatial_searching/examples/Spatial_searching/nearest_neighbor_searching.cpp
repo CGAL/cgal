@@ -1,4 +1,4 @@
-// file: examples/Spatial_searching/Nearest_neighbor_searching.C
+// file: examples/Spatial_searching/Nearest_neighbor_searching.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>

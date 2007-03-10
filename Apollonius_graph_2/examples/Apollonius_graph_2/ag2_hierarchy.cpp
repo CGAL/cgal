@@ -1,4 +1,4 @@
-// file: examples/Apollonius_graph_2/ag2_hierarchy.C
+// file: examples/Apollonius_graph_2/ag2_hierarchy.cpp
 
 #include <CGAL/basic.h>
 

@@ -1,4 +1,4 @@
-// file: examples/Polyhedron_IO/iv2off.C
+// file: examples/Polyhedron_IO/iv2off.cpp
 
 // Converts Geometry Information in Inventor files (*.iv) into OFF format. 
 // The scanner triggers on Coordinate3, IndexedFaceSet, and IndexedLineSet

@@ -1,4 +1,4 @@
-// file: examples/Generator/Segment_generator_example1.C
+// file: examples/Generator/Segment_generator_example1.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>

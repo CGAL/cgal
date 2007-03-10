@@ -1,4 +1,4 @@
-// file: examples/Kernel_23/MyKernel.C
+// file: examples/Kernel_23/MyKernel.cpp
 
 #include <CGAL/basic.h>
 #include <CGAL/Filtered_kernel.h>

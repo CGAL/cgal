@@ -1,4 +1,4 @@
-// file: examples/SearchStructures/range_tree_4.C
+// file: examples/SearchStructures/range_tree_4.cpp
 
 // Implementation: Testprogram for 4-dimensional Range Trees
 // A four dimensional Range Tree is defined in this class.

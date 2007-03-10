@@ -1,4 +1,4 @@
-// file: examples/Nef_3/point_set_operations.C
+// file: examples/Nef_3/point_set_operations.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Extended_homogeneous.h>

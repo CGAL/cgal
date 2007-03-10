@@ -1,4 +1,4 @@
-// file: examples/Triangulation_3/example_linking_2d_and_3d.C
+// file: examples/Triangulation_3/example_linking_2d_and_3d.cpp
 
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_data_structure_3.h>

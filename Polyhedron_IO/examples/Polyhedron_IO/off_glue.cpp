@@ -1,4 +1,4 @@
-// file: examples/Polyhedron_IO/off_glue.C
+// file: examples/Polyhedron_IO/off_glue.cpp
 
 // Glue vertices of a polyhedron together that have equal coordinate values.
 

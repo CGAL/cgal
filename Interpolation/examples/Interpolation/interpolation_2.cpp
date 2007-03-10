@@ -1,4 +1,4 @@
-//file: examples/Interpolation/interpolation_2.C
+//file: examples/Interpolation/interpolation_2.cpp
 // compares the result of several interpolation methods  
 // Author: Julia
 

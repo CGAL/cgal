@@ -1,4 +1,4 @@
-// file: examples/Apollonius_graph_2/ag2_exact_traits.C
+// file: examples/Apollonius_graph_2/ag2_exact_traits.cpp
 
 #include <CGAL/basic.h>
 

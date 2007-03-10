@@ -1,4 +1,4 @@
-// file: examples/Matrix_search/all_furthest_neighbors_2_example.C
+// file: examples/Matrix_search/all_furthest_neighbors_2_example.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>

@@ -1,4 +1,4 @@
-// file: examples/Polygon/Example.C
+// file: examples/Polygon/Example.cpp
 
 //-----------------------------------------------------------------------//
 // This is just a simple example that demonstrates how to use the

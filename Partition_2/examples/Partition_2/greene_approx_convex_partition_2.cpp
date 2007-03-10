@@ -1,4 +1,4 @@
-// file: examples/Partition_2/greene_approx_convex_partition_2.C
+// file: examples/Partition_2/greene_approx_convex_partition_2.cpp
 
 #include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

@@ -1,4 +1,4 @@
-// file: examples/Spatial_searching/Searching_with_circular_query.C
+// file: examples/Spatial_searching/Searching_with_circular_query.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>

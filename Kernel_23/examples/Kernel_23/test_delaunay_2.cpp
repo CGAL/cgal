@@ -1,4 +1,4 @@
-// file: examples/Kernel_23/test_delaunay_2.C
+// file: examples/Kernel_23/test_delaunay_2.cpp
 
 // small example for compilation
 // check of Delaunay_triangulation_2 using the kernel concept

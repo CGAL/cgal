@@ -1,4 +1,4 @@
-// file: examples/SearchStructures/segment_tree_2.C
+// file: examples/SearchStructures/segment_tree_2.cpp
 
 // Implementation: Testprogram for 2-dimensional Segment Trees
 // A two dimensional Segment Tree is defined in this class.

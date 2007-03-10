@@ -1,4 +1,4 @@
-// file: examples/Polyhedron_IO/off2stl.C
+// file: examples/Polyhedron_IO/off2stl.cpp
 
 // Convert from OFF format to StereoLithography StL format.
 

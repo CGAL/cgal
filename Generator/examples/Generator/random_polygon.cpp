@@ -1,4 +1,4 @@
-// file : examples/Generator/random_polygon_ex.C
+// file : examples/Generator/random_polygon_ex.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>

@@ -1,4 +1,4 @@
-// file: examples/Interval_skip_list/intervals.C
+// file: examples/Interval_skip_list/intervals.cpp
 
 #include <CGAL/Interval_skip_list.h>
 #include <CGAL/Interval_skip_list_interval.h>

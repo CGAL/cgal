@@ -1,4 +1,4 @@
-// file: examples/Polygon/Polygon.C
+// file: examples/Polygon/Polygon.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>

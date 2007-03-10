@@ -1,4 +1,4 @@
-// file: examples/Spatial_searching/Fuzzy_range_query.C
+// file: examples/Spatial_searching/Fuzzy_range_query.cpp
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>

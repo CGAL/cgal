@@ -1,4 +1,4 @@
-// file: examples/Nef_3/shell_exploration.C
+// file: examples/Nef_3/shell_exploration.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>

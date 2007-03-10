@@ -1,4 +1,4 @@
-// file: examples/HalfedgeDS/hds_prog_edge_iterator.C
+// file: examples/HalfedgeDS/hds_prog_edge_iterator.cpp
 
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_decorator.h>

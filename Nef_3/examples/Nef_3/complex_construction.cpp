@@ -1,4 +1,4 @@
-// file: examples/Nef_3/complex_construction.C
+// file: examples/Nef_3/complex_construction.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>

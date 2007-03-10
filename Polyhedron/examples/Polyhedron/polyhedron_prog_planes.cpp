@@ -1,4 +1,4 @@
-// file: examples/Polyhedron/polyhedron_prog_planes.C
+// file: examples/Polyhedron/polyhedron_prog_planes.cpp
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polyhedron_3.h>

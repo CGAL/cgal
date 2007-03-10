@@ -1,4 +1,4 @@
-// file: examples/HalfedgeDS/hds_prog_compact2.C
+// file: examples/HalfedgeDS/hds_prog_compact2.cpp
 
 #include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_list.h>

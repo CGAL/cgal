@@ -1,4 +1,4 @@
-// file: examples/HalfedgeDS/hds_prog_default.C
+// file: examples/HalfedgeDS/hds_prog_default.cpp
 
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_decorator.h>

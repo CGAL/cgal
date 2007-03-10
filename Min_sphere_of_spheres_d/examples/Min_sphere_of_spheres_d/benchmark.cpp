@@ -1,4 +1,4 @@
-// file: examples/Min_sphere_of_spheres_d/benchmark.C
+// file: examples/Min_sphere_of_spheres_d/benchmark.cpp
 
 #include <iostream>
 #include <ctime>

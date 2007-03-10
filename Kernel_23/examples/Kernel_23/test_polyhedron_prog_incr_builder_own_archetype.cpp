@@ -1,6 +1,6 @@
-// file: examples/Kernel_23/test_polyhedron_prog_incr_builder_own_archetype.C
+// file: examples/Kernel_23/test_polyhedron_prog_incr_builder_own_archetype.cpp
 
-// original version see examples/Polyhedron/polyhedron_prog_incr_builder.C
+// original version see examples/Polyhedron/polyhedron_prog_incr_builder.cpp
 // this time we test compilation with
 // an own archetype that uses functionality
 // provided by the kernel archetype

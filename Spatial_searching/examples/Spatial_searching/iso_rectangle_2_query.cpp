@@ -1,4 +1,4 @@
-// file: examples/Spatial_searching/Iso_rectangle_2_query.C
+// file: examples/Spatial_searching/Iso_rectangle_2_query.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>

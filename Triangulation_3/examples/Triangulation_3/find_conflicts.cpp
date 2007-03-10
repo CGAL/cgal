@@ -1,4 +1,4 @@
-// file: examples/Triangulation_3/example_find_conflicts.C
+// file: examples/Triangulation_3/example_find_conflicts.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>

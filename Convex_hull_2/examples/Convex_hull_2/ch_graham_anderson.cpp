@@ -1,4 +1,4 @@
-// file: examples/Convex_hull_2/ch_graham_anderson.C
+// file: examples/Convex_hull_2/ch_graham_anderson.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/ch_graham_andrew.h>

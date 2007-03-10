@@ -1,6 +1,6 @@
-// file: examples/Kernel_23/test_polyhedron_prog_incr_builder.C
+// file: examples/Kernel_23/test_polyhedron_prog_incr_builder.cpp
 
-// original version see examples/Polyhedron/polyhedron_prog_incr_builder.C
+// original version see examples/Polyhedron/polyhedron_prog_incr_builder.cpp
 // this time we test compilation with the
 // kernel concept archetype
 // we use interface restrictions in this example

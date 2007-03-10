@@ -1,4 +1,4 @@
-// file: examples/SearchStructures/segment_tree_4.C
+// file: examples/SearchStructures/segment_tree_4.cpp
 
 // Implementation: Testprogram for 4-dimensional Segment Trees
 // A four dimensional Segment Tree is defined in this class.

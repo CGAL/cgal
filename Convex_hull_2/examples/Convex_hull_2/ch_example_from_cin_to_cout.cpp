@@ -1,4 +1,4 @@
-// file: examples/Convex_hull_2/ch_example_from_cin_to_cout.C
+// file: examples/Convex_hull_2/ch_example_from_cin_to_cout.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/ch_graham_andrew.h>

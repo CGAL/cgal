@@ -1,4 +1,4 @@
-// file: examples/Alpha_shapes_2/example_alpha.C
+// file: examples/Alpha_shapes_2/example_alpha.cpp
 
 /***********************************************************************
 

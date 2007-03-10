@@ -1,4 +1,4 @@
-// file: examples/Matrix_search/rectangular_p_center_2_example.C
+// file: examples/Matrix_search/rectangular_p_center_2_example.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
