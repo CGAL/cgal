@@ -134,7 +134,7 @@ protected:
     }
 };
 
-static boost::rand48 randgen;
+static boost::minstd_rand randgen;
 
 // point_iterator_x generates points randomly on a grid (thus making lots of
 // degenerate cases), staying in dimension x.
