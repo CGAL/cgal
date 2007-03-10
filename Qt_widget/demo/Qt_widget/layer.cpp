@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -56,7 +56,7 @@ public:
     resize(x,y);
     widget->attach(&get_point);
     widget->attach(&v);
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
             this, SLOT(get_new_object(CGAL::Object)));
     widget->set_window(0, 600, 0, 600);
   };
@@ -68,7 +68,7 @@ private slots:
   void get_new_object(CGAL::Object obj)
   {
     Point_2 p;
-    if (CGAL::assign(p, obj)) { 
+    if (CGAL::assign(p, obj)) {
       dt.insert(p);
     }
     widget->redraw();

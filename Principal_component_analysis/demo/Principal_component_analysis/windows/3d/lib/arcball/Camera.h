@@ -78,5 +78,3 @@ public :
 };
 
 #endif // _CAMERA_
-
-

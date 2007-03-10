@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau and Radu Ursu
 
@@ -57,7 +57,7 @@ public:
     for(int count=0; count<100; count++) {
       dt.insert(*g++);
     }
-    
+
     //How to attach the standard toolbar
     std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
 						       "Standard Toolbar");

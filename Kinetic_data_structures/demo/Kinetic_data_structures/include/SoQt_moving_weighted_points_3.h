@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
@@ -301,7 +301,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_coordinates()
       CGAL_assertion(n->isOfType(SoShapeKit::getClassTypeId()));
       SoShapeKit *sh= reinterpret_cast<SoShapeKit*>(n);
       SoTransform *tr= SO_GET_PART(sh, "localTransform", SoTransform);
-      tr->translation.setValue(CGAL::to_double(pt.point().x()), 
+      tr->translation.setValue(CGAL::to_double(pt.point().x()),
 			       CGAL::to_double(pt.point().y()),
 			       CGAL::to_double(pt.point().z()));
       SoSphere *sph= SO_GET_PART(sh, "shape", SoSphere);

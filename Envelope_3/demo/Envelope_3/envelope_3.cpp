@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -38,7 +38,7 @@ int main(int, char*){
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
-#include <CGAL/Random.h> 
+#include <CGAL/Random.h>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -48,17 +48,17 @@ int main(int, char*){
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
-#include <qmenudata.h> 
+#include <qmenudata.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qfiledialog.h>
-#include <qtimer.h> 
-#include <qstatusbar.h> 
+#include <qtimer.h>
+#include <qstatusbar.h>
 #include <qstring.h>
 #include <qiconset.h>
-#include <qpixmap.h> 
-#include <qpainter.h> 
-#include <qpushbutton.h> 
+#include <qpixmap.h>
+#include <qpainter.h>
+#include <qpushbutton.h>
 
 #include "typedefs.h"
 #include "icons/vertices.xpm"
@@ -78,7 +78,7 @@ const QString my_title_string("Envelopes of 3D surfaces");
 
 class Qt_layer_show_diag : public CGAL::Qt_widget_layer {
 public:
-    
+
     // default constructor
   Qt_layer_show_diag(){};
 
@@ -93,11 +93,11 @@ public:
       draw_arr(widget, sphere_diag, draw_v, draw_e, draw_f);
     else
       draw_arr(widget, plane_diag, draw_v, draw_e, draw_f);
-    
+
     widget->unlock(); // widget have to be unlocked when finished drawing
-  };    
-  
-};//end class 
+  };
+
+};//end class
 
 class Qt_layer_show_statitics : public CGAL::Qt_widget_layer
 {
@@ -131,7 +131,7 @@ public:
   }
 };
 
-/* The QMainWindow class provides a main application window, 
+/* The QMainWindow class provides a main application window,
  * with a menu bar, dock windows (e.g. for toolbars), and a status bar
  */
 class MyWindow : public QMainWindow {
@@ -139,19 +139,19 @@ class MyWindow : public QMainWindow {
 
 public:
   // constructor
-  MyWindow(int w, int h) 
+  MyWindow(int w, int h)
   {
     // Constructs a widget which is a child of this window
     widget = new CGAL::Qt_widget(this);
 
-    /* Sets the central widget for this main window to w. 
+    /* Sets the central widget for this main window to w.
      * The central widget is surrounded by the left, top, right and bottom
      * dock areas. The menu bar is above the top dock area
      */
     setCentralWidget(widget);
 
     curr_dir= QString::null;
-    
+
     // create a timer for checking if somthing changed
     // constructs a timer whose parent is this window
     QTimer *timer = new QTimer(this);
@@ -161,8 +161,8 @@ public:
     timer->start(200, FALSE);         // starts the timer with a timeout
 
     // file menu
-    QPopupMenu * file = new QPopupMenu(this); 
-    menuBar()->insertItem("&File", file);  
+    QPopupMenu * file = new QPopupMenu(this);
+    menuBar()->insertItem("&File", file);
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
@@ -175,7 +175,7 @@ public:
     file->insertItem("&Open Planes File", this, SLOT(open_planes_file()),
                      CTRL+Key_H);
     file->insertSeparator();
-    
+
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
@@ -199,14 +199,14 @@ public:
 
     QIconSet set1(QPixmap((const char**)edges), QPixmap((const char**)edges));
     QIconSet set2(QPixmap((const char**)faces), QPixmap((const char**)faces));
-    
+
     show_v_button = new QToolButton(show_toolbar, "Show Vertices");
     show_v_button->setToggleButton(TRUE);
     show_v_button->setTextLabel("Show Vertices ");
     connect(show_v_button,SIGNAL(pressed()),
             this, SLOT(show_v_pressed()));
     show_v_button->setIconSet(set0);
-    
+
 
     show_toolbar->addSeparator();
     show_e_button = new QToolButton(show_toolbar, "Show Edges");
@@ -214,7 +214,7 @@ public:
     show_e_button->setTextLabel("Show Edges ");
     connect(show_e_button,SIGNAL(pressed()), this, SLOT(show_e_pressed()));
     show_e_button->setIconSet(set1);
-    
+
     show_toolbar->addSeparator();
     show_f_button = new QToolButton(show_toolbar, "Show Faces");
     show_f_button->setToggleButton(TRUE);
@@ -222,16 +222,16 @@ public:
     show_f_button->setTextLabel("Show Faces ");
     connect(show_f_button,SIGNAL(pressed()), this, SLOT(show_f_pressed()));
     show_f_button->setIconSet(set2);
-    
+
     //layers
-    widget->attach(&testlayer); 
+    widget->attach(&testlayer);
     widget->attach(&show_stat_layer);
     *widget <<CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-    
+
     //application flag stuff
     old_state = 0;
   };
@@ -252,13 +252,13 @@ private:
                                              "Choose a file");
     if (s == QString::null) return false;
     curr_dir = s;
-      
+
     std::ifstream in_file(s);
     if (!in_file.is_open()) {
       QMessageBox::warning(widget,"Open","Can't open file");
       return false;
     }
-     
+
     QCursor old = widget->cursor();
     widget->setCursor(Qt::WaitCursor);
     widget->lock();
@@ -286,7 +286,7 @@ private:
       double x_max = CGAL::to_double(vit->point().x());
       double y_min = CGAL::to_double(vit->point().y());
       double y_max = CGAL::to_double(vit->point().y());
-      
+
       for (++vit; vit != arr.vertices_end(); ++vit) {
         double curr_x = CGAL::to_double(vit->point().x());
         double curr_y = CGAL::to_double(vit->point().y());
@@ -373,8 +373,8 @@ public slots:
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
         // set the Visible Area to the Interval
     widget->unlock();
-    
-    something_changed(); 
+
+    something_changed();
   }
 
   void clear_all_diags()
@@ -403,13 +403,13 @@ public slots:
   }
 
 private slots:
- 
+
 
   void about()
   {
     QMessageBox::about(this, my_title_string,
         "This is a demo for 3D envelopes of surfaces\n");
-          
+
   }
 
   void aboutQt()
@@ -421,7 +421,7 @@ private slots:
   {
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -445,8 +445,8 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }    
-  
+  }
+
 private:
   CGAL::Qt_widget*                     widget;
   CGAL::Qt_widget_standard_toolbar*    stoolbar;
@@ -476,7 +476,7 @@ int main(int argc, char **argv)
   draw_v = false;
   draw_e = false;
   draw_f = true;
-  return app.exec();   
+  return app.exec();
 }
 
 #endif // CGAL_USE_QT

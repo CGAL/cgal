@@ -74,5 +74,3 @@ public:
   afx_msg void OnFitFitpointset();
   afx_msg void OnFitTriangleset32899();
 };
-
-

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -31,7 +31,7 @@
 
 #include <qiconset.h>
 
-Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 			     Delaunay *t, Alpha_shape *a) :
   QToolBar(mw, "NT")
   {
@@ -45,7 +45,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
     pointbut.deactivate();
     movepointbut.deactivate();
 
-		
+
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
     QIconSet set1(QPixmap( (const char**)point_small_xpm ),
@@ -62,7 +62,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
   but[2] = new QToolButton(this, "move/delete layer");
   but[2]->setIconSet(set2);
   but[2]->setTextLabel("Move/Delete Point");
-  
+
   nr_of_buttons = 3;
 
   button_group = new QButtonGroup(0, "My_group");
@@ -71,7 +71,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
     but[i]->setToggleButton(true);
   }
   button_group->setExclusive(true);
-  
+
   connect(but[1], SIGNAL(stateChanged(int)),
         &pointbut, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),

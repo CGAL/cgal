@@ -17,13 +17,13 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
 
 #include <CGAL/basic.h>
- 
+
 #ifndef CGAL_USE_LEDA
 #include <iostream>
 int main() {

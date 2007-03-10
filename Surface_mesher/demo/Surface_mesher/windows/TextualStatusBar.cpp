@@ -33,11 +33,11 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CTextualStatusBar message handlers
 
-int CTextualStatusBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CTextualStatusBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if(CStatusBar::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	if(!m_wndToolTip.Create(this, TTS_ALWAYSTIP) ||
 		 !m_wndToolTip.AddTool(this, "Tool tip for status bar"))
 		AfxMessageBox("Unable to add tool tip for status bar");
@@ -45,19 +45,19 @@ int CTextualStatusBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CTextualStatusBar::OnDestroy() 
+void CTextualStatusBar::OnDestroy()
 {
 	m_wndToolTip.DestroyWindow();
 	CStatusBar::OnDestroy();
 }
 
-BOOL CTextualStatusBar::PreTranslateMessage(MSG* pMsg) 
+BOOL CTextualStatusBar::PreTranslateMessage(MSG* pMsg)
 {
 	m_wndToolTip.RelayEvent(pMsg);
 	return CStatusBar::PreTranslateMessage(pMsg);
 }
 
-UINT CTextualStatusBar::OnNcHitTest(CPoint point) 
+UINT CTextualStatusBar::OnNcHitTest(CPoint point)
 {
 	CStatusBarCtrl& statusBar = GetStatusBarCtrl();
   int i = -1;

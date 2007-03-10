@@ -13,10 +13,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
-// 
+//
 
 #include <CGAL/basic.h>
 

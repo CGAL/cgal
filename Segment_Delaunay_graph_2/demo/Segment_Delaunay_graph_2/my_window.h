@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -300,7 +300,7 @@ private:
 	       !sdg.is_infinite(fc->vertex(1)) &&
 	       !sdg.is_infinite(fc->vertex(2)) &&
 	       !sdg.is_infinite(vopp) ) {
-	    SDG_2::Geom_traits::Vertex_conflict_2 incircle = 
+	    SDG_2::Geom_traits::Vertex_conflict_2 incircle =
 	      sdg.geom_traits().vertex_conflict_2_object();
 	    std::cerr << "  vertices of face: " << std::endl;
 	    for (int i = 0; i < 3; i++) {
@@ -401,7 +401,7 @@ private slots:
     } else if ( input_mode == SDG_SEGMENT ) {
       Segment s;
 
-      if ( is_snap_mode ) {	
+      if ( is_snap_mode ) {
 	if( CGAL::assign(s, obj) ) {
 	  SDG_2::Vertex_handle v1, v2;
 	  v1 = sdg.nearest_neighbor(s.source());
@@ -448,7 +448,7 @@ private slots:
     {
       is_remove_mode = b;
 
-      if ( is_remove_mode ) {	
+      if ( is_remove_mode ) {
 	get_point.activate();
 	get_segment.deactivate();
 	get_polygon.deactivate();
@@ -537,7 +537,7 @@ private slots:
 	  p1 = p2;
         }
       }
-      
+
       if(bbox_empty) {
 	bbox = tbox;
 	bbox_empty = false;
@@ -670,7 +670,7 @@ private slots:
       }
       set_msg(qmsg);
       std::ofstream f(fileName);
-      assert(f);      
+      assert(f);
       f << sdg;
       qmsg = qmsg + " done!";
       set_msg(qmsg);

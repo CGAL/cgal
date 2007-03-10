@@ -26,7 +26,7 @@ void SketchSample::buildDisplayList(GLuint surf) {
     draw_point((*it)->P1);
   //next, ppal dirs and normal
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
-    {	
+    {
       glColor3f(0.,0.,1.);//dmax
       draw_vector((*it)->P1,(*it)->D1);
       glColor3f(1.0,0.0,0.);//dmin
@@ -34,22 +34,22 @@ void SketchSample::buildDisplayList(GLuint surf) {
       glColor3f(0.0,1.,.0);//normal
       Vector normal = CGAL::cross_product( (*it)->D1 ,(*it)->D2 )
 	/ CGAL::sqrt( ((*it)->D1) * ((*it)->D1) );
-      draw_vector((*it)->P1, normal) ;		
+      draw_vector((*it)->P1, normal) ;
     }
-  
+
   glEnable(GL_LIGHTING);
   glShadeModel(GL_SMOOTH);
 
   //mesh
-  //glMaterialfv is def in the mesh 
+  //glMaterialfv is def in the mesh
   p_mesh->gl_draw_facets(true);
   //additional objects that may be displayed
-//   p_mesh->gl_draw_vertices_normal(); 
+//   p_mesh->gl_draw_vertices_normal();
 //   p_mesh->gl_draw_edges();
 //   p_mesh->gl_draw_vertices();
 //   p_mesh->gl_draw_facets_normal();
 //   p_mesh->gl_draw_vertices_normal();
- 
+
   glEndList();
 }
 
@@ -129,12 +129,11 @@ void SketchSample::draw_vector(Point& P, Vector& V)
   glBegin(GL_LINES);
   glVertex3d(P.x()-V.x()/2.,P.y()-V.y()/2.,P.z()-V.z()/2.);
   glVertex3d(P.x()+V.x()/2.,P.y()+V.y()/2.,P.z()+V.z()/2.);
-  glEnd();	
-  
+  glEnd();
+
   glPointSize(3.0);
   glBegin(GL_POINTS);
-  glVertex3d(P.x()+V.x()/2.,P.y()+V.y()/2.,P.z()+V.z()/2.);		
+  glVertex3d(P.x()+V.x()/2.,P.y()+V.y()/2.,P.z()+V.z()/2.);
   glEnd();
   glPointSize(1.0);
 }
-

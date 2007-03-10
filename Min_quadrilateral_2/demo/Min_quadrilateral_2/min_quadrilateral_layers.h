@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -71,8 +71,8 @@ public:
     widget->unlock();
   }
 private:
-  std::list<Point>  *list_of_points;  
-};//end class 
+  std::list<Point>  *list_of_points;
+};//end class
 
 
 template <class R>
@@ -103,19 +103,19 @@ public:
 	pts.vertices_begin(), pts.vertices_end(), std::back_inserter(p));
 
       std::vector< Line > ll;
-      if (p.size() >= 2) 
+      if (p.size() >= 2)
 	CGAL::min_strip_2(
 	  p.vertices_begin(), p.vertices_end(), std::back_inserter(ll));
       *widget << CGAL::GREEN;
       for (typename std::vector<Line>::iterator it = ll.begin();
 	   it != ll.end(); ++it)
-	*widget << (*it);	    
+	*widget << (*it);
     widget->unlock();
 
   }
 private:
-  std::list<Point>  *list_of_points;  
-};//end class 
+  std::list<Point>  *list_of_points;
+};//end class
 
 
 template <class R>
@@ -144,23 +144,23 @@ public:
       Polygon p;
       CGAL::convex_hull_points_2(
 	pts.vertices_begin(), pts.vertices_end(), std::back_inserter(p));
-      
+
       Polygon kg;
       if (p.size() >= 3)
 	CGAL::min_rectangle_2(
 	  p.vertices_begin(), p.vertices_end(), std::back_inserter(kg));
-      
+
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(XorROP);
-      *widget << CGAL::FillColor(CGAL::BLUE);      
+      *widget << CGAL::FillColor(CGAL::BLUE);
       *widget << kg;
-      widget->setRasterOp(old);  
+      widget->setRasterOp(old);
     widget->unlock();
 
   }
 private:
-  std::list<Point>  *list_of_points;  
-};//end class 
+  std::list<Point>  *list_of_points;
+};//end class
 
 
 
@@ -169,7 +169,7 @@ class Qt_layer_show_points : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename R::Point_2	Point;
-  
+
   Qt_layer_show_points(std::list<Point> *pl){list_of_points = pl;};
 
   void draw()
@@ -184,7 +184,7 @@ public:
 	*widget << (*itp++);
       }
     widget->unlock();
-  };//end draw();	
+  };//end draw();
 private:
-  std::list<Point>  *list_of_points;  
-};//end class 
+  std::list<Point>  *list_of_points;
+};//end class

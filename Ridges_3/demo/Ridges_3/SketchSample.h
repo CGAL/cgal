@@ -12,7 +12,7 @@
 #include <CGAL/Ridges.h>
 //marc
 #include "visu_poly.h"
-#include "enriched_polyhedron.h" 
+#include "enriched_polyhedron.h"
 
 /* extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST,  */
 /*   BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST,  */
@@ -24,7 +24,7 @@ struct data_line{
   double strength, sharpness;
   std::vector<Point> ridge_points;
   data_line(int ridge_type, double strength, double sharpness,
-	    std::vector<Point> ridge_points): 
+	    std::vector<Point> ridge_points):
   ridge_type(ridge_type), strength(strength), sharpness(sharpness),
     ridge_points(ridge_points)
     {};
@@ -35,16 +35,16 @@ typedef std::list<data_line* >::iterator DS_iterator;
 
 
 class SketchSample : public Sketcher {
- private: 
+ private:
   bool highlight;
   Mesh* p_mesh;
   DS* p_ridge_data;
-  
- public: 
-  SketchSample(Mesh* mesh, DS* ridge_data);  
-  
+
+ public:
+  SketchSample(Mesh* mesh, DS* ridge_data);
+
   ~SketchSample();
-  
+
   void buildDisplayList(GLuint surf);
   void buildPicking(GLuint pickSurf);
   bool selectedColor(GLubyte red, GLubyte green, GLubyte blue);

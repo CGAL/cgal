@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -84,7 +84,7 @@ public:
         *widget << point;
     widget->unlock();
   };
-};//end class 
+};//end class
 
 
 class MyWindow : public QMainWindow
@@ -94,7 +94,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -138,10 +138,10 @@ public:
     //the polygon_toolbar
     pt = new Polygon_toolbar(widget, this);
 
-    *widget << CGAL::LineWidth(2) << CGAL::PointSize(6) 
+    *widget << CGAL::LineWidth(2) << CGAL::PointSize(6)
 	    <<CGAL::PointStyle(CGAL::DISC)
 	    << CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
@@ -163,7 +163,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -307,7 +307,7 @@ void show_info()
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -329,11 +329,11 @@ void show_info()
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void save_polygon()
   {
-    QString fileName = QFileDialog::getSaveFileName( 
+    QString fileName = QFileDialog::getSaveFileName(
 		"polygon.cgal", "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
       std::ofstream out(fileName);
@@ -377,7 +377,7 @@ main(int argc, char **argv)
   widget.setMouseTracking(TRUE);
 #if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
-  widget.setIcon(cgal_icon); 
+  widget.setIcon(cgal_icon);
 #endif
   widget.show();
   current_state = -1;

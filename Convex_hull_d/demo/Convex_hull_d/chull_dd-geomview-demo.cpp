@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -64,7 +64,7 @@ template <class R>
 void random_points_in_range(int n, int d,int l,int h,
                             std::list< CGAL::Point_d<R> >& L)
 { CGAL::Point_d<R> dummy;
-  for(int i = 0; i<n; ++i) 
+  for(int i = 0; i<n; ++i)
     L.push_back(random_point_in_range(d,l,h,dummy));
 }
 
@@ -73,29 +73,29 @@ typedef  CGAL::Point_3<Kernel_3> Point_3;
 typedef  CGAL::Polyhedron_3<Kernel_3> Polyhedron;
 
 int main(int argc, char* argv[]) {
-  int dimension = 3;  
-  int n = 100; 
+  int dimension = 3;
+  int n = 100;
   if (argc > 1 && std::string(argv[1])=="-h") {
     std::cout << "usage: chddemo [#points]\n";
     std::exit(1);
   }
   if (argc > 1) n = std::atoi(argv[1]);
- 
+
   int r = 2*n;
   CGAL::Geomview_stream gv(CGAL::Bbox_3(-r, -r, -r, r, r, r));
   gv.clear();
 
 
-  Convex_hull_d T(dimension);  
+  Convex_hull_d T(dimension);
   std::list<Point_d> L;
   random_points_in_range(n,dimension,-n,n,L);
-  int i(0);  
+  int i(0);
   std::list<Point_d>::iterator it;
   for(it = L.begin(); it!=L.end(); ++it) {
     T.insert(*it); i++;
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
-  T.is_valid(true); 
+  T.is_valid(true);
 
   Polyhedron P;
   CGAL::convex_hull_d_to_polyhedron_3(T,P);

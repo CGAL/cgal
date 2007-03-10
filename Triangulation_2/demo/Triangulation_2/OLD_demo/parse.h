@@ -1,4 +1,3 @@
-
 class Options {
 public:
     Options()

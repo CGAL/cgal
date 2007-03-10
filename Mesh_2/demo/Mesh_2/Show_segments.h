@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -71,7 +71,7 @@ public:
 
           widget->setColor(style()->getColor(color));
           widget->setLineWidth(style()->getInt(width));
-      
+
           for(iterator it = (cont->*_begin)();
               it!=(cont->*_end)();
               ++it)
@@ -90,7 +90,7 @@ private:
   C	*cont;
   iterator_function _begin;
   iterator_function _end;
-};//end class 
+};//end class
 
 } // namespace CGAL
 

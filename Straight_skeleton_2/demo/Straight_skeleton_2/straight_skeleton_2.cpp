@@ -76,9 +76,9 @@ int main(int, char*)
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
 {
-  std::cerr << "CGAL error: " << what << " violation!" << std::endl 
+  std::cerr << "CGAL error: " << what << " violation!" << std::endl
        << "Expr: " << expr << std::endl
-       << "File: " << file << std::endl 
+       << "File: " << file << std::endl
        << "Line: " << line << std::endl;
   if ( msg != 0)
       std::cerr << "Explanation:" << msg << std::endl;
@@ -168,19 +168,19 @@ public:
    Qt_layer_show_progress& progress = vtoolbar->get_progress_layer();
    if ( progress.is_active() )
    {
-     progress.add_figure( Qt_layer_show_progress::FigurePtr( new Qt_layer_show_progress::Bisector( Segment(s,t), c ) ) ) ; 
+     progress.add_figure( Qt_layer_show_progress::FigurePtr( new Qt_layer_show_progress::Bisector( Segment(s,t), c ) ) ) ;
      widget->redraw();
-   }  
+   }
  }
- 
+
  void draw_point ( Point const& v, CGAL::Color c )
  {
    Qt_layer_show_progress& progress = vtoolbar->get_progress_layer();
    if ( progress.is_active() )
    {
-     progress.add_figure( Qt_layer_show_progress::FigurePtr( new Qt_layer_show_progress::Vertex(v, c) ) ) ; 
+     progress.add_figure( Qt_layer_show_progress::FigurePtr( new Qt_layer_show_progress::Vertex(v, c) ) ) ;
      widget->redraw();
-   }  
+   }
  }
 
 private:
@@ -232,7 +232,7 @@ private slots:
         lCgalPoly.reverse_orientation();
 
       lRegion->push_back( PolygonPtr( new Polygon(lCgalPoly.vertices_begin(),lCgalPoly.vertices_end()) ) ) ;
-      
+
       input.push_back(lRegion);
     }
     widget->redraw();
@@ -244,7 +244,7 @@ private slots:
     if ( input.size() > 0 )
     {
       vtoolbar->get_progress_layer().clear();
-      
+
       Region const& lRegion = *input.front();
 
       SSkelBuilder builder ;
@@ -269,7 +269,7 @@ private slots:
       if ( lRegion.size() > 0 )
       {
         Polygon const& lOuter = *lRegion.front() ;
-        
+
         Doubles::iterator last = offsets.end() ;
         double lMaxOffset = offsets.size() > 0 ? *--last : 10.0 ;
 
@@ -277,18 +277,18 @@ private slots:
         if ( lMargin )
         {
           CGAL::Bbox_2 lBbox = CGAL::bbox_2(lOuter.begin(),lOuter.end());
-          
+
           double flx = lBbox.xmin() - *lMargin ;
           double fhx = lBbox.xmax() + *lMargin ;
           double fly = lBbox.ymin() - *lMargin ;
           double fhy = lBbox.ymax() + *lMargin ;
-          
+
           Point lFrame[4]= { Point(flx,fly)
                            , Point(fhx,fly)
                            , Point(fhx,fhy)
                            , Point(flx,fhy)
                            } ;
-                             
+
           vtoolbar->get_progress_layer().clear();
           SSkelBuilder builder ;
           builder.enter_contour(lFrame,lFrame+4);
@@ -297,13 +297,13 @@ private slots:
           sskel_valid = sskel ;
           if ( !sskel_valid )
             QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
-          
+
           widget->redraw();
           something_changed();
         }
         else
           QMessageBox::critical( this, my_title_string,"This polygon has a very sharp vertex. Unable to create outer straight skeleton." );
-        
+
       }
     }
   }
@@ -490,13 +490,13 @@ private slots:
                 offsets.insert(c*m);
             }
           }
-          
+
           CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-          
+
           double area = CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K());
-          
+
           CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
-          
+
           if ( orientation == expected )
                lRegion->push_back(lPoly);
           else lRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
@@ -507,9 +507,9 @@ private slots:
     }
 
     sskel = SSkelPtr() ;
-    
+
     vtoolbar->get_progress_layer().clear();
-    
+
     output.clear();
     widget->redraw();
     something_changed();
@@ -532,19 +532,19 @@ demo::MyWindow* mainwin = 0 ;
 namespace demo
 {
 
-void draw_segment( Point const& s, Point const& t, CGAL::Color c ) 
+void draw_segment( Point const& s, Point const& t, CGAL::Color c )
 {
   if ( mainwin )
-    mainwin->draw_segment(s,t,c);  
+    mainwin->draw_segment(s,t,c);
 }
 
-void draw_point( Point const& v, CGAL::Color c ) 
+void draw_point( Point const& v, CGAL::Color c )
 {
   if ( mainwin )
-    mainwin->draw_point(v,c);  
+    mainwin->draw_point(v,c);
 }
 
-void wait_on_user() 
+void wait_on_user()
 {
 }
 
@@ -560,18 +560,18 @@ main(int argc, char **argv)
   CGAL::set_warning_handler(error_handler);
 
   mainwin = new demo::MyWindow(500,500);
-  
+
   app.setMainWidget(mainwin);
   mainwin->setCaption(demo::my_title_string);
   mainwin->setMouseTracking(TRUE);
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   mainwin->setIcon(cgal_icon);
   mainwin->show();
-  
+
   int r = app.exec();
-  
+
   delete mainwin ;
-  
+
   return r;
 }
 

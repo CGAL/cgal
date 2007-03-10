@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -88,7 +88,7 @@ class Apollonius_diagram_halfedge_2
     if ( is_conflict ) {
       int ccw_i = (e_.second + 1) % 3;
       int cw_i  = (e_.second + 2) % 3;
-      typename Geom_traits::Construct_Apollonius_vertex_2 cvertex = 
+      typename Geom_traits::Construct_Apollonius_vertex_2 cvertex =
 	Geom_traits().construct_Apollonius_vertex_2_object();
       if ( inf_ == 0 ) {
 	Point_2 c1 = cvertex(e_.first->vertex(ccw_i)->site(),

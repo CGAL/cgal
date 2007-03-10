@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
@@ -40,7 +40,7 @@ int main()
 #include <iostream>
 
 // exact constructions (circumcenter computations) are needed in this
-// demo, not only predicates 
+// demo, not only predicates
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_3<K>                 Vb;
@@ -62,7 +62,7 @@ int main()
   std::cout <<"          Inserting points" << std::endl ;
   for (int z=0 ; z<3 ; z++)
     for (int y=0 ; y<3 ; y++)
-      for (int x=0 ; x<3 ; x++) 
+      for (int x=0 ; x<3 ; x++)
 	  T.insert(Point(x, y, z));
 
   T.is_valid(true);

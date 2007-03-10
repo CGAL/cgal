@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     :Radu Ursu
 
@@ -69,7 +69,7 @@ typedef CGAL::Cartesian<Coord_type>     Rep;
 typedef Rep::Point_2                    Point_2;
 typedef Rep::Segment_2                  Segment;
 typedef CGAL::Creator_uniform_2<double,Point_2>
-                                        Creator; 
+                                        Creator;
 
 //global flags and variables
 int current_state;
@@ -82,7 +82,7 @@ const QString my_title_string("Generator Demo with"
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
-	
+
   Qt_layer_show_ch(){};
 
   void draw()
@@ -102,9 +102,9 @@ public:
         *widget << (*its++);
       }
     widget->unlock();
-  };	
-  
-};//end class 
+  };
+
+};//end class
 
 class MyWindow : public QMainWindow
 {
@@ -113,7 +113,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -160,13 +160,13 @@ public:
 
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
-  
+
     *widget << CGAL::LineWidth(1) << CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-	
+
     //application flag stuff
     old_state = 0;
 
@@ -176,7 +176,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -228,11 +228,11 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void in_square(){
     //stoolbar->clear_history();
-    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
     CGAL::Random_points_in_square_2<Point_2> g(1);
     for(int count=0; count<200; count++) {
@@ -244,7 +244,7 @@ private slots:
   void in_disc()
   {
     //stoolbar->clear_history();
-    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
 
     CGAL::Random_points_in_disc_2<Point_2> g(1);
@@ -253,12 +253,12 @@ private slots:
     }
     something_changed();
   }
-	
+
 
   void on_square()
   {
     //stoolbar->clear_history();
-    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
 
     CGAL::Random_points_on_square_2<Point_2> g(1);
@@ -271,11 +271,11 @@ private slots:
   void on_square_grid()
   {
     //    stoolbar->clear_history();
-    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
 
-    CGAL::points_on_square_grid_2(2, 100, 
-				  std::back_inserter(list_of_points), 
+    CGAL::points_on_square_grid_2(2, 100,
+				  std::back_inserter(list_of_points),
 				  Creator());
 
     something_changed();
@@ -284,7 +284,7 @@ private slots:
   void on_circle()
   {
     //stoolbar->clear_history();
-    //widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    //widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
 
     CGAL::Random_points_on_circle_2<Point_2> g(0.7);
@@ -293,7 +293,7 @@ private slots:
     }
     something_changed();
   }
-	
+
 
 
   void segments()

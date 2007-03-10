@@ -12,9 +12,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -58,7 +58,7 @@
 #include <vector>
 
 // INCLUDES D'OPENGL
-//#include <GL/glut.h> // Header File For The GLUT Library 
+//#include <GL/glut.h> // Header File For The GLUT Library
 #include <GL/gl.h> // Header File For The OpenGL32 Library
 #include <GL/glu.h> // Header File For The GLu32 Library
 
@@ -121,8 +121,8 @@ class MyGLDrawer : public QGLWidget {
 			// creation de la liste openGL
 			if (this->list_cercle != 0) glDeleteLists(this->list_cercle, 1);
 			this->list_cercle = glGenLists(1);
-			//On cree une liste dans laquelle on met l'objet 3ds 
-			//On cree une liste dans laquelle on met l'objet 3ds 
+			//On cree une liste dans laquelle on met l'objet 3ds
+			//On cree une liste dans laquelle on met l'objet 3ds
 			glNewList(this->list_cercle, GL_COMPILE);
 			for (std::size_t i = 0; i < this->cercles.size(); i++) {
 			  CGAL::dessiner_spherical_circle<SK>(this->cercles[i].first, this->cercles[i].second);
@@ -387,5 +387,3 @@ class MyWindow : public QMainWindow {
 		float x, y, z, rx, ry, rz; //coordinate of camera
 
 };
-
-

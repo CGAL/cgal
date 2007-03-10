@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -33,7 +33,7 @@
 /*! open a segment file and add new tab */
 void MyWindow::fileOpenSegment()
 {
-  Qt_widget_base_tab *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == SEGMENT_TRAITS);
   if( w_demo_p->is_empty() ) // pm is empty
@@ -45,14 +45,14 @@ void MyWindow::fileOpenSegment()
   {
     FileOpenOptionsForm
          *form = new FileOpenOptionsForm(flag);
-    if ( form->exec() ) 
+    if ( form->exec() )
     {
         int id = form->buttonGroup->id(form->buttonGroup->selected());
-		switch ( id ) 
+		switch ( id )
 		{
           case 0: // open file in a new tab
             add_segment_tab();
-            fileOpen();      
+            fileOpen();
             break;
           case 1: // open file in current tab (delete current Pm)
             updateTraitsType( setSegmentTraits );
@@ -69,10 +69,10 @@ void MyWindow::fileOpenSegment()
 /*! open a segment file and add new tab */
 void MyWindow::fileOpenSegmentPm()
 {
-  Qt_widget_base_tab *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   if( w_demo_p->is_empty() ) // pm is empty
-  {    
+  {
     updateTraitsType( setSegmentTraits );
     fileOpenPm();
   }
@@ -80,19 +80,19 @@ void MyWindow::fileOpenSegmentPm()
   {
     FileOpenOptionsForm
          *form = new FileOpenOptionsForm(false);
-    if ( form->exec() ) 
+    if ( form->exec() )
     {
         int id = form->buttonGroup->id(form->buttonGroup->selected());
-		switch ( id ) 
+		switch ( id )
 		{
           case 0: // open file in a new tab
             add_segment_tab();
-            fileOpenPm();      
+            fileOpenPm();
             break;
           case 1: // open file in current tab (delete current Pm)
             updateTraitsType( setSegmentTraits );
             fileOpenPm();
-          break;          
+          break;
 		}// switch
 	}// if
   }
@@ -101,25 +101,25 @@ void MyWindow::fileOpenSegmentPm()
 /*! open a polyline file and add new tab */
 void MyWindow::fileOpenPolyline()
 {
-  Qt_widget_base_tab *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == POLYLINE_TRAITS);
   if( w_demo_p->is_empty() ) // pm is empty
-  {    
+  {
     updateTraitsType( setPolylineTraits );
-    fileOpen(true);	
+    fileOpen(true);
   }
   else
   {
     FileOpenOptionsForm *form = new FileOpenOptionsForm(flag);
-    if ( form->exec() ) 
+    if ( form->exec() )
     {
       int id = form->buttonGroup->id(form->buttonGroup->selected());
-      switch ( id ) 
+      switch ( id )
       {
        case 0: // open file in a new tab
         add_polyline_tab();
-        fileOpen();      
+        fileOpen();
         break;
        case 1: // open file in current tab (delete current Pm)
         updateTraitsType( setPolylineTraits );
@@ -130,13 +130,13 @@ void MyWindow::fileOpenPolyline()
         break;
       }// switch
     }// if
-  } 
+  }
 }// fileOpenPolyline
 
 /*! open a polyline file and add new tab */
 void MyWindow::fileOpenPolylinePm()
 {
-  Qt_widget_base_tab *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   if( w_demo_p->is_empty() ) // pm is empty
   {
@@ -146,19 +146,19 @@ void MyWindow::fileOpenPolylinePm()
   else
   {
     FileOpenOptionsForm * form = new FileOpenOptionsForm(false);
-    if ( form->exec() ) 
+    if ( form->exec() )
     {
       int id = form->buttonGroup->id(form->buttonGroup->selected());
-      switch ( id ) 
+      switch ( id )
       {
        case 0: // open file in a new tab
         add_polyline_tab();
-        fileOpenPm();      
+        fileOpenPm();
         break;
        case 1: // open file in current tab (delete current Pm)
         updateTraitsType( setPolylineTraits );
         fileOpenPm();
-        break;          
+        break;
       }// switch
     }// if
   }
@@ -167,7 +167,7 @@ void MyWindow::fileOpenPolylinePm()
 /*! open a polyline file and add new tab */
 void MyWindow::fileOpenConic()
 {
-  Qt_widget_base_tab *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == CONIC_TRAITS);
   if( w_demo_p->is_empty() ) // pm is empty
@@ -178,14 +178,14 @@ void MyWindow::fileOpenConic()
   else
   {
     FileOpenOptionsForm * form = new FileOpenOptionsForm(flag);
-    if ( form->exec() ) 
+    if ( form->exec() )
     {
       int id = form->buttonGroup->id(form->buttonGroup->selected());
-      switch ( id ) 
+      switch ( id )
       {
        case 0: // open file in a new tab
         add_conic_tab();
-        fileOpen();      
+        fileOpen();
         break;
        case 1: // open file in current tab (delete current Pm)
         updateTraitsType( setConicTraits );
@@ -196,13 +196,13 @@ void MyWindow::fileOpenConic()
         break;
       }// switch
     }// if
-  }// else  
+  }// else
 }// fileOpenConic
 
 /*! open a file */
 void MyWindow::fileOpen( bool clear_flag )
 {
-  
+
   QString filename =
     QFileDialog::getOpenFileName(QString::null, 0, this,
                                  "file open", "Demo -- File Open" );
@@ -217,7 +217,7 @@ void MyWindow::fileOpen( bool clear_flag )
 
 /*! open a Pm file */
 void MyWindow::fileOpenPm()
-{  
+{
   QString filename =
     QFileDialog::getOpenFileName(QString::null, 0, this,
                                  "file open", "Demo -- File Open" );
@@ -233,8 +233,8 @@ void MyWindow::fileOpenPm()
     std::cout << "Error opening input file" << std::endl;
     return;
   }
- 
-  Qt_widget_base_tab    *w_demo_p1 = 
+
+  Qt_widget_base_tab    *w_demo_p1 =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   QCursor old = w_demo_p1->cursor();
@@ -243,36 +243,36 @@ void MyWindow::fileOpenPm()
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->currentPage());
       inputFile >> (*w_demo_p->m_curves_arr);
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
     {
-      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
        (myBar->currentPage());
      inputFile >> (*w_demo_p->m_curves_arr);
 	   break;
     }
    case CONIC_TRAITS: // dosen't work !!
     {
-      /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+      /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->currentPage());
      inputFile >> (*w_demo_p->m_curves_arr);*/
      break;
     }
-  }  
-  
+  }
+
   inputFile.close();
 
-  
-  w_demo_p1->set_window(w_demo_p1->bbox.xmin() , w_demo_p1->bbox.xmax() , 
+
+  w_demo_p1->set_window(w_demo_p1->bbox.xmin() , w_demo_p1->bbox.xmax() ,
                      w_demo_p1->bbox.ymin() , w_demo_p1->bbox.ymax());
-  
+
   inputFile.close();
   w_demo_p1->setCursor(old);
   updateMode( dragMode );
@@ -282,7 +282,7 @@ void MyWindow::fileOpenPm()
   statusBar()->message( QString( "Opened \'%1\'" ).arg( m_filename ), 2000 );
 
 }
-/*! open a polyline or conic file 
+/*! open a polyline or conic file
  * \param filename - name of the file
  */
 void MyWindow::load( const QString& filename , bool clear_flag )
@@ -294,17 +294,17 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     std::cout << "Error opening input file" << std::endl;
     return;
   }
-  
-  Qt_widget_base_tab    *w_demo = 
+
+  Qt_widget_base_tab    *w_demo =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   QCursor old = w_demo->cursor();
   w_demo->setCursor(Qt::WaitCursor);
-   
+
   if (w_demo->traits_type == CONIC_TRAITS)
   {
-    Qt_widget_demo_tab<Conic_tab_traits>    *w_demo_p = 
-      static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+    Qt_widget_demo_tab<Conic_tab_traits>    *w_demo_p =
+      static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
       (myBar->currentPage());
     if (clear_flag)
         w_demo_p->m_curves_arr->clear();
@@ -314,24 +314,24 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
     CGAL::insert_curves (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
   }
-  
+
   else if (w_demo->traits_type == POLYLINE_TRAITS)
   {
-    Qt_widget_demo_tab<Polyline_tab_traits>    *w_demo_p = 
-      static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+    Qt_widget_demo_tab<Polyline_tab_traits>    *w_demo_p =
+      static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
       (myBar->currentPage());
     if (clear_flag)
       w_demo_p->m_curves_arr->clear();
-    
+
     int num_polylines, num_segments;
     int ix, iy;
     std::vector<Arr_pol_point_2> points;
     int i, j;
-    
-    inputFile >> num_polylines; 
+
+    inputFile >> num_polylines;
     std::list<Arr_pol_2> pol_list;
 
-    for (i = 0; i < num_polylines; i++) 
+    for (i = 0; i < num_polylines; i++)
     {
       inputFile >> num_segments;
       points.clear();
@@ -342,26 +342,26 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       }
 
       Arr_pol_2 curve (points.begin(), points.end());
- 	
+
       CGAL::Bbox_2 curve_bbox = curve.bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
-      
+
       pol_list.push_back(curve);
     }
     CGAL::insert_curves(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
   }
-  
+
   else if (w_demo->traits_type == SEGMENT_TRAITS)
   {
-    Qt_widget_demo_tab<Segment_tab_traits>    *w_demo_p = 
-      static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+    Qt_widget_demo_tab<Segment_tab_traits>    *w_demo_p =
+      static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
       (myBar->currentPage());
     if (clear_flag)
         w_demo_p->m_curves_arr->clear();
-    
+
     int count;
     inputFile >> count;
     int i;
@@ -369,33 +369,33 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     for (i = 0; i < count; i++) {
       NT x0, y0, x1, y1;
       inputFile >> x0 >> y0 >> x1 >> y1;
-    
+
       Arr_seg_point_2 p1(x0, y0);
       Arr_seg_point_2 p2(x1, y1);
 
 	  Arr_seg_2 curve(p1, p2);
-	
+
       CGAL::Bbox_2 curve_bbox = curve.bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
-      
+
       seg_list.push_back(curve);
     }
-    
+
     CGAL::insert_curves(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
   }
-  w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 
+  w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() ,
                      w_demo->bbox.ymin() , w_demo->bbox.ymax());
-  
+
   inputFile.close();
   w_demo->setCursor(old);
-  
+
   something_changed();
 }
 
-/*! read a conic curve 
+/*! read a conic curve
  * \param is - input file stream
  * \param cv - will hold the reading curve
  */
@@ -403,27 +403,27 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
 {
   // Read a line from the input file.
   char one_line[128];
-      
+
   skip_comments (is, one_line);
   std::istringstream str_line (one_line);
-      
+
   // Read the arc type and act accordingly.
   char     type;
-      
+
   str_line >> type;
-      
+
   if (type == 's' || type == 'S')
   {
     // Construct a line segment. The line should have the format:
     //   s <x1> <y1> <x2> <y2>
     // where (x1, y1), (x2, y2) are the endpoints of a segment.
     Rational    x1, y1, x2, y2;
-    
+
     str_line >> x1 >> y1 >> x2 >> y2;
-    
+
     Rat_point_2   p1(x1, y1), p2(x2, y2);
     Rat_segment_2 seg (p1, p2);
-    
+
     cv = Arr_conic_2 (seg);
   }
   else if (type == 'c' || type == 'C')
@@ -433,12 +433,12 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
     // where (x0, y0) is the center of the circle and R_sq is its squared
     // radius.
     Rational    x0, y0, R_sq;
-    
+
     str_line >> x0 >> y0 >> R_sq;
-    
+
     Rat_point_2   p0(x0, y0);
     Rat_circle_2  circ(p0, R_sq);
-    
+
     cv = Arr_conic_2 (circ);
   }
   else if (type == 't' || type == 'T')
@@ -447,9 +447,9 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
     //   t <x1> <y1> <x2> <y2> <x3> <y3>
     // where (x1, y1), (x2, y2) and (x3, y3) define the arc.
     Rational    x1, y1, x2, y2, x3, y3;
-    
+
     str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
-    
+
     Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
 
     cv = Arr_conic_2 (p1, p2, p3);
@@ -462,7 +462,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
     Rational    r, s, t, u, v, w;
 
     str_line >> r >> s >> t >> u >> v >> w;
-    
+
     cv = Arr_conic_2 (r, s, t, u, v, w);
   }
   else if (type == 'a' || type == 'A')
@@ -472,7 +472,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
     // where r, s, t, u, v, w define the conic equation, while (x1, y1)
     // and (x2, y2) are the arc's endpoints.
     Rational    r, s, t, u, v, w;
-    
+
     str_line >> r >> s >> t >> u >> v >> w;
 
     // Read the orientation.
@@ -488,21 +488,21 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
       orient = CGAL::COLLINEAR;
 
     // Read the end points of the arc and create it.
-    // Notice we read the coordinates as strings, then we convert them to 
+    // Notice we read the coordinates as strings, then we convert them to
     // the Algebraic type, as we do not want to initialize Algebraic from a double.
     char    num[50];
     Algebraic    x1, y1, x2, y2;
-      
+
     str_line >> num;
     x1 = Algebraic(num);
     str_line >> num;
     y1 = Algebraic(num);
-    
+
     str_line >> num;
     x2 = Algebraic(num);
     str_line >> num;
     y2 = Algebraic(num);
-    
+
     Arr_conic_point_2 ps (x1, y1);
     Arr_conic_point_2 pt (x2, y2);
 
@@ -516,9 +516,9 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
     // a line that intersects it.
     Rational    r, s, t, u, v, w;
     Rational    a, b, c;
-    
+
     str_line >> r >> s >> t >> u >> v >> w >> a >> b >> c;
-    
+
     Rat_line_2    line (a, b, c);
 
   }
@@ -526,14 +526,14 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
   {
     // Construct a circular arc. The line should have the format:
     //   t <x1> <y1> <x2> <y2> <x3> <y3> <x4> <y4> <x5> <y5>
-    // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the 
+    // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the
     // arc.
     Rational    x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
 
     str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4 >> x5 >> y5;
 
     Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
-    
+
     cv = Arr_conic_2 (p1, p2, p3, p4, p5);
   }
   else
@@ -565,7 +565,7 @@ void MyWindow::fileSaveAs()
   QString filename =
     QFileDialog::getSaveFileName(QString::null, "Arrangement (*.arr)", this,
                                  "file save as", "Arrangement -- File Save As");
-  if ( !filename.isEmpty() ) 
+  if ( !filename.isEmpty() )
   {
     int answer = 0;
     if ( QFile::exists( filename ) )
@@ -574,7 +574,7 @@ void MyWindow::fileSaveAs()
                                     QString( "Overwrite\n\'%1\'?" ).
                                     arg( filename ),
                                     "&Yes", "&No", QString::null, 1, 1 );
-    if ( answer == 0 ) 
+    if ( answer == 0 )
     {
       m_filename = filename;
       //updateRecentFiles( filename );
@@ -592,7 +592,7 @@ void MyWindow::fileSave()
     fileSaveAs();
     return;
   }
-  
+
   std::ofstream outFile(m_filename);
   // Creates an ofstream object named outFile
   if (! outFile.is_open()) // Always test file open
@@ -600,39 +600,39 @@ void MyWindow::fileSave()
     std::cout << "Error opening input file" << std::endl;
     return;
   }
-  
-  Qt_widget_base_tab    *w_demo_p1 = 
+
+  Qt_widget_base_tab    *w_demo_p1 =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->currentPage());
      outFile << (*w_demo_p->m_curves_arr);
      break;
     }
    case POLYLINE_TRAITS:
     {
-      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
        (myBar->currentPage());
       outFile << (*w_demo_p->m_curves_arr);
      break;
     }
    case CONIC_TRAITS:
     {
-      /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+      /*Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->currentPage());
       outFile << (*w_demo_p->m_curves_arr);*/
      break;
     }
-  }  
-  
+  }
+
   outFile.close();
-  
+
   setCaption( QString( "Arrangement -- %1" ).arg( m_filename ) );
   statusBar()->message( QString( "Saved \'%1\'" ).arg( m_filename ), 2000 );
 }
@@ -641,15 +641,15 @@ void MyWindow::fileSave()
 void MyWindow::fileSave_ps()
 {
 #if 0
-  
-  Qt_widget_base_tab    *w_demo_p1 = 
+
+  Qt_widget_base_tab    *w_demo_p1 =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->currentPage());
      // Print to Postscript file:
      CGAL::Postscript_file_stream  LPF(m_width, m_height ,"pm.ps");
@@ -660,21 +660,21 @@ void MyWindow::fileSave_ps()
     }
    case POLYLINE_TRAITS:
     {
-     //Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
-     //static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+     //Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+     //static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
      //  (myBar->currentPage());
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
    case CONIC_TRAITS:
     {
-     //Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
-     //static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+     //Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+     //static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
       // (myBar->currentPage());
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
-  }  
+  }
 #endif
 }
 

@@ -6,7 +6,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 //marc
-#include "enriched_polyhedron.h" 
+#include "enriched_polyhedron.h"
 
 typedef  CGAL::Cartesian<double>               Kernel;
 typedef  Kernel::Point_3                       Point;

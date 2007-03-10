@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -89,7 +89,7 @@ Coord_type        xmin, ymin, xmax, ymax;
 class Layout_widget : public QWidget{
 public:
   Layout_widget(QWidget *parent, const char *name=0):
-      QWidget(parent, name) {    
+      QWidget(parent, name) {
     QBoxLayout *topLayout = new QVBoxLayout( this, 5);
     QBoxLayout *topLayout1 = new QHBoxLayout( topLayout, 5);
     slider = new QSlider(0, 10000, 1, 10, Qt::Vertical, this, "slider1");
@@ -136,12 +136,12 @@ public:
   file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
   file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
   file->insertSeparator();
-  file->insertItem("&Load Triangulation", this, 
+  file->insertItem("&Load Triangulation", this,
 		   SLOT(load_triangulation()), CTRL+Key_L);
-  file->insertItem("&Save Triangulation", 
+  file->insertItem("&Save Triangulation",
 		   this, SLOT(save_triangulation()), CTRL+Key_S);
   file->insertSeparator();
-  file->insertItem("&Load Image", 
+  file->insertItem("&Load Image",
 		   this, SLOT(load_image()), CTRL+Key_I);
   file->insertSeparator();
   file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
@@ -152,13 +152,13 @@ public:
   // drawing menu
   QPopupMenu * edit = new QPopupMenu( this );
   menuBar()->insertItem( "&Edit", edit );
-  edit->insertItem("&Generate Triangulation", this, 
+  edit->insertItem("&Generate Triangulation", this,
 		   SLOT(gen_tr()), CTRL+Key_G );
-  edit->insertItem("&Change Alpha", this, 
+  edit->insertItem("&Change Alpha", this,
 		   SLOT(change_alpha()), CTRL+Key_C );
-  edit->insertItem("C&rust", this, 
+  edit->insertItem("C&rust", this,
 		   SLOT(show_crust()), CTRL+Key_R );
-  edit->insertItem("&Weighted Alpha Shape", this, 
+  edit->insertItem("&Weighted Alpha Shape", this,
 		   SLOT(show_weighted()), CTRL+Key_B);
 
   // help menu
@@ -172,7 +172,7 @@ public:
   //the standard toolbar
   stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
   //the new input layers toolbar
-  newtoolbar = new Tools_toolbar(widget, this, &tr1, &A);	
+  newtoolbar = new Tools_toolbar(widget, this, &tr1, &A);
   //the new drawing layers toolbar
   vtoolbar = new Layers_toolbar(widget, this, &tr1, &A, &image);
 
@@ -180,10 +180,10 @@ public:
 
   resize(w,h);
   widget->set_window(-1, 1, -1, 1);
-  widget->setMouseTracking(TRUE);  
+  widget->setMouseTracking(TRUE);
 
   //connect the widget to the main function that receives the objects
-  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
     this, SLOT(get_new_object(CGAL::Object)));
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(slider_changed(int)));
 
@@ -197,7 +197,7 @@ public:
   ~MyWindow()
   {
   };
-  
+
   void  init_coordinates(){
     xmin = -1; xmax = 1;
     ymin = -1; ymax = 1;
@@ -205,7 +205,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -215,7 +215,7 @@ public slots:
     A.clear();AW.clear();
     L.clear();LW.clear();
     stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
     widget->unlock();
     something_changed();
@@ -283,7 +283,7 @@ private slots:
       AW.make_alpha_shape(LW.begin(), LW.end());
       A.set_alpha(alpha_index);
       something_changed();
-    } 
+    }
   };
 
   void about()
@@ -326,14 +326,14 @@ private slots:
 
   void change_alpha() {
     bool ok = FALSE;
-    double result = QInputDialog::getDouble( 
+    double result = QInputDialog::getDouble(
 		 tr( "Please enter a decimal number" ),
 		 "alpha > 0:", alpha_index, 0, 2147483647, 4, &ok, this );
     if ( ok ){
       alpha_index = result;
       if(mult < result)
         mult = result;
-      slider->setValue(static_cast<int>(result*10000/mult));	
+      slider->setValue(static_cast<int>(result*10000/mult));
       A.set_alpha(alpha_index);
       label->setText(QString("The current alpha value: ") +
 		   QString::number(alpha_index));
@@ -347,7 +347,7 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void gen_tr()
   {
@@ -407,17 +407,17 @@ private slots:
     A.make_alpha_shape(L.begin(), L.end());
     AW.make_alpha_shape(LW.begin(), LW.end());
     A.set_alpha(alpha_index);
-    something_changed();    
+    something_changed();
   }
   void save_triangulation()
   {
-    QString fileName = 
-      QFileDialog::getSaveFileName( "triangulation.cgal", 
+    QString fileName =
+      QFileDialog::getSaveFileName( "triangulation.cgal",
 				    "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
       std::ofstream out(fileName);
       CGAL::set_ascii_mode(out);
-      out << tr1 << std::endl;    
+      out << tr1 << std::endl;
     }
   }
 
@@ -462,11 +462,11 @@ private slots:
     A.set_alpha(alpha_index);
     A.set_mode(Alpha_shape::GENERAL);
     something_changed();
-    //widget->redraw();   
+    //widget->redraw();
   }
 
 private:
-  CGAL::Qt_widget         *widget;		
+  CGAL::Qt_widget         *widget;
   CGAL::Qt_widget_standard_toolbar
                           *stoolbar;
   Tools_toolbar           *newtoolbar;

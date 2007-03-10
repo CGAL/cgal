@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
@@ -36,7 +36,7 @@ class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Tools_toolbar(CGAL::Qt_widget * w, QMainWindow * mw, 
+  Tools_toolbar(CGAL::Qt_widget * w, QMainWindow * mw,
     std::list<Segment_2> * l1);
   ~Tools_toolbar(){};
 

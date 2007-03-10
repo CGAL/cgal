@@ -20,7 +20,7 @@ SketchSample::~SketchSample() {
 
 void SketchSample::buildDisplayList(GLuint surf) {
   glNewList(surf, GL_COMPILE);
-  
+
   glEnable(GL_LIGHTING);
   glShadeModel(GL_SMOOTH);
   //glShadeModel(GL_FLAT);
@@ -33,19 +33,19 @@ void SketchSample::buildDisplayList(GLuint surf) {
 
   for (DS_iterator it=p_ridge_data->begin();it!=p_ridge_data->end();it++)
     {
-      if ( (*it)->strength >= strength_threshold && 
+      if ( (*it)->strength >= strength_threshold &&
 	   (*it)->sharpness >= sharpness_threshold )
 	draw_one_ridge(*it);
      }
   glEnable(GL_LIGHTING);
 
   //additional objects that may be displayed
-//   p_mesh->gl_draw_vertices_normal(); 
+//   p_mesh->gl_draw_vertices_normal();
 //   p_mesh->gl_draw_edges();
 //   p_mesh->gl_draw_vertices();
 //   p_mesh->gl_draw_facets_normal();
 //   p_mesh->gl_draw_vertices_normal();
- 
+
   glEndList();
 }
 
@@ -57,14 +57,14 @@ void SketchSample::draw_one_ridge(data_line* line)
   if (line->ridge_type == CGAL::MIN_ELLIPTIC_RIDGE)    glColor3f(1.,0.,0.);
   if (line->ridge_type == CGAL::MIN_HYPERBOLIC_RIDGE)  glColor3f(1.,1.,0.);
   if (line->ridge_type == CGAL::MIN_CREST_RIDGE)             glColor3f(1.,0.,0.);
-  
-  std::vector<Point>::iterator iter = line->ridge_points.begin(), 
+
+  std::vector<Point>::iterator iter = line->ridge_points.begin(),
     ite = line->ridge_points.end();
 
   glLineWidth(3 );
   glBegin(GL_LINE_STRIP);
-  for (;iter!=ite;iter++)  glVertex3d(iter->x(), iter->y(), iter->z()); 
-  glEnd();	
+  for (;iter!=ite;iter++)  glVertex3d(iter->x(), iter->y(), iter->z());
+  glEnd();
 }
 
 
@@ -123,5 +123,3 @@ double SketchSample::rmm() {
 const double* SketchSample::rcoord() {
   return 0;
 }
-
-

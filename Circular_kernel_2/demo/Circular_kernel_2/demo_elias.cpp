@@ -5,10 +5,10 @@
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //           Radu Ursu
-// 
+//
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (CGAL - Effective Computational Geometry for Curves and Surfaces) 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (CGAL - Effective Computational Geometry for Curves and Surfaces)
 
 
 // TODO :
@@ -127,7 +127,7 @@ public:
 
   const Point_location & pl() const { return _pl; }
         Point_location & pl()       { return _pl; }
- 
+
   void draw()
   {
     if (! show_pmwx)
@@ -454,7 +454,7 @@ private:
 
   Point_location const & pl() const { return do_sweep_layer.pl(); }
   Point_location       & pl()       { return do_sweep_layer.pl(); }
-  
+
 
   const ArcContainer & arc_container() const
   { return testlayer.arc_container(); }

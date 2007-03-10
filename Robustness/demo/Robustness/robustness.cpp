@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Radu Ursu
 
@@ -95,7 +95,7 @@ public:
       *widget << (*dit2);
       dit2++;
     }
-    
+
     widget->unlock();
   }
 };
@@ -147,7 +147,7 @@ public:
 
     if ( real_convex_hull.size() != double_convex_hull.size() )
     {
-      *widget <<CGAL::PointSize(11) << CGAL::PointStyle(CGAL::CIRCLE) 
+      *widget <<CGAL::PointSize(11) << CGAL::PointStyle(CGAL::CIRCLE)
 	      << CGAL::RED;
       std::vector<double_Point >::iterator  dble_it;
       std::vector<real_Point >::iterator    real_it;
@@ -170,7 +170,7 @@ public:
 	    ++real_it;
 	  }
         }
-      } 
+      }
     }
     widget->unlock();
   }
@@ -184,7 +184,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -205,10 +205,10 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("Convex &Hull of intersection points", this, 
+    draw->insertItem("Convex &Hull of intersection points", this,
 		     SLOT(hull_points()), CTRL+Key_H );
-    
-    draw->insertItem("&Intersection points on segments", this, 
+
+    draw->insertItem("&Intersection points on segments", this,
 		     SLOT(intersection_points()), CTRL+Key_I );
 
     // help menu
@@ -221,13 +221,13 @@ public:
 
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
-  
+
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-	
+
     //application flag stuff
     old_state = 0;
 
@@ -242,7 +242,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -254,7 +254,7 @@ public slots:
     real_convex_hull.clear();
     double_intersection_points.clear();
     real_intersection_points.clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
     widget->unlock();
     something_changed();
@@ -265,7 +265,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -299,7 +299,7 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void intersection_points(){
     stoolbar->clear_history();
@@ -308,16 +308,16 @@ private slots:
 
     //computing using Cartesian<float>
     CartesianFloat::Point_2      p;
-    CartesianFloat::Intersect_2  intersection = 
+    CartesianFloat::Intersect_2  intersection =
       CartesianFloat().intersect_2_object();
     CGAL::Timer watch;
     int is_count = 0;
     int ol_count = 0;
     int bl_count = 0;
-    watch.start();    
-    for( std::vector<CartesianFloat::Segment_2>::const_iterator i 
+    watch.start();
+    for( std::vector<CartesianFloat::Segment_2>::const_iterator i
 	   = float_segments.begin(); i != float_segments.end(); ++i)
-        for( std::vector<CartesianFloat::Segment_2>::const_iterator j 
+        for( std::vector<CartesianFloat::Segment_2>::const_iterator j
 	       = float_segments2.begin(); j != float_segments2.end(); ++j)
         {
             if ( CGAL::assign(p, intersection(*i,*j)) )
@@ -347,17 +347,17 @@ private slots:
 
 
     //computing using Cartesian<double>
-    CartesianDouble::Intersect_2  double_intersection = 
+    CartesianDouble::Intersect_2  double_intersection =
       CartesianDouble().intersect_2_object();
     double_Point pd;
     is_count = 0;
     ol_count = 0;
     bl_count = 0;
     watch.reset();
-    watch.start();    
-    for( std::vector<CartesianDouble::Segment_2>::const_iterator i 
+    watch.start();
+    for( std::vector<CartesianDouble::Segment_2>::const_iterator i
 	   = double_segments.begin(); i != double_segments.end(); ++i)
-        for( std::vector<CartesianDouble::Segment_2>::const_iterator j 
+        for( std::vector<CartesianDouble::Segment_2>::const_iterator j
 	       = double_segments2.begin(); j != double_segments2.end(); ++j)
         {
             if ( CGAL::assign(pd, double_intersection(*i,*j)) )
@@ -385,17 +385,17 @@ private slots:
 
 
     //computing using Homogeneous<float>
-    HomogeneousFloat::Intersect_2  hfloat_intersection = 
+    HomogeneousFloat::Intersect_2  hfloat_intersection =
       HomogeneousFloat().intersect_2_object();
     HomogeneousFloat::Point_2 phf;
     is_count = 0;
     ol_count = 0;
     bl_count = 0;
     watch.reset();
-    watch.start();    
-    for( std::vector<HomogeneousFloat::Segment_2>::const_iterator i 
+    watch.start();
+    for( std::vector<HomogeneousFloat::Segment_2>::const_iterator i
 	   = hfloat_segments.begin(); i != hfloat_segments.end(); ++i)
-        for( std::vector<HomogeneousFloat::Segment_2>::const_iterator j 
+        for( std::vector<HomogeneousFloat::Segment_2>::const_iterator j
 	       = hfloat_segments2.begin(); j != hfloat_segments2.end(); ++j)
         {
             if ( CGAL::assign(phf, hfloat_intersection(*i,*j)) )
@@ -438,8 +438,8 @@ private slots:
                 " and double arithmetic. Then we compute the convex hull of"
                 " those. If there are points that are different in different"
                 " arithmetic, we mark them by a red circle.");
-    
-    QProgressDialog progress( "Generating segments...", 
+
+    QProgressDialog progress( "Generating segments...",
       "Cancel computing", 60, NULL, "Compute random segments ...", true );
     progress.setCaption("Progress bar");
     progress.resize(200, 50);
@@ -515,7 +515,7 @@ private slots:
     std::transform(double_segments2.begin(), double_segments2.end(),
 		    std::back_inserter(float_segments2), fconverter);
 
-    CGAL::Cartesian_double_to_Homogeneous< HomogeneousFloat::RT > 
+    CGAL::Cartesian_double_to_Homogeneous< HomogeneousFloat::RT >
                                                         hfconverter;
     std::transform(double_segments.begin(), double_segments.end(),
 		   std::back_inserter(hfloat_segments), hfconverter);
@@ -530,7 +530,7 @@ private slots:
 		   std::back_inserter(hdouble_segments2), hdconverter);
 
 
-  }	
+  }
 
 private:
   CGAL::Qt_widget           *widget;

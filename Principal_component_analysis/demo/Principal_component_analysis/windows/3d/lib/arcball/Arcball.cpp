@@ -36,7 +36,7 @@ CArcball::Clear()
 // Set
 //********************************************
 void
-CArcball::Set(const double x, const double y, const double z, 
+CArcball::Set(const double x, const double y, const double z,
 	      const double r /* = 1 */)
 {
   m_Center.Set(x,y,z);
@@ -241,7 +241,7 @@ CArcball::glDraw()
 // IntersectSphere
 //********************************************
 int
-CArcball::IntersectSphere(CVector3d& rayStart, CVector3d& rayDir, 
+CArcball::IntersectSphere(CVector3d& rayStart, CVector3d& rayDir,
 			  CVector3d& result)
 {
   CVector3d q = rayStart - m_Center;
@@ -270,8 +270,8 @@ CArcball::IntersectSphere(CVector3d& rayStart, CVector3d& rayDir,
 //********************************************
 // IntersectPlane
 //********************************************
-int 
-CArcball::IntersectPlane(CVector3d& rayStart, CVector3d& rayDir, 
+int
+CArcball::IntersectPlane(CVector3d& rayStart, CVector3d& rayDir,
 			 CVector3d& result, int whichPlane /* = 2 */)
 {
   double denom = rayDir[whichPlane];
@@ -350,4 +350,3 @@ CArcball::Intersect(int x, int y, CCamera& theCam, CViewport& vp)
   return theVec;
 }
 // ** EOF **
-

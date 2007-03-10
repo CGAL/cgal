@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////
-// 
+//
 // Class: Enriched_polyhedron
-// 
-//									
+//
+//
 ///////////////////////////////////////////////////////////////////////////
 
 #ifndef	CGAL_POLYGON_MESH_
@@ -16,7 +16,7 @@
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-// compute facet normal	
+// compute facet normal
 struct Facet_normal	// (functor)
 {
   template <class	Facet>
@@ -46,7 +46,7 @@ struct Facet_normal	// (functor)
 };
 
 
-// compute vertex	normal 
+// compute vertex	normal
 struct Vertex_normal //	(functor)
 {
   template <class	Vertex>
@@ -55,10 +55,10 @@ struct Vertex_normal //	(functor)
       typename Vertex::Normal_3	normal = CGAL::NULL_VECTOR;
       typename Vertex::Halfedge_around_vertex_const_circulator
 	pHalfedge = v.vertex_begin();
-      typename Vertex::Halfedge_around_vertex_const_circulator 
+      typename Vertex::Halfedge_around_vertex_const_circulator
 	begin =	pHalfedge;
 
-      CGAL_For_all(pHalfedge,begin)	
+      CGAL_For_all(pHalfedge,begin)
 	if(!pHalfedge->is_border())
 	  normal = normal	+	pHalfedge->facet()->normal();
       float	sqnorm = normal * normal;
@@ -69,13 +69,13 @@ struct Vertex_normal //	(functor)
     }
 };
 
-// a refined facet with a normal 
+// a refined facet with a normal
 template <class	Refs,	class	T, class P,	class	Norm>
 class	Enriched_facet : public	CGAL::HalfedgeDS_face_base<Refs, T>
 {
   // normal
   Norm  m_normal;
-  int	m_tag; 
+  int	m_tag;
 
 public:
 
@@ -97,7 +97,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// a refined halfedge with a general tag 
+// a refined halfedge with a general tag
 template <class	Refs,	class	Tprev, class Tvertex,	class	Tface, class Norm>
 class	Enriched_halfedge	:	public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
@@ -150,12 +150,12 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// A redefined items class for the Polyhedron_3	
-// with	a	refined	vertex class that	contains a 
+// A redefined items class for the Polyhedron_3
+// with	a	refined	vertex class that	contains a
 // member	for	the	normal vector	and	a	refined
-// facet with	a	normal vector	instead	of the 
-// plane equation	(this	is an	alternative	
-// solution	instead	of using 
+// facet with	a	normal vector	instead	of the
+// plane equation	(this	is an	alternative
+// solution	instead	of using
 // Polyhedron_traits_with_normals_3).
 
 struct Enriched_items	:	public CGAL::Polyhedron_items_3
@@ -227,10 +227,10 @@ typedef typename Enriched_polyhedron<kernel, items>::Edge_iterator Edge_iterator
 public :
 
   // life	cycle
-  Enriched_polyhedron()	
+  Enriched_polyhedron()
     {
     }
-  virtual	~Enriched_polyhedron() 
+  virtual	~Enriched_polyhedron()
     {
     }
 
@@ -294,7 +294,7 @@ public :
       glEnable(GL_LIGHTING);
       static GLfloat agray[4] = {1,1,1, 1.0 };
       glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, agray);
-      
+
      glEnable(GL_POLYGON_OFFSET_FILL);
      glPolygonOffset( 1.0, 1.0 );
     glPolygonMode(GL_FRONT, GL_FILL);
@@ -304,7 +304,7 @@ public :
 	  hFacet != this->facets_end();
 	  hFacet++)
 	gl_draw_facet(hFacet,smooth);
-      
+
       glPolygonOffset( 0.0, 0.0 );
       glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -375,7 +375,7 @@ public :
 	{
 	  Point p = iso_barycentre(hFacet);
 	  const typename Facet::Normal_3& normal = hFacet->normal();
-	  typename kernel::Vector_3 n = normal / 
+	  typename kernel::Vector_3 n = normal /
 	    sqrt( pow(normal[0],2)+pow(normal[1],2)+pow(normal[2],2));
 	  ::glVertex3d(p[0],p[1],p[2]);
 	  ::glVertex3d(p[0]+n[0],p[1]+n[1],p[2]+n[2]);
@@ -396,7 +396,7 @@ public :
 	{
 	  const typename Vertex::Normal_3& normal	=	it->normal();
 	  const Point& p = it->point();
-	  typename kernel::Vector_3 n = normal / 
+	  typename kernel::Vector_3 n = normal /
 	    sqrt( pow(normal[0],2)+pow(normal[1],2)+pow(normal[2],2));
 	  ::glVertex3d(p[0],p[1],p[2]);
 	  ::glVertex3d(p[0]+n[0],p[1]+n[1],p[2]+n[2]);
@@ -443,7 +443,7 @@ void tag_facets(const	int	tag)
     pFace->tag(tag);
 }
 
-// tag component 
+// tag component
 void tag_component(Facet_handle	pSeedFacet,
 		   const int tag_free,
 		   const int tag_done)

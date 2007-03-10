@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -147,7 +147,7 @@ private:
       this->addSeparator();
       QWhatsThis::whatsThisButton(this);
     }
-  
+
   /** setup the statusbar */
 
 public slots:
@@ -162,7 +162,7 @@ public slots:
       QString fileName =
 	QFileDialog::getOpenFileName(QString::null, QString::null,
 				     window, "Open file...");
-						      
+
       if ( !fileName.isNull() ) {
 	emit fileToRead(fileName);
       }
@@ -170,7 +170,7 @@ public slots:
   /** save a document */
   void slotFileSave()
     {
-      
+
     }
   /** save a document under a different filename*/
   void slotFileSaveAs()
@@ -178,7 +178,7 @@ public slots:
       QString fileName =
 	QFileDialog::getSaveFileName(tr("data.cin"), QString::null,
 				     window, "Save data as...");
-						      
+
       if ( !fileName.isNull() ) {
 	emit fileToWrite(fileName);
       }
@@ -194,4 +194,3 @@ public slots:
 };
 
 #endif // QT_FILE_TOOLBAR_H
-

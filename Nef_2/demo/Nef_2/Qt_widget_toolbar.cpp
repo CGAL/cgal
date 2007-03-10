@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -32,16 +32,16 @@
 
 #include <qiconset.h>
 
-Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 			     QMainWindow *mw) : QToolBar(mw, "NT")
   {
-    w->attach(&input_point); 
+    w->attach(&input_point);
     input_point.deactivate();
-    w->attach(&input_line); 
+    w->attach(&input_line);
     input_line.deactivate();
-    w->attach(&input_polygon); 
+    w->attach(&input_polygon);
     input_polygon.deactivate();
-    
+
     //set the widget
     widget = w;
 
@@ -53,7 +53,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
                   QPixmap( (const char**)line_xpm ));
     QIconSet set3(QPixmap( (const char**)polygon_small_xpm ),
                   QPixmap( (const char**)polygon_xpm ));
-	
+
   but[0] = new QToolButton(this, "Deactivate Layer");
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
@@ -66,7 +66,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   but[3] = new QToolButton(this, "polygoninput layer");
   but[3]->setIconSet(set3);
   but[3]->setTextLabel("Input Simple Polygon");
-  
+
   nr_of_buttons = 4;
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i<nr_of_buttons; i++) {
@@ -74,7 +74,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
     but[i]->setToggleButton(true);
   }
   button_group->setExclusive(true);
-  
+
   connect(but[1], SIGNAL(stateChanged(int)),
         &input_point, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),

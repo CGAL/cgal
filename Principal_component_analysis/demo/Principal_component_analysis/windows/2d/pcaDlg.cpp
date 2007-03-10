@@ -124,7 +124,7 @@ BOOL CpcaDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -145,7 +145,7 @@ void CpcaDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CpcaDlg::OnPaint() 
+void CpcaDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -200,7 +200,7 @@ BOOL CpcaDlg::SetWindowPixelFormat(HDC hDC)
 
 	pixelDesc.nSize = sizeof(PIXELFORMATDESCRIPTOR);
 	pixelDesc.nVersion = 1;
-	pixelDesc.dwFlags = PFD_DRAW_TO_WINDOW | 
+	pixelDesc.dwFlags = PFD_DRAW_TO_WINDOW |
 						PFD_SUPPORT_OPENGL |
 						PFD_DOUBLEBUFFER |
 						PFD_STEREO_DONTCARE;
@@ -402,7 +402,7 @@ bool CpcaDlg::inside(const CPoint& point)
 	FT h = (FT)rect.Height();
 	FT x = cx/w;
 	FT y = 1.0f-cy/h;
-  if(x > 0.0f && x < 1.0f && 
+  if(x > 0.0f && x < 1.0f &&
      y > 0.0f && y < 1.0f)
      return true;
 	return false;
@@ -411,12 +411,12 @@ bool CpcaDlg::inside(const CPoint& point)
 
 void CpcaDlg::OnFitLine()
 {
-  FT quality = 
+  FT quality =
     linear_least_squares_fitting_2(m_points.begin(),
                                    m_points.end(),
                                    m_fitting_line,
                                    m_centroid);
-  quality = 
+  quality =
     linear_least_squares_fitting_2(m_points.begin(),
                                    m_points.end(),
                                    m_fitting_line);
@@ -491,7 +491,7 @@ void CpcaDlg::OnDebugManytestsfornumerouspointsonaline()
 {
   BeginWaitCursor();
   m_points.clear();
-  
+
   // random line (y = ax + b)
   double a = (double)rand() / (double)RAND_MAX;
   double b = (double)rand() / (double)RAND_MAX;

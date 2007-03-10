@@ -16,7 +16,7 @@
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows NT 4 or later.
 #define _WIN32_WINNT 0x0400		// Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif						
+#endif
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
 #define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
@@ -42,4 +42,3 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 #include <afxdhtml.h>
-

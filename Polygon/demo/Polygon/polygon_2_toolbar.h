@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -39,13 +39,13 @@ class Polygon_toolbar : public QToolBar
   Q_OBJECT
 public:
   Polygon_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
-	
+
 private:
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QButtonGroup    *button_group;
   int             nr_of_buttons;
-	
+
   CGAL::Qt_widget_get_simple_polygon<Cgal_Polygon> getsimplepoly;
   CGAL::Qt_widget_get_polygon<Cgal_Polygon>        getpoly;
   CGAL::Qt_widget_get_point<K>                     getpoint;

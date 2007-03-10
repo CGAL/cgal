@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Peter Hachenberger
 
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
   typedef std::multimap<Nef_polyhedron::Size_type,Nef_polyhedron> PQ;
   typedef PQ::iterator      PQ_iterator;
   PQ pq;
-  
+
   CGAL::Timer t;
 
   Point_3 room_min = read_point(in);
@@ -82,16 +82,16 @@ int main(int argc, char* argv[]) {
   for(int cam=0; cam<ncameras; ++cam) {
 
     Point_3 camera(read_point(in));
-    
+
     int npolygons;
     in >> npolygons;
-    
+
     std::list<std::list<Point_3> > polygon_list;
     for(int poly=0; poly<npolygons; ++poly) {
 
       int npoints;
       in >> npoints;
-      
+
       std::list<Point_3> input_points;
       for(int pnt=0; pnt<npoints; ++pnt)
 	input_points.push_back(read_point(in));
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
       if(pi_next==li->end()) pi_next=li->begin();
       if(pi_prev==li->begin()) pi_prev=li->end();
       --pi_prev;
-      if(CGAL::orientation(*pi_prev,*pimin,*pi_next,camera) 
+      if(CGAL::orientation(*pi_prev,*pimin,*pi_next,camera)
 	 == CGAL::POSITIVE)
 	li->reverse();
     }
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
   }
 
   t.start();
-  PQ_iterator i1, i2; 
+  PQ_iterator i1, i2;
   while(pq.size() > 1) {
     i1 = i2 = pq.begin();
     ++i2;
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron result(pq.begin()->second);
 
   QApplication a(argc,argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();

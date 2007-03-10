@@ -1,13 +1,13 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France) 
+// Copyright (c) 2003  INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //           Radu Ursu
-// 
+//
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (CGAL - Effective Computational Geometry for Curves and Surfaces) 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (CGAL - Effective Computational Geometry for Curves and Surfaces)
 
 
 // TODO :
@@ -73,11 +73,11 @@ int main() {
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/IO/Dxf_variant_reader.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                       NT; 
+typedef CGAL::Quotient<CGAL::MP_Float>                       NT;
 //typedef CGAL::Quotient<CGAL::MP_Float> NT;
 //typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>  NT;
 //typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc_2;
-//typedef std::vector<Arc_2>  
+//typedef std::vector<Arc_2>
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
@@ -89,14 +89,14 @@ typedef Circular_k::Line_arc_2                              Line_arc_2;
 typedef Circular_k::Segment_2                               Segment;
 typedef Circular_k::Circular_arc_2                          Circular_arc_2;
 
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, 
-					   Circular_arc_2, 
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k,
+					   Circular_arc_2,
 					   Line_arc_2>      Traits;
 
 typedef Traits::Point_2                             Point_2;
 typedef Traits::Curve_2                             Curve_2;
 //typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc_2;
-//typedef std::vector<Arc_2>  
+//typedef std::vector<Arc_2>
 typedef std::vector<Curve_2>                        ArcContainer;
 
 typedef CGAL::Arrangement_2<Traits>                 Pmwx;
@@ -125,7 +125,7 @@ public:
 
   const Point_location & pl() const { return _pl; }
         Point_location & pl()       { return _pl; }
- 
+
   void draw()
   {
     if (! show_pmwx)
@@ -140,7 +140,7 @@ public:
 			    Circular_k::Point_2(to_double(line->target().x()),
 					      to_double(line->target().y())));
        }
-       else if (const Circular_arc_2* arc 
+       else if (const Circular_arc_2* arc
 		= boost::get<Circular_arc_2>( &(ei->curve()))) {
 	 *widget << *arc;
        }
@@ -186,7 +186,7 @@ public:
 			   Circular_k::Point_2(to_double(line->target().x()),
 					     to_double(line->target().y())));
       }
-      else if (const Circular_arc_2* arc 
+      else if (const Circular_arc_2* arc
 	       = boost::get<Circular_arc_2>( &(*cit))) {
 	*widget << *arc;
       }
@@ -329,7 +329,7 @@ public:
     get_segment_layer =  new CGAL::Qt_widget_get_segment<Circular_k>;
     widget->attach(get_arc_layer);
     connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
-    connect(get_segment_layer, SIGNAL(new_object_time()), 
+    connect(get_segment_layer, SIGNAL(new_object_time()),
 	    this, SLOT(get_arc()));
   }
 
@@ -459,7 +459,7 @@ private slots:
 
     //std::ifstream in(s);
     //CGAL::set_ascii_mode(in);
-    
+
     //std::istream_iterator<Arc_2> begin(in), end;
     //ArcContainer arcs(begin, end);
     //arc_container().swap(arcs);
@@ -498,7 +498,7 @@ private:
 
   Point_location const & pl() const { return do_sweep_layer.pl(); }
   Point_location       & pl()       { return do_sweep_layer.pl(); }
-  
+
 
   const ArcContainer & arc_container() const
   { return testlayer.arc_container(); }

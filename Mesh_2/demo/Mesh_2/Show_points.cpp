@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -36,7 +36,7 @@ namespace CGAL {
     color=tr("Color");
     size=tr("Point size");
     style_name=tr("Point style");
-    
+
     setColor(QColor(c.red(), c.green(), c.blue()));
     setPointSize(pointsize);
     setPointStyle(pointstyle);
@@ -54,9 +54,9 @@ namespace CGAL {
       style_name(points_style_name)
   {}
 
-  void Show_points_base::setColor(QColor c) 
+  void Show_points_base::setColor(QColor c)
   { style()->setColor(color, c); }
-  
+
   void Show_points_base::setPointSize(int pointsize)
   { style()->setInt(size, pointsize); }
 
@@ -69,4 +69,3 @@ namespace CGAL {
 #include "Show_points.moc"
 
 #endif // CGAL_USE_QT
-

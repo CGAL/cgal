@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -50,7 +50,7 @@ private:
   CGAL::Qt_widget_get_point<R>         point_layer;
   CGAL::Qt_widget_get_iso_rectangle<R> iso_r_layer;
   CGAL::Qt_widget_get_circle<R>        circle_layer;
-  Qt_widget_move_list_point<R>         edit_layer;  
+  Qt_widget_move_list_point<R>         edit_layer;
 };//end class
 
 #endif

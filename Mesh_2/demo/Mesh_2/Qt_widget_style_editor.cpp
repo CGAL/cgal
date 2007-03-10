@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -75,7 +75,7 @@ Qt_widget_style_editor::Qt_widget_style_editor(Style* style,
 		this, SLOT(map(bool)));
 	break;
       case QVariant::UInt:
-	selector = 
+	selector =
 	  new Point_style_selector(PointStyle(it.data().toUInt()),
 				   this);
 	connect(selector, SIGNAL(activated(int)),
@@ -85,7 +85,7 @@ Qt_widget_style_editor::Qt_widget_style_editor(Style* style,
 	CGAL_assertion(false);
 	break;
       }
-      
+
       mapper[selector]=it.key();
 
       layout->addWidget(selector, row, selectors_col);
@@ -101,7 +101,7 @@ void Qt_widget_style_editor::map(QColor c)
     style->setColor(mapper[s], c);
   emit styleChanged();
 }
-  
+
 void Qt_widget_style_editor::map(int i)
 {
   const QObject* s = sender();
@@ -109,7 +109,7 @@ void Qt_widget_style_editor::map(int i)
     style->setInt(mapper[s], i);
   emit styleChanged();
 }
-  
+
 void Qt_widget_style_editor::map(bool b)
 {
   const QObject* s = sender();

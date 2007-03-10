@@ -37,7 +37,7 @@ class Tools_toolbar : public QToolBar
   Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
-  
+
 private:
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;

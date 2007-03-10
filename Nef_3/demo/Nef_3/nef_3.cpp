@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Lutz Kettner
 //                 Peter Hachenberger
@@ -239,14 +239,14 @@ int eval( int argc, char* argv[]) {
 	    error = 2;
 	    continue;
 	  }
-	  cout << "Top uses " << nef.back().bytes() << " bytes" << std::endl; 
+	  cout << "Top uses " << nef.back().bytes() << " bytes" << std::endl;
 	} else if ( strcmp( argv[i], "bytes_reduced") == 0) {
 	  if ( nef.size() == 0) {
 	    cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
 	    error = 2;
 	    continue;
 	  }
-	  cout << "Reduced Version of top uses " << nef.back().bytes_reduced() << " bytes" << std::endl; 
+	  cout << "Reduced Version of top uses " << nef.back().bytes_reduced() << " bytes" << std::endl;
         } else if ( strcmp( argv[i], "simple") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -281,11 +281,11 @@ int eval( int argc, char* argv[]) {
 		cerr << "Error: loadnef3 cannot open file '" << argv[i+1]
 		     << "'." << endl;
 		error = 5;
-	      } else {	     
+	      } else {
 		Nef_polyhedron nf;
 		in >> nf;
 		if ( ! in) {
-		  cerr << "Error: loadnef3 cannot read nef3 file '" 
+		  cerr << "Error: loadnef3 cannot read nef3 file '"
 		       << argv[i+1] << "' correctly." << endl;
 		  error = 5;
 		} else {
@@ -307,7 +307,7 @@ int eval( int argc, char* argv[]) {
                     Polyhedron poly;
                     in >> poly;
                     if ( ! in) {
-                        cerr << "Error: loadoff cannot read OFF file '" 
+                        cerr << "Error: loadoff cannot read OFF file '"
                              << argv[i+1] << "' correctly." << endl;
                         error = 5;
                     } else {
@@ -342,7 +342,7 @@ int eval( int argc, char* argv[]) {
                     nef.back().convert_to_Polyhedron(poly);
                     out << poly;
                     if ( ! out) {
-                        cerr << "Error: saveoff cannot write OFF file '" 
+                        cerr << "Error: saveoff cannot write OFF file '"
                              << argv[i+1] << "' correctly." << endl;
                         error = 5;
                     }
@@ -373,7 +373,7 @@ int eval( int argc, char* argv[]) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
                 error = 2;
                 continue;
-            }	  
+            }
 	    std::cout << "Number of Vertices " << nef.back().number_of_vertices() << std::endl;
 	    std::cout << "Number of Facets " << nef.back().number_of_facets() << std::endl;
         } else if ( strcmp( argv[i], "vis") == 0) {
@@ -386,7 +386,7 @@ int eval( int argc, char* argv[]) {
 	    nef.back().visualize();
 #elif defined (CGAL_USE_QT)
 	    QApplication a(argc, argv);
-	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
 	      new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
 	    a.setMainWidget(w);
 	    w->show();
@@ -416,7 +416,7 @@ int eval( int argc, char* argv[]) {
             } else {
                 error = 4;
             }
-	   
+
         } else if ( strcmp( argv[i], "scale") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -445,7 +445,7 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                CGAL::rational_rotation_approximation( dirx, diry, 
+                CGAL::rational_rotation_approximation( dirx, diry,
 						       sin_alpha, cos_alpha, w,
 						       NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( w, NT(0), NT(0),
@@ -470,7 +470,7 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                CGAL::rational_rotation_approximation( dirx, diry, 
+                CGAL::rational_rotation_approximation( dirx, diry,
 						       sin_alpha, cos_alpha, w,
 						       NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( cos_alpha, NT(0), sin_alpha,
@@ -495,7 +495,7 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                CGAL::rational_rotation_approximation( dirx, diry, 
+                CGAL::rational_rotation_approximation( dirx, diry,
 						       sin_alpha, cos_alpha, w,
 						       NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( cos_alpha,-sin_alpha, NT(0),
@@ -618,8 +618,8 @@ int eval( int argc, char* argv[]) {
 	    Kernel::Plane_3 pl( a, b, c, d);
 	    Nef_polyhedron nf(pl);
 	    nef.push_back( nf);
-	    i += 4; 
-	  } else 
+	    i += 4;
+	  } else
 	    error = 4;
 	} else if ( strcmp( argv[i], "start") == 0) {
 	  t.start();
@@ -638,7 +638,7 @@ int eval( int argc, char* argv[]) {
     return error;
 }
 
-int main(  int argc, char* argv[]) {    
+int main(  int argc, char* argv[]) {
     if ( argc < 2
          || strcmp( argv[1], "-h") == 0
          || strcmp( argv[1], "-help") == 0 )

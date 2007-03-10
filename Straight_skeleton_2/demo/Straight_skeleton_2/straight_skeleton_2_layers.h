@@ -21,17 +21,17 @@
 template <class SSkel>
 class Qt_layer_show_skeleton : public CGAL::Qt_widget_layer
 {
-  
+
   typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
   typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
   typedef typename SSkel::Face_const_iterator   Face_const_iterator ;
 
   typedef boost::shared_ptr<SSkel> SSkelPtr ;
-  
+
 public:
 
-  
-  Qt_layer_show_skeleton(Layers_toolbar* aParent, char const* aName, SSkelPtr const& aSSkelPtr) 
+
+  Qt_layer_show_skeleton(Layers_toolbar* aParent, char const* aName, SSkelPtr const& aSSkelPtr)
     : CGAL::Qt_widget_layer(aParent,aName)
     , mSSkelPtr(aSSkelPtr)
   {
@@ -43,11 +43,11 @@ public:
 
     if ( !mSSkelPtr )
       return ;
-      
+
     widget->lock();
 
     int watchdog_limit = mSSkelPtr->size_of_halfedges();
-    
+
     for ( Face_const_iterator fit = mSSkelPtr->faces_begin(), efit = mSSkelPtr->faces_end()
           ; fit != efit
           ; ++ fit
@@ -55,9 +55,9 @@ public:
     {
       Halfedge_const_handle hstart = fit->halfedge();
       Halfedge_const_handle he     = hstart ;
-      
+
       int watchdog = watchdog_limit ;
-      
+
       do
       {
         if ( he == null_halfedge )
@@ -84,10 +84,10 @@ public:
 
     widget->unlock();
   }
-  
+
   virtual void activating  (){ widget->redraw() ; };
   virtual void deactivating(){ widget->redraw() ; };
-  
+
 private:
 
   SSkelPtr const& mSSkelPtr;
@@ -119,10 +119,10 @@ class Qt_layer_show_regions : public CGAL::Qt_widget_layer
 
 public:
 
-  Qt_layer_show_regions(Layers_toolbar* aParent, char const* aName, RegionList const& aRegions, CGAL::Color aColor ) 
+  Qt_layer_show_regions(Layers_toolbar* aParent, char const* aName, RegionList const& aRegions, CGAL::Color aColor )
     : CGAL::Qt_widget_layer(aParent,aName)
     , mRegions(aRegions)
-    , mColor(aColor) 
+    , mColor(aColor)
   {
   }
 
@@ -150,7 +150,7 @@ public:
     widget->unlock();
 
   }
-  
+
   virtual void activating  (){ widget->redraw() ; };
   virtual void deactivating(){ widget->redraw() ; };
 
@@ -165,76 +165,75 @@ private:
 class Qt_layer_show_progress : public CGAL::Qt_widget_layer
 {
   typedef CGAL::Qt_widget_layer base ;
-  
+
 public:
 
   struct Figure
   {
     virtual ~Figure() {}
-    
+
     virtual void draw ( CGAL::Qt_widget& widget ) const = 0 ;
   } ;
-  
+
   typedef boost::shared_ptr<Figure> FigurePtr ;
   typedef std::vector<FigurePtr> FigureVector ;
   typedef FigureVector::const_iterator figure_const_iterator ;
-  
+
   struct Bisector : Figure
   {
     Bisector ( demo::Segment const& s_, CGAL::Color c_ ) : s(s_), c(c_) {}
-        
+
     virtual void draw ( CGAL::Qt_widget& widget ) const
     {
       widget << c ;
       widget << s ;
-    } 
-    
+    }
+
     demo::Segment s ;
     CGAL::Color   c ;
   } ;
-  
+
   struct Vertex : Figure
   {
     Vertex ( demo::Point const& v_, CGAL::Color c_ ) : v(v_), c(c_) {}
-        
+
     virtual void draw ( CGAL::Qt_widget& widget ) const
     {
       widget << c ;
       widget << CGAL::CIRCLE ;
       widget << v ;
-    } 
-    
+    }
+
     demo::Point v ;
     CGAL::Color c ;
-    
-  } ;  
-  
+
+  } ;
+
 public:
 
-  
+
   Qt_layer_show_progress(Layers_toolbar* aParent, char const* aName )  : CGAL::Qt_widget_layer(aParent,aName) {}
 
   void clear() { mFigures.clear() ; }
-  
+
   void add_figure ( FigurePtr const& aFigure ) { mFigures.push_back(aFigure) ; }
-  
+
   void draw()
   {
     widget->lock();
-   
+
     for ( figure_const_iterator it = mFigures.begin(), eit = mFigures.end() ; it != eit ; ++ it )
       (*it)->draw(*widget);
-    
+
     widget->unlock();
   }
-  
+
   virtual void activating  (){ widget->redraw() ; base::activating(); };
   virtual void deactivating(){ widget->redraw() ; base::deactivating(); };
-  
+
 private:
 
   FigureVector mFigures ;
 
 }
 ;//end class
-

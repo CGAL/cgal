@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -28,7 +28,7 @@ int get_new_id()
   gen++;
 
   assert( gen != 0 ); // guards against unwanted phenomena due to
-                      // overflow 
+                      // overflow
   return gen;
 }
 
@@ -65,7 +65,7 @@ insert_segment(PDG& pdg, const Point& p1, const Point_2& p2, int id)
 
 template<class PDG, class Point>
 typename PDG::Vertex_handle
-insert_segment(PDG& pdg, const Point& p1, const Point_2& p2, 
+insert_segment(PDG& pdg, const Point& p1, const Point_2& p2,
 	       typename PDG::Vertex_handle v, int id)
 {
   typedef typename PDG::Vertex_handle Vertex_handle;

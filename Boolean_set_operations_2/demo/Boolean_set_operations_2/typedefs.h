@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 #ifndef CGAL_TYPEDEFS_H
@@ -49,7 +49,7 @@ typedef CGAL::Lazy_exact_nt<Base_nt>                  Coord_type;
 
 // instead of
 //typedef CGAL::Cartesian<Coord_type>		                Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Cartesian<Coord_type> {};
 
 typedef Kernel::Segment_2			      Segment;

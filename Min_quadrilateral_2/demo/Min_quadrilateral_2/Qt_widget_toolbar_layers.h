@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -51,14 +51,14 @@ public:
     delete showLS;
     delete showR;
   };
-  
+
 private:
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QMainWindow     *window;
   QButtonGroup    *button_group;
   int             nr_of_buttons;
-	
+
   Qt_layer_show_points<Rp>          *showP;
   Qt_layer_show_parallelogram<Rp>   *showPL;
   Qt_layer_show_strip<Rp>           *showLS;

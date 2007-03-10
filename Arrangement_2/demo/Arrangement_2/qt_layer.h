@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -35,9 +35,9 @@ class Qt_layer : public CGAL::Qt_widget_layer
 public:
     Qt_layer( QTabWidget * );
 	void draw();
- 	
+
 private:
 	QTabWidget *myBar;
-}; 
+};
 
 #endif

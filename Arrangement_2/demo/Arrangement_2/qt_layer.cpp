@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -37,16 +37,16 @@ void Qt_layer::draw()
   // We peform downcasting from QWigdet* to Qt_widget_demo_tab*
   // , as we know that only
   // Qt_widget_demo_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_base_p = 
+  Qt_widget_base_tab    *w_base_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   TraitsType t = w_base_p->traits_type;
-  
+
   switch ( t ) {
    case SEGMENT_TRAITS:
     {
-     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->currentPage());
      w_demo_p->lock();
      w_demo_p->draw();
@@ -55,8 +55,8 @@ void Qt_layer::draw()
     }
    case POLYLINE_TRAITS:
     {
-     Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+     Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
        (myBar->currentPage());
      w_demo_p->lock();
      w_demo_p->draw();
@@ -65,8 +65,8 @@ void Qt_layer::draw()
     }
    case CONIC_TRAITS:
     {
-     Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
-       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+     Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->currentPage());
      w_demo_p->lock();
      w_demo_p->draw();
@@ -74,8 +74,8 @@ void Qt_layer::draw()
      break;
     }
   }
-  
-  
+
+
 }
 
 #endif // CGAL_USE_QT

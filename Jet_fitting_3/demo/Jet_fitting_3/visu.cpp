@@ -8,7 +8,7 @@
 #include "SketchSample.h"
 //geom, local
 #include "visu_poly.h"
-#include "enriched_polyhedron.h" 
+#include "enriched_polyhedron.h"
 
 #include <iostream>
 #include <fstream>
@@ -29,7 +29,7 @@ void clean_DS(DS& L)
   L.pop_front();
 }
 
-void 
+void
 read_line(FILE* file, Point& P1,Point& P2,
 	  Vector&  D1,Vector& D2, double& k1,double& k2)
 {
@@ -41,18 +41,18 @@ read_line(FILE* file, Point& P1,Point& P2,
   fscanf(file, "%lf%lf%lf",&x,&y,&z);
   D1=Vector(x,y,z);
   fscanf(file, "%lf%lf%lf",&x,&y,&z);
-  D2=Vector(x,y,z);	
+  D2=Vector(x,y,z);
   fscanf(file, "%lf%lf",&k1,&k2);
 }
 
 void load_data_from_file(DS& l, const char* file_res)
 {
   FILE *file;
-  if((file = fopen(file_res, "r")) != NULL) 
+  if((file = fopen(file_res, "r")) != NULL)
     {
       while (!feof(file))
 	{
-	  Point P1,P2;	
+	  Point P1,P2;
 	  Vector D1,D2;
 	  double k1,k2;
 	  read_line(file,P1,P2,D1,D2,k1,k2);
@@ -62,16 +62,16 @@ void load_data_from_file(DS& l, const char* file_res)
       fclose(file);
     }
   else
-    std::cout << "Cannot open file" << std::endl;	
-}	
+    std::cout << "Cannot open file" << std::endl;
+}
 
 
 void load_geom(int argc, char* argv[])
-{	
+{
   assert(argc==3);
   const char* file_off = argv[1];
   const char* file_res = argv[2];
- 
+
   // initialisation du maillage
   std::ifstream f(file_off, std::ifstream::in);
   if(!f){
@@ -79,7 +79,7 @@ void load_geom(int argc, char* argv[])
     }
   f >> m_mesh;
   m_mesh.compute_normals();
-  
+
   // init of the ppal dir
   ppal_data.clear();
   load_data_from_file(ppal_data, file_res);
@@ -90,7 +90,7 @@ void load_geom(int argc, char* argv[])
 int main(int argc, char** argv) {
 
   load_geom(argc, argv);
-  
+
   QApplication app(argc, argv);
   glutInit(&argc, argv);
 

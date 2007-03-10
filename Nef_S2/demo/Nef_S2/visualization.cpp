@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -41,11 +41,10 @@ int main(int argc, char* argv[]) {
   create_random_Nef_S2(S,5);
 
   QApplication a(argc, argv);
-  CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
+  CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w =
     new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(S);
   a.setMainWidget(w);
   w->show();
   return a.exec();
 }
 #endif
-

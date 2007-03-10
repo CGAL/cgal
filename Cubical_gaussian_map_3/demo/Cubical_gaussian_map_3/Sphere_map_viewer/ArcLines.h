@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Kapelushnik Lior <liorkape@post.tau.ac.il>
@@ -28,13 +28,13 @@
  v - the vector to be normalized
 */
 inline
-void normalize(float v[3]) {    
-  float d = sqrtf(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]); 
+void normalize(float v[3]) {
+  float d = sqrtf(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
   if (d == 0.0) {
-//      error("zero length vector");        
+//      error("zero length vector");
     return;
    }
-   v[0] /= d; v[1] /= d; v[2] /= d; 
+   v[0] /= d; v[1] /= d; v[2] /= d;
 }
 
 /*
@@ -78,7 +78,7 @@ public:
     arcNorm[0]/=normLen; arcNorm[1]/=normLen; arcNorm[2]/=normLen;
     float cosLen = enPnt[0]*stPnt[0]+enPnt[1]*stPnt[1]+
       enPnt[2]*stPnt[2];
-    m_angle = atan2f(normLen, cosLen);    
+    m_angle = atan2f(normLen, cosLen);
     normcrossprod(arcNorm, m_u, m_v);
   }
 
@@ -114,11 +114,11 @@ private:
    v1,v2 - vectors to cross product
    out - will hold the cross product value, v1xv2
   */
-  inline 
-  void normcrossprod(float v1[3], float v2[3], float out[3]) { 
-    out[0] = v1[1]*v2[2] - v1[2]*v2[1]; 
-    out[1] = v1[2]*v2[0] - v1[0]*v2[2]; 
-    out[2] = v1[0]*v2[1] - v1[1]*v2[0]; 
+  inline
+  void normcrossprod(float v1[3], float v2[3], float out[3]) {
+    out[0] = v1[1]*v2[2] - v1[2]*v2[1];
+    out[1] = v1[2]*v2[0] - v1[0]*v2[2];
+    out[2] = v1[0]*v2[1] - v1[1]*v2[0];
   }
 
   // the u and v vectors of the surface containing the two directions

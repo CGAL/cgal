@@ -50,7 +50,7 @@ public :
   void oY(int oy)    { originY = oy; }
 
   // Data access (explicit inline functions)
-  void GetSize(float& x, float& y) 
+  void GetSize(float& x, float& y)
     { x = (float)sizeX; y = (float)sizeY; }
   float GetAspectRatio() const
     { return (float)sizeX / (float)sizeY; }
@@ -71,4 +71,3 @@ public :
 };
 
 #endif // _VIEWPORT_
-

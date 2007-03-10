@@ -365,7 +365,7 @@ CMatrix44::operator*=(const double d)
 }
 
 //********************************************
-// Operator + 
+// Operator +
 //********************************************
 CMatrix44
 operator+(const CMatrix44& u, const CMatrix44& v)
@@ -391,7 +391,7 @@ operator-(const CMatrix44& u, const CMatrix44& v)
 }
 
 //********************************************
-// Operator * 
+// Operator *
 //********************************************
 CMatrix44
 operator*(const double s, const CMatrix44& u)
@@ -551,7 +551,7 @@ CMatrix44::Transpose() const
 // Adjoint
 // Returns the adjoint of the 4x4 matrix.
 // Adjoint_ij = (-1)^(i+j) * alpha_ji
-//  where alpha_ij is the determinant of the 
+//  where alpha_ij is the determinant of the
 //  submatrix of A without row i and column j
 //********************************************
 CMatrix44

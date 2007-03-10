@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 #ifndef CGAL_TYPEDEFS_H
@@ -28,9 +28,9 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Env_sphere_traits_3.h>
 #include <CGAL/Env_plane_traits_3.h>
-#include <CGAL/Bbox_2.h> 
-#include <CGAL/Bbox_3.h> 
-#include <CGAL/IO/Color.h> 
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/IO/Color.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_widget_Conic_arc_2.h>
@@ -38,7 +38,7 @@
 #include <CGAL/Arr_overlay.h>
 #include <CGAL/Arr_overlay_2/Arr_overlay_traits.h>
 
-#include <qpainter.h> 
+#include <qpainter.h>
 
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
@@ -52,7 +52,7 @@
 typedef CGAL::Lazy_exact_nt<Base_nt>                    Coord_type;
 // instead of
 //typedef CGAL::Cartesian<Coord_type>                     Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Cartesian<Coord_type> {};
 
 typedef Kernel::Segment_2                               Segment_2;
@@ -72,7 +72,7 @@ typedef Triangle_traits::Xy_monotone_surface_3
 typedef CGAL::Envelope_diagram_2<Triangle_traits>       Envelope_tri_diagram_2;
 typedef Triangle_traits::X_monotone_curve_2             Tri_x_monotone_curve_2;
 
-typedef Envelope_tri_diagram_2::Ccb_halfedge_const_circulator 
+typedef Envelope_tri_diagram_2::Ccb_halfedge_const_circulator
   Tri_ccb_halfedge_const_circulator;
 
 
@@ -87,9 +87,9 @@ typedef Alg_kernel::Point_2                             Sphere_point_2;
 // instead of
 //typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
 //                                                        Conic_traits_2;
-// workaround for VC++ 
-struct Conic_traits_2 : public CGAL::Arr_conic_traits_2<Rat_kernel, 
-			                                Alg_kernel, 
+// workaround for VC++
+struct Conic_traits_2 : public CGAL::Arr_conic_traits_2<Rat_kernel,
+			                                Alg_kernel,
                                                         Nt_traits> {} ;
 
 typedef CGAL::Env_sphere_traits_3<Conic_traits_2>       Base_sphere_traits_3;
@@ -104,7 +104,7 @@ typedef Sphere_traits_3::X_monotone_curve_2
 typedef Sphere_traits_3::Surface_3                      Sphere_3;
 typedef CGAL::Envelope_diagram_2<Sphere_traits_3>
   Envelope_sphere_diagram_2;
-typedef Envelope_sphere_diagram_2::Ccb_halfedge_const_circulator 
+typedef Envelope_sphere_diagram_2::Ccb_halfedge_const_circulator
   Sphere_ccb_halfedge_const_circulator;
 
 
@@ -118,7 +118,7 @@ typedef Plane_traits_3::X_monotone_curve_2              Plane_x_monotone_curve_2
 typedef CGAL::Envelope_diagram_2<Plane_traits_3>        Envelope_plane_diagram_2;
 typedef Envelope_plane_diagram_2::Ccb_halfedge_const_circulator
   Plane_ccb_halfedge_const_circulator;
-typedef Envelope_plane_diagram_2::Halfedge_const_handle 
+typedef Envelope_plane_diagram_2::Halfedge_const_handle
   Plane_halfedge_const_handle;
 
 
@@ -162,13 +162,13 @@ public:
                                      CGAL::to_double(cc->source()->
                                                      point().y())));
         //created from the outer boundary of the face
-      } 
+      }
       while (++cc !=ccb);
       *m_oi++ = pgn;
     }
   }
 };
-                                             
+
 template <class OutoutIterator>
 void construct_polygon(CGAL::Qt_widget* w,
                        Tri_ccb_halfedge_const_circulator ccb,
@@ -178,13 +178,13 @@ void construct_polygon(CGAL::Qt_widget* w,
   /* running with around the outer of the face and generate from it polygon */
 
   Polygon_2 pgn;
-  
+
   Tri_ccb_halfedge_const_circulator cc=ccb;
   do {
     pgn.push_back(Double_point_2(CGAL::to_double(cc->source()->point().x()),
                                  CGAL::to_double(cc->source()->point().y())));
     //created from the outer boundary of the face
-  } 
+  }
   while (++cc !=ccb);
 
   *oi = pgn;
@@ -216,7 +216,7 @@ void construct_polygon(CGAL::Qt_widget* w,
     else
     {
 
-      // Draw a curves conic arc: As the arc is x-monotone, its source and its 
+      // Draw a curves conic arc: As the arc is x-monotone, its source and its
       // target has the extreme x-coordinates.
       const bool    is_source_left = (sx < tx);
       const int     x_min = is_source_left ? w->x_pixel(sx) : w->x_pixel(tx);
@@ -224,10 +224,10 @@ void construct_polygon(CGAL::Qt_widget* w,
       const int     n = x_max - x_min + 1;
 
       if (n <= 0) return;
-      
+
       typedef std::pair<double, double>    App_point_2;
       int                                  i;
-      
+
       App_point_2  *pts = new App_point_2 [n + 1];
       cv.polyline_approximation (n, pts);
 
@@ -240,7 +240,7 @@ void construct_polygon(CGAL::Qt_widget* w,
       }
       delete[] pts;
     }
-    
+
     //created from the outer boundary of the face
   } while (++cc != ccb);
   *oi = pgn;
@@ -302,7 +302,7 @@ void construct_polygon(CGAL::Qt_widget* w,
         insert_non_intersecting_curve(arr_unb_f, non_fict->curve());
       if (he->direction() != non_fict->direction())
         he = he->twin();
-     
+
       std::list<Plane_x_monotone_curve_2> cv_list;
       Plane_halfedge_const_handle eh;
       for (eh = non_fict->next(); eh != non_fict; eh = eh->next()) {
@@ -312,7 +312,7 @@ void construct_polygon(CGAL::Qt_widget* w,
       CGAL::insert_non_intersecting_curves(arr_unb_f, cv_list.begin(),
                                            cv_list.end());
 
-      Faces_visitor<Envelope_plane_diagram_2, OutoutIterator> 
+      Faces_visitor<Envelope_plane_diagram_2, OutoutIterator>
         visitor(eh->face(), he->face(), oi);
       Envelope_plane_diagram_2 res;
       CGAL::overlay(arr_box, arr_unb_f, res, visitor);
@@ -328,7 +328,7 @@ void construct_polygon(CGAL::Qt_widget* w,
     pgn.push_back(Double_point_2(CGAL::to_double(cc->source()->point().x()),
                                  CGAL::to_double(cc->source()->point().y())));
     //created from the outer boundary of the face
-  } 
+  }
   while (++cc !=ccb);
 
   *oi = pgn;
@@ -341,7 +341,7 @@ void draw_face(CGAL::Qt_widget* w, typename Arr::Face_const_iterator f)
   bool is_unb = false;
   if(f->is_unbounded())
     is_unb = true;
-  
+
   Qt::RasterOp old_rasterop = w->rasterOp();
   w->get_painter().setRasterOp(Qt::XorROP);
   // make polygon from the outer ccb of the face 'f'
@@ -397,7 +397,7 @@ void draw_arr(CGAL::Qt_widget* w, const Arrangement& arr, bool draw_v,
       *w << eit->curve();
     }
   }
-  
+
   if (draw_v) {
     *w <<  CGAL::RED;
     Vertex_const_iterator vit;

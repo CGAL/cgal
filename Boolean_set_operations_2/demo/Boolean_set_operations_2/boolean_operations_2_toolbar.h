@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -30,7 +30,7 @@
 //#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
 #include "Qt_widget_get_circ_polygon.h"
 
-#include <CGAL/IO/Qt_widget_get_circle.h> 
+#include <CGAL/IO/Qt_widget_get_circle.h>
 #include <CGAL/IO/pixmaps/circle.xpm>
 
 
@@ -40,15 +40,15 @@
 #include <qbuttongroup.h>
 #include <qmainwindow.h>
 #include <qcursor.h>
-#include <qradiobutton.h> 
-#include <qvbuttongroup.h> 
+#include <qradiobutton.h>
+#include <qvbuttongroup.h>
 
 
 
 #include "typedefs.h"
 #include "Qt_widget_locate_layer.h"
 
-extern bool                                      red_active; 
+extern bool                                      red_active;
 extern Polygon_set                               red_set;
 extern Polygon_set                               blue_set;
 
@@ -75,11 +75,11 @@ private:
   QToolButton     *but[10];
   QButtonGroup    *button_group;
   CGAL::Qt_widget *widget;
-  
+
   CGAL::Qt_widget_get_circ_polygon<Kernel>     getsimplebut;
   CGAL::Qt_widget_get_circle<Kernel>           getcirclebut;
   Qt_widget_locate_layer                       locatebut;
-  
+
 };//end class
 
 

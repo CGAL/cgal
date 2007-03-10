@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_NEF_SETDTHREAD(131);
-  // Sphere_geometry 11 
+  // Sphere_geometry 11
   // Sphere_geometry_OGL 13
   // Segment_overlay 23
   // SM_overlayer 53
@@ -78,10 +78,10 @@ int main(int argc, char **argv)
     Point_3 o(0,0,0);
     while ( n-- > 0 ) {
       do { ph = *S++; } while ( ph == o );
-      Plane_3 h(o,(ph-CGAL::ORIGIN).direction()); 
-      do { p1 = *S++; } 
+      Plane_3 h(o,(ph-CGAL::ORIGIN).direction());
+      do { p1 = *S++; }
       while ( p1 == o || h.projection(p1) == o );
-      do { p2 = *S++; } 
+      do { p2 = *S++; }
       while ( p2 == o || h.projection(p2) == o );
       SPoint p3(h.projection(p1)),p4(h.projection(p2));
       int which = CGAL::default_random.get_int(0,3);
@@ -125,11 +125,9 @@ int main(int argc, char **argv)
   O1.simplify(); // O1.dump(std::cerr);
   O2.create_from_segments(L2.begin(),L2.end());
   O2.simplify(); // O2.dump(std::cerr);
-  O3.subdivide(E1,E2); 
+  O3.subdivide(E1,E2);
   O3.select(OR());
   O3.simplify(); // O3.dump(std::cerr);
     */
   return 0;
 }
-
-

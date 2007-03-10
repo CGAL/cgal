@@ -47,7 +47,7 @@ public:
 	// camera
 	void InitCamera();
 
-	// mouse 
+	// mouse
 	void HandleMouseButton(int x, int y);
 
   // Overrides
@@ -91,4 +91,3 @@ public:
 inline CMeshDoc* CMeshView::GetDocument() const
    { return reinterpret_cast<CMeshDoc*>(m_pDocument); }
 #endif
-

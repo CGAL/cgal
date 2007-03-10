@@ -43,7 +43,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMDIFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
 		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
 		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
@@ -71,8 +71,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	if( !CMDIFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
 
-	cs.style = WS_OVERLAPPED | WS_CAPTION | FWS_ADDTOTITLE | 
-		         WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | 
+	cs.style = WS_OVERLAPPED | WS_CAPTION | FWS_ADDTOTITLE |
+		         WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX |
 						 WS_MAXIMIZE | WS_SYSMENU;
 
 	return TRUE;
@@ -93,4 +93,3 @@ void CMainFrame::Dump(CDumpContext& dc) const
 }
 
 #endif //_DEBUG
-

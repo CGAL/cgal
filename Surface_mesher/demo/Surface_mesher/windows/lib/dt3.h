@@ -108,7 +108,7 @@ public:
 		{
 			Object object = dual(*it);
 			Segment segment;
-			if(assign(segment,object)) 
+			if(assign(segment,object))
 			{
 				Point p1 = segment.source();
 				Point p2 = segment.target();
@@ -120,7 +120,7 @@ public:
 											CGAL_NTS to_double(p2.z()));
 			}
 			Ray ray;
-			if(assign(ray,object)) 
+			if(assign(ray,object))
 			{
 				Point p1 = ray.source();
 				Point p2 = ray.point(1);
@@ -137,4 +137,3 @@ public:
 };
 
 #endif // _DT3_
-

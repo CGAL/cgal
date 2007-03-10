@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -52,7 +52,7 @@ public:
 		 const char* name = 0, WFlags f = 0 )
     : QToolBar(label, mainWindow, parent, newLine, name, f),
       nr_of_buttons(0)
-  {  
+  {
     showVD = new Voronoi_diagram_layer<AG_2>(ag);
     showDG = new Delaunay_graph_layer<AG_2>(ag);
     showNT = new Visible_sites_layer<AG_2>(ag);
@@ -71,61 +71,61 @@ public:
     widget->attach(edit_V);
 
     but[0] = new QToolButton(QPixmap( (const char**)points_small_xpm ),
-			     "Show sites", 
-			     0, 
-			     this, 
-			     SLOT(show_sites()), 
-			     this, 
+			     "Show sites",
+			     0,
+			     this,
+			     SLOT(show_sites()),
+			     this,
 			     "Show weighted points");
 
     but[1] = new QToolButton(QPixmap( (const char**)voronoi_small_xpm ),
-			     "Show Voronoi diagram", 
-			     0, 
-			     this, 
-			     SLOT(show_apollonius_diagram()), 
-			     this, 
+			     "Show Voronoi diagram",
+			     0,
+			     this,
+			     SLOT(show_apollonius_diagram()),
+			     this,
 			     "Show Voronoi_diagram");
 
-    
+
     but[2] = new QToolButton(QPixmap( (const char**)triangulation_small_xpm ),
-			     "Show Delaunay graph", 
-			     0, 
-			     this, 
-			     SLOT(show_apollonius_graph()), 
-			     this, 
+			     "Show Delaunay graph",
+			     0,
+			     this,
+			     SLOT(show_apollonius_graph()),
+			     this,
 			     "Show Delaunay graph");
 
     but[3] = new QToolButton(QPixmap( (const char**)point_small_xpm ),
-			     "Insert point", 
-			     0, 
-			     this, 
-			     SLOT(insert_point_mode()), 
-			     this, 
+			     "Insert point",
+			     0,
+			     this,
+			     SLOT(insert_point_mode()),
+			     this,
 			     "Insert point");
 
     but[4] = new QToolButton(QPixmap( (const char**)circle_small_xpm ),
-			     "Insert circle", 
-			     0, 
-			     this, 
-			     SLOT(insert_circle_mode()), 
-			     this, 
+			     "Insert circle",
+			     0,
+			     this,
+			     SLOT(insert_circle_mode()),
+			     this,
 			     "Insert circle");
-    
+
 #if 0
     but[5] = new QToolButton(QPixmap( (const char**)removecircle_xpm ),
-			     "Remove site", 
-			     0, 
-			     this, 
-			     SLOT(remove_mode()), 
-			     this, 
+			     "Remove site",
+			     0,
+			     this,
+			     SLOT(remove_mode()),
+			     this,
 			     "Remove site");
 #else
     but[5] = new QToolButton(QPixmap( (const char**)notool_xpm ),
-			     "Remove site", 
-			     0, 
-			     this, 
-			     SLOT(remove_mode()), 
-			     this, 
+			     "Remove site",
+			     0,
+			     this,
+			     SLOT(remove_mode()),
+			     this,
 			     "Remove site");
 #endif
 
@@ -137,11 +137,11 @@ public:
     // associated with them...
 #if 0
     but[6] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
-    			     "Edit site", 
-    			     0, 
-    			     this, 
+    			     "Edit site",
+    			     0,
+    			     this,
     			     SLOT(edit_mode()),
-    			     this, 
+    			     this,
     			     "Edit site");
 #endif
 
@@ -177,7 +177,7 @@ signals:
   void removeModeChanged(bool);
   void editModeChanged(bool);
   void inputModeChanged(bool);
-		
+
 private slots:
   void show_sites() {
     if ( but[0]->isOn() ) {
@@ -250,7 +250,7 @@ private slots:
 private:
   QToolButton		*but[10];
   CGAL::Qt_widget	*widget;
-  QMainWindow		*window;	
+  QMainWindow		*window;
   int			nr_of_buttons;
 
   Voronoi_diagram_layer<AG_2>             *showVD;

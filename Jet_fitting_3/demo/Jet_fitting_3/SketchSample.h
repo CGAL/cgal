@@ -9,12 +9,12 @@
 
 //marc
 #include "visu_poly.h"
-#include "enriched_polyhedron.h" 
+#include "enriched_polyhedron.h"
 
 
 //Data structure for one line of the input file .4ogl.txt
 struct data_line{
-  Point P1,P2;	
+  Point P1,P2;
   Vector D1,D2;
   double k1,k2;
   data_line(Point P1,Point P2,
@@ -29,16 +29,16 @@ typedef std::list<data_line* >::iterator DS_iterator;
 
 
 class SketchSample : public Sketcher {
- private: 
+ private:
   bool highlight;
   Mesh* p_mesh;
   DS* p_ppal_data;
-  
- public: 
-  SketchSample(Mesh* mesh, DS* ppal_data);  
-  
+
+ public:
+  SketchSample(Mesh* mesh, DS* ppal_data);
+
   ~SketchSample();
-  
+
   void buildDisplayList(GLuint surf);
   void buildPicking(GLuint pickSurf);
   bool selectedColor(GLubyte red, GLubyte green, GLubyte blue);

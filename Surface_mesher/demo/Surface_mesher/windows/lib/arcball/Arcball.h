@@ -47,7 +47,7 @@ public :
 
   // Data setting
   void Clear();
-  void Set(const double x, const double y, const double z, 
+  void Set(const double x, const double y, const double z,
 	   const double r = 1.0f);
   void Set(CVector3d center, const double r = 1.0f);
   void Set(CArcball &arcball);
@@ -79,14 +79,13 @@ public :
   void Motion(CVector3d& currentVec);
   int  glDraw();
 
-  int IntersectSphere(CVector3d& rayStart, CVector3d& rayDir, 
+  int IntersectSphere(CVector3d& rayStart, CVector3d& rayDir,
 		      CVector3d& result);
-  int IntersectPlane(CVector3d& rayStart, CVector3d& rayDir, 
+  int IntersectPlane(CVector3d& rayStart, CVector3d& rayDir,
 		     CVector3d& result, int whichPlane = 2);
   int Intersect(CVector3d& rayStart, CVector3d& rayDir, CVector3d& result);
   CVector3d Intersect(int x, int y, CCamera& theCam, CViewport& vp);
 };
 
 
-#endif // 
-
+#endif //

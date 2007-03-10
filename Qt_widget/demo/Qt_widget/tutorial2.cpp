@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
@@ -55,7 +55,7 @@ public:
 
     setCentralWidget(widget);
   };
-private slots:  
+private slots:
   void redraw_win()
   {
     *widget << dt;

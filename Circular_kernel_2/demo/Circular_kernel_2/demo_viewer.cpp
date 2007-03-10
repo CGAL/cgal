@@ -5,10 +5,10 @@
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //           Radu Ursu
-// 
+//
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (CGAL - Effective Computational Geometry for Curves and Surfaces) 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (CGAL - Effective Computational Geometry for Curves and Surfaces)
 
 
 // TODO :
@@ -70,7 +70,7 @@ int main() {
 #include <CGAL/Arr_circular_arc_traits_tracer.h>
 #include <CGAL/IO/Dxf_variant_reader.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                      NT;  
+typedef CGAL::Quotient<CGAL::MP_Float>                      NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
@@ -309,7 +309,7 @@ private slots:
 
     //std::ifstream in(s);
     //CGAL::set_ascii_mode(in);
-    
+
     //std::istream_iterator<Arc_2> begin(in), end;
     //ArcContainer arcs(begin, end);
     //arc_container().swap(arcs);

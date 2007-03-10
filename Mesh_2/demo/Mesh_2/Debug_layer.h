@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -34,7 +34,7 @@ public:
   Debug_layer(std::ostream& s = std::cerr) : stream(s)
   {
   }
-  
+
   void draw()
   {
     stream << "redraw()" << std::endl;

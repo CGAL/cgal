@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -77,4 +77,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-               

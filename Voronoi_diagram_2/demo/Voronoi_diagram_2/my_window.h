@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -349,7 +349,7 @@ private slots:
       CGAL::Object conflicts;
 
       widget->redraw();
-      
+
       if ( CGAL::assign(q, obj) ) {
 	conflicts = vvd->get_conflicts(q);
 	*widget << CGAL::YELLOW;
@@ -514,7 +514,7 @@ private slots:
     QString fileName =
       QFileDialog::getOpenFileName(QString::null, QString::null,
 				   this, "Open file...");
-    
+
     if ( !fileName.isNull() ) {
       read_from_file(fileName);
     }
@@ -540,7 +540,7 @@ private slots:
     QString fileName =
       QFileDialog::getOpenFileName(QString::null, QString::null,
 				   this, "Open file...");
-    
+
     if ( !fileName.isNull() ) {
       std::ifstream f(fileName);
       assert(f);
@@ -567,10 +567,10 @@ private slots:
     QString fileName =
       QFileDialog::getSaveFileName(tr("data.out"), QString::null,
 				   this, "Save as...");
-						      
+
     if ( !fileName.isNull() ) {
       std::ofstream f(fileName);
-      assert(f);      
+      assert(f);
       f << svd;
     }
 #endif

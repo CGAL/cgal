@@ -44,9 +44,9 @@ public:
                 , demo::Regions  const&   out
                 );
   ~Layers_toolbar();
-  
+
   Qt_layer_show_progress& get_progress_layer() { return *progress ; }
-  
+
 private:
   QToolButton         *but[4];
   CGAL::Qt_widget     *widget;

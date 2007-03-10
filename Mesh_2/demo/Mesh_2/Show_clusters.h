@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -80,7 +80,7 @@ public:
       mesher(m), dt(), color(color_),
       size(pointsize), style(pointstyle), line_color(lc),
       reduced_line_color(reduced_line_color_),
-      width(linewidth) 
+      width(linewidth)
     {
       reinit_clusters();
     }
@@ -112,23 +112,23 @@ public:
   void draw()
   {
     widget->lock();
-    
+
     QColor oldColor = widget->color();
     int oldPointSize = widget->pointSize();
     CGAL::PointStyle oldStyle = widget->pointStyle();
-    
+
     *widget << color << CGAL::PointStyle(style)
     	    << CGAL::PointSize(size);
-    
+
     for(Vertices_iterator it = dt.finite_vertices_begin();
         it != dt.finite_vertices_end();
         ++it)
       *widget << it->point();
-    
+
     widget->setPointStyle(oldStyle);
     widget->setPointSize(oldPointSize);
     widget->setColor(oldColor);
-    
+
     widget->unlock();
     oldPixmap = widget->get_pixmap();
   }
@@ -136,7 +136,7 @@ public:
   void mouseMoveEvent(QMouseEvent *e)
   {
     if( mesher == 0 ) return;
-    
+
     FT x, y;
     widget->x_real(e->x(), x);
     widget->y_real(e->y(), y);
@@ -151,7 +151,7 @@ public:
 
     QColor oldColor = widget->color();
     int oldWidth = widget->lineWidth();
-    
+
     widget->lock();
 
     widget->get_painter().drawPixmap(0, 0, oldPixmap);
@@ -169,7 +169,7 @@ public:
 
     for(int j = 0; j < n; ++j)
       {
-	std::pair<ViCIt,ViCIt> seq = 
+	std::pair<ViCIt,ViCIt> seq =
           mesher->clusters().vertices_in_cluster_sequence(v2, j);
         Cluster c;
         Clusters_const_iterator dummy_c_it;

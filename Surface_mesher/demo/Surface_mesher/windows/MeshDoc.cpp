@@ -79,7 +79,7 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	CString extension = lpszPathName;
 	extension = extension.Right(4);
 	extension.MakeLower();
-	
+
 	// set current path
 	// path "c:\path\file.wrl" -> c:\path
 	CString path = lpszPathName;
@@ -89,7 +89,7 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// off extension
 	if(extension == ".off")
 	{
-		// read from stream 
+		// read from stream
 		std::ifstream stream(lpszPathName);
 		if(!stream)
 		{
@@ -116,25 +116,25 @@ BOOL CMeshDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	// Extension-based checking
 	CString file = lpszPathName;
-	
+
 	// Extension
 	CString extension = lpszPathName;
 	extension = extension.Right(4);
 	extension.MakeLower();
-	
+
 	// Path "c:\path\file.wrl" -> c:\path
 	CString path = lpszPathName;
 	path = path.Left(path.ReverseFind('\\'));
 
 	// Current path
 	SetCurrentDirectory(path);
-	
+
 	TRACE("\nOpening document\n");
 	TRACE("File      : %s\n",lpszPathName);
 	TRACE("Path      : %s\n",path);
 	TRACE("Extension : %s\n",extension);
-	
-	// save off file 
+
+	// save off file
 	if(extension == ".off")
 	{
 		// OFF extension
@@ -160,25 +160,25 @@ BOOL CMeshDoc::OnSaveDocument(LPCTSTR lpszPathName)
 // User message in status bar
 //*******************************************
 void CMeshDoc::StatusMessage(char* fmt,...)
-{   
+{
 	CWinApp *pApp = AfxGetApp();
-	if(pApp->m_pMainWnd != NULL) 
-	{ 
+	if(pApp->m_pMainWnd != NULL)
+	{
 		char buffer[256];
-		CStatusBar* pStatus = 
+		CStatusBar* pStatus =
 			(CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(
 			AFX_IDW_STATUS_BAR);
-		
+
 		// fill buffer
-		va_list argptr;      
+		va_list argptr;
 		va_start(argptr,fmt);
 		vsprintf(buffer,fmt,argptr);
 		va_end(argptr);
-		
-		if(pStatus != NULL) 
+
+		if(pStatus != NULL)
 		{
 			pStatus->SetPaneText(0,buffer);
-			pStatus->UpdateWindow(); 
+			pStatus->UpdateWindow();
 		}
   }
 	return;
@@ -216,18 +216,18 @@ void CMeshDoc::OnMeshingRun()
 	generate_initial_point_sample(points,m_init_nb_vertices);
   m_del.insert(points.begin(),points.end());
 	StatusMessage("Initial number of points: %d",m_del.number_of_vertices());
-  
+
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000); 
+  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000);
                                          // bound on Hausdorff distance
                                          // does not play any role if
                                          // bigger than the square of
                                          // the Uniform_size_criterion
 
-  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (m_criterion_uniform_size); 
+  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (m_criterion_uniform_size);
                            // bound on radii of surface Delaunay balls
 
-  CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30); 
+  CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30);
                           // lower bound on minimum angle in degrees
 
   std::vector<Criterion*> crit_vect;
@@ -237,14 +237,14 @@ void CMeshDoc::OnMeshingRun()
 
   Criteria criteria(crit_vect);
 
-  
+
   // 2D-complex in 3D-Delaunay triangulation
   C2t3 Co2(m_del);
 
   // Surface meshing
 	StatusMessage("Refine...");
   Surface_mesher mesher(m_del, Co2, m_oracle, criteria);
-  
+
 	//mesher.refine_mesh(true);
 
 	unsigned int index = m_init_nb_vertices;
@@ -288,4 +288,3 @@ void CMeshDoc::generate_initial_point_sample(std::list<Point>& points,
   for(unsigned int i = 0;i<nb;i++)
     points.push_back(m_mesh.random_point());
 }
-

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -97,7 +97,7 @@ private:
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(XorROP);
       widget->lock();
-        *widget << CGAL::GREEN << CGAL::PointSize (7) 
+        *widget << CGAL::GREEN << CGAL::PointSize (7)
               << CGAL::PointStyle (CGAL::DISC);
 	      if(!wasrepainted)
           *widget << old_point;
@@ -109,7 +109,7 @@ private:
       current_v = v;
       wasrepainted = FALSE;
       on_first = FALSE;
-    }	
+    }
   };
   void mouseMoveEvent(QMouseEvent *e)
   {
@@ -118,7 +118,7 @@ private:
       FT x, y;
       widget->x_real(e->x(), x),
       widget->y_real(e->y(), y);
-  		
+
       *widget << CGAL::GREEN << CGAL::PointSize (5)
               << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)
@@ -129,9 +129,9 @@ private:
       FT alpha_index = as->get_alpha();
       as->clear();
       L.clear();
-      Vertex_iterator it = dt->vertices_begin(), 
+      Vertex_iterator it = dt->vertices_begin(),
 	              beyond = dt->vertices_end();
-      while(it != beyond) {      
+      while(it != beyond) {
         L.push_back((*it).point());
         ++it;
       }
@@ -160,9 +160,9 @@ private:
     FT alpha_index = as->get_alpha();
     as->clear();
     L.clear();
-    Vertex_iterator it = dt->vertices_begin(), 
+    Vertex_iterator it = dt->vertices_begin(),
 	            beyond = dt->vertices_end();
-    while(it != beyond) {      
+    while(it != beyond) {
       L.push_back((*it).point());
       ++it;
     }
@@ -173,11 +173,10 @@ private:
   void move_pointi(){
     on_first = TRUE;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), 
+                            QPoint(widget->x_pixel(old_point.x()),
                             widget->y_pixel(old_point.y()))));
   }
-};//end class 
+};//end class
 
 
 #endif // CGAL_QT_WIDGET_GET_SEGMENT_H
-

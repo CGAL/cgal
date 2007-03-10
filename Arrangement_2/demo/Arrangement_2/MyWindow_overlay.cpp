@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -34,8 +34,8 @@
 void MyWindow::overlay_pm()
 {
   OverlayForm *form = new OverlayForm( myBar , this ,tab_number);
-  if ( form->exec() ) 
-  {    
+  if ( form->exec() )
+  {
     unsigned int i = 2;
     if (form->listBox2->count() < i)
     {
@@ -46,7 +46,7 @@ void MyWindow::overlay_pm()
     i = 12;
     if (form->listBox2->count() > i)
     {
-      QMessageBox::information 
+      QMessageBox::information
         (this, "Overlay",
          "Maximal number of arrangements to overlay is 12 !");
       return;
@@ -54,25 +54,25 @@ void MyWindow::overlay_pm()
     CheckForm *check_form = new CheckForm( form , this );
     if ( ! check_form->exec() )
       return;
-    
+
     std::list<int>      indexes;
     std::list<int>      paint_flags;
     TraitsType          t;
     Qt_widget_base_tab *w_demo_p;
     int                 index,real_index = 0;
-    
+
     for (unsigned int i = 0; i < form->listBox2->count(); i++)
     {
       form->listBox2->setCurrentItem(i);
       char s[100];
-      strcpy(s, form->listBox2->currentText()); 
+      strcpy(s, form->listBox2->currentText());
       char * pch;
       pch = strtok(s," ");
       pch = strtok(NULL, " ");
       index = atoi(pch);
       real_index = realIndex(index-1);
       indexes.push_back(real_index);
-      QCheckBox *b = 
+      QCheckBox *b =
       static_cast<QCheckBox *> (check_form->button_group->find(i));
       if ( b->isChecked() )
         paint_flags.push_back(1);
@@ -80,25 +80,25 @@ void MyWindow::overlay_pm()
         paint_flags.push_back(0);
     }
     delete check_form;
-    
+
     w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->page( real_index ));
     t = w_demo_p->traits_type;
 
     FileOpenOptionsForm * form = new FileOpenOptionsForm(false);
-    if ( form->exec() ) 
+    if ( form->exec() )
     {
     int id = form->buttonGroup->id(form->buttonGroup->selected());
-    switch ( id ) 
+    switch ( id )
     {
       case 0: // open file in a new tab
-      make_overlay( indexes , paint_flags , t , true);    
+      make_overlay( indexes , paint_flags , t , true);
       break;
       case 1: // open file in current tab (delete current Pm)
       make_overlay( indexes , paint_flags , t , false);
-      break;        
+      break;
     }// switch
     }// if
-  
+
   }
   delete form;
 }
@@ -110,7 +110,7 @@ void MyWindow::overlay_pm()
 void MyWindow::make_overlay( std::list<int> indexes ,
                std::list<int> paint_flags ,TraitsType t , bool new_tab)
 {
-  switch ( t ) 
+  switch ( t )
   {
     case SEGMENT_TRAITS:
     {
@@ -118,30 +118,30 @@ void MyWindow::make_overlay( std::list<int> indexes ,
          add_segment_tab();
        else
          updateTraitsType( setSegmentTraits );
-        Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p_new = 
-         static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+        Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p_new =
+         static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->currentPage());
-     
+
    QCursor old = w_demo_p_new->cursor();
      w_demo_p_new->setCursor(Qt::WaitCursor);
-     
+
    Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p1, *w_demo_p2;
-     
+
      int ind1, ind2;
-    
+
      ind1 = indexes.front();
      ind2 = indexes.back();
-    
-     w_demo_p1 = 
-       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+
+     w_demo_p1 =
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->page( ind1 ));
 
-     w_demo_p2 = 
-       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+     w_demo_p2 =
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
        (myBar->page( ind2 ));
-       
+
      w_demo_p_new->bbox = w_demo_p1->bbox + w_demo_p2->bbox;
-       
+
      // update the vector of colors of unbounded faces
 
      typedef  Segment_tab_traits::Arrangement_2    Arrangement_2;
@@ -150,13 +150,13 @@ void MyWindow::make_overlay( std::list<int> indexes ,
                    *(w_demo_p2->m_curves_arr),
                    *(w_demo_p_new->m_curves_arr),
                    func);
-     
-   w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(), 
+
+   w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(),
                             w_demo_p_new->bbox.xmax(),
-                            w_demo_p_new->bbox.ymin() , 
+                            w_demo_p_new->bbox.ymin() ,
                             w_demo_p_new->bbox.ymax());
-   
-     w_demo_p_new->setCursor(old);     
+
+     w_demo_p_new->setCursor(old);
      break;
      }
 
@@ -167,31 +167,31 @@ void MyWindow::make_overlay( std::list<int> indexes ,
       else
         updateTraitsType( setPolylineTraits );
 
-      
-       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p_new = 
-         static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+
+       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p_new =
+         static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
        (myBar->currentPage());
-     
+
    QCursor old = w_demo_p_new->cursor();
      w_demo_p_new->setCursor(Qt::WaitCursor);
-     
+
    Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p1, *w_demo_p2;
-     
+
      int ind1, ind2;
-    
+
      ind1 = indexes.front();
      ind2 = indexes.back();
-    
-     w_demo_p1 = 
-       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+
+     w_demo_p1 =
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
        (myBar->page( ind1 ));
 
-     w_demo_p2 = 
-       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+     w_demo_p2 =
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
        (myBar->page( ind2 ));
-       
+
      w_demo_p_new->bbox = w_demo_p1->bbox + w_demo_p2->bbox;
-       
+
      // update the vector of colors of unbounded faces
 
      typedef  Polyline_tab_traits::Arrangement_2    Arrangement_2;
@@ -200,13 +200,13 @@ void MyWindow::make_overlay( std::list<int> indexes ,
                    *(w_demo_p2->m_curves_arr),
                    *(w_demo_p_new->m_curves_arr),
                    func);
-     
-   w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(), 
+
+   w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(),
                             w_demo_p_new->bbox.xmax(),
-                            w_demo_p_new->bbox.ymin() , 
+                            w_demo_p_new->bbox.ymin() ,
                             w_demo_p_new->bbox.ymax());
-   
-     w_demo_p_new->setCursor(old);     
+
+     w_demo_p_new->setCursor(old);
      break;
     }
 
@@ -216,31 +216,31 @@ void MyWindow::make_overlay( std::list<int> indexes ,
         add_conic_tab();
       else
         updateTraitsType( setConicTraits );
-      
-       Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p_new = 
-         static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+
+       Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p_new =
+         static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->currentPage());
-     
+
    QCursor old = w_demo_p_new->cursor();
      w_demo_p_new->setCursor(Qt::WaitCursor);
-     
+
    Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p1, *w_demo_p2;
-     
+
      int ind1, ind2;
-    
+
      ind1 = indexes.front();
      ind2 = indexes.back();
-    
-     w_demo_p1 = 
-       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+
+     w_demo_p1 =
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->page( ind1 ));
 
-     w_demo_p2 = 
-       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+     w_demo_p2 =
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->page( ind2 ));
-       
+
      w_demo_p_new->bbox = w_demo_p1->bbox + w_demo_p2->bbox;
-       
+
      // update the vector of colors of unbounded faces
 
      typedef  Conic_tab_traits::Arrangement_2    Arrangement_2;
@@ -251,23 +251,23 @@ void MyWindow::make_overlay( std::list<int> indexes ,
                    func);
 
 
-     
-   w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(), 
+
+   w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(),
                             w_demo_p_new->bbox.xmax(),
-                            w_demo_p_new->bbox.ymin() , 
+                            w_demo_p_new->bbox.ymin() ,
                             w_demo_p_new->bbox.ymax());
-   
-     w_demo_p_new->setCursor(old);     
+
+     w_demo_p_new->setCursor(old);
      break;
 
-    } 
+    }
   }
 }
-  
+
 
 
 /*! real index - finds the tab bar index of a tab
- * \param index - the tab index (the same one it was 
+ * \param index - the tab index (the same one it was
  *                initialized with)
  *\ return the tab bar index of this tab
  */
@@ -278,7 +278,7 @@ int MyWindow::realIndex(int index)
   {
     if ( myBar->isTabEnabled( myBar->page(i) ) )
     {
-      // We peform downcasting from QWigdet* to 
+      // We peform downcasting from QWigdet* to
       // Qt_widget_base_tab*, as we know that only
       // Qt_widget_base_tab objects are stored in the tab pages.
       w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->page(i));

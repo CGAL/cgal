@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
       else if(std::string(argv[arg_count]) == "-a")
 	{
 	  double area_bound;
-	    if( (argc > arg_count+1) && 
+	    if( (argc > arg_count+1) &&
 		std::istringstream(argv[arg_count+1]) >> area_bound )
 	      {
 		criteria.set_area_bound(area_bound);
@@ -137,10 +137,10 @@ int main(int argc, char** argv)
 	  CGAL::write_triangle_poly_file(t, output);
 	}
       if(terminal_output)
-	std::cerr 
+	std::cerr
 	  << "Mesh points: " << t.number_of_vertices() << std::endl
 	  << "Mesh triangles: " << t.number_of_faces () << std::endl;
-      
+
     }
   else
     {
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
       usage(argv);
       return 1;
     }
-  
+
   return 0;
 };
 

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -24,8 +24,8 @@
 template <class NT>
 CGAL::Quotient<NT>
 double_to_quotient(double x)
-{ 
-    NT num = 0; 
+{
+    NT num = 0;
     NT den = 1;
 
     if (x != 0.0)
@@ -42,7 +42,7 @@ double_to_quotient(double x)
       long exponent = expt;
       double intpart;
       int k = 0;
-      
+
       while (mantissa != 0.0 && k++ < maxiter)
 
       { mantissa *= width; // shift double mantissa

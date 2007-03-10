@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -23,7 +23,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // the demo program includs several calsses:
 // 1. MyWindow - main window, create thw window properties (tool bar, menu bar)
-// 2. Qt_widget_demo_tab - the program give the user an optoin of multiple tabs with  
+// 2. Qt_widget_demo_tab - the program give the user an optoin of multiple tabs with
 //    different curve traits (segment_tab, polyline_tab and conic_tab)
 // 3. Qt_layer - the screen object attached to every demo_tab that draw on it.
 // 4. forms classes - the dailogs windows.
@@ -44,7 +44,7 @@
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 #include <qfiledialog.h>
-#include <qmessagebox.h> 
+#include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qtoolbutton.h>
@@ -53,8 +53,8 @@
 #include <qtabbar.h>
 #include <qtabwidget.h>
 #include <qstring.h>
-#include <qlabel.h> 
-#include <qcolordialog.h> 
+#include <qlabel.h>
+#include <qcolordialog.h>
 
 #include <qfile.h>
 #include <qpainter.h>
@@ -69,9 +69,9 @@
 class Qt_layer;
 class Qt_widget_base_tab;
 
-/*! class MyWindow is the main class that controls all the window 
-    operations 
- */ 
+/*! class MyWindow is the main class that controls all the window
+    operations
+ */
 class MyWindow : public QMainWindow
 {
     Q_OBJECT
@@ -150,7 +150,7 @@ private slots:
     /*! overlay planar maps */
     void overlay_pm();
     /*! make the overlay */
-    void make_overlay( std::list<int> indexes , std::list<int> paint_flags , 
+    void make_overlay( std::list<int> indexes , std::list<int> paint_flags ,
                        TraitsType t , bool new_tab );
     /*! save file */
     void fileSave();
@@ -171,7 +171,7 @@ private slots:
     /*! set backGround Color */
     void backGroundColor();
     /*! set vertexColor Color */
-    void changePmColor();    
+    void changePmColor();
     /*! choose the point location strategy */
     void pointLocationStrategy();
     /*! change the conic type of current tab */
@@ -221,7 +221,7 @@ private:
     /*! drag mode action */
     QAction *dragMode;
     /*! merge mode action */
-    QAction *mergeMode;    
+    QAction *mergeMode;
     /*! split mode action */
     QAction *splitMode;
     /*! fill face mode action */
@@ -233,7 +233,7 @@ private:
     ///*! the name of the file to be saved */
     QString m_filename;
     /*! window hight */
-    int m_height; 
+    int m_height;
     /*! window width */
     int m_width;
     /*! hand tool layer for dragging the planar map */

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -79,7 +79,7 @@ public:
 
     connect(widget, SIGNAL(s_mouseReleaseEvent(QMouseEvent*)), this,
           SLOT(insert_after_show_conflicts(QMouseEvent*)));
-	
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -121,7 +121,7 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &tr1);	
+    newtoolbar = new Tools_toolbar(widget, this, &tr1);
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &tr1);
 
@@ -133,7 +133,7 @@ public:
     widget->set_window(-1, 1, -1, 1);
 
     widget->setMouseTracking(TRUE);
-	
+
     //connect the widget to the main function that receives the objects
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
@@ -164,7 +164,7 @@ private slots:
     triangulation_changed = true;
     something_changed();
   }
-	
+
   void get_new_object(CGAL::Object obj){
     Point_2 p;
     Segment s;
@@ -266,7 +266,7 @@ private slots:
       old_state = current_state;
       triangulation_changed = true;
     }
-  }	
+  }
 
   void generate_triangulation(){
     tr1.clear();
@@ -292,7 +292,7 @@ private slots:
     triangulation_changed = true;
     something_changed();
   }
-	
+
   void save_triangulation()
   {
     QString fileName =
@@ -365,11 +365,11 @@ public slots:
   inline  void something_changed(){current_state++;};
 
 private:
-  CGAL::Qt_widget                   *widget;		
+  CGAL::Qt_widget                   *widget;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   Tools_toolbar                     *newtoolbar;
   Layers_toolbar                    *vtoolbar;
-  bool                              got_point;	
+  bool                              got_point;
   //if a CGAL::Point is received should be true
   bool                              triangulation_changed;
   //true only when triangulation has changed

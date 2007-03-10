@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
@@ -30,7 +30,7 @@
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
-#include <CGAL/IO/pixmaps/demoicon.xpm> 
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 typedef CGAL::Quotient<CGAL::MP_Float>         Number_type;
 typedef CGAL::Cartesian<Number_type>           Rep;

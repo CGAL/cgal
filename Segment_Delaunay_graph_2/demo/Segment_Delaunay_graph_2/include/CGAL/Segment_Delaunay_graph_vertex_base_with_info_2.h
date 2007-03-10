@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -56,9 +56,9 @@ public:
     typedef Segment_Delaunay_graph_vertex_base_with_info_2<Vb2,Info> Other;
   };
 
-  
+
   Segment_Delaunay_graph_vertex_base_with_info_2 () : Vbb(), info_() {}
-    
+
   Segment_Delaunay_graph_vertex_base_with_info_2(const Storage_site_2& ss,
 						 Face_handle f)
     : Vbb(ss, f), info_()  {}
@@ -71,6 +71,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_WITH_INFO_2_H

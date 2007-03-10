@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -30,7 +30,7 @@
 
 #include <qiconset.h>
 
-Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 			     QMainWindow *mw, std::list<Point_2> *l1) :
   QToolBar(mw, "NT")
   {
@@ -49,7 +49,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   but[1] = new QToolButton(this, "pointtool");
   but[1]->setIconSet(set1);
   but[1]->setTextLabel("Input Point");
-  
+
   nr_of_buttons = 2;
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i<nr_of_buttons; i++) {
@@ -57,7 +57,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
     but[i]->setToggleButton(true);
   }
   button_group->setExclusive(true);
-  
+
   connect(but[1], SIGNAL(stateChanged(int)),
         &pointbut, SLOT(stateChanged(int)));
 };

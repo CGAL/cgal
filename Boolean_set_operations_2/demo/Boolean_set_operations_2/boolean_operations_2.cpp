@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -36,11 +36,11 @@ int main(int, char*){
 
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_circ_polygon.h"
-#include <CGAL/Bbox_2.h> 
-#include <CGAL/iterator.h>  
+#include <CGAL/Bbox_2.h>
+#include <CGAL/iterator.h>
 
 
-#include <CGAL/IO/Qt_widget_Polygon_2.h> 
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
 
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
@@ -57,17 +57,17 @@ int main(int, char*){
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
-#include <qmenudata.h> 
+#include <qmenudata.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qfiledialog.h>
-#include <qtimer.h> 
-#include <qstatusbar.h> 
+#include <qtimer.h>
+#include <qstatusbar.h>
 #include <qstring.h>
 #include <qiconset.h>
-#include <qpixmap.h> 
-#include <qpainter.h> 
-#include <qpushbutton.h> 
+#include <qpixmap.h>
+#include <qpainter.h>
+#include <qpushbutton.h>
 
 
 #include "Qt_widget_X_monotone_circle_segment_2.h"
@@ -93,7 +93,7 @@ int main(int, char*){
 
 //global flags and variables
 int current_state;
-bool red_active = false; 
+bool red_active = false;
 Polygon_set                       red_set;
 Polygon_set                       blue_set;
 Polygon_set                       res_set;
@@ -104,7 +104,7 @@ const QString my_title_string("Boolean operations on polygons");
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
-    
+
     // default constructor
   Qt_layer_show_ch(){};
 
@@ -116,11 +116,11 @@ public:
     widget->get_painter().setRasterOp(XorROP);
     widget->setFilled (true);
     widget->setFillColor (CGAL::RED);
-    *widget <<  CGAL::BLACK; 
+    *widget <<  CGAL::BLACK;
     std::list<Polygon_with_holes> red_pgns_list;
     red_set.polygons_with_holes(std::back_inserter(red_pgns_list));
     std::list<Polygon_with_holes>::iterator itpgn1 = red_pgns_list.begin();
-    
+
     while(itpgn1 != red_pgns_list.end())
     {
       const Polygon_with_holes& pgn_with_hole = *itpgn1;
@@ -132,7 +132,7 @@ public:
                             Point_2(widget->x_max(), widget->y_max()));
          *widget << rect;
        }
-       else  
+       else
          *widget << outer_boundary;
 
       for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
@@ -143,11 +143,11 @@ public:
       }
       ++itpgn1;
     }
-   
-    
+
+
     widget->setFilled (true);
     widget->setFillColor (CGAL::BLUE);
-  
+
     std::list<Polygon_with_holes> blue_pgns_list;
     blue_set.polygons_with_holes(std::back_inserter(blue_pgns_list));
     std::list<Polygon_with_holes>::iterator itpgn2 = blue_pgns_list.begin();
@@ -163,7 +163,7 @@ public:
                             Point_2(widget->x_max(), widget->y_max()));
          *widget << rect;
        }
-       else  
+       else
        {
          *widget << outer_boundary;
        }
@@ -179,12 +179,12 @@ public:
     widget->get_painter().setRasterOp(old_rasterop);
     widget->setFilled (false);
     widget->unlock(); // widget have to be unlocked when finished drawing
-  };    
-  
-};//end class 
+  };
+
+};//end class
 
 
-/* The QMainWindow class provides a main application window, 
+/* The QMainWindow class provides a main application window,
  *  with a menu bar, dock windows (e.g. for toolbars), and a status bar
  */
 class MyWindow : public QMainWindow
@@ -193,29 +193,29 @@ class MyWindow : public QMainWindow
 public:
 
     // constructor
-  MyWindow(int w, int h) 
+  MyWindow(int w, int h)
   {
     widget = new CGAL::Qt_widget(this); //Constructs a widget which is a child of this window
-    
 
-    /* Sets the central widget for this main window to w. 
+
+    /* Sets the central widget for this main window to w.
      * The central widget is surrounded by the left, top, right and bottom dock areas.
      * The menu bar is above the top dock area
      */
     setCentralWidget(widget);
 
     file_name= QString::null;
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this ); // constructs a timer whose parent is this window
-    
+
     connect( timer, SIGNAL(timeout()),
            this, SLOT(timer_done()) );  // connects the timer to the window
     timer->start( 200, FALSE ); // Starts the timer with a msec milliseconds timeout
 
     // file menu
-    QPopupMenu * file = new QPopupMenu( this ); 
-    menuBar()->insertItem( "&File", file );  
+    QPopupMenu * file = new QPopupMenu( this );
+    menuBar()->insertItem( "&File", file );
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
@@ -243,25 +243,25 @@ public:
 
     radiotoolbar = new QToolBar(this, "polygon type");
     blue_pgn = new QRadioButton ("Blue", radiotoolbar);
-    blue_pgn->toggle(); 
+    blue_pgn->toggle();
     red_pgn = new QRadioButton("Red", radiotoolbar);
     radio_group = new QVButtonGroup(this,"Radios");
     radio_group->insert(blue_pgn);
     radio_group->insert(red_pgn);
     radio_group->setRadioButtonExclusive(true);
 
-    
-    connect(blue_pgn, SIGNAL(toggled (bool)), 
+
+    connect(blue_pgn, SIGNAL(toggled (bool)),
             this, SLOT(radio_selected()));
-    connect(red_pgn, SIGNAL(toggled (bool)), 
+    connect(red_pgn, SIGNAL(toggled (bool)),
              this, SLOT(radio_selected()));
 
 
     //layers
-    widget->attach(&testlayer);  
+    widget->attach(&testlayer);
 
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this);    
+    newtoolbar = new Tools_toolbar(widget, this);
 
     // voronoi toolbar
     bops_toolbar = new QToolBar(this, "Boolean operations");
@@ -271,7 +271,7 @@ public:
 
     intersection_but = new QToolButton(bops_toolbar, "Boolean operations");
     intersection_but->setAutoRaise(TRUE);
-    
+
     intersection_but->setIconSet(set0);
     intersection_but->setTextLabel("Intersection ");
     connect(intersection_but,SIGNAL(pressed()),
@@ -283,7 +283,7 @@ public:
     bops_toolbar->addSeparator();
     union_but = new QToolButton(bops_toolbar, "Boolean operations");
     union_but->setAutoRaise(TRUE);
-    
+
     union_but->setIconSet(set1);
     union_but->setTextLabel("Union ");
     connect(union_but,SIGNAL(pressed()),
@@ -295,7 +295,7 @@ public:
     bops_toolbar->addSeparator();
     diff_but2 = new QToolButton(bops_toolbar, "Boolean operations");
     diff_but2->setAutoRaise(TRUE);
-    
+
     diff_but2->setIconSet(set2);
     diff_but2->setTextLabel("Difference between Blue and Red");
     connect(diff_but2, SIGNAL(pressed()),
@@ -307,7 +307,7 @@ public:
     bops_toolbar->addSeparator();
     diff_but = new QToolButton(bops_toolbar, "Boolean operations");
     diff_but->setAutoRaise(TRUE);
-    
+
     diff_but->setIconSet(set3);
     diff_but->setTextLabel("Difference between Red and Blue");
     connect(diff_but, SIGNAL(pressed()),
@@ -319,7 +319,7 @@ public:
 
     symm_diff_but = new QToolButton(bops_toolbar, "Boolean operations");
     symm_diff_but->setAutoRaise(TRUE);
-    
+
     symm_diff_but->setIconSet(set4);
     symm_diff_but->setTextLabel("Symmetric Difference ");
     connect(symm_diff_but, SIGNAL(pressed()),
@@ -341,7 +341,7 @@ public:
 
     blue_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
     blue_complement_but->setAutoRaise(TRUE);
-    
+
     blue_complement_but->setIconSet(set5);
     blue_complement_but->setTextLabel("Blue Complement ");
     connect(blue_complement_but, SIGNAL(pressed()),
@@ -353,20 +353,20 @@ public:
 
     red_complement_but = new QToolButton(bops_toolbar, "Boolean operations");
     red_complement_but->setAutoRaise(TRUE);
-    
+
     red_complement_but->setIconSet(set6);
     red_complement_but->setTextLabel("Red Complement ");
     connect(red_complement_but, SIGNAL(pressed()),
             this, SLOT(perform_red_complement()));
 
-    
+
     QIconSet set7(QPixmap( (const char**)make_P_xpm ),
                  QPixmap( (const char**)make_P_xpm ));
     bops_toolbar->addSeparator();
     make_res_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
     make_res_blue_but->setAutoRaise(TRUE);
-    
-    
+
+
     make_res_blue_but->setIconSet(set7);
     make_res_blue_but->setTextLabel("Make Result Blue");
     connect(make_res_blue_but,SIGNAL(pressed()),
@@ -390,7 +390,7 @@ public:
 
     refresh_but = new QToolButton(bops_toolbar, "Boolean operations");
     refresh_but->setAutoRaise(TRUE);
-    
+
     refresh_but->setIconSet(set9);
     refresh_but->setTextLabel("Refresh ");
     connect(refresh_but,SIGNAL(pressed()),
@@ -402,7 +402,7 @@ public:
 
     delete_blue_but = new QToolButton(bops_toolbar, "Boolean operations");
     delete_blue_but->setAutoRaise(TRUE);
-    
+
     delete_blue_but->setIconSet(set10);
     delete_blue_but->setTextLabel("Delete Blue Polygons");
     connect(delete_blue_but,SIGNAL(pressed()),
@@ -415,7 +415,7 @@ public:
 
     delete_red_but = new QToolButton(bops_toolbar, "Boolean operations");
     delete_red_but->setAutoRaise(TRUE);
-    
+
     delete_red_but->setIconSet(set11);
     delete_red_but->setTextLabel("Delete Red Polygons");
     connect(delete_red_but,SIGNAL(pressed()),
@@ -423,15 +423,15 @@ public:
 
 
 
-  
+
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-    
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -446,7 +446,7 @@ private:
       /*std::ofstream out_file(str);
       if(!out_file.is_open())
         return false;
-     
+
       std::list<Polygon_with_holes> red_pgns_list;
       red_set.polygons_with_holes(std::back_inserter(red_pgns_list));
       int num_of_red_pgns = red_pgns_list.size();
@@ -492,9 +492,9 @@ private:
                             Point_2(widget->x_max(), widget->y_max()));
          *widget << rect;
        }
-       else  
+       else
          *widget << outer_boundary;
-       
+
        widget->setFillColor (CGAL::BLACK) ;
        for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
            hit != pgn_with_hole.holes_end();
@@ -503,12 +503,12 @@ private:
          *widget << *hit;
        }
      }
-      
+
      widget->setFilled (false);
      widget->unlock();
   }
 
-        
+
 public slots:
 
     void open_dxf_file()
@@ -531,7 +531,7 @@ public slots:
       }
       bool are_simple;
       int answer = 0;
-      answer = 
+      answer =
         QMessageBox::question(this, QString("Open file"),
                              QString("Are all polygons simple and without holes?"),
                              QString("Yes"), QString("No"), QString::null, 0 , 0);
@@ -565,7 +565,7 @@ public slots:
                      circ_polygons_with_holes.begin(),
                      circ_polygons_with_holes.end());
       }
-      else  
+      else
       {
         blue_set.join(circ_polygons.begin(),
                       circ_polygons.end(),
@@ -592,14 +592,14 @@ public slots:
 
 
       std::vector<Polygon_with_holes>::iterator itr2;
-      
+
       for (itr2 = circ_polygons_with_holes.begin();
            itr2 != circ_polygons_with_holes.end();
            ++itr2)
       {
         box = box + itr2->outer_boundary().bbox();
       }
-       
+
       widget->set_window(box.xmin(),
                          box.xmax(),
                          box.ymin(),
@@ -628,7 +628,7 @@ public slots:
         QMessageBox::warning( widget,"Open","Can't open file");
         return ;
       }
-     
+
       CGAL::Bbox_2 box = CGAL::Bbox_2 (widget->x_min(), widget->y_min(),
                                        widget->x_max(), widget->y_max());
       QCursor old = widget->cursor();
@@ -649,13 +649,13 @@ public slots:
 
       const Polygon_2& circ_pgn = linear_2_circ(pgn);
 
-      
+
       if(red_active)
         red_set.join(circ_pgn);
-      else  
+      else
         blue_set.join(circ_pgn);
 
-     
+
       box = box + circ_pgn.bbox();
       widget->set_window(box.xmin(),
                          box.xmax(),
@@ -697,23 +697,23 @@ public slots:
         }
         file_name=s;
     }*/
-  
-        
-    
+
+
+
   void new_instance()
   {
     newtoolbar->deactivate();
     widget->lock();
     file_name = QString::null;
-    
+
     red_set.clear();
     blue_set.clear();
     widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
         // set the Visible Area to the Interval
     widget->unlock();
-    
-    something_changed(); 
+
+    something_changed();
   }
 
   void radio_selected() const
@@ -725,7 +725,7 @@ public slots:
         red_active = false;
   }
 
-  
+
 
   void perform_intersection()
   {
@@ -748,7 +748,7 @@ public slots:
     res_set = red_set;
     res_set.join(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
-    newtoolbar->reset();  
+    newtoolbar->reset();
     draw_result(res_pgns.begin(), res_pgns.end());
     widget->setCursor(old);
   }
@@ -775,7 +775,7 @@ public slots:
     res_set.difference(red_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
     newtoolbar->reset();
-  
+
     draw_result(res_pgns.begin(), res_pgns.end());
     widget->setCursor(old);
   }
@@ -789,7 +789,7 @@ public slots:
     res_set.symmetric_difference(blue_set);
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
     newtoolbar->reset();
-  
+
     draw_result(res_pgns.begin(), res_pgns.end());
     widget->setCursor(old);
   }
@@ -803,7 +803,7 @@ public slots:
     res_set.complement();
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
     newtoolbar->reset();
-  
+
     draw_result(res_pgns.begin(), res_pgns.end());
     widget->setCursor(old);
   }
@@ -817,7 +817,7 @@ public slots:
     res_set.complement();
     res_set.polygons_with_holes(std::back_inserter(res_pgns));
     newtoolbar->reset();
-  
+
     draw_result(res_pgns.begin(), res_pgns.end());
     widget->setCursor(old);
   }
@@ -838,7 +838,7 @@ public slots:
       }
       make_res_red_but->setDown(FALSE);
     }
-    
+
     red_set = res_set;
     res_set.clear();
     blue_set.clear();
@@ -904,7 +904,7 @@ public slots:
       const Linear_polygon_2& linear_red_p  = circ_2_linear(red_p);
       const Linear_polygon_2& linear_blue_p = circ_2_linear(blue_p);
 
-      const Linear_polygon_with_holes_2& res_p = 
+      const Linear_polygon_with_holes_2& res_p =
         CGAL::minkowski_sum_2(linear_red_p, linear_blue_p);
 
       Polygon_with_holes res_p_wh  = linear_2_circ(res_p);
@@ -914,12 +914,12 @@ public slots:
       std::list<Polygon_with_holes> res_pgns;
       res_pgns.push_back(res_p_wh);
       draw_result(res_pgns.begin(), res_pgns.end());
-      widget->setCursor(old);  
+      widget->setCursor(old);
     }
     else if(is_disc(red_p) && is_linear(blue_p))
     {
       const Linear_polygon_2& linear_blue_p = circ_2_linear(blue_p);
-      const Polygon_with_holes& res_p_wh = 
+      const Polygon_with_holes& res_p_wh =
         CGAL::approximated_offset_2 (linear_blue_p, get_radius(red_p), 0.00001);
 
       res_set.clear();
@@ -928,12 +928,12 @@ public slots:
       std::list<Polygon_with_holes> res_pgns;
       res_pgns.push_back(res_p_wh);
       draw_result(res_pgns.begin(), res_pgns.end());
-      widget->setCursor(old);  
+      widget->setCursor(old);
     }
     else if(is_disc(blue_p) && is_linear(red_p))
     {
       const Linear_polygon_2& linear_red_p = circ_2_linear(red_p);
-      const Polygon_with_holes& res_p_wh = 
+      const Polygon_with_holes& res_p_wh =
         CGAL::approximated_offset_2 (linear_red_p, get_radius(blue_p), 0.00001);
 
       res_set.clear();
@@ -942,12 +942,12 @@ public slots:
       std::list<Polygon_with_holes> res_pgns;
       res_pgns.push_back(res_p_wh);
       draw_result(res_pgns.begin(), res_pgns.end());
-      widget->setCursor(old);  
+      widget->setCursor(old);
     }
     else
     {
       mink_sum_warning();
-      widget->setCursor(old); 
+      widget->setCursor(old);
       return;
     }
   }
@@ -992,14 +992,14 @@ public slots:
 
     const Circle& c2 = ci->supporting_circle();
 
-    return ((c1.center() == c2.center()) && 
+    return ((c1.center() == c2.center()) &&
             (c1.squared_radius() == c2.squared_radius()));
   }
 
   Coord_type get_radius(const Polygon_2& pgn)
   {
     CGAL_assertion(is_disc(pgn));
-    double r = 
+    double r =
       CGAL::sqrt(CGAL::to_double(pgn.curves_begin()->supporting_circle().squared_radius()));
     return (Coord_type(r));
   }
@@ -1024,7 +1024,7 @@ public slots:
   {
     Polygon_with_holes p(linear_2_circ(pgn.outer_boundary()));
 
-    typedef Linear_polygon_with_holes_2::Hole_const_iterator    
+    typedef Linear_polygon_with_holes_2::Hole_const_iterator
       Hole_const_iterator;
     for(Hole_const_iterator hi = pgn.holes_begin();
         hi != pgn.holes_end();
@@ -1095,18 +1095,18 @@ private slots:
 
         if(circ.orientation() == CGAL::CLOCKWISE)
           circ = circ.opposite();
-        
+
         std::vector<CGAL::Object> xcurves;
         xcurves.reserve(2);
         Traits tr;
         Curve full_circ(circ);
         tr.make_x_monotone_2_object()(full_circ, std::back_inserter(xcurves));
-        
+
         CGAL_assertion(xcurves.size() == 2);
         XCurve half_circ1;
         XCurve half_circ2;
-        CGAL::assign(half_circ1, xcurves[0]); 
-        CGAL::assign(half_circ2, xcurves[1]); 
+        CGAL::assign(half_circ1, xcurves[0]);
+        CGAL::assign(half_circ2, xcurves[1]);
         pgn.push_back(half_circ1);
         pgn.push_back(half_circ2);
         if(red_active)
@@ -1122,7 +1122,7 @@ private slots:
   {
     QMessageBox::about( this, my_title_string,
         "This is a demo for boolean operations on polygons\n");
-          
+
   }
 
   void aboutQt()
@@ -1133,7 +1133,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -1156,9 +1156,9 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }    
+  }
 
-  
+
 private:
   CGAL::Qt_widget*                     widget;
   CGAL::Qt_widget_standard_toolbar*    stoolbar;
@@ -1168,7 +1168,7 @@ private:
   QRadioButton*                        blue_pgn;
   QVButtonGroup*                       radio_group;
   Tools_toolbar*                       newtoolbar;
-  QToolBar*                            bops_toolbar; 
+  QToolBar*                            bops_toolbar;
   QToolButton *                         intersection_but;
   QToolButton *                         union_but;
   QToolButton *                         diff_but;
@@ -1202,7 +1202,7 @@ int main(int argc, char **argv)
   widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
-  return app.exec();   
+  return app.exec();
 }
 
 #endif // CGAL_USE_QT

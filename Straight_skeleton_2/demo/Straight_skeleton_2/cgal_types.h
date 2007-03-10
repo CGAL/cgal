@@ -56,4 +56,3 @@ typedef std::set<double>              Doubles ;
 
 }
 #endif
-

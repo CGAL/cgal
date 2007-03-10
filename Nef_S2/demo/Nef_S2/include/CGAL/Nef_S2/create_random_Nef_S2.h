@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -49,7 +49,7 @@ create_random_Nef_S2(Nef_polyhedron_S2<K,I,M>& P, int n=5, int seed=0) {
   Point_3 ph;
   Point_3 o(0,0,0);
   while ( n-- > 0 ) {
-    do { ph = *S++; } 
+    do { ph = *S++; }
     while ( ph == o );
     Plane_3 h(o,(ph-CGAL::ORIGIN).direction());
     L.push_back( Sphere_circle(h) );

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -30,7 +30,7 @@ template <class T>
 class Qt_layer_show_triangulation : public Qt_widget_styled_layer
 {
 public:
-	
+
   Qt_layer_show_triangulation(T *t,
 			      CGAL::Color lc = CGAL::BLUE,
 			      int linewidth = 1,
@@ -58,7 +58,7 @@ public:
 
     widget->setColor(style()->getColor(color));
     widget->setLineWidth(style()->getInt(width));
-      
+
     *widget << *tr;
 
     widget->setLineWidth(old_width);
@@ -69,7 +69,7 @@ private:
   T *tr;
   QString color;
   QString width;
-};//end class 
+};//end class
 
 } // namespace CGAL
 

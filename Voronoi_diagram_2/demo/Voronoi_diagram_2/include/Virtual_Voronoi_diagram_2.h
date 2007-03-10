@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -41,7 +41,7 @@ struct Virtual_Voronoi_diagram_2
   typedef ::Rep GlobalRep;
   typedef GlobalRep ::Point_2   Point_2;
   typedef GlobalRep::Circle_2  Circle_2;
-  
+
   // virtual destructor
   virtual ~Virtual_Voronoi_diagram_2() {}
 
@@ -60,7 +60,7 @@ struct Virtual_Voronoi_diagram_2
 			      Qt_widget&) const = 0;
   virtual void draw_conflicts(const Circle_2&, const Object&,
 			      Qt_widget&) const = 0;
-#endif  
+#endif
 
   virtual Object locate(const Point_2&) const = 0;
 
@@ -72,7 +72,7 @@ struct Virtual_Voronoi_diagram_2
   virtual bool is_valid() const = 0;
 
   virtual void clear() = 0;
-  
+
 };
 
 
@@ -461,7 +461,7 @@ class Concrete_Apollonius_diagram_2
 
   Geom_traits::Site_2 to_site(const Point_2& p) const {
     Geom_traits::Point_2 pp(p.x(), p.y());
-    return Geom_traits::Site_2(p, 0);    
+    return Geom_traits::Site_2(p, 0);
   }
 
   Geom_traits::Site_2 to_site(const Circle_2& c) const {

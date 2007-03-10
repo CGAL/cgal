@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
@@ -61,4 +61,3 @@ typedef CGAL::Partition_traits_2<Rep>           Traits;
 typedef Traits::Polygon_2                       Cgal_Polygon;
 
 #endif
-

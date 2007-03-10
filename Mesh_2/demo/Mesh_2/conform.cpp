@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 	    std::cerr << "Make conforming Gabriel..." << std::endl;
 	  CGAL::make_conforming_Gabriel_2(t);
 	}
- 
+
       if(argc==arg_count+1)
 	{
 	  if(terminal_output)
@@ -142,10 +142,10 @@ int main(int argc, char** argv)
 	}
 
       if(terminal_output)
-	std::cerr 
+	std::cerr
 	  << "Number of points: " << t.number_of_vertices() << std::endl
 	  << "Number of triangles: " << t.number_of_faces () << std::endl;
-      
+
     }
   else
     {

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -89,26 +89,26 @@ std::list<Point_2>	  list_of_points;
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
-	
+
   Qt_layer_show_ch(){};
 
 
   void draw()
   {
     widget->lock();
-      
+
       //MAXIMUM INSCRIBED 3-GON
       Polygonvec  outpol;
-	CGAL::convex_hull_points_2(list_of_points.begin(), 
+	CGAL::convex_hull_points_2(list_of_points.begin(),
 			list_of_points.end(), std::back_inserter(outpol));
       Polygonvec  kg;
       if (outpol.size()>2)
 	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
 			outpol.vertices_end(),3, std::back_inserter(kg));
-      
+
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(XorROP);
-      *widget << CGAL::FillColor(CGAL::BLUE);      
+      *widget << CGAL::FillColor(CGAL::BLUE);
       *widget << kg;
       widget->setRasterOp(old);
 
@@ -117,12 +117,12 @@ public:
       if (outpol.size()>2)
 	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
 			outpol.vertices_end(),5, std::back_inserter(kg1));
-      
+
       old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(XorROP);
-      *widget << CGAL::FillColor(CGAL::GRAY);      
+      *widget << CGAL::FillColor(CGAL::GRAY);
       *widget << kg1;
-      widget->setRasterOp(old);  
+      widget->setRasterOp(old);
 
       //VERTICES
       *widget << CGAL::PointSize(3);
@@ -130,12 +130,12 @@ public:
       std::list<Point_2>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end())
 	*widget << (*itp++);
-          
+
 
       //CONVEX HULL
       std::list<Point_2>  out;
       std::list<Segment>  Sl;
-      CGAL::convex_hull_points_2(list_of_points.begin(), 
+      CGAL::convex_hull_points_2(list_of_points.begin(),
 				list_of_points.end(), std::back_inserter(out));
       if( out.size() > 1 ) {
 	Point_2 pakt,prev,pstart;
@@ -157,12 +157,12 @@ public:
 	while(its!=Sl.end())
 	  *widget << (*its++);
       }
-      
-      
+
+
     widget->unlock();
-  };	
-  
-};//end class 
+  };
+
+};//end class
 
 class MyWindow : public QMainWindow
 {
@@ -171,7 +171,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -206,16 +206,16 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &list_of_points);	
-  
+    newtoolbar = new Tools_toolbar(widget, this, &list_of_points);
+
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-	
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
     this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -227,14 +227,14 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
     widget->lock();
     list_of_points.clear();
     stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
 			// set the Visible Area to the Interval
     widget->unlock();
     something_changed();
@@ -265,7 +265,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -287,12 +287,12 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void gen_points()
   {
     stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
@@ -302,8 +302,8 @@ private slots:
     }
     something_changed();
   }
-	
-	
+
+
 
 private:
   CGAL::Qt_widget          *widget;

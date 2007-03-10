@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -70,7 +70,7 @@ public:
   {
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -83,12 +83,12 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Load Triangulation", this, 
+    file->insertItem("&Load Triangulation", this,
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("&Load Constraints", this, 
+    file->insertItem("&Load Constraints", this,
 		      SLOT(load_constraints()), CTRL+Key_C);
     file->insertItem("&Save Constraints", this,
 		      SLOT(save_constraints()), CTRL+Key_T);
@@ -117,19 +117,19 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &ct);	
+    newtoolbar = new Tools_toolbar(widget, this, &ct);
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &ct);
-  
+
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
 
     widget->setMouseTracking(TRUE);
-	
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -154,7 +154,7 @@ private slots:
     widget->unlock();
     something_changed();
   }
-	
+
   void get_new_object(CGAL::Object obj)
   {
     Point_2 p;
@@ -193,7 +193,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/cindex.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -214,7 +214,7 @@ private slots:
 
   void new_window(){
     Window *ed = new Window(500, 500);
-    ed->setCaption("Layer");    
+    ed->setCaption("Layer");
     if(ct.number_of_vertices() > 1){
     Vertex_iterator it = ct.vertices_begin();
     xmin = xmax = (*it).point().x();
@@ -243,7 +243,7 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void generate_triangulation()
   {
@@ -269,17 +269,17 @@ private slots:
     widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
-	
+
   void save_triangulation()
   {
-    QString fileName = 
-      QFileDialog::getSaveFileName( "triangulation.cgal", 
+    QString fileName =
+      QFileDialog::getSaveFileName( "triangulation.cgal",
 				  "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {
       // got a file name
       std::ofstream out(fileName);
       CGAL::set_ascii_mode(out);
-      out << ct << std::endl;    
+      out << ct << std::endl;
     }
   }
 
@@ -314,9 +314,9 @@ private slots:
 
   void load_constraints()
   {
-    QString s( QFileDialog::getOpenFileName( 
+    QString s( QFileDialog::getOpenFileName(
 	     QString::null,
-	     "Constrained edges (*.edg);;Shewchuck Triangle .poly files (*.poly);;Constraints File (*.cst);;All files (*)", 
+	     "Constrained edges (*.edg);;Shewchuck Triangle .poly files (*.poly);;Constraints File (*.cst);;All files (*)",
 	     this ) );
     if ( s.isEmpty() ){
       return;
@@ -370,7 +370,7 @@ private slots:
       std::istream_iterator<Point_2> it(in), done;
       bool first(true);
       CGAL::Bbox_2 b;
- 
+
       Vertex_handle p_vh;
       Point_2 p_q;
 
@@ -432,7 +432,7 @@ main(int argc, char **argv)
   W.setIcon(cgal_icon);
 #endif
   W.show();
-  W.init_coordinates();  
+  W.init_coordinates();
   current_state = -1;
   return app.exec();
 }

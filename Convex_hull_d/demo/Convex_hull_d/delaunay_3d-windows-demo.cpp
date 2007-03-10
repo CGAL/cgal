@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -78,14 +78,14 @@ int main()
   W1.int_item("z-axis scale",scale,1,100,
   "determines the extend of the z-axis");
   W2.init(-50,50,-50);
-  W1.display(leda_window::min,leda_window::min); 
+  W1.display(leda_window::min,leda_window::min);
   W2.display(wsize+20,0);
   W1.message(startmess);
   double a,b;  // coordinates of a point in the window
   but = W1.read_mouse(a,b);
   W1.del_messages();
 
-  Delaunay_d T(2);  
+  Delaunay_d T(2);
   pT = &T;
   // we are working in space
   // see dd_delaunay_traits.h for the adaptations
@@ -95,16 +95,16 @@ int main()
   leda_node_array<leda_rat_vector> pos(G);
   leda_d3_window W3(W2,G,pos);
   leda_node v;
- 
+
   while (but != MOUSE_BUTTON(3)) {
     // while mouse click is not the right button
 
     // read the window coordinates into a and b
-    W1.clear();       
+    W1.clear();
     RT ia(a), ib(b);
 
-    To << a << "," << b << std::endl; To.flush(); 
-    Point_d x(ia,ib); 
+    To << a << "," << b << std::endl; To.flush();
+    Point_d x(ia,ib);
     switch (but) {
     case Nearest:
       kind = Delaunay_d::NEAREST;
@@ -116,7 +116,7 @@ int main()
     case MOUSE_BUTTON(2):
       forall_nodes(v,G) pos[v] = transform(G[v],scale);
       W3.init(pos);
-      CGAL::d2_show(T,W1,kind); 
+      CGAL::d2_show(T,W1,kind);
       while (but != MOUSE_BUTTON(3))
         but = W3.move();
       break;
@@ -134,8 +134,8 @@ int main()
       W3.draw();
       break;
     }
-    CGAL::d2_show(T,W1,kind); 
-    but = W1.read_mouse(a,b);  
+    CGAL::d2_show(T,W1,kind);
+    but = W1.read_mouse(a,b);
   }
   return 0;
 }
@@ -144,11 +144,9 @@ int main()
 #include <iostream>
 
 int main()
-{ 
+{
   std::cout << "this program requires LEDA" << std::endl;
   return 0;
 }
 
 #endif // CGAL_USE_LEDA
-
-

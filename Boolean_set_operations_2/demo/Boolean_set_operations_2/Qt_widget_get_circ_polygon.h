@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -52,7 +52,7 @@ namespace CGAL
     //Data members
     Polygon     m_pgn;
     bool        m_active;      //true if the first point was inserted
-    bool        m_first_time; //true if it is the first time when 
+    bool        m_first_time; //true if it is the first time when
                               //draw the rubber band
 
     bool        m_is_circ_mode; // true if we are at circular arc mode
@@ -63,12 +63,12 @@ namespace CGAL
     Point_2     m_arc_source;  // the arc source (incase of circ arc)
     Point_2     m_arc_target; // the arc target (incase of circ arc)
     Curve_2     m_old_arc;
-    
+
     QWidget::FocusPolicy  m_oldpolicy;
     QCursor               m_oldcursor;
     QCursor               m_cursor;
 
-    bool m_ignore_move_event; 
+    bool m_ignore_move_event;
 
 
   public:
@@ -93,7 +93,7 @@ namespace CGAL
         widget->get_painter().setRasterOp(XorROP);
         *widget << CGAL::GREEN;
         Curve_iterator before_end = m_pgn.curves_end();
-        --before_end; 
+        --before_end;
 
         for(Curve_iterator it = m_pgn.curves_begin(); it != before_end; ++it)
           *widget << *it;
@@ -112,7 +112,7 @@ namespace CGAL
        (s & Qt::ShiftButton) ||
        (s & Qt::AltButton))
       return false;
-    
+
     return true;
   }
 
@@ -129,8 +129,8 @@ namespace CGAL
       FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
-   
-       if (m_last_of_poly == Point_2(x,y)) 
+
+       if (m_last_of_poly == Point_2(x,y))
           return;
 
        m_is_circ_mode = true;
@@ -147,17 +147,17 @@ namespace CGAL
       {
         m_active=true;
         m_last_of_poly = Point_2(x, y);
-      } 
+      }
       else
       {
-        if (m_last_of_poly == Point_2(x,y)) 
+        if (m_last_of_poly == Point_2(x,y))
           return;
         m_rubber_old = Point_2(x, y);
         if(is_simple())
         {
           if(!m_is_circ_mode)
           {
-            m_pgn.push_back(X_monotone_curve_2(m_last_of_poly, Point_2(x,y)));	
+            m_pgn.push_back(X_monotone_curve_2(m_last_of_poly, Point_2(x,y)));
             //show the last rubber as edge of the polygon
             widget->lock();
             RasterOp old_rasterop=widget->rasterOp();
@@ -178,7 +178,7 @@ namespace CGAL
              std::vector<Object> xcurves_vec;
              xcurves_vec.reserve(2);
              make_x(m_old_arc, std::back_inserter(xcurves_vec));
-             
+
              widget->lock();
              RasterOp old_rasterop=widget->rasterOp();
              widget->get_painter().setRasterOp(XorROP);
@@ -189,7 +189,7 @@ namespace CGAL
              {
                X_monotone_curve_2 cv_arc;
                CGAL::assign(cv_arc, xcurves_vec[i]);
-               m_pgn.push_back(cv_arc);    
+               m_pgn.push_back(cv_arc);
                *widget << (cv_arc);
              }
              widget->setRasterOp(old_rasterop);
@@ -202,7 +202,7 @@ namespace CGAL
              int ypixel = widget->y_pixel(CGAL::to_double(m_arc_target.y()));
 
              QPoint qp(xpixel, ypixel);
-             QPoint qq = widget->mapToGlobal(qp); 
+             QPoint qq = widget->mapToGlobal(qp);
              QCursor::setPos(qq);
           }
         }
@@ -211,7 +211,7 @@ namespace CGAL
     }
     if(e->button() == Qt::RightButton && is_pure(e->state()))
     {
-      if (m_active) 
+      if (m_active)
       {
         if(m_is_circ_mode)
           return; // if we are at circ mode, ignore
@@ -223,7 +223,7 @@ namespace CGAL
           CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
           FT xs = first_point.x().alpha();
           FT ys = first_point.y().alpha();
-          m_pgn.push_back(X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys))); 
+          m_pgn.push_back(X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys)));
           widget->new_object(make_object(m_pgn));
           m_active = false;
           m_first_time = true;
@@ -238,8 +238,8 @@ namespace CGAL
   {
     switch ( e->key() )
     {
-      case Key_Escape: 
-       
+      case Key_Escape:
+
           if(m_is_circ_mode)
           {
             // special treatment if we are at circ mode
@@ -256,7 +256,7 @@ namespace CGAL
             int rubber_y_pixel = widget->y_pixel(CGAL::to_double(m_rubber.y()));
 
             QPoint qp(rubber_x_pixel, rubber_y_pixel);
-            QPoint qq = widget->mapToGlobal(qp); 
+            QPoint qq = widget->mapToGlobal(qp);
             QCursor::setPos(qq);
             m_ignore_move_event = true;
 
@@ -283,15 +283,15 @@ namespace CGAL
             *widget << CGAL::WHITE;
             *widget << Segment_2(m_rubber, m_last_of_poly);
             const Arc_point_2& last_point = last->source();
-             
-            CGAL_assertion(last_point.x().is_rational() && last_point.y().is_rational());      
+
+            CGAL_assertion(last_point.x().is_rational() && last_point.y().is_rational());
             FT xs = last_point.x().alpha();
             FT ys = last_point.y().alpha();
-                
+
             *widget << Segment_2(m_rubber, Point_2(xs, ys));
             widget->setRasterOp(old_rasterop);
             widget->unlock();
-            m_last_of_poly = Point_2(xs, ys); 
+            m_last_of_poly = Point_2(xs, ys);
             m_pgn.erase(last);
            }
            else
@@ -310,7 +310,7 @@ namespace CGAL
                else
                  break;
              }
-             Curve_iterator first; 
+             Curve_iterator first;
              if(curr == m_pgn.curves_begin())
              {
                Curve_iterator next = curr;
@@ -337,11 +337,11 @@ namespace CGAL
              *widget << CGAL::WHITE;
              *widget << Segment_2(m_rubber, m_last_of_poly);
              const Arc_point_2& last_point = first->source();
-             
-             CGAL_assertion(last_point.x().is_rational() && last_point.y().is_rational());      
+
+             CGAL_assertion(last_point.x().is_rational() && last_point.y().is_rational());
              FT xs = last_point.x().alpha();
              FT ys = last_point.y().alpha();
-                
+
              *widget << Segment_2(m_rubber, Point_2(xs, ys));
              widget->setRasterOp(old_rasterop);
              widget->unlock();
@@ -397,7 +397,7 @@ namespace CGAL
     if(m_is_circ_mode)
     {
       Curve_2 circ_arc(m_arc_source, m_rubber, m_arc_target);
-      
+
       widget->lock();
       RasterOp old_rasterop=widget->rasterOp();
       widget->get_painter().setRasterOp(XorROP);
@@ -416,12 +416,12 @@ namespace CGAL
       return;
     }
 
-    
-    
+
+
     widget->lock();
     RasterOp old_rasterop=widget->rasterOp();
     widget->get_painter().setRasterOp(XorROP);
-    *widget << CGAL::WHITE;      	
+    *widget << CGAL::WHITE;
     if(!m_first_time)
       *widget << Segment_2(m_rubber_old, m_last_of_poly);
     *widget << Segment_2(m_rubber, m_last_of_poly);
@@ -460,9 +460,9 @@ namespace CGAL
      widget->setRasterOp(old_rasterop);
      widget->unlock();
 
-     
+
      Double_point_2 ptt(last_pgn_pt_x, last_pgn_pt_y);
-    
+
      double mid_x = (last_pgn_pt_x + CGAL::to_double(x)) /2;
      double mid_y = (last_pgn_pt_y + CGAL::to_double(y)) /2;
 
@@ -470,7 +470,7 @@ namespace CGAL
      int mid_point_y_pixel = widget->y_pixel(mid_y);
 
      QPoint qp(mid_point_x_pixel, mid_point_y_pixel);
-     QPoint qq = widget->mapToGlobal(qp); 
+     QPoint qq = widget->mapToGlobal(qp);
      QCursor::setPos(qq);
      m_ignore_move_event = true;
 
@@ -512,13 +512,13 @@ namespace CGAL
           CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
           FT xs = first_point.x().alpha();
           FT ys = first_point.y().alpha();
-          rubber_curve = X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys)); 
+          rubber_curve = X_monotone_curve_2(m_last_of_poly, Point_2(xs, ys));
           return(does_curve_disjoint_interior(rubber_curve, is_last_curve));
         }
         else
         {
           rubber_curve = X_monotone_curve_2(m_last_of_poly, m_rubber_old);
-          return(does_curve_disjoint_interior(rubber_curve, is_last_curve));          
+          return(does_curve_disjoint_interior(rubber_curve, is_last_curve));
         }
       }
       else
@@ -554,7 +554,7 @@ namespace CGAL
       Curve_iterator it = this->m_pgn.curves_begin();
 
       std::list<CGAL::Object> obj_list;
-   
+
       intersect_func(rubber_curve, *it, std::back_inserter(obj_list));
       if(is_last_curve)
       {
@@ -595,7 +595,7 @@ namespace CGAL
 
             Traits_2 tr;
             // make sure that the intersection point is equal to the curve target
-            return (tr.equal_2_object()(inter_pt.first, it->target())); 
+            return (tr.equal_2_object()(inter_pt.first, it->target()));
           }
           return false;
         }
@@ -612,7 +612,7 @@ namespace CGAL
         if(!obj_list.empty())
           return false;
       }
-      //if I'm out of this means that all the edges, 
+      //if I'm out of this means that all the edges,
       //didn't intersect the last one
       intersect_func(rubber_curve, *it, std::back_inserter(obj_list));
       if(obj_list.empty())

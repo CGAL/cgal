@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -176,7 +176,7 @@ public:
     this->addToolBar(file_toolbar, Top, FALSE);
     this->addToolBar(layers_toolbar, Top, FALSE);
 
-    connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)),
 	    this, SLOT(get_object(CGAL::Object)));
 
     connect(layers_toolbar, SIGNAL(inputModeChanged(bool)), this,
@@ -330,7 +330,7 @@ private slots:
   {
     is_remove_mode = b;
 
-    if ( is_remove_mode ) {	
+    if ( is_remove_mode ) {
       get_point.activate();
       get_circle.deactivate();
     } else {
@@ -345,7 +345,7 @@ private slots:
   {
     is_edit_mode = b;
 
-    if ( is_edit_mode ) {	
+    if ( is_edit_mode ) {
       get_point.activate();
       get_circle.deactivate();
     } else {
@@ -388,7 +388,7 @@ private slots:
     assert( ag.is_valid(false, 1) );
 
     qmsg = QString(msg) + " done!";
-    set_msg(qmsg);    
+    set_msg(qmsg);
     widget->redraw();
   }
 
@@ -469,12 +469,12 @@ private slots:
     QString fileName =
       QFileDialog::getSaveFileName(tr("data.out"), QString::null,
 				   this, "Save as...");
-						      
+
     if ( !fileName.isNull() ) {
       qmsg = "Saving Apollonius graph to file...";
       set_msg(qmsg);
       std::ofstream f(fileName);
-      assert(f);      
+      assert(f);
       f << ag;
       qmsg = qmsg + " done!";
       set_msg(qmsg);
@@ -517,7 +517,7 @@ private slots:
     *widget << CGAL::BackgroundColor(c);
     widget->redraw();
   }
-  
+
 };
 
 #include "qt_file_toolbar.moc"

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -68,16 +68,16 @@ int main(int argc, char* argv[]) {
   leda_string startmess = "we randomly input ";
   startmess += leda_string("%i",numpoints);
   startmess += " and display the convex hull in space!";
-  leda_window W("Convex Hulls in Space"); 
+  leda_window W("Convex Hulls in Space");
   enum { SURFACE, SKELETON, EXIT };
   W.button("surface", SURFACE);
   W.button("skeleton", SKELETON);
   W.button("exit", EXIT);
   W.init(-50,50,-50);
-  W.display(); 
+  W.display();
   W.message(startmess);
 
-  Convex_hull_d T(3);  
+  Convex_hull_d T(3);
   leda_list<Point> L;
   std::ifstream from(ifile);
   if (from) from >> L;
@@ -85,8 +85,8 @@ int main(int argc, char* argv[]) {
     int r = numpoints;
     CGAL_LEDA_SCOPE::rand_int.set_range(-r,r);
     int x,y,z;
-    while (r--) { 
-      CGAL_LEDA_SCOPE::rand_int >> x >> y >> z; 
+    while (r--) {
+      CGAL_LEDA_SCOPE::rand_int >> x >> y >> z;
       L.append(Point(x,y,z,1));
     }
   }
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
   // forall(p,L) { To << p; T.insert(p); T.is_valid(true); }
   T.initialize(L.begin(),L.end());
   T.print_statistics();
-  To.flush(); 
+  To.flush();
   CGAL_LEDA_SCOPE::GRAPH<Point,int> G;
   leda_node_array<leda_vector> pos(G);
   leda_node v;
@@ -132,10 +132,9 @@ int main(int argc, char* argv[]) {
 #include <iostream>
 
 int main()
-{ 
+{
   std::cout << "this program requires LEDA" << std::endl;
   return 0;
 }
 
 #endif // CGAL_USE_LEDA
-

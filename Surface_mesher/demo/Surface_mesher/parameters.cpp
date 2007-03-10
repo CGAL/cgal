@@ -71,7 +71,7 @@ void init_string_options()
 void init_double_options()
 {
   double_options["distance_bound"] = std::numeric_limits<double>::infinity();
-  
+
   // bound on radius of surface Delaunay balls
   double_options["radius_bound"] = std::numeric_limits<double>::infinity();
 

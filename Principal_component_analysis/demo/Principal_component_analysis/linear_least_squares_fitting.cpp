@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -75,7 +75,7 @@ const QString my_title_string("Principal Component Analysis");
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
-	
+
   Qt_layer_show_ch(){};
 
 
@@ -97,13 +97,13 @@ public:
       linear_least_squares_fitting_2(list_of_points.begin(),
 						                         list_of_points.end(),
 						                         line);
-      
+
       *widget << line;
     }
     widget->unlock();
-  };	
-  
-};//end class 
+  };
+
+};//end class
 
 class MyWindow : public QMainWindow
 {
@@ -112,7 +112,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -147,16 +147,16 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &list_of_points);	
-  
+    newtoolbar = new Tools_toolbar(widget, this, &list_of_points);
+
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-	
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -168,7 +168,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -206,7 +206,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -228,12 +228,12 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void gen_points()
   {
     widget->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
@@ -243,8 +243,8 @@ private slots:
     }
     something_changed();
   }
-	
-	
+
+
 
 private:
   CGAL::Qt_widget        *widget;

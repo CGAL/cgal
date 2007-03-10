@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -53,7 +53,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_help_window.h>
 #include "partition_2_toolbar.h"
 #include "partition_2_toolbar_layers.h"
-#include <CGAL/IO/pixmaps/demoicon.xpm> 
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 #include <fstream>
 #include <iomanip>
@@ -74,7 +74,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -111,17 +111,17 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this);	
+    newtoolbar = new Tools_toolbar(widget, this);
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &polygon);
 
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
-    resize(w,h);  
+    resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(true);
-	
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
 		    this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -130,7 +130,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -166,7 +166,7 @@ private slots:
     widget->redraw();
   };
 
-	
+
   void about()
   {
     QMessageBox::about( this, my_title_string,
@@ -182,7 +182,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -204,12 +204,12 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
-	
+
   void save_polygon()
   {
-    QString fileName = QFileDialog::getSaveFileName( 
+    QString fileName = QFileDialog::getSaveFileName(
 		"polygon.cgal", "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
       std::ofstream out(fileName);
@@ -231,7 +231,7 @@ private slots:
     something_changed();
   }
 
-	
+
 
 private:
   CGAL::Qt_widget        *widget;
@@ -250,7 +250,7 @@ main(int argc, char **argv)
 {
   QApplication app( argc, argv );
   current_state = -1;
-  
+
   MyWindow widget(500,500); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);

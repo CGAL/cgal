@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -148,7 +148,7 @@ static const char * circum_circle_small_xpm[] = {
     but[4] = new QToolButton(this, "circles");
     but[4]->setIconSet(set4);
     but[4]->setTextLabel("Circuscribed Circle");
-		
+
     nr_of_buttons = 5;
 	  button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)

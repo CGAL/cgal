@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -25,10 +25,10 @@
 
 #include <qobject.h>
 #include <qpopupmenu.h>
-#include <qmessagebox.h> 
+#include <qmessagebox.h>
 #include <qcursor.h>
 
-#include <CGAL/squared_distance_2.h> 
+#include <CGAL/squared_distance_2.h>
 
 
 class Qt_widget_movepoint_helper : public CGAL::Qt_widget_layer
@@ -64,7 +64,7 @@ public:
   //constructor
   Qt_widget_move_list_point(const QCursor c=QCursor(Qt::crossCursor)) :
       on_first(FALSE), cursor(c), first_time(true) {};
-  
+
   void pass_the_structure(std::vector<Point>* l) {
     v_of_p = l;
   }
@@ -92,7 +92,7 @@ private:
         widget->x_real(e->x(), x);
 	widget->y_real(e->y(), y);
         Point p(x, y);
-        Point closest_p;  
+        Point closest_p;
         //this point is the closest one to the mouse coordinates
         FT min_dist;
         typename std::vector<Point>::const_iterator it = v_of_p->begin();
@@ -109,7 +109,7 @@ private:
         RasterOp old = widget->rasterOp();	//save the initial raster mode
         widget->setRasterOp(XorROP);
         widget->lock();
-          *widget << CGAL::GREEN << CGAL::PointSize (7) 
+          *widget << CGAL::GREEN << CGAL::PointSize (7)
                   << CGAL::PointStyle (CGAL::DISC);
           *widget << closest_p;
         widget->unlock();
@@ -129,7 +129,7 @@ private:
       FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
-      *widget << CGAL::GREEN << CGAL::PointSize (5) 
+      *widget << CGAL::GREEN << CGAL::PointSize (5)
               << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)
         *widget << old_point;
@@ -148,7 +148,7 @@ private:
       old_point = Point(x, y);
     }
   };
-  
+
   void activating()
   {
     oldcursor = widget->cursor();
@@ -161,7 +161,7 @@ private:
       first_time = false;
     }
   };
-  
+
   void deactivating()
   {
     widget->setCursor(oldcursor);
@@ -182,7 +182,7 @@ private:
   void move_pointi(){
     on_first = TRUE;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), 
+                            QPoint(widget->x_pixel(old_point.x()),
                             widget->y_pixel(old_point.y()))));
   };
 };

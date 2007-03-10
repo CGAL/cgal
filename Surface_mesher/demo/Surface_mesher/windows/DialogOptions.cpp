@@ -38,4 +38,3 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDialogOptions, CDialog)
 END_MESSAGE_MAP()
-

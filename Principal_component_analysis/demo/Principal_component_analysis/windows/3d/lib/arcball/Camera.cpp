@@ -88,7 +88,7 @@ CCamera::GetToward()
 
 //********************************************
 // GetRayDirection
-//  Returns the ray direction given a point 
+//  Returns the ray direction given a point
 //  on the image plane.
 //********************************************
 CVector3d
@@ -120,11 +120,11 @@ CCamera::GetRayDirection(int x, int y, CViewport& vp)
 //  Sets the camera to view the bounding box.
 //********************************************
 void
-CCamera::ViewAll(double xMin, 
+CCamera::ViewAll(double xMin,
 								 double xMax,
-								 double yMin, 
+								 double yMin,
 								 double yMax,
-								 double zMin, 
+								 double zMin,
 								 double zMax,
 								 CViewport& vp)
 {

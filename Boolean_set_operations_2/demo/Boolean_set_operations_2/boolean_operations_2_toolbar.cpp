@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -37,19 +37,19 @@
 
 
 class MyWindow;
-Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
-                             QMainWindow *mw) : 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
+                             QMainWindow *mw) :
     QToolBar(mw, "NT")
   {
 
-   
+
     w->attach(&getsimplebut);
     w->attach(&getcirclebut);
     w->attach(&locatebut);
     /*w->attach(delete_red_but);
     w->attach(delete_blue_but);*/
     //w->attach(&delete_polygon);
-    
+
     getsimplebut.deactivate();
     getcirclebut.deactivate();
     locatebut.deactivate();
@@ -67,7 +67,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
                   QPixmap( (const char**)insert_circle_xpm ));
     QIconSet set3(QPixmap( (const char**)locate_xpm ),
                   QPixmap( (const char**)locate_xpm ));
-    
+
 
 
 
@@ -83,8 +83,8 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   but[3] = new QToolButton(this, "locatetool");
   but[3]->setIconSet(set3);
   but[3]->setTextLabel("Locate Polygon");
- 
-   
+
+
   int nr_of_buttons = 4;
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i < nr_of_buttons; i++)
@@ -93,8 +93,8 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
     but[i]->setToggleButton(true);
   }
   button_group->setExclusive(true);
-  
- 
+
+
   connect(but[1], SIGNAL(stateChanged(int)),
         &getsimplebut, SLOT(stateChanged(int)));
 
@@ -107,7 +107,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
 
 
-  
+
 #include "boolean_operations_2_toolbar.moc"
 
 #endif

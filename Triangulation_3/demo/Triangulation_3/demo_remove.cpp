@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
@@ -55,16 +55,16 @@ typedef Dh::Vertex_handle   Vertex_handle;
 typedef Dh::Cell_handle     Cell_handle;
 typedef Dh::Point           Point;
 
-////////////////////// 
+//////////////////////
 // VISU GEOMVIEW
-////////////////////// 
+//////////////////////
 template<class TRIANGULATION>
 void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 	       Cell_handle c)
 {
   if ( ! T.is_infinite(c) )
     os << T.tetrahedron(c);
-  else 
+  else
     os << T.triangle(c,c->index(T.infinite_vertex()));
 }
 template<class TRIANGULATION>
@@ -86,7 +86,7 @@ void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
 {
   Vertex_iterator vit = T.finite_vertices_begin();
   Vertex_iterator vdone = T.vertices_end();
-  
+
   if ( vit == vdone ) { std::cout << "no vertex" << std::endl ;}
   else {
     while(vit != vdone) {
@@ -103,7 +103,7 @@ void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
     os << c->vertex(i)->point();
 }
 
-////////////////////// 
+//////////////////////
 
 int main()
 {
@@ -118,10 +118,10 @@ int main()
   int x,y,z;
   std::vector<Vertex_handle> V(125);
   int i=0;
- 
+
   for (z=0 ; z<5 ; z++)
     for (y=0 ; y<5 ; y++)
-      for (x=0 ; x<5 ; x++) 
+      for (x=0 ; x<5 ; x++)
 	  V[i++] = T.insert(Point(x,y,z));
 
   assert( T.is_valid() );
@@ -134,7 +134,7 @@ int main()
   sleep(3);
 
   std::cout <<"          Removing vertices in random order" << std::endl;
-  
+
   std::random_shuffle(V.begin(), V.end());
 
   for (i=0; i<125; ++i) {

@@ -88,7 +88,7 @@ BOOL CMeshApp::InitInstance()
 	CCommandLineInfo cmdInfo;
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 	ParseCommandLine(cmdInfo);
-	
+
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
 	if (!ProcessShellCommand(cmdInfo))

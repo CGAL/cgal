@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -37,17 +37,17 @@ int main() {
   SETDTHREAD(191);
   leda_string startmess = "input points with left mouse button and ";
   startmess += "exit program with right mouse button!";
-  CGAL::Window_stream W; 
+  CGAL::Window_stream W;
   W.set_grid_mode(5);
   W.set_show_coordinates(true);
-  W.display(); 
+  W.display();
   W.message(startmess);
   double a,b;  // coordinates of a point in the window
-  int mouse = W.read_mouse(a,b); 
-  // variable to indicate which mouse button was pressed 
+  int mouse = W.read_mouse(a,b);
+  // variable to indicate which mouse button was pressed
   W.del_messages();
 
-  Convex_hull_d T(2);  
+  Convex_hull_d T(2);
   // we are working in the plane
 
   std::ofstream To("ch2-demo.log");
@@ -56,15 +56,15 @@ int main() {
     // while mouse click is not the right button
     RT ia(a), ib(b);
 
-    To << a << "," << b << std::endl; To.flush(); 
-    Point x(ia,ib); 
+    To << a << "," << b << std::endl; To.flush();
+    Point x(ia,ib);
 
-    T.insert(x); 
+    T.insert(x);
     T.is_valid(true);
-    W.clear(); 
-    CGAL::d2_show(T,W); 
-    
-    mouse = W.read_mouse(a,b);  
+    W.clear();
+    CGAL::d2_show(T,W);
+
+    mouse = W.read_mouse(a,b);
     // read the window coordinates into a and b
   }
   return 0;
@@ -74,11 +74,9 @@ int main() {
 #include <iostream>
 
 int main()
-{ 
+{
   std::cout << "this program requires LEDA" << std::endl;
   return 0;
 }
 
 #endif // CGAL_USE_LEDA
-
-

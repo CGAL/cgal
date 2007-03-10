@@ -91,7 +91,7 @@ class Placement : public QObject
     Field * regular_grid;
     Strl_iterator begin_iterator;
     Strl_iterator end_iterator;
-    Placement() : 
+    Placement() :
         completed(false), density_(12.0), ratio_(1.6), integrating_(1.0), sampling_(1), number_of_lines_(0),
     Stream_lines(NULL), runge_kutta_integrator(NULL), regular_grid(NULL), begin_iterator(){}
     Strl_iterator begin() const
@@ -100,9 +100,9 @@ class Placement : public QObject
     }
     Strl_iterator end() const
     {
-      return end_iterator;   
+      return end_iterator;
     }
-    bool is_empty() const 
+    bool is_empty() const
     {
       return Stream_lines == NULL;
     }
@@ -194,7 +194,7 @@ class Placement : public QObject
     }
     void generateNext(bool b = true)
     {
-      if (!completed){ 
+      if (!completed){
         completed = ! Stream_lines->continue_next(*regular_grid, *runge_kutta_integrator, sampling_);
         if (completed)
           std::cerr << "placement completed!\n";}
@@ -226,7 +226,7 @@ class Placement : public QObject
       if (Stream_lines != NULL)
         delete Stream_lines;
       Stream_lines = NULL;
-	
+
 		// desable all generator menu items
       placement->setItemEnabled(generate_id, true);
       placement->setItemEnabled(generatefirst_id, true);
@@ -306,7 +306,7 @@ class MyWidget : public QGLWidget
   Q_OBJECT
   public:
     Placement p;
-	
+
     QStatusBar * statusbar;
     QLabel * densitylabel;
     QLabel * densitytextlabel;
@@ -322,7 +322,7 @@ class MyWidget : public QGLWidget
     QLabel * numberspacelabel;
     QLabel * xcursorposition;
     QLabel * ycursorposition;
-	
+
     MyWidget(QGLWidget *parent = 0);
     ~MyWidget(){
       delete menu;
@@ -359,7 +359,7 @@ class MyWidget : public QGLWidget
       p.Stream_lines->print_stream_lines(fw);
       return s;
     }
-	
+
     void drawing()
     {
       glClearColor(1.0, 1.0, 1.0, 0.0);
@@ -373,7 +373,7 @@ class MyWidget : public QGLWidget
 
 
       glLineWidth(0.5f);
-		
+
       int XSize = width();
       int YSize = height();
       int Diff = div(XSize - YSize, 2).quot;
@@ -384,7 +384,7 @@ class MyWidget : public QGLWidget
         Diff = -Diff;
         glViewport ( 10, 40+Diff, width() - 20, XSize - 20);
       }
-		
+
       glMatrixMode ( GL_PROJECTION );
       glLoadIdentity ();
       glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
@@ -396,7 +396,7 @@ class MyWidget : public QGLWidget
       glVertex2f(0.0, 0.0);
       glVertex2f(1.0, 0.0);
       glEnd();
-		
+
       if (d_pq)
       {
         glColor3f(1.0, 0.0, 0.0);
@@ -431,7 +431,7 @@ class MyWidget : public QGLWidget
         }
         glEnd();
       }
-		
+
       if (d_stl)
       {
         glColor3f(0.0, 0.0, 0.0);
@@ -449,7 +449,7 @@ class MyWidget : public QGLWidget
       }
       update();
     }
-	
+
     void paintGL()
     {
       updatestatus();
@@ -468,15 +468,15 @@ class MyWidget : public QGLWidget
       gcvt(p.number_of_lines_, 4, str);
       numberlabel->setText(str);
     }
-	
+
     void setstatus()
     {
       statusbar = new QStatusBar(this, "Status bar");
-		
+
       densitytextlabel = new QLabel(this);
-		
+
       char str[20];
-		
+
       densitytextlabel->setText("Separating distance");
       statusbar->addWidget(densitytextlabel);
       densitylabel = new QLabel(this);
@@ -523,7 +523,7 @@ class MyWidget : public QGLWidget
       statusbar->move(0, height() - 30);
       statusbar->resize(width(), 30);
     }
-	
+
     void resizeEvent ( QResizeEvent * )
     {
       statusbar->move(0, height() - 30);
@@ -541,7 +541,7 @@ MyWidget::MyWidget(QGLWidget *parent)
   setMouseTracking(true);
 
   setPaletteBackgroundColor(QColor(255,255,255));
-	
+
   setstatus();
 
   menu = new QMenuBar(this, "Menu bar");
@@ -574,7 +574,7 @@ MyWidget::MyWidget(QGLWidget *parent)
   menu->insertItem( "&Placement", placement );
   view_id = menu->insertItem( "&View ", view );
   file->insertItem( "&Quit", qApp, SLOT(quit()), ALT+Key_F4 );
-	
+
 	// desable all generator menu items
   placement->setItemEnabled(generate_id, false);
   placement->setItemEnabled(generatefirst_id, false);
@@ -582,13 +582,13 @@ MyWidget::MyWidget(QGLWidget *parent)
   placement->setItemEnabled(generateten_id, false);
   placement->setItemEnabled(generateresume_id, false);
   placement->setItemEnabled(clear_id, false);
-	
+
   menu->setItemEnabled(view_id, false);
-	
+
   placement->setItemEnabled(addimage_id, false);
   file->setItemEnabled(save_id, false);
 
-	
+
   connect(this, SIGNAL(fileloaded(const QString &)), &p, SLOT(load(const QString &)));
   connect(this, SIGNAL(imageloaded(const QString &)), &p, SLOT(image(const QString &)));
   connect(&p, SIGNAL(optionschanged()), this, SLOT(updatestatus()));

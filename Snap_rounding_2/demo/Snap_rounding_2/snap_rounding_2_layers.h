@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
@@ -57,7 +57,7 @@ public:
   void draw()
   {
     if (show_grid) draw_grid();
-    
+
     widget->lock();
     widget->setRasterOp(CopyROP);
     if(show_input) {
@@ -91,7 +91,7 @@ public:
         if(show_output)
           *widget << CGAL::RED << Segment_2(*prev,*i2);
         if(show_hp)
-          *widget << CGAL::GREEN << 
+          *widget << CGAL::GREEN <<
             Iso_rectangle_2(Point_2(i2->x() - prec / Number_type(2.0),
                                     i2->y() - prec / Number_type(2.0)),
                         Point_2(i2->x() + prec / Number_type(2.0),
@@ -102,7 +102,7 @@ public:
       if(!seg_painted && show_output) // segment entirely inside hot pixel
         *widget << CGAL::RED << *(i->begin());
     }
-    widget->unlock();  
+    widget->unlock();
   }
 };
 

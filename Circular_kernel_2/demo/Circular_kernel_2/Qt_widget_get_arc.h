@@ -4,10 +4,10 @@
 //
 // Authors : Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //           Radu Ursu
-// 
+//
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (CGAL - Effective Computational Geometry for Curves and Surfaces) 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (CGAL - Effective Computational Geometry for Curves and Surfaces)
 
 // file          : include/CGAL/IO/Qt_widget_get_arc.h
 
@@ -170,7 +170,7 @@ private:
 			  (y_screen_b - y_screen) *
 			  (y_screen_b - y_screen)));
 	    double diff = 180/3.1415926;
-	
+
 	    double a = atan2( to_double(first_point.y() - center.y()),
 			  to_double(first_point.x() - center.x()));
 	    double a2p = atan2( to_double(y2 - center.y()),
@@ -235,7 +235,7 @@ private:
   void mouseMoveEvent(QMouseEvent *e)
   {
     if (firstpoint==true && !secondpoint)
-    {		
+    {
       FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
@@ -255,7 +255,7 @@ private:
 
       //save the last coordinates to redraw the screen
       x2 = x;
-      y2 = y;	
+      y2 = y;
       firsttime = false;
     } else if(secondpoint || thirdpoint){
       FT x, y;
@@ -292,7 +292,7 @@ private:
 			  (x_screen_b - x_screen) +
 			  (y_screen_b - y_screen) *
 			  (y_screen_b - y_screen)));
-	
+
 	double diff = 180/3.1415926;
 
 	double a = atan2( to_double(first_point.y() - center.y()),
@@ -356,7 +356,7 @@ public:
     Line l2 (second_point, center);
 
     return Circular_arc_2 (circ,
-     // FIXME which one is newer?	
+     // FIXME which one is newer?
      //l1, compare_lexicographically_xy(first_point,  center) == CGAL::SMALLER,
      //l2, compare_lexicographically_xy(second_point, center) == CGAL::SMALLER);
 	       l1, CGAL::compare_xy(first_point,  center) == CGAL::SMALLER,

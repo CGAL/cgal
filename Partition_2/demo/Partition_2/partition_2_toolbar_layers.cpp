@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -84,10 +84,10 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
     but[4] = new QToolButton(this, "show_points");
     but[4]->setIconSet(set4);
     but[4]->setTextLabel("Show Polygon Vertices");
-    
+
     nr_of_buttons = 5;
     button_group = new QButtonGroup(0, "nonexclusive");
-    
+
     for(int i =0; i<nr_of_buttons; i++){
       but[i]->setToggleButton(true);
       but[i]->toggle();
@@ -108,7 +108,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
         showPP, SLOT(stateChanged(int)));
     connect(button_group, SIGNAL(clicked(int)),
           widget, SLOT(redraw()));
-  }	
+  }
 
   Layers_toolbar::~Layers_toolbar()
   {

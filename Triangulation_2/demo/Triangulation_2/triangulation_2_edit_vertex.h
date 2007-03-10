@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -112,14 +112,14 @@ private:
       current_v = v;
       wasrepainted = FALSE;
       on_first = FALSE;
-    }	
+    }
   };
   void mouseMoveEvent(QMouseEvent *e)  {
     if(on_first)   {
       FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
-		
+
       *widget << CGAL::GREEN << CGAL::PointSize (5)
 	      << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)
@@ -271,7 +271,7 @@ private:
        current_v = v;
        wasrepainted = FALSE;
        on_first = FALSE;
-    }	
+    }
   }
 
   void
@@ -283,7 +283,7 @@ private:
         FT x, y;
         widget->x_real(e->x(), x);
         widget->y_real(e->y(), y);
-    		
+
         *widget << CGAL::GREEN << CGAL::PointSize (5)
                 << CGAL::PointStyle (CGAL::DISC);
         if(!wasrepainted)

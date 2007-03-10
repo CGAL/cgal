@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 // ============================================================================
@@ -63,7 +63,7 @@ const QString my_title_string("Spatial Searching Demo with"
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
-	
+
   Qt_layer_show_ch(){};
 
 
@@ -78,9 +78,9 @@ public:
       *widget << (*itp++);
     }
     widget->unlock();
-  };	
-  
-};//end class 
+  };
+
+};//end class
 
 class MyWindow : public QMainWindow
 {
@@ -89,7 +89,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -130,16 +130,16 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &vector_of_points);	
-  
+    newtoolbar = new Tools_toolbar(widget, this, &vector_of_points);
+
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-  
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-	
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -151,7 +151,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -197,7 +197,7 @@ private slots:
         it++;
       }
       widget->unlock();
-        
+
     } else if(CGAL::assign(c, obj)){
       // exact range searching using default value 0.0 for fuzziness paramater
       Fuzzy_circle exact_range(c.center(), std::sqrt(c.squared_radius()));
@@ -236,7 +236,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -258,12 +258,12 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
   void gen_points()
   {
     widget->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
@@ -273,7 +273,7 @@ private slots:
     }
     something_changed();
   }
-	
+
   void n_search(){
 
     typedef CGAL::Kd_tree<Traits> Tree;
@@ -290,12 +290,12 @@ private slots:
 
     std::vector<Neighbour_search::Point_with_transformed_distance>
       nearest_neighbour;
-    for (int i=0; i < query_point_number; i++) { 
-     
+    for (int i=0; i < query_point_number; i++) {
+
      Neighbour_search N(d, query_points[i]);
      std::copy(N.begin(), N.end(), std::back_inserter(nearest_neighbour));
     }
-    widget->lock();    
+    widget->lock();
     for (int j=0; j < query_point_number; j++) {
       *widget << CGAL::RED;
       *widget << Segment_2(query_points[j], (nearest_neighbour[j].first));
@@ -304,7 +304,7 @@ private slots:
     }
     widget->unlock();
   }
-	
+
 
 private:
   CGAL::Qt_widget        *widget;

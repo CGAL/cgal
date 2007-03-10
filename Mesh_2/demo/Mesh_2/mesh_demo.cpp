@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -193,7 +193,7 @@ struct Background_color : public CGAL::Qt_widget_styled_layer
 {
   Background_color (CGAL::Color c = CGAL::WHITE)
   {
-    style()->setColor("Back ground color", 
+    style()->setColor("Back ground color",
                       QColor(c.red(), c.green(), c.blue()));
   }
 
@@ -254,7 +254,7 @@ public:
                  QObject* parent = 0, const char* name = 0)
     : Qt_widget_layer(parent, name),
       m(mesher),
-      color(c) 
+      color(c)
   {}
 
   void set_container(Mesher* mesher)
@@ -269,11 +269,11 @@ public:
     if( m != 0 )
       {
         widget->lock();
-        {          
+        {
           QColor old_fill_color = widget->fillColor();
           int old_line_width = widget->lineWidth();
 
-          *widget << CGAL::FillColor(color) 
+          *widget << CGAL::FillColor(color)
                   << CGAL::LineWidth(0);
 
           for(Bad_faces_iterator fit=m->bad_faces_begin();
@@ -300,7 +300,7 @@ public:
     : Qt_widget_layer(parent, name), m(0), point_on(false)
   {
   }
-  
+
   void set_container(Mesher* mesher)
   {
     m = mesher;
@@ -357,7 +357,7 @@ public:
   }
 };
 
- 
+
 class Follow_mouse : public CGAL::Qt_widget_layer
 {
   QCursor oldcursor;
@@ -450,7 +450,7 @@ public:
   }
 
 private slots:
-  void is_changed() { emit changed(); }  
+  void is_changed() { emit changed(); }
 
 signals:
   void changed();
@@ -606,14 +606,14 @@ public:
         (&cdt, CGAL::RED, 1,
          this, "Show constrained edges");
 
-      show_encroached_edges = 
+      show_encroached_edges =
         new Show_encroached_edges(0,
                                   &Mesher::encroached_edges_begin,
                                   &Mesher::encroached_edges_end,
                                   CGAL::RED, 2,
                                   this, "Encroached edges layer");
 
-      show_bad_faces = 
+      show_bad_faces =
         new Show_bad_faces<Mesher>(0, CGAL::Color(0,160,0),
                                    this, "Show bad faces");
 
@@ -625,7 +625,7 @@ public:
                                             CGAL::WHITE, false,
                                             this, "Show circles");
 
-      show_coordinates = 
+      show_coordinates =
         new CGAL::Qt_widget_show_mouse_coordinates(*this,
                                                    this,
                                                    "Follow mouse coordinates");
@@ -929,7 +929,7 @@ public:
 
       QPopupMenu *pmOptions = new QPopupMenu(this);
       menuBar()->insertItem("&Options", pmOptions);
-      pmOptions->insertItem("Set &layer properties...", this, 
+      pmOptions->insertItem("Set &layer properties...", this,
                             SLOT(displayPreferences()));
       pmOptions->setCheckable(true);
 
@@ -1004,7 +1004,7 @@ private slots:
   {
     prefs->show();
   }
-  
+
 
 public slots:
 
@@ -1024,9 +1024,9 @@ public slots:
                 criteria.set_point(p);
 
                 std::list<Face_handle> l;
-            
+
                 Criteria::Quality q;
-                if(criteria.is_bad_object().operator()(fh, q) != 
+                if(criteria.is_bad_object().operator()(fh, q) !=
 		   CGAL::Mesh_2::NOT_BAD)
                   l.push_back(fh);
 

@@ -93,12 +93,12 @@ protected:
 	Static_point d= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+2)%3)->point());
 	Static_point a= tri.geom_traits().current_coordinates_object()(fit->first->vertex(fit->second)->point());
 	Static_point b= tri.geom_traits().current_coordinates_object()(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
-	
+
 	double angle1= std::abs(angle(o,a, d));
 	double angle2= std::abs(angle(o,b, d));
-	
+
 	Static_segment ss(o,d);
-	
+
 	if (angle1+angle2 < threshold_*3.1415) {
 	  if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(TDS_helper::mirror_edge(*fit))) {
 	    w<< CGAL::Color(255,0,0);

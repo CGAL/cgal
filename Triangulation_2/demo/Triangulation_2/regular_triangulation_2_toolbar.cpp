@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -68,7 +68,7 @@
     but[3] = new QToolButton(this, "movedelete layer");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Edit Vertex");
-  	
+
   nr_of_buttons = 4;
 
   button_group = new QButtonGroup(0, "exclusive");

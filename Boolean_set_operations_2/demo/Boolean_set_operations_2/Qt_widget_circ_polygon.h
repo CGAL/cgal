@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -24,7 +24,7 @@
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/IO/Qt_widget_Polygon_2.h> 
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <utility>
 
 namespace CGAL

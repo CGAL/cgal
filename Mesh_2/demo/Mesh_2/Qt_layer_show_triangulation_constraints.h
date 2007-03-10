@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -30,7 +30,7 @@ class Qt_layer_show_triangulation_constraints
   : public Qt_widget_styled_layer
 {
 public:
-	
+
   Qt_layer_show_triangulation_constraints(T *t,
 					  CGAL::Color lc = CGAL::RED,
 					  int linewidth = 1,

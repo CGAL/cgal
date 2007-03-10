@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
@@ -44,4 +44,3 @@ typedef Delaunay::Face_handle               Face_handle;
 typedef Delaunay::Vertex_handle             Vertex_handle;
 typedef Delaunay::Edge                      Edge;
 typedef Delaunay::Line_face_circulator      Line_face_circulator;
-

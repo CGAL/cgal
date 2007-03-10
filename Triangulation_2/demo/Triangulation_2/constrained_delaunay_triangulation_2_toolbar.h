@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -46,7 +46,7 @@ private:
   QButtonGroup       *button_group;
   void               addToolButton(QToolButton *b);
   int                nr_of_buttons;
-	
+
   CGAL::Qt_widget_get_segment<K2>            segmentbut;
   CGAL::Qt_widget_get_point<K2>              pointbut;
   CGAL::Qt_widget_get_polygon<Cgal_Polygon>  polygonbut;

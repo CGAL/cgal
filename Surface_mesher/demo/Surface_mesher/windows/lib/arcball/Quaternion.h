@@ -55,7 +55,7 @@ public :
   void v(const CVector3d v) {	m_v = v; }
   void x(const double x)     {	m_v.x(x); }
   void y(const double y)     {	m_v.y(y); }
-  void z(const double z)     {	m_v.z(z); } 
+  void z(const double z)     {	m_v.z(z); }
 
   // Data access (explicit inline functions)
   double     s() const { return m_s; }
@@ -70,7 +70,7 @@ public :
   const double& operator[](int i) const
     { if(i==0) return (double&)m_s;
       else return (double&)m_v[i-1];}
-	
+
   // Operators
   CQuaternion& operator+=(const CQuaternion& rQuad);
   CQuaternion& operator+=(const CQuaternion* pQuad);

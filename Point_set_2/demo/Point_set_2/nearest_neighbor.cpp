@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Matthias Baesken
 
@@ -42,7 +42,7 @@ void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K>& PS)
 {
   W.clear();
   Edge_iterator eit = PS.finite_edges_begin();
-  
+
   for(;eit != PS.finite_edges_end(); eit++) {
     CGAL::Segment_2<K> s= PS.segment(*eit);
     W << s;
@@ -57,73 +57,73 @@ void redraw(CGAL::Window_stream* wptr)
 
 int main()
 {
-  CGAL::Window_stream W(600,500, "Finding nearest neighbor / k nearest neighbors");  
+  CGAL::Window_stream W(600,500, "Finding nearest neighbor / k nearest neighbors");
 
   W.init(-500,500,-400);
   W.set_redraw(redraw);
   W.display(100,100);
-  
+
 #if defined(CGAL_USE_CGAL_WINDOW)
   W.set_point_style(CGAL::disc_point);
 #else
   W.set_point_style(leda_disc_point);
-#endif  
-  
+#endif
+
   W.draw_text(-260,20, "Input some points; quit input with the right mouse button");
-  
+
   CGAL::Point_2<K> actual;
   /*std::cout << sizeof(actual) << "\n";*/
-  
+
   int i=0;
-  
+
   while (W >> actual){
    PSet.insert(actual);
    output(W,PSet);
    i++;
-  }  
-  
+  }
+
   std::cout << i << " points were inserted !\n";
 
-  // nearest neighbor ...  
+  // nearest neighbor ...
   W.draw_text(-450,-350, "Input a point; we display the nearest neighbor ... ");
-  
+
   for (i=0; i<5; i++){
     W >> actual;
     Vertex_handle v = PSet.nearest_neighbor(actual);
-    
+
     if (v != NULL) {
-    
+
      CGAL::Segment_2<K> my_seg(actual,v->point());
-    
+
      W << CGAL::RED << v->point() << CGAL::BLACK;
      W << CGAL::BLUE << my_seg << CGAL::BLACK;
     }
   }
-  
+
   // k nearest neighbors ...
   std::list<Vertex_handle> L;
   std::list<Vertex_handle>::const_iterator it;
- 
+
   output(W,PSet);
-  W.draw_text(-450,-350, "Input a point; we display the 5 nearest neighbors ... "); 
-  
+  W.draw_text(-450,-350, "Input a point; we display the 5 nearest neighbors ... ");
+
   for (i=0; i<5; i++){
     L.clear();
     W >> actual;
     PSet.nearest_neighbors(actual,5, std::back_inserter(L));
     std::cout << "actual point: " << actual << "\n";
-    
+
     W.clear();
-    W.draw_text(-450,-350, "Input a point; we display the 5 nearest neighbors ... "); 
+    W.draw_text(-450,-350, "Input a point; we display the 5 nearest neighbors ... ");
     output(W,PSet);
     W << CGAL::RED << actual << CGAL::BLACK;
-    
+
     for (it=L.begin();it != L.end(); it++){
-      W << CGAL::GREEN << (*it)->point() << CGAL::BLACK;      
+      W << CGAL::GREEN << (*it)->point() << CGAL::BLACK;
       std::cout << (*it)->point() << "\n";
     }
     std::cout << "\n";
-  }  
+  }
 
   W.read_mouse();
 

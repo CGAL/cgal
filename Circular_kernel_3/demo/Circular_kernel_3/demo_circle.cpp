@@ -12,9 +12,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -49,7 +49,7 @@ int main (int argc, char** argv) {
 	windows->add_cercle(Circle_3(laSphere, plan), 100);
 	plan = Plane_3(Point_3( 1.,  0.,  0.), Point_3(-1.,  1.,  0.), Point_3(-1., -1.,  0.));
 	windows->add_cercle(Circle_3(laSphere, plan), 100);
-	
+
 	app.setMainWidget(windows);
 	windows->show();
 	return app.exec();

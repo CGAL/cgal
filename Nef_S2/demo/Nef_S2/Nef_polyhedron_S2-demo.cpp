@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_NEF_SETDTHREAD(911);
-  // Sphere_geometry 11 
+  // Sphere_geometry 11
   // Sphere_geometry_OGL 13
   // Segment_overlay 23
   // SM_overlayer 53
@@ -111,9 +111,9 @@ int main(int argc, char **argv)
   Nef_polyhedron_S2 N3 = N1 * N2;
   Nef_polyhedron_S2 N4 = N1 ^ N2;
   //std::cerr << N1 << N2 << N3 << N4 << std::endl;
-  CGAL::ogl << N1 << N2 << N3 << N4; 
-  CGAL::ogl << "Nef Polyhedron 1" << "Nef Polyhedron 2" 
-            << "Intersection" << "Symmetric Difference"; 
+  CGAL::ogl << N1 << N2 << N3 << N4;
+  CGAL::ogl << "Nef Polyhedron 1" << "Nef Polyhedron 2"
+            << "Intersection" << "Symmetric Difference";
   CGAL::ogl.display();
   return 0;
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 
 #include <iostream>
 
-int main() 
+int main()
 {
   std::cout << "This demo requires LEDA\n";
   return 0;

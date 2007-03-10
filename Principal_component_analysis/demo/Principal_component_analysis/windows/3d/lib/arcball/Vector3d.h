@@ -33,7 +33,7 @@ public :
     { Set(b - a); }
   CVector3d(const CVector3d *a, const CVector3d *b)
     { Set(*b - *a); }
-  
+
   virtual ~CVector3d() { }
 
   // Debug
@@ -111,7 +111,7 @@ public :
   int IsCollinear(CVector3d *pVector) const;
   int IsCollinear(CVector3d &vector) const;
 	void Negate();
-	CVector3d Rotate(double angle,CVector3d Around); 
+	CVector3d Rotate(double angle,CVector3d Around);
 	CVector3d Projection(const CVector3d* pV) const;
 };
 

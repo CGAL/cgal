@@ -3,10 +3,10 @@
 // All rights reserved.
 //
 // Authors : Radu Ursu
-// 
+//
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (CGAL - Effective Computational Geometry for Curves and Surfaces) 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (CGAL - Effective Computational Geometry for Curves and Surfaces)
 
 #include <CGAL/basic.h>
 

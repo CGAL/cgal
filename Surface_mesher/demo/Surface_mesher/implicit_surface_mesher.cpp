@@ -13,7 +13,7 @@
 #include <fstream>
 
 
-/////////////// Types /////////////// 
+/////////////// Types ///////////////
 
 typedef CGAL::Surface_mesh_default_triangulation_3 Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
@@ -39,7 +39,7 @@ double generic_inrimage_function(double x, double y, double z)
   return (*isosurface)(Point_3(x, y, z));
 }
 
-/// Global variables 
+/// Global variables
 std::ostream *out = 0;
 std::string filename = std::string();
 std::string function_name = "sphere";
@@ -50,7 +50,7 @@ void usage(std::string error = "")
 {
   if( error != "" )
     std:: cerr << "Error: " << error << std::endl;
-  std::cerr << "Usage:\n  " 
+  std::cerr << "Usage:\n  "
             << argv0
             << " [-f function_name]"
             << " [output_file.mesh|-]\n"
@@ -85,7 +85,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
         }
       else if( arg.substr(0, 2) == "--" )
 	{
-	  Double_options::iterator opt_it = 
+	  Double_options::iterator opt_it =
 	    double_options.find(arg.substr(2, arg.length()-2));
 	  if( opt_it != double_options.end() )
 	    {
@@ -102,7 +102,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 	    }
 	  else
           {
-            String_options::iterator opt_it = 
+            String_options::iterator opt_it =
                 string_options.find(arg.substr(2, arg.length()-2));
             if( opt_it != string_options.end() )
             {
@@ -116,7 +116,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
               usage(("Invalid option " + arg).c_str());
           }
 	}
-      else 
+      else
 	{
 	  output_to_file = true;
 	  filename = argv[1+extra_args];
@@ -125,7 +125,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
     }
 }
 
-/////////////// Main function /////////////// 
+/////////////// Main function ///////////////
 
 int main(int argc, char **argv) {
   argv0 = argv[0];
@@ -142,10 +142,10 @@ int main(int argc, char **argv) {
       isosurface = new Gray_image(inrimage.c_str(),
                                   double_options["isovalue"]);
     }
-  
+
   // Function
   FT sphere_radius = double_options["enclosing_sphere_radius"];
-  
+
   Surface surface(functions[function_name],
                   Sphere_3(Point_3(double_options["center_x"],
                                    double_options["center_y"],
@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
 
   // Initial point sample
   std::string read_initial_points = string_options["read_initial_points"];
-  if( read_initial_points != "")     
+  if( read_initial_points != "")
   {
     std::ifstream in( read_initial_points.c_str() );
     int n;
@@ -179,7 +179,7 @@ int main(int argc, char **argv) {
   }
 //   else
 //   {
-//     const int number_of_initial_points = 
+//     const int number_of_initial_points =
 //       static_cast<int>(double_options["number_of_initial_points"]);
 
 //     std::vector<Point_3> initial_point_sample;
@@ -191,7 +191,7 @@ int main(int argc, char **argv) {
 //     std::ofstream out("dump_of_initial_points");
 
 //     out << initial_point_sample.size() << "\n";
-//     for(std::vector<Point_3>::const_iterator it = 
+//     for(std::vector<Point_3>::const_iterator it =
 // 	  initial_point_sample.begin();
 // 	it != initial_point_sample.end();
 // 	++it)
@@ -202,7 +202,7 @@ int main(int argc, char **argv) {
 
 
   // defining meshing criteria
-  CGAL::Surface_mesh_default_criteria_3<Tr> 
+  CGAL::Surface_mesh_default_criteria_3<Tr>
     criteria(double_options["angle_bound"],   // angular bound
              double_options["radius_bound"],  // radius bound
              double_options["distance_bound"]); //distance bound

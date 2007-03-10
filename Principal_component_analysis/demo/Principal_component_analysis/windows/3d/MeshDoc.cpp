@@ -75,7 +75,7 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	CString extension = lpszPathName;
 	extension = extension.Right(4);
 	extension.MakeLower();
-	
+
 	// set current path
 	// path "c:\path\file.wrl" -> c:\path
 	CString path = lpszPathName;
@@ -85,7 +85,7 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// off extension
 	if(extension == ".off")
 	{
-		// read from stream 
+		// read from stream
 		std::ifstream stream(lpszPathName);
 		if(!stream)
 		{
@@ -128,25 +128,25 @@ BOOL CMeshDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	// Extension-based checking
 	CString file = lpszPathName;
-	
+
 	// Extension
 	CString extension = lpszPathName;
 	extension = extension.Right(4);
 	extension.MakeLower();
-	
+
 	// Path "c:\path\file.wrl" -> c:\path
 	CString path = lpszPathName;
 	path = path.Left(path.ReverseFind('\\'));
 
 	// Current path
 	SetCurrentDirectory(path);
-	
+
 	TRACE("\nOpening document\n");
 	TRACE("File      : %s\n",lpszPathName);
 	TRACE("Path      : %s\n",path);
 	TRACE("Extension : %s\n",extension);
-	
-	// save off file 
+
+	// save off file
 	if(extension == ".off")
 	{
 		// OFF extension
@@ -172,25 +172,25 @@ BOOL CMeshDoc::OnSaveDocument(LPCTSTR lpszPathName)
 // User message in status bar
 //*******************************************
 void CMeshDoc::StatusMessage(char* fmt,...)
-{   
+{
 	CWinApp *pApp = AfxGetApp();
-	if(pApp->m_pMainWnd != NULL) 
-	{ 
+	if(pApp->m_pMainWnd != NULL)
+	{
 		char buffer[256];
-		CStatusBar* pStatus = 
+		CStatusBar* pStatus =
 			(CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(
 			AFX_IDW_STATUS_BAR);
-		
+
 		// fill buffer
-		va_list argptr;      
+		va_list argptr;
 		va_start(argptr,fmt);
 		vsprintf(buffer,fmt,argptr);
 		va_end(argptr);
-		
-		if(pStatus != NULL) 
+
+		if(pStatus != NULL)
 		{
 			pStatus->SetPaneText(0,buffer);
-			pStatus->UpdateWindow(); 
+			pStatus->UpdateWindow();
 		}
   }
 	return;

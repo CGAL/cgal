@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Susan Hert
 
@@ -48,18 +48,18 @@ typedef double RT;
 #include <vector>
 #include <cstdlib>
 
-// NOTE: the choice of double here for a number type may cause problems 
+// NOTE: the choice of double here for a number type may cause problems
 //       for degenerate point sets
 typedef CGAL::Homogeneous<RT>                     K;
 typedef CGAL::Convex_hull_traits_3<K>             Traits;
 typedef Traits::Polyhedron_3                      Polyhedron_3;
 
-// define point creator 
+// define point creator
 typedef K::Point_3                                Point_3;
 typedef CGAL::Creator_uniform_3<double, Point_3>  PointCreator;
 typedef CGAL::Random_points_in_sphere_3<Point_3, PointCreator> Generator;
 
-void draw_points_and_hull(const std::vector<Point_3>& points, 
+void draw_points_and_hull(const std::vector<Point_3>& points,
                           const CGAL::Object& object)
 {
    std::vector<Point_3>::const_iterator p_it;
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
   }
 
   int num = std::atoi(argv[1]);
-  if (num < 0) 
+  if (num < 0)
   {
      std::cerr << "Usage: " << argv[0] << " #points " << std::endl;
      std::cerr << " #points must be >= 0" << std::endl;
@@ -114,13 +114,13 @@ int main(int argc, char* argv[])
   std::vector<Point_3> points;
   Generator gen(100.0);
 
-  // generate num points and copy them to a vector 
+  // generate num points and copy them to a vector
   CGAL::copy_n( gen, num, std::back_inserter(points) );
-  
-  // define object to hold convex hull 
+
+  // define object to hold convex hull
   CGAL::Object ch_object;
 
-  // compute convex hull 
+  // compute convex hull
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object);
   draw_points_and_hull(points, ch_object);
   return 0;

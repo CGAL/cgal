@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -24,7 +24,7 @@
 #include <qcursor.h>
 #include "Qt_widget_circ_polygon.h"
 
-extern bool                                      red_active; 
+extern bool                                      red_active;
 extern Polygon_set                               red_set;
 extern Polygon_set                               blue_set;
 
@@ -34,12 +34,12 @@ class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
 
     //Data members
     Polygon_with_holes     m_pgn;
-  
+
     QWidget::FocusPolicy  m_oldpolicy;
     QCursor               m_oldcursor;
     QCursor               m_cursor;
 
-    bool m_found_pgn; 
+    bool m_found_pgn;
 
 
   public:
@@ -66,7 +66,7 @@ class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
                             Point_2(widget->x_max(), widget->y_max()));
           *widget << rect;
         }
-        else  
+        else
           *widget << outer_boundary;
         for(Hole_const_iterator hit = m_pgn.holes_begin();
             hit != m_pgn.holes_end();
@@ -96,7 +96,7 @@ class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
         m_found_pgn = blue_set.locate(query_pt, m_pgn);
       widget->redraw();
     }
-         
+
   };//end mousePressEvent
 
   void activating()

@@ -66,15 +66,15 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*        w
     but[0] = new QToolButton(this, "polygon");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Simple Polygon");
-    
+
     but[1] = new QToolButton(this, "straight_skeleton");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Straight Skeleton");
-    
+
     but[2] = new QToolButton(this, "offset");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Polygon Offset");
-    
+
     but[3] = new QToolButton(this, "progress");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Show Progress");

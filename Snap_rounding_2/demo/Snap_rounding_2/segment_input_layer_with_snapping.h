@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
@@ -72,13 +72,13 @@ private:
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
       Point_2 p(x, y);
-      Point_2 closest_p;  
+      Point_2 closest_p;
       //this point is the closest one to the mouse coordinates
       FT min_dist;
       typename std::list<Segment_2>::const_iterator it = seg_list->begin();
       min_dist = CGAL::squared_distance(p, (*it).source());
       closest_p = (*it).source();
-      
+
       while(it!=seg_list->end())
       {
         if (min_dist > CGAL::squared_distance(p, (*it).source())) {
@@ -91,15 +91,15 @@ private:
         }
         it++;
       }
-      
+
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(this->XorROP);
       widget->lock();
-      *widget << CGAL::GREEN << CGAL::PointSize (5) 
+      *widget << CGAL::GREEN << CGAL::PointSize (5)
               << CGAL::PointStyle (CGAL::DISC);
       *widget << closest_p;
       widget->unlock();
-      widget->setRasterOp(old);        
+      widget->setRasterOp(old);
       old_point = closest_p;
       if(!firstpoint){
         x1 = closest_p.x();
@@ -110,7 +110,7 @@ private:
       } else {
         if(x1 != closest_p.x() || y1 != closest_p.y()) {
           widget->new_object(
-            CGAL::make_object(Segment(Point_2(x1, y1), 
+            CGAL::make_object(Segment(Point_2(x1, y1),
                                       Point_2(closest_p.x(), closest_p.y()))));
           firstpoint = false;
         }
@@ -123,7 +123,7 @@ private:
     widget->setCursor(cursor);
     firstpoint = false;
   };
-  
+
   void deactivating()
   {
     widget->setCursor(oldcursor);

@@ -26,9 +26,9 @@ static char THIS_FILE[] = __FILE__;
 //********************************************
 // Constructor
 //********************************************
-CQuaternion::CQuaternion(const double s, 
-												 const double x, 
-												 const double y, 
+CQuaternion::CQuaternion(const double s,
+												 const double x,
+												 const double y,
 												 const double z)
 {
   m_s = s;
@@ -54,7 +54,7 @@ CQuaternion::CQuaternion(const CQuaternion *pQuat)
 //********************************************
 // Constructor
 //********************************************
-CQuaternion::CQuaternion(const double s, 
+CQuaternion::CQuaternion(const double s,
 												 const CVector3d *pVector)
 {
   m_s = s;
@@ -64,7 +64,7 @@ CQuaternion::CQuaternion(const double s,
 //********************************************
 // Constructor
 //********************************************
-CQuaternion::CQuaternion(const double s, 
+CQuaternion::CQuaternion(const double s,
 												 const CVector3d& vector)
 {
   m_s = s;
@@ -75,7 +75,7 @@ CQuaternion::CQuaternion(const double s,
 // Constructor
 // This assumes unit vecFrom and vecTo
 //********************************************
-CQuaternion::CQuaternion(const CVector3d &vecFrom, 
+CQuaternion::CQuaternion(const CVector3d &vecFrom,
 												 const CVector3d &vecTo)
 {
   CVector3d& vecHalf = vecTo + vecFrom;
@@ -104,9 +104,9 @@ CQuaternion::Clear()
 // Set
 //********************************************
 void
-CQuaternion::Set(const double s, 
-								 const double x, 
-								 const double y, 
+CQuaternion::Set(const double s,
+								 const double x,
+								 const double y,
 								 const double z)
 {
   m_s = s;
@@ -117,7 +117,7 @@ CQuaternion::Set(const double s,
 // Set
 //********************************************
 void
-CQuaternion::Set(const double s, 
+CQuaternion::Set(const double s,
 								 const CVector3d &v)
 {
   m_s = s;
@@ -128,7 +128,7 @@ CQuaternion::Set(const double s,
 // Set
 //********************************************
 void
-CQuaternion::Set(const double s, 
+CQuaternion::Set(const double s,
 								 const CVector3d *pV)
 {
   m_s = s;
@@ -157,9 +157,9 @@ CQuaternion::Set(const CQuaternion &quat)
 // SetRotation
 //********************************************
 void
-CQuaternion::SetRotation(double ax, 
-												 double ay, 
-												 double az, 
+CQuaternion::SetRotation(double ax,
+												 double ay,
+												 double az,
 												 double radAngle)
 {
   double halfAngle = radAngle / 2.f;
@@ -172,7 +172,7 @@ CQuaternion::SetRotation(double ax,
 // GetMatrix
 // Construct rotation matrix from (possibly non-unit) quaternion.
 // Assumes matrix is used to multiply column vector on the left:
-// Vnew = Matrix * Vold.  Works correctly for right-handed 
+// Vnew = Matrix * Vold.  Works correctly for right-handed
 // coordinate systems and right-handed rotations.
 //********************************************
 void
@@ -201,7 +201,7 @@ CQuaternion::GetMatrix(double *mat) const
 // GetMatrix
 // Construct rotation matrix from (possibly non-unit) quaternion.
 // Assumes matrix is used to multiply column vector on the left:
-// Vnew = Matrix * Vold.  Works correctly for right-handed 
+// Vnew = Matrix * Vold.  Works correctly for right-handed
 // coordinate systems and right-handed rotations.
 //********************************************
 CMatrix44
@@ -312,7 +312,7 @@ CQuaternion::operator -() const
 }
 
 //********************************************
-// Operator + 
+// Operator +
 //********************************************
 CQuaternion
 operator+(const CQuaternion& u, const CQuaternion& v)
@@ -345,10 +345,10 @@ operator*(const CQuaternion& u, const CQuaternion& v)
 }
 
 //********************************************
-// Operator * 
+// Operator *
 //********************************************
 CQuaternion
-operator*(const double s, 
+operator*(const double s,
 					const CQuaternion& u)
 {
   return CQuaternion(u.m_s * s, u.m_v * s);
@@ -358,7 +358,7 @@ operator*(const double s,
 // Operator ==
 //********************************************
 int
-operator==(const CQuaternion& q1, 
+operator==(const CQuaternion& q1,
 					 const CQuaternion& q2)
 {
   return (q1.m_s == q2.m_s &&
@@ -371,7 +371,7 @@ operator==(const CQuaternion& q1,
 //  within a tolerence (squared distance).
 //********************************************
 int
-CQuaternion::Equals(const CQuaternion& q, 
+CQuaternion::Equals(const CQuaternion& q,
 										const double tolerence) const
 {
   CQuaternion diff = *this - q;
@@ -406,21 +406,21 @@ CQuaternion::Normalize()
 double
 CQuaternion::Length()const
 {
-  return sqrt((double)m_s *(double)m_s + 
-	      (double)m_v.x()*(double)m_v.x() + 
-	      (double)m_v.y()*(double)m_v.y() + 
+  return sqrt((double)m_s *(double)m_s +
+	      (double)m_v.x()*(double)m_v.x() +
+	      (double)m_v.y()*(double)m_v.y() +
 	      (double)m_v.z()*(double)m_v.z());
 }
-	
+
 //********************************************
 // LengthSquared
 //********************************************
 double
 CQuaternion::LengthSquared()const
 {
-  return ((double)m_s    *(double)m_s + 
-	  (double)m_v.x()*(double)m_v.x() + 
-	  (double)m_v.y()*(double)m_v.y() + 
+  return ((double)m_s    *(double)m_s +
+	  (double)m_v.x()*(double)m_v.x() +
+	  (double)m_v.y()*(double)m_v.y() +
 	  (double)m_v.z()*(double)m_v.z());
 }
 
@@ -446,6 +446,3 @@ CQuaternion::Conjugate()
 }
 
 // ** EOF **
-
-
-

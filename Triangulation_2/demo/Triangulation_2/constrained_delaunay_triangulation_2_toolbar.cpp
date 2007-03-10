@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -66,7 +66,7 @@
     but[3] = new QToolButton(this, "polygoninput layer");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Input Polygon");
-  		
+
   nr_of_buttons = 4;
 
   button_group = new QButtonGroup(0, "exclusive");
@@ -81,7 +81,7 @@
         &segmentbut, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
         &polygonbut, SLOT(stateChanged(int)));
-  
+
 };
 
 #include "constrained_delaunay_triangulation_2_toolbar.moc"

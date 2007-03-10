@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -52,11 +52,11 @@ std::vector<Site_2> sitelist;
 int
 main(int argc, char* argv[])
 {
-  
+
   int size = 750;
 
   QApplication app( argc, argv );
-  
+
   My_Window W(size,size);
   app.setMainWidget( &W );
 #if !defined (__POWERPC__)
@@ -67,7 +67,7 @@ main(int argc, char* argv[])
   W.set_window(0,size,0,size);
   W.setCaption(W.title());
 
-  
+
   return app.exec();
 }
 

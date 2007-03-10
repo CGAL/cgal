@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -71,75 +71,75 @@ public:
 
 
     but[0] = new QToolButton(QPixmap( (const char**)points_xpm ),
-			     "Show sites", 
-			     0, 
-			     this, 
-			     SLOT(show_sites()), 
-			     this, 
+			     "Show sites",
+			     0,
+			     this,
+			     SLOT(show_sites()),
+			     this,
 			     "Show sites");
 
     but[1] = new QToolButton(QPixmap( (const char**)voronoi_xpm ),
-			     "Show Voronoi diagram", 
-			     0, 
-			     this, 
-			     SLOT(show_voronoi()), 
-			     this, 
+			     "Show Voronoi diagram",
+			     0,
+			     this,
+			     SLOT(show_voronoi()),
+			     this,
 			     "Show Voronoi diagram");
 
     but[2] = new QToolButton(QPixmap( (const char**)triangulation_xpm ),
-			     "Show skeleton", 
-			     0, 
-			     this, 
-			     SLOT(show_skeleton()), 
-			     this, 
+			     "Show skeleton",
+			     0,
+			     this,
+			     SLOT(show_skeleton()),
+			     this,
 			     "Show skeleton");
-    
+
     but[3] = new QToolButton(QPixmap( (const char**)point_xpm ),
-			     "Input points", 
-			     0, 
-			     this, 
-			     SLOT(input_points_mode()), 
-			     this, 
+			     "Input points",
+			     0,
+			     this,
+			     SLOT(input_points_mode()),
+			     this,
 			     "Input points");
 
-    
+
     but[4] = new QToolButton(QPixmap( (const char**)line_xpm ),
-			     "Input segments", 
-			     0, 
-			     this, 
-			     SLOT(input_segments_mode()), 
-			     this, 
+			     "Input segments",
+			     0,
+			     this,
+			     SLOT(input_segments_mode()),
+			     this,
 			     "Input segments");
     but[5] = new QToolButton(QPixmap( (const char**)polygon_xpm ),
-			     "Input polygons", 
-			     0, 
-			     this, 
-			     SLOT(input_polygons_mode()), 
-			     this, 
+			     "Input polygons",
+			     0,
+			     this,
+			     SLOT(input_polygons_mode()),
+			     this,
 			     "Input polygons");
 #if 1
     but[6] = new QToolButton(QPixmap( (const char**)notool_xpm ),
-			     "Remove site", 
-			     0, 
-			     this, 
-			     SLOT(remove_mode()), 
-			     this, 
+			     "Remove site",
+			     0,
+			     this,
+			     SLOT(remove_mode()),
+			     this,
 			     "Remove site");
 #else
     but[6] = new QToolButton(QPixmap( (const char**)remove_xpm ),
-			     "Remove site", 
-			     0, 
-			     this, 
-			     SLOT(remove_mode()), 
-			     this, 
+			     "Remove site",
+			     0,
+			     this,
+			     SLOT(remove_mode()),
+			     this,
 			     "Remove site");
 #endif
     but[7] = new QToolButton(QPixmap( (const char**)holddown_xpm ),
-			     "Snap mode", 
-			     0, 
-			     this, 
-			     SLOT(snap_mode()), 
-			     this, 
+			     "Snap mode",
+			     0,
+			     this,
+			     SLOT(snap_mode()),
+			     this,
 			     "Snap mode");
 
     showSK->deactivate();
@@ -177,7 +177,7 @@ signals:
   void inputModeChanged(Input_mode);
   void insertModeChanged(bool);
   void snapModeChanged(bool);
-  
+
 private slots:
   void show_sites() {
     if ( but[0]->isOn() ) {
@@ -203,7 +203,7 @@ private slots:
   }
 
   void show_skeleton() {
-    if ( !but[2]->isOn() ) { 
+    if ( !but[2]->isOn() ) {
       showSK->deactivate();
     } else {
       showSK->activate();
@@ -263,7 +263,7 @@ private slots:
 private:
   QToolButton		*but[15];
   CGAL::Qt_widget	*widget;
-  QMainWindow		*window;	
+  QMainWindow		*window;
   int			nr_of_buttons;
   Input_mode            input_mode;
 

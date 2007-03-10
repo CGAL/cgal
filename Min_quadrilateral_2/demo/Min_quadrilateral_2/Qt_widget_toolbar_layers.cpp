@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -59,12 +59,12 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 			       std::list<Point_2> *l_of_p) :
   QToolBar(mw, "LT"), widget(w), window(mw), nr_of_buttons(0)
   {
-      
+
     showPL  = new Qt_layer_show_parallelogram<Rp>(l_of_p);
     showP   = new Qt_layer_show_points<Rp>(l_of_p);
     showLS  = new Qt_layer_show_strip<Rp>(l_of_p);
     showR   = new Qt_layer_show_rectangle<Rp>(l_of_p);
-    
+
     //set the widget
 
     widget->attach(showR);
@@ -95,7 +95,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
     but[3]->setTextLabel("Show Minimum Rectangle");
 
     nr_of_buttons = 4;
-    button_group = new QButtonGroup(0, "nonexclusive");	
+    button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)
     {
 	but[i]->setToggleButton(TRUE);
@@ -104,16 +104,16 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
     }
     connect(but[0], SIGNAL(stateChanged(int)),
       showP, SLOT(stateChanged(int)));
-    connect(but[1], SIGNAL(stateChanged(int)), 
+    connect(but[1], SIGNAL(stateChanged(int)),
       showPL, SLOT(stateChanged(int)));
-    connect(but[2], SIGNAL(stateChanged(int)), 
+    connect(but[2], SIGNAL(stateChanged(int)),
       showLS, SLOT(stateChanged(int)));
-    connect(but[3], SIGNAL(stateChanged(int)), 
+    connect(but[3], SIGNAL(stateChanged(int)),
       showR, SLOT(stateChanged(int)));
 
     connect(button_group, SIGNAL(clicked(int)),
       widget, SLOT(redraw()));
-    
+
   }//end constructor
 
 #include "Qt_widget_toolbar_layers.moc"

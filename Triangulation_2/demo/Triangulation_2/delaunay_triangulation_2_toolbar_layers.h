@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -50,7 +50,7 @@ private:
   Delaunay        *dt;
   QButtonGroup    *button_group;
   int             nr_of_buttons;
-	
+
   Qt_layer_show_triangulation < Delaunay > *showT;
   Qt_layer_show_voronoi < Delaunay >       *showV;
   Qt_layer_show_points < Delaunay >        *showP;

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -41,26 +41,26 @@ public:
 
     greene_approx_polys.clear();
     Traits  partition_traits;
-    
+
     CGAL::greene_approx_convex_partition_2(
-		polygon.vertices_begin(), 
+		polygon.vertices_begin(),
 		polygon.vertices_end(),
 		std::back_inserter(greene_approx_polys),
 		partition_traits);
-    
+
     typename std::list<T>::const_iterator p_it;
-    for(p_it = greene_approx_polys.begin(); 
+    for(p_it = greene_approx_polys.begin();
 		p_it != greene_approx_polys.end(); p_it++)
     {
-      *widget << CGAL::GREEN; 
+      *widget << CGAL::GREEN;
       *widget << *p_it;
     }
-    
+
   };
 private:
   T		&polygon;
   std::list<T>	greene_approx_polys;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_optimal_convex : public CGAL::Qt_widget_layer
@@ -76,44 +76,44 @@ public:
   {
     optimal_convex.clear();
     Traits  partition_traits;
-    
-    CGAL::optimal_convex_partition_2(polygon.vertices_begin(), 
+
+    CGAL::optimal_convex_partition_2(polygon.vertices_begin(),
                                        polygon.vertices_end(),
                            std::back_inserter(optimal_convex),
-                                            partition_traits);    
-    
+                                            partition_traits);
+
     typename std::list<T>::const_iterator p_it;
     for(p_it = optimal_convex.begin(); p_it != optimal_convex.end(); p_it++)
     {
-      *widget << CGAL::YELLOW; 
+      *widget << CGAL::YELLOW;
       *widget << *p_it;
     }
-    
+
   };
 private:
   T		&polygon;
   std::list<T>	optimal_convex;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
 {
 public:
-  
+
   Qt_layer_show_polygon(T &p) : polygon(p){};
   void draw()
   {
     *widget << CGAL::LineWidth(3);
-    *widget << CGAL::BLUE; 
+    *widget << CGAL::BLUE;
     *widget << polygon;
     *widget << CGAL::LineWidth(1);
-    *widget << CGAL::WHITE; 
+    *widget << CGAL::WHITE;
     *widget << polygon;
   };
-	
+
 private:
   T &polygon;
-};//end class 
+};//end class
 
 
 template <class T>
@@ -121,26 +121,26 @@ class Qt_layer_show_polygon_points : public CGAL::Qt_widget_layer
 {
   typedef typename T::Point_2	Point_2;
 public:
-  
+
   Qt_layer_show_polygon_points(T &p) : polygon(p){};
   void draw()
   {
     typename T::const_iterator vert_it;
 
-    
-    for (vert_it = polygon.vertices_begin(); 
+
+    for (vert_it = polygon.vertices_begin();
 		vert_it != polygon.vertices_end(); vert_it++)
     {
-      
-      *widget << CGAL::GREEN << CGAL::PointSize (5) 
+
+      *widget << CGAL::GREEN << CGAL::PointSize (5)
 			<< CGAL::PointStyle (CGAL::DISC);
       *widget << Point_2((*vert_it).x(), (*vert_it).y());
     }
   };
-	
+
 private:
   T &polygon;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_ymonotone : public CGAL::Qt_widget_layer
@@ -156,20 +156,20 @@ public:
   void draw()
   {
     ymonotone.clear();
-    
-    CGAL::y_monotone_partition_2(polygon.vertices_begin(), 
+
+    CGAL::y_monotone_partition_2(polygon.vertices_begin(),
                                 polygon.vertices_end(),
                                 std::back_inserter(ymonotone));
 
     typename std::list<T>::const_iterator p_it;
     for(p_it = ymonotone.begin(); p_it != ymonotone.end(); p_it++)
     {
-      *widget << CGAL::RED; 
+      *widget << CGAL::RED;
       *widget << *p_it;
     }
-    
+
   };
 private:
   T		&polygon;
   std::list<T>	ymonotone;
-};//end class 
+};//end class

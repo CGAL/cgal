@@ -43,7 +43,7 @@ typedef CGAL::Surface_mesher::Surface_mesher_regular_edges<Del, Oracle, Criteria
 typedef CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary<Del, Oracle, Criteria> SMREWB;
 typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria> SMM;
 typedef CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary_base<Del, Oracle, Criteria> SMREWBB;
-typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria, 
+typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria,
           CGAL::Surface_mesher::Surface_mesher_manifold_base <Del, Oracle, Criteria, SMREWBB> > SMMWB;
 
 typedef SM Surface_mesher;  // basic mesher
@@ -108,5 +108,3 @@ public:
 	afx_msg void OnEditOptions();
 	afx_msg void OnMeshingRun();
 };
-
-

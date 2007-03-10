@@ -9,7 +9,7 @@
 
 //geom, local
 #include "visu_poly.h"
-#include "enriched_polyhedron.h" 
+#include "enriched_polyhedron.h"
 
 #include <iostream>
 #include <fstream>
@@ -34,15 +34,15 @@ void clean_DS(DS& L)
   L.pop_front();
 }
 
-void 
-read_line(std::ifstream& stream_res, int& ridge_type, 
-	  double& strength, double& sharpness, 
-	  std::vector<Point>& ridge_points) 
+void
+read_line(std::ifstream& stream_res, int& ridge_type,
+	  double& strength, double& sharpness,
+	  std::vector<Point>& ridge_points)
 {
       const int max_line_size = 100000;
       char cline[max_line_size];
       stream_res.getline ( cline, max_line_size , '\n' );
-      if (stream_res.gcount() > max_line_size) 
+      if (stream_res.gcount() > max_line_size)
 	{std::cout << "too long line, exit!, change max_line_size in read_line()" ;
 	exit(0);}
       std::string sline(cline);
@@ -81,14 +81,14 @@ void load_data_from_file(DS& l, const char* file_res)
 		ridge_points);
       if (ridge_points.size() > 1)//to discard the last empty line... to fix
       l.push_front(new data_line(ridge_type, strength, sharpness,
-				 ridge_points)); 
+				 ridge_points));
     }
   stream_res.close();
-}	
+}
 
 
 void load_geom(int argc, char* argv[])
-{	
+{
   if (argc != 5)
     { std::cout << "Usage : prog + " << std::endl
 		<< " file.off " << std::endl
@@ -100,7 +100,7 @@ void load_geom(int argc, char* argv[])
 
   const char* file_off = argv[1];
   const char* file_res = argv[2];
- 
+
   // initialisation du maillage
   std::ifstream f(file_off, std::ifstream::in);
   if(!f){
@@ -108,7 +108,7 @@ void load_geom(int argc, char* argv[])
     }
   f >> m_mesh;
   m_mesh.compute_normals();
-  
+
   // init of the ridge data
   ridge_data.clear();
   load_data_from_file(ridge_data, file_res);
@@ -122,7 +122,7 @@ void load_geom(int argc, char* argv[])
 int main(int argc, char** argv) {
 
   load_geom(argc, argv);
-  
+
   QApplication app(argc, argv);
   glutInit(&argc, argv);
 

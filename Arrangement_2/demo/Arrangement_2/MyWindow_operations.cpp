@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -44,30 +44,30 @@ bool upper_env = false;
  */
 void MyWindow::something_changed()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab     *w_demo_p = 
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());  
+  Qt_widget_base_tab     *w_demo_p =
+    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
   w_demo_p->current_state++;
 }
 
-/*! get_new_object - get a point object from current page 
+/*! get_new_object - get a point object from current page
  * \param obj - a CGAL object
  */
 void MyWindow::get_new_object(CGAL::Object obj)
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab *w_demo_p = 
+  Qt_widget_base_tab *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   // point location
   Coord_point p;
-  if(CGAL::assign(p,obj)) 
+  if(CGAL::assign(p,obj))
     w_demo_p->pl_point = p;
-  
+
   something_changed();
 }
 
@@ -100,23 +100,23 @@ void MyWindow::howto()
 /*! redraw the widget when timer ends */
 void MyWindow::timer_done()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_demo_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_demo_tab*,
   // as we know that only
   // Qt_widget_demo_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   if(old_state!=w_demo_p->current_state){
     w_demo_p->redraw();
     old_state = w_demo_p->current_state;
   }
-}    
+}
 
 
 /*! zoom in - enlarge the picture */
 void MyWindow::zoomin()
 {
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   w_demo_p->zoom(m_scailing_factor);
 }
@@ -124,7 +124,7 @@ void MyWindow::zoomin()
 /*! zoom out - lessen the picture */
 void MyWindow::zoomout()
 {
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   w_demo_p->zoom(1/m_scailing_factor);
 }
@@ -132,15 +132,15 @@ void MyWindow::zoomout()
 /*! properties form dialog */
 void MyWindow::properties()
 {
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
-  PropertiesForm *optionsForm = 
-    new PropertiesForm( myBar , this ,number_of_tabs ,w_demo_p , 
+
+  PropertiesForm *optionsForm =
+    new PropertiesForm( myBar , this ,number_of_tabs ,w_demo_p ,
                 m_scailing_factor , colors_flag);
-  
-  if ( optionsForm->exec() ) 
-  {    
+
+  if ( optionsForm->exec() )
+  {
     m_width = optionsForm->box1->value();
     m_height = optionsForm->box2->value();
     w_demo_p->m_line_width = optionsForm->box3->value();
@@ -174,7 +174,7 @@ void MyWindow::properties()
 /*! print planar map */
 void MyWindow::print()
 {
-  Qt_widget_base_tab    *w_demo_p1 = 
+  Qt_widget_base_tab    *w_demo_p1 =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   w_demo_p1->print_to_ps();
 }
@@ -183,24 +183,24 @@ void MyWindow::print()
 /*! show grid without been in a grid snap mode */
 void MyWindow::showGrid()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab     *w_demo_p = 
+  Qt_widget_base_tab     *w_demo_p =
     dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
   w_demo_p->grid = true;
   something_changed();
 }
 
-/*! hide the grid (can be applied only when we 
+/*! hide the grid (can be applied only when we
  *  are not in a grid snap mode.
  */
 void MyWindow::hideGrid()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab     *w_demo_p = 
+  Qt_widget_base_tab     *w_demo_p =
     dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
   w_demo_p->grid = false;
   something_changed();
@@ -210,20 +210,20 @@ void MyWindow::hideGrid()
 void MyWindow::backGroundColor()
 {
   QColor c = QColorDialog::getColor();
-  Qt_widget_base_tab     *w_demo_p = 
+  Qt_widget_base_tab     *w_demo_p =
     dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
-  
-  w_demo_p->setBackgroundColor( c ); 
-  
+
+  w_demo_p->setBackgroundColor( c );
+
   something_changed();
 }
 
 void MyWindow::changePmColor()
 {
   QColor c = QColorDialog::getColor();
-  Qt_widget_base_tab     *w_demo_p = 
+  Qt_widget_base_tab     *w_demo_p =
     dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
-  
+
   w_demo_p->pm_color = c;
   w_demo_p->change_pm_color = true;
   something_changed();
@@ -233,11 +233,11 @@ void MyWindow::changePmColor()
 /*! a dialog form to set the pointLocationStrategy */
 void MyWindow::pointLocationStrategy()
 {
-  Qt_widget_base_tab * w_demo_p = 
+  Qt_widget_base_tab * w_demo_p =
     dynamic_cast<Qt_widget_base_tab*> (myBar->currentPage());
   PointLocationStrategyForm form;
   if ( form.exec() )
-  { 
+  {
     QString type = form.arrComboBox1->currentText();
     if(! strcmp(type,"Naive"))
       w_demo_p -> change_strategy(NAIVE);
@@ -270,20 +270,20 @@ void MyWindow::init(Qt_widget_base_tab *widget)
   tab_number++;
   number_of_tabs++;
   // add the new widget to myBar
-  myBar->insertTab( widget, 
+  myBar->insertTab( widget,
                     QString("Arr " + QString::number( widget->index + 1 ) ),
                     widget->index );
   myBar->setCurrentPage(myBar->indexOf(widget));
- 
+
   update();
   something_changed();
-  
+
 }
 
 /*! add a tab widget with segment traits */
 void MyWindow::add_segment_tab()
 {
-  Qt_widget_demo_tab<Segment_tab_traits> *widget = 
+  Qt_widget_demo_tab<Segment_tab_traits> *widget =
     new Qt_widget_demo_tab<Segment_tab_traits>
     (SEGMENT_TRAITS , this, tab_number, colors[tab_number%num_of_colors]);
   init(widget);
@@ -293,7 +293,7 @@ void MyWindow::add_segment_tab()
 /*! add a tab widget with polyline traits */
 void MyWindow::add_polyline_tab()
 {
-  Qt_widget_demo_tab<Polyline_tab_traits> *widget = 
+  Qt_widget_demo_tab<Polyline_tab_traits> *widget =
     new Qt_widget_demo_tab<Polyline_tab_traits>
     (POLYLINE_TRAITS , this, tab_number, colors[tab_number%num_of_colors]);
   init(widget);
@@ -303,13 +303,13 @@ void MyWindow::add_polyline_tab()
 /*! add a tab widget with conic traits */
 void MyWindow::add_conic_tab()
 {
-  Qt_widget_demo_tab<Conic_tab_traits> *widget = 
+  Qt_widget_demo_tab<Conic_tab_traits> *widget =
     new Qt_widget_demo_tab<Conic_tab_traits>
     (CONIC_TRAITS , this , tab_number, colors[tab_number%num_of_colors]);
   init(widget);
   widget->draw();
 
-  //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()), 
+  //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()),
     //                 widget->x_pixel(widget->y_min()), widget->x_pixel(widget->y_max()));
 
 }
@@ -321,7 +321,7 @@ void MyWindow::remove_tab()
   {
     QWidget *w_demo_p = myBar->currentPage(); // w_demo_p is a pointer to Qt_widget_demo_tab object
     myBar->removePage(w_demo_p);
-    delete w_demo_p;  //the destructor of Qt_widget_demo_tab will be called (virtual...) 
+    delete w_demo_p;  //the destructor of Qt_widget_demo_tab will be called (virtual...)
     number_of_tabs--;
   }
   else
@@ -338,11 +338,11 @@ void MyWindow::remove_tab()
  */
 void MyWindow::updateTraitsType( QAction *action )
 {
-  Qt_widget_base_tab *old_widget = 
+  Qt_widget_base_tab *old_widget =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   Qt_widget_base_tab * widget = 0;
   int old_index = old_widget->index;
-  
+
   if (action == setSegmentTraits)
   {
     if (old_widget->traits_type == SEGMENT_TRAITS) return;
@@ -361,7 +361,7 @@ void MyWindow::updateTraitsType( QAction *action )
     widget = new Qt_widget_demo_tab<Conic_tab_traits>
       (CONIC_TRAITS , this, old_index, old_widget->pm_color);
   }
-  
+
   if( !old_widget->is_empty() ) // pm is not empty
   {
     switch( QMessageBox::warning( this, "Update Traits Type",
@@ -369,7 +369,7 @@ void MyWindow::updateTraitsType( QAction *action )
         "Do you want to continue ?",
         "Yes",
         "No", 0, 0, 1 ) ) {
-      case 0: 
+      case 0:
           // continue
           break;
       case 1: // The user clicked the Quit or pressed Escape
@@ -380,13 +380,13 @@ void MyWindow::updateTraitsType( QAction *action )
     }
   }
 
-  
+
   int index = myBar->currentPageIndex();
   QString label = myBar->label(index);
   myBar->removePage(myBar->currentPage());
-  
+
   //initialize the new tab widget
-  *widget << CGAL::LineWidth(2); 
+  *widget << CGAL::LineWidth(2);
   widget->setBackgroundColor(def_bg_color);
    widget->setMouseTracking(TRUE);
   connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
@@ -400,9 +400,9 @@ void MyWindow::updateTraitsType( QAction *action )
 
   // add the new widget to myBar
   myBar->insertTab( widget, label , index );
-  
+
   myBar->setCurrentPage(index);
-    
+
   update();
   something_changed();
 }
@@ -427,24 +427,24 @@ void MyWindow::setTraits( TraitsType t )
 }
 
 /*! update widget conic type
- * \param action - the new conic type 
+ * \param action - the new conic type
  */
 void MyWindow::updateConicType( QAction *action )
 {
   // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  if ( action == setCircle ) 
+  if ( action == setCircle )
     w_demo_p->conic_type = CIRCLE;
-  else if ( action == setSegment ) 
+  else if ( action == setSegment )
     w_demo_p->conic_type = SEGMENT;
-  else if ( action == setEllipse ) 
+  else if ( action == setEllipse )
     w_demo_p->conic_type = ELLIPSE;
-  else if ( action == setParabola ) 
+  else if ( action == setParabola )
     w_demo_p->conic_type = PARABOLA;
-  else if ( action == setHyperbola ) 
+  else if ( action == setHyperbola )
     w_demo_p->conic_type = HYPERBOLA;
 }
 
@@ -473,7 +473,7 @@ void MyWindow::setConicType( ConicType t )
 /*! open color dialog for faces color */
 void MyWindow::openColorDialog()
 {
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   QColor c = QColorDialog::getColor();
   if( c.isValid())
@@ -493,18 +493,18 @@ void MyWindow::upperEnvelope(bool b)
 }
 
 
-/*! update snap mode - change the snap mode and the relevant buttons 
+/*! update snap mode - change the snap mode and the relevant buttons
  *  state after the snap mode button was clicked
  * \param on - true if the user activate the button.
  */
 void MyWindow::updateSnapMode( bool on )
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   if (on)
   {
     setGridSnapMode->setEnabled( TRUE );
@@ -531,7 +531,7 @@ void MyWindow::updateSnapMode( bool on )
 }
 
 /*! update grid snap mode - we have 2 states of snap
- *  - to grid points 
+ *  - to grid points
  *  - to closest point in the planar map
  * \param on - true when we choos grid mode
  */
@@ -540,14 +540,14 @@ void MyWindow::updateGridSnapMode( bool on )
   // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   if (on && w_demo_p->snap)
     w_demo_p->snap_mode = SNAP_GRID;
   else
     w_demo_p->snap_mode = SNAP_POINT;
-  
+
   something_changed();
 }
 
@@ -559,29 +559,29 @@ void MyWindow::updateMode( QAction *action )
   // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
-  if ( action == insertMode ) 
+
+  if ( action == insertMode )
   {
     w_demo_p->mode = MODE_INSERT;
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
     something_changed();
   }
-  else if ( action == deleteMode ) 
+  else if ( action == deleteMode )
   {
     w_demo_p->mode = MODE_DELETE;
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)delete_xpm)));
     something_changed();
   }
-  
-  else if ( action == pointLocationMode ) 
+
+  else if ( action == pointLocationMode )
   {
     w_demo_p->mode = MODE_POINT_LOCATION;
     w_demo_p->setCursor(Qt::CrossCursor);
     current_label = point_location_label;
   }
-  else if ( action == rayShootingUpMode ) 
+  else if ( action == rayShootingUpMode )
   {
     w_demo_p->mode = MODE_RAY_SHOOTING_UP;
     w_demo_p->setCursor(QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
@@ -591,28 +591,28 @@ void MyWindow::updateMode( QAction *action )
     w_demo_p->mode = MODE_RAY_SHOOTING_DOWN;
     w_demo_p->setCursor(QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
   }
-  else if ( action == dragMode ) 
+  else if ( action == dragMode )
   {
     w_demo_p->mode = MODE_DRAG;
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
     something_changed();
   }
-  else if ( action == mergeMode ) 
+  else if ( action == mergeMode )
   {
     w_demo_p->mode = MODE_MERGE;
     w_demo_p->setCursor(Qt::IbeamCursor );
     something_changed();
   }
-  else if ( action == splitMode ) 
+  else if ( action == splitMode )
   {
     w_demo_p->mode = MODE_SPLIT;
     w_demo_p->setCursor(Qt::SplitHCursor  );
     something_changed();
   }
-  else if ( action == fillfaceMode ) 
+  else if ( action == fillfaceMode )
   {
     w_demo_p->mode = MODE_FILLFACE;
-    w_demo_p->setCursor(Qt::CrossCursor  );        
+    w_demo_p->setCursor(Qt::CrossCursor  );
   }
 }
 
@@ -620,12 +620,12 @@ void MyWindow::updateMode( QAction *action )
 /*! set the buttons state according to the current mode */
 void MyWindow::setMode( Mode m )
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
   w_demo_p->mode = m;
   switch ( m ) {
    case MODE_INSERT: insertMode->setOn( TRUE ); break;
@@ -643,15 +643,15 @@ void MyWindow::setMode( Mode m )
 /*! update all modes */
 void MyWindow::update()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p = 
+  Qt_widget_base_tab    *w_demo_p =
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   setMode( w_demo_p->mode );
   //updateSnapMode( w_demo_p->snap );
   setTraits( w_demo_p->traits_type );
-  setConicType( w_demo_p->conic_type ); 
+  setConicType( w_demo_p->conic_type );
   if ( w_demo_p->snap )
   {
     setGridSnapMode->setEnabled( TRUE );
@@ -673,16 +673,16 @@ void MyWindow::update()
 /*! a dialog form to set the conic type for conics insertion. */
 void MyWindow::conicType()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab     *w_demo_p = 
+  Qt_widget_base_tab     *w_demo_p =
     dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
   OptionsForm *form = new OptionsForm();
-  if ( form->exec() ) 
+  if ( form->exec() )
   {
     QString type = form->arrComboBox1->currentText();
-  
+
     if (strcmp(type,"Circle") == 0)
       w_demo_p->conic_type = CIRCLE;
     else if (strcmp(type,"Segment") == 0)

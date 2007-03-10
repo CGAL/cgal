@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
@@ -83,7 +83,7 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
   max_x = (CGAL::max)(iter->source().x(),iter->target().x());
   min_y = (CGAL::min)(iter->source().y(),iter->target().y());
   max_y = (CGAL::max)(iter->source().y(),iter->target().y());
-   
+
   for(++iter;iter != seg_list.end();++iter) {
     min_x = min3(iter->source().x(),iter->target().x(),min_x);
     max_x = max3(iter->source().x(),iter->target().x(),max_x);
@@ -99,7 +99,7 @@ public:
   MyWindow(int w, int h){
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
@@ -131,7 +131,7 @@ public:
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
 
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &seg_list);	
+    newtoolbar = new Tools_toolbar(widget, this, &seg_list);
     QToolBar * layers_toolbar = new QToolBar(this, "layers");
     QIconSet set0(QPixmap( (const char**)show_hot_points_small_xpm ),
                 QPixmap( (const char**)show_hot_points_xpm ));
@@ -162,7 +162,7 @@ public:
     but4->setToggleButton(true);
     but4->toggle();
     but4->setTextLabel(QString("Show grid"));
-    
+
     connect(but1, SIGNAL(stateChanged(int)),
           this, SLOT(toggle_hd(int)));
     connect(but2, SIGNAL(stateChanged(int)),
@@ -173,13 +173,13 @@ public:
           this, SLOT(toggle_grid(int)));
 
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-    
+
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-	
+
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
@@ -196,7 +196,7 @@ public:
 
 private:
   void something_changed(){current_state++;};
-  
+
 public slots:
   void new_instance()
   {
@@ -337,7 +337,7 @@ private slots:
   {
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -360,7 +360,7 @@ private slots:
       widget->redraw();
       old_state = current_state;
     }
-  }	
+  }
 
 private:
   CGAL::Qt_widget        *widget;

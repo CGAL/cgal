@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -33,7 +33,7 @@ public:
   void draw() {
 #if 1
     draw_diagram(*widget, sdg);
-#else 
+#else
 
     *widget << CGAL::BLUE;
 #if !defined (__POWERPC__)

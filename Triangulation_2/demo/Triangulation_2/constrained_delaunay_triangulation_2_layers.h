@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -79,7 +79,7 @@ template <class T>
 class Qt_layer_show_triangulation : public CGAL::Qt_widget_layer
 {
 public:
-	
+
   Qt_layer_show_triangulation(T &t) : tr(t){};
 
 
@@ -88,7 +88,7 @@ public:
     *widget << CGAL::BLUE;
     *widget << tr;
   };
-	
+
 private:
   T &tr;
 };//end class

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
@@ -31,7 +31,7 @@
 
 #include "snap_rounding_2_toolbar.h"
 
-Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
 			     QMainWindow *mw, std::list<Segment_2> * l1) :
   QToolBar(mw, "NT")
 {
@@ -47,7 +47,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
                 QPixmap( (const char**)arrow_xpm ));
   QIconSet set2(QPixmap( (const char**)line_small_xpm ),
                 QPixmap( (const char**)line_xpm ));
- 
+
   but[0] = new QToolButton(this, "deactivate layer");
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
@@ -62,7 +62,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
     but[i]->setToggleButton(true);
   }
   button_group->setExclusive(true);
-  
+
   connect(but[1], SIGNAL(stateChanged(int)),
           &segment_layer, SLOT(stateChanged(int)));
 };

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
@@ -75,7 +75,7 @@ namespace CGAL
 
   };
 }
-//#else 
+//#else
 
 //static bool SoQt_examiner_viewer_compiled_without_CGAL_USE_SOQT_defined;
 

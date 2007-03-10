@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     Plane_3 h(o,(ph-CGAL::ORIGIN).direction());
     L.push_back( Sphere_circle(h) );
   }
-  
+
   // partition input into two lists
   Nef_polyhedron_S2 Ni, N;
   bool first(true);
@@ -77,11 +77,10 @@ int main(int argc, char **argv) {
   }
 
   QApplication a(argc, argv);
-  CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
+  CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w =
     new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(N);
   a.setMainWidget(w);
   w->show();
   return a.exec();
 }
 #endif
-

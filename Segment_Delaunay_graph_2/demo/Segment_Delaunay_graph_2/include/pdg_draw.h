@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
@@ -36,7 +36,7 @@ void draw_diagram(Widget& widget, const T& sdg)
   for (; eit != sdg.finite_edges_end(); ++eit) {
     if ( eit->first->vertex( sdg.cw(eit->second) )->info() !=
 	 eit->first->vertex( sdg.ccw(eit->second) )->info() ) {
-      sdg.draw_dual_edge(*eit, widget);	
+      sdg.draw_dual_edge(*eit, widget);
     }
 #if 0
     Site_2 p = eit->first->vertex(  cw(eit->second) )->site();
@@ -49,7 +49,7 @@ void draw_diagram(Widget& widget, const T& sdg)
 	is_endpoint_of_segment(p, q) );
 
     if ( !is_endpoint_of_seg ) {
-      sdg.draw_dual_edge(*eit, widget);	
+      sdg.draw_dual_edge(*eit, widget);
     }
 #endif
   }

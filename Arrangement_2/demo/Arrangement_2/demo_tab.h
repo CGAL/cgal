@@ -13,15 +13,15 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef DEMO_TAB_H
 #define DEMO_TAB_H
 
-/*! demo_tab.h contain the definetion and implementation of 
- *  the demo tab classes and the tabs traits classes.       
+/*! demo_tab.h contain the definetion and implementation of
+ *  the demo tab classes and the tabs traits classes.
  *  all the possible shared code is in Qt_widget_demo_tab where
  *  the differences is in the traits classes.
  */
@@ -30,9 +30,9 @@
 
 #include <qrect.h>
 #include <qcursor.h>
-#include <qmessagebox.h> 
+#include <qmessagebox.h>
 #include <qcolor.h>
-#include <qpainter.h> 
+#include <qpainter.h>
 #include <qpen.h>
 
 #include "cgal_types.h"
@@ -44,7 +44,7 @@
 #include <CGAL/iterator.h> //for CGAL::Oneset_iterator<T>
 #include <CGAL/Object.h>
 #include <CGAL/envelope_2.h>
-#include <CGAL/Env_default_diagram_1.h> 
+#include <CGAL/Env_default_diagram_1.h>
 
 #include <vector>
 
@@ -52,7 +52,7 @@
 extern bool lower_env;
 extern bool upper_env;
 /*! class Qt_widget_base_tab - inherits from CGAL::Qt_widget
- *  contain all data members that are not part of the traits 
+ *  contain all data members that are not part of the traits
  */
 class Qt_widget_base_tab : public CGAL::Qt_widget
 {
@@ -73,7 +73,7 @@ public:
     active(false),
     traits_type(t),
     bbox(CGAL::Bbox_2(-10, -10, 10, 10)),
-    wasrepainted(true), 
+    wasrepainted(true),
     on_first(false),
     pm_color(color),
     change_pm_color(false),
@@ -91,13 +91,13 @@ public:
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2) <<
       CGAL::BackgroundColor (CGAL::BLACK);
     set_window(-10, 10, -10, 10);
-   
+
     setMouseTracking(TRUE);
   }
 
   /*! Destructor */
   virtual ~Qt_widget_base_tab(){}
-  
+
   /*! current_state - indecates when a tab state is changed */
   int current_state;
 
@@ -183,7 +183,7 @@ public:
   /*! set the colo of the unbounded face (its the same as the background
    * color of the tab)
    */
-  void set_unbounded_face_color(QColor c) { this->setBackgroundColor(c); } 
+  void set_unbounded_face_color(QColor c) { this->setBackgroundColor(c); }
 
   /*! increment current_state to inidicate that something has changed
    */
@@ -195,7 +195,7 @@ public:
 };
 
 
-/*! template class Qt_widget_demo_tab gets a Tab_traits class as 
+/*! template class Qt_widget_demo_tab gets a Tab_traits class as
  *  a template parameter. all the Tab_traits classes must support
  *  a set of demands.
  */
@@ -221,8 +221,8 @@ private:
   typedef typename Tab_traits::Face_const_handle       Face_const_handle;
   typedef typename Tab_traits::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Tab_traits::Vertex_const_handle     Vertex_const_handle;
- 
-  typedef typename Tab_traits::Ccb_halfedge_circulator 
+
+  typedef typename Tab_traits::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
   typedef typename Tab_traits::Holes_iterator          Holes_iterator;
   typedef typename Arrangement_2::Hole_const_iterator  Holes_const_iterator;
@@ -230,7 +230,7 @@ private:
                                                        Isolated_vertex_const_iterator;
   typedef typename Tab_traits::Halfedge_iterator       Halfedge_iterator;
   typedef typename Tab_traits::Hafledge_list           Hafledge_list;
-  typedef typename Tab_traits::Hafledge_list_iterator 
+  typedef typename Tab_traits::Hafledge_list_iterator
     Hafledge_list_iterator;
   typedef typename Tab_traits::Vertex_iterator Vertex_iterator;
   typedef typename Tab_traits::Halfedge_around_vertex_circulator
@@ -264,13 +264,13 @@ private:
     /*!
      */
     void
-    operator()(typename Qt_widget_demo_tab<Tab_traits>::Face_handle& face) 
+    operator()(typename Qt_widget_demo_tab<Tab_traits>::Face_handle& face)
     {
       ptr->m_tab_traits.fill_face(ptr,face);
     }
   };
-  
-  
+
+
 
 public:
   /*! m_tab_traits - the traits object */
@@ -300,9 +300,9 @@ public:
    */
   Halfedge_iterator removable_halfedge;
 
- 
 
-  /*! constructor 
+
+  /*! constructor
    *\ param t - widget traits type
    *\ param parent - widget parent window
    *\ param tab_number - widget program index
@@ -314,20 +314,20 @@ public:
     removable_halfedge()
   {
     // set the unbounded face initial color
-    m_curves_arr->unbounded_face()->set_color(def_bg_color); 
+    m_curves_arr->unbounded_face()->set_color(def_bg_color);
     m_point_location = CGAL::make_object(new Walk_point_location(*m_curves_arr));
   }
-  
+
   /*! destructor - delete the planar map and the point location pointer
    */
-  virtual ~Qt_widget_demo_tab() 
+  virtual ~Qt_widget_demo_tab()
   {
     m_observer.detach ();
     delete m_curves_arr;
   }
-  
 
-  /*! draw - called everytime something changed, draw the PM and mark the 
+
+  /*! draw - called everytime something changed, draw the PM and mark the
    *         point location if the mode is on.
    */
   void draw()
@@ -335,7 +335,7 @@ public:
     QCursor old = cursor();
     setCursor(Qt::WaitCursor);
 
-    if ( mode == MODE_FILLFACE ) 
+    if ( mode == MODE_FILLFACE )
     {
       Point_2 temp_p (pl_point.x(), pl_point.y());
       CGAL::Object obj = locate(temp_p);
@@ -349,19 +349,19 @@ public:
     }
 
     // draw all faces (fill them with their color)
-    visit_faces(FillFace(this));  
+    visit_faces(FillFace(this));
 
     if (snap_mode == SNAP_GRID || grid)
       draw_grid();
 
-    for (Edge_iterator ei = m_curves_arr->edges_begin(); 
-         ei != m_curves_arr->edges_end(); ++ei) 
+    for (Edge_iterator ei = m_curves_arr->edges_begin();
+         ei != m_curves_arr->edges_end(); ++ei)
     {
       setColor(pm_color);
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
-    // Go over all vertices and for each vertex check the 
-    // index numbers of the base curves that go through 
+    // Go over all vertices and for each vertex check the
+    // index numbers of the base curves that go through
     // it and paint the point if they are different (beacuse ew want to
     // color red the intersection opints between two different planar maps
     // which are overlayed
@@ -369,30 +369,30 @@ public:
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_vertex_width);
 
     Vertex_iterator   vit;
-    for (vit = m_curves_arr->vertices_begin(); 
+    for (vit = m_curves_arr->vertices_begin();
          vit != m_curves_arr->vertices_end(); vit++)
     {
         // draw all vertexes of the planar map is 'draw_vertex' is true
         // draw_vertex is a flag that indicates if we draw the vertexes
-     
+
           setColor(pm_color);
           Coord_point p(CGAL::to_double((*vit).point().x()) /
-                        m_tab_traits.COORD_SCALE, 
+                        m_tab_traits.COORD_SCALE,
                         CGAL::to_double((*vit).point().y()) /
-                        m_tab_traits.COORD_SCALE); 
+                        m_tab_traits.COORD_SCALE);
           static_cast<CGAL::Qt_widget&>(*this) << p;
-      
+
     }
     if (mode == MODE_POINT_LOCATION)
     {
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
       setColor(Qt::yellow);
-      
+
       Point_2 temp_p (pl_point.x(), pl_point.y());
       CGAL::Object obj = locate(temp_p);
 
       Face_const_handle f = get_face(obj);
-      
+
       if (!f->is_unbounded()) // its an inside face
       {
         Ccb_halfedge_const_circulator cc = f->outer_ccb();
@@ -403,35 +403,35 @@ public:
         while (++cc != f->outer_ccb());
       }
 
-      
+
       //color the holes of the located face
       Holes_const_iterator hit, eit = f->holes_end();
-      for (hit = f->holes_begin(); hit != eit; ++hit) 
+      for (hit = f->holes_begin(); hit != eit; ++hit)
       {
-        Ccb_halfedge_const_circulator cc = *hit; 
-        do 
+        Ccb_halfedge_const_circulator cc = *hit;
+        do
         {
           m_tab_traits.draw_xcurve(this , cc->curve() );
           cc++;
-        } 
+        }
         while (cc != *hit);
       }
 
       //color isolated vertices
       Isolated_vertex_const_iterator ivit = f->isolated_vertices_begin();
-      for (; ivit != f->isolated_vertices_end(); ++ivit) 
+      for (; ivit != f->isolated_vertices_end(); ++ivit)
       {
         static_cast<CGAL::Qt_widget&>(*this) << ivit->point();
       }
 
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     }
-    
+
     if (mode == MODE_RAY_SHOOTING_UP)
     {
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
-      Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
+      Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE ,
                           pl_point.y() / m_tab_traits.COORD_SCALE);
       CGAL::Object    obj = ray_shoot_up (temp_p);
       if(!obj.is_empty())
@@ -444,7 +444,7 @@ public:
           static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
         }
         // we shoot something
-        else 
+        else
         {
           Halfedge_const_handle he;
           if(CGAL::assign(he, obj))
@@ -453,7 +453,7 @@ public:
             Point_2 p2c1(pl_point.x() , pl_point.y());
             const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
             const X_monotone_curve_2 c2 = he->curve();
-             
+
             CGAL::Object             res;
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
@@ -469,7 +469,7 @@ public:
             {
               up = pl_draw;
             }
-          
+
             setColor(Qt::red);
             m_tab_traits.draw_xcurve(this , he->curve() );
           }
@@ -479,18 +479,18 @@ public:
             CGAL_assertion(CGAL::assign(v, obj));
             CGAL::assign(v, obj);
             up = Coord_point(CGAL::to_double(v->point().x()) /
-                        m_tab_traits.COORD_SCALE, 
+                        m_tab_traits.COORD_SCALE,
                             CGAL::to_double(v->point().y()) /
-                        m_tab_traits.COORD_SCALE); 
+                        m_tab_traits.COORD_SCALE);
             setColor(Qt::red);
             static_cast<CGAL::Qt_widget&>(*this) << up;
           }
         }
-    
+
         setColor(Qt::yellow);
         static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
-        
+
         // draw an arrow that points to 'up' point
         int x = this->x_pixel(CGAL::to_double(up.x()));
         int y = this->y_pixel(CGAL::to_double(up.y()));
@@ -504,7 +504,7 @@ public:
     {
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
-      Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
+      Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE ,
                           pl_point.y() / m_tab_traits.COORD_SCALE);
 
       CGAL::Object    obj = ray_shoot_down (temp_p);
@@ -518,7 +518,7 @@ public:
           static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
         }
         // we shoot something
-        else 
+        else
         {
           Halfedge_const_handle he;
           if(CGAL::assign(he, obj))
@@ -527,7 +527,7 @@ public:
             Point_2 p2c1(pl_point.x() , pl_point.y());
             const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
             const X_monotone_curve_2 c2 = he->curve();
-            
+
             CGAL::Object             res;
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
@@ -552,14 +552,14 @@ public:
             CGAL_assertion(CGAL::assign(v, obj));
             CGAL::assign(v, obj);
             down = Coord_point(CGAL::to_double(v->point().x()) /
-                          m_tab_traits.COORD_SCALE, 
+                          m_tab_traits.COORD_SCALE,
                           CGAL::to_double(v->point().y()) /
-                          m_tab_traits.COORD_SCALE); 
+                          m_tab_traits.COORD_SCALE);
             setColor(Qt::red);
             static_cast<CGAL::Qt_widget&>(*this) << down;
           }
         }
-        
+
         setColor(Qt::yellow);
         static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
@@ -576,9 +576,9 @@ public:
     if(lower_env || upper_env)
     {
       std::list<X_monotone_curve_2> xcurves;
-      for (Edge_iterator ei = m_curves_arr->edges_begin(); 
+      for (Edge_iterator ei = m_curves_arr->edges_begin();
            ei != m_curves_arr->edges_end();
-           ++ei) 
+           ++ei)
       {
         xcurves.push_back(ei->curve());
       }
@@ -604,7 +604,7 @@ public:
     typename Diagram_1::Edge_const_handle     e = diag.leftmost();
     typename Diagram_1::Vertex_const_handle   v;
     typename Diagram_1::Curve_const_iterator  cit;
- 
+
     setColor(CGAL::RED);
     while (e != diag.rightmost())
     {
@@ -621,15 +621,15 @@ public:
     }
   }
 
- 
-  
+
+
   /*!
    */
   void set_face_color(Face_handle f ,QColor& c)
-  {  
+  {
     f->set_color(c);
     if( f->is_unbounded())
-      set_unbounded_face_color(c); 
+      set_unbounded_face_color(c);
   }
 
   /*!
@@ -668,14 +668,14 @@ public:
       {
         Ccb_halfedge_circulator cc = *hit;
         do {
-          Halfedge_handle he = cc; 
+          Halfedge_handle he = cc;
           Halfedge_handle he2 = he->twin();
-          Face_handle inner_face = he2->face(); 
+          Face_handle inner_face = he2->face();
           if (antenna(he))
             continue;
-          
+
           // move on to next hole
-          visit_ccb_faces(inner_face , func); 
+          visit_ccb_faces(inner_face , func);
         }while (++cc != *hit);
       }// for
     }
@@ -697,7 +697,7 @@ public:
     } while (++cc != fh->outer_ccb());
   }
 
- 
+
 
   /*! draw_grid - draw the grid
    */
@@ -710,7 +710,7 @@ public:
     int max_x = static_cast<int> (x_max());
     int min_y = static_cast<int> (y_min());
     int max_y = static_cast<int> (y_max());
-    
+
     // calculate cube size (minimum of 1)
     //int cube_size_x = (CGAL::max)(1, abs(max_x - min_x)/20);
     //int cube_size_y = (CGAL::max)(1, abs(max_y - min_y)/20);
@@ -718,7 +718,7 @@ public:
         cube_size < std::abs(max_y - min_y)/40)
       cube_size = (CGAL::max)((CGAL::max)(1, std::abs(max_x - min_x)/20),
 			      (CGAL::max)(1, std::abs(max_y - min_y)/20));
-    
+
     int cube_size_x = cube_size;
     int cube_size_y = cube_size;
     // draw the grid lines
@@ -731,8 +731,8 @@ public:
         Coord_segment(Coord_point( max_x + cube_size_x , i ),
                       Coord_point( min_x - cube_size_x , i ));
   }
-  
-  /*! mousePressEvent - mouse click on the tab 
+
+  /*! mousePressEvent - mouse click on the tab
    *\ param e - mouse click event
    */
   void mousePressEvent(QMouseEvent *e)
@@ -786,18 +786,18 @@ public:
       x_real(e->x(), x);
       y_real(e->y(), y);
       Coord_point p = get_point(x,y);
-      
+
       lock();
       QColor old_color = color();
       RasterOp old_rasterop=rasterOp();
       get_painter().setRasterOp(XorROP);
-      
+
       insert( e , p);
-      
+
       setRasterOp(old_rasterop);
       setColor(old_color);
       unlock();
-    
+
       setCursor(old);
       return;
     }
@@ -820,14 +820,14 @@ public:
       x_real(e->x(), x);
       y_real(e->y(), y);
       Coord_point p = get_point(x,y);
-      
+
       lock();
       QColor old_color = color();
       RasterOp old_rasterop=rasterOp();
       get_painter().setRasterOp(XorROP);
-      
+
       split( e , p);
-      
+
       setRasterOp(old_rasterop);
       setColor(old_color);
       unlock();
@@ -837,8 +837,8 @@ public:
       return;
     }
   }
-  
-  /*! insert - insert a curve to the planar map 
+
+  /*! insert - insert a curve to the planar map
    *\ param e - mouse click event
    *\ param p - the pressed point
    */
@@ -850,21 +850,21 @@ public:
       {
         active = true;
         m_tab_traits.first_point( p , mode );
-      } 
+      }
       else
       {
         //show the last rubber as edge of the polygon
         m_tab_traits.middle_point( p , this );
       }
     }
-    // finish polyline draw with right button click 
-    else if (active && e->button() == Qt::RightButton && is_pure(e->state())) 
+    // finish polyline draw with right button click
+    else if (active && e->button() == Qt::RightButton && is_pure(e->state()))
     {
       m_tab_traits.last_point( p , this );
-    }    
+    }
   }
-  
-  /*! split - split a xcurve in to 2 xcurves  
+
+  /*! split - split a xcurve in to 2 xcurves
    *\ param e - mouse click event
    *\ param p - the pressed point
    */
@@ -878,14 +878,14 @@ public:
         m_tab_traits.first_point( p , mode);
         split_point = Point_2( p.x() * m_tab_traits.COORD_SCALE ,
                                   p.y() * m_tab_traits.COORD_SCALE);
-      } 
+      }
       else
       {
         active = false;
         Point_2 split_point2 =
           Point_2(p.x() * m_tab_traits.COORD_SCALE,
                   p.y() * m_tab_traits.COORD_SCALE);
-        const X_monotone_curve_2 split_curve = 
+        const X_monotone_curve_2 split_curve =
           m_tab_traits.curve_make_x_monotone(split_point , split_point2);
         std::pair<Point_2, unsigned int> p1;
         Point_2 p_right;
@@ -895,7 +895,7 @@ public:
           p_right = split_point2;
         Halfedge_iterator hei;
         for (hei = m_curves_arr->halfedges_begin();
-             hei != m_curves_arr->halfedges_end(); ++hei) 
+             hei != m_curves_arr->halfedges_end(); ++hei)
         {
           const X_monotone_curve_2 & xcurve = hei->curve();
           m_tab_traits.draw_xcurve(this, xcurve);
@@ -903,7 +903,7 @@ public:
           CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
           m_traits.intersect_2_object()(split_curve, xcurve, oi);
-          
+
           if (CGAL::assign(p1, res))
             break;
         }
@@ -912,18 +912,18 @@ public:
           return;
 
         // we dont want to split an already existed vertex...
-        if(m_traits.equal_2_object()(hei->source()->point(), p1.first) || 
+        if(m_traits.equal_2_object()(hei->source()->point(), p1.first) ||
            m_traits.equal_2_object()(hei->target()->point(), p1.first))
            return;
 
         //m_tab_traits.draw_xcurve(this, hei->curve());
         m_curves_arr->split_edge(hei , p1.first);
-        
+
       }// else
-    }    
+    }
   }
 
-  /*! mousePressEvent_point_location - creats the point location point 
+  /*! mousePressEvent_point_location - creats the point location point
    *\ param e - mouse click event
    */
   void mousePressEvent_point_location(QMouseEvent *e)
@@ -935,13 +935,13 @@ public:
       x_real(e->x(), x);
       y_real(e->y(), y);
 
-      new_object(make_object(Coord_point(x * m_tab_traits.COORD_SCALE, 
+      new_object(make_object(Coord_point(x * m_tab_traits.COORD_SCALE,
                                          y * m_tab_traits.COORD_SCALE)));
     }
   }
-  
-  /*! is_pure - insure no special button is pressed 
-   *\ param s - keyboard modifier flags that existed 
+
+  /*! is_pure - insure no special button is pressed
+   *\ param s - keyboard modifier flags that existed
    *  immediately before the event occurred.
    *\ return true if one of them existed, false otherway.
    */
@@ -954,19 +954,19 @@ public:
     else
       return 1;
   }
-  
-  /*! dist  
+
+  /*! dist
    *\ param x1,y1,x2,y2 - points coordinates
-   *\ return the distance between 2 points 
+   *\ return the distance between 2 points
    */
   Coord_type dist(Coord_type x1, Coord_type y1, Coord_type x2, Coord_type y2)
   {
     return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
   }
-  
-  /*! getMid 
+
+  /*! getMid
    *\ param coord - coord vulue apon the grid
-   *\ return the closest grid point 
+   *\ return the closest grid point
    */
   Coord_type getMid(Coord_type coord, int my_min, int my_max)
   {
@@ -974,7 +974,7 @@ public:
     Coord_type d = static_cast<Coord_type>(cube_size)/2;
     for (int i = my_min - cube_size; i <= my_max; i += cube_size)
     {
-      Coord_type id = static_cast<Coord_type>(i); 
+      Coord_type id = static_cast<Coord_type>(i);
       if (coord >= id - d && coord <= id + d)
       {
         Coord_type ans  = static_cast<Coord_type>(i);
@@ -983,8 +983,8 @@ public:
     }
     return 0;
   }
-  
-  /*! find_removeable_halfedges - find removable curve in the tab 
+
+  /*! find_removeable_halfedges - find removable curve in the tab
    *\ param e - mouse click event
    */
   void find_removable_halfedges(QMouseEvent *e)
@@ -1021,19 +1021,19 @@ public:
       else
         m_tab_traits.draw_xcurve(this, removable_halfedge->curve());
     }
-  
+
 
     Coord_point p(x_real(e->x()) * m_tab_traits.COORD_SCALE ,
                   y_real(e->y()) * m_tab_traits.COORD_SCALE);
-    
-    bool is_first = true;       
+
+    bool is_first = true;
     Coord_type min_dist = 0;
     Halfedge_iterator hei;
     Halfedge_iterator closest_hei;
-    
+
     for (hei = m_curves_arr->halfedges_begin();
          hei != m_curves_arr->halfedges_end();
-         ++hei) 
+         ++hei)
     {
       X_monotone_curve_2 & xcurve = hei->curve();
       Coord_type dist = m_tab_traits.xcurve_point_distance(p, xcurve , this);
@@ -1042,7 +1042,7 @@ public:
         min_dist = dist;
         closest_hei = hei;
         is_first = false;
-      }    
+      }
     }
     // now 'closest_hei' holds the cloeset halfedge to the point of the mouse
 
@@ -1076,14 +1076,14 @@ public:
     }
   }
 
-  /*! mouseMoveEvent - enable seeing the line to be drawen 
+  /*! mouseMoveEvent - enable seeing the line to be drawen
    *\ param e - mouse click event
    */
   void mouseMoveEvent(QMouseEvent *e)
   {
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     if (mode == MODE_DELETE)
-      // find removable edges , store them in the list 
+      // find removable edges , store them in the list
       find_removable_halfedges(e);
     //'removable_halfedges' and highlight them
 
@@ -1132,19 +1132,19 @@ public:
       lock();
 
       setColor(Qt::green);
-      
+
       if(!first_time)
         m_tab_traits.draw_last_segment(this);
-      
+
       m_tab_traits.draw_current_segment( p , this);
-      
+
       unlock();
       setRasterOp(old_raster);
       first_time = false;
     }
   }
-  
-  /*! leaveEvent - hide the line if you leave the widget's area on the screen 
+
+  /*! leaveEvent - hide the line if you leave the widget's area on the screen
    *\ param e - mouse click event
    */
   void leaveEvent(QEvent *e)
@@ -1163,11 +1163,11 @@ public:
       first_time = true;
     }
   }
-  
-  /*! get_point 
+
+  /*! get_point
    *\ params x,y - the mouse clicked point coordinates
    *\    return a point according to the current snap mode and
-   *  recent points. 
+   *  recent points.
    */
   Coord_point get_point(Coord_type x, Coord_type y)
   {
@@ -1181,35 +1181,35 @@ public:
       {
        Coord_type min_dist = 0;
        Coord_point closest;
-       
-       if( m_curves_arr->number_of_vertices() == 0 ) 
+
+       if( m_curves_arr->number_of_vertices() == 0 )
          return Coord_point(x , y);
-       
-       min_dist = m_tab_traits.closest_point(x,y,closest,this);                
-       
+
+       min_dist = m_tab_traits.closest_point(x,y,closest,this);
+
        if (min_dist <= d)
          return closest;
        else
          return Coord_point(x , y);
-       
+
        break;
       }
      case SNAP_GRID:
-      return Coord_point(getMid(x, xmin, xmax), 
+      return Coord_point(getMid(x, xmin, xmax),
                          getMid(y, ymin, ymax) );
 
      case SNAP_NONE: break;
     }
     return Coord_point(x,y);
   }
-  
+
   /*! mousePressEvent_drag - change the Cursor on the drag mode
    *  mouse pressed event
    *\ param e - mouse click event
    */
   void mousePressEvent_drag(QMouseEvent *e)
   {
-    if(e->button() == Qt::LeftButton 
+    if(e->button() == Qt::LeftButton
        && is_pure(e->state()))
     {
       setCursor(QCursor( QPixmap( (const char**)holddown_xpm)));
@@ -1217,10 +1217,10 @@ public:
         first_x = e->x();
         first_y = e->y();
         on_first = TRUE;
-      }    
+      }
     }
   }
-  
+
   /*! mouseReleaseEvent - change the Cursor on the drag mode
    *  mouse pressed event and move the widget center according
    *  to the drag distance.
@@ -1238,7 +1238,7 @@ public:
       y_real(e->y(), y);
       x_real(first_x, xfirst2);
       y_real(first_y, yfirst2);
-      
+
       double    xmin, xmax, ymin, ymax, distx, disty;
       if(x < xfirst2) {xmin = x; xmax = xfirst2;}
       else {xmin = xfirst2; xmax = x;};
@@ -1250,14 +1250,14 @@ public:
       on_first = FALSE;
     }
   }
-  
+
   /*! mouseMoveEvent_drag - calculate new widget position
    *\ param e - mouse release event
    */
   void mouseMoveEvent_drag(QMouseEvent *e)
   {
     if(on_first)
-    {        
+    {
       int x = e->x();
       int y = e->y();
       //save the last coordinates to redraw the screen
@@ -1266,7 +1266,7 @@ public:
       wasrepainted = FALSE;
     }
   }
-  
+
   /*! mousePressEvent_merge -  merge mode
    *  mouse pressed event
    *\ param e - mouse click event
@@ -1289,9 +1289,9 @@ public:
         first_time_merge = false;
         Halfedge_iterator hei;
         closest_curve = m_curves_arr->halfedges_end();
-    
+
         for (hei = m_curves_arr->halfedges_begin();
-             hei != m_curves_arr->halfedges_end(); ++hei) 
+             hei != m_curves_arr->halfedges_end(); ++hei)
         {
           Vertex_iterator   vis = hei->source();
           Vertex_iterator   vit = hei->target();
@@ -1300,13 +1300,13 @@ public:
           X_monotone_curve_2 & xcurve = hei->curve();
           Coord_type dist =
             m_tab_traits.xcurve_point_distance(p, xcurve, this);
-          
+
           if (first || dist < min_dist)
           {
             min_dist = dist;
             closest_curve = hei;
             first = false;
-          }    
+          }
         }
         if (first)       // we didn't find any "good" curve
         {
@@ -1475,11 +1475,11 @@ public:
                         bool move_event)
   {
     bool       first = true;
-    Coord_type min_dist = 0;   
+    Coord_type min_dist = 0;
 
     for (Halfedge_iterator hei = m_curves_arr->halfedges_begin();
          hei != m_curves_arr->halfedges_end();
-         ++hei) 
+         ++hei)
     {
       if(m_curves_arr->are_mergeable(closest_curve, hei))
       {
@@ -1490,7 +1490,7 @@ public:
           min_dist = dist;
           second_curve = hei;
           first = false;
-        }    
+        }
       }
     }
     if (first)     // didn't find any "good" curve
@@ -1523,7 +1523,7 @@ public:
       Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
       return  (eit->face());
     }
-      
+
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1531,7 +1531,7 @@ public:
 
 /*! class Segment_tab_traits defines the segment traits
  */
-class Segment_tab_traits 
+class Segment_tab_traits
 {
 public:
   typedef Kernel::FT                                FT;
@@ -1563,16 +1563,16 @@ public:
   typedef Arrangement_2::Edge_iterator              Edge_iterator;
   typedef Seg_halfedge                              Halfedge;
   typedef Seg_face_iterator                         Face_iterator;
-  
+
   //point location
   typedef Seg_trap_point_location                   Trap_point_location;
   typedef Seg_naive_point_location                  Naive_point_location;
   typedef Seg_walk_point_location                   Walk_point_location;
   typedef Seg_lanmarks_point_location               Lanmarks_point_location;
- 
- 
+
+
 public:
- 
+
   /*! coordinate scale - used in conics*/
   int COORD_SCALE;
 
@@ -1580,7 +1580,7 @@ public:
   Segment_tab_traits():
   COORD_SCALE(1)
   {}
-  
+
   /*! distructor */
   ~Segment_tab_traits()
   {}
@@ -1601,14 +1601,14 @@ public:
   }
 
   /*! fill_face - fill a face with its color (which is stored at the face)
-   * it creates a polyong from the outer boundary of the face and 
-   * uses CGAL opertaor << of polygons 
+   * it creates a polyong from the outer boundary of the face and
+   * uses CGAL opertaor << of polygons
    */
   void fill_face(Qt_widget_demo_tab<Segment_tab_traits> * w , Face_handle f)
   {
     if (!f->is_unbounded())  // f is not the unbounded face
     {
-      std::list< Coord_point > pts; // holds the points of the polygon         
+      std::list< Coord_point > pts; // holds the points of the polygon
 
       /* running with around the outer of the face and generate from it
        * polygon
@@ -1623,7 +1623,7 @@ public:
       } while (++cc != f->outer_ccb());
 
       // make polygon from the outer ccb of the face 'f'
-      My_polygon pgn (pts.begin() , pts.end()); 
+      My_polygon pgn (pts.begin() , pts.end());
 
       w->setFilled(true);
 
@@ -1636,8 +1636,8 @@ public:
 
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
-      (*w) << pgn ;  // draw the polyong 
-      w->setFilled(false);       
+      (*w) << pgn ;  // draw the polyong
+      w->setFilled(false);
       w->get_painter().setPen(old_penstyle);
     }
     else
@@ -1647,10 +1647,10 @@ public:
       points[1] = (Coord_point(w->x_min(),w->y_max()));
       points[2] = (Coord_point(w->x_max(),w->y_max()));
       points[3] = (Coord_point(w->x_max(),w->y_min()));
-     
+
       w->setFilled(true);
       w->setFillColor(f->color());
-      
+
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
       (*w)<<My_polygon(points , points +4 );
@@ -1660,7 +1660,7 @@ public:
   }
 
 
-  /*! draw_xcurve - use Qt_Widget operator to draw 
+  /*! draw_xcurve - use Qt_Widget operator to draw
    *\ param w - the demo widget
    *\ c - xcurve to be drawen
    */
@@ -1669,7 +1669,7 @@ public:
     (*w) << c;
   }
 
-  /*! draw_curve - use Qt_Widget operator to draw 
+  /*! draw_curve - use Qt_Widget operator to draw
    *\ param w - the demo widget
    *\ c - curve to be drawen
    */
@@ -1677,17 +1677,17 @@ public:
   {
     (*w) << c;
   }
-  
+
   /*! first_point - a first point of inserted sgment
    */
   void first_point( Coord_point p , Mode m )
   {
     m_p1 = m_p2 = p;
   }
-  
+
   /*! middle_point - the last point of a segment
    */
-  void middle_point(Coord_point p , 
+  void middle_point(Coord_point p ,
                     Qt_widget_demo_tab<Segment_tab_traits> * w)
   {
     Coord_kernel      ker;
@@ -1698,17 +1698,17 @@ public:
       w->active = false;
       //w->redraw();  // not working so I use new_object insted
       w->new_object(make_object(Coord_segment(m_p1 , p)));
-    } 
+    }
   }
-  
+
   /*! last_point - meaningless for segments
    */
-  void last_point( Coord_point p , 
+  void last_point( Coord_point p ,
                    Qt_widget_demo_tab<Segment_tab_traits> * w )
   {
     return;
   }
-  
+
   /*! get_segment - create a new segment, insert him into curves_list
    * and planar map
    */
@@ -1724,8 +1724,8 @@ public:
     CGAL::Bbox_2 curve_bbox = seg.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
-  
- 
+
+
   /*! xcurve_point_distance - return the distance between a point
    * and a xsegment
    */
@@ -1734,27 +1734,27 @@ public:
   {
     const Arr_seg_point_2 & source = c.source();
     const Arr_seg_point_2 & target = c.target();
-    
+
     Coord_type x1 = CGAL::to_double(source.x());
     Coord_type y1 = CGAL::to_double(source.y());
-    
+
     Coord_type x2 = CGAL::to_double(target.x());
     Coord_type y2 = CGAL::to_double(target.y());
-    
+
     Coord_point coord_source(x1 , y1);
     Coord_point coord_target(x2 , y2);
     Coord_segment coord_seg(coord_source, coord_target);
     return CGAL::squared_distance( p, coord_seg);
   }
-  
-  
+
+
   /*! draw_last_segment - call from mouse move event
    */
   void draw_last_segment( Qt_widget_demo_tab<Segment_tab_traits> * w)
   {
     *w << Coord_segment( m_p1 , m_p2 );
   }
-  
+
   /*! draw_current_segment - call from mouse move event
    */
   void draw_current_segment( Coord_point p ,
@@ -1763,7 +1763,7 @@ public:
     *w << Coord_segment( m_p1 , p);
     m_p2 = p;
   }
-  
+
   /*! closest_point - find the closest point in the planar map
    * to a clicked point
    */
@@ -1803,17 +1803,17 @@ public:
     return c;
   }
 
-  
+
   /*! temporary points of the created segment */
   Traits m_traits;
   Coord_point m_p1,m_p2;
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 /*! class Polyline_tab_traits defines the polyline traits */
-class Polyline_tab_traits  
+class Polyline_tab_traits
 {
 public:
   typedef Kernel::FT                                FT;
@@ -1849,21 +1849,21 @@ public:
   typedef Pol_naive_point_location                 Naive_point_location;
   typedef Pol_walk_point_location                  Walk_point_location;
   typedef Pol_lanmarks_point_location              Lanmarks_point_location;
- 
+
 
   /*! coordinate scale - used in conics*/
   int COORD_SCALE;
-  
+
   /*! constructor */
   Polyline_tab_traits():
   COORD_SCALE(1)
   {}
-  
+
   /*! distructor */
   ~Polyline_tab_traits()
   {}
 
- 
+
   /*! curve_has_same_direction - return true if the curve and
    *  the halfedge has the same direction
    */
@@ -1881,8 +1881,8 @@ public:
   }
 
   /*! fill_face - fill a face with its color (which is stored at the curves)
-   * it creates a polyong from the outer boundary of the face and 
-   * uses CGAL opertaor << of polygons 
+   * it creates a polyong from the outer boundary of the face and
+   * uses CGAL opertaor << of polygons
    */
   void fill_face(Qt_widget_demo_tab<Polyline_tab_traits> * w , Face_handle f)
   {
@@ -1937,8 +1937,8 @@ public:
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
 
-      (*w) << pgn ;  // draw the polyong 
-      w->setFilled(false);  
+      (*w) << pgn ;  // draw the polyong
+      w->setFilled(false);
       w->get_painter().setPen(old_penstyle);
     }
     else
@@ -1948,10 +1948,10 @@ public:
       points[1] = (Coord_point(w->x_min(),w->y_max()));
       points[2] = (Coord_point(w->x_max(),w->y_max()));
       points[3] = (Coord_point(w->x_max(),w->y_min()));
-     
+
       w->setFilled(true);
       w->setFillColor(w->unbounded_face_color());
-      
+
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
       (*w)<<My_polygon(points , points +4 );
@@ -1959,7 +1959,7 @@ public:
        w->get_painter().setPen(old_penstyle);
     }
   }
-  
+
   /*! draw_xcurve - go over the polyline parts and use Qt_Widget operator
    * to draw
    */
@@ -1967,7 +1967,7 @@ public:
   {
     Curve_2::const_iterator ps = pol.begin();
     Curve_2::const_iterator pt = ps; ++pt;
-    
+
     while (pt != pol.end()) {
       const Point_2 & source = *ps;
       const Point_2 & target = *pt;
@@ -1994,16 +1994,16 @@ public:
         draw_xcurve (w, cv);
     }
   }
-  
+
   /*! first_point - a first point of inserted polyline or a splitter
    */
   void first_point( Coord_point p , Mode m)
   {
     last_of_poly = p;
     if (m == MODE_INSERT)
-      points.push_back(Arr_pol_point_2(p.x(),p.y()));    
+      points.push_back(Arr_pol_point_2(p.x(),p.y()));
   }
-  
+
   /*! middle_point - a middle point of a polyline
    */
   void middle_point( Coord_point p ,
@@ -2011,19 +2011,19 @@ public:
   {
     if (last_of_poly == p) return;
     rubber_old = p;
-    
-    points.push_back(Arr_pol_point_2(p.x(),p.y()));    
-    
+
+    points.push_back(Arr_pol_point_2(p.x(),p.y()));
+
     *w << CGAL::WHITE;
     *w << Coord_segment(rubber, last_of_poly);
     *w << CGAL::GREEN;
     *w << Coord_segment(rubber, last_of_poly);
-    
+
     last_of_poly = p;
   }
-  
-  /*! last_point - last point of the polyline, create new 
-   * polyline and reset 
+
+  /*! last_point - last point of the polyline, create new
+   * polyline and reset
    */
   void last_point( Coord_point p ,Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
@@ -2034,7 +2034,7 @@ public:
     //w->redraw();  // not working so I use new_object insted
     w->new_object(make_object(Coord_segment(p , p)));
   }
-  
+
 
   /*! xcurve_point_distance - return the distance between a point
    * and a polyline
@@ -2064,14 +2064,14 @@ public:
     }
     return min_dist;
   }
-  
+
   /*! draw_last_segment - call from mouse move event
    */
   void draw_last_segment( Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
     *w << Coord_segment(rubber_old, last_of_poly);
   }
-  
+
   /*! draw_current_segment - call from mouse move event */
   void draw_current_segment( Coord_point p ,
                              Qt_widget_demo_tab<Polyline_tab_traits> * w)
@@ -2080,7 +2080,7 @@ public:
     rubber = p;
     rubber_old = p;
   }
-  
+
   /*! closest_point - find the closest point in the planar map
    * to a clicked point
    */
@@ -2125,7 +2125,7 @@ public:
     }
     return min_dist;
   }
-  
+
 
   /*! curve_make_x_monotone
    */
@@ -2142,20 +2142,20 @@ public:
     CGAL::assign(c1, res);
     return c1;
   }
- 
+
 
 private:
-  
+
   /*! get_polyline - create a new polyline
    */
   void get_polyline(Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
-    Arr_pol_2  pol (points.begin(), points.end()); 
+    Arr_pol_2  pol (points.begin(), points.end());
     CGAL::insert_curve(*(w->m_curves_arr), pol);
     CGAL::Bbox_2 curve_bbox = pol.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
-  
+
   /*! convert - convert from Arr_pol_curve to Coord_segment
    */
   Coord_segment convert(Arr_pol_point_2 & source , Arr_pol_point_2 & target)
@@ -2163,14 +2163,14 @@ private:
     Coord_type x1 = CGAL::to_double(source.x());
     Coord_type y1 = CGAL::to_double(source.y());
     Coord_point coord_source(x1, y1);
-    
+
     Coord_type x2 = CGAL::to_double(target.x());
     Coord_type y2 = CGAL::to_double(target.y());
     Coord_point coord_target(x2, y2);
-    
+
     return Coord_segment(coord_source, coord_target);
   }
-  
+
   /*! convert - convert from const Arr_pol_curve to Coord_segment
    */
   Coord_segment convert(const Arr_pol_point_2 & source ,
@@ -2179,14 +2179,14 @@ private:
     Coord_type x1 = CGAL::to_double(source.x());
     Coord_type y1 = CGAL::to_double(source.y());
     Coord_point coord_source(x1, y1);
-    
+
     Coord_type x2 = CGAL::to_double(target.x());
     Coord_type y2 = CGAL::to_double(target.y());
     Coord_point coord_target(x2, y2);
-    
+
     return Coord_segment(coord_source, coord_target);
   }
-  
+
   Traits m_traits;
 
   /*! the new point of the rubber band */
@@ -2199,7 +2199,7 @@ private:
   Coord_point rubber_old;
 
   /*! container to hold the point during polyline creation */
-  std::vector<Arr_pol_point_2> points;  
+  std::vector<Arr_pol_point_2> points;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2233,13 +2233,13 @@ public:
   typedef Arrangement_2::Edge_iterator              Edge_iterator;
   typedef Conic_halfedge                            Halfedge;
   typedef Conic_face_iterator                       Face_iterator;
-  
+
   //point location
   typedef Conic_trap_point_location                 Trap_point_location;
   typedef Conic_naive_point_location                Naive_point_location;
   typedef Conic_walk_point_location                 Walk_point_location;
   typedef Conic_lanmarks_point_location             Lanmarks_point_location;
- 
+
   /*! coordinate scale - used in conics*/
   int COORD_SCALE;
   int DRAW_FACTOR;
@@ -2249,7 +2249,7 @@ public:
   COORD_SCALE(1),
   DRAW_FACTOR(5)
   {}
-  
+
   /*! distructor */
   ~Conic_tab_traits()
   {}
@@ -2276,7 +2276,7 @@ public:
   {
     if (! f->is_unbounded())  // f is not the unbounded face
     {
-      std::list< Coord_point > pts; // holds the points of the polygon         
+      std::list< Coord_point > pts; // holds the points of the polygon
       /* running with around the outer of the face and generate from it
        * polygon
        */
@@ -2284,7 +2284,7 @@ public:
       do {
         if(w->antenna(cc))
           continue;
-         
+
         Halfedge_handle he = cc;
         X_monotone_curve_2 c = he->curve();
         // Get the co-ordinates of the curve's source and target.
@@ -2292,27 +2292,27 @@ public:
                sy = CGAL::to_double(he->source()->point().y()),
                tx = CGAL::to_double(he->target()->point().x()),
                ty = CGAL::to_double(he->target()->point().y());
-        
+
         Coord_point coord_source(sx / COORD_SCALE, sy / COORD_SCALE);
         Coord_point coord_target(tx / COORD_SCALE, ty / COORD_SCALE);
 
         if (c.orientation() == CGAL::COLLINEAR)
-            pts.push_back(coord_source ); 
+            pts.push_back(coord_source );
         else
         {
           // If the curve is monotone, than its source and its target has the
           // extreme x co-ordinates on this curve.
             bool     is_source_left = (sx < tx);
-            int      x_min = is_source_left ? (*w).x_pixel(sx) : 
+            int      x_min = is_source_left ? (*w).x_pixel(sx) :
                                               (*w).x_pixel(tx);
             int      x_max = is_source_left ? (*w).x_pixel(tx) :
                                               (*w).x_pixel(sx);
             double   curr_x, curr_y;
             int      x;
-  
+
             Arr_conic_point_2 px;
 
-            pts.push_back(coord_source ); 
+            pts.push_back(coord_source );
 
             if (is_source_left)
             {
@@ -2329,10 +2329,10 @@ public:
                 curr_y = CGAL::to_double(px.y());
                 pts.push_back(Coord_point(curr_x / COORD_SCALE,
                                           curr_y / COORD_SCALE));
-              }// for 
+              }// for
             }
             else
-            {    
+            {
               for (x = x_max; x > x_min; x-=DRAW_FACTOR)
               {
                 curr_x = (*w).x_real(x);
@@ -2345,9 +2345,9 @@ public:
                 curr_y = CGAL::to_double(px.y());
                 pts.push_back(Coord_point(curr_x / COORD_SCALE,
                                           curr_y / COORD_SCALE));
-              }// for       
+              }// for
             }// else
-            pts.push_back(coord_target ); 
+            pts.push_back(coord_target );
         }
         //created from the outer boundary of the face
       } while (++cc != f->outer_ccb());
@@ -2365,7 +2365,7 @@ public:
       else
         w->setFillColor(f->color());
 
-      (*w) << pgn ;  // draw the polyong 
+      (*w) << pgn ;  // draw the polyong
       w->get_painter().setPen(old_penstyle);
       w->setFilled(false);
     }
@@ -2376,10 +2376,10 @@ public:
       points[1] = (Coord_point(w->x_min(),w->y_max()));
       points[2] = (Coord_point(w->x_max(),w->y_max()));
       points[3] = (Coord_point(w->x_max(),w->y_min()));
-     
+
       w->setFilled(true);
       w->setFillColor(w->unbounded_face_color());
-      
+
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
       (*w)<<My_polygon(points , points +4 );
@@ -2387,7 +2387,7 @@ public:
        w->get_painter().setPen(old_penstyle);
     }
   }
-   
+
   /*! draw_xcurve - same as draw_curve
    */
   void draw_xcurve(Qt_widget_demo_tab<Conic_tab_traits> * w , X_monotone_curve_2 c )
@@ -2424,7 +2424,7 @@ public:
 
     std::pair<double, double>  *app_pts = new std::pair<double, double> [n + 1];
     std::pair<double, double>  *end_pts = c.polyline_approximation (n, app_pts);
-    std::pair<double, double>  *p_curr = app_pts; 
+    std::pair<double, double>  *p_curr = app_pts;
     std::pair<double, double>  *p_next = p_curr + 1;
     Coord_point     ps (p_curr->first, p_curr->second);
 
@@ -2443,7 +2443,7 @@ public:
     delete[] app_pts;
     return;
   }
-  
+
   /*! draw_curve -
    */
   void draw_curve(Qt_widget_demo_tab<Conic_tab_traits> * w , Curve_2 conic )
@@ -2460,9 +2460,9 @@ public:
         draw_xcurve (w, cv);
     }
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////
-  
+
   /*! first_point - a first point of inserted sgment
    */
   void first_point( Coord_point p , Mode m)
@@ -2471,7 +2471,7 @@ public:
     num_points = 1;
     first_time = true;
   }
-  
+
   /*! middle_point - the last point of a segment
    */
   void middle_point( Coord_point p , Qt_widget_demo_tab<Conic_tab_traits> * w)
@@ -2486,15 +2486,15 @@ public:
     x = Rational(static_cast<int>(1000 * p.x() + 0.5), 1000);
     y = Rational(static_cast<int>(1000 * p.y() + 0.5), 1000);
 
-    if(x != x1 || y != y1) 
-    {      
+    if(x != x1 || y != y1)
+    {
       Arr_conic_2 cv;
 
       switch (w->conic_type)
       {
        case CIRCLE:
         sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
-        cv =  Arr_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad)); 
+        cv =  Arr_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad));
         break;
 
        case SEGMENT:
@@ -2516,7 +2516,7 @@ public:
         b_sq = b*b;
         x0 = (x + x1)/2;
         y0 = (y + y1)/2;
-        
+
         r = b_sq;
         s = a_sq;
         t = 0;
@@ -2549,7 +2549,7 @@ public:
             QMessageBox::information( w, "Insert Conic", "Invalid Conic");
             w->active = false;
             *w << m_p1 << m_p2 ;
-            return; 
+            return;
           }
           cv =  Arr_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
                                     Rat_point_2(x,y));
@@ -2580,7 +2580,7 @@ public:
           return;
         }
         if (num_points == 4)
-        { 
+        {
           *w << p;
           Rational x2 = Rational(static_cast<int>(1000 * m_p2.x() + 0.5), 1000);
           Rational y2 = Rational(static_cast<int>(1000 * m_p2.y() + 0.5), 1000);
@@ -2601,19 +2601,19 @@ public:
         }
         break;
       }
-  
+
       CGAL::insert_curve(*(w->m_curves_arr), cv);
       CGAL::Bbox_2 curve_bbox = cv.bbox();
       w->bbox = w->bbox + curve_bbox;
       w->active = false;
       w->new_object(make_object(Coord_segment(m_p1 , p)));
-    } 
+    }
   }
-  
+
   /*! last_point - meaningless for conics - at least for now
    */
   void last_point( Coord_point p , Qt_widget_demo_tab<Conic_tab_traits> * w )
-  {   
+  {
     return;
   }
 
@@ -2662,7 +2662,7 @@ public:
       }
     }
   }
-  
+
   /*! draw_current_segment - call from mouse move event
    */
   void draw_current_segment( Coord_point p ,
@@ -2697,8 +2697,8 @@ public:
     }
     return min_dist;
   }
-  
- 
+
+
   /*! xcurve_point_distance - return the distance between
    * a point and a conic
    */
@@ -2710,13 +2710,13 @@ public:
       sy = CGAL::to_double(c.source().y()),
       tx = CGAL::to_double(c.target().x()),
       ty = CGAL::to_double(c.target().y());
-    
+
     if (c.orientation() == CGAL::COLLINEAR)
     {
       Coord_point coord_source(sx , sy);
       Coord_point coord_target(tx , ty);
       Coord_segment coord_seg(coord_source, coord_target);
-      
+
       return CGAL::squared_distance( p, coord_seg);
     }
     else
@@ -2724,7 +2724,7 @@ public:
       // If the curve is monotone, than its source and its target has the
       // extreme x co-ordinates on this curve.
         bool     is_source_left = (sx < tx);
-        int      x_min = is_source_left ? (*w).x_pixel(sx) : 
+        int      x_min = is_source_left ? (*w).x_pixel(sx) :
           (*w).x_pixel(tx);
         int      x_max = is_source_left ? (*w).x_pixel(tx) :
           (*w).x_pixel(sx);
@@ -2732,14 +2732,14 @@ public:
         double   prev_y = is_source_left ? sy : ty;
         double   curr_x, curr_y;
         int      x;
-        
+
         Arr_conic_point_2 px;
-        
+
         bool         first = true;
         Coord_type   min_dist = 100000000;
         Alg_kernel   ker;
-        
-        
+
+
         for (x = x_min + 1; x < x_max; x++)
         {
           curr_x = (*w).x_real(x);
@@ -2750,7 +2750,7 @@ public:
 
           px = c.get_point_at_x(Arr_conic_point_2(curr_x, 0));
           curr_y = CGAL::to_double(px.y());
-            
+
           Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,
                                    Coord_point(curr_x, curr_y) );
           Coord_type dist = CGAL::squared_distance( p, coord_seg);
@@ -2758,15 +2758,15 @@ public:
           {
             first = false;
             min_dist = dist;
-          }   
+          }
           prev_x = curr_x;
           prev_y = curr_y;
         }
         return min_dist;
     }
-    
+
   }
-  
+
   /*! curve_make_x_monotone
    */
   const X_monotone_curve_2 curve_make_x_monotone(Point_2 p1 , Point_2 p2)
@@ -2789,7 +2789,7 @@ public:
     return c1;
   }
 
- 
+
   Traits m_traits;
   /*! temporary points of the created conic */
   Coord_point m_p_old,m_p1,m_p2,m_p3,m_p4;

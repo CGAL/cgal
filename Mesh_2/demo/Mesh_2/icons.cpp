@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -31,4 +31,4 @@
 #include <CGAL/IO/pixmaps/circle.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 
-#endif 
+#endif

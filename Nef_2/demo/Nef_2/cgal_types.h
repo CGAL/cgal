@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -52,4 +52,3 @@ typedef CGAL::Nef_polyhedron_2<Extended_kernel>
                                   Nef_polyhedron;
 typedef Nef_polyhedron::Point     Point_2;
 typedef Nef_polyhedron::Line      Line;
-

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -47,7 +47,7 @@ public:
 private:
   QToolButton     *but[10];
   QButtonGroup    *button_group;
-  CGAL::Qt_widget *widget;  
+  CGAL::Qt_widget *widget;
   int             nr_of_buttons;
 
 

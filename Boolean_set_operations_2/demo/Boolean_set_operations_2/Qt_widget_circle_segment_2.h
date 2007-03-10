@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -46,7 +46,7 @@ operator<<(CGAL::Qt_widget & widget,
     return (widget);
   }
 
-  
+
   const typename Kernel::Circle_2 & circ = arc.supporting_circle();
   const typename Kernel::Point_2 & center = circ.center();
   typedef typename _X_monotone_circle_segment_2<Kernel, Filter>::Point_2 Arc_point_2;
@@ -70,7 +70,7 @@ operator<<(CGAL::Qt_widget & widget,
   int radius     = x_screen_b - x_screen;
 
   double a   = std::atan2( to_double(source.y() - center.y()),
-                            to_double(source.x() - center.x())); 
+                            to_double(source.x() - center.x()));
   double a2p = std::atan2( to_double(target.y() - center.y()),
                             to_double(target.x() - center.x()));
 
@@ -81,10 +81,10 @@ operator<<(CGAL::Qt_widget & widget,
 
   double diff = 180/CGAL_PI*16;
 
-  widget.get_painter().drawArc(x_screen - radius, 
-                                y_screen - radius, 
-                                2 * radius, 2 * radius, 
-                                (int)(a * diff), 
+  widget.get_painter().drawArc(x_screen - radius,
+                                y_screen - radius,
+                                2 * radius, 2 * radius,
+                                (int)(a * diff),
                                 (int)(alen2 * diff));
   return widget;
 }

@@ -120,13 +120,13 @@ CMeshDoc* CMeshView::GetDocument() const // non-debug version is inline
 BOOL CMeshView::SetWindowPixelFormat(HDC hDC)
 {
 	PIXELFORMATDESCRIPTOR pixelDesc;
-	
+
 	pixelDesc.nSize = sizeof(PIXELFORMATDESCRIPTOR);
 	pixelDesc.nVersion = 1;
-	
+
 	pixelDesc.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL |
 		PFD_DOUBLEBUFFER | PFD_STEREO_DONTCARE;
-	
+
 	pixelDesc.iPixelType = PFD_TYPE_RGBA;
 	pixelDesc.cColorBits = 32;
 	pixelDesc.cRedBits = 8;
@@ -150,7 +150,7 @@ BOOL CMeshView::SetWindowPixelFormat(HDC hDC)
 	pixelDesc.dwLayerMask = 0;
 	pixelDesc.dwVisibleMask = 0;
 	pixelDesc.dwDamageMask = 0;
-	
+
 	m_GLPixelIndex = ChoosePixelFormat(hDC,&pixelDesc);
 	if(m_GLPixelIndex == 0) // Choose default
 	{
@@ -159,7 +159,7 @@ BOOL CMeshView::SetWindowPixelFormat(HDC hDC)
 			sizeof(PIXELFORMATDESCRIPTOR),&pixelDesc)==0)
 			return FALSE;
 	}
-	
+
 	if(!SetPixelFormat(hDC,m_GLPixelIndex,&pixelDesc))
 		return FALSE;
 
@@ -180,7 +180,7 @@ BOOL CMeshView::CreateViewGLContext(HDC hDC)
 	if(wglMakeCurrent(hDC,m_hGLContext)==FALSE)
 		return FALSE;
 
-	return TRUE;	
+	return TRUE;
 }
 
 //********************************************
@@ -196,7 +196,7 @@ int CMeshView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if(SetWindowPixelFormat(hDC)==FALSE)
 		return -1;
-	
+
 	if(CreateViewGLContext(hDC)==FALSE)
 		return -1;
 
@@ -253,7 +253,7 @@ void CMeshView::InitCamera()
 void CMeshView::OnPaint()
 {
 	// device context for painting
-	CPaintDC dc(this); 
+	CPaintDC dc(this);
 
 	// model is stored in Document
 	CMeshDoc *pDoc = (CMeshDoc *)GetDocument();
@@ -308,7 +308,7 @@ void CMeshView::OnPaint()
 void CMeshView::OnSize(UINT nType, int cx, int cy)
 {
 	CView::OnSize(nType, cx, cy);
-	
+
 	HWND hWnd = GetSafeHwnd();
 	HDC hDC = ::GetDC(hWnd);
 	wglMakeCurrent(hDC,m_hGLContext);
@@ -323,16 +323,16 @@ void CMeshView::OnSize(UINT nType, int cx, int cy)
 	::ReleaseDC(hWnd,hDC);
 }
 
-void CMeshView::OnActivateView(BOOL bActivate, 
-															 CView* pActivateView, 
-															 CView* pDeactiveView) 
+void CMeshView::OnActivateView(BOOL bActivate,
+															 CView* pActivateView,
+															 CView* pDeactiveView)
 {
 	HWND hWnd = GetSafeHwnd();
 	HDC hDC = ::GetDC(hWnd);
 	wglMakeCurrent(hDC,m_hGLContext);
 	::ReleaseDC(hWnd,hDC);
-	CView::OnActivateView(bActivate, 
-		                    pActivateView, 
+	CView::OnActivateView(bActivate,
+		                    pActivateView,
 												pDeactiveView);
 }
 
@@ -356,7 +356,7 @@ void CMeshView::OnDestroy()
 }
 
 // handle mouse button
-void CMeshView::HandleMouseButton(int x, 
+void CMeshView::HandleMouseButton(int x,
 																	int y)
 {
   CVector3d vec = m_Arcball.Intersect(x,m_Viewport.yRes()-y,

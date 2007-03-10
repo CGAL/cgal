@@ -12,7 +12,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <list>
 
-// a refined facet with a normal 
+// a refined facet with a normal
 template <class	Refs,	class	T, class P,	class	Norm>
 class	Enriched_facet : public	CGAL::HalfedgeDS_face_base<Refs, T>
 {
@@ -32,7 +32,7 @@ public:
 	const	Normal_3&	normal() const { return	m_normal;	}
 };
 
-// a refined halfedge with a general tag 
+// a refined halfedge with a general tag
 template <class	Refs,	class	Tprev, class Tvertex,	class	Tface, class Norm>
 class	Enriched_halfedge	:	public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
@@ -78,12 +78,12 @@ public:
 	const	Normal_3&	normal() const { return	m_normal;	}
 };
 
-// A redefined items class for the Polyhedron_3	
-// with	a	refined	vertex class that	contains a 
+// A redefined items class for the Polyhedron_3
+// with	a	refined	vertex class that	contains a
 // member	for	the	normal vector	and	a	refined
-// facet with	a	normal vector	instead	of the 
-// plane equation	(this	is an	alternative	
-// solution	instead	of using 
+// facet with	a	normal vector	instead	of the
+// plane equation	(this	is an	alternative
+// solution	instead	of using
 // Polyhedron_traits_with_normals_3).
 
 struct Enriched_items	:	public CGAL::Polyhedron_items_3
@@ -137,10 +137,10 @@ public :
 public :
 
 	// life	cycle
-	Enriched_polyhedron()	
+	Enriched_polyhedron()
 	{
 	}
-	virtual	~Enriched_polyhedron() 
+	virtual	~Enriched_polyhedron()
 	{
 	}
 
@@ -209,7 +209,7 @@ public :
 	}
 };
 
-// compute facet normal	
+// compute facet normal
 struct Facet_normal	// (functor)
 {
 	template <class	Facet>
@@ -240,7 +240,7 @@ struct Facet_normal	// (functor)
 };
 
 
-// compute vertex	normal 
+// compute vertex	normal
 struct Vertex_normal //	(functor)
 {
 		template <class	Vertex>
@@ -249,7 +249,7 @@ struct Vertex_normal //	(functor)
 				typename Vertex::Normal_3	normal = CGAL::NULL_VECTOR;
 				Vertex::Halfedge_around_vertex_const_circulator	pHalfedge	=	v.vertex_begin();
 				Vertex::Halfedge_around_vertex_const_circulator	begin	=	pHalfedge;
-				CGAL_For_all(pHalfedge,begin)	
+				CGAL_For_all(pHalfedge,begin)
 					if(!pHalfedge->is_border())
 						normal = normal	+	pHalfedge->facet()->normal();
 				float	sqnorm = normal * normal;

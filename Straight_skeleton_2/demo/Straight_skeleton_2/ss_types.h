@@ -41,11 +41,11 @@ extern void wait_on_user() ;
 
 struct Visitor
 {
-  void on_contour_edge_entered ( Halfedge_const_handle const& he ) const 
+  void on_contour_edge_entered ( Halfedge_const_handle const& he ) const
   {
     draw_segment(he->opposite()->vertex()->point(),he->vertex()->point(),CGAL::RED);
   }
-  
+
   void on_initialization_started( int size_of_vertices ) const
   {
     mTotalVertices = size_of_vertices ;
@@ -61,42 +61,42 @@ struct Visitor
     mAnihiliationCount = 0 ;
     mStage = 0 ;
   }
-  
+
   void on_initial_events_collected( Vertex_const_handle const& v, bool is_reflex, bool is_degenerate ) const
   {
     ++ mVertexCount0 ;
     if ( is_reflex )
       ++ mReflexVertexCount ;
     if ( is_degenerate )
-      ++ mDegenerateVertexCount ;  
-      
+      ++ mDegenerateVertexCount ;
+
     draw_point(v->point(),CGAL::BLACK );
-      
-    //printf("\rInitialization: %d/%d (%d%%)",mVertexCount0,mTotalVertices,(mVertexCount0*100/mTotalVertices));  
+
+    //printf("\rInitialization: %d/%d (%d%%)",mVertexCount0,mTotalVertices,(mVertexCount0*100/mTotalVertices));
   }
 
   void on_edge_event_created( Vertex_const_handle const& lnode
                             , Vertex_const_handle const& rnode
-                            )  const 
+                            )  const
   {
     ++ mFoundEdgeEventCount ;
   }
 
-  void on_split_event_created( Vertex_const_handle const& node ) const 
+  void on_split_event_created( Vertex_const_handle const& node ) const
   {
     ++ mFoundSplitEventCount ;
   }
 
   void on_pseudo_split_event_created( Vertex_const_handle const& lnode
                                     , Vertex_const_handle const& rnode
-                                    ) const 
+                                    ) const
   {
   }
-  
+
   void on_initialization_finished() const { printf("\n"); ++ mStage ; }
-  
+
   void on_propagation_started() const {}
-  
+
   void on_anihiliation_event_processed ( Vertex_const_handle const& node0
                                        , Vertex_const_handle const& node1
                                        ) const
@@ -108,18 +108,18 @@ struct Visitor
   void on_edge_event_processed( Vertex_const_handle const& lseed
                               , Vertex_const_handle const& rseed
                               , Vertex_const_handle const& node
-                              ) const 
+                              ) const
   {
     draw_segment(lseed->point(),node->point(), CGAL::BLACK );
     draw_segment(rseed->point(),node->point(), CGAL::BLACK );
-    
+
     ++ mProcessedEdgeEventCount ;
-  } 
+  }
 
   void on_split_event_processed( Vertex_const_handle const& seed
                                , Vertex_const_handle const& node0
                                , Vertex_const_handle const& node1
-                               ) const 
+                               ) const
   {
     draw_segment(seed->point(),node0->point(), CGAL::BLACK );
     ++ mProcessedSplitEventCount ;
@@ -136,31 +136,31 @@ struct Visitor
     ++ mProcessedPseudoSplitEventCount ;
   }
 
-  void on_vertex_processed( Vertex_const_handle const& node ) const 
+  void on_vertex_processed( Vertex_const_handle const& node ) const
   {
     if ( node->is_contour() )
     {
       ++ mVertexCount1 ;
       wait_on_user();
-      //printf("\rPropagation: %d/%d (%d%%)",mVertexCount1,mTotalVertices,(mVertexCount1*100/mTotalVertices));  
+      //printf("\rPropagation: %d/%d (%d%%)",mVertexCount1,mTotalVertices,(mVertexCount1*100/mTotalVertices));
     }
   }
-  
+
   void on_propagation_finished() const { printf("\n"); ++ mStage ; }
-  
+
   void on_cleanup_started() const {}
-  
+
   void on_cleanup_finished() const {}
-  
-  void on_error( char const* what ) const 
+
+  void on_error( char const* what ) const
   {
     std::cerr << what << std::endl ;
   }
-  
+
   void on_algorithm_finished ( bool finished_ok ) const
   {
   }
-  
+
   mutable int mTotalVertices ;
   mutable int mVertexCount0 ;
   mutable int mVertexCount1 ;
@@ -173,18 +173,18 @@ struct Visitor
   mutable int mProcessedPseudoSplitEventCount ;
   mutable int mAnihiliationCount ;
   mutable int mStage ;
-  
+
   void print_stats()
   {
     std::cout << "VertexCount                   =" << mTotalVertices << std::endl
-              << "ReflexVertexCount             =" << mReflexVertexCount << std::endl 
-              << "DegenerateVertexCount         =" << mDegenerateVertexCount << std::endl  
-              << "FoundEdgeEventCount           =" << mFoundEdgeEventCount << std::endl  
-              << "FoundSplitEventCount          =" << mFoundSplitEventCount << std::endl  
-              << "ProcessedEdgeEventCount       =" << mProcessedEdgeEventCount << std::endl  
-              << "ProcessedSplitEventCount      =" << mProcessedSplitEventCount << std::endl  
-              << "ProcessedPseudoSplitEventCount=" << mProcessedPseudoSplitEventCount << std::endl  
-              << "AnihiliationCount             =" << mAnihiliationCount << std::endl ; 
+              << "ReflexVertexCount             =" << mReflexVertexCount << std::endl
+              << "DegenerateVertexCount         =" << mDegenerateVertexCount << std::endl
+              << "FoundEdgeEventCount           =" << mFoundEdgeEventCount << std::endl
+              << "FoundSplitEventCount          =" << mFoundSplitEventCount << std::endl
+              << "ProcessedEdgeEventCount       =" << mProcessedEdgeEventCount << std::endl
+              << "ProcessedSplitEventCount      =" << mProcessedSplitEventCount << std::endl
+              << "ProcessedPseudoSplitEventCount=" << mProcessedPseudoSplitEventCount << std::endl
+              << "AnihiliationCount             =" << mAnihiliationCount << std::endl ;
   }
 
 } ;
@@ -199,4 +199,3 @@ typedef CGAL::Polygon_offset_builder_2<SSkel,OffsetBuilderTraits,Polygon> Offset
 }
 
 #endif // SSKEL_DEMO_SS_TYPES_H
-

@@ -1,4 +1,3 @@
-
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
 #include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <fstream>
@@ -33,15 +32,15 @@ int main(int argc, char *argv[])
     CoinKDel::Handle cd= new CoinKDel(kdel, qtsim, qtmpt);
 
     if (argc==1) {
-      
+
       typedef Traits::Simulator::Time Time;
       typedef CGAL::Kinetic::Insert_event<Traits::Active_points_3_table> MOI;
-      
+
       Traits::Kinetic_kernel::Function_kernel::Construct_function cf= tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
-      
+
       tr.simulator_handle()->new_event(Time(0.000000), MOI(MP(MPP(cf(10, 1),
 								  cf(0, .1),
-								 cf(0)), cf(.1)) , 
+								 cf(0)), cf(.1)) ,
 							   tr.active_points_3_table_handle()));
       tr.simulator_handle()->new_event(Time(0.000001), MOI(MP(MPP(cf(10),
 								  cf(0),
@@ -55,13 +54,13 @@ int main(int argc, char *argv[])
 								  cf(2),
 								  cf(0)), cf(.1)),
 							   tr.active_points_3_table_handle()));
-      tr.simulator_handle()->new_event(Time(0.000000035), MOI(MP(MPP(cf(1), cf(10),  cf(0)), cf(.1)) , 
+      tr.simulator_handle()->new_event(Time(0.000000035), MOI(MP(MPP(cf(1), cf(10),  cf(0)), cf(.1)) ,
 							      tr.active_points_3_table_handle()));
       tr.simulator_handle()->new_event(Time(0.000004),MOI(MP(MPP(cf(10.5, .05),
 								 cf(.5),
 								 cf(.5)), cf(.1)),
 							  tr.active_points_3_table_handle()));
-      
+
       tr.simulator_handle()->set_current_event_number(4);
     } else {
       std::cout << "Reading from " << argv[1] << std::endl;

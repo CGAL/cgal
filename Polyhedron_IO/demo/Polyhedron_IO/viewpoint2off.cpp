@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Lutz Kettner
 
@@ -87,7 +87,7 @@ int main( int argc, char **argv) {
                      "parameter." << endl;
                 help = true;
             }
-        } else if ( (strcmp( "-h", argv[i]) == 0) || 
+        } else if ( (strcmp( "-h", argv[i]) == 0) ||
                   (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 3 ) {
@@ -100,15 +100,15 @@ int main( int argc, char **argv) {
     if ((n < 1) || (n > 3) || help) {
         if ( ! help)
             cerr << "Error: in parameter list" << endl;
-        cerr << "Usage: " << argv[0] 
+        cerr << "Usage: " << argv[0]
              << " [<options>] <infile.coo> <infile.ele> [<outfile>]" << endl;
-        cerr << "   or: " << argv[0] 
+        cerr << "   or: " << argv[0]
              << " [<options>] <infile.msh> [<outfile>]" << endl;
-        cerr << "       convert an object from Viewpoint formats into OFF." 
+        cerr << "       convert an object from Viewpoint formats into OFF."
              << endl;
-        cerr << "       -mesh   forces input to be read from mesh file." 
+        cerr << "       -mesh   forces input to be read from mesh file."
              << endl;
-        cerr << "       -ascii  forces input to be read from ascii mesh file." 
+        cerr << "       -ascii  forces input to be read from ascii mesh file."
              << endl;
         cerr << "       -normals <filename>   reads normals file (in "
                 "polygon format)." << endl;
@@ -124,7 +124,7 @@ int main( int argc, char **argv) {
     vout << argv[0] << ": verbosity on." << endl;
 
     ifstream     in( filename[0]);
-    if ( ! in) { 
+    if ( ! in) {
         cerr << argv[0] << ": error: cannot open file '"<< filename[0]
          << "' for reading." <<endl;
         exit( 1);
@@ -230,10 +230,10 @@ int main( int argc, char **argv) {
         }
         while( in) {
             in >> c >> x >> d >> y >> e >> z;
-            if ( ! in || (size_t)number != (points.size() + 1) || 
+            if ( ! in || (size_t)number != (points.size() + 1) ||
                  c != ',' || d != ',' || e != ',') {
-                cerr << argv[0] << ": error: cannot read line " 
-                     << points.size() + 1 << " from file '" << filename[0] 
+                cerr << argv[0] << ": error: cannot read line "
+                     << points.size() + 1 << " from file '" << filename[0]
                      << "'." <<endl;
                 exit( 1);
             }
@@ -246,7 +246,7 @@ int main( int argc, char **argv) {
         if ( normals_file && ! no_normals) {
             vout << "    ... next is normals file ..." << endl;
             in.open( normals_filename);
-            if ( ! in) { 
+            if ( ! in) {
                 cerr << argv[0] << ": error: cannot open file '"
                      << normals_filename << "' for reading." <<endl;
                 exit( 1);
@@ -255,8 +255,8 @@ int main( int argc, char **argv) {
             while( in) {
                 in >> y >> z;
                 if ( ! in ) {
-                    cerr << argv[0] << ": error: cannot read line " 
-                         << points.size() + 1 << " from file '" 
+                    cerr << argv[0] << ": error: cannot read line "
+                         << points.size() + 1 << " from file '"
                          << normals_filename << "'." <<endl;
                     exit( 1);
                 }
@@ -274,7 +274,7 @@ int main( int argc, char **argv) {
 
         vout << "    ... next is element file ..." << endl;
         in.open( filename[1]);
-        if ( ! in) { 
+        if ( ! in) {
             cerr << argv[0] << ": error: cannot open file '"<< filename[1]
              << "' for reading." <<endl;
             exit( 1);
@@ -288,9 +288,9 @@ int main( int argc, char **argv) {
             while( c == ' ') {
                 in >> number;
                 if ( number < 1 || (size_t)number > points.size()) {
-                    cerr << argv[0] << ": error: parsing line " 
-                         << facets.size() << " from file '" << filename[1] 
-                         << "': index " << number << " is out of range." 
+                    cerr << argv[0] << ": error: parsing line "
+                         << facets.size() << " from file '" << filename[1]
+                         << "': index " << number << " is out of range."
                          << endl;
                     exit( 1);
                 }
@@ -316,17 +316,17 @@ int main( int argc, char **argv) {
         p_out = &out;
         oname = filename[1];
     }
-    if ( !*p_out) { 
+    if ( !*p_out) {
         cerr << argv[0] << ": error: cannot open file '"<< oname
              << "' for writing." <<endl;
         exit( 1);
     }
 
-    vout << "CGAL::File_writer_OFF( " << (binary ? ", binary" : ", ASCII") 
+    vout << "CGAL::File_writer_OFF( " << (binary ? ", binary" : ", ASCII")
          << ") ...." << endl;
     CGAL::File_header_OFF  header( binary, noc, skel, verbose);
     CGAL::File_writer_OFF  writer( header);
-    writer.write_header( *p_out, points.size(), 0, facets.size(), 
+    writer.write_header( *p_out, points.size(), 0, facets.size(),
                          normals.size()>0);
     Point_vector::iterator norm = normals.begin();
     for ( Point_vector::iterator p = points.begin(); p != points.end(); ++p) {
@@ -346,8 +346,8 @@ int main( int argc, char **argv) {
     }
     writer.write_footer();
     vout << "    .... done." << endl;
-    if ( !*p_out) { 
-        cerr << argv[0] << " write error: while writing file '"<< oname 
+    if ( !*p_out) {
+        cerr << argv[0] << " write error: while writing file '"<< oname
              << "'."  << endl;
         exit( 1);
     }

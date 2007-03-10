@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -51,9 +51,9 @@ private:
   QMainWindow      *window;
   QButtonGroup     *button_group;
   int              nr_of_buttons;
-	
-  Qt_layer_show_triangulation < CDT>  *showT;  
-  Qt_layer_show_points < CDT >        *showP;  
+
+  Qt_layer_show_triangulation < CDT>  *showT;
+  Qt_layer_show_points < CDT >        *showP;
   Qt_layer_show_constraints < CDT >   *showC;
 };//end class
 

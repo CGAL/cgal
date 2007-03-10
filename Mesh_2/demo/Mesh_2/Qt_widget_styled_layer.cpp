@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -80,7 +80,7 @@ namespace CGAL {
     if( ! map.contains(name) )
       return false;
     else
-      { 
+      {
 	CGAL_assertion( map[name].type() == QVariant::Bool );
 	return map[name].asBool();
       }

@@ -124,7 +124,7 @@ CVector3d::operator -() const
 }
 
 //********************************************
-// Operator + 
+// Operator +
 //********************************************
 CVector3d
 operator+(const CVector3d& u, const CVector3d& v)
@@ -142,7 +142,7 @@ operator-(const CVector3d& u, const CVector3d& v)
 }
 
 //********************************************
-// Operator * 
+// Operator *
 //********************************************
 CVector3d
 operator*(double s, const CVector3d& u)
@@ -257,7 +257,7 @@ CVector3d::LengthSquared() const
 	 + (double)vec[1]*(double)vec[1]
 	 + (double)vec[2]*(double)vec[2]);
 }
-	
+
 //********************************************
 // Length
 //********************************************
@@ -268,7 +268,7 @@ CVector3d::Length() const
 	     + (double)vec[1]*(double)vec[1]
 	     + (double)vec[2]*(double)vec[2]);
 }
-	
+
 //********************************************
 // IsCollinear
 //********************************************
@@ -308,34 +308,34 @@ CVector3d::Negate()
 // Rotate this vector around pAround by angle
 // by Haeyoung Lee
 //********************************************
-CVector3d CVector3d::Rotate(double angle, 
-														CVector3d Around) 
+CVector3d CVector3d::Rotate(double angle,
+														CVector3d Around)
 {
 	double f1, f2, f3;
 	CVector3d t1, t2;
-	
-	
+
+
 	f1 = (double)cos((double)angle);
 	f2 = (double)sin((double)angle);
 	t1 = Projection(&Around);
 	t2 = Around.Cross(this);
 	f3 = Dot(Around);
-	
+
 	return CVector3d((double)(f1*t1.x()+f2*t2.x()+f3*Around.x()),
 		(double)(f1*t1.y()+f2*t2.y()+f3*Around.y()),
 		(double)(f1*t1.z()+f2*t2.z()+f3*Around.z()));
-	
+
 }
 
 //********************************************
 // Projection
 // by Haeyoung Lee
 //********************************************
-CVector3d    
+CVector3d
 CVector3d::Projection(const CVector3d* pV) const
 {
   double alpha = Dot(pV)/pV->Dot(pV);
-	return CVector3d(x()-alpha* pV->x(), 
+	return CVector3d(x()-alpha* pV->x(),
 		               y()-alpha*pV->y(),
 		               z()-alpha*pV->z());
 }

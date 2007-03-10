@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
@@ -53,11 +53,11 @@ int main()
   Delaunay T;
 
   T.insert(Point(0,0,0));
-  T.insert(Point(1,0,0));  
-  T.insert(Point(0,1,0));  
-  T.insert(Point(0,0,1));  
-  T.insert(Point(2,2,2));  
-  T.insert(Point(-1,0,1));  
+  T.insert(Point(1,0,0));
+  T.insert(Point(0,1,0));
+  T.insert(Point(0,0,1));
+  T.insert(Point(2,2,2));
+  T.insert(Point(-1,0,1));
 
   // Set the color of finite vertices of degree 6 to red.
   Delaunay::Finite_vertices_iterator vit;
@@ -70,8 +70,8 @@ int main()
   gv << T;
 
   std::cout << "           Vertices of T with their own color" << std::endl
-	    << "           red for degree 6 (counting infinite vertex)" 
-	    << std::endl 
+	    << "           red for degree 6 (counting infinite vertex)"
+	    << std::endl
 	    << "           white otherwise" << std::endl;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
     gv << vit->info() << vit->point();

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -61,14 +61,14 @@ void random_d_tuple_in_range(p_int V, int d, int l, int h)
 }
 
 void random_d_tuples_in_range(pp_int V, int n, int d, int l, int h)
-{ for(int i = 0; i<n; ++i) 
+{ for(int i = 0; i<n; ++i)
     random_d_tuple_in_range(V[i],d,l,h);
 }
 
 void create(pp_int& V, int n, int d)
-{ 
+{
   V = new p_int[n];
-  for (int i=0; i<n; ++i) 
+  for (int i=0; i<n; ++i)
     V[i] = new int[d];
 }
 
@@ -91,7 +91,7 @@ void print_to_file(pp_int V, int n, int d, std::string s)
 }
 
 void read_from_file(pp_int& V, int& n, int& d, std::string s)
-{ 
+{
   std::ifstream In(s.c_str());
   CGAL_assertion(In);
   In >> d >> n;
@@ -109,31 +109,31 @@ void time_insertion_and_check(pp_int V, int n, int d,
   typedef typename CGAL::Convex_hull_d<R>::chull_has_double_coverage
     chull_has_double_coverage;
   typedef typename CGAL::Convex_hull_d<R>::
-    chull_has_center_on_wrong_side_of_hull_facet 
+    chull_has_center_on_wrong_side_of_hull_facet
     chull_has_center_on_wrong_side_of_hull_facet;
 
   std::cout << " timing of " << s << std::endl;
   std::vector< CGAL::Point_d<R> > P(n); int i;
-  for(i=0; i<n; ++i) 
+  for(i=0; i<n; ++i)
     P[i] = CGAL::Point_d<R>(d,V[i],V[i]+d,1);
-  
+
   timer.reset(); timer.start(); // float ti = used_time();
   for(i=0; i<n; ++i) {
     C.insert(P[i]);
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
-  timer.stop(); 
+  timer.stop();
   double t = timer.time(); timer.reset(); // float t = used_time(ti);
   (*p_table_file) << s << "\t" << d << " " << n << " "
                   << C.number_of_vertices() << " " << C.number_of_facets()
                   << "\t" << t;
-  C.print_statistics(); 
+  C.print_statistics();
   std::cout << "used time for inserts  " << t << std::endl;
 
   C.clear(d);
   timer.start(); // ti = used_time();
   C.initialize(P.begin(),P.end());
-  timer.stop(); t = timer.time(); timer.reset(); 
+  timer.stop(); t = timer.time(); timer.reset();
   // t = used_time(ti);
   C.print_statistics();
   std::cout << "used time for inserts  " << t << std::endl;
@@ -142,11 +142,11 @@ void time_insertion_and_check(pp_int V, int n, int d,
     timer.start();
     std::cout << "entering check" << std::endl;
     try { C.is_valid(true); }
-    catch ( chull_has_local_non_convexity ) 
+    catch ( chull_has_local_non_convexity )
     { std::cerr << "local non-convexity determined\n"; }
-    catch ( chull_has_double_coverage ) 
+    catch ( chull_has_double_coverage )
     { std::cerr << "double coverage determined\n"; }
-    catch ( chull_has_center_on_wrong_side_of_hull_facet ) 
+    catch ( chull_has_center_on_wrong_side_of_hull_facet )
     { std::cerr << "facet center problem determined\n"; }
 
     // t = used_time(ti);
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
 {
   // first param is dimension
   // second param is number of points
-  int d = 4;  
+  int d = 4;
   int n = 100;
   int range = 100;
   unsigned which(255);
@@ -230,10 +230,8 @@ if ( which & 16 )  {
   leda::print_statistics();
 #else
   print_statistics();
-#endif  
+#endif
 #endif
   destroy(V,n);
   return 0;
 }
-
-

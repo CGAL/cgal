@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_NEF_SETDTHREAD(101); //(11*23*31);
-  // Sphere_geometry 11 
+  // Sphere_geometry 11
   // Sphere_geometry_OGL 13
   // PM_segment_overlay 23
   // leda_sphere_map 31
@@ -73,10 +73,10 @@ int main(int argc, char **argv)
     Point o(0,0,0);
     while ( n-->0 ) {
       do { ph = *S++; } while ( ph == o );
-      Plane h(o,(ph-CGAL::ORIGIN).direction()); 
-      do { p1 = *S++; } 
+      Plane h(o,(ph-CGAL::ORIGIN).direction());
+      do { p1 = *S++; }
       while ( p1 == o || h.projection(p1) == o );
-      do { p2 = *S++; } 
+      do { p2 = *S++; }
       while ( p2 == o || h.projection(p2) == o );
       SPoint p3(h.projection(p1)),p4(h.projection(p2));
       int which = CGAL::default_random.get_int(0,3);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
   CGAL::OGL::add_sphere();
   CGAL::OGL::Unit_sphere& S1(*CGAL::OGL::spheres_.begin());
   CGAL::OGL::Unit_sphere& S2(CGAL::OGL::spheres_.back());
-  
+
   CGAL_forall_iterators(it,L) {
     S1.push_back(*it);
     S1.push_back(it->source(),CGAL::BLUE);
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
   leda_edge e;
   forall_edges(e,SMO.sphere_map()) {
     SSegment s(SMO.sphere_map()[source(e)],
-               SMO.sphere_map()[target(e)]); 
+               SMO.sphere_map()[target(e)]);
     S2.push_back(s);
   }
   leda_node v;
@@ -142,12 +142,10 @@ int main(int argc, char **argv)
 
 #include <iostream>
 
-int main() 
+int main()
 {
   std::cout << "This demo requires LEDA\n";
   return 0;
 }
 
 #endif
-
-

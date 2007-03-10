@@ -1,4 +1,3 @@
-
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <algorithm>
@@ -93,7 +92,7 @@ int main(int argc, char *argv[])
 	walls->setPart("appearance", ap.get());
       }
       CGAL::SoQt_handle<SoCoordinate3> coords= new SoCoordinate3();
-      SbVec3f cids[8]={SbVec3f(-10,-10,-10), 
+      SbVec3f cids[8]={SbVec3f(-10,-10,-10),
 		       SbVec3f(-10,-10,10),
 		       SbVec3f(10, -10, -10),
 		       SbVec3f(-10, 10, -10),
@@ -102,7 +101,7 @@ int main(int argc, char *argv[])
 		       SbVec3f(10, -10, 10),
 		       SbVec3f(10,10,-10)};
       coords->point.setValues(0,8,cids);
-      
+
 
       shape->setPart("coordinate3", coords.get());
       walls->setPart("coordinate3", coords.get());
@@ -126,9 +125,9 @@ int main(int argc, char *argv[])
 	ls->coordIndex.setNum(sizeof(lines)/sizeof(int));
 	ls->coordIndex.setValues(0, sizeof(lines)/sizeof(int), lines);
 	//ls->vertexProperty.setValue(coords.get());
-	
+
 	shape->setPart("shape",ls.get());
-      } 
+      }
       {
 	CGAL::SoQt_handle<SoIndexedFaceSet> ls= new SoIndexedFaceSet();
 	int faces[]={2,0,3,7,-1,
@@ -140,7 +139,7 @@ int main(int argc, char *argv[])
 	ls->coordIndex.setNum(sizeof(faces)/sizeof(int));
 	ls->coordIndex.setValues(0, sizeof(faces)/sizeof(int), faces);
 	//ls->vertexProperty.setValue(coords.get());
-	
+
 	walls->setPart("shape",ls.get());
       }
       CGAL::SoQt_handle<SoSeparator> p= new SoSeparator();
@@ -148,7 +147,7 @@ int main(int argc, char *argv[])
       p->addChild(walls.get());
       qtsim->soqt_examiner_viewer_pointer()->new_subgraph(p.get());
     }
-  
+
 
     if (verbose) {
         CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
@@ -199,7 +198,7 @@ int main(int argc, char *argv[])
     std::cout << "Press 'h' to hide/show the convex hull.\n";
     std::cout << "Press 'f' to hide/show faces.\n";
     std::cout << "Press 's' to show spheres for points, 'p' to show points.\n";
-    
+
 
     return qtsim->begin_event_loop();
 

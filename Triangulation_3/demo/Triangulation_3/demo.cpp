@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
@@ -48,16 +48,16 @@ typedef Triangulation::Cell_handle              Cell_handle;
 typedef Triangulation::Locate_type              Locate_type;
 typedef Triangulation::Point                    Point;
 
-////////////////////// 
+//////////////////////
 // VISU GEOMVIEW
-////////////////////// 
+//////////////////////
 template<class TRIANGULATION>
 void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 	       Cell_handle c)
 {
   if ( ! T.is_infinite(c) )
     os << T.tetrahedron(c);
-  else 
+  else
     os << T.triangle(c,c->index(T.infinite_vertex()));
 }
 template<class TRIANGULATION>
@@ -79,7 +79,7 @@ void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
 {
   Finite_vertices_iterator vit = T.finite_vertices_begin();
   Finite_vertices_iterator vdone = T.finite_vertices_end();
-  
+
   if ( vit == vdone ) { std::cout << "no vertex" << std::endl ;}
   else {
     while(vit != vdone) {
@@ -96,7 +96,7 @@ void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
     os << c->vertex(i)->point();
 }
 
-////////////////////// 
+//////////////////////
 
 int main()
 {
@@ -109,15 +109,15 @@ int main()
   std::ifstream iFile("data/points",std::ios::in);
 
   if (! iFile) {
-    std::cout <<"A file named points in directory data" 
-              <<" containing points should be provided," << std::endl 
+    std::cout <<"A file named points in directory data"
+              <<" containing points should be provided," << std::endl
 	      <<"see README"<<std::endl;
     return 1;
   }
 
   std::cout <<"          Reading file data/points" << std::endl ;
   Point nouv;
-  while ( iFile >> nouv ) 
+  while ( iFile >> nouv )
     T.insert(nouv);
 
   T.is_valid(true);
@@ -157,9 +157,9 @@ int main()
     std::cout <<"                     VERTEX" << std::endl;
     visu_vertex(gv,T,c,li);
   }
-  if ( lt == Triangulation::OUTSIDE_CONVEX_HULL ) 
+  if ( lt == Triangulation::OUTSIDE_CONVEX_HULL )
     std::cout <<"                     OUTSIDE_CONVEX_HULL" << std::endl;
-  if ( lt == Triangulation::OUTSIDE_AFFINE_HULL ) 
+  if ( lt == Triangulation::OUTSIDE_AFFINE_HULL )
     std::cout <<"                     OUTSIDE_AFFINE_HULL" << std::endl;
 
   sleep(6);

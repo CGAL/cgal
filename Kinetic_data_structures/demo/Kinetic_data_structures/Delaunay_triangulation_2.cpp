@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 #include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
@@ -16,7 +15,7 @@
 #include <boost/program_options.hpp>
 #endif
 
-template <class Traits> 
+template <class Traits>
 int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
   //typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
   typedef CGAL::Triangulation_data_structure_2<
@@ -40,13 +39,13 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 
   typename Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
   typename Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, tr.instantaneous_kernel_object(), qtsim);
- 
+
 
   if (file.empty()) {
     typename CGAL::Random rand(seed);
     typename Traits::Active_points_2_table::Key lk;
     std::vector<typename Traits::Kinetic_kernel::Point_2> pts;
-      
+
     for (int i=0; i< n; ++i) {
       std::vector<double> coefsx, coefsy;
       for (int j=0; j< d; ++j) {
@@ -54,7 +53,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 	coefsy.push_back((rand.get_double()*10-5.0)/(j+1));
 	std::cout << coefsx.back() << " " << coefsy.back() << std::endl;
       }
-      typename Traits::Kinetic_kernel::Point_2 mp(typename Traits::Kinetic_kernel::Motion_function(coefsx.begin(), 
+      typename Traits::Kinetic_kernel::Point_2 mp(typename Traits::Kinetic_kernel::Motion_function(coefsx.begin(),
 												   coefsx.end()),
 						  typename Traits::Kinetic_kernel::Motion_function(coefsy.begin(),
 												   coefsy.end()));
@@ -88,7 +87,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 
   std::cout << "Green edges just flipped, grey edges will not flip until"
 	    << " their certificate changes and black edges will flip." << std::endl;
-  
+
   return qtsim->begin_event_loop();
 }
 
@@ -121,7 +120,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 #endif
-  
+
   if (true) {
     return run<CGAL::Kinetic::Exact_simulation_traits>(argc, argv, n,d,seed, file);
   } else {

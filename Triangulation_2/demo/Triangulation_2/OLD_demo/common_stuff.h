@@ -6,7 +6,7 @@ any_button(CGAL::Window_stream &W)
     W.read_mouse(x,y);
 }
 
-template < class TRIANGULATION > 
+template < class TRIANGULATION >
 Vertex_handle  closest_vertex(const TRIANGULATION &T,
 			      Face_handle f,
 			      const Point& p)
@@ -22,11 +22,11 @@ Vertex_handle  closest_vertex(const TRIANGULATION &T,
     v =  cmp(p, pcwi, pccwi) == CGAL::SMALLER ? f->vertex(f->cw(i)) :
                                                 f->vertex(f->ccw(i));
   }
-  else{ 
+  else{
     v = f->vertex(0);
-    if (cmp(p, f->vertex(1)->point(), v->point()) == CGAL::SMALLER) 
+    if (cmp(p, f->vertex(1)->point(), v->point()) == CGAL::SMALLER)
       v = f->vertex(1);
-    if (cmp(p, f->vertex(2)->point(), v->point()) == CGAL::SMALLER) 
+    if (cmp(p, f->vertex(2)->point(), v->point()) == CGAL::SMALLER)
       v = f->vertex(2);
   }
   return v;
@@ -105,13 +105,13 @@ void container_input(TRIANGULATION &T,
 }
 
 template <class TRIANGULATION>
-void draw_face(Face_handle fh, TRIANGULATION &T, Window_stream &W) 
+void draw_face(Face_handle fh, TRIANGULATION &T, Window_stream &W)
 {
   if(! T.is_infinite( fh))  W << T.triangle( fh );
 }
 
 template <class TRIANGULATION>
-void draw_edge(Edge e, TRIANGULATION &T,Window_stream &W) 
+void draw_edge(Edge e, TRIANGULATION &T,Window_stream &W)
 {
   if(! T.is_infinite( e ))  W << T.segment( e );
 }

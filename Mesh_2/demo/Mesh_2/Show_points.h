@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -56,7 +56,7 @@ protected:
   QString color;
   QString size;
   QString style_name;
-}; // end Show_points_base  
+}; // end Show_points_base
 
 template <class C, class It,
   class Transform = Identity<typename It::value_type> >
@@ -105,7 +105,7 @@ public:
       widget->setPointSize(style()->getInt(size));
       widget->setPointStyle(static_cast<CGAL::PointStyle>(style()->
 							  getInt(style_name)));
-      
+
       for(iterator it = (cont->*_begin)();
 	  it!=(cont->*_end)();
 	  ++it)
@@ -122,7 +122,7 @@ private:
   C	*cont;
   iterator_function _begin;
   iterator_function _end;
-};//end class 
+};//end class
 
 } // namespace CGAL
 

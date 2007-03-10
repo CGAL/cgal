@@ -13,14 +13,14 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Kapelushnik Lior <liorkape@post.tau.ac.il>
 
 /*! \file
  * spherical arrangements of none intersecting arcs of great circles on a sphere
- * 
+ *
  * a viewer of spherical arrangements
  */
 
@@ -103,8 +103,8 @@ void readSpericalMap(const char *fileName, SphereMap &spMap) {
       spMap.insert(X_monotone_curve_2(stDir, enDir));
     } catch (...) {
       // probably an overlapping segments exception uppon insert
-      std::cerr << "there was an internal error when inserting the curve" << 
-        std::endl << "from (" << stDir << ") to (" << enDir << 
+      std::cerr << "there was an internal error when inserting the curve" <<
+        std::endl << "from (" << stDir << ") to (" << enDir <<
         ") to the cubical gaussian map" << std::endl <<
         "this may have been caused due to intersecting curves" << std::endl;
     }
@@ -140,7 +140,7 @@ void renderScene(void) {
   draw a spherical arc of a halfedge
 */
 void drawArc(const Halfedge_const_iterator &he) {
-  float st[3], en[3];  
+  float st[3], en[3];
   Direction_3 dirSt, dirEn;
   // translate to float arrays
   dirSt = (he->source())->direction();
@@ -181,7 +181,7 @@ void drawCubeArc(const Halfedge_const_iterator &he) {
   } else {
     hit = hit->twin();
   }
-  
+
   // walk from last edge twin until a real vertex and print
   unsigned int i = (hit->source())->get_face_id(); // get cubical map id
   unsigned int id1, id2, id3;
@@ -263,7 +263,7 @@ void drawCubicalMap(void) {
   CGM *theCGM = s_spMap.get_cgm();
   unsigned int id1, id2, id3;
   int mapConst; // the map constant coordinate value
-  float src[3], dst[3];  
+  float src[3], dst[3];
   glBegin(GL_LINES);
   for (i=0;i<6;++i) { // for all cubical maps
     CGM_arrangement &curMap = theCGM->get_arrangement(i);
@@ -312,27 +312,27 @@ void drawAxisCircles(void) {
   glDepthMask(GL_FALSE);
   // the axis parallel circles are transparent
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-  GLint circle_points = 40; 
+  GLint circle_points = 40;
   float angle;
 
   int i;
   glBegin(GL_LINE_LOOP);  // plane xy
-    for (i = 0; i < circle_points; i++) {    
-    angle = 2*PI*i/circle_points; 
-    glVertex3f(0.98*cos(angle), 0.98*sin(angle), 0.f); 
-  } 
+    for (i = 0; i < circle_points; i++) {
+    angle = 2*PI*i/circle_points;
+    glVertex3f(0.98*cos(angle), 0.98*sin(angle), 0.f);
+  }
   glEnd();
   glBegin(GL_LINE_LOOP); // plane yz
-    for (i = 0; i < circle_points; i++) {    
-    angle = 2*PI*i/circle_points; 
-    glVertex3f(0.f, 0.98*cos(angle), 0.98*sin(angle)); 
-  } 
+    for (i = 0; i < circle_points; i++) {
+    angle = 2*PI*i/circle_points;
+    glVertex3f(0.f, 0.98*cos(angle), 0.98*sin(angle));
+  }
   glEnd();
   glBegin(GL_LINE_LOOP); // plane xz
-    for (i = 0; i < circle_points; i++) {    
-    angle = 2*PI*i/circle_points; 
-    glVertex3f(0.98*cos(angle), 0.f, 0.98*sin(angle)); 
-  } 
+    for (i = 0; i < circle_points; i++) {
+    angle = 2*PI*i/circle_points;
+    glVertex3f(0.98*cos(angle), 0.f, 0.98*sin(angle));
+  }
   glEnd();
   glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
@@ -350,7 +350,7 @@ GLuint createMapDL() {
   // start list
   glNewList(sphereMapDL, GL_COMPILE);
 
-  // call the function that contains 
+  // call the function that contains
   // the rendering commands
   drawSphereMap();
   // endList
@@ -407,10 +407,10 @@ void changeSize(int w, int h) {
   glLoadIdentity();
   glViewport (0, 0, w, h);
   gluPerspective(45,ratio,1,1000);
-  
+
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0.0,0.0,4.0f, 
+  gluLookAt(0.0,0.0,4.0f,
       0.0,0.0,0.0,
     0.0f,1.0f,0.0f);
   glRotatef(s_angY, 0.f,1.f,0.f);
@@ -423,21 +423,21 @@ void changeSize(int w, int h) {
 */
 void inputKey(int key, int x, int y) {
   switch (key) {
-    case GLUT_KEY_LEFT : 
+    case GLUT_KEY_LEFT :
       s_angY -= 1.f;
       break;
-    case GLUT_KEY_RIGHT : 
+    case GLUT_KEY_RIGHT :
       s_angY +=1.f;
       break;
-    case GLUT_KEY_UP : 
+    case GLUT_KEY_UP :
       s_angX -=1.f;
       break;
-    case GLUT_KEY_DOWN : 
+    case GLUT_KEY_DOWN :
       s_angX += 1.f;
       break;
   }
   glLoadIdentity();
-  gluLookAt(0.0,0.0,4.0f, 
+  gluLookAt(0.0,0.0,4.0f,
       0.0,0.0,0.0,
     0.0f,1.0f,0.0f);
   glRotatef(s_angY, 0.f,1.f,0.f);
@@ -454,7 +454,7 @@ void pointLocate(void) {
   std::cout << "enter point location direction: ";
   std::cin >> locateDir;
   CGAL::Object location;
-  location = s_pointLocate.locate(locateDir);    
+  location = s_pointLocate.locate(locateDir);
   // the possible object to locate
   Face_handle foundFace;
   Vertex_handle foundVertex;
@@ -494,7 +494,7 @@ void pointLocate(void) {
       heif = foundFace->outer_ccb();
       SphereMap::Ccb_halfedge_circulator circEn = heif;
       do {
-        std::cout << heif->curve() << std::endl;    
+        std::cout << heif->curve() << std::endl;
         drawArc(heif);
         ++heif;
       } while (heif != circEn);
@@ -510,7 +510,7 @@ void pointLocate(void) {
       do {
         std::cout << "edge: (" << heif->source()->direction() << ") - (" <<
           heif->target()->direction() << ")" << std::endl;
-        // draw halfedge          
+        // draw halfedge
         drawArc(heif);
         ++heif;
       } while (heif !=circEn);
@@ -598,7 +598,7 @@ void pointLocate(void) {
       heif = *holesIt;
       SphereMap::Ccb_halfedge_circulator circEn=heif;
       do {
-        // draw halfedge          
+        // draw halfedge
         drawCubeArc(heif);
         ++heif;
       } while (heif !=circEn);
@@ -609,7 +609,7 @@ void pointLocate(void) {
 
   s_showPointLocation = true;
   glLoadIdentity();
-  gluLookAt(0.0,0.0,4.0f, 
+  gluLookAt(0.0,0.0,4.0f,
       0.0,0.0,0.0,
     0.0f,1.0f,0.0f);
   glRotatef(s_angY, 0.f,1.f,0.f);
@@ -641,7 +641,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
   switch (key) {
     case 27:
       exit(0);
-      break;  
+      break;
     case 'a':
     case 'A':
       s_displayAxis = !s_displayAxis;
@@ -660,7 +660,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
     case 'r':
     case 'R':
       glLoadIdentity();
-      gluLookAt(0.0,0.0,4.0f, 
+      gluLookAt(0.0,0.0,4.0f,
       0.0,0.0,0.0,
       0.0f,1.0f,0.0f);
       s_angX = 0; s_angY = 0;
@@ -692,7 +692,7 @@ int main(int argc, char *argv[]) {
   // set up the openGL display window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-  
+
   glutInitWindowPosition(100,100);
   glutInitWindowSize(320,320);
   glutCreateWindow("Spherical map viewer");

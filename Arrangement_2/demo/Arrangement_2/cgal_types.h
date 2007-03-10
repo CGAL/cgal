@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -45,10 +45,10 @@
 #include <CGAL/Arr_landmarks_point_location.h>
 
 #ifdef CGAL_USE_LEDA
-#include <CGAL/IO/Postscript_file_stream.h> 
+#include <CGAL/IO/Postscript_file_stream.h>
 #endif
 
-#include <qcolordialog.h> 
+#include <qcolordialog.h>
 #include <qcolor.h>  // color of faces (stored in curve data)
 #include <iostream>
 
@@ -79,7 +79,7 @@ typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
 
 
-typedef CGAL::Polygon_2<Coord_kernel> My_polygon;  
+typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
                                       // polygon is usefull for filling faces
 
 #ifdef CGAL_USE_GMP
@@ -98,14 +98,14 @@ typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
 #endif
 // instead of
 //typedef CGAL::Cartesian<NT>                                Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Cartesian<NT> {};
 
-class Face_with_color : public CGAL::Arr_face_base 
+class Face_with_color : public CGAL::Arr_face_base
 {
   QColor    m_color;
   bool      m_visited;
- 
+
 public:
 
   Face_with_color() : CGAL::Arr_face_base(), m_color(), m_visited(false){}
@@ -118,13 +118,13 @@ public:
 };
 
 template <class Traits>
-class Dcel : 
+class Dcel :
   public CGAL::Arr_dcel_base<CGAL::Arr_vertex_base<typename Traits::Point_2>,
                              CGAL::Arr_halfedge_base<typename Traits::X_monotone_curve_2>,
-                             Face_with_color> 
+                             Face_with_color>
 {
 
-public:  
+public:
 
    /*! \struct
    * An auxiliary structure for rebinding the DCEL with a new traits class.
@@ -134,15 +134,15 @@ public:
   {
     typedef Dcel<T> other;
   };
-  
+
   // CREATION
   Dcel() {}
 };
 
 
-// Segments: 
-typedef CGAL::Arr_segment_traits_2<Kernel>              Seg_traits; 
-typedef Seg_traits::Curve_2                             Arr_seg_2; 
+// Segments:
+typedef CGAL::Arr_segment_traits_2<Kernel>              Seg_traits;
+typedef Seg_traits::Curve_2                             Arr_seg_2;
 typedef Seg_traits::X_monotone_curve_2                  Arr_xseg_2;
 typedef Seg_traits::Point_2                             Arr_seg_point_2;
 typedef Dcel<Seg_traits>                                Seg_dcel;
@@ -151,7 +151,7 @@ typedef CGAL::Arrangement_with_history_2<Seg_traits,
 typedef Seg_arr::Halfedge                               Seg_halfedge;
 typedef Seg_arr::Halfedge_handle                        Seg_halfedge_handle;
 typedef Seg_arr::Face_handle                            Seg_face_handle;
-typedef Seg_arr::Ccb_halfedge_circulator                
+typedef Seg_arr::Ccb_halfedge_circulator
   Seg_ccb_halfedge_circulator;
 typedef Seg_arr::Hole_iterator                          Seg_holes_iterator;
 typedef Seg_arr::Face_iterator                          Seg_face_iterator;
@@ -216,11 +216,11 @@ typedef CGAL::Cartesian<Rational>                     Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
 
 // instead of
-//typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
+//typedef CGAL::Arr_conic_traits_2<Rat_kernel,
 //                                 Alg_kernel,
 //                                 Nt_traits>           Conic_traits;
-// workaround for VC++ 
-struct Conic_traits: public CGAL::Arr_conic_traits_2<Rat_kernel, 
+// workaround for VC++
+struct Conic_traits: public CGAL::Arr_conic_traits_2<Rat_kernel,
                                                      Alg_kernel,
                                                      Nt_traits>   {};
 
@@ -240,7 +240,7 @@ typedef Conic_arr::Face_handle                          Conic_face_handle;
 typedef Conic_arr::Ccb_halfedge_circulator
   Conic_ccb_halfedge_circulator;
 typedef Conic_arr::Hole_iterator                        Conic_holes_iterator;
-//typedef CGAL::Arr_file_scanner<Conic_arr>                Arr_scanner; 
+//typedef CGAL::Arr_file_scanner<Conic_arr>                Arr_scanner;
 typedef Conic_arr::Halfedge                             Conic_halfedge;
 typedef Conic_arr::Face_iterator                        Conic_face_iterator;
 

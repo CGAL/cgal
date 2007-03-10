@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -32,7 +32,7 @@ template <class T>
 class Qt_layer_show_triangulation : public CGAL::Qt_widget_layer
 {
 public:
-	
+
   Qt_layer_show_triangulation(T &t) : tr(t){};
 
 
@@ -41,7 +41,7 @@ public:
     *widget << CGAL::BLUE;
     *widget << tr;
   };
-	
+
 private:
   T &tr;
 };//end class
@@ -57,7 +57,7 @@ public:
     *widget << CGAL::RED ;
     tr.draw_dual(*widget);
   };
-	
+
 private:
   T	&tr;
 };//end class
@@ -99,7 +99,7 @@ public:
   typedef typename T::Geom_traits::FT		FT;
 
   Qt_layer_nearest_vertex(T &t) : tr(t), first_time(TRUE) {};
-	
+
   void draw(){first_time = TRUE;};
   void mouseMoveEvent(QMouseEvent *e)
   {
@@ -115,7 +115,7 @@ public:
     *widget << CGAL::GREEN << CGAL::PointSize (10)
 		<< CGAL::PointStyle (CGAL::CIRCLE);
     if(!first_time)
-      *widget << oldPoint;	
+      *widget << oldPoint;
     *widget << v->point();
     widget->unlock();
     widget->setRasterOp(old);
@@ -129,7 +129,7 @@ public:
     widget->setRasterOp(XorROP);
     *widget << CGAL::GREEN << CGAL::PointSize (10)
 		<< CGAL::PointStyle (CGAL::CIRCLE);
-    *widget << oldPoint;	
+    *widget << oldPoint;
     widget->unlock();
     widget->setRasterOp(old);
     first_time = TRUE;
@@ -140,7 +140,7 @@ private:
 	T     &tr;
 	Point oldPoint, newPoint;
 	bool  first_time;
-	
+
 };//end class
 
 
@@ -157,7 +157,7 @@ public:
   typedef typename CGAL::Circle_2<Rep>           Circle;
 
   Qt_layer_circum_circle(T &t) : tr(t), first_time(TRUE) {};
-	
+
   void draw(){first_time = TRUE;};
   void mouseMoveEvent(QMouseEvent *e)
   {
@@ -178,7 +178,7 @@ public:
       widget->lock();
       *widget << CGAL::GREEN << CGAL::PointSize(10);
       if(!first_time)
-	*widget << oldCircle;	
+	*widget << oldCircle;
       *widget << newCircle;
       widget->unlock();
       widget->setRasterOp(old);
@@ -202,7 +202,7 @@ public:
     widget->setRasterOp(XorROP);
     *widget << CGAL::GREEN;
     if(!first_time)
-      *widget << oldCircle;	
+      *widget << oldCircle;
     widget->unlock();
     widget->setRasterOp(old);
     first_time = TRUE;
@@ -213,7 +213,7 @@ private:
 	T       &tr;
 	Circle oldCircle, newCircle;
 	bool		first_time;
-	
+
 };//end class
 
 
