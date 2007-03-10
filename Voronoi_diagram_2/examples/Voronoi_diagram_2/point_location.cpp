@@ -1,5 +1,3 @@
-// examples/Voronoi_diagram_2/point_location.C
-
 #include <CGAL/basic.h>
 
 // standard includes

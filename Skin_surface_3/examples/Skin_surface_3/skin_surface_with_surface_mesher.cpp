@@ -1,6 +1,5 @@
 #define CGAL_SURFACE_MESHER_VERBOSE 1
 
-// file examples/Skin_surface_3/skin_surface_with_surface_mesher.cpp
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Skin_surface_3.h>
@@ -28,7 +27,7 @@ typedef Kernel::Point_3                                     Point_3;
 typedef Kernel::FT                                          FT;
 
 
-int main(int, char **) {
+int main() {
   // Construct the Skin_surface_3 object:
   std::list<Weighted_point> l;
   RT                        shrinkfactor = 0.5;

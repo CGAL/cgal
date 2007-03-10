@@ -1,4 +1,3 @@
-// file examples/Surface_mesher/mesh_an_implicit_function.cpp
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -24,7 +23,7 @@ FT sphere_function (Point_3 p) {
   return x2+y2+z2-1;
 }
 
-int main(int, char **) {
+int main() {
   Tr tr;            // 3D-Delaunay triangulation
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 

@@ -209,4 +209,3 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
     }
     return pBest;
 }
-

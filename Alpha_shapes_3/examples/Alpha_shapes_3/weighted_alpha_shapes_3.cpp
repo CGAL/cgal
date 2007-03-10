@@ -1,5 +1,3 @@
-// examples/Alpha_shapes_3/example_weight.C
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>

@@ -1,4 +1,3 @@
-// examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/make_skin_surface_mesh_3.h>
 #include <list>
@@ -8,7 +7,7 @@ typedef K::Point_3                                          Bare_point;
 typedef CGAL::Weighted_point<Bare_point,K::RT>              Weighted_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
-int main(int argc, char *argv[]) {
+int main() {
   std::list<Weighted_point> l;
   double                    shrinkfactor = 0.5;
 

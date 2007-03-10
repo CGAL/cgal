@@ -1,5 +1,3 @@
-// examples/Polyhedron/polyhedron_prog_vertex_color.C
-// --------------------------------------------------
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Polyhedron_3.h>

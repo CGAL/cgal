@@ -1,4 +1,3 @@
-// examples/Skin_surface_3/skin_surface_pdb_reader.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>

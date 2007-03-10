@@ -1,5 +1,3 @@
-// examples/Nef_3/topolgical_operations.C
-// -------------------------------------
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>

@@ -1,5 +1,3 @@
-// Complete_parameterization_example.cpp
-
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
 #ifdef CGAL_USE_TAUCS
@@ -296,12 +294,10 @@ int main(int argc, char * argv[])
 // Empty main() if TAUCS is not installed
 // ----------------------------------------------------------------------------
 
-int main(int argc, char * argv[])
+int main()
 {
     std::cerr << "Skip test as TAUCS is not installed" << std::endl;
     return EXIT_SUCCESS;
 }
 
-
 #endif // CGAL_USE_TAUCS
-

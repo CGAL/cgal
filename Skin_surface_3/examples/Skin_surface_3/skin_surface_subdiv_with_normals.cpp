@@ -1,4 +1,3 @@
-// examples/Skin_surface_3/skin_surface_subdiv_with_normals.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -17,7 +16,7 @@ typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
-int main(int argc, char *argv[]) {
+int main() {
   std::list<Weighted_point> l;
   FT                        shrinkfactor = 0.5;
 

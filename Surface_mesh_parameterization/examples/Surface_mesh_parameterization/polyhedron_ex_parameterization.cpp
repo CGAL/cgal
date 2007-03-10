@@ -1,6 +1,3 @@
-// polyhedron_ex_parameterization.cpp
-
-
 // ----------------------------------------------------------------------------
 // USAGE EXAMPLES
 // ----------------------------------------------------------------------------
@@ -549,5 +546,3 @@ try {
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-

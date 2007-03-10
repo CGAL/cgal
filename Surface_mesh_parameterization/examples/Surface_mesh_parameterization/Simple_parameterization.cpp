@@ -1,5 +1,3 @@
-// Simple_parameterization.cpp
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -100,5 +98,3 @@ int main(int argc, char * argv[])
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-

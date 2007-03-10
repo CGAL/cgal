@@ -1,4 +1,3 @@
-// examples/Skin_surface_3/NGHK_skin_surface_subdiv.C
 //#define CGAL_PROFILE
 //#define CGAL_NO_ASSERTIONS
 

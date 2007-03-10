@@ -1,4 +1,3 @@
-// file examples/Surface_mesher/mesh_a_3d_gray_image.cpp
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -15,7 +14,7 @@ typedef Tr::Geom_traits GT;
 typedef CGAL::Gray_level_image_3<GT::FT, GT::Point_3> Gray_level_image;
 typedef CGAL::Implicit_surface_3<GT, Gray_level_image> Surface_3;
 
-int main(int, char **) {
+int main() {
   Tr tr;            // 3D-Delaunay triangulation
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 

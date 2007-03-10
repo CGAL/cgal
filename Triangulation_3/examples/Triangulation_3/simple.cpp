@@ -1,5 +1,3 @@
-// examples/Triangulation_3/example_simple.C
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_3.h>
 

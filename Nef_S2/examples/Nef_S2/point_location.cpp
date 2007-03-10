@@ -1,5 +1,3 @@
-// examples/Nef_S2/point_location.C
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>

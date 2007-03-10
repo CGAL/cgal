@@ -1,5 +1,3 @@
-// examples/Polyhedron/polyhedron_prog_vertex_normals.C
-// ----------------------------------------------------
 // computes the normal vector for facets, assuming they are triangles
 // (or at least reasonably planar convex polygons), and the normal
 // vector for vertices by accumulating the normal vectors of all

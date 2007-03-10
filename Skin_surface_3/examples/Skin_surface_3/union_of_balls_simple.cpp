@@ -1,4 +1,3 @@
-// examples/Skin_surface_3/union_of_balls_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Union_of_balls_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -12,7 +11,7 @@ typedef Union_of_balls_3::Weighted_point                    Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
-int main(int argc, char *argv[]) {
+int main() {
   std::list<Weighted_point> l;
 
   l.push_front(Weighted_point(Bare_point(0,0,0), 1));

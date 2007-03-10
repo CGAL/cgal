@@ -1,5 +1,3 @@
-// examples/Timer/Profile_histogram_counter.cpp
-
 #define CGAL_PROFILE
 
 #include <CGAL/Profile_counter.h>
