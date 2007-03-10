@@ -461,8 +461,7 @@ Point_d associated_point(Simplex_const_handle s, int i) const
 
 Simplex_handle opposite_simplex(Simplex_handle s,int i) const 
 /*{\Mop returns the simplex opposite to the $i$-th vertex of $s$
-(|Simplex_handle()| is there is no such simplex).\\ 
-\precond $0 \leq i \leq |dcur|$. }*/
+(|Simplex_handle()| is there is no such simplex).\\ \precond $0 \leq i \leq |dcur|$. }*/
 { CGAL_assertion(0<=i&&i<=dcur);
   return s->neighbor(i); }
 
