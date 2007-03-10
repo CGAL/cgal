@@ -107,7 +107,7 @@ public:
 };
 
 /* XPM */
-static char *show_hot_points_small_xpm[] = {
+static const char *show_hot_points_small_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 3 1",
 "  c black",
@@ -133,7 +133,7 @@ static char *show_hot_points_small_xpm[] = {
 };
 
 /* XPM */
-static char *show_hot_points_xpm[] = {
+static const char *show_hot_points_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -175,7 +175,7 @@ static char *show_hot_points_xpm[] = {
 };
 
 /* XPM */
-static char *show_inputs_small_xpm[] = {
+static const char *show_inputs_small_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 3 1",
 "  c black",
@@ -201,7 +201,7 @@ static char *show_inputs_small_xpm[] = {
 };
 
 /* XPM */
-static char *show_inputs_xpm[] = {
+static const char *show_inputs_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -243,7 +243,7 @@ static char *show_inputs_xpm[] = {
 };
 
 /* XPM */
-static char *show_outputs_small_xpm[] = {
+static const char *show_outputs_small_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 3 1",
 "  c black",
@@ -269,7 +269,7 @@ static char *show_outputs_small_xpm[] = {
 };
 
 /* XPM */
-static char *show_outputs_xpm[] = {
+static const char *show_outputs_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
