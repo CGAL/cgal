@@ -1,4 +1,3 @@
-// file: examples/Point_set_2/nearest_neighbors.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_2.h>

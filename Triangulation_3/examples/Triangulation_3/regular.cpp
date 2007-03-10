@@ -1,4 +1,3 @@
-// file: examples/Triangulation_3/example_regular.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>

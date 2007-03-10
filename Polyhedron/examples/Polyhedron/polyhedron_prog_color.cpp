@@ -1,4 +1,3 @@
-// file: examples/Polyhedron/polyhedron_prog_color.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Color.h>

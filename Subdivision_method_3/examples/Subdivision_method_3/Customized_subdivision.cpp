@@ -1,4 +1,3 @@
-// file: examples/Subdivision_method_3/Customized_subdivision.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Subdivision_method_3.h>

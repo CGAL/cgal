@@ -1,4 +1,3 @@
-// file: examples/Triangulation_2/triangulation_prog1.cpp
 
 #include <fstream>
 

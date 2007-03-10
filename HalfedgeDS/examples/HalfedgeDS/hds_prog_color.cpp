@@ -1,4 +1,3 @@
-// file: examples/HalfedgeDS/hds_prog_color.cpp
 
 #include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_default.h>

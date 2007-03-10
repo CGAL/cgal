@@ -1,4 +1,3 @@
-// file: examples/Polyhedron_IO/off2off.cpp
 
 // Copies a file in OFF format.
 

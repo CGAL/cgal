@@ -1,4 +1,3 @@
-// file: examples/Box_intersection_d/minimal_self.cpp
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Bbox_2.h>
 #include <iostream>

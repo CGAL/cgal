@@ -1,4 +1,3 @@
-// file: examples/Subdivision_method_3/Loop_subdivision.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Subdivision_method_3.h>

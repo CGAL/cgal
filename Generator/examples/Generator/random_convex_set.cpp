@@ -1,4 +1,3 @@
-// file: examples/Generator/rcs_example.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>

@@ -1,4 +1,3 @@
-// file: examples/Polyhedron/polyhedron_prog_subdiv_with_boundary.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

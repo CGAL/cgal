@@ -1,4 +1,3 @@
-// file: examples/Circulator/circulator_prog2.cpp
 
 #include <CGAL/basic.h>
 #include <cassert>

@@ -1,4 +1,3 @@
-// file: sdg-red-blue-info.cpp
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
 

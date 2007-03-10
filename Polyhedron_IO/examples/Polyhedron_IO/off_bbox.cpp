@@ -1,4 +1,3 @@
-// file: examples/Polyhedron_IO/off_bbox.cpp
 
 // computes bbox of an OFF object.
 

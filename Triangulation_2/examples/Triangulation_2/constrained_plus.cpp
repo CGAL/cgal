@@ -1,4 +1,3 @@
-// file: examples/Triangulation_2/constrained_plus.cpp
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>

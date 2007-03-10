@@ -1,4 +1,3 @@
-// file: examples/Arrangement_2/ex_curve_history.cpp
 // Constructing an arrangement with curve history.
 
 #include "arr_rational_nt.h"

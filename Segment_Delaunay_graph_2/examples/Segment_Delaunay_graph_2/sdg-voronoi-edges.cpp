@@ -1,4 +1,3 @@
-// file: sdg-voronoi-vertices.cpp
 #include <CGAL/basic.h>
 
 // standard includes

@@ -1,4 +1,3 @@
-// file: examples/Polyhedron_IO/off2vrml.cpp
 
 // Convert from OFF format to VRML (.wrl) 1.0 or 2.0 format.
 

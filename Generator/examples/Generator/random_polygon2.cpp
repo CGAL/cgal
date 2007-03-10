@@ -1,4 +1,3 @@
-// file: examples/Generator/random_poly_example.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>

@@ -1,4 +1,3 @@
-// file: examples/Spatial_searching/General_neighbor_searching.cpp
 
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_2.h>

@@ -1,4 +1,3 @@
-// file: examples/Triangulation_2/terrain.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>

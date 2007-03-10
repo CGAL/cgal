@@ -1,4 +1,3 @@
-// file: examples/Core/delaunay.cpp
 
 #include <CGAL/basic.h>
 

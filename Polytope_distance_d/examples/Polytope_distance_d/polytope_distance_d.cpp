@@ -1,4 +1,3 @@
-// file: examples/Polytope_distance_d/polytope_distance.cpp
 
 // computes the distance between two cubes in R^3 using double
 // as input type and some internal EXACT floating point type 

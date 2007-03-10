@@ -1,4 +1,3 @@
-// file: examples/Kernel_23/test_polyhedron_prog_incr_builder_own_archetype.cpp
 
 // original version see examples/Polyhedron/polyhedron_prog_incr_builder.cpp
 // this time we test compilation with

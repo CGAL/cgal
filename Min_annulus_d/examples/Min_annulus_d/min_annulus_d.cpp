@@ -1,4 +1,3 @@
-// file: examples/Min_annulus_d/min_annulus_d.cpp
 
 // computes the smallest enclosing annulus of two point
 // sets on nested squares in R^2, using double

@@ -1,4 +1,3 @@
-// file: examples/intersection.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>

@@ -1,4 +1,3 @@
-// file: examples/Spatial_searching/Distance_browsing.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>

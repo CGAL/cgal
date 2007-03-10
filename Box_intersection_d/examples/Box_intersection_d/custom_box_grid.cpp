@@ -1,4 +1,3 @@
-// file: examples/Box_intersection_d/custom_box_grid.cpp
 #include <CGAL/box_intersection_d.h>
 #include <vector>
 #include <algorithm>

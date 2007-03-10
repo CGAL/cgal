@@ -1,4 +1,3 @@
-// file: examples/Matrix_search/sorted_matrix_search_example.cpp
 
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_matrix.h>

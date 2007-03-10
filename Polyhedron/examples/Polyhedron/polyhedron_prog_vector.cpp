@@ -1,4 +1,3 @@
-// file: examples/Polyhedron/polyhedron_prog_vector.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/HalfedgeDS_vector.h>

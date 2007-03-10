@@ -1,4 +1,3 @@
-// file: examples/Min_ellipse_2/min_ellipse_2.cpp
 
 // includes
 #include <cassert>

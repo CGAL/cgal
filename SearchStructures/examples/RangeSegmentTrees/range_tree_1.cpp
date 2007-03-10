@@ -1,4 +1,3 @@
-// file: examples/SearchStructures/range_tree_1.cpp
 
 // Implementation: Testprogram for 1-dimensional Range Trees
 // A two dimensional Range Tree is defined in this class.

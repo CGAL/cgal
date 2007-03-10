@@ -1,4 +1,3 @@
-// file: examples/Polyhedron/polyhedron_prog_off.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>

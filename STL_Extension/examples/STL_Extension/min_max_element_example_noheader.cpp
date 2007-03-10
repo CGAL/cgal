@@ -1,4 +1,3 @@
-// file: examples/STL_Extension/min_max_element_example_noheader.cpp
 
 #include <CGAL/algorithm.h>
 #include <vector>

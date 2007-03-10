@@ -1,4 +1,3 @@
-// file: sdg-info-set.cpp
 #include <CGAL/basic.h>
 
 // example that shows how to add info to input sites and how this is

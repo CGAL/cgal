@@ -1,4 +1,3 @@
-// file: examples/Spatial_searching/Circular_query.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>

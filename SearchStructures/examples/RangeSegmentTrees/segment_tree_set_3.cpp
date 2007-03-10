@@ -1,4 +1,3 @@
-// file: examples/SearchStructures/segment_tree_set_3.cpp
 
 // Implementation: Testprogram for 3-dimensional Segment Trees
 // A three dimensional Segment Tree is defined in this class.

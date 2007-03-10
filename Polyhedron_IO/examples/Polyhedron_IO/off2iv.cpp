@@ -1,4 +1,3 @@
-// file: examples/Polyhedron_IO/off2iv.cpp
 
 // Convert from OFF format to OpenInventor (.iv) format. 
 

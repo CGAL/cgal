@@ -1,4 +1,3 @@
-// file: examples/Min_quadrilateral_2/minimum_enclosing_parallelogram_2.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>

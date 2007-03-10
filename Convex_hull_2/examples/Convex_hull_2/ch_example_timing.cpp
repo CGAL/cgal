@@ -1,4 +1,3 @@
-// file: examples/Convex_hull_2/ch_example_timing.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/convex_hull_traits_2.h>

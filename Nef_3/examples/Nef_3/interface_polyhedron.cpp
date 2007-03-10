@@ -1,4 +1,3 @@
-// file: examples/Nef_3/interface_polyhedron.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>

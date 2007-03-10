@@ -1,4 +1,3 @@
-// file: examples/Partition_2/y_monotone_partition_2.cpp
 
 #include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

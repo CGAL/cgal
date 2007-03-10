@@ -1,4 +1,3 @@
-// file: examples/Nef_3/extended_kernel.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Extended_homogeneous.h>

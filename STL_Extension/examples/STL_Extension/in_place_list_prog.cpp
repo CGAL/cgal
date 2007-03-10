@@ -1,4 +1,3 @@
-// file: examples/STL_Extension/in_place_list_prog.cpp
 
 #include <CGAL/basic.h>
 #include <cassert>

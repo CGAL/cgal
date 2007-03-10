@@ -1,4 +1,3 @@
-// file: examples/Polyhedron_IO/off2wav.cpp
 
 // Convert from OFF format to Wavefront (.obj) format.
 
