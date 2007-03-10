@@ -165,7 +165,7 @@ public:
                 return out << CGAL_CORE_NUMERATOR(t)
                            << "/" 
                            << CGAL_CORE_DENOMINATOR(t);
-            break;
+            //break; // unreachable
         }
             
         default:
