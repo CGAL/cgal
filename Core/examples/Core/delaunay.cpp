@@ -1,4 +1,6 @@
-// file: examples/Core/delaunay.C
+// file: examples/Core/delaunay.cpp
+
+#include <CGAL/basic.h>
 
 #ifdef CGAL_USE_CORE
 
@@ -38,6 +40,5 @@ int main()
   std::cout << "Core is not installed" << std::endl;
   return 0;
 }
-
 
 #endif // CGAL_USE_CORE
