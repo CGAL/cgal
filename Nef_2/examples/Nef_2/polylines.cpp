@@ -1,4 +1,3 @@
-// file : examples/Nef_2/polylines.cpp
 
 #include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_exact_nt.h>

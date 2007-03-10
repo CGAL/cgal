@@ -1,4 +1,3 @@
-// file : examples/Nef_2/simple_intersection.cpp
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
