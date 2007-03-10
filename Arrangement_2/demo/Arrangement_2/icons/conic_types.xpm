@@ -1,5 +1,5 @@
 /* XPM */
- char *mycircle_xpm[] = {
+const char *mycircle_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -45,7 +45,7 @@
 };
 
 /* XPM */
- char *segment_xpm[] = {
+const char *segment_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",

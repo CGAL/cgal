@@ -1,5 +1,5 @@
 /* XPM */
-/*static char * draw_xpm[] = {
+/*static const char * draw_xpm[] = {
 "32 32 3 1",
 "         c None",
 ".        c #FFFFFF",
@@ -37,7 +37,7 @@
 "                                "};*/
 
 /* XPM */
-static char * small_draw_xpm[] = {
+static const char * small_draw_xpm[] = {
 "32 32 3 1",
 "         c None",
 ".        c #FFFFFF",

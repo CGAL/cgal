@@ -1,5 +1,5 @@
 /* XPM */
-static char *delete_xpm[] = {
+static const char *delete_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 6 1",
 /* colors */

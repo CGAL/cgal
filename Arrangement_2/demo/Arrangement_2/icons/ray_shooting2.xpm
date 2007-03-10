@@ -1,5 +1,5 @@
 /* XPM */
- char *ray_shooting_xpm[] = {
+const char *ray_shooting_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -45,7 +45,7 @@
 };
 
 /* XPM */
- char *small_ray_shooting_xpm[] = {
+const char *small_ray_shooting_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",

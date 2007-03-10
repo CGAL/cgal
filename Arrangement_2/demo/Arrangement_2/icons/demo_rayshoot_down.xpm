@@ -1,5 +1,5 @@
 /* XPM */
-static char *demo_rayshoot_down_xpm[] = {
+static const char *demo_rayshoot_down_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 6 1",
 /* colors */

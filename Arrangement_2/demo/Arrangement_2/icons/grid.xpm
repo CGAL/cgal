@@ -1,5 +1,5 @@
 /* XPM */
- char * grid_xpm[] = {
+const char * grid_xpm[] = {
 "16 16 4 1",
 " 	c #EDA1A1",
 ".	c None",

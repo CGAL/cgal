@@ -1,5 +1,5 @@
 /* XPM */
- char *insert_xpm[] = {
+static const char *insert_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",

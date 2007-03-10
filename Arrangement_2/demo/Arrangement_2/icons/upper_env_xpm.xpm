@@ -1,5 +1,5 @@
 /* XPM */
-static char *upper_env_xpm[] = {
+static const char *upper_env_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 5 1",
 /* colors */
