@@ -871,7 +871,7 @@ BigFloat Polynomial<NT>::evalExactSign(const BigFloat& val,
     } else
 	return BigFloat(eval(val));
 
-   return 0;
+   //return 0; // unreachable
   }//evalExactSign
   
 
