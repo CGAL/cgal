@@ -1,6 +1,4 @@
-//file: examples/Interpolation/interpolation_2.cpp
 // compares the result of several interpolation methods
-// Author: Julia
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -213,4 +211,3 @@ int main()
   std::cout << "done" << std::endl;
   return 0;
 }
-//end of file

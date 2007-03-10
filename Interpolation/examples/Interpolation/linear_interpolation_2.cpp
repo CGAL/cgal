@@ -1,5 +1,3 @@
-//file: examples/Interpolation/linear_interpolation_2.cpp
-//
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 

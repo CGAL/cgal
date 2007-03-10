@@ -1,5 +1,3 @@
-//file: examples/Algebraic_foundations/integralize.cpp
-
 #include <CGAL/basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/IO/io.h>

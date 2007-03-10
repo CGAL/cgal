@@ -1,5 +1,3 @@
-//file: examples/Polyhedron_IO/terr_trian.cpp
-
 // Delaunay Triangulation of a set of 3D points in the xy-plane.
 // (Terrain triangulation)
 
@@ -174,4 +172,3 @@ int main( int argc, char **argv) {
     delete[] indices;
     return 0;
 }
-// EOF //

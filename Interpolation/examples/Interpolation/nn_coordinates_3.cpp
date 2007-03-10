@@ -1,6 +1,3 @@
-//file: examples/Interpolation/nn_coordinates_3.cpp
-// author(s)     : Raphaelle Chaine <Raphaelle.Chaine@sophia.inria.fr, raphaelle.chaine@liris.cnrs.fr>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Triangulation_vertex_base_3.h>
@@ -97,4 +94,3 @@ int main()
   std::cout << "done" << std::endl;
   return 0;
 }
-
