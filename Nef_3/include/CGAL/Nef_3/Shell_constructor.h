@@ -38,7 +38,7 @@ class Shell_constructor : public Modifier_base<typename Nef3::SNC_structure> {
   std::istream in;
 
 
-  bool SNC_io_parser<EW>::check_sep(char* sep) const {
+  bool SNC_io_parser<EW>::check_sep(const char* sep) const {
     char c; 
     do in.get(c); while (isspace(c));
     while (*sep != '\0') { 

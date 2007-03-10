@@ -83,7 +83,7 @@ class SM_io_parser : public Decorator_
   int vn,en,ln,fn,i;
   // the number of objects
 
-  bool check_sep(char* sep);
+  bool check_sep(const char* sep);
   void print_vertex(SVertex_handle) const;
   void print_edge(SHalfedge_handle) const;
   void print_loop(SHalfloop_const_handle) const;
@@ -161,7 +161,7 @@ SM_io_parser(std::ostream& iout, const Base& D)
 //-----------------------------------------------------------------------------
 
 template <typename Decorator_>
-bool SM_io_parser<Decorator_>::check_sep(char* sep)
+bool SM_io_parser<Decorator_>::check_sep(const char* sep)
 {
   char c; 
   do in.get(c); while (isspace(c));

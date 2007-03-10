@@ -855,7 +855,7 @@ public:
     return this->string("unknown object");
   }
 
-  bool check_sep(char* sep) const;
+  bool check_sep(const char* sep) const;
   bool test_string(std::string s) const;
   void print_vertex(Vertex_handle) const;
   void print_edge(Halfedge_handle) const;
@@ -1114,7 +1114,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
 }
 
 template <typename EW>
-bool SNC_io_parser<EW>::check_sep(char* sep) const
+bool SNC_io_parser<EW>::check_sep(const char* sep) const
 {
   char c; 
   do in.get(c); while (isspace(c));
