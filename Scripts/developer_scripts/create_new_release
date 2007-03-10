@@ -82,7 +82,10 @@ TMPDIR="`pwd`"
 [ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
 [ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
 
-LOGFILE="${TMPDIR}/create_release.log.`date -I`.$$"
+# ISO format ("date -I" does not work on Darwin).
+date_=`date "+%Y-%m-%d"`
+
+LOGFILE="${TMPDIR}/create_release.log.$date_.$$"
 
 if [ -z "$VERBOSE" ]; then
   # Redirect standard out and standard err to $LOGFILE
