@@ -24,7 +24,7 @@ int main (int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
   // fan_grids.dat file if no command-line parameters are given.
-  char   *filename = "fan_grids.dat";
+  const char   *filename = "fan_grids.dat";
 
   if (argc > 1)
     filename = argv[1];

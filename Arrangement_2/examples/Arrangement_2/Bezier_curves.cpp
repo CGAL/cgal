@@ -33,7 +33,7 @@ int main (int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
   // Bezier.dat file if no command-line parameters are given.
-  char   *filename = "Bezier.dat";
+  const char   *filename = "Bezier.dat";
 
   if (argc > 1)
     filename = argv[1];
