@@ -21,7 +21,7 @@ public:
     *(vec+1) = 0;
   }
 
-  
+
   MyPointC2(const double x, const double y, int c = 0)
     : col(c)
   {
@@ -40,8 +40,8 @@ public:
   int color() const { return col; }
 
   int& color() { return col; }
-  
-  
+
+
   bool operator==(const MyPointC2 &p) const
   {
     return ( *vec == *(p.vec) )  && ( *(vec+1) == *(p.vec + 1) && ( col == p.col) );
@@ -110,8 +110,8 @@ public:
 
     Point_2
     operator()(const RT& x, const RT& y) const
-    { 
-      return MyPointC2(x, y, 0); 
+    {
+      return MyPointC2(x, y, 0);
     }
 
     Point_2
@@ -121,7 +121,7 @@ public:
       Point_2 p = base_operator(l);
       return p;
     }
-    
+
     Point_2
     operator()(const Line_2& l, int i) const
     {
@@ -132,9 +132,9 @@ public:
     // We need this one, as such a functor is in the Filtered_kernel
     Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
-    { 
+    {
       if(w != 1){
-	return MyPointC2(x/w, y/w, 0); 
+	return MyPointC2(x/w, y/w, 0);
       } else {
 	return MyPointC2(x,y, 0);
       }
@@ -186,5 +186,3 @@ operator>>(std::istream &is, MyPointC2 &p)
 
 
 #endif // MY_POINTC2_H
-
-

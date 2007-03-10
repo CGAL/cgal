@@ -29,7 +29,7 @@ void print_polygon_with_holes
 {
   if (! pwh.is_unbounded())
   {
-    std::cout << "{ Outer boundary = "; 
+    std::cout << "{ Outer boundary = ";
     print_polygon (pwh.outer_boundary());
   }
   else

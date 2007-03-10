@@ -8,8 +8,8 @@
 
 template <class SkinSurface, class Polyhedron>
 /// Write polyhedron with normals:
-void write_polyhedron_with_normals(SkinSurface &skin, 
-				   Polyhedron &p, 
+void write_polyhedron_with_normals(SkinSurface &skin,
+				   Polyhedron &p,
 				   std::ostream &out)
 {
   typedef typename Polyhedron::Vertex_iterator                  Vertex_iterator;
@@ -26,8 +26,8 @@ void write_polyhedron_with_normals(SkinSurface &skin,
       << " " << p.size_of_halfedges()
       << std::endl;
 
-  
-  
+
+
   // Write vertices
   for (Vertex_iterator vit = p.vertices_begin();
        vit != p.vertices_end(); vit ++) {
@@ -51,6 +51,6 @@ void write_polyhedron_with_normals(SkinSurface &skin,
     } while (++hc != hc_end);
     out << "\n";
   }
-}  
+}
 
 #endif // CGAL_SKIN_SURFACE_WRITER_H

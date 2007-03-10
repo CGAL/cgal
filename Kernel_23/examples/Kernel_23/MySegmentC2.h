@@ -88,7 +88,7 @@ CGAL_KERNEL_INLINE
 const typename MySegmentC2<R>::Point_2 &
 MySegmentC2<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
-  typename R::Less_xy_2 less_xy; 
+  typename R::Less_xy_2 less_xy;
   return less_xy(source(),target()) ? source() : target();
 }
 
@@ -97,7 +97,7 @@ CGAL_KERNEL_INLINE
 const typename MySegmentC2<R>::Point_2 &
 MySegmentC2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION() const
 {
-  typename R::Less_xy_2 less_xy; 
+  typename R::Less_xy_2 less_xy;
   return less_xy(source(),target()) ? target() : source();
 }
 

@@ -12,10 +12,10 @@
 #include <list>
 
 
-#include "PolyhedralSurf_operations.h" 
+#include "PolyhedralSurf_operations.h"
 
 //----------------------------------------------------------------
-// A redefined items class for the Polyhedron_3 with 
+// A redefined items class for the Polyhedron_3 with
 // a refined facet with a normal vector
 //---------------------------------------------------------------
 
@@ -71,8 +71,3 @@ public:
 };
 
 #endif
-
-
-
-
-

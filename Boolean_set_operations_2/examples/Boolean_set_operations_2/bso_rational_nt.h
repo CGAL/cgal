@@ -5,7 +5,7 @@
 
 #ifdef CGAL_USE_GMP
 
-  // GMP is installed. Use the GMP rational number-type. 
+  // GMP is installed. Use the GMP rational number-type.
   #include <CGAL/Gmpq.h>
 
   typedef CGAL::Gmpq                                    Number_type;

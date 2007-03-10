@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 
@@ -41,9 +41,9 @@ public:
   public:
     typedef void result_type;
     typedef Arity_tag< 2 >   Arity;
-  
+
     Intersect_with_iterators_2() {}
-    
+
     template <typename OutputIterator>
     OutputIterator
     operator()(const Segment_2& s1, const Segment_2& s2, OutputIterator it ) const
@@ -52,8 +52,8 @@ public:
       if(! o.is_empty()){
 	*it = o;
 	it++;
-      } 
-      
+      }
+
       return it;
     }
   };

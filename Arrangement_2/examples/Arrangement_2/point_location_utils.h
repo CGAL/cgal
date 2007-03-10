@@ -11,7 +11,7 @@ void point_location_query
 
   // Print the result.
   typedef typename PointLocation::Arrangement_2  Arrangement_2;
-  
+
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
@@ -59,7 +59,7 @@ void vertical_ray_shooting_query
 
   // Print the result.
   typedef typename VerticalRayShoot::Arrangement_2  Arrangement_2;
-  
+
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
@@ -82,8 +82,8 @@ void vertical_ray_shooting_query
   {
     // We did not hit anything:
     CGAL_assertion (f->is_unbounded());
-    
-    std::cout << "hit nothing." << std::endl; 
+
+    std::cout << "hit nothing." << std::endl;
   }
   else
   {
@@ -98,7 +98,7 @@ void vertical_ray_shooting_query
 // the vertical ray-shooting examples.
 // The function assumes that the arrangement is of line segments with integer
 // coordinates.
-//			
+//
 template <class Arrangement>
 void construct_segments_arr (Arrangement& arr)
 {

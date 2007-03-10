@@ -5,12 +5,12 @@ using namespace std;
 
 
 //----------------------------------------------------------------
-// some functors 
+// some functors
 //----------------------------------------------------------------
 
 //computing the edge length
 struct Edge_length {
-  template <class HalfEdge_handle> 
+  template <class HalfEdge_handle>
   double operator() (HalfEdge_handle h) {
     double l = CGAL::sqrt(CGAL::squared_distance(h->prev()->vertex()->point(),
 						 h->vertex()->point()));
@@ -20,11 +20,11 @@ struct Edge_length {
 
 //computing a the facet normal
 struct Facet_unit_normal {
-  template < class Facet > 
+  template < class Facet >
   typename Facet::Vector_3 operator() (Facet & f) {
       typename Facet::Halfedge_handle h = f.halfedge();
       typename Facet::Vector_3 normal =
-	CGAL::cross_product(h->vertex()->point() - 
+	CGAL::cross_product(h->vertex()->point() -
 			    h->opposite()->vertex()->point(),
 			    h->next()->vertex()->point() -
 			    h->opposite()->vertex()->point());
@@ -45,13 +45,13 @@ protected:
   typedef typename TPoly::Halfedge Halfedge;
   typedef typename TPoly::Facet_handle Facet_handle;
   typedef typename TPoly::Facet Facet;
-  
+
   typedef typename TPoly::Vertex_iterator Vertex_iterator;
   typedef typename TPoly::Halfedge_iterator Halfedge_iterator;
   typedef typename TPoly::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
-  
-public:  
-  
+
+public:
+
   static void compute_edges_length(TPoly& P, HEdgePropertyMap& hepm);
   static double compute_mean_edges_length_around_vertex(Vertex * v, HEdgePropertyMap& hepm);
 };
@@ -96,13 +96,13 @@ protected:
   typedef typename TPoly::Halfedge Halfedge;
   typedef typename TPoly::Facet_handle Facet_handle;
   typedef typename TPoly::Facet Facet;
-  
+
   typedef typename TPoly::Vertex_iterator Vertex_iterator;
   typedef typename TPoly::Halfedge_iterator Halfedge_iterator;
   typedef typename TPoly::Facet_iterator Facet_iterator;
   typedef typename TPoly::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
-  
-public:  
+
+public:
   static void compute_facets_normals(TPoly& P, FacetPropertyMap& fpm);
   static typename TPoly::Traits::Vector_3 compute_vertex_average_unit_normal(Vertex * v, const FacetPropertyMap& fpm);
 };
@@ -116,7 +116,7 @@ compute_facets_normals(TPoly& P, FacetPropertyMap& fpm)
 {
   //iterator returning facet handles
   Facet_iterator itb = P.facets_begin(), ite = P.facets_end();
-  for(; itb!=ite; itb++) 
+  for(; itb!=ite; itb++)
     put(fpm, itb, Facet_unit_normal()(*itb));
 }
 
@@ -134,7 +134,7 @@ compute_vertex_average_unit_normal(Vertex * v, const FacetPropertyMap& fpm)
       hedgeb++;
       continue;
     }
-    
+
     f = hedgeb->facet();
     n = get(fpm, f);
     sum = (sum + n);

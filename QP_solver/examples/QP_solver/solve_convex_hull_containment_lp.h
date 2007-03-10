@@ -14,18 +14,18 @@ struct Homogeneous_begin  {
   }
 };
 
-// function to solve the LP that tests whether a point is in the 
-// convex hull of other points; the type ET is an exact type used 
+// function to solve the LP that tests whether a point is in the
+// convex hull of other points; the type ET is an exact type used
 // for the internal computations
 template <class Point_d, class RandomAccessIterator, class ET>
-CGAL::Quadratic_program_solution<ET> 
-solve_convex_hull_containment_lp (const Point_d& p, 
-				  RandomAccessIterator begin, 
-				  RandomAccessIterator end, const ET& dummy) 
+CGAL::Quadratic_program_solution<ET>
+solve_convex_hull_containment_lp (const Point_d& p,
+				  RandomAccessIterator begin,
+				  RandomAccessIterator end, const ET& dummy)
 {
   // Constraint matrix type: A[j][i] is the i-th homogeneous coordinate of p_j
   typedef boost::transform_iterator
-    <Homogeneous_begin<Point_d>, RandomAccessIterator> A_it; 
+    <Homogeneous_begin<Point_d>, RandomAccessIterator> A_it;
   // Right-hand side type: b[i] is the i-th homogeneous coordinate of p
   typedef typename Point_d::Homogeneous_const_iterator B_it;
   // Relation type ("=")
@@ -40,9 +40,9 @@ solve_convex_hull_containment_lp (const Point_d& p,
     Program;
 
   // ok, we are prepared now: construct program and solve it
-  Program lp (end-begin,        // number of variables 
+  Program lp (end-begin,        // number of variables
 	      p.dimension()+1,  // number of constraints
-	      A_it (begin), B_it (p.homogeneous_begin()), 
+	      A_it (begin), B_it (p.homogeneous_begin()),
 	      R_it (CGAL::EQUAL), C_it (0));
   return CGAL::solve_nonnegative_linear_program (lp, dummy);
 }

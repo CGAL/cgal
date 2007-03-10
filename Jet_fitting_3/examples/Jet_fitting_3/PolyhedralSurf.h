@@ -27,7 +27,7 @@
 //Polyhedron_traits_with_normals_3). edges with the length
 //----------------------------------------------------------------
 
-template < class Refs, class Tag, class Pt, class FGeomTraits > 
+template < class Refs, class Tag, class Pt, class FGeomTraits >
 class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >
 {
 typedef typename FGeomTraits::Point_3 Point_3;
@@ -67,17 +67,17 @@ public:
 
 
 template <class TPoly>
-class Facet_PM : 
+class Facet_PM :
   public boost::put_get_helper<typename TPoly::Traits::Vector_3, Facet_PM<TPoly> >
 {
-public: 
+public:
 
   //read_write
   typedef boost::read_write_property_map_tag category;
   typedef typename TPoly::Facet key_type;
   typedef typename TPoly::Traits::Vector_3 value_type;
   typedef typename TPoly::Traits::Vector_3& reference;
-  
+
   Facet_PM() {}
   reference operator[](key_type f) const {return f.get_unit_normal();}
 };
@@ -90,7 +90,7 @@ namespace boost{
 
 };
 
-template <class TPoly> 
+template <class TPoly>
 Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& P) {return Facet_PM<TPoly>();}
 
 
@@ -117,10 +117,10 @@ public:
 /*XFC: tentative ... failed so far...*/
 //property map associated to the half edge
 template <class TPoly>
-class HEdge_PM : 
+class HEdge_PM :
   public boost::put_get_helper<typename TPoly::Traits::FT&, HEdge_PM<TPoly> >//double
 {
-public: 
+public:
   //read_write or lvalue
   //typedef boost::read_write_property_map_tag category;
   typedef boost::lvalue_property_map_tag category;
@@ -133,8 +133,8 @@ public:
 };
 
 //use the std edge_weight_t tag...
-template <class TPoly> 
-HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& P) 
+template <class TPoly>
+HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& P)
 {return HEdge_PM<TPoly>();}
 
 
