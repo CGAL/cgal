@@ -74,7 +74,7 @@ double_to_quotient(double x)
     return q;
 }
 /* XPM */
-static char *intersection_xpm[] = {
+static const char *intersection_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -116,7 +116,7 @@ static char *intersection_xpm[] = {
 };
 
 /* XPM */
-static char *union_xpm[] = {
+static const char *union_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -158,7 +158,7 @@ static char *union_xpm[] = {
 };
 
 /* XPM */
-static char *difference_xpm[] = {
+static const char *difference_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -200,7 +200,7 @@ static char *difference_xpm[] = {
 };
 
 /* XPM */
-static char *symmetric_difference_xpm[] = {
+static const char *symmetric_difference_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -242,7 +242,7 @@ static char *symmetric_difference_xpm[] = {
 };
 
 /* XPM */
-static char *complement_xpm[] = {
+static const char *complement_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c opaque",
@@ -283,7 +283,7 @@ static char *complement_xpm[] = {
 };
 
 /* XPM */
-static char *interior_xpm[] = {
+static const char *interior_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c opaque",
@@ -324,7 +324,7 @@ static char *interior_xpm[] = {
 };
 
 /* XPM */
-static char *closure_xpm[] = {
+static const char *closure_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -366,7 +366,7 @@ static char *closure_xpm[] = {
 };
 
 /* XPM */
-static char *boundary_xpm[] = {
+static const char *boundary_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c opaque",
@@ -407,7 +407,7 @@ static char *boundary_xpm[] = {
 };
 
 /* XPM */
-static char *regularization_xpm[] = {
+static const char *regularization_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
