@@ -1,4 +1,3 @@
-
 // computes the smallest enclosing annulus of two point
 // sets on nested squares in R^2,  using double
 // as input type and some internal EXACT floating point type;

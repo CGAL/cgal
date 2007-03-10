@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian_d.h>
 #include <iostream>
 #include <cstdlib>
@@ -33,4 +32,3 @@ int main ()
 
     return 0;
 }
-

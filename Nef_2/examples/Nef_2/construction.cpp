@@ -1,4 +1,3 @@
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_2.h>
@@ -26,5 +25,3 @@ int main() {
 
   return 0;
 }
-
-

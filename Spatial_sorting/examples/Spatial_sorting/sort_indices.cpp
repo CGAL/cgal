@@ -1,4 +1,3 @@
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/spatial_sort.h>
 

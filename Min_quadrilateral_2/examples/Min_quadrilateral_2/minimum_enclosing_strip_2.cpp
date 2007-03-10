@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
@@ -27,4 +26,3 @@ int main()
 
   return 0;
 }
-

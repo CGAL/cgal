@@ -1,4 +1,3 @@
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -23,4 +22,3 @@ int main()
   std::cout << dt.number_of_vertices() << std::endl;
   return 0;
 }
-

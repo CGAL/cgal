@@ -1,4 +1,3 @@
-
 // original version see examples/Polyhedron/polyhedron_prog_incr_builder.cpp
 // this time we test compilation with
 // an own archetype that uses functionality

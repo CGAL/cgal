@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/Polyhedron_3.h>

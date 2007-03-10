@@ -82,4 +82,3 @@ int main ()
   print_arrangement (arr);
   return (0);
 }
-

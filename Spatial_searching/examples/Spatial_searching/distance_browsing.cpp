@@ -1,4 +1,3 @@
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
@@ -40,18 +39,3 @@ int main() {
 
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

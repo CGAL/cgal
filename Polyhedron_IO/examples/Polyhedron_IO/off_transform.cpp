@@ -1,4 +1,3 @@
-
 // Applies translation and scaling to an OFF object.
 
 #include <CGAL/Cartesian.h>

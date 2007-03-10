@@ -1,4 +1,3 @@
-
 // CGAL example program for the generic segment generator
 // using precomputed point locations.
 
@@ -55,5 +54,3 @@ int main() {
     }
     return 0;
 }
-
-

@@ -1,4 +1,3 @@
-
 // Convert from OFF format to VRML (.wrl) 1.0 or 2.0 format.
 
 #include <CGAL/basic.h>

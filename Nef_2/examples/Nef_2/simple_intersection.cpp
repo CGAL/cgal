@@ -1,4 +1,3 @@
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_2.h>
@@ -15,5 +14,3 @@ int main()
   Nef_polyhedron N3 = N1 * N2; // line (*)
   return 0;
 }
-
-

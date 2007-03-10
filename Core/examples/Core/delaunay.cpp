@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_CORE

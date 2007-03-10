@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/functional.h>

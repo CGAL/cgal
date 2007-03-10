@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 
 // standard includes
@@ -62,5 +61,3 @@ int main()
 
   return 0;
 }
-
-

@@ -1,4 +1,3 @@
-
 // Convert from OFF format to Wavefront (.obj) format.
 
 #include <CGAL/basic.h>

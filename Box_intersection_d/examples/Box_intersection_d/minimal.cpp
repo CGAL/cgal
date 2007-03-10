@@ -18,4 +18,3 @@ int main() {
     CGAL::box_intersection_d( boxes, boxes+9, query, query+2, callback);
     return 0;
 }
-

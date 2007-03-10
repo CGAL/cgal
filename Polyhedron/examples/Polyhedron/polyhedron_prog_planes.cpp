@@ -1,4 +1,3 @@
-
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>

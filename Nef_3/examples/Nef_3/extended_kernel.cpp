@@ -1,4 +1,3 @@
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>

@@ -1,4 +1,3 @@
-
 // Implementation: Testprogram for 2-dimensional Segment Trees
 // A two dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.

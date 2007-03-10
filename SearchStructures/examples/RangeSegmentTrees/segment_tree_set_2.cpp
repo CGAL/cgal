@@ -1,4 +1,3 @@
-
 // Implementation: Testprogram for 2-dimensional Segment Trees
 // Example for the construction of a two dimensional segment tree.
 // The data type of the first dimension is double and for the second
@@ -71,5 +70,3 @@ int main()
     std::cerr << "Tree is not valid\n";
   return 0;
 }
-
-

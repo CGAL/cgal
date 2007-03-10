@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <iostream>
@@ -38,4 +37,3 @@ int main()
 
   return 0;
 }
-

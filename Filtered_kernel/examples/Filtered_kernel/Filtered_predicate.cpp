@@ -1,4 +1,3 @@
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/MP_Float.h>
@@ -41,4 +40,3 @@ int main()
   orientation(p, q, r);
   return 0;
 }
-

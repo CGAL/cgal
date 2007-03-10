@@ -1,4 +1,3 @@
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
@@ -37,4 +36,3 @@ int main() {
 
   return 0;
 }
-

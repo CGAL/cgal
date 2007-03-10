@@ -1,4 +1,3 @@
-
 // Convert from OFF format to StereoLithography StL format.
 
 #include <CGAL/Simple_cartesian.h>

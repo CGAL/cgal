@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>

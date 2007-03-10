@@ -1,4 +1,3 @@
-
 #include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Simple_cartesian.h>
@@ -83,4 +82,3 @@ int main()
 
   return 0;
 }
-

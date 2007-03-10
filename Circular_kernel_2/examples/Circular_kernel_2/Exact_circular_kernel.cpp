@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
@@ -65,4 +64,3 @@ int main(){
 
   return 0;
 };
-

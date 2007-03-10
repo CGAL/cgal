@@ -1,4 +1,3 @@
-
 // original version see examples/Polyhedron/polyhedron_prog_incr_builder.cpp
 // this time we test compilation with the
 // kernel concept archetype

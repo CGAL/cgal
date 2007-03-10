@@ -1,4 +1,3 @@
-
 // Copies a file in OFF format.
 
 #include <CGAL/basic.h>

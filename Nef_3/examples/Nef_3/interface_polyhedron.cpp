@@ -1,4 +1,3 @@
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polyhedron_3.h>

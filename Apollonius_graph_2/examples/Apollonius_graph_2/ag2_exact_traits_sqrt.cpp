@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 
 // standard includes

@@ -1,4 +1,3 @@
-
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <vector>

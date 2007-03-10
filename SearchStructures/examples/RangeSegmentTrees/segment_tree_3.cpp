@@ -1,4 +1,3 @@
-
 // Implementation: Testprogram for 3-dimensional Segment Trees
 // A three dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
@@ -64,5 +63,3 @@ int main()
     std::cerr << "Tree is not valid\n";
   return 0;
 }
-
-

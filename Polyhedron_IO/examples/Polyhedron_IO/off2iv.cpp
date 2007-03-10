@@ -1,4 +1,3 @@
-
 // Convert from OFF format to OpenInventor (.iv) format.
 
 #include <CGAL/basic.h>

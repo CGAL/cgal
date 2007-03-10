@@ -44,5 +44,3 @@ int main()
   assert(as.number_of_solid_components() == 1);
   return 0;
 }
-
-

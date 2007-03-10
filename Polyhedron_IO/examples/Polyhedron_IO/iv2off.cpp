@@ -1,4 +1,3 @@
-
 // Converts Geometry Information in Inventor files (*.iv) into OFF format.
 // The scanner triggers on Coordinate3, IndexedFaceSet, and IndexedLineSet
 // keywords. It does not recognize transformations nor groups.

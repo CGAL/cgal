@@ -1,4 +1,3 @@
-
 // Computes the minsphere of some random spheres.
 // This example illustrates how to use CGAL::Point_d and CGAL::
 // Weighted_point with the Min_sphere_of_spheres_d package.

@@ -1,4 +1,3 @@
-
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/N_step_adaptor.h>

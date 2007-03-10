@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
@@ -55,4 +54,3 @@ int main( )
    std::cout << polygon << std::endl;
    return 0;
 }
-

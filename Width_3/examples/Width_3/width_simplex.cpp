@@ -46,8 +46,3 @@ int main() {
               << simplex.get_number_of_optimal_solutions() << std::endl;
     return(0);
 }
-
-
-
-
-

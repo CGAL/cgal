@@ -1,4 +1,3 @@
-
 // Implementation: Testprogram for 1-dimensional Range Trees
 // A two dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
@@ -55,5 +54,3 @@ int main()
     std::cerr << "Tree is not valid\n";
   return 0;
 }
-
-

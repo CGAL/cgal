@@ -1,4 +1,3 @@
-
 // Copies a CGAL::Polyhedron_3 from OFF format to OFF format.
 
 #include <CGAL/Cartesian.h>

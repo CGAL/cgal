@@ -1,4 +1,3 @@
-
 // includes
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_circle_2.h>

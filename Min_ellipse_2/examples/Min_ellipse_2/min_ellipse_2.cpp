@@ -1,4 +1,3 @@
-
 // includes
 #include <cassert>
 #include <CGAL/Cartesian.h>

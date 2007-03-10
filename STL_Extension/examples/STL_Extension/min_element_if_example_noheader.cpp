@@ -1,4 +1,3 @@
-
 #include <CGAL/algorithm.h>
 #include <CGAL/function_objects.h>
 #include <vector>

@@ -1,4 +1,3 @@
-
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <iostream>
 #include <fstream>

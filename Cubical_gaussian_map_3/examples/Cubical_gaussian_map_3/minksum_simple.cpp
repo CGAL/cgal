@@ -1,4 +1,3 @@
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Polyhedral_cgm_polyhedron_3.h>

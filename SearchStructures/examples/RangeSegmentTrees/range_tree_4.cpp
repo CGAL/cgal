@@ -1,4 +1,3 @@
-
 // Implementation: Testprogram for 4-dimensional Range Trees
 // A four dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
@@ -56,5 +55,3 @@ int main()
 
   return 0;
 }
-
-

@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------//
 // This is just a simple example that demonstrates how to use the
 // class CGAL::Polygon_2.
@@ -78,4 +77,3 @@ int main()
 
   return 0;
 }
-

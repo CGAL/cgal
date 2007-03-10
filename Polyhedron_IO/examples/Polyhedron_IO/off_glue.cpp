@@ -1,4 +1,3 @@
-
 // Glue vertices of a polyhedron together that have equal coordinate values.
 
 #include <CGAL/Cartesian.h>
@@ -207,4 +206,3 @@ int main( int argc, char **argv) {
     return 0;
 }
 // EOF //
-

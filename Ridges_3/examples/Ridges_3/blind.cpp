@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Ridges.h>
 #include <CGAL/Umbilics.h>
@@ -341,4 +340,3 @@ int main(int argc, char *argv[])
 
   return 0;
 }
-

@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/ch_graham_andrew.h>
 
@@ -14,4 +13,3 @@ int main()
   CGAL::ch_graham_andrew( in_start, in_end, out );
   return 0;
 }
-

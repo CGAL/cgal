@@ -1,4 +1,3 @@
-
 #include <CGAL/Interval_skip_list.h>
 #include <CGAL/Interval_skip_list_interval.h>
 #include <vector>
@@ -39,5 +38,3 @@ int main()
   return 0;
 
 }
-
-

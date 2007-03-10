@@ -1,4 +1,3 @@
-
 /***********************************************************************
 
 Takes a list of points and returns a list of segments corresponding to the

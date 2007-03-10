@@ -1,4 +1,3 @@
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Search_traits_2.h>

@@ -1,4 +1,3 @@
-
 // computes bbox of an OFF object.
 
 #include <CGAL/basic.h>

@@ -1,4 +1,3 @@
-
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/copy_n.h>

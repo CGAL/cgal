@@ -1,4 +1,3 @@
-
 // Implementation: Testprogram for 2-dimensional Range Trees
 // A two dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
@@ -57,5 +56,3 @@ int main()
 
   return 0;
 }
-
-

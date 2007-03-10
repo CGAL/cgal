@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
@@ -53,4 +52,3 @@ int main() {
   std::cout << "\ndone" << std::endl;
   return 0;
 }
-

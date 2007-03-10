@@ -33,4 +33,3 @@ const Vector_3 PolyhedralSurf::computeFacetsAverageUnitNormal(const Vertex_const
   sum = sum / std::sqrt(sum * sum);
   return sum;
 }
-

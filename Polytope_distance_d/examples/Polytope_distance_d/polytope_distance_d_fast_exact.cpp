@@ -1,4 +1,3 @@
-
 // computes the distance between two cubes in R^3 using double
 // as input type and some internal EXACT floating point type;
 // the fast type double is also safely used for many of the
