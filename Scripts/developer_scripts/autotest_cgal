@@ -116,7 +116,7 @@ put_on_web()
         $CURL --upload-file ${1} --user anonymous:${MAIL_ADDRESS} \
               ftp://${FTP_SERVER}/${FTP_STORE_DIR}/${2} >> ${ACTUAL_LOGFILE} 2>&1
     else
-	$FTP $FTP_OPTS  $FTP_SERVER >> ${ACTUAL_LOGFILE} 2>&1 <<EOF
+	$FTP $FTP_OPTS $FTP_SERVER >> ${ACTUAL_LOGFILE} 2>&1 <<EOF
 quote USER anonymous
 quote PASS ${MAIL_ADDRESS}
 binary
@@ -185,13 +185,13 @@ build_cgal_libs()
     fi
     if [ "`value_of BUILD_ON_${1}`" = "all" ]; then
         remote_command ${1} \
-            "cd ${CGAL_DIR};
+            "cd ${CGAL_DIR}; export MAKEFLAGS=${MAKEFLAGS};
             ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild-all" \
               >> ${ACTUAL_LOGFILE} 2>&1
     else
         for j in `value_of BUILD_ON_${1}`; do
             remote_command ${1} \
-                "cd ${CGAL_DIR};
+                "cd ${CGAL_DIR}; export MAKEFLAGS=${MAKEFLAGS};
                 ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild ${j}" \
                   >> ${ACTUAL_LOGFILE} 2>&1
         done
