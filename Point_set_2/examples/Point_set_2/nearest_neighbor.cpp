@@ -8,18 +8,16 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Point_set_2<K>::Edge_iterator  Edge_iterator;
 typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
-typedef K::Point_2                         Point_2;
+typedef K::Point_2                           Point_2;
 
 CGAL::Point_set_2<K> PSet;
 Point_2 ar1[5];
-
 
 
 int main()
 {
   std::list<Point_2> Lr;
   
-  int w1,w2;
   Point_2 p1(12,14);
   Point_2 p2(-12,14);  
   Point_2 p3(2,11);
@@ -47,8 +45,6 @@ int main()
   Vertex_handle v = PSet.nearest_neighbor(actual);
   std::cout << "Nearest neighbor:" << v->point() << "\n";
   
-  if (v->point() == p4) w1=0; else w1=1;
-  
   // k nearest neighbors ...
   std::list<Vertex_handle> L;
   std::list<Vertex_handle>::const_iterator it;
@@ -61,4 +57,3 @@ int main()
      
   return 0;
 }
-
