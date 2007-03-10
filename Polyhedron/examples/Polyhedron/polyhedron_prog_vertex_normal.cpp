@@ -4,7 +4,7 @@
 // (or at least reasonably planar convex polygons), and the normal
 // vector for vertices by accumulating the normal vectors of all
 // incident facets. All normal vectors are normalized, which requires
-// sqrt computations. Therefore we use the Simple_cartesian<double> 
+// sqrt computations. Therefore we use the Simple_cartesian<double>
 // kernel, which is also a natural choice in graphics. Note that the
 // normals computed are therefore not exact.
 
@@ -20,7 +20,7 @@ struct Facet_normal {
     template <class Facet>
     void operator()( Facet& f) {
         typename Facet::Halfedge_handle h = f.halfedge();
-        typename Facet::Normal_3 normal = CGAL::cross_product( 
+        typename Facet::Normal_3 normal = CGAL::cross_product(
           h->next()->vertex()->point() - h->vertex()->point(),
           h->next()->next()->vertex()->point() - h->next()->vertex()->point());
         f.normal() = normal / std::sqrt( normal * normal);

@@ -1,10 +1,10 @@
 
 // Implementation: Testprogram for 2-dimensional Segment Trees
 // Example for the construction of a two dimensional segment tree.
-// The data type of the first dimension is double and for the second 
-// dimension double. 
+// The data type of the first dimension is double and for the second
+// dimension double.
 // The elements that should be stored in the tree are pushed into
-// a list. Then a two dimensional segment tree is created and a 
+// a list. Then a two dimensional segment tree is created and a
 // window query is performed.
 
 #include <CGAL/basic.h>
@@ -34,7 +34,7 @@ int main()
   InputList.push_back(Interval(Key(2,7), Key(3,8)));
   InputList.push_back(Interval(Key(6,9), Key(9,13)));
   InputList.push_back(Interval(Key(1,3), Key(3,9)));
- 
+
   // creation of the segment tree
   std::list<Interval>::iterator first = InputList.begin();
   std::list<Interval>::iterator last = InputList.end();
@@ -50,8 +50,8 @@ int main()
   std::cerr << "\n window_query (3,6), (7,12)\n";
   while(j!=OutputList.end())
   {
-    std::cerr << (*j).first.x() << "-" << (*j).second.x() << " " 
-	 << (*j).first.y() << "-" << (*j).second.y() << std::endl; 
+    std::cerr << (*j).first.x() << "-" << (*j).second.x() << " "
+	 << (*j).first.y() << "-" << (*j).second.y() << std::endl;
     j++;
   }
   std::cerr << "\n enclosing_query (6,10),(7,11) \n";
@@ -61,8 +61,8 @@ int main()
   std::cerr << "\n enclosing_query (6,10),(7,11) \n";
   while(j!=N.end())
   {
-    std::cerr << (*j).first.x() << "-" << (*j).second.x() << " " 
-	 << (*j).first.y() << "-" << (*j).second.y() << std::endl; 
+    std::cerr << (*j).first.x() << "-" << (*j).second.x() << " "
+	 << (*j).first.y() << "-" << (*j).second.y() << std::endl;
     j++;
   }
   if(Segment_tree_2.segment_tree_2->is_valid())

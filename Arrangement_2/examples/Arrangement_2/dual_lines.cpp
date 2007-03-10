@@ -52,7 +52,7 @@ int main (int argc, char **argv)
     // The line dual to the point (p_x, p_y) is y = p_x*x - p_y,
     // or: p_x*x - y - p_y = 0:
     dual_lines.push_back (Line_2 (Number_type(px),
-                                  Number_type(-1), 
+                                  Number_type(-1),
                                   Number_type(-py)));
   }
   in_file.close();
@@ -66,7 +66,7 @@ int main (int argc, char **argv)
             << "V = " << arr.number_of_vertices()
             << " (+ " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces()
             << " (" << arr.number_of_unbounded_faces()
             << " unbounded)" << std::endl;
@@ -95,7 +95,7 @@ int main (int argc, char **argv)
   Point_2            p_mid = ker.construct_midpoint_2_object() (points[k1],
                                                                 points[k2]);
   X_monotone_curve_2 dual_p_mid = Line_2 (Number_type(p_mid.x()),
-                                          Number_type(-1), 
+                                          Number_type(-1),
                                           Number_type(-p_mid.y()));
 
   insert_x_monotone_curve (arr, dual_p_mid);

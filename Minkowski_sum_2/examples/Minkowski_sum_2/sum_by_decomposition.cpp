@@ -12,7 +12,7 @@
 
 // instead of
 //typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Exact_predicates_exact_constructions_kernel {};
 
 typedef Kernel::Point_2                               Point_2;
@@ -42,6 +42,6 @@ int main ()
   Polygon_with_holes_2  sum = minkowski_sum_2 (P, Q, ssab_decomp);
 
   std::cout << "P (+) Q = "; print_polygon_with_holes (sum);
-  
+
   return (0);
 }

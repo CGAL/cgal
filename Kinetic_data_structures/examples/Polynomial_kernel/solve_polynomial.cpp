@@ -20,7 +20,7 @@ typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Polynomial_double;
 typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::POLYNOMIAL::Default_field_nt> Polynomial_ft;
 
 
-template <class K, class P> 
+template <class K, class P>
 void solve(K k, P p, double lb, double ub, const char *name){
   typename CGAL::POLYNOMIAL::Polynomial_converter<P, typename K::Function> pc;
   typename K::Function f= pc(p);
@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
     double ub;
     std::cin >> ub;
     if (!std::cin) break;
-    
-    
+
+
     solve(k, input, lb, ub, "Turkowski");
 
 

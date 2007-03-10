@@ -8,7 +8,7 @@
 
 // instead of
 //typedef CGAL::Cartesian<Number_type>               Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Cartesian<Number_type> {};
 
 typedef Kernel::Point_2                            Point_2;
@@ -27,7 +27,7 @@ int main ()
   P.push_back (Point_2 (3.5, 1.5));
   P.push_back (Point_2 (2.5, 0.5));
   P.push_back (Point_2 (1.5, 1.5));
-     
+
   std::cout << "P = "; print_polygon (P);
 
   Polygon_2 Q;
@@ -36,7 +36,7 @@ int main ()
   Q.push_back (Point_2 (2.5, 1.5));
   Q.push_back (Point_2 (3.5, 0.5));
   Q.push_back (Point_2 (5, 2));
-     
+
   std::cout << "Q = "; print_polygon (Q);
 
   // Compute the union of P and Q.
@@ -46,7 +46,7 @@ int main ()
     std::cout << "The union: ";
     print_polygon_with_holes (unionR);
   } else
-    std::cout << "P and Q are disjoint and their union is trivial." 
+    std::cout << "P and Q are disjoint and their union is trivial."
               << std::endl;
   std::cout << std::endl;
 
@@ -61,6 +61,6 @@ int main ()
     std::cout << "--> ";
     print_polygon_with_holes (*it);
   }
-  
+
   return 0;
 }

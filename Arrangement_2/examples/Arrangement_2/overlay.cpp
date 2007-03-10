@@ -52,7 +52,7 @@ int main ()
   // Print the size of the overlaid arrangement.
   std::cout << "The overlaid arrangement size:" << std::endl
             << "   V = " << overlay_arr.number_of_vertices()
-            << ",  E = " << overlay_arr.number_of_edges() 
+            << ",  E = " << overlay_arr.number_of_edges()
             << ",  F = " << overlay_arr.number_of_faces() << std::endl;
 
   return (0);

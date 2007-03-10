@@ -23,14 +23,14 @@ typedef Traits::Sphere                    Sphere;
 int main () {
   std::vector<Sphere> S;                  // n spheres
   CGAL::Random r;                         // random number generator
-  
+
   for (int i=0; i<N; ++i) {
     const FT x = r.get_int(LOW,HIGH),
              y = r.get_int(LOW,HIGH);
     Point p(x,y);                         // random center...
     S.push_back(Sphere(p,r.get_int(LOW,HIGH))); // ...and random radius
   }
-  
+
   Min_sphere ms(S.begin(),S.end());       // check in the spheres
   CGAL_assertion(ms.is_valid());
 }

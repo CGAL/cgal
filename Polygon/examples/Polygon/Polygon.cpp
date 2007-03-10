@@ -15,11 +15,11 @@ int main()
   Polygon_2 pgn(points, points+4);
 
   // check if the polygon is simple.
-  cout << "The polygon is " << 
+  cout << "The polygon is " <<
     (pgn.is_simple() ? "" : "not ") << "simple." << endl;
 
   // check if the polygon is convex
-  cout << "The polygon is " << 
+  cout << "The polygon is " <<
     (pgn.is_convex() ? "" : "not ") << "convex." << endl;
 
   return 0;

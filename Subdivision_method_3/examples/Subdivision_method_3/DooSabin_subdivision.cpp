@@ -14,10 +14,10 @@ using namespace std;
 using namespace CGAL;
 
 int main(int argc, char **argv) {
-  if (argc != 2) { 
-    cout << "Usage: DooSabin_subdivision d < filename" << endl; 
-    cout << "       d: the depth of the subdivision (0 < d < 10)" << endl; 
-    cout << "       filename: the input mesh (.off)" << endl; 
+  if (argc != 2) {
+    cout << "Usage: DooSabin_subdivision d < filename" << endl;
+    cout << "       d: the depth of the subdivision (0 < d < 10)" << endl;
+    cout << "       filename: the input mesh (.off)" << endl;
     return 0;
   }
 
@@ -29,6 +29,6 @@ int main(int argc, char **argv) {
   Subdivision_method_3::DooSabin_subdivision(P,d);
 
   cout << P; // write the .off
-  
+
   return 0;
 }

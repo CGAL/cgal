@@ -52,7 +52,7 @@ public:
 int main ()
 {
   Arrangement_2   arr;
- 
+
   // Construct an arrangement of seven intersecting line segments.
   insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (7, 1)));
   insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
@@ -64,13 +64,13 @@ int main ()
 
   // Create a mapping of the arrangement faces to indices.
   CGAL::Arr_face_index_map<Arrangement_2>      index_map (arr);
-  
+
   // Perform breadth-first search from the unbounded face, and use the BFS
   // visitor to associate each arrangement face with its discover time.
   Discover_time_bfs_visitor<CGAL::Arr_face_index_map<Arrangement_2> >
                                                bfs_visitor (index_map);
   Arrangement_2::Face_handle                   uf = arr.unbounded_face();
-  
+
   boost::breadth_first_search (Dual_arrangement_2 (arr), uf,
                                boost::vertex_index_map (index_map).
                                visitor (bfs_visitor));

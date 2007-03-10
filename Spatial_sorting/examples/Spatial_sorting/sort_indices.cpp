@@ -26,9 +26,9 @@ struct Sort_traits_2 {
         : k (kernel)
     {}
     bool operator() (const Point_2 &p, const Point_2 &q) const
-    { 
+    {
       return k.less_x_2_object() (*p, *q);
-    } 
+    }
   };
 
   Less_x_2
@@ -36,16 +36,16 @@ struct Sort_traits_2 {
   {
     return Less_x_2(k);
   }
-  
+
   struct Less_y_2 {
     Kernel k;
     Less_y_2 (const Kernel &kernel = Kernel())
         : k (kernel)
     {}
     bool operator() (const Point_2 &p, const Point_2 &q) const
-    { 
+    {
       return k.less_y_2_object() (*p, *q);
-    } 
+    }
   };
 
 

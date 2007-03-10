@@ -12,12 +12,12 @@ typedef Point_3* point_iterator;
 typedef std::pair<point_iterator,point_iterator> point_range;
 typedef std::list<point_range> polygon;
 typedef polygon::const_iterator polygon_iterator;
-typedef CGAL::Polygon_constructor<Nef_polyhedron, polygon_iterator> 
+typedef CGAL::Polygon_constructor<Nef_polyhedron, polygon_iterator>
 Polygon_constructor;
 
 int main() {
 
-  Point_3 pl[4] = {Point_3(0,0,0), Point_3(1,0,0), 
+  Point_3 pl[4] = {Point_3(0,0,0), Point_3(1,0,0),
 		   Point_3(1,1,0), Point_3(0,1,0)};
   polygon poly;
   poly.push_back(point_range(pl,pl+4));

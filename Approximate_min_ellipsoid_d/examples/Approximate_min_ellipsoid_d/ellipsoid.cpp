@@ -32,7 +32,7 @@ int main()
   // compute approximation:
   Traits traits;
   AME ame(eps, P.begin(), P.end(), traits);
-  
+
   // write EPS file:
   if (ame.is_full_dimensional() && d == 2)
     ame.write_eps("example.eps");

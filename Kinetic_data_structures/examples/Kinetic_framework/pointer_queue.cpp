@@ -45,7 +45,7 @@ int main(int, char *[])
   Q pq(0, 10000, FK());
   typedef Q::Key Key;
   std::vector<Key>  items;
-  
+
   for (unsigned int i=0; i< 10000; ++i) {
     Time t(std::rand()/100000.0);
     items.push_back(pq.insert(t,Event(t)));
@@ -53,19 +53,19 @@ int main(int, char *[])
   for (unsigned int i=0; i< 5000; ++i) {
     pq.erase(items[i]);
   }
-  
+
   Time last_time = -1;
   while (!pq.empty()) {
     Time t= pq.front_priority();
     if (t < last_time) {
-      std::cerr << "ERROR: priority of next event (" << pq.front_priority() 
+      std::cerr << "ERROR: priority of next event (" << pq.front_priority()
 		<< ") is before the last one (" << last_time << ")." << std::cerr;
     }
     assert(t >= last_time);
     last_time=t;
     pq.process_front();
     if (t < last_time) {
-      std::cerr << "ERROR: wrong event processed (" << pq.front_priority() 
+      std::cerr << "ERROR: wrong event processed (" << pq.front_priority()
 		<< ") instead of (" << proc_time_ << ")." << std::cerr;
     }
     if (proc_time_!= t) {

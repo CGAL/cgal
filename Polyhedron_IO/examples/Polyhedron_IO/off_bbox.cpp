@@ -29,7 +29,7 @@ int main( int argc, char **argv) {
             verbose = true;
         else if ( strcmp( "-unit", argv[i]) == 0)
             unitcube = true;
-        else if ( (strcmp( "-h", argv[i]) == 0) || 
+        else if ( (strcmp( "-h", argv[i]) == 0) ||
                   (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 1 ) {
@@ -64,7 +64,7 @@ int main( int argc, char **argv) {
         p_in = &in;
         name = filename[0];
     }
-    if ( ! * p_in) { 
+    if ( ! * p_in) {
         cerr << argv[0] << ": error: cannot open file '"<< name
          << "' for reading." <<endl;
         exit( 1);
@@ -93,18 +93,18 @@ int main( int argc, char **argv) {
         bbox = bbox + CGAL::Bbox_3( x,y,z, x,y,z);
         scanner.skip_to_next_vertex( scanner.size_of_vertices() - v - 1);
     }
-    verr << ".... done." << scanner.size_of_vertices() << " points read." 
+    verr << ".... done." << scanner.size_of_vertices() << " points read."
          << endl;
 
-    if ( !in) { 
-        cerr << argv[0] << " read error: while reading file '"<< name << "'." 
+    if ( !in) {
+        cerr << argv[0] << " read error: while reading file '"<< name << "'."
              << endl;
         exit( 1);
     }
     if ( ! unitcube) {
-        cout << bbox.xmin() << "  " << bbox.ymin() << "  " << bbox.zmin() 
+        cout << bbox.xmin() << "  " << bbox.ymin() << "  " << bbox.zmin()
              << '\n';
-        cout << bbox.xmax() << "  " << bbox.ymax() << "  " << bbox.zmax() 
+        cout << bbox.xmax() << "  " << bbox.ymax() << "  " << bbox.zmax()
              << endl;
     } else {
         double s = DBL_MAX;
@@ -119,9 +119,9 @@ int main( int argc, char **argv) {
             s = 2/d;
         if ( s == DBL_MAX)
             s = 1;
-        cout << "-trans  " << (-(bbox.xmin() + bbox.xmax())/2) 
-             << "  "       << (-(bbox.ymin() + bbox.ymax())/2) 
-             << "  "       << (-(bbox.zmin() + bbox.zmax())/2) 
+        cout << "-trans  " << (-(bbox.xmin() + bbox.xmax())/2)
+             << "  "       << (-(bbox.ymin() + bbox.ymax())/2)
+             << "  "       << (-(bbox.zmin() + bbox.zmax())/2)
              << "  -scale  " << s << endl;
     }
     return 0;

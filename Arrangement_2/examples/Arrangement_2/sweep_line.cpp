@@ -19,13 +19,13 @@ int main()
                           Segment_2 (Point_2 (1, 1), Point_2 (8, 8)),
                           Segment_2 (Point_2 (3, 1), Point_2 (3, 8)),
                           Segment_2 (Point_2 (8, 5), Point_2 (8, 8))};
-  
+
   // Compute all intersection points.
   std::list<Point_2>     pts;
 
   CGAL::get_intersection_points (segments, segments + 4,
                                  std::back_inserter (pts));
-  
+
   // Print the result.
   std::copy (pts.begin(), pts.end(),
              std::ostream_iterator<Point_2>(std::cout, "\n"));

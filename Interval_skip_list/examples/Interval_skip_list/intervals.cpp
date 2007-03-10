@@ -29,7 +29,7 @@ int main()
     isl.find_intervals(i, std::back_inserter(L));
     for(std::list<Interval>::iterator it = L.begin(); it != L.end(); it++){
       std::cout << *it;
-    }  
+    }
     std::cout << std::endl;
   }
 

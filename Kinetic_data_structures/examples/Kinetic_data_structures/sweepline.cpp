@@ -42,9 +42,9 @@ struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
 
 
 
-template <class TraitsT> 
-class Planar_arrangement: 
-  public CGAL::Kinetic::Sort<TraitsT, 
+template <class TraitsT>
+class Planar_arrangement:
+  public CGAL::Kinetic::Sort<TraitsT,
 			     Arrangement_visitor<Planar_arrangement<TraitsT> > > {
   typedef TraitsT Traits;
   typedef Planar_arrangement<TraitsT> This;
@@ -56,7 +56,7 @@ class Planar_arrangement:
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
   typedef std::pair<int,int> Edge;
-  typedef typename Sort::Vertex_handle Vertex_handle; 
+  typedef typename Sort::Vertex_handle Vertex_handle;
 
   // Register this KDS with the MovingObjectTable and the Simulator
   Planar_arrangement(Traits tr): Sort(tr, Visitor(this)), tr_(tr) {}
@@ -137,7 +137,7 @@ int main(int, char *[])
 
   std::ifstream in("data/sweepline.input");
 
-  int num=0; 
+  int num=0;
   std::vector<std::pair<NT, NT> > extents;
   std::vector<Point> points;
   do {

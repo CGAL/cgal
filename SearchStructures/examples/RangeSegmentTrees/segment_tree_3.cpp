@@ -26,7 +26,7 @@ int main()
   InputList.push_back(Interval(Key(2,6.7,5), Key(4,6.9, 8)));
   InputList.push_back(Interval(Key(2,4.55, 8), Key(5, 7.88, 10)));
   InputList.push_back(Interval(Key(2, 4.66, 5), Key(6, 8.99, 8)));
- 
+
   // creation of the segment tree
   std::list<Interval>::iterator first = InputList.begin();
   std::list<Interval>::iterator last = InputList.end();
@@ -42,8 +42,8 @@ int main()
   std::cerr << "\n window_query (3,4.88, 6),(6, 8.999, 9)\n";
   while(j!=OutputList.end())
   {
-    std::cerr << (*j).first.key_1 << "," << (*j).first.key_2 << ", " 
-	 << (*j).first.key_3 << "-" << (*j).second.key_1 << "," 
+    std::cerr << (*j).first.key_1 << "," << (*j).first.key_2 << ", "
+	 << (*j).first.key_3 << "-" << (*j).second.key_1 << ","
 	 << (*j).second.key_2 << ", " << (*j).second.key_3 << std::endl;
     j++;
   }
@@ -53,8 +53,8 @@ int main()
   std::cerr << "\n enclosing_query(2,6.8,9),(3,7,10)\n";
   while(j!=N.end())
   {
-    std::cerr << (*j).first.key_1 << "," << (*j).first.key_2 << ", " 
-	 << (*j).first.key_3 << "-" << (*j).second.key_1 << "," 
+    std::cerr << (*j).first.key_1 << "," << (*j).first.key_2 << ", "
+	 << (*j).first.key_3 << "-" << (*j).second.key_1 << ","
 	 << (*j).second.key_2 << ", " << (*j).second.key_3 << std::endl;
     j++;
   }

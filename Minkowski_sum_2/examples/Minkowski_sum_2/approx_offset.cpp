@@ -37,7 +37,7 @@ int main ()
   in_file >> P;
   in_file.close();
 
-  std::cout << "Read an input polygon with " 
+  std::cout << "Read an input polygon with "
             << P.size() << " vertices." << std::endl;
 
   // Approximate the offset polygon.
@@ -53,7 +53,7 @@ int main ()
   std::cout << "The offset polygon has "
             << offset.outer_boundary().size() << " vertices, "
             << offset.number_of_holes() << " holes." << std::endl;
-  std::cout << "Offset computation took " 
+  std::cout << "Offset computation took "
             << timer.time() << " seconds." << std::endl;
   return (0);
 }

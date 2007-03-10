@@ -31,7 +31,7 @@ int main ()
   std::cout << "Writing an arrangement of "
             << arr.number_of_curves() << " input segments:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Write the arrangement to a file.
@@ -46,11 +46,11 @@ int main ()
 
   in_file >> arr2;
   in_file.close();
-  
+
   std::cout << "Read an arrangement of "
             << arr2.number_of_curves() << " input segments:" << std::endl
             << "   V = " << arr2.number_of_vertices()
-            << ",  E = " << arr2.number_of_edges() 
+            << ",  E = " << arr2.number_of_edges()
             << ",  F = " << arr2.number_of_faces() << std::endl;
 
   return (0);

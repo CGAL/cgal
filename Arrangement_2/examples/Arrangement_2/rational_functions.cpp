@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -32,7 +32,7 @@ int main ()
 {
   // Create an arc supported by the polynomial y = x^4 - 6x^2 + 8,
   // defined over the interval [-2.1, 2.1]:
-  Rat_vector        P1(5);  
+  Rat_vector        P1(5);
   P1[4] = 1; P1[3] = 0; P1[2] = -6; P1[1] = 0; P1[0] = 8;
 
   Rational_arc_2    a1 (P1, Algebraic(-2.1), Algebraic(2.1));
@@ -49,14 +49,14 @@ int main ()
 
   // Create an arc supported by the parbola y = 8 - x^2,
   // defined over the interval [-2, 3]:
-  Rat_vector        P3(5);  
+  Rat_vector        P3(5);
   P3[2] = -1; P3[1] = 0; P3[0] = 8;
 
   Rational_arc_2    a3 (P3, Algebraic(-2), Algebraic(3));
 
   // Create an arc supported by the line y = -2x,
   // defined over the interval [-3, 0]:
-  Rat_vector        P4(2);  
+  Rat_vector        P4(2);
   P4[1] = -2; P4[0] = 0;
 
   Rational_arc_2    a4 (P4, Algebraic(-3), Algebraic(0));
@@ -74,7 +74,7 @@ int main ()
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return 0;

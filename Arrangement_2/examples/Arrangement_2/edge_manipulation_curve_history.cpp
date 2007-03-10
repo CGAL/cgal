@@ -14,14 +14,14 @@ typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Curve_2;
 typedef CGAL::Arrangement_with_history_2<Traits_2>    Arr_with_hist_2;
 typedef Arr_with_hist_2::Curve_handle                 Curve_handle;
-typedef CGAL::Arr_walk_along_line_point_location<Arr_with_hist_2>  
+typedef CGAL::Arr_walk_along_line_point_location<Arr_with_hist_2>
                                                       Point_location;
 
 int main ()
 {
   // Construct an arrangement containing nine circles: C[0] of radius 2 and
   // C[1], ..., C[8] of radius 1.
-  const Number_type _7_halves = Number_type (7, 2); 
+  const Number_type _7_halves = Number_type (7, 2);
   Arr_with_hist_2   arr;
   Curve_2           C[9];
   Curve_handle      handles[9];
@@ -42,17 +42,17 @@ int main ()
 
   std::cout << "The initial arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Remove the large circle C[0].
   std::cout << "Removing C[0] : ";
-  std::cout << remove_curve (arr, handles[0]) 
+  std::cout << remove_curve (arr, handles[0])
             << " edges have been removed." << std::endl;
 
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Locate the point q, which should be on an edge e.
@@ -63,7 +63,7 @@ int main ()
   bool                                    success = CGAL::assign (e, obj);
 
   CGAL_assertion (success);
- 
+
   // Split the edge e to two edges e1 and e2;
   Arr_with_hist_2::Halfedge_handle        e1, e2;
 
@@ -72,7 +72,7 @@ int main ()
 
   std::cout << "After edge split: "
             << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Merge back the two split edges.
@@ -80,7 +80,7 @@ int main ()
 
   std::cout << "After edge merge: "
             << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return (0);

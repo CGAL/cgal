@@ -24,10 +24,10 @@ int main()
 
   // insertion of points on a 3D grid
   std::vector<Vertex_handle> V;
-  
+
   for (int z=0 ; z<5 ; z++)
     for (int y=0 ; y<5 ; y++)
-      for (int x=0 ; x<5 ; x++) 
+      for (int x=0 ; x<5 ; x++)
 	  V.push_back(T.insert(Point(x,y,z)));
 
   assert( T.is_valid() );

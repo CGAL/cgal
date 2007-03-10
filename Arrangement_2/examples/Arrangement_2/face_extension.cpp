@@ -29,13 +29,13 @@ public:
     n_faces (0)
   {
     CGAL_precondition (arr.is_empty());
-    
+
     arr.unbounded_face()->set_data (0);
     n_faces++;
   }
 
   virtual void after_split_face (Face_handle old_face,
-                                 Face_handle new_face, bool ) 
+                                 Face_handle new_face, bool )
   {
     // Assign index to the new face.
     new_face->set_data (n_faces);

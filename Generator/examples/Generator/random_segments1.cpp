@@ -43,7 +43,7 @@ int main() {
         assert( i->source().x() <=  100);
         assert( i->source().x() >= -100);
         assert( i->source().y() ==    0);
-        assert( i->target().x() * i->target().x() + 
+        assert( i->target().x() * i->target().x() +
                 i->target().y() * i->target().y() <=  251*251);
         assert( i->target().x() * i->target().x() +
                 i->target().y() * i->target().y() >=  249*249);

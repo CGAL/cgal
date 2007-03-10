@@ -59,13 +59,13 @@ int main()
   // nli is the index of v in nc
 
   std::ofstream oFileT("output",std::ios::out);
-  // writing file output; 
-  oFileT << T; 
+  // writing file output;
+  oFileT << T;
 
   Triangulation T1;
   std::ifstream iFileT("output",std::ios::in);
-  // reading file output; 
-  iFileT >> T1; 
+  // reading file output;
+  iFileT >> T1;
   assert( T1.is_valid() );
   assert( T1.number_of_vertices() == T.number_of_vertices() );
   assert( T1.number_of_cells() == T.number_of_cells() );

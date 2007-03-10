@@ -12,9 +12,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -74,9 +74,9 @@ int main() {
     }
   }
 
-  std::cout << "The approximate probability that 2 spheres with radius 1" 
+  std::cout << "The approximate probability that 2 spheres with radius 1"
             << std::endl;
-  std::cout << "choosen (uniformly) randomly on a 5x5x5 box intersect is: " 
+  std::cout << "choosen (uniformly) randomly on a 5x5x5 box intersect is: "
             << ((double)count)/((double)(10000)) << std::endl;
   std::cout << "The mean size of the radius of the intersection circle is: "
             << (mean / ((double)count)) << std::endl << std::endl;
@@ -102,9 +102,9 @@ int main() {
     if(intersection_1.size() > 0) count++;
   }
 
-  std::cout << "The approximate probability that 3 spheres with radius 1" 
+  std::cout << "The approximate probability that 3 spheres with radius 1"
             << std::endl;
-  std::cout << "choosen (uniformly) randomly on a 5x5x5 box intersect is: " 
+  std::cout << "choosen (uniformly) randomly on a 5x5x5 box intersect is: "
             << ((double)count)/((double)(10000)) << std::endl;
 
   return 0;

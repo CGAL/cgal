@@ -1,7 +1,7 @@
 
 // computes the distance between two cubes in R^3 using double
 // as input type and some internal EXACT floating point type;
-// the fast type double is also safely used for many of the 
+// the fast type double is also safely used for many of the
 // internal computations
 #include <iostream>
 #include <cassert>
@@ -18,7 +18,7 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an inexact kernel...
-typedef CGAL::Simple_cartesian<double>     K;  
+typedef CGAL::Simple_cartesian<double>     K;
 typedef K::Point_3                         Point;
 // ... and the EXACT traits class based on the inexcat kernel
 typedef CGAL::Optimisation_d_traits_3<K, ET, double>  Traits;
@@ -35,7 +35,7 @@ int main()
   Point Q[8] = { Point(2,2,2), Point(2,2,3), Point(2,3,2), Point(2,3,3),
                  Point(3,2,2), Point(3,2,3), Point(3,3,2), Point(3,3,3)};
 
-  Polytope_distance pd(P, P+8, Q, Q+8); 
+  Polytope_distance pd(P, P+8, Q, Q+8);
   assert (pd.is_valid());
 
   // get squared distance (2,2,2)-(1,1,1))^2 = 3
@@ -62,4 +62,4 @@ int main()
 
   return 0;
 
-} 
+}

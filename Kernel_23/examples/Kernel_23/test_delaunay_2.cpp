@@ -17,9 +17,9 @@ Delaunay_triang_2 dt;
 
 int main()
 {
-  std::list<Point> input;  
+  std::list<Point> input;
   Point act;
 
   dt.insert(act);
-  return 0;  
+  return 0;
 }

@@ -23,9 +23,9 @@ class WLoop_mask_3 {
   typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
   typedef typename Polyhedron::Facet_iterator          Facet_iterator;
 
-  typedef typename Polyhedron::Halfedge_around_facet_circulator  
+  typedef typename Polyhedron::Halfedge_around_facet_circulator
                                             Halfedge_around_facet_circulator;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator 
+  typedef typename Polyhedron::Halfedge_around_vertex_circulator
                                             Halfedge_around_vertex_circulator;
 
   typedef typename Polyhedron::Traits                  Traits;
@@ -41,7 +41,7 @@ public:
     Point& p2 = eitr->opposite()->vertex()->point();
     Point& f1 = eitr->next()->vertex()->point();
     Point& f2 = eitr->opposite()->next()->vertex()->point();
-    
+
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
 	       (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
 	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
@@ -51,7 +51,7 @@ public:
     Point& S = vitr->point();
 
     Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
-    int n = circulator_size(vcir);    
+    int n = circulator_size(vcir);
     for (int i = 0; i < n; i++, ++vcir) {
       Point& p = vcir->opposite()->vertex()->point();
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
@@ -84,10 +84,10 @@ public:
 };
 
 int main(int argc, char **argv) {
-  if (argc != 2) { 
-    cout << "Usage: Customized_subdivision d < filename" << endl; 
-    cout << "       d: the depth of the subdivision (0 < d < 10)" << endl; 
-    cout << "       filename: the input mesh (.off)" << endl; 
+  if (argc != 2) {
+    cout << "Usage: Customized_subdivision d < filename" << endl;
+    cout << "       d: the depth of the subdivision (0 < d < 10)" << endl;
+    cout << "       filename: the input mesh (.off)" << endl;
     return 0;
   }
 
@@ -99,6 +99,6 @@ int main(int argc, char **argv) {
   Subdivision_method_3::PTQ(P, WLoop_mask_3<Polyhedron>(), d);
 
   cout << P; // write the .off
- 
+
   return 0;
 }

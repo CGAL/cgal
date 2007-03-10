@@ -26,7 +26,7 @@ int main() {
   if(N1.is_simple()) {
     N1.convert_to_Polyhedron(P);
     std::cout << P;
-  } 
+  }
   else {
     std::cout << N1;
   }

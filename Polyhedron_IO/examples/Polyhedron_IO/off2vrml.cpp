@@ -30,7 +30,7 @@ int main( int argc, char **argv) {
             verbose = true;
         else if ( strcmp( "-2", argv[i]) == 0)
             version = 2;
-        else if ( (strcmp( "-h", argv[i]) == 0) || 
+        else if ( (strcmp( "-h", argv[i]) == 0) ||
                   (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 2 ) {
@@ -63,7 +63,7 @@ int main( int argc, char **argv) {
         p_in = &in;
         iname = filename[0];
     }
-    if ( !*p_in) { 
+    if ( !*p_in) {
         cerr << argv[0] << ": error: cannot open file '"<< iname
              << "' for reading." <<endl;
         exit( 1);
@@ -77,13 +77,13 @@ int main( int argc, char **argv) {
         p_out = &out;
         oname = filename[1];
     }
-    if ( !*p_out) { 
+    if ( !*p_out) {
         cerr << argv[0] << ": error: cannot open file '"<< oname
              << "' for writing." <<endl;
         exit( 1);
     }
 
-    vout << "CGAL::generic_copy_OFF( " << iname << ", " << oname 
+    vout << "CGAL::generic_copy_OFF( " << iname << ", " << oname
          << ", V" << version << " ) ...." << endl;
     if ( version == 1) {
         CGAL::VRML_1_ostream os( *p_out);
@@ -98,13 +98,13 @@ int main( int argc, char **argv) {
     }
     vout << "    .... done." << endl;
 
-    if ( !*p_in) { 
-        cerr << argv[0] << " read error: while reading file '"<< iname << "'." 
+    if ( !*p_in) {
+        cerr << argv[0] << " read error: while reading file '"<< iname << "'."
              << endl;
         exit( 1);
     }
-    if ( !*p_out) { 
-        cerr << argv[0] <<" write error: while writing file '"<< oname << "'." 
+    if ( !*p_out) {
+        cerr << argv[0] <<" write error: while writing file '"<< oname << "'."
              << endl;
         exit( 1);
     }

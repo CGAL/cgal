@@ -17,11 +17,11 @@ main( )
 {
   CDT cdt;
   std::cout << "Inserting a grid of 5x5 constraints " << std::endl;
-  for (int i = 1; i < 6; ++i) 
+  for (int i = 1; i < 6; ++i)
     cdt.insert_constraint( Point(0,i), Point(6,i));
-  for (int j = 1; j < 6; ++j) 
+  for (int j = 1; j < 6; ++j)
     cdt.insert_constraint( Point(j,0), Point(j,6));
-  
+
   assert(cdt.is_valid());
   int count = 0;
   for (CDT::Finite_edges_iterator eit = cdt.finite_edges_begin();
@@ -32,4 +32,4 @@ main( )
   std::cout <<  count << std::endl;
   return 0;
 }
-  
+

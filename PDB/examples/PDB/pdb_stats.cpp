@@ -35,14 +35,14 @@ int main(int argc, char *argv[]){
     boost::program_options::options_description o("Allowed options"), po, ao;
     o.add_options()
       ("help", boost::program_options::bool_switch(&print_help), "produce help message")
-      ("verbose,v", boost::program_options::bool_switch(&verbose), 
+      ("verbose,v", boost::program_options::bool_switch(&verbose),
        "Print error messages from reading the pdb files.");
     po.add_options()
       ("input-pdb", boost::program_options::value< std::string >(&input_file),
        "The input and output files.");
 
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("input-pdb", -1);
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 				  options(ao).positional(p).run(), vm);
     boost::program_options::notify(vm);
 
-    
+
     if (print_help || input_file.empty()) {
       std::cout << "Print some statistics of a pdb file.\n";
       std::cout << "usage: " << argv[0] << " pdb_file.pdb\n";
@@ -65,9 +65,9 @@ int main(int argc, char *argv[]){
     std::cerr << "Error opening input file " << input_file << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   CGAL_PDB_NS::PDB inpdb(in, verbose);
-    
+
   std::cout << "PDB has " << inpdb.number_of_models() << " models." << std::endl;
 
   for (CGAL_PDB_NS::PDB::Models_iterator mit= inpdb.models_begin(); mit != inpdb.models_end(); ++mit){
@@ -78,8 +78,8 @@ int main(int argc, char *argv[]){
     }
     std::cout << std::endl;
   }
-  
- 
-  
+
+
+
   return EXIT_SUCCESS;
 }

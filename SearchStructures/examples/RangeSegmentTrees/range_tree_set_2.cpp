@@ -60,7 +60,7 @@ int main()
   else
     std::cerr << "Tree is not valid\n";
 
-  return 0; 
+  return 0;
 }
 
 

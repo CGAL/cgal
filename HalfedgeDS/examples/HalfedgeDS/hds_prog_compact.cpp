@@ -8,8 +8,8 @@
 // be created from a pointer (e.g. the HalfedgeDS is based here on the
 // In_place_list or a std::vector with such property) and that halfedges
 // are allocated in pairs. We encode the opposite pointer in a single bit,
-// which is stored in the lower bit of the next-pointer. We use the 
-// static member function HDS::halfedge_handle to translate pointer to 
+// which is stored in the lower bit of the next-pointer. We use the
+// static member function HDS::halfedge_handle to translate pointer to
 // handles.
 template <class Refs>
 class My_halfedge {
@@ -34,8 +34,8 @@ public:
     My_halfedge() : nxt(0), f( Face_handle()) {}
 
     Halfedge_handle opposite() {
-        // Halfedge could be different from My_halfedge (e.g. pointer for 
-        // linked list). Get proper handle from 'this' pointer first, do 
+        // Halfedge could be different from My_halfedge (e.g. pointer for
+        // linked list). Get proper handle from 'this' pointer first, do
         // pointer arithmetic, then convert pointer back to handle again.
         Halfedge_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
@@ -56,7 +56,7 @@ public:
                                     (nxt & (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
-        CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) || 
+        CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) ||
                           ( &* h + 1 == &* HDS::halfedge_handle(this)));
         if ( &* h - 1 == &* HDS::halfedge_handle(this))
             nxt |= 1;

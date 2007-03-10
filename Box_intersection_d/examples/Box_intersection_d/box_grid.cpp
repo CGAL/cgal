@@ -32,27 +32,27 @@ Report<Iter> report( Iter it) { return Report<Iter>(it); }
 int main() {
     // run the intersection algorithm and store results in a vector
     std::vector<std::size_t> result;
-    CGAL::box_intersection_d( boxes, boxes+9, query, query+2, 
+    CGAL::box_intersection_d( boxes, boxes+9, query, query+2,
                               report( std::back_inserter( result)));
     // sort, check, and show result
     std::sort( result.begin(), result.end());
     std::size_t check1[13] = {0,1,2,3,4,4,5,5,6,7,7,8,8};
     assert(result.size() == 13 && std::equal(check1,check1+13,result.begin()));
-    std::copy( result.begin(), result.end(), 
+    std::copy( result.begin(), result.end(),
                std::ostream_iterator<std::size_t>( std::cout, " "));
     std::cout << std::endl;
 
     // run it again but for different cutoff value and half-open boxes
     result.clear();
-    CGAL::box_intersection_d( boxes, boxes+9, query, query+2, 
+    CGAL::box_intersection_d( boxes, boxes+9, query, query+2,
                               report( std::back_inserter( result)),
-                              std::ptrdiff_t(1), 
+                              std::ptrdiff_t(1),
                               CGAL::Box_intersection_d::HALF_OPEN);
     // sort, check, and show result
     std::sort( result.begin(), result.end());
     std::size_t check2[2]  = {4,8};
     assert(result.size() == 2 && std::equal(check2, check2+2, result.begin()));
-    std::copy( result.begin(), result.end(), 
+    std::copy( result.begin(), result.end(),
                std::ostream_iterator<std::size_t>( std::cout, " "));
     std::cout << std::endl;
     return 0;

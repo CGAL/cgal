@@ -81,18 +81,18 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 // 1. the exact number of points to be used
 // 2. the exact number of rings to be used
 // 3. nothing is specified
-void gather_fitting_points(Vertex* v, 
+void gather_fitting_points(Vertex* v,
 			   std::vector<DPoint> &in_points,
 			   Vertex_PM_type& vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
-  std::vector<Vertex*> gathered; 
+  std::vector<Vertex*> gathered;
   //initialize
-  in_points.clear();  
-  
+  in_points.clear();
+
   //OPTION -p nb_points_to_use, with nb_points_to_use != 0. Collect
   //enough rings and discard some points of the last collected ring to
-  //get the exact "nb_points_to_use" 
+  //get the exact "nb_points_to_use"
   if ( nb_points_to_use != 0 ) {
     Poly_rings::collect_enough_rings(v, nb_points_to_use, gathered, vpm);
     if ( gathered.size() > nb_points_to_use ) gathered.resize(nb_points_to_use);
@@ -101,13 +101,13 @@ void gather_fitting_points(Vertex* v,
     // then option -a nb_rings is checked. If nb_rings=0, collect
     // enough rings to get the min_nb_points required for the fitting
     // else collect the nb_rings required
-    if ( nb_rings == 0 ) 
+    if ( nb_rings == 0 )
       Poly_rings::collect_enough_rings(v, min_nb_points, gathered, vpm);
     else Poly_rings::collect_i_rings(v, nb_rings, gathered, vpm);
   }
-     
+
   //store the gathered points
-  std::vector<Vertex*>::iterator 
+  std::vector<Vertex*>::iterator
     itb = gathered.begin(), ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
@@ -139,11 +139,11 @@ int main(int argc, char *argv[])
       ("verbose,v", po::value<bool>(&verbose)->default_value(false),
        "verbose output on text file")
       ;
-    
-    po::variables_map vm;        
+
+    po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);    
-    
+    po::notify(vm);
+
     if (vm.count("help")) {
       cout << desc << "\n";
       return 1;
@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
 
   //modify global variables which are fct of options:
   min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
-  if (nb_points_to_use < min_nb_points && nb_points_to_use != 0) 
-    {std::cerr << "the nb of points asked is not enough to perform the fitting" << std::endl; exit(0);} 
+  if (nb_points_to_use < min_nb_points && nb_points_to_use != 0)
+    {std::cerr << "the nb of points asked is not enough to perform the fitting" << std::endl; exit(0);}
 
   //prepare output file names
   //--------------------------
@@ -168,14 +168,14 @@ int main(int argc, char *argv[])
   assert(if_name != NULL);
   w_if_name = new char[strlen(if_name)+1];
   strcpy(w_if_name, if_name);
-  for(unsigned int i=0; i<strlen(w_if_name); i++) 
+  for(unsigned int i=0; i<strlen(w_if_name); i++)
     if (w_if_name[i] == '/') w_if_name[i]='_';
-  cerr << if_name << '\n';  
-  cerr << w_if_name << '\n';  
+  cerr << if_name << '\n';
+  cerr << w_if_name << '\n';
 
   res4openGL_fname = new char[strlen(w_if_name) + 10];// append .4ogl.txt
   sprintf(res4openGL_fname, "%s.4ogl.txt", w_if_name);
-  out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out); 
+  out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out);
   assert(out_4ogl!=NULL);
   //if verbose only...
   if(verbose){
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     assert(out_verbose != NULL);
     CGAL::set_pretty_mode(*out_verbose);
   }
-  unsigned int nb_vertices_considered = 0;//count vertices for verbose 
+  unsigned int nb_vertices_considered = 0;//count vertices for verbose
 
   //load the model from <mesh.off>
   //------------------------------
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 	    << " vertices and " << P.size_of_facets()
 	    << " facets. " << std::endl;
 
-  if(verbose) 
+  if(verbose)
     (*out_verbose) << "Polysurf with " << P.size_of_vertices()
 		   << " vertices and " << P.size_of_facets()
 		   << " facets. " << std::endl;
@@ -208,19 +208,19 @@ int main(int argc, char *argv[])
   //Vertex, using a std::map
   Vertex2int_map_type vertex2props;
   Vertex_PM_type vpm(vertex2props);
-  
+
   //Hedge, with enriched hedge
   //HEdgePM_type hepm = get_hepm(boost::edge_weight_t(), P);
   //Hedge, using a std::map
   Hedge2double_map_type hedge2props;
-  Hedge_PM_type hepm(hedge2props);  
-  
+  Hedge_PM_type hepm(hedge2props);
+
   //Facet PM, with enriched Facet
   //FacetPM_type fpm = get_fpm(boost::vertex_attribute_t(), P);
   //Facet PM, with std::map
   Facet2normal_map_type facet2props;
-  Facet_PM_type fpm(facet2props);  
-  
+  Facet_PM_type fpm(facet2props);
+
   //initialize Polyhedral data : length of edges, normal of facets
   Poly_hedge_ops::compute_edges_length(P, hepm);
   Poly_facet_ops::compute_facets_normals(P, fpm);
@@ -238,14 +238,14 @@ int main(int argc, char *argv[])
   for (; vitb != vite; vitb++) {
     //initialize
     Vertex* v = &(*vitb);
-    in_points.clear();  
+    in_points.clear();
     My_Monge_form monge_form;
-      
+
     //gather points around the vertex using rings
     gather_fitting_points(v, in_points, vpm);
 
-    //skip if the nb of points is to small 
-    if ( in_points.size() < min_nb_points ) 
+    //skip if the nb of points is to small
+    if ( in_points.size() < min_nb_points )
       {std::cerr << "not enough pts for fitting this vertex" << in_points.size() << std::endl;
 	continue;}
 
@@ -256,21 +256,21 @@ int main(int argc, char *argv[])
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
     monge_form.comply_wrt_given_normal(normal_mesh);
- 
+
     //OpenGL output. Scaling for ppal dir, may be optimized with a
     //global mean edges length computed only once on all edges of P
     DFT scale_ppal_dir = Poly_hedge_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
- 
+
     (*out_4ogl) << v->point()  << " ";
     monge_form.dump_4ogl(*out_4ogl, scale_ppal_dir);
 
-    //verbose txt output 
-    if (verbose) {     
+    //verbose txt output
+    if (verbose) {
       std::vector<DPoint>::iterator itbp = in_points.begin(), itep = in_points.end();
       (*out_verbose) << "in_points list : " << std::endl ;
       for (;itbp!=itep;itbp++) (*out_verbose) << *itbp << std::endl ;
-      
-      (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
+
+      (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered
 		     <<	" : " << v->point() << std::endl
 		     << "number of points used : " << in_points.size() << std::endl
 	;// << monge_form;
@@ -279,14 +279,14 @@ int main(int argc, char *argv[])
 
   //cleanup filenames
   //------------------
-  delete res4openGL_fname; 
-  out_4ogl->close(); 
+  delete res4openGL_fname;
+  out_4ogl->close();
   delete out_4ogl;
   if(verbose) {
     delete verbose_fname;
-    out_verbose->close(); 
+    out_verbose->close();
     delete out_verbose;
   }
   return 0;
 }
- 
+

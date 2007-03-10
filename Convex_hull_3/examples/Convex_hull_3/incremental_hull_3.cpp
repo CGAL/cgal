@@ -25,13 +25,13 @@ int main()
   CGAL::Random_points_in_sphere_3<Point_3, Creator> gen(100.0);
 
   std::vector<Point_3> V;
-  // generate 250 points randomly on a sphere of radius 100.0 and copy 
+  // generate 250 points randomly on a sphere of radius 100.0 and copy
   // them to a vector
-  CGAL::copy_n( gen, 250, std::back_inserter(V) ); 
-  
-  Polyhedron P; // define polyhedron to hold convex hull 
+  CGAL::copy_n( gen, 250, std::back_inserter(V) );
 
-  // compute convex hull 
+  Polyhedron P; // define polyhedron to hold convex hull
+
+  // compute convex hull
   CGAL::convex_hull_incremental_3( V.begin(), V.end(), P, true);
 
 

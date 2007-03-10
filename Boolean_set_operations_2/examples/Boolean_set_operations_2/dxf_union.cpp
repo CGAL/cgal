@@ -24,7 +24,7 @@ typedef CGAL::General_polygon_set_2<Traits_2>        General_polygon_set_2;
 
 static const int DEFAULT_GROUP_SIZE = 5;
 
-// The command line should be: 
+// The command line should be:
 //   ex_dxf_union [DXF file] [simplify] [group size]
 int main (int argc, char **argv)
 {
@@ -81,18 +81,18 @@ int main (int argc, char **argv)
             << std::distance (pgns_with_holes.begin(), pgns_with_holes.end())
             << " polygons with holes." << std::endl;
 
-  input_file.close();  
+  input_file.close();
 
   // Compute their union.
   CGAL::Timer                    t_union;
-  
+
   std::cout << "Computing the union ... " << std::flush;
   t_union.start();
 
   gps.join (pgns.begin(), pgns.end(),
             pgns_with_holes.begin(), pgns_with_holes.end(),
             group_size);
-  
+
   t_union.stop();
   std::cout << "Done! (" << t_union.time() << " seconds)." << std::endl;
 

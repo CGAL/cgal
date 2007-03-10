@@ -15,8 +15,8 @@ typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef Segment_traits_2::X_monotone_curve_2            Segment_2;
-typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2, 
-                                      char>             Traits_2; 
+typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2,
+                                      char>             Traits_2;
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::X_monotone_curve_2                    Labeled_segment_2;
 typedef CGAL::Env_default_diagram_1<Traits_2>           Diagram_1;
@@ -45,7 +45,7 @@ int main ()
 
   // Compute the minimization diagram that represents their lower envelope.
   Diagram_1              min_diag;
-  
+
   lower_envelope_x_monotone_2 (segments.begin(), segments.end(),
                                min_diag);
 

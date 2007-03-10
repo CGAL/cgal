@@ -26,7 +26,7 @@ int main() {
   CGAL_assertion(Cube1 == Cube2);  // both are closed cube
   CGAL_assertion(Cube1 == Cube1.closure());
   CGAL_assertion(Cube1 == Cube1.regularization());
-  CGAL_assertion((N1 - N1.boundary()) == N1.interior()); 
+  CGAL_assertion((N1 - N1.boundary()) == N1.interior());
   CGAL_assertion(I1.closure() == I1.complement().interior().complement());
   CGAL_assertion(I1.regularization() == I1.interior().closure());
   return 0;

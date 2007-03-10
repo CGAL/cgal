@@ -69,7 +69,7 @@ int main (int argc, char * argv[])
 
     circles.push_back (construct_polygon (circle));
   }
-  
+
   // Compute the union aggragately.
   std::list<Polygon_with_holes_2> res;
   CGAL::join (circles.begin(), circles.end(), std::back_inserter (res));
@@ -78,6 +78,6 @@ int main (int argc, char * argv[])
   std::copy (res.begin(), res.end(),
              std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));
   std::cout << std::endl;
-  
+
   return 0;
 }

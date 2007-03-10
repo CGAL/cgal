@@ -24,7 +24,7 @@ typedef CGAL::Arrangement_2<Traits>                     Arr;
 typedef CGAL::Arr_naive_point_location<Arr>             Point_location;
 
 int main(){
-  
+
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -45,7 +45,7 @@ int main(){
   for (ArcContainer::const_iterator it=ac.begin(); it != ac.end(); ++it) {
     insert_curve(arr, *it, _pl);
   };
-  
+
   return 0;
 };
 

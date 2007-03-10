@@ -21,7 +21,7 @@ int main()
   std::ifstream fin("terrain.pts"); // elevation ranges from 0 to 100
   Delaunay dt;
 
-  dt.insert(std::istream_iterator<Point_3>(fin), 
+  dt.insert(std::istream_iterator<Point_3>(fin),
 	    std::istream_iterator<Point_3>());
 
   Interval_skip_list isl;

@@ -82,7 +82,7 @@ void init_double_options()
   double_options["r"] = 0;
   double_options["special"] = 0.;
   double_options["distance_bound"] = 1000000000000000.;
-  
+
   // bound on radius of surface Delaunay balls
   double_options["radius_bound"] = 10000000000000.;
 

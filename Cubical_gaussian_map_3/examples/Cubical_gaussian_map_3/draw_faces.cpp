@@ -1,5 +1,5 @@
 /*
-  agc course project, 
+  agc course project,
   spherical arrangements of none intersecting arcs of great circles on a sphere
 
   an example for traversing spherical faces boundaries
@@ -92,7 +92,7 @@ int main() {
   sMap.insert(curv6);
   std::cout << "inserting curve (-1,0,1) - (1,-1,1)" << std::endl;
   sMap.insert(curv7);
-  
+
   std::cout << "displaying current map faces" << std::endl;
   for (fit = sMap.faces_begin(); fit != sMap.faces_end(); ++fit) {
     displayFace(fit);

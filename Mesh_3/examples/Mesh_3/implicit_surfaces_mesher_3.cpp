@@ -45,7 +45,7 @@
 
 using boost::tie;
 
-/////////////// Types /////////////// 
+/////////////// Types ///////////////
 
 struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
@@ -114,8 +114,8 @@ public:
     const double squared_special_size;
   public:
     typedef Tr::Point Point_3;
-      
-    Is_bad(const double radius_edge_bound, 
+
+    Is_bad(const double radius_edge_bound,
 	   const double squared_radius_bound,
            const double r1,
            const double size)
@@ -123,7 +123,7 @@ public:
 	size_bound(squared_radius_bound),
         r1(r1),
         squared_special_size(size*size){};
-      
+
     bool operator()(const Cell_handle& c,
                     Quality& qual) const
     {
@@ -140,10 +140,10 @@ public:
 
       Radius radius = Geom_traits().compute_squared_radius_3_object();
       Distance distance = Geom_traits().compute_squared_distance_3_object();
-      Circumcenter circumcenter = 
+      Circumcenter circumcenter =
         Geom_traits().construct_circumcenter_3_object();
 
-      const double sq_distance_from_origin = 
+      const double sq_distance_from_origin =
         CGAL::to_double(distance(CGAL::ORIGIN, circumcenter(p, q, r, s)));
 
       double min_sq_length = CGAL::to_double(distance(p, q));
@@ -159,7 +159,7 @@ public:
                                 CGAL::to_double(distance(r, s)));
 
       double min_size_bound = size_bound;
-      if( squared_special_size != 0 && 
+      if( squared_special_size != 0 &&
           sq_distance_from_origin < r1*r1 )
       {
         if( min_size_bound == 0 )
@@ -217,7 +217,7 @@ typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<
 typedef Volume_mesh_traits::Construct_initial_points Initial_points;
 
 typedef CGAL::Implicit_surfaces_mesher_3<
-  C2t3, 
+  C2t3,
   Surface,
   Criteria,
   Special_tets_criteria,
@@ -232,7 +232,7 @@ typedef CGAL::Point_traits<Point_3> Point_traits;
 typedef Point_traits::Bare_point Bare_point_3;
 typedef Regular_traits::Point_3 Kernel_point_3;
 
-/// Global variables 
+/// Global variables
 std::ostream *out = 0;
 std::string filename = std::string();
 std::string function_name = "sphere";
@@ -242,7 +242,7 @@ void usage(std::string error = "")
 {
   if( error != "" )
     std:: cerr << "Error: " << error << std::endl;
-  std::cerr << "Usage:\n  " 
+  std::cerr << "Usage:\n  "
             << argv0
             << " [-f function_name]"
             << " [output_file.mesh|-]\n"
@@ -272,7 +272,7 @@ open_file_for_writing(std::string filename,
       std::cerr << display_string << "standard out...\n";
       return std::make_pair(&std::cout, false);
     }
-    else 
+    else
     {
       std::ofstream* result = new std::ofstream(filename.c_str());
       if( *result )
@@ -280,7 +280,7 @@ open_file_for_writing(std::string filename,
         std::cerr << display_string << "file " << filename << "...\n";
         return std::make_pair(result, true);
       }
-      else 
+      else
       {
         delete result;
         std::cerr << "Error: cannot create " << filename << "\n";
@@ -289,7 +289,7 @@ open_file_for_writing(std::string filename,
       }
     }
   }
-  else 
+  else
     return std::pair<std::ostream*, bool>(0, false);
 }
 
@@ -309,7 +309,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
         }
       else if( arg.substr(0, 2) == "--" )
 	{
-	  Double_options::iterator opt_it = 
+	  Double_options::iterator opt_it =
 	    double_options.find(arg.substr(2, arg.length()-2));
 	  if( opt_it != double_options.end() )
 	    {
@@ -326,7 +326,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 	    }
 	  else
           {
-            String_options::iterator opt_it = 
+            String_options::iterator opt_it =
                 string_options.find(arg.substr(2, arg.length()-2));
             if( opt_it != string_options.end() )
             {
@@ -340,7 +340,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
               usage(("Invalid option " + arg).c_str());
           }
 	}
-      else 
+      else
 	{
 	  filename = argv[1+extra_args];
 	  parse_argv(argc, argv, extra_args + 1);
@@ -348,7 +348,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
     }
 }
 
-/////////////// Main function /////////////// 
+/////////////// Main function ///////////////
 
 int main(int argc, char **argv) {
   argv0 = argv[0];
@@ -367,7 +367,7 @@ int main(int argc, char **argv) {
     isosurface = new Gray_image(inrimage.c_str(),
                                 get_double_option("iso_value"));
   }
-  
+
   // Function
   FT sphere_radius = get_double_option("enclosing_sphere_radius");
 
@@ -395,7 +395,7 @@ int main(int argc, char **argv) {
 
   // Initial point sample
   std::string read_initial_points = get_string_option("read_initial_points");
-  if( read_initial_points != "")     
+  if( read_initial_points != "")
   {
     std::ifstream in( read_initial_points.c_str() );
     int n;
@@ -415,7 +415,7 @@ int main(int argc, char **argv) {
   }
   else
   {
-    const int number_of_initial_points = 
+    const int number_of_initial_points =
       static_cast<int>(get_double_option("number_of_initial_points"));
 
     std::vector<Point_3> initial_point_sample;
@@ -424,29 +424,29 @@ int main(int argc, char **argv) {
     Initial_points get_initial_points =
       volume_mesh_traits.construct_initial_points_object();
 
-    get_initial_points(surface, 
+    get_initial_points(surface,
                        std::back_inserter(initial_point_sample),
                        number_of_initial_points);
 
-    tie(out, need_delete) = 
+    tie(out, need_delete) =
       open_file_for_writing(get_string_option("dump_of_initial_points"),
                             "Writing initial points to ");
     if( out )
     {
       *out << initial_point_sample.size() << "\n";
-      for(std::vector<Point_3>::const_iterator it = 
+      for(std::vector<Point_3>::const_iterator it =
             initial_point_sample.begin();
           it != initial_point_sample.end();
           ++it)
         *out << *it <<"\n";
-      if(need_delete) 
+      if(need_delete)
         delete out;
     }
     tr.insert (initial_point_sample.begin(), initial_point_sample.end());
   }
 
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Tr> 
+  CGAL::Surface_mesher::Curvature_size_criterion<Tr>
     curvature_size_criterion (get_double_option("distance_bound"));
   CGAL::Surface_mesher::Uniform_size_criterion<Tr>
     uniform_size_criterion (get_double_option("radius_bound"));
@@ -470,10 +470,10 @@ int main(int argc, char **argv) {
                   get_double_option("tets_aspect_ratio_bound"),
                   get_double_option("tets_size_bound"));
 
-  std::cerr << "\nInitial number of points: " << tr.number_of_vertices() 
+  std::cerr << "\nInitial number of points: " << tr.number_of_vertices()
             << std::endl;
 
-  
+
   // Surface meshing
 
   Mesher mesher (c2t3, surface, criteria, tets_criteria, volume_mesh_traits);
@@ -484,13 +484,13 @@ int main(int argc, char **argv) {
             << tr.number_of_vertices() << std::endl
             << "Elapsed time: " << timer.time() << std::endl;
 
-  tie(out, need_delete) = 
+  tie(out, need_delete) =
     open_file_for_writing(get_string_option("initial_surface_off"),
                           "Writing initial surface off to ");
   if( out )
   {
     CGAL::output_oriented_surface_facets_to_off(*out, tr);
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
   timer.start();
@@ -499,60 +499,60 @@ int main(int argc, char **argv) {
 
   std::cout.flush();
 
-  std::cerr << "\nFinal number of points: " << tr.number_of_vertices() 
+  std::cerr << "\nFinal number of points: " << tr.number_of_vertices()
             << std::endl
             << "Total time: " << timer.time() << std::endl;
 
-  tie(out, need_delete) = 
+  tie(out, need_delete) =
     open_file_for_writing(filename,
                           "Writing medit mesh before exudation to ");
   if( out )
   {
     CGAL::output_to_medit(*out, mesher.complex_2_in_triangulation_3());
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
 
-  tie(out, need_delete) = 
+  tie(out, need_delete) =
     open_file_for_writing(get_string_option("cgal_mesh_before_exudation"),
                           "Writing cgal mesh before exudation to ");
   if( out )
   {
     CGAL::Mesh_3::output_mesh(*out, mesher.complex_2_in_triangulation_3());
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
 
   CGAL::Mesh_3::Slivers_exuder<C2t3> exuder(tr);
   exuder.pump_vertices(get_double_option("pumping_bound"));
-  
-  tie(out, need_delete) = 
+
+  tie(out, need_delete) =
     open_file_for_writing(get_string_option("cgal_mesh_after_filename"),
                           "Writing cgal mesh after exudation to ");
   if( out )
   {
     CGAL::Mesh_3::output_mesh(*out, mesher.complex_2_in_triangulation_3());
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
 
-  tie(out, need_delete) = 
+  tie(out, need_delete) =
     open_file_for_writing(get_string_option("mesh_after_filename"),
                           "Writing medit mesh after exudation to ");
   if( out )
   {
     CGAL::output_to_medit(*out, mesher.complex_2_in_triangulation_3());
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
 
-  tie(out, need_delete) = 
+  tie(out, need_delete) =
     open_file_for_writing(get_string_option("surface_off"),
                           "Writing finale surface off to ");
   if( out )
   {
     CGAL::output_oriented_surface_facets_to_off(*out, tr);
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
 //   {
@@ -561,7 +561,7 @@ int main(int argc, char **argv) {
 //       {
 // 	std::ofstream dump_points((dump_final_surface_filename +
 // 				   ".points").c_str());
-// 	std::ofstream dump_faces((dump_final_surface_filename + 
+// 	std::ofstream dump_faces((dump_final_surface_filename +
 // 				  ".faces").c_str());
 // 	if( dump_points && dump_faces ) {
 // 	  std::cerr << "Writing final surface to ghs file "
@@ -569,18 +569,18 @@ int main(int argc, char **argv) {
 // 	  output_surface_facets_to_ghs(dump_points, dump_faces, tr);
 // 	}
 // 	else
-// 	  usage(("Error: cannot create " + 
+// 	  usage(("Error: cannot create " +
 // 			  dump_final_surface_filename).c_str());
 //       }
 //   }
-  
-  tie(out, need_delete) = 
+
+  tie(out, need_delete) =
     open_file_for_writing(get_string_option("slivers_off"),
                           "Writing slivers off to ");
   if( out )
   {
     CGAL::output_slivers_to_off(*out, tr, get_double_option("sliver_test"));
-    if(need_delete) 
+    if(need_delete)
       delete out;
   }
 

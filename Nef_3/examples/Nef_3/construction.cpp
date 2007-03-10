@@ -19,7 +19,7 @@ int main() {
   CGAL_assertion(N3 == N4);
   CGAL_assertion(N0 != N2);
   CGAL_assertion(N3 != N5);
-  
+
   CGAL_assertion(N4 >= N5);
   CGAL_assertion(N5 <= N4);
   CGAL_assertion(N4 > N5);

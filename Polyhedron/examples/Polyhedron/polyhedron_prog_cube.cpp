@@ -20,7 +20,7 @@ typename Poly::Halfedge_handle make_cube_3( Poly& P) {
     h->next()->vertex()->point()     = Point( 1, 0, 1);
     g->next()->vertex()->point()     = Point( 0, 1, 1);
     g->opposite()->vertex()->point() = Point( 1, 1, 0);            // Fig. (c)
-    Halfedge_handle f = P.split_facet( g->next(),            
+    Halfedge_handle f = P.split_facet( g->next(),
                                        g->next()->next()->next()); // Fig. (d)
     Halfedge_handle e = P.split_edge( f);
     e->vertex()->point() = Point( 1, 1, 1);                        // Fig. (e)

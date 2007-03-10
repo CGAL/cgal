@@ -41,6 +41,6 @@ int main( int argc, char* argv[] )
     iterations = CGAL_CLIB_STD::atoi( argv[2] );
   else
     iterations = 1;
-  CGAL::ch_timing(V.begin(), V.end(), VE.begin(), iterations, TraitsCls() ); 
+  CGAL::ch_timing(V.begin(), V.end(), VE.begin(), iterations, TraitsCls() );
   return 0;
 }

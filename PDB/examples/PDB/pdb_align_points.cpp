@@ -60,11 +60,11 @@ double align_to_points(const std::vector<CGAL_PDB_NS::Point> &points,
 
   /*
   {
-   
-   CGAL_PDB_NS::Transform tr2= CGAL_PDB_NS::compute_transform_taking_first_to_second(points, 
+
+   CGAL_PDB_NS::Transform tr2= CGAL_PDB_NS::compute_transform_taking_first_to_second(points,
 									   ppoints);
    std::cout << tr2 << std::endl;
-    
+
   }
 
   {
@@ -76,7 +76,7 @@ double align_to_points(const std::vector<CGAL_PDB_NS::Point> &points,
     CGAL_PDB_NS::Transform tr2= CGAL_PDB_NS::compute_transform_taking_first_to_second(npoints,
 									    points);
     std::cout << tr2 << std::endl;
-    
+
   }
 
   {
@@ -88,9 +88,9 @@ double align_to_points(const std::vector<CGAL_PDB_NS::Point> &points,
     CGAL_PDB_NS::Transform tr2= CGAL_PDB_NS::compute_transform_taking_first_to_second(npoints,
 									    ppoints);
     std::cout << tr2 << std::endl;
-    
+
     }*/
-  
+
   double dist=0;
 
   CGAL_PDB_NS::Squared_distance sd;
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]){
       ("input-pdb", boost::program_options::value< std::string>(&input_file),
        "input file");
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("base-points", 1);
     p.add("input-pdb", 1);
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]){
   }
 
   CGAL_PDB_NS::PDB input(in, warn);
-  
+
   std::vector<CGAL_PDB_NS::Point> points;
   while (bin) {
     char buf[10000];
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]){
     iss >> pt;
     points.push_back(pt);
   }
-  
+
   std::cout << "Read " << points.size() << " points.\n";
 
   if ( !output_file.empty() || crms) {
@@ -193,14 +193,14 @@ int main(int argc, char *argv[]){
   if (!output_file.empty()) {
     std::ofstream out(output_file.c_str());
     if (!out){
-      std::cerr << "Error opening output file " 
+      std::cerr << "Error opening output file "
 		<< output_file << std::endl;
       return EXIT_FAILURE;
     }
     input.write(out);
   }
 
- 
+
 
   return EXIT_SUCCESS;
 

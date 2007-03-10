@@ -33,4 +33,4 @@ int main() {
             << k_gon << std::endl;
 
   return 0;
-} 
+}

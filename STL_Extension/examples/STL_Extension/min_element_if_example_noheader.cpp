@@ -21,8 +21,8 @@ int main()
   v.push_back(5);
   v.push_back(2);
   cout << "min_odd = "
-       << *min_element_if(v.begin(), 
-			  v.end(), 
+       << *min_element_if(v.begin(),
+			  v.end(),
 			  compose1_1(bind2nd(greater< int >(), 0),
 				     bind2nd(modulus< int >(), 2)))
        << endl;

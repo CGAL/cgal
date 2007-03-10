@@ -28,14 +28,14 @@ int main() {
   tree.insert(Point_d(45,0));
   tree.insert(Point_d(0,2340));
   tree.insert(Point_d(0,30));
-  
+
   Point_d query(0,0);
 
   NN_incremental_search NN(tree, query);
   NN_positive_x_iterator it(NN.end(), X_not_positive(), NN.begin()), end(NN.end(), X_not_positive());
 
   std::cout <<  "The first 5 nearest neighbours with positive x-coord are: " << std::endl;
-  for (int j=0; (j < 5)&&(it!=end); ++j,++it) 
+  for (int j=0; (j < 5)&&(it!=end); ++j,++it)
     std::cout <<   (*it).first << "  at squared distance = " << (*it).second << std::endl;
 
   return 0;

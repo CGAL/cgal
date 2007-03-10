@@ -22,25 +22,25 @@ class Shell_explorer {
   Vertex_const_handle v_min;
 
 public:
-  Shell_explorer(const Nef_polyhedron& N_) 
+  Shell_explorer(const Nef_polyhedron& N_)
     : first(true), N(N_) {}
-  
+
   void visit(Vertex_const_handle v) {
     if(first || CGAL::lexicographically_xyz_smaller(v->point(),v_min->point())) {
       v_min = v;
       first=false;
-    } 
+    }
   }
-  
+
   void visit(Halfedge_const_handle e) {}
   void visit(Halffacet_const_handle f) {}
   void visit(SHalfedge_const_handle se) {}
   void visit(SHalfloop_const_handle sl) {}
   void visit(SFace_const_handle sf) {}
-  
+
   Vertex_const_handle& minimal_vertex() { return v_min; }
   void reset_minimal_vertex() { first = true; }
-};    
+};
 
 int main() {
   Nef_polyhedron N;
@@ -57,8 +57,8 @@ int main() {
       SE.reset_minimal_vertex();
       N.visit_shell_objects(SFace_const_handle(it),SE);
       Point_3 p(SE.minimal_vertex()->point());
-      std::cout << "  minimal vertex of shell " << is++ 
+      std::cout << "  minimal vertex of shell " << is++
                 << " is at " << p << std::endl;
     }
-  } 
+  }
 }

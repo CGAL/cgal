@@ -9,10 +9,10 @@
  * example1.C -
  *    Simple example the CGAL KD-tree module.
  *
- * Written by Sariel Har-Peled 
+ * Written by Sariel Har-Peled
  *            Iddo Hanniel
 \*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
- 
+
 #include <CGAL/Cartesian.h>
 
 #include <iostream>
@@ -46,9 +46,9 @@ int main()
           l.push_front(p);
         }
 
-    // building the tree 
+    // building the tree
     tree.build( l );
-       
+
     // checking validity
     if  ( ! tree.is_valid() )
         tree.dump();
@@ -64,12 +64,12 @@ int main()
     std::cin >> rx ;
     std::cout << "Enter right y coordinate: ";
     std::cin >> ry;
-    std::cout << std::endl; 
+    std::cout << std::endl;
 
     box r(point(lx,ly), point(rx,ry) ,2);
 
     tree.search( std::back_inserter( res ), r );
-    
+
     std::cout << "Listing of the points in the square: \n" ;
     std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout," \n") );
     std::cout << std::endl;

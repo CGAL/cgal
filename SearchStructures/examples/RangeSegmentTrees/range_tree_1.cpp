@@ -3,7 +3,7 @@
 // A two dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h> 
+#include <CGAL/basic.h>
 
 #include <iostream>
 #include <CGAL/Range_tree_k.h>
@@ -53,7 +53,7 @@ int main()
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";
-  return 0; 
+  return 0;
 }
 
 

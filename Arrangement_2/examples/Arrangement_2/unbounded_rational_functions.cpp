@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -50,11 +50,11 @@ int main ()
   Rat_vector        P2(3);
   P2[2] = -4; P2[1] = 0; P2[0] = 3;
 
-  arcs.push_back (Rational_arc_2 (P2, 
+  arcs.push_back (Rational_arc_2 (P2,
                                   -half_sqrt3, half_sqrt3));
 
   P2[2] = 4;  P2[0] = -3;
-  arcs.push_back (Rational_arc_2 (P2, 
+  arcs.push_back (Rational_arc_2 (P2,
                                   -half_sqrt3, half_sqrt3));
 
   // Create the rational function (y = 1 / 2*x) for x > 0, and the
@@ -80,8 +80,8 @@ int main ()
             << "   V = " << arr.number_of_vertices()
             << " (plus " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() 
+            << ",  E = " << arr.number_of_edges()
+            << ",  F = " << arr.number_of_faces()
             << " (" << arr.number_of_unbounded_faces() << " unbounded)"
             << std::endl << std::endl;
 

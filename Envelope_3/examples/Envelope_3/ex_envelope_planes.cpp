@@ -27,7 +27,7 @@ void print_diagram (const Envelope_diagram_2& diag)
   for (fit = diag.faces_begin(); fit != diag.faces_end(); ++fit)
   {
     // Print the face boundary.
-   
+
     // Print the vertices along the outer boundary of the face.
     ccb = fit->outer_ccb();
     std::cout << "[Face]  ";
@@ -37,9 +37,9 @@ void print_diagram (const Envelope_diagram_2& diag)
         std::cout << '(' << ccb->curve() << ") ";
       ++ccb;
     } while (ccb != fit->outer_ccb());
-    
+
     // Print the planes that induce the envelope on this face.
-    std::cout << "-->  " << fit->number_of_surfaces() 
+    std::cout << "-->  " << fit->number_of_surfaces()
               << " planes:";
 
     for (sit = fit->surfaces_begin(); sit != fit->surfaces_end(); ++sit)
@@ -55,17 +55,17 @@ int main ()
 {
   // Construct the input planes.
   std::list<Surface_3>   planes;
-  
+
   planes.push_back (Surface_3(Plane_3(0, -1, 1, 0)));
   planes.push_back (Surface_3(Plane_3(-1, 0, 1, 0)));
   planes.push_back (Surface_3(Plane_3(0, 1 , 1, 0)));
   planes.push_back (Surface_3(Plane_3(1, 0, 1,  0)));
-  
+
   // Compute and print the minimization diagram.
   Envelope_diagram_2      min_diag;
 
   CGAL::lower_envelope_3 (planes.begin(), planes.end(), min_diag);
- 
+
   std::cout << std::endl << "The minimization diagram:" << std::endl;
   print_diagram (min_diag);
 

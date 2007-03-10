@@ -1,7 +1,7 @@
 
 // computes the smallest enclosing annulus of two point
 // sets on nested squares in R^2, using double
-// as input type and some internal EXACT floating point type 
+// as input type and some internal EXACT floating point type
 #include <iostream>
 #include <cassert>
 #include <CGAL/Simple_cartesian.h>
@@ -17,9 +17,9 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an EXACT kernel...
-typedef CGAL::Simple_cartesian<ET>        K;  
+typedef CGAL::Simple_cartesian<ET>        K;
 typedef K::Point_2                        Point;
-// ...and the traits class based on the exact kernel 
+// ...and the traits class based on the exact kernel
 typedef CGAL::Optimisation_d_traits_2<K>  Traits;
 typedef CGAL::Min_annulus_d<Traits>       Min_annulus;
 
@@ -29,7 +29,7 @@ int main()
   Point P[8] = { Point(-1,-1), Point(-1,1), Point(1,-1), Point(1,1),
                  Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
 
-  Min_annulus ma(P, P+8); 
+  Min_annulus ma(P, P+8);
   assert (ma.is_valid());
 
   // get center of annulus
@@ -54,4 +54,4 @@ int main()
 
   return 0;
 
-} 
+}

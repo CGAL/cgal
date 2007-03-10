@@ -26,5 +26,5 @@ int main()
   std::cout << p_m[0] << "\n" << p_m[1] << std::endl;
 
   return 0;
-} 
+}
 

@@ -40,15 +40,15 @@ int main(int argc, char *argv[]){
     boost::program_options::options_description o("Allowed options"), po, ao;
     o.add_options()
       ("aligned-pdb,a", boost::program_options::value< std::string>(&output_file), "Where to write the result of aligning input-pdb to base-pdb.")
-    
+
       ("crms,c", boost::program_options::bool_switch(&crms), "Output the cRMS between the two pdbs (after alignment).")
-      ("drms,d", boost::program_options::bool_switch(&drms), "Output the dRMS between the two pdbs.")     
+      ("drms,d", boost::program_options::bool_switch(&drms), "Output the dRMS between the two pdbs.")
       ("verbose,v", boost::program_options::bool_switch(&warn), "Warn about errors parsing pdb file.")
       ("help", boost::program_options::bool_switch(&print_help), "Produce help message");
     po.add_options()("base-pdb", boost::program_options::value< std::string>(&base_file), "Base file")
       ("input-pdb", boost::program_options::value< std::string>(&input_file), "input file");
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("base-pdb", 1);
     p.add("input-pdb", 1);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]){
       }
     }
   }
-  
+
   if ( !output_file.empty() || crms) {
     for (unsigned int i=0; i< input.number_of_models(); ++i){
       CGAL_PDB_NS::Model &m= input.model(i);
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]){
   if (!output_file.empty()) {
     std::ofstream out(output_file.c_str());
     if (!out){
-      std::cerr << "Error opening output file " 
+      std::cerr << "Error opening output file "
 		<< output_file << std::endl;
       return EXIT_FAILURE;
     }

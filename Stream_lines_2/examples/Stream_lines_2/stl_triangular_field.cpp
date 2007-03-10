@@ -27,7 +27,7 @@ int main()
   std::istream_iterator<Point> beginp(inp);
   std::istream_iterator<Vector> beginv(inv);
   std::istream_iterator<Point> endp;
-  
+
   Field triangular_field(beginp, endp, beginv);
 
   /* the placement of streamlines */

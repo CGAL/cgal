@@ -20,7 +20,7 @@ int main() {
 
     // Write polyhedron in Object File Format (OFF).
     CGAL::set_ascii_mode( std::cout);
-    std::cout << "OFF" << std::endl << P.size_of_vertices() << ' ' 
+    std::cout << "OFF" << std::endl << P.size_of_vertices() << ' '
               << P.size_of_facets() << " 0" << std::endl;
     std::copy( P.points_begin(), P.points_end(),
                std::ostream_iterator<Point_3>( std::cout, "\n"));

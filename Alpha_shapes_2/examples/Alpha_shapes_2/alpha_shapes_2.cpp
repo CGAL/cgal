@@ -59,7 +59,7 @@ template <class OutputIterator>
 void
 alpha_edges( const Alpha_shape_2&  A,
 	     OutputIterator out)
-{ 
+{
 
   for(Alpha_shape_edges_iterator it =  A.alpha_shape_edges_begin();
       it != A.alpha_shape_edges_end();
@@ -86,7 +86,7 @@ file_input(OutputIterator out)
 
   return true;
 }
-    
+
 //------------------ main -------------------------------------------
 
 int main()
@@ -99,13 +99,13 @@ int main()
   Alpha_shape_2 A(points.begin(), points.end(),
 		  coord_type(10000),
 		  Alpha_shape_2::GENERAL);
- 
+
   std::vector<Segment> segments;
   alpha_edges( A, std::back_inserter(segments));
 
   std::cout << "Alpha Shape computed" << std::endl;
   std::cout << segments.size() << " alpha shape edges" << std::endl;
-  std::cout << "Optimal alpha: " << *A.find_optimal_alpha(1)<<std::endl; 
+  std::cout << "Optimal alpha: " << *A.find_optimal_alpha(1)<<std::endl;
 
   return 0;
 }

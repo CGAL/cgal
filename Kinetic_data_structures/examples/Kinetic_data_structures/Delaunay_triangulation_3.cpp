@@ -20,7 +20,7 @@ int main(int , char *[])
     kdel.set_has_certificates(true);
 
     sp->set_current_time(sp->end_time());
-    
+
     std::cout << "Processed " << sp->current_event_number() << " events.\n";
 
     /*std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),

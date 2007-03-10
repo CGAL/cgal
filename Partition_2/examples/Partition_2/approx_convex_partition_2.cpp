@@ -43,14 +43,14 @@ int main()
    Polygon_list partition_polys;
 
 /*
-   CGAL::random_polygon_2(50, std::back_inserter(polygon), 
+   CGAL::random_polygon_2(50, std::back_inserter(polygon),
                           Point_generator(100));
 */
    make_polygon(polygon);
-   CGAL::approx_convex_partition_2(polygon.vertices_begin(), 
+   CGAL::approx_convex_partition_2(polygon.vertices_begin(),
                                    polygon.vertices_end(),
                                    std::back_inserter(partition_polys));
-   assert(CGAL::convex_partition_is_valid_2(polygon.vertices_begin(), 
+   assert(CGAL::convex_partition_is_valid_2(polygon.vertices_begin(),
                                             polygon.vertices_end(),
                                             partition_polys.begin(),
                                             partition_polys.end()));

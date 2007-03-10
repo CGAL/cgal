@@ -3,7 +3,7 @@
 void PolyhedralSurf::compute_facets_normals()
 {
   std::for_each(this->facets_begin(), this->facets_end(),
-		Facet_unit_normal()); 
+		Facet_unit_normal());
 }
 
 const Vector_3 PolyhedralSurf::computeFacetsAverageUnitNormal(const Vertex_const_handle v)

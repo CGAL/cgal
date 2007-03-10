@@ -129,8 +129,8 @@ struct Info_set_merge_info
     typedef typename Info_set<Info_item>::Info_list       Info_list;
 
     // return as new info the union of the two infos
-    Info_list info_union = info0.info_list(); 
-    Info_list copy = info1.info_list(); 
+    Info_list info_union = info0.info_list();
+    Info_list copy = info1.info_list();
 
     info_union.splice(info_union.end(), copy);
     return info_union;

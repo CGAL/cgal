@@ -1,6 +1,6 @@
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Ridges.h> 
+#include <CGAL/Ridges.h>
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -9,7 +9,7 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 using namespace std;
- 
+
 //this is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
@@ -25,7 +25,7 @@ typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
-      
+
 typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_map;
@@ -40,17 +40,17 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-				      Vertex2FT_property_map, 
+				      Vertex2FT_property_map,
 				      Vertex2Vector_property_map > Umbilic_approximation;
 
 //create property maps
-Vertex2FT_map vertex2k1_map, vertex2k2_map, 
-  vertex2b0_map, vertex2b3_map, 
+Vertex2FT_map vertex2k1_map, vertex2k2_map,
+  vertex2b0_map, vertex2b3_map,
   vertex2P1_map, vertex2P2_map;
 Vertex2Vector_map vertex2d1_map, vertex2d2_map;
 
-Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
-  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
+Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map),
+  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map),
   vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map),vertex2P2_p();
 Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 
@@ -70,18 +70,18 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
    2. the exact number of rings to be used
    3. nothing is specified
 */
-void gather_fitting_points(Vertex_const_handle v, 
+void gather_fitting_points(Vertex_const_handle v,
 			   std::vector<Point_3> &in_points,
 			   Poly_rings& poly_rings)
 {
   //container to collect vertices of v on the PolyhedralSurf
-  std::vector<Vertex_const_handle> gathered; 
+  std::vector<Vertex_const_handle> gathered;
   //initialize
-  in_points.clear();  
-  
+  in_points.clear();
+
   //OPTION -p nb_points_to_use, with nb_points_to_use != 0. Collect
   //enough rings and discard some points of the last collected ring to
-  //get the exact "nb_points_to_use" 
+  //get the exact "nb_points_to_use"
   if ( nb_points_to_use != 0 ) {
     poly_rings.collect_enough_rings(v, nb_points_to_use, gathered);//, vpm);
     if ( gathered.size() > nb_points_to_use ) gathered.resize(nb_points_to_use);
@@ -90,13 +90,13 @@ void gather_fitting_points(Vertex_const_handle v,
     // then option -a nb_rings is checked. If nb_rings=0, collect
     // enough rings to get the min_nb_points required for the fitting
     // else collect the nb_rings required
-    if ( nb_rings == 0 ) 
+    if ( nb_rings == 0 )
       poly_rings.collect_enough_rings(v, min_nb_points, gathered);//, vpm);
     else poly_rings.collect_i_rings(v, nb_rings, gathered);//, vpm);
   }
-     
+
   //store the gathered points
-  std::vector<Vertex_const_handle>::const_iterator 
+  std::vector<Vertex_const_handle>::const_iterator
     itb = gathered.begin(), ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
@@ -108,20 +108,20 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 {
   //container for approximation points
   std::vector<Point_3> in_points;
- 
+
   //MAIN LOOP
   Vertex_const_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
     Vertex_const_handle v = vitb;
-    in_points.clear();  
+    in_points.clear();
     Monge_form monge_form;
     Monge_via_jet_fitting monge_fit;
-      
+
     //gather points around the vertex using rings
     gather_fitting_points(v, in_points, poly_rings);
 
-    //exit if the nb of points is too small 
+    //exit if the nb of points is too small
     if ( in_points.size() < min_nb_points )
       {std::cerr << "Too few points to perform the fitting" << std::endl; exit(1);}
 
@@ -130,11 +130,11 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     // run the main fct : perform the fitting
      monge_form = monge_fit(in_points.begin(), in_points.end(),
 			   d_fitting, d_monge);
-    
+
     //switch min-max ppal curv/dir wrt the mesh orientation
     const Vector_3 normal_mesh = P.computeFacetsAverageUnitNormal(v);
     monge_form.comply_wrt_given_normal(normal_mesh);
-       
+
     //Store monge data needed for ridge computations in property maps
     vertex2d1_map[v] = monge_form.maximal_principal_direction();
     vertex2d2_map[v] = monge_form.minimal_principal_direction();
@@ -149,24 +149,24 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 	+(monge_form.coefficients()[0]-monge_form.coefficients()[1])
 	*(monge_form.coefficients()[6]
 	  -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
-	  *monge_form.coefficients()[0]); 
+	  *monge_form.coefficients()[0]);
       //= 3*b2^2+(k2-k1)(c4-3k2^3)
-      vertex2P2_map[v] = 
+      vertex2P2_map[v] =
 	3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
 	+(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
 	*(monge_form.coefficients()[10]
 	  -3*monge_form.coefficients()[1]*monge_form.coefficients()[1]
-	  *monge_form.coefficients()[1]); 
+	  *monge_form.coefficients()[1]);
     }
   } //END FOR LOOP
 }
 
 
 int main(int argc, char *argv[])
-{  
+{
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
   unsigned int int_tag;
- 
+
   try {
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -188,11 +188,11 @@ int main(int argc, char *argv[])
       ("verbose,v", po::value<bool>(&verbose)->default_value(false),
        "verbose output on text file")
       ;
-    
-    po::variables_map vm;        
+
+    po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);    
-    
+    po::notify(vm);
+
     if (vm.count("help")) {
       cout << desc << "\n";
       return 1;
@@ -201,12 +201,12 @@ int main(int argc, char *argv[])
     if (vm.count("ridge_order")){
       if ( int_tag == 3 ) tag_order = CGAL::Ridge_order_3;
       if ( int_tag == 4 ) tag_order = CGAL::Ridge_order_4;
-      if ( int_tag != 3 && int_tag != 4 ) 
+      if ( int_tag != 3 && int_tag != 4 )
 	{cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
 	  return 1;}
     }
   }
-    
+
     catch(exception& e) {
     cerr << "error: " << e.what() << "\n";
     return 1;
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
   //prepare output file names
   assert(!if_name.empty());
   of_name = if_name;
-  for(unsigned int i=0; i<of_name.size(); i++) 
+  for(unsigned int i=0; i<of_name.size(); i++)
     if (of_name[i] == '/') of_name[i]='_';
   std::ostringstream str_4ogl;
   str_4ogl << "data/"
@@ -247,66 +247,66 @@ int main(int argc, char *argv[])
 	   << ".verb.txt";
   std::cout << str_verb.str() << std::endl ;
   std::ofstream out_verb(str_verb.str().c_str() , std::ios::out);
-  
+
   //load the model from <mesh.off>
   PolyhedralSurf P;
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
 	  (int)P.size_of_vertices(), (int)P.size_of_facets());
-  if(verbose) 
+  if(verbose)
     out_verb << "Polysurf with " << P.size_of_vertices()
 	     << " vertices and " << P.size_of_facets()
 	     << " facets. " << std::endl;
-  
+
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())
     {std::cerr << "not enough points in the model" << std::endl;   exit(0);}
 
   //initialize Polyhedral data : normal of facets
   P.compute_facets_normals();
-  
+
   //create a Poly_rings object
   Poly_rings poly_rings(P);
 
   std::cout << "Compute differential quantities via jet fitting..." << std::endl;
   //initialize the diff quantities property maps
   compute_differential_quantities(P, poly_rings);
-  
+
   //---------------------------------------------------------------------------
   //Ridges
   //--------------------------------------------------------------------------
   std::cout << "Compute ridges..." << std::endl;
-  Ridge_approximation ridge_approximation(P, 
+  Ridge_approximation ridge_approximation(P,
 					  vertex2k1_pm, vertex2k2_pm,
 					  vertex2b0_pm, vertex2b3_pm,
 					  vertex2d1_pm, vertex2d2_pm,
 					  vertex2P1_pm, vertex2P2_pm );
   std::vector<Ridge_line*> ridge_lines;
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
-  
+
   //Find MAX_RIDGE, MIN_RIDGE, CREST_RIDGES
-  //   ridge_approximation.compute_max_ridges(ii, tag_order);  
-  //   ridge_approximation.compute_min_ridges(ii, tag_order);  
-  ridge_approximation.compute_crest_ridges(ii, tag_order);  
- 
+  //   ridge_approximation.compute_max_ridges(ii, tag_order);
+  //   ridge_approximation.compute_min_ridges(ii, tag_order);
+  ridge_approximation.compute_crest_ridges(ii, tag_order);
+
   // or with the global function
-  CGAL::compute_max_ridges(P, 
+  CGAL::compute_max_ridges(P,
 			   vertex2k1_pm, vertex2k2_pm,
 			   vertex2b0_pm, vertex2b3_pm,
 			   vertex2d1_pm, vertex2d2_pm,
 			   vertex2P1_pm, vertex2P2_pm,
 			   ii, tag_order);
 
-  std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
+  std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(),
     iter_end = ridge_lines.end();
   //OpenGL output
   for (;iter_lines!=iter_end;iter_lines++) (*iter_lines)->dump_4ogl(out_4ogl);
-    
-  //verbose txt output 
-  if (verbose) 
-    for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++) 
-      out_verb << **iter_lines; 
+
+  //verbose txt output
+  if (verbose)
+    for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++)
+      out_verb << **iter_lines;
 
   //---------------------------------------------------------------------------
   // UMBILICS
@@ -314,31 +314,31 @@ int main(int argc, char *argv[])
   std::cout << "Compute umbilics..." << std::endl;
   std::vector<Umbilic*> umbilics;
   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
- 
+
   //explicit construction of the class
- //  Umbilic_approximation umbilic_approximation(P, 
+ //  Umbilic_approximation umbilic_approximation(P,
 // 					      vertex2k1_pm, vertex2k2_pm,
 // 					      vertex2d1_pm, vertex2d2_pm);
 //   umbilic_approximation.compute(umb_it, umb_size);
   //or global function call
-  CGAL::compute_umbilics(P, 
+  CGAL::compute_umbilics(P,
 			 vertex2k1_pm, vertex2k2_pm,
 			 vertex2d1_pm, vertex2d2_pm,
 			 umb_it, umb_size);
 
-  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(),
     iter_umb_end = umbilics.end();
   // output
   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
   for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
- 
-  //verbose txt output 
+
+  //verbose txt output
   if (verbose) {
     out_verb << "nb of umbilics " << umbilics.size() << std::endl;
     for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++)
-      out_verb << **iter_umb; 
+      out_verb << **iter_umb;
   }
 
   return 0;
 }
- 
+

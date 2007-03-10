@@ -61,14 +61,14 @@ Polygon_2 construct_polygon (const Point_2& p1, const Point_2& p2,
 int main ()
 {
   // Insert four non-intersecting circles.
-  Polygon_set_2 S; 
+  Polygon_set_2 S;
   Polygon_2 circ1, circ2, circ3, circ4;
 
   circ1 = construct_polygon(Circle_2(Point_2(1, 1), 1));  S.insert(circ1);
   circ2 = construct_polygon(Circle_2(Point_2(5, 1), 1));  S.insert(circ2);
   circ3 = construct_polygon(Circle_2(Point_2(5, 5), 1));  S.insert(circ3);
   circ4 = construct_polygon(Circle_2(Point_2(1, 5), 1));  S.insert(circ4);
-  
+
   // Compute the union with four rectangles incrementally.
   Polygon_2 rect1, rect2, rect3, rect4;
 
@@ -80,11 +80,11 @@ int main ()
                             Point_2(5, 6), Point_2(1, 6));
   S.join (rect2);
 
-  rect3 = construct_polygon(Point_2(0, 1), Point_2(2, 1), 
+  rect3 = construct_polygon(Point_2(0, 1), Point_2(2, 1),
                             Point_2(2, 5), Point_2(0, 5));
   S.join (rect3);
 
-  rect4 = construct_polygon(Point_2(4, 1), Point_2(6, 1), 
+  rect4 = construct_polygon(Point_2(4, 1), Point_2(6, 1),
                             Point_2(6, 5), Point_2(4, 5));
   S.join (rect4);
 
@@ -95,6 +95,6 @@ int main ()
   std::copy (res.begin(), res.end(),
              std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));
   std::cout << std::endl;
-  
+
   return 0;
 }

@@ -65,8 +65,8 @@ typedef Circular_k::Circular_arc_2              Circular_arc_2;
 
 int main(){
 
-  CGAL::Timer clck1,clck2;  
-  double t1,t2,t3,t4; 
+  CGAL::Timer clck1,clck2;
+  double t1,t2,t3,t4;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -86,7 +86,7 @@ int main(){
 
   Pmwx _pm;
   Point_location _pl(_pm);
-  
+
   clck1.start();
   t1=clck1.time();
   for (ArcContainer::const_iterator it=ac.begin();
@@ -113,7 +113,7 @@ int main(){
 std::cout<<"Lazy Circular_k ="<<(t2-t1)<<std::endl;
 std::cout<<"Exact Circular_k ="<<(t4-t3)<<std::endl;
 
-  
+
   return 0;
 };
 

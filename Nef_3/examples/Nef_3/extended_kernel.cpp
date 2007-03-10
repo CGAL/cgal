@@ -20,7 +20,7 @@ int main() {
 
   Nef_polyhedron N;
   std::cin >> N;
-  
+
   Vertex_const_iterator v;
   for(v = N.vertices_begin(); v != N.vertices_end(); ++v) {
     Point_3 p(v->point());

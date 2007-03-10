@@ -25,9 +25,9 @@ int main ()
   Naive_pl        pl (arr);
 
   Segment_2       s1 (Point_2 (1, 3), Point_2 (4, 3));
-  Halfedge_handle e1 = arr.insert_in_face_interior (s1, arr.unbounded_face()); 
+  Halfedge_handle e1 = arr.insert_in_face_interior (s1, arr.unbounded_face());
   Segment_2       s2 (Point_2 (1, 4), Point_2 (4, 4));
-  Halfedge_handle e2 = arr.insert_in_face_interior (s2, arr.unbounded_face()); 
+  Halfedge_handle e2 = arr.insert_in_face_interior (s2, arr.unbounded_face());
   Segment_2       s3 (Point_2 (1, 1), Point_2 (1, 6));
   Segment_2       s4 (Point_2 (4, 1), Point_2 (4, 6));
 

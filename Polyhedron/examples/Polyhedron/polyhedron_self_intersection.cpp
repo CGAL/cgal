@@ -65,7 +65,7 @@ struct Intersect_facets {
             }
         }
         if ( v != Halfedge_const_handle()) {
-            // found shared vertex: 
+            // found shared vertex:
             CGAL_assertion( h->vertex() == v->vertex());
             // geomtric check if the opposite segments intersect the triangles
             Triangle t1( h->vertex()->point(),
@@ -79,12 +79,12 @@ struct Intersect_facets {
             Segment  s2( v->next()->vertex()->point(),
                          v->next()->next()->vertex()->point());
             if ( CGAL::do_intersect( t1, s2)) {
-                //cerr << "Triangles intersect (t1,s2):\n    T1: " << t1 
+                //cerr << "Triangles intersect (t1,s2):\n    T1: " << t1
                 //     << "\n    T2 :" << t2 << endl;
                 triangles.push_back(t1);
                 triangles.push_back(t2);
             } else if ( CGAL::do_intersect( t2, s1)) {
-                //cerr << "Triangles intersect (t2,s1):\n    T1: " << t1 
+                //cerr << "Triangles intersect (t2,s1):\n    T1: " << t1
                 //     << "\n    T2 :" << t2 << endl;
                 triangles.push_back(t1);
                 triangles.push_back(t2);
@@ -99,7 +99,7 @@ struct Intersect_facets {
                      g->next()->vertex()->point(),
                      g->next()->next()->vertex()->point());
         if ( CGAL::do_intersect( t1, t2)) {
-            //cerr << "Triangles intersect:\n    T1: " << t1 << "\n    T2 :" 
+            //cerr << "Triangles intersect:\n    T1: " << t1 << "\n    T2 :"
             //     << t2 << endl;
             triangles.push_back(t1);
             triangles.push_back(t2);
@@ -110,7 +110,7 @@ struct Intersect_facets {
 void write_off() {
     cout << "OFF\n" << (triangles.size() * 3) << ' ' << triangles.size()
          << " 0\n";
-    for ( std::vector<Triangle>::iterator i = triangles.begin(); 
+    for ( std::vector<Triangle>::iterator i = triangles.begin();
           i != triangles.end(); ++i) {
         cout << i->vertex(0) << '\n';
         cout << i->vertex(1) << '\n';
@@ -125,7 +125,7 @@ void intersection( const Polyhedron& P) {
     std::vector<Box> boxes;
     boxes.reserve( P.size_of_facets());
     for ( Facet_const_iterator i = P.facets_begin(); i != P.facets_end(); ++i){
-        boxes.push_back( 
+        boxes.push_back(
             Box( i->halfedge()->vertex()->point().bbox()
                + i->halfedge()->next()->vertex()->point().bbox()
                + i->halfedge()->next()->next()->vertex()->point().bbox(),
@@ -148,7 +148,7 @@ int main() {
     cin >> P;
     cerr << "Loading OFF file   : " << user_time.time() << " seconds." << endl;
     if ( ! P.is_pure_triangle()) {
-        cerr << "The input object is not triangulated. Cannot intersect." 
+        cerr << "The input object is not triangulated. Cannot intersect."
                   << endl;
         exit(1);
     }

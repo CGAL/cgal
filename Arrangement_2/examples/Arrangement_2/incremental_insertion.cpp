@@ -22,10 +22,10 @@ int main ()
   // Construct the arrangement of five intersecting segments.
   Arrangement_2  arr;
   Walk_pl        pl(arr);
-  
+
   Segment_2      s1 (Point_2(1, 0), Point_2(2, 4));
   Segment_2      s2 (Point_2(5, 0), Point_2(5, 5));
-  Segment_2      s3 (Point_2(1, 0), Point_2(5, 3));  
+  Segment_2      s3 (Point_2(1, 0), Point_2(5, 3));
   Segment_2      s4 (Point_2(0, 2), Point_2(6, 0));
   Segment_2      s5 (Point_2(3, 0), Point_2(5, 5));
 
@@ -38,14 +38,14 @@ int main ()
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Perform a point-location query on the resulting arrangement and print
   // the boundary of the face that contains it.
   Point_2        q (4, 1);
   CGAL::Object   obj = pl.locate (q);
-  
+
   Arrangement_2::Face_const_handle  f;
   bool           success = CGAL::assign (f, obj);
 

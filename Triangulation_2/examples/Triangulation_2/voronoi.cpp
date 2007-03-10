@@ -19,7 +19,7 @@ int main( )
   T.insert(begin, end);
 
   int ns = 0;
-  int nr = 0;  
+  int nr = 0;
   Edge_iterator eit =T.edges_begin();
   for ( ; eit !=T.edges_end(); ++eit) {
     CGAL::Object o = T.dual(eit);
@@ -28,8 +28,8 @@ int main( )
     if (CGAL::assign(s,o)) {++ns;}
     if (CGAL::assign(r,o)) {++nr;}
   }
-  std::cout << "The voronoi diagram as " << ns << "finite edges " 
+  std::cout << "The voronoi diagram as " << ns << "finite edges "
 	    << " and " << nr << " rays" << std::endl;
   return 0;
 }
- 
+

@@ -12,9 +12,9 @@ typedef Nef_polyhedron_S2::SVertex_const_handle SVertex_const_handle;
 typedef Nef_polyhedron_S2::SHalfedge_const_handle SHalfedge_const_handle;
 typedef Nef_polyhedron_S2::SHalfloop_const_handle SHalfloop_const_handle;
 typedef Nef_polyhedron_S2::SFace_const_iterator SFace_const_iterator;
-typedef Nef_polyhedron_S2::SFace_cycle_const_iterator 
+typedef Nef_polyhedron_S2::SFace_cycle_const_iterator
                            SFace_cycle_const_iterator;
-			   
+
 int main() {
 
   Nef_polyhedron_S2 S;
@@ -25,13 +25,13 @@ int main() {
   CGAL_forall_sfaces(sf,S) {
     SFace_cycle_const_iterator it;
     std::cout << "the sface cycles of sface " << i++;
-    std::cout << " start with an " << std::endl; 
+    std::cout << " start with an " << std::endl;
     CGAL_forall_sface_cycles_of(it,sf) {
       if (it.is_svertex()) {
-	std::cout << "  svertex at position "; 
+	std::cout << "  svertex at position ";
 	std::cout << SVertex_const_handle(it)->point() << std::endl;
       }
-      else if (it.is_shalfedge()) { 
+      else if (it.is_shalfedge()) {
 	std::cout << "  shalfedge from ";
 	std::cout << SHalfedge_const_handle(it)->source()->point() << " to ";
 	std::cout << SHalfedge_const_handle(it)->target()->point() << std::endl;

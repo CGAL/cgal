@@ -25,7 +25,7 @@ Box boxes[9] = { Box( 0,0,1,1),  Box( 1,0,2,1),  Box( 2,0,3,1), // low
 Box query[2] = { Box( 1,1,2,2),  Box( 2,2,3,3)};
 
 // With the special id-function we need to work on box pointers
-Box* b_ptr[9] = { boxes,   boxes+1, boxes+2, boxes+3, boxes+4, boxes+5, 
+Box* b_ptr[9] = { boxes,   boxes+1, boxes+2, boxes+3, boxes+4, boxes+5,
                   boxes+6, boxes+7, boxes+8};
 Box* q_ptr[2] = { query,   query+1};
 
@@ -46,8 +46,8 @@ Report<Iter> report( Iter it) { return Report<Iter>(it); }
 int main() {
     // run the intersection algorithm and store results in a vector
     std::vector<std::size_t> result;
-    CGAL::box_intersection_d( b_ptr, b_ptr+9, q_ptr, q_ptr+2, 
-                              report( std::back_inserter( result)), 
+    CGAL::box_intersection_d( b_ptr, b_ptr+9, q_ptr, q_ptr+2,
+                              report( std::back_inserter( result)),
                               std::ptrdiff_t(0));
     // sort and check result
     std::sort( result.begin(), result.end());

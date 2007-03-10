@@ -41,7 +41,7 @@ int main() {
     std::vector<Box> boxes;
     for ( Iterator i = triangles.begin(); i != triangles.end(); ++i)
         boxes.push_back( Box( i->bbox(), i));
-    
+
     // Run the self intersection algorithm with all defaults
     CGAL::box_self_intersection_d( boxes.begin(), boxes.end(), report_inters);
     return 0;

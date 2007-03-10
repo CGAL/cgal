@@ -43,11 +43,11 @@ int main()
    Traits       partition_traits;
 
 /*
-   CGAL::random_polygon_2(50, std::back_inserter(polygon), 
+   CGAL::random_polygon_2(50, std::back_inserter(polygon),
                           Point_generator(100));
 */
    make_polygon(polygon);
-   CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(), 
+   CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(),
                                           polygon.vertices_end(),
                                           std::back_inserter(partition_polys),
                                           partition_traits);

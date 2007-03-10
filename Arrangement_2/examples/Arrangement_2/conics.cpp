@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -24,7 +24,7 @@ typedef Rat_kernel::Point_2                             Rat_point_2;
 typedef Rat_kernel::Segment_2                           Rat_segment_2;
 typedef Rat_kernel::Circle_2                            Rat_circle_2;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,
                                  Alg_kernel,
                                  Nt_traits>             Traits_2;
 typedef Traits_2::Point_2                               Point_2;
@@ -48,7 +48,7 @@ int main ()
   // phi=36.87 degree (such that sin(phi) = 0.6, cos(phi) = 0.8),
   // yielding: 58x^2 + 72y^2 - 48xy - 360 = 0.
   Conic_arc_2   c2 (58, 72, -48, 0, 0, -360);
-  
+
   insert_curve (arr, c2);
 
   // Insert the segment (1, 1) -- (0, -3).
@@ -72,12 +72,12 @@ int main ()
   // Insert a full unit circle that is centered at (0, 4).
   Rat_circle_2  circ5 (Rat_point_2(0,4), 1);
   Conic_arc_2   c5 (circ5);
-  
+
   insert_curve (arr, c5);
 
   // Insert a parabolic arc that is supported by a parabola y = -x^2
   // (or: x^2 + y = 0) and whose endpoints are (-sqrt(3), -3) ~ (-1.73, -3)
-  // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates 
+  // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates
   // of the endpoints cannot be acccurately represented, we specify them
   // as the intersections of the parabola with the lines y = -3 and y = -2.
   // Note that the arc is clockwise oriented.
@@ -98,13 +98,13 @@ int main ()
   Point_2       ps7 (4, 3);
   Point_2       pt7 (4, 2);
   Conic_arc_2   c7 (circ7, CGAL::CLOCKWISE, ps7, pt7);
-  
+
   insert_curve (arr, c7);
 
   // Print out the size of the resulting arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return (0);

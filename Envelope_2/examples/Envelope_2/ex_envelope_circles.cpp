@@ -61,14 +61,14 @@ int main ()
 
   // Compute the minimization diagram that represents their lower envelope.
   Diagram_1              min_diag;
-  
+
   lower_envelope_2 (&(circles[0]), &(circles[4]),
                     min_diag);
   print_diagram (min_diag);
 
   // Compute the maximization diagram that represents the upper envelope.
   Diagram_1              max_diag;
-  
+
   upper_envelope_2 (&(circles[0]), &(circles[4]),
                     max_diag);
   print_diagram (max_diag);

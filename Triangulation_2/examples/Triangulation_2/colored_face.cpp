@@ -22,7 +22,7 @@ int main() {
   t.insert(Point(0,0));
   t.insert(Point(2,0));
   t.insert(Point(2,2));
- 
+
   Finite_faces_iterator fc = t.finite_faces_begin();
   for( ; fc != t.finite_faces_end(); ++fc)  fc->info() = CGAL::BLUE;
 

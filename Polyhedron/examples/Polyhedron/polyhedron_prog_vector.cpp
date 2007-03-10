@@ -7,7 +7,7 @@
 typedef CGAL::Cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                Point_3;
 typedef CGAL::Polyhedron_3< Kernel,
-                            CGAL::Polyhedron_items_3, 
+                            CGAL::Polyhedron_items_3,
                             CGAL::HalfedgeDS_vector>   Polyhedron;
 
 int main() {

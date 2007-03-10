@@ -20,11 +20,11 @@ template <typename T>
 struct Is_finite {
 
   const T* t_;
-  
-  Is_finite() 
+
+  Is_finite()
     : t_(NULL)
   {}
-  
+
   Is_finite(const T& t)
     : t_(&t)
   { }
@@ -54,7 +54,7 @@ main(int,char*[])
   t.insert(Point(0,1));
   t.insert(Point(0,2));
 
-  vertex_iterator vit, ve;  
+  vertex_iterator vit, ve;
   // associate indices to the vertices
   int index = 0;
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
@@ -63,7 +63,7 @@ main(int,char*[])
   }
 
   typedef boost::property_map<Triangulation, boost::vertex_index_t>::type VertexIdPropertyMap;
-  VertexIdPropertyMap vertex_index_pmap = get(boost::vertex_index, ft); 
+  VertexIdPropertyMap vertex_index_pmap = get(boost::vertex_index, ft);
 
   // Dijkstra's shortest path needs property maps for the predecessor and distance
   std::vector<vertex_descriptor> predecessor(boost::num_vertices(ft));
@@ -76,15 +76,15 @@ main(int,char*[])
 
   vertex_descriptor source =  *boost::vertices(ft).first;
   std::cout << "\nStart dijkstra_shortest_paths at " << source->point() << std::endl;
-  
+
   boost::dijkstra_shortest_paths(ft, source ,
 				 distance_map(distance_pmap)
-				 .predecessor_map(predecessor_pmap));  
+				 .predecessor_map(predecessor_pmap));
 
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor vd = *vit;
     std::cout << vd->point() << " [" << vd->id() << "] ";
-    std::cout << " has distance = "  << get(distance_pmap,vd) << " and predecessor ";  
+    std::cout << " has distance = "  << get(distance_pmap,vd) << " and predecessor ";
     vd = get(predecessor_pmap,vd);
     std::cout << vd->point() << " [" << vd->id() << "]\n";
   }

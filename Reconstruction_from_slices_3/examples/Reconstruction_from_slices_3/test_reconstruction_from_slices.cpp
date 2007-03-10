@@ -22,7 +22,7 @@ CGAL::Geomview_stream gv;  //TO RM
 #endif // GEOMVIEW_DUMP TO RM
 
 #include <cstring> //strcat, strcpy
-#include <cstdlib> //system 
+#include <cstdlib> //system
 #include <iostream>
 
 #ifdef GEOMVIEW
@@ -48,7 +48,7 @@ int main (int argc , char ** argv)
   bool solidlight = false;
   bool solidheavy = false;
   bool heavy = false;
-  
+
   // options of the command line
   if(argc == 1)
     {
@@ -60,26 +60,26 @@ int main (int argc , char ** argv)
       std::cout << command << std::endl;
       exit(2);
     }
-  
+
   const char * cnt_file = argv[1];
   const char * off_file_prefix = argv[2];
-  
+
   int l_pref=std::strlen(off_file_prefix);
-  
+
   char *head=new char[l_pref+10];
   char *body=new char[l_pref+10];
-  
+
   std::strcpy(head,off_file_prefix);
   std::strcpy(body,off_file_prefix);
-  
+
   std::strcat(head,".head");
   std::strcat(body,".body");
- 
+
   char *system_command=new char[3*(l_pref+10)];
 
-  std::strcat(std::strcat(std::strcat(std::strcpy(system_command,"cat "),head)," "),body);   
-  std::strcat(std::strcat(std::strcat(system_command," > "),off_file_prefix),".off"); 
- 
+  std::strcat(std::strcat(std::strcat(std::strcpy(system_command,"cat "),head)," "),body);
+  std::strcat(std::strcat(std::strcat(system_command," > "),off_file_prefix),".off");
+
   for (int i=3 ; i<argc ; i++)
     {
       if (std::strcmp(argv[i],"-solidlight")==0)
@@ -92,42 +92,42 @@ int main (int argc , char ** argv)
       else if (std::strcmp(argv[i],"-geomview")==0)
 	geomview = true;
 #endif
-      else 
+      else
 	{
 	  std::cout << command << std::endl;
 	  exit(3);
 	}
     }
-  
+
   // Read data and triangulation construction
   typedef CGAL::Exact_predicates_exact_constructions_kernel Gt;
   typedef CGAL::TFS_polyline_vertex_base_3< CGAL::Triangulation_vertex_base_3<Gt> > PlVb;
   typedef CGAL::TFS_cell_base_3_for_reconstruction< CGAL::Triangulation_cell_base_3<Gt> > PlCb;
   typedef CGAL::Triangulation_data_structure_3<PlVb,PlCb> Tds;
   typedef CGAL::Triangulation_from_slices_3< Gt,Tds> Slice_constrained_triangulation;
-  
+
   Slice_constrained_triangulation tpis;
-  
-  typedef CGAL::parser_CNT<Slice_constrained_triangulation> CNT_parser; 
-  
+
+  typedef CGAL::parser_CNT<Slice_constrained_triangulation> CNT_parser;
+
   //   parser_CNT pp(cnt_file,&tpis);
   //   pp.parse();
- 
+
   tpis.load<CNT_parser>(cnt_file);
   std::cout << "Triangulation over" << std::endl;
   //   std::cout << "Conforming (guaranteed only for small angles)" << std::endl;
   if(!check_polylines_respect(tpis))
 {
-  std::cout << "Not conform" << std::endl;  
+  std::cout << "Not conform" << std::endl;
   check_and_conform_polylines(tpis);
 }
 {
   tag_inner_outer(tpis);
-  std::cout << "In/out tagging over" << std::endl; 
+  std::cout << "In/out tagging over" << std::endl;
   if(solidlight)
     {
      non_solid_connections_removal(tpis,false); // Seems to be more efficient
-     std::cout << "Only heavy solid connections remain" << std::endl;	  
+     std::cout << "Only heavy solid connections remain" << std::endl;
     }
   else if(solidheavy)
     {
@@ -141,7 +141,7 @@ int main (int argc , char ** argv)
     }
   //save_in_off_file(tpis,head,body);
   //std::system(system_command);
-  //std::cout << "Off file over" << std::endl; 
+  //std::cout << "Off file over" << std::endl;
   save_in_wrl_file(tpis, "hello.wrl");
 }
 // else
@@ -150,10 +150,10 @@ int main (int argc , char ** argv)
   delete body;
   delete system_command;
 
-#ifdef GEOMVIEW 
+#ifdef GEOMVIEW
   if(geomview)
     {
-      CGAL::Geomview_stream gvv; 
+      CGAL::Geomview_stream gvv;
       typedef Slice_constrained_triangulation::Finite_edges_iterator Finite_edges_iterator;
       typedef Slice_constrained_triangulation::Finite_cells_iterator Finite_cells_iterator;
       typedef Slice_constrained_triangulation::Segment Segment;
@@ -162,11 +162,11 @@ int main (int argc , char ** argv)
       typedef Slice_constrained_triangulation::Cell_handle Cell_handle;
       typedef Slice_constrained_triangulation::Cell_iterator Cell_iterator;
       gvv.clear();
-      
+
       gvv.set_edge_color (CGAL::Color(0,0,0));
       gvv.set_face_color (CGAL::Color(0,0,0));
       gvv.set_bg_color (CGAL::Color(180,180,180));
-      
+
       for (Cell_iterator it=tpis.cells_begin(); it != tpis.cells_end(); ++it)
 	{
 	  Cell_handle c(it);

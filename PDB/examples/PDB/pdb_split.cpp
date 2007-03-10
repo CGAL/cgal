@@ -71,18 +71,18 @@ int main(int argc, char *argv[]){
   boost::program_options::notify(vm);
 
 
- 
+
   //boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-  //boost::program_options::notify(vm);    
+  //boost::program_options::notify(vm);
 
   if (input_file.empty()
       || output_template.empty()
-      || (split_chains && split_chain != '\0') 
-      || (split_chains && split_domain != -1) 
-      || (split_chain != '\0' && split_domain != -1) 
+      || (split_chains && split_chain != '\0')
+      || (split_chains && split_domain != -1)
+      || (split_chain != '\0' && split_domain != -1)
       || print_help) {
     std::cout << "This program splits a pdb file with multiple models or multiple domains into multiple files each with one model .\n";
-    std::cout << "useage: " << argv[0] 
+    std::cout << "useage: " << argv[0]
 	      << " [-c] input-pdb template%d[%c].pdb\n" << std::endl;
     std::cout << "The second argument is an sprintf style string that will be used to generate the names for the output files.\n\n";
     std::cout << o << "\n";
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
 
 
 
-  if (split_chain != '\0'){ 
+  if (split_chain != '\0'){
     std::cout << "Splitting on chain " << split_chain << std::endl;
   } else if (split_domain != -1) {
     std::cout << "Splitting on residue " << split_domain << std::endl;
@@ -128,12 +128,12 @@ int main(int argc, char *argv[]){
       }
       for (unsigned int j=0; j< m.number_of_chains(); ++j){
 	const CGAL_PDB_NS::Protein &p= m.chain(j);
-	
+
 	if (split_chain != '\0') {
 	  if (p.chain() == split_chain || p.chain() == std::toupper(split_chain) ) {
 	    std::cout << "Writing chain " << p.chain() << std::endl;
 	    assert(split_domain ==-1);
-	   
+
 	    std::ofstream out(output_template.c_str());
 	    CGAL_PDB_NS::PDB npdb;
 	    CGAL_PDB_NS::Model nm;
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]){
 	  npdb.write(out);
 	} else {
 	  CGAL_PDB_NS::Protein ps[2]={CGAL_PDB_NS::Protein(), CGAL_PDB_NS::Protein()};
-	  for (CGAL_PDB_NS::Protein::Const_residues_iterator rit = p.residues_begin(); 
+	  for (CGAL_PDB_NS::Protein::Const_residues_iterator rit = p.residues_begin();
 	       rit != p.residues_end(); ++rit){
 	    //rit->write('c', std::cout);
 	    if (rit->index().to_index()
@@ -172,10 +172,10 @@ int main(int argc, char *argv[]){
 	      ps[1].new_residue(*rit);
 	    }
 	  }
-	  
+
 	  assert(ps[0].number_of_residues() + ps[1].number_of_residues()
 		 == p.number_of_residues());
-	  
+
 	  for (unsigned int j=0; j< 2; ++j){
 	    std::cout << "Writing pdb with " << ps[j].number_of_residues() << " residues.\n";
 	    char buf[100000];

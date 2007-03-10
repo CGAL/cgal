@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
   o.add_options()
     ("help", boost::program_options::bool_switch(&print_help),
      "produce help message")
-    ("dali,d", boost::program_options::bool_switch(&dali), 
+    ("dali,d", boost::program_options::bool_switch(&dali),
      "Use a DALI transformation matrix as pasted from an email from DALI.")
     ("matrix,m", boost::program_options::bool_switch(&matrix),
      "Enter a single transformation matrix.")
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
      "refine the alignment relative to some pdb file.")
     ("verbose,v", boost::program_options::bool_switch(&verbose),
      "print out any errors that occur during reading of the pdb file.");
-   
+
   po.add_options()
     ("input-pdb", boost::program_options::value< std::string>(&input_file),
      "input file")
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]){
   boost::program_options::variables_map vm;
   boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
 				options(ao).positional(p).run(), vm);
-  boost::program_options::notify(vm); 
+  boost::program_options::notify(vm);
 
   if (input_file.empty() || output_file.empty() || print_help || (dali && matrix)) {
     std::cout << "This program transforms a pdb file by reading a transformation"
@@ -83,14 +83,14 @@ int main(int argc, char *argv[]){
 
   // std::cout << input_file << " " << output_template << " " << split_domain << " " << split_chains << std::endl;
 
-  
+
 
   //= new char[strlen(argv[2]+1000)];
- 
- 
+
+
 
   CGAL_PDB_NS::Transform t; //(rot, trans);
- 
+
   if (dali) {
     double rot[3][3];
     double trans[3];
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
 	done=true;
       }
     } while (!done);
-    
+
     CGAL_PDB_NS::Quaternion q(q1, q2, q3);
     CGAL_PDB_NS::Vector v(x,y,z);
     t= CGAL_PDB_NS::Transform(v, q);
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]){
     };
     t= CGAL_PDB_NS::Transform(rot, trans);
   }
-  
+
   std::cout  << t;
   std::ifstream in(input_file.c_str());
   if (!in) {
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]){
   CGAL_PDB_NS::PDB pdb(in, verbose);
 
   if (verbose) std::cout << "Input PDB has " << pdb.number_of_models() << " models." << std::endl;
- 
+
   for (unsigned int i=0;i< pdb.number_of_models(); ++i){
     CGAL_PDB_NS::Model &m= pdb.model(i);
     std::cout << "Model " << i << " has " << m.number_of_chains() << " chains."<< std::endl;
@@ -196,10 +196,10 @@ int main(int argc, char *argv[]){
     std::cout << "Refining against " << refine << std::endl;
 
     CGAL_PDB_NS::PDB rpdb(rin, verbose);
-    
+
     for (unsigned int i=0;i< pdb.number_of_models(); ++i){
       CGAL_PDB_NS::Model &m= pdb.model(i);
-      CGAL_PDB_NS::Model &rm= rpdb.model((std::min)(rpdb.number_of_models(), 
+      CGAL_PDB_NS::Model &rm= rpdb.model((std::min)(rpdb.number_of_models(),
 						    static_cast<size_t>(i)));
       for (unsigned int j=0; j< m.number_of_chains(); ++j){
 	CGAL_PDB_NS::Protein &p= m.chain(j);

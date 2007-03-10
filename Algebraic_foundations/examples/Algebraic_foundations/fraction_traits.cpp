@@ -10,24 +10,24 @@
 int main(){
     typedef CGAL::Fraction_traits<CGAL::Gmpq> FT;
     typedef FT::Numerator_type Numerator_type;
-    typedef FT::Denominator_type Denominator_type; 
-   
+    typedef FT::Denominator_type Denominator_type;
+
     BOOST_STATIC_ASSERT((boost::is_same<Numerator_type,CGAL::Gmpz>::value));
     BOOST_STATIC_ASSERT((boost::is_same<Denominator_type,CGAL::Gmpz>::value));
-    
+
     Numerator_type numerator;
-    Denominator_type denominator; 
+    Denominator_type denominator;
     CGAL::Gmpq fraction(4,5);
     FT::Decompose()(fraction,numerator,denominator);
 
     CGAL::set_pretty_mode(std::cout);
     std::cout << "decompose fraction: "<< std::endl;
     std::cout << "fraction   : " << fraction << std::endl;
-    std::cout << "numerator  : " << numerator<< std::endl; 
+    std::cout << "numerator  : " << numerator<< std::endl;
     std::cout << "denominator: " << denominator << std::endl;
-    
-    std::cout << "re-compose fraction: "<< std::endl;  
-    fraction = FT::Compose()(numerator,denominator); 
+
+    std::cout << "re-compose fraction: "<< std::endl;
+    fraction = FT::Compose()(numerator,denominator);
     std::cout << "fraction   : " << fraction << std::endl;
 }
 #else

@@ -28,7 +28,7 @@ int main() {
 
     // Select 100 points randomly and append them at the end of
     // the current vector of points.
-    random_selection( points.begin(), points.end(), 100, 
+    random_selection( points.begin(), points.end(), 100,
 		      std::back_inserter(points));
 
     // Create 100 points that are collinear to two randomly chosen

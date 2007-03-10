@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
      "produce help message")
     ("verbose,v", boost::program_options::bool_switch(&verbose),
      "print out any errors that occur during reading of the pdb file.");
-   
+
   po.add_options()
     ("input-pdb", boost::program_options::value< std::string>(&input_file),
      "input file")
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
   boost::program_options::variables_map vm;
   boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
 				options(ao).positional(p).run(), vm);
-  boost::program_options::notify(vm); 
+  boost::program_options::notify(vm);
 
   if (input_file.empty() || output_file.empty() || print_help || (dali && matrix)) {
     std::cout << "This program produces a pdb identical to the input but with no sidechains.\n";
@@ -67,14 +67,14 @@ int main(int argc, char *argv[]){
 
 
 
-  
+
   // std::cout << input_file << " " << output_template << " " << split_domain << " " << split_chains << std::endl;
 
-  
+
 
   //= new char[strlen(argv[2]+1000)];
 
-  
+
   std::ifstream in(input_file.c_str());
   if (!in) {
     std::cerr << "Error opening output file " << input_file << std::endl;
@@ -84,13 +84,13 @@ int main(int argc, char *argv[]){
   CGAL_PDB_NS::PDB pdb(in, verbose);
 
   if (verbose) std::cout << "Input PDB has " << pdb.number_of_models() << " models." << std::endl;
- 
+
   CGAL_PDB_NS::PDB outpdb;
-  
+
   for (unsigned int i=0;i< pdb.number_of_models(); ++i){
     CGAL_PDB_NS::Model &m= pdb.model(i);
     CGAL_PDB_NS::Model om;
-    
+
     std::cout << "Model " << i << " has " << m.number_of_chains() << " chains."<< std::endl;
     for (unsigned int j=0; j< m.number_of_chains(); ++j){
       CGAL_PDB_NS::Protein &p= m.chain(j);

@@ -6,7 +6,7 @@
 
 /* A facet with an additionnal handle */
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
-class My_vertex_base 
+class My_vertex_base
   : public  Vb
 {
   typedef Vb                              Base;
@@ -50,13 +50,13 @@ int main() {
   Vertex_handle v1 = t.insert(Point(0,0));
   Vertex_handle v2 = t.insert(Point(2,0));
   Vertex_handle v3 = t.insert(Point(2,2));
- 
+
   // associate vertices as you like
   v0->set_associated_vertex(v1);
   v1->set_associated_vertex(v2);
   v2->set_associated_vertex(v3);
-  v3->set_associated_vertex(v0); 
-  assert( v0->get_associated_vertex() == v1); 
+  v3->set_associated_vertex(v0);
+  assert( v0->get_associated_vertex() == v1);
 
   return 0;
 }

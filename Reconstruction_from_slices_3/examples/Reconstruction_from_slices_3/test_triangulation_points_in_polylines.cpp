@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-#ifdef GEOMVIEW 
+#ifdef GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>
 #endif //GEOMVIEW
 
@@ -29,7 +29,7 @@ int main (int argc , char ** argv)
 {
   const char * command = "Command :\n ./test_triangulation_points_in_polylines cnt_file [-geomview]";
   bool geomview = false;
-  
+
   // options of the command line
   if(argc == 1)
     {
@@ -46,48 +46,48 @@ int main (int argc , char ** argv)
     {
       if (std::strcmp(argv[i],"-geomview")==0)
 	geomview = true;
-      else 
+      else
 	{
 	  std::cout << command << std::endl;
 	  exit(3);
 	}
     }
-  
+
   // Read data and triangulation construction
   typedef CGAL::Exact_predicates_exact_constructions_kernel Gt;
   typedef CGAL::TFS_polyline_vertex_base_3<CGAL::Triangulation_vertex_base_3<Gt> > Vertex;
-  typedef CGAL::Triangulation_cell_base_3<Gt> Cell; 
-  typedef CGAL::Triangulation_data_structure_3<Vertex,Cell> Tds;  
+  typedef CGAL::Triangulation_cell_base_3<Gt> Cell;
+  typedef CGAL::Triangulation_data_structure_3<Vertex,Cell> Tds;
   typedef CGAL::Triangulation_from_slices_3<Gt,Tds> Triangulation_from_slices_3;
-  
+
   Triangulation_from_slices_3 tpis;
-  
-  typedef CGAL::parser_CNT<Triangulation_from_slices_3> parser_CNT; 
-  
+
+  typedef CGAL::parser_CNT<Triangulation_from_slices_3> parser_CNT;
+
   //   parser_CNT pp(cnt_file,&tpis);
   //   pp.parse();
-  
+
   tpis.load<parser_CNT>(cnt_file);
 
-#ifdef GEOMVIEW 
+#ifdef GEOMVIEW
   if(geomview)
     {
       typedef Triangulation_from_slices_3::Finite_edges_iterator Finite_edges_iterator;
       typedef Triangulation_from_slices_3::Segment Segment;
 
-      CGAL::Geomview_stream gv; 
-      gv.clear();      
+      CGAL::Geomview_stream gv;
+      gv.clear();
       gv.set_edge_color (CGAL::Color(0,0,0));
       //gv.set_face_color (CGAL::Color(255,255,255));
       gv.set_bg_color (CGAL::Color(180,180,180));
-      
+
       for (Finite_edges_iterator it=tpis.finite_edges_begin(); it != tpis.finite_edges_end(); ++it)
 	if (((*it).first->vertex((*it).second)->get_next()==(*it).first->vertex((*it).third))
 	    ||((*it).first->vertex((*it).third)->get_next()==(*it).first->vertex((*it).second)))
 	  {
 	    gv << Segment((*it).first->vertex((*it).second)->point(),(*it).first->vertex((*it).third)->point());
 	  }
-      gv.look_recenter();      
+      gv.look_recenter();
       std::getchar();
     }
 #endif //GEOMVIEW

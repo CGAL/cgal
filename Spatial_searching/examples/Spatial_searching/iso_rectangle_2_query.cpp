@@ -13,12 +13,12 @@ typedef CGAL::Random_points_in_square_2<Point_d> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Kd_tree<Traits> Tree;
-typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;	
+typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;
 
-int 
+int
 main() {
   const int N = 1000;
-   
+
   std::list<Point_d> points;
   points.push_back(Point_d(0,0));
 
@@ -29,7 +29,7 @@ main() {
   }
 
   std::list<Point_d> result;
-  
+
   // define range query
   Point_d p(0.2, 0.2);
   Point_d q(0.7, 0.7);
@@ -45,13 +45,13 @@ main() {
   std::cout << "The points in the box [0.2,0.7]x[0.2,0.7] are: " << std::endl;
   std::copy (result.begin(), result.end(), std::ostream_iterator<Point_d>(std::cout,"\n") );
   std::cout << std::endl;
-  
+
   result.clear();
   // Searching a fuzzy range
   // using value 0.1 for fuzziness paramater
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
-  std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: " 
+  std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: "
 	    << std::endl;
   std::copy (result.begin(), result.end(), std::ostream_iterator<Point_d>(std::cout,"\n") );
   std::cout << std::endl;

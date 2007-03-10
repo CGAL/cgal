@@ -32,24 +32,24 @@ struct Checker : public cb::Benchmark_visitor {
     }
 
     virtual void accept_classification( std::string problem,
-                                        std::string geom, 
+                                        std::string geom,
                                         std::string clas,
                                         std::string family,
                                         std::string instance,
                                         std::string release) {
-       
-        if ((problem != "Arrangement") && (problem != "CSG") 
+
+        if ((problem != "Arrangement") && (problem != "CSG")
             && (problem != " "))
             error_handler( "classification error");
 
-        if ((geom != "Lines") && (geom != "Circles") && (geom != "Conics") 
-            && (geom != "Cubics") && (geom != "Quartics") 
-            && (geom != "ArbitraryDegreeCurves") && ( geom != "Quadrics") 
+        if ((geom != "Lines") && (geom != "Circles") && (geom != "Conics")
+            && (geom != "Cubics") && (geom != "Quartics")
+            && (geom != "ArbitraryDegreeCurves") && ( geom != "Quadrics")
             && (geom != "Tori") && (geom != "Planes") && (geom != " "))
             error_handler( "classification error" );
 
-        if ((clas != "FullCurves") && (clas != "Ellipses") 
-            && (clas != "BoundedArcs") && (clas != "UnboundedArcs") 
+        if ((clas != "FullCurves") && (clas != "Ellipses")
+            && (clas != "BoundedArcs") && (clas != "UnboundedArcs")
             && (clas != "FullSurfaces") && (clas != "BoundedPatches")
             && (clas != "UnboundedPatches") && (clas != " "))
             error_handler( "classification error" );

@@ -27,7 +27,7 @@ typedef CGAL::Arr_naive_point_location<Arrangement>     Point_location;
 typedef Circular_k::Point_2                             Point_2;
 typedef Circular_k::Circle_2                            Circle_2;
 int main(){
-  
+
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -50,7 +50,7 @@ int main(){
     //insert(arr,_pl, *it);
     insert_curve(arr, *it, _pl);
       };
-  
+
   return 0;
 };
 

@@ -47,7 +47,7 @@ int main( int argc, char **argv) {
             if ( i < argc) {
                 scale = atof( argv[i]);
             } else {
-                cerr << argv[0] << ": error: -scale needs a double parameter." 
+                cerr << argv[0] << ": error: -scale needs a double parameter."
                      << endl;
                 help = true;
             }
@@ -64,7 +64,7 @@ int main( int argc, char **argv) {
                         "parameters." << endl;
                 help = true;
             }
-        } else if ( (strcmp( "-h", argv[i]) == 0) || 
+        } else if ( (strcmp( "-h", argv[i]) == 0) ||
 		    (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 2 ) {
@@ -79,7 +79,7 @@ int main( int argc, char **argv) {
             cerr << "Error: in parameter list" << endl;
         cerr << "Usage: " << argv[0] << " [<options>] [<infile> [<outfile>]]"
              << endl;
-        cerr << "       transforms coordinate values of an OFF object." 
+        cerr << "       transforms coordinate values of an OFF object."
              << endl;
         cerr << "       -trans <x> <y> <y>    translation." << endl;
         cerr << "       -scale <s>            uniform scaling." << endl;
@@ -102,7 +102,7 @@ int main( int argc, char **argv) {
         p_in = &in;
         name = filename[0];
     }
-    if ( ! * p_in) { 
+    if ( ! * p_in) {
         cerr << argv[0] << ": error: cannot open file '"<< name
          << "' for reading." <<endl;
         exit( 1);
@@ -124,7 +124,7 @@ int main( int argc, char **argv) {
         p_out = &out;
         oname = filename[1];
     }
-    if ( !*p_out) { 
+    if ( !*p_out) {
         cerr << argv[0] << ": error: cannot open file '"<< oname
              << "' for writing." <<endl;
         exit( 1);
@@ -132,7 +132,7 @@ int main( int argc, char **argv) {
 
     CGAL::File_header_OFF  header( binary, noc, skel, verbose);
     CGAL::File_writer_OFF  writer( header);
-    writer.write_header( * p_out, 
+    writer.write_header( * p_out,
                          scanner.size_of_vertices(),
                          scanner.size_of_halfedges(),
                          scanner.size_of_facets());
@@ -146,12 +146,12 @@ int main( int argc, char **argv) {
         q = CGAL::ORIGIN + ( (q - CGAL::ORIGIN) * scale );
         scanner.skip_to_next_vertex( k);
         writer.write_vertex( q.x(), q.y(), q.z());
-    }   
-    verr << "    .... done." << scanner.size_of_vertices() << " points read." 
+    }
+    verr << "    .... done." << scanner.size_of_vertices() << " points read."
 	 << endl;
 
-    if ( ! *p_in) { 
-        cerr << argv[0] << " read error: while reading file '"<< name << "'." 
+    if ( ! *p_in) {
+        cerr << argv[0] << " read error: while reading file '"<< name << "'."
              << endl;
         exit( 1);
     }

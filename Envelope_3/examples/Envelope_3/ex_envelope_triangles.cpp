@@ -44,9 +44,9 @@ void print_diagram (const Envelope_diagram_2& diag)
         ++ccb;
       } while (ccb != fit->outer_ccb());
     }
-    
+
     // Print the labels of the triangles that induce the envelope on this face.
-    std::cout << "-->  " << fit->number_of_surfaces() 
+    std::cout << "-->  " << fit->number_of_surfaces()
               << " triangles:";
 
     for (sit = fit->surfaces_begin(); sit != fit->surfaces_end(); ++sit)
@@ -62,7 +62,7 @@ void print_diagram (const Envelope_diagram_2& diag)
     // Print the labels of the triangles that induce the envelope on this edge.
     std::cout << "[Edge]  (" << eit->source()->point()
               << ")  (" << eit->target()->point()
-              << ")  -->  " << eit->number_of_surfaces() 
+              << ")  -->  " << eit->number_of_surfaces()
               << " triangles:";
 
     for (sit = eit->surfaces_begin(); sit != eit->surfaces_end(); ++sit)
@@ -78,7 +78,7 @@ int main ()
 {
   // Construct the input triangles, makred A and B.
   std::list<Data_triangle_3>   triangles;
-  
+
   triangles.push_back (Data_triangle_3 (Triangle_3 (Point_3 (0, 0, 0),
                                                     Point_3 (0, 6, 0),
                                                     Point_3 (5, 3, 4)),

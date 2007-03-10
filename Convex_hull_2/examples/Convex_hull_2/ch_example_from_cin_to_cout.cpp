@@ -6,8 +6,8 @@ typedef   CGAL::Point_2<CGAL::Cartesian<double> >        Point_2;
 
 int main()
 {
-  CGAL::set_ascii_mode(std::cin); 
-  CGAL::set_ascii_mode(std::cout); 
+  CGAL::set_ascii_mode(std::cin);
+  CGAL::set_ascii_mode(std::cout);
   std::istream_iterator< Point_2 >  in_start( std::cin );
   std::istream_iterator< Point_2 >  in_end;
   std::ostream_iterator< Point_2 >  out( std::cout, "\n" );

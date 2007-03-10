@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
      "print out verbose messages about reading and writing pdb files")
     ("distance,d", boost::program_options::value<double>(&dist_threshold),
      "The maximum distance to find neighbors when looking for nearby atoms.")
-    ("nearby-file,n", boost::program_options::value<std::string>(&nearby_file), 
+    ("nearby-file,n", boost::program_options::value<std::string>(&nearby_file),
      "Only output atoms which are near atoms of a similar type in this file.");
   po.add_options()
     ("input-pdb", boost::program_options::value< std::string>(&input_file),
@@ -62,15 +62,15 @@ int main(int argc, char *argv[]){
   boost::program_options::notify(vm);
 
 
- 
+
   //boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-  //boost::program_options::notify(vm);    
+  //boost::program_options::notify(vm);
 
   if (input_file.empty()
       || output_file.empty()
       || print_help) {
     std::cout << "This program filters a pdb file, removing some of the atoms and residues.\n";
-    std::cout << "useage: " << argv[0] 
+    std::cout << "useage: " << argv[0]
 	      << " [-c] input-pdb output.pdb\n" << std::endl;
     std::cout << o << "\n";
     return EXIT_SUCCESS;
@@ -83,14 +83,14 @@ int main(int argc, char *argv[]){
     std::cerr << "Error opening input file " << input_file << std::endl;
     return EXIT_FAILURE;
   }
- 
+
   //= new char[strlen(argv[2]+1000)];
   CGAL_PDB_NS::PDB pdb(in, verbose);
 
   std::cout << "Input PDB has " << pdb.number_of_models() << " models." << std::endl;
 
 
- 
+
   if (!nearby_file.empty()){
     std::ifstream ns(input_file.c_str());
     if (!ns) {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]){
       return EXIT_FAILURE;
     }
     CGAL_PDB_NS::PDB fpdb(ns, verbose);
-    
+
     CGAL_PDB_NS::Squared_distance sd;
 
     for (unsigned int i=0; i< pdb.number_of_models(); ++i){
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]){
 	CGAL_PDB_NS::Protein &c= m.chain(j);
 	std::vector<CGAL_PDB_NS::Atom::Index> to_erase;
 
-	
+
 	for (CGAL_PDB_NS::Protein::Const_atoms_iterator it= c.atoms_begin(); it != c.atoms_end(); ++it){
 	  bool found=false;
 	  for (unsigned int j=0; j< fm.number_of_chains(); ++j){
@@ -134,11 +134,11 @@ int main(int argc, char *argv[]){
 	  c.erase_atom(to_erase[i]);
 	}
 
-      } 
+      }
     }
   }
-  
-  
+
+
 
 
   std::ofstream out(output_file.c_str());

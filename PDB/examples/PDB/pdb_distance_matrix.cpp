@@ -61,21 +61,21 @@ int main(int argc, char *argv[]){
       ("input-pdb", boost::program_options::value< std::string>(&input_file), "input file");
 
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("input-pdb", 1);
     p.add("output-image", 1);
-    
+
     boost::program_options::variables_map vm;
     boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
 				  options(ao).positional(p).run(), vm);
     boost::program_options::notify(vm);
-    
-    
-    
+
+
+
     //boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-    //boost::program_options::notify(vm);    
-    
+    //boost::program_options::notify(vm);
+
     if (input_file.empty() || print_help || (all_atoms && backbone)) {
       std::cout << "This program writes the distance matrix to an image file.\n";
       std::cout << "Only one of -b or -a may be used.\n";
@@ -85,10 +85,10 @@ int main(int argc, char *argv[]){
     }
   }
 
- 
-  
-  
-  
+
+
+
+
   std::ifstream in(input_file.c_str());
   if (!in) {
     std::cerr << "Error opening input file " << input_file << std::endl;
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]){
   if (pdb.number_of_models() != 1){
     std::cout << "Attempting to write multiple image files: assuming the output argument has a %d in it.\n";
   }
- 
+
   for (unsigned int i=0;i< pdb.number_of_models(); ++i){
     CGAL_PDB_NS::Model &m= pdb.model(i);
     CGAL_PDB_NS::Matrix arr;
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]){
 	  int a,b;
 	  if (sscanf(buf, "%d %d", &a, &b)==2){
 	    if (a > arr.dim1() || b > arr.dim1() || a<0 || b <0){
-	      std::cerr << "Index " << a << " or " << b << " out of range." << std::endl;	  
+	      std::cerr << "Index " << a << " or " << b << " out of range." << std::endl;
 	    } else {
 	      std::cout << arr[a][b] << std::endl;
 	    }
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]){
 	  } else {
 	    std::cerr << "Error parsing input. Please enter a pair of indices or 'exit'." << std::endl;
 	  }
-	 
+
 	}
       }
     }
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]){
 	  }
 	}
       }
-	
+
       im.write(buf);
     }
   }

@@ -1,5 +1,5 @@
 /*
-  agc course project, 
+  agc course project,
   spherical arrangements of none intersecting arcs of great circles on a sphere
 
   an example for traversing incoming halfedges of vertices
@@ -36,18 +36,18 @@ int main() {
   SphereMap::Vertex_iterator vit;
   // loop over vertices and print incident halfedges
   for (vit = sMap.vertices_begin(); vit != sMap.vertices_end(); ++vit) {
-    std::cout << "now at vertex with direction: " << vit->direction() << 
+    std::cout << "now at vertex with direction: " << vit->direction() <<
       std::endl;
 
     SphereMap::Halfedge_around_vertex_circulator havc;
     havc = vit->incident_halfedges();
     SphereMap::Halfedge_around_vertex_circulator circEn=havc;
     do {
-      std::cout << "incident halfedge: " << havc->curve() << 
+      std::cout << "incident halfedge: " << havc->curve() <<
 	std::endl;
       ++havc;
     } while (havc != circEn);
-    
+
   }
 
   std::cout <<sMap;

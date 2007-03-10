@@ -11,7 +11,7 @@ struct Normal_vector {
         typename Facet::Halfedge_handle h = f.halfedge();
         // Facet::Plane_3 is the normal vector type. We assume the
         // CGAL Kernel here and use its global functions.
-        return CGAL::cross_product( 
+        return CGAL::cross_product(
           h->next()->vertex()->point() - h->vertex()->point(),
           h->next()->next()->vertex()->point() - h->next()->vertex()->point());
     }

@@ -13,7 +13,7 @@ int main(int, char *[])
     Simulation_traits::Simulator::Handle sp= tr.simulator_handle();
 
     KDel kdel(tr);
-  
+
     kdel.set_has_certificates(false);
     std::ifstream in("data/points_2");
     in >> *tr.active_points_2_table_handle();

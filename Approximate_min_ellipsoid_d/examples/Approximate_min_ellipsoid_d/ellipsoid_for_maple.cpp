@@ -36,7 +36,7 @@ int main()
   // compute approximation:
   Traits traits;
   AME mel(eps, P.begin(), P.end(), traits);
-  
+
   // output for Maple:
   if (mel.is_full_dimensional() && d == 2) {
 
@@ -49,14 +49,14 @@ int main()
          << "with(plottools):\n"
          << "n:= " << n << ":\n"
          << "P:= Matrix(" << d << "," << n << "):\n";
-    
+
     for (int i=0; i<n; ++i)
       for (int j=0; j<d; ++j)
         cout << "P[" << j+1 << "," << i+1 << "] := "
-             << std::setiosflags(std::ios::scientific) 
+             << std::setiosflags(std::ios::scientific)
              << std::setprecision(20) << P[i][j] << ":\n";
     cout << "\n";
-  
+
     // output defining equation:
     cout << "Mp:= Matrix([\n";
     for (int i=0; i<d; ++i) {

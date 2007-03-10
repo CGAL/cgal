@@ -36,7 +36,7 @@ int main()
             << pcgm1.number_of_edges() << " "
             << pcgm1.number_of_facets()
             << std::endl;
-  
+
   Polyhedral_cgm pcgm2;
   Polyhedral_cgm_initializer pcgm_initializer2(pcgm2);
   pcgm_initializer2(P2);

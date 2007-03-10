@@ -10,18 +10,18 @@ typedef K::Point_2 Point;
 
 typedef CGAL::Triangulation_2<K> Triangulation;
 
-// As we want to run Dijskra's shortest path algorithm we only 
+// As we want to run Dijskra's shortest path algorithm we only
 // consider finite vertices and edges.
 
 template <typename T>
 struct Is_finite {
 
   const T* t_;
-  
-  Is_finite() 
+
+  Is_finite()
     : t_(NULL)
   {}
-  
+
   Is_finite(const T& t)
     : t_(&t)
   { }
@@ -59,23 +59,23 @@ main(int,char*[])
   vertex_iterator vit, ve;
   // Associate indices to the vertices
   int index = 0;
-  // boost::tie assigns the first and second element of the std::pair 
+  // boost::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor  vd = *vit;
     vertex_id_map[vd]= index++;
     }
-  
+
   // Dijkstra's shortest path needs property maps for the predecessor and distance
   // We first declare a vector
-  std::vector<vertex_descriptor> predecessor(boost::num_vertices(ft));  
+  std::vector<vertex_descriptor> predecessor(boost::num_vertices(ft));
   // and then turn it into a property map
-  boost::iterator_property_map<std::vector<vertex_descriptor>::iterator, 
+  boost::iterator_property_map<std::vector<vertex_descriptor>::iterator,
                                VertexIdPropertyMap>
     predecessor_pmap(predecessor.begin(), vertex_index_pmap);
 
   std::vector<double> distance(boost::num_vertices(ft));
-  boost::iterator_property_map<std::vector<double>::iterator, 
+  boost::iterator_property_map<std::vector<double>::iterator,
                                VertexIdPropertyMap>
     distance_pmap(distance.begin(), vertex_index_pmap);
 
@@ -86,16 +86,16 @@ main(int,char*[])
   boost::dijkstra_shortest_paths(ft, source,
 				 distance_map(distance_pmap)
 				 .predecessor_map(predecessor_pmap)
-				 .vertex_index_map(vertex_index_pmap));  
-  
+				 .vertex_index_map(vertex_index_pmap));
+
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor vd = *vit;
-    std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "] "; 
-    std::cout << " has distance = "  << boost::get(distance_pmap,vd) 
-	      << " and predecessor ";  
+    std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "] ";
+    std::cout << " has distance = "  << boost::get(distance_pmap,vd)
+	      << " and predecessor ";
     vd =  boost::get(predecessor_pmap,vd);
-    std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "]\n "; 
+    std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "]\n ";
   }
-  
+
   return 0;
 }

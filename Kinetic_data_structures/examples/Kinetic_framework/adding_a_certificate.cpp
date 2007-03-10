@@ -26,7 +26,7 @@ struct Positive_x_f_2 {
   }
 };
 
-template <class FunctionKernel> 
+template <class FunctionKernel>
 class My_kinetic_kernel:
   public CGAL::Kinetic::Cartesian<FunctionKernel> {
   typedef CGAL::Kinetic::Cartesian<FunctionKernel> P;
@@ -63,7 +63,7 @@ struct My_simulation_traits {
   typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
   typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
   // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
- 
+
   typedef CGAL::Kinetic::Instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
@@ -74,7 +74,7 @@ struct My_simulation_traits {
   Simulator* simulator_handle() const { return sim_.get();}
   const Static_kernel& static_kernel_object() const {return k_;}
   const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
- 
+
   Instantaneous_kernel instantaneous_kernel_object() const {
     return Instantaneous_kernel(*this);
   }
@@ -85,8 +85,8 @@ struct My_simulation_traits {
 						   ap2_(new Active_points_2_table()),
 						   ap3_(new Active_points_3_table())
   {}
- 
-  
+
+
   bool is_exact() const {
     return true;
   }
@@ -114,9 +114,9 @@ int main(int, char *[])
 
   std::ifstream in("data/points_2");
   in >> *tr.active_points_2_table_handle();
-  std::cout << "Read " << tr.active_points_2_table_handle()->size() 
+  std::cout << "Read " << tr.active_points_2_table_handle()->size()
 	    << " points" << std::endl;
-  
+
   tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
 
   return EXIT_SUCCESS;

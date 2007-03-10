@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
     boost::program_options::options_description o("Allowed options"), po, ao;
     o.add_options()
       ("help", boost::program_options::bool_switch(&print_help), "produce help message")
-      ("verbose,v", boost::program_options::bool_switch(&verbose), 
+      ("verbose,v", boost::program_options::bool_switch(&verbose),
        "Print error messages from reading the pdb files.");
     po.add_options()
       ("input-pdb", boost::program_options::value< std::string >(&input_file),
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
        "The output file.");
 
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("input-pdb", 1);
     p.add("output-spheres", 1);
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
 				  options(ao).positional(p).run(), vm);
     boost::program_options::notify(vm);
 
-    
+
     if (input_file.empty() || output_file.empty() || print_help) {
       std::cout << "Read a PDB file and write spheres:\n# num_spheres \nx y z r\n...\nto the output file.\n";
       std::cout << "usage: " << argv[0] << " input.pdb output.spheres\n";

@@ -11,7 +11,7 @@
 
 // instead of
 //typedef CGAL::Cartesian<Number_type>               Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Cartesian<Number_type> {};
 
 typedef Kernel::Point_2                            Point_2;
@@ -41,19 +41,19 @@ int main ()
   rect.push_back (Point_2 (3, 0));
   rect.push_back (Point_2 (3, 2));
   rect.push_back (Point_2 (0, 2));
-  
+
   // Perform a sequence of operations.
   Polygon_set_2 S;
   S.insert (P);
   S.join (Q);                   // Compute the union of P and Q.
   S.complement();               // Compute the complement.
   S.intersection (rect);        // Intersect with the clipping rectangle.
-  
+
   // Print the result.
   std::list<Polygon_with_holes_2> res;
   std::list<Polygon_with_holes_2>::const_iterator it;
 
-  std::cout << "The result contains " << S.number_of_polygons_with_holes() 
+  std::cout << "The result contains " << S.number_of_polygons_with_holes()
             << " components:" << std::endl;
 
   S.polygons_with_holes (std::back_inserter (res));
@@ -61,6 +61,6 @@ int main ()
     std::cout << "--> ";
     print_polygon_with_holes (*it);
   }
-  
+
   return 0;
 }

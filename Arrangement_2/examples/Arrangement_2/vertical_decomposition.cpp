@@ -26,7 +26,7 @@ int main ()
 {
   // Construct the arrangement.
   Arrangement_2    arr;
-  
+
   insert_non_intersecting_curve(arr, Segment_2(Point_2(1, 1), Point_2(3, 0)));
   insert_non_intersecting_curve(arr, Segment_2(Point_2(1, 1), Point_2(2, 2)));
   insert_non_intersecting_curve(arr, Segment_2(Point_2(2, 2), Point_2(3, 0)));

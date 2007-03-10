@@ -9,7 +9,7 @@
 
 // instead of
 //typedef CGAL::Cartesian<Number_type>               Kernel;
-// workaround for VC++ 
+// workaround for VC++
 struct Kernel : public CGAL::Cartesian<Number_type> {};
 
 typedef Kernel::Point_2                            Point_2;
@@ -32,7 +32,7 @@ int main ()
   holesP[0].push_back (Point_2 (1, 3));
   holesP[0].push_back (Point_2 (1, -3));
 
-  Polygon_with_holes_2  P (outP, holesP, holesP + 1); 
+  Polygon_with_holes_2  P (outP, holesP, holesP + 1);
   std::cout << "P = "; print_polygon_with_holes (P);
 
   // Construct Q - a bounded rectangle that contains a rectangular hole.
@@ -57,7 +57,7 @@ int main ()
 
   std::cout << "The symmetric difference:" << std::endl;
   for (it = symmR.begin(); it != symmR.end(); ++it) {
-    std::cout << "--> "; 
+    std::cout << "--> ";
     print_polygon_with_holes (*it);
   }
 

@@ -20,7 +20,7 @@ int main()
   CGAL::Random_points_in_sphere_3<Point_3> gen(100.0);
   std::list<Point_3>   points;
 
-  // generate 250 points randomly on a sphere of radius 100.0 
+  // generate 250 points randomly on a sphere of radius 100.0
   // and insert them into the triangulation
   CGAL::copy_n(gen, 250, std::back_inserter(points) );
   Delaunay T;
@@ -28,10 +28,10 @@ int main()
 
   std::list<Vertex_handle>  vertices;
   T.incident_vertices(T.infinite_vertex(), std::back_inserter(vertices));
-  std::cout << "This convex hull of the 250 points has " 
+  std::cout << "This convex hull of the 250 points has "
             << vertices.size() << " points on it." << std::endl;
 
-  // remove 25 of the input points 
+  // remove 25 of the input points
   std::list<Vertex_handle>::iterator v_set_it = vertices.begin();
   for (int i = 0; i < 25; i++)
   {

@@ -4,28 +4,28 @@
 #include <list>
 #include <CGAL/circulator.h>
 
-template <class C> inline  int foo( C c, std::forward_iterator_tag) { 
+template <class C> inline  int foo( C c, std::forward_iterator_tag) {
     CGAL::Assert_circulator( c);
     CGAL::Assert_forward_category( c);
     return 1;
 }
-template <class C> inline  int foo( C c, std::random_access_iterator_tag) { 
+template <class C> inline  int foo( C c, std::random_access_iterator_tag) {
     CGAL::Assert_circulator( c);
     CGAL::Assert_random_access_category( c);
     return 2;
 }
-template <class I> inline  int foo( I i, CGAL::Iterator_tag) { 
+template <class I> inline  int foo( I i, CGAL::Iterator_tag) {
     CGAL::Assert_iterator( i);
     return 3;
 }
 
-template <class C> inline  int foo( C c, CGAL::Circulator_tag) { 
+template <class C> inline  int foo( C c, CGAL::Circulator_tag) {
     CGAL::Assert_circulator( c);
     typedef std::iterator_traits<C> Traits;
     typedef typename Traits::iterator_category iterator_category;
     return foo( c, iterator_category());
 }
-template <class IC> inline  int foo( IC ic) { 
+template <class IC> inline  int foo( IC ic) {
     typedef CGAL::Circulator_traits<IC> Traits;
     typedef typename Traits::category category;
     return foo( ic, category());

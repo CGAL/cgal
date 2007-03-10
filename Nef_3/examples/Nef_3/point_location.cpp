@@ -16,10 +16,10 @@ int main() {
   typedef Nef_polyhedron_3::Volume_const_handle Volume_const_handle;
   typedef Nef_polyhedron_3::Object_handle Object_handle;
 
-  
+
   Nef_polyhedron_3 N;
   std::cin >> N;
-  
+
   Vertex_const_handle v;
   Halfedge_const_handle e;
   Halffacet_const_handle f;
@@ -34,7 +34,7 @@ int main() {
   else if(CGAL::assign(c,o))
     std::cout << "Locating volume" << std::endl;
   //other cases can not occur
-  
+
   return 0;
 }
 

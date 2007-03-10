@@ -33,7 +33,7 @@ int main( int argc, char **argv) {
             binary = true;
         else if ( strcmp( "-noc", argv[i]) == 0)
             noc = true;
-        else if ( (strcmp( "-h", argv[i]) == 0) || 
+        else if ( (strcmp( "-h", argv[i]) == 0) ||
                   (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 2 ) {
@@ -66,7 +66,7 @@ int main( int argc, char **argv) {
         p_in = &in;
         name = filename[0];
     }
-    if ( !*p_in) { 
+    if ( !*p_in) {
         cerr << argv[0] << ": error: cannot open file '"<< name
              << "' for reading." <<endl;
         exit( 1);
@@ -77,8 +77,8 @@ int main( int argc, char **argv) {
     (*p_in) >> P;
     vout << "    .... done." << endl;
 
-    if ( !*p_in) { 
-        cerr << argv[0] << " read error: while reading file '"<< name << "'." 
+    if ( !*p_in) {
+        cerr << argv[0] << " read error: while reading file '"<< name << "'."
              << endl;
         exit( 1);
     }
@@ -92,7 +92,7 @@ int main( int argc, char **argv) {
         p_out = &out;
         name = filename[1];
     }
-    if ( !*p_out) { 
+    if ( !*p_out) {
         cerr << argv[0] << ": error: cannot open file '"<< name
              << "' for writing." <<endl;
         exit( 1);
@@ -113,8 +113,8 @@ int main( int argc, char **argv) {
     (*p_out) << P;
     vout << "    .... done." << endl;
 
-    if ( !*p_out) { 
-        cerr << argv[0] << " write error: while writing file '"<< name << "'." 
+    if ( !*p_out) {
+        cerr << argv[0] << " write error: while writing file '"<< name << "'."
              << endl;
         exit( 1);
     }

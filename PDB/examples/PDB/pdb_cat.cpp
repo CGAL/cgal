@@ -37,16 +37,16 @@ int main(int argc, char *argv[]){
     boost::program_options::options_description o("Allowed options"), po, ao;
     o.add_options()
       ("help", boost::program_options::bool_switch(&print_help), "produce help message")
-      ("verbose,v", boost::program_options::bool_switch(&verbose), 
+      ("verbose,v", boost::program_options::bool_switch(&verbose),
        "Print error messages from reading the pdb files.")
-      ("align,a", boost::program_options::bool_switch(&align), 
+      ("align,a", boost::program_options::bool_switch(&align),
        "Align each protein to the previous.");
     po.add_options()
       ("input-pdbs", boost::program_options::value< std::vector<std::string> >(&input_files),
        "The input and output files.");
 
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("input-pdbs", -1);
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
 				  options(ao).positional(p).run(), vm);
     boost::program_options::notify(vm);
 
-    
+
     if (input_files.size() <2 || print_help) {
       std::cout << "Concatenate a bunch of pdb files into one pdb file with many models.\n";
       std::cout << "usage: " << argv[0] << " input-pdb-0 input-pdb-1 ... output-pdb\n";
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]){
     input_files.pop_back();
   }
 
-  
+
   CGAL_PDB_NS::PDB outpdb;
   CGAL_PDB_NS::Model last;
   for (unsigned int i=0; i < input_files.size(); ++i){
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
       return EXIT_FAILURE;
     }
     CGAL_PDB_NS::PDB inpdb(in, verbose);
-    
+
     for (CGAL_PDB_NS::PDB::Models_iterator mit= inpdb.models_begin(); mit != inpdb.models_end(); ++mit){
       CGAL_PDB_NS::Model m= *mit;
       m.set_index(outpdb.number_of_models());
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]){
       last= m;
     }
   }
-  
+
   if (output_file.empty()){
     outpdb.write(std::cout);
   } else {

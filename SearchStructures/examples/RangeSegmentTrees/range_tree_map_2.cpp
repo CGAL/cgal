@@ -3,7 +3,7 @@
 // A two dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h> 
+#include <CGAL/basic.h>
 #include <iostream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
@@ -52,7 +52,7 @@ int main()
 
   while(current!=OutputList.end())
   {
-    std::cerr << (*current).first.x()<< "-" << (*current).first.y() << " +char= " 
+    std::cerr << (*current).first.x()<< "-" << (*current).first.y() << " +char= "
 	 << (*current).second << std::endl;
     current++;
   }
@@ -60,7 +60,7 @@ int main()
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";
-  return 0; 
+  return 0;
 }
 
 

@@ -1,5 +1,5 @@
 /*
-  agc course project, 
+  agc course project,
   spherical arrangements of none intersecting arcs of great circles on a sphere
 
   an example for point location of spherical objects

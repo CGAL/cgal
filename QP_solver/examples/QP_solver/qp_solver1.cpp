@@ -1,4 +1,4 @@
-// This example program solves the quadratic program 
+// This example program solves the quadratic program
 //    minimize    x^T D x + c^T x + c0
 //    subject to  A x <rel> b
 //                L <= x <= u
@@ -17,7 +17,7 @@
 // for y = 1/8. This value (as well as x = 1 - 2(1/8) = 3/4)
 // are within the bounds, so the solution should be x = 3/4
 // and y = 1/8. The objective function value should be
-// 9/16 + 3/8 + 1 = 31/16 
+// 9/16 + 3/8 + 1 = 31/16
 
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
@@ -26,7 +26,7 @@
 #ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float ET;
-#else 
+#else
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz ET;
 #endif
@@ -53,11 +53,11 @@ int main() {
 
   // now construct the quadratic program; the first two parameters are
   // the number of variables and the number of constraints (rows of A)
-  Program qp (2, 1, cols_of_A, b, rt, fl, l, fu, u, rows_of_D, c, c0); 
+  Program qp (2, 1, cols_of_A, b, rt, fl, l, fu, u, rows_of_D, c, c0);
 
   // solve the program
   Solution s = CGAL::solve_quadratic_program(qp, ET());
-  
+
   // output solution
   if (s.status() == CGAL::QP_OPTIMAL) { // we know that, don't we?
     std::cout << "Optimal feasible solution: ";
@@ -68,4 +68,4 @@ int main() {
   }
 
   return 0;
-} 
+}

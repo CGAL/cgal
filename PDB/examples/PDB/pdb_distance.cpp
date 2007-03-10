@@ -51,29 +51,29 @@ int main(int argc, char *argv[]){
   {
     boost::program_options::options_description o("Allowed options"), po, ao;
     o.add_options()
-      ("crms,c", boost::program_options::bool_switch(&crms), 
+      ("crms,c", boost::program_options::bool_switch(&crms),
        "Output the cRMS between the two pdbs (after alignment).")
-      ("drms,d", boost::program_options::bool_switch(&drms), 
-       "Output the dRMS between the two pdbs.")     
+      ("drms,d", boost::program_options::bool_switch(&drms),
+       "Output the dRMS between the two pdbs.")
       ("all-atoms,a", boost::program_options::bool_switch(&all_atoms),
-       "Output the distances between all atoms, not just the C_alphas.")     
-      ("no-align,n", boost::program_options::bool_switch(&no_align), 
-       "Do not rigidly align the proteins before computing cRMS.")     
-      ("verbose,v", boost::program_options::bool_switch(&warn), 
+       "Output the distances between all atoms, not just the C_alphas.")
+      ("no-align,n", boost::program_options::bool_switch(&no_align),
+       "Do not rigidly align the proteins before computing cRMS.")
+      ("verbose,v", boost::program_options::bool_switch(&warn),
        "Warn about errors parsing pdb file.")
-      ("max-c-dist,C", boost::program_options::bool_switch(&max_cdist), 
+      ("max-c-dist,C", boost::program_options::bool_switch(&max_cdist),
        "Output the max distance between any two corresponding atoms.")
-      ("max-d-dist,D", boost::program_options::bool_switch(&max_ddist), 
+      ("max-d-dist,D", boost::program_options::bool_switch(&max_ddist),
        "Output the max distance difference between pairwise distances.")
       ("help", boost::program_options::bool_switch(&print_help), "Produce help message");
 
-    po.add_options()("input-pdb-0", 
-		     boost::program_options::value< std::string>(&base_file), 
+    po.add_options()("input-pdb-0",
+		     boost::program_options::value< std::string>(&base_file),
 		     "First input file.")
-      ("input-pdb-1", boost::program_options::value< std::string>(&input_file), 
+      ("input-pdb-1", boost::program_options::value< std::string>(&input_file),
        "Second input file");
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("input-pdb-0", 1);
     p.add("input-pdb-1", 1);
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
       }
     }
   }
-  
+
   if ( crms && !no_align) {
     for (unsigned int i=0; i< input.number_of_models(); ++i){
       CGAL_PDB_NS::Model &m= input.model(i);
@@ -207,8 +207,8 @@ int main(int argc, char *argv[]){
       }
       if (base_matrix.dim1() != input_matrix.dim1()){
 	std::cerr << "Proteins being compared must have the same number of atoms.\n";
-	std::cerr << "Base protein had " << base_matrix.dim1() 
-		  << " atoms and second protein had " << input_matrix.dim1() 
+	std::cerr << "Base protein had " << base_matrix.dim1()
+		  << " atoms and second protein had " << input_matrix.dim1()
 		  << " atoms." << std::endl;
 	return EXIT_FAILURE;
       }

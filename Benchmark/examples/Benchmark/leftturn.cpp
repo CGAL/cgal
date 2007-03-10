@@ -54,7 +54,7 @@ int main(int argc, char * argv[])
     std::cerr << e.what() << std::endl;
     return 1;
   }
-  
+
   cb::Benchmark<My_bench_leftturn> bench("Leftturn", bench_opts.get_seconds());
   bench();
   return 0;

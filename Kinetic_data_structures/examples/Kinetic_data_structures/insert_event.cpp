@@ -17,13 +17,13 @@ int main(int, char *[])
     Simulation_traits::Simulator::Handle sp= tr.simulator_handle();
 
     KDS kds(tr);
-  
-   
+
+
     //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
     std::ifstream in("data/points_1");
     in >> *tr.active_points_1_table_handle();
     std::cout << *tr.active_points_1_table_handle();
-    sp->new_event(Simulation_traits::Simulator::Time(3), 
+    sp->new_event(Simulation_traits::Simulator::Time(3),
 		  Insert_event(Moving_point_1(Moving_point_1::Coordinate(0)),
 			       tr.active_points_1_table_handle()));
 

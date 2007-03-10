@@ -7,7 +7,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs LEDA ..." << std::endl; 
+  std::cout << "Sorry, this example needs LEDA ..." << std::endl;
   return 0;
 }
 #else

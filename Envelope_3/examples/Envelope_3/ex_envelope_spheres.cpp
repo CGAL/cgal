@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -79,7 +79,7 @@ int main (int argc, char **argv)
   Envelope_diagram_2    min_diag;
   CGAL::Timer           timer;
 
-  std::cout << "Constructing the lower envelope of " 
+  std::cout << "Constructing the lower envelope of "
             << n << " spheres." << std::endl;
 
   timer.start();
@@ -89,10 +89,10 @@ int main (int argc, char **argv)
 
   // Print the dimensions of the minimization diagram.
   std::cout << "V = " << min_diag.number_of_vertices()
-	    << ",  E = " << min_diag.number_of_edges() 
+	    << ",  E = " << min_diag.number_of_edges()
 	    << ",  F = " << min_diag.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time() 
+  std::cout << "Construction took " << timer.time()
 	    << " seconds." << std::endl;
 
   return (0);

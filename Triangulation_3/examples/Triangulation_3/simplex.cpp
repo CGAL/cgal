@@ -51,6 +51,6 @@ int main()
        it != simplices.end(); it++) {
     std::cout << it->dimension() << std::endl;
   }
-	 
+
   return 0;
 }

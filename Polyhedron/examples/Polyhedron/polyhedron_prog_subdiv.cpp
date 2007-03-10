@@ -42,7 +42,7 @@ struct Smooth_old_vertex {
         Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0 - alpha);
         HV_circulator h = v.vertex_begin();
         do {
-            vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN) 
+            vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
                        * alpha / degree;
             ++ h;
             CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
@@ -78,7 +78,7 @@ void subdiv( Polyhedron& P) {
     std::vector<Point> pts;                    // smooth the old vertices
     pts.reserve( nv);  // get intermediate space for the new points
     ++ last_v; // make it the past-the-end position again
-    std::transform( P.vertices_begin(), last_v, std::back_inserter( pts), 
+    std::transform( P.vertices_begin(), last_v, std::back_inserter( pts),
                     Smooth_old_vertex());
     std::copy( pts.begin(), pts.end(), P.points_begin());
 
@@ -97,7 +97,7 @@ int main() {
     std::cin >> P;
     P.normalize_border();
     if ( P.size_of_border_edges() != 0) {
-        std::cerr << "The input object has border edges. Cannot subdivide." 
+        std::cerr << "The input object has border edges. Cannot subdivide."
                   << std::endl;
         std::exit(1);
     }

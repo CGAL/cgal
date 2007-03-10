@@ -53,7 +53,7 @@ struct Smooth_old_vertex {
                           << std::endl;
                 return v.point();
             }
-            vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN) 
+            vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
                        * alpha / degree;
             ++ h;
             CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
@@ -91,7 +91,7 @@ void subdiv( Polyhedron& P) {
     std::vector<Point> pts;                    // smooth the old vertices
     pts.reserve( nv);  // get intermediate space for the new points
     ++ last_v; // make it the past-the-end position again
-    std::transform( P.vertices_begin(), last_v, std::back_inserter( pts), 
+    std::transform( P.vertices_begin(), last_v, std::back_inserter( pts),
                     Smooth_old_vertex());
     std::copy( pts.begin(), pts.end(), P.points_begin());
 
@@ -112,7 +112,7 @@ void trisect_border_halfedge( Polyhedron& P, Halfedge_handle e) {
     P.split_vertex( e, e->next()->opposite());
     P.split_vertex( e, e->next()->opposite());
     e = e->next();
-    // We use later for the smoothing step that e->next()->next() 
+    // We use later for the smoothing step that e->next()->next()
     // is our original halfedge we started with, i.e., its vertex is
     // from the unrefined mesh.  Split the face twice.
     Halfedge_handle h = e->opposite()->next();
@@ -124,7 +124,7 @@ template <class OutputIterator>
 void smooth_border_vertices( Halfedge_handle e, OutputIterator out) {
     CGAL_precondition( e->is_border());
     // We know that the vertex at this edge is from the unrefined mesh.
-    // Get the locus vectors of the unrefined vertices in the neighborhood.    
+    // Get the locus vectors of the unrefined vertices in the neighborhood.
     Vector v0 = e->prev()->prev()->opposite()->vertex()->point() -CGAL::ORIGIN;
     Vector v1 = e->vertex()->point() - CGAL::ORIGIN;
     Vector v2 = e->next()->next()->next()->vertex()->point() - CGAL::ORIGIN;

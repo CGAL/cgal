@@ -14,7 +14,7 @@ typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Segment_2;
 typedef CGAL::Arrangement_with_history_2<Traits_2>    Arr_with_hist_2;
 typedef Arr_with_hist_2::Curve_handle                 Curve_handle;
-typedef CGAL::Arr_trapezoid_ric_point_location<Arr_with_hist_2>  
+typedef CGAL::Arr_trapezoid_ric_point_location<Arr_with_hist_2>
                                                       Point_location;
 
 int main ()
@@ -44,7 +44,7 @@ int main ()
   for (cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
   {
     std::cout << "Curve [" << *cit << "] induces "
-              << arr.number_of_induced_edges(cit) << " edges." << std::endl; 
+              << arr.number_of_induced_edges(cit) << " edges." << std::endl;
   }
 
   // Print the arrangement edges, along with the list of curves that

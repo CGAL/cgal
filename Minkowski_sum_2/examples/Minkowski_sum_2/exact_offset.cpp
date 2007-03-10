@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -28,7 +28,7 @@ typedef Nt_traits::Algebraic                   Algebraic;
 //typedef CGAL::Arr_conic_traits_2<Rat_kernel,
 //                                 Alg_kernel,
 //                                 Nt_traits>    Conic_traits_2;
-// workaround for VC++ 
+// workaround for VC++
 struct Rat_kernel : public CGAL::Cartesian<Rational> {};
 struct Alg_kernel : public CGAL::Cartesian<Algebraic> {};
 struct Conic_traits_2 : public CGAL::Arr_conic_traits_2<Rat_kernel,
@@ -58,7 +58,7 @@ int main ()
   in_file >> P;
   in_file.close();
 
-  std::cout << "Read an input polygon with " 
+  std::cout << "Read an input polygon with "
             << P.size() << " vertices." << std::endl;
 
   // Compute the offset polygon.
@@ -74,7 +74,7 @@ int main ()
   std::cout << "The offset polygon has "
             << offset.outer_boundary().size() << " vertices, "
             << offset.number_of_holes() << " holes." << std::endl;
-  std::cout << "Offset computation took " 
+  std::cout << "Offset computation took "
             << timer.time() << " seconds." << std::endl;
   return (0);
 }

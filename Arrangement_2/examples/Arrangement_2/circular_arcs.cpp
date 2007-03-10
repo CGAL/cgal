@@ -22,13 +22,13 @@ int main ()
   // Create a circle centered at the origin with squared radius 2.
   Kernel::Point_2  c1 = Kernel::Point_2 (0, 0);
   Circle_2         circ1 = Circle_2 (c1, Number_type (2));
-  
+
   curves.push_back (Curve_2 (circ1));
 
   // Create a circle centered at (2,3) with radius 3/2 - note that
   // as the radius is rational we use a different curve constructor.
   Kernel::Point_2  c2 = Kernel::Point_2 (2, 3);
-  
+
   curves.push_back (Curve_2 (c2, Number_type(3, 2)));
 
   // Create a segment of the line (y = x) with rational endpoints.
@@ -66,7 +66,7 @@ int main ()
   CoordNT          sqrt_3_div_2 = CoordNT (0, Number_type(1,2), 3);
   Point_2          s6 = Point_2 (Number_type (-1, 2), sqrt_3_div_2);
   Point_2          t6 = Point_2 (Number_type (1, 2), sqrt_3_div_2);
-  
+
   curves.push_back (Curve_2 (c6, 1, CGAL::CLOCKWISE, s6, t6));
 
   // Create a circular arc defined by two endpoints and a midpoint,
@@ -82,11 +82,11 @@ int main ()
   Arrangement_2    arr;
 
   insert_curves (arr, curves.begin(), curves.end());
-  
+
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return (0);

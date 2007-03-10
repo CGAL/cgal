@@ -46,8 +46,8 @@ int main() {
     std::vector<Box *> ptr;
     for ( std::vector<Box>::iterator i = boxes.begin(); i != boxes.end(); ++i)
         ptr.push_back( &*i);
-    
-    // Run the self intersection algorithm with all defaults on the 
+
+    // Run the self intersection algorithm with all defaults on the
     // indirect pointers to bounding boxes. Avoids copying the boxes.
     CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), report_inters);
     return 0;

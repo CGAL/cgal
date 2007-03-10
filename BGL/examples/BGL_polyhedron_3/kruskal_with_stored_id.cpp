@@ -18,12 +18,12 @@ typedef Kernel::Point_3                                              Point;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;  
-typedef boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;  
+typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
 
 typedef boost::graph_traits<Polyhedron const>::vertex_descriptor vertex_const_descriptor;
-typedef boost::graph_traits<Polyhedron const>::vertex_iterator   vertex_const_iterator;  
-typedef boost::graph_traits<Polyhedron const>::edge_descriptor   edge_const_descriptor;  
+typedef boost::graph_traits<Polyhedron const>::vertex_iterator   vertex_const_iterator;
+typedef boost::graph_traits<Polyhedron const>::edge_descriptor   edge_const_descriptor;
 
 
 void
@@ -41,7 +41,7 @@ kruskal( const Polyhedron& P)
    boost::kruskal_minimum_spanning_tree(P,std::back_inserter(mst));
 
    vertex_const_iterator vb, ve;
-    
+
    std::cout << "#VRML V2.0 utf8\n"
       "Shape {\n"
       "appearance Appearance {\n"
@@ -58,11 +58,11 @@ kruskal( const Polyhedron& P)
     std::cout << "]\n"
       "}\n"
       "coordIndex [\n";
-    
+
     for(std::list<edge_const_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
-      std::cout << boost::source(*it,P)->id() 
+      std::cout << boost::source(*it,P)->id()
 		<< ", " << boost::target(*it,P)->id() <<  ", -1\n";
-    } 
+    }
 
     std::cout << "]\n"
       "}#IndexedLineSet\n"
@@ -78,20 +78,20 @@ int main() {
     Point b(0,1,0);
     Point c(0,0,1);
     Point d(0,0,0);
-    
+
     P.make_tetrahedron(a,b,c,d);
- 
+
     // associate indices to the vertices using the "id()" field of the vertex.
     vertex_iterator vb, ve;
     int index = 0;
 
-    // boost::tie assigns the first and second element of the std::pair 
+    // boost::tie assigns the first and second element of the std::pair
     // returned by boost::vertices to the variables vit and ve
     for(boost::tie(vb,ve)=boost::vertices(P); vb!=ve; ++vb ){
       vertex_descriptor  vd = *vb;
        vd->id() = index++;
     }
-    
+
     kruskal(P);
     return 0;
 }

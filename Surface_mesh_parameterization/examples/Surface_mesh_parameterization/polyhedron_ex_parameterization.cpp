@@ -392,13 +392,13 @@ try {
     po::positional_options_description p;
     p.add("input", 1);
     p.add("output", 2);
-    
-    po::variables_map vm; 
-    po::store(po::command_line_parser(argc, argv).
-	      options(desc).positional(p).run(), vm);       
 
-    po::notify(vm);    
-    
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv).
+	      options(desc).positional(p).run(), vm);
+
+    po::notify(vm);
+
     if (vm.count("help")) {
       std::cout << desc << "\n";
       return 1;
@@ -416,7 +416,7 @@ try {
     std::cerr << "Exception of unknown type!\n";
   }
 
-     
+
     //***************************************
     // Read the mesh
     //***************************************
@@ -484,7 +484,7 @@ try {
     {
         err = parameterize<Mesh_patch_polyhedron,
                            OpenNL::DefaultLinearSolverTraits<double>,
-                           OpenNL::SymmetricLinearSolverTraits<double> 
+                           OpenNL::SymmetricLinearSolverTraits<double>
                           >(mesh_patch, type, border);
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
@@ -494,7 +494,7 @@ try {
 #ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
                            CGAL::Taucs_solver_traits<double>,
-                           CGAL::Taucs_symmetric_solver_traits<double> 
+                           CGAL::Taucs_symmetric_solver_traits<double>
                           >(mesh_patch, type, border);
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;

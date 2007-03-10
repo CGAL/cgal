@@ -17,11 +17,11 @@ template <typename T>
 struct Is_finite {
 
   const T* t_;
-  
-  Is_finite() 
+
+  Is_finite()
     : t_(NULL)
   {}
-  
+
   Is_finite(const T& t)
     : t_(&t)
   { }
@@ -39,7 +39,7 @@ typedef boost::graph_traits<Finite_triangulation>::vertex_iterator vertex_iterat
 typedef boost::graph_traits<Finite_triangulation>::edge_descriptor edge_descriptor;
 
 // The BGL makes use of indices associated to the vertices
-// We use a std::map to store the index 
+// We use a std::map to store the index
 typedef std::map<vertex_descriptor,int> VertexIndexMap;
 VertexIndexMap vertex_id_map;
 
@@ -62,21 +62,21 @@ main(int,char*[])
   vertex_iterator vit, ve;
   // Associate indices to the vertices
   int index = 0;
-  // boost::tie assigns the first and second element of the std::pair 
+  // boost::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor  vd = *vit;
     vertex_id_map[vd]= index++;
     }
-  
+
 
   // We use the default edge weight which is the squared length of the edge
   // This property map is defined in graph_traits_Triangulation_2.h
 
   // In the function call you can see a named parameter: vertex_index_map
    std::list<edge_descriptor> mst;
-   boost::kruskal_minimum_spanning_tree(t, 
-					std::back_inserter(mst), 
+   boost::kruskal_minimum_spanning_tree(t,
+					std::back_inserter(mst),
 					vertex_index_map(vertex_index_pmap));
 
 

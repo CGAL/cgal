@@ -23,7 +23,7 @@ struct My_archetype {
   typedef KA_Point_3                    Point_3;
   typedef KA_Plane_3                    Plane_3;
   typedef KA_Construct_opposite_plane_3 Construct_opposite_plane_3;
-  
+
   Construct_opposite_plane_3
   construct_opposite_plane_3_object()
   { return Construct_opposite_plane_3(); }

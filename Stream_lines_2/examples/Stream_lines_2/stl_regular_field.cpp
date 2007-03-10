@@ -23,7 +23,7 @@ int main()
 {
   Runge_kutta_integrator runge_kutta_integrator;
 
-  /*data.vec.cin is an ASCII file containing the vector field values*/  
+  /*data.vec.cin is an ASCII file containing the vector field values*/
   std::ifstream infile("data/vnoise.vec.cin", std::ios::in);
   double iXSize, iYSize;
   unsigned int x_samples, y_samples;
@@ -41,8 +41,8 @@ int main()
         regular_grid_2.set_field(i, j, Vector_2(xval, yval));
       }
   infile.close();
-  
-  /* the placement of streamlines */  
+
+  /* the placement of streamlines */
   std::cout << "processing...\n";
   double dSep = 3.5;
   double dRat = 1.6;
@@ -60,7 +60,7 @@ int main()
 	fw << p.x() << " " << p.y() << "\n";
       }
     }
-  
+
   fw.close();
 
 }

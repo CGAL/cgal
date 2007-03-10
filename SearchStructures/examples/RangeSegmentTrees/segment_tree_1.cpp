@@ -3,7 +3,7 @@
 // A one dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h> 
+#include <CGAL/basic.h>
 #include <iostream>
 #include "include/Tree_Traits.h"
 #include <CGAL/Segment_tree_k.h>
@@ -26,7 +26,7 @@ int main()
   InputList.push_back(Interval(465, 499));
   InputList.push_back(Interval(288, 379));
   InputList.push_back(Interval(314, 375));
- 
+
   // creation of the segment tree
   typedef std::list<Interval>::iterator l_iterator;
   l_iterator first = InputList.begin();
@@ -59,7 +59,7 @@ int main()
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";
-  return 0; 
+  return 0;
 }
 
 

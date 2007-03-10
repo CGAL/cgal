@@ -17,16 +17,16 @@ typedef CGAL::Constrained_triangulation_plus_2<CDTH>     Triangulation;
 
 typedef Triangulation::Point                             Point;
 
-int 
+int
 main( )
 {
   Triangulation cdt;
   std::cout << "Inserting a grid 5 x 5 of  constraints " << std::endl;
-    for (int i = 1; i < 6; ++i) 
+    for (int i = 1; i < 6; ++i)
     cdt.insert_constraint( Point(0,i), Point(6,i));
-    for (int j = 1; j < 6; ++j) 
+    for (int j = 1; j < 6; ++j)
     cdt.insert_constraint( Point(j,0), Point(j,6));
-  
+
   int count = 0;
   for (Triangulation::Subconstraint_iterator scit = cdt.subconstraints_begin();
        scit != cdt.subconstraints_end();
@@ -35,7 +35,7 @@ main( )
   std::cout <<  count << std::endl;
 
   //verbose mode of is_valid ; shows the number of vertices at each  level
-  std::cout << "The number of vertices at successive levels" << std::endl; 
+  std::cout << "The number of vertices at successive levels" << std::endl;
   assert(cdt.is_valid(true));
 
   return 0;

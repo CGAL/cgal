@@ -15,7 +15,7 @@ int main()
   CDT cdt;
 
   // construct a constrained triangulation
-  Vertex_handle 
+  Vertex_handle
     va = cdt.insert(Point( 5., 5.)),
     vb = cdt.insert(Point(-5., 5.)),
     vc = cdt.insert(Point( 4., 3.)),

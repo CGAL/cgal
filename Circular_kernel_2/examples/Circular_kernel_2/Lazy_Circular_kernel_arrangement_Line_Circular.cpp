@@ -49,7 +49,7 @@ typedef std::vector< Arc1> ArcContainer;
 typedef std::vector< Arc2> ArcContainer2;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k,Circular_k::Line_arc_2, 
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k,Circular_k::Line_arc_2,
                                       Circular_k::Circular_arc_2>  Traits;
 
 typedef CGAL::Arr_circular_line_arc_traits<CK1_,CK1_::Line_arc_2,
@@ -82,17 +82,17 @@ typedef Traits2::X_monotone_curve_2                  X_monotone_curve_2_2;
 
 
 int main(){
-  
+
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
   CGAL::Random theRandom(random_seed);
   int random_max = 128;
   int random_min = -128;
-  
+
   ArcContainer ac;
   ArcContainer2 ac2;
-  
+
   CGAL::Timer clck1,clck2;
   double t1,t2,t3,t4;
 
@@ -113,7 +113,7 @@ int main(){
       //x2 = theRandom.get_double(random_min,random_max);
       //y2 = theRandom.get_double(random_min,random_max);
     }while((x1 == x2) && (y1 == y2));
-      
+
     std::cout << x1 << " "
   	      << y1 << " "
   	      << x2 << " "
@@ -125,7 +125,7 @@ int main(){
     ac2.push_back( v2);
 
   }
-  
+
    for(int i = 0; i < 10; i++){
     x1 = theRandom.get_int(random_min,random_max);
     y1 = theRandom.get_int(random_min,random_max);
@@ -137,7 +137,7 @@ int main(){
   }
 
 
-  
+
   Pmwx _pm;
   Point_location _pl(_pm);
 
@@ -177,7 +177,7 @@ int main(){
 
   std::cout<<"Lazy Circular_k ="<<(t2-t1)<<std::endl;
   std::cout<<"Exact Circular_k ="<<(t4-t3)<<std::endl;
-  
+
   return 0;
 };
 

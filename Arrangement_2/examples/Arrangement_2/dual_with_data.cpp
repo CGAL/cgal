@@ -13,7 +13,7 @@ typedef CGAL::Arr_linear_traits_2<Kernel>                Linear_traits_2;
 typedef Linear_traits_2::Point_2                         Point_2;
 typedef Linear_traits_2::Line_2                          Line_2;
 typedef CGAL::Arr_curve_data_traits_2<Linear_traits_2,
-                                      unsigned int>      Traits_2; 
+                                      unsigned int>      Traits_2;
 typedef Traits_2::X_monotone_curve_2                     X_monotone_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                    Arrangement_2;
 

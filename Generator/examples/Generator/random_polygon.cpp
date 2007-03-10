@@ -50,7 +50,7 @@ int main( )
    std::copy(point_set.begin(), point_set.end(), out);
    std::cout << std::endl;
 
-   CGAL::random_polygon_2(point_set.size(), std::back_inserter(polygon), 
+   CGAL::random_polygon_2(point_set.size(), std::back_inserter(polygon),
                           point_set.begin());
    std::cout << "The following simple polygon was made: " << std::endl;
    std::cout << polygon << std::endl;

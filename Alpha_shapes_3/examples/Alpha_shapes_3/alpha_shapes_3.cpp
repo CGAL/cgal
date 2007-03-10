@@ -24,23 +24,23 @@ int main()
 
   //read input
   std::ifstream is("./data/bunny_1000");
-  int n;   
+  int n;
   is >> n;
-  std::cout << "Reading " << n << " points " << std::endl; 
+  std::cout << "Reading " << n << " points " << std::endl;
   Point p;
-  for( ; n>0 ; n--)    { 
-    is >> p;      
+  for( ; n>0 ; n--)    {
+    is >> p;
     lp.push_back(p);
   }
-  
-  // compute alpha shape  
+
+  // compute alpha shape
   Alpha_shape_3 as(lp.begin(),lp.end());
-  std::cout << "Alpha shape computed in REGULARIZED mode by defaut" 
+  std::cout << "Alpha shape computed in REGULARIZED mode by defaut"
 	    << std::endl;
 
   // find optimal alpha value
   Alpha_iterator opt = as.find_optimal_alpha(1);
-  std::cout << "Optimal alpha value to get one connected component is " 
+  std::cout << "Optimal alpha value to get one connected component is "
 	    <<  *opt    << std::endl;
   as.set_alpha(*opt);
   assert(as.number_of_solid_components() == 1);

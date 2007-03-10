@@ -45,7 +45,7 @@ int main ()
   vertical_ray_shooting_query (trap_pl, q4);
   vertical_ray_shooting_query (trap_pl, q5);
   vertical_ray_shooting_query (trap_pl, q6);
-  
+
   return (0);
 }
 

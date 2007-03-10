@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -35,7 +35,7 @@ struct Alg_kernel  : public CGAL::Cartesian<Algebraic> {};
 // instead of
 //typedef CGAL::Arr_conic_traits_2<Rat_kernel,
 //                                 Alg_kernel,Nt_traits>  Conic_traits_2;
-// workaround for VC++ 
+// workaround for VC++
 struct Conic_traits_2 : public  CGAL::Arr_conic_traits_2<Rat_kernel,
 			                                 Alg_kernel,
                                                          Nt_traits> {};
@@ -75,7 +75,7 @@ int main ()
   // and whose endpoints lie on the line y = 0:
   Curve_2 parabola2 = Curve_2 (1, 0, 0, 0, -2, -4, CGAL::COUNTERCLOCKWISE,
                                Point_2(-2, 0), Point_2(2, 0));
-  
+
   // Construct a polygon from these two parabolic arcs.
   Polygon_2 P;
   append_conic_arc (P, parabola1);
@@ -92,7 +92,7 @@ int main ()
   std::copy (res.begin(), res.end(),       // export to standard output
              std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));
   std::cout << std::endl;
-  
+
   return (0);
 }
 

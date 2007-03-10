@@ -29,11 +29,11 @@ int  main() {
 
   Distance tr_dist;
   Neighbor_search N1(tree, query, K, 0.0, false); // eps=10.0, nearest=false
-  
-  std::cout << "For query rectange = [0.1,0.2]^2 " << std::endl 
-	    <<  "The " << K << " approximate furthest neighbors are: " << std::endl; 
-  for (Neighbor_search::iterator it = N1.begin();it != N1.end();it++) { 
-    std::cout << " Point " << it->first << " at distance = " << tr_dist.inverse_of_transformed_distance(it->second) << std::endl; 
-  } 
+
+  std::cout << "For query rectange = [0.1,0.2]^2 " << std::endl
+	    <<  "The " << K << " approximate furthest neighbors are: " << std::endl;
+  for (Neighbor_search::iterator it = N1.begin();it != N1.end();it++) {
+    std::cout << " Point " << it->first << " at distance = " << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
+  }
   return 0;
 }

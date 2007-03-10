@@ -6,8 +6,8 @@
 
 // A vertex type with a color member variable.
 template <class Refs, class Point>
-struct My_vertex 
-    : public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point> 
+struct My_vertex
+    : public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>
 {
     CGAL::Color color;
     My_vertex() {} // repeat the required constructors

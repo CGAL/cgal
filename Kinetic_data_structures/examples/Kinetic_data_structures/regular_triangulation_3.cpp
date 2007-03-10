@@ -16,13 +16,13 @@ int main(int, char *[]) {
      std::ifstream in("data/weighted_points_3");
     CGAL_assertion(in);
     in >> *tr.active_points_3_table_handle();
- 
+
     std::cout << *tr.active_points_3_table_handle();
-    
+
     std::cout <<  *tr.active_points_3_table_handle() << std::endl;
 
     kdel.set_has_certificates(true);
-   
+
     sp->set_current_event_number(10000);
     return EXIT_SUCCESS;
 };

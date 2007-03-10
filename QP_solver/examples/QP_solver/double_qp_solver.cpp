@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
@@ -26,7 +26,7 @@
 #include <CGAL/MP_Float.h>
 #else
 #include <CGAL/Gmpzf.h>
-#endif 
+#endif
 
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
@@ -48,8 +48,8 @@ int main(const int argNr,const char **args) {
   // construct QP instance:
   typedef double IT;
 
-#ifndef CGAL_USE_GMP 
-  typedef CGAL::MP_Float ET; 
+#ifndef CGAL_USE_GMP
+  typedef CGAL::MP_Float ET;
 #else
   typedef CGAL::Gmpzf ET;
 #endif
@@ -81,33 +81,33 @@ int main(const int argNr,const char **args) {
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {
     // output solution:
-    cout << "Objective function value: " << 
-      CGAL::to_double(s.solution()) << endl;     
-     
+    cout << "Objective function value: " <<
+      CGAL::to_double(s.solution()) << endl;
+
     cout << "Variable values:" << endl;
-    Solution::Variable_value_iterator vit = 
+    Solution::Variable_value_iterator vit =
       s.variable_values_begin() ;
     for (int i=0; i < qp.n(); ++vit, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
 	   << CGAL::to_double(*vit) << endl;
 
     cout << "Basic variables (index, value):" << endl;
-    Solution::Index_iterator iit = 
+    Solution::Index_iterator iit =
       s.basic_variable_indices_begin();
     vit = s.variable_values_begin();
     for ( ; iit < s.basic_variable_indices_end(); ++iit)
-      cout << "  (" << *iit << ", " 
+      cout << "  (" << *iit << ", "
 	   <<  CGAL::to_double(vit[*iit]) << ")" << endl;
-    cout << "  There are " << s.number_of_basic_variables() 
+    cout << "  There are " << s.number_of_basic_variables()
 	 << " basic variables. " << endl;
 
     cout << "Basic constraints: " << endl;
-    Solution::Index_iterator cit = 
+    Solution::Index_iterator cit =
       s.basic_constraint_indices_begin();
     for ( ; cit < s.basic_constraint_indices_end(); ++cit)
       cout << *cit << " ";
     cout << endl;
-    cout << "  There are " << s.number_of_basic_constraints() 
+    cout << "  There are " << s.number_of_basic_constraints()
 	 << " basic constraints. " << endl;
 
     return 0;
@@ -117,5 +117,5 @@ int main(const int argNr,const char **args) {
   else // unbounded
     cout << "Problem is unbounded." << endl;
   return 0;
- 
+
 }

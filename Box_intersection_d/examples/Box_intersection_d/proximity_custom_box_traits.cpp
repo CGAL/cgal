@@ -15,7 +15,7 @@ std::vector<Point_3>  points;
 std::vector<Point_3*> boxes;     // boxes are just pointers to points
 const float           eps = 0.1; // finds point pairs of distance < 2*eps
 
-// Boxes are just pointers to 3d points. The traits class adds the 
+// Boxes are just pointers to 3d points. The traits class adds the
 // +- eps size to each interval around the point, effectively building
 // on the fly a box of size 2*eps centered at the point.
 struct Traits {
@@ -52,9 +52,9 @@ int main() {
         points.push_back( *generator++);
         boxes.push_back( & points.back());
     }
-    
+
     // run the intersection algorithm and report proximity pairs
-    CGAL::box_self_intersection_d( boxes.begin(), boxes.end(), 
+    CGAL::box_self_intersection_d( boxes.begin(), boxes.end(),
                                    report, Traits());
     return 0;
 }

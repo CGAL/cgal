@@ -29,7 +29,7 @@ int main()
 
   // check if the polygon is simple.
   cout << "The polygon is "
-    << (CGAL::is_simple_2(points, points+4, K()) ? "" : "not ") 
+    << (CGAL::is_simple_2(points, points+4, K()) ? "" : "not ")
     << "simple." << endl;
 
   check_inside(Point(0.5, 0.5), points, points+4, K());

@@ -83,7 +83,7 @@ int main ()
     // Print the vertex only if incident RED and BLUE edges were found.
     if (has_red && has_blue)
     {
-      std::cout << "Red-blue intersection at (" << vit->point() << ")" 
+      std::cout << "Red-blue intersection at (" << vit->point() << ")"
                 << std::endl;
     }
   }
@@ -106,13 +106,13 @@ int main ()
       if (*dit == RED)
         has_red = true;
       else if (*dit == BLUE)
-        has_blue = true;	
+        has_blue = true;
     }
 
     // Print the edge only if it corresponds to a red-blue overlap.
     if (has_red && has_blue)
     {
-      std::cout << "Red-blue overlap at [" << eit->curve() << "]" 
+      std::cout << "Red-blue overlap at [" << eit->curve() << "]"
                 << std::endl;
     }
   }

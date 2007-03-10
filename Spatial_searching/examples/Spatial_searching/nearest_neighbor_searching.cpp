@@ -18,21 +18,21 @@ int main() {
 
   std::list<Point_d> points;
   points.push_back(Point_d(0,0));
-  
+
   Tree tree(points.begin(), points.end());
 
   Point_d query(0,0);
-  
+
   // Initialize the search structure, and search all N points
-  
+
   Neighbor_search search(tree, query, N);
-  
+
    // report the N nearest neighbors and their distance
   // This should sort all N points by increasing distance from origin
   for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it){
     std::cout << it->first << " "<< std::sqrt(it->second) << std::endl;
   }
-  
-  
+
+
   return 0;
 }

@@ -17,7 +17,7 @@ int main() {
 
   Triangulation t;
   t.insert(begin, end);
-    
+
   Vertex_circulator vc = t.incident_vertices(t.infinite_vertex()),
     done(vc);
   if (vc != 0) {

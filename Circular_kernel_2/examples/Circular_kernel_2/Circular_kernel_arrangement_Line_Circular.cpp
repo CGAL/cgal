@@ -25,7 +25,7 @@ typedef Circular_k::Line_arc_2                              Line_arc_2;
 typedef boost::variant< Circular_arc_2, Line_arc_2>         Arc_2;
 typedef std::vector< Arc_2>                                 ArcContainer;
 
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, 
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k,
 					   Circular_arc_2, Line_arc_2>  Traits;
 
 typedef CGAL::Arrangement_2<Traits>                         Arrangement;
@@ -33,7 +33,7 @@ typedef CGAL::Arr_naive_point_location<Arrangement>         Point_location;
 
 
 int main(){
-  
+
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -53,7 +53,7 @@ int main(){
       x2 = theRandom.get_int(random_min,random_max);
       y2 = theRandom.get_int(random_min,random_max);
     }while((x1 == x2) && (y1 == y2));
-      
+
     std::cout << x1 << " "
   	      << y1 << " "
   	      << x2 << " "
@@ -61,7 +61,7 @@ int main(){
     boost::variant< Circular_arc_2, Line_arc_2 > v =  Line_arc_2(Point_2(x1,y1), Point_2(x2,y2));
     ac.push_back( v);
   }
-  
+
    for(int i = 0; i < 10; i++){
     x1 = theRandom.get_int(random_min,random_max);
     y1 = theRandom.get_int(random_min,random_max);
@@ -71,7 +71,7 @@ int main(){
 
 
 
-  
+
   Arrangement arr;
   Point_location _pl(arr);
   for (ArcContainer::const_iterator it=ac.begin();
@@ -79,7 +79,7 @@ int main(){
     //insert(arr,_pl,*it);
     insert_curve(arr, *it, _pl);
       };
-  
+
   return 0;
 };
 

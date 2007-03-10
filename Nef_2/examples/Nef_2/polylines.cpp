@@ -19,7 +19,7 @@ typedef Explorer::Hole_const_iterator Hole_const_iterator;
 typedef Explorer::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 typedef Explorer::Vertex_const_handle Vertex_const_handle;
 
-int main() 
+int main()
 {
   Point r1[3] = { Point(20,15), Point(25,5), Point(30,15) };
   //Point s1[3] = { Point(40,15), Point(40,5) };
@@ -29,7 +29,7 @@ int main()
   polylines.push_back(std::make_pair(r1, r1+3));
   //polylines.push_back(std::make_pair(s1, s1+2));
   polylines.push_back(std::make_pair(t1, t1+3));
-  
+
 
    Nef_polyhedron RST(polylines.begin(), polylines.end(), Nef_polyhedron::POLYLINES);
 
@@ -53,7 +53,7 @@ int main()
 	std::cout << std::endl;
       }
 
-    
+
     // The other faces have outer face cycles, and they may have holes
     for( fit++;
 	fit != explorer.faces_end();

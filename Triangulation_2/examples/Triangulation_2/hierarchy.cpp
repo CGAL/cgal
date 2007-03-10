@@ -17,16 +17,16 @@ typedef CGAL::Delaunay_triangulation_2<K,Tds>            Dt;
 typedef CGAL::Triangulation_hierarchy_2<Dt>              Triangulation;
 typedef Triangulation::Point                             Point;
 typedef CGAL::Creator_uniform_2<double,Point>            Creator;
- 
+
 int main( )
 {
   std::cout << "insertion of 1000 random points" << std::endl;
   Triangulation t;
   CGAL::Random_points_in_square_2<Point,Creator> g(1.);
   CGAL::copy_n( g, 1000, std::back_inserter(t));
-  
+
   //verbose mode of is_valid ; shows the number of vertices at each  level
-  std::cout << "The number of vertices at successive levels" << std::endl; 
+  std::cout << "The number of vertices at successive levels" << std::endl;
   assert(t.is_valid(true));
 
   return 0;

@@ -20,7 +20,7 @@ typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<
   CGAL::Simple_cartesian<double>,
-  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> 
+  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>
   >   Polyhedron;
 
 int main(int argc, char *argv[]) {
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   std::ifstream in(filename);
   while (in >> wp) l.push_back(wp);
 
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, 
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor,
                               false, Traits(), false);
 
   Polyhedron p;
@@ -51,6 +51,6 @@ int main(int argc, char *argv[]) {
   std::ofstream out("mesh.off");
   //write_polyhedron_with_normals(p, skin_surface, out);
   out << p;
-  
+
   return 0;
 }

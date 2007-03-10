@@ -1,6 +1,6 @@
 //file: examples/Polyhedron_IO/terr_trian.cpp
 
-// Delaunay Triangulation of a set of 3D points in the xy-plane. 
+// Delaunay Triangulation of a set of 3D points in the xy-plane.
 // (Terrain triangulation)
 
 #include <CGAL/Simple_cartesian.h>
@@ -28,12 +28,12 @@ public:
     int*  index;
     Indexed_point()                                 {}
     Indexed_point( Point_3 p) : Point_3(p)    {}
-    Indexed_point( double x, double y, double z, int* i) 
+    Indexed_point( double x, double y, double z, int* i)
         : Point_3(x,y,z), index(i)               {}
 };
 
 typedef CGAL::Simple_cartesian<double> SC;
-typedef CGAL::Filtered_kernel<SC> Kernel; 
+typedef CGAL::Filtered_kernel<SC> Kernel;
 
 typedef Indexed_point<Kernel>                              IPoint;
 typedef CGAL::Triangulation_euclidean_traits_xy_3<Kernel>  Gtraits;
@@ -68,7 +68,7 @@ int main( int argc, char **argv) {
 	    delaunay = true;
 	else if ( strcmp( "-incr", argv[i]) == 0)
 	    incr = true;
-        else if ( (strcmp( "-h", argv[i]) == 0) || 
+        else if ( (strcmp( "-h", argv[i]) == 0) ||
                   (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 2 ) {
@@ -103,7 +103,7 @@ int main( int argc, char **argv) {
 	p_in = &in;
 	iname = filename[0];
     }
-    if ( !*p_in) { 
+    if ( !*p_in) {
 	cerr << argv[0] << ": error: cannot open file '" << iname
 	 << "' for reading." <<endl;
 	exit( 1);
@@ -121,7 +121,7 @@ int main( int argc, char **argv) {
 	p_out = &out;
 	oname = filename[1];
     }
-    if ( !*p_out) { 
+    if ( !*p_out) {
 	cerr << argv[0] << ": error: cannot open file '"<< oname
 	     << "' for writing." <<endl;
 	exit( 1);
@@ -142,7 +142,7 @@ int main( int argc, char **argv) {
 	    triang.insert( p);
 	}
 	vout << "    .... done." << endl;
-	vout << "write_triangulation( " << oname 
+	vout << "write_triangulation( " << oname
 	     << (binary ? ", binary" : ", ASCII") << ") ...." << endl;
 	CGAL::triangulation_print_OFF( *p_out, triang, binary, noc, verbose);
 	vout << "    .... done." << endl;
@@ -156,18 +156,18 @@ int main( int argc, char **argv) {
 	    triang.insert( p);
 	}
 	vout << "    .... done." << endl;
-	vout << "write_triangulation( " << oname 
+	vout << "write_triangulation( " << oname
 	     << (binary ? ", binary" : ", ASCII") << ") ...." << endl;
 	CGAL::triangulation_print_OFF( *p_out, triang, binary, noc, verbose);
 	vout << "    .... done." << endl;
     }
-    if ( !*p_in) { 
-	cerr << argv[0] << " read error: while reading file '"<< iname << "'." 
+    if ( !*p_in) {
+	cerr << argv[0] << " read error: while reading file '"<< iname << "'."
 	     << endl;
 	exit( 1);
     }
-    if ( !*p_out) { 
-	cerr << argv[0] << " write error: while writing file '"<< oname << "'." 
+    if ( !*p_out) {
+	cerr << argv[0] << " write error: while writing file '"<< oname << "'."
 	     << endl;
 	exit( 1);
     }

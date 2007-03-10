@@ -23,7 +23,7 @@ int main()
 {
   CGAL::Lazy_exact_nt<CGAL::Gmpq> nt;
   nt = nt + nt * nt;
-  
+
   K::Intersect_with_iterators_2 iwi;
 
   CGAL::set_pretty_mode(std::cout);
@@ -43,21 +43,21 @@ int main()
 
   FT ft = 3.1415;
   std::cout << "ft = " << ft << std::endl;
-  
+
   ft *= ft;
   std::cout << "ft^2 = " << ft << std::endl;
   std::cout << "ft^2.depth() = " << ft.depth() << std::endl;
   std::cout << "ft^2.exact() = " << ft.exact() << std::endl;
   Point_2 p(ft, 2.22);
   Point_2 q(9,9);
-  
+
   CGAL::Bbox_2 bb = p.bbox();
-  
+
   Segment_2 s(p,q);
-  
+
   Segment_2 s3(Point_2(0,1), Point_2(2,1));
   Segment_2 s4(Point_2(1,0), Point_2(1,2));
-  
+
   CGAL::Object o = intersection(s3,s4);
   Point_2 rp;
 
@@ -65,7 +65,7 @@ int main()
     std::cout << "Intersection is a point:" << std::endl;
     std::cout << rp;
   }
-    
+
 
   Point_2 r = K::Construct_vertex_2()(s,0);
   assert(r == s.source());
@@ -78,7 +78,7 @@ int main()
   FT rx = r.x();
 
   std::cout << rx << std::endl;
-  
+
 
     Vector_2 v1(1,1), v2(1,1);
 
@@ -91,7 +91,7 @@ int main()
     std::cout << q << std::endl;
 
     if(v1 == v2){}
-  
+
     if(K::Compare_distance_2()(p,q,r)== CGAL::SMALLER)
       {
 	std::cout << "smaller" << std::endl;
@@ -111,7 +111,7 @@ int main()
   circ.exact();
   std::cout << "\nCircle after circ.exaxt():\n " << circ << std::endl;
   std::cout << "\nCenter = " << center << "\nSquared radius = " << sr << std::endl;
-  
+
   std::cout << "Done"  << std::endl;
 
   return 0;

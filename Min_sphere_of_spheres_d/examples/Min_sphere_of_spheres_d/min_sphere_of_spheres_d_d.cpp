@@ -25,14 +25,14 @@ int main () {
   std::vector<Sphere> S;                  // n spheres
   FT coord[D];                            // d coordinates
   CGAL::Random r;                         // random number generator
-  
+
   for (int i=0; i<N; ++i) {
     for (int j=0; j<D; ++j)
       coord[j] = r.get_int(LOW,HIGH);
     Point p(D,coord,coord+D);             // random center...
     S.push_back(Sphere(p,r.get_int(LOW,HIGH))); // ...and random radius
   }
-  
+
   Min_sphere ms(S.begin(),S.end());       // check in the spheres
   CGAL_assertion(ms.is_valid());
 }

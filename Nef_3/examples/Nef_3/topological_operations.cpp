@@ -14,9 +14,9 @@ int main() {
   Nef_polyhedron N;
   std::cin >> N;
 
-  CGAL_assertion((N - N.boundary()) == N.interior()); 
+  CGAL_assertion((N - N.boundary()) == N.interior());
   CGAL_assertion(N.closure() == N.complement().interior().complement());
   CGAL_assertion(N.regularization() == N.interior().closure());
-  
+
   return 0;
 }

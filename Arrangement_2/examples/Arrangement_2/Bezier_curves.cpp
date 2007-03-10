@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
 }
 #else
@@ -52,7 +52,7 @@ int main (int argc, char **argv)
   std::list<Bezier_curve_2>  curves;
   Bezier_curve_2             B;
   unsigned int               k;
-  
+
   in_file >> n_curves;
   for (k = 0; k < n_curves; k++)
   {
@@ -71,7 +71,7 @@ int main (int argc, char **argv)
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return (0);

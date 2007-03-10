@@ -21,23 +21,23 @@ int main(int argc, char *argv[]){
   {
     boost::program_options::options_description o("Allowed options"), po, ao;
     o.add_options()
-      ("crms,c", boost::program_options::bool_switch(&crms), 
+      ("crms,c", boost::program_options::bool_switch(&crms),
        "Output the cRMS between the two pdbs (after alignment).")
-      ("drms,d", boost::program_options::bool_switch(&drms), 
-       "Output the dRMS between the two pdbs.")     
+      ("drms,d", boost::program_options::bool_switch(&drms),
+       "Output the dRMS between the two pdbs.")
       ("all-atoms,a", boost::program_options::bool_switch(&all_atoms),
-       "Output the distances between all atoms, not just the C_alphas.")  
-      ("verbose,v", boost::program_options::bool_switch(&warn), 
+       "Output the distances between all atoms, not just the C_alphas.")
+      ("verbose,v", boost::program_options::bool_switch(&warn),
        "Warn about errors parsing pdb file.")
-      ("image-file,i", boost::program_options::value<std::string>(&image_name), 
+      ("image-file,i", boost::program_options::value<std::string>(&image_name),
        "Output the max distance difference between pairwise distances.")
       ("help", boost::program_options::bool_switch(&print_help), "Produce help message");
 
-    po.add_options()("input-pdbs", 
-		     boost::program_options::value< std::vector<std::string> >(&inputs)->composing(), 
+    po.add_options()("input-pdbs",
+		     boost::program_options::value< std::vector<std::string> >(&inputs)->composing(),
 		     "The input files. Names with a % in their name are assumed to have printf style converters for ints and will be expanded to the first n integers that correspond to names of actual files.");
     ao.add(o).add(po);
-    
+
     boost::program_options::positional_options_description p;
     p.add("input-pdbs", -1);
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
     }
   }
 
- 
+
   std::vector<std::string> names;
   std::vector<CGAL_PDB_NS::Protein> pdbs;
   for (unsigned int i=0; i < inputs.size(); ++i){
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
       }
     }
   }
- 
+
   CGAL_TNT_NS::Array2D<double> dists(pdbs.size(), pdbs.size(), 0.0);
 
   double max=0;
@@ -112,19 +112,19 @@ int main(int argc, char *argv[]){
 #ifdef PDB_USE_MAGICK
   if (!image_name.empty()){
     Magick::Geometry geom(dists.dim1(),dists.dim2());
-    
+
     Magick::Image im(geom, "red");
     for (int j=0; j< dists.dim1(); ++j){
       for (int k=0; k< dists.dim2(); ++k){
 	double v= (std::min) (1.0, dists[j][k]/6.0);
 	im.pixelColor(j, k, Magick::ColorGray(1-v));
-	
+
       }
     }
-	
+
     im.write(image_name.c_str());
   }
-  
+
 #endif
 
   return EXIT_SUCCESS;

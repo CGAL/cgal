@@ -30,7 +30,7 @@ struct   VertexComp {
     bool operator()( const Vertex* v, const Vertex* w) const {
         return ( v->point.x() < w->point.x() ||
             (v->point.x() == w->point.x() && v->point.y() < w->point.y()) ||
-            (v->point.x() == w->point.x() && (v->point.y() == w->point.y() 
+            (v->point.x() == w->point.x() && (v->point.y() == w->point.y()
                                            && v->point.z() < w->point.z())));
     }
 };
@@ -56,7 +56,7 @@ int main( int argc, char **argv) {
             skel = true;
         else if ( strcmp( "-noc", argv[i]) == 0)
             noc = true;
-        else if ( (strcmp( "-h", argv[i]) == 0) || 
+        else if ( (strcmp( "-h", argv[i]) == 0) ||
                   (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 2 ) {
@@ -90,7 +90,7 @@ int main( int argc, char **argv) {
         p_in = &in;
         name = filename[0];
     }
-    if ( !in) { 
+    if ( !in) {
         cerr << argv[0] << ": error: cannot open file '"<< name
          << "' for reading." <<endl;
         exit( 1);
@@ -141,37 +141,37 @@ int main( int argc, char **argv) {
         p_out = &out;
         oname = filename[1];
     }
-    if ( !*p_out) { 
+    if ( !*p_out) {
         cerr << argv[0] << ": error: cannot open file '"<< oname
              << "' for writing." <<endl;
         exit( 1);
     }
 
-    vout << "CGAL::File_writer_OFF( " << (binary ? ", binary" : ", ASCII") 
+    vout << "CGAL::File_writer_OFF( " << (binary ? ", binary" : ", ASCII")
          << ") ...." << endl;
     CGAL::File_header_OFF  header( binary, noc, skel, verbose);
     CGAL::File_writer_OFF  writer( header);
-    writer.write_header(*p_out, 
-                        current_index, 
-                        0, 
-                        scanner.size_of_facets(), 
+    writer.write_header(*p_out,
+                        current_index,
+                        0,
+                        scanner.size_of_facets(),
                         scanner.has_normals());
     vector<Vertex*>::iterator v = sorted_vertices.begin();
     writer.write_vertex((*v)->point.x(), (*v)->point.y(), (*v)->point.z());
     if ( scanner.has_normals()) {
-        writer.write_normal((*v)->normal.x(), 
-                            (*v)->normal.y(), 
+        writer.write_normal((*v)->normal.x(),
+                            (*v)->normal.y(),
                             (*v)->normal.z());
     }
     ++v;
     for ( ; v != sorted_vertices.end(); ++v) {
         if ( (*v)->index != (*(v-1))->index) {
-            writer.write_vertex( (*v)->point.x(), 
-                                 (*v)->point.y(), 
+            writer.write_vertex( (*v)->point.x(),
+                                 (*v)->point.y(),
                                  (*v)->point.z());
             if ( scanner.has_normals()) {
-                writer.write_normal( (*v)->normal.x(), 
-                                     (*v)->normal.y(), 
+                writer.write_normal( (*v)->normal.x(),
+                                     (*v)->normal.y(),
                                      (*v)->normal.z());
             }
         }
@@ -194,13 +194,13 @@ int main( int argc, char **argv) {
     writer.write_footer();
     vout << "    .... done." << endl;
 
-    if ( ! * p_in) { 
-        cerr << argv[0] << " read error: while reading file '"<< name << "'." 
+    if ( ! * p_in) {
+        cerr << argv[0] << " read error: while reading file '"<< name << "'."
              << endl;
         exit( 1);
     }
-    if ( !*p_out) { 
-        cerr << argv[0] << " write error: while writing file '"<< oname 
+    if ( !*p_out) {
+        cerr << argv[0] << " write error: while writing file '"<< oname
              << "'."  << endl;
         exit( 1);
     }

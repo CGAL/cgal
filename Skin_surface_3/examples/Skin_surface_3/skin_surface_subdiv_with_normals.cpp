@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
-  
+
   CGAL::subdivide_skin_surface_mesh_3(skin_surface, p);
 
   std::ofstream out("mesh.off");
