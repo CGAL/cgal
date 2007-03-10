@@ -131,7 +131,7 @@ public:
 		       size_t d, size_t dprime);
  const FT condition_number() const {return condition_nb;}
  const std::pair<FT, Vector_3> pca_basis(size_t i) const {
-   CGAL_precondition( (0 <= i) && (i<3) );
+   CGAL_precondition( i<3 );
    return m_pca_basis[i];}
  
  protected:
