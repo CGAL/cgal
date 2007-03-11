@@ -117,15 +117,15 @@ int main(int, char *[]) {
     typedef CGAL::Kinetic::Regular_triangulation_3<Traits> DS;
     typedef Traits::Kinetic_kernel::Motion_function F;
     typedef Traits::Kinetic_kernel::Point_3 Bare_point;
-    typedef Traits::Kinetic_kernel::Weighted_point_3 WPoint;
+    typedef Traits::Kinetic_kernel::Weighted_point_3 Point;
     Traits tr(0, end_time);
     DS ds(tr);
     std::cout << "Points are:\n";
     for (int i=0; i< nump/2.5; ++i){
-      WPoint pt(Bare_point(rp<F>(r, r.get_int(0,5)),
-			  rp<F>(r, r.get_int(0,5)),
-			  rp<F>(r, r.get_int(0,5))),
-	       rp<F>(r, r.get_int(0,5)));
+      Point pt = Point(Bare_point(rp<F>(r, r.get_int(0,5)),
+			          rp<F>(r, r.get_int(0,5)),
+			          rp<F>(r, r.get_int(0,5))),
+	               rp<F>(r, r.get_int(0,5)));
       std::cout << pt << std::endl;
       tr.active_points_3_table_handle()->insert(pt);
       ds.audit();
