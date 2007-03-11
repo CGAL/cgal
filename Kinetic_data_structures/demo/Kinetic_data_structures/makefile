@@ -33,7 +33,7 @@ LDFLAGS =  \
 
 QT_LDFLAGS =  \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) 
+          $(CGAL_LDFLAGS) 
 
 CXXFLAGS_3D= $(CXXFLAGS) -DCGAL_USE_SOQT
 

@@ -39,7 +39,7 @@ LDFLAGS = \
 
 QTLDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) -lGL -lglut
+          $(CGAL_LDFLAGS) -lGL -lglut
 
 
 INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lIntrospect

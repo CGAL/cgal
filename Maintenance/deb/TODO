@@ -7,3 +7,5 @@ next revision:
 CGAL 3.3:
 - SONAME issue
 - -D_REENTRANT
+- -fPIC
+- adjust manpage
