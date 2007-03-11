@@ -77,7 +77,7 @@ Transform transform_taking_first_to_second(InputIteratorP pBegin, InputIteratorP
   // compute the centroid of the points and transform
   // pointsets so that their centroids coinside
       
-  typedef typename InputIteratorP::value_type Point;
+  typedef typename std::iterator_traits<InputIteratorP>::value_type Point;
   typedef double RT;
 
   Vector center_p(0,0,0), center_q(0,0,0);

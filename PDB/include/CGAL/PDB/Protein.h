@@ -237,14 +237,14 @@ CGAL_PDB_BEGIN_NAMESPACE
     typedef Atom value_type;
     typedef std::forward_iterator_tag iterator_category;
     typedef std::size_t difference_type;
-    typedef Residue::Atoms_iterator::reference reference;
-    typedef Residue::Atoms_iterator::pointer pointer;
+    typedef std::iterator_traits<Residue::Atoms_iterator>::reference reference;
+    typedef std::iterator_traits<Residue::Atoms_iterator>::pointer pointer;
 
     reference operator*() {
       return *ait_;
     }
     pointer operator->() {
-      return ait_.operator->();
+      return deref(ait_);
     }
     Atoms_iterator operator++() {
       ++ait_;
@@ -277,6 +277,11 @@ CGAL_PDB_BEGIN_NAMESPACE
     }
     std::vector<Residue>::iterator rit_, rend_;
     Residue::Atoms_iterator ait_, aend_;
+  private:
+    template < typename T >
+    static pointer deref(const T& t) { return t.operator->(); }
+    template < typename T >
+    static pointer deref(T* t) { return t; }
   };
 
 
@@ -288,14 +293,14 @@ CGAL_PDB_BEGIN_NAMESPACE
     typedef Atom value_type;
     typedef std::forward_iterator_tag iterator_category;
     typedef std::size_t difference_type;
-    typedef Residue::Const_atoms_iterator::reference reference;
-    typedef Residue::Const_atoms_iterator::pointer pointer;
+    typedef std::iterator_traits<Residue::Const_atoms_iterator>::reference reference;
+    typedef std::iterator_traits<Residue::Const_atoms_iterator>::pointer pointer;
 
     reference operator*() const {
       return *ait_;
     }
     pointer operator->() const {
-      return ait_.operator->();
+      return deref(ait_);
     }
     Const_atoms_iterator operator++() {
       ++ait_;
@@ -335,6 +340,11 @@ CGAL_PDB_BEGIN_NAMESPACE
     }
     std::vector<Residue>::const_iterator rit_, rend_;
     Residue::Const_atoms_iterator ait_, aend_;
+  private:
+    template < typename T >
+    static pointer deref(const T& t) { return t.operator->(); }
+    template < typename T >
+    static pointer deref(const T* t) { return t; }
   };
 
 
