@@ -361,11 +361,9 @@ int main(int argc, char * argv[])
     std::string type;       // default: Floater param
     std::string border;      // default: circular border param.
     std::string solver;      // default: OpenNL solver
+    std::string input;            // default: no output
     std::string output;            // default: no output
 
-    // File names are:
-    std::string input_filename;
-    std::string output_filename;
     // misc
     char  optchar;
     const char *optarg;
@@ -381,7 +379,9 @@ try {
        "floater (default), conformal, barycentric, authalic or lscm")
       ("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
        "opennl (default) or taucs")
-      ("output,o", po::value<std::string>(&output)->default_value("eps"),
+      ("input,i", po::value<std::string>(&input)->default_value("mesh-in.off"),
+       "polyhedral mesh")
+      ("output,o", po::value<std::string>(&output)->default_value("mesh-out.eps"),
        "eps or obj")
       ;
 
@@ -400,10 +400,6 @@ try {
       std::cout << desc << "\n";
       return 1;
     }
-
-    // File names are:
-    input_filename  = vm["input"].as<std::string>();
-    output_filename = vm["output"].as<std::string>();
   }
   catch(std::exception& e) {
     std::cerr << "error: " << e.what() << "\n";
@@ -422,16 +418,16 @@ try {
     task_timer.start();
 
     // Read the mesh
-    std::ifstream stream(input_filename.c_str());
+    std::ifstream stream(input.c_str());
     Polyhedron mesh;
     stream >> mesh;
     if(!stream || !mesh.is_valid() || mesh.empty())
     {
-        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        std::cerr << "FATAL ERROR: cannot read OFF file " << input << std::endl;
         return EXIT_FAILURE;
     }
 
-    std::cerr << "Read file " << input_filename << ": "
+    std::cerr << "Read file " << input << ": "
               << task_timer.time() << " seconds "
               << "(" << mesh.size_of_facets() << " facets, "
               << mesh.size_of_vertices() << " vertices)" << std::endl;
@@ -516,21 +512,21 @@ try {
     // Save mesh
     if (err == Parameterizer::OK)
     {
-        if(output == std::string("eps"))
+        if(output.substr(output.length()-4) == std::string(".eps"))
         {
             // write Postscript file
-            if ( ! mesh.write_file_eps(output_filename.c_str()) )
+            if ( ! mesh.write_file_eps(output.c_str()) )
             {
-                std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
+                std::cerr << "FATAL ERROR: cannot write file " << output << std::endl;
                 return EXIT_FAILURE;
             }
         }
-        else if(output == std::string("obj"))
+        else if(output.substr(output.length()-4) == std::string(".obj"))
         {
             // write Wavefront obj file
-            if ( ! mesh.write_file_obj(output_filename.c_str()) )
+            if ( ! mesh.write_file_obj(output.c_str()) )
             {
-                std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
+                std::cerr << "FATAL ERROR: cannot write file " << output << std::endl;
                 return EXIT_FAILURE;
             }
         }
@@ -540,7 +536,7 @@ try {
             err = Parameterizer::ERROR_WRONG_PARAMETER;
         }
 
-        std::cerr << "Write file " << output_filename << ": "
+        std::cerr << "Write file " << output << ": "
                   << task_timer.time() << " seconds " << std::endl;
     }
 
