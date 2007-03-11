@@ -26,7 +26,7 @@ LIBPATH = \
           $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
-          $(CGAL_WINDOW_LDFLAGS)
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries

@@ -5,7 +5,7 @@ CC   = $(CGAL_CXX) $(CGAL_WINDOW_LIBPATH)
 
 CGALCFLAGS =  $(CGAL_CXXFLAGS) 
 
-CGDL =  $(CGAL_WINDOW_LDFLAGS)
+CGDL =  $(CGAL_LDFLAGS)
 
 all: nearest_neighbor ps_test1_cgal nn_functions rs_functions rs_check_empty_circle rs_check_empty_triangle rs_check_empty_rectangle
 

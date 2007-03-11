@@ -42,7 +42,7 @@ CXXFLAGS =  '-Iz:\Cgal-I\For_Submission\Alpha_shapes_2\include' \
 LDFLAGS =  $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS) \
           $(CGAL_WINDOW_LIBPATH) \
-          $(CGAL_WINDOW_LDFLAGS)
+          $(CGAL_LDFLAGS)
 
 #	  $(LONG_NAME_PROBLEM_LDFLAGS) \
 #---------------------------------------------------------------------#

@@ -24,7 +24,7 @@ CXXFLAGS =  -I../../include \
 
 LIBPATH = $(CGAL_LIBPATH)
 
-LDFLAGS = $(CGAL_WINDOW_LDFLAGS)
+LDFLAGS = $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
