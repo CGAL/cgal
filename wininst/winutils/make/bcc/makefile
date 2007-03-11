@@ -131,13 +131,13 @@ CGAL_LDFLAGS = \
 CGAL_WINDOW_LIBPATH = $(CUSTOM1_LDFLAGS) \
 	-L$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -L$(GMP_LIB_DIR) $(CGALWIN_LIB_DIR_PATH)
 
-CGAL_LDFLAGS = \
+CGAL_WINDOW_LDFLAGS = \
 	$(CGAL_WINDOW_LIBPATH)  \
 	$(CUSTOM_LDFLAGS) \
 	CGAL.lib $(LE_LIBS_LIST) gmp.lib 
 
 CGAL_GEOWIN_LDFLAGS = \
-	$(CGAL_LDFLAGS)
+	$(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    commands and flags for creating libraries
