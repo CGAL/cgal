@@ -294,51 +294,6 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
 
 
 // ----------------------------------------------------------------------------
-// Usage
-// ----------------------------------------------------------------------------
-
-// Parameters description for Options library
-static const char *  optv[] =
-{
-    //     '|' -- indicates that the option takes NO argument;
-    //     '?' -- indicates that the option takes an OPTIONAL argument;
-    //     ':' -- indicates that the option takes a REQUIRED argument;
-    //     '*' -- indicates that the option takes 0 or more arguments;
-    //     '+' -- indicates that the option takes 1 or more arguments;
-
-    "t:type <string>", // -t or --type
-    // -t    floater     -> Floater Mean Value Coordinates (default)
-    //       conformal   -> Discrete Conformal Map
-    //       barycentric -> Tutte Barycentric Mapping (weight = 1)
-    //       authalic    -> Discrete Authalic Parameterization (weak area-preserving)
-    //       lscm        -> Least Squares Conformal Maps
-
-
-    "b:border <string>", // -b or --border (for fixed border param.)
-    // -b circle        -> map mesh border onto a circle
-    //    square        -> map mesh border onto a square
-    //    2pts          -> pin 2 points
-
-    "s:solver <string>", // -s or --solver
-    // -s opennl        -> OpenNL solver (GPL)
-    //    taucs         -> TAUCS solver
-
-    "o:output <string>", // -o or --output
-    // -o eps   -> eps map       (-o eps file.off > file.eps)
-    //    obj   -> Wavefront obj (-o obj file.off > file.obj)
-
-    NULL
-} ;
-
-// Parameters description for usage
-static const char * usage = "off-input-file [output-file]\n\
-where type is:   floater (default), conformal, barycentric, authalic or lscm\n\
-      border is: circle (default), square or 2pts\n\
-      solver is: opennl (default) or taucs\n\
-      output is: eps or obj (default is no output)";
-
-
-// ----------------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------------
 
