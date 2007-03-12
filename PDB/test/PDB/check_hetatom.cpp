@@ -25,16 +25,17 @@ MA 02111-1307, USA. */
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/PDB/geometry.h>
+#include "include/check_equal.h"
 
 
-int main(int argc, char *argv[]){
+int main(int , char *[]){
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
   //assert(argc==3);
-  std::ifstream in(argv[1]);
+  std::ifstream in("data/check_hetatom.pdb");
   CGAL_PDB_NS::PDB p(in);
   //p.write(std::cout);
-  std::ofstream of(argv[2]);
+  std::ostringstream of;
   
   std::cout << "There are " << p.number_of_models() << " models." << std::endl;
   
@@ -49,6 +50,10 @@ int main(int argc, char *argv[]){
     }
   }
   p.write(of);
+
+    std::ifstream in2("data/check_hetatom.pdb");
+  std::istringstream iss(of.str().c_str());
+  check_equal(in2, iss);
 
   return EXIT_SUCCESS;
 }

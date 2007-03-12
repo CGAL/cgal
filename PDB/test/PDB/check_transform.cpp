@@ -26,12 +26,12 @@ MA 02111-1307, USA. */
 #include <CGAL/PDB/distance.h>
 #include <CGAL/PDB/Transform.h>
 
-int main(int argc, char *argv[]){
+int main(int , char *[]){
   using namespace CGAL_PDB_NS;
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
   //assert(argc==2);
-  std::ifstream in(argv[1]);
+  std::ifstream in("data/check_protein.pdb");
   CGAL_PDB_NS::PDB p(in);
   
   std::cout << "There are " << p.number_of_models() << " models." << std::endl;

@@ -30,7 +30,7 @@ MA 02111-1307, USA. */
 
 #include "check_equal.h"
 
-int main(int argc, char *argv[]){
+int main(int , char *[]){
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
   
