@@ -628,6 +628,7 @@ template <class  AS >
 void test_Type_functions( const CGAL::Field_tag&) {
     test_Type_functions< AS >(CGAL::Integral_domain_tag());
     CGAL_test_assert(CGAL_NTS unit_part( AS (-15))== AS (-15));
+    CGAL_test_assert(CGAL_NTS unit_part( AS (1  ))== AS (  1));
     CGAL_test_assert(CGAL_NTS unit_part( AS (0  ))== AS (  1));
 };
   
