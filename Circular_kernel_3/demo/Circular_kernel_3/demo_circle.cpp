@@ -27,6 +27,7 @@
 
 // moc_source_file: demo_circle.h
 
+#include <CGAL/basic.h>
 #ifdef CGAL_USE_QT
 
 #include "demo_circle.moc"
