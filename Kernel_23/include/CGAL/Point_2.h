@@ -72,7 +72,7 @@ public:
   {}
 
   template < typename T1, typename T2 >
-  Point_2(const T1 &x, const T2 &y)
+  Self(const T1 &x, const T2 &y)
     : Rep(typename R::Construct_point_2()(Return_base_tag(), x, y))
   {}
 
