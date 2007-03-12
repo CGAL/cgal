@@ -42,8 +42,12 @@ LDFLAGS = \
 all:            \
                 combined_spheres$(EXE_EXT) \
                 implicit_surface_mesher_test$(EXE_EXT) \
+                internal-test-surface-mesher$(EXE_EXT) \
                 test_c2t3_iterators$(EXE_EXT) \
-                test_robust_circumcenter$(EXE_EXT)
+                test_robust_circumcenter$(EXE_EXT) 
+
+combined_spheres$(EXE_EXT): combined_spheres$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)combined_spheres combined_spheres$(OBJ_EXT) $(LDFLAGS)
 
 implicit_surface_mesher_test$(EXE_EXT): implicit_surface_mesher_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher_test implicit_surface_mesher_test$(OBJ_EXT) $(LDFLAGS)
@@ -67,11 +71,15 @@ clean: \
                    implicit_surface_mesher_test.clean \
                    internal-test-surface-mesher.clean \
                    test_c2t3_iterators.clean \
-                   test_robust_circumcenter.clean
+                   test_robust_circumcenter.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
