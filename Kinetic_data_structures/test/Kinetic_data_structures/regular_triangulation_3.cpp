@@ -53,14 +53,14 @@ int main(int argc, char *argv[])
     typedef CGAL::Kinetic::Regular_triangulation_event_log_visitor_3 Visitor;
     typedef CGAL::Kinetic::Regular_triangulation_3<Simulation_traits, Visitor> KDel;
     typedef KDel::Triangulation IT;
-    Simulation_traits simtr(0,1000);
+    Simulation_traits simtr(1,1000);
     Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
     typedef CGAL::Regular_triangulation_3<Simulation_traits::Static_kernel> ST;
     typedef ST::Weighted_point SWP;
     typedef ST::Bare_point BP;
 
-    Simulation_traits isimtr(0,1000);
+    Simulation_traits isimtr(1,1000);
     IT it(isimtr.instantaneous_kernel_object());
     it.geom_traits().set_time(Simulation_traits::Instantaneous_kernel::NT(0));
     
@@ -184,9 +184,6 @@ int main(int argc, char *argv[])
       sp->set_current_event_number(sp->current_event_number()+1);
     }
 
-    std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),
-      std::ostream_iterator<std::string>(std::cout, "\n"));
-
     if (argc==1) {
       std::ifstream out("data/regular_triangulation_3.output");
       if (!out) {
@@ -214,6 +211,11 @@ int main(int argc, char *argv[])
 	++line;
       }
       if (error_count != 0) {
+
+
+	std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),
+		  std::ostream_iterator<std::string>(std::cout, "\n"));
+
 	line=0;
 	error_count=0;
 	for (CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3::Event_iterator it = kdel.visitor().events_begin();
