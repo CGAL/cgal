@@ -1368,22 +1368,24 @@ public:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-  inline FT x(const Tag_false&) const {
+  inline FT x(Integral_domain_without_division_tag) const {
     return CGAL::to_double(hx()) / CGAL::to_double(hw());
   }
-  inline FT y(const Tag_false&) const {
+  inline FT y(Integral_domain_without_division_tag) const {
     return CGAL::to_double(hy()) / CGAL::to_double(hw());
   }
 
-  inline FT x(const Tag_true&) const { return hx() / hw(); }
-  inline FT y(const Tag_true&) const { return hy() / hw(); }
+  inline FT x(Field_tag) const { return hx() / hw(); }
+  inline FT y(Field_tag) const { return hy() / hw(); }
 
   inline FT x() const {
-    return x(Boolean_tag<CGALi::Is_field<FT>::value>());
+      typedef Algebraic_structure_traits<FT> AST;
+      return x(typename AST::Algebraic_category());
   }
-
+    
   inline FT y() const {
-    return y(Boolean_tag<CGALi::Is_field<FT>::value>());
+      typedef Algebraic_structure_traits<FT> AST;
+      return y(typename AST::Algebraic_category());
   }
 
   FT hx() const {

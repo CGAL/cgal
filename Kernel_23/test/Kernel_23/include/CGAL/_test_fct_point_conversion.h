@@ -30,7 +30,7 @@
 // Test for number-types that support division.
 template <class NT>
 bool
-_test_fct_point_conversion(const NT&, CGAL::Tag_true)
+_test_fct_point_conversion(const NT&, CGAL::Field_tag)
 {
   std::cout << "Testing Point Conversion Functions" ;
 
@@ -84,7 +84,7 @@ _test_fct_point_conversion(const NT&, CGAL::Tag_true)
 // Test for number-types that do not support division.
 template <class NT>
 bool
-_test_fct_point_conversion(const NT&, CGAL::Tag_false)
+_test_fct_point_conversion(const NT&, CGAL::Integral_domain_without_division_tag)
 {
   std::cout << "Testing Point Conversion Functions" ;
 
@@ -128,8 +128,8 @@ template <class NT>
 bool
 _test_fct_point_conversion (const NT& x)
 {
-    return _test_fct_point_conversion (x, 
-            ::CGAL::Boolean_tag< ::CGAL::CGALi::Is_field<NT>::value >() );
+    typedef CGAL::Algebraic_structure_traits<NT> AST;
+    return _test_fct_point_conversion (x, typename AST::Algebraic_category());
 };
 
 #endif // CGAL__TEST_FCT_POINT_CONVERSION_H

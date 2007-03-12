@@ -217,18 +217,18 @@ public:
 
   FT operator()(const Point& p, const Point& q, const Point& r) const
   {
+      typedef typename CGAL::Algebraic_structure_traits<FT> AST;
     FT squared_area = Compute_squared_area_3()(p,q,r);
-    return cast_sqrt_to_double(squared_area,
-            Boolean_tag< CGALi::Is_field_with_sqrt<FT>::value >());
+    return cast_sqrt_to_double(squared_area, typename AST::Algebraic_category() );
   }
 
 private:
-  FT cast_sqrt_to_double(const FT& squared_area, Tag_true) const
+  FT cast_sqrt_to_double(const FT& squared_area, Field_with_sqrt_tag) const
     {
       return CGAL_NTS sqrt(squared_area);
     }
 
-  FT cast_sqrt_to_double(const FT& squared_area, Tag_false) const
+  FT cast_sqrt_to_double(const FT& squared_area, Integral_domain_without_division_tag) const
     {
       double approx = CGAL_NTS to_double(squared_area);
       return CGAL_NTS sqrt(approx);

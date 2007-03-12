@@ -173,20 +173,21 @@ public:
 
 private:
   static
-  Point_2 midpoint(const Point_2& p, const Point_2& q, const Tag_false&) {
+  Point_2 midpoint(const Point_2& p, const Point_2& q, Integral_domain_without_division_tag) {
     typedef typename Gt::FT  FT;
     FT half(0.5);
     return Point_2((p.x() + q.x()) * half,(p.y() + q.y()) * half);
   }
 
   static
-  Point_2 midpoint(const Point_2& p, const Point_2& q, const Tag_true&) {
+  Point_2 midpoint(const Point_2& p, const Point_2& q, Field_tag) {
     return CGAL::midpoint(p, q);
   }
 
   static Point_2 midpoint(const Point_2& p, const Point_2& q) {
     typedef typename Gt::FT  FT;
-    return midpoint(p, q, Boolean_tag<CGALi::Is_field<FT>::value>());
+    typedef Algebraic_structure_traits<FT> AST;
+    return midpoint(p, q, typename AST::Algebraic_category());
   }
 
 public:

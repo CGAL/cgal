@@ -331,14 +331,19 @@ namespace QP_solution_detail {
   public:
     typedef CGAL::Quotient<ET> result_type;
     typedef CGAL::Arity_tag<1> Arity;
+   
+  private:
+      typedef CGAL::Algebraic_structure_traits<ET> AST;
+      typedef typename AST::Algebraic_category Category; 
     
-    typedef 
-    CGAL::Boolean_tag<CGALi::Is_unique_factorization_domain<ET>::value> 
-    Has_gcd;
+  public:
+      typedef CGAL::Boolean_tag<
+      CGAL::is_same_or_derived<CGAL::Unique_factorization_domain_tag,Category>::value> 
+      Has_gcd;
     
-    typedef 
-    CGAL::Boolean_tag<CGALi::Is_integral_domain<ET>::value> 
-    Has_exact_division;
+      typedef CGAL::Boolean_tag<
+      CGAL::is_same_or_derived<CGAL::Integral_domain_tag,Category>::value> 
+      Has_exact_division;
 
     CGAL::Quotient<ET> normalize 
     (const CGAL::Quotient<ET>& q, 

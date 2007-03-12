@@ -42,7 +42,8 @@ public:
   //  typedef CGAL::Point_2< Cartesian<double> >      Point_2;
   //  typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
   //  typedef CGAL::Line_2< Cartesian<double> >       Line_2;
-
+private:
+    typedef Algebraic_structure_traits<FT> AST;
 protected:
   // static stuff
 #if defined(__POWERPC__) && \
@@ -67,34 +68,22 @@ protected:
   //  }
 
   inline static
-  FT divide(const FT& x, const FT& y, const Tag_false&) {
-    return CGAL::to_double(x) / CGAL::to_double(y);
-  }
-
-  inline static
-  FT divide(const FT& x, const FT& y, const Tag_true&) {
-    return x / y;
-  }
-
-  inline static
   FT divide(const FT& x, const FT& y) {
-      return divide(x, y, 
-      Boolean_tag< ! CGALi::Is_integral_domain_without_division<FT>::value >());
+      return CGAL::integral_division(x,y);
   }
-    
   inline static
-  FT sqrt(const FT& x, const Tag_false&) {
+  FT sqrt(const FT& x, Integral_domain_without_division_tag) {
     return CGAL::sqrt(CGAL::to_double(x));
   }
 
   inline static
-  FT sqrt(const FT& x, const Tag_true&) {
+  FT sqrt(const FT& x, Field_with_sqrt_tag) {
     return CGAL::sqrt(x);
   }
 
   inline static
   FT sqrt(const FT& x) {
-      return sqrt(x, Boolean_tag<CGALi::Is_field_with_sqrt<FT>::value >());
+      return sqrt(x, typename AST::Algebraic_category());
   }
 
   inline static

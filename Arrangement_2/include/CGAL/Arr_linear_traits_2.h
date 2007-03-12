@@ -49,13 +49,14 @@ public:
 
   typedef Kernel_                         Kernel;
   typedef typename Kernel::FT             FT;
-
 private:
     typedef Algebraic_structure_traits<FT> AST; 
-    typedef typename AST::Is_exact FT_is_exact; 
+    typedef typename AST::Algebraic_category Algebraic_category; 
 public:
-    typedef Boolean_tag<CGALi::Is_field<FT>::value && FT_is_exact::value>  
-    Has_exact_division;
+    typedef Boolean_tag<
+       CGAL::is_same_or_derived<CGAL::Field_tag,Algebraic_category>::value
+       && AST::Is_exact::value>                
+                                          Has_exact_division;
 
   // Category tags:
   typedef Tag_true                        Has_left_category;

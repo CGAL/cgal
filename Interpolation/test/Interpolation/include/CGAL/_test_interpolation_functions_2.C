@@ -86,7 +86,7 @@ _test_sibson_c1_interpolation_sqrt(ForwardIterator first,
 				   const typename
 				   std::iterator_traits<ForwardIterator>
 				   ::value_type::second_type& exact_value,
-				   CGAL::Tag_false)
+                                   CGAL::Integral_domain_without_division_tag)
 {
   bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
   std::cout << std::endl
@@ -116,7 +116,7 @@ _test_sibson_c1_interpolation_sqrt(ForwardIterator first,
 				   const typename
 				   std::iterator_traits<ForwardIterator>
 				   ::value_type::second_type& exact_value,
-				   CGAL::Tag_true)
+				   CGAL::Field_with_sqrt_tag)
 {
   typename Functor::result_type res =
     CGAL::sibson_c1_interpolation(first, beyond,
@@ -162,13 +162,12 @@ bool test_interpolation(ForwardIterator first, ForwardIterator beyond,
     assert(res.second && (CGAL_NTS abs(res.first-exact_value)<= tolerance));
 
     //with sqrt:
+    typedef CGAL::Algebraic_structure_traits<Value_type> AST;
+    
     assert(_test_sibson_c1_interpolation_sqrt(
                    first, beyond, norm,p,f, grad_f, 
                    geom_traits, tolerance, exact_value,
-                   ::CGAL::Boolean_tag< 
-                   ::CGAL::CGALi::Is_field_with_sqrt<Value_type>::value >()
-		   // typename CGAL::Number_type_traits<Value_type>::Has_sqrt()
-            ));
+                   typename AST::Algebraic_category()));
   }
   res =  CGAL::farin_c1_interpolation(first, beyond, norm,p,f,grad_f,
 				      geom_traits);

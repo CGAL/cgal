@@ -58,7 +58,7 @@ template <> class Polynomial<double> ;
 
 template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
-gcd_of_range(Forward_iterator its, Forward_iterator ite, Tag_true)
+gcd_of_range(Forward_iterator its, Forward_iterator ite, Unique_factorization_domain_tag)
 /*{\Mfunc calculates the greates common divisor of the
 set of numbers $\{ |*its|, |*++its|, \ldots, |*it| \}$ of type |NT|,
 where |++it == ite| and |NT| is the value type of |Forward_iterator|. 
@@ -75,7 +75,7 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
 
 template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
-gcd_of_range(Forward_iterator its, Forward_iterator ite, Tag_false)
+gcd_of_range(Forward_iterator its, Forward_iterator ite, Integral_domain_without_division_tag)
 /*{\Mfunc calculates the greates common divisor of the
 set of numbers $\{ |*its|, |*++its|, \ldots, |*it| \}$ of type |NT|,
 where |++it == ite| and |NT| is the value type of |Forward_iterator|. 
@@ -93,9 +93,10 @@ template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
 gcd_of_range(Forward_iterator its, Forward_iterator ite)
 {
+    
   typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
-  return gcd_of_range(its,ite,
-          Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>());
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  return gcd_of_range(its,ite,typename AST::Algebraic_category());
 }
 
 
@@ -1245,8 +1246,8 @@ template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                            const Polynomial<NT>& p2)
 { 
-    return divop(p1,p2, 
-            Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>() );
+    typedef Algebraic_structure_traits<NT> AST;
+    return divop(p1,p2, typename AST::Algebraic_category());
 }
 
 
@@ -1254,15 +1255,15 @@ template <class NT> inline
 Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
 { 
-    return modop(p1,p2, 
-            Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>() ); 
+    typedef Algebraic_structure_traits<NT> AST;
+    return modop(p1,p2, typename AST::Algebraic_category());
 }
 
 
 template <class NT> 
 Polynomial<NT> divop (const Polynomial<NT>& p1, 
-                       const Polynomial<NT>& p2,
-                       Tag_false)
+                      const Polynomial<NT>& p2,
+                      Integral_domain_without_division_tag)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) {
 	return 0;
@@ -1276,8 +1277,9 @@ Polynomial<NT> divop (const Polynomial<NT>& p1,
 
 
 template <class NT> 
-Polynomial<NT> divop (const Polynomial<NT>& p1, const Polynomial<NT>& p2,
-                       Tag_true)
+Polynomial<NT> divop (const Polynomial<NT>& p1, 
+                      const Polynomial<NT>& p2,
+                      Unique_factorization_domain_tag)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   Polynomial<NT> q,r; NT D; 
@@ -1289,8 +1291,8 @@ Polynomial<NT> divop (const Polynomial<NT>& p1, const Polynomial<NT>& p2,
 
 template <class NT> 
 Polynomial<NT> modop (const Polynomial<NT>& p1, 
-                       const Polynomial<NT>& p2,
-                       Tag_false)
+                      const Polynomial<NT>& p2,
+                      Integral_domain_without_division_tag)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   Polynomial<NT> q,r;
@@ -1302,8 +1304,8 @@ Polynomial<NT> modop (const Polynomial<NT>& p1,
 
 template <class NT> 
 Polynomial<NT> modop (const Polynomial<NT>& p1, 
-                       const Polynomial<NT>& p2,
-                       Tag_true)
+                      const Polynomial<NT>& p2,
+                      Unique_factorization_domain_tag)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   Polynomial<NT> q,r; NT D; 

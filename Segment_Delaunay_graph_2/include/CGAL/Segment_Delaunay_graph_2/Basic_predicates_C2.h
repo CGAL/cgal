@@ -56,10 +56,13 @@ public:
   typedef CGAL::Sqrt_extension_1<RT>       Sqrt_1;
   typedef CGAL::Sqrt_extension_2<RT>       Sqrt_2;
   typedef CGAL::Sqrt_extension_2<Sqrt_1>   Sqrt_3;
-
-    typedef Boolean_tag<CGALi::Is_field_with_sqrt<RT>::value>  RT_Has_sqrt;
-    typedef Boolean_tag<CGALi::Is_field_with_sqrt<FT>::value>  FT_Has_sqrt;
-
+private:
+    typedef typename Algebraic_structure_traits<RT>::Algebraic_category RT_Category;
+    typedef typename Algebraic_structure_traits<FT>::Algebraic_category FT_Category;
+public:
+    typedef Boolean_tag<CGAL::is_same_or_derived<Field_with_sqrt_tag,RT_Category>::value>  RT_Has_sqrt;
+    typedef Boolean_tag<CGAL::is_same_or_derived<Field_with_sqrt_tag,FT_Category>::value>  FT_Has_sqrt;
+ 
   static const RT_Has_sqrt& rt_has_sqrt() {
     static RT_Has_sqrt has_sqrt;
     return has_sqrt;
