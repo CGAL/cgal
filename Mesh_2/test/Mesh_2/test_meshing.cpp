@@ -69,8 +69,8 @@ int main()
                                Criteria(0.125, 0.2));
 
   std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-  CGAL_assertion( 180 <= cdt.number_of_vertices() &&
-                  cdt.number_of_vertices() <= 200 );
+  CGAL_assertion( 190 <= cdt.number_of_vertices() &&
+                  cdt.number_of_vertices() <= 210 );
 
   std::cerr << "Meshing the triangulation with size 0.1...";
   CGAL::refine_Delaunay_mesh_2(cdt,
