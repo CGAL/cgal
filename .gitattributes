@@ -2557,7 +2557,6 @@ Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
 iostream/test/iostream/data/io.cin -text
 window/test/WindowStream/manual_example_ps.cmd eol=lf
 window/test/WindowStream/test_window_stream_xy_3.cmd eol=lf
-wininst/cgal_config.bat eol=crlf
 wininst/developer_scripts/examples/master_71.vcproj -text
 wininst/developer_scripts/examples/master_80.vcproj -text
 wininst/src/CGAL/cgallib_71.vcproj -text
