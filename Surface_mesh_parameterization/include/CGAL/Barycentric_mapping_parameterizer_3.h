@@ -142,9 +142,9 @@ public:
 // Protected operations
 protected:
     /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
-    virtual NT compute_w_ij(const Adaptor& mesh,
-                            Vertex_const_handle main_vertex_v_i,
-                            Vertex_around_vertex_const_circulator neighbor_vertex_v_j)
+  virtual NT compute_w_ij(const Adaptor& /* mesh */,
+			  Vertex_const_handle /* main_vertex_v_i */,
+			  Vertex_around_vertex_const_circulator /* neighbor_vertex_v_j */ )
     {
         /// Tutte Barycentric Mapping algorithm is the most simple one:
         /// w_ij = 1 for j neighbor vertex of i.
@@ -152,10 +152,10 @@ protected:
     }
 
     /// Check if 3D -> 2D mapping is one-to-one.
-    virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
-                                         const Matrix& A,
-                                         const Vector& Bu,
-                                         const Vector& Bv)
+  virtual bool  is_one_to_one_mapping (const Adaptor& /* mesh */,
+				       const Matrix& /* A */,
+				       const Vector& /* Bu */,
+				       const Vector& /* Bv */)
     {
         /// Theorem: one-to-one mapping is guaranteed if all w_ij coefficients
         ///          are > 0 (for j vertex neighbor of i) and if the surface

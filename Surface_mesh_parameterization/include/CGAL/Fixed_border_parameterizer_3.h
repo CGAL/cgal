@@ -474,8 +474,8 @@ inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix& A,
-                             Vector& Bu,
-                             Vector& Bv,
+                             Vector& ,
+                             Vector& ,
                              const Adaptor& mesh,
                              Vertex_const_handle vertex)
 {
@@ -568,9 +568,9 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,
-                      const Matrix& A,
-                      const Vector& Bu,
-                      const Vector& Bv)
+                      const Matrix& ,
+                      const Vector& ,
+                      const Vector& )
 {
     Vector_3    first_triangle_normal;
 

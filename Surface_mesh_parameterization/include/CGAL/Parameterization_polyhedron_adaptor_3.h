@@ -951,7 +951,7 @@ public:
 private:
 
     /// Extract mesh's longest border.
-    std::list<Vertex_handle> extract_longest_border(Polyhedron& mesh)
+    std::list<Vertex_handle> extract_longest_border(Polyhedron& )
     {
         std::list<Vertex_handle> longest_border;    // returned list
         double                   max_len = 0;       // length of longest_border

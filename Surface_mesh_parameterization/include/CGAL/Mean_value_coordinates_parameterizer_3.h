@@ -173,10 +173,10 @@ protected:
     }
 
     /// Check if 3D -> 2D mapping is one-to-one.
-    virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
-                                         const Matrix& A,
-                                         const Vector& Bu,
-                                         const Vector& Bv)
+    virtual bool  is_one_to_one_mapping (const Adaptor& ,
+                                         const Matrix& ,
+                                         const Vector& ,
+                                         const Vector& )
     {
         /// Theorem: one-to-one mapping is guaranteed if all w_ij coefficients
         ///          are > 0 (for j vertex neighbor of i) and if the surface
