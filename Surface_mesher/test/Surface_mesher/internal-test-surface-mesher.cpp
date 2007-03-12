@@ -7,8 +7,9 @@ typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 
 typedef Tr::Geom_traits Gt;
 typedef Gt::Sphere_3 Sphere_3;
+typedef Gt::Point_3 Point_3;
 
-typedef double (*Function)(double, double, double);
+typedef double (*Function)(Point_3);
 typedef CGAL::Implicit_surface_3<Gt, Function> Surface_3;
 typedef CGAL::Surface_mesh_traits_generator_3<Surface_3>::type SMTraits;
 
@@ -19,20 +20,20 @@ using CGAL::Surface_mesher::Surface_mesher;
 using CGAL::Surface_mesher::Surface_mesher_base;
 using CGAL::Surface_mesher::Surface_mesher_manifold_base;
 using CGAL::Surface_mesher::Surface_mesher_regular_edges_base;
-using CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary_base;
+using CGAL::Surface_mesher::VERBOSE;
 
 // define the surface meshers
 typedef Surface_mesher_base<C2t3, Surface_3, SMTraits, Criteria> SM_base;
 typedef Surface_mesher_regular_edges_base<C2t3, Surface_3, SMTraits, Criteria> SMRE_base;
-typedef Surface_mesher_regular_edges_without_boundary_base<C2t3, Surface_3, SMTraits, Criteria> SMREWB_base;
+typedef Surface_mesher_regular_edges_base<C2t3, Surface_3, SMTraits, Criteria, true> SMREWB_base;
 typedef Surface_mesher_manifold_base<C2t3, Surface_3, SMTraits, Criteria, SMRE_base> SMM_base;
 typedef Surface_mesher_manifold_base<C2t3, Surface_3, SMTraits, Criteria, SMREWB_base> SMMWB_base;
 
-typedef Surface_mesher<SM_base> SM;
-typedef Surface_mesher<SMRE_base> SMRE;
-typedef Surface_mesher<SMREWB_base> SMREWB;
-typedef Surface_mesher<SMM_base> SMM;
-typedef Surface_mesher<SMMWB_base> SMWB;
+typedef Surface_mesher<SM_base, VERBOSE> SM;
+typedef Surface_mesher<SMRE_base, VERBOSE> SMRE;
+typedef Surface_mesher<SMREWB_base, VERBOSE> SMREWB;
+typedef Surface_mesher<SMM_base, VERBOSE> SMM;
+typedef Surface_mesher<SMMWB_base, VERBOSE> SMWB;
 
 // typedef SM Mesher;
 // typedef SMRE Mesher;
@@ -40,7 +41,10 @@ typedef SMREWB Mesher;
 // typedef SMM Mesher;
 // typedef SMMWB Mesher;
 
-double sphere_function (double x, double y, double z) {
+double sphere_function (Point_3 p) {
+  const double x = p.x();
+  const double y = p.y();
+  const double z = p.z();
   const double x2=x*x, y2=y*y, z2=z*z;
   return x2+y2+z2-1;
 }
@@ -64,7 +68,7 @@ int main(int, char **) {
                                                20);
 
   Mesher mesher(c2t3, surface, SMTraits(), criteria);
-  mesher.refine_mesh(true); // true == verbosity
+  mesher.refine_mesh(); 
 
   std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
 }
