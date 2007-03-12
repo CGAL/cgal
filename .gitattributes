@@ -2561,11 +2561,3 @@ wininst/developer_scripts/examples/master_71.vcproj -text
 wininst/developer_scripts/examples/master_80.vcproj -text
 wininst/src/CGAL/cgallib_71.vcproj -text
 wininst/src/CGAL/cgallib_80.vcproj -text
-wininst/winutils/make/bcc/leda/demo.bat eol=crlf
-wininst/winutils/make/bcc/leda/ex.bat eol=crlf
-wininst/winutils/make/bcc/noleda/demo.bat eol=crlf
-wininst/winutils/make/bcc/noleda/ex.bat eol=crlf
-wininst/winutils/make/msvc/leda/demo.bat eol=crlf
-wininst/winutils/make/msvc/leda/ex.bat eol=crlf
-wininst/winutils/make/msvc/noleda/demo.bat eol=crlf
-wininst/winutils/make/msvc/noleda/ex.bat eol=crlf

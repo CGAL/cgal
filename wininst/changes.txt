@@ -1,4 +1,7 @@
-19 February 2006 Fernando Cacciola
+12 March 2007 Andreas Fabri
+- Removed cgal_confog.bat
+
+19 February 2007 Fernando Cacciola
 - The following .vcproj files have been replaced by *_71.vcproj and *_VC80.vcproj:
     master.vcproj, cgalib.vcproj, CORE.vcproj and CGALQt.vcproj
   (the old project files were removed).
