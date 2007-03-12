@@ -33,17 +33,22 @@ CGAL_BEGIN_NAMESPACE
 template < class T >
 void use(const T&) {}
 
-template < class NT >
+template < class NT, class Sqrt>
 bool
-test_sqrt(const NT&, CGAL::Tag_true)
+test_sqrt(const NT&, Sqrt)
 {
   NT sixteen(16);
   std::cout << "  sqrt()" << std::endl;
-  typedef typename Algebraic_structure_traits<NT>::Is_exact Is_exact;
-  if(Is_exact::value && CGALi::Is_field_with_sqrt<NT>::value){
-      if (CGAL_NTS sqrt(sixteen)    != NT(4)) return false;
-      if (CGAL::Sqrt<NT>()(sixteen) != NT(4)) return false;
-  }else{
+  typedef  Algebraic_structure_traits<NT> AST;
+  typedef typename AST::Is_exact Is_exact;
+  typedef typename AST::Algebraic_category Algebraic_category;
+
+  if(Is_exact::value && 
+     CGAL::is_same_or_derived<Algebraic_category,CGAL::Field_with_sqrt_tag>::value)
+      {
+          if (CGAL_NTS sqrt(sixteen)    != NT(4)) return false;
+          if (CGAL::Sqrt<NT>()(sixteen) != NT(4)) return false;
+      }else{
       // sqrt is inexact
       if (!( NT(CGAL_NTS sqrt(sixteen) - NT(5)) < NT(0) )) return false;
       if (!( NT(CGAL_NTS sqrt(sixteen) - NT(3)) > NT(0) )) return false;
@@ -55,20 +60,19 @@ test_sqrt(const NT&, CGAL::Tag_true)
 
 template < class NT >
 bool
-test_sqrt(const NT&, CGAL::Tag_false)
+test_sqrt(const NT&, CGAL::Null_functor)
 {
   return true;
 }
 
 template < class NT >
 bool
-test_gcd(const NT&, CGAL::Tag_true)
+test_gcd(const NT&, CGAL::Unique_factorization_domain_tag)
 {
   // div
   NT eleven(11);
   NT three(3);
   std::cout << "  div()" << std::endl;
-  std::cout << "  ##################### div( 11, 3): " << CGAL_NTS div(eleven, three) <<std::endl;
   if (CGAL_NTS div(eleven, three) != three) return false;
   CGAL::Div<NT> d;
   if (d(eleven, three) != three) return false;
@@ -80,21 +84,13 @@ test_gcd(const NT&, CGAL::Tag_true)
   CGAL::Gcd<NT> gc;
   if (CGAL_NTS gcd(x, y) != NT(391)) return false;
   if (gc(x, y) != NT(391)) return false;
-
-  
-  typedef typename Algebraic_structure_traits<NT>::Sqrt Sqrt;
-  return test_sqrt(x,
-          Boolean_tag< ! ::boost::is_same<Sqrt,Null_functor>::value>());
+  return true;
 }
 
 template < class NT >
 bool
-test_gcd(const NT &x, CGAL::Tag_false)
-{
-    typedef typename Algebraic_structure_traits<NT>::Sqrt Sqrt;
-    return test_sqrt(x,
-            Boolean_tag< ! ::boost::is_same<Sqrt,Null_functor>::value>());
-}
+test_gcd(const NT &x, CGAL::Integral_domain_without_division_tag)
+{ return true; }
 
 
 template < class NT >
@@ -132,22 +128,20 @@ test_basic_operators(const NT&)
 
 template < class NT >
 bool
-test_field_division(const NT&, Tag_true )
+test_field_division(const NT&, CGAL::Field_tag )
 {
-    BOOST_STATIC_ASSERT(CGAL::CGALi::Is_field<NT>::value);
-
     if ( NT(0) / NT(1) != NT(0) ) return false;
     if ( NT(1) / NT(1) != NT(1) ) return false;
     // mixed op with int 
     if ( NT(0) / 1  != NT(0) ) return false;
     if ( 1 / NT(1)  != NT(1) ) return false;
-
-  return true;
+    
+    return true;
 }
 
 template < class NT >
 bool
-test_field_division(const NT&, Tag_false)
+test_field_division(const NT&, CGAL::Integral_domain_without_division_tag)
 { 
     return true; 
 }
@@ -155,7 +149,7 @@ test_field_division(const NT&, Tag_false)
 
 template < class NT >
 bool
-test_integral_division(const NT&, Tag_true)
+test_integral_division(const NT&, CGAL::Integral_domain_tag)
 {
     return (CGAL_NTS integral_division(NT(6),NT(3)) == NT(2));
     //mixed ops with int 
@@ -165,7 +159,7 @@ test_integral_division(const NT&, Tag_true)
 
 template < class NT >
 bool
-test_integral_division(const NT&, Tag_false)
+test_integral_division(const NT&, CGAL::Integral_domain_without_division_tag)
 { 
 return true; 
 }
@@ -226,11 +220,10 @@ test_mixed_operators(const NT& x)
   if (1 * zero != 0 ) return false;
 
   // Test division (only if supported).
-  if (! test_field_division(x, 
-                  Boolean_tag<CGALi::Is_field<NT>::value>() )) 
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  if (! test_field_division(x, typename AST::Algebraic_category())) 
       return false;
-  if (! test_integral_division(x, 
-                  Boolean_tag<CGALi::Is_integral_domain<NT>::value>() )) 
+  if (! test_integral_division(x, typename AST::Algebraic_category())) 
       return false;
   return true;
 }
@@ -375,8 +368,10 @@ test_utilities(const NT& x)
   if (CGAL_NTS square(two+two) != NT(16)) return false;
 
   // UFD
-  return test_gcd(x, 
-          Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>() );
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  if (!test_gcd(x,typename AST::Algebraic_category())) return false; 
+  if (!test_sqrt(x,typename AST::Sqrt())) return false; 
+
   return true; 
 }
 
