@@ -319,51 +319,46 @@ int main(int argc, char * argv[])
     std::string input;            // default: no output
     std::string output;            // default: no output
 
-    // misc
-    char  optchar;
-    const char *optarg;
-    int  errors = 0;
-    int  npos = 0;
-try {
-    po::options_description desc("Allowed options");
-    desc.add_options()
-      ("help,h", "produce help message.")
-      ("border,b", po::value<std::string>(&border)->default_value("circle"),
-       "circle, square or 2pts")
-      ("type,t", po::value<std::string>(&type)->default_value("floater"),
-       "floater (default), conformal, barycentric, authalic or lscm")
-      ("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
-       "opennl (default) or taucs")
-      ("input,i", po::value<std::string>(&input)->default_value("mesh-in.off"),
-       "polyhedral mesh")
-      ("output,o", po::value<std::string>(&output)->default_value("mesh-out.eps"),
-       "eps or obj")
-      ;
-
-
-    po::positional_options_description p;
-    p.add("input", 1);
-    p.add("output", 2);
-
-    po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).
-	      options(desc).positional(p).run(), vm);
-
-    po::notify(vm);
-
-    if (vm.count("help")) {
-      std::cout << desc << "\n";
+    try {
+      po::options_description desc("Allowed options");
+      desc.add_options()
+	("help,h", "produce help message.")
+	("border,b", po::value<std::string>(&border)->default_value("circle"),
+	 "circle, square or 2pts")
+	("type,t", po::value<std::string>(&type)->default_value("floater"),
+	 "floater (default), conformal, barycentric, authalic or lscm")
+	("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
+	 "opennl (default) or taucs")
+	("input,i", po::value<std::string>(&input)->default_value("mesh-in.off"),
+	 "polyhedral mesh")
+	("output,o", po::value<std::string>(&output)->default_value("mesh-out.eps"),
+	 "eps or obj")
+	;
+      
+      
+      po::positional_options_description p;
+      p.add("input", 1);
+      p.add("output", 2);
+      
+      po::variables_map vm;
+      po::store(po::command_line_parser(argc, argv).
+		options(desc).positional(p).run(), vm);
+      
+      po::notify(vm);
+      
+      if (vm.count("help")) {
+	std::cout << desc << "\n";
+	return 1;
+      }
+    }
+    catch(std::exception& e) {
+      std::cerr << "error: " << e.what() << "\n";
       return 1;
     }
-  }
-  catch(std::exception& e) {
-    std::cerr << "error: " << e.what() << "\n";
-    return 1;
-  }
-  catch(...) {
-    std::cerr << "Exception of unknown type!\n";
-  }
-
+    catch(...) {
+      std::cerr << "Exception of unknown type!\n";
+    }
+    
 
     //***************************************
     // Read the mesh
