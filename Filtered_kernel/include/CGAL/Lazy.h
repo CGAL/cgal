@@ -372,7 +372,7 @@ public:
     l2_ = L2();
   }
 
-  Lazy_rep_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
+  Lazy_rep_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))),
       l1_(l1), l2_(l2)
   {
@@ -426,7 +426,7 @@ public:
     l3_ = L3();
   }
 
-  Lazy_rep_3(const AC& ac, const EC& ec,
+  Lazy_rep_3(const AC& ac, const EC& /*ec*/,
              const L1& l1, const L2& l2, const L3& l3)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
                              CGAL::approx(l3))),
@@ -487,7 +487,7 @@ public:
     l4_ = L4();
   }
 
-  Lazy_rep_4(const AC& ac, const EC& ec,
+  Lazy_rep_4(const AC& ac, const EC& /*ec*/,
              const L1& l1, const L2& l2, const L3& l3, const L4& l4)
    : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
                             CGAL::approx(l3), CGAL::approx(l4))),
@@ -554,7 +554,7 @@ public:
     l5_ = L5();
   }
 
- Lazy_rep_5(const AC& ac, const EC& ec,
+ Lazy_rep_5(const AC& ac, const EC& /*ec*/,
             const L1& l1, const L2& l2, const L3& l3, const L4& l4,
             const L5& l5)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
@@ -625,7 +625,7 @@ public:
     l6_ = L6();
   }
 
- Lazy_rep_6(const AC& ac, const EC& ec,
+ Lazy_rep_6(const AC& ac, const EC& /*ec*/,
             const L1& l1, const L2& l2, const L3& l3, const L4& l4,
             const L5& l5, const L6& l6)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
@@ -701,7 +701,7 @@ public:
     l7_ = L7();
   }
 
- Lazy_rep_7(const AC& ac, const EC& ec,
+ Lazy_rep_7(const AC& ac, const EC& /*ec*/,
             const L1& l1, const L2& l2, const L3& l3, const L4& l4,
             const L5& l5, const L6& l6, const L7& l7)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
@@ -782,7 +782,7 @@ public:
     l8_ = L8();
   }
 
- Lazy_rep_8(const AC& ac, const EC& ec,
+ Lazy_rep_8(const AC& ac, const EC& /*ec*/,
             const L1& l1, const L2& l2, const L3& l3, const L4& l4,
             const L5& l5, const L6& l6, const L7& l7, const L8& l8)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
@@ -891,7 +891,7 @@ public:
     l1_ = L1();
   }
 
-  Lazy_rep_with_vector_1(const AC& ac, const EC& ec, const L1& l1)
+  Lazy_rep_with_vector_1(const AC& ac, const EC& /*ec*/, const L1& l1)
     : l1_(l1)
   {
     ac(CGAL::approx(l1), std::back_inserter(this->at));
@@ -941,7 +941,7 @@ public:
     l2_ = L2();
   }
 
-  Lazy_rep_with_vector_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
+  Lazy_rep_with_vector_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : l1_(l1), l2_(l2)
   {
     ac(CGAL::approx(l1), CGAL::approx(l2), std::back_inserter(this->at));
@@ -990,7 +990,7 @@ public:
     l2_ = L2();
   }
 
-  Lazy_rep_2_1(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
+  Lazy_rep_2_1(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(), l1_(l1), l2_(l2)
   {
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at);
@@ -1042,7 +1042,7 @@ public:
     l2_ = L2();
   }
 
-  Lazy_rep_2_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
+  Lazy_rep_2_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(), l1_(l1), l2_(l2)
   {
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at.first, this->at.second);
