@@ -18,6 +18,7 @@
 //
 // Author(s)     : Stefan Schirra
  
+#include <CGAL/basic.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>

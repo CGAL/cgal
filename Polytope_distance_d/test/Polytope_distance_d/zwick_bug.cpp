@@ -1,4 +1,5 @@
 #include <iostream>
+#include <CGAL/basic.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf ET;

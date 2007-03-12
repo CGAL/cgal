@@ -21,6 +21,7 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
+#include <CGAL/basic.h>
 
 #if !defined(CGAL_USE_LEDA)
 int main() { return 0; }
