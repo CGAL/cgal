@@ -302,6 +302,7 @@ public:
  
     const Mesher_level_conflict_status result = test_point_conflict(p, zone);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    std::cerr << "(" << p << ") ";
     switch( result )
     {
     case NO_CONFLICT:
