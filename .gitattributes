@@ -2214,6 +2214,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/test_all.sh eol
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.eps -text svneol=unset#application/postscript
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/detail.png -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.eps -text svneol=unset#application/postscript
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.png -text svneol=unset#image/png
