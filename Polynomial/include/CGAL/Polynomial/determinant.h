@@ -23,8 +23,10 @@ CGAL_BEGIN_NAMESPACE ;
 
 namespace CGALi {
     
-    // Own simple matrix and vector to avoid importing the whole matrix stuff 
-    // from EXACUS
+    // TODO: Own simple matrix and vector to avoid importing the whole matrix stuff 
+    // from EXACUS.
+    
+    // This is to be replaced by a corresponding CGAL Matrix and Vector.
     template< class Coeff >
     struct Simple_matrix
         : public std::vector< std::vector< Coeff > > {
@@ -45,11 +47,12 @@ namespace CGALi {
         private:
         
         void initialize( int m, int n ) {
+            this->reserve( m );
             this->m = m;
             this->n = n;
-            this->reserve( m );
             for( int i = 0; i < m; ++i ) {
                 this->push_back( std::vector< Coeff >() );
+                this->operator[](i).reserve(n);
                 for( int j = 0; j < n; ++j ) {
                     this->operator[](i).push_back( Coeff(0) );
                 }
@@ -63,6 +66,7 @@ namespace CGALi {
     struct Simple_vector
         : public std::vector< Coeff > {
         Simple_vector( int m ) {
+        	this->reserve( m );
             for( int i = 0; i < m; ++i )
                 this->push_back( Coeff(0) );
         }
@@ -70,7 +74,7 @@ namespace CGALi {
         Coeff operator*( const Simple_vector<Coeff>& v2 ) const {
             CGAL_precondition( v2.size() == this->size() );
             Coeff result(0);
-            
+                        
             for( unsigned i = 0; i < this->size(); ++i )
                 result += ( this->operator[](i) * v2[i] );
                 
@@ -78,8 +82,6 @@ namespace CGALi {
         }
     };
     
-// TODO: Copied from Nix/determinant.h /////////////////////////////////////////
-
     // call for auto-selection of best routine (exact NT)
     template <class M> inline
     typename M::NT determinant (const M& matrix,
