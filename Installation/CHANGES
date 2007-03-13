@@ -11,10 +11,10 @@ Additional supported platforms:
 
 2 Installation
 
-On Windows the libraries built in Developer Studio now have names
-which encode the compiler version, the runtime and whether it was
-built in release or debug mode. The libraries to link against are
-chosen with linker pragmas in header files.
+  On Windows the libraries built in Developer Studio now have names
+  which encode the compiler version, the runtime and whether it was
+  built in release or debug mode. The libraries to link against are
+  chosen with linker pragmas in header files.
 
 
 3 Algebraic Foundations (new package)
@@ -32,26 +32,69 @@ chosen with linker pragmas in header files.
 
 6.1 Surface Mesh Simplification (new package)
 
-This package provides a mesh simplification framework using edge collapse
-operations, and provides the Turk/Lindstom simplification algorithm.
+  This package provides a mesh simplification framework using edge collapse
+  operations, and provides the Turk/Lindstom simplification algorithm.
 
 
 6.2 Estimation of Local Differential Properties (new package)
 
-This package allows to compute local differential quantities of a surface from a point sample
+  This package allows to compute local differential quantities of a surface from a point sample
 
 
 6.3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes  (new package)
 
-This package enables the approximation of differential features on
-triangulated surface meshes. Such curvature related features are
-lines: ridges or crests, and points: umbilics.
+  This package enables the approximation of differential features on
+  triangulated surface meshes. Such curvature related features are
+  lines: ridges or crests, and points: umbilics.
 
 
-6.4 Surface Mesh Parametrization
+6.4 Envelopes of Curves in 2D (new package)
 
-Added Jacobi and SSOR preconditioners to OpenNL solver, which makes it
-much faster and more stable.
+  This package contains two sets of functions that construct the lower and upper envelope diagram 
+  for a given range of bounded or unbounded curves.
+
+
+6.5 Envelopes of Surfaces in 3D (new package)
+
+  This package contains two sets of functions that construct the lower and upper envelope diagram 
+  for a given range of bounded or unbounded surfaces. The envelope diagram is realized as a 
+  2D arrangement.
+
+
+6.6 Minkowski Sums in 2D (new package)
+
+  This package contains functions for computing planar Minkowski sums of two closed polygons, 
+  and for a polygon and a disc (an operation also known as offsetting or dilating a polygon). 
+  The package also contains an efficient approximation algorithm for the offset computattion, 
+  which provides a guaranteed approximation bound. 
+
+6.7 Surface Mesh Parametrization
+
+  Added Jacobi and SSOR preconditioners to OpenNL solver, which makes it
+  much faster and more stable.
+
+
+6.8 2D Arrangements
+
+- Added support for unbounded curves.
+- Added a traits class that supports (unbounded) lines.
+- Added a traits class that supports Bezier curves.
+- Enhanced the traits class that supports rational functions to     
+  handle unbounded (as well as bounded) arcs
+- Added a free function called decompose() that produces the symbolic vertical decomposition of a 
+  given arrangement, performing a batched vertical ray-shooting query from all arrangement vertices.
+- Fixed a memory leak in the sweep-line code.
+- Fixed a bug in computing the minor axis of non-degenerate hyperbolas.
+
+
+6.9 Boolean Set Operations
+
+- Added the DCEL as a default template parameter to the General_polygon_set_2 and Polygon_set_2 classes. 
+  This allows users to extend the DCEL of the underlying arrangement.
+- Added a function template called connect_holes() that connects the holes in a given polygon with holes, 
+  turning it into a sequence of points, where the holes are connceted to the outer boundary using
+  zero-width passages. 
+
 
 
 7 Support Library
