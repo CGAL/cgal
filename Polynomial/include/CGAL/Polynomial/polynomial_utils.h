@@ -133,14 +133,12 @@ namespace INTERN_POLYNOMIAL {
         typedef Polynomial<NT> POLY;
         typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
         typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-        //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
         typename Polynomial_traits_d<POLY>::Innermost_coefficient_begin begin;
         typename Polynomial_traits_d<POLY>::Innermost_coefficient_end end;
         typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
     
         IC tmp = ilcoeff(g);
         tmp *= dfai(begin(g), end(g));
-        //f *= ictp(tmp);
         f *= POLY(tmp);
         return canonicalize_polynomial(f / g);
     }
@@ -153,11 +151,10 @@ namespace INTERN_POLYNOMIAL {
         typedef Polynomial<NT> POLY;
         typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
         typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-        typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
     
         if (!is_canonicalized) {
             IC lcoeff = ilcoeff(g);
-            f *= ictp(lcoeff);
+            f *= POLY(lcoeff);
         }
         return canonicalize_polynomial(f / g);
     }
@@ -178,14 +175,12 @@ namespace INTERN_POLYNOMIAL {
         typedef Polynomial<NT> POLY;
         typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
         typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-        //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
         typename Polynomial_traits_d<NT>::Innermost_coefficient_begin begin;
         typename Polynomial_traits_d<NT>::Innermost_coefficient_end end;
         typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
     
         IC tmp = ilcoeff(g);
         tmp *= dfai(begin(g), end(g));
-        //f *= ictp(tmp);
         f *= POLY(tmp);
         return canonicalize_polynomial(f / g);
     }
