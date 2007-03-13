@@ -9,6 +9,12 @@ Additional supported platforms:
  - Intel C++ compiler 9
  - Microsoft Visual C++ compiler 8.0
 
+CGAL now supports Visual C++ "Checked iterators" as well as "libstdc++ debug mode".
+
+CGAL has no longer problems with the preprocessor macros min and max 
+defined in windows.h
+
+
 2 Installation
 
   On Windows the libraries built in Developer Studio now have names
