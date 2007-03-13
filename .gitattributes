@@ -1930,6 +1930,8 @@ Straight_skeleton_2/demo/Straight_skeleton_2/straight_skeleton_2.vcproj eol=crlf
 Straight_skeleton_2/dll/Straight_skeleton_2/A.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/dll/Straight_skeleton_2/ex1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/dll/Straight_skeleton_2/input.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/StraightSkeleton.png -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/StraightSkeletonTeaser.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.png -text svneol=unset#image/png
