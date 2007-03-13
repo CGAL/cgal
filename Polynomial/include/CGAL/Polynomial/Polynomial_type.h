@@ -620,8 +620,13 @@ public:
     /*! The content is defined as 1 for the zero polynomial. */
     NT content() const {
         CGAL_precondition(degree() >= 0);
-        if (is_zero()) return NT(1);
+        if (is_zero()) return NT(0);
+        
+        return content_( typename Algebraic_structure_traits< NT >::Algebraic_category() );
+    }
 
+private:
+    NT content_( Unique_factorization_domain_tag ) const {
         typename Algebraic_structure_traits<NT>::Integral_division idiv;
         typename Algebraic_structure_traits<NT>::Unit_part    upart;
         typename Algebraic_structure_traits<NT>::Gcd          gcd;
@@ -635,6 +640,12 @@ public:
         return d;
     }
 
+    NT content_( Field_tag ) const {
+        return NT(1);
+    }
+
+public:
+    
     //! return the unit part of the polynomial
     /*! It is defined as the unit part of the leading coefficient. */
     NT unit_part() const {
