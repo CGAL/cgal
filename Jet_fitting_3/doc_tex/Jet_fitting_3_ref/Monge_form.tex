@@ -18,7 +18,7 @@
 
 \ccDefinition
   
-The class \ccRefName\ stores the Monge representation, i.e. the Monge
+The class \ccRefName\ stores the Monge representation, i.e., the Monge
 coordinate system and the coefficients of the Monge form in this
 system.
 
@@ -48,7 +48,7 @@ system.
 \ccMemberFunction{Point_3 origin();}{Point on the fitted surface where
 differential quantities are computed.}
 
-The Monge basis is given by :
+The Monge basis is given by:
 
 \ccMemberFunction{Vector_3 maximal_principal_direction();}{}
 \ccGlue
@@ -56,7 +56,7 @@ The Monge basis is given by :
 \ccGlue
 \ccMemberFunction{Vector_3 normal_direction(); }{}
 
-The Monge coefficients are given by :
+The Monge coefficients are given by:
 
 \ccMemberFunction{FT principal_curvatures(size_t i);}
 {$i=0$ for the maximum and $i=1$ for the minimum.}
@@ -73,7 +73,7 @@ The Monge coefficients are given by :
 \ccMemberFunction{void comply_wrt_given_normal(const Vector_3 given_normal);}
 { change principal basis and Monge coefficients so that the
 given\_normal and the Monge normal make an acute angle.\\ If
-given\_normal.monge\_normal $< 0$ then change the orientation~: if
+given\_normal.monge\_normal $< 0$ then change the orientation: if
 $z=g(x,y)$ in the basis (d1,d2,n) then in the basis (d2,d1,-n)
 $z=h(x,y)=-g(y,x)$. }
 
