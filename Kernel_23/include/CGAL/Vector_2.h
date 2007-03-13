@@ -86,7 +86,7 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2 >
-  Self(const T1 &x, const T2 &y)
+  Vector_2(const T1 &x, const T2 &y)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y)) {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
