@@ -18,7 +18,7 @@
 #include <CGAL/Polynomial/basic.h>
 
 #include <CGAL/CORE_Expr.h>
-#include <CORE/poly/Poly.h>
+#include <CGAL/CORE/poly/Poly.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/CORE_BigRat.h>

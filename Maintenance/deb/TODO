@@ -9,3 +9,4 @@ CGAL 3.3:
 - -D_REENTRANT
 - -fPIC
 - adjust manpage
+- add --with-OPENGL

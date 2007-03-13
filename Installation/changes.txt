@@ -1,3 +1,9 @@
+12 March 2007 Joachim Reichel
+- moved src/Core to src/CGALCore
+- moved include/CORE to include/CGAL/CORE
+- moved include/OpenNL to include/CGAL/OpenNL
+- renamed libcore++ to libCGALcore++
+
 20 July 2006 Menelaos Karavelas
 - duplicated test_LEDA.cpp to test_LEDA5X.cpp; it seems that the install
   script was not finding this file and as a result it was behaving as if

@@ -21,7 +21,7 @@
 
 
 #define CORE_LEVEL 4
-#include <CORE/CORE.h>
+#include <CGAL/CORE/CORE.h>
 
 
 //#if defined(CGAL_CORE_BIGRAT_NUMER_DENOM_ARE_MEMBERS)

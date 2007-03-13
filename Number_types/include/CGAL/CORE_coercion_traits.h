@@ -21,10 +21,10 @@
 #include <CGAL/number_type_basic.h>
 
 #ifdef CGAL_USE_CORE
-#include <CORE/BigInt.h>
-#include <CORE/BigRat.h>
-#include <CORE/BigFloat.h>
-#include <CORE/Expr.h>
+#include <CGAL/CORE/BigInt.h>
+#include <CGAL/CORE/BigRat.h>
+#include <CGAL/CORE/BigFloat.h>
+#include <CGAL/CORE/Expr.h>
 
 //#include <NiX/CORE/Coercion_traits.h>
 

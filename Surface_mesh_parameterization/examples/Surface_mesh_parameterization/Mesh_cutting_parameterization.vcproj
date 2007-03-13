@@ -194,22 +194,22 @@
 			Name="OpenNL"
 			Filter="">
 			<File
-				RelativePath="..\..\..\OpenNL\include\OpenNL\bicgstab.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\OpenNL\blas.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\blas.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\OpenNL\conjugate_gradient.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\OpenNL\full_vector.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\OpenNL\linear_solver.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\OpenNL\sparse_matrix.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
 			</File>
 		</Filter>
 	</Files>

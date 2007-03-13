@@ -50,10 +50,10 @@ if [ ! -f install_cgal ]; then
 fi
  
 grep -r -L "^\(//\| \*\|#\) See the file LICENSE\.\(LG\|Q\)PL distributed with CGAL\." * | \
-	grep -v "^$DIR/\|^include/CORE/\|^include/OpenNL/\|^src/Core/\|^test/\|^Packages/\|^developer_scripts\|^doc_tex/\|^winutils/" | sort >$PREFIX1 || true
+	grep -v "^$DIR/\|^include/CGAL/CORE/\|^include/CGAL/OpenNL/\|^src/CGALCore/\|^test/\|^Packages/\|^developer_scripts\|^doc_tex/\|^winutils/" | sort >$PREFIX1 || true
 	
 echo Note that files in the following directories are ignored:
-echo include/CORE, include/OpenNL, src/Core,
+echo include/CGAL/CORE, include/CGAL/OpenNL, src/CGALCore,
 echo test, Packages, developer_scripts, doc_tex, winutils
 
 echo

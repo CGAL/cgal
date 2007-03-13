@@ -29,7 +29,7 @@
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 #elif defined CGAL_USE_CORE
-#  include <CGAL/CORE_Expr.h>
+#  include <CGAL/CORE/Expr.h>
 #else
 #  error "You need LEDA or CORE installed."
 #endif

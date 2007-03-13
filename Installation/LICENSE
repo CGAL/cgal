@@ -23,8 +23,8 @@ licenses:
   (see LICENSE.LGPL).
 - CGALPDB, in the directory "src/CGALPDB/" and "include/CGALPDB" is licensed
   under the LGPL (see LICENSE.LGPL).
-- OpenNL, in the directory "include/OpenNL", is licensed under the LGPL
-  (see include/OpenNL/LICENSE.OPENNL).
+- OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
+  (see include/CGAL/OpenNL/LICENSE.OPENNL).
 
 All other files that do not have an explicit copyright notice (e.g., all
 examples and some demos) are licensed under a very permissive license. The

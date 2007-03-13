@@ -26,7 +26,6 @@ This distribution of CGAL includes:
                         (experimental) are provided for all programs.
    include/CGAL       - the include files for the CGAL library
    include/CORE       - the include files for the CORE library
-   include/OpenNL     - the include files for the OpenNL library
    install_cgal       - the script with which you can install CGAL
    INSTALL            - file containing information about the installation
                         process on Unix-like platforms

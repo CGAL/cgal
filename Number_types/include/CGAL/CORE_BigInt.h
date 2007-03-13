@@ -18,7 +18,7 @@
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
 #define CORE_LEVEL 4
-#include <CORE/CORE.h>
+#include <CGAL/CORE/CORE.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -23,7 +23,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Timer.h>
-#include <OpenNL/linear_solver.h>
+#include <CGAL/OpenNL/linear_solver.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>

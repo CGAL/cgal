@@ -30,7 +30,7 @@
 #include <utility>
 
 #define CORE_LEVEL 4
-#include <CORE/CORE.h>
+#include <CGAL/CORE/CORE.h>
 
 CGAL_BEGIN_NAMESPACE
 

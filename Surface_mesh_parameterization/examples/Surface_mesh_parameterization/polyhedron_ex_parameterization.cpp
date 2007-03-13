@@ -44,7 +44,7 @@
 #include <CGAL/LSCM_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 
-#include <OpenNL/linear_solver.h>
+#include <CGAL/OpenNL/linear_solver.h>
 #ifdef CGAL_USE_TAUCS
     #include <CGAL/Taucs_solver_traits.h>
 #endif

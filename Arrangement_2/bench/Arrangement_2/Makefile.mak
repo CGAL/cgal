@@ -389,7 +389,7 @@ LLDLIBS+= -lCGALBenchmark
 
 # ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDOPTS+= -L$(COREROOT)/lib
-LLDLIBS+= -lcore++
+LLDLIBS+= -lCGALcore++
 # else
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDLIBS+= $(EXACUS_ROOT)/ConiX/src/.libs/libCnX.so

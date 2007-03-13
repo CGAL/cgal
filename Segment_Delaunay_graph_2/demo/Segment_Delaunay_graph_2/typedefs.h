@@ -33,7 +33,7 @@
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
 #ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_Expr.h>
+#  include <CGAL/CORE/Expr.h>
 #endif
 
 #if defined(USE_FILTERED_TRAITS) || !defined(CGAL_USE_CORE)

@@ -30,7 +30,7 @@ int main() { return 0; }
 
 #else
 
-#include <CORE/CORE.h>
+#include <CGAL/CORE/CORE.h>
 #include <iostream>
 
 int main()

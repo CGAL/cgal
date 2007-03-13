@@ -2,9 +2,9 @@
 
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
-#include <CORE/poly/Sturm.h>
-#include <CORE/poly/Poly.h>
-#include <CORE/BigFloat.h>
+#include <CGAL/CORE/poly/Sturm.h>
+#include <CGAL/CORE/poly/Poly.h>
+#include <CGAL/CORE/BigFloat.h>
 #endif
 //#include <CGAL/Polynomial/internal/CORE_polynomial.h>
 

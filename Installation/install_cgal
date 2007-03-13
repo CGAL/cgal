@@ -3975,8 +3975,8 @@ write_linker_flags()
   makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
   makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "\$(CGAL_CGAL_LDFLAGS)" >> ${FILE}
-  if [ -n "${libCore_COMPILED}" ]; then
-      makefile_print_continuationline "`lib_option \"core++\"`" >> ${FILE}
+  if [ -n "${libCGALCore_COMPILED}" ]; then
+      makefile_print_continuationline "`lib_option \"CGALcore++\"`" >> ${FILE}
   fi
   if [ -n "${libCGALQt_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"CGALQt\"`" >> ${FILE}
@@ -4183,9 +4183,9 @@ create_include_makefile()
   #
   # CGAL_SHARED_LIBNAME_WITH_SOVERSION, CGAL_SHARED_LIBNAME_WITH_SOMAJOR, and CGAL_SHARED_LIB_SONAME
   #
-  ${_printf} "\n%s\n" \
+  ${_printf} "%s\n" \
        "CGAL_SHARED_LIB_SONAME = ${CGAL_SHARED_LIB_SONAME}" >> ${FILE}
-  ${_printf} "%s\n\n" \
+  ${_printf} "%s\n" \
        "CGAL_SHARED_LIBNAME_WITH_SOMAJOR = ${CGAL_SHARED_LIBNAME_WITH_SOMAJOR}" >> ${FILE}
   ${_printf} "%s\n\n" \
        "CGAL_SHARED_LIBNAME_WITH_SOVERSION = ${CGAL_SHARED_LIBNAME_WITH_SOVERSION}" >> ${FILE}
@@ -4256,7 +4256,7 @@ generatemakefiles()
 }
 
 # compile $1 $2
-# $1 = libCGAL, libCore, libCGALQt, libCGALBenchmark, libCGALimageIO ...
+# $1 = libCGAL, libCGALCore, libCGALQt, libCGALBenchmark, libCGALimageIO ...
 # $2 = static, shared
 # return 0, iff success
 _do_compile()
@@ -4392,10 +4392,10 @@ build_cgal()
 	    _do_compile libCGALPDB static
 	    _do_compile libCGALPDB shared 
 	fi
-	if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
-	    cd "${CGAL_SRC_DIR}/Core"
-	    _do_compile libCore static
-	    _do_compile libCore shared
+	if [ -d "${CGAL_SRC_DIR}/CGALCore" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
+	    cd "${CGAL_SRC_DIR}/CGALCore"
+	    _do_compile libCGALCore static
+	    _do_compile libCGALCore shared
 	fi
     fi
     write_buffer "\n"
