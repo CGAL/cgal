@@ -28,6 +28,14 @@
 #include <string>
 #include <cstdlib>
 
+
+
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Homogeneous_d<CGAL::Gmpz>   GKernel;
+typedef CGAL::Convex_hull_d<GKernel> GConvex_hull_d;
+#endif
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_real.h>
@@ -35,12 +43,6 @@ typedef CGAL::Homogeneous_d<leda_integer> LHKernel;
 typedef CGAL::Convex_hull_d<LHKernel> LHConvex_hull_d;
 typedef CGAL::Cartesian_d<leda_real> LCKernel;
 typedef CGAL::Convex_hull_d<LCKernel> LCConvex_hull_d;
-#endif
-
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Homogeneous_d<CGAL::Gmpz>   GKernel;
-typedef CGAL::Convex_hull_d<GKernel> GConvex_hull_d;
 #endif
 
 #include <CGAL/double.h>

@@ -19,21 +19,18 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/LEDA_basic.h>
+#ifdef CGAL_USE_GMP
+
 #include <CGAL/Homogeneous_d.h>
+#include <CGAL/Gmpz.h>
 #include <CGAL/Delaunay_d.h>
 #include <CGAL/random_selection.h>
+#include <CGAL/Timer.h>
 #include <iostream>
+#include <string>
 
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/misc.h>
-#else
-#include <LEDA/system/misc.h>
-#endif
-#include <CGAL/leda_integer.h>
-typedef leda_integer RT;
 
+typedef CGAL::Gmpz RT;
 typedef CGAL::Homogeneous_d<RT> Kernel;
 typedef CGAL::Delaunay_d<Kernel> Delaunay_d;
 typedef Delaunay_d::Point_d Point_d;
@@ -42,6 +39,9 @@ typedef Delaunay_d::Sphere_d Sphere_d;
 typedef Delaunay_d::Simplex_handle Simplex_handle;
 typedef Delaunay_d::Vertex_handle Vertex_handle;
 typedef Delaunay_d::Facet_handle Facet_handle;
+
+
+
 
 
 template <class R>
@@ -64,13 +64,14 @@ void random_points_in_range(int n, int d,int l,int h,
 
 int main(int argc, char* argv[])
 {
+  CGAL::Timer timer;
   // first param is dimension
   // second param is number of points
   int dimension = 4;
   int n = 100;
   int m = 100;
 
-  if (argc > 1 && leda_string(argv[1])=="-h") {
+  if (argc > 1 && std::string(argv[1])== std::string("-h")) {
     std::cout<<"usage: "<<argv[0]<<" [dim] [#points] [max coords]\n";
     return 1;
   }
@@ -82,7 +83,8 @@ int main(int argc, char* argv[])
   std::list<Point_d> L;
 
   random_points_in_range(n,dimension,-m,m,L);
-  float ti = CGAL_LEDA_SCOPE::used_time();
+
+  timer.start();
   int i=0;
   std::list<Point_d>::iterator it;
   for(it = L.begin(); it!=L.end(); ++it) {
@@ -90,23 +92,34 @@ int main(int argc, char* argv[])
     if (i%10==0)
       std::cout << i << " points inserted" << std::endl;
   }
-  std::cout << "used time for inserts  " << CGAL_LEDA_SCOPE::used_time(ti) << std::endl;
+  timer.stop();
+  std::cout << "used time for inserts  " << timer.time() << std::endl;
+
   std::cout << "entering check" << std::endl;
+
+  timer.reset();
+  timer.start();
   T.is_valid();
-  std::cout << "used time for sanity check  " << CGAL_LEDA_SCOPE::used_time(ti) << std::endl;
+  timer.stop();
+  std::cout << "used time for sanity check  " << timer.time() << std::endl;
+  
+
   std::cout << "entering nearest neighbor location" << std::endl;
   L.clear();
   random_points_in_range(n/10,dimension,-m,m,L);
-  ti = CGAL_LEDA_SCOPE::used_time();
+
+  timer.reset();
+  timer.start();
   i = 0;
   for(it = L.begin(); it!=L.end(); ++it) {
     T.nearest_neighbor(*it); i++;
     if (i%10==0) std::cout << i << " points located" << std::endl;
   }
-  std::cout << "used time for location  " << CGAL_LEDA_SCOPE::used_time(ti) << std::endl;
+  timer.stop();
+  std::cout << "used time for location  " << timer.time() << std::endl;
 
   T.print_statistics();
-  CGAL_LEDA_SCOPE::print_statistics();
+  std::cout << "done" << std::endl;
   return 0;
 }
 
@@ -115,8 +128,8 @@ int main(int argc, char* argv[])
 
 int main()
 {
-  std::cout << "this program requires LEDA" << std::endl;
+  std::cout << "this program requires GMP" << std::endl;
   return 0;
 }
 
-#endif // CGAL_USE_LEDA
+#endif // CGAL_USE_GMP
