@@ -1536,6 +1536,18 @@ Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#application
 Optimisation_doc/doc_tex/Optimisation/polydist.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#application/pdf
+PDB/demo/PDB/pdb_align.cpp -text
+PDB/demo/PDB/pdb_align_points.cpp -text
+PDB/demo/PDB/pdb_cat.cpp -text
+PDB/demo/PDB/pdb_distance.cpp -text
+PDB/demo/PDB/pdb_distance_matrix.cpp -text
+PDB/demo/PDB/pdb_distances.cpp -text
+PDB/demo/PDB/pdb_filter.cpp -text
+PDB/demo/PDB/pdb_split.cpp -text
+PDB/demo/PDB/pdb_stats.cpp -text
+PDB/demo/PDB/pdb_strip_sidechains.cpp -text
+PDB/demo/PDB/pdb_to_spheres.cpp -text
+PDB/demo/PDB/pdb_transform.cpp -text
 PDB/include/CGAL/PDB/Atom.h -text
 PDB/include/CGAL/PDB/Matrix.h -text
 PDB/include/CGAL/PDB/Model.h -text
