@@ -40,7 +40,7 @@ CGAL_INSTALL_CGAL="`basename \"${0}\"`"
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
-CGAL_DIR="`pwd`"
+CGAL_DIR="$PWD"
 # ---------------------------------------------
 CGAL_INSTALL_DIR=''
 
@@ -311,9 +311,9 @@ value_of_without()
 # needs awk!
 real_which()
 {
-    for i in `echo ${PATH} | sed 's/ //g' | awk 'BEGIN {RS=":"}{print $0}'`
+    for i in `echo ${PATH} | ${_sed} 's/ //g' | ${_awk} 'BEGIN {RS=":"}{print $0}'`
     do
-	i=`echo $i | sed 's// /g'`
+	i=`echo $i | ${_sed} 's// /g'`
 	if [ -x "${i}/$1" -a ! -d "${i}/$1" ]; then
 	    echo ${i}/$1
 	    return
@@ -389,7 +389,7 @@ _check_for_util()
 _check_for_sysutil()
 {
     _tmp2=''
-    for _path in /bin /usr/bin /opt/sfw/bin /usr/sfw/bin; do
+    for _path in ${POSIX_UTILITIES_PATH} /bin /usr/bin /opt/sfw/bin /usr/sfw/bin; do
         if [ -x "${_path}/$1" ]; then
 	    eval "${3:-_$1}=\"${_path}/$1\""
 	    _tmp2=${_path}
@@ -617,6 +617,13 @@ _check_printf()
 # (they should be on a unix system, but ...)
 check_for_utils()
 {
+    # Set ${GETCONF} to /bin/true if you do not want to use it.
+    POSIX_UTILITIES_PATH="`${GETCONF:-getconf} CS_PATH`"
+    if [ -n "${POSIX_UTILITIES_PATH}" ]; then
+	POSIX_UTILITIES_PATH="`echo ${POSIX_UTILITIES_PATH} | ${_sed} -e 's/:/ /g'`"
+        log_print "Path for Posix utilities: ${POSIX_UTILITIES_PATH}"
+    fi
+
     _which=real_which
     _check_for_sysutil basename y
     _check_for_sysutil dirname y
@@ -2343,8 +2350,8 @@ _register_compiler()
 # return 0, iff found
 _search_compiler()
 {
-    if _check_for_util "$2" n tmp1; then
-	_check_for_util "$1" n tmp2
+    if _check_for_util "$2" n _tmp1; then
+	_check_for_util "$1" n _tmp2
 	get_compiler_description "$2"
 	COMPILER="$2@`compiler_basename \"${_tmp3}\"`@${_tmp2}@${_tmp1}@`compiler_description \"${_tmp3}\"`@"
 	if [ -z "$3" ]; then
@@ -2517,7 +2524,7 @@ set_expr()
 #    elif [ -x /bin/expr ]; then
     elif _check_for_sysutil expr n; then
 	_EXPR=_expr_expr
-    elif _check_for_sysutil expr n; then
+    elif _check_for_sysutil bc n; then
 	_EXPR=_bc_expr
     else
 	exit_on_error "Cannot find either of \"expr\" or \"bc\"" \
@@ -4694,7 +4701,7 @@ upgrade()
     log_print "copy config install files ... "
     #for i in ${UPGRADE_FROM}/config/install/*; do
     #    # check for old format
-    #    case "`awk 'BEGIN{FS=\".\"}/install_cgal/{print $0}' $i`"
+    #    case "`${_awk} 'BEGIN{FS=\".\"}/install_cgal/{print $0}' $i`"
     #done
     ${_cp} -r "${UPGRADE_FROM}/config/install" "${CGAL_DIR}/config"
     log_print "done."
@@ -4980,7 +4987,6 @@ startup()
     else
         log_to_screen
     fi
-    check_for_utils
     if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
     check_conf_dir
     if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
@@ -5079,14 +5085,13 @@ set_variable_from_command_line()
 
 _WHAT_TO_DO=''
 _CONFLICT=''
-_cat=cat
+
+# These four utilities are used before the call of check_for_utils().
 _awk=awk
-_tee=tee
 _sed=sed
-_tr=tr
 _printf=printf
 _rm=rm
-_grep=grep
+
 CGAL_INSTALL_VERSION="`_install_version_number`"
 
 # first quickly process "trivial" commandline options
@@ -5112,8 +5117,10 @@ case ${*} in
 esac
 
 
+initial_check
+check_for_utils
+
 if [ -z "${_WHAT_TO_DO}" ]; then
-    initial_check
 
     # ---------------------------------------------------------------------
     # process environment variables
