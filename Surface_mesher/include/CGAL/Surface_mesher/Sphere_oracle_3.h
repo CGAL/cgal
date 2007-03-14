@@ -148,12 +148,10 @@ namespace CGAL {
         {
         case ZERO:
           return boost::make_tuple(1, ab_ac / ab2, 0);
-          break;
         case POSITIVE:
           return boost::make_tuple(2,
                                    (ab_ac - CGAL::sqrt(deltaprime)) / ab2,
                                    (ab_ac + CGAL::sqrt(deltaprime)) / ab2);
-          break;
         case NEGATIVE:
           break;
         }
