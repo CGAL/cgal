@@ -11,7 +11,7 @@ Additional supported platforms:
 
 CGAL now supports Visual C++ "Checked iterators" as well as "libstdc++ debug mode".
 
-CGAL has no longer problems with the preprocessor macros min and max 
+CGAL has no longer problems with the preprocessor macros 'min' and 'max' 
 defined in windows.h
 
 
@@ -71,8 +71,10 @@ defined in windows.h
 
   This package contains functions for computing planar Minkowski sums of two closed polygons, 
   and for a polygon and a disc (an operation also known as offsetting or dilating a polygon). 
-  The package also contains an efficient approximation algorithm for the offset computattion, 
-  which provides a guaranteed approximation bound. 
+  The package also contains an efficient approximation algorithm for the offset computation, 
+  which provides a guaranteed approximation bound while significantly expediting the running 
+  times w.r.t. the exact computation procedure.
+
 
 6.7 Surface Mesh Parametrization
 
@@ -83,7 +85,8 @@ defined in windows.h
 6.8 2D Arrangements
 
 - Added support for unbounded curves.
-- Added a traits class that supports (unbounded) lines.
+- Added a traits class that supports bounded and unbounded linear objects,
+  namely lines, rays and line segments.
 - Added a traits class that supports Bezier curves.
 - Enhanced the traits class that supports rational functions to     
   handle unbounded (as well as bounded) arcs
