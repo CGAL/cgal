@@ -1312,6 +1312,7 @@ Min_sphere_of_spheres_d/web/figs/pivot/cex1.eps -text svneol=unset#application/p
 Min_sphere_of_spheres_d/web/figs/ss/basis.eps -text svneol=unset#application/postscript
 Min_sphere_of_spheres_d/web/figs/ss/notbasis.eps -text svneol=unset#application/postscript
 Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text svneol=unset#application/postscript
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/Minkowski_sum_2.png -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.eps -text svneol=unset#application/postscript
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
