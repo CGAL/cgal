@@ -4765,6 +4765,7 @@ support_feature_menu()
 	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Support Menu'
 
+	KEY=`echo "${KEY}" | ${_tr} '[:lower:]' '[:upper:]'`
 	case $KEY in
 	    t|T) go_down_lines 3
 		flush_buffer
