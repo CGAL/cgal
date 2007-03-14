@@ -1,16 +1,44 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::SquareFreeFactorization_1}
 
-\ccCreationVariable{fo}
+\ccDefinition
 
-A model \ccVar\ of this type must provide:
+This \ccc{AdaptableFunctor} computes a square-free factorization 
+of a \ccc{AlgebraicKernel_d_1::Polynomial_1}. 
 
-\ccMethod{template < class OutputIterator1, class OutputIterator2 >
-    void
-    operator()(const AlgebraicKernel_d_1::Polynomial_1 & p1, 
-               OutputIterator oi1
-               OutputIterator oi2);}
-{oi1 returns factors, oi2 returns multiplicities}
+A polynomial $p$ is factored into square-free and pairwise 
+coprime non-constant factors $g_i$ with multiplicities $m_i$ 
+and a constant factor $a$, such that 
+$p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
+
+The provided operator returns the number of factors $n$.
+The factors $g_i$ and multiplicities $m_i$ are written through the 
+respective output iterators. 
+The constant factor $a$ is not computed. 
+
+\ccRefines 
+
+\ccTypes
+\ccNestedType{result_type}{ Type convertible to \ccc{int}.}
+
+\ccOperations
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{sqff_1}
+
+\ccMethod{template<class OutputIterator_1, class OutputIterator_2>
+int operator()(PolynomialTraits_d::Polynomial_d p,
+               OutputIterator_1                 it_1,
+               OutputIterator_2                 it_2);}{
+computes square-free factorization of $p$.\\
+          \ccPrecond \ccc{OutputIterator_1} must allow the value type 
+          \ccc{PolynomialTraits_d::Polynomial_d}. 
+          \ccPrecond \ccc{OutputIterator_2} must allow the value type int.}
 
 \ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizationUpToConstantFactor}\\
+\ccRefIdfierPage{PolynomialTraits_d::MakeSquareFree}\\
 
 \end{ccRefConcept}
