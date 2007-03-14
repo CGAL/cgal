@@ -22,36 +22,36 @@
 #include <cassert>
 
 extern "C" {
-  // Fortran interface...
-  void dgemm (char*,char*,int*,
-	      int*,int*,
-	      double*,
-	      double*,int*,double*,int*,
-	      double*,
-	      double*,int*);
-  // ... or C interface
-  void dgemm_(char*,char*,int*,
-	      int*,int*,
-	      double*,
-	      double*,int*,double*,int*,
-	      double*,
-	      double*,int*);
+  // Fortran interface (taken from www.netlib.org/clapack)...
+  void dgemm_(char* transa, char* transb, int* m,
+              int* n, int* k,
+              double* alpha,
+              double* a, int* lda, double* b, int* ldb,
+              double* beta,
+              double* c, int* ldc);
+  // ... or C interface (taken from AMD Core Math Library)
+  void dgemm (char transa, char transb, int m,
+              int n, int k,
+              double alpha,
+              double* a, int lda, double* b, int ldb,
+              double beta,
+              double* c, int ldc);
 }
 
 namespace CGAL { namespace BLAS {
 
 inline
-void dgemm (char*a,char*b,int*c,
-            int*d,int*e,
-            double*f,
-            double*g,int*h,double*i,int*j,
-            double*k,
-            double*l,int*m)
+void dgemm (char* transa, char* transb, int* m,
+            int* n, int* k,
+            double* alpha,
+            double* a, int* lda, double* b, int* ldb,
+            double* beta,
+            double* c, int* ldc)
 {
 #ifdef CGAL_USE_F2C
-  return ::dgemm_(a,b,c,d,e,f,g,h,i,j,k,l,m);
+  ::dgemm_(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
 #else
-  return ::dgemm (a,b,c,d,e,f,g,h,i,j,k,l,m);
+  ::dgemm (*transa, *transb, *m, *n, *k, *alpha, a, *lda, b, *ldb, *beta, c, *ldc);
 #endif
 }
 

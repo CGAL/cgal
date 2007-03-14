@@ -1,0 +1,19 @@
+# AMD Core Math Library (http://developer.amd.com/acml.jsp) provides BLAS and LAPACK:
+# - BLAS (Basic Linear Algebra Subprograms)
+# - LAPACK is a linear algebra library
+# This configuration has been tested with ACML for Windows 64 bits built with Intel Fortran.
+
+DESCRIPTION = ACML for Windows
+PROVIDES = BLAS LAPACK
+CXXFLAGS =
+LDFLAGS =
+LIBS = libacml_dll
+REQUIRES = DOLLAR_WINDOWS_COMPILER
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS =
+
+# EOF
