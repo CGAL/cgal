@@ -19,11 +19,12 @@
 #define CGAL_LAPACK_H
 
 extern "C" {
-  int dgelss(int *m, int *n, int *nrhs,
-                    double *a, int *lda, double *b, int *ldb, double *
-                    s, double *rcond, int *rank, double *work, int *lwork,
-                    int *info);
-  int dgelss_(int *m, int *n, int *nrhs,
+  // taken from acml.h
+void dgelss(int m, int n, int nrhs, 
+            double *a, int lda, double *b, int ldb, double *sing, 
+            double rcond, int *irank, int *info);
+
+void dgelss_(int *m, int *n, int *nrhs,
                     double *a, int *lda, double *b, int *ldb, double *
                     s, double *rcond, int *rank, double *work, int *lwork,
                     int *info);
@@ -32,15 +33,15 @@ extern "C" {
 namespace CGAL { namespace LAPACK {
 
 inline
-int dgelss(int *m, int *n, int *nrhs,
+void dgelss(int *m, int *n, int *nrhs,
        double *a, int *lda, double *b, int *ldb, double *
        s, double *rcond, int *rank, double *work, int *lwork,
        int *info)
 {
 #ifdef CGAL_USE_F2C
-  return ::dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+  ::dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
 #else
-  return ::dgelss(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+  ::dgelss(*m, *n, *nrhs, a, *lda, b, *ldb, s, *rcond, rank,  info);
 #endif
 }
 
