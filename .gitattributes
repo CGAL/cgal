@@ -490,6 +490,7 @@ Envelope_3/demo/Envelope_3/help/index.html svneol=native#text/html
 Envelope_3/demo/Envelope_3/icons/edges.bmp -text svneol=unset#image/bmp
 Envelope_3/demo/Envelope_3/icons/faces.bmp -text svneol=unset#image/bmp
 Envelope_3/demo/Envelope_3/icons/vertices.bmp -text svneol=unset#image/bmp
+Envelope_3/doc_tex/Envelope_3/fig/Envelope_3.png -text
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.eps -text svneol=unset#application/postscript
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.fig -text svneol=unset#application/octet-stream
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.gif -text svneol=unset#image/gif
