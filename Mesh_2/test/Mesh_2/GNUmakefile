@@ -34,11 +34,15 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                bench_double_map$(EXE_EXT) \
                 test_conforming$(EXE_EXT) \
                 test_double_map$(EXE_EXT) \
                 test_filtred_container$(EXE_EXT) \
                 test_meshing$(EXE_EXT) \
                 test_vertex_and_face_bases$(EXE_EXT) 
+
+bench_double_map$(EXE_EXT): bench_double_map$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bench_double_map bench_double_map$(OBJ_EXT) $(LDFLAGS)
 
 test_conforming$(EXE_EXT): test_conforming$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_conforming test_conforming$(OBJ_EXT) $(LDFLAGS)
@@ -56,6 +60,7 @@ test_vertex_and_face_bases$(EXE_EXT): test_vertex_and_face_bases$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_vertex_and_face_bases test_vertex_and_face_bases$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   bench_double_map.clean \
                    test_conforming.clean \
                    test_double_map.clean \
                    test_filtred_container.clean \
@@ -69,6 +74,7 @@ run: all
 	./test_meshing
 	./test_double_map
 	./test_vertex_and_face_bases
+	./bench_double_map
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -82,7 +88,7 @@ run: all
 #
 #                        dependencies
 #
-#      if you want deps, create a file my_makefile that contains
+#      if you want deps, create a file my_makefile that cont2ains
 #      -include makefile.dependencies
 #
 #---------------------------------------------------------------------#

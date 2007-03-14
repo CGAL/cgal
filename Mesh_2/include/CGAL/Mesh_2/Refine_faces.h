@@ -24,6 +24,9 @@
 #include <CGAL/Double_map.h>
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <string>
+#include <sstream>
+
 namespace CGAL {
 
 namespace Mesh_2 {
@@ -404,6 +407,20 @@ public:
 
   bool check_bad_faces()
   {
+    struct Output_bad_face {
+      std::string operator()(typename Tr::Face_handle fh)
+      {
+	std::stringstream str;
+	
+	str << "("
+	    << fh->vertex(0)->point() << ", "
+            << fh->vertex(1)->point() << ", "
+            << fh->vertex(2)->point()
+	    << ")";
+	return str.str();
+      }
+    };
+
     CGAL_assertion_code
       (typename Geom_traits::Orientation_2 orientation =
        this->triangulation_ref_impl().geom_traits().orientation_2_object()
@@ -421,7 +438,7 @@ public:
                     << (*fit)->vertex(2)->point()<< ") == true"
                     << std::endl;
           std::cerr << "Dump of bad_faces:" << std::endl;
-          this->bad_faces.dump_direct_func(std::cerr);
+          this->bad_faces.dump_direct_func(std::cerr, Output_bad_face());
 
           return false;
         }

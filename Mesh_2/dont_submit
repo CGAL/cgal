@@ -10,3 +10,4 @@ implementation.tex
 *.kdev*
 depends
 makefile.dependencies
+my_makefile
