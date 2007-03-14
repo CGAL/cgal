@@ -46,7 +46,7 @@ int main(int , char *[]){
 			{0.595025, 0.172916, 0.78488}},
 	trans[3]={4,5,6};
       CGAL_PDB_NS::Transform tr(rot, trans);
-
+      std::cout << "tr is " << tr<< std::endl;
       for (CGAL_PDB_NS::Protein::Residues_iterator rit= p.residues_begin();
 	   rit != p.residues_end(); ++rit){
 	for (CGAL_PDB_NS::Residue::Atoms_iterator ait= rit->atoms_begin(); 
@@ -55,13 +55,15 @@ int main(int , char *[]){
 	}
       }
 
+      std::cout << "iterated" << std::endl;
       std::vector<CGAL_PDB_NS::Point> pa, pp;
       CGAL_PDB_NS::backbone_coordinates(m.chain(j).atoms_begin(), m.chain(j).atoms_end(),
 				   std::back_inserter(pa));
       CGAL_PDB_NS::backbone_coordinates(p.atoms_begin(), p.atoms_end(),
 				   std::back_inserter(pp));
-
+      std::cout << "m has " << pa.size() << " p has " << pp.size() << std::endl;
       CGAL_PDB_NS::Transform trp= CGAL_PDB_NS::transform_taking_first_to_second( pa, pp);
+      std::cout << "trp is " << trp<< std::endl;
 
       double mdiff=tr.error(trp);
       assert(mdiff<.1);
