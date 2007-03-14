@@ -617,14 +617,18 @@ _check_printf()
 # (they should be on a unix system, but ...)
 check_for_utils()
 {
-    # Set ${GETCONF} to /bin/true if you do not want to use it.
-    POSIX_UTILITIES_PATH="`${GETCONF:-getconf} CS_PATH`"
-    if [ -n "${POSIX_UTILITIES_PATH}" ]; then
-	POSIX_UTILITIES_PATH="`echo ${POSIX_UTILITIES_PATH} | ${_sed} -e 's/:/ /g'`"
-        log_print "Path for Posix utilities: ${POSIX_UTILITIES_PATH}"
+    _which=real_which
+
+    _check_for_util getconf n
+    if [ -n "${_getconf}" ]; then 
+        # Set ${GETCONF} to /bin/true if you do not want to use it.
+        POSIX_UTILITIES_PATH="`${GETCONF:-${_getconf}} CS_PATH`"
+        if [ -n "${POSIX_UTILITIES_PATH}" ]; then
+	    POSIX_UTILITIES_PATH="`echo ${POSIX_UTILITIES_PATH} | ${_sed} -e 's/:/ /g'`"
+            log_print "Path for Posix utilities: ${POSIX_UTILITIES_PATH}"
+        fi
     fi
 
-    _which=real_which
     _check_for_sysutil basename y
     _check_for_sysutil dirname y
     _check_for_sysutil uname y
