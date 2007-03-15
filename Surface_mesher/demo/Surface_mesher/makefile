@@ -40,7 +40,8 @@ LDFLAGS = \
 
 all:            \
                 implicit_surface_mesher$(EXE_EXT) \
-                polyhedron_remesher$(EXE_EXT)
+                polyhedron_remesher$(EXE_EXT) \
+                test_imageio$(EXE_EXT) 
 
 implicit_surface_mesher$(EXE_EXT): implicit_surface_mesher$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher implicit_surface_mesher$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS)
@@ -48,15 +49,23 @@ implicit_surface_mesher$(EXE_EXT): implicit_surface_mesher$(OBJ_EXT) implicit_fu
 polyhedron_remesher$(EXE_EXT): polyhedron_remesher$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_remesher implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) polyhedron_remesher$(OBJ_EXT) $(LDFLAGS)
 
+test_imageio$(EXE_EXT): test_imageio$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_imageio test_imageio$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    implicit_functions.clean \
                    implicit_surface_mesher.clean \
                    parameters.clean \
-                   polyhedron_remesher.clean 
+                   polyhedron_remesher.clean \
+                   test_imageio.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
