@@ -40,7 +40,7 @@ all:            \
 
 BLIND_OBJS=PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
 blind$(EXE_EXT): $(BLIND_OBJS)
-	$(CGAL_CXX) $(LIBPATH) -o blind$(EXE_EXT)  $(BLIND_OBJS) \
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind  $(BLIND_OBJS) \
 	$(LDFLAGS) 
 
 clean: \
