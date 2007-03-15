@@ -24,6 +24,7 @@
 
 #include <CGAL/Polynomial/ipower.h>
 #include <CGAL/Polynomial/hgdelta_update.h>
+#include <CGAL/Polynomial/square_free_factorization.h>
 
 #ifndef CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
 #define CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
@@ -730,36 +731,13 @@ int filtered_square_free_factorization(
                                        OutputIterator2 multiplicities)
 {
   if(may_have_multiple_root(p)){
-      return square_free_factorization(p, factors, multiplicities);
+      return CGALi::square_free_factorization(p, factors, multiplicities);
   }else{
 #if NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE
       *factors++ = p;
 #else
       *factors++ = canonicalize_polynomial(p);
 #endif
-      *multiplicities++ = 1;
-      return 1;
-  }
-}
-
-/*! \brief As NiX::square_free_factorization, but filtered by  
- *  NiX::may_have_multiple_root 
- *  
- *  Use this function if the polynomial might be square free. 
- */  
-template <class NT, class OutputIterator1, class OutputIterator2> 
-inline
-int filtered_square_free_factorization(Polynomial<NT> p,
-                                       OutputIterator1 factors,
-                                       OutputIterator2 multiplicities,
-                                       NT& alpha)
-{
-  if(may_have_multiple_root(p)){
-      return square_free_factorization(p, factors, multiplicities, alpha);
-  }else{
-      alpha = typename Polynomial_traits_d< Polynomial<NT> >::Univariate_content()(p);
-      p/=alpha;
-      *factors++ = p;
       *multiplicities++ = 1;
       return 1;
   }
@@ -777,7 +755,7 @@ int filtered_square_free_factorization_utcf( const Polynomial<NT>& p,
                                          OutputIterator2 multiplicities)
 {
     if(may_have_multiple_root(p)){
-        return square_free_factorization_utcf(p,factors,multiplicities);
+        return CGALi::square_free_factorization_utcf(p,factors,multiplicities);
     }else{
 #if NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE
         *factors++ = p;
