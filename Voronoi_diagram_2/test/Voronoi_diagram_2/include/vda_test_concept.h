@@ -77,7 +77,8 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
   // testing constructors
   {
     // constructor taking geom traits
-    DG dg0(Geom_traits());
+    Geom_traits gt;
+    DG dg0(gt);
 
     // copy constructor
     DG dg2(dg);
