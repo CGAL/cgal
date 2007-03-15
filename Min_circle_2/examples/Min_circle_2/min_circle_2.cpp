@@ -1,4 +1,3 @@
-// includes
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
@@ -13,12 +12,11 @@ typedef  CGAL::Min_circle_2<Traits>      Min_circle;
 
 typedef  K::Point_2                      Point;
 
-// main
 int
 main( int, char**)
 {
-    int     n = 100;
-    Point*  P = new Point[ n];
+    const int n = 100;
+    Point P[n];
 
     for ( int i = 0; i < n; ++i)
 	P[ i] = Point( (i%2 == 0 ? i : -i), 0);
@@ -30,9 +28,5 @@ main( int, char**)
     CGAL::set_pretty_mode( std::cout);
     std::cout << mc2;
 
-    delete[] P;
-
-    return( 0);
+    return 0;
 }
-
-// ===== EOF ==================================================================
