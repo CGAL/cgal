@@ -287,9 +287,9 @@ contains of five holes:
 
 \ccIncludeExampleCode{Boolean_set_operations_2/symmetric_difference.cpp}
 
-We mention that in some cases it is convinient to connect the outer
-boundary of a polygon with holes with the holes inside it. The
-function \ccc{connect_polygon_with_holes_2()} accepts a polygon with
+In some cases it is convinient to connect the outer boundary of a
+polygon with holes with the holes inside it. The
+function \ccc{connect_holes()} accepts a polygon with
 holes, and connects the topmost vertex in each hole with the polygon
 feature located directly above it (a vertex or an edge of the outer
 boundary, or of another hole). It produces an output sequence of

@@ -525,12 +525,23 @@ public:
   // returns the location of the query point
   bool locate(const Point_2& q, Polygon_with_holes_2& pgn) const;
 
-  //advanced function: get const reference to the arrangement
+  /*! Obtain a const reference to the underlying arrangement
+   * \return the underlying arrangement.
+   */
   const Arrangement_2& arrangement() const
   {
     return *m_arr;
   }
 
+  /*! Obtain a reference to the underlying arrangement
+   * \return the underlying arrangement.
+   */
+  Arrangement_2 & arrangement()
+  {
+    return *m_arr;
+  }
+  
+  /*! */
   bool is_valid() const
   {
     if (!CGAL::is_valid(*m_arr))

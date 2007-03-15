@@ -3,7 +3,7 @@
 
 #include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/connect_polygon_with_holes_2.h>
+#include <CGAL/connect_holes.h>
 #include <list>
 
 typedef CGAL::Cartesian<Number_type>               Kernel;
@@ -46,7 +46,7 @@ int main (int argc, char **argv)
   std::list<Point_2>            pts;
   std::list<Point_2>::iterator  pit;
 
-  connect_polygon_with_holes_2 (P, std::back_inserter (pts));
+  connect_holes (P, std::back_inserter (pts));
 
   for (pit = pts.begin(); pit != pts.end(); ++pit)
     std::cout << '(' << *pit << ")  ";

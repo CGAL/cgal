@@ -17,8 +17,8 @@
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
-#ifndef CGAL_CONNECT_POLYGON_WITH_HOLES_2_H
-#define CGAL_CONNECT_POLYGON_WITH_HOLES_2_H
+#ifndef CGAL_CONNECT_HOLES_H
+#define CGAL_CONNECT_HOLES_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -63,9 +63,9 @@ struct _Less_handle
  * \return A past-the-end iterator of the points.
  */
 template <class Kernel, class Container, class OutputIterator>
-OutputIterator connect_polygon_with_holes_2
-    (const Polygon_with_holes_2<Kernel,Container>& pwh,
-     OutputIterator oi)
+OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
+                             Container>& pwh,
+                             OutputIterator oi)
 {
   typedef Polygon_2<Kernel,Container>              Polygon_2;
   typedef Polygon_with_holes_2<Kernel,Container>   Polygon_with_holes_2;
