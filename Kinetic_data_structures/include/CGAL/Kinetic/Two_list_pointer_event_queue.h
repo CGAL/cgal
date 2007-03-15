@@ -487,8 +487,7 @@ public:
       unmake_event(oi);
       return Key(ni);
     }
-
-    CGAL_expensive_postcondition(audit());
+    // unreachable
 
   }
 

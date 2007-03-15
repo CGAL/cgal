@@ -75,11 +75,14 @@ template <class TraitsT,
 	  class TriangulationT=typename internal::Delaunay_triangulation_3_types<TraitsT>::Default_triangulation>
 class Delaunay_triangulation_3: public Ref_counted<Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> > {
 private:
-  typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This_DT3;
-  typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
-  
+   typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This_DT3;
+typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
 
-
+typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3::result_type Root_stack;
+  typedef typename TriangulationT::Facet Facet;
+  typedef typename TriangulationT::Edge Edge;
+typedef typename TraitsT::Simulator::Event_key Event_key;
+  typedef typename TraitsT::Active_points_3_table::Key Point_key;
   struct Base_traits: public TraitsT {
     typedef TriangulationT Triangulation;
     typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
@@ -110,20 +113,17 @@ private:
     This_DT3 *wr_;
   };
 
-  typedef typename TraitsT::Simulator::Event_key Event_key;
-
+ 
   friend class internal::Delaunay_event_base_3<This>;  
 
   friend class internal::Delaunay_3_edge_flip_event<This>;
 
   friend class internal::Delaunay_3_facet_flip_event<This>;
 
-  typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3::result_type Root_stack;
-  typedef typename TriangulationT::Facet Facet;
-  typedef typename TriangulationT::Edge Edge;
+  
 
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Visitor> KDel;
-  typedef typename TraitsT::Active_points_3_table::Key Point_key;
+
 
   struct Listener_core
   {
