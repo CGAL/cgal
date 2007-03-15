@@ -12,6 +12,10 @@ int main(int argc, char** argv)
 {
   unsigned int number_of_elements = 500;
 
+#ifdef CGAL_USE_BOOST_BIMAP
+  std::cerr << "(Using the \"Boost.Bimap implementation\" of <CGAL/Double_map.h>...)\n\n";
+#endif
+
   if(argc > 1)
     number_of_elements = atoi(argv[1]);
 
