@@ -6,8 +6,6 @@
 
 int main(int argc, char** argv)
 {
-  ::printSupportedFileFormat();
-
   if(argc > 1)
   {
     _image* image = ::_readImage(argv[1]);
@@ -55,8 +53,9 @@ int main(int argc, char** argv)
       
       ::_freeImage(image);
     }
-
-    
-  } 
-    
+    else
+      std::cerr << "\'" << argv[1] << "\"is not a supported file\n.";
+  }
+  else
+    ::printSupportedFileFormat();
 }
