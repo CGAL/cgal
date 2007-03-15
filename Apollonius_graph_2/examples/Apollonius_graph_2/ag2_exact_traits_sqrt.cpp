@@ -9,7 +9,7 @@
 #if defined CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 #elif defined CGAL_USE_CORE
-#  include <CGAL/CORE/Expr.h>
+#  include <CGAL/CORE_Expr.h>
 #endif
 
 
