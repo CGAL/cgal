@@ -226,12 +226,12 @@ private:
    Face_handle fn = fh->neighbor(i);
    if (! test_conflict(p,fn)) {
      *(pit.second)++ = Edge(fn, fn->index(fh));
-     return pit;
+   } else {
+     *(pit.first)++ = fn;
+     int j = fn->index(fh);
+     pit = propagate_conflicts(p,fn,ccw(j),pit);
+     pit = propagate_conflicts(p,fn,cw(j), pit);
    }
-   *(pit.first)++ = fn;
-   int j = fn->index(fh);
-   pit = propagate_conflicts(p,fn,ccw(j),pit);
-   pit = propagate_conflicts(p,fn,cw(j), pit);
    return pit;
  }
 };
