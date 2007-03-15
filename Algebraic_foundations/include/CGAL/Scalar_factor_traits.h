@@ -1,21 +1,24 @@
-// ============================================================================
-//
-// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
+// Copyright (c) 2006-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// TODO: Add licence
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $URL:$
+// $Id:$
 //
-// Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//                 Michael Hemmer   <mhemmer@uni-mainz.de>
 //
-// ============================================================================
+// Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
+//
+// =============================================================================
 
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
