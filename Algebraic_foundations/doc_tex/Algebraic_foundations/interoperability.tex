@@ -5,10 +5,10 @@ namely \ccc{ImplicitInteroperable} and \ccc{ExplicitInteroperable}. While
 \ccc{ExplicitInteroperable} is the base concept, we start with 
 \ccc{ImplicitInteroperable} since it is the more intuitive one.
 
-In general mixed operations are provided due to overloaded operators and
-functions or just due to implicit constructor calls. 
+In general mixed operations are provided by overloaded operators and
+functions or just via implicit constructor calls. 
 This level of interoperability is reflected by the concept 
-\ccc{ImplicitInteroperable}. But within template code the result type, 
+\ccc{ImplicitInteroperable}. However, within template code the result type, 
 or so called coercion type, of an mixed arithmetic operation may be unclear.
 Therefore, the package introduces \ccc{CGAL::Coercion_traits}
 giving access to the coercion type via \ccc{CGAL::Coercion_traits<A,B>::Type}
@@ -28,7 +28,7 @@ for two interoperable types \ccc{A} and \ccc{B}.
 
 Some trivial example are \ccc{int} and \ccc{double} with coercion type double 
 or \ccc{CGAL::Gmpz} and \ccc{CGAL::Gmpq} with coercion type \ccc{CGAL::Gmpq}.
-But the coercion type is not necessarily one of the input types,
+However, the coercion type is not necessarily one of the input types,
 e.g. the coercion type of a polynomial 
 with integer coefficients that is multiplied by a rational type 
 is supposed to be a polynomial with rational coefficients.

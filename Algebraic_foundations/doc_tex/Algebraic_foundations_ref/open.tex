@@ -1,8 +1,9 @@
 \section{Overview - TODO - OPEN Questions for Release 3.3}
 
 \subsection{Overview}
+{\em this section is for the reviewer and to be removed for the release. }
 
-We introduced three traits classes and related concepts, for more details see 
+We introduced four traits classes and related concepts, for more details see 
 section \ref{caf_ref::classified_refernce_pages}
 \begin{itemize}
 \item \ccc{Algebraic_structure_traits} reflects the algebraic concepts of a 
@@ -10,160 +11,84 @@ section \ref{caf_ref::classified_refernce_pages}
 \item \ccc{Real_embeddable_traits} is use for number types that are embedded on 
       the real axis. 
 \item \ccc{Coercion_traits}, reflects interoperability of types. 
+\item \ccc{Fraction_traits}, more general than \ccc{Rational_traits}.
 \end{itemize}
 
-We decided to use two traits classes \ccc{Algebraic_structure_traits} 
-and \ccc{Real_embeddable_traits} instead of one \ccc{Number_type_traits} since there are 
-types, in particular polynomials, that are valid algebraic structures, 
-but should not be considered as a number type.\\
-Note that Polynomials are not part of this package. 
+Number types, polynomials and linear algebra are not part of this package. 
+
+OPEN:
+\begin{itemize}
+\item there is a problem with io stream operators for CORE types in case 
+      gmpxx.h is included too. 
+\end{itemize}
 
 TODO:
-\begin{itemize}
-
-\item 'built-in' types -> 'fundamental' types 
+\begin{itemize} 
 \item add a new entry in the globally maintained Bib file.
-\item there is a problem with io stream operators for CORE types \\
-      This may also be related to the problem that gmpxx.h must be included 
-      before CORE types. 
-\item document rounding mode for Div/Mod. 
-\item revise doc of NTs
-\item extra review of \ccc{Sqrt_extension}
 \item extra review of \ccc{Root_of_2}
-\item in manual: rm 'this is new feature' and so on
 \item add isModel to traits classes and hasModels to concepts 
 \item add concept FieldNumberType
 \item add concept RingNumberType 
+\item rm inexact version of \ccc{MP_float}. 
+\item Functions \ccc{min}, \ccc{max}, \ccc{is_valid} are considered to be more 
+      basic than this package. We added a file utils.h for this. 
+      (should be not part of \ccc{Algebraic_foundations}. )
+\item Functors \ccc{Min}/\ccc{Max} are considered to be more basic than 
+      this package. We added a file \ccc{utils_classes.h} for this. 
+      (should be not part of \ccc{Algebraic_foundations}. )   
 \end{itemize}
 
 DONE:
-
 \begin{itemize}
-\item find a place for basic stuff. Max/Min/Is\_valid/Boolean\_tag..
-      basic concepts...
-\item rm \ccc{Binary_operator_result} use \ccc{Coercion_traits}
-\item rm \ccc{Number_type_traits} use \ccc{Algebraic_structure_traits}
-\item rm \ccc{Rational_traits} It was not possible to remove the Traits, since  
-      the semantic of \ccc{Fraction_traits} is different for unsupported types.
-\item rm global function \ccc{is_exact(AS())}\\
-      use \ccc{Algebraic_structure_traits<AS>::Is_exact::value}.
-\item rm all fwd.h files    
-\item Introduced \ccc{Boolean_tag} with static const bool. \\
-      typedef \ccc{Tag_true}, \ccc{Tag_false}. 
-\item added concept \ccc{FromDoubleConstructible}
-\item rm support for io mode: BENCHMARK 
-\item added \ccc{Boolean_tag}, rm doc of function \ccc{check_tag}.
-\item added AST tag \ccc{is\_exact}
-\item added AST tag \ccc{is\_numerical\_sensitive}
-\item rm IsFinite from \ccc{RealEmeddable} concept
-      function \ccc{CGAL::is_finite} for float, double, long double 
 \item \ccc{FromSmallIntConstructible} -> \ccc{FromIntConstructible}
+\item added concept \ccc{FromDoubleConstructible}
 \end{itemize}
 
 Remarks:
 \begin{itemize}
 \item old functions stay within code (but undocumented)
-\item keep name \ccc{IntegralDomainWithoutDivision} and \ccc{IntegralDomain}.
-\item consider \ccc{Interval_nt} as not exact
 \item io support: keep \ccc{Output_rep} 
-\end{itemize}
-
-OPEN:
-\begin{itemize}
-\item \ccc{mpf_class} is not supported yet. why not? is it possible?  
-\item split \ccc{MP_float} into two types. 
-\item Should we add Ipower? motivation see introduction of Square. 
-\end{itemize}
-
-\subsubsection{planed: for Release 3.4}
-\begin{itemize}
-\item \ccc{Modular_traits} for concept \ccc{Modularizable}\\
-      new package \ccc{Modular_arithmetic}? 
-\item \ccc{Scalar_factor_traits} extracts a scalar factor, 
-      makes sense for \ccc{Polynomials}, \ccc{Sqrt_extension}. 
-\item \ccc{Arithmetic_kernel}, new name for \ccc{NiX::Arithmetic_traits}
-\item \ccc{Polynomial_d} in package Polynomial. 
-\item introduce something like: \ccc{NT_converter}, currently undocumented.     
 \end{itemize}
 
 Keep in mind: 
 \begin{itemize}
-
+\item \ccc{mpf_class} is not supported yet. why not? is it possible?  
+\item Should we add Ipower? motivation see introduction of Square. 
 \item generic interoperable operators via Coercion Traits
 \item may add arithmetic functors as Add, Sub to Algebraic Structure Traits
 \item may add more fundamental concepts, such as Abelian Group.
-\item second operator for RootOf
-\item can we do better for \ccc{mpz_class}, \ccc{mpq_class }
-\item ToDoubleInterval etc. 
-\item what about namespace of leda types ? \ccc{leda_integer} vs. \ccc{leda::integer}
-\end{itemize}
-
-
-\subsection{remarks / changes }
-\begin{itemize}
-\item The concepts \ccc{AdaptableUnaryFunction} and \ccc{AdaptableBinaryFunction}
-      should be part of the \ccc{STL_extension} package.  
-
-\item Functions \ccc{min}, \ccc{max}, \ccc{is_valid} are considered to be more 
-      basic than this package. We added a file utils.h for this. 
-      (should be not part of \ccc{Algebraic_foundations}. )
-
-\item Functors \ccc{Min}/\ccc{Max} are considered to be more basic than 
-      this package. We added a file \ccc{utils_classes.h} for this. 
-      (should be not part of \ccc{Algebraic_foundations}. )        
-      
-\item gcd(0,0)=0, in particular gcd(x,0) is allowed now and is the unit normal of x. 
-      For more details see \ccc{AlgebraicStructureTraits::Gcd}. \\
-
-\item The generic gcd function has been changed, such that it first removes the 
-      \ccc{UnitPart}s of the 
-      arguments (this is in most case equivalent to abs)\\
-      Thus, NT does not need to be a model of \ccc{RealEmbeddable} 
-
-\item \ccc{mod}, \ccc{div}, \ccc{div_mod} and functors:
-        The behavior of div and mod must be consistent: \\
-        That is: $ x = qy + r $, where $q= div(x,y)$ and $r = mod(x,y)$.
-        
-        But, there seems to be no universally observed convention on how to choose 
-        the sign. (In particular, the ISO C++ Standard fixes none for the modulo
-        operation on the built-in integral types.)
-
-        Todo: Decide what to do about the sign ambiguity for the Mod operation of
-        Euclidean rings.\\
-        We currently expect that div is rounded to zero.\\
-        Example: -5 div 3 is -1 rest -2 \\
-        \\      
-        The other option is that div is rounded to $-\infty$\\
-        Example: -5 div 3 is -2 rest 1 \\
-        \\      
-        PROPOSAL:
-        The other option is that div is rounded to $nearest $\\
-        Example: -5 div 3 is -2 rest 1 \\
-        Advantage: mod is unique
-
-
 \item The second operator of \ccc{AlgebraicStructureTraits::RootOf} is not 
         part of the concept, since the difference in the interface of the 
         according function provided by the two possible models \ccc{leda::real}
         and \ccc{CORE::Expr} is to large.  
+\item can we do better for \ccc{mpz_class}, \ccc{mpq_class }
+\item ToDoubleInterval etc. 
+\item what about namespace of leda types ? 
+     \ccc{leda_integer} vs. \ccc{leda::integer}
+\item We had a quick look at \ccc{Nef_polynomial}. \\ 
+      is it \ccc{RealEmbeddable}?
+\end{itemize}
 
-\item IO: \ccc{Output_rep}  \\
-      This can be found in the package 
-      \ccc{CGAL_with_EXACUS/iostream/include/CGAL/io.h}
-      Several types already have specialization of \ccc{Output_rep}. 
-      That supports mode: ASCII(default), PRETTY, BENCHMARK.\\
-        e.g. the format of a Rational in benchmark mode is 
-        Rational(num,denom).\\
-      That is just an proposal and can be removed easily.  \\
-        In case this extra mode is to general, we propose a \ccc{Benchmark_io_traits.h} 
-        provided by the Benchmark package of Tel Aviv. \\
-        Providing a Write and Read functor.  
-
+\subsection{Changes}
+\begin{itemize}
+\item rm IsFinite from \ccc{RealEmeddable} concept
+      function \ccc{CGAL::is_finite} for float, double, long double 
+\item Moved Max/Min/Is\_valid/Boolean\_tag.. to STL-extension 
+\item mv \ccc{AdaptableUnaryFunction} and \ccc{AdaptableBinaryFunction} 
+      to STL-extension
+\item \ccc{Coercion_traits} replaces \ccc{Binary_operator_result}
+\item \ccc{Algebraic_structure_traits} replaces \ccc{Number_type_traits} 
+\item \ccc{Fraction_traits} should be used instead of \ccc{Rational_traits}\\
+      \ccc{Rational_traits} is kept for backward compatibility.
+\item gcd(0,0)=0, in particular gcd(x,0) is allowed now and is the unit normal 
+      of x. For more details see \ccc{AlgebraicStructureTraits::Gcd}. \\
 \end{itemize}
 
 
-\subsection{remarks on current status of number type classes}
+\subsection{some remarks on current status of number type}
 \begin{itemize}
+\item  \ccc{Interval_nt}\\
+       consider \ccc{Interval_nt} as not exact
 \item \ccc{Lazy_exact_nt}:\\
       Now supports all algebraic structures that are real embeddable.\\
       Supports \ccc{Coercion_traits< Lazy_exact_nt<A> , Lazy_exact_nt<B> >}\\ 
@@ -174,24 +99,17 @@ Keep in mind:
         Implementation supports all algebraic structures, all functions are counted.\\
         Functors of \ccc{RealEmbeddable} are not counted. \\
         It's current implementation does not use the \ccc{result_type} of the used 
-        functors. i.e. does not fully support \ccc{Interval_nt} as internal type. \\
-         
-\item \ccc{MP_Float}: 
-In order to use both version exact {EuclideanRing} inexact \ccc{FieldWithSqrt} 
-of \ccc{MP_Float}, we should  introduce two types. \\
-possible names are: \\
-      - \ccc{Exact_binary_fraction} since it represents Z[1/2]
-      - \ccc{Multi_precision_float}(old \ccc{MP_Float}) \\
-      same problem for \ccc{Gmpzf}
-\item \ccc{Gmpz}:\\
-       Implementation supports global functions for gcd(Gmpz,int).
+        functors. i.e. does not fully support \ccc{Interval_nt} as internal type.
+
 \item \ccc{mpz_class}:\\
        Implementation supports expression templates, 
        up to the same level as the old CGAL implementation.       
        i.e. it is possible to call CGAL::square(x+x) but the result is 
        \ccc{mpz_class } and not the according expression template.  
+
 \item \ccc{mpq_class}:\\
         same as \ccc{mpz_class}.
+
 \item \ccc{Quotient<NT>}\\
         For an exact NT it is always a model of \ccc{Field}. (implemented)\\
         For inexact types it is a FieldWithSqrt in case the internal type has a sqrt.
@@ -199,10 +117,4 @@ possible names are: \\
         Since all inexact types with sqrt are Fields, and thus it make no sense to use 
         them as the internal type.  \\
         Supports \ccc{Coercion_traits}. 
-
-\item We had a quick look at \ccc{Nef_polynomial}. \\ 
-      is it \ccc{RealEmbeddable}?
-
-\item We did not touch \ccc{Roof_of_2} stuff. \\ 
-
 \end{itemize}

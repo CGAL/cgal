@@ -44,7 +44,7 @@ Note that \ccc{Field} refines \ccc{IntegralDomain}. This is because
 most ring-theoretic notions like greatest common divisors become trivial for 
 \ccc{Field}s. Hence we see \ccc{Field} as a refinement of 
 \ccc{IntegralDomain} and not as a 
-refinement of one of the more advanced types of ring. 
+refinement of one of the more advanced ring concepts. 
 If an algorithm wants to rely on gcd or remainder computation, it is trying 
 to do things it should not do with a \ccc{Field} in the first place. 
 
@@ -57,7 +57,7 @@ fulfills is encoded in the tag
 An algebraic structure is at least \ccc{Assignable}, 
 \ccc{CopyConstructible}, \ccc{DefaultConstructible} and 
 \ccc{EqualityComparable}. Moreover, we require that it is
-constructible from \ccc{int}, for any int in the range from \ccc{-128} to \ccc{127}. 
+constructible from \ccc{int}.
 For ease of use and since their semantic is sufficiently standard to presume 
 their existence, the usual arithmetic and comparison operators are required
 to be realized via \CC\ operator overloading. 
@@ -73,11 +73,57 @@ two-pass template compilation problems experienced with the old design
 using overloaded functions. However, for ease of use and backward 
 compatibility all functionality is also 
 accessible through global functions defined within namespace \ccc{CGAL}, 
-e.g., \ccc{CGAL::sqrt}. This is realized via function templates using 
+e.g., \ccc{CGAL::sqrt(x)}. This is realized via function templates using 
 the according functor of the traits class. For an overview see 
 Section~\ref{caf_ref::classified_refernce_pages} in the reference manual.
 
 %Dispatching
+\subsection{Tags in Algebraic Structure Traits}
+
+\subsubsection{Algebraic Category}
+
+For a type \ccc{AS}, \ccc{Algebraic_structure_traits<AS>} 
+provides several tags. The most important tag is the \ccc{Algebraic_category} 
+tag, which indicates the most refined algebraic concept the type \ccc{AS} 
+fulfills. The tag is one of; 
+\ccc{Integral_domain_without_division_tag}, \ccc{Integral_domain_tag}, 
+\ccc{Field_tag}, \ccc{Field_with_sqrt_tag}, \ccc{Field_with_kth_root_tag}, 
+\ccc{Field_with_root_of_tag}, \ccc{Unique_factorization_domain_tag}, 
+\ccc{Euclidean_ring_tag}, or even \ccc{Null_tag} 
+in case the type is not a model of an algebraic structure concept. 
+The tags are derived from each other such that they reflect the 
+hierarchy of the algebraic structure concept, e.g., 
+\ccc{Field_with_sqrt_tag} is derived from \ccc{Field_tag}. \\
+
+\subsubsection{ Exact and Numerical Sensitive}
+
+Moreover, \ccc{Algebraic_structure_traits<AS>} provides the tags \ccc{Is_exact} 
+and \ccc{Is_numerical_sensitive}, which are both \ccc{Boolean_tag}s. \\
+An algebraic structure is considered {\em exact},
+if all operations required by its concept are computed such that a comparison 
+of two algebraic expressions is always correct.\\
+An algebraic structure is  considered as {\em numerically sensitive},
+if the performance of the type is sensitive to the condition number of an 
+algorithm.
+%performance includes both rounding errors or runtime. 
+Note that there is really a difference among these two notions, 
+e.g., the fundamental type \ccc{int}\ is not numerical sensitive but 
+considered inexact due to overflow. 
+Conversely, types as \ccc{leda_real} or \ccc{CORE::Expr} are exact but sensitive 
+to numerical issues due to the internal use of multi precision floating point 
+arithmetic. We expect that \ccc{Is_numerical_sensitive} is used for dispatching
+ of algorithms, while \ccc{Is_exact} is useful to enable assertions that can be 
+check for exact types only.
+
+
+Tags are very useful to dispatch between alternative implementations. 
+The following example illustrates a dispatch for \ccc{Field}s using overloaded 
+functions. The example only needs two overloads since the algebraic 
+category tags reflect the algebraic structure hierarchy. 
+
+\ccIncludeExampleCode{Algebraic_foundations/algebraic_structure_dispatch.cpp}
+
+\ccIgnore{
 
 For dispatching \ccc{Algebraic_structure_traits} provides the tags:  
 \ccc{Algebraic_category}, \ccc{Is_exact} and \ccc{Is_numerical_sensitive}. \\ 
@@ -110,12 +156,7 @@ arithmetic. We expect that \ccc{Is_numerical_sensitive} is used for dispatching
 check for exact types only.
 
 
-The following example illustrates a dispatch for \ccc{Field}s using overloaded 
-functions.
 
-\ccIncludeExampleCode{Algebraic_foundations/algebraic_structure_dispatch.cpp}
-
-\ccIgnore{
 \begin{tabular}{|l|l|}
 Algebraic Structure Concept & provided functions \\
 \hline
@@ -196,8 +237,8 @@ divisor (gcd).
 
 \ccc{EuclideanRing} refines \ccc{UniqueFactorizationDomain}. 
 It is an \ccc{UniqueFactorizationDomain} that affords a 
-suitable notion of minimality for remainders of divisions. In particular 
-it is possible to use the well known euclidean algorithm in order to compute the 
+suitable notion for remainders of divisions. In particular 
+it is possible to use the  Euclidean algorithm in order to compute the 
 {\em gcd} of two elements. 
  
 }
