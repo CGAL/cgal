@@ -493,11 +493,11 @@ private:
         Denominator_type den;
         typename FT::Decompose decompose;
         decompose(x,num,den);
-        CGAL_precondition(CGAL::Sign(den) == CGAL::POSITIVE);
+        CGAL_precondition(CGAL::sign(den) == CGAL::POSITIVE);
 
         typedef Coercion_traits< Numerator_type , Denominator_type > CT;
         typename CT::Cast cast;
-        return CGAL::Sign(evaluate_homogeneous(cast(num),cast(den)));
+        return CGAL::sign(evaluate_homogeneous(cast(num),cast(den)));
     }
 public:
     //! evaluates the sign of the Polynomial at x
