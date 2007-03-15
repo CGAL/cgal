@@ -85,7 +85,7 @@ class Polynomial_traits_d_base {
     typedef Null_functor  Translate;
     typedef Null_functor  Translate_homogeneous;
     typedef Null_functor  Scale_homogeneous;
-    typedef Null_functor  Differentiate;
+    typedef Null_functor  Derivative;
     
     struct Make_square_free 
         : public Unary_function< ICoeff, ICoeff>{
@@ -551,8 +551,8 @@ public:
         }  
      };
 
-    //       Differentiate;
-     struct Differentiate 
+    //       Derivative;
+     struct Derivative 
          : public Unary_function<Polynomial_d, Polynomial_d>{
         Polynomial_d
         operator()(Polynomial_d p, int i = (d-1)) const {
@@ -733,7 +733,7 @@ public:
             if (CGAL::is_zero(p)) return p;
             Univariate_content_up_to_constant_factor ucontent_utcf;
             Integral_division_up_to_constant_factor  idiv_utcf;
-            Differentiate diff;
+            Derivative diff;
             typename PTC::Make_square_free msf;
             
             Coefficient content = ucontent_utcf(p);
