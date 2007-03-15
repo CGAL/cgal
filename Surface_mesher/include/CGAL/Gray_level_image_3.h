@@ -26,7 +26,9 @@
 extern "C" {
 struct _image;
 
+void printSupportedFileFormat();
 _image* _readImage(const char *name);
+void _freeImage(_image *im);
 bool _get_image_bounding_box(_image*,
 			     float*, float*, float*,
 			     float*, float*, float*); 
@@ -68,6 +70,16 @@ public:
 				&min_x, &min_y, &min_z,
 				&max_x, &max_y, &max_z);
     }
+  }
+
+  ~Gray_level_image_3()
+  {
+    ::_freeImage(image);
+  }
+
+  static void print_supported_file_format()
+  {
+    ::printSupportedFileFormat();
   }
 
   bool inside(float X, float Y, float Z) const
