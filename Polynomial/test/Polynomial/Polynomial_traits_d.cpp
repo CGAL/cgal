@@ -622,13 +622,13 @@ void test_scale_homogeneous(){
     std::cerr << " ok "<< std::endl;
 }
 
-// //       Differentiate;
+// //       Derivative;
 template <class Polynomial_traits_d>
-void test_differentiate(){
-    std::cerr << "start test_differentiate "; std::cerr.flush();
+void test_derivative(){
+    std::cerr << "start test_derivative "; std::cerr.flush();
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
-    typename PT::Differentiate diff;
+    typename PT::Derivative diff;
     typename PT::Swap swap;
     
     CGAL_test_assert(diff(Polynomial_d(0)) == Polynomial_d(0));
@@ -1232,8 +1232,8 @@ struct Test_polynomial_traits_d<Polynomial_traits_d, CGAL::Null_tag > {
         test_scale<Polynomial_traits_d>();
     //       Scale_homogeneous;
         test_scale_homogeneous<Polynomial_traits_d>();
-    //       Differentiate;
-        test_differentiate<Polynomial_traits_d>();
+    //       Derivative;
+        test_derivative<Polynomial_traits_d>();
     //       Make_square_free;
         test_make_square_free<Polynomial_traits_d>();
     //       Pseudo_division;
