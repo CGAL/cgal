@@ -224,13 +224,11 @@ private:
 		      std::pair<OutputItFaces,OutputItBoundaryEdges>
 		      pit)  const {
    Face_handle fn = fh->neighbor(i);
-   OutputItFaces fit = pit.first;
-   OutputItBoundaryEdges eit = pit.second;
    if (! test_conflict(p,fn)) {
-     *eit++ = Edge(fn, fn->index(fh));
-     return std::make_pair(fit,eit);
+     *(pit.second)++ = Edge(fn, fn->index(fh));
+     return pit;
    }
-   *fit++ = fn;
+   *(pit.first)++ = fn;
    int j = fn->index(fh);
    pit = propagate_conflicts(p,fn,ccw(j),pit);
    pit = propagate_conflicts(p,fn,cw(j), pit);
