@@ -597,9 +597,9 @@ void sqff() {
     std::back_insert_iterator<IVEC> mul_bi(mul);
     unsigned n;
     NT alpha;
-    n = CGAL::filtered_square_free_factorization(p, fac_bi, mul_bi, alpha);
+    n = CGAL::filtered_square_free_factorization(p, fac_bi, mul_bi );
 
-    CGAL_test_assert(alpha == 3);
+//    CGAL_test_assert(alpha == 3);
     CGAL_test_assert(n == 3);
     CGAL_test_assert(mul.size() == n);
     CGAL_test_assert(fac.size() == n);
