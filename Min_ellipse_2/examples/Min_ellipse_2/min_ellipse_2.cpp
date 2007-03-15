@@ -1,24 +1,22 @@
-// includes
-#include <cassert>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/Gmpq.h>
 
-// typedefs
+#include <cassert>
+
 typedef  CGAL::Gmpq                       NT;
 typedef  CGAL::Cartesian<NT>              K;
 typedef  CGAL::Point_2<K>                 Point;
 typedef  CGAL::Min_ellipse_2_traits_2<K>  Traits;
 typedef  CGAL::Min_ellipse_2<Traits>      Min_ellipse;
 
-// main
+
 int
 main( int, char**)
 {
-    int     n = 200;
-    Point*  P = new Point[ n];
+    const int n = 200;
+    Point     P[n];
 
     for ( int i = 0; i < n; ++i)
 	P[ i] = Point( i % 2 ? i : -i , 0);
@@ -65,9 +63,6 @@ main( int, char**)
       v << " y + " <<
       w << " = 0." << std::endl;
 
-    delete[] P;
-
-    return( 0);
+    return 0;
 }
 
-// ===== EOF ==================================================================
