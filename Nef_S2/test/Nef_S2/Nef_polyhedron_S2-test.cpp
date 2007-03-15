@@ -1,7 +1,4 @@
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
-//#include <CGAL/random_selection.h>
-//#include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/test_macros.h>
 

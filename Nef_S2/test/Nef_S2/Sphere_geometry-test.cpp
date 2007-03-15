@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
