@@ -19,22 +19,20 @@
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 
 
-/*! \file NiX/CORE/Coercion_traits.h
- *  \brief Provides specializations of Coercion_traits for the CORE types.
- */
-
 #ifndef CGAL_CORE_COERCION_TRAITS_H
 #define CGAL_CORE_COERCION_TRAITS_H 1
 
 #include <CGAL/number_type_basic.h>
 
 #ifdef CGAL_USE_CORE
-#include <CGAL/CORE/BigInt.h>
-#include <CGAL/CORE/BigRat.h>
-#include <CGAL/CORE/BigFloat.h>
-#include <CGAL/CORE/Expr.h>
 
-//#include <NiX/CORE/Coercion_traits.h>
+#ifndef CORE_LEVEL
+#define CORE_LEVEL 4
+#endif
+
+#include <CGAL/CORE/CORE.h>
+
+//#include <NiX/Coercion_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

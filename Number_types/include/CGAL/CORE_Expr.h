@@ -29,8 +29,6 @@
 
 #include <utility>
 
-#define CORE_LEVEL 4
-#include <CGAL/CORE/CORE.h>
 
 CGAL_BEGIN_NAMESPACE
 

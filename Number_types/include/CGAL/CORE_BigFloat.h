@@ -23,10 +23,8 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
-#include <CGAL/CORE_Expr.h>
 
-#define CORE_LEVEL 4
-#include <CGAL/CORE/CORE.h>
+#include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
 CGAL_BEGIN_NAMESPACE
 

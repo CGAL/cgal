@@ -26,12 +26,7 @@
 #include <CGAL/CORE_coercion_traits.h>
 
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
-#include <CGAL/CORE_BigInt.h>
-
-
-#define CORE_LEVEL 4
-#include <CGAL/CORE/CORE.h>
-
+#include <CGAL/CORE_BigInt.h> // used for To_interval-functor
 
 //#if defined(CGAL_CORE_BIGRAT_NUMER_DENOM_ARE_MEMBERS)
 //  #define CGAL_CORE_NUMERATOR(X) ((X).numerator())
