@@ -1,4 +1,4 @@
-// Copyright (c) 2007  Max-Planck-Institute Saarbruecken (Germany)
+// Copyright (c) 2006-2007  Max-Planck-Institute Saarbruecken (Germany)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sebastian Limbach  <slimbach@mpi-sb.mpg.de>
+// Author(s)     : Michael Hemmer <hemmer@mpi-sb.mpg.de>
 
 #ifndef CGAL_UTILS_H
 #define CGAL_UTILS_H

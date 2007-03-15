@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2005  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2005,2007  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Michael Hemmer 
 
 #ifndef CGAL_INTERVAL_NT_H
 #define CGAL_INTERVAL_NT_H

@@ -1,8 +1,6 @@
-// Copyright (c) 1999,2003,2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2006-2007 Max-Planck-Institute Saarbruecken (Germany),
+// INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -15,12 +13,12 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $URL:$
+// $Id:$
 //
-// Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
-
+//
+// Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
+//                 Sylvain Pion 
 
 #ifndef CGAL_GMPZ_H
 #define CGAL_GMPZ_H

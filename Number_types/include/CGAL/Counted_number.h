@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2007  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -20,7 +20,7 @@
 // 
 //
 // Author(s)     : Geert-Jan Giezeman,
-//                 Michael Hemmer <mhemmer@uni-mainz.de>
+//                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
 
 #ifndef CGAL_COUNTED_NUMBER_H
 #define CGAL_COUNTED_NUMBER_H

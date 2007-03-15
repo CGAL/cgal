@@ -1,4 +1,4 @@
-// Copyright (c) 1999  Utrecht University (The Netherlands),
+// Copyright (c) 1999,2007  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Stefan Schirra
+// Author(s)     : Stefan Schirra, Michael Hemmer
  
 
 #ifndef CGAL_NUMBER_Type_BASIC_H

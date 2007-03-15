@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Michael Hemmer 
  
 #ifndef CGAL_MPQ_CLASS_H
 #define CGAL_MPQ_CLASS_H

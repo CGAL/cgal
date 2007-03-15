@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias
+// Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Michael Hemmer 
 
 #ifndef CGAL_ROOT_OF_TRAITS_H
 #define CGAL_ROOT_OF_TRAITS_H

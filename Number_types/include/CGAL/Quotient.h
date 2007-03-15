@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2005  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2007  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Stefan Schirra, Sylvain Pion
+// Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hemmer 
 
 // The template class Quotient<NT> is based on the LEDA class
 // leda_rational written by Stefan Naeher and Christian Uhrig.
