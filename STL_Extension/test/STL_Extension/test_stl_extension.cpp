@@ -8669,7 +8669,6 @@ void test_Filter_iterator()
     CGAL_assertion(*f1 == 9);
     --f1;
     f1--;
-    f1 = f;
     CGAL_assertion(
       6 ==
       std::distance(filter_iterator(l.end(), fi, l.begin()),
