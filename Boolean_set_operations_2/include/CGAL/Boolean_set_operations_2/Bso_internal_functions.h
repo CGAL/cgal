@@ -88,8 +88,8 @@ inline bool _is_empty (const typename Traits:: Polygon_2& pgn,
 }
 
 template <class Traits>
-inline bool _is_empty (const typename Traits::Polygon_with_holes_2& pgn,
-                       Traits& tr) 
+inline bool _is_empty (const typename Traits::Polygon_with_holes_2&,
+                       Traits&) 
 {
   return (false);
 }

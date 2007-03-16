@@ -593,7 +593,7 @@ public:
   template <class InputIterator>
   inline void join(InputIterator begin,
                    InputIterator end,
-                   Polygon_2& pgn,
+                   Polygon_2&,
                    unsigned int k=5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
@@ -618,7 +618,7 @@ public:
   //join range of polygons with holes
   template <class InputIterator>
   inline void join(InputIterator begin, InputIterator end,
-                   Polygon_with_holes_2& pgn, unsigned int k=5)
+                   Polygon_with_holes_2&, unsigned int k=5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -689,7 +689,7 @@ public:
   // intersect range of simple polygons
   template <class InputIterator>
   inline void intersection(InputIterator begin, InputIterator end,
-                           Polygon_2& pgn, unsigned int k)
+                           Polygon_2&, unsigned int k)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -714,7 +714,7 @@ public:
   //intersect range of polygons with holes
   template <class InputIterator>
   inline void intersection(InputIterator begin, InputIterator end,
-                           Polygon_with_holes_2& pgn, unsigned int k)
+                           Polygon_with_holes_2&, unsigned int k)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -789,7 +789,7 @@ public:
   // intersect range of simple polygons
   template <class InputIterator>
   inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                   Polygon_2& pgn, unsigned int k=5)
+                                   Polygon_2&, unsigned int k=5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -814,7 +814,7 @@ public:
   //intersect range of polygons with holes
   template <class InputIterator>
   inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                   Polygon_with_holes_2& pgn, unsigned int k=5)
+                                   Polygon_with_holes_2&, unsigned int k=5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;

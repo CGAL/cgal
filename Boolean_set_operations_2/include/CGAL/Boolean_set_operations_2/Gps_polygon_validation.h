@@ -66,7 +66,7 @@ public:
     reinterpret_cast<Sweep_line*>(this->m_sweep_line)->sweep(begin, end);
   }
 
-  bool after_handle_event(Event* event,SL_iterator iter, bool flag)
+  bool after_handle_event(Event* event,SL_iterator, bool)
   {
     if(event->is_intersection() ||
        event->is_weak_intersection() ||

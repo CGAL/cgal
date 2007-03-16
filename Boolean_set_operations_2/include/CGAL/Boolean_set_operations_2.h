@@ -866,7 +866,7 @@ template <class InputIterator, class OutputIterator, class Traits>
 inline OutputIterator join(InputIterator begin,
                            InputIterator end,
                            OutputIterator oi,
-                           Traits&        tr)
+                           Traits& )
 {
   if(begin == end)
     return (oi);
@@ -921,7 +921,7 @@ template <class InputIterator, class OutputIterator, class Traits>
 inline OutputIterator intersection (InputIterator begin,
                                     InputIterator end,
                                     OutputIterator oi,
-                                    Traits&        tr)
+                                    Traits&)
 {
   if(begin == end)
     return (oi);

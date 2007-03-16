@@ -66,7 +66,7 @@ public:
       ubf->set_contained(true);
   }
 
-  void after_scan(Arrangement& arr)
+  void after_scan(Arrangement&)
   {}
 
 
