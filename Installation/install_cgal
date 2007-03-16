@@ -377,10 +377,7 @@ _check_for_util()
 	log_print "WARNING: Couldn't find $1."
 	return 1
     fi
-    _tmp="echo $`echo ${3:-_$1}`"
-    _tmp=`eval "${_tmp}"`
-    _tmp=`eval "echo ${_tmp}"`
-    log_print "$1 is ${_tmp}."
+    log_print "$1 is `value_of ${3:-_$1}`."
     return 0
 }
 
@@ -388,6 +385,17 @@ _check_for_util()
 # in several directories first.
 _check_for_sysutil()
 {
+    if [ -n "`value_of NO_${3:-$1}`" ]; then
+	log_print "NO_${3:-$1} under effect."
+	return 1
+    fi
+	
+    if [ -n "`value_of USE_${3:-$1}`" ]; then
+	eval "${3:-_$1}=\"`value_of USE_${3:-$1}`\""
+	log_print "USE_${3:-$1} under effect: $1 is set to `value_of ${3:-_$1}`."
+	return 0
+    fi
+	
     _tmp2=''
     for _path in ${POSIX_UTILITIES_PATH} /bin /usr/bin /opt/sfw/bin /usr/sfw/bin; do
         if [ -x "${_path}/$1" ]; then
@@ -400,10 +408,7 @@ _check_for_sysutil()
 	_check_for_util "${*}"
 	return $?
     fi
-    _tmp="echo $`echo ${3:-_$1}`"
-    _tmp=`eval "${_tmp}"`
-    _tmp=`eval "echo ${_tmp}"`
-    log_print "$1 is ${_tmp}."
+    log_print "$1 is `value_of ${3:-_$1}`."
     return 0
 }
 
@@ -617,6 +622,9 @@ _check_printf()
 # (they should be on a unix system, but ...)
 check_for_utils()
 {
+    log_print "Looking for POSIX  utilities..."
+    ${_printf} "%s" "Looking for POSIX  utilities..."
+
     _which=real_which
 
     _check_for_util getconf n
@@ -680,22 +688,7 @@ check_for_utils()
 	PAGER="${_cat}"
     fi
 
-    # Verify that GNU Make exists:
-    # Check the content of the current ${MAKE} variable.
-    if [ -n "${MAKE}" ] && test_gmake "${MAKE}"; then 
-        log_print 'GNU Make found in the environment variable \${MAKE}.'
-    # Search gmake in PATH
-    elif _check_for_util gmake n MAKE && test_gmake "${MAKE}"; then
-	log_print 'GNU Make found in \${PATH}.';
-    # Search gmake in standard directories
-    elif _check_for_sysutil gmake n MAKE && test_gmake "${MAKE}"; then
-	log_print "GNU Make found in standard directories.";
-    # Search make in PATH, or fail.
-    elif _check_for_util make y MAKE && test_gmake "${MAKE}"; then
-        log_print 'make found in \$PATH is GNU Make.';
-    else
-        exit_on_error "GNU Make not found - please install GNU Make"
-    fi
+    ${_printf} "%s\n" " done."
 }
 
 # tests if $1 is a path to an executable GNU/make.
@@ -759,7 +752,7 @@ set_dirs_dependant_on_cgal_dir()
     CGAL_INCL_DIR="${CGAL_DIR}/include"
     CGAL_INCL_CONF_DIR="${CGAL_INCL_DIR}/CGAL/config"
     CGAL_LIB_DIR="${CGAL_DIR}/lib"
-    CGAL_MAKE_DIR="${CGAL_DIR}/make/"
+    CGAL_MAKE_DIR="${CGAL_DIR}/make"
     CGAL_SRC_DIR="${CGAL_DIR}/src"
     CGAL_TEST_DIR="${CGAL_DIR}/test"
     CGAL_CONF_DIR="${CGAL_DIR}/config"
@@ -4984,13 +4977,32 @@ cgal_install_header()
 
 startup()
 {
-    ${_printf} "%s\n" " one moment, please"
     if [ -n "${INSTALL_INTERACTIVE}" ]; then
         ${_printf} "."
         log_to_file
     else
         log_to_screen
     fi
+
+    log_print "Looking for GNU/make..."
+    # Verify that GNU Make exists:
+    # Check the content of the current ${MAKE} variable.
+    if [ -n "${MAKE}" ] && test_gmake "${MAKE}"; then 
+        log_print 'GNU Make found in the environment variable \${MAKE}.'
+    # Search gmake in PATH
+    elif _check_for_util gmake n MAKE && test_gmake "${MAKE}"; then
+	log_print 'GNU Make found in \${PATH}.';
+    # Search gmake in standard directories
+    elif _check_for_sysutil gmake n MAKE && test_gmake "${MAKE}"; then
+	log_print "GNU Make found in standard directories.";
+    # Search make in PATH, or fail.
+    elif _check_for_util make y MAKE && test_gmake "${MAKE}"; then
+        log_print 'make found in \$PATH is GNU Make.';
+    else
+        exit_on_error "GNU Make not found - please install GNU Make"
+    fi
+
+
     if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
     check_conf_dir
     if [ -n "${INSTALL_INTERACTIVE}" ]; then ${_printf} "."; fi
@@ -5090,9 +5102,10 @@ set_variable_from_command_line()
 _WHAT_TO_DO=''
 _CONFLICT=''
 
-# These four utilities are used before the call of check_for_utils().
+# These five utilities are used before the call of check_for_utils().
 _awk=awk
 _sed=sed
+_tee=tee
 _printf=printf
 _rm=rm
 
@@ -5121,10 +5134,9 @@ case ${*} in
 esac
 
 
-initial_check
-check_for_utils
-
 if [ -z "${_WHAT_TO_DO}" ]; then
+    initial_check
+    check_for_utils
 
     # ---------------------------------------------------------------------
     # process environment variables
