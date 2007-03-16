@@ -625,8 +625,8 @@ protected:
   }
 
   template<class SSite>
-  inline void convert_info1(SSite& ss_trg,
-			    const SSite& ss_src, bool, char) const
+  inline void convert_info1(SSite& /*  ss_trg */,
+			    const SSite& /* ss_src */, bool, char) const
   {
   }
 

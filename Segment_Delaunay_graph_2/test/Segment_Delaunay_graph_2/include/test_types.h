@@ -66,14 +66,14 @@ struct Level_finder< Segment_Delaunay_graph_2<Gt,SDGDS,LTag> >
   typedef typename SDG::size_type      size_type;
   typedef typename SDG::Vertex_handle  Vertex_handle; 
 
-  size_type operator()(Vertex_handle v) const { return 0; }
+  size_type operator()(Vertex_handle ) const { return 0; }
 };
 
 
 //========================================================================
 
 template<class SDG, class InputStream>
-bool test_sdg(InputStream& is, const SDG&, const char* ifname, const char* ofname,
+bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 	      bool test_remove)
 {
   char* ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);

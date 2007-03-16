@@ -104,7 +104,7 @@ public:
   bool is_point() const { return type_ == 1; }
   bool is_segment() const { return type_ == 2; }
   bool is_input() const { return true; }
-  bool is_input(unsigned int i) const { return true; }
+  bool is_input(unsigned int) const { return true; }
 
   const Point_2& point() const { 
     CGAL_precondition ( is_point() );

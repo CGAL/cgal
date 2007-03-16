@@ -222,7 +222,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  bool check_if_exact(const Site_2& t1, const Tag_false&) const
+  bool check_if_exact(const Site_2&, const Tag_false&) const
   {
     return true;
   }

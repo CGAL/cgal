@@ -100,7 +100,7 @@ public:
   bool is_point() const { return type_ == 1; }
   bool is_segment() const { return type_ == 2; }
   bool is_input() const { return true; }
-  bool is_input(unsigned int i) const { return true; }
+  bool is_input(unsigned int) const { return true; }
 
   // ACCESS METHODS
   //---------------
@@ -122,12 +122,12 @@ public:
   // the following methods should never be called; they have been
   // defined in order for this class to be a model of the
   // SegmentDelaunayGraphStorageSite_2 concept.
-  const Handle& source_of_supporting_site(unsigned int i) const {
+  const Handle& source_of_supporting_site(unsigned int) const {
     CGAL_precondition( is_point() && !is_input() );
     return h_[0];
   }
 
-  const Handle& target_of_supporting_site(unsigned int i) const {
+  const Handle& target_of_supporting_site(unsigned int) const {
     CGAL_precondition( is_point() && !is_input() );
     return h_[0];
   }

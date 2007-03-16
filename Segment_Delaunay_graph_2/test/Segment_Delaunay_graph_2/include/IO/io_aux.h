@@ -24,7 +24,7 @@ void start_testing(const std::string& msg) {
 
 //---------------------------------------------------------------
 
-std::ostream& end_testing(std::ostream& os, const std::string& msg) {
+std::ostream& end_testing(std::ostream& os, const std::string& ) {
   os << "done." << std::endl;
   return os;
 }

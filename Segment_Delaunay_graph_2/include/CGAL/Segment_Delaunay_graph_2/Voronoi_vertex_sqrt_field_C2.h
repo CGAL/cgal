@@ -704,7 +704,7 @@ private:
   }
 
   template<class Type>
-  Sign incircle_p_no_easy(const Site_2& st, Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, Type) const
   {
     CGAL_precondition( st.is_point() );
 

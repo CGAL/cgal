@@ -43,7 +43,7 @@ bool test_hierarchy_no_x(InputStream& is, const char* ifname, bool test_remove =
 
 
 template<class SDG, class InputStream>
-bool test_base(InputStream& is, const SDG& sdg, const char* ifname, const char* ofname,
+bool test_base(InputStream&, const SDG& sdg, const char* ifname, const char* ofname,
 	       bool test_remove)
 {
   print_separator();

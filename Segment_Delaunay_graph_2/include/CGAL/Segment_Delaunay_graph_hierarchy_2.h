@@ -333,11 +333,11 @@ protected:
 				      const Vertex_handle* vertices0,
 				      int level, Tag_true);
 
-  void insert_segment_in_upper_levels(const Site_2& t,
-				      const Storage_site_2& ss,
-				      Vertex_handle vbelow,
-				      const Vertex_handle* vertices,
-				      int level, Tag_false) {}
+  void insert_segment_in_upper_levels(const Site_2& ,
+				      const Storage_site_2& ,
+				      Vertex_handle ,
+				      const Vertex_handle* ,
+				      int , Tag_false) {}
 
   Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
 					const Vertex_handle& v,
@@ -345,10 +345,10 @@ protected:
 
   template<class Tag>
   Vertex_handle
-  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v,
-				       int level, Tag_false itag, Tag) {
+  insert_intersecting_segment_with_tag(const Storage_site_2&,
+				       const Site_2& ,
+				       Vertex_handle ,
+				       int , Tag_false itag, Tag) {
 #if defined(__POWERPC__) && \
   defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
     // hack to avoid nasty warning for G++ 3.4 on Darwin

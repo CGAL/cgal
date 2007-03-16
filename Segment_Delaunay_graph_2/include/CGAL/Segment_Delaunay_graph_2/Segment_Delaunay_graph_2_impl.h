@@ -856,8 +856,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 template<class Gt, class ST, class DS, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				     const Site_2& t, Vertex_handle v,
+insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
+				     const Site_2& /* t */, Vertex_handle /* v */,
 				     Tag_false)
 {
 #if defined(__POWERPC__) && \
@@ -1494,7 +1494,7 @@ void
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 find_conflict_region_remove(const Vertex_handle& v,
 			    const Vertex_handle& vnearest,
-			    List& l, Face_map& fm, Sign_map& vm)
+			    List& l, Face_map& fm, Sign_map&)
 {
   CGAL_precondition( vnearest != Vertex_handle() );
   Storage_site_2 ss = v->storage_site();

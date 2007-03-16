@@ -94,7 +94,7 @@ protected:
 			const Point_handle&,
 			const Point_handle&,
 			const Point_handle&,
-			bool is_first_exact, const Tag_false&) const {
+			bool /* is_first_exact */, const Tag_false&) const {
     CGAL_assertion( false );
     return Storage_site_2();
   }

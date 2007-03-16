@@ -607,7 +607,7 @@ Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     int level,
-				     Tag_true itag, Tag_false stag)
+				     Tag_true itag, Tag_false /* stag */)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
@@ -824,7 +824,7 @@ void
 Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS,LTag>::
 nearest_neighbor(const Site_2& t,
 		 Vertex_handle vnear[sdg_hierarchy_2__maxlevel],
-		 bool force_point) const
+		 bool /* force_point */) const
 {
   CGAL_precondition( t.is_point() );
 

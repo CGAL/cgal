@@ -7,7 +7,7 @@
 
 #include "test.h"
 
-int main(int argc, char* argv[])
+int main(int , char* )
 {
   CGAL::test_x(std::cin, "bizarre");
   CGAL::test_no_x(std::cin, "bizarre");
