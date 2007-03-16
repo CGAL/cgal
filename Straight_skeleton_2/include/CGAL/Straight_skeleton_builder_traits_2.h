@@ -318,7 +318,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   }
 
   template<class NT>  
-  bool is_point_calculation_accurate( NT const& t, Point_2 const& p, Seeded_trisegment_2 const& st ) const 
+  bool is_point_calculation_accurate( NT const& , Point_2 const&  , Seeded_trisegment_2 const& ) const 
   {
     return true ;
   }

@@ -1296,7 +1296,7 @@ void TraceFinalBisectors( Vertex_handle v, Halfedge_around_vertex_circulator cb 
 #endif
 
 template<class Vertex_handle, class Halfedge_around_vertex_circulator>
-bool ValidateFinalBisectorsAfterMerge( Vertex_handle v, Halfedge_around_vertex_circulator cb )
+bool ValidateFinalBisectorsAfterMerge( Vertex_handle /* v */, Halfedge_around_vertex_circulator cb )
 {
   bool rOK = true ;
   

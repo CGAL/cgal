@@ -50,7 +50,7 @@ struct Dummy_straight_skeleton_builder_2_visitor
 
   void on_contour_edge_entered ( Halfedge_const_handle const&  ) const {}
                                
-  void on_initialization_started( std::size_t size_of_vertices ) const {}
+  void on_initialization_started( std::size_t /* size_of_vertices */ ) const {}
   
   void on_initial_events_collected( Vertex_const_handle const& , bool /* is_reflex */, bool /*is_degenerate*/ )  const  {}
   

@@ -96,7 +96,7 @@ struct Construct_offset_point_2 : Functor_base_2<K>
   }
 
   template<class NT>  
-  bool is_point_calculation_accurate( NT const& time, Point_2 const& p, Segment_2 const& aE0, Segment_2 const& aE1 ) const { return true ; }
+  bool is_point_calculation_accurate( NT const& /* time */, Point_2 const& /* p */, Segment_2 const& /* aE0 */, Segment_2 const& /* aE1 */ ) const { return true ; }
 };
 
 
