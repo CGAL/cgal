@@ -253,7 +253,7 @@ CGAL_END_NAMESPACE
         }
         
         
-        bool is_valid (bool verbose = false, int level = true) const
+      bool is_valid (bool verbose = false, int /* level */ = true) const
         {
             Verbose_ostream verr (verbose);
             for (int j=1; j<m+1; ++j)
@@ -335,11 +335,11 @@ CGAL_END_NAMESPACE
 
     public:
 
-        Optimisation_sphere_d& get_sphere (Homogeneous_tag t)
+        Optimisation_sphere_d& get_sphere (Homogeneous_tag )
         {return *this;}
 
         const Optimisation_sphere_d&
-          get_sphere (Homogeneous_tag t) const
+          get_sphere (Homogeneous_tag ) const
         {return *this;}
 
         Optimisation_sphere_d (const Traits& t = Traits())
@@ -539,7 +539,7 @@ CGAL_END_NAMESPACE
         }
         
         
-        bool is_valid (bool verbose = false, int level = true) const
+      bool is_valid (bool verbose = false, int /* level*/ = true) const
         {
             if (d==-1) return true;
             Verbose_ostream verr (verbose);

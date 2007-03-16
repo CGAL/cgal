@@ -335,7 +335,7 @@ public:
     }
     
     
-    bool is_valid (bool verbose = false, int level = 0) const
+  bool is_valid (bool verbose = false, int /* level */ = 0) const
     {
         Verbose_ostream verr (verbose);
     
