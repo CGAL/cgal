@@ -77,7 +77,7 @@ typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
 approximated_offset_2 (const Polygon_2<Kernel, Container>& pgn,
                        const typename Kernel::FT& r,
                        const double& eps,
-                       const DecompositionStrategy& decomp)
+                       const DecompositionStrategy&)
 {
   typedef Approx_offset_base_2<Kernel, Container>            Base;
   typedef Offset_by_decomposition_2<Base, DecompositionStrategy>

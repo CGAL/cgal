@@ -73,7 +73,7 @@ template <class Kernel, class Container, class DecompositionStrategy>
 Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
                  const Polygon_2<Kernel,Container>& pgn2,
-                 const DecompositionStrategy& decomp)
+                 const DecompositionStrategy&)
 {
   Minkowski_sum_by_decomposition_2<DecompositionStrategy>   mink_sum;
   Polygon_2<Kernel,Container>                        sum_bound;
