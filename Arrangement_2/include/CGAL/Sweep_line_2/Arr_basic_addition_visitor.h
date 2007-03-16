@@ -370,7 +370,7 @@ public:
   void update_event(Event*,
                     Subcurve*,
                     Subcurve*,
-                    bool created = false)
+                    bool /*created*/ = false)
   {}
 
   void update_event(Event*,
@@ -442,7 +442,7 @@ public:
 
   Halfedge_handle _insert_from_left_vertex(const X_monotone_curve_2& cv,
                                            Halfedge_handle he,
-                                           Subcurve* sc)
+                                           Subcurve* /*sc*/)
   {
     Event* curr_event = this->current_event();
     Vertex_handle v = 
@@ -463,7 +463,7 @@ public:
   Halfedge_handle _insert_at_vertices (const X_monotone_curve_2& cv,
                                        Halfedge_handle hhandle,
                                        Halfedge_handle prev,
-                                       Subcurve* sc,
+                                       Subcurve* /*sc*/,
                                        bool &new_face_created)
   {
  

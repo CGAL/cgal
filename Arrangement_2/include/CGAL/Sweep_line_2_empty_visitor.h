@@ -152,7 +152,7 @@ public:
   void update_event(Event*,
                     Subcurve*,
                     Subcurve*,
-                    bool created = false)
+                    bool /*created*/ = false)
   {}
 
   void update_event(Event*,

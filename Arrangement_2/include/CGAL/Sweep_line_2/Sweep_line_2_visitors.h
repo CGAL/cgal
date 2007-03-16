@@ -163,7 +163,7 @@ public:
   }
        
 
-  bool after_handle_event(Event* event,SL_iterator iter, bool flag)
+  bool after_handle_event(Event* /*event*/,SL_iterator /*iter*/, bool /*flag*/)
   {
     return true;
   }
