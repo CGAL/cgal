@@ -923,8 +923,8 @@ protected:
   }
 
    // compare two infinite surfaces with no boundary or holes
-  Comparison_result compare_distance_to_envelope(const Xy_monotone_surface_3& s1,
-                                                 const Xy_monotone_surface_3& s2,
+  Comparison_result compare_distance_to_envelope(const Xy_monotone_surface_3&,
+                                                 const Xy_monotone_surface_3&,
                                                  Tag_false)
   {
     CGAL_assertion(false); // doesnt' suppose to reach here at all!!!
@@ -1363,7 +1363,7 @@ protected:
   
   // copy the halfedges of a ccb (in from) to the md "to" inside the face inside_face
   void copy_ccb(Ccb_halfedge_circulator hec, // the circulator to insert
-                Minimization_diagram_2 &from,// the original arrangement
+                Minimization_diagram_2 &    ,// the original arrangement
                 Face_handle inside_face,     // the face in which we insert it
                 Minimization_diagram_2 &to,  // the arrangement to which we insert
 
