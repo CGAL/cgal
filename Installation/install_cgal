@@ -2820,11 +2820,11 @@ try_to_get_var_from_config_file()
     _awkprg="/ ${1}/"'{printf "%s=",$2; for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
 		    printf "%s\n",$(NF-1)}'
     if try_to_get_var_from_file_aux "${_awkprg}" "${2}"; then
-	log_print \
-	    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
+	#log_print \
+	#    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
+        return 0
     else
-	log_print "got ${1} from config/`${_basename} \"${2}\"`."
-	log_print "set to '`value_of ${1}`'."
+	log_print "Cached  ${1}... " `value_of ${1}` 
 	return 1
     fi
     return 0
@@ -2839,8 +2839,9 @@ try_to_get_var_from_file()
     # Note: the line may contain several '=' characters.
     _awkprg='BEGIN{ FS=" *= *" } /('"${1}"') *=/ {printf "%s=\"",$1; for (i=2; i<NF; i++) printf "%s=",$(i); printf "%s\"\n",$(NF)}'
     if try_to_get_var_from_file_aux "${_awkprg}" "${2}"; then
-	log_print \
-	    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
+	#log_print \
+	    #"WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
+        return 0
     else
       return 1
     fi
@@ -2862,8 +2863,8 @@ try_to_get_var_from_file_aux()
 	    eval "${_tmp2}"
             return 1
 	fi
-    else
-	log_print "WARNING: cannot find file ${2}."
+    #else
+	#log_print "WARNING: cannot find file ${2}."
     fi
     return 0
 }
@@ -5339,7 +5340,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     # --- end of parsing commandline options ---
 fi
 if [ -z "${_WHAT_TO_DO}" ]; then 
-    _WHAT_TO_DO='auto'; 
+    _WHAT_TO_DO='non-interactive'; 
 fi
 
 # ---------------------------------------------------------------------
@@ -5362,8 +5363,14 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s\n" \
 	    "--------------------------------------------------------"
 	startup
-	if [ -z "${COMPILER}" ]; then exit_on_error "No compiler specified"; fi
-	set_compiler_from_command_line
+	if [ -z "${COMPILER}" ]; then
+            search_for_compilers
+	    if [ ${_COMPILER_NUMBER} -gt 2 ]; then
+		compiler_choose_menu 'Main Menu'
+	    fi
+        else 
+	    set_compiler_from_command_line
+        fi
 	flush_buffer
         log_to_file
 	${_printf} "\n%s\n" \
@@ -5443,28 +5450,6 @@ case ${_WHAT_TO_DO} in
         get_cgal_version
 	cgal_install_header
 	print_usage_information
-	;;
-    *auto*)
-	${_printf} "Automatically installing CGAL"
-	get_cgal_version
-	cgal_install_header
-	# start interactive part
-	${_printf} "%s" "starting interactive mode -"
-	INSTALL_INTERACTIVE='y'
-	startup
-	if [ -z "${COMPILER}" ]; then
-	    search_for_compilers
-	    if [ ${_COMPILER_NUMBER} -gt 2 ]; then
-		compiler_choose_menu 'Main Menu'
-	    fi
-	else
-	    _COMPILER_NUMBER=1
-	    set_compiler_from_command_line
-	    _register_compiler "${COMPILER}"
-	    _set_support
-	fi
-	lib_menu
-	installation
 	;;
     *)
         get_cgal_version
