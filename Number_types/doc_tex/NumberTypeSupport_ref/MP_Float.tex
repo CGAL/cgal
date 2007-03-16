@@ -15,8 +15,6 @@ the construction from \ccc{float}, \ccc{double} and \ccc{long double}.
 Division and square root are not enabled by default since \cgal\ release 3.2,
 since they are computed approximately.  We suggest that you use
 rationals like \ccc{Quotient<MP_Float>} when you need exact divisions.
-To enable division and square root, you have to define the preprocessor
-macro \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT}.
 
 Note on the implementation : although the mantissa length is basically only
 limited by the available memory, the exponent is currently represented by a
@@ -26,8 +24,7 @@ plan to also have a multiprecision exponent to fix this issue.
 \ccInclude{CGAL/MP_Float.h}
 
 \ccIsModel
-\ccc{EuclideanRing} in exact mode \\
-\ccc{FieldWithSqrt} if \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT} is set.\\
+\ccc{EuclideanRing}.\\
 \\
 \ccc{RealEmbeddable}
 

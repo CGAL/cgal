@@ -100,9 +100,6 @@ operator>> (std::istream & is, MP_Float &b);
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
 MP_Float operator*(const MP_Float &a, const MP_Float &b);
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-MP_Float operator/(const MP_Float &a, const MP_Float &b);
-#endif
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
 class MP_Float
@@ -221,9 +218,6 @@ public:
   MP_Float& operator+=(const MP_Float &a) { return *this = *this + a; }
   MP_Float& operator-=(const MP_Float &a) { return *this = *this - a; }
   MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-  MP_Float& operator/=(const MP_Float &a) { return *this = *this / a; }
-#endif
   MP_Float& operator%=(const MP_Float &a) { return *this = *this % a; }
 
   exponent_type max_exp() const
@@ -387,32 +381,15 @@ approximate_sqrt(const MP_Float &d);
 MP_Float
 approximate_division(const MP_Float &n, const MP_Float &d);
 
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-inline
-MP_Float
-operator/(const MP_Float &a, const MP_Float &b)
-{ 
-    return approximate_division(a, b);
-}
-#endif
-
 // Algebraic structure traits
 template <> class Algebraic_structure_traits< MP_Float >
   : public Algebraic_structure_traits_base< MP_Float, 
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-                                            Field_with_sqrt_tag
-#else                                            
                                             Unique_factorization_domain_tag
 	    // with some work on mod/div it could be Euclidean_ring_tag
-#endif
                                           >  {
   public:
 
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-    typedef Tag_false           Is_exact;
-#else // !CGAL_MP_FLOAT_ALLOW_INEXACT
     typedef Tag_true            Is_exact;
-#endif
     typedef Tag_true            Is_numerical_sensitive;
                                     
     struct Unit_part
@@ -431,14 +408,10 @@ template <> class Algebraic_structure_traits< MP_Float >
         Type operator()( 
                 const Type& x,
                 const Type& y ) const {
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT // inexact
-            return x/y;
-#else // exact
             std::pair<MP_Float, MP_Float> res = CGALi::division(x, y);
             CGAL_assertion_msg(res.second == 0,
                     "exact_division() called with operands which do not divide");
             return res.first;
-#endif
         }
     };                                                         
 
@@ -451,16 +424,6 @@ template <> class Algebraic_structure_traits< MP_Float >
         }
     };
 
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT  
-    class Sqrt 
-      : public Unary_function< Type, Type > {
-      public:
-        Type operator()( const Type& x ) const {
-          return approximate_sqrt( x );
-        }
-    };
-#endif
-    
     class Gcd
       : public Binary_function< Type, Type,
                                 Type > {

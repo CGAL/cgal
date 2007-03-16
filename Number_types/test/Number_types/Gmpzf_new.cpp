@@ -1,5 +1,3 @@
-//#define CGAL_MP_FLOAT_ALLOW_INEXACT // TODO: How can I test both cases in one 
-                                    //         file?
 #include <iostream>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/_test_algebraic_structure.h>

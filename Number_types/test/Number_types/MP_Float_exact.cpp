@@ -1,10 +1,4 @@
-#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-#undef CGAL_MP_FLOAT_ALLOW_INEXACT
-#endif 
-
 #include <CGAL/basic.h>
-
-
 #include <iostream>
 #include <CGAL/MP_Float.h>
 #include <CGAL/_test_algebraic_structure.h>
@@ -29,6 +23,5 @@ int main() {
   
     CGAL::test_real_embeddable<NT>();
 
-   
   return 0;
 }
