@@ -5050,11 +5050,15 @@ finish()
     print_center_line "have a look at `${_basename} \"${INSTALL_LOGFILE}\"`."
     print_filled_line
     #write_buffer "\nCGAL_LIB_DIR is\n${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}\n"
-    write_buffer "\nRemember to set the CGAL_MAKEFILE environment variable, "
+    write_buffer "\nRemember to set the CGAL_MAKEFILE environment variable, e.g.:"
+    case "$SHELL" in 
+	*csh) write_buffer "\nsetenv CGAL_MAKEFILE \"";;
+	*)    write_buffer "\nexport CGAL_MAKEFILE=\"";;
+    esac
     if [ -n "${CGAL_INSTALL_MAKEFILE}" ]; then
-        write_buffer "e.g., to\n${CGAL_INSTALL_MAKEFILE}\n\n"
+        write_buffer "${CGAL_INSTALL_MAKEFILE}\"\n\n"
     else
-        write_buffer "e.g., to\n${CGAL_MAKEFILE}\n\n"
+        write_buffer "${CGAL_MAKEFILE}\"\n\n"
     fi
     flush_buffer
 }
