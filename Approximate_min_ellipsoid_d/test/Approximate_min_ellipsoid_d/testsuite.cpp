@@ -62,7 +62,7 @@ struct DD {};
 
 template<typename Kernel,typename Point_list>
 void add_random_points(int n, int d, int multiplicity, Point_list& list,
-		       DD is_d_dim)
+		       const DD&)
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;
@@ -77,7 +77,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
 
 template<typename Kernel,typename Point_list>
 void add_random_points(int n, int d, int multiplicity, Point_list& list,
-		       TwoD is_d_dim)
+		       const TwoD&)
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;
@@ -95,7 +95,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
 
 template<typename Kernel,typename Point_list>
 void add_random_points(int n, int d, int multiplicity, Point_list& list,
-		       ThreeD is_d_dim)
+		       const ThreeD&)
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;

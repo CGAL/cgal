@@ -33,7 +33,7 @@ namespace CGAL {
     typedef typename K_::Cartesian_const_iterator_2 Cartesian_const_iterator;
                                          // iterator over point coordinates
     
-    static int dimension(const Point& p)
+    static int dimension(const Point& )
     {
       return 2;
     }

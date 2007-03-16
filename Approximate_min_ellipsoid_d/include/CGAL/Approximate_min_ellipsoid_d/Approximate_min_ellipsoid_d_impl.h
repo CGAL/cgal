@@ -145,7 +145,7 @@ namespace CGAL {
 
   template<class Traits>
   void Approximate_min_ellipsoid_d<Traits>::
-  compute_axes_2(const double alpha, const double factor)
+  compute_axes_2(const double /* alpha */, const double factor)
   {
     CGAL_APPEL_ASSERT(d==2);
 
@@ -181,7 +181,7 @@ namespace CGAL {
   
   template<class Traits>
   void Approximate_min_ellipsoid_d<Traits>::
-  compute_axes_3(const double alpha, const double factor)
+  compute_axes_3(const double /* alpha */, const double factor)
   {
     CGAL_APPEL_ASSERT(d==3);
 

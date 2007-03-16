@@ -253,7 +253,7 @@ namespace CGAL {
 
   template<bool Embed,class Traits>
   bool Khachiyan_approximation<Embed,Traits>::
-    compute_inverse_of_t_into_mi(const Tag_false exact)
+  compute_inverse_of_t_into_mi(const Tag_false /* exact */)
   {
     // handle the obvious case when the points cannot span \R^d:
     if (P.size() <= static_cast<unsigned int>(d))
