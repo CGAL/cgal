@@ -76,7 +76,7 @@ typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
 offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
                                   Container>& pgn,
                   const typename ConicTraits::Rat_kernel::FT& r,
-                  const DecompositionStrategy& decomp,
+                  const DecompositionStrategy&,
                   const ConicTraits& )
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
