@@ -11,10 +11,10 @@ Lazy_Circular_kernel_arrangement.cpp
 Lazy_Circular_kernel_arrangement_Line_arc.cpp
 Lazy_Circular_kernel_arrangement_Line_Circular.cpp
 old_lazy/
-test_Lazy_circular_kernel.C
-test_Lazy_Line_arc.C
+test_Lazy_circular_kernel.cpp
+test_Lazy_Line_arc.cpp
 demo_Lazy_line_circle.cpp
-demo_elias.C
+demo_elias.cpp
 demo_circle.cpp
 demo_line.cpp
 demo_viewer.cpp
