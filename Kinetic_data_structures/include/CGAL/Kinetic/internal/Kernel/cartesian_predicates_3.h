@@ -405,6 +405,13 @@ struct Cartesian_weighted_orientation_3: public Cartesian_orientation_3<KK>
   typedef typename KK::Weighted_point_3 second_argument_type;
   typedef typename KK::Weighted_point_3 third_argument_type;
   typedef typename KK::Weighted_point_3 fourth_argument_type;
+  template <class NWP>
+    result_type operator()(const NWP &a,
+			   const NWP &b,
+			   const NWP &c,
+			   const NWP &d) const {
+    return Cartesian_orientation_3<KK>::operator()(a,b,c,d);
+  }
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b,
 			 const third_argument_type &c,
@@ -412,7 +419,7 @@ struct Cartesian_weighted_orientation_3: public Cartesian_orientation_3<KK>
   {
     return co3(a.point(), b.point(), c.point(), d.point());
   }
-  using Cartesian_orientation_3<KK>::operator();
+
 };
 
 template <class KK>
