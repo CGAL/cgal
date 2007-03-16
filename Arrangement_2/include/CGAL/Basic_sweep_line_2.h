@@ -757,7 +757,7 @@ public:
    * \return (true) if an overlap occured; (false) otherwise.
    */
   virtual bool _add_curve_to_right (Event* event, Subcurve* curve,
-                                    bool overlap_exist = false)
+                                    bool /* overlap_exist*/ = false)
   {
     std::pair<bool, EventCurveIter> pair_res = 
       event->add_curve_to_right(curve, m_traits);
