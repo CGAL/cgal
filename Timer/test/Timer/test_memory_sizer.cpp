@@ -7,7 +7,6 @@
 
 int main()
 {
-
     typedef CGAL::Memory_sizer::size_type size_type;
 
     CGAL::Memory_sizer mem;
@@ -44,7 +43,6 @@ int main()
               << " (" << (v2>>20) << " MB)" << std::endl;
     std::cout << "Resident size = " << r2
               << " (" << (r2>>20) << " MB)" << std::endl;
-
 
     return 0;
 }

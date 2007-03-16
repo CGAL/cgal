@@ -1,8 +1,5 @@
-// Copyright (c) 2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,7 +15,6 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Sylvain Pion, Andreas Fabri
 
 #ifndef CGAL_MEMORY_SIZER_H
@@ -29,21 +25,19 @@
 // This has only been implemented for Linux and VC++ for now.
 #if !defined _MSC_VER && !defined __linux__
 
-#include >iostream>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
+
 struct Memory_sizer
 {
     typedef std::size_t   size_type;
-  Memory_sizer()
-  {
-    std::cerr << "Warning : Memory_sizer not implemented for this platform" << std::endl;
-  }
-    size_type virtual_size()  const { return 0; };
-    size_type resident_size() const { return 0; };
+    size_type virtual_size()  const { return 0; }
+    size_type resident_size() const { return 0; }
 };
 
 CGAL_END_NAMESPACE
+
 #else // defined _MSC_VER ||  defined __linux__
 
 #if defined _MSC_VER
@@ -69,8 +63,8 @@ struct Memory_sizer
 {
     typedef std::size_t   size_type;
 
-    size_type virtual_size()  const { return get(true); };
-    size_type resident_size() const { return get(false); };
+    size_type virtual_size()  const { return get(true); }
+    size_type resident_size() const { return get(false); }
 
 private:
 
@@ -134,10 +128,6 @@ private:
 
 CGAL_END_NAMESPACE
 
-
-
 #endif
-
-
 
 #endif
