@@ -7,12 +7,7 @@
 
 int main()
 {
-#ifdef CGAL_DONT_HAVE_MEMORY_SIZER
-    // Emit a warning :
-    bool UNTESTED_BECAUSE_MEMORY_SIZER_IS_NOT_PORTED_ON_THIS_PLATFORM;
-    std::cout << "WARNING : This platform does not implement Memory_sizer"
-              << std::endl;
-#else
+
     typedef CGAL::Memory_sizer::size_type size_type;
 
     CGAL::Memory_sizer mem;
@@ -50,7 +45,6 @@ int main()
     std::cout << "Resident size = " << r2
               << " (" << (r2>>20) << " MB)" << std::endl;
 
-#endif // CGAL_DONT_HAVE_MEMORY_SIZER
 
     return 0;
 }

@@ -28,8 +28,23 @@
 
 // This has only been implemented for Linux and VC++ for now.
 #if !defined _MSC_VER && !defined __linux__
-#  define CGAL_DONT_HAVE_MEMORY_SIZER
-#endif
+
+#include >iostream>
+
+CGAL_BEGIN_NAMESPACE
+struct Memory_sizer
+{
+    typedef std::size_t   size_type;
+  Memory_sizer()
+  {
+    std::cerr << "Warning : Memory_sizer not implemented for this platform" << std::endl;
+  }
+    size_type virtual_size()  const { return 0; };
+    size_type resident_size() const { return 0; };
+};
+
+CGAL_END_NAMESPACE
+#else // defined _MSC_VER ||  defined __linux__
 
 #if defined _MSC_VER
 #  include <windows.h>
@@ -42,8 +57,6 @@
 #  include <fcntl.h>
 #  include <unistd.h>
 #endif
-
-#ifndef CGAL_DONT_HAVE_MEMORY_SIZER
 
 CGAL_BEGIN_NAMESPACE
 
@@ -121,6 +134,10 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_DONT_HAVE_MEMORY_SIZER
+
+
+#endif
+
+
 
 #endif
