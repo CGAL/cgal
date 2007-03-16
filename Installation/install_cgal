@@ -2824,7 +2824,7 @@ try_to_get_var_from_config_file()
 	    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
     else
 	log_print "got ${1} from config/`${_basename} \"${2}\"`."
-	log_print "set to \"`value_of ${1}`\"."
+	log_print "set to '`value_of ${1}`'."
 	return 1
     fi
     return 0
