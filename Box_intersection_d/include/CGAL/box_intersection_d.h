@@ -64,7 +64,7 @@ void box_intersection_d(
     RandomAccessIter1 begin1, RandomAccessIter1 end1,
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
     Callback callback,
-    BoxTraits box_traits,
+    BoxTraits,
     std::ptrdiff_t cutoff,
     Box_intersection_d::Topology topology,
     Box_intersection_d::Setting  setting)
@@ -230,7 +230,7 @@ template< class RandomAccessIter, class Callback >
 void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback,
-    std::ptrdiff_t cutoff)
+    std::ptrdiff_t)
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;

@@ -79,8 +79,8 @@ struct Predicate_traits_d : public BoxTraits {
 
     template<bool b> struct Bool_t {};
 
-    static bool hi_greater(NT hi, NT val, Bool_t<true> b) { return hi >= val;}
-    static bool hi_greater(NT hi, NT val, Bool_t<false> b){ return hi >  val;}
+    static bool hi_greater(NT hi, NT val, Bool_t<true> ) { return hi >= val;}
+    static bool hi_greater(NT hi, NT val, Bool_t<false> ){ return hi >  val;}
     static bool hi_greater (NT hi, NT val) {
         return hi_greater(hi,val, Bool_t<closed>()); 
     }

@@ -89,7 +89,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                   Callback callback, Traits traits, int last_dim,
+                   Callback callback, Traits, int last_dim,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
@@ -128,7 +128,7 @@ template< class RandomAccessIter1, class RandomAccessIter2,
 void modified_two_way_scan(
     RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-    Callback callback, Traits traits, int last_dim,
+    Callback callback, Traits, int last_dim,
     bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
@@ -188,7 +188,7 @@ void modified_two_way_scan(
 template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
 median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
-                 Predicate_traits traits, int dim )
+                 Predicate_traits, int dim )
 {
 
     if( Predicate_traits::is_lo_less_lo( *a, *b, dim ) )
