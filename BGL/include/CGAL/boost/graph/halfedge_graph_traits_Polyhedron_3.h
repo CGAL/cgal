@@ -133,7 +133,7 @@ next_edge( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descri
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor 
 prev_edge( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor outedge
-         , Polyhedron_3<Gt,I,HDS,A>& p
+         , Polyhedron_3<Gt,I,HDS,A>&
          )
 {
   CGAL::HalfedgeDS_items_decorator< Polyhedron_3<Gt,I,HDS,A> > D ;

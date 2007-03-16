@@ -80,14 +80,14 @@ in_degree(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::vertex_d
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::vertex_descriptor
-source(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p)
+source(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> const& )
 {
   return e->opposite()->vertex();
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::vertex_descriptor
-target(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p)
+target(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> const& )
 {
   return e->vertex();
 }
@@ -148,14 +148,14 @@ struct graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
-source(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> & p)
+source(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> & )
 {
   return e->opposite()->vertex();
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
-target(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> & p)
+target(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e, CGAL::Polyhedron_3<Gt,I,HDS,A> & )
 {
   return e->vertex();
 }
