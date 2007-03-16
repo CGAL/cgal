@@ -258,14 +258,14 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline DT2_vertex_id_map<Gt,Tds>
-  get(vertex_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& g) {
+  get(vertex_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& ) {
     DT2_vertex_id_map<Gt,Tds> m;
     return m;
   }
 
   template <class Gt, class Tds>
   inline DT2_edge_id_map<Gt,Tds>
-  get(edge_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& g) {
+  get(edge_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& ) {
     DT2_edge_id_map<Gt,Tds> m;
     return m;
   }
