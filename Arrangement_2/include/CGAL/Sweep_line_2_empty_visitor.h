@@ -123,17 +123,17 @@ public:
   /*! Destructor */
   virtual ~Empty_visitor() {}
 
-  void before_handle_event(Event* event){}
+  void before_handle_event(Event*){}
 
-  bool after_handle_event(Event* event,SL_iterator iter, bool flag)
+  bool after_handle_event(Event*, SL_iterator, bool)
   {
     return true;
   }
 
-  void add_subcurve(X_monotone_curve_2 cv,Subcurve* sc){}
+  void add_subcurve(X_monotone_curve_2, Subcurve*){}
 
   
-  void init_event(Event* e){}
+  void init_event(Event* ){}
 
   void before_sweep(){}
   void after_sweep(){}
@@ -143,23 +143,23 @@ public:
   //void update_event(Event* e, const Point_2& pt)
   //{}
 
-  void update_event(Event* e,
-                    const Point_2& end_point,
-                    const X_monotone_curve_2& cv,
-                    bool is_left_end)
+  void update_event(Event*,
+                    const Point_2&,
+                    const X_monotone_curve_2&,
+                    bool /* is_left_end */)
   {}
 
-  void update_event(Event* e,
-                    Subcurve* sc1,
-                    Subcurve* sc2,
+  void update_event(Event*,
+                    Subcurve*,
+                    Subcurve*,
                     bool created = false)
   {}
 
-  void update_event(Event* e,
-                    Subcurve* sc1)
+  void update_event(Event*,
+                    Subcurve*)
   {}
 
-  void update_event(Event* e, const Point_2& pt)
+  void update_event(Event*, const Point_2&)
   {}
 
 

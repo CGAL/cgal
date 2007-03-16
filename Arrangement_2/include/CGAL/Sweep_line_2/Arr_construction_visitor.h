@@ -145,7 +145,7 @@ public:
                    m_th->target() == m_arr_access.top_left_fictitious_vertex());
   }
 
-  bool after_handle_event(Event* event, SL_iterator iter, bool flag)
+  bool after_handle_event(Event* event, SL_iterator iter, bool)
   {
     if(!event->has_left_curves() && !event->has_right_curves())
     {
@@ -398,10 +398,10 @@ public:
 
 
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
-                                               SL_iterator iter)
+                                               SL_iterator)
   {
     return (m_arr_access.arrangement().insert_in_face_interior (_point(pt),
-					                                  m_th->face()));
+								m_th->face()));
   }
 
   void relocate_holes_and_iso_verts_in_new_face(Halfedge_handle he)

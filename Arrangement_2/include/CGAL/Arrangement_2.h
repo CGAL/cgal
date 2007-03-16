@@ -2056,7 +2056,7 @@ protected:
   std::pair<bool, bool> _is_face_unbounded_imp (DHalfedge *he,
                                                 Tag_true) const;
 
-  std::pair<bool, bool> _is_face_unbounded_imp (DHalfedge *he,
+  std::pair<bool, bool> _is_face_unbounded_imp (DHalfedge *,
                                                 Tag_false) const
   {
     // If the traits class does not support unbounded curves, it is guaranteed
