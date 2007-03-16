@@ -24,9 +24,7 @@ int main(int argc, char** argv)
   CGAL::Timer time_insert;
   CGAL::Timer time_pop;
   CGAL::Timer time;
-#ifndef CGAL_DONT_HAVE_MEMORY_SIZER
   CGAL::Memory_sizer memory;
-#endif
 
   time.start();
   for(int loop = 0; loop < number_of_loops; ++loop)
@@ -44,12 +42,8 @@ int main(int argc, char** argv)
   std::cerr << "Total time:           " << time.time()
 	    << "\nTime for 'insert':    " << time_insert.time() 
 	    << "\nTime for 'pop_front': " << time_pop.time() 
-#ifdef CGAL_DONT_HAVE_MEMORY_SIZER
-	    << "\n(No CGAL memory sizer on this platform.)"
-#else
 	    << "\nResident memory:      " << memory.resident_size() 
 	    << "\nVirtual  memory:      " << memory.virtual_size()
-#endif
 	    << "\n";
   return 0;
 }
