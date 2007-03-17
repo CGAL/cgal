@@ -1048,7 +1048,7 @@ namespace CircularFunctors {
 
   template < class CK >
   bool
-  is_vertical(const typename CK::Circular_arc_2 &a)
+  is_vertical(const typename CK::Circular_arc_2 &)
   {
     return false; 
   }
