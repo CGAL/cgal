@@ -33,14 +33,11 @@ ET QP_solver<Q, ET, Tags>::original_variable_value_under_bounds(int i) const
   switch (x_O_v_i[i]) {
   case UPPER:
     return qp_u[i];
-    break;
   case ZERO:
     return et0;
-    break;
   case LOWER:
   case FIXED:
     return qp_l[i];
-    break;
   case BASIC:
     CGAL_qpe_assertion(false);
   }
@@ -64,17 +61,13 @@ ET QP_solver<Q, ET, Tags>::variable_numerator_value(int i) const
   switch (x_O_v_i[i]) {
   case QP::UPPER:
     return ET(qp_u[i]) * d;
-    break;
   case QP::ZERO:
     return et0;
-    break;
   case QP::LOWER:
   case QP::FIXED:
     return ET(qp_l[i]) * d;
-    break;
   case QP::BASIC:
     return x_B_O[in_B[i]];
-    break;
   default: // never reached
     return et0;
   }

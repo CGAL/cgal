@@ -109,7 +109,8 @@ void write_MPS(std::ostream& out,
   // output header:
   if (number_type.length() == 0) {
     const char *tn = QP_from_mps_detail::MPS_type_name
-      <typename QP::U_iterator::value_type>::name();
+      <typename 
+      std::iterator_traits<typename QP::U_iterator>::value_type>::name();
     if (tn != 0)
       out << "* Number-type: " << tn << "\n";
   } else

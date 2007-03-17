@@ -179,7 +179,7 @@ bool QP_from_mps<IT_, Is_linear_,
     return true;
   do {
     from.get(c);
-    if (c == '\r' || c == '\n') return true;
+    if (c == '\r' || c == '\n') break;
     if (isspace(c)) 
       whitespaces.push_back(c); // save whitespace
     else {

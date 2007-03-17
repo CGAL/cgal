@@ -69,9 +69,11 @@ int main(const int argNr,const char **args) {
     CGAL::print_quadratic_program (cout, qp);
     cout << std::endl;
   }
-
-  typedef CGAL::Quadratic_program_solution<ET> Solution;
-  Solution s = CGAL::solve_quadratic_program (qp, ET(0));
+  typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_true> Tags;
+  CGAL::QP_pricing_strategy<QP, ET, Tags> *pricing_strategy =
+    new CGAL::QP_partial_filtered_pricing<QP, ET, Tags>;
+  typedef CGAL::QP_solver<QP, ET, Tags> Solver;
+  Solver s (qp, pricing_strategy, 1);
 
   if (s.is_valid()) {
     cout << "Solution is valid." << endl;
@@ -87,8 +89,8 @@ int main(const int argNr,const char **args) {
       s.solution() << endl;     
      
     cout << "Variable values:" << endl;
-    Solution::Variable_value_iterator it 
-      = s.variable_values_begin() ;
+    Solver::Variable_value_iterator it 
+      = s.original_variable_values_begin() ;
     for (int i=0; i < qp.n(); ++it, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
 	   << CGAL::to_double(*it) << endl;
@@ -98,5 +100,7 @@ int main(const int argNr,const char **args) {
     cout << "Problem is infeasible." << endl;
   else // unbounded
     cout << "Problem is unbounded." << endl;
+
+  delete pricing_strategy;
   return 0;
 }

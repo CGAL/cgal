@@ -34,7 +34,6 @@ ET QP_solver<Q, ET, Tags>::unbounded_direction_value(int i) const
      return direction == 1 ? -d : d;
    return et0;
  }
- return et0;
 }
 CGAL_END_NAMESPACE
 

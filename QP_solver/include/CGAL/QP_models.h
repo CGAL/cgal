@@ -58,7 +58,7 @@
   typedef typename Base::U_iterator U_iterator;\
   typedef typename Base::D_iterator D_iterator;\
   typedef typename Base::C_iterator C_iterator;\
-  typedef typename Base::C_entry C_entry;
+  typedef typename Base::C_entry C_entry
 // end QP_MODEL_ITERATOR_TYPES
 
 

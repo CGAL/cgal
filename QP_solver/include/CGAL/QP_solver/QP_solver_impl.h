@@ -2646,7 +2646,6 @@ multiply__2D_B_OxN_O(Value_iterator out) const
     //initialize
     std::fill_n( out, B_O.size(), et0);
 
-    Index_const_iterator    row_it;
     Value_iterator          out_it;
     ET                      value;
     
