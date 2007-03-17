@@ -3358,7 +3358,7 @@ namespace HomogeneousKernelFunctors {
     }
 
     Rep // Vector_2
-    operator()(Return_base_tag, const Point_2& p, const Origin& q) const
+    operator()(Return_base_tag, const Point_2& p, const Origin& ) const
     {
       return Rep( - p.hx(), - p.hy(), p.hw() );
     }
@@ -3481,7 +3481,7 @@ namespace HomogeneousKernelFunctors {
     }
 
     Rep // Vector_3
-    operator()(Return_base_tag, const Point_3& p, const Origin& q) const
+    operator()(Return_base_tag, const Point_3& p, const Origin& ) const
     {
       return Rep( - p.hx(), - p.hy(), - p.hz(), p.hw() );
     }
