@@ -60,7 +60,7 @@ public:
     typedef typename DG::Face_handle   Face_handle;
     typedef Arity_tag<1>  Arity;
 
-    Point_2 operator()(const Face_handle& f) const {
+    Point_2 operator()(const Face_handle& ) const {
       return Point_2();
     }
   };

@@ -226,11 +226,11 @@ class Delaunay_graph_concept
   }
 
  public:
-  Delaunay_graph_concept(const Geom_traits& gt = Geom_traits()) {}
+  Delaunay_graph_concept(const Geom_traits& /* gt */ = Geom_traits()) {}
 
   template<class Iterator>
-  Delaunay_graph_concept(Iterator first, Iterator beyond,
-			 const Geom_traits& gt = Geom_traits()) {}
+  Delaunay_graph_concept(Iterator /* first */, Iterator /* beyond */,
+			 const Geom_traits& /* gt */ = Geom_traits()) {}
 
 
   void insert(const Site_2&) {}
@@ -242,7 +242,7 @@ class Delaunay_graph_concept
   size_type number_of_faces() const { return 0; }
   size_type number_of_edges() const { return 0; }
 
-  size_type degree(Vertex_handle v) const { return 0; }
+  size_type degree(Vertex_handle ) const { return 0; }
 
   int dimension() const { return -1; }
 

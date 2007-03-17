@@ -77,7 +77,7 @@ public:
     return e_rejector_.is_valid() && f_rejector_.is_valid();
   }
 
-  bool is_valid(const Delaunay_graph& dg) const {
+  bool is_valid(const Delaunay_graph& ) const {
     return e_rejector_.is_valid() && f_rejector_.is_valid();
   }
 

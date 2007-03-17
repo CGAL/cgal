@@ -104,7 +104,7 @@ class VDA_Tester
   }
 
   template<class Iterator>
-  VD* compute_vd(const DG& dg, Iterator first, Iterator beyond,
+  VD* compute_vd(const DG& , Iterator first, Iterator beyond,
 		 CGAL::Tag_true) const
   {
     // insertion is supported
