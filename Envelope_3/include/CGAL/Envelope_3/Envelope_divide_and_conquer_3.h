@@ -1694,7 +1694,7 @@ protected:
     // Write the discover time for a given vertex.
     template <typename Vertex, typename Graph>
 
-    void discover_vertex (Vertex fh, const Graph& g)
+    void discover_vertex (Vertex fh, const Graph& )
     {
       // first we check if we can set the decision immediately
       // if a surface of one map doesn't exist, then we set the second surface

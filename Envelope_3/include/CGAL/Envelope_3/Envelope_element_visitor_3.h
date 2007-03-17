@@ -1963,8 +1963,8 @@ protected:
       // and is also no isolated)
       new_vertices.push_back(v);
     }
-    void before_create_vertex_at_infinity(Boundary_type inf_x,
-                                          Boundary_type inf_y)
+    void before_create_vertex_at_infinity(Boundary_type /* inf_x */,
+                                          Boundary_type /* inf_y */ )
     {}
 
     void after_create_vertex_at_infinity(Vertex_handle v)
@@ -2252,8 +2252,7 @@ protected:
 
     virtual void before_move_hole (Face_handle from_f,
                                    Face_handle to_f,
-
-                                   Ccb_halfedge_circulator h)
+                                   Ccb_halfedge_circulator )
     {
       // should be used after insert_at_vertices which creates a new face
       CGAL_assertion(is_in_relocate);
@@ -2278,7 +2277,7 @@ protected:
 
     virtual void before_move_isolated_vertex (Face_handle from_f,
   					      Face_handle to_f,
-  					      Vertex_handle v)
+  					      Vertex_handle )
     {
       // should be used after insert_at_vertices which creates a new face
 
