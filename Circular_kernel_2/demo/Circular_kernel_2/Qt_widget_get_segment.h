@@ -131,7 +131,7 @@ protected:
     }//endswitch
   }
 
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent *)
   {
     if(firstpoint)
     {
