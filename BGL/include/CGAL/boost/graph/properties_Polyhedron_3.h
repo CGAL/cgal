@@ -46,7 +46,7 @@ public:
   typedef double                                                          reference;
   typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
 
-  Polyhedron_edge_weight_map( Polyhedron const& p_) {}
+  Polyhedron_edge_weight_map( Polyhedron const& ) {}
 
   reference operator[](key_type const& e) const
   {
