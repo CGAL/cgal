@@ -88,7 +88,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
-    int& i,const Tag_true use_sqrt,const Tag_false is_exact) {
+						      int& i,const Tag_true /* use_sqrt */,
+						      const Tag_false /* is_exact */) {
     using namespace Min_sphere_of_spheres_d_impl;
   
     // we will compute the excesses w.r.t. to the ball B with
@@ -119,8 +120,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
   
   template<class Traits>
-  bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
-    int& i,const Tag_true use_sqrt,const Tag_true is_exact) {
+  bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from, int to,
+						      int& i, const Tag_true /* use_sqrt */,
+						      const Tag_true /* is_exact*/) {
     using namespace Min_sphere_of_spheres_d_impl;
   
     // we will compute the excesses w.r.t. to the ball B with
@@ -158,7 +160,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
-    int& i,const Tag_false use_sqrt,const Tag_false is_exact) {
+						      int& i, const Tag_false /* use_sqrt */,
+						      const Tag_false /* is_exact*/ ) {
     using namespace Min_sphere_of_spheres_d_impl;
   
     // we will compute the excesses w.r.t. to the ball with
@@ -188,7 +191,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
-    int& i,const Tag_false use_sqrt,const Tag_true is_exact) {
+						      int& i,const Tag_false /* use_sqrt */,
+						      const Tag_true /* is_exact */) {
     using namespace Min_sphere_of_spheres_d_impl;
   
     // we will compute the excesses w.r.t. to the ball B with
@@ -241,13 +245,13 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::
-    is_valid(const Tag_false is_exact) {
+  is_valid(const Tag_false /* is_exact */) {
     return true;
   }
   
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::
-    is_valid(const Tag_true is_exact) {
+    is_valid(const Tag_true /* is_exact */) {
     using namespace Min_sphere_of_spheres_d_impl;
     using std::cerr;
     using std::endl;

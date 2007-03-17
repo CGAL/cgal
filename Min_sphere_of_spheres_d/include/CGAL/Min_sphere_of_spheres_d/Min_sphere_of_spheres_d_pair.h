@@ -55,11 +55,11 @@ namespace CGAL_MINIBALL_NAMESPACE {
       *result = *first;
   }
 
-  inline bool is_approximate(const Tag_false is_exact) {
+  inline bool is_approximate(const Tag_false /* is_exact*/) {
     return true;
   }
 
-  inline bool is_approximate(const Tag_true is_exact) {
+  inline bool is_approximate(const Tag_true /* is_exact */) {
     return false;
   }
 
