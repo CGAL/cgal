@@ -211,7 +211,7 @@ public:
     return;
   }
 
-  virtual void write_vertex_data (Vertex_const_handle v)
+  virtual void write_vertex_data (Vertex_const_handle )
   {}
   //@}
 
@@ -238,7 +238,7 @@ public:
     return;
   }
 
-  virtual void write_halfedge_data (Halfedge_const_handle he)
+  virtual void write_halfedge_data (Halfedge_const_handle )
   {}
   //@}
 
@@ -313,7 +313,7 @@ public:
   }
 
   /*! Read a size value (with a label comment line before it). */
-  Size read_size (const char *title = NULL)
+  Size read_size (const char* /* title */ = NULL)
   {
     std::size_t   val;
 
@@ -374,7 +374,7 @@ public:
     return;
   }
 
-  virtual void read_vertex_data (Vertex_handle v)
+  virtual void read_vertex_data (Vertex_handle )
   {}
   //@}
 

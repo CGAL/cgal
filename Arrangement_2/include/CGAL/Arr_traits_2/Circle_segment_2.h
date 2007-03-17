@@ -1745,7 +1745,7 @@ protected:
    * Compare two line segments to the left of their intersection point.
    */
   Comparison_result _lines_compare_to_left (const Self& cv,
-                                             const Point_2& p) const
+                                            const Point_2& ) const
   {
     if (_index() != 0 && _index() == cv._index())
       return (EQUAL);

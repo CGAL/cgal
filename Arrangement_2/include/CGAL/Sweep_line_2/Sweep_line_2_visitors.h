@@ -83,7 +83,7 @@ public:
 
        
 
-  bool after_handle_event(Event* event,SL_iterator iter, bool flag)
+  bool after_handle_event(Event* event,SL_iterator , bool )
   {
     if((m_includeEndPoints ||
        event->is_intersection() ||
@@ -92,7 +92,7 @@ public:
     return true;
   }
 
- void add_subcurve(X_monotone_curve_2 cv,Subcurve* sc){}
+ void add_subcurve(X_monotone_curve_2 ,Subcurve* ){}
 
   OutputIerator get_output_iterator()
   {

@@ -235,8 +235,8 @@ public:
 
   void update_event(Event* e,
                     const Point_2& end_point,
-                    const X_monotone_curve_2& cv,
-                    bool is_left_end)
+                    const X_monotone_curve_2& ,
+                    bool /* is_left_end */ )
   {
     if(!e->is_finite())
       return;
@@ -253,9 +253,9 @@ public:
       }
   }
 
-  void update_event(Event* e,
-                    Subcurve* c1,
-                    Subcurve* c2,
+  void update_event(Event* ,
+                    Subcurve* ,
+                    Subcurve* ,
                     bool created = false)
   {
     CGAL_assertion(created == true);

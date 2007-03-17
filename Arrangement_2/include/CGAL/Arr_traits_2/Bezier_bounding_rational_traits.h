@@ -91,7 +91,7 @@ public:
   
   // iddo: can_refine() function can be based on Euclidean or parametric space.
   // For rationals it is a simple parametric-space check.
-  bool can_refine(const Control_point_vec& cp, const NT& l, const NT& r)
+  bool can_refine(const Control_point_vec& , const NT& l, const NT& r)
   {
     // iddo: might be made more efficient if needed (based on denom...)
     if (r-l < _can_refine_bound)
