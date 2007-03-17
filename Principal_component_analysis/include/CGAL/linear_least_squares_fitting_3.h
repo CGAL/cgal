@@ -38,7 +38,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
                              typename K::FT covariance[6], // covariance matrix
                              const typename K::Point_3& c, // centroid
-                             const K& k,                   // kernel
+                             const K& ,                    // kernel
                              const typename K::Point_3*)   // used for indirection
 {
   typedef typename K::FT       FT;
@@ -74,7 +74,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
                              typename K::FT covariance[6], // covariance matrix
                              const typename K::Point_3& c, // centroid
-                             const K& k,                   // kernel
+                             const K& ,                    // kernel
                              const typename K::Triangle_3*)// used for indirection
 {
   typedef typename K::FT       FT;
@@ -139,7 +139,7 @@ typename K::FT
 fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
                 const typename K::Point_3& c,       // centroid
                 typename K::Plane_3& plane,         // best fit plane
-                const K& k)                         // kernel
+                const K& )                          // kernel
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -183,7 +183,7 @@ typename K::FT
 fitting_line_3(const typename K::FT covariance[6], // covariance matrix
                const typename K::Point_3& c,       // centroid
                typename K::Line_3& line,           // best fit line
-               const K& k)                         // kernel
+               const K&  )                         // kernel
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;

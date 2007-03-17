@@ -70,7 +70,7 @@ template < typename InputIterator,
 typename K::Point_3
 centroid(InputIterator begin, 
          InputIterator end, 
-         const K& k,
+         const K& ,
          const typename K::Point_3*)
 {
   typedef typename K::Vector_3 Vector;
@@ -95,7 +95,7 @@ template < typename InputIterator,
 typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
-         const K& k,
+         const K& ,
          const typename K::Triangle_2*)
 {
   typedef typename K::FT       FT;
@@ -128,7 +128,7 @@ template < typename InputIterator,
 typename K::Point_3
 centroid(InputIterator begin, 
          InputIterator end, 
-         const K& k,
+         const K& ,
          const typename K::Triangle_3*)
 {
   typedef typename K::FT       FT;
