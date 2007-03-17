@@ -133,7 +133,7 @@ struct Cartesian_power_test_3
 				     dsx, dsy, dsz, dst);
   }
 
- result_type operator()(const first_argument_type &a,
+ result_type operator()(const first_argument_type &,
 			const second_argument_type &,
 			const third_argument_type &,
 			const fourth_argument_type &)const
@@ -141,14 +141,14 @@ struct Cartesian_power_test_3
     CGAL_assertion(0);
     return result_type();
   }
-  result_type operator()(const first_argument_type &a,
+  result_type operator()(const first_argument_type &,
 			 const second_argument_type &,
 			 const third_argument_type &)const
   {
     CGAL_assertion(0);
     return result_type();
   }
-  result_type operator()(const first_argument_type &a,
+  result_type operator()(const first_argument_type &,
 			 const second_argument_type &)const
   {
     CGAL_assertion(0);
