@@ -1014,12 +1014,12 @@ public:
     return (itr_pair.first == itr_pair.second);
   }
   
-  bool _is_empty(const Polygon_with_holes_2& pgn) const
+  bool _is_empty(const Polygon_with_holes_2& ) const
   {
     return (false);
   }
   
-  bool _is_plane(const Polygon_2& pgn) const
+  bool _is_plane(const Polygon_2& ) const
   {
     return (false);
   }
