@@ -198,8 +198,8 @@ Regular_grid_2<StreamLinesTraits_2>::get_vector_field(const Point_2 &
 
 template <class StreamLinesTraits_2>
 typename Regular_grid_2<StreamLinesTraits_2>::FT
-Regular_grid_2<StreamLinesTraits_2>::get_density_field(const Point_2 &
-						       p) const
+Regular_grid_2<StreamLinesTraits_2>::get_density_field(const Point_2 & ) const
+						       
 {
   return 1.0;
 }
@@ -207,8 +207,7 @@ Regular_grid_2<StreamLinesTraits_2>::get_density_field(const Point_2 &
 template<class StreamLinesTraits_2>
 inline
 typename Regular_grid_2<StreamLinesTraits_2>::FT
-Regular_grid_2<StreamLinesTraits_2>::get_integration_step(const
-							  Point_2 &)
+Regular_grid_2<StreamLinesTraits_2>::get_integration_step(const Point_2 &)
   const
 {
   return 1.0;
