@@ -58,7 +58,7 @@ struct Dummy_straight_skeleton_builder_2_visitor
 			    , Vertex_const_handle const& /* rnode */
                             )  const {}
 
-  void on_split_event_created( Vertex_const_handle const& node )  const {}
+  void on_split_event_created( Vertex_const_handle const&  )  const {}
 
   void on_pseudo_split_event_created( Vertex_const_handle const& /* lnode */
                                     , Vertex_const_handle const& /* rnode */
