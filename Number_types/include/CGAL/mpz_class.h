@@ -213,7 +213,7 @@ public:
     }; 
     struct Is_finite: public Unary_function<mpz_class,bool> {
         template <typename T, typename U> 
-        bool operator()( const ::__gmp_expr< T , U >& x) const {
+        bool operator()( const ::__gmp_expr< T , U >& ) const {
             CGAL_CHECK_GMP_EXPR;
             return true;
         }
