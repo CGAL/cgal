@@ -278,12 +278,11 @@ namespace CGAL {
       
       // Begins exporting to file filename.  Sets the current stroke mode
       // to Solid and the current label-mode to Random_angle.
-      Eps_export_2(std::string filename,double zoom,int seed=0) :
-	bb(4,0.0), bm(Solid), lm(Random_angle), count(1), 
-	next_label(default_label(1)), adjust_bb(true),
-	zoom(zoom), filename(filename)
-      {
-      }
+      Eps_export_2(std::string filename, double zoom, int /* seed */ = 0) 
+	: bb(4,0.0), bm(Solid), lm(Random_angle), count(1), 
+	  next_label(default_label(1)), adjust_bb(true),
+	  zoom(zoom), filename(filename)
+      {}
       
       // Ends exporting and closes the file.
       ~Eps_export_2()
