@@ -60,7 +60,7 @@ void test_locate(const VDA& vda, const Projector& project,
 }
 
 template<class VDA, class Projector, class Point_vector, class OStream>
-void test_locate_dg(const VDA& vda, const Projector& project,
+void test_locate_dg(const VDA& vda, const Projector& ,
 		    const Point_vector& vecp, OStream& os)
 {
   typedef typename VDA::Adaptation_traits                     Adaptation_traits;
