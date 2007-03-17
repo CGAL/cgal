@@ -85,7 +85,12 @@ public:
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2, typename T3 >
-  Vector_3(const T1 &x, const T2 &y, const T3 &z)
+#ifdef __INTEL_COMPILER
+      Self
+#else
+  Vector_3
+#endif
+          (const T1 &x, const T2 &y, const T3 &z)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z)) {}
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)

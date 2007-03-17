@@ -72,7 +72,12 @@ public:
       : Rep(p) {}
 
   template < typename T1, typename T2, typename T3 >
-  Point_3(const T1& x, const T2& y, const T3& z)
+#ifdef __INTEL_COMPILER
+     Self
+#else
+  Point_3
+#endif
+         (const T1& x, const T2& y, const T3& z)
     : Rep(typename R::Construct_point_3()(Return_base_tag(), x, y, z))
   {}
 
