@@ -29,8 +29,8 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_solver/iterator.h>
 #include <CGAL/QP_solver/functors.h>
-#include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
-#include <CGAL/QP_solver/QP_partial_exact_pricing.h>
+#include <CGAL/QP_solver/QP_full_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_full_exact_pricing.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -731,11 +731,11 @@ private:
     
   template < class NT >
   Pricing_strategy *pricing_strategy( NT) {
-    return new QP_partial_filtered_pricing<QP, ET, QP_tags>;
+    return new QP_full_filtered_pricing<QP, ET, QP_tags>;
   }
   
   Pricing_strategy *pricing_strategy( ET) {
-    return new QP_partial_exact_pricing<QP, ET, QP_tags>;
+    return new QP_full_exact_pricing<QP, ET, QP_tags>;
   }
     
 };
