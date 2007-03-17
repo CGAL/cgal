@@ -30,7 +30,8 @@
 #include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
-
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/logical.hpp>
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
@@ -62,8 +63,8 @@ public:
 
     template < typename Tx, typename Ty >
     PointH2(const Tx & x, const Ty & y,
-            typename boost::enable_if_c<CGAL_AND((boost::is_convertible<Tx, RT>::value),
-                                                 (boost::is_convertible<Ty, RT>::value)) >::type* = 0)
+            typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, RT>,
+                                                        boost::is_convertible<Ty, RT> > >::type* = 0)
       : base(x, y, RT(1)) {}
 
     PointH2(const FT& x, const FT& y)

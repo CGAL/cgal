@@ -27,6 +27,9 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Fourtuple.h>
 #include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
+#include <boost/utility/enable_if.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/logical.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,9 +61,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   PointH3(const Tx & x, const Ty & y, const Tz & z,
-          typename boost::enable_if_c<CGAL_AND_3((boost::is_convertible<Tx, RT>::value),
-                                                 (boost::is_convertible<Ty, RT>::value),
-                                                 (boost::is_convertible<Tz, RT>::value)) >::type* = 0)
+          typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
+                                                                         boost::is_convertible<Ty, RT> >,
+                                                       boost::is_convertible<Tz, RT> > >::type* = 0)
     : base(x, y, z, RT(1)) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)
