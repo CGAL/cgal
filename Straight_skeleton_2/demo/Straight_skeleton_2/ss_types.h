@@ -75,20 +75,20 @@ struct Visitor
     //printf("\rInitialization: %d/%d (%d%%)",mVertexCount0,mTotalVertices,(mVertexCount0*100/mTotalVertices));
   }
 
-  void on_edge_event_created( Vertex_const_handle const& lnode
-                            , Vertex_const_handle const& rnode
+  void on_edge_event_created( Vertex_const_handle const& 
+                            , Vertex_const_handle const& 
                             )  const
   {
     ++ mFoundEdgeEventCount ;
   }
 
-  void on_split_event_created( Vertex_const_handle const& node ) const
+  void on_split_event_created( Vertex_const_handle const&  ) const
   {
     ++ mFoundSplitEventCount ;
   }
 
-  void on_pseudo_split_event_created( Vertex_const_handle const& lnode
-                                    , Vertex_const_handle const& rnode
+  void on_pseudo_split_event_created( Vertex_const_handle const& 
+                                    , Vertex_const_handle const& 
                                     ) const
   {
   }
@@ -118,7 +118,7 @@ struct Visitor
 
   void on_split_event_processed( Vertex_const_handle const& seed
                                , Vertex_const_handle const& node0
-                               , Vertex_const_handle const& node1
+                               , Vertex_const_handle const& 
                                ) const
   {
     draw_segment(seed->point(),node0->point(), CGAL::BLACK );
@@ -157,7 +157,7 @@ struct Visitor
     std::cerr << what << std::endl ;
   }
 
-  void on_algorithm_finished ( bool finished_ok ) const
+  void on_algorithm_finished ( bool /* finished_ok */ ) const
   {
   }
 
