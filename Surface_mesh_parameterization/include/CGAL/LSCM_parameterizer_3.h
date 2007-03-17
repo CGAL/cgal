@@ -611,7 +611,7 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,
-                      const LeastSquaresSolver& solver)
+                      const LeastSquaresSolver& )
 {
     Vector_3    first_triangle_normal;
 
