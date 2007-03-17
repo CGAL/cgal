@@ -64,12 +64,8 @@ public:
 
   Triangulation_cell_base_with_circumcenter_3
         (const Triangulation_cell_base_with_circumcenter_3 &c)
-  {
-      if (c.circumcenter_ != NULL)
-	  circumcenter_ = new Point_3(*circumcenter_);
-      else
-          circumcenter_ = NULL;
-  }
+    : Cb(c), circumcenter_(c.circumcenter_ != NULL ? new Point_3(*(c.circumcenter_)) : NULL)
+  {}
 
   Triangulation_cell_base_with_circumcenter_3&
   operator=(const Triangulation_cell_base_with_circumcenter_3 &c)
