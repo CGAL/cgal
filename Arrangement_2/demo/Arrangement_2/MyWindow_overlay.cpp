@@ -22,7 +22,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "MyWindow.h"
+#include "arrangement_2.h"
 #include "forms.h"
 #include "qt_layer.h"
 #include "demo_tab.h"

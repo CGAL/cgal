@@ -35,10 +35,10 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: arrangements_2$(EXE_EXT)
+all: arrangement_2$(EXE_EXT)
 
-MyWindow$(OBJ_EXT): MyWindow.cpp MyWindow.moc cgal_types.h demo_tab.h forms.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.cpp
+arrangement_2$(OBJ_EXT): arrangement_2.cpp arrangement_2.moc cgal_types.h demo_tab.h forms.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) arrangement_2.cpp
 
 MyWindow_files$(OBJ_EXT): MyWindow_files.cpp cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_files.cpp
@@ -49,8 +49,8 @@ MyWindow_overlay$(OBJ_EXT): MyWindow_overlay.cpp cgal_types.h demo_tab.h
 MyWindow_operations$(OBJ_EXT): MyWindow_operations.cpp cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_operations.cpp
 
-MyWindow.moc: MyWindow.h
-	$(QT_MOC) $< -o MyWindow.moc
+arrangement_2.moc: arrangement_2.h
+	$(QT_MOC) $< -o arrangement_2.moc
 
 forms$(OBJ_EXT): forms.cpp  forms.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) forms.cpp
@@ -62,16 +62,16 @@ forms.moc: forms.h
 qt_layer$(OBJ_EXT): qt_layer.cpp 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.cpp
 
-arrangements_2$(EXE_EXT): MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
-                          MyWindow_overlay$(OBJ_EXT) \
-                          MyWindow_operations$(OBJ_EXT)  forms$(OBJ_EXT) \
-                          qt_layer$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)arrangements_2 MyWindow$(OBJ_EXT) \
+arrangement_2$(EXE_EXT): arrangement_2$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
+                         MyWindow_overlay$(OBJ_EXT) \
+                         MyWindow_operations$(OBJ_EXT)  forms$(OBJ_EXT) \
+                         qt_layer$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)arrangement_2 arrangement_2$(OBJ_EXT) \
 	MyWindow_files$(OBJ_EXT) MyWindow_overlay$(OBJ_EXT) \
 	MyWindow_operations$(OBJ_EXT) forms$(OBJ_EXT) \
         qt_layer$(OBJ_EXT) $(LDFLAGS)
 
-clean: MyWindow.clean MyWindow_files.clean MyWindow_overlay.clean \
+clean: arrangement_2.clean MyWindow_files.clean MyWindow_overlay.clean \
        MyWindow_operations.clean forms.clean qt_layer.clean
 	rm -rf *.moc arrangements_2
 
