@@ -28,8 +28,8 @@
 
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/functors.h>
-#include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
-#include <CGAL/QP_solver/QP_partial_exact_pricing.h>
+#include <CGAL/QP_solver/QP_full_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_full_exact_pricing.h>
 
 // here is how it works. We have d+2 variables: 
 // R (big radius), r (small radius), c (center). The problem is
@@ -677,11 +677,11 @@ private:
     
   template < class NT >
   Pricing_strategy *pricing_strategy( NT) {
-    return new QP_partial_filtered_pricing<LP, ET, QP_tags>;
+    return new QP_full_filtered_pricing<LP, ET, QP_tags>;
   }
   
   Pricing_strategy *pricing_strategy( ET) {
-    return new QP_partial_exact_pricing<LP, ET, QP_tags>;
+    return new QP_full_exact_pricing<LP, ET, QP_tags>;
   }
     
 };
