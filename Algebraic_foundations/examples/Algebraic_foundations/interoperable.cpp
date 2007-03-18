@@ -6,7 +6,7 @@
 // the result type is determined via Coercion_traits<A,B>
 template <typename A, typename B>
 typename CGAL::Coercion_traits<A,B>::Type
-binary_function(const A& a , const B& b){
+binary_func(const A& a , const B& b){
     typedef CGAL::Coercion_traits<A,B> CT;
 
     // check for explicit interoperability
@@ -20,8 +20,8 @@ binary_function(const A& a , const B& b){
 
 int main(){
     // Function call for the interoperable types
-    std::cout<< binary_function(double(3), int(5)) << std::endl;
+    std::cout<< binary_func(double(3), int(5)) << std::endl;
     // Note that Coercion_traits is symmetric
-    std::cout<< binary_function(int(3), double(5)) << std::endl;
+    std::cout<< binary_func(int(3), double(5)) << std::endl;
     return 0;
 }
