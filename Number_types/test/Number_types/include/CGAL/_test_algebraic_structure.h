@@ -31,6 +31,8 @@
 
 #include <vector>
 
+#include <CGAL/Testsuite/use.h>
+
 #ifndef CGAL_TEST_ALGEBRAIC_STRUCTURE_H
 #define CGAL_TEST_ALGEBRAIC_STRUCTURE_H
 
@@ -507,7 +509,7 @@ class Test_is_square {
         BOOST_STATIC_ASSERT(
                 ( ::boost::is_same< AS& , Second_argument_type>::value));
         //BOOST_STATIC_ASSERT(( ::boost::is_same< bool , Result_type>::value));
-        bool b = Result_type(true); (void) b;
+        bool b = Result_type(true); CGAL_USE(b);
  
         AS test_number = AS(3)*AS(3);
         AS result;
