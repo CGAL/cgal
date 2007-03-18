@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -66,7 +66,7 @@ public:
                 const Type& y ) const {
             return x.gcd(y);
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int);
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int)
     };
     
     typedef INTERN_AST::Div_per_operator< Type > Div;
