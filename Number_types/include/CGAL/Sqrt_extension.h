@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -36,8 +36,7 @@
 
 #include <CGAL/number_type_basic.h>
 
-#include <numeric> // fro std::accumulate
-#include <boost/numeric/interval.hpp> // Needed by To_interval
+#include <numeric> // for std::accumulate
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
@@ -779,7 +778,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
     class To_interval 
       : public Unary_function< Type, std::pair< double, double > > {
       private:
-        typedef boost::numeric::interval<double> Double_interval;
+        typedef CGAL::Interval_nt<> Double_interval;
       public:
         std::pair<double,double> operator()(const Type& x) const {
             if(x.is_extended()){
@@ -787,12 +786,10 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
               std::pair<double, double> pair_a1_root = CGAL_NTS to_interval(
                                          x.a1() * x.a1() * COEFF( x.root() ) );
                                          
-              Double_interval result( pair_a0.first, pair_a0.second );
+              Double_interval result = pair_a0;
               result += ( Double_interval( (int) CGAL_NTS sign(x.a1())) * 
-                      ::boost::numeric::sqrt( 
-                              Double_interval( pair_a1_root.first,
-                                               pair_a1_root.second ) ) ); 
-              return std::pair<double, double>(result.lower(), result.upper() );
+                      CGAL::sqrt( Double_interval( pair_a1_root ) ) ); 
+              return result.pair();
             } else {
                 return CGAL_NTS to_interval( x.a0());
             }
