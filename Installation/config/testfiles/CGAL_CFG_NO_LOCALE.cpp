@@ -21,7 +21,7 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_NO_LOCALE.C
+// CGAL_CFG_NO_LOCALE.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.

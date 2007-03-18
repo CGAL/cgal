@@ -21,7 +21,7 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_NO_LIMITS.C
+// CGAL_CFG_NO_LIMITS.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.

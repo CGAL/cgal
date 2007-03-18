@@ -21,7 +21,7 @@
 //
 // Author(s)     : Radu Ursu
 
-// CGAL_CFG_NET2003_MATCHING_BUG.C
+// CGAL_CFG_NET2003_MATCHING_BUG.cpp
 // ---------------------------------------------------------------------
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.

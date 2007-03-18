@@ -21,7 +21,7 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_NO_LONG_LONG.C
+// CGAL_CFG_NO_LONG_LONG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
 // This program is used by cgal_configure.

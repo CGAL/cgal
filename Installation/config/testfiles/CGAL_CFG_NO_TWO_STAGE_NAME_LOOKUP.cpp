@@ -21,7 +21,7 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.C
+// CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.

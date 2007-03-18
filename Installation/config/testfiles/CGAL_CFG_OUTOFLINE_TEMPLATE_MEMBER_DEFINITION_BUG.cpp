@@ -21,7 +21,7 @@
 //
 // Author(s)     : Radu Ursu
 
-// CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG.C
+// CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.

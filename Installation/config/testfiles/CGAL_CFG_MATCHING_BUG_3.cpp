@@ -21,7 +21,7 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_MATCHING_BUG_3.C
+// CGAL_CFG_MATCHING_BUG_3.cpp
 // ---------------------------------------------------------------------
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.

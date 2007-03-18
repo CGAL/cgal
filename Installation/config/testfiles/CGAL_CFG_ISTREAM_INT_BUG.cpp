@@ -18,7 +18,7 @@
 //
 // Author(s)     : Andreas Fabri
 
-// CGAL_CFG_ISTREAM_INT_BUG.C
+// CGAL_CFG_ISTREAM_INT_BUG.cpp
 // ---------------------------------------------------------------------
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.

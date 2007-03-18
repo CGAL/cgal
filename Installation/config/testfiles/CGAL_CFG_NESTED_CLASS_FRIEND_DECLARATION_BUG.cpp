@@ -18,14 +18,14 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-// CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG.C
+// CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| The flag CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG.C is set
+//| The flag CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG is set
 //| if the compiler cannot recognize the declaration of a nested
 //| class as friend.
 //| Compilers such as the Intel compiler 8.x (for linux or windows),

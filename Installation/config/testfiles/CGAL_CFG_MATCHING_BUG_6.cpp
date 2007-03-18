@@ -21,7 +21,7 @@
 //
 // Author(s)     : Andreas Fabri
 
-// CGAL_CFG_MATCHING_BUG_6.C
+// CGAL_CFG_MATCHING_BUG_6.cpp
 // ---------------------------------------------------------------------
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.

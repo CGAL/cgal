@@ -21,7 +21,7 @@
 //
 // Author(s)     : Laurent Rineau
 
-// CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG_2.C
+// CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG_2.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.

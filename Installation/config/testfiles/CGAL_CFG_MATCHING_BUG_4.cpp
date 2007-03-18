@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann
 
-// CGAL_CFG_MATCHING_BUG_4.C
+// CGAL_CFG_MATCHING_BUG_4.cpp
 // ---------------------------------------------------------------------
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.

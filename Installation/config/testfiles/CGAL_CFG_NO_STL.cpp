@@ -21,7 +21,7 @@
 //
 // Author(s)     : Lutz Kettner, Sylvain Pion
 
-// CGAL_CFG_NO_STL.C
+// CGAL_CFG_NO_STL.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
 // This program is used by cgal_configure.
