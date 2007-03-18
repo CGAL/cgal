@@ -29,7 +29,7 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Testsuite/assert.h>
 #include <iostream>
-#include <sstream> 
+#include <sstream>
 #include <cstdlib>
 
 
@@ -37,65 +37,73 @@ template <class NT>
 void test_io(const NT& x){
     NT tmp;
     {
-        std::ostringstream os;  
+        std::ostringstream os;
         os << x;
-        std::istringstream is(os.str()); 
+        std::istringstream is(os.str());
         is >> tmp;
         CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
     }{
-        std::ostringstream os;  
+        std::ostringstream os;
         os << ::CGAL::oformat(x);
-        std::istringstream is(os.str()); 
+        std::istringstream is(os.str());
         is >> ::CGAL::iformat(tmp);
         CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
     }{
-        std::ostringstream os;  
+        std::ostringstream os;
         ::CGAL::write(os,x);
-        std::istringstream is(os.str()); 
+        std::istringstream is(os.str());
         ::CGAL::read(is,tmp);
         CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
-    }   
+    }
 }
 
 int main() {
-    
-    std::cout << "test_io: short "<< std::endl; 
+
+    std::cout << "test_io: short "<< std::endl;
     test_io<short>(12);
     test_io<short>(0);
     test_io<short>(-12);
 
-    std::cout << "test_io: int "<< std::endl; 
+    std::cout << "test_io: int "<< std::endl;
     test_io<int>(12);
     test_io<int>(0);
     test_io<int>(-12);
 
-    std::cout << "test_io: long int "<< std::endl; 
+    std::cout << "test_io: long int "<< std::endl;
     test_io<long int>(12);
     test_io<long int>(0);
     test_io<long int>(-12);
 
-    std::cout << "test_io: long long int "<< std::endl; 
+#ifdef CGAL_CFG_LONG_LONG_IO_BUG
+    std::cout << "test_io: long long int is not performed due to compiler bug"<< std::endl;
+#else
+    std::cout << "test_io: long long int "<< std::endl;
     test_io<long long int>(12);
     test_io<long long int>(0);
     test_io<long long int>(-12);
+#endif
 
-    std::cout << "test_io: float "<< std::endl; 
+    std::cout << "test_io: float "<< std::endl;
     test_io<float>(12);
     test_io<float>(0);
     test_io<float>(-12);
 
-    std::cout << "test_io: double "<< std::endl; 
+    std::cout << "test_io: double "<< std::endl;
     test_io<double>(12);
     test_io<double>(0);
     test_io<double>(-12);
 
-    std::cout << "test_io: long double "<< std::endl; 
+#ifdef CGAL_CFG_NO_LONG_DOUBLE_IO
+    std::cout << "test_io: long double is not performed due to compiler bug"<< std::endl;
+#else
+    std::cout << "test_io: long double "<< std::endl;
     test_io<long double>(12);
     test_io<long double>(0);
     test_io<long double>(-12);
-    
-    //TODO: add more 
+#endif
+
+    //TODO: add more
     std::cout << "ok" <<std::endl;
-    
-    return 0;     
+
+    return 0;
 }
