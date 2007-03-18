@@ -163,10 +163,10 @@ kth_root( int k, const AS& x ) {
 
 template< class Input_iterator >
 inline
-typename Algebraic_structure_traits< typename Input_iterator::value_type >
+typename Algebraic_structure_traits< typename std::iterator_traits<Input_iterator>::value_type >
 ::Root_of::result_type
 root_of( int k, Input_iterator begin, Input_iterator end ) {
-    typedef typename Input_iterator::value_type AS; 
+    typedef typename std::iterator_traits<Input_iterator>::value_type AS; 
     return typename Algebraic_structure_traits<AS>::Root_of()( k, begin, end );
 }
 
