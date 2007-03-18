@@ -74,7 +74,7 @@ public:
 
   ~Gray_level_image_3()
   {
-    ::_freeImage(image);
+//     ::_freeImage(image);
   }
 
   static void print_supported_file_format()
