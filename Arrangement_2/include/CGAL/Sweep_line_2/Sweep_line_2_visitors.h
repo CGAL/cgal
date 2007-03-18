@@ -247,7 +247,7 @@ class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
   }
 
 
-  bool after_handle_event(Event* event,SL_iterator iter, bool flag)
+  bool after_handle_event(Event* event,SL_iterator , bool )
   {
     if(event->is_intersection() ||
        event->is_weak_intersection() ||
