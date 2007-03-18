@@ -4478,7 +4478,7 @@ installation()
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/include"
     _check_dir_exists_create "${_CGAL_IDIR}"
     _do_command \
-      "cd \"${CGAL_INCL_DIR}\"; cp CGAL/config/${CGAL_OS_COMPILER}/CGAL/compiler_config.h CGAL/; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
+      "cd \"${CGAL_INCL_DIR}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -; mv CGAL/config/${CGAL_OS_COMPILER}/CGAL/compiler_config.h CGAL; rm -r CGAL/config)" \
       "Install CGAL headers"
 
     # install libraries
@@ -4507,9 +4507,9 @@ installation()
       "Install CGAL programs"
 
     # install makefile
-    _CGAL_IDIR="${CGAL_INSTALL_DIR}/make/CGAL"
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/share/cgal"
     _check_dir_exists_create "${_CGAL_IDIR}"
-    CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/`${_basename} \"${CGAL_MAKEFILE}\"`"
+    CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/makefile"
     OS_CGAL_DIR=`os_path "${CGAL_DIR}"`
     OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
     log_print "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")"
