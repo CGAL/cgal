@@ -405,7 +405,7 @@ _check_for_sysutil()
         fi
     done
     if [ -z "${_tmp2}" ]; then
-	_check_for_util "${*}"
+	_check_for_util "${@}"
 	return $?
     fi
     log_print "$1 is `value_of ${3:-_$1}`."
