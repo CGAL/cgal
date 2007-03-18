@@ -1,12 +1,6 @@
 TODO
 ====
 
-next revision:
 - update list of authors in debian/copyright
-
-CGAL 3.3:
-- SONAME issue
-- -D_REENTRANT
-- -fPIC
-- adjust manpage
-- add --with-OPENGL
+- update license text in debian/copyright
+- adjust date in manpage

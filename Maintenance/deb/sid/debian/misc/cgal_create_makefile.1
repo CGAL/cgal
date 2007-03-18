@@ -1,9 +1,9 @@
-.TH CGAL_CREATE_MAKEFILE "1" "May 2006" "CGAL 3.2" "User Commands"
+.TH CGAL_CREATE_MAKEFILE "1" "May 2006" "CGAL 3.3" "User Commands"
 .SH NAME
 cgal_create_makefile \- create makefiles for applications using CGAL
 .SH SYNOPSIS
 .B cgal_create_makefile
-.BR -d | -t | -g | -q | -w
+.BR -d | -t | -q
 .RI [ filename ]
 .SH DESCRIPTION
 The script
@@ -29,11 +29,9 @@ Create a (default) makefile as described above.
 .B -t
 Create a makefile that is suited for the testsuite used by the CGAL developers.
 .TP
-.BR -g | -q | -w
-These options are obsolete and are supported for backwards compatibility. The
-generated makefiles are almost identical to the makefile that is created by
-using 
-.BR -d .
+.BR -q
+Create a makefile with Qt support (including calls for the Qt's meta object
+compiler moc.
 .TP
 .I filename
 The output is written to
@@ -59,12 +57,12 @@ is used.
 contains the default compiler and linker flags
 .SH AUTHOR
 The CGAL software was written by a large number of authors
-(see /usr/share/doc/libcgal1/copyright for a list).
+(see /usr/share/doc/libcgal2/copyright for a list).
 
 This manual page was written by Joachim Reichel <joachim.reichel@gmx.de> for
 the Debian GNU/Linux system (but may be used by others).
 .SH "REPORTING BUGS"
-Report bugs to <cgal-discuss-l@postino.mpi-sb.mpg.de> (see http://www.cgal.org/
+Report bugs to <cgal-discuss@lists-sop.inria.fr> (see http://www.cgal.org/
 for further instructions).
 .SH "SEE ALSO"
 The full documentation for CGAL is available at http://www.cgal.org/ in PDF and

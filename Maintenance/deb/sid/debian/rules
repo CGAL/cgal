@@ -15,18 +15,15 @@ ifndef CXX
 	CXX = g++
 endif
 
-SOVERSION=1.0.1
-SOMAJOR=1
-
 build: build-stamp
 build-stamp: patch-stamp
 	dh_testdir
-	if test -d include/CORE; then mv include/CORE include/CORE.orig; fi
-	if test -d src/Core; then mv src/Core src/Core.orig; fi
-	-rm -f make/makefile_*
-	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) --without-autofind \
-	  --with-ZLIB --with-BOOST --with-BOOSTPROGRAMOPTIONS --with-X11 \
-	  --with-GMP --with-GMPXX --with-MPFR --with-CORE --with-QT3MT
+	dh_clean -k
+	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) --prefix `pwd`/debian/tmp/usr \
+	  --without-autofind --with-ZLIB --with-BOOST --with-BOOSTPROGRAMOPTIONS \
+	  --with-GMP --with-GMPXX --with-MPFR --with-CGALCORE \
+	  --with-X11 --with-OPENGL --with-QT3MT \
+	  --with-BLASGCCATLAS --with-LAPACK
 	touch build-stamp
 
 clean: clean-patched unpatch
@@ -34,46 +31,32 @@ clean-patched: patch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-	cd src/CGAL && OBJ_EXT=.o $(MAKE) clean
-	cd src/CGALQt && OBJ_EXT=.o $(MAKE) clean
-	-rm -f compile.log install.{log,completed}
-	-rm -f config/testfiles/{a.out,*.o,tmp_test}
+	-for DIR in src/*; do $(MAKE) -C $$DIR clean; done
+	-rm -f compile.log install.log install.completed
+	-rm -f config/support/tmp_test*
+	-rm -f config/testfiles/a.out
 	-for DIR in include/CGAL/config/*; do \
-	   if test x$$DIR != xinclude/CGAL/config/msvc7; then \
+	   if test x$$DIR != xinclude/CGAL/config/msvc; then \
 	     rm -fr $$DIR; \
 	   fi; \
 	 done
-	-rm -f config/testfiles/redirect_tmpfile
-	-rm -f config/testfiles/redirect_tmpfile.C
 	-rm -f make/makefile_*
 	-rm -fr lib/???????*
 	-rm -fr config/install
 	if test -d examples.orig; then rm -r examples && mv examples.orig examples; fi
 	if test -d demo.orig; then rm -r demo && mv demo.orig demo; fi
-	if test -d include/CORE.orig; then mv include/CORE.orig include/CORE; fi
-	if test -d src/Core.orig; then mv src/Core.orig src/Core; fi
 	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+#	dh_clean -k
 	dh_installdirs
 
-	mkdir -p debian/tmp/{usr/bin,usr/include,usr/lib,usr/share/cgal,usr/share/doc/cgal}
+	mkdir -p debian/tmp/usr/share/doc/cgal
 
-	cp -a scripts/cgal_create_makefile debian/tmp/usr/bin
-
-	cp -a include/{CGAL,OpenNL} debian/tmp/usr/include
-	rm -r debian/tmp/usr/include/CGAL/config/msvc7
-	mv debian/tmp/usr/include/CGAL/config/*/CGAL/compiler_config.h debian/tmp/usr/include/CGAL
-	rm -r debian/tmp/usr/include/CGAL/config
-	rm debian/tmp/usr/include/OpenNL/LICENSE.OPENNL
-
-	cp -a lib/*/libCGAL.{so.$(SOVERSION),a} debian/tmp/usr/lib
-	cp -a lib/*/libCGALQt.a debian/tmp/usr/lib
-	cd debian/tmp/usr/lib && ln -s libCGAL.so.$(SOVERSION) libCGAL.so.$(SOMAJOR)
-	cd debian/tmp/usr/lib && ln -s libCGAL.so.$(SOVERSION) libCGAL.so
+	rm debian/tmp/usr/bin/cgal_make_macosx_app
+	rm debian/tmp/usr/include/CGAL/OpenNL/LICENSE.OPENNL
 
 	cat make/makefile_* | sed -f debian/misc/adjust-default-makefile.sed >debian/tmp/usr/share/cgal/makefile
 
@@ -96,11 +79,11 @@ install: build
 
 	dh_install --sourcedir=debian/tmp --list-missing
 
-	ln -s libcgal1 debian/libcgal-demo/usr/share/doc/libcgal-demo
-	ln -s libcgal1 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	ln -s libcgal2 debian/libcgal-demo/usr/share/doc/libcgal-demo
+	ln -s libcgal2 debian/libcgal-dev/usr/share/doc/libcgal-dev
 
-	install -d debian/libcgal1/DEBIAN
-	install -m644 debian/libcgal1.shlibs debian/libcgal1/DEBIAN/shlibs
+	install -d debian/libcgal2/DEBIAN
+	install -m644 debian/libcgal2.shlibs debian/libcgal2/DEBIAN/shlibs
 
 binary-indep: build install
 	dh_testdir -i
@@ -116,8 +99,8 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
-	dh_installdocs -plibcgal1 debian/copyright
-	dh_installchangelogs -plibcgal1
+	dh_installdocs -plibcgal2 debian/copyright
+	dh_installchangelogs -plibcgal2
 	dh_installman -plibcgal-dev debian/misc/cgal_create_makefile.1
 	dh_link -a
 	dh_strip -a
@@ -125,7 +108,7 @@ binary-arch: build install
 	dh_fixperms -a
 	dh_makeshlibs -a
 	dh_installdeb -a
-	dh_shlibdeps -a -ldebian/libcgal1/usr/lib
+	dh_shlibdeps -a -ldebian/libcgal2/usr/lib
 	dh_gencontrol -a
 	dh_md5sums -a
 	dh_builddeb -a

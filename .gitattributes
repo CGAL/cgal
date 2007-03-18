@@ -839,8 +839,8 @@ Maintenance/deb/sid/debian/compat -text
 Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
-Maintenance/deb/sid/debian/libcgal1.install -text
-Maintenance/deb/sid/debian/libcgal1.shlibs -text
+Maintenance/deb/sid/debian/libcgal2.install -text
+Maintenance/deb/sid/debian/libcgal2.shlibs -text
 Maintenance/deb/sid/debian/misc/adjust-default-makefile.sed -text
 Maintenance/deb/sid/debian/misc/adjust-demo-examples-makefiles.sed -text
 Maintenance/deb/sid/debian/misc/cgal_create_makefile.1 -text
