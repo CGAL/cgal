@@ -53,14 +53,14 @@ void test_integral_division()
     //std::cout << "n = " << n << std::endl;
     assert( integral_division(nd, n) == d);
     assert( integral_division(nd, d) == n);
-    assert( divides(nd, n) );
-    assert( divides(nd, d) );
+    assert( CGAL::divides(nd, n) );
+    assert( CGAL::divides(nd, d) );
   }
   
-  assert( ! divides(MPF(1), MPF(3)) );
-  assert( ! divides(MPF(2), MPF(7)) );
+  assert( ! CGAL::divides(MPF(1), MPF(3)) );
+  assert( ! CGAL::divides(MPF(2), MPF(7)) );
   // test if we're lucky :)
-  assert( ! divides(MPF(CGAL::default_random.get_double()), MPF(CGAL::default_random.get_double())) );
+  assert( ! CGAL::divides(MPF(CGAL::default_random.get_double()), MPF(CGAL::default_random.get_double())) );
 }
 
 void test_equality(int i)
