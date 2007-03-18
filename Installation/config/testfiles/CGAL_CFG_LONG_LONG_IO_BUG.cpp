@@ -1,4 +1,4 @@
-// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -14,25 +14,31 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_NO_LONG_DOUBLE_IO.cpp
+// CGAL_CFG_LONG_LONG_IO_BUG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| Tests if std::cout supports long double IO.
-//| pgCC 5.2 and 6.2 have this bug.
+//| Tests if the input stream operator<< is correct with long long.
+//| pgCC 6.2 has this bug.
 
-#include <iostream>
+#include <sstream>
 
-int main()
-{
-  long double ld = 3.14;
-  std::cout << ld << std::endl;
-  return 0;
+int main() {
+    long long x = 12;
+    long long tmp;
+    std::ostringstream os;
+    os << x;
+    std::istringstream is(os.str());
+    is >> tmp;
+
+    if (x != tmp)
+      return 1;
+
+    return 0;
 }
