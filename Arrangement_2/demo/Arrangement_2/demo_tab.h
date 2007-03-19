@@ -1680,7 +1680,7 @@ public:
 
   /*! first_point - a first point of inserted sgment
    */
-  void first_point( Coord_point p , Mode m )
+  void first_point( Coord_point p , Mode  )
   {
     m_p1 = m_p2 = p;
   }
@@ -1703,8 +1703,8 @@ public:
 
   /*! last_point - meaningless for segments
    */
-  void last_point( Coord_point p ,
-                   Qt_widget_demo_tab<Segment_tab_traits> * w )
+  void last_point( Coord_point  ,
+                   Qt_widget_demo_tab<Segment_tab_traits> *  )
   {
     return;
   }
@@ -1730,7 +1730,7 @@ public:
    * and a xsegment
    */
   Coord_type xcurve_point_distance(Coord_point p, X_monotone_curve_2 & c ,
-                                   Qt_widget_demo_tab<Segment_tab_traits> * w)
+                                   Qt_widget_demo_tab<Segment_tab_traits> * )
   {
     const Arr_seg_point_2 & source = c.source();
     const Arr_seg_point_2 & target = c.target();
@@ -2040,8 +2040,7 @@ public:
    * and a polyline
    */
   Coord_type xcurve_point_distance(Coord_point p, X_monotone_curve_2 & c,
-                                   Qt_widget_demo_tab<Polyline_tab_traits> *
-                                   w)
+                                   Qt_widget_demo_tab<Polyline_tab_traits> * )
   {
     Curve_const_iterator ps = c.begin();
     Curve_const_iterator pt = ps; pt++;
@@ -2465,7 +2464,7 @@ public:
 
   /*! first_point - a first point of inserted sgment
    */
-  void first_point( Coord_point p , Mode m)
+  void first_point( Coord_point p , Mode )
   {
     m_p_old = m_p1 = m_p2 = m_p3 = m_p4 = p;
     num_points = 1;
@@ -2612,7 +2611,7 @@ public:
 
   /*! last_point - meaningless for conics - at least for now
    */
-  void last_point( Coord_point p , Qt_widget_demo_tab<Conic_tab_traits> * w )
+  void last_point( Coord_point  , Qt_widget_demo_tab<Conic_tab_traits> *  )
   {
     return;
   }

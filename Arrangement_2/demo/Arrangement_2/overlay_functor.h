@@ -31,49 +31,49 @@ public:
     res_f->set_color(res_c);
   }
 
-  void create_vertex(Halfedge_const_handle h1,
-                     Halfedge_const_handle h2,
-                     Vertex_handle res_v)
+  void create_vertex(Halfedge_const_handle ,
+                     Halfedge_const_handle ,
+                     Vertex_handle )
   {}
 
-  void create_vertex(Vertex_const_handle v1,
-                     Vertex_const_handle v2,
-                     Vertex_handle res_v)
+  void create_vertex(Vertex_const_handle ,
+                     Vertex_const_handle ,
+                     Vertex_handle )
   {}
 
-  void create_vertex(Vertex_const_handle v1,
-                     Halfedge_const_handle h2,
-                     Vertex_handle res_v)
+  void create_vertex(Vertex_const_handle ,
+                     Halfedge_const_handle ,
+                     Vertex_handle )
   {}
 
-  void create_vertex(Halfedge_const_handle h1,
-                     Vertex_const_handle v2,
-                     Vertex_handle res_v)
+  void create_vertex(Halfedge_const_handle ,
+                     Vertex_const_handle ,
+                     Vertex_handle )
   {}
 
-  void create_vertex(Face_const_handle f1,
-                     Vertex_const_handle v2,
-                     Vertex_handle res_v)
+  void create_vertex(Face_const_handle ,
+                     Vertex_const_handle ,
+                     Vertex_handle )
   {}
 
-  void create_vertex(Vertex_const_handle v1,
-                     Face_const_handle f2,
-                     Vertex_handle res_v)
+  void create_vertex(Vertex_const_handle ,
+                     Face_const_handle ,
+                     Vertex_handle )
   {}
 
-  void create_edge(Halfedge_const_handle h1,
-                   Halfedge_const_handle h2,
-                   Halfedge_handle res_h)
+  void create_edge(Halfedge_const_handle ,
+                   Halfedge_const_handle ,
+                   Halfedge_handle )
   {}
 
-  void create_edge(Halfedge_const_handle h1,
-                   Face_const_handle f2,
-                   Halfedge_handle res_h)
+  void create_edge(Halfedge_const_handle ,
+                   Face_const_handle ,
+                   Halfedge_handle )
   {}
 
-  void create_edge(Face_const_handle f1,
-                   Halfedge_const_handle h2,
-                   Halfedge_handle res_h)
+  void create_edge(Face_const_handle ,
+                   Halfedge_const_handle ,
+                   Halfedge_handle )
   {}
 
 
