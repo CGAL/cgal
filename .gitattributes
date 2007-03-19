@@ -2570,6 +2570,7 @@ Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text svneol=unset#appl
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#application/pdf
 Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
+Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/test/iostream/data/io.cin -text
 window/test/WindowStream/manual_example_ps.cmd eol=lf
 window/test/WindowStream/test_window_stream_xy_3.cmd eol=lf
