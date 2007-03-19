@@ -108,7 +108,7 @@ public:
    * \param above_on_event Is the subcurve above actually on the event.
    * \return Whether the event can be de-allocated.
    */
-  bool after_handle_event(Event* event, SL_iterator above, bool above_on_event)
+  bool after_handle_event(Event* event, SL_iterator above, bool /* above_on_event */)
   {
     if (! event->is_finite())
     {
