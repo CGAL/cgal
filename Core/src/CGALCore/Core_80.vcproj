@@ -69,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../lib/core++-vc80-mt-sgd.lib"
+				OutputFile="../../lib/CGALcore++-vc80-mt-sgd.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -131,7 +131,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../lib/core++-vc80-mt-s.lib"
+				OutputFile="../../lib/CGALcore++-vc80-mt-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -203,7 +203,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../lib/core++-vc80-mt.lib"
+				OutputFile="../../lib/CGALcore++-vc80-mt.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -275,7 +275,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../lib/core++-vc80-mt-gd.lib"
+				OutputFile="../../lib/CGALcore++-vc80-mt-gd.lib"
 				AdditionalLibraryDirectories=""
 			/>
 			<Tool
