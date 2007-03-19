@@ -1766,7 +1766,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
      Intersection_map& inter_map,
      Bezier_cache& cache,
      std::vector<Intersection_point_2>& ipts,
-     Self& ovlp_cv) const
+     Self& /* ovlp_cv */) const
 {
   CGAL_precondition (_curve.id() < cv._curve.id());
 
