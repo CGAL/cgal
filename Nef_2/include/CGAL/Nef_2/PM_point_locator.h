@@ -647,9 +647,9 @@ public:
     //    assert(0); return h; // compiler warning
   }
 
-  bool ray_shoot_from_outer_facet(Segment& s, object_kind& current, 
-				  Vertex_const_handle &v, 
-				  Halfedge_const_handle& e,
+  bool ray_shoot_from_outer_facet(Segment& , object_kind& , 
+				  Vertex_const_handle &, 
+				  Halfedge_const_handle& ,
 				  const Tag_true& ) const {
     return false;
   }
@@ -838,8 +838,8 @@ public:
     // assert(0); return h; // compiler warning
   }
 
-  bool within_outer_cycle(Vertex_const_handle v, 
-			  const Point& q, const Tag_true& ) const {
+  bool within_outer_cycle(Vertex_const_handle , 
+			  const Point& , const Tag_true& ) const {
     return true;
   }
 

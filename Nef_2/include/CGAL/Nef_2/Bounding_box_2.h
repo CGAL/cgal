@@ -36,11 +36,11 @@ class Bounding_box_2 {
 
  public:
   template<typename Vertex_iterator>
-    Bounding_box_2(Vertex_iterator begin, Vertex_iterator end) {
+    Bounding_box_2(Vertex_iterator , Vertex_iterator ) {
     CGAL_assertion_msg(false, "dummy interface");
   }
   
-  Point intersection_ray_bbox(const SPoint& p, const SDirection& d) {
+  Point intersection_ray_bbox(const SPoint& , const SDirection& ) {
     CGAL_assertion_msg(false, "dummy interface");
     return Point();
   }

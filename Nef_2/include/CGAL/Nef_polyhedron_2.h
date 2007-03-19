@@ -101,7 +101,7 @@ public:
     : pm_(), pl_(0) 
   {}
 
-  Nef_polyhedron_2_rep(const Self& R) 
+  Nef_polyhedron_2_rep(const Self& ) 
     : pm_(), pl_(0) 
   {}
 
@@ -258,7 +258,7 @@ protected:
     L.push_back(Extended_segment(EK.SE(),EK.NE()));
   }
 
-  void fill_with_frame_segs(ES_list& L, const Tag_false& ) const
+  void fill_with_frame_segs(ES_list& , const Tag_false& ) const
   {}
 
   void fill_with_frame_segs(ES_list& L) const
