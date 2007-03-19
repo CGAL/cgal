@@ -21,12 +21,14 @@
 // PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
+
 //=======================================================================
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -36,10 +38,11 @@
 //
 // $URL$
 // $Id$
+// 
 //
-// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
-//
-//=======================================================================
+// Author(s)     : Andreas Fabri, Fernando Cacciola
+
+
 
 #ifndef CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 #define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H

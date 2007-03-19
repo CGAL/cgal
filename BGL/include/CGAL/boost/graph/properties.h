@@ -1,9 +1,9 @@
-// Copyright (c) 2006 Geometry Factory (France).
-// All rights reserved.
+// Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s): Andreas Fabri <andreas.fabri@geometryfactory.com>, Fernando Cacciola <fernando.cacciola@gmail.com>
+// Author(s)     : Andreas Fabri, Fernando Cacciola
+
 
 #ifndef CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 #define CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
