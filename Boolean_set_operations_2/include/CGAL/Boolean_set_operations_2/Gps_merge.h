@@ -112,6 +112,11 @@ class Xor_merge
                     std::vector<Vertex_handle> *>     Arr_entry;
 
 public:
+
+  // Temporarily defined to see if this avoids a warning on SunPro CC
+  Xor_merge()
+  {}
+
    void operator()(unsigned int i,
                    unsigned int j,
                    unsigned int jump,
