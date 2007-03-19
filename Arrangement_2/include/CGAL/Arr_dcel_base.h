@@ -1040,8 +1040,11 @@ public:
   Vertex* new_vertex()
   {
     Vertex     *v = vertex_alloc.allocate (1);
-
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     vertex_alloc.construct (v, Vertex());
+#else 
+    new (v) Vertex;
+#endif
     vertices.push_back (*v);
     return v;
   }
@@ -1064,8 +1067,11 @@ public:
   Face* new_face()
   {
     Face       *f = face_alloc.allocate (1);
-    
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     face_alloc.construct (f, Face());
+#else
+    new (f) Face;
+#endif
     faces.push_back (*f);
     return (f);
   }
@@ -1074,8 +1080,11 @@ public:
   Hole* new_hole ()
   {
     Hole       *h = hole_alloc.allocate (1);
-    
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     hole_alloc.construct (h, Hole());
+#else
+    new (h) Hole;
+#endif
     holes.push_back (*h);
     return (h);
   }
@@ -1084,8 +1093,11 @@ public:
   Isolated_vertex* new_isolated_vertex ()
   {
     Isolated_vertex  *iv = iso_vert_alloc.allocate (1);
-    
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     iso_vert_alloc.construct (iv, Isolated_vertex());
+#else
+    new (iv) Isolated_vertex;
+#endif
     iso_verts.push_back (*iv);
     return (iv);
   }
@@ -1097,7 +1109,11 @@ public:
   void delete_vertex (Vertex * v)
   {
     vertices.erase (v);
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     vertex_alloc.destroy (v);
+#else
+    v->~Vertex();
+#endif
     vertex_alloc.deallocate (v,1);
   }
   
@@ -1114,7 +1130,11 @@ public:
   void delete_face(Face * f)
   {
     faces.erase (f);
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     face_alloc.destroy (f);
+#else
+    f->~Face();
+#endif
     face_alloc.deallocate (f, 1);
   }
 
@@ -1122,7 +1142,11 @@ public:
   void delete_hole (Hole * h)
   {
     holes.erase (h);
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     hole_alloc.destroy (h);
+#else
+    h->~Hole();
+#endif
     hole_alloc.deallocate (h, 1);
   }
 
@@ -1130,7 +1154,11 @@ public:
   void delete_isolated_vertex (Isolated_vertex * iv)
   {
     iso_verts.erase (iv);
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     iso_vert_alloc.destroy (iv);
+#else
+    iv->~Isolated_vertex();
+#endif
     iso_vert_alloc.deallocate (iv, 1);
   }
   
