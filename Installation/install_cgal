@@ -630,7 +630,7 @@ check_for_utils()
     _check_for_util getconf n
     if [ -n "${_getconf}" ]; then 
         # Set ${GETCONF} to /bin/true if you do not want to use it.
-        POSIX_UTILITIES_PATH="`${GETCONF:-${_getconf}} CS_PATH`"
+        POSIX_UTILITIES_PATH="`${GETCONF:-${_getconf}} PATH`"
         if [ -n "${POSIX_UTILITIES_PATH}" ]; then
 	    POSIX_UTILITIES_PATH="`echo ${POSIX_UTILITIES_PATH} | ${_sed} -e 's/:/ /g'`"
             log_print "Path for Posix utilities: ${POSIX_UTILITIES_PATH}"
