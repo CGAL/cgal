@@ -979,14 +979,17 @@ set_compiler_flags()
 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    ;;
-        *alpha*Linux*g++*)
-            #### settings for g++ on alpha-linux (special FPU handling)
-            #### LONG_NAME_PROBLEM is cured by disabling debugging
-            ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
-            RUNTIME_LINKER_FLAG='-Wl,-R'
-            ;;
+	*alpha*Linux*g++*)
+	    #### settings for g++ on alpha-linux (special FPU handling)
+	    #### LONG_NAME_PROBLEM is cured by disabling debugging
+	    ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    ;;
 	*Linux*g++*)
-	    #### settings for gcc on linux
+	    #### settings for g++ on linux
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
