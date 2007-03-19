@@ -256,7 +256,7 @@ public:
   void update_event(Event* ,
                     Subcurve* ,
                     Subcurve* ,
-                    bool = false)
+                    bool created = false)
   {
     CGAL_assertion(created == true);
   }
