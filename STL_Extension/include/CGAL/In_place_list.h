@@ -228,20 +228,29 @@ protected:
 
   // These are the only places where the allocator gets called.
   pointer get_node() {
-    // was: return new T;
     pointer p = allocator.allocate(1);
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     allocator.construct(p, value_type());
+#else
+    new (p) value_type;
+#endif
     return p;
   }
   pointer get_node( const T& t) {
-    // was: return new T(t);
     pointer p = allocator.allocate(1);
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
     allocator.construct(p, t);
+#else
+    new (p) value_type(t);
+#endif
     return p;
   }
   void put_node( pointer p) {
-    // was: delete p;
+#ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY  
     allocator.destroy( p);
+#else 
+   p->~value_type();
+#endif
     allocator.deallocate( p, 1);
   }
 
