@@ -121,7 +121,7 @@ struct SMO_from_sm {
   SM_overlayer G;
   CGAL::Unique_hash_map<IT,INFO>& M;
   SMO_from_sm(SM_overlayer Gi, 
-              SM_const_decorator* pGIi, 
+              SM_const_decorator* /* pGIi */, 
               CGAL::Unique_hash_map<IT,INFO>& Mi) : 
     G(Gi), M(Mi) {}
 
@@ -566,23 +566,23 @@ public:
     return f;
   }
 
-  Sphere_segment segment(SM_const_decorator N, 
+  Sphere_segment segment(SM_const_decorator , 
                          SHalfedge_const_handle e) const
   { return K.construct_segment(e->source()->point(),
 			       e->target()->point(),
 			       e->circle()); }
 
-  Sphere_segment trivial_segment(SM_const_decorator N, 
+  Sphere_segment trivial_segment(SM_const_decorator , 
                                  SVertex_const_handle v) const
   { Sphere_point p = v->point(); 
     return K.construct_segment(p,p); }
 
-  Seg_pair two_segments(SM_const_decorator N, 
+  Seg_pair two_segments(SM_const_decorator , 
                         SHalfedge_const_handle e) const
   // we know that e->source()==e->target()
   { return e->circle().split_at(e->source()->point()); }
 
-  Seg_pair two_segments(SM_const_decorator N, 
+  Seg_pair two_segments(SM_const_decorator , 
                         SHalfloop_const_handle l) const
   { return l->circle().split_at_xy_plane(); }
 
@@ -1924,7 +1924,7 @@ template <typename Map>
 template <typename Below_accessor>
 void SM_overlayer<Map>::
 complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
-  const Below_accessor& D, std::vector<Mark>& mohs, int offset, bool both) const
+  const Below_accessor& , std::vector<Mark>& mohs, int offset, bool both) const
 { CGAL_NEF_TRACEN("complete_face_support");
   for (SVertex_iterator v = v_start; v != v_end; ++v) { 
     CGAL_NEF_TRACEN("VERTEX = "<<PH(v));
