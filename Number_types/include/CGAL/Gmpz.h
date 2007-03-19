@@ -13,8 +13,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -22,6 +22,12 @@
 
 #ifndef CGAL_GMPZ_H
 #define CGAL_GMPZ_H
+
+#include <CGAL/config.h>
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4800) // complaint about performance in std::map where we can't do anything
+#endif    
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
@@ -178,4 +184,9 @@ public:
 };
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif // CGAL_GMPZ_H
