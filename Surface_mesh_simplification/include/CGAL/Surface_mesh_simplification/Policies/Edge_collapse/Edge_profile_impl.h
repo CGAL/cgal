@@ -40,37 +40,49 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   ,mSurface(boost::addressof(aSurface))
   
 {
-  mV1V0 = opposite_edge(v0v1(),surface());
+  mV1V0 = opposite_edge(v0_v1(),surface());
   
-  mV0 = source(v0v1(),surface());
-  mV1 = target(v0v1(),surface());
+  mV0 = source(v0_v1(),surface());
+  mV1 = target(v0_v1(),surface());
   
   CGAL_assertion( mV0 != mV1 );
   
   mP0 = get(vertex_point,surface(),mV0);
   mP1 = get(vertex_point,surface(),mV1);
   
-  mIsBorderV0V1 = is_border[v0v1()];
-  mIsBorderV1V0 = is_border[v1v0()];
+  mIsBorderV0V1 = is_border[v0_v1()];
+  mIsBorderV1V0 = is_border[v1_v0()];
   
   if ( left_face_exists() ) 
   {
-    mVLV0 = prev_edge(v0v1(),surface());
-    mV1VL = next_edge(v0v1(),surface());
-    mVL   = target(v1vl(),surface());
+    CGAL_SURF_SIMPL_TEST_assertion( !mV0V1->is_border() ) ;
+
+    mVLV0 = prev_edge(v0_v1(),surface());
+    mV1VL = next_edge(v0_v1(),surface());
+    mVL   = target(v1_vL(),surface());
     
-    CGAL_assertion( mV0 != mVL );
-    CGAL_assertion( mVL == source(vlv0(),surface()) );
-  }  
+    CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVL );
+    CGAL_SURF_SIMPL_TEST_assertion( mVL == source(vL_v0(),surface()) );
+  }
+  else
+  {
+    CGAL_SURF_SIMPL_TEST_assertion( mV0V1->is_border() ) ;
+  }
   
   if ( right_face_exists() )
   {
-    mV0VR = next_edge(v1v0(),surface());
-    mVRV1 = prev_edge(v1v0(),surface());
-    mVR   = target(v0vr(),surface());
+    CGAL_SURF_SIMPL_TEST_assertion( !mV1V0->is_border() ) ;
+
+    mV0VR = next_edge(v1_v0(),surface());
+    mVRV1 = prev_edge(v1_v0(),surface());
+    mVR   = target(v0_vR(),surface());
     
-    CGAL_assertion( mV0 != mVR );
-    CGAL_assertion( mVR == source(vrv1(),surface()) );
+    CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVR );
+    CGAL_SURF_SIMPL_TEST_assertion( mVR == source(vR_v1(),surface()) );
+  }
+  else
+  {
+    CGAL_SURF_SIMPL_TEST_assertion( mV1V0->is_border() ) ;
   }
     
   Extract_triangles_and_link(vertex_idx,is_border);
@@ -160,7 +172,9 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
 //
 template<class ECM>
 template<class VertexIdxMap, class EdgeIsBorderMap>
-void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const& vertex_idx, EdgeIsBorderMap const& is_border )
+void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    vertex_idx
+                                                  , EdgeIsBorderMap const& is_border 
+                                                  )
 {
   
   IdxSet lCollected ;

@@ -1,4 +1,4 @@
-// Copyright (c) 2002  Max Planck Institut fuer Informatik (Germany).
+// Copyright (c) 2007  GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -6,7 +6,7 @@
 // See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// accordance with the commercial license agreement provided with the soNTware.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -28,7 +28,13 @@
 
 #define CGAL_CHECK_EXPENSIVE
 
-//#define TRACE
+//#define TRACE_ENABLED
+
+#ifdef TRACE_ENABLED
+#  define TRACE(m) std::cerr << m << std::endl ;
+#else
+#  define TRACE(m)
+#endif
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
@@ -46,9 +52,11 @@ using namespace std ;
 using namespace boost ;
 using namespace CGAL ;
 
-typedef Simple_cartesian<double> Kernel;
-typedef Kernel::Vector_3         Vector;
-typedef Kernel::Point_3          Point;
+typedef double NT ;
+
+typedef Simple_cartesian<NT> Kernel;
+typedef Kernel::Vector_3     Vector;
+typedef Kernel::Point_3      Point;
 
 typedef Polyhedron_3<Kernel,Polyhedron_items_with_id_3> Surface; 
 
@@ -80,6 +88,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
+typedef SMS::Edge_profile<Surface> Profile ;
 
 template<class T>
 string opt2str ( optional<T> const& o )
@@ -120,31 +129,28 @@ string audit2str ( shared_ptr<D> const& d )
 {
   ostringstream ss ;
   ss << "[id:" << d->id  ;
-  if ( d->selected )
-  {
-     ss << " (S" << " at step " << d->order ;
-     if ( d->cost ) 
-          ss << " <" << *(d->cost) << ">" ;
-     else ss << " <no-cost>" ;
-     ss << ")";
 
-     if ( d->is_collapsable ) 
-     {
-        ss << " (C " ;
-        if ( d->placement ) 
-             ss << " <" << *(d->placement) << "> ";
-        else ss << " <no-new-placement>" ;
-        ss << ")";
-     }
-     else ss << " (not collapsed)" ;
-  }
-  else ss << " (not selected)" ;
+  if ( d->cost ) 
+       ss << " <" << *(d->cost) << ">" ;
+  else ss << " <no-cost>" ;
+
+  if ( d->placement ) 
+       ss << " <" << *(d->placement) << "> ";
+  else ss << " <no-new-placement>" ;
 
   ss << "]" ;  
+
   return ss.str(); 
 }
 
 template<class T> ostream&  operator << ( ostream& os, optional<T> const& o ) { return os << opt2str(o); }
+
+string normalize_EOL ( string line )
+{
+  string::size_type l = line.length();
+  string::size_type d = ( l > 0 && line[l-1] == '\r' ) ? 1 : 0 ; 
+  return line.substr(0, l-d ) ;
+}
 
 #define REPORT_ERROR(msg) error(__FILE__,__LINE__,0,msg);
 
@@ -157,7 +163,9 @@ template<class T> ostream&  operator << ( ostream& os, optional<T> const& o ) { 
 #define CHECK_EQUAL(x,y)       CHECK_MSG(((x)==(y)), str(format("Assertion failed: %1%(=%2%)==%3%(=%4%)") % (#x) % (x) % (#y) % (y) ) )
 #define CHECK_NOT_EQUAL(x,y)   CHECK_MSG(((x)!=(y)), str(format("Assertion failed: %1%(=%2%)!=%3%(=%4%)") % (#x) % (x) % (#y) % (y) ) )
 
-#include VISITOR
+#ifdef VISITOR_CLASS
+#  include VISITOR_CLASS
+#endif
 
 bool Test ( string aName )
 {
@@ -166,10 +174,6 @@ bool Test ( string aName )
   try
   {
     string off_name = aName ;
-    
-    string audit_name = aName.substr(0,aName.find_last_of(".")) + "_" + STRATEGY_ACRN + ".audit" ;
-    
-    cerr << "Audit file: " << audit_name << endl ;
     
     ifstream off_is(off_name.c_str());
     if ( off_is )
@@ -182,21 +186,22 @@ bool Test ( string aName )
         {
           cerr << "Processing " << aName << " (" << ( lSurface.size_of_halfedges() / 2 ) << " edges)" << endl ;
           
-          Visitor lVisitor(audit_name) ;
+          CREATE_VISITOR
           
           set_halfedgeds_items_id(lSurface);
           
           SMS::Count_stop_predicate<Surface> stop(1);
 
-          cerr << "Using " << STRATEGY_POLICIES << "\nVia visitor: " << VISITOR << endl ;
-#include STRATEGY_POLICIES
+#ifdef STRATEGY_POLICIES
+#  include STRATEGY_POLICIES
+#endif          
 
           Real_timer t ; t.start();    
           edge_collapse(lSurface
                        ,stop
                        ,get_cost(cost)
                        .get_placement(placement)
-                       .visitor(&lVisitor)
+                       VISITOR_ARGUMENT
                        );
           t.stop();
                        
@@ -241,7 +246,7 @@ int aux_main( int argc, char** argv )
   
   for ( int i = 1 ; i < argc ; ++i )
   {
-    string c(argv[i]);
+    string c( normalize_EOL( string(argv[i]) ) ) ;
     string::size_type pos = c.find_last_of(".") ;
     if ( pos != string::npos )
     {

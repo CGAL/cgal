@@ -208,16 +208,16 @@ void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( Boundary_data
     Vector e1 = NULL_VECTOR ; 
     Vector e2 = NULL_VECTOR ;
 
-    double e1x = 0, e1y = 0, e1z = 0 ;
+    FT e1x = FT(0.0), e1y = FT(0.0), e1z = FT(0.0) ;
     
     for ( typename Boundary_data_vector::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
     {
       e1 = e1 + it->v ;
       e2 = e2 + it->n ;
       
-      double vx = it->v.x() ;
-      double vy = it->v.y() ;
-      double vz = it->v.z() ;
+      FT vx = it->v.x() ;
+      FT vy = it->v.y() ;
+      FT vz = it->v.z() ;
       
       e1x = e1x + vx;
       e1y = e1y + vy;
@@ -308,7 +308,7 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
     //
     // Weighted average
     //
-    FT lScaledBoundaryWeight = FT(9) * mParams.BoundaryWeight * squared_distance(mProfile.p0(),mProfile.p1())  ;
+    FT lScaledBoundaryWeight = FT(9) * FT(mParams.BoundaryWeight) * squared_distance(mProfile.p0(),mProfile.p1())  ;
     
     H *= mParams.VolumeWeight ;
     c = c * mParams.VolumeWeight ;
@@ -327,11 +327,11 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
 template<class ECM>
 void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink )
 {
-  FT s(aLink.size());
+  FT s((double)aLink.size());
   
-  Matrix H (s,0,0
-           ,0,s,0
-           ,0,0,s
+  Matrix H (  s,0.0,0.0
+           ,0.0,  s,0.0
+           ,0.0,0.0,  s
            );
            
   Vector c = NULL_VECTOR ;
@@ -392,18 +392,18 @@ LindstromTurkCore<ECM>::Compute_shape_cost( Point const& p, vertex_descriptor_ve
 template<class ECM>
 void LindstromTurkCore<ECM>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
-  double slai = to_double(Ai*Ai) ;
+  FT slai = Ai*Ai ;
   
   CGAL_ECMS_LT_TRACE(3,"[constrians] Adding new if alpha-compatble.\nslai: " << slai );
   
-  double l = CGAL_NTS sqrt(slai) ;
+  FT l = CGAL_NTS sqrt(slai) ;
   
   CGAL_ECMS_LT_TRACE(3,"[constrians] Adding new if alpha-compatble.\nslai: " << slai );
   
   Vector Ain ;
   FT     bin ;
   
-  if ( l > 0.0 )
+  if ( !CGAL_NTS is_zero(l) )
   {
     Ain = Ai / l ;
     bin = bi / l ;
@@ -424,10 +424,10 @@ void LindstromTurkCore<ECM>::Constrians::Add_if_alpha_compatible( Vector const& 
   {
     FT d01 = A.r0() * Ai  ;
     
-    double sla0 = to_double(A.r0() * A.r0()) ;
-    double sd01 = to_double(d01 * d01) ;
+    FT sla0 = A.r0() * A.r0() ;
+    FT sd01 = d01 * d01 ;
 
-    double max = sla0 * slai * squared_cos_alpha() ;     
+    FT max = sla0 * slai * squared_cos_alpha() ;     
     
     CGAL_ECMS_LT_TRACE(3,"[constrians] Second constrain. d01: " << d01 << " sla0:" << sla0 << " sd01:" << sd01 << " max:" << max );
     
@@ -440,12 +440,13 @@ void LindstromTurkCore<ECM>::Constrians::Add_if_alpha_compatible( Vector const& 
     
     FT dc012 = N * Ai ;
     
-    double slc01  = to_double(N * N) ;
-    double sdc012 = to_double(dc012 * dc012);       
+    FT slc01  = N * N ;
+    FT sdc012 = dc012 * dc012;       
 
-    double min = slc01 * slai * squared_sin_alpha() ;
+    FT min = slc01 * slai * squared_sin_alpha() ;
     
-    CGAL_ECMS_LT_TRACE(3,"[constrians] Thirds constrain. N: " << xyz_to_string(N) << " dc012:" << dc012 << " slc01:" << slc01 << " sdc012:" << sdc012 << " min:" << min );
+    CGAL_ECMS_LT_TRACE(3,"[constrians] Thirds constrain. N: " << xyz_to_string(N) << " dc012:" << dc012 << " slc01:" << slc01 
+                       << " sdc012:" << sdc012 << " min:" << min );
     
     if ( sdc012 <= min )
       lAddIt = false ;
@@ -488,6 +489,8 @@ int index_of_max_component ( V const& v )
   int i = 0 ;
   
   FT max = v.x();
+  FT y = v.y();
+
   if ( max < v.y() )
   {
     max = v.y();

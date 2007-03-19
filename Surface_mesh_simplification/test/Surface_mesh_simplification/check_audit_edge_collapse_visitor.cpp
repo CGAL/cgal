@@ -1,4 +1,4 @@
-#include <map>
+#include <vector>
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -8,37 +8,15 @@ private :
   
   struct Data
   {
-    Data ( size_t i )
+    Data ( size_t i, optional<NT> const& c, optional<Point> const& p )
       : 
        id(i)
-      ,selected(false)
-      ,is_collapsable(false)
-      ,order( size_t(-1) )
+      ,cost(c) 
+      ,placement(p)
     {}
-
-    static bool match ( Data const& x, Data const& y )
-    {  
-      bool r = false ;
-      if ( x.selected == y.selected )
-      {
-        if ( x.selected )
-        {
-          if (    (  x.is_collapsable ==  y.is_collapsable )
-               && ( !x.cost           == !y.cost           )
-               && ( !x.placement      == !y.placement      )
-             )
-            r = true ;
-        } 
-        else r = true ;
-      }
-      return r ;  
-    }
-
+    
     size_t           id ;
-    bool             selected ; 
-    bool             is_collapsable ;
-    size_t           order ;
-    optional<double> cost ;
+    optional<NT>     cost ;
     optional<Point>  placement ;
   } ;
   typedef shared_ptr<Data> Data_ptr ;
@@ -51,111 +29,63 @@ private :
   typedef char_separator<char> Separator ;
   typedef tokenizer<Separator> Tokenizer ;
   
-  // The audit files are generated in a Windows machine, so if this runs on Linux there is a trailing CR that would mess up the tokenizer.
-  string normalize_EOL ( string line )
-  {
-    string::size_type l = line.length();
-    string::size_type d = ( l > 0 && line[l-1] == '\r' ) ? 1 : 0 ; 
-    return line.substr(0, l-d ) ;
-  }
 
   void ReadAudit( istream& in )
   {
-    size_t order = 0 ;
+    size_t section = 0 ;
     string line ;
     while ( getline(in,line) )
     {
-      if ( line.length() > 1 )
+      line = normalize_EOL(line);
+      if ( line.length() > 0 )
       {
-        line = normalize_EOL(line);
-
-        string h = str ( format("AUDIT: %1%") % line ) ;
-        history.push_back(h);
-        #ifdef TRACE
-        std::cerr << h << std::endl ;
-        #endif
- 
-        Tokenizer tk(line,Separator(" "));
-        vector<string> tokens(tk.begin(),tk.end());
-
-        CHECK_MSG( tokens.size() > 1, str(format("Invalid audit line, not enough tokens: %1%") % line) ) ;
-        char c = tokens[0][0] ;
-        switch ( c )
+        TRACE( str ( format("AUDIT: %1%") % line ) ) ;
+       
+        switch ( section )
         {
-          case 'I' : 
-            {
-              CHECK_MSG( tokens.size() > 1, str(format("Invalid audit line of type I, id field missing: %1%") % line) ) ;
-              size_t id = lexical_cast<size_t>(tokens[1]);
+          case 0 : epsilon_cost   = compute_epsilon_from_smallest_sample(toNT(line)); break ;
+          case 1 : epsilon_sqdist = compute_epsilon_from_smallest_sample(toNT(line)); break ;
+          
+          default : 
+     
+            Tokenizer tk(line,Separator(" "));
+            vector<string> tokens(tk.begin(),tk.end());
 
-              CHECK_MSG(audit_table.find(id)==audit_table.end()
-                       ,str(format("Invalid audit line of type I, id field with duplicate value: %1%") % line)
-                       );
-
-              audit_table.insert(make_pair(id, Data_ptr( new Data(id) ) ) ) ;
-            }  
-            break ;
+            CHECK_MSG( tokens.size() >= 1, str(format("Invalid audit line of type I, id field missing: %1%") % line) ) ;
+            CHECK_MSG( tokens.size() >= 2, str(format("Invalid audit line of type I, cost field missing: %1%") % line) ) ;
+            CHECK_MSG( tokens.size() >= 5, str(format("Invalid audit line of type I, placement field missing: %1%") % line) ) ;
             
-          case 'S' : 
+            size_t id = lexical_cast<size_t>(tokens[0]);
+
+            CHECK_MSG(audit_table.find(id)==audit_table.end()
+                     ,str(format("Invalid audit line of type I, id field with duplicate value: %1%") % line)
+                     );
+
+                           
+            optional<NT> cost ;
+                  
+            if ( tokens[1][0] != '?' )
+              cost = toNT(tokens[1]);
+                  
+            optional<Point> placement ;
+            if ( tokens.size() > 3 )
             {
-              CHECK_MSG( tokens.size() > 1, str(format("Invalid audit line of type S, id field missing: %1%") % line) ) ;
-              size_t id = lexical_cast<size_t>(tokens[1]);
-              Data_ptr data = audit_table[id];
-
-              CHECK_MSG(data
-                       ,str(format("Invalid audit line of type S, incorrect id field (doesn't match any previous I line): %1%") % line)
-                       );
-              
-              optional<double> cost ;
-              if ( tokens.size() > 2 )
-                cost = lexical_cast<double>(tokens[2]);
-
-              data->selected = true ;  
-              data->cost     = cost ;
-              data->order    = order++;
-            }  
-            break ;
-            
-          case 'C' : 
-            {
-              CHECK_MSG( tokens.size() > 1, str(format("Invalid audit line of type C, id field missing: %1%") % line) ) ;
-              size_t id = lexical_cast<size_t>(tokens[1]);
-              Data_ptr data = audit_table[id];
-              
-              CHECK_MSG(data
-                       ,str(format("Invalid audit line of type C, incorrect id field (doesn't match any previous I line): %1%") % line)
-                       );
-
-              optional<Point> placement ;
-              if ( tokens.size() > 4 )
+              if ( tokens[2][0] != '?' )
               {
-                double x = lexical_cast<double>(tokens[2]);
-                double y = lexical_cast<double>(tokens[3]);
-                double z = lexical_cast<double>(tokens[4]);
+                NT x = toNT(tokens[2]);
+                NT y = toNT(tokens[3]);
+                NT z = toNT(tokens[4]);
+                      
                 placement = Point(x,y,z);
-              }
-                
-              data->is_collapsable = true ;
-              data->placement = placement ;
-            }  
-            break ;
+              }              
+            }
             
-          case 'N' : 
-            {
-              CHECK_MSG( tokens.size() > 1, str(format("Invalid audit line of type N, id field missing: %1%") % line) ) ;
-              size_t id = lexical_cast<size_t>(tokens[1]);
-              Data_ptr data = audit_table[id];
-
-              CHECK_MSG(data
-                       ,str(format("Invalid audit line of type N, incorrect id field (doesn't match any previous I line): %1%") % line)
-                       );
-              
-              data->is_collapsable = false ;
-            }  
-            break ;
+            audit_table.insert(make_pair(id,Data_ptr( new Data(id, cost, placement) ) ) ) ;
             
-         default :
-           REPORT_ERROR( str(format("Invalid audit line: %1%") % line) ) ;
+            break ;
         }
+        
+        ++ section ;
       }  
     }
   }
@@ -164,25 +94,22 @@ public :
   
   Visitor ( string audit_name ) 
   {
-    string h = str ( format("AUDIT FILE: %1%") % audit_name ) ;
-    history.push_back(h);
-    #ifdef TRACE
-    std::cerr << h << std::endl ;
-    #endif
+    TRACE( str ( format("AUDIT FILE: %1%") % audit_name ) ) ;
     ifstream in(audit_name.c_str());  
     if ( in )
          ReadAudit(in);
     else REPORT_ERROR( str(format("Unable to open audit file: %1%") % audit_name) ) ;
   }
   
-  void OnStarted( Surface& ) { order = 0 ; } 
+  void OnStarted( Surface& aSurface ) {} 
   
-  void OnFinished ( Surface& )
+  void OnFinished ( Surface& aSurface )
   { 
+    CHECK(aSurface.is_valid());
+
     CHECK_EQUAL( audit_table.size(), actual_table.size() ) ;
     
     size_t total = audit_table.size() ;
-    size_t wrong = 0 ;
     for ( size_t i = 0, ei = total ; i != ei ; ++ i )
     {
       size_t idx = i * 2 ;
@@ -192,71 +119,101 @@ public :
       CHECK(audit_data);
       CHECK(actual_data);
 
-      if ( !Data::match(*audit_data,*actual_data) )
+      match cost_m      = equal_cost     (audit_data->cost     ,actual_data->cost);
+      match placement_m = equal_placement(audit_data->placement,actual_data->placement);
+      
+      if ( !cost_m.ok() )
       {
-        cerr << "Mismatch detected.\n Expected: " << audit2str(audit_data) << "\n Got: " << audit2str(actual_data) << endl ;
-        ++ wrong ;
+        cerr << "Cost mismatch detected: " << cost_m 
+             << "\nExpected: " << audit2str(audit_data) 
+             << "\nGot: " << audit2str(actual_data) << endl ;
+        throw runtime_error("");
+      } 
+      if ( !placement_m.ok() )
+      {
+        cerr << "Placement mismatch detected: " << placement_m 
+             << "\nExpected: " << audit2str(audit_data) 
+             << "\nGot: " << audit2str(actual_data) << endl ;
+        throw runtime_error("");
       } 
     }
+  } 
+  
+  void OnStopConditionReached( Profile const& ) {} 
+  
+  void OnCollected( Profile const& aProfile, optional<NT> const& aCost, optional<Point> const& aP )
+  {
+    TRACE( str ( format("I %1% # %2%") % aProfile.v0_v1()->id() % edge2str(aProfile.v0_v1()) ) ) ;
+    
+    actual_table.insert(make_pair(aProfile.v0_v1()->id(), Data_ptr( new Data(aProfile.v0_v1()->id(),aCost,aP) ) ) ) ;
+  }                
+  
+  void OnSelected( Profile const& aProfile, optional<NT> const& aCost, size_t, size_t ) {}
+  
+  void OnCollapsing( Profile const& aProfile, optional<Point> const& aPlacement ) {}
+  
+  void OnNonCollapsable( Profile const& aProfile ) {}                
 
-    if ( wrong > 0 )
+  NT toNT ( string s ) 
+  { 
+    NT r(-1);
+    
+    try
     {
-      cerr << wrong << " mismatches out of " << total << " collapses" << endl ;
-      if ( wrong > 20 )
-      {
-        cerr << "TEST FAILED. Too many mismatched collapses." << endl ;
-        throw runtime_error("");
-      }
+     r = lexical_cast<NT>(s); 
     }
-  } 
+    catch (...)
+    {
+      cerr << "Cannot convert string[" << s << "] to a numeric value" << endl ;
+    }
+    
+    return r ;
+  }
   
-  void OnStopConditionReached( Surface& )
+  
+  NT compute_epsilon_from_smallest_sample ( NT n ) { return n / NT(256);  }  
+  
+  struct match
   {
-  } 
+    match ( optional<NT> ad, NT md ) : actual_diff(ad), max_diff(md) {}
+   
+    bool ok() const
+    {
+      return !!actual_diff ? *actual_diff <= max_diff : false ;
+    }    
+    
+    friend std::ostream& operator<< ( std::ostream& os, match const& m )
+    {
+      return os << "actual_diff=" << opt2str(m.actual_diff) << " max_diff=" << m.max_diff ;
+    }
+    
+    optional<NT> actual_diff ;
+    NT           max_diff ;
+  } ;
   
-  void OnCollected( Halfedge_handle const& aEdge, Surface& )
+  match equal_cost ( optional<NT> const& a, optional<NT> const& b )
   {
-    string h = str ( format("I %1% # %2%") % aEdge->id() % edge2str(aEdge) ) ;
-    history.push_back(h);
-    #ifdef TRACE
-    std::cerr << h << std::endl ;
-    #endif
-    actual_table.insert(make_pair(aEdge->id(), Data_ptr( new Data(aEdge->id()) ) ) ) ;
-  }                
+    optional<NT> diff ;
+    
+    if ( a && b )
+      diff = CGAL_NTS abs(*a-*b) ;
+    else if ( !a && !b )
+      diff = NT(0.0) ; 
+      
+   return match ( diff , epsilon_cost ) ;
+  }
   
-  void OnSelected( Halfedge_handle const& aEdge, Surface&, optional<double> const& aCost, size_t, size_t )
+  match equal_placement ( optional<Point> const& a, optional<Point> const& b )
   {
-    string h = str ( format("S %1% %2%") % aEdge->id() % opt2str(aCost) ) ;
-    history.push_back(h);
-    #ifdef TRACE
-    std::cerr << h << std::endl ;
-    #endif
-    actual_table[aEdge->id()]->selected = true ;
-    actual_table[aEdge->id()]->cost     = aCost ; 
-    actual_table[aEdge->id()]->order    = order ++ ; 
-  }                
-  
-  void OnCollapsing(Halfedge_handle const& aEdge, Surface&, optional<Point> const& aPlacement ) 
-  {
-    string h = str ( format("C %1%") % aEdge->id() ) ;
-    history.push_back(h);
-    #ifdef TRACE
-    std::cerr << h << std::endl ;
-    #endif
-    actual_table[aEdge->id()]->placement      = aPlacement ; 
-    actual_table[aEdge->id()]->is_collapsable = true ; 
-  }                
-  
-  void OnNonCollapsable(Halfedge_handle const& aEdge, Surface& ) 
-  {
-    string h = str ( format("N %1%") % aEdge->id() ) ;
-    history.push_back(h);
-    #ifdef TRACE
-    std::cerr << h << std::endl ;
-    #endif
-    actual_table[aEdge->id()]->is_collapsable = false ; 
-  }                
-  
+    optional<NT> diff ;
+    if ( a && b )
+      diff = squared_distance(*a,*b) ;
+    else if ( !a && !b )
+      diff = NT(0.0) ; 
+      
+   return match ( diff , epsilon_sqdist ) ;
+  }
+
   void error ( char const* file, int line, char const* pred, string msg )
   {
     cerr << "ERROR in " << file << " at " << line << endl ;
@@ -270,8 +227,8 @@ public :
 
 private :
 
-  Table          audit_table ;
-  Table          actual_table ;      
-  size_t         order ;
-  vector<string> history ;
+  Table audit_table ;
+  Table actual_table ;      
+  NT    epsilon_cost ;
+  NT    epsilon_sqdist ;
 } ;

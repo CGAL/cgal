@@ -117,14 +117,14 @@ private :
   private:
   
     // alpha = 1 degree  
-    static double squared_cos_alpha() { return 0.999695413509  ; }
-    static double squared_sin_alpha() { return 3.04586490453e-4; }
+    static FT squared_cos_alpha() { return FT(0.999695413509)  ; }
+    static FT squared_sin_alpha() { return FT(3.04586490453e-4); }
   } ;
   
 private :
     
   void Extract_triangle_data();
-  void Extract_boundary_data() ;
+  void Extract_boundary_data();
   
   void Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry ) ;
   void Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles );
@@ -169,7 +169,7 @@ private :
   static FT big_value() { return static_cast<FT>((std::numeric_limits<double>::max)()) ; }
   
   // Returns 'n' if it is finite, CGALi::infinite otherwise.
-  static FT made_finite ( FT n ) { return CGAL_NTS is_finite(n) ? n : big_value() ; }
+  static FT made_finite ( FT n ) { return ( CGAL_NTS is_finite(n) ) ? n : big_value() ; }
   
   static Vector made_finite ( Vector const& v ) { return Vector( made_finite(v.x()), made_finite(v.y()), made_finite(v.z()) ) ; }
   

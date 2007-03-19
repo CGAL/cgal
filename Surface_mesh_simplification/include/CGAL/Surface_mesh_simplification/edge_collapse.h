@@ -90,17 +90,17 @@ struct Dummy_visitor
   template<class ECM>
   void OnStopConditionReached( ECM& ) {} 
   
-  template<class Edge, class ECM>
-  void OnCollected( Edge const&, ECM& ) {}                
+  template<class Profile, class OFT>
+  void OnCollected( Profile const&, OFT const& ) {}                
   
-  template<class Edge, class ECM, class OFT, class Size_type>
-  void OnSelected( Edge const&, ECM&, OFT const&, Size_type, Size_type ) {}                
+  template<class Profile, class OFT, class Size_type>
+  void OnSelected( Profile const&, OFT const&, Size_type, Size_type ) {}                
   
-  template<class Edge, class ECM, class OPoint>
-  void OnCollapsing(Edge const&, ECM&, OPoint const& ) {}                
+  template<class Profile, class OPoint>
+  void OnCollapsing(Profile const&, OPoint const& ) {}                
   
-  template<class Edge, class ECM>
-  void OnNonCollapsable(Edge const&, ECM& ) {}                
+  template<class Profile>
+  void OnNonCollapsable(Profile const& ) {}                
 } ;
 
 template<class ECM, class ShouldStop, class P, class T, class R>

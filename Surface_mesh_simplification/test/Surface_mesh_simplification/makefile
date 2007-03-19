@@ -35,19 +35,24 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            test_edge_collapse_Polyhedron_3_LT \
-                test_edge_collapse_Polyhedron_3_MP \
+all:            test_edge_collapse_Polyhedron_3 \
+                test_MP_strategy \
+                test_LT_strategy \
 
-test_edge_collapse_Polyhedron_3_LT$(EXE_EXT): test_edge_collapse_Polyhedron_3_LT$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_LT test_edge_collapse_Polyhedron_3_LT$(OBJ_EXT) $(LDFLAGS)
+test_edge_collapse_Polyhedron_3$(EXE_EXT): test_edge_collapse_Polyhedron_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3 test_edge_collapse_Polyhedron_3$(OBJ_EXT) $(LDFLAGS)
 
-test_edge_collapse_Polyhedron_3_MP$(EXE_EXT): test_edge_collapse_Polyhedron_3_MP$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_MP test_edge_collapse_Polyhedron_3_MP$(OBJ_EXT) $(LDFLAGS)
+test_MP_strategy$(EXE_EXT): test_MP_strategy$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_MP_strategy test_MP_strategy$(OBJ_EXT) $(LDFLAGS)
+
+test_LT_strategy$(EXE_EXT): test_LT_strategy$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_LT_strategy test_LT_strategy$(OBJ_EXT) $(LDFLAGS)
 
 
-clean:          test_edge_collapse_Polyhedron_3_LT.clean \
-                test_edge_collapse_Polyhedron_3_MP.clean \
-
+clean:          test_edge_collapse_Polyhedron_3.clean \
+                test_MP_strategy.clean \
+                test_LT_strategy.clean \
+  
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#

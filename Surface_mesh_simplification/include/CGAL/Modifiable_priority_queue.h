@@ -51,15 +51,15 @@ public:
   
   handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
   
-  handle erase ( value_type const& v, handle  ) { mHeap.remove(v); return null_handle() ; }
+  handle erase ( value_type const& v, handle h ) { mHeap.remove(v); return null_handle() ; }
 
   value_type top() const { return mHeap.top() ; }
   
   void pop() { mHeap.pop(); }
   
   bool empty() const { return mHeap.empty() ; }
-  
-  size_type size() const { return mHeap.size() ; }
+
+  bool contains ( value_type const& v ) { return mHeap.contains(v) ; }
 
   boost::optional<value_type> extract_top()
   {

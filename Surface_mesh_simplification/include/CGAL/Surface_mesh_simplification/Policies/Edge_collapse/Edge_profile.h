@@ -56,7 +56,11 @@ public:
             , vertex_descriptor const& a_v1
             , vertex_descriptor const& a_v2
             ) 
-            : v0(a_v0), v1(a_v1), v2(a_v2) {}
+            : v0(a_v0), v1(a_v1), v2(a_v2)
+    {
+      CGAL_SURF_SIMPL_TEST_assertion( handle_assigned(v0) && handle_assigned(v1) && handle_assigned(v2) ) ;
+      CGAL_SURF_SIMPL_TEST_assertion( v0 != v1 && v1 != v2 && v2 != v0 ) ;
+    }
     
     vertex_descriptor v0 ;
     vertex_descriptor v1 ;
@@ -83,21 +87,21 @@ public :
      
 public :
 
-  edge_descriptor const& v0v1() const { return mV0V1; }
-  edge_descriptor const& v1v0() const { return mV1V0; }
+  edge_descriptor const& v0_v1() const { return mV0V1; }
+  edge_descriptor const& v1_v0() const { return mV1V0; }
   
   vertex_descriptor const& v0() const { return mV0; }
   vertex_descriptor const& v1() const { return mV1; }
 
   // These are null if v0v1 is a border (thius there is no face to its left)  
-  vertex_descriptor const& vl() const { return mVL; } 
-  edge_descriptor const& v1vl() const { return mV1VL; }
-  edge_descriptor const& vlv0() const { return mVLV0; }
+  vertex_descriptor const&  vL() const { return mVL; } 
+  edge_descriptor const& v1_vL() const { return mV1VL; }
+  edge_descriptor const& vL_v0() const { return mVLV0; }
   
   // These are null if v1v0 is a border (thius there is no face to its left)  
-  vertex_descriptor const& vr() const { return mVR; } 
-  edge_descriptor const& v0vr() const { return mV0VR; }
-  edge_descriptor const& vrv1() const { return mVRV1; }
+  vertex_descriptor const&  vR() const { return mVR; } 
+  edge_descriptor const& v0_vR() const { return mV0VR; }
+  edge_descriptor const& vR_v1() const { return mVRV1; }
 
   Triangle_vector const& triangles() const { return mTriangles ; }
   
@@ -114,8 +118,8 @@ public :
   Point const& p0() const { return mP0; }  
   Point const& p1() const { return mP1; }  
   
-  bool is_v0v1_a_border() const { return mIsBorderV0V1 ; }
-  bool is_v1v0_a_border() const { return mIsBorderV1V0 ; }
+  bool is_v0_v1_a_border() const { return mIsBorderV0V1 ; }
+  bool is_v1_v0_a_border() const { return mIsBorderV1V0 ; }
   
   bool left_face_exists () const { return !mIsBorderV0V1 ; }
   bool right_face_exists() const { return !mIsBorderV1V0 ; }

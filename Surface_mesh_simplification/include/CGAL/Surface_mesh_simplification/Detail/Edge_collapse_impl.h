@@ -62,6 +62,8 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::EdgeCollapse( ECM&                    aS
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
 int EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::run()
 {
+  CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
+
   if ( Visitor )
     Visitor->OnStarted(mSurface);
    
@@ -94,6 +96,8 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
     
   size_type lSize = num_edges(mSurface) / 2 ;
   
+  CGAL_SURF_SIMPL_TEST_assertion( ( lSize * 2 ) == mSurface.size_of_halfedges() ) ;
+
   mInitialEdgeCount = mCurrentEdgeCount = lSize;
   
   mEdgeDataArray.reset( new Edge_data[lSize] ) ;
@@ -102,6 +106,9 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
   
   std::size_t id = 0 ;
   
+  CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lInserted    = 0 ) ;
+  CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lNotInserted = 0 ) ;
+
   undirected_edge_iterator eb, ee ;
   for ( tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
   {
@@ -117,16 +124,31 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
       Edge_data& lData = get_data(lEdge);
       lData.cost() = get_cost(lProfile) ;
       insert_in_PQ(lEdge,lData);
-    }
       
-    if ( Visitor )
-      Visitor->OnCollected(lEdge,mSurface);
+      if ( Visitor )
+        Visitor->OnCollected(lProfile
+                            ,lData.cost() 
+
+#ifdef CGAL_TESTING_SURFACE_MESH_SIMPLIFICATION_USING_EXTENDED_VISITOR
+                            ,get_placement(lProfile) 
+#endif
+                            );
+
+      CGAL_SURF_SIMPL_TEST_assertion_code ( ++ lInserted ) ;
+    }
+    else
+    {
+      CGAL_SURF_SIMPL_TEST_assertion_code ( ++ lNotInserted ) ;
+    }
+
     
     CGAL_ECMS_TRACE(2,edge_to_string(lEdge));
     
     id += 2 ;
   }
  
+  CGAL_SURF_SIMPL_TEST_assertion ( lInserted + lNotInserted == mInitialEdgeCount ) ;
+
   CGAL_ECMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
 }
 
@@ -135,27 +157,32 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
 {
   CGAL_ECMS_TRACE(0,"Collapsing edges...") ;
 
+  CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lLoop_watchdog = 0 ) ;
+  CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lNonCollapsableCount = 0 ) ;
+
   //
   // Pops and processes each edge from the PQ
   //
   optional<edge_descriptor> lEdge ;
   while ( (lEdge = pop_from_PQ()) )
   {
+    CGAL_SURF_SIMPL_TEST_assertion ( lLoop_watchdog ++ < mInitialEdgeCount ) ;
+
     CGAL_ECMS_TRACE(3,"Poped " << edge_to_string(*lEdge) ) ;
     
+    Profile const& lProfile = create_profile(*lEdge);
+      
     Cost_type lCost = get_data(*lEdge).cost();
     
     if ( Visitor )
-      Visitor->OnSelected(*lEdge,mSurface,lCost,mInitialEdgeCount,mCurrentEdgeCount);
+      Visitor->OnSelected(lProfile,lCost,mInitialEdgeCount,mCurrentEdgeCount);
       
     if ( lCost ) 
     {
-      Profile const& lProfile = create_profile(*lEdge);
-      
       if ( Should_stop(*lCost,lProfile,mInitialEdgeCount,mCurrentEdgeCount) )
       {
         if ( Visitor )
-          Visitor->OnStopConditionReached(mSurface);
+          Visitor->OnStopConditionReached(lProfile);
           
         CGAL_ECMS_TRACE(0,"Stop condition reached with InitialEdgeCount=" << mInitialEdgeCount
                        << " CurrentEdgeCount=" << mCurrentEdgeCount
@@ -170,8 +197,10 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
       }
       else
       {
+        CGAL_SURF_SIMPL_TEST_assertion_code ( lNonCollapsableCount++ ) ;
+
         if ( Visitor )
-          Visitor->OnNonCollapsable(*lEdge,mSurface);
+          Visitor->OnNonCollapsable(lProfile);
           
         CGAL_ECMS_TRACE(1,edge_to_string(*lEdge) << " NOT Collapsable"  );
       }  
@@ -180,8 +209,10 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
     {
       CGAL_ECMS_TRACE(1,edge_to_string(*lEdge) << " uncomputable cost."  );
     }
-    
   }
+
+  CGAL_SURF_SIMPL_TEST_assertion ( mCurrentEdgeCount = mSurface.size_of_halfedges() * 2 ) ;
+
 }
 
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
@@ -209,7 +240,8 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::is_border( const_vertex_descriptor 
 // An edge p->q can be collapsed iff it satisfies the "link condition"
 // (as described in the "Mesh Optimization" article of Hoppe et al (1993))
 //
-// The link conidition is as follows: for every vertex 'k' adjacent to both 'p and 'q', "p,k,q" is a facet of the mesh.
+// The link conidition is as follows: for every vertex 'k' adjacent to both 'p and 'q',
+// "p,k,q" is a facet of the mesh.
 //
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
 bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapsable( Profile const& aProfile )
@@ -220,33 +252,31 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapsable( Profile const& aPro
                  << "->V" << aProfile.v1()->id() << "(%" << aProfile.v1()->vertex_degree() << ")" 
                  );
                  
-  CGAL_ECMS_TRACE(4, "is p_q border:" << aProfile.is_v0v1_a_border() );
-  CGAL_ECMS_TRACE(4, "is q_q border:" << aProfile.is_v1v0_a_border() );
+  CGAL_ECMS_TRACE(4, "is p_q border:" << aProfile.is_v0_v1_a_border() );
+  CGAL_ECMS_TRACE(4, "is q_q border:" << aProfile.is_v1_v0_a_border() );
 
-  bool lIsBoundary = aProfile.is_v0v1_a_border() || aProfile.is_v1v0_a_border() ;
-  
   out_edge_iterator eb1, ee1 ; 
   out_edge_iterator eb2, ee2 ; 
 
-  CGAL_ECMS_TRACE(4,"  t=V" << aProfile.vt()->ID << "(%" << aProfile.vt()->vertex_degree() << ")" );
-  CGAL_ECMS_TRACE(4,"  b=V" << aProfile.vb()->ID << "(%" << aProfile.vb()->vertex_degree() << ")" );
+  CGAL_ECMS_TRACE(4,"  t=V" << aProfile.vL()->ID << "(%" << aProfile.vL()->vertex_degree() << ")" );
+  CGAL_ECMS_TRACE(4,"  b=V" << aProfile.vR()->ID << "(%" << aProfile.vR()->vertex_degree() << ")" );
 
-  // The following loop checks the link condition for aProfile.v0v1().
-  // Specifically, that every vertex 'k' adjacent to both 'p and 'q' is a face of the mesh.
+  // The following loop checks the link condition for v0_v1.
+  // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   // 
   for ( tie(eb1,ee1) = out_edges(aProfile.v0(),mSurface) ; rR && eb1 != ee1 ; ++ eb1 )
   {
-    edge_descriptor p_k = *eb1 ;
+    edge_descriptor v0_k = *eb1 ;
     
-    if ( p_k != aProfile.v0v1() )
+    if ( v0_k != aProfile.v0_v1() )
     {
-      vertex_descriptor k = target(p_k,mSurface);
+      vertex_descriptor k = target(v0_k,mSurface);
       
       for ( tie(eb2,ee2) = out_edges(k,mSurface) ; rR && eb2 != ee2 ; ++ eb2 )
       {
-        edge_descriptor k_l = *eb2 ;
+        edge_descriptor k_v1 = *eb2 ;
 
-        if ( target(k_l,mSurface) == aProfile.v1() )
+        if ( target(k_v1,mSurface) == aProfile.v1() )
         {
           // At this point we know p-q-k are connected and we need to determine if this triangle is a face of the mesh.
           //
@@ -259,9 +289,33 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapsable( Profile const& aPro
           // or k==b but q->b is a border (because in that case even though there exists triangles p->q->t (or q->p->b)
           // they are holes, not faces)
           // 
-          bool lIsFace =   ( aProfile.vl() == k && aProfile.left_face_exists () )
-                        || ( aProfile.vr() == k && aProfile.right_face_exists() ) ;
+     
+          bool lIsFace =   ( aProfile.vL() == k && aProfile.left_face_exists () )
+                        || ( aProfile.vR() == k && aProfile.right_face_exists() ) ;
                         
+          CGAL_SURF_SIMPL_TEST_assertion_code
+          ( 
+            if ( lIsFace )
+            {
+              // Is k_v1 the halfedge bounding the face 'k-v1-v0'?
+              if ( !k_v1->is_border() && k_v1->next()->vertex() == aProfile.v0() )
+              {
+                CGAL_SURF_SIMPL_TEST_assertion( !k_v1->is_border() ) ;
+                CGAL_SURF_SIMPL_TEST_assertion(  k_v1                ->vertex() == aProfile.v1() ) ;
+                CGAL_SURF_SIMPL_TEST_assertion(  k_v1->next()        ->vertex() == aProfile.v0() ) ;
+                CGAL_SURF_SIMPL_TEST_assertion(  k_v1->next()->next()->vertex() == k ) ;
+              }
+              else // or is it the opposite?
+              {
+                edge_descriptor v1_k = k_v1->opposite();
+                CGAL_SURF_SIMPL_TEST_assertion( !v1_k->is_border() ) ;
+                CGAL_SURF_SIMPL_TEST_assertion(  v1_k                ->vertex() == k ) ;
+                CGAL_SURF_SIMPL_TEST_assertion(  v1_k->next()        ->vertex() == aProfile.v0() ) ;
+                CGAL_SURF_SIMPL_TEST_assertion(  v1_k->next()->next()->vertex() == aProfile.v1() ) ;
+              }
+            }
+          );
+
           if ( !lIsFace )
           {
             CGAL_ECMS_TRACE(3,"  k=V" << k->id() << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
@@ -279,9 +333,17 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapsable( Profile const& aPro
      
   if ( rR )
   {
-    if ( lIsBoundary )
+    if ( aProfile.is_v0_v1_a_border() )
     {
-      if ( Is_open_triangle(aProfile.v0v1()) )
+      if ( Is_open_triangle(aProfile.v0_v1()) )
+      {
+        rR = false ;
+        CGAL_ECMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge." ) ;
+      }
+    }
+    else if ( aProfile.is_v1_v0_a_border() )
+    {
+      if ( Is_open_triangle(aProfile.v1_v0()) )
       {
         rR = false ;
         CGAL_ECMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge." ) ;
@@ -294,10 +356,17 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapsable( Profile const& aPro
         rR = false ;
         CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
       }  
-      else if ( Is_tetrahedron(aProfile.v0v1()) )
+      else
       {
-        rR = false ;
-        CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
+        bool lTetra = Is_tetrahedron(aProfile.v0_v1());
+
+        CGAL_SURF_SIMPL_TEST_assertion( lTetra == mSurface.is_tetrahedron(aProfile.v0_v1()) ) ;
+
+        if ( lTetra )
+        {
+          rR = false ;
+          CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
+        }
       }
     }
   }
@@ -363,7 +432,14 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_open_triangle( edge_descriptor c
   edge_descriptor h2 = next_edge(h1,mSurface);
   edge_descriptor h3 = next_edge(h2,mSurface);
   
-  return is_undirected_edge_a_border(h2) && is_undirected_edge_a_border(h3);  
+  bool rR = is_border(h2) && is_border(h3);  
+
+  CGAL_SURF_SIMPL_TEST_assertion( rR == (  h1->is_border()
+                                        && h1->next()->is_border()
+                                        && h1->next()->next()->is_border()
+                                        ) 
+                                ) ;
+  return rR ;
 }
 
 
@@ -379,16 +455,20 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
   Placement_type lPlacement = get_placement(aProfile);
   
   if ( Visitor )
-    Visitor->OnCollapsing(aProfile.v0v1(),mSurface,lPlacement);
+    Visitor->OnCollapsing(aProfile,lPlacement);
 
   -- mCurrentEdgeCount ;
       
+  CGAL_SURF_SIMPL_TEST_assertion_code( size_type lResultingVertexCount = mSurface.size_of_vertices() ;
+                                       size_type lResultingEdgeCount   = mSurface.size_of_halfedges() / 2 ;
+                                     ) ; 
+
   // If the top/bottom facets exists, they are removed and the edges v0vt and Q-B along with them.
   // In that case their corresponding pairs must be pop off the queue
   
   if ( aProfile.left_face_exists() )
   {
-    edge_descriptor lV0VL = primary_edge(aProfile.vlv0());
+    edge_descriptor lV0VL = primary_edge(aProfile.vL_v0());
     
     CGAL_ECMS_TRACE(3,"V0VL E" << lV0VL->id()
                    << "(V" <<  lV0VL->vertex()->id() << "->V" << lV0VL->opposite()->vertex()->id() << ")"
@@ -399,13 +479,15 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
     {
       CGAL_ECMS_TRACE(2,"Removing E" << lV0VL->id() << " from PQ" ) ;
       remove_from_PQ(lV0VL,lData) ;
-      -- mCurrentEdgeCount ;
     }
+
+    -- mCurrentEdgeCount ;
+    CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
   }
   
   if ( aProfile.right_face_exists() )
   {
-    edge_descriptor lVRV1 = primary_edge(aProfile.vrv1());
+    edge_descriptor lVRV1 = primary_edge(aProfile.vR_v1());
     
     CGAL_ECMS_TRACE(3,"V1VRE" << lVRV1->id()
                    << "(V" <<  lVRV1->vertex()->id() << "->V" << lVRV1->opposite()->vertex()->id() << ")"
@@ -416,8 +498,9 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
     {
       CGAL_ECMS_TRACE(2,"Removing E" << lVRV1->ID << " from PQ") ;
       remove_from_PQ(lVRV1,lData) ;
-      -- mCurrentEdgeCount ;
     }
+    -- mCurrentEdgeCount ;
+    CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
   }
 
   CGAL_ECMS_TRACE(1,"Removing:\n  v0v1: E" << aProfile.v0v1()->ID << "(V" << lP->ID << "->V" << lQ->ID << ")" );
@@ -425,10 +508,21 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
     
   // Perform the actuall collapse.
   // This is an external function.
-  // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB (PT and QB are removed if they are not null).
+  // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB
+  // (PT and QB are removed if they are not null).
   // All other edges must be kept.
   // All directed edges incident to vertex removed are relink to the vertex kept.
-  rResult = halfedge_collapse(aProfile.v0v1(),mSurface);
+  rResult = halfedge_collapse(aProfile.v0_v1(),mSurface);
+
+  CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
+
+  CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingVertexCount ) ; 
+
+  CGAL_SURF_SIMPL_TEST_assertion( lResultingEdgeCount * 2 == mSurface.size_of_halfedges() ) ;
+
+  CGAL_SURF_SIMPL_TEST_assertion( lResultingVertexCount == mSurface.size_of_vertices() ) ;
+
+  CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
   
   CGAL_ECMS_TRACE(1,"V" << rResult->ID << " kept." ) ;
                  

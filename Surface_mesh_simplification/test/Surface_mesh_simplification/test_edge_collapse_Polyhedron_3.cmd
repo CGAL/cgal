@@ -1,0 +1,17 @@
+data/cube.off
+data/cube_open.off
+data/eight.off
+data/genus1.off
+data/head_open_with_holes.off
+data/hedra.off
+data/hedra_open.off
+data/helmet.off
+data/hexagon_open.off
+data/oct.off
+data/oni.off
+data/square_open.off
+data/star.off
+data/tetra.off
+data/tetra_12f.off
+data/tetra_6f.off
+data/triangle_open_with_hole.off

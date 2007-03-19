@@ -270,23 +270,38 @@ private:
   
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 
   {
-    CGAL_precondition( is_primary_edge(aEdge) ) ;
-    CGAL_precondition(!aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
+    CGAL_SURF_SIMPL_TEST_assertion(!aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
+
     aData.set_PQ_handle(mPQ->push(aEdge));
+
+    CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }
   
   void update_in_PQ( edge_descriptor const& aEdge, Edge_data& aData )
   {
-    CGAL_precondition( is_primary_edge(aEdge) ) ;
-    CGAL_precondition(aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
+    CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
+
     aData.set_PQ_handle(mPQ->update(aEdge,aData.PQ_handle())) ; 
+
+    CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }   
   
   void remove_from_PQ( edge_descriptor const& aEdge, Edge_data& aData )
   {
-    CGAL_precondition( is_primary_edge(aEdge) ) ;
-    CGAL_precondition(aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
+    CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
+
     aData.set_PQ_handle(mPQ->erase(aEdge,aData.PQ_handle()));
+
+    CGAL_SURF_SIMPL_TEST_assertion(!aData.is_in_PQ());
+    CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
   }   
   
   optional<edge_descriptor> pop_from_PQ() 
@@ -294,8 +309,13 @@ private:
     optional<edge_descriptor> rEdge = mPQ->extract_top();
     if ( rEdge )
     {
-      CGAL_precondition( is_primary_edge(*rEdge) ) ;
+      CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(*rEdge) ) ;
+      CGAL_SURF_SIMPL_TEST_assertion(get_data(*rEdge).is_in_PQ()) ;
+
       get_data(*rEdge).reset_PQ_handle();
+
+      CGAL_SURF_SIMPL_TEST_assertion(!get_data(*rEdge).is_in_PQ() ) ;
+      CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(*rEdge)) ;
     }  
     return rEdge ;  
   }

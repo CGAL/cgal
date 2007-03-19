@@ -2299,17 +2299,12 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f_LT.au
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_LT.cmd eol=lf
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_MP.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/test_LT_strategy.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/test_MP_strategy.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3.cmd eol=lf
 Surface_mesher/demo/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
