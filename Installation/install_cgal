@@ -3082,19 +3082,25 @@ print_os_setting()
     ${1} "OS:\t\t\t\t${SYST}"
     ${1} "COMPILER:\t\t\t`extended_compiler_description`"
     for i in ${SUPPORT_FEATURES}; do
-	_set_tmp_to_not_or_not "`value_of \"PROVIDE_PKG_${i}\"`"
+	if [ -z `value_of PROVIDE_PKG_${i}` ]; then
+	    _tmp="not supported"
+	elif [ x`value_of ${i}_VERSION` = x0 ]; then
+	    _tmp="supported (unknown version)"
+	else
+	    _tmp="supported (`value_of ${i}_VERSION`)"
+	fi
 	length "${_LEFTSPACE}${i}:"
         l=${?}
 	if [ ${l} -lt 8 ]; then
-	    ${1} "${i}:\t\t\t\t${_tmp}supported"
+	    ${1} "${i}:\t\t\t\t${_tmp}"
 	else
             if [ ${l} -lt 16 ]; then
-	        ${1} "${i}:\t\t\t${_tmp}supported"
+	        ${1} "${i}:\t\t\t${_tmp}"
             else
                 if [ ${l} -lt 24 ]; then
-	          ${1} "${i}:\t\t${_tmp}supported"
+	          ${1} "${i}:\t\t${_tmp}"
                 else
-                  ${1} "${i}:\t${_tmp}supported"
+                  ${1} "${i}:\t${_tmp}"
                 fi
 	    fi
         fi
@@ -3529,17 +3535,6 @@ change_value()
     print_prompt "New $1: "
     _read
     eval "$1=\"${KEY}\""
-}
-
-# set _tmp to 'not', if $1 is an empty string
-# otherwise set _tmp to ''
-_set_tmp_to_not_or_not()
-{
-    if [ -z "$1" ]; then
-	_tmp='not '
-    else
-	_tmp=''
-    fi
 }
 
 # ---------------------------------------------------------------------
