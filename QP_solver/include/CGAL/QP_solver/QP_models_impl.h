@@ -24,7 +24,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/QP_functions.h>
+//#include <CGAL/QP_functions.h>
 
 CGAL_BEGIN_NAMESPACE
 

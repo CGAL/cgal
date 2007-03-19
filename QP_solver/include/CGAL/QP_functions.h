@@ -22,132 +22,99 @@
 
 #include <iostream>
 #include <string>
-#include <CGAL/iterator.h>
-#include <CGAL/QP_solver.h>
-#include <CGAL/QP_models.h>
 #include <CGAL/QP_solution.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename R>
-bool is_in_equational_form (const R& r);
-// test whether the system is of the form A x == b (equations only)
+namespace QP_functions_detail { 
+  // internal routine; writes P to out in MPS format
+  // Is_linear == Tag_true / Tag_false:
+  //    p is treated as LinearProgram / QuadraticProgram
+  // Is_nonnegative == Tag_true / Tag_false
+  //    p is treated as Nonnegative / Arbitrary  
+  // the dmatrix parameter specificies whether the quadratic matrix (if any)
+  // is written in DMATRIX format (no multiplication by two, good for
+  // cross-checking output, or in QMATRIX format (good for using other
+  // solvers like CPLEX)
+  template <typename P, typename Is_linear, typename Is_nonnegative>
+  void print_program
+  (std::ostream& out, 
+   const P &p,
+   const bool d_matrix, 
+   const std::string& problem_name,
+   Is_linear is_linear, 
+   Is_nonnegative is_nonnegative); 
 
-template <typename Ar, class ET>
-bool has_linearly_independent_equations 
-(const Ar& r, const ET& );
-// test whether the row vectors of A that correpsond to equations 
-// are linearly independent; this is done using type ET. The value
-// type of LinearInequalitySystem must be convertible to ET
+  // test whether the system is of the form A x == b (equations only)
+  template <typename R>
+  bool is_in_equational_form (const R& r);
 
-
-template <typename Abrc, typename Is_linear, typename Is_in_standard_form>
-void print_linear_inequality_system
-(std::ostream& out, 
- const Abrc &abrc,
- const std::string& problem_name,
- Is_linear is_linear, 
- Is_in_standard_form is_in_standard_form);
-// internal routine; writes lis to out in MPS format
-// Is_linear == Tag_true / Tag_false:
-//    lis is treated as LinearProgram / QuadraticProgram
-// Is_in_standard_form == Tag_true / Tag_false
-//    lis is treated as Nonnegative / Arbitrary  
+  // test whether the row vectors of A that correpsond to equations 
+  // are linearly independent; this is done using type ET. The value
+  // type of LinearInequalitySystem must be convertible to ET
+  template <class Ar, class ET>
+  bool has_linearly_independent_equations 
+  (const Ar& ar, const ET& dummy);
+}
 
 template <typename QuadraticProgram>
 void print_quadratic_program 
-(std::ostream& out, const QuadraticProgram &qp,
+(std::ostream& out, const QuadraticProgram &qp, const bool dmatrix = false,
  const std::string& problem_name = std::string("MY_MPS"))
 // writes qp to out in MPS format
 {
-  print_linear_inequality_system 
-    (out, qp, problem_name, CGAL::Tag_false(), CGAL::Tag_false());
+  QP_functions_detail::print_program 
+    (out, qp, dmatrix, problem_name, CGAL::Tag_false(), CGAL::Tag_false());
 }
 
 template <typename LinearProgram>
 void print_linear_program 
-(std::ostream& out, const LinearProgram &lp,
+(std::ostream& out, const LinearProgram &lp, const bool dmatrix = false,
  const std::string& problem_name = std::string("MY_MPS"))
 // writes lp to out in MPS format
 {
-  print_linear_inequality_system 
-    (out, lp, problem_name, CGAL::Tag_true(), CGAL::Tag_false());
+  QP_functions_detail::print_program 
+    (out, lp, dmatrix, problem_name, CGAL::Tag_true(), CGAL::Tag_false());
 }
 
 template <typename NonnegativeQuadraticProgram>
 void print_nonnegative_quadratic_program 
 (std::ostream& out, const NonnegativeQuadraticProgram &qp,
+ const bool dmatrix = false,
  const std::string& problem_name = std::string("MY_MPS"))
 // writes qp to out in MPS format
 {
-  print_linear_inequality_system 
-    (out, qp, problem_name, CGAL::Tag_false(), CGAL::Tag_true());
+  QP_functions_detail::print_program 
+    (out, qp, dmatrix, problem_name, CGAL::Tag_false(), CGAL::Tag_true());
 }
 
 template <typename NonnegativeLinearProgram>
 void print_nonnegative_linear_program 
 (std::ostream& out, const NonnegativeLinearProgram &lp,
+ const bool dmatrix = false,
  const std::string& problem_name = std::string("MY_MPS"))
 // writes lp to out in MPS format
 {
-  print_linear_inequality_system 
-    (out, lp,  problem_name, CGAL::Tag_true(), CGAL::Tag_true());
+  QP_functions_detail::print_program 
+    (out, lp, dmatrix, problem_name, CGAL::Tag_true(), CGAL::Tag_true());
 }
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_quadratic_program 
-(const QuadraticProgram &qp, const ET& )
-{
-  typedef QP_solver<
-    QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_false, Tag_false> >
-    Solver;
-  const Solver* s = new Solver(qp);
-  return Quadratic_program_solution<ET>(s);
-}
+(const QuadraticProgram &qp, const ET& );
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_quadratic_program 
-(const QuadraticProgram &qp, const ET& )
-{
-  typedef QP_solver<
-    QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_false, Tag_true> >
-    Solver;
-  const Solver* s = new Solver(qp);
-  return Quadratic_program_solution<ET>(s);
-}
+(const QuadraticProgram &qp, const ET& );
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_linear_program 
-(const QuadraticProgram &qp, const ET& )
-{
-  typedef QP_solver<
-    QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_true, Tag_false> >
-    Solver;
-  const Solver* s = new Solver(qp);
-  return Quadratic_program_solution<ET>(s);
-}
+(const QuadraticProgram &qp, const ET& );
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_linear_program 
-(const QuadraticProgram &qp, const ET& )
-{
-  typedef QP_solver<
-    QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_true, Tag_true> >
-    Solver;
-  const Solver* s = new Solver(qp);
-  return Quadratic_program_solution<ET>(s);
-}
+(const QuadraticProgram &qp, const ET& );
 
-// check whether the two qp's have the same data; this is the case iff
-// they agree in n, m, a, b, r, fl, l, fu, u, d, c, c0
-// PRE: qp1, qp2 have the same internal number type
-template <typename Quadratic_program1, typename Quadratic_program2>
-bool are_equal_qp 
-(const Quadratic_program1 &qp1, const Quadratic_program2 &qp2);
 
 CGAL_END_NAMESPACE
 

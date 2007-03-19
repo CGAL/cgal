@@ -37,7 +37,8 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
     is_RTS_transition(false),
     is_LP(check_tag(Is_linear())), is_QP(!is_LP),
     //no_ineq(check_tag(Has_equalities_only_and_full_rank())),
-    no_ineq(is_in_equational_form(qp)), // may change after phase I
+    no_ineq(QP_functions_detail::is_in_equational_form(qp)), 
+    // may change after phase I
     has_ineq(!no_ineq),
     is_in_standard_form(check_tag(Is_in_standard_form()))
 {

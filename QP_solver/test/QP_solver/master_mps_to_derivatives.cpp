@@ -118,7 +118,8 @@ void write_MPS(std::ostream& out,
   out << "* Description: " << description << "\n"
       << "* Generated-by: " << generator_name << "\n";
 
-  CGAL::print_quadratic_program(out, qp, problem_name);
+  // print in qmatrix format
+  CGAL::print_quadratic_program(out, qp, false, problem_name);
 }
 
 std::auto_ptr<std::ofstream>

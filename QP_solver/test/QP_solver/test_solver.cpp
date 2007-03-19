@@ -18,6 +18,7 @@
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -404,8 +405,21 @@ bool process(const std::string& filename,
   }
 
   // compare qp1, qp2 
-  if (!are_equal_qp (qp, qp2)) {
+  if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
     cout << "Dense/Sparse readers disagree.\n" << endl;
+    return false;
+  }
+
+  // print program (using DMATRIX format), read it back in and check 
+  // whether it still agrees with the original program
+  std::stringstream inout;
+  // if we have doubles, adjust precision to accomodate high-precision doubles
+  if (is_double(IT())) inout << std::setprecision (12);
+  print_quadratic_program (inout, qp, true);
+  QP_instance qp3(inout, true, verbosity);
+  CGAL_qpe_assertion (qp3.is_valid());
+  if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp3)) {
+    cout << "MPS reader and MPS writer disagree.\n" << endl;
     return false;
   }
 
