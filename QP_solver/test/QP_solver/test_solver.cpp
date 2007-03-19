@@ -323,7 +323,7 @@ CGAL::QP_pricing_strategy<Q, ET, Tags> *
 }
 
 template<typename Is_linear,
-	 typename Is_in_standard_form,
+	 typename Is_nonnegative,
 	 typename IT,
 	 typename ET>
 bool process(const std::string& filename,
@@ -374,13 +374,13 @@ bool process(const std::string& filename,
     return true;
 
   if ((check_tag(Is_linear()) && !qp.is_linear()) ||
-      (check_tag(Is_in_standard_form()) && !qp.is_in_standard_form()))
+      (check_tag(Is_nonnegative()) && !qp.is_nonnegative()))
     return true;
 
   if (verbosity > 0)
     cout << "- Running a solver specialized for: "
 	 << (check_tag(Is_linear())? "linear " : "")
-	 << (check_tag(Is_in_standard_form())? "standard-form " : "")
+	 << (check_tag(Is_nonnegative())? "standard-form " : "")
 	 << "file-IT=" << number_type << ' '
 	 << "IT=" << (is_double(IT())? "double" :
 		      (is_rational(IT())? "Gmpq" : "int")) << ' '
@@ -415,7 +415,9 @@ bool process(const std::string& filename,
   std::stringstream inout;
   // if we have doubles, adjust precision to accomodate high-precision doubles
   if (is_double(IT())) inout << std::setprecision (12);
-  print_quadratic_program (inout, qp, true);
+  CGAL::QP_functions_detail::print_program 
+    (inout, qp, true, std::string("test_io_mps"),
+     Is_linear(),Is_nonnegative());
   QP_instance qp3(inout, true, verbosity);
   CGAL_qpe_assertion (qp3.is_valid());
   if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp3)) {
@@ -423,7 +425,48 @@ bool process(const std::string& filename,
     return false;
   }
 
-  typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_in_standard_form> Tags;
+  // copy program and check whether it is still the same
+  if (!qp.is_linear() && !qp.is_nonnegative()) {
+    CGAL::Quadratic_program<IT> qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
+				     qp.fl(), qp.l(), qp.fu(), qp.u(), 
+				     qp.d(), qp.c(), qp.c0());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
+      cout << "Program not correctly copied.\n" << endl;
+      return false;
+    }
+  }
+
+  if (qp.is_linear() && !qp.is_nonnegative()) {
+    CGAL::Linear_program<IT> qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
+				     qp.fl(), qp.l(), qp.fu(), qp.u(), 
+				     qp.c(), qp.c0());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
+      cout << "Program not correctly copied.\n" << endl;
+      return false;
+    }
+  }
+
+  if (!qp.is_linear() && qp.is_nonnegative()) {
+    CGAL::Nonnegative_quadratic_program<IT> 
+      qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
+	   qp.d(), qp.c(), qp.c0());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
+      cout << "Program not correctly copied.\n" << endl;
+      return false;
+    }
+  }
+
+  if (qp.is_linear() && qp.is_nonnegative()) {
+    CGAL::Nonnegative_linear_program<IT> 
+      qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
+	   qp.c(), qp.c0());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
+      cout << "Program not correctly copied.\n" << endl;
+      return false;
+    }
+  }
+
+  typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_nonnegative> Tags;
 
   // solve:
   CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s = 
@@ -441,7 +484,7 @@ bool process(const std::string& filename,
 }
 
 template<typename Is_linear,
-	 typename Is_in_standard_form>
+	 typename Is_nonnegative>
 bool processType(const std::string& filename,
 		 const std::map<std::string,int>& options)
 {
@@ -457,19 +500,19 @@ bool processType(const std::string& filename,
 
 #ifdef QP_INT
   if (!processOnlyOneValue || value==Int_type)
-    if (!process<Is_linear,Is_in_standard_form,
+    if (!process<Is_linear,Is_nonnegative,
 	int,Integer>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
-    if (!process<Is_linear,Is_in_standard_form,
+    if (!process<Is_linear,Is_nonnegative,
 	double,Float>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
-    if (!process<Is_linear,Is_in_standard_form,
+    if (!process<Is_linear,Is_nonnegative,
 	Rational,Rational>(filename,options))
       success = false;
 #endif

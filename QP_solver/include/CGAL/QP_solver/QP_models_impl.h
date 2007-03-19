@@ -42,7 +42,7 @@ QP_from_mps(std::istream& in,bool use_CPLEX_convention,
     is_linear_(true),
     use_CPLEX_convention(use_CPLEX_convention),
     it0(0),
-    is_in_standard_form_cached(false),
+    is_nonnegative_cached(false),
     use_put_back_token(false)
 {
   // read NAME section:
@@ -703,7 +703,7 @@ std::ostream& operator<<(std::ostream& o,
     << "                       linear: "
     << (qp.is_linear()? yes : no) << endl
     << "             in standard form: "
-    << (qp.is_in_standard_form()? yes : no) << endl
+    << (qp.is_nonnegative()? yes : no) << endl
     << "equalities only and full rank: not checked" << endl;
   //<< (qp.has_equalities_only_and_full_rank()? yes : no) << endl;
   if (!qp.is_linear())

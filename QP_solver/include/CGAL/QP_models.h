@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/iterator.h>
 #include <vector> 
@@ -33,6 +34,7 @@
 // this file defines the following models:
 // - Quadratic_program_from_iterators
 // - Quadratic_program_from_pointers
+// - Quadratic_program
 // - Nonngative_quadratic_program_from_iterators
 // - Nonengative_quadratic_program_from_pointers
 // - Free_quadratic_program_from_iterators
@@ -104,20 +106,20 @@ public:
   typedef D_it   D_iterator;
   typedef C_it   C_iterator;
   typedef typename std::iterator_traits<C_it>::value_type C_entry;
-private:
+protected:
   // data
-  const int n_;
-  const int m_;
-  const A_iterator a_it;
-  const B_iterator b_it; 
-  const R_iterator r_it;
-  const FL_iterator fl_it;
-  const L_iterator l_it;
-  const FU_iterator fu_it;
-  const U_iterator u_it; 
-  const D_iterator d_it;
-  const C_iterator c_it;
-  const C_entry c_0; // constant term
+  int n_;
+  int m_;
+  A_iterator a_it;
+  B_iterator b_it; 
+  R_iterator r_it;
+  FL_iterator fl_it;
+  L_iterator l_it;
+  FU_iterator fu_it;
+  U_iterator u_it; 
+  D_iterator d_it;
+  C_iterator c_it;
+  C_entry c_0; // constant term
 public:
   // construction
   Quadratic_program_from_iterators (
@@ -197,20 +199,91 @@ private:
    bool*, NT*, bool*, NT*, NT**, NT*> Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
-  Quadratic_program_from_pointers (
-     int n, int m, // number of variables / constraints
-     const A_iterator& a, 
-     const B_iterator& b,
-     const R_iterator& r,
-     const FL_iterator& fl,
-     const L_iterator& l,
-     const FU_iterator& fu,
-     const U_iterator& u,
-     const D_iterator& d,
-     const C_iterator& c,
-     const C_entry& c0 = C_entry(0))
+  Quadratic_program_from_pointers 
+  (
+   int n, int m, // number of variables / constraints
+   const A_iterator& a, 
+   const B_iterator& b,
+   const R_iterator& r,
+   const FL_iterator& fl,
+   const L_iterator& l,
+   const FU_iterator& fu,
+   const U_iterator& u,
+   const D_iterator& d,
+   const C_iterator& c,
+   const C_entry& c0 = C_entry(0))
     : Base (n, m, a, b, r, fl, l, fu, u, d, c, c0)
   {}  
+};
+
+// Quadratic_program (copies the data)
+// -----------------------------------
+template <typename NT>
+class Quadratic_program :
+  public Quadratic_program_from_pointers<NT>
+{
+private:
+  typedef Quadratic_program_from_pointers<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  template <typename A_it, typename B_it, typename R_it, typename FL_it, 
+	    typename L_it, typename FU_it, typename U_it, typename D_it, 
+	    typename C_it>
+  Quadratic_program 
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const FL_it& fl,
+   const L_it& l,
+   const FU_it& fu,
+   const U_it& u,
+   const D_it& d,
+   const C_it& c,
+   const C_entry& c0 = C_entry(0))
+    : Base (n, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, c0)
+  {
+    // now allocate space...
+    this->a_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
+    this->b_it = new NT[m];
+    this->r_it = new CGAL::Comparison_result[m];
+    this->fl_it = new bool[n];
+    this->l_it = new NT[n];
+    this->fu_it = new bool[n];
+    this->u_it = new NT[n];
+    this->d_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->d_it[j] = new NT[n];
+    this->c_it = new NT[n];
+
+    // ... and copy the iterator ranges
+    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
+    copy_n (b, m, this->b_it);
+    copy_n (r, m, this->r_it);
+    copy_n (fl, n, this->fl_it);
+    copy_n (l, n, this->l_it);
+    copy_n (fu, n, this->fu_it);
+    copy_n (u, n, this->u_it);
+    for (int j=0; j<n; ++j) copy_n (*(d+j), n, this->d_it[j]);
+    copy_n (c, n, this->c_it);
+  }
+
+  ~Quadratic_program () 
+  {
+    // free memory
+    delete[] this->c_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];
+    delete[] this->d_it;
+    delete[] this->u_it;
+    delete[] this->fu_it;
+    delete[] this->l_it;
+    delete[] this->fl_it;
+    delete[] this->r_it;
+    delete[] this->b_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
+    delete[] this->a_it;
+  }
 };
 
 // Linear_program_from_iterators
@@ -227,13 +300,13 @@ template <
 class Linear_program_from_iterators : 
   public Quadratic_program_from_iterators 
 <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it,
- typename QP_model_default_iterators<A_it>::It_2d, C_it>
+ typename QP_model_default_iterators<C_it>::It_2d, C_it>
 {
 private:
   typedef Quadratic_program_from_iterators 
   <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it,
-   typename QP_model_default_iterators<A_it>::It_2d, C_it> Base;
-  typedef typename QP_model_default_iterators<A_it>::It_2d Const_D_iterator;
+   typename QP_model_default_iterators<C_it>::It_2d, C_it> Base;
+  typedef typename QP_model_default_iterators<C_it>::It_2d Const_D_iterator;
 public:
    QP_MODEL_ITERATOR_TYPES;
    Linear_program_from_iterators (
@@ -311,6 +384,70 @@ public:
   {}  
 };
 
+// Linear_program (copies the data)
+// --------------------------------
+template <typename NT>
+class Linear_program :
+  public Linear_program_from_pointers<NT>
+{
+private:
+  typedef Linear_program_from_pointers<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  template <typename A_it, typename B_it, typename R_it, typename FL_it, 
+	    typename L_it, typename FU_it, typename U_it, typename C_it>
+  Linear_program 
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const FL_it& fl,
+   const L_it& l,
+   const FU_it& fu,
+   const U_it& u,
+   const C_it& c,
+   const C_entry& c0 = C_entry(0))
+    : Base (n, m, 0, 0, 0, 0, 0, 0, 0, 0, c0)
+  {
+    // now allocate space...
+    this->a_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
+    this->b_it = new NT[m];
+    this->r_it = new CGAL::Comparison_result[m];
+    this->fl_it = new bool[n];
+    this->l_it = new NT[n];
+    this->fu_it = new bool[n];
+    this->u_it = new NT[n];
+    this->c_it = new NT[n];
+
+    // ... and copy the iterator ranges
+    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
+    copy_n (b, m, this->b_it);
+    copy_n (r, m, this->r_it);
+    copy_n (fl, n, this->fl_it);
+    copy_n (l, n, this->l_it);
+    copy_n (fu, n, this->fu_it);
+    copy_n (u, n, this->u_it);
+    copy_n (c, n, this->c_it);
+  }
+
+  ~Linear_program () 
+  {
+    // free memory
+    delete[] this->c_it;
+    delete[] this->u_it;
+    delete[] this->fu_it;
+    delete[] this->l_it;
+    delete[] this->fl_it;
+    delete[] this->r_it;
+    delete[] this->b_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
+    delete[] this->a_it;
+  }
+};
+
+
 // Nonnegative_quadratic_program_from_iterators
 // --------------------------------------------
 template <
@@ -322,20 +459,20 @@ template <
 class Nonnegative_quadratic_program_from_iterators : 
   public Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      D_it, C_it>
 {
 private:
   typedef  Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      D_it, C_it> Base;
   typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
-  typedef typename QP_model_default_iterators<B_it>::It_1d Const_LU_iterator;
+  typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
 public:
    QP_MODEL_ITERATOR_TYPES;
    Nonnegative_quadratic_program_from_iterators (
@@ -405,6 +542,60 @@ public:
   {}  
 };
 
+// Nonnegative_quadratic_program (copies the data)
+// ----------------------------------------------
+template <typename NT>
+class Nonnegative_quadratic_program :
+  public Nonnegative_quadratic_program_from_pointers<NT>
+{
+private:
+  typedef Nonnegative_quadratic_program_from_pointers<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  template <typename A_it, typename B_it, typename R_it, typename D_it, 
+	    typename C_it>
+  Nonnegative_quadratic_program 
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const D_it& d,
+   const C_it& c,
+   const C_entry& c0 = C_entry(0))
+    : Base (n, m, 0, 0, 0, 0, 0, c0)
+  {
+    // now allocate space...
+    this->a_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
+    this->b_it = new NT[m];
+    this->r_it = new CGAL::Comparison_result[m];
+    this->d_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->d_it[j] = new NT[n];
+    this->c_it = new NT[n];
+
+    // ... and copy the iterator ranges
+    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
+    copy_n (b, m, this->b_it);
+    copy_n (r, m, this->r_it);
+    for (int j=0; j<n; ++j) copy_n (*(d+j), n, this->d_it[j]);
+    copy_n (c, n, this->c_it);
+  }
+
+  ~Nonnegative_quadratic_program () 
+  {
+    // free memory
+    delete[] this->c_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];
+    delete[] this->d_it;
+    delete[] this->r_it;
+    delete[] this->b_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
+    delete[] this->a_it;
+  }
+};
+
+
 // Free_quadratic_program_from_iterators
 // -------------------------------------
 template <
@@ -416,20 +607,20 @@ template <
 class Free_quadratic_program_from_iterators : 
   public Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      D_it, C_it>
 {
 private:
   typedef  Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      D_it, C_it> Base;
   typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
-  typedef typename QP_model_default_iterators<B_it>::It_1d Const_LU_iterator;
+  typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
 public:
    QP_MODEL_ITERATOR_TYPES;
    Free_quadratic_program_from_iterators (
@@ -498,6 +689,58 @@ public:
   {}  
 };
 
+// Free_quadratic_program (copies the data)
+// ---------------------------------------
+template <typename NT>
+class Free_quadratic_program :
+  public Free_quadratic_program_from_pointers<NT>
+{
+private:
+  typedef Free_quadratic_program_from_pointers<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  template <typename A_it, typename B_it, typename R_it, typename D_it, 
+	    typename C_it>
+  Free_quadratic_program 
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const D_it& d,
+   const C_it& c,
+   const C_entry& c0 = C_entry(0))
+    : Base (n, m, 0, 0, 0, 0, 0, c0)
+  {
+    // now allocate space...
+    this->a_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
+    this->b_it = new NT[m];
+    this->r_it = new CGAL::Comparison_result[m];
+    this->d_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->d_it[j] = new NT[n];
+    this->c_it = new NT[n];
+
+    // ... and copy the iterator ranges
+    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
+    copy_n (b, m, this->b_it);
+    copy_n (r, m, this->r_it);
+    for (int j=0; j<n; ++j) copy_n (*(d+j), n, this->d_it[j]);
+    copy_n (c, n, this->c_it);
+  }
+
+  ~Free_quadratic_program () 
+  {
+    // free memory
+    delete[] this->c_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];
+    delete[] this->d_it;
+    delete[] this->r_it;
+    delete[] this->b_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
+    delete[] this->a_it;
+  }
+};
  
 // Nonnegative_linear_program_from_iterators
 // -----------------------------------------
@@ -509,21 +752,21 @@ template <
 class Nonnegative_linear_program_from_iterators : 
   public Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
-     typename QP_model_default_iterators<B_it>::It_2d, C_it>
+     typename QP_model_default_iterators<C_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_2d, C_it>
 {
 private:
   typedef Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
-     typename QP_model_default_iterators<B_it>::It_2d, C_it> Base;
+     typename QP_model_default_iterators<C_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_2d, C_it> Base;
   typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
-  typedef typename QP_model_default_iterators<B_it>::It_1d Const_LU_iterator;
-  typedef typename QP_model_default_iterators<B_it>::It_2d Const_D_iterator;
+  typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
+  typedef typename QP_model_default_iterators<C_it>::It_2d Const_D_iterator;
 public:
    QP_MODEL_ITERATOR_TYPES;
    Nonnegative_linear_program_from_iterators (
@@ -589,6 +832,53 @@ public:
   {}  
 };
 
+// Nonnegative_linear_program (copies the data)
+// --------------------------------------------
+template <typename NT>
+class Nonnegative_linear_program :
+  public Nonnegative_linear_program_from_pointers<NT>
+{
+private:
+  typedef Nonnegative_linear_program_from_pointers<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  template <typename A_it, typename B_it, typename R_it, typename C_it>
+  Nonnegative_linear_program 
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const C_it& c,
+   const C_entry& c0 = C_entry(0))
+    : Base (n, m, 0, 0, 0, 0, c0)
+  {
+    // now allocate space...
+    this->a_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
+    this->b_it = new NT[m];
+    this->r_it = new CGAL::Comparison_result[m];
+    this->c_it = new NT[n];
+
+    // ... and copy the iterator ranges
+    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
+    copy_n (b, m, this->b_it);
+    copy_n (r, m, this->r_it);
+    copy_n (c, n, this->c_it);
+  }
+
+  ~Nonnegative_linear_program () 
+  {
+    // free memory
+    delete[] this->c_it;
+    delete[] this->r_it;
+    delete[] this->b_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
+    delete[] this->a_it;
+  }
+};
+
+
 // Free_linear_program_from_iterators
 // ----------------------------------
 template <
@@ -599,21 +889,21 @@ template <
 class Free_linear_program_from_iterators : 
   public Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
-     typename QP_model_default_iterators<B_it>::It_2d, C_it>
+     typename QP_model_default_iterators<C_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_2d, C_it>
 {
 private:
   typedef Quadratic_program_from_iterators <A_it, B_it, R_it, 
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_1d,
      typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<B_it>::It_1d,
-     typename QP_model_default_iterators<B_it>::It_2d, C_it> Base;
+     typename QP_model_default_iterators<C_it>::It_1d,
+     typename QP_model_default_iterators<C_it>::It_2d, C_it> Base;
   typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
-  typedef typename QP_model_default_iterators<B_it>::It_1d Const_LU_iterator;
-  typedef typename QP_model_default_iterators<B_it>::It_2d Const_D_iterator;
+  typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
+  typedef typename QP_model_default_iterators<C_it>::It_2d Const_D_iterator;
 public:
    QP_MODEL_ITERATOR_TYPES;
    Free_linear_program_from_iterators (
@@ -677,6 +967,52 @@ public:
 		     )
     : Base (n, m, a, b, r, c, c0)
   {}  
+};
+
+// Free_linear_program (copies the data)
+// -------------------------------------
+template <typename NT>
+class Free_linear_program :
+  public Free_linear_program_from_pointers<NT>
+{
+private:
+  typedef Free_linear_program_from_pointers<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  template <typename A_it, typename B_it, typename R_it, typename C_it>
+  Free_linear_program 
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const C_it& c,
+   const C_entry& c0 = C_entry(0))
+    : Base (n, m, 0, 0, 0, 0, c0)
+  {
+    // now allocate space...
+    this->a_it = new NT*[n];
+    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
+    this->b_it = new NT[m];
+    this->r_it = new CGAL::Comparison_result[m];
+    this->c_it = new NT[n];
+
+    // ... and copy the iterator ranges
+    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
+    copy_n (b, m, this->b_it);
+    copy_n (r, m, this->r_it);
+    copy_n (c, n, this->c_it);
+  }
+
+  ~Free_linear_program () 
+  {
+    // free memory
+    delete[] this->c_it;
+    delete[] this->r_it;
+    delete[] this->b_it;
+    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
+    delete[] this->a_it;
+  }
 };
 
 // QP_from_mps
@@ -847,7 +1183,7 @@ private:
   std::string D_section;      // name of the section from which D was read
   
   // cached data:
-  bool is_in_standard_form_cached, is_in_standard_form_;
+  bool is_nonnegative_cached, is_nonnegative_;
 
   // further data gathered from MPS file:
   std::string name;     // from the NAME section
@@ -1322,21 +1658,21 @@ public:
 
   // Returns true iff the MPS stream could be successfully parsed and
   // the loaded QP instance is in standard form.
-  bool is_in_standard_form()
+  bool is_nonnegative()
   {
     if (!is_format_okay_)
       return false;
 
-    if (!is_in_standard_form_cached) {
+    if (!is_nonnegative_cached) {
       for (unsigned int i=0; i<var_names.size(); ++i)
 	if (fl_[i] == false || l_[i] != 0 ||
 	    fu_[i] == true) {
-	  is_in_standard_form_ = false;
-	  return is_in_standard_form_;
+	  is_nonnegative_ = false;
+	  return is_nonnegative_;
 	}
-      is_in_standard_form_ = true;
+      is_nonnegative_ = true;
     }
-    return is_in_standard_form_;
+    return is_nonnegative_;
   }
 };
 
