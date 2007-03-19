@@ -9,9 +9,11 @@ sired. Make the tables simply an event manager rather than owning the points (so
 - make sorting general- solve linking first
 - times can generate certificate func and solve. Queue checks if they are dirty (a point changed--when check? that is hard--maybe collapse to front of interval if need exact and is dirty) and reinserts them if they are. Points are ref counted pointers. With interval rep and way to generate exact. Then just insert notifications. Dirty is keept by generation count per point. Time is k ints, k points, inexact func, interval--broken-what if time moves up? Need linear scans.
 - Delaunay/Regular 3D does all sorts of extra walking around the mesh. 
-- pull edge data into faces (since those must be empty and it is just as easy
-	to walk around them)
 - resolve IK using sign_after. probably should be sign_at with a flag
+- pull edge data into faces (since those must be empty and it is just as easy
+	        to walk around them)-- this does not work trivially, perhaps not
+at all as there can be more than one edge certificate per cell, and they
+mostly collide
 
 Easy:
 - pull static_pred/IP into kinetic pred to get result types right and things

@@ -42,7 +42,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 
 
   if (file.empty()) {
-    typename CGAL::Random rand(seed);
+    typename CGAL::Random rand= CGAL::Random(seed);
     typename Traits::Active_points_2_table::Key lk;
     std::vector<typename Traits::Kinetic_kernel::Point_2> pts;
 

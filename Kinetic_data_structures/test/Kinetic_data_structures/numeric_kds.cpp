@@ -20,8 +20,6 @@ int main(int argc, char *argv[])
     degree= std::atoi(argv[2]);
   }
 
-  bool error;
-
   std::cout << "Using " << num_points  << " degree " << degree << " points."
 	    << std::endl;
   //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
@@ -49,7 +47,7 @@ int main(int argc, char *argv[])
 					  tr.active_points_1_table_handle()));
   }
 
-  error= sort_test<Tr>(tr, 3000);
+  bool error= sort_test<Tr>(tr, 3000);
 
 
   /*if (error || CGAL::Kinetic::internal::audit_failures__ != 0) {

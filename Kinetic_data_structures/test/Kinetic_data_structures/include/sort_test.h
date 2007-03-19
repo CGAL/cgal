@@ -19,9 +19,9 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
 {
 
   std::string etag="WARNING: ";
-  CGAL_exactness_assertion_code(bool fail=false);
+  //CGAL_exactness_assertion_code(bool fail=false);
   CGAL_exactness_assertion_code(etag="ERROR: ");
-  CGAL_exactness_assertion_code(fail=true);
+  //CGAL_exactness_assertion_code(fail=true);
   //CGAL_exactness_assertion_code(bool test_compiled_with_exact_checks;);
     
   typedef CGAL::Kinetic::Sort<Traits> Sort;

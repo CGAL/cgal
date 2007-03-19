@@ -167,7 +167,7 @@ public:
   /*!
     There is one notifaction type, TRIANGULATION.
   */
-  typedef Listener<Listener_core> Listener;
+  typedef CGAL::Kinetic::Listener<Listener_core> Listener;
 
   void write(std::ostream &out) const
   {
