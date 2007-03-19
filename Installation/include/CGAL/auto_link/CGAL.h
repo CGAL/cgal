@@ -20,8 +20,12 @@
 #ifndef CGAL_AUTO_LINK_CGAL_H
 #define CGAL_AUTO_LINK_CGAL_H
 
+#ifndef CGAL_NO_AUTOLINK_CGAL
+
 #define CGAL_LIB_NAME CGAL
 #include <CGAL/auto_link/auto_link.h>
+
+#endif // CGAL_NO_AUTOLINK_CGAL
 
 #endif // CGAL_AUTO_LINK_CGAL_H
 

@@ -20,8 +20,12 @@
 #ifndef CGAL_AUTO_LINK_CGALQT_H
 #define CGAL_AUTO_LINK_CGALQT_H
 
+#ifndef CGAL_NO_AUTOLINK_CGALQT
+
 #define CGAL_LIB_NAME CGALQt
 #include <CGAL/auto_link/auto_link.h>
+
+#endif // CGAL_NO_AUTOLINK_CGALQT
 
 #endif // CGAL_AUTO_LINK_CGALQT_H
 
