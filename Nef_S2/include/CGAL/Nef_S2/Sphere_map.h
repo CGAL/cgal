@@ -231,7 +231,7 @@ public:
   construction means cloning an isomorphic structure and is thus an
   expensive operation.}*/
 
-  Sphere_map(bool b=false) : boundary_item_(boost::none), 
+  Sphere_map(bool = false) : boundary_item_(boost::none), 
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
   ~Sphere_map() { clear(); }
@@ -368,7 +368,7 @@ public:
   }
 
   SVertex_alloc vertex_allocator;
-  SVertex* get_vertex_node( const SVertex& t) {
+  SVertex* get_vertex_node( const SVertex& ) {
     SVertex* p = vertex_allocator.allocate(1);
     vertex_allocator.construct( p, SVertex());
     return p;
@@ -379,7 +379,7 @@ public:
   }
 
   SHalfedge_alloc halfedge_allocator;
-  SHalfedge* get_halfedge_node( const SHalfedge& t) {
+  SHalfedge* get_halfedge_node( const SHalfedge& ) {
     SHalfedge* p = halfedge_allocator.allocate(1);
     halfedge_allocator.construct( p, SHalfedge());
     return p;
@@ -390,7 +390,7 @@ public:
   }
 
   SFace_alloc face_allocator;
-  SFace* get_face_node( const SFace& t) {
+  SFace* get_face_node( const SFace& ) {
     SFace* p = face_allocator.allocate(1);
     face_allocator.construct( p, SFace());
     return p;

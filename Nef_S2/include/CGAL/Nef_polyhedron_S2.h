@@ -76,7 +76,7 @@ class Nef_polyhedron_S2_rep {
   
 public:
   Nef_polyhedron_S2_rep() : sm_() {}
-  Nef_polyhedron_S2_rep(const Self& R) : sm_() {}
+  Nef_polyhedron_S2_rep(const Self&) : sm_() {}
   ~Nef_polyhedron_S2_rep() { sm_.clear(); }
 };
 
