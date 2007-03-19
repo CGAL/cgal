@@ -564,7 +564,7 @@ public:
   template <class OutputIterator>
   OutputIterator compute_polynomial_roots (const Polynomial& poly,
                                            double x_min, double x_max,
-					   OutputIterator oi) const
+                                           OutputIterator oi) const
   {
     // Get the real degree of the polynomial.
     int            degree = poly.getTrueDegree();
@@ -583,7 +583,7 @@ public:
                                   poly.getCoeff(1),
                                   poly.getCoeff(0),
                                   buffer);
-      unsigned int  num_of_roots = std::distance(buffer, end_buffer);
+      unsigned int  num_of_roots = std::distance (&(buffer[0]), end_buffer);
 
       for (i = 0; i < num_of_roots; ++i)
       {
