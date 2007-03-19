@@ -38,66 +38,66 @@ class ID_support_handler {
  public:
   ID_support_handler() {}
   
-  void handle_support(SVertex_handle sv, 
-		      SHalfedge_const_handle se1,
-		      SHalfedge_const_handle se2) {} 
+  void handle_support(SVertex_handle , 
+		      SHalfedge_const_handle ,
+		      SHalfedge_const_handle ) {} 
   
-  void handle_support(SVertex_handle sv,
-		      SHalfloop_const_handle sl1,
-		      SHalfloop_const_handle sl2) {}
+  void handle_support(SVertex_handle ,
+		      SHalfloop_const_handle ,
+		      SHalfloop_const_handle ) {}
   
-  void handle_support(SVertex_handle sv,
-		      SHalfloop_const_handle sl1,
-		      SHalfedge_const_handle se2) {} 
+  void handle_support(SVertex_handle,
+		      SHalfloop_const_handle,
+		      SHalfedge_const_handle) {} 
   
-  void handle_support(SVertex_handle sv,
-		      SHalfedge_const_handle se1,
-		      SHalfloop_const_handle sl2) {}
+  void handle_support(SVertex_handle,
+		      SHalfedge_const_handle,
+		      SHalfloop_const_handle) {}
   
-  void handle_support(SVertex_handle sv,
-		      SHalfedge_const_handle se1,
-		      SVertex_const_handle sv2) {}
+  void handle_support(SVertex_handle,
+		      SHalfedge_const_handle,
+		      SVertex_const_handle) {}
   
-  void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv1,
-		      SHalfedge_const_handle se2) {}
+  void handle_support(SVertex_handle,
+		      SVertex_const_handle,
+		      SHalfedge_const_handle) {}
   
-  void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv1,
-		      SVertex_const_handle sv2) {}
+  void handle_support(SVertex_handle,
+		      SVertex_const_handle,
+		      SVertex_const_handle) {}
   
-  void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv0) {}
+  void handle_support(SVertex_handle,
+		      SVertex_const_handle) {}
   
-  void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv1,
-		      SHalfloop_const_handle sl2) {}
+  void handle_support(SVertex_handle,
+		      SVertex_const_handle,
+		      SHalfloop_const_handle) {}
   
-  void handle_support(SVertex_handle sv,
-		      SHalfloop_const_handle sl1,
-		      SVertex_const_handle sv2) {}
+  void handle_support(SVertex_handle,
+		      SHalfloop_const_handle,
+		      SVertex_const_handle) {}
   
-  void handle_support(SHalfedge_handle se,
-		      SHalfedge_const_handle se1,
-		      SHalfedge_const_handle se2) {}
+  void handle_support(SHalfedge_handle,
+		      SHalfedge_const_handle,
+		      SHalfedge_const_handle) {}
   
-  void handle_support(SHalfedge_handle se,
-		      SHalfedge_const_handle se1) {}
+  void handle_support(SHalfedge_handle,
+		      SHalfedge_const_handle) {}
   
-  void handle_support(SHalfedge_handle se,
-		      SHalfloop_const_handle sl1) {}
+  void handle_support(SHalfedge_handle,
+		      SHalfloop_const_handle) {}
   
-  void handle_support(SHalfedge_handle se,
-		      SHalfedge_const_handle se1,
-		      SHalfloop_const_handle sl2) {}
+  void handle_support(SHalfedge_handle,
+		      SHalfedge_const_handle,
+		      SHalfloop_const_handle) {}
   
-  void handle_support(SHalfedge_handle se,
-		      SHalfloop_const_handle sl1,
-		      SHalfedge_const_handle se2) {}
+  void handle_support(SHalfedge_handle,
+		      SHalfloop_const_handle,
+		      SHalfedge_const_handle) {}
   
-  void handle_support(SHalfedge_handle se,
-		      SHalfloop_const_handle sl1,
-		      SHalfloop_const_handle sl2) {}
+  void handle_support(SHalfedge_handle,
+		      SHalfloop_const_handle,
+		      SHalfloop_const_handle) {}
 };
 
 template<typename Decorator>
