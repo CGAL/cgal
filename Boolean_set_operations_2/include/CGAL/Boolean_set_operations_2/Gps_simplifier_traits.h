@@ -185,7 +185,7 @@ public:
     Intersect_2 (const Base_Intersect_2& base,
                  const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
                  const Base_Compare_xy_2& base_cmp_xy,
-                 const Base_Construct_min_vertex_2& ctr_min_v,
+                 const Base_Construct_min_vertex_2& ,
                  const Self*  tr) : 
       m_base(base),
       m_base_cmp_endpoints(base_cmp_endpoints),
