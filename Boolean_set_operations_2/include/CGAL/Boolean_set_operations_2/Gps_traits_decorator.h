@@ -177,16 +177,16 @@ public:
 
 public:
   
-  Gps_traits_decorator<Base, Curve_data, Point_data>() : m_base_tr(new Base()),
-                                                         m_traits_owner(true)
+  Gps_traits_decorator() : m_base_tr(new Base()),
+			   m_traits_owner(true)
   {}
 
-  Gps_traits_decorator<Base, Curve_data, Point_data>(Base& base_traits) :
+  Gps_traits_decorator(Base& base_traits) :
     m_base_tr(&base_traits),
     m_traits_owner(false)
   {}
 
-  ~Gps_traits_decorator<Base, Curve_data, Point_data>()
+  ~Gps_traits_decorator()
   {
     if(m_traits_owner)
       delete m_base_tr;
