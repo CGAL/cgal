@@ -1,0 +1,10 @@
+data/7_faces_traingle.off
+data/genus3.off
+data/head.off
+data/hedra.off
+data/hedra_open.off
+data/open_cube.off
+data/rombus.off
+data/tetrahedron.off
+data/triangle.off
+data/triangular_hole.off
