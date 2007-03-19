@@ -321,7 +321,7 @@ private:
 
 
   //--------------------------------------------------------------------------
-  bool check_if_exact(const Site_2& s, unsigned int i,
+  bool check_if_exact(const Site_2& , unsigned int ,
 		      const Tag_false&) const
   {
     return true;
