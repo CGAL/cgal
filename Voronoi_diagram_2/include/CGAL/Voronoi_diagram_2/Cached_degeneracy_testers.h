@@ -244,7 +244,7 @@ public:
     emap.clear(UNDEFINED);
   }
 
-  void swap(Self& other) {
+  void swap(Self& /* other */) {
     // doing a real swap is not ready yet
 #if 1
     clear();
