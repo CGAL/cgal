@@ -92,9 +92,9 @@ int main(int, char *[]) {
     DS ds(tr);
     std::cout << "Points are:\n";
     for (int i=0; i< nump/2; ++i){
-      Point pt(rp<F>(r, r.get_int(0,5)),
-	       rp<F>(r, r.get_int(0,5)),
-	       rp<F>(r, r.get_int(0,5)));
+      Point pt(rp<F>(r, r.get_int(0,3)),
+	       rp<F>(r, r.get_int(0,3)),
+	       rp<F>(r, r.get_int(0,3)));
       std::cout << pt << std::endl;
       tr.active_points_3_table_handle()->insert(pt);
       if (i == 10) {
@@ -121,6 +121,7 @@ int main(int, char *[]) {
     Traits tr(0, end_time);
     DS ds(tr);
     std::cout << "Points are:\n";
+
     for (int i=0; i< nump/2.5; ++i){
       Point pt = Point(Bare_point(rp<F>(r, r.get_int(0,5)),
 			          rp<F>(r, r.get_int(0,5)),
