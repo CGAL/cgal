@@ -55,11 +55,11 @@ class Infimaximal_box {
     return false;
   }
 
-  static bool is_standard(const Point_3& p) {
+  static bool is_standard(const Point_3& ) {
     return true;
   }
 
-  static bool is_standard(const Plane_3& p) {
+  static bool is_standard(const Plane_3& ) {
     return true;
   }
 
@@ -71,11 +71,11 @@ class Infimaximal_box {
     return p;
   }
 
-  static Standard_point standard_point(Point_3 p, NT d=1) {
+  static Standard_point standard_point(Point_3 p, NT =1) {
     return p;
   }
 
-  static Standard_plane standard_plane(Plane_3 p, NT d=1) {
+  static Standard_plane standard_plane(Plane_3 p, NT =1) {
     return p;
   }
 
@@ -85,11 +85,11 @@ class Infimaximal_box {
 
   static void set_size_of_infimaximal_box(const NT& size) {}
 
-  static int degree(const RT& n) {
+  static int degree(const RT& ) {
     return 0;
   }
 
-  static NT get_coeff(const RT& p, unsigned int i) {
+  static NT get_coeff(const RT& p, unsigned int ) {
     return p;
   }
 
@@ -97,16 +97,16 @@ class Infimaximal_box {
     return p;
   }
 
-  static bool is_infibox_corner(const Point_3& p) {
+  static bool is_infibox_corner(const Point_3& ) {
     return false;
   }
 
   template <typename Sphere_map>
-  static bool is_complex_facet_infibox_intersection(const Sphere_map& sm) {
+  static bool is_complex_facet_infibox_intersection(const Sphere_map& ) {
     return false;
   }
 
-  static int type_of_infibox_point(const Point_3& p) {
+  static int type_of_infibox_point(const Point_3& ) {
     return 0;
   }
 
@@ -116,35 +116,35 @@ class Infimaximal_box {
   }
 
   template <typename SNC_structure>
-  static bool is_beyond_Infibox(typename SNC_structure::SFace_handle sf, 
-				SNC_structure& snc) {
+  static bool is_beyond_Infibox(typename SNC_structure::SFace_handle , 
+				SNC_structure& ) {
     return false;
   }
 
-  static bool x_on_box(const Point_3& p) {
+  static bool x_on_box(const Point_3& ) {
     return false;
   }
 
-  static bool y_on_box(const Point_3& p) {
+  static bool y_on_box(const Point_3& ) {
     return false;
   }
 
-  static bool z_on_box(const Point_3& p) {
+  static bool z_on_box(const Point_3& ) {
     return false;
   }
 
   template<typename SNC_structure>
-  static NT compute_evaluation_constant_for_halfedge_pairup(const SNC_structure& snc) {
+  static NT compute_evaluation_constant_for_halfedge_pairup(const SNC_structure& ) {
     return NT(1);
   }
 
-  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& min, int& max) { }
+  static void compute_min_max(const Plane_3& , NT orth_coords[3], int& /* min */, int& /* max */) { }
 
-  static Point_3 scale_infibox_vertex(const Point_3 pin) {
+  static Point_3 scale_infibox_vertex(const Point_3& ) {
     return Point_3();
   }
 
-  static Point_3 normalize_transformed_vertex(const Point_3& p) {
+  static Point_3 normalize_transformed_vertex(const Point_3& ) {
     return Point_3();
   }
 
@@ -190,7 +190,7 @@ class Infimaximal_box {
   }
 
   template <typename SNC_constructor>
-  static void initialize_infibox_vertices(SNC_constructor& C, bool space) {
+  static void initialize_infibox_vertices(SNC_constructor& , bool ) {
   }
 
   template <typename SHalfedge_handle>

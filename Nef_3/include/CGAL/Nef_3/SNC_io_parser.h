@@ -575,11 +575,11 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
     }
   }
   
-  void visit(Vertex_handle h) {}
-  void visit(Halfedge_handle h) {}
-  void visit(Halffacet_handle h) {}
-  void visit(SHalfedge_handle h) {}
-  void visit(SHalfloop_handle h) {}
+  void visit(Vertex_handle ) {}
+  void visit(Halfedge_handle ) {}
+  void visit(Halffacet_handle ) {}
+  void visit(SHalfedge_handle ) {}
+  void visit(SHalfloop_handle ) {}
 
   SFace_handle& minimal_sface() { return sf_min; }
 };

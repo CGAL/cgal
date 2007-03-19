@@ -324,11 +324,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       D.set_volume(h, c); 
       linked[h] = true;
     }
-    void visit(Vertex_handle h) { /* empty */ }
-    void visit(Halfedge_handle h) { /* empty */ }
+    void visit(Vertex_handle ) { /* empty */ }
+    void visit(Halfedge_handle ) { /* empty */ }
     void visit(Halffacet_handle h ) { D.set_volume(h, c); }
-    void visit(SHalfedge_handle se) {}
-    void visit(SHalfloop_handle sl) {}
+    void visit(SHalfedge_handle ) {}
+    void visit(SHalfloop_handle ) {}
     void set_volume(Volume_handle ci) { c = ci; }
     bool is_linked(SFace_handle h) {return linked[h];}
   };

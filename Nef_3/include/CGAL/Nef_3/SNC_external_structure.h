@@ -247,8 +247,8 @@ public:
       ShellF[h]=n; 
     }
 
-    void visit(SHalfedge_handle se) {}
-    void visit(SHalfloop_handle sl) {}
+    void visit(SHalfedge_handle ) {}
+    void visit(SHalfloop_handle ) {}
 
     SFace_handle& minimal_sface() { return sf_min; }
 

@@ -216,7 +216,7 @@ template<class Kernel, typename SHalfedge_handle> class SmallerXYZ {
  public:
   SmallerXYZ() {}
 
-  bool operator()(const SHalfedge_handle se, const Point_3 min, bool init) {
+  bool operator()(const SHalfedge_handle se, const Point_3 min, bool /*init*/) {
     return CGAL::lexicographically_xyz_smaller(se->twin()->source()->twin()->source()->point(), min);
   }
 };

@@ -1043,7 +1043,7 @@ public:
   }
 
   Vertex_alloc vertex_allocator;
-  Vertex* get_vertex_node( const Vertex& t) {
+  Vertex* get_vertex_node( const Vertex& ) {
     Vertex* p = vertex_allocator.allocate(1);
     vertex_allocator.construct( p, Vertex());
     return p;
@@ -1065,7 +1065,7 @@ public:
   }
 
   Halffacet_alloc halffacet_allocator;
-  Halffacet* get_halffacet_node( const Halffacet& t) {
+  Halffacet* get_halffacet_node( const Halffacet& ) {
     Halffacet* p = halffacet_allocator.allocate(1);
     halffacet_allocator.construct( p, Halffacet());
     return p;
@@ -1076,7 +1076,7 @@ public:
   }
 
   Volume_alloc volume_allocator;
-  Volume* get_volume_node( const Volume& t) {
+  Volume* get_volume_node( const Volume& ) {
     Volume* p = volume_allocator.allocate(1);
     volume_allocator.construct( p, Volume());
     return p;
@@ -1087,7 +1087,7 @@ public:
   }
 
   SHalfedge_alloc shalfedge_allocator;
-  SHalfedge* get_shalfedge_node( const SHalfedge& t) {
+  SHalfedge* get_shalfedge_node( const SHalfedge& ) {
     SHalfedge* p = shalfedge_allocator.allocate(1);
     shalfedge_allocator.construct( p, SHalfedge());
     return p;
@@ -1098,7 +1098,7 @@ public:
   }
 
   SHalfloop_alloc shalfloop_allocator;
-  SHalfloop* get_shalfloop_node( const SHalfloop& t) {
+  SHalfloop* get_shalfloop_node( const SHalfloop& ) {
     SHalfloop* p = shalfloop_allocator.allocate(1);
     shalfloop_allocator.construct( p, SHalfloop());
     return p;
@@ -1109,7 +1109,7 @@ public:
   }
 
   SFace_alloc sface_allocator;
-  SFace* get_sface_node( const SFace& t) {
+  SFace* get_sface_node( const SFace& ) {
     SFace* p = sface_allocator.allocate(1);
     sface_allocator.construct( p, SFace());
     return p;
