@@ -145,7 +145,7 @@ private:
   
   
   void add_hidden_vertices_into_map(Tag_false ,
-				    std::map<Vertex_handle,Vertex_handle >& V)
+				    std::map<Vertex_handle,Vertex_handle >& )
   {return;}
 };
 

@@ -744,7 +744,7 @@ is_valid_vertex(Vertex_handle vh) const
 template < class Gt, class Tds >
 bool
 Regular_triangulation_2<Gt,Tds>::
-is_valid(bool verbose, int level) const
+is_valid(bool verbose, int /* level */) const
 {
   // cannot call for is_valid() of Base Triangulation class
   // because 1) number of vertices of base class does not match
