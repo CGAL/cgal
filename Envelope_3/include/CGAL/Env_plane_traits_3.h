@@ -136,7 +136,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s,
-                              bool is_lower,
+                              bool /* is_lower */,
                               OutputIterator o) 
     {
       *o++ = s;
