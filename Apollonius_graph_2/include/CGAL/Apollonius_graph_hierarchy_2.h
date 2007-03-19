@@ -170,7 +170,7 @@ public:
 public:
   Vertex_handle nearest_neighbor(const Point_2& p) const;
   inline Vertex_handle nearest_neighbor(const Point_2& p,
-					Vertex_handle vnear) const {
+					Vertex_handle /* vnear */) const {
     return nearest_neighbor(p);
   }
 
