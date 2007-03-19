@@ -1004,6 +1004,18 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"
 	    ;;
+	*Linux*sunCC*)
+	    #### settings for sunpro compiler on linux
+	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
+	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
+	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    RUNTIME_LINKER_FLAG="-R "
+	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    ;;
 	*CYGWIN*g++*)
 	    #### settings for gcc on Cygwin
 	    ADDITIONAL_CXXFLAGS="-Wall"
@@ -2119,7 +2131,7 @@ int main()
   CGAL_STDCOUT << "@";
   output_first_ciff_separate(_COMPILER_VERSION, 10);
   CGAL_STDCOUT << CGAL_STDENDL;
-#elif defined(__sun) && defined(__SUNPRO_CC)
+#elif defined(__SUNPRO_CC)
   // SUN workshop
   CGAL_STDCOUT << "SUNPRO";
 # ifdef __sparcv9

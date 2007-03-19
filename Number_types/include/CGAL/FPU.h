@@ -42,7 +42,7 @@ extern "C" {
 }
 #elif defined __powerpc__
 #  include <fpu_control.h>
-#elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
+#elif (defined __SUNPRO_CC || defined __KCC) && defined __sun
 #  include <ieeefp.h>
 #elif defined __osf || defined __osf__ 
 #  ifdef __GNUG__
