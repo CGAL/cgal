@@ -62,8 +62,16 @@ wait_for_process()
 	    kill -TERM 0
 	    trap TERM
 	else
-# But for the moment only send SIGTERM to the process itself.
-	    kill -TERM $pid
+
+	    # $pid is the PID of the forked shell that launched the command
+	    # in background, in run_local_cgal_test(). If the shell is
+	    # Bash, the Bash manual states that it ignores SIGTERM.
+	    # However, it does not catch SIGHUP. That is why the first
+	    # signal send is SIGHUP.
+	    kill -HUP $pid
+	    sleep 10
+	    # If SIGHUP was not enough, SIGKILL will finish the job, 10s after.
+	    kill -KILL $pid
 	fi
         return 1  
     fi
