@@ -289,6 +289,7 @@ public:
   void clear();
   void copy_triangulation(const Self& tr);
 private:
+  void copy_triangulation_();
   Vertex_handle reinsert(Vertex_handle v, Face_handle start);
   void regularize(Vertex_handle v);
   void remove_hidden(Vertex_handle v);
@@ -559,10 +560,8 @@ clear()
 template < class Gt, class Tds >
 void
 Regular_triangulation_2<Gt,Tds>::
-copy_triangulation(const Self &tr )
+copy_triangulation_()
 {
-  Base::copy_triangulation(tr);
-  _hidden_vertices = tr._hidden_vertices;
   // the list of vertices have been copied member for member and are
   // not good
   // clear them and next
@@ -577,14 +576,24 @@ copy_triangulation(const Self &tr )
     hvit->face()->vertex_list().push_back(hvit);
   }
   CGAL_triangulation_postcondition(is_valid());
-  return;
+}
+
+template < class Gt, class Tds >
+void
+Regular_triangulation_2<Gt,Tds>::
+copy_triangulation(const Self &tr )
+{
+  Base::copy_triangulation(tr);
+  _hidden_vertices = tr._hidden_vertices;
+  copy_triangulation_();
 }
 
 template < class Gt, class Tds >
 Regular_triangulation_2<Gt,Tds>::
 Regular_triangulation_2(const Self &tr)
+  : Base(tr), _hidden_vertices(tr._hidden_vertices)
 {
-  copy_triangulation(tr);
+  copy_triangulation_();
 }
 
 template <class Gt, class Tds >
