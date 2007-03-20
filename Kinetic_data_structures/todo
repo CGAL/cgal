@@ -17,6 +17,7 @@ mostly collide
 
 Easy:
 - pull static_pred/IP into kinetic pred to get result types right and things
+- numeric solver based on lapack instead of TNT
 
 known bugs:
 

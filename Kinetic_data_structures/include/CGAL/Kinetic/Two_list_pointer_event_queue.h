@@ -50,8 +50,7 @@ struct Two_list_pointer_event_queue_key: public Item::Handle
   typedef Two_list_pointer_event_queue_key<Item> This;
   typedef typename Item::Handle P;
   Two_list_pointer_event_queue_key(){};
-  Two_list_pointer_event_queue_key(Item  *p): Item::Handle(p){};
-
+  Two_list_pointer_event_queue_key(Item  *p): Item::Handle(p){}
   std::ostream& write(std::ostream &out) {
     if (Item::Handle::get()) {
       out << "(" << Item::Handle::get() << ": " << *Item::Handle::get() << ")";
@@ -93,6 +92,7 @@ struct Two_list_pointer_event_queue_key: public Item::Handle
   {
     return Item::Handle::get();
   }
+ 
   //using P::operator>;
 };
 
@@ -123,7 +123,8 @@ public:
   typedef Two_list_pointer_event_queue_key<This> Key;
   Two_list_event_queue_item() { /*++two_list_remaining;*/}
   Two_list_event_queue_item(const Priority &t): time_(t){/*++two_list_remaining;*/}
-  virtual ~Two_list_event_queue_item(){/*--two_list_remaining;*/}
+  virtual ~Two_list_event_queue_item(){/*--two_list_remaining;*/
+  }
 
   enum List {FRONT, BACK, INF};
 
@@ -152,10 +153,22 @@ public:
     }
   }
 
-  virtual std::ostream& write(std::ostream &out) const =0;
-  virtual void process() =0;
-  virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const=0;
-  virtual bool merge_concurrent(Key a, Key b)=0;
+  virtual std::ostream& write(std::ostream &out) const{
+    out << "Dummy event." << std::endl;
+    return out;
+  }
+  virtual void process() {
+    CGAL_assertion(0);
+    CGAL_KINETIC_ERROR("Writing dummy queue element.");
+  }
+  virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const {
+    CGAL_assertion(0);
+    return CGAL::EQUAL;
+  };
+  virtual bool merge_concurrent(Key a, Key b) {
+    CGAL_assertion(0);
+    return false;
+  }
   virtual void *kds() const{return NULL;}
   virtual void audit(Key) const{};
 private:
@@ -175,7 +188,7 @@ inline std::ostream& operator<<(std::ostream &out, const Two_list_event_queue_it
 /*
   One dummy item is used to represent events which will never happen.
 */
-template <class Priority>
+/*template <class Priority>
 class Two_list_event_queue_dummy_item: public Two_list_event_queue_item<Priority>
 {
   typedef Two_list_event_queue_item<Priority> P;
@@ -197,7 +210,7 @@ public:
     return out;
   }
   virtual ~Two_list_event_queue_dummy_item(){}
-};
+  };*/
 
 // The how a real item is stored in the ::Two_list_event_queue
 /*
@@ -254,7 +267,9 @@ protected:
   Event event_;
 };
 
-template <class T>
+
+/* This is needed since the list cannot allocate an element of the abstract base class. I could just make it non-abstract. Why not?*/
+/*template <class T>
 struct Two_list_event_queue_item_allocator
 {
   typedef Two_list_event_queue_dummy_item<T> dummy_value_type;
@@ -285,7 +300,7 @@ struct Two_list_event_queue_item_allocator
   void destroy(pointer p) {
     p->~Two_list_event_queue_item<T>();
   }
-};
+  };*/
 
 CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
@@ -314,8 +329,8 @@ class Two_list_pointer_event_queue
   typedef Two_list_pointer_event_queue<FK, INF, TARGET> This;
   typedef typename internal::Two_list_event_queue_item<PriorityT> Item;
 
-  typedef typename CGAL::In_place_list<Item, false,
-				       internal::Two_list_event_queue_item_allocator<PriorityT> > Queue;
+  typedef typename CGAL::In_place_list<Item, false/*,
+						    internal::Two_list_event_queue_item_allocator<PriorityT>*/ > Queue;
   typedef typename Queue::iterator Iterator;
 
 
@@ -333,7 +348,7 @@ public:
   Two_list_pointer_event_queue(Priority start_time,
 			       Priority end_time, 
 			       FK, int =0):
-					       null_event_(new internal::Two_list_event_queue_dummy_item<Priority>()){
+    null_event_(new internal::Two_list_event_queue_item<Priority>()){
     CGAL_precondition(!INF);
     initialize(start_time, end_time);
   }
@@ -341,7 +356,7 @@ public:
  //! Construct it with a suggested size of sz.
   Two_list_pointer_event_queue(Priority start_time,
 			       FK, int =0): 
-					       null_event_(new internal::Two_list_event_queue_dummy_item<Priority>()){
+    null_event_(new internal::Two_list_event_queue_item<Priority>()){
     CGAL_precondition(INF);
     initialize(start_time);
   }
