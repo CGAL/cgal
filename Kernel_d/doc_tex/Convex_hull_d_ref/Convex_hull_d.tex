@@ -327,12 +327,7 @@ void convex_hull_d_to_polyhedron_3(   const Convex_hull_d<R>& C, Polyhedron_3<T,
 }
 
 \ccHeading{Low Dimensional Output Routines}
-include \ccc{<CGAL/IO/Convex_hull_d_window_stream.h>}
 
-\ccFunction{template <class R>
-void d2_show(const Convex_hull_d<R>& C, CGAL::Window_stream& W);}{draws the convex hull \ccc{C} in window \ccc{W}.\\
-\ccPrecond \ccc{dim == 2}.  
-}
 
 \ccFunction{template <class R>
 void d3_surface_map(const Convex_hull_d<R>& C, GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G);}{constructs the representation of the surface of \ccc{C} as a 

@@ -322,12 +322,7 @@ and uses the following function objects from the kernel traits \ccc{R}:
 
 
 \ccHeading{Low Dimensional Output Routines}
-include \ccc{<CGAL/IO/Delaunay_d_window_stream.h>}
 
-\ccFunction{template <typename R, typename Lifted_R>
-template <typename R, typename Lifted_R> void d2_show(const Delaunay_d<R,Lifted_R>& D,              CGAL::Window_stream& W,               typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k =               Delaunay_d<R,Lifted_R>::NEAREST) ;}{draws the underlying simplicial complex \ccc{D} into window \ccc{W}.\\
-\ccPrecond \ccc{dim == 2}.  
-}
 
 \ccFunction{template <typename R, typename Lifted_R>
 template <typename R, typename Lifted_R> void d2_map(const Delaunay_d<R,Lifted_R>& D,              GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG,              typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k =              Delaunay_d<R,Lifted_R>::NEAREST) ;}{constructs a LEDA graph representation of the nearest 
