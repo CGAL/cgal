@@ -25,8 +25,6 @@
 #ifndef CGAL_CONIC_2_H
 #define CGAL_CONIC_2_H
 
-#include <CGAL/IO/forward_decl_window_stream.h>
-
 #include <CGAL/Conic_misc.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -36,12 +34,6 @@ class Optimisation_ellipse_2;
 
 CGAL_END_NAMESPACE
 
-// Why is this outside namespace CGAL ???
-
-template < class R_ >
-CGAL::Window_stream&
-operator << ( CGAL::Window_stream&,
-              const CGAL::Optimisation_ellipse_2<R_>&);
 
 CGAL_BEGIN_NAMESPACE
 
