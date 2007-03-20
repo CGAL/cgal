@@ -5,8 +5,12 @@
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 #include <fstream>
+
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
+#endif
+
 using namespace std;
 
 //this is an enriched Polyhedron with facets' normal
@@ -167,6 +171,7 @@ int main(int argc, char *argv[])
   unsigned int int_tag;
 
   try {
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
@@ -197,6 +202,7 @@ int main(int argc, char *argv[])
       return 1;
     }
 
+
     if (vm.count("ridge_order")){
       if ( int_tag == 3 ) tag_order = CGAL::Ridge_order_3;
       if ( int_tag == 4 ) tag_order = CGAL::Ridge_order_4;
@@ -204,6 +210,17 @@ int main(int argc, char *argv[])
 	{cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
 	  return 1;}
     }
+#else 
+    std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
+    if_name = "data/ellipsoid_u_0.02.off";
+    d_fitting = 3;
+    d_monge = 3;
+    nb_rings = 0;
+    nb_points_to_use = 0;
+    int_tag = 3;
+    umb_size = 2;
+    verbose = false;
+#endif
   }
 
     catch(exception& e) {
