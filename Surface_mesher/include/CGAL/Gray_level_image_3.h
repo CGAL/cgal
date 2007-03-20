@@ -22,6 +22,10 @@
 
 #include <CGAL/basic.h>
 
+#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
+#include <boost/format.hpp>
+#endif
+
 /* Copy-paste from <imageio/ImageIO.h> */
 extern "C" {
 struct _image;
@@ -60,9 +64,16 @@ public:
       max_z(0.f),
       is_valid(false)
   {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
+    std::cerr << 
+      ::boost::format("Constructing a Gray_level_image_3(\"%1%\")... ") % file;
+#endif
     image = ::_readImage(file);
     if( image != 0 )
     {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
+      std::cerr << ::boost::format(" = %1%\n") % image;
+#endif
       is_valid = true;
       ::convertImageTypeToFloat(image);
       isovalue=isoval;
@@ -72,9 +83,18 @@ public:
     }
   }
 
+  // BUG
+  /** @FIXME This destructor should call ::freeImage(), but objects of type
+      Gray_level_image_3 are copied a lot of time during the execution of
+      the Surface_mesher algorithm. image should perhaps be a smart
+      pointer. We need to bench if the handling of smart pointer has a
+      cost.
+   */
   ~Gray_level_image_3()
   {
-//     ::_freeImage(image);
+#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
+      std::cerr << ::boost::format("~Gray_level_image_3() image=%1%\n") % image;
+#endif
   }
 
   static void print_supported_file_format()
@@ -82,7 +102,7 @@ public:
     ::printSupportedFileFormat();
   }
 
-  bool inside(float X, float Y, float Z) const
+  bool inside(const float X, const float Y, const float Z) const
   {
     return ( X>=min_x && Y>=min_y && Z>=min_z && 
              X<=max_x && Y<=max_y && Z<=max_z );
@@ -90,9 +110,9 @@ public:
 
   FT operator()(Point p) const
   {
-    float X=static_cast<float>(to_double(p.x()));
-    float Y=static_cast<float>(to_double(p.y()));
-    float Z=static_cast<float>(to_double(p.z()));
+    const float X=static_cast<float>(to_double(p.x()));
+    const float Y=static_cast<float>(to_double(p.y()));
+    const float Z=static_cast<float>(to_double(p.z()));
 
     if (!inside(X,Y,Z))
       return FT(1);
