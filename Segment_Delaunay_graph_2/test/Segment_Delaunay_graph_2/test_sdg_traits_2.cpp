@@ -226,7 +226,7 @@ bool test_traits(const char* title)
 }
 
 
-int main(int argc, char* argv[])
+int main(int , char**)
 {
 #if 0
   test_traits<Double_Ring_Gtwi>("Double Ring WI");

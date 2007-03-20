@@ -519,7 +519,7 @@ Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS,LTag>::
 insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 			       Vertex_handle vbelow,
 			       const Vertex_handle* vertices,
-			       int level, Tag_true stag)
+			       int level, Tag_true /* stag */)
 {
   CGAL_precondition( vertices != NULL );
   CGAL_precondition( vbelow != Vertex_handle() );
@@ -654,7 +654,7 @@ Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     int level,
-				     Tag_true itag, Tag_true stag)
+				     Tag_true itag, Tag_true /* stag */)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
