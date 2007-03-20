@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -325,9 +325,6 @@ namespace CGAL {
 
     void before_insertion_impl(const Facet&, const Point& s, Zone& zone) {
 
-      // DEBUG: on ajoute un espace
-      //std::cout << " ";
-
       CGAL_assertion_code(Vertex_handle v);
       CGAL_assertion (!tr.is_vertex(s,v));
 
@@ -388,9 +385,6 @@ namespace CGAL {
 	  handle_incident_facet (Facet (cellule, (indice+i)&3));
       }
 
-
-      // DEBUG: on ajoute un espace
-      //std::cout << " ";
 
     } // restore_restricted_Delaunay end
 
@@ -596,7 +590,7 @@ namespace CGAL {
 
 
     // Checks restricted Delaunay triangulation
-    void check_restricted_delaunay () {
+    bool check_restricted_delaunay () {
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit !=
 	     tr.finite_facets_end(); ++fit) {
 	Facet other_side = mirror_facet(*fit);
@@ -627,9 +621,10 @@ namespace CGAL {
 		    << is_facet_on_surface(*fit, center)
 		    << ")"
 		    << std::endl;
-	  std::exit (-1);
+	  return false;
 	}
       }
+      return true;
     }
 
     std::string debug_info() const
@@ -664,13 +659,11 @@ namespace CGAL {
       
     } // end namespace details
 
-    enum Debug_flag { DEBUG, NO_DEBUG};
     enum Verbose_flag { VERBOSE, NOT_VERBOSE};
 
   template <
     typename Base,
-    Verbose_flag verbose = NOT_VERBOSE,
-    Debug_flag debug = NO_DEBUG
+    Verbose_flag verbose = NOT_VERBOSE
     >
   struct Surface_mesher
     : public Base,
@@ -722,8 +715,7 @@ namespace CGAL {
       {
 	scan_triangulation();
 	initialized = true;
-	if (debug == DEBUG)
-	  check_restricted_delaunay();
+	CGAL_assertion(check_restricted_delaunay());
       }
 
     void refine_mesh () {
@@ -750,8 +742,7 @@ namespace CGAL {
 	std::cerr << "\ndone.\n";
       }
 
-      if (debug == DEBUG)
-	check_restricted_delaunay();
+      CGAL_assertion(check_restricted_delaunay());
 
       initialized = false;
     }
