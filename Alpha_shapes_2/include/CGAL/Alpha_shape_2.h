@@ -38,9 +38,7 @@
 #include <CGAL/Alpha_shape_vertex_base_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
 
-#ifdef CGAL_ALPHA_WINDOW_STREAM
-#include <CGAL/IO/Window_stream.h>
-#endif
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -232,9 +230,6 @@ public:
  
   std::ostream& op_ostream(std::ostream& os) const;
 
-#ifdef CGAL_ALPHA_WINDOW_STREAM
-  Window_stream& op_window(Window_stream& W) const;
-#endif 
  
   //----------------------- OPERATIONS ---------------------------------
 
@@ -1824,8 +1819,5 @@ Alpha_shape_2<Dt>::print_edge_map() {
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ALPHA_WINDOW_STREAM
-#include <CGAL/IO/alpha_shapes_2_window_stream.h>
-#endif
 
 #endif //CGAL_ALPHA_SHAPE_2_H
