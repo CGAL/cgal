@@ -818,6 +818,7 @@ set_compiler_flags()
     ADDITIONAL_LDFLAGS=""
     LONG_NAME_PROBLEM_CXXFLAGS=""
     LONG_NAME_PROBLEM_LDFLAGS=""
+    CGAL_LIBS_OPTFLAGS="-O2"
     CGAL_LIB_CXXFLAGS=""
     CGAL_LIB_LDFLAGS=""
     CGAL_STATIC_LIB_CREATE="ar cr ''"
@@ -967,6 +968,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_LIBS_OPTFLAGS="-O"
 
 	    ;;
 	*SunOS*5.*g++*)
@@ -4159,7 +4161,7 @@ create_include_makefile()
   # CGAL_LIB_CXXFLAGS
   #
   ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_LIB_CXXFLAGS} -O2" >> ${FILE}
+  makefile_print_line "${CGAL_LIB_CXXFLAGS} ${CGAL_LIBS_OPTFLAGS}" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   #
@@ -4178,7 +4180,7 @@ create_include_makefile()
   # CGAL_SHARED_LIB_CXXFLAGS
   #
   ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS} -O2" >> ${FILE}
+  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS} ${CGAL_LIBS_OPTFLAGS}" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   #
