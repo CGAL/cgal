@@ -71,7 +71,7 @@ bool compare_neighbors(ForwardIteratorCoord first_coord,
 		       ForwardIteratorCoord beyond_coord,
 		       ForwardIteratorPoint first_point,
 		       ForwardIteratorPoint beyond_point,
-		       Kernel k)
+		       Kernel )
 {
   typedef std::set<typename std::iterator_traits<ForwardIteratorPoint>::value_type,
     typename Kernel::Less_xyz_3 > Point_set;
