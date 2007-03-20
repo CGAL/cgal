@@ -636,8 +636,6 @@ Installation/config/support/S15-X11 -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
 Installation/config/support/S23-MPFR -text
-Installation/config/support/S30-CORE -text
-Installation/config/support/S32-CGALCORE -text
 Installation/config/support/S40-ZLIB -text
 Installation/config/support/S41-ZLIBMS -text
 Installation/config/support/S45-APPLEVECLIB -text

@@ -3212,14 +3212,6 @@ retrieve_compiler_settings()
 	SETUP_COMPLETE=''
     fi
 
-    # legacy mode: package CORE corresponds to an external CORE
-    # installation now
-    try_to_get_var_from_config_file CORE_INSTALLATION "${_file}"
-    if [ ${?} -eq 1 -a "${CORE_INSTALLATION}" = "c" ]; then
-	if [ -n "${CORE_SUPPORT}" ]; then disable_support CORE; fi
-	enable_support CGALCORE
-    fi
-
     set_lib_compiled_flag
     reassemble_compiler
 }
@@ -4409,7 +4401,7 @@ build_cgal()
 	    _do_compile libCGALPDB static
 	    _do_compile libCGALPDB shared 
 	fi
-	if [ -d "${CGAL_SRC_DIR}/CGALCore" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
+	if [ -d "${CGAL_SRC_DIR}/CGALCore" -a -n "${PROVIDE_PKG_GMP}" ]; then
 	    cd "${CGAL_SRC_DIR}/CGALCore"
 	    _do_compile libCGALCore static
 	    _do_compile libCGALCore shared

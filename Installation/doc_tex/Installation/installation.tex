@@ -415,12 +415,8 @@ several steps:
 %%
 \begin{enumerate}
 \item write the include makefile,
-\item compile the static libraries,
-\item \textit{(on some systems)} compile the shared libraries,
-\item \textit{(if \qt\ support is configured)} compile the CGALQt
-  library, \textit{and}
-\item \textit{(if \textsc{CgalCore} support is configured)} compile
-  the \core\ library.
+\item compile the static libraries, \textit{and}
+\item \textit{(on some systems)} compile the shared libraries.
 \end{enumerate}
 %%
 The include makefile\index{include makefile} encapsulates the OS-- and
@@ -912,6 +908,15 @@ speedup the computation. It is highly recommended to configure \cgal\
 with support for \gmp. Note that \gmp\ support also requires \mpfr\
 support and vice versa.
 
+Note that \gmp\ support is necessary to enable \core\ support.
+\core\ is a number type library for exact geometric computation that
+is available from \corepage. A modified version of \core\ version 1.7
+is shipped with \cgal~\cgalrelease. Support for \core\ automatically
+gets enabled if \gmp\ support is enabled. In \cgal\, \core\ is used
+in many example and demo programs to speedup the computation. It is
+highly recommended to configure \cgal\ with support for \gmp\ in order
+to enable support for \core\.
+
 If installed in a standard location, \gmp\ should be
 found automatically. Otherwise, you have to specify where \gmp\ is
 installed on your system using the command line options
@@ -967,35 +972,6 @@ For instance, if you have installed \mpfr\ in \texttt{/opt/mpfr}, type
 In case you disabled the automatic support for third party libraries,
 support for \mpfr\ can be enabled with the command line switch
 ``\texttt{--with-MPFR}''.
-
-\subsection{Setup Support for CORE\label{sec:core-setup}}
-\index{CORE@\core!enable support}
-
-\core\ is a number type library for exact geometric computation that
-is available from \corepage. \core\ version 1.7 is also shipped with
-\cgal~\cgalrelease. In \cgal\ it is used in many example and demo
-programs to speedup the computation. It is highly recommended to
-configure \cgal\ with support for \core. Note that \core\ support also
-requires \gmp\ support.
-
-If installed in a standard location, \core\ should be found
-automatically. Otherwise, you have two options: Either use the version
-of \core\ that is shipped with \cgal\ and, hence, found automatically,
-or specify where \core\ is installed on your system using the command
-line options ``\texttt{--CORE\_INCL\_DIR}'' and/or
-``\texttt{--CORE\_LIB\_DIR}''.  For instance, if you have installed
-\core\ in \texttt{/opt/core}, type
-%%
-\begin{verbatim}
-  --CORE_INCL_DIR /opt/core/include --CORE_LIB_DIR /opt/core/lib
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for CORE can be enabled with the command line switch
-``\texttt{--with-CORE}''. In order to enable support for the version
-of \core\ that is shipped with \cgal, use the
-switch``\texttt{--with-CGALCORE}'' instead.
 
 \subsection{Setup Support for ZLIB\label{sec:zlib-setup}}
 \index{ZLIB@\texttt{ZLIB}!enable support}

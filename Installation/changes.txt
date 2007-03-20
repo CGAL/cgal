@@ -1,3 +1,6 @@
+20 March 2007 Joachim Reichel
+- drop support for external CORE
+
 12 March 2007 Joachim Reichel
 - moved src/Core to src/CGALCore
 - moved include/CORE to include/CGAL/CORE
