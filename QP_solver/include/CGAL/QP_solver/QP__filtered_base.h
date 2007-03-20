@@ -177,7 +177,7 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
 QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 QP__filtered_base( ET2NT et2nt)
-    : nt0( 0), nt1( 1), et2nt_obj( et2nt)
+    : nt0( 0), nt1( 1), w_j_NT( 0), et2nt_obj( et2nt)
 { }
 
 // set-up
