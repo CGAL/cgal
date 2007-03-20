@@ -604,8 +604,8 @@ _check_printf()
 # (they should be on a unix system, but ...)
 check_for_utils()
 {
-    log_print "Looking for POSIX  utilities..."
-    ${_printf} "%s" "Looking for POSIX  utilities..."
+    log_print "Looking for POSIX utilities..."
+    ${_printf} "%s" "Looking for POSIX utilities..."
 
     _which=real_which
 
@@ -3757,7 +3757,7 @@ makefile_print_from_var()
 {
     _tmp="`value_of \"${1}\"`"
     if [ -n "${_tmp}" ]; then
-	echo "${_tmp}" | ${_awk} 'BEGIN {RS=""}{printf " \\\n\t%s",$0}'
+	echo -n "${_tmp}" | ${_awk} 'BEGIN {RS=""}{printf " \\\n\t%s",$0}'
     fi
 }
 
@@ -3832,7 +3832,7 @@ write_compiler_flags()
   #
   # CGAL_CXXFLAGS
   #
-  ${_printf} "%s" "CGAL_CXXFLAGS = " >> ${FILE}
+  ${_printf} "%s" "CGAL_CXXFLAGS = \$(strip" >> ${FILE}
   makefile_print_continuationline "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
   makefile_print_continuationline "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
   makefile_print_continuationline "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
@@ -3847,6 +3847,7 @@ write_compiler_flags()
 	  makefile_print_continuationline "\$(${i}_PKG_CXXFLAGS)" >> ${FILE}
       fi
   done
+  makefile_print_continuationline ")" >> ${FILE}
   ${_printf} "\n\n" >> ${FILE}
 
   #
@@ -3886,7 +3887,7 @@ write_linker_flags()
   # CGAL_LIBPATHFLAGS
   #
   print_as_shell_comment "*** libpath flags for CGAL ***" >> ${FILE}
-  ${_printf} "%s\\\\\n\t" "CGAL_LIBPATHFLAGS = " >> ${FILE}
+  ${_printf} "%s\\\\\n\t" "CGAL_LIBPATHFLAGS = \$(strip " >> ${FILE}
   libpath_option_pure `concat_path "\\\$(CGAL_LIB_DIR)" "\\\$(CGAL_OS_COMPILER)"` >> ${FILE}
   for i in ${SUPPORT_FEATURES}; do
       if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
@@ -3905,6 +3906,7 @@ write_linker_flags()
 	      >> ${FILE}
       fi
   fi
+  makefile_print_continuationline ")" >> ${FILE}
   ${_printf} "\n\n" >> ${FILE}
 
   #
@@ -3962,7 +3964,7 @@ write_linker_flags()
   #
   # CGAL_LDFLAGS
   #
-  ${_printf} "%s" "CGAL_LDFLAGS =" >> ${FILE}
+  ${_printf} "%s" "CGAL_LDFLAGS = \$(strip" >> ${FILE}
   makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
   makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "\$(CGAL_CGAL_LDFLAGS)" >> ${FILE}
@@ -3993,6 +3995,7 @@ write_linker_flags()
   if [ -n "${MATH_LIB}" ]; then
       makefile_print_continuationline "`math_ldflags`" >> ${FILE}
   fi
+  makefile_print_continuationline ")" >> ${FILE}
   ${_printf} "\n\n" >> ${FILE}
 
   for i in ${SUPPORT_FEATURES}; do
