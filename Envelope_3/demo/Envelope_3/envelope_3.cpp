@@ -105,7 +105,7 @@ public:
     // default constructor
   Qt_layer_show_statitics(){};
 
-  void mousePressEvent(QMouseEvent *e)
+  void mousePressEvent(QMouseEvent* )
   {
     QString s("|V|=%1 |E|=%2 |F|=%3");
     unsigned int n_v = 0,

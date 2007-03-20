@@ -170,9 +170,9 @@ public:
 };
 
 template <class OutoutIterator>
-void construct_polygon(CGAL::Qt_widget* w,
+void construct_polygon(CGAL::Qt_widget* ,
                        Tri_ccb_halfedge_const_circulator ccb,
-                       OutoutIterator oi, bool is_unb, bool is_hole)
+                       OutoutIterator oi, bool is_unb, bool /* is_hole */)
 {
   if (is_unb) return;
   /* running with around the outer of the face and generate from it polygon */
@@ -193,7 +193,7 @@ void construct_polygon(CGAL::Qt_widget* w,
 template <class OutoutIterator>
 void construct_polygon(CGAL::Qt_widget* w,
                        Sphere_ccb_halfedge_const_circulator ccb,
-                       OutoutIterator oi, bool is_unb, bool is_hole)
+                       OutoutIterator oi, bool is_unb, bool /* is_hole */)
 {
   if (is_unb) return;
   Polygon_2 pgn;

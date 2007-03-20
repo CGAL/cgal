@@ -252,7 +252,7 @@ public:
   // if faces_only = false we also compare the data over the edges & vertices
   bool compare_diagrams(Minimization_diagram_2 &test_env,
                         Minimization_diagram_2 &env,
-                        bool faces_only = false)
+                        bool /* faces_only */ = false)
   {
     Minimization_diagram_2 overlay_map;
     // overlay the 2 maps
