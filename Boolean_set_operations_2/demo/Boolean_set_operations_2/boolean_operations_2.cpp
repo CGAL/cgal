@@ -441,7 +441,7 @@ public:
 private:
   void something_changed(){current_state++;};
 
-  bool write_to_file(QString str)
+  bool write_to_file(QString /* str */)
   {
       /*std::ofstream out_file(str);
       if(!out_file.is_open())
