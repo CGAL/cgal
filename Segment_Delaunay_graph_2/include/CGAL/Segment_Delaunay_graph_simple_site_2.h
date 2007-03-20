@@ -82,16 +82,16 @@ public:
     return Self();
   }
 
-  static Self construct_site_2(const Point_2& p1, const Point_2& p2,
-			       const Point_2& q1, const Point_2& q2,
+  static Self construct_site_2(const Point_2& , const Point_2& ,
+			       const Point_2& , const Point_2& ,
 			       bool b) {
     no_constructor_support();
     return Self();
   }
 
-  static Self construct_site_2(const Point_2& p1, const Point_2& p2,
-			       const Point_2& q1, const Point_2& q2,
-			       const Point_2& r1, const Point_2& r2) {
+  static Self construct_site_2(const Point_2& , const Point_2& ,
+			       const Point_2& , const Point_2& ,
+			       const Point_2& , const Point_2& ) {
     no_constructor_support();
     return Self();
   }
