@@ -4967,12 +4967,12 @@ cgal_install_header()
 
 startup()
 {
-    if [ -n "${INSTALL_INTERACTIVE}" ]; then
-        ${_printf} "."
+    #if [ -n "${INSTALL_INTERACTIVE}" ]; then
+    #    ${_printf} "."
         log_to_file
-    else
-        log_to_screen
-    fi
+    #else
+    #    log_to_screen
+    #fi
 
     log_print "Looking for GNU/make..."
     # Verify that GNU Make exists:
