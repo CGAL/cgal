@@ -135,7 +135,7 @@ bool are_equal(const Container& l1, Container& l2)
 template <class Traits_>
 void my_complement(const typename Traits_::Polygon_2& p,
                    std::vector<typename Traits_::Polygon_with_holes_2>& vec,
-                   Traits_& tr)
+                   Traits_& )
 {
   vec.resize(1);
   CGAL::complement(p, vec[0]);
@@ -144,7 +144,7 @@ void my_complement(const typename Traits_::Polygon_2& p,
 template <class Traits_>
 void my_complement(const typename Traits_::Polygon_with_holes_2& p,
                    std::vector<typename Traits_::Polygon_with_holes_2>& vec,
-                   Traits_& tr)
+                   Traits_& )
 {
   CGAL::complement(p, std::back_inserter(vec));
 }
