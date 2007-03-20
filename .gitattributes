@@ -1798,6 +1798,7 @@ Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
 Qt_widget/src/CGALQt/CGALQt_71.vcproj -text
 Qt_widget/src/CGALQt/CGALQt_80.vcproj -text
+Ridges_3/doc_tex/Ridges_3/DavidDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_crest.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
