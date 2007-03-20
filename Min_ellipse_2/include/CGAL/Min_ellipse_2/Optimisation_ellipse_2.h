@@ -23,7 +23,7 @@
 #include <CGAL/Conic_2.h>
 #include <CGAL/Optimisation/assertions.h>
 
-#  include <CGAL/IO/forward_decl_window_stream.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,8 +36,6 @@ class Optimisation_ellipse_2 {
         std::ostream&, const Optimisation_ellipse_2<K_>&);
     friend  std::istream&  operator >> <> (
         std::istream&, Optimisation_ellipse_2<K_> &);
-    friend  CGAL::Window_stream& operator << <> (
-        CGAL::Window_stream&, const Optimisation_ellipse_2<K_>&);
     */
   public:
     // types
