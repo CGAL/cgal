@@ -58,8 +58,11 @@
 #include <ctype.h>
 #include <fstream>
 #include <cassert>
+
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
+#endif
 
 #ifdef WIN32
     #include <Windows.h>
@@ -320,6 +323,7 @@ int main(int argc, char * argv[])
     std::string output;            // default: no output
 
     try {
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
       po::options_description desc("Allowed options");
       desc.add_options()
 	("help,h", "produce help message.")
@@ -350,6 +354,16 @@ int main(int argc, char * argv[])
 	std::cout << desc << "\n";
 	return 1;
       }
+
+#else 
+    std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
+    border = "circle";
+    type = "floater";
+    solver = "opennl";
+    input = "mesh-in.off";
+    output = "mesh-out.eps";
+      
+#endif
     }
     catch(std::exception& e) {
       std::cerr << "error: " << e.what() << "\n";
