@@ -21,7 +21,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-#include <CGAL/_test_natural_neighbors_2.C>
+#include <CGAL/_test_natural_neighbors_2.cpp>
 
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};

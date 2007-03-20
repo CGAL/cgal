@@ -24,7 +24,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-#include <CGAL/_test_regular_neighbors_2.C>
+#include <CGAL/_test_regular_neighbors_2.cpp>
 
 
 struct K : CGAL::Exact_predicates_exact_constructions_kernel {};

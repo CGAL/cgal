@@ -23,7 +23,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-#include <CGAL/_test_interpolation_functions_2.C>
+#include <CGAL/_test_interpolation_functions_2.cpp>
 
 struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
 typedef CGAL::Delaunay_triangulation_2<K>            Dt;

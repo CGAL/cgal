@@ -30,7 +30,7 @@
 #include <CGAL/Triangulation_hierarchy_3.h>
 #include <CGAL/aff_transformation_tags.h>
 
-#include <CGAL/_test_surface_neighbors_3.C>
+#include <CGAL/_test_surface_neighbors_3.cpp>
 
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
