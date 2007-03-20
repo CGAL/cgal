@@ -357,11 +357,11 @@ int main(int argc, char * argv[])
 
 #else 
     std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    border = "circle";
+    border = "square";
     type = "floater";
     solver = "opennl";
-    input = "mesh-in.off";
-    output = "mesh-out.eps";
+    input = "data/rotor.off";
+    output = "rotor_floater_square_opennl_parameterized.obj";
       
 #endif
     }
