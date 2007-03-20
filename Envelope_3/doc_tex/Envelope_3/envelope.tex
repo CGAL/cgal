@@ -1,5 +1,5 @@
 
-A continuous surface $S$ in $\reals^3$ is called {\em $xy$-monotone},
+A continuous surface $S$ in ${\mathbb R}^3$ is called {\em $xy$-monotone},
 if every line parallel to the $z$-axis intersects it at a single point
 at most. For example, the sphere $x^2 + y^2 + z^2 = 1$ is {\em not}
 $xy$-monotone as the $z$-axis intersects it at $(0, 0, -1)$ and at
@@ -9,12 +9,13 @@ $xy$-monotone.
 
 An $xy$-monotone surface can therefore be represented as a
 bivariate function $z = S(x,y)$, defined over some continuous range
-$R_S \subseteq \reals^2$. Given a set $\calS = \{ S_1, S_2, \ldots,
-S_n \}$ of $xy$-monotone surfaces, their {\em lower envelope} is defined
+$R_S \subseteq {\mathbb R}^2$. Given a set 
+${\cal S} = \{ S_1, S_2, \ldots, S_n \}$ of $xy$-monotone surfaces,
+their {\em lower envelope} is defined
 as the point-wise minimum of all surfaces. Namely, the lower envelope
-of the set $\calS$ can be defined as the following function:
+of the set ${\cal S}$ can be defined as the following function:
 \begin{eqnarray*}
-\calL_{\calS} (x,y) = \min_{1 \leq k \leq n}{
+{\cal L}_{{\cal S}} (x,y) = \min_{1 \leq k \leq n}{
 \begin{ccTexOnly}\overline{S}\end{ccTexOnly}
 \begin{ccHtmlOnly}<span style="text-decoration:overline">S</span>\end{ccHtmlOnly}
 _k (x,y)} \ ,
@@ -27,10 +28,10 @@ _k(x,y) = S_k(x,y)$ for $(x,y) \in R_{S_k}$, and $
 \begin{ccHtmlOnly}<span style="text-decoration:overline">S</span>\end{ccHtmlOnly}
 _k(x,y) = \infty$ otherwise.
 
-Similarly, the {\em upper envelope} of $\calS$ is the point-wise maximum of
+Similarly, the {\em upper envelope} of ${\cal S}$ is the point-wise maximum of
 the $xy$-monotone surfaces in the set:
 \begin{eqnarray*}
-\calU_{\calS} (x,y) = \max_{1 \leq k \leq n}{
+{\cal U}_{{\cal S}} (x,y) = \max_{1 \leq k \leq n}{
 \begin{ccTexOnly}\underline{S}\end{ccTexOnly}
 \begin{ccHtmlOnly}<span style="text-decoration:underline">S</span>\end{ccHtmlOnly}
 _k (x,y)} \ ,
@@ -41,8 +42,8 @@ where in this case $
 _k(x,y) = -\infty$ for $(x,y) \not\in
 R_{S_k}$.
 
-Given a set of $xy$-monotone surfaces $\calS$, the {\em minimization
-diagram} of $\calS$ is a subdivision of the $xy$-plane into cells,
+Given a set of $xy$-monotone surfaces ${\cal S}$, the {\em minimization
+diagram} of ${\cal S}$ is a subdivision of the $xy$-plane into cells,
 such that the identity of the surfaces that induce the lower diagram
 over a specific cell of the subdivision (be it a face, an edge, or
 a vertex) is the same. In non-degenerate situation, a face is
@@ -58,22 +59,23 @@ both these diagrams as {\em envelope diagrams}.
 
 It is easy to see that an envelope diagram is no more than a planar
 arrangement (see Chapter~\ref{chapterArrangement_2}), represented
-using an extended \dcel\ structure, such that every \dcel\ record
-(namely each face, halfedge and vertex) stores an additional container
-of it originators: the $xy$-monotone surfaces that induce this feature.
+using an extended {\sc Dcel} structure, such that every {\sc Dcel}
+record (namely each face, halfedge and vertex) stores an additional
+container of it originators: the $xy$-monotone surfaces that induce
+this feature.
 
 Lower and upper envelopes can be efficiently computed using a
 divide-and-conquer approach. First note that the envelope diagram for
 a single $xy$-monotone curve $S_k$ is trivial to compute: we project
 the boundary of its range of definition $R_{S_k}$ onto the $xy$-plane,
-and label the faces it induces accordingly. Given a set $\hat{\calS}$
-of (non necessarily $xy$-monotone) surfaces in $\reals^3$, we subdivide
+and label the faces it induces accordingly. Given a set $\hat{{\cal S}}$
+of (non necessarily $xy$-monotone) surfaces in ${\mathbb R}^3$, we subdivide
 each surface into a finite number of weakly $xy$-monotone 
 surfaces,\footnote{We consider {\em vertical} surfaces, namely patches 
 of planes that are perpendicular to the $xy$-plane, as {\em weakly} 
 $xy$-monotone, to handle degenerate inputs properly.} and obtain the 
-set $\calS$. Then, we split the set into two disjoint subsets $\calS_1$
-and $\calS_2$, and we compute their envelope diagrams recursively.
+set ${\cal S}$. Then, we split the set into two disjoint subsets ${\cal S}_1$
+and ${\cal S}_2$, and we compute their envelope diagrams recursively.
 Finally, we merge the diagrams, and we do this by overlaying them and 
 then applying some post-processing on the resulting diagram. The 
 post-processing stage is non-trivial and involves the projection of 
@@ -245,7 +247,7 @@ traits classes is demonstrated in the next section.
   </table>
   </center>
 \end{ccHtmlOnly}
-\caption{(a)~Two triangles in $\reals^3$, as given in
+\caption{(a)~Two triangles in ${\mathbb R}^3$, as given in
 \ccc{ex_envelope_triangles.cpp}. (b)~Their lower envelope.
 (c)~Their upper envelope.\label{env3_fig:ex_tri}}
 \end{figure}
