@@ -38,7 +38,7 @@ OutputIterator
 surface_neighbors_3(InputIterator first, InputIterator beyond,
 		    const typename Kernel::Point_3& p,
 		    const typename Kernel::Vector_3& normal,
-		    OutputIterator out, const Kernel& K)
+		    OutputIterator out, const Kernel& )
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
   return surface_neighbors_3(first, beyond, p, out, I_gt(p,normal));
@@ -94,7 +94,7 @@ surface_neighbors_certified_3(InputIterator first,
 			      InputIterator beyond,
 			      const typename Kernel::Point_3& p,
 			      const typename Kernel::Vector_3& normal,
-			      OutputIterator out, const Kernel& K)
+			      OutputIterator out, const Kernel& )
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
   return surface_neighbors_certified_3(first, beyond, p, out, I_gt(p,normal));

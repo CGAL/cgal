@@ -70,22 +70,24 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 template < class ForwardIterator, class Functor, class GradFunctor,
            class Gt>
 bool
-_test_sibson_c1_interpolation_sqrt(ForwardIterator first,
-				   ForwardIterator beyond,
+_test_sibson_c1_interpolation_sqrt(ForwardIterator ,
+				   ForwardIterator ,
 				   const typename
 				   std::iterator_traits<ForwardIterator>
 				   ::value_type::second_type&
-				   norm, const typename
+				   /* norm */, 
+                                   const typename
 				   std::iterator_traits<ForwardIterator>
-				   ::value_type::first_type& p,
-				   Functor f, GradFunctor grad_f,
+				   ::value_type::first_type& /* p */,
+				   Functor /* f */, 
+                                   GradFunctor /* grad_f */,
 				   const Gt& geom_traits,
 				   const typename
 				   std::iterator_traits<ForwardIterator>
-				   ::value_type::second_type& tolerance,
+				   ::value_type::second_type& /* tolerance */,
 				   const typename
 				   std::iterator_traits<ForwardIterator>
-				   ::value_type::second_type& exact_value,
+				   ::value_type::second_type& /* exact_value */,
                                    CGAL::Integral_domain_without_division_tag)
 {
   bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;

@@ -94,7 +94,7 @@ surface_neighbor_coordinates_certified_3(
 			     const typename Kernel::Point_3& p,
 			     const typename Kernel::Vector_3& normal,
 			     const typename Kernel::FT& radius,
-			     OutputIterator out, const Kernel& K)
+			     OutputIterator out, const Kernel& )
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
   return surface_neighbor_coordinates_certified_3
