@@ -320,7 +320,7 @@ class Delaunay_graph_concept
 
   bool is_valid(bool = true,int = 0) const { return true; }
 
-  void swap(Self& other) {}
+  void swap(Self& /* other */) {}
   void clear() {}
 };
 
