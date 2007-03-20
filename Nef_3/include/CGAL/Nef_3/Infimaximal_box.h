@@ -179,7 +179,7 @@ class Infimaximal_box {
   }
 
   template <typename SNC_decorator, typename Point>
-    static Ray_3 get_ray(SNC_decorator& D, Point& p) {
+    static Ray_3 get_ray(SNC_decorator& , Point& p) {
     //    return D.point(D.vertex(D.shells_begin(D.volumes_begin())));
     return Ray_3(p, Vector_3(-1,0,0));
   }
@@ -194,20 +194,20 @@ class Infimaximal_box {
   }
 
   template <typename SHalfedge_handle>
-  static bool is_sedge_on_infibox(SHalfedge_handle sh) {
+  static bool is_sedge_on_infibox(SHalfedge_handle ) {
     return false;
   }
 
   template <typename Halfedge_handle>
-  static bool is_edge_on_infibox(Halfedge_handle e) {
+  static bool is_edge_on_infibox(Halfedge_handle ) {
     return false; 
   }
 
   template <typename Halfedge_handle>
-  static bool is_type4(Halfedge_handle e) {return false;}
+  static bool is_type4(Halfedge_handle ) {return false;}
 
   template <typename Halfedge_handle>
-  static bool is_type3(Halfedge_handle e) {return false;}
+  static bool is_type3(Halfedge_handle ) {return false;}
 };
 
 template <class Kernel>
