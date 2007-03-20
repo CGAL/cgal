@@ -288,8 +288,7 @@ $\alpha$-value such that \ccVar\ satisfies the second property.}
 
 \ccHeading{I/O}
 
-The I/O operators are defined for \ccc{iostream}, and for
-the window stream provided by \cgal. The format for the iostream
+The I/O operators are defined for \ccc{iostream}. The format for the iostream
 is an internal format. 
 
 \ccInclude{CGAL/IO/io.h}
@@ -299,14 +298,6 @@ is an internal format.
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccc{os}.
 \ccPrecond The insert operator must be defined for \ccc{Point}.}
 
-\ccInclude{CGAL/IO/Window_stream.h}
-
-\ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
-
-\ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Alpha_shape_2<Dt>& A);}
-{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccc{W}.
-\ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Segment}.}
 
 \ccImplementation
 The set of intervals associated with the
