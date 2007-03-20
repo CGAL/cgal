@@ -33,7 +33,7 @@
 #include <qiconset.h>
 
   Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
-			       CDT *t) : QToolBar(mw, "NT")
+			       CDT* ) : QToolBar(mw, "NT")
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
