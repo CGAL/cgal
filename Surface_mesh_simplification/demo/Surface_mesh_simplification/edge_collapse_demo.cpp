@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-//
+// 
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@gmail.com>
 
@@ -46,7 +46,7 @@ typedef Simple_cartesian<double> Kernel;
 typedef Kernel::Vector_3         Vector;
 typedef Kernel::Point_3          Point;
 
-typedef Polyhedron_3<Kernel,Polyhedron_items_with_id_3> Polyhedron;
+typedef Polyhedron_3<Kernel,Polyhedron_items_with_id_3> Polyhedron; 
 
 typedef Polyhedron::Vertex                                  Vertex;
 typedef Polyhedron::Vertex_iterator                         Vertex_iterator;
@@ -60,52 +60,50 @@ typedef Polyhedron::Halfedge_around_vertex_const_circulator HV_circulator;
 typedef Polyhedron::Halfedge_around_facet_circulator        HF_circulator;
 typedef Polyhedron::size_type                               size_type ;
 
+typedef CGAL::Surface_mesh_simplification::Edge_profile<Polyhedron> Profile ;
+
+
+
 struct Visitor
 {
   Visitor ( size_t aRequested ) : mRequested(aRequested), mCollected(0) {}
-
-  void OnStarted( Polyhedron& ) {}
-
+  
+  void OnStarted( Polyhedron& ) {} 
+  
   void OnFinished ( Polyhedron& )
-  {
+  { 
     cerr << "\n" << flush ;
-  }
-
-  void OnStopConditionReached( Polyhedron& ) {}
-
-  void OnCollected( Halfedge_handle const& aEdge, Polyhedron& )
+  } 
+  
+  void OnStopConditionReached( Profile const& ) {} 
+  
+  void OnCollected( Profile const& aProfile, optional<double> const& aCost )
   {
-    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
-
     ++ mCollected ;
     cerr << "\rEdges collected: " << mCollected << flush ;
-  }
-
-  void OnSelected( Halfedge_handle const& aEdge, Polyhedron&, optional<double> const& aCost, size_t aInitial, size_t aCurrent )
+  }                
+  
+  void OnSelected( Profile const& aProfile, optional<double> const& aCost, size_t aInitial, size_t aCurrent )
   {
-    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
-
     if ( aCurrent == aInitial )
       cerr << "\n" << flush ;
-
+        
     if ( mRequested < aInitial )
     {
-      double n = aInitial - aCurrent ;
-      double d = aInitial - mRequested ;
+      double n = aInitial - aCurrent ;  
+      double d = aInitial - mRequested ; 
       cerr << "\r" << aCurrent << " " << ((int)(100.0*(n/d))) << "%" << flush ;
-    }
-  }
-
-  void OnCollapsing(Halfedge_handle const& aEdge, Polyhedron&, optional<Point> const& aPlacement )
+    }  
+  }                
+  
+  void OnCollapsing(Profile const& aProfile, optional<Point> const& aPlacement ) 
   {
-    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
-  }
-
-  void OnNonCollapsable(Halfedge_handle const& aEdge, Polyhedron& )
+  }                
+  
+  void OnNonCollapsable(Profile const& aProfile ) 
   {
-    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
-  }
-
+  }                
+  
   size_t mRequested ;
   size_t mCollected ;
 } ;
@@ -113,21 +111,21 @@ struct Visitor
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
 {
-  cerr << "CGAL error: " << what << " violation!" << endl
+  cerr << "CGAL error: " << what << " violation!" << endl 
        << "Expr: " << expr << endl
-       << "File: " << file << endl
+       << "File: " << file << endl 
        << "Line: " << line << endl;
   if ( msg != 0)
     cerr << "Explanation:" << msg << endl;
-
-  throw std::logic_error("");
+    
+  throw std::logic_error("");  
 }
 
 using namespace CGAL::Surface_mesh_simplification ;
 
 char const* matched_alpha ( bool matched )
 {
-  return matched ? "matched" : "UNMATCHED" ;
+  return matched ? "matched" : "UNMATCHED" ; 
 }
 
 enum Method { LT, MP } ;
@@ -139,7 +137,7 @@ char const* method_to_string( Method aMethod )
     case LT: return "LindstromTurk" ; break ;
     case MP: return "Midpoint" ; break ;
   }
-
+  
   return "<unknown>" ;
 }
 
@@ -149,14 +147,14 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
 {
   string off_name    = aName ;
   string result_name = aName+string(".out.off");
-
+  
   ifstream off_is(off_name.c_str());
   if ( off_is )
   {
-    Polyhedron lP;
-
+    Polyhedron lP; 
+    
     scan_OFF(off_is,lP,true);
-
+    
     if ( lP.is_valid() )
     {
       if ( lP.is_pure_triangle() )
@@ -167,33 +165,33 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
           if ( aStopA != -1 )
                lRequestedEdgeCount = aStopA ;
           else lRequestedEdgeCount = lP.size_of_halfedges() * aStopR / 200 ;
-
-          cout << "Testing simplification of surface " << off_name
+    
+          cout << "Testing simplification of surface " << off_name 
                << " using " << method_to_string(aMethod) << " method" ;
-
-          cout << lP.size_of_facets() << " triangles." << endl
-               << (lP.size_of_halfedges()/2) << " edges." << endl
-               << lP.size_of_vertices() << " vertices." << endl
-               << (lP.is_closed() ? "Closed." : "Open." ) << endl
+               
+          cout << lP.size_of_facets() << " triangles." << endl 
+               << (lP.size_of_halfedges()/2) << " edges." << endl 
+               << lP.size_of_vertices() << " vertices." << endl 
+               << (lP.is_closed() ? "Closed." : "Open." ) << endl 
                << "Requested edge count: " << lRequestedEdgeCount << endl ;
-
+               
           cout << setprecision(19) ;
-
+        
           set_halfedgeds_items_id(lP);
-
+          
           Edge_length_cost  <Polyhedron>  get_MP_cost ;
-          LindstromTurk_cost<Polyhedron>  get_LT_cost ;
-
+          LindstromTurk_cost<Polyhedron>  get_LT_cost ; 
+          
           Midpoint_placement<Polyhedron>      get_MP_placement ;
           LindstromTurk_placement<Polyhedron> get_LT_placement ;
-
+                    
           Count_stop_predicate<Polyhedron> stop(lRequestedEdgeCount);
-
+              
           Visitor lVisitor(lRequestedEdgeCount) ;
-
+      
           int r = -1 ;
-
-          Real_timer t ; t.start();
+          
+          Real_timer t ; t.start();    
           switch( aMethod )
           {
             case MP: r = edge_collapse(lP
@@ -202,26 +200,26 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
                                        .get_placement(get_MP_placement)
                                        .visitor(&lVisitor)
                                       );
-              break ;
-
+              break ;                 
+              
             case LT: r = edge_collapse(lP
                                       ,stop
                                       , get_cost(get_LT_cost)
                                        .get_placement(get_LT_placement)
                                        .visitor(&lVisitor)
                                       );
-              break ;
-
+              break ;                 
+                                   
           }
           t.stop();
-
+          
           if ( lP.is_valid() && lP.is_pure_triangle() )
           {
             ofstream off_out(result_name.c_str(),ios::trunc);
             off_out << lP ;
-
+            
             cout << "\nFinished...\n"
-                 << "Ellapsed time: " << t.time() << " seconds.\n"
+                 << "Ellapsed time: " << t.time() << " seconds.\n" 
                  << r << " edges removed.\n"
                  << endl
                  << lP.size_of_vertices() << " final vertices.\n"
@@ -233,14 +231,14 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
             cout << "\nFAILED. The resulting surface is not " << ( lP.is_valid() ? " valid" : " triangular" ) << endl
                  << "Ellapsed time: " << t.time() << " seconds.\n" ;
           }
-        }
+        }   
         else
         {
-          cout << off_name << ": " << lP.size_of_facets() << " triangles, "
+          cout << off_name << ": " << lP.size_of_facets() << " triangles, " 
                << (lP.size_of_halfedges()/2) << " edges, "
                << lP.size_of_vertices() << " vertices, "
                << (lP.is_closed() ? "Closed." : "Open." ) << endl ;
-        }
+        }  
       }
       else
       {
@@ -255,7 +253,7 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
   else
   {
     cerr << "Unable to open test file " << aName << endl ;
-  }
+  }              
 }
 
 bool sPrintUsage = false ;
@@ -263,7 +261,7 @@ bool sPrintUsage = false ;
 void add_case( string aCase, vector<string>& rCases )
 {
   bool lAdded = false ;
-
+  
   string::size_type pos = aCase.find_last_of(".") ;
   if ( pos != string::npos )
   {
@@ -274,26 +272,26 @@ void add_case( string aCase, vector<string>& rCases )
       lAdded = true ;
     }
   }
-
+    
   if ( !lAdded )
   {
-    sPrintUsage = true ;
+    sPrintUsage = true ;  
     cerr << "Invalid input file. Only .off files are supported: " << aCase << endl ;
-  }
+  }    
 }
 
-int main( int argc, char** argv )
+int main( int argc, char** argv ) 
 {
   set_error_handler  (error_handler);
   set_warning_handler(error_handler);
-
+  
   bool   lJustPrintSurfaceData = false ;
   int    lStopA = -1 ;
   int    lStopR = 20 ;
   Method lMethod = LT ;
-  string lFolder ="";
+  string lFolder =""; 
   vector<string> lCases ;
-
+        
   for ( int i = 1 ; i < argc ; ++i )
   {
     string opt(argv[i]);
@@ -306,14 +304,14 @@ int main( int argc, char** argv )
         case 'r' : lStopR = lexical_cast<int>(opt.substr(2)); break;
         case 'n' : lJustPrintSurfaceData = true ; break ;
         case 'm' : lMethod = (Method)lexical_cast<int>(opt.substr(2)); break ;
-
-        default:
+        
+        default: 
           cerr << "Invalid option: " << opt << endl ;
-          sPrintUsage = true ;
+          sPrintUsage = true ; 
       }
     }
   }
-
+  
   for ( int i = 1 ; i < argc ; ++i )
   {
     string opt(argv[i]);
@@ -330,7 +328,7 @@ int main( int argc, char** argv )
       else
       {
         cerr << "Cannot open response file: " << rspname << endl ;
-        sPrintUsage = true ;
+        sPrintUsage = true ; 
       }
     }
     else if ( opt[0] != '-' )
@@ -338,27 +336,27 @@ int main( int argc, char** argv )
       add_case(lFolder+opt,lCases);
     }
   }
-
+   
   if ( lCases.size() == 0 )
     sPrintUsage = true ;
-
+    
   if ( sPrintUsage )
   {
-    cout << "edge_collapse_demo <options> file0 file1 ... fileN @response_file" << endl
+    cout << "edge_collapse_demo <options> file0 file1 ... fileN @response_file" << endl 
          << "  options: " << endl
-         << "    -m method                       method: 0=LindstromTurk[default] 1=Midpoint" << endl
-         << "    -d folder                       Specifies the folder where the files are located. " << endl
+         << "    -m method                       method: 0=LindstromTurk[default] 1=Midpoint" << endl 
+         << "    -d folder                       Specifies the folder where the files are located. " << endl 
          << "    -a absolute_max_edge_count      Sets the final number of edges as absolute number." << endl
          << "    -r relative_max_edge_count      Sets the final number of edges as a percentage." << endl
          << "    -n                              Do not simplify but simply report data of surfaces." << endl ;
-
+    
     return 1 ;
-  }
+  } 
   else
   {
     for ( vector<string>::const_iterator it = lCases.begin(); it != lCases.end() ; ++ it )
       Simplify( lStopA, lStopR, lJustPrintSurfaceData, *it, lMethod) ;
-
+      
     return 0 ;
   }
 }
