@@ -5,8 +5,12 @@
 #include <fstream>
 
 #include <boost/property_map.hpp>
+
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
+#endif
+
 using namespace std;
 
 #include "PolyhedralSurf.h"
@@ -112,8 +116,12 @@ void gather_fitting_points(Vertex* v,
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
 
-//////////////////////////////MAIN///////////////////////////////////////////////////////
+///////////////MAIN///////////////////////////////////////////////////////
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 int main(int argc, char *argv[])
+#else
+int main()
+#endif
 {
   string if_name_string;
   const char *if_name = NULL; //input file name
@@ -123,6 +131,7 @@ int main(int argc, char *argv[])
   std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
 
   try {
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
@@ -148,6 +157,15 @@ int main(int argc, char *argv[])
       cout << desc << "\n";
       return 1;
     }
+#else
+    std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
+    if_name_string = "data/ellipe0.003.off";
+    d_fitting = 2;
+    d_monge = 2;
+    nb_rings = 0;
+    nb_points_to_use = 0;
+    verbose = false;
+#endif
   }
   catch(exception& e) {
     cerr << "error: " << e.what() << "\n";
