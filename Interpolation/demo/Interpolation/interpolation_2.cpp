@@ -136,7 +136,7 @@ void generate_grid_points(Point_vector_2& points, int m, float h)
 
 //////////////////////
 
-int main(int argc,  char* argv[])
+int main(int ,  char** )
 {
 
   //parameters:
