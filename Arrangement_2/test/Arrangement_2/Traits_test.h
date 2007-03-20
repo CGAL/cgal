@@ -921,7 +921,7 @@ bool Traits_test<T_Traits>::merge_wrapper(std::istringstream & str_stream)
  */
 template <class T_Traits>
 bool
-Traits_test<T_Traits>::approximate_wrapper(std::istringstream & str_stream)
+Traits_test<T_Traits>::approximate_wrapper(std::istringstream & )
 {
   return false;
 }
@@ -931,7 +931,7 @@ Traits_test<T_Traits>::approximate_wrapper(std::istringstream & str_stream)
  */
 template <class T_Traits>
 bool Traits_test<T_Traits>::
-construct_x_monotone_curve_wrapper(std::istringstream & str_stream)
+construct_x_monotone_curve_wrapper(std::istringstream & )
 {
   return false;
 }
