@@ -490,24 +490,15 @@ parse_support_options()
     log_print "Parsing support specfiles for 3rd party libraries:"
     _set_indent
     log_to_file
-    for i in "${CGAL_SUPPORT_DIR}"/S*; do
-	_tmp="`echo $i | ${_awk} 'BEGIN {FS=\"-\"} {print toupper($NF)}' | remove_special_chars `"
-	if [ -z "${_tmp}" ]; then continue; fi
-        SUPPORT_PKGS="${SUPPORT_PKGS} ${_tmp}"
-        R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
-        log_print "${_tmp}"
-	${_printf} "%s" "${_tmp}, "
-	# read specfile
-	for j in PROVIDES DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
-	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
-	do
-	  eval "${j}=''"
-	done
-        try_to_get_var_from_file "PROVIDES|DESCRIPTION|CXXFLAGS|LDFLAGS|LIBS|REQUIRES|INCOMPATIBLE|STDINCLDIRS|INCLTHING|STDLIBDIRS|LIBTHING|COMPILETESTFLAGS" "${i}"
-	if [ -z "${PROVIDES}" ]; then continue; fi
-	eval "${_tmp}_PROVIDES=\"${PROVIDES}\""
+
+    # read all specfiles at once
+    _tmp="`${_awk} -f "${CGAL_SUPPORT_DIR}"/parse_files.awk  "${CGAL_SUPPORT_DIR}"/S*`"
+    eval "${_tmp}"
+    for i in ${SUPPORT_PKGS}; do
+        log_print "${i}"
+        ${_printf} "%s" "${i}, "
         # is PROVIDES already among SUPPORT_FEATURES?
-	for j in ${PROVIDES}; do
+	for j in `value_of "${i}_PROVIDES"`; do
 	    if [ -z "`value_of \"SUPPORT_PKG_${j}\"`" ]; then
 		SUPPORT_FEATURES="${SUPPORT_FEATURES} ${j}"
 		eval "PROVIDE_PKG_${j}=''"
@@ -515,20 +506,11 @@ parse_support_options()
 		eval "${j}_LIB_DIR=''"
 		eval "${j}_VERSION=''"
 	    fi
-	    _append_to "SUPPORT_PKG_${j}" "${_tmp}" " "
+	    _append_to "SUPPORT_PKG_${j}" "${i}" " "
 	done
-
-	# generate set of variables corresponding to $_tmp
-
-	# store those from the specfile
-	for j in DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
-	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
-	do
-	  eval ${_tmp}_${j}=\"`value_of ${j}`\"
-	done
-	eval "${_tmp}_SUPPORT=''"
-	eval "${_tmp}_TEST_PASSED=''"
-	eval "${_tmp}_REQUIRED_BY=''"
+	eval "${i}_SUPPORT=''"
+	eval "${i}_TEST_PASSED=''"
+	eval "${i}_REQUIRED_BY=''"
     done
     for i in ${SUPPORT_PKGS}; do
 	for j in `value_of "${i}_REQUIRES"`; do
