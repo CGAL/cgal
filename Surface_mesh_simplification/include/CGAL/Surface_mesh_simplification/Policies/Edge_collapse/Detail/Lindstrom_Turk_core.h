@@ -165,13 +165,21 @@ private :
                  ,a20,a21,a22
                  );
   }
-
+  
   static FT big_value() { return static_cast<FT>((std::numeric_limits<double>::max)()) ; }
+
+  // Returns optional(n) if 'n' is finite, or optional() otherwise.
+  static optional<FT> filter_infinity ( FT n ) { return ( CGAL_NTS is_finite(n) ) ? optional<FT>(n) : optional<FT>() ; }
   
-  // Returns 'n' if it is finite, CGALi::infinite otherwise.
-  static FT made_finite ( FT n ) { return ( CGAL_NTS is_finite(n) ) ? n : big_value() ; }
-  
-  static Vector made_finite ( Vector const& v ) { return Vector( made_finite(v.x()), made_finite(v.y()), made_finite(v.z()) ) ; }
+  // Returns optional(p) if all coordinates of 'p' are finite, or optional() otherwise.
+  static optional<Point> filter_infinity ( Point const& p )
+  { 
+    bool lIsFinite =   CGAL_NTS is_finite(p.x())
+                    && CGAL_NTS is_finite(p.y()) 
+                    && CGAL_NTS is_finite(p.z()) ;
+    
+    return lIsFinite ? optional<Point>(p) : optional<Point>();
+  }
   
   ECM& surface() const { return mProfile.surface() ; }
   

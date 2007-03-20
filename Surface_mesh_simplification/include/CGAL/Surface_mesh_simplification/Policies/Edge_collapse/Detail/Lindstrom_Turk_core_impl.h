@@ -149,7 +149,7 @@ typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_
       CGAL_ECMS_LT_TRACE(2,"     b: " << xyz_to_string(mConstrians.b) );
       CGAL_ECMS_LT_TRACE(2,"inv(A): " << matrix_to_string(lAi) );
       
-      lPlacementV = made_finite( mConstrians.b * lAi ) ;
+      lPlacementV = mConstrians.b * lAi ;
       
       CGAL_ECMS_LT_TRACE(0,"New vertex point: " << xyz_to_string(*lPlacementV) );
     }
@@ -160,7 +160,7 @@ typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_
     CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
   
   if ( lPlacementV )
-    rPlacementP = Optional_point( ORIGIN + (*lPlacementV) );
+    rPlacementP = filter_infinity( ORIGIN + (*lPlacementV) );
     
   return rPlacementP;
 }
@@ -184,7 +184,7 @@ typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cos
                     + FT(mParams.BoundaryWeight) * lBdryCost   * lSquaredLength
                     + FT(mParams.ShapeWeight)    * lShapeCost  * lSquaredLength * lSquaredLength ;
     
-    rCost = Optional_FT(made_finite(lTotalCost));
+    rCost = filter_infinity(lTotalCost);
     
     CGAL_ECMS_LT_TRACE(0,"\nSquared edge length: " << lSquaredLength 
                       << "\nBoundary cost: " << lBdryCost << " weight: " << mParams.BoundaryWeight
