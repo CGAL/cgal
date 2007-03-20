@@ -350,7 +350,7 @@ public:
 
   Bounded_side
   side_of_power_circle(const Facet & f, const Weighted_point & p,
-                       bool perturb = false) const
+                       bool /* perturb */ = false) const
   {
       return side_of_power_circle(f.first, f.second, p);
   }
