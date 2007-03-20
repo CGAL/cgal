@@ -691,6 +691,7 @@ Jet_fitting_3/clean_tree.csh eol=lf
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Jet_fitting_3/doc_tex/AIDE -text
+Jet_fitting_3/doc_tex/Jet_fitting_3/DavidDetail.png -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/Maple_formula.mw -text svneol=unset#application/octet-stream
 Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-jpg-white-back.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-jpg-white-back.png -text svneol=unset#image/png
