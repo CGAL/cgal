@@ -361,6 +361,25 @@ public:
     initialize(start_time);
   }
 
+  ~Two_list_pointer_event_queue() {
+    // release pointers
+    std::vector<Key> all;
+    all.reserve(front_.size()+back_.size());
+    for (typename Queue::iterator it = front_.begin(); 
+	 it != front_.end(); ++it) {
+      all.push_back(Key(&*it));
+    }
+    for (typename Queue::iterator it = back_.begin(); 
+	 it != back_.end(); ++it) {
+      all.push_back(Key(&*it));
+    }
+    front_.clear();
+    back_.clear();
+    for (unsigned int i=0; i< all.size(); ++i) {
+      unmake_event(all[i].get());
+    }
+  }
+
   
   /*template <class E>
   Key insert_at_end(const E & e) {

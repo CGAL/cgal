@@ -418,7 +418,7 @@ public:
     set_instantaneous_time();
     //typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
     //simulator()->set_current_time(nt);
-    std::cout << "Locating at time " << triangulation_.geom_traits().time() << std::endl;
+    //std::cout << "Locating at time " << triangulation_.geom_traits().time() << std::endl;
     Cell_handle h= triangulation_.locate(k);
     /*if (h != Cell_handle() && h->vertex(0) != Vertex_handle()
 	       && h->vertex(1) != Vertex_handle()
