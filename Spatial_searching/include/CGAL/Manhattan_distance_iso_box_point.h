@@ -42,7 +42,7 @@ namespace CGAL {
     // obsolete as we no longer store dimension Manhattan_distance_iso_box_point(const int d) : the_dimension(d) {}
 
     //copy constructor
-    Manhattan_distance_iso_box_point(const Manhattan_distance_iso_box_point& d) {}
+    Manhattan_distance_iso_box_point(const Manhattan_distance_iso_box_point& ) {}
 
     ~Manhattan_distance_iso_box_point() {}
 
