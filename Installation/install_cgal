@@ -338,10 +338,31 @@ _real_options()
     ${_printf} "${*}" | ${_awk} '{ for (i=2; i<=NF; ++i) if (substr($i,0,1) == "-") printf "%s",$i }'
 }
 
+EXTRABUFFER='essai'
+# auxiliary function for log_to_file_and_extra_buffer
+save_to_extra_buffer()
+{
+    _read
+    ${_printf} "${KEY}\n" >> ${EXTRA_INSTALL_LOGFILE}
+    ${_printf} "${KEY}\n"
+}
+
+flush_extra_buffer()
+{
+    ${_cat} "${EXTRA_INSTALL_LOGFILE}" >> "${INSTALL_LOGFILE}"
+    ${_rm} -f "${EXTRA_INSTALL_LOGFILE}"
+}
+
 # log_print writes to logfile only
 log_to_file()
 {
     INSTALL_LOGFILE_REDIRECTION=">>\"${INSTALL_LOGFILE}\""
+}
+
+# log_print writes to logfile only
+log_to_file_and_extra_buffer()
+{
+    INSTALL_LOGFILE_REDIRECTION="|save_to_extra_buffer | ${_tee} -a >>\"${INSTALL_LOGFILE}\""
 }
 
 # log_print writes to screen only
@@ -366,6 +387,7 @@ log_print()
 # ($3 defaults to _$1 if not specified)
 # (if $2 is 'y', exit if it is not existent,
 # otherwise return 0, iff it exists)
+# (if $2 is 'q', do not warn if it is not existent)
 _check_for_util()
 {
     _tmp="`${_which} $1`"
@@ -374,7 +396,7 @@ _check_for_util()
     elif [ "$2" = "y" ]; then
 	exit_on_error "Couldn't find \"${1}\""
     else
-	log_print "WARNING: Couldn't find $1."
+	[ "$2" = "q" ] || log_print "WARNING: Couldn't find $1."
 	return 1
     fi
     log_print "$1 is `value_of ${3:-_$1}`."
@@ -485,11 +507,12 @@ parse_support_options()
     SUPPORT_PKGS=''
     R_SUPPORT_PKGS=''
 
+    INSTALL_LOGFILE_REDIRECTION_BAK="${INSTALL_LOGFILE_REDIRECTION}"
     log_to_file_and_screen
     _no_indent
     log_print "Parsing support specfiles for 3rd party libraries:"
     _set_indent
-    log_to_file
+    INSTALL_LOGFILE_REDIRECTION="${INSTALL_LOGFILE_REDIRECTION_BAK}"
 
     # read all specfiles at once
     _tmp="`${_awk} -f "${CGAL_SUPPORT_DIR}"/parse_files.awk  "${CGAL_SUPPORT_DIR}"/S*`"
@@ -535,10 +558,11 @@ get_cgal_version()
 init_logfiles()
 {
     log_to_file
+    _check_printf
     ${_printf} "%s\n" \
 	"----------------------------------------------------------" \
 	>${INSTALL_LOGFILE}
-    log_print "log of $0 $*"
+    log_print "log of $0 $ARGS"
     log_print "called by $LOGNAME on `date`"
     log_print "CGAL_DIR is ${CGAL_DIR}"
     log_print "----------------------------------------------------------"
@@ -3081,7 +3105,7 @@ print_os_setting()
     ${1} "OS:\t\t\t\t${SYST}"
     ${1} "COMPILER:\t\t\t`extended_compiler_description`"
     for i in ${SUPPORT_FEATURES}; do
-	if [ -z `value_of PROVIDE_PKG_${i}` ]; then
+	if [ -z "`value_of PROVIDE_PKG_${i}`" ]; then
 	    _tmp="not supported"
 	elif [ x`value_of ${i}_VERSION` = x0 ]; then
 	    _tmp="supported (unknown version)"
@@ -4565,6 +4589,7 @@ _build_one()
     log_print "Build on ${CONFIG_BASENAME}:"
     log_print \
 	    "--------------------------------------------------------"
+    log_print "New log file: ${INSTALL_LOGFILE}"
     log_to_file
     try_to_get_var_from_config_file COMPILER "$1"
     if [ -n "${COMPILER}" ]; then
@@ -4967,12 +4992,12 @@ cgal_install_header()
 
 startup()
 {
-    #if [ -n "${INSTALL_INTERACTIVE}" ]; then
-    #    ${_printf} "."
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+        ${_printf} "."
         log_to_file
-    #else
-    #    log_to_screen
-    #fi
+    else
+        log_to_file_and_screen
+    fi
 
     log_print "Looking for GNU/make..."
     # Verify that GNU Make exists:
@@ -4980,10 +5005,10 @@ startup()
     if [ -n "${MAKE}" ] && test_gmake "${MAKE}"; then 
         log_print 'GNU Make found in the environment variable \${MAKE}.'
     # Search gmake in PATH
-    elif _check_for_util gmake n MAKE && test_gmake "${MAKE}"; then
+    elif _check_for_util gmake q MAKE && test_gmake "${MAKE}"; then
 	log_print 'GNU Make found in \${PATH}.';
     # Search gmake in standard directories
-    elif _check_for_sysutil gmake n MAKE && test_gmake "${MAKE}"; then
+    elif _check_for_sysutil gmake q MAKE && test_gmake "${MAKE}"; then
 	log_print "GNU Make found in standard directories.";
     # Search make in PATH, or fail.
     elif _check_for_util make y MAKE && test_gmake "${MAKE}"; then
@@ -5063,7 +5088,7 @@ set_compiler_from_command_line()
     _check_comp_executable "${COMPILER}"
     log_to_file
     COMPILER="`compiler_absolute ${COMPILER}`"
-    if [ -z "${INSTALL_INTERACTIVE}" ]; then log_to_screen; fi
+    if [ -z "${INSTALL_INTERACTIVE}" ]; then log_to_file_and_screen; fi
     set_ostype
     set_compiler_flags
 }
@@ -5096,14 +5121,20 @@ set_variable_from_command_line()
 _WHAT_TO_DO=''
 _CONFLICT=''
 
-# These five utilities are used before the call of check_for_utils().
+# These six utilities are used before the call of check_for_utils().
 _awk=awk
 _sed=sed
 _tee=tee
 _printf=printf
 _rm=rm
+_cat=cat
 
 CGAL_INSTALL_VERSION="`_install_version_number`"
+
+ARGS="$*"
+
+# temporary logfile, that do not dependent on ${CGAL_DIR}.
+EXTRA_INSTALL_LOGFILE="${PWD}/tmp_install.log"
 
 # first quickly process "trivial" commandline options
 # (starting the whole parsing process would slowdown too much...)
@@ -5130,6 +5161,7 @@ esac
 
 if [ -z "${_WHAT_TO_DO}" ]; then
     initial_check
+    log_to_file_and_extra_buffer
     check_for_utils
 
     # ---------------------------------------------------------------------
@@ -5139,24 +5171,25 @@ if [ -z "${_WHAT_TO_DO}" ]; then
    if [ -z "${CUSTOM_CXXFLAGS}" ]; then
 	if [ -n "$CXXFLAGS" ]; then
 	     CUSTOM_CXXFLAGS="${CXXFLAGS}"
-	     write_buffer "${_LEFTSPACE}Setting CUSTOM_CXXFLAGS from \$CXXFLAGS.\n"
+	     log_print 'Setting CUSTOM_CXXFLAGS from \$CXXFLAGS.'
         fi
         if [ -n "${CPPFLAGS}" ]; then
 	     CUSTOM_CXXFLAGS="${CUSTOM_CXXFLAGS} ${CPPFLAGS}"
-	     write_buffer "${_LEFTSPACE}Setting CUSTOM_CXXFLAGS from \$CPPFLAGS.\n"
+	     log_print 'Setting CUSTOM_CXXFLAGS from \$CPPFLAGS.'
         fi
     fi
     if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then
 	CUSTOM_LDFLAGS="${LDFLAGS}"
-	write_buffer "${_LEFTSPACE}Setting CUSTOM_LDFLAGS from \$LDFLAGS.\n"
+	log_print 'Setting CUSTOM_LDFLAGS from \$LDFLAGS.'
     fi
     if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
 	COMPILER="${CXX}"
-	write_buffer "${_LEFTSPACE}Setting COMPILER from \$CXX.\n"
+	log_print 'Setting COMPILER from \$CXX.'
     fi
-    ${_printf} "${_BUF}" >> "${INSTALL_LOGFILE}"
 
+    log_to_file
     parse_support_options
+    log_to_file_and_extra_buffer
 
     # --- begin parsing commandline options ---
     while [ ${#} -gt 0 ]; do
@@ -5168,7 +5201,15 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		    shift
 		fi
 		set_dirs_dependant_on_cgal_dir
+		log_to_file_and_screen
+		log_print "CGAL_DIR has been changed. Redo initial checks..."
 		initial_check
+		log_print "CGAL_DIR has been changed. The log file has been reinitialized."
+		log_print "Old part of the log file between vvvv and ^^^^:"
+		log_print "vvvv"
+		flush_extra_buffer
+		log_print "^^^^"
+		log_print "Redo parsing of support specfiles..."
 		parse_support_options
 		shift; continue
 		;;
@@ -5328,6 +5369,10 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     done
     # --- end of parsing commandline options ---
 fi
+
+log_to_file_and_screen
+${_rm} -f "${EXTRA_INSTALL_LOGFILE}"
+
 if [ -z "${_WHAT_TO_DO}" ]; then 
     _WHAT_TO_DO='non-interactive'; 
 fi
@@ -5375,7 +5420,7 @@ case ${_WHAT_TO_DO} in
     *upgrade*)
         get_cgal_version
 	cgal_install_header
-	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	${_printf} "%s\n" "starting ${_WHAT_TO_DO} -"
 	startup
 	guess_os log_print
 	upgrade
@@ -5385,7 +5430,7 @@ case ${_WHAT_TO_DO} in
         get_cgal_version
 	cgal_install_header
 	# start interactive part
-	${_printf} "%s" "starting interactive mode -"
+	${_printf} "%s\n" "starting interactive mode -"
 	INSTALL_INTERACTIVE='y'
 	startup
 	if [ -z "${COMPILER}" ]; then
@@ -5408,10 +5453,7 @@ case ${_WHAT_TO_DO} in
 	_basename=basename
 	_dirname=dirname
 	_which=real_which
-	_sed=sed
 	_tr=tr
-	_cat=cat
-	_tee=tee
 	eval "guess_os ${_printf}" >/dev/null
 	_check_comp_executable "${COMPILER}"
 	COMPILER="`compiler_absolute ${COMPILER}`"
@@ -5422,7 +5464,7 @@ case ${_WHAT_TO_DO} in
     *build-all*)
         get_cgal_version
 	cgal_install_header
-	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	${_printf} "%s\n" "starting ${_WHAT_TO_DO} -"
 	startup
 	build_all
 	finish
@@ -5430,7 +5472,7 @@ case ${_WHAT_TO_DO} in
     *build*)
         get_cgal_version
 	cgal_install_header
-	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	${_printf} "%s\n" "starting ${_WHAT_TO_DO} -"
 	startup
 	build_one
 	finish
