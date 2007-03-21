@@ -570,6 +570,24 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   s = T2_3.segment(T2_3.finite_edges_begin()); assert( &s == &s );
 
 
+  std::cout << "    hidden vertices" << std::endl;
+  {
+      Cls rt;
+
+      rt.insert (wp0);
+      rt.insert (wp1);
+      rt.insert (wp2);
+      rt.insert (wp3);
+
+      for (unsigned i = 4; i > 0; --i) {
+          assert (rt.number_of_vertices() + rt.number_of_hidden_vertices() == i);
+          assert (rt.number_of_vertices() > 0);
+          rt.remove (rt.finite_vertices_begin ());
+      }
+      assert (rt.number_of_vertices() == 0);
+      assert (rt.number_of_hidden_vertices() == 0);
+  }
+
   /***************************/
   /***** get_conflicts ******/
   std:: cout << "    get conflicts " << std::endl;
@@ -791,7 +809,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   T2_5.clear();
   assert( T2_5.number_of_vertices() == 0 );
 
-  for (i=T2_6.number_of_vertices(); i>0; i--){
+  for (i=T2_6.number_of_vertices() + T2_6.number_of_hidden_vertices(); i>0; i--){
     T2_6.remove(T2_6.finite_vertex());
   }
   assert( T2_6.number_of_vertices() == 0 );

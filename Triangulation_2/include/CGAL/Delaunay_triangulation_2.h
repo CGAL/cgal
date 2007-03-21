@@ -122,6 +122,7 @@ public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
   using Triangulation::cw;
   using Triangulation::ccw;
+  using Triangulation::geom_traits;
 #endif
 
 private:
@@ -158,10 +159,15 @@ public:
   insert(InputIterator first, InputIterator last)
     {
       int n = this->number_of_vertices();
-        while(first != last){
-	insert(*first);
-	++first;
-      }
+
+      std::vector<Point> points (first, last);
+      std::random_shuffle (points.begin(), points.end());
+      spatial_sort (points.begin(), points.end(), geom_traits());
+      Face_handle f;
+      for (typename std::vector<Point>::const_iterator p = points.begin();
+              p != points.end(); ++p)
+          f = insert (*p, f)->face();
+
       return this->number_of_vertices() - n;
     }
 

@@ -74,6 +74,7 @@ public:
   using Base::dimension;
   using Base::geom_traits;
   using Base::infinite_vertex;
+  using Base::finite_vertex;
   using Base::create_face;
   using Base::number_of_faces;
   using Base::all_faces_begin;
@@ -328,11 +329,17 @@ public:
   insert(InputIterator first, InputIterator last)
   {
       int n = number_of_vertices();
-      while(first != last)
-      {
-          insert(*first);
-  	  ++first;
-      }
+
+      std::vector<Weighted_point> points (first, last);
+
+      std::random_shuffle (points.begin(), points.end());
+      spatial_sort (points.begin(), points.end(), geom_traits());
+
+      Face_handle hint;
+      for (typename std::vector<Weighted_point>::const_iterator p = points.begin();
+              p != points.end(); ++p)
+          hint = insert (*p, hint)->face();
+
       return number_of_vertices() - n;
   }
 
@@ -714,27 +721,31 @@ is_valid_vertex(Vertex_handle vh) const
   if (vh->is_hidden()) {
     Locate_type lt; 
     int li;
-    result = result && (!is_infinite(vh->face()));
     Face_handle loc  = locate(vh->point(), lt, li, vh->face());
-    result = result && (loc == vh->face() ||
-		        (lt == Base::VERTEX && 
-			     vh->face()->has_vertex(loc->vertex(li))) ||
-			(lt == Base::EDGE && vh->face() ==
-			 loc->neighbor(li)) );
+    if (dimension() == 0) {
+        result = result && lt == Base::VERTEX;
+        result = result && power_test (vh->face()->vertex(0)->point(), vh->point()) <= 0;
+    } else {
+        result = result && (!is_infinite(vh->face()));
+        result = result && (loc == vh->face() ||
+                (lt == Base::VERTEX && 
+                 vh->face()->has_vertex(loc->vertex(li))) ||
+                (lt == Base::EDGE && vh->face() ==
+                 loc->neighbor(li)) );
 
-    CGAL_triangulation_assertion(result);  
-    result = result && 
-             power_test(vh->face(),vh->point()) == ON_NEGATIVE_SIDE;
- //    if ( !result) {
-//       std::cerr << " from is_valid_vertex " << std::endl;
-//       std::cerr << "sommet cache " << &*(vh) 
-// 		<< "vh_point " <<vh->point() << " " << std::endl;
-//       std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
-//       std::cerr <<  "loc      " <<  &*(loc )
-// 	        << " lt " << lt  << " li " << li << std::endl;
-//       show_face(vh->face());
-//       show_face(loc);
-//     }
+        result = result && 
+            power_test(vh->face(),vh->point()) == ON_NEGATIVE_SIDE;
+//            if ( !result) {
+//               std::cerr << " from is_valid_vertex " << std::endl;
+//               std::cerr << "sommet cache " << &*(vh) 
+//         		<< "vh_point " <<vh->point() << " " << std::endl;
+//               std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
+//               std::cerr <<  "loc      " <<  &*(loc )
+//         	        << " lt " << lt  << " li " << li << std::endl;
+//               show_face(vh->face());
+//               show_face(loc);
+//             }
+    }
   }
   else { // normal vertex
     result = result && vh->face()->has_vertex(vh);
@@ -1043,52 +1054,69 @@ typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li) 
 {
-  if (number_of_vertices() <= 1) return Base::insert(p);
-  Vertex_handle v;
-  Oriented_side os;
-  Vertex_handle vv; // helping vertex in case VERTEX
-  switch (lt) {
-  case Base::VERTEX:
-    vv = loc->vertex(li);
-    if (power_test(loc->vertex(li)->point(), p) != ON_POSITIVE_SIDE) 
-          return hide_new_vertex(loc,p);
-    v = this->_tds.create_vertex(); 
-    v->set_point(p);
-    exchange_incidences(v,loc->vertex(li));
-    hide_vertex(loc, vv);
-    break;
-  case Base::EDGE:
-    os = dimension() == 1 ?  power_test(loc,li,p) : 
-                             power_test(loc,p);
-    if (os == ON_NEGATIVE_SIDE)  { //hide preferably in finite face
-      if (is_infinite(loc)) loc = loc->neighbor(li);
-      return hide_new_vertex(loc,p);
-    }
-    v = insert_in_edge(p,loc,li);
-    break;
-  case Base::FACE:
-    if (power_test(loc,p) == ON_NEGATIVE_SIDE) 
-      return hide_new_vertex(loc,p);
-    v = insert_in_face(p,loc);
-    break;
-  case Base::OUTSIDE_CONVEX_HULL:
-    v = insert_outside_convex_hull(p,loc);
-    break;
-  case Base::OUTSIDE_AFFINE_HULL:
-    v =  insert_outside_affine_hull(p);
-    //clear vertex list of infinite faces which have been copied
-     for ( All_faces_iterator afi = all_faces_begin();
-	                    afi != all_faces_end(); afi++) {
-      if(is_infinite(afi)) afi->vertex_list().clear();
-    }
-    break;
-  default:
-    CGAL_triangulation_assertion_msg(false, "locate step failed");
-  }
-  regularize(v);
-  return v;
-}
+    Vertex_handle v;
+    switch (lt) {
+    case Base::VERTEX:
+        {
+            CGAL_precondition (dimension() >= 0);
+            if (dimension() == 0) {
+                // in this case locate() oddly returns loc = NULL and li = 4,
+                // so we work around it.
+                loc = finite_vertex()->face();
+                li = loc->index(finite_vertex());
+            }
 
+            Vertex_handle vv = loc->vertex(li);
+            if (power_test (vv->point(), p) < 0) {
+                return hide_new_vertex (loc, p);
+            }
+
+            v = this->_tds.create_vertex(); 
+            v->set_point(p);
+            exchange_incidences(v,vv);
+            hide_vertex(loc, vv);
+            regularize (v);
+            return v;
+        }
+    case Base::EDGE:
+        {
+            CGAL_precondition (dimension() >= 1);
+            Oriented_side os = dimension() == 1 ? power_test (loc, li, p) :
+                                                  power_test (loc, p);
+
+            if (os < 0) {
+                if (is_infinite (loc)) loc = loc->neighbor (li);
+                return hide_new_vertex (loc, p);
+            }
+            v = insert_in_edge (p, loc, li);
+            break;
+        }
+
+    case Base::FACE:
+        {
+            CGAL_precondition (dimension() >= 2);
+            if (power_test (loc, p) < 0) {
+                return hide_new_vertex(loc,p);
+            }
+            v = insert_in_face (p, loc);
+            break;
+        }
+    default:
+        v = Base::insert (p, lt, loc, li);
+    }
+
+    if (lt == OUTSIDE_AFFINE_HULL) {
+        //clear vertex list of infinite faces which have been copied
+        for ( All_faces_iterator afi = all_faces_begin();
+                afi != all_faces_end(); afi++)
+            if (is_infinite (afi))
+                afi->vertex_list().clear();
+    }
+
+    regularize (v);
+
+    return v;
+}
 
 /*
 The reinsert function  insert a weighted point which was in a hidden
@@ -1161,7 +1189,9 @@ exchange_incidences(Vertex_handle va, Vertex_handle vb)
 {
   CGAL_triangulation_assertion ( !vb->is_hidden());
   std::list<Face_handle> faces;
-  if (dimension() == 1) {
+  if (dimension() == 0) {
+    faces.push_back (vb->face());
+  } else if (dimension() == 1) {
     faces.push_back(vb->face());
     int i = vb->face()->index(vb);
     faces.push_back(vb->face()->neighbor(1-i));
@@ -1235,6 +1265,8 @@ regularize(Vertex_handle v)
   CGAL_triangulation_precondition( v != infinite_vertex());
   Faces_around_stack faces_around;
 
+  if (dimension() < 1) return;
+
   //initialise faces_around
   if (dimension() == 1) {
     faces_around.push_back(v->face());
@@ -1298,60 +1330,59 @@ void
 Regular_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v )
 {
-  CGAL_triangulation_precondition( v != Vertex_handle() );
-  CGAL_triangulation_precondition(!is_infinite(v));
-   
-  if (v->is_hidden()) {
-    remove_hidden(v);
-    return;
-  }
-  
-  // remove the hidden vertices before removing the before last vertex
-  if(number_of_vertices() == 2 ) {
-    Hidden_vertices_iterator hit = hidden_vertices_begin();
-    for( ; hit != hidden_vertices_end(); hit = hidden_vertices_begin())
-      remove_hidden(hit);
-  }
- 
-  // As we want to reinsert close to where the point we remove
-  // is we take a neighbor face
-  Face_handle neighboring = v->face()->neighbor(v->face()->index(v));
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_precondition(!is_infinite(v));
 
-  // Collect in p_list
-  // the points hidden by the face to be deleted
-  Vertex_list p_list;
-  if (dimension() == 1) {
-    Face_handle f = v->face();
-    Face_handle n = f->neighbor(1 - f->index(v));
-    p_list.splice(p_list.begin(), f->vertex_list());
-    p_list.splice(p_list.begin(), n->vertex_list());
-  }
-  else if (dimension() == 2 ) {
-    Face_circulator fc = incident_faces(v),done(fc);
-    do {
-      p_list.splice(p_list.begin(), fc->vertex_list());
-      fc++;
-    }  
-    while( fc != done);
-  }
+    if (v->is_hidden())
+        return remove_hidden (v);
 
-  if (dimension() <= 1) {
-    Base::remove(v);
-    neighboring = infinite_vertex()->face();
-  } else {
-    remove_2D(v);
-  }
+    Face_handle hint;
+    int ihint = 0;
 
-  while (! p_list.empty())
-  {
-    Vertex_handle v(p_list.front());
-    p_list.pop_front();
-    if (is_infinite(neighboring)) {
-      neighboring=neighboring->neighbor(neighboring->index(infinite_vertex()));
+    Vertex_list to_reinsert;
+    switch (dimension()) {
+    case 0:
+        to_reinsert.splice (to_reinsert.begin(), v->face()->vertex_list());
+        break;
+    case 1:
+        {
+            Face_handle f1 = v->face();
+            ihint = f1->index(v);
+            hint = f1->neighbor(ihint);
+            Face_handle f2 = f1->neighbor(1 - ihint);
+            ihint = mirror_index (f1, ihint);
+
+            to_reinsert.splice (to_reinsert.begin(), f1->vertex_list());
+            to_reinsert.splice (to_reinsert.begin(), f2->vertex_list());
+            break;
+        }
+    case 2:
+        {
+            Face_circulator f = incident_faces (v), end = f;
+            ihint = f->index(v);
+            hint = f->neighbor(ihint);
+            ihint = mirror_index (f, ihint);
+            do to_reinsert.splice (to_reinsert.begin(), f->vertex_list());
+            while (++f != end);
+            break;
+        }
     }
-    reinsert(v, neighboring); 
-    neighboring = v->face();
-  }
+
+    if (number_of_vertices() <= 2) {
+        this->_tds.remove_dim_down(v);
+    } else if (dimension() < 2) {
+        Base::remove (v);
+    } else {
+        remove_2D (v);
+    }
+
+    if (hint != Face_handle()) hint = hint->neighbor(ihint);
+
+    for (typename Vertex_list::iterator i = to_reinsert.begin();
+            i != to_reinsert.end(); ++i)
+    {
+        hint = reinsert (*i, hint)->face();
+    }
 }
 
 template < class Gt, class Tds >
@@ -1742,8 +1773,8 @@ Regular_triangulation_2<Gt,Tds>::
 hide_vertex(Face_handle f, Vertex_handle vh)
 {
   // no hidden vertex in infinite face
-  if(is_infinite(f)) f = f->neighbor(f->index(infinite_vertex()));
-    
+  if(is_infinite(f) && dimension() > 0) f = f->neighbor(f->index(infinite_vertex()));
+ 
   if(! vh->is_hidden()) {
     vh->set_hidden(true);
     _hidden_vertices++;

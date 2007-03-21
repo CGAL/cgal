@@ -43,6 +43,7 @@
 #include <CGAL/Triangulation_line_face_circulator_2.h>
 #include <CGAL/Random.h>
 
+#include <CGAL/spatial_sort.h>
 
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds > class Triangulation_2;
@@ -437,10 +438,15 @@ template < class InputIterator >
 int insert(InputIterator first, InputIterator last)
 {
   int n = number_of_vertices();
-  while(first != last){
-    insert(*first);
-    ++first;
-  }
+
+  std::vector<Point> points (first, last);
+  std::random_shuffle (points.begin(), points.end());
+  spatial_sort (points.begin(), points.end(), geom_traits());
+  Face_handle f;
+  for (typename std::vector<Point>::const_iterator p = points.begin();
+          p != points.end(); ++p)
+      f = insert (*p, f)->face();
+
   return number_of_vertices() - n;
 }
 
@@ -1020,13 +1026,16 @@ typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_outside_affine_hull(const Point& p)
 {
-  CGAL_triangulation_precondition(dimension() == 1);
-  Face_handle f = (*finite_edges_begin()).first;
-  Orientation orient = orientation( f->vertex(0)->point(),
-				    f->vertex(1)->point(),
-				    p);
-  CGAL_triangulation_precondition(orient != COLLINEAR);
-  bool conform = ( orient == COUNTERCLOCKWISE);
+  CGAL_triangulation_precondition(dimension() < 2);
+  bool conform = false;
+  if (dimension() == 1) {
+      Face_handle f = (*finite_edges_begin()).first;
+      Orientation orient = orientation( f->vertex(0)->point(),
+              f->vertex(1)->point(),
+              p);
+      CGAL_triangulation_precondition(orient != COLLINEAR);
+      conform = ( orient == COUNTERCLOCKWISE);
+  }
 
   Vertex_handle v = _tds.insert_dim_up( infinite_vertex(), conform);
   v->set_point(p);
@@ -2055,11 +2064,12 @@ locate(const Point& p,
        int& li,
        Face_handle start) const
 {
-  if( dimension() <= 0) {
-    if(number_of_vertices() == 0) {
+  if (dimension() < 0) {
       lt = OUTSIDE_AFFINE_HULL;
       li = 4; // li should not be used in this case
-    } else { // number_of_vertices() == 1
+      return Face_handle();
+  }
+  if( dimension() == 0) {
       if (xy_equal(p,finite_vertex()->point())){
 	lt = VERTEX ;
       }
@@ -2067,8 +2077,7 @@ locate(const Point& p,
 	lt = OUTSIDE_AFFINE_HULL;
       }
       li = 4; // li should not be used in this case
-    }
-    return Face_handle();
+      return Face_handle();
   }
   if(dimension() == 1){
     return march_locate_1D(p, lt, li);

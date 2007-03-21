@@ -58,6 +58,7 @@ public:
   typedef typename Ctr::Edge_set Edge_set;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Ctr::geom_traits;
   using Ctr::number_of_vertices;
   using Ctr::finite_faces_begin;
   using Ctr::finite_faces_end;
@@ -186,10 +187,15 @@ public:
 #endif
     {
       int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
+
+      std::vector<Point> points (first, last);
+      std::random_shuffle (points.begin(), points.end());
+      spatial_sort (points.begin(), points.end(), geom_traits());
+      Face_handle f;
+      for (typename std::vector<Point>::const_iterator p = points.begin();
+              p != points.end(); ++p)
+          f = insert (*p, f)->face();
+
       return number_of_vertices() - n;
     }
 

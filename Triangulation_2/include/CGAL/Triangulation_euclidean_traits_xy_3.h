@@ -78,6 +78,8 @@ public:
   typedef typename Rp::Segment_3   Segment_2;
   typedef typename Rp::Triangle_3  Triangle_2;
 
+  typedef typename Rp::Less_x_3             Less_x_2;
+  typedef typename Rp::Less_y_3             Less_y_2;
   typedef typename Rp::Compare_x_3          Compare_x_2;
   typedef typename Rp::Compare_y_3          Compare_y_2;
   typedef Orientation_xy_3<Rp>              Orientation_2;
@@ -100,6 +102,14 @@ public:
   typename Rp::FT y(const Point_2 &p) const { return p.y(); }
     
  
+  Less_x_2
+  less_x_2_object() const
+    { return Less_x_2();}
+
+  Less_y_2
+  less_y_2_object() const
+    { return Less_y_2();}
+
   Compare_x_2
   compare_x_2_object() const
     { return Compare_x_2();}

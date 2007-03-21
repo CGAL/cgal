@@ -45,6 +45,8 @@ public:
   typedef typename R::Line_2      Line_2;
   typedef typename R::Ray_2       Ray_2;
 
+  typedef typename R::Less_x_2                   Less_x_2;
+  typedef typename R::Less_y_2                   Less_y_2;
   typedef typename R::Compare_x_2                Compare_x_2;
   typedef typename R::Compare_y_2                Compare_y_2;
   typedef typename R::Orientation_2              Orientation_2;
@@ -70,6 +72,14 @@ public:
       (const Triangulation_euclidean_traits_2 &)
   {return *this;}
  
+  Less_x_2
+  less_x_2_object() const
+    { return Less_x_2();}
+
+  Less_y_2
+  less_y_2_object() const
+    { return Less_y_2();}
+  
   Compare_x_2
   compare_x_2_object() const
     { return Compare_x_2();}

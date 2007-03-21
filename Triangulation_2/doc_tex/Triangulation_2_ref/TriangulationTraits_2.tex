@@ -44,6 +44,18 @@ which constructs a  segment from two points.}
 \ccc{Triangle_2 operator()(Point_2 p,Point_2 q,Point_2 r )}, \\
 which constructs a triangle from three points.}
 
+\ccNestedType{Less_x_2}{Predicate object. Provides
+the operator~: \\
+\ccc{bool operator()(Point p, Point q)} \\
+which returns \ccc{true} if \ccc{p} is before \ccc{q}
+according to the $x$-ordering of points.}
+\ccGlue
+\ccNestedType{Less_y_2}{Predicate object. Provides
+the operator~: \\
+\ccc{bool operator()(Point p, Point q)} \\
+which returns \ccc{true} if \ccc{p} is before \ccc{q}
+according to the $y$-ordering of points.}
+\ccGlue
 \ccNestedType{Compare_x_2}{Predicate object. Provides
 the operator~: \\
 \ccc{Comparison_result operator()(Point p, Point q)} \\

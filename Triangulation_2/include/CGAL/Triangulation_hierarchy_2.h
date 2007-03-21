@@ -52,6 +52,10 @@ class Triangulation_hierarchy_2
   typedef typename Tr_Base::Finite_vertices_iterator  Finite_vertices_iterator;
   //typedef typename Tr_Base::Finite_faces_iterator     Finite_faces_iterator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Tr_Base::geom_traits;
+#endif
+
  private:
   // here is the stack of triangulations which form the hierarchy
   Tr_Base*   hierarchy[Triangulation_hierarchy_2__maxlevel];
@@ -70,9 +74,7 @@ public:
     for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
       hierarchy[i] = new Tr_Base(traits);
 
-    for (InputIterator it = first; it != beyond; ++it) {
-      insert(*it);
-    }
+    insert (first, beyond);
   }
 
   Triangulation_hierarchy_2 &operator=(const  Triangulation_hierarchy_2& tr);
@@ -97,10 +99,16 @@ public:
   int insert(InputIterator first, InputIterator last)
     {
       int n = this->number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
+
+      std::vector<Point> points (first, last);
+      std::random_shuffle (points.begin(), points.end());
+      CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
+
+      Face_handle hint;
+      for (typename std::vector<Point>::const_iterator p = points.begin();
+              p != points.end(); ++p)
+          hint = insert (*p, hint)->face();
+
       return this->number_of_vertices() - n;
     }
 
@@ -505,7 +513,7 @@ locate_in_all(const Point& p,
     position = nearest->face();                // incident face
     --level;
   }
-  pos[0]=hierarchy[level]->locate(p,lt,li,loc);  // at level 0 
+  pos[0]=hierarchy[0]->locate(p,lt,li,loc == Face_handle() ? position : loc);  // at level 0 
 }
 
 

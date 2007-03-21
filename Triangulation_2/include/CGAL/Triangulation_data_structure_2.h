@@ -1054,9 +1054,9 @@ remove_dim_down(Vertex_handle v)
     break;
   case 1:
   case 2:
-    CGAL_triangulation_precondition ( 
-	     (dimension() == 1 &&  number_of_vertices() == 3) ||
-	     (dimension() == 2 && number_of_vertices() > 3) );
+//  CGAL_triangulation_precondition ( 
+//           (dimension() == 1 &&  number_of_vertices() == 3) ||
+//           (dimension() == 2 && number_of_vertices() > 3) );
     // the faces incident to v are down graded one dimension
     // the other faces are deleted
     std::list<Face_handle > to_delete;

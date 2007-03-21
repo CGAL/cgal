@@ -140,6 +140,25 @@ class Triangulation_test_triangle {
 };
 
 
+class Triangulation_test_Less_x_2{
+public:
+  typedef Triangulation_test_point  Point;
+  bool operator()( const Point& p, const Point&  q) const 
+    {
+      return (p.test_x() < q.test_x());
+    }
+};
+
+class Triangulation_test_Less_y_2{
+public:
+  typedef Triangulation_test_point  Point;
+  bool operator()( const Point& p, const Point&  q) const 
+    {
+      return (p.test_y() < q.test_y());
+    }
+};
+
+
 class Triangulation_test_Compare_x_2{
 public:
   typedef Triangulation_test_point  Point;
@@ -356,6 +375,8 @@ public:
   typedef Triangulation_test_ray       Ray_2;
   typedef Triangulation_test_triangle  Triangle_2;
 
+  typedef Triangulation_test_Less_x_2       Less_x_2;
+  typedef Triangulation_test_Less_y_2       Less_y_2;
   typedef Triangulation_test_Compare_x_2    Compare_x_2;
   typedef Triangulation_test_Compare_y_2    Compare_y_2;
   typedef Triangulation_test_Orientation_2  Orientation_2;
@@ -379,6 +400,14 @@ public:
   _Triangulation_test_traits(const _Triangulation_test_traits &) {}
   _Triangulation_test_traits &operator=
         (const _Triangulation_test_traits &) { return *this; }
+
+  Less_x_2
+  less_x_2_object() const
+    { return Less_x_2();}
+
+  Less_y_2
+  less_y_2_object() const
+    { return Less_y_2();}
 
   Compare_x_2
   compare_x_2_object() const
