@@ -1,6 +1,30 @@
+// Copyright (c) 2006 Inria Lorraine (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Elias Tsigaridas <Elias.Tsigaridas@loria.fr>
+//                 Luis Peñaranda <penarand@loria.fr>
+
 #include <CGAL/Arr_poly_traits_1.h>
 #include <CGAL/Arrangement_2.h>
+#ifdef __TEST_ARR
+#include <ctime>
+#else
 #include "../../../../CGAL-3.2.1/examples/Arrangement_2/arr_print.h"
+#endif
 #include "parsers.h"
 
 typedef CGAL::GBRS_algebraic_kernel<CGAL::Gmpz>	AlgKernel;
@@ -14,62 +38,48 @@ typedef CGAL::Arrangement_2<Traits_2>		Arrangement_2;
 Polynomial parse_poly(AlgKernel ker,std::string tstr){
 	CGAL::Polynomial_parser_1 parser;
 	parser.parse(tstr);
-	Polynomial p;
-	if(parser.is_correct()){
-		// The coefficients of the polynomial
-		std::vector<Coefficient> Coeff;
-		// We get the coefficients from the parser.
-		// Notice that we use our convertor. If we didn't supply a convertor
-		// then the default convertor would be used (to ints)
-		parser.result(std::back_inserter(Coeff),CGAL::The_Convert_to());
-
-		// Output the result
-		//std::cout.precision(20);
-
-		/*std::cout << "Coeff: ";
-		std::copy(Coeff.begin(),Coeff.end(),std::ostream_iterator<Coefficient>(std::cout," "));
-		std::cout << std::endl; 
-	*/
-	p=ker.construct_polynomial_1_object()
-		(Coeff.begin(),Coeff.end());
-	} else {
-		// Something went wrong
-		std::cout << "Failure..." << std::endl; 
-		// The error was at...
-		std::cout << "at: " << parser.error() << std::endl; 
-	}
-	return p;
+	CGAL_assertion(parser.is_correct());
+	std::vector<Coefficient> Coeff;
+	// We get the coefficients from the parser.
+	// Notice that we use our convertor. If we didn't supply a convertor
+	// then the default convertor would be used (to ints)
+	parser.result(std::back_inserter(Coeff),CGAL::The_Convert_to());
+	return ker.construct_polynomial_1_object()(Coeff.begin(),Coeff.end());
 }
 
-int main()
-{
+int main(){
 	AlgKernel ker;
 	Arrangement_2 arr;
-
-	/*Polynomial p=parse_poly(ker,"x^2-4");
-	Polynomial q=parse_poly(ker,"x-1");
-	Polynomial r=parse_poly(ker,"x^3+1");
-	Polynomial s=parse_poly(ker,"2");
-
-	Curve cv0=Curve(p,-4,5);	// x^2-4 [-4,5]
-	Curve cv1=Curve(q,-5,4);	// x-1 [-5,4]
-	Curve cv2=Curve(r,-6,6);	// x^3+1 [-6,6]
-	Curve cv3=Curve(s,-5,5);	// 2 [-5,5]
-
-	insert_curve(arr,cv0);
-	insert_curve(arr,cv1);
-	insert_curve(arr,cv2);
-	insert_curve(arr,cv3);*/
-
-	Polynomial q=parse_poly(ker,"x^200-4");
-	Polynomial r=parse_poly(ker,"x^2");
-	Curve cvq=Curve(q,-10,10);
-	Curve cvr=Curve(r,-10,10);
-	insert_curve(arr,cvq);
-	insert_curve(arr,cvr);
-
+	std::string s;
+	unsigned n;
+	std::cout<<"number of polynomials in the arrangement: ";
+	std::cin>>n;
+	Polynomial p[n];
+	Coefficient left[n],right[n];
+	for(unsigned i=0;i<n;++i){
+		std::cout<<"\npolynomial? ";
+		std::cin>>s;
+		p[i]=parse_poly(ker,s);
+		std::cout<<"left bound? ";
+		std::cin>>s;
+		left[i]=s;
+		std::cout<<"right bound? ";
+		std::cin>>s;
+		right[i]=s;
+		CGAL_assertion(left[i]<right[i]);
+	}
+#ifdef __TEST_ARR
+	clock_t start,end;
+	start=clock();
+#endif
+	for(unsigned i=0;i<n;++i)
+		insert_curve(arr,Curve(p[i],left[i],right[i]));
+#ifdef __TEST_ARR
+	end=clock();
+	std::cout<<"\ntime: "<<((double)(end-start))/CLOCKS_PER_SEC<<" seconds, ";
+#else
 	print_arrangement(arr);
-	std::cout<<"is valid? "<<arr.is_valid()<<std::endl;
-
+#endif
+	std::cout<<"valid="<<arr.is_valid()<<std::endl;
 	return (0);
 }

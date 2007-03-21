@@ -21,9 +21,13 @@ int main()
 
 	// construct the polynomial x^2-4
 	std::vector<Coefficient>coefsp;
-	coefsp.push_back(Coefficient(-4));	// x^0
-	coefsp.push_back(Coefficient(0));	// x^1
-	coefsp.push_back(Coefficient(1));	// x^2
+	for(int i=0;i<51;++i)
+		coefsp.push_back(Coefficient((i%2)?(-i):i));	// x^i
+	//--------------------------------------------------
+	// coefsp.push_back(Coefficient(-4));	// x^0
+	// coefsp.push_back(Coefficient(0));	// x^1
+	// coefsp.push_back(Coefficient(1));	// x^2
+	//-------------------------------------------------- 
 	Polynomial p=ker.construct_polynomial_1_object()
 		(coefsp.begin(),coefsp.end());
 	// now we create the polynomial q = x-1
@@ -47,7 +51,7 @@ int main()
 	Polynomial s=ker.construct_polynomial_1_object()
 		(coefss.begin(),coefss.end());
 
-	Curve cv0=Curve(p,-4,5);	// x^2-4 [-4,5]
+	Curve cv0=Curve(p,-4,5,"cv0");	// x^2-4 [-4,5]
 	Curve cv1=Curve(q,-5,4);	// x-1 [-5,4]
 	Curve cv2=Curve(r,-6,6);	// x^3+1 [-6,6]
 	Curve cv3=Curve(s,-5,5);	// 2 [-5,5]
