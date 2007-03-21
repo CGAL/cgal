@@ -45,7 +45,7 @@ public:
 
    void create_face (Face_const_handle f1,
                      Face_const_handle f2,
-                     Face_handle res_f)
+                     Face_handle )
   {
     if(f1->contained() && f2->contained())
       // found intersection
