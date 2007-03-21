@@ -118,18 +118,11 @@ class Arr_poly_traits_1:public Kernel_{
             const X_monotone_curve_2 &c2,const Point_2 &p)const{
           if(c1.pol()==c2.pol())
             return EQUAL;
-          switch(sign_1(c1.pol().derive()-c2.pol().derive(),p.get_x())){
-            case NEGATIVE:return LARGER;break;
-            case POSITIVE:return SMALLER;break;
-                          // TODO:
-                          // -compare the signs of the second derivative, if they differ
-                          // we know the convexities
-                          // -if this fails, compare the curvatures, see
-                          // http://mathworld.wolfram.com/RadiusofCurvature.html
-            default:std::cout<<"c1="<<c1<<", c2="<<c2<<", p="<<p<<std::endl;
-                    CGAL_assertion_msg(false,"not implemented");
-          };
-          return EQUAL;
+          switch(signat(c1.pol()-c2.pol(),p.get_x().left())){
+            case ZERO:return EQUAL;break;
+            case POSITIVE:return LARGER;break;
+            default:return SMALLER;
+          }
         };
     };
 
@@ -139,14 +132,11 @@ class Arr_poly_traits_1:public Kernel_{
             const X_monotone_curve_2 &c2,const Point_2 &p)const{
           if(c1.pol()==c2.pol())
             return EQUAL;
-          switch(sign_1(c1.pol().derive()-c2.pol().derive(),p.get_x())){
-            case NEGATIVE:return SMALLER;break;
+          switch(signat(c1.pol()-c2.pol(),p.get_x().right())){
+            case ZERO:return EQUAL;break;
             case POSITIVE:return LARGER;break;
-            // TODO: see the function above
-            default:std::cout<<"c1="<<c1<<", c2="<<c2<<", p="<<p<<std::endl;
-                    CGAL_assertion_msg(false,"not implemented");
-          };
-          return EQUAL;
+            default:return SMALLER;
+          }
         };
     };
 

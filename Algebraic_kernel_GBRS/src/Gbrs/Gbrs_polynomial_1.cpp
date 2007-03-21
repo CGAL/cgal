@@ -140,17 +140,10 @@ void Rational_polynomial_1::clear_solved(){
 };*/
 
 CGAL::Gmpz Rational_polynomial_1::eval(const CGAL::Gmpz &x)const{
-	mpz_t result,x_pow;
-	mpz_init(result);	// it's 0 now
-	mpz_init_set_si(x_pow,1);	// x^0 = 1
-	for(int i=0;i<=degree;++i){	// invariant: x_pow = x^i
-		mpz_addmul(result,coef[i],x_pow);
-		mpz_mul(x_pow,x_pow,x.mpz());	// for the next iteration
-	}
-	mpz_clear(x_pow);
-	CGAL::Gmpz ret(result);
-	mpz_clear(result);
-	return ret;
+	CGAL::Gmpz y(coef[degree]);
+	for(int i=1;i<degree+1;++i)
+		y=y*x+coef[degree-i];
+	return y;
 };
 
 // This implementation uses the Horner's method. The precision paramenter
@@ -198,27 +191,14 @@ void Rational_polynomial_1::eval_mpfr(mpfr_ptr result,mpfr_srcptr xcoord)const{
 	mpz_clear(temp);
 };
 
-// I think RS should do this
-// NO!
-void Rational_polynomial_1::eval_mpfi(mpfi_ptr result,mpfi_srcptr x)const{
-	mpfi_set_z(result,coef[0]);
-	if(degree&&((!mpfr_zero_p(&(x->left)))||(!mpfr_zero_p(&(x->right))))){
-		mpfi_t x_pow,temp;
-		mpfi_init_set(x_pow,x);
-		mpfi_init_set_ui(temp,0);
-		for(int i=1;i<degree;++i){
-			if(mpz_sgn(coef[i])){
-				mpfi_mul_z(temp,x_pow,coef[i]);
-				mpfi_add(result,temp,result);
-			}
-			mpfi_mul(x_pow,x_pow,x);
-		}
-		mpfi_mul_z(temp,x_pow,coef[degree]);
-		mpfi_clear(x_pow);
-		mpfi_add(result,temp,result);
-		mpfi_clear(temp);
+// Evaluation of a polynomial in a given interval using Horner's rule.
+// y=p(x), y must be already initialized.
+void Rational_polynomial_1::eval_mpfi(mpfi_ptr y,mpfi_srcptr x)const{
+	mpfi_set_z(y,coef[degree]);
+	for(int i=1;i<degree+1;++i){
+		mpfi_mul(y,y,x);
+		mpfi_add_z(y,y,coef[degree-i]);
 	}
-	return;
 };
 
 // doing calculations with doubles is faster (but less accurate) than doing

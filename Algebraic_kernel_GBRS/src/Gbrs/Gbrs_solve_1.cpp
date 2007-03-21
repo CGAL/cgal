@@ -96,9 +96,9 @@ Sign affiche_signs_constr(const Algebraic_1 &a){
 		}
 		ident_node = rs_export_list_vect_ibfr_nextnode (ident_node);
 	}
-	/*std::cout << "\nreturned value: ";
-	mpfi_out_str(stdout,10,0,tmp);
-	std::cout << std::endl;*/
+	/*std::cerr << "\nreturned value: ";
+	mpfi_out_str(stderr,10,0,tmp);
+	std::cerr << std::endl;*/
 	/* mpfi_is_zero(tmp) doesn't work. The reason is that MPFR_SIGN in
 	   the mpfi code returns 1 when applied to the left and right zeros.
 	   This is not surprising because zero is signed in IEEE 754, and MPFR
@@ -115,7 +115,7 @@ Sign affiche_signs_constr(const Algebraic_1 &a){
 	if((mpfr_sgn(&(tmp->left))<0)&&(mpfr_sgn(&(tmp->right))<=0))
 		return NEGATIVE;
 	// if we arrive here, it is because the signs of the endpoints are -
-	// and +, and (I think) RS guarantees that this never happen
+	// and +, and (I think) RS guarantees that this never happens
 	CGAL_assertion_msg(false,"error in sign calculation");
 	return ZERO;
 }
@@ -154,6 +154,7 @@ int solve_1(mpfi_ptr *x,Rational_polynomial_1 &p1,unsigned int prec){
 
 // y=p1(a)
 void eval_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,mpfi_ptr y){
+// I think it's not a good idea to call RS to do this simple evaluation
 #if 0
 	CGAL_assertion((a.is_consistent())/*&&(a.nr()>=0)*/);
 	mpz_t **constr;
@@ -174,10 +175,8 @@ void eval_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,mpfi_ptr y){
 	p1.eval_mpfi(y,a.mpfi());
 }
 
-// old function
-Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
-		unsigned int prec){
-	CGAL_assertion(a.is_consistent());
+Sign sign_1_rs
+(const Rational_polynomial_1 &p1,const Algebraic_1 &a,unsigned int prec){
 	mpz_t **constr;
 	int *degs;
 	// XXX: is this always necessary? can I do it just once?
@@ -194,14 +193,40 @@ Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
 	set_rs_precisol (prec);
 	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLES");
-	Sign s=affiche_signs_constr(a);
+	//Sign s=affiche_signs_constr(a);
 	//std::cout<<"sign of "<<p1<<" in the root of "<<a.pol()<<" = "<<s<<std::endl;
-	return s;
-	//return affiche_signs_constr (a);
+	//return s;
+	return affiche_signs_constr (a);
+}
+
+// This function calculates the sign of the evaluation of a polynomial at a
+// given algebraic number. If it is impossible to know the sign evaluating
+// the interval, it calls sign_1_rs, which uses RS to do it.
+Sign sign_1
+(const Rational_polynomial_1 &p,const Algebraic_1 &x,unsigned int prec){
+	mpfi_t y;
+	mpfi_init2(y,mpfi_get_prec(x.mpfi()));
+	eval_1(p,x,y);
+	if(mpfr_zero_p(&(y->right))&&mpfr_zero_p(&(y->left))){
+		mpfi_clear(y);
+		return ZERO;
+	}
+	if((mpfr_sgn(&(y->left))<0)&&(mpfr_sgn(&(y->right))<0)){
+		mpfi_clear(y);
+		return NEGATIVE;
+	}
+	if((mpfr_sgn(&(y->left))>0)&&(mpfr_sgn(&(y->right))>0)){
+		mpfi_clear(y);
+		return POSITIVE;
+	}
+	// interval arithmetic couldn't find the sign, we call RS
+	mpfi_clear(y);
+	CGAL_assertion(x.is_consistent());
+	return sign_1_rs(p,x);
 }
 
 // new function (implement evaluation using Horner's rule)
-Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
+Sign exactsignat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
 	// we have numbers H0=h0*2^e0 and X=x*2^ex
 	mpz_t h0,x,temp;
 	mp_exp_t e0,ex;
@@ -245,19 +270,68 @@ Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
 	}
 }
 
-// TODO: rewrite this function without using mpfr
+// This function uses interval arithmetic to calculate the sign of the
+// evaluation. First, it converts the given mpfr number to an mpfi interval
+// with the given precision. Later, it evaluates the polynomial in the
+// interval an looks for the sign. If it is not able to determine it, it
+// calls the exact signat function (which is slower when the size of the
+// mpfr number is big).
+Sign quicksignat
+(const Rational_polynomial_1 &p,mpfr_srcptr xcoord,mp_prec_t prec){
+	mpfi_t x,result;
+	int d=p.get_degree();
+	mpz_t *c=p.get_coefs();
+	mpfi_init2(x,prec);
+	mpfi_init2(result,prec);
+	mpfi_set_fr(x,xcoord);
+	mpfi_set_z(result,c[d]);
+	for(int i=1;i<d+1;++i){
+		mpfi_mul(result,result,x);
+		mpfi_add_z(result,result,c[d-i]);
+	}
+	mpfi_clear(x);
+	if(mpfi_is_strictly_pos(result)){
+		mpfi_clear(result);
+		return POSITIVE;
+	}
+	if(mpfi_is_strictly_neg(result)){
+		mpfi_clear(result);
+		return NEGATIVE;
+	}
+	if(mpfi_is_zero(result)){
+		mpfi_clear(result);
+		return ZERO;
+	}
+	// interval arithmetic couldn't find the sign, we have to do it better
+	mpfi_clear(result);
+	return exactsignat(p,xcoord);
+}
+
+// This function is supposed to return the signat calculated in the best way.
+// Obviously, it must be tested and fixed.
+Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
+	mp_prec_t xprec=mpfr_get_prec(xcoord);
+	if(xprec<160)
+		return exactsignat(p,xcoord);
+	if(xprec<640)
+		return quicksignat(p,xcoord,xprec/4);
+	return quicksignat(p,xcoord,xprec/8);
+}
+
 // this function returns the number of refinements made
+// TODO: this function should be applied to a square-free polynomial
+// TODO: study when is it better to call quicksignat and when signat
 int refine(Algebraic_1 &a,unsigned n){
 	Sign sl,sc;
 	mp_prec_t pl,pr,pc;
 	mpfr_t center;
 	unsigned i;
+	pl=mpfr_get_prec(&(a.mpfi()->left));
 	sl=signat(a.pol(),&(a.mpfi()->left));
 	if(sl==ZERO)
 		return 0;
-	mpfr_init2(center,MPFR_PREC_MIN);
-	pl=mpfr_get_prec(&(a.mpfi()->left));
 	pr=mpfr_get_prec(&(a.mpfi()->right));
+	mpfr_init2(center,MPFR_PREC_MIN);
 	for(i=0;i<n;++i){
 		pc=pl<pr?pr+1:pl+1;
 		mpfr_set_prec(center,pc);
@@ -281,6 +355,7 @@ int refine(Algebraic_1 &a,unsigned n){
 	return i;
 }
 
+#if 0
 int get_root (mpfi_ptr x, int n) {
 	int ident_sols_eqs = rs_get_default_sols_eqs ();
 	int ident_node = rs_export_list_vect_ibfr_firstnode (ident_sols_eqs);
@@ -296,6 +371,7 @@ int get_root (mpfi_ptr x, int n) {
 	}
 	return 0;	// false: we couldn't copy the root
 }
+#endif
 
 // TODO: rewrite using gcd
 Comparison_result compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
