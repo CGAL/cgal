@@ -44,6 +44,7 @@ FGBFLAGS=-L${LIB_STAT_PATH}
 
 
 OBJS= \
+      Mpfi$(EXE_EXT) \
       Gbrs_polynomial_1$(EXE_EXT) \
       Gbrs_algebraic_kernel_1$(EXE_EXT) \
       Arr_poly_traits_1$(EXE_EXT) \
