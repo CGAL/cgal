@@ -27,10 +27,6 @@ class Logger
     log( 4, "!! Error: " + msg )
   end
 
-  def fatal( msg )
-    puts "!!! Fatal: " + msg
-  end
-
   def log( l, msg )
     if l >= @level then
       puts msg
@@ -43,19 +39,54 @@ class Logger
 end
 
 def internal_test
-  s=normalize_function_declaration( "template<class XX, typename YY=bla<blubb> >void bla(XX a, XX b, YY c)" )
-  fail unless s=="void bla($0,$0,$1)"
-  s=normalize_function_declaration( "template<class XX, typename YY=bla<blubb> > void bla(XX a, XX b, xYYz c)" )
-  fail unless s=="void bla($0,$0,xYYz)"
+  s=normalize_declaration( "template<class XX, typename YY=bla<blubb> >void bla(XX a, XX b, YY c)", "function" )
+  fail s unless s=="void bla($0,$0,$1)"
+  s=normalize_declaration( "template<class XX, typename YY=bla<blubb> > void bla(XX a, XX b, xYYz c)", "function" )
+  fail s unless s=="void bla($0,$0,xYYz)"
   
-  s=normalize_function_declaration( "template< class ForwardIterator1, class ForwardIterator2, class Callback > void box_intersection_all_pairs_d( ForwardIterator1 begin1, ForwardIterator1 end1, ForwardIterator2 begin2, ForwardIterator2 end2, Callback callback, Box_intersection_d::Topology topology = Box_intersection_d<bla<blubb>::blubber>::CLOSED);" )
-  fail unless s=="void box_intersection_all_pairs_d($0,$0,$1,$1,$2,Box_intersection_d::Topology);"
+  s=normalize_declaration( "template< class ForwardIterator1, class ForwardIterator2, class Callback > void box_intersection_all_pairs_d_with_ForwardIterator1_in_its_name( ForwardIterator1 begin1, ForwardIterator1 end1, ForwardIterator2 begin2, ForwardIterator2 end2, Callback callback, Box_intersection_d::Topology topology = Box_intersection_d<bla<blubb>::blubber>::CLOSED);", "function" )
+  fail unless s=="void box_intersection_all_pairs_d_with_ForwardIterator1_in_its_name($0,$0,$1,$1,$2,Box_intersection_d::Topology);"
+  s=normalize_declaration( "void foo( int bla[2][4] );", "function" )
+  fail unless s=="void foo(int[][]);"
+  s=normalize_declaration( "typedef std::size_t ID;", "typedef" )
+  fail unless s=="ID"
+  s=normalize_declaration( "typedef X<Y>ID;", "typedef" )
+  fail unless s=="ID"
+  s=normalize_declaration( "typedef X<Y> ID;", "typedef" )
+  fail unless s=="ID"
+  s="Box_d<NT,int D,Traits>"
+  fail unless enumerate_template_parameters( s )==['NT', 'int D', 'Traits']
+end
+
+def join( array, separator )
+  return nil if array.length == 0 
+  retval = array[0].class.new
+  first = true
+  array.each do |x|
+    if first then
+      first = false
+    else
+      retval << separator
+    end
+    retval << x
+  end
+  return retval
+end
+
+def normalize_declaration_generic( decl )
+  decl.gsub!( /\bfriend\b/, '' );
+  decl.gsub!( /\bvirtual\b/, '' );
+  decl.gsub!( /\s+/, ' ' );
+  decl.gsub!( /(\w) ([&*()=:;,<>])/, '\1\2' );
+  decl.gsub!( /([()=:;,<>]) (\w)/, '\1\2' );
+  decl.gsub!( /([()=:;,<>]) ([&();,])/, '\1\2' );
+  decl.gsub!( /([();,]) ([()=:;,<>])/, '\1\2' );
+  return decl.strip
 end
 
 # input: "template<class XX>void bla(XX t)"
 # result: void bla($1 t)
 def normalize_template_parameters( decl )
-  typemap=Hash.new
   if decl =~ /^template\s*/ then
     decl=$'
     outer, inner, rest = split_nesting_levels( '<', '>', decl )
@@ -63,32 +94,31 @@ def normalize_template_parameters( decl )
     decl=rest.sub( /^\s*>/, "" )
     counter = 0
     protected_split( '<', '>', ',', inner ).each do |x|
-      x=x.gsub( /(class|typename)/, "" )
-      x=x.gsub( /=.*$/, "" ).strip
-      $log.debug "typemap[#{x}]=$#{counter}"
-      typemap[x]="$#{counter}"
+      x.gsub!( /(class|typename)/, "" )
+      x = x.gsub( /=.*$/, "" ).strip
+      decl.gsub!( /\b#{x}\b/, "$#{counter}" )
       counter+=1
     end
   end
-  return decl, typemap
+  return decl
 end
 
-def normalize_declaration( decl )
-  decl = decl.gsub( /\s+/, ' ' );
-  decl = decl.gsub( /(\w) ([&()=:;,<>])/, '\1\2' );
-  decl = decl.gsub( /([()=:;,<>]) (\w)/, '\1\2' );
-  decl = decl.gsub( /([()=:;,<>]) ([&();,])/, '\1\2' );
-  decl = decl.gsub( /([();,]) ([()=:;,<>])/, '\1\2' );
-  return decl.strip
-end
-
-
-def normalize_function_declaration( decl )
-  decl = normalize_declaration( decl )
-  decl,typemap = normalize_template_parameters( decl )
-  if decl =~ /([^(]+[(])/ then
-    decl=$1+remove_argnames($',typemap)
+def normalize_declaration( decl, kind )
+  decl = normalize_declaration_generic( decl )
+  case kind 
+    when /function/
+      decl = normalize_template_parameters( decl )
+      if decl =~ /^([^(]+[(])/ then
+        decl=$1+remove_argnames($')
+      end
+    when /typedef/
+      if decl =~ /([^ ;<>]+)(\s*)[;]?$/ then
+        decl = $1
+      end
   end
+  decl = decl.gsub( /\btypename\b/, '' );
+  decl = normalize_declaration_generic( decl )
+  return decl
 end
 
 # input: s="xxxx<<dskd>dsad>dssd<x>"
@@ -126,7 +156,7 @@ end
 #    part:  h
 #    part: y
 def protected_split( openchar, closechar, splitchar, s, nesting_level = 0 )
-  result_array = Array.new
+  result_array = []
   part = ""
   char = ""
   s.each_byte do |c|
@@ -150,6 +180,13 @@ def protected_split( openchar, closechar, splitchar, s, nesting_level = 0 )
   return result_array
 end
 
+def enumerate_template_parameters( name )
+  if name =~ /^[^<]+[<](.*)[>]$/ then    
+    return protected_split( '<', '>', ',', $1 )
+  else 
+    return []
+  end
+end
 
 def split_typename( decl )
   nesting_level = 0
@@ -173,113 +210,132 @@ def split_typename( decl )
   return result, ""
 end
 
-def remove_argnames( decl, typemap )
+def remove_argnames( decl) 
   result = ""
+  $log.debug "  removing argnames and default values/normalizing type modifiers in #{decl} :"
   until decl =~ /^[)]/ || decl == "" do
     type_with_default, decl = split_typename( decl )
-    $log.debug "type with default: #{type_with_default}"
+    $log.debug "    type with default: #{type_with_default}"
     # remove default
     if type_with_default =~ /^([^=]+)=/ then
       type = $1
     else
       type = type_with_default
     end
+    $log.debug "    type without default: #{type}"
     # remove argname (preserving declarators like * and [])
-    if type =~ /\s*(\*+)?\s*\w+(\[\w+\])?$/ then
+    if type =~ /\s*(\*+)?\s*\w+((\[\w+\])+)?\s*$/ then
       type = $`
       type += $1 if $1 != nil
-      type += $2 if $2 != nil
-    end
-    if typemap.has_key?( type ) then
-      type = typemap[type]
+      if $2 != nil then
+        type += $2.gsub( /\w/, "" )
+      end
+      $log.debug "    normalized type: #{type}"
     end
     result << type
     if( decl =~ /,/ ) then
       result << ","
       decl = $'
     end
-    $log.debug "type: [#{type}] \t ......rest: #{decl}"
+    $log.debug "    type: #{type}\" \t rest: \"#{decl}"
   end
   return result + decl
 end
-
-
-#def match_and_consume( s, regex_string )
-#  printf "              match: [#{regex_string}] .. "
-#  regex = Regexp.new( regex_string )
-#  if s =~ regex then
-#    s = s.sub( regex, "" )
-#    #puts "ok! remaining #{s}"
-#    return true
-#  end
-#  return false
-#end
-
-
-# convenience class
-#class Declaration
-#  def initialize( name )
-#    @name = name
-#  end
-#
-#  def match( regex_string )
-#    name = match_and_consume( name, regex_string )
-#  end
-#
-#end
 
 class Doxygen
   def initialize( filename )
     @doxy_xml=XML::Document.file(filename)
     @items = {}
   end
-
-  def member_matches_texname?( memberdef, texname, strip_const_from_return_types )
-    is_const=""
-    if memberdef['const'] == 'yes' then
-      is_const = "const"
-    end
-    argsstring=get_xpath_content(memberdef,'argsstring')
-    type=get_xpath_content(memberdef,'type')
-    if strip_const_from_return_types then
-      type=type.gsub( /_const_/, "_" )
-    end
-    name=get_xpath_content(memberdef,'name')
-    templateparamlist=""
+  
+  def enumerate_template_parameters( memberdef )
+    retval = []
     memberdef.find( 'templateparamlist/param' ).each do |param|
-      declname=get_xpath_content(param,'declname')
-      templateparamlist += declname+","
+      retval << get_xpath_content(param,'declname')
     end
-    if templateparamlist != "" then
-      templateparamlist.gsub!( /,$/, "" )
-      templateparamlist = "template<#{templateparamlist}>"
-    end
-    doxyname=templateparamlist+"#{type} #{name}#{argsstring};"
-    doxyname=normalize_function_declaration( doxyname )
-    $log.moreinfo "    doxyname: #{doxyname}"
-    return doxyname == texname
+    return retval
   end
 
-  def find_member( compoundname, memberkind, texname )
-    $log.moreinfo "-- raw texname: "+texname
-    texname=normalize_function_declaration( texname )
-    $log.moreinfo "- find_member"
+  def member_matches_texname?( memberdef, memberkind, is_static, texname ) # , strip_const_from_return_types
+    argsstring=get_xpath_content(memberdef,'argsstring')
+    type=get_xpath_content(memberdef,'type')
+    #if strip_const_from_return_types then
+    #  type=type.gsub( /_const_/, "_" )
+    #end
+    name=get_xpath_content(memberdef,'name')
+    template_parameters = enumerate_template_parameters( memberdef )
+    templateparamlist=""
+    if template_parameters.length != 0 then
+      templateparamlist = "template<#{join(template_parameters,',')}>"
+    end
+    doxyname=templateparamlist+"#{type} #{name}#{argsstring};"
+    #$log.moreinfo "    doxyname_pre: #{doxyname}"
+    doxyname=normalize_declaration( doxyname, memberkind )
+    $log.moreinfo "    doxyname    : #{doxyname}"
+    name_match = doxyname == texname
+    attrib_match = (memberdef['static'] == 'yes') == is_static
+    if name_match && !attrib_match then
+      $log.warning "     name match, but no attrib match"
+    end
+    return name_match && attrib_match
+  end
+
+  def find_compound( compoundname, template_parameters )
     $log.moreinfo "-- compoundname: #{compoundname}"
-    $log.moreinfo "-- memberkind: #{memberkind}"
-    $log.moreinfo "-- texname: #{texname}"
     xpath_ckind='(@kind=\'struct\' or @kind=\'class\' or @kind=\'namespace\')'
     xpath_cname="(compoundname=\'#{compoundname}\')"
+    xpath_compound="/doxygen/compounddef[#{xpath_ckind}]" # and #{xpath_cname}]"
+    @doxy_xml.find( xpath_compound ).each do |compounddef|
+      name=get_xpath_content( compounddef, "compoundname" )
+      template_values = ""
+      if name =~ /^([^<]+)<(.*)>/ then
+        name = $1
+        parameters = $2
+      end
+      if name == compoundname && 
+         compounddef.find('templateparamlist/param').length == template_parameters.length
+      then
+        return compounddef
+      end
+    end
+    return nil
+  end
+  
+  def find_member( compounddef, memberkind, is_static, texname )
+    $log.moreinfo "- find_member"
+    $log.moreinfo "-- memberkind: #{memberkind}"
+    $log.moreinfo "-- texname:   #{texname}"
     xpath_mkind="(@kind=\'#{memberkind}\')"
-    #xpath_mname="(name=\'#{membername}\')"
-    xpath_compound="/doxygen/compounddef[#{xpath_ckind} and #{xpath_cname}]"
-    xpath_member="/sectiondef/memberdef[#{xpath_mkind}]" # and #{xpath_mname}
-    xpath_query="#{xpath_compound}#{xpath_member}"
-    #puts "xpath query: #{xpath_query}"
+    xpath_member="sectiondef/memberdef[#{xpath_mkind}]" # and #{xpath_mname}
 
-    for strip_const_from_return_type in [false,true]
-      @doxy_xml.find( xpath_query ).each do |memberdef|
-        if member_matches_texname?( memberdef, texname, strip_const_from_return_type )
-          return memberdef
+    compounddef.find( xpath_member ).each do |memberdef|
+      if member_matches_texname?( memberdef, memberkind, is_static, texname )
+        if is_static then
+          texname = "static #{texname}"
+        end
+        location = memberdef.find( 'location' ).to_a.first
+        fail if location == nil
+        return location
+      end
+    end
+    
+    # additionally, look also for inner classes
+    compounddef.find( "innerclass" ).each do |innerclass|
+      name=innerclass.to_s
+      if name =~ /::([^:]+)$/ then
+        name = $1
+      end
+      if name == texname then
+        # TODO: template parameters ?
+        compoundname = get_xpath_content( compounddef, 'compoundname' )
+        compoundname += "::#{name}"
+        compounddef=find_compound( compoundname, [] )
+        if compounddef != nil then
+          location = compounddef.find( 'location' ).to_a.first
+          fail if location == nil
+          return location
+        else
+          $log.error( "did not find compound #{compoundname}" )
         end
       end
     end
@@ -293,41 +349,86 @@ class Tex
     @doxy = doxy
   end
 
+  # tex refpage, tex item, doxy location
+  def found_match( refpage, item, name, location )
+    pwd      = Dir.pwd
+    filename = location['file']
+    line     = location['line']
+    if filename =~ /^#{pwd}\// then
+      filename = $'
+    end
+    $log.info "  found  #{name} \tin #{filename} \t@ #{line}"
+  end
+  
   def list_all_refpages()
     @tex_xml.find('/manual_tools_output/package').each do |package|
       $log.info "package: #{package['id']}"
       package.find('refpage[refcat!=\'Concept\']').each do |refpage|
-        scope=get_xpath_content(refpage,'globalscope')
+        globalscope=get_xpath_content(refpage,'globalscope')
+        localscope=get_xpath_content(refpage,'localscope')
+        scope="#{globalscope}#{localscope}"
         refcat=get_xpath_content(refpage,'refcat')
+        definition=get_xpath_content(refpage,'definition')
+        template_parameters = enumerate_template_parameters( definition )
         compoundname = "#{scope}#{refpage['id']}" # if applicable
         case refcat
           when /Function/ then compoundname=scope.gsub( /::$/, '' )
         end
+        look_for_static_memberfunctions = refcat == 'Concept' || refcat == 'Class'
+        
 
-        $log.info "refpage id: #{refpage['id']} \tscope: #{scope} \trefcat: #{refcat}"
+        # TODO: scope may have template parameters. problem: doxygen xml output has problems with this:
+        # params only appear as prefix in members of compound, not in compound name
+        $log.info "refpage id: #{refpage['id']} scope: #{scope} refcat: #{refcat} name: #{definition}"
+        compounddef = @doxy.find_compound( compoundname, template_parameters )
+        if compounddef == nil then
+          $log.error( "cannot find compound '#{compoundname}'" )
+          next # refpage
+        else
+          $log.info("found compound #{compoundname}")
+        end
+
         refpage.find('item').each do |item|
-          name=get_xpath_content(item,'name')
           kind=get_xpath_content(item,'kind')
-          comment=get_xpath_content(item,'comment')
-          #puts "    item name: #{name}"
-          #puts "    item kind: #{kind}"
-          #puts "    item comment: #{comment}"
-
-          $log.moreinfo "compoundname: #{compoundname}"
-
           if kind == "memberfunction" || kind == "constructor" then
             kind="function"
           elsif kind == "nested_type" then
             kind="typedef"
           end
 
-          memberdef=@doxy.find_member( compoundname , kind, name )
-          if memberdef == nil then
-            $log.error "did not find doxygen equivalent for \"#{name}\" in \"#{compoundname}\""
-          else
-            definition=get_xpath_content(memberdef,'definition')
-            $log.info "OK! found memberdef: #{definition}"
+          membername=normalize_declaration( get_xpath_content(item,'name'), kind )
+          comment=get_xpath_content(item,'comment')
+          is_static = false
+          
+          if look_for_static_memberfunctions && 
+            (kind == 'function' || kind == 'memberfunction' ) 
+          then
+            if membername =~ /^[^ (]+\s#{refpage['id']}::(\w+)\s*\(/ then
+              membername = "#{$`} #{$1}(#{$'}"
+              is_static = true
+            end
+            if membername =~ /^\s*static\s*/ then
+              membername = $'
+              is_static = true
+            end
           end
+          
+          if get_xpath_content(item,'kind') == 'constructor' then
+            if membername =~ /^#{refpage['id']}<.+>\(/ then
+              #puts "found template constructor #{membername}"
+              membername = "#{refpage['id']}(#{$'}"
+            end
+          end
+          
+          $log.moreinfo "compoundname: #{compoundname}"
+
+          location=@doxy.find_member( compounddef, kind, is_static, membername )
+          if location != nil then
+            found_match( refpage, item, membername, location )
+          else
+            $log.error "did not find doxygen equivalent for member '#{membername}'" 
+          end
+
         end # each item
       end # each refpage
     end # each package
@@ -336,7 +437,9 @@ class Tex
 end
 
 def get_xpath_content( node, xpath )
-  s=node.find( xpath ).to_a.first.to_s
+  nodes=node.find( xpath ).to_a
+  qreturn "" if nodes == nil
+  s = nodes.first.to_s
   if s == nil then
     return ""
   else
@@ -346,36 +449,183 @@ end
 
 
 $log = Logger.new
+$force_rebuild = false
 
-for x in 0...ARGV.length do
-  case ARGV[x]
-    when /^-v(.*)$/
+def process_cmdline_options
+  pkg_hash = Hash.new
+  pkg_list = []
+  
+  add_pkg = lambda { |name|
+    if name =~ /^(.+)_ref$/ then
+      pkg_hash[ $1 ] = true
+    else
+      pkg_hash[ name ] |= false
+    end
+  }
+  
+  for x in 0...ARGV.length do
+    case ARGV[x]
+      when /^-v(.*)$/
         if $1 != nil then
           $log.decrease_level( $1.length )
         end
         $log.decrease_level( 1 )
-    when /^-doxy$/
-        x += 1
-        fail "-doxy needs an argument" unless x < ARGV.length
-        doxyfilename = ARGV[x]
-    when /^-tex$/ 
-        x += 1
-        fail "-tex needs an argument" unless x < ARGV.length
-        texfilename = ARGV[x]
+      when /^--rebuild$/
+        $force_rebuild = true
+      when /^-/
+        puts "! unknown command line option #{ARGV[x]}"
+      else
+        add_pkg[ ARGV[x] ]
+    end
   end
+  
+  if pkg_hash.length == 0 then
+    #puts "autofind"
+    raise unless Dir.chdir("doc_tex")
+    for pkg in Dir["*"]
+      if File.directory?( pkg ) && File.file?( "#{pkg}/main.tex" ) then
+        #puts " found pkg: #{pkg}"
+        add_pkg[ pkg ]
+      end
+    end
+    raise unless Dir.chdir("..")
+  end
+  pkg_hash.keys.each do |key|
+    if pkg_hash[key] then
+      pkg_list.push( [key, "#{key}_ref"] )
+      #puts "#{key} #{key}_ref"
+    else
+      pkg_list.push( [key, nil ] )
+      #puts key
+    end
+  end
+  return pkg_list
 end
 
-fail "-doxy and -tex are required" if texfilename == nil || doxyfilename == nil
+def have_to_rebuild?( gen_filename, dep_path, dep_pattern )
+  return true if $force_rebuild
+  retval = false
+  if File.file?( gen_filename ) then
+    mtime = File.mtime( gen_filename )
+    Dir.chdir(dep_path)    
+    for f in Dir[dep_pattern]
+      if mtime < File.mtime( f ) then
+        retval = true
+        break
+      end
+    end
+    Dir.chdir("..")
+    return retval
+  end
+  return true
+end
 
-doxy = Doxygen.new( doxyfilename )
-tex = Tex.new( texfilename, doxy )
+def have_to_rebuild_comments_xml?( pkg )
+  texfilename = "doc_html/#{pkg}/comments.xml"
+  return have_to_rebuild?( texfilename, "doc_tex", "**/*.tex" )
+end
 
-tex.list_all_refpages
+def have_to_rebuild_doxy_xml?
+  doxyfilename = "include/xml/all.xml"
+  return have_to_rebuild?( doxyfilename, "include", "**/*.h" )
+end
 
-#s = remove_argnames( "long int bla=CGAL::my_default_value<xxx<yyy>::bla>,bool blubb)" )
-#s = remove_argnames( "void bla(type<param> bla,bool blubb,float x)const;" )
-#s = normalize_declaration( "void bla(NT values[D],int *bla = default);" )
-#puts "result: #{s}"
+def ensure_cmd( cmd )
+  `which #{cmd}`
+  raise "#{cmd} is required" unless $? == 0
+end
 
-#puts normalize_function_declaration( "template<class XX, typename YY=bla<blubb> >void bla(XX a, XX b, YY c)" #)
+def check_requirements
+  ensure_cmd( "cgal_manual" )
+  ensure_cmd( "latex_to_html" )
+  ensure_cmd( "doxygen" )
+  ensure_cmd( "xsltproc" )
+end
 
+# returns a list of relative paths to */comment.xml files
+def check_doc_tex_and_doxy_xml
+  pkg_list = process_cmdline_options
+  pkg_list.each do |pkg|
+    if have_to_rebuild_comments_xml?( pkg[0] ) then
+      puts
+      puts "***********************************************************************"
+      puts "*     rebuilding html manual for #{pkg[0]} ..."
+      puts "***********************************************************************"
+      
+      Dir.chdir("doc_tex")
+      output=`cgal_manual -html #{pkg[0]} #{pkg[1]}`
+      if $? == 256 then
+        puts output
+        #errormsg=`cat #{pkg[0]}.hlg`
+        #fail errormsg
+      else
+        puts "OK."
+      end
+      Dir.chdir("..")
+    end
+  end
+  
+  if have_to_rebuild_doxy_xml? then
+    puts
+    puts "***********************************************************************"
+    puts "*     rebuilding doxygen ..."
+    puts "***********************************************************************"
+    
+    Dir.chdir("include")
+    doxyfile=File.open( "Doxyfile", "w" )
+    doxyfile.write <<DOXY_EOF
+SORT_BY_SCOPE_NAME     = NO
+SHOW_DIRECTORIES       = NO
+WARNINGS               = NO
+RECURSIVE              = YES
+FILTER_SOURCE_FILES    = YES
+INPUT_FILTER           = "sed -e 's/CGAL_BEGIN_NAMESPACE/namespace CGAL {/' -e 's/CGAL_END_NAMESPACE/}/'"
+SOURCE_BROWSER         = NO
+VERBATIM_HEADERS       = NO
+GENERATE_HTML          = NO
+GENERATE_XML           = YES
+GENERATE_LATEX         = NO
+XML_OUTPUT             = xml
+XML_PROGRAMLISTING     = NO
+ENABLE_PREPROCESSING   = YES
+SEARCH_INCLUDES        = YES
+SKIP_FUNCTION_MACROS   = YES
+PERL_PATH              = /usr/bin/perl
+DOXY_EOF
+    doxyfile.close
+    output=`doxygen >& /dev/null`
+    if $? != 0 then
+      puts output
+      raise "!! doxygen error."      
+    else
+      puts "OK."
+    end
+    Dir.chdir("xml")
+    output=`xsltproc combine.xslt index.xml > all.xml`
+    if $? != 0 then
+      puts output
+      raise "!! xsltproc error."      
+    end
+    Dir.chdir("../..")
+  end
+  return pkg_list
+end
+
+def main
+  internal_test
+  check_requirements
+  pkg_list = check_doc_tex_and_doxy_xml
+  doxy = Doxygen.new( "include/xml/all.xml" )
+  pkg_list.each do |pkg|
+    puts "***********************************************************************"
+    puts "* processing package #{pkg[0]} ..."
+    puts "***********************************************************************"
+    tex = Tex.new( "doc_html/#{pkg[0]}/comments.xml", doxy )
+    tex.list_all_refpages
+  end
+  puts "+------+"
+  puts "| done |"
+  puts "+------+"
+end
+
+main
