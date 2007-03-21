@@ -48,7 +48,7 @@ DISTRIB=${HOME}/Distrib/IBM_INTEL_LINUX.4.2.1
 #DISTRIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1
 MPFI_INCL=${DISTRIB}/include
 RS_INCL=${DISTRIB}/include
-MPFI_LIB=${DISTRIB}/lib
+#MPFI_LIB=${DISTRIB}/lib
 RS_LIB=${DISTRIB}/lib
 LIB_STAT_PATH=$(RS_LIB)
 FGBFLAGS=
@@ -59,8 +59,9 @@ FGBFLAGS=
 
 all: outside
 
+#outside: CXXFLAGS=-g -O0 $(CGAL_CXXFLAGS)
 outside: CGAL_GBRS_LIB=libCGALGbrs.a
-outside: CXXFLAGS=-g -O0 $(CGAL_CXXFLAGS)
+outside: CXXFLAGS=-O3 $(CGAL_CXXFLAGS)
 outside: OUTSIDEPARS=-I$(PWD)/../../include -I$(MPFI_INCL) -I$(RS_INCL)
 outside: static_lib_no_install
 	mv $(CGAL_GBRS_LIB) $(CGAL_LIB_DESTINATION)
