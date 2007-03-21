@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 void create_rs_bipoly_ring(char *v1,char * v2)
 {
-  int i=0;
+  /*int i=0;*/
   /* initialise l'anneau de polynômes univariés à coeffs entiers
      de RS : pas obligatoire mais mieux si on veut faire afficher
      des polynômes par RS */
@@ -44,7 +44,7 @@ void create_rs_bipoly_ring(char *v1,char * v2)
 int create_rs_bipoly(MP_INT ** poly,int deg1,int deg2,int ident_pol)
 {
   int i,j;
-  int ident_ring,ident_mon,ident_coeff,ident_pp;
+  int /*ident_ring,*/ident_mon,ident_coeff,ident_pp;
   /* demande à RS l'adresse de son polynome univarie global */
   for (i=0;i<deg1;i++) {
     for (j=0;j<deg2;j++) {
