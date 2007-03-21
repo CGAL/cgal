@@ -313,7 +313,7 @@ class Partition_vertex : public Traits_::Point_2
   }
 #endif
 
-    Partition_vertex(Base_point p): Base_point(p) {}
+    Partition_vertex(Base_point p): Base_point(p) { current_diag = diag_endpoint_refs.end() ; }
 
     void insert_diagonal(Circulator v_ref) 
     {
