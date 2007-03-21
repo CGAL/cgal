@@ -261,7 +261,7 @@ edge, we first need to cast away its ``constness''.
 \ccMethod{Halfedge_handle non_const_handle (Halfedge_const_handle e);}
     {casts the given constant halfedge handle to an equivalent mutable handle.}
 
-\ccMethod{Face_handle non_const_handle (Halfedge_const_handle f);}
+\ccMethod{Face_handle non_const_handle (Face_const_handle f);}
     {casts the given constant face handle to an equivalent mutable handle.}
 
 \end{ccAdvanced}
@@ -504,7 +504,7 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
     \ccPrecond{\ccc{v} is an isolated vertex (has no incident edges).}}
 
 \ccMethod{Halfedge_handle modify_edge (Halfedge_handle e,
-                                       const X_monotone_curve& c);}
+                                       const X_monotone_curve_2& c);}
    {sets \ccc{c} to be the $x$-monotone curve associated with the edge \ccc{e}.
     The function returns a handle for the modified edge (same as \ccc{e}).
     \ccPrecond{\ccc{c} is geometrically equivalent to the curve currently

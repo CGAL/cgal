@@ -14,7 +14,7 @@ read and no auxiliary data is attached to the \dcel\ features.
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
 \ccGlobalFunction{template<class Traits, class Dcel>
-            std::istream& operator>> (std::ostream& is,
+            std::istream& operator>> (std::istream& is,
                                       Arrangement_2<Traits,Dcel>& arr);}
 %%%%
 
@@ -24,7 +24,7 @@ input stream using the default input format.
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
 \ccGlobalFunction{template<class Traits, class Dcel>
-            std::istream& operator>> (std::ostream& is,
+            std::istream& operator>> (std::istream& is,
                                 Arrangement_with_history_2<Traits,Dcel>& arr);}
 
 \ccSeeAlso
