@@ -54,8 +54,8 @@ class QP_pricing_strategy {
     // types
     typedef  CGAL::QP_solver<Q, ET, Tags>      QP_solver;
     typedef  CGAL::Verbose_ostream      Verbose_ostream;
-    typedef  typename Tags::Is_in_standard_form
-                                        Is_in_standard_form;
+    typedef  typename Tags::Is_nonnegative
+                                        Is_nonnegative;
     typedef  typename Tags::Is_linear    Is_linear;
     typedef typename QP_solver::Bound_index Bound_index;
 

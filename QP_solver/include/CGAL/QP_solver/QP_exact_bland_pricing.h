@@ -45,7 +45,7 @@ class QP_exact_bland_pricing : public QP_pricing_strategy<Q,ET,Tags> {
   typedef  QP_exact_bland_pricing<Q,ET,Tags>  Self;
 
   // types from the base class
-  typedef  typename Tags::Is_in_standard_form     Is_in_standard_form;
+  typedef  typename Tags::Is_nonnegative     Is_nonnegative;
   typedef  typename CGAL::QP_solver<Q,ET,Tags>    QP_solver;
 
  public:
@@ -82,7 +82,7 @@ template < typename Q, typename ET, typename Tags >
 int  QP_exact_bland_pricing<Q,ET,Tags>::
 pricing(int& direction )
 {
-  return (pricing_helper(direction, Is_in_standard_form()));
+  return (pricing_helper(direction, Is_nonnegative()));
 }
 
 template < typename Q, typename ET, typename Tags >

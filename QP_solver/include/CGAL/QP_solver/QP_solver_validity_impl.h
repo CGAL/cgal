@@ -341,7 +341,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem() const
   for (Index_const_iterator i_it = B_S.begin();
        i_it != B_S.end(); ++i_it, ++v_it)
     x_aux[*i_it] = *v_it;
-  if (!check_tag(Is_in_standard_form()))
+  if (!check_tag(Is_nonnegative()))
     for (int j=0; j<qp_n; ++j)
       if (!is_basic(j))
 	x_aux[j] = nonbasic_original_variable_value(j) * d;

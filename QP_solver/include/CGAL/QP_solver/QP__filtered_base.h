@@ -69,7 +69,7 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
     void  init_NT( );
     NT mu_j_NT( int j) const
     {
-      return mu_j_NT(j, Is_in_standard_form());
+      return mu_j_NT(j, Is_nonnegative());
     } 
 
     void  update_maxima( );
@@ -80,7 +80,7 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
     // bounds from Sven's thesis (p.99), see also the C-file. Only
     // if these bounds are insufficient, exact arithmetic is used
     bool  certify_mu_j_NT( int j) const {
-      return certify_mu_j_NT( j, Is_in_standard_form());
+      return certify_mu_j_NT( j, Is_nonnegative());
     }
 
     virtual  void  transition( );
@@ -91,7 +91,7 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
   private:
     // types from Tags
     typedef  typename Tags::Is_linear    Is_linear;
-    typedef  typename Tags::Is_in_standard_form Is_in_standard_form;
+    typedef  typename Tags::Is_nonnegative Is_nonnegative;
 
     // private member functions
     void  set( int l, Tag_true  is_linear);
@@ -120,7 +120,7 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
 
     // the q-parameter in the error bound
     void set_q(int c, int b) {
-      set_q(c, b, Is_in_standard_form());
+      set_q(c, b, Is_nonnegative());
     }
     void set_q(int c, int b, Tag_true);
     void set_q(int c, int b, Tag_false);

@@ -40,7 +40,7 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
     no_ineq(QP_functions_detail::is_in_equational_form(qp)), 
     // may change after phase I
     has_ineq(!no_ineq),
-    is_in_standard_form(check_tag(Is_in_standard_form()))
+    is_nonnegative(check_tag(Is_nonnegative()))
 {
   // init diagnostics
   diagnostics.redundant_equations = false;
@@ -115,7 +115,7 @@ set(const Q& qp)
     art_A.reserve( qp_m);
 
   // decide on which bound the variables sit initially:
-  if (!check_tag(Is_in_standard_form()))
+  if (!check_tag(Is_nonnegative()))
     init_x_O_v_i();
 
   set_up_auxiliary_problem();
@@ -163,7 +163,7 @@ template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
 set_explicit_bounds(const Q& qp)
 {
-  set_explicit_bounds (qp, Is_in_standard_form());
+  set_explicit_bounds (qp, Is_nonnegative());
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -524,7 +524,7 @@ set_up_auxiliary_problem()
     // zero vector (but the vector with values original_variable_value(i),
     // 0<=i<qp_n), and therefore, rhs=b-Ax is not simply b as in the standard
     // form case, but Ax_init-b:
-    const ET rhs = check_tag(Is_in_standard_form())?
+    const ET rhs = check_tag(Is_nonnegative())?
       qp_b[i] : ET(qp_b[i]) - multiply__A_ixO(i);
 
     if (has_ineq && (qp_r[i] != CGAL::EQUAL)) { // inequality constraint, so we
@@ -903,11 +903,11 @@ init_solution()
   direction = 1;
     
   // initialization of vectors r_C, r_S_B:
-  init_r_C(Is_in_standard_form());
-  init_r_S_B(Is_in_standard_form());
+  init_r_C(Is_nonnegative());
+  init_r_S_B(Is_nonnegative());
 
   // compute initial solution:
-  compute_solution(Is_in_standard_form());
+  compute_solution(Is_nonnegative());
 
   // diagnostic output:
   CGAL_qpe_debug {

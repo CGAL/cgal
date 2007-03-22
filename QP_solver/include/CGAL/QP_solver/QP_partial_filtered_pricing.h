@@ -51,7 +51,7 @@ class QP_partial_filtered_pricing
     typedef  QP_partial_filtered_pricing<Q, ET, Tags, NT_, ET2NT_>  Self;
 
     // types from the base class
-    typedef  typename Tags::Is_in_standard_form           Is_in_standard_form;
+    typedef  typename Tags::Is_nonnegative           Is_nonnegative;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
   public:
@@ -117,7 +117,7 @@ template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 int  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing(int& direction ) 
 {
-  return (pricing_helper(direction, Is_in_standard_form()));
+  return (pricing_helper(direction, Is_nonnegative()));
 }
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >

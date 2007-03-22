@@ -25,11 +25,11 @@ CGAL_BEGIN_NAMESPACE
 // Looks in x_O_v_i which bound is present for variable i and returns
 // the variable's value corresponding to this bound.
 //
-// Precondition: Is_in_standard_form is Tag_false.
+// Precondition: Is_nonnegative is Tag_false.
 template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::original_variable_value_under_bounds(int i) const
 {
-  CGAL_assertion(!check_tag(Is_in_standard_form()) && i<qp_n);
+  CGAL_assertion(!check_tag(Is_nonnegative()) && i<qp_n);
   switch (x_O_v_i[i]) {
   case UPPER:
     return qp_u[i];
@@ -49,7 +49,7 @@ ET QP_solver<Q, ET, Tags>::variable_numerator_value(int i) const
 {
   // Returns the current value of an *original* variable.
   CGAL_qpe_assertion( 0 <= i && i < qp_n );
-  if (check_tag(Is_in_standard_form())) {
+  if (check_tag(Is_nonnegative())) {
     if (in_B[i] < 0) 
       return et0;
     else 
@@ -77,7 +77,7 @@ template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::nonbasic_original_variable_value
 (int i) const
 {
-  if (check_tag(Is_in_standard_form()))
+  if (check_tag(Is_nonnegative()))
     return et0;
 
   CGAL_assertion(!is_basic(i));
@@ -126,7 +126,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 multiply__A_CxN_O(Value_iterator out) const
 {
-  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()));
+  CGAL_qpe_precondition(!check_tag(Is_nonnegative()));
   
   // initialize with zero vector:
   std::fill_n(out, C.size(), et0);
@@ -157,7 +157,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 multiply__2D_OxN_O(Value_iterator out) const
 {
-  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()));
+  CGAL_qpe_precondition(!check_tag(Is_nonnegative()));
 
   // initialize with zero vector:
   std::fill_n(out, B_O.size(), et0);
@@ -203,7 +203,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 init_r_B_O()
 {
-  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()) &&
+  CGAL_qpe_precondition(!check_tag(Is_nonnegative()) &&
 			!check_tag(Is_linear()));
   r_B_O.resize(B_O.size());
   multiply__2D_B_OxN_O(r_B_O.begin());
@@ -217,7 +217,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 init_w()
 {
-  CGAL_qpe_precondition(!check_tag(Is_in_standard_form()) &&
+  CGAL_qpe_precondition(!check_tag(Is_nonnegative()) &&
 			!check_tag(Is_linear()));
   w.resize(qp_n);
   multiply__2D_OxN_O(w.begin());

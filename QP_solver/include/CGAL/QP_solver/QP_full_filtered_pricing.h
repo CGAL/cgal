@@ -43,7 +43,7 @@ class QP_full_filtered_pricing : public QP__filtered_base<Q,ET,Tags,NT_,ET2NT_> 
 
     // self
     typedef  QP_pricing_strategy<Q, ET, Tags>       Base;
-    typedef  typename Tags::Is_in_standard_form     Is_in_standard_form;
+    typedef  typename Tags::Is_nonnegative     Is_nonnegative;
     typedef  QP__filtered_base<Q, ET, Tags, NT_, ET2NT_>         Filtered_base;
     typedef  QP_full_filtered_pricing<Q, ET, Tags, NT_, ET2NT_>  Self;
 
@@ -87,7 +87,7 @@ template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 int  QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing (int& direction) 
 {
-  return (pricing_helper(direction, Is_in_standard_form()));
+  return (pricing_helper(direction, Is_nonnegative()));
 }
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >

@@ -46,7 +46,7 @@ class QP_partial_exact_pricing : public QP__partial_base<Q,ET,Tags> {
     typedef  QP_partial_exact_pricing<Q,ET,Tags>  Self;
 
     // types from the pricing base class
-    typedef  typename Tags::Is_in_standard_form           Is_in_standard_form;
+    typedef  typename Tags::Is_nonnegative           Is_nonnegative;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
 
@@ -86,7 +86,7 @@ template < typename Q, typename ET, typename Tags >
 int  QP_partial_exact_pricing<Q,ET,Tags>::
 pricing(int& direction )
 {
-  return (pricing_helper(direction, Is_in_standard_form()));
+  return (pricing_helper(direction, Is_nonnegative()));
 }
 
 template < typename Q, typename ET, typename Tags >

@@ -28,7 +28,7 @@ bool QP_solver<Q, ET, Tags>::has_finite_lower_bound(int i) const
   // or not the variable has a finite lower bound.
 {
   CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
-  return i>=qp_n || check_tag(Is_in_standard_form()) || *(qp_fl+i);
+  return i>=qp_n || check_tag(Is_nonnegative()) || *(qp_fl+i);
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -37,7 +37,7 @@ bool QP_solver<Q, ET, Tags>::has_finite_upper_bound(int i) const
   // or not the variable has a finite upper bound.
 {
   CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
-  return i<qp_n && !check_tag(Is_in_standard_form()) && *(qp_fu+i);
+  return i<qp_n && !check_tag(Is_nonnegative()) && *(qp_fu+i);
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -47,7 +47,7 @@ ET QP_solver<Q, ET, Tags>::lower_bound(int i) const
 {
   CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
   if (i < qp_n)                     // original variable?
-    if (check_tag(Is_in_standard_form()))
+    if (check_tag(Is_nonnegative()))
       return et0;
     else {
       CGAL_qpe_assertion(has_finite_lower_bound(i));

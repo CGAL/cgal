@@ -70,7 +70,7 @@ transition( )
                     minus_c_B.begin(), std::negate<ET>());
     
     // compute initial solution of phase II
-    compute_solution(Is_in_standard_form());
+    compute_solution(Is_nonnegative());
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -91,7 +91,7 @@ solution_numerator( ) const
     ET   s, z = et0;
     int  i, j;
 
-    if (check_tag(Is_in_standard_form()) || is_phaseI) {
+    if (check_tag(Is_nonnegative()) || is_phaseI) {
       // standard form or phase I; it suffices to go
       // through the basic variables; all D- and c-entries
       // are obtained through the appropriate iterators 
@@ -539,7 +539,7 @@ ratio_test_1( )
     q_i = et0;                                          // minimum with +oo
 
     // computation of t_{min}^{j}
-    ratio_test_1__t_min_j(Is_in_standard_form());
+    ratio_test_1__t_min_j(Is_nonnegative());
     CGAL_qpe_debug { // todo kf: at first sight, this debug message should
                      // only be output for problems in nonstandard form...
         if (vout2.verbose()) {
@@ -609,7 +609,7 @@ ratio_test_1( )
 
 template < typename Q, typename ET, typename Tags >                         // Standard form
 void  QP_solver<Q, ET, Tags>::
-ratio_test_1__t_min_j(Tag_true /*is_in_standard_form*/)
+ratio_test_1__t_min_j(Tag_true /*is_nonnegative*/)
 {
 }
 
@@ -618,7 +618,7 @@ ratio_test_1__t_min_j(Tag_true /*is_in_standard_form*/)
 // direction == -1 => x_O_v_i[j] == (UPPER v ZERO) 
 template < typename Q, typename ET, typename Tags >                         // Upper bounded
 void  QP_solver<Q, ET, Tags>::
-ratio_test_1__t_min_j(Tag_false /*is_in_standard_form*/)
+ratio_test_1__t_min_j(Tag_false /*is_nonnegative*/)
 {
     if (j < qp_n) {                                 // original variable
         if (direction == 1) {
@@ -677,7 +677,7 @@ void  QP_solver<Q, ET, Tags>::
 ratio_test_1__t_min_B(Tag_true  /*has_equalities_only_and_full_rank*/)
 {
     ratio_test_1_B_O__t_i(B_O.begin(), B_O.end(), x_B_O.begin(),
-                        q_x_O.begin(), Is_in_standard_form());
+                        q_x_O.begin(), Is_nonnegative());
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -685,9 +685,9 @@ void  QP_solver<Q, ET, Tags>::
 ratio_test_1__t_min_B(Tag_false /*has_equalities_only_and_full_rank*/)
 {
     ratio_test_1_B_O__t_i(B_O.begin(), B_O.end(), x_B_O.begin(),
-                        q_x_O.begin(), Is_in_standard_form());
+                        q_x_O.begin(), Is_nonnegative());
     ratio_test_1_B_S__t_i(B_S.begin(), B_S.end(), x_B_S.begin(),
-                        q_x_S.begin(), Is_in_standard_form());
+                        q_x_S.begin(), Is_nonnegative());
 }    
 
 // ratio test for the basic original variables
@@ -695,7 +695,7 @@ template < typename Q, typename ET, typename Tags >                         // S
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
                     Value_iterator x_it, Value_iterator q_it,
-                    Tag_true  /*is_in_standard_form*/)
+                    Tag_true  /*is_nonnegative*/)
 {    
     for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
         test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
@@ -707,7 +707,7 @@ template < typename Q, typename ET, typename Tags >                         // U
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
                     Value_iterator x_it, Value_iterator q_it,
-                    Tag_false /*is_in_standard_form*/)
+                    Tag_false /*is_nonnegative*/)
 {
     if (is_phaseI) {
         if (direction == 1) {
@@ -737,7 +737,7 @@ template < typename Q, typename ET, typename Tags >                         // S
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
                 Value_iterator x_it, Value_iterator q_it,
-                Tag_true  /*is_in_standard_form*/)
+                Tag_true  /*is_nonnegative*/)
 {
     for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
         test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
@@ -749,7 +749,7 @@ template < typename Q, typename ET, typename Tags >                         // U
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
                 Value_iterator x_it, Value_iterator q_it,
-                Tag_false /*is_in_standard_form*/)
+                Tag_false /*is_nonnegative*/)
 {
     if (direction == 1) {
         for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
@@ -1112,19 +1112,19 @@ update_1( )
     CGAL_qpe_assertion(check_basis_inverse());
     
     // check the updated vectors r_C and r_S_B
-    CGAL_expensive_assertion(check_r_C(Is_in_standard_form()));
-    CGAL_expensive_assertion(check_r_S_B(Is_in_standard_form()));
+    CGAL_expensive_assertion(check_r_C(Is_nonnegative()));
+    CGAL_expensive_assertion(check_r_S_B(Is_nonnegative()));
     
     // check the vectors r_B_O and w in phaseII for QPs
     CGAL_qpe_debug {
         if (is_phaseII && is_QP) {
-            CGAL_expensive_assertion(check_r_B_O(Is_in_standard_form()));
-            CGAL_expensive_assertion(check_w(Is_in_standard_form()));
+            CGAL_expensive_assertion(check_r_B_O(Is_nonnegative()));
+            CGAL_expensive_assertion(check_w(Is_nonnegative()));
         }
     }
 
     // compute current solution
-    compute_solution(Is_in_standard_form());
+    compute_solution(Is_nonnegative());
     
     // check feasibility 
     CGAL_qpe_debug {
@@ -1146,7 +1146,7 @@ update_1( )
 	}
       else
 	vout2 << "(feasibility not checked in intermediate step)" << std::endl;
-      CGAL_expensive_assertion(check_tag(Is_in_standard_form()) ||
+      CGAL_expensive_assertion(check_tag(Is_nonnegative()) ||
 			       r_C.size() == C.size());
     }
 	 
@@ -1171,13 +1171,13 @@ update_2( Tag_false)
     }
     
     // check the updated vectors r_C, r_S_B, r_B_O and w
-    CGAL_expensive_assertion(check_r_C(Is_in_standard_form()));
-    CGAL_expensive_assertion(check_r_S_B(Is_in_standard_form()));
-    CGAL_expensive_assertion(check_r_B_O(Is_in_standard_form()));
-    CGAL_expensive_assertion(check_w(Is_in_standard_form()));
+    CGAL_expensive_assertion(check_r_C(Is_nonnegative()));
+    CGAL_expensive_assertion(check_r_S_B(Is_nonnegative()));
+    CGAL_expensive_assertion(check_r_B_O(Is_nonnegative()));
+    CGAL_expensive_assertion(check_w(Is_nonnegative()));
 
     // compute current solution
-    compute_solution(Is_in_standard_form());
+    compute_solution(Is_nonnegative());
 }
  
 template < typename Q, typename ET, typename Tags >
@@ -1281,7 +1281,7 @@ void  QP_solver<Q, ET, Tags>::
 replace_variable_original_original( )
 {
     // updates for the upper bounded case
-    replace_variable_original_original_upd_r(Is_in_standard_form());
+    replace_variable_original_original_upd_r(Is_nonnegative());
     
     int  k = in_B[ i];
 
@@ -1353,7 +1353,7 @@ replace_variable_slack_slack( )
 {
     
     // updates for the upper bounded case
-    replace_variable_slack_slack_upd_r(Is_in_standard_form()); 
+    replace_variable_slack_slack_upd_r(Is_nonnegative()); 
     
     int  k = in_B[ i];
 
@@ -1416,7 +1416,7 @@ void  QP_solver<Q, ET, Tags>::
 replace_variable_slack_original( )
 {
     // updates for the upper bounded case
-    replace_variable_slack_original_upd_r(Is_in_standard_form()); 
+    replace_variable_slack_original_upd_r(Is_nonnegative()); 
      
     int  k = in_B[ i];
 
@@ -1493,7 +1493,7 @@ void  QP_solver<Q, ET, Tags>::
 replace_variable_original_slack( )
 {
     // updates for the upper bounded case
-    replace_variable_original_slack_upd_r(Is_in_standard_form());
+    replace_variable_original_slack_upd_r(Is_nonnegative());
     
     int  k = in_B[ i];
 
@@ -1578,7 +1578,7 @@ void  QP_solver<Q, ET, Tags>::
 remove_artificial_variable_and_constraint( )
 {
     // updates for the upper bounded case
-    remove_artificial_variable_and_constraint_upd_r(Is_in_standard_form());
+    remove_artificial_variable_and_constraint_upd_r(Is_nonnegative());
     
     int  k = in_B[ i];
 
@@ -1692,7 +1692,7 @@ enter_variable( )
     if (no_ineq || (j < qp_n)) {              // original variable
     
         // updates for the upper bounded case:
-        enter_variable_original_upd_w_r(Is_in_standard_form());
+        enter_variable_original_upd_w_r(Is_nonnegative());
 
 	// enter original variable [ in: j ]:
 	if (minus_c_B.size() <= B_O.size()) { // Note: minus_c_B and the
@@ -1730,7 +1730,7 @@ enter_variable( )
     } else {                                  // slack variable
 
         // updates for the upper bounded case:
-        enter_variable_slack_upd_w_r(Is_in_standard_form());
+        enter_variable_slack_upd_w_r(Is_nonnegative());
 
 	// enter slack variable [ in: j ]:
 	in_B  [ j] = B_S.size();
@@ -1834,7 +1834,7 @@ leave_variable( )
     if ( no_ineq || ( i < qp_n)) {                      // original variable
         
         // updates for the upper bounded case
-        leave_variable_original_upd_w_r(Is_in_standard_form());
+        leave_variable_original_upd_w_r(Is_nonnegative());
 
 	// leave original variable [ out: i ]
 	in_B  [ B_O.back()] = k;
@@ -1858,7 +1858,7 @@ leave_variable( )
     } else {                                            // slack variable
         
         // updates for the upper bounded case
-        leave_variable_slack_upd_w_r(Is_in_standard_form());
+        leave_variable_slack_upd_w_r(Is_nonnegative());
 
 	// leave slack variable [ out: i ]
 	in_B  [ B_S.back()] = k;      // former last var moves to position k
@@ -2014,7 +2014,7 @@ void  QP_solver<Q, ET, Tags>::
 z_replace_variable_original_by_original( )
 {
     // updates for the upper bounded case
-    z_replace_variable_original_by_original_upd_w_r(Is_in_standard_form());
+    z_replace_variable_original_by_original_upd_w_r(Is_nonnegative());
     
     int  k = in_B[ i];
 
@@ -2079,7 +2079,7 @@ void  QP_solver<Q, ET, Tags>::
 z_replace_variable_original_by_slack( )
 {
     // updates for the upper bounded case
-    z_replace_variable_original_by_slack_upd_w_r(Is_in_standard_form());
+    z_replace_variable_original_by_slack_upd_w_r(Is_nonnegative());
     
     int  k = in_B[ i];
 
@@ -2165,7 +2165,7 @@ void  QP_solver<Q, ET, Tags>::
 z_replace_variable_slack_by_original( )
 {
     // updates for the upper bounded case
-    z_replace_variable_slack_by_original_upd_w_r(Is_in_standard_form());
+    z_replace_variable_slack_by_original_upd_w_r(Is_nonnegative());
     
     int  k = in_B[ i];
     if (minus_c_B.size() <= B_O.size()) {  // Note: minus_c_B and the
@@ -2276,7 +2276,7 @@ void  QP_solver<Q, ET, Tags>::
 z_replace_variable_slack_by_slack( )
 {
     // updates for the upper bounded case
-    z_replace_variable_slack_by_slack_upd_w_r(Is_in_standard_form());
+    z_replace_variable_slack_by_slack_upd_w_r(Is_nonnegative());
     
     int  k = in_B[ i];
 
@@ -2419,7 +2419,7 @@ void  QP_solver<Q, ET, Tags>::
 update_w_r_B_O__j(ET& x_j)
 {
   // assertion checking:
-  CGAL_expensive_assertion(!check_tag(Is_in_standard_form()));
+  CGAL_expensive_assertion(!check_tag(Is_nonnegative()));
 
   // Note: we only do anything it we are dealing with a QP.
   if (!check_tag(Is_linear())) {
@@ -2444,7 +2444,7 @@ void  QP_solver<Q, ET, Tags>::
 update_w_r_B_O__j_i(ET& x_j, ET& x_i)
 {
   // assertion checking:
-  CGAL_expensive_assertion(!check_tag(Is_in_standard_form()));
+  CGAL_expensive_assertion(!check_tag(Is_nonnegative()));
 
   // Note: we only do anything it we are dealing with a QP.
   if (!check_tag(Is_linear())) {
@@ -2470,7 +2470,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 update_w_r_B_O__i(ET& x_i)
 {
-  CGAL_expensive_assertion(!check_tag(Is_in_standard_form()));
+  CGAL_expensive_assertion(!check_tag(Is_nonnegative()));
 
   // Note: we only do anything it we are dealing with a QP.
   if (!check_tag(Is_linear())) {
@@ -2501,7 +2501,7 @@ compute_solution(Tag_true)
 		    lambda.begin(), x_B_O.begin());
   
   // compute current solution, slack variables
-  compute__x_B_S(no_ineq, Is_in_standard_form());
+  compute__x_B_S(no_ineq, Is_nonnegative());
 }
 
 // Compute solution, meaning compute the solution vector x and the KKT
@@ -2533,7 +2533,7 @@ compute_solution(Tag_false)
   }
   
   // compute current solution, slack variables
-  compute__x_B_S( no_ineq, Is_in_standard_form());
+  compute__x_B_S( no_ineq, Is_nonnegative());
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -3021,7 +3021,7 @@ print_program( ) const
 		    << ( qp_r[ row] == CGAL::EQUAL      ? ' ' :
 		       ( qp_r[ row] == CGAL::SMALLER ? '<' : '>')) << "=  "
 		    << qp_b[ row];
-		    if (!is_in_standard_form) {
+		    if (!is_nonnegative) {
 		        vout4.out() << " - " << multiply__A_ixO(row);
 		    }
 		    vout4.out() << std::endl;
@@ -3029,7 +3029,7 @@ print_program( ) const
     vout4.out() << std::endl;
     
     // explicit bounds
-    if (!is_in_standard_form) {
+    if (!is_nonnegative) {
         vout4.out() << "explicit bounds:" << std::endl; 
         for (int i = 0; i < qp_n; ++i) {
             if (*(qp_fl+i)) {                   // finite lower bound
@@ -3115,7 +3115,7 @@ print_solution( ) const
             << "  -c_B_O: ";
 	   std::copy( minus_c_B.begin(), minus_c_B.begin()+B_O.size(),
 		   std::ostream_iterator<ET>( vout3.out()," "));
-	   if (!is_in_standard_form) {
+	   if (!is_nonnegative) {
 	       vout3.out() << std::endl
                 << "     r_C: ";
 	       std::copy( r_C.begin(), r_C.begin()+r_C.size(),
@@ -3138,7 +3138,7 @@ print_solution( ) const
         std::copy( x_B_O.begin(), x_B_O.begin()+B_O.size(),
             std::ostream_iterator<ET>( vout2.out(), " "));
         vout2.out() << std::endl;
-        if (!is_in_standard_form) {
+        if (!is_nonnegative) {
             vout2.out() << "   x_N_O: ";
             for (int i = 0; i < qp_n; ++i) {
                 if (!is_basic(i)) {
@@ -3172,7 +3172,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
 {
-    if (is_in_standard_form) {                      // => direction == 1
+    if (is_nonnegative) {                      // => direction == 1
         if (q_k > et0) {                            // check for lower bound
             vout2.out() << "t_O_" << k << ": "
             << x_k << '/' << q_k
@@ -3241,7 +3241,7 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 print_ratio_1_slack(int k, const ET& x_k, const ET& q_k)
 {
-    if (is_in_standard_form) {                      // => direction == 1
+    if (is_nonnegative) {                      // => direction == 1
         if (q_k > et0) {                            // check for lower bound
             vout2.out() << "t_S_" << k << ": "
             << x_k << '/' << q_k
