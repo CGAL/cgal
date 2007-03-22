@@ -10,8 +10,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
-#LAPACK_INCDIRS = -I$(LAPACK_DIR)/SRC -I$(LAPACK_DIR)
-
 CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) 
@@ -23,7 +21,6 @@ LIBPATH = \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          ${LAPACK_LDLIBS} \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -33,19 +30,19 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                blind$(EXE_EXT) blind_1pt$(EXE_EXT)
+                Mesh_estimation$(EXE_EXT) Single_estimation$(EXE_EXT)
 
-BLIND_OBJS=PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
-blind$(EXE_EXT): $(BLIND_OBJS)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind $(BLIND_OBJS) \
+MESH_ESTIMATION_OBJS=PolyhedralSurf$(OBJ_EXT) Mesh_estimation$(OBJ_EXT)
+Mesh_estimation$(EXE_EXT): $(MESH_ESTIMATION_OBJS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Mesh_estimation $(MESH_ESTIMATION_OBJS) \
 	$(LDFLAGS) 
 
-blind_1pt$(EXE_EXT): blind_1pt$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind_1pt blind_1pt$(OBJ_EXT) \
+Single_estimation$(EXE_EXT): Single_estimation$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Single_estimation Single_estimation$(OBJ_EXT) \
 	$(LDFLAGS) 
 
 clean: \
-        blind.clean blind_1pt.clean PolyhedralSurf.clean 
+        Mesh_estimation.clean Single_estimation.clean PolyhedralSurf.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

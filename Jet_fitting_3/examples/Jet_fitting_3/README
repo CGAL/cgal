@@ -1,20 +1,20 @@
 To compile, you need support for lapack
 
-Program blind_1pt
+Program Single_estimation
 --------------------- 
 takes as input a <inputPoints.txt> which is a xyz text file 
 it compute the fitting for this single entry and 
 it outputs results in the <output.txt> file and on the standard std::cout
 
-Usage is : blind_1pt <inputPoints.txt> <d_fitting>, <d_monge>" 
+Usage is : Single_estimation <inputPoints.txt> <d_fitting>, <d_monge>" 
 
 in_points are sampled on 0.1(x²+2y²)
 
-./blind_1pt data/in_points_file.txt  2 2
-./blind_1pt data/in_points_d4.txt  4 4
+./Single_estimation data/in_points_file.txt  2 2
+./Single_estimation data/in_points_d4.txt  4 4
 
 
-Program blind
+Program Mesh_estimation
 -----------------
 takes an filename.off file as input,
 it computes a fitting for each vertex
@@ -46,9 +46,9 @@ Note : if the nb of collected points is less than the required min number of
    points to make the approxiamtion possible (which is constrained by the deg)
    then the vertex is skipped.
 
-./blind
- ./blind -f data/ellipe0.003.off -d2 -m2 -a2 
- ./blind -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
+./Mesh_estimation
+ ./Mesh_estimation -f data/ellipe0.003.off -d2 -m2 -a2 
+ ./Mesh_estimation -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
 		
 visu with:
 ./introspect-qt ../../examples/Jet_fitting_3/data/ellipe0.003.off ../../examples/Jet_fitting_3/data_ellipe0.003.off.4ogl.txt

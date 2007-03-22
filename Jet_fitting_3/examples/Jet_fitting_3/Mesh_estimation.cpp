@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
 int main()
 #endif
 {
+#ifdef CGAL_USE_LAPACK
   string if_name_string;
   const char *if_name = NULL; //input file name
   char *w_if_name = NULL;  //as above, but / replaced by _
@@ -305,5 +306,11 @@ int main()
     out_verbose->close();
     delete out_verbose;
   }
+
+#else 
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+   
+#endif // CGAL_USE_LAPACK
   return 0;
 }

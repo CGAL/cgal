@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
                 << " <inputPoints.txt> <d_fitting> <d_monge>" << std::endl;
       return 0;
     }
-  //open the input file
+#ifdef CGAL_USE_LAPACK
+ //open the input file
   std::ifstream inFile( argv[1]);
   if ( !inFile )
     {
@@ -55,5 +56,10 @@ int main(int argc, char *argv[])
     std::cout << monge_fit.pca_basis(i).first << std::endl
 	      << monge_fit.pca_basis(i).second  << std::endl;
 
+#else 
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+   
+#endif // CGAL_USE_LAPACK
   return 0;
 }
