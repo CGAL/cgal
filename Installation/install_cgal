@@ -3781,7 +3781,7 @@ makefile_print_from_var()
 {
     _tmp="`value_of \"${1}\"`"
     if [ -n "${_tmp}" ]; then
-	echo -n "${_tmp}" | ${_awk} 'BEGIN {RS=""}{printf " \\\n\t%s",$0}'
+	${_printf} "%s\n" "${_tmp}" | ${_awk} 'BEGIN {RS=""}{printf " \\\n\t%s",$0}'
     fi
 }
 
