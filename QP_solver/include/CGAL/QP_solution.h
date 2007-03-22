@@ -174,10 +174,6 @@ public:
   // Infeasibility
   // -------------
 
-  // Validity
-  // --------
-  virtual bool is_valid() const = 0;
-
   // destruction
   // -----------
   virtual ~QP_solver_base() {}
@@ -308,12 +304,6 @@ public:
   {
     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->number_of_basic_constraints();
-  }
-
-  bool is_valid() const
-  {
-    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
-    return (*(this->Ptr()))->is_valid();
   }
 
   ~Quadratic_program_solution()

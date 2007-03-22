@@ -75,7 +75,2725 @@ Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10123(8) -10123(8) -10123(8) -10123(8) 
+ Solution:   ======
+Set-Up
+======
+[ LP, 3 variables, 3 constraints (3 inequalities) ]
+flag: has inequalities or rank not full
+
+objective function:
+-100 -10 -1 (+ 0) 
+
+constraints:
+1 0 0  |  +1  0  0  |  <=  2 - 1
+20 1 0  |   0 +1  0  |  <=  122 - 22
+200 20 1  |   0  0 +1  |  <=  10243 - 243
+
+explicit bounds:
+1 <= x_0 <= inf
+2 <= x_1 <= inf
+3 <= x_2 <= inf
+
+==============
+Initialization
+==============
+basic variables  :   |  3 4 5  (# of artificials: 0)
+basic constraints:  
+
+    in_B: -1 -1 -1 0 1 2 
+    in_C: -1 -1 -1 
+
+basis-inverse:
+denominator = 1
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: 0 / 1  ~= 0
+
+pricing: full filtered
+
+no artificial variables at all --> skip phase I
+
+----------------------
+Transition to phase II
+----------------------
+basis-inverse:
+denominator = 1
+check: 
+check ok
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: -123 / 1  ~= -123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 1 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+
+entering variable: 0 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 
+
+   q_x_O: 
+   q_x_S: 1 20 200 
+
+t_min_j: 1/0
+
+t_S_0: 1/1 *
+t_S_1: 100/20
+t_S_2: 10000/200
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 0 replaces basic (slack) variable 3
+
+basic variables  :  0  |  5 4 
+basic constraints:  0:i 
+
+    in_B: 0 -1 -1 -1 1 0 
+    in_C: 0 -1 -1 
+
+basis-inverse:
+1 
+denominator = 1
+check: 
+1  ||  1 
+check ok
+
+     b_C: 2 
+  -c_B_O: 100 
+     r_C: 0 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 100 
+   x_B_O: 2 
+   x_N_O: 2 3 
+   x_B_S: 9800 80 
+   denominator: 1
+
+solution: -223 / 1  ~= -223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 2 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+
+entering variable: 1 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 0 
+
+   q_x_O: 0 
+   q_x_S: 20 1 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 9800/20
+t_S_1: 80/1 *
+
+leaving variable: 4 (= B_S[ 1]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 1 replaces basic (slack) variable 4
+
+basic variables  :  0 1  |  5 
+basic constraints:  0:i 1:i 
+
+    in_B: 0 1 -1 -1 -1 0 
+    in_C: 0 1 -1 
+
+basis-inverse:
+1 0 
+-20 1 
+denominator = 1
+check: 
+1 20  ||  1 0 
+0 1  ||  0 1 
+check ok
+
+     b_C: 2 122 
+  -c_B_O: 100 10 
+     r_C: 0 0 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -100 10 
+   x_B_O: 2 82 
+   x_N_O: 3 
+   x_B_S: 8200 
+   denominator: 1
+
+solution: -1023 / 1  ~= -1023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 3 ]
+
+-------
+Pricing
+-------
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 1 0 
+
+   q_x_O: 1 -20 
+   q_x_S: 200 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-20
+t_S_0: 8200/200
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+------
+Update
+------
+<--> nonbasic (slack) variable 3 replaces basic (original) variable 0
+
+basic variables  :  1  |  5 3 
+basic constraints:  1:i 
+
+    in_B: -1 0 -1 1 -1 0 
+    in_C: -1 0 -1 
+
+basis-inverse:
+1 
+denominator = 1
+check: 
+1  ||  1 
+check ok
+
+     b_C: 122 
+  -c_B_O: 10 
+     r_C: 20 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 10 
+   x_B_O: 102 
+   x_N_O: 1 3 
+   x_B_S: 8000 1 
+   denominator: 1
+
+solution: -1123 / 1  ~= -1123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 4 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 2 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 0 
+
+   q_x_O: 0 
+   q_x_S: 1 0 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 8000/1 *
+t_S_1: inf
+
+leaving variable: 5 (= B_S[ 0]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 2 replaces basic (slack) variable 5
+
+basic variables  :  1 2  |  3 
+basic constraints:  1:i 2:i 
+
+    in_B: -1 0 1 0 -1 -1 
+    in_C: -1 0 1 
+
+basis-inverse:
+1 0 
+-20 1 
+denominator = 1
+check: 
+1 20  ||  1 0 
+0 1  ||  0 1 
+check ok
+
+     b_C: 122 10243 
+  -c_B_O: 10 1 
+     r_C: 20 200 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -10 1 
+   x_B_O: 102 8003 
+   x_N_O: 1 
+   x_B_S: 1 
+   denominator: 1
+
+solution: -9123 / 1  ~= -9123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 5 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 0 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 20 200 
+
+   q_x_O: 20 -200 
+   q_x_S: 1 
+
+t_min_j: 1/0
+
+t_O_0: 100/20
+t_O_1: inf/-200
+t_S_0: 1/1 *
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 0 replaces basic (slack) variable 3
+
+basic variables  :  1 2 0  |  
+basic constraints:  1:i 2:i 0:i 
+
+    in_B: 2 0 1 -1 -1 -1 
+    in_C: 2 0 1 
+
+basis-inverse:
+1 0 -20 
+-20 1 200 
+0 0 1 
+denominator = 1
+check: 
+1 20 0  ||  1 0 0 
+0 1 0  ||  0 1 0 
+20 200 1  ||  0 0 1 
+check ok
+
+     b_C: 122 10243 2 
+  -c_B_O: 10 1 100 
+     r_C: 0 0 0 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -10 1 100 
+   x_B_O: 82 8203 2 
+   x_N_O: 
+   x_B_S: 
+   denominator: 1
+
+solution: -9223 / 1  ~= -9223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 6 ]
+
+-------
+Pricing
+-------
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 4 (slack)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 1 0 0 
+
+   q_x_O: 1 -20 0 
+   q_x_S: 
+
+t_min_j: 1/0
+
+t_O_0: 80/1 *
+t_O_1: inf/-20
+t_O_2: inf
+
+leaving variable: 1 (= B_O[ 0]: original)
+
+------
+Update
+------
+<--> nonbasic (slack) variable 4 replaces basic (original) variable 1
+
+basic variables  :  0 2  |  4 
+basic constraints:  0:i 2:i 
+
+    in_B: 0 -1 1 -1 0 -1 
+    in_C: 0 -1 1 
+
+basis-inverse:
+1 0 
+-200 1 
+denominator = 1
+check: 
+1 200  ||  1 0 
+0 1  ||  0 1 
+check ok
+
+     b_C: 2 10243 
+  -c_B_O: 100 1 
+     r_C: 0 40 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -100 1 
+   x_B_O: 2 9803 
+   x_N_O: 2 
+   x_B_S: 80 
+   denominator: 1
+
+solution: -10023 / 1  ~= -10023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 7 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 1 0 
+
+   q_x_O: 1 -200 
+   q_x_S: -20 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-200
+t_S_0: inf/-20
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+------
+Update
+------
+<--> nonbasic (slack) variable 3 replaces basic (original) variable 0
+
+basic variables  :  2  |  4 3 
+basic constraints:  2:i 
+
+    in_B: -1 -1 0 1 0 -1 
+    in_C: -1 -1 0 
+
+basis-inverse:
+1 
+denominator = 1
+check: 
+1  ||  1 
+check ok
+
+     b_C: 10243 
+  -c_B_O: 1 
+     r_C: 240 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 1 
+   x_B_O: 10003 
+   x_N_O: 1 2 
+   x_B_S: 100 1 
+   denominator: 1
+
+solution: -10123 / 1  ~= -10123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 8 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+first bound for certification: 0
+|mu_|0 [NT]: 100  ok [1]
+|mu_|1 [NT]: 10  ok [1]
+|mu_|5 [NT]: 1  ok [1]
+
+entering variable: none
+
+solution is OPTIMAL
+
+========
+Validity
+========
+
+----------
+Validation
+----------
+ is in phase II: 1
+       feasible: 1
+        optimal: 1
+  correct value: 1
+-10123(8) ======
+Set-Up
+======
+[ LP, 3 variables, 3 constraints (3 inequalities) ]
+flag: has inequalities or rank not full
+
+objective function:
+-100 -10 -1 (+ 0) 
+
+constraints:
+1 0 0  |  +1  0  0  |  <=  2 - 1
+20 1 0  |   0 +1  0  |  <=  122 - 22
+200 20 1  |   0  0 +1  |  <=  10243 - 243
+
+explicit bounds:
+1 <= x_0 <= inf
+2 <= x_1 <= inf
+3 <= x_2 <= inf
+
+==============
+Initialization
+==============
+basic variables  :   |  3 4 5  (# of artificials: 0)
+basic constraints:  
+
+    in_B: -1 -1 -1 0 1 2 
+    in_C: -1 -1 -1 
+
+basis-inverse:
+denominator = 1
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: 0 / 1  ~= 0
+
+pricing: full filtered
+
+no artificial variables at all --> skip phase I
+
+----------------------
+Transition to phase II
+----------------------
+basis-inverse:
+denominator = 1
+check: 
+check ok
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: -123 / 1  ~= -123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 1 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+
+entering variable: 0 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 
+
+   q_x_O: 
+   q_x_S: 1 20 200 
+
+t_min_j: 1/0
+
+t_S_0: 1/1 *
+t_S_1: 100/20
+t_S_2: 10000/200
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 0 replaces basic (slack) variable 3
+
+basic variables  :  0  |  5 4 
+basic constraints:  0:i 
+
+    in_B: 0 -1 -1 -1 1 0 
+    in_C: 0 -1 -1 
+
+basis-inverse:
+1 
+denominator = 1
+check: 
+1  ||  1 
+check ok
+
+     b_C: 2 
+  -c_B_O: 100 
+     r_C: 0 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 100 
+   x_B_O: 2 
+   x_N_O: 2 3 
+   x_B_S: 9800 80 
+   denominator: 1
+
+solution: -223 / 1  ~= -223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 2 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+
+entering variable: 1 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 0 
+
+   q_x_O: 0 
+   q_x_S: 20 1 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 9800/20
+t_S_1: 80/1 *
+
+leaving variable: 4 (= B_S[ 1]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 1 replaces basic (slack) variable 4
+
+basic variables  :  0 1  |  5 
+basic constraints:  0:i 1:i 
+
+    in_B: 0 1 -1 -1 -1 0 
+    in_C: 0 1 -1 
+
+basis-inverse:
+1 0 
+-20 1 
+denominator = 1
+check: 
+1 20  ||  1 0 
+0 1  ||  0 1 
+check ok
+
+     b_C: 2 122 
+  -c_B_O: 100 10 
+     r_C: 0 0 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -100 10 
+   x_B_O: 2 82 
+   x_N_O: 3 
+   x_B_S: 8200 
+   denominator: 1
+
+solution: -1023 / 1  ~= -1023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 3 ]
+
+-------
+Pricing
+-------
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 1 0 
+
+   q_x_O: 1 -20 
+   q_x_S: 200 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-20
+t_S_0: 8200/200
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+------
+Update
+------
+<--> nonbasic (slack) variable 3 replaces basic (original) variable 0
+
+basic variables  :  1  |  5 3 
+basic constraints:  1:i 
+
+    in_B: -1 0 -1 1 -1 0 
+    in_C: -1 0 -1 
+
+basis-inverse:
+1 
+denominator = 1
+check: 
+1  ||  1 
+check ok
+
+     b_C: 122 
+  -c_B_O: 10 
+     r_C: 20 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 10 
+   x_B_O: 102 
+   x_N_O: 1 3 
+   x_B_S: 8000 1 
+   denominator: 1
+
+solution: -1123 / 1  ~= -1123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 4 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 2 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 0 
+
+   q_x_O: 0 
+   q_x_S: 1 0 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 8000/1 *
+t_S_1: inf
+
+leaving variable: 5 (= B_S[ 0]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 2 replaces basic (slack) variable 5
+
+basic variables  :  1 2  |  3 
+basic constraints:  1:i 2:i 
+
+    in_B: -1 0 1 0 -1 -1 
+    in_C: -1 0 1 
+
+basis-inverse:
+1 0 
+-20 1 
+denominator = 1
+check: 
+1 20  ||  1 0 
+0 1  ||  0 1 
+check ok
+
+     b_C: 122 10243 
+  -c_B_O: 10 1 
+     r_C: 20 200 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -10 1 
+   x_B_O: 102 8003 
+   x_N_O: 1 
+   x_B_S: 1 
+   denominator: 1
+
+solution: -9123 / 1  ~= -9123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 5 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 0 (original)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 20 200 
+
+   q_x_O: 20 -200 
+   q_x_S: 1 
+
+t_min_j: 1/0
+
+t_O_0: 100/20
+t_O_1: inf/-200
+t_S_0: 1/1 *
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+------
+Update
+------
+<--> nonbasic (original) variable 0 replaces basic (slack) variable 3
+
+basic variables  :  1 2 0  |  
+basic constraints:  1:i 2:i 0:i 
+
+    in_B: 2 0 1 -1 -1 -1 
+    in_C: 2 0 1 
+
+basis-inverse:
+1 0 -20 
+-20 1 200 
+0 0 1 
+denominator = 1
+check: 
+1 20 0  ||  1 0 0 
+0 1 0  ||  0 1 0 
+20 200 1  ||  0 0 1 
+check ok
+
+     b_C: 122 10243 2 
+  -c_B_O: 10 1 100 
+     r_C: 0 0 0 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -10 1 100 
+   x_B_O: 82 8203 2 
+   x_N_O: 
+   x_B_S: 
+   denominator: 1
+
+solution: -9223 / 1  ~= -9223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 6 ]
+
+-------
+Pricing
+-------
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 4 (slack)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 1 0 0 
+
+   q_x_O: 1 -20 0 
+   q_x_S: 
+
+t_min_j: 1/0
+
+t_O_0: 80/1 *
+t_O_1: inf/-20
+t_O_2: inf
+
+leaving variable: 1 (= B_O[ 0]: original)
+
+------
+Update
+------
+<--> nonbasic (slack) variable 4 replaces basic (original) variable 1
+
+basic variables  :  0 2  |  4 
+basic constraints:  0:i 2:i 
+
+    in_B: 0 -1 1 -1 0 -1 
+    in_C: 0 -1 1 
+
+basis-inverse:
+1 0 
+-200 1 
+denominator = 1
+check: 
+1 200  ||  1 0 
+0 1  ||  0 1 
+check ok
+
+     b_C: 2 10243 
+  -c_B_O: 100 1 
+     r_C: 0 40 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: -100 1 
+   x_B_O: 2 9803 
+   x_N_O: 2 
+   x_B_S: 80 
+   denominator: 1
+
+solution: -10023 / 1  ~= -10023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 7 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------
+Ratio Test
+----------
+    A_Cj: 1 0 
+
+   q_x_O: 1 -200 
+   q_x_S: -20 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-200
+t_S_0: inf/-20
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+------
+Update
+------
+<--> nonbasic (slack) variable 3 replaces basic (original) variable 0
+
+basic variables  :  2  |  4 3 
+basic constraints:  2:i 
+
+    in_B: -1 -1 0 1 0 -1 
+    in_C: -1 -1 0 
+
+basis-inverse:
+1 
+denominator = 1
+check: 
+1  ||  1 
+check ok
+
+     b_C: 10243 
+  -c_B_O: 1 
+     r_C: 240 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 1 
+   x_B_O: 10003 
+   x_N_O: 1 2 
+   x_B_S: 100 1 
+   denominator: 1
+
+solution: -10123 / 1  ~= -10123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 8 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+first bound for certification: 4.51028e-13
+|mu_|0 [NT]: 100  ok [1]
+|mu_|1 [NT]: 10  ok [1]
+|mu_|5 [NT]: 1  ok [1]
+
+entering variable: none
+
+solution is OPTIMAL
+
+========
+Validity
+========
+
+----------
+Validation
+----------
+ is in phase II: 1
+       feasible: 1
+        optimal: 1
+  correct value: 1
+-10123(8) ======
+Set-Up
+======
+[ QP, 3 variables, 3 constraints (3 inequalities) ]
+flag: has inequalities or rank not full
+
+objective function:
+--> output of MATRIX must go here <--
+-100 -10 -1 (+ 0) 
+
+constraints:
+1 0 0  |  +1  0  0  |  <=  2 - 1
+20 1 0  |   0 +1  0  |  <=  122 - 22
+200 20 1  |   0  0 +1  |  <=  10243 - 243
+
+explicit bounds:
+1 <= x_0 <= inf
+2 <= x_1 <= inf
+3 <= x_2 <= inf
+
+==============
+Initialization
+==============
+basic variables  :   |  3 4 5  (# of artificials: 0)
+basic constraints:  
+
+    in_B: -1 -1 -1 0 1 2 
+    in_C: -1 -1 -1 
+
+basis-inverse:
+denominator = 1
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: 0 / 1  ~= 0
+
+pricing: full filtered
+
+no artificial variables at all --> skip phase I
+
+----------------------
+Transition to phase II
+----------------------
+basis-inverse:
+= = = = = = = = = =
+denominator = 1
+check: 
+= = = = = = = = = =
+check ok
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: -123 / 1  ~= -123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 1 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+
+entering variable: 0 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 
+  2 D_Bj: 
+
+q_lambda: 
+   q_x_O: 
+   q_x_S: 1 20 200 
+
+t_min_j: 1/0
+
+t_S_0: 1/1 *
+t_S_1: 100/20
+t_S_2: 10000/200
+
+  t_j: -100/0
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 0 z_replaces basic (slack) variable 3
+
+basic variables  :  0  |  5 4 
+basic constraints:  0:i 
+
+    in_B: 0 -1 -1 -1 1 0 
+    in_C: 0 -1 -1 
+
+basis-inverse:
+physical row 3 appended in Q
+0 
+= = = = = = = = = =
+1 || 0 
+denominator = 1
+check: 
+0 | 1  ||  1  |  0 
+= = = = = = = = = =
+1 | 0  ||  0  |  1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 1 
+   p_x_O: 0 
+   p_x_S: 0 0 
+
+mu_j_O_0: - 2/0
+mu_j_S_0: - 9800/0
+mu_j_S_1: - 80/0
+
+leaving variable: none
+
+     b_C: 2 
+  -c_B_O: 100 
+     r_C: 0 
+   r_B_O: 0 
+
+  lambda: 100 
+   x_B_O: 2 
+   x_N_O: 2 3 
+   x_B_S: 9800 80 
+   denominator: 1
+
+solution: -223 / 1  ~= -223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 2 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+
+entering variable: 1 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 0 
+  2 D_Bj: 0 
+
+q_lambda: 0 
+   q_x_O: 0 
+   q_x_S: 20 1 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 9800/20
+t_S_1: 80/1 *
+
+  t_j: -10/0
+
+leaving variable: 4 (= B_S[ 1]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 1 z_replaces basic (slack) variable 4
+
+basic variables  :  0 1  |  5 
+basic constraints:  0:i 1:i 
+
+    in_B: 0 1 -1 -1 -1 0 
+    in_C: 0 1 -1 
+
+basis-inverse:
+physical row 4 appended in Q
+0 
+0 0 
+= = = = = = = = = =
+1 0 || 0 
+-20 1 || 0 0 
+denominator = 1
+check: 
+0 0 | 1 0  ||  1 0  |  0 0 
+0 0 | 20 1  ||  0 1  |  0 0 
+= = = = = = = = = =
+1 20 | 0 0  ||  0 0  |  1 0 
+0 1 | 0 0  ||  0 0  |  0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: -20 1 
+   p_x_O: 0 0 
+   p_x_S: 0 
+
+mu_j_O_0: - 2/0
+mu_j_O_1: - 82/0
+mu_j_S_0: - 8200/0
+
+leaving variable: none
+
+     b_C: 2 122 
+  -c_B_O: 100 10 
+     r_C: 0 0 
+   r_B_O: 0 0 
+
+  lambda: -100 10 
+   x_B_O: 2 82 
+   x_N_O: 3 
+   x_B_S: 8200 
+   denominator: 1
+
+solution: -1023 / 1  ~= -1023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 3 ]
+
+-------
+Pricing
+-------
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 1 0 
+  2 D_Bj: 0 0 
+
+q_lambda: 0 0 
+   q_x_O: 1 -20 
+   q_x_S: 200 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-20
+t_S_0: 8200/200
+
+  t_j: -100/0
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+Update (Step 1)
+---------------
+<--> nonbasic (slack) variable 3 z_replaces basic (original) variable 0
+
+basic variables  :  1  |  5 3 
+basic constraints:  1:i 
+
+    in_B: -1 0 -1 1 -1 0 
+    in_C: -1 0 -1 
+
+basis-inverse:
+0 
+= = = = = = = = = =
+1 || 0 
+denominator = 1
+check: 
+0 | 1  ||  1  |  0 
+= = = = = = = = = =
+1 | 0  ||  0  |  1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 0 
+   p_x_O: 0 
+   p_x_S: 0 0 
+
+mu_j_O_0: - 102/0
+mu_j_S_0: - 8000/0
+mu_j_S_1: - 1/0
+
+leaving variable: none
+
+     b_C: 122 
+  -c_B_O: 10 
+     r_C: 20 
+   r_B_O: 0 
+
+  lambda: 10 
+   x_B_O: 102 
+   x_N_O: 1 3 
+   x_B_S: 8000 1 
+   denominator: 1
+
+solution: -1123 / 1  ~= -1123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 4 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 2 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 0 
+  2 D_Bj: 0 
+
+q_lambda: 0 
+   q_x_O: 0 
+   q_x_S: 1 0 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 8000/1 *
+t_S_1: inf
+
+  t_j: -1/0
+
+leaving variable: 5 (= B_S[ 0]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 2 z_replaces basic (slack) variable 5
+
+basic variables  :  1 2  |  3 
+basic constraints:  1:i 2:i 
+
+    in_B: -1 0 1 0 -1 -1 
+    in_C: -1 0 1 
+
+basis-inverse:
+0 
+0 0 
+= = = = = = = = = =
+1 0 || 0 
+-20 1 || 0 0 
+denominator = 1
+check: 
+0 0 | 1 0  ||  1 0  |  0 0 
+0 0 | 20 1  ||  0 1  |  0 0 
+= = = = = = = = = =
+1 20 | 0 0  ||  0 0  |  1 0 
+0 1 | 0 0  ||  0 0  |  0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: -20 1 
+   p_x_O: 0 0 
+   p_x_S: 0 
+
+mu_j_O_0: - 102/0
+mu_j_O_1: - 8003/0
+mu_j_S_0: - 1/0
+
+leaving variable: none
+
+     b_C: 122 10243 
+  -c_B_O: 10 1 
+     r_C: 20 200 
+   r_B_O: 0 0 
+
+  lambda: -10 1 
+   x_B_O: 102 8003 
+   x_N_O: 1 
+   x_B_S: 1 
+   denominator: 1
+
+solution: -9123 / 1  ~= -9123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 5 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 0 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 20 200 
+  2 D_Bj: 0 0 
+
+q_lambda: 0 0 
+   q_x_O: 20 -200 
+   q_x_S: 1 
+
+t_min_j: 1/0
+
+t_O_0: 100/20
+t_O_1: inf/-200
+t_S_0: 1/1 *
+
+  t_j: -100/0
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 0 z_replaces basic (slack) variable 3
+
+basic variables  :  1 2 0  |  
+basic constraints:  1:i 2:i 0:i 
+
+    in_B: 2 0 1 -1 -1 -1 
+    in_C: 2 0 1 
+
+basis-inverse:
+physical row 5 appended in Q
+0 
+0 0 
+0 0 0 
+= = = = = = = = = =
+1 0 -20 || 0 
+-20 1 200 || 0 0 
+0 0 1 || 0 0 0 
+denominator = 1
+check: 
+0 0 0 | 1 0 20  ||  1 0 0  |  0 0 0 
+0 0 0 | 20 1 200  ||  0 1 0  |  0 0 0 
+0 0 0 | 0 0 1  ||  0 0 1  |  0 0 0 
+= = = = = = = = = =
+1 20 0 | 0 0 0  ||  0 0 0  |  1 0 0 
+0 1 0 | 0 0 0  ||  0 0 0  |  0 1 0 
+20 200 1 | 0 0 0  ||  0 0 0  |  0 0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 0 0 1 
+   p_x_O: 0 0 0 
+   p_x_S: 
+
+mu_j_O_0: - 82/0
+mu_j_O_1: - 8203/0
+mu_j_O_2: - 2/0
+
+leaving variable: none
+
+     b_C: 122 10243 2 
+  -c_B_O: 10 1 100 
+     r_C: 0 0 0 
+   r_B_O: 0 0 0 
+
+  lambda: -10 1 100 
+   x_B_O: 82 8203 2 
+   x_N_O: 
+   x_B_S: 
+   denominator: 1
+
+solution: -9223 / 1  ~= -9223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 6 ]
+
+-------
+Pricing
+-------
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 4 (slack)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 1 0 0 
+  2 D_Bj: 0 0 0 
+
+q_lambda: 0 0 0 
+   q_x_O: 1 -20 0 
+   q_x_S: 
+
+t_min_j: 1/0
+
+t_O_0: 80/1 *
+t_O_1: inf/-20
+t_O_2: inf
+
+  t_j: -10/0
+
+leaving variable: 1 (= B_O[ 0]: original)
+
+Update (Step 1)
+---------------
+<--> nonbasic (slack) variable 4 z_replaces basic (original) variable 1
+
+basic variables  :  0 2  |  4 
+basic constraints:  0:i 2:i 
+
+    in_B: 0 -1 1 -1 0 -1 
+    in_C: 0 -1 1 
+
+basis-inverse:
+0 
+0 0 
+= = = = = = = = = =
+1 0 || 0 
+-200 1 || 0 0 
+denominator = 1
+check: 
+0 0 | 1 0  ||  1 0  |  0 0 
+0 0 | 200 1  ||  0 1  |  0 0 
+= = = = = = = = = =
+1 200 | 0 0  ||  0 0  |  1 0 
+0 1 | 0 0  ||  0 0  |  0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: -20 0 
+   p_x_O: 0 0 
+   p_x_S: 0 
+
+mu_j_O_0: - 2/0
+mu_j_O_1: - 9803/0
+mu_j_S_0: - 80/0
+
+leaving variable: none
+
+     b_C: 2 10243 
+  -c_B_O: 100 1 
+     r_C: 0 40 
+   r_B_O: 0 0 
+
+  lambda: -100 1 
+   x_B_O: 2 9803 
+   x_N_O: 2 
+   x_B_S: 80 
+   denominator: 1
+
+solution: -10023 / 1  ~= -10023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 7 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 1 0 
+  2 D_Bj: 0 0 
+
+q_lambda: 0 0 
+   q_x_O: 1 -200 
+   q_x_S: -20 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-200
+t_S_0: inf/-20
+
+  t_j: -100/0
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+Update (Step 1)
+---------------
+<--> nonbasic (slack) variable 3 z_replaces basic (original) variable 0
+
+basic variables  :  2  |  4 3 
+basic constraints:  2:i 
+
+    in_B: -1 -1 0 1 0 -1 
+    in_C: -1 -1 0 
+
+basis-inverse:
+0 
+= = = = = = = = = =
+1 || 0 
+denominator = 1
+check: 
+0 | 1  ||  1  |  0 
+= = = = = = = = = =
+1 | 0  ||  0  |  1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 0 
+   p_x_O: 0 
+   p_x_S: 0 0 
+
+mu_j_O_0: - 10003/0
+mu_j_S_0: - 100/0
+mu_j_S_1: - 1/0
+
+leaving variable: none
+
+     b_C: 10243 
+  -c_B_O: 1 
+     r_C: 240 
+   r_B_O: 0 
+
+  lambda: 1 
+   x_B_O: 10003 
+   x_N_O: 1 2 
+   x_B_S: 100 1 
+   denominator: 1
+
+solution: -10123 / 1  ~= -10123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 8 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+first bound for certification: 0
+|mu_|0 [NT]: 100  ok [1]
+|mu_|1 [NT]: 10  ok [1]
+|mu_|5 [NT]: 1  ok [1]
+
+entering variable: none
+
+solution is OPTIMAL
+
+========
+Validity
+========
+
+----------
+Validation
+----------
+ is in phase II: 1
+       feasible: 1
+        optimal: 1
+  correct value: 1
+-10123(8) ======
+Set-Up
+======
+[ QP, 3 variables, 3 constraints (3 inequalities) ]
+flag: has inequalities or rank not full
+
+objective function:
+--> output of MATRIX must go here <--
+-100 -10 -1 (+ 0) 
+
+constraints:
+1 0 0  |  +1  0  0  |  <=  2 - 1
+20 1 0  |   0 +1  0  |  <=  122 - 22
+200 20 1  |   0  0 +1  |  <=  10243 - 243
+
+explicit bounds:
+1 <= x_0 <= inf
+2 <= x_1 <= inf
+3 <= x_2 <= inf
+
+==============
+Initialization
+==============
+basic variables  :   |  3 4 5  (# of artificials: 0)
+basic constraints:  
+
+    in_B: -1 -1 -1 0 1 2 
+    in_C: -1 -1 -1 
+
+basis-inverse:
+denominator = 1
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: 0 / 1  ~= 0
+
+pricing: full filtered
+
+no artificial variables at all --> skip phase I
+
+----------------------
+Transition to phase II
+----------------------
+basis-inverse:
+= = = = = = = = = =
+denominator = 1
+check: 
+= = = = = = = = = =
+check ok
+
+     b_C: 
+  -c_B_O: 
+     r_C: 
+   r_B_O: < will only be allocated in phase II>
+
+  lambda: 
+   x_B_O: 
+   x_N_O: 1 2 3 
+   x_B_S: 1 100 10000 
+   denominator: 1
+
+solution: -123 / 1  ~= -123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 1 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+
+entering variable: 0 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 
+  2 D_Bj: 
+
+q_lambda: 
+   q_x_O: 
+   q_x_S: 1 20 200 
+
+t_min_j: 1/0
+
+t_S_0: 1/1 *
+t_S_1: 100/20
+t_S_2: 10000/200
+
+  t_j: -100/0
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 0 z_replaces basic (slack) variable 3
+
+basic variables  :  0  |  5 4 
+basic constraints:  0:i 
+
+    in_B: 0 -1 -1 -1 1 0 
+    in_C: 0 -1 -1 
+
+basis-inverse:
+physical row 3 appended in Q
+0 
+= = = = = = = = = =
+1 || 0 
+denominator = 1
+check: 
+0 | 1  ||  1  |  0 
+= = = = = = = = = =
+1 | 0  ||  0  |  1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 1 
+   p_x_O: 0 
+   p_x_S: 0 0 
+
+mu_j_O_0: - 2/0
+mu_j_S_0: - 9800/0
+mu_j_S_1: - 80/0
+
+leaving variable: none
+
+     b_C: 2 
+  -c_B_O: 100 
+     r_C: 0 
+   r_B_O: 0 
+
+  lambda: 100 
+   x_B_O: 2 
+   x_N_O: 2 3 
+   x_B_S: 9800 80 
+   denominator: 1
+
+solution: -223 / 1  ~= -223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 2 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: -10
+mu_1: -10 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+
+entering variable: 1 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 0 
+  2 D_Bj: 0 
+
+q_lambda: 0 
+   q_x_O: 0 
+   q_x_S: 20 1 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 9800/20
+t_S_1: 80/1 *
+
+  t_j: -10/0
+
+leaving variable: 4 (= B_S[ 1]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 1 z_replaces basic (slack) variable 4
+
+basic variables  :  0 1  |  5 
+basic constraints:  0:i 1:i 
+
+    in_B: 0 1 -1 -1 -1 0 
+    in_C: 0 1 -1 
+
+basis-inverse:
+physical row 4 appended in Q
+0 
+0 0 
+= = = = = = = = = =
+1 0 || 0 
+-20 1 || 0 0 
+denominator = 1
+check: 
+0 0 | 1 0  ||  1 0  |  0 0 
+0 0 | 20 1  ||  0 1  |  0 0 
+= = = = = = = = = =
+1 20 | 0 0  ||  0 0  |  1 0 
+0 1 | 0 0  ||  0 0  |  0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: -20 1 
+   p_x_O: 0 0 
+   p_x_S: 0 
+
+mu_j_O_0: - 2/0
+mu_j_O_1: - 82/0
+mu_j_S_0: - 8200/0
+
+leaving variable: none
+
+     b_C: 2 122 
+  -c_B_O: 100 10 
+     r_C: 0 0 
+   r_B_O: 0 0 
+
+  lambda: -100 10 
+   x_B_O: 2 82 
+   x_N_O: 3 
+   x_B_S: 8200 
+   denominator: 1
+
+solution: -1023 / 1  ~= -1023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 3 ]
+
+-------
+Pricing
+-------
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 1 0 
+  2 D_Bj: 0 0 
+
+q_lambda: 0 0 
+   q_x_O: 1 -20 
+   q_x_S: 200 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-20
+t_S_0: 8200/200
+
+  t_j: -100/0
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+Update (Step 1)
+---------------
+<--> nonbasic (slack) variable 3 z_replaces basic (original) variable 0
+
+basic variables  :  1  |  5 3 
+basic constraints:  1:i 
+
+    in_B: -1 0 -1 1 -1 0 
+    in_C: -1 0 -1 
+
+basis-inverse:
+0 
+= = = = = = = = = =
+1 || 0 
+denominator = 1
+check: 
+0 | 1  ||  1  |  0 
+= = = = = = = = = =
+1 | 0  ||  0  |  1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 0 
+   p_x_O: 0 
+   p_x_S: 0 0 
+
+mu_j_O_0: - 102/0
+mu_j_S_0: - 8000/0
+mu_j_S_1: - 1/0
+
+leaving variable: none
+
+     b_C: 122 
+  -c_B_O: 10 
+     r_C: 20 
+   r_B_O: 0 
+
+  lambda: 10 
+   x_B_O: 102 
+   x_N_O: 1 3 
+   x_B_S: 8000 1 
+   denominator: 1
+
+solution: -1123 / 1  ~= -1123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 4 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_2 [NT]: -1
+mu_2: -1 LOWER
+mu_4 [NT]: 10
+mu_4: 10 LOWER (slack)
+
+entering variable: 2 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 0 
+  2 D_Bj: 0 
+
+q_lambda: 0 
+   q_x_O: 0 
+   q_x_S: 1 0 
+
+t_min_j: 1/0
+
+t_O_0: inf
+t_S_0: 8000/1 *
+t_S_1: inf
+
+  t_j: -1/0
+
+leaving variable: 5 (= B_S[ 0]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 2 z_replaces basic (slack) variable 5
+
+basic variables  :  1 2  |  3 
+basic constraints:  1:i 2:i 
+
+    in_B: -1 0 1 0 -1 -1 
+    in_C: -1 0 1 
+
+basis-inverse:
+0 
+0 0 
+= = = = = = = = = =
+1 0 || 0 
+-20 1 || 0 0 
+denominator = 1
+check: 
+0 0 | 1 0  ||  1 0  |  0 0 
+0 0 | 20 1  ||  0 1  |  0 0 
+= = = = = = = = = =
+1 20 | 0 0  ||  0 0  |  1 0 
+0 1 | 0 0  ||  0 0  |  0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: -20 1 
+   p_x_O: 0 0 
+   p_x_S: 0 
+
+mu_j_O_0: - 102/0
+mu_j_O_1: - 8003/0
+mu_j_S_0: - 1/0
+
+leaving variable: none
+
+     b_C: 122 10243 
+  -c_B_O: 10 1 
+     r_C: 20 200 
+   r_B_O: 0 0 
+
+  lambda: -10 1 
+   x_B_O: 102 8003 
+   x_N_O: 1 
+   x_B_S: 1 
+   denominator: 1
+
+solution: -9123 / 1  ~= -9123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 5 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: -100
+mu_0: -100 LOWER
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 0 (original)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 20 200 
+  2 D_Bj: 0 0 
+
+q_lambda: 0 0 
+   q_x_O: 20 -200 
+   q_x_S: 1 
+
+t_min_j: 1/0
+
+t_O_0: 100/20
+t_O_1: inf/-200
+t_S_0: 1/1 *
+
+  t_j: -100/0
+
+leaving variable: 3 (= B_S[ 0]: slack)
+
+Update (Step 1)
+---------------
+<--> nonbasic (original) variable 0 z_replaces basic (slack) variable 3
+
+basic variables  :  1 2 0  |  
+basic constraints:  1:i 2:i 0:i 
+
+    in_B: 2 0 1 -1 -1 -1 
+    in_C: 2 0 1 
+
+basis-inverse:
+physical row 5 appended in Q
+0 
+0 0 
+0 0 0 
+= = = = = = = = = =
+1 0 -20 || 0 
+-20 1 200 || 0 0 
+0 0 1 || 0 0 0 
+denominator = 1
+check: 
+0 0 0 | 1 0 20  ||  1 0 0  |  0 0 0 
+0 0 0 | 20 1 200  ||  0 1 0  |  0 0 0 
+0 0 0 | 0 0 1  ||  0 0 1  |  0 0 0 
+= = = = = = = = = =
+1 20 0 | 0 0 0  ||  0 0 0  |  1 0 0 
+0 1 0 | 0 0 0  ||  0 0 0  |  0 1 0 
+20 200 1 | 0 0 0  ||  0 0 0  |  0 0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 0 0 1 
+   p_x_O: 0 0 0 
+   p_x_S: 
+
+mu_j_O_0: - 82/0
+mu_j_O_1: - 8203/0
+mu_j_O_2: - 2/0
+
+leaving variable: none
+
+     b_C: 122 10243 2 
+  -c_B_O: 10 1 100 
+     r_C: 0 0 0 
+   r_B_O: 0 0 0 
+
+  lambda: -10 1 100 
+   x_B_O: 82 8203 2 
+   x_N_O: 
+   x_B_S: 
+   denominator: 1
+
+solution: -9223 / 1  ~= -9223
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 6 ]
+
+-------
+Pricing
+-------
+mu_3 [NT]: 100
+mu_3: 100 LOWER (slack)
+mu_4 [NT]: -10
+mu_4: -10 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 4 (slack)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 1 0 0 
+  2 D_Bj: 0 0 0 
+
+q_lambda: 0 0 0 
+   q_x_O: 1 -20 0 
+   q_x_S: 
+
+t_min_j: 1/0
+
+t_O_0: 80/1 *
+t_O_1: inf/-20
+t_O_2: inf
+
+  t_j: -10/0
+
+leaving variable: 1 (= B_O[ 0]: original)
+
+Update (Step 1)
+---------------
+<--> nonbasic (slack) variable 4 z_replaces basic (original) variable 1
+
+basic variables  :  0 2  |  4 
+basic constraints:  0:i 2:i 
+
+    in_B: 0 -1 1 -1 0 -1 
+    in_C: 0 -1 1 
+
+basis-inverse:
+0 
+0 0 
+= = = = = = = = = =
+1 0 || 0 
+-200 1 || 0 0 
+denominator = 1
+check: 
+0 0 | 1 0  ||  1 0  |  0 0 
+0 0 | 200 1  ||  0 1  |  0 0 
+= = = = = = = = = =
+1 200 | 0 0  ||  0 0  |  1 0 
+0 1 | 0 0  ||  0 0  |  0 1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: -20 0 
+   p_x_O: 0 0 
+   p_x_S: 0 
+
+mu_j_O_0: - 2/0
+mu_j_O_1: - 9803/0
+mu_j_S_0: - 80/0
+
+leaving variable: none
+
+     b_C: 2 10243 
+  -c_B_O: 100 1 
+     r_C: 0 40 
+   r_B_O: 0 0 
+
+  lambda: -100 1 
+   x_B_O: 2 9803 
+   x_N_O: 2 
+   x_B_S: 80 
+   denominator: 1
+
+solution: -10023 / 1  ~= -10023
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 7 ]
+
+-------
+Pricing
+-------
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_3 [NT]: -100
+mu_3: -100 LOWER (slack)
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+entering variable: 3 (slack)
+direction: positive
+
+----------------------------
+Ratio Test & Update (Step 1)
+----------------------------
+
+Ratio Test (Step 1)
+-------------------
+    A_Cj: 1 0 
+  2 D_Bj: 0 0 
+
+q_lambda: 0 0 
+   q_x_O: 1 -200 
+   q_x_S: -20 
+
+t_min_j: 1/0
+
+t_O_0: 1/1 *
+t_O_1: inf/-200
+t_S_0: inf/-20
+
+  t_j: -100/0
+
+leaving variable: 0 (= B_O[ 0]: original)
+
+Update (Step 1)
+---------------
+<--> nonbasic (slack) variable 3 z_replaces basic (original) variable 0
+
+basic variables  :  2  |  4 3 
+basic constraints:  2:i 
+
+    in_B: -1 -1 0 1 0 -1 
+    in_C: -1 -1 0 
+
+basis-inverse:
+0 
+= = = = = = = = = =
+1 || 0 
+denominator = 1
+check: 
+0 | 1  ||  1  |  0 
+= = = = = = = = = =
+1 | 0  ||  0  |  1 
+check ok
+(feasibility not checked in intermediate step)
+
+----------------------------
+Ratio Test & Update (Step 2)
+----------------------------
+
+Ratio Test (Step 2)
+-------------------
+p_lambda: 0 
+   p_x_O: 0 
+   p_x_S: 0 0 
+
+mu_j_O_0: - 10003/0
+mu_j_S_0: - 100/0
+mu_j_S_1: - 1/0
+
+leaving variable: none
+
+     b_C: 10243 
+  -c_B_O: 1 
+     r_C: 240 
+   r_B_O: 0 
+
+  lambda: 1 
+   x_B_O: 10003 
+   x_N_O: 1 2 
+   x_B_S: 100 1 
+   denominator: 1
+
+solution: -10123 / 1  ~= -10123
+
+
+==========
+Pivot Step
+==========
+[ phase II, iteration 8 ]
+
+-------
+Pricing
+-------
+mu_0 [NT]: 100
+mu_0: 100 LOWER
+mu_1 [NT]: 10
+mu_1: 10 LOWER
+mu_5 [NT]: 1
+mu_5: 1 LOWER (slack)
+
+first bound for certification: 4.51028e-13
+|mu_|0 [NT]: 100  ok [1]
+|mu_|1 [NT]: 10  ok [1]
+|mu_|5 [NT]: 1  ok [1]
+
+entering variable: none
+
+solution is OPTIMAL
+
+========
+Validity
+========
+
+----------
+Validation
+----------
+ is in phase II: 1
+       feasible: 1
+        optimal: 1
+  correct value: 1
+-10123(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0

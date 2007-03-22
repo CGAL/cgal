@@ -254,19 +254,19 @@ public:
     this->fu_it = new bool[n];
     this->u_it = new NT[n];
     this->d_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->d_it[j] = new NT[n];
+    for (int j=0; j<n; ++j) this->d_it[j] = new NT[j+1];
     this->c_it = new NT[n];
 
     // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
-    copy_n (b, m, this->b_it);
-    copy_n (r, m, this->r_it);
-    copy_n (fl, n, this->fl_it);
-    copy_n (l, n, this->l_it);
-    copy_n (fu, n, this->fu_it);
-    copy_n (u, n, this->u_it);
-    for (int j=0; j<n; ++j) copy_n (*(d+j), n, this->d_it[j]);
-    copy_n (c, n, this->c_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
+    CGAL::copy_n (b, m, this->b_it);
+    CGAL::copy_n (r, m, this->r_it);
+    CGAL::copy_n (fl, n, this->fl_it);
+    CGAL::copy_n (l, n, this->l_it);
+    CGAL::copy_n (fu, n, this->fu_it);
+    CGAL::copy_n (u, n, this->u_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j]);
+    CGAL::copy_n (c, n, this->c_it);
   }
 
   ~Quadratic_program () 
@@ -422,14 +422,14 @@ public:
     this->c_it = new NT[n];
 
     // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
-    copy_n (b, m, this->b_it);
-    copy_n (r, m, this->r_it);
-    copy_n (fl, n, this->fl_it);
-    copy_n (l, n, this->l_it);
-    copy_n (fu, n, this->fu_it);
-    copy_n (u, n, this->u_it);
-    copy_n (c, n, this->c_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
+    CGAL::copy_n (b, m, this->b_it);
+    CGAL::copy_n (r, m, this->r_it);
+    CGAL::copy_n (fl, n, this->fl_it);
+    CGAL::copy_n (l, n, this->l_it);
+    CGAL::copy_n (fu, n, this->fu_it);
+    CGAL::copy_n (u, n, this->u_it);
+    CGAL::copy_n (c, n, this->c_it);
   }
 
   ~Linear_program () 
@@ -571,15 +571,15 @@ public:
     this->b_it = new NT[m];
     this->r_it = new CGAL::Comparison_result[m];
     this->d_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->d_it[j] = new NT[n];
+    for (int j=0; j<n; ++j) this->d_it[j] = new NT[j+1];
     this->c_it = new NT[n];
 
     // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
-    copy_n (b, m, this->b_it);
-    copy_n (r, m, this->r_it);
-    for (int j=0; j<n; ++j) copy_n (*(d+j), n, this->d_it[j]);
-    copy_n (c, n, this->c_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
+    CGAL::copy_n (b, m, this->b_it);
+    CGAL::copy_n (r, m, this->r_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j]);
+    CGAL::copy_n (c, n, this->c_it);
   }
 
   ~Nonnegative_quadratic_program () 
@@ -718,15 +718,15 @@ public:
     this->b_it = new NT[m];
     this->r_it = new CGAL::Comparison_result[m];
     this->d_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->d_it[j] = new NT[n];
+    for (int j=0; j<n; ++j) this->d_it[j] = new NT[j+1];
     this->c_it = new NT[n];
 
     // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
-    copy_n (b, m, this->b_it);
-    copy_n (r, m, this->r_it);
-    for (int j=0; j<n; ++j) copy_n (*(d+j), n, this->d_it[j]);
-    copy_n (c, n, this->c_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
+    CGAL::copy_n (b, m, this->b_it);
+    CGAL::copy_n (r, m, this->r_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j]);
+    CGAL::copy_n (c, n, this->c_it);
   }
 
   ~Free_quadratic_program () 
@@ -861,10 +861,10 @@ public:
     this->c_it = new NT[n];
 
     // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
-    copy_n (b, m, this->b_it);
-    copy_n (r, m, this->r_it);
-    copy_n (c, n, this->c_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
+    CGAL::copy_n (b, m, this->b_it);
+    CGAL::copy_n (r, m, this->r_it);
+    CGAL::copy_n (c, n, this->c_it);
   }
 
   ~Nonnegative_linear_program () 
@@ -998,10 +998,10 @@ public:
     this->c_it = new NT[n];
 
     // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) copy_n (*(a+j), m, this->a_it[j]);
-    copy_n (b, m, this->b_it);
-    copy_n (r, m, this->r_it);
-    copy_n (c, n, this->c_it);
+    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
+    CGAL::copy_n (b, m, this->b_it);
+    CGAL::copy_n (r, m, this->r_it);
+    CGAL::copy_n (c, n, this->c_it);
   }
 
   ~Free_linear_program () 

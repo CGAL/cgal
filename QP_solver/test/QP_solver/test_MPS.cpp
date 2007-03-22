@@ -73,14 +73,7 @@ int main(const int argNr,const char **args) {
   CGAL::QP_pricing_strategy<QP, ET, Tags> *pricing_strategy =
     new CGAL::QP_partial_filtered_pricing<QP, ET, Tags>;
   typedef CGAL::QP_solver<QP, ET, Tags> Solver;
-  Solver s (qp, pricing_strategy, 1);
-
-  if (s.is_valid()) {
-    cout << "Solution is valid." << endl;
-  } else {
-    cout << "Solution is not valid!" << endl;
-    return 1;
-  }
+  Solver s (qp, pricing_strategy, 4);
 
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {

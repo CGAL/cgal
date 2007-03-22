@@ -226,11 +226,11 @@ namespace QP_functions_detail {
     // check d
     typename Quadratic_program1::D_iterator d1 = qp1.d();
     typename Quadratic_program2::D_iterator d2 = qp2.d();
-    for (int j=0; j<n; ++j, ++d1, ++d2)
-      for (int i=0; i<n; ++i)  // we assume here that D is full!
-	if (*((*d1)+i) != *((*d2)+i)) {
-	  std::cerr << "Equality test fails with D[" << j << "][" << i << "]: "
-		    << *((*d1)+i) << " vs. " <<  *((*d2)+i) << std::endl; 
+    for (int i=0; i<n; ++i, ++d1, ++d2)
+      for (int j=0; j<i+1; ++j)  // only access entries on/below diagonal
+	if (*((*d1)+j) != *((*d2)+j)) {
+	  std::cerr << "Equality test fails with D[" << i << "][" << j << "]: "
+		    << *((*d1)+j) << " vs. " <<  *((*d2)+j) << std::endl; 
 	  return false;
 	}
     // check c

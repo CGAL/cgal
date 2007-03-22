@@ -1344,9 +1344,6 @@ private:
   bool is_solution_optimal() const;
   bool is_value_correct() const;
   bool is_solution_unbounded() const;
-
-public:
-  // validity checks:
   bool is_valid() const;
 
   // ----------------------------------------------------------------------------

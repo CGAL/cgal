@@ -57,6 +57,9 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
   // initialize and solve immediately:
   init();
   solve();
+
+  // certify solution
+  CGAL_qpe_assertion(is_valid());
 }
 
 // set-up of QP

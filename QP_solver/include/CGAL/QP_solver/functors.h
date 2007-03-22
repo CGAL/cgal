@@ -165,13 +165,14 @@ public:
       return ResultType(m[ c][ r]) * 2;
   }
   
-  ResultType entry_pair( int c, Tag_false) const           // not symmetric
-  { 
-    // TEMPORARILY:
-    typedef typename std::iterator_traits<
-      typename std::iterator_traits<MatrixIt>::value_type>::value_type IT;
-    return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
-  }
+  // this should not be used anymore:
+  //   ResultType entry_pair( int c, Tag_false) const  // not symmetric
+  //   { 
+  //     // TEMPORARILY:
+  //     typedef typename std::iterator_traits<
+  //       typename std::iterator_traits<MatrixIt>::value_type>::value_type IT;
+  //     return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
+  //   }
   
 private:
   MatrixIt           m;
