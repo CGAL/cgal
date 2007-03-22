@@ -201,33 +201,37 @@ template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::is_value_correct() const
 {
   // checks whether solution_numerator() returns the right value
-  // by computing x^T D x + x^T c + c0 from scratch; we use the numerators
-  // of the variables, so x^T D x carries a factor of d^2, while x^T c
-  // carries a factor of d (must be compensated for); solution_numerator() 
-  // carries a factor of d^2
+  // by computing 2 f(x) = x^T 2D x + 2x^T c + 2c0 from scratch; 
+  // we have a common numerator d for the variables, so in our computations, 
+  // - x^T 2D x carries a factor of d^2, 
+  // - x^T 2c carries a factor of d,
+  // - 2c0 carries no factor 
   CGAL_qpe_assertion(is_phaseII);
-  // compute x^T D x + d c = sum_i x_i (D_i x + d c_i)
-  ET z = et0; // for x^T D x + d c
   int i = 0;
+  ET z = et0; // represents x_i (2D_i x + 2c_i)
   for (Variable_numerator_iterator 
 	 i_it = original_variables_numerator_begin(); 
        i_it < original_variables_numerator_end(); ++i_it, ++i) {
     if (*i_it == et0) continue; // no contribution from this variable
-    ET s = et0; // for D_i x + c_i
+    ET s = et0; // represents 2D_i x + 2c_i
     int j = 0;
     if (is_QP) {
-      for (Variable_numerator_iterator j_it = 
-	     original_variables_numerator_begin(); 
-            j_it < original_variables_numerator_end(); ++j_it, ++j)
-         s += ET(qp_D[i][j]) * *j_it; // D_ij x_j
+      Variable_numerator_iterator j_it = 
+	original_variables_numerator_begin();
+      // half the offdiagonal contribution
+      for (;j<i; ++j_it, ++j)
+         s += ET((*(qp_D+i))[j]) * *j_it; // 2D_ij x_j * d
+      // the other half
+      s *= et2;
+      // the diagonal
+      s += ET((*(qp_D+i))[j]) * *j_it;
     } 
-    // now s = D_i x
-    s += d * ET(qp_c[i]);                 // add d * c_i
-    // now s = D_i x + d c_i
-    z += s * *i_it;                   // add x_i (D_i x + d c_i)
+    s += et2 * d * ET(qp_c[i]);       // add 2c_i * d
+    z += s * *i_it;                   // add d*(2D_i x + 2 c_i) * d*x_i
   }
-  // handle constant term
-  return (z + d * d * ET(qp_c0)) == solution_numerator();
+  // add constant term
+  z += d * d * et2 * ET(qp_c0);       // now z = 2*d^2 * f(x) 
+  return (z * solution_denominator() == d * d * et2 * solution_numerator());
 }
 
 template < typename Q, typename ET, typename Tags >

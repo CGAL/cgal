@@ -117,7 +117,7 @@ denominator = 1
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: 0 / 1  ~= 0
+solution: 0 / 2  ~= 0
 
 pricing: full filtered
 
@@ -142,7 +142,7 @@ check ok
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: -123 / 1  ~= -123
+solution: -246 / 2  ~= -123
 
 
 ==========
@@ -208,7 +208,7 @@ check ok
    x_B_S: 9800 80 
    denominator: 1
 
-solution: -223 / 1  ~= -223
+solution: -446 / 2  ~= -223
 
 
 ==========
@@ -276,7 +276,7 @@ check ok
    x_B_S: 8200 
    denominator: 1
 
-solution: -1023 / 1  ~= -1023
+solution: -2046 / 2  ~= -1023
 
 
 ==========
@@ -342,7 +342,7 @@ check ok
    x_B_S: 8000 1 
    denominator: 1
 
-solution: -1123 / 1  ~= -1123
+solution: -2246 / 2  ~= -1123
 
 
 ==========
@@ -410,7 +410,7 @@ check ok
    x_B_S: 1 
    denominator: 1
 
-solution: -9123 / 1  ~= -9123
+solution: -18246 / 2  ~= -9123
 
 
 ==========
@@ -480,7 +480,7 @@ check ok
    x_B_S: 
    denominator: 1
 
-solution: -9223 / 1  ~= -9223
+solution: -18446 / 2  ~= -9223
 
 
 ==========
@@ -548,7 +548,7 @@ check ok
    x_B_S: 80 
    denominator: 1
 
-solution: -10023 / 1  ~= -10023
+solution: -20046 / 2  ~= -10023
 
 
 ==========
@@ -614,7 +614,7 @@ check ok
    x_B_S: 100 1 
    denominator: 1
 
-solution: -10123 / 1  ~= -10123
+solution: -20246 / 2  ~= -10123
 
 
 ==========
@@ -694,7 +694,7 @@ denominator = 1
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: 0 / 1  ~= 0
+solution: 0 / 2  ~= 0
 
 pricing: full filtered
 
@@ -719,7 +719,7 @@ check ok
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: -123 / 1  ~= -123
+solution: -246 / 2  ~= -123
 
 
 ==========
@@ -785,7 +785,7 @@ check ok
    x_B_S: 9800 80 
    denominator: 1
 
-solution: -223 / 1  ~= -223
+solution: -446 / 2  ~= -223
 
 
 ==========
@@ -853,7 +853,7 @@ check ok
    x_B_S: 8200 
    denominator: 1
 
-solution: -1023 / 1  ~= -1023
+solution: -2046 / 2  ~= -1023
 
 
 ==========
@@ -919,7 +919,7 @@ check ok
    x_B_S: 8000 1 
    denominator: 1
 
-solution: -1123 / 1  ~= -1123
+solution: -2246 / 2  ~= -1123
 
 
 ==========
@@ -987,7 +987,7 @@ check ok
    x_B_S: 1 
    denominator: 1
 
-solution: -9123 / 1  ~= -9123
+solution: -18246 / 2  ~= -9123
 
 
 ==========
@@ -1057,7 +1057,7 @@ check ok
    x_B_S: 
    denominator: 1
 
-solution: -9223 / 1  ~= -9223
+solution: -18446 / 2  ~= -9223
 
 
 ==========
@@ -1125,7 +1125,7 @@ check ok
    x_B_S: 80 
    denominator: 1
 
-solution: -10023 / 1  ~= -10023
+solution: -20046 / 2  ~= -10023
 
 
 ==========
@@ -1191,7 +1191,7 @@ check ok
    x_B_S: 100 1 
    denominator: 1
 
-solution: -10123 / 1  ~= -10123
+solution: -20246 / 2  ~= -10123
 
 
 ==========
@@ -1272,7 +1272,7 @@ denominator = 1
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: 0 / 1  ~= 0
+solution: 0 / 2  ~= 0
 
 pricing: full filtered
 
@@ -1299,7 +1299,7 @@ check ok
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: -123 / 1  ~= -123
+solution: -246 / 2  ~= -123
 
 
 ==========
@@ -1393,7 +1393,7 @@ leaving variable: none
    x_B_S: 9800 80 
    denominator: 1
 
-solution: -223 / 1  ~= -223
+solution: -446 / 2  ~= -223
 
 
 ==========
@@ -1491,7 +1491,7 @@ leaving variable: none
    x_B_S: 8200 
    denominator: 1
 
-solution: -1023 / 1  ~= -1023
+solution: -2046 / 2  ~= -1023
 
 
 ==========
@@ -1584,7 +1584,7 @@ leaving variable: none
    x_B_S: 8000 1 
    denominator: 1
 
-solution: -1123 / 1  ~= -1123
+solution: -2246 / 2  ~= -1123
 
 
 ==========
@@ -1681,7 +1681,7 @@ leaving variable: none
    x_B_S: 1 
    denominator: 1
 
-solution: -9123 / 1  ~= -9123
+solution: -18246 / 2  ~= -9123
 
 
 ==========
@@ -1783,7 +1783,7 @@ leaving variable: none
    x_B_S: 
    denominator: 1
 
-solution: -9223 / 1  ~= -9223
+solution: -18446 / 2  ~= -9223
 
 
 ==========
@@ -1880,7 +1880,7 @@ leaving variable: none
    x_B_S: 80 
    denominator: 1
 
-solution: -10023 / 1  ~= -10023
+solution: -20046 / 2  ~= -10023
 
 
 ==========
@@ -1973,7 +1973,7 @@ leaving variable: none
    x_B_S: 100 1 
    denominator: 1
 
-solution: -10123 / 1  ~= -10123
+solution: -20246 / 2  ~= -10123
 
 
 ==========
@@ -2054,7 +2054,7 @@ denominator = 1
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: 0 / 1  ~= 0
+solution: 0 / 2  ~= 0
 
 pricing: full filtered
 
@@ -2081,7 +2081,7 @@ check ok
    x_B_S: 1 100 10000 
    denominator: 1
 
-solution: -123 / 1  ~= -123
+solution: -246 / 2  ~= -123
 
 
 ==========
@@ -2175,7 +2175,7 @@ leaving variable: none
    x_B_S: 9800 80 
    denominator: 1
 
-solution: -223 / 1  ~= -223
+solution: -446 / 2  ~= -223
 
 
 ==========
@@ -2273,7 +2273,7 @@ leaving variable: none
    x_B_S: 8200 
    denominator: 1
 
-solution: -1023 / 1  ~= -1023
+solution: -2046 / 2  ~= -1023
 
 
 ==========
@@ -2366,7 +2366,7 @@ leaving variable: none
    x_B_S: 8000 1 
    denominator: 1
 
-solution: -1123 / 1  ~= -1123
+solution: -2246 / 2  ~= -1123
 
 
 ==========
@@ -2463,7 +2463,7 @@ leaving variable: none
    x_B_S: 1 
    denominator: 1
 
-solution: -9123 / 1  ~= -9123
+solution: -18246 / 2  ~= -9123
 
 
 ==========
@@ -2565,7 +2565,7 @@ leaving variable: none
    x_B_S: 
    denominator: 1
 
-solution: -9223 / 1  ~= -9223
+solution: -18446 / 2  ~= -9223
 
 
 ==========
@@ -2662,7 +2662,7 @@ leaving variable: none
    x_B_S: 80 
    denominator: 1
 
-solution: -10023 / 1  ~= -10023
+solution: -20046 / 2  ~= -10023
 
 
 ==========
@@ -2755,7 +2755,7 @@ leaving variable: none
    x_B_S: 100 1 
    denominator: 1
 
-solution: -10123 / 1  ~= -10123
+solution: -20246 / 2  ~= -10123
 
 
 ==========

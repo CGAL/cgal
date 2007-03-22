@@ -83,7 +83,8 @@ transition( )
 
 // access
 // ------
-// numerator of current solution
+// numerator of current solution; the denominator is 2*d*d, so we should
+// compute here d*d*(x^T2Dx + x^T2c + 2c0)
 template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::
 solution_numerator( ) const
@@ -104,25 +105,25 @@ solution_numerator( ) const
       for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_i_it, ++c_it){
         i = *i_it;
 
-        // quadratic part
+        // compute quadratic part: 2D_i x
         s = et0;
         if ( is_QP && is_phaseII) {
-       
-	  // foreach j < i
+	  // half the off-diagonal contribution
 	  s += std::inner_product(x_B_O.begin(), x_i_it,
 				  D_pairwise_iterator(
 					 B_O.begin(),
 					 D_pairwise_accessor( qp_D, i)),
 				  et0);
-
-	  // D_{i,i} x_i
+	  // the other half
+	  s *= et2;
+	  // diagonal contribution
 	  s += ET( qp_D[ i][ i]) * *x_i_it;
         }
-        // linear part
-        s -= d * *c_it;
+        // add linear part: 2c_i
+        s -= d * et2 * ET( *c_it);
 
-        // accumulate
-        z += s * *x_i_it;
+        // add x_i(2D_i x + 2c_i)
+        z += s * *x_i_it; // endowed with a factor of d*d now
       }
     } else {
       // nonstandard form and phase II, 
@@ -138,11 +139,17 @@ solution_numerator( ) const
 	  // do something only if *i_it != 0
 	  if (*i_it == et0) continue;
 	  s = et0; // contribution of i-th row
-	  j=0; 
-	  for (Variable_numerator_iterator 
-		 j_it = original_variables_numerator_begin(); 
-	       j_it < original_variables_numerator_end(); ++j_it, ++j)
-	    s += ET(qp_D[i][j]) * *j_it;
+	  Variable_numerator_iterator j_it = 
+	    original_variables_numerator_begin();
+	  // half the off-diagonal contribution
+	  j=0;
+	  for (; j<i; ++j_it, ++j)
+	    s += ET((*(qp_D+i))[j]) * *j_it;
+	  // the other half
+	  s *= et2;
+	  // the diagonal entry
+	  s += ET((*(qp_D+i))[j]) * *j_it;
+	  // accumulate
 	  z += s * *i_it;
 	}
       }
@@ -151,11 +158,11 @@ solution_numerator( ) const
       for (Variable_numerator_iterator 
 	     j_it = original_variables_numerator_begin();
 	   j_it < original_variables_numerator_end(); ++j_it, ++j)
-	s +=  ET(qp_c[j]) * *j_it;
+	s +=  et2 * ET(qp_c[j]) * *j_it;
       z += d * s;
     }
     // finally, add the constant term
-    return z += ET(qp_c0) * d * d;
+    return z += et2 * ET(qp_c0) * d * d;
 }
 
 // pivot step
@@ -255,7 +262,7 @@ pivot_step( )
 		    q_lambda.begin(),    q_x_O.begin());
 	        if (is_QP) {
 		    if (j < qp_n) {
-		        nu -= et2*d*ET(qp_D[j][j]);
+		        nu -= d*ET(qp_D[j][j]);
 		    }
 		}
 		CGAL_qpe_assertion(nu == et0);

@@ -40,7 +40,6 @@ namespace QP_functions_detail {
   void print_program
   (std::ostream& out, 
    const P &p,
-   const bool d_matrix, 
    const std::string& problem_name,
    Is_linear is_linear, 
    Is_nonnegative is_nonnegative); 
@@ -59,44 +58,42 @@ namespace QP_functions_detail {
 
 template <typename QuadraticProgram>
 void print_quadratic_program 
-(std::ostream& out, const QuadraticProgram &qp, const bool dmatrix = false,
+(std::ostream& out, const QuadraticProgram &qp, 
  const std::string& problem_name = std::string("MY_MPS"))
 // writes qp to out in MPS format
 {
   QP_functions_detail::print_program 
-    (out, qp, dmatrix, problem_name, CGAL::Tag_false(), CGAL::Tag_false());
+    (out, qp, problem_name, CGAL::Tag_false(), CGAL::Tag_false());
 }
 
 template <typename LinearProgram>
 void print_linear_program 
-(std::ostream& out, const LinearProgram &lp, const bool dmatrix = false,
+(std::ostream& out, const LinearProgram &lp, 
  const std::string& problem_name = std::string("MY_MPS"))
 // writes lp to out in MPS format
 {
   QP_functions_detail::print_program 
-    (out, lp, dmatrix, problem_name, CGAL::Tag_true(), CGAL::Tag_false());
+    (out, lp, problem_name, CGAL::Tag_true(), CGAL::Tag_false());
 }
 
 template <typename NonnegativeQuadraticProgram>
 void print_nonnegative_quadratic_program 
 (std::ostream& out, const NonnegativeQuadraticProgram &qp,
- const bool dmatrix = false,
  const std::string& problem_name = std::string("MY_MPS"))
 // writes qp to out in MPS format
 {
   QP_functions_detail::print_program 
-    (out, qp, dmatrix, problem_name, CGAL::Tag_false(), CGAL::Tag_true());
+    (out, qp, problem_name, CGAL::Tag_false(), CGAL::Tag_true());
 }
 
 template <typename NonnegativeLinearProgram>
 void print_nonnegative_linear_program 
 (std::ostream& out, const NonnegativeLinearProgram &lp,
- const bool dmatrix = false,
  const std::string& problem_name = std::string("MY_MPS"))
 // writes lp to out in MPS format
 {
   QP_functions_detail::print_program 
-    (out, lp, dmatrix, problem_name, CGAL::Tag_true(), CGAL::Tag_true());
+    (out, lp, problem_name, CGAL::Tag_true(), CGAL::Tag_true());
 }
 
 template <typename QuadraticProgram, typename ET>

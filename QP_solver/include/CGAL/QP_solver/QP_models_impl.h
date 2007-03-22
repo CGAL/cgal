@@ -614,7 +614,7 @@ bool QP_from_mps<IT_, Is_linear_,
 
   // remember section name:
   D_section = t;
-  const bool divide_by_two = t!="DMATRIX";
+  const bool multiply_by_two = t=="DMATRIX";
   const bool only_get_lower_part = t =="QUADOBJ";
 
   t = token();
@@ -640,9 +640,9 @@ bool QP_from_mps<IT_, Is_linear_,
     if (!number(val))
       return err1("expected number after '%' in section QMATRIX",t);
 
-    // divide by two if approriate:
-    if (divide_by_two)
-      halve (val);
+    // multiply by two if approriate:
+    if (multiply_by_two)
+      val *= IT(2);
 
     // mark problem as nonlinear if value is nonzero, and
     // bail out if we are supposed to read a linear program

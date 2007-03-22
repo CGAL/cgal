@@ -323,10 +323,12 @@ private:
   int                      qp_n;      // number of variables
   int                      qp_m;      // number of constraints
     
+  // min x^T D x + c^T x + c0
   A_iterator               qp_A;      // constraint matrix
   B_iterator               qp_b;      // right-hand-side vector
   C_iterator               qp_c;      // objective vector
   C_entry                  qp_c0;     // constant term in objective function
+  // attention: qp_D represents *twice* the matrix D
   D_iterator               qp_D;      // objective matrix
   Row_type_iterator        qp_r;      // row-types of constraints
   FL_iterator              qp_fl;     // lower bound finiteness vector
@@ -585,12 +587,15 @@ public:
   ET  solution_numerator( ) const;
 
   // access to current solution
-  ET  solution_denominator( ) const { return d*d; }
+  ET  solution_denominator( ) const { return et2*d*d; }
     
   Quotient<ET>  solution( ) const
-  { return 
-      Quotient_creator (Quotient_normalizer(),
-			U_Quotient_creator())(solution_numerator(), d*d);}
+  { 
+    return 
+      Quotient_creator 
+      (Quotient_normalizer(),
+       U_Quotient_creator())(solution_numerator(), solution_denominator());
+  }
   // access to original variables
   int  number_of_original_variables( ) const { return qp_n; }
     
@@ -1491,7 +1496,7 @@ private:
       mu_j += inv_M_B.inner_product_x
 	( x_it,
 	  D_by_index_iterator( B_O.begin(),
-			       D_by_index_accessor( qp_D[ j]))) * NT( 2);
+			       D_by_index_accessor( *(qp_D + j))));
     }
   }
 
@@ -1506,7 +1511,7 @@ private:
       mu_j += inv_M_B.inner_product_x
 	( x_it,
 	  D_by_index_iterator( B_O.begin(),
-			       D_by_index_accessor( qp_D[ j]))) * NT( 2);
+			       D_by_index_accessor( *(qp_D + j))));
     }
   }
 
@@ -1744,7 +1749,7 @@ ratio_test_1__t_j( Tag_false)
     nu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
 				    q_lambda.begin(),    q_x_O.begin());
     if ( j < qp_n) {                                // original variable
-      nu -= et2*d*ET( qp_D[ j][ j]);
+      nu -= d*ET( (*(qp_D + j))[ j]);
     }
     CGAL_qpe_assertion_msg(nu <= et0,
 			   "nu <= et0 violated -- is your D matrix positive semidefinite?");

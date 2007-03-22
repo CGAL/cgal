@@ -118,8 +118,8 @@ namespace QP_functions_detail {
 
   // helper for MPS output: DMATRIX/QMATRIX
   template <typename P>
-  void print_dmatrix 
-  (std::ostream& out, const P& p, const bool dmatrix,
+  void print_qmatrix 
+  (std::ostream& out, const P& p, 
    CGAL::Tag_true /*is_linear*/)
   {
     // nop
@@ -127,8 +127,8 @@ namespace QP_functions_detail {
 
   // helper for MPS output: DMATRIX/QMATRIX
   template <typename P>
-  void print_dmatrix 
-  (std::ostream& out, const P& p, const bool dmatrix,
+  void print_qmatrix 
+  (std::ostream& out, const P& p, 
    CGAL::Tag_false /*is_linear*/)
   {
     typename P::D_iterator it = p.d();
@@ -139,11 +139,10 @@ namespace QP_functions_detail {
 	if (!CGAL::is_zero(*(*it + j))) {
 	  if (empty_D) {
 	    // first time we see a nonzero entry
-	    dmatrix ? out << "DMATRIX\n" : out << "QMATRIX\n";
+	    out << "QMATRIX\n";
 	    empty_D = false;
 	  }
-	  out << "  x" << i << "  x" << j << "  " << 
-	    (dmatrix ? *(*it + j) : 2*(*(*it + j))) << "\n";
+	  out << "  x" << i << "  x" << j << "  " << *(*it + j) << "\n";
 	}
     }
   }
@@ -255,8 +254,7 @@ namespace QP_functions_detail {
 
   template <typename P, typename Is_linear, typename Is_nonnegative>
   void print_program
-  (std::ostream& out, 
-   const P &p, const bool dmatrix,
+  (std::ostream& out, const P& p, 
    const std::string& problem_name,
    Is_linear is_linear, 
    Is_nonnegative is_nonnegative)
@@ -309,7 +307,7 @@ namespace QP_functions_detail {
     QP_functions_detail::print_bounds (out, p, is_nonnegative); 
 
     // QMATRIX section:
-    QP_functions_detail::print_dmatrix (out, p, dmatrix, is_linear);
+    QP_functions_detail::print_qmatrix (out, p, is_linear);
  
     // output end:
     out << "ENDATA\n";

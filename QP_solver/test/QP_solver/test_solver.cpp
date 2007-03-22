@@ -410,13 +410,13 @@ bool process(const std::string& filename,
     return false;
   }
 
-  // print program (using DMATRIX format), read it back in and check 
+  // print program (using QMATRIX format), read it back in and check 
   // whether it still agrees with the original program
   std::stringstream inout;
   // if we have doubles, adjust precision to accomodate high-precision doubles
   if (is_double(IT())) inout << std::setprecision (12);
   CGAL::QP_functions_detail::print_program 
-    (inout, qp, true, std::string("test_io_mps"),
+    (inout, qp, std::string("test_io_mps"),
      Is_linear(),Is_nonnegative());
   QP_instance qp3(inout, true, verbosity);
   CGAL_qpe_assertion (qp3.is_valid());

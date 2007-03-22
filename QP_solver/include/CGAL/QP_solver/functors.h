@@ -160,9 +160,9 @@ public:
     // make sure that only entries on or below the diagonal are
     // accessed
     if (c <= r)
-      return ResultType(v[ c]) * 2; 
+      return ResultType(v[ c]); 
     else
-      return ResultType(m[ c][ r]) * 2;
+      return ResultType(m[ c][ r]);
   }
   
   // this should not be used anymore:

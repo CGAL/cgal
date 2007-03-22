@@ -71,7 +71,7 @@ int main(const int argNr,const char **args) {
   }
   typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_true> Tags;
   CGAL::QP_pricing_strategy<QP, ET, Tags> *pricing_strategy =
-    new CGAL::QP_partial_filtered_pricing<QP, ET, Tags>;
+    new CGAL::QP_full_exact_pricing<QP, ET, Tags>;
   typedef CGAL::QP_solver<QP, ET, Tags> Solver;
   Solver s (qp, pricing_strategy, 4);
 

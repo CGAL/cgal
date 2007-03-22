@@ -63,20 +63,8 @@ int main(const int argNr,const char **args) {
     std::exit(2);
   }
 
-//   if (verbosity > 0) {
-//     CGAL::print_quadratic_program (cout, qp);
-//     cout << std::endl;
-//   }
-
   typedef CGAL::Quadratic_program_solution<ET> Solution;
   Solution s = CGAL::solve_quadratic_program (qp, ET(0));
-
-  if (s.is_valid()) {
-    cout << "Solution is valid." << endl;
-  } else {
-    cout << "Solution is not valid!" << endl;
-    return 1;
-  }
 
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {
