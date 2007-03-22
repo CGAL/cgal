@@ -167,6 +167,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 
 int main(int argc, char *argv[])
 {
+#ifdef CGAL_USE_LAPACK
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
   unsigned int int_tag;
 
@@ -354,6 +355,12 @@ int main(int argc, char *argv[])
     for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++)
       out_verb << **iter_umb;
   }
+
+#else 
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+   
+#endif // CGAL_USE_LAPACK
 
   return 0;
 }

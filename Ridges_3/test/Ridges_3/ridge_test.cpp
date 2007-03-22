@@ -161,6 +161,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 
 int main()
 {  
+#ifdef CGAL_USE_LAPACK
   //load the model from <mesh.off>
   PolyhedralSurf P;
   std::ifstream stream("data/ellipsoid.off");
@@ -236,6 +237,11 @@ int main()
  
   std::cout << "success\n";
 
+#else 
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+   
+#endif // CGAL_USE_LAPACK
   return 0;
 }
  

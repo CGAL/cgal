@@ -36,15 +36,15 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                blind$(EXE_EXT) 
+                Compute_Ridges_Umbilics$(EXE_EXT) 
 
-BLIND_OBJS=PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
-blind$(EXE_EXT): $(BLIND_OBJS)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind  $(BLIND_OBJS) \
+COMPUTE_RIDGES_UMBILICS_OBJS=PolyhedralSurf$(OBJ_EXT) Compute_Ridges_Umbilics$(OBJ_EXT)
+Compute_Ridges_Umbilics$(EXE_EXT): $(COMPUTE_RIDGES_UMBILICS_OBJS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Compute_Ridges_Umbilics  $(COMPUTE_RIDGES_UMBILICS_OBJS) \
 	$(LDFLAGS) 
 
 clean: \
-        blind.clean PolyhedralSurf.clean 
+        Compute_Ridges_Umbilics.clean PolyhedralSurf.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

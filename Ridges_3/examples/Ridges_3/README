@@ -1,4 +1,4 @@
-Program blind
+Program Compute_Ridges_Umbilics
 -----------------
 takes a polyhedron (filename.off file) as input,
 it computes a jet fitting to set the monge data at each vertex 
@@ -49,14 +49,8 @@ Note : if the nb of collected points is less than the required min number of
  
 EXAMPLES
 ---------------------------------------------------------
-./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3 -v
+./Compute_Ridges_Umbilics -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3 -v0
 
 visu with:
 
  ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
-
-
-crest -f data/mecanic.off -d4 -m4 -a4 -t4
-
-
- blind -f data/models/aim@shape/brain.off -d4 -m4 -a3 -t4
