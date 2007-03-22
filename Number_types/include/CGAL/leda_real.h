@@ -170,9 +170,9 @@ template <> class Real_embeddable_traits< leda_real >
             leda_bigfloat berr = x.get_bigfloat_error();
             
             double dummy;
-            double low = (bnum - berr).to_double(dummy, 
+            double low = CGAL_LEDA_SCOPE::sub(bnum, berr, 53, CGAL_LEDA_SCOPE::TO_N_INF).to_double(dummy, 
                                                      CGAL_LEDA_SCOPE::TO_N_INF);
-            double upp = (bnum + berr).to_double(dummy, 
+            double upp = CGAL_LEDA_SCOPE::add(bnum, berr, 53, CGAL_LEDA_SCOPE::TO_P_INF).to_double(dummy, 
                                                      CGAL_LEDA_SCOPE::TO_P_INF);
             
             std::pair<double, double> result(low, upp);
