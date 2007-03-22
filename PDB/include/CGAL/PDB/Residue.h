@@ -211,7 +211,7 @@ CGAL_PDB_BEGIN_NAMESPACE
     //! Write it for debugging
     void dump(std::ostream &out) const;
     //! Write the lines for a pdb file
-    void write(char chain, std::ostream &out) const;
+    void write(char chain, char insert_code, std::ostream &out) const;
    
     
 

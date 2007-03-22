@@ -83,7 +83,8 @@ CGAL_PDB_BEGIN_NAMESPACE
       char charge[3]={'\0','\0','\0'};
       int numscan= sscanf(line, CGAL_PDB_INTERNAL_NS::atom_line_iformat_,
 			  //"ATOM  %5d%4s%1c%3s%1c%4d%1c%8f%8f%8f%6f%6f%4s%2s%2s",
-			  &snum, name, &alt, resname, &chain, &resnum, &insertion_residue_code,
+			  &snum, name, &alt, resname, &chain, &resnum,
+			  &insertion_residue_code,
 			  &x,&y,&z, &occupancy, &tempFactor, segID, element, charge);
       if (chain_==' ') chain_=chain;
       if (!(chain_==' ' || chain== chain_)){
@@ -102,30 +103,32 @@ CGAL_PDB_BEGIN_NAMESPACE
       }
 
       Residue::Index resindex(resnum);
-
-      if (insertion_residue_code != ' ' 
-	  && (!residues_.empty() && resindex == residues_.back().index())){
-	static bool skip_alt=false;
-	if (!skip_alt){
-	  CGAL_PDB_INTERNAL_NS::error_logger.new_warning("Skipping alternate residue.");
-	}
-	skip_alt=true;
-	return;
-      }
-      
       
       Residue::Atom_label al= Residue::atom_label(name);
       
       if (al != Residue::AL_OTHER) {
-	if (residues_.empty() || residues_.back().index() != resindex) {
-	  std::string nm(line, 17, 3);
-	  Residue::Type rl= Residue::type(resname);
-	  residues_.push_back(Residue(rl));
-	  residues_.back().set_index(resindex);
-	}
+	Residue *cur_residue=NULL;
+  
+	if (insertion_residue_code != ' '){
+	  if (insert_residues_[resindex].empty() 
+	      || insert_residues_[resindex].back().first != insertion_residue_code) {
+	    Residue::Type rl= Residue::type(resname);
+	    insert_residues_[resindex].push_back(std::make_pair(insertion_residue_code,
+							       Residue(rl)));
+	    insert_residues_[resindex].back().second.set_index(resindex);
+	  } 
+	  cur_residue= &insert_residues_[resindex].back().second;
+	} else {
+	  if (residues_.empty() || residues_.back().index() != resindex) {
+	    std::string nm(line, 17, 3);
+	    Residue::Type rl= Residue::type(resname);
+	    residues_.push_back(Residue(rl));
+	    residues_.back().set_index(resindex);
+	  } 
+	  cur_residue =&residues_.back();
+	}    
 
 	Atom::Index sindex(snum);
-	
 
 	Atom a;
 	//a.set_label(Residue::atom_label(al));
@@ -141,26 +144,26 @@ CGAL_PDB_BEGIN_NAMESPACE
 	a.set_element(element);
 	a.set_charge(charge);
       
-	if (residues_.back().index().to_index() 
+	if (cur_residue->index().to_index() 
 	    != static_cast<unsigned int>(resnum)){
 	  std::ostringstream oss;
-	  oss << "Confusion over residue numbers. Expected" << residues_.back().index()
+	  oss << "Confusion over residue numbers. Expected" << cur_residue->index()
 	      << " got " << resnum 
 	      << " on line:\n" << line << std::endl;
 	  CGAL_PDB_INTERNAL_NS::error_logger.new_fatal_error(oss.str().c_str());
 	  return;
 	}
-	if (residues_.back().type() != Residue::type(resname)){
+	if (cur_residue->type() != Residue::type(resname)){
 	  std::ostringstream oss;
 	  oss << "Confusion over residue types. Expected" 
-	      << Residue::type_string(residues_.back().type())
+	      << Residue::type_string(cur_residue->type())
 	      << " got " << Residue::type_string(Residue::type(resname))
 	      << " on line:\n" << line << std::endl;
 	  CGAL_PDB_INTERNAL_NS::error_logger.new_fatal_error(oss.str().c_str());
 	}
-	//assert(residues_.back().type() == Residue::type(resname));
+	//assert(cur_residue->type() == Residue::type(resname));
 	
-	residues_.back().set_atom(al, a);
+	cur_residue->set_atom(al, a);
 	
 	//residue(resnum-1)->set_coords (al, Point(x,y,z));
 	//residue(resnum-1)->set_index(al, snum);
@@ -229,7 +232,14 @@ CGAL_PDB_BEGIN_NAMESPACE
       const Residue &res= residues_[i];
       //Residue::Label rl =  res.label();
       //residues_[i]->atoms();
-      res.write(chain_, out);
+      res.write(chain_, ' ', out);
+      Residue::Index index = res.index();
+      if (insert_residues_.find(index) != insert_residues_.end()) {
+	for (unsigned int i=0; i< insert_residues_.find(index)->second.size(); ++i){
+	  insert_residues_.find(index)->second.at(i).second.write(chain_, 
+								  insert_residues_.find(index)->second.at(i).first, out);
+	}
+      }
     }
     const char *terformat="TER   %5d      %3s %c%3d%c";
     if (!residues_.empty()) {

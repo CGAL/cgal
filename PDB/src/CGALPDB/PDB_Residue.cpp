@@ -166,7 +166,7 @@ struct Compare_index{
   }
 };
 
-void Residue::write(char chain, std::ostream &out) const {
+void Residue::write(char chain, char insertion_residue_code, std::ostream &out) const {
   char line[81];
   std::vector<std::pair<Atom_label, Atom> > atoms(atoms_.begin(), atoms_.end());
   std::sort(atoms.begin(), atoms.end(), Compare_index());
@@ -178,7 +178,6 @@ void Residue::write(char chain, std::ostream &out) const {
     Point pt = a.cartesian_coords();
     char alt=' ';
     //char chain=' ';
-    char insertion_residue_code=' ';
     sprintf(line, CGAL_PDB_INTERNAL_NS::atom_line_oformat_,
 	    a.index().to_index(), Residue::atom_label_string(al).c_str(), alt,
 	    Residue::type_string(type()).c_str(), chain,index().to_index(), insertion_residue_code,

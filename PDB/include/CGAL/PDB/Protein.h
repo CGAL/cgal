@@ -219,6 +219,8 @@ CGAL_PDB_BEGIN_NAMESPACE
     std::vector<Residue> residues_;
     std::vector<std::string> header_;
     //static Residue dummy_residue_;
+    std::map<Residue::Index,
+	      std::vector<std::pair<char, Residue> > > insert_residues_; 
     char chain_;
   };
 
@@ -326,8 +328,10 @@ CGAL_PDB_BEGIN_NAMESPACE
     Const_atoms_iterator(Protein::Atoms_iterator it){
       rit_= it.rit_;
       rend_= it.rend_;
-      ait_= it.ait_;
-      aend_= it.aend_;
+      if (rit_ != rend_) {
+	ait_= it.ait_;
+	aend_= it.aend_;
+      }
     }
 
   protected:
