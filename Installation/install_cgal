@@ -4527,7 +4527,7 @@ installation()
     OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
     log_print "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")"
     _do_command \
-      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
+      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s\'-I\$\(CGAL_INCL_CONF_DIR\)\'\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" | ${_sed} \"\"s-Wl,-R\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-Wl,-R\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
       "Install CGAL Makefile"
 
     write_buffer "\n"
@@ -5177,14 +5177,16 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	     CUSTOM_CXXFLAGS="${CUSTOM_CXXFLAGS} ${CPPFLAGS}"
 	     log_print 'Setting CUSTOM_CXXFLAGS from \$CPPFLAGS.'
         fi
+		log_print "CUSTOM_CXXFLAGS is " ${CUSTOM_CXXFLAGS}
     fi
     if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then
-	CUSTOM_LDFLAGS="${LDFLAGS}"
-	log_print 'Setting CUSTOM_LDFLAGS from \$LDFLAGS.'
+	    CUSTOM_LDFLAGS="${LDFLAGS}"
+	    log_print 'Setting CUSTOM_LDFLAGS from \$LDFLAGS.'
+		log_print "CUSTOM_LDFLAGS is " ${CUSTOM_LDFLAGS}
     fi
     if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
-	COMPILER="${CXX}"
-	log_print 'Setting COMPILER from \$CXX.'
+	    COMPILER="${CXX}"
+	    log_print 'Setting COMPILER from \$CXX.'
     fi
 
     log_to_file
