@@ -28,10 +28,6 @@ using boost::bimap::set_of;
 
 int main()
 {
-  std::cout << "version=" << BOOST_VERSION/100000 << "."
-            << ((BOOST_VERSION / 100) % 100) << "."
-            << BOOST_VERSION % 100 << std::endl;
-                                                            
   bimap<set_of<int,    std::less<int>    >,
         set_of<double, std::less<double> >
     > function;
