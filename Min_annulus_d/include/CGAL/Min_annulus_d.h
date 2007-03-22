@@ -647,7 +647,6 @@ private:
     strategy = pricing_strategy(NT());
     delete solver;
     solver = new Solver(lp, strategy);
-    CGAL_optimisation_assertion(solver->is_valid());
     CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
  
     // compute center and squared radius
