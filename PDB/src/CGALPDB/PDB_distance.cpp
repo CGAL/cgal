@@ -6,6 +6,12 @@
 #include <CGAL/PDB/iterator.h>
 #include <CGAL/PDB/Model.h>
 #include <CGAL/PDB/internal/Error_logger.h>
+
+#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
+// need std::copy
+#include <algorithm>
+#endif
+
 CGAL_PDB_BEGIN_NAMESPACE
 
   struct Identity {
@@ -141,23 +147,42 @@ CGAL_PDB_BEGIN_NAMESPACE
   }
 
   Matrix distance_matrix(const Protein &a){
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
     std::vector<Point> aa(all_coordinates_begin(a), all_coordinates_end(a));
+#else
+    std::vector<Point> aa;
+    std::copy(all_coordinates_begin(a), all_coordinates_end(a), std::back_inserter(aa));
+#endif
     return distance_matrix(aa.begin(), aa.end());
   }
 
   Matrix ca_distance_matrix(const Protein &a) {
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
     std::vector<Point> aa(ca_coordinates_begin(a), ca_coordinates_end(a));
+#else
+    std::vector<Point> aa;
+    std::copy(ca_coordinates_begin(a), ca_coordinates_end(a), std::back_inserter(aa));
+#endif
     return distance_matrix(aa.begin(), aa.end());
   }
   Matrix backbone_distance_matrix(const Protein &a) {
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
     std::vector<Point> aa(backbone_coordinates_begin(a), backbone_coordinates_end(a));
+#else
+    std::vector<Point> aa;
+    std::copy(backbone_coordinates_begin(a), backbone_coordinates_end(a), std::back_inserter(aa));
+#endif
     return distance_matrix(aa.begin(), aa.end());
   }
 
   Matrix distance_matrix(const Model &a){
     std::vector<Point> aa;
     for (unsigned int j=0; j< a.number_of_chains(); ++j){
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
       aa.insert(aa.end(), all_coordinates_begin(a.chain(j)), all_coordinates_end(a.chain(j)));
+#else
+      std::copy(all_coordinates_begin(a.chain(j)), all_coordinates_end(a.chain(j)), std::back_inserter(aa));
+#endif
     }
     return distance_matrix(aa.begin(), aa.end());
   }
@@ -165,7 +190,11 @@ CGAL_PDB_BEGIN_NAMESPACE
   Matrix ca_distance_matrix(const Model &a) {
     std::vector<Point> aa;
     for (unsigned int j=0; j< a.number_of_chains(); ++j){
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
       aa.insert(aa.end(), ca_coordinates_begin(a.chain(j)), ca_coordinates_end(a.chain(j)));
+#else
+      std::copy(ca_coordinates_begin(a.chain(j)), ca_coordinates_end(a.chain(j)), std::back_inserter(aa));
+#endif
     }
     return distance_matrix(aa.begin(), aa.end());
   }
@@ -173,7 +202,11 @@ CGAL_PDB_BEGIN_NAMESPACE
   Matrix backbone_distance_matrix(const Model &a) {
     std::vector<Point> aa;
     for (unsigned int j=0; j< a.number_of_chains(); ++j){
+#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
       aa.insert(aa.end(), backbone_coordinates_begin(a.chain(j)), backbone_coordinates_end(a.chain(j)));
+#else
+      std::copy(backbone_coordinates_begin(a.chain(j)), backbone_coordinates_end(a.chain(j)), std::back_inserter(aa));
+#endif
     }
     return distance_matrix(aa.begin(), aa.end());
   }
