@@ -582,14 +582,12 @@ construct_surface(const Simplex &sim, const Traits &) const {
     case 0: {
       Vertex_handle vh = sim;
       return Quadratic_surface(conv(vh->point()), shrink_factor());
-      break;
     }
     case 1: {
       Edge e = sim;
       Weighted_point p0 = conv(e.first->vertex(e.second)->point());
       Weighted_point p1 = conv(e.first->vertex(e.third)->point());
       return Quadratic_surface(p0, p1, shrink_factor());
-      break;
     }
     case 2: {
       Facet f = sim;
@@ -597,7 +595,6 @@ construct_surface(const Simplex &sim, const Traits &) const {
       Weighted_point p1 = conv(f.first->vertex((f.second+2)&3)->point());
       Weighted_point p2 = conv(f.first->vertex((f.second+3)&3)->point());
       return Quadratic_surface(p0,p1,p2, shrink_factor());
-      break;
     }
     case 3: {
       Cell_handle ch = sim;
@@ -606,7 +603,6 @@ construct_surface(const Simplex &sim, const Traits &) const {
       Weighted_point p2 = conv(ch->vertex(2)->point());
       Weighted_point p3 = conv(ch->vertex(3)->point());
       return Quadratic_surface(p0,p1,p2,p3, shrink_factor());
-      break;
     }
   }
   CGAL_assertion(false);

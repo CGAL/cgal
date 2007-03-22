@@ -95,13 +95,13 @@ public:
     for (int i=0; i<4; i++) {
       Cell_handle ch2 = ch->neighbor(i);
       if (!reg.is_infinite(ch2)) {
-	Sign side = test_anchor(ch,ch2);
-	CGAL_assertion(test_anchor(ch2,ch)==side);
-	if (side==ZERO) {
-	  equiv_anchors.push_back(ch2);
-	} else {
-	  CGAL_assertion(side==POSITIVE);
-	}
+        Sign side = test_anchor(ch,ch2);
+        CGAL_assertion(test_anchor(ch2,ch)==side);
+        if (side==ZERO) {
+          equiv_anchors.push_back(ch2);
+        } else {
+          CGAL_assertion(side==POSITIVE);
+        }
       }
     }
     return ch;
@@ -207,7 +207,7 @@ private:
       ch->vertex((i+1)&3)->point(),
       ch->vertex((i+2)&3)->point(),
       ch->vertex((i+3)&3)->point(),
-      ch->vertex(i)->point());		
+      ch->vertex(i)->point());                
   }
   Sign test_anchor(Cell_handle ch, Cell_handle ch2) {
     CGAL_assertion(!reg.is_infinite(ch));
@@ -219,14 +219,14 @@ private:
       ch->vertex(1)->point(),
       ch->vertex(2)->point(),
       ch->vertex(3)->point(),
-      ch2->vertex(index)->point());		
+      ch2->vertex(index)->point());                
   }
   Sign test_anchor(
     Weighted_point const& wp1, Weighted_point const& wp2,
     Weighted_point const& wp3, Weighted_point const& wp4,
     Weighted_point const& wp5) {
     return reg.geom_traits().in_smallest_orthogonal_sphere_3_object()(
-      wp1, wp2, wp3, wp4, wp5);		
+      wp1, wp2, wp3, wp4, wp5);                
   }
 
   const Regular_triangulation &reg;
@@ -274,7 +274,7 @@ compute_anchor_del(Facet const &f) {
     if (result == ZERO) {
       //equiv_anchors.push_back(Edge(f.first, f.second,(f.second+i)&3));
       equiv_anchors.push_back(
-	Edge(f.first, (f.second+(i==1?2:1))&3, (f.second+(i==3?2:3))&3));
+        Edge(f.first, (f.second+(i==1?2:1))&3, (f.second+(i==3?2:3))&3));
     }
   }
   
@@ -358,8 +358,8 @@ compute_anchor_del(Cell_handle const ch) {
         CGAL_assertion(s.dimension() == 2);
       }
       if (found) {
-	equiv_anchors.clear();
-	return s;
+        equiv_anchors.clear();
+  return s;
       }
       found = true;
       s = tmp;
@@ -390,13 +390,13 @@ compute_anchor_vor (Vertex_handle const v) {
     if (!reg.is_infinite(*adj_vertex)) {
       side = test_anchor(v->point(),(*adj_vertex)->point());
       if (side == NEGATIVE) { 
-	contains_center = false;
+        contains_center = false;
       } else if (side == ZERO) {
-	Edge e;
-	if (!reg.is_edge (v, *adj_vertex, e.first, e.second, e.third)) {
+        Edge e;
+        if (!reg.is_edge (v, *adj_vertex, e.first, e.second, e.third)) {
           CGAL_assertion(false);
         }
-	equiv_anchors.push_back(Simplex(e));
+        equiv_anchors.push_back(Simplex(e));
       }
     }
   }
@@ -426,23 +426,23 @@ compute_anchor_vor (Vertex_handle const v) {
       } else if (s.dimension() == 3) {
         //  s lies on a Voronoi vertex
         Cell_handle ch=s;
-	CGAL_assertion(ch != Cell_handle());
+        CGAL_assertion(ch != Cell_handle());
         int index = ch->index(v);
         for (int i=1; (i<4) && (found); i++) {
           tmp = anchor_vor(Facet(ch, (index+i)&3));
-	  found = (tmp == s);
+          found = (tmp == s);
         }
       } else {
-	CGAL_assertion(s.dimension() == 1);
+        CGAL_assertion(s.dimension() == 1);
       }
       if (found) {
-	equiv_anchors.clear();
+        equiv_anchors.clear();
         if (s.dimension() == 1) {
           Edge e = s;
           Vertex_handle v_other = e.first->vertex(e.second+e.third-e.first->index(v));
-	  for (adj_vertex = adj_vertices.begin(); 
-	       adj_vertex != adj_vertices.end();
-	       adj_vertex++) {
+          for (adj_vertex = adj_vertices.begin(); 
+               adj_vertex != adj_vertices.end();
+               adj_vertex++) {
             if (v_other != (*adj_vertex)) {
               side = test_anchor(v->point(), v_other->point(),
                                  (*adj_vertex)->point());
@@ -456,12 +456,11 @@ compute_anchor_vor (Vertex_handle const v) {
             }
           }          
         }
-	return s;
+        return s;
       }
       s = tmp;
     }
   }
-  CGAL_assertion(false);
   return Simplex();
 }
 
@@ -510,12 +509,12 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
         int index1 = ch->index(v1);
         for (int i=0; (i<4) && found; i++) {
           if ((i != index0) && (i != index1)) {
-	    if (!reg.is_infinite(Facet(ch,i))) {
-	      side = test_anchor(ch,6-index0-index1-i);
-	      if (side != POSITIVE) {
-		tmp = anchor_vor(Facet(ch,i));
-		found = (s==tmp);
-	      }
+            if (!reg.is_infinite(Facet(ch,i))) {
+              side = test_anchor(ch,6-index0-index1-i);
+              if (side != POSITIVE) {
+                tmp = anchor_vor(Facet(ch,i));
+                found = (s==tmp);
+              }
             }
           }
         }
@@ -523,7 +522,7 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
         CGAL_assertion(s.dimension() == 2);
       }
       if (found) {
-	equiv_anchors.clear();
+        equiv_anchors.clear();
         if (s.dimension() == 2) {
           // Check whether facet is degenerate (a line segment):
           Facet f = s;
@@ -545,7 +544,7 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
             }
           } while (++fcir != fstart);
         }
-	return s;
+        return s;
       }
       s = tmp;
     }
