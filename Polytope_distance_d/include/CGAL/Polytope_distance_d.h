@@ -697,7 +697,6 @@ private:
     strategy = pricing_strategy(NT());
     delete solver;
     solver = new Solver(qp, strategy);
-    CGAL_optimisation_assertion(solver->is_valid());
     CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
     // compute support and realizing points
     ET  et_0 = 0;
