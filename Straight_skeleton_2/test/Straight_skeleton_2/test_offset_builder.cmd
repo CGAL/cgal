@@ -100,8 +100,3 @@ sample_698.poly
 sample_147.poly
 degenerate21.poly
 sample_298.poly
-sample_85.poly
-sample_102.poly
-four_squares.poly
-anchor.poly
-complex_6.poly
