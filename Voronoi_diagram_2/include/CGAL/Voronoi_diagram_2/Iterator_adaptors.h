@@ -226,7 +226,8 @@ private:
   Halfedge_iterator_adaptor(const VDA* vda, Base_iterator cur)
     : Base(vda, cur), is_first_(true) {}
 
-  Halfedge_iterator_adaptor(const Self& other) { copy_from(other); }
+  Halfedge_iterator_adaptor(const Self& other)
+    : Base(other) { copy_from(other); }
 
   operator Halfedge_handle() const {
     eval_reference();
