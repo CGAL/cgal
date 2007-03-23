@@ -167,7 +167,7 @@ public:
       : m_polyhedron(mesh)
     {
         // Extract mesh's longest border
-        m_main_border = extract_longest_border(mesh);
+        m_main_border = extract_longest_border();
 
 #ifndef NDEBUG
         // Index vertices right away to ease debugging
@@ -751,7 +751,7 @@ public:
 private:
 
     // Extract mesh's longest border
-    std::list<Vertex_handle> extract_longest_border(Polyhedron_ex& mesh)
+    std::list<Vertex_handle> extract_longest_border()
     {
         std::list<Vertex_handle> longest_border;    // returned list
         double                   max_len = 0;       // length of longest_border
