@@ -99,7 +99,7 @@ sub parse_description {
 
 &check_unique_filenames;
 
-$html='Benchmark_instaces/out_html';
+$html='Benchmark_instances/out_html';
 
 system "rm -rf $html";
 system "mkdir -p $html/data";
