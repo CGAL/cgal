@@ -24,9 +24,9 @@ int main()
   Point t1[3] = { Point(20,10), Point(30,10), Point(25, 15) };
 
   std::list<std::pair<Point*,Point*> > polylines;
-  polylines.push_back(std::make_pair(r1, r1+3));
-  //polylines.push_back(std::make_pair(s1, s1+2));
-  polylines.push_back(std::make_pair(t1, t1+3));
+  polylines.push_back(std::make_pair(r1+0, r1+3));
+  //polylines.push_back(std::make_pair(s1+0, s1+2));
+  polylines.push_back(std::make_pair(t1+0, t1+3));
 
 
    Nef_polyhedron RST(polylines.begin(), polylines.end(), Nef_polyhedron::POLYLINES);
