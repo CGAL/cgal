@@ -326,10 +326,11 @@ protected:
 
   Nef_polyhedron_3(const Plane_3& p, Boundary b = INCLUDED);
   /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the
-  halfspace on the positive side of |p| including |p| if |b==INCLUDED|,
+  halfspace on the negative side of |p| including |p| if |b==INCLUDED|,
   excluding |p| if |b==EXCLUDED|.}*/
 
-  Nef_polyhedron_3(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) : Base(N1) {
+  Nef_polyhedron_3(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) 
+ : Base(N1) , SNC_const_decorator() {
     set_snc(snc());
   } 
 
@@ -450,11 +451,11 @@ protected:
 	B.end_facet();
       }
 
-      void visit(SFace_const_handle s) {}
-      void visit(Halfedge_const_handle e) {}
-      void visit(Vertex_const_handle v) {}
-      void visit(SHalfedge_const_handle se) {}
-      void visit(SHalfloop_const_handle sl) {}
+      void visit(SFace_const_handle) {}
+      void visit(Halfedge_const_handle) {}
+      void visit(Vertex_const_handle) {}
+      void visit(SHalfedge_const_handle) {}
+      void visit(SHalfloop_const_handle) {}
     };
 
   public:
@@ -504,8 +505,9 @@ protected:
 
  public:
  void delegate( Modifier_base<SNC_structure>& modifier, 
-		bool compute_external = false,
+		bool compute_external = false, 
 		bool do_simplify = true) {
+
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
    modifier(snc());
