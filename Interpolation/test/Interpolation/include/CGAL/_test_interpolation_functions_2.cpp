@@ -81,7 +81,7 @@ _test_sibson_c1_interpolation_sqrt(ForwardIterator ,
 				   ::value_type::first_type& /* p */,
 				   Functor /* f */, 
                                    GradFunctor /* grad_f */,
-				   const Gt& geom_traits,
+				   const Gt& /*geom_traits */,
 				   const typename
 				   std::iterator_traits<ForwardIterator>
 				   ::value_type::second_type& /* tolerance */,
