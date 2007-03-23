@@ -41,7 +41,7 @@ sub parse_description {
   print "\tparsing description $description\n";
   my $outdir = "";
   my $basename = "";
-  if( $description =~ /^[^\/]+\/[^\/]+\/[^\/]+\/([^\/]+\/)([^\/]+)$/ ) {
+  if($description =~ /^[^\/]+\/[^\/]+\/[^\/]+\/([^\/]+\/)([^\/]+)$/ ) {
     $outdir   = $1;
     $basename = $2;
   } else {
@@ -110,14 +110,21 @@ printf OUT "<h1>CGAL Benchmarks - Overview</h1>\n\n";
 while( $pkg=readdir PKG ) {
   if( -d $pkg && $pkg ne '.' && $pkg ne '..' && $pkg ne '.svn') {
     print "searching in package: $pkg\n";
-    if( -d "$pkg/benchmark/description" ) {
-      #print "  contains benchmark\n";
-      open FILES, "find $pkg/benchmark/description -type f -name \"*.desc\"|";
-      while(<FILES>) {
-        chomp;
-        &parse_description( $_ );
+    opendir INNERPKG, "$pkg/benchmark/";
+    while( $innerpkg=readdir INNERPKG ) {
+      if( -d $innerpkg && $innerpkg ne '.' && $innerpkg ne '..' 
+          && $innerpkg ne '.svn') {
+        #print "$innerpkg";
+        if( -d "$pkg/benchmark/$innerpkg/description" ) {
+          #print "  contains benchmark\n";
+          open FILES, "find $pkg/benchmark/$innerpkg/description -type f -name \"*.desc\"|";
+          while(<FILES>) {
+            chomp;
+            &parse_description( $_ );
+          }
+          close FILES;
+        }
       }
-      close FILES;
     }
   }
 }
