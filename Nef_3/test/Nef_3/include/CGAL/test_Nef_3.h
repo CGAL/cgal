@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : test/Nef_3/nef_3.h
+// file          : test/Nef_3/include/Nef_3/test_with_homogeneous.h
 // package       : Nef_3
 // chapter       : 3D-Nef Polyhedra
 //
@@ -23,38 +23,21 @@
 // coordinator   : MPI Saarbruecken
 //
 // ============================================================================
-#include <CGAL/basic.h>
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer NT;
-typedef leda_rational FNT;
-#else
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpz NT;
-typedef CGAL::Gmpq FNT;
-#endif
-#include <CGAL/Cartesian.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Extended_cartesian.h>
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Extended_homogeneous.h>
-#include <CGAL/Lazy_kernel.h>
+#ifndef CGAL_TEST_TEST_NEF_3
+#define CGAL_TEST_TEST_NEF_3
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
-#include <CGAL/Nef_3/SNC_items.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <CGAL/Timer.h>
 #include <fstream>
 
+CGAL_BEGIN_NAMESPACE
+
 template<typename Kernel, typename Items>
-class test {
+class test_Nef_3 {
 
   typedef CGAL::Nef_polyhedron_3<Kernel, Items>             Nef_polyhedron;
   typedef typename Nef_polyhedron::Mark                     Mark;
@@ -99,7 +82,7 @@ private:
   bool isolated_edge_tested;
 
 public:
-  test() {cubes_tested=false; isolated_edge_tested=false;};
+  test_Nef_3() {cubes_tested=false; isolated_edge_tested=false;};
 
 private:
 
@@ -127,10 +110,10 @@ private:
 	v_min = h; 
     }
 
-    void visit(Halfedge_const_handle h) {}
-    void visit(Halffacet_const_handle h) {}
-    void visit(SHalfedge_const_handle h) {}
-    void visit(SHalfloop_const_handle h) {}
+    void visit(Halfedge_const_handle) {}
+    void visit(Halffacet_const_handle) {}
+    void visit(SHalfedge_const_handle) {}
+    void visit(SHalfloop_const_handle) {}
 
     Vertex_const_handle& minimal_vertex() { return v_min; }
   };
@@ -1246,84 +1229,7 @@ public:
 };
 
 template<typename Kernel, typename Items>
-const char* test<Kernel, Items>::datadir="data/";
+const char* test_Nef_3<Kernel, Items>::datadir="data/";
 
-int main() {
-  typedef CGAL::Cartesian<FNT>               C_kernel;
-  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
-  typedef CGAL::Lazy_kernel<SC_kernel>      LC_kernel;
-  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
-  typedef CGAL::Homogeneous<NT>              H_kernel;
-  typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
-  typedef CGAL::Extended_homogeneous<NT>    EH_kernel;
-  
-#ifdef CGAL_CFG_ISTREAM_INT_BUG
-  std::locale::global(std::locale("C")); 
-#endif
-
-  CGAL::Timer t;
-
-  //  test<C_kernel, CGAL::SNC_indexed_items>  test_C;
-  //  test<SC_kernel, CGAL::SNC_indexed_items> test_SC;
-  test<LC_kernel, CGAL::SNC_indexed_items> test_LC;
-  //  test<EC_kernel, CGAL::SNC_items> test_EC;
-  test<H_kernel, CGAL::SNC_indexed_items>  test_H;
-  //  test<SH_kernel, CGAL::SNC_indexed_items> test_SH;
-  test<EH_kernel, CGAL::SNC_items> test_EH;
-
-/*
-  t.start();
-  test_C.run_test();
-  t.stop();
-  std::cout << "Cartesian kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-  t.reset();
-*/
-/*
-  t.start();
-  test_SC.run_test();
-  t.stop();
-  std::cout << "Simple_cartesian kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-  t.reset();
-*/
-
-  t.start();
-  test_LC.run_test();
-  t.stop();
-  std::cout << "Lazy Simple_cartesian kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-  t.reset();
-
-/*
-  t.start();
-  test_EC.run_test();
-  t.stop();
-  std::cout << "Extended_cartesian kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-  t.reset();
-*/
-
-  t.start();
-  test_H.run_test();
-  t.stop();
-  std::cout << "Homogeneous kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-  t.reset();
-
-/*
-  t.start();
-  test_SH.run_test();
-  t.stop();
-  std::cout << "Simple_homogeneous kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-  t.reset();
-*/
-  t.start();
-  test_EH.run_test();
-  t.stop();
-  std::cout << "Extended_homogeneous kernel successful in: " << t.time() 
-            << " seconds " << std::endl;
-
-}
-
+CGAL_END_NAMESPACE
+#endif // CGAL_TEST_NEF_3
