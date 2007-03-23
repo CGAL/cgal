@@ -21,11 +21,12 @@ void print_res (bool res)
 //               +--------+------+-------+
 
 // I use a global variable here to avoid constant propagation.
-double IA_min_double = CGAL_IA_MIN_DOUBLE;
+double IA_min_double;
 
 CGAL::FPU_CW_t
 FPU_empiric_test()
 {
+    IA_min_double = CGAL_IA_MIN_DOUBLE;
     double y = 1.0, z = -1.0;
     double ye, ze;
     ye = y - IA_min_double;
