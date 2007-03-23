@@ -136,7 +136,7 @@ inline double IA_force_to_double(double x)
 #if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
     ((defined __i386__ && !defined CGAL_SAFE_SSE2) \
      || defined _MSC_VER || defined __BORLANDC__)
-#  define CGAL_IA_FORCE_TO_DOUBLE(x) IA_force_to_double(x)
+#  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif
@@ -144,8 +144,8 @@ inline double IA_force_to_double(double x)
 // We sometimes need to stop constant propagation,
 // because operations are done with a wrong rounding mode at compile time.
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  define CGAL_IA_STOP_CPROP(x)    IA_force_to_double(x)
-#  define CGAL_IA_STOP_CPROP2(x,y) IA_force_to_double(x)
+#  define CGAL_IA_STOP_CPROP(x)    CGAL::IA_force_to_double(x)
+#  define CGAL_IA_STOP_CPROP2(x,y) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_STOP_CPROP(x)    (x)
 #  define CGAL_IA_STOP_CPROP2(x,y) (x)
