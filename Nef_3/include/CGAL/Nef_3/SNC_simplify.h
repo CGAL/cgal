@@ -499,7 +499,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
      }
    }
 
-   void merge_halfedge_pairs( SVertex_handle p, SVertex_handle q) {
+   virtual void merge_halfedge_pairs( SVertex_handle p, SVertex_handle q) {
      SNC_decorator D(*this->sncp());
      CGAL_assertion( p->source() == q->source());
      Vertex_handle v(p->source()); 
