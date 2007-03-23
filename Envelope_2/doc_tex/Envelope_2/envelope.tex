@@ -15,7 +15,7 @@ arc.}
 \end{figure}
 
 
-A continuous curve $C$ in $\reals^2$ is called {\em $x$-monotone}, if
+A continuous curve $C$ in ${\mathbb R}^2$ is called {\em $x$-monotone}, if
 every vertical line intersects it at a single point at most. For
 example, the circle $x^2 + y^2 = 1$ is {\em not} $xy$-monotone as the
 vertical line $x = 0$ intersects it at $(0, -1)$ and at $(0, 1)$;
@@ -25,13 +25,13 @@ We consider vertical segments as {\em weakly} $x$-monotone, to properly
 handle inputs that contain such vertical curves.
 
 An $x$-monotone curve can be represented as a univariate function
-$y = C(x)$, defined over some continuous range $R_C \subseteq \reals$.
-Given a set $\calC = \{ C_1, C_2, \ldots, C_n \}$ of $x$-monotone
+$y = C(x)$, defined over some continuous range $R_C \subseteq {\mathbb R}$.
+Given a set ${\cal C} = \{ C_1, C_2, \ldots, C_n \}$ of $x$-monotone
 curves, their {\em lower envelope} is defined as the point-wise minimum of
-all curves. Namely, the lower envelope of the set $\calC$ can be
+all curves. Namely, the lower envelope of the set ${\cal C}$ can be
 defined as the following function:
 \begin{eqnarray*}
-\calL_{\calC} (x) = \min_{1 \leq k \leq n}{
+{\cal L}_{{\cal C}} (x) = \min_{1 \leq k \leq n}{
 \begin{ccTexOnly}\overline{C}\end{ccTexOnly}
 \begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
 _k (x)} \ ,
@@ -45,10 +45,10 @@ and $
 \begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
 _k(x) = \infty$ otherwise.
 
-Similarly, the {\em upper envelope} of $\calC$ is the point-wise maximum of
+Similarly, the {\em upper envelope} of ${\cal C}$ is the point-wise maximum of
 the $x$-monotone curves in the set:
 \begin{eqnarray*}
-\calU_{\calC} (x) = \max_{1 \leq k \leq n}{
+{\cal U}_{{\cal C}} (x) = \max_{1 \leq k \leq n}{
 \begin{ccTexOnly}\underline{C}\end{ccTexOnly}
 \begin{ccHtmlOnly}<span style="text-decoration:underline">C</span>\end{ccHtmlOnly}
 _k (x)} \ ,
@@ -59,8 +59,8 @@ where in this case $
 _k(x) = -\infty$ for $x 
 \not\in R_{C_k}$.
 
-Given a set of $x$-monotone curves $\calC$, the {\em minimization
-diagram} of $\calC$ is a subdivision of the $x$-axis into cells,
+Given a set of $x$-monotone curves ${\cal C}$, the {\em minimization
+diagram} of ${\cal C}$ is a subdivision of the $x$-axis into cells,
 such that the identity of the curves that induce the lower envelope
 over a specific cell of the subdivision (an edge or a vertex) is the
 same. In non-degenerate situations, an edge --- which represents a
@@ -78,10 +78,10 @@ divide-and-conquer approach. First, note that the envelope diagram for
 a single $x$-monotone curve $C_k$ is trivial to compute: we project
 the boundary of its range of definition $R_{C_k}$ onto the $x$-axis
 and label the features it induces accordingly. Given a set
-$\hat{\calC}$ of (non necessarily $x$-monotone) curves in $\reals^2$,
+$\hat{{\cal C}}$ of (non necessarily $x$-monotone) curves in ${\mathbb R}^2$,
 we subdivide each curve into a finite number of weakly $x$-monotone 
-curves, and obtain the set $\calC$. Then, we split the set into two
-disjoint subsets $\calC_1$ and $\calC_2$, and we compute their envelope
+curves, and obtain the set ${\cal C}$. Then, we split the set into two
+disjoint subsets ${\cal C}_1$ and ${\cal C}_2$, and we compute their envelope
 diagrams recursively. Finally, we merge the diagrams in linear time by
 traversing both diagrams in parallel.
 
@@ -186,14 +186,14 @@ The next example computes the convex hull of a set of input points
 by constructing envelopes of unbounded curves, in our case lines
 that are dual to the input points. Here use the
 \ccc{Arr_linear_traits_2} class to compute the lower envelope of the
-set of dual lines. We read a set of points $\calP = p_1, \ldots, p_n$
+set of dual lines. We read a set of points ${\cal P} = p_1, \ldots, p_n$
 from an input file, and construct the corresponding dual lines
-$\calP^{*} = p^{*}_1, \ldots, p^{*}_n$, where the line $p^{*}$ dual
+${\cal P}^{*} = p^{*}_1, \ldots, p^{*}_n$, where the line $p^{*}$ dual
 to a point $p = (p_x, p_y)$ is given by $y = p_x x - p_y$. We then
-compute the convex hull of the point-set $\calP$, using the fact that
-the lines that form the lower envelope of $\calP^{*}$ are dual to the
-points along the {\em upper} part of $\calP$'s convex hull, and the
-lines that form the upper envelope of $\calP^{*}$ are dual to the
+compute the convex hull of the point-set ${\cal P}$, using the fact that
+the lines that form the lower envelope of ${\cal P}^{*}$ are dual to the
+points along the {\em upper} part of ${\cal P}$'s convex hull, and the
+lines that form the upper envelope of ${\cal P}^{*}$ are dual to the
 points along the {\em lower} part of the convex hull; see,
 e.g.,~\cite[Section~11.4]{bkos-cgaa-00} for more details.
 Note that the leftmost edge of the minimization diagram is associated
