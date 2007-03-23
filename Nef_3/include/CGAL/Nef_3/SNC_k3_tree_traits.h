@@ -137,11 +137,12 @@ public:
 
   typedef ComparePoints<Kernel, int> ComparePoints_;
   
-  Side_of_plane(bool rc = false)
-#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING    
-    : reference_counted(rc) 
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+  Side_of_plane(bool rc = false) : reference_counted(rc) {}
+#else    
+    Side_of_plane(bool) {}
 #endif
-    {}
+
 
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Object_handle o, Depth depth);
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Vertex_handle v, Depth depth);
@@ -553,7 +554,6 @@ Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag,
 	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   ( const Object_list& O) const {
-  CGAL_assertion( O.size() >= 0);
   Bounding_box_3 b(Point_3(0,0,0),Point_3(0,0,0));
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
