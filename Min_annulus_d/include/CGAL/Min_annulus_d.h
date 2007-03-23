@@ -613,9 +613,8 @@ private:
       outer_indices.push_back( 0);
       center_coords.resize( d+1);
       std::copy( da_coord( points[ 0]),
-		 da_coord( points[ 0])+d,
+		 da_coord( points[ 0])+d+1,
 		 center_coords.begin());
-      center_coords[ d] = ET( 1);
       sqr_i_rad_numer = ET( 0);
       sqr_o_rad_numer = ET( 0);
       sqr_rad_denom   = ET( 1);
