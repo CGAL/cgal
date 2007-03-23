@@ -1054,7 +1054,7 @@ public:
   }
 
   Halfedge_alloc halfedge_allocator;
-  Halfedge* get_halfedge_node( const Halfedge& t) {
+  Halfedge* get_halfedge_node( const Halfedge&) {
     Halfedge* p = halfedge_allocator.allocate(1);
     halfedge_allocator.construct( p, Halfedge());
     return p;
