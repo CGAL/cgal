@@ -37,14 +37,19 @@
 // - Quadratic_program
 // - Nonngative_quadratic_program_from_iterators
 // - Nonengative_quadratic_program_from_pointers
+// - Nonengative_quadratic_program_
 // - Free_quadratic_program_from_iterators
 // - Free_quadratic_program_from_pointers
+// - Free_quadratic_program
 // - Linear_program_from_iterators
 // - Linear_program_from_pointers
+// - Linear_program
 // - Nonngative_linear_program_from_iterators
 // - Nonengative_linear_program_from_pointers
+// - Nonengative_linear_program
 // - Free_linear_program_from_iterators
 // - Free_linear_program_from_pointers
+// - Free_linear_program
 // - Quadratic_program_from_mps
 // - Linear_program_from_mps
 
@@ -61,7 +66,78 @@
   typedef typename Base::D_iterator D_iterator;\
   typedef typename Base::C_iterator C_iterator;\
   typedef typename Base::C_entry C_entry
-// end QP_MODEL_ITERATOR_TYPES
+
+// macros to ease coding of copying models
+// invariant: a pointer is either 0, or it points to valid memory
+#define QP_MODEL_MAKE_ABRC \
+  if (this->n_ > 0) this->a_it = new NT*[this->n_];\
+  for (int j=0; j<this->n_; ++j)\
+    if (this->m_ > 0)\
+      this->a_it[j] = new NT[this->m_];\
+    else\
+      this->a_it[j] = 0;\
+  if (this->m_ > 0) this->b_it = new NT[this->m_];\
+  if (this->m_ > 0) this->r_it = new CGAL::Comparison_result[this->m_];\
+  if (this->n_ > 0) this->c_it = new NT[this->n_]
+
+#define QP_MODEL_SET_ABRC \
+  for (int j=0; j<this->n_; ++j)\
+    CGAL::copy_n (*(a+j), this->m_, this->a_it[j]);\
+  CGAL::copy_n (b, this->m_, this->b_it);\
+  CGAL::copy_n (r, this->m_, this->r_it);\
+  CGAL::copy_n (c, this->n_, this->c_it)
+
+#define QP_MODEL_SET_ABRC_FROM_P \
+  for (int j=0; j<this->n_; ++j)\
+    CGAL::copy_n (*(p.a()+j), this->m_, this->a_it[j]);\
+  CGAL::copy_n (p.b(), this->m_, this->b_it);\
+  CGAL::copy_n (p.r(), this->m_, this->r_it);\
+  CGAL::copy_n (p.c(), this->n_, this->c_it)
+
+#define QP_MODEL_DELETE_ABRC \
+  delete[] this->c_it;\
+  delete[] this->r_it;\
+  delete[] this->b_it;\
+  for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];\
+  delete[] this->a_it
+
+#define QP_MODEL_MAKE_BOUNDS \
+  if (this->n_ > 0) this->fl_it = new bool[this->n_];\
+  if (this->n_ > 0) this->l_it = new NT[this->n_];\
+  if (this->n_ > 0) this->fu_it = new bool[this->n_];\
+  if (this->n_ > 0) this->u_it = new NT[this->n_];
+
+#define QP_MODEL_SET_BOUNDS \
+  CGAL::copy_n (fl, this->n_, this->fl_it);\
+  CGAL::copy_n (l, this->n_, this->l_it);\
+  CGAL::copy_n (fu, this->n_, this->fu_it);\
+  CGAL::copy_n (u, this->n_, this->u_it)
+
+#define QP_MODEL_SET_BOUNDS_FROM_P \
+  CGAL::copy_n (p.fl(), this->n_, this->fl_it);\
+  CGAL::copy_n (p.l(), this->n_, this->l_it);\
+  CGAL::copy_n (p.fu(), this->n_, this->fu_it);\
+  CGAL::copy_n (p.u(), this->n_, this->u_it)
+
+#define QP_MODEL_DELETE_BOUNDS \
+  delete[] this->u_it;\
+  delete[] this->fu_it;\
+  delete[] this->l_it;\
+  delete[] this->fl_it
+
+#define QP_MODEL_MAKE_D \
+  if (this->n_ > 0) this->d_it = new NT*[this->n_];\
+  for (int j=0; j<this->n_; ++j) this->d_it[j] = new NT[j+1];
+
+#define QP_MODEL_SET_D \
+  for (int j=0; j<this->n_; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j])
+
+#define QP_MODEL_SET_D_FROM_P \
+  for (int j=0; j<this->n_; ++j) CGAL::copy_n (*(p.d()+j), j+1, this->d_it[j])
+
+#define QP_MODEL_DELETE_D \
+  for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];\
+  delete[] this->d_it
 
 
 CGAL_BEGIN_NAMESPACE
@@ -244,45 +320,55 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, c0)
   {
-    // now allocate space...
-    this->a_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
-    this->b_it = new NT[m];
-    this->r_it = new CGAL::Comparison_result[m];
-    this->fl_it = new bool[n];
-    this->l_it = new NT[n];
-    this->fu_it = new bool[n];
-    this->u_it = new NT[n];
-    this->d_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->d_it[j] = new NT[j+1];
-    this->c_it = new NT[n];
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC;
+    QP_MODEL_MAKE_BOUNDS;
+    QP_MODEL_SET_BOUNDS;
+    QP_MODEL_MAKE_D;
+    QP_MODEL_SET_D;
+  }
 
-    // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
-    CGAL::copy_n (b, m, this->b_it);
-    CGAL::copy_n (r, m, this->r_it);
-    CGAL::copy_n (fl, n, this->fl_it);
-    CGAL::copy_n (l, n, this->l_it);
-    CGAL::copy_n (fu, n, this->fu_it);
-    CGAL::copy_n (u, n, this->u_it);
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j]);
-    CGAL::copy_n (c, n, this->c_it);
+  Quadratic_program ()
+    : Base (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  {}
+
+  Quadratic_program (const Quadratic_program& p)
+    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, 0, 0, 0, 0, p.c0())
+  {
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC_FROM_P;
+    QP_MODEL_MAKE_BOUNDS;
+    QP_MODEL_SET_BOUNDS_FROM_P;
+    QP_MODEL_MAKE_D;
+    QP_MODEL_SET_D_FROM_P;
+  }
+
+  Quadratic_program& operator= (const Quadratic_program& p)
+  {
+    if (this != &p) {
+      // cleanup
+      QP_MODEL_DELETE_D;
+      QP_MODEL_DELETE_BOUNDS;
+      QP_MODEL_DELETE_ABRC;
+      // reset
+      this->n_ = p.n();
+      this->m_ = p.m();
+      this->c_0 = p.c0();
+      QP_MODEL_MAKE_ABRC;
+      QP_MODEL_SET_ABRC_FROM_P;
+      QP_MODEL_MAKE_BOUNDS;
+      QP_MODEL_SET_BOUNDS_FROM_P;
+      QP_MODEL_MAKE_D;
+      QP_MODEL_SET_D_FROM_P;
+    }
+    return *this;
   }
 
   ~Quadratic_program () 
   {
-    // free memory
-    delete[] this->c_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];
-    delete[] this->d_it;
-    delete[] this->u_it;
-    delete[] this->fu_it;
-    delete[] this->l_it;
-    delete[] this->fl_it;
-    delete[] this->r_it;
-    delete[] this->b_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
-    delete[] this->a_it;
+    QP_MODEL_DELETE_D;
+    QP_MODEL_DELETE_BOUNDS;
+    QP_MODEL_DELETE_ABRC;
   }
 };
 
@@ -410,40 +496,47 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, 0, 0, 0, 0, 0, 0, 0, 0, c0)
   {
-    // now allocate space...
-    this->a_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
-    this->b_it = new NT[m];
-    this->r_it = new CGAL::Comparison_result[m];
-    this->fl_it = new bool[n];
-    this->l_it = new NT[n];
-    this->fu_it = new bool[n];
-    this->u_it = new NT[n];
-    this->c_it = new NT[n];
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC;
+    QP_MODEL_MAKE_BOUNDS;
+    QP_MODEL_SET_BOUNDS;
+  }
 
-    // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
-    CGAL::copy_n (b, m, this->b_it);
-    CGAL::copy_n (r, m, this->r_it);
-    CGAL::copy_n (fl, n, this->fl_it);
-    CGAL::copy_n (l, n, this->l_it);
-    CGAL::copy_n (fu, n, this->fu_it);
-    CGAL::copy_n (u, n, this->u_it);
-    CGAL::copy_n (c, n, this->c_it);
+  Linear_program ()
+    : Base (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  {}
+
+  Linear_program (const Linear_program& p)
+    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, 0, 0, 0, p.c0())
+  {
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC_FROM_P;
+    QP_MODEL_MAKE_BOUNDS;
+    QP_MODEL_SET_BOUNDS_FROM_P;
+  }
+
+  Linear_program& operator= (const Linear_program& p)
+  {
+    if (this != &p) {
+      // cleanup
+      QP_MODEL_DELETE_BOUNDS;
+      QP_MODEL_DELETE_ABRC;
+      // reset
+      this->n_ = p.n();
+      this->m_ = p.m();
+      this->c_0 = p.c0();
+      QP_MODEL_MAKE_ABRC;
+      QP_MODEL_SET_ABRC_FROM_P;
+      QP_MODEL_MAKE_BOUNDS;
+      QP_MODEL_SET_BOUNDS_FROM_P;
+    }
+    return *this;
   }
 
   ~Linear_program () 
   {
-    // free memory
-    delete[] this->c_it;
-    delete[] this->u_it;
-    delete[] this->fu_it;
-    delete[] this->l_it;
-    delete[] this->fl_it;
-    delete[] this->r_it;
-    delete[] this->b_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
-    delete[] this->a_it;
+    QP_MODEL_DELETE_BOUNDS;
+    QP_MODEL_DELETE_ABRC;
   }
 };
 
@@ -565,33 +658,48 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, 0, 0, 0, 0, 0, c0)
   {
-    // now allocate space...
-    this->a_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
-    this->b_it = new NT[m];
-    this->r_it = new CGAL::Comparison_result[m];
-    this->d_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->d_it[j] = new NT[j+1];
-    this->c_it = new NT[n];
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC;
+    QP_MODEL_MAKE_D;
+    QP_MODEL_SET_D;
+  }
 
-    // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
-    CGAL::copy_n (b, m, this->b_it);
-    CGAL::copy_n (r, m, this->r_it);
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j]);
-    CGAL::copy_n (c, n, this->c_it);
+  Nonnegative_quadratic_program ()
+    : Base (0, 0, 0, 0, 0, 0, 0)
+  {}
+
+  Nonnegative_quadratic_program (const Nonnegative_quadratic_program& p)
+    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, p.c0())
+  {
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC_FROM_P;
+    QP_MODEL_MAKE_D;
+    QP_MODEL_SET_D_FROM_P;
+  }
+
+  Nonnegative_quadratic_program& operator= 
+  (const Nonnegative_quadratic_program& p)
+  {
+    if (this != &p) {
+      // cleanup
+      QP_MODEL_DELETE_D;
+      QP_MODEL_DELETE_ABRC;
+      // reset
+      this->n_ = p.n();
+      this->m_ = p.m();
+      this->c_0 = p.c0();
+      QP_MODEL_MAKE_ABRC;
+      QP_MODEL_SET_ABRC_FROM_P;
+      QP_MODEL_MAKE_D;
+      QP_MODEL_SET_D_FROM_P;
+    }
+    return *this;
   }
 
   ~Nonnegative_quadratic_program () 
   {
-    // free memory
-    delete[] this->c_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];
-    delete[] this->d_it;
-    delete[] this->r_it;
-    delete[] this->b_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
-    delete[] this->a_it;
+    QP_MODEL_DELETE_D;
+    QP_MODEL_DELETE_ABRC;
   }
 };
 
@@ -712,33 +820,47 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, 0, 0, 0, 0, 0, c0)
   {
-    // now allocate space...
-    this->a_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
-    this->b_it = new NT[m];
-    this->r_it = new CGAL::Comparison_result[m];
-    this->d_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->d_it[j] = new NT[j+1];
-    this->c_it = new NT[n];
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC;
+    QP_MODEL_MAKE_D;
+    QP_MODEL_SET_D;
+  }
 
-    // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
-    CGAL::copy_n (b, m, this->b_it);
-    CGAL::copy_n (r, m, this->r_it);
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j]);
-    CGAL::copy_n (c, n, this->c_it);
+  Free_quadratic_program ()
+    : Base (0, 0, 0, 0, 0, 0, 0)
+  {}
+
+  Free_quadratic_program (const Free_quadratic_program& p)
+    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, p.c0())
+  {
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC_FROM_P;
+    QP_MODEL_MAKE_D;
+    QP_MODEL_SET_D_FROM_P;
+  }
+
+  Free_quadratic_program& operator= (const Free_quadratic_program& p)
+  {
+    if (this != &p) {
+      // cleanup
+      QP_MODEL_DELETE_D;
+      QP_MODEL_DELETE_ABRC;
+      // reset
+      this->n_ = p.n();
+      this->m_ = p.m();
+      this->c_0 = p.c0();
+      QP_MODEL_MAKE_ABRC;
+      QP_MODEL_SET_ABRC_FROM_P;
+      QP_MODEL_MAKE_D;
+      QP_MODEL_SET_D_FROM_P;
+    }
+    return *this;
   }
 
   ~Free_quadratic_program () 
   {
-    // free memory
-    delete[] this->c_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];
-    delete[] this->d_it;
-    delete[] this->r_it;
-    delete[] this->b_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
-    delete[] this->a_it;
+    QP_MODEL_DELETE_D;
+    QP_MODEL_DELETE_ABRC;
   }
 };
  
@@ -853,28 +975,39 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, 0, 0, 0, 0, c0)
   {
-    // now allocate space...
-    this->a_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
-    this->b_it = new NT[m];
-    this->r_it = new CGAL::Comparison_result[m];
-    this->c_it = new NT[n];
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC;
+  }
 
-    // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
-    CGAL::copy_n (b, m, this->b_it);
-    CGAL::copy_n (r, m, this->r_it);
-    CGAL::copy_n (c, n, this->c_it);
+  Nonnegative_linear_program ()
+    : Base (0, 0, 0, 0, 0, 0)
+  {}
+
+  Nonnegative_linear_program (const Nonnegative_linear_program& p)
+    : Base (p.n(), p.m(), 0, 0, 0, 0, p.c0())
+  {
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC_FROM_P;
+  }
+
+  Nonnegative_linear_program& operator= (const Nonnegative_linear_program& p)
+  {
+    if (this != &p) {
+      // cleanup
+      QP_MODEL_DELETE_ABRC;
+      // reset
+      this->n_ = p.n();
+      this->m_ = p.m();
+      this->c_0 = p.c0();
+      QP_MODEL_MAKE_ABRC;
+      QP_MODEL_SET_ABRC_FROM_P;
+    }
+    return *this;
   }
 
   ~Nonnegative_linear_program () 
   {
-    // free memory
-    delete[] this->c_it;
-    delete[] this->r_it;
-    delete[] this->b_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
-    delete[] this->a_it;
+    QP_MODEL_DELETE_ABRC;
   }
 };
 
@@ -990,28 +1123,39 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, 0, 0, 0, 0, c0)
   {
-    // now allocate space...
-    this->a_it = new NT*[n];
-    for (int j=0; j<n; ++j) this->a_it[j] = new NT[m];
-    this->b_it = new NT[m];
-    this->r_it = new CGAL::Comparison_result[m];
-    this->c_it = new NT[n];
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC;
+  }
 
-    // ... and copy the iterator ranges
-    for (int j=0; j<n; ++j) CGAL::copy_n (*(a+j), m, this->a_it[j]);
-    CGAL::copy_n (b, m, this->b_it);
-    CGAL::copy_n (r, m, this->r_it);
-    CGAL::copy_n (c, n, this->c_it);
+  Free_linear_program ()
+    : Base (0, 0, 0, 0, 0, 0)
+  {}
+
+  Free_linear_program (const Free_linear_program& p)
+    : Base (p.n(), p.m(), 0, 0, 0, 0, p.c0())
+  {
+    QP_MODEL_MAKE_ABRC;
+    QP_MODEL_SET_ABRC_FROM_P;
+  }
+
+  Free_linear_program& operator= (const Free_linear_program& p)
+  {
+    if (this != &p) {
+      // cleanup
+      QP_MODEL_DELETE_ABRC;
+      // reset
+      this->n_ = p.n();
+      this->m_ = p.m();
+      this->c_0 = p.c0();
+      QP_MODEL_MAKE_ABRC;
+      QP_MODEL_SET_ABRC_FROM_P;
+    }
+    return *this;
   }
 
   ~Free_linear_program () 
   {
-    // free memory
-    delete[] this->c_it;
-    delete[] this->r_it;
-    delete[] this->b_it;
-    for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];
-    delete[] this->a_it;
+    QP_MODEL_DELETE_ABRC;
   }
 };
 
@@ -1415,13 +1559,6 @@ private: // parsing routines:
     CGAL_qpe_assertion(!use_put_back_token);
     use_put_back_token = true;
     put_back_token = token;
-  }
-    
-  // here is a general template for halving a number; ToDo: we must
-  // somehow trigger an error if this division is not exact
-  template<typename NumberType>
-  void halve(NumberType& entry) {
-    entry /= 2;
   }
 
   template<typename NumberType>

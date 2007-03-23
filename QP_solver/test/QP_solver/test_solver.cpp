@@ -322,6 +322,8 @@ CGAL::QP_pricing_strategy<Q, ET, Tags> *
   return strat;
 }
 
+
+
 template<typename Is_linear,
 	 typename Is_nonnegative,
 	 typename IT,
@@ -421,8 +423,7 @@ bool process(const std::string& filename,
   QP_instance qp3(inout, true, verbosity);
   CGAL_qpe_assertion (qp3.is_valid());
   if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp3)) {
-    cout << "MPS reader and MPS writer disagree.\n" << endl;
-    return false;
+    cout << "Warning: MPS reader and MPS writer disagree.\n" << endl;
   }
 
   // copy program and check whether it is still the same
@@ -432,6 +433,18 @@ bool process(const std::string& filename,
 				     qp.d(), qp.c(), qp.c0());
     if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
       cout << "Program not correctly copied.\n" << endl;
+      return false;
+    }
+    // test default/copy constructor, assignment
+    CGAL::Quadratic_program<IT> qp5;
+    qp5 = qp4;
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
+      cout << "Program not correctly assigned.\n" << endl;
+      return false;
+    }
+    CGAL::Quadratic_program<IT> qp6 (qp4);
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
+      cout << "Program not correctly copy-constructed.\n" << endl;
       return false;
     }
   }
@@ -444,6 +457,18 @@ bool process(const std::string& filename,
       cout << "Program not correctly copied.\n" << endl;
       return false;
     }
+    // test default/copy constructor, assignment
+    CGAL::Linear_program<IT> qp5;
+    qp5 = qp4;
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
+      cout << "Program not correctly assigned.\n" << endl;
+      return false;
+    }
+    CGAL::Linear_program<IT> qp6 (qp4);
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
+      cout << "Program not correctly copy-constructed.\n" << endl;
+      return false;
+    }
   }
 
   if (!qp.is_linear() && qp.is_nonnegative()) {
@@ -452,6 +477,18 @@ bool process(const std::string& filename,
 	   qp.d(), qp.c(), qp.c0());
     if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
       cout << "Program not correctly copied.\n" << endl;
+      return false;
+    }    
+    // test default/copy constructor, assignment
+    CGAL::Nonnegative_quadratic_program<IT> qp5;
+    qp5 = qp4;
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
+      cout << "Program not correctly assigned.\n" << endl;
+      return false;
+    }
+    CGAL::Nonnegative_quadratic_program<IT> qp6 (qp4);
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
+      cout << "Program not correctly copy-constructed.\n" << endl;
       return false;
     }
   }
@@ -464,26 +501,57 @@ bool process(const std::string& filename,
       cout << "Program not correctly copied.\n" << endl;
       return false;
     }
+    // test default/copy constructor, assignment
+    CGAL::Nonnegative_linear_program<IT> qp5;
+    qp5 = qp4;
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
+      cout << "Program not correctly assigned.\n" << endl;
+      return false;
+    }
+    CGAL::Nonnegative_linear_program<IT> qp6 (qp4);
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
+      cout << "Program not correctly copy-constructed.\n" << endl;
+      return false;
+    }
   }
 
   typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_nonnegative> Tags;
 
-  // solve:
-  CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s = 
+  // now comes the actual, output-generating run 
+  CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s =
     create_strategy<QP_instance, ET, Tags>(options);
-  // temporary hack to print debug info for bad file in MAC testsuite
-  int verb;
-  if (filename == std::string("test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps") && options.find("Strategy")->second == FF)
-    verb = 4;
-  else
-    verb = verbosity;  
-  CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, s, verb);
+
+  CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, s, verbosity);
   // output solution + number of iterations
   cout << CGAL::to_double(solver.solution()) << "(" 
        << solver.iterations() << ") ";
   // the solver previously checked itself through an assertion
   const bool is_valid = true; 
   delete s;
+
+  // the last step: solve poblem from copied QP, if full exact pricing
+  // and general form
+  if (options.find("Strategy")->second == FE && 
+      !check_tag(Is_linear()) &&
+      !check_tag(Is_nonnegative()))
+    { 
+    // general form
+    typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> 
+      LocalTags;
+    typedef CGAL::Quadratic_program<IT> 
+      LocalQP;
+    CGAL::QP_pricing_strategy<LocalQP, ET, LocalTags> *slocal = new
+      CGAL::QP_full_exact_pricing <LocalQP, ET, LocalTags>();
+      
+    LocalQP qplocal (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
+		     qp.fl(), qp.l(), qp.fu(), qp.u(), 
+		     qp.d(), qp.c(), qp.c0()); 
+    CGAL::QP_solver<LocalQP, ET, LocalTags> solverlocal (qplocal, slocal, 0);
+    std::cout << "(c) ";
+    delete slocal;
+  }
+ 
+
 
   if (verbosity > 0 || !is_valid)
     cout << "  Solution is valid: " << is_valid << endl;

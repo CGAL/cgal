@@ -235,12 +235,6 @@ private:
   typedef  Join_input_iterator_1< Index_const_iterator, C_by_index_accessor >
   C_by_index_iterator;
 
-  typedef  QP_vector_accessor<
-    typename std::iterator_traits<D_iterator>::value_type,
-    false, false >                    D_by_index_accessor;
-  typedef  Join_input_iterator_1< Index_const_iterator, D_by_index_accessor >
-  D_by_index_iterator;
-
   typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
   A_accessor;
   typedef  typename CGAL::Bind< A_accessor,
@@ -249,17 +243,18 @@ private:
   typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
   A_row_by_index_iterator;
 
-  // Access to the matrix D is sometimes exact, and sometimes inexact:
+  // Access to the matrix D sometimes converts to ET, and 
+  // sometimes retruns the original input type
   typedef  QP_matrix_pairwise_accessor< D_iterator, Tag_true, ET >
   D_pairwise_accessor;
   typedef  Join_input_iterator_1< Index_const_iterator,
 				  D_pairwise_accessor >
   D_pairwise_iterator;
   typedef  QP_matrix_pairwise_accessor< D_iterator, Tag_true, D_entry >
-  D_pairwise_accessor_inexact;
+  D_pairwise_accessor_input_type;
   typedef  Join_input_iterator_1< Index_const_iterator, 
-				  D_pairwise_accessor_inexact >
-  D_pairwise_iterator_inexact;
+				  D_pairwise_accessor_input_type >
+  D_pairwise_iterator_input_type;
 
   // access to special artificial column by basic constraint index:
   typedef  QP_vector_accessor< typename S_art::const_iterator, false, false>
@@ -1495,8 +1490,8 @@ private:
       // 2 D_Bj^T * x_B
       mu_j += inv_M_B.inner_product_x
 	( x_it,
-	  D_by_index_iterator( B_O.begin(),
-			       D_by_index_accessor( *(qp_D + j))));
+	  D_pairwise_iterator_input_type( B_O.begin(),
+			       D_pairwise_accessor_input_type(qp_D, j)));
     }
   }
 
@@ -1510,8 +1505,8 @@ private:
       // 2 D_Bj^T * x_B
       mu_j += inv_M_B.inner_product_x
 	( x_it,
-	  D_by_index_iterator( B_O.begin(),
-			       D_by_index_accessor( *(qp_D + j))));
+	  D_pairwise_iterator_input_type( B_O.begin(),
+			       D_pairwise_accessor_input_type(qp_D, j)));
     }
   }
 

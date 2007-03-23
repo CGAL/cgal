@@ -154,8 +154,19 @@ namespace QP_functions_detail {
   bool are_equal_qp 
   (const Quadratic_program1 &qp1, const Quadratic_program2 &qp2)
   {
-    if (qp1.n() != qp2.n()) return false;
-    if (qp1.m() != qp2.m()) return false;
+    bool return_val = true;
+    // check n
+    if (qp1.n() != qp2.n()) {
+      std::cerr << "Equality test fails with n: " 
+		<< qp1.n() << " vs. " << qp2.n() << std::endl;
+      return false; // wildly wrong, abort now
+    }
+    // check m
+    if (qp1.m() != qp2.m()) {
+      std::cerr << "Equality test fails with m: " 
+		<< qp1.m() << " vs. " << qp2.m() << std::endl;
+      return false; // wildly wrong, abort now
+    }
     int n = qp1.n();
     int m = qp1.m();
     // check A
@@ -164,9 +175,10 @@ namespace QP_functions_detail {
     for (int j=0; j<n; ++j, ++a1, ++a2)
       for (int i=0; i<m; ++i) 
 	if (*((*a1)+i) != *((*a2)+i)) {
-	  std::cerr << "Equality test fails with A[" << j << "][" << i << "]: "
+	  std::cerr << "Equality test fails with A[" 
+		    << j << "][" << i << "]: "
 		    << *((*a1)+i) << " vs. " <<  *((*a2)+i) << std::endl;
-	  return false;
+	  return_val = false;
 	}
     // check b
     typename Quadratic_program1::B_iterator b1 = qp1.b();
@@ -175,7 +187,7 @@ namespace QP_functions_detail {
       if (*b1 != *b2) {
 	std::cerr << "Equality test fails with b[" << i << "]: "
 		  << *b1 << " vs. " <<  *b2 << std::endl;	
-	return false;
+	return_val = false;
       }
     // check r
     typename Quadratic_program1::R_iterator r1 = qp1.r();
@@ -184,7 +196,7 @@ namespace QP_functions_detail {
       if (*r1 != *r2) {
 	std::cerr << "Equality test fails with r[" << i << "]: "
 		  << *r1 << " vs. " <<  *r2 << std::endl;	
-	return false;
+	return_val = false;
       }
     // check fl
     typename Quadratic_program1::FL_iterator fl1 = qp1.fl();
@@ -193,7 +205,7 @@ namespace QP_functions_detail {
       if (*fl1 != *fl2) {
 	std::cerr << "Equality test fails with fl[" << j << "]: "
 		  << *fl1 << " vs. " <<  *fl2 << std::endl;	
-	return false;
+	return_val = false;
       }
     // check l
     typename Quadratic_program1::L_iterator l1 = qp1.l();
@@ -202,7 +214,7 @@ namespace QP_functions_detail {
       if (*l1 != *l2) {
 	std::cerr << "Equality test fails with l[" << j << "]: "
 		  << *l1 << " vs. " <<  *l2 << std::endl;
-	return false;
+	return_val = false;
       }
     // check fu
     typename Quadratic_program1::FU_iterator fu1 = qp1.fu();
@@ -211,7 +223,7 @@ namespace QP_functions_detail {
       if (*fu1 != *fu2) {
 	std::cerr << "Equality test fails with fu[" << j << "]: "
 		  << *fu1 << " vs. " <<  *fu2 << std::endl;
-	return false;
+	return_val = false;
       }
     // check u
     typename Quadratic_program1::U_iterator u1 = qp1.u();
@@ -220,7 +232,7 @@ namespace QP_functions_detail {
       if (*u1 != *u2) {
 	std::cerr << "Equality test fails with u[" << j << "]: "
 		  << *u1 << " vs. " <<  *u2 << std::endl;
-	return false;
+	return_val = false;
       }
     // check d
     typename Quadratic_program1::D_iterator d1 = qp1.d();
@@ -228,9 +240,10 @@ namespace QP_functions_detail {
     for (int i=0; i<n; ++i, ++d1, ++d2)
       for (int j=0; j<i+1; ++j)  // only access entries on/below diagonal
 	if (*((*d1)+j) != *((*d2)+j)) {
-	  std::cerr << "Equality test fails with D[" << i << "][" << j << "]: "
+	  std::cerr << "Equality test fails with D["
+		    << i << "][" << j << "]: "
 		    << *((*d1)+j) << " vs. " <<  *((*d2)+j) << std::endl; 
-	  return false;
+	  return_val = false;
 	}
     // check c
     typename Quadratic_program1::C_iterator c1 = qp1.c();
@@ -239,7 +252,7 @@ namespace QP_functions_detail {
       if (*c1 != *c2) {
 	std::cerr << "Equality test fails with c[" << j << "]: "
 		  << *c1 << " vs. " <<  *c2 << std::endl;
-	return false;
+	return_val = false;
       }
     // check c0
     typename Quadratic_program1::C_entry c01 = qp1.c0();
@@ -247,9 +260,9 @@ namespace QP_functions_detail {
     if (c01 != c02) {
       std::cerr << "Equality test fails with c0: "
 		<< c01 << " vs. " <<  c02 << std::endl;
-      return false;
+      return_val = false;
     }
-    return true;
+    return return_val;
   }
 
   template <typename P, typename Is_linear, typename Is_nonnegative>
