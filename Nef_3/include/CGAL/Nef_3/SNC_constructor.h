@@ -1895,16 +1895,19 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
     Halffacet_iterator f;
     CGAL_forall_halffacets(f, *this->sncp()) {
-      Halffacet_cycle_iterator fci;
-      for(fci = f->facet_cycles_begin();
-	  fci != f->facet_cycles_end(); ++fci) {
+      Halffacet_cycle_iterator fci(f->facet_cycles_begin());
+      SHalfedge_handle se(fci);
+      se->set_index();
+      int index(se->get_index());
+      for(; fci != f->facet_cycles_end(); ++fci) {
 	if(fci.is_shalfedge()) {
 	  SHalfedge_around_facet_circulator c1(fci), c2(c1);
-	  c1->set_index();
-	  ++c1;
 	  CGAL_For_all(c1,c2) {
-	    c1->set_index(c2->get_index());
+	    c1->set_index(index);
 	  }
+	} else if(fci.is_shalfloop()) {
+	  SHalfloop_handle sl(fci);
+	  sl->set_index(index);
 	}
       }
     }

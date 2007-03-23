@@ -38,6 +38,7 @@
 #include <CGAL/Nef_3/SNC_simplify.h>
 #include <CGAL/Nef_3/binop_intersection_tests.h>
 #include <CGAL/Nef_3/SNC_decorator_traits.h>
+#include <CGAL/Nef_3/ID_support_handler.h>
 
 #include <CGAL/IO/Verbose_ostream.h>
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
@@ -185,7 +186,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   typedef typename SM_decorator::SHalfedge_around_sface_circulator 
                                  SHalfedge_around_sface_circulator;
 
-  typedef ID_support_handler<Items, SNC_decorator> Association;
+  typedef CGAL::ID_support_handler<Items, SNC_decorator> Association;
 
   struct points_lt {
     bool operator()(Point_3& p1, Point_3& p2) const {
@@ -201,9 +202,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   SNC_decorator() : Base(), sncp_() {}
   SNC_decorator(SNC_structure& W) 
     : Base(W), sncp_(&W) {}
-  SNC_decorator(const Self& S) {
-    sncp_ = S.sncp_;
-  }
+    SNC_decorator(const Self& S) : Base(*(S.sncp_)) {}
 
   SNC_structure* sncp() const { 
     CGAL_assertion( sncp_ != NULL);

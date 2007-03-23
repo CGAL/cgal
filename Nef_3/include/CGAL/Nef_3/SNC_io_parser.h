@@ -877,6 +877,7 @@ public:
   bool read_sface(SFace_handle);
   void add_infi_box();
   void read();
+  template <typename K> void read_items(int);
 
   static void dump(SNC_structure& W, std::ostream& os = std::cerr, bool sort = false)
   { Self O(os,W, sort); O.print(); }
@@ -1225,101 +1226,62 @@ void SNC_io_parser<EW>::read()
 
   addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
-  if(addInfiBox) {
-    Vertex_of.resize(vn+8);
-    Edge_of.resize(en+24);
-    Halffacet_of.resize(fn+12);
-    Volume_of.resize(cn+1);
-    SEdge_of.resize(sen+48);
-    SLoop_of.resize(sln);
-    SFace_of.resize(sfn+16);
-    for(i=0; i<vn+8; ++i)   Vertex_of[i] = this->sncp()->new_vertex_only();
-    for(i=0; i<en+24; ++i)  Edge_of[i] = this->sncp()->new_halfedge_only();
-    for(i=0; i<fn+12; ++i)  Halffacet_of[i] = this->sncp()->new_halffacet_only();
-    for(i=0; i<cn+1; ++i)   Volume_of[i] = this->sncp()->new_volume_only();
-    for(i=0; i<sen+48; ++i) SEdge_of[i] = this->sncp()->new_shalfedge_only();
-    for(i=0; i<sln; ++i)    SLoop_of[i] = this->sncp()->new_shalfloop_only();
-    for(i=0; i<sfn+16; ++i) SFace_of[i] = this->sncp()->new_sface_only();
-  }
-  else {
-    Vertex_of.resize(vn);
-    Edge_of.resize(en);
-    Halffacet_of.resize(fn);
-    Volume_of.resize(cn);
-    SEdge_of.resize(sen);
-    SLoop_of.resize(sln);
-    SFace_of.resize(sfn);
-    for(i=0; i<vn; ++i)  Vertex_of[i] = this->sncp()->new_vertex_only();
-    for(i=0; i<en; ++i)  Edge_of[i] = this->sncp()->new_halfedge_only();
-    for(i=0; i<fn; ++i)  Halffacet_of[i] = this->sncp()->new_halffacet_only();
-    for(i=0; i<cn; ++i)  Volume_of[i] = this->sncp()->new_volume_only();
-    for(i=0; i<sen; ++i) SEdge_of[i] = this->sncp()->new_shalfedge_only();
-    for(i=0; i<sln; ++i) SLoop_of[i] = this->sncp()->new_shalfloop_only();
-    for(i=0; i<sfn; ++i) SFace_of[i] = this->sncp()->new_sface_only();
-  }
-
+  for(i=0; i<vn; ++i)  Vertex_of.push_back(this->sncp()->new_vertex_only());
+  for(i=0; i<en; ++i)  Edge_of.push_back(this->sncp()->new_halfedge_only());
+  for(i=0; i<fn; ++i)  Halffacet_of.push_back(this->sncp()->new_halffacet_only());
+  for(i=0; i<cn; ++i)  Volume_of.push_back(this->sncp()->new_volume_only());
+  for(i=0; i<sen; ++i) SEdge_of.push_back(this->sncp()->new_shalfedge_only());
+  for(i=0; i<sln; ++i) SLoop_of.push_back(this->sncp()->new_shalfloop_only());
+  for(i=0; i<sfn; ++i) SFace_of.push_back(this->sncp()->new_sface_only());
 
   if(addInfiBox) {
-    for(i=0; i<vn; ++i) {
-      if (!read_vertex<Standard_kernel>(Vertex_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in node line");
-    }
-    for(i=0; i<en; ++i) {
-      if (!read_edge<Standard_kernel>(Edge_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in edge line");
-    }
-    for(i=0; i<fn; ++i) {
-      if (!read_facet<Standard_kernel>(Halffacet_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in facet line");
-    }
-    for(i=0; i<cn; ++i) {
-      if (!read_volume(Volume_of[i+1]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in volume line");
-    }
-    for(i=0; i<sen; ++i) {
-      if (!read_sedge<Standard_kernel>(SEdge_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in sedge line");
-    }
-    for(i=0; i<sln; ++i) {
-      if (!read_sloop<Standard_kernel>(SLoop_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in sloop line");
-    }
-    for(i=0; i<sfn; ++i) {
-      if (!read_sface(SFace_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in sface line");
-    }
+    Volume_of.push_back(this->sncp()->new_volume_only());
+    read_items<Standard_kernel>(1);
     add_infi_box();
+  } else
+    read_items<Kernel>(0);
+}
+
+template <typename EW>
+template <typename K>
+void SNC_io_parser<EW>::read_items(int plus01) {
+
+  typename std::vector<Vertex_iterator>::iterator vi;
+  for(vi=Vertex_of.begin(); vi!=Vertex_of.end(); ++vi) {
+    if (!read_vertex<K>(*vi))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in node line");
   }
-  else {
-    for(i=0; i<vn; ++i) {
-      if (!read_vertex<Kernel>(Vertex_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in node line");
-    }
-    for(i=0; i<en; ++i) {
-      if (!read_edge<Kernel>(Edge_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in edge line");
-    }
-    for(i=0; i<fn; ++i) {
-      if (!read_facet<Kernel>(Halffacet_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in facet line");
-    }
-    for(i=0; i<cn; ++i) {
-      if (!read_volume(Volume_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in volume line");
-    }
-    for(i=0; i<sen; ++i) {
-      if (!read_sedge<Kernel>(SEdge_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in sedge line");
-    }
-    for(i=0; i<sln; ++i) {
-      if (!read_sloop<Kernel>(SLoop_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in sloop line");
-    }
-    for(i=0; i<sfn; ++i) {
-      if (!read_sface(SFace_of[i]))
-	CGAL_assertion_msg(0,"SNC_io_parser::read: error in sface line");
-    }
-  } 
+
+  typename std::vector<Halfedge_iterator>::iterator ei;
+  for(ei=Edge_of.begin(); ei!=Edge_of.end(); ++ei) {
+    if (!read_edge<K>(*ei))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in edge line");
+  }
+  typename std::vector<Halffacet_iterator>::iterator fi;
+  for(fi=Halffacet_of.begin(); fi!=Halffacet_of.end(); ++fi) {
+    if (!read_facet<K>(*fi))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in facet line");
+  }
+  typename std::vector<Volume_iterator>::iterator ci;
+  for(ci=Volume_of.begin()+plus01; ci!=Volume_of.end(); ++ci) {
+    if (!read_volume(*ci))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in volume line");
+  }
+  typename std::vector<SHalfedge_iterator>::iterator sei;
+  for(sei=SEdge_of.begin(); sei!=SEdge_of.end(); ++sei) {
+    if (!read_sedge<K>(*sei))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sedge line");
+  }
+  typename std::vector<SHalfloop_iterator>::iterator sli;
+  for(sli=SLoop_of.begin(); sli!=SLoop_of.end(); ++sli) {
+    if (!read_sloop<K>(*sli))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sloop line");
+  }
+  typename std::vector<SFace_iterator>::iterator sfi;
+  for(sfi=SFace_of.begin(); sfi!=SFace_of.end(); ++sfi) {
+    if (!read_sface(*sfi))
+      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sface line");
+  }
 
   SNC_constructor C(*this->sncp());
   C.assign_indices(); 
@@ -1777,8 +1739,14 @@ void SNC_io_parser<EW>::print_local_graph(Vertex_handle v) const
 template <typename EW>
 void SNC_io_parser<EW>::add_infi_box() {
 
+  for(i=0; i<8; ++i)  Vertex_of.push_back(this->sncp()->new_vertex_only());
+  for(i=0; i<24; ++i)  Edge_of.push_back(this->sncp()->new_halfedge_only());
+  for(i=0; i<12; ++i)  Halffacet_of.push_back(this->sncp()->new_halffacet_only());
+  for(i=0; i<48; ++i) SEdge_of.push_back(this->sncp()->new_shalfedge_only());
+  for(i=0; i<16; ++i) SFace_of.push_back(this->sncp()->new_sface_only());
+
   typename Standard_kernel::RT hx,hy,hz,hw;
-  for(int i=0; i<8; i++) {
+  for(int i=0; i<8; ++i) {
     Vertex_handle vh = Vertex_of[vn+i];
     vh->svertices_begin() = Edge_of[en+3*i];
     vh->svertices_last()  = Edge_of[en+3*i+2];
@@ -1805,7 +1773,7 @@ void SNC_io_parser<EW>::add_infi_box() {
 		      21,13, 8,
 		      18,16,11};
   
-  for(int i = 0; i < 24; i++) {
+  for(int i = 0; i < 24; ++i) {
     Halfedge_handle eh = Edge_of[en+i];
     eh->twin() = Edge_of[en+twinIdx[i]];
     eh->center_vertex() = Vertex_of[vn+(i/3)];
@@ -1830,7 +1798,7 @@ void SNC_io_parser<EW>::add_infi_box() {
   
   int bnd[12] = {19, 18, 43, 42, 35, 34,
 		 47, 46, 39, 38, 45, 44};
-  for(int i = 0; i < 12; i++) {
+  for(int i = 0; i < 12; ++i) {
     Halffacet_handle fh = Halffacet_of[fn+i];
     fh->twin() = Halffacet_of[fn+(i/2*2)+((i+1)%2)];
     fh->boundary_entry_objects().push_back(SEdge_of[sen+bnd[i]]);
@@ -1887,7 +1855,7 @@ void SNC_io_parser<EW>::add_infi_box() {
 		 1,-1,-1,-1,-1,1,
 		 -1,1,-1,1,1,1};
   
-  for(int i = 0; i < 48; i++) {
+  for(int i = 0; i < 48; ++i) {
     SHalfedge_handle seh = SEdge_of[sen+i];
     
     seh->twin() = SEdge_of[sen+(i/2*2)+((i+1)%2)];
@@ -1916,7 +1884,7 @@ void SNC_io_parser<EW>::add_infi_box() {
   
   int volIdx[8] = {0,1,1,0,1,0,0,1};
   
-  for(int i = 0; i < 16; i++) {
+  for(int i = 0; i < 16; ++i) {
     SFace_handle sfh = SFace_of[sfn+i];
     sfh->center_vertex() = Vertex_of[vn+(i/2)];
     sfh->boundary_entry_objects().push_back(SEdge_of[sen+(i/2*6)+(i%2)]);
