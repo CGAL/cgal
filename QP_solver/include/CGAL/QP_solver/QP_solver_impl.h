@@ -117,7 +117,7 @@ solution_numerator( ) const
 	  // the other half
 	  s *= et2;
 	  // diagonal contribution
-	  s += ET( qp_D[ i][ i]) * *x_i_it;
+	  s += ET( (*(qp_D + i))[ i]) * *x_i_it;
         }
         // add linear part: 2c_i
         s -= d * et2 * ET( *c_it);
@@ -262,7 +262,7 @@ pivot_step( )
 		    q_lambda.begin(),    q_x_O.begin());
 	        if (is_QP) {
 		    if (j < qp_n) {
-		        nu -= d*ET(qp_D[j][j]);
+		        nu -= d*ET((*(qp_D+j))[j]);
 		    }
 		}
 		CGAL_qpe_assertion(nu == et0);
@@ -428,7 +428,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
 
-	CGAL::copy_n( A_column(qp_A[ j_]), qp_m, A_Cj_it);
+	CGAL::copy_n( *(qp_A + j_), qp_m, A_Cj_it);
 
     } else {                                            // artificial variable
 
@@ -445,7 +445,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
 {
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
-	A_by_index_accessor  a_accessor( qp_A[ j_]);
+	A_by_index_accessor  a_accessor( *(qp_A + j_));
 	std::copy( A_by_index_iterator( C.begin(), a_accessor),
 		   A_by_index_iterator( C.end  (), a_accessor),
 		   A_Cj_it);
@@ -1876,7 +1876,7 @@ leave_variable( )
 	// enter inequality constraint [ in: i ]
 	int new_row = slack_A[ i-qp_n].first;
 
-	A_Cj[ C.size()] = ( j < qp_n ? ET( A_column(qp_A[ j])[ new_row]) : et0);
+	A_Cj[ C.size()] = ( j < qp_n ? ET( (*(qp_A + j))[ new_row]) : et0);
 
 	 b_C[ C.size()] = ET( qp_b[ new_row]);
 	in_C[ new_row ] = C.size();
@@ -2232,7 +2232,7 @@ z_replace_variable_slack_by_original( )
     
     
     // prepare kappa
-    ET  kappa = d * ET(A_column(qp_A[j])[new_row]) 
+    ET  kappa = d * ET((*(qp_A + j))[new_row]) 
                 - inv_M_B.inner_product_x( tmp_x.begin(), q_x_O.begin());
 		
 	// note: (-1)/hat{\nu} is stored instead of \hat{\nu}	 
@@ -2348,7 +2348,7 @@ void  QP_solver<Q, ET, Tags>::
 update_r_C_r_S_B__j(ET& x_j)
 {
     // update of vector r_{C}
-    A_by_index_accessor     a_accessor_j(qp_A[j]);
+    A_by_index_accessor     a_accessor_j(*(qp_A + j));
     
     A_by_index_iterator     A_C_j_it(C.begin(), a_accessor_j);
     
@@ -2372,8 +2372,8 @@ void  QP_solver<Q, ET, Tags>::
 update_r_C_r_S_B__j_i(ET& x_j, ET& x_i)
 {
     // update of vector r_{C}
-    A_by_index_accessor     a_accessor_j(qp_A[j]);
-    A_by_index_accessor     a_accessor_i(qp_A[i]);
+    A_by_index_accessor     a_accessor_j(*(qp_A+j));
+    A_by_index_accessor     a_accessor_i(*(qp_A+i));
     
     A_by_index_iterator     A_C_j_it(C.begin(), a_accessor_j);
     A_by_index_iterator     A_C_i_it(C.begin(), a_accessor_i);
@@ -2399,7 +2399,7 @@ void  QP_solver<Q, ET, Tags>::
 update_r_C_r_S_B__i(ET& x_i)
 {
     // update of vector r_{C}
-    A_by_index_accessor     a_accessor_i(qp_A[i]);
+    A_by_index_accessor     a_accessor_i(*(qp_A+i));
     A_by_index_iterator     A_C_i_it(C.begin(), a_accessor_i);
     
     for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end(); 
@@ -2560,7 +2560,7 @@ multiply__A_S_BxB_O(Value_iterator in, Value_iterator out) const
     out_it   = out;
     
     if ( *col_it < qp_n) {	                        // original variable
-      a_col = qp_A[ *col_it];
+      a_col = *(qp_A+ *col_it);
       
       // foreach row of A in S_B
       for ( row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
@@ -2830,7 +2830,7 @@ check_basis_inverse( Tag_false)
 	row = ( has_ineq ? C[ col] : col);
 	v_it = tmp_x.begin();
 	for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-	    *v_it = ( *i_it < qp_n ? A_column(qp_A[ *i_it])[ row] :  // original
+	    *v_it = ( *i_it < qp_n ? (*(qp_A+ *i_it))[ row] :  // original
 		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
@@ -3000,7 +3000,7 @@ print_program( ) const
 
 	// original variables
 	for (i = 0; i < qp_n; ++i) 
-	  vout4.out() << A_column(qp_A[ i])[row] << ' ';
+	  vout4.out() << (*(qp_A+ i))[row] << ' ';
 
 	// slack variables
 	if ( ! slack_A.empty()) {

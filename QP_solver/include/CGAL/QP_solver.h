@@ -245,12 +245,12 @@ private:
 
   // Access to the matrix D sometimes converts to ET, and 
   // sometimes retruns the original input type
-  typedef  QP_matrix_pairwise_accessor< D_iterator, Tag_true, ET >
+  typedef  QP_matrix_pairwise_accessor< D_iterator, ET >
   D_pairwise_accessor;
   typedef  Join_input_iterator_1< Index_const_iterator,
 				  D_pairwise_accessor >
   D_pairwise_iterator;
-  typedef  QP_matrix_pairwise_accessor< D_iterator, Tag_true, D_entry >
+  typedef  QP_matrix_pairwise_accessor< D_iterator, D_entry >
   D_pairwise_accessor_input_type;
   typedef  Join_input_iterator_1< Index_const_iterator, 
 				  D_pairwise_accessor_input_type >
@@ -1445,16 +1445,17 @@ private:
   void
   mu_j__linear_part( NT& mu_j, int j, It lambda_it, Tag_true) const
   {
-    mu_j += inv_M_B.inner_product_l( lambda_it, A_column(qp_A[ j]));
+    mu_j += inv_M_B.inner_product_l( lambda_it, *(qp_A+ j));
   }
 
   template < class NT, class It > inline                      // has ineq.
   void
   mu_j__linear_part( NT& mu_j, int j, It lambda_it, Tag_false) const
   {
-    mu_j += inv_M_B.inner_product_l( lambda_it,
-				     A_by_index_iterator( C.begin(),
-							  A_by_index_accessor( qp_A[ j])));
+    mu_j += inv_M_B.inner_product_l
+      ( lambda_it,
+	A_by_index_iterator( C.begin(),
+			     A_by_index_accessor( *(qp_A + j))));
   }
 
   template < class NT, class It > inline                     
@@ -1690,7 +1691,7 @@ ratio_test_1__q_x_S( Tag_false)
     std::transform( q_x_S.begin(),
 		    q_x_S.begin()+S_B.size(),
 		    A_by_index_iterator( S_B.begin(),
-					 A_by_index_accessor( qp_A[ j])),
+					 A_by_index_accessor( *(qp_A + j))),
 		    q_x_S.begin(),
 		    compose2_2( std::minus<ET>(),
 				Identity<ET>(),
@@ -1819,7 +1820,7 @@ ratio_test_2__p( Tag_false)
 	    i_it != B_O.end();
 	    ++i_it,                ++v_it                ) {
       *v_it = ( sign ? 
-		A_column(qp_A[ *i_it])[ row] : - A_column(qp_A[ *i_it])[ row]);
+		(*(qp_A+ *i_it))[ row] : - (*(qp_A + *i_it))[ row]);
     }
 
     // compute  ( p_l | p_x_O )^T = M_B^{-1} * ( 0 | A_{S_j,B_O} )^T

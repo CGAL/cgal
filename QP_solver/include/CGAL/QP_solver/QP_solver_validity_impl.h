@@ -163,7 +163,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem() const
        ++i_it, ++x_it)                    // iterate over all basic vars
     if (*i_it < qp_n)                     // ordinary original variable?
       for (int i=0; i<qp_m; ++i)
-	lhs_col[i] += (*x_it) * ET(A_column(qp_A[*i_it])[i]);
+	lhs_col[i] += (*x_it) * ET((*(qp_A + *i_it))[i]);
     else                                  // artificial variable?
       if (*i_it != art_s_i)   {           // normal artificial variable?
 	const int k = *i_it - qp_n - slack_A.size();
@@ -177,7 +177,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem() const
     if (!is_basic(j)) {
       const ET var = nonbasic_original_variable_value(j) * d;
       for (int i=0; i<qp_m; ++i)
-	lhs_col[i] += var * ET(A_column(qp_A[j])[i]);
+	lhs_col[i] += var * ET((*(qp_A+j))[i]);
     }
 
   // compute left-hand side of (C1) (part for slackies):
@@ -383,7 +383,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem() const
   for (int col = 0; col < no_of_wo_vars; ++col) {
     if (col < qp_n)                  // ordinary original variable
       for (int i=0; i<qp_m; ++i)
-	tau_aux[col] += lambda_aux[i] * ET(A_column(qp_A[col])[i]);
+	tau_aux[col] += lambda_aux[i] * ET((*(qp_A+col))[i]);
     else {
       int k = col - qp_n;
       if (k < static_cast<int>(slack_A.size()))
@@ -448,7 +448,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
 
     // compute A x times d:
     for (int j=0; j<qp_m; ++j)
-      lhs_col[j] += var * ET(A_column(qp_A[i])[j]);
+      lhs_col[j] += var * ET((*(qp_A+i))[j]);
   }
   
   // check A x = b (where in the code both sides are multiplied by d):
@@ -520,7 +520,7 @@ is_solution_optimal() const
   for (int col = 0; col < qp_n; ++col) {
     tau[col] = ET(qp_c[col]) * d;
     for (int i=0; i<qp_m; ++i)
-      tau[col] += lambda_prime[i] * ET(A_column(qp_A[col])[i]);
+      tau[col] += lambda_prime[i] * ET((*(qp_A+col))[i]);
   }
   if (!check_tag(Is_linear())) {
     for (int col = 0; col < qp_n; ++col) {
@@ -539,7 +539,7 @@ is_solution_optimal() const
   Values lhs_col(qp_m, et0);
   for (int i=0; i<qp_n; ++i)
     for (int j=0; j<qp_m; ++j)
-      lhs_col[j] += x[i] * ET(A_column(qp_A[i])[j]);
+      lhs_col[j] += x[i] * ET((*(qp_A+i))[j]);
 
   // check (C5) and (C6), more precisely:
   // - check \lambda[i] >= 0 for i in LE:={j|qp_r[j]==LESS_EQUAL}
@@ -642,7 +642,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
   Values aw(qp_m, et0);
   for (int i=0; i<qp_n; ++i)
     for (int j=0; j<qp_m; ++j)
-      aw[j] += w[i] * ET(A_column(qp_A[i])[j]);
+      aw[j] += w[i] * ET((*(qp_A+i))[j]);
 
   // check feasibility (C8):
   for (int row=0; row<qp_m; ++row)

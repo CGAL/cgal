@@ -42,7 +42,7 @@ template < class MatrixIt,
            bool check_2nd_lower = false, bool check_2nd_upper = false >
 class QP_matrix_accessor;
 
-template < class MatrixIt, class IsSymmetric, typename ET >
+template < class MatrixIt, typename ET >
 class QP_matrix_pairwise_accessor;
 
 
@@ -131,7 +131,7 @@ class QP_matrix_accessor {
 // ----------------------------
 // QP_matrix_pairwise_accessor
 // ----------------------------
-template < class MatrixIt,class IsSymmetric, typename ResultType >
+template < class MatrixIt, typename ResultType >
 class QP_matrix_pairwise_accessor {
   typedef  typename std::iterator_traits<MatrixIt>::value_type  VectorIt;
   
@@ -147,32 +147,18 @@ public:
   QP_matrix_pairwise_accessor() {}
   
   QP_matrix_pairwise_accessor( MatrixIt it, int row)
-    : m (it), v (it[ row]), r (row)                                  
+    : m (it), v (*(it + row)), r (row)                                  
   {}
   
   ResultType operator () ( int c) const
   {
-    return entry_pair( c, IsSymmetric());
-  }
-  
-  ResultType entry_pair( int c, Tag_true ) const           // symmetric
-  { 
     // make sure that only entries on or below the diagonal are
     // accessed
     if (c <= r)
       return ResultType(v[ c]); 
     else
-      return ResultType(m[ c][ r]);
+      return ResultType((*(m + c))[ r]);
   }
-  
-  // this should not be used anymore:
-  //   ResultType entry_pair( int c, Tag_false) const  // not symmetric
-  //   { 
-  //     // TEMPORARILY:
-  //     typedef typename std::iterator_traits<
-  //       typename std::iterator_traits<MatrixIt>::value_type>::value_type IT;
-  //     return ResultType(m[ r][ c]) + ResultType(m[ c][ r]); 
-  //   }
   
 private:
   MatrixIt           m;

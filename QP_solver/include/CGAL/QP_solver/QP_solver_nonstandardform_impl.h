@@ -103,11 +103,11 @@ ET  QP_solver<Q, ET, Tags>::multiply__A_ixO(int row) const
     // nonzero.
     switch (x_O_v_i[i]) {
     case UPPER:
-      value += ET(qp_u[i]) * ET(A_column(qp_A[i])[row]);
+      value += ET(qp_u[i]) * ET((*(qp_A+i))[row]);
       break;
     case LOWER:
     case FIXED:
-      value += ET(qp_l[i]) * ET(A_column(qp_A[i])[row]);
+      value += ET(qp_l[i]) * ET((*(qp_A+i))[row]);
       break;
     case BASIC:
       CGAL_qpe_assertion(false);
@@ -134,7 +134,7 @@ multiply__A_CxN_O(Value_iterator out) const
   for (int i = 0; i < qp_n; ++i)
     if (!is_basic(i)) {
       const ET x_i = nonbasic_original_variable_value(i);
-      const A_column a_col = qp_A[i];
+      const A_column a_col = *(qp_A+i);
       Value_iterator out_it = out;
       for (Index_const_iterator row_it = C.begin();
 	   row_it != C.end();
@@ -186,7 +186,7 @@ multiply__A_S_BxN_O(Value_iterator out) const
   for (int i = 0; i < qp_n; ++i)
     if (!is_basic(i)) {
       const ET x_i = nonbasic_original_variable_value(i);
-      const A_column a_col = qp_A[i];
+      const A_column a_col = *(qp_A+i);
       Value_iterator out_it = out;
       for (Index_const_iterator row_it = S_B.begin();
 	   row_it != S_B.end();
