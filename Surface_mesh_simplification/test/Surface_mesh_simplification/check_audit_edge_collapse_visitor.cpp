@@ -101,7 +101,7 @@ public :
     else REPORT_ERROR( str(format("Unable to open audit file: %1%") % audit_name) ) ;
   }
   
-  void OnStarted( Surface& aSurface ) {} 
+  void OnStarted( Surface& ) {} 
   
   void OnFinished ( Surface& aSurface )
   { 
@@ -148,11 +148,11 @@ public :
     actual_table.insert(make_pair(aProfile.v0_v1()->id(), Data_ptr( new Data(aProfile.v0_v1()->id(),aCost,aP) ) ) ) ;
   }                
   
-  void OnSelected( Profile const& aProfile, optional<NT> const& aCost, size_t, size_t ) {}
+  void OnSelected( Profile const&, optional<NT> const&, size_t, size_t ) {}
   
-  void OnCollapsing( Profile const& aProfile, optional<Point> const& aPlacement ) {}
+  void OnCollapsing( Profile const&, optional<Point> const& ) {}
   
-  void OnNonCollapsable( Profile const& aProfile ) {}                
+  void OnNonCollapsable( Profile const& ) {}                
 
   NT toNT ( string s ) 
   { 

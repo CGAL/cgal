@@ -52,16 +52,16 @@ struct Visitor
   {} 
 
   // Called on algorithm entry  
-  void OnStarted( Surface& surface ) {} 
+  void OnStarted( Surface& ) {} 
   
   // Called on algorithm exit  
-  void OnFinished ( Surface& surface ) { std::cerr << "\n" << std::flush ; } 
+  void OnFinished ( Surface& ) { std::cerr << "\n" << std::flush ; } 
   
   // Called when the stop condition returned true
-  void OnStopConditionReached( Profile const& profile ) {} 
+  void OnStopConditionReached( Profile const& ) {} 
   
   // Called during the collecting phase for each edge collected.
-  void OnCollected( Profile const& profile, boost::optional<double> const& cost )
+  void OnCollected( Profile const&, boost::optional<double> const& )
   {
     ++ collected ;
     std::cerr << "\rEdges collected: " << collected << std::flush ;
@@ -69,7 +69,7 @@ struct Visitor
   
   // Called during the processing phase for each edge selected.
   // If cost is absent the edge won't be collapsed.
-  void OnSelected(Profile const&          profile
+  void OnSelected(Profile const&          
                  ,boost::optional<double> cost
                  ,std::size_t             initial
                  ,std::size_t             current
@@ -86,7 +86,7 @@ struct Visitor
   
   // Called during the processing phase for each edge being collapsed.
   // If placement is absent the edge is left uncollapsed.
-  void OnCollapsing(Profile const&          profile
+  void OnCollapsing(Profile const&          
                    ,boost::optional<Point>  placement
                    )
   {
@@ -98,7 +98,7 @@ struct Visitor
   // Called for each edge which failed the so called link-condition,
   // that is, which cannot be collapsed because doing so would
   // turn the surface into a non-manifold.
-  void OnNonCollapsable( Profile const& profile )
+  void OnNonCollapsable( Profile const& )
   {
     ++ non_collapsable;
   }                

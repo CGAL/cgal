@@ -77,13 +77,13 @@ struct Visitor
   
   void OnStopConditionReached( Profile const& ) {} 
   
-  void OnCollected( Profile const& aProfile, optional<double> const& aCost )
+  void OnCollected( Profile const&, optional<double> const& )
   {
     ++ mCollected ;
     cerr << "\rEdges collected: " << mCollected << flush ;
   }                
   
-  void OnSelected( Profile const& aProfile, optional<double> const& aCost, size_t aInitial, size_t aCurrent )
+  void OnSelected( Profile const&, optional<double> const&, size_t aInitial, size_t aCurrent )
   {
     if ( aCurrent == aInitial )
       cerr << "\n" << flush ;
@@ -96,13 +96,9 @@ struct Visitor
     }  
   }                
   
-  void OnCollapsing(Profile const& aProfile, optional<Point> const& aPlacement ) 
-  {
-  }                
+  void OnCollapsing(Profile const&, optional<Point> const& ) {}                
   
-  void OnNonCollapsable(Profile const& aProfile ) 
-  {
-  }                
+  void OnNonCollapsable(Profile const& ) {}                
   
   size_t mRequested ;
   size_t mCollected ;
