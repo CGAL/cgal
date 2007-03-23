@@ -137,13 +137,13 @@ void halfedge_below(Vertex_handle v, Halfedge_handle e)
   geninfo<unsigned>::access(v->info()) = e; }
 
 // all empty, no update necessary
-void link_as_target_and_append(Vertex_handle v, Halfedge_handle e)
+void link_as_target_and_append(Vertex_handle, Halfedge_handle)
 { /* do nothing */ }
 
-void trivial_segment(Vertex_handle v, I it) const {}
-void starting_segment(Vertex_handle v, I it) const {}
-void passing_segment(Vertex_handle v, I it) const {}
-void ending_segment(Vertex_handle v, I it) const {}
+void trivial_segment(Vertex_handle, I) const {}
+void starting_segment(Vertex_handle, I) const {}
+void passing_segment(Vertex_handle, I) const {}
+void ending_segment(Vertex_handle, I) const {}
 
 };
 

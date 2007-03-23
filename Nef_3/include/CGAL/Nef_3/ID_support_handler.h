@@ -181,7 +181,7 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
   }
   
   void handle_support(SVertex_handle sv,
-		      SHalfedge_const_handle se1,
+		      SHalfedge_const_handle,
 		      SVertex_const_handle sv2) {
     //      std::cerr << "handle support ev " << sv->point() << std::endl;
     sv->set_index(sv2->get_index());
@@ -214,7 +214,7 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
   
   void handle_support(SVertex_handle sv,
 		      SVertex_const_handle sv1,
-		      SHalfloop_const_handle sl2) {
+		      SHalfloop_const_handle) {
     //      std::cerr << "handle support vl " << sv->point() << std::endl;
     sv->set_index(sv1->get_index());
   }

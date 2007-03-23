@@ -837,7 +837,7 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
   public:	
     BBox_updater(const SNCd& sncd) : D(sncd), b(Point_3(0,0,0),Point_3(0,0,0)) {}
 
-    void pre_visit(const Node* n) {}
+    void pre_visit(const Node*) {}
     void post_visit(const Node* n) {
       typename Object_list::const_iterator o;
       for( o = n->objects().begin(); o != n->objects().end(); ++o) {

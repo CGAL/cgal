@@ -150,15 +150,15 @@ class Infimaximal_box {
 
   template <typename SNC_constructor, typename Mark>
   static std::list<typename SNC_constructor::Vertex_handle> 
-    create_vertices_on_infibox(SNC_constructor& C, 
-			       const Plane_3& h, const std::list<Point_3>& points, 
-			       const Mark& bnd, const Mark& inside, const Mark& outside) {
+    create_vertices_on_infibox(SNC_constructor&, 
+			       const Plane_3&, const std::list<Point_3>&, 
+			       const Mark&, const Mark&, const Mark&) {
     // TODO: warning oder assertion einbauen
     return std::list<typename SNC_constructor::Vertex_handle>();
   }
 
   template <typename SNC_constructor>
-  static std::list<Point_3> find_points_of_box_with_plane(SNC_constructor& C, const Plane_3& h) {
+  static std::list<Point_3> find_points_of_box_with_plane(SNC_constructor&, const Plane_3&) {
     return std::list<Point_3>();
   }
 
@@ -167,13 +167,13 @@ class Infimaximal_box {
     return segs.begin();
   }
 
-  static Point_3 create_extended_point(NT x, NT y, NT z) {
+  static Point_3 create_extended_point(NT, NT, NT) {
     std::cerr << "function should not be called" << std::endl;
     CGAL_assertion_msg(0,"function should not be called");
     return Point_3(0,0,0);
   }
 
-  static Plane_3 create_extended_plane(NT a, NT b, NT c, NT d) {
+  static Plane_3 create_extended_plane(NT, NT, NT, NT) {
     std::cerr << "function should not be called" << std::endl;
     return Plane_3(1,0,0,0);
   }
@@ -185,7 +185,7 @@ class Infimaximal_box {
   }
 
   template <typename SNC_constructor_>
-  static void create_vertices_of_box_with_plane(SNC_constructor_& C, const Plane_3& h, bool b) {
+  static void create_vertices_of_box_with_plane(SNC_constructor_&, const Plane_3&, bool) {
     std::cerr << "Constructor not available for this Kernel" << std::endl;
   }
 
