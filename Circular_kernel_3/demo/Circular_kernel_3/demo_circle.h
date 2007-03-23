@@ -297,7 +297,7 @@ class MyWindow : public QMainWindow {
 
 	protected:
 
-		void keyPressEvent (QKeyEvent* qke) {
+		void keyPressEvent (QKeyEvent* /*qke*/) {
 			//std::cout << "Key ascii<" << qke->ascii() << "> key<" << qke->key() << ">" << std::endl;
 		}
 
