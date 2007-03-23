@@ -124,11 +124,11 @@ public:
   //                   Unique_hash_map<Halfedge_handle, bool>& E, 
   //                   Unique_hash_map<Halffacet_handle, bool>& F) = 0;
 
-  virtual void add_facet(Halffacet_handle f) {}
+  virtual void add_facet(Halffacet_handle) {}
 
-  virtual void add_edge(Halfedge_handle e) {}
+  virtual void add_edge(Halfedge_handle) {}
 
-  virtual void add_vertex(Vertex_handle v) {}
+  virtual void add_vertex(Vertex_handle) {}
 
   virtual ~SNC_point_locator() {
     CGAL_NEF_CLOG("");
