@@ -62,12 +62,12 @@ NT my_rand()
 //----------------------
 
 template<class T>
-bool is_RO2_class(const typename CGAL::Root_of_2<T>& ){ return true;}
+bool is_RO2_class(const CGAL::Root_of_2<T>& ){ return true;}
 template<class T>
 bool is_RO2_class(const T& ){ return false;}
 
 template<class T>
-CGAL::Root_of_2<T> conjugate(const typename CGAL::Root_of_2<T>& R){
+CGAL::Root_of_2<T> conjugate(const CGAL::Root_of_2<T>& R){
   return R.conjugate();
 }
 
@@ -79,7 +79,7 @@ template<class T>
 T inverse_helper(const T& R){ return (T) 1/R; }
 
 template<class T>
-CGAL::Root_of_2<T> inverse_helper(const typename CGAL::Root_of_2<T>& R){
+CGAL::Root_of_2<T> inverse_helper(const CGAL::Root_of_2<T>& R){
   return inverse(R);
 }
 
@@ -87,16 +87,14 @@ template<class T>
 bool is_smaller_helper(const T& R){ return R.exact().is_smaller(); }
 
 template<class T>
-bool is_smaller_helper(const typename CGAL::Root_of_2<T>& R){ return R.is_smaller();}
+bool is_smaller_helper(const CGAL::Root_of_2<T>& R){ return R.is_smaller();}
 
-template<class RT, class T>
-RT bracket(const T& R,int i){ return R.exact()[i]; }
-
-template<class RT>
-RT bracket(const typename CGAL::Root_of_2<RT>& R,int i){
-  return R[i];
-}
-
+template < typename RT >
+struct bracket {
+  template < typename T >
+  RT operator()(const T& R, int i) const { return R.exact()[i]; }
+  RT operator()(const CGAL::Root_of_2<RT>& R, int i) const { return R[i]; }
+};
 
 
 //----------------------------
@@ -107,7 +105,7 @@ Root create_root_helper(RT a, RT b, Root *)
 }
 
 template < class T, class RT >
-CGAL::Root_of_2<T> create_root_helper(RT a, RT b, typename CGAL::Root_of_2<T> *)
+CGAL::Root_of_2<T> create_root_helper(RT a, RT b, CGAL::Root_of_2<T> *)
 {
    return CGAL::Root_of_2<T>(a, b);
 }
@@ -175,7 +173,7 @@ test_to_interval(const Root &r1)
 {
   std::pair<double, double> the_interval = CGAL_NTS to_interval(r1);
   if(!((to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second))) {
-    std::cout << bracket<RT>(r1,2) << " " << bracket<RT>(r1,1) << " " << bracket<RT>(r1,0) << " " << is_smaller_helper(r1) << std::endl; 
+    std::cout << bracket<RT>()(r1,2) << " " << bracket<RT>()(r1,1) << " " << bracket<RT>()(r1,0) << " " << is_smaller_helper(r1) << std::endl; 
     std::cout << setprecision (18) << to_double(r1) << std::endl;
     std::cout << "[" << setprecision (18) << the_interval.first << "," << setprecision (18) << the_interval.second << "]";
   }
