@@ -36,6 +36,7 @@
 #endif
 
 // #include <CGAL/FPU.h>
+#include <CGAL/Interval_nt.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -152,15 +153,23 @@ template <> class Real_embeddable_traits< long double >
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-
+          // The conversion long double to double does not always follow the
+          // rounding mode (e.g. on MacIntel/g++-4.0.2).  So let's do a naive
+          // conversion to double, then widen the interval.
+          return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+#if 0
           // We hope that the long double -> double conversion
           // follows the current rounding mode.
           Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
           volatile long double mx = -x; // needed otherwise the conversion can
                                         // get factorized between d and -d...
-          return std::make_pair(- (double) CGAL_IA_FORCE_TO_DOUBLE(mx),
-                                (double) CGAL_IA_FORCE_TO_DOUBLE(x));
-          
+          if (x>0)
+            return std::make_pair(- static_cast<double>(CGAL_IA_FORCE_TO_DOUBLE(mx)),
+                                  static_cast<double>(CGAL_IA_FORCE_TO_DOUBLE(x)));
+          else
+            return std::make_pair((double) CGAL_IA_FORCE_TO_DOUBLE(x),
+                                  - (double) CGAL_IA_FORCE_TO_DOUBLE(mx));
+#endif
         }
     };
 

@@ -42,6 +42,12 @@ int main()
         std::cout << ia << std::endl;
         if (ia.inf() == ia.sup())
 	    return 1;
+        ia = CGAL_NTS to_interval(-posnormal);
+        std::cout.precision(30);
+        std::cout << -posnormal << std::endl;
+        std::cout << ia << std::endl;
+        if (ia.inf() == ia.sup())
+	    return 1;
     }
 
     return 0;
