@@ -1,0 +1,15 @@
+Three families of data sets for quadrics are provided to benchmark the generic
+divide-and-conquer algorithm of CGAL's Envelope_3 package.
+
+This set contains sets of up to 1000 random quadrics, whose coefficients
+are 10-bit integers.
+
+\instance{Benchmark_instances/benchmark/Envelope_3/data/Quadric_3/random/quadrics/}
+
+This set contains sets of up to 1000 random ellipsoids.
+
+\instance{Benchmark_instances/benchmark/Envelope_3/data/Quadric_3/random/quadrics/}
+
+This set contains sets of up to 1000 random non-ellipsoids.
+
+\instance{Benchmark_instances/benchmark/Envelope_3/data/Quadric_3/random/quadrics/}
