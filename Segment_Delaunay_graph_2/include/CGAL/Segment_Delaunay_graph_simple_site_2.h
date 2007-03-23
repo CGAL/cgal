@@ -84,7 +84,7 @@ public:
 
   static Self construct_site_2(const Point_2& , const Point_2& ,
 			       const Point_2& , const Point_2& ,
-			       bool b) {
+			       bool ) {
     no_constructor_support();
     return Self();
   }
