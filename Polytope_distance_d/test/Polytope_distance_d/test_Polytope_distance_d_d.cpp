@@ -65,18 +65,19 @@ void process ()
     int d = 10;
     std::vector<double>  coords( d+1);
     int  i, j;
-    double hom = 1.0;
+    double hom = 2.0;
     for ( i = 0; i < 50; ++i) {
       for (j=0; j<d; ++j) 
 	coords[ j] = CGAL::default_random( 0x100000);
-      coords[d] = hom++;
+      coords[d] = hom;
       p_points.push_back
 	(typename K::Point_d(d, coords.begin(), coords.end()));
     }
+    hom = 3.0;
     for ( i = 0; i < 50; ++i) {
       for (j=0; j<d; ++j) 
 	coords[ j] = -CGAL::default_random( 0x100000);
-      coords[d] = hom++;
+      coords[d] = hom;
       q_points.push_back
 	(typename K::Point_d(d, coords.begin(), coords.end()));
     }

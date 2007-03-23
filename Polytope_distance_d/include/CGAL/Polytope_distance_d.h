@@ -201,7 +201,8 @@ namespace PD_detail {
   // we have one functor for a fixed row, and one functor for the
   // whole matrix
 
-  // functor for a fixed row of D 
+  // functor for a fixed row of D; note that we have to return 2D in
+  // order to please the QP_solver
   template <class NT> 
   class D_row : public std::unary_function <int, NT> 
   {
@@ -210,7 +211,7 @@ namespace PD_detail {
     D_row () 
     {}
     D_row (int i, int d) 
-      : i_ (i), d_ (d), nt_0_ (0), nt_1_ (1)
+      : i_ (i), d_ (d), nt_0_ (0), nt_2_ (2)
     {}
     
     result_type operator () (int j) const
@@ -219,16 +220,16 @@ namespace PD_detail {
 	//  I ( 1 iff i = j)
 	// -I (-1 iff i = j + d)
 	//  0
-	if (i_ == j) return nt_1_;
-	if (i_ == j + d_) return -nt_1_;
+	if (i_ == j) return nt_2_;
+	if (i_ == j + d_) return -nt_2_;
 	return nt_0_;
       }
       if (j < 2*d_) {
 	// -I (-1 iff i = j - d)
 	//  I ( 1 iff i = j)
 	//  0
-	if (i_ == j - d_) return -nt_1_;
-	if (i_ == j) return nt_1_;
+	if (i_ == j - d_) return -nt_2_;
+	if (i_ == j) return nt_2_;
 	return nt_0_;
       }
       // 0
@@ -240,7 +241,7 @@ namespace PD_detail {
     int i_; // row number
     int d_; // dimension
     NT nt_0_;
-    NT nt_1_;
+    NT nt_2_;
   };
 
   // functor for matrix D
