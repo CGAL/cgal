@@ -441,11 +441,13 @@ inline bool operator<(const BigRat& a, const BigRat& b) {
 }
 
 inline std::ostream& operator<<(std::ostream& o, const BigRat& x) {
-  return CORE::operator<<(o, x.get_mp());
+  //return CORE::operator<<(o, x.get_mp());
+  return CORE::io_write(o, x.get_mp());
 }
 inline std::istream& operator>>(std::istream& i, BigRat& x) {
   x.makeCopy();
-  return CORE::operator>>(i, x.get_mp());
+  //return CORE::operator>>(i, x.get_mp());
+  return CORE::io_read(i, x.get_mp());
 }
 
 /// sign

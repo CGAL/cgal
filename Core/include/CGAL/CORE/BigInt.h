@@ -376,11 +376,13 @@ inline bool operator<(const BigInt& a, const BigInt& b) {
 }
 
 inline std::ostream& operator<<(std::ostream& o, const BigInt& x) {
-  return CORE::operator<<(o, x.get_mp());
+  //return CORE::operator<<(o, x.get_mp());
+  return CORE::io_write(o, x.get_mp());
 }
 inline std::istream& operator>>(std::istream& i, BigInt& x) {
   x.makeCopy();
-  return CORE::operator>>(i, x.get_mp());
+  //return CORE::operator>>(i, x.get_mp());
+  return CORE::io_read(i, x.get_mp());
 }
 
 /// sign
