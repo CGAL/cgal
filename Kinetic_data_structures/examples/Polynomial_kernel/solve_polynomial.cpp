@@ -34,7 +34,7 @@ void solve(K k, P p, double lb, double ub, const char *name){
 }
 
 
-int main(int argc, char *argv[])
+int main(int , char **)
 {
   std::cout << "Enter a polynomial like 1+2*x+3*x^2\n";
   while (true) {
