@@ -10,7 +10,7 @@ the vertical line respectively.
 With the help of the concept's methods one is able
 to compute the local topology of the curve at the given vertical line.
 Note that vertical lines at $x = \pm\infty$ are not allowed, since different 
-events (curve ends going to infinity with different non-horizontal asympotes)
+events (curve ends going to infinity with different non-horizontal asymptotes)
 would have equal $y$-coordinate ($\pm\infty$), which confuses more than it
 helps. Note in addition that curve ends approaching the vertical asymptote 
 introduce an event (depending on whether approaching $+\infty$ or $-\infty$ -
@@ -121,7 +121,7 @@ open interval.
         
 \ccConstructor{CurveAnalysis_2(Polynomial_2 p);}
     {constructs an analysis for the curve defined by p. The polynomial must
-      be squarefree.}
+      be square free.}
 
 \begin{ccAdvanced}
 \ccConstructor{template < class InputIterator >
@@ -140,7 +140,7 @@ open interval.
 \ccAccessFunctions
 
 \ccMethod{Polynomial_2 get_polynomial_2();}{
-  returns the defining polynomial of the anyalsis
+  returns the defining polynomial of the analysis
 }
 
 \ccMethod{unsigned int number_of_vertical_lines_with_event();}{
