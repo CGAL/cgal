@@ -122,7 +122,8 @@ __gmp_istream_set_digits (string &s, istream &i, char &c, bool &ok, int base)
 }
 
 istream &
-operator>> (istream &i, mpz_ptr z)
+//operator>> (istream &i, mpz_ptr z)
+io_read (istream &i, mpz_ptr z)
 {
   int base;
   char c = 0;
@@ -164,7 +165,8 @@ operator>> (istream &i, mpz_ptr z)
 }
 
 istream &
-operator>> (istream &i, mpq_ptr q)
+//operator>> (istream &i, mpq_ptr q)
+io_read (istream &i, mpq_ptr q)
 {
   int base;
   char c = 0;
@@ -240,13 +242,15 @@ operator>> (istream &i, mpq_ptr q)
 }
 
 ostream&
-operator<< (ostream &o, mpz_srcptr z)
+//operator<< (ostream &o, mpz_srcptr z)
+io_write (ostream &o, mpz_srcptr z)
 { 
   return o << mpz_get_str (0, 10, z);
 }
 
 ostream&
-operator<< (ostream &o, mpq_srcptr q)
+//operator<< (ostream &o, mpq_srcptr q)
+io_write (ostream &o, mpq_srcptr q)
 { 
   return o << mpq_get_str (0, 10, q);
 }
