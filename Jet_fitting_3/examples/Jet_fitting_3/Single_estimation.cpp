@@ -1,10 +1,18 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Monge_via_jet_fitting.h>
+
+#ifndef CGAL_USE_LAPACK
+int main()
+{
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+  return 0;
+}
+#else
 
 #include <fstream>
-#include <stdlib.h>
 #include <vector>
 
+#include <CGAL/Monge_via_jet_fitting.h>
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
@@ -20,8 +28,7 @@ int main(int argc, char *argv[])
                 << " <inputPoints.txt> <d_fitting> <d_monge>" << std::endl;
       return 0;
     }
-#ifdef CGAL_USE_LAPACK
- //open the input file
+  //open the input file
   std::ifstream inFile( argv[1]);
   if ( !inFile )
     {
@@ -55,11 +62,6 @@ int main(int argc, char *argv[])
   for (int i=0; i<3; i++)
     std::cout << monge_fit.pca_basis(i).first << std::endl
 	      << monge_fit.pca_basis(i).second  << std::endl;
-
-#else 
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-   
-#endif // CGAL_USE_LAPACK
   return 0;
 }
+#endif //CGAL_USE_LAPACK

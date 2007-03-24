@@ -1,4 +1,13 @@
 #include <CGAL/Cartesian.h>
+#ifndef CGAL_USE_LAPACK
+int main()
+{
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+  return 0;
+}
+#else
+
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
@@ -123,7 +132,6 @@ int main(int argc, char *argv[])
 int main()
 #endif
 {
-#ifdef CGAL_USE_LAPACK
   string if_name_string;
   const char *if_name = NULL; //input file name
   char *w_if_name = NULL;  //as above, but / replaced by _
@@ -305,12 +313,7 @@ int main()
     delete verbose_fname;
     out_verbose->close();
     delete out_verbose;
-  }
-
-#else 
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-   
-#endif // CGAL_USE_LAPACK
+  }  
   return 0;
 }
+#endif // CGAL_USE_LAPACK
