@@ -1,30 +1,15 @@
 \begin{ccRefConcept}{FieldNumberType}
 
-The concept \ccRefName\ defines the syntactic requirements of a number type
-to be used as a template parameter for the Cartesian kernels.  This number
-type supports the operations $+$, $-$, $*$ and $/$.  This implies that
-\ccc{CGAL::Number_type_traits<FieldNumberType>::Has_division} is
-\ccc{CGAL::Tag_true}.
+\ccDefinition
+
+The concept \ccRefName\ combines the requirements of the concepts 
+\ccc{Field} and \ccc{RealEmbeddable}. 
+A model of \ccRefName\ can be used as a template parameter 
+for Cartesian kernels.
 
 \ccRefines
-RingNumberType
-
-\ccCreationVariable{n1}
-
-\ccOperations
-\ccFunction{FieldNumberType operator/(const FieldNumberType &n1, 
-                                      const FieldNumberType &n2);} {}
-\ccGlue
-\ccFunction{FieldNumberType operator/(int n1, 
-                                      const FieldNumberType &n2);} {}
-\ccGlue
-\ccFunction{FieldNumberType operator/(const FieldNumberType &n1, 
-                                      int n2);} {}
-\ccGlue
-\ccMethod{FieldNumberType operator/=(const FieldNumberType &n2) const;}{}
-\ccGlue
-\ccMethod{FieldNumberType operator/=(int n2) const;}{}
-
+\ccc{Field}\\
+\ccc{RealEmbeddable} 
 
 \ccHasModels
 \ccc{float} \\
@@ -39,8 +24,7 @@ RingNumberType
 \ccc{leda_real} \\
 
 \ccSeeAlso
-\ccRefConceptPage{EuclideanRingNumberType} \\
+\ccRefConceptPage{RingNumberType} \\
 \ccRefConceptPage{Kernel} \\
-\ccRefIdfierPage{CGAL::Field_tag} \\
 
 \end{ccRefConcept}
