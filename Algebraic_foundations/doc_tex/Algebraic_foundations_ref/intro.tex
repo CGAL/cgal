@@ -9,29 +9,17 @@
 \section{Classified Reference Pages}
 \label{caf_ref::classified_refernce_pages}
 
-\subsection*{Basics}
-\label{caf_ref::basics}
-
-\subsubsection*{Basic Concepts}
-\ccRefConceptPage{AdaptableUnaryFunction}\\
-\ccRefConceptPage{AdaptableBinaryFunction}\\
-\ccRefConceptPage{FromIntConstructible}\\
-\ccRefConceptPage{FromDoubleConstructible}\\
-
-
-
-\subsection*{Interoperability of Types}
+\subsection*{Interoperability}
 \subsubsection*{Concepts}
 \ccRefConceptPage{ExplicitInteroperable}\\
 \ccRefConceptPage{ImplicitInteroperable}\\
 \subsubsection*{Classes}
 \ccRefIdfierPage{CGAL::Coercion_traits<A,B>}\\
 
-
 \subsection*{Algebraic Structures}
 \label{caf_ref::algebraic_structures}
 
-\subsubsection*{Algebraic Structure Concepts}
+\subsubsection*{Concepts}
 
 \ccRefConceptPage{IntegralDomainWithoutDivision}\\
 \ccRefConceptPage{IntegralDomain}\\
@@ -40,9 +28,8 @@
 \ccRefConceptPage{Field}\\
 \ccRefConceptPage{FieldWithSqrt}\\
 \ccRefConceptPage{FieldWithKthRoot}\\
-\ccRefConceptPage{FieldWithRootOf}
-
-\subsubsection*{Concept AlgebraicStructureTraits}
+\ccRefConceptPage{FieldWithRootOf}\\
+\ \\
 \ccRefConceptPage{AlgebraicStructureTraits}\\
 \ccRefConceptPage{AlgebraicStructureTraits::IsZero}\\
 \ccRefConceptPage{AlgebraicStructureTraits::IsOne}\\
@@ -59,19 +46,16 @@
 \ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
 \ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
 
-
-\subsubsection{Related Classes}
+\subsubsection*{Classes}
 \ccRefIdfierPage{CGAL::Algebraic_structure_traits<T>}\\
+\ccRefIdfierPage{CGAL::Integral_domain_without_division_tag}\\
+\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
+\ccRefIdfierPage{CGAL::Field_tag}\\
+\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
+\ccRefIdfierPage{CGAL::Unique_factorization_domain_tag}\\
+\ccRefIdfierPage{CGAL::Euclidean_ring_tag}
 
-%\subsubsection*{Related Tags }
-%\ccRefIdfierPage{CGAL::Integral_domain_without_division_tag}\\
-%\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
-%\ccRefIdfierPage{CGAL::Field_tag}\\
-%\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
-%\ccRefIdfierPage{CGAL::Unique_factorization_domain_tag}\\
-%\ccRefIdfierPage{CGAL::Euclidean_ring_tag}
-
-\subsubsection{Related Global Functions}
+\subsubsection*{Global Functions}
 
 \ccRefIdfierPage{CGAL::is_zero}\\
 \ccRefIdfierPage{CGAL::is_one}\\
@@ -88,13 +72,12 @@
 \ccRefIdfierPage{CGAL::kth_root}\\
 \ccRefIdfierPage{CGAL::root_of}\\
 
-\subsection*{Real Embeddable Concept}
+\subsection*{Real Embeddable}
 \label{caf_ref::real_embeddable_concept} 
 
-\subsubsection{Concept RealEmbeddable}
+\subsubsection*{Concepts}
 \ccRefConceptPage{RealEmbeddable}\\
-
-\subsubsection{RealEmbeddableTraits}
+\ \\
 \ccRefConceptPage{RealEmbeddableTraits}\\
 \ccRefConceptPage{RealEmbeddableTraits::IsZero}\\
 \ccRefConceptPage{RealEmbeddableTraits::Abs}\\
@@ -109,10 +92,10 @@
 %\ccRefConceptPage{RealEmbeddableTraits::ToDoubleInterval}\\ 
 %\end{ccAdvanced}
 
-\subsubsection{Related Classes}
+\subsubsection*{Classes}
 \ccRefIdfierPage{CGAL::Real_embeddable_traits<T>}
 
-\subsubsection*{Related Global functions}
+\subsubsection*{Global Functions}
 
 \ccRefIdfierPage{CGAL::is_zero}\\
 \ccRefIdfierPage{CGAL::abs}\\
@@ -124,13 +107,20 @@
 \ccRefIdfierPage{CGAL::to_interval}\\
 %\ccRefIdfierPage{CGAL::is_finite}\\
 
-\subsection{Fractions}
+\subsection*{Fractions}
+\subsubsection*{Concepts}
 \ccRefConceptPage{Fraction}\\
 \ccRefConceptPage{FractionTraits}\\
 \ccRefConceptPage{FractionTraits::Decompose}\\
 \ccRefConceptPage{FractionTraits::Compose}\\
 \ccRefConceptPage{FractionTraits::CommonFactor}\\
 
-\subsubsection{Related Classes}
+\subsubsection*{Classes}
 \ccRefIdfierPage{CGAL::Fraction_traits<T>}\\
 
+\subsection*{Miscellaneous}
+\subsubsection*{Concepts}
+%\ccRefConceptPage{RingNumberType}\\
+%\ccRefConceptPage{FieldNumberType}\\
+\ccRefConceptPage{FromIntConstructible}\\
+\ccRefConceptPage{FromDoubleConstructible}\\
