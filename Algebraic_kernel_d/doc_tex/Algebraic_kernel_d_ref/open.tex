@@ -5,9 +5,6 @@
 \begin{itemize}
 \item Missing Doc for IsSquareFree\_2, IsCoprime\_2, MakeSquareFree\_2,
    MakeCoprime\_2, Solve\_2
-\item revise doc of AK\_1 
-\item Move methods from AlgebraicReal\_1 to a traits class and make
-  this traits class concept a refinement of RealEmbedableTraits.
 \item Move methods from AlgebraicReal\_2 to a traits class.
 \item AlgebraicReal\_2 - Add GetX() and GetY() functors.
 \end{itemize}
@@ -20,12 +17,17 @@
       are documented.
 \item added \ccc{SquareFreeFactorization_1}
 \item added \ccc{AlgebraicKernel_1::SignAt_1} 
+\item Move methods from AlgebraicReal\_1 to a traits class and make
+  this traits class concept a refinement of RealEmbeddableTraits.
 \end{itemize}
 
 
 \section{Questions}
 \subsection{Open}
 \begin{itemize}
+\item problem is due to \ccc{AK_1}<double>.\\
+      The Boundary type is documented as dense in R, which is not true for double.
+\item  How is the Boundary type related to the Coefficient type ? \\
  \item Names of CurveVerticalLine\_1 and CurvePairVerticalLine\_1?
  \item Use "int" at all places, or stick to distinction of \texttt{unsigned
    int} + \texttt{int}?
@@ -44,12 +46,12 @@
    inf doesn't play a role in CPA\_2 we discuss it for the sake of
    simplicity as a special case in CA\_2 only. 
 \item AlgebraicReal\_1 - refine: with relative precision is enough. \\
-      Moreover, you can use 'refine() until' for absolut prec.
+      Moreover, you can use 'refine() until' for absolute prec.
 \item SquareFreeFactorization is not returning an additional constant 
       factor. This prevents us from providing an extra interface for 
       algebraic coefficients.
  \item Is Derivative and XCriticalPoints/YCriticalPoints are not
-   redundant. We decided to kepp them both because it is possible that
+   redundant. We decided to keep them both because it is possible that
    XCriticalPoints/YCriticalPoints use a different methodology, other
    than residing to the Derivative functor. As Michael pointed out:
    \emph{``I think we should keep it, since it is more abstract than

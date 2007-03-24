@@ -2,45 +2,14 @@
 
 \ccDefinition
 
-A model of \ccRefName\ represents a real root of a univariat polynomial 
+A model of \ccRefName\ represents a real root of a univariate polynomial 
 \ccc{AlgebraicKernel_d_1::Polynomial_1}. 
 
-\ccTypes
-
-\ccNestedType{Boundary}
-{ A \ccc{RealEmbeddable} number type that is dense in \R. \\
-  It is required to be \ccc{ImplicitInteroperable} with \ccc{AlgebraicKernel_d_1::Coefficient}, where \ccc{AlgebraicKernel_d_1::Coefficient} is the coercion type. 
-}
-
-\ccOperations
-\ccCreationVariable{ar}
-
-\ccMethod{Boundary between(AlgebraicReal_1 ar2);}{
-  returns a value between \ccc{ar} and \ccc{ar2}
-  \ccPrecond{ar != ar2}
-}
-
-\ccMethod{Boundary lower_bound();}{
-  Gives the current lower bound of the number.
-} 
-
-\ccMethod{Boundary upper_bound();}{
-  Gives the current upper bound of the number.
-} 
-
-\ccMethod{void refine();}{
-  Refines the isolating interval of the algebraic real. \\
-  The method at least haves the isolating interval. 
-} 
+The type is associated with \ccc{AlgebraicKernel_d_1::AlgebraicRealTraits_1} 
+providing further functionality on \ccRefName.
 
 
-\ccMethod{void refine(int prec);}{
-  Refines the representation to the given precision (binary digits 
-  after point). Internally the precision can already be higher.
-} 
-
-\ccRefines 
-
+\ccRefines
 \ccc{FromIntConstructible}\\
 \ccc{RealEmbeddable}\\
 \ccc{ImplicitInteroperable} with \ccc{int}\\
