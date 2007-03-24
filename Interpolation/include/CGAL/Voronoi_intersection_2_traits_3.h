@@ -36,6 +36,8 @@
 #include <CGAL/constructions/constructions_for_voronoi_intersection_cartesian_2_3.h>
 #endif
 
+#include <CGAL/function_objects.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits>
@@ -279,6 +281,8 @@ public:
   typedef Compare_first_projection_3<Rep>                  Compare_x_2;
   typedef Compare_second_projection_3<Rep>                 Compare_y_2;
 
+  typedef Compare_to_less<Compare_x_2>                     Less_x_2;
+  typedef Compare_to_less<Compare_y_2>                     Less_y_2;
 
   //for certificated coordinate/neighbor computation:
   typedef typename Rep::Less_distance_to_point_3    Less_distance_to_point_2;
@@ -305,6 +309,14 @@ public:
   Compare_y_2
   compare_y_2_object() const
   { return Compare_y_2(normal); }
+
+  Less_x_2
+  less_x_2_object() const
+  { return compare_to_less(compare_x_2_object());; }
+
+  Less_y_2
+  less_y_2_object() const
+  { return compare_to_less(compare_y_2_object());; }
 
   //for the coordinate computation:
   Compute_area_2 compute_area_2_object() const
