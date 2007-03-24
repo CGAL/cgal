@@ -16,85 +16,74 @@
 // Author(s)     : Michael Hemmer <hemmer@mpi-sb.mpg.de>
 
 #ifndef CGAL_UTILS_CLASSES_H
-#define CGAL_UTILS_CLASSES_H
-#include <CGAL/number_type_basic.h>
+#define CGAL_UTILS_CLASSES_H 
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class NT1, class NT2 > struct Equal_to;
-template < class NT1, class NT2 > struct Not_equal_to;
-template < class NT1, class NT2 > struct Greater;
-template < class NT1, class NT2 > struct Less;
-template < class NT1, class NT2 > struct Greater_equal;
-template < class NT1, class NT2 > struct Less_equal;
-
-
-template < class NT, class Compare = std::less< NT > >
-struct Min :public Binary_function< NT, NT, NT > {
- Min() {}
- Min(const Compare& c_) : c(c_) {}
- NT operator()( const NT& x, const NT& y) const
-    { return (std::min) BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
-protected:
- Compare c;
-};
-
-template < class NT, class Compare = std::less< NT > >
-struct Max :public Binary_function< NT, NT, NT > {
- Max() {}
- Max(const Compare& c_) : c(c_) {}
- NT operator()( const NT& x, const NT& y) const
-    { return (std::max) BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
-protected:
- Compare c;
-};
-
-template< class Number_type >
-class Is_valid 
-  : public Unary_function< Number_type, bool > {
-  public:
-    bool operator()( const Number_type& ) const {
-      return true;
-    };
-};
-
-
-
-
-template < class NT1, class NT2 = NT1 >
-struct Equal_to : public Binary_function< NT1, NT2, bool > {
-  bool operator()( const NT1& x, const NT2& y) const
+template < class A, class B = A >
+struct Equal_to : public Binary_function< A, B, bool > {
+  bool operator()( const A& x, const B& y) const
   { return x == y; }
 };
 
-template < class NT1, class NT2 = NT1 >
-struct Not_equal_to : public Binary_function< NT1, NT2, bool > {
-  bool operator()( const NT1& x, const NT2& y) const
+template < class A, class B = A >
+struct Not_equal_to : public Binary_function< A, B, bool > {
+  bool operator()( const A& x, const B& y) const
   { return x != y; }
 };
 
-template < class NT1, class NT2 = NT1 >
-struct Greater : public Binary_function< NT1, NT2, bool > {
-  bool operator()( const NT1& x, const NT2& y) const
+template < class A, class B = A >
+struct Greater : public Binary_function< A, B, bool > {
+  bool operator()( const A& x, const B& y) const
   { return x > y; }
 };
 
-template < class NT1, class NT2 = NT1 >
-struct Less : public Binary_function< NT1, NT2, bool > {
-  bool operator()( const NT1& x, const NT2& y) const
+template < class A, class B = A >
+struct Less : public Binary_function< A, B, bool > {
+  bool operator()( const A& x, const B& y) const
   { return x < y; }
 };
 
-template < class NT1, class NT2 = NT1 >
-struct Greater_equal : public Binary_function< NT1, NT2, bool > {
-  bool operator()( const NT1& x, const NT2& y) const
+template < class A, class B = A >
+struct Greater_equal : public Binary_function< A, B, bool > {
+  bool operator()( const A& x, const B& y) const
   { return x >= y; }
 };
 
-template < class NT1, class NT2 = NT1 >
-struct Less_equal : public Binary_function< NT1, NT2, bool > {
-  bool operator()( const NT1& x, const NT2& y) const
+template < class A, class B = A >
+struct Less_equal : public Binary_function< A, B, bool > {
+  bool operator()( const A& x, const B& y) const
   { return x <= y; }
+};
+
+template < class NT, class Less = std::less< NT > >
+struct Min :public Binary_function< NT, NT, NT > {
+ Min() {}
+ Min(const Less& c_) : c(c_) {}
+ NT operator()( const NT& x, const NT& y) const
+    { return (std::min) BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
+protected:
+ Less c;
+};
+
+template < class NT, class Less = std::less< NT > >
+struct Max :public Binary_function< NT, NT, NT > {
+ Max() {}
+ Max(const Less& c_) : c(c_) {}
+ NT operator()( const NT& x, const NT& y) const
+    { return (std::max) BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
+protected:
+ Less c;
+};
+
+template< class T >
+class Is_valid 
+  : public Unary_function< T, bool > {
+  public:
+    bool operator()( const T& ) const {
+      return true;
+    };
 };
 
 CGAL_END_NAMESPACE
