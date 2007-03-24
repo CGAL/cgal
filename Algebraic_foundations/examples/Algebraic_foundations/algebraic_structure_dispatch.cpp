@@ -2,10 +2,11 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Algebraic_structure_traits.h>
 
-
 template< typename NT > NT unit_part(const NT& x);
-template< typename NT > NT unit_part_(const NT& x, CGAL::Field_tag);
-template< typename NT > NT unit_part_(const NT& x, CGAL::Integral_domain_without_division_tag);
+template< typename NT > 
+NT unit_part_(const NT& x, CGAL::Field_tag);
+template< typename NT > 
+NT unit_part_(const NT& x, CGAL::Integral_domain_without_division_tag);
 
 template< typename NT >
 NT unit_part(const NT& x){
@@ -42,5 +43,5 @@ int main(){
 // This implementation for unit part won't work for some types, e.g., 
 // types that are not RealEmbeddable or types representing structures that have 
 // more units than just -1 and +1. (e.g. MP_Float representing Z[1/2])
-// From there Algebraic_structure_traits provides an functor Unit_part.  
+// From there Algebraic_structure_traits provides the functor Unit_part.  
 
