@@ -1,4 +1,12 @@
 #include <CGAL/Cartesian.h>
+#ifndef CGAL_USE_LAPACK
+int main()
+{
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+  return 0;
+}
+#else
 #include <CGAL/Ridges.h>
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h>
@@ -167,13 +175,12 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 
 int main(int argc, char *argv[])
 {
-#ifdef CGAL_USE_LAPACK
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
-  unsigned int int_tag;
 
   try {
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
-    po::options_description desc("Allowed options");
+   unsigned int int_tag;
+   po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
       ("input-file,f", po::value<string>(&if_name)->default_value("data/ellipsoid_u_0.02.off"),
@@ -218,7 +225,6 @@ int main(int argc, char *argv[])
     d_monge = 3;
     nb_rings = 0;
     nb_points_to_use = 0;
-    int_tag = 3;
     umb_size = 2;
     verbose = false;
 #endif
@@ -355,12 +361,7 @@ int main(int argc, char *argv[])
     for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++)
       out_verb << **iter_umb;
   }
-
-#else 
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-   
-#endif // CGAL_USE_LAPACK
-
   return 0;
 }
+ 
+#endif // CGAL_USE_LAPACK

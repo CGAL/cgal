@@ -1,8 +1,14 @@
-
 #include <CGAL/Cartesian.h>
+#ifndef CGAL_USE_LAPACK
+int main()
+{
+  std::cerr << "Skip since LAPACK is not installed" << std::endl;
+  std::cerr << std::endl;
+  return 0;
+}
+#else
 #include <fstream>
 #include <vector>
-
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h> 
@@ -161,7 +167,6 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 
 int main()
 {  
-#ifdef CGAL_USE_LAPACK
   //load the model from <mesh.off>
   PolyhedralSurf P;
   std::ifstream stream("data/ellipsoid.off");
@@ -236,12 +241,8 @@ int main()
   for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
  
   std::cout << "success\n";
-
-#else 
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-   
-#endif // CGAL_USE_LAPACK
   return 0;
 }
+ 
+#endif // CGAL_USE_LAPACK
  
