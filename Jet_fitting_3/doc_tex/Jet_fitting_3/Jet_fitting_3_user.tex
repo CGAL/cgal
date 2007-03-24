@@ -314,15 +314,14 @@ the degrees $d$ and $d'$.
 \ccIncludeExampleCode{Jet_fitting_3/Single_estimation.cpp}
 
 \paragraph{On a mesh.}
-The second example (cf Mesh_estimation.cpp in the example directory)
+The second example (cf Mesh\_estimation.cpp in the example directory)
 illustrates the computation of local differential quantities for all
 vertices of a given mesh. The neighborhood of a given vertex is
 computed using rings on the triangulation. Results are twofold:
 \begin{itemize}
-\item
-a human readable text file featuring the \ccc{Monge_form} and
-numerical informations on the computation~: condition number and the
-PCA basis;
+\item a human readable text file featuring the \ccc{Monge_form} and
+  numerical informations on the computation~: condition number and the
+  PCA basis;
 \item another text file which may be visualised with the demo program
   introspect-qt (experimental \cgal\ package) displaying the Monge
   basis at each vertex of the mesh.
