@@ -3,7 +3,7 @@ Thu, 29 Apr 2004 18:43:18 +0200.
 
 It was downloaded from http://www.cgal.org/download/index.html.
 
-The Debian packaging is (c) 2004, 2005, 2006 Joachim Reichel
+The Debian packaging is (c) 2004, 2005, 2006, 2007 Joachim Reichel
 <joachim.reichel@gmx.de> and is licensed under the BSD license,
 which can be found in /usr/share/common-licenses/BSD.
 
@@ -199,7 +199,7 @@ file to file.
 Copright statement for files under the FREE_USE license
 =======================================================
 
-   Copyright (c) 1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006
+   Copyright (c) 1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007
    Utrecht University (The Netherlands),
    ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
    INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg

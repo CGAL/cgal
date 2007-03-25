@@ -19,11 +19,14 @@ build: build-stamp
 build-stamp: patch-stamp
 	dh_testdir
 	dh_clean -k
-	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) --prefix `pwd`/debian/tmp/usr \
-	  --without-autofind --with-ZLIB --with-BOOST --with-BOOSTPROGRAMOPTIONS \
-	  --with-GMP --with-GMPXX --with-MPFR --with-CGALCORE \
+	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) --prefix $(CURDIR)/debian/tmp/usr \
+	  --without-autofind --with-ZLIB --with-BOOST --with-BOOST_PROGRAM_OPTIONS \
+	  --with-GMP --with-GMPXX --with-MPFR \
 	  --with-X11 --with-OPENGL --with-QT3MT \
 	  --with-BLASGCCATLAS --with-LAPACK
+	$(MAKE) -C $(CURDIR)/debian/tests rounding_modes
+	-$(CURDIR)/debian/tests/rounding_modes
+	$(MAKE) -C $(CURDIR)/debian/tests clean
 	touch build-stamp
 
 clean: clean-patched unpatch
@@ -56,7 +59,6 @@ install: build
 	mkdir -p debian/tmp/usr/share/doc/cgal
 
 	rm debian/tmp/usr/bin/cgal_make_macosx_app
-	rm debian/tmp/usr/include/CGAL/OpenNL/LICENSE.OPENNL
 
 	cat make/makefile_* | sed -f debian/misc/adjust-default-makefile.sed >debian/tmp/usr/share/cgal/makefile
 
