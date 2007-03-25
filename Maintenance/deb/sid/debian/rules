@@ -25,8 +25,8 @@ build-stamp: patch-stamp
 	  --with-X11 --with-OPENGL --with-QT3MT \
 	  --with-BLASGCCATLAS --with-LAPACK
 	$(MAKE) -C $(CURDIR)/debian/tests rounding_modes
-	-$(CURDIR)/debian/tests/rounding_modes
-	$(MAKE) -C $(CURDIR)/debian/tests clean
+	-LD_LIBRARY_PATH=$(CURDIR)/debian/tmp/usr/lib $(CURDIR)/debian/tests/rounding_modes
+	-$(MAKE) -C $(CURDIR)/debian/tests clean
 	touch build-stamp
 
 clean: clean-patched unpatch
