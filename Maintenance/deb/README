@@ -5,6 +5,9 @@ backport for sarge:
 - debian/control:
   * adjust Standards-Version: to 3.6.1
   * adjust debhelper dependency from >= 5 to >= 4
+  * adjust lapack3-dev dependency to lapack-dev
+  * adjust atlas3-base-dev dependency to atlas2-base-dev
+  * replace binary: by Source-
 - debian/compat:
   * adjust debhelper compatibility level from 5 to 4
 - debian/changelog:

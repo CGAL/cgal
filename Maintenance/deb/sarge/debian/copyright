@@ -3,9 +3,12 @@ Thu, 29 Apr 2004 18:43:18 +0200.
 
 It was downloaded from http://www.cgal.org/download/index.html.
 
-The Debian packaging is (c) 2004, 2005, 2006 Joachim Reichel
+The Debian packaging is (c) 2004, 2005, 2006, 2007 Joachim Reichel
 <joachim.reichel@gmx.de> and is licensed under the BSD license,
 which can be found in /usr/share/common-licenses/BSD.
+
+The license of this package is not DFSG-free, but it permits to autobuild the
+package and to redistribute it in the non-free archive.
 
 
 
@@ -16,8 +19,8 @@ Editorial Committee:
 
 Andreas Fabri (release manager), GeometryFactory
 Efi Fogel, Tel Aviv University
-Bernd Gärtner, ETH Zürich
-Michael Hoffmann, ETH Zürich
+Bernd GÃ¤rtner, ETH ZÃ¼rich
+Michael Hoffmann, ETH ZÃ¼rich
 Menelaos Karavelas, University of Crete and FO.R.T.H.
 Sylvain Pion (chair), INRIA Sophia Antipolis
 Monique Teillaud, INRIA Sophia Antipolis
@@ -28,38 +31,38 @@ Mariette Yvinec, INRIA Sophia Antipolis
 Current Developers:
 
 Pierre Alliez, INRIA Sophia Antipolis
-Eric Berberich, Max-Planck-Institut für Informatik
+Eric Berberich, Max-Planck-Institut fÃ¼r Informatik
 Fernando Cacciola, Scisoft/GeometryFactory
-Raphaëlle Chaine, Université Claude Bernard de Lyon
+RaphaÃ«lle Chaine, UniversitÃ© Claude Bernard de Lyon
 Christophe Delage, INRIA Sophia Antipolis
 Michal Gourgy, Tel Aviv University
-Peter Hachenberger, Max-Planck-Institut für Informatik
+Peter Hachenberger, Max-Planck-Institut fÃ¼r Informatik
 Idit Haran, Tel Aviv University
 Michael Hemmer, Mainz University
-Thomas Herrmann, ETH Zürich
+Thomas Herrmann, ETH ZÃ¼rich
 Nico Kruithof, University of Groningen
 Abdelkrim Mebarki, INRIA Sophia Antipolis
 Naceur Meskini, INRIA Sophia Antipolis
-Andreas Meyer, Max-Planck-Institut für Inform
+Andreas Meyer, Max-Planck-Institut fÃ¼r Inform
 Marc Pouget, INRIA Sophia Antipolis
 Laurent Rineau, ENS Paris
 Daniel Russel, INRIA Sophia Antipolis
 Laurent Saboret, INRIA Sophia Antipolis
 Le-Jeng Shiue, University of Florida
-Astrid Sturm, Freie Universität Berlin
+Astrid Sturm, Freie UniversitÃ¤t Berlin
 Baruch Zukerman, Tel Aviv University
 
 Former Developers:
 
-Matthias Bäsken
-Hervé Brönnimann
+Matthias BÃ¤sken
+HervÃ© BrÃ¶nnimann
 Tran Kai Frank Da
 Olivier Devillers
 Katrin Dobrindt
 Eti Ezra
 Kaspar Fischer
 Eyal Flato
-Julia Flötotto
+Julia FlÃ¶totto
 Wolfgang Freiseisen
 Geert-Jan Giezeman
 Philippe Guigue
@@ -76,10 +79,10 @@ Steve Oudot
 Eli Packer
 Dmitrii Pasechnik
 Sigal Raab
-François Rebufat
+FranÃ§ois Rebufat
 Niv Sabath
 Stefan Schirra
-Sven Schönherr
+Sven SchÃ¶nherr
 Michael Seel
 Hans Tangelder
 Radu Ursu
@@ -196,7 +199,7 @@ file to file.
 Copright statement for files under the FREE_USE license
 =======================================================
 
-   Copyright (c) 1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006
+   Copyright (c) 1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007
    Utrecht University (The Netherlands),
    ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
    INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg

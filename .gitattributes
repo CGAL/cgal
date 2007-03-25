@@ -829,13 +829,14 @@ Maintenance/deb/sarge/debian/compat -text
 Maintenance/deb/sarge/debian/control -text
 Maintenance/deb/sarge/debian/libcgal-demo.install -text
 Maintenance/deb/sarge/debian/libcgal-dev.install -text
-Maintenance/deb/sarge/debian/libcgal1.install -text
-Maintenance/deb/sarge/debian/libcgal1.shlibs -text
+Maintenance/deb/sarge/debian/libcgal2.install -text
+Maintenance/deb/sarge/debian/libcgal2.shlibs -text
 Maintenance/deb/sarge/debian/misc/adjust-default-makefile.sed -text
 Maintenance/deb/sarge/debian/misc/adjust-demo-examples-makefiles.sed -text
 Maintenance/deb/sarge/debian/misc/cgal_create_makefile.1 -text
 Maintenance/deb/sarge/debian/patches/00list -text
 Maintenance/deb/sarge/debian/rules -text
+Maintenance/deb/sarge/debian/watch -text
 Maintenance/deb/sid/debian/README.Debian -text
 Maintenance/deb/sid/debian/changelog -text
 Maintenance/deb/sid/debian/compat -text

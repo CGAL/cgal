@@ -5,10 +5,10 @@
 ## DP: No description.
 
 @DPATCH@
-diff -urNad cgal-3.1.99.464~/scripts/cgal_create_makefile cgal-3.1.99.464/scripts/cgal_create_makefile
---- cgal-3.1.99.464~/scripts/cgal_create_makefile	2006-05-18 20:18:11.000000000 +0200
-+++ cgal-3.1.99.464/scripts/cgal_create_makefile	2006-05-18 20:21:48.000000000 +0200
-@@ -118,6 +118,9 @@
+diff -urNad cgal~/scripts/cgal_create_makefile cgal/scripts/cgal_create_makefile
+--- cgal~/scripts/cgal_create_makefile	2007-03-17 21:01:14.000000000 +0100
++++ cgal/scripts/cgal_create_makefile	2007-03-17 21:47:52.000000000 +0100
+@@ -84,6 +84,9 @@
    echo    "# Choose the right include file from the <cgalroot>/make directory."
    echo
    echo    "# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE"
@@ -18,7 +18,7 @@ diff -urNad cgal-3.1.99.464~/scripts/cgal_create_makefile cgal-3.1.99.464/script
    echo    "include \$(CGAL_MAKEFILE)"
  
    # print compiler flags
-@@ -128,7 +129,7 @@
+@@ -94,7 +97,7 @@
    if [ -d include ] ; then
      echo  "           -Iinclude \\"
    fi

@@ -2,10 +2,11 @@ Source: cgal
 Section: non-free/libs
 Priority: optional
 Maintainer: Joachim Reichel <joachim.reichel@gmx.de>
-Build-Depends: debhelper (>= 4), dpatch, libgmp3-dev, libmpfr-dev, libcore++-dev, libqt3-mt-dev, libqt3-compat-headers, libboost-dev, libboost-graph-dev, libboost-program-options-dev, zlib1g-dev
+Build-Depends: debhelper (>= 4), dpatch, libboost-dev, libboost-graph-dev, libboost-program-options-dev, libgmp3-dev, libmpfr-dev, libqt3-mt-dev, libqt3-compat-headers, lapack-dev, atlas2-base-dev, zlib1g-dev
 Standards-Version: 3.6.1
+XS-Autobuild: yes
 
-Package: libcgal1
+Package: libcgal2
 Section: non-free/libs
 Architecture: any
 Depends: ${shlibs:Depends}
@@ -31,10 +32,9 @@ Description: C++ library for computational geometry
 Package: libcgal-dev
 Section: non-free/libdevel
 Architecture: any
-Depends: libcgal1 (= ${Source-Version}), libgmp3-dev, libmpfr-dev,
- libcore++-dev, libqt3-mt-dev, libqt3-compat-headers,
- libboost-dev, libboost-graph-dev, libboost-program-options-dev,
- zlib1g-dev
+Depends: libcgal2 (= ${Source-Version}), libboost-dev, libboost-graph-dev,
+ libboost-program-options-dev,libgmp3-dev, libmpfr-dev, libqt3-mt-dev,
+ libqt3-compat-headers, lapack3-dev, atlas3-base-dev, zlib1g-dev
 Description: C++ library for computational geometry (development files)
  CGAL (Computational Geometry Algorithms Library) makes the most important
  of the solutions and methods developed in computational geometry available
@@ -46,7 +46,7 @@ Description: C++ library for computational geometry (development files)
 Package: libcgal-demo
 Section: non-free/devel
 Architecture: all
-Depends: libcgal-dev (= ${Source-Version}), libcgal1 (= ${Source-Version})
+Depends: libcgal-dev (>= ${Source-Version}), libcgal2 (>= ${Source-Version})
 Suggests: geomview
 Description: C++ library for computational geometry (demos)
  CGAL (Computational Geometry Algorithms Library) makes the most important

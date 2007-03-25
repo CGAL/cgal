@@ -1,56 +1,132 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## library-soname.dpatch by Joachim Reichel <joachim.reichel@gmx.de>
+## build-library.dpatch by Joachim Reichel <joachim.reichel@gmx.de>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
 ## DP: No description.
 
 @DPATCH@
-diff -urNad cgal/install_cgal cgal/install_cgal
---- cgal/install_cgal	2006-04-17 22:33:03.000000000 +0200
-+++ cgal/install_cgal	2006-04-17 22:33:06.000000000 +0200
-@@ -4156,7 +4156,7 @@
- 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_SHARED_LIB_CXXFLAGS) shared_lib";;
-     esac
+diff -urNad cgal~/install_cgal cgal/install_cgal
+--- cgal~/install_cgal	2007-03-25 13:01:29.000000000 +0200
++++ cgal/install_cgal	2007-03-25 13:01:53.000000000 +0200
+@@ -934,7 +934,7 @@
+ 	    #### settings for sgi mipspro compiler on irix5
+ 	    CGAL_SHARED_LIB_CXXFLAGS=
+ 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
+-	    RUNTIME_LINKER_FLAG="-rpath "
++#	    RUNTIME_LINKER_FLAG="-rpath "
+ 	    PRINT_STACKTRACE_PROGRAM="dbx"
+ 	    ;;
+ 	*IRIX*6.*CC*7.3*)
+@@ -943,14 +943,14 @@
+ 	    ADDITIONAL_LDFLAGS="-LANG:std"
+ 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
+ 	    CGAL_SHARED_LIB_CXXFLAGS=
+-	    RUNTIME_LINKER_FLAG="-rpath "
++#	    RUNTIME_LINKER_FLAG="-rpath "
+ 	    PRINT_STACKTRACE_PROGRAM="dbx"
+ 	    ;;
+ 	*IRIX*6.*CC*)
+ 	    #### settings for sgi mipspro compiler on irix6
+ 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
+ 	    CGAL_SHARED_LIB_CXXFLAGS=
+-	    RUNTIME_LINKER_FLAG="-rpath "
++#	    RUNTIME_LINKER_FLAG="-rpath "
+ 	    PRINT_STACKTRACE_PROGRAM="dbx"
+ 	    ;;
+ 	*IRIX*g++*)
+@@ -958,7 +958,7 @@
+ 	    ADDITIONAL_CXXFLAGS="-Wall"
+ 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
+ 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
+-	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
++#	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
+ 	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+@@ -969,7 +969,7 @@
+ 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
+ 	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
+ 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+-	    RUNTIME_LINKER_FLAG="-R "
++#	    RUNTIME_LINKER_FLAG="-R "
+ 	    PRINT_STACKTRACE_PROGRAM="dbx"
+ 	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+@@ -982,7 +982,7 @@
+ 	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
+ 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
+ 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+-	    RUNTIME_LINKER_FLAG="-R "
++#	    RUNTIME_LINKER_FLAG="-R "
+ 	    CGAL_SHARED_LIB_SONAME="-h \$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+@@ -991,7 +991,7 @@
+ 	    #### settings for g++ on alpha-linux (special FPU handling)
+ 	    #### LONG_NAME_PROBLEM is cured by disabling debugging
+ 	    ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
+-	    RUNTIME_LINKER_FLAG='-Wl,-R'
++#	    RUNTIME_LINKER_FLAG='-Wl,-R'
+ 	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+@@ -999,7 +999,7 @@
+ 	*Linux*g++*)
+ 	    #### settings for g++ on linux
+ 	    ADDITIONAL_CXXFLAGS="-Wall"
+-	    RUNTIME_LINKER_FLAG='-Wl,-R'
++#	    RUNTIME_LINKER_FLAG='-Wl,-R'
+ 	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+@@ -1009,7 +1009,7 @@
+ 	    # -mp is required for correct enough floating point operations
+ 	    # necessary for interval arithmetic.
+ 	    ADDITIONAL_CXXFLAGS="-mp"
+-	    RUNTIME_LINKER_FLAG='-Wl,-R'
++#	    RUNTIME_LINKER_FLAG='-Wl,-R'
+ 	    PRINT_STACKTRACE_PROGRAM="idb"
+ 	    ;;
+ 	*Linux*sunCC*)
+@@ -1060,7 +1060,7 @@
+ 	    ;;
+ 	*Linux*pgCC*|*Linux*pgcpp*)
+ 	    #### settings for Portland Group Compiler on linux
+-	    RUNTIME_LINKER_FLAG='-Wl,-R'
++#	    RUNTIME_LINKER_FLAG='-Wl,-R'
+ 	    # PGCC has long name problems with "-g".
+ 	    DEBUG_OPT=""
+ 	    ;;
+@@ -4307,7 +4307,7 @@
+     _buildlog_marker="log for $1 $2 shown"
  
--    if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
-+    if make ${MAKE_OPTION} | tee "${COMPILE_LOGFILE}" 2>&1; then
+     ${_printf} "%s %s\n" "${MAKE}" "${MAKE_OPTION}" > "${COMPILE_LOGFILE}"
+-    if ${MAKE} ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
++    if ${MAKE} ${MAKE_OPTION} | tee "${COMPILE_LOGFILE}" 2>&1; then
  	log_print "Compilation of $1 $2 ${_libname} succeeded."
- 	${_printf} "%s\n" " done."
- 	ANY_LIB_COMPILED='y'
-diff -urNad cgal/src/CGAL/makefile cgal/src/CGAL/makefile
---- cgal/src/CGAL/makefile	2006-04-17 22:33:03.000000000 +0200
-+++ cgal/src/CGAL/makefile	2006-04-17 22:33:28.000000000 +0200
-@@ -74,11 +74,14 @@
- #                    target entries
+ 	log_print "vvvvvvvvvvvv build ${_buildlog_marker} below vvvvvvvvvvvv"
+ 	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
+diff -urNad cgal~/src/CGAL/common.mk cgal/src/CGAL/common.mk
+--- cgal~/src/CGAL/common.mk	2007-03-25 13:01:29.000000000 +0200
++++ cgal/src/CGAL/common.mk	2007-03-25 13:01:29.000000000 +0200
+@@ -104,17 +104,19 @@
+ 
+ clean_temp_files::
+ 	rm -f $(OBJECTS)
++	rm -f *.o
+ 
+ clean:: clean_temp_files
+ 	rm -f $(CGAL_STATIC_LIBNAME)
+ 	rm -f $(CGAL_SHARED_LIBNAME) $(LIBRARIES_EXTRA_NAMES)
++	rm -f lib*
+ 
+ #---------------------------------------------------------------------#
+ #                    suffix rules
  #---------------------------------------------------------------------#
  
-+SOVERSION=1.0.1
-+SOMAJOR=1
-+
- shared_lib: $(CGAL_OBJECTS)
--	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) \
-+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB).$(SOVERSION) -Wl,-soname,$(CGAL_SHARED_LIB).${SOMAJOR} \
- 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
- 		$(CGAL_SHARED_LIB_LDFLAGS)
--	mv $(CGAL_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-+	mv $(CGAL_SHARED_LIB).$(SOVERSION) '$(CGAL_LIB_DESTINATION)'
- 	rm $(CGAL_OBJECTS)
+ %$(OBJ_EXT): %.cpp
+-	$(CGAL_CXX)  $(CXXFLAGS) $(ADDITIONAL_CXXFLAGS) -c $<
++	$(CGAL_CXX)  $(CXXFLAGS) $(ADDITIONAL_CXXFLAGS) -D_REENTRANT -c $<
  
- static_lib: static_lib_no_install
-@@ -99,5 +102,5 @@
- #---------------------------------------------------------------------#
- 
- .cpp$(OBJ_EXT):
--	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
-+	$(CGAL_CXX)  $(CXXFLAGS) -D_REENTRANT -c $<
- 
-diff -urNad cgal/src/CGALQt/makefile cgal/src/CGALQt/makefile
---- cgal/src/CGALQt/makefile	2006-04-17 21:00:25.000000000 +0200
-+++ cgal/src/CGALQt/makefile	2006-04-17 22:33:53.000000000 +0200
-@@ -125,5 +125,5 @@
- 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.cpp
- 
- .cpp$(OBJ_EXT):
--	$(CGAL_CXX)  $(CXXFLAGS) -c $<
-+	$(CGAL_CXX)  $(CXXFLAGS) -D_REENTRANT -c $<
- 
+ FLEX ?=flex
+ BISON ?=bison
