@@ -4,6 +4,7 @@
 use Cwd;
 use File::Find;
 use Getopt::Std;
+use File::Spec;
 
 sub usage() {
     print STDERR<<"EOF";
@@ -529,7 +530,7 @@ if ($::opt_r){
   die "\n";
 }
 if ($::opt_a){
-  $ALLPACKAGESDIR = $::opt_a;
+  $ALLPACKAGESDIR = File::Spec->rel2abs( $::opt_a ) ;
 }
 if ($::opt_l){
   $LOCKFILE = $::opt_l;
