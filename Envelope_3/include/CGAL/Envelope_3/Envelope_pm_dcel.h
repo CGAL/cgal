@@ -31,10 +31,10 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Data>
-class Dcel_data
+class Dcel_info
 {
 public:
-  typedef Dcel_data<Data>                         Self;
+  typedef Dcel_info<Data>                         Self;
   typedef std::list<Data>                         Data_container;
   typedef typename Data_container::iterator       Data_iterator;
   typedef typename Data_container::const_iterator Data_const_iterator;
@@ -50,7 +50,7 @@ protected:
   Dac_decision m_decision;
 public:
   /*! Constructor */
-  Dcel_data() : m_is_set(false), m_decision(NOT_SET)
+  Dcel_info() : m_is_set(false), m_decision(NOT_SET)
   {}
 
   /*! \brief returns true iff data has been set already */
@@ -292,7 +292,7 @@ public:
 /*! Extend the planar-map vertex */
 template <class Point_2, class Data>
 class Envelope_pm_vertex : public CGAL::Arr_vertex_base<Point_2>,
-                           public Dcel_data<Data>
+                           public Dcel_info<Data>
 {
 protected:
   // all flags are bits in this variable:
@@ -316,8 +316,7 @@ protected:
   };
 public:
   /*! Constructor */
-  Envelope_pm_vertex() : Dcel_data<Data>()
-        , flags(0)
+  Envelope_pm_vertex() : Dcel_info<Data>(), flags(0)
   {}
 
   /*void set_is_fake(bool b)
@@ -400,8 +399,9 @@ protected:
 
 /*! Extend the planar-map halfedge */
 template <class X_monotone_curve_2, class Data>
-class Envelope_pm_halfedge : public CGAL::Arr_halfedge_base<X_monotone_curve_2>,
-                             public Dcel_data<Data>
+class
+Envelope_pm_halfedge : public CGAL::Arr_halfedge_base<X_monotone_curve_2>,
+                       public Dcel_info<Data>
 {
 protected:
 
@@ -431,8 +431,7 @@ protected:
   };
   
 public:
-  Envelope_pm_halfedge() : Dcel_data<Data>()
-                           , flags(0)
+  Envelope_pm_halfedge() : Dcel_info<Data>(), flags(0)
   {} 
 
  /* void set_is_fake(bool b)
@@ -568,7 +567,7 @@ protected:
 /*! Extend the planar-map face */
 template <class Data>
 class Envelope_pm_face : public CGAL::Arr_face_base,
-                         public Dcel_data<Data>
+                         public Dcel_info<Data>
 {
 public:
   typedef std::list<Data>                         Data_container;
@@ -576,7 +575,7 @@ public:
   typedef typename Data_container::const_iterator Data_const_iterator;
 
   /*! Constructor */
-  Envelope_pm_face() : Dcel_data<Data>()
+  Envelope_pm_face() : Dcel_info<Data>()
   {}  
 };
 
@@ -605,7 +604,7 @@ public:
   typedef Face_data_iterator                      Vertex_data_iterator;
   typedef Face_data_const_iterator                Vertex_data_const_iterator;
 
-  typedef Dcel_data<Data>                         Dcel_elem_with_data;
+  typedef Dcel_info<Data>                         Dcel_elem_with_data;
 
   typedef Data                                    Dcel_data;
   typedef Face_data_iterator                      Dcel_data_iterator;
