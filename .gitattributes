@@ -1397,6 +1397,13 @@ Modifier/doc_tex/Modifier/idraw/modifier.eps -text svneol=unset#application/post
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#application/pdf
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#image/gif
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#image/gif
+Modular_arithmetic/doc_tex/Modular_arithmetic/main.tex -text
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/Modular.tex -text
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/ModularTraits.tex -text
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/ModularTraits_ModularImage.tex -text
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/Modularizable.tex -text
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/intro.tex -text
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.tex -text
 Modular_arithmetic/test/Modular_arithmetic/Modular_traits.C -text
 Nef_2/demo/Nef_2/filtered_homogeneous_data/complex.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/filtered_homogeneous_data/symmdif.nef -text svneol=native#application/octet-stream

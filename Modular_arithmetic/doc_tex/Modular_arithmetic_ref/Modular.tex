@@ -1,0 +1,71 @@
+\begin{ccRefClass} {Modular}
+\label{Modular}
+
+\def\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+The class \ccRefName\ represents a finite field $\Z{/p\Z}$, 
+for some prime number $p$. \\
+
+The prime number $p$ is stored in a static member variable. 
+The class provides static member functions to change this value. 
+{\bf Note that changing the prime invalidates already existing objects 
+of this type.}
+However, already existing objects do not lose their value with respect to the 
+old prime and can be reused after restoring the old prime. 
+Since the type is base on double 
+arithmetic the prime is restricted to values less than $2^{26}$. 
+The initial value of $p$ is 67111067. 
+
+\ccInclude{CGAL/Modular.h}
+
+\ccIsModel
+\ccc{Field}\\
+
+
+\ccCreation
+\ccCreationVariable{x}
+
+\ccConstructor{Modular();}
+{introduces a variable \ccVar, which is initalized with zero;}
+\ccGlue
+\ccConstructor{Modular(const Modular& m);}
+{copy constructor;}
+\ccGlue
+\ccConstructor{Modular(int i);}
+{intorduces a variable \ccVar, which is initalized with $i \%  p$;}
+\ccGlue
+\ccConstructor{Modular(long i);}
+{intorduces a variable \ccVar, which is initalized with $i \%  p$;}
+
+\ccOperations
+
+\ccMethod{static int set_current_prime(int p);}{ 
+        Static member function;\\
+        sets current prime to the given value and returns the old prime. }
+\ccGlue
+\ccMethod{static int get_current_prime();}{
+        Static member function;\\
+        returns the value of the current prime.      
+    }
+\ccGlue
+\ccMethod{int  get_value() const;}{
+        Returns the value of \ccVar. 
+    }
+
+
+\ccFunction{Modular operator+(const Modular&a);}{}\ccGlue
+\ccFunction{Modular operator-(const Modular&a);}{}\ccGlue
+
+\ccFunction{Modular operator+(const Modular&a,const Modular& b);}{}\ccGlue
+\ccFunction{Modular operator-(const Modular&a,const Modular& b);}{}\ccGlue
+\ccFunction{Modular operator*(const Modular&a,const Modular& b);}{}\ccGlue
+\ccFunction{Modular operator/(const Modular&a,const Modular& b);}{}\ccGlue
+
+\ccMethod{Modular & operator+=(const Modular& a);}{}\ccGlue
+\ccMethod{Modular & operator-=(const Modular& a);}{}\ccGlue
+\ccMethod{Modular & operator*=(const Modular& a);}{}\ccGlue
+\ccMethod{Modular & operator/=(const Modular& a);}{}\ccGlue
+
+\end{ccRefClass} 
