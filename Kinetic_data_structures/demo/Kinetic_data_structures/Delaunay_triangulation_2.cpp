@@ -97,10 +97,10 @@ int main(int argc, char *argv[])
   int n=10;
   int d=2;
   int seed=std::time(NULL);
-  bool print_help=false;
-  bool exact=false;
   std::string file;
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+  bool print_help=false;
+  bool exact=false;
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
     ("help", boost::program_options::bool_switch(&print_help), "produce help message")
