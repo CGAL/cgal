@@ -489,7 +489,9 @@ public:
       insert_curve(arr, *i, strategy);
     
     if (m_verbose_level > 0) {      //print to cout
-      if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
+      if (m_verbose_level > 1) {
+        if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
+      }
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << arr.number_of_faces() << std::endl;
@@ -531,7 +533,9 @@ public:
     Arr arr(&m_traits);
     insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose_level > 0) {
-      if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
+      if (m_verbose_level > 1) {
+        if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
+      }
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << arr.number_of_faces() << std::endl;
@@ -556,7 +560,9 @@ public:
     Arr arr(&m_traits);
     insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose_level > 0) {
-      if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
+      if (m_verbose_level > 1) {
+        if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
+      }
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << arr.number_of_faces() << std::endl;

@@ -1147,7 +1147,7 @@ public:
   /*! leaveEvent - hide the line if you leave the widget's area on the screen
    *\ param e - mouse click event
    */
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent * /* e */)
   {
     if(active)
     {

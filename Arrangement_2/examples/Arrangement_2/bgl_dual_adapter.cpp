@@ -43,7 +43,7 @@ public:
 
   // Write the discover time for a given vertex.
   template <typename Vertex, typename Graph>
-  void discover_vertex (Vertex u, const Graph& g)
+  void discover_vertex (Vertex u, const Graph& /* g */)
   {
     u->set_data (time);
     time++;

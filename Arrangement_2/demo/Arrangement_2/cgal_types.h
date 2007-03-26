@@ -275,7 +275,7 @@ public:
 
    virtual void after_split_face (Face_handle  f ,
                                   Face_handle  new_f ,
-                                  bool         is_hole)
+                                  bool         /* is_hole */)
   {
     new_f ->set_color(f->color());
   }

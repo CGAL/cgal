@@ -28,10 +28,11 @@
 #include "demo_tab.h"
 
 /*! constructor - build the properties dialog form */
-PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
-                                 int number_of_tabs , Qt_widget_base_tab
-                                                                 *w_demo_p, double scale, bool colors_flag):
-  QDialog( parent),
+PropertiesForm::PropertiesForm(QTabWidget * bar, QWidget* parent,
+                               int /* number_of_tabs */,
+                               Qt_widget_base_tab * w_demo_p, double scale,
+                               bool colors_flag):
+  QDialog(parent),
   myBar(bar)
 {
   setCaption( "Properties -- Options" );
@@ -355,8 +356,8 @@ void DDListBox::set_max_items(int num)
 }
 
 /*! OptionsForm constructor */
-OptionsForm::OptionsForm( QWidget* parent ,int number_of_tabs ,
-                          const char* name, bool modal, WFlags f  ):
+OptionsForm::OptionsForm(QWidget * parent, int /* number_of_tabs */,
+                         const char * name, bool modal, WFlags f):
   QDialog( parent, name, modal, f )
 {
   setCaption( "Conic Type - Options" );
@@ -475,8 +476,10 @@ FileOpenOptionsForm::FileOpenOptionsForm( bool flag ,QWidget* parent ,
 
 
 /*! PointLocationStrategyForm constructor */
-PointLocationStrategyForm::PointLocationStrategyForm(QWidget* parent ,
-                        int number_of_tabs ,const char* name, bool modal, WFlags f):
+PointLocationStrategyForm::PointLocationStrategyForm(QWidget * parent ,
+                                                     int /* number_of_tabs */,
+                                                     const char * name,
+                                                     bool modal, WFlags f):
 QDialog( parent, name, modal, f )
 {
   setCaption( "Point Location - Strategy" );

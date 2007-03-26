@@ -34,7 +34,7 @@ public:
     n_faces++;
   }
 
-  virtual void after_split_face (Face_handle old_face,
+  virtual void after_split_face (Face_handle /* old_face */,
                                  Face_handle new_face, bool )
   {
     // Assign index to the new face.

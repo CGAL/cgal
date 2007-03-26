@@ -1306,13 +1306,15 @@ class Trapezoidal_decomposition_2
     tr.top()
     vertical_ray_shoot upward from tr
   */
-  reference insert_curve_at_point_using_geometry(const X_curve &     cv,
-                                                 const Point&        p,
-                                                 pointer &           tr,
-                                                 const Locate_type & lt)
+  reference
+  insert_curve_at_point_using_geometry(const X_curve &     cv,
+                                       const Point&        p,
+                                       pointer &           tr,
+                                       const Locate_type &
+                                       CGAL_precondition_code(lt))
   {
     CGAL_assertion(traits);
-    CGAL_precondition(lt==POINT);
+    CGAL_precondition(lt == POINT);
     
     if (traits->compare_cw_around_point_2_object()
         (cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
@@ -1327,10 +1329,12 @@ class Trapezoidal_decomposition_2
     return *tr;
   }
   
-  reference insert_curve_at_point_using_data_structure(const X_curve & cv,
-                                                       const Point & p,
-                                                       pointer & tr,
-                                                       const Locate_type & lt)
+  reference
+  insert_curve_at_point_using_data_structure(const X_curve & cv,
+                                             const Point & p,
+                                             pointer & tr,
+                                             const Locate_type &
+                                             CGAL_precondition_code(lt))
   {
     CGAL_precondition(lt==TRAPEZOID || lt==UNBOUNDED_TRAPEZOID);
     

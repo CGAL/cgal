@@ -529,7 +529,8 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  const Point_2& CGAL_assertion_code(p) ) const
+                                  const Point_2& CGAL_precondition_code(p) )
+      const
     {
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());
@@ -583,7 +584,8 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  const Point_2& CGAL_assertion_code(p) ) const
+                                  const Point_2& CGAL_precondition_code(p) )
+      const
     {
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());

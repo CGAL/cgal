@@ -107,8 +107,9 @@ void MyWindow::overlay_pm()
  * \param indexes - list of the planar maps indexes in the overlay
  * \param t - the traits type of the overlay
  */
-void MyWindow::make_overlay( std::list<int> indexes ,
-               std::list<int> paint_flags ,TraitsType t , bool new_tab)
+void MyWindow::make_overlay(std::list<int> indexes,
+                            std::list<int> /* paint_flags */, TraitsType t,
+                            bool new_tab)
 {
   switch ( t )
   {
