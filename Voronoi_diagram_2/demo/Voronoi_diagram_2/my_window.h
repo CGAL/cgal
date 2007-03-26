@@ -495,7 +495,7 @@ private slots:
     widget->redraw();
   }
 
-  void write_to_file(const QString& fileName)
+  void write_to_file(const QString& /* fileName */)
   {
 #if 0
     std::ofstream f(fileName);
