@@ -1611,6 +1611,7 @@ PDB/include/CGAL/PDB/internal/tnt/tnt_vec.h -text
 PDB/include/CGAL/PDB/iterator.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/include/CGAL/PDB/transforms.h -text
+PDB/maintainer -text
 PDB/src/CGALPDB/PDB_Atom.cpp -text
 PDB/src/CGALPDB/PDB_Error_logger.cpp -text
 PDB/src/CGALPDB/PDB_Model.cpp -text
