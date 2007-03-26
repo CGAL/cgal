@@ -79,7 +79,7 @@ public:
   /*! mapTextToValue - map text to value
    *\ return the corresponding int value
    */
-  int mapTextToValue( bool *ok )
+  int mapTextToValue( bool * /* ok */)
   {
     return (int) ( 10 * text().toFloat() ); // 0 to 100
   }
