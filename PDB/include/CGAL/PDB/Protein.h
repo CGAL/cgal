@@ -250,11 +250,10 @@ CGAL_PDB_BEGIN_NAMESPACE
     }
     Atoms_iterator operator++() {
       ++ait_;
-      if (ait_== aend_) {
+      if (ait_== rit_->atoms_end()) {
 	++rit_;
 	if (rit_!= rend_){
 	  ait_=rit_->atoms_begin();
-	  aend_= rit_->atoms_end();
 	}
       }
       return *this;
@@ -268,17 +267,26 @@ CGAL_PDB_BEGIN_NAMESPACE
       if (rit_== rend_) return rit_!= o.rit_;
       else return rit_!= o.rit_ || ait_ != o.ait_;
     }
-
+    Atoms_iterator(const Atoms_iterator &o) {
+      operator=(o);
+    }
+    Atoms_iterator& operator=(const Atoms_iterator &o) {
+      rit_= o.rit_;
+      rend_= o.rend_;
+      if (rit_!= rend_) {
+	ait_=o.ait_;
+      }
+      return *this;
+    }
   protected:
     Atoms_iterator(std::vector<Residue>::iterator b, 
 		   std::vector<Residue>::iterator e): rit_(b), rend_(e){
       if (b != e) {
 	ait_= rit_->atoms_begin();
-	aend_= rit_->atoms_end();
       }
     }
     std::vector<Residue>::iterator rit_, rend_;
-    Residue::Atoms_iterator ait_, aend_;
+    Residue::Atoms_iterator ait_;
   private:
     template < typename T >
     static pointer deref(const T& t) { return t.operator->(); }
@@ -306,11 +314,10 @@ CGAL_PDB_BEGIN_NAMESPACE
     }
     Const_atoms_iterator operator++() {
       ++ait_;
-      if (ait_== aend_) {
+      if (ait_== rit_->atoms_end()) {
 	++rit_;
 	if (rit_!= rend_){
 	  ait_=rit_->atoms_begin();
-	  aend_= rit_->atoms_end();
 	}
       }
       return *this;
@@ -330,8 +337,18 @@ CGAL_PDB_BEGIN_NAMESPACE
       rend_= it.rend_;
       if (rit_ != rend_) {
 	ait_= it.ait_;
-	aend_= it.aend_;
       }
+    }
+    Const_atoms_iterator(const Const_atoms_iterator &o) {
+      operator=(o);
+    }
+    Const_atoms_iterator& operator=(const Const_atoms_iterator &o) {
+      rit_= o.rit_;
+      rend_= o.rend_;
+      if (rit_!= rend_) {
+	ait_=o.ait_;
+      }
+      return *this;
     }
 
   protected:
@@ -339,11 +356,10 @@ CGAL_PDB_BEGIN_NAMESPACE
 			 std::vector<Residue>::const_iterator e): rit_(b), rend_(e){
       if (b != e) {
 	ait_= rit_->atoms_begin();
-	aend_= rit_->atoms_end();
       }
     }
     std::vector<Residue>::const_iterator rit_, rend_;
-    Residue::Const_atoms_iterator ait_, aend_;
+    Residue::Const_atoms_iterator ait_;
   private:
     template < typename T >
     static pointer deref(const T& t) { return t.operator->(); }
@@ -370,62 +386,73 @@ CGAL_PDB_BEGIN_NAMESPACE
       return &cur_bond();
     }
     Bonds_iterator operator++() {
-      if (nc_) {
-	nc_=false;
+      if (between_) {
+	between_=false;
+	++rit_;
+	if (rit_ != rend_) {
+	  ait_= rit_->bonds_begin();
+	}
       } else {
 	++ait_;
-	if (ait_== aend_) {
-	  std::vector<Residue>::const_iterator orit= rit_;
-	  ++rit_;
-	  if (rit_!= rend_){
-	    if (orit->index().to_index() +1 == rit_->index().to_index()
-		&& orit->has_atom(Residue::AL_C) && rit_->has_atom(Residue::AL_N)){
-	      nc_=true;
-	    } /*else {
-	      std::cout << "Skipping bond between residues " << orit->index() << " and " << rit_->index() << "\n";
-	      std::cout << static_cast<unsigned int>(orit->index()) << " " << static_cast<unsigned int>(rit_->index()) << std::endl;
-	      rit_->dump(std::cout);
-	      orit->dump(std::cout);
-	      }*/
-	    ait_=rit_->bonds_begin();
-	    aend_= rit_->bonds_end();
+	if (ait_== rit_->bonds_end()) {
+	  std::vector<Residue>::const_iterator nrit= rit_;
+	  ++nrit;
+	  between_=true;
+	  if (nrit == rend_ 
+	      || nrit->index().to_index() != rit_->index().to_index()+1
+	      || !nrit->has_atom(Residue::AL_N) || !rit_->has_atom(Residue::AL_C)){
+	    operator++();
 	  }
+	  
 	}
       }
       return *this;
     }
      bool operator==(const Bonds_iterator& o) const {
+       if (between_ != o.between_) return false;
        if (rit_ == rend_) return rit_==o.rit_;
-       else return rit_== o.rit_ && ait_ == o.ait_ && nc_== o.nc_;
+       else return rit_== o.rit_ && ait_ == o.ait_;
     }
     bool operator!=(const Bonds_iterator& o) const {
-      if (rit_== rend_) return rit_!= o.rit_;
-      else return rit_!= o.rit_ || ait_ != o.ait_ || nc_ != o.nc_;
+      return !operator==(o);
     }
     
     Bonds_iterator(){}
+
+    Bonds_iterator(const Bonds_iterator &o) {
+      operator=(o);
+    }
+    Bonds_iterator &operator=(const Bonds_iterator &o) {
+      rit_= o.rit_;
+      rend_= o.rend_;
+      between_= o.between_;
+      if (rit_ != rend_) {
+	ait_= o.ait_;
+      }
+      return *this;
+    }
   protected:
     Bonds_iterator(std::vector<Residue>::const_iterator b, 
-		   std::vector<Residue>::const_iterator e): rit_(b), rend_(e), nc_(false){
+		   std::vector<Residue>::const_iterator e): rit_(b), rend_(e), 
+							    between_(false){
       if (b != e) {
 	ait_= rit_->bonds_begin();
-	aend_= rit_->bonds_end();
       }
     }
 
     const Bond &cur_bond() const {
-      if (nc_) {
-	assert(rit_ != rend_);
+      if (between_) {
+	assert(rit_+1 != rend_);
 	static Bond b;
-	b= Bond((rit_-1)->atom(Residue::AL_C).index(),
-		rit_->atom(Residue::AL_N).index());
+	b= Bond((rit_)->atom(Residue::AL_C).index(),
+		(rit_+1)->atom(Residue::AL_N).index());
 	return b;
       } else return *ait_;
     }
 
     std::vector<Residue>::const_iterator rit_, rend_;
-    Residue::Bonds_iterator ait_, aend_;
-    bool nc_;
+    Residue::Bonds_iterator ait_;
+    bool between_;
   };
 
 CGAL_PDB_END_NAMESPACE

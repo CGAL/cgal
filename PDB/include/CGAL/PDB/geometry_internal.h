@@ -37,7 +37,8 @@ void filtered_coordinates(Ait ab, Ait ae, Filt f, Voit out){
 
 template <class Filt, class Voit, class Boit>
 void filtered_coordinates_and_bonds(const CGAL_PDB_NS::Protein &p, Filt f, Voit out, Boit bout){
-  std::vector<int> map(p.number_of_atoms(), -1);
+  int na= p.number_of_atoms();
+  std::vector<int> map(na, -1);
   int seen=0;
   for (typename CGAL_PDB_NS::Protein::Const_atoms_iterator it= p.atoms_begin(); it != p.atoms_end(); ++it){
     unsigned int index= it->second.index().to_index();

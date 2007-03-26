@@ -203,7 +203,7 @@ int main(int argc, char *argv[]){
 #else
 
 int main(int, char*[]){
-  bool this_program_requires_image_magick;
+  //bool this_program_requires_image_magick;
   std::cerr << "This program requires Image Magick++\n";
   // so that the test suite is not red
   return EXIT_SUCCESS;
