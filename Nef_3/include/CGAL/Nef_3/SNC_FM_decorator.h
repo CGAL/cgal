@@ -237,7 +237,7 @@ class SmallerXYZ<CGAL::Lazy_kernel<EK>, SHalfedge_handle> {
     return p.z() > 0;
   }  
 
-  bool operator()(const SHalfedge_handle se, const Point_3 min, bool init) {
+  bool operator()(const SHalfedge_handle se, const Point_3 min, bool) {
     return 
       //      (point_in_positive_direction_3(se->next()->source()->point()) &&
       //	    point_in_positive_direction_3(se->next()->twin()->source()->point()) &&
