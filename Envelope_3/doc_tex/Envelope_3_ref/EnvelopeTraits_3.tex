@@ -7,7 +7,7 @@
 
 This concept defines the minimal set of geometric predicates and
 operations needed to compute the envelope of a set of arbitrary
-surfaces in $\reals^3$. It refines the 
+surfaces in $\mathbb{R}^3$. It refines the 
 \ccc{ArrangementXMonotoneTraits_2} concept. In addition to the
 \ccc{Point_2} and \ccc{X_monotone_curve_2} types and the
 \ccc{Has_boundary_category} category tag listed in the base concept,
@@ -24,10 +24,10 @@ Note however, that these operations usually involve the projection of
 % ======
 
 \ccNestedType{Surface_3}
-{represents an arbitrary surface in $\reals^3$.}
+{represents an arbitrary surface in $\mathbb{R}^3$.}
 \ccGlue
 \ccNestedType{Xy_monotone_surface_3}
-{represents a weakly $xy$-monotone surface in $\reals^3$.}
+{represents a weakly $xy$-monotone surface in $\mathbb{R}^3$.}
 
 \ccHeading{Functor Types}
 % =======================
@@ -117,7 +117,7 @@ Note however, that these operations usually involve the projection of
  have no boundary, with the precondition that the surfaces do not intersect
  at all.
  The functor should therefore return the comparison result of
- $s_1(p)$ and $s_2(p)$ for some planar point $p \in \reals^2$.
+ $s_1(p)$ and $s_2(p)$ for some planar point $p \in \mathbb{R}^2$.
  This operator is required iff the category tag \ccc{Has_boundary_category} 
  is defined as \ccc{Tag_true}.
  \end{itemize}}
