@@ -173,7 +173,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 }
 
 
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
 
