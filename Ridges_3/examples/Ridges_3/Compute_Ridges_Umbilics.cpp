@@ -173,7 +173,12 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 }
 
 
-int main(/* int argc, char *argv[] */)
+///////////////MAIN///////////////////////////////////////////////////////
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+int main(int argc, char *argv[])
+#else
+int main()
+#endif
 {
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
 
