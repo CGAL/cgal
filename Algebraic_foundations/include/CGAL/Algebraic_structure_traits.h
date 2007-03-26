@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -435,7 +435,7 @@ class Algebraic_structure_traits_base< Type_,
     struct Is_square
         :public Binary_function<Type,Type&,bool>
     {
-        bool operator()(const Type& x) const {return true;}
+        bool operator()(const Type& ) const {return true;}
         bool operator()(
                 const Type& x,
                 Type      & result) const {
