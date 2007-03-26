@@ -26,7 +26,7 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
-
+#include <CGAL/CORE/Expr.h>
 #include <utility>
 
 
