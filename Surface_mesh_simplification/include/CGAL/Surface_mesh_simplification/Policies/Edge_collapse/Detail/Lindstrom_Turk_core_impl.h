@@ -489,7 +489,6 @@ int index_of_max_component ( V const& v )
   int i = 0 ;
   
   FT max = v.x();
-  FT y = v.y();
 
   if ( max < v.y() )
   {
