@@ -202,7 +202,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   SNC_decorator() : Base(), sncp_() {}
   SNC_decorator(SNC_structure& W) 
     : Base(W), sncp_(&W) {}
-    SNC_decorator(const Self& S) : Base(*(S.sncp_)) {}
+  SNC_decorator(const Self& S) 
+    : Base(*(S.sncp_)), sncp_(S.sncp_) {}
 
   SNC_structure* sncp() const { 
     CGAL_assertion( sncp_ != NULL);
