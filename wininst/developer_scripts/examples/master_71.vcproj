@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="test_msvc71"
+	Name="SOURCE"
 	ProjectGUID="{7E47FDD3-2BE2-4190-B391-03778A146F31}"
 	Keyword="ManagedCProj">
 	<Platforms>
@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies=""
-				OutputFile="$(OutDir)/test_msvc71.exe"
+				OutputFile="$(OutDir)/SOURCE.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;..\..\lib&quot;;$(GMP_LIB_VC71);$(MPFR_LIB_VC71)"
 				GenerateDebugInformation="TRUE"/>
@@ -82,7 +82,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies=""
-				OutputFile="$(OutDir)/test_msvc71.exe"
+				OutputFile="$(OutDir)/SOURCE.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;..\..\lib&quot;;$(GMP_LIB_VC71);$(MPFR_LIB_VC71)"
 				GenerateDebugInformation="TRUE"/>
@@ -115,7 +115,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="master.EXT">
+				RelativePath="SOURCE.EXT">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
