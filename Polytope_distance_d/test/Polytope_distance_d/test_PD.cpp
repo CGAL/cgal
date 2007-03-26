@@ -147,7 +147,7 @@ void process (const std::string& filename)
     
 }
 
-int main(const int ac,const char **av) {
+int main(/* const int ac,const char **av */) {
   // we assume that av contains a list of files in the following
   // format: 
   //     d n1 n2 p_1 p_2 ... p_n1 q_1 q_2 ... q_n2
