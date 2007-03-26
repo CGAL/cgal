@@ -18,8 +18,10 @@
 #include <list>
 #include <map>
 
+#ifdef _MSC_VER
 #pragma warning(disable:4355) // complaint about using 'this' to
                                 // initialize a member
+#endif
 
 template <class Arrangement>
 struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
