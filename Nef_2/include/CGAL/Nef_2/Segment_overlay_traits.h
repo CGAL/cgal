@@ -262,7 +262,7 @@ public:
       if (sit == nil) 
         {
           Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
-          seg_pair sp(s_sweep,ITERATOR());
+          seg_pair sp(s_sweep, ite);
           sit_succ = YS.locate( &sp );
           if ( sit_succ != YS.max_item() && 
                orientation(sit_succ,p_sweep) == 0 ) 
@@ -677,7 +677,7 @@ public:
     Vertex_handle v = GO.new_vertex(p_sweep);
     ss_iterator sit_succ, sit_pred, sit_first, sit;
     Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
-    seg_pair sp(s_sweep,ITERATOR());
+    seg_pair sp(s_sweep, ite);
     sit_succ = YS.upper_bound(&sp);
     sit = sit_succ; --sit;
 
