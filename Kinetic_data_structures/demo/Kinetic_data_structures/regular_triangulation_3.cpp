@@ -1,17 +1,17 @@
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
 #include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <fstream>
-//#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_COIN
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_triangulation_3.h"
 #include "include/SoQt_widget_3.h"
 #include <CGAL/Kinetic/Insert_event.h>
-//#endif
+#endif
 
 
 int main(int argc, char *argv[])
 {
-  //#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_COIN
     typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Traits;
     typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
     typedef CGAL::Kinetic::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
@@ -77,12 +77,12 @@ int main(int argc, char *argv[])
     std::cout << "Press 's' to show spheres for points, 'p' to show points.\n";
 
     return qtsim->begin_event_loop();
-    /*#else
+ #else
     std::cout << "An install of Inventor and SoQt are required for this demo.  "
       "Please make sure they are installed and then compile "
       "using the makefile 'makefile.soqt'.\n"
       "They can be found at http://www.coin3d.org or as an rpm from "
       "your linux distribution (they are part of Fedora extras, for example).\n";
     return EXIT_FAILURE;
-    #endif*/
+    #endif
 };

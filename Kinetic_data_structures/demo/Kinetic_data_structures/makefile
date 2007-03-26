@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -g \
+CXXFLAGS = -g -DCGAL_USE_COIN\
            -I$(CGAL_INCL_DIR) \
            $(CGAL_CXXFLAGS) \
            -Iinclude\

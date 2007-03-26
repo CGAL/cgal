@@ -3,14 +3,14 @@
 #include <algorithm>
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 
-//#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_COIN
 #include "include/SoQt_widget_3.h"
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_triangulation_3.h"
 #include <CGAL/Kinetic/Enclosing_box_3.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
-//#endif
+#endif
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -18,7 +18,7 @@
 
 int main(int argc, char *argv[])
 {
-  //#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_SOQT
     int n=10;
     int d=2;
     bool print_help=false;
@@ -201,5 +201,8 @@ int main(int argc, char *argv[])
 
 
     return qtsim->begin_event_loop();
-
+#else 
+    std::cerr << "Coin and SoQt are required for this demo.\n";
+    return EXIT_FAILURE;
+#endif
 };

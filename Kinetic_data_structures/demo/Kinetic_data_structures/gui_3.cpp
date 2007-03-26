@@ -5,11 +5,11 @@
 #include <CGAL/Random.h>
 #include <vector>
 
-//#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_COIN
 #include "include/SoQt_widget_3.h"
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_moving_weighted_points_3.h"
-//#endif
+#endif
 
 #include <CGAL/Kinetic/Insert_event.h>
 
@@ -19,7 +19,7 @@
 
 int main(int argc, char *argv[])
 {
-  //#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_COIN
   int n=10;
   int d=2;
   bool print_help=false;
@@ -150,13 +150,13 @@ int main(int argc, char *argv[])
 
     return qtsim->begin_event_loop();
   }
-  /*#else
+#else
     std::cout << "An install of Inventor and SoQt are required for this demo.  "
     "Please make sure they are installed and then compile "
     "using the makefile 'makefile.soqt'.\n"
     "They can be found at http://www.coin3d.org or as an rpm from "
     "your linux distribution (they are part of Fedora extras, for example).\n";
     return EXIT_FAILURE;
-    #endif*/
+#endif
 
 }
