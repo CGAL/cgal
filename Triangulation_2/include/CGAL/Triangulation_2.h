@@ -2070,7 +2070,9 @@ locate(const Point& p,
       return Face_handle();
   }
   if( dimension() == 0) {
-      if (xy_equal(p,finite_vertex()->point())){
+      // Do not use finite_vertex directly because there can be hidden vertices
+      // (regular triangulations)
+      if (xy_equal(p,finite_vertex()->face()->vertex(0)->point())){
 	lt = VERTEX ;
       }
       else{

@@ -1063,7 +1063,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
                 // in this case locate() oddly returns loc = NULL and li = 4,
                 // so we work around it.
                 loc = finite_vertex()->face();
-                li = loc->index(finite_vertex());
+                li = 0;
             }
 
             Vertex_handle vv = loc->vertex(li);
