@@ -461,7 +461,6 @@ compute_anchor_vor (Vertex_handle const v) {
       s = tmp;
     }
   }
-  return Simplex();
 }
 
 template < class RegularTriangulation3 >
