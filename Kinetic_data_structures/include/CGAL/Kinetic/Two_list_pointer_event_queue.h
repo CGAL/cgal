@@ -161,11 +161,11 @@ public:
     CGAL_assertion(0);
     CGAL_KINETIC_ERROR("Writing dummy queue element.");
   }
-  virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const {
+  virtual CGAL::Comparison_result compare_concurrent(Key , Key ) const {
     CGAL_assertion(0);
     return CGAL::EQUAL;
   };
-  virtual bool merge_concurrent(Key a, Key b) {
+  virtual bool merge_concurrent(Key , Key ) {
     CGAL_assertion(0);
     return false;
   }
