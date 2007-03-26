@@ -31,10 +31,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<typename Items, typename SNC_structure>
+template<typename SNC_structure>
 class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   
-  typedef CGAL::SNC_simplify_base<Items, SNC_structure>      Self;
+  typedef CGAL::SNC_simplify_base<SNC_structure>        Self;
   typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
   typedef typename SNC_structure::Sphere_map            Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                SM_decorator;
@@ -680,19 +680,19 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
 
 template<typename Items, typename SNC_structure>
-class SNC_simplify : public SNC_simplify_base<Items, SNC_structure> {
+class SNC_simplify : public SNC_simplify_base<SNC_structure> {
 public:
   SNC_simplify(SNC_structure& sncs)
-    : SNC_simplify_base<Items, SNC_structure>(sncs)
+    : SNC_simplify_base<SNC_structure>(sncs)
   {}
 };
 
 
 template<typename SNC_structure>
 class SNC_simplify<SNC_indexed_items, SNC_structure> 
- : public SNC_simplify_base<int, SNC_structure> {
+ : public SNC_simplify_base<SNC_structure> {
 
-  typedef SNC_simplify_base<int, SNC_structure>         Base;
+  typedef SNC_simplify_base<SNC_structure>              Base;
   typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
   typedef typename SNC_structure::Sphere_map            Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                SM_decorator;
