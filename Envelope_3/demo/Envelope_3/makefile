@@ -36,13 +36,13 @@ LDFLAGS = \
 
 all:            \
                 envelope_3$(EXE_EXT) 
-                
+
 envelope_3.moc: envelope_3.cpp
 	${QT_MOC} -o envelope_3.moc envelope_3.cpp
 
 envelope_3$(OBJ_EXT): envelope_3.cpp envelope_3.moc 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) envelope_3.cpp
-	
+
 envelope_3$(EXE_EXT): envelope_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)envelope_3 envelope_3$(OBJ_EXT) $(LDFLAGS)
 
