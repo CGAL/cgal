@@ -98,7 +98,7 @@ struct SMO_from_segs {
   void assert_equal_marks(Halfedge_handle e1, Halfedge_handle e2) const
   { CGAL_assertion(e1->mark()==e2->mark()); }
 
-  void discard_info(Halfedge_handle e) const {}
+  void discard_info(Halfedge_handle ) const {}
 
   void clear_temporary_vertex_info() const
   { Vertex_handle v;

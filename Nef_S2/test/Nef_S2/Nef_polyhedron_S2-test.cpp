@@ -21,7 +21,7 @@ typedef Explorer::SHalfedge_const_handle SHalfedge_const_handle;
 typedef Explorer::SFace_const_handle SFace_const_handle;
 typedef Nef_polyhedron::Object_handle Object_handle;
 
-int main(int argc, char **argv)
+int main(int, char**)
 {
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_NEF_SETDTHREAD(911);
