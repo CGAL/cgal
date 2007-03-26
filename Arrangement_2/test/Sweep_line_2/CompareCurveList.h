@@ -8,24 +8,29 @@
 template <class Traits>
 class Equal_pred
 {
+private:
+  Traits & m_traits;
+  
 public:
+  Equal_pred(Traits & traits) : m_traits(traits) {}
+
   typedef typename Traits::Point_2                Point_2;
   typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
   
   bool operator()(const Point_2& p1, const Point_2& p2)
   {
-    return(Traits().equal_2_object()(p1, p2));
+    return(m_traits.equal_2_object()(p1, p2));
   }
 
   bool operator()(const X_monotone_curve_2& c1, const X_monotone_curve_2& c2)
   {
-    return(Traits().equal_2_object()(c1, c2));
+    return(m_traits.equal_2_object()(c1, c2));
   }
 };
 
 
 template <class List, class Traits>
-bool compare_lists(const List& list1, const List& list2, Traits& )
+bool compare_lists(const List& list1, const List& list2, Traits& traits)
 {
   typedef typename List::const_iterator  Iter;
   Iter begin1 = list1.begin();
@@ -43,7 +48,7 @@ bool compare_lists(const List& list1, const List& list2, Traits& )
     return false;
   }
 
-  Equal_pred<Traits> eq;
+  Equal_pred<Traits> eq(traits);
   return std::equal(begin1, end1, begin2, eq);
 }
 
