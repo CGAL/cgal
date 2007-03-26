@@ -259,7 +259,7 @@ template< class ForwardIter1, class ForwardIter2,
 void box_intersection_all_pairs_d( 
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
-    Callback callback, BoxTraits traits)
+    Callback callback, BoxTraits)
 {
     typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
     Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
@@ -271,7 +271,7 @@ template< class ForwardIter1, class ForwardIter2,
 void box_intersection_all_pairs_d( 
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
-    Callback callback, BoxTraits traits,
+    Callback callback, BoxTraits,
     Box_intersection_d::Topology topology,
     Box_intersection_d::Setting setting)
 {
@@ -354,7 +354,7 @@ void box_self_intersection_all_pairs_d(
 
 template< class ForwardIter, class Callback, class BoxTraits >
 void box_self_intersection_all_pairs_d( 
-    ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits traits,
+    ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits,
     Box_intersection_d::Topology topology)
 {
     if (topology == Box_intersection_d::CLOSED) {

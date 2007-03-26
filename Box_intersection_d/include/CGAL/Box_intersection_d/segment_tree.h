@@ -44,7 +44,7 @@ template< class ForwardIter1, class ForwardIter2,
           class Callback, class Traits >
 void all_pairs( ForwardIter1 p_begin, ForwardIter1 p_end,
                 ForwardIter2 i_begin, ForwardIter2 i_end,
-                Callback callback, Traits traits, bool complete_case = false)
+                Callback callback, Traits , bool complete_case = false)
 {
     const int last_dim = Traits::dimension() - 1;
     for( ForwardIter1 p = p_begin; p != p_end; ++p ) {
