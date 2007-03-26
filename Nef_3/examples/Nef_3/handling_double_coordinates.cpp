@@ -16,7 +16,7 @@ int main() {
   std::cin >> P;
   Nef_polyhedron N(P);
 
-  std::cout << "Lazy_kernel + Simple_cartesian + SNC_indexed_items"
+  std::cout << "Exact_predicates_exact_constructions_kernel + SNC_indexed_items"
 	    << std::endl
 	    << "  allows efficient handling of input "
 		 "using floating point coordinates"
