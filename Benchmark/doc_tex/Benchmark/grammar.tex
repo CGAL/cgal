@@ -22,9 +22,12 @@ Rational & Rational (Integer, Integer)    & Rational(integer nominator, \\
 Infty    & MINUS\_INFTY                   & encodes $-\infty$ \\ 
          & PLUS\_INFTY                    & encodes $+\infty$  \\ \hline
 
-Integer\_sequence & integer\_sequence (Integer,...)      
+Integer\_sequence & Integer, Integer ...
                         & a sequence of arbitrary many integer  \\ 
                   &     &  values \\ \hline
+Monom & (Integer, (Integer\_sequence)) & monom with integer coefficient and exponent sequence, \\
+      &                                & starting with the first variable \\ \hline
+Monom\_sequence & Monom, Monom ... & a sequence of arbitrary many monoms \\ \hline
 %Integer\_sequence\_2 & integer\_sequence\_2(
 %                       & a sequence of an even number of \\
 %                  & \ \ Integer, Integer, ... ) & integer values\\ \hline
@@ -44,6 +47,8 @@ Point\_2 & Point\_2 (Integer,Integer)     & cartesian point with \\
 %                   & \ \ Integer\_sequence\_2 )&  \\ \hline
 {\bf Polynomial}    & {\bf Polynomial\_1} (Integer\_sequence) 
                              & the coefficients of an integer polynomial \\ \hline
+                    & {\bf Polynomial} $<d>$ (Monom\_list)
+                             & the monoms of a degree $d$ polynomial \\ \hline
 
 AlgebraicReal & AlgebraicReal (         & an algebraic real is a real root\\
               & \ \ Polynomial,         & of a polynomial defined by an\\
@@ -130,10 +135,20 @@ ConicPoint    & ConicPoint\_2 (Conic,
 <tr><td>Integer</rd><td>INTEGER</td><td>an integer value</td></tr>
 <tr><td>Rational</td><td>Rational (Integer, Integer)</td>
   <td>Rational(integer nominator, integer denominator)</td></tr>
-<tr><td>Infty</td><td>MINUS_INFTY<br>PLUS_INFTY</td>
-  <td>encodes $-\infty$<br>encodes $+\infty$</td></tr>
-<tr><td>Integer_sequence</td><td>integer_sequence (Integer,...)</td>
-  <td>a sequence of arbitrary many integer values</td></tr>
+<tr><td>Infty</td>
+    <td>MINUS_INFTY<BR>
+        PLUS_INFTY</td>
+    <td>encodes $-\infty$<BR>
+        encodes $+\infty$</td></tr>
+<tr><td>Integer_sequence</td>
+    <td>Integer, Integer ...</td>
+    <td>a sequence of arbitrary many integer values</td></tr>
+<tr><td>Monom</td>
+    <td>(Integer,(Integer_sequence))</td>
+    <td>coefficient(exponent_sequence)</td></tr>
+<tr><td>Monom_sequence</td>
+    <td>Monom, Monom ...</td>
+    <td>a sequence of arbitrary many monoms</td></tr>
 <tr><td>Orientation</td><td>COUNTERCLOCKWISE<br>CLOCKWISE<br>VOID</td><td>orientation of a ConicArc</td></tr>
 <tr><td>Point_2</td>
   <td>Point_2 (Integer,Integer)<br>
@@ -142,8 +157,11 @@ ConicPoint    & ConicPoint\_2 (Conic,
   <td>cartesian point with integer coordinates x and y<br>
       homogeneous point with integer coordinates x,y,w<br>
       cartesian point of two rational coordinates x,y</td></tr>
-<tr><td><b>Polynomial</b></td><td><b>Polynomial_1</b>(Integer_sequence)</td>
-  <td>the coefficients of an integer polynomial</td></tr>
+<tr><td rowspan="2"><b>Polynomial</b></td>
+    <td><b>Polynomial_1</b>(Integer_sequence)</td>
+    <td>the coefficients of an integer polynomial</td></tr>
+<tr><td><b>Polynomial</b>&lt;<i>d</i>&gt;(Monom_sequence)</td>
+    <td>monoms of a degree <i>d</i> polynomial</td></tr>
 <tr><td>AlgebraicReal</td>
     <td>AlgebraicReal(Polynomial,Rational,Rational,Integer)</td>
     <td>an algebraic real is a real root of a polynomial defined by an
