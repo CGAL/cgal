@@ -21,7 +21,7 @@
 #ifndef CGAL_CARTESIAN_REGULAR_INSTANTANEOUS_KERNEL_H
 #define CGAL_CARTESIAN_REGULAR_INSTANTANEOUS_KERNEL_H
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Instantaneous_kernel.h>
+#include <CGAL/Kinetic/Default_instantaneous_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <map>
@@ -52,12 +52,12 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 
 
 template <class Traitst >
-class Regular_triangulation_instantaneous_kernel: public Instantaneous_kernel<Traitst>
+class Regular_triangulation_instantaneous_kernel: public Default_instantaneous_kernel<Traitst>
 {
   typedef Regular_triangulation_instantaneous_kernel<Traitst> This;
 public:
   typedef Traitst Traits;
-  typedef Instantaneous_kernel<Traitst> P;
+  typedef Default_instantaneous_kernel<Traitst> P;
 
   //using P::Time;
   //using P::NT;

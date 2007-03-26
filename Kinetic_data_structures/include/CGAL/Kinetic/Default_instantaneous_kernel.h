@@ -18,8 +18,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_CARTESIAN_INSTANTANEOUS_KERNEL_H
-#define  CGAL_CARTESIAN_INSTANTANEOUS_KERNEL_H
+#ifndef CGAL_CARTESIAN_DEFAULT_INSTANTANEOUS_KERNEL_H
+#define  CGAL_CARTESIAN_DEFAULT_INSTANTANEOUS_KERNEL_H
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/Instantaneous_adaptor.h>
 #include <CGAL/Simple_cartesian.h>
@@ -43,7 +43,7 @@
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class CIK>
-class Instantaneous_kernel_rep: public Ref_counted<Instantaneous_kernel_rep<CIK> >
+class Default_instantaneous_kernel_rep: public Ref_counted<Default_instantaneous_kernel_rep<CIK> >
 {
 public:
   typedef typename CIK::Traits Traits;
@@ -58,7 +58,7 @@ public:
   typedef typename Static_kernel::FT NT;
   typedef typename CIK::Traits::Simulator::Time Time;
 
-  Instantaneous_kernel_rep(Traits tr): tr_(tr) {
+  Default_instantaneous_kernel_rep(Traits tr): tr_(tr) {
     initialized_=false;
     time_is_nt_=false;
   }
@@ -237,18 +237,18 @@ protected:
 
 
 template <class Traitst >
-class Instantaneous_kernel
+class Default_instantaneous_kernel
 {
-  typedef Instantaneous_kernel<Traitst> This;
+  typedef Default_instantaneous_kernel<Traitst> This;
 public:
   typedef Traitst Traits;
-  typedef Instantaneous_kernel_rep< This>  Rep;
+  typedef Default_instantaneous_kernel_rep< This>  Rep;
   typedef typename Traits::Static_kernel Static_kernel;
   typedef typename Traits::Kinetic_kernel Kinetic_kernel;
   typedef typename Static_kernel::FT NT;
   typedef typename Traits::Simulator::Time Time;
 
-  Instantaneous_kernel(const Traits &tr):
+  Default_instantaneous_kernel(const Traits &tr):
     rep_(new Rep(tr)) {
   }
   template <class N>

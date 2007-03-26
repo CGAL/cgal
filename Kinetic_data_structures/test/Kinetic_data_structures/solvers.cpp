@@ -1,6 +1,6 @@
 //#define NDEBUG
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Instantaneous_kernel.h>
+#include <CGAL/Kinetic/Default_instantaneous_kernel.h>
 #include <CGAL/Kinetic/Cartesian.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Polynomial/Kernel.h>
