@@ -77,7 +77,7 @@ private:
 public: 
   /*! Constructor. */
   Arr_middle_edges_landmarks_generator 
-  (const Arrangement_2& arr, int lm_num = -1) : 
+  (const Arrangement_2& arr, int /* lm_num */ = -1) : 
     Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr)
   {
     CGAL_PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
@@ -140,7 +140,7 @@ protected:
     } 
   }
   
-  virtual void _create_points_set (Points_set & points)
+  virtual void _create_points_set (Points_set & /* points */)
   {
     std::cerr << "should not reach here!"<< std::endl;
     CGAL_assertion(false);
