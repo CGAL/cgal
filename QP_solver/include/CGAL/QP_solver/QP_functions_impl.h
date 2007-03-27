@@ -86,7 +86,7 @@ namespace QP_functions_detail {
   // helper for MPS output: BOUNDS
   template <typename P>
   void print_bounds 
-  (std::ostream& out, const P& p,
+  (std::ostream& , const P& ,
    CGAL::Tag_true /*is_nonnegative*/)
   {
     // nop (default bounds are nonnegative)
@@ -119,7 +119,7 @@ namespace QP_functions_detail {
   // helper for MPS output: DMATRIX/QMATRIX
   template <typename P>
   void print_qmatrix 
-  (std::ostream& out, const P& p, 
+  (std::ostream& , const P& , 
    CGAL::Tag_true /*is_linear*/)
   {
     // nop
