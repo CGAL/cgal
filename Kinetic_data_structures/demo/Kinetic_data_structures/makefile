@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -g -DCGAL_USE_COIN\
+CXXFLAGS = -g -DCGAL_USE_COIN -I/usr/include/Coin2\
            -I$(CGAL_INCL_DIR) \
            $(CGAL_CXXFLAGS) \
            -Iinclude\
