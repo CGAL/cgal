@@ -24,7 +24,6 @@
 
 #include <CGAL/basic.h> 
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Sqrt_extension.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
@@ -41,49 +40,9 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 // Forward declaration of Algebraic_real_pure
-template< class COEFF, class RAT, class POLICY >
+template< class COEFF, class RAT, class POLICY, class REPCLASS >
 class Algebraic_real_pure;
 
-template< class NT > struct Get_arithmetic_kernel;
-
-#ifdef CGAL_USE_LEDA
-
-template <>
-struct Get_arithmetic_kernel<leda::integer> {
-    typedef LEDA_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
-struct Get_arithmetic_kernel<leda::rational>{
-    typedef LEDA_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
-struct Get_arithmetic_kernel<leda::real>{
-    typedef LEDA_arithmetic_kernel Arithmetic_kernel;
-};
-#endif //CGAL_USE_LEDA
-
-
-#ifdef CGAL_USE_CORE
-
-template <>
-struct Get_arithmetic_kernel<CORE::BigInt>{
-    typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
-struct Get_arithmetic_kernel<CORE::BigRat>{
-    typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
-struct Get_arithmetic_kernel<CORE::Expr>{
-    typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-#endif //CGAL_USE_CORE
-
-template <class COEFF, class ROOT>
-struct Get_arithmetic_kernel<Sqrt_extension<COEFF,ROOT> >{
-    typedef Get_arithmetic_kernel<COEFF> GET;
-    typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
-};
 
 
 template <class NTX>
@@ -96,16 +55,17 @@ convert_to_bfi(const NTX& x) {
 }
 
 
-template <class COEFF, class RAT, class POLICY >
+template <class COEFF, class RAT, class POLICY, class REPCLASS >
 typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel::Bigfloat_interval
 inline
-convert_to_bfi(const Algebraic_real_pure< COEFF, RAT, POLICY >& x){
+convert_to_bfi(const Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS >& x){
     typedef typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel AT;
     typedef typename AT::Bigfloat BF;
     typedef typename AT::Bigfloat_interval BFI; 
-    typedef Algebraic_real_pure< COEFF, RAT, POLICY > ALG;
+    typedef Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS > ALG;
 
     if (x.is_rational()) return convert_to_bfi(x.rational());
+    
     if(CGAL::sign(x) == CGAL::ZERO) return (BF(0));
     
     CGAL_postcondition(CGAL::sign(x.low()) == CGAL::sign(x.high()));
