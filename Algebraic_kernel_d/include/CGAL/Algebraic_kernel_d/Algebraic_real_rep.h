@@ -416,7 +416,7 @@ public:
         }
     }
 
-private:
+protected:
     void learn_from(const Field& m) const {
         if(is_rational()){
             CGAL_precondition(rational()==m);
