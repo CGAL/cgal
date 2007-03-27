@@ -1,5 +1,5 @@
 
-------- example_simple ---------------------------------------
+------- simple -----------------------------------------------
 
 This example shows the incremental construction of a 3D triangulation, 
 the location of a point, and how to manipulate elementary operations
@@ -8,35 +8,35 @@ CGAL for the Triangulation_3 class.
 
 --------------------------------------------------------------
 
-------- example_color ----------------------------------------
+------- color ------------------------------------------------
 
 This example shows how the user can plug his own vertex base in a
 triangulation.
 
 --------------------------------------------------------------
 
-------- example_adding_handles -------------------------------
+------- adding_handles ---------------------------------------
 
 This example shows how the user can plug his own vertex base
 in a triangulation, when he needs to add handles in it.
 
 --------------------------------------------------------------
 
-------- example_hierarchy ------------------------------------
+------- hierarchy --------------------------------------------
 
 This example shows the use of the hierarchy to speed up the 
 construction of a Delaunay triangulation. 
 
 --------------------------------------------------------------
 
-------- example_tds ------------------------------------------
+------- tds --------------------------------------------------
 
 Shows how to construct a 3D triangulation data structure by 
 inserting vertices.
 
 --------------------------------------------------------------
 
-------- example_find_conflicts -------------------------------
+------- find_conflicts ---------------------------------------
 
 Illustrates how the insertion process of points in a Delaunay
 triangulation can be decomposed in order to give access to the
@@ -45,15 +45,22 @@ of a point) prior to deciding to do the actual insertion or not.
 
 --------------------------------------------------------------
 
-------- example_linking_2d_and_3d ----------------------------
+------- linking_2d_and_3d ------------------------------------
 
 Illustrates how to setup a 2D and a 3D triangulation data structure
 whose vertices respectively store vertex handles of the other one.
 
 --------------------------------------------------------------
 
-------- example_regular --------------------------------------
+------- regular ----------------------------------------------
 
 Illustrates the use of Regular_triangulation_3.
 
 --------------------------------------------------------------
+
+------- simplex ----------------------------------------------
+
+Illustrates the use of Triangulation_3::Simplex.
+
+--------------------------------------------------------------
+
