@@ -15,8 +15,9 @@
 #if ! defined( MODULE_BASIC)
 #define MODULE_BASIC 1
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
+#include <string.h>
 
 using namespace std;
 
@@ -50,6 +51,7 @@ int indentation_number();
 char* renew( char* old, size_t old_size, size_t new_size);
 char* newstr( const char* src);
 
+int execute_shell_command( const string& cmd, std::ostream& out, std::ostream& err );
 
 
 #endif // MODULE_BASIC //

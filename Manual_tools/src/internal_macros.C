@@ -1436,11 +1436,15 @@ handle_savestream_close( const string&, string param[], size_t n, size_t opt) {
 }
 
 string
-handle_execute_perl_script( const string&, string param[], size_t n, size_t opt) {
+handle_shell_command( const string&, string param[], size_t n, size_t opt) {
   NParamCheck( 1, 0);
-  string script = param[0];
-  
-  return string();
+  string cmd = param[0];
+  std::stringstream out, err;
+  int retval = execute_shell_command( cmd, out, err );
+  if (retval == 0 )
+    return out.str();
+  else
+    return string("\\lciError{error while executing " + cmd + "}");
 }
 
 
@@ -1545,7 +1549,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciSavestreamUse",  handle_savestream_use, 1 );
     insertInternalGlobalMacro( "\\lciSavestreamClose",  handle_savestream_close, 1 );
 
-    insertInternalGlobalMacro( "\\lciExecutePerlScript",  handle_execute_perl_script, 1 );
+    insertInternalGlobalMacro( "\\lciShellCommand",  handle_shell_command, 1 );
 }
 
 // EOF //

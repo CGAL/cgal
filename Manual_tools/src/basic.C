@@ -13,8 +13,11 @@
 **************************************************************************/
 
 #include <basic.h>
-#include <stdlib.h>
-#include <string.h>
+
+extern "C" {
+#include <unistd.h>
+}
+
 
 // Own assertion macro
 // ================================================
@@ -97,6 +100,85 @@ char* newstr( const char* src) {
     char* s = new char[ strlen( src) + 1];
     strcpy( s, src);
     return s;
+}
+
+int execute_shell_command( const string& cmd, std::ostream& out, std::ostream& err ) {  
+  int  stdin_pipe[2];
+  int  stdout_pipe[2];
+  int  stderr_pipe[2];
+  int  retval_pipe[2];
+  
+  char buffer[BUFSIZ+1];
+  char buffer_err[BUFSIZ+1];
+  
+  int fork_result;
+  int data_processed;
+  int data_processed_err;
+  
+  if( pipe(stdin_pipe) == 0 &&
+      pipe(stdout_pipe) == 0 &&
+      pipe(stderr_pipe) == 0 &&
+      pipe(retval_pipe) == 0 )
+  {
+          fork_result = fork();
+          if(fork_result == -1) {
+                  std::cerr << "Fork Failure" << std::endl;
+                  exit(EXIT_FAILURE);
+          } else if(fork_result == 0) {
+                  /* Close the Child process' STDIN */
+                  close(0);
+  
+                  /* Duplicate the Child's STDIN to the stdin_pipe file descriptor */
+                  dup(stdin_pipe[0]);
+  
+                  /* Close the read and write to for the pipe for the child.  The child will now only be able to read from it's STDIN (which is our pipe). */ 
+                  close(stdin_pipe[0]);
+                  close(stdin_pipe[1]);
+  
+                  /* Close the Child process' STDOUT */
+                  close(1);
+                  dup(stdout_pipe[1]);
+                  close(stdout_pipe[0]);
+                  close(stdout_pipe[1]);
+  
+                  /* Close the Child process' STDERR */
+                  close(2);
+                  dup(stderr_pipe[1]);
+                  close(stderr_pipe[0]);
+                  close(stderr_pipe[1]);
+                  int retval = system( cmd.c_str() );
+                  write(retval_pipe[1], &retval, sizeof(retval) );
+                  exit(EXIT_SUCCESS);
+          } else { // parent process
+                  /* Close STDIN for read & write and close STDERR for write */
+                  close(stdin_pipe[0]);
+                  close(stdin_pipe[1]);
+                  close(stderr_pipe[1]);
+                  while(1) {
+                          data_processed_err=read(stderr_pipe[0],buffer_err,BUFSIZ);
+                          err.write( buffer_err,data_processed_err );
+                          if( data_processed_err == 0 ) break;
+                  }
+                  /* Close the read end of STDERR */
+                  close(stderr_pipe[0]);
+                  /* Close the write end of STDOUT */
+                  close(stdout_pipe[1]);
+  
+                  while(1) {
+                          data_processed=read(stdout_pipe[0],buffer,BUFSIZ);          
+                          out.write( buffer, data_processed );
+                          if(data_processed == 0) break;
+                  }
+                  close(stdout_pipe[0]);
+                  int retval;
+                  read(retval_pipe[0], &retval, sizeof(retval) );
+                  return retval;
+          }
+  } else {
+    std::cerr << "pipe error" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  return -1;
 }
 
 // EOF //
