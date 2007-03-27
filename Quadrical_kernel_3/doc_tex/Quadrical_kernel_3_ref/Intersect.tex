@@ -1,0 +1,64 @@
+\begin{ccRefFunctionObjectConcept}{QuadricalKernel_3::Intersect_3}
+
+\ccRefines
+
+\ccc{Kernel::Intersect_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const Type1 &obj1, const Type2 &obj2,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order
+(where appropriate). See below for more precisions.}
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const Type1 &obj1, const Type2 &obj2,
+	const Type3 &obj3,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order 
+(where appropriate). See below for more precisions.}
+
+For the \textbf{first operator}, \ccc{Type_1} and \ccc{Type_2} can both 
+be either
+
+\begin{itemize}
+\item {} \ccc{QuadricalKernel_3::Quadric_3},
+\item {} \ccc{QuadricalKernel_3::Curve_3},
+\item {} \ccc{QuadricalKernel_3::Curve_arc_3},
+\end{itemize} 
+
+and depending on the types \ccc{Type_1} and \ccc{Type_2}, the computed 
+\ccc{CGAL::Object}s can be assigned to 
+\begin{itemize}
+\item {} \ccc{std::pair<QuadricalKernel_3::Curve_point_3, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj_1} and \ccc{obj_2},
+\item {} \ccc{Type_1}, when \ccc{Type_1} and \ccc{Type_2} are equal, and 
+if the two objets \ccc{obj1} and \ccc{obj2} are equal,
+\item {} \ccc{QuadricalKernel_3::Curve_arc_3} in case of an overlap of 
+two arcs
+\end{itemize} 
+
+For the \textbf{second operator}, \ccc{Type_1}, \ccc{Type_2} and \ccc{Type_3}
+are of type \ccc{QuadricalKernel_3::Quadric_3}. 
+The computed \ccc{CGAL::Object}s can be assigned to 
+\begin{itemize}
+\item {} \ccc{std::pair<QuadricalKernel_3::Curve_point_3, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point,
+\item {} \ccc{QuadricalKernel_3::Curve_3} or
+\item {} \ccc{Type_1}, when \ccc{Type_1}, \ccc{Type_2} and \ccc{Type_3} 
+are equal, and if the three objets \ccc{obj1} and \ccc{obj2} and \ccc{obj3}
+are equal.
+\end{itemize} 
+
+\end{ccRefFunctionObjectConcept}
