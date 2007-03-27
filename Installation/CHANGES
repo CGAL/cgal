@@ -22,6 +22,8 @@ defined in windows.h
   built in release or debug mode. The libraries to link against are
   chosen with linker pragmas in header files.
 
+  On al platforms but Windows shared and static versions of the libraries are generated
+
 
 3 Algebraic Foundations (new package)
 
@@ -34,9 +36,17 @@ defined in windows.h
 5 Kernels
 
 5.1 Circular Kernel in 2D
+
   Efficiency improved through geometric filtering of predicates, introduced with 
   the filtered kernel Filtered_bbox_circular_kernel_2<.>, and also chosen for the 
   predefined kernel Exact_circular_kernel_2. 
+
+
+5.2 Linear Kernel
+
+  Exact_predicates_exact_constructions_kernel memory and run-time improvements
+  through usage of lazy geometric constructions instead of lazy arithmetic.
+
 
 
 6 Data Structures and Algorithms
@@ -44,7 +54,7 @@ defined in windows.h
 6.1 Surface Mesh Simplification (new package)
 
   This package provides a mesh simplification framework using edge collapse
-  operations, and provides the Turk/Lindstom simplification algorithm.
+  operations, and provides the Turk/Lindstrom simplification algorithm.
 
 
 6.2 Estimation of Local Differential Properties (new package)
@@ -129,6 +139,8 @@ they become models of the BGL graph concept.
 
 This package allows to sort points and other objects along a Hilbert curve
 which can improve the performance of algorithms like triangulations.
+It is used by the constructors of the triangulation package which have
+an iterator range of points as argument.
 
 
 
