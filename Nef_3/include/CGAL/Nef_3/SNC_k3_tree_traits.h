@@ -140,7 +140,7 @@ public:
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Side_of_plane(bool rc = false) : reference_counted(rc) {}
 #else    
-    Side_of_plane(bool) {}
+    Side_of_plane() {}
 #endif
 
 
