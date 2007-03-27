@@ -78,6 +78,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
  public:
   SNC_simplify_base(SNC_structure& sncs) : SNC_decorator(sncs), simplified(false) {}
+  virtual ~SNC_simplify_base() {}
 
   typedef typename Union_find< Volume_handle>::handle UFH_volume;
   typedef typename Union_find< Halffacet_handle>::handle UFH_facet;
