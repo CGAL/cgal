@@ -1,0 +1,35 @@
+\begin{ccRefFunctionObjectConcept}{QuadricalKernel_3::HasOn_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool 
+	operator()(const Type1 &obj1, const Type2 &obj2);}
+{Returns \ccc{true} when \ccc{obj1} contains \ccc{obj2},}
+
+where \ccc{Type_1} and \ccc{Type_2} can be respectively:
+
+\begin{itemize}
+\item {}
+	\begin{itemize}
+	\item {} \ccc{QuadricalKernel_3::Quadric_3},
+	\item {} \ccc{QuadricalKernel_3::Curve_3},
+	\item {} \ccc{QuadricalKernel_3::Curve_arc_3}
+	\end{itemize} 
+and \ccc{QuadricalKernel_3::Curve_point_3}
+\item {} 
+	\begin{itemize}
+	\item {} \ccc{QuadricalKernel_3::Quadric_3} 
+	\end{itemize}
+and \ccc{QuadricalKernel_3::Curve_3}
+\item {} or
+	\begin{itemize}
+	\item {} \ccc{QuadricalKernel_3::Quadric_3} or
+	\item {} \ccc{QuadricalKernel_3::Curve_3}
+	\end{itemize}
+and \ccc{QuadricalKernel_3::Curve_arc_3}.
+\end{itemize} 
+
+
+\end{ccRefFunctionObjectConcept}

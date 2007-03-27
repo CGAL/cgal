@@ -1,0 +1,43 @@
+\begin{ccRefClass}{Curve_arc_3<QuadricalKernel_3>}
+
+%\ccInclude{CGAL/Curve_arc_3.h}
+
+\ccIsModel
+
+\ccc{QuadricalKernel_3::CurveArc_3}
+
+\ccCreation
+\ccCreationVariable{arc}
+
+\ccThree{Curve_point_3}{arc.is_x_monotone()}{}
+\ccThreeToTwo
+
+% TODO constructors are missing
+
+\ccAccessFunctions
+
+\ccThree{QuadricalKernel_3::Curve_arc_point_3}{arc.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{QuadricalKernel_3::Curve_3 supporting_curve();}{}
+
+%A circular arc is supposed to be oriented counterclockwise, from 
+%\ccc{source} to \ccc{target}. 
+
+\ccMethod{QuadricalKernel_3::Curve_point_3 source();}{Only valid if source
+is finite.}
+\ccGlue
+\ccMethod{QuadricalKernel_3::Curve_point_3 target();}{Only valid if target 
+is finite.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Curve_arc_3 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_3 & ca);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Curve_point_3<QuadricalKernel_3>}\\
+
+\end{ccRefClass}
