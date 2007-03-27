@@ -1,0 +1,25 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_1::AlgebraicReal_1}
+
+\ccDefinition
+
+A model of \ccRefName\ represents a real root of a univariate polynomial 
+\ccc{AlgebraicKernel_d_1::Polynomial_1}. 
+
+The type is associated with \ccc{AlgebraicKernel_d_1::AlgebraicRealTraits_1} 
+providing further functionality on \ccRefName.
+
+The type is \ccc{ImplicitInteroperable} with \ccc{int}, \ccc{AlgebraicKernel_d_1::Coefficient}, and \ccc{AlgebraicKernel_d_1::Boundary}, where \ccRefName\ is the 
+coercion type. 
+
+
+\ccRefines
+\ccc{FromIntConstructible}\\
+\ccc{RealEmbeddable}\\
+\ccc{ImplicitInteroperable} with \ccc{int}\\
+\ccc{ImplicitInteroperable} with \ccc{AlgebraicKernel_d_1::Coefficient}\\
+\ccc{ImplicitInteroperable} with \ccc{AlgebraicKernel_d_1::Boundary}\\
+
+%\ccHasModels
+%\ccc{double, NiX::Algebraic_real}
+
+\end{ccRefConcept}
