@@ -21,9 +21,7 @@
 #include <CGAL/tags.h>
 
 #include <CGAL/Polynomial.h>
-#include <CGAL/Algebraic_kernel_d/Descartes.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
-#include <CGAL/Algebraic_kernel_d/Real_roots.h>
 #include <CGAL/Interval_nt.h>
 
 
@@ -80,12 +78,12 @@ namespace CGALi {
   THIS CLASS IS CONSIDERED AS EXPERIMENTAL !
 */
 template <class Coefficient_, 
-          class Rational_, 
-          class HandlePolicy = ::CGAL::Handle_policy_no_union>
+          class Rational_,            
+          class HandlePolicy = ::CGAL::Handle_policy_no_union,
+          class RepClass = Algebraic_real_rep< Coefficient_, Rational_ > >
 class Algebraic_real_pure :
         public
-::CGAL::Handle_with_policy<Algebraic_real_rep<Coefficient_,Rational_>,
-HandlePolicy > {    
+::CGAL::Handle_with_policy< RepClass, HandlePolicy > {    
 public :
     typedef Coefficient_                                            Coefficient;
     typedef Rational_                                               Rational;
@@ -93,16 +91,16 @@ public :
     typedef CGAL::Polynomial<Coefficient>                            Polynomial;   
     
     
-    typedef Algebraic_real_rep<Coefficient,Rational>    Int_rep;
+    typedef RepClass    Int_rep;
 
     typedef ::CGAL::Handle_with_policy<Int_rep,HandlePolicy>                       Base;
-    typedef Algebraic_real_pure<Coefficient,Rational, HandlePolicy> Self;
+    typedef Algebraic_real_pure<Coefficient,Rational, HandlePolicy, RepClass> Self;
 private:
     typedef CGAL::Fraction_traits<Rational> FT_rational;
-    typedef CGALi::Descartes<Polynomial,Rational> Isolator;
+//    typedef CGALi::Descartes<Polynomial,Rational> Isolator;
     typedef typename FT_rational::Numerator_type Integer;
 public:
-    typedef CGALi::Real_roots<Self,Isolator>   Real_roots;
+//    typedef CGALi::Real_roots<Self,Isolator>   Real_roots;
  
     //! creates the algebraic real as \c Rational from \a i.
     explicit Algebraic_real_pure(int i = 0 ) : Base(i) { }
@@ -337,13 +335,13 @@ public:
  *  NiX::Algebraic_real_pure does not support any arithmetic operations, thus they
  *  are not even a model of the IntegralDomainWithoutDiv concept. \see NiX_NT_Concepts 
  */
- template< class Coefficient, class Rational, class HandlePolicy >
- class Real_embeddable_traits< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy > >
-    : public Real_embeddable_traits_base< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy > > {
+ template< class Coefficient, class Rational, class HandlePolicy, class RepClass >
+ class Real_embeddable_traits< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > >
+    : public Real_embeddable_traits_base< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > > {
 
   public:
     
-    typedef typename CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy > Type;
+    typedef typename CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > Type;
         
     class Compare
         : public Binary_function< Type, Type, CGAL::Comparison_result > {
