@@ -1,8 +1,9 @@
-$CGAL/README
+README
 -------------------------------------------------------------------------------
 
 This distribution of CGAL includes:
 
+   AUTHORS            - file recording the current and former authors of CGAL
    auxiliary/         - directory containing miscellaneous things, currently
                         only the icons needed for the demos on MacOSX.
    CHANGES            - file recording the history of changes for the library
