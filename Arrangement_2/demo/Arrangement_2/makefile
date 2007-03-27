@@ -13,9 +13,10 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-ARR_CXXFLAGS = -DNDEBUG -O2
+# ARR_CXXFLAGS = -DNDEBUG -O2
 CXXFLAGS = \
            -I../../include \
+	   -I../../../Envelope_2/include \
            $(ARR_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
