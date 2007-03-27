@@ -235,6 +235,9 @@ inline BigFloatRep* BigFloatRep::exp2(int e) {
 }
 
 //  constructors
+inline BigFloatRep::BigFloatRep(short n)
+  : m(n), err(0), exp(0) {}
+
 //  Chee (8/8/04) -- introduced constructor from int
 inline BigFloatRep::BigFloatRep(int n)
   : m(n), err(0), exp(0) {}

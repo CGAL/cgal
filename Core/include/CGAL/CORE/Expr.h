@@ -53,6 +53,8 @@ public:
   Expr() : RCExpr(new ConstDoubleRep()) {}
   /// constructor for <tt>int</tt>
   Expr(int i) : RCExpr(new ConstDoubleRep(i)) {}
+  /// constructor for <tt>short</tt>
+  Expr(short i) : RCExpr(new ConstDoubleRep(i)) {}
   /// constructor for <tt>unsigned int</tt>
   Expr(unsigned int ui) : RCExpr(new ConstDoubleRep(ui)) {}
 
