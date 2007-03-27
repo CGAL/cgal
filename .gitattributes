@@ -2600,12 +2600,12 @@ Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#appl
 Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/test/iostream/data/io.cin -text
+wininst/developer_scripts/examples/C2vcproj -text
 wininst/developer_scripts/examples/master_71.vcproj -text
 wininst/developer_scripts/examples/master_71_head.sln eol=crlf
 wininst/developer_scripts/examples/master_71_proj_line.sln eol=crlf
 wininst/developer_scripts/examples/master_80.vcproj -text
 wininst/developer_scripts/examples/master_80_head.sln eol=crlf
 wininst/developer_scripts/examples/master_80_proj_line.sln eol=crlf
-wininst/developer_scripts/examples/src2sln -text
 wininst/src/CGAL/cgallib_71.vcproj -text
 wininst/src/CGAL/cgallib_80.vcproj -text
