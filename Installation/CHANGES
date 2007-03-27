@@ -108,7 +108,7 @@ defined in windows.h
 - Added a function template called connect_holes() that connects the holes in a given polygon with holes, 
   turning it into a sequence of points, where the holes are connceted to the outer boundary using
   zero-width passages. 
-
+- Added a non-const function member to General_polygon_set_2 that obtains the underlying arrangement. 
 
 6.10 2D and 3D Triangulations
 
