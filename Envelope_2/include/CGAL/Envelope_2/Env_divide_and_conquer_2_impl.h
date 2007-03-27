@@ -869,6 +869,23 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
   return (new_v);
 }    
 
+/*! \todo Make the handlers default constructibe
+ * Some compilers complain that the handlers are not initialized. Currently,
+ * there is no requirement from the concepts they model respectively to
+ * have default constructors. The following is a work around.
+ */
+template <typename Handle>
+class Vertex_initializer {
+public:
+  void operator()(Handle & handle) {}
+};
+
+template <typename Vertex>
+class Vertex_initializer<Vertex *> {
+public:
+  void operator()(Vertex * & handle) {handle = NULL; }
+};
+
 // ---------------------------------------------------------------------------
 // Merge the vertical segments into the envelope given as a minimization
 // (or maximization) diagram.
@@ -905,6 +922,9 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
   bool                    on_v;
   Point_2                 p;
 
+  Vertex_initializer<Vertex_handle> v_init;
+  v_init(v);
+  
   while (iter != vert_vec.end())
   {
     // Check if the current vertical segment is on the x-range of the current
