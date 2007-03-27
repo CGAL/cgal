@@ -107,7 +107,7 @@ public:
 
   std::ostream& write(std::ostream &out) const
   {
-    out << "Nothing " << P::vh_->point();
+    out << "Nothing ";
     return out;
   }
 
