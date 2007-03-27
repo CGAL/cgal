@@ -1435,6 +1435,14 @@ handle_savestream_close( const string&, string param[], size_t n, size_t opt) {
   return string();
 }
 
+string
+handle_execute_perl_script( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  string script = param[0];
+  
+  return string();
+}
+
 
 // Initialize
 // ======================================================================
@@ -1536,6 +1544,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciSavestreamOpen",  handle_savestream_open, 1 );
     insertInternalGlobalMacro( "\\lciSavestreamUse",  handle_savestream_use, 1 );
     insertInternalGlobalMacro( "\\lciSavestreamClose",  handle_savestream_close, 1 );
+
+    insertInternalGlobalMacro( "\\lciExecutePerlScript",  handle_execute_perl_script, 1 );
 }
 
 // EOF //
