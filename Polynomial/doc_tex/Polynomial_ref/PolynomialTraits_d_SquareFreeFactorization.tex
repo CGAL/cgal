@@ -10,9 +10,9 @@ factors $g_i$ with multiplicities $m_i$ and a constant factor $a$, such that
 $p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
 
 The provided operator returns the number of factors $n$.
-The factors $g_i$ and 
-multiplicities $m_i$ are written through the respective output iterators.\\
-The constant factor $a$ is not computed. 
+The factors $g_i$ and multiplicities $m_i$ are written through 
+the respective output iterators.\\
+
           
 \ccRefines 
 
@@ -26,7 +26,8 @@ The constant factor $a$ is not computed.
 \ccMethod{template<class OutputIterator_1, class OutputIterator_2>
 int operator()(PolynomialTraits_d::Polynomial_d  p,
                OutputIterator_1 it_1,
-               OutputIterator_2 it_2);}
+               OutputIterator_2 it_2, 
+               PolynomialTraits_d::Innermost_coefficient& a);}
 { computes square-free factorization of $p$.\\
   \ccPrecond \ccc{OutputIterator_1} must allow the value type 
   \ccc{PolynomialTraits_d::Polynomial_d}. 
