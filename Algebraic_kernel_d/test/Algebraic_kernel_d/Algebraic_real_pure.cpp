@@ -22,6 +22,8 @@
 #include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/leda_real.h>
@@ -57,7 +59,7 @@ REAL  a FieldWithSqrt
 RATIONAL a numbertype representing the rational numbers
 Z a numbertype representing Z (needed for Descartes)
 */
-template <class COEFF,class REAL,class RATIONAL,class Z>
+template <class COEFF,class REAL,class RATIONAL,class Z, class RepClass>
 void algebraic_number_test()
 {
     typedef COEFF Coeff_NT;
@@ -65,7 +67,7 @@ void algebraic_number_test()
     typedef RATIONAL rat_NT;
     typedef Z Integer;
 
-    typedef CGAL::CGALi::Algebraic_real_pure<Coeff_NT,rat_NT> ALGNUM; 
+    typedef CGAL::CGALi::Algebraic_real_pure<Coeff_NT,rat_NT, CGAL::Handle_policy_no_union, RepClass > ALGNUM; 
     typedef CGAL::Polynomial<Coeff_NT> Poly;
      
     // general test of comparable functionality  
@@ -419,23 +421,42 @@ algebraic_number_test()
 //                       < class COEFF, class REAL, class RATIONAL, class Z>
 #ifdef CGAL_USE_LEDA
     algebraic_number_test<leda_integer , leda_real, leda_rational,  
-        leda_integer>();
+        leda_integer, CGAL::CGALi::Algebraic_real_rep< leda_integer, leda_rational > >();
     algebraic_number_test<leda_rational, leda_real, leda_rational,  
-        leda_integer>();
-    
+        leda_integer, CGAL::CGALi::Algebraic_real_rep< leda_rational, leda_rational > >();    
       {
           typedef leda_rational TESTT;
           typedef CGAL::Sqrt_extension<TESTT,TESTT > EXT;
           algebraic_number_test<EXT, leda_real, leda_rational,  
-              leda_integer>();
+              leda_integer, CGAL::CGALi::Algebraic_real_rep< EXT, leda_rational > >();
       }  
+
+    // TEST with Algebraic_real_rep_bfi
+    algebraic_number_test<leda_integer , leda_real, leda_rational,  
+        leda_integer, CGAL::CGALi::Algebraic_real_rep_bfi< leda_integer, leda_rational > >();
+    algebraic_number_test<leda_rational, leda_real, leda_rational,  
+        leda_integer, CGAL::CGALi::Algebraic_real_rep_bfi< leda_rational, leda_rational > >();    
+      {
+          typedef leda_rational TESTT;
+          typedef CGAL::Sqrt_extension<TESTT,TESTT > EXT;
+          algebraic_number_test<EXT, leda_real, leda_rational,  
+              leda_integer, CGAL::CGALi::Algebraic_real_rep_bfi< EXT, leda_rational > >();
+      }  
+
 #endif // CGAL_USE_LEDA
 
 #ifdef CGAL_USE_CORE
     algebraic_number_test< ::CORE::BigInt, ::CORE::Expr, ::CORE::BigRat,  
-        ::CORE::BigInt >();
+        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep< CORE::BigInt, CORE::BigRat > >();
     algebraic_number_test< ::CORE::BigRat, ::CORE::Expr, ::CORE::BigRat, 
-        ::CORE::BigInt>();
+        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep< CORE::BigRat, CORE::BigRat > >();
+
+    // TEST with Algebraic_real_rep_bfi
+    algebraic_number_test< ::CORE::BigInt, ::CORE::Expr, ::CORE::BigRat,  
+        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep_bfi< CORE::BigInt, CORE::BigRat > >();
+    algebraic_number_test< ::CORE::BigRat, ::CORE::Expr, ::CORE::BigRat, 
+        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep_bfi< CORE::BigRat, CORE::BigRat > >();
+
 #endif // CGAL_USE_CORE
 
 
