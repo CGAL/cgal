@@ -7,6 +7,11 @@
 #include <set>
 #include <vector>
 
+#ifdef _MSC_VER
+#pragma warning(disable:4355) // complaint about using 'this' to
+                                // initialize a member
+#endif
+
 // This must be external since operator<< has to be defined
 template <class Object, class Time, class KDS>
 struct Trivial_event: public CGAL::Kinetic::Event_base<KDS*>
