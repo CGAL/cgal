@@ -44,7 +44,7 @@
 #include <CGAL/compiler_config.h>
 
 //----------------------------------------------------------------------//
-//        auto-link the CGAL library in platfotms that support it
+//        auto-link the CGAL library on platforms that support it
 //----------------------------------------------------------------------//
 #include <CGAL/auto_link/CGAL.h>
 
@@ -123,9 +123,16 @@ namespace CGAL {
 // Big endian or little endian machine.
 // ====================================
 
-// We used to have a config program for this, but it
-// is much more convenient to use the preprocessor.
-#if defined(__sparc) || defined(__sparc__) \
+#if defined (__GLIBC__)
+#  include <endian.h>
+#  if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#    define CGAL_LITTLE_ENDIAN
+#  elif (__BYTE_ORDER == __BIG_ENDIAN)
+#    define CGAL_BIG_ENDIAN
+#  else
+#    error Unknown endianness
+#  endif
+#elif defined(__sparc) || defined(__sparc__) \
    || defined(_POWER) || defined(__powerpc__) \
    || defined(__ppc__) || defined(__hppa) \
    || defined(_MIPSEB) || defined(_POWER) \
