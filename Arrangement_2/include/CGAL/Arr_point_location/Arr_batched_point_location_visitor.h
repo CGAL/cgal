@@ -70,8 +70,8 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
 
     CGAL_assertion((m_top_fict->source() == 
                     arr_access.top_right_fictitious_vertex()) ||
-                   (m_top_fict->source()->boundary_in_x() == NO_BOUNDARY) &&
-                   (m_top_fict->source()->boundary_in_y() == PLUS_INFINITY));
+                   ((m_top_fict->source()->boundary_in_x() == NO_BOUNDARY) &&
+                    (m_top_fict->source()->boundary_in_y() == PLUS_INFINITY)));
     CGAL_assertion(m_top_fict->target() == 
                    arr_access.top_left_fictitious_vertex());
   }
