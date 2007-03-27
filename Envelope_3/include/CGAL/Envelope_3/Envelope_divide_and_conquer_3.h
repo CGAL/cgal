@@ -866,7 +866,7 @@ protected:
   // check if we can remove an isolated vertex from the envelope
   // this can be done if the envelope surfaces on the vertex are the same as
   // the envelope surfaces on its incident face
-  bool can_remove_isolated_vertex(Minimization_diagram_2& , Vertex_handle vh)
+  bool can_remove_isolated_vertex(Vertex_handle vh)
   {
     Face_handle f = vh->face();
     CGAL_assertion(vh->is_decision_set() && f->is_decision_set());
@@ -961,8 +961,7 @@ protected:
       Vertex_handle vh = vi;
       if (!vh->is_decision_set() || vh->degree() == 2)
         candidates_to_remove.push_back(vh);
-      else if (vh->is_isolated() &&
-               can_remove_isolated_vertex(result, vh))
+      else if (vh->is_isolated() && can_remove_isolated_vertex(vh))
         isolated_to_remove.push_back(vh);
     }
 
@@ -1042,7 +1041,7 @@ protected:
     {
       Vertex_handle vh = *li;
       CGAL_assertion(vh->is_isolated());
-      CGAL_assertion(can_remove_isolated_vertex(result, vh));
+      CGAL_assertion(can_remove_isolated_vertex(vh));
 
       result.remove_isolated_vertex(vh);
     }
