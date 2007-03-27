@@ -51,6 +51,8 @@ public:
   BigFloat() : RCBigFloat(new BigFloatRep()) {}
   /// constructor for <tt>short</tt>
   BigFloat(short i) : RCBigFloat(new BigFloatRep(i)) {}
+  /// constructor for <tt>float</tt>
+  BigFloat(float i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>int</tt>
   BigFloat(int i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>long</tt>

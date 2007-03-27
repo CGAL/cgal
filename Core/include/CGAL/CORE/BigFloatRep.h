@@ -69,6 +69,8 @@ public:
 public:
   //  constructors
   BigFloatRep(int=0);           //inline
+  BigFloatRep(short);           //inline
+  BigFloatRep(float);           //inline
   BigFloatRep(long);          //inline
   BigFloatRep(double);        //inline
   BigFloatRep(const BigInt& I, unsigned long u, long l); //inline
@@ -236,6 +238,9 @@ inline BigFloatRep* BigFloatRep::exp2(int e) {
 
 //  constructors
 inline BigFloatRep::BigFloatRep(short n)
+  : m(n), err(0), exp(0) {}
+
+inline BigFloatRep::BigFloatRep(float n)
   : m(n), err(0), exp(0) {}
 
 //  Chee (8/8/04) -- introduced constructor from int
