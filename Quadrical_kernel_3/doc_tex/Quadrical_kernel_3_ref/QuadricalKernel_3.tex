@@ -29,12 +29,18 @@ and to define the following geometric objects
 \ccNestedType{Quadric_3}{Model of \ccc{QuadricalKernel_3::Quadric_3}.}
 \ccGlue
 \ccNestedType{Curve_3}{Model of \ccc{QuadricalKernel_3::Curve_3}.}
-
+\ccGlue
 \ccNestedType{Curve_point_3}{Model of \ccc{QuadricalKernel_3::CurvePoint_3}.}
-
+\ccGlue
 \ccNestedType{Curve_arc_3}{Model of \ccc{QuadricalKernel_3::CurveArc_3}.}
 
-
+It seems that a triangular patch consisting of three instances of 
+\ccc{Curve_arc_3} embedded on an instance of \ccc{Quadric_3} is missing. 
+But it is not possible to define an instance of \ccc{Quadric_3} that 
+passes through two given instances of \ccc{Curve_point_3}. This implies
+that there is no way to find a third arc that can form together with two
+given arcs a triangular patch. In other words, onbe could say, that 
+it is not possible to do iteratative constructions.
 
 A model of \ccc{QuadricalKernel_3} must also provide predicates, 
 constructions and other functionalities. 
