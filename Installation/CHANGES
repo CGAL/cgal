@@ -110,6 +110,11 @@ defined in windows.h
   zero-width passages. 
 
 
+6.10 2D and 3D Triangulations
+
+- The constructors which take an iterator range perform spatial sorting to speed up the insertion.
+
+
 
 7 Support Library
 
