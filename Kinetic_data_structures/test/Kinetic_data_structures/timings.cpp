@@ -182,7 +182,7 @@ template < class Traits > void test_del(const char *nm)
 }
 
 
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   //std::cout << "Delaunay\n";
     //test_del < CGAL::Kinetic::Inexact_simulation_traits_3 > ("Numeric");
