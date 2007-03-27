@@ -45,7 +45,7 @@ struct Red_blue_convert_info
   }
 
   inline
-  const Info& operator()(const Info& info0, const Info& info1, bool) const {
+  const Info& operator()(const Info& info0, const Info& , bool) const {
     // just return the info of the supporting segment
     return info0;
   }
