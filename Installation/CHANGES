@@ -33,6 +33,11 @@ defined in windows.h
 
 5 Kernels
 
+5.1 Circular Kernel in 2D
+  Efficiency improved through geometric filtering of predicates, introduced with 
+  the filtered kernel Filtered_bbox_circular_kernel_2<.>, and also chosen for the 
+  predefined kernel Exact_circular_kernel_2. 
+
 
 6 Data Structures and Algorithms
 
