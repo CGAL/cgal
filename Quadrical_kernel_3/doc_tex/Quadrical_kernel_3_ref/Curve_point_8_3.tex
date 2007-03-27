@@ -4,7 +4,7 @@
 
 \ccIsModel
 
-\ccc{QuadricalKernal_3::CurvePoint_3}
+\ccc{QuadricalKernel_3::CurvePoint_3}
 
 \ccCreation
 \ccCreationVariable{p}
@@ -12,48 +12,48 @@
 \ccThree{Curve_point_3}{spc.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccConstructor{Curve_point_3(const QuadricalKernal_3::Point_3 &p)}{}
+\ccConstructor{Curve_point_3(const QuadricalKernel_3::Point_3 &p)}{}
 
-\ccConstructor{Curve_point_3(const QuadricalKernal_3::Root_of_3 &r)}{}
+\ccConstructor{Curve_point_3(const QuadricalKernel_3::Root_of_3 &r)}{}
 
 \ccAccessFunctions
 
 \ccThree{CurvedKernel::Root_of_3}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-%\ccMethod{const QuadricalKernal_3::Root_of_1 & x();}{$x$-coordinate of the point.}
+%\ccMethod{const QuadricalKernel_3::Root_of_1 & x();}{$x$-coordinate of the point.}
 %\ccGlue
-%\ccMethod{const QuadricalKernal_3::Root_of_1 & y();}{$y$-coordinate of the point.}
+%\ccMethod{const QuadricalKernel_3::Root_of_1 & y();}{$y$-coordinate of the point.}
 %\ccGlue
-%\ccMethod{const QuadricalKernal_3::Root_of_1 & z();}{$z$-coordinate of the point.}
+%\ccMethod{const QuadricalKernel_3::Root_of_1 & z();}{$z$-coordinate of the point.}
 
 \ccMethod{Bbox_3 bbox() const;}
 {Returns a bounding box around the point.}
 
 \ccOperations
 
-\ccFunction{bool operator==(const Curve_point_3<QuadricalKernal_3> &p,
-			const Curve_point_3<QuadricalKernal_3> &q);}
+\ccFunction{bool operator==(const Curve_point_3<QuadricalKernel_3> &p,
+			const Curve_point_3<QuadricalKernel_3> &q);}
 {Test for equality. Two points are equal, iff their coordinates are equal.} 
 
-\ccFunction{bool operator!=(const Curve_point_3<QuadricalKernal_3> &p,
-			const Curve_point_3<QuadricalKernal_3> &q);}
-{Test for nonequality.} 
+\ccFunction{bool operator!=(const Curve_point_3<QuadricalKernel_3> &p,
+			const Curve_point_3<QuadricalKernel_3> &q);}
+{Test for non-equality.} 
 
-\ccFunction{bool operator<(const Curve_point_3<QuadricalKernal_3> &p,
-			   const Curve_point_3<QuadricalKernal_3> &q);}
+\ccFunction{bool operator<(const Curve_point_3<QuadricalKernel_3> &p,
+			   const Curve_point_3<QuadricalKernel_3> &q);}
 {Returns true iff $p$ is lexicographically smaller than $q$. First compare $x$-coordinates, if equal compare $y$-coordinates, if equal compare $z$-coordinates.}
 
-\ccFunction{bool operator>(const Curve_point_3<QuadricalKernal_3> &p,
-			const Curve_point_3<QuadricalKernal_3> &q);}
+\ccFunction{bool operator>(const Curve_point_3<QuadricalKernel_3> &p,
+			const Curve_point_3<QuadricalKernel_3> &q);}
 {Returns true iff $p$ is lexicographically greater than $q$.}
 
-\ccFunction{bool operator<=(const Curve_point_3<QuadricalKernal_3> &p,
-			const Curve_point_3<QuadricalKernal_3> &q);}
+\ccFunction{bool operator<=(const Curve_point_3<QuadricalKernel_3> &p,
+			const Curve_point_3<QuadricalKernel_3> &q);}
 {Returns true iff $p$ is lexicographically smaller than or equal to $q$.}
 
-\ccFunction{bool operator>=(const Curve_point_3<QuadricalKernal_3> &p,
-			const Curve_point_3<QuadricalKernal_3> &q);}
+\ccFunction{bool operator>=(const Curve_point_3<QuadricalKernel_3> &p,
+			const Curve_point_3<QuadricalKernel_3> &q);}
 {Returns true iff $p$ is lexicographically greater than or equal to $q$.}
 
 \ccHeading{I/O}
