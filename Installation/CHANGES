@@ -22,7 +22,7 @@ defined in windows.h
   built in release or debug mode. The libraries to link against are
   chosen with linker pragmas in header files.
 
-  On al platforms but Windows shared and static versions of the libraries are generated
+  On all platforms but Windows shared and static versions of the libraries are generated
 
 
 3 Algebraic Foundations (new package)
@@ -122,7 +122,8 @@ defined in windows.h
 
 6.10 2D and 3D Triangulations
 
-- The constructors which take an iterator range perform spatial sorting to speed up the insertion.
+- The constructors and insert member functions which take an iterator range perform spatial sorting 
+  in order to speed up the insertion.
 
 
 
