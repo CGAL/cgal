@@ -183,6 +183,16 @@ public:
     };
 };
 
+//
+// Needs_parens_as_product
+//
+template <> 
+struct Needs_parens_as_product<Gmpz> {
+  bool operator()(const Gmpz& x) {
+    return CGAL_NTS is_negative(x);
+  } 
+};
+
 CGAL_END_NAMESPACE
 
 #if defined(BOOST_MSVC)
