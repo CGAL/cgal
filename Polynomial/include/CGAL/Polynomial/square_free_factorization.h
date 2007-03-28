@@ -17,6 +17,7 @@
 #include <CGAL/Polynomial.h>
 
 CGAL_BEGIN_NAMESPACE
+;
 
 namespace CGALi {
 
@@ -199,7 +200,7 @@ int square_free_factorization( Polynomial<Coeff> polynomial,
                                         std::back_inserter(multiplicities_uc) );
         
         for( typename Factors_uc::iterator it = factors_uc.begin(); it != factors_uc.end(); ++it )
-            *factors++ = Polynomial<Coeff>((*it));
+            *factors++ = Polynomial<Coeff>((*it) / CGAL::unit_part((*it)) );
          
         for( Multiplicities_uc::iterator it = multiplicities_uc.begin();
              it != multiplicities_uc.end(); ++it )
