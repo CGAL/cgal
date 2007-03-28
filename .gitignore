@@ -190,6 +190,14 @@ Optimisation_doc/.tmp
 Optimisation_doc/Makefile
 Optimisation_doc/bin
 Optimisation_doc/doc_ps
+Polynomial/doc_html
+Polynomial/doc_pdf
+Polynomial/doc_ps
+Polynomial/doc_tex/Polynomial.*
+Polynomial/doc_tex/Polynomial/main.aux
+Polynomial/doc_tex/Polynomial/main.hax
+Polynomial/doc_tex/Polynomial_ref/main.aux
+Polynomial/doc_tex/Polynomial_ref/main.hax
 Polytope_distance_d/*.aux
 Polytope_distance_d/*.bbl
 Polytope_distance_d/*.blg
