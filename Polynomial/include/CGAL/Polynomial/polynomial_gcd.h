@@ -37,6 +37,104 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// Forward declarations of ALL functions of this file to avoid problems with
+//  some compilers.
+template< class NT > inline bool may_have_multiple_root( const Polynomial<NT>& P );
+
+namespace INTERN_POLYNOMIAL_GCD {
+
+template <class NT> inline 
+Polynomial<NT> gcd_( const Polynomial<NT>& p1, const Polynomial<NT>& p2 );
+template <class NT> inline
+Polynomial<NT> gcd_innermost_coefficient_dispatch( const Polynomial<NT>& p1, 
+                                         const Polynomial<NT>& p2, Field_tag );
+template <class NT> inline
+Polynomial<NT> gcd_innermost_coefficient_dispatch( const Polynomial<NT>& p1, 
+               const Polynomial<NT>& p2, Unique_factorization_domain_tag tag );
+
+template <class NT> inline
+Polynomial<NT> gcd_( const Polynomial<NT>& p1, const Polynomial<NT>& p2, 
+                                                           ::CGAL::Tag_false ); 
+template <class NT> inline
+Polynomial<NT> gcd_( const Polynomial<NT>& p1, const Polynomial<NT>& p2, 
+                                                        ::CGAL::Tag_true tag );
+#ifndef NiX_POLY_USE_PRIMITIVE_GCD
+    template <class NT>
+    Polynomial<NT> gcd_( Polynomial<NT> p1, Polynomial<NT> p2, 
+                                             Unique_factorization_domain_tag ); 
+#else
+    template <class NT>
+    Polynomial<NT> gcd_( Polynomial<NT> p1, Polynomial<NT> p2, UFDomain_tag );
+#endif // NiX_POLY_USE_PRIMITIVE_GCD
+
+template <class NT>
+Polynomial<NT> gcd_( Polynomial<NT> p1, Polynomial<NT> p2, Field_tag );
+template <class NT> inline
+Polynomial<NT> gcd( const Polynomial<NT>& p1, const Polynomial<NT>& p2 );
+template <class NT> inline
+NT gcd_utcf_( const NT& a, const NT& b );
+template <class NT> inline
+Polynomial<NT> gcd_utcf_( const Polynomial<NT>& p1, const Polynomial<NT>& p2 );
+template <class NT> inline
+Polynomial<NT> gcd_utcf_( const Polynomial<NT>& p1, const Polynomial<NT>& p2, 
+                                                           ::CGAL::Tag_false );
+template <class NT>
+Polynomial<NT> gcd_utcf_( Polynomial<NT> p1, Polynomial<NT> p2, 
+                                                            ::CGAL::Tag_true );
+template <class NT> inline
+Polynomial<NT> gcd_utcf_( const Polynomial<NT>& p1, const Polynomial<NT>& p2, 
+                                                               Field_tag tag );
+template <class NT>
+NT content_utcf_( const Polynomial<NT>& p );
+template <class NT>
+Polynomial<NT> gcd_utcf_( Polynomial<NT> p1, Polynomial<NT> p2, 
+                                                         Integral_domain_tag );
+
+} // namespace INTERN_POLYNOMIAL_GCD
+
+template <class NT> inline
+Polynomial<NT> gcd_utcf( const Polynomial<NT>& p1, const Polynomial<NT>& p2 );
+
+namespace INTERN_POLYNOMIAL_GCD {
+
+template <class NT> inline
+Polynomial<NT> gcdex_( Polynomial<NT> x, Polynomial<NT> y, Polynomial<NT>& xf, 
+                                       Polynomial<NT>& yf, ::CGAL::Tag_false );
+template <class NT>
+Polynomial<NT> gcdex_( Polynomial<NT> x, Polynomial<NT> y, Polynomial<NT>& xf, 
+                                               Polynomial<NT>& yf, Field_tag );
+template <class NT> inline
+Polynomial<NT> gcdex_( Polynomial<NT> x, Polynomial<NT> y, Polynomial<NT>& xf, 
+                                        Polynomial<NT>& yf, ::CGAL::Tag_true );
+
+} // namespace INTERN_POLYNOMIAL_GCD
+
+template <class NT> inline
+Polynomial<NT> gcdex( Polynomial<NT> p1, Polynomial<NT> p2, Polynomial<NT>& f1, 
+                                                          Polynomial<NT>& f2 );
+template <class NT>
+Polynomial<NT> pseudo_gcdex(
+#ifdef DOXYGEN_RUNNING
+    Polynomial<NT> p1, Polynomial<NT> p2,
+    Polynomial<NT>& f2, Polynomial<NT>& f2, NT& v
+#else
+    Polynomial<NT> x, Polynomial<NT> y,
+    Polynomial<NT>& xf, Polynomial<NT>& yf, NT& vf
+#endif // DOXYGEN_RUNNING
+);
+
+template <class NT, class OutputIterator1, class OutputIterator2> inline
+int filtered_square_free_factorization( Polynomial<NT> p, 
+                     OutputIterator1 factors, OutputIterator2 multiplicities );
+template <class NT,  class OutputIterator1, class OutputIterator2> inline
+int filtered_square_free_factorization_utcf( const Polynomial<NT>& p, 
+                     OutputIterator1 factors, OutputIterator2 multiplicities );
+
+
+// end of prototypes
+////////////////////////////////////////////////////////////////////////////////
+
+
 // TODO: This is a dummy-version of may_have_multiple_root. The original
 //       EXACUS function is defined in polynomial_utils.h, but does currently
 //       not work because of the missing modular traits (and other stuff).
