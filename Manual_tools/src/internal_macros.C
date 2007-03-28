@@ -31,10 +31,11 @@
 
 #include <map>
 
-typedef std::map< string, string, Case_insensitive_string_greater_than >     String_map;
-typedef hash_map< string, String_map > String_map_table;
 
-String_map_table                       string_map_table;
+typedef std::map< string, string, Case_insensitive_string_greater_than > String_map;
+hash_map< string, String_map >  sorted_map_table;
+
+hash_map< string, hash_map< string, string > > hash_map_table;
 
 // ======================================================================
 // External visible functions
@@ -1328,7 +1329,7 @@ sorted_map_add_to( const string&, string param[], size_t n, size_t opt) {
   if( value[0] == '\\' )
     value = macroX( value );
 
-  string_map_table[name][ key ] = value;
+  sorted_map_table[name][ key ] = value;
   return string();
 }
 
@@ -1341,7 +1342,7 @@ sorted_map_foreach( const string&, string param[], size_t n, size_t opt) {
   if( func[0] != '\\' )
     return string("!! Error: argument to \\lciSortedMapForeach has to be a function");
 
-  const String_map& m = string_map_table[name];
+  const String_map& m = sorted_map_table[name];
   string func_params[2];
   Macro_item item = fetchMacro( func );
   for( String_map::const_iterator it = m.begin(); it != m.end(); ++it ) {
@@ -1360,7 +1361,7 @@ string
 sorted_map_clear( const string&, string param[], size_t n, size_t opt) {
   NParamCheck( 1, 0);
   string name  = param[0];
-  string_map_table[name].clear();
+  sorted_map_table[name].clear();
   return string();
 }
 
@@ -1368,12 +1369,61 @@ string
 sorted_map_is_empty( const string&, string param[], size_t n, size_t opt) {
   NParamCheck( 1, 0);
   string name  = param[0];
-  if( string_map_table[name].empty() )
+  if( sorted_map_table[name].empty() )
     return string("\\lcTrue");
   else
     return string("\\lcFalse");
 }
 
+/* hash maps */
+
+string
+hash_map_insert( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 3, 0);
+  string name  = param[0];
+  string key   = param[1];
+  string value = param[2];
+
+  crop_string( key );
+  crop_string( value );
+
+  if( key[0] == '\\' )
+    key = macroX( key );
+  if( value[0] == '\\' )
+    value = macroX( value );
+  crop_string( name );
+  crop_string( key );
+  crop_string( value );
+
+  hash_map_table[name][ key ] = value;
+  return string();
+}
+
+string
+hash_map_is_defined( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 2, 0);
+  string name  = param[0];
+  string key   = param[1];
+  if( hash_map_table[name].find( key ) == hash_map_table[name].end() )
+    return string("\\lcFalse");
+  else
+    return string("\\lcTrue");
+}
+
+string
+hash_map_get( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 2, 0);
+  string name  = param[0];
+  string key   = param[1];
+  return hash_map_table[name][key];
+}
+
+string
+hash_map_clear( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  hash_map_table[ param[0] ].clear();
+  return string();
+}
 
 /* regular expressions */
 
@@ -1439,12 +1489,17 @@ string
 handle_shell_command( const string&, string param[], size_t n, size_t opt) {
   NParamCheck( 1, 0);
   string cmd = param[0];
-  std::stringstream out, err;
+  std::stringstream out, err, exitcode;
   int retval = execute_shell_command( cmd, out, err );
-  if (retval == 0 )
-    return out.str();
-  else
-    return string("\\lciError{error while executing " + cmd + "}");
+  exitcode << retval;
+  insertInternalGlobalMacro( "\\lciShellExitCode", exitcode.str() );
+  insertInternalGlobalMacro( "\\lciShellStdout", out.str() );
+  insertInternalGlobalMacro( "\\lciShellStderr", err.str() );
+  if( retval != 0 ) {
+    return string("\\lciError{error while executing \"" + cmd + "\". error log:" + err.str());
+  } else {
+    return string();
+  }
 }
 
 
@@ -1522,6 +1577,11 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciSortedMapForeach", sorted_map_foreach,2 );
     insertInternalGlobalMacro( "\\lciSortedMapClear", sorted_map_clear,1 );
     insertInternalGlobalMacro( "\\lciSortedMapIsEmpty", sorted_map_is_empty,1 );
+
+    insertInternalGlobalMacro( "\\lciHashMapInsert", hash_map_insert,3 );
+    insertInternalGlobalMacro( "\\lciHashMapIsDefined", hash_map_is_defined,2 );
+    insertInternalGlobalMacro( "\\lciHashMapGet", hash_map_get,2 );
+    insertInternalGlobalMacro( "\\lciHashMapClear", hash_map_clear,1 );
 
     insertInternalGlobalMacro( "\\lciIfFileExists", if_file_exists, 1);
     insertInternalGlobalMacro( "\\lciCopyFile",     copy_file, 2);

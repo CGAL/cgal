@@ -39,7 +39,7 @@ LATEX_CONV_INPUTS = .
 
 # C++ Compiler Options:
 # CXXFLAGS = -v
-CXXFLAGS = -g -O2
+CXXFLAGS = -g -O0
 
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
 # CC = gcc

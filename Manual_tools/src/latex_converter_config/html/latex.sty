@@ -2077,9 +2077,9 @@ td.TocChapter          { font-weight: normal; }
   {\gdef\lciCurrentSaveboxName{#C1}\lciPushOutput{savebox}}
   {\lciPopOutput\lciStoreSaveboxX{\lciCurrentSaveboxName}}
 
-\newcommand{\sbox}[2]{
+\newcommand{\sbox}[2]{%
   \begin{savebox}{#1}%
-  #2
+  #2%
   \end{savebox}%
 }
 \newcommand{\savebox}[2]{\sbox{#1}{#2}}

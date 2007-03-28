@@ -1147,9 +1147,69 @@
 
 
 \newcommand{\ccBenchmarkInstance}[1]{
-\lciShellCommand{echo bla}
+\begingroup
+\def\lciBenchmarkPath{}
+\lciShellCommand{perl -e '
+$location = "#C1";
+$pattern="-name \"*.bff\"";
+if( $location =~ /\/([^\/]*\*[^\/]*)$/ ) {
+  $pattern = " -name \"$1\"";
+  $location = $`;
+}
+if( $location =~ /\/$/ ) { $location =$`; }
+$benchname=$location;
+if( $benchname =~ /^[^\/]+\/[^\/]+\/(.*)$/ ) { $tarname = $1; }
+$benchname =~ s/\//__/g;
+$benchname =~ s/_data_//;
+if( ! -d $location && -d "../benchmark/$location" ) {
+  $location = "../benchmark/$location";
+}
+print "\\def\\benchlocation{$location}\\def\\benchpattern{$pattern}\\def\\benchname{$benchname}";
+'
+}
+\lciShellStdout
+\ccBenchmarkGetUniqeBenchname{\benchname}{\uniquebenchname}
+%\begin{alltt}
+%location = \benchlocation
+%
+%pattern = \benchpattern
+%
+%tarname = \uniquebenchname
+%
+%\end{alltt}
+\ccBenchmarkInstanceX{\benchlocation}{\benchpattern}{\uniquebenchname}{\lciTmpPath}
+\endgroup
 }
 
+\gdef\lciBenchmarkTarnameCounter{0}
+
+
+\newcommand{\ccBenchmarkGetUniqeBenchname}[2]{%
+  \lciHashMapIsDefined{tarnames}{#XC1}{}{\lciHashMapInsert{tarnames}{#XC1}{0}}%
+  \savebox{\benchvalue}{\lciHashMapGet{tarnames}{#XC1}}%
+  \lciGlobalAddTo{\benchvalue}{1}%
+  \ccBenchmarkGetFreshTarnameX{#XC1}{\benchvalue}%
+  \begin{alltt}%
+  \savebox{#C2}{#C1__\benchvalue{}}%
+  \end{alltt}%
+}
+
+\newcommand{\ccBenchmarkGetFreshTarnameX}[2]{%
+  \lciHashMapInsert{tarnames}{#1}{#XC2}%
+}
+
+\newcommand{\ccBenchmarkInstanceX}[4]{
+\lciShellCommand{
+OLDPWD=`pwd`;
+mkdir -p #XC4/benchmarks/#XC3;
+cd #XC4/benchmarks;
+ln -s `find $OLDPWD/#XC1 #XC2` #XC3;
+tar -czhf #XC3.tar.gz #XC3;
+rm -rf #XC3;
+cd $OLDPWD;
+}
+\lcRawHtml{<a href="../benchmarks/#XC3.tar.gz">#XC3.tar.gz</a>}
+}
 % ___________________________________________________________________________
 % ###########################################################################
 % | EOF
