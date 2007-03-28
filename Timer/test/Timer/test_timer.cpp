@@ -1,6 +1,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/FPU.h>
 
 template <class T>
 double test_timer() {
@@ -34,6 +35,12 @@ double test_timer() {
 }
 
 int main(){
+    // The following ensures that the conversion from internal timer
+    // to double is done in a consistent way.  Otherwise we may get
+    // double-rounding effects (show up on x86 at -O2 typically), which
+    // makes the timer non-monotone.
+    CGAL::force_ieee_double_precision();
+
     double p = 0.0;
     std::cout << "CGAL::Timer:\n";
     p += test_timer<CGAL::Timer>();
