@@ -19,7 +19,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
