@@ -149,6 +149,14 @@ Min_sphere_d_new/.tmp
 Min_sphere_d_new/Makefile
 Min_sphere_d_new/bin
 Min_sphere_d_new/doc_ps
+Modular_arithmetic/doc_html
+Modular_arithmetic/doc_pdf
+Modular_arithmetic/doc_ps
+Modular_arithmetic/doc_tex/Modular_arithmetic.*
+Modular_arithmetic/doc_tex/Modular_arithmetic/*.aux
+Modular_arithmetic/doc_tex/Modular_arithmetic/*.hax
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.aux
+Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.hax
 Optimisation_basic/*.aux
 Optimisation_basic/*.bbl
 Optimisation_basic/*.blg
