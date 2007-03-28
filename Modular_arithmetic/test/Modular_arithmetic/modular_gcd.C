@@ -9,7 +9,6 @@
 #include <CGAL/Modular.h>
 #include <CGAL/modular_gcd.h>
 #include <CGAL/Polynomial.h>
-#include <./src_Modular.C>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>

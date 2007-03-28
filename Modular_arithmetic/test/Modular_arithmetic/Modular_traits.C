@@ -8,8 +8,6 @@
 #include <CGAL/Testsuite/assert.h>
 #include <CGAL/Modular_traits.h>
 
-#include <./src_Modular.C>
-
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
