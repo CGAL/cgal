@@ -14,7 +14,7 @@ The class provides static member functions to change this value.
 of this type.}
 However, already existing objects do not lose their value with respect to the 
 old prime and can be reused after restoring the old prime. 
-Since the type is base on double 
+Since the type is based on double 
 arithmetic the prime is restricted to values less than $2^{26}$. 
 The initial value of $p$ is 67111067. 
 
@@ -30,16 +30,16 @@ Note that due to the static prime the type is not thread-safe.
 \ccCreationVariable{x}
 
 \ccConstructor{Modular();}
-{introduces a variable \ccVar, which is initalized with zero;}
+{introduces a variable \ccVar, which is initialized with zero;}
 \ccGlue
 \ccConstructor{Modular(const Modular& m);}
 {copy constructor;}
 \ccGlue
 \ccConstructor{Modular(int i);}
-{intorduces a variable \ccVar, which is initalized with $i \%  p$;}
+{introduces a variable \ccVar, which is initialized with $i \%  p$;}
 \ccGlue
 \ccConstructor{Modular(long i);}
-{intorduces a variable \ccVar, which is initalized with $i \%  p$;}
+{introduces a variable \ccVar, which is initialized with $i \%  p$;}
 
 \ccOperations
 
