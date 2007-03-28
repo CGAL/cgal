@@ -1,0 +1,34 @@
+\chapter{Envelope\_3\label{bi_cha:Envelope3}}
+
+Lower envelopes are a fundamental structure in computational geometry.
+CGAL provides with its {\tt Envelope\_3} package an implementation
+of a generic divide-and-conquer algorithm to compute the lower envelope
+of three-dimensional objects. 
+The following sections collect different families of data sets that are used
+to benchmark this implementation.
+
+\section{Quadric\_3\label{bi_sec:Envelope3Quadric3}}
+
+Quadrics are the simplest non-linear objects. 
+Note that, if non-bounded quadrics
+are involved, quite certainly several unbounded faces will show up in the
+minimization diagram.
+
+\subsection{Random data\label{bi_subsec:Envelope3Quadric3Randomdata}}
+
+The following instances contains quadrics that are randomly generated. 
+The coefficients of each quadric consist of 10-bit integers.
+
+The first set contains instance with up to 1000 quadrics.
+\ccBenchmarkInstance{Envelope_3/data/Quadric_3/random/quadrics/}
+
+The set is restricted to instances with with up to 1000 ellipsoids.
+\ccBenchmarkInstance{Envelope_3/data/Quadric_3/random/ellipsoids}
+
+Ellipsoids can also be excluded like in this set, which 
+contains instances of up to 1000 random non-ellipsoids.
+\ccBenchmarkInstance{Envelope_3/data/Quadric_3/random/non-ellipsoids}
+
+%Another instance, more specific:
+
+%\ccBenchmarkInstance{Envelope_3/data/Quadric_3/random/non-ellipsoids/rnd_non_ellipsoids_0800_*.bff}
