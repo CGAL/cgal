@@ -81,9 +81,9 @@ class Index_adder {
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
  public:
-  Index_adder(Polyhedron& P_) {}
-  void set_hash(Halfedge_around_vertex_const_circulator evc,
-		SHalfedge_handle se) {}
+  Index_adder(Polyhedron& ) {}
+  void set_hash(Halfedge_around_vertex_const_circulator,
+		SHalfedge_handle) {}
   void resolve_indexes() {}
 };
 

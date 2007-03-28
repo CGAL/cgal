@@ -716,7 +716,7 @@ public:
 					 Halffacet_const_handle f,
 					 const Point_3& p,
 					 const Selection& BOP, bool inv,
-					 Association& A) {
+					 Association& ) {
 
 #ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
     ++number_of_edge_facet_overlays;

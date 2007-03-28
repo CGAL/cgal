@@ -40,11 +40,11 @@ class Volume_setter {
 public:
   Volume_setter(Mark m_in = true) : m(m_in) {}
   
-  void visit(Vertex_handle v) {}
-  void visit(Halfedge_handle e) {}
-  void visit(Halffacet_handle f) {}
-  void visit(SHalfedge_handle se) {}
-  void visit(SHalfloop_handle sl) {}
+  void visit(Vertex_handle ) {}
+  void visit(Halfedge_handle ) {}
+  void visit(Halffacet_handle ) {}
+  void visit(SHalfedge_handle ) {}
+  void visit(SHalfloop_handle ) {}
   void visit(SFace_handle sf) {sf->mark() = m;}
 };    
 
