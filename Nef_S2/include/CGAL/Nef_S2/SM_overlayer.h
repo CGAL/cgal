@@ -1500,6 +1500,7 @@ subdivide(const Map* M0, const Map* M1,
   if(compute_halfsphere[cs][0]) {
     PH_geometry phg(cs);
 
+    // the following is only needed for indexed items
     SHalfedge_const_handle se;
     SHalfloop_const_handle sl;
     for(Seg_iterator it=L_pos.begin(); it!=L_pos.end();++it) {
@@ -1507,10 +1508,8 @@ subdivide(const Map* M0, const Map* M1,
       if(phg.compare_xy(it->target(),it->source())<0) {
 	Object_handle o = From[it]._o;
 	if(CGAL::assign(se, o)) {
-	  CGAL_assertion(it->sphere_circle()==se->circle());
 	  From[it] = Seg_info(se->twin(), From[it]._from);
 	} else if(CGAL::assign(sl, o)) {
-	  CGAL_assertion(it->sphere_circle()==sl->circle());
 	  From[it] = Seg_info(sl->twin(), From[it]._from);
 	}
       }
@@ -1535,10 +1534,8 @@ subdivide(const Map* M0, const Map* M1,
       if(nhg.compare_xy(it->target(),it->source())<0) {
 	Object_handle o = From[it]._o;
 	if(CGAL::assign(se, o)) {
-	  CGAL_assertion(it->sphere_circle()==se->circle());
 	   From[it] = Seg_info(se->twin(), From[it]._from);
 	} else if(CGAL::assign(sl, o)) {
-	  CGAL_assertion(it->sphere_circle()==sl->circle());
 	  From[it] = Seg_info(sl->twin(), From[it]._from);
 	}
       }
