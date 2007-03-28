@@ -14,10 +14,9 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I. \
-	   -I../../include \
-	   -I../../../Polynomial/include \
-	   -I../../../Number_types/test/Number_types/include/ \
+           -I../../include \
+           -I../../../Polynomial/include \
+           -I../../../Number_types/test/Number_types/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -42,7 +41,8 @@ all:            \
                 euclidean_algorithm$(EXE_EXT) \
                 extended_euclidean_algorithm$(EXE_EXT) \
                 Modular$(EXE_EXT) \
-                modular_gcd$(EXE_EXT) 
+                modular_gcd$(EXE_EXT) \
+                Modular_traits$(EXE_EXT) 
 
 chinese_remainder$(EXE_EXT): chinese_remainder$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)chinese_remainder chinese_remainder$(OBJ_EXT) $(LDFLAGS)
@@ -62,6 +62,9 @@ Modular$(EXE_EXT): Modular$(OBJ_EXT)
 modular_gcd$(EXE_EXT): modular_gcd$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)modular_gcd modular_gcd$(OBJ_EXT) $(LDFLAGS)
 
+Modular_traits$(EXE_EXT): Modular_traits$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Modular_traits Modular_traits$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    chinese_remainder.clean \
                    Chinese_remainder_traits.clean \
@@ -69,6 +72,7 @@ clean: \
                    extended_euclidean_algorithm.clean \
                    Modular.clean \
                    modular_gcd.clean \
+                   Modular_traits.clean \
                    src_Modular.clean 
 
 #---------------------------------------------------------------------#
