@@ -1,5 +1,5 @@
 /* XPM */
-static char *faces[] = {
+static const char *faces[] = {
 /* width height ncolors chars_per_pixel */
 "32 32 4 1",
 /* colors */
