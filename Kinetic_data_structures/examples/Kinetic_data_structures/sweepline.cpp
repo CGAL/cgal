@@ -1,7 +1,3 @@
-#define CGAL_CHECK_EXACTNESS
-#define CGAL_CHECK_EXPENSIVE
-#define _GLIBCXX_DEBUG
-
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Erase_event.h>
