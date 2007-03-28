@@ -171,12 +171,12 @@ private:
 
 public: 
 
-    //! Explicit constructor of Modular, from int 
+    //! constructor of Modular, from int 
     Modular(int n = 0){
         x_= MOD_reduce(n);
     }
 
-    //! Explicit constructor of Modular, from long 
+    //! constructor of Modular, from long 
     Modular(long n){
         x_= MOD_reduce(n);
     }
@@ -318,9 +318,6 @@ struct Algebraic_structure_traits<Modular>
 };
 
 }///namespace CGAL
-
-//TODO: move to src/
-#include <./src_Modular.C>
 
 #endif //#ifnedef CGAL_MODULAR_H 1
  
