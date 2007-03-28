@@ -39,7 +39,8 @@ private:
 
 int main()
 {
-  CGAL::Random_points_in_disc_2<Point_2> rpg(100, CGAL::Random(7812));
+  CGAL::Random rnd = CGAL::Random(7812);
+  CGAL::Random_points_in_disc_2<Point_2> rpg(100, rnd);
   std::list<Point_2> points;
   std::list<Vertex_handle> LV;
   
@@ -52,10 +53,11 @@ int main()
   Circle_2 circle(p, q);
   range_search(PSet, circle, back_inserter(LV));
 
-  int m =  std::count_if(points.begin(), 
+  std::list<Point_2>::difference_type m =
+           std::count_if(points.begin(), 
 			 points.end(), 
 			 Has_not_on_unbounded_side<Circle_2>(circle));
-  assert(m == LV.size());
+  assert((std::size_t) m == LV.size());
 
  
   std::cout << "range search for triangle" << std::endl;    
@@ -66,7 +68,7 @@ int main()
   m =  std::count_if(points.begin(), 
 		     points.end(), 
 		     Has_not_on_unbounded_side<Triangle_2>(Triangle_2(p,q,r)));
-  assert(m == LV.size());
+  assert((std::size_t) m == LV.size());
  
   std::cout << "range search for iso rectangle" << std::endl;
   LV.clear();
@@ -75,6 +77,6 @@ int main()
   m =  std::count_if(points.begin(), 
 		     points.end(), 
 		     Has_not_on_unbounded_side<Iso_rectangle_2>(Iso_rectangle_2(p,r)));
-  assert(m == LV.size());
+  assert((std::size_t) m == LV.size());
   return 0;
 }
