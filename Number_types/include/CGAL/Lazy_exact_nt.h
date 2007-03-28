@@ -655,7 +655,7 @@ namespace INTERN_LAZY_EXACT_NT {
 template< class NT, class Functor >
 struct Simplify_selector {
   struct Simplify : public Unary_function<NT&, void> {
-    void operator()( NT& x ) const {
+    void operator()( NT& ) const {
       // TODO: In the old implementation the Simplify-functor was the default
       //       (which does nothing). But this cannot be the correct way!?
     }

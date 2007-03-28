@@ -72,7 +72,7 @@ CGAL::Root_of_2<T> conjugate(const CGAL::Root_of_2<T>& R){
 }
 
 template<class T>
-T conjugate(const T& R){ return T(); }
+T conjugate(const T&){ return T(); }
 
 
 template<class T>

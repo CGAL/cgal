@@ -1686,7 +1686,7 @@ class Standardise {
 public:
     typedef NT_ argument_type;
     typedef NT_ result_type;
-    NT_ operator () (const NT_& a) const {
+    NT_ operator () (const NT_&) const {
         return NT_(1);
     }
 };

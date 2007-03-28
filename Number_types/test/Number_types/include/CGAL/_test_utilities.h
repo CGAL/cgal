@@ -91,7 +91,7 @@ test_gcd(const NT&, CGAL::Unique_factorization_domain_tag)
 
 template < class NT >
 bool
-test_gcd(const NT &x, CGAL::Integral_domain_without_division_tag)
+test_gcd(const NT &, CGAL::Integral_domain_without_division_tag)
 { return true; }
 
 

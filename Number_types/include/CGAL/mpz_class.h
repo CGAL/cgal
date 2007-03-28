@@ -73,7 +73,7 @@ public:
 
     struct Simplify: public Unary_function< mpz_class , void > {        
         template <class T, class U> 
-        void operator()( const ::__gmp_expr< T ,U >& x) const {
+        void operator()( const ::__gmp_expr< T ,U >&) const {
             CGAL_CHECK_GMP_EXPR;
         }
     }; 
