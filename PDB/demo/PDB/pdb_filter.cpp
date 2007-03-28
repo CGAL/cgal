@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
 		}
 	      }
 	    }
-	    if (found=true) break;
+	    if (found==true) break;
 	  }
 	  if (!found) {
 	    to_erase.push_back(it->second.index());
