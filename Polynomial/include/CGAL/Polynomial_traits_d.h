@@ -1203,7 +1203,19 @@ public:
                 OutputIterator1 fit, 
                 OutputIterator2 mit) const {
             return square_free_factorization( p, fit, mit );
-        }  
+        }
+        
+        template< class OutputIterator1, class OutputIterator2 >
+        int operator()( const Polynomial_d& p, OutputIterator1 fit,
+                        OutputIterator2 mit, Innermost_coefficient& a ) {
+            if( p == Polynomial_d(0) ) {
+                a = Innermost_coefficient(0);
+                return 0;
+            }
+            a = CGAL::unit_part( typename Polynomial_traits_d< Polynomial_d >::Innermost_leading_coefficient()( p ) ) * Multivariate_content()( p );            
+            return square_free_factorization( p/Polynomial_d(a), fit, mit );
+        }
+          
     };
     
     
@@ -1255,6 +1267,18 @@ public:
                 OutputIterator2 mit) const {
             return square_free_factorization( p, fit, mit );
         }  
+        
+        template< class OutputIterator1, class OutputIterator2 >
+        int operator()( const Polynomial_d& p, OutputIterator1 fit,
+                        OutputIterator2 mit, Innermost_coefficient& a ) {
+            if( p == Polynomial_d(0) ) {
+                a = Innermost_coefficient(0);
+                return 0;
+            }
+            
+            a = CGAL::unit_part( typename Polynomial_traits_d< Polynomial_d >::Innermost_leading_coefficient()( p ) ) * Multivariate_content()( p );            
+            return square_free_factorization( p/Polynomial_d(a), fit, mit );
+        }
     };
     
 };
