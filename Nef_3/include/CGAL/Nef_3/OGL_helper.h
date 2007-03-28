@@ -347,11 +347,6 @@ namespace OGL {
       glBegin(GL_POINTS);
       glVertex3d(v->x(),v->y(),v->z());
       glEnd();
-      glColor3ub(255,0,0);
-      glBegin(GL_POINTS);
-      glVertex3d(3420,-32,494);
-      glVertex3d(3020,-32,494);
-      glEnd();      
     }
 
     void draw(Edge_iterator e) const { 
