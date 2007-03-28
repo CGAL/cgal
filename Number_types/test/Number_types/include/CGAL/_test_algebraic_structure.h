@@ -8,7 +8,6 @@
 // 
 // Author(s)     : Lutz Kettner  <kettner@mpi-inf.mpg.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
-//                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //                 Michael Hemmer  <mhemmer@uni-mainz.de>
 //
 
