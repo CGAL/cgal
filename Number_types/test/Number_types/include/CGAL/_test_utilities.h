@@ -43,6 +43,8 @@ test_sqrt(const NT&, Sqrt)
   typedef typename AST::Is_exact Is_exact;
   typedef typename AST::Algebraic_category Algebraic_category;
 
+  CGAL::Sqrt<NT> local_sqrt; // introduced an object as inlining it crashes g++-3.3
+
   if(Is_exact::value && 
      CGAL::is_same_or_derived<Algebraic_category,CGAL::Field_with_sqrt_tag>::value)
       {
@@ -52,8 +54,8 @@ test_sqrt(const NT&, Sqrt)
       // sqrt is inexact
       if (!( NT(CGAL_NTS sqrt(sixteen) - NT(5)) < NT(0) )) return false;
       if (!( NT(CGAL_NTS sqrt(sixteen) - NT(3)) > NT(0) )) return false;
-      if (!( NT(CGAL::Sqrt<NT>()(sixteen) - NT(5)) < NT(0) )) return false;
-      if (!( NT(CGAL::Sqrt<NT>()(sixteen) - NT(3)) > NT(0) )) return false;  
+      if (!( NT(local_sqrt(sixteen) - NT(5)) < NT(0) )) return false;
+      if (!( NT(local_sqrt(sixteen) - NT(3)) > NT(0) )) return false;  
   }
   return true;
 }

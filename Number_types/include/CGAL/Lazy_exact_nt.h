@@ -1289,13 +1289,13 @@ struct Lazy_exact_ro2
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
         op1(a), op2(b), op3(c), smaller(s), old_rep(true) {}
 #else
-      : Base(a.approx() /* dummy value */, a),
+      : Base(a.approx() /* dummy value */),
         op1(a), op2(b), op3(c), smaller(s), old_rep(true)
-  {
-    P p;
+    {
+      P p;
       this->approx() = make_root_of_2(a.approx(), b.approx(),
                                       c.approx(), s);
-  }
+    }
 #endif
  
     Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
@@ -1305,13 +1305,13 @@ struct Lazy_exact_ro2
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx()))),
         op1(a), op2(b), op3(c), smaller(true), old_rep(false) {}
 #else
-      : Base(a.approx() /* dummy value */, a),
+      : Base(a.approx() /* dummy value */),
         op1(a), op2(b), op3(c), smaller(true), old_rep(false)
-  {
-    P p;
+    {
+      P p;
       this->approx() = make_root_of_2(a.approx(), b.approx(),
                                       c.approx());
-  }
+    }
 #endif
 
     void update_exact()
