@@ -32,6 +32,7 @@
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
+#include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
 #endif // CGAL_USE_LEDA
 
 #ifdef CGAL_USE_GMP
@@ -51,6 +52,8 @@
 #include <CGAL/CORE_Expr.h>
 #endif // CGAL_USE_CORE
 
+#include <CGAL/Sqrt_extension.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -68,6 +71,9 @@ public:
     typedef leda_rational Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef leda_real Field_with_sqrt;
+    // undocumented
+    typedef leda_bigfloat          Bigfloat;
+    typedef CGALi::leda_bigfloat_interval Bigfloat_interval;
 };
 #endif // CGAL_USE_LEDA
 
@@ -85,6 +91,10 @@ public:
     typedef CORE::BigRat Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef CORE::Expr Field_with_sqrt;
+    // undocumented
+    typedef CORE::BigFloat          Bigfloat;
+    typedef CORE::BigFloat          Bigfloat_interval;
+
 };
 #endif // CGAL_USE_CORE
 
@@ -174,6 +184,54 @@ struct Lazy_exact_arithmetic_kernel{
     typedef typename INTERN_AK::Lazy_exact_type<typename AT::Rational>::type Rational;
     typedef typename INTERN_AK::Lazy_exact_type<typename AT::Field_with_sqrt>::type Field_with_sqrt;
 };
+
+
+namespace CGALi {
+template< class NT > struct Get_arithmetic_kernel;
+
+#ifdef CGAL_USE_LEDA
+    
+    template <>
+    struct Get_arithmetic_kernel<leda::integer> {
+        typedef LEDA_arithmetic_kernel Arithmetic_kernel;
+    };
+    template <>
+    struct Get_arithmetic_kernel<leda::rational>{
+        typedef LEDA_arithmetic_kernel Arithmetic_kernel;
+    };
+    template <>
+    struct Get_arithmetic_kernel<leda::real>{
+        typedef LEDA_arithmetic_kernel Arithmetic_kernel;
+    };
+#endif //CGAL_USE_LEDA
+    
+    
+#ifdef CGAL_USE_CORE
+    
+    template <>
+    struct Get_arithmetic_kernel<CORE::BigInt>{
+        typedef CORE_arithmetic_kernel Arithmetic_kernel;
+    };
+    template <>
+    struct Get_arithmetic_kernel<CORE::BigRat>{
+        typedef CORE_arithmetic_kernel Arithmetic_kernel;
+    };
+    template <>
+    struct Get_arithmetic_kernel<CORE::Expr>{
+        typedef CORE_arithmetic_kernel Arithmetic_kernel;
+    };
+#endif //CGAL_USE_CORE
+    
+    template <class COEFF, class ROOT>
+    struct Get_arithmetic_kernel<Sqrt_extension<COEFF,ROOT> >{
+        typedef Get_arithmetic_kernel<COEFF> GET;
+        typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
+    };
+    
+    
+} // namespace CGALi
+
+
 
 CGAL_END_NAMESPACE
 
