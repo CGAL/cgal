@@ -78,9 +78,9 @@ Polynomial<Coeff> algorithm_x(
     typedef Chinese_remainder_traits<Poly> CRT;
     typename CRT::Chinese_remainder chinese_remainder; 
     
-   
-    Poly F1 = CGAL::canonicalize_polynomial(p1);
-    Poly F2 = CGAL::canonicalize_polynomial(p2);
+    typename Polynomial_traits_d<Poly>::Canonicalize canonicalize;
+    Poly F1 = canonicalize(p1);
+    Poly F2 = canonicalize(p2);
     
     //std::cout <<" F1   : " << F1 <<std::endl;
     //std::cout <<" F2   : " << F2 <<std::endl;
@@ -226,7 +226,7 @@ Polynomial<Coeff> algorithm_x(
     
     //std::cout << "G: " << CGAL::canonicalize_polynomial(gcd_utcf(F1,F2)) << std::endl;
     
-    return CGAL::canonicalize_polynomial(Gs);
+    return canonicalize(Gs);
     
 }
 
@@ -267,9 +267,9 @@ Polynomial<NT> modular_gcd_utcf(
     typedef Chinese_remainder_traits<Poly> CRT;
     typename CRT::Chinese_remainder chinese_remainder; 
     
-   
-    Poly F1 = CGAL::canonicalize_polynomial(FF1);
-    Poly F2 = CGAL::canonicalize_polynomial(FF2);
+    typename Polynomial_traits_d<Poly>::Canonicalize canonicalize;
+    Poly F1 = canonicalize(FF1);
+    Poly F2 = canonicalize(FF2);
     
     //std::cout <<" F1   : " << F1 <<std::endl;
     //std::cout <<" F2   : " << F2 <<std::endl;
@@ -416,7 +416,7 @@ Polynomial<NT> modular_gcd_utcf(
     
     //std::cout << "G: " << CGAL::canonicalize_polynomial(gcd_utcf(F1,F2)) << std::endl;
     
-    return CGAL::canonicalize_polynomial(Gs);
+    return canonicalize(Gs);
     
 }
 
