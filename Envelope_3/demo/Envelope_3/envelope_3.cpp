@@ -194,8 +194,8 @@ public:
     stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this, "ST");
 
     show_toolbar = new QToolBar(this, "Show features");
-    QIconSet set0(QPixmap((const char**)vertices),
-                  QPixmap((const char**)vertices));
+    QIconSet set0(QPixmap((const char**)vertices_icon),
+                  QPixmap((const char**)vertices_icon));
 
     QIconSet set1(QPixmap((const char**)edges), QPixmap((const char**)edges));
     QIconSet set2(QPixmap((const char**)faces), QPixmap((const char**)faces));
