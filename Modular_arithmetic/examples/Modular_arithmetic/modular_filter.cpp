@@ -21,10 +21,10 @@ bool may_have_common_factor(
 template< typename Polynomial >
 Polynomial modular_filtered_gcd(const Polynomial& p1, const Polynomial& p2){
     typedef CGAL::Modular_traits<Polynomial> MT;
-    typedef typename MT::Is_convertible Is_convertible;
+    typedef typename MT::Is_modularizable Is_modularizable;
     
     // Try to avoid actual gcd computation 
-    if (may_have_common_factor(p1,p2, Is_convertible())){
+    if (may_have_common_factor(p1,p2, Is_modularizable())){
         // Compute gcd, since the filter indicates a common factor
         return CGAL::gcd(p1,p2);
     }else{

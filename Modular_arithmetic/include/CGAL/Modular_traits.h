@@ -23,7 +23,7 @@ template<class NT_>
 class Modular_traits{
 public: 
     typedef NT_ NT;
-    typedef ::CGAL::Tag_false Is_convertible;
+    typedef ::CGAL::Tag_false Is_modularizable;
     typedef ::CGAL::Null_functor Modular_NT;
     typedef ::CGAL::Null_functor Modular_image;  
     typedef ::CGAL::Null_functor Modular_image_inv;    
@@ -41,7 +41,7 @@ template<>
 class Modular_traits<int>{
 public: 
     typedef int NT;
-    typedef ::CGAL::Tag_true Is_convertible;
+    typedef ::CGAL::Tag_true Is_modularizable;
     typedef Modular Modular_NT;
  
     struct Modular_image{
@@ -65,7 +65,7 @@ template<>
 class Modular_traits<long>{
 public: 
     typedef long NT;
-    typedef ::CGAL::Tag_true Is_convertible;
+    typedef ::CGAL::Tag_true Is_modularizable;
     typedef Modular Modular_NT;
  
     struct Modular_image{
@@ -87,7 +87,7 @@ class Modular_traits< ::leda::integer > {
     typedef Modular MOD;
  public:
     typedef ::leda::integer NT;
-    typedef ::CGAL::Tag_true Is_convertible;
+    typedef ::CGAL::Tag_true Is_modularizable;
     typedef MOD Modular_NT;
 
     struct Modular_image{
@@ -116,7 +116,7 @@ private:
     typedef typename MT_ROOT::Modular_NT  Modular_NT_root;
 public:
     typedef Sqrt_extension<COEFF, ROOT > NT;
-    typedef typename MT_COEFF::Is_convertible Is_convertible;
+    typedef typename MT_COEFF::Is_modularizable Is_modularizable;
     typedef Sqrt_extension<Modular_NT_coeff, Modular_NT_root> Modular_NT;
     
     struct Modular_image{
@@ -167,7 +167,7 @@ private:
 public:
     typedef Polynomial<COEFF> NT;
     typedef Modular_traits<NT> Self;
-    typedef typename Mtr::Is_convertible Is_convertible;
+    typedef typename Mtr::Is_modularizable Is_modularizable;
     typedef Polynomial<typename Mtr::Modular_NT> Modular_NT;
     
     struct Modular_image{ 

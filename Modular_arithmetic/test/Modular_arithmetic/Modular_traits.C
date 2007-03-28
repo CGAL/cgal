@@ -29,13 +29,13 @@ void test_modular_traits(){
         typedef CGAL::Modular_traits<TESTT> MT;
         typedef typename MT::Modular_NT Modular_NT;
         typedef typename MT::Modular_image Modular_image;
-        typedef typename MT::Is_convertible Is_convertible;
+        typedef typename MT::Is_modularizable Is_modularizable;
         typedef typename MT::NT NT;
         
         CGAL_test_assert(
                 !(::boost::is_same<CGAL::Null_functor,Modular_image>::value));
         CGAL_test_assert(
-                (::boost::is_same<CGAL::Tag_true,Is_convertible>::value));
+                (::boost::is_same<CGAL::Tag_true,Is_modularizable>::value));
         CGAL_test_assert(
                 (::boost::is_same<TESTT,NT>::value));
         
