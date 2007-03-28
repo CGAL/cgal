@@ -32,7 +32,11 @@
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
+
+#ifdef CGAL_INTERN_USE_BFI
 #include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
+#endif //CGAL_INTERN_USE_BFI
+
 #endif // CGAL_USE_LEDA
 
 #ifdef CGAL_USE_GMP
@@ -71,9 +75,13 @@ public:
     typedef leda_rational Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef leda_real Field_with_sqrt;
+
+#ifdef CGAL_INTERN_USE_BFI
     // undocumented
     typedef leda_bigfloat          Bigfloat;
     typedef CGALi::leda_bigfloat_interval Bigfloat_interval;
+#endif //CGAL_INTERN_USE_BFI    
+
 };
 #endif // CGAL_USE_LEDA
 
@@ -91,13 +99,14 @@ public:
     typedef CORE::BigRat Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef CORE::Expr Field_with_sqrt;
+#ifdef CGAL_INTERN_USE_BFI
     // undocumented
     typedef CORE::BigFloat          Bigfloat;
     typedef CORE::BigFloat          Bigfloat_interval;
+#endif //CGAL_INTERN_USE_BFI
 
 };
 #endif // CGAL_USE_CORE
-
 
 #ifdef CGAL_USE_GMP
 /*! \ingroup CGAL_Arithmetic_kernel
@@ -186,6 +195,8 @@ struct Lazy_exact_arithmetic_kernel{
 };
 
 
+#ifdef CGAL_INTERN_USE_BFI
+
 namespace CGALi {
 template< class NT > struct Get_arithmetic_kernel;
 
@@ -230,7 +241,7 @@ template< class NT > struct Get_arithmetic_kernel;
     
     
 } // namespace CGALi
-
+#endif //CGAL_INTERN_USE_BFI
 
 
 CGAL_END_NAMESPACE
