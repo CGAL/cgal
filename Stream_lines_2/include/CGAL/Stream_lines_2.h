@@ -372,7 +372,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
   stl_vertices.push_front(m_Vertex_handle);
   stl.push_front(new_point);
   number_of_points++;
-  Point_2 old_point;
+  Point_2 old_point = seed_point;
   insertion_step = (int) (((dist)-fSepStl_seed) / (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
   if (insertion_step < 0) insertion_step = 0;
   while (!bEnd)
@@ -502,7 +502,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
   stl_vertices.push_back(m_Vertex_handle);
   stl.push_back(new_point);
   number_of_points++;
-  Point_2 old_point;
+  Point_2 old_point = new_point;
   while (!bEnd)
     {
       Point_2 ex_old_point = old_point;
@@ -771,6 +771,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
   bool b0,b;
   Pq_element m_Pq_element;
   do{
+    assert(!pq.empty());
     m_Pq_element = pq.top();
     v0 = m_Pq_element.first;
     v1 = m_Pq_element.second;
