@@ -7,6 +7,8 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 
+#include <CGAL/Polynomial/ipower.h>
+
 #include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/_test_basic.h>
@@ -706,7 +708,39 @@ void test_square_free_factorization(){
         //if(typename PT::Total_degree()(p) != 0){
         //    std::cout<< p << std::endl; 
         //}
+        
     }
+    
+    typename PT::Canonicalize canonicalize;
+    typename PT::Innermost_leading_coefficient ileading_coeff;
+    typename PT::Multivariate_content multivariate_content;
+    Polynomial_d p = generate_sparse_random_polynomial< Polynomial_d >(2);
+    p *= p*generate_sparse_random_polynomial< Polynomial_d >(2);    
+    std::vector< Polynomial_d > factors;
+    std::vector< int > mults;
+    ICoeff alpha;
+    Polynomial_d rec_p(1);
+    sqff( p, std::back_inserter(factors), std::back_inserter(mults), alpha );
+    
+    CGAL_test_assert( alpha == CGAL::unit_part( ileading_coeff( p ) ) * 
+                            multivariate_content( p ) );
+    
+    std::cerr << std::endl;
+    std::vector< int >::iterator mults_it = mults.begin();
+    for( typename std::vector< Polynomial_d >::iterator it = factors.begin();
+         it != factors.end(); ++it ) {
+        CGAL_test_assert( (*it) == canonicalize( (*it) ) );
+        std::cerr << "faktor= " << (*it) << ", ";
+        std::cerr << "mult= " << (*mults_it) << std::endl; 
+        CGAL_test_assert( mults_it != mults.end() );
+        rec_p *= CGAL::INTERN_POLYNOMIAL::ipower( (*it),(*mults_it++) );
+    }
+    
+    rec_p *= Polynomial_d( alpha );
+    std::cerr << "ALPHA= " << alpha << std::endl;
+    std::cerr << "    p= " << p << std::endl;
+    std::cerr << "rec_p= " << rec_p << std::endl;
+    CGAL_test_assert( p == rec_p );
 
     std::cerr << "ok"<< std::endl; 
     
@@ -1430,7 +1464,7 @@ int main(){
     std::cerr << "--------------------------------------" << std::endl;
     test_multiple_dimensions<leda_integer>();
 
-    std::cerr << std::endl;
+/*    std::cerr << std::endl;
     std::cerr << "Test for coefficient type leda_rational" << std::endl;
     std::cerr << "---------------------------------------" << std::endl;
     test_multiple_dimensions<leda_rational>();
@@ -1448,7 +1482,7 @@ int main(){
     std::cerr << std::endl;
     std::cerr << "Test for coefficient type Sqrt_extension< leda_rational, leda_rational >" << std::endl;
     std::cerr << "------------------------------------------------------------------------" << std::endl;    
-    test_multiple_dimensions< CGAL::Sqrt_extension< leda_rational, leda_rational > >();    
+    test_multiple_dimensions< CGAL::Sqrt_extension< leda_rational, leda_rational > >();*/    
     
     return 0;
 }
