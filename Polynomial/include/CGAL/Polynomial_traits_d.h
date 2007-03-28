@@ -335,6 +335,7 @@ public:
         }
     
     private:
+    public: 
 
         template< class T >
         class Create_polynomial_from_monom_rep {
@@ -354,7 +355,6 @@ public:
                 return Polynomial_d(coefficients.begin(),coefficients.end());
             }
         };
-        
         template< class T >
         class Create_polynomial_from_monom_rep< Polynomial < T > > {
         public:
@@ -434,6 +434,24 @@ public:
         typedef int                 third_argument_type;
         typedef Arity_tag< 3 >         Arity;
         
+        // We use our own Strict Weak Ordering predicate in order to avoid
+        // problems when calling sort for a Exponents_coeff_pair where the
+        // coeff type has no comparison operators available.
+      private:
+        struct Compare_exponents_coeff_pair 
+            : public Binary_function< std::pair< Exponent_vector, Innermost_coefficient >,
+                                      std::pair< Exponent_vector, Innermost_coefficient >,
+                                      bool > {
+            bool operator()( const std::pair< Exponent_vector, Innermost_coefficient >& p1,
+                             const std::pair< Exponent_vector, Innermost_coefficient >& p2 ) const {
+                // TODO: Precondition leads to an error within test_translate in Polynomial_traits_d test
+                //CGAL_precondition( p1.first != p2.first );
+                return p1.first < p2.first;
+            }            
+        }; 
+      
+      public:
+        
         Polynomial_d operator()(const Polynomial_d& p, int i, int j ) const {
             //std::cout << i <<" " << j << " : " ; 
             CGAL_precondition(0 <= i && i < d);
@@ -442,7 +460,7 @@ public:
                 Exponents_coeff_pair;
             typedef std::vector< Exponents_coeff_pair > Monom_rep; 
             Get_monom_representation gmr;
-            Construct_polynomial construct;
+            typename Construct_polynomial::template Create_polynomial_from_monom_rep< Coefficient > construct;
             Monom_rep mon_rep;
             gmr( p, std::back_inserter( mon_rep ) );
             for( typename Monom_rep::iterator it = mon_rep.begin(); 
@@ -451,7 +469,7 @@ public:
                 std::swap(it->first[i],it->first[j]);
                 // it->first.swap( i, j );
             }
-            std::sort( mon_rep.begin(), mon_rep.end() );
+            std::sort( mon_rep.begin(), mon_rep.end(), Compare_exponents_coeff_pair() );
             return construct( mon_rep.begin(), mon_rep.end() );
         }
     };
