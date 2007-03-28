@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "C2vcproj called..." 
+
 # Creates a VC71/VC80 .vcproj file corresponding to a source file
 # $1 is the source file
 # $2 is the extension of the source file
