@@ -3,8 +3,8 @@
 \ccDefinition
 
 This \ccc{AdaptableUnaryFunction} computes the modular image of the given value 
-with respect to the homomorphism $\varphi$ from the \ccc{ModularTraits::Type} into
-\ccc{ModularTraits::Modular_type}.
+with respect to a homomorphism $\varphi$ from the 
+\ccc{ModularTraits::Type} into the \ccc{ModularTraits::Modular_type}.
 
 The homomorphism preserves the mapping of \ccc{int} into both types
 , i.e., $\varphi(Type(i)) == Modular\_type(i)$.
@@ -12,13 +12,13 @@ The homomorphism preserves the mapping of \ccc{int} into both types
 
 \ccTypes
 \ccTypedef{typedef ModularTraits::Modular_type result_type;}{}
-\ccTypedef{typedef ModularTraits::Modular_type argument_type;}{}
+\ccTypedef{typedef ModularTraits::Type         argument_type;}{}
 
 \ccCreationVariable{fo}
 
 \ccMethod{
 result_type
-operator()(const  argument_type &);}{
+operator()(const  argument_type & x);}{
 computes $\varphi(x)$.
 } 
  

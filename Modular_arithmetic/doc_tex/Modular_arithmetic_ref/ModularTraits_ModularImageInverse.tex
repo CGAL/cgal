@@ -1,0 +1,23 @@
+\begin{ccRefFunctionObjectConcept}{ModularTraits::ModularImageInverse}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} implements a $right inverse$ of the
+homomorphism $\varphi$, which is implemented by \ccc{ModularTraits::ModularImage}. 
+
+\ccTypes
+\ccTypedef{typedef ModularTraits::Type         result_type;}{}
+\ccTypedef{typedef ModularTraits::Modular_type argument_type;}{}
+
+\ccCreationVariable{fo}
+
+\ccMethod{
+result_type
+operator()(const  argument_type &x);}{
+computes $\varphi^{-1}(x)$.
+} 
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction} 
+
+\end{ccRefFunctionObjectConcept}

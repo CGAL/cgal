@@ -3,16 +3,16 @@
 \ccDefinition
 
 A model of \ccc{ModularTraits} is associated to specific \ccc{Type}.
-In case this type is \ccc{Modularizable}, this is indicated by the 
-
- and reflects the properties of this type with respect 
-to the concept \ccc{Modular}.
+In case this associated type is \ccc{Modularizable}, this is indicated by the 
+boolean tag \ccc{Is_modularizable}. The mapping into the \ccc{Modular_type} is
+provided by the functor \ccc{Modular_image}.
 
 \ccTypes
 
 A model of \ccc{ModularTraits} is supposed to provide:\\
 
 \ccNestedType{Type        }{The associated type.}
+
 \ccGlue
 
 \ccNestedType{Is_modularizable}{ 
@@ -20,6 +20,7 @@ A model of \ccc{ModularTraits} is supposed to provide:\\
   This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
 
 \ccGlue
+
 \ccNestedType{Modular_type}{
    The type of the modular image. \\
    In case the type is not \ccc{Modularizable} this is undefined. 
@@ -31,10 +32,11 @@ In case the associated type is \ccc{Modularizable} all functors are provided.\\
 In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 
 
-\ccNestedType{Modular_image}{A model of \ccc{ModularTraits::ModularImage} } 
+\ccNestedType{Modular_image}
+{A model of \ccc{ModularTraits::ModularImage} } 
 \ccGlue
-\ccNestedType{Modular_image_inverse}{A model of \ccc{ModularTraits::ModularImageInverse} } 
-
+\ccNestedType{Modular_image_inverse}
+{A model of \ccc{ModularTraits::ModularImageInverse} } 
 
 \ccHasModels
 \ccRefIdfierPage{Modular_traits}\\

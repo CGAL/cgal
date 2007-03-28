@@ -2,3 +2,32 @@
 \ccUserChapter{Modular Arithmetic}
 \label{chap:modular_arithmetic}
 \ccChapterAuthor{Michael Hemmer}
+
+\input{Modular_arithmetic/PkgDescription.tex}
+
+\section{Introduction}
+
+This package introduces a type \ccc{CGAL::Modular} 
+representing a finite field over some prime. 
+This prime can be changed at runtime. From there, the type may serve
+as the workhorse for algorithms base on chinese remainder.  
+
+Moreover, the package introduces the \ccc{CGAL::Modular_traits<T>} 
+providing a mapping from some algebraic strucutre \ccc{T} into algebraic 
+structure that is based on the type \ccc{CGAL::Modular}.  
+For scalar types, e.g. Integers, this mapping is just the kanonical homomorphism
+into the type \ccc{CGAL::Modular}. 
+For compount types, e.g. Polynomials, the mapping is applied to the 
+coefficients of the compount type. 
+
+\section{Software Design}
+
+The class \ccc{CGAL::Modular_traits<T>} is designed such that the concept 
+\ccc{Modularizable} can be considered as optional, i.e., 
+\ccc{CGAL::Modular_traits<T>} provides a tag that can be used for dispatching. 
+
+\subsection{Examples}
+
+In the following example the modular arithmetic is used as a filter. 
+\ccIncludeExampleCode{Modular_arithmetic/modular_filter.cpp}
+
