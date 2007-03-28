@@ -27,7 +27,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) -lboost_program_options
+          $(CGAL_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
