@@ -286,7 +286,7 @@ concepts \ccc{TriangulationCellBase_3} and \ccc{TriangulationVertexBase_3}
 
 Since adjacency relations are stored in the vertices and cells, it means that
 the vertex and cell base classes have to be able to store handles (an entity
-akeen to pointers) to their neighbors in the TDS.  This in turns means that the
+akin to pointers) to their neighbors in the TDS.  This in turns means that the
 vertex and cell base classes have to know the types of these handles, which are
 provided by the TDS.  So in a sense, the base classes are parameterized by the
 TDS, and the TDS is parameterized by the vertex and cell base classes !
@@ -360,7 +360,7 @@ public:
 The rebinding scheme has been introduced in CGAL version 3.0.  It is
 incompatible with the previous versions, for the cases where the user provides
 his own vertex or cell base class.  In these cases, the user needs to add
-the rebind nested template class appropriately.  More informations are given
+the rebind nested template class appropriately.  More information is given
 in~\ref{T3-sec-compat}.
 
 \section{Examples}
@@ -383,7 +383,7 @@ structures whose vertices respectively store vertex handles of the other one.
 
 Monique Teillaud introduced the triangulation of the topological
 sphere $S^d$ in $\R^{d+1}$ to manage the underlying graph of geometric
-triangulations and handle degenerate diomensions \cite{t-tdtc-99}. 
+triangulations and handle degenerate dimensions \cite{t-tdtc-99}. 
 
 Sylvain Pion improved the software in several ways, in particular
 regarding the memory management.
