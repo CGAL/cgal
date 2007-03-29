@@ -89,11 +89,11 @@ be the case, due to round off errors.
 So, exactness checks should only be turned on if the computation is done 
 with some exact number type.
 
-\subsection{Altering the Failure Behaviour}
+\subsection{Altering the Failure Behavior}
 
 As stated above, if a postcondition, precondition or assertion is
 violated, the program will abort (stop and produce a core dump).
-This behaviour can be changed by means of the following function.
+This behavior can be changed by means of the following function.
 
 \ccInclude{CGAL/assertions.h}
 
@@ -143,7 +143,7 @@ The name of a particular module is documented with that module.
 
 \begin{ccAdvanced}
 
-\subsection{Customising how Errors are Reported}
+\subsection{Customizing how Errors are Reported}
 
 Normally, error messages are written to the standard error output.
 It is possible to do something different with them.
@@ -174,9 +174,9 @@ There are several things that you can do with your own handler.
 You can display a diagnostic message in a different way, for instance in 
 a pop up window or to a log file (or a combination).
 You can also implement a different policy on what to do after an error.
-For instance, you can throw an exception or ask the user in a dialogue 
+For instance, you can throw an exception or ask the user in a dialog 
 whether to abort or to continue.
-If you do this, it is best to set the error behaviour to
+If you do this, it is best to set the error behavior to
 \ccStyle{CONTINUE}, so that it does not interfere with your policy.
 
 You can register two handlers, one for warnings and one for errors.
