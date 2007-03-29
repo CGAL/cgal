@@ -1012,7 +1012,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"
 	    ;;
-	*Linux*sunCC*)
+	*Linux*sunCC*|*Linux*CC*)
 	    #### settings for sunpro compiler on linux
 	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
