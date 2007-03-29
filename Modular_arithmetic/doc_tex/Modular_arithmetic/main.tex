@@ -7,10 +7,11 @@
 
 \section{Introduction}
 
-This package introduces a type \ccc{CGAL::Modular} 
+Modular arithmetic is a fundamental tool in modern algebraic systems. In conjunction with the Chinese remainder theorem it serves as the workhorse in several algorithms computing the gcd, resultant etc. Moreover, it can serve as a very efficient filter, since it is often possible to exclude that some value is zero by computing its modular correspondent with respect to one prime only. 
+
+This package introduces a type \ccc{CGAL::Modular}
 representing a finite field over some prime. 
-This prime can be changed at runtime. From there, the type may serve
-as the workhorse for algorithms base on Chinese remainder.  
+The prime can be changed at runtime. 
 
 Moreover, the package introduces the \ccc{CGAL::Modular_traits<T>} 
 providing a mapping from some algebraic structure \ccc{T} into algebraic 
@@ -19,6 +20,7 @@ For scalar types, e.g. Integers, this mapping is just the canonical homomorphism
 into the type \ccc{CGAL::Modular}. 
 For compound types, e.g. Polynomials, the mapping is applied to the 
 coefficients of the compound type. 
+
 
 \section{Software Design}
 
