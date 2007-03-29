@@ -26,11 +26,6 @@
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 
-#define CGAL_POINT_IS_LEFT_LOW(p,q) (traits->compare_xy_2_object()((p),(q))==SMALLER)
-#define CGAL_POINT_IS_RIGHT_TOP(p,q) (traits->compare_xy_2_object()((p),(q))==LARGER)
-#define CGAL_CURVE_IS_TO_RIGHT(cv,p) (traits->equal_2_object()(traits->construct_min_vertex_2_object()((cv)), (p)))
-#define CGAL_CURVE_COMPARE_Y_AT_X(p, cv) (traits->compare_y_at_x_2_object()((p),(cv)))
-#define CGAL_IS_IN_X_RANGE(cv,p) ((cv).is_in_x_range((p)))
 #ifdef CGAL_TD_DEBUG
 #define CGAL_TD_INLINE
 #else
