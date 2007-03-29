@@ -1,4 +1,4 @@
-personal_ws-1.1 en 71 
+personal_ws-1.1 en 79 
 makefile
 Qpl
 Teillaud
@@ -7,7 +7,10 @@ indices
 dereference
 GeometryFactory
 templated
+Destructor
+circumcircle
 namespace
+GIS
 Sylvain
 preprocessor
 PostScript
@@ -27,6 +30,7 @@ Blas
 vertices
 Gmp
 Delaunay
+Fichel
 circumcenter
 combinatorics
 Boissonnat
@@ -41,6 +45,7 @@ Devillers
 Kruithof
 zlib
 Enums
+combinatorially
 Voronoi
 Umbilics
 functors
@@ -49,6 +54,7 @@ Lgpl
 circulators
 Amd
 enum
+tuple
 struct
 parameterization
 functionalities
@@ -61,6 +67,7 @@ Mpfr
 halfedge
 Kde
 Austern
+iostream
 inlining
 Taucs
 functor
@@ -69,4 +76,5 @@ Lapack
 simplicial
 Delage
 OpenNL
+circumcircles
 multi
