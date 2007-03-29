@@ -55,13 +55,17 @@ public:
   void init(CurveIterator begin, CurveIterator end)
   {
     m_xcurves.clear();
-    m_xcurves.insert(m_xcurves.end(), begin, end);
+    //m_xcurves.insert(m_xcurves.end(), begin, end);
+    // Because SunPro CC doesn't support template member functions:
+    std::copy(begin, end, std::back_inserter(m_xcurves));
   }
 
   template <class CurveIterator>
   void insert(CurveIterator begin, CurveIterator end)
   {
-    m_xcurves.insert(m_xcurves.end(), begin, end);
+    //m_xcurves.insert(m_xcurves.end(), begin, end);
+    // Because SunPro CC doesn't support template member functions:
+    std::copy(begin, end, std::back_inserter(m_xcurves));
   }
 
   bool is_empty() const
