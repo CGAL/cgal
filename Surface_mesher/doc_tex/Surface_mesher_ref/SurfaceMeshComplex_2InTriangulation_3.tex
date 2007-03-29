@@ -44,15 +44,16 @@ A model of this concept is a type to be plugged as first template
 parameter in the 
 function template \ccc{make_surface_mesh}.
 
-
-The concept \ccRefName\   is a simplification of more general concepts called
- respectively \ccc{PureComplex2InTriangulation3} and
-\ccc{Complex2InTriangulation3}.
-\ccc{PureComplex2InTriangulation3} is  designed to represent a  pure complex
-and \ccc{Complex2InTriangulation3} is designed to represent any
-two dimensional complex. 
-Both concepts include member functions to analyse the complex,
-e.g. find its size, number of connected components, genus etc... 
+% Commented as these concepts are still missing
+%
+%The concept \ccRefName\   is a simplification of more general concepts called
+% respectively \ccc{PureComplex2InTriangulation3} and
+%\ccc{Complex2InTriangulation3}.
+%\ccc{PureComplex2InTriangulation3} is  designed to represent a  pure complex
+%and \ccc{Complex2InTriangulation3} is designed to represent any
+%two dimensional complex. 
+%Both concepts include member functions to analyse the complex,
+%e.g. find its size, number of connected components, genus etc... 
 
 %\ccGeneralizes
 
@@ -98,7 +99,7 @@ The status of a vertex is determined by
 the adjacency graph of the facets of the 2D complex
 incident to that vertex.
 The vertex  of the 2D complex is \ccc{BOUNDARY}, if this adjacency graph
-is a simple path,  it is \ccc{REGULAR} if the adjacency graph is cyclic,
+is a simple path,  it is \ccc{REGULAR}, if the adjacency graph is cyclic,
 and \ccc{SINGULAR}in any other case.
 }
 
