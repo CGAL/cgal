@@ -124,14 +124,15 @@ default blank.
 \section{Identifying the version of \cgal}
 \label{sec:cgal_version}
 
-Every release of \cgal\ defines (in \texttt{<CGAL/version.h>}) two
-macros:
+\ccInclude{CGAL/version.h}
+
+Every release of \cgal\ defines the following preprocessor macros:
 \begin{description}
 \item[\texttt{CGAL\_VERSION}]
      \index{CGAL_VERSION macro@{\tt CGAL\_VERSION} macro}
      -- a textual description of the current release
         (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15), and 
-\item[\texttt{CGAL\_VERSION\_NR}], 
+\item[\texttt{CGAL\_VERSION\_NR}]
      \index{CGAL_VERSION_NR macro@{\tt CGAL\_VERSION\_NR} macro}
      -- a numerical description of the current release such that
         more recent releases have higher number.
@@ -145,7 +146,7 @@ macros:
      Examples: for the public release 3.2.4 this number is 
      1030241000; for internal release 3.2-I-1, it is 1030200001.
      Note that this scheme was modified around 3.2-I-30.
-\item[\texttt{CGAL\_VERSION\_NUMBER(M,m,b)}], 
+\item[\texttt{CGAL\_VERSION\_NUMBER(M,m,b)}]
      \index{CGAL_VERSION_NUMBER macro@{\tt CGAL\_VERSION\_NUMBER} macro}
      -- a function macro computing the version number macro
      from the M.m.b release version.  Note that the internal release
