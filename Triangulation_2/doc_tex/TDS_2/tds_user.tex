@@ -10,14 +10,14 @@ embedded in a plane.
 However it appears that the concept is more general
 and can be used for any  orientable triangulated surface
 without boundary, whatever may be the dimensionality
-of the space the trianguation is embedded in.
+of the space the triangulation is embedded in.
 
 
 \subsection{A data structure based on faces and vertices}
 
 The representation of \cgal\ 2D triangulations is based on faces and vertices,
-Edges are only implicitely 
-represented trough the adjacency relations betwen two
+Edges are only implicitly 
+represented trough the adjacency relations between two
 faces.
 
 The triangulation data structure can be seen 
@@ -63,7 +63,7 @@ can be represented as well as an edge of the \ccc{neighbor(i)} of
 
 This kind or representation of simplicial complexes extends in any
 dimension. More precisely, in dimension $d$, the data structure
-will explicitely represents cells (i. e. faces of maximal dimension) 
+will explicitly represents cells (i. e. faces of maximal dimension) 
 and vertices (i. e. faces of dimension 0).
 All faces of dimension between $1$ and $d-1$
 will have an implicit representation.
@@ -195,7 +195,7 @@ as a default triangulation data structure.
 
 
 \subsection{Flexibility}
-In oder to provide flexibility, the default triangulation data
+In order to provide flexibility, the default triangulation data
 structure is templated by two parameters 
 which stands respectively for a vertex base class and a face base
 class.
@@ -209,7 +209,7 @@ This design  allows the user to plug in the
 triangulation data structure
 his own vertex or face classes tuned for  his application.
 
-\subsection{The cyclic dependancy of template parameters}
+\subsection{The cyclic dependency of template parameters}
  Since adjacency and incidence relation are stored in vertices and
 faces,
 the vertex and face  classes have to know the types
@@ -219,7 +219,7 @@ Therefore, vertex and face classes need to be templated
 by the triangulation data structure. Because the triangulation
 data structure 
 is itself templated by the vertex and face classes this induces
-a cyclic dependancy.
+a cyclic dependency.
 See figure~\ref{2D_TDS_Fig_three_levels_2}.
 
 \begin{figure}
@@ -255,7 +255,7 @@ face class, which provide the rebound class
 as a type called  \ccc{Other}.
 
 Here is how it works schematically. First, here is the rebinding
-taking place in the triangulation data stucture.
+taking place in the triangulation data structure.
 \begin{ccExampleCode}
 template < class Vb, class Fb >
 class Triangulation_data_structure
@@ -313,7 +313,7 @@ triangulated data structure,  predefined classes
 and \ccc{Triangulation_face_base_with_info} can be plugged in.
 Those classes have a template parameter \ccc{Info} to be instantiated
 by a user defined type. They
-store a data member of this type and gives acces to it.
+store a data member of this type and gives access to it.
 \item{} Second, the user  can derive 
 his own base classes from the default base
 classes :
@@ -321,7 +321,7 @@ classes :
 \ccc{Triangulation_ds_face_base_2}
 are the default base classes to be plugged in a triangulation 
 data structure used alone.
-Triangulation classes requires a data strucure in which
+Triangulation classes requires a data structure in which
 other base classes have been plugged it. The default base classes
 for most of the triangulation classes are
 \ccc{Triangulation_vertex_base_2}, and \ccc{Triangulation_face_base_2}

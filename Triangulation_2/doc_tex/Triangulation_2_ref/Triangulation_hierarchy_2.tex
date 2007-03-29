@@ -22,9 +22,9 @@ The data structure is a hierarchy
 of triangulations. The triangulation at the lowest level is
 the original triangulation where operations and point location are to 
 be performed.
-Then at each succeedding level, the data structure
+Then at each succeeding level, the data structure
 stores a triangulation of a small random sample of the vertices
-of the triangulation at the preceeding level. 
+of the triangulation at the preceding level. 
 
 Point location
 is done through a top-down nearest neighbor query.
@@ -32,13 +32,13 @@ The nearest neighbor query is first
 performed naively in the top level triangulation.
 Then, at each following level, the nearest neighbor at that level
 is found through a linear walk performed from
-the nearest neighbor found at the preceeding level.
+the nearest neighbor found at the preceding level.
 
 Because the number of vertices in each triangulation is only a small
-fraction of the number of vertices of the preceeding triangulation 
+fraction of the number of vertices of the preceding triangulation 
 the data structure remains small and achieves fast point location 
 queries on real
-data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
+data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations.
 The class \ccRefName\ is templated by a parameter
@@ -60,7 +60,7 @@ Location queries are overloaded to benefit from the
 data structure. Modifiers (insertion, removal) are overloaded
 to take care of updating the data structure.
 
-Be carefull that I/O operations are not overloaded.
+Be careful that I/O operations are not overloaded.
 Writing a \ccRefName\  into a file
 writes only the lowest level triangulation and drop the hierarchy
 and reading it from a file results in a triangulation

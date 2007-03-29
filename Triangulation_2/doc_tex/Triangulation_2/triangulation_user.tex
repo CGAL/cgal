@@ -66,14 +66,14 @@ Let us first record a few definitions.
 A simplicial complex is a set $T$  of simplices such that~\\
 - any face of a simplex in $T$ is a simplex in $T$ \\
 - two simplices in $T$  either are disjoint or  share
-  a common subface.
+  a common sub-face.
 
 The dimension $d$ of a  simplicial complex is the 
 maximal dimension of its simplices. \\
 A simplicial complex $T$ is pure if any simplex of $T$
 is included in a simplex of $T$ with maximal dimension. \\
 Two simplexes in $T$ with maximal dimension $d$ are said to be
-adjacent if they share a $(d-1)$ dimensional subface.
+adjacent if they share a $(d-1)$ dimensional sub-face.
 A simplicial complex is connected if the adjacency relation
 defines a connected graph 
 over  the set of simplices of $T$ with maximal dimension. \\
@@ -95,14 +95,14 @@ A triangulation is said to be orientable if
 the orientation of each facet can be chosen in such a way
 that all pairs of incident facets have consistent orientations. 
 
-The data stucture underlying \cgal\ triangulations
+The data structure underlying \cgal\ triangulations
 allows to represent the combinatorics of 
 any  orientable two dimensional  triangulations
 without boundaries. 
 On top of this data structure, the 2D triangulations classes
 take care of the geometric embedding  of the triangulation
 and are designed to handle planar triangulations.
-The plane of the tiangulation may be embedded in a higher
+The plane of the triangulation may be embedded in a higher
 dimensional space.
 
 The  triangulations of  \cgal\ are complete triangulations
@@ -214,7 +214,7 @@ See Figure~\ref{2D_Triangulation_Fig_neighbors1},
 and \ccc{cw(i)} shown  on this figure
 compute respectively $i+1$ and $i-1$ modulo 3.
 
-The edges are not explicitly represented, they are only implicitely
+The edges are not explicitly represented, they are only implicitly
 represented through the adjacency relations of two faces.
 Each edge has two implicit representations : the edge
 of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
@@ -419,7 +419,7 @@ of a particular feature (edge or face) given its vertices.
 
 The triangulation class  provides a method to locate
 a given point with respect to a triangulation.
-In particular, this method reports wether the point
+In particular, this method reports whether the point
 coincides with a vertex of the triangulation, lies on an edge,
 in a face or outside of the convex hull. In case of a degenerate 
 lower dimensional triangulation, the query point may also lie
@@ -429,7 +429,7 @@ The triangulation class also provides
 methods to locate a point with respect to
 a given  finite face of the triangulation or with respect to its
 circumcircle.
-The faces of the triangulation and their circimcircles 
+The faces of the triangulation and their circumcircles 
 have the  counterclockwise orientation.
 
 The triangulation can be modified by several functions~:
@@ -477,7 +477,7 @@ time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
-retriangulating the hole. Removal takes a time  at most proportionnal to
+re-triangulating the hole. Removal takes a time  at most proportional to
 \ccTexHtml{$d^2$}{d^2}, where
  \ccTexHtml{$d$}{d} is the degree of the removed vertex,
 which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
@@ -521,7 +521,7 @@ The triangulation is
 build according to  the projections of those points
 on the $xy$ plane  and then lifted up to the original
 three-dimensional data points.
-This is especially usefull
+This is especially useful
 to deal with GIS terrains.
 Instead of really projecting the  three-dimensional points and
 maintaining a mapping between each point and its projection
@@ -559,7 +559,7 @@ the following {\em empty circle property}
 (also called {\em Delaunay property}): the circumscribing
 circle of any facet of the triangulation 
 contains no data point in its interior.
-For a point set with no subset of four cocircular points
+For a point set with no subset of four co-circular points
 the Delaunay triangulation is unique, it is  dual
 to the Voronoi diagram of the set of points.
 
@@ -615,7 +615,7 @@ The traits class for terrains,
 \ccc{Triangulation_euclidean_traits_yz_3<R>}, and\\
 \ccc{Triangulation_euclidean_traits_zx_3<R>} \\
 are also models of  \ccc{DelaunayTriangulationTraits_2}
-excapt that they do not fulfills 
+except that they do not fulfill
 the requirements for the duality functions and nearest vertex
 queries.
 
@@ -631,7 +631,7 @@ points distributed uniformly at random,
 each insertion takes time \ccTexHtml{$O(1)$}{O(1)} on
 average, once the point has been located in the triangulation.
 
-Removal calls the removal in the triangulation and then retriangulates
+Removal calls the removal in the triangulation and then re-triangulates
 the hole created in such a way that  the Delaunay criterion is
 satisfied. Removal of a
 vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)}.
@@ -760,7 +760,7 @@ The vertices of the regular triangulation
 of a set of weighted points ${PW}$ correspond  only to a subset
 of ${PW}$.
 Some of the input
-weigthed points have no cell in the dual power diagrams
+weighted points have no cell in the dual power diagrams
 and therefore do not correspond to a vertex of the regular
 triangulation.
 Such a point is called a hidden point.
@@ -815,7 +815,7 @@ instance of the \ccc{Filtered_kernel} template.
 \subsubsection{The Vertex type and Face Type of a Regular Triangulation}
 
 The base vertex type of a regular triangulation
-includes a boolean to mark the hidden state of the vertex.
+includes a Boolean data member to mark the hidden state of the vertex.
 Therefore  CGAL defines the concept
 \ccc{RegularTriangulationVertexBase_2} which refine
 the concept \ccc{TriangulationVertexBase_2}
@@ -835,7 +835,7 @@ as a default base class for faces of regular triangulations.
 \subsection{Example : a Regular Triangulation\label{Subsection_2D_Triangulations_Regular_Example}}
 
 The following code  creates a regular triangulation 
-of a set of weighted points and ouput the number
+of a set of weighted points and output the number
 of vertices and the number of hidden vertices.
 
 \ccIncludeExampleCode{Triangulation_2/regular.cpp}
@@ -878,7 +878,7 @@ in the way intersecting constraints are dealt with.
  One of them is
 designed to be robust when predicates are evaluated exactly but
 constructions (i. e.  intersection computations) are
-approximative.
+approximate.
 \item
 The other one is designed to be used 
 with exact arithmetic (meaning exact
@@ -913,7 +913,7 @@ by one of the following classes~:
 \ccc{CGAL::No_intersection_tag} when input constraints do not
 intersect \\
 \ccc{CGAL::Exact_predicates_tag} if the geometric traits provides
-exact predicates but approximative constructions \\
+exact predicates but approximate constructions \\
 \ccc{CGAL::Exact_intersections_tag} when an exact predicates
 and exact constructions are provided.
 
@@ -957,7 +957,7 @@ for constrained triangulations. This class, named
 \ccc{Constrained_triangulation_face_base_2<Traits>},
 derives from the class
 \ccc{Triangulation_face_base_2<Traits>}
-and adds three booleans to store the status of its edges. 
+and adds three Boolean data members to store the status of its edges. 
 
 %\subsubsection{A Constrained Triangulation Class for Animation Purposes
 %\cgal\ provides 
@@ -1014,7 +1014,7 @@ at the endpoints. The two other versions
 handle intersecting input constraints. One of them
  is designed to be designed to be robust
 when used in conjunction with a geometric traits
-providing exact predicates and approximative constructions
+providing exact predicates and approximate constructions
 (such as a \ccc{CGAL::Filtered_Kernel} or any kernel providing
 filtered exact predicates). The third version is designed to be used
 with an exact arithmetic number type.
@@ -1101,7 +1101,7 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation  of the  arrangement
 of the constraints,
 introducing new vertices at each proper intersection
-points and  refining the input constraints into subconstraints
+points and  refining the input constraints into sub-constraints
 which appear as  edges (more precisely as constrained edges) of the
 triangulation.  The  data structure maintains for each 
 input constraint
@@ -1141,20 +1141,20 @@ The data structure is a hierarchy
 of triangulations. The triangulation at the lowest level is
 the original triangulation where operations and point location are to 
 be performed.
-Then at each succedding level, the data structure
+Then at each succeeding level, the data structure
 stores a triangulation of a small random sample of the vertices
-of the triangulation at the preceeding level. Point location
+of the triangulation at the preceding level. Point location
 is done through a top down nearest neighbor query.
 The nearest neighbor query is first
 performed naively in the top level triangulation.
 Then, at each following level, the nearest neighbor at that level
 is found through a linear walk performed from
-the nearest neighbor found at the preceeding level.
+the nearest neighbor found at the preceding level.
 Because the number of vertices in each triangulation is only a small
-fraction of the number of vertices of the preceeding triangulation,
+fraction of the number of vertices of the preceding triangulation,
 the data structure remains small and achieves fast point location 
 queries  on real
-data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
+data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations
 and the class \ccc{Triangulation_hierarchy_2<Tr>} is templated by a parameter
@@ -1177,7 +1177,7 @@ the concept \ccc{TriangulationVertexBase_2}.
 This extension adds
 access and setting member functions 
 for two pointers  to the corresponding vertices in the 
-triangulations of the next and preceeding levels.
+triangulations of the next and preceding levels.
 
 \cgal\ provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>}
 which is a model for the concept 
@@ -1202,7 +1202,7 @@ at the different levels of the hierarchy.
 \ccIncludeExampleCode{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
-a triangulation hierachy in conjunction with a constrained 
+a triangulation hierarchy in conjunction with a constrained 
 triangulation plus.
 \ccIncludeExampleCode{Triangulation_2/constrained_hierarchy_plus.cpp}
 

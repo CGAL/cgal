@@ -236,7 +236,7 @@ located in  \ccc{lt,loc,li}.}
   pointed to by \ccc{eit} the boundary of the zone in conflict
   with \ccc{p}.  It inserts the vertices that would be hidden by \ccc{p} 
   into the container pointed to by \ccc{vit}.  The boundary edges of
-  the conflict zone are ouput in counter-clockwise order and each edge
+  the conflict zone are output in counter-clockwise order and each edge
   is described through its incident face which is not in conflict with
   \ccc{p}.  The function returns in a CGAL::Triple the resulting output
   iterators.}
@@ -270,7 +270,7 @@ located in  \ccc{lt,loc,li}.}
 { same as above except that only the vertices that would be hidden
   by \ccc{p} and the boundary of the zone in conflict with \ccc{p} are
   output via the corresponding output iterators. The boundary edges of
-  the conflict zone are ouput in counterclockwise order and each edge
+  the conflict zone are output in counterclockwise order and each edge
   is described through the incident face which is not in conflict with
   \ccc{p}. The function returns in a std::pair the resulting output
   iterators.}
@@ -289,7 +289,7 @@ are output. The function returns the resulting output iterator.}
                                     OutputItBoundaryEdges eit,
                                     Face_handle start) const;}
 { same as above except that only the boundary edges
-of the conflict zone are ouput in counterclockwise order
+of the conflict zone are output in counterclockwise order
 where each edge is described  through the incident face
 which is not in conflict with \ccc{p}.
 The function returns the resulting output iterator.}
@@ -367,7 +367,7 @@ otherwise.  }
 \ccMethod{
 template < class Stream>
   Stream& draw_dual(Stream & ps);}
-{output the dual power diagram to stream ps.}
+{output the dual power diagram to stream \ccc{ps}.}
 
 \ccPredicates
 \ccThree{Oriented_side}{side_of_}{}

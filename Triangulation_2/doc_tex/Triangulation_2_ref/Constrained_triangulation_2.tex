@@ -53,7 +53,7 @@ in the way intersecting constraints are dealt with.
 \item  One of them is
 designed to be robust when predicates are evaluated exactly but
 constructions (i. e.  intersection computations) are
-approximative.
+approximate.
 \item
 The other one is designed to be used 
 with an exact arithmetic (meaning exact
@@ -110,7 +110,7 @@ with an exact arithmetic type.
  The information about constrained edges is stored in the 
 faces of the triangulation. Thus the nested \ccc{Face}
 type of a constrained triangulation offers
-additonnal functionalities to deal with this information.
+additional functionalities to deal with this information.
 These additional functionalities 
 induce additional requirements on the base face class
 plugged into the triangulation data structure of 
@@ -182,7 +182,7 @@ is constrained.}
 \ccMethod{template<class OutputItEdges>
   OutputItEdges incident_constraints(Vertex_handle v, 
     OutputItEdges out) const;}
-{OutputItEdges is an ouput iterator with \ccc{Edge} as value
+{\ccc{OutputItEdges} is an output iterator with \ccc{Edge} as value
 type.
 Outputs the constrained edges incident to \ccc{v}
 in the sequence pointed to by \ccc{out} and returns the resulting
@@ -220,8 +220,8 @@ for the location of \ccc{p}.}
 { Inserts points a and b, and inserts segment ab as a
 constraint. Removes the faces crossed by segment ab and creates new
 faces instead. If a vertex c lies on segment ab, constraint ab is
-replaced by the two constraints ac and cb. Apart from the insertion of
-a and b, the algorithm runs in time proportionnal to the number of
+replaced by the two constraints ac and \ccc{cb}. Apart from the insertion of
+a and b, the algorithm runs in time proportional to the number of
 removed triangles. 
 \ccPrecond The relative interior of segment \ccc{ab} does not
 intersect the relative interior of another constrained edge.}
@@ -278,7 +278,7 @@ write ``C'' or ``N'' depending whether edge
 %algorithm. The complexity of this algorithm is $O(n\log n)$ if $n$
 %endpoints are present. The sweep structure is an \stl\ map.
  The insertion of a constrained edge runs in time
-proportionnal to the number of triangles intersected by this edge.
+proportional to the number of triangles intersected by this edge.
 
 
 \end{ccRefClass}

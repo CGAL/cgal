@@ -26,7 +26,7 @@ of set of points ${  A}$ in the plane.
 Such a triangulation has vertices at the points of ${  A}$
 and its domain covers the convex hull of ${  A}$.
 It can be viewed as a planar partition of the plane
-whoses bounded faces are triangular and cover
+whose bounded faces are triangular and cover
 the convex hull of ${  A}$. The single unbounded face of this partition
 is the complementary of the convex hull of ${  A}$.
  
@@ -127,14 +127,14 @@ The class \ccRefName\ has  two template parameters. The first one
 The second parameter is the triangulation data structure,
 it has to be instantiated by a model of the concept
 \ccc{TriangulationDataStructure_2}.
-By befault, the triangulation data structure  is instanciated by
+By default, the triangulation data structure  is instantiated by
 \ccc{CGAL::Triangulation_data_structure_2 <
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Triangulation_face_base_2<Gt> > >}.
 
 
 \ccInheritsFrom{\ccc{Triangulation_cw_ccw_2}}
-This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
+This class provides the functions \ccc{cw(i)} and \ccc{ccw(i)}.
 
 \ccTypes
 \ccThree{typedef Traits::Triangle_2xxx}{Triangulation_data_structure;}{}
@@ -261,8 +261,8 @@ refer to different triangulations~:
  if \ccc{tr} is modified, \ccVar\ is not. }
 
 \ccMethod{Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr);}
-{Assignement. All the vertices and faces are duplicated.
- After the assignement, \ccVar\ and \ccc{tr}
+{Assignment. All the vertices and faces are duplicated.
+ After the assignment, \ccVar\ and \ccc{tr}
 refer to different triangulations~: 
  if \ccc{tr} is modified, \ccVar\ is not.}
 
@@ -405,7 +405,7 @@ location : \\
 such that
 \ccc{query} lies to the left  of the oriented line $pq$ 
 (the rest of the triangulation lying to the right of this line).\\
-- for a degenerate one dimensional triangulation it is the (degenarate
+- for a degenerate one dimensional triangulation it is the (degenerate
 one dimensional) face $(\infty, p, NULL)$ such that \ccc{query}
 and the triangulation lie on either side of \ccc{p}. \\
 If the point \ccc{query} lies outside the affine hull,
@@ -443,7 +443,7 @@ the point \ccc{p}. \ccPrecond \ccc{f} is finite.}
 \ccMethod{Oriented_side
  side_of_oriented_circle(Face_handle f, const Point & p);}
 {Returns on which side of the circumcircle  of face \ccc{f} lies 
-the point \ccc{p}. The circle is assumed to be counterclockwisely
+the point \ccc{p}. The circle is assumed to be counterclockwise
 oriented, so its positive
 side correspond to its bounded side.
 This predicate is available only if the corresponding predicates on
@@ -506,7 +506,7 @@ algorithm of where to start.
 
 \ccMethod{void    remove(Vertex_handle v);}
 {Removes the vertex from the triangulation. The created hole is 
- retriangulated.
+ re-triangulated.
  \ccPrecond Vertex \ccc{v} must be finite.}
 
 
@@ -622,8 +622,8 @@ the third one is modified.
 \ccMethod{void remove_second(Vertex_handle v);}{Removes the before last finite vertex.}
 \ccMethod{void remove_first(Vertex_handle v);}{Removes the last finite vertex.}
 
-The following fonctions are mainly intended to be used in conjunction
-with the \ccc{find_conflicts()} member fonctions of Delaunay and constrained 
+The following functions are mainly intended to be used in conjunction
+with the \ccc{find_conflicts()} member functions of Delaunay and constrained 
 Delaunay triangulations to perform insertions.
 
 \ccMethod{   template<class EdgeIt>
@@ -946,7 +946,7 @@ is an internal format.
 {Reads a triangulation from stream \ccc{is} and assigns it
 to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point}.}
 
-The information ouput  in the \ccc{iostream} is: \\
+The information output  in the \ccc{iostream} is: \\
 - the dimension, the number of vertices (including the infinite one), 
  and the number of faces (including infinite ones). \\
 - for each vertex (except the infinite vertex), 
@@ -957,8 +957,8 @@ the non combinatorial information (if any) in  this face.
 - for each face again 
  the indices of the neighboring faces. \\
 The  index of an item  (vertex of face) is
-the rank of this item in the ouput order.
-When dimension $<$ 2, the same information is ouput
+the rank of this item in the output order.
+When dimension $<$ 2, the same information is output
 for faces of maximal dimension instead of faces.
 
 
@@ -995,7 +995,7 @@ time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
-retriangulating the hole. Removal takes time \ccTexHtml{$O(d^2)$}{O(d^2)} in the worst
+re-triangulating the hole. Removal takes time \ccTexHtml{$O(d^2)$}{O(d^2)} in the worst
 case, if \ccTexHtml{$d$}{d} is the degree of the removed vertex,
 which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
 

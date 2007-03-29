@@ -39,9 +39,9 @@ constrained Delaunay triangulations.
 
 As in the case of constrained triangulations, three different versions
 of Delaunay constrained triangulations are offered
-depending on wether the user wishes to handle
+depending on whether the user wishes to handle
 intersecting input constraints or not.
-The desired version can  be selected through the instantation of the
+The desired version can  be selected through the instantiation of the
 third template parameter \ccc{Itag} which can be one of the
 following~: \\
 \ccc{CGAL::No_intersection_tag} if  intersections of
@@ -83,7 +83,7 @@ of the edges of the triangulation is stored
 in the faces. 
 Thus the nested \ccc{Face}
 type of a constrained triangulation offers
-additonnal functionalities to deal with this information.
+additional functionalities to deal with this information.
 These additional functionalities 
 induce additional requirements on the base face class
 plugged into the triangulation data structure of 
@@ -184,7 +184,7 @@ for the location of \ccc{p}.}
 
 
 \ccMethod{ void insert_constraint(Vertex_handle va, Vertex_handle vb);}
-{ Inserts the line segment whose endpoints are the vertices va and vb
+{ Inserts the line segment whose endpoints are the vertices \ccc{va} and vb
 as a constrained  edge e in the triangulation. }
 
 
@@ -223,7 +223,7 @@ the faces which are in conflict with point \ccc{p}.
 It outputs in the container pointed to by \ccc{eit} 
 the boundary of the zone in conflict with \ccc{p}.
 The boundary edges
-of the conflict  zone are ouput in counterclockwise order
+of the conflict  zone are output in counterclockwise order
 and each edge is described  through its incident face
 which is not in conflict with \ccc{p}.
 The function returns in a std::pair the resulting output iterators.
@@ -247,7 +247,7 @@ are output. The function returns the resulting output iterator.}
 type.
  This functions  outputs in the container pointed to by \ccc{eit},
 the boundary of the zone in conflict with \ccc{p}. The boundary edges
-of the conflict  zone are ouput in counter-clockwise order
+of the conflict  zone are output in counter-clockwise order
 and each edge is described  through the incident face
 which is not in conflict with \ccc{p}.
 The function returns the resulting output iterator.}
