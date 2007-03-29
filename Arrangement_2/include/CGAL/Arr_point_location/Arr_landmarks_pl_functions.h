@@ -976,8 +976,10 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
                                             traits->compare_xy_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x = 
                                             traits->compare_y_at_x_2_object();
+  CGAL_LM_DEBUG (
   typename Traits_adaptor_2::Is_in_x_range_2      is_in_x_range = 
                                             traits->is_in_x_range_2_object();
+  )
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right = 
                                       traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2 compare_y_at_x_left = 
