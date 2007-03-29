@@ -663,8 +663,6 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
                                       traits->is_in_x_range_2_object();
   typename Traits_adaptor_2::Construct_min_vertex_2  min_vertex =
                                       traits->construct_min_vertex_2_object();
-  typename Traits_adaptor_2::Construct_max_vertex_2  max_vertex =
-                                      traits->construct_max_vertex_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2        compare_y_at_x =
                                       traits->compare_y_at_x_2_object();
 
