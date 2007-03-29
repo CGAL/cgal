@@ -378,7 +378,7 @@ public:
     CGAL_precondition(it->object() == k);
     
     v_.pre_remove_vertex(it);
-    if (next(it) != end()) {
+    if (next(it) != Iterator(end())) {
       simulator_->delete_event(it->event());
       it->set_event(Event_key());
     }

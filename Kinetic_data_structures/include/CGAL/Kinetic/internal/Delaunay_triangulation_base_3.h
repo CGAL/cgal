@@ -1032,8 +1032,9 @@ protected:
     std::vector<Cell_handle> ics;
     triangulation().incident_cells(v, std::back_inserter(ics));
     for (unsigned int i=0; i< ics.size(); ++i) {
-      int j;
-      bool ret=ics[i]->has_vertex(v, j);
+      int j=-1;// disable warning
+      bool ret=ics[i]->has_vertex(v, j); // initializes j
+      CGAL_assertion(j != -1);
       CGAL_assertion(ret);
       for (int k=0; k<4 ; ++k) {
 	if (k==j) continue;

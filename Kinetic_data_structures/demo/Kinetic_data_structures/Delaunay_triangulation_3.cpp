@@ -18,7 +18,7 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef CGAL_USE_SOQT
+#ifdef CGAL_USE_COIN
     int n=10;
     int d=2;
     bool print_help=false;

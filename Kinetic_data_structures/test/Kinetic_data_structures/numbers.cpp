@@ -8,7 +8,7 @@
 template <class NT>
 void check_nt(NT v) {
   NT zero(0);
-  assert(v <= 0 || v > 0);                  // break symmetry due to compiler warning
+  assert(v <= zero || v > zero);                  // break symmetry due to compiler warning
   if (std::numeric_limits<NT>::has_infinity) {
     NT inf= std::numeric_limits<NT>::infinity();
     //NT inf2=inf;
