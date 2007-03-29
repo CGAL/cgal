@@ -26,6 +26,23 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! \todo Make the handlers default constructibe
+ * Some compilers complain that the handlers are not initialized. Currently,
+ * there is no requirement from the concepts they model respectively to
+ * have default constructors. The following is a work around.
+ */
+template <typename Handle>
+class Vertex_initializer {
+public:
+  void operator()(Handle & handle) {}
+};
+
+template <typename Vertex>
+class Vertex_initializer<Vertex *> {
+public:
+  void operator()(Vertex * & handle) {handle = NULL; }
+};
+
 // ---------------------------------------------------------------------------
 // Construct the lower/upper envelope of the given list of non-vertical curves.
 //
@@ -231,9 +248,14 @@ _merge_envelopes (const Envelope_diagram_1& d1,
   Vertex_const_handle  v2;
   Vertex_const_handle  next_v;
   bool                 next_exists = true;
-  Comparison_result    res_v;
+  Comparison_result    res_v = EQUAL;
   bool                 same_x = false;
-  
+
+  Vertex_initializer<Vertex_const_handle> v_init;
+  v_init(v1);
+  v_init(v2);
+  v_init(next_v);
+    
   do
   {
     // Locate the vertex that has smaller x-coordinate between v1 and v2.
@@ -465,6 +487,8 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   // Use the current rightmost of the two left vertices as a reference point.
   bool                 v_rm_exists = true;
   Vertex_const_handle  v_rm;
+  Vertex_initializer<Vertex_const_handle> v_init;
+  v_init(v_rm);
 
   if (is_leftmost1)
   {
@@ -868,23 +892,6 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
   
   return (new_v);
 }    
-
-/*! \todo Make the handlers default constructibe
- * Some compilers complain that the handlers are not initialized. Currently,
- * there is no requirement from the concepts they model respectively to
- * have default constructors. The following is a work around.
- */
-template <typename Handle>
-class Vertex_initializer {
-public:
-  void operator()(Handle & handle) {}
-};
-
-template <typename Vertex>
-class Vertex_initializer<Vertex *> {
-public:
-  void operator()(Vertex * & handle) {handle = NULL; }
-};
 
 // ---------------------------------------------------------------------------
 // Merge the vertical segments into the envelope given as a minimization
