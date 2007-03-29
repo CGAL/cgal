@@ -8,21 +8,6 @@
 // #define DEBUG(a) a;
 #define DEBUG(a)
 
-// The following wrappers are needed, since we can't call the right min/max
-// from outside namespace CGAL directly.
-namespace CGAL {
-template <class FT>
-inline FT my_max (const FT &a, const FT &b)
-{
-  return max(a,b);
-}
-
-template <class FT>
-inline FT my_min (const FT &a, const FT &b)
-{
-  return min(a,b);
-}
-}                                                                               
 
 // This test program computes the coordinates of a sequence of points drawing
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
@@ -274,11 +259,11 @@ bool utility_test()
   DEBUG( std::cout << "is_finite test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::my_max(a,d).is_same(IA_nt(0,1));
+  tmpflag = (CGAL::max)(a,d).is_same(IA_nt(0,1));
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::my_min(a,b).is_same(IA_nt(-1,0));
+  tmpflag = (CGAL::min)(a,b).is_same(IA_nt(-1,0));
   DEBUG( std::cout << "min test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
