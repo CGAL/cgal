@@ -2198,7 +2198,7 @@ public:
         pointer rb=old->right_bottom_neighbour();
         if (rb) {rb->set_lb(last);last->set_rb(rb);}
       }
-      if (!top_it || !bottom && !traits->trapezoid_top_curve_equal(*old,*it))
+      if (!top_it || (!bottom && !traits->trapezoid_top_curve_equal(*old,*it)))
       {
         pointer rt=old->right_top_neighbour();
         if (rt) {rt->set_lt(last);last->set_rt(rt);}
