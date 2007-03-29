@@ -55,17 +55,21 @@ public:
   void init(CurveIterator begin, CurveIterator end)
   {
     m_xcurves.clear();
-    //m_xcurves.insert(m_xcurves.end(), begin, end);
-    // Because SunPro CC doesn't support template member functions:
+#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
     std::copy(begin, end, std::back_inserter(m_xcurves));
+#else
+    m_xcurves.insert(m_xcurves.end(), begin, end);
+#endif
   }
 
   template <class CurveIterator>
   void insert(CurveIterator begin, CurveIterator end)
   {
-    //m_xcurves.insert(m_xcurves.end(), begin, end);
-    // Because SunPro CC doesn't support template member functions:
+#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
     std::copy(begin, end, std::back_inserter(m_xcurves));
+#else
+    m_xcurves.insert(m_xcurves.end(), begin, end);
+#endif
   }
 
   bool is_empty() const
