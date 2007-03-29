@@ -22,11 +22,11 @@ int main() {
 		 "using floating point coordinates"
 	    << std::endl;
 
-  if(N1.is_simple()) {
-    N1.convert_to_Polyhedron(P);
+  if(N.is_simple()) {
+    N.convert_to_Polyhedron(P);
     std::cout << P;
   } 
   else {
-    std::cout << N1;
+    std::cout << N;
   }
 }
