@@ -64,7 +64,7 @@ three points, or a point and a line, ray, or segment.
 space $\E^3$ and the embedding of $\E^2$ in that space.
 Just like lines, planes are oriented and partition space into a positive side 
 and a negative side.
-In \cgal, there are no special classes for halfspaces. Halfspaces in 2D and
+In \cgal, there are no special classes for half-spaces. Half-spaces in 2D and
 3D are supposed to be represented by oriented lines and planes, respectively.
 
 Concerning polygons and polyhedra, the kernel provides triangles,
@@ -82,7 +82,7 @@ separate the plane into two regions, one bounded and one unbounded.
 Geometric objects in \cgal\ have member functions that test the
 position of a point relative to the object.  Full dimensional objects
 and their boundaries are represented by the same type, 
-e.g.\ halfspaces and hyperplanes are not distinguished, neither are balls and
+e.g.\ half-spaces and hyperplanes are not distinguished, neither are balls and
 spheres and discs and circles. Such objects split the ambient space into two
 full-dimensional parts, a bounded part and an unbounded part 
 (e.g.\ circles), or two unbounded parts (e.g.\ hyperplanes). By default these
@@ -102,4 +102,4 @@ a member function \ccStyle{bounded_side()} with return type
 If an object is lower dimensional, e.g.\ a triangle in three-dimensional
 space or a segment in two-dimensional space, there is only a test whether a
 point belongs to the object or not. This member function, which takes a 
-point as an argument and returns a boolean value, is called \ccStyle{has_on()}
+point as an argument and returns a Boolean value, is called \ccStyle{has_on()}

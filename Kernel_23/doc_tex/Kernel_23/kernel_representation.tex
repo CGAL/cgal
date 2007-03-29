@@ -74,7 +74,7 @@ requirements on what is called a {\em FieldNumberType} in \cgal. This
 roughly means that \ccStyle{Kernel::FT} is a type for which operations
 $+$, $-$, $*$ and $/$ are defined with semantics (approximately)
 corresponding to those of a field in a mathematical sense. Note that,
-strictly speaking, the built-in type \ccc{int} does not fullfil the
+strictly speaking, the built-in type \ccc{int} does not fulfill the
 requirements on a field type, since \ccc{int}s correspond to elements
 of a ring rather than a field, especially operation $/$ is not the
 inverse of $*$.  The requirements on the type \ccStyle{Kernel::RT} are
@@ -96,7 +96,7 @@ used with the \ccc{Cartesian} representation class should be a
 FieldNumberType as described above. As mentioned above, the built-in
 type \ccc{int} is not a FieldNumberType. However, for some
 computations with \ccHtmlNoLinksFrom{Cartesian} representation, no
-division operation is needed, i.e., a RingNumberType is sufficient in
+division operation is needed, i.e., a \ccc{RingNumberType} is sufficient in
 this case. With \ccc{Cartesian<FieldNumberType>}, both
 \ccc{Cartesian<FieldNumberType>::FT} and
 \ccc{Cartesian<FieldNumberType>::RT} are mapped to
@@ -126,14 +126,14 @@ objects. As for the \ccHtmlNoLinksFrom{Cartesian} representation, one
 has to declare the type used to store the coordinates. Since the
 homogeneous representation does not use divisions, the number type
 associated with a homogeneous representation class must be a model for
-the weaker concept RingNumberType only. However, some operations
+the weaker concept \ccc{RingNumberType} only. However, some operations
 provided by this kernel involve divisions, for example computing
 squared distances or \ccHtmlNoLinksFrom{Cartesian} coordinates. To
 keep the requirements on the number type parameter of
 \ccc{Homogeneous} low, the number type
 \ccStyle{Quotient<RingNumberType>} is used for operations that require
 divisions. This number type can be viewed as an adaptor which turns a
-RingNumberType into a FieldNumberType. It maintains numbers as
+\ccc{RingNumberType} into a \ccc{FieldNumberType}. It maintains numbers as
 quotients, i.e., a numerator and a denominator. With
 \ccc{Homogeneous<RingNumberType>},
 \ccc{Homogeneous<RingNumberType>::FT} is equal to
@@ -208,14 +208,14 @@ arise due to overflow.
 If new points are to be constructed, for example the
 \ccHtmlNoLinksFrom{intersection} point of two lines, computation of
 \ccHtmlNoLinksFrom{Cartesian} coordinates usually involves divisions.
-Hence, one needs to use a FieldNumberType with
+Hence, one needs to use a \ccc{FieldNumberType} with
 \ccHtmlNoLinksFrom{Cartesian} representation, or alternatively, switch
 to homogeneous representation. The type \ccc{double} is a -- though
-imprecise -- model for FieldNumberType. You can also put any
-RingNumberType into the \ccc{Quotient} adaptor to get a field type
+imprecise -- model for \ccc{FieldNumberType}. You can also put any
+\ccc{RingNumberType} into the \ccc{Quotient} adaptor to get a field type
 which then can be put into \ccc{Cartesian}. But using homogeneous
-representation on the RingNumberType is usually the better option.
-Other valid FieldNumberTypes are \ccc{leda_rational} and
+representation on the \ccc{RingNumberType} is usually the better option.
+Other valid \ccc{FieldNumberType}s are \ccc{leda_rational} and
 \ccc{leda_real}.
 
 If it is crucial for you that the computation is reliable, the right
@@ -258,7 +258,7 @@ kernels.
         \footnote{Currently it requires having either LEDA or CORE installed}.
   \item \ccc{Exact_predicates_inexact_constructions_kernel}: provides exact
         geometric predicates, but geometric constructions may be inexact due to
-        roundoff errors.  It is however enough for most \cgal\ algorithms, and
+        round-off errors.  It is however enough for most \cgal\ algorithms, and
         faster than both \ccc{Exact_predicates_exact_constructions_kernel} and
         \ccc{Exact_predicates_exact_constructions_kernel_with_sqrt}.
   \end{itemize}

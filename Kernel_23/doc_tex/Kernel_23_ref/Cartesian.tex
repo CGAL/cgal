@@ -5,10 +5,10 @@
 A model for \ccc{Kernel} that uses \ccHtmlNoLinksFrom{Cartesian} coordinates to represent the
 geometric objects.  In order for \ccRefName\ to model Euclidean geometry
 in $E^2$ and/or $E^3$, for some mathematical field $E$ (\textit{e.g.},
-the rationals \Q\ or the reals \R), the template parameter FieldNumberType 
+the rationals \Q\ or the reals \R), the template parameter \ccc{FieldNumberType} 
 must model the mathematical field $E$.  That is, the field operations on this
-number type must copute the mathematically correct results.  If the number 
-type provided as a model for FieldNumberType is only an approximation of a 
+number type must compute the mathematically correct results.  If the number 
+type provided as a model for \ccc{FieldNumberType} is only an approximation of a 
 field (such as the built-in type \ccc{double}), then the geometry provided by 
 the kernel is only an approximation of Euclidean geometry.  
 

@@ -22,7 +22,7 @@ A model for this must provide:
                                          const Kernel::Point_3&r);}
 {If \ccc{p,q,r} are collinear, then \ccc{COLLINEAR} is returned.
 If not, then \ccc{p,q,r} define a plane $P$.  The return value in this case is
-either \ccc{POSITIVE} or \ccc{NEGATIVE}, but we don't specify it explicitely.
+either \ccc{POSITIVE} or \ccc{NEGATIVE}, but we don't specify it explicitly.
 However, we guarantee that all calls to this predicate over 3 points in $P$
 will return a coherent orientation if considered a 2D orientation in $P$.}
 
