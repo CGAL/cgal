@@ -95,7 +95,7 @@ with respect to the smallest sphere orthogonal to the others. \\
 \ccc{In_smallest_orthogonal_sphere_3}
 except that the  returned type  is not a \ccc{Sign}
 but belongs to the  enum \ccc{Bounded_side}
-(A \ccc{NEGATIVE}, ccc{NULL} and \ccc{POSITIVE})
+(A \ccc{NEGATIVE}, \ccc{ZERO} and \ccc{POSITIVE})
  corresponding respectively to 
 \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY} and \ccc{ON_UNBOUNDED_SIDE})).
  \\
@@ -126,7 +126,7 @@ The operator()  returns \ccc{ON_BOUNDED_SIDE},
 according to the position of this intersection 
 with respect to the simplex formed by the bare
 points.
-This predicate is usefull for flow computations. \\
+This predicate is useful for flow computations. \\
 \ccc{Bounded_side operator()( Weighted_point_3  p,
 		           Weighted_point_3  q,
 		           Weighted_point_3  r,
@@ -186,7 +186,7 @@ and computes the squared radius
 of the sphere centered in the last point and orthogonal
 to the other weighted points. The last argument is a weighted point 
 but its weight does not matter. 
-This construction is adhoc for pumping slivers.
+This construction is ad hoc for pumping slivers.
 For robustness issue, a predicate to compare critical squared radii
 for a given last point should be needed. \\
 \ccc{FT operator() ( Weighted_point_3  p,

@@ -144,7 +144,7 @@ Delaunay triangulations have the specific \textit{empty sphere property},
 that is, the circumscribing sphere of each cell of such a triangulation
 does not contain any other vertex of the triangulation in its interior.
 These triangulations are uniquely defined except in degenerate cases
-where five points are cospherical.  Note however that the \cgal\ implementation
+where five points are co-spherical.  Note however that the \cgal\ implementation
 computes a unique triangulation even in these cases.
 
 This implementation is fully dynamic: it supports both insertions of points
@@ -417,7 +417,7 @@ base classes.
 
 Starting with \cgal\ release 3.0, the design of the triangulation data
 structure has been changed in order to give the possibility to store handles
-(an entity akeen to pointers) directly in the vertex and cell base classes.
+(an entity akin to pointers) directly in the vertex and cell base classes.
 Previously, \texttt{void*} pointers were stored there instead, and later
 converted internally to handles, but this happened to be too restrictive for
 some uses.
