@@ -16,6 +16,18 @@
 typedef CGAL::MP_Float       MPF;
 typedef CGAL::Quotient<MPF>  QMPF;
 
+double non_zero_double(){
+ double d;
+ do {
+  d = CGAL::default_random.get_double();
+  if(d ==0) {
+	  std::cout << "generated zero" << std::endl;
+  }
+ }while(d==0);
+ return d;
+}
+
+
 void test_integral_division()
 {
   std::cout << "Testing integral_division()" << std::endl;
@@ -25,18 +37,18 @@ void test_integral_division()
   MPF tmp = integral_division(MPF(0), MPF(1));
 
   for (int i = 0; i < 10000; ++i) {
-    MPF d = CGAL::default_random.get_double();
-    MPF n = CGAL::default_random.get_double();
+    MPF d = non_zero_double();
+    MPF n = non_zero_double();
 
     // We test with up to 5 chunks for the denominator.
-    if ((i%5) < 1) d *= CGAL::default_random.get_double();
-    if ((i%5) < 2) d *= CGAL::default_random.get_double();
-    if ((i%5) < 3) d *= CGAL::default_random.get_double();
-    if ((i%5) < 4) d *= CGAL::default_random.get_double();
+    if ((i%5) < 1) d *= non_zero_double();
+    if ((i%5) < 2) d *= non_zero_double();
+    if ((i%5) < 3) d *= non_zero_double();
+    if ((i%5) < 4) d *= non_zero_double();
 
     // We test with up to 3 chunks for the numerator.
-    if ((i%3) < 1) n *= CGAL::default_random.get_double();
-    if ((i%3) < 2) n *= CGAL::default_random.get_double();
+    if ((i%3) < 1) n *= non_zero_double();
+    if ((i%3) < 2) n *= non_zero_double();
 
     // Try to change the signs
     if ((i%7)  == 0) d = -d;
@@ -60,7 +72,7 @@ void test_integral_division()
   assert( ! CGAL::divides(MPF(1), MPF(3)) );
   assert( ! CGAL::divides(MPF(2), MPF(7)) );
   // test if we're lucky :)
-  assert( ! CGAL::divides(MPF(CGAL::default_random.get_double()), MPF(CGAL::default_random.get_double())) );
+  assert( ! CGAL::divides(MPF(non_zero_double()), MPF(non_zero_double())) );
 }
 
 void test_equality(int i)
