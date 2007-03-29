@@ -119,10 +119,6 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
   // Go over all halfedges in the arrangement.
-  typename Traits_adaptor_2::Is_in_x_range_2      is_in_x_range =
-                                       traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
-                                       traits->compare_y_at_x_2_object();
   typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                        traits->is_vertical_2_object();
   typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
