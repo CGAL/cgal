@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -g -DCGAL_USE_COIN -I/usr/include/Coin2\
+CXXFLAGS = -g  -I/usr/include/Coin2\
            -I$(CGAL_INCL_DIR) \
            $(CGAL_CXXFLAGS) \
            -Iinclude\
@@ -35,7 +35,7 @@ QT_LDFLAGS =  \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) 
 
-CXXFLAGS_3D= $(CXXFLAGS) -DCGAL_USE_SOQT
+CXXFLAGS_3D= $(CXXFLAGS)
 
 LDFLAGS_3D= -lCoin -lSoQt  $(QT_LDFLAGS) 
 
@@ -54,11 +54,14 @@ DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
 all: 2d
 
 
-3d:\
+3d:     activate_coin\
 	Delaunay_triangulation_3$(EXE_EXT) \
 	regular_triangulation_3$(EXE_EXT)\
 	gui_3$(EXE_EXT)
 
+activate_coin:
+	rm -rf include/control_coin.h
+	echo "#define CGAL_USE_COIN" > include/control_coin.h
 
 generate_data$(EXE_EXT): generate_data$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate_data generate_data$(OBJ_EXT) $(LDFLAGS)
