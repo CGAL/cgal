@@ -904,6 +904,9 @@ Manual/doc_tex/Manual/fig/l-simp.eps -text svneol=unset#application/postscript
 Manual/doc_tex/Manual/fig/l-simp.pdf -text svneol=unset#application/pdf
 Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#image/gif
 Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#image/gif
+Manual_tools/aspell/.aspell.conf -text
+Manual_tools/aspell/.aspell.en.prepl -text
+Manual_tools/aspell/.aspell.en.pws -text
 Manual_tools/doc_ps/cc_manual.ps.gz -text svneol=unset#application/gzip
 Manual_tools/doc_ps/cc_manual_index.ps.gz -text svneol=unset#application/gzip
 Manual_tools/doc_ps/latex_to_html.ps.gz -text svneol=unset#application/gzip

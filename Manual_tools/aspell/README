@@ -1,0 +1,6 @@
+This directory contains word files and configuration files that allow to
+spell-check the CGAL Manual using the "aspell" program.
+Just run it using :
+
+aspell --home-dir=.../Manual_tools/aspell -c filename.tex
+
