@@ -1,5 +1,7 @@
+#if 0
+
 /* XPM */
-const const char *mycircle_xpm[] = {
+static const char *mycircle_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -45,7 +47,7 @@ const const char *mycircle_xpm[] = {
 };
 
 /* XPM */
-const char *segment_xpm[] = {
+static const char *segment_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -90,7 +92,7 @@ const char *segment_xpm[] = {
 };
 
 /* XPM */
- char *ellipse_xpm[] = {
+static const char *ellipse_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -134,7 +136,7 @@ const char *segment_xpm[] = {
 };
 
 /* XPM */
- char *parabula_xpm[] = {
+static const char *parabula_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -179,7 +181,7 @@ const char *segment_xpm[] = {
 
 
 /* XPM */
- char *hyperbula_xpm[] = {
+static const char *hyperbula_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -221,3 +223,5 @@ const char *segment_xpm[] = {
 "oooooooooooooooooooooooooooooooo",
 "oooooooooooooooooooooooooooooooo",
 };
+
+#endif

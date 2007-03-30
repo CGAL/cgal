@@ -1,5 +1,7 @@
+#if 0
+
 /* XPM */
-const const char *ray_shooting_xpm[] = {
+static const char *ray_shooting_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -45,7 +47,7 @@ const const char *ray_shooting_xpm[] = {
 };
 
 /* XPM */
-const char *small_ray_shooting_xpm[] = {
+static const char *small_ray_shooting_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -89,7 +91,7 @@ const char *small_ray_shooting_xpm[] = {
 };
 
 /* XPM */
- char *ray_shooting_down_xpm[] = {
+static const char *ray_shooting_down_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -135,7 +137,7 @@ const char *small_ray_shooting_xpm[] = {
 };
 
 /* XPM */
- char *small_ray_shooting_down_xpm[] = {
+static const char *small_ray_shooting_down_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -177,6 +179,7 @@ const char *small_ray_shooting_xpm[] = {
 "oooooooooooooooooooooooooooooooo"
 };
 
+#endif
 
 
 

@@ -1,5 +1,5 @@
 /* XPM */
-const const char *polyline_xpm[] = {
+static const char *polyline_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -42,8 +42,10 @@ const const char *polyline_xpm[] = {
 "oooooooooooooooooooooooooooooooo"
 };
 
+#if 0
+
 /* XPM */
-const char * polyline_small_xpm[] = {
+static const char * polyline_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #EDA1A1",
@@ -65,3 +67,5 @@ const char * polyline_small_xpm[] = {
 " @@@..@.......  ",
 "@@@..........   ",
 "@@  ........    "};
+
+#endif
