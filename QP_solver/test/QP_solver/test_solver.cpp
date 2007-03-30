@@ -370,13 +370,27 @@ bool process(const std::string& filename,
     type = Double_type;
     number_type = "double";
   }
-  if ((type==Double_type && (is_int(IT()) || is_rational(IT()))) ||
-      (type==Int_type && is_rational(IT())) ||
+  // now, some combinations of IT and the file's number-type are
+  // incomaptible:
+  //    file's input type  | input type IT to be used in parsing the file
+  //    -----------------------------------------------------------------
+  //    double             | int  (can't convert double to it)
+  //    int                | 
+  //    rational           | int + double (can't convert rational to them)
+  if ((type==Double_type && is_int(IT()) ) ||
       (type==Rational_type && (is_double(IT()) || is_int(IT()))))
     return true;
 
+  // also, Is_linear/Is_nonnegative tags are incompatible with 
+  // nonlinear/nonnegative programs
   if ((check_tag(Is_linear()) && !qp.is_linear()) ||
       (check_tag(Is_nonnegative()) && !qp.is_nonnegative()))
+    return true;
+
+  // finally, filtered pricing strategies are only to be used if the input
+  // type is double
+  Key_const_iterator it = options.find("Strategy");
+  if (!is_double(IT()) && (it->second == FF || it->second == PF)) 
     return true;
 
   if (verbosity > 0)
