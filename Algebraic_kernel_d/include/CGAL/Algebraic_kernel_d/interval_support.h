@@ -22,6 +22,12 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_INTERVAL_SUPPORT_H
 #define CGAL_ALGEBRAIC_KERNEL_D_INTERVAL_SUPPORT_H
 
+// TODO: Remove #define (also from Arithmetic_kernel.h) if Algebraic_kernel_d is 
+//       part of the release
+#ifndef CGAL_INTERN_USE_BFI
+#define CGAL_INTERN_USE_BFI
+#endif
+
 #include <CGAL/basic.h> 
 #include <CGAL/Arithmetic_kernel.h>
 
