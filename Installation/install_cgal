@@ -1012,6 +1012,12 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"
 	    ;;
+	*Linux*pgCC*|*Linux*pgcpp*)
+	    #### settings for Portland Group Compiler on linux
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    # PGCC has long name problems with "-g".
+	    DEBUG_OPT=""
+	    ;;
 	*Linux*sunCC*|*Linux*CC*)
 	    #### settings for sunpro compiler on linux
 	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
@@ -1057,12 +1063,6 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
-	    ;;
-	*Linux*pgCC*|*Linux*pgcpp*)
-	    #### settings for Portland Group Compiler on linux
-	    RUNTIME_LINKER_FLAG='-Wl,-R'
-	    # PGCC has long name problems with "-g".
-	    DEBUG_OPT=""
 	    ;;
 	*)
 	    #### settings for unknown compiler
