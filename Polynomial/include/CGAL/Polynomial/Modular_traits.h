@@ -40,7 +40,7 @@ private:
 public:
     typedef Polynomial<COEFF> NT;
     typedef Modular_traits<NT> Self;
-    typedef typename Mtr::Is_convertible Is_convertible;
+    typedef typename Mtr::Is_modularizable Is_modularizable;
     typedef Polynomial<typename Mtr::Modular_NT> Modular_NT;
     
     struct Modular_image{
