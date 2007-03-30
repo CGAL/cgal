@@ -21,10 +21,9 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_NO_LOCALE.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
@@ -33,10 +32,7 @@
 
 #include <locale>
 
-
 int main()
 {
   return std::isspace(' ', std::locale::classic()) ? 0 : 1;
 }
-
-

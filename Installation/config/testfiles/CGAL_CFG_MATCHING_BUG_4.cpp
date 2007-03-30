@@ -21,9 +21,8 @@
 //
 // Author(s)     : Michael Hoffmann
 
-// CGAL_CFG_MATCHING_BUG_4.cpp
 // ---------------------------------------------------------------------
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
@@ -37,5 +36,3 @@ template <class K> void foo(typename K::P, typename K::L, K) {}
 template <class K> void foo(typename K::L, typename K::P, K) {}
 
 int main() { return 0; }
-
-// EOF //

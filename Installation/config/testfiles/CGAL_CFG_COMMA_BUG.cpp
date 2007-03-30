@@ -18,9 +18,8 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_COMMA_BUG.cpp
 // ---------------------------------------------------------------------
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 

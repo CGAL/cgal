@@ -18,10 +18,9 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_NO_LONG_DOUBLE_IO.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 

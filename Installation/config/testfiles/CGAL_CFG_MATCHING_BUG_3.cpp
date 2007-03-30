@@ -21,9 +21,8 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_MATCHING_BUG_3.cpp
 // ---------------------------------------------------------------------
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
@@ -49,5 +48,3 @@ int main()
   B *p = 0;
   return foo(p);
 }
-
-// EOF //

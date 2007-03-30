@@ -21,10 +21,9 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
@@ -55,5 +54,3 @@ int main() {
     c.foo(0);
     return 0;
 }
-
-// EOF //

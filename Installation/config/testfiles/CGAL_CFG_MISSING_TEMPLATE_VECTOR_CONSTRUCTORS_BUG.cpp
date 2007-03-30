@@ -21,17 +21,15 @@
 //
 // Author(s)     : Radu Ursu
 
-// CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
 //| The flag CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG is set,
 //| if the std::vector class does not have defined template constructors.
 //| This is a feature of SunPro 5.5.
-
 
 
 #include <list>
@@ -43,4 +41,3 @@ int main() {
   std::vector<int> v(l.begin(), l.end());
   return 0;
 }
-

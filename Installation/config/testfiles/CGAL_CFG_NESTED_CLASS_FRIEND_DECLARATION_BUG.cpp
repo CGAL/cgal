@@ -18,10 +18,9 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-// CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
@@ -82,4 +81,4 @@ int main()
   b.do_something();
 
   return 0;
-};
+}

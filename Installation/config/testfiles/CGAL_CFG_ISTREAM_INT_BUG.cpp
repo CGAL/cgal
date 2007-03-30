@@ -18,9 +18,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-// CGAL_CFG_ISTREAM_INT_BUG.cpp
 // ---------------------------------------------------------------------
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
@@ -29,6 +28,7 @@
 
 #include <iostream>
 #include <sstream>
+
 int main()
 {
   int i;
@@ -42,4 +42,3 @@ int main()
   return 0;
 
 }
-

@@ -21,10 +21,9 @@
 //
 // Author(s)     : Sylvain Pion
 
-// CGAL_CFG_CONVERSION_OPERATOR_BUG.cpp
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
-// This program is used by cgal_configure.
+// This program is used by install_cgal.
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
