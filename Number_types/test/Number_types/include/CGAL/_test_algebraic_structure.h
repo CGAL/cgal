@@ -274,8 +274,11 @@ void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
     (void)c;  // avoid warnings for unused variables
 
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Is_exact Is_exact; 
-    CGAL_test_assert( !Is_exact::value || c * b == a );
+    typedef typename AST::Is_exact Is_exact;
+   // VC7 produced an ICE for
+   // CGAL_test_assert( ! Is_exact::value || ... );
+    bool ie = Is_exact::value;
+    CGAL_test_assert( ! ie || c * b == a );
     a =  AS (1);
     a /=  AS (2);
     a /=  AS (2); // that must work correctly also for float types
@@ -295,9 +298,10 @@ void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
     AS  a(4);
    
     AS  c = sqrt( a);
-    CGAL_test_assert( !Is_exact::value || c ==  AS (2) );
+    bool ie =  Is_exact::value;
+    CGAL_test_assert( ! ie ||   (c ==  AS (2))  );   
     c =  AS (5);
-    CGAL_test_assert( !Is_exact::value || sqrt(c) * sqrt(c) == c );
+    CGAL_test_assert( !ie || sqrt(c) * sqrt(c) == c );
     (void)c;  // avoid warnings for unused variables
     // #### more involved square root and root tests
 };
@@ -639,7 +643,8 @@ void test_Type_functions( const CGAL::Field_with_sqrt_tag&) {
    typedef Algebraic_structure_traits<AS> AST;
    typedef typename AST::Is_exact Is_exact; 
    AS  c = CGAL_NTS sqrt( AS (4));
-   CGAL_test_assert( !Is_exact::value || c ==  AS (2) );
+   bool ie = Is_exact::value;
+   CGAL_test_assert( !ie || c ==  AS (2) );
 }
 template <class  AS >
 void test_Type_functions( const CGAL::Field_with_root_of_tag&) {
