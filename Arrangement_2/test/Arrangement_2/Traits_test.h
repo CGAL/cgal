@@ -960,6 +960,8 @@ Traits_test<T_Traits>::read_xcurve(stream & is,
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
   cv = typename T_Traits::X_monotone_curve_2(p1, p2);
+  // Only to pacify some dome compiler
+  (void) cv;
   return true;
 }
 
