@@ -54,7 +54,7 @@ extern "C" {
 #elif defined __BORLANDC__
 #  include <float.h>
 #elif defined _MSC_VER || defined __sparc__ || \
-     (defined __i386__ && !defined __PGI)
+     (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC)
    // Nothing to include.
 #else
    // By default we use the ISO C99 version.
@@ -195,7 +195,7 @@ inline double IA_bug_sqrt(double d)
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
 
-#if defined __i386__ && !defined __PGI
+#if defined __i386__ && !defined __PGI && !defined __SUNPRO_CC
 
 #  if defined CGAL_SAFE_SSE2 
 
