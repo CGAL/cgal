@@ -305,20 +305,7 @@ bounding_box_2(ForwardIterator f, ForwardIterator l)
   Traits t;
   return bounding_box_2(f, l, t);
 } // bounding_box_2(f, l)
-#ifdef CGAL_CFG_MATCHING_BUG_3
-template < class ForwardIterator >
-inline typename
-std::iterator_traits< ForwardIterator* >::value_type::R::Iso_rectangle_2
-bounding_box_2(ForwardIterator* f, ForwardIterator* l)
-// PRE: f != l.
-{
-  CGAL_precondition(f != l);
-  typedef typename std::iterator_traits< ForwardIterator* >::value_type::R R;
-  typedef Rectangular_p_center_default_traits_2< R > Traits;
-  Traits t;
-  return bounding_box_2(f, l, t);
-} // bounding_box_2(f, l)
-#endif // CGAL_CFG_MATCHING_BUG_3
+
 template < class Rectangle, class Traits >
 inline Rectangle
 construct_bounding_box_union_2(const Rectangle& r1,
