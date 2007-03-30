@@ -945,10 +945,10 @@ int main() {
         //definition of MOD::NT
         CGAL_test_assert((::boost::is_same<TESTT,
                   MOD_traits::NT>::value));
-        // Is_convertible
+        // Is_modularizable
         CGAL_test_assert( 
             (::boost::is_same<::CGAL::Tag_true,
-             MOD_traits::Is_convertible>::value)
+             MOD_traits::Is_modularizable>::value)
             );
 
         CGAL_test_assert(MOD_image(TESTT(21)) == MOD_NT(0));   
