@@ -48,12 +48,190 @@ public:                                                                       \
                                                                               \
 private:
 
-CGAL_BEGIN_NAMESPACE                           ;
+CGAL_BEGIN_NAMESPACE
+;
 
-// The Polynomial_traits_d_base template
 namespace CGALi {
 
-template< class InnermostCoefficient, class ICoeffAlgebraicCategory >
+// Base class for functors depending on the algebraic category of the
+// innermost coefficient
+template< class Coefficient_, class ICoeffAlgebraicCategory >
+class Polynomial_traits_d_base_icoeff_algebraic_category {    
+    public:    
+        typedef Null_functor    Multivariate_content;
+};
+
+// Specializations
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Integral_domain_without_division_tag > 
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Null_tag > {};
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Integral_domain_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Integral_domain_without_division_tag > {}; 
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Integral_domain_tag > {
+    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+    
+    public:    
+    
+    //       Multivariate_content;
+    struct Multivariate_content
+        : public Unary_function< Polynomial_d , Innermost_coefficient >{
+        Innermost_coefficient 
+        operator()(const Polynomial_d& p) const {
+            typedef Innermost_coefficient_iterator IT;
+            Innermost_coefficient content(0);
+            for (IT it = typename PT::Innermost_coefficient_begin()(p);
+                 it != typename PT::Innermost_coefficient_end()(p);
+                 it++){
+                content = CGAL::gcd(content, *it);
+                if(CGAL::is_one(content)) break;
+            }
+            return content;
+        }
+    };
+}; 
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Euclidean_ring_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Unique_factorization_domain_tag > {}; 
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Field_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Integral_domain_tag > {
+    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+
+    public:
+    
+    //       Multivariate_content;
+    struct Multivariate_content
+        : public Unary_function< Polynomial_d , Innermost_coefficient >{
+        Innermost_coefficient 
+        operator()(const Polynomial_d& p) const {
+            typename PT::Compare compare;
+            if( compare( p, Polynomial_d(0) ) == EQUAL )
+                return Innermost_coefficient(0);
+            else
+                return Innermost_coefficient(1);
+        }
+    };
+};
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Field_with_sqrt_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Field_tag > {}; 
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Field_with_kth_root_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Field_with_sqrt_tag > {}; 
+ 
+ template< class Coefficient_ >
+class Polynomial_traits_d_base_icoeff_algebraic_category< 
+            Polynomial< Coefficient_ >, Field_with_root_of_tag >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+                Polynomial< Coefficient_ >, Field_with_kth_root_tag > {}; 
+
+// Base class for functors depending on the algebraic category of the
+// Polynomial type
+template< class Coefficient_, class PolynomialAlgebraicCategory >
+class Polynomial_traits_d_base_polynomial_algebraic_category {        
+    public:
+        typedef Null_functor    Univariate_content;
+        typedef Null_functor    Square_free_factorization;
+};
+
+// Specializations
+template< class Coefficient_ >
+class Polynomial_traits_d_base_polynomial_algebraic_category<
+            Polynomial< Coefficient_ >, Integral_domain_without_division_tag >
+    : public Polynomial_traits_d_base_polynomial_algebraic_category<
+                Polynomial< Coefficient_ >, Null_tag > {};
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_polynomial_algebraic_category<
+            Polynomial< Coefficient_ >, Integral_domain_tag >
+    : public Polynomial_traits_d_base_polynomial_algebraic_category<
+                Polynomial< Coefficient_ >, Integral_domain_without_division_tag > {};
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_polynomial_algebraic_category<
+            Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
+    : public Polynomial_traits_d_base_polynomial_algebraic_category<
+                Polynomial< Coefficient_ >, Integral_domain_tag > {
+    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+
+    public:
+    
+    //       Univariate_content
+    struct Univariate_content
+        : public Unary_function< Polynomial_d , Coefficient>{
+        Coefficient operator()(const Polynomial_d& p) const {
+            return p.content();
+        }
+        Coefficient operator()(Polynomial_d p, int i) const {
+            return typename PT::Swap()(p,i,PT::d-1).content();
+        }
+    };
+    
+    //       Square_free_factorization;
+    struct Square_free_factorization{
+        typedef int result_type;
+        
+        template < class OutputIterator1, class OutputIterator2 >
+        int operator()(
+                const Polynomial_d& p, 
+                OutputIterator1 fit, 
+                OutputIterator2 mit) const {
+            return square_free_factorization( p, fit, mit );
+        }
+        
+        template< class OutputIterator1, class OutputIterator2 >
+        int operator()( const Polynomial_d& p, OutputIterator1 fit,
+                        OutputIterator2 mit, Innermost_coefficient& a ) {
+            if( p == Polynomial_d(0) ) {
+                a = Innermost_coefficient(0);
+                return 0;
+            }
+            a = CGAL::unit_part( typename Polynomial_traits_d< Polynomial_d >::Innermost_leading_coefficient()( p ) ) * 
+                typename Polynomial_traits_d< Polynomial_d >::Multivariate_content()( p );            
+            return square_free_factorization( p/Polynomial_d(a), fit, mit );
+        }
+          
+    };
+        
+};
+
+template< class Coefficient_ >
+class Polynomial_traits_d_base_polynomial_algebraic_category<
+            Polynomial< Coefficient_ >, Euclidean_ring_tag >
+    : public Polynomial_traits_d_base_polynomial_algebraic_category<
+                Polynomial< Coefficient_ >, Unique_factorization_domain_tag > {};
+
+
+// Polynomial_traits_d_base class connecting the two base classes which depend
+//  on the algebraic category of the innermost coefficient type and the poly-
+//  nomial type.
+
+// First the general base class for the innermost coefficient
+template< class InnermostCoefficient, 
+          class ICoeffAlgebraicCategory, class PolynomialAlgebraicCategory >
 class Polynomial_traits_d_base {
     typedef InnermostCoefficient ICoeff;
   public:
@@ -156,6 +334,8 @@ class Polynomial_traits_d_base {
     
 };
 
+// Evaluate_homogeneous_func for recursive homogeneous evaluation of a
+//  polynomial, used by Polynomial_traits_d_base for polynomials.
     template< class Polynomial, int d = CGAL::Polynomial_traits_d< Polynomial>::d >
     struct Evaluate_homogeneous_func;
 
@@ -210,14 +390,15 @@ class Polynomial_traits_d_base {
         }
     };
 
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Null_tag > {
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
-};
-
-template< class Coefficient_  >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Integral_domain_without_division_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Null_tag > {
+// Now the version for the polynomials with all functors provided by all polynomials
+template< class Coefficient_,
+          class ICoeffAlgebraicCategory, class PolynomialAlgebraicCategory >
+class Polynomial_traits_d_base< Polynomial< Coefficient_ >,
+          ICoeffAlgebraicCategory, PolynomialAlgebraicCategory >
+    : public Polynomial_traits_d_base_icoeff_algebraic_category< 
+        Polynomial< Coefficient_ >, ICoeffAlgebraicCategory >,
+      public Polynomial_traits_d_base_polynomial_algebraic_category<
+        Polynomial< Coefficient_ >, PolynomialAlgebraicCategory > {
 
     CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
@@ -733,16 +914,7 @@ public:
             return typename Coefficient_flattening::Flatten()(p.end(),p.end());    
         }                                                                          
     };                                                                             
-    
-    //       Univariate_content;
-    typedef Null_functor    Univariate_content;
-
-    //       Multivariate_content;
-    typedef Null_functor    Multivariate_content;
-
-    //       Square_free_factorization;
-    typedef Null_functor    Square_free_factorization;
-               
+                   
     //       Make_square_free;
     struct Make_square_free 
         : public Unary_function< Polynomial_d, Polynomial_d >{
@@ -1149,151 +1321,8 @@ public:
             result.insert(result.begin(),polynomial.degree());
             return result;
         }
-    };
+    };        
 };
-
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Integral_domain_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Integral_domain_without_division_tag > {};
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Integral_domain_tag > {
-    
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
-
-public:    
-    //       Univariate_content
-    struct Univariate_content
-        : public Unary_function< Polynomial_d , Coefficient>{
-        Coefficient operator()(const Polynomial_d& p) const {
-            return p.content();
-        }
-        Coefficient operator()(Polynomial_d p, int i) const {
-            return typename PT::Swap()(p,i,PT::d-1).content();
-        }
-    };
-
-
-    //       Multivariate_content;
-    struct Multivariate_content
-        : public Unary_function< Polynomial_d , Innermost_coefficient >{
-        Innermost_coefficient 
-        operator()(const Polynomial_d& p) const {
-            typedef Innermost_coefficient_iterator IT;
-            Innermost_coefficient content(0);
-            for (IT it = typename PT::Innermost_coefficient_begin()(p);
-                 it != typename PT::Innermost_coefficient_end()(p);
-                 it++){
-                content = CGAL::gcd(content, *it);
-                if(CGAL::is_one(content)) break;
-            }
-            return content;
-        }
-    };
-    
-    //       Square_free_factorization;
-    struct Square_free_factorization{
-        typedef int result_type;
-        
-        template < class OutputIterator1, class OutputIterator2 >
-        int operator()(
-                const Polynomial_d& p, 
-                OutputIterator1 fit, 
-                OutputIterator2 mit) const {
-            return square_free_factorization( p, fit, mit );
-        }
-        
-        template< class OutputIterator1, class OutputIterator2 >
-        int operator()( const Polynomial_d& p, OutputIterator1 fit,
-                        OutputIterator2 mit, Innermost_coefficient& a ) {
-            if( p == Polynomial_d(0) ) {
-                a = Innermost_coefficient(0);
-                return 0;
-            }
-            a = CGAL::unit_part( typename Polynomial_traits_d< Polynomial_d >::Innermost_leading_coefficient()( p ) ) * Multivariate_content()( p );            
-            return square_free_factorization( p/Polynomial_d(a), fit, mit );
-        }
-          
-    };
-    
-    
-};
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Euclidean_ring_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Unique_factorization_domain_tag > {};
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Integral_domain_tag > {
-
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
-
-public:    
-    //       Univariate_content
-    struct Univariate_content
-        : public Unary_function< Polynomial_d , Coefficient>{
-        Coefficient operator()(const Polynomial_d& p) const {
-            return p.content();
-        }
-        Coefficient operator()(Polynomial_d p, int i) const {
-            return typename PT::Swap()(p,i,PT::d-1).content();
-        }
-    };
-
-    //       Multivariate_content;
-    struct Multivariate_content
-        : public Unary_function< Polynomial_d , Innermost_coefficient >{
-        Innermost_coefficient 
-        operator()(const Polynomial_d& p) const {
-            typename PT::Compare compare;
-            if( compare( p, Polynomial_d(0) ) == EQUAL )
-                return Innermost_coefficient(0);
-            else
-                return Innermost_coefficient(1);
-        }
-    };
-    
-    //       Square_free_factorization;
-    struct Square_free_factorization{
-        typedef int result_type;
-        
-        template < class OutputIterator1, class OutputIterator2 >
-        int operator()(
-                const Polynomial_d& p, 
-                OutputIterator1 fit, 
-                OutputIterator2 mit) const {
-            return square_free_factorization( p, fit, mit );
-        }  
-        
-        template< class OutputIterator1, class OutputIterator2 >
-        int operator()( const Polynomial_d& p, OutputIterator1 fit,
-                        OutputIterator2 mit, Innermost_coefficient& a ) {
-            if( p == Polynomial_d(0) ) {
-                a = Innermost_coefficient(0);
-                return 0;
-            }
-            
-            a = CGAL::unit_part( typename Polynomial_traits_d< Polynomial_d >::Innermost_leading_coefficient()( p ) ) * Multivariate_content()( p );            
-            return square_free_factorization( p/Polynomial_d(a), fit, mit );
-        }
-    };
-    
-};
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_with_sqrt_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_tag > {};
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_with_kth_root_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_with_sqrt_tag > {};
-
-template< class Coefficient_ >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_with_root_of_tag >
-    : public Polynomial_traits_d_base< Polynomial< Coefficient_ >, Field_with_kth_root_tag > {};
 
 } // namespace CGALi
 
@@ -1305,8 +1334,9 @@ template< class Polynomial >
 class Polynomial_traits_d
     : public CGALi::Polynomial_traits_d_base< Polynomial,  
     typename Algebraic_structure_traits<
-        typename CGALi::Polynomial_traits_d_base< Polynomial, Null_tag >
-                             ::Innermost_coefficient >::Algebraic_category > {};
+        typename CGALi::Polynomial_traits_d_base< Polynomial, Null_tag, Null_tag >
+                             ::Innermost_coefficient >::Algebraic_category,
+    typename Algebraic_structure_traits< Polynomial >::Algebraic_category > {};
 
 
 CGAL_END_NAMESPACE
