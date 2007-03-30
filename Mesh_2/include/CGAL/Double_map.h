@@ -28,6 +28,7 @@
 
 #ifdef CGAL_USE_BOOST_BIMAP
 #include <boost/bimap/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
 #endif
 
 namespace CGAL {
@@ -46,7 +47,7 @@ public:
   
 #ifdef CGAL_USE_BOOST_BIMAP
   typedef ::boost::bimap::bimap< ::boost::bimap::set_of<Key, Direct_compare>,
-				 ::boost::bimap::set_of<Data, Reverse_compare> > Boost_bimap;
+				 ::boost::bimap::multiset_of<Data, Reverse_compare> > Boost_bimap;
 
   typedef typename Boost_bimap::left_map_type Direct_func;
   typedef typename Boost_bimap::right_map_type Reverse_func;
@@ -236,7 +237,7 @@ public :
 	it != direct_func().end();
 	++it)
     {
-      out << func_key(it->first) << " "
+      out << func_key(it->first) << " -> "
 #ifdef CGAL_USE_BOOST_BIMAP
 	  << func_data(it->second)
 #else
