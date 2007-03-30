@@ -205,8 +205,8 @@ bool may_have_common_factor(const Polynomial<NT>& P,
     CGAL_precondition( Modular::get_current_prime()!=0 );
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
-    typename Mtr::Is_convertible is_convertible;
-    return CGALi::may_have_common_factor_(P,Q,is_convertible);   
+    typename Mtr::Is_modularizable is_modularizable;
+    return CGALi::may_have_common_factor_(P,Q,is_modularizable);   
 }
 
 
