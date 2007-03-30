@@ -1366,7 +1366,8 @@ print(std::ostream &os, const Root_of_2<RT> &r)
 }
 
 template < typename RT >
-struct Is_valid<Root_of_2<RT> >: public Unary_function<Root_of_2<RT> , bool>{
+class Is_valid<Root_of_2<RT> >: public Unary_function<Root_of_2<RT> , bool>{
+public:
     bool operator()(const Root_of_2<RT> &r)
     {
         return r.is_valid();
