@@ -320,7 +320,7 @@ private :
 
 #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
 template <class Traits>
-CW_indirect_edge_info_compare< Edge_info<Traits> >
+CW_indirect_edge_info_compare< Traits >
 Edge_list<Traits>::cw_indirect_edge_info_compare;
 #endif
 
