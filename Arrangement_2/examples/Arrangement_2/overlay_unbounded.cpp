@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_2/ex_overlay_unbounded.cpp
 // A face overlay of two arrangements with unbounded faces.
 
+#include <string>
+#include <boost/lexical_cast.hpp>
+
 #include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
@@ -8,16 +11,14 @@
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arr_overlay.h>
 #include <CGAL/Arr_default_overlay_traits.h>
-#include <string>
 
 // Define a functor for creating a label from a characer and an integer.
 struct Overlay_label
 {
   std::string operator() (char c, int i) const
   {
-    char  cstr[10];
-    sprintf (cstr, "%c%d", c, i);
-    return (std::string(cstr));
+    return boost::lexical_cast<std::string>(c) +
+      boost::lexical_cast<std::string>(i);
   }
 };
 
