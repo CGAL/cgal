@@ -65,9 +65,8 @@ construction of the Voronoi diagram:
 \ccConstructor{template < class InputIterator >
        Delaunay_triangulation_3 (InputIterator first, InputIterator last,
  const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
-{Creates a Delaunay triangulation of the points specified by the iterator range
-\ccc{[first,last)} of value type \ccc{Point}, possibly specifying a traits
-class \ccc{traits}.}
+{Equivalent to contructing an empty triangulation with the optional 
+traits class argument and calling \ccc{insert(first,last)}.}
 
 \ccOperations
 
@@ -105,7 +104,11 @@ number of inserted points.
           int
           insert(InputIterator first, InputIterator last);}
 {Inserts the points in the iterator range $\left[\right.$\ccc{first},
-\ccc{last}$\left.\right)$, of value type \ccc{Point}.}
+\ccc{last}$\left.\right)$.  Returns the number of inserted points.
+Note that this function is not garanteed to insert the points
+following the order of \ccc{InputIterator}.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}}
 
 \ccHeading{Point moving}
 

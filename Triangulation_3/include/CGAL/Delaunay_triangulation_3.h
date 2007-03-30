@@ -197,10 +197,16 @@ public:
   insert(InputIterator first, InputIterator last)
   {
     int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
+
+    std::vector<Point> points (first, last);
+    std::random_shuffle (points.begin(), points.end());
+    spatial_sort (points.begin(), points.end(), geom_traits());
+
+    Cell_handle hint;
+    for (typename std::vector<Point>::const_iterator p = points.begin();
+            p != points.end(); ++p)
+        hint = insert (*p, hint)->cell();
+
     return number_of_vertices() - n;
   }
 

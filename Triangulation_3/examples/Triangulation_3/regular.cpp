@@ -20,24 +20,38 @@ typedef Rt::Vertex_handle                                   Vertex_handle;
 
 int main()
 {
-  Rt T;
+  // generate points on a 3D grid
+  std::vector<Weighted_point> P;
 
-  // insertion of points on a 3D grid
-  std::vector<Vertex_handle> V;
+  int number_of_points = 0;
 
   for (int z=0 ; z<5 ; z++)
     for (int y=0 ; y<5 ; y++)
       for (int x=0 ; x<5 ; x++) {
 	  Point p(x, y, z);
           Weight w = (x+y-z*y*x)*2.0; // let's say this is the weight.
-	  Weighted_point wp(p, w);
-	  V.push_back(T.insert(wp));
+	  P.push_back(Weighted_point(p, w));
+          ++number_of_points;
       }
+
+  Rt T;
+
+  // insert all points in a row (this is faster than one insert() at a time).
+  T.insert (P.begin(), P.end());
 
   assert( T.is_valid() );
   assert( T.dimension() == 3 );
 
   std::cout << "Number of vertices : " << T.number_of_vertices() << std::endl;
+
+  // removal of all vertices
+  int count = 0;
+  while (T.number_of_vertices() > 0) {
+      T.remove (T.finite_vertices_begin());
+      ++count;
+  }
+
+  assert( count == number_of_points );
 
   return 0;
 }

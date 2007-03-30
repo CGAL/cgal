@@ -320,6 +320,16 @@ int main()
   assert(T.is_valid());
   assert(T.dimension()==3);
 
+  T.clear();
+  std::cout << " test iterator range insert" << std::endl;
+  T.insert (lp.begin(), lp.end());
+
+  std::cout << " number of vertices : " 
+	    << T.number_of_vertices() << std::endl;
+  assert(T.is_valid());
+  assert(T.dimension()==3);
+
+
     //test nearest_power_vertex
   std::cout << " test nearest_power_vertex " << std::endl;
   Point pp1(0.0, 0.0, 0.0);

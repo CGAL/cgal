@@ -135,10 +135,25 @@ public:
   insert(InputIterator first, InputIterator last)
   {
     int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
+
+    std::vector<Weighted_point> points (first, last);
+    std::random_shuffle (points.begin(), points.end());
+    spatial_sort (points.begin(), points.end(), geom_traits());
+
+    Cell_handle hint;
+    for (typename std::vector<Weighted_point>::const_iterator p = points.begin();
+            p != points.end(); ++p)
+    {
+        Locate_type lt;
+        Cell_handle c;
+        int li, lj;
+        c = locate (*p, lt, li, lj, hint);
+
+        Vertex_handle v = insert (*p, lt, c, li, lj);
+
+        hint = v == Vertex_handle() ? c : v->cell();
     }
+
     return number_of_vertices() - n;
   }
 

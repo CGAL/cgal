@@ -37,6 +37,7 @@ int main()
 
 #include <iostream>
 #include <fstream>
+#include <iterator>
 #include <unistd.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -116,9 +117,10 @@ int main()
   }
 
   std::cout <<"          Reading file data/points" << std::endl ;
-  Point nouv;
-  while ( iFile >> nouv )
-    T.insert(nouv);
+  {
+      std::istream_iterator<Point> begin (iFile), end;
+      T.insert (begin, end);
+  }
 
   T.is_valid(true);
 
