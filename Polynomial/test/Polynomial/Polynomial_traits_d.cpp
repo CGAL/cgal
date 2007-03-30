@@ -725,21 +725,21 @@ void test_square_free_factorization(){
     CGAL_test_assert( alpha == CGAL::unit_part( ileading_coeff( p ) ) * 
                             multivariate_content( p ) );
     
-    std::cerr << std::endl;
+    //std::cerr << std::endl;
     std::vector< int >::iterator mults_it = mults.begin();
     for( typename std::vector< Polynomial_d >::iterator it = factors.begin();
          it != factors.end(); ++it ) {
         CGAL_test_assert( (*it) == canonicalize( (*it) ) );
-        std::cerr << "faktor= " << (*it) << ", ";
-        std::cerr << "mult= " << (*mults_it) << std::endl; 
+        //std::cerr << "faktor= " << (*it) << ", ";
+        //std::cerr << "mult= " << (*mults_it) << std::endl; 
         CGAL_test_assert( mults_it != mults.end() );
         rec_p *= CGAL::INTERN_POLYNOMIAL::ipower( (*it),(*mults_it++) );
     }
     
     rec_p *= Polynomial_d( alpha );
-    std::cerr << "ALPHA= " << alpha << std::endl;
-    std::cerr << "    p= " << p << std::endl;
-    std::cerr << "rec_p= " << rec_p << std::endl;
+    //std::cerr << "ALPHA= " << alpha << std::endl;
+    //std::cerr << "    p= " << p << std::endl;
+    //std::cerr << "rec_p= " << rec_p << std::endl;
     CGAL_test_assert( p == rec_p );
 
     std::cerr << "ok"<< std::endl; 
@@ -1464,7 +1464,7 @@ int main(){
     std::cerr << "--------------------------------------" << std::endl;
     test_multiple_dimensions<leda_integer>();
 
-/*    std::cerr << std::endl;
+    std::cerr << std::endl;
     std::cerr << "Test for coefficient type leda_rational" << std::endl;
     std::cerr << "---------------------------------------" << std::endl;
     test_multiple_dimensions<leda_rational>();
@@ -1482,7 +1482,7 @@ int main(){
     std::cerr << std::endl;
     std::cerr << "Test for coefficient type Sqrt_extension< leda_rational, leda_rational >" << std::endl;
     std::cerr << "------------------------------------------------------------------------" << std::endl;    
-    test_multiple_dimensions< CGAL::Sqrt_extension< leda_rational, leda_rational > >();*/    
+    test_multiple_dimensions< CGAL::Sqrt_extension< leda_rational, leda_rational > >();    
     
     return 0;
 }
