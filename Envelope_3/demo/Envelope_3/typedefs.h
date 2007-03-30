@@ -149,7 +149,7 @@ public:
     m_oi(oi)
   {}
 
-  void create_face(Face_const_handle f1, Face_const_handle f2,
+  virtual void create_face(Face_const_handle f1, Face_const_handle f2,
                    Face_handle f)
   {
     if (f1 == m_f1 && f2 == m_f2) {
