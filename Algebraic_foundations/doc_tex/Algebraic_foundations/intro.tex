@@ -15,35 +15,4 @@ allows an explicit handling of mixed operations.
 %In particular it is possible to access the result type of a binary operation. 
  
 
-\ccIgnore{ 
-Moreover, the package takes care of the problematic of mixed operations by 
-introducing the notion of {\em interoperable types}. 
-
-The later is gathered by the concept \ccc{RealEmbeddable}
-
-Instead the concepts 
-introduced within this package reflect the {\em algebraic structure} of a type. 
-
-Instead it introduces a 
-concept hierarchy for {\em algebraic structures} and an orthogonal concept
-\ccc{RealEmbeddable}. 
-
-The most important change is, that the new concept \ccc{RealEmbeddable} is now 
-orthogonal to the old {\em number type} concepts which are now called {\em algebraic structures}. 
-
-The package avoids the term {\em number type} and introduces the  notion of an 
-{\em algebraic structure}, i.e. it introduces an concepts hierarchy 
-of algebraic structures such as  \ccc{IntegralDomain}, 
-\ccc{UniqueFactorizationDomain}, \ccc{EuclideanRing}, \ccc{Field} etc. 
-Orthogonal to these concepts it introduces the concept \ccc{RealEmbeddable}
-for number types that are embeddable on the real axis. 
-This allows type representing polynomials, finite fields, complex numbers etc.
-to be valid models of algebraic structure concepts. 
-
-The package also introduces the notion of interoperability of types, 
-by introducing the concepts \ccc{ExplicitInteroperable} and 
-\ccc{ImplictInteroparable}. 
-}
-
-
 
