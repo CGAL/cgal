@@ -608,8 +608,6 @@ convert() {
     if [ -d ${TmpDir}/benchmarks ] ; then
         mkdir -p ${OutDir}/benchmarks
         cp -r ${TmpDir}/benchmarks/*.tar.gz ${OutDir}/benchmarks
-    else
-        lgout -n "cannot find benchmarks!"
     fi
 
     # finish, write timing to logfile and close it
