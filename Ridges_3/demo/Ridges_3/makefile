@@ -61,7 +61,7 @@ visu: 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT)
 	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
 
 clean: 
-	rm *$(EXE_EXT) *$(OBJ_EXT)
+	rm *.$(EXE_EXT) *$(OBJ_EXT)
 
 depend: 
 	makedepend *.[Ch]
