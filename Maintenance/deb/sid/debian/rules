@@ -19,7 +19,8 @@ build: build-stamp
 build-stamp: patch-stamp
 	dh_testdir
 	dh_clean -k
-	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) --prefix $(CURDIR)/debian/tmp/usr \
+	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) \
+	  --prefix $(CURDIR)/debian/tmp/usr \
 	  --without-autofind --with-ZLIB --with-BOOST --with-BOOST_PROGRAM_OPTIONS \
 	  --with-GMP --with-GMPXX --with-MPFR \
 	  --with-X11 --with-OPENGL --with-QT3MT \

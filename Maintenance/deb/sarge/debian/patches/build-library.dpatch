@@ -6,8 +6,17 @@
 
 @DPATCH@
 diff -urNad cgal~/install_cgal cgal/install_cgal
---- cgal~/install_cgal	2007-03-25 13:01:29.000000000 +0200
-+++ cgal/install_cgal	2007-03-25 13:01:53.000000000 +0200
+--- cgal~/install_cgal	2007-04-01 23:17:22.000000000 +0200
++++ cgal/install_cgal	2007-04-01 23:18:21.000000000 +0200
+@@ -836,7 +836,7 @@
+     CGAL_SHARED_LIB_SONAME=""
+     CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME)"
+     CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME)"
+-    RUNTIME_LINKER_FLAG=''
++#    RUNTIME_LINKER_FLAG=''
+     PRINT_STACKTRACE_PROGRAM="gdb"
+     WINDOWS_COMPILER=""
+     CYGWIN_COMPILER=""
 @@ -934,7 +934,7 @@
  	    #### settings for sgi mipspro compiler on irix5
  	    CGAL_SHARED_LIB_CXXFLAGS=
@@ -79,16 +88,13 @@ diff -urNad cgal~/install_cgal cgal/install_cgal
  	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
  	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
  	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
-@@ -1009,7 +1009,7 @@
+@@ -1009,12 +1009,12 @@
  	    # -mp is required for correct enough floating point operations
  	    # necessary for interval arithmetic.
  	    ADDITIONAL_CXXFLAGS="-mp"
 -	    RUNTIME_LINKER_FLAG='-Wl,-R'
 +#	    RUNTIME_LINKER_FLAG='-Wl,-R'
  	    PRINT_STACKTRACE_PROGRAM="idb"
- 	    ;;
- 	*Linux*sunCC*)
-@@ -1060,7 +1060,7 @@
  	    ;;
  	*Linux*pgCC*|*Linux*pgcpp*)
  	    #### settings for Portland Group Compiler on linux
@@ -97,6 +103,24 @@ diff -urNad cgal~/install_cgal cgal/install_cgal
  	    # PGCC has long name problems with "-g".
  	    DEBUG_OPT=""
  	    ;;
+@@ -1024,7 +1024,7 @@
+ 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
+ 	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
+ 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+-	    RUNTIME_LINKER_FLAG="-R "
++#	    RUNTIME_LINKER_FLAG="-R "
+ 	    PRINT_STACKTRACE_PROGRAM="dbx"
+ 	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+ 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+@@ -4284,7 +4284,7 @@
+ 	${_rm} -f "${COMPILE_LOGFILE}"
+     fi
+     ${_rm} -f *"${OBJ_EXT}"
+-    MAKE_OPTION="-k CGAL_MAKEFILE=$CGAL_MAKEFILE"
++    MAKE_OPTION="-k -j 1 CGAL_MAKEFILE=$CGAL_MAKEFILE"
+ 
+     case "$2" in
+ 	static)
 @@ -4307,7 +4307,7 @@
      _buildlog_marker="log for $1 $2 shown"
  
@@ -107,8 +131,8 @@ diff -urNad cgal~/install_cgal cgal/install_cgal
  	log_print "vvvvvvvvvvvv build ${_buildlog_marker} below vvvvvvvvvvvv"
  	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
 diff -urNad cgal~/src/CGAL/common.mk cgal/src/CGAL/common.mk
---- cgal~/src/CGAL/common.mk	2007-03-25 13:01:29.000000000 +0200
-+++ cgal/src/CGAL/common.mk	2007-03-25 13:01:29.000000000 +0200
+--- cgal~/src/CGAL/common.mk	2007-04-01 23:17:22.000000000 +0200
++++ cgal/src/CGAL/common.mk	2007-04-01 23:17:22.000000000 +0200
 @@ -104,17 +104,19 @@
  
  clean_temp_files::
