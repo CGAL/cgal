@@ -71,14 +71,14 @@
   are specified by the traits class parameter \ccc{t}. This parameter
   can be omitted if \ccc{ForwardIterator} refers to a point type from
   the 2D-Kernel. In this case, a default traits class
-  (\ccc{Rectangular_p_center_default_traits_2<R>}) is used.
+  (\ccc{Rectangular_p_center_default_traits_2<K>}) is used.
   
   \ccRequire
   \begin{enumerate}
   \item \textit{Either: (if no traits parameter is given)} Value type
-    of \ccc{ForwardIterator} is \ccc{CGAL::Point_2<R>} for some
-    representation class \ccc{R} and \ccc{FT} is equivalent to
-    \ccc{R::FT},
+    of \ccc{ForwardIterator} is \ccc{CGAL::Point_2<K>} for some
+    representation class \ccc{K} and \ccc{FT} is equivalent to
+    \ccc{K::FT},
   \item \textit{Or: (if a traits parameter is specified)} \ccc{Traits}
     is a model for \ccc{RectangularPCenterTraits_2}.
   \item \ccc{OutputIterator} accepts the value type of
@@ -87,7 +87,7 @@
   
   \ccSeeAlso
   \ccRefConceptPage{RectangularPCenterTraits_2}\\
-  \ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<R>}\\
+  \ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<K>}\\
   \ccRefIdfierPage{CGAL::sorted_matrix_search}
   
   \ccImplementation The runtime is linear for $p \in \{2,\,3\}$ and
@@ -104,14 +104,14 @@
   \ccIncludeExampleCode{Matrix_search/rectangular_p_center_2.cpp}
 \end{ccRefFunction}
 
-\begin{ccRefClass}{Rectangular_p_center_default_traits_2<R>}
+\begin{ccRefClass}{Rectangular_p_center_default_traits_2<K>}
   \ccCreationVariable{t}\ccTagFullDeclarations
     
   \ccDefinition The class \ccRefName\ defines types and operations
   needed to compute rectilinear $p$-centers of a planar point set
   using the function \ccc{rectangular_p_center_2}.
   
-  \ccRequirements The template parameter \ccc{R} is a model for
+  \ccRequirements The template parameter \ccc{K} is a model for
   \ccc{Kernel}.
   
   \ccIsModel
@@ -119,21 +119,21 @@
 
   \ccTypes 
     
-  \ccNestedType{FT}{typedef to \ccc{R::FT}.}
+  \ccNestedType{FT}{typedef to \ccc{K::FT}.}
   
-  \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}.}
+  \ccNestedType{Point_2}{typedef to \ccc{K::Point_2}.}
   
-  \ccNestedType{Iso_rectangle_2}{typedef to \ccc{R::Iso_rectangle_2}.}
+  \ccNestedType{Iso_rectangle_2}{typedef to \ccc{K::Iso_rectangle_2}.}
   
-  \ccNestedType{Less_x_2}{typedef to \ccc{R::Less_x_2}.}
+  \ccNestedType{Less_x_2}{typedef to \ccc{K::Less_x_2}.}
  
-  \ccNestedType{Less_y_2}{typedef to \ccc{R::Less_y_2}.}
+  \ccNestedType{Less_y_2}{typedef to \ccc{K::Less_y_2}.}
   
   \ccNestedType{Construct_vertex_2}{typedef to
-    \ccc{R::Construct_vertex_2}.}
+    \ccc{K::Construct_vertex_2}.}
   
   \ccNestedType{Construct_iso_rectangle_2}{typedef to
-    \ccc{R::Construct_iso_rectangle_2}.}
+    \ccc{K::Construct_iso_rectangle_2}.}
     
   \ccNestedType{Signed_x_distance_2}{adaptable binary function
     class: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
@@ -328,7 +328,7 @@
     construct_iso_rectangle_2_above_right_point_2_object() const;}{}
   
   \ccHasModels
-  \ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<R>}
+  \ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<K>}
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::rectangular_p_center_2}
