@@ -210,8 +210,10 @@ typedef unsigned int FPU_CW_t;
 #  else
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
-// Note that the ISO C99 version is not enough because of the extended
-// mantissa issue on x86 (may be required by some kinds of computation).
+// Note that the ISO C99 version may not be enough because of the extended
+// mantissa issue on x86 (may be required by some kinds of computation, but
+// as far as CGAL::Interval_nt<> is concerned, the double-rounding issues
+// are taking care of there).
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fnstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
