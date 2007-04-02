@@ -3924,15 +3924,18 @@ write_linker_flags()
       fi
   done
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+      if [ "${CGAL_DIR}" = "${CGAL_INSTALL_DIR}" ]; then
+          _CGAL_IDIR="`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`"
+      else
+          _CGAL_IDIR=`concat_path "${CGAL_INSTALL_DIR}" lib`
+      fi
       RUNTIME_PATH="`split_up \"RUNTIME_PATH\" \":\"`"
       if [ -z "${RUNTIME_PATH}" ]; then
-	  makefile_print_continuationline \
-	      "${RUNTIME_LINKER_FLAG}`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`" \
-	      >> ${FILE}
+          makefile_print_continuationline \
+              "${RUNTIME_LINKER_FLAG}${_CGAL_IDIR}" >> ${FILE}
       else
-	  makefile_print_continuationline \
-	      "${RUNTIME_LINKER_FLAG}`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`:${RUNTIME_PATH}" \
-	      >> ${FILE}
+          makefile_print_continuationline \
+              "${RUNTIME_LINKER_FLAG}${_CGAL_IDIR}:${RUNTIME_PATH}" >> ${FILE}
       fi
   fi
   makefile_print_continuationline ")" >> ${FILE}
@@ -4506,14 +4509,12 @@ installation()
     _do_command \
       "cd \"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
       "Install CGAL libraries"
-    # On Darwin, the path is encoded into the shared library
+    # On Darwin, the shared library identification name needs to be adjusted
     case ${CGAL_OS_COMPILER} in
 	*Darwin*)
-	    #for i in "${_CGAL_IDIR}"/*${CGAL_SHARED_LIB_EXT}; do
 	    for i in `cd "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"; ls *${CGAL_SHARED_LIB_EXT}`; do
 		log_print "Fixing lib paths in" "${i}"
 		${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
-		${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
 	    done;;
     esac
 
