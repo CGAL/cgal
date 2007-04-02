@@ -28,6 +28,7 @@
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_is_valid_2.h>
 #include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/Safe_circulator_from_iterator.h>
 #include <utility>
 #include <iterator>
 
@@ -129,7 +130,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 
    typedef Partitioned_polygon_2< Traits >             P_Polygon_2;
    typedef typename P_Polygon_2::iterator              I;
-   typedef Circulator_from_iterator<I>                 Circulator;
+   typedef Safe_circulator_from_iterator<I>            Circulator;
    typedef Triangulation_indirect_traits_2<Circulator, Traits>  Gt;
 
    typedef Constrained_triangulation_2<Gt>             Constrained_tri_2;
@@ -211,7 +212,9 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                       std::cout << "inserting" << std::endl;
 #endif
-                      polygon.insert_diagonal(source, target);
+                      polygon.insert_diagonal(source.unsafe_circulator()
+		                             ,target.unsafe_circulator()
+					     );
                       triangles.insert(source, target);
                    }
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
