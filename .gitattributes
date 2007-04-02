@@ -1580,6 +1580,9 @@ Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#application
 Optimisation_doc/doc_tex/Optimisation/polydist.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Polytope_distance/polydist.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Polytope_distance/polydist.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Polytope_distance/polydist.pdf -text svneol=unset#application/pdf
 PDB/demo/PDB/makefile -text
 PDB/demo/PDB/pdb_align.cpp -text
 PDB/demo/PDB/pdb_align_points.cpp -text
