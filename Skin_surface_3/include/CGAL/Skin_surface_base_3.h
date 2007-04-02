@@ -247,8 +247,6 @@ template <class Polyhedron_3>
 void
 Skin_surface_base_3<MixedComplexTraits_3>::
 subdivide_mesh_3(Polyhedron_3 &p) const {
-  std::cout << "Skin_surface_base_3.subdivide_mesh_3(p)" << std::endl;
-
   typedef Skin_surface_refinement_policy_3<Self, Polyhedron_3> Policy;
   typedef Skin_surface_sqrt3<Self, Polyhedron_3, Policy>       Subdivider;
 

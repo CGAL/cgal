@@ -39,8 +39,6 @@ class Skin_surface_marching_tetrahedra_observer_3
 
 public:
   Skin_surface_marching_tetrahedra_observer_3() : Base() {
-    std::cout << "Default Skin_surface_marching_tetrahedra_observer_3" 
-	      << std::endl;
   }
 
 };
@@ -70,8 +68,6 @@ public:
   typedef typename Polyhedron::Facet_handle   Polyhedron_facet_handle; 
 
   Skin_surface_marching_tetrahedra_observer_3() : Base() {
-    std::cout << "Optimized Skin_surface_marching_tetrahedra_observer_3" 
-	      << std::endl;
   }
 
   Skin_surface_marching_tetrahedra_observer_3(

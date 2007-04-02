@@ -119,8 +119,6 @@ private:
     do {
       v->point() = policy.to_surface(v);
     } while (++v != last_v);
-
-    CGAL_postcondition( P.is_valid());
   }
 
   //*********************************************

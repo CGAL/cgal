@@ -43,7 +43,8 @@ public:
   typedef typename P_traits::Vector_3    P_vector;
   typedef typename P_traits::Plane_3     P_plane;
 
-  Skin_surface_refinement_policy_3(Skin_surface const& skin) : ss_3(skin) {}
+  Skin_surface_refinement_policy_3(Skin_surface const& skin) : ss_3(skin) {
+  }
     
   P_point to_surface(P_vertex_handle vh) const
   {
@@ -70,14 +71,14 @@ protected:
   Skin_surface const &ss_3;
 };
 
-template <class SkinSurface_3, class P_Traits>
+template <class SkinSurfaceBase_3, class P_Traits, class SkinSurface_3>
 class Skin_surface_refinement_policy_3<
-  SkinSurface_3,
+  SkinSurfaceBase_3,
   Polyhedron_3<P_Traits, 
     Skin_surface_polyhedral_items_3<SkinSurface_3> > > 
 {
 public:
-  typedef SkinSurface_3                              Skin_surface;
+  typedef SkinSurfaceBase_3                          Skin_surface;
   typedef Polyhedron_3<P_Traits, 
     Skin_surface_polyhedral_items_3<SkinSurface_3> > Polyhedron;
   typedef typename Polyhedron::Traits                P_traits;
@@ -91,7 +92,8 @@ public:
   typedef typename P_traits::Vector_3    P_vector;
   typedef typename P_traits::Plane_3     P_plane;
 
-  Skin_surface_refinement_policy_3(Skin_surface const& skin) : ss_3(skin) {}
+  Skin_surface_refinement_policy_3(Skin_surface const& skin) : ss_3(skin) {
+  }
 
   P_point to_surface(P_vertex_handle vh) const {
     typename Skin_surface::Bare_point result =
