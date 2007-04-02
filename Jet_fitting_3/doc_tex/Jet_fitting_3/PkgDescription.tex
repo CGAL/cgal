@@ -1,7 +1,15 @@
 \begin{ccPkgDescription}{Estimation of Local Differential Properties \label{Pkg:Jet_fitting_3}}
 \ccPkgHowToCiteCgal{cgal:pc-eldp-07}
-  \ccPkgSummary{This package allows to compute local
-    differential quantities of a surface from a point sample.}
+
+\ccPkgSummary{For a surface discretized as a point cloud or a mesh, it
+  is desirable to estimate pointwise differential quantities. More
+  precisely, first order properties correspond to the normal or the
+  tangent plane; second order properties provide the principal
+  curvatures and directions, third order properties provide the
+  directional derivatives of the principal curvatures along the
+  curvature lines, etc. This package proposes estimators based on
+  local polynomial fitting.}
+
 \ccPkgDependsOn{Solvers as \ccThirdPartyLapack\ and \ccThirdPartyBlas.}
 \ccPkgIntroducedInCGAL{3.3}
 \ccPkgLicense{\ccLicenseQPL}
