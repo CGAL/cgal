@@ -7,9 +7,6 @@
 
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "imageio/ImageIO.h"
 
 /* read analyse format header
@@ -49,8 +46,5 @@ int writeAnalyzeHeader( const _image* im ) ;
  */
 int writeAnalyzeData( const _image* im ) ;
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

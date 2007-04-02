@@ -6,9 +6,6 @@
 #include "imageio/ImageIO.h"
 #include <minc.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /** read an image from a minc file
     @param im image structure
@@ -49,9 +46,6 @@ int writeMincFile( const _image* im, const char *name, const char *sourceName,
 		   const double *Xcosine, const double *Ycosine,
 		   const double *Zcosine, const double *range );
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

@@ -19,9 +19,6 @@
 #ifndef _typedefs_h_
 #define _typedefs_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 
@@ -62,8 +59,5 @@ typedef enum {
 } typeBoolean;
 
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

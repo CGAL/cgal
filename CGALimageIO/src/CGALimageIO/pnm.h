@@ -1,9 +1,6 @@
 #ifndef PNM_H
 #define PNM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <stdio.h>
 
 #include "imageio/ImageIO.h"
@@ -21,8 +18,5 @@ PTRIMAGE_FORMAT createPgmFormat();
 PTRIMAGE_FORMAT createPgmAscIIFormat();
 PTRIMAGE_FORMAT createPpmFormat();
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

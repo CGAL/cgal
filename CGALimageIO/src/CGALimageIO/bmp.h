@@ -19,9 +19,6 @@
 #ifndef _bmp_h_
 #define _bmp_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
 
 #include <stdio.h>
@@ -40,8 +37,5 @@ PTRIMAGE_FORMAT createBMPFormat();
 extern void IoBmp_verbose ( );
 extern void IoBmp_noverbose ( );
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* _bmp_h_ */

@@ -27,18 +27,17 @@
 #endif
 
 /* Copy-paste from <imageio/ImageIO.h> */
-extern "C" {
-struct _image;
+struct point_image;
+typedef struct point_image _image;
 
-void printSupportedFileFormat();
-_image* _readImage(const char *name);
-void _freeImage(_image *im);
-bool _get_image_bounding_box(_image*,
+extern void printSupportedFileFormat();
+extern _image* _readImage(const char *name);
+extern void _freeImage(_image *im);
+extern void _get_image_bounding_box(_image*,
 			     float*, float*, float*,
 			     float*, float*, float*); 
-void convertImageTypeToFloat(_image* image);
-float triLinInterp(_image* image,float posx, float posy, float posz);
-}
+extern void convertImageTypeToFloat(_image* image);
+extern float triLinInterp(_image* image,float posx, float posy, float posz);
 /* End of copy-paste from <imageio/ImageIO.h> */
 
 namespace CGAL {

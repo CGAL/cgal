@@ -27,9 +27,6 @@
 #ifndef _reech4x4_h_
 #define _reech4x4_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 
@@ -262,8 +259,5 @@ extern void Reech2DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
 extern void Reech4x4_verbose ( );
 extern void Reech4x4_noverbose ( );
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

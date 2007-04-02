@@ -5,9 +5,6 @@
 #include "imageio/ImageIO.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 /* read gis format header
@@ -116,8 +113,5 @@ int writeGisHeader( const _image* im ) ;
  */
 int writeGisData( const _image* im ) ;
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -29,9 +29,6 @@
 #ifndef _recline_h_
 #define _recline_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
 
 /* The different recursive filter's types.
@@ -210,8 +207,5 @@ extern void Recline_verbose ( );
  */
 extern void Recline_noverbose ( );
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* _recline_h_ */

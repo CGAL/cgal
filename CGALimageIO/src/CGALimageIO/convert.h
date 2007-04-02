@@ -19,9 +19,6 @@
 #ifndef _convert_h_
 #define _convert_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 
@@ -84,8 +81,5 @@ extern void Convert_r32_to_u16( r32 *theBuf,
 
 
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

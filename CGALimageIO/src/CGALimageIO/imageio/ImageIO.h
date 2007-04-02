@@ -32,9 +32,6 @@ extern int strncasecmp(const char *s1, const char *s2, size_t n);
 
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 #ifndef LONGINT
@@ -502,8 +499,5 @@ float triLinInterp(_image* image,float posx, float posy, float posz);
 */
 void convertImageTypeToFloat(_image* image);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

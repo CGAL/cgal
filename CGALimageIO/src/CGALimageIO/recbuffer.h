@@ -27,9 +27,6 @@
 #ifndef _recbuffer_h_
 #define _recbuffer_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
 #include <typedefs.h>
 #include <recline.h>
@@ -177,8 +174,5 @@ extern void Recbuffer_verbose ( );
 extern void Recbuffer_noverbose ( );
 
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* _recbuffer_h_ */

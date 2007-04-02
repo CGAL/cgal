@@ -6,9 +6,6 @@
 #include "imageio/ImageIO.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /** Writes the given inrimage header in an already opened file.
     @param im image descriptor
@@ -39,8 +36,5 @@ int writeInrimage(char *basename,_image *im);
 /** creates an return the file format structure associated with the Inrimage file format */
 PTRIMAGE_FORMAT createInrimageFormat();
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif
