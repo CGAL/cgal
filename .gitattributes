@@ -1555,22 +1555,22 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Optimisation_doc/doc_tex/Bounded_volumes/annulus.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Bounded_volumes/annulus.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Bounded_volumes/annulus.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Bounded_volumes/ball.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Bounded_volumes/ball.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Bounded_volumes/ball.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Bounded_volumes/minCircle.png -text
+Optimisation_doc/doc_tex/Bounded_volumes/pcenter.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Bounded_volumes/pcenter.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Bounded_volumes/pcenter.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Optimisation/annulus.eps -text svneol=unset#application/postscript
-Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Optimisation/ball.eps -text svneol=unset#application/postscript
-Optimisation_doc/doc_tex/Optimisation/ball.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Optimisation/ball.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Optimisation/minCircle.png -text
-Optimisation_doc/doc_tex/Optimisation/pcenter.eps -text svneol=unset#application/postscript
-Optimisation_doc/doc_tex/Optimisation/pcenter.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#application/pdf
 PDB/demo/PDB/makefile -text
 PDB/demo/PDB/pdb_align.cpp -text
 PDB/demo/PDB/pdb_align_points.cpp -text
