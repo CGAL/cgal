@@ -1,22 +1,3 @@
-%% =============================================================================
-%% The CGAL User Manual
-%% Chapter: Geometric Optimization
-%% -----------------------------------------------------------------------------
-%% file   : doc_tex/basic/Optimization/user_part.tex
-%% package: Optimisation_doc
-%% author : Sven Schönherr <sven@inf.ethz.ch>
-%% -----------------------------------------------------------------------------
-%% $Id$
-%% $Date$
-%% =============================================================================
-
-%%\section{Introduction}
-
-Geometric optimization deals with problems of computing geometric
-objects which are optimal subject to certain criteria and constraints.
-Our running example will be the problem of computing the sphere of
-smallest radius which contains a given point set in $d$-dimensional
-Euclidean space.
 
 \begin{ccHtmlOnly}
 <center>
@@ -31,13 +12,9 @@ Euclidean space.
 \end{center}
 \end{ccTexOnly}
 
-The geometric optimization algorithms in \cgal\ fall into three categories,
-``Bounding Volumes'', ``Optimal Distances'' and ``Advanced Techniques''.
 
-\section{Bounding and Inscribed Volumes\label{c:opt:sec:bounding}}
-
-This category contains algorithms which for a given point set compute
-the ``best'' circumscribing (or inscribed) object from a specific
+This chapter describes algorithms which for a given point set compute
+the ``best'' circumscribing  object from a specific
 class. If the class consists of all spheres in $d$-dimensional
 Euclidean space and ``best'' is defined as having smallest radius,
 then we obtain the smallest enclosing sphere problem already mentioned
@@ -91,51 +68,8 @@ polygons is performed. In practice, bounding volume hierarchies are
 often used on top of simple bounding volumes to approximate
 complicated objects more accurately.
 
-As far as inscribed volumes are concerned, we provide algorithms for
-computing maximal inscribed $k$-gons (triangles, quadrilaterals,
-\dots) of a planar point set $P$. Maximal $k$-gons are convex, and it
-is known that their vertices can be chosen to be vertices of the
-convex hull of $P$. Hence, the functions
-\ccc{CGAL::maximum_area_inscribed_k_gon_2} and
-\ccc{CGAL::maximum_perimeter_inscribed_k_gon_2} operate on convex polygons
-only. The example below shows that the largest area triangle (green)
-and the largest perimeter triangle (orange, containing the top point)
-of a point set are different in general.
 
-\begin{ccHtmlOnly}
-<center>
-<img border="0" src="max_triangle.gif" align="center">
-</center>
-\end{ccHtmlOnly} 
-
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=5cm]{Optimisation/max_triangle}
-\end{center}
-\end{ccTexOnly}
-
-
-We further provide an algorithm for computing the maximal area
-inscribed axis parallel rectangle 
-
-Given a set of points in the plane, the class \ccc{CGAL::Largest_empty_iso_rectangle_2<T>}
-is a data structure that maintains an iso-rectangle with the largest area among
-all iso-rectangles that are inside a given iso-rectangles, and
-that do not contain any point of the point set.
-
-\begin{ccHtmlOnly}
-<center>
-<img border="0" src="largestEmptyRect.gif" align="center">
-</center>
-\end{ccHtmlOnly} 
-
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=5cm]{Optimisation/largestEmptyRect}
-\end{center}
-\end{ccTexOnly}
-
-Bounding and inscribed volumes are also frequently applied to extract
+Bounding volumes are also frequently applied to extract
 geometric properties of objects. For example, the smallest enclosing
 annulus of a point set can be used to test whether a set of points is
 approximately cospherical. Here, the width of the annulus (or its
@@ -180,82 +114,6 @@ three boxes; the center points are shown in red.
 %us to come up with a solution that satisfies the \cgal\ standards. We
 %are working on a solution for 3-space, though.
 
-\section{Optimal Distances}
-
-This section currently consists of two algorithms only. On one hand,
-one can compute the computation of the distance between the convex
-hulls of two given point sets in $d$-dimensional Euclidean space
-(\ccc{CGAL::Polytope_distance_d<Traits>}). Moreover, it is possible to
-compute the width of a point set in three dimensions
-(\ccc{CGAL::Width_3<Traits>}).
-
-\begin{ccHtmlOnly}
-<center>
-<img border="0" src="polydist.gif" align="center">
-</center>
-\end{ccHtmlOnly} 
-
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=4cm]{Optimisation/polydist}
-\end{center}
-\end{ccTexOnly}
-
-The obvious application is collision detection between convex bodies
-in space. In the spirit of the bounding volume application above, it
-also makes sense for nonconvex objects: a full intersection test
-between complicated objects could in a first stage be approximated
-with the test between the convex hulls of the objects. Only if the
-hulls intersect, a full intersection test is necessary.
-
-To dampen fears concerning the performance of the distance
-computation, we want to mention that the convex hulls of the input
-point sets are not explicitly computed. This avoids a runtime which
-grows exponentially in $d$. In fact, the runtime is almost always
-linear in the size of the two point sets.
-
-\section{Monotone and Sorted Matrix Search}
-
-%% Geometric optimization is a well-studied subject also in theory.
-%% Consequently, general design principles have been developed from which
-%% solutions to diverse problems arise. For example, although the
-%% problems of computing the smallest enclosing sphere of a point set and
-%% the problem of computing the distance between two convex hulls seem to
-%% be quite different, they are both instances of a more general
-%% optimization problem, named ``quadratic programming''. To be more
-%% specific, \cgal's solutions for the two quadratic programming
-%% instances just mentioned are based on a general quadratic programming
-%% solver, which will be documented as a separate unit in future
-%% releases.
-
-%% This section provides interfaces to several such general techniques as
-%% well as additional concrete optimization algorithms that derive from
-%% these general techniques.
-
-%% To be more specific, \cgal's solutions for the two quadratic
-%% programming instances just mentioned are based on a general quadratic
-%% programming solver, which itself is available as an advanced
-%% technique.  This means, using \cgal, you can solve your favorite
-%% quadratic program, even if it does not assume the form of one of the
-%% optimization problems that we explicitly address! A word of warning is
-%% in order: the interface of the quadratic programming solver has mainly
-%% been developed for internal use by the \cgal\ developers community. In
-%% particular, feedback from the developers has influenced (and will
-%% further influence) its design. This means: you are welcome to use the
-%% solver's interface, but if you do so, please be aware that it might
-%% change in the future, making adaptions of your code necessary. In the
-%% future, the interface and the functionality will stabilize.
-
-
-\ccc{CGAL::monotone_matrix_search} and \ccc{CGAL::sorted_matrix_search} 
-are techniques that deal with the problem of efficiently finding
-largest entries in matrices with certain structural properties. Many
-concrete problems can be modelled as matrix search problems, and for
-some of them we provide explicit solutions that allow you to solve
-them without knowing about the matrix search technique. Examples are,
-the computation of all furthest neighbors for the vertices of a convex
-polygon, maximal $k$-gons inscribed into a planar point set, and
-computing rectangular $p$-centers.
 
 %% ===== EOF ===================================================================
 
