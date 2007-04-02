@@ -1555,6 +1555,12 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Optimisation_doc/doc_tex/Inscribed_volumes/largestEmptyRect.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Inscribed_volumes/largestEmptyRect.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Inscribed_volumes/largestEmptyRect.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Inscribed_volumes/max_triangle.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Inscribed_volumes/max_triangle.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Inscribed_volumes/max_triangle.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#application/pdf
