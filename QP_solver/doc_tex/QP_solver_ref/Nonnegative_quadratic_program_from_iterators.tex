@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+\begin{ccRefClass}{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}
 
 \ccInclude{CGAL/QP_models.h}
 
@@ -8,7 +8,7 @@ An object of class \ccRefName\ describes a convex quadratic program of the form
 \begin{eqnarray*}
 \mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
-&                    & l \leq x \leq u
+&                    & x \geq \mathbf{0}
 \end{eqnarray*}
 %%
 in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
@@ -18,10 +18,6 @@ Here,
 \item $b$ is an $m$-dimensional vector (the right-hand side),
 \item $\qprel$ is an $m$-dimensional vector of relations 
 from $\{\leq, =, \geq\}$, 
-\item $l$ is an $n$-dimensional vector of lower
-bounds for $x$,
-\item $u$ is an $n$-dimensional vector of upper bounds for
-$x$, 
 \item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
   quadratic objective function),
 \item $c$ is an $n$-dimensional vector (the linear objective
@@ -31,31 +27,27 @@ $x$,
 
 This class is simply a wrapper for existing iterators, and it does not
 copy the program data (if you need a copy, you may use the class 
-\ccc{Quadratic_program<NT>}).
+\ccc{Nonnegative_quadratic_program<NT>}).
 
 \ccIsModel
-\ccc{QuadraticProgramInterface}
+\ccc{NonnegativeQuadraticProgramInterface}
 
 
 \ccCreation
 \ccIndexClassCreation
 \ccCreationVariable{qp}
 
-\ccConstructor{Quadratic_program_from_iterators(int n, int m, 
+\ccConstructor{Nonnegative_quadratic_program_from_iterators(int n, int m, 
   const A_iterator& a, 
   const B_iterator& b,
   const R_iterator& r,
-  const FL_iterator& fl,
-  const L_iterator& l,
-  const FU_iterator& fu,
-  const U_iterator& u,
   const D_iterator& d,
   const C_iterator& c,
   const std::iterator_traits<C_iterator>value_type& c0 = 0
   )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. }
 
 \ccSeeAlso
-\ccc{Quadratic_program_from_pointers<NT>}\\
-\ccc{Quadratic_program<NT>}
+\ccc{Nonnegative_quadratic_program_from_pointers<NT>}\\
+\ccc{Nonnegative_quadratic_program<NT>}
 
 \end{ccRefClass}

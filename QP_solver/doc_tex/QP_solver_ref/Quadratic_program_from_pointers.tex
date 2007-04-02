@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+\begin{ccRefClass}{Quadratic_program_from_pointers<NT>}
 
 \ccInclude{CGAL/QP_models.h}
 
@@ -29,33 +29,17 @@ $x$,
 \item $c_0$ is a constant.
 \end{itemize}
 
-This class is simply a wrapper for existing iterators, and it does not
-copy the program data (if you need a copy, you may use the class 
-\ccc{Quadratic_program<NT>}).
+This class specializes the class
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>} for the case where all iterators are of type \ccc{NT**} (for
+$A$ and $D$) and \ccc{NT*} otherwise. The class is simply a wrapper for 
+existing pointers, and it does not copy the program data (if you need
+a copy, you may use the class \ccc{Quadratic_program<NT>}).
 
 \ccIsModel
 \ccc{QuadraticProgramInterface}
 
-
-\ccCreation
-\ccIndexClassCreation
-\ccCreationVariable{qp}
-
-\ccConstructor{Quadratic_program_from_iterators(int n, int m, 
-  const A_iterator& a, 
-  const B_iterator& b,
-  const R_iterator& r,
-  const FL_iterator& fl,
-  const L_iterator& l,
-  const FU_iterator& fu,
-  const U_iterator& u,
-  const D_iterator& d,
-  const C_iterator& c,
-  const std::iterator_traits<C_iterator>value_type& c0 = 0
-  )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. }
-
 \ccSeeAlso
-\ccc{Quadratic_program_from_pointers<NT>}\\
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 \ccc{Quadratic_program<NT>}
 
 \end{ccRefClass}

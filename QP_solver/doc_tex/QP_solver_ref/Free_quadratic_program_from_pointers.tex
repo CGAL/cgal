@@ -1,0 +1,42 @@
+\begin{ccRefClass}{Free_quadratic_program_from_pointers<NT>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a convex quadratic program of the form
+%%
+\begin{eqnarray*}
+\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
+&\mbox{subject to}   & Ax\qprel b
+\end{eqnarray*}
+%%
+in $n$ real variables $x=(x_0,\ldots,x_{n-1})$. The term ``free'' refers
+to the fact that there are no explicit bounds on the variables.
+Here, 
+\begin{itemize}
+\item $A$ is an $m\times n$ matrix (the constraint matrix), 
+\item $b$ is an $m$-dimensional vector (the right-hand side),
+\item $\qprel$ is an $m$-dimensional vector of relations 
+from $\{\leq, =, \geq\}$, 
+\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
+  quadratic objective function),
+\item $c$ is an $n$-dimensional vector (the linear objective
+  function), and 
+\item $c_0$ is a constant.
+\end{itemize}
+
+This class specializes the class
+\ccc{Free_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>} for the case where all iterators are of type 
+\ccc{NT**} (for
+$A$ and $D$) and \ccc{NT*} otherwise. The class is simply a wrapper for 
+existing pointers, and it does not copy the program data (if you need
+a copy, you may use the class \ccc{Free_quadratic_program<NT>}).
+
+\ccIsModel
+\ccc{QuadraticProgramInterface}
+
+\ccSeeAlso
+\ccc{Free_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{Free_quadratic_program<NT>}
+
+\end{ccRefClass}

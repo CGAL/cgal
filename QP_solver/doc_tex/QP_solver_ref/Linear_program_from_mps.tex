@@ -1,0 +1,47 @@
+\begin{ccRefClass}{Linear_program_from_mps<NT>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a linear program of the form
+%%
+\begin{eqnarray*}
+\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
+&\mbox{subject to}   & Ax\qprel b, \\
+&                    & l \leq x \leq u
+\end{eqnarray*}
+%%
+in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
+Here, 
+\begin{itemize}
+\item $A$ is an $m\times n$ matrix (the constraint matrix), 
+\item $b$ is an $m$-dimensional vector (the right-hand side),
+\item $\qprel$ is an $m$-dimensional vector of relations 
+from $\{\leq, =, \geq\}$, 
+\item $l$ is an $n$-dimensional vector of lower
+bounds for $x$,
+\item $u$ is an $n$-dimensional vector of upper bounds for
+$x$, 
+\item $c$ is an $n$-dimensional vector (the linear objective
+  function), and 
+\item $c_0$ is a constant.
+\end{itemize}
+
+This class reads the program data from a file in MPS format. 
+
+\ccIsModel
+\ccc{LinearProgramInterface}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{lp}
+
+\ccConstructor{Linear_program_from_mps(std::istream& in)} {reads \ccVar\ fromthe stream \ccc{in}.}
+
+\ccSeeAlso
+\ccc{Linear_program<NT>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{Linear_program_from_pointers<NT>}
+
+
+\end{ccRefClass}

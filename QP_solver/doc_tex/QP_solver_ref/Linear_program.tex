@@ -1,12 +1,12 @@
-\begin{ccRefClass}{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+\begin{ccRefClass}{Linear_program<NT>}
 
 \ccInclude{CGAL/QP_models.h}
 
 \ccDefinition
-An object of class \ccRefName\ describes a convex quadratic program of the form
+An object of class \ccRefName\ describes a linear program of the form
 %%
 \begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
+\mbox{(QP)}& \mbox{minimize} & c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
 &                    & l \leq x \leq u
 \end{eqnarray*}
@@ -22,26 +22,26 @@ from $\{\leq, =, \geq\}$,
 bounds for $x$,
 \item $u$ is an $n$-dimensional vector of upper bounds for
 $x$, 
-\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
-  quadratic objective function),
 \item $c$ is an $n$-dimensional vector (the linear objective
   function), and 
 \item $c_0$ is a constant.
 \end{itemize}
 
-This class is simply a wrapper for existing iterators, and it does not
-copy the program data (if you need a copy, you may use the class 
-\ccc{Quadratic_program<NT>}).
+This class copies the program data from given iterator ranges; 
+if you only need to wrap existing iterators, you may use the classes 
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>} and \ccc{Linear_program_from_pointers<NT>}).
 
 \ccIsModel
-\ccc{QuadraticProgramInterface}
-
+\ccc{LinearProgramInterface}
 
 \ccCreation
 \ccIndexClassCreation
-\ccCreationVariable{qp}
+\ccCreationVariable{lp}
 
-\ccConstructor{Quadratic_program_from_iterators(int n, int m, 
+The following constructor is a template, so you can provide input
+iterators of any types.
+
+\ccConstructor{Linear_program_from_iterators(int n, int m, 
   const A_iterator& a, 
   const B_iterator& b,
   const R_iterator& r,
@@ -49,13 +49,13 @@ copy the program data (if you need a copy, you may use the class
   const L_iterator& l,
   const FU_iterator& fu,
   const U_iterator& u,
-  const D_iterator& d,
   const C_iterator& c,
   const std::iterator_traits<C_iterator>value_type& c0 = 0
-  )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. }
+  )}{constructs \ccVar\ from given input iterators and the constant \ccc{c0}.}
 
 \ccSeeAlso
-\ccc{Quadratic_program_from_pointers<NT>}\\
-\ccc{Quadratic_program<NT>}
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{Linear_program_from_pointers<NT>}
+
 
 \end{ccRefClass}

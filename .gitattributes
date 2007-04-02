@@ -1815,6 +1815,25 @@ QP_solver/doc_tex/QP_solver/first_qp.eps -text svneol=unset#application/postscri
 QP_solver/doc_tex/QP_solver/first_qp.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/first_qp.gif -text svneol=unset#image/gif
 QP_solver/doc_tex/QP_solver/first_qp.pdf -text svneol=unset#application/pdf
+QP_solver/doc_tex/QP_solver_ref/Free_linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/Free_linear_program_from_iterators.tex -text
+QP_solver/doc_tex/QP_solver_ref/Free_linear_program_from_pointers.tex -text
+QP_solver/doc_tex/QP_solver_ref/Free_quadratic_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/Free_quadratic_program_from_iterators.tex -text
+QP_solver/doc_tex/QP_solver_ref/Free_quadratic_program_from_pointers.tex -text
+QP_solver/doc_tex/QP_solver_ref/Linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/Linear_program_from_iterators.tex -text
+QP_solver/doc_tex/QP_solver_ref/Linear_program_from_mps.tex -text
+QP_solver/doc_tex/QP_solver_ref/Linear_program_from_pointers.tex -text
+QP_solver/doc_tex/QP_solver_ref/Nonnegative_linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/Nonnegative_linear_program_from_iterators.tex -text
+QP_solver/doc_tex/QP_solver_ref/Nonnegative_linear_program_from_pointers.tex -text
+QP_solver/doc_tex/QP_solver_ref/Nonnegative_quadratic_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/Nonnegative_quadratic_program_from_iterators.tex -text
+QP_solver/doc_tex/QP_solver_ref/Nonnegative_quadratic_program_from_pointers.tex -text
+QP_solver/doc_tex/QP_solver_ref/Quadratic_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_mps.tex -text
+QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_pointers.tex -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text
