@@ -1083,11 +1083,17 @@ set_compiler_flags()
 		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
-	    case `compiler_version` in
-                # adjust to future versions. flag will be removed some day, anyhow
-                4.[12345].*)
-                   ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ffriend-injection";;
-            esac
+             if [ "${PROVIDE_PKG_LEDA}" != "" ] ; then
+                 # NOTE: this is only needed for LEDA.
+                 # rationale: currently, LEDA relies on the old g++ behaviour,
+                 # where friend methods are injected in their surrounding namespace. this will probably 
+                 # be fixed in future versions. however, until then, this workaround is required.
+                 case `compiler_version` in
+                    # TODO: adjust to future versions of g++
+                    4.[12345].*)
+                       ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ffriend-injection";;
+                 esac
+             fi
 	    ;;
     esac
 }
