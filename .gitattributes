@@ -1840,6 +1840,7 @@ QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
+QP_solver/maintainer -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/debug_bug.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
