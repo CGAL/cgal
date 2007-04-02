@@ -1,4 +1,4 @@
-# Created by the script cgal_create_makefile
+# Created by the script cgal_create_makefile and modified!!!!!
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -24,30 +24,16 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-#GLUT_LIBS_PATH=-L$(GLUT_DIR)/lib/glut -L/usr/X11R6/lib
-GLUT_LIBS=-lGL -lGLU -lglut  -lX11 -lXmu -lXi -lm
 
 LIBPATH = \
           $(CGAL_LIBPATH) $(GLUT_LIBS_PATH)
 
 LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) \
-          $(GLUT_LIBS)
+          $(CGAL_LDFLAGS)
 
-EXE_EXT = #.exe
-
-LDFLAGS = \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) -lGL -lglut
-
-QTLDFLAGS = \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) -lGL -lglut
-
-
-INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lIntrospect
-
+INTRO_LD_FLAGS= -L$(INTROSPEC_DIR) -lIntrospect -lglut
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -58,10 +44,9 @@ all:	visu
 visu: 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) \
 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) \
-	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
+	$(LDFLAGS) $(INTRO_LD_FLAGS)
 
-clean: 
-	rm *.$(EXE_EXT) *$(OBJ_EXT)
+clean:  visu.clean SketchSample.clean 
 
 depend: 
 	makedepend *.[Ch]
