@@ -20,7 +20,8 @@
 
 //#ifdef CGAL_USE_SOQT
 
-
+#include "include/control_coin.h"
+#ifndef CGAL_USE_COIN 
 #include "include/SoQt_examiner_viewer.h"
 #include <qpushbutton.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -80,3 +81,4 @@ namespace CGAL
 //static bool SoQt_examiner_viewer_compiled_without_CGAL_USE_SOQT_defined;
 
 //#endif
+#endif // CGAL_USE_COIN
