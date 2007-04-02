@@ -1340,7 +1340,8 @@ private:
   // validity checks:
   bool is_solution_feasible_for_auxiliary_problem() const;
   bool is_solution_optimal_for_auxiliary_problem() const;
-  bool is_solution_feasible() const;
+  bool is_solution_feasible() const;  
+  bool is_solution_infeasible() const;
   bool is_solution_optimal() const;
   bool is_value_correct() const;
   bool is_solution_unbounded() const;

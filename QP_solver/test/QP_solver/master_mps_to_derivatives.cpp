@@ -191,7 +191,7 @@ void create_shifted_instance(CGAL::QP_from_mps
   for (int i=0; i<n; ++i) {
     for (int j=0; j<n; ++j)
       mvTD[i] += qp.d()[j][i] * v[j];
-    mvTD[i] *= -2;
+    mvTD[i] *= -1;
   }
 
   // output:

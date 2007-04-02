@@ -25,7 +25,7 @@
 #ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>
 #else
-#include <CGAL/Gmpzf.h>
+#include <CGAL/Gmpz.h>
 #endif
 
 #include <CGAL/QP_solver.h>
@@ -49,11 +49,11 @@ int main(const int argNr,const char **args) {
   const int verbosity = argNr < 2? 1 : std::atoi(args[1]);
 
   // construct QP instance:
-  typedef double IT;
+  typedef int IT;
 #ifndef CGAL_USE_GMP
   typedef CGAL::MP_Float ET;
 #else
-  typedef CGAL::Gmpzf ET;
+  typedef CGAL::Gmpz ET;
 #endif
   typedef CGAL::QP_from_mps<IT, CGAL::Tag_false, CGAL::Tag_true> QP;
   QP qp(std::cin,true,verbosity);
@@ -69,7 +69,7 @@ int main(const int argNr,const char **args) {
     CGAL::print_quadratic_program (cout, qp);
     cout << std::endl;
   }
-  typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_true> Tags;
+  typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> Tags;
   CGAL::QP_pricing_strategy<QP, ET, Tags> *pricing_strategy =
     new CGAL::QP_full_exact_pricing<QP, ET, Tags>;
   typedef CGAL::QP_solver<QP, ET, Tags> Solver;

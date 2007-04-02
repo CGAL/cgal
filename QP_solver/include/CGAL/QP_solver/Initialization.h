@@ -195,7 +195,7 @@ init_x_O_v_i()
   // and so we initialize them to zero (if the bound on the variable
   // allows it), or to the variable's lower or upper bound:
   for (int i = 0; i < qp_n; ++i) {
-    CGAL_qpe_assertion(qp_l[i]<=qp_u[i] || !*(qp_fl+i) || !*(qp_fu+i));
+    CGAL_qpe_assertion( !*(qp_fl+i) || !*(qp_fu+i) || qp_l[i]<=qp_u[i]);
 
     if (*(qp_fl+i))                    // finite lower bound?
       if (*(qp_fu+i))                  // finite lower and finite upper bound?

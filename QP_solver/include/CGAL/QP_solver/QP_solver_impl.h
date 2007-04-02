@@ -161,8 +161,9 @@ solution_numerator( ) const
 	s +=  et2 * ET(qp_c[j]) * *j_it;
       z += d * s;
     }
-    // finally, add the constant term
-    return z += et2 * ET(qp_c0) * d * d;
+    // finally, add the constant term (phase II only)
+    if (is_phaseII) z += et2 * ET(qp_c0) * d * d;
+    return z;
 }
 
 // pivot step
@@ -929,7 +930,7 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
             }
         }
     } else {                                        // check for upper bound
-        if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
+        if ((q_k > et0) && (k < qp_n) && *(qp_fu+k)) {
             ET  diff = (d * ET(qp_u[k])) - x_k;
             if (diff * q_min < d_min * q_k) {
                 i_min = k;

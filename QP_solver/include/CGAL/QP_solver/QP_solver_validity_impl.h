@@ -75,6 +75,7 @@ bool QP_solver<Q, ET, Tags>::is_valid() const
       {
 	const bool f = this->is_solution_feasible_for_auxiliary_problem();
 	const bool o = this->is_solution_optimal_for_auxiliary_problem();
+	const bool i = this->is_solution_infeasible();
 	const bool aux_positive = 
 	  ( (this->solution_numerator() > et0) && (d > et0) );
 	CGAL_qpe_debug {
@@ -85,9 +86,10 @@ bool QP_solver<Q, ET, Tags>::is_valid() const
 	  vout << "      is in phase I: " << is_phaseI << std::endl;
 	  vout << "       feasible_aux: " << f << std::endl;
 	  vout << "        optimal_aux: " << o << std::endl;
+	  vout << "        infeasible:  " << i << std::endl;
 	  vout << " obj. val. positive: " << aux_positive << std::endl;
 	}
-	return is_phaseI && f && o && aux_positive;
+	return is_phaseI && f && o && i && aux_positive;
       }
     case QP_UNBOUNDED:    
       {
@@ -127,16 +129,30 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem() const
     if (*i_it < qp_n) {                 // original variable?
       if ((has_finite_lower_bound(*i_it) && (*v_it < lower_bound(*i_it) * d))||
 	  (has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d)))
-        return false;
+	{
+	  CGAL_qpe_debug {
+	    vout4 << "variable " << *i_it << " out of bounds" << std::endl;
+	  }
+	  return false;
+	}
     } else                              // artificial variable?
       if (*v_it < et0)
-        return false;
+	{
+	  CGAL_qpe_debug {
+	    vout4 << "artificial variable negative" << std::endl;
+	  }
+	  return false;
+	}
   }
   
   // check nonegativity of slack variables (the basic ones suffice):
   for (Value_const_iterator v_it = x_B_S.begin(); v_it != x_B_S.end(); ++v_it)
-    if (*v_it < et0)
+    if (*v_it < et0) {
+      CGAL_qpe_debug {
+	vout4 << "slack variable out of bounds" << std::endl;
+      }
       return false;
+    }
   
   // Check whether the current solution is feasible for the auxiliary
   // problem.  For this, we use the fact that the auxiliary problem
@@ -192,10 +208,74 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem() const
 
   // check equality (C1);
   for (int i=0; i<qp_m; ++i)
-    if (lhs_col[i] != ET(qp_b[i]) * d)
+    if (lhs_col[i] != ET(qp_b[i]) * d) {
+      CGAL_qpe_debug {
+	vout4 << "row " << i << " infeasible" << std::endl;
+      }
       return false;
+    }
   return true;
 }
+
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_solution_infeasible() const
+{
+  // checks whether we have a proof of infeasibilty according
+  // to Farkas Lemma. Namely, the system is infeasible iff
+  //     \tau^T = \lambda^T A  (A)
+  //     \lambda^T b - \sum{j: \tau_j < 0} \tau_j u_j  
+  //                 - \sum{j: \tau_j > 0} \tau_j l_j < 0  (B)
+  //      \lambda_i >= 0                for <=-constraints i,    (C)
+  //      \lambda_i <= 0                for >=-constraints i,    (D)
+ 
+  // get \lambda:
+  // Note: as the \lambda' we have access to is actual d times the \lambda
+  // we will not compute \tau but \tau * d.
+  Optimality_certificate_numerator_iterator 
+    itb = optimality_certificate_numerator_begin();
+  Optimality_certificate_numerator_iterator 
+    ite = optimality_certificate_numerator_end();
+  Optimality_certificate_iterator 
+    itq = optimality_certificate_begin();
+  Values lambda_prime;
+  int row = 0;
+  for (Optimality_certificate_numerator_iterator 
+	 it = itb; it != ite; ++it, ++itq, ++row) {
+    // simply check whether numerator/denominator gives correct value
+    CGAL_qpe_assertion (*it * (*itq).denominator() == (*itq).numerator() * d);
+    lambda_prime.push_back(*it);
+    // check sign (C) (D)
+    if (qp_r[row] == CGAL::SMALLER)
+      if (lambda_prime[row] < et0) return false;
+    if (qp_r[row] == CGAL::LARGER)
+      if (lambda_prime[row] > et0) return false;
+  }
+    
+  // compute \tau^T = \lambda^T A (A):
+  Values tau(qp_n,et0);
+  for (int col = 0; col < qp_n; ++col)
+    for (int i=0; i<qp_m; ++i)
+      tau[col] += lambda_prime[i] * ET((*(qp_A+col))[i]);
+
+  // check condition (B)
+  ET sum = et0;
+  // add \lambda^T b
+  for (int i=0; i<qp_m; ++i)
+    sum += lambda_prime[i] * ET(qp_b[i]);  // lambda carries factor of d
+  // subtract the remaining terms
+  for (int col = 0; col < qp_n; ++col) {
+    if (tau[col] < et0) {
+      CGAL_qpe_assertion(has_finite_upper_bound(col));
+      sum -= tau[col] * upper_bound(col); // tau carries factor of d
+    }
+    if (tau[col] > et0) {
+      CGAL_qpe_assertion(has_finite_lower_bound(col));
+      sum -= tau[col] * lower_bound(col); // tau carries factor of d
+    }
+  }
+  return sum < et0;
+}
+
 
 template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::is_value_correct() const
@@ -443,8 +523,12 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
     if (var != *it)
       return false; // original_variables_numerator_begin() inconsistent
     if ((has_finite_lower_bound(i) && var < lower_bound(i) * d) ||
-	(has_finite_upper_bound(i) && var > upper_bound(i) * d))
+	(has_finite_upper_bound(i) && var > upper_bound(i) * d)) {
+      CGAL_qpe_debug {
+	vout4 << "variable " << i << " out of bounds" << std::endl;
+      }
       return false;
+    }
 
     // compute A x times d:
     for (int j=0; j<qp_m; ++j)
@@ -456,8 +540,12 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
     const ET rhs = ET(qp_b[row])*d;
     if ((qp_r[row] == CGAL::EQUAL         && lhs_col[row] != rhs) ||
 	(qp_r[row] == CGAL::SMALLER    && lhs_col[row] >  rhs) ||
-	(qp_r[row] == CGAL::LARGER && lhs_col[row] <  rhs))
+	(qp_r[row] == CGAL::LARGER && lhs_col[row] <  rhs)) {
+      CGAL_qpe_debug {
+	vout4 << "row " << row << " infeasible" << std::endl;
+      }
       return false;
+    }
   }
   
   return true;
