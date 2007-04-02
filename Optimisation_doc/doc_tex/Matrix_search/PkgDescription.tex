@@ -1,0 +1,29 @@
+
+\begin{ccPkgDescription}{Geometric Optimisation \label{Pkg:Optimisation}}
+\ccPkgHowToCiteCgal{cgal:fghhps-go-06}
+\ccPkgSummary{
+This package provides algorithms for computing bounding volumes, inscribed areas and polytope distances.
+
+The algorithms for bounding volumes for point sets in
+ d-dimensional space are: the smallest enclosing sphere, annulus,
+ ellipsoid, or strip. For 2-dimensional space, a number of additional
+ volumes (rectangles, parallelograms, $k=2,3,4$ axis-aligned rectangles) 
+are available.
+The smallest enclosing sphere algorithm can also be applied
+on a set of d-dimensional spheres. 
+
+The algorithms for computing inscribed areas are: the largest inscribed
+k-gon (area or perimeter) of a convex point set and the largest inscribed rectangle.
+
+The polytope distance algorithm computes the distance between the
+convex hulls of two point sets in d-dimensional space, without
+explicitely constructing the convex hulls. 
+
+Finally this package offers a matrix search framework, which is
+the underlying machinery of some of the algorithms of this package.}
+
+%\ccPkgDependsOn{}
+\ccPkgIntroducedInCGAL{1.1}
+\ccPkgLicense{\ccLicenseQPL}
+\ccPkgIllustration{Optimisation//minCircle.png}{Optimisation//minCircle.png}
+\end{ccPkgDescription}
