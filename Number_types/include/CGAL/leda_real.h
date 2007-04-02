@@ -35,6 +35,7 @@
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
 #include <LEDA/real.h>
+#include <LEDA/interval.h>
 #else
 #include <LEDA/numbers/real.h>
 #endif
