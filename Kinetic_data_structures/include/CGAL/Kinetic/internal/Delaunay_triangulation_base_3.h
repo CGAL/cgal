@@ -1052,7 +1052,7 @@ protected:
     std::vector<Cell_handle> ics;
     triangulation().incident_cells(v, std::back_inserter(ics));
     for (unsigned int i=0; i< ics.size(); ++i) {
-      int j;
+      int j=-1; // keep some dumb compiler happy
       bool ret=ics[i]->has_vertex(v, j);
       CGAL_assertion(ret);
       for (int k=0; k<4 ; ++k) {
