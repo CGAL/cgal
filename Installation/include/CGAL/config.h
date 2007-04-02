@@ -225,4 +225,26 @@ using std::max;
 // with sunpro, this requires -features=extensions
 #endif
 
+
+// SunPRO's STL is missing the std::vector constructor from an iterator range.
+#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
+#include <vector>
+#include <iterator>
+#include <algorithm>
+namespace CGAL { namespace CGALi {
+template < typename Iterator >
+inline
+std::vector<typename std::iterator_traits<Iterator>::value_type>
+make_vector(Iterator begin, Iterator end)
+{
+  std::vector<typename std::iterator_traits<Iterator>::value_type> v;
+  std::copy(begin, end, std::back_inserter(v));
+  return v;
+}
+} }
+#  define CGAL_make_vector(begin, end) = CGAL::CGALi::make_vector(begin, end)
+#else
+#  define CGAL_make_vector(begin, end) (begin, end)
+#endif
+
 #endif // CGAL_CONFIG_H
