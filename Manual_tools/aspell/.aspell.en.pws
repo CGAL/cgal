@@ -1,4 +1,4 @@
-personal_ws-1.1 en 120 
+personal_ws-1.1 en 137 
 halfedge
 Devillers
 dereference
@@ -14,7 +14,9 @@ Voronoi
 DefaultConstructible
 iso
 Kettner
+ISR
 Informatik
+Berberich
 Graduiertenkolleg
 TDS
 Schirra
@@ -31,8 +33,10 @@ parameterized
 Freiseisen
 Hoffmann
 multi
+Halperin
 adaptor
 functionalities
+halfegde
 const
 iostream
 Fabri
@@ -45,12 +49,17 @@ circumcircle
 Giezeman
 GeometryFactory
 Wittenberg
+Flato
+Raab
 bijection
 Aviv
 Wein
 Sylvain
 Stl
+Haran
+Zukerman
 Otfried
+Hanniel
 Cgal
 Guigue
 templated
@@ -65,6 +74,7 @@ Pion
 parameterization
 preprocessor
 typedef
+halfedges
 Geert
 PostScript
 indices
@@ -73,9 +83,11 @@ inlining
 typename
 polyline
 GIS
+accessor
 Yvinec
 Teillaud
 Fsf
+Fogel
 Ressler
 combinatorics
 Lutz
@@ -86,6 +98,7 @@ functors
 isometry
 Umbilics
 CopyConstructible
+Dcel
 iff
 Boissonnat
 Taucs
@@ -97,13 +110,16 @@ Postconditions
 Mathematik
 Remco
 struct
+polylines
 tuples
 inlined
+Nechushtan
 postcondition
 enums
 formulae
 Antipolis
 circumcenter
+CCB
 vertices
 Genericity
 Bernd
@@ -116,6 +132,7 @@ makefile
 wrt
 Kde
 Veltkamp
+Minkowski
 Geomview
 circulator
 Hert
