@@ -26,6 +26,11 @@
  * and the specialized boost::graph_traits<Dual<Arrangement_2> >class.
  */
 
+#include <boost/config.hpp>
+#include <boost/iterator_adaptors.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
 #include <CGAL/Arrangement_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -619,8 +624,10 @@ std::pair<
                                                                vertex_iterator>
 vertices (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (std::make_pair (darr.vertices_begin(),
-                          darr.vertices_end()));
+  typedef typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+                                                    vertex_iterator vertex_iterator;
+  return (std::pair<vertex_iterator, vertex_iterator> (darr.vertices_begin(),
+                                                       darr.vertices_end()));
 }
 
 // Functions required by the EdgeListGraph concept:
