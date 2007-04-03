@@ -1295,7 +1295,7 @@ public:
       Base(c, r_sqr)
   {}
 
-    /*!
+  /*!
    * Cast to a triangle.
    */
   operator Sphere_3() const
