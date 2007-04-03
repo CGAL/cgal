@@ -44,7 +44,7 @@ int main() {
   double *cols_of_A[] = {A_col_0, A_col_1};
   double b[]       = {0.5};
   CGAL::Comparison_result rt[] = {CGAL::LARGER};
-  double D_row_0[] = {1.0, 0.0};
+  double D_row_0[] = {2.0, 0.0};
   double D_row_1[] = {0.0, 0.0};
   double *rows_of_D[] = {D_row_0, D_row_1};
   double c[]       = {0.0, 3.0};

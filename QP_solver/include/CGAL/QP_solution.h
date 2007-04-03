@@ -111,6 +111,9 @@ public:
 				Quotient_maker >
   Optimality_certificate_iterator;
 
+  typedef Optimality_certificate_numerator_iterator 
+  Infeasibility_certificate_iterator;
+
 public:
 
   // virtual access functions to solution that will 
@@ -119,6 +122,8 @@ public:
   // Solution
   // --------
   virtual Quotient<ET> solution() const = 0;
+  virtual ET solution_numerator() const = 0;
+  virtual ET solution_denominator() const = 0;
   virtual QP_status status() const = 0;
 
   // Variable values
@@ -158,6 +163,7 @@ public:
   // Optimality
   // ----------
   virtual ET optimality_certificate_numerator(int i) const = 0;
+  virtual ET optimality_certificate_denominator() const = 0;
 
   // value type ET
   virtual Optimality_certificate_numerator_iterator 
@@ -170,9 +176,6 @@ public:
   optimality_certificate_begin() const = 0;
   virtual Optimality_certificate_iterator 
   optimality_certificate_end() const = 0;
-
-  // Infeasibility
-  // -------------
 
   // destruction
   // -----------
@@ -187,6 +190,10 @@ class Quadratic_program_solution: Handle_for<const QP_solver_base<ET>*>
 {
 public:
   // interface types
+  // ===============
+
+  // variable values / indices
+  // -------------------------
   typedef typename QP_solver_base<ET>::Variable_value_iterator
   Variable_value_iterator;
 
@@ -196,8 +203,20 @@ public:
   typedef typename QP_solver_base<ET>::Index_const_iterator
   Index_iterator;
 
+  // certificates
+  // ------------
   typedef typename QP_solver_base<ET>::Unbounded_direction_iterator
-  Unbounded_direction_iterator;
+  Unboundedness_certificate_iterator;
+  
+  typedef 
+  typename QP_solver_base<ET>::Optimality_certificate_numerator_iterator
+  Optimality_certificate_numerator_iterator;
+  
+  typedef typename QP_solver_base<ET>::Optimality_certificate_iterator
+  Optimality_certificate_iterator;
+
+  typedef Optimality_certificate_numerator_iterator
+  Infeasibility_certificate_iterator;
 
   // methods
   Quadratic_program_solution ()
@@ -246,28 +265,16 @@ public:
     return (*(this->Ptr()))->original_variables_numerator_end();
   }
 
-  ET variable_numerator_value (int i) const 
-  {
-    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
-    return (*(this->Ptr()))->variable_numerator_value(i);
-  }
+//   ET variable_numerator_value (int i) const 
+//   {
+//     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+//     return (*(this->Ptr()))->variable_numerator_value(i);
+//  }
 
   const ET& variables_common_denominator() const
   {
     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->variables_common_denominator();
-  }
-
-  Unbounded_direction_iterator unbounded_direction_begin() const
-  {
-    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
-    return (*(this->Ptr()))->unbounded_direction_begin();
-  }
-
-  Unbounded_direction_iterator unbounded_direction_end() const
-  {
-    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
-    return (*(this->Ptr()))->unbounded_direction_end();
   }
 
   Index_iterator basic_variable_indices_begin() const
@@ -305,6 +312,90 @@ public:
     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->number_of_basic_constraints();
   }
+
+  // certificates
+  // ============
+  // optimality
+  // ----------
+//   ET optimality_certificate_numerator (int i) 
+//   {
+//     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+//     return (*(this->Ptr()))->
+//   }
+
+  Optimality_certificate_numerator_iterator 
+  optimality_certifcate_numerator_begin() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_OPTIMAL);
+    return (*(this->Ptr()))->optimality_certifcate_numerator_begin();
+  }
+
+  Optimality_certificate_numerator_iterator 
+  optimality_certifcate_numerator_end() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_OPTIMAL);
+    return (*(this->Ptr()))->optimality_certifcate_numerator_end();
+  }
+
+  Optimality_certificate_iterator 
+  optimality_certificate_begin() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_OPTIMAL);
+    return (*(this->Ptr()))->optimality_certificate_begin();
+  }
+
+  Optimality_certificate_iterator 
+  optimality_certificate_end() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_OPTIMAL);
+    return (*(this->Ptr()))->optimality_certificate_end();
+  }
+
+  ET optimality_certificate_denominator() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_OPTIMAL);
+    return (*(this->Ptr()))->optimality_certificate_denominator();
+  }
+
+  // infeasibility
+  // -------------
+  Infeasibility_certificate_iterator 
+  infeasibility_certificate_begin() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_INFEASIBLE);
+    return (*(this->Ptr()))->optimality_certificate_numerator_begin();
+  }
+
+  Infeasibility_certificate_iterator 
+  infeasibility_certificate_end() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_INFEASIBLE);
+    return (*(this->Ptr()))->optimality_certificate_numerator_end();
+  }
+  
+  // unboundedness
+  // -------------
+  Unboundedness_certificate_iterator unboundedness_certificate_begin() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_UNBOUNDED);
+    return (*(this->Ptr()))->unbounded_direction_begin();
+  }
+
+  Unboundedness_certificate_iterator unboundedness_certificate_end() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_precondition(status() == QP_UNBOUNDED);
+    return (*(this->Ptr()))->unbounded_direction_end();
+  }
+
 
   ~Quadratic_program_solution()
   {

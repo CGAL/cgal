@@ -17,4 +17,10 @@ with exact number type \ccc{ET}.}
 be an exact type, and all entries of \ccc{lp} are convertible to 
 \ccc{ET}.
 
+{\bf Note:} by default, this function performs a large number of 
+runtime-checks to ensure consistency during the solution process.
+However, these checks slow down the computations by a considerable
+factor. For maximum efficiency, it is advisable to define the macros
+\texttt{CGAL\_QP\_NO\_ASSERTIONS} or (still better) 
+\texttt{NDEBUG}.
 \end{ccRefFunction}

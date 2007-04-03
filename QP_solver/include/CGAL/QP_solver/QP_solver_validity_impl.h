@@ -242,7 +242,9 @@ bool QP_solver<Q, ET, Tags>::is_solution_infeasible() const
   for (Optimality_certificate_numerator_iterator 
 	 it = itb; it != ite; ++it, ++itq, ++row) {
     // simply check whether numerator/denominator gives correct value
-    CGAL_qpe_assertion (*it * (*itq).denominator() == (*itq).numerator() * d);
+    CGAL_qpe_assertion 
+      (*it * (*itq).denominator() == 
+       (*itq).numerator() * optimality_certificate_denominator());
     lambda_prime.push_back(*it);
     // check sign (C) (D)
     if (qp_r[row] == CGAL::SMALLER)
@@ -593,7 +595,9 @@ is_solution_optimal() const
   Values lambda_prime;
   for (Optimality_certificate_numerator_iterator 
 	 it = itb; it != ite; ++it, ++itq) {
-    CGAL_qpe_assertion (*it * (*itq).denominator() == (*itq).numerator() * d);
+    CGAL_qpe_assertion 
+      (*it * (*itq).denominator() == 
+       (*itq).numerator() * optimality_certificate_denominator());
     lambda_prime.push_back(*it);
   }
   
@@ -669,7 +673,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
   // when the program is in standard form.)
   //
   // An "unbounded direction" w is defined to be a vector w such that
-  // x_t(t):= x'-tw yields for any t>=0 feasible solutions with unbounded
+  // x_t(t):= x'+tw yields for any t>=0 feasible solutions with unbounded
   // objective value (assuming x' denotes the current solution).
   //
   // In order to check that the vector w returned by
@@ -682,29 +686,29 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
   //
   // which is equivalent to 
   //
-  //     row j is GREATER_EQUAL then (Aw)_j <= 0,
+  //     row j is GREATER_EQUAL then (Aw)_j >= 0,
   //     row j is         EQUAL then (Aw)_j  = 0,                (C8)
-  //     row j is   LOWER_EQUAL then (Aw)_j >= 0.
+  //     row j is   LOWER_EQUAL then (Aw)_j <= 0.
   //
   // Feasibility of the constraints for the variables x is similar: we
   // need l <= x_t(t) <= u for all t, which is equivalent to
   //
-  //     x_j has finite lower bound then w_j <= 0,               (C9)
-  //     x_j has finite upper bound then w_j >= 0.               (C10)
+  //     x_j has finite lower bound then w_j >= 0,               (C9)
+  //     x_j has finite upper bound then w_j <= 0.               (C10)
   //
   // As to unboundedness (ii), we have (see equation (10) in
   // documentation/Test_suite.tex)
   //
-  //     f(x_t(t)) = f(x') + t^2 w^TDw - t(c^T+2x^TD)w,
+  //     f(x_t(t)) = f(x') + t^2 w^TDw + t(c^T+2x^TD)w,
   //
   // that is, the objective function f behaves like a parabola.  So if
   // it should be unbounded then it has to be a lower parabola which
   // means w^TDw<=0, but D is positive semidefinite, so w^TDw = 0.
   // Thus, f must be linear in t, and unboundedness then implies
-  // (c^T+2x^TD)w > 0.  Subsuming, (ii) requires
+  // (c^T+2x^TD)w < 0.  Subsuming, (ii) requires
   //
   //      w^TDw = 0,                                             (C11)
-  //      (c^T+2x^TD)w > 0.                                      (C12)
+  //      (c^T+2x^TD)w < 0.                                      (C12)
 
   CGAL_expensive_precondition(is_solution_feasible());
   
@@ -734,15 +738,15 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
 
   // check feasibility (C8):
   for (int row=0; row<qp_m; ++row)
-    if ((qp_r[row] == CGAL::LARGER && aw[row]  > et0) ||
+    if ((qp_r[row] == CGAL::LARGER && aw[row]  < et0) ||
 	(qp_r[row] == CGAL::EQUAL         && aw[row] != et0) ||
-	(qp_r[row] == CGAL::SMALLER    && aw[row]  < et0)) 
+	(qp_r[row] == CGAL::SMALLER    && aw[row]  > et0)) 
       return false;
 
   // check feasibility (C9) and (C10):
   for (int i=0; i<qp_n; ++i)
-    if ((has_finite_lower_bound(i) && w[i] > et0) ||
-	(has_finite_upper_bound(i) && w[i] < et0))
+    if ((has_finite_lower_bound(i) && w[i] < et0) ||
+	(has_finite_upper_bound(i) && w[i] > et0))
       return false;
 
   // check unboundedness 2 Dw=0 (C11):
@@ -756,11 +760,11 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
 	return false;
     }
   
-  // check unboundedness c^Tw > 0 (C12):
+  // check unboundedness c^Tw < 0 (C12):
   ET m = et0;
   for (int i=0; i<qp_n; ++i)
     m += w[i] * ET(qp_c[i]);
-  if (m <= et0)
+  if (m >= et0)
     return false;
 
   return true;

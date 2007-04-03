@@ -28,10 +28,10 @@ template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::unbounded_direction_value(int i) const
 {
  if (is_basic(i)) {                  // basic variable?
-   return direction == 1 ? q_x_O[in_B[i]] : -q_x_O[in_B[i]];
+   return direction == 1 ? -q_x_O[in_B[i]] : q_x_O[in_B[i]];
  } else {                            // non-basic variable?
    if (i == j)                       // most recent entering variable?
-     return direction == 1 ? -d : d;
+     return direction == 1 ? d : -d;
    return et0;
  }
 }

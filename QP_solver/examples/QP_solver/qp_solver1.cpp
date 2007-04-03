@@ -45,7 +45,7 @@ int main() {
   int l[]       = {0, 0};
   bool fu[]     = {false, true};  // x has upper bound infinity...
   int u[]       = {0, 1};         // ... and it's u-entry is ignored
-  int D_row_0[] = {1, 0};
+  int D_row_0[] = {2, 0};
   int D_row_1[] = {0, 0};
   int *rows_of_D[] = {D_row_0, D_row_1};
   int c[]       = {0, 3};

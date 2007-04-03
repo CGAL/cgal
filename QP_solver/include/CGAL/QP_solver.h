@@ -825,7 +825,7 @@ public:
       (0, Unbounded_direction_by_index(this)) + qp_n;}
 
   // Optimality; iterators for the vector lambda, see the doc in
-  // Validity.C
+  // QP_solver_validity_impl.C
   typedef typename Base::Optimality_certificate_by_index
   Optimality_certificate_by_index;
   typedef typename Base::Optimality_certificate_numerator_iterator 
@@ -843,13 +843,17 @@ public:
   { return Optimality_certificate_numerator_iterator 
       (0, Optimality_certificate_by_index(this)) + qp_m;}
 
+  ET optimality_certificate_denominator() const
+  { return d;}
+
   Optimality_certificate_iterator
   optimality_certificate_begin() const
   {
     return Optimality_certificate_iterator
      (optimality_certificate_numerator_begin(),
       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
-				       U_Quotient_creator()) , d));
+				       U_Quotient_creator()) ,
+		      optimality_certificate_denominator() ));
   }
 
   Optimality_certificate_iterator
@@ -858,7 +862,8 @@ public:
     return Optimality_certificate_iterator
      (optimality_certificate_numerator_end(),
       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
-				       U_Quotient_creator()) , d));
+				       U_Quotient_creator()) , 
+		      optimality_certificate_denominator()));
   }
 
 private:    

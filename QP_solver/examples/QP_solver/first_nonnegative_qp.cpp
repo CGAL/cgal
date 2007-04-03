@@ -22,8 +22,8 @@ int main() {
   int   b[] = {7, 4};                         // right-hand side
   CGAL::Comparison_result
         r[] = {CGAL::SMALLER, CGAL::SMALLER}; // constraints are "<="
-  int  D1[] = {1};                            // D_{1,1}
-  int  D2[] = {0, 4};                         // D_{2,1}, D_{2,2}
+  int  D1[] = {2};                            // 2D_{1,1}
+  int  D2[] = {0, 8};                         // 2D_{2,1}, 2D_{2,2}
   int*  D[] = {D1, D2};                       // D-entries on/below diagonal
   int   c[] = {0, -32};
   int  c0   = 64;                             // constant term
