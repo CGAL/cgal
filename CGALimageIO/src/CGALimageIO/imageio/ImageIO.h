@@ -441,13 +441,13 @@ void removeSupportedFileFormat();
     @param fileName image file name */
 PTRIMAGE_FORMAT imageType(const char *fileName);
 
-
+extern "C" {
 /** function prototype to allocate memory */
 typedef void *(*ALLOCATION_FUNCTION)(size_t);
 
 /** function prototype to free memory */
 typedef void (*DEALLOCATION_FUNCTION)(void *);
-
+}
 
 /** set allocation and deallocation routines
     @param alloc new allocation routine
