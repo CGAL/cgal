@@ -1,0 +1,113 @@
+
+\begin{ccRefConcept}{MinSphereAnnulusDTraits}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+This concept defines the requirements for traits classes of $d$-dimensional
+min sphere and min annulus algorithms.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+\ccSetTwoColumns{MinSphereAnnulusDTraits:: Rep_tag}{}
+
+\ccNestedType{Point_d}{point type used to represent the input points.}
+
+\ccNestedType{Rep_tag}{%
+  compile time tag to distinguish between Cartesian and homogeneous
+  representation of the input points. \ccc{Rep_tag} has to be either
+  \ccGlobalScope\ccc{Cartesian_tag} or
+  \ccGlobalScope\ccc{Homogeneous_tag}.}
+
+\ccNestedType{RT}{%
+  number type used to represent the coordinates of the input points.
+  It has to be a model for \ccc{RingNumberType}.}
+
+\ccNestedType{FT}{%
+  number type used to return either the squared radius of the smallest
+  enclosing sphere or annulus, or the squared distance of the polytopes.
+  \ccc{FT} has to be either \ccc{RT} or \ccGlobalScope\ccc{Quotient<RT>} if
+  the input points have Cartesian or homogeneous representation,
+  respectively (cf.~\ccc{Rep_tag}).}
+
+\ccNestedType{Access_dimension_d}{%
+  data accessor object used to access the dimension of the input points.}
+
+\ccNestedType{Access_coordinates_begin_d}{%
+  data accessor object used to access the coordinates of the input points.}
+
+\ccNestedType{Construct_point_d}{%
+  constructor object used to construct either the center of the smallest
+  enclosing sphere or annulus, or the points realizing the distance between
+  the two polytopes.}
+
+The following two number types are only needed for
+\ccGlobalScope\ccc{Min_annulus_d<Traits>} and
+\ccGlobalScope\ccc{Polytope_distance_d<Traits>}.
+
+\ccNestedType{ET}{%
+  exact number type used to do the exact computations in the
+  underlying solver for linear programs. It has to to be a model for
+  \ccc{RingNumberType}. There must be an implicit conversion from
+  \ccc{RT} to \ccc{ET} available.}
+
+\ccNestedType{NT}{%
+  fast (possibly inexact) number type used to speed up the pricing step in
+  the underlying solver for linear programs. It has to be a model for
+  \ccc{RingNumberType}. There must be implicit conversions from \ccc{RT} to
+  \ccc{NT} and from \ccc{NT} to \ccc{ET} available.}
+
+\ccRestoreThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+Only default and copy constructor are required.
+
+\ccConstructor{ MinSphereAnnulusDTraits( );}{}
+
+\ccConstructor{ MinSphereAnnulusDTraits( const MinSphereAnnulusDTraits&);}{}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccSetThreeColumns{Access_coordinates_begin_d}{}{\hspace*{8.5cm}}
+
+The following functions just return the corresponding function class
+object.
+
+\ccMemberFunction{ Access_dimension_d
+                   access_dimension_d_object() const;}{}
+
+\ccMemberFunction{ Access_coordinates_begin_d
+                   access_coordinates_begin_d_object() const;}{}
+
+\ccMemberFunction{ Construct_point_d
+                   construct_point_d_object() const;}{}
+
+\ccRestoreThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccIndexTraitsClassRequirements[C]{Min_sphere_d}
+\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+\ccIndexTraitsClassRequirements[C]{Min_annulus_d}
+\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}
+
+
+% -----------------------------------------------------------------------------
+
+\end{ccRefConcept}
+
+
