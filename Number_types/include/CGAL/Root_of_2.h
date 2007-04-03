@@ -128,19 +128,30 @@ public:
   }
 
   Root_of_2(const RT& a, const RT& b) {
+    CGAL_assertion( b != 0 );
     _alpha = FT(a,b);
     _rational = 1;
+    CGAL_assertion(is_valid());
   }
 
   Root_of_2(const RT& a, const RT& b, const RT& c, const bool s)
   {
-    _alpha = FT(-b,2*a);
-    _gamma = CGAL_NTS square(alpha()) - FT(c,a);
-    if(CGAL_NTS is_zero(gamma())) {
+    if ( a != 0 ) {
+      _alpha = FT(-b,2*a);
+      _gamma = CGAL_NTS square(alpha()) - FT(c,a);
+      if(CGAL_NTS is_zero(gamma())) {
+	_rational = 1;
+      } else {
+	_beta = (s ? -1 : 1);
+	_rational = 0;
+      }
+    }
+    else {
+      CGAL_assertion( b != 0 );
       _rational = 1;
-    } else {
-      _beta = (s ? -1 : 1);
-      _rational = 0;
+      _alpha = FT(-c,b);
+      _beta = 0;
+      _gamma = 0;
     }
     CGAL_assertion(is_valid());
   }
