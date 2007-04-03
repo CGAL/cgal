@@ -89,11 +89,11 @@ and also automatically with\\
   intervals to [\ccc{lo[i]},\ccc{hi[i]}], $0 \leq i < D$. 
   \ccPrecond \ccc{lo[i]} $<$ \ccc{hi[i]} for $0 \leq i < D$.}
 
-\ccConstructor{Box_d( const Bbox_2& bbox);}{constructs from bbox,
-  exists iff $D=2$ and \ccc{NT}$ \equiv $\ccc{double}.}
+\ccConstructor{Box_d( const Bbox_2& bbox);}{constructs from bbox
+  \ccRequire $D=2$ and \ccc{NT}$ \equiv $\ccc{double}.}
 \ccGlue
-\ccConstructor{Box_d( const Bbox_3& bbox);}{constructs from bbox,
-  exists iff $D=3$ and \ccc{NT}$ \equiv $\ccc{double}.} 
+\ccConstructor{Box_d( const Bbox_3& bbox);}{constructs from bbox
+  \ccRequire $D=3$ and \ccc{NT}$ \equiv $\ccc{double}.} 
 
 
 \ccModifiers
@@ -112,20 +112,22 @@ and also automatically with\\
 
 \ccMethod{std::size_t id();} {returns a unique box id, see the
   \ccc{IdPolicy} template parameter above for the different
-  choices. Does not exist if \ccc{ID_NONE} has been chosen for the
-  \ccc{IdPolicy}.}
+  choices.
+  \ccRequire \ccc{IdPolicy}$ \neq $\ccc{ID_NONE}}
 
-\ccMethod{NT min_coord( int d) const;}{%
-  returns the lower boundary in dimension \ccc{d}, $0 \leq $\ccc{d}$ < D$.}
+\ccMethod{NT min_coord(int d) const;}{%
+  returns the lower boundary in dimension \ccc{d}
+  \ccPrecond $0 \leq $\ccc{d}$ < D$}
 
-\ccMethod{NT max_coord( int d) const;}{%
-  returns the upper boundary in dimension \ccc{d}, $0 \leq $\ccc{d}$ < D$.}
+\ccMethod{NT max_coord(int d) const;}{%
+  returns the upper boundary in dimension \ccc{d}
+  \ccPrecond $0 \leq $\ccc{d}$ < D$}
 
-\ccMethod{const Bbox_2& bbox() const;}{returns the bounding box iff
-  $D=2$ and \ccc{NT}$ \equiv $\ccc{double}.}
+\ccMethod{const Bbox_2& bbox() const;}{returns the bounding box
+  \ccRequire $D=2$ and \ccc{NT}$ \equiv $\ccc{double}}
 \ccGlue
-\ccMethod{const Bbox_3& bbox() const;}{returns the bounding box iff
-  $D=3$ and \ccc{NT}$ \equiv $\ccc{double}.}
+\ccMethod{const Bbox_3& bbox() const;}{returns the bounding box
+  \ccRequire $D=3$ and \ccc{NT}$ \equiv $\ccc{double}}
 
 \ccMethod{void extend(NT p[N]);}{extends \ccVar\ to the smallest
   box that additionally contains the point represented by coordinates in \ccc{p}.}

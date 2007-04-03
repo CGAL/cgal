@@ -111,7 +111,7 @@ void box_intersection_d(
     RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
     Callback callback,
     BoxTraits box_traits,
-    std::ptrdiff cutoff = 10,
+    std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
     Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);
 }{Invocation with custom box traits.}
@@ -126,7 +126,7 @@ void box_intersection_d(
 %     RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
 %     Callback callback,
 %     BoxPredicateTraits traits,
-%     std::ptrdiff cutoff = 10,
+%     std::ptrdiff_t cutoff = 10,
 %     Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);
 % }{%
 %     This version of the box-intersection algorithms uses a very
