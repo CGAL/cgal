@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Linear_program_from_mps<NT>}
+\begin{ccRefClass}{Sparse_linear_program_from_mps<NT>}
 
 \ccInclude{CGAL/QP_models.h}
 
@@ -31,18 +31,16 @@ The program data are read from an input stream in \ccc{MPSFormat}. This is
 a commonly used format for encoding linear and quadratic programs that
 is understood by many solvers. 
 
-\textbf{Note:} The space required to store the program is $\Theta(nm +
-n^2)$, even if these matrix $A$ is very sparse. This might be
-prohibitive. In this case, you may use the model
-\ccc{Sparse_linear_program_from_mps<NT>} whose space requirements
-are bounded by the number of nonzero entries in the program
-description. In this latter model, access to the iterators in
-\ccc{LinearProgramInterface} will be a little slower, though.
+\textbf{Note:} 
+The space requirements are bounded by the number of nonzero entries
+in the program description. However, if you can afford space
+$\Theta(nm)$, the model \ccc{Linear_program_from_mps<NT>}
+might be preferrable, since in the latter model, access to the 
+iterators in \ccc{LinearProgramInterface} will be faster.
 
-As a rule of thumb, however, if there is a need for the sparse model,
+As a rule of thumb, if there is a need for this sparse model,
 then \cgal's linear programming solver will probably not be able to 
 solve it anyway.
-
 \ccIsModel
 \ccc{LinearProgramInterface}
 
@@ -65,7 +63,7 @@ MPS-encoded linear program could be extracted from the input stream.}
 \ccMethod{const std::string& error() const;}{returns an error message explaining why the input is not in MPS format \ccPrecond \ccc{!} \ccVar\ccc{.is_valid()}}
 
 \ccSeeAlso
-\ccc{Sparse_linear_program_from_mps<NT>}\\
+\ccc{Linear_program_from_mps<NT>}\\
 \ccc{Linear_program<NT>}\\
 \ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 \ccc{Linear_program_from_pointers<NT>}

@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Quadratic_program_from_mps<NT>}
+\begin{ccRefClass}{Sparse_quadratic_program_from_mps<NT>}
 
 \ccInclude{CGAL/QP_models.h}
 
@@ -34,16 +34,13 @@ a commonly used format for encoding linear and quadratic programs that
 is understood by many solvers. 
 
 \textbf{Note:} 
-The space required to store the matrices
-$A$ and $D$ is $\Theta(nm + n^2)$, even if these matrices are very sparse. This
-might be prohibitive (for example, if there are many variables, but only
-few of them are involved in the quadratic objective function). In this
-case, you may use the model \ccc{Sparse_quadratic_program_from_mps<NT>}
-whose space requirements are bounded by the number of nonzero entries
-in the program description. In this latter model, access to the iterators 
-in \ccc{QuadraticProgramInterface} will be a little slower, though.
+The space requirements are bounded by the number of nonzero entries
+in the program description. However, if you can afford space
+$\Theta(nm + n^2)$, the model \ccc{Quadratic_program_from_mps<NT>}
+might be preferrable, since in the latter model, access to the iterators 
+in \ccc{QuadraticProgramInterface} will be faster.
 
-As a rule of thumb, however, if there is a need for the sparse model
+As a rule of thumb, if there is a need for the sparse model
 \emph{because both $m$ and $n$ are large}, then \cgal's quadratic
 programming solver will probably not be able to solve it anyway.
 
@@ -54,7 +51,7 @@ programming solver will probably not be able to solve it anyway.
 \ccIndexClassCreation
 \ccCreationVariable{qp}
 
-\ccConstructor{Quadratic_program_from_mps(std::istream& in)} {reads \ccVar\ fromthe input stream \ccc{in}.}
+\ccConstructor{Sparse_quadratic_program_from_mps(std::istream& in)} {reads \ccVar\ from the input stream \ccc{in}.}
 
 \ccOperations
 
@@ -72,7 +69,7 @@ MPS-encoded program could be extracted from the input stream.}
 \ccMethod{const std::string& error() const;}{returns an error message explaining why the input is not in MPS format \ccPrecond \ccc{!} \ccVar\ccc{.is_valid()}}
 
 \ccSeeAlso
-\ccc{Sparse_quadratic_program_from_mps<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 \ccc{Quadratic_program_from_pointers<NT>}

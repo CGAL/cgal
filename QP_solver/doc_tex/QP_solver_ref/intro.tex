@@ -7,13 +7,17 @@
 
 \ccHeading{Concepts}
 \ccRefConceptPage{QuadraticProgramInterface}\\
-$\quad$ (for quadratic programs with variable bounds $\mathbf{l} \leq x \leq \mathbf{u}$) \\
+$\quad$ (for quadratic programs with variable bounds $l\leq x \leq u$) \\
 \ccRefConceptPage{LinearProgramInterface} \\
-$\quad$(for linear programs with variable bounds $\mathbf{l} \leq x \leq \mathbf{u}$)\\
+$\quad$(for linear programs with variable bounds $l\leq x \leq u$)\\
 \ccRefConceptPage{NonnegativeQuadraticProgramInterface}\\
 $\quad$ (for quadratic programs with variable bounds $x\geq\mathbf{0}$) \\
 \ccRefConceptPage{NonnegativeLinearProgramInterface}\\
 $\quad$ (for linear programs with variable bounds $x\geq\mathbf{0}$)
+
+\ccRefConceptPage{MPSFormat}\\
+$\quad$ (the format used for reading and writing linear and quadratic 
+programs)
 
 \ccHeading{Classes}
 
@@ -42,7 +46,12 @@ $\quad$ (for quadratic programs with no variable bounds, wrapping given iterator
 \ccc{Free_quadratic_program_from_pointers<NT>}\\
 $\quad$ (for quadratic programs with no variable bounds, wrapping given pointers)\\
 \ccc{Quadratic_program_from_mps<NT>}\\
-$\quad$ (for quadratic programs copied from an input stream)
+$\quad$ (for quadratic programs copied from an input stream in 
+\ccc{MPSFormat})\\
+\ccc{Sparse_quadratic_program_from_mps<NT>}\\
+$\quad$ (for sparse quadratic programs copied from an input stream in 
+\ccc{MPSFormat})
+
 
 These are the models for \ccc{LinearProgramInterface}.
 
@@ -63,8 +72,11 @@ iterators)\\
 $\quad$ (for linear programs with no variable bounds, wrapping given 
 pointers)\\
 \ccc{Linear_program_from_mps<NT>}\\ 
-$\quad$ (for linear programs copied from an input stream)
-
+$\quad$ (for linear programs copied from an input stream in 
+\ccc{MPSFormat})\\
+\ccc{Sparse_linear_program_from_mps<NT>}\\
+$\quad$ (for sparse linear programs copied from an input stream in 
+\ccc{MPSFormat})
 
 For \ccc{NonnegativeQuadraticProgramInterface}, we offer these
 three models.
