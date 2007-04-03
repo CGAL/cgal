@@ -1,6 +1,4 @@
 #include <cassert>
-#include <vector>
-#include <algorithm>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -56,10 +54,8 @@ int main() {
 
   // get certificate for unboundedness
   assert (s.status() == CGAL::QP_UNBOUNDED);
-  std::vector<ET> w;
-  std::copy (s.unboundedness_certificate_begin(), 
-	     s.unboundedness_certificate_end(), std::back_inserter(w));
-  
+  Solution::Unboundedness_certificate_iterator w =
+    s.unboundedness_certificate_begin();
   // check w >= 0
   assert (w[0] >= 0);
   assert (w[1] >= 0);

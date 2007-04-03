@@ -1,6 +1,4 @@
 #include <cassert>
-#include <vector>
-#include <algorithm>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -55,13 +53,10 @@ int main() {
 
   // get certificate for optimality
   assert (s.status() == CGAL::QP_OPTIMAL);
-  std::vector<CGAL::Quotient<ET> > x;
-  std::copy (s.variable_values_begin(),
-	     s.variable_values_end(), std::back_inserter(x));
-  std::vector<CGAL::Quotient<ET> > y;
-  std::copy (s.optimality_certificate_begin(), 
-	     s.optimality_certificate_end(), std::back_inserter(y));
-  
+  Solution::Variable_value_iterator x = 
+    s.variable_values_begin();
+  Solution::Optimality_certificate_iterator y = 
+    s.optimality_certificate_begin();
   // check y >= 0
   assert (y[0] >= 0);
   assert (y[1] >= 0);

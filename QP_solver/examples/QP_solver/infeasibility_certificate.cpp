@@ -1,6 +1,4 @@
 #include <cassert>
-#include <vector>
-#include <algorithm>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -49,10 +47,8 @@ int main() {
 
   // get certificate for infeasibility
   assert (s.status() == CGAL::QP_INFEASIBLE);
-  std::vector<ET> y;
-  std::copy (s.infeasibility_certificate_begin(), 
-	     s.infeasibility_certificate_end(), std::back_inserter(y));
-  
+  Solution::Infeasibility_certificate_iterator y = 
+    s.infeasibility_certificate_begin();
   // check y >= 0
   assert (y[0] >= 0);
   assert (y[1] >= 0);
