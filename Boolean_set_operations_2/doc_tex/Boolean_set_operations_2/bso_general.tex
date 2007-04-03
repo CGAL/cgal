@@ -94,15 +94,15 @@ class and a \dcel{} class. The former defines the type of points used
 to represent polygon vertices and the type of $x$-monotone curves that 
 represent the polygon edges. The traits class also provides primitive 
 geometric operations that operate on objects of these types. 
-The \dcel{} class is used to represent the undelying internal 
+The \dcel{} class is used to represent the underlying internal 
 \ccc{Arrangement_2} data structure. The instantiated \ccc{Dcel} type is 
 used to represent the underlying internal arrangement. It must model the 
 concept \ccc{GeneralPolygonSetDcel}, and defaults to \ccc{Gps_default_dcel}.
 You can override this default, with a different {\sc Dcel} class, typically
 an extension of the default. Overriding the default is necessary only if 
-you intend to obtain the undelying internal arrangement and process it further.
+you intend to obtain the underlying internal arrangement and process it further.
 
-An instatiated
+An instantiated
 \ccc{General_polygon_set_2} class defines the nested types 
 \ccc{General_polygon_set_2<Traits,Dcel>::Polygon_2} and
 \ccc{General_polygon_set_2<Traits,Dcel>::Polygon_with_holes_2}, which model
@@ -149,7 +149,7 @@ swap its source and target points).
 The traits classes \ccc{Arr_segment_traits_2}, 
 \ccc{Arr_non_caching_segment_traits}, \ccc{Arr_circle_segment_traits_2},
 \ccc{Arr_conic_traits_2} and \ccc{Arr_rational_arc_traits_2}, which are 
-bundeled in the \ccc{Arrangement_2} package and distributed with \cgal,
+bundled in the \ccc{Arrangement_2} package and distributed with \cgal,
 are all models of the refined concept 
 \ccc{ArrangementDirectionalXMonotoneTraits_2}.\footnote{The
 \ccc{Arr_polyline_traits_2} class is {\em not} a model of the, 
@@ -171,7 +171,7 @@ of the program or even incorrect results.
 
 Two traits classes are distributed with \cgal. The first one is named
 \ccc{Gps_segment_traits_2}, and it is used to perform Boolean
-set-operations on oridnary polygons and polygons with holes. In fact,
+set-operations on ordinary polygons and polygons with holes. In fact,
 the class \ccc{Polygon_set_2} introduced in
 Section~\ref{bso_ssec:main_component} is a specialization of
 \ccc{General_polygon_set_2<Gps_segment_traits_2>}. This class defined
@@ -313,7 +313,7 @@ package.
 \subsection{Example - Aggregated Operations\label{bso_ssec:aggregated_gen_ops}}
 % ------------------------------------------
 
-In Section~\ref{bso_ssec:agg_ops} we describe how aggragated union
+In Section~\ref{bso_ssec:agg_ops} we describe how aggregated union
 and intersection operations can be applied to a collection of ordinary
 polygons or polygons with holes. Naturally, the aggregated operations
 can be applied also to collections of general polygons. As was the
