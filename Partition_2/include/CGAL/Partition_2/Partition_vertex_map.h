@@ -316,16 +316,12 @@ private :
   List m_list ;
 };
 
-} // namespace Partition_2
-
 #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
 template <class Traits>
 CW_indirect_edge_info_compare< Traits >
 Edge_list<Traits>::cw_indirect_edge_info_compare;
 #endif
 
-
-namespace Partition_2 {
 
 template <class Traits>
 std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges) 
