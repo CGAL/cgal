@@ -1,4 +1,6 @@
-// Copyright (c) 2001-2006  Max-Planck-Institute Saarbruecken (Germany).
+// =============================================================================
+//
+// Copyright (c) 2001-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -15,7 +17,9 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de>
+// Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
+//
+// =============================================================================
 
 #ifndef CGAL_CACHE_H
 #define CGAL_CACHE_H 1

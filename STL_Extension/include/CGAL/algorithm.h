@@ -185,7 +185,7 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
 /*! \brief output iterator range to a stream, with separators
 
     The iterator range \c [first,beyond) is written
-    to \c os (obeying EXACUS I/O modes). Each element is bracketed by
+    to \c os (obeying CGAL I/O modes). Each element is bracketed by
     \c pre and \c post (default: empty string). Adjacent values are
     spearated by \c sep (default: ", ", i.e. comma space).
     The stream \c os is returned in its new state after output.
@@ -198,10 +198,11 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
     produces \c (1):(2):(3)
  */
 template <class InputIterator>
-std::ostream& output_range(std::ostream& os,
-        InputIterator first, InputIterator beyond,
-        const char* sep = ", ", const char* pre = "", const char* post = ""
-) {
+std::ostream& 
+output_range(std::ostream& os,
+             InputIterator first, InputIterator beyond,
+             const char* sep = ", ", const char* pre = "", const char* post = "") 
+{
     InputIterator it = first;
     if (it != beyond) {
         os << pre << oformat(*it) << post;

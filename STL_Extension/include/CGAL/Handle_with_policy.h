@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2006  Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2001-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -19,15 +19,6 @@
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //                 Lutz Kettner <kettner@mpi-inf.mpg.de>
 
-/*! \file LiS/Handle.h
-   \brief Handles with policy parameter for reference counting and union-find
-    strategy. Uses \c LEDA_MEMORY if available.
-
-    <B> See for the full documentation:</B>
-
-      - <B>\link LiS_handle Handle for Reference Counting \endlink</B>
-*/
-
 #ifndef CGAL_HANDLE_WITH_POLICY_H
 #define CGAL_HANDLE_WITH_POLICY_H
 
@@ -46,11 +37,6 @@
 
 //#define  LiS_HANDLE_OLD_ALLOCATION
 
-// LiS2CGAL: check whether CGAL::Handle is a subset and replacing it
-// LiS2CGAL: Start: Copy and use it 
-// LiS2CGAL: Handle Package?
-
-
 #ifdef LiS_HANDLE_OLD_ALLOCATION
 #ifdef CGAL_USE_LEDA
 #include <LEDA/memory.h>
@@ -59,11 +45,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \defgroup LiS_handle Handle for Reference Counting
-    \brief <tt>\#include <CGAL/Handle_with_policy.h></tt> for handles with policy
+/*! \brief <tt>\#include <CGAL/Handle_with_policy.h></tt> for handles with policy
     parameter for reference counting and union-find strategy. Uses 
     \c LEDA_MEMORY if available. The old memory allocation can be
-    selected by defining the \c LiS_HANDLE_OLD_ALLOCATION macro.
+    selected by defining the \c HANDLE_OLD_ALLOCATION macro.
 
     There are two fundamentally different usages of this base class:
 
@@ -91,7 +76,7 @@ We use a single representation class to store an integer. The second
 constructor makes use of one of the forwarding template constructors
 that simply forward their parameter list to the representation
 constructors. They exist for up to ten parameters.  The third
-constructor illustrates how the \c LiS::USE_WITH_INITIALIZE_WITH can be
+constructor illustrates how the \c USE_WITH_INITIALIZE_WITH can be
 used. It is useful if extensive computations are necessary before the
 representation can be created.
 
@@ -721,7 +706,7 @@ public:
     allocator. Btw, the allocator is used as an allocator of character
     arrays here.
 
-    \see \link LiS_handle Handle for Reference Counting\endlink for 
+    \see \link Handle Handle for Reference Counting\endlink for 
     an example for each of the two alternative usages.
 
     The template parameters are:
