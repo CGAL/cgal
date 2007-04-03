@@ -3931,17 +3931,17 @@ write_linker_flags()
   done
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
       if [ "${CGAL_DIR}" = "${CGAL_INSTALL_DIR}" ]; then
-          _CGAL_IDIR="`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`"
+          CGAL_FINAL_LIB_DIR="`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`"
       else
-          _CGAL_IDIR=`concat_path "${CGAL_INSTALL_DIR}" lib`
+          CGAL_FINAL_LIB_DIR=`concat_path "${CGAL_INSTALL_DIR}" lib`
       fi
       RUNTIME_PATH="`split_up \"RUNTIME_PATH\" \":\"`"
       if [ -z "${RUNTIME_PATH}" ]; then
           makefile_print_continuationline \
-              "${RUNTIME_LINKER_FLAG}${_CGAL_IDIR}" >> ${FILE}
+              "${RUNTIME_LINKER_FLAG}${CGAL_FINAL_LIB_DIR}" >> ${FILE}
       else
           makefile_print_continuationline \
-              "${RUNTIME_LINKER_FLAG}${_CGAL_IDIR}:${RUNTIME_PATH}" >> ${FILE}
+              "${RUNTIME_LINKER_FLAG}${CGAL_FINAL_LIB_DIR}:${RUNTIME_PATH}" >> ${FILE}
       fi
   fi
   makefile_print_continuationline ")" >> ${FILE}
