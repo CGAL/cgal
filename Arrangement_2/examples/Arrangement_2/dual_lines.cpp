@@ -18,10 +18,7 @@ int main (int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
   // points.dat file if no command-line parameters are given.
-  char   *filename = "points.dat";
-
-  if (argc > 1)
-    filename = argv[1];
+  char * filename = (argc > 1) ? argv[1] : "points.dat";
 
   // Open the input file.
   std::ifstream     in_file (filename);
