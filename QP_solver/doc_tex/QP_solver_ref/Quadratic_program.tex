@@ -30,9 +30,11 @@ $x$,
 \end{itemize}
 
 This class copies the program data from given iterator ranges;this
-is useful if the iterators that you have are not random-access, or 
-if dereferencing them performs some complex operations. Usually, 
-you only need to wrap existing iterators, and then you may use the classes 
+is useful if the iterators that you have are not random-access.
+The time taken to copy the data is $\Theta(nm+n^2)$, though, even if the
+program description is very sparse. Usually, 
+you only need to wrap existing (random-access)
+iterators, and then you may use the classes 
 \ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>} and \ccc{Quadratic_program_from_pointers<NT>}).
 
 \ccIsModel
