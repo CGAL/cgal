@@ -33,13 +33,12 @@
 
 #include <CGAL/basic.h>
 
-// only do something if LEDA available
 
 #include <cassert>
 #include<CGAL/Random.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
-#include<CGAL/Optimisation_d_traits_2.h>
+#include<CGAL/Min_sphere_annulus_d_traits_2.h>
 #include<CGAL/Min_sphere_d.h>
 #include<CGAL/Min_circle_2.h>
 #include<CGAL/Min_circle_2_traits_2.h>  //why is this not in Min_circle_2.h
@@ -52,8 +51,8 @@ typedef NT                                          FT;
 typedef NT                                          RT;
 typedef Cartesian<FT>                               C;
 typedef Homogeneous<RT>                     H;
-typedef Optimisation_d_traits_2<C>          Cartesian_traits;
-typedef Optimisation_d_traits_2<H>          Homogeneous_traits;
+typedef Min_sphere_annulus_d_traits_2<C>    Cartesian_traits;
+typedef Min_sphere_annulus_d_traits_2<H>    Homogeneous_traits;
 typedef Min_sphere_d<Cartesian_traits>      Min_sphereC;
 typedef Min_sphere_d<Homogeneous_traits>    Min_sphereH;
 typedef C::Point_2                          PointC;

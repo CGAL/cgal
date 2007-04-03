@@ -33,13 +33,12 @@
 
 #include<CGAL/basic.h>
 
-// only do something if LEDA available
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <sstream>
 #include <cassert>
-#include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Min_sphere_annulus_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Gmpq.h>
 
@@ -50,8 +49,8 @@ typedef NT                                  FT;
 typedef NT                                  RT;
 typedef Cartesian_d<FT>                     C;
 typedef Homogeneous_d<RT>                   H;
-typedef Optimisation_d_traits_d<C>          Cartesian_traits;
-typedef Optimisation_d_traits_d<H>          Homogeneous_traits;
+typedef Min_sphere_annulus_d_traits_d<C>    Cartesian_traits;
+typedef Min_sphere_annulus_d_traits_d<H>    Homogeneous_traits;
 typedef Min_sphere_d<Cartesian_traits>      Min_sphereC;
 typedef Min_sphere_d<Homogeneous_traits>    Min_sphereH;
 typedef Point_d<C>                          PointC;

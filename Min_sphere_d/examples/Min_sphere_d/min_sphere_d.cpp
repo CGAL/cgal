@@ -2,11 +2,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <CGAL/Random.h>
-#include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Min_sphere_annulus_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
 
 typedef CGAL::Cartesian_d<double>              K;
-typedef CGAL::Optimisation_d_traits_d<K>       Traits;
+typedef CGAL::Min_sphere_annulus_d_traits_d<K> Traits;
 typedef CGAL::Min_sphere_d<Traits>             Min_sphere;
 typedef K::Point_d                             Point;
 
