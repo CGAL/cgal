@@ -26,7 +26,8 @@ from $\{\leq, =, \geq\}$,
 This class specializes the class
 \ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
 for the case where all iterators are of type \ccc{NT**} (for
-$A$) and \ccc{NT*} otherwise. The class is simply a wrapper for 
+$A$) and \ccc{NT*} otherwise, for some number type \ccc{NT}.
+The class is simply a wrapper for 
 existing pointers, and it does not copy the program data (if you need
 a copy, you may use the class \ccc{Nonnegative_linear_program<NT>}).
 

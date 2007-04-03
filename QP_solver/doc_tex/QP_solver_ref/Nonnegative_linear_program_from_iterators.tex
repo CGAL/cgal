@@ -36,11 +36,11 @@ copy the program data (if you need a copy, you may use the class
 \ccCreationVariable{lp}
 
 \ccConstructor{Nonnegative_linear_program_from_iterators(int n, int m, 
-  const A_iterator& a, 
-  const B_iterator& b,
-  const R_iterator& r,
-  const C_iterator& c,
-  const std::iterator_traits<C_iterator>value_type& c0 = 0
+  const A_it& a, 
+  const B_it& b,
+  const R_it& r,
+  const C_it& c,
+  const std::iterator_traits<C_it>value_type& c0 = 0
   )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. }
 
 \ccSeeAlso

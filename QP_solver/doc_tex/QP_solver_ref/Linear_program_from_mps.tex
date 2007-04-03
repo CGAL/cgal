@@ -29,7 +29,8 @@ $x$,
 
 The program data are read from an input stream in \ccc{MPSFormat}. This is
 a commonly used format for encoding linear and quadratic programs that
-is understood by many solvers. 
+is understood by many solvers. All values are expected to be readable
+into type \ccc{NT}.
 
 \textbf{Note:} The space required to store the program is $\Theta(nm +
 n^2)$, even if these matrix $A$ is very sparse. This might be

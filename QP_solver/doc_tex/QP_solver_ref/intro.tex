@@ -21,15 +21,17 @@ programs)
 
 \ccHeading{Classes}
 
-There is one major class that represents the solution of a program
-specified according to one of the concepts above. An instance of this 
-class is returned by any of the solution functions below.
+There is a class that represents the solution of a linear
+or quadratic program. An instance of this class is returned by any of 
+the solution functions below.
 
 %\ccRefIdfierPage{Quadratic_program_solution}
 
-We offer a number of predefined models for the four program concepts.
+We offer a number of predefined models for the program concepts. These
+construct linear or quadratic programs from iterators, or from streams.
 
-Here are models that conform to the concept \ccc{QuadraticProgramInterface}. 
+Here are the models that conform to the concept 
+\ccc{QuadraticProgramInterface}. 
 
 \ccc{Quadratic_program<NT>}\\
 $\quad$ (for quadratic programs that copy data from iterator ranges) \\
@@ -96,7 +98,22 @@ $\quad$ (for nonnegative linear programs, copied from iterator ranges)\\
 $\quad$ (for nonnegative linear programs, wrapping given iterators)\\
 \ccc{Nonnegative_linear_program_from_pointers<NT>}\\
 $\quad$ (for nonnegative linear programs, wrapping given pointers)\\
+
+
 \ccHeading{Functions}
 
 There are four functions to solve a program, one for each program
 concept. 
+
+\ccc{solve_quadratic_program}\\
+\ccc{solve_linear_program}\\
+\ccc{solve_nonnegative_quadratic_program}\\
+\ccc{solve_nonnegative_linear_program}
+
+Programs can be written to an output stream in \ccc{MPSFormat}, using
+one of the following four functions.
+
+\ccc{print_quadratic_program}\\
+\ccc{print_linear_program}\\
+\ccc{print_nonnegative_quadratic_program}\\
+\ccc{print_nonnegative_linear_program}

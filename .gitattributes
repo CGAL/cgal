@@ -1839,6 +1839,14 @@ QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_mps.tex -text
 QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_pointers.tex -text
 QP_solver/doc_tex/QP_solver_ref/Sparse_linear_program_from_mps.tex -text
 QP_solver/doc_tex/QP_solver_ref/Sparse_quadratic_program_from_mps.tex -text
+QP_solver/doc_tex/QP_solver_ref/print_linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/print_nonnegative_linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/print_nonnegative_quadratic_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/print_quadratic_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/solve_linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/solve_nonnegative_linear_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/solve_nonnegative_quadratic_program.tex -text
+QP_solver/doc_tex/QP_solver_ref/solve_quadratic_program.tex -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text

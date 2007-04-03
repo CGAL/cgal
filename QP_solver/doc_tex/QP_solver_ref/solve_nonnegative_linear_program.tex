@@ -1,0 +1,20 @@
+\begin{ccRefFunction}{solve_nonnegative_linear_program}
+
+\ccInclude{CGAL/QP_functions.h}
+
+This function solves a nonnegative linear program, using some exact
+Integral Domain \ccc{ET} for its computations.   
+
+\ccFunction{template <NonnegativeLinearProgramInterface, ET>
+  Quadratic_program_solution<ET> solve_nonnegative_linear_program 
+  (const NonegativeLinearProgramInterface& lp, const ET&);}
+{returns the solution of the nonnegative linear program \ccc{lp}, solved
+with exact number type \ccc{ET}.}
+
+\ccHeading{Requirements}
+\ccc{ET} is a model of the concepts \ccc{IntegralDomain} and
+\ccc{RealEmbeddable}; it must
+be an exact type, and all entries of \ccc{lp} are convertible to 
+\ccc{ET}.
+
+\end{ccRefFunction}

@@ -1,0 +1,20 @@
+\begin{ccRefFunction}{solve_linear_program}
+
+\ccInclude{CGAL/QP_functions.h}
+
+This function solves a linear program, using some exact
+Integral Domain \ccc{ET} for its computations.   
+
+\ccFunction{template <LinearProgramInterface, ET>
+  Quadratic_program_solution<ET> solve_linear_program 
+  (const LinearProgramInterface& lp, const ET&);}
+{returns the solution of the linear program \ccc{lp}, solved
+with exact number type \ccc{ET}.}
+
+\ccHeading{Requirements}
+\ccc{ET} is a model of the concepts \ccc{IntegralDomain} and
+\ccc{RealEmbeddable}; it must
+be an exact type, and all entries of \ccc{lp} are convertible to 
+\ccc{ET}.
+
+\end{ccRefFunction}
