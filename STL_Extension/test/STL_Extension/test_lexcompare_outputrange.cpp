@@ -1,26 +1,12 @@
 // ============================================================================
 //
-// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
 // ----------------------------------------------------------------------------
-//
-// Library       : LiS
-// File          : test/algorithm_test.C
-// LiS_release   : $Name:  $
-// Revision      : $Revision$
-// Revision_date : $Date$
-//
+// $URL$
+// $Id$
 // Author(s)     : Lutz Kettner  <kettner@mpi-inf.mpg.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //
@@ -67,7 +53,7 @@ void test_output_range() {
     CGAL_test_assert(os.str() == "");
     CGAL_test_assert(sp == &os);
     os.str("");
-    
+
     sp = &(CGAL::output_range(os, A, A+1, ":", "(", ")"));
     CGAL_test_assert(os.str() == "(1)");
     CGAL_test_assert(sp == &os);
@@ -88,7 +74,7 @@ void test_output_range() {
 int main() {
     test_lex_compare();
     test_output_range();
-    
+
     return EXIT_SUCCESS;
 }
 

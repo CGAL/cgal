@@ -1,26 +1,12 @@
 // ============================================================================
 //
-// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
 // ----------------------------------------------------------------------------
-//
-// Library       : LiS
-// File          : test/Handle.C
-// LiS_release   : $Name:  $
-// Revision      : $Revision$
-// Revision_date : $Date$
-//
+// $URL$
+// $Id$
 // Author(s)     : Michael Seel <seel@mpi-inf.mpg.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //                 Lutz Kettner <kettner@mpi-inf.mpg.de>
@@ -52,11 +38,11 @@ struct Int_t : public ::CGAL::Handle_with_policy< Int_rep, Unify > {
         // test initialize_with
         this->initialize_with( i, j + k);
     }
-    
-    // This is needed to prevent VC7.1 and VC8 to call 
+
+    // This is needed to prevent VC7.1 and VC8 to call
     // the explicit templated constructor in Base instead of its copy-ctor.
     Int_t( Int_t const& rhs ) : Base( static_cast<Base const&>(rhs) ) {}
-    
+
     int  value() const { return this->ptr()->val; }
     void set_value( int i) {
         this->copy_on_write();
@@ -268,8 +254,8 @@ void test_handle() {
 template <class Policy, class Alloc>
 struct Int_vrep : public Policy::template Hierarchy_base< Alloc>::Type {
     int val;
-    virtual CGAL::Reference_counted_hierarchy<Alloc>* clone() { 
-        return new Int_vrep( *this); 
+    virtual CGAL::Reference_counted_hierarchy<Alloc>* clone() {
+        return new Int_vrep( *this);
     }
     virtual int  get_val() const { return val; }
     virtual void set_val( int i) { val = i; }
@@ -279,7 +265,7 @@ struct Int_vrep : public Policy::template Hierarchy_base< Alloc>::Type {
 template <class Policy, class Alloc>
 struct Int_vrep2 : public Int_vrep<Policy,Alloc> {
     int val2;
-    virtual ::CGAL::Reference_counted_hierarchy<Alloc>* clone() { 
+    virtual ::CGAL::Reference_counted_hierarchy<Alloc>* clone() {
         return new Int_vrep2( *this);
     }
     virtual int get_val() const { return this->val + val2; }
@@ -305,7 +291,7 @@ struct Int_vt : public ::CGAL::Handle_with_policy< Int_vrep<Unify,Alloc>, Unify 
     Int_vt( int i, int j) : Base( new Int_vrep2<Unify,Alloc>(i,j)) {}
     Int_vt( int i, int j, int k) : Base( new Int_vrep3<Unify,Alloc>(i,j,k)) {}
 
-    // This is needed to prevent VC7.1 and VC8 to call 
+    // This is needed to prevent VC7.1 and VC8 to call
     // the explicit templated constructor in Base instead of its copy-ctor.
     Int_vt( Int_vt const& rhs ) : Base( static_cast<Base const&>(rhs) ) {}
 
@@ -326,7 +312,7 @@ struct Int_vt : public ::CGAL::Handle_with_policy< Int_vrep<Unify,Alloc>, Unify 
 
 void test_handle_with_class_hierarchy() {
     { // test template constructor and initialize_with
-        typedef Int_vt< ::CGAL::Handle_policy_no_union> Int; 
+        typedef Int_vt< ::CGAL::Handle_policy_no_union> Int;
         Int i(5,6);
         CGAL_test_assert( i == Int(11));
         Int j(5,6,7);

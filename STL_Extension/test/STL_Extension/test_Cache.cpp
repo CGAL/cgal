@@ -1,26 +1,12 @@
 // ============================================================================
 //
-// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
 // ----------------------------------------------------------------------------
-//
-// Library       : Support
-// File          : test/Cache.C
-// SoX_release   : $Name:  $
-// Revision      : $Revision$
-// Revision_date : $Date$
-//
+// $URL$
+// $Id$
 // Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de>
 //
 // ============================================================================
@@ -51,8 +37,8 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
         // test initialize_with
         this->initialize_with( i, j + k);
     }
-    
-    // This is needed to prevent VC7.1 and VC8 to call 
+
+    // This is needed to prevent VC7.1 and VC8 to call
     // the explicit templated constructor in Base instead of its copy-ctor.
     Int_t( Int_t const& rhs ) : Base( static_cast<Base const&>(rhs) ) {}
 
@@ -73,16 +59,16 @@ void test_typedefs(){
     typedef CGAL::Cache<int,double> Cache;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Cache::Input, int >::value ));
     BOOST_STATIC_ASSERT(( ::boost::is_same< Cache::Output,double>::value ));
-    typedef CGAL::Creator_1<int,double> Creator_double; 
+    typedef CGAL::Creator_1<int,double> Creator_double;
     BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Creator,Creator_double>::value ));
-    typedef CGAL::Creator_1<int,int> Creator_int; 
+    typedef CGAL::Creator_1<int,int> Creator_int;
     BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Canonicalizer,Creator_int>::value ));
     BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Compare,std::less<int> >::value ));
     BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Self,CGAL::Cache<int,double> >::value ));
 }
 int main(){
     {
-        test_typedefs(); 
+        test_typedefs();
         {
             typedef CGAL::Cache<int,double> Cache;
             double d;
@@ -107,7 +93,7 @@ int main(){
             typedef Cache::Reverse_iterator Reverse_iterator;
             typedef Cache::Const_reverse_iterator Const_reverse_iterator;
             typedef Cache::Size_type Size_type;
-        
+
             Iterator it;
             d=0;
             for(it=cache.begin();it!=cache.end();it++){
@@ -131,7 +117,7 @@ int main(){
             CGAL_test_assert(hi2==Int(4));
             CGAL_test_assert(cache.size()==2);
             hi2=cache(3);
-            CGAL_test_assert(hi.id()==hi2.id());       
+            CGAL_test_assert(hi.id()==hi2.id());
         }
     }
 
