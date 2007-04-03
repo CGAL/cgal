@@ -63,26 +63,31 @@ sub check_keywords {
     local *FILE;
     open(FILE, "<", $filename) || die("Bad filename \"$filename\".");
     while(<FILE>) {
-	if(/\/\/.*\$.*\$/) {
-	    (my $key, my $value) = /\$([a-zA-Z-_]+): ?(.*)\$/;
-	    if(defined($key)) {
-		switch ($key) {
-		    case "Author" { $keywordAuthor = $value; }
-		    case "Date" { $keywordDate = $value; }
-		    case "Id" { $keywordId = $value; }
-		    case "Revision" { $keywordRevision = $value; }
-		    case "URL" { $keywordURL = $value; }
-		    else {
-			$incorrect = 1;
-			$verbose && print STDERR 
-			    "\"$filename\" has incorrect keyword \"$key\""
-			    . " with value \"$value\".\n";
+	chomp;
+	if(/\/\/.*\$[a-zA-Z]+:/) {
+	    my %keys = /\$([a-zA-Z-_]+): ?([^\$]+)\$/g;
+	    if(/^[^\$]*(\$[^\$]+\$[^\$]*)+$/ && scalar(keys(%keys))) {
+		foreach (keys(%keys)) {
+		    my $key = $_;
+		    my $value = $keys{$key};
+		    switch ($key) {
+			case "Author" { $keywordAuthor = $value; }
+			case "Date" { $keywordDate = $value; }
+			case "Id" { $keywordId = $value; }
+			case "Revision" { $keywordRevision = $value; }
+			case "URL" { $keywordURL = $value; }
+			else {
+			    $incorrect = 1;
+			    if($verbose) {
+				print STDERR "$filename has the incorrect keyword \"$key:\".\n";
+			    }
+			}
 		    }
 		}
 	    }
 	    else {
 		$incorrect = 1;
-		$verbose && print STDERR "Incorrect line in \"$filename\$:\n  \"" . $_ . "\"\n";
+		$verbose && print STDERR "$filename has the incorrect line:\n  \"" . $_ . "\"\n";
 	    }
 	}
     }
@@ -90,8 +95,8 @@ sub check_keywords {
     {
 	$incorrect = 1;
 	if( $verbose ) {
-	    $keywordId || print STDERR "\"$filename\" has no \"Id:\".\n";
-	    $keywordURL || print STDERR "\"$filename\" has no \"Id:\".\n";
+	    $keywordId || print STDERR "$filename has no \"Id:\".\n";
+	    $keywordURL || print STDERR "$filename has no \"URL:\".\n";
 	}
     }
     if( ! $verbose && $incorrect ) {
@@ -127,7 +132,7 @@ GetOptions('help' => \$help,
 pod2usage( { -exitval => 1 ,
 	     -verbose => 1 } ) if $help;
 
-if($#FILENAMES eq -1) {
+if($#FILENAMES == -1) {
     pod2usage( { -msg => "No filename!" ,
 		 -exitval => 1 ,
 		 -verbose => 0 ,
