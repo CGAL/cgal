@@ -52,6 +52,8 @@
 // - Free_linear_program
 // - Quadratic_program_from_mps
 // - Linear_program_from_mps
+// - Sparse_quadratic_program_from_mps
+// - Sparse_linear_program_from_mps
 
 // for convenience, every model is actually a model of the
 // concept QuadraticProgramInterface:
@@ -1637,7 +1639,6 @@ public: // methods:
   }
 
   // Returns the name (as present in the MPS-file) of the i-th variable.
-  // Note: this routine has linear complexity.
   const std::string& name_of_variable(int i)
   {
     CGAL_qpe_assertion(0<=i && i<n());
@@ -1794,18 +1795,18 @@ public:
   }
 
   // Returns true iff the MPS stream could be successfully parsed and
-  // the loaded QP instance is in standard form.
+  // the loaded QP instance is nonnegative
   bool is_nonnegative()
   {
     if (!is_format_okay_)
       return false;
 
     if (!is_nonnegative_cached) {
+      is_nonnegative_cached = true;
       for (unsigned int i=0; i<var_names.size(); ++i)
-	if (fl_[i] == false || l_[i] != 0 ||
+	if (fl_[i] == false || !CGAL::is_zero(l_[i]) ||
 	    fu_[i] == true) {
-	  is_nonnegative_ = false;
-	  return is_nonnegative_;
+	  return is_nonnegative_ = false;
 	}
       is_nonnegative_ = true;
     }
@@ -1823,34 +1824,47 @@ std::ostream& operator<<(std::ostream& o,
 
 // Quadratic_program_from_mps, inherits from QP_from_mps
 // -----------------------------------------------------
-template<typename IT_,
-	 typename Sparse_D_ = Tag_false,
-	 typename Sparse_A_ = Tag_false>
+template<typename IT_>
 class Quadratic_program_from_mps : 
-  public QP_from_mps <IT_, Tag_false, Sparse_D_, Sparse_A_>
+  public QP_from_mps <IT_, Tag_false, Tag_false, Tag_false>
 {
 private:
-  typedef QP_from_mps <IT_, Tag_false, Sparse_D_, Sparse_A_>
+  typedef QP_from_mps <IT_, Tag_false, Tag_false, Tag_false>
   Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
-  Quadratic_program_from_mps(std::istream& in,bool use_CPLEX_convention=true,
+  Quadratic_program_from_mps(std::istream& in, bool use_CPLEX_convention=true,
 		  int verbosity=0)
     : Base (in, use_CPLEX_convention, verbosity)
   {}
 };
 
+// Sparse_quadratic_program_from_mps, inherits from QP_from_mps
+// ------------------------------------------------------------
+template<typename IT_>
+class Sparse_quadratic_program_from_mps : 
+  public QP_from_mps <IT_, Tag_false, Tag_true, Tag_true>
+{
+private:
+  typedef QP_from_mps <IT_, Tag_false, Tag_true, Tag_true>
+  Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Sparse_quadratic_program_from_mps
+  (std::istream& in, bool use_CPLEX_convention=true,
+   int verbosity=0)
+    : Base (in, use_CPLEX_convention, verbosity)
+  {}
+};
 
 // Linear_program_from_mps, inherits from QP_from_mps
 // --------------------------------------------------
-template<typename IT_,
-	 typename Sparse_D_ = Tag_false,
-	 typename Sparse_A_ = Tag_false>
+template<typename IT_>
 class Linear_program_from_mps : 
-  public QP_from_mps <IT_, Tag_true, Sparse_D_, Sparse_A_>
+  public QP_from_mps <IT_, Tag_true, Tag_false, Tag_false>
 {
 private:
-  typedef QP_from_mps <IT_, Tag_true, Sparse_D_, Sparse_A_>
+  typedef QP_from_mps <IT_, Tag_true, Tag_false, Tag_false>
   Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
@@ -1860,6 +1874,23 @@ public:
   {}
 };
 
+// Sparse_linear_program_from_mps, inherits from QP_from_mps
+// ---------------------------------------------------------
+template<typename IT_>
+class Sparse_linear_program_from_mps : 
+  public QP_from_mps <IT_, Tag_true, Tag_true, Tag_true>
+{
+private:
+  typedef QP_from_mps <IT_, Tag_true, Tag_true, Tag_true>
+  Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Sparse_linear_program_from_mps
+  (std::istream& in,bool use_CPLEX_convention=true,
+   int verbosity=0)
+    : Base (in, use_CPLEX_convention, verbosity)
+  {}
+};
 
 CGAL_END_NAMESPACE
 

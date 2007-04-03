@@ -341,8 +341,7 @@ bool process(const std::string& filename,
   std::ifstream in(filename.c_str());
   if (!in)
     bailout1("could not open file '%'",filename);
-  typedef CGAL::Quadratic_program_from_mps
-    <IT, CGAL::Tag_false, CGAL::Tag_false> QP_instance;
+  typedef CGAL::Quadratic_program_from_mps <IT> QP_instance;
   QP_instance qp(in,true,verbosity);
   in.close();
 
@@ -350,8 +349,7 @@ bool process(const std::string& filename,
   std::ifstream in2(filename.c_str());
   if (!in2)
     bailout1("could not open file '%'",filename);
-  typedef CGAL::Quadratic_program_from_mps
-    <IT, CGAL::Tag_true, CGAL::Tag_true> Sparse_QP_instance;
+  typedef CGAL::Sparse_quadratic_program_from_mps <IT> Sparse_QP_instance;
   Sparse_QP_instance qp2(in2,true,verbosity);
   in2.close();
 
@@ -410,9 +408,7 @@ bool process(const std::string& filename,
 	 << "Error: " << qp.error() << endl;
     return false;
   }
-  if (verbosity > 3)
-    cout << endl << qp;
-
+  
   // check for format errors in MPS file (sparse):
   if (!qp2.is_valid()) {
     cout << "Input is not a valid MPS file." << endl

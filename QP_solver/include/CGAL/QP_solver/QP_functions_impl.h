@@ -300,6 +300,8 @@ namespace QP_functions_detail {
     // COLUMNS section:
     typename P::A_iterator a = p.a();
     typename P::C_iterator c = p.c();
+    typedef 
+      typename std::iterator_traits<typename P::C_iterator>::value_type IT;
     out << "COLUMNS\n";
     for (int j=0; j<n; ++j, ++c, ++a) {
       // make sure that variable appears here even if it has only
@@ -316,7 +318,7 @@ namespace QP_functions_detail {
 	}
       }
       if (!written)
-	out << "  x" << j << "  obj  " << 0 << "\n";
+	out << "  x" << j << "  obj  " << IT(0) << "\n";
     }
  
     // RHS section:
