@@ -1899,6 +1899,7 @@ Robustness/demo/Robustness/robustness.vcproj eol=crlf
 STL_Extension/include/CGAL/type_traits.h -text
 STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
+Scripts/developer_scripts/check_svn_keywords -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_macosx_installer -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text svneol=unset#application/postscript
