@@ -4521,6 +4521,7 @@ installation()
 	    for i in `cd "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"; ls *${CGAL_SHARED_LIB_EXT}`; do
 		log_print "Fixing lib paths in" "${i}"
 		${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
+		${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
 	    done;;
     esac
 
