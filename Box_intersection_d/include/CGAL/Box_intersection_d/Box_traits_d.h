@@ -42,7 +42,7 @@ struct Box_traits_d {
     static NT  min_coord(Box_parameter b, int dim) { return b.min_coord( dim);}
     static NT  max_coord(Box_parameter b, int dim) { return b.max_coord( dim);}
     static ID  id(Box_parameter b)                 { return b.id();}
-    static int dimension()                    { return BoxHandle::dimension();}
+    static int dimension()                         { return BoxHandle::dimension();}
 };
 
 // box pointer traits
