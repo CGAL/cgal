@@ -87,7 +87,7 @@ sub check_keywords {
 	    }
 	    else {
 		$incorrect = 1;
-		$verbose && print STDERR "$filename has the incorrect line:\n  \"" . $_ . "\"\n";
+		$verbose && print STDERR "$filename has the incorrect line: \"" . $_ . "\"\n";
 	    }
 	}
     }
