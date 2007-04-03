@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Min_annulus_d.h>
-#include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Min_sphere_annulus_d_traits_d.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>
@@ -47,15 +47,15 @@ typedef CGAL::Quotient<CGAL::MP_Float> FT;
 
 // exact kernels
 typedef  CGAL::Cartesian_d<FT>                     CK1;
-typedef  CGAL::Optimisation_d_traits_d<CK1>        CTraits1;
+typedef  CGAL::Min_sphere_annulus_d_traits_d<CK1>        CTraits1;
 typedef  CGAL::Homogeneous_d<RT>                   HK1;
-typedef  CGAL::Optimisation_d_traits_d<HK1>        HTraits1;
+typedef  CGAL::Min_sphere_annulus_d_traits_d<HK1>        HTraits1;
 
 // inexact kernels
 typedef  CGAL::Cartesian_d<double>                      CK2;
-typedef  CGAL::Optimisation_d_traits_d<CK2, RT, double> CTraits2;
+typedef  CGAL::Min_sphere_annulus_d_traits_d<CK2, RT, double> CTraits2;
 typedef  CGAL::Homogeneous_d<double>                    HK2;
-typedef  CGAL::Optimisation_d_traits_d<HK2, RT, double> HTraits2;
+typedef  CGAL::Min_sphere_annulus_d_traits_d<HK2, RT, double> HTraits2;
 
 #include <CGAL/Random.h>
 #include <vector>

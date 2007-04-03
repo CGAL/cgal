@@ -5,7 +5,7 @@
 #include <cassert>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Min_annulus_d.h>
-#include <CGAL/Optimisation_d_traits_2.h>
+#include <CGAL/Min_sphere_annulus_d_traits_2.h>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
@@ -16,11 +16,11 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an EXACT kernel...
-typedef CGAL::Simple_cartesian<ET>        K;
-typedef K::Point_2                        Point;
+typedef CGAL::Simple_cartesian<ET>             K;
+typedef K::Point_2                             Point;
 // ...and the traits class based on the exact kernel
-typedef CGAL::Optimisation_d_traits_2<K>  Traits;
-typedef CGAL::Min_annulus_d<Traits>       Min_annulus;
+typedef CGAL::Min_sphere_annulus_d_traits_2<K> Traits;
+typedef CGAL::Min_annulus_d<Traits>            Min_annulus;
 
 int main()
 {
