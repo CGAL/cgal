@@ -4,7 +4,7 @@
 #include <cassert>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polytope_distance_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/Polytope_distance_d_traits_3.h>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
@@ -15,11 +15,11 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an EXACT kernel...
-typedef CGAL::Simple_cartesian<ET>        K;
-typedef K::Point_3                        Point;
+typedef CGAL::Simple_cartesian<ET>            K;
+typedef K::Point_3                            Point;
 // ...and the traits class based on the exact kernel
-typedef CGAL::Optimisation_d_traits_3<K>  Traits;
-typedef CGAL::Polytope_distance_d<Traits> Polytope_distance;
+typedef CGAL::Polytope_distance_d_traits_3<K> Traits;
+typedef CGAL::Polytope_distance_d<Traits>     Polytope_distance;
 
 
 int main()

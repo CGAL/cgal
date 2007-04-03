@@ -28,7 +28,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/Polytope_distance_d_traits_3.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf RT;
@@ -45,9 +45,9 @@ typedef CGAL::MP_Float RT;
 
 // fast and exact
 typedef  CGAL::Cartesian< double >                      CK1;
-typedef  CGAL::Optimisation_d_traits_3<CK1, RT, double> CTraits1;
+typedef  CGAL::Polytope_distance_d_traits_3<CK1, RT, double> CTraits1;
 typedef  CGAL::Homogeneous< double >                    HK1;
-typedef  CGAL::Optimisation_d_traits_3<HK1, RT, double> HTraits1;
+typedef  CGAL::Polytope_distance_d_traits_3<HK1, RT, double> HTraits1;
 
 #include <CGAL/Random.h>
 #include <vector>

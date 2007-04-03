@@ -1,7 +1,7 @@
 #include <iostream>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Polytope_distance_d.h>
-#include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Polytope_distance_d_traits_d.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf                            ExactFPType;
@@ -10,7 +10,7 @@ typedef CGAL::Gmpzf                            ExactFPType;
 typedef CGAL::MP_Float                         ExactFPType;
 #endif
 typedef CGAL::Cartesian_d<double>              K;
-typedef CGAL::Optimisation_d_traits_d<K,ExactFPType, double >       
+typedef CGAL::Polytope_distance_d_traits_d<K,ExactFPType, double >       
                                                Traits;
 typedef CGAL::Polytope_distance_d<Traits>      Polytope_distance;
 typedef K::Point_d                             Point;
