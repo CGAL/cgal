@@ -1,11 +1,10 @@
-// ============================================================================
-//
-// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
+// Copyright (c) 2001-2006  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -13,17 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
-//
-// Library       : LiS
-// File          : include/LiS/Flattening_iterator.h
-// LiS_release   : $Name:  $
-// Revision      : $Revision$
-// Revision_date : $Date$
+// $URL$
+// $Id$
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//
-// ============================================================================
 
 /*! \file LiS/Flattening_iterator.h
  *  \brief declares classes \c LiS::Flattening_iterator and
@@ -283,4 +275,3 @@ flattener(InputIterator it);
 CGAL_END_NAMESPACE
 
 #endif // LiS_FLATTENING_ITERATOR_H
-// EOF
