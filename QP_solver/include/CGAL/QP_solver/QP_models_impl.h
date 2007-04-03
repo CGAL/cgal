@@ -103,7 +103,7 @@ template<typename IT_, typename Is_linear_,
 	 typename Sparse_A_>
 const std::string& QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
-		Sparse_A_>::error()
+		Sparse_A_>::error() const
 {
   CGAL_qpe_assertion(!is_valid());
   return error_msg;
@@ -114,7 +114,7 @@ template<typename IT_, typename Is_linear_,
 	 typename Sparse_A_>
 const std::string& QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
-		Sparse_A_>::comment()
+		Sparse_A_>::comment() const
 {
   return comment_;
 }

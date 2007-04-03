@@ -26,8 +26,8 @@ int main() {
   int   l[] = {0, 0};
   bool fu[] = {false, true};                  // only y is upper-bounded
   int   u[] = {0, 4};                         // x's u-entry is ignored
-  int  D1[] = {1};                            // D_{1,1}
-  int  D2[] = {0, 4};                         // D_{2,1}, D_{2,2}
+  int  D1[] = {2};                            // 2D_{1,1}
+  int  D2[] = {0, 8};                         // 2D_{2,1}, 2D_{2,2}
   int*  D[] = {D1, D2};                       // D-entries on/below diagonal
   int   c[] = {0, -32};
   int  c0   = 64;                             // constant term
@@ -48,6 +48,8 @@ int main() {
     std::cout << std::endl << "Optimal objective function value: "
 	      << s.solution() << std::endl;
   }
+
+  CGAL::print_quadratic_program(std::cout, qp);
 
   return 0;
 }

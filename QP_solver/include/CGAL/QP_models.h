@@ -1606,10 +1606,10 @@ public: // methods:
   // string describing the problem that was encountered.
   //
   // Precondition: !is_valid()
-  const std::string& error();
+  const std::string& error() const;
 
   // Returns the first comment that was read from the MPS stream.
-  const std::string& comment();
+  const std::string& comment() const;
   
   // Returns the number of variables in the QP.
   //
