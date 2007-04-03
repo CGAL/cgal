@@ -47,15 +47,15 @@
   The geometric types and operations to be used for the computation are
   specified by the traits class parameter \ccc{t}. The parameter can be
   omitted, if \ccc{ForwardIterator} refers to a two-dimensional point
-  type from one the \cgal\ Kernels. In this case, a default traits class
-  (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
+  type from one the \cgal\ kernels. In this case, a default traits class
+  (\ccc{Min_quadrilateral_default_traits_2<K>}) is used.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
     \ccc{ForwardIterator} is \ccc{Traits::Point_2}. Otherwise \ccc{VT}
-    is \ccc{CGAL::Point_2<Kernel>} for some kernel \ccc{Kernel}.
+    is \ccc{CGAL::Point_2<K>} for some kernel \ccc{K}.
   \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
   \end{enumerate}
   
@@ -63,7 +63,7 @@
   \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
   \ccRefIdfierPage{CGAL::min_strip_2}\\
   \ccRefConceptPage{MinQuadrilateralTraits_2}\\
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<K>}
   
   \ccImplementation We use a rotating caliper
   \ccIndexMainItem[t]{rotating caliper} algorithm~\cite{t-sgprc-83}
@@ -117,16 +117,16 @@
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. The parameter can be
   omitted, if \ccc{ForwardIterator} refers to a two-dimensional point
-  type from one the \cgal\ Kernels. In this case, a default traits class
-  (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is used.
+  type from one the \cgal\ kernels. In this case, a default traits class
+  (\ccc{Min_quadrilateral_default_traits_2<K>}) is used.
   
   \ccRequire
   \begin{enumerate}
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
     \ccc{ForwardIterator} is \ccc{Traits::Point_2}. Otherwise
-    \ccc{VT} is \ccc{CGAL::Point_2<Kernel>} for some Kernel
-    \ccc{Kernel}.
+    \ccc{VT} is \ccc{CGAL::Point_2<K>} for some kernel
+    \ccc{K}.
   \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
   \end{enumerate}
   
@@ -134,7 +134,7 @@
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
   \ccRefIdfierPage{CGAL::min_strip_2}\\
   \ccRefConceptPage{MinQuadrilateralTraits_2}\\
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<K>}
   
   \ccImplementation We use a rotating caliper
   \ccIndexMainItem[t]{rotating caliper} algorithm
@@ -187,8 +187,8 @@
   The geometric types and operations to be used for the computation
   are specified by the traits class parameter \ccc{t}. The parameter
   can be omitted, if \ccc{ForwardIterator} refers to a two-dimensional
-  point type from one the \cgal\ Kernels. In this case, a default
-  traits class (\ccc{Min_quadrilateral_default_traits_2<Kernel>}) is
+  point type from one the \cgal\ kernels. In this case, a default
+  traits class (\ccc{Min_quadrilateral_default_traits_2<K>}) is
   used.
   
   \ccRequire
@@ -196,7 +196,7 @@
   \item If \ccc{Traits} is specified, it is a model for
     \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
     \ccc{ForwardIterator} is \ccc{Traits::Point_2}. Otherwise \ccc{VT}
-    is \ccc{CGAL::Point_2<Kernel>} for some kernel \ccc{Kernel}.
+    is \ccc{CGAL::Point_2<K>} for some kernel \ccc{K}.
   \item \ccc{OutputIterator} accepts \ccc{Traits::Line_2} as value type.
   \end{enumerate}
   
@@ -204,7 +204,7 @@
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
   \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
   \ccRefConceptPage{MinQuadrilateralTraits_2}\\
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<K>}
   
   \ccImplementation We use a rotating caliper
   \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
@@ -218,14 +218,14 @@
 
 \end{ccRefFunction}
     
-\begin{ccRefClass}{Min_quadrilateral_default_traits_2<Kernel>}
+\begin{ccRefClass}{Min_quadrilateral_default_traits_2<K>}
   \ccCreationVariable{t}\ccTagFullDeclarations
   
   \ccDefinition The class \ccRefName\ is a traits class for the
   functions \ccc{min_rectangle_2}, \ccc{min_parallelogram_2} and
   \ccc{min_strip_2} using a two-dimensional \cgal\ kernel.
   
-  \ccRequirements The template parameter \ccc{Kernel} is a model for
+  \ccRequirements The template parameter \ccc{K} is a model for
   \ccc{Kernel}.
   
   \ccInclude{CGAL/Min_quadrilateral_traits_2.h}
@@ -504,7 +504,7 @@
     const ;}{}
 
   \ccHasModels
-  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<Kernel>}
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<K>}
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::min_rectangle_2}\\
