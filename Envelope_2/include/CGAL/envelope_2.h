@@ -11,9 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision$ $Date$
-// $Name:  $
+// $URL$
+// $Id$
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
@@ -21,7 +20,7 @@
 #define CGAL_ENVELOPE_2_H
 
 /*! \file
- * Global functions fro computing lower and upper envelopes of curves in the
+ * Global functions for computing lower and upper envelopes of curves in the
  * plane.
  */
 
