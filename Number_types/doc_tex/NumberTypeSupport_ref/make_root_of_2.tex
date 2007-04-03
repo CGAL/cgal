@@ -2,25 +2,31 @@
 
 \ccDefinition
 
-The function \ccRefName\ returns the root of a polynomial of degree 2
-given its 3 coefficients and a boolean value selecting the smaller
-or larger root.  The type of the arguments must be a model of the
-\ccc{RingNumberType} concept.
-
+The function \ccRefName\ constructs an algebraic number of degree 2 over a 
+ring. 
 
 \ccInclude{CGAL/Root_of_traits.h}
 
+\ccFunction{template <typename NT>
+            Root_of_traits<NT>::RootOf_2
+            make_root_of_2(const NT& a, const NT& b, const NT& c, bool s);}
+{Returns the root of the polynomial $aX^2+bX+c$ which is the smallest if
+$s$ is true, or the largest if $s$ is false.   
+%If \ccc{NT} supports a \ccc{sqrt} operation, then the usual formula is used.  
+%Otherwise the \ccc{Root_of_2} class is used.
+\ccPrecond{NT is a \ccc{Ringnumbertype} or \ccc{Fieldnumbertype}.}
+\ccPrecond{The polynomial must have at least one real root.}}
+
 \ccFunction{template <typename RT>
             Root_of_traits<RT>::RootOf_2
-            make_root_of_2(const RT& a, const RT& b, const RT& c, bool s);}
-{ Returns the root of the polynomial $aX^2+bX+c$ which is the smallest if
-$s$ is true, or the largest if $s$ is false.   If \ccc{RT} supports a
-\ccc{sqrt} operation, then the usual formula is used.  Otherwise
-the \ccc{Root_of_2} class is used.
-\ccPrecond{\ccc{a} must be non-zero, and the polynomial must have a root.}}
+	    make_root_of_2(Root_of_traits<RT>::RootOf_1 alpha, 
+			Root_of_traits<RT>::RootOf_1 beta, 
+			Root_of_traits<RT>::RootOf_1 gamma);}
+{Constructs the number $\alpha + \beta \sqrt{\gamma}$. 
+\ccPrecond{$\gamma\geq 0$}}
 
 \ccSeeAlso
 \ccRefIdfierPage{RootOf_2}\\
-\ccRefIdfierPage{CGAL::Root_of_2<RT>}
-
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}
 \end{ccRefFunction}
