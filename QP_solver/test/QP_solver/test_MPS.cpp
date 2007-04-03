@@ -73,7 +73,7 @@ int main(const int argNr,const char **args) {
   CGAL::QP_pricing_strategy<QP, ET, Tags> *pricing_strategy =
     new CGAL::QP_full_exact_pricing<QP, ET, Tags>;
   typedef CGAL::QP_solver<QP, ET, Tags> Solver;
-  Solver s (qp, pricing_strategy, 4);
+  Solver s (qp, pricing_strategy, 0);
 
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {
