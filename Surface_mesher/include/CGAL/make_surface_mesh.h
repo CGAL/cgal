@@ -1,4 +1,4 @@
-// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Revision$ $Date$
+// $Id$
 //
 // Author(s)     : Laurent Rineau
 

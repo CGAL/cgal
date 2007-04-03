@@ -1,4 +1,4 @@
-// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,9 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision$ $Date$
-// $Name:  $
+// $URL$
+// $Id$
 //
 // Author(s)     : Laurent RINEAU
 
@@ -92,6 +91,7 @@ public:
         fit != polyhedron.facets_end();
         ++fit)
     {
+      CGAL_assertion(fit->is_triangle());
       typename Polyhedron_3::Halfedge_around_facet_const_circulator 
         edges_circ = fit->facet_begin();
 

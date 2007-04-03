@@ -11,9 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: /proj/geometrica/home/CGAL/Local/cvsroot/InrImage/include/CGAL/Isosurface.h,v $
-// $Revision$ $Date$
-// $Name:  $
+// $URL$
+// $Id$
 //
 // Author(s)     : Laurent RINEAU
 
