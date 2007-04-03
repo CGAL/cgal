@@ -807,7 +807,6 @@ Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.eps -text svn
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
 Kinetic_data_structures/examples/Kinetic_framework/data/points_2 -text
 Kinetic_data_structures/examples/Kinetic_framework/data/points_with_color_2 -text
 Kinetic_data_structures/examples/Kinetic_framework/defining_a_simulation_traits.cpp -text
