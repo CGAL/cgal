@@ -128,8 +128,7 @@ mod( const A& x, const B& y ) {
 
 template< class A, class B >
 inline
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
-::Div::result_type
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type>::Div::result_type
 div( const A& x, const B& y ) {
     typedef typename Coercion_traits<A,B>::Type Type;
     typename Algebraic_structure_traits<Type >::Div div;
@@ -138,8 +137,7 @@ div( const A& x, const B& y ) {
 
 template< class A, class B >
 inline 
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
-::Div_mod::result_type
+void
 div_mod( 
         const A& x,
         const B& y,
@@ -147,7 +145,7 @@ div_mod(
         typename Coercion_traits<A,B>::Type& r ) {
     typedef typename Coercion_traits<A,B>::Type Type;
     typename Algebraic_structure_traits< Type >::Div_mod div_mod;
-    div_mod( x, y, q, r );                                                                    
+    div_mod( x, y, q, r );
 }
 
 // others 
