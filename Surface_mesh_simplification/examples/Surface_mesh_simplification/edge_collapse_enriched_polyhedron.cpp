@@ -151,12 +151,13 @@ int main( int argc, char** argv )
   // On the other hand, we pass here explicit cost and placement
   // function which differ from the default policies, ommited in
   // the previous example.
-  int r = SMS::edge_collapse(surface
-                            ,stop
-                            ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
-                                  .get_placement(SMS::Midpoint_placement<Surface>())
-                                  .visitor(&vis)
-                            );
+  int r = SMS::edge_collapse
+           (surface
+           ,stop
+           ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
+                 .get_placement(SMS::Midpoint_placement<Surface>())
+                 .visitor(&vis)
+           );
   
   std::cout << "\nEdges collected: " << vis.collected
             << "\nEdges proccessed: " << vis.processed

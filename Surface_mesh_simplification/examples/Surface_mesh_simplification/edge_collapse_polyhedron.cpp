@@ -34,11 +34,12 @@ int main( int argc, char** argv )
   // The surface and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface lack an "id()" field.
-  int r = SMS::edge_collapse(surface
-                            ,stop
-                            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface)) 
-                                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
-                            );
+  int r = SMS::edge_collapse
+            (surface
+            ,stop
+            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface)) 
+                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
+            );
   
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface.size_of_halfedges()/2) << " final edges.\n" ;
