@@ -128,29 +128,41 @@ typedef Double_kernel::Point_2                          Double_point_2;
 typedef CGAL::Polygon_2<Double_kernel>                  Polygon_2;
 
 template<class Arrangement, class OutputIterator>
-class Faces_visitor : public CGAL::_Arr_default_overlay_traits<Arrangement,
-                                                               Arrangement,
-                                                               Arrangement>
-{
-  typedef typename Arrangement::Face_const_handle       Face_const_handle;
-  typedef typename Arrangement::Face_handle             Face_handle;
+class Faces_visitor {
+private:
+  typedef typename Arrangement::Vertex_const_handle     V_const_handle;
+  typedef typename Arrangement::Halfedge_const_handle   He_const_handle;
+  typedef typename Arrangement::Face_const_handle       F_const_handle;
+
+  typedef typename Arrangement::Vertex_handle           V_handle;
+  typedef typename Arrangement::Halfedge_handle         He_handle;
+  typedef typename Arrangement::Face_handle             F_handle;
+
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
 
-  Face_const_handle m_f1;
-  Face_const_handle m_f2;
+  F_const_handle m_f1;
+  F_const_handle m_f2;
   OutputIterator    m_oi;
 
 public:
-  Faces_visitor(Face_const_handle f1, Face_const_handle f2,
-                OutputIterator oi) :
+  Faces_visitor(F_const_handle f1, F_const_handle f2, OutputIterator oi) :
     m_f1(f1),
     m_f2(f2),
     m_oi(oi)
   {}
 
-  virtual void create_face(Face_const_handle f1, Face_const_handle f2,
-                   Face_handle f)
+  void create_vertex(V_const_handle, V_const_handle, V_handle) const {}
+  void create_vertex(V_const_handle, He_const_handle, V_handle) const {}
+  void create_vertex(V_const_handle, F_const_handle, V_handle) const {}
+  void create_vertex(He_const_handle, V_const_handle, V_handle) const {}
+  void create_vertex(F_const_handle, V_const_handle, V_handle) const {}
+  void create_vertex(He_const_handle, He_const_handle, V_handle) const {}
+  void create_edge(He_const_handle, He_const_handle, He_handle) const {}
+  void create_edge(He_const_handle, F_const_handle, He_handle) const {}
+  void create_edge(F_const_handle, He_const_handle, He_handle) const {}
+
+  void create_face(F_const_handle f1, F_const_handle f2, F_handle f)
   {
     if (f1 == m_f1 && f2 == m_f2) {
       Polygon_2 pgn;
