@@ -6,6 +6,7 @@
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 
+#define CGAL_C2T3_USE_POLYHEDRON
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h>

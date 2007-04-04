@@ -165,9 +165,15 @@ protected:
     }
   }
 
+public:
   Facet canonical_facet(Cell_handle c, int i) const {
     Cell_handle c2 = c->neighbor(i);
     return (c2 < c) ? std::make_pair(c2,c2->index(c)) : std::make_pair(c,i);
+  }
+
+  Facet opposite_facet(Facet f) const {
+    Cell_handle c2 = f.first->neighbor(f.second);
+    return std::make_pair(c2,c2->index(f.first));
   }
  public:
 
@@ -371,6 +377,25 @@ protected:
                   CGAL::filter_output_iterator(it, 
                                                Facet_not_in_complex(this)));
     return it;
+  }
+
+  /** This function assumes that the edge is regular. */
+  Facet neighbor(Facet f, int j) const 
+  {
+    const Cell_handle ch = f.first;
+    const int index = f.second;
+    const int i1  = tr.vertex_triple_index(index, tr. cw(j));
+    const int i2  = tr.vertex_triple_index(index, tr.ccw(j));
+
+    Edge edge = Edge(ch, i1, i2);
+    CGAL_assertion(face_status(edge) == REGULAR);
+
+    typename Tr::Facet_circulator facet_circ = 
+      tr.incident_facets(edge, f);
+    do { 
+      ++facet_circ;
+    } while(! is_in_complex(*facet_circ) );
+    return opposite_facet(*facet_circ);
   }
 
   // Setting functions

@@ -21,6 +21,10 @@
 #ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 #define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 
+#ifdef CGAL_C2T3_USE_POLYHEDRON
+#  include <CGAL/Polyhedron_3.h>
+#  include <CGAL/Polyhedron_incremental_builder_3.h>
+#endif
 
 #include <iomanip>
 
@@ -44,11 +48,121 @@ output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
   typedef typename C2t3::Triangulation Tr;
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Tr::Facet Facet;
+  typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;
+  typedef typename Tr::Geom_traits Gt;
 
+#ifdef CGAL_C2T3_USE_POLYHEDRON
+  typedef CGAL::Polyhedron_3<Gt> Polyhedron_3;
+  typedef typename Polyhedron_3::HalfedgeDS HalfedgeDS;
+
+  Polyhedron_3 p;
+
+  struct Off_builder : public CGAL::Modifier_base<HalfedgeDS>{
+    const C2t3& c2t3;
+    const Tr& tr;
+    Off_builder(const C2t3& c2t3) : c2t3(c2t3), tr(c2t3.triangulation()) {};
+    void operator()( HalfedgeDS& hds) {
+      CGAL::Polyhedron_incremental_builder_3<HalfedgeDS> builder(hds, true);
+      const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
+      builder.begin_surface(tr.number_of_vertices(), 
+			    number_of_facets);
+      {
+	// Finite vertices coordinates.
+	std::map<Vertex_handle, int> V;
+	int inum = 0;
+	for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
+	    vit != tr.finite_vertices_end();
+	    ++vit)
+	{
+	  V[vit] = inum++;
+	  Point p = static_cast<Point>(vit->point());
+	  builder.add_vertex(p);
+	}
+	Finite_facets_iterator fit = tr.finite_facets_begin();
+	std::set<Facet> oriented_set;
+	std::stack<Facet> stack;
+
+	CGAL_assertion_code(typename Tr::size_type nb_facets = 0; )
+
+	while (oriented_set.size() != number_of_facets) {
+	  while ( fit->first->is_facet_on_surface(fit->second) == false ||
+		  oriented_set.find(*fit) != oriented_set.end() ||
+
+		  oriented_set.find(c2t3.opposite_facet(*fit)) !=
+		  oriented_set.end() ) {
+	    ++fit;
+	  }
+	  oriented_set.insert(*fit);
+	  stack.push(*fit);
+	  while(! stack.empty() ) {
+	    Facet f = stack.top();
+	    stack.pop();
+	    for(int ih = 0 ; ih < 3 ; ++ih) {
+	      const int i1  = tr.vertex_triple_index(f.second, tr. cw(ih));
+	      const int i2  = tr.vertex_triple_index(f.second, tr.ccw(ih));
+	      if( c2t3.face_status(Edge(f.first, i1, i2)) == C2t3::REGULAR ) {
+		Facet fn = c2t3.neighbor(f, ih);
+		if (oriented_set.find(fn) == oriented_set.end() &&
+		    oriented_set.find(c2t3.opposite_facet(fn)) == oriented_set.end())
+		{
+		  oriented_set.insert(fn);
+		  stack.push(fn);
+		}
+	      } // end "if the edge is regular"
+	    } // end "for each neighbor of f"
+	  } // end "stack non empty"
+	} // end "oriented_set not full"
+
+	for(typename std::set<Facet>::const_iterator fit = 
+	      oriented_set.begin();
+	    fit != oriented_set.end();
+	    ++fit)
+	{
+	  int indices[3];
+	  int index = 0;
+	  for (int i=0; i<3; i++)
+	    std::cerr << 
+	      ( indices[index++] = 
+		V[fit->first->vertex(tr.vertex_triple_index(fit->second, i))] )
+		      << ", ";
+	  std::cerr << "\n";
+	  builder.add_facet(indices+0, indices+3);
+	  CGAL_assertion_code(++nb_facets);
+	}
+	CGAL_assertion(nb_facets == number_of_facets);
+// 	for( Finite_facets_iterator fit = tr.finite_facets_begin();
+// 	     fit != tr.finite_facets_end(); ++fit)
+// 	  if ((*fit).first->is_facet_on_surface((*fit).second)==true)
+// 	  {
+// 	    int indices[3];
+// 	    int index = 0;
+// 	    for (int i=0; i<3; i++)
+// 	      std::cerr << ( indices[index++] = V[(*fit).first->vertex(tr.vertex_triple_index(fit->second, i))] ) << ", ";
+// 	    std::cerr << "\n";
+// 	    if( builder.test_facet(indices+0, indices+3) )
+// 	      builder.add_facet(indices+0, indices+3);
+// 	    else
+// 	    {
+// 	      builder.begin_facet();
+// 	      builder.add_vertex_to_facet(indices[2]);
+// 	      builder.add_vertex_to_facet(indices[1]);
+// 	      builder.add_vertex_to_facet(indices[0]);
+// 	      builder.end_facet();
+// 	    }
+// 	    CGAL_assertion_code(++nb_facets);
+// 	  }
+      }
+      builder.end_surface();
+    }
+  } off_builder(c2t3);
+
+  p.delegate( off_builder );
+  os << p;
+#else
   // Header.
-
   const Tr& tr = c2t3.triangulation();
 
   os << "OFF \n"
@@ -84,6 +198,7 @@ output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
       
       os << "\n"; // without color.
     }
+#endif
 }
 
 // only if cells have is_in_domain() method.
