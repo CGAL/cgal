@@ -49,7 +49,7 @@ contains_vector(const typename CGAL_WRAP(K)::Plane_3 &pl,
 
 template <class K>
 inline typename K::FT
-squared_distancePPl3(
+squared_distance(
     const typename CGAL_WRAP(K)::Point_3 & pt,
     const typename CGAL_WRAP(K)::Plane_3 & plane,
     const K& k)
@@ -64,41 +64,41 @@ squared_distancePPl3(
 
 template <class K>
 inline typename K::FT
-squared_distancePlP3(
+squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 & plane,
     const typename CGAL_WRAP(K)::Point_3 & pt,
     const K& k)
 {
-    return squared_distancePPl3(pt, plane, k);
+    return squared_distance(pt, plane, k);
 }
 
 template <class K>
 typename K::FT
-squared_distanceLPl3(
+squared_distance(
     const typename CGAL_WRAP(K)::Line_3 &line,
     const typename CGAL_WRAP(K)::Plane_3 &plane,
     const K& k)
 {
     typedef typename K::FT FT;
     if (contains_vector(plane, line.direction().vector(), k))
-        return squared_distancePlP3(plane, line.point(), k);
+        return squared_distance(plane, line.point(), k);
     return FT(0);
 }
 
 
 template <class K>
 inline typename K::FT
-squared_distancePlL3(
+squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 & p,
     const typename CGAL_WRAP(K)::Line_3 & line,
     const K& k)
 {
-    return squared_distanceLPl3(line, p, k);
+    return squared_distance(line, p, k);
 }
 
 template <class K>
 typename K::FT
-squared_distanceRPl3(
+squared_distance(
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const typename CGAL_WRAP(K)::Plane_3 &plane,
     const K& k)
@@ -133,17 +133,17 @@ squared_distanceRPl3(
 
 template <class K>
 inline typename K::FT
-squared_distancePlR3(
+squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 & plane,
     const typename CGAL_WRAP(K)::Ray_3 & ray,
     const K& k)
 {
-    return squared_distanceRPl3(ray, plane, k);
+    return squared_distance(ray, plane, k);
 }
 
 template <class K>
 typename K::FT
-squared_distanceSPl3(
+squared_distance(
     const typename CGAL_WRAP(K)::Segment_3 &seg,
     const typename CGAL_WRAP(K)::Plane_3 &plane,
     const K& k)
@@ -156,7 +156,7 @@ squared_distanceSPl3(
     const Point_3 &start = seg.start();
     const Point_3 &end = seg.end();
     if (start == end)
-        return squared_distancePPl3(start, plane, k);
+        return squared_distance(start, plane, k);
     const Point_3 &planepoint = plane.point();
     Vector_3 start_min_pp = construct_vector(planepoint, start);
     Vector_3 end_min_pp = construct_vector(planepoint, end);
@@ -187,12 +187,12 @@ squared_distanceSPl3(
 
 template <class K>
 inline typename K::FT
-squared_distancePlS3(
+squared_distance(
     const typename CGAL_WRAP(K)::Plane_3 & plane,
     const typename CGAL_WRAP(K)::Segment_3 & seg,
     const K& k)
 {
-    return squared_distance(SPl3seg, plane, k);
+    return squared_distance(seg, plane, k);
 }
 
 
@@ -214,7 +214,7 @@ squared_distance(
     const Point_3<K> & pt,
     const Plane_3<K> & plane)
 {
-  return CGALi::squared_distancePPl3(pt, plane, K());
+  return CGALi::squared_distance(pt, plane, K());
 }
 
 
@@ -226,7 +226,7 @@ squared_distance(
     const Plane_3<K> & plane,
     const Point_3<K> & pt)
 {
-    return CGALi::squared_distancePPl3(pt, plane, K());
+    return CGALi::squared_distance(pt, plane, K());
 }
 
 template <class K>
@@ -236,7 +236,7 @@ squared_distance(
     const Line_3<K> &line,
     const Plane_3<K> &plane)
 {
-    return CGALi::squared_distanceLPl3(line, plane, K());
+    return CGALi::squared_distance(line, plane, K());
 }
 
 
@@ -247,7 +247,7 @@ squared_distance(
     const Plane_3<K> & p,
     const Line_3<K> & line)
 {
-    return CGALi::squared_distanceLPl3(line, p, K());
+    return CGALi::squared_distance(line, p, K());
 }
 
 template <class K>
@@ -257,7 +257,7 @@ squared_distance(
     const Ray_3<K> &ray,
     const Plane_3<K> &plane)
 {
-  return CGALi::squared_distanceRPl3(ray, plane, K());
+  return CGALi::squared_distance(ray, plane, K());
 }
 
 
@@ -269,7 +269,7 @@ squared_distance(
     const Plane_3<K> & plane,
     const Ray_3<K> & ray)
 {
-    return CGALi::squared_distanceRPl3(ray, plane, K());
+    return CGALi::squared_distance(ray, plane, K());
 }
 
 template <class K>
@@ -279,7 +279,7 @@ squared_distance(
     const Segment_3<K> &seg,
     const Plane_3<K> &plane)
 {
-  return CGALi::squared_distanceSPl3(seg, plane, K());
+  return CGALi::squared_distance(seg, plane, K());
 
 }
 
@@ -291,7 +291,7 @@ squared_distance(
     const Plane_3<K> & plane,
     const Segment_3<K> & seg)
 {
-    return CGALi::squared_distanceSPl3(seg, plane, K());
+    return CGALi::squared_distance(seg, plane, K());
 }
 
 
