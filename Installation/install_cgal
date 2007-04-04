@@ -1083,17 +1083,6 @@ set_compiler_flags()
 		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
-             if [ "${PROVIDE_PKG_LEDA}" != "" ] ; then
-                 # NOTE: this is only needed for LEDA.
-                 # rationale: currently, LEDA relies on the old g++ behaviour,
-                 # where friend methods are injected in their surrounding namespace. this will probably 
-                 # be fixed in future versions. however, until then, this workaround is required.
-                 case `compiler_version` in
-                    # TODO: adjust to future versions of g++
-                    4.[12345].*)
-                       ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ffriend-injection";;
-                 esac
-             fi
 	    ;;
     esac
 }
@@ -3752,6 +3741,24 @@ _do_command_may_fail()
 # lib menu
 #
 
+leda_friend_injection_workaround() {
+  case `compiler_description` in
+  *GNU*)
+           if [ "${PROVIDE_PKG_LEDA}" != "" ] ; then
+               # NOTE: this is only needed for LEDA.
+               # rationale: currently, LEDA relies on the old g++ behaviour,
+               # where friend methods are injected in their surrounding namespace. this will probably 
+               # be fixed in future versions. however, until then, this workaround is required.
+               case `compiler_version` in
+                  # TODO: adjust to future versions of g++
+                  4.[12345].*)
+                     ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ffriend-injection";;
+               esac
+           fi
+      ;;
+  esac
+}
+
 # ---------------------------------------------------------------------
 # create include makefile
 # these makefiles are placed in ${CGAL_MAKE_DIR}
@@ -4438,6 +4445,9 @@ build_cgal()
 
 lib_menu()
 {
+    # NOTE:if you know a better place between compiler/support library setup
+    #      and makefile generation, feel free to move the workaround elsewhere
+    leda_friend_injection_workaround
     if [ -n "${SETUP_COMPLETE}" ]; then
         write_menu_information "Compiling"
         make_lib_dir
@@ -4602,7 +4612,6 @@ _build_one()
     log_print "Build on ${CONFIG_BASENAME}:"
     log_print \
 	    "--------------------------------------------------------"
-    log_print "New log file: ${INSTALL_LOGFILE}"
     log_to_file
     try_to_get_var_from_config_file COMPILER "$1"
     if [ -n "${COMPILER}" ]; then
