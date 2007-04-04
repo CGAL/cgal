@@ -200,6 +200,25 @@ public:
     CGAL::Comparison_result
     compare_distinct(const NTX& y) const { return intern_compare(y,true); }
    
+    template <class Algebraic_real_iterator>
+    static void conjugate(Algebraic_real_iterator begin,
+                          Algebraic_real_iterator end){
+        if(begin == end) return;
+        
+        CGAL_precondition(begin->ptr()->next==begin->ptr());
+        CGAL_precondition(begin->ptr()->prev==begin->ptr());
+        
+        for(Algebraic_real_iterator it = begin; it != end; ++it){
+            CGAL_precondition(it->ptr()->next==it->ptr());
+            CGAL_precondition(it->ptr()->prev==it->ptr());
+            CGAL_precondition(it->polynomial()==begin->polynomial());
+            it->ptr()->next         =begin->ptr();
+            it->ptr()->prev         =begin->ptr()->prev;
+            begin->ptr()->prev->next=it->ptr();
+            begin->ptr()->prev      =it->ptr();  
+        }
+    }
+
 
 private:
     CGAL::Comparison_result 
