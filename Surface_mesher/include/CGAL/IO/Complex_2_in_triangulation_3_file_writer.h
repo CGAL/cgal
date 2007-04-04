@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -124,11 +124,8 @@ output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
 	  int indices[3];
 	  int index = 0;
 	  for (int i=0; i<3; i++)
-	    std::cerr << 
-	      ( indices[index++] = 
-		V[fit->first->vertex(tr.vertex_triple_index(fit->second, i))] )
-		      << ", ";
-	  std::cerr << "\n";
+	    indices[index++] = 
+	      V[fit->first->vertex(tr.vertex_triple_index(fit->second, i))];
 	  builder.add_facet(indices+0, indices+3);
 	  CGAL_assertion_code(++nb_facets);
 	}
