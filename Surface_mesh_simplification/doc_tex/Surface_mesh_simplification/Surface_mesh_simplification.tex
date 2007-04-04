@@ -1,4 +1,4 @@
-%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
 %% the terms of the Q Public License version 1.0.
@@ -12,7 +12,7 @@
 %%
 %% 
 %%
-%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -140,7 +140,7 @@ two strategies: the Lindstrom-Turk strategy, which is the default, and
 a strategy consisting of an edge-length cost with an optional
 midpoint placement (much faster but less accurate).
 
-\begin{ccAdvanced}
+%\begin{ccAdvanced}
 \subsection{Lindstrom-Turk Cost and Placement Strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
 
 The main characteristic of the strategy presented in
@@ -162,8 +162,8 @@ Each constraint is obtained by minimizing a quadratic objective function
 subject to the previously computed constraints.\\
 There are several possible candidate constraints and each is considered in order of importance.
 A candidate constraint might be {\em incompatible} with the previously accepted constraints,
-in which case it's rejected and the next constraint is considered.\\
-Once 3 constrains have been accepted, the system is solved for the vertex position.
+in which case it is rejected and the next constraint is considered.\\
+Once 3 constraints have been accepted, the system is solved for the vertex position.
 
 The first constraints considered preserves the shape of the surface boundaries 
 (in case the edge profile has boundary edges).
@@ -172,16 +172,14 @@ The next constraints, if needed, optimize the local changes in volume and bounda
 Lastly, if a constraint is still needed (because the ones previously computed were incompatible),
 a third (and last) constraint is added to favor equilateral triangles over elongated triangles.
 
-The cost is then a convex combination of the volume and boundary optimization terms.
-A {\em weighting unit factor}, $w$, defaulted to $1/2$, can be specified by the user to favor volume over
-boundary, or the opposite. (the forumla has the form: $(w*volume+(1-w)*boundary)$)
+The cost is then a weighted sum of the shape, volume and boundary optimization terms, where the user specifies the unit {\em weighting unit factor} for each term.
 
 The local changes are computed independently for each edge using only
 the triangles currently adjacent to it at the time when the edge 
 is about to be collapsed, that is, after all previous collapses.
 Thus, the transitive path of minimal local changes yields at
 the end a global change reasonably close to the absolute minimum.
-\end{ccAdvanced}
+%\end{ccAdvanced}
 
 \subsection{Cost Strategy Policies}
 
@@ -257,43 +255,16 @@ returns \ccc{true} the algorithm terminates.
 
 \subsubsection{Optional Named Parameters}
 
-The notion of {\em named parameters} was also introduced in the {\sc Bgl}.
-You can read about it in \cite{cgal:sll-bgl-02} or the following site:
-\path|http://www.boost.org/libs/graph/doc/bgl_named_params.html|.
+The notion of {\em named parameters} was also introduced in the {\sc Bgl}. You can read about it in \cite{cgal:sll-bgl-02} or the following site: \path|http://www.boost.org/libs/graph/doc/bgl_named_params.html|. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant. 
 
-Named parameters allow the user to specify only those parameters which are really needed,
-by name, making the parameter ordering unimportant. 
+Say there is a function \ccc{f()} that takes 3 parameters called \ccc{name}, \ccc{age} and \ccc{gender}, and you have variables \ccc{n,a and g} to pass as parameters to that function. Without named parameters, you would call it like this: \ccc{f(n,a,g)}, but with named parameters, you call it like this: \ccc{f(name(n).age(a).gender(g))}.
 
-Say there is a function \ccc{f()} that takes 3 parameters called \ccc{name}, 
-\ccc{age} and \ccc{gender}, and you have variables \ccc{n,a and g} 
-to pass as parameters to that function. Without named parameters, 
-you would call it like this:
-
-\ccc{f(n,a,g)} 
-
-but with named parameters, you call it like this:
-
-\ccc{f(name(n).age(a).gender(g))}
-
-That is, you give each parameter a name by wrapping it into a function whose name 
-matches that of the parameter.
-
-The entire list of named parameters is really a composition of function calls 
-separated by a dot ($.$). Thus, if the function takes a mix of mandatory 
-and named parameters, you use a comma to separate the last non-named parameter 
-from the first named parameters, like this:
+That is, you give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is really a composition of function calls separated by a dot ($.$). Thus, if the function takes a mix of mandatory and named parameters, you use a comma to separate the last non-named parameter from the first named parameters, like this:
 
 \ccc{f(non_named_par0, non_named_pa1, name(n).age(a).gender(g)) }
 
-When you use named parameters, the ordering is irrelevant, so this:
-
-\ccc{f(name(n).age(a).gender(g))}
-
-is equivalent to this:
-
-\ccc{f(age(a).gender(g).name(n))}
-
-And you can just omit any named parameter that has a default value.
+When you use named parameters, the ordering is irrelevant, so this: \ccc{f(name(n).age(a).gender(g))} is equivalent to this:
+\ccc{f(age(a).gender(g).name(n))}, and you can just omit any named parameter that has a default value.
 
 \subsubsection{Sample call}
 
