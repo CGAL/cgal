@@ -140,7 +140,6 @@ filename        [^ \t\n\r\\\{\}\[\]()]+
 void            VOID
 counterclockwise COUNTERCLOCKWISE
 clockwise       CLOCKWISE
-/*string_literal  [\"][^"]*[\"]*/
 ST              [<]
 GT              [>]
 
@@ -205,14 +204,7 @@ GT              [>]
 {clockwise}                     { yylval = std::string( yytext);
                                   return CLOCKWISE;
                                 }
- /*
-{string_literal}                { yylval = std::string( yytext );
-                                  yylval = yylval.substr( 1, yylval.length() - 2 );
-                                  std::cout << "received string literal [" << yylval << "]" << std::endl;
-                                  return STRING_LITERAL;
-                                } */
-
-
+ 
  /* Non-recognized tokens are errors */
  /* -------------------------------- */
 {idfier}                        { yylval = std::string( yytext);

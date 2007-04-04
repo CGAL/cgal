@@ -77,7 +77,6 @@ static std::string numbertype;
 %token COUNTERCLOCKWISE
 %token CLOCKWISE
 %token VOID
-%token STRING_LITERAL
 %token ST GT
 
 /* Structure tokens */
@@ -208,7 +207,7 @@ polynomial: /* */
     Polynomial ST INTEGER optional_typename GT
                                  { polynom_varcount = atoi( $3.c_str() );
                                    visitor->begin_polynomial( polynom_varcount, $4 );
-                                   numbertype = "int"; }
+                                   numbertype = $4; }
       '(' monom_list ')'         { visitor->end_polynomial(); }
    | Polynomial_1                { visitor->begin_polynomial_1(); }
       '(' integer_sequence1 ')'  { visitor->end_polynomial_1(); }
@@ -216,7 +215,7 @@ polynomial: /* */
 
 optional_typename :
     /* empty */                  { $$ = "int"; }
-  | ',' UNKNOWN_TOKEN            { $$ = $2;    }
+  | ',' UNKNOWN_TOKEN            {  $$ = $2;  }
   ;
 
 monom_list:
@@ -247,7 +246,7 @@ numeric_value:
                                      yyerror( "type mismatch: int expected" );
                                    $$ = $1;
                                  }
-  | STRING_LITERAL               { if( numbertype == "int" )
+  | STRING                       { if( numbertype == "int" )
                                      yyerror( "type mismatch" );
                                    $$ = $1;
                                  }

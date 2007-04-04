@@ -1,5 +1,5 @@
 /**************************************************************************
-// Copyright (c) 2004  Max-Planck-Institut Saarbruecken (Germany)
+// Copyright (c) 2004-2007  Max-Planck-Institut Saarbruecken (Germany)
 // All rights reserved.
 //
 // This file is part of BenchmarkParser; you can redistribute it and/or
@@ -18,15 +18,21 @@
 **************************************************************************/
 
 #include <iostream>
+#include <string>
+#include <sstream>
 
-#include "CGAL/Benchmark/benchmark_format.hpp"
+#include <CGAL/Benchmark/benchmark_format.hpp>
+#include <CGAL/Sqrt_extension.h>
 
 namespace cb = CGAL::benchmark;
+
+
 
 struct Polynomial_reader: public cb::Benchmark_visitor {
     unsigned char current_variable_name;
     bool inside_monom;
     bool first_monom;
+    std::string coeff_typename;
 
     Polynomial_reader() : inside_monom( false ) {}
 
@@ -48,8 +54,9 @@ struct Polynomial_reader: public cb::Benchmark_visitor {
                       std::string  coeff_typename )
     {
         std::cout << "begin poly" << std::endl;
-        //std::cout << "number of variables: " << variables << std::endl;
-        //std::cout << "typename: " << coeff_typename << std::endl;
+        std::cout << "number of variables: " << variables << std::endl;
+        std::cout << "typename: " << coeff_typename << std::endl;
+        this->coeff_typename = coeff_typename;
         first_monom = true;
     }
 
@@ -62,6 +69,11 @@ struct Polynomial_reader: public cb::Benchmark_visitor {
     virtual void
     begin_monom( std::string coefficient )
     {
+        if( coeff_typename == "Sqrt_extension_int" ) {
+          CGAL::Sqrt_extension<int,int> ex;
+          std::stringstream input( coefficient );
+          input >> ex;
+        }
         if( ! first_monom ) {
            std::cout << " + ";
         }
@@ -82,7 +94,6 @@ struct Polynomial_reader: public cb::Benchmark_visitor {
         inside_monom = false;
     }
 
-    // NOTE: this only works for polynoms with type==int
     virtual void
     accept_integer( std::string s )
     {
