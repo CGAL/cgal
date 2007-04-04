@@ -98,8 +98,8 @@ Skin_surface_3(WP_iterator begin, WP_iterator end,
                FT shrink,
                bool grow_balls,
                Gt gt_,
-               bool verbose) 
-  : Base(begin, end, shrink, grow_balls, gt_, verbose) {
+               bool verbose_) 
+  : Base(begin, end, shrink, grow_balls, gt_, verbose_) {
     
   // Construct the Triangulated_mixed_complex:
   Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());

@@ -188,10 +188,10 @@ private:
 template <class MixedComplexTraits_3> 
 template < class WP_iterator >
 Skin_surface_base_3<MixedComplexTraits_3>::
-Skin_surface_base_3(WP_iterator begin, WP_iterator end, FT shrink,
+Skin_surface_base_3(WP_iterator begin, WP_iterator end, FT shrink_,
                    bool grow_balls,
                    Gt gt_, bool verbose_) 
-: shrink(shrink), gt(gt_), verbose(verbose_)
+: shrink(shrink_), gt(gt_), verbose(verbose_)
 {
   gt.set_shrink(shrink);
   CGAL_assertion(begin != end);
