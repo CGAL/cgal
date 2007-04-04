@@ -1,13 +1,14 @@
 //! \file examples/Envelope_3/ex_envelope_spheres.cpp
 // Constructing the lower envelope of a set of spheres read from a file.
+
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
-int main ()
+int main()
 {
   std::cout << "Sorry, this example needs CORE ..." << std::endl;
-  return (0);
+  return 0;
 }
 #else
 
@@ -35,7 +36,7 @@ typedef CGAL::Env_sphere_traits_3<Conic_traits_2>     Traits_3;
 typedef Traits_3::Surface_3                           Sphere_3;
 typedef CGAL::Envelope_diagram_2<Traits_3>            Envelope_diagram_2;
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
   // fan_grids.dat file if no command-line parameters are given.
@@ -45,12 +46,12 @@ int main (int argc, char **argv)
     filename = argv[1];
 
   // Open the input file.
-  std::ifstream     in_file (filename);
+  std::ifstream     in_file(filename);
 
   if (! in_file.is_open())
   {
     std::cerr << "Failed to open " << filename << " ..." << std::endl;
-    return (1);
+    return 1;
   }
 
   // Read the spheres from the file.
@@ -66,12 +67,10 @@ int main (int argc, char **argv)
   int                   i;
 
   in_file >> n;
-  for (i = 0; i < n; i++)
+  for (i = 0; i < n; ++i)
   {
     in_file >> x >> y >> z >> sqr_r;
-
-    spheres.push_back (Sphere_3 (Rat_point_3 (x, y, z),
-                                 Rational (sqr_r)));
+    spheres.push_back(Sphere_3(Rat_point_3(x, y, z), Rational(sqr_r)));
   }
   in_file.close();
 
@@ -83,8 +82,7 @@ int main (int argc, char **argv)
             << n << " spheres." << std::endl;
 
   timer.start();
-  CGAL::lower_envelope_3 (spheres.begin(), spheres.end(),
-                          min_diag);
+  CGAL::lower_envelope_3(spheres.begin(), spheres.end(), min_diag);
   timer.stop();
 
   // Print the dimensions of the minimization diagram.
@@ -95,7 +93,7 @@ int main (int argc, char **argv)
   std::cout << "Construction took " << timer.time()
 	    << " seconds." << std::endl;
 
-  return (0);
+  return 0;
 }
 
 #endif

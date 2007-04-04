@@ -16,6 +16,8 @@
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
+
 #ifndef CGAL_TYPEDEFS_H
 #define CGAL_TYPEDEFS_H
 
@@ -143,7 +145,7 @@ private:
 
   F_const_handle m_f1;
   F_const_handle m_f2;
-  OutputIterator    m_oi;
+  OutputIterator m_oi;
 
 public:
   Faces_visitor(F_const_handle f1, F_const_handle f2, OutputIterator oi) :
