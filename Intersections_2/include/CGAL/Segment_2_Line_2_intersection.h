@@ -70,7 +70,7 @@ inline bool do_intersect(
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Segment_2 &seg, 
+intersectionSL(const typename CGAL_WRAP(K)::Segment_2 &seg, 
 	     const typename CGAL_WRAP(K)::Line_2 &line,
 	     const K&)
 {
@@ -92,11 +92,11 @@ intersection(const typename CGAL_WRAP(K)::Segment_2 &seg,
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Line_2 &line,
+intersectionLS(const typename CGAL_WRAP(K)::Line_2 &line,
 	     const typename CGAL_WRAP(K)::Segment_2 &seg, 
 	     const K& k)
 {
-  return CGALi::intersection(seg, line, k);
+  return CGALi::intersectionSL(seg, line, k);
 }
 
 

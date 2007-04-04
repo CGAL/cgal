@@ -464,7 +464,7 @@ Segment_2_Segment_2_pair<K>::intersection(typename K::Segment_2 &result) const
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Segment_2 &seg1, 
+intersectionSS(const typename CGAL_WRAP(K)::Segment_2 &seg1, 
 	     const typename CGAL_WRAP(K)::Segment_2 &seg2,
 	     const K&)
 {
