@@ -39,7 +39,7 @@ namespace CGALi {
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distancePL3(
     const typename CGAL_WRAP(K)::Point_3 &pt,
     const typename CGAL_WRAP(K)::Line_3 &line,
     const K& k)
@@ -54,18 +54,18 @@ squared_distance(
 template <class K>
 inline
 typename K::FT
-squared_distance(
+squared_distanceLP3(
     const typename CGAL_WRAP(K)::Line_3 & line,
     const typename CGAL_WRAP(K)::Point_3 & pt,
     const K& k)
 {
-    return squared_distance(pt, line, k);
+    return squared_distancePL3(pt, line, k);
 }
 
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distancePR3(
     const typename CGAL_WRAP(K)::Point_3 &pt,
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const K& k)
@@ -84,12 +84,12 @@ squared_distance(
 template <class K>
 inline
 typename K::FT
-squared_distance(
+squared_distanceRP3(
     const typename CGAL_WRAP(K)::Ray_3 & ray,
     const typename CGAL_WRAP(K)::Point_3 & pt,
     const K& k)
 {
-    return squared_distance(pt, ray, k);
+    return squared_distancePR3(pt, ray, k);
 }
 
 
@@ -151,7 +151,7 @@ squared_distance(
 template <class K>
 inline
 typename K::FT
-squared_distance(
+squared_distancePS3(
     const typename CGAL_WRAP(K)::Point_3 &pt,
     const typename CGAL_WRAP(K)::Segment_3 &seg,
     const K& k)
@@ -165,7 +165,7 @@ squared_distance(
 template <class K>
 inline 
 typename K::FT
-squared_distance(
+squared_distanceSP3(
     const typename CGAL_WRAP(K)::Segment_3 & seg,
     const typename CGAL_WRAP(K)::Point_3 & pt,
     const K& k)
@@ -218,7 +218,7 @@ _distance_measure_sub(typename K::RT startwdist, typename K::RT endwdist,
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distanceSS3(
     const typename CGAL_WRAP(K)::Segment_3 &seg1,
     const typename CGAL_WRAP(K)::Segment_3 &seg2,
     const K& k)
@@ -234,9 +234,9 @@ squared_distance(
     const Point_3 &end2 = seg2.target();
 
     if (start1 == end1)
-        return squared_distance(start1, seg2, k);
+        return squared_distancePS3(start1, seg2, k);
     if (start2 == end2)
-        return squared_distance(start2, seg1, k);
+        return squared_distancePS3(start2, seg1, k);
     
     Vector_3 dir1, dir2, normal;
     dir1 = seg1.direction().vector();
@@ -286,10 +286,10 @@ squared_distance(
         dm = _distance_measure_sub(
                   sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
         if (dm < RT(0)) {
-            return squared_distance(start2, seg1, k);
+            return squared_distancePS3(start2, seg1, k);
         } else {
             if (dm > RT(0)) {
-                return squared_distance(end2, seg1, k);
+                return squared_distancePS3(end2, seg1, k);
             } else {
                 // should not happen with exact arithmetic.
                 return squared_distance_parallel(seg1, seg2, k);
@@ -301,10 +301,10 @@ squared_distance(
             dm =_distance_measure_sub(
                  sdm_s1to2, sdm_e1to2, s2mins1, e1mins2, k);
             if (dm < RT(0)) {
-                return squared_distance(start1, seg2, k);
+                return squared_distancePS3(start1, seg2, k);
             } else {
                 if (dm > RT(0)) {
-                    return squared_distance(end1, seg2, k);
+                    return squared_distancePS3(end1, seg2, k);
                 } else {
                     // should not happen with exact arithmetic.
                     return squared_distance_parallel(seg1, seg2, k);
@@ -318,15 +318,15 @@ squared_distance(
             if (dm == RT(0)) // should not happen with exact arithmetic.
                return squared_distance_parallel(seg1, seg2, k);
             min1 = (dm < RT(0)) ?
-                squared_distance(seg1.source(), seg2, k):
-                squared_distance(end1, seg2, k);
+                squared_distancePS3(seg1.source(), seg2, k):
+                squared_distancePS3(end1, seg2, k);
             dm = _distance_measure_sub(
                      sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
             if (dm == RT(0)) // should not happen with exact arithmetic.
                 return squared_distance_parallel(seg1, seg2, k);
             min2 = (dm < RT(0)) ?
-                squared_distance(start2, seg1, k):
-                squared_distance(end2, seg1, k);
+                squared_distancePS3(start2, seg1, k):
+                squared_distancePS3(end2, seg1, k);
             return (min1 < min2) ? min1 : min2;
         }
     }
@@ -362,7 +362,7 @@ squared_distance_parallel(
     if (!is_acute_angle(seg.target(), seg.source(), ray.source(), k))
       return squared_distance(seg.source(), ray.source(), k);
   }
-  return squared_distance(ray.source(), seg.supporting_line(), k);
+  return squared_distancePL3(ray.source(), seg.supporting_line(), k);
 }
 
 
@@ -381,7 +381,7 @@ squared_distance(
     const Point_3 & ss = seg.source();
     const Point_3 & se = seg.target();
     if (ss == se)
-        return squared_distance(ss, ray, k);
+        return squared_distancePR3(ss, ray, k);
     Vector_3 raydir, segdir, normal;
     raydir = ray.direction().vector();
     segdir = seg.direction().vector();
@@ -424,17 +424,17 @@ squared_distance(
         if (crossing2) {
             return squared_distance_to_plane(normal, ss_min_rs, k);
         }
-        return squared_distance(ray.source(), seg, k);
+        return squared_distancePS3(ray.source(), seg, k);
     } else {
         if (crossing2) {
             RT dm;
             dm = _distance_measure_sub(
                     sdm_ss2r, sdm_se2r, ss_min_rs, se_min_rs, k);
             if (dm < RT(0)) {
-                return squared_distance(ss, ray, k);
+                return squared_distancePR3(ss, ray, k);
             } else {
                 if (dm > RT(0)) {
-                    return squared_distance(se, ray, k);
+                    return squared_distancePR3(se, ray, k);
                 } else {
                     // parallel, should not happen (no crossing)
                     return squared_distance_parallel(seg, ray, k);
@@ -448,9 +448,9 @@ squared_distance(
             if (dm == RT(0))
                 return squared_distance_parallel(seg, ray, k);
             min1 = (dm < RT(0))
-                 ? squared_distance(ss, ray, k)
-                 : squared_distance(se, ray, k);
-            min2 = squared_distance(ray.source(), seg, k);
+                 ? squared_distancePR3(ss, ray, k)
+                 : squared_distancePR3(se, ray, k);
+            min2 = squared_distancePS3(ray.source(), seg, k);
             return (min1 < min2) ? min1 : min2;
         }
     }
@@ -466,13 +466,13 @@ squared_distance(
     const typename CGAL_WRAP(K)::Segment_3 & seg,
     const K& k)
 {
-    return squared_distance(seg, ray, k);
+    return squared_distanceSR3(seg, ray, k);
 }
 
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distanceSL3(
     const typename CGAL_WRAP(K)::Segment_3 &seg,
     const typename CGAL_WRAP(K)::Line_3 &line,
     const K& k)
@@ -486,7 +486,7 @@ squared_distance(
     const Point_3 &end = seg.target();
 
     if (start == end)
-        return squared_distance(start, line, k);
+        return squared_distancePL3(start, line, k);
     Vector_3 linedir = line.direction().vector();
     Vector_3 segdir = seg.direction().vector();
     Vector_3 normal = wcross(segdir, linedir, k);
@@ -530,12 +530,12 @@ squared_distance(
 template <class K>
 inline 
 typename K::FT
-squared_distance(
+squared_distanceLS3(
     const typename CGAL_WRAP(K)::Line_3 & line,
     const typename CGAL_WRAP(K)::Segment_3 & seg,
     const K& k)
 {
-    return squared_distance(seg, line, k);
+    return squared_distanceSL3(seg, line, k);
 }
 
 
@@ -559,7 +559,7 @@ ray_ray_squared_distance_parallel(
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distanceRR3(
     const typename CGAL_WRAP(K)::Ray_3 &ray1,
     const typename CGAL_WRAP(K)::Ray_3 &ray2,
     const K& k)
@@ -608,14 +608,14 @@ squared_distance(
     if (crossing1) {
         if (crossing2)
             return squared_distance_to_plane(normal, s1_min_s2, k);
-        return squared_distance(ray2.source(), ray1, k);
+        return squared_distancePR3(ray2.source(), ray1, k);
     } else {
         if (crossing2) {
-            return squared_distance(ray1.source(), ray2, k);
+            return squared_distancePR3(ray1.source(), ray2, k);
         } else {
           FT min1, min2;
-            min1 = squared_distance(ray1.source(), ray2, k);
-            min2 = squared_distance(ray2.source(), ray1, k);
+            min1 = squared_distancePR3(ray1.source(), ray2, k);
+            min2 = squared_distancePR3(ray2.source(), ray1, k);
             return (min1 < min2) ? min1 : min2;
         }
     }
@@ -627,7 +627,7 @@ squared_distance(
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distanceLR3(
     const typename CGAL_WRAP(K)::Line_3 &line,
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const K& k)
@@ -670,12 +670,12 @@ squared_distance(
 
 template <class K>
 inline typename K::FT
-squared_distance(
+squared_distanceRL3(
     const typename CGAL_WRAP(K)::Ray_3 & ray,
     const typename CGAL_WRAP(K)::Line_3 & line,
     const K& k)
 {
-    return squared_distance(line, ray, k);
+    return squared_distanceLR3(line, ray, k);
 }
 
 
@@ -683,7 +683,7 @@ squared_distance(
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distanceLL3(
     const typename CGAL_WRAP(K)::Line_3 &line1,
     const typename CGAL_WRAP(K)::Line_3 &line2,
     const K& k)
@@ -713,7 +713,7 @@ typename K::FT
 squared_distance(const Point_3<K> &pt,
 		 const Line_3<K> &line)
 {
-  return CGALi::squared_distance(pt, line, K());
+  return CGALi::squared_distancePL3(pt, line, K());
 }
 
 
@@ -724,7 +724,7 @@ squared_distance(
     const Line_3<K> & line,
     const Point_3<K> & pt)
 {
-  return CGALi::squared_distance(pt, line, K());
+  return CGALi::squared_distancePL3(pt, line, K());
 }
 
 
@@ -735,7 +735,7 @@ squared_distance(
     const Point_3<K> &pt,
     const Ray_3<K> &ray)
 {
-    return CGALi::squared_distance(pt, ray, K());
+    return CGALi::squared_distancePR3(pt, ray, K());
 }
 
 
@@ -746,7 +746,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Point_3<K> & pt)
 {
-    return CGALi::squared_distance(pt, ray, K());
+    return CGALi::squared_distancePR3(pt, ray, K());
 }
 
 
@@ -757,7 +757,7 @@ squared_distance(
     const Point_3<K> &pt,
     const Segment_3<K> &seg)
 {
-  return CGALi::squared_distance(pt, seg, K());
+  return CGALi::squared_distancePS3(pt, seg, K());
 }
 
 
@@ -768,7 +768,7 @@ squared_distance(
     const Segment_3<K> & seg,
     const Point_3<K> & pt)
 {
-    return CGALi::squared_distance(pt, seg, K());
+    return CGALi::squared_distancePS3(pt, seg, K());
 }
 
 
@@ -793,7 +793,7 @@ typename K::FT
 squared_distance(const Segment_3<K> &seg1,
 		 const Segment_3<K> &seg2)
 {
-  return CGALi::squared_distance(seg1, seg2, K());
+  return CGALi::squared_distanceSS3(seg1, seg2, K());
 }
 
 
@@ -819,7 +819,7 @@ squared_distance(
     const Segment_3<K> &seg,
     const Ray_3<K> &ray)
 {
-  return CGALi::squared_distance(ray, seg, K());
+  return CGALi::squared_distanceRS3(ray, seg, K());
 }
 
 
@@ -831,7 +831,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Segment_3<K> & seg)
 {
-    return squared_distance(seg, ray, K());
+    return squared_distanceSR3(seg, ray, K());
 }
 
 
@@ -842,7 +842,7 @@ squared_distance(
     const Segment_3<K> &seg,
     const Line_3<K> &line)
 {
-  return CGALi::squared_distance(seg, line, K());
+  return CGALi::squared_distanceSL3(seg, line, K());
 }
 
 
@@ -853,7 +853,7 @@ squared_distance(
     const Line_3<K> & line,
     const Segment_3<K> & seg)
 {
-    return CGALi::squared_distance(seg, line, K());
+    return CGALi::squared_distanceSL3(seg, line, K());
 }
 
 
@@ -878,7 +878,7 @@ squared_distance(
     const Ray_3<K> &ray1,
     const Ray_3<K> &ray2)
 {
-  return CGALi::squared_distance(ray1, ray2, K());
+  return CGALi::squared_distanceRR3(ray1, ray2, K());
 }
 
 
@@ -892,7 +892,7 @@ squared_distance(
     const Line_3<K> &line,
     const Ray_3<K> &ray)
 {
-  return CGALi::squared_distance(line, ray, K());
+  return CGALi::squared_distanceLR3(line, ray, K());
 }
 
 
@@ -903,7 +903,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Line_3<K> & line)
 {
-    return CGALi::squared_distance(line, ray, K());
+    return CGALi::squared_distanceLR3(line, ray, K());
 }
 
 
@@ -916,7 +916,7 @@ squared_distance(
     const Line_3<K> &line1,
     const Line_3<K> &line2)
 {  
-    return CGALi::squared_distance(line1, line2, K());
+    return CGALi::squared_distanceLL3(line1, line2, K());
 }
 
 
