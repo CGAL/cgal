@@ -198,7 +198,7 @@ squared_distance_parallel(
         if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source(), k))
             return squared_distance(seg1.source(), seg2.source(), k);
     }
-    return squared_distance(seg2.source(), seg1.supporting_line(), k);
+    return squared_distancePL3(seg2.source(), seg1.supporting_line(), k);
 }
 
 
@@ -368,7 +368,7 @@ squared_distance_parallel(
 
 template <class K>
 typename K::FT
-squared_distance(
+squared_distanceSR3(
     const typename CGAL_WRAP(K)::Segment_3 &seg,
     const typename CGAL_WRAP(K)::Ray_3 &ray,
     const K& k)
@@ -461,7 +461,7 @@ squared_distance(
 template <class K>
 inline
 typename K::FT
-squared_distance(
+squared_distanceRS3(
     const typename CGAL_WRAP(K)::Ray_3 & ray,
     const typename CGAL_WRAP(K)::Segment_3 & seg,
     const K& k)

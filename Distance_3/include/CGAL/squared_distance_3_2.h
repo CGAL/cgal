@@ -74,7 +74,7 @@ squared_distancePlP3(
 
 template <class K>
 typename K::FT
-squared_distanceLP3(
+squared_distanceLPl3(
     const typename CGAL_WRAP(K)::Line_3 &line,
     const typename CGAL_WRAP(K)::Plane_3 &plane,
     const K& k)
