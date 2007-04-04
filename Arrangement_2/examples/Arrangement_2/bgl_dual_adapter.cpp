@@ -29,52 +29,50 @@ template <class IndexMap>
 class Discover_time_bfs_visitor : public boost::default_bfs_visitor
 {
 private:
-
   const IndexMap  *index_map;      // Mapping vertices to indices.
   unsigned int     time;           // The current time stamp.
 
 public:
-
   // Constructor.
-  Discover_time_bfs_visitor (const IndexMap& imap) :
-    index_map (&imap),
-    time (0)
+  Discover_time_bfs_visitor(const IndexMap& imap) :
+    index_map(&imap),
+    time(0)
   {}
 
   // Write the discover time for a given vertex.
   template <typename Vertex, typename Graph>
-  void discover_vertex (Vertex u, const Graph& /* g */)
+  void discover_vertex(Vertex u, const Graph& /* g */)
   {
-    u->set_data (time);
+    u->set_data(time);
     time++;
   }
 };
 
-int main ()
+int main()
 {
   Arrangement_2   arr;
 
   // Construct an arrangement of seven intersecting line segments.
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (7, 1)));
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
-  insert_curve (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
-  insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
-  insert_curve (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
+  insert_curve(arr, Segment_2(Point_2(1, 1), Point_2(7, 1)));
+  insert_curve(arr, Segment_2(Point_2(1, 1), Point_2(3, 7)));
+  insert_curve(arr, Segment_2(Point_2(1, 4), Point_2(7, 1)));
+  insert_curve(arr, Segment_2(Point_2(2, 2), Point_2(9, 3)));
+  insert_curve(arr, Segment_2(Point_2(2, 2), Point_2(4, 4)));
+  insert_curve(arr, Segment_2(Point_2(7, 1), Point_2(9, 3)));
+  insert_curve(arr, Segment_2(Point_2(3, 7), Point_2(9, 3)));
 
   // Create a mapping of the arrangement faces to indices.
-  CGAL::Arr_face_index_map<Arrangement_2>      index_map (arr);
+  CGAL::Arr_face_index_map<Arrangement_2>      index_map(arr);
 
   // Perform breadth-first search from the unbounded face, and use the BFS
   // visitor to associate each arrangement face with its discover time.
   Discover_time_bfs_visitor<CGAL::Arr_face_index_map<Arrangement_2> >
-                                               bfs_visitor (index_map);
+    bfs_visitor(index_map);
   Arrangement_2::Face_handle                   uf = arr.unbounded_face();
 
-  boost::breadth_first_search (Dual_arrangement_2 (arr), uf,
-                               boost::vertex_index_map (index_map).
-                               visitor (bfs_visitor));
+  boost::breadth_first_search(Dual_arrangement_2(arr), uf,
+                              boost::vertex_index_map(index_map).
+                              visitor(bfs_visitor));
 
   // Print the results:
   Arrangement_2::Face_iterator      fit;
@@ -85,11 +83,11 @@ int main ()
     if (fit != uf)
     {
       std::cout << "face ";
-      print_ccb<Arrangement_2> (fit->outer_ccb());
+      print_ccb<Arrangement_2>(fit->outer_ccb());
     }
     else
       std::cout << "the unbounded face." << std::endl;
   }
 
-  return (0);
+  return 0;
 }

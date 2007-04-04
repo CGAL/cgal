@@ -17,13 +17,14 @@
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Ophir Setter <ophirset@post.tau.ac.il>
+//                 Efi Fogel    <efif@post.tau.ac.il>
 
 #ifndef CGAL_BOOST_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 #define CGAL_BOOST_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 
 /*! \file
  * Definition of the specialized Dual<Arrangement_2> class,
- * and the specialized boost::graph_traits<Dual<Arrangement_2> >class.
+ * and the specialized graph_traits<Dual<Arrangement_2> >class.
  */
 
 #include <boost/config.hpp>
@@ -97,8 +98,8 @@ protected:
   public:
 
     /*! Default constructor. */
-    Face_neighbor_iterator () :
-      _end (true)
+    Face_neighbor_iterator() :
+      _end(true)
     {}
 
     /*!
@@ -108,14 +109,12 @@ protected:
      * \param start Should we start traversing the edges.
      *              If false, we construct a past-the-end iterator.
      */
-    Face_neighbor_iterator (Face_handle face, 
-                            bool out_edges,
-                            bool start) :
-      _face (face),
-      _out (out_edges),
-      _end (! start)
+    Face_neighbor_iterator(Face_handle face, bool out_edges, bool start) :
+      _face(face),
+      _out(out_edges),
+      _end(! start)
     {
-      CGAL_precondition (! face->is_fictitious());
+      CGAL_precondition(! face->is_fictitious());
 
       _outer_ccb_circ = face->outer_ccb();
       _ccb_incremented = !start;
@@ -145,29 +144,29 @@ protected:
     }  
 
     /*! Equality operators. */
-    bool operator== (const Self& it) const
+    bool operator==(const Self& it) const
     {
-      return (this->_equal(it));
+      return this->_equal(it);
     }
     
-    bool operator!= (const Self& it) const
+    bool operator!=(const Self& it) const
     {
       return (! this->_equal(it));
     }
     
     /*! Dereference operators. */
-    reference operator* () const
+    reference operator*() const
     {
-      return (_hh);
+      return _hh;
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
-      return (&_hh);
+      return &_hh;
     }
     
     /* Increment operators. */
-    Self& operator++ ()
+    Self& operator++()
     {
       do
       {
@@ -182,7 +181,7 @@ protected:
       return (*this);
     }
 
-    Self operator++ (int )
+    Self operator++(int)
     {
       Self tmp = *this;
 
@@ -190,19 +189,19 @@ protected:
       {
         this->_increment();
         if (_end)
-          return (tmp);
+          return tmp;
 
         _hh = this->_dereference();
 
       } while (_hh->is_fictitious());
 
-      return (tmp);
+      return tmp;
     }
 
   private:
 
     /*! Check two iterators for equality. */
-    bool _equal (const Self& it) const
+    bool _equal(const Self& it) const
     {
       return (_out == it._out && _face == it._face &&
               ((_end && it._end) ||
@@ -212,27 +211,27 @@ protected:
     }
 
     /*! Derefernce the current circulator. */
-    Edge_handle _dereference () const
+    Edge_handle _dereference() const
     {
       if (! _ccb_incremented ||
           _outer_ccb_circ != _face->outer_ccb())
       {
         if (_out)
-          return (_outer_ccb_circ);
+          return _outer_ccb_circ;
         else
-          return (_outer_ccb_circ->twin());
+          return _outer_ccb_circ->twin();
       }
     
       if (_out)
-        return (_curr_hole_circ);
+        return _curr_hole_circ;
       else
-        return (_curr_hole_circ->twin());
+        return _curr_hole_circ->twin();
     }
 
     // Increments of the iterator.
-    void _increment ()
+    void _increment()
     {
-      CGAL_assertion (! _end);
+      CGAL_assertion(! _end);
 
       // If we have not traversed the entire outer CCB (namely this is the
       // first increment operation, or we still have not completed a full
@@ -308,56 +307,56 @@ public:
   typedef Face_neighbor_iterator            Incident_edge_iterator;
 
   /*! Default constructor. */
-  Dual () :
-    p_arr (NULL)
+  Dual() :
+    p_arr(NULL)
   {}
 
   /*! Constructor from an arrangement. */
-  Dual (const Arrangement_2& arr) :
-    p_arr (const_cast<Arrangement_2 *> (&arr))
+  Dual(const Arrangement_2& arr) :
+    p_arr(const_cast<Arrangement_2 *>(&arr))
   {}
 
   /*! Get the number of vertices (face of the primal arrangement). */
-  Size number_of_vertices () const
+  Size number_of_vertices() const
   {
-    return (p_arr->number_of_faces());
+    return p_arr->number_of_faces();
   }
 
   /*! Traverse the vertices (faces of the primal arrangement). */
-  Vertex_iterator vertices_begin () const
+  Vertex_iterator vertices_begin() const
   {
-    return (p_arr->faces_begin());
+    return p_arr->faces_begin();
   }
 
-  Vertex_iterator vertices_end () const
+  Vertex_iterator vertices_end() const
   {
-    return (p_arr->faces_end());
+    return p_arr->faces_end();
   }
 
   /*! Get the number of edges. */
-  Size number_of_edges () const
+  Size number_of_edges() const
   {
-    return (p_arr->number_of_halfedges());
+    return p_arr->number_of_halfedges();
   }
 
   /*! Traverse the edges. */
-  Edge_iterator edges_begin () const
+  Edge_iterator edges_begin() const
   {
-    return (p_arr->halfedges_begin());
+    return p_arr->halfedges_begin();
   }
 
-  Edge_iterator edges_end () const
+  Edge_iterator edges_end() const
   {
-    return (p_arr->halfedges_end());
+    return p_arr->halfedges_end();
   }
 
   /*!
    * Get the dual vertex-degree (number of edges forming the face boundary).
    */
-  Size degree (Vertex_handle v) const
+  Size degree(Vertex_handle v) const
   {
-    Incident_edge_iterator   begin = Incident_edge_iterator (v, true, true);
-    Incident_edge_iterator   end = Incident_edge_iterator (v, false, true);
+    Incident_edge_iterator   begin = Incident_edge_iterator(v, true, true);
+    Incident_edge_iterator   end = Incident_edge_iterator(v, false, true);
     Size                     deg = 0;
 
     while (begin != end)
@@ -366,29 +365,29 @@ public:
       ++begin;
     }
 
-    return (deg);
+    return deg;
   }
 
   /*! Traverse the outgoing edges of a given vertex. */
-  Incident_edge_iterator out_edges_begin (Vertex_handle v) const
+  Incident_edge_iterator out_edges_begin(Vertex_handle v) const
   {
-    return (Incident_edge_iterator (v, true, true));
+    return Incident_edge_iterator(v, true, true);
   }
 
-  Incident_edge_iterator out_edges_end (Vertex_handle v) const
+  Incident_edge_iterator out_edges_end(Vertex_handle v) const
   {
-    return (Incident_edge_iterator (v, true, false));
+    return Incident_edge_iterator(v, true, false);
   }
 
   /*! Traverse the ingoing edges of a given vertex. */
-  Incident_edge_iterator in_edges_begin (Vertex_handle v) const
+  Incident_edge_iterator in_edges_begin(Vertex_handle v) const
   {
-    return (Incident_edge_iterator (v, false, true));
+    return Incident_edge_iterator(v, false, true);
   }
 
-  Incident_edge_iterator in_edges_end (Vertex_handle v) const
+  Incident_edge_iterator in_edges_end(Vertex_handle v) const
   {
-    return (Incident_edge_iterator (v, false, false));
+    return Incident_edge_iterator(v, false, false);
   }
 };
 
@@ -465,6 +464,10 @@ public:
 
 };
 
+}; // namespace boost
+
+CGAL_BEGIN_NAMESPACE
+
 // Functions required by the IncidenceGraph concept:
 // -------------------------------------------------
 
@@ -475,13 +478,14 @@ public:
  * \param Number of halfedges around the boundary of the primal face.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-degree_size_type out_degree
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           vertex_descriptor v,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+degree_size_type
+out_degree(typename boost::graph_traits<CGAL::Dual<CGAL::
+                   Arrangement_2<Traits_, Dcel_> > >::vertex_descriptor v,
+           const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (darr.degree (v));
+  return darr.degree(v);
 }
 
 /*!
@@ -492,18 +496,15 @@ degree_size_type out_degree
  * \return A pair of out-edges iterators.
  */
 template <class Traits_, class Dcel_>
-std::pair<
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                             out_edge_iterator,
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                             out_edge_iterator>
-out_edges
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           vertex_descriptor v,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+std::pair<typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::out_edge_iterator,
+          typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::out_edge_iterator>
+out_edges(typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::vertex_descriptor v,
+          const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (std::make_pair (darr.out_edges_begin (v),
-                          darr.out_edges_end (v)));
+  return std::make_pair(darr.out_edges_begin(v), darr.out_edges_end(v));
 }
 
 /*!
@@ -513,13 +514,14 @@ out_edges
  * \return The incident face of e in the primal arrangement.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-vertex_descriptor source
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           edge_descriptor e,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& /* darr */)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+vertex_descriptor
+source(typename boost::graph_traits<CGAL::Dual<CGAL::
+         Arrangement_2<Traits_, Dcel_> > >::edge_descriptor e,
+       const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& /* darr */)
 {
-  return (e->face());
+  return e->face();
 }
 
 /*!
@@ -529,13 +531,14 @@ vertex_descriptor source
  * \return The incident face of e's twin in the primal arrangement.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-vertex_descriptor target 
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           edge_descriptor e,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& /* darr */)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+vertex_descriptor
+target(typename boost::graph_traits<CGAL::Dual<CGAL::
+         Arrangement_2<Traits_, Dcel_> > >::edge_descriptor e,
+       const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& /* darr */)
 {
-  return (e->twin()->face());
+  return e->twin()->face();
 }
 
 // Functions required by the BidirectionalGraph concept:
@@ -548,13 +551,14 @@ vertex_descriptor target
  * \param Number of halfedges around the boundary of the primal face.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-degree_size_type in_degree 
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           vertex_descriptor v,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+degree_size_type
+in_degree(typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::vertex_descriptor v,
+          const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (darr.degree (v));
+  return darr.degree(v);
 }
 
 /*!
@@ -565,18 +569,15 @@ degree_size_type in_degree
  * \return A pair of in-edges iterators.
  */
 template <class Traits_, class Dcel_>
-std::pair<
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                             in_edge_iterator,
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                             in_edge_iterator>
-in_edges
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           vertex_descriptor v,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+std::pair<typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::in_edge_iterator,
+          typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::in_edge_iterator>
+in_edges(typename boost::graph_traits<CGAL::Dual<CGAL::
+           Arrangement_2<Traits_, Dcel_> > >::vertex_descriptor v,
+         const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (std::make_pair (darr.in_edges_begin (v),
-                          darr.in_edges_end (v)));
+  return std::make_pair(darr.in_edges_begin(v), darr.in_edges_end(v));
 }
 
 /*!
@@ -586,13 +587,14 @@ in_edges
  * \param Number of ingoing and outgoing halfedges incident to v.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-degree_size_type degree
-  (typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                           vertex_descriptor v,
-   const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+degree_size_type
+degree(typename boost::graph_traits<CGAL::Dual<CGAL::
+         Arrangement_2<Traits_, Dcel_> > >::vertex_descriptor v,
+       const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (2 * darr.degree (v));
+  return (2 * darr.degree(v));
 }
 
 // Functions required by the VertexListGraph concept:
@@ -604,11 +606,12 @@ degree_size_type degree
  * \return Number of faces in the primal arrangement.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-vertices_size_type num_vertices
-  (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+vertices_size_type
+num_vertices(const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (darr.number_of_vertices());
+  return darr.number_of_vertices();
 }
 
 /*!
@@ -617,17 +620,17 @@ vertices_size_type num_vertices
  * \return A pair of vertex iterators.
  */
 template <class Traits_, class Dcel_>
-std::pair<
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                               vertex_iterator,
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                               vertex_iterator>
-vertices (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+std::pair<typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::vertex_iterator,
+          typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::vertex_iterator>
+vertices(const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  typedef typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                    vertex_iterator vertex_iterator;
-  return (std::pair<vertex_iterator, vertex_iterator> (darr.vertices_begin(),
-                                                       darr.vertices_end()));
+  typedef typename
+    boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+                                              vertex_iterator vertex_iterator;
+  return std::pair<vertex_iterator, vertex_iterator>(darr.vertices_begin(),
+                                                     darr.vertices_end());
 }
 
 // Functions required by the EdgeListGraph concept:
@@ -639,11 +642,12 @@ vertices (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
  * \return Number of halfedges in the primal arrangement.
  */
 template <class Traits_, class Dcel_>
-typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-edges_size_type num_edges
-  (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+typename
+boost::graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
+edges_size_type
+num_edges(const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (darr.number_of_edges()); 
+  return darr.number_of_edges(); 
 }
 
 /*!
@@ -652,17 +656,15 @@ edges_size_type num_edges
  * \return A pair of edge iterators.
  */
 template <class Traits_, class Dcel_>
-std::pair<
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                               edge_iterator,
-  typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
-                                                               edge_iterator>
-edges (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+std::pair<typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::edge_iterator,
+          typename boost::graph_traits<CGAL::Dual<CGAL::
+            Arrangement_2<Traits_, Dcel_> > >::edge_iterator>
+edges(const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
-  return (std::make_pair (darr.edges_begin(),
-                          darr.edges_end()));
+  return std::make_pair(darr.edges_begin(), darr.edges_end());
 }
 
-}; // namespace boost
+CGAL_END_NAMESPACE
 
 #endif
