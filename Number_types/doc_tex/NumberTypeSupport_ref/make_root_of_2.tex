@@ -10,12 +10,12 @@ ring.
 \ccFunction{template <typename NT>
             Root_of_traits<NT>::RootOf_2
             make_root_of_2(const NT& a, const NT& b, const NT& c, bool s);}
-{Returns the root of the polynomial $aX^2+bX+c$ which is the smallest if
-$s$ is true, or the largest if $s$ is false.   
+{Returns the real root of the polynomial $aX^2+bX+c$ which is the smallest 
+if $s$ is true, or the largest if $s$ is false.   
 %If \ccc{NT} supports a \ccc{sqrt} operation, then the usual formula is used.  
 %Otherwise the \ccc{Root_of_2} class is used.
-\ccPrecond{NT is a \ccc{Ringnumbertype} or \ccc{Fieldnumbertype}.}
-\ccPrecond{The polynomial must have at least one real root.}}
+\ccPrecond{\ccc{NT} is a \ccc{RingNumberType} or \ccc{Fieldnumbertype}.}
+\ccPrecond{The polynomial has at least one real root.}}
 
 \ccFunction{template <typename RT>
             Root_of_traits<RT>::RootOf_2
