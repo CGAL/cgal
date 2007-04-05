@@ -40,6 +40,9 @@ public:
   typedef typename PolyhedralCgm::Arr_face_handle       Arr_face_handle;
   typedef typename PolyhedralCgm::Arr_face_const_handle Arr_face_const_handle;
 
+  /*! Destructor */
+  virtual ~Polyhedral_cgm_initializer_visitor() {}
+  
   /*! Pass information from a polyhedron vertex to its dual - a cgm-face */
   virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
                                   Arr_face_handle trg)
