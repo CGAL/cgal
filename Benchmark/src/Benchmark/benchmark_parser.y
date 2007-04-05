@@ -216,7 +216,7 @@ polynomial: /* */
   ;
 
 optional_typename :
-    /* empty */                  { $$ = "int"; }
+    /* empty */                  { $$ = "Integer"; }
   | ',' typename                 { $$ = $2;    }
   ;
 
