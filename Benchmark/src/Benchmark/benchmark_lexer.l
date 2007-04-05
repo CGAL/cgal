@@ -150,7 +150,6 @@ GT              [>]
 "BenchmarkName"                 { return BenchmarkName; }
 "Classification"                { return Classification; }
 "List"                          { return List; }
-"Rational"                      { return Rational; }
 "Polynomial_1"                  { return Polynomial_1; }
 "Polynomial"                    { return Polynomial; }
 "Point_2"                       { return Point_2; }
@@ -178,6 +177,10 @@ GT              [>]
 "CSGOperationUnion_3"           { return CSGOperationUnion_3; }
 "CSGOperationIntersection_3"    { return CSGOperationIntersection_3; }
 "CSGOperationNegation_3"        { return CSGOperationNegation_3; }
+
+"Integer"                       { return Integer; }
+"Rational"                      { return Rational; }
+"Sqrt_extension"                { return Sqrt_extension; }
 
  /* Integer numbers and float numbers */
  /* --------------------------------- */

@@ -86,11 +86,9 @@ static std::string numbertype;
 %token Classification
 
 %token List
-%token Rational
 %token Polynomial_1
 %token Polynomial
 %token Point_2
-%token AlgebraicReal
 %token Degree
 %token Vector_2
 
@@ -114,6 +112,10 @@ static std::string numbertype;
 %token CSGOperationIntersection_3
 %token CSGOperationNegation_3
 
+%token Integer
+%token Rational
+%token Sqrt_extension
+%token AlgebraicReal
 
 %%
 /* Grammar */
@@ -215,8 +217,14 @@ polynomial: /* */
 
 optional_typename :
     /* empty */                  { $$ = "int"; }
-  | ',' UNKNOWN_TOKEN            {  $$ = $2;  }
+  | ',' typename                 { $$ = $2;    }
   ;
+
+typename :
+     Sqrt_extension ST typename ',' typename GT { $$ = "Sqrt_extension<" + $3 + "," + $5 + ">"; }
+  |  Rational                                   { $$ = "Rational"; }
+  |  Integer                                    { $$ = "Integer";  }
+  ;  
 
 monom_list:
     monom
