@@ -645,8 +645,8 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#applic
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
 Installation/LICENSE.FREE_USE -text
 Installation/config/support/S05-BOOST -text
-Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
-Installation/config/support/S06win-BOOST_PROGRAM_OPTIONS -text
+Installation/config/support/S06a-BOOST_PROGRAM_OPTIONS -text
+Installation/config/support/S06b-MS_BOOST_PROGRAM_OPTIONS -text
 Installation/config/support/S07-BOOST_BIMAP -text
 Installation/config/support/S15-X11 -text
 Installation/config/support/S20-GMP -text
