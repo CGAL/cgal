@@ -73,6 +73,7 @@ private:
   // Base type:
   typedef Cgm_initializer<typename PolyhedralCgm::Base> Cgm_initializer;
   typedef typename Cgm_initializer::FT                  FT;
+  typedef typename Cgm_initializer::RT                  RT;
   typedef typename Cgm_initializer::Vector_3            Vector_3;
   typedef typename Cgm_initializer::Point_3             Point_3;
   typedef typename Cgm_initializer::Arr                 Arr;
@@ -119,7 +120,8 @@ private:
                             h->next()->vertex()->point());
       FT sqr_length = normal.squared_length();
       double tmp = CGAL::to_double(sqr_length);
-      return normal / CGAL::sqrt(tmp);
+      RT length = CGAL::sqrt(tmp);
+      return normal / length;
     }
   };
 
