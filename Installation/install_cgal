@@ -840,6 +840,8 @@ set_compiler_flags()
     PRINT_STACKTRACE_PROGRAM="gdb"
     WINDOWS_COMPILER=""
     CYGWIN_COMPILER=""
+    DARWIN_COMPILER=""
+    SUNCC_COMPILER=""
     SUFFIX_LIST=
     OBJ_EXT=".o"
     OBJ_OPT="-c"
@@ -965,6 +967,7 @@ set_compiler_flags()
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
+	    SUNCC_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
@@ -1042,6 +1045,7 @@ set_compiler_flags()
 	    ;;
 	*Darwin*g++*)
 	    #### settings for gcc on Darwin (MacOSX)
+	    DARWIN_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
