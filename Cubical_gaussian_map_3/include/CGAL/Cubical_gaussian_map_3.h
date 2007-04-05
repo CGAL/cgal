@@ -121,6 +121,7 @@ class Cgm_initializer {
 private:
 protected:
   typedef typename Cgm::FT                              FT;
+  typedef typename Cgm::RT                              RT;
   typedef typename Cgm::Corner_id                       Corner_id;
   
   typedef typename Cgm::Kernel                          Kernel;
@@ -1081,6 +1082,7 @@ private:
 
 public:  
   typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::RT                           RT;
   typedef typename Kernel::Point_3                      Point_3;
   typedef typename Kernel::Vector_3                     Vector_3;
   typedef typename Kernel::Plane_3                      Plane_3;
