@@ -366,7 +366,7 @@ private:
   void update_point()
   {
     for (unsigned int i = 0; i < PolyhedralCgm::NUM_FACES; i++) {
-      Arr & arr = m_cgm.arrangement(i);
+      Arr & arr = this->m_cgm.arrangement(i);
 
       // If there are more than 1 face excluding the unbounded face, continue
       if (arr.number_of_faces() != 2) continue;
@@ -395,7 +395,7 @@ private:
   void compute_projections(Polyhedron & polyhedron)
   {
     // Initialize the arrangements with the boundary curves:
-    init_arrangements();
+    this->init_arrangements();
 
     // Compute the central projection of each facet-normal:
     typedef typename Polyhedron::Facet_iterator Polyhedron_facet_iterator;
@@ -450,11 +450,11 @@ private:
     }
 
     // Process the corners:
-    process_corners();
+    this->process_corners();
 
     //! \todo eliminate this call!!!
     // Process the edges:
-    process_edges();
+    this->process_edges();
   
     // Update the point of the vertex-less cubic faces:
     update_point();
@@ -545,19 +545,19 @@ public:
 
 /*!
  */
-template <class Kernel,
+template <class T_Kernel,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
 #endif
           class T_Dcel = Polyhedral_cgm_arr_dcel>
-class Polyhedral_cgm : public Cubical_gaussian_map_3<Kernel,T_Dcel> {
+class Polyhedral_cgm : public Cubical_gaussian_map_3<T_Kernel,T_Dcel> {
 private:
-  typedef Polyhedral_cgm<Kernel, T_Dcel>                Self;
+  typedef Polyhedral_cgm<T_Kernel, T_Dcel>              Self;
   
 public:
   // For some reason MSVC barfs on the friend statement below. Therefore,
   // we declare the Base to be public to overcome the problem.
-  typedef Cubical_gaussian_map_3<Kernel, T_Dcel>        Base;
+  typedef Cubical_gaussian_map_3<T_Kernel, T_Dcel>      Base;
 
 #if 0
   /*! Allow the initializer to update the CGM data members */
@@ -642,8 +642,8 @@ private:
     // Count them:
     Face_nop_op op;
     unsigned int vertices_num = 0;
-    for (unsigned int i = 0; i < NUM_FACES; i++) {
-      Arr & arr = m_arrangements[i];
+    for (unsigned int i = 0; i < Base::NUM_FACES; i++) {
+      Arr & arr = this->m_arrangements[i];
       Arr_face_handle fi = arr.faces_begin();
       // Skip the unbounded face
       for (fi++; fi != arr.faces_end(); fi++) {
@@ -671,8 +671,8 @@ private:
    */
   void reset_faces()
   {
-    for (unsigned int i = 0; i < NUM_FACES; i++) {
-      Arr & pm = m_arrangements[i];
+    for (unsigned int i = 0; i < Base::NUM_FACES; i++) {
+      Arr & pm = this->m_arrangements[i];
       Arr_face_handle fi = pm.faces_begin();
       // Skip the unbounded face
       for (fi++; fi != pm.faces_end(); fi++) {
@@ -748,13 +748,13 @@ public:
     overlay(cgm1, cgm2);
 
     // Initialize the corners:
-    init_corners();
+    this->init_corners();
   
     // Process the corners:
-    process_corners();
+    this->process_corners();
 
     // Process the edges:
-    process_edges();
+    this->process_edges();
   
 #if 0
     /* Is there a collision?
@@ -782,8 +782,8 @@ public:
    */
   void overlay(Polyhedral_cgm * cgm1, Polyhedral_cgm * cgm2)
   {
-    for (unsigned int i = 0; i < NUM_FACES; ++i) {
-      Arr & arr = m_arrangements[i];
+    for (unsigned int i = 0; i < Base::NUM_FACES; ++i) {
+      Arr & arr = this->m_arrangements[i];
       Arr & arr1 = cgm1->m_arrangements[i];
       Arr & arr2 = cgm2->m_arrangements[i];
 
@@ -807,8 +807,8 @@ public:
   /*! \brief computes the orientation of a point relative to the polyhedron */
   CGAL::Oriented_side oriented_side(const Point_3 & p)
   {
-    for (unsigned int i = 0; i < NUM_FACES; i++) {
-      const Arr & pm = m_arrangements[i];
+    for (unsigned int i = 0; i < Base::NUM_FACES; i++) {
+      const Arr & pm = this->m_arrangements[i];
 
       Arr_vertex_const_iterator vit;
       for (vit = pm.vertices_begin(); vit != pm.vertices_end(); ++vit) {
@@ -847,9 +847,9 @@ public:
     // Find the id of the first arrangement the point maps to:
     unsigned int faces_mask = dual.faces_mask();
     unsigned int id;
-    for (id = 0; id < NUM_FACES; ++id)
+    for (id = 0; id < Base::NUM_FACES; ++id)
     if (faces_mask & s_mask[id]) break;
-    CGAL_assertion(id < NUM_FACES);
+    CGAL_assertion(id < Base::NUM_FACES);
 
     // Map the projected normal to a planar point in the respective arrangement:
     const Point_3 & proj_p = dual.get_projected_normal();
@@ -925,8 +925,8 @@ public:
     // Count them:
     Face_nop_op op;
     unsigned int dual_faces_num = 0;
-    for (unsigned int i = 0; i < NUM_FACES; i++) {
-      Arr & pm = m_arrangements[i];
+    for (unsigned int i = 0; i < Base::NUM_FACES; i++) {
+      Arr & pm = this->m_arrangements[i];
       Arr_face_handle fi = pm.faces_begin();
       // Skip the unbounded face
       for (fi++; fi != pm.faces_end(); fi++) {
@@ -944,8 +944,8 @@ public:
     unsigned int number_of_halfedges = 0;
     unsigned int num_real_edges = 0;
   
-    for (unsigned int i = 0; i < NUM_FACES; i++) {
-      const Arr & pm = m_arrangements[i];
+    for (unsigned int i = 0; i < Base::NUM_FACES; i++) {
+      const Arr & pm = this->m_arrangements[i];
       // Traverse all halfedge:
       Arr_halfedge_const_iterator he;
       for (he = pm.halfedges_begin(); he != pm.halfedges_end(); ++he) {
@@ -960,7 +960,7 @@ public:
        */
 
       // Find the first halfedge incident to the unbounded face:
-      Arr_vertex_const_handle vh = m_corner_vertices[i][0];
+      Arr_vertex_const_handle vh = this->m_corner_vertices[i][0];
       Arr_halfedge_around_vertex_const_circulator hec =
         vh->incident_halfedges();
       Arr_halfedge_around_vertex_const_circulator begin_hec = hec;
@@ -989,8 +989,8 @@ public:
     unsigned int dual_corner_vertices_num = 0;
     unsigned int dual_edge_vertices_num = 0;
 
-    for (i = 0; i < NUM_FACES; i++) {
-      const Arr & pm = m_arrangements[i];
+    for (i = 0; i < Base::NUM_FACES; i++) {
+      const Arr & pm = this->m_arrangements[i];
       Arr_vertex_const_iterator vit;
       for (vit = pm.vertices_begin(); vit != pm.vertices_end(); ++vit) {
         if (vit->is_real()) {
