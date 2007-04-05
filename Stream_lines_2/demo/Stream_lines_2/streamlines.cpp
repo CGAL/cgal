@@ -27,8 +27,8 @@ int main(int, char*)
 #include <qpopupmenu.h>
 #include <qgl.h>
 
-#include <stdlib.h>
-
+#include <sstream>
+#include <string>
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
@@ -456,17 +456,24 @@ class MyWidget : public QGLWidget
       drawing();
     }
 
+  template <class T>
+  std::string five_letters(T i)
+  {
+    std::ostringstream ss ; 
+    ss << i ; 
+    std::string s = ss.str().substr(0,5);
+    
+    if(s.length()<5){
+      s.insert((std::string::size_type)0, 5-s.length(), ' ');
+    }
+    return s;
+  }
+
     void updatestatus()
     {
-      char str[20];
-      gcvt(p.density_, 4, str);
-      densitylabel->setText(str);
-      gcvt(p.ratio_, 4, str);
-      ratiolabel->setText(str);
-      gcvt(p.sampling_, 4, str);
-      samplinglabel->setText(str);
-      gcvt(p.number_of_lines_, 4, str);
-      numberlabel->setText(str);
+      std::string s =  five_letters( p.density_ ) + five_letters( p.ratio_ ) + five_letters( p.sampling_ ) + five_letters(p.number_of_lines_);
+      
+      numberlabel->setText(s.c_str());
     }
 
     void setstatus()
@@ -475,13 +482,12 @@ class MyWidget : public QGLWidget
 
       densitytextlabel = new QLabel(this);
 
-      char str[20];
+
 
       densitytextlabel->setText("Separating distance");
       statusbar->addWidget(densitytextlabel);
       densitylabel = new QLabel(this);
-      gcvt(p.density_, 4, str);
-      densitylabel->setText(str);
+      densitylabel->setText(five_letters(p.density_).c_str());
       statusbar->addWidget(densitylabel);
       densityspacelabel = new QLabel(this);
       densityspacelabel->setText("    ");
@@ -491,8 +497,7 @@ class MyWidget : public QGLWidget
       ratiotextlabel->setText("Saturation ratio");
       statusbar->addWidget(ratiotextlabel);
       ratiolabel = new QLabel(this);
-      gcvt(p.ratio_, 4, str);
-      ratiolabel->setText(str);
+      ratiolabel->setText(five_letters(p.ratio_).c_str());
       statusbar->addWidget(ratiolabel);
       ratiospacelabel = new QLabel(this);
       ratiospacelabel->setText("    ");
@@ -502,8 +507,7 @@ class MyWidget : public QGLWidget
       samplingtextlabel->setText("Sampling step");
       statusbar->addWidget(samplingtextlabel);
       samplinglabel = new QLabel(this);
-      gcvt(p.sampling_, 4, str);
-      samplinglabel->setText(str);
+      samplinglabel->setText(five_letters(p.sampling_).c_str());
       statusbar->addWidget(samplinglabel);
       samplingspacelabel = new QLabel(this);
       samplingspacelabel->setText("    ");
@@ -513,8 +517,7 @@ class MyWidget : public QGLWidget
       numbertextlabel->setText("Number of lines");
       statusbar->addWidget(numbertextlabel);
       numberlabel = new QLabel(this);
-      gcvt(p.number_of_lines_, 4, str);
-      numberlabel->setText(str);
+      numberlabel->setText(five_letters(p.number_of_lines_).c_str());
       statusbar->addWidget(numberlabel);
       numberspacelabel = new QLabel(this);
       numberspacelabel->setText("    ");
