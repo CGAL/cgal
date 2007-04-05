@@ -103,8 +103,9 @@ Skin_surface_3(WP_iterator begin, WP_iterator end,
     
   // Construct the Triangulated_mixed_complex:
   Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
-  triangulate_mixed_complex_3(regular(), shrink_factor(), triangulated_mixed_complex(),
-                              observer, verbose);
+  triangulate_mixed_complex_3(regular(), shrink_factor(), 
+                              triangulated_mixed_complex(),
+                              observer, verbose_);
 
   CGAL_assertion(triangulated_mixed_complex().dimension() == 3);
 }
