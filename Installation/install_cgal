@@ -537,7 +537,7 @@ parse_support_options()
     done
     for i in ${SUPPORT_PKGS}; do
 	for j in `value_of "${i}_REQUIRES"`; do
-	    _append_to "${j}_REQUIRED_BY" " "
+	    _append_to "${j}_REQUIRED_BY" "${i}" " "
 	done
     done
     ${_printf} "%s\n" "done."
