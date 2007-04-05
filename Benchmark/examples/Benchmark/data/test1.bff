@@ -31,5 +31,8 @@ Rotate_2(Degree(30), Point_2(Rational(1,2), Rational(3,4)), Rotate_2(Degree(30),
 Conic_2(1,2,3,4,5,6)
 
 Polynomial<2>((1,(2,3)),(4,(5,6)))
-Polynomial<2,Sqrt_extension_int>(("EXT[1,2,3]",(2,3)),("EXT[5,4,3]",(5,6)))
+Polynomial<3,Integer>( (1,(2,3,4)), (5,(6,7,8)) )
+Polynomial<2,Sqrt_extension<Integer,Integer>>( (Sqrt_extension(1,2,3),(2,3)) , (Sqrt_extension(5,4,3),(5,6)) )
+# this should issue a type error by the benchmark parser:
+#Polynomial<2,Sqrt_extension<Integer,Integer>>( (Sqrt_extension(1,2,Rational(3,4)),(2,3)) , (Sqrt_extension(5,4,3),(5,6)) )
 

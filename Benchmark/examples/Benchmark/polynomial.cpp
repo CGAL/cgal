@@ -32,7 +32,10 @@ struct Polynomial_reader: public cb::Benchmark_visitor {
     unsigned char current_variable_name;
     bool inside_monom;
     bool first_monom;
-    std::string coeff_typename;
+    enum Coefficient_numbertype { Not_supported = 0, Integer, Sqrt_ext_int_int };
+    
+    Coefficient_numbertype  coefficient_numbertype;
+    
 
     Polynomial_reader() : inside_monom( false ) {}
 
@@ -53,26 +56,40 @@ struct Polynomial_reader: public cb::Benchmark_visitor {
     begin_polynomial( unsigned int variables,
                       std::string  coeff_typename )
     {
-        std::cout << "begin poly" << std::endl;
         std::cout << "number of variables: " << variables << std::endl;
         std::cout << "typename: " << coeff_typename << std::endl;
-        this->coeff_typename = coeff_typename;
+        if( coeff_typename == "Sqrt_extension<Integer,Integer>" ) {
+          coefficient_numbertype = Sqrt_ext_int_int;
+        } else if( coeff_typename == "Integer" ) {
+          coefficient_numbertype = Integer;
+        } else {
+          std::cout << "coefficient numbertype " << coeff_typename << " not supported." << std::endl;
+          coefficient_numbertype = Not_supported;
+        }
         first_monom = true;
     }
 
     virtual void
     end_polynomial()
     {
-        std::cout << std::endl << "end poly" << std::endl;
+      std::cout << std::endl;
     }
 
     virtual void
     begin_monom( std::string coefficient )
     {
-        if( coeff_typename == "Sqrt_extension_int" ) {
-          CGAL::Sqrt_extension<int,int> ex;
-          std::stringstream input( coefficient );
-          input >> ex;
+        switch( coefficient_numbertype ) {
+          case Sqrt_ext_int_int: {
+            //std::cout << "parsing coefficient " << coefficient << std::endl;
+            CGAL::Sqrt_extension<int,int> ex;
+            std::stringstream input( coefficient );
+            input >> ex;
+            break;
+          }
+          case Integer:
+            break;
+          default: 
+            ;
         }
         if( ! first_monom ) {
            std::cout << " + ";

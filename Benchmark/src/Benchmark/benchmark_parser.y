@@ -20,15 +20,17 @@
 %{
 /* C/C++ declaration section */
 /* ========================= */
-#include <stdlib.h>  /* for atoi */
+#include <cassert>
+#include <cstdlib>  /* for atoi */
 #include <string>    /* for std::string */
 #include <fstream>   /* for std::ifstream */
 #include <sstream>   // for better error messages
 #include <iostream>
+#include <stack>     // for type checking
 
-#include "CGAL/Benchmark/config.hpp"
-#include "CGAL/Benchmark/Benchmark_visitor.hpp"
-#include "CGAL/Benchmark/benchmark_format.hpp"
+#include <CGAL/Benchmark/config.hpp>
+#include <CGAL/Benchmark/Benchmark_visitor.hpp>
+#include <CGAL/Benchmark/benchmark_format.hpp>
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
@@ -59,7 +61,54 @@ int yylex( void);
 void yyerror( const char *s) { visitor->parse_error( std::string(s)); }
 
 static int int_sequence_counter, polynom_varcount;
-static std::string numbertype;
+//static std::string numbertype_name;
+
+struct Number_type {
+  virtual ~Number_type() {}
+  virtual bool is_equal( Number_type *other ) = 0;
+  virtual std::string name() = 0;
+};
+
+struct Integer_type : public Number_type {
+  virtual bool is_equal( Number_type *other ) {
+    return dynamic_cast<Integer_type*>( other ) != NULL;
+  }
+  virtual std::string name() { return "Integer"; }
+};
+
+struct Rational_type : public Number_type {
+  virtual bool is_equal( Number_type *other ) {
+    return dynamic_cast<Rational_type*>( other ) != NULL;
+  }
+  virtual std::string name() { return "Rational"; }
+};
+
+struct Sqrt_extension_type 
+ : public Number_type 
+{
+  Number_type *t0;
+  Number_type *t1;
+
+  Sqrt_extension_type( Number_type *t0, Number_type *t1 ) : t0(t0), t1(t1) {}
+  
+  virtual ~Sqrt_extension_type() {
+    delete t0;
+    delete t1;
+  }
+
+  virtual bool is_equal( Number_type *other ) {
+    Sqrt_extension_type *other_ext = dynamic_cast<Sqrt_extension_type*>( other );
+    return t0->is_equal( other_ext->t0 ) &&
+           t1->is_equal( other_ext->t1 );
+  }
+
+  virtual std::string name() { return "Sqrt_extension<" + t0->name() + "," + t1->name() + ">"; }
+};
+
+static std::stack< Number_type* > number_type_stack;
+static Number_type *expected_number_type = NULL;
+
+
 /* Use C++ std::string as semantic value to communicate with lexer */
 #define YYSTYPE std::string
 
@@ -208,22 +257,29 @@ polynomial: /* */
     // directly encoding '<' does not work, interestingly ...
     Polynomial ST INTEGER optional_typename GT
                                  { polynom_varcount = atoi( $3.c_str() );
-                                   visitor->begin_polynomial( polynom_varcount, $4 );
-                                   numbertype = $4; }
-      '(' monom_list ')'         { visitor->end_polynomial(); }
+                                   visitor->begin_polynomial( polynom_varcount, expected_number_type->name() );
+                                 }
+      '(' monom_list ')'         { visitor->end_polynomial(); 
+                                   delete expected_number_type; }
    | Polynomial_1                { visitor->begin_polynomial_1(); }
       '(' integer_sequence1 ')'  { visitor->end_polynomial_1(); }
   ;
 
 optional_typename :
-    /* empty */                  { $$ = "Integer"; }
-  | ',' typename                 { $$ = $2;    }
+    /* empty */                  { expected_number_type = new Integer_type(); }
+  | ',' typename                 { expected_number_type = number_type_stack.top(); 
+                                   number_type_stack.pop(); 
+                                   assert( number_type_stack.size() == 0 );
+                                 }
   ;
 
 typename :
-     Sqrt_extension ST typename ',' typename GT { $$ = "Sqrt_extension<" + $3 + "," + $5 + ">"; }
-  |  Rational                                   { $$ = "Rational"; }
-  |  Integer                                    { $$ = "Integer";  }
+     Sqrt_extension ST typename ',' typename GT { assert( number_type_stack.size() >= 2 );
+                                                  Number_type *t1 = number_type_stack.top(); number_type_stack.pop();
+                                                  Number_type *t0 = number_type_stack.top(); number_type_stack.pop();
+                                                  number_type_stack.push( new Sqrt_extension_type( t0, t1 ) ); }
+  |  Rational                                   { number_type_stack.push( new Rational_type() );   }
+  |  Integer                                    { number_type_stack.push( new Integer_type() );    }
   ;  
 
 monom_list:
@@ -250,14 +306,40 @@ monom:
   ;
 
 numeric_value:
-    INTEGER                      { if( numbertype != "int" )
-                                     yyerror( "type mismatch: int expected" );
-                                   $$ = $1;
-                                 }
-  | STRING                       { if( numbertype == "int" )
-                                     yyerror( "type mismatch" );
-                                   $$ = $1;
-                                 }
+  numeric_value1        { Number_type *actual_number_type = number_type_stack.top();
+                          number_type_stack.pop();
+                          if( ! expected_number_type->is_equal( actual_number_type ) ) {
+                            yyerror( ("type mismatch. expected \n" + expected_number_type->name() + 
+                                     "\nbut got\n" + actual_number_type->name()).c_str() );
+                            exit(EXIT_FAILURE);
+                          } else
+                            $$ = $1; 
+                          delete actual_number_type;
+                        }
+  ;
+  
+  
+  
+
+
+numeric_value1:
+    INTEGER                              { $$ = $1;
+                                           number_type_stack.push( new Integer_type() );  }
+  | Rational '(' INTEGER ',' INTEGER ')' { $$ = "RAT[" + $3 + "," + $5 + "]";
+                                           number_type_stack.push( new Rational_type() );  }
+  | Sqrt_extension '(' numeric_value1 ',' numeric_value1 ',' numeric_value1 ')'
+                                         { $$ = "EXT[" + $3 + "," + $5 + "," + $7 + "]";
+                                           assert( number_type_stack.size() >= 3 );
+                                           Number_type *t2 = number_type_stack.top(); number_type_stack.pop();
+                                           Number_type *t1 = number_type_stack.top(); number_type_stack.pop();
+                                           Number_type *t0 = number_type_stack.top(); number_type_stack.pop();
+
+                                           if( ! t1->is_equal( t0 ) ) {
+                                             yyerror( "type mismatch. for sqrt_ext, t0 and t1 should be equal" );
+                                             exit(EXIT_FAILURE);
+                                           }
+                                           number_type_stack.push( new Sqrt_extension_type( t0, t2 ) );
+                                         }
   ;
 
 conic: /* */
