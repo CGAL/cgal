@@ -11,12 +11,12 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Hemmer <hemmer@mpi-sb.mpg.de>
 
 #ifndef CGAL_UTILS_CLASSES_H
-#define CGAL_UTILS_CLASSES_H 
+#define CGAL_UTILS_CLASSES_H
 #include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -78,7 +78,7 @@ protected:
 };
 
 template< class T >
-class Is_valid 
+class Is_valid
   : public Unary_function< T, bool > {
   public:
     bool operator()( const T& ) const {

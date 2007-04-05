@@ -14,9 +14,9 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Michael Hemmer 
+//
+// Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Michael Hemmer
 
 #ifndef CGAL_ROOT_OF_TRAITS_H
 #define CGAL_ROOT_OF_TRAITS_H
@@ -41,13 +41,13 @@ struct Root_of_traits_helper{
         Root_of_2 operator()(const NT& a, const NT& b, const NT& c, bool s){
             return Root_of_2(a,b,c,s);
         }
-        Root_of_2 operator()(const Root_of_1& a, 
-                             const Root_of_1& b, 
+        Root_of_2 operator()(const Root_of_1& a,
+                             const Root_of_1& b,
                              const Root_of_1& c){
             return Root_of_2(a,b,c);
         }
-        Root_of_2 operator()(const Root_of_1& a, 
-                             const Root_of_1& b, 
+        Root_of_2 operator()(const Root_of_1& a,
+                             const Root_of_1& b,
                              const Root_of_1& c,
                              bool s){
             return Root_of_2(a,b,c,s);
@@ -62,33 +62,33 @@ struct Root_of_traits_helper < FT, Field_tag >
 private:
     typedef Fraction_traits<FT> FrT;
     // Field must be a Type (Decomposable)
-    BOOST_STATIC_ASSERT((FrT::Is_fraction::value)); 
+    BOOST_STATIC_ASSERT((FrT::Is_fraction::value));
 
     typedef typename FrT::Numerator_type      RT;
     typedef typename FrT::Decompose Decompose;
 public:
     typedef CGAL::Root_of_2< RT >  Root_of_2;
-    
+
     struct Make_root_of_2{
         typedef Root_of_2 result_type;
-        Root_of_2 
+        Root_of_2
         operator()(const FT& a, const FT& b, const FT& c){
             return Root_of_2(a,b,c);
         }
-        Root_of_2 
+        Root_of_2
         operator()(const FT& a, const FT& b, const FT& c, bool smaller){
             Decompose decompose;
             RT a_num,b_num,c_num;
             RT a_den,b_den,c_den; // Denomiantor same as RT
- 
+
             decompose(a,a_num,a_den);
             decompose(b,b_num,b_den);
             decompose(c,c_num,c_den);
-            
+
             RT a_ = a_num * b_den * c_den;
             RT b_ = b_num * a_den * c_den;
             RT c_ = c_num * a_den * b_den;
- 
+
             return make_root_of_2(a_,b_,c_,smaller);
         }
     };
@@ -99,10 +99,10 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
 {
     typedef NT  Root_of_1;
     typedef NT  Root_of_2;
-    
+
     struct Make_root_of_2{
         typedef NT result_type;
-        // just a copy, not sure about the semantic of smaller 
+        // just a copy, not sure about the semantic of smaller
         NT operator()(const NT& a, const NT& b, const NT& c, bool smaller){
             // former make_root_of_2_sqrt()
             CGAL_assertion( a != 0 );
@@ -113,7 +113,7 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
                 d = -d;
             return (d-b)/(a*2);
         }
-        // it's so easy 
+        // it's so easy
         NT operator()(const NT& a, const NT& b, const NT& c){
             return a + b * CGAL_NTS sqrt(c) ;
         }
@@ -141,7 +141,7 @@ struct Root_of_traits
     typedef CGALi::Root_of_traits_helper<NT,
       typename Algebraic_structure_traits<NT>::Algebraic_category> Base;
     typedef typename Base::Root_of_1 RootOf_1;
-    typedef typename Base::Root_of_2 RootOf_2;    
+    typedef typename Base::Root_of_2 RootOf_2;
 };
 
 template <bool B>
@@ -152,7 +152,7 @@ struct Root_of_traits<Interval_nt<B> >{
   typedef Root_of_2 RootOf_2;
   struct Make_root_of_2{
     typedef Interval_nt<B> result_type;
-    // just a copy, not sure about the semantic of smaller 
+    // just a copy, not sure about the semantic of smaller
     Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c, bool smaller){
         // former make_root_of_2_sqrt()
         if (CGAL::possibly(a==0))
@@ -164,7 +164,7 @@ struct Root_of_traits<Interval_nt<B> >{
             d = -d;
         return (d-b)/(a*2);
     }
-    // it's so easy 
+    // it's so easy
     Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c){
         return a + b * CGAL_NTS sqrt(c) ;
     }

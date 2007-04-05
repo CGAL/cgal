@@ -32,19 +32,19 @@ CGAL_BEGIN_NAMESPACE
 // Algebraic structure traits
 //
 template <> class Algebraic_structure_traits< CORE::BigInt >
-  : public Algebraic_structure_traits_base< CORE::BigInt, 
+  : public Algebraic_structure_traits_base< CORE::BigInt,
                                             Euclidean_ring_tag >  {
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-                
+
     typedef INTERN_AST::Is_square_per_sqrt< Type >
-                                                                 Is_square;            
+                                                                 Is_square;
 
     typedef INTERN_AST::Div_per_operator< Type > Div;
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
-    
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
       public:
         //! computes the largest NT not larger than the square root of \a a.
@@ -56,13 +56,13 @@ template <> class Algebraic_structure_traits< CORE::BigInt >
     };
 
 
-    class Gcd 
+    class Gcd
       : public Binary_function< Type, Type,
                                 Type > {
-      public:        
+      public:
         Type operator()( const Type& x,
                                         const Type& y) const {
-          if ( x == Type(0) && y == Type(0) ) 
+          if ( x == Type(0) && y == Type(0) )
               return Type(0);
           Type result;
           mpz_gcd(result.get_mp(), x.get_mp(), y.get_mp());
@@ -74,49 +74,49 @@ template <> class Algebraic_structure_traits< CORE::BigInt >
 //
 // Real embeddable traits
 //
-template <> class Real_embeddable_traits< CORE::BigInt > 
+template <> class Real_embeddable_traits< CORE::BigInt >
   : public Real_embeddable_traits_base< CORE::BigInt > {
 
   public:
 
-    class Abs 
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CORE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
-      public:        
+      public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           typedef Real_embeddable_traits<int> Int_traits;
           return Int_traits::Sign()( ::CORE::cmp(x,y));
         }
     };
 
-    class To_double 
+    class To_double
       : public Unary_function< Type, double > {
-      public:        
+      public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
-          // approximation 
+          // approximation
           return x.doubleValue();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {

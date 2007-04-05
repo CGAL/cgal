@@ -42,15 +42,15 @@ CGAL_BEGIN_NAMESPACE
 // Algebraic structure traits
 //
 template <> class Algebraic_structure_traits< CORE::BigRat >
-  : public Algebraic_structure_traits_base< CORE::BigRat, 
+  : public Algebraic_structure_traits_base< CORE::BigRat,
                                             Field_tag >  {
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
 
     // BigRat are always normalized, so no special simplify-functor is needed
-    
-    // Nothing new...                
+
+    // Nothing new...
 };
 
 
@@ -59,57 +59,57 @@ template <> class Algebraic_structure_traits< CORE::BigRat >
 //
 // Real embeddable traits
 //
-template <> class Real_embeddable_traits< CORE::BigRat > 
+template <> class Real_embeddable_traits< CORE::BigRat >
   : public Real_embeddable_traits_base< CORE::BigRat > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
-      public:        
+      public:
         Type operator()( const Type& x ) const {
           return CORE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
-      public:        
+      public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           typedef Real_embeddable_traits<int> Int_traits;
           return Int_traits::Sign()( ::CORE::cmp(x,y));
         }
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
-          // approximation 
+          // approximation
           return x.doubleValue();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
           Real_embeddable_traits<CORE::Expr>::To_interval to_interval;
           CORE::Expr temp(x);
-            
-          return to_interval(temp); 
-        }          
+
+          return to_interval(temp);
+        }
     };
 };
 
@@ -139,14 +139,14 @@ public:
             den = CGAL_CORE_DENOMINATOR(rat);
         }
     };
-    
+
     class Compose {
     public:
         typedef Numerator_type first_argument_type;
         typedef Numerator_type second_argument_type;
         typedef Type result_type;
         Type operator ()(
-                const Numerator_type& num , 
+                const Numerator_type& num ,
                 const Numerator_type& den ) {
             return Type(num, den);
         }
@@ -167,14 +167,14 @@ public:
                 return out <<CGAL_CORE_NUMERATOR(t);
             else
                 return out << CGAL_CORE_NUMERATOR(t)
-                           << "/" 
+                           << "/"
                            << CGAL_CORE_DENOMINATOR(t);
             //break; // unreachable
         }
-            
+
         default:
             return out << CGAL_CORE_NUMERATOR(t)
-                       << "/" 
+                       << "/"
                        << CGAL_CORE_DENOMINATOR(t);
         }
     }
@@ -183,7 +183,7 @@ public:
 template <>
 struct Needs_parens_as_product< ::CORE::BigRat >{
     bool operator()( ::CORE::BigRat t){
-        if (CGAL_CORE_DENOMINATOR(t) != 1 ) 
+        if (CGAL_CORE_DENOMINATOR(t) != 1 )
             return true;
         else
             return needs_parens_as_product(CGAL_CORE_NUMERATOR(t)) ;
@@ -194,10 +194,10 @@ template <>
 class Output_rep< ::CORE::BigRat, Parens_as_product_tag > {
     const ::CORE::BigRat& t;
 public:
-    // Constructor 
+    // Constructor
     Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
-    // operator 
-    std::ostream& operator()( std::ostream& out) const { 
+    // operator
+    std::ostream& operator()( std::ostream& out) const {
         Needs_parens_as_product< ::CORE::BigRat > needs_parens_as_product;
         if (needs_parens_as_product(t))
             return out <<"("<< oformat(t) <<")";

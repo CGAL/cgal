@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
- 
+
 #ifndef CGAL_LEDA_REAL_H
 #define CGAL_LEDA_REAL_H
 
@@ -45,30 +45,30 @@ CGAL_BEGIN_NAMESPACE
 
 template <> class Algebraic_structure_traits< leda_real >
 
-#if CGAL_LEDA_VERSION >= 500 
-  : public Algebraic_structure_traits_base< leda_real, 
+#if CGAL_LEDA_VERSION >= 500
+  : public Algebraic_structure_traits_base< leda_real,
                                             Field_with_root_of_tag >  {
 #else
-  : public Algebraic_structure_traits_base< leda_real, 
+  : public Algebraic_structure_traits_base< leda_real,
                                             Field_with_kth_root_tag >  {
 #endif
 
   public:
     typedef Tag_true           Is_exact;
     typedef Tag_true           Is_numerical_sensitive;
-                                                                             
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
         }
     };
-    
-    class Kth_root 
+
+    class Kth_root
       : public Binary_function<int, Type, Type> {
       public:
-        Type operator()( int k, 
+        Type operator()( int k,
                                         const Type& x) const {
             CGAL_precondition_msg(k > 0, "'k' must be positive for k-th roots");
             return CGAL_LEDA_SCOPE::root( x, k);
@@ -76,7 +76,7 @@ template <> class Algebraic_structure_traits< leda_real >
     };
 
 // Root_of is only available for LEDA versions >= 5.0
-#if CGAL_LEDA_VERSION >= 500 
+#if CGAL_LEDA_VERSION >= 500
     class Root_of {
       public:
         typedef Type result_type;
@@ -85,72 +85,72 @@ template <> class Algebraic_structure_traits< leda_real >
 //        typedef leda_rational Boundary;
       private:
         template< class ForwardIterator >
-        inline 
+        inline
         CGAL_LEDA_SCOPE::polynomial<Type>
-        make_polynomial(ForwardIterator begin, 
+        make_polynomial(ForwardIterator begin,
                         ForwardIterator end) const {
           CGAL_LEDA_SCOPE::growing_array<Type> coeffs;
-          for(ForwardIterator it = begin; it < end; it++) 
+          for(ForwardIterator it = begin; it < end; it++)
               coeffs.push_back(*it);
           return CGAL_LEDA_SCOPE::polynomial<Type>(coeffs);
         }
       public:
         template <class ForwardIterator>
-        Type operator()( int k, 
-                       ForwardIterator begin, 
+        Type operator()( int k,
+                       ForwardIterator begin,
                        ForwardIterator end) const {
             return CGAL_LEDA_SCOPE::diamond(k,make_polynomial(begin,end));
         };
 /*        template <class ForwardIterator>
         Type operator()( leda_rational lower,
                                         leda_rational upper,
-                                        ForwardIterator begin, 
+                                        ForwardIterator begin,
                                         ForwardIterator end) const {
             return CGAL_LEDA_SCOPE::diamond(lower,upper,
                                              make_polynomial(begin,end));
         };*/
     };
-    
+
 #endif
 
-    
+
 };
 
-template <> class Real_embeddable_traits< leda_real > 
+template <> class Real_embeddable_traits< leda_real >
   : public Real_embeddable_traits_base< leda_real > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
-        
+
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                                                       Comparison_result )
-        
+
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
@@ -160,22 +160,22 @@ template <> class Real_embeddable_traits< leda_real >
           return x.to_double();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
 #if CGAL_LEDA_VERSION >= 501
-            leda_bigfloat bnum = x.to_bigfloat();  
+            leda_bigfloat bnum = x.to_bigfloat();
             leda_bigfloat berr = x.get_bigfloat_error();
-            
+
             double dummy;
-            double low = CGAL_LEDA_SCOPE::sub(bnum, berr, 53, CGAL_LEDA_SCOPE::TO_N_INF).to_double(dummy, 
+            double low = CGAL_LEDA_SCOPE::sub(bnum, berr, 53, CGAL_LEDA_SCOPE::TO_N_INF).to_double(dummy,
                                                      CGAL_LEDA_SCOPE::TO_N_INF);
-            double upp = CGAL_LEDA_SCOPE::add(bnum, berr, 53, CGAL_LEDA_SCOPE::TO_P_INF).to_double(dummy, 
+            double upp = CGAL_LEDA_SCOPE::add(bnum, berr, 53, CGAL_LEDA_SCOPE::TO_P_INF).to_double(dummy,
                                                      CGAL_LEDA_SCOPE::TO_P_INF);
-            
+
             std::pair<double, double> result(low, upp);
             CGAL_postcondition(Type(result.first)<=x);
             CGAL_postcondition(Type(result.second)>=x);
@@ -183,17 +183,17 @@ template <> class Real_embeddable_traits< leda_real >
 #else
             CGAL_LEDA_SCOPE::interval temp(x); //bug in leda
             std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
-            CGAL_postcondition_msg(Type(result.first)<=x, 
+            CGAL_postcondition_msg(Type(result.first)<=x,
                                                     "Known bug in LEDA <=5.0");
-            CGAL_postcondition_msg(Type(result.first)>=x, 
+            CGAL_postcondition_msg(Type(result.first)>=x,
                                                     "Known bug in LEDA <=5.0");
             return result;
-            // If x is very small and we look closer at x 
+            // If x is very small and we look closer at x
             // (i.e. comparison or to_double() or to_bigfloat())
             // then x gets 0, which is really bad.
-            // Therefore we do not touch x. 
+            // Therefore we do not touch x.
             // The LEDA interval above returns (-inf, inf) for
-            // very small x, which is also bad and leads to 
+            // very small x, which is also bad and leads to
             // problems lateron. The postcondition fails in this
             // situation.
 #endif
@@ -209,9 +209,9 @@ template <> class Real_embeddable_traits< leda_real >
         }
     };
 };
-    
 
-template <> 
+
+template <>
 class Output_rep< ::leda::real > {
     const ::leda::real& t;
 public:
@@ -222,7 +222,7 @@ public:
         out << CGAL_NTS to_double(t);
         return out;
     }
-    
+
 };
 
 template <>

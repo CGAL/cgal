@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -24,7 +24,7 @@
 #include <CGAL/functional_base.h>
 
 template <bool> class Interval_nt;
- 
+
 CGAL_BEGIN_NAMESPACE
 
 // A number type converter usable as default, using the conversion operator.

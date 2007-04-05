@@ -36,91 +36,91 @@ template <> class Algebraic_structure_traits< Gmpzf >
 public:
     typedef Tag_true            Is_exact;
 
-    struct Is_zero 
+    struct Is_zero
         : public Unary_function< Type, bool > {
-    public:        
+    public:
         bool operator()( const Type& x ) const {
             return x.is_zero();
         }
     };
-    
+
     struct Integral_division
-        : public Binary_function< Type, 
+        : public Binary_function< Type,
                                 Type,
                                 Type > {
     public:
-        Type operator()( 
+        Type operator()(
                 const Type& x,
                 const Type& y ) const {
             return x.integral_division(y);
         }
     };
-    
+
     struct Gcd
-        : public Binary_function< Type, 
+        : public Binary_function< Type,
                                 Type,
                                 Type > {
     public:
-        Type operator()( 
+        Type operator()(
                 const Type& x,
                 const Type& y ) const {
             return x.gcd(y);
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int)
     };
-    
+
     typedef INTERN_AST::Div_per_operator< Type > Div;
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
 
-    struct Sqrt 
+    struct Sqrt
         : public Unary_function< Type, Type > {
         Type operator()( const Type& x ) const {
             return x.sqrt();
         }
-    };       
+    };
     typedef INTERN_AST::Is_square_per_sqrt<Type> Is_square;
-    
+
 };
 
 
 // Real embeddable traits
-template <> 
-class Real_embeddable_traits< Gmpzf > 
+template <>
+class Real_embeddable_traits< Gmpzf >
     : public Real_embeddable_traits_base< Gmpzf > {
-    
+
     typedef Algebraic_structure_traits<Gmpzf> AST;
 public:
     typedef AST::Is_zero Is_zero;
 
-    struct Sign 
+    struct Sign
         : public Unary_function< Type, ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
-        }        
+        }
     };
-    
-    struct Compare 
-        : public Binary_function< Type, 
+
+    struct Compare
+        : public Binary_function< Type,
                                   Type,
                                   Comparison_result > {
     public:
-        Comparison_result operator()( 
-                const Type& x, 
+        Comparison_result operator()(
+                const Type& x,
                 const Type& y ) const {
             return x.compare(y);
         }
     };
-    
-    struct To_double 
+
+    struct To_double
         : public Unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return x.to_double();
         }
     };
-    
-    struct To_interval 
+
+    struct To_interval
         : public Unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -130,20 +130,20 @@ public:
 };
 
 // specialization of to double functor
-template<> 
+template<>
 class Real_embeddable_traits< Quotient<Gmpzf> >
-    : public 
-INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<Gmpzf> > 
+    : public
+INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<Gmpzf> >
 {
 public:
     struct To_double: public Unary_function<Quotient<Gmpzf>, double>{
         inline
         double operator()(const Quotient<Gmpzf>& q) const {
             double man = to_double(Quotient<Gmpz>(
-                                           q.numerator().man(), 
+                                           q.numerator().man(),
                                            q.denominator().man()));
                 return std::ldexp(
-                        man, 
+                        man,
                         q.numerator().exp()-q.denominator().exp()
                 );
         }
@@ -153,9 +153,9 @@ public:
         inline
         std::pair<double,double> operator()(const Quotient<Gmpzf>& q) const {
 	  // do here as MP_Float does
-	  std::pair<std::pair<double, double>, long> n = 
+	  std::pair<std::pair<double, double>, long> n =
 	    q.numerator().to_interval_exp();
-	  std::pair<std::pair<double, double>, long> d = 
+	  std::pair<std::pair<double, double>, long> d =
 	    q.denominator().to_interval_exp();
 
 	  CGAL_assertion_msg(CGAL::abs(1.0*n.second - d.second) < (1<<30)*2.0,

@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
 
@@ -33,17 +33,17 @@
 CGAL_BEGIN_NAMESPACE
 
 template<> class Algebraic_structure_traits< long long int >
-  : public Algebraic_structure_traits_base< long long int, 
+  : public Algebraic_structure_traits_base< long long int,
                                             Euclidean_ring_tag > {
 
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-    
-    typedef INTERN_AST::Div_per_operator< Type >  Div;
-    typedef INTERN_AST::Mod_per_operator< Type >  Mod;       
 
-    class Is_square 
+    typedef INTERN_AST::Div_per_operator< Type >  Div;
+    typedef INTERN_AST::Mod_per_operator< Type >  Mod;
+
+    class Is_square
       : public Binary_function< Type, Type&,
                                 bool > {
       public:
@@ -53,21 +53,21 @@ template<> class Algebraic_structure_traits< long long int >
           return x == y * y;
         }
         bool operator()( const Type& x) const {
-            Type y 
+            Type y
                 = (Type) CGAL_CLIB_STD::sqrt( (double)x );
           return x == y * y;
         }
     };
 };
 
-template <> class Real_embeddable_traits< long long int > 
+template <> class Real_embeddable_traits< long long int >
   : public Real_embeddable_traits_base< long long int > {
   public:
-          
+
     typedef INTERN_RET::To_double_by_conversion< Type >
                                                                       To_double;
 
-    class To_interval 
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -75,7 +75,7 @@ template <> class Real_embeddable_traits< long long int >
           Interval_nt<false> approx ((double) x);
           FPU_set_cw(CGAL_FE_UPWARD);
           approx += Interval_nt<false>::smallest();
-          return approx.pair();          
+          return approx.pair();
         }
     };
 };

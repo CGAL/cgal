@@ -24,9 +24,9 @@
 
 
 /*! \file CGAL/Sqrt_extension.h
-    \brief Defines class CGAL::Sqrt_extension. 
-    
-    Provides the Number type Sqrt_extension that extends a given number type  
+    \brief Defines class CGAL::Sqrt_extension.
+
+    Provides the Number type Sqrt_extension that extends a given number type
     \c NT by a square root. One can add several square roots recursively.
 
 */
@@ -46,14 +46,14 @@ CGAL_BEGIN_NAMESPACE
 inline static void swallow(std::istream &is, char d) {
     char c;
     do c = is.get(); while (isspace(c));
-    if (c != d) CGAL_assertion_msg( false, 
+    if (c != d) CGAL_assertion_msg( false,
                              "input error: unexpected character in polynomial");
 }
 //// END: From polynomial.h
 
 template <class NT,class ROOT> class Sqrt_extension;
-    
-template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
+
+template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
 operator + (const Sqrt_extension<NT,ROOT>&);
 template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
 operator - (const Sqrt_extension<NT,ROOT>&);
@@ -65,23 +65,23 @@ template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
 operator * (const Sqrt_extension<NT,ROOT>&, const Sqrt_extension<NT,ROOT>&);
 template <class NT,class ROOT> inline Sqrt_extension<NT,ROOT>
 operator / (const Sqrt_extension<NT,ROOT>&, const Sqrt_extension<NT,ROOT>&);
-template<class NT,class ROOT>  
+template<class NT,class ROOT>
 std::ostream& operator << (std::ostream& os, const Sqrt_extension<NT,ROOT>& p);
-template <class NT,class ROOT>  
+template <class NT,class ROOT>
 std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT>& p);
 
 /*! \ingroup CGAL_Sqrt_extension
-\brief represents an extension of a number type by one square root. 
+\brief represents an extension of a number type by one square root.
 
  An instance of this class
-represents  an extension of the type NT by a square root of the 
-type ROOT. In case NT and ROOT do not coincide, 
-NT must be constructible from ROOT.  The number type NT 
-must be at least a model of the IntegralDomainWithoutDiv concept. 
+represents  an extension of the type NT by a square root of the
+type ROOT. In case NT and ROOT do not coincide,
+NT must be constructible from ROOT.  The number type NT
+must be at least a model of the IntegralDomainWithoutDiv concept.
 
-An Sqrt_extension is a model of RealComparable if NT is RealComparable.\n  
-The <B>algebraic type</B> of CGAL::Sqrt_extension depends on the algebraic type 
-of NT: 
+An Sqrt_extension is a model of RealComparable if NT is RealComparable.\n
+The <B>algebraic type</B> of CGAL::Sqrt_extension depends on the algebraic type
+of NT:
 - IntegralDomainWithoutDiv -> IntegralDomainWithoutDiv
 - IntegralDomain           -> IntegralDomain
 - UFDomain                 -> IntegralDomain
@@ -92,11 +92,11 @@ of NT:
 
 Note that NT and ROOT can themselves be an instance of
 CGAL::Sqrt_extension, yielding a nested extension.\n
-Note that the extension of an UFDomain or EuclideanRing is just an 
-IntegralDomain, since the extension in general destroys the unique 
-factorization property. 
+Note that the extension of an UFDomain or EuclideanRing is just an
+IntegralDomain, since the extension in general destroys the unique
+factorization property.
 */
-template <class NT_,class ROOT_> 
+template <class NT_,class ROOT_>
 class Sqrt_extension {
 public:
     typedef NT_ NT;
@@ -107,38 +107,38 @@ private:
     NT a1_;
     ROOT root_;
     bool is_extended_;
-    
+
     typedef CGAL::Algebraic_structure_traits<NT> Algebraic_structure_traits_nt;
     typedef CGAL::Real_embeddable_traits<NT> Real_embeddable_traits_nt;
 public:
-    //! Default constructor of \c Sqrt_extension 
+    //! Default constructor of \c Sqrt_extension
     Sqrt_extension()
         : a0_( NT(0)), a1_( NT(0)), root_(ROOT(0)), is_extended_(false) {}
-    
-    Sqrt_extension(CGAL_int(NT) i) 
+
+    Sqrt_extension(CGAL_int(NT) i)
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
-    
-    Sqrt_extension(const NT& i) 
+
+    Sqrt_extension(const NT& i)
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
 
     /*!\brief Explicit constructor of Sqrt_extension, from any type NTX.
-     * \pre NT must constructible from NTX */ 
+     * \pre NT must constructible from NTX */
     template <class NTX>
-    explicit Sqrt_extension(const NTX& i) 
+    explicit Sqrt_extension(const NTX& i)
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
 
-    /*! \brief copy constructor  */ 
+    /*! \brief copy constructor  */
     Sqrt_extension(const Sqrt_extension<NT,ROOT>& x)
         : a0_(x.a0()),
           a1_(x.a1()),
           root_(x.root()),
           is_extended_(x.is_extended()){}
-    
 
-    /*! \brief Expicite constructor of Sqrt_extension, from 
+
+    /*! \brief Expicite constructor of Sqrt_extension, from
      *  \c Sqrt_extension<NTX,ROOTX>.
-     *  \pre NT must constructible from NTX 
-     *  \pre ROOT must constructible from ROOTX */ 
+     *  \pre NT must constructible from NTX
+     *  \pre ROOT must constructible from ROOTX */
 //     template <class NTX,class ROOTX>
 //     explicit Sqrt_extension(const Sqrt_extension<NTX,ROOTX>& x)
 //         : a0_(x.a0()),
@@ -149,7 +149,7 @@ public:
     /*! \brief Constructor from some type NTX and ROOTX
      *  NT must be constructible from NTX\\
      *  ROOT must be construcible from ROOTX\\
-     */ 
+     */
     template <class NTX,class ROOTX>
     explicit Sqrt_extension(const NTX& a0, const NTX& a1, const ROOTX& root)
         : a0_(a0),
@@ -158,36 +158,36 @@ public:
           is_extended_(true){
         CGAL_precondition( !CGAL_NTS is_zero(root));
     }
-    
-    //! Access operator for a0_, \c const 
+
+    //! Access operator for a0_, \c const
     const NT& a0() const { return a0_; }
     //! Access operator for a0_
     NT&        a0()       { return a0_; }
-    //! Access operator for a1_, \c const 
+    //! Access operator for a1_, \c const
     const NT& a1() const { return a1_; }
     //! Access operator for a1_
     NT&        a1()       { return a1_; }
-    //! Access operator for root_, \c const 
+    //! Access operator for root_, \c const
     const ROOT& root() const { return root_; }
-    //! Access operator for is_extended_, \c const 
+    //! Access operator for is_extended_, \c const
     const bool& is_extended() const { return is_extended_; }
-    //! Access operator for root_ 
+    //! Access operator for root_
     //ROOT& root() { return root_; }
-  
+
 public:
-    
-    //! propagates the simplify command to the members of xx   
+
+    //! propagates the simplify command to the members of xx
     void simplify(){
         CGAL_NTS simplify(a0_);
         CGAL_NTS simplify(a1_);
         CGAL_NTS simplify(root_);
     }
-    
+
     //! determines the sign of xx by repeated squaring.
-    ::CGAL::Sign sign() const { 
-        if (!is_extended()) 
+    ::CGAL::Sign sign() const {
+        if (!is_extended())
             return CGAL_NTS sign(a0());
-        
+
         ::CGAL::Sign s0,s1;
 
         s0 = CGAL_NTS sign(a0());
@@ -196,7 +196,7 @@ public:
         if (s0 == s1) return s0;
         if (s0 == CGAL::ZERO) return s1;
         if (s1 == CGAL::ZERO) return s0;
-        
+
         // s0*s1=-1
         NT r = a1()*a1()*NT(root())-a0()*a0();
         // if(r>0) return s1 else s0
@@ -205,12 +205,12 @@ public:
         else
             return -CGAL_NTS sign(r); // TODO: Is this valid??? Was: -CGAL::sign(..)
     }
-  
 
-    
-    template < class BOOL_TAG > 
+
+
+    template < class BOOL_TAG >
     bool is_zero_(const BOOL_TAG&) const{
-        // Is_real_comparable == CGAL::Tag_true 
+        // Is_real_comparable == CGAL::Tag_true
         return sign()==CGAL::ZERO;
     }
     bool is_zero_(const CGAL::Tag_false) const {
@@ -227,99 +227,99 @@ public:
         }
     }
 
-    //! returns \a true if xx is zero 
-    bool is_zero() const { 
+    //! returns \a true if xx is zero
+    bool is_zero() const {
 //        typedef typename Algebraic_structure_traits_nt::Is_real_comparable Is_real_comparable;
-      typedef typename Real_embeddable_traits_nt::Is_real_embeddable 
+      typedef typename Real_embeddable_traits_nt::Is_real_embeddable
                                                              Is_real_embeddable;
         return is_zero_(Is_real_embeddable());
     }
 
     //! returns the absolute value of xx
-    Self abs() const { 
-        if (sign() == CGAL::NEGATIVE) 
-            return -*this; 
-        return *this; 
+    Self abs() const {
+        if (sign() == CGAL::NEGATIVE)
+            return -*this;
+        return *this;
     }
-    
+
     friend Self operator + <>(const Self&);
-    friend Self operator - <>(const Self&); 
+    friend Self operator - <>(const Self&);
     friend Self operator + <>(const Self&, const Self&);
     friend Self operator - <>(const Self&, const Self&);
     friend Self operator * <>(const Self&, const Self&);
     friend Self operator / <>(const Self& p1, const Self& p2);
 
     Self& operator += (const Self& p) {
-        (*this)=(*this)+p; 
-        return (*this); 
+        (*this)=(*this)+p;
+        return (*this);
     }
-    Self& operator -= (const Self& p){ 
-        (*this)=(*this)-p; 
-        return (*this); 
+    Self& operator -= (const Self& p){
+        (*this)=(*this)-p;
+        return (*this);
     }
-    Self& operator *= (const Self& p){ 
-        (*this)=(*this)*p; 
-        return (*this); 
+    Self& operator *= (const Self& p){
+        (*this)=(*this)*p;
+        return (*this);
     }
-    Self& operator /= (const Self& p) { 
-        (*this)=(*this)/p; 
-        return (*this); 
+    Self& operator /= (const Self& p) {
+        (*this)=(*this)/p;
+        return (*this);
     }
 
 //------------------------------------------------------------------
 // SPECIALIZE_MEMBERS NT
-    
-    Self& operator += (const NT& num) { 
-        a0() += NT(num); 
-        return *this; 
+
+    Self& operator += (const NT& num) {
+        a0() += NT(num);
+        return *this;
     }
-    Self& operator -= (const NT& num) { 
-        a0() -= NT(num); 
-        return *this; 
+    Self& operator -= (const NT& num) {
+        a0() -= NT(num);
+        return *this;
     }
-    Self& operator *= (const NT& num) { 
-        a0() *= NT(num); 
+    Self& operator *= (const NT& num) {
+        a0() *= NT(num);
         a1() *= NT(num);
-        return *this; 
+        return *this;
     }
-    Self& operator /= (const NT& num) { 
-        typename Real_embeddable_traits_nt::Sign sign;       
+    Self& operator /= (const NT& num) {
+        typename Real_embeddable_traits_nt::Sign sign;
         CGAL_assert(sign(num) != 0);
-        a0() /= NT(num); 
+        a0() /= NT(num);
         a1() /= NT(num);
-        return *this; 
+        return *this;
     }
 
-   Self& operator += (CGAL_int(NT) num) { 
-        a0() += NT(num); 
-        return *this; 
+   Self& operator += (CGAL_int(NT) num) {
+        a0() += NT(num);
+        return *this;
     }
-    Self& operator -= (CGAL_int(NT) num) { 
-        a0() -= NT(num); 
-        return *this; 
+    Self& operator -= (CGAL_int(NT) num) {
+        a0() -= NT(num);
+        return *this;
     }
-    Self& operator *= (CGAL_int(NT) num) { 
-        a0() *= NT(num); 
+    Self& operator *= (CGAL_int(NT) num) {
+        a0() *= NT(num);
         a1() *= NT(num);
-        return *this; 
+        return *this;
     }
-    Self& operator /= (CGAL_int(NT) num) { 
-        typename Real_embeddable_traits_nt::Sign sign;       
+    Self& operator /= (CGAL_int(NT) num) {
+        typename Real_embeddable_traits_nt::Sign sign;
         CGAL_assert(sign(num) != 0);
-        a0() /= NT(num); 
+        a0() /= NT(num);
         a1() /= NT(num);
-        return *this; 
+        return *this;
     }
 
-public:    
+public:
     void output_maple(std::ostream& os) const;
-public:    
-    /*! \brief write Sqrt_extension to \c os in a format readable 
+public:
+    /*! \brief write Sqrt_extension to \c os in a format readable
          by \c input_ascii()
-    
-         The output format is: 
+
+         The output format is:
          <TT><B>EXT[</B></TT><I>a0</I><TT><B>,</B></TT>
-         <I>a1</I><TT><B>,</B></TT><I>root</I><TT><B>]</B></TT> 
+         <I>a1</I><TT><B>,</B></TT><I>root</I><TT><B>]</B></TT>
      */
    void output_ascii(std::ostream& os) const{
        os<<"EXT["<<a0()<<","<<a1()<<","<<root()<<"]";
@@ -329,8 +329,8 @@ public:
      *
      * The expected format is:
      * <TT><B>EXT[</B></TT><I>a0</I><TT><B>,</B></TT>
-     * <I>a1</I><TT><B>,</B></TT><I>root</I><TT><B>]</B></TT> 
-     * 
+     * <I>a1</I><TT><B>,</B></TT><I>root</I><TT><B>]</B></TT>
+     *
      * The format of the coefficients must be understandable for
      * <TT> is >> iformat(ai) </TT>.
      *
@@ -342,25 +342,25 @@ public:
 
 public:
 // compare of two values with different extension
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare(const Self& y, bool in_same_extension = false ) const {
 
     if (!this->is_extended() || !y.is_extended() || in_same_extension)
         return ((*this)-y).sign();
-    
+
 
   // Perform the exact comparison:
   // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
   // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
   // We first determine the signs of these terms.
- 
+
   const NT          diff_a0 = this->a0() - y.a0();
   const CGAL::Sign  sign_left = CGAL::sign (diff_a0);
   const NT          x_sqr = this->a1()*this->a1() * this->root();
   const NT          y_sqr = y.a1()*y.a1() * y.root();
   Comparison_result right_res = CGAL::compare (y_sqr, x_sqr);
   CGAL::Sign        sign_right = ZERO;
-  
+
   if (right_res == LARGER)
   {
     // Take the sign of b2:
@@ -440,26 +440,26 @@ compare(const Self& y, bool in_same_extension = false ) const {
     return (swap_res ? SMALLER : LARGER);
   else if (sgn == NEGATIVE)
     return (swap_res ? LARGER : SMALLER);
-  
+
   return (EQUAL);
 }
 
-    
+
 };
 
-template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
+template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
 operator + (const Sqrt_extension<NT,ROOT>& p) { return p; }
 
-template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
+template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
 operator - (const Sqrt_extension<NT,ROOT>& p){
     if(p.is_extended())
-        return  Sqrt_extension<NT,ROOT>(-p.a0(),-p.a1(),p.root()); 
-    else 
-        return  Sqrt_extension<NT,ROOT>(-p.a0()); 
+        return  Sqrt_extension<NT,ROOT>(-p.a0(),-p.a1(),p.root());
+    else
+        return  Sqrt_extension<NT,ROOT>(-p.a0());
 }
 
-template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
-operator + (const Sqrt_extension<NT,ROOT>& p1, 
+template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
+operator + (const Sqrt_extension<NT,ROOT>& p1,
             const Sqrt_extension<NT,ROOT>& p2){
     typedef Sqrt_extension<NT,ROOT> EXT;
     if(p1.is_extended()){
@@ -469,12 +469,12 @@ operator + (const Sqrt_extension<NT,ROOT>& p1,
         if (p2.is_extended())
             return EXT (p1.a0()+p2.a0(), p2.a1(), p2.root());
         else
-            return EXT (p1.a0()+p2.a0()); 
+            return EXT (p1.a0()+p2.a0());
     }
-} 
+}
 
-template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
-operator - (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2) { 
+template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
+operator - (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2) {
     typedef Sqrt_extension<NT,ROOT> EXT;
     if(p1.is_extended()){
         if (p2.is_extended()){CGAL_precondition(p1.root()==p2.root());}
@@ -483,14 +483,14 @@ operator - (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2
         if (p2.is_extended())
             return EXT (p1.a0()-p2.a0(), -p2.a1(), p2.root());
         else
-            return EXT (p1.a0()-p2.a0()); 
-    } 
+            return EXT (p1.a0()-p2.a0());
+    }
 }
 
-template <class NT,class ROOT> Sqrt_extension<NT,ROOT> 
+template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
 operator * (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2) {
     typedef Sqrt_extension<NT,ROOT> EXT;
-    
+
     if(p1.is_extended()){
         if (p2.is_extended()){
             CGAL_precondition(p1.root()==p2.root());
@@ -498,38 +498,38 @@ operator * (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2
                         p1.a0()*p2.a1()+p1.a1()*p2.a0(),
                         p1.root());
         }else{
-            return EXT (p1.a0()*p2.a0(), p1.a1()*p2.a0(), p1.root()); 
+            return EXT (p1.a0()*p2.a0(), p1.a1()*p2.a0(), p1.root());
         }
     }else{
         if (p2.is_extended())
-            return EXT (p1.a0()*p2.a0(), p1.a0()*p2.a1(), p2.root()); 
+            return EXT (p1.a0()*p2.a0(), p1.a0()*p2.a1(), p2.root());
         else
-            return EXT (p1.a0()*p2.a0()); 
-    } 
+            return EXT (p1.a0()*p2.a0());
+    }
 }
 
-template <class NT,class ROOT> inline Sqrt_extension<NT,ROOT> 
-operator / (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2) { 
-    
+template <class NT,class ROOT> inline Sqrt_extension<NT,ROOT>
+operator / (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2) {
+
     typedef Sqrt_extension<NT,ROOT> EXT;
     CGAL_assertion(! p2.is_zero());
     typename CGAL::Algebraic_structure_traits<NT>::Integral_division Idiv;
-   
+
     if(p1.is_extended()){
         if (p2.is_extended()){
             CGAL_precondition(p1.root()==p2.root());
             NT c = p2.a0()*p2.a0()-p2.a1()*p2.a1()*NT(p2.root());
             if (c == NT(0)) {                          //TR
-                NT a0 = Idiv(p1.a0(), NT(2)*p2.a0()) 
+                NT a0 = Idiv(p1.a0(), NT(2)*p2.a0())
                       + Idiv(p1.a1(), NT(2)*p2.a1());
                 return EXT(a0);
             }
-            NT a0 = Idiv(p1.a0()*p2.a0()-p1.a1()*p2.a1()*NT(p2.root()),c);    
-            NT a1 = Idiv(p1.a1()*p2.a0()-p1.a0()*p2.a1(),c);    
+            NT a0 = Idiv(p1.a0()*p2.a0()-p1.a1()*p2.a1()*NT(p2.root()),c);
+            NT a1 = Idiv(p1.a1()*p2.a0()-p1.a0()*p2.a1(),c);
             return EXT(a0,a1,p1.root());
         }else{
-            NT a0 = Idiv(p1.a0(),p2.a0());    
-            NT a1 = Idiv(p1.a1(),p2.a0());    
+            NT a0 = Idiv(p1.a0(),p2.a0());
+            NT a1 = Idiv(p1.a1(),p2.a0());
             return EXT(a0,a1,p1.root());
         }
     }else{
@@ -539,106 +539,106 @@ operator / (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2
                 NT a0 = Idiv(p1.a0(), NT(2)*p2.a0());
                 return EXT(a0);
             }
-            NT a0 = Idiv(p1.a0()*p2.a0(),c);    
-            NT a1 = Idiv(-p1.a0()*p2.a1(),c);  
-            return EXT(a0,a1,p2.root()); 
+            NT a0 = Idiv(p1.a0()*p2.a0(),c);
+            NT a1 = Idiv(-p1.a0()*p2.a1(),c);
+            return EXT(a0,a1,p2.root());
         }else{
-            return EXT (Idiv(p1.a0(),p2.a0())); 
+            return EXT (Idiv(p1.a0(),p2.a0()));
         }
-    } 
+    }
 }
 
-template <class NT,class ROOT> bool 
+template <class NT,class ROOT> bool
 operator == (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
-{ return (p1-p2).is_zero() ; }   
+{ return (p1-p2).is_zero() ; }
 
-template <class NT,class ROOT> bool 
+template <class NT,class ROOT> bool
 operator != (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
-{ return !(p1-p2).is_zero() ; }    
+{ return !(p1-p2).is_zero() ; }
 
-template <class NT,class ROOT> bool 
+template <class NT,class ROOT> bool
 operator <  (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
-{ return ( (p1-p2).sign() < 0 ); }    
+{ return ( (p1-p2).sign() < 0 ); }
 
-template <class NT,class ROOT> bool 
+template <class NT,class ROOT> bool
 operator <= (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
-{ return ( (p1-p2).sign() <= 0 ); }    
+{ return ( (p1-p2).sign() <= 0 ); }
 
-template <class NT,class ROOT> bool 
+template <class NT,class ROOT> bool
 operator >  (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
-{ return ( (p1-p2).sign() > 0 ); }    
+{ return ( (p1-p2).sign() > 0 ); }
 
-template <class NT,class ROOT> bool 
+template <class NT,class ROOT> bool
 operator >= (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2)
   { return ( (p1-p2).sign() >= 0 ); }
 
 
 // lefthand side
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator +
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) + p2); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator -
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) - p2); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator *
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) * p2); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num)/p2); }
 
 // righthand side
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator +
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
 { return (p1 + Sqrt_extension<NT,ROOT>(num)); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator -
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
 { return (p1 - Sqrt_extension<NT,ROOT>(num)); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator *
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
 { return (p1 * Sqrt_extension<NT,ROOT>(num)); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
 { return (p1 / Sqrt_extension<NT,ROOT>(num)); }
 
 // lefthand side
-template <class NT,class ROOT>    bool operator ==  
-(const NT& num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator ==
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() == 0 );}
-template <class NT,class ROOT>    bool operator != 
-(const NT& num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator !=
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() != 0 );}
-template <class NT,class ROOT>    bool operator <  
-(const NT& num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator <
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() < 0 );}
-template <class NT,class ROOT>    bool operator <=  
-(const NT& num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator <=
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() <= 0 );}
-template <class NT,class ROOT>    bool operator >  
-(const NT& num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator >
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() > 0 );}
-template <class NT,class ROOT>    bool operator >=  
-(const NT& num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator >=
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() >= 0 );}
 
 // righthand side
 template <class NT,class ROOT>    bool operator ==
-(const Sqrt_extension<NT,ROOT>& p, const NT& num) 
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() == 0 );}
 template <class NT,class ROOT>    bool operator !=
-(const Sqrt_extension<NT,ROOT>& p, const NT& num) 
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() != 0 );}
-template <class NT,class ROOT>    bool operator < 
-(const Sqrt_extension<NT,ROOT>& p, const NT& num) 
+template <class NT,class ROOT>    bool operator <
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() < 0 );}
-template <class NT,class ROOT>    bool operator <= 
-(const Sqrt_extension<NT,ROOT>& p, const NT& num) 
+template <class NT,class ROOT>    bool operator <=
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() <= 0 );}
-template <class NT,class ROOT>    bool operator > 
-(const Sqrt_extension<NT,ROOT>& p, const NT& num) 
+template <class NT,class ROOT>    bool operator >
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() > 0 );}
 template <class NT,class ROOT>    bool operator >=
-(const Sqrt_extension<NT,ROOT>& p, const NT& num) 
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() >= 0 );}
 
 // Algebraic structure traits
@@ -646,14 +646,14 @@ template< class Type, class Algebraic_type >
 class Sqrt_extension_algebraic_structure_traits_base;
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                         CGAL::Integral_domain_without_division_tag >
   : public Algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
   public:
     typedef CGAL::Integral_domain_without_division_tag Algebraic_category;
-    
-    class Simplify 
+
+    class Simplify
       : public Unary_function< Type&, void > {
       public:
         typedef void result_type;
@@ -666,28 +666,28 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                     CGAL::Integral_domain_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
   public:
     typedef CGAL::Integral_domain_tag Algebraic_category;
-    
-    class Integral_division 
-      : public Binary_function< Type, Type, 
+
+    class Integral_division
+      : public Binary_function< Type, Type,
                                 Type > {
       public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                                         const Type& y ) const {
           return x/y;
         }
 
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
-    };                                  
+    };
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                     CGAL::Unique_factorization_domain_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
@@ -695,7 +695,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                     CGAL::Euclidean_ring_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
@@ -703,14 +703,14 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                     CGAL::Field_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
   public:
     typedef Field_tag Algebraic_category;
-    
-    class Unit_part 
+
+    class Unit_part
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
@@ -720,7 +720,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                     CGAL::Field_with_sqrt_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Field_tag > {
@@ -728,7 +728,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                 CGAL::Field_with_kth_root_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       // TODO: Why not Fiel_tag?
@@ -737,7 +737,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 };
 
 template< class Type >
-class Sqrt_extension_algebraic_structure_traits_base< Type, 
+class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                 CGAL::Field_with_root_of_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       // TODO: Why not Fiel_tag?
@@ -747,19 +747,19 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 
 template< class COEFF, class ROOT>
 class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
-  : public Sqrt_extension_algebraic_structure_traits_base< 
+  : public Sqrt_extension_algebraic_structure_traits_base<
       Sqrt_extension< COEFF, ROOT >,
       typename Algebraic_structure_traits< COEFF >::Algebraic_category > {
   public:
     typedef Sqrt_extension< COEFF, ROOT > Type;
-    
-    // Tag_true if COEFF and ROOT are exact 
-    typedef typename ::boost::mpl::if_c< 
+
+    // Tag_true if COEFF and ROOT are exact
+    typedef typename ::boost::mpl::if_c<
        bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<ROOT >::Is_exact,::CGAL::Tag_true>::value )&&
        bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<COEFF>::Is_exact,::CGAL::Tag_true>::value )
            ,::CGAL::Tag_true,::CGAL::Tag_false>::type Is_exact;
-    
-    typedef typename Algebraic_structure_traits<COEFF>::Is_numerical_sensitive 
+
+    typedef typename Algebraic_structure_traits<COEFF>::Is_numerical_sensitive
     Is_numerical_sensitive;
 };
 
@@ -767,15 +767,15 @@ class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
 // Real embeddable traits
 //
 
-template< class COEFF, class ROOT > 
-class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> > 
-  : public INTERN_RET::Real_embeddable_traits_base_selector< 
-                  Sqrt_extension<COEFF, ROOT>, 
+template< class COEFF, class ROOT >
+class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
+  : public INTERN_RET::Real_embeddable_traits_base_selector<
+                  Sqrt_extension<COEFF, ROOT>,
                   typename Real_embeddable_traits<COEFF>::Is_real_embeddable > {
   public:
-    typedef Sqrt_extension<COEFF, ROOT> Type;  
-           
-    class To_interval 
+    typedef Sqrt_extension<COEFF, ROOT> Type;
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       private:
         typedef CGAL::Interval_nt<> Double_interval;
@@ -785,10 +785,10 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
               std::pair<double, double> pair_a0 = CGAL_NTS to_interval( x.a0() );
               std::pair<double, double> pair_a1_root = CGAL_NTS to_interval(
                                          x.a1() * x.a1() * COEFF( x.root() ) );
-                                         
+
               Double_interval result = pair_a0;
-              result += ( Double_interval( (int) CGAL_NTS sign(x.a1())) * 
-                      CGAL::sqrt( Double_interval( pair_a1_root ) ) ); 
+              result += ( Double_interval( (int) CGAL_NTS sign(x.a1())) *
+                      CGAL::sqrt( Double_interval( pair_a1_root ) ) );
               return result.pair();
             } else {
                 return CGAL_NTS to_interval( x.a0());
@@ -796,18 +796,18 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
         }
     };
 
-    class To_double 
+    class To_double
       : public Unary_function< Type, double > {
       public:
-        // The main problem here is, that even tough the total 
-        // expression fits into double, one of the coefficients 
-        // or the root may not. ?? ! 
+        // The main problem here is, that even tough the total
+        // expression fits into double, one of the coefficients
+        // or the root may not. ?? !
         double operator()(const Type& x) const {
             if(x.is_extended()){
-                return CGAL_NTS to_double(x.a0()) 
+                return CGAL_NTS to_double(x.a0())
                     +  int(CGAL_NTS sign(x.a1()))
-                    * CGAL_NTS sqrt(CGAL_NTS to_double(x.a1()*x.a1() * 
-                                                    Type(x.root()))); 
+                    * CGAL_NTS sqrt(CGAL_NTS to_double(x.a1()*x.a1() *
+                                                    Type(x.root())));
             }else{
                 return CGAL_NTS to_double(x.a0());
             }
@@ -820,7 +820,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
 //##########################Algebraic_structure_traits<Sqrt_extension>######################
 
 
-// ############## initializing for Algebraic_structure_traits_comparable_base 
+// ############## initializing for Algebraic_structure_traits_comparable_base
 /*template <class EXT, class TypeTAG>
 class Sqrt_ext_NTtr_comp_base;
 
@@ -837,10 +837,10 @@ public:
         typedef Interval result_type;
         //! the function call.
         Interval operator()(const EXT& a) const {
-            if(a.is_extended()){               
+            if(a.is_extended()){
                 return CGAL::to_Interval(a.a0())
                     + Interval(int(CGAL::sign(a.a1())))
-                    * CGAL::sqrt(CGAL::to_Interval(a.a1()*a.a1()*NT(a.root()))); 
+                    * CGAL::sqrt(CGAL::to_Interval(a.a1()*a.a1()*NT(a.root())));
             }else{
                 return CGAL::to_Interval(a.a0());
             }
@@ -852,20 +852,20 @@ public:
         typedef double result_type;
         // the argument type.
         typedef EXT argument_type;
-        // The main problem here is, that even tough the total 
-        // expression fits into double, one of the coefficients 
-        // or the root may not. ?? ! 
+        // The main problem here is, that even tough the total
+        // expression fits into double, one of the coefficients
+        // or the root may not. ?? !
         double operator()(const EXT& a) const {
             if(a.is_extended()){
-                return CGAL::to_double(a.a0()) 
+                return CGAL::to_double(a.a0())
                     +  int(CGAL::sign(a.a1()))
-                    *sqrt(CGAL::to_double(a.a1()*a.a1()*NT(a.root()))); 
+                    *sqrt(CGAL::to_double(a.a1()*a.a1()*NT(a.root())));
             }else{
                 return CGAL::to_double(a.a0());
             }
         }
     };
-    
+
 };
 template <class EXT>
 class Sqrt_ext_NTtr_comp_base<EXT,CGAL::Tag_false>
@@ -878,22 +878,22 @@ class Sqrt_ext_NTtr_comp_base<EXT,CGAL::Tag_false>
 
 /*! \ingroup CGAL_Sqrt_extension
     \ingroup CGAL_Algebraic_structure_traits_spec
-  
-    \brief Specialization of CGAL::Algebraic_structure_traits for CGAL::Sqrt_extension. 
+
+    \brief Specialization of CGAL::Algebraic_structure_traits for CGAL::Sqrt_extension.
 */
 /*template < class COEFF, class ROOT >
-class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > > 
-    : public Sqrt_extension_NTtr_base< Sqrt_extension< COEFF, ROOT >, 
+class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
+    : public Sqrt_extension_NTtr_base< Sqrt_extension< COEFF, ROOT >,
                              typename Algebraic_structure_traits< COEFF >::Algebra_type>,
-      public Sqrt_ext_NTtr_comp_base< Sqrt_extension< COEFF, ROOT >, 
+      public Sqrt_ext_NTtr_comp_base< Sqrt_extension< COEFF, ROOT >,
                              typename Algebraic_structure_traits<COEFF>::Is_real_comparable>,
       public Algebraic_structure_traits_log2_null_base
 {
 public:
-    typedef Sqrt_extension< COEFF, ROOT > NT;  
+    typedef Sqrt_extension< COEFF, ROOT > NT;
 
-    // Tag_true if COEFF and ROOT are exact 
-    typedef typename ::boost::mpl::if_c< 
+    // Tag_true if COEFF and ROOT are exact
+    typedef typename ::boost::mpl::if_c<
        bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<ROOT >::Is_exact,::CGAL::Tag_true>::value )&&
        bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<COEFF>::Is_exact,::CGAL::Tag_true>::value )
        ,::CGAL::Tag_true,::CGAL::Tag_false>::type Is_exact;
@@ -904,8 +904,8 @@ public:
 // #################### INPUT
 
 
-template<class NT, class ROOT> 
-Sqrt_extension<NT,ROOT> 
+template<class NT, class ROOT>
+Sqrt_extension<NT,ROOT>
 Sqrt_extension<NT,ROOT>::input_ascii(std::istream& is){
     // expected input format: EXT[ext.a0(),ext.a1(),root()]
     typedef Sqrt_extension<NT,ROOT> EXT;
@@ -930,7 +930,7 @@ Sqrt_extension<NT,ROOT>::input_ascii(std::istream& is){
     is >> iformat(root);
     do c = is.get(); while (isspace(c));
     if (c != ']') CGAL_error( "input error: ] expected" );
-    
+
     if ( root  < ROOT(0)) CGAL_error("input error: non-negative root expected");
     if ( root == ROOT(0)) return EXT(a0);
     return EXT(a0,a1,root);
@@ -941,33 +941,33 @@ Sqrt_extension<NT,ROOT>::input_ascii(std::istream& is){
 /*! The output is intended to be Maple-readable; see module
  *  \link CGAL_io CGAL I/O Support \endlink.
  */
-template<class NT, class ROOT> 
-void 
+template<class NT, class ROOT>
+void
 Sqrt_extension<NT,ROOT>::output_maple(std::ostream& os) const{
-    CGAL::IO::Mode o_mode=::CGAL::get_mode(os);        
-    ::CGAL::set_mode(os,CGAL::IO::PRETTY); 
+    CGAL::IO::Mode o_mode=::CGAL::get_mode(os);
+    ::CGAL::set_mode(os,CGAL::IO::PRETTY);
 
     if ( a0() != NT(0)){
-        if ( a1() != NT(0)){               
-            os << a0() 
-               << "+" << CGAL::oformat(a1(),CGAL::Parens_as_product_tag()) 
+        if ( a1() != NT(0)){
+            os << a0()
+               << "+" << CGAL::oformat(a1(),CGAL::Parens_as_product_tag())
                << "*sqrt(" << root() << ")";
         }else{
-            os << a0(); 
+            os << a0();
         }
     }
     else{
         if (a1() != NT(0)){
-            os << CGAL::oformat(a1(),CGAL::Parens_as_product_tag()) 
-               << "*sqrt(" << root() << ")"; 
+            os << CGAL::oformat(a1(),CGAL::Parens_as_product_tag())
+               << "*sqrt(" << root() << ")";
         }else{
-            os << 0; 
+            os << 0;
         }
     }
-    ::CGAL::set_mode(os,o_mode);   
+    ::CGAL::set_mode(os,o_mode);
     return;
 }
- 
+
 /*! \relates CGAL::Sqrt_extension
  *  \brief output \c ext to \c os
  *
@@ -977,7 +977,7 @@ Sqrt_extension<NT,ROOT>::output_maple(std::ostream& os) const{
  *  identical to \c LiS::IO::ASCII.
  */
 template <class NT,class ROOT>
-std::ostream& operator << (std::ostream& os, 
+std::ostream& operator << (std::ostream& os,
                            const Sqrt_extension<NT,ROOT>& ext){
     switch(CGAL::get_mode(os)) {
     case CGAL::IO::PRETTY:
@@ -1007,18 +1007,18 @@ std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT>& ext) {
   \ingroup CGAL_Sqrt_extension
   \ingroup CGAL_Modular_traits_spec
   \brief Specialization of CGAL::Modular_traits for \c CGAL::Sqrt_extension.
-  
+
   A model of the concept ModularTraits.
- 
-  CGAL::Modular_traits::Modular_image maps the coefficients of a  
-  CGAL::Sqrt_extension to their Modular_image and returns the resulting 
-  compound type.  
+
+  CGAL::Modular_traits::Modular_image maps the coefficients of a
+  CGAL::Sqrt_extension to their Modular_image and returns the resulting
+  compound type.
 */
 /*template< class COEFF, class ROOT>
 class Modular_traits< Sqrt_extension<COEFF,ROOT> > {
-    
+
 private:
-    typedef Sqrt_extension<COEFF,ROOT> EXT; 
+    typedef Sqrt_extension<COEFF,ROOT> EXT;
     typedef Modular_traits<COEFF> MT_COEFF;
     typedef Modular_traits<ROOT>  MT_ROOT;
     typedef typename MT_COEFF::Modular_NT Modular_NT_coeff;
@@ -1027,7 +1027,7 @@ public:
     typedef Sqrt_extension<COEFF, ROOT > NT;
     typedef typename MT_COEFF::Is_convertible Is_convertible;
     typedef Sqrt_extension<Modular_NT_coeff, Modular_NT_root> Modular_NT;
-    
+
     struct Modular_image{
         Modular_NT operator()(const EXT& a){
             typename MT_ROOT::Modular_image mod_image_root;
@@ -1095,7 +1095,7 @@ Polynomial<FieldWithSqrt> to_rootexp(Polynomial< Sqrt_extension<NT, ROOT> > p) {
  *  may actually be rational.
  *
  *  This function is designed for cases where \c Sqrt_extension::NT models
- *  the rationals, \c Sqrt_extension::ROOT models is integer 
+ *  the rationals, \c Sqrt_extension::ROOT models is integer
  *  and \c CGAL::Algebraic_real<>::Coefficient is integer
  *  or rational. (You may get away in other cases if you know
  *  what you are doing). If parameter \c simplify_radicant is set to \c true
@@ -1108,14 +1108,14 @@ Polynomial<FieldWithSqrt> to_rootexp(Polynomial< Sqrt_extension<NT, ROOT> > p) {
  */
  // TODO: No Coercion_traits available yet.
 /*template <class Extension, class AlgebraicReal >
-Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) { 
-    
+Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
+
     typedef typename AlgebraicReal::Coefficient Coefficient;
     typedef typename AlgebraicReal::Rational Rational;
 
     typedef typename Extension::NT NT;
     typedef typename Extension::ROOT ROOT;
-    
+
     Polynomial< Coefficient > p = CGAL::canonicalize_polynomial(x.polynomial());
     switch (p.degree()) {
     case 2: {
@@ -1123,7 +1123,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
         typedef typename CT::Type Type;
         typename CGAL::Algebraic_structure_traits<Type>::integral_division idiv;
         typename CT::Cast cast;
-    
+
         Type den(Type(2) * cast(p[2]));
         CGAL_assert(CGAL::sign(den) == CGAL::POSITIVE);
         Type mid = idiv(cast(-p[1]), den);
@@ -1174,7 +1174,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
                 CGAL::convert_to(e,x0);
         );
         CGAL_postcond(x.real() == x0);
-        return e; 
+        return e;
     }
     case 1:
         CGAL_assert(x.is_rational());
@@ -1182,7 +1182,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
         return Extension(x.rational());
     default:
         CGAL_error("CGAL::to_Extension(x) called with x.poly.degree != 1, 2");
-        // NOT REACHED 
+        // NOT REACHED
         return Extension();
     }
 };*/
@@ -1196,13 +1196,13 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
 template <class COEFF, class INTERNAL>
 class Scalar_factor_traits< Sqrt_extension<COEFF, INTERNAL> > {
 public:
-    
+
     //! the number type for which this instance has been instantiated
     typedef Sqrt_extension<COEFF, INTERNAL> NT;
       //! the number type of scalars that can be extracted from NT
     typedef typename Scalar_factor_traits<COEFF>::Scalar Scalar;
-    
-    class Scalar_factor 
+
+    class Scalar_factor
     {
     public:
         //! argument type
@@ -1213,10 +1213,10 @@ public:
         typedef Scalar second_argument_type;
         //! result type
         typedef Scalar result_type;
-        
-        Scalar 
+
+        Scalar
         operator () (const NT& x, const Scalar& d_ = Scalar(0) ) {
-            typename Scalar_factor_traits<COEFF>::Scalar_factor sfac;  
+            typename Scalar_factor_traits<COEFF>::Scalar_factor sfac;
 
             Scalar d(d_);
             Scalar unity(1);
@@ -1228,8 +1228,8 @@ public:
             return d;
         }
     };
-    
-    class Scalar_div 
+
+    class Scalar_div
     {
     public:
         //! first_argument_type
@@ -1250,18 +1250,18 @@ public:
 // The actual Type traits is Intern::Sqrt_ext_Ftr_base_2
 // The selction is done in two steps:
 // 1. Inter::Sqrt_ext_Ftr_base_1 selects by the BOOL_TAG whether the COEFF type
-//    Is_fraction 
+//    Is_fraction
 // 2. Intern::Sqrt_ext_Ftr_base_2 checks whether the internal type of the ROOT
-//    is still implicite convertible to the new COEFF type. 
+//    is still implicite convertible to the new COEFF type.
 //    since the ROOT type it self can not be converted.
-namespace Intern{ 
+namespace Intern{
     template <class EXT, bool> class Sqrt_ext_Ftr_base_2;
     template <class EXT, class BOOL_TAG> class Sqrt_ext_Ftr_base_1;
-} 
+}
 
 /*! \ingroup CGAL_Sqrt_extension
     \ingroup CGAL_Fraction_traits_spec
-    \brief Specialisation of CGAL::Fraction_traits for CGAL::Sqrt_extension.  
+    \brief Specialisation of CGAL::Fraction_traits for CGAL::Sqrt_extension.
  *
  *  Extensions provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.
@@ -1275,18 +1275,18 @@ namespace Intern{
 
 template <class COEFF, class ROOT_NT >
 class Fraction_traits< Sqrt_extension<COEFF,ROOT_NT > >
-    : public Intern::Sqrt_ext_Ftr_base_1< 
-    Sqrt_extension<COEFF,ROOT_NT >, 
-    typename CGAL::Fraction_traits<COEFF>::Is_fraction >              
+    : public Intern::Sqrt_ext_Ftr_base_1<
+    Sqrt_extension<COEFF,ROOT_NT >,
+    typename CGAL::Fraction_traits<COEFF>::Is_fraction >
 {
     // nothing new
 };
 
 namespace Intern {
 
-// Use this if the coefficients cannot be decomposed 
+// Use this if the coefficients cannot be decomposed
 // into numerator and denominator
-template <class NT_ > 
+template <class NT_ >
 class Sqrt_ext_Ftr_base_2< NT_, false > {
 public:
     typedef NT_ NT;
@@ -1321,7 +1321,7 @@ public:
             typename CFT::Common_factor common_factor;
             typedef typename CFT::Numerator_type NUM;
             typedef typename CFT::Denominator_type DEN;
-            
+
             if(ext.is_extended()){
                 NUM a0_num, a1_num;
                 DEN a0_den, a1_den;
@@ -1329,7 +1329,7 @@ public:
                 decompose(ext.a0(),a0_num,a0_den);
                 decompose(ext.a1(),a1_num,a1_den);
                 common_den=common_factor(a0_den,a1_den);
-                
+
                 a0_num = a0_num*CGAL::integral_division(a1_den,common_den);
                 a1_num = a1_num*CGAL::integral_division(a0_den,common_den);
                 den = CGAL::integral_division(a0_den,common_den)*a1_den;
@@ -1367,8 +1367,8 @@ class Sqrt_ext_Ftr_base_1;
 
 template <class COEFF, class ROOT_NT>
 class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT_NT >, CGAL::Tag_true >
-    : public Sqrt_ext_Ftr_base_2< 
-    Sqrt_extension<COEFF,ROOT_NT >, 
+    : public Sqrt_ext_Ftr_base_2<
+    Sqrt_extension<COEFF,ROOT_NT >,
     ::boost::is_same< typename CGAL::Coercion_traits<ROOT_NT,typename CGAL::Fraction_traits<COEFF>::Numerator_type>::Type,
                         typename CGAL::Fraction_traits<COEFF>::Numerator_type>::value >
 {
@@ -1394,31 +1394,31 @@ namespace Intern{
         typedef ::CGAL::Tag_false Is_composable;
         typedef ::CGAL::Null_tag Denominator_type;
         typedef ::CGAL::Null_tag Type;
-        typedef ::CGAL::Null_tag Compose;  
-    }; 
+        typedef ::CGAL::Null_tag Compose;
+    };
     template <class SqrtExt>
     class Sqrt_ext_Coftr_base_1< SqrtExt, CGAL::Tag_true >{
         typedef typename SqrtExt::NT Coeff;
         typedef typename SqrtExt::ROOT Root;
         typedef typename CGAL::Cofraction_traits<Coeff> CFT;
         typedef typename CFT::Type Type_coeff;
-       
+
     public:
         typedef SqrtExt                                       Numerator_type;
         typedef ::CGAL::Tag_true                               Is_composable;
         typedef typename CFT::Denominator_type                Denominator;
         typedef CGAL::Sqrt_extension<Type_coeff,Root> Type;
-        
+
         class Compose {
     public:
             //! first argument type
             typedef Numerator_type   first_argument_type;
-            //! second argument type 
-            typedef Denominator_type second_argument_type; 
+            //! second argument type
+            typedef Denominator_type second_argument_type;
             //! result type
             typedef Type    result_type;
             //! Compose fraction
-            Type operator() (Numerator_type   num, 
+            Type operator() (Numerator_type   num,
                                       Denominator_type den){
                 if(num.is_extended()){
                     typename CFT::Compose compose_coeff;
@@ -1427,17 +1427,17 @@ namespace Intern{
                     return result_type(a0_new, a1_new, num.root());
                 }else{
                     typename CFT::Compose compose_coeff;
-                    return result_type(compose_coeff(num.a0(),den));                    
+                    return result_type(compose_coeff(num.a0(),den));
                 }
             };
-        };     
+        };
     };
 }
 
 template <class Coeff, class Root>
 class Cofraction_traits<Sqrt_extension<Coeff,Root> >
-    :public Intern::Sqrt_ext_Coftr_base_1< 
-    Sqrt_extension<Coeff,Root>, 
+    :public Intern::Sqrt_ext_Coftr_base_1<
+    Sqrt_extension<Coeff,Root>,
     typename CGAL::Cofraction_traits<Coeff>::Is_composable>{
     //nothing new;
 };
@@ -1448,10 +1448,10 @@ template <class COEFF, class ROOT>
 class Needs_parens_as_product< Sqrt_extension<COEFF,ROOT> >{
 public:
     typedef Sqrt_extension<COEFF,ROOT> NT;
-    bool operator()(const NT& t){         
+    bool operator()(const NT& t){
         if( t.a0() != NT(0) && t.a1() != NT(0)){
             return true;
-        } 
+        }
         if( t.a1() == NT(0) ){
             Needs_parens_as_product<COEFF> npap;
             return npap(t.a0());
@@ -1463,30 +1463,30 @@ public:
 
 
 
-        
-/////////// COERCION_TRAITS BEGIN 
+
+/////////// COERCION_TRAITS BEGIN
 
 // <EXT,EXT>
 template <class A_coeff, class B_coeff, class Root>
-struct Coercion_traits_for_level<Sqrt_extension<A_coeff, Root>, 
+struct Coercion_traits_for_level<Sqrt_extension<A_coeff, Root>,
                            Sqrt_extension<B_coeff, Root>,
                            CTL_SQRT_EXT>{
 private:
     typedef Coercion_traits<A_coeff, B_coeff> CT;
     typedef Sqrt_extension<A_coeff,Root> A;
     typedef Sqrt_extension<B_coeff,Root> B;
-            
+
 public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
-    typedef Sqrt_extension<typename CT::Type, Root> Type;   
+    typedef Sqrt_extension<typename CT::Type, Root> Type;
 
-    struct Cast{  
+    struct Cast{
     private:
         inline Type cast(const Type& x) const{ return x; }
-        
+
         template <class T>
-        inline Type cast(const T& x) const{ 
+        inline Type cast(const T& x) const{
             typename CT::Cast cast;
             if (x.is_extended()) {
                 return result_type(cast(x.a0()),cast(x.a1()),x.root());
@@ -1495,16 +1495,16 @@ public:
             }
         }
     public:
-        typedef Type result_type;       
-        // this is in order to allow A and B only 
+        typedef Type result_type;
+        // this is in order to allow A and B only
         Type operator()(const A& x) const { return cast(x);}
-        Type operator()(const B& x) const { return cast(x);}      
+        Type operator()(const B& x) const { return cast(x);}
     };
 };
 
 template <class Coeff, class Root_1, class Root_2>
-struct Coercion_traits_for_level<Sqrt_extension<Sqrt_extension<Coeff,Root_1>, 
-Root_2>, 
+struct Coercion_traits_for_level<Sqrt_extension<Sqrt_extension<Coeff,Root_1>,
+Root_2>,
                            Sqrt_extension<Coeff,Root_1>,
                            CTL_SQRT_EXT>{
 private:
@@ -1514,33 +1514,33 @@ public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
 
-    // Type = A 
+    // Type = A
     typedef Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2> Type;
-    struct Cast{                                      
-        typedef Type result_type;                               
+    struct Cast{
+        typedef Type result_type;
         Type operator()(const A& x) const { return x;}
-        Type operator()(const B& x) const { return Type(x);} 
-    };  
+        Type operator()(const B& x) const { return Type(x);}
+    };
 };
-        
+
 template <class Coeff, class Root_1, class Root_2>
 struct Coercion_traits_for_level
 <
             Sqrt_extension<Coeff,Root_1>,
-            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2> 
-            ,CTL_SQRT_EXT> 
+            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2>
+            ,CTL_SQRT_EXT>
     :public Coercion_traits_for_level
 <
-            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2>, 
-            Sqrt_extension<Coeff,Root_1> 
+            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2>,
+            Sqrt_extension<Coeff,Root_1>
             ,CTL_SQRT_EXT>
-{}; 
+{};
 
 template <class Coeff, class Root_1>
 struct Coercion_traits_for_level
 <
-            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1>, 
-            Sqrt_extension<Coeff,Root_1> 
+            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1>,
+            Sqrt_extension<Coeff,Root_1>
             ,CTL_SQRT_EXT>{
 private:
     typedef  Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> A;
@@ -1550,27 +1550,27 @@ public:
     typedef CGAL::Tag_false Are_implicit_interoperable;
 
     typedef  Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> Type;
-    struct Cast{                                      
-        typedef Type result_type;                               
-        Type operator()(const A& x) const { return x;} 
-        Type operator()(const B& x) const { return Type(x);} 
-    }; 
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const A& x) const { return x;}
+        Type operator()(const B& x) const { return Type(x);}
+    };
 };
-        
+
 template <class Coeff, class Root_1>
 struct Coercion_traits_for_level
 <
             Sqrt_extension<Coeff,Root_1>,
-            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> 
-            ,CTL_SQRT_EXT> 
+            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1>
+            ,CTL_SQRT_EXT>
     :public Coercion_traits_for_level
 <
-            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1>, 
-            Sqrt_extension<Coeff,Root_1> 
+            Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1>,
+            Sqrt_extension<Coeff,Root_1>
             ,CTL_SQRT_EXT>
 {};
-        
-        
+
+
 namespace INTERN_CT{
 // Coercion_traits for Sqrt_extenison to FieldWithSqrt
 template <class A, class B> class CT_ext_to_fwsqrt;
@@ -1578,17 +1578,17 @@ template <class A, class B> class CT_ext_to_fwsqrt;
 template <class A, class B> class CT_ext_not_to_fwsqrt;
 } // namespace INTERN_CT
 
-        
+
 //<EXT,ANY>
 template <class Coeff, class Root, class B>
-struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT> 
-:public ::boost::mpl::if_c< 
+struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT>
+:public ::boost::mpl::if_c<
              // if B is fwsqrt
-              ::boost::is_base_and_derived< 
-                  Field_with_sqrt_tag, 
-typename Algebraic_structure_traits<B>::Algebraic_category >::value || 
-              ::boost::is_same< 
-                  Field_with_sqrt_tag, 
+              ::boost::is_base_and_derived<
+                  Field_with_sqrt_tag,
+typename Algebraic_structure_traits<B>::Algebraic_category >::value ||
+              ::boost::is_same<
+                  Field_with_sqrt_tag,
 typename Algebraic_structure_traits<B>::Algebraic_category >::value
             ,
             //then take Intern::Coercion_traits for fwsqrt
@@ -1598,14 +1598,14 @@ typename Algebraic_structure_traits<B>::Algebraic_category >::value
             INTERN_CT::CT_ext_not_to_fwsqrt< Sqrt_extension<Coeff,Root> ,B>
               >::type
 {};
-        
+
 // <ANY,EXT>
 template <class Coeff, class Root, class B>
 struct Coercion_traits_for_level
 <B,Sqrt_extension<Coeff, Root>,CTL_SQRT_EXT >
     :public Coercion_traits_for_level<Sqrt_extension<Coeff,Root>,B,CTL_SQRT_EXT>
 {};
-        
+
 namespace INTERN_CT{
 // EXT coercion with FieldWithSqrt
 template <class Coeff, class Root, class FieldWithSqrt>
@@ -1619,28 +1619,28 @@ public:
     typedef CGAL::Tag_false Are_implicit_interoperable;
 
     typedef FieldWithSqrt Type;
-    struct Cast{                                      
-        typedef Type result_type;                               
-        Type operator()(const A& x) const { 
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const A& x) const {
             typedef Coercion_traits<Coeff,FieldWithSqrt> CT_coeff;
             typedef Coercion_traits<Root ,FieldWithSqrt> CT_root;
             typename CT_coeff::Cast coeff_cast;
             typename CT_root::Cast root_cast;
-            if (x.is_extended()) {   
+            if (x.is_extended()) {
                 typename CGAL::Algebraic_structure_traits<
                 typename CT_root::Type>::Sqrt sqrt;
-                return // a0+a1*sqrt(root) 
+                return // a0+a1*sqrt(root)
                     coeff_cast(x.a0())+
                     coeff_cast(x.a1())*
                     sqrt(root_cast(x.root()));
             } else {
                 return coeff_cast(x.a0());
             }
-        } 
-        Type operator()(const B& x) const { return x;} 
-    }; 
+        }
+        Type operator()(const B& x) const { return x;}
+    };
 };
-    
+
 // EXT coercion not with FieldWithSqrt
 template <class Coeff, class Root, class B_>
 struct CT_ext_not_to_fwsqrt<Sqrt_extension<Coeff,Root>, B_>{
@@ -1652,33 +1652,33 @@ public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
     typedef Sqrt_extension<typename CT::Type,Root> Type;
-    struct Cast{                                      
-        typedef Type result_type;                               
-        Type operator()(const A& x) const { 
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const A& x) const {
             typename CT::Cast cast;
             if (x.is_extended()) {
                 return Type(cast(x.a0()),cast(x.a1()),x.root());
             } else {
                 return Type(cast(x.a0()));
             }
-        } 
-        Type operator()(const B& x) const { 
+        }
+        Type operator()(const B& x) const {
             typename CT::Cast cast;
             return Type(cast(x));
-        } 
-    };   
+        }
+    };
 };
 } // namespace INTERN_CT
 
-/////////// COERCION_TRAITS END 
+/////////// COERCION_TRAITS END
 
-#if 1 // Algebraic_extension_traits not supported yet 
+#if 1 // Algebraic_extension_traits not supported yet
 /////////// ALGEBRAIC_NUMER_TRAITS BEGIN
 template <class COEFF, class ROOT >
 class Algebraic_extension_traits<Sqrt_extension<COEFF,ROOT> > {
-// needed to 'add up' sqrt_extensions in iterator range such that all roots are 
-//   collected in order to keep operation time minimal all scalar coeffs are set 
-//   to 1 by standardise. 
+// needed to 'add up' sqrt_extensions in iterator range such that all roots are
+//   collected in order to keep operation time minimal all scalar coeffs are set
+//   to 1 by standardise.
 //   TODO .. find a better name, if you want to.
 //
 template <class NT_>
@@ -1690,7 +1690,7 @@ public:
         return NT_(1);
     }
 };
-    
+
 template <class COEFF_, class ROOT_>
 class Standardise<Sqrt_extension<COEFF_,ROOT_> > {
     Standardise<COEFF_> standardise;
@@ -1698,7 +1698,7 @@ public:
     typedef Sqrt_extension<COEFF_,ROOT_> NT_;
     typedef NT_ argument_type;
     typedef NT_ result_type;
-    NT_ operator () (const NT_& a) const {       
+    NT_ operator () (const NT_& a) const {
         if (a.a1() != COEFF_(0)){
             return NT_(standardise(a.a0()),standardise(a.a1()),a.root());
         }else{
@@ -1708,13 +1708,13 @@ public:
 };
 
 public:
-    //! \name Typedefs 
+    //! \name Typedefs
     //! the number type for which this instance has been instantiated
     typedef Sqrt_extension<COEFF,ROOT> NT;
     //! Sqrt_extension as a number type is extended
     typedef ::CGAL::Tag_true Is_extended;
-    
-    //! computes the factor which normalizes a number to be integral 
+
+    //! computes the factor which normalizes a number to be integral
     //!  after multiplication
     //!
     class Normalization_factor{
@@ -1732,19 +1732,19 @@ public:
             NT result;
             if(a.is_extended() && CGAL::sign(a.a1())!= CGAL::ZERO){
                 NT tmp1(a.a0(),-a.a1(),a.root());
-                
+
                 NT tmp2= a*tmp1;
                 CGAL_postcondition(tmp2.a1()==COEFF(0));
                 result = tmp1*NT(normalization_factor(tmp2.a0()));
                 CGAL_postcondition(CGAL::sign(result.a1()) != CGAL::ZERO);
             }else{
-                result = NT(normalization_factor(a.a0())); 
-            }       
+                result = NT(normalization_factor(a.a0()));
+            }
             return result;
         }
     };
 
-    //! returns the extension factor needed for the gcd_utcf computation 
+    //! returns the extension factor needed for the gcd_utcf computation
     //! for more details see ... TODO!!
     //!
     class Denominator_for_algebraic_integers {
@@ -1761,7 +1761,7 @@ public:
 
             Standardise<COEFF> standardise;
             if (a.a1() != COEFF(0)) {
-                COEFF tmp = 
+                COEFF tmp =
                     standardise(a.a0())
                     + standardise(a.a1())
                     + standardise(COEFF(a.root()));
@@ -1772,13 +1772,13 @@ public:
         }
 
         //! overloaded operator for computing the denominator out of an iterator
-        //!  range accumulates all root expressions which appear in the range to 
-        //!  the most complex term and uses this term to determine the denominator 
+        //!  range accumulates all root expressions which appear in the range to
+        //!  the most complex term and uses this term to determine the denominator
         //!  for algebraic integers
         //!
         template <class InputIterator>
         NT operator () (InputIterator begin, InputIterator end) const {
-            NT a = std::accumulate(::boost::make_transform_iterator(begin,Standardise<NT>()), 
+            NT a = std::accumulate(::boost::make_transform_iterator(begin,Standardise<NT>()),
                                    ::boost::make_transform_iterator(end  ,Standardise<NT>()), NT(0));
             return (*this)(a);
         }
@@ -1788,71 +1788,71 @@ public:
 /////////// ALGEBRAIC_NUMER_TRAITS BEGIN
 
 // lefthand side
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator +
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) + p2); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator -
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) - p2); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator *
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num) * p2); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num)/p2); }
 
 // righthand side
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator + 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator +
 (const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 + Sqrt_extension<NT,ROOT>(num)); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator - 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator -
 (const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 - Sqrt_extension<NT,ROOT>(num)); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator * 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator *
 (const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 * Sqrt_extension<NT,ROOT>(num)); }
-template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator / 
+template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 (const Sqrt_extension<NT,ROOT>& p1, CGAL_int(NT) num)
 { return (p1 / Sqrt_extension<NT,ROOT>(num)); }
 
 // lefthand side
-template <class NT,class ROOT>    bool operator ==  
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator ==
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() == 0 );}
-template <class NT,class ROOT>    bool operator != 
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator !=
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() != 0 );}
-template <class NT,class ROOT>    bool operator <  
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator <
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() < 0 );}
-template <class NT,class ROOT>    bool operator <=  
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator <=
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() <= 0 );}
-template <class NT,class ROOT>    bool operator >  
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator >
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() > 0 );}
-template <class NT,class ROOT>    bool operator >=  
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p) 
+template <class NT,class ROOT>    bool operator >=
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( (Sqrt_extension<NT,ROOT>(num)-p).sign() >= 0 );}
 
 // righthand side
 template <class NT,class ROOT>    bool operator ==
-(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() == 0 );}
 template <class NT,class ROOT>    bool operator !=
-(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() != 0 );}
-template <class NT,class ROOT>    bool operator < 
-(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
+template <class NT,class ROOT>    bool operator <
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() < 0 );}
-template <class NT,class ROOT>    bool operator <= 
-(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
+template <class NT,class ROOT>    bool operator <=
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() <= 0 );}
-template <class NT,class ROOT>    bool operator > 
-(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
+template <class NT,class ROOT>    bool operator >
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() > 0 );}
 template <class NT,class ROOT>    bool operator >=
-(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num) 
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() >= 0 );}
 
 CGAL_END_NAMESPACE

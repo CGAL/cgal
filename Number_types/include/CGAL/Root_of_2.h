@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Pedro Machado
 
@@ -78,11 +78,11 @@ namespace CGAL {
 //   polynomial class which performed this task (and others)...
 // - overloaded versions of make_root_of_2<>() for Lazy_exact_nt<> and others.
 
-template <class RT> struct Root_of_traits; 
+template <class RT> struct Root_of_traits;
 
 template < typename RT_ >
 class Root_of_2 {
- 
+
   // the value is the root of P(X) = C2.X^2 + C1.X + C0,
   // and C2 > 0.
 
@@ -90,7 +90,7 @@ public:
 
   typedef RT_ RT;
   typedef typename Root_of_traits<RT>::RootOf_1 FT;
-  
+
 private:
 
   FT  _alpha, _beta, _gamma;
@@ -161,9 +161,9 @@ public:
             const typename First_if_different<FT, RT>::Type & c2)
   {
     if(CGAL_NTS is_zero(c1) || CGAL_NTS is_zero(c2)) {
-      _alpha = c0; 
+      _alpha = c0;
       _rational = 1;
-      
+
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
       int n_a = c0.tam();
       if(max_num_digit < n_a) max_num_digit = n_a;
@@ -171,9 +171,9 @@ public:
 #endif
 
     } else {
-      _alpha = c0; 
-      _beta = c1; 
-      _gamma = c2; 
+      _alpha = c0;
+      _beta = c1;
+      _gamma = c2;
       _rational = 0;
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
@@ -188,7 +188,7 @@ public:
       histogram[n_c]++;
 #endif
 
-    } 
+    }
     CGAL_assertion(is_valid());
   }
 
@@ -216,12 +216,12 @@ public:
     return _rational;
   }
 
-  Root_of_2 inverse() const 
+  Root_of_2 inverse() const
   {
-    CGAL_assertion(!(CGAL_NTS is_zero(alpha()) && (CGAL_NTS is_zero(beta()) || CGAL_NTS is_zero(gamma())))); // root = 0,   
+    CGAL_assertion(!(CGAL_NTS is_zero(alpha()) && (CGAL_NTS is_zero(beta()) || CGAL_NTS is_zero(gamma())))); // root = 0,
     FT r = (CGAL_NTS square(alpha())) -  (CGAL_NTS square(beta()))*gamma();
-    CGAL_assertion(!(CGAL_NTS is_zero(r) 
-                   && (CGAL_NTS sign(beta()) != CGAL_NTS sign(alpha())))); 
+    CGAL_assertion(!(CGAL_NTS is_zero(r)
+                   && (CGAL_NTS sign(beta()) != CGAL_NTS sign(alpha()))));
 // ex. 6 - 2 sqrt(9)
     if(CGAL_NTS is_zero(r)) return Root_of_2(1 / (2 * alpha()));
     else return Root_of_2(alpha()/r, -beta()/r, gamma());
@@ -233,22 +233,22 @@ public:
     return Root_of_2(alpha(),-beta(),gamma());
   }
 
-  const FT& alpha() const 
+  const FT& alpha() const
   {
     return _alpha;
-  } 
+  }
 
-  const FT& beta() const 
+  const FT& beta() const
   {
     return _beta;
-  } 
+  }
 
-  const FT& gamma() const 
+  const FT& gamma() const
   {
     return _gamma;
-  } 
+  }
 
-  bool is_smaller() const 
+  bool is_smaller() const
   {
     return beta() <= 0;
   }
@@ -276,18 +276,18 @@ public:
     // i == 2
     return ((CGAL_NTS square(d2)) * d3 * (CGAL_NTS square(r1))) -
            ((CGAL_NTS square(d1)) * r3 * (CGAL_NTS square(r2)));
-    
+
   }
 
   RT discriminant() const
   {
     if(is_rational()) return RT(0);
-    return CGAL_NTS square(operator[](1)) - 
+    return CGAL_NTS square(operator[](1)) -
            4*(operator[](0))*(operator[](2));
   }
 
-  template < typename T > 
-  T eval_at(const T& x) const 
+  template < typename T >
+  T eval_at(const T& x) const
   {
     if(is_rational()) return x * (operator[](0)) - (operator[](1));
     if(CGAL_NTS is_zero(x)) return (operator[](2));
@@ -296,10 +296,10 @@ public:
     if(zeroC0 && zeroC1) return x * (operator[](0));
     if(zeroC0) return x * ((operator[](1)) + x * (operator[](0)));
     if(zeroC1) return (x * x * (operator[](0))) + (operator[](2));
-    return (operator[](2)) + x * ((operator[](1)) + x * (operator[](0))); 
-  } 
+    return (operator[](2)) + x * ((operator[](1)) + x * (operator[](0)));
+  }
 
-  template < typename T > 
+  template < typename T >
   Sign sign_at(const T &x) const
   {
     // Maybe there is slightly more efficient.
@@ -312,44 +312,44 @@ public:
 
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Root_of_2<RT>,class RT);
 
-template <class RT>                                                      
-struct Coercion_traits< RT , Root_of_2<RT> >{                                    
-    typedef Tag_true  Are_explicit_interoperable;             
-    typedef Tag_true  Are_implicit_interoperable;             
-    typedef Root_of_2<RT> Type;                                       
-    struct Cast{                                                    
-        typedef Type result_type;                          
-        Type operator()(const Root_of_2<RT>& x)   const { return x;}  
-        Type operator()(const RT& x) const {             
-            return Type(x);}                               
-    };                                                              
-};   
+template <class RT>
+struct Coercion_traits< RT , Root_of_2<RT> >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Root_of_2<RT> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Root_of_2<RT>& x)   const { return x;}
+        Type operator()(const RT& x) const {
+            return Type(x);}
+    };
+};
 
-template <class RT>                                                      
-struct Coercion_traits< CGAL_int(RT) , Root_of_2<RT> >{                                    
-    typedef Tag_true  Are_explicit_interoperable;             
-    typedef Tag_true  Are_implicit_interoperable;             
-    typedef Root_of_2<RT> Type;                                       
-    struct Cast{                                                    
-        typedef Type result_type;                          
-        Type operator()(const Root_of_2<RT>& x)   const { return x;}  
-        Type operator()(CGAL_int(RT) x) const {             
-            return Type(x);}                               
-    };                                                              
-};   
+template <class RT>
+struct Coercion_traits< CGAL_int(RT) , Root_of_2<RT> >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Root_of_2<RT> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Root_of_2<RT>& x)   const { return x;}
+        Type operator()(CGAL_int(RT) x) const {
+            return Type(x);}
+    };
+};
 
-template <class RT>                                                      
-struct Coercion_traits< typename Root_of_traits<RT>::RootOf_1 , Root_of_2<RT> >{                                    
-    typedef Tag_true  Are_explicit_interoperable;             
-    typedef Tag_true  Are_implicit_interoperable;             
-    typedef Root_of_2<RT> Type;                                       
-    struct Cast{                                                    
-        typedef Type result_type;                          
-        Type operator()(const Root_of_2<RT>& x)   const { return x;}  
-        Type operator()(const RT& x) const {             
-            return Type(x);}                               
-    };                                                              
-};   
+template <class RT>
+struct Coercion_traits< typename Root_of_traits<RT>::RootOf_1 , Root_of_2<RT> >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Root_of_2<RT> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Root_of_2<RT>& x)   const { return x;}
+        Type operator()(const RT& x) const {
+            return Type(x);}
+    };
+};
 
 
 template <class RT, class NTX >
@@ -412,7 +412,7 @@ template <class RT>
 class Algebraic_structure_traits<Root_of_2<RT> >
     :public Algebraic_structure_traits_base<Root_of_2<RT> , Null_tag >{
 public:
-    
+
     typedef Root_of_2<RT> Type;
     typedef typename Algebraic_structure_traits<RT>::Is_exact Is_exact;
     struct Square
@@ -420,7 +420,7 @@ public:
         Root_of_2<RT> operator()(const Root_of_2<RT>& a){
 
             CGAL_assertion(is_valid(a));
-  
+
             if(a.is_rational()) {
                 return Root_of_2<RT>(CGAL_NTS square(a.alpha()));
             }
@@ -428,9 +428,9 @@ public:
             // It's easy to get the explicit formulas for the square of the two roots.
             // Then it's easy to compute their sum and their product, which gives the
             // coefficients of the polynomial (X^2 - Sum X + Product).
-            return Root_of_2<RT> ( CGAL_NTS square(a.alpha()) + 
+            return Root_of_2<RT> ( CGAL_NTS square(a.alpha()) +
                     (CGAL_NTS square(a.beta())) * a.gamma(),
-                    2 * a.alpha() * a.beta(), 
+                    2 * a.alpha() * a.beta(),
                     a.gamma());
         }
     };
@@ -443,19 +443,19 @@ class Real_embeddable_traits<Root_of_2<RT> >
     typedef Real_embeddable_traits<RT> RET_RT;
     typedef typename Root_of_traits<RT>::RootOf_1 Root_of_1;
 public:
-    
+
     typedef Root_of_2<RT> Type;
     typedef Tag_true Is_real_embeddable;
 
-    class Abs 
+    class Abs
         : public Unary_function< Type, Type >{
     public:
-        Type operator()(const Type& x) const {  
+        Type operator()(const Type& x) const {
             return (x>=0)?x:-x;
         }
-    };    
+    };
 
-    class Sign 
+    class Sign
         : public Unary_function< Type, ::CGAL::Sign >{
     public:
         ::CGAL::Sign operator()(const Type& a) const {
@@ -465,7 +465,7 @@ public:
             const ::CGAL::Sign sign_beta = CGAL_NTS sign (a.beta());
             if (sign_alpha == sign_beta) return (sign_alpha);
             if (sign_alpha == ZERO) return (sign_beta);
-            
+
             // Compare the squared values of m_alpha and of m_beta*sqrt(m_gamma):
             const Comparison_result res = CGAL_NTS compare (CGAL_NTS square(a.alpha()),
                     CGAL_NTS square(a.beta()) * a.gamma());
@@ -474,14 +474,14 @@ public:
             else return ZERO;
         }
     };
-    
-    class Compare 
-        : public Binary_function< Type, 
-                                  Type, 
+
+    class Compare
+        : public Binary_function< Type,
+                                  Type,
                                   Comparison_result >{
     public:
         Comparison_result operator()(
-                const Type& a, 
+                const Type& a,
                 const Type& b) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
             typedef typename First_if_different<FT, RT>::Type WhatType;
@@ -593,11 +593,11 @@ public:
                 return (EQUAL);
         }
 
-        Comparison_result 
+        Comparison_result
         inline
         operator()(
                 const Type& a,
-                const Root_of_1& b 
+                const Root_of_1& b
         ) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
             typedef typename First_if_different<FT, RT>::Type WhatType;
@@ -620,18 +620,18 @@ public:
             else if (sgn == NEGATIVE) return (SMALLER);
             else return (EQUAL);
         }
-        
-        Comparison_result 
-        inline 
+
+        Comparison_result
+        inline
         operator()(
-                const Root_of_1& a, 
+                const Root_of_1& a,
                 const Type& b
         ) const{ return opposite(this->operator()(b,a) ); }
-        
-        Comparison_result 
-        inline 
+
+        Comparison_result
+        inline
         operator()(
-                const Type& a, 
+                const Type& a,
                 const RT& b
         ) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
@@ -655,14 +655,14 @@ public:
             else if (sgn == NEGATIVE) return (SMALLER);
             else return (EQUAL);
         }
-        
+
         inline
         Comparison_result
         operator()(const RT &a, const Root_of_2<RT> &b)
         {
             return opposite(this->operator()(b, a));
         }
-      
+
         inline
         Comparison_result
         operator()( CGAL_int(RT)  a, const Root_of_2<RT> &b)
@@ -675,10 +675,10 @@ public:
         operator()(const Root_of_2<RT> &a, CGAL_int(RT) b)
         {
             return this->operator()(a,RT(b));
-        }        
+        }
     };
-    
-    class To_double 
+
+    class To_double
         : public Unary_function< Type, double >{
     public:
         double operator()(const Type& x) const {
@@ -695,31 +695,31 @@ public:
             if (x.is_rational()) {
                 return (CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1));
             }
-  
+
             return ((CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1)) +
-                    (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) * 
-                    std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3)))); 
+                    (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) *
+                    std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3))));
         }
     };
-    
-    class To_interval 
+
+    class To_interval
         : public Unary_function< Type, std::pair< double, double > >{
     public:
         std::pair<double,double> operator()(const Type& x) const {
 
             if(x.is_rational()) return CGAL_NTS to_interval(x.alpha());
 
-            const Interval_nt<true>   alpha_in 
+            const Interval_nt<true>   alpha_in
                 = CGAL_NTS to_interval(x.alpha());
-            const Interval_nt<true>   beta_in 
+            const Interval_nt<true>   beta_in
                 = CGAL_NTS to_interval(x.beta());
-            const Interval_nt<true>   gamma_in 
+            const Interval_nt<true>   gamma_in
                 = CGAL_NTS to_interval(x.gamma());
-            const Interval_nt<true>&  x_in = alpha_in + 
+            const Interval_nt<true>&  x_in = alpha_in +
                 (beta_in * CGAL_NTS sqrt(gamma_in));
             return x_in.pair();
-        }        
-    };   
+        }
+    };
 };
 
 template < typename RT > inline
@@ -729,258 +729,258 @@ bool operator<(const Root_of_2<RT> &a, const Root_of_2<RT> &b) {
 
 template < typename RT > inline
 bool operator<(const typename Root_of_traits< RT >::RootOf_1 &a,
-	  const Root_of_2<RT> &b) 
+	  const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT > inline
 bool operator<(const Root_of_2<RT> &a,
-	  const typename Root_of_traits< RT >::RootOf_1 &b) 
+	  const typename Root_of_traits< RT >::RootOf_1 &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT > inline
-bool operator<(const RT &a, const Root_of_2<RT> &b) 
+bool operator<(const RT &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT > inline
-bool operator<(const Root_of_2<RT> &a, const RT &b) 
+bool operator<(const Root_of_2<RT> &a, const RT &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT > inline
-bool operator<(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+bool operator<(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT > inline
-bool operator<(const Root_of_2<RT> &a, const CGAL_int(RT) &b) 
+bool operator<(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
 
 template < typename RT > inline
-bool operator>(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+bool operator>(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
 bool operator>(const typename Root_of_traits< RT >::RootOf_1 &a,
-	  const Root_of_2<RT> &b) 
+	  const Root_of_2<RT> &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
 bool operator>(const Root_of_2<RT> &a,
-	  const typename Root_of_traits< RT >::RootOf_1 &b) 
+	  const typename Root_of_traits< RT >::RootOf_1 &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
-bool operator>(const RT &a, const Root_of_2<RT> &b) 
+bool operator>(const RT &a, const Root_of_2<RT> &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
-bool operator>(const Root_of_2<RT> &a, const RT &b) 
+bool operator>(const Root_of_2<RT> &a, const RT &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
-bool operator>(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+bool operator>(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
-bool operator>(const Root_of_2<RT> &a, const CGAL_int(RT) &b) 
+bool operator>(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return b < a;
 }
 
 template < typename RT > inline
-bool operator>=(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+bool operator>=(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
 bool operator>=(const typename Root_of_traits< RT >::RootOf_1 &a,
-	   const Root_of_2<RT> &b) 
+	   const Root_of_2<RT> &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
 bool operator>=(const Root_of_2<RT> &a,
-	   const typename Root_of_traits< RT >::RootOf_1 &b) 
+	   const typename Root_of_traits< RT >::RootOf_1 &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
-bool operator>=(const RT &a, const Root_of_2<RT> &b) 
+bool operator>=(const RT &a, const Root_of_2<RT> &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
-bool operator>=(const Root_of_2<RT> &a, const RT &b) 
+bool operator>=(const Root_of_2<RT> &a, const RT &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
-bool operator>=(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+bool operator>=(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
-bool operator>=(const Root_of_2<RT> &a, const CGAL_int(RT) &b) 
+bool operator>=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return !(a < b);
 }
 
 template < typename RT > inline
-bool operator<=(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+bool operator<=(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
 bool operator<=(const typename Root_of_traits< RT >::RootOf_1 &a,
-	   const Root_of_2<RT> &b) 
+	   const Root_of_2<RT> &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
 bool operator<=(const Root_of_2<RT> &a,
-	   const typename Root_of_traits< RT >::RootOf_1 &b) 
+	   const typename Root_of_traits< RT >::RootOf_1 &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
-bool operator<=(const RT &a, const Root_of_2<RT> &b) 
+bool operator<=(const RT &a, const Root_of_2<RT> &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
-bool operator<=(const Root_of_2<RT> &a, const RT &b) 
+bool operator<=(const Root_of_2<RT> &a, const RT &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
-bool operator<=(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+bool operator<=(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
-bool operator<=(const Root_of_2<RT> &a, const CGAL_int(RT) &b) 
+bool operator<=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return !(a > b);
 }
 
 template < typename RT > inline
-bool operator==(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+bool operator==(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
 bool operator==(const typename Root_of_traits< RT >::RootOf_1 &a,
-	   const Root_of_2<RT> &b) 
+	   const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
 bool operator==(const Root_of_2<RT> &a,
-	   const typename Root_of_traits< RT >::RootOf_1 &b) 
+	   const typename Root_of_traits< RT >::RootOf_1 &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
-bool operator==(const RT &a, const Root_of_2<RT> &b) 
+bool operator==(const RT &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
-bool operator==(const Root_of_2<RT> &a, const RT &b) 
+bool operator==(const Root_of_2<RT> &a, const RT &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
-bool operator==(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+bool operator==(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
-bool operator==(const Root_of_2<RT> &a, const CGAL_int(RT) &b) 
+bool operator==(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
 
 template < typename RT > inline
-bool operator!=(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+bool operator!=(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return !(a == b);
 }
 
 template < typename RT > inline
 bool operator!=(const typename Root_of_traits< RT >::RootOf_1 &a,
-	   const Root_of_2<RT> &b) 
+	   const Root_of_2<RT> &b)
 {
   return !(a == b);
 }
 
 template < typename RT > inline
 bool operator!=(const Root_of_2<RT> &a,
-	   const typename Root_of_traits< RT >::RootOf_1 &b) 
+	   const typename Root_of_traits< RT >::RootOf_1 &b)
 {
   return !(a == b);
 }
 
 template < typename RT > inline
-bool operator!=(const RT &a, const Root_of_2<RT> &b) 
+bool operator!=(const RT &a, const Root_of_2<RT> &b)
 {
   return !(a == b);
 }
 
 template < typename RT > inline
-bool operator!=(const Root_of_2<RT> &a, const RT &b) 
+bool operator!=(const Root_of_2<RT> &a, const RT &b)
 {
   return !(a == b);
 }
 
 template < typename RT > inline
-bool operator!=(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+bool operator!=(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return !(a == b);
 }
 
 template < typename RT > inline
-bool operator!=(const Root_of_2<RT> &a, const CGAL_int(RT) &b) 
+bool operator!=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return !(a == b);
 }
@@ -988,24 +988,24 @@ bool operator!=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 // END OF COMPARISON OPERATORS
 
 template < typename RT >
-Root_of_2<RT> inverse(const Root_of_2<RT> &a) 
+Root_of_2<RT> inverse(const Root_of_2<RT> &a)
 {
   CGAL_assertion(is_valid(a));
   return a.inverse();
 }
 
 template < typename RT >
-Root_of_2<RT> make_sqrt(const RT& r) 
+Root_of_2<RT> make_sqrt(const RT& r)
 {
-  CGAL_assertion(r >= 0); 
+  CGAL_assertion(r >= 0);
   if(CGAL_NTS is_zero(r)) return Root_of_2<RT>();
   return Root_of_2<RT>(0,1,r);
 }
 
 template < typename RT >
-Root_of_2<RT> make_sqrt(const typename Root_of_traits< RT >::RootOf_1& r) 
+Root_of_2<RT> make_sqrt(const typename Root_of_traits< RT >::RootOf_1& r)
 {
-  CGAL_assertion(r >= 0); 
+  CGAL_assertion(r >= 0);
   if(CGAL_NTS is_zero(r)) return Root_of_2<RT>();
   return Root_of_2<RT>(0,1,r);
 }
@@ -1056,57 +1056,57 @@ operator-(const Root_of_2<RT> &a, const RT& b)
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator-(const Root_of_2<RT> &a, const CGAL_int(RT)& b) 
+Root_of_2<RT> operator-(const Root_of_2<RT> &a, const CGAL_int(RT)& b)
 {
   return (a-RT(b));
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator-(const RT &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator-(const RT &a, const Root_of_2<RT> &b)
 {
   return (-(b-a));
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator-(const CGAL_int(RT)& a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator-(const CGAL_int(RT)& a, const Root_of_2<RT> &b)
 {
   return (-(b-RT(a)));
 }
 
 template < typename RT > inline
 Root_of_2<RT> operator+(const Root_of_2<RT> &a,
-	  const typename Root_of_traits< RT >::RootOf_1& b) 
+	  const typename Root_of_traits< RT >::RootOf_1& b)
 {
   return a - typename Root_of_traits< RT >::RootOf_1(-b);
 }
 
 template < typename RT > inline
 Root_of_2<RT> operator+(const typename Root_of_traits< RT >::RootOf_1 &a,
-	  const Root_of_2<RT> &b) 
+	  const Root_of_2<RT> &b)
 {
   return b - typename Root_of_traits< RT >::RootOf_1(-a);
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator+(const Root_of_2<RT> &a, const RT& b) 
+Root_of_2<RT> operator+(const Root_of_2<RT> &a, const RT& b)
 {
   return a - RT(-b);
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator+(const Root_of_2<RT> &a, const CGAL_int(RT)& b) 
+Root_of_2<RT> operator+(const Root_of_2<RT> &a, const CGAL_int(RT)& b)
 {
   return a - RT(-b);
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator+(const RT &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator+(const RT &a, const Root_of_2<RT> &b)
 {
   return b - RT(-a);
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator+(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator+(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return b - RT(-a);
 }
@@ -1164,19 +1164,19 @@ operator*(const Root_of_2<RT> &a, const RT& b)
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator*(const Root_of_2<RT> &a, const CGAL_int(RT)& b) 
+Root_of_2<RT> operator*(const Root_of_2<RT> &a, const CGAL_int(RT)& b)
 {
   return a * RT(b);
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator*(const RT &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator*(const RT &a, const Root_of_2<RT> &b)
 {
   return b * a;
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator*(const CGAL_int(RT) &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator*(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return b * RT(a);
 }
@@ -1192,7 +1192,7 @@ operator/(const Root_of_2<RT> &a, const RT& b)
 
   if(a.is_rational()) {
     return Root_of_2<RT>(a.alpha() / b);
-  } 
+  }
 
   return Root_of_2<RT>(a.alpha()/b,
                        a.beta()/b,
@@ -1200,19 +1200,19 @@ operator/(const Root_of_2<RT> &a, const RT& b)
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator/(const Root_of_2<RT> &a, const CGAL_int(RT)& b) 
+Root_of_2<RT> operator/(const Root_of_2<RT> &a, const CGAL_int(RT)& b)
 {
   return a / RT(b);
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator/(const RT& a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator/(const RT& a, const Root_of_2<RT> &b)
 {
   return b.inverse() * a;
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator/(const CGAL_int(RT)& a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator/(const CGAL_int(RT)& a, const Root_of_2<RT> &b)
 {
   return b.inverse() * RT(a);
 }
@@ -1229,7 +1229,7 @@ operator/(const Root_of_2<RT> &a,
 
   if(a.is_rational()) {
     return Root_of_2<RT>(a.alpha() / b);
-  } 
+  }
 
   return Root_of_2<RT>(a.alpha()/b,
                        a.beta()/b,
@@ -1237,8 +1237,8 @@ operator/(const Root_of_2<RT> &a,
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator/(const typename Root_of_traits< RT >::RootOf_1& a, 
-          const Root_of_2<RT> &b) 
+Root_of_2<RT> operator/(const typename Root_of_traits< RT >::RootOf_1& a,
+          const Root_of_2<RT> &b)
 {
   return b.inverse() * a;
 }
@@ -1255,7 +1255,7 @@ operator-(const Root_of_2<RT> &a,
 
   if(a.is_rational() && b.is_rational()) {
     return Root_of_2<RT>(a.alpha() - b.alpha());
-  } 
+  }
   if(a.is_rational()) return a.alpha() - b;
   if(b.is_rational()) return a - b.alpha();
 
@@ -1269,7 +1269,7 @@ operator-(const Root_of_2<RT> &a,
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator+(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator+(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return b - (-a);
 }
@@ -1304,7 +1304,7 @@ operator*(const Root_of_2<RT> &a,
 }
 
 template < typename RT > inline
-Root_of_2<RT> operator/(const Root_of_2<RT> &a, const Root_of_2<RT> &b) 
+Root_of_2<RT> operator/(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   return b.inverse() * a;
 }
@@ -1326,10 +1326,10 @@ to_double(const Root_of_2<RT> &x)
   if (x.is_rational()) {
     return (CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1));
   }
-  
+
   return ((CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1)) +
-          (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) * 
-          std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3)))); 
+          (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) *
+          std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3))));
 }
 
 template < typename RT >
@@ -1338,10 +1338,10 @@ operator<<(std::ostream &os, const Root_of_2<RT> &r)
 {
   if(r.is_rational()) {
     return os << r.is_rational() << r.alpha();
-  } else { 
+  } else {
     return os << r.is_rational() << r.alpha() << " "
 	      << r.beta() << " "
-	      << r.gamma(); 
+	      << r.gamma();
   }
 }
 
@@ -1359,7 +1359,7 @@ operator>>(std::istream &is, Root_of_2<RT> &r)
     return is;
   }
   is >> a >> b >> c;
-  if(is) r = Root_of_2<RT>(a,b,c);  
+  if(is) r = Root_of_2<RT>(a,b,c);
   return is;
 }
 
@@ -1371,7 +1371,7 @@ print(std::ostream &os, const Root_of_2<RT> &r)
   if(r.is_rational()) {
     os << "(" << r.alpha() << ")";
   } else {
-    os << "(" << r.alpha() << " + " << r.beta() << 
+    os << "(" << r.alpha() << " + " << r.beta() <<
           "*sqrt(" << r.gamma() << ")"<< ")";
   }
 }

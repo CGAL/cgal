@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
- 
+
 #ifndef CGAL_CORE_EXPR_H
 #define CGAL_CORE_EXPR_H
 
@@ -33,48 +33,48 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> class Algebraic_structure_traits< CORE::Expr >
-  : public Algebraic_structure_traits_base< CORE::Expr, 
+  : public Algebraic_structure_traits_base< CORE::Expr,
                                             Field_with_root_of_tag >  {
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_true            Is_numerical_sensitive;
-    
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CORE::sqrt( x );
         }
     };
-    
-    class Kth_root 
+
+    class Kth_root
       : public Binary_function<int, Type, Type> {
       public:
-        Type operator()( int k, 
+        Type operator()( int k,
                                         const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
           // CORE::radical isn't implemented for negative values of x, so we
           //  have to handle this case separately
           if( x < 0 && k%2 != 0)
             return -CORE::radical( -x, k );
-  
+
           return CORE::radical( x, k );
         }
     };
-    
+
     class Root_of {
       public:
 //        typedef CORE::BigRat Boundary;
         typedef Type   result_type;
 
         typedef Arity_tag< 3 >         Arity;
-        
+
       public:
-        // constructs the kth roots of the polynomial 
-        // given by the iterator range, starting from 0. 
+        // constructs the kth roots of the polynomial
+        // given by the iterator range, starting from 0.
         template< class ForwardIterator >
-        Type operator()( int k, 
-                                        ForwardIterator begin, 
+        Type operator()( int k,
+                                        ForwardIterator begin,
                                         ForwardIterator end) const {
             std::vector<Type> coeffs;
             for(ForwardIterator it = begin; it != end; it++){
@@ -83,14 +83,14 @@ template <> class Algebraic_structure_traits< CORE::Expr >
             CORE::Polynomial<Type> polynomial(coeffs);
             return Type(polynomial,k);
         }
-        
-// TODO: Need to be fixed: polynomial<CORE::Expr>.eval() cannot return 
+
+// TODO: Need to be fixed: polynomial<CORE::Expr>.eval() cannot return
 //       CORE::BigFloat, so this does not compile.
 
 /*        template <class ForwardIterator>
         Type operator()( CORE::BigRat lower,
                                         CORE::BigRat upper,
-                                        ForwardIterator begin, 
+                                        ForwardIterator begin,
                                         ForwardIterator end) const {
             std::vector<Type> coeffs;
             for(ForwardIterator it = begin; it != end; it++){
@@ -99,77 +99,77 @@ template <> class Algebraic_structure_traits< CORE::Expr >
             CORE::Polynomial<Type> polynomial(coeffs);
             CORE::BigFloat lower_bf, upper_bf;
             CORE::BigFloat eval_at_lower(0), eval_at_upper(0);
-            
+
             CORE::extLong r(16),a(16);
-            while((eval_at_lower.isZeroIn() || 
+            while((eval_at_lower.isZeroIn() ||
                    eval_at_upper.isZeroIn())){
                 //std::cout << "while"<<std::endl;
-                r*=2; 
+                r*=2;
                 a*=2;
                 lower_bf.approx(lower,r,a);
                 upper_bf.approx(upper,r,a);
                 // The most expensive precond I've ever seen :)),
-                // since the coefficients of the polynomial are CORE::Expr 
+                // since the coefficients of the polynomial are CORE::Expr
                 // TODO: be sure that lower_bf, upper_bf contain exactly one root
                 //NiX_expensive_precond(
                 //     CORE::Sturm(polynomial).numberOfRoots(lower_bf,upper_bf)==1);
                 eval_at_lower = polynomial.eval(lower_bf);
                 eval_at_upper = polynomial.eval(upper_bf);
-            }  
+            }
             CORE::BFInterval interval(lower_bf,upper_bf);
-   
+
             return Type(polynomial,interval);
         };  */
     };
-    
+
 };
 
-template <> class Real_embeddable_traits< CORE::Expr > 
+template <> class Real_embeddable_traits< CORE::Expr >
   : public Real_embeddable_traits_base< CORE::Expr > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CORE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return (Comparison_result) CORE::cmp( x, y );
         }
-        
+
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                                                       Comparison_result )
-        
+
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
-          // approximation 
+          // approximation
           x.approx( 53, 1 );
           return x.doubleValue();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -179,7 +179,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
             CGAL_expensive_assertion(result.first <= x);
             CGAL_expensive_assertion(result.second >= x);
             return result;
-        }          
+        }
     };
 };
 

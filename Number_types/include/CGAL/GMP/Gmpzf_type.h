@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
@@ -37,7 +37,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//internal fwd 
+//internal fwd
 class Gmpzf;
 bool operator<(const Gmpzf &a, const Gmpzf &b);
 bool operator==(const Gmpzf &a, const Gmpzf &b);
@@ -75,7 +75,7 @@ class Gmpzf :
   , boost::ordered_euclidian_ring_operators2< Gmpzf, int
     > >
 {
-  typedef Handle_for<Gmpzf_rep> Base; 
+  typedef Handle_for<Gmpzf_rep> Base;
 
 public:
 
@@ -89,14 +89,14 @@ public:
 private:
   // data members (mantissa is from Gmpzf_rep)
   // ----------------------------------------
-  // Invariant: 
+  // Invariant:
   // - number is in canonical form, i.e.(m,e) == 0 or m is odd
-  Exponent  e; 
+  Exponent  e;
 
 public:
   // access
   // ------
-  const mpz_t& man() const 
+  const mpz_t& man() const
   {
     return Ptr()->mpZ;
   }
@@ -110,7 +110,7 @@ public:
   {
     return e;
   }
- 
+
   // construction
   // ------------
 
@@ -124,35 +124,35 @@ public:
 
   Gmpzf(const mpz_t z)
     : e(0)
-  { 
-    mpz_init_set(man(), z); 
+  {
+    mpz_init_set(man(), z);
     canonicalize();
-  }  
+  }
 
 
   Gmpzf(const Gmpz& n )
     : e(0)
-  { 
-    mpz_init_set(man(), n.mpz()); 
+  {
+    mpz_init_set(man(), n.mpz());
     canonicalize();
   }
 
 
   Gmpzf( int i)
     : e(0)
-  {   
-    mpz_init_set_si( man(), i);  
+  {
+    mpz_init_set_si( man(), i);
     canonicalize();
   }
 
   Gmpzf( long l)
     : e(0)
-  {   
+  {
     mpz_init_set_si( man(), l);
     canonicalize();
   }
 
-  Gmpzf( double d)    
+  Gmpzf( double d)
   {
     Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
     if (d == 0) {
@@ -164,16 +164,16 @@ public:
     CGAL_assertion(CGAL_NTS is_finite(d) && is_valid(d));
     int exp;
     double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
-    mpz_init_set_d (man(), // to the following integer:   
-		    std::ldexp( x, p)); 
+    mpz_init_set_d (man(), // to the following integer:
+		    std::ldexp( x, p));
     e = exp - p;
     canonicalize();
   }
 
-  // arithmetics 
+  // arithmetics
   // -----------
-  Gmpzf operator+() const; 
-  Gmpzf operator-() const; 
+  Gmpzf operator+() const;
+  Gmpzf operator-() const;
   Gmpzf& operator+=( const Gmpzf& b);
   Gmpzf& operator+=( int i);
   Gmpzf& operator-=( const Gmpzf& b);
@@ -183,7 +183,7 @@ public:
   Gmpzf& operator/= (const Gmpzf& b);
   Gmpzf& operator%= (const Gmpzf& b);
   Gmpzf& operator/= (int i);
-  Gmpzf& operator%= (int i); 
+  Gmpzf& operator%= (int i);
   bool is_zero() const;
   Sign sign() const;
   Gmpzf integral_division(const Gmpzf& b) const;
@@ -196,28 +196,28 @@ public:
 private:
   void canonicalize();
   bool is_canonical() const;
-  static void align ( const mpz_t*& a_aligned, const mpz_t*& b_aligned, 
-		     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);  
+  static void align ( const mpz_t*& a_aligned, const mpz_t*& b_aligned,
+		     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);
 };
 
 
 
-    
+
 
 // implementation
 // ==============
 
-// arithmetics 
+// arithmetics
 // -----------
 
 inline
-Gmpzf Gmpzf::operator+() const 
+Gmpzf Gmpzf::operator+() const
 {
     return *this;
 }
 
 inline
-Gmpzf Gmpzf::operator-() const 
+Gmpzf Gmpzf::operator-() const
 {
   Gmpzf result;
   mpz_neg (result.man(), man());
@@ -228,7 +228,7 @@ Gmpzf Gmpzf::operator-() const
 
 inline
 Gmpzf& Gmpzf::operator+=( const Gmpzf& b)
-{  
+{
   Gmpzf result;
   if (b.is_zero()) return *this; // important in sparse contexts
   const mpz_t *a_aligned, *b_aligned;
@@ -247,7 +247,7 @@ Gmpzf& Gmpzf::operator+=( int i)
 
 inline
 Gmpzf& Gmpzf::operator-=( const Gmpzf& b)
-{    
+{
   Gmpzf result;
   if (b.is_zero()) return *this; // important in sparse contexts
   const mpz_t *a_aligned, *b_aligned;
@@ -255,7 +255,7 @@ Gmpzf& Gmpzf::operator-=( const Gmpzf& b)
   mpz_sub(result.man(), *a_aligned, *b_aligned);
   swap(result);
   canonicalize();
-  return(*this);   
+  return(*this);
 }
 
 inline
@@ -266,28 +266,28 @@ Gmpzf& Gmpzf::operator-=( int i)
 
 inline
 Gmpzf& Gmpzf::operator*=( const Gmpzf& b)
-{ 
+{
   Gmpzf result;
   mpz_mul(result.man(), man(), b.man());
   e += b.exp();
   swap (result);
   canonicalize();
-  return *this; 
-}  
+  return *this;
+}
 
 inline
 Gmpzf& Gmpzf::operator*=( int i)
 {
   Gmpzf result;
-  mpz_mul_si(result.man(), man(), i);   
+  mpz_mul_si(result.man(), man(), i);
   swap (result);
   canonicalize();
-  return *this; 
+  return *this;
 }
 
 // *this = m1 * 2 ^ e1 = a_aligned * 2 ^ rexp
 //     b = m2 * 2 ^ e2 = b_aligned * 2 ^ rexp,   where rexp = min (e1, e2)
-// 
+//
 // => a / b = a div b = (a_aligned div b_aligned)
 //            a mod b = (a_aligned mod b_aligned) * 2 ^ rexp
 inline
@@ -298,10 +298,10 @@ Gmpzf& Gmpzf::operator/= (const Gmpzf& b)
   const mpz_t *a_aligned, *b_aligned;
   align (a_aligned, b_aligned, e, *this, b);
   mpz_tdiv_q (result.man(), *a_aligned, *b_aligned); // round towards zero
-  e = 0; 
+  e = 0;
   swap(result);
   canonicalize();
-  return(*this);   
+  return(*this);
 }
 
 inline
@@ -314,7 +314,7 @@ Gmpzf& Gmpzf::operator%= (const Gmpzf& b)
   mpz_tdiv_r (result.man(), *a_aligned, *b_aligned);
   swap(result);
   canonicalize();
-  return(*this);   
+  return(*this);
 }
 
 inline
@@ -324,7 +324,7 @@ Gmpzf& Gmpzf::operator/= (int i)
 }
 
 inline
-Gmpzf& Gmpzf::operator%= (int i) 
+Gmpzf& Gmpzf::operator%= (int i)
 {
   return operator%= (Gmpzf(i));
 }
@@ -336,7 +336,7 @@ bool Gmpzf::is_zero() const
 }
 
 inline
-Sign Gmpzf::sign() const 
+Sign Gmpzf::sign() const
 {
   return static_cast<Sign>(mpz_sgn( man()));
 }
@@ -346,7 +346,7 @@ Gmpzf Gmpzf::integral_division(const Gmpzf& b) const
 {
   Gmpzf result;
   mpz_divexact(result.man(), man(), b.man());
-  result.e = exp()-b.exp(); 
+  result.e = exp()-b.exp();
   result.canonicalize();
   CGAL_postcondition (*this == b * result);
   return result;
@@ -358,26 +358,26 @@ Gmpzf Gmpzf::gcd (const Gmpzf& b) const
   Gmpzf result;
   mpz_gcd (result.man(), man(), b.man()); // exponent is 0
   result.canonicalize();
-  return result;  
+  return result;
 }
 
 inline
 Gmpzf Gmpzf::sqrt() const
 {
   // is there a well-defined sqrt at all?? Here we do the
-  // following: write *this as m * 2 ^ e with e even, and 
+  // following: write *this as m * 2 ^ e with e even, and
   // then return sqrt(m) * 2 ^ (e/2)
   Gmpzf result;
   // make exponent even
   if (exp() % 2 == 0) {
     mpz_set (result.man(), man());
   } else {
-    mpz_mul_2exp (result.man(), man(), 1); 
+    mpz_mul_2exp (result.man(), man(), 1);
   }
   mpz_sqrt(result.man(), result.man());
   result.e = exp() / 2;
   result.canonicalize();
-  return result;  
+  return result;
 }
 
 inline
@@ -410,7 +410,7 @@ std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
   // l = +/- 0.1*...*
   //           ------
   //           53 digits
-  // in order to round away from zero, it suffices to add/subtract 2^-53 
+  // in order to round away from zero, it suffices to add/subtract 2^-53
   double u = l;
   if (l < 0)
     // u is already the upper bound, decrease l to get lower bound
@@ -425,7 +425,7 @@ std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
     (std::pair<double, double>(l, u), k + exp());
 }
 
-inline 
+inline
 std::pair<double, double> Gmpzf::to_interval() const
 {
   std::pair<std::pair<double, double>, long> lue = to_interval_exp();
@@ -435,7 +435,7 @@ std::pair<double, double> Gmpzf::to_interval() const
   return std::pair<double,double> (std::ldexp (l, k), std::ldexp (u, k));
 }
 
-inline  
+inline
 void Gmpzf::canonicalize()
 {
   if (!is_zero()) {
@@ -458,24 +458,24 @@ bool Gmpzf::is_canonical() const
 // align a and b such that they have the same exponent:
 // a = m1 * 2 ^ e1 -> a_aligned * 2 ^ rexp,
 // b = m2 * 2 ^ e2 -> b_aligned * 2 ^ rexp,   where rexp = min (e1, e2)
-// 
+//
 // function sets (pointers to) a_aligned and b_aligned and rexp;
 // it uses the static s to store the shifted number
 inline
-void Gmpzf::align ( const mpz_t*& a_aligned, 
-			   const mpz_t*& b_aligned, 
-			   Exponent& rexp, 
+void Gmpzf::align ( const mpz_t*& a_aligned,
+			   const mpz_t*& b_aligned,
+			   Exponent& rexp,
 			   const Gmpzf& a, const Gmpzf& b) {
   static Gmpz s;
   switch (CGAL_NTS compare (b.exp(), a.exp())) {
   case SMALLER:
     {
       // leftshift of a to reach b.exp()
-      mpz_mul_2exp (s.mpz(), a.man(), a.exp() - b.exp()); 
+      mpz_mul_2exp (s.mpz(), a.man(), a.exp() - b.exp());
       const mpz_t& smpzref = s.mpz();  // leftshifted a
-      a_aligned = &smpzref;  // leftshifted a 
+      a_aligned = &smpzref;  // leftshifted a
       const mpz_t& bmanref = b.man();
-      b_aligned = &bmanref;  // b 
+      b_aligned = &bmanref;  // b
       rexp = b.exp();
       break;
     }
@@ -486,7 +486,7 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
       const mpz_t& amanref = a.man();
       a_aligned = &amanref; // a
       const mpz_t& smpzref = s.mpz();  // leftshifted b
-      b_aligned = &smpzref; // leftshifted b 
+      b_aligned = &smpzref; // leftshifted b
       rexp = a.exp();
       break;
     }
@@ -495,7 +495,7 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
       const mpz_t& amanref = a.man();
       a_aligned = &amanref;
       const mpz_t& bmanref = b.man();
-      b_aligned = &bmanref; 
+      b_aligned = &bmanref;
       rexp = a.exp();
     }
   }
@@ -504,24 +504,24 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
 // input/output
 // ------------
 inline
-std::ostream& operator<< (std::ostream& os, const Gmpzf& a) 
+std::ostream& operator<< (std::ostream& os, const Gmpzf& a)
 {
     return os << a.to_double();
 }
 
 inline
-std::ostream& print (std::ostream& os, const Gmpzf& a) 
+std::ostream& print (std::ostream& os, const Gmpzf& a)
 {
   return os << a.man() << "*2^" << a.exp();
 }
 
 inline
-std::istream&  operator>> ( std::istream& is, Gmpzf& a) 
+std::istream&  operator>> ( std::istream& is, Gmpzf& a)
 {
   // simply read from double
   double d;
   is >> d;
-  if (is.good()) 
+  if (is.good())
     a = Gmpzf(d);
   return is;
 }
@@ -531,13 +531,13 @@ std::istream&  operator>> ( std::istream& is, Gmpzf& a)
 
 inline
 bool operator<(const Gmpzf &a, const Gmpzf &b)
-{ 
+{
   return a.compare(b) == SMALLER;
 }
 
 inline
 bool operator==(const Gmpzf &a, const Gmpzf &b)
-{ 
+{
   return ( (mpz_cmp(a.man(), b.man()) == 0) && a.exp() == b.exp() );
 }
 

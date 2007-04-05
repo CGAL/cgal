@@ -18,7 +18,7 @@
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
-//                 Sylvain Pion 
+//                 Sylvain Pion
 
 #ifndef CGAL_GMPZ_H
 #define CGAL_GMPZ_H
@@ -27,7 +27,7 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4800) // complaint about performance in std::map where we can't do anything
-#endif    
+#endif
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
@@ -47,7 +47,7 @@
 CGAL_BEGIN_NAMESPACE
 
 class Gmpq;
-  
+
 template<>
 struct Root_of_traits<Gmpz>: public CGALi::Root_of_traits_helper<Gmpz,
     Euclidean_ring_tag>{
@@ -58,15 +58,15 @@ struct Root_of_traits<Gmpz>: public CGALi::Root_of_traits_helper<Gmpz,
 
 // Algebraic structure traits
 template <> class Algebraic_structure_traits< Gmpz >
-    : public Algebraic_structure_traits_base< Gmpz, 
+    : public Algebraic_structure_traits_base< Gmpz,
                                             Euclidean_ring_tag >  {
 public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-                
+
     typedef INTERN_AST::Is_square_per_sqrt< Type >
     Is_square;
-    class Integral_division 
+    class Integral_division
         : public Binary_function< Type, Type,
                                 Type > {
     public:
@@ -75,22 +75,22 @@ public:
             Gmpz result;
             mpz_divexact(result.mpz(), x.mpz(), y.mpz());
             CGAL_postcondition_msg(result * y == x, "exact_division failed\n");
-            return result;          
+            return result;
         }
     };
-                                                                 
-    class Gcd 
-        : public Binary_function< Type, Type, 
+
+    class Gcd
+        : public Binary_function< Type, Type,
                                 Type > {
     public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                 const Type& y ) const {
             Gmpz result;
             mpz_gcd(result.mpz(), x.mpz(), y.mpz());
             return result;
 
         }
-        
+
         Type operator()( const Type& x,
                                         const int& y ) const {
           if (y > 0)
@@ -99,19 +99,19 @@ public:
               mpz_gcd_ui(Res.mpz(), x.mpz(), y);
               return Res;
           }
-          return CGAL_NTS gcd(x, Gmpz(y));                                          
+          return CGAL_NTS gcd(x, Gmpz(y));
         }
-        
+
         Type operator()( const int& x,
                                         const Type& y ) const {
           return CGAL_NTS gcd(Gmpz(x), y );
         }
     };
-    
+
     typedef INTERN_AST::Div_per_operator< Type > Div;
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
-    
-    class Sqrt 
+
+    class Sqrt
         : public Unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
@@ -119,30 +119,30 @@ public:
             mpz_sqrt(result.mpz(), x.mpz());
             return result;
         }
-    };        
+    };
 };
 
-template <> class Real_embeddable_traits< Gmpz > 
+template <> class Real_embeddable_traits< Gmpz >
     : public Real_embeddable_traits_base< Gmpz > {
 public:
-          
-    class Sign 
+
+    class Sign
         : public Unary_function< Type, ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
-        }        
+        }
     };
-        
-    class To_double 
+
+    class To_double
         : public Unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return x.to_double();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
         : public Unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -164,7 +164,7 @@ template<> class Algebraic_structure_traits< Quotient<Gmpz> >
     // specialization of to double functor
 public:
     typedef Quotient<Gmpz> Type;
-    
+
     struct To_double: public Unary_function<Quotient<Gmpz>, double>{
         double operator()(const Quotient<Gmpz>& quot){
             mpq_t  mpQ;
@@ -173,9 +173,9 @@ public:
             const Gmpz& d = quot.denominator();
             mpz_set(mpq_numref(mpQ), n.mpz());
             mpz_set(mpq_denref(mpQ), d.mpz());
-            
+
             mpq_canonicalize(mpQ);
-            
+
             double ret = mpq_get_d(mpQ);
             mpq_clear(mpQ);
             return ret;
@@ -186,11 +186,11 @@ public:
 //
 // Needs_parens_as_product
 //
-template <> 
+template <>
 struct Needs_parens_as_product<Gmpz> {
   bool operator()(const Gmpz& x) {
     return CGAL_NTS is_negative(x);
-  } 
+  }
 };
 
 CGAL_END_NAMESPACE

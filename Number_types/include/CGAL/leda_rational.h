@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Michael Hemmer
 
@@ -47,66 +47,66 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> class Algebraic_structure_traits< leda_rational >
-  : public Algebraic_structure_traits_base< leda_rational, 
+  : public Algebraic_structure_traits_base< leda_rational,
                                             Field_tag >  {
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-                
+
 //    TODO: How to implement this without having sqrt?
 //    typedef INTERN_AST::Is_square_per_sqrt< Type >
 //                                                                 Is_square;
 
-    class Simplify 
+    class Simplify
       : public Unary_function< Type&, void > {
-      public:        
+      public:
         void operator()( Type& x) const {
             x.normalize();
         }
     };
-                                                                 
+
 };
 
-template <> class Real_embeddable_traits< leda_rational > 
+template <> class Real_embeddable_traits< leda_rational >
   : public Real_embeddable_traits_base< leda_rational > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                       const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result)
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -116,31 +116,31 @@ template <> class Real_embeddable_traits< leda_rational >
           std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
           CGAL_postcondition(Type(result.first)<=x);
           CGAL_postcondition(Type(result.second)>=x);
-          return result; 
-#else 
+          return result;
+#else
           CGAL_LEDA_SCOPE::bigfloat xnum = x.numerator();
           CGAL_LEDA_SCOPE::bigfloat xden = x.denominator();
-          CGAL_LEDA_SCOPE::bigfloat xupp = 
+          CGAL_LEDA_SCOPE::bigfloat xupp =
                                     div(xnum,xden,53,CGAL_LEDA_SCOPE::TO_P_INF);
-          CGAL_LEDA_SCOPE::bigfloat xlow = 
+          CGAL_LEDA_SCOPE::bigfloat xlow =
                                     div(xnum,xden,53,CGAL_LEDA_SCOPE::TO_N_INF);
-    
+
           // really smallest positive double
-          double MinDbl = CGAL_LEDA_SCOPE::fp::compose_parts(0,0,0,1); 
-   
+          double MinDbl = CGAL_LEDA_SCOPE::fp::compose_parts(0,0,0,1);
+
           double low = xlow.to_double();
           while(Type(low) > x) low = low - MinDbl;
-       
+
           double upp = xupp.to_double();
           while(Type(upp) < x) upp = upp + MinDbl;
-         
+
           std::pair<double, double> result(low,upp);
           CGAL_postcondition(Type(result.first)<=x);
           CGAL_postcondition(Type(result.second)>=x);
-          return result; 
+          return result;
 #endif
           // Original CGAL to_interval (seemed to be inferior)
-          //  // There's no guarantee about the error of to_double(), so I add 
+          //  // There's no guarantee about the error of to_double(), so I add
           //  //  3 ulps...
           //  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
           //  Interval_nt_advanced approx (z.to_double());
@@ -150,7 +150,7 @@ template <> class Real_embeddable_traits< leda_rational >
           //  approx += Interval_nt<false>::smallest();
           //  approx += Interval_nt<false>::smallest();
           //  return approx.pair();
-        
+
         }
     };
 };
@@ -181,14 +181,14 @@ public:
             den = rat.denominator();
         }
     };
-    
+
     class Compose {
     public:
         typedef Numerator_type first_argument_type;
         typedef Numerator_type second_argument_type;
         typedef Type result_type;
         Type operator ()(
-                const Numerator_type& num , 
+                const Numerator_type& num ,
                 const Numerator_type& den ) {
             Type result(num, den);
             result.normalize();
@@ -211,14 +211,14 @@ public:
                 return out <<t.numerator();
             else
                 return out << t.numerator()
-                           << "/" 
+                           << "/"
                            << t.denominator();
             break;
         }
-            
+
         default:
             return out << t.numerator()
-                       << "/" 
+                       << "/"
                        << t.denominator();
         }
     }
@@ -227,7 +227,7 @@ public:
 template <>
 struct Needs_parens_as_product< leda_rational >{
     bool operator()( leda_rational t){
-        if (t.denominator() != 1 ) 
+        if (t.denominator() != 1 )
             return true;
         else
             return needs_parens_as_product(t.numerator()) ;
@@ -238,10 +238,10 @@ template <>
 class Output_rep< leda_rational, Parens_as_product_tag > {
     const leda_rational& t;
 public:
-    // Constructor 
+    // Constructor
     Output_rep( const leda_rational& tt) : t(tt) {}
-    // operator 
-    std::ostream& operator()( std::ostream& out) const { 
+    // operator
+    std::ostream& operator()( std::ostream& out) const {
         Needs_parens_as_product< leda_rational > needs_parens_as_product;
         if (needs_parens_as_product(t))
             return out <<"("<< oformat(t) <<")";

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -80,7 +80,7 @@ MP_Float div(const MP_Float& n1, const MP_Float& n2);
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
 }
 
-std::pair<double, int> 
+std::pair<double, int>
 to_double_exp(const MP_Float &b);
 
 // Returns (first * 2^second), an interval surrounding b.
@@ -383,7 +383,7 @@ approximate_division(const MP_Float &n, const MP_Float &d);
 
 // Algebraic structure traits
 template <> class Algebraic_structure_traits< MP_Float >
-  : public Algebraic_structure_traits_base< MP_Float, 
+  : public Algebraic_structure_traits_base< MP_Float,
                                             Unique_factorization_domain_tag
 	    // with some work on mod/div it could be Euclidean_ring_tag
                                           >  {
@@ -391,7 +391,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 
     typedef Tag_true            Is_exact;
     typedef Tag_true            Is_numerical_sensitive;
-                                    
+
     struct Unit_part
       : public Unary_function< Type , Type >
     {
@@ -401,11 +401,11 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     struct Integral_division
-        : public Binary_function< Type, 
+        : public Binary_function< Type,
                                  Type,
                                  Type > {
     public:
-        Type operator()( 
+        Type operator()(
                 const Type& x,
                 const Type& y ) const {
             std::pair<MP_Float, MP_Float> res = CGALi::division(x, y);
@@ -413,10 +413,10 @@ template <> class Algebraic_structure_traits< MP_Float >
                     "exact_division() called with operands which do not divide");
             return res.first;
         }
-    };                                                         
+    };
 
 
-    class Square 
+    class Square
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
@@ -433,7 +433,7 @@ template <> class Algebraic_structure_traits< MP_Float >
           return INTERN_MP_FLOAT::gcd( x, y );
         }
     };
-    
+
     class Div
       : public Binary_function< Type, Type,
                                 Type > {
@@ -443,44 +443,44 @@ template <> class Algebraic_structure_traits< MP_Float >
           return INTERN_MP_FLOAT::div( x, y );
         }
     };
-    
+
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
 };
 
 
 
 // Real embeddable traits
-template <> class Real_embeddable_traits< MP_Float > 
+template <> class Real_embeddable_traits< MP_Float >
   : public Real_embeddable_traits_base< MP_Float > {
   public:
-      
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return INTERN_MP_FLOAT::compare( x, y );
         }
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_double( x );
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -655,7 +655,7 @@ namespace INTERN_MP_FLOAT {
   {
     return CGALi::division(n1, n2).first;
   }
-  
+
   inline
   MP_Float
   gcd( const MP_Float& a, const MP_Float& b)
@@ -686,7 +686,7 @@ namespace INTERN_MP_FLOAT {
   }
 
 } // INTERN_MP_FLOAT
-  
+
 
 inline
 void
@@ -697,7 +697,7 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
   // This better version causes problems as the I/O is changed for
   // Quotient<MP_Float>, which then does not appear as rational 123/345,
   // 1.23/3.45, this causes problems in the T2 test-suite (to be investigated).
-  numerator.exp -= denominator.exp 
+  numerator.exp -= denominator.exp
                     + (MP_Float::exponent_type) denominator.v.size();
   denominator.exp = - (MP_Float::exponent_type) denominator.v.size();
 #elif 1
@@ -724,25 +724,25 @@ inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/)
   	simplify_quotient(a,c); return;
   } else if(is_zero(c)) {
   	simplify_quotient(a,b); return;
-  }  	
-  MP_Float::exponent_type va = a.exp + 
-    (MP_Float::exponent_type) a.v.size();	
-  MP_Float::exponent_type vb = b.exp + 
+  }
+  MP_Float::exponent_type va = a.exp +
+    (MP_Float::exponent_type) a.v.size();
+  MP_Float::exponent_type vb = b.exp +
     (MP_Float::exponent_type) b.v.size();
-  MP_Float::exponent_type vc = c.exp + 
+  MP_Float::exponent_type vc = c.exp +
     (MP_Float::exponent_type) c.v.size();
-  MP_Float::exponent_type min = (std::min)((std::min)(va,vb),vc);	
+  MP_Float::exponent_type min = (std::min)((std::min)(va,vb),vc);
   MP_Float::exponent_type max = (std::max)((std::max)(va,vb),vc);
   MP_Float::exponent_type med = (min+max)/2.0;
   a.exp -= med;
   b.exp -= med;
-  c.exp -= med;  
-#endif    	
+  c.exp -= med;
+#endif
 }
 
 namespace CGALi {
   inline void simplify_3_exp(int &a, int &b, int &c) {
-    int min = (std::min)((std::min)(a,b),c);	
+    int min = (std::min)((std::min)(a,b),c);
     int max = (std::max)((std::max)(a,b),c);
     int med = (min+max)/2;
     a -= med;
@@ -753,9 +753,9 @@ namespace CGALi {
 
 
 // specialization of to double functor
-template<> 
+template<>
 class Real_embeddable_traits< Quotient<MP_Float> >
-    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< 
+    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<
 Quotient<MP_Float> >{
 public:
     struct To_double: public Unary_function<Quotient<MP_Float>, double>{
@@ -775,7 +775,7 @@ public:
 
 // TODO:
 // // specialization of to double functor
-// template<> 
+// template<>
 // class Real_embeddable_traits< Root_of_2<MP_Float> >
 //     : public INTERN_ROOT_OF_2::Real_embeddable_traits_quotient_root_of_2_base<
 // Root_of_2<MP_Float> >{
@@ -795,7 +795,7 @@ public:
 //     };
 // };
 
-// Coercion_traits 
+// Coercion_traits
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(MP_Float);
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float);
 

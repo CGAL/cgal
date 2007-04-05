@@ -14,10 +14,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_CONSTANT_H
 #define CGAL_CONSTANT_H
 

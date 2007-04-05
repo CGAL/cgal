@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -33,7 +33,7 @@
 // a little bit complicated in order to make square(x+y) work for example.
 // Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
 // while ::__gmp_expr<T, U> is the others "expressions".
- 
+
 #ifndef CGAL_GMPXX_H
 #define CGAL_GMPXX_H
 
@@ -50,12 +50,12 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template < typename T, typename U > 
-class Algebraic_structure_traits< ::__gmp_expr<T,U> > 
+template < typename T, typename U >
+class Algebraic_structure_traits< ::__gmp_expr<T,U> >
     : public Algebraic_structure_traits< ::__gmp_expr<T,T> >{};
 
-template < typename T, typename U > 
-class Real_embeddable_traits< ::__gmp_expr<T,U> > 
+template < typename T, typename U >
+class Real_embeddable_traits< ::__gmp_expr<T,U> >
     : public Real_embeddable_traits< ::__gmp_expr<T,T> >{};
 
 CGAL_END_NAMESPACE

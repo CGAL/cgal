@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
- 
+
 
 #ifndef CGAL_LEDA_BIGFLOAT_H
 #define CGAL_LEDA_BIGFLOAT_H
@@ -45,24 +45,24 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> class Algebraic_structure_traits< leda_bigfloat >
-  : public Algebraic_structure_traits_base< leda_bigfloat, 
+  : public Algebraic_structure_traits_base< leda_bigfloat,
                                             Field_with_kth_root_tag >  {
   public:
     typedef Tag_false           Is_exact;
     typedef Tag_true            Is_numerical_sensitive;
-                                         
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
         }
     };
-    
-    class Kth_root 
+
+    class Kth_root
       : public Binary_function<int, Type, Type> {
       public:
-        Type operator()( int k, 
+        Type operator()( int k,
                                         const Type& x) const {
             CGAL_precondition_msg(k > 0, "'k' must be positive for k-th roots");
             // heuristic: we ask for as many precision as the argument has
@@ -72,48 +72,48 @@ template <> class Algebraic_structure_traits< leda_bigfloat >
             return CGAL_LEDA_SCOPE::sqrt_d( x, d, k);
         }
     };
-    
+
 };
 
-template <> class Real_embeddable_traits< leda_bigfloat > 
+template <> class Real_embeddable_traits< leda_bigfloat >
   : public Real_embeddable_traits_base< leda_bigfloat > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -123,26 +123,26 @@ template <> class Real_embeddable_traits< leda_bigfloat >
           Interval_nt_advanced approx (CGAL_LEDA_SCOPE::to_double(x));
           FPU_set_cw(CGAL_FE_UPWARD);
           approx += Interval_nt<false>::smallest();
-          return approx.pair();          
+          return approx.pair();
         }
     };
-    
+
     class Is_finite
       : public Unary_function< Type, bool > {
       public:
         bool operator()( const Type& x )  const {
-          return !( CGAL_LEDA_SCOPE::isInf(x) || CGAL_LEDA_SCOPE::isNaN(x) ); 
+          return !( CGAL_LEDA_SCOPE::isInf(x) || CGAL_LEDA_SCOPE::isNaN(x) );
         }
     };
 };
 
 template<>
-class Is_valid< leda_bigfloat > 
+class Is_valid< leda_bigfloat >
   : public Unary_function< leda_bigfloat, bool > {
   public :
     bool operator()( const leda_bigfloat& x ) const {
       return !( CGAL_LEDA_SCOPE::isNaN(x) );
-    }  
+    }
 };
 
 CGAL_END_NAMESPACE

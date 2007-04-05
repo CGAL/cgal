@@ -17,9 +17,9 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hemmer 
+//
+// Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hemmer
 
 // The template class Quotient<NT> is based on the LEDA class
 // leda_rational written by Stefan Naeher and Christian Uhrig.
@@ -440,7 +440,7 @@ operator>(const Quotient<NT>& x, const CGAL_int(NT)& y)
 
 
 template< class NT >
-class Is_valid< Quotient<NT> > 
+class Is_valid< Quotient<NT> >
   : public Unary_function< Quotient<NT>, bool > {
   public :
     bool operator()( const Quotient<NT>& x ) const {
@@ -505,11 +505,11 @@ namespace INTERN_QUOTIENT {
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
             return NT(CGAL_NTS sqrt(x.numerator()*x.denominator()),
-                      x.denominator());          
+                      x.denominator());
           }
       };
   };
-  
+
   template< class NT >
   class Sqrt_selector< NT, Null_functor > {
     public:
@@ -522,15 +522,15 @@ template<class NT> class Algebraic_structure_traits_quotient_base;
 
 template< class NT > class Algebraic_structure_traits_quotient_base< Quotient<NT> >
   : public Algebraic_structure_traits_base< Quotient<NT>, Field_tag >  {
-    
-public:
-    typedef Quotient<NT> Type;  
- 
-    typedef typename Algebraic_structure_traits<NT>::Is_exact        Is_exact;
-    typedef Tag_false Is_numerical_sensitive; 
-    
 
-    
+public:
+    typedef Quotient<NT> Type;
+
+    typedef typename Algebraic_structure_traits<NT>::Is_exact        Is_exact;
+    typedef Tag_false Is_numerical_sensitive;
+
+
+
     class Is_square
         : public Binary_function< Quotient<NT>, Quotient<NT>&, bool > {
     public:
@@ -539,7 +539,7 @@ public:
             x.normalize();
             x_num = x.numerator();
             x_den = x.denominator();
-            
+
             typename Algebraic_structure_traits<NT>::Is_square is_square;
             bool num_is_square = is_square(x_num,y_num);
             bool den_is_square = is_square(x_den,y_den);
@@ -551,18 +551,18 @@ public:
             typename Algebraic_structure_traits<NT>::Is_square is_square;
             return is_square(x.numerator())&&is_square(x.denominator());
         }
-        
+
     };
 
-    typedef typename boost::mpl::if_c< 
-        !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt, 
+    typedef typename boost::mpl::if_c<
+        !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
                          Null_functor >::value,
-         typename INTERN_QUOTIENT::Sqrt_selector< Type, 
+         typename INTERN_QUOTIENT::Sqrt_selector< Type,
                                                   Is_exact >::Sqrt,
-         Null_functor 
+         Null_functor
                             >::type Sqrt;
 
-    class Simplify 
+    class Simplify
       : public Unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
@@ -574,40 +574,40 @@ public:
 
 template<class NT> class Real_embeddable_traits_quotient_base;
 // Real embeddable traits
-template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> > 
+template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
   : public INTERN_RET::Real_embeddable_traits_base_selector< Quotient<NT>,
                   typename Real_embeddable_traits< NT >::Is_real_embeddable > {
   public:
-    typedef Quotient<NT> Type;  
-               
-    class Compare 
+    typedef Quotient<NT> Type;
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return quotient_cmp(x, y);
         }
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
         // Original global function was marked with an TODO!!
           if (x.num == 0 )
             return 0;
-        
+
           double nd = CGAL_NTS to_double( x.num );
-        
+
           if (x.den == 1 )
             return nd;
-        
+
           double dd = CGAL_NTS to_double( x.den );
-        
+
           if ( CGAL_NTS is_finite( x.den ) && CGAL_NTS is_finite( x.num ) )
             return nd/dd;
-        
+
           if ( CGAL_NTS abs(x.num) > CGAL_NTS abs(x.den) )
           {
               NT  nt_div = x.num / x.den;
@@ -617,22 +617,22 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
           if ( CGAL_NTS abs(x.num) < CGAL_NTS abs(x.den) )
           { return 1.0 / CGAL_NTS to_double( NT(1) / x ); }
-        
+
           return nd/dd;
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-          Interval_nt<> quot = 
+          Interval_nt<> quot =
                           Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
                           Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
           return std::make_pair(quot.inf(), quot.sup());
         }
     };
-    
+
     class Is_finite
       : public Unary_function< Type, bool > {
       public:
@@ -641,7 +641,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         }
     };
 };
-} // namespace INTERN_QUOTIENT 
+} // namespace INTERN_QUOTIENT
 
 template< class NT > class Algebraic_structure_traits< Quotient<NT> >
     : public INTERN_QUOTIENT::Algebraic_structure_traits_quotient_base<
@@ -656,41 +656,41 @@ Quotient<NT> >{};
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM( Quotient<NT>, class NT);
 
 // from int to Quotient
-template <class NT>                                                      
+template <class NT>
 struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >
-{                                    
-    typedef Tag_true  Are_explicit_interoperable;             
-    typedef Tag_true  Are_implicit_interoperable;             
-    typedef Quotient<NT> Type;                                       
-    struct Cast{                                                    
-        typedef Type result_type;                          
-        Type operator()(const Quotient<NT>& x)   const { return x;}  
+{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Quotient<NT> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Quotient<NT>& x)   const { return x;}
         Type operator()(
                 const typename First_if_different<int, NT>::Type& x) const {
-            return Type(x);}                               
-    };                                                              
-};                                                                  
-template <class NT>                                                      
+            return Type(x);}
+    };
+};
+template <class NT>
 struct Coercion_traits<Quotient<NT>,typename First_if_different<int, NT>::Type>
     :public Coercion_traits<typename First_if_different<int, NT>::Type,
 Quotient<NT> >{};
 
 // from double to Quotient
-template <class NT>                                                      
+template <class NT>
 struct Coercion_traits<typename First_if_different<double, NT>::Type,
-Quotient<NT> >{                                    
-    typedef Tag_true  Are_explicit_interoperable;             
-    typedef Tag_true  Are_implicit_interoperable;             
-    typedef Quotient<NT> Type;                                       
-    struct Cast{                                                    
-        typedef Type result_type;                          
-        Type operator()(const Quotient<NT>& x)   const { return x;}  
+Quotient<NT> >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Quotient<NT> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Quotient<NT>& x)   const { return x;}
         Type operator()(
                 const typename First_if_different<double, NT>::Type& x) const {
-            return Type(x);}                               
-    };                                                              
-};                                                                  
-template <class NT>                                                      
+            return Type(x);}
+    };
+};
+template <class NT>
 struct Coercion_traits<Quotient<NT>,
 typename First_if_different<double, NT>::Type>
     :public Coercion_traits<typename First_if_different<double, NT>::Type,
@@ -729,14 +729,14 @@ public:
             den = rat.denominator();
         }
     };
-    
+
     class Compose {
     public:
         typedef Numerator_type first_argument_type;
         typedef Numerator_type second_argument_type;
         typedef Type result_type;
         Type operator ()(
-                const Numerator_type& num , 
+                const Numerator_type& num ,
                 const Numerator_type& den ) {
             Type result(num, den);
             return result;

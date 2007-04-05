@@ -17,9 +17,9 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Sylvain Pion, Michael Hemmer 
+//
+// Author(s)     : Sylvain Pion, Michael Hemmer
 
 #ifndef CGAL_NUMBER_Type_CHECKER_H
 #define CGAL_NUMBER_Type_CHECKER_H
@@ -223,8 +223,8 @@ operator/(const Number_type_checker<NT1, NT2, Cmp> &a, int b)
    return Number_type_checker<NT1, NT2, Cmp>(a.n1() / b, a.n2() / b);
 }
 
-// arithmetic operators end 
-// compare operators begin 
+// arithmetic operators end
+// compare operators begin
 
 template < typename NT1, typename NT2, typename Cmp >
 bool
@@ -416,7 +416,7 @@ operator>=(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 // Functors Is_valid
 
 template < typename NT1, typename NT2, typename Cmp >
-class Is_valid< Number_type_checker<NT1, NT2, Cmp> > 
+class Is_valid< Number_type_checker<NT1, NT2, Cmp> >
     : public Unary_function< Number_type_checker<NT1, NT2, Cmp> , bool > {
 public :
     bool operator()(const  Number_type_checker<NT1, NT2, Cmp>& a ) const {
@@ -425,13 +425,13 @@ public :
         CGAL_assertion(b1 == b2);
         // Should we also call a.is_valid() ?
         return b1;
-    }  
+    }
 };
 
 namespace NTC_INTERN{
 // -----------------------------
 
-// fwd 
+// fwd
 template < typename Number_type_checker, typename Algebraic_category>
 class NTC_AST_base
     :public Algebraic_structure_traits_base< Number_type_checker , Null_tag>{
@@ -439,17 +439,17 @@ class NTC_AST_base
 
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_AST_base
-< Number_type_checker<NT1, NT2, Cmp> , Integral_domain_without_division_tag> 
+< Number_type_checker<NT1, NT2, Cmp> , Integral_domain_without_division_tag>
 :public Algebraic_structure_traits_base<Number_type_checker<NT1, NT2, Cmp>, Null_tag>
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
     typedef Number_type_checker<NT1, NT2, Cmp> Type;
-    
+
 public:
     //CGAL::Algebraic_structure_traits<>::Simplify
-    class Simplify 
+    class Simplify
         : public Unary_function< Type& , void > {
     public:
         void operator()( Type& a) const {
@@ -458,9 +458,9 @@ public:
             CGAL_assertion(a.is_valid());
         }
     };
-    
+
     //CGAL::Algebraic_structure_traits< >::Is_zero
-    class Is_zero 
+    class Is_zero
         : public Unary_function< Type, bool > {
     public:
         bool operator()(const  Type& a ) const {
@@ -471,9 +471,9 @@ public:
             return b1;
         }
     };
-    
+
     // CGAL::Algebraic_structure_traits< >::Is_one
-    class Is_one 
+    class Is_one
         : public Unary_function< Type, bool > {
     public:
         bool operator()(const Type& a) const {
@@ -485,7 +485,7 @@ public:
         }
     };
     // CGAL::Algebraic_structure_traits<  >::Square
-    class Square 
+    class Square
         : public Unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
@@ -497,7 +497,7 @@ public:
 
 
     // CGAL::Algebraic_structure_traits<  >::Unit_part
-    class Unit_part 
+    class Unit_part
         : public Unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
@@ -510,9 +510,9 @@ public:
 };
 
 template < typename NT1, typename NT2, typename Cmp >
-class NTC_AST_base 
-      < Number_type_checker< NT1, NT2, Cmp> , Integral_domain_tag > 
-      :public  NTC_AST_base 
+class NTC_AST_base
+      < Number_type_checker< NT1, NT2, Cmp> , Integral_domain_tag >
+      :public  NTC_AST_base
       < Number_type_checker< NT1, NT2, Cmp> , Integral_domain_without_division_tag >
 {
 private:
@@ -521,15 +521,15 @@ private:
     typedef Number_type_checker<NT1, NT2, Cmp> Type;
 
 public:
-    
+
 // CGAL::Algebraic_structure_traits< >::Integral_division
-    class Integral_division 
-        : public Binary_function< Type, 
+    class Integral_division
+        : public Binary_function< Type,
                                   Type,
                                   Type > {
     public:
         Type operator()(
-                const Type& a, 
+                const Type& a,
                 const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Integral_division");
             return Type(
@@ -541,9 +541,9 @@ public:
 
 
 template < typename NT1, typename NT2, typename Cmp >
-class NTC_AST_base 
-< Number_type_checker< NT1, NT2, Cmp> , Unique_factorization_domain_tag > 
-    :public  NTC_AST_base 
+class NTC_AST_base
+< Number_type_checker< NT1, NT2, Cmp> , Unique_factorization_domain_tag >
+    :public  NTC_AST_base
 < Number_type_checker< NT1, NT2, Cmp> , Integral_domain_tag >
 {
 private:
@@ -552,13 +552,13 @@ private:
     typedef Number_type_checker<NT1, NT2, Cmp> Type;
 public:
     // CGAL::Algebraic_structure_traits< >::Gcd
-    class Gcd 
-        : public Binary_function< Type, 
+    class Gcd
+        : public Binary_function< Type,
                                   Type,
                                   Type > {
     public:
         Type operator()(
-                const Type& a, 
+                const Type& a,
                 const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Gcd");
             return Type(
@@ -569,9 +569,9 @@ public:
 };
 
 template < typename NT1, typename NT2, typename Cmp >
-class NTC_AST_base 
-< Number_type_checker< NT1, NT2, Cmp> , Euclidean_ring_tag > 
-    :public  NTC_AST_base 
+class NTC_AST_base
+< Number_type_checker< NT1, NT2, Cmp> , Euclidean_ring_tag >
+    :public  NTC_AST_base
 < Number_type_checker< NT1, NT2, Cmp> , Unique_factorization_domain_tag >
 {
 private:
@@ -580,13 +580,13 @@ private:
     typedef Number_type_checker<NT1, NT2, Cmp> Type;
 public:
     // CGAL::Algebraic_structure_traits< >::Div
-    class Div 
-        : public Binary_function< Type, 
+    class Div
+        : public Binary_function< Type,
                                   Type,
                                   Type > {
     public:
         Type operator()(
-                const Type& a, 
+                const Type& a,
                 const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Div");
             return Type(
@@ -595,13 +595,13 @@ public:
         }
     };
     // CGAL::Algebraic_structure_traits< >::Mod
-    class Mod 
-        : public Binary_function< Type, 
+    class Mod
+        : public Binary_function< Type,
                                   Type,
                                   Type > {
     public:
         Type operator()(
-                const Type& a, 
+                const Type& a,
                 const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Mod");
             return Type(
@@ -621,9 +621,9 @@ public:
         typedef void  result_type;
 
         void operator()(
-                const Type& a, 
+                const Type& a,
                 const Type& b,
-                Type& q, 
+                Type& q,
                 Type& r) const {
             CGAL_NT_CHECK_DEBUG("AST::Div_mod");
             NT1 q1,r1;
@@ -638,27 +638,27 @@ public:
 
 
 template < typename NT1, typename NT2, typename Cmp >
-class NTC_AST_base 
-      < Number_type_checker< NT1, NT2, Cmp> , Field_tag > 
-      :public  NTC_AST_base 
+class NTC_AST_base
+      < Number_type_checker< NT1, NT2, Cmp> , Field_tag >
+      :public  NTC_AST_base
       < Number_type_checker< NT1, NT2, Cmp> , Integral_domain_tag >
 {};
 
 template < typename NT1, typename NT2, typename Cmp >
-class NTC_AST_base 
-      < Number_type_checker< NT1, NT2, Cmp> , Field_with_sqrt_tag > 
-      :public  NTC_AST_base 
+class NTC_AST_base
+      < Number_type_checker< NT1, NT2, Cmp> , Field_with_sqrt_tag >
+      :public  NTC_AST_base
       < Number_type_checker< NT1, NT2, Cmp> , Field_tag >
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
     typedef Number_type_checker<NT1, NT2, Cmp> Type;
-    
+
 public:
-    
+
     // CGAL::Algebraic_structure_traits<  >::Sqrt
-    class Sqrt 
+    class Sqrt
         : public Unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
@@ -674,9 +674,9 @@ public:
 
 
 template < typename NT1, typename NT2, typename Cmp >
-class Algebraic_structure_traits <Number_type_checker<NT1, NT2, Cmp> >   
-    :public NTC_INTERN::NTC_AST_base 
-      < Number_type_checker< NT1, NT2, Cmp> , 
+class Algebraic_structure_traits <Number_type_checker<NT1, NT2, Cmp> >
+    :public NTC_INTERN::NTC_AST_base
+      < Number_type_checker< NT1, NT2, Cmp> ,
         typename Algebraic_structure_traits<NT1>::Algebraic_category >
 {
     typedef Algebraic_structure_traits<NT1> AST1;
@@ -688,7 +688,7 @@ public:
 };
 
 
-namespace NTC_INTERN{ 
+namespace NTC_INTERN{
 template < typename Number_type_checker, typename Is_real_embeddable >
 class NTC_RET_base;
 
@@ -699,8 +699,8 @@ class NTC_RET_base<NT,Tag_false>
 
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_RET_base
-< Number_type_checker<NT1, NT2, Cmp> , Tag_true> 
-        :public Real_embeddable_traits_base< Number_type_checker< NT1, NT2, Cmp > > 
+< Number_type_checker<NT1, NT2, Cmp> , Tag_true>
+        :public Real_embeddable_traits_base< Number_type_checker< NT1, NT2, Cmp > >
 {
 private:
     typedef Real_embeddable_traits<NT1> RET1;
@@ -709,7 +709,7 @@ private:
 public:
 
     // CGAL::Real_embeddable_traits<  >::Abs
-    class Abs 
+    class Abs
         : public Unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
@@ -721,7 +721,7 @@ public:
     };
 
     // CGAL::Real_embeddable_traits<  >::Sign
-    class Sign 
+    class Sign
         : public Unary_function< Type , ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()(const Type& a) const {
@@ -729,12 +729,12 @@ public:
             ::CGAL::Sign r1 =  typename RET1::Sign()(a.n1());
             ::CGAL::Sign r2 =  typename RET2::Sign()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 
     // CGAL::Real_embeddable_traits<  >::Is_finite
-    class Is_finite 
+    class Is_finite
         : public Unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
@@ -742,12 +742,12 @@ public:
             bool r1 =  typename RET1::Is_finite()(a.n1());
             bool r2 =  typename RET2::Is_finite()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 
     // CGAL::Real_embeddable_traits<  >::Is_positive
-    class Is_positive 
+    class Is_positive
         : public Unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
@@ -755,12 +755,12 @@ public:
             bool r1 =  typename RET1::Is_positive()(a.n1());
             bool r2 =  typename RET2::Is_positive()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
-    
+
     // CGAL::Real_embeddable_traits<  >::Is_negative
-    class Is_negative 
+    class Is_negative
         : public Unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
@@ -768,12 +768,12 @@ public:
             bool r1 =  typename RET1::Is_negative()(a.n1());
             bool r2 =  typename RET2::Is_negative()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 
     // CGAL::Real_embeddable_traits<  >::Is_zero
-    class Is_zero 
+    class Is_zero
         : public Unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
@@ -781,12 +781,12 @@ public:
             bool r1 =  typename RET1::Is_zero()(a.n1());
             bool r2 =  typename RET2::Is_zero()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 
     // CGAL::Real_embeddable_traits<  >::Compare
-    class Compare 
+    class Compare
         : public Binary_function< Type , Type, Comparison_result > {
     public:
         Comparison_result operator()(const Type& a, const Type& b) const {
@@ -794,12 +794,12 @@ public:
             Comparison_result r1 =  typename RET1::Compare()(a.n1(),b.n1());
             Comparison_result r2 =  typename RET2::Compare()(a.n2(),b.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 
     // CGAL::Real_embeddable_traits<  >::To_double
-    class To_double 
+    class To_double
         : public Unary_function< Type , double > {
     public:
         double operator()(const Type& a) const {
@@ -807,12 +807,12 @@ public:
             double r1 =  typename RET1::To_double()(a.n1());
             double r2 =  typename RET2::To_double()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 
     // CGAL::Real_embeddable_traits<  >::To_interval
-    class To_interval 
+    class To_interval
         : public Unary_function< Type , std::pair<double, double> > {
     public:
         std::pair<double, double> operator()(const Type& a) const {
@@ -820,7 +820,7 @@ public:
             std::pair<double, double> r1 =  typename RET1::To_interval()(a.n1());
             std::pair<double, double> r2 =  typename RET2::To_interval()(a.n2());
             CGAL_assertion( r1 == r2 );
-            return r1; 
+            return r1;
         }
     };
 };
@@ -829,79 +829,79 @@ public:
 
 template < typename NT1, typename NT2, typename Cmp >
 class Real_embeddable_traits
-< Number_type_checker<NT1, NT2, Cmp> > 
-    :public NTC_INTERN::NTC_RET_base< Number_type_checker< NT1, NT2, Cmp > , 
-      typename Real_embeddable_traits<NT1>::Is_real_embeddable > 
+< Number_type_checker<NT1, NT2, Cmp> >
+    :public NTC_INTERN::NTC_RET_base< Number_type_checker< NT1, NT2, Cmp > ,
+      typename Real_embeddable_traits<NT1>::Is_real_embeddable >
 {
     typedef Real_embeddable_traits<NT1> RET1;
-public: 
+public:
     typedef Number_type_checker< NT1, NT2, Cmp >  Type;
     typedef typename RET1::Is_real_embeddable     Is_real_embeddable;
 };
 
-template < typename NT1, typename NT2, typename Cmp >   
+template < typename NT1, typename NT2, typename Cmp >
 struct Coercion_traits< Number_type_checker<NT1,NT2,Cmp>,
-                        Number_type_checker<NT1,NT2,Cmp> >{    
-    typedef Tag_true  Are_explicit_interoperable;   
-    typedef Tag_true  Are_implicit_interoperable;   
-    typedef Number_type_checker<NT1,NT2,Cmp> Type;    
-    struct Cast{    
-        typedef Type result_type;  
-        Type operator()(const Type& x) const { return x;} 
-    };      
-};    
+                        Number_type_checker<NT1,NT2,Cmp> >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Number_type_checker<NT1,NT2,Cmp> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Type& x) const { return x;}
+    };
+};
 
-template < typename NT1, typename NT2, typename Cmp >   
-struct Coercion_traits< Number_type_checker<NT1,NT2,Cmp>, int >{    
-    typedef Tag_true  Are_explicit_interoperable;   
-    typedef Tag_true  Are_implicit_interoperable;   
-    typedef Number_type_checker<NT1,NT2,Cmp> Type;    
-    struct Cast{    
-        typedef Type result_type;  
-        Type operator()(const Type& x) const { return x;} 
-        Type operator()(int x) const { return Type(x);} 
-    };      
-};   
- 
-template < typename NT1, typename NT2, typename Cmp >   
+template < typename NT1, typename NT2, typename Cmp >
+struct Coercion_traits< Number_type_checker<NT1,NT2,Cmp>, int >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Number_type_checker<NT1,NT2,Cmp> Type;
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const Type& x) const { return x;}
+        Type operator()(int x) const { return Type(x);}
+    };
+};
+
+template < typename NT1, typename NT2, typename Cmp >
 struct Coercion_traits< int , Number_type_checker<NT1,NT2,Cmp> >
     :public Coercion_traits< Number_type_checker<NT1,NT2,Cmp> , int >{};
 
 namespace NTC_INTERN {
 
 
-template < typename NT_checker, typename Tag = Tag_false >  
+template < typename NT_checker, typename Tag = Tag_false >
 struct Coercion_traits_double{
-    typedef Tag_false  Are_explicit_interoperable;   
-    typedef Tag_false  Are_implicit_interoperable; 
+    typedef Tag_false  Are_explicit_interoperable;
+    typedef Tag_false  Are_implicit_interoperable;
     typedef Null_tag Type;
 };
-    
-template < typename NT1, typename NT2, typename Cmp>   
-struct Coercion_traits_double< Number_type_checker<NT1,NT2,Cmp> , 
-                               Tag_true >{
-    typedef Tag_true  Are_explicit_interoperable;   
-    typedef Tag_true  Are_implicit_interoperable; 
-    typedef Number_type_checker<NT1,NT2,Cmp> Type;
-     struct Cast{    
-        typedef Type result_type;  
-         Type operator()(const Type& x) const { return x;} 
-         Type operator()(const double& x) const { 
-             return Type(x);
-         } 
-    };      
-};  
-} // namespace NTC_INTERN 
 
-template < typename NT1, typename NT2, typename Cmp >   
+template < typename NT1, typename NT2, typename Cmp>
+struct Coercion_traits_double< Number_type_checker<NT1,NT2,Cmp> ,
+                               Tag_true >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_true  Are_implicit_interoperable;
+    typedef Number_type_checker<NT1,NT2,Cmp> Type;
+     struct Cast{
+        typedef Type result_type;
+         Type operator()(const Type& x) const { return x;}
+         Type operator()(const double& x) const {
+             return Type(x);
+         }
+    };
+};
+} // namespace NTC_INTERN
+
+template < typename NT1, typename NT2, typename Cmp >
 struct Coercion_traits< Number_type_checker<NT1,NT2,Cmp>, double >
     :public NTC_INTERN::Coercion_traits_double< Number_type_checker<NT1,NT2,Cmp>,
             typename Coercion_traits<NT1,double>::Are_implicit_interoperable >
-{};  
+{};
 
-template < typename NT1, typename NT2, typename Cmp >   
+template < typename NT1, typename NT2, typename Cmp >
 struct Coercion_traits< double , Number_type_checker<NT1,NT2,Cmp> >
-    :public Coercion_traits< Number_type_checker<NT1,NT2,Cmp>, double > {};  
+    :public Coercion_traits< Number_type_checker<NT1,NT2,Cmp>, double > {};
 
 
 // What to do with the IO ?

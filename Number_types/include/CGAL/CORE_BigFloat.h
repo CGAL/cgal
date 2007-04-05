@@ -32,24 +32,24 @@ CGAL_BEGIN_NAMESPACE
 // Algebraic structure traits
 //
 template <> class Algebraic_structure_traits< CORE::BigFloat >
-  : public Algebraic_structure_traits_base< CORE::BigFloat, 
+  : public Algebraic_structure_traits_base< CORE::BigFloat,
                                             Field_with_kth_root_tag >  {
   public:
     typedef Tag_false          Is_exact;
     typedef Tag_true           Is_numerical_sensitive;
-                          
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
-      public:        
+      public:
         Type operator()( const Type& x ) const {
           return CORE::sqrt( x );
         }
     };
-    
-    class Kth_root 
+
+    class Kth_root
       : public Binary_function<int, Type, Type> {
       public:
-        Type operator()( int k, 
+        Type operator()( int k,
                                         const Type& x) const {
             CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
             // CORE::radical isn't implemented for negative values of x, so we
@@ -57,66 +57,66 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
             if( x < 0 && k%2 != 0) {
               return Type(-CORE::radical( -x, k ) );
             }
-  
-  
+
+
             return Type( CORE::radical( x, k ) );
         }
-    };    
+    };
 };
 
 //
 // Real embeddable traits
 //
-template <> class Real_embeddable_traits< CORE::BigFloat > 
+template <> class Real_embeddable_traits< CORE::BigFloat >
   : public Real_embeddable_traits_base< CORE::BigFloat > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CORE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
-      public:        
+      public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CORE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
-      public:        
-        Comparison_result operator()( const Type& x, 
+      public:
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return (Comparison_result) CORE::cmp( x, y );
         }
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
-      public:        
+      public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
-          // approximation 
+          // approximation
           return x.doubleValue();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
             Real_embeddable_traits<CORE::Expr>::To_interval to_interval;
             CORE::Expr temp(x);
-            
-            return to_interval(temp); 
-        }          
+
+            return to_interval(temp);
+        }
     };
 };
 

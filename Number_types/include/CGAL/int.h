@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
- 
+
 
 #ifndef CGAL_INT_H
 #define CGAL_INT_H
@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace INTERN_INT {
     template< class Type >
-    class Is_square_per_double_conversion 
+    class Is_square_per_double_conversion
       : public Binary_function< Type, Type&,
                                 bool > {
       public:
@@ -41,11 +41,11 @@ namespace INTERN_INT {
           return x == y * y;
         }
         bool operator()( const Type& x ) const {
-            Type y = 
+            Type y =
                 (Type) CGAL_CLIB_STD::sqrt( (double)x );
             return x == y * y;
         }
-        
+
     };
 } // INTERN_INT
 
@@ -56,18 +56,18 @@ template<> class Algebraic_structure_traits< int >
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-    
+
     typedef INTERN_AST::Div_per_operator< Type >  Div;
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
-    
+
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
 };
 
-template <> class Real_embeddable_traits< int > 
+template <> class Real_embeddable_traits< int >
   : public Real_embeddable_traits_base< int > {
   public:
-          
+
     typedef INTERN_RET::To_double_by_conversion< Type >
                                                                       To_double;
     typedef INTERN_RET::To_interval_by_conversion< Type >
@@ -77,24 +77,24 @@ template <> class Real_embeddable_traits< int >
 // long
 
 template<> class Algebraic_structure_traits< long int >
-  : public Algebraic_structure_traits_base< long int, 
+  : public Algebraic_structure_traits_base< long int,
                                             Euclidean_ring_tag > {
 
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-    
+
     typedef INTERN_AST::Div_per_operator< Type >  Div;
-    typedef INTERN_AST::Mod_per_operator< Type >  Mod;       
+    typedef INTERN_AST::Mod_per_operator< Type >  Mod;
 
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
 };
 
-template <> class Real_embeddable_traits< long int > 
+template <> class Real_embeddable_traits< long int >
   : public Real_embeddable_traits_base< long int > {
   public:
-          
+
     typedef INTERN_RET::To_double_by_conversion< Type >
                                                                       To_double;
     typedef INTERN_RET::To_interval_by_conversion< Type >
@@ -104,7 +104,7 @@ template <> class Real_embeddable_traits< long int >
 // short
 
 template<> class Algebraic_structure_traits< short int >
-  : public Algebraic_structure_traits_base< short int, 
+  : public Algebraic_structure_traits_base< short int,
                                             Euclidean_ring_tag > {
 
   public:
@@ -114,32 +114,32 @@ template<> class Algebraic_structure_traits< short int >
     // Explicitly defined functors which have no support for implicit
     //  interoperability. This is nescessary because of the implicit conversion
     //  to int for binary operations between short ints.
-    class Integral_division 
+    class Integral_division
       : public Binary_function< Type, Type,
-                                Type > { 
+                                Type > {
       public:
-        Type operator()( const Type& x, 
-                                        const Type& y) const { 
+        Type operator()( const Type& x,
+                                        const Type& y) const {
           Algebraic_structure_traits<Type>::Div actual_div;
           CGAL_precondition_msg( actual_div( x, y) * y == x,
                   "'x' must be divisible by 'y' in "
                   "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
-          return actual_div( x, y);          
-        }      
+          return actual_div( x, y);
+        }
     };
 
-    class Gcd 
+    class Gcd
       : public Binary_function< Type, Type,
-                                Type > { 
+                                Type > {
       public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                                         const Type& y) const {
           Algebraic_structure_traits<Type>::Mod mod;
           Algebraic_structure_traits<Type>::Unit_part unit_part;
           Algebraic_structure_traits<Type>::Integral_division integral_div;
           // First: the extreme cases and negative sign corrections.
           if (x == Type(0)) {
-              if (y == Type(0))  
+              if (y == Type(0))
                   return Type(0);
               return integral_div( y, unit_part(y) );
           }
@@ -167,10 +167,10 @@ template<> class Algebraic_structure_traits< short int >
               v = mod(w,u);
           } while (v != Type(0));
           return u;
-        }        
+        }
     };
 
-    class Div_mod { 
+    class Div_mod {
       public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
@@ -178,45 +178,45 @@ template<> class Algebraic_structure_traits< short int >
         typedef Type&   fourth_argument_type;
         typedef Arity_tag< 4 >         Arity;
         typedef void  result_type;
-        void operator()( const Type& x, 
-                         const Type& y, 
+        void operator()( const Type& x,
+                         const Type& y,
                          Type& q, Type& r) const {
           q = x / y;
-          r = x % y;          
+          r = x % y;
           return;
-        }        
+        }
     };
 
     // based on \c Div_mod.
-    class Div 
+    class Div
       : public Binary_function< Type, Type,
                                 Type > {
       public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                                         const Type& y) const {
           return x / y;
-        };        
+        };
     };
 
     // based on \c Div_mod.
-    class Mod 
+    class Mod
       : public Binary_function< Type, Type,
-                                Type > { 
+                                Type > {
       public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                                         const Type& y) const {
           return x % y;
-        };        
+        };
     };
-    
+
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
 };
 
-template <> class Real_embeddable_traits< short int > 
+template <> class Real_embeddable_traits< short int >
   : public Real_embeddable_traits_base< short int > {
   public:
-          
+
     typedef INTERN_RET::To_double_by_conversion< Type >
                                                                       To_double;
     typedef INTERN_RET::To_interval_by_conversion< Type >

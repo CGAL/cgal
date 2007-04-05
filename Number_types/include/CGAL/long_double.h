@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
 
@@ -44,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 #ifdef __sgi
 
 template<>
-class Is_valid< long double > 
+class Is_valid< long double >
   : public Unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
@@ -63,7 +63,7 @@ class Is_valid< long double >
           return false;
       }
       return false; // NOT REACHED
-    }  
+    }
 };
 
 #elif defined CGAL_CFG_IEEE_754_BUG
@@ -89,25 +89,25 @@ is_nan_by_mask_long_double(unsigned int h, unsigned int l)
 }
 
 template<>
-class Is_valid< long double > 
+class Is_valid< long double >
   : public Unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
       double d = x;
       IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
       return ! ( is_nan_by_mask_long_double( p->c.H, p->c.L ));
-    }  
+    }
 };
 
 #else
 
 template<>
-class Is_valid< long double > 
+class Is_valid< long double >
   : public Unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
       return (x == x);
-    }  
+    }
 };
 
 #endif
@@ -116,40 +116,40 @@ class Is_valid< long double >
 
 
 template <> class Algebraic_structure_traits< long double >
-  : public Algebraic_structure_traits_base< long double, 
+  : public Algebraic_structure_traits_base< long double,
                                             Field_with_kth_root_tag >  {
   public:
     typedef Tag_false            Is_exact;
     typedef Tag_true             Is_numerical_sensitive;
-                
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_CLIB_STD::sqrt( x );
         }
     };
-    
-    class Kth_root 
+
+    class Kth_root
       :public Binary_function<int, Type, Type > {
       public:
-        Type operator()( int k, 
+        Type operator()( int k,
                                         const Type& x) const {
-          CGAL_precondition_msg( k > 0, 
+          CGAL_precondition_msg( k > 0,
                                     "'k' must be positive for k-th roots");
           return CGAL_CLIB_STD::pow(x, (long double)1.0 / (long double)(k));
         };
     };
-    
+
 };
 
-template <> class Real_embeddable_traits< long double > 
+template <> class Real_embeddable_traits< long double >
   : public Real_embeddable_traits_base< long double > {
   public:
 
     typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                  To_double;      
-    class To_interval 
+                                                                  To_double;
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -175,7 +175,7 @@ template <> class Real_embeddable_traits< long double >
 
 // Is_finite depends on platform
 #ifdef __sgi
-    class Is_finite 
+    class Is_finite
       : public Unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
@@ -197,7 +197,7 @@ template <> class Real_embeddable_traits< long double >
         }
     };
 #elif defined CGAL_CFG_IEEE_754_BUG
-    class Is_finite 
+    class Is_finite
       : public Unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
@@ -207,15 +207,15 @@ template <> class Real_embeddable_traits< long double >
         }
     };
 #else
-    class Is_finite 
+    class Is_finite
       : public Unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
-         return (x == x) && (is_valid(x-x)); 
+         return (x == x) && (is_valid(x-x));
         }
     };
 #endif
-    
+
 };
 
 CGAL_END_NAMESPACE

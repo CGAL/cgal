@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Michael Hemmer
- 
+
 #ifndef CGAL_LEDA_INTEGER_H
 #define CGAL_LEDA_INTEGER_H
 
@@ -43,100 +43,100 @@
 CGAL_BEGIN_NAMESPACE
 
 template <> class Algebraic_structure_traits< leda_integer >
-  : public Algebraic_structure_traits_base< leda_integer, 
+  : public Algebraic_structure_traits_base< leda_integer,
                                             Euclidean_ring_tag >  {
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-                
+
     typedef INTERN_AST::Is_square_per_sqrt< Type >
                                                                  Is_square;
-                                                                 
-    class Gcd 
+
+    class Gcd
       : public Binary_function< Type, Type,
                                 Type > {
       public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                                         const Type& y ) const {
           // By definition gcd(0,0) == 0
           if( x == Type(0) && y == Type(0) )
             return Type(0);
-            
+
           return CGAL_LEDA_SCOPE::gcd( x, y );
         }
-        
+
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
-    
+
     typedef INTERN_AST::Div_per_operator< Type > Div;
-    
-    class Mod 
+
+    class Mod
       : public Binary_function< Type, Type,
                                 Type > {
       public:
-        Type operator()( const Type& x, 
+        Type operator()( const Type& x,
                                         const Type& y ) const {
           Type m = x % y;
-          
+
           // Fix wrong lede result if first operand is negative
           if( x < 0 && m != 0 )
             m -= y;
 
           return m;
         }
-        
+
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
-    
-    class Sqrt 
+
+    class Sqrt
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
         }
-    };        
+    };
 };
 
-template <> class Real_embeddable_traits< leda_integer > 
+template <> class Real_embeddable_traits< leda_integer >
   : public Real_embeddable_traits_base< leda_integer > {
   public:
-      
-    class Abs 
+
+    class Abs
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
-    
-    class Sign 
+
+    class Sign
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
-        }        
+        }
     };
-    
-    class Compare 
+
+    class Compare
       : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Type& x, 
+        Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
-        
+
     };
-    
-    class To_double 
+
+    class To_double
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
         }
     };
-    
-    class To_interval 
+
+    class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
@@ -152,13 +152,13 @@ template <> class Real_embeddable_traits< leda_integer >
             ina += Interval_nt_advanced::smallest();
             return ina.pair();
           }
-          
+
 /*        CGAL_LEDA_SCOPE::bigfloat h(x);
-          CGAL_LEDA_SCOPE::bigfloat low = 
+          CGAL_LEDA_SCOPE::bigfloat low =
                         CGAL_LEDA_SCOPE::round(h,53,CGAL_LEDA_SCOPE::TO_N_INF);
-          CGAL_LEDA_SCOPE::bigfloat high = 
+          CGAL_LEDA_SCOPE::bigfloat high =
                         CGAL_LEDA_SCOPE::round(h,53,CGAL_LEDA_SCOPE::TO_P_INF);
-          return Double_interval(low.to_double(), high.to_double());                    
+          return Double_interval(low.to_double(), high.to_double());
         }*/
         }
     };
@@ -167,11 +167,11 @@ template <> class Real_embeddable_traits< leda_integer >
 //
 // Needs_parens_as_product
 //
-template <> 
+template <>
 struct Needs_parens_as_product<leda_integer> {
   bool operator()(const leda_integer& x) {
     return CGAL_NTS is_negative(x);
-  } 
+  }
 };
 
 // missing mixed operators

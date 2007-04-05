@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
 
@@ -130,7 +130,7 @@ public:
   int tam() const { return 0; }  // put here a code
                                  // measuring the number of digits
                                  // of the Gmpz
-#endif 
+#endif
 
   // Gives the memory size in bytes. (not documented yet)
   std::size_t size() const
@@ -339,7 +339,7 @@ void gmpz_eat_white_space(std::istream &is)
 }
 
 
-inline 
+inline
 std::istream &
 gmpz_new_read(std::istream &is, Gmpz &z)
 {
@@ -351,7 +351,7 @@ gmpz_new_read(std::istream &is, Gmpz &z)
 
   is.unsetf(std::ios::skipws);
   gmpz_eat_white_space(is);
-   
+
   c=is.peek();
   if (c=='-' || c=='+'){
       is.get();
@@ -360,11 +360,11 @@ gmpz_new_read(std::istream &is, Gmpz &z)
       gmpz_eat_white_space(is);
       c=is.peek();
   }
-  
+
   std::istream::char_type cc= c;
-  
+
   if (c== std::istream::traits_type::eof()
-      || 
+      ||
 #ifndef CGAL_CFG_NO_LOCALE
       !std::isdigit(cc, std::locale::classic() )
 #else
@@ -396,9 +396,9 @@ gmpz_new_read(std::istream &is, Gmpz &z)
       CGAL_assertion(!is.fail());
       CGAL_assertion(cc==c);
       r= r*10+(cc-zero);
-    }  
+    }
   }
-   
+
   is.flags(old_flags);
   if (!is.fail()) {
     if (negative) {

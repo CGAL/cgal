@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Susan Hert, Sylvain Pion
- 
+
 #ifndef CGAL_TO_RATIONAL_H
 #define CGAL_TO_RATIONAL_H
 
@@ -34,17 +34,17 @@ CGAL_BEGIN_NAMESPACE
 template <class Rational>
 Rational
 to_rational(double x)
-{ 
+{
     typedef Fraction_traits<Rational> FT;
     typedef typename FT::Is_fraction Is_fraction;
     typedef typename FT::Numerator_type Numerator_type;
     typedef typename FT::Denominator_type Denominator_type;
     typename FT::Compose compose;
-    
+
     BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction,Tag_true>::value));
     BOOST_STATIC_ASSERT((::boost::is_same<Numerator_type,Denominator_type>::value));
-     
-    Numerator_type num(0),den(1); 
+
+    Numerator_type num(0),den(1);
 
     if (x != 0.0)
         { bool neg = (x < 0);
@@ -62,7 +62,7 @@ to_rational(double x)
             int k = 0;
 
             while (mantissa != 0.0 && k++ < maxiter)
-                { 
+                {
                     mantissa *= width; // shift double mantissa
                     mantissa = CGAL_CLIB_STD::modf(mantissa, &intpart);
                     num *= shift_pow;

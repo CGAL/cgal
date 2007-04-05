@@ -17,17 +17,17 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
-#include <CGAL/number_type_basic.h> 
+#include <CGAL/number_type_basic.h>
 
 #ifndef __INTEL_COMPILER
-#include <cmath> // for HUGE_VAL 
+#include <cmath> // for HUGE_VAL
 #endif
 
 // This file specifies some platform dependant functions, regarding the FPU
@@ -36,7 +36,7 @@
 // It also contains the definition of the Protect_FPU_rounding<> class,
 // which helps to protect blocks of code needing a particular rounding mode.
 
-#if defined __alpha__  && defined __linux__ 
+#if defined __alpha__  && defined __linux__
 extern "C" {
 #  include <fenv.h>
 }
@@ -44,7 +44,7 @@ extern "C" {
 #  include <fpu_control.h>
 #elif defined __SUNPRO_CC && defined __sun
 #  include <ieeefp.h>
-#elif defined __osf || defined __osf__ 
+#elif defined __osf || defined __osf__
 #  ifdef __GNUG__
      // GCC seems to remove (fixincludes) read_rnd/write_rnd...
 #    include "/usr/include/float.h"
@@ -197,7 +197,7 @@ inline double IA_bug_sqrt(double d)
 
 #if defined __i386__ && !defined __PGI && !defined __SUNPRO_CC
 
-#  if defined CGAL_SAFE_SSE2 
+#  if defined CGAL_SAFE_SSE2
 
 #define CGAL_IA_SETFPCW(CW) _MM_SET_ROUNDING_MODE(CW)
 #define CGAL_IA_GETFPCW(CW) CW = _MM_GET_ROUNDING_MODE()
@@ -224,7 +224,7 @@ typedef unsigned short FPU_CW_t;
 
 #  endif
 
-#elif defined __powerpc__  
+#elif defined __powerpc__
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
@@ -274,20 +274,20 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_IA_GETFPCW(CW) (CW = __ieee_get_fp_control())
 typedef unsigned long FPU_CW_t;
 #define CGAL_FE_TONEAREST   FE_TONEAREST
-#define CGAL_FE_TOWARDZERO  FE_TOWARDZERO 
-#define CGAL_FE_UPWARD      FE_UPWARD 
-#define CGAL_FE_DOWNWARD    FE_DOWNWARD 
+#define CGAL_FE_TOWARDZERO  FE_TOWARDZERO
+#define CGAL_FE_UPWARD      FE_UPWARD
+#define CGAL_FE_DOWNWARD    FE_DOWNWARD
 
 #elif defined ( _MSC_VER )
 #if ( _MSC_VER < 1400)
 #define CGAL_IA_SETFPCW(CW) _controlfp (CW, _MCW_RC )
 #define CGAL_IA_GETFPCW(CW) CW = _controlfp (0, 0 ) &  _MCW_RC
 typedef unsigned short FPU_CW_t;
-#else 
+#else
 #define CGAL_IA_SETFPCW(CW) unsigned int dummy; _controlfp_s (&dummy, CW, _MCW_RC )
 #define CGAL_IA_GETFPCW(CW)_controlfp_s (&CW, 0, 0 ); CW  &=  _MCW_RC
 typedef unsigned int FPU_CW_t;
-#endif 
+#endif
 
 #define CGAL_FE_TONEAREST    _RC_NEAR
 #define CGAL_FE_TOWARDZERO   _RC_CHOP
@@ -357,7 +357,7 @@ inline void force_ieee_double_precision()
 // and whose destructor resets it back to the saved state.
 
 template <bool Protected = true> struct Protect_FPU_rounding;
- 
+
 template <>
 struct Protect_FPU_rounding<true>
 {
@@ -372,7 +372,7 @@ struct Protect_FPU_rounding<true>
 private:
   FPU_CW_t backup;
 };
- 
+
 template <>
 struct Protect_FPU_rounding<false>
 {

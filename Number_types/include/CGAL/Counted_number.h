@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman,
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -43,7 +43,7 @@ class Counted_number {
                          s_square_count,
                          s_integral_division_count,
                          s_is_square_count,
-                         s_sqrt_count, 
+                         s_sqrt_count,
                          s_kth_root_count,
                          s_root_of_count,
                          s_gcd_count,
@@ -54,10 +54,10 @@ class Counted_number {
     typedef NT Rep_type;
     static void reset()
             { s_neg_count=0; s_add_count=0; s_sub_count=0;
-              s_mul_count=0; s_div_count=0; 
+              s_mul_count=0; s_div_count=0;
       	      s_eq_count=0; s_comp_count = 0;
               s_simplify_count = 0; s_unit_part_count = 0; s_is_zero_count = 0;
-              s_is_one_count = 0; s_square_count = 0; 
+              s_is_one_count = 0; s_square_count = 0;
               s_integral_division_count = 0; s_is_square_count = 0;
               s_sqrt_count = 0; s_kth_root_count = 0; s_root_of_count = 0;
               s_gcd_count = 0; s_div_mod_count = 0; s_mod_count = 0;
@@ -82,7 +82,7 @@ class Counted_number {
     static void inc_gcd_count() {++s_gcd_count;}
     static void inc_div_mod_count() {++s_div_mod_count;}
     static void inc_mod_count() {++s_mod_count;}
-    
+
     static unsigned long neg_count() {return s_neg_count;}
     static unsigned long add_count() {return s_add_count;}
     static unsigned long sub_count() {return s_sub_count;}
@@ -105,18 +105,18 @@ class Counted_number {
     static unsigned long gcd_count() {return s_gcd_count;}
     static unsigned long div_mod_count() {return s_div_mod_count;}
     static unsigned long mod_count() {return s_mod_count;}
-    
+
     static unsigned long count()
             { return s_neg_count + s_add_count + s_sub_count +
                      s_mul_count + s_div_count +
       	             s_eq_count + s_comp_count +
                      s_simplify_count + s_unit_part_count + s_is_zero_count +
-                     s_is_one_count + s_square_count + 
-                     s_integral_division_count + s_is_square_count + 
-                     s_sqrt_count + s_kth_root_count + s_root_of_count + 
+                     s_is_one_count + s_square_count +
+                     s_integral_division_count + s_is_square_count +
+                     s_sqrt_count + s_kth_root_count + s_root_of_count +
                      s_gcd_count + s_div_mod_count + s_mod_count;
             }
-            
+
     static void report(std::ostream &os);
     NT rep() const {return m_rep;}
     Counted_number() {}
@@ -124,16 +124,16 @@ class Counted_number {
     explicit Counted_number(NT n) :m_rep(n){}
     Counted_number operator-() const
             {inc_neg_count();return Counted_number(-m_rep);}
-    Counted_number const & operator+=(Counted_number const &n) 
+    Counted_number const & operator+=(Counted_number const &n)
             {
 		inc_add_count();
 		m_rep += n.m_rep;
 		return *this;}
-    Counted_number const & operator-=(Counted_number const &n) 
+    Counted_number const & operator-=(Counted_number const &n)
             {inc_sub_count(); m_rep -= n.m_rep; return *this;}
-    Counted_number const & operator*=(Counted_number const &n) 
+    Counted_number const & operator*=(Counted_number const &n)
             {inc_mul_count(); m_rep *= n.m_rep; return *this;}
-    Counted_number const & operator/=(Counted_number const &n) 
+    Counted_number const & operator/=(Counted_number const &n)
             {inc_div_count(); m_rep /= n.m_rep; return *this;}
 
     // Counted operations
@@ -141,32 +141,32 @@ class Counted_number {
       inc_simplify_count();
       CGAL_NTS simplify( m_rep );
     }
-    
+
     Counted_number unit_part() const {
       inc_unit_part_count();
       return Counted_number( CGAL_NTS unit_part( rep() ) );
-    } 
-    
+    }
+
     bool is_zero() const {
       inc_is_zero_count();
       return CGAL_NTS is_zero( rep() );
     }
-    
+
     bool is_one() const {
       inc_is_one_count();
       return CGAL_NTS is_one( rep() );
     }
-    
+
     Counted_number square() const {
       inc_square_count();
       return Counted_number( CGAL_NTS square( rep() ) );
     }
-    
+
     Counted_number integral_division( const Counted_number& n ) const {
       inc_integral_division_count();
       return Counted_number( CGAL_NTS integral_division( rep(), n.rep() ) );
     }
-    
+
     bool is_square( Counted_number& result ) const {
       inc_is_square_count();
       NT result_as_nt;
@@ -174,33 +174,33 @@ class Counted_number {
       result = Counted_number( result_as_nt );
       return is_integral;
     }
-      
+
     Counted_number sqrt() const {
       inc_sqrt_count();
       return Counted_number( CGAL_NTS sqrt( rep() ) );
     }
-    
+
     Counted_number kth_root( int k ) const {
       inc_kth_root_count();
       return Counted_number( CGAL_NTS kth_root( k, rep() ) );
     }
-    
+
     Counted_number gcd( const Counted_number& n ) const {
       inc_gcd_count();
       return Counted_number( CGAL_NTS gcd( rep(), n.rep() ) );
     }
-    
+
     Counted_number div( const Counted_number& n ) const {
       inc_div_count();
       return Counted_number( CGAL_NTS div( rep(), n.rep() ) );
     }
-    
+
     Counted_number mod( const Counted_number& n ) const {
       inc_mod_count();
       return Counted_number( CGAL_NTS mod( rep(), n.rep() ) );
     }
-    
-    void div_mod( const Counted_number& n, Counted_number& q, 
+
+    void div_mod( const Counted_number& n, Counted_number& q,
                   Counted_number& r ) const {
       inc_div_mod_count();
       NT q_as_nt, r_as_nt;
@@ -208,12 +208,12 @@ class Counted_number {
       q = Counted_number( q_as_nt );
       r = Counted_number( r_as_nt );
     }
-        
-    // Other operations  
+
+    // Other operations
     inline double to_double() const {
       return CGAL_NTS to_double( rep() );
     }
-    
+
     inline std::pair<double, double> to_interval() const {
       return CGAL_NTS to_interval( rep() );
     }
@@ -280,7 +280,7 @@ template< class NT >
 unsigned long Counted_number<NT>::s_mod_count = 0;
 
 //unary +
-template <class NT> Counted_number<NT> 
+template <class NT> Counted_number<NT>
 operator + (const Counted_number<NT>& n1){
     return n1;
 }
@@ -531,7 +531,7 @@ struct Is_square_selector {
   struct Is_square : public Binary_function<NT, NT&, bool > {
       bool operator()( const NT& x, NT& y ) const {
           return x.is_square( y );
-      } 
+      }
       bool operator()( const NT& x) const {
           NT y;
           return x.is_square( y );
@@ -547,10 +547,10 @@ struct Is_square_selector< NT, Null_functor > {
 
 template <class NT, class AlgebraicStructureTag>
 struct Sqrt_selector{
-    struct Sqrt : public Unary_function<NT,NT> { 
+    struct Sqrt : public Unary_function<NT,NT> {
         NT operator ()(const NT& x) const {
             return x.sqrt();
-        }  
+        }
     };
 };
 template <class NT>
@@ -576,12 +576,12 @@ template< class NT, class Functor >
 struct Root_of_selector {
   private:
     typedef typename NT::Rep_type Rep_type;
-    struct Cast{                                      
-      typedef Rep_type result_type;                               
-      result_type operator()(const NT& counted_number) const { 
+    struct Cast{
+      typedef Rep_type result_type;
+      result_type operator()(const NT& counted_number) const {
         return counted_number.rep();
       }
-    }; 
+    };
 
   public:
     struct Root_of {
@@ -592,22 +592,22 @@ struct Root_of_selector {
       NT operator()( int k, Input_iterator begin, Input_iterator end ) const {
         NT::inc_root_of_count();
         Cast cast;
-        return NT( Functor()( k, 
+        return NT( Functor()( k,
                               ::boost::make_transform_iterator( begin, cast ),
                               ::boost::make_transform_iterator( end, cast ) ) );
       }
-      
+
       // TODO: Why are the arguments not const-ref?
 /*      template< class Input_iterator >
-      NT operator()( Boundary lower, Boundary upper, 
+      NT operator()( Boundary lower, Boundary upper,
                      Input_iterator begin, Input_iterator end ) const {
         NT::inc_root_of_count();
         Cast cast;
-        return NT( Functor()( lower, upper, 
+        return NT( Functor()( lower, upper,
                              ::boost::make_transform_iterator( begin, cast ),
                              ::boost::make_transform_iterator( end, cast ) ) );
       }*/
-    };    
+    };
 };
 
 template< class NT >
@@ -666,7 +666,7 @@ struct Div_mod_selector {
     typedef NT&  third_argument_type;
     typedef NT&  fourth_argument_type;
     typedef Arity_tag< 4 >         Arity;
-    
+
     void operator()( const NT& x, const NT& y, NT& q, NT& r ) const {
       x.div_mod( y, q, r );
     }
@@ -683,7 +683,7 @@ struct Div_mod_selector< NT, Null_functor >{
 template <class NT>
 class Algebraic_structure_traits<Counted_number<NT> >
     :public Algebraic_structure_traits_base
-      <Counted_number<NT>, 
+      <Counted_number<NT>,
        typename Algebraic_structure_traits<NT>::Algebraic_category >
 {
 private:
@@ -734,11 +734,11 @@ public:
     <Counted_number<NT>, typename AST_NT::Mod > ::Mod Mod;
 
     typedef typename INTERN_COUNTED_NUMBER::Div_mod_selector
-    <Counted_number<NT>, typename AST_NT::Div_mod > ::Div_mod Div_mod;            
+    <Counted_number<NT>, typename AST_NT::Div_mod > ::Div_mod Div_mod;
 };
 
 template <class NT>
-class Real_embeddable_traits<Counted_number<NT> > 
+class Real_embeddable_traits<Counted_number<NT> >
     : public Real_embeddable_traits_base <Counted_number<NT> > {
     typedef Real_embeddable_traits<NT> RET_NT;
 
@@ -753,13 +753,13 @@ public:
           return CGAL_NTS is_finite( x.rep() );
         }
     };
-    
+
     struct To_double : public Unary_function< Counted_number<NT>, double > {
         double operator()(const Counted_number<NT>& x) const {
             return x.to_double();
         }
     };
-    
+
     struct To_interval: public Unary_function< Counted_number<NT>, std::pair<double,double> > {
         std::pair<double,double>
         operator()(const Counted_number<NT>& x) const {

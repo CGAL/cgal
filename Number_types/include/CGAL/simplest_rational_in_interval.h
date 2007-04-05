@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Susan Hert, Sylvain Pion
- 
+
 #ifndef CGAL_SIMPLEST_RATIONAL_IN_INTERVAL_H
 #define CGAL_SIMPLEST_RATIONAL_IN_INTERVAL_H
 
@@ -40,22 +40,22 @@ CGAL_BEGIN_NAMESPACE
      4.53-39. */
 
 template <class Rational>
-Rational 
+Rational
 simplest_rational_in_interval(double x, double y) {
-    
+
     typedef Fraction_traits<Rational> FT;
-    typedef typename FT::Is_fraction Is_fraction; 
+    typedef typename FT::Is_fraction Is_fraction;
     typedef typename FT::Numerator_type Numerator_type;
     typedef typename FT::Denominator_type Denominator_type;
     typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose Compose;
-    
+
     // Must be a fraction
     BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction, Tag_true>::value));
     // Numerator_type,Denominator_type must be the same
     BOOST_STATIC_ASSERT((::boost::is_same<Numerator_type, Denominator_type>::value));
-    
-    
+
+
   if(x == y){
     return to_rational<Rational>(x);
   }
@@ -64,7 +64,7 @@ simplest_rational_in_interval(double x, double y) {
     std::swap(x,y);
   }
 
-  Rational r;  // Return value. 
+  Rational r;  // Return value.
   Numerator_type r_numerator, r_denominator;
   // Deal with negative arguments.  We only have to deal with the case
   // where both x and y are negative -- when exactly one is negative
@@ -74,7 +74,7 @@ simplest_rational_in_interval(double x, double y) {
     return  - simplest_rational_in_interval<Rational>(std::fabs(x),std::fabs(y));
   } else if (x <= 0 || y <= 0) {
     // One argument is 0, or arguments are on opposite sides of 0:
-    // simplest rational in interval is 0 exactly. 
+    // simplest rational in interval is 0 exactly.
     r_numerator = 0;
     r_denominator = 1;
   } else { // x > 0 && y > 0
@@ -98,11 +98,11 @@ simplest_rational_in_interval(double x, double y) {
 
       // Return 1/(xc + s).
 
-      Numerator_type xc_rt(xc);      
+      Numerator_type xc_rt(xc);
       Numerator_type s_num,s_den;
       Decompose()(s,s_num,s_den);
       r_numerator = s_den;
-      r_denominator = s_num + xc_rt * s_den;  
+      r_denominator = s_num + xc_rt * s_den;
     }
   }
 

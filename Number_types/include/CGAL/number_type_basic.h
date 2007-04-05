@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
- 
+
 
 #ifndef CGAL_NUMBER_Type_BASIC_H
 #define CGAL_NUMBER_Type_BASIC_H
@@ -50,7 +50,7 @@
 #include <CGAL/functional_base.h> // Unary_function, Binary_function
 #include <CGAL/Kernel/mpl.h>      // First_if_different
 #include <CGAL/known_bit_size_integers.h>
-#include <CGAL/enum.h>            // CGAL::Sign etc.  
+#include <CGAL/enum.h>            // CGAL::Sign etc.
 #include <CGAL/tags.h>            // Tag_true / Tag_false
 
 #include <CGAL/Coercion_traits.h>
@@ -59,7 +59,7 @@
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Rational_traits.h>
-#include <CGAL/Scalar_factor_traits.h>    
+#include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Algebraic_extension_traits.h>
 
 #include <CGAL/Needs_parens_as_product.h>
@@ -67,7 +67,7 @@
 #include <CGAL/utils_classes.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/number_utils_classes.h> 
+#include <CGAL/number_utils_classes.h>
 
 
 #include <CGAL/FPU.h>

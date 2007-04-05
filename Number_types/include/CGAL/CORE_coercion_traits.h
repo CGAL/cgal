@@ -36,9 +36,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//CORE internal coercions:    
-   
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigFloat)  
+//CORE internal coercions:
+
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigFloat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigRat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::Expr)
 
@@ -48,44 +48,44 @@ CGAL_BEGIN_NAMESPACE
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigRat,::CORE::Expr)
 
 // The following definitions reflect the interaction of the CORE number types
-// with the built in types, 
+// with the built in types,
 // CORE BigInt:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::CORE::BigInt)        
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::CORE::BigInt)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,::CORE::BigInt)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,::CORE::BigInt)
-   
 
-// CORE BigRat:    
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::BigRat)   
+
+// CORE BigRat:
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::BigRat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::CORE::BigRat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::BigRat)
-    
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::BigRat)  
+
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::BigRat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::CORE::BigRat)
-   
+
 
 // CORE BigFloat:      :
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::BigFloat)   
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::BigFloat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::BigFloat) 
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::BigFloat)  
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::BigFloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::BigFloat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::CORE::BigFloat)
 
 // CORE Expr:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::Expr)   
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::Expr)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::CORE::Expr)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::Expr)  
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::Expr)  
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::Expr)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::CORE::Expr)
 
-// not provieded by CORE 
+// not provieded by CORE
 // Note that this is not symmetric to LEDA
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::BigInt)
-//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::BigRat)  
-//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::CORE::BigRat)  
+//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::BigRat)
+//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::CORE::BigRat)
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::BigFloat)
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::CORE::BigFloat)
-//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::Expr) 
+//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::Expr)
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::CORE::Expr)
 
 CGAL_END_NAMESPACE

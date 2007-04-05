@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
 
@@ -134,8 +134,8 @@ public:
                                  // measuring the number of digits
                                  // of the Gmpq
 // a possible code is:
-//  int tam() const { return std::max(numerator().tam(), 
-//  	                                denominator().tam()); }  
+//  int tam() const { return std::max(numerator().tam(),
+//  	                                denominator().tam()); }
 // the same as Quotient<MP_Float>
 #endif
 
@@ -302,9 +302,9 @@ operator<<(std::ostream& os, const Gmpq &z)
 namespace Gmpq_detail {
   inline
   bool is_space (const std::istream& /*is*/, std::istream::int_type c)
-  { 
-    std::istream::char_type cc= c; 
-    return 
+  {
+    std::istream::char_type cc= c;
+    return
       (c == std::istream::traits_type::eof()) ||
 #ifndef CGAL_CFG_NO_LOCALE
       std::isspace(cc, std::locale::classic() )
@@ -314,7 +314,7 @@ namespace Gmpq_detail {
       ;
   }
 
-  inline 
+  inline
   bool is_eof (const std::istream& /*is*/, std::istream::int_type c)
   {
     return c == std::istream::traits_type::eof();
@@ -324,7 +324,7 @@ namespace Gmpq_detail {
   bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
   {
     std::istream::char_type cc= c;
-    return 
+    return
 #ifndef CGAL_CFG_NO_LOCALE
       std::isdigit(cc, std::locale::classic() )
 #else
@@ -353,7 +353,7 @@ operator>>(std::istream& is, Gmpq &z)
 
   c = is.peek();
   if (c != '.') {
-    // is there a sign? 
+    // is there a sign?
     if (c == '-' || c == '+') {
       is.get();
       negative = (c == '-');
@@ -367,20 +367,20 @@ operator>>(std::istream& is, Gmpq &z)
       is.get();
       c = is.peek();
     }
-    // are we done? 
+    // are we done?
     if (Gmpq_detail::is_eof(is, c) || Gmpq_detail::is_space(is, c)) {
       is.flags(old_flags);
       if (digits && !is.fail())
 	z = negative? Gmpq(-n,1): Gmpq(n,1);
       return is;
-    } 
+    }
   } else
     n = 0;
-  
-  // now we have read n, we are not done, and c is the next character 
+
+  // now we have read n, we are not done, and c is the next character
   // in the stream
   if (c == '/' || c == '.') {
-    is.get(); 
+    is.get();
     if (c == '/') {
       // rational case
       is >> d;
@@ -390,7 +390,7 @@ operator>>(std::istream& is, Gmpq &z)
       return is;
     }
 
-    // floating point case; read number after '.' (may be empty)  
+    // floating point case; read number after '.' (may be empty)
     while (true) {
       c = is.peek();
       if (Gmpq_detail::is_eof(is, c) || !Gmpq_detail::is_digit(is, c))
@@ -409,7 +409,7 @@ operator>>(std::istream& is, Gmpq &z)
   if (c == 'e' || c == 'E') {
     is.get();
     is >> e;
-  } 
+  }
 
   // now construct the Gmpq
   if (!digits) {
@@ -418,9 +418,9 @@ operator>>(std::istream& is, Gmpq &z)
     is.flags(old_flags);
     return is;
   }
-   
+
   // handle e
-  if (e > 0) 
+  if (e > 0)
     while (e--) n *= 10;
   else
     while (e++) d *= 10;

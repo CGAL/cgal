@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Hemmer <hemmer@mpi-sb.mpg.de>
 
@@ -33,7 +33,7 @@ inline T min BOOST_PREVENT_MACRO_SUBSTITUTION
 };
 
 template< class T , class Compare >
-inline T min BOOST_PREVENT_MACRO_SUBSTITUTION 
+inline T min BOOST_PREVENT_MACRO_SUBSTITUTION
 ( const T& x , const T& y, const Compare& c) {
     return Min<T, Compare>(c)( x , y );
 };
@@ -51,7 +51,7 @@ inline T max BOOST_PREVENT_MACRO_SUBSTITUTION
     return Max<T, Compare>(c)( x , y );
 };
 
-// use Is_valid 
+// use Is_valid
 template< class T >
 inline bool is_valid( const T& x ) {
   return Is_valid< T >()( x );

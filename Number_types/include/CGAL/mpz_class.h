@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Sylvain Pion, Michael Hemmer 
- 
+//
+// Author(s)     : Sylvain Pion, Michael Hemmer
+
 #ifndef CGAL_MPZ_CLASS_H
 #define CGAL_MPZ_CLASS_H
 
@@ -40,7 +40,7 @@
 
 #define CGAL_CHECK_GMP_EXPR                                             \
     BOOST_STATIC_ASSERT(                                                \
-            (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));   
+            (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,52 +54,52 @@ public:
     typedef Euclidean_ring_tag  Algebraic_category;
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-    
+
     struct Is_zero: public Unary_function< mpz_class , bool > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) == 0;
         }
-    };  
+    };
 
     struct Is_one: public Unary_function< mpz_class , bool > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return x == 1;
         }
-    }; 
+    };
 
-    struct Simplify: public Unary_function< mpz_class , void > {        
-        template <class T, class U> 
+    struct Simplify: public Unary_function< mpz_class , void > {
+        template <class T, class U>
         void operator()( const ::__gmp_expr< T ,U >&) const {
             CGAL_CHECK_GMP_EXPR;
         }
-    }; 
-    
+    };
+
     struct Square: public Unary_function< mpz_class , mpz_class > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return x*x;
         }
-    }; 
+    };
 
     struct Unit_part: public Unary_function< mpz_class , mpz_class > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
-            return( x < mpz_class(0)) ?  mpz_class(-1) : mpz_class(1); 
+            return( x < mpz_class(0)) ?  mpz_class(-1) : mpz_class(1);
         }
-    }; 
+    };
 
-   
 
-    struct Integral_division: 
+
+    struct Integral_division:
         public Binary_function< mpz_class , mpz_class, mpz_class > {
-        template <typename T,  typename U1, typename U2> 
-        mpz_class operator()( 
+        template <typename T,  typename U1, typename U2>
+        mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y) const {
             CGAL_CHECK_GMP_EXPR;
@@ -107,42 +107,42 @@ public:
             CGAL_precondition_msg( result * y == x,
             "'x' must be divisible by 'y' in "
             "Algebraic_structure_traits<mpz_class>::Integral_div()(x,y)" );
-            return result;         
-        } 
+            return result;
+        }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
-    }; 
-    
+    };
+
     struct Gcd : public Binary_function< mpz_class, mpz_class, mpz_class > {
-        template <typename T,  typename U1, typename U2> 
-        mpz_class operator()( 
+        template <typename T,  typename U1, typename U2>
+        mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y) const {
             CGAL_CHECK_GMP_EXPR;
             mpz_class c;
             mpz_gcd(c.get_mpz_t(),mpz_class(x).get_mpz_t(), mpz_class(y).get_mpz_t() );
             return c;
-        } 
+        }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
-    
+
     struct Div : public Binary_function< mpz_class, mpz_class, mpz_class > {
-        template <typename T,  typename U1, typename U2> 
-        mpz_class operator()( 
+        template <typename T,  typename U1, typename U2>
+        mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y) const {
             CGAL_CHECK_GMP_EXPR;
-            return x / y; 
-        } 
+            return x / y;
+        }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
-    
+
     struct Mod : public Binary_function< mpz_class, mpz_class, mpz_class > {
-        template <typename T,  typename U1, typename U2> 
-        mpz_class operator()( 
+        template <typename T,  typename U1, typename U2>
+        mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y) const {
             CGAL_CHECK_GMP_EXPR;
-            return x % y; 
+            return x % y;
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
@@ -153,11 +153,11 @@ public:
         typedef mpz_class&   fourth_argument_type;
         typedef Arity_tag< 4 >         Arity;
         typedef void         result_type;
-        template <typename T,  typename U1, typename U2> 
-        void operator()( 
+        template <typename T,  typename U1, typename U2>
+        void operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y,
-                mpz_class& q, 
+                mpz_class& q,
                 mpz_class& r
         ) const {
             CGAL_CHECK_GMP_EXPR;
@@ -165,54 +165,54 @@ public:
                 typename Traits::Div  actual_div;
                 typename Traits::Mod  actual_mod;
                 q = actual_div( x, y );
-                r = actual_mod( x, y );          
+                r = actual_mod( x, y );
                 return;
-            }  
+            }
     };
-    
-    
+
+
     struct Sqrt: public Unary_function< mpz_class , mpz_class > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sqrt(x);
         }
-    }; 
-   
+    };
+
 
     /*struct Is_square: public Binary_function< mpz_class , mpz_class& , bool > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()(
                 const ::__gmp_expr< T , U >& x,
                 mpz_class&                              r){
             r = ::sqrt(x);
-            return (r*r==x) ? true : false; 
+            return (r*r==x) ? true : false;
         }
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()(const ::__gmp_expr< T , U >& x){
             mpz_class r = ::sqrt(x);
-            return (r*r==x) ? true : false; 
+            return (r*r==x) ? true : false;
         }
-        };*/ 
+        };*/
 };
 
 // RET for mpz_class
 template<>
-class Real_embeddable_traits< mpz_class  > 
+class Real_embeddable_traits< mpz_class  >
     : public Real_embeddable_traits_base< mpz_class > {
 public:
-    
+
     typedef mpz_class  Type;
 
     struct Is_zero: public Unary_function< mpz_class , bool > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) == 0;
         }
-    }; 
+    };
     struct Is_finite: public Unary_function<mpz_class,bool> {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& ) const {
             CGAL_CHECK_GMP_EXPR;
             return true;
@@ -220,15 +220,15 @@ public:
     };
 
     struct Is_positive: public Unary_function< mpz_class , bool > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) > 0;
         }
-    }; 
-  
+    };
+
     struct Is_negative: public Unary_function< mpz_class , bool > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) < 0;
@@ -236,28 +236,28 @@ public:
     };
 
     struct Abs: public Unary_function< mpz_class , mpz_class > {
-        template <typename T, typename U> 
+        template <typename T, typename U>
         mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::abs(x);
         }
     };
-    
-    struct Sign 
+
+    struct Sign
         : public Unary_function< mpz_class, ::CGAL::Sign > {
     public:
-        template <typename T, typename U> 
+        template <typename T, typename U>
         ::CGAL::Sign operator()( const ::__gmp_expr< T , U >& x ) const {
             CGAL_CHECK_GMP_EXPR;
             return (::CGAL::Sign) ::sgn( x );
-        }        
+        }
     };
-    
-    struct Compare 
+
+    struct Compare
         : public Binary_function< mpz_class, mpz_class, Comparison_result > {
         template <typename T,  typename U1, typename U2>
-        Comparison_result operator()( 
-                const ::__gmp_expr< T , U1 >& x, 
+        Comparison_result operator()(
+                const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y ) const {
             CGAL_CHECK_GMP_EXPR;
             // cmp returns any int value, not just -1/0/1...
@@ -266,8 +266,8 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT
         ( Type, Comparison_result)
     };
-    
-    struct To_double 
+
+    struct To_double
         : public Unary_function< mpz_class, double > {
         template < typename T, typename U >
         double operator()( const ::__gmp_expr< T , U >& x ) const {
@@ -275,12 +275,12 @@ public:
             return mpz_class(x).get_d();
         }
     };
-    
-    struct To_interval 
-    
+
+    struct To_interval
+
         : public Unary_function< mpz_class, std::pair< double, double > > {
-       template <typename T, typename U> 
-        std::pair<double, double> 
+       template <typename T, typename U>
+        std::pair<double, double>
         operator()( const ::__gmp_expr< T , U >& x_ ) const {
             CGAL_CHECK_GMP_EXPR;
             mpz_class x = mpz_class(x_);
@@ -298,6 +298,6 @@ public:
 
 CGAL_END_NAMESPACE
 
-#undef CGAL_CHECK_GMP_EXPR 
+#undef CGAL_CHECK_GMP_EXPR
 
 #endif // CGAL_MPZ_CLASS_H

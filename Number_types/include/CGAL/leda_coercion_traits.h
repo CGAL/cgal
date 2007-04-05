@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -48,8 +48,8 @@ CGAL_BEGIN_NAMESPACE
 
 
 //LEDA internal coercions:
-   
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::bigfloat); 
+
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::bigfloat);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::rational);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::real);
 
@@ -59,53 +59,53 @@ CGAL_BEGIN_NAMESPACE
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::rational,::leda::real);
 
 // The following definitions reflect the interaction of the LEDA number types
-// with the built in types, 
+// with the built in types,
 // leda integer:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::leda::integer);        
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::leda::integer);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,::leda::integer);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,::leda::integer);
 
-// leda rational:    
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::rational);   
+// leda rational:
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::rational);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::rational);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::rational);   
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::rational);  
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::rational);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::rational);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::rational);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::rational);
 
 // leda bigfloat:      :
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::bigfloat);   
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::bigfloat);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::bigfloat);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::bigfloat);   
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::bigfloat);  
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::bigfloat);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::bigfloat);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::bigfloat);
 
 // leda real:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::real);   
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::real);  
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::real);  
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::real);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::real);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::real);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::real);
 
 //not provided by LEDA
-//Note that this is not symmetric to CORE 
+//Note that this is not symmetric to CORE
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,::leda::integer);
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::bigfloat);
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::bigfloat);
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::real);
-//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::real); 
+//CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::real);
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::real);
 
 
-template <> 
-struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{  
-    typedef Tag_true  Are_explicit_interoperable; 
-    typedef Tag_false Are_implicit_interoperable; 
-    typedef ::leda::rational Type;  
+template <>
+struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    typedef ::leda::rational Type;
     struct Cast{
-        typedef Type result_type; 
-        Type operator()(const ::leda::rational& x)  const { return x;} 
-        Type operator()(const ::leda::bigfloat& x) const { 
+        typedef Type result_type;
+        Type operator()(const ::leda::rational& x)  const { return x;}
+        Type operator()(const ::leda::bigfloat& x) const {
 #if CGAL_LEDA_VERSION < 500
             ::leda::integer e = x.get_exponent();
             ::leda::integer s = x.get_significant();
@@ -123,7 +123,7 @@ struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{
 #endif
         }
     };
-}; 
+};
 template <> struct Coercion_traits< ::leda::rational, ::leda::bigfloat >
     :public Coercion_traits< ::leda::bigfloat , ::leda::rational >{};
 
