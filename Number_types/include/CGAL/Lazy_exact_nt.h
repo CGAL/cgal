@@ -1039,9 +1039,8 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
                 return r;
 
             // If it's precise enough, then OK.
-            if ((app.sup() - app.inf())
-                    < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
-                    * (std::max)(std::fabs(app.inf()), std::fabs(app.sup())) )
+            if (compare_relative_precision(app,
+                 Lazy_exact_nt<ET>::get_relative_precision_of_to_double()) <= 0)
                 return CGAL_NTS to_double(app);
 
             CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));

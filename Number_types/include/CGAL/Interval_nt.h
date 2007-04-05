@@ -280,6 +280,7 @@ Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, int b)
 { return ! (a == b); }
 
+// Non-documented
 // Returns true if the interval is a unique representable double.
 template <bool Protected>
 inline
@@ -292,6 +293,7 @@ fit_in_double (const Interval_nt<Protected> & d, double &r)
   return b;
 }
 
+// Non-documented
 template <bool Protected>
 inline
 bool
@@ -299,6 +301,34 @@ is_singleton (const Interval_nt<Protected> & d)
 {
   return d.is_point();
 }
+
+// Non-documented
+template <bool Protected>
+inline
+double
+magnitude (const Interval_nt<Protected> & d)
+{
+  return (std::max)(std::fabs(d.inf()), std::fabs(d.sup()));
+}
+
+// Non-documented
+template <bool Protected>
+inline
+double
+width (const Interval_nt<Protected> & d)
+{
+  return d.sup() - d.inf();
+}
+
+// Non-documented
+template <bool Protected>
+inline
+Comparison_result
+compare_relative_precision(const Interval_nt<Protected> & d, double prec)
+{
+  return CGAL::compare(width(d), prec * magnitude(d));
+}
+
 
 template< bool Protected >
 class Is_valid< Interval_nt<Protected> >
