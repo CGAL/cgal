@@ -46,7 +46,7 @@ public:
   RT operator[](unsigned int i) const
   {
     CGAL_assertion(i < 3);
-    return (i == 0) ? a() : ((i == 1) ? b() : c());
+    return (i == 0) ? this->a() : ((i == 1) ? this->b() : this->c());
   }
   
   /*! Return a 3d point p_3 coincident to the plane, such that the image point
@@ -61,9 +61,9 @@ public:
     CGAL_assertion(i < 3);
 
     // We know that the plane goes throgh the origin
-    RT coef_a = a();
-    RT coef_b = b();
-    RT coef_c = c();
+    RT coef_a = this->a();
+    RT coef_b = this->b();
+    RT coef_c = this->c();
 
 #if 0
     std::cout << "(a, b, c): " << coef_a << "," << coef_b << "," << coef_c
