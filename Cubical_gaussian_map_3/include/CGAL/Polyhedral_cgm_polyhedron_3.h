@@ -54,10 +54,10 @@ CGAL_BEGIN_NAMESPACE
 /*! The extended Polyhedron vertex type */
 template <class T_Refs, class T_Point>
 class Polyhedral_cgm_polyhedron_3_vertex :
-  public CGAL::HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point>
+  public HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point>
 {
 private:
-  typedef CGAL::HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point> Base;
+  typedef HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point> Base;
 
   /*! Indicates whether it is a marked vertex */
   bool m_marked;
@@ -88,7 +88,7 @@ public:
 /*! The extended Polyhedron halfedge type */
 template <class T_Refs>
 class Polyhedral_cgm_polyhedron_3_halfedge :
-  public CGAL::HalfedgeDS_halfedge_base<T_Refs>
+  public HalfedgeDS_halfedge_base<T_Refs>
 {
 private:
   /*! Indicates that the halfedge has been processed already */
@@ -118,10 +118,10 @@ public:
 /*! The extended Polyhedron face type */
 template <class T_Refs, class Plane, class Cgm>
 class Polyhedral_cgm_polyhedron_3_face :
-  public CGAL::HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane>
+  public HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane>
 {
 private:
-  typedef CGAL::HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane> Base;
+  typedef HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane> Base;
   typedef typename Cgm::Projected_normal                Projected_normal;
   
   /*! The normal projected onto the unit cube */
@@ -169,7 +169,7 @@ public:
  * items type.
  */
 template <class Cgm>
-struct Polyhedral_cgm_polyhedron_items : public CGAL::Polyhedron_items_3 {
+struct Polyhedral_cgm_polyhedron_items : public Polyhedron_items_3 {
   template <class T_Refs, class T_Traits>
   struct Vertex_wrapper {
     typedef typename T_Traits::Point_3                              Point_3;
@@ -200,8 +200,8 @@ struct Polyhedral_cgm_polyhedron_items : public CGAL::Polyhedron_items_3 {
  */
 template <class Cgm>
 struct Polyhedral_cgm_polyhedron_3 :
-  public CGAL::Polyhedron_3<CGAL::Polyhedron_traits_with_normals_3<typename Cgm::Kernel>,
-                            Polyhedral_cgm_polyhedron_items<Cgm> >
+  public Polyhedron_3<Polyhedron_traits_with_normals_3<typename Cgm::Kernel>,
+                      Polyhedral_cgm_polyhedron_items<Cgm> >
 {
   /*! Constructor */
   Polyhedral_cgm_polyhedron_3() {}
