@@ -54,10 +54,10 @@ CGAL_BEGIN_NAMESPACE
 /*! The extended Polyhedron vertex type */
 template <class T_Refs, class T_Point>
 class Polyhedral_cgm_polyhedron_3_vertex :
-  public HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point>
+  public HalfedgeDS_vertex_base<T_Refs, Tag_true, T_Point>
 {
 private:
-  typedef HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point> Base;
+  typedef HalfedgeDS_vertex_base<T_Refs, Tag_true, T_Point> Base;
 
   /*! Indicates whether it is a marked vertex */
   bool m_marked;
@@ -116,12 +116,12 @@ public:
 };
 
 /*! The extended Polyhedron face type */
-template <class T_Refs, class Plane, class Cgm>
+template <class T_Refs, class T_Plane, class Cgm>
 class Polyhedral_cgm_polyhedron_3_face :
-  public HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane>
+  public HalfedgeDS_face_base<T_Refs, Tag_true, T_Plane>
 {
 private:
-  typedef HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane> Base;
+  typedef HalfedgeDS_face_base<T_Refs, Tag_true, T_Plane> Base;
   typedef typename Cgm::Projected_normal                Projected_normal;
   
   /*! The normal projected onto the unit cube */
