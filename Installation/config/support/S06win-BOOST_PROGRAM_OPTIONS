@@ -1,0 +1,16 @@
+# The Boost library (http://www.boost.org/) extends the C++ std library
+
+DESCRIPTION = 
+PROVIDES = BOOST_PROGRAM_OPTIONS
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = boost_program_options 
+REQUIRES = DOLLAR_WINDOWS_COMPILER BOOST
+INCOMPATIBLE = 
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS =
+LIBTHING = 
+COMPILETESTFLAGS = 
+
+# EOF
