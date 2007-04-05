@@ -36,19 +36,21 @@ It can have any number of connected components, boundaries
 \ccHeading{Valid Expressions}
 
 The mesh simplification algorithm requires the free function \ccc{collapse_triangulation_edge}.
-\ccTagFullDeclarations
 
+  \ccTagFullDeclarations
+  \def\ccLongParamLayout{\ccTrue}
   \ccFunction
   {template<class EdgeCollapsableMesh>
   typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor
-  halfedge_collapse(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor const& ue,
-                             EdgeCollapsableMesh& mesh);}  
+  halfedge_collapse(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor const& ue
+                   , EdgeCollapsableMesh& mesh);
+  }  
   {Collapses the undirected edge \ccc{(v0v1,v1v0)} replacing it with \ccc{v0} or \ccc{v1},
-   as described in the following paragraph.}
+  as described in the following paragraph.}
 
     
 
-\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge \ccc{v0v1,v1v0} must satisfy the {\em link condition} 
+\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge \ccc{(v0v1,v1v0)} must satisfy the {\em link condition} 
 \cite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse. 
 
 \smallskip
@@ -64,15 +66,15 @@ Then, after the collapse of \ccc{(v0v1,v1v0)} the following holds:
 \begin{itemize}
 \item The edge \ccc{e} is no longer in \ccc{mesh}.
 \item One of $\{$\ccc{v0,v1}$\}$ is no longer in \ccc{mesh} while the other remains.
-\footnote{Even though it would appear that v0 can always be the vertex being removed, there is one exception case (illustrated in Figure 4) when v1 must be the vertex removed.}
-Let \ccc{vm} be the removed vertex and \ccc{vk} be the remaining vertex.
+\footnote{Even though it would appear that v0 can always be the vertex being removed, there is a case when removing the edge \ccc{e} {\em requires} \ccc{v1} to be removed as well. See figure \ref{CollapseFigure5}.}
+Let \ccc{vgone} be the removed vertex and \ccc{vkept} be the remaining vertex.
 \item If \ccc{e} was a border edge, that is \ccc{get(is_border, e, mesh) == true}, then \ccc{next_edge(ep) == en}, and \ccc{prev_edge(en) == ep}.
 \item If \ccc{e} was not a border edge, that is \ccc{get(is_border, e, mesh) == false}, then \ccc{ep} and \ccc{epo} are no longer in \ccc{mesh} while \ccc{en} and \ccc{eno} are kept in \ccc{mesh}.
-\item For all edges \ccc{ie} in \ccc{in_edges(vm,mesh)}, \ccc{target(ie,mesh) == vk} and \ccc{source(opposite_edge(ie),mesh) == vk}.
+\item For all edges \ccc{ie} in \ccc{in_edges(vgone,mesh)}, \ccc{target(ie,mesh) == vkept} and \ccc{source(opposite_edge(ie),mesh) == vkept}.
 \item No other incidence information has changed in \ccc{mesh}.
 \end{itemize}
 
-The function returns vertex \ccc{vk}. 
+The function returns vertex \ccc{vkept} (which can be either \ccc{v0} or \ccc{v1}). 
 
 \begin{figure}[htpb]
 \begin{ccTexOnly}
@@ -149,6 +151,7 @@ The function returns vertex \ccc{vk}.
 \end{figure}
 
 \begin{figure}[htbp]
+\label{CollapseFigure5}
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=17cm]{Surface_mesh_simplification_ref/fig/border_collapse4} % omit suffix .eps to support PS and PDF
@@ -163,11 +166,14 @@ The function returns vertex \ccc{vk}.
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{This figures illustrates the single exceptional case when vertex v0 cannot be removed, so v1 is removed instead (which also is a border case hence only 1 triangle is removed).}
+\caption{This figure illustrates the single exceptional case when removing $(v0,v1)$ neccesarily implies removing $(v1)$, thus $(v0)$ remains.}
 \end{figure}
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} with only triangular faces, via external adaptation.
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+(If it has only triangular faces, and via
+{\em External Adaptation}, which is described in \cite{cgal:sll-bgl-02}
+and this {\sc Bgl} web page: \path|http://www.boost.org/libs/graph/doc/leda_conversion.html|).
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}\\

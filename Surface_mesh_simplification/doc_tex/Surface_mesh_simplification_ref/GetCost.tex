@@ -45,11 +45,11 @@ or can be intentionally returned to prevent the edge from being collapsed.
 \ccGlue    
   \ccTypedef{boost::optional<FT> result_type;}{The type of the result (an optional cost value).}
 
-\ccTagFullDeclarations
 \ccCreationVariable{gc} 
 
 \ccOperations
 
+  \ccTagFullDeclarations
   \ccMemberFunction{result_type operator()( Profile const& edge_profile
   , boost::optional<Point> const& placement ) const;}
   {Computes and returns the cost of collapsing the edge (represented by its profile),

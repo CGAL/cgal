@@ -24,10 +24,10 @@
 The concept \ccRefName\ describes the requirements for the {\em policy
 function object} which gets the {\em collapse placement} of an edge,
 that is, the new position of the vertex that remains after a 
-halfedge-collapse.
+halfedge-collapse operation.
 
 The placement returned is a \ccc{boost::optional} value (i.e., it can
-be absent). An absent result indicates that the remainin vertex 
+be absent). An absent result indicates that the remaining vertex 
 must be kept in place, not moved to a new position.
 
 \ccRefines
@@ -43,11 +43,11 @@ must be kept in place, not moved to a new position.
 \ccGlue    
   \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point).}
 
-\ccTagFullDeclarations
 \ccCreationVariable{gp} 
 
 \ccOperations
 
+\ccTagFullDeclarations
   \ccMemberFunction{ result_type operator()( Profile const& edge_profile ) const; }
   {Computes and returns the placement, that is, the position of the vertex 
   which replaces the collapsing edge (represented by its profile).}

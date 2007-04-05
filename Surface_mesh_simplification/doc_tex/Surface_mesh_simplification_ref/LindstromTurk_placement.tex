@@ -42,9 +42,9 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 {Initializes the policy with the given {\em weighting unit factor}.
 See \ref{SurfaceMeshSimplification:LindstromTurkStrategy} for details on the meaning of this factor.} 
 
-\ccHeading{Methods}
-\ccTagFullDeclarations
+\ccOperations
 \ccCreationVariable{gp} 
+  \ccTagFullDeclarations
   \ccMemberFunction{result_type operator()( Profile const& edge_profile ) const;}
   {Returns the new position for the remaining vertex after collapsing the edge
   (represented by its profile).}

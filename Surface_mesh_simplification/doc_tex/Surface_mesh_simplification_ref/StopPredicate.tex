@@ -34,11 +34,12 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
   \ccNestedType{Profile}
   {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 
+
 \ccOperations
-\ccTagFullDeclarations
 \ccCreationVariable{sp}
 
-  \ccMemberFunction
+  \ccTagFullDeclarations
+  \ccMethod
     {bool operator()( FT const&       current_cost
                     , Profile  const& profile
                     , size_type       initial_count

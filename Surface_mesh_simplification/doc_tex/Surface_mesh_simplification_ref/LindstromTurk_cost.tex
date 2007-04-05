@@ -41,9 +41,9 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 {Initializes the policy with the given {\em weighting unit factor}.
 See \ref{SurfaceMeshSimplification:LindstromTurkStrategy} for details on the meaning of this factor.} 
 
-\ccHeading{Methods}
-\ccTagFullDeclarations
+\ccOperations
 \ccCreationVariable{gc}
+  \ccTagFullDeclarations
   \ccMemberFunction{result_type operator()( Profile const& profile
   , boost::optional<Point> const& placement ) const;}
   {Returns the cost of collapsing the edge (represented by its profile) considering 
