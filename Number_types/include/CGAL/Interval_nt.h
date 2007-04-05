@@ -286,10 +286,19 @@ inline
 bool
 fit_in_double (const Interval_nt<Protected> & d, double &r)
 {
-  r = d.inf();
-  return d.is_point();
+  bool b = d.is_point();
+  if (b)
+    r = d.inf();
+  return b;
 }
 
+template <bool Protected>
+inline
+bool
+is_singleton (const Interval_nt<Protected> & d)
+{
+  return d.is_point();
+}
 
 template< bool Protected >
 class Is_valid< Interval_nt<Protected> > 
@@ -340,7 +349,7 @@ std::istream & operator>> (std::istream &is, Interval_nt<Protected> & I)
 }
 #undef CGAL_SWALLOW
 
-typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
+typedef Interval_nt<false> Interval_nt_advanced;  // for backward-compatibility
 
 
 template <bool Protected>

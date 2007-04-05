@@ -1034,8 +1034,9 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
 
             const Interval_nt<false>& app = a.approx();
-            if (app.sup() == app.inf())
-                return app.sup();
+            double r;
+            if (fit_in_double(app, r))
+                return r;
 
             // If it's precise enough, then OK.
             if ((app.sup() - app.inf())
@@ -1258,7 +1259,8 @@ struct NT_converter < Lazy_exact_nt<ET>, ET >
 };
 
 // Returns true if the value is representable by a double and to_double()
-// would return it.  False means "don't know".
+// would return it.  False means "don't know" (the exact number type is not
+// queried).
 template < typename ET >
 inline bool
 fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
