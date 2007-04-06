@@ -558,14 +558,14 @@ namespace OGL {
       { return OGL::Double_segment(double_point(s.source()),
 				   double_point(s.target())); }
     
-    static void draw(Vertex_const_handle v, const Nef_polyhedron& N, 
+    static void draw(Vertex_const_handle v, const Nef_polyhedron& , 
 		     CGAL::OGL::Polyhedron& P) { 
       Point_3 bp = v->point();
       //    CGAL_NEF_TRACEN("vertex " << bp);
       P.push_back(double_point(bp), v->mark()); 
     }
     
-    static void draw(Halfedge_const_handle e, const Nef_polyhedron& N,
+    static void draw(Halfedge_const_handle e, const Nef_polyhedron& ,
 		     CGAL::OGL::Polyhedron& P) { 
       Vertex_const_handle s = e->source();
       Vertex_const_handle t = e->twin()->source();
@@ -574,7 +574,7 @@ namespace OGL {
       P.push_back(double_segment(seg), e->mark()); 
     }
     
-    static void draw(Halffacet_const_handle f, const Nef_polyhedron& N,
+    static void draw(Halffacet_const_handle f, const Nef_polyhedron& ,
 		     CGAL::OGL::Polyhedron& P) { 
       OGL::DFacet g;
       Halffacet_cycle_const_iterator fc; // all facet cycles:
