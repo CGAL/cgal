@@ -240,22 +240,22 @@ public:
   void assert_equal_marks(SHalfedge_handle e1, SHalfedge_handle e2) const
   { CGAL_assertion(e1->mark()==e2->mark()); }
 
-  Sphere_segment segment(const Explorer* N, 
+  Sphere_segment segment(const Explorer* , 
                          SHalfedge_const_handle e) const
   { return Sphere_segment(
 	    e->source()->point(),e->twin()->source()->point(),e->circle()); }
 
-  Sphere_segment trivial_segment(const Explorer* N, 
+  Sphere_segment trivial_segment(const Explorer* , 
                                  SVertex_const_handle v) const
   { Sphere_point p = v->point(); 
     return Sphere_segment(p,p); }
 
-  Seg_pair two_segments(const Explorer* N, 
+  Seg_pair two_segments(const Explorer* , 
                         SHalfedge_const_handle e) const
   // we know that source(e)==target(e)
   { return e->circle().split_at(e->source()->point()); }
 
-  Seg_pair two_segments(const Explorer* N, 
+  Seg_pair two_segments(const Explorer* , 
                         SHalfloop_const_handle l) const
   { return l->circle().split_at_xy_plane(); }
 
