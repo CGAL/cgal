@@ -65,7 +65,7 @@ void all_pairs( ForwardIter1 p_begin, ForwardIter1 p_end,
 
 template< class ForwardIter, class Callback, class Traits >
 void all_pairs( ForwardIter p_begin, ForwardIter p_end,
-                Callback callback, Traits traits)
+                Callback callback, Traits)
 {
     const int last_dim = Traits::dimension() - 1;
     // loops actually only up to p_end-1, but we stay with the forward iterator
