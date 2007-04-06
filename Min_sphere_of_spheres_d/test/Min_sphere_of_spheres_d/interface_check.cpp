@@ -106,7 +106,7 @@ void checkRelError(const double exact,
 }
 
 template<int D,typename Sphere,typename FT>
-void compare(const FT& tol,Sphere& m1,Sphere& m2,
+void compare(const FT& /* tol */, Sphere& m1, Sphere& m2,
              const CGAL::Tag_true) {
   typedef typename Sphere::Result Pair;
   typedef typename Sphere::Cartesian_const_iterator CIt;
@@ -125,8 +125,8 @@ void compare(const FT& tol,Sphere& m1,Sphere& m2,
 }
 
 template<int D,typename Sphere,typename FT>
-void compare(const FT& tol,Sphere& m1,Sphere& m2,
-	     const CGAL::Tag_false get_is_exact_tag) {
+void compare(const FT& tol, Sphere& m1, Sphere& m2,
+	     const CGAL::Tag_false /* get_is_exact_tag */) {
   typedef typename Sphere::Cartesian_const_iterator CIt;
 
   // check radii:
