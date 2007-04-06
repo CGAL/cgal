@@ -275,12 +275,12 @@ public:
   }
 
   // test2
-  // compare the 2 envelopes by overlaying them, and then comparing the surfaces over
-  // the faces of the result map
+  // compare the 2 envelopes by overlaying them, and then comparing the
+  // surfaces over the faces of the result map
   // if faces_only = false we also compare the data over the edges & vertices
   bool compare_lu_envelopes_test2(Minimization_diagram_2 &test_env,
                                   Minimization_diagram_2 &env,
-                                  bool faces_only = true)
+                                  bool /* faces_only */ = true)
   {
     Minimization_diagram_2 overlay_map;
     // overlay the 2 maps, the overlay test functor does all the comparisons
