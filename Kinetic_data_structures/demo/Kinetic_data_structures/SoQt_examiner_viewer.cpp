@@ -21,7 +21,7 @@
 //#ifdef CGAL_USE_SOQT
 
 #include "include/control_coin.h"
-#ifndef CGAL_USE_COIN 
+#ifdef CGAL_USE_COIN 
 #include "include/SoQt_examiner_viewer.h"
 #include <qpushbutton.h>
 #include <Inventor/nodes/SoSeparator.h>
