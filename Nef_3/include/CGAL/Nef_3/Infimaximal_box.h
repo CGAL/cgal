@@ -83,7 +83,7 @@ class Infimaximal_box {
     return p;
   }
 
-  static void set_size_of_infimaximal_box(const NT& size) {}
+  static void set_size_of_infimaximal_box(const NT& ) {}
 
   static int degree(const RT& ) {
     return 0;
