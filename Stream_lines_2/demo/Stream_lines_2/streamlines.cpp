@@ -13,7 +13,6 @@ int main(int, char*)
 }
 
 #else
-
 #include <qapplication.h>
 #include <qfont.h>
 #include <qpushbutton.h>
@@ -75,6 +74,20 @@ int drawbc_id;
 int addimage_id;
 int clear_id;
 int save_id;
+
+
+template <class T>
+std::string five_letters(T i)
+{
+  std::ostringstream ss ; 
+  ss << i ; 
+  std::string s = ss.str().substr(0,5);
+    
+  if(s.length()<5){
+    s.insert((std::string::size_type)0, 5-s.length(), ' ');
+  }
+  return s;
+}
 
 class Placement : public QObject
 {
@@ -455,19 +468,6 @@ class MyWidget : public QGLWidget
       updatestatus();
       drawing();
     }
-
-  template <class T>
-  std::string five_letters(T i)
-  {
-    std::ostringstream ss ; 
-    ss << i ; 
-    std::string s = ss.str().substr(0,5);
-    
-    if(s.length()<5){
-      s.insert((std::string::size_type)0, 5-s.length(), ' ');
-    }
-    return s;
-  }
 
     void updatestatus()
     {
