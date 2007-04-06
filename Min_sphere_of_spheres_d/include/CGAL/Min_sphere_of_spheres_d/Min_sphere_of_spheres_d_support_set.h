@@ -129,7 +129,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       template<typename InputIterator>
       bool contains(InputIterator c,const FT& r,
                     const FT tol,
-                    const Tag_false is_exact) const {
+                    const Tag_false /* is_exact */) const {
         // scale ball:
         const FT r1 = sol[m]*tol;
 
@@ -147,7 +147,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
       template<typename InputIterator>
       bool contains(InputIterator c,const FT& r,
-                    const double,const Tag_true is_exact) const {
+                    const double,const Tag_true /* is_exact */) const {
         typedef Pair<FT> P;
 
         // check radii:
@@ -261,7 +261,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     }
 
     template<class Traits>
-    bool Support_set<Traits>::find_radius(const Tag_false is_exact) {
+    bool Support_set<Traits>::find_radius(const Tag_false /* is_exact */) {
       using namespace Min_sphere_of_spheres_d_impl;
 
       // find discriminant:
@@ -298,7 +298,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     }
 
     template<class Traits>
-    bool Support_set<Traits>::find_radius(const Tag_true is_exact) {
+    bool Support_set<Traits>::find_radius(const Tag_true /* is_exact */) {
       // find discriminant:
       discrim[m+1] = sqr(psi[m]) - FT(4)*chi[m]*omega[m];
       if (discrim[m+1] < FT(0))

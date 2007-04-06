@@ -28,12 +28,12 @@ namespace CGAL_MINIBALL_NAMESPACE {
   namespace Min_sphere_of_spheres_d_impl {
 
     template<typename FT>
-    bool is_better(const FT& old,const FT& now,const Tag_false is_exact) {
+    bool is_better(const FT& old,const FT& now,const Tag_false /* is_exact */) {
       return now > old;
     }
 
     template<typename FT>
-    bool is_better(const FT&,const FT&,const Tag_true is_exact) {
+    bool is_better(const FT&,const FT&,const Tag_true /* is_exact */) {
       return true;
     }
 

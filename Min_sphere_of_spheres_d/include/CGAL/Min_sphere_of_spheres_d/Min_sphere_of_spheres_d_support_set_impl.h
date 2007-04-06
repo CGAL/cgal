@@ -29,14 +29,14 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     template<typename FT>
     inline bool reject(const FT& alpha,const FT& prev,
-                       const Tag_false is_exact) {
+                       const Tag_false /* is_exact */) {
       using namespace Min_sphere_of_spheres_d_impl;
       return alpha < SqrOfEps*sqr(prev);
     }
 
     template<typename FT,typename Pair>
     inline bool reject(const FT& alpha,const Pair&,
-                       const Tag_true is_exact) {
+                       const Tag_true /* is_exact */) {
       return alpha == FT(0);
     }
 
