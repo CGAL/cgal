@@ -1023,6 +1023,7 @@ set_compiler_flags()
 	    ;;
 	*Linux*sunCC*|*Linux*CC*)
 	    #### settings for sunpro compiler on linux
+	    SUNCC_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
@@ -1032,6 +1033,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_LIBS_OPTFLAGS="-O"
 	    ;;
 	*CYGWIN*g++*)
 	    #### settings for gcc on Cygwin
