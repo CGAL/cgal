@@ -40,12 +40,12 @@
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
-template <class KD>
+template <class KD, class RS>
 class Delaunay_event_base_3: public Event_base<KD*>
 {
   typedef Event_base<KD*> P;
 public:
-  Delaunay_event_base_3(const typename KD::Root_stack &s,
+  Delaunay_event_base_3(const RS &s,
 			KD *kdel):P(kdel), s_(s){
   }
   //! Default constructor
@@ -59,7 +59,7 @@ public:
     // for some reason VC insists that this be there
     CGAL_assertion(0 && "Process called in Delaunay_event_base_3");
   }
-  const typename KD::Root_stack& root_stack() const
+  const RS& root_stack() const
   {
     return s_;
   }
@@ -72,7 +72,7 @@ public:
     return P::kds();
   }
 protected:
-  const typename KD::Root_stack s_;
+  const RS s_;
 };
 
 /*template <class K, class R>
@@ -83,12 +83,12 @@ std::ostream& operator<<(std::ostream &out, const Delaunay_event_base_3<K, R> &e
   }*/
 
 
-template <class KD>
-class Delaunay_3_edge_flip_event: public Delaunay_event_base_3<KD>
+template <class KD, class RS>
+class Delaunay_3_edge_flip_event: public Delaunay_event_base_3<KD, RS>
 {
 public:
-  typedef Delaunay_event_base_3<KD>   P;
-  Delaunay_3_edge_flip_event(const typename KD::Root_stack &s,
+  typedef Delaunay_event_base_3<KD, RS>   P;
+  Delaunay_3_edge_flip_event(const RS &s,
 			     const typename KD::Edge &e,
 			     KD *kdel):P(s, kdel), e_(e) {
 #ifndef NDEBUG
@@ -138,12 +138,12 @@ std::ostream& operator<<(std::ostream &out, const Delaunay_3_edge_flip_event<B, 
   }*/
 
 
-template <class KD>
-class Delaunay_3_facet_flip_event:  public Delaunay_event_base_3<KD>
+template <class KD, class RS>
+class Delaunay_3_facet_flip_event:  public Delaunay_event_base_3<KD, RS>
 {
 public:
-  typedef Delaunay_event_base_3<KD>   P;
-  Delaunay_3_facet_flip_event(const typename KD::Root_stack &s,
+  typedef Delaunay_event_base_3<KD, RS>   P;
+  Delaunay_3_facet_flip_event(const RS &s,
 			      const typename KD::Facet &e,
 			      KD *kdel):  P(s, kdel),e_(e) {
 #ifndef NDEBUG

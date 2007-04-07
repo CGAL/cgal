@@ -43,9 +43,9 @@
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 template <class KD>
-class Regular_3_pop_event: public Delaunay_event_base_3<KD>
+class Regular_3_pop_event: public Delaunay_event_base_3<KD, typename KD::Root_stack>
 {
-  typedef Delaunay_event_base_3<KD>  P;
+  typedef Delaunay_event_base_3<KD, typename KD::Root_stack>  P;
 public:
   Regular_3_pop_event(const typename KD::Root_stack &s,
 		      const typename KD::Vertex_handle &vh,
@@ -92,9 +92,9 @@ protected:
 
 
 template <class KD>
-class Regular_3_non_vertex_event: public Delaunay_event_base_3<KD>
+class Regular_3_non_vertex_event: public Delaunay_event_base_3<KD, typename KD::Root_stack>
 {
-  typedef Delaunay_event_base_3<KD>  P;
+  typedef Delaunay_event_base_3<KD, typename KD::Root_stack>  P;
 public:
 
   Regular_3_non_vertex_event(const typename KD::Root_stack &s,
@@ -271,14 +271,14 @@ public:
   typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This_RT3;
   typedef TraitsT Traits;
   typedef typename Traits::Active_points_3_table::Key Point_key; //here
-
+  typedef typename Traits::Kinetic_kernel::Certificate Root_stack;
 protected:
   typedef typename Traits::Active_points_3_table MPT; // here
   typedef typename Traits::Simulator Simulator;
   typedef typename Traits::Simulator::Event_key Event_key;
   typedef typename Traits::Simulator::Time Time;
 
-  typedef typename Traits::Kinetic_kernel::Certificate Root_stack;
+  
   typedef TriangulationT Delaunay;
 
   typedef internal::Regular_triangulation_3_types<TraitsT> Types;
@@ -368,11 +368,11 @@ public:
   typedef VisitorT Visitor;
 
 
-  friend class internal::Delaunay_event_base_3<This>;
-  typedef internal::Delaunay_3_edge_flip_event<This> Edge_flip;
-  friend class internal::Delaunay_3_edge_flip_event<This>;
-  typedef internal::Delaunay_3_facet_flip_event<This> Facet_flip;
-  friend class internal::Delaunay_3_facet_flip_event<This>;
+  friend class internal::Delaunay_event_base_3<This, Root_stack>;
+  typedef internal::Delaunay_3_edge_flip_event<This, Root_stack> Edge_flip;
+  friend class internal::Delaunay_3_edge_flip_event<This, Root_stack>;
+  typedef internal::Delaunay_3_facet_flip_event<This, Root_stack> Facet_flip;
+  friend class internal::Delaunay_3_facet_flip_event<This, Root_stack>;
 
   typedef internal::Regular_3_pop_event<This> Pop_event;
   friend class internal::Regular_3_pop_event<This>;

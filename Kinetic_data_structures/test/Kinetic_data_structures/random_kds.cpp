@@ -122,7 +122,7 @@ int main(int, char *[]) {
     DS ds(tr);
     std::cout << "Points are:\n";
 
-    for (int i=0; i< nump/2.5; ++i){
+    for (int i=0; i< nump/2; ++i){
       Point pt = Point(Bare_point(rp<F>(r, r.get_int(0,5)),
 			          rp<F>(r, r.get_int(0,5)),
 			          rp<F>(r, r.get_int(0,5))),

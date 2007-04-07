@@ -87,8 +87,8 @@ typedef typename TraitsT::Simulator::Event_key Event_key;
     typedef TriangulationT Triangulation;
     typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Orientation_3 Orientation_3;
-    typedef internal::Delaunay_3_edge_flip_event<This_DT3> Edge_flip;
-    typedef typename internal::Delaunay_3_facet_flip_event<This_DT3> Facet_flip;
+    typedef internal::Delaunay_3_edge_flip_event<This_DT3, Root_stack> Edge_flip;
+    typedef typename internal::Delaunay_3_facet_flip_event<This_DT3, Root_stack> Facet_flip;
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
@@ -114,11 +114,11 @@ typedef typename TraitsT::Simulator::Event_key Event_key;
   };
 
  
-  friend class internal::Delaunay_event_base_3<This>;  
+  friend class internal::Delaunay_event_base_3<This, Root_stack>;  
 
-  friend class internal::Delaunay_3_edge_flip_event<This>;
+  friend class internal::Delaunay_3_edge_flip_event<This, Root_stack>;
 
-  friend class internal::Delaunay_3_facet_flip_event<This>;
+  friend class internal::Delaunay_3_facet_flip_event<This, Root_stack>;
 
   
 
