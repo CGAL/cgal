@@ -1152,7 +1152,7 @@
 \lciShellCommand{perl -e '
 $location = "#C1";
 $pattern="-name \"*.bff\"";
-if( $location =~ /\/([^\/]*\*[^\/]*)$/ ) {
+if( $location =~ /\/([^\/]*[*\[\]?][^\/]*)$/ ) {
   $pattern = " -name \"$1\"";
   $location = $`;
 }
