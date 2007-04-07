@@ -598,6 +598,49 @@ Bench                            Bench    Ops      Total    Single   Num Ops
 Leftturn                                1    90242   0.9900   0.0000 91153.5345
 \end{verbatim}
 
+\section{Documenting Benchmark Instances}
+
+To provide a better overview of benchmark instances, they can be organized and documented using \cgal{}'s Manual tools. Similar to other \cgal packages, there is a \verb+doc_tex+ directory with the usual \verb+.tex+ files. For our purposes, a macro
+
+\verb+\ccBenchmarkInstance{path_to_benchmark/optional_filename_pattern}+
+
+can be used to specify location and an optional filename pattern. The html result will contain a link to a tar file and the tar file itself, which contains exactly the files matching the above path and pattern. If the optional pattern is missing, the default pattern is just \verb+*.bff+. In each case, directories are searched recursively.
+
+Side note: in contrast to usual \cgal{} packages, you can have multiple chapters within the benchmark instance package.
+
+\ccExample
+
+Consider the following (fictional) directory structure below \verb+Benchmark_instances+ :
+\begin{verbatim}
+benchmark/Arrangement_3/data/Quadric_3/random/q-rnd-01.bff
+benchmark/Arrangement_3/data/Quadric_3/random/q-rnd-02.bff
+benchmark/Arrangement_3/data/Quadric_3/random/q-rnd-03.bff
+benchmark/Arrangement_3/data/Quadric_3/random/q-rnd-04.bff
+benchmark/Arrangement_3/data/Quadric_3/triples/q-trip-01.bff
+benchmark/Arrangement_3/data/Quadric_3/triples/q-trip-02.bff
+benchmark/Arrangement_3/data/Quadric_3/triples/q-trip-03.bff
+\end{verbatim}
+
+If you type the following:
+\begin{verbatim}
+\ccBenchmarkInstance{benchmark/Arrangement_3/data/Quadric_3/random/}
+\end{verbatim}
+
+the html result will contain
+
+\begin{itemize}
+ \item a tar file named \verb+Arrangement_3__Quadric_3__random__1.tar.gz+ where all matching files are directly below a directory \verb+Arrangement_3__Quadric_3__random__1+
+ \item a link to this tar file for easy download.
+\end{itemize}
+
+
+You can specify instances with a restricted set of files:
+\begin{verbatim}
+\ccBenchmarkInstance{benchmark/Arrangement_3/data/Quadric_3/random/*-0[123].bff}
+\end{verbatim}
+
+which would create an additional tar file named \verb+Arrangement_3__Quadric_3__random__2.tar.gz+ (and the link to it).
+
 \section{Acknowledgement}
 The benchmark file-format and the reference parser implementation was 
 developed at Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany, by
