@@ -92,7 +92,7 @@ intersection(const typename CGAL_WRAP(K)::Segment_2 &seg,
 
 template <class K>
 Object
-intersectionLS(const typename CGAL_WRAP(K)::Line_2 &line,
+intersection(const typename CGAL_WRAP(K)::Line_2 &line,
 	     const typename CGAL_WRAP(K)::Segment_2 &seg, 
 	     const K& k)
 {
