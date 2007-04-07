@@ -254,8 +254,8 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
 
    for (size_type e_num = edge_num1; e_num <= edge_num2; e_num++) 
    {
-       if (edges[edge_num1][e_num].is_visible() && 
-           edges[e_num][edge_num2].is_visible() || 
+       if ((edges[edge_num1][e_num].is_visible() && 
+            edges[e_num][edge_num2].is_visible() ) || 
            collinearly_visible(edge_num1, e_num, edge_num2, edges, polygon,
                                traits) ) 
        {
