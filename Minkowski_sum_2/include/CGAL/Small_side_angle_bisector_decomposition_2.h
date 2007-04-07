@@ -163,6 +163,8 @@ public:
     unsigned int                ind1, ind2;
     Point_vector_2              vec1, vec2;
 
+    ind1 = ind2 = static_cast<unsigned int>(-1);        // Pacify some compiler
+
     ss_queue.push_back (vec);
 
     // Use the small-side decomposition as long as possible.
