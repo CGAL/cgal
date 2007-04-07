@@ -28,9 +28,8 @@ typedef CGAL::Cartesian<Rational>                     Rat_kernel;
 typedef Rat_kernel::Point_3                           Rat_point_3;
 typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
 
-typedef CGAL::Arr_conic_traits_2<Rat_kernel,
-                                 Alg_kernel,
-                                 Nt_traits>           Conic_traits_2;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                      Conic_traits_2;
 
 typedef CGAL::Env_sphere_traits_3<Conic_traits_2>     Traits_3;
 typedef Traits_3::Surface_3                           Sphere_3;
@@ -40,10 +39,7 @@ int main(int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
   // fan_grids.dat file if no command-line parameters are given.
-  char   *filename = "spheres.dat";
-
-  if (argc > 1)
-    filename = argv[1];
+  const char * filename = (argc > 1) ? argv[1] : "spheres.dat";
 
   // Open the input file.
   std::ifstream     in_file(filename);

@@ -577,17 +577,18 @@ public:
     Points_compare comp(*traits);
     std::sort(split_points.begin(), split_points.end(), comp);
  
-    // if overlaps > 0 it will indicate that we are inside an overlapping segment
-    // meaning, we have a special edge
+    // if overlaps > 0 it will indicate that we are inside an overlapping
+    // segment meaning, we have a special edge
     int overlaps = 0;    
 
     // check if source is a special vertex (i.e. also a projected intersection)
     // by checking the first point in the list
     bool source_is_special = false;
     CGAL_assertion(split_points.size() >= 1);
-    if (!original_src->is_at_infinity() && 
-        traits->equal_2_object()(split_points[0].first, original_src->point()) ||
-        original_src->is_at_infinity() && is_min_end_at_inf)
+    if ((!original_src->is_at_infinity() && 
+         traits->equal_2_object()(split_points[0].first,
+                                  original_src->point())) ||
+        (original_src->is_at_infinity() && is_min_end_at_inf))
     {
       overlaps++;
       source_is_special = true;
@@ -595,10 +596,10 @@ public:
     
     // check if target is a special vertex, by checking the last point in the list
     bool target_is_special = false;
-    if (!original_trg->is_at_infinity() && 
-        traits->equal_2_object()(split_points[split_points.size()-1].first, 
-                                 original_trg->point()) ||
-        original_trg->is_at_infinity() && is_max_end_at_inf)
+    if ((!original_trg->is_at_infinity() && 
+         traits->equal_2_object()(split_points[split_points.size()-1].first, 
+                                  original_trg->point())) ||
+        (original_trg->is_at_infinity() && is_max_end_at_inf))
       target_is_special = true;
 
     
@@ -765,7 +766,7 @@ protected:
   {
     CGAL_precondition(he == NULL || (*he)->face() == face);
     //CGAL_assertion(!face->is_unbounded());
-    Comparison_result res;
+    Comparison_result res = EQUAL;
 
     bool success = false;
     #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
