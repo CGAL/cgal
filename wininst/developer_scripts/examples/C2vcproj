@@ -2,7 +2,8 @@
 
 echo "Creating VC71/VC80 solution & project files..."
 
-SCRIPTDIR=$PWD;
+# NOTE: This is hard-coded
+SCRIPTDIR="../../developer_scripts/examples"
 
 
 # Creates a VC71/VC80 .vcproj file corresponding to a source file
@@ -25,7 +26,7 @@ create_project_file()
   projfile=`echo $srcfile|sed -e "s/\.$ext/\.vcproj/"`;
   
   # Creates a vcroj IFF it doesn't exist
-  if [[ ! -e $projfile ]]; then
+  if [ ! -e $projfile ]; then
 
       GUID=`printf "%012d" $RANDOM`
       
@@ -76,7 +77,7 @@ for h in $@ ; do
 if [ -d $h ]; then
   cd $h;
   echo "In " $h;
-  
+
   pkg=`basename $h`
   
   # Create a VC71 subdirectory IFF it doesn't already exists
@@ -112,7 +113,7 @@ if [ -d $h ]; then
       if [ ! $i = "*.$ext" ]; then
         # if $i contains a function "main()"
         zgrep main $i >/dev/null 2>&1
-        if [[ $? == 0 ]]; then
+        if [ $? == 0 ]; then
 
           create_project_file $i $ext "71" $sp71        
           
