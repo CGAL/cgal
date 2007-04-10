@@ -78,33 +78,31 @@ typedef Traits::Rat_circle_2                            Rat_circle;
 #define TRAITS_TYPE "Conics"
 
 #elif TEST_TRAITS == LINE_ARC_TRAITS
-typedef Kernel                                              Linear_kernel;
-typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type> Algebraic_kernel;
+typedef Kernel                                                Linear_kernel;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   Algebraic_kernel;
 typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>
-                                                            Circular_kernel;
-typedef CGAL::Arr_line_arc_traits_2<Circular_kernel>        Traits;
+                                                              Circular_kernel;
+typedef CGAL::Arr_line_arc_traits_2<Circular_kernel>          Traits;
 
 #define TRAITS_TYPE "Line Arc"
 
 #elif TEST_TRAITS == CIRCULAR_ARC_TRAITS
-typedef Kernel                                              Linear_kernel;
-typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type> Algebraic_kernel;
+typedef Kernel                                                Linear_kernel;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   Algebraic_kernel;
 typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>
-                                                            Circular_kernel;
-typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>    Traits;
+                                                              Circular_kernel;
+typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>      Traits;
 
 #define TRAITS_TYPE "Circular Arc"
 
 #elif TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
-typedef Kernel                                              Linear_kernel;
-typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type> Algebraic_kernel;
+typedef Kernel                                                Linear_kernel;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   Algebraic_kernel;
 typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>
-                                                            Circular_kernel;
-typedef Circular_kernel::Circular_arc_2                     Circular_arc_2;
-typedef Circular_kernel::Line_arc_2                         Line_arc_2;
-typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                             Circular_arc_2,
-                                             Line_arc_2>    Traits;
+                                                              Circular_kernel;
+typedef Circular_kernel::Circular_arc_2                       Circular_arc_2;
+typedef Circular_kernel::Line_arc_2                           Line_arc_2;
+typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel> Traits;
 
 #define TRAITS_TYPE "Circular Line Arc"
 

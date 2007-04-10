@@ -113,17 +113,11 @@ read_curve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                                 Circular_arc_2,
-                                                 Line_arc_2> >::
+Traits_test<CGAL::Arr_circular_line_arc_traits_2<Circular_kernel> >::
 read_point(stream & is,
-           CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                                Circular_arc_2,
-                                                Line_arc_2>::Point_2 & p)
+           CGAL::Arr_circular_line_arc_traits_2<Circular_kernel>::Point_2 & p)
 {
-  typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                               Circular_arc_2,
-                                               Line_arc_2>      Traits;
+  typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel>      Traits;
   return read_arc_point<Traits, stream>(is, p);
 }
 
@@ -131,14 +125,11 @@ read_point(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                                 Circular_arc_2,
-                                                 Line_arc_2> >::
+Traits_test<CGAL::Arr_circular_line_arc_traits_2<Circular_kernel> >::
 read_xcurve(stream & is,
             CGAL::
-            Arr_circular_line_arc_traits_2<Circular_kernel,
-                                           Circular_arc_2,
-                                           Line_arc_2>::X_monotone_curve_2 & xc)
+            Arr_circular_line_arc_traits_2<Circular_kernel>::
+              X_monotone_curve_2 & xc)
 {
   return true;
 }
@@ -147,13 +138,9 @@ read_xcurve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                                 Circular_arc_2,
-                                                 Line_arc_2> >::
+Traits_test<CGAL::Arr_circular_line_arc_traits_2<Circular_kernel> >::
 read_curve(stream & is,
-           CGAL::Arr_circular_line_arc_traits_2<Circular_kernel,
-                                                Circular_arc_2,
-                                                Line_arc_2>::Curve_2 & cv)
+           CGAL::Arr_circular_line_arc_traits_2<Circular_kernel>::Curve_2 & cv)
 {
   return true;
 }
