@@ -65,8 +65,8 @@ CGAL_BEGIN_NAMESPACE
     typedef AlgebraicSphereFunctors::Construct_polynomials_for_line_3<Self>
                                          Construct_polynomials_for_line_3;
 
-    typedef AlgebraicSphereFunctors::Solve<Self>             Solve;//En cour d'implementation
-    typedef AlgebraicSphereFunctors::Sign_at<Self>           Sign_at;//Non implementer
+    typedef AlgebraicSphereFunctors::Solve<Self>             Solve;
+    typedef AlgebraicSphereFunctors::Sign_at<Self>           Sign_at;
     typedef AlgebraicSphereFunctors::X_critical_points<Self> X_critical_points;
     typedef AlgebraicSphereFunctors::Y_critical_points<Self> Y_critical_points;
     typedef AlgebraicSphereFunctors::Z_critical_points<Self> Z_critical_points;
