@@ -27,8 +27,10 @@
 #define CGAL_CONFIG_H
 
 
-// AF: Temporary thing to mimic users including this file which defines min max macros
-#ifdef _MSC_VER
+
+#ifdef CGAL_INCLUDE_WINDOWS_DOT_H
+// Mimic users including this file which defines min max macros
+// and other names leading to name clashes
 #include <windows.h>
 #endif
 
