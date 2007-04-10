@@ -1,4 +1,4 @@
-\ccUserChapter{3D Surface Mesher}
+\ccUserChapter{3D Surface Mesh Generation}
 \label{chapter_SurfaceMesher}
 \ccChapterAuthor{Laurent Rineau \and Mariette Yvinec}
 
@@ -55,7 +55,7 @@ The size and shape criteria guide the  behaviour of
 the refinement process and control its termination.
 They also condition  the size and shape of the elements in the final
 mesh. Naturally, those criteria can be customized to satisfy
-the user needs. The \ccc{Surface mesher} package offers
+the user needs. The \ccc{Surface mesh generation} package offers
 a set of standard criteria that can be scaled through
 three numerical values. Also the user can also plug in its own 
 set of refinement criteria.
@@ -74,7 +74,7 @@ but then there is no guarantee.
 
 
 
-\section{The Surface Mesher Interface}
+\section{The Surface Mesh Generator Interface}
 \label{SurfaceMesher_section_interface}
 
 The meshing process is launched through a call to a function template.
@@ -127,9 +127,9 @@ process.
 The template parameter \ccc{Surface}  stands for the surface type.
 This type has to be a model of the concept \ccc{Surface_3}.
 
-The knowledge on the surface, required by the surface mesher
+The knowledge on the surface, required by the surface mesh generator
 is  encapsulated in a
-traits class. Actually, the mesher accesses the surface to be meshed
+traits class. Actually, the mesh generator accesses the surface to be meshed
 through this traits class only. 
 The traits class is required to be a model
 of the concept \ccc{SurfaceMeshTraits_3}. 
@@ -141,8 +141,8 @@ can be explained as follows
 In the first  overloaded version
 of \ccc{make_surface_mesh},  the surface type  is given  
 as template parameter  (\ccc{Surface}) and the \ccc{surface}
-to be meshed is passed as parameter to the mesher.
-In that case the surface mesher traits type 
+to be meshed is passed as parameter to the mesh generator.
+In that case the surface mesh generator traits type 
 is  automatically generated form the surface type
 by an auxiliary class called  the \ccc{Surface_mesh_traits_generator_3}.
   %through
@@ -151,11 +151,11 @@ by an auxiliary class called  the \ccc{Surface_mesh_traits_generator_3}.
 %(This mechanism is similar to the 
 %\ccc{Kernel_traits}  mechanism.) \\
 \item In the second overloaded version of \ccc{make_surface_mesh}, 
-the surface mesher traits type is provided
+the surface mesh generator traits type is provided
 by the  template parameter \ccc{SurfaceMeshTraits_3}
 and the surface type is obtained from this traits type.
 Both  a surface and a traits 
-are passed to the mesher as arguments. 
+are passed to the mesh generator as arguments. 
 \end{itemize}
 
 
@@ -224,7 +224,7 @@ between the circumcenter of a mesh facet and the center of a surface
 Delaunay ball of this facet.
 \end{itemize}
 
-Given this surface type, the surface mesher will use
+Given this surface type, the surface mesh generator will use
 an automatically generated traits class.
 
 The resulting mesh is shown in 

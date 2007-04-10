@@ -20,7 +20,7 @@
 
 \ccDefinition
   
-The function \ccRefName\ is a surface mesher,
+The function \ccRefName\ is a surface mesh generator,
 that is a function to build a two dimensional mesh 
 approximating  a surface.
 
@@ -60,7 +60,7 @@ is required to be a model of the concept
 a data structure able to represent a two dimensional
 complex  embedded in a three dimensional triangulation.
 The argument \ccc{c2t3} of type \ccc{SurfaceMeshC2T3},  passed by reference
-to the surface mesher, 
+to the surface mesh generator, 
 is used to maintain  the current approximating mesh and it stores
 the final mesh at the end of the procedure.
 The type \ccc{SurfaceMeshC2T3} is in particuler required to
@@ -77,16 +77,16 @@ to be  models  of the concepts
 The template parameter \ccc{Surface}  stands for the surface type.
 This type has to be a model of the concept \ccc{Surface_3}.
 
-The knowledge on the surface, required by the surface mesher
+The knowledge on the surface, required by the surface mesh generator
 is  encapsulated in a
-traits class. Actually, the mesher accesses the surface to be meshed
+traits class. Actually, the mesh generator accesses the surface to be meshed
 through this traits class only. 
 The traits class is required to be a model
 of the concept \ccc{SurfaceMeshTraits_3}.
 
 In the first  version
 of  \ccRefName\, the surface type is a template paramater \ccc{Surface}
-and the surface mesher traits type 
+and the surface meshe generator traits type 
 is  automatically generated form the surface type  through
 the class 
 \ccc{Surface_mesh_traits_generator_3<Surface>}.
@@ -99,8 +99,8 @@ can be explained as follows
 In the first  overloaded version of
 of \ccc{make_surface_mesh},  the surface type  is given  
 as template paramater  (\ccc{Surface}) and the \ccc{surface}
-to be meshed is passed as parameter to the mesher.
-In that case the surface mesher traits type 
+to be meshed is passed as parameter to the meshe generator.
+In that case the surface mesh generator traits type 
 is  automatically generated form the surface type
 by an auxiliary class called  the \ccc{Surface_mesh_traits_generator_3}.
   %through
@@ -109,11 +109,11 @@ by an auxiliary class called  the \ccc{Surface_mesh_traits_generator_3}.
 %(This mechanism is similar to the 
 %\ccc{Kernel_traits}  mechanism.) \\
 \item In the second overloaded version of \ccc{make_surface_mesh}, 
-the surface mesher traits type is provided
+the surface mesh generator traits type is provided
 by the  template parameter \ccc{SurfaceMeshTraits_3}
 and the surface type is obtained from this traits type.
 Both the surface and the traits 
-are passed to the mesher as arguments. 
+are passed to the mesh generator as arguments. 
 \end{itemize}
 
 
@@ -134,7 +134,7 @@ grey level images (\ccc{Gray_level_image_3<FT, Point> }).
 The template parameter \ccc{Criteria} has to be a model
 of the concept \ccc{SurfaceMeshCriteria_3}.
 The argument of type  \ccc{Criteria} passed to the surface
-mesher specifies the size and shape  requirements
+mesh generator specifies the size and shape  requirements
 on the output surface mesh.
 
 The template parameter \ccc{Tag}
