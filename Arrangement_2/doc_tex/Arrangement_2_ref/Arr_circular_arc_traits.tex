@@ -1,0 +1,46 @@
+\begin{ccRefClass}{Arr_circular_arc_traits_2<CircularKernel>}
+
+\ccInclude{CGAL/Arr_circular_arc_traits_2.h}
+
+\ccDefinition
+
+This class is a traits class for \cgal\ arrangements, built on top of a model of 
+concept \ccc{CircularKernel}.
+It provides curves of type \ccc{CGAL::Circular_arc_2<CircularKernel>}.
+
+\ccIsModel
+\ccc{ArrangementTraits_2}
+
+\end{ccRefClass}
+\begin{ccRefClass}{Arr_line_arc_traits_2<CircularKernel>}
+
+\ccInclude{CGAL/Arr_line_arc_traits_2.h}
+
+\ccDefinition
+
+This class is a traits class for \cgal\ arrangements, built on top of a
+model of concept \ccc{CircularKernel}.  It provides curves of type
+\ccc{CGAL::Line_arc_2<CircularKernel>}.
+
+\ccIsModel
+\ccc{ArrangementTraits_2}
+
+\end{ccRefClass}
+\begin{ccRefClass}{Arr_circular_line_arc_traits_2<CircularKernel>}
+
+\ccInclude{CGAL/Arr_circular_line_arc_traits_2.h}
+
+\ccDefinition
+
+This class is a traits class for \cgal\ arrangements, built on top of a
+model of concept \ccc{CircularKernel}. It provides curves that can be
+of both types
+\ccc{CGAL::Line_arc_2<CircularKernel>} or 
+\ccc{CGAL::Circular_arc_2<CircularKernel>}.
+
+It uses the \ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}. 
+
+\ccIsModel
+\ccc{ArrangementTraits_2}
+
+\end{ccRefClass}
