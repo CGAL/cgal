@@ -389,61 +389,6 @@ void general_test(){
 }
 
 
-template <class AT>
-void scalar_factor_traits_test(){
-    {
-        typedef typename AT::Integer Integer;
-        typedef CGAL::Sqrt_extension<Integer,Integer> EXT1;
-        typedef CGAL::Sqrt_extension<EXT1,Integer>    EXT2;
-
-        {
-            typedef CGAL::Scalar_factor_traits<EXT1> SFT;
-            typedef typename SFT::Scalar Scalar;
-            typename SFT::Scalar_factor sfac;            
-            typename SFT::Scalar_div    sdiv;
-
-            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
-            
-            CGAL_test_assert((sfac(EXT1(0)))==Integer(0));
-            CGAL_test_assert((sfac(EXT1(3)))==Integer(3));
-            CGAL_test_assert((sfac(EXT1(0,3,2)))==Integer(3));
-            CGAL_test_assert((sfac(EXT1(6,9,2)))==Integer(3));
-            EXT1 tmp;
-            tmp = EXT1(3); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(1));
-            tmp = EXT1(0,3,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(0,1,2));
-            tmp = EXT1(6,9,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(2,3,2));
-        }
-        {
-            typedef CGAL::Scalar_factor_traits<EXT2> SFT;
-            typedef typename SFT::Scalar Scalar;
-            typename SFT::Scalar_factor sfac;            
-            typename SFT::Scalar_div    sdiv;
-
-            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
-            
-            CGAL_test_assert((sfac(EXT2(0)))==Integer(0));
-            CGAL_test_assert((sfac(EXT2(3)))==Integer(3));
-            CGAL_test_assert((sfac(EXT2(EXT1(0),EXT1(3),2)))==Integer(3));
-            CGAL_test_assert((sfac(EXT2(EXT1(6),EXT1(9),2)))==Integer(3));
-            EXT2 tmp;
-            tmp = EXT2(3); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(1));
-            tmp = EXT2(0,3,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(0,1,2));
-            tmp = EXT2(6,9,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(2,3,2));    
-        }
-        {
-            typedef CGAL::Scalar_factor_traits<EXT1> SFT;
-            typedef typename SFT::Scalar Scalar;
-            typename SFT::Scalar_factor sfac;      
-  
-            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
-  
-            CGAL_test_assert((sfac(EXT1(0)))                 ==Integer(0));
-            CGAL_test_assert((sfac(EXT1(9),Integer(15)))     ==Integer(3));
-            CGAL_test_assert((sfac(EXT1(0,9,2),Integer(15))) ==Integer(3));
-            CGAL_test_assert((sfac(EXT1(18,9,2),Integer(15)))==Integer(3));
-        }
-    }
-}
 
 template <class AT>
 void fraction_traits_test(){
@@ -546,6 +491,65 @@ void fraction_traits_test(){
 
 }
 
+#if (CGAL_VERSION_NR >= 1030400000)
+// this includes Scalar_factor_traits
+// this includes Algebraic_extension_traits
+
+template <class AT>
+void scalar_factor_traits_test(){
+    {
+        typedef typename AT::Integer Integer;
+        typedef CGAL::Sqrt_extension<Integer,Integer> EXT1;
+        typedef CGAL::Sqrt_extension<EXT1,Integer>    EXT2;
+
+        {
+            typedef CGAL::Scalar_factor_traits<EXT1> SFT;
+            typedef typename SFT::Scalar Scalar;
+            typename SFT::Scalar_factor sfac;            
+            typename SFT::Scalar_div    sdiv;
+
+            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
+            
+            CGAL_test_assert((sfac(EXT1(0)))==Integer(0));
+            CGAL_test_assert((sfac(EXT1(3)))==Integer(3));
+            CGAL_test_assert((sfac(EXT1(0,3,2)))==Integer(3));
+            CGAL_test_assert((sfac(EXT1(6,9,2)))==Integer(3));
+            EXT1 tmp;
+            tmp = EXT1(3); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(1));
+            tmp = EXT1(0,3,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(0,1,2));
+            tmp = EXT1(6,9,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(2,3,2));
+        }
+        {
+            typedef CGAL::Scalar_factor_traits<EXT2> SFT;
+            typedef typename SFT::Scalar Scalar;
+            typename SFT::Scalar_factor sfac;            
+            typename SFT::Scalar_div    sdiv;
+
+            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
+            
+            CGAL_test_assert((sfac(EXT2(0)))==Integer(0));
+            CGAL_test_assert((sfac(EXT2(3)))==Integer(3));
+            CGAL_test_assert((sfac(EXT2(EXT1(0),EXT1(3),2)))==Integer(3));
+            CGAL_test_assert((sfac(EXT2(EXT1(6),EXT1(9),2)))==Integer(3));
+            EXT2 tmp;
+            tmp = EXT2(3); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(1));
+            tmp = EXT2(0,3,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(0,1,2));
+            tmp = EXT2(6,9,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(2,3,2));    
+        }
+        {
+            typedef CGAL::Scalar_factor_traits<EXT1> SFT;
+            typedef typename SFT::Scalar Scalar;
+            typename SFT::Scalar_factor sfac;      
+  
+            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
+  
+            CGAL_test_assert((sfac(EXT1(0)))                 ==Integer(0));
+            CGAL_test_assert((sfac(EXT1(9),Integer(15)))     ==Integer(3));
+            CGAL_test_assert((sfac(EXT1(0,9,2),Integer(15))) ==Integer(3));
+            CGAL_test_assert((sfac(EXT1(18,9,2),Integer(15)))==Integer(3));
+        }
+    }
+}
 
 template <class AT>
 void test_algebraic_extension_traits(){
@@ -672,8 +676,8 @@ void test_algebraic_extension_traits(){
         }
         
     }
-    
     }
+#endif //(CGAL_VERSION_NR >= 1030400000)
 
 template <class AT>
 void sqrt_extension_test(){
@@ -686,10 +690,12 @@ void sqrt_extension_test(){
     convert_to_real<Integer,Integer,Field_with_sqrt>();
 
     sqrt_ext_pretty_output_test<AT>();
-    scalar_factor_traits_test<AT>();
     fraction_traits_test<AT>();
-    test_algebraic_extension_traits<AT>();
 
+#if (CGAL_VERSION_NR >= 1030400000)
+    scalar_factor_traits_test<AT>();
+    test_algebraic_extension_traits<AT>();
+#endif //(CGAL_VERSION_NR >= 1030400000)
 }
 
 int main(){ 
