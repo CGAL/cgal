@@ -505,11 +505,14 @@ namespace CGAL {
   }
   /// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
 
-  template < typename CircularKernel, typename Arc1, typename Arc2>
+  template < typename CircularKernel>
   class Arr_circular_line_arc_traits_2 {
 
-    typedef Arr_circular_line_arc_traits_2< CircularKernel, Arc1, Arc2 >   Self;
+    typedef Arr_circular_line_arc_traits_2< CircularKernel >   Self;
 
+    typedef typename CircularKernel::Line_arc_2                Arc1;
+    typedef typename CircularKernel::Circular_arc_2            Arc2;
+    
   public:
   
     typedef CircularKernel Kernel;
