@@ -28,6 +28,9 @@
 #define POLYLINE_TRAITS                 2
 #define NON_CACHING_POLYLINE_TRAITS     3
 #define CORE_CONIC_TRAITS               4
+#define LINE_ARC_TRAITS                 5
+#define CIRCULAR_ARC_TRAITS             6
+#define CIRCULAR_LINE_ARC_TRAITS        7
 
 // Default value based on dependencies:
 #if TEST_TRAITS == CORE_CONIC_TRAITS

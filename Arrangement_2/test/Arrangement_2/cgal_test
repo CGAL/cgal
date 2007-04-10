@@ -25,6 +25,9 @@ NON_CACHING_SEGMENT_TRAITS=1
 POLYLINE_TRAITS=2
 NON_CACHING_POLYLINE_TRAITS=3
 CORE_CONIC_TRAITS=4
+LINE_ARC_TRAITS=5
+CIRCULAR_ARC_TRAITS=6
+CIRCULAR_LINE_ARC_TRAITS=7
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -179,6 +182,7 @@ test_segment_traits()
     run_trapped_test test_traits data/segments/vertex
     run_trapped_test test_traits data/segments/is_vertical
     run_trapped_test test_traits data/segments/compare_y_at_x
+    run_trapped_test test_traits data/segments/compare_y_at_x_left
     run_trapped_test test_traits data/segments/make_x_monotone
     run_trapped_test test_traits data/segments/intersect
     run_trapped_test test_traits data/segments/split
@@ -201,6 +205,7 @@ test_non_caching_segment_traits()
     run_trapped_test test_traits data/segments/vertex
     run_trapped_test test_traits data/segments/is_vertical
     run_trapped_test test_traits data/segments/compare_y_at_x
+    run_trapped_test test_traits data/segments/compare_y_at_x_left
     run_trapped_test test_traits data/segments/make_x_monotone
     run_trapped_test test_traits data/segments/intersect
     run_trapped_test test_traits data/segments/split
@@ -276,6 +281,69 @@ test_conic_traits()
 }
 
 #---------------------------------------------------------------------#
+# "line arcs" (segments) only
+#---------------------------------------------------------------------#
+test_line_arc_traits()
+{
+# function     executable  number type           kernel            traits
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare
+    run_trapped_test test_traits data/segments/vertex
+    run_trapped_test test_traits data/segments/is_vertical
+    run_trapped_test test_traits data/segments/compare_y_at_x
+    run_trapped_test test_traits data/segments/make_x_monotone
+    run_trapped_test test_traits data/segments/intersect
+    run_trapped_test test_traits data/segments/split
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# circular arcs only
+#---------------------------------------------------------------------#
+test_circular_arc_traits()
+{
+# function     executable  number type           kernel            traits
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare
+#    run_trapped_test test_traits data/arcs/vertex
+#    run_trapped_test test_traits data/arcs/is_vertical
+#    run_trapped_test test_traits data/arcs/compare_y_at_x
+#    run_trapped_test test_traits data/arcs/make_x_monotone
+#    run_trapped_test test_traits data/arcs/intersect
+#    run_trapped_test test_traits data/arcs/split
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# circular and line arcs
+#---------------------------------------------------------------------#
+test_circular_line_arc_traits()
+{
+# function     executable  number type           kernel            traits
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare
+#    run_trapped_test test_traits data/arcs/vertex
+#    run_trapped_test test_traits data/arcs/is_vertical
+#    run_trapped_test test_traits data/arcs/compare_y_at_x
+#    run_trapped_test test_traits data/arcs/make_x_monotone
+#    run_trapped_test test_traits data/arcs/intersect
+#    run_trapped_test test_traits data/arcs/split
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 #                    remove the previous error file
 #---------------------------------------------------------------------#
 
@@ -296,6 +364,10 @@ else
   test_polyline_traits
   test_non_caching_polyline_traits
   test_conic_traits
+
+  test_line_arc_traits		# "line arcs" (segments) only
+  test_circular_arc_traits	# circular arcs only
+  test_circular_line_arc_traits	# for both
 
   compile_and_run test_insertion
   compile_and_run test_removal

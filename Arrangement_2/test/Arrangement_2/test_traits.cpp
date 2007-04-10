@@ -21,6 +21,7 @@ int main ()
 
 #include "test_traits.h"
 #include "Traits_test.h"
+#include "test_arc_traits.h"
 
 // Arrangement types:
 typedef CGAL::Arr_default_dcel<Traits>                  Dcel;

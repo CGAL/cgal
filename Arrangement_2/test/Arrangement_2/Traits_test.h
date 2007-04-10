@@ -2,6 +2,7 @@
 #define CGAL_TRAITS_TEST_H
 
 #include <CGAL/Object.h>
+#include <CGAL/tags.h>
 
 #include <string>
 #include <vector>
@@ -139,6 +140,10 @@ private:
    *                   One of the curves is vertical.
    */
   bool compare_y_at_x_left_wrapper(std::istringstream & line);
+  bool compare_y_at_x_left_wrapper_imp(std::istringstream & line,
+                                       CGAL::Tag_false);
+  bool compare_y_at_x_left_wrapper_imp(std::istringstream & line,
+                                       CGAL::Tag_true);
 
   /*! Tests Compare_y_at_x_right_2.
    * Compare the y value of two x-monotone curves immediately to the right
@@ -189,11 +194,15 @@ private:
    * Check whether it is possible to merge two given x-monotone curves.
    */
   bool are_mergeable_wrapper(std::istringstream & line);
+  bool are_mergeable_wrapper_imp(std::istringstream & line, CGAL::Tag_false);
+  bool are_mergeable_wrapper_imp(std::istringstream & line, CGAL::Tag_true);
 
   /*! Tests Merge_2.
    * Merge two given x-monotone curves into a single curve.
    */
   bool merge_wrapper(std::istringstream & line);
+  bool merge_wrapper_imp(std::istringstream & line, CGAL::Tag_false);
+  bool merge_wrapper_imp(std::istringstream & line, CGAL::Tag_true);
 
   /*! Tests Approximate_2.
    * Return an approximation of a point coordinate.
@@ -590,6 +599,25 @@ bool
 Traits_test<T_Traits>::
 compare_y_at_x_left_wrapper(std::istringstream & str_stream)
 {
+  typedef typename T_Traits::Has_left_category          Has_left_category;
+  return compare_y_at_x_left_wrapper_imp(str_stream, Has_left_category());
+}
+
+template <class T_Traits>
+bool
+Traits_test<T_Traits>::
+compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
+                                CGAL::Tag_false)
+{
+  return false;
+}
+
+template <class T_Traits>
+bool
+Traits_test<T_Traits>::
+compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
+                                CGAL::Tag_true)
+{
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = get_expected_enum(str_stream);
@@ -878,6 +906,23 @@ template <class T_Traits>
 bool
 Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
 {
+  typedef typename T_Traits::Has_merge_category         Has_merge_category;
+  return are_mergeable_wrapper_imp(str_stream, Has_merge_category());
+}
+
+template <class T_Traits>
+bool
+Traits_test<T_Traits>::
+are_mergeable_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_false)
+{
+  return false;
+}
+
+template <class T_Traits>
+bool
+Traits_test<T_Traits>::
+are_mergeable_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
+{
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = get_expected_boolean(str_stream);
@@ -893,6 +938,21 @@ Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
  */
 template <class T_Traits>
 bool Traits_test<T_Traits>::merge_wrapper(std::istringstream & str_stream)
+{
+  typedef typename T_Traits::Has_merge_category         Has_merge_category;
+  return merge_wrapper_imp(str_stream, Has_merge_category());
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & str_stream,
+                                              CGAL::Tag_false)
+{
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & str_stream,
+                                              CGAL::Tag_true)
 {
   typedef T_Traits                              Traits;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
@@ -939,8 +999,7 @@ construct_x_monotone_curve_wrapper(std::istringstream & )
 template <class T_Traits>
 template <class stream>
 bool
-Traits_test<T_Traits>::read_point(stream & is,
-                                  typename T_Traits::Point_2 & p)
+Traits_test<T_Traits>::read_point(stream & is, typename T_Traits::Point_2 & p)
 {
   Basic_number_type x, y;
   is >> x >> y;
@@ -952,7 +1011,7 @@ template <class T_Traits>
 template <class stream>
 bool
 Traits_test<T_Traits>::read_xcurve(stream & is,
-                                  typename T_Traits::X_monotone_curve_2 & cv)
+                                   typename T_Traits::X_monotone_curve_2 & cv)
 {
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
@@ -960,16 +1019,13 @@ Traits_test<T_Traits>::read_xcurve(stream & is,
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
   cv = typename T_Traits::X_monotone_curve_2(p1, p2);
-  // Only to pacify some dome compiler
-  (void) cv;
   return true;
 }
 
 template <class T_Traits>
 template <class stream>
 bool
-Traits_test<T_Traits>::read_curve(stream & is,
-                                  typename T_Traits::Curve_2 & cv)
+Traits_test<T_Traits>::read_curve(stream & is, typename T_Traits::Curve_2 & cv)
 {
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
