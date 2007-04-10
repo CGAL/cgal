@@ -1,6 +1,6 @@
 //Author(s) : Michael Hemmer <mhemmer@uni-mainz.de>
 
-#include <CGAL/Modular_type.h>
+#include <CGAL/Modular_arithmetic/Modular_type.h>
 
 namespace CGAL{
     int Modular::prime_int = 67111067;
