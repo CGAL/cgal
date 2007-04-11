@@ -184,16 +184,14 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o largest_empty_rect_2.moc largest_empty_rect_2.C
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o largest_empty_rect_2.moc largest_empty_rect_2.cpp"
 						Outputs="largest_empty_rect_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o largest_empty_rect_2.moc largest_empty_rect_2.C
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o largest_empty_rect_2.moc largest_empty_rect_2.cpp"
 						Outputs="largest_empty_rect_2.moc"/>
 				</FileConfiguration>
 			</File>

@@ -160,8 +160,7 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.C
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.cpp"
 						Outputs="nef_2.moc"/>
 				</FileConfiguration>
 			</File>

@@ -49,7 +49,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe delaunay_triangulation_2.C -o delaunay_triangulation_2.moc"/>
+				CommandLine="$(QTDIR)/bin/moc.exe delaunay_triangulation_2.cpp -o delaunay_triangulation_2.moc"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -107,7 +107,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe delaunay_triangulation_2.C -o delaunay_triangulation_2.moc"/>
+				CommandLine="$(QTDIR)/bin/moc.exe delaunay_triangulation_2.cpp -o delaunay_triangulation_2.moc"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool

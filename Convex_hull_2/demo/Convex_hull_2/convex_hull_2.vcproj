@@ -182,7 +182,7 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C
+						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.cpp
 "
 						Outputs="convex_hull_2.moc"/>
 				</FileConfiguration>
@@ -190,8 +190,7 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.cpp"
 						Outputs="convex_hull_2.moc"/>
 				</FileConfiguration>
 			</File>
