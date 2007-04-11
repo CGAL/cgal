@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib zdll.lib"
+				AdditionalDependencies=" zdll.lib"
 				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;..\..\lib\msvc7&quot;"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib zdll.lib"
+				AdditionalDependencies=" zdll.lib"
 				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;..\..\lib\msvc7&quot;"

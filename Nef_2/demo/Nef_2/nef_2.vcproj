@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib gmp.lib mpfr.lib  wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib gmp.lib mpfr.lib  wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/nef_2.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -76,7 +76,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;CGAL_USE_QT;CGAL_USE_GMP"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib gmp.lib mpfr.lib  wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib gmp.lib mpfr.lib  wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/nef_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
@@ -129,7 +129,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="nef_2.C">
+				RelativePath="nef_2.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -138,7 +138,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Qt_widget_toolbar.C">
+				RelativePath="Qt_widget_toolbar.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -153,7 +153,7 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.C"
+						CommandLine="$(QTDIR)/bin/moc.exe -o nef_2.moc nef_2.cpp"
 						Outputs="nef_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration

@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT;CGAL_USE_GMP"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib  winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib  winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/apollonius_graph_2.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
@@ -49,7 +49,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o apollonius_graph_2.moc apollonius_graph_2.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o apollonius_graph_2.moc apollonius_graph_2.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -77,7 +77,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib  winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib  winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/apollonius_graph_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
@@ -106,7 +106,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o apollonius_graph_2.moc apollonius_graph_2.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o apollonius_graph_2.moc apollonius_graph_2.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -130,7 +130,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="apollonius_graph_2.C">
+				RelativePath="apollonius_graph_2.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

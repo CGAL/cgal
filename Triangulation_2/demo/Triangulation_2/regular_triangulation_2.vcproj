@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -47,7 +47,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2.moc regular_triangulation_2.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2.moc regular_triangulation_2.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -75,7 +75,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;CGAL_USE_QT"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -89,7 +89,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -103,7 +103,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2.moc regular_triangulation_2.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2.moc regular_triangulation_2.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -127,7 +127,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="regular_triangulation_2.C">
+				RelativePath="regular_triangulation_2.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -142,7 +142,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="regular_triangulation_2_toolbar.C">
+				RelativePath="regular_triangulation_2_toolbar.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -157,7 +157,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="regular_triangulation_2_toolbar_layers.C">
+				RelativePath="regular_triangulation_2_toolbar_layers.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -172,7 +172,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="triangulation_2_edit_vertex.C">
+				RelativePath="triangulation_2_edit_vertex.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

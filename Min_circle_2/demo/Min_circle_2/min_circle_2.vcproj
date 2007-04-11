@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/min_circle_2.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -48,7 +48,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o min_circle_2.moc min_circle_2.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o min_circle_2.moc min_circle_2.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -76,7 +76,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -90,7 +90,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/min_circle_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
@@ -105,7 +105,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o min_circle_2.moc min_circle_2.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o min_circle_2.moc min_circle_2.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -129,7 +129,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="min_circle_2.C">
+				RelativePath="min_circle_2.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -144,7 +144,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="min_circle_2_toolbar.C">
+				RelativePath="min_circle_2_toolbar.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -159,7 +159,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Qt_widget_move_list_point.C">
+				RelativePath="Qt_widget_move_list_point.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
