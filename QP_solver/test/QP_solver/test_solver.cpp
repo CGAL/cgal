@@ -337,23 +337,15 @@ bool process(const std::string& filename,
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
 
-  // read QP instance, first using dense representation:
+  // read QP instance
   std::ifstream in(filename.c_str());
   if (!in)
     bailout1("could not open file '%'",filename);
   typedef CGAL::Quadratic_program_from_mps <IT> QP_instance;
-  QP_instance qp(in,true,verbosity);
+  QP_instance qp(in);
   in.close();
 
-  // then read it again, using sparse representation
-  std::ifstream in2(filename.c_str());
-  if (!in2)
-    bailout1("could not open file '%'",filename);
-  typedef CGAL::Sparse_quadratic_program_from_mps <IT> Sparse_QP_instance;
-  Sparse_QP_instance qp2(in2,true,verbosity);
-  in2.close();
-
-  std::string comment = qp.comment();
+  std::string comment = qp.get_comment();
 
   // check for the number-type:
   Input_type type;
@@ -402,26 +394,13 @@ bool process(const std::string& filename,
 		      (is_rational(ET())? "Gmpq" : "Double"))
 	 << endl;
 
-  // check for format errors in MPS file (dense):
+  // check for format errors in MPS file:
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
-	 << "Error: " << qp.error() << endl;
+	 << "Error: " << qp.get_error() << endl;
     return false;
   }
   
-  // check for format errors in MPS file (sparse):
-  if (!qp2.is_valid()) {
-    cout << "Input is not a valid MPS file." << endl
-	 << "Error: " << qp2.error() << endl;
-    return false;
-  }
-
-  // compare qp1, qp2 
-  if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
-    cout << "Dense/Sparse readers disagree.\n" << endl;
-    return false;
-  }
-
   // print program (using QMATRIX format), read it back in and check 
   // whether it still agrees with the original program
   std::stringstream inout;
@@ -430,99 +409,57 @@ bool process(const std::string& filename,
   CGAL::QP_functions_detail::print_program 
     (inout, qp, std::string("test_io_mps"),
      Is_linear(),Is_nonnegative());
-  QP_instance qp3(inout, true, verbosity);
-  CGAL_qpe_assertion (qp3.is_valid());
-  if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp3)) {
-    cout << "Warning: MPS reader and MPS writer disagree.\n" << endl;
-  }
 
-  // copy program and check whether it is still the same
-  if (!qp.is_linear() && !qp.is_nonnegative()) {
-    CGAL::Quadratic_program<IT> qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
-				     qp.fl(), qp.l(), qp.fu(), qp.u(), 
-				     qp.d(), qp.c(), qp.c0());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
-      cout << "Program not correctly copied.\n" << endl;
-      return false;
-    }
-    // test default/copy constructor, assignment
-    CGAL::Quadratic_program<IT> qp5;
-    qp5 = qp4;
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
-      cout << "Program not correctly assigned.\n" << endl;
-      return false;
-    }
-    CGAL::Quadratic_program<IT> qp6 (qp4);
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
-      cout << "Program not correctly copy-constructed.\n" << endl;
-      return false;
-    }
-  }
-
-  if (qp.is_linear() && !qp.is_nonnegative()) {
-    CGAL::Linear_program<IT> qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
-				     qp.fl(), qp.l(), qp.fu(), qp.u(), 
-				     qp.c(), qp.c0());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
-      cout << "Program not correctly copied.\n" << endl;
-      return false;
-    }
-    // test default/copy constructor, assignment
-    CGAL::Linear_program<IT> qp5;
-    qp5 = qp4;
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
-      cout << "Program not correctly assigned.\n" << endl;
-      return false;
-    }
-    CGAL::Linear_program<IT> qp6 (qp4);
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
-      cout << "Program not correctly copy-constructed.\n" << endl;
-      return false;
-    }
-  }
-
-  if (!qp.is_linear() && qp.is_nonnegative()) {
-    CGAL::Nonnegative_quadratic_program<IT> 
-      qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
-	   qp.d(), qp.c(), qp.c0());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
-      cout << "Program not correctly copied.\n" << endl;
-      return false;
-    }    
-    // test default/copy constructor, assignment
-    CGAL::Nonnegative_quadratic_program<IT> qp5;
-    qp5 = qp4;
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
-      cout << "Program not correctly assigned.\n" << endl;
-      return false;
-    }
-    CGAL::Nonnegative_quadratic_program<IT> qp6 (qp4);
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
-      cout << "Program not correctly copy-constructed.\n" << endl;
-      return false;
-    }
-  }
-
+  // test all four readers
   if (qp.is_linear() && qp.is_nonnegative()) {
-    CGAL::Nonnegative_linear_program<IT> 
-      qp4 (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
-	   qp.c(), qp.c0());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
-      cout << "Program not correctly copied.\n" << endl;
-      return false;
+    CGAL::Nonnegative_linear_program_from_mps<IT> qp2(inout);
+    CGAL_qpe_assertion (qp2.is_valid());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
+      cout << "Warning: MPS reader (NLP) and MPS writer disagree.\n" << endl;
     }
-    // test default/copy constructor, assignment
-    CGAL::Nonnegative_linear_program<IT> qp5;
-    qp5 = qp4;
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp5, qp4)) {
-      cout << "Program not correctly assigned.\n" << endl;
-      return false;
+  }
+  if (qp.is_linear() && !qp.is_nonnegative()) {
+    CGAL::Linear_program_from_mps<IT> qp2(inout);
+    CGAL_qpe_assertion (qp2.is_valid());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
+      cout << "Warning: MPS reader (LP) and MPS writer disagree.\n" << endl;
     }
-    CGAL::Nonnegative_linear_program<IT> qp6 (qp4);
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp6, qp4)) {
-      cout << "Program not correctly copy-constructed.\n" << endl;
-      return false;
+  }
+  if (!qp.is_linear() && !qp.is_nonnegative()) {
+    CGAL::Quadratic_program_from_mps<IT> qp2(inout);
+    CGAL_qpe_assertion (qp2.is_valid());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
+      cout << "Warning: MPS reader (QP) and MPS writer disagree.\n" << endl;
     }
+  }
+  if (!qp.is_linear() && qp.is_nonnegative()) {
+    CGAL::Nonnegative_quadratic_program_from_mps<IT> qp2(inout);
+    CGAL_qpe_assertion (qp2.is_valid());
+    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
+      cout << "Warning: MPS reader (NQP) and MPS writer disagree.\n" << endl;
+    }
+  }
+  // now copy from the iterators, check for equality
+  CGAL::Quadratic_program_base<IT> 
+    qp4 (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), qp.get_r(), 
+	 qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
+	 qp.get_d(), qp.get_c(), qp.get_c0());
+  if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
+    cout << "Program not correctly copied.\n" << endl;
+    return false;
+  }
+  // test consistency of types
+  if (qp.is_linear() != qp4.is_linear()) {
+    cout << "Program types inconsistent (linearity): " 
+	 << qp.is_linear() << " vs. " << qp4.is_linear() 
+	 << "\n"<< endl;
+    return false;
+  }
+  if (qp.is_nonnegative() != qp4.is_nonnegative()) {
+    cout << "Program types inconsistent (nonnegativity): " 
+	 << qp.is_nonnegative() << " vs. " << qp4.is_nonnegative() 
+	 << "\n"<< endl;
+    return false;
   }
 
   typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_nonnegative> Tags;
@@ -548,14 +485,15 @@ bool process(const std::string& filename,
     // general form
     typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> 
       LocalTags;
-    typedef CGAL::Quadratic_program<IT> 
+    typedef CGAL::Quadratic_program_base<IT> 
       LocalQP;
     CGAL::QP_pricing_strategy<LocalQP, ET, LocalTags> *slocal = new
       CGAL::QP_full_exact_pricing <LocalQP, ET, LocalTags>();
       
-    LocalQP qplocal (qp.n(), qp.m(), qp.a(), qp.b(), qp.r(), 
-		     qp.fl(), qp.l(), qp.fu(), qp.u(), 
-		     qp.d(), qp.c(), qp.c0()); 
+    LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), 
+		     qp.get_r(), 
+		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
+		     qp.get_d(), qp.get_c(), qp.get_c0()); 
     CGAL::QP_solver<LocalQP, ET, LocalTags> solverlocal (qplocal, slocal, 0);
     std::cout << "(c) ";
     delete slocal;

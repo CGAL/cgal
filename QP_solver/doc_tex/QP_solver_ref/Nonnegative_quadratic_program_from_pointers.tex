@@ -8,7 +8,7 @@ An object of class \ccRefName\ describes a convex quadratic program of the form
 \begin{eqnarray*}
 \mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
-&                    & x \geq \mathbf{0}
+&                    & x \geq 0
 \end{eqnarray*}
 %%
 in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
@@ -35,8 +35,12 @@ a copy, you may use the class \ccc{Nonnegative_quadratic_program<NT>}).
 \ccIsModel
 \ccc{NonnegativeQuadraticProgramInterface}
 
+\ccTypes
+\ccNestedType{NT}{The number type of the program entries.}
+
 \ccSeeAlso
+\ccc{Nonnegative_quadratic_program<NT>}\\
 \ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
-\ccc{Nonnegative_quadratic_program<NT>}
+\ccc{Nonnegative_quadratic_program_from_mps<NT>}
 
 \end{ccRefClass}

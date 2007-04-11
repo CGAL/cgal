@@ -55,13 +55,13 @@ int main(const int argNr,const char **args) {
 #else
   typedef CGAL::Gmpz ET;
 #endif
-  typedef CGAL::QP_from_mps<IT, CGAL::Tag_false, CGAL::Tag_true> QP;
-  QP qp(std::cin,true,verbosity);
+  typedef CGAL::Quadratic_program_from_mps<IT> QP;
+  QP qp(std::cin);
 
   // check for format errors in MPS f\ile:
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
-         << "Error: " << qp.error() << endl;
+         << "Error: " << qp.get_error() << endl;
     std::exit(2);
   }
 
@@ -84,8 +84,8 @@ int main(const int argNr,const char **args) {
     cout << "Variable values:" << endl;
     Solver::Variable_value_iterator it 
       = s.original_variable_values_begin() ;
-    for (int i=0; i < qp.n(); ++it, ++i)
-      cout << "  " << qp.name_of_variable(i) << " = "
+    for (int i=0; i < qp.get_n(); ++it, ++i)
+      cout << "  " << qp.get_name_of_variable(i) << " = "
 	   << CGAL::to_double(*it) << endl;
     return 0;
   }

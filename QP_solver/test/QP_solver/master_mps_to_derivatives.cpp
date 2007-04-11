@@ -27,6 +27,7 @@
 #include <boost/iterator/zip_iterator.hpp>
 
 #include <CGAL/Gmpq.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
@@ -36,13 +37,6 @@
 
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
-
-using CGAL::Tag_true;
-using CGAL::Tag_false;
-
-typedef Tag_false Sparse_D;
-typedef Tag_false Sparse_A;
-typedef Tag_false Is_linear;
 
 // Routines to output to MPS format:
 namespace QP_from_mps_detail {
@@ -151,8 +145,7 @@ template<typename IT,   // input number type
 	 typename ET>   // exact number type compatible with IT (ET is used,
                         // for instance, by QP in the query methods
                         // has_equalities_only_and_full_rank())
-void create_shifted_instance(CGAL::QP_from_mps
-			     <IT, Is_linear, Sparse_D, Sparse_A>& qp,
+void create_shifted_instance(const CGAL::Quadratic_program_from_mps <IT>& qp,
 			     const char *file,   // Note: "Bernd3" and
 					         // not "Bernd3.mps".
 			     const char *dir)
@@ -172,8 +165,8 @@ void create_shifted_instance(CGAL::QP_from_mps
   // where v = [1,...,n]^T.
 
   // extract data from qp:
-  const int n = qp.n();
-  const int m = qp.m();
+  const int n = qp.get_n();
+  const int m = qp.get_m();
 
   // offset vector:
   std::vector<IT> v(n);
@@ -184,13 +177,13 @@ void create_shifted_instance(CGAL::QP_from_mps
   std::vector<IT> Av(m, IT(0));
   for (int i=0; i<m; ++i) 
     for (int j=0; j<n; ++j)
-      Av[i] += qp.a()[j][i] * v[j];
+      Av[i] += qp.get_a()[j][i] * v[j];
 
   // compute - 2 v^T D into mvTD:
   std::vector<IT> mvTD(n, IT(0));  // -2D^Tv
   for (int i=0; i<n; ++i) {
     for (int j=0; j<n; ++j)
-      mvTD[i] += qp.d()[j][i] * v[j];
+      mvTD[i] += ( j <= i ? qp.get_d()[i][j] : qp.get_d()[j][i]) * v[j];
     mvTD[i] *= -1;
   }
 
@@ -204,46 +197,30 @@ void create_shifted_instance(CGAL::QP_from_mps
 		  "", // deduce number-type
 		  "Shifted instance of original file",
 		  "master_mps_to_derivatives-create_shifted_instance",
-		  qp.problem_name(), 
+		  qp.get_problem_name(), 
 		  CGAL::make_quadratic_program_from_iterators(
      n, 
      m, 
-     qp.a(), 
+     qp.get_a(), 
      make_transform_iterator(
-			     make_zip_iterator(make_tuple(qp.b(),Av.begin())),
+			     make_zip_iterator(make_tuple(qp.get_b(),Av.begin())),
 			     tuple_add<IT>()),
-     qp.r(), 
-     qp.fl(),
+     qp.get_r(), 
+     qp.get_fl(),
      make_transform_iterator(
-			      make_zip_iterator(make_tuple(qp.l(),v.begin())),
+			      make_zip_iterator(make_tuple(qp.get_l(),v.begin())),
 			      tuple_add<IT>()),
-     qp.fu(),
+     qp.get_fu(),
      make_transform_iterator(
-			     make_zip_iterator(make_tuple(qp.u(),v.begin())),
+			     make_zip_iterator(make_tuple(qp.get_u(),v.begin())),
 			     tuple_add<IT>()),
-     qp.d(),
+     qp.get_d(),
      make_transform_iterator(
-			   make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
+			   make_zip_iterator(make_tuple(qp.get_c(),mvTD.begin())),
 			   tuple_add<IT>()), 
-     qp.c0()
+     qp.get_c0()
      )
 );
-// 		  n, m,
-// 		  qp.a(),
-// 		  make_transform_iterator(
-// 		    make_zip_iterator(make_tuple(qp.b(),Av.begin())),
-// 		    tuple_add<IT>()),
-// 		  make_transform_iterator(
-// 		    make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
-// 		    tuple_add<IT>()), qp.c0(),
-// 		  qp.d(), qp.fu(), qp.fl(),
-// 		  make_transform_iterator(
-// 		    make_zip_iterator(make_tuple(qp.u(),v.begin())),
-// 		    tuple_add<IT>()),
-// 		  make_transform_iterator(
-// 		    make_zip_iterator(make_tuple(qp.l(),v.begin())),
-// 		    tuple_add<IT>()),
-// 		  qp.r());
   out->close();
 }
 
@@ -251,8 +228,7 @@ template<typename IT,   // input number type
 	 typename ET>   // exact number type compatible with IT (ET is used,
                         // for instance, by QP in the query methods
                         // has_equalities_only_and_full_rank())
-void create_free_instance(CGAL::QP_from_mps<IT, Is_linear,
-			  Sparse_D, Sparse_A>& qp_,
+void create_free_instance(CGAL::Quadratic_program_from_mps<IT>& qp,
 			  const char *file,   // Note: "Bernd3" and
 			                      // not "Bernd3.mps".
 			  const char *dir)
@@ -266,78 +242,46 @@ void create_free_instance(CGAL::QP_from_mps<IT, Is_linear,
   // (and fl and fu are adjusted as well).
 
   // extract data from qp:
-  const unsigned int n = qp_.n();
-  const unsigned int m = qp_.m();
-
-  // allocate storage (admittedly, I don't care about efficiency and
-  // elegance here...):
-  typedef CGAL::QP_from_mps<IT, Is_linear, Sparse_D, Sparse_A>    QP_MPS;
-  typedef typename QP_MPS::Vector            Vector;
-  typedef typename QP_MPS::B_iterator   Vector_iterator;
-  typedef typename QP_MPS::A_Matrix          Matrix;
-  typedef typename QP_MPS::A_Beginner        A_Beginner;
-  typedef typename QP_MPS::A_iterator        A_iterator;
-  typedef CGAL::Comparison_result Row_type;
-  typedef typename QP_MPS::R_vector R_vector;
-
-  // copy the qp
-  QP_MPS qp (qp_);
-
-  // copy some of its vectors (they get manipulated)
-  Vector b           = qp.b_vector();
-  R_vector row_types = qp.r_vector();
+  const unsigned int n = qp.get_n();
+  unsigned int m = qp.get_m();
 
   // add rows to A and corresponding entries to b:
-  int nr_of_rows_added = 0;
   for (unsigned int i=0; i<n; ++i) {
-    if (*(qp.fl()+i)) {                        // x >= l
+    if (*(qp.get_fl()+i)) {                        // x >= l
       // add a row to A:
       for (unsigned int j=0; j<n; ++j)
-	qp.add_entry_in_A (j, b.size(),(i==j? 1 : 0)); 
-        //A[j].push_back(i==j? 1 : 0);
+	qp.set_a (j, m, (i==j? 1 : 0)); 
 
       // add corresponding entry to b:
-      b.push_back(qp.l()[i]);
+      qp.set_b(m, qp.get_l()[i]);
 
       // add corresponding row type:
-      row_types.push_back(CGAL::LARGER);
-
-      ++nr_of_rows_added;
+      qp.set_r(m, CGAL::LARGER);
+      ++m;
     }
-    if (*(qp.fu()+i)) {                        // x <= u
+    qp.set_l(i, false);                           // variable becomes free
+    if (*(qp.get_fu()+i)) {                        // x <= u
       // add a row to A:
       for (unsigned int j=0; j<n; ++j)
-	qp.add_entry_in_A (j, b.size(),(i==j? 1 : 0)); 
-        //A[j].push_back(i==j? 1 : 0);
+	qp.set_a (j, m ,(i==j? 1 : 0)); 
 
       // add corresponding entry to b:
-      b.push_back(qp.u()[i]);
+      qp.set_b(m, qp.get_u()[i]);
 
       // add corresponding row type:
-      row_types.push_back(CGAL::SMALLER);
-
-      ++nr_of_rows_added;
+      qp.set_r(m, CGAL::SMALLER);
+      ++m;
     }
+    qp.set_u(i, false);                         // variable becomes free
   }
-
   // output:
   std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "free");
   write_MPS(*out,
 		  "", // deduce number-type
 		  "Freed instance of original file",
 		  "master_mps_to_derivatives-create_free_instance",
-		  qp.problem_name(),
-		  CGAL::make_quadratic_program_from_iterators (
-		  n, m+nr_of_rows_added,
-		  A_iterator(qp.A_matrix().begin(),A_Beginner()),
-		  b.begin(),
-		  row_types.begin(),
-		  CGAL::Const_oneset_iterator<bool>(false), // fl
-		  qp.l(),  // dummy
-		  CGAL::Const_oneset_iterator<bool>(false), // fu
-		  qp.u(),  // dummy
-		  qp.d(),
-		  qp.c(), qp.c0()));
+		  qp.get_problem_name(),
+	    qp);
   out->close();
 }
 
@@ -364,20 +308,19 @@ bool create_derivatives(const char *path,
   }
 
   // load QP instance:
-  const int verbosity = 5;
   typedef typename QP_from_mps_detail::IT_to_ET<IT>::ET ET;
-  typedef CGAL::QP_from_mps<IT, Is_linear, Sparse_D, Sparse_A> QP;
-  QP qp(f,true,verbosity);
+  typedef CGAL::Quadratic_program_from_mps<IT> QP;
+  QP qp(f);
 
   // check for format errors in MPS file:
   if (!qp.is_valid()) {
-    msg = "Input is not a valid MPS file: " + qp.error();
+    msg = "Input is not a valid MPS file: " + qp.get_error();
     return false;
   }
   cerr << "    MPS-file successfully input.\n";
 
   // no derivatives if comment says so
-  if (qp.comment().find(std::string("Derivatives: none"))!=std::string::npos) 
+  if (qp.get_comment().find(std::string("Derivatives: none"))!=std::string::npos) 
     cerr << "    No derivatives made.\n";
   else {
     // derivates:

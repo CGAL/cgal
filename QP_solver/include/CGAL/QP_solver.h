@@ -534,14 +534,14 @@ private:
   // ----------
   // pivot step
   QP_status  pivot( )
-  { CGAL_qpe_precondition( phase() > 0);
-  CGAL_qpe_precondition( phase() < 3);
+  { CGAL_qpe_assertion( phase() > 0);
+  CGAL_qpe_assertion( phase() < 3);
   pivot_step();
   return status(); }
 
   // solve QP
   QP_status  solve( )
-  { CGAL_qpe_precondition( phase() > 0);
+  { CGAL_qpe_assertion( phase() > 0);
   while ( phase() < 3) { pivot_step(); }
   return status(); }
 
@@ -686,15 +686,15 @@ public: // only the pricing strategies (including user-defined ones
   
   bool is_basic( int j) const
   { 
-    CGAL_qpe_precondition(j >= 0);
-    CGAL_qpe_precondition(j < number_of_working_variables());
+    CGAL_qpe_assertion(j >= 0);
+    CGAL_qpe_assertion(j < number_of_working_variables());
     return (in_B[ j] >= 0);
   }
   
   bool is_original(int j) const
   {
-    CGAL_qpe_precondition(j >= 0);
-    CGAL_qpe_precondition(j < number_of_working_variables());
+    CGAL_qpe_assertion(j >= 0);
+    CGAL_qpe_assertion(j < number_of_working_variables());
     return (j < qp_n);    
   }
     
@@ -726,7 +726,7 @@ public: // only the pricing strategies (including user-defined ones
   // Returns w[j] for an original variable x_j.
   ET w_j_numerator(int j) const
   { 
-    CGAL_qpe_precondition((0 <= j) && (j < qp_n) && is_phaseII);
+    CGAL_qpe_assertion((0 <= j) && (j < qp_n) && is_phaseII);
     return w[j];
   }
   
@@ -1970,7 +1970,7 @@ template < typename Q, typename ET, typename Tags >  inline
 bool  QP_solver<Q, ET, Tags>::
 basis_matrix_stays_regular()
 {
-  CGAL_qpe_precondition( is_phaseII);
+  CGAL_qpe_assertion( is_phaseII);
   int new_row, k;
     
   if ( has_ineq && (i >= qp_n)) {	// slack variable

@@ -33,8 +33,8 @@ template < class ET_, class Is_LP_ >
 void  QP_basis_inverse<ET_,Is_LP_>::
 set( int n, int m, int nr_equalities)
 {
-    CGAL_qpe_precondition( n > 0);
-    //CGAL_qpe_precondition( m > 0);
+    CGAL_qpe_assertion( n >= 0);
+    CGAL_qpe_assertion( m >= 0);
     b = s = 0;
     // l is the maximum size of the basis in phase I
     l = (std::min)( n+nr_equalities+1, m);
@@ -69,7 +69,7 @@ leave_original( )
     --b;
     ET    z     = M[ l+b][ l+b];
     bool  z_neg = ( z < et0);
-    CGAL_qpe_precondition( z != et0);
+    CGAL_qpe_assertion( z != et0);
 
     // update matrix in place
     update_inplace_QP( M[ l+b].begin(), M[ l+b].begin()+l,
@@ -77,7 +77,7 @@ leave_original( )
                                                                  
     // store new denominator
     d = ( z_neg ? -z : z);
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
@@ -96,7 +96,7 @@ enter_slack( )
     --s;
     ET    z     = M[ s][ s];
     bool  z_neg = ( z < et0);
-    CGAL_qpe_precondition( z != et0);
+    CGAL_qpe_assertion( z != et0);
 
     // update matrix in place
     typename Matrix::iterator  col_it;
@@ -111,7 +111,7 @@ enter_slack( )
 
     // store new denominator
     d = ( z_neg ? -z : z);
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
@@ -124,7 +124,7 @@ void  QP_basis_inverse<ET_,Is_LP_>::
 enter_slack_leave_original( )
 {
     // assert LP case or phase I
-    CGAL_qpe_precondition( is_LP || is_phaseI);
+    CGAL_qpe_assertion( is_LP || is_phaseI);
 
     // update matrix in-place
     // ----------------------
@@ -145,7 +145,7 @@ enter_slack_leave_original( )
     }
     ET    z     = (*matrix_it)[ b];
     bool  z_neg = ( z < et0);
-    CGAL_qpe_precondition( z != et0);
+    CGAL_qpe_assertion( z != et0);
 
     // update matrix
     update_inplace_LP( matrix_it->begin(), x_x.begin(), -z, ( z_neg ? d : -d));
@@ -153,7 +153,7 @@ enter_slack_leave_original( )
     // store new denominator
     // ---------------------
     d = ( z_neg ? -z : z);
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
@@ -172,7 +172,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
 {
 
     // assert QP case and phaseII
-    CGAL_qpe_precondition(is_QP && is_phaseII);
+    CGAL_qpe_assertion(is_QP && is_phaseII);
 
 
     // prepare \hat{k}_{1} -scalar
@@ -197,7 +197,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
     // prepare \hat{k}_{2} -scalar
     ET  hat_k_2 = s_nu - (et2 * s_delta * hat_k_1);
     
-    CGAL_qpe_precondition( d != et0);
+    CGAL_qpe_assertion( d != et0);
         
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -206,7 +206,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
     // store new denominator
     d = CGAL::integral_division(hat_k_1 * hat_k_1, d);
 
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
@@ -223,7 +223,7 @@ z_replace_original_by_slack( )
 {
 
     // assert QP case and phaseII
-    CGAL_qpe_precondition(is_QP && is_phaseII);
+    CGAL_qpe_assertion(is_QP && is_phaseII);
 
     // adapt s and b
     --s; --b;
@@ -240,7 +240,7 @@ z_replace_original_by_slack( )
     // prepare \hat{\xi} -scalar
     ET hat_xi = M[s][s];
         
-    CGAL_qpe_precondition( d != et0);
+    CGAL_qpe_assertion( d != et0);
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -249,7 +249,7 @@ z_replace_original_by_slack( )
     // store new denominator
     d = CGAL::integral_division(hat_kappa * hat_kappa, d);
 
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
@@ -269,13 +269,13 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
 		                    const ET& hat_nu)
 {
     // assert QP case and phaseII
-    CGAL_qpe_precondition(is_QP && is_phaseII);
+    CGAL_qpe_assertion(is_QP && is_phaseII);
     
     // get copies of y_l_it and y_x_it for later use
     ForwardIterator y_l_it_copy = y_l_it;
     ForwardIterator y_x_it_copy = y_x_it;
 
-    CGAL_qpe_precondition( d != et0);
+    CGAL_qpe_assertion( d != et0);
     
     // prepare \hat{\phi}
      
@@ -349,7 +349,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     // store new denominator
     d = CGAL::integral_division(hat_kappa * hat_kappa, d);
 
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
@@ -367,7 +367,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
 {
 
     // assert QP case and phaseII
-    CGAL_qpe_precondition(is_QP && is_phaseII);
+    CGAL_qpe_assertion(is_QP && is_phaseII);
 
     // prepare \hat{v} -vector in x_l, x_x
     multiply(u_x_it, u_x_it, x_l.begin(), x_x.begin(),Tag_false(),
@@ -383,7 +383,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
     // prepare \hat{k}_{3} -scalar
     ET  hat_k_3 = -M[k_j][k_j];
     
-    CGAL_qpe_precondition( d != et0);    
+    CGAL_qpe_assertion( d != et0);    
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -392,7 +392,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
     // store new denominator
     d = CGAL::integral_division(hat_k_1 * hat_k_1, d);
 
-    CGAL_qpe_postcondition( d > et0);
+    CGAL_qpe_assertion( d > et0);
 
     CGAL_qpe_debug {
         if ( vout.verbose()) print();

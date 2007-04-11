@@ -6,7 +6,7 @@
 An object of class \ccRefName\ describes a linear program of the form
 %%
 \begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & c^{T}x+c_0 \\
+\mbox{(LP)}& \mbox{minimize} & c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
 &                    & l \leq x \leq u
 \end{eqnarray*}
@@ -37,8 +37,12 @@ a copy, you may use the class \ccc{Linear_program<NT>}).
 \ccIsModel
 \ccc{LinearProgramInterface}
 
+\ccTypes
+\ccNestedType{NT}{The number type of the program entries.}
+
 \ccSeeAlso
+\ccc{Linear_program<NT>}\\
 \ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
-\ccc{Linear_program<NT>}
+\ccc{Linear_program_from_mps<NT>}
 
 \end{ccRefClass}

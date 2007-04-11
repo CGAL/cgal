@@ -203,7 +203,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 	      it != this->inactive_set_end(); ++it) {
 
 	  // don't price basics/artificials
-	  CGAL_qpe_precondition (!this->solver().is_basic(*it));
+	  CGAL_qpe_assertion (!this->solver().is_basic(*it));
 	  if (this->solver().is_artificial( *it)) continue;
 	    
 	  // compute mu_j

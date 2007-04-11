@@ -2,7 +2,9 @@
 
 \ccInclude{CGAL/QP_functions.h}
 
-This function writes a linear program to an output stream.
+This function writes a linear program to an output stream (in 
+\ccc{MPSFormat}). The time
+complexity is $\Theta (mn)$, even if the program is very sparse.
 
 \ccFunction{template <LinearProgramInterface>
 void print_linear_program 

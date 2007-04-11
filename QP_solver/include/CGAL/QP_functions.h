@@ -44,10 +44,12 @@ namespace QP_functions_detail {
    Is_linear is_linear, 
    Is_nonnegative is_nonnegative); 
 
+  // internal routine:
   // test whether the system is of the form A x == b (equations only)
   template <typename R>
   bool is_in_equational_form (const R& r);
 
+  // internal routine:
   // test whether the row vectors of A that correpsond to equations 
   // are linearly independent; this is done using type ET. The value
   // type of LinearInequalitySystem must be convertible to ET

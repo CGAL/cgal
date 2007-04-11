@@ -2,7 +2,9 @@
 
 \ccInclude{CGAL/QP_functions.h}
 
-This function writes a quadratic program to an output stream.
+This function writes a quadratic program to an output stream (in 
+\ccc{MPSFormat}). The time complexity is $\Theta (n^2 + mn)$, even 
+if the program is very sparse.
 
 \ccFunction{template <QuadraticProgramInterface>
 void print_quadratic_program 

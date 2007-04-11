@@ -76,7 +76,7 @@ template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
 set_D(const Q& qp, Tag_false /*is_linear*/)
 {
-  qp_D = qp.d();
+  qp_D = qp.get_d();
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -84,15 +84,15 @@ void QP_solver<Q, ET, Tags>::
 set(const Q& qp)
 {
   // assertions:
-  CGAL_qpe_precondition(qp.n() > 0);
-  CGAL_qpe_precondition(qp.m() >= 0); 
+  CGAL_qpe_assertion(qp.get_n() >= 0);
+  CGAL_qpe_assertion(qp.get_m() >= 0); 
 
   // store QP
-  qp_n = qp.n(); qp_m = qp.m();
-  qp_A = qp.a(); qp_b = qp.b(); qp_c = qp.c(); qp_c0 = qp.c0(); 
+  qp_n = qp.get_n(); qp_m = qp.get_m();
+  qp_A = qp.get_a(); qp_b = qp.get_b(); qp_c = qp.get_c(); qp_c0 = qp.get_c0(); 
 
   set_D(qp, Is_linear());
-  qp_r = qp.r();
+  qp_r = qp.get_r();
   
   // set up slack variables and auxiliary problem
   // --------------------------------------------
@@ -171,10 +171,10 @@ set_explicit_bounds(const Q& /*qp*/, Tag_true) {
 template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
 set_explicit_bounds(const Q& qp, Tag_false) {
-  qp_fl = qp.fl();
-  qp_l = qp.l();
-  qp_fu = qp.fu();
-  qp_u = qp.u();
+  qp_fl = qp.get_fl();
+  qp_l = qp.get_l();
+  qp_fu = qp.get_fu();
+  qp_u = qp.get_u();
 }
 
 
@@ -339,7 +339,7 @@ init()
   init_solution();
 
   // initialize pricing strategy
-  CGAL_qpe_precondition(strategyP != static_cast< Pricing_strategy*>(0));
+  CGAL_qpe_assertion(strategyP != static_cast< Pricing_strategy*>(0));
   strategyP->init(0);
 
   // basic feasible solution already available?
@@ -389,8 +389,8 @@ init_basis()
     // we only have equality constraints
 
     // art_A.push_back(std::make_pair(s_i, !slack_A[s_i].second)); 
-    CGAL_qpe_precondition(s_i_absolute >= 0);
-    CGAL_qpe_precondition(s_i_absolute == slack_A[s_i].first);
+    CGAL_qpe_assertion(s_i_absolute >= 0);
+    CGAL_qpe_assertion(s_i_absolute == slack_A[s_i].first);
     art_A.push_back(std::make_pair(s_i_absolute, !slack_A[s_i].second));
   }
   
@@ -572,7 +572,7 @@ init_solution()
   // latter restricted to basic variables B_O:
   if (!minus_c_B.empty()) minus_c_B.clear();
   minus_c_B.insert(minus_c_B.end(), l, -et1);   // todo: what is minus_c_B?
-  CGAL_qpe_precondition(l >= (int)art_A.size());
+  CGAL_qpe_assertion(l >= (int)art_A.size());
   if (art_s_i > 0)
     minus_c_B[art_A.size()-1] *= ET(qp_n+qp_m); // Note: the idea here is to
 						// give more weight to the

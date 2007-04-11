@@ -1,14 +1,14 @@
-\begin{ccRefClass}{Linear_program_from_mps<NT>}
+\begin{ccRefClass}{Nonnegative_quadratic_program_from_mps<NT>}
 
 \ccInclude{CGAL/QP_models.h}
 
 \ccDefinition
-An object of class \ccRefName\ describes a linear program of the form
+An object of class \ccRefName\ describes a convex quadratic program of the form
 %%
 \begin{eqnarray*}
-\mbox{(LP)}& \mbox{minimize} & c^{T}x+c_0 \\
+\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
-&                    & l \leq x \leq u
+&                    & x \geq 0
 \end{eqnarray*}
 %%
 in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
@@ -18,10 +18,8 @@ Here,
 \item $b$ is an $m$-dimensional vector (the right-hand side),
 \item $\qprel$ is an $m$-dimensional vector of relations 
 from $\{\leq, =, \geq\}$, 
-\item $l$ is an $n$-dimensional vector of lower
-bounds for $x$,
-\item $u$ is an $n$-dimensional vector of upper bounds for
-$x$, 
+\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
+  quadratic objective function),
 \item $c$ is an $n$-dimensional vector (the linear objective
   function), and 
 \item $c_0$ is a constant.
@@ -34,30 +32,30 @@ into type \ccc{NT}. The constructed program can be further manipulated
 by using the set-methods below.
 
 \ccIsModel
-\ccc{LinearProgramInterface}
+\ccc{NonnegativeQuadraticProgramInterface}
 
 \ccTypes
 \ccNestedType{NT}{The number type of the program entries.}
 
 \ccCreation
 \ccIndexClassCreation
-\ccCreationVariable{lp}
+\ccCreationVariable{qp}
 
-\ccConstructor{Linear_program_from_mps(std::istream& in)} 
+\ccConstructor{Nonnegative_quadratic_program_from_mps(std::istream& in)} 
 {reads \ccVar\ from the input stream \ccc{in}.}
 
 \ccOperations
 
 \ccMethod{bool is_valid() const;}{returns \ccc{true} if and only if an
-MPS-encoded linear program could be extracted from the input stream.}
+MPS-encoded nonnegative 
+quadratic program could be extracted from the input stream.}
 
 \ccMethod{const std::string& get_name_of_variable (int j) const;} 
 {returns the name of the $j$-th variable.}
 
-\ccMethod{bool is_linear() const;}{returns \ccc{true}.} 
+\ccMethod{bool is_linear() const;}{returns \ccc{true} if and only if the quadratic program read into \ccVar\ is a linear program.}
 
-\ccMethod{bool is_nonnegative() const;}{returns \ccc{true} if and only 
-if the linear program read into \ccVar\ is a nonnegative program.}
+\ccMethod{bool is_nonnegative() const;}{returns \ccc{true}.}
 
 \ccMethod{const std::string& get_error() const;}{if !\ccVar\ccc{.is_valid()},
 this method returns an error message explaining why the input does not
@@ -72,16 +70,6 @@ necessary to accomodate this entry.}
 of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
 \ccVar\ is enlarged if necessary to accomodate this entry.}
 
-\ccMethod{void set_l (int j, bool is_finite, const NT& val = NT(0));}
-{if \ccc{is_finite}, this sets the entry $l_j$ of \ccVar\ to \ccc{val},
-otherwise it sets $l_j$ to $-\infty$. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
-
-\ccMethod{void set_u (int j, bool is_finite, const NT& val = NT(0));}
-{if \ccc{is_finite}, this sets the entry $u_j$ of \ccVar\ to \ccc{val},
-otherwise it sets $u_j$ to $\infty$. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
-
 \ccMethod{void set_c (int j, const NT& val);}{sets the entry $c_j$
 of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
 \ccVar\ is enlarged if necessary to accomodate this entry.}
@@ -89,10 +77,14 @@ of \ccVar\ to \ccc{val}. An existing entry is overwritten.
 \ccMethod{void set_c0 (const NT& val);}{sets the entry $c_0$
 of \ccVar\ to \ccc{val}. An existing entry is overwritten.}
 
+\ccMethod{void set_d (int i, int j, const NT& val);}{sets the entry 
+$2D_{ij}$ of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
+\ccVar\ is enlarged if necessary to accomodate this entry.}
+
 \ccSeeAlso
-\ccc{Linear_program<NT>}\\
-\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
-\ccc{Linear_program_from_pointers<NT>}
+\ccc{Nonnegative_quadratic_program<NT>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
+\ccc{Nonnegative_quadratic_program_from_pointers<NT>}
 
 
 \end{ccRefClass}

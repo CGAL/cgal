@@ -1690,7 +1690,7 @@ void
 QP_solver<Q, ET, Tags>::
 enter_variable( )
 {
-  CGAL_qpe_precondition (is_phaseII);
+  CGAL_qpe_assertion (is_phaseII);
     CGAL_qpe_debug {
 	vout2 << "--> nonbasic (" << variable_type( j) << ") variable "
 	      << j << " enters basis" << std::endl << std::endl;
@@ -1711,7 +1711,7 @@ enter_variable( )
 					      // correct size). We check here
 					      // whether we need to enlarge
 					      // them.
-	  CGAL_qpe_precondition(minus_c_B.size() == B_O.size());
+	  CGAL_qpe_assertion(minus_c_B.size() == B_O.size());
 	    minus_c_B.push_back(et0);
 	        q_x_O.push_back(et0);
 	      tmp_x  .push_back(et0);
@@ -2184,7 +2184,7 @@ z_replace_variable_slack_by_original( )
 					   // correct size). We check here
 					   // whether we need to enlarge
 					   // them.
-      CGAL_qpe_precondition(minus_c_B.size() == B_O.size());
+      CGAL_qpe_assertion(minus_c_B.size() == B_O.size());
 	 minus_c_B.push_back(et0);
 	     q_x_O.push_back(et0);
 	   tmp_x  .push_back(et0);
@@ -2950,8 +2950,8 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 set_pricing_strategy( Pricing_strategy *strategy)
 {
-    CGAL_qpe_precondition( phase() != 1);
-    CGAL_qpe_precondition( phase() != 2);
+    CGAL_qpe_assertion( phase() != 1);
+    CGAL_qpe_assertion( phase() != 2);
 
     if (defaultStrategy != static_cast< Pricing_strategy*>( 0))
       delete defaultStrategy;

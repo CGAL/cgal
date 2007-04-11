@@ -25,8 +25,8 @@ template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::optimality_certificate_numerator(int i) const
 {
   // we use the vector lambda which conforms to C (basic constraints)
-  CGAL_qpe_precondition (i >= 0);
-  CGAL_qpe_precondition (i <= qp_m);
+  CGAL_qpe_assertion (i >= 0);
+  CGAL_qpe_assertion (i <= qp_m);
   if (no_ineq)
     return lambda[i];
   else {
@@ -710,7 +710,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
   //      w^TDw = 0,                                             (C11)
   //      (c^T+2x^TD)w < 0.                                      (C12)
 
-  CGAL_expensive_precondition(is_solution_feasible());
+  CGAL_expensive_assertion(is_solution_feasible());
   
   // get solution vector of original problem (multiplied by d):
   Values x(qp_n, et0);

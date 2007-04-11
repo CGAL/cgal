@@ -75,8 +75,9 @@ of one or two sequences of three tokens $j i val$, where $j$ is the
 name of a variable (here, we have variables \texttt{x0,x1}), $i$ is
 the name of a constraint or the objective function, and $val$ is the
 value $A_{ij}$ (if $i$ names a constraint), or $c_j$ (if $i$ names the
-linear objective function). Values that are not specified in this
-section default to $0$.
+linear objective function). Values for pairs $(i,j)$ that are not 
+specified in this section default to $0$. Otherwise, for every pair 
+$(i,j)$, the \emph{last} specified value determines $A_{ij}$ or $c_j$.
 
 \section*{RHS section}
 This (mandatory) section encodes the right-hand side vector $b$ and
@@ -86,10 +87,13 @@ encode several right-hand sides $b$ by using several such identifiers,
 but we ignore all lines having an identifier different from that of
 the first line.
 
-The second token $i$ in every line names a constraint or the linear 
-objective function, and the third token $val$ is the value $b_i$ (if
+The right-hand side identifier is succeeded by one or two sequences
+of tokens $i val$, where $i$ names a constraint or the linear 
+objective function, and $val$ specifies the value $b_i$ (if
 $i$ names a constraint), or $-c_0$ (if $i$ names the linear objective
 function). Values that are not specified in this section default to $0$.
+Otherwise, for every $i$, the \emph{last} specified value determines 
+$b_{i}$ or $-c_0$.
 
 \section*{BOUNDS section}
 This (optional) section encodes the lower and upper bound vectors $l$ 
@@ -114,7 +118,7 @@ they are processed in order of appearance.
 
 \begin{tabular}{l|l}
 bound type & resulting bound \\ \hline
-FX & $x_j \leq val$ (lower bound remains unchanged) \\
+FX & $x_j = val$ ($x_j$ becomes a fixed variable) \\
 LO & $x_j \geq val$ (upper bound remains unchanged) \\
 UP & $x_j \leq val$ (lower bound remains unchanged, except if $val<0$; then, 
 a zero lower bound is reset to $-\infty$)\\
@@ -133,16 +137,17 @@ or \texttt{QUADOBJ}), or $D_{ij}$ (in case of \texttt{DMATRIX}).
 In case of \texttt{QMATRIX} and \texttt{DMATRIX}, \emph{all} nonzero
 entries must be specified: if there is a line $i j val$, then there
 must also be a line $j i val$, since $D$ is required to be symmetric.
-In case of \texttt{QUADOBJ}, only the entries of $2D$ on or below the
-diagonal must be specified, and the entries above the diagonal are
-deduced from symmetry.
+In case of \texttt{QUADOBJ}, only the entries of $2D$ on or below the 
+diagonal must be specified, entries above the diagonal are deduced from 
+symmetry. It is not allowed to specify two or more \emph{different} 
+nonzero values for an unordered pair $\{i,j\}$.
 
-If this seftion is missing or does not contain nonzero values, the
+If this section is missing or does not contain nonzero values, the
 program is a model of the concept \ccc{LinearProgramInterface}.
 
 \section*{Miscellaneous}
 Our MPS format also supports an (optional) \texttt{RANGES} section,
-but we won't explain this here.
+but we don't explain this here.
 
 
 \end{ccRefConcept}

@@ -4,9 +4,9 @@
 A model of \ccRefName\ describes a linear program of the form
 %%
 \begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & c^{T}x+c_0 \\
+\mbox{(LP)}& \mbox{minimize} & c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
-&                    & x\geq \mathbf{0}
+&                    & x\geq 0
 \end{eqnarray*}
 %%
 in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
@@ -21,11 +21,15 @@ from $\{\leq, =, \geq\}$,
 \item $c_0$ is a constant.
 \end{itemize}
 
+The description is given by appropriate \emph{random-access} 
+iterators over the program data, see below. The program therefore 
+comes in \emph{dense} representation which includes zero entries.
+
 \ccHasModels
+\ccc{CGAL::Nonnegative_linear_program<NT>}\\
 \ccc{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 \ccc{CGAL::Nonnegative_linear_program_from_pointers<NT>}\\
-\ccc{CGAL::Nonnegative_linear_program<NT>}\\
-\ccc{CGAL::Linear_program_from_mps<NT>}\\
+\ccc{CGAL::Nonnegative_linear_program_from_mps<NT>}\\
 
 \ccTypes
 
@@ -48,36 +52,38 @@ from $\{\leq, =, \geq\}$,
 
 \ccCreationVariable{qp}
 
-\ccMethod{int n() const;}{returns the number $n$ of variables (number
+\ccMethod{int get_n() const;}{returns the number $n$ of variables (number
   of columns of $A$) in \ccVar.}
 
-\ccMethod{int m() const;}{returns the number $m$ of constraints
+\ccMethod{int get_m() const;}{returns the number $m$ of constraints
   (number of rows of $A$) in \ccVar.}
 
-\ccMethod{const A_iterator& a() const;}{returns an iterator over the columns
+\ccMethod{A_iterator get_a() const;}{returns an iterator over the columns
   of $A$. For $j=0,\ldots,n-1$, $\ccc{*(a()+j)}$ is a random access
   iterator for column $j$.}
 
-\ccMethod{const B_iterator& b() const;}{returns an iterator over the entries
+\ccMethod{B_iterator get_b() const;}{returns an iterator over the entries
   of $b$.}
 
-\ccMethod{const R_iterator& r() const;}{returns an iterator over the entries
+\ccMethod{R_iterator get_r() const;}{returns an iterator over the entries
   of $\qprel$. The value \ccc{CGAL::SMALLER} stands
   for $\leq$, \ccc{CGAL::EQUAL} stands for $=$, and \ccc{CGAL::LARGER}
   stands for $\geq$.}
 
-\ccMethod{const C_iterator& c() const;}{returns an iterator over the entries
+\ccMethod{C_iterator get_c() const;}{returns an iterator over the entries
   of $c$.}
 
-\ccMethod{const std::iterator_traits<C_iterator>::value_type& c0() const;}{returns the constant 
-  term $c_0$ of the objective function.}
+\ccMethod{std::iterator_traits<C_iterator>::value_type get_c0() const;}
+{returns the constant term $c_0$ of the objective function.}
 
 \ccRequirements
 
 The value types of all iterator types (nested iterator types,
-respectively, for \ccc{A_iterator} and \ccc{D_iterator}) must be
-convertible to some common \ccc{IntegralDomain} \ccc{ET}.
+respectively, for \ccc{A_iterator}) must be convertible to some common
+\ccc{IntegralDomain} \ccc{ET}.
 
 \ccSeeAlso
-
+\ccc{QuadraticProgramInterface}\\
+\ccc{LinearProgramInterface}\\
+\ccc{NonnegativeQuadraticProgramInterface}
 \end{ccRefConcept}

@@ -11,9 +11,9 @@ $\quad$ (for quadratic programs with variable bounds $l\leq x \leq u$) \\
 \ccRefConceptPage{LinearProgramInterface} \\
 $\quad$(for linear programs with variable bounds $l\leq x \leq u$)\\
 \ccRefConceptPage{NonnegativeQuadraticProgramInterface}\\
-$\quad$ (for quadratic programs with variable bounds $x\geq\mathbf{0}$) \\
+$\quad$ (for quadratic programs with variable bounds $x\geq 0$) \\
 \ccRefConceptPage{NonnegativeLinearProgramInterface}\\
-$\quad$ (for linear programs with variable bounds $x\geq\mathbf{0}$)
+$\quad$ (for linear programs with variable bounds $x\geq 0$)
 
 \ccRefConceptPage{MPSFormat}\\
 $\quad$ (the format used for reading and writing linear and quadratic 
@@ -34,73 +34,66 @@ Here are the models that conform to the concept
 \ccc{QuadraticProgramInterface}. 
 
 \ccc{Quadratic_program<NT>}\\
-$\quad$ (for quadratic programs that copy data from iterator ranges) \\
+$\quad$ (for quadratic programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Quadratic_program_from_iterators<A_it, B_it,  R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 $\quad$ (for quadratic programs that wrap given iterators, without copying 
 data) \\
 \ccc{Quadratic_program_from_pointers<NT>}\\
 $\quad$ (for quadratic programs that wrap given pointers, without copying 
 data) \\
-\ccc{Free_quadratic_program<NT>}\\
-$\quad$ (for quadratic programs with no variable bounds, copied from iterator ranges)\\
-\ccc{Free_quadratic_program_from_iterators<A_it, B_it,  R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
-$\quad$ (for quadratic programs with no variable bounds, wrapping given iterators)\\
-\ccc{Free_quadratic_program_from_pointers<NT>}\\
-$\quad$ (for quadratic programs with no variable bounds, wrapping given pointers)\\
 \ccc{Quadratic_program_from_mps<NT>}\\
-$\quad$ (for quadratic programs copied from an input stream in 
-\ccc{MPSFormat})\\
-\ccc{Sparse_quadratic_program_from_mps<NT>}\\
-$\quad$ (for sparse quadratic programs copied from an input stream in 
-\ccc{MPSFormat})
-
+$\quad$ (for quadratic programs read from an input stream in 
+\ccc{MPSFormat}; the constructed program can be manipulate entry-wise)
 
 These are the models for \ccc{LinearProgramInterface}.
 
 \ccc{Linear_program<NT>}\\
-$\quad$ (for linear programs that copy data from iterator ranges) \\
+$\quad$ (for linear programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Linear_program_from_iterators<A_it, B_it,  R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
 $\quad$ (for linear programs that wrap given iterators, without copying 
 data) \\
 \ccc{Linear_program_from_pointers<NT>}\\
 $\quad$ (for linear programs that wrap given pointers, without copying 
 data) \\
-\ccc{Free_linear_program<NT>}\\
-$\quad$ (for linear programs with no variable bounds, copied from iterator ranges)\\
-\ccc{Free_linear_program_from_iterators<A_it, B_it,  R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
-$\quad$ (for linear programs with no variable bounds, wrapping given 
-iterators)\\
-\ccc{Free_linear_program_from_pointers<NT>}\\
-$\quad$ (for linear programs with no variable bounds, wrapping given 
-pointers)\\
 \ccc{Linear_program_from_mps<NT>}\\ 
-$\quad$ (for linear programs copied from an input stream in 
-\ccc{MPSFormat})\\
-\ccc{Sparse_linear_program_from_mps<NT>}\\
-$\quad$ (for sparse linear programs copied from an input stream in 
-\ccc{MPSFormat})
+$\quad$ (for linear programs read from an input stream in 
+\ccc{MPSFormat}; the constructed program can be manipulate entry-wise)
 
 For \ccc{NonnegativeQuadraticProgramInterface}, we offer these
-three models.
+four models.
 
 \ccc{Nonnegative_quadratic_program<NT>}\\
-$\quad$ (for nonnegative quadratic programs, copied from iterator ranges)\\
+$\quad$ (for nonnegative quadratic programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it,  D_it, C_it>}\\
 $\quad$ (for nonnegative quadratic programs, wrapping given iterators)\\
 \ccc{Nonnegative_quadratic_program_from_pointers<NT>}\\
-$\quad$ (for nonnegative quadratic programs, wrapping given pointers)
+$\quad$ (for nonnegative quadratic programs, wrapping given pointers)\\
+\ccc{Nonnegative_quadratic_program_from_mps<NT>}\\
+$\quad$ (for nonnegative quadratic programs read from an input stream in 
+\ccc{MPSFormat}; the constructed program can be manipulate entry-wise)
 
-And finally, the three models for \ccc{NonnegativeLinearProgramInterface}.
+And finally, the four models for \ccc{NonnegativeLinearProgramInterface}.
 
 \ccc{Nonnegative_linear_program<NT>}\\
-$\quad$ (for nonnegative linear programs, copied from iterator ranges)\\
+$\quad$ (for nonnegative linear programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\
 $\quad$ (for nonnegative linear programs, wrapping given iterators)\\
 \ccc{Nonnegative_linear_program_from_pointers<NT>}\\
 $\quad$ (for nonnegative linear programs, wrapping given pointers)\\
-
+\ccc{Nonnegative_linear_program_from_mps<NT>}\\
+$\quad$ (for nonnegative linear programs read from an input stream in 
+\ccc{MPSFormat}; the constructed programt can be manipulate entry-wise)
 
 \ccHeading{Functions}
+
+In case you want to construct a program from complicated iterators
+(whose types you don't know, or simply don't want to bother with), 
+we provide four makers.
+
+\ccc{make_quadratic_program_from_iterators}\\
+\ccc{make_linear_program_from_iterators}\\
+\ccc{make_nonnegative_quadratic_program_from_iterators}\\
+\ccc{make_nonnegative_linear_program_from_iterators}
 
 There are four functions to solve a program, one for each program
 concept. 

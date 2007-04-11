@@ -35,25 +35,19 @@
 // - Quadratic_program_from_iterators
 // - Quadratic_program_from_pointers
 // - Quadratic_program
+// - Quadratic_program_from_mps
 // - Nonngative_quadratic_program_from_iterators
 // - Nonengative_quadratic_program_from_pointers
-// - Nonengative_quadratic_program_
-// - Free_quadratic_program_from_iterators
-// - Free_quadratic_program_from_pointers
-// - Free_quadratic_program
+// - Nonengative_quadratic_program
+// - Nonengative_quadratic_program_from_mps
 // - Linear_program_from_iterators
 // - Linear_program_from_pointers
 // - Linear_program
+// - Linear_program_from_mps
 // - Nonngative_linear_program_from_iterators
 // - Nonengative_linear_program_from_pointers
 // - Nonengative_linear_program
-// - Free_linear_program_from_iterators
-// - Free_linear_program_from_pointers
-// - Free_linear_program
-// - Quadratic_program_from_mps
-// - Linear_program_from_mps
-// - Sparse_quadratic_program_from_mps
-// - Sparse_linear_program_from_mps
+// - Nonengative_linear_program_from_mps
 
 // for convenience, every model is actually a model of the
 // concept QuadraticProgramInterface:
@@ -68,79 +62,6 @@
   typedef typename Base::D_iterator D_iterator;\
   typedef typename Base::C_iterator C_iterator;\
   typedef typename Base::C_entry C_entry
-
-// macros to ease coding of copying models
-// invariant: a pointer is either 0, or it points to valid memory
-#define QP_MODEL_MAKE_ABRC \
-  if (this->n_ > 0) this->a_it = new NT*[this->n_];\
-  for (int j=0; j<this->n_; ++j)\
-    if (this->m_ > 0)\
-      this->a_it[j] = new NT[this->m_];\
-    else\
-      this->a_it[j] = 0;\
-  if (this->m_ > 0) this->b_it = new NT[this->m_];\
-  if (this->m_ > 0) this->r_it = new CGAL::Comparison_result[this->m_];\
-  if (this->n_ > 0) this->c_it = new NT[this->n_]
-
-#define QP_MODEL_SET_ABRC \
-  for (int j=0; j<this->n_; ++j)\
-    CGAL::copy_n (*(a+j), this->m_, this->a_it[j]);\
-  CGAL::copy_n (b, this->m_, this->b_it);\
-  CGAL::copy_n (r, this->m_, this->r_it);\
-  CGAL::copy_n (c, this->n_, this->c_it)
-
-#define QP_MODEL_SET_ABRC_FROM_P \
-  for (int j=0; j<this->n_; ++j)\
-    CGAL::copy_n (*(p.a()+j), this->m_, this->a_it[j]);\
-  CGAL::copy_n (p.b(), this->m_, this->b_it);\
-  CGAL::copy_n (p.r(), this->m_, this->r_it);\
-  CGAL::copy_n (p.c(), this->n_, this->c_it)
-
-#define QP_MODEL_DELETE_ABRC \
-  delete[] this->c_it;\
-  delete[] this->r_it;\
-  delete[] this->b_it;\
-  for (int j=0; j<this->n_; ++j) delete[] this->a_it[j];\
-  delete[] this->a_it
-
-#define QP_MODEL_MAKE_BOUNDS \
-  if (this->n_ > 0) this->fl_it = new bool[this->n_];\
-  if (this->n_ > 0) this->l_it = new NT[this->n_];\
-  if (this->n_ > 0) this->fu_it = new bool[this->n_];\
-  if (this->n_ > 0) this->u_it = new NT[this->n_];
-
-#define QP_MODEL_SET_BOUNDS \
-  CGAL::copy_n (fl, this->n_, this->fl_it);\
-  CGAL::copy_n (l, this->n_, this->l_it);\
-  CGAL::copy_n (fu, this->n_, this->fu_it);\
-  CGAL::copy_n (u, this->n_, this->u_it)
-
-#define QP_MODEL_SET_BOUNDS_FROM_P \
-  CGAL::copy_n (p.fl(), this->n_, this->fl_it);\
-  CGAL::copy_n (p.l(), this->n_, this->l_it);\
-  CGAL::copy_n (p.fu(), this->n_, this->fu_it);\
-  CGAL::copy_n (p.u(), this->n_, this->u_it)
-
-#define QP_MODEL_DELETE_BOUNDS \
-  delete[] this->u_it;\
-  delete[] this->fu_it;\
-  delete[] this->l_it;\
-  delete[] this->fl_it
-
-#define QP_MODEL_MAKE_D \
-  if (this->n_ > 0) this->d_it = new NT*[this->n_];\
-  for (int j=0; j<this->n_; ++j) this->d_it[j] = new NT[j+1];
-
-#define QP_MODEL_SET_D \
-  for (int j=0; j<this->n_; ++j) CGAL::copy_n (*(d+j), j+1, this->d_it[j])
-
-#define QP_MODEL_SET_D_FROM_P \
-  for (int j=0; j<this->n_; ++j) CGAL::copy_n (*(p.d()+j), j+1, this->d_it[j])
-
-#define QP_MODEL_DELETE_D \
-  for (int j=0; j<this->n_; ++j) delete[] this->d_it[j];\
-  delete[] this->d_it
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -217,18 +138,18 @@ public:
   {}
 
   // access
-  int n() const {return n_;}
-  int m() const {return m_;}
-  A_iterator a() const {return a_it;}
-  B_iterator b() const {return b_it;}
-  R_iterator r() const {return r_it;}  
-  FL_iterator fl() const {return fl_it;}
-  L_iterator l() const {return l_it;}
-  FU_iterator fu() const {return fu_it;}
-  U_iterator u() const {return u_it;}
-  D_iterator d() const {return d_it;}
-  C_iterator c() const {return c_it;}
-  C_entry c0() const {return c_0;}
+  int get_n() const {return n_;}
+  int get_m() const {return m_;}
+  A_iterator get_a() const {return a_it;}
+  B_iterator get_b() const {return b_it;}
+  R_iterator get_r() const {return r_it;}  
+  FL_iterator get_fl() const {return fl_it;}
+  L_iterator get_l() const {return l_it;}
+  FU_iterator get_fu() const {return fu_it;}
+  U_iterator get_u() const {return u_it;}
+  D_iterator get_d() const {return d_it;}
+  C_iterator get_c() const {return c_it;}
+  C_entry get_c0() const {return c_0;}
 };
 
 // corresponding global function make_quadratic_program_from_iterators
@@ -265,12 +186,14 @@ make_quadratic_program_from_iterators (
 
 // Quadratic_program_from_pointers
 // -------------------------------
-template <typename NT>
+template <typename NT_>
 class Quadratic_program_from_pointers : 
   public Quadratic_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, 
- bool*, NT*, bool*, NT*, NT**, NT*>
+<NT_**, NT_*, CGAL::Comparison_result*, 
+ bool*, NT_*, bool*, NT_*, NT_**, NT_*>
 {
+public:
+  typedef NT_ NT;
 private:
   typedef Quadratic_program_from_iterators 
   <NT**, NT*, CGAL::Comparison_result*, 
@@ -292,86 +215,6 @@ public:
    const C_entry& c0 = C_entry(0))
     : Base (n, m, a, b, r, fl, l, fu, u, d, c, c0)
   {}  
-};
-
-// Quadratic_program (copies the data)
-// -----------------------------------
-template <typename NT>
-class Quadratic_program :
-  public Quadratic_program_from_pointers<NT>
-{
-private:
-  typedef Quadratic_program_from_pointers<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  template <typename A_it, typename B_it, typename R_it, typename FL_it, 
-	    typename L_it, typename FU_it, typename U_it, typename D_it, 
-	    typename C_it>
-  Quadratic_program 
-  (
-   int n, int m, // number of variables / constraints
-   const A_it& a, 
-   const B_it& b,
-   const R_it& r,
-   const FL_it& fl,
-   const L_it& l,
-   const FU_it& fu,
-   const U_it& u,
-   const D_it& d,
-   const C_it& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, c0)
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC;
-    QP_MODEL_MAKE_BOUNDS;
-    QP_MODEL_SET_BOUNDS;
-    QP_MODEL_MAKE_D;
-    QP_MODEL_SET_D;
-  }
-
-  Quadratic_program ()
-    : Base (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-  {}
-
-  Quadratic_program (const Quadratic_program& p)
-    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, 0, 0, 0, 0, p.c0())
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC_FROM_P;
-    QP_MODEL_MAKE_BOUNDS;
-    QP_MODEL_SET_BOUNDS_FROM_P;
-    QP_MODEL_MAKE_D;
-    QP_MODEL_SET_D_FROM_P;
-  }
-
-  Quadratic_program& operator= (const Quadratic_program& p)
-  {
-    if (this != &p) {
-      // cleanup
-      QP_MODEL_DELETE_D;
-      QP_MODEL_DELETE_BOUNDS;
-      QP_MODEL_DELETE_ABRC;
-      // reset
-      this->n_ = p.n();
-      this->m_ = p.m();
-      this->c_0 = p.c0();
-      QP_MODEL_MAKE_ABRC;
-      QP_MODEL_SET_ABRC_FROM_P;
-      QP_MODEL_MAKE_BOUNDS;
-      QP_MODEL_SET_BOUNDS_FROM_P;
-      QP_MODEL_MAKE_D;
-      QP_MODEL_SET_D_FROM_P;
-    }
-    return *this;
-  }
-
-  ~Quadratic_program () 
-  {
-    QP_MODEL_DELETE_D;
-    QP_MODEL_DELETE_BOUNDS;
-    QP_MODEL_DELETE_ABRC;
-  }
 };
 
 // Linear_program_from_iterators
@@ -446,11 +289,13 @@ make_linear_program_from_iterators (
 
 // Linear_program_from_pointers
 // ----------------------------
-template <typename NT>
+template <typename NT_>
 class Linear_program_from_pointers : 
   public Linear_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, bool*, NT*, bool*, NT*, NT*>
+<NT_**, NT_*, CGAL::Comparison_result*, bool*, NT_*, bool*, NT_*, NT_*>
 {
+public:
+  typedef NT_ NT;
 private:
   typedef  Linear_program_from_iterators 
   <NT**, NT*, CGAL::Comparison_result*, bool*, NT*, bool*, NT*, NT*> Base;
@@ -471,77 +316,6 @@ public:
     : Base (n, m, a, b, r, fl, l, fu, u, c, c0)
   {}  
 };
-
-// Linear_program (copies the data)
-// --------------------------------
-template <typename NT>
-class Linear_program :
-  public Linear_program_from_pointers<NT>
-{
-private:
-  typedef Linear_program_from_pointers<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  template <typename A_it, typename B_it, typename R_it, typename FL_it, 
-	    typename L_it, typename FU_it, typename U_it, typename C_it>
-  Linear_program 
-  (
-   int n, int m, // number of variables / constraints
-   const A_it& a, 
-   const B_it& b,
-   const R_it& r,
-   const FL_it& fl,
-   const L_it& l,
-   const FU_it& fu,
-   const U_it& u,
-   const C_it& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, 0, 0, 0, 0, 0, 0, 0, 0, c0)
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC;
-    QP_MODEL_MAKE_BOUNDS;
-    QP_MODEL_SET_BOUNDS;
-  }
-
-  Linear_program ()
-    : Base (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-  {}
-
-  Linear_program (const Linear_program& p)
-    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, 0, 0, 0, p.c0())
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC_FROM_P;
-    QP_MODEL_MAKE_BOUNDS;
-    QP_MODEL_SET_BOUNDS_FROM_P;
-  }
-
-  Linear_program& operator= (const Linear_program& p)
-  {
-    if (this != &p) {
-      // cleanup
-      QP_MODEL_DELETE_BOUNDS;
-      QP_MODEL_DELETE_ABRC;
-      // reset
-      this->n_ = p.n();
-      this->m_ = p.m();
-      this->c_0 = p.c0();
-      QP_MODEL_MAKE_ABRC;
-      QP_MODEL_SET_ABRC_FROM_P;
-      QP_MODEL_MAKE_BOUNDS;
-      QP_MODEL_SET_BOUNDS_FROM_P;
-    }
-    return *this;
-  }
-
-  ~Linear_program () 
-  {
-    QP_MODEL_DELETE_BOUNDS;
-    QP_MODEL_DELETE_ABRC;
-  }
-};
-
 
 // Nonnegative_quadratic_program_from_iterators
 // --------------------------------------------
@@ -614,11 +388,13 @@ make_nonnegative_quadratic_program_from_iterators (
 
 // Nonnegative_Quadratic_program_from_pointers
 // -------------------------------------------
-template <typename NT>
+template <typename NT_>
 class Nonnegative_quadratic_program_from_pointers : 
   public Nonnegative_quadratic_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT**, NT*>
+<NT_**, NT_*, CGAL::Comparison_result*, NT_**, NT_*>
 {
+public:
+  typedef NT_ NT;
 private:
   typedef Nonnegative_quadratic_program_from_iterators 
 <NT**, NT*, CGAL::Comparison_result*, NT**, NT*> Base;
@@ -637,235 +413,9 @@ public:
   {}  
 };
 
-// Nonnegative_quadratic_program (copies the data)
-// ----------------------------------------------
-template <typename NT>
-class Nonnegative_quadratic_program :
-  public Nonnegative_quadratic_program_from_pointers<NT>
-{
-private:
-  typedef Nonnegative_quadratic_program_from_pointers<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  template <typename A_it, typename B_it, typename R_it, typename D_it, 
-	    typename C_it>
-  Nonnegative_quadratic_program 
-  (
-   int n, int m, // number of variables / constraints
-   const A_it& a, 
-   const B_it& b,
-   const R_it& r,
-   const D_it& d,
-   const C_it& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, 0, 0, 0, 0, 0, c0)
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC;
-    QP_MODEL_MAKE_D;
-    QP_MODEL_SET_D;
-  }
-
-  Nonnegative_quadratic_program ()
-    : Base (0, 0, 0, 0, 0, 0, 0)
-  {}
-
-  Nonnegative_quadratic_program (const Nonnegative_quadratic_program& p)
-    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, p.c0())
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC_FROM_P;
-    QP_MODEL_MAKE_D;
-    QP_MODEL_SET_D_FROM_P;
-  }
-
-  Nonnegative_quadratic_program& operator= 
-  (const Nonnegative_quadratic_program& p)
-  {
-    if (this != &p) {
-      // cleanup
-      QP_MODEL_DELETE_D;
-      QP_MODEL_DELETE_ABRC;
-      // reset
-      this->n_ = p.n();
-      this->m_ = p.m();
-      this->c_0 = p.c0();
-      QP_MODEL_MAKE_ABRC;
-      QP_MODEL_SET_ABRC_FROM_P;
-      QP_MODEL_MAKE_D;
-      QP_MODEL_SET_D_FROM_P;
-    }
-    return *this;
-  }
-
-  ~Nonnegative_quadratic_program () 
-  {
-    QP_MODEL_DELETE_D;
-    QP_MODEL_DELETE_ABRC;
-  }
-};
 
 
-// Free_quadratic_program_from_iterators
-// -------------------------------------
-template <
-  typename A_it,   // for constraint matrix A (columnwise)
-  typename B_it,   // for right-hand side b 
-  typename R_it,   // for relations (value type Comparison)
-  typename D_it,   // for quadratic matrix D (rowwise)
-  typename C_it >  // for objective function c
-class Free_quadratic_program_from_iterators : 
-  public Quadratic_program_from_iterators <A_it, B_it, R_it, 
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     D_it, C_it>
-{
-private:
-  typedef  Quadratic_program_from_iterators <A_it, B_it, R_it, 
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     D_it, C_it> Base;
-  typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
-  typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
-public:
-   QP_MODEL_ITERATOR_TYPES;
-   Free_quadratic_program_from_iterators (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,		     
-		     const D_iterator& d,
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, 
-	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
-	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
-	    d, c, c0)
-  {}  
-};
-// corresponding global function 
-// make_free_quadratic_program_from_iterators
-// ------------------------------------------
-template <
-  typename A_it,   // for constraint matrix A (columnwise)
-  typename B_it,   // for right-hand side b 
-  typename R_it,   // for relations (value type Comparison)
-  typename D_it,   // for quadratic matrix D (rowwise)
-  typename C_it >  // for objective function c
-Free_quadratic_program_from_iterators
-<A_it, B_it, R_it, D_it, C_it>
-make_free_quadratic_program_from_iterators (
-   int n, int m, 
-   const A_it& a, 
-   const B_it& b, 
-   const R_it& r, 
-   const D_it& d, 
-   const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0 =
-   typename std::iterator_traits<C_it>::value_type(0))
-{
-  return Free_quadratic_program_from_iterators
-    <A_it, B_it, R_it, D_it, C_it>
-    (n, m, a, b, r, d, c, c0);
-}	
 
-// Free_Quadratic_program_from_pointers
-// -------------------------------------------
-template <typename NT>
-class Free_quadratic_program_from_pointers : 
-  public Free_quadratic_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT**, NT*>
-{
-private:
-  typedef Free_quadratic_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT**, NT*> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Free_quadratic_program_from_pointers (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,
-		     const D_iterator& d,
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, d, c, c0)
-  {}  
-};
-
-// Free_quadratic_program (copies the data)
-// ---------------------------------------
-template <typename NT>
-class Free_quadratic_program :
-  public Free_quadratic_program_from_pointers<NT>
-{
-private:
-  typedef Free_quadratic_program_from_pointers<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  template <typename A_it, typename B_it, typename R_it, typename D_it, 
-	    typename C_it>
-  Free_quadratic_program 
-  (
-   int n, int m, // number of variables / constraints
-   const A_it& a, 
-   const B_it& b,
-   const R_it& r,
-   const D_it& d,
-   const C_it& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, 0, 0, 0, 0, 0, c0)
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC;
-    QP_MODEL_MAKE_D;
-    QP_MODEL_SET_D;
-  }
-
-  Free_quadratic_program ()
-    : Base (0, 0, 0, 0, 0, 0, 0)
-  {}
-
-  Free_quadratic_program (const Free_quadratic_program& p)
-    : Base (p.n(), p.m(), 0, 0, 0, 0, 0, p.c0())
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC_FROM_P;
-    QP_MODEL_MAKE_D;
-    QP_MODEL_SET_D_FROM_P;
-  }
-
-  Free_quadratic_program& operator= (const Free_quadratic_program& p)
-  {
-    if (this != &p) {
-      // cleanup
-      QP_MODEL_DELETE_D;
-      QP_MODEL_DELETE_ABRC;
-      // reset
-      this->n_ = p.n();
-      this->m_ = p.m();
-      this->c_0 = p.c0();
-      QP_MODEL_MAKE_ABRC;
-      QP_MODEL_SET_ABRC_FROM_P;
-      QP_MODEL_MAKE_D;
-      QP_MODEL_SET_D_FROM_P;
-    }
-    return *this;
-  }
-
-  ~Free_quadratic_program () 
-  {
-    QP_MODEL_DELETE_D;
-    QP_MODEL_DELETE_ABRC;
-  }
-};
- 
 // Nonnegative_linear_program_from_iterators
 // -----------------------------------------
 template <
@@ -934,11 +484,13 @@ make_nonnegative_linear_program_from_iterators (
 	
 // Nonnegative_linear_program_from_pointers
 // ----------------------------------------
-template <typename NT>
+template <typename NT_>
 class Nonnegative_linear_program_from_pointers : 
   public Nonnegative_linear_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT*>
+<NT_**, NT_*, CGAL::Comparison_result*, NT_*>
 {
+public:
+  typedef NT_ NT;
 private:
   typedef Nonnegative_linear_program_from_iterators 
 <NT**, NT*, CGAL::Comparison_result*, NT*> Base;
@@ -956,216 +508,8 @@ public:
   {}  
 };
 
-// Nonnegative_linear_program (copies the data)
-// --------------------------------------------
-template <typename NT>
-class Nonnegative_linear_program :
-  public Nonnegative_linear_program_from_pointers<NT>
-{
-private:
-  typedef Nonnegative_linear_program_from_pointers<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  template <typename A_it, typename B_it, typename R_it, typename C_it>
-  Nonnegative_linear_program 
-  (
-   int n, int m, // number of variables / constraints
-   const A_it& a, 
-   const B_it& b,
-   const R_it& r,
-   const C_it& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, 0, 0, 0, 0, c0)
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC;
-  }
-
-  Nonnegative_linear_program ()
-    : Base (0, 0, 0, 0, 0, 0)
-  {}
-
-  Nonnegative_linear_program (const Nonnegative_linear_program& p)
-    : Base (p.n(), p.m(), 0, 0, 0, 0, p.c0())
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC_FROM_P;
-  }
-
-  Nonnegative_linear_program& operator= (const Nonnegative_linear_program& p)
-  {
-    if (this != &p) {
-      // cleanup
-      QP_MODEL_DELETE_ABRC;
-      // reset
-      this->n_ = p.n();
-      this->m_ = p.m();
-      this->c_0 = p.c0();
-      QP_MODEL_MAKE_ABRC;
-      QP_MODEL_SET_ABRC_FROM_P;
-    }
-    return *this;
-  }
-
-  ~Nonnegative_linear_program () 
-  {
-    QP_MODEL_DELETE_ABRC;
-  }
-};
-
-
-// Free_linear_program_from_iterators
-// ----------------------------------
-template <
-  typename A_it,   // for constraint matrix A (columnwise)
-  typename B_it,   // for right-hand side b 
-  typename R_it,   // for relations (value type Comparison)
-  typename C_it >  // for objective function c
-class Free_linear_program_from_iterators : 
-  public Quadratic_program_from_iterators <A_it, B_it, R_it, 
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     typename QP_model_default_iterators<C_it>::It_2d, C_it>
-{
-private:
-  typedef Quadratic_program_from_iterators <A_it, B_it, R_it, 
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     typename QP_model_default_iterators<bool*>::It_1d, 
-     typename QP_model_default_iterators<C_it>::It_1d,
-     typename QP_model_default_iterators<C_it>::It_2d, C_it> Base;
-  typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
-  typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
-  typedef typename QP_model_default_iterators<C_it>::It_2d Const_D_iterator;
-public:
-   QP_MODEL_ITERATOR_TYPES;
-   Free_linear_program_from_iterators (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,		     
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, 
-	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
-	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
-	    Const_D_iterator(C_entry(0)), c, c0)
-  {}  
-}; 
-
-// corresponding global function 
-// make_free_linear_program_from_iterators
-// ---------------------------------------
-template <
-  typename A_it,   // for constraint matrix A (columnwise)
-  typename B_it,   // for right-hand side b 
-  typename R_it,   // for relations (value type Comparison)
-  typename C_it >  // for objective function c
-Nonnegative_linear_program_from_iterators
-<A_it, B_it, R_it, C_it>
-make_free_linear_program_from_iterators (
-   int n, int m, 
-   const A_it& a, 
-   const B_it& b, 
-   const R_it& r, 
-   const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0 =
-   typename std::iterator_traits<C_it>::value_type(0))
-{
-  return Free_linear_program_from_iterators
-    <A_it, B_it, R_it, C_it>
-    (n, m, a, b, r, c, c0);
-}
-	
-// Free_linear_program_from_pointers
-// ---------------------------------
-template <typename NT>
-class Free_linear_program_from_pointers : 
-  public Free_linear_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT*>
-{
-private:
-  typedef Free_linear_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT*> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Free_linear_program_from_pointers (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, c, c0)
-  {}  
-};
-
-// Free_linear_program (copies the data)
-// -------------------------------------
-template <typename NT>
-class Free_linear_program :
-  public Free_linear_program_from_pointers<NT>
-{
-private:
-  typedef Free_linear_program_from_pointers<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  template <typename A_it, typename B_it, typename R_it, typename C_it>
-  Free_linear_program 
-  (
-   int n, int m, // number of variables / constraints
-   const A_it& a, 
-   const B_it& b,
-   const R_it& r,
-   const C_it& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, 0, 0, 0, 0, c0)
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC;
-  }
-
-  Free_linear_program ()
-    : Base (0, 0, 0, 0, 0, 0)
-  {}
-
-  Free_linear_program (const Free_linear_program& p)
-    : Base (p.n(), p.m(), 0, 0, 0, 0, p.c0())
-  {
-    QP_MODEL_MAKE_ABRC;
-    QP_MODEL_SET_ABRC_FROM_P;
-  }
-
-  Free_linear_program& operator= (const Free_linear_program& p)
-  {
-    if (this != &p) {
-      // cleanup
-      QP_MODEL_DELETE_ABRC;
-      // reset
-      this->n_ = p.n();
-      this->m_ = p.m();
-      this->c_0 = p.c0();
-      QP_MODEL_MAKE_ABRC;
-      QP_MODEL_SET_ABRC_FROM_P;
-    }
-    return *this;
-  }
-
-  ~Free_linear_program () 
-  {
-    QP_MODEL_DELETE_ABRC;
-  }
-};
-
-// QP_from_mps
-// --------------------------
-namespace QP_from_mps_detail {
-
-  // functor to get the appropriate begin-iterator of a container 
+namespace QP_model_detail {
+  // maps a container to its begin-iterator, as specified by HowToBegin
   template<typename Container, typename Iterator, typename HowToBegin>
   struct Begin
     : public std::unary_function< Container, Iterator >
@@ -1176,165 +520,507 @@ namespace QP_from_mps_detail {
       return HowToBegin()(v); 
     }
   };
+}
 
-  // the general representation template
-  template <typename IT, typename Use_sparse_representation>
-  struct  Rep_selector {};
-
-  // sparse representation; uses a map and "fake" random access iterator
-  template <typename IT>
-  struct Rep_selector<IT, Tag_true> 
-  {
-    typedef std::map<unsigned int, IT> Container;
-    typedef CGAL::Fake_random_access_const_iterator<Container> Iterator;
-    struct HowToBegin {
-     Iterator operator() (const Container& v) const
-      { return Iterator(&v, IT(0));}
-    };
-    typedef Begin<Container, Iterator, HowToBegin> Beginner;
-  };
-
-  // dense representation; uses vector and its const-iterator
-  template <typename IT>
-  struct Rep_selector<IT, Tag_false> 
-  {
-    typedef std::vector<IT> Container;
-    typedef typename Container::const_iterator Iterator;
-    struct HowToBegin {
-      Iterator operator() (const Container& v) const
-      { return v.begin();}
-    };
-    typedef Begin<Container, Iterator, HowToBegin> Beginner;
-  };
-
-  template <typename Matrix_iter, typename Beginner, typename IT,
-	    typename Is_linear>
-  struct D_selector {};
-
-  template <typename Matrix_iter, typename Beginner, typename IT>
-  struct D_selector<Matrix_iter, Beginner, IT, Tag_true> // linear case
-  {
-    typedef typename QP_model_default_iterators<IT*>::It_2d D_iterator;
-  };
-
-  template <typename Matrix_iter, typename Beginner, typename IT>
-  struct D_selector<Matrix_iter, Beginner, IT, Tag_false> // quadratic case
-  {
-    typedef CGAL::Join_input_iterator_1<Matrix_iter, Beginner> 
-    D_iterator;
-  };
-
-} // QP_from_mps_detail
-
-template<typename IT_,  // The input number type: the numbers in the
-			// MPS stream are expected to be of this type
-			// and are read using IT_'s operator>>.
-			// Warning: IT_ must support EXACT division by
-			// 2 (so x/2 must be exactly representable in
-			// IT_).  The reason is that the QMATRIX
-			// section of the MPS format stores the matrix
-			// 2*D and the QP-solver needs D, so we need
-			// to divide by 2.  Note: If the MPS stream is
-			// known to only contain a DMATRIX section,
-			// this warning can be neglected because in a
-			// DMATRIX section, D is stored (and not 2*D).
-			// (See also method D_format_type().)
-	 typename Is_linear_,
-	                // this checks that there is no DMATRIX
-                        // section, and it avoids allocation of
-	                // an (n x n) matrix in the non-sparse 
-	                // case
-	 typename Sparse_D_=Tag_false,
-                        // Use a sparse representation for D.
-	 typename Sparse_A_=Tag_false>
-                        // Use a sparse representation for A. 
-class QP_from_mps {
+// Quadratic_program_base
+// ----------------------
+// sparse representation, entries can be set one by one, overriding
+// defaults; during construction, we can provide flags that tell us
+// whether we want to set up a linear/nonnegative program
+template <typename NT_>
+class Quadratic_program_base 
+{
 public:
-  typedef IT_ IT;
-  typedef Is_linear_ Is_linear;
-  typedef Sparse_D_   Sparse_D;
-  typedef Sparse_A_   Sparse_A;
-
-  // choose representation for columns of A-matrix
-  typedef typename QP_from_mps_detail::Rep_selector
-  <IT, Sparse_A>::Container A_col; 
-  typedef typename QP_from_mps_detail::Rep_selector
-  <IT, Sparse_A>::Iterator A_col_iterator;
-
-  // choose representation for rows of D-matrix
-  typedef typename QP_from_mps_detail::Rep_selector
-  <IT, Sparse_D>::Container D_row; 
-  typedef typename QP_from_mps_detail::Rep_selector
-  <IT, Sparse_D>::Iterator D_row_iterator;
-
-  // choose Beginners (maps col/row containers to their begin iterators)
-  typedef typename QP_from_mps_detail::Rep_selector
-  <IT, Sparse_A>::Beginner A_Beginner; 
-  typedef typename QP_from_mps_detail::Rep_selector
-  <IT, Sparse_D>::Beginner D_Beginner;
-
-  // matrices A and D itself are vectors of columns resp. rows 
-  typedef std::vector<A_col>           A_Matrix; 
-  typedef std::vector<D_row>           D_Matrix;
-
-  // containers for the other QP data
-  typedef std::vector<IT>                      Vector;    // b, c, l, u
-  typedef std::vector<bool>                    F_vector;  // fl, fu 
-  typedef std::vector<CGAL::Comparison_result> R_vector;  // r
-
-  // QP_model types
-  typedef CGAL::Join_input_iterator_1
-  <typename A_Matrix::const_iterator, A_Beginner > A_iterator;
-  typedef typename Vector::const_iterator B_iterator;
-  typedef typename R_vector::const_iterator R_iterator;
-  typedef typename F_vector::const_iterator FL_iterator;
-  typedef typename F_vector::const_iterator FU_iterator;
-  typedef typename Vector::const_iterator L_iterator;
-  typedef typename Vector::const_iterator U_iterator;
-
-  // select D_iterator, depending on Is_linear
-  typedef typename QP_from_mps_detail::D_selector
-  <typename D_Matrix::const_iterator, D_Beginner, IT, Is_linear >::D_iterator
-  D_iterator;
- //  typedef CGAL::Join_input_iterator_1
-//   <typename D_Matrix::const_iterator, D_Beginner>
-//     D_iterator;
-  typedef typename Vector::const_iterator C_iterator;
-  typedef typename std::iterator_traits<C_iterator>::value_type C_entry;
+  typedef NT_ NT;
 private:
-  typedef std::pair<std::string,unsigned int> String_int_pair;
-  typedef std::map<std::string,unsigned int> Index_map;
-  typedef std::map<unsigned int, IT> Map;
+  // Sparse_vectors
+  typedef std::map<int, NT>                   
+  Sparse_vector;
+  typedef std::map<int, CGAL::Comparison_result>
+  Sparse_r_vector;
+  typedef std::map<int, bool>                   
+  Sparse_f_vector;
 
-private:
-  const bool has_linear_tag;
-  const int verbosity_;
-  std::istream& from;
-  std::string error_msg;
-  bool is_format_okay_;
-  bool is_linear_;
-  const bool use_CPLEX_convention;
-  const IT it0;
+  // Sparse_matrix
+  typedef std::vector<Sparse_vector>                  
+  Sparse_matrix;   
 
-  // actual problem data to be read from MPS file
-  A_Matrix A_;
-  D_Matrix D_;                
-  Vector b_;                  
-  R_vector row_types_;        
-  F_vector fl_, fu_;          
-  Vector l_, u_;                                
-  Vector c_;                 
-  IT c_0;   
- 
-  std::string D_section;      // name of the section from which D was read
+  // Sparse_vector_iterators
+  typedef CGAL::Fake_random_access_const_iterator<Sparse_vector> 
+  Sparse_vector_iterator;  
+  typedef CGAL::Fake_random_access_const_iterator<Sparse_r_vector> 
+  Sparse_r_vector_iterator;
+  typedef CGAL::Fake_random_access_const_iterator<Sparse_f_vector> 
+  Sparse_f_vector_iterator;
+
+  // Sparse_matrix_iterator
+  struct HowToBegin
+  {
+    Sparse_vector_iterator operator() (const Sparse_vector& v) const
+    { return Sparse_vector_iterator(&v, NT(0));}
+  };
+
+  typedef QP_model_detail::Begin
+  <Sparse_vector, Sparse_vector_iterator, HowToBegin> Beginner;
+  typedef CGAL::Join_input_iterator_1 
+  <typename Sparse_matrix::const_iterator, Beginner> 
+  Sparse_matrix_iterator;
   
-  // cached data:
-  bool is_nonnegative_cached, is_nonnegative_;
+  // program data; we maintain the invariant that only the 
+  // non-default elements are stored; this means that entries
+  // may get removed again, and n_, m_ might be larger than
+  // absolutely needed; we also maintain the invariants that
+  // a_matrix and d_matrix always have n_ elements
 
-  // further data gathered from MPS file:
-  std::string name;     // from the NAME section
-  std::string comment_; // first comment in the file, if any
-  std::string obj;      // name of the objective "constraint"
+  // type settings
+  bool                                 linear_;
+  bool                                 nonnegative_;
+
+  int                                  n_; 
+  int                                  m_;
+  Sparse_matrix                        a_matrix;
+  Sparse_vector                        b_vector;
+  Sparse_r_vector                      r_vector;
+  Sparse_f_vector                      fl_vector;
+  Sparse_vector                        l_vector;
+  Sparse_f_vector                      fu_vector;
+  Sparse_vector                        u_vector;
+  Sparse_vector                        c_vector;  
+  Sparse_matrix                        d_matrix;
+  NT                                   c0_;
+
+  // default settings
+  CGAL::Comparison_result              default_r;   // from constructor
+  bool                                 default_fl;  // true
+  NT                                   default_l;   // 0
+  bool                                 default_fu;  // false
+  NT                                   default_u;   // dummy
+protected: 
+  mutable bool                         is_valid_;
+private:
+  mutable std::string                  error_msg;
+
+  // methods
+  // enlarges a_matrix, d_matrix to size s, under the
+  // precondition that the previous sizes were smaller
+  void grow_a_d (int s) 
+  {
+    CGAL_qpe_assertion( a_matrix.size() == d_matrix.size() );
+    CGAL_qpe_assertion( a_matrix.size() < (unsigned int)s);
+    for (int k = a_matrix.size(); k < s; ++k) {
+      a_matrix.push_back(Sparse_vector());
+      d_matrix.push_back(Sparse_vector());
+    }
+  }
+
+public:
+  // interface types  
+  typedef Sparse_matrix_iterator                     A_iterator;
+  typedef Sparse_vector_iterator                     B_iterator;
+  typedef Sparse_r_vector_iterator                   R_iterator;
+  typedef Sparse_f_vector_iterator                   FL_iterator;
+  typedef Sparse_vector_iterator                     L_iterator;
+  typedef Sparse_f_vector_iterator                   FU_iterator;
+  typedef Sparse_vector_iterator                     U_iterator;
+  typedef Sparse_vector_iterator                     C_iterator;
+  typedef Sparse_matrix_iterator                     D_iterator;
+  typedef NT                                         C_entry;
+
+  // concept methods
+  int get_n() const 
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return n_;
+  }
+  int get_m() const  
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return m_;
+  }
+  A_iterator get_a() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return A_iterator (a_matrix.begin(), Beginner());
+  }
+  B_iterator get_b() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return B_iterator (&b_vector, NT(0));
+  }
+  R_iterator get_r() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return R_iterator (&r_vector, default_r);
+  }
+  FL_iterator get_fl() const  
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return FL_iterator (&fl_vector, default_fl); // default bound: >= 0
+  }
+  L_iterator get_l() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return L_iterator (&l_vector, default_l);
+  }
+  FU_iterator get_fu() const  
+  {
+    CGAL_qpe_assertion(is_valid());
+    return FU_iterator (&fu_vector, default_fu);
+  }
+  U_iterator get_u() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return U_iterator (&u_vector, default_u);
+  }
+  C_iterator get_c() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return C_iterator (&c_vector, NT(0));
+  }
+  D_iterator get_d() const    
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return D_iterator (d_matrix.begin(), Beginner());
+  }
+  C_entry get_c0() const 
+  { 
+    CGAL_qpe_assertion(is_valid());
+    return c0_;
+  }
+
+  bool is_valid() const
+  {
+    if (is_valid_) {
+      // check for type validity
+      if (linear_ && !is_linear()) 
+	err ("program is not linear");
+      if (nonnegative_ && !is_nonnegative()) 
+	err ("program is not nonnegative");
+    }
+    return is_valid_;
+  }
+
+  const std::string& get_error() const
+  {
+    CGAL_qpe_assertion(!is_valid_);
+    return error_msg;
+  }
+
+  // default constructor
+  Quadratic_program_base (bool linear, 
+			  bool nonnegative,
+			  CGAL::Comparison_result relation = CGAL::EQUAL) 
+    : linear_(linear), nonnegative_(nonnegative), n_(0), m_(0), c0_(0), 
+      default_r(relation), default_fl(true),
+      default_l(0), default_fu(false), default_u(0), is_valid_(true) 
+  {}
+  // constructor from iterators
+  template <typename A_it, typename B_it, typename R_it, typename FL_it, 
+	    typename L_it, typename FU_it, typename U_it, typename D_it, 
+	    typename C_it>
+  Quadratic_program_base
+  (
+   int n, int m, // number of variables / constraints
+   const A_it& a, 
+   const B_it& b,
+   const R_it& r,
+   const FL_it& fl,
+   const L_it& l,
+   const FU_it& fu,
+   const U_it& u,
+   const D_it& d,
+   const C_it& c,
+   const typename std::iterator_traits<C_it>::value_type& c0 = 0) 
+    : linear_(false), nonnegative_(false), n_(0), m_(0), c0_(0), 
+      default_r(CGAL::EQUAL), default_fl(true),
+      default_l(0), default_fu(false), default_u(0), is_valid_(true)
+  {
+    // now copy, using the set methods
+    for (int j=0; j<n; ++j) {
+      for (int i=0; i<m; ++i) 
+	set_a (j, i, (*(a+j))[i]);
+      set_l (j, *(fl+j), *(l+j));
+      set_u (j, *(fu+j), *(u+j));
+      set_c (j, *(c+j));
+    }
+    for (int i=0; i<m; ++i) {
+      set_b (i, *(b+i));
+      set_r (i, *(r+i));
+    }
+    for (int i=0; i<n; ++i)
+      for (int j=0; j<=i; ++j)
+	set_d (i, j, (*(d+i))[j]);
+    set_c0 (c0);
+  }
+
+  // type of problem
+  bool is_linear() const
+  {
+    CGAL_qpe_assertion(d_matrix.size() == (unsigned int)(n_));
+    for (int i=0; i<n_; ++i)
+      if (!d_matrix[i].empty()) return false;
+    return true;
+  }
+
+  bool is_nonnegative() const
+  {
+    CGAL_qpe_assertion(default_fl);
+    CGAL_qpe_assertion(CGAL::is_zero(default_l)); 
+    CGAL_qpe_assertion(!default_fu);
+    // bounds must be at their defaults:  
+    //             >=                   0                  inf
+    return (fl_vector.empty() && l_vector.empty() && fu_vector.empty());
+  }
+
+  // set methods
+  void set_a (int j, int i, const NT& val) 
+  { 
+    CGAL_qpe_assertion (j >= 0); 
+    CGAL_qpe_assertion (i >= 0);    
+    if (j >= n_) {
+      n_ = j+1;  
+      grow_a_d(n_);
+    }
+    if (i >= m_) m_ = i+1;
+    if (CGAL::is_zero(val))
+      a_matrix[j].erase(i);
+    else
+      a_matrix[j][i] = val;
+  }
+
+  void set_b (int i,  const NT& val)
+  {
+    CGAL_qpe_assertion (i >= 0);
+    if (i >= m_) m_ = i+1;    
+    if (CGAL::is_zero(val)) 
+      b_vector.erase(i);
+    else
+      b_vector[i] = val;
+  }
+
+  void set_r (int i, CGAL::Comparison_result val)
+  {    
+    CGAL_qpe_assertion (i >= 0); 
+    if (i >= m_) m_ = i+1;        
+    if (val == default_r)
+      r_vector.erase(i);
+    else
+      r_vector[i] = val;
+  }
+
+  void set_l (int j, bool is_finite, const NT& val = NT(0))
+  {   
+    CGAL_qpe_assertion(!nonnegative_);
+    CGAL_qpe_assertion (j >= 0);  
+    if (j >= n_) {
+      n_ = j+1; 
+      grow_a_d(n_);
+    }
+    if (is_finite == default_fl)
+      fl_vector.erase(j);
+    else
+      fl_vector[j] = is_finite;
+    if (val == default_l)
+      l_vector.erase(j);
+    else
+      l_vector[j] = val;
+  }
+  
+  void set_u (int j, bool is_finite, const NT& val = NT(0))
+  { 
+    CGAL_qpe_assertion(!nonnegative_);
+    CGAL_qpe_assertion (j >= 0); 
+    if (j >= n_) {
+      n_ = j+1; 
+      grow_a_d(n_);
+    }
+      if (is_finite == default_fu)
+      fu_vector.erase(j);
+    else
+      fu_vector[j] = is_finite;
+    if (val == default_u)
+      u_vector.erase(j);
+    else
+      u_vector[j] = val;  
+  }
+
+  void set_c (int j, const NT& val)
+  {   
+    CGAL_qpe_assertion (j >= 0);  
+    if (j >= n_) {
+      n_ = j+1; 
+      grow_a_d(n_);
+    }
+    if (CGAL::is_zero(val)) 
+      c_vector.erase(j);
+    else
+      c_vector[j] = val;
+  }
+
+  void set_c0 (const NT& val)
+  {
+    c0_ = val;
+  }
+
+  void set_d (int i, int j, const NT& val) 
+  { 
+    CGAL_qpe_assertion(!linear_);   
+    CGAL_qpe_assertion (i >= 0);    
+    CGAL_qpe_assertion (j >= 0);
+    CGAL_qpe_assertion (j <= i); // lower-diagonal entry  
+    if (i >= n_) {
+      n_ = i+1;
+      grow_a_d(n_);
+    }  
+    if (CGAL::is_zero(val)) 
+      d_matrix[i].erase(j);
+    else
+      d_matrix[i][j] = val;
+  }
+
+protected:
+  // helpers for errors/warnings
+  std::string replace1
+  (const std::string& msg,const std::string& replacement) const
+  {
+    std::string result(msg);
+    const std::string::size_type pos = result.find('%');
+    CGAL_qpe_assertion(pos < result.size());
+    result.replace(pos,1,replacement);
+    return result;
+  }
+
+  bool err(const char* msg) const {
+    error_msg = msg;
+    is_valid_ = false;
+    return false;
+  }
+
+  bool err1(const char* msg,
+	    const std::string& parameter1)  const {
+    error_msg = replace1(msg,parameter1);
+    is_valid_ = false;
+    return false;
+  }
+
+  bool err2(const char* msg,
+	    const std::string& parameter1,
+	    const std::string& parameter2)  const {
+    error_msg = replace1(replace1(msg,parameter1),parameter2);
+    is_valid_ = false;
+    return false;
+  }
+
+  bool err3(const char* msg,
+	    const std::string& parameter1,
+	    const std::string& parameter2,
+	    const std::string& parameter3) const {
+    error_msg = 
+    replace1(replace1(replace1(msg,parameter1),parameter2),parameter3);
+    is_valid_ = false;
+    return false;
+  }
+
+  void warn(const std::string& msg) {
+    std::cerr << "Warning: " << msg << '.' << std::endl;
+  }
+
+  void warn1(const std::string& msg,const std::string& parameter1) {
+    warn(replace1(msg,parameter1));
+  }
+
+
+};
+
+// Quadratic_program_from_mps_base
+// -------------------------------
+// for reading a QP from a stream in MPS format
+
+template <typename NT_>
+class Quadratic_program_from_mps_base : 
+  public Quadratic_program_base<NT_> 
+{
+public:
+  typedef NT_ NT;
+private:
+  typedef Quadratic_program_base<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+private:
+  // types 
+  typedef std::map<std::string,unsigned int> Index_map;   
+  typedef std::pair<std::string,unsigned int> String_int_pair;
+public:
+  // constructor
+  Quadratic_program_from_mps_base 
+  (std::istream& in, bool linear, bool nonnegative)
+    : Base(linear, nonnegative), from(in), nt0(0), use_put_back_token(false)
+  {
+    // read NAME section:
+    if (!name_section())
+      return;
+
+    // read ROWS section:
+    if (!rows_section())
+      return;
+
+    // read COLUMNS section:
+    if (!columns_section())
+      return;
+
+    // read RHS section:
+    if (!rhs_section())
+      return;
+
+    // check for (optional) RANGES section:
+    if (!ranges_section())
+      return; 
+
+    // read optional BOUNDS section:
+    if (!bounds_section())
+      return;
+
+    // read optional QMATRIX section:
+    if (!qmatrix_section())
+      return;
+
+    // check for ENDATA:
+    const std::string end = token();
+    if (end != "ENDATA") {
+      this->err1("ENDDATA expected but found '%'",end);
+      return;
+    }
+  }
+
+  // returns the first comment that was read from the MPS stream
+  const std::string& get_comment() const 
+  {
+    return comment_;
+  }
+
+  // returns name of the problem
+  const std::string& get_problem_name() const 
+  {
+    return name;
+  }
+
+  const std::string& get_name_of_variable(int i)
+  {
+    CGAL_qpe_assertion(this->is_valid_);
+    CGAL_qpe_assertion(0<=i && i<this->get_n());
+    return var_by_index[i];
+  } 
+private:
+  // data
+  // ----
+  std::istream& from;    // input stream
+  NT nt0;
+
+  std::string D_section; // name of the section from which D was read
+  std::string name;      // name of the problem
+  std::string comment_;  // first comment in the input, if any
+  std::string obj;       // name of the objective "constraint"
+
   Index_map row_names;
   Index_map duplicated_row_names; // to handle RANGES section
   Index_map var_names;
@@ -1345,166 +1031,7 @@ private:
   bool use_put_back_token;
   std::string put_back_token;
 
-public: 
-  // unofficial helpers used in master_mps_to_derivatives.C;
-  // these should be considered private for CGAL end-users:
-  const A_Matrix& A_matrix() { return A_; }
-  const Vector& b_vector() { return b_; }
-  const R_vector& r_vector() { return row_types_; }
-  void add_entry_in_A(unsigned int j, unsigned int i, const IT& val) {
-    add_entry_in_A (j, i, val, Sparse_A());
-  }
-private: // helpers to deal with sparse/dense representation:
-
-  void add_column (const Tag_true /*sparse_A*/) 
-  {  
-    // append a new column to A_ (it's empty by default)
-    A_.push_back(A_col());
-  }
-
-  void add_column (const Tag_false /*sparse_A*/) 
-  {
-    // append a new empty column to A_
-    A_.push_back(A_col(row_names.size(), IT(0)));
-  }
-
-  void initialize_D(unsigned int dimension, const Tag_true /*sparse_D*/ ) 
-  {
-    // generate dimension many rows (empty by default)
-    for (unsigned int i=0; i<dimension; ++i) 
-    D_.push_back(D_row()); 
-  }
-  
-  void initialize_D(unsigned int dimension, const Tag_false /*sparse_D*/)
-  {
-    // generate dimension many empty rows; this can be very costly
-    // if dimension is large
-    for (unsigned int i=0; i<dimension; ++i)
-    D_.push_back(D_row(dimension,IT(0)));
-  }
-
-  void set_entry_in_A(unsigned int j,unsigned int i,const IT& val,
-		      const Tag_true /*sparse_A*/)      
-  {
-    // set element i in column j to val
-    if (val != it0) A_[j][i] = val;
-  }
-
-  void set_entry_in_A(unsigned int j,unsigned int i,const IT& val,
-		      const Tag_false /*sparse_A*/) 
-  {
-    // set element i in column j to val
-    A_[j][i] = val;
-  }  
-  
-  void add_entry_in_A(unsigned int j, unsigned int i, const IT& val,
-		      const Tag_true /*sparse_A*/)
-  {
-    // append value to column j; new element has index i
-    set_entry_in_A (j, i, val, Tag_true()); 
-  }
-
-  void add_entry_in_A(unsigned int j, unsigned int i, const IT& val,
-		      const Tag_false /*sparse_A*/)
-  {
-    // append value to column j; new element has index i
-    CGAL_qpe_precondition (i == A_[j].size());
-    A_[j].push_back (val);
-  }
-
-  const IT& get_entry_in_A(unsigned int j,unsigned int i,
-		      const Tag_true /*sparse_A*/)
-  {
-    typename Map::const_iterator it = A_[j].find(i);
-    if (it != A_[j].end())
-    return it->second;
-    else
-    return it0;
-  }
-
-  const IT&  get_entry_in_A(unsigned int j,unsigned int i,
-		      const Tag_false /*sparse_A*/)
-  {
-    return A_[j][i];
-  }
-
-  void set_entry_in_D(unsigned int i, unsigned int j, const IT& val,
-		      const Tag_true /*sparse_D*/) 
-  {
-    if (val != it0) D_[i][j] = val;
-  }
-
-  void set_entry_in_D(unsigned int i, unsigned int j, const IT& val,
-		      const Tag_false /*sparse_D*/)
-  {
-    D_[i][j] = val;
-  }
-
-  const IT& get_entry_in_D(unsigned int i,unsigned int j,
-		      const Tag_true /*sparse_D*/)
-  {
-    typename Map::const_iterator it = D_[i].find(j);
-    if (it != D_[i].end())
-    return it->second;
-    else
-    return it0;
-  }
-
-  const IT&  get_entry_in_D(unsigned int i,unsigned int j,
-		      const Tag_false /*sparse_D*/)
-  {
-    return D_[i][j];
-  }
-
-private: // private helpers:
-
-  // Replaces the first occurrence of '%' in msg by replacement.
-  std::string replace1(const std::string& msg,const std::string& replacement)
-  {
-    std::string result(msg);
-    const std::string::size_type pos = result.find('%');
-    CGAL_qpe_assertion(pos < result.size());
-    result.replace(pos,1,replacement);
-    return result;
-  }
-
-  bool err(const char* msg) {
-    error_msg = msg;
-    return false;
-  }
-
-  bool err1(const char* msg,
-	    const std::string& parameter1) {
-    error_msg = replace1(msg,parameter1);
-    return false;
-  }
-
-  bool err2(const char* msg,
-	    const std::string& parameter1,
-	    const std::string& parameter2) {
-    error_msg = replace1(replace1(msg,parameter1),parameter2);
-    return false;
-  }
-
-  bool err3(const char* msg,
-	    const std::string& parameter1,
-	    const std::string& parameter2,
-	    const std::string& parameter3) {
-    error_msg = 
-    replace1(replace1(replace1(msg,parameter1),parameter2),parameter3);
-    return false;
-  }
-
-  void warn(const std::string& msg) {
-    std::cerr << "MPS parser warning: " << msg << '.' << std::endl;
-  }
-
-  void warn1(const std::string& msg,const std::string& parameter1) {
-    warn(replace1(msg,parameter1));
-  }
-
-private: // parsing routines:
-
+  // parsing routines
   // (Note: returns true iff a line-break was eaten.)
   bool whitespace()
   {
@@ -1570,330 +1097,619 @@ private: // parsing routines:
     return from.good();
   }
 
-  bool name_section();
-  bool rows_section();
-  bool columns_section();
-  bool rhs_section();
-  bool ranges_section();
-  bool bounds_section();
-  bool qmatrix_section();
-
-public: // methods:
-  // Create a quadratic program instance from a stream.
-  //
-  // If use_CPLEX_convention is true and you set the upper bound of a
-  // variable to exactly zero and do not give a lower bound then the
-  // lower bound will be set to zero as well.  If use_CPLEX_convention
-  // and you set the upper bound of a variable to exactly zero and do
-  // not specify a lower bound then the lower bound will be set to
-  // -infinity.
-  QP_from_mps(std::istream& in,bool use_CPLEX_convention=true,
-		  int verbosity=0);
-
-  // Returns true if and only if the instance has been properly
-  // constructed (i.e., if the QP could be loaded from the MPS
-  // stream).
-  bool is_valid() const;
-
-  // Returns the verbosity level with which the instance was
-  // constructed.
-  int verbosity() const
+  bool name_section() 
   {
-    return verbosity_;
+    const std::string t = token();
+    if (t != "NAME")
+      return this->err("expected 'NAME'");
+    // NAME: everything found until line break; whitespaces are allowed
+    char c;
+    std::string token;
+    std::string whitespaces;
+    if (whitespace()) 
+      // line break eaten, name is empty
+      return true;
+    do {
+      from.get(c);
+      if (c == '\r' || c == '\n') break;
+      if (isspace(c)) 
+	whitespaces.push_back(c); // save whitespace
+      else {
+	// new actual character found: previous whitespaces belong to name
+	name += whitespaces;
+	whitespaces.clear();
+	name.push_back(c);
+      }
+    } while (true);
+    return true;
   }
 
-  // If is_valid() returns false, this routine returns an error
-  // string describing the problem that was encountered.
-  //
-  // Precondition: !is_valid()
-  const std::string& error() const;
-
-  // Returns the first comment that was read from the MPS stream.
-  const std::string& comment() const;
-  
-  // Returns the number of variables in the QP.
-  //
-  // Precondition: is_valid()
-  int n() const
+  bool rows_section()
   {
-    CGAL_qpe_assertion(is_valid());
-    return var_names.size();
-  }
+    std::string t = token();
+    if (t != "ROWS")
+      return this->err1("expected 'ROWS' but found '%'",t);
 
-  // Returns the number of constraints in the QP.
-  //
-  // Precondition: is_valid()
-  int m() const
-  {
-    CGAL_qpe_assertion(is_valid());
-    return b_.size(); // row_names doesn't work as RANGES may duplicate rows
-  }
-
-  // Returns the problem's name (as specified in the MPS-file).
-  //
-  // Precondition: is_valid()
-  const std::string& problem_name()
-  {
-    CGAL_qpe_assertion(is_valid());
-    return name;
-  }
-
-  // Returns the name (as present in the MPS-file) of the i-th variable.
-  const std::string& name_of_variable(int i)
-  {
-    CGAL_qpe_assertion(0<=i && i<n());
-    return var_by_index[i];
-  }
-
-  // Returns the section name of the MPS stream in which the D matrix
-  // (if any present) was read.
-  //
-  // Note: The MPS file was originally defined for LP's only, and so
-  // there was no way to store the D matrix of a QP. Several
-  // extensions exists, including:
-  //
-  // - CPLEX extension: here, not D but the matrix 2*D is stored in a
-  //   so-called "QMATRIX" section.  When the parser encounters such a
-  //   section it has to divide the read entries by 2 in order to be
-  //   able to return (see D_iterator) the matrix D.  For this, IT
-  //   must support division by 2.
-  // - QP-solver extension: we also support reading D from a section
-  //   called "DMATRIX" which is defined exactly like CPLEX's QMATRIX
-  //   section with the only difference that we do in fact store D and
-  //   not 2*D.
-  //
-  // Precondition: !is_linear
-  const std::string& D_format_type()
-  {
-    CGAL_qpe_assertion(!is_linear());
-    return D_section;
-  }
-
-  // Returns an iterator over the matrix A (as needs to be
-  // passed to the constructor of class QP_solver).
-  //
-  // Precondition: is_valid()
-  A_iterator a() const
-  {
-    CGAL_qpe_assertion(is_valid());
-    return A_iterator(A_.begin(), A_Beginner());
-  }
-
-  // Returns an iterator over the vector b (as needs to be
-  // passed to the constructor of class QP_solver).
-  //
-  // Precondition: is_valid()
-  B_iterator b() const
-  {
-    CGAL_qpe_assertion(is_valid());
-    return b_.begin();
-  }
-
-  // Returns an iterator over the vector c (as needs to be
-  // passed to the constructor of class QP_solver).
-  //
-  // Precondition: is_valid()
-  C_iterator c() const
-  {
-    CGAL_qpe_assertion(is_valid());
-    return c_.begin();
-  }
-
-  // Returns the constant term of the objective function (as
-  // needs to be passed to the constructor of class QP_solver).
-  // Precondition: is_valid()
-  IT c0() const
-  {
-    CGAL_qpe_assertion(is_valid());
-    return c_0;
-  }
-
-  // Returns an iterator over the matrix D (as needs to be
-  // passed to the constructor of class QP_solver).
-  //
-  // Precondition: is_valid()
-  // it calls one of the following two helpers to decide between
-  // the appropriate iterators
-  D_iterator d() const
-  {
-    return d(Is_linear());
-  }
-
-private:
-  D_iterator d (Tag_true /*is_linear*/) const {
-    return D_iterator(it0); 
-  }
-
-  D_iterator d(Tag_false /*is_linear*/) const {
-    CGAL_qpe_assertion(is_valid());
-    return D_iterator(D_.begin(), D_Beginner());
-  }
-  
-  // checks symmetry; if false, it assigns offending i and j 
-  bool is_symmetric(Tag_true, unsigned int&, unsigned int&) const;  
-  bool is_symmetric(Tag_false, unsigned int&, unsigned int&) const;
-
-public:
-
-  // Returns an iterator (of value-type Row_type) over the constraint
-  // types (as needs to be passed to the constructor of class
-  // QP_solver).
-  //
-  // Precondition: is_valid()
-  R_iterator r() const
-  {
-    CGAL_qpe_assertion(is_valid());
-    return row_types_.begin();
-  }
-
-  // Returns an iterator of Booleans specifying for each variable
-  // whether it has a finite lower bound or not (such an iterator
-  // needs to be passed to the constructor of class QP_solver).
-  //
-  // Precondition: is_valid()
-  FL_iterator fl() const {
-    CGAL_qpe_assertion(is_valid());
-    return fl_.begin();
-  }
-
-  // Returns an iterator of Booleans specifying for each variable
-  // whether it has a finite upper bound or not (such an iterator
-  // needs to be passed to the constructor of class QP_solver).
-  //
-  // Precondition: is_valid()
-  FU_iterator fu() const {
-    CGAL_qpe_assertion(is_valid());
-    return fu_.begin();
-  }
-
-  // Returns an iterator of IT's specifying for each variable what its
-  // lower bound is (provided it is finite); such an iterator needs to
-  // be passed to the constructor of class QP_solver.
-  //
-  // Precondition: is_valid()
-  U_iterator u() const {
-    CGAL_qpe_assertion(is_valid());
-    return u_.begin();
-  }
-
-  // Returns an iterator of IT's specifying for each variable what its
-  // upper bound is (provided it is finite); such an iterator needs to
-  // be passed to the constructor of class QP_solver.
-  //
-  // Precondition: is_valid()
-  L_iterator l() const {
-    CGAL_qpe_assertion(is_valid());
-    return l_.begin();
-  }
-
-  // Returns true iff the MPS stream could be successfully parsed and
-  // the loaded QP instance has a D matrix that is zero (i.e., iff the
-  // QP is actually an LP).
-  bool is_linear()
-  {
-    return is_format_okay_ && is_linear_;
-  }
-
-  // Returns true iff the MPS stream could be successfully parsed and
-  // the loaded QP instance is nonnegative
-  bool is_nonnegative()
-  {
-    if (!is_format_okay_)
-      return false;
-
-    if (!is_nonnegative_cached) {
-      is_nonnegative_cached = true;
-      for (unsigned int i=0; i<var_names.size(); ++i)
-	if (fl_[i] == false || !CGAL::is_zero(l_[i]) ||
-	    fu_[i] == true) {
-	  return is_nonnegative_ = false;
+    // read 'N', 'G', 'L', or 'E', and the name of the constraint:
+    t = token();
+    int i = 0; // row index
+    while (t != "COLUMNS") {
+      const char type = t[0];
+      const std::string symbol(t); // for error message below
+      t = token();
+      switch (type) {
+      case 'N':
+	// register name of objective row:
+	if (obj.size() == 0) // remember first (and ignore others)
+	  obj = t;
+	break;
+      case 'G':
+      case 'L':
+      case 'E':
+	{
+	  // register name of >=, <=, or = constraint:
+	  this->set_r (i, 
+		 type == 'G'? CGAL::LARGER :
+		 (type == 'E'? CGAL::EQUAL : CGAL::SMALLER));
+	  if (row_names.find(t) != row_names.end())
+	    return this->err1("duplicate row name '%' in section ROWS",t);
+	  row_names.insert(String_int_pair(t,i));
+	  row_by_index.push_back(t);
+	  ++i;
 	}
-      is_nonnegative_ = true;
+	break;
+      default:
+	return 
+	  this->err1
+	  ("expected 'N', 'L', 'E', or 'G' in ROWS section but found '%'",
+	   symbol);
+      }
+      t = token();
     }
-    return is_nonnegative_;
+    put_token_back(t);
+
+    return true;
   }
+
+  bool columns_section() 
+  {
+    std::string t = token();
+    if (t != "COLUMNS")
+      return this->err1("expected 'COLUMNS' but found '%'",t);
+
+    t = token();
+    while (t != "RHS") {
+      // find variable name:
+      unsigned int var_index;
+      std::string col_name;
+      const Index_map::const_iterator var_name = var_names.find(t);
+      if (var_name == var_names.end()) { // new variable?
+	var_index = var_names.size();
+	col_name = t;
+	var_names.insert(String_int_pair(t,var_index));
+	var_by_index.push_back(t);
+      } else { // variable that is already known?
+	var_index = var_name->second;
+	col_name = var_name->first;
+      }
+      
+      bool doItAgain = true;
+      for (int i=0; doItAgain; ++i) {
+	// read row identifier:
+	t = token();
+
+	// read number:
+	NT val;
+	if (!number(val))
+	  return this->err2
+	    ("number expected after row identifier '%' in '%' COLUMNS record",
+	     t,col_name);
+
+	// store number:
+	if (t == obj) { // objective row?
+	  this->set_c(var_index, val);
+	} else { // not objective row?
+	  const Index_map::const_iterator row_name = row_names.find(t);
+	  if (row_name == row_names.end())
+	    return this->err1
+	      ("unknown row identifier '%' in section COLUMNS",t);
+	  this->set_a (var_index, row_name->second, val);
+	}
+
+	// determine if we need to read another number:
+	doItAgain = i==0 && !whitespace();
+      }
+      
+      // read next token:
+      t = token();
+    }
+    put_token_back(t);
+
+    return true;
+  }
+
+  bool rhs_section()
+  {
+    this->set_c0 (nt0);  // no constant term yet
+    std::string t = token();
+    if (t != "RHS")
+      return this->err1("expected 'RHS' but found '%'",t);
+
+    t = token();
+    std::string rhs_id;
+    while (t != "RANGES" && t != "BOUNDS" &&
+	   t != "DMATRIX" && t != "QMATRIX" && t != "QUADOBJ" &&
+	   t != "ENDATA") {
+      // read rhs identifier and if it is different from the one
+      // from the previous iteration, ignore the whole row:
+      bool ignore = false;
+      std::string ignored;
+      if (rhs_id.size() == 0) { // first time we enter the loop?
+	rhs_id = t;
+      } else {                  // rhs_id already set
+	if (t != rhs_id) { 
+	  ignore = true;        // ignore other rhs identifiers
+	  ignored = t;
+	}
+      }
+
+      bool doItAgain = true;
+      for (int i=0; doItAgain; ++i) {
+	// read row identifier:
+	t = token();
+
+	// read number:
+	NT val;
+	if (!number(val))
+	  return this->err1("number expected after '%' in this RHS record",t);
+
+	// store number:
+	const Index_map::const_iterator row_name = row_names.find(t);
+	if (row_name == row_names.end()) {
+	  // no corresponding constraint; is it the constant term?
+	  if (t == obj) 
+	    this->set_c0(-val);
+	  else 
+	    return this->err1("unknown row identifier '%' in section RHS",t);
+	} else {
+	  // we have an actual constraint
+	  if (!ignore) {
+	    this->set_b(row_name->second, val);
+	  } else {
+	    this->warn1("rhs with identifier '%' ignored", ignored);
+	  }
+	}
+
+	// determine if we need to read another number:
+	doItAgain = i==0 && !whitespace();
+      }
+      
+      // read next token:
+      t = token();
+    }
+    put_token_back(t);
+
+    return true;  
+  }
+
+  bool ranges_section()
+  {
+    std::string t = token();
+    if (t != "RANGES") { // (Note: RANGES section is optional.)
+      put_token_back(t);
+      return true;
+    }
+
+    t = token();
+    std::string range_id;
+    while ((t != "BOUNDS" && t != "QMATRIX" && 
+	    t != "DMATRIX" && t != "QUADOBJ" && t != "ENDATA")) {
+      // read rhs identifier and if it is different from the one
+      // from the previous iteration, ignore the whole row:
+      bool ignore = false;
+      std::string ignored;
+      if (range_id.size() == 0) { // first time we enter the loop?
+	range_id = t;
+      } else {                    // range_id already set
+	if (t != range_id) { 
+	  ignore = true;          // ignore other range identifiers
+	  ignored = t;
+	}
+      }
+      bool doItAgain = true;
+      for (int i=0; doItAgain; ++i) {
+	// read row identifier:
+	t = token();
+
+	// read number:
+	NT val;
+	if (!number(val))
+	  return this->err1
+	    ("number expected after '%' in this RANGES record",t);
+
+	// duplicate the constraint, depending on sign of val and type
+	// of constraint
+	const Index_map::const_iterator row_name = row_names.find(t);
+	if (row_name == row_names.end()) {
+	  return this->err1("unknown row identifier '%' in section RANGES",t);
+	} else {
+	  if (!ignore) {
+	    int index = row_name->second;
+	    CGAL::Comparison_result type = *(this->get_r()+index);
+	    // duplicate the row, unless it has already been duplicated
+	    const Index_map::const_iterator duplicated_row_name = 
+	      duplicated_row_names.find(t);
+	    if (duplicated_row_name != duplicated_row_names.end())
+	      return this->err1
+		("duplicate row identifier '%' in section RANGES",t);
+	    duplicated_row_names.insert(*row_name);
+	    int new_index = this->get_m();
+	    for (unsigned int j=0; j<var_names.size(); ++j) {
+	      NT val = (*(this->get_a()+j))[index];
+	      this->set_a (j, new_index, val);
+	    }
+	    // determine rhs for this new row. Here are the rules:
+	    // if r is the ranges value and b is the old right-hand 
+	    // side, then we have h <= constraint <= u according to
+	    // this table:
+	    //
+	    // row type       sign of r       h          u
+	    // ----------------------------------------------
+	    // G            + or -         b        b + |r|
+	    // L            + or -       b - |r|      b
+	    // E              +            b        b + |r|
+	    // E              -          b - |r|      b
+	  
+	    switch (type) {
+	    case CGAL::LARGER: // introduce "<= b+|r|" 
+	      this->set_r(new_index, CGAL::SMALLER);
+	      this->set_b(new_index, *(this->get_b()+index) + CGAL::abs(val));
+	      break;
+	    case CGAL::SMALLER:   // introduce ">=  b-|r|" 
+	      this->set_r(new_index, CGAL::LARGER);
+	      this->set_b(new_index, *(this->get_b()+index) - CGAL::abs(val));
+	      break;
+	    case CGAL::EQUAL:   
+	      if (CGAL_NTS is_positive (val)) {
+		// introduce "<= b+|r|"
+		this->set_r(new_index, CGAL::SMALLER);
+	      } else {
+		// introduce ">=  b-|r|"  
+		this->set_r(new_index, CGAL::LARGER);
+	      }
+	      this->set_b(new_index, *(this->get_b()+index) + val);
+	      break;
+	    default:
+	      CGAL_qpe_assertion(false);
+	    }  
+	  } else {
+	    this->warn1("range with identifier '%' ignored", ignored);
+	  }
+	}
+
+	// determine if we need to read another number:
+	doItAgain = i==0 && !whitespace();
+      }
+      
+      // read next token:
+      t = token();
+    }
+    put_token_back(t);
+
+    return true;   
+  }
+
+  bool bounds_section()
+  {
+    std::string t = token();
+    if (t != "BOUNDS") { // (Note: BOUNDS section is optional.)
+      put_token_back(t);
+      return true;
+    }
+
+    t = token();
+    std::string bound_id;
+    while (t != "QMATRIX" && t != "DMATRIX" && t != "QUADOBJ" && t != "ENDATA") {
+      // process type of bound:
+      enum Bound_type { LO, UP, FX, FR, MI, PL};
+      Bound_type type;
+      if (t=="LO")
+	type = LO;
+      else if (t=="UP")
+	type = UP;
+      else if (t=="FX")
+	type = FX;
+      else if (t=="FR")
+	type = FR;
+      else if (t=="MI")
+	type = MI;
+      else if (t=="PL")
+	type = PL;
+      else    
+	return
+	  this->err1
+	  ("expected 'LO', 'UP', 'FX', 'FR', 'MI', or 'PL' here but found '%'",
+	   t);
+    
+      // remember bound:
+      const std::string bound = t;
+
+      // find bound label; there may be several, but we only process
+      // the bounds having the first bound label that occurs. This 
+      // label may be empty, though
+      t = token(); // bound label or variable name (case of empty bound label) 
+      if (bound_id.size() == 0) { // first time we see a bound label / variable?
+	const Index_map::const_iterator var_name = var_names.find(t);
+	if (var_name != var_names.end()) { // is the token a variable?
+	  bound_id = " ";    // there is no bound label
+	  put_token_back(t); // the variable name is processed below
+	} else
+	  bound_id = t; // we found a bound label
+      } else {
+	// now we already know the bound label
+	if (bound_id == " ") // empty bound label? 
+	  put_token_back(t); // the variable name is processed below
+	else 
+	  if (t != bound_id) {
+	    this->warn1("ignoring all bounds for bound label '%'",t);
+	    this->warn1("(only bounds for bound label '%' are accepted)",
+			bound_id);
+	  }
+      }
+
+      // find variable name;
+      t = token();
+      const Index_map::const_iterator var_name = var_names.find(t);
+      if (var_name == var_names.end()) // unknown variable?
+	return this->err1("unknown variable '%' in BOUNDS section",t);
+      const unsigned int var_index = var_name->second;;
+
+      // read value of bound, if appropriate:
+      NT val;
+      if (type==LO || type==UP || type==FX)
+	if (!number(val))
+	  return this->err2("expected number after '%' in % bound",t,bound);
+
+      // store bound:
+      switch (type) {
+      case FX:
+	this->set_u (var_index, true, val);
+	// no break here!!
+      case LO:
+	this->set_l (var_index, true, val);
+	break;
+      case UP:
+	this->set_u (var_index, true, val);
+	if (val <= 0 && *(this->get_fl()+var_index) 
+	    && *(this->get_l()+var_index) == 0)
+	  if (val < 0)
+	    this->set_l(var_index, false);
+	break;
+      case FR:
+	this->set_u(var_index, false);
+	this->set_l(var_index, false);
+	break;
+      case MI:
+	this->set_l(var_index, false);
+	break;
+      case PL:
+	this->set_u(var_index, false);
+	break;
+      default:
+	CGAL_qpe_assertion(false);
+      }
+      
+      // read next token:
+      t = token();
+    }
+    put_token_back(t);
+
+    return true;
+  }
+
+  bool qmatrix_section()
+  {
+    std::string t = token();
+    if (t!="QMATRIX" && t!="DMATRIX" && t!="QUADOBJ") { // optional
+      put_token_back(t);
+      return true;
+    }   
+
+    // remember section name:
+    D_section = t;
+    const bool multiply_by_two = t=="DMATRIX";
+
+    t = token();
+    std::string bound_id;
+    while (t != "ENDATA") {
+      // find first variable name;
+      const Index_map::const_iterator var1_name = var_names.find(t);
+      if (var1_name == var_names.end()) // unknown variable?
+	return this->err2("unknown first variable '%' in '%' section", 
+			  t, D_section);
+      const unsigned int var1_index = var1_name->second;    
+      
+      // find second variable name;
+      t = token();
+      const Index_map::const_iterator var2_name = var_names.find(t);
+      if (var2_name == var_names.end()) // unknown variable?
+	return this->err2("unknown second variable '%' in '%' section",
+			  t, D_section);
+      const unsigned int var2_index = var2_name->second;;
+      
+      // read value:
+      NT val;
+      if (!number(val))
+	return this->err2("expected number after '%' in section '%'",
+			  t, D_section);
+
+      // multiply by two if approriate:
+      if (multiply_by_two)
+	val *= NT(2);
+
+      // set entry in D:
+      int i, j;
+      if (var2_index <= var1_index) {
+	i = var1_index; j = var2_index;
+      } else {
+	i = var2_index; j = var1_index;
+      }
+      // rule out that we previously put a different (nonzero) value at (i,j)
+      NT old_val = this->get_d()[i][j];
+      if (!CGAL::is_zero(old_val) && old_val != val)
+	return this->err3("nonsymmetric '%' section at variables '%' and '%'",
+			  D_section, var1_name->first, var2_name->first);
+      this->set_d(i, j, val);
+
+      // read next token:
+      t = token();
+    }
+    put_token_back(t);
+ 
+    return true;
+  }
+  
 };
 
-template<typename IT_, typename Is_linear_, 
-	 typename Sparse_D_,
-	 typename Sparse_A_>
-std::ostream& operator<<(std::ostream& o,
-			 QP_from_mps<IT_, Is_linear_,
-			 Sparse_D_,
-			 Sparse_A_>& qp);
-
-// Quadratic_program_from_mps, inherits from QP_from_mps
-// -----------------------------------------------------
-template<typename IT_>
-class Quadratic_program_from_mps : 
-  public QP_from_mps <IT_, Tag_false, Tag_false, Tag_false>
+// Quadratic_program
+// -----------------
+template <typename NT_>
+class Quadratic_program: 
+  public Quadratic_program_base<NT_>
 {
+public:
+  typedef NT_ NT;
 private:
-  typedef QP_from_mps <IT_, Tag_false, Tag_false, Tag_false>
-  Base;
+  typedef Quadratic_program_base<NT> Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
-  Quadratic_program_from_mps(std::istream& in, bool use_CPLEX_convention=true,
-		  int verbosity=0)
-    : Base (in, use_CPLEX_convention, verbosity)
+  Quadratic_program (CGAL::Comparison_result default_r = CGAL::EQUAL)
+    : Base (false, false, default_r)
   {}
 };
 
-// Sparse_quadratic_program_from_mps, inherits from QP_from_mps
-// ------------------------------------------------------------
-template<typename IT_>
-class Sparse_quadratic_program_from_mps : 
-  public QP_from_mps <IT_, Tag_false, Tag_true, Tag_true>
+// Nonnegative_quadratic_program
+// -----------------------------
+template <typename NT_>
+class Nonnegative_quadratic_program: 
+  public Quadratic_program_base<NT_>
 {
+public:
+  typedef NT_ NT;
 private:
-  typedef QP_from_mps <IT_, Tag_false, Tag_true, Tag_true>
-  Base;
+  typedef Quadratic_program_base<NT> Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
-  Sparse_quadratic_program_from_mps
-  (std::istream& in, bool use_CPLEX_convention=true,
-   int verbosity=0)
-    : Base (in, use_CPLEX_convention, verbosity)
+  Nonnegative_quadratic_program 
+  (CGAL::Comparison_result default_r = CGAL::EQUAL)
+    : Base (false, true, default_r)
   {}
 };
 
-// Linear_program_from_mps, inherits from QP_from_mps
-// --------------------------------------------------
-template<typename IT_>
-class Linear_program_from_mps : 
-  public QP_from_mps <IT_, Tag_true, Tag_false, Tag_false>
+// Nonnegative_linear_program
+// --------------------------
+template <typename NT_>
+class Nonnegative_linear_program: 
+  public Quadratic_program_base<NT_>
 {
+public:
+  typedef NT_ NT;
 private:
-  typedef QP_from_mps <IT_, Tag_true, Tag_false, Tag_false>
-  Base;
+  typedef Quadratic_program_base<NT> Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
-  Linear_program_from_mps(std::istream& in,bool use_CPLEX_convention=true,
-		  int verbosity=0)
-    : Base (in, use_CPLEX_convention, verbosity)
+  Nonnegative_linear_program 
+  (CGAL::Comparison_result default_r = CGAL::EQUAL)
+    : Base (true, true, default_r)
   {}
 };
 
-// Sparse_linear_program_from_mps, inherits from QP_from_mps
-// ---------------------------------------------------------
-template<typename IT_>
-class Sparse_linear_program_from_mps : 
-  public QP_from_mps <IT_, Tag_true, Tag_true, Tag_true>
+// Linear_program
+// --------------
+template <typename NT_>
+class Linear_program: 
+  public Quadratic_program_base<NT_>
 {
+public:
+  typedef NT_ NT;
 private:
-  typedef QP_from_mps <IT_, Tag_true, Tag_true, Tag_true>
-  Base;
+  typedef Quadratic_program_base<NT> Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
-  Sparse_linear_program_from_mps
-  (std::istream& in,bool use_CPLEX_convention=true,
-   int verbosity=0)
-    : Base (in, use_CPLEX_convention, verbosity)
+  Linear_program 
+  (CGAL::Comparison_result default_r = CGAL::EQUAL)
+    : Base (true, false, default_r)
+  {}
+};
+
+// Quadratic_program_from_mps
+// --------------------------
+template <typename NT_>
+class Quadratic_program_from_mps: 
+  public Quadratic_program_from_mps_base<NT_>
+{
+public:
+  typedef NT_ NT;
+private:
+  typedef Quadratic_program_from_mps_base<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Quadratic_program_from_mps (std::istream& in)
+    : Base (in, false, false)
+  {}
+};
+
+// Nonnegative_quadratic_program_from_mps
+// --------------------------------------
+template <typename NT_>
+class Nonnegative_quadratic_program_from_mps: 
+  public Quadratic_program_from_mps_base<NT_>
+{
+public:
+  typedef NT_ NT;
+private:
+  typedef Quadratic_program_from_mps_base<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Nonnegative_quadratic_program_from_mps (std::istream& in)
+    : Base (in, false, true)
+  {}
+};
+
+// Nonnegative_linear_program_from_mps
+// -----------------------------------
+template <typename NT_>
+class Nonnegative_linear_program_from_mps: 
+  public Quadratic_program_from_mps_base<NT_>
+{
+public:
+  typedef NT_ NT;
+private:
+  typedef Quadratic_program_from_mps_base<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Nonnegative_linear_program_from_mps (std::istream& in)
+    : Base (in, true, true)
+  {}
+};
+
+// Linear_program_from_mps
+// -----------------------
+template <typename NT_>
+class Linear_program_from_mps: 
+  public Quadratic_program_from_mps_base<NT_>
+{
+public:
+  typedef NT_ NT;
+private:
+  typedef Quadratic_program_from_mps_base<NT> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Linear_program_from_mps (std::istream& in)
+    : Base (in, true, false)
   {}
 };
 
 CGAL_END_NAMESPACE
-
-#include <CGAL/QP_solver/QP_models_impl.h>
 
 #endif // CGAL_QP_MODELS_H

@@ -173,8 +173,8 @@ template <typename NT>
 bool  QP_pricing_strategy<Q, ET, Tags>::
 is_improving (int j, const NT& mu, const NT& nt0 ) const
 {  
-  CGAL_qpe_precondition(!this->solver().is_basic(j));
-  CGAL_qpe_precondition(!this->solver().is_artificial(j));
+  CGAL_qpe_assertion(!this->solver().is_basic(j));
+  CGAL_qpe_assertion(!this->solver().is_artificial(j));
   if (this->solver().is_original(j)) {
     const Bound_index bnd_ind =
       this->solver().nonbasic_original_variable_bound_index(j);
@@ -207,8 +207,8 @@ template <typename NT>
 bool QP_pricing_strategy<Q, ET, Tags>::
 price_dantzig (int j, const NT& mu, const NT& nt0,
 	 int& min_j, NT& min_mu, int& direction) {
-  CGAL_qpe_precondition(!this->solver().is_basic(j));
-  CGAL_qpe_precondition(!this->solver().is_artificial(j));
+  CGAL_qpe_assertion(!this->solver().is_basic(j));
+  CGAL_qpe_assertion(!this->solver().is_artificial(j));
   if (this->solver().is_original(j)) {
     // original variable
     const Bound_index bnd_ind =

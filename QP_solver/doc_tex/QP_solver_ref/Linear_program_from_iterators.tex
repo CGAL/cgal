@@ -6,7 +6,7 @@
 An object of class \ccRefName\ describes a linear program of the form
 %%
 \begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & c^{T}x+c_0 \\
+\mbox{(LP)}& \mbox{minimize} & c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
 &                    & l \leq x \leq u
 \end{eqnarray*}
@@ -52,7 +52,8 @@ copy the program data (if you need a copy, you may use the class
   )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. }
 
 \ccSeeAlso
+\ccc{Linear_program<NT>}\\
 \ccc{Linear_program_from_pointers<NT>}\\
-\ccc{Linear_program<NT>}
+\ccc{Linear_program_from_mps<NT>}
 
 \end{ccRefClass}

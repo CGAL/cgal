@@ -2,7 +2,9 @@
 
 \ccInclude{CGAL/QP_functions.h}
 
-This function writes a nonnegative linear program to an output stream.
+This function writes a nonnegative linear program to an output stream
+(in \ccc{MPSFormat}). The time
+complexity is $\Theta (mn)$, even if the program is very sparse.
 
 \ccFunction{template <NonnegativeLinearProgramInterface>
 void print_nonnegative_linear_program 

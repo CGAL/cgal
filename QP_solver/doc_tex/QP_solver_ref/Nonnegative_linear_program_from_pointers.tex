@@ -6,9 +6,9 @@
 An object of class \ccRefName\ describes a linear program of the form
 %%
 \begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & c^{T}x+c_0 \\
+\mbox{(LP)}& \mbox{minimize} & c^{T}x+c_0 \\
 &\mbox{subject to}   & Ax\qprel b, \\
-&                    & x \geq \mathbf{0}
+&                    & x \geq 0
 \end{eqnarray*}
 %%
 in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
@@ -34,8 +34,12 @@ a copy, you may use the class \ccc{Nonnegative_linear_program<NT>}).
 \ccIsModel
 \ccc{NonnegativeLinearProgramInterface}
 
+\ccTypes
+\ccNestedType{NT}{The number type of the program entries.}
+
 \ccSeeAlso
+\ccc{Nonnegative_linear_program<NT>}\\
 \ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\
-\ccc{Nonnegative_linear_program<NT>}
+\ccc{Nonnegative_linear_program_from_mps<NT>}
 
 \end{ccRefClass}

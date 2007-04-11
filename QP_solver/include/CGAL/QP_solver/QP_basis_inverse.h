@@ -103,12 +103,12 @@ class QP_basis_inverse {
     // special matrix-vector multiplication functions for LPs
     template < class ForwardIterator, class OutputIterator >  inline
     void  multiply_l( ForwardIterator v_x_it, OutputIterator y_l_it) const
-        { CGAL_qpe_precondition( is_LP || is_phaseI);
+        { CGAL_qpe_assertion( is_LP || is_phaseI);
           multiply__l( v_x_it, y_l_it); }
     
     template < class ForwardIterator, class OutputIterator >  inline
     void  multiply_x( ForwardIterator v_l_it, OutputIterator y_x_it) const
-        { CGAL_qpe_precondition( is_LP || is_phaseI);
+        { CGAL_qpe_assertion( is_LP || is_phaseI);
 	  multiply__x( v_l_it, y_x_it); }
     
     // vector-matrix multiplication ( x^T = u^T M )
@@ -221,10 +221,10 @@ class QP_basis_inverse {
 
     // swap functions
     void  swap_variable( unsigned int j)                // ``to the end'' of R
-        { CGAL_qpe_precondition( j < b);
+        { CGAL_qpe_assertion( j < b);
 	  swap_variable( j, Is_LP()); }
     void  swap_constraint( unsigned int i)              // ``to the end'' of P
-        { CGAL_qpe_precondition( i < s);
+        { CGAL_qpe_assertion( i < s);
 	  swap_constraint( i, Is_LP()); }
 
   private:
@@ -323,13 +323,13 @@ class QP_basis_inverse {
     void
     init( unsigned int art_size, InputIterator art_first)
     {
-	CGAL_qpe_precondition_msg( art_size <= l, \
+	CGAL_qpe_assertion_msg( art_size <= l, \
 	    "There are more equality constraints than original variables!");
 
         init( art_size, art_first, Is_LP());
 	d = et1;
-        CGAL_qpe_postcondition( s == art_size);
-        CGAL_qpe_postcondition( b == art_size);
+        CGAL_qpe_assertion( s == art_size);
+        CGAL_qpe_assertion( b == art_size);
 
 	is_phaseI  = true;
 	is_phaseII = false;
@@ -438,7 +438,7 @@ class QP_basis_inverse {
         // update matrix in-place
         // ----------------------
         // handle sign of new denominator
-        CGAL_qpe_precondition( z != et0);
+        CGAL_qpe_assertion( z != et0);
         bool  z_neg = ( z < et0);
 
         // update matrix
@@ -478,7 +478,7 @@ class QP_basis_inverse {
         // store new denominator
 	// ---------------------
         d = ( z_neg ? -z : z);
-        CGAL_qpe_postcondition( d > et0);
+        CGAL_qpe_assertion( d > et0);
     
         CGAL_qpe_debug {
             if ( vout.verbose()) print();
@@ -502,7 +502,7 @@ class QP_basis_inverse {
 		  Tag_false());                         // ignore 1st argument
         ET    z     = -inner_product_x( x_x.begin(), u_x_it);
         bool  z_neg = ( z < et0);
-        CGAL_qpe_precondition( z != et0);
+        CGAL_qpe_assertion( z != et0);
     
         // update matrix
         update_inplace_QP( x_l.begin(), x_x.begin(), z, ( z_neg ? -d : d));
@@ -535,7 +535,7 @@ class QP_basis_inverse {
         // store new denominator
 	// ---------------------
         d = ( z_neg ? -z : z);
-        CGAL_qpe_postcondition( d > et0);
+        CGAL_qpe_assertion( d > et0);
     
         CGAL_qpe_debug {
             if ( vout.verbose()) print();
@@ -548,8 +548,8 @@ class QP_basis_inverse {
     enter_original_leave_original( RandomAccessIterator y_x_it, unsigned int k)
     {
         // assert LP case or phase I
-	CGAL_qpe_precondition( is_LP || is_phaseI);
-	CGAL_qpe_precondition( k < b);
+	CGAL_qpe_assertion( is_LP || is_phaseI);
+	CGAL_qpe_assertion( k < b);
 
         // update matrix in place
         // ----------------------
@@ -599,7 +599,7 @@ class QP_basis_inverse {
         // store new denominator
         // ---------------------
         d = ( z_neg ? -z : z);
-        CGAL_qpe_postcondition( d > et0);
+        CGAL_qpe_assertion( d > et0);
 
 	// diagnostic output
         CGAL_qpe_debug {
@@ -613,8 +613,8 @@ class QP_basis_inverse {
     enter_slack_leave_slack( ForwardIterator u_x_it, unsigned int k)
     {
         // assert LP case or phase I
-	CGAL_qpe_precondition( is_LP || is_phaseI);
-	CGAL_qpe_precondition( k < s);
+	CGAL_qpe_assertion( is_LP || is_phaseI);
+	CGAL_qpe_assertion( k < s);
 
         // compute new row of basis inverse
         multiply__l( u_x_it, x_x.begin());
@@ -663,7 +663,7 @@ class QP_basis_inverse {
         // store new denominator
         // ---------------------
         d = ( z_neg ? -z : z);
-        CGAL_qpe_postcondition( d > et0);
+        CGAL_qpe_assertion( d > et0);
 
 	// diagnostic output
         CGAL_qpe_debug {
@@ -677,7 +677,7 @@ class QP_basis_inverse {
 				      ForwardIterator2 u_x_it)
     {
         // assert LP case or phase I
-	CGAL_qpe_precondition( is_LP || is_phaseI);
+	CGAL_qpe_assertion( is_LP || is_phaseI);
 
         // update matrix in-place
         // ----------------------
@@ -685,7 +685,7 @@ class QP_basis_inverse {
         multiply__l( u_x_it, x_x.begin());
         ET    z     = d*u_x_it[ b] - inner_product_x( y_x_it, u_x_it);
         bool  z_neg = ( z < et0);
-        CGAL_qpe_precondition( z != et0);
+        CGAL_qpe_assertion( z != et0);
 	
         // update matrix
 	update_inplace_LP( x_x.begin(), y_x_it, z, ( z_neg ? -d : d));
@@ -722,7 +722,7 @@ class QP_basis_inverse {
         // store new denominator
 	// ---------------------
         d = ( z_neg ? -z : z);
-        CGAL_qpe_postcondition( d > et0);
+        CGAL_qpe_assertion( d > et0);
     
         CGAL_qpe_debug {
             if ( vout.verbose()) print();
@@ -762,21 +762,21 @@ class QP_basis_inverse {
     // append row in Q if no allocated row available
     void ensure_physical_row (unsigned int row) {
     	unsigned int rows = M.size();
-	CGAL_qpe_precondition(rows >= row);
+	CGAL_qpe_assertion(rows >= row);
 	if (rows == row) {
             M.push_back(Row(row+1, et0));
 	    
 	    // do we have to grow x_x?
-	    CGAL_qpe_precondition(x_x.size() >= row-l);
+	    CGAL_qpe_assertion(x_x.size() >= row-l);
 	    if (x_x.size() == row-l)
 	       x_x.push_back(et0);
 	    
 	    // do we have to grow tmp_x?
-	    CGAL_qpe_precondition(tmp_x.size() >= row-l);
+	    CGAL_qpe_assertion(tmp_x.size() >= row-l);
 	    if (tmp_x.size() == row-l)
 	       tmp_x.push_back(et0);
 	    
-            CGAL_qpe_postcondition(M[row].size()==row+1);
+            CGAL_qpe_assertion(M[row].size()==row+1);
 	    CGAL_qpe_debug {
 	      if ( vout.verbose()) {
                     vout << "physical row " << (row) << " appended in Q\n";
@@ -1101,8 +1101,8 @@ template < class ET_, class Is_LP_ >  inline
 const ET_&  QP_basis_inverse<ET_,Is_LP_>::
 entry( unsigned int r, unsigned int c, Tag_false) const
 {
-    CGAL_qpe_precondition( ( r < s) || ( ( r >= l) && ( r < l+b)));
-    CGAL_qpe_precondition( ( c < s) || ( ( c >= l) && ( c < l+b)));
+    CGAL_qpe_assertion( ( r < s) || ( ( r >= l) && ( r < l+b)));
+    CGAL_qpe_assertion( ( c < s) || ( ( c >= l) && ( c < l+b)));
     return ( c < r ? M[ r][ c] : M[ c][ r]);
 }
 
@@ -1111,8 +1111,8 @@ template < class ET_, class Is_LP_ >  inline
 const ET_&  QP_basis_inverse<ET_,Is_LP_>::
 entry( unsigned int r, unsigned int c, Tag_true) const
 {
-    CGAL_qpe_precondition( r < s);
-    CGAL_qpe_precondition( c < b);
+    CGAL_qpe_assertion( r < s);
+    CGAL_qpe_assertion( c < b);
     return M[ r][ c];
 }
 

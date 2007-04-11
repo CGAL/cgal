@@ -32,8 +32,8 @@ namespace QP_functions_detail {
   template <typename R>
   bool is_in_equational_form (const R& r) 
   {	     
-    typename R::R_iterator it = r.r();
-    typename R::R_iterator end = it + r.m();
+    typename R::R_iterator it = r.get_r();
+    typename R::R_iterator end = it + r.get_m();
     for (; it < end; ++it)
       if (*it != CGAL::EQUAL) return false;
     return true;
@@ -67,7 +67,7 @@ namespace QP_functions_detail {
       typename Ar::R_iterator, C_iterator> LP;
 
     //  auxiliary LP
-    LP lp (ar.n(), ar.m(), ar.a(), B_iterator(0), ar.r(), C_iterator(0));
+    LP lp (ar.get_n(), ar.get_m(), ar.get_a(), B_iterator(0), ar.get_r(), C_iterator(0));
 
     //  solver Tags
     typedef QP_solver_impl::QP_tags<
@@ -98,11 +98,11 @@ namespace QP_functions_detail {
   (std::ostream& out, const P& p, 
    CGAL::Tag_false /*is_nonnegative*/)
   {
-    typename P::FL_iterator fl = p.fl();
-    typename P::FU_iterator fu = p.fu();
-    typename P::L_iterator l = p.l();
-    typename P::U_iterator u = p.u();
-    int n = p.n();
+    typename P::FL_iterator fl = p.get_fl();
+    typename P::FU_iterator fu = p.get_fu();
+    typename P::L_iterator l = p.get_l();
+    typename P::U_iterator u = p.get_u();
+    int n = p.get_n();
     out << "BOUNDS\n"; 
     for (int j=0; j<n; ++j, ++fl, ++l, ++fu, ++u) {
       if (!*fl || !CGAL::is_zero(*l)) {
@@ -131,8 +131,8 @@ namespace QP_functions_detail {
   (std::ostream& out, const P& p, 
    CGAL::Tag_false /*is_linear*/)
   {
-    typename P::D_iterator it = p.d();
-    int n = p.n();
+    typename P::D_iterator it = p.get_d();
+    int n = p.get_n();
     bool empty_D = true;
     for (int i=0; i<n; ++i, ++it) {
       // handle only entries on/below diagonal
@@ -160,22 +160,22 @@ namespace QP_functions_detail {
   {
     bool return_val = true;
     // check n
-    if (qp1.n() != qp2.n()) {
+    if (qp1.get_n() != qp2.get_n()) {
       std::cerr << "Equality test fails with n: " 
-		<< qp1.n() << " vs. " << qp2.n() << std::endl;
+		<< qp1.get_n() << " vs. " << qp2.get_n() << std::endl;
       return false; // wildly wrong, abort now
     }
     // check m
-    if (qp1.m() != qp2.m()) {
+    if (qp1.get_m() != qp2.get_m()) {
       std::cerr << "Equality test fails with m: " 
-		<< qp1.m() << " vs. " << qp2.m() << std::endl;
+		<< qp1.get_m() << " vs. " << qp2.get_m() << std::endl;
       return false; // wildly wrong, abort now
     }
-    int n = qp1.n();
-    int m = qp1.m();
+    int n = qp1.get_n();
+    int m = qp1.get_m();
     // check A
-    typename Quadratic_program1::A_iterator a1 = qp1.a();
-    typename Quadratic_program2::A_iterator a2 = qp2.a();
+    typename Quadratic_program1::A_iterator a1 = qp1.get_a();
+    typename Quadratic_program2::A_iterator a2 = qp2.get_a();
     for (int j=0; j<n; ++j, ++a1, ++a2)
       for (int i=0; i<m; ++i) 
 	if (*((*a1)+i) != *((*a2)+i)) {
@@ -185,8 +185,8 @@ namespace QP_functions_detail {
 	  return_val = false;
 	}
     // check b
-    typename Quadratic_program1::B_iterator b1 = qp1.b();
-    typename Quadratic_program2::B_iterator b2 = qp2.b();
+    typename Quadratic_program1::B_iterator b1 = qp1.get_b();
+    typename Quadratic_program2::B_iterator b2 = qp2.get_b();
     for (int i=0; i<m; ++i, ++b1, ++b2)
       if (*b1 != *b2) {
 	std::cerr << "Equality test fails with b[" << i << "]: "
@@ -194,8 +194,8 @@ namespace QP_functions_detail {
 	return_val = false;
       }
     // check r
-    typename Quadratic_program1::R_iterator r1 = qp1.r();
-    typename Quadratic_program2::R_iterator r2 = qp2.r();
+    typename Quadratic_program1::R_iterator r1 = qp1.get_r();
+    typename Quadratic_program2::R_iterator r2 = qp2.get_r();
     for (int i=0; i<m; ++i, ++r1, ++r2)
       if (*r1 != *r2) {
 	std::cerr << "Equality test fails with r[" << i << "]: "
@@ -203,10 +203,10 @@ namespace QP_functions_detail {
 	return_val = false;
       }
     // check fl, l
-    typename Quadratic_program1::FL_iterator fl1 = qp1.fl();
-    typename Quadratic_program2::FL_iterator fl2 = qp2.fl();
-    typename Quadratic_program1::L_iterator l1 = qp1.l();
-    typename Quadratic_program2::L_iterator l2 = qp2.l();
+    typename Quadratic_program1::FL_iterator fl1 = qp1.get_fl();
+    typename Quadratic_program2::FL_iterator fl2 = qp2.get_fl();
+    typename Quadratic_program1::L_iterator l1 = qp1.get_l();
+    typename Quadratic_program2::L_iterator l2 = qp2.get_l();
     for (int j=0; j<n; ++j, ++fl1, ++fl2, ++l1, ++l2) {
       if (*fl1 != *fl2) {
 	std::cerr << "Equality test fails with fl[" << j << "]: "
@@ -221,10 +221,10 @@ namespace QP_functions_detail {
     }
     
     // check fu, u 
-    typename Quadratic_program1::FU_iterator fu1 = qp1.fu();
-    typename Quadratic_program2::FU_iterator fu2 = qp2.fu();
-    typename Quadratic_program1::U_iterator u1 = qp1.u();
-    typename Quadratic_program2::U_iterator u2 = qp2.u();
+    typename Quadratic_program1::FU_iterator fu1 = qp1.get_fu();
+    typename Quadratic_program2::FU_iterator fu2 = qp2.get_fu();
+    typename Quadratic_program1::U_iterator u1 = qp1.get_u();
+    typename Quadratic_program2::U_iterator u2 = qp2.get_u();
     for (int j=0; j<n; ++j, ++fu1, ++fu2, ++u1, ++u2) {
       if (*fu1 != *fu2) {
 	std::cerr << "Equality test fails with fu[" << j << "]: "
@@ -238,8 +238,8 @@ namespace QP_functions_detail {
       }
     }
     // check d
-    typename Quadratic_program1::D_iterator d1 = qp1.d();
-    typename Quadratic_program2::D_iterator d2 = qp2.d();
+    typename Quadratic_program1::D_iterator d1 = qp1.get_d();
+    typename Quadratic_program2::D_iterator d2 = qp2.get_d();
     for (int i=0; i<n; ++i, ++d1, ++d2)
       for (int j=0; j<i+1; ++j)  // only access entries on/below diagonal
 	if (*((*d1)+j) != *((*d2)+j)) {
@@ -249,8 +249,8 @@ namespace QP_functions_detail {
 	  return_val = false;
 	}
     // check c
-    typename Quadratic_program1::C_iterator c1 = qp1.c();
-    typename Quadratic_program2::C_iterator c2 = qp2.c();
+    typename Quadratic_program1::C_iterator c1 = qp1.get_c();
+    typename Quadratic_program2::C_iterator c2 = qp2.get_c();
     for (int j=0; j<n; ++j, ++c1, ++c2)
       if (*c1 != *c2) {
 	std::cerr << "Equality test fails with c[" << j << "]: "
@@ -258,8 +258,8 @@ namespace QP_functions_detail {
 	return_val = false;
       }
     // check c0
-    typename Quadratic_program1::C_entry c01 = qp1.c0();
-    typename Quadratic_program2::C_entry c02 = qp2.c0();
+    typename Quadratic_program1::C_entry c01 = qp1.get_c0();
+    typename Quadratic_program2::C_entry c02 = qp2.get_c0();
     if (c01 != c02) {
       std::cerr << "Equality test fails with c0: "
 		<< c01 << " vs. " <<  c02 << std::endl;
@@ -278,11 +278,11 @@ namespace QP_functions_detail {
     // NAME:
     out << "NAME " << problem_name << "\n";
 
-    int n = p.n();
-    int m = p.m();
+    int n = p.get_n();
+    int m = p.get_m();
  
     // ROWS section: 
-    typename P::R_iterator r = p.r();
+    typename P::R_iterator r = p.get_r();
     out << "ROWS\n"
 	<< "  N obj\n";                       // for the objective function
     for (int i=0; i<m; ++i, ++r) {
@@ -298,8 +298,8 @@ namespace QP_functions_detail {
     }
 
     // COLUMNS section:
-    typename P::A_iterator a = p.a();
-    typename P::C_iterator c = p.c();
+    typename P::A_iterator a = p.get_a();
+    typename P::C_iterator c = p.get_c();
     typedef 
       typename std::iterator_traits<typename P::C_iterator>::value_type IT;
     out << "COLUMNS\n";
@@ -322,10 +322,10 @@ namespace QP_functions_detail {
     }
  
     // RHS section:
-    typename P::B_iterator b = p.b();
+    typename P::B_iterator b = p.get_b();
     out << "RHS\n";
-    if (!CGAL_NTS is_zero (p.c0()))
-      out << "  rhs obj " << -p.c0() << "\n";
+    if (!CGAL_NTS is_zero (p.get_c0()))
+      out << "  rhs obj " << -p.get_c0() << "\n";
     for (int i=0; i<m; ++i, ++b)  
       if (!CGAL_NTS is_zero (*b))
 	out << "  rhs c" << i << "  " << *b << "\n";

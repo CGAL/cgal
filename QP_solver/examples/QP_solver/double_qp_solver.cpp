@@ -43,7 +43,7 @@ int main(const int argNr,const char **args) {
   using std::endl;
 
   // get desired level of additional logging output:
-  const int verbosity = argNr < 2? 1 : std::atoi(args[1]);
+  //const int verbosity = argNr < 2? 1 : std::atoi(args[1]);
 
   // construct QP instance:
   typedef double IT;
@@ -55,11 +55,11 @@ int main(const int argNr,const char **args) {
 #endif
 
   typedef CGAL::Quadratic_program_from_mps<IT> QP;
-  QP qp(std::cin,true,verbosity);
+  QP qp(std::cin);
   // check for format errors in MPS f\ile:
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
-         << "Error: " << qp.error() << endl;
+         << "Error: " << qp.get_error() << endl;
     std::exit(2);
   }
 
@@ -75,8 +75,8 @@ int main(const int argNr,const char **args) {
     cout << "Variable values:" << endl;
     Solution::Variable_value_iterator vit =
       s.variable_values_begin() ;
-    for (int i=0; i < qp.n(); ++vit, ++i)
-      cout << "  " << qp.name_of_variable(i) << " = "
+    for (int i=0; i < qp.get_n(); ++vit, ++i)
+      cout << "  " << qp.get_name_of_variable(i) << " = "
 	   << CGAL::to_double(*vit) << endl;
 
     cout << "Basic variables (index, value):" << endl;

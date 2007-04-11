@@ -41,8 +41,8 @@ public:
   typedef  std::random_access_iterator_tag    iterator_category;
   typedef  typename Map::difference_type      difference_type;
   typedef  typename Map::mapped_type          value_type;
-  typedef  value_type*                        pointer;
-  typedef  value_type&                        reference;
+  typedef  const value_type*                  pointer;
+  typedef  const value_type&                  reference;
   
   typedef  Fake_random_access_const_iterator  Self;
   typedef  difference_type                    Diff;
@@ -118,8 +118,8 @@ public:
   typedef  std::random_access_iterator_tag    iterator_category;
   typedef  Diff                               difference_type;
   typedef  typename Op::result_type           value_type;
-  typedef  value_type*                        pointer;
-  typedef  value_type&                        reference;
+  typedef  const value_type*                  pointer;
+  typedef  const value_type&                  reference;
   
   typedef  Transform_diff_const_iterator      Self;
   typedef  value_type                         Val;
