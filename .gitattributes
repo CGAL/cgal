@@ -340,6 +340,7 @@ Arrangement_2/examples/Arrangement_2/Bezier.dat -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
 Arrangement_2/test/Arrangement_2/cgal_test eol=lf
+Arrangement_2/test/Arrangement_2/data/segments/compare_y_at_x_left -text
 Arrangement_2/test/Arrangement_2/point_location.cmd eol=lf
 Arrangement_2/test/Arrangement_2/test_construction.cmd eol=lf
 Arrangement_2/test/Sweep_line_2/cgal_test eol=lf
