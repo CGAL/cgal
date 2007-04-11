@@ -1,3 +1,7 @@
+28 March 2007 Fernando Cacciola
+- C2vcproj modified to produce <package>_VC71.sln and <package>_VC80.sln in the package folder,
+  then subfolders VC71 and VC80 each containing one .vcproj per main program.
+  
 12 March 2007 Andreas Fabri
 - Removed cgal_confog.bat
 
