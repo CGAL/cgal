@@ -22,7 +22,7 @@ BOUNDS
   LO  BND  x2  3
 QMATRIX
   x0  x0  128
-  x0  x1  -32
   x1  x0  -32
+  x0  x1  -32
   x1  x1  8
 ENDATA

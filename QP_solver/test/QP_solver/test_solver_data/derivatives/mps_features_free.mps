@@ -24,7 +24,7 @@ COLUMNS
   x1  c5  1/1
   x1  c7  1/1
 RHS
-  rhs obj   -1/2
+  rhs obj -1/2
   rhs c0  1/1
   rhs c1  1/1
   rhs c3  1/3

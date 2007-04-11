@@ -28,7 +28,7 @@ BOUNDS
   MI  BND  x1
 QMATRIX
   x0  x0  8
-  x0  x1  2
   x1  x0  2
+  x0  x1  2
   x1  x1  10
 ENDATA

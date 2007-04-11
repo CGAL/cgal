@@ -43,11 +43,11 @@ BOUNDS
   MI  BND  x3
 QMATRIX
   x0  x0  2
-  x0  x2  -2
   x1  x1  2
-  x1  x3  -2
   x2  x0  -2
+  x0  x2  -2
   x2  x2  2
   x3  x1  -2
+  x1  x3  -2
   x3  x3  2
 ENDATA
