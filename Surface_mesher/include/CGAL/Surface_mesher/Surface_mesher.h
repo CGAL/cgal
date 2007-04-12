@@ -513,16 +513,13 @@ namespace CGAL {
       typename GT::Ray_3 ray;
       typename GT::Line_3 line;
 
+      Object intersection;
       // If the dual is a segment
       if (assign(segment, dual)) {
-	Object intersection = intersect(surf, segment);
-	if (assign(center,intersection))
-	  return true;
+	intersection = intersect(surf, segment);
       }
-
       // If the dual is a ray
       else if(assign(ray, dual)) {
-
         // If a facet is on the convex hull, and if its finite incident
         // cell has a very bid Delaunay ball, then the dual of the facet is
         // a ray constructed with a point with very big coordinates, and a
@@ -532,59 +529,19 @@ namespace CGAL {
         typename GT::Is_degenerate_3 is_degenerate;
         if(is_degenerate(ray)) return false;
 
-//         std::cerr << "ray: " << ray << "\n";
-//         if( squared_distance(ray.point(0), Point(ORIGIN)) > 1e12 ||
-//             squared_distance(ray.point(1), Point(ORIGIN)) > 1e12 )
-//         {
-//           const Cell_handle& c = f.first;
-//           const int& index = f.second;
-//           std::cerr << "problem:\n"
-//                     << "facet=" 
-//                     << c->vertex((index+1)&3)->point() << ","
-//                     << c->vertex((index+2)&3)->point() << ","
-//                     << c->vertex((index+3)&3)->point() << "\n";
-
-//           std::cerr << "vertex1: ";
-//           if(tr.is_infinite(c->vertex(index)))
-//             std::cerr << "infinite";
-//           else
-//             std::cerr << c->vertex(index)->point();
-//           std::cerr << "\n";
-
-
-//           std::cerr << "vertex2: ";
-//           if(tr.is_infinite(tr.mirror_vertex(c, index)))
-//             std::cerr << "infinite";
-//           else
-//             std::cerr << tr.mirror_vertex(c, index)->point();
-//           std::cerr << "\n";
-
-//           if(!tr.is_infinite(c))
-//             std::cerr << "volume1=" << tr.tetrahedron(c).volume() << "\n";
-//           if(!tr.is_infinite(c->neighbor(index)))
-//             std::cerr << "volume2=" << tr.tetrahedron(c->neighbor(index)).volume() << "\n";
-//         }
-	Object intersection = intersect(surf, ray);
-	//std::cerr << "intersection: " << std::endl;
-	if (assign(center,intersection))
-	  return true;
+	intersection = intersect(surf, ray);
       }
-
       // If the dual is a line
       else if(assign(line, dual)) {
-	Object intersection = intersect(surf, line);
-	if (assign(center,intersection))
-	  return true;
+	intersection = intersect(surf, line);
       }
-
       // Else there is a problem with the dual
       else {
         CGAL_assertion(false);
       }
 
-      return false;
+      return assign(center,intersection);
     }
-
 
   protected:
 
@@ -599,10 +556,9 @@ namespace CGAL {
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
 	//		other_side.first->is_facet_on_surface
 	//		(other_side.second));
-	bool restr, restr_bis;
 	Point center;
-	restr = is_facet_on_surface(*fit, center);
-	restr_bis = is_facet_on_surface(other_side, center);
+	const bool restr = is_facet_on_surface(*fit, center);
+	const bool restr_bis = is_facet_on_surface(other_side, center);
 	CGAL_assertion (restr == restr_bis);
 	CGAL_assertion ((c2t3.face_status(*fit)
 			 == C2T3::REGULAR) == restr);
