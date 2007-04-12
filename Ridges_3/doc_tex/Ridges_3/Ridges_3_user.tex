@@ -501,15 +501,25 @@ enables the definition of models for the concepts
 using \ccc{std::maps} and \ccc{boost::associative_property_map}.
 
 
-\section{Illustrations - Examples} 
+\section{Illustrations - Examples}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-\paragraph{Example program.}
+\paragraph{Example program.}\footnote{Model data may be downloaded via
+  ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges\_3\_datafiles.tgz .
+  The mechanical part model has been provided courtesy of Dassault
+  System to produce figure \ref{fig:mechanical_crest_filtered-intro},
+  due to copyright issues the available model is not the same, it is
+  provided by the AIM@SHAPE Shape Repository.}
 The following program computes ridges and umbilics from an off
 file. It uses the Jet fitting package to estimate the differential
-quantities.  The output file contains data to be visualized with the
-demo program introspect-qt.  Parameters are
+quantities. 
+%introspect-qt and the demo rep not in the public release%%% 
+%The output file contains data to be visualized with the
+%demo program introspect-qt.  
+The default output file gives rough data for visualization purpose, a
+verbose output file may also be asked for.  Parameters are
 \begin{itemize}
 \item
 $d$, the degree of the jet for the \ccc{Monge_via_jet_fitting} class, $d$
@@ -618,10 +628,10 @@ For that figure, the data have been computed as follows
 \begin{ccExampleCode}
 ./Compute_Ridges_Umbilics -f data/ellipsoid_u_0.02.off -d 4 -m 4 -a 3 -t 3
 \end{ccExampleCode}
-and the visualization with 
-\begin{ccExampleCode}
- ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
-\end{ccExampleCode} 
+% and the visualization with 
+% \begin{ccExampleCode}
+%  ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
+% \end{ccExampleCode} 
 In addition, the four elliptic umbilics are detected, the standard output being
 \begin{ccExampleCode}
 nb of umbilics 4
@@ -656,9 +666,9 @@ model, and has been computed as follows:
 \begin{ccExampleCode}
 ./Compute_Ridges_Umbilics -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
 \end{ccExampleCode}
-The last parameters of the visualization program of the demo are
-threshold for the strength and the sharpness. This enables the three
-different images to be produced with the same data.
+% The last parameters of the visualization program of the demo are
+% threshold for the strength and the sharpness. This enables the three
+% different images to be produced with the same data.
 
 \begin{figure}[htb] 
 \begin{ccTexOnly}
