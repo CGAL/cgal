@@ -1,14 +1,3 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: Color.tex
-% +------------------------------------------------------------------------+
-% | 05.04.2002   Author
-% | Package: Package
-% | 
-\RCSdef{\RCSColorRev}{$Id$}
-\RCSdefDate{\RCSColorDate}{$Date$}
-% |
-%%RefPage: end of header, begin of main body
-% +------------------------------------------------------------------------+
 
 
 \begin{ccRefClass}{Color}  %% add template arg's if necessary
@@ -18,7 +7,7 @@
 
 \ccDefinition
 An object of the class \ccRefName\ is a color available
-for drawing operations in \cgal\ output streams.
+for drawing operations in many \cgal\ output streams.
 Each color is defined by a triple of integers $(r,g,b)$ with
 $0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.  
 
@@ -86,29 +75,9 @@ The following constants are predefined:
 
 \ccSeeAlso
 
-\ccc{CGAL::Window_stream } \\
-\ccc{CGAL::PostScript_File_Stream}
+\ccc{CGAL::Qt_widget } \\
+\ccc{CGAL::Geomview_stream}
 
-%\ccExample
 
-%A short example program.
-%Instead of a short program fragment, a full running program can be
-%included using the 
-%\verb|\ccIncludeExampleCode{Package/Color_prog.C}| 
-%macro. The program example would be part of the source code distribution and
-%also part of the automatic test suite.
-
-%\begin{ccExampleCode}
-%void your_example_code() {
-%}
-%\end{ccExampleCode}
-
-%%% \ccIncludeExampleCode{Package/Color_prog.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-
