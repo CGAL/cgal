@@ -222,7 +222,9 @@ bool QP_solver<Q, ET, Tags>::is_solution_infeasible() const
 {
   // checks whether we have a proof of infeasibilty according
   // to Farkas Lemma. Namely, the system is infeasible iff
-  //     \tau^T = \lambda^T A  (A)
+  //     \tau^T = \lambda^T A (A), where
+  //     \tau_j < 0 implies that u_j is finite and
+  //     \tau_j > 0 implies that l_j is finite
   //     \lambda^T b - \sum{j: \tau_j < 0} \tau_j u_j  
   //                 - \sum{j: \tau_j > 0} \tau_j l_j < 0  (B)
   //      \lambda_i >= 0                for <=-constraints i,    (C)
