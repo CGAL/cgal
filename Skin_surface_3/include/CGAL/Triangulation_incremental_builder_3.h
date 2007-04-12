@@ -127,11 +127,11 @@ Triangulation_incremental_builder_3< TDS_ >::add_cell(
 
   MapTripleIt neighbIt;
   for (int i=0; i<4; i++) {
-    Vtriple t=facet(
+    Vtriple vtriple=facet(
 		    ch->vertex((i+1)&3),
 		    ch->vertex((i+2)&3),
 		    ch->vertex((i+3)&3));
-    neighbIt = facets.find(t);
+    neighbIt = facets.find(vtriple);
     if (neighbIt != facets.end()) {
       Facet f = (*neighbIt).second;
       glue_cells(f.first, f.second, ch, i);
@@ -139,7 +139,7 @@ Triangulation_incremental_builder_3< TDS_ >::add_cell(
       assert(f.first->neighbor(f.second) != NULL);
       assert(ch->neighbor(i) != NULL);
     } else {
-      facets[t] = Facet(ch, i);
+      facets[vtriple] = Facet(ch, i);
       assert(ch->neighbor(i) == NULL);
     }
   }
