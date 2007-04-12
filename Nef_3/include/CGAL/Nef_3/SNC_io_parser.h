@@ -586,10 +586,72 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
 
 class Homogeneous_tag;
 class Cartesian_tag;
-template<typename Tag> class Geometry_io;
+template<typename Tag, typename Kernel> class Geometry_io;
 
-template<>
-class Geometry_io<Cartesian_tag> {
+template<typename ET>
+class Geometry_io<Cartesian_tag, CGAL::Lazy_kernel<CGAL::Simple_cartesian<ET> > > {
+ public:
+  template <typename EK, typename K> static
+  typename EK::Point_3 
+  read_point(std::istream& in) {
+    typedef Fraction_traits<typename K::FT> FracTraits;
+    typename FracTraits::Type hx, hy, hz, hw;
+    typename FracTraits::Numerator_type num;
+    typename FracTraits::Denominator_type denom(1);
+    typename FracTraits::Compose composer;
+    in >> num;
+    hx = composer(num, denom);
+    in >> num;
+    hy = composer(num, denom);
+    in >> num;
+    hz = composer(num, denom);
+    in >> num;
+    hw = composer(num, denom);
+    return typename EK::Point_3(hx,hy,hz,hw);
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Plane_3 read_plane(std::istream& in) {
+    typedef Fraction_traits<typename K::FT> FracTraits;
+    typename FracTraits::Type a, b, c, d;
+    typename FracTraits::Numerator_type num;
+    typename FracTraits::Denominator_type denom(1);
+    typename FracTraits::Compose composer;
+    in >> num;
+    a = composer(num, denom);
+    in >> num;
+    b = composer(num, denom);
+    in >> num;
+    c = composer(num, denom);
+    in >> num;
+    d = composer(num, denom);
+    return typename EK::Plane_3(a,b,c,d);
+  }
+
+  template <typename R> static
+  void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
+    typedef typename CGAL::Simple_cartesian<ET> SC;
+    typedef typename SC::Point_3 Exact_point;
+    typedef Geometry_io<Cartesian_tag, SC> Gio;
+    
+    Exact_point ep(p.x().exact(), p.y().exact(), p.z().exact());
+    Gio::print_point(out, ep);
+  }  
+
+  template <typename R> static
+  void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
+    typedef typename CGAL::Simple_cartesian<ET> SC;
+    typedef typename SC::Plane_3 Exact_plane;
+    typedef Geometry_io<Cartesian_tag, SC> Gio;
+    
+    Exact_plane ep(p.a().exact(), p.b().exact(), 
+		   p.c().exact(), p.d().exact());
+    Gio::print_plane(out, ep);
+  }  
+};
+
+template<typename Kernel>
+class Geometry_io<Cartesian_tag, Kernel> {
  public:
   template <typename EK, typename K> static
   typename EK::Point_3 read_point(std::istream& in) {
@@ -698,8 +760,8 @@ class Geometry_io<Cartesian_tag> {
   }
 };
 
-template<>
-class Geometry_io<Homogeneous_tag> {
+template<typename Kernel>
+class Geometry_io<Homogeneous_tag, Kernel> {
  public:
   template <typename EK, typename K> static
   typename EK::Point_3 read_point(std::istream& in) {
@@ -1318,7 +1380,7 @@ void SNC_io_parser<EW>::print_vertex(Vertex_handle v) const
     out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
   }
   else
-    Geometry_io<typename Kernel::Kernel_tag>::print_point(out, v->point());
+    Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_point(out, v->point());
   out << " } "  << v->mark() << std::endl;
 }
 
@@ -1356,7 +1418,7 @@ read_vertex(Vertex_handle vh) {
   //  in >> hx >> hy >> hz >> hw;
   //  vh->point() = Point_3(hx,hy,hz,hw);
   vh->point() = 
-    Geometry_io<typename K::Kernel_tag>::template read_point<Kernel, K>(in);
+    Geometry_io<typename K::Kernel_tag, Kernel>::template read_point<Kernel, K>(in);
   OK = OK && test_string("}");
   in >> vh->mark();
   
@@ -1377,7 +1439,7 @@ void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
     out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
   }
   else
-    Geometry_io<typename Kernel::Kernel_tag>::print_point(out, (Point_3) e->point());
+    Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_point(out, (Point_3) e->point());
 
   out << " } "<< e->mark() << std::endl;
 }
@@ -1412,7 +1474,7 @@ read_edge(Halfedge_handle eh) {
   //    in >> hx >> hy >> hz >> hw;
   //    eh->point() = Sphere_point(hx,hy,hz);
   eh->point() = 
-    Geometry_io<typename K::Kernel_tag>::template read_point<Kernel,K>(in);
+    Geometry_io<typename K::Kernel_tag, Kernel>::template read_point<Kernel,K>(in);
   OK = OK && test_string("}");
   in >> eh->mark();
 
@@ -1436,7 +1498,7 @@ void SNC_io_parser<EW>::print_facet(Halffacet_handle f) const
     out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
   }
   else
-    Geometry_io<typename Kernel::Kernel_tag>::print_plane(out, f->plane());
+    Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_plane(out, f->plane());
 
   out << " } " << f->mark() << std::endl;
 }
@@ -1480,7 +1542,7 @@ read_facet(Halffacet_handle fh) {
   //  in >> a >> b >> c >> d;
   //  fh->plane() = Plane_3(a,b,c,d);
   fh->plane() = 
-    Geometry_io<typename K::Kernel_tag>::
+    Geometry_io<typename K::Kernel_tag, Kernel>::
     template read_plane<Kernel, K>(in);
   OK = OK && test_string("}");
   in >> fh->mark();
@@ -1538,7 +1600,8 @@ print_sedge(SHalfedge_handle e) const {
     out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
   }
   else
-    Geometry_io<typename Kernel::Kernel_tag>::print_plane(out, (Plane_3) e->circle());
+    Geometry_io<typename Kernel::Kernel_tag, Kernel>::
+      print_plane(out, (Plane_3) e->circle());
 
   out << " } " << e->mark() << "\n";
 }
@@ -1582,7 +1645,7 @@ read_sedge(SHalfedge_handle seh) {
   //  in >> a >> b >> c >> d;
   //  seh->circle() = Sphere_circle(Plane_3(a,b,c,d));
   seh->circle() =     
-    Geometry_io<typename K::Kernel_tag>::
+    Geometry_io<typename K::Kernel_tag, Kernel>::
     template read_plane<Kernel, K>(in);
   OK = OK && test_string("}");
   in >> seh->mark();
@@ -1603,7 +1666,8 @@ print_sloop(SHalfloop_handle l) const
     out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
   }
   else
-    Geometry_io<typename Kernel::Kernel_tag>::print_plane(out, (Plane_3) l->circle());
+    Geometry_io<typename Kernel::Kernel_tag, Kernel>::
+      print_plane(out, (Plane_3) l->circle());
 
   out << " } " << l->mark() << "\n";
 }
@@ -1632,7 +1696,7 @@ read_sloop(SHalfloop_handle slh) {
   //  in >> a >> b >> c >> d;
   //  slh->circle() = Sphere_circle(Plane_3(a,b,c,d));
   slh->circle() =
-    Geometry_io<typename K::Kernel_tag>::
+    Geometry_io<typename K::Kernel_tag, Kernel>::
     template read_plane<Kernel, K>(in);	
   OK = OK && test_string("}");	
   in >> slh->mark();
