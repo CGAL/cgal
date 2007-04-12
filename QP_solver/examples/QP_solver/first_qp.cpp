@@ -40,13 +40,13 @@ int main() {
   Solution s = CGAL::solve_quadratic_program(qp, ET());
 
   // output solution
-  if (s.status() == CGAL::QP_OPTIMAL) { // we know that, don't we?
+  if (s.is_optimal()) { // we know that, don't we?
     std::cout << "Optimal feasible solution: ";
     for (Solution::Variable_value_iterator it = s.variable_values_begin();
 	 it != s.variable_values_end(); ++it)
       std::cout << *it << "  ";
     std::cout << std::endl << "Optimal objective function value: "
-	      << s.solution() << std::endl;
+	      << s.objective_value() << std::endl;
   }
 
   CGAL::print_quadratic_program(std::cout, qp);

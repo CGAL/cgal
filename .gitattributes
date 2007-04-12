@@ -1818,6 +1818,7 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
 Principal_component_analysis/doc_tex/Principal_component_analysis/teaserLeastSquaresFitting.png -text
+QP_solver/doc_tex/QP_solver/PkgDescription.tex -text
 QP_solver/doc_tex/QP_solver/closest_point.eps -text svneol=unset#application/postscript
 QP_solver/doc_tex/QP_solver/closest_point.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/closest_point.gif -text svneol=unset#image/gif
@@ -1834,6 +1835,7 @@ QP_solver/doc_tex/QP_solver/first_qp.eps -text svneol=unset#application/postscri
 QP_solver/doc_tex/QP_solver/first_qp.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/first_qp.gif -text svneol=unset#image/gif
 QP_solver/doc_tex/QP_solver/first_qp.pdf -text svneol=unset#application/pdf
+QP_solver/doc_tex/QP_solver/qp.png -text
 QP_solver/doc_tex/QP_solver_ref/Linear_program_from_iterators.tex -text
 QP_solver/doc_tex/QP_solver_ref/Linear_program_from_pointers.tex -text
 QP_solver/doc_tex/QP_solver_ref/MPSFormat.tex -text
@@ -1844,6 +1846,7 @@ QP_solver/doc_tex/QP_solver_ref/Nonnegative_quadratic_program_from_pointers.tex 
 QP_solver/doc_tex/QP_solver_ref/Quadratic_program.tex -text
 QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_mps.tex -text
 QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_pointers.tex -text
+QP_solver/doc_tex/QP_solver_ref/Quadratic_program_solution.tex -text
 QP_solver/doc_tex/QP_solver_ref/make_linear_program_from_iterators.tex -text
 QP_solver/doc_tex/QP_solver_ref/make_nonnegative_linear_program_from_iterators.tex -text
 QP_solver/doc_tex/QP_solver_ref/make_nonnegative_quadratic_program_from_iterators.tex -text

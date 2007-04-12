@@ -184,11 +184,12 @@ public:
 
 
 // Quadratic_program_solution class: a handle for QP_solver_base<ET>
-// -------------------------------------------------- 
-template <class ET>
-class Quadratic_program_solution: Handle_for<const QP_solver_base<ET>*> 
+// ----------------------------------------------------------------- 
+template <class ET_>
+class Quadratic_program_solution: Handle_for<const QP_solver_base<ET_>*> 
 {
 public:
+  typedef ET_ ET;
   // interface types
   // ===============
 
@@ -219,6 +220,7 @@ public:
   Infeasibility_certificate_iterator;
 
   // methods
+  // -------
   Quadratic_program_solution ()
     : Handle_for<const QP_solver_base<ET>*>()
   {
@@ -229,104 +231,120 @@ public:
     : Handle_for<const QP_solver_base<ET>*>(s)
   {}
 
-  Quotient<ET> solution() const
+  bool is_void() const 
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    return (*(this->ptr()) == 0);
+  }
+
+  Quotient<ET> objective_value() const
+  {
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->solution();
+  }
+
+  ET objective_value_numerator() const
+  {
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
+    return (*(this->Ptr()))->solution_numerator();
+  }
+
+  ET objective_value_denominator() const
+  {
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
+    return (*(this->Ptr()))->solution_denominator();
   }
 
   QP_status status() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->status();
+  }
+
+  bool is_optimal() const
+  {
+    return status() == QP_OPTIMAL;
+  }
+
+  bool is_infeasible() const
+  {
+    return status() == QP_INFEASIBLE;
+  }
+
+  bool is_unbounded() const
+  {
+    return status() == QP_UNBOUNDED;
   }
 
   Variable_value_iterator variable_values_begin() const
   {
-   CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+   CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
    return (*(this->Ptr()))->original_variable_values_begin();
   }
 
   Variable_value_iterator variable_values_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->original_variable_values_end();
   }
 
   Variable_numerator_iterator variable_numerators_begin() const
   {
-   CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+   CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
    return (*(this->Ptr()))->original_variables_numerator_begin();
   }
 
   Variable_numerator_iterator variable_numerators_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->original_variables_numerator_end();
   }
 
-//   ET variable_numerator_value (int i) const 
-//   {
-//     CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
-//     return (*(this->Ptr()))->variable_numerator_value(i);
-//  }
-
   const ET& variables_common_denominator() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->variables_common_denominator();
   }
 
   Index_iterator basic_variable_indices_begin() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->basic_original_variable_indices_begin();
   }
 
   Index_iterator basic_variable_indices_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->basic_original_variable_indices_end();
   }
 
   int number_of_basic_variables() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->number_of_basic_original_variables();
   }
 
   Index_iterator basic_constraint_indices_begin() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->basic_constraint_indices_begin();
   }
 
   Index_iterator basic_constraint_indices_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->basic_constraint_indices_end();
   }
 
   int number_of_basic_constraints() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->number_of_basic_constraints();
   }
-
-  // certificates
-  // ============
-  // optimality
-  // ----------
-//   ET optimality_certificate_numerator (int i) 
-//   {
-//     CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
-//     return (*(this->Ptr()))->
-//   }
 
   Optimality_certificate_numerator_iterator 
   optimality_certifcate_numerator_begin() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
     return (*(this->Ptr()))->optimality_certifcate_numerator_begin();
   }
@@ -334,7 +352,7 @@ public:
   Optimality_certificate_numerator_iterator 
   optimality_certifcate_numerator_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
     return (*(this->Ptr()))->optimality_certifcate_numerator_end();
   }
@@ -342,7 +360,7 @@ public:
   Optimality_certificate_iterator 
   optimality_certificate_begin() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
     return (*(this->Ptr()))->optimality_certificate_begin();
   }
@@ -350,14 +368,14 @@ public:
   Optimality_certificate_iterator 
   optimality_certificate_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
     return (*(this->Ptr()))->optimality_certificate_end();
   }
 
   ET optimality_certificate_denominator() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
     return (*(this->Ptr()))->optimality_certificate_denominator();
   }
@@ -367,7 +385,7 @@ public:
   Infeasibility_certificate_iterator 
   infeasibility_certificate_begin() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_INFEASIBLE);
     return (*(this->Ptr()))->optimality_certificate_numerator_begin();
   }
@@ -375,7 +393,7 @@ public:
   Infeasibility_certificate_iterator 
   infeasibility_certificate_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_INFEASIBLE);
     return (*(this->Ptr()))->optimality_certificate_numerator_end();
   }
@@ -384,14 +402,14 @@ public:
   // -------------
   Unboundedness_certificate_iterator unboundedness_certificate_begin() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_UNBOUNDED);
     return (*(this->Ptr()))->unbounded_direction_begin();
   }
 
   Unboundedness_certificate_iterator unboundedness_certificate_end() const
   {
-    CGAL_qpe_assertion_msg(*(this->ptr()) != 0, "Solution not initialized");
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_UNBOUNDED);
     return (*(this->Ptr()))->unbounded_direction_end();
   }

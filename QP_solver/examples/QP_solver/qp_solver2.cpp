@@ -62,7 +62,7 @@ int main() {
     for (Solution::Variable_value_iterator it = s.variable_values_begin();
 	 it != s.variable_values_end(); ++it)
       std::cout << CGAL::to_double(*it) << "  ";
-    std::cout << "\nOptimal value: " <<  CGAL::to_double(s.solution())
+    std::cout << "\nOptimal value: " <<  CGAL::to_double(s.objective_value())
 	      << std::endl;
   }
 

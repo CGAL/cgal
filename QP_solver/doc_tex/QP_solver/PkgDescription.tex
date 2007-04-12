@@ -1,0 +1,34 @@
+
+\begin{ccPkgDescription}{Linear and quadratic programming solver
+\label{Pkg:QPSolver}}
+\ccPkgHowToCiteCgal{cgal:fgsw-lqps-07}
+\ccPkgSummary{This package contains algorithms for minimizing linear and
+convex quadratic functions over polyhedral domains, described by linear
+equations and inequalities. The algorithms are exact, i.e. the solution
+is computed in terms of multiprecision rational numbers.
+
+The resulting solution is certified: along with the claims that the
+problem under consideration has an optimal solution, is infeasible,
+or is unbounded, the algorithms also deliver proofs for these facts.
+These proofs can easily (and independently from the algorithms) be 
+checked for correctness.
+
+The solution algorithms expect the linear and quadratic programs to
+be in dense format, and they also compute with this dense representation
+internally. Adapters are provided to bring sparse programs (as encoded in
+MPS format, for example) into the required dense representation, but the 
+ability to solve large, sparse problems is limited.
+
+The solver is efficient if the minimum of the number of variables
+(columns) and the number of constraints (rows) is of moderate size
+(100, say).
+
+The solution algorithms are based on a generalization of the simplex 
+method to quadratic objective functions.
+}
+
+%\ccPkgDependsOn{}
+\ccPkgIntroducedInCGAL{3.3}
+\ccPkgLicense{\ccLicenseQPL}
+\ccPkgIllustration{QP_solver/qp.png}{QP_solver/qp.png}
+\end{ccPkgDescription}

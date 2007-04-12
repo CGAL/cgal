@@ -67,10 +67,10 @@ int main(const int argNr,const char **args) {
   Solution s = CGAL::solve_quadratic_program (qp, ET(0));
 
   // get solution:
-  if (s.status() == CGAL::QP_OPTIMAL) {
+  if (s.is_optimal()) {
     // output solution:
     cout << "Objective function value: " <<
-      CGAL::to_double(s.solution()) << endl;
+      CGAL::to_double(s.objective_value()) << endl;
 
     cout << "Variable values:" << endl;
     Solution::Variable_value_iterator vit =
