@@ -435,14 +435,14 @@ public:
 	  (!s_init && !c.has_on(pv))) continue;
       CGAL_NEF_TRACEN("candidate "<<pv);
       if ((start_inclusive || p != pv) && 
-	  (end_inclusive || s.target() != pv)) {
+	  (end_inclusive || !s_init || s.target() != pv)) {
         h = Object_handle(vi);     // store vertex
         s = Sphere_segment(p,pv,c); // shorten
 	ip = pv;
 	s_init = true;
       }
     }
- 
+
     // TODO: edges on the ray.
 
     SHalfedge_iterator ei;
@@ -523,7 +523,11 @@ public:
     if(this->has_shalfloop()) {
       Sphere_circle cl(this->shalfloop()->circle());
       if(!s_init || s.is_long())
-	s = Sphere_segment(p,p.antipode(),c);
+	if(cl.has_on(p)) {
+	  ip = p.antipode();
+	  return Object_handle(SHalfloop_handle(this->shalfloop()));
+	} else 	  
+	  s = Sphere_segment(p,p.antipode(),c);
       Sphere_point p_res;
       CGAL_NEF_TRACEN("do intersect " << cl << ", " << s);
       if(!do_intersect_internally(cl,s,p_res))
@@ -533,7 +537,7 @@ public:
 	p_res = p;
       */
       CGAL_NEF_TRACEN("found intersection point " << p_res);
-      Sphere_segment testseg(p,p_res,c);
+      CGAL_assertion_code(Sphere_segment testseg(p,p_res,c));
       CGAL_assertion(!testseg.is_long());
       if (start_inclusive || p != p_res) {
 	ip = p_res;
@@ -541,7 +545,6 @@ public:
       }
     }
 
-    CGAL_assertion(s_init);
     return h;
   }
 
