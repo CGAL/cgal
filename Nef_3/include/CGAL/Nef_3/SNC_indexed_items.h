@@ -31,12 +31,13 @@ CGAL_BEGIN_NAMESPACE
 
 class Index_generator {
   
-  static int unique;
  public:
-  static int get_unique_index() { return unique++; }
+  static int get_unique_index()
+  {
+    static int unique = 0;
+    return unique++;
+  }
 };
-
-int Index_generator::unique = 0;
 
 class SNC_indexed_items {
  public:
