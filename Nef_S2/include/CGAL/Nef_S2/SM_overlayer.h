@@ -1508,8 +1508,10 @@ subdivide(const Map* M0, const Map* M1,
       if(phg.compare_xy(it->target(),it->source())<0) {
 	Object_handle o = From[it]._o;
 	if(CGAL::assign(se, o)) {
-	  From[it] = Seg_info(se->twin(), From[it]._from);
+	  if(it->sphere_circle() == se->circle())
+	    From[it] = Seg_info(se->twin(), From[it]._from);
 	} else if(CGAL::assign(sl, o)) {
+	  CGAL_assertion(it->sphere_circle()==sl->circle());
 	  From[it] = Seg_info(sl->twin(), From[it]._from);
 	}
       }
@@ -1534,8 +1536,10 @@ subdivide(const Map* M0, const Map* M1,
       if(nhg.compare_xy(it->target(),it->source())<0) {
 	Object_handle o = From[it]._o;
 	if(CGAL::assign(se, o)) {
-	   From[it] = Seg_info(se->twin(), From[it]._from);
+	  if(it->sphere_circle() == se->circle())
+	    From[it] = Seg_info(se->twin(), From[it]._from);
 	} else if(CGAL::assign(sl, o)) {
+	  CGAL_assertion(it->sphere_circle()==sl->circle());
 	  From[it] = Seg_info(sl->twin(), From[it]._from);
 	}
       }
