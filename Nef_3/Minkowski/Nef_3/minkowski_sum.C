@@ -209,13 +209,17 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  CGAL::Timer t1, t2;  
+  CGAL::Timer t1, t2, t3;  
   t1.start();
   t2.start();
   //  CGAL_NEF_SETDTHREAD(503*509);
   convex_decomposition_3<Nef_polyhedron>(N0);
-  convex_decomposition_3<Nef_polyhedron>(N1);
   t2.stop();
+  std::cerr << "Decomposition of Polyhedron 1: " << t2.time() << std::endl;
+  t3.start();
+  convex_decomposition_3<Nef_polyhedron>(N1);
+  t3.stop();
+  std::cerr << "Decomposition of Polyhedron 2: " << t3.time() << std::endl;
 
   CGAL_assertion(N0.is_valid());
   CGAL_assertion(N1.is_valid());
@@ -228,15 +232,18 @@ int main(int argc, char* argv[]) {
 #else
     CGAL::bipartite_nary_union_sorted_combined(N0, N1);
 #endif
-    //  std::cout << result;
 
-  std::cerr << "Decomposition: " << t2.time() << std::endl;
-  std::cerr << "Total runtime: " << t1.time() << std::endl;
+    std::cerr << "Decomposition: " << t2.time()+t3.time() << std::endl;
+    std::cerr << "Total runtime: " << t1.time() << std::endl;
 
+    std::cout << result;
+
+    /*
   QApplication a(argc, argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();
   a.exec();
+    */
 }
