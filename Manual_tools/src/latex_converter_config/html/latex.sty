@@ -1674,21 +1674,31 @@ td.TocChapter          { font-weight: normal; }
 % |
 % ###########################################################################
 
-\newenvironment{figure}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
-\newenvironment{figure*}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
-\newenvironment{figure@o}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
-\newenvironment{figure*@o}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
-%\newenvironment{figure*}{\begin{figure}}{\end{figure}}
-%\newenvironment{figure@o}{\begin{figure}}{\end{figure}}
-%\newenvironment{figure*@o}{\begin{figure}}{\end{figure}}
+\newenvironment{figure}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Figure \thefigure:~~}}}
+  {}
+\newenvironment{figure*}
+  {\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}
+  {}
+\newenvironment{figure@o}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Figure \thefigure:~~}}}
+  {}
+\newenvironment{figure*@o}
+  {\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}
+  {}
 
-\newenvironment{table}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
-\newenvironment{table*}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
-\newenvironment{table@o}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
-\newenvironment{table*@o}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
-%\newenvironment{table*}{\begin{table}}{\end{table}}
-%\newenvironment{table@o}{\begin{table}}{\end{table}}
-%\newenvironment{table*@o}{\begin{table}}{\end{table}}
+\newenvironment{table}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Table \thetable:~~}}}
+  {}
+\newenvironment{table*}
+  {\newcommand{\lciLabelTitle}{{\bf Table:~~}}}
+  {}
+\newenvironment{table@o}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Table \thetable:~~}}}
+  {}
+\newenvironment{table*@o}
+  {\newcommand{\lciLabelTitle}{{\bf Table:~~}}}
+  {}
 
 \newcommand{\caption}[1]{\lciLabelTitle #1}
 \newcommand{\caption@om}{\lciLabelTitle #1}
