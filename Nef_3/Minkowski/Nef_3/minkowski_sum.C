@@ -3,7 +3,6 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
@@ -13,17 +12,16 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Nef_S2/Gausian_map.h>
-#include <CGAL/Nef_S2/gausian_map_to_polyhedron_3.h>
-#include <CGAL/Nef_S2/gausian_map_to_nef_3.h>
-#include <CGAL/Nef_3/convex_decomposition_3.h> 
-#include <CGAL/convexity_check_3.h>
+//#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Nef_3/convex_decomposition_3.h>
+#include <CGAL/Nef_3/bipartite_nary_union_sequential.h> 
+#include <CGAL/Nef_3/bipartite_nary_union_sorted_separately.h> 
+#include <CGAL/Nef_3/bipartite_nary_union_sorted_combined.h> 
 
-#include <CGAL/Nef_3/Nary_union_by_queue.h>
-#include <CGAL/Nef_3/Nary_union_by_pq.h>
+#define CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
 
 #ifdef CGAL_WITH_LAZY_KERNEL
+#include <CGAL/Lazy_kernel.h>
 typedef CGAL::Gmpq NT;
 //typedef leda_rational NT;
 typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > Kernel;
@@ -32,20 +30,19 @@ typedef CGAL::Gmpz NT;
 typedef CGAL::Homogeneous<NT> Kernel;
 #endif
 #ifdef CGAL_NEF_INDEXED_ITEMS
+#include <CGAL/Nef_3/SNC_indexed_items.h>
 typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron;
 #else
 typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
 #endif
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef Nef_polyhedron::SNC_structure  SNC_structure;
-typedef CGAL::SNC_decorator<SNC_structure>  SNC_decorator;
 typedef Nef_polyhedron::Halfedge_iterator  Halfedge_iterator;
-typedef SNC_structure::Halfedge_handle Halfedge_handle;
+//typedef Nef_polyhedron::Halfedge_handle Halfedge_handle;
 typedef Nef_polyhedron::SHalfedge_iterator SHalfedge_iterator;
 typedef Nef_polyhedron::SHalfedge_handle SHalfedge_handle;
 typedef Nef_polyhedron::Sphere_segment Sphere_segment;
 typedef Nef_polyhedron::Sphere_point   Sphere_point;
-typedef Nef_polyhedron::Volume_const_iterator  Volume_const_iterator;
+typedef Nef_polyhedron::Volume_const_handle  Volume_const_handle;
 typedef Nef_polyhedron::Vertex_const_handle  Vertex_const_handle;
 typedef Nef_polyhedron::Halfedge_const_handle  Halfedge_const_handle;
 typedef Nef_polyhedron::Halffacet_const_handle  Halffacet_const_handle;
@@ -54,15 +51,8 @@ typedef Nef_polyhedron::SHalfloop_const_handle  SHalfloop_const_handle;
 typedef Nef_polyhedron::SFace_const_handle  SFace_const_handle;
 typedef Nef_polyhedron::Halffacet_cycle_const_iterator      Halffacet_cycle_const_iterator;
 typedef Nef_polyhedron::SHalfedge_around_facet_const_circulator      SHalfedge_around_facet_const_circulator;
-typedef Nef_polyhedron::Vector_3           Vector_3;
-typedef Kernel::Plane_3            Plane_3;
-typedef Kernel::Line_3             Line_3;
-typedef Kernel::Point_3            Point_3;
 
-typedef CGAL::Nary_union_by_queue<Nef_polyhedron> NUBQ;
-typedef CGAL::Nary_union_by_pq<Nef_polyhedron> NUBPQ;
-typedef CGAL::Nary_union_by_summup<Nef_polyhedron> NUBPS;
-
+/*
 template <class HDS, class Const_decorator>
 class Build_polyhedron : public CGAL::Modifier_base<HDS> {
 
@@ -178,91 +168,75 @@ void convert_volume2polyhedron(const Nef_polyhedron& N,
   P.delegate(bp);
   
 }
+*/
+
+bool loadFile(char* filename, Nef_polyhedron& N) {
+  std::ifstream in(filename);
+  std::ifstream test(filename);
+  char c;
+  test >> c;
+  if(c!='S' && c!='O') return false;
+  if(c == 'S')
+    in >> N;
+  else {
+    Polyhedron P;
+    in >> P;
+    N = Nef_polyhedron(P);
+  }
+  return true;
+}
 
 int main(int argc, char* argv[]) {
 
   CGAL_assertion(argc==3);
+  /*
   std::ifstream in(argv[1]);
-  Nef_polyhedron N;
-  in >> N;
-  CGAL::Timer t1, t2, t3, t4;
-  
-  t1.start();
-  SNC_decorator D(*const_cast<SNC_structure*>(N.sncp()));
-
-  t2.start();
-  //  CGAL_NEF_SETDTHREAD(227*229*233);
-  convex_decomposition_3<Nef_polyhedron>(N);
-
-  t2.stop();
-
-  CGAL_assertion(N.is_valid());
-
-  typedef CGAL::Gausian_map<Kernel> Gausian_map;
+  Nef_polyhedron N0;
+  in >> N0;
 
   std::ifstream inc(argv[2]);
-  Nef_polyhedron NC;
-  inc >> NC;
-  Gausian_map GC(NC, --NC.volumes_end());
+  Nef_polyhedron N1;
+  inc >> N1;
+  */
 
-#ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
-  NUBS nary_union;
-#elif defined CGAL_NEF3_NARY_UNION_VIA_PQ
-  NUBPQ nary_union;
-#else
-  NUBQ nary_union;
-#endif
-
-  t3.start();
-
-  //  int skip_shells = 0;
-  int shells = N.number_of_volumes();
-  Volume_const_iterator c = N.volumes_begin();
-  ++c;
-  for(;c!=N.volumes_end();++c) {
-    std::cerr << "noch " << --shells << " shells" << std::endl;
-//    if(shells == 805) CGAL_NEF_SETDTHREAD(223);
-    //    if(skip_shells > 0) { --skip_shells; continue;}
-    if(c->mark() == false) continue;
-
-    Polyhedron P;
-    convert_volume2polyhedron(N,c,P);
-    Nef_polyhedron NP(P);
-
-    Gausian_map G(NP,--NP.volumes_end());
-    //    Gausian_map G(N, c);
-    Gausian_map GcG;
-    GcG.minkowski_sum(GC,G);
-
-    Polyhedron tmp;
-    gausian_map_to_polyhedron_3<Kernel, Polyhedron::HDS> Converter(GcG);
-    tmp.delegate(Converter);
-    CGAL_assertion(is_strongly_convex_3(tmp));
-    Nef_polyhedron Ntmp(tmp);
-    CGAL_assertion(Ntmp.is_valid());
-    nary_union.add_polyhedron(Ntmp);
+  Nef_polyhedron N0, N1;
+  if(!loadFile(argv[1], N0)) {
+    std::cerr << "parameter 1 is not a valid input file" << std::endl;
+    return 0;
   }
-  
-  t3.stop();
-  t4.start();
-  Nef_polyhedron result = nary_union.get_union();
-  t4.stop();
-  t1.stop();
+  if(!loadFile(argv[2], N1)) {
+    std::cerr << "parameter 2 is not a valid input file" << std::endl;
+    return 0;
+  }
 
-  //  std::cerr << result;
+  CGAL::Timer t1, t2;  
+  t1.start();
+  t2.start();
+  //  CGAL_NEF_SETDTHREAD(503*509);
+  convex_decomposition_3<Nef_polyhedron>(N0);
+  convex_decomposition_3<Nef_polyhedron>(N1);
+  t2.stop();
 
-  std::cout << "Total runtime: " << t1.time() << std::endl;
-  std::cout << "Decomposition: " << t2.time() << std::endl;
-  std::cout << "Sum of convex Minkowski sums : " << t3.time() << std::endl;
-  std::cout << "Union of subpolyhedra: " << t4.time() << std::endl;
+  CGAL_assertion(N0.is_valid());
+  CGAL_assertion(N1.is_valid());
 
-  /*
+  Nef_polyhedron result =
+#ifdef CGAL_MINKOWSKI_BIPARTITE_NARY_UNION_SEQUENTIAL
+    CGAL::bipartite_nary_union_sequential(N0, N1);
+#elif defined CGAL_MINKOWSKI_BIPARTITE_NARY_UNION_SORTED_SEPARATELY
+    CGAL::bipartite_nary_union_sorted_separately(N0, N1);
+#else
+    CGAL::bipartite_nary_union_sorted_combined(N0, N1);
+#endif
+    //  std::cout << result;
+
+  std::cerr << "Decomposition: " << t2.time() << std::endl;
+  std::cerr << "Total runtime: " << t1.time() << std::endl;
+
   QApplication a(argc, argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();
   a.exec();
-*/
-
 }
