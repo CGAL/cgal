@@ -14,9 +14,12 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
+  typedef typename SNC_structure::Items          Items;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
-  typedef CGAL::SNC_constructor<SNC_structure>   SNC_constructor;
+  typedef CGAL::SNC_constructor<Items, SNC_structure>   
+    SNC_constructor;
+
   typedef typename SNC_structure::Vertex_handle     Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle   SVertex_handle;
   typedef typename SNC_structure::SHalfedge_handle  SHalfedge_handle;
@@ -30,26 +33,39 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef typename Container::iterator Iterator;
 
   struct sort_edges {
-    bool operator()(SHalfedge_handle e1, SHalfedge_handle e2) {
-      return CGAL::lexicographically_xyz_smaller(e1->source()->source()->point(),
-						 e2->source()->source()->point());
+    bool operator()(Halfedge_handle e1, Halfedge_handle e2) {
+      return e1->source()->point() < e2->source()->point();
     }
   };
 
   bool split_at(Segment_3 s1, Segment_3 s2, Point_3& ip2) {
     
+    //    std::cerr << "split_at " << s1 << std::endl;
+    //    std::cerr << "         " << s2 << std::endl;
     Point_3 ip1;
     Vector_3 vec1(cross_product(s2.to_vector(),Vector_3(1,0,0)));
     Plane_3 pl1(s2.source(), vec1);
+    //    std::cerr << "pl1 " << pl1 << std::endl;
+    CGAL_assertion(pl1.has_on(s2.source()));
+    CGAL_assertion(pl1.has_on(s2.target()));
+    CGAL_assertion(pl1.has_on(s2.source()+Vector_3(1,0,0)));
     Object o1 = intersection(pl1,s1);
-    if(!assign(ip1,o1) || ip1 == s1.source() || ip1 == s1.target())
+    // TODO: what happens if the first segment is directly above the second, 
+    // but starts lower 
+    if(!assign(ip1,o1))
       return false;
+    //    std::cerr << "ipp " << ip1 << std::endl;
     Vector_3 vec2(cross_product(s1.to_vector(),Vector_3(1,0,0)));
     Plane_3 pl2(s1.source(), vec2);
+    //    std::cerr << "pl2 " << pl2 << std::endl;
+    CGAL_assertion(pl2.has_on(s1.source()));
+    CGAL_assertion(pl2.has_on(s1.target()));
+    CGAL_assertion(pl2.has_on(s1.source()+Vector_3(1,0,0)));
     Object o2 = intersection(pl2,s2);
     if(!assign(ip2,o2) || ip2 == s2.source() || ip2 == s2.target())
       return false;
-    CGAL_assertion(ip1!=ip2);
+    
+    //    std::cerr << "ips " << ip1 << ", " << ip2 << std::endl;
     if(ip2 < ip1)
       return true;
     return false;
@@ -66,7 +82,7 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     sncp = sncpl.sncp;
     pl = sncpl.pl;
-    SNC_constructor C(*sncp,pl);
+    SNC_constructor C(*sncp);
 
     //    std::cerr << "edge_sorter " << c.size() << std::endl;
     std::sort(c.begin(), c.end(), sort_edges());
@@ -76,62 +92,54 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
       //      std::cerr << "1: " << (*esi1)->source()->point() << "->" << (*esi1)->twin()->source()->point() << std::endl;
       esi2 = esi1;
       ++esi2;
-      // while(esi2!=c.end() && (*esi1)->source()->point().x() == 
-      //			 (*esi2)->source()->point().x());
-      if(esi2==c.end()) continue;
       //      std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
-
-      while((*esi1)->source()->twin()->source()->point().x() >
-	    (*esi2)->source()->source()->point().x()) {
+      while(esi2!=c.end() &&
+	    (*esi1)->twin()->source()->point().x() >
+	    (*esi2)->source()->point().x()) {
+	if((*esi1)->source() == (*esi2)->source()) {
+	  ++esi2;
+	  continue;
+	}
 	Point_3 ip;
-	bool b = split_at(Segment_3((*esi1)->source()->source()->point(),
-				    (*esi1)->source()->twin()->source()->point()), 
-			  Segment_3((*esi2)->source()->source()->point(),
-				    (*esi2)->source()->twin()->source()->point()),ip);
-	//	std::cerr << "split " << b << std::endl;
+	bool b = split_at(Segment_3((*esi1)->source()->point(),
+				    (*esi1)->twin()->source()->point()), 
+			  Segment_3((*esi2)->source()->point(),
+				    (*esi2)->twin()->source()->point()),ip);
 	if(b) {
 	  //	  std::cerr << ip << std::endl;
 	  Vertex_handle v;
-	  Halfedge_handle e = (*esi2)->source();
+	  Halfedge_handle e = (*esi2);
 	  v = C.create_from_edge(e,ip);
 	  pl->add_vertex(v);
-
-	  SVertex_iterator svi = v->svertices_begin();
-	  SVertex_handle svf = svi;
-	  SVertex_handle svb = ++svi;
 	  
-	  if(svf->point() == e->point()) {
-	    svb->twin() = e;
-	    svf->twin() = e->twin();
-	    e->twin()->twin() = svf;
-	    e->twin() = svb;
+	  SVertex_iterator svi = v->svertices_begin();
+	  SVertex_handle svf, svb;
+	  if(svi->point() == e->point()) {
+	    svf = svi;
+	    svb = ++svi;
 	  } else {
-	    svf->twin() = e;
-	    svb->twin() = e->twin();
-	    e->twin()->twin() = svb;
-	    e->twin() = svf;
+	    svb = svi;
+	    svf = ++svi;
 	  }
+	  
+	  svb->twin() = e;
+	  svf->twin() = e->twin();
+	  e->twin()->twin() = svf;
+	  e->twin() = svb;
 	  
 	  pl->add_edge(svf);
 	  pl->add_edge(svb);
-
-	  //	  std::cerr << "new edge " << e->source()->point() << "->" << e->twin()->source()->point() << std::endl;
-	  //	  std::cerr << "new edge " << svf->source()->point() << "->" << svf->twin()->source()->point() << std::endl;
-
+	  
 	  esi3 = esi2;
 	  ++esi3;
 	  while(esi3 != c.end() && 
-		(*esi3)->source()->source()->point() < svf->source()->point())
+		(*esi3)->source()->point() < 
+		svf->source()->point())
 	    ++esi3;
-	  //	  std::cerr << "insert " << std::endl;
-          SHalfedge_handle se_new = svf->out_sedge();
-          while(se_new->circle() != (*esi2)->circle())
-            se_new = se_new->sprev()->twin();
-	  c.insert(esi3, se_new);
+	  c.insert(esi3, svf);
 	}
 
 	++esi2;
-	if(esi2==c.end()) break;
 	//	std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
       }
     }

@@ -9,7 +9,7 @@ CGAL_BEGIN_NAMESPACE
 template<class Polyhedron>
 class Nary_union_by_pq {
 
-  typedef typename std::multimap<typename Polyhedron::Size_type,Polyhedron> PQ;
+  typedef typename std::multimap<typename Polyhedron::Size_type, Polyhedron> PQ;
   typedef typename PQ::iterator PQ_iterator;
   PQ pq;
 

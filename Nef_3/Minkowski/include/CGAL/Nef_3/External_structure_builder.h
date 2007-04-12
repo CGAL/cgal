@@ -6,6 +6,10 @@
 #include <CGAL/Nef_S2/SM_walls.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
 
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 43
+#include <CGAL/Nef_2/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template<typename Nef_>
@@ -14,10 +18,12 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
+  typedef typename SNC_structure::Items          Items;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
   typedef CGAL::SNC_intersection<SNC_structure>  SNC_intersection;
-  typedef CGAL::SNC_constructor<SNC_structure>   SNC_constructor;
+  typedef CGAL::SNC_external_structure<Items, SNC_structure>
+    SNC_external_structure;
 
   typedef typename SNC_structure::Sphere_map     Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;  
@@ -53,17 +59,15 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
   External_structure_builder() {}
 
   void operator()(SNC_and_PL& sncpl) {
-
-    //    std::cerr << "External structure builder" << std::endl;
+    //    CGAL_NEF_TRACEN(43);
 
     SNC_structure* sncp(sncpl.sncp);
     SNC_point_locator* pl(sncpl.pl);
 
-    //    CGAL::SNC_io_parser<SNC_structure> Ox(std::cerr, *sncp, false);
-    //    Ox.print();
+
 
     Unique_hash_map<SHalfedge_handle, SFace_handle> sedge2sface;
-    
+    /*    
     SFace_iterator sfi;
     CGAL_forall_sfaces(sfi, *sncp) {
       SFace_cycle_iterator sfc;
@@ -104,14 +108,17 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
 	// TODO: relink inner sface cycles
       }
     }
-
+    */
     SNC_point_locator* old_pl = pl;
     pl = pl->clone();
     sncpl.pl = pl;
     delete old_pl;
-    SNC_constructor C(*sncp,pl);
+    SNC_external_structure C(*sncp,pl);
     C.clear_external_structure();
     C.build_external_structure();
+
+    //    CGAL::SNC_io_parser<SNC_structure> Ox(std::cerr, *sncp, false);
+    //    Ox.print();
   }
 };
 

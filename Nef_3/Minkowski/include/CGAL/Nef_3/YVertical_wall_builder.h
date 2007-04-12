@@ -22,7 +22,9 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
   typedef typename SNC_structure::SFace_handle            SFace_handle;
 
   typedef typename SNC_structure::Volume_iterator         Volume_iterator;
-  //  typedef typename SNC_structure::Shell_entry_iterator    Shell_entry_iterator;
+  typedef typename SNC_structure::Halfedge_iterator       Halfedge_iterator;
+  typedef typename SNC_structure::SHalfedge_around_svertex_circulator
+    SHalfedge_around_svertex_circulator;
 
   typedef typename SNC_structure::Vector_3                Vector_3;
   typedef typename SNC_structure::Point_3                 Point_3;
@@ -34,6 +36,7 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
   typedef typename std::list<Halfedge_handle>             Edge_list;
  public:
   typedef typename std::list<Halfedge_handle>::iterator   Vertical_redge_iterator;
+
 
  private:
   struct Reflex_edge_visitor {
@@ -51,6 +54,11 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
     void visit(SHalfloop_handle sl) const {}
     void visit(SFace_handle sf) const {}
     void visit(SHalfedge_handle se) const {
+      int isrse = CGAL::is_reflex_sedge<SNC_structure>(se, dir);
+      if((isrse&1)==1) pos.push_back(se->source());
+      if((isrse&2)==2) neg.push_back(se->source());
+      return;
+
       Halfedge_handle e = se->source();
       if(e->is_twin())
 	return;
@@ -86,16 +94,35 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
 	
     }
   };
-  
+
   Sphere_point dir;
   Edge_list pos;
   Edge_list neg;
 
  public:
-    YVertical_wall_builder(Sphere_point dir_in = Sphere_point(0,1,0)) 
-        : dir (dir_in) {}
+  YVertical_wall_builder(Sphere_point dir_in = Sphere_point(0,1,0)) 
+    : dir (dir_in) {}
+    
+    /*
+    void operator()(SNC_structure& snc) {
+      Halfedge_iterator ei;
+      CGAL_forall_halfedges(ei, snc) {
+	if(ei->point() != Sphere_point(1,0,0)) continue;
+	SHalfedge_around_svertex_circulator 
+	  svc(ei->out_sedge()), send(svc);
+	CGAL_For_all(svc, send) {
+	  if(!svc->incident_sface()->mark()) continue;
+	  if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
+	    continue;
+	  pos.push_back(svc);
+	}
+      }
+    }
+    */
 
   void operator()(SNC_structure& snc) {
+    pos.clear();
+    neg.clear();
     SNC_decorator D(snc);
     Reflex_edge_visitor rev(pos,neg,dir);
     Volume_iterator ci;

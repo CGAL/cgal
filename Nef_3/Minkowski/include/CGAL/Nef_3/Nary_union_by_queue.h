@@ -26,7 +26,8 @@ class Nary_union_by_queue {
 	std::cerr << queue.size() << " polyhedra in the queue" << std::endl;
       
       pit i1(queue.begin()), i2(i1);
-      Polyhedron tmp(*i1 + *(++i2));
+      ++i2;
+      Polyhedron tmp(*i1 + *i2);
       
       queue.pop_front();
       queue.pop_front();

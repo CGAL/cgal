@@ -5,8 +5,6 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_walls.h>
 #include <CGAL/Nef_3/Ray_hit_generator.h>
-#include <CGAL/Nef_3/Reflex_edge_searcher.h> // only for assertion
-
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 229
 #include <CGAL/Nef_2/debug.h>
@@ -19,10 +17,12 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef Nef_                                    Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL     SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure  SNC_structure;
+  typedef typename SNC_structure::Items           Items;
   typedef CGAL::SNC_decorator<SNC_structure>      Base;
   typedef CGAL::SNC_point_locator<Base>           SNC_point_locator;
   typedef CGAL::SNC_intersection<SNC_structure>   SNC_intersection;
-  typedef CGAL::SNC_constructor<SNC_structure>    SNC_constructor;
+  typedef CGAL::SNC_constructor<Items, SNC_structure>
+    SNC_constructor;
 
   typedef typename SNC_structure::Sphere_map      Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>          SM_decorator;  
@@ -66,35 +66,45 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 #endif
 {}
 
- private:
+ public:
   bool need_to_create_wall() const {
 
     // is edge parallel to dir ?
-    if(Sphere_point(CGAL::ORIGIN - dir) == ein->point() ||
-       Sphere_point(CGAL::ORIGIN - dir) == ein->twin()->point())
+    /*
+    if(Sphere_point(CGAL::ORIGIN - dir) == ein->point())
       return false;
+    if(Sphere_point(CGAL::ORIGIN - dir) == ein->twin()->point())
+      return false;
+    */
+   
+    CGAL_assertion(Sphere_point(CGAL::ORIGIN - dir) != ein->point());
+    CGAL_assertion(Sphere_point(CGAL::ORIGIN - dir) != ein->twin()->point());
 
     CGAL_NEF_TRACEN( "test 0 " );
     
     SHalfedge_handle se;
     SFace_handle sf;
-    SM_point_locator PS(&*ein->source());
-    Object_handle os = PS.locate(Sphere_point(dir));
+    //    SM_point_locator PS(&*ein->source());
+    //    Object_handle os = PS.locate(Sphere_point(dir));
+    //    CGAL_assertion(!assign(se,os));
+    /*
     if(assign(se,os) && (se->source() == ein || se->twin()->source() == ein))
       return false;
 //    if(assign(sf,os) && !sf->mark())
 //        return false;
-    
+*/
     
     CGAL_NEF_TRACEN( "test 1 " );
 
-    SM_point_locator PT(&*ein->target());
-    Object_handle ot = PT.locate(Sphere_point(dir));
+    //    SM_point_locator PT(&*ein->target());
+    //    Object_handle ot = PT.locate(Sphere_point(dir));
+    // CGAL_assertion(!assign(se,ot));
+    /*
     if(assign(se,ot) && (se->source() == ein->twin() || se->twin()->source() == ein->twin()))
       return false;
 //    if(assign(sf,os) && !sf->mark())
 //        return false;
-
+*/
     CGAL_NEF_TRACEN( "test 2 " );
 
     
@@ -120,7 +130,6 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       SM_point_locator PL(&*origin[i]);
       Sphere_segment sphere_ray(lateral_sv_tgt[i]->point(), Sphere_point(dir));
       legal[i] = SMW.legal_direction(sphere_ray, found_object[i], found_point[i]);
-
     }
 
     SVertex_handle sv0, sv1;
@@ -128,15 +137,24 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       CGAL_NEF_TRACEN( "check " << sv0->point() << "+" << sv1->point() );
       SHalfedge_around_svertex_circulator sh0(sv0->out_sedge()), send0(sh0);
       CGAL_For_all(sh0,send0)
-	if(sh0->twin()->source() == ein) {
+	if(sh0->twin()->source() == ein &&
+	   Sphere_segment(sh0->source()->point(),
+			  sh0->twin()->source()->point(),
+			  sh0->circle()).is_short()) {
 	  SHalfedge_around_svertex_circulator sh1(sv1->out_sedge()), send1(sh1);
 	  CGAL_For_all(sh1,send1)
-	    if(sh1->twin()->source() == ein->twin()) {
+	    if(sh1->twin()->source() == ein->twin() &&
+	       Sphere_segment(sh1->source()->point(),
+			      sh1->twin()->source()->point(),
+			      sh1->circle()).is_short()) {
 	      CGAL_NEF_TRACEN( "did not process edge " );
-	      CGAL_NEF_TRACEN( "check " << sh0->source()->point() << "->" << sh0->twin()->source()->point() );
-	      CGAL_NEF_TRACEN( "check " << sh1->source()->point() << "->" << sh1->twin()->source()->point() );
+	      CGAL_NEF_TRACEN( "check " << sh0->source()->point() << 
+			       "->" << sh0->twin()->source()->point() );
+	      CGAL_NEF_TRACEN( "check " << sh1->source()->point() << 
+			       "->" << sh1->twin()->source()->point() );
 	      return false;
 	    }
+	  CGAL_assertion_msg(false, "should not happen on one side only");
 	}
     }
 
@@ -150,8 +168,16 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     
   SVertex_handle create_new_outer_cycle(SVertex_handle estart, Sphere_circle c) {
 
-//      std::cerr << "create_new_outer_cycle " << std::endl;
-    CGAL_NEF_TRACEN( "SM_walls " << estart->source()->point() );
+    CGAL_NEF_TRACEN( "create new outer cycle " << 
+		     estart->source()->point() << " to " <<
+		     estart->twin()->source()->point());
+    CGAL_NEF_TRACEN( "double coords" << CGAL::to_double(estart->source()->point().x())
+		     << ", " << CGAL::to_double(estart->source()->point().y())
+		     << ", " << CGAL::to_double(estart->source()->point().z()) );
+    CGAL_NEF_TRACEN( "double coords" << CGAL::to_double(estart->twin()->source()->point().x())
+		     << ", " << CGAL::to_double(estart->twin()->source()->point().y())
+		     << ", " << CGAL::to_double(estart->twin()->source()->point().z()) );
+
     SM_walls SMW(&*estart->source());
 
     Sphere_segment sphere_ray(estart->point(), estart->twin()->point(), c);
@@ -161,7 +187,6 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 #else
     SMW.add_sedge_between(estart, lateral_svertex, c);
 #endif
-
 
     Ray_hit rh(sncp, pl, 3);
     Ray_3 r(lateral_svertex->source()->point(), lateral_svertex->point()-CGAL::ORIGIN);
@@ -187,8 +212,8 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 #endif
       pl->add_edge(lateral_svertex);
 
-      CGAL_NEF_TRACEN( "twins " << lateral_svertex->source()->point() 
-		       << " + " << opp->source()->point() );
+      CGAL_NEF_TRACEN( "twins " << lateral_svertex->point() 
+		       << " + " << opp->point() );
 
       sphere_ray = Sphere_segment(lateral_svertex->point().antipode(), 
 				  lateral_svertex->point(), c);
@@ -299,6 +324,8 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
  public:
   void operator()(SNC_and_PL& sncpl) {
 
+    //    CGAL_NEF_SETDTHREAD(47*227*229*233);
+
     if(!need_to_create_wall())
       return;
 
@@ -312,16 +339,16 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     //    O0.print();
 
     //    CGAL_NEF_SETDTHREAD(229);
+
     SVertex_handle target_svertex = ein->twin();
     Sphere_circle c(ein->point(), Sphere_point(dir));
-    c = normalized(c);
 
+    c = normalized(c);
     do {
       ein = target_svertex->twin(); // for subsequent runs of the loop
-      SVertex_handle svopen = create_new_outer_cycle(ein, c);
-#ifdef CGAL_NEF_INDEXED_ITEMS
+      SVertex_handle svopen = 
+	create_new_outer_cycle(ein, c);
 
-#endif
       if(ein->twin() != target_svertex) {
 	// TODO: what indexes are needed here?
 	SHalfedge_handle seopen = svopen->out_sedge();
@@ -337,6 +364,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       }
 	
     } while(ein->twin() != target_svertex);
+
   }
 };
 

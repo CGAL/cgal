@@ -12,10 +12,12 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
   
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
+  typedef typename SNC_structure::Items          Items;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
   typedef CGAL::SNC_intersection<SNC_structure>  SNC_intersection;
-  typedef CGAL::SNC_constructor<SNC_structure>   SNC_constructor;
+  typedef CGAL::SNC_constructor<Items, SNC_structure>   
+    SNC_constructor;
 
   typedef typename SNC_structure::Sphere_map     Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;  
@@ -43,7 +45,8 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
 	 sf->sface_cycles_end()) continue;
 
       SM_decorator SD(&*sf->center_vertex());
-      SFace_cycle_iterator sfci = ++sf->sface_cycles_begin();
+      SFace_cycle_iterator sfci
+	(++sf->sface_cycles_begin());
       while(sfci != sf->sface_cycles_end()) {
 	SFace_handle sf_new = SD.new_sface();
 	sf_new->mark() = sf->mark();
@@ -56,7 +59,6 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
 	sfci = ++sf->sface_cycles_begin();
       }
     }
-
   }
 };
 

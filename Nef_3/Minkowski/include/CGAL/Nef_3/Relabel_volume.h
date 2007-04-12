@@ -11,15 +11,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
+// Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
-#ifndef CGAL_NEF3_MARK_BOUNDED_VOLUMES_H
-#define CGAL_NEF3_MARK_BOUNDED_VOLUMES_H
+#ifndef CGAL_NEF3_RELABEL_VOLUME_H
+#define CGAL_NEF3_RELABEL_VOLUME_H
 
 #include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/Nef_3/Mark_bounded_volumes.h>
 
 CGAL_BEGIN_NAMESPACE
 
+/*
 template<typename Decorator, typename Mark>
 class Volume_setter {
 
@@ -47,6 +49,7 @@ public:
   void visit(SHalfloop_handle sl) {}
   void visit(SFace_handle sf) {sf->mark() = m;}
 };    
+*/
 
 template<typename Nef_3>
 class Relabel_volume : public Modifier_base<typename Nef_3::SNC_structure> { 
@@ -76,4 +79,4 @@ class Relabel_volume : public Modifier_base<typename Nef_3::SNC_structure> {
 };
 
 CGAL_END_NAMESPACE
-#endif // CGAL_NEF3_MARK_BOUNDED_VOLUMES_H
+#endif // CGAL_NEF3_RELABEL_VOLUME_H

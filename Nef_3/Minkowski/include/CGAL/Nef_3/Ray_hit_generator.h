@@ -17,10 +17,12 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
+  typedef typename SNC_structure::Items          Items;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
   typedef CGAL::SNC_intersection<SNC_structure>  SNC_intersection;
-  typedef CGAL::SNC_constructor<SNC_structure>   SNC_constructor;
+  typedef CGAL::SNC_constructor<Items, SNC_structure> 
+    SNC_constructor;
 
   typedef typename SNC_structure::Sphere_map     Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;  
@@ -65,7 +67,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Point_3 ip;
     SNC_intersection I;
-    SNC_constructor C(*sncp,pl);
+    SNC_constructor C(*sncp);
 
     Halfedge_handle e;
     if(assign(e, o)) {
@@ -137,7 +139,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Vertex_iterator vi;
     for(vi = sncp->vertices_begin(); vi != sncp->vertices_end(); ++vi) {
-      //      std::cerr << "Ray hit from " << vi->point() << std::endl;
+      std::cerr << "Ray hit from " << vi->point() << std::endl;
       SM_walls smw(&*vi);
       SVertex_handle sv1, sv2;
       if(smw.need_to_shoot(Sphere_point(dir),sv1)) {
