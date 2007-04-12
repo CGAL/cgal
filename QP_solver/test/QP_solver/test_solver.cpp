@@ -410,37 +410,15 @@ bool process(const std::string& filename,
     (inout, qp, std::string("test_io_mps"),
      Is_linear(),Is_nonnegative());
 
-  // test all four readers
-  if (qp.is_linear() && qp.is_nonnegative()) {
-    CGAL::Nonnegative_linear_program_from_mps<IT> qp2(inout);
-    CGAL_qpe_assertion (qp2.is_valid());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
-      cout << "Warning: MPS reader (NLP) and MPS writer disagree.\n" << endl;
-    }
+  // test readers
+  CGAL::Quadratic_program_from_mps<IT> qp2(inout);
+  CGAL_qpe_assertion (qp2.is_valid());
+  if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
+    cout << "Warning: MPS reader (QP) and MPS writer disagree.\n" << endl;
   }
-  if (qp.is_linear() && !qp.is_nonnegative()) {
-    CGAL::Linear_program_from_mps<IT> qp2(inout);
-    CGAL_qpe_assertion (qp2.is_valid());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
-      cout << "Warning: MPS reader (LP) and MPS writer disagree.\n" << endl;
-    }
-  }
-  if (!qp.is_linear() && !qp.is_nonnegative()) {
-    CGAL::Quadratic_program_from_mps<IT> qp2(inout);
-    CGAL_qpe_assertion (qp2.is_valid());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
-      cout << "Warning: MPS reader (QP) and MPS writer disagree.\n" << endl;
-    }
-  }
-  if (!qp.is_linear() && qp.is_nonnegative()) {
-    CGAL::Nonnegative_quadratic_program_from_mps<IT> qp2(inout);
-    CGAL_qpe_assertion (qp2.is_valid());
-    if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
-      cout << "Warning: MPS reader (NQP) and MPS writer disagree.\n" << endl;
-    }
-  }
+ 
   // now copy from the iterators, check for equality
-  CGAL::Quadratic_program_base<IT> 
+  CGAL::Quadratic_program<IT> 
     qp4 (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), qp.get_r(), 
 	 qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
 	 qp.get_d(), qp.get_c(), qp.get_c0());
@@ -485,7 +463,7 @@ bool process(const std::string& filename,
     // general form
     typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> 
       LocalTags;
-    typedef CGAL::Quadratic_program_base<IT> 
+    typedef CGAL::Quadratic_program<IT> 
       LocalQP;
     CGAL::QP_pricing_strategy<LocalQP, ET, LocalTags> *slocal = new
       CGAL::QP_full_exact_pricing <LocalQP, ET, LocalTags>();

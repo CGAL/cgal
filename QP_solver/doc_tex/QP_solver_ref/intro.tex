@@ -27,62 +27,48 @@ the solution functions below.
 
 %\ccRefIdfierPage{Quadratic_program_solution}
 
-We offer a number of predefined models for the program concepts. These
-construct linear or quadratic programs from iterators, or from streams.
-
-Here are the models that conform to the concept 
-\ccc{QuadraticProgramInterface}. 
+We offer a number of predefined models for the above program concepts.
+The following two are simultaneously models for all four concepts and
+are probably the most convenient models; they allow you to construct
+linear or quadratic programs entry by entry, or from streams in
+\ccc{MPSFormat}. At any time, you can query these programs for
+linearity and nonnegativity and thus select the appropriate 
+solution function.
 
 \ccc{Quadratic_program<NT>}\\
-$\quad$ (for quadratic programs that own their data and are built entry-wise; probably the most useful model)\\
+$\quad$ (for linear and quadratic programs that own their 
+data and are built entry-wise)\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+$\quad$ (for linear and quadratic programs read from an input stream in 
+\ccc{MPSFormat}; the constructed program can also be manipulate entry-wise)
+
+Then there are specific models for any of the four program concepts above; 
+these are useful if you want to maintain the program data yourself, and
+they simply wrap random access iterators over the program data. 
+
 \ccc{Quadratic_program_from_iterators<A_it, B_it,  R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 $\quad$ (for quadratic programs that wrap given iterators, without copying 
 data) \\
 \ccc{Quadratic_program_from_pointers<NT>}\\
 $\quad$ (for quadratic programs that wrap given pointers, without copying 
-data) \\
-\ccc{Quadratic_program_from_mps<NT>}\\
-$\quad$ (for quadratic programs read from an input stream in 
-\ccc{MPSFormat}; the constructed program can be manipulate entry-wise)
+data) 
 
-These are the models for \ccc{LinearProgramInterface}.
-
-\ccc{Linear_program<NT>}\\
-$\quad$ (for linear programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Linear_program_from_iterators<A_it, B_it,  R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
 $\quad$ (for linear programs that wrap given iterators, without copying 
 data) \\
 \ccc{Linear_program_from_pointers<NT>}\\
 $\quad$ (for linear programs that wrap given pointers, without copying 
-data) \\
-\ccc{Linear_program_from_mps<NT>}\\ 
-$\quad$ (for linear programs read from an input stream in 
-\ccc{MPSFormat}; the constructed program can be manipulate entry-wise)
+data) 
 
-For \ccc{NonnegativeQuadraticProgramInterface}, we offer these
-four models.
-
-\ccc{Nonnegative_quadratic_program<NT>}\\
-$\quad$ (for nonnegative quadratic programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it,  D_it, C_it>}\\
 $\quad$ (for nonnegative quadratic programs, wrapping given iterators)\\
 \ccc{Nonnegative_quadratic_program_from_pointers<NT>}\\
-$\quad$ (for nonnegative quadratic programs, wrapping given pointers)\\
-\ccc{Nonnegative_quadratic_program_from_mps<NT>}\\
-$\quad$ (for nonnegative quadratic programs read from an input stream in 
-\ccc{MPSFormat}; the constructed program can be manipulate entry-wise)
+$\quad$ (for nonnegative quadratic programs, wrapping given pointers)
 
-And finally, the four models for \ccc{NonnegativeLinearProgramInterface}.
-
-\ccc{Nonnegative_linear_program<NT>}\\
-$\quad$ (for nonnegative linear programs that own their data and are built entry-wise; probably the most useful model)\\
 \ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\
 $\quad$ (for nonnegative linear programs, wrapping given iterators)\\
 \ccc{Nonnegative_linear_program_from_pointers<NT>}\\
-$\quad$ (for nonnegative linear programs, wrapping given pointers)\\
-\ccc{Nonnegative_linear_program_from_mps<NT>}\\
-$\quad$ (for nonnegative linear programs read from an input stream in 
-\ccc{MPSFormat}; the constructed programt can be manipulate entry-wise)
+$\quad$ (for nonnegative linear programs, wrapping given pointers)
 
 \ccHeading{Functions}
 

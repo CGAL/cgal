@@ -38,16 +38,10 @@
 // - Quadratic_program_from_mps
 // - Nonngative_quadratic_program_from_iterators
 // - Nonengative_quadratic_program_from_pointers
-// - Nonengative_quadratic_program
-// - Nonengative_quadratic_program_from_mps
 // - Linear_program_from_iterators
 // - Linear_program_from_pointers
-// - Linear_program
-// - Linear_program_from_mps
 // - Nonngative_linear_program_from_iterators
 // - Nonengative_linear_program_from_pointers
-// - Nonengative_linear_program
-// - Nonengative_linear_program_from_mps
 
 // for convenience, every model is actually a model of the
 // concept QuadraticProgramInterface:
@@ -62,7 +56,6 @@
   typedef typename Base::D_iterator D_iterator;\
   typedef typename Base::C_iterator C_iterator;\
   typedef typename Base::C_entry C_entry
-
 CGAL_BEGIN_NAMESPACE
 
 // default iterator types to used to make linear / nonnegative models
@@ -522,13 +515,12 @@ namespace QP_model_detail {
   };
 }
 
-// Quadratic_program_base
-// ----------------------
+// Quadratic_program
+// -----------------
 // sparse representation, entries can be set one by one, overriding
-// defaults; during construction, we can provide flags that tell us
-// whether we want to set up a linear/nonnegative program
+// defaults;
 template <typename NT_>
-class Quadratic_program_base 
+class Quadratic_program
 {
 public:
   typedef NT_ NT;
@@ -572,10 +564,6 @@ private:
   // absolutely needed; we also maintain the invariants that
   // a_matrix and d_matrix always have n_ elements
 
-  // type settings
-  bool                                 linear_;
-  bool                                 nonnegative_;
-
   int                                  n_; 
   int                                  m_;
   Sparse_matrix                        a_matrix;
@@ -596,9 +584,9 @@ private:
   bool                                 default_fu;  // false
   NT                                   default_u;   // dummy
 protected: 
-  mutable bool                         is_valid_;
+  bool                                 is_valid_;
 private:
-  mutable std::string                  error_msg;
+  std::string                          error_msg;
 
   // methods
   // enlarges a_matrix, d_matrix to size s, under the
@@ -690,27 +678,18 @@ public:
 
   bool is_valid() const
   {
-    if (is_valid_) {
-      // check for type validity
-      if (linear_ && !is_linear()) 
-	err ("program is not linear");
-      if (nonnegative_ && !is_nonnegative()) 
-	err ("program is not nonnegative");
-    }
     return is_valid_;
   }
 
   const std::string& get_error() const
   {
-    CGAL_qpe_assertion(!is_valid_);
+    CGAL_qpe_assertion(!is_valid());
     return error_msg;
   }
 
   // default constructor
-  Quadratic_program_base (bool linear, 
-			  bool nonnegative,
-			  CGAL::Comparison_result relation = CGAL::EQUAL) 
-    : linear_(linear), nonnegative_(nonnegative), n_(0), m_(0), c0_(0), 
+  Quadratic_program (CGAL::Comparison_result relation = CGAL::EQUAL) 
+    : n_(0), m_(0), c0_(0), 
       default_r(relation), default_fl(true),
       default_l(0), default_fu(false), default_u(0), is_valid_(true) 
   {}
@@ -718,7 +697,7 @@ public:
   template <typename A_it, typename B_it, typename R_it, typename FL_it, 
 	    typename L_it, typename FU_it, typename U_it, typename D_it, 
 	    typename C_it>
-  Quadratic_program_base
+  Quadratic_program
   (
    int n, int m, // number of variables / constraints
    const A_it& a, 
@@ -731,7 +710,7 @@ public:
    const D_it& d,
    const C_it& c,
    const typename std::iterator_traits<C_it>::value_type& c0 = 0) 
-    : linear_(false), nonnegative_(false), n_(0), m_(0), c0_(0), 
+    : n_(0), m_(0), c0_(0), 
       default_r(CGAL::EQUAL), default_fl(true),
       default_l(0), default_fu(false), default_u(0), is_valid_(true)
   {
@@ -810,7 +789,6 @@ public:
 
   void set_l (int j, bool is_finite, const NT& val = NT(0))
   {   
-    CGAL_qpe_assertion(!nonnegative_);
     CGAL_qpe_assertion (j >= 0);  
     if (j >= n_) {
       n_ = j+1; 
@@ -828,7 +806,6 @@ public:
   
   void set_u (int j, bool is_finite, const NT& val = NT(0))
   { 
-    CGAL_qpe_assertion(!nonnegative_);
     CGAL_qpe_assertion (j >= 0); 
     if (j >= n_) {
       n_ = j+1; 
@@ -864,7 +841,6 @@ public:
 
   void set_d (int i, int j, const NT& val) 
   { 
-    CGAL_qpe_assertion(!linear_);   
     CGAL_qpe_assertion (i >= 0);    
     CGAL_qpe_assertion (j >= 0);
     CGAL_qpe_assertion (j <= i); // lower-diagonal entry  
@@ -890,14 +866,14 @@ protected:
     return result;
   }
 
-  bool err(const char* msg) const {
+  bool err(const char* msg) {
     error_msg = msg;
     is_valid_ = false;
     return false;
   }
 
   bool err1(const char* msg,
-	    const std::string& parameter1)  const {
+	    const std::string& parameter1) {
     error_msg = replace1(msg,parameter1);
     is_valid_ = false;
     return false;
@@ -905,7 +881,7 @@ protected:
 
   bool err2(const char* msg,
 	    const std::string& parameter1,
-	    const std::string& parameter2)  const {
+	    const std::string& parameter2) {
     error_msg = replace1(replace1(msg,parameter1),parameter2);
     is_valid_ = false;
     return false;
@@ -914,36 +890,36 @@ protected:
   bool err3(const char* msg,
 	    const std::string& parameter1,
 	    const std::string& parameter2,
-	    const std::string& parameter3) const {
+	    const std::string& parameter3) {
     error_msg = 
     replace1(replace1(replace1(msg,parameter1),parameter2),parameter3);
     is_valid_ = false;
     return false;
   }
 
-  void warn(const std::string& msg) {
+  void warn(const std::string& msg) const {
     std::cerr << "Warning: " << msg << '.' << std::endl;
   }
 
-  void warn1(const std::string& msg,const std::string& parameter1) {
+  void warn1(const std::string& msg,const std::string& parameter1) const {
     warn(replace1(msg,parameter1));
   }
 
 
 };
 
-// Quadratic_program_from_mps_base
-// -------------------------------
+// Quadratic_program_from_mps
+// --------------------------
 // for reading a QP from a stream in MPS format
 
 template <typename NT_>
-class Quadratic_program_from_mps_base : 
-  public Quadratic_program_base<NT_> 
+class Quadratic_program_from_mps : 
+  public Quadratic_program<NT_> 
 {
 public:
   typedef NT_ NT;
 private:
-  typedef Quadratic_program_base<NT> Base;
+  typedef Quadratic_program<NT> Base;
 public:
   QP_MODEL_ITERATOR_TYPES;
 private:
@@ -952,9 +928,9 @@ private:
   typedef std::pair<std::string,unsigned int> String_int_pair;
 public:
   // constructor
-  Quadratic_program_from_mps_base 
-  (std::istream& in, bool linear, bool nonnegative)
-    : Base(linear, nonnegative), from(in), nt0(0), use_put_back_token(false)
+  Quadratic_program_from_mps 
+  (std::istream& in)
+    : Base(), from(in), nt0(0), use_put_back_token(false)
   {
     // read NAME section:
     if (!name_section())
@@ -990,6 +966,9 @@ public:
       this->err1("ENDDATA expected but found '%'",end);
       return;
     }
+
+    // remember the number of variables that we have now
+    n_after_construction = this->get_n();
   }
 
   // returns the first comment that was read from the MPS stream
@@ -1006,8 +985,8 @@ public:
 
   const std::string& get_name_of_variable(int i)
   {
-    CGAL_qpe_assertion(this->is_valid_);
-    CGAL_qpe_assertion(0<=i && i<this->get_n());
+    CGAL_qpe_assertion(this->is_valid());
+    CGAL_qpe_assertion(0<=i && i<n_after_construction);
     return var_by_index[i];
   } 
 private:
@@ -1020,6 +999,7 @@ private:
   std::string name;      // name of the problem
   std::string comment_;  // first comment in the input, if any
   std::string obj;       // name of the objective "constraint"
+  int n_after_construction;
 
   Index_map row_names;
   Index_map duplicated_row_names; // to handle RANGES section
@@ -1569,145 +1549,6 @@ private:
     return true;
   }
   
-};
-
-// Quadratic_program
-// -----------------
-template <typename NT_>
-class Quadratic_program: 
-  public Quadratic_program_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Quadratic_program (CGAL::Comparison_result default_r = CGAL::EQUAL)
-    : Base (false, false, default_r)
-  {}
-};
-
-// Nonnegative_quadratic_program
-// -----------------------------
-template <typename NT_>
-class Nonnegative_quadratic_program: 
-  public Quadratic_program_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Nonnegative_quadratic_program 
-  (CGAL::Comparison_result default_r = CGAL::EQUAL)
-    : Base (false, true, default_r)
-  {}
-};
-
-// Nonnegative_linear_program
-// --------------------------
-template <typename NT_>
-class Nonnegative_linear_program: 
-  public Quadratic_program_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Nonnegative_linear_program 
-  (CGAL::Comparison_result default_r = CGAL::EQUAL)
-    : Base (true, true, default_r)
-  {}
-};
-
-// Linear_program
-// --------------
-template <typename NT_>
-class Linear_program: 
-  public Quadratic_program_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Linear_program 
-  (CGAL::Comparison_result default_r = CGAL::EQUAL)
-    : Base (true, false, default_r)
-  {}
-};
-
-// Quadratic_program_from_mps
-// --------------------------
-template <typename NT_>
-class Quadratic_program_from_mps: 
-  public Quadratic_program_from_mps_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_from_mps_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Quadratic_program_from_mps (std::istream& in)
-    : Base (in, false, false)
-  {}
-};
-
-// Nonnegative_quadratic_program_from_mps
-// --------------------------------------
-template <typename NT_>
-class Nonnegative_quadratic_program_from_mps: 
-  public Quadratic_program_from_mps_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_from_mps_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Nonnegative_quadratic_program_from_mps (std::istream& in)
-    : Base (in, false, true)
-  {}
-};
-
-// Nonnegative_linear_program_from_mps
-// -----------------------------------
-template <typename NT_>
-class Nonnegative_linear_program_from_mps: 
-  public Quadratic_program_from_mps_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_from_mps_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Nonnegative_linear_program_from_mps (std::istream& in)
-    : Base (in, true, true)
-  {}
-};
-
-// Linear_program_from_mps
-// -----------------------
-template <typename NT_>
-class Linear_program_from_mps: 
-  public Quadratic_program_from_mps_base<NT_>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_from_mps_base<NT> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Linear_program_from_mps (std::istream& in)
-    : Base (in, true, false)
-  {}
 };
 
 CGAL_END_NAMESPACE
