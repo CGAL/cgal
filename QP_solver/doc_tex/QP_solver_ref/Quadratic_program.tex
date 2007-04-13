@@ -52,13 +52,22 @@ the model \ccc{Quadratic_program_from_mps<NT>}.
 \ccCreationVariable{qp}
 
 \ccConstructor{
-  Quadratic_program(CGAL::Comparison_result default_r = CGAL::EQUAL);}
+  Quadratic_program
+  (CGAL::Comparison_result default_r = CGAL::EQUAL,
+   bool default_fl = true,
+   const NT& default_l = 0,
+   bool default_fu = false,
+   const NT& default_u = 0);}
 {constructs a quadratic program with no variables and no constraints, ready
-for data to be added. Unless
-bounds are explicitly set using one of the methods below, bounds will be
-$x\geq 0$. Unless relations are explicitly set, relations will be of type
-\ccc{default_r}. Numerical entries that are not explicitly set will
-default to $0$.}
+for data to be added.  Unless relations are explicitly set, they will 
+be of type \ccc{default_r}. Unless bounds are explicitly set, they
+will be as specified by \ccc{default_fl} (finite lower bound?), 
+\ccc{default_l} (lower bound value if lower bound is finite),
+\ccc{default_fu} (finite upper bound?), and
+\ccc{default_l} (upper bound value if upper bound is finite). If all
+parameters take their default values, we thus get equality constraints 
+and bounds $x\geq 0$ by default. Numerical entries that are not 
+explicitly set will default to $0$.}
 
 \ccOperations
 
@@ -96,9 +105,10 @@ of \ccVar\ to \ccc{val}. An existing entry is overwritten.
 \ccMethod{void set_c0 (const NT& val);}{sets the entry $c_0$
 of \ccVar\ to \ccc{val}. An existing entry is overwritten.}
 
-\ccMethod{void set_d (int i, int j, const NT& val);}{sets the entry 
-$2D_{ij}$ of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
+\ccMethod{void set_d (int i, int j, const NT& val);}{sets the entries 
+$2D_{ij}$ and $2D_{ji}$ of \ccVar\ to \ccc{val}. Existing entries are 
+overwritten. \ccVar\ is enlarged if necessary to accomodate these entries.
+\ccPrecond \ccc{j <= i}}
 
 
 \ccSeeAlso

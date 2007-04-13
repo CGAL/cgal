@@ -643,7 +643,7 @@ public:
   FL_iterator get_fl() const  
   { 
     CGAL_qpe_assertion(is_valid());
-    return FL_iterator (&fl_vector, default_fl); // default bound: >= 0
+    return FL_iterator (&fl_vector, default_fl); 
   }
   L_iterator get_l() const    
   { 
@@ -688,10 +688,16 @@ public:
   }
 
   // default constructor
-  Quadratic_program (CGAL::Comparison_result relation = CGAL::EQUAL) 
+  Quadratic_program 
+  (CGAL::Comparison_result relation = CGAL::EQUAL,
+   bool finite_lower = true,
+   NT lower = 0,
+   bool finite_upper = false,
+   NT upper = 0) 
     : n_(0), m_(0), c0_(0), 
-      default_r(relation), default_fl(true),
-      default_l(0), default_fu(false), default_u(0), is_valid_(true) 
+      default_r(relation), default_fl(finite_lower),
+      default_l(lower), default_fu(finite_upper), 
+      default_u(upper), is_valid_(true) 
   {}
   // constructor from iterators
   template <typename A_it, typename B_it, typename R_it, typename FL_it, 
@@ -741,14 +747,62 @@ public:
     return true;
   }
 
+private:
+  // helpers to determine bound status
+  // checks whether all bounds in flu are as given by the parameter "finite"
+  // default_flu is the default-value of the underlying map that is not 
+  // stored
+  bool all_bounds_are
+  (bool finite, const Sparse_f_vector& flu, bool default_flu) const
+  {
+    if (finite == default_flu)
+      return flu.empty();
+    else
+      // are there exactly n non-default values "finite"?
+      return flu.size() == (unsigned int)(n_);
+  }
+
+  bool all_bounds_are_zero 
+  // checks whether all bounds in lu are 0. default_lu is the default-value 
+  // of the underlying map that is not stored
+  (const Sparse_vector& lu, const NT& default_lu) const
+  {
+    if (CGAL::is_zero(default_lu))
+      return lu.empty();
+    else {
+      // are there exactly n non-default values?
+      if (lu.size() != (unsigned int)(n_)) return false;
+      // ok, we have to test each of the non-default values against zero
+      for (typename Sparse_vector::const_iterator 
+	     j = lu.begin(); j != lu.end(); ++j)
+	if (!CGAL::is_zero(j->second)) return false;
+      return true;
+    }
+  }
+  
+public:
+
   bool is_nonnegative() const
   {
-    CGAL_qpe_assertion(default_fl);
-    CGAL_qpe_assertion(CGAL::is_zero(default_l)); 
-    CGAL_qpe_assertion(!default_fu);
-    // bounds must be at their defaults:  
-    //             >=                   0                  inf
-    return (fl_vector.empty() && l_vector.empty() && fu_vector.empty());
+    return 
+      all_bounds_are (true, fl_vector, default_fl) &&
+      all_bounds_are_zero (l_vector, default_l) &&
+      all_bounds_are (false, fu_vector, default_fu);
+  }
+
+  bool is_nonpositive() const
+  {
+     return 
+      all_bounds_are (false, fl_vector, default_fl) &&
+      all_bounds_are_zero (u_vector, default_u) &&
+      all_bounds_are (true, fu_vector, default_fu);
+  }
+
+  bool is_free() const
+  {
+    return 
+      all_bounds_are (false, fl_vector, default_fl) &&
+      all_bounds_are (false, fu_vector, default_fu);
   }
 
   // set methods

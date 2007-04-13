@@ -1871,7 +1871,7 @@ QP_solver/examples/QP_solver/unboundedness_certificate.cpp -text
 QP_solver/maintainer -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/debug_bug.cpp -text
-QP_solver/test/QP_solver/test_empty_qp.cpp -text
+QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
 Qt_widget/demo/Qt_widget/hellosegment.vcproj eol=crlf
