@@ -330,7 +330,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     if (_known)
         return _result;
     _known = true;
-    if (!do_intersect(*_seg1, *_seg2, K())) {
+    if (!CGALi::do_intersect(*_seg1, *_seg2, K())) {
         _result = NO_INTERSECTION;
         return _result;
     }
