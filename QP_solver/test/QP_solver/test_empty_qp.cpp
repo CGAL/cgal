@@ -22,7 +22,7 @@ int main()
   CGAL::Quadratic_program_solution<ET> s = 
     CGAL::solve_quadratic_program (qp, ET());
   
-  std::cout << "Solution = " << s.solution() << std::endl;
+  std::cout << "Solution = " << s.objective_value() << std::endl;
   std::cout << "Status   = " << s.status() << std::endl;
 
   return 0;
