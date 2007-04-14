@@ -1,3 +1,6 @@
+// example: construct a nonnegative quadratic program from data
+// the QP below is the first nonnegative quadratic program example 
+// in the user manual
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
@@ -28,7 +31,7 @@ int main() {
   qp.set_c0(64);                                          // +64
 
   // solve the program, using ET as the exact type
-  Solution s = CGAL::solve_quadratic_program(qp, ET());
+  Solution s = CGAL::solve_nonnegative_quadratic_program(qp, ET());
 
   // output solution
   if (s.is_optimal()) { // we know that, don't we?

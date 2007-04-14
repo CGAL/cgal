@@ -1,3 +1,6 @@
+// example: construct a nonnegative linear program from data
+// the LP below is the first nonnegative linear program example 
+// in the user manual
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
@@ -17,7 +20,7 @@ typedef CGAL::Quadratic_program<int> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
-  // by default, we have a nonnegative QP with Ax <= b
+  // by default, we have a nonnegative LP with Ax <= b
   Program lp (CGAL::SMALLER, true, 0, false, 0); 
   
   // now set the non-default entries: 0 <-> x, 1 <-> y
@@ -26,7 +29,7 @@ int main() {
   lp.set_c(1, -32);                                       // -32y
 
   // solve the program, using ET as the exact type
-  Solution s = CGAL::solve_quadratic_program(lp, ET());
+  Solution s = CGAL::solve_nonnegative_linear_program(lp, ET());
 
   // output solution
   if (s.is_optimal()) { // we know that, don't we?

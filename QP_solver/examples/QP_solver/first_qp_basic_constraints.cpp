@@ -1,4 +1,4 @@
-// example: construct a quadratic program from data
+// example: output basic constraint indices 
 // the QP below is the first quadratic program example in the user manual
 #include <iostream>
 #include <CGAL/basic.h>
@@ -33,14 +33,13 @@ int main() {
   // solve the program, using ET as the exact type
   Solution s = CGAL::solve_quadratic_program(qp, ET());
 
-  // output solution
+  // print basic constraint indices (we know that there is only one: 1)
   if (s.is_optimal()) { // we know that, don't we?
-    std::cout << "Optimal feasible solution: ";
-    for (Solution::Variable_value_iterator it = s.variable_values_begin();
-	 it != s.variable_values_end(); ++it)
+    std::cout << "Basic constraints: ";
+    for (Solution::Index_iterator it = s.basic_constraint_indices_begin();
+	 it != s.basic_constraint_indices_end(); ++it)
       std::cout << *it << "  ";
-    std::cout << std::endl << "Optimal objective function value: "
-	      << s.objective_value() << std::endl;
+    std::cout << std::endl;
   }
 
   return 0;

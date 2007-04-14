@@ -1,4 +1,5 @@
-// function to check whether a point is in the convex hull of other points
+// example: function to check whether a point is in the convex 
+// hull of other points; this version uses a maker
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/QP_models.h>

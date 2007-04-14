@@ -91,6 +91,9 @@ program are returned by any of the four functions
 \ccc{solve_nonnegative_quadratic_program}, and
 \ccc{solve_nonnegative_linear_program}. 
 
+\ccExample
+\ccReferToExampleCode{QP_solver/first_qp.cpp}
+
 \ccOperations
 
 \ccMethod{bool is_void() const;}{returns \ccc{true} iff \ccVar\ is not
@@ -184,6 +187,9 @@ basic.}
 \ccMethod{int number_of_basic_constraints() const;}
 {returns the number of basic constraint, equivalently the length
 of the range determined by the previous two iterators.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/first_qp_basic_constraints.cpp}
 
 \begin{ccAdvanced}
 \ccHeading{Certificates}

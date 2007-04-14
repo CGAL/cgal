@@ -1868,10 +1868,12 @@ QP_solver/examples/QP_solver/first_nonnegative_qp.mps -text
 QP_solver/examples/QP_solver/first_nonnegative_qp_from_mps.cpp -text
 QP_solver/examples/QP_solver/first_qp.cpp -text
 QP_solver/examples/QP_solver/first_qp.mps -text
+QP_solver/examples/QP_solver/first_qp_basic_constraints.cpp -text
 QP_solver/examples/QP_solver/first_qp_from_mps.cpp -text
 QP_solver/examples/QP_solver/infeasibility_certificate.cpp -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
+QP_solver/examples/QP_solver/invert_matrix.cpp -text
 QP_solver/examples/QP_solver/optimality_certificate.cpp -text
 QP_solver/examples/QP_solver/print_first_lp.cpp -text
 QP_solver/examples/QP_solver/print_first_nonnegative_lp.cpp -text

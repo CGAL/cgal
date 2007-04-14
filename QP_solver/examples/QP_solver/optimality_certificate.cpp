@@ -1,3 +1,4 @@
+// example: extracting and verifying a proof of optimality from the solution
 #include <cassert>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
@@ -13,7 +14,12 @@ typedef CGAL::Gmpz ET;
 #endif
 
 // program and solution types
-typedef CGAL::Nonnegative_linear_program_from_pointers<int> Program;
+typedef CGAL::Nonnegative_linear_program_from_iterators
+<int**,                                                // for A
+ int*,                                                 // for b
+ CGAL::Comparison_result*,                             // for r
+ int*>                                                 // for c 
+Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 // we demonstrate the optimality certificate: if the
