@@ -394,7 +394,7 @@ private:
   Values                   w;         // w = 2D_{O, N_O}x_{N_O}
     
   int                      m_phase;   // phase of the Simplex method
-  QP_status                   m_status;  // status of last pivot step
+  Quadratic_program_status                   m_status;  // status of last pivot step
   int                      m_pivots;  // number of pivot steps
     
   bool                     is_phaseI; // flag indicating phase I
@@ -533,14 +533,14 @@ private:
   // operations
   // ----------
   // pivot step
-  QP_status  pivot( )
+  Quadratic_program_status  pivot( )
   { CGAL_qpe_assertion( phase() > 0);
   CGAL_qpe_assertion( phase() < 3);
   pivot_step();
   return status(); }
 
   // solve QP
-  QP_status  solve( )
+  Quadratic_program_status  solve( )
   { CGAL_qpe_assertion( phase() > 0);
   while ( phase() < 3) { pivot_step(); }
   return status(); }
@@ -572,7 +572,7 @@ public:
 
   // access to current status
   int     phase     ( ) const { return m_phase;  }
-  QP_status  status    ( ) const { return m_status; }
+  Quadratic_program_status  status    ( ) const { return m_status; }
   int     iterations( ) const { return m_pivots; }
     
   // access to common denominator

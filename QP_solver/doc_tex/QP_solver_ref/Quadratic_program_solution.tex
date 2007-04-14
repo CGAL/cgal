@@ -46,9 +46,6 @@ has a 'solution' in form of an object of the class \ccRefName.
 \ccNestedType{ET}{The exact number type that was used to solve the 
 program.}
 
-\ccNestedType{QP_status}{An enumeration type containing the values
-\ccc{QP_OPTIMAL}, \ccc{QP_INFEASIBLE}, and \ccc{QP_UNBOUNDED}.}
-
 \ccNestedType{Variable_value_iterator}{An iterator type with value type 
 \ccc{Quotient<ET>} to go over the values of the variables in the solution.} 
 
@@ -112,7 +109,8 @@ associated program is infeasible.}
 \ccMethod{bool is_unbounded() const;}{returns \ccc{true} iff the 
 associated program is unbounded.}
 
-\ccMethod{QP_status status() const;}{returns the status of the solution;
+\ccMethod{Quadratic_program_status status() const;}
+{returns the status of the solution;
 this is one of the values \ccc{QP_OPTIMAL}, \ccc{QP_INFEASIBLE}, and 
 \ccc{QP_UNBOUNDED}, depending on whether the quadratic program asociated
 to \ccVar\ has an optimal solution, is infeasible, or is unbounded.}

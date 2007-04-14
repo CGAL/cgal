@@ -52,7 +52,7 @@ namespace QP_solution_detail {
 }
 
 // global status type
-enum QP_status { QP_UPDATE, QP_INFEASIBLE, QP_UNBOUNDED, QP_OPTIMAL };
+enum Quadratic_program_status { QP_UPDATE, QP_INFEASIBLE, QP_UNBOUNDED, QP_OPTIMAL };
 
 // abstract base class of all QP-solvers
 // -------------------------------------
@@ -124,7 +124,7 @@ public:
   virtual Quotient<ET> solution() const = 0;
   virtual ET solution_numerator() const = 0;
   virtual ET solution_denominator() const = 0;
-  virtual QP_status status() const = 0;
+  virtual Quadratic_program_status status() const = 0;
 
   // Variable values
   // ---------------
@@ -254,7 +254,7 @@ public:
     return (*(this->Ptr()))->solution_denominator();
   }
 
-  QP_status status() const
+  Quadratic_program_status status() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return (*(this->Ptr()))->status();
