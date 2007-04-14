@@ -493,6 +493,15 @@ $x$-monotone circular arcs or line segments, using similar constructors.
 Construction from a full circle is obviously not supported. See the Reference
 Manual for more details.
 
+The traits class-template
+\ccc{Arr_circular_line_arc_traits_2<CircularKernel>} offered by the
+arrangement package also handles circular arcs and line segments. It
+is an alternative to the \ccc{Arr_circle_segment_traits_2<Kernel>}
+class-template. These two class templates, while serve similar
+purposes, are based on different concepts, and posses different
+characteristics. You are encouraged to experiment with both, compare
+their performance, and use the most suitable for your case.
+
 \subsection{A Traits Class for Conic Arcs\label{arr_ssec:tr_conic}}
 %-----------------------------------------
 
@@ -589,7 +598,7 @@ derived from \ccc{AlgKernel::Point_2}, while the \ccc{Curve_2}
 type represents a bounded, not necessarily $x$-monotone, conic arc.
 The \ccc{X_monotone_curve_2} type is derived from \ccc{Curve_2},
 but its constructors are to be used only by the traits class.
-Users should therefore construct only \ccc{Curve_2} objects and
+You should therefore construct only \ccc{Curve_2} objects and
 insert them into the arrangement using the \ccc{insert_curve()}
 or \ccc{insert_curves()} functions.
 
@@ -818,7 +827,7 @@ Figure~\ref{arr_fig:ex_bez}.
 \subsection{Traits-Class Decorators\label{arr_ssec:meta_tr}}
 %-----------------------------------
 
-Geometric traits-class decorators allow users to attach auxiliary
+Geometric traits-class decorators allow you to attach auxiliary
 data to curves and to points. The data is automatically manipulated 
 by the decorators and distributed to the constructed geometric entities. 
 Note that additional information can alternatively be maintained by extending 
@@ -849,8 +858,8 @@ segment-traits class for example). The extended curve types support the
 additional methods \ccc{data()} and \ccc{set_data()} for
 accessing and modifying the data field.
 
-Users can create an extended curve (or an extended $x$-monotone
-curve) from a basic curve and a curve-data object. When curves are
+You can create an extended curve (or an extended $x$-monotone curve)
+from a basic curve and a curve-data object. When curves are
 inserted into an arrangement, they may be split, and the
 decorator handles their data fields automatically:
 \begin{itemize}
