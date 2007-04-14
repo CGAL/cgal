@@ -82,6 +82,15 @@ inline bool operator==(const Triple<T1, T2, T3>& x,
 }
 
 template <class T1, class T2, class T3>
+inline bool operator!=(const Triple<T1, T2, T3>& x,
+                       const Triple<T1, T2, T3>& y)
+{
+  return ( (x.first != y.first) ||
+           (x.second != y.second) ||
+           (x.third != y.third) );
+}
+
+template <class T1, class T2, class T3>
 inline
 bool operator<(const Triple<T1, T2, T3>& x,
                const Triple<T1, T2, T3>& y)
