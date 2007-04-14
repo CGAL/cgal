@@ -14,7 +14,7 @@ bool is_in_convex_hull (const Point_d& p,
 {
   CGAL::Quadratic_program_solution<CGAL::MP_Float> s =
     solve_convex_hull_containment_lp (p, begin, end, CGAL::MP_Float());
-  return s.status() != CGAL::QP_INFEASIBLE;
+  return !s.is_infeasible();
 }
 
 int main()
