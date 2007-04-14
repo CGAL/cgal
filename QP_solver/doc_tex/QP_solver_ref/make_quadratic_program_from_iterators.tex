@@ -8,15 +8,15 @@ iterators are too complicated (or of too little interest for you)
 to write them down explicitly.
 
 \ccFunction{template <
-  typename A_it,   
-  typename B_it,   
-  typename R_it,   
-  typename FL_it,  
-  typename L_it,   
-  typename FU_it, 
-  typename U_it,   
-  typename D_it,  
-  typename C_it >  
+   A_it,   
+   B_it,   
+   R_it,   
+   FL_it,  
+   L_it,   
+   FU_it, 
+   U_it,   
+   D_it,  
+   C_it >  
 Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>
 make_quadratic_program_from_iterators (
    int n, int m, 
@@ -29,9 +29,16 @@ make_quadratic_program_from_iterators (
    const U_it& u, 
    const D_it& d, 
    const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0 = 
-   typename std::iterator_traits<C_it>::value_type(0));}
+   std::iterator_traits<C_it>::value_type c0 = 
+   std::iterator_traits<C_it>::value_type(0));}
 {returns an instance of \ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}, constructed from the given iterators.}
+
+\ccExample
+The following example demonstrates the typical usage of makers
+with the simpler function \ccc{make_nonnegative_linear_program_from_iterators}.
+
+\ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp2.h}
+
 
 \ccSeeAlso
 \ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}

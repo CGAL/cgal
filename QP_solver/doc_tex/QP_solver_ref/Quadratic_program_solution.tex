@@ -20,6 +20,9 @@ the four functions
 \ccc{solve_nonnegative_quadratic_program}, and
 \ccc{solve_nonnegative_linear_program}. 
 
+\ccExample
+\ccReferToExampleCode{QP_solver/first_qp.cpp}
+
 \ccHeading{Terminology}
 If there is no $x$ that satisfies all the (in)equalities,
 the program is called \emph{infeasible}, otherwise, it is \emph{feasible},
@@ -165,6 +168,9 @@ variables have value $0$.}
 {returns the number of basic variables, equivalently the length
 of the range determined by the previous two iterators.}
 
+\ccExample
+\ccReferToExampleCode{QP_solver/important_variables.cpp}
+
 \ccMethod{Index_iterator basic_constraint_indices_begin() const;}
 {returns a random access iterator over the indices of the basic
 constraints in the system $Ax\qprel b$. The value type is \ccc{int}. 
@@ -179,6 +185,7 @@ basic.}
 {returns the number of basic constraint, equivalently the length
 of the range determined by the previous two iterators.}
 
+\begin{ccAdvanced}
 \ccHeading{Certificates}
 
 A certificate is a vector that admits a simple proof for the 
@@ -200,7 +207,6 @@ then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
 \end{array}\]
 \end{enumerate}
 
-\begin{ccAdvanced}
 {\bf Proof:} Let $x$ be any feasible solution. We need to prove that
 \[c^Tx + x^TDx \geq c^Tx^* + {x^*}^TDx^*.\]
 
@@ -224,7 +230,7 @@ c^Tx + x^TDx - (x-x^*)^TD(x-x^*) \geq c^Tx^* + {x^*}^TDx^*,
 \] 
 and since $D$ is positive semidefinite, we have
 $(x-x^*)^TD(x-x^*)\geq 0$ and the lemma follows.
-\end{ccAdvanced}
+
 
 \ccMethod{Optimality_certificate_iterator 
 optimality_certifcate_begin() const;}
@@ -253,6 +259,9 @@ is \ccc{ET}, and the valid iterator range has length $m$.}
 {returns the common denominator of the certificate values 
 $\lambda$ as referred to by the previous two methods.}
 
+\ccExample
+\ccReferToExampleCode{QP_solver/optimality_certificate.cpp}
+
 {\bf Lemma 2 (infeasibility certificate):} The program (QP) is
 infeasible if an $m$-vector $\lambda$ with the
 following properties exist.
@@ -271,7 +280,6 @@ then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
 \quad+\quad  \sum_{j: \lambda^TA_j >0} \lambda^TA_j l_j.\]
 \end{enumerate}
 
-\begin{ccAdvanced}
 {\bf Proof:} Let us assume for the purpose of obtaining a contradiction
 that there is a feasible solution $x$. Then we get
 \[
@@ -286,7 +294,7 @@ that there is a feasible solution $x$. Then we get
 \end{array}
 \]
 and this is the desired contradiction $0>0$.
-\end{ccAdvanced}
+
 
 \ccMethod{Infeasibility_certificate_iterator 
   infeasibility_certificate_begin() const;}
@@ -298,6 +306,9 @@ is \ccc{ET}, and the valid iterator range has length $m$.
 \ccMethod{Infeasibility_certificate_iterator 
   infeasibility_certificate_end() const;}
 {returns the corresponding past-the-end iterator.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/infeasibility_certificate.cpp}
 
 {\bf Lemma 3 (unboundedness certificate:)} Let $x^*$ be a feasible
 solution of (QP). The program (QP) is unbounded if an $n$-vector 
@@ -318,7 +329,6 @@ w_j &\quad  \\
 
 The vector $w$ is called an \emph{unbounded direction}.
 
-\begin{ccAdvanced}
 {\bf Proof:} For a real number $t$, consider the vector $x(t):=x^*+tw$. By 1.
 and 2., $x(t)$ is feasible for all $t\geq 0$. The objective function value
 of $x(t)$ is
@@ -329,7 +339,6 @@ c^Tx^* + tc^Tw + {x^*}^TDx^* +  2t{x^*}^TDw + t^2 w^TDw  \\
 \end{eqnarray*}
 By condition 3., this tends to $-\infty$ for $t\rightarrow\infty$, so
 the problem is indeed unbounded. 
-\end{ccAdvanced}
 
 \ccMethod{Unboundedness_certificate_iterator 
 unboundedness_certificate_begin() const;}
@@ -342,6 +351,10 @@ is \ccc{ET}, and the valid iterator range has length $n$.
 \ccMethod{Unboundedness_certificate_iterator 
 unboundedness_certificate_end();}
 {returns the corresponding past-the-end iterator.}
+\ccExample
+\ccReferToExampleCode{QP_solver/unboundedness_certificate.cpp}
+
+\end{ccAdvanced}
 
 \ccSeeAlso
 

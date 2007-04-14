@@ -29,9 +29,16 @@ $x$,
 \item $c_0$ is a constant.
 \end{itemize}
 
-This class is simply a wrapper for existing iterators, and it does not
-copy the program data (if you need a copy, you may use the class 
-\ccc{Quadratic_program<NT>}).
+This class is simply a wrapper for existing iterators over these program
+data, and it does not copy the program data (if you need a copy, you may 
+use the class \ccc{Quadratic_program<NT>}). 
+
+It frequently happens that all values in one of the vectors from
+above are the same, for example if the system $Ax\qprel b$ is 
+actually a system of equations $Ax=b$. To get an iterator over such a 
+vector, it is not necessary to store multiple copies of the value in
+some container; an instance of the class \ccc{Const_oneset_iterator<T>},
+constructed from the value in question, does the job more efficiently.
 
 \ccIsModel
 \ccc{QuadraticProgramInterface}
@@ -52,11 +59,23 @@ copy the program data (if you need a copy, you may use the class
   const D_it& d,
   const C_it& c,
   const std::iterator_traits<C_it>value_type& c0 = 0
-  )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. }
+  )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the quadratic program is
+described in \ccc{QuadraticProgramInterface}.}
+
+\ccExample
+
+\ccReferToExampleCode{QP_solver/first_qp_from_iterators.cpp}
+
+The following example for the simpler model
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
+should give you a flavor of the use of this 
+model in practice.
+
+\ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp.h}
 
 \ccSeeAlso
+\ccc{QuadraticProgramInterface}
 \ccc{Quadratic_program<NT>}\\
-\ccc{Quadratic_program_from_pointers<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}
 
 \end{ccRefClass}

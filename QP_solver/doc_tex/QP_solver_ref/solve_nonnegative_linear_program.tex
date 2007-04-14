@@ -7,7 +7,7 @@ Integral Domain \ccc{ET} for its computations.
 
 \ccFunction{template <NonnegativeLinearProgramInterface, ET>
   Quadratic_program_solution<ET> solve_nonnegative_linear_program 
-  (const NonegativeLinearProgramInterface& lp, const ET&);}
+  (const NonnegativeLinearProgramInterface& lp, const ET&);}
 {returns the solution of the nonnegative linear program \ccc{lp}, solved
 with exact number type \ccc{ET}.}
 
@@ -17,18 +17,30 @@ with exact number type \ccc{ET}.}
 be an exact type, and all entries of \ccc{lp} are convertible to 
 \ccc{ET}.
 
+Here are some recommended combinations of input type (the type of
+the \ccc{lp} entries) and \ccc{ET}.
+
+\begin{tabular}{lll} 
+input type        &| &  \ccc{ET} \\ \hline
+\ccc{double}      &| & \ccc{MP_Float}, \ccc{Gmpzf}, or \ccc{Gmpq} \\
+\ccc{int}         &| & \ccc{MP_Float}, or \ccc{Gmpz} \\
+any exact type \ccc{NT} &|&  \ccc{NT}
+\end{tabular}
+ 
 {\bf Note:} by default, this function performs a large number of 
 runtime-checks to ensure consistency during the solution process.
 However, these checks slow down the computations by a considerable
 factor. For maximum efficiency, it is advisable to define the macros
 \texttt{CGAL\_QP\_NO\_ASSERTIONS} or \texttt{NDEBUG}.
 
+\ccExample
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}
+
 \ccSeeAlso
 
 The  models of \ccRefIdfierPage{NonnegativeLinearProgramInterface}:
 
-\ccRefIdfierPage{Quadratic_program}\\
-\ccRefIdfierPage{Quadratic_program_from_mps}\\
-\ccRefIdfierPage{Nonnegative_linear_program_from_iterators}\\
-\ccRefIdfierPage{Nonnegative_linear_program_from_pointers}
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}
 \end{ccRefFunction}

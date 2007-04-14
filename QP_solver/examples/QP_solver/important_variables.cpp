@@ -12,26 +12,29 @@ typedef CGAL::Quadratic_program_solution<CGAL::MP_Float> Solution;
 int main()
 {
   std::vector<Point_d> points;
-  // convex hull: line spanned by {(0,0), (1,0),..., (9,0)}
-  for (int j=0; j<10; ++j)
-    points.push_back (Point_d (j, 0));
-
-  for (double f=0.5; f<10; ++f) {
-    Point_d p (f, 0.0);
-    Solution s = solve_convex_hull_containment_lp
-      (p, points.begin(), points.end(), CGAL::MP_Float());
-    std::cout << p;
-    if (s.status() == CGAL::QP_INFEASIBLE)
-      std::cout << " is not in the convex hull." << std::endl;
-    else {
-      std::cout << " is a convex combination of the points ";
-      Solution::Index_iterator it = s.basic_variable_indices_begin();
-      Solution::Index_iterator end = s.basic_variable_indices_end();
-      for (; it != end; ++it)
-	std::cout << points[*it] << " ";
-      std::cout << std::endl;
+  // convex hull: 4-gon spanned by {(1,0), (4,1), (4,4), (2,3)}
+  points.push_back (Point_d (1, 0)); 
+  points.push_back (Point_d (4, 1));
+  points.push_back (Point_d (4, 4));
+  points.push_back (Point_d (2, 3));
+ 
+  // test all 25 integer points in [0,4]^2
+  for (int i=0; i<=4; ++i)
+    for (int j=0; j<=4; ++j) {
+      Point_d p (i, j);
+      Solution s = solve_convex_hull_containment_lp
+	(p, points.begin(), points.end(), CGAL::MP_Float());
+      std::cout << p;
+      if (s.is_infeasible())
+	std::cout << " is not in the convex hull\n";
+      else {
+	assert (s.is_optimal());
+	std::cout << " is a convex combination of the points ";
+	Solution::Index_iterator it = s.basic_variable_indices_begin();
+	Solution::Index_iterator end = s.basic_variable_indices_end();
+	for (; it != end; ++it) std::cout << *it << " ";
+	std::cout << std::endl;
+      }
     }
-  }
-
   return 0;
 }

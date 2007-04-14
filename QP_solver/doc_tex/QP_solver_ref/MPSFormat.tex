@@ -1,8 +1,10 @@
 \begin{ccRefConcept}{MPSFormat}
 
 MPS is a commonly used file format for storing linear and quadratic 
-programs according to the concepts \ccc{LinearProgramInterface} and 
-\ccc{QuadraticProgramInterface}. \cgal\ supports a large subset of
+programs according to the concepts \ccc{QuadraticProgramInterface},
+\ccc{LinearProgramInterface},
+\ccc{NonnegativeQuadraticProgramInterface}, and
+\ccc{NonnegativeLinearProgramInterface}. \cgal\ supports a large subset of
 this format, but there are MPS files around that we cannot read (for
 example, files that encode integrality constraints on the variables).
 Also, there might be some other MPS-based solvers that will not be able 
@@ -26,7 +28,7 @@ Let's look at an example first. The quadratic program
 has the following description in MPS format. 
 
 \begin{verbatim}
-NAME MY_MPS
+NAME first_qp
 ROWS
   N obj
   L c0
@@ -149,5 +151,8 @@ program is a model of the concept \ccc{LinearProgramInterface}.
 Our MPS format also supports an (optional) \texttt{RANGES} section,
 but we don't explain this here.
 
+\ccSeeAlso
+
+\ccc{Quadratic_program_from_mps<NT>}
 
 \end{ccRefConcept}

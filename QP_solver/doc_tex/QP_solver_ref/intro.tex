@@ -44,32 +44,21 @@ $\quad$ (for linear and quadratic programs read from an input stream in
 
 Then there are specific models for any of the four program concepts above; 
 these are useful if you want to maintain the program data yourself, since
-they simply wrap random access iterators over the program data. 
+they simply wrap random access iterators over the program data and involve
+no further copying of data.
 
 \ccRefIdfierPage{Quadratic_program_from_iterators}\\
 $\quad$ (for quadratic programs that wrap given iterators, without copying 
-data) \\
-\ccRefIdfierPage{Quadratic_program_from_pointers}\\
-$\quad$ (for quadratic programs that wrap given pointers, without copying 
 data) 
 
 \ccRefIdfierPage{Linear_program_from_iterators}\\
-$\quad$ (for linear programs that wrap given iterators, without copying 
-data) \\
-\ccRefIdfierPage{Linear_program_from_pointers}\\
-$\quad$ (for linear programs that wrap given pointers, without copying 
-data) 
+$\quad$ (for linear programs wrapping given iterators) 
 
 \ccRefIdfierPage{Nonnegative_quadratic_program_from_iterators}\\
-$\quad$ (for nonnegative quadratic programs, wrapping given iterators)\\
-\ccRefIdfierPage{Nonnegative_quadratic_program_from_pointers}\\
-$\quad$ (for nonnegative quadratic programs, wrapping given pointers)
+$\quad$ (for nonnegative quadratic programs, wrapping given iterators)
 
 \ccRefIdfierPage{Nonnegative_linear_program_from_iterators}\\
-$\quad$ (for nonnegative linear programs, wrapping given iterators)\\
-\ccRefIdfierPage{Nonnegative_linear_program_from_pointers}\\
-$\quad$ (for nonnegative linear programs, wrapping given pointers)
-
+$\quad$ (for nonnegative linear programs, wrapping given iterators)
 \ccHeading{Functions}
 
 In case you want to construct a program from complicated iterators

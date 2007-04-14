@@ -33,15 +33,11 @@
 
 // this file defines the following models:
 // - Quadratic_program_from_iterators
-// - Quadratic_program_from_pointers
 // - Quadratic_program
 // - Quadratic_program_from_mps
 // - Nonngative_quadratic_program_from_iterators
-// - Nonengative_quadratic_program_from_pointers
 // - Linear_program_from_iterators
-// - Linear_program_from_pointers
 // - Nonngative_linear_program_from_iterators
-// - Nonengative_linear_program_from_pointers
 
 // for convenience, every model is actually a model of the
 // concept QuadraticProgramInterface:
@@ -177,38 +173,6 @@ make_quadratic_program_from_iterators (
     (n, m, a, b, r, fl, l, fu, u, d, c, c0);
 }	
 
-// Quadratic_program_from_pointers
-// -------------------------------
-template <typename NT_>
-class Quadratic_program_from_pointers : 
-  public Quadratic_program_from_iterators 
-<NT_**, NT_*, CGAL::Comparison_result*, 
- bool*, NT_*, bool*, NT_*, NT_**, NT_*>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Quadratic_program_from_iterators 
-  <NT**, NT*, CGAL::Comparison_result*, 
-   bool*, NT*, bool*, NT*, NT**, NT*> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Quadratic_program_from_pointers 
-  (
-   int n, int m, // number of variables / constraints
-   const A_iterator& a, 
-   const B_iterator& b,
-   const R_iterator& r,
-   const FL_iterator& fl,
-   const L_iterator& l,
-   const FU_iterator& fu,
-   const U_iterator& u,
-   const D_iterator& d,
-   const C_iterator& c,
-   const C_entry& c0 = C_entry(0))
-    : Base (n, m, a, b, r, fl, l, fu, u, d, c, c0)
-  {}  
-};
 
 // Linear_program_from_iterators
 // -----------------------------
@@ -280,35 +244,6 @@ make_linear_program_from_iterators (
     (n, m, a, b, r, fl, l, fu, u, c, c0);
 }	
 
-// Linear_program_from_pointers
-// ----------------------------
-template <typename NT_>
-class Linear_program_from_pointers : 
-  public Linear_program_from_iterators 
-<NT_**, NT_*, CGAL::Comparison_result*, bool*, NT_*, bool*, NT_*, NT_*>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef  Linear_program_from_iterators 
-  <NT**, NT*, CGAL::Comparison_result*, bool*, NT*, bool*, NT*, NT*> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Linear_program_from_pointers (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,
-		     const FL_iterator& fl,
-		     const L_iterator& l,
-		     const FU_iterator& fu,
-		     const U_iterator& u,
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, fl, l, fu, u, c, c0)
-  {}  
-};
 
 // Nonnegative_quadratic_program_from_iterators
 // --------------------------------------------
@@ -379,35 +314,6 @@ make_nonnegative_quadratic_program_from_iterators (
     (n, m, a, b, r, d, c, c0);
 }	
 
-// Nonnegative_Quadratic_program_from_pointers
-// -------------------------------------------
-template <typename NT_>
-class Nonnegative_quadratic_program_from_pointers : 
-  public Nonnegative_quadratic_program_from_iterators 
-<NT_**, NT_*, CGAL::Comparison_result*, NT_**, NT_*>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Nonnegative_quadratic_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT**, NT*> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Nonnegative_quadratic_program_from_pointers (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,
-		     const D_iterator& d,
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, d, c, c0)
-  {}  
-};
-
-
-
 
 // Nonnegative_linear_program_from_iterators
 // -----------------------------------------
@@ -475,31 +381,6 @@ make_nonnegative_linear_program_from_iterators (
     (n, m, a, b, r, c, c0);
 }
 	
-// Nonnegative_linear_program_from_pointers
-// ----------------------------------------
-template <typename NT_>
-class Nonnegative_linear_program_from_pointers : 
-  public Nonnegative_linear_program_from_iterators 
-<NT_**, NT_*, CGAL::Comparison_result*, NT_*>
-{
-public:
-  typedef NT_ NT;
-private:
-  typedef Nonnegative_linear_program_from_iterators 
-<NT**, NT*, CGAL::Comparison_result*, NT*> Base;
-public:
-  QP_MODEL_ITERATOR_TYPES;
-  Nonnegative_linear_program_from_pointers (
-		     int n, int m, // number of variables / constraints
-		     const A_iterator& a, 
-		     const B_iterator& b,
-		     const R_iterator& r,
-		     const C_iterator& c,
-		     const C_entry& c0 = C_entry(0)
-		     )
-    : Base (n, m, a, b, r, c, c0)
-  {}  
-};
 
 namespace QP_model_detail {
   // maps a container to its begin-iterator, as specified by HowToBegin
@@ -579,10 +460,10 @@ private:
 
   // default settings
   CGAL::Comparison_result              default_r;   // from constructor
-  bool                                 default_fl;  // true
-  NT                                   default_l;   // 0
-  bool                                 default_fu;  // false
-  NT                                   default_u;   // dummy
+  bool                                 default_fl;  // from constructor
+  NT                                   default_l;   // from constructor
+  bool                                 default_fu;  // from constructor
+  NT                                   default_u;   // from constructor
 protected: 
   bool                                 is_valid_;
 private:

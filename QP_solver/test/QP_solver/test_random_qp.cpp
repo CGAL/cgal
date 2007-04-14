@@ -16,7 +16,17 @@ typedef CGAL::Gmpz ET;
 #endif
 
 // program and solution types
-typedef CGAL::Quadratic_program_from_pointers<int> Program;
+typedef CGAL::Quadratic_program_from_iterators
+<int**,                                                // for A
+ int*,                                                 // for b
+ CGAL::Comparison_result*,                             // for r
+ bool*,                                                // for fl
+ int*,                                                 // for l
+ bool*,                                                // for fu
+ int*,                                                 // for u
+ int**,                                                // for D
+ int*>                                                 // for c 
+Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 // randum number generator

@@ -28,10 +28,9 @@ iterators over the program data, see below. The program therefore
 comes in \emph{dense} representation which includes zero entries.
 
 \ccHasModels
-\ccc{CGAL::Nonnegative_quadratic_program<NT>}\\
-\ccc{CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
-\ccc{CGAL::Nonnegative_quadratic_program_from_pointers<NT>}\\
-\ccc{CGAL::Nonnegative_quadratic_program_from_mps<NT>}\\
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 
 \ccTypes
 
@@ -95,6 +94,13 @@ respectively, for \ccc{A_iterator} and \ccc{D_iterator}) must be
 convertible to some common \ccc{IntegralDomain} \ccc{ET}.
 
 \ccSeeAlso
+The models
+
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}
+and the other concepts
+
 \ccc{QuadraticProgramInterface}\\
 \ccc{LinearProgramInterface}\\
 \ccc{NonnegativeLinearProgramInterface}

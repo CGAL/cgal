@@ -14,13 +14,30 @@ typedef CGAL::MP_Float ET;
 typedef CGAL::Gmpz ET;
 #endif
 
+int fl;
+int fu;
+int l;
+int u;
+int r;
+
+// inline void check(bool cond) 
+// {
+//   if (!cond) {
+//     std::cout << "fl = " << fl << ", "
+// 	      << " l = " <<  l << ", "
+// 	      << "fu = " << fu << ", "
+// 	      << " u = " <<  u << ", "
+// 	      << " r = " <<  r << std::endl;
+//   }
+// }
+
 int main() 
 {
-  for (bool fl = false; fl < true; ++fl) 
-    for (bool fu = false; fu < true; ++fu)
-      for (int l = -2; l < 0; ++l) 
-	for (int u = 0; u < 2; ++u) 
-	  for (int r = -1;  r < 1; ++r) {
+  for (fl = 0; fl < 2; ++fl) 
+    for (fu = 0; fu < 2; ++fu)
+      for (l = -2; l <= 0; ++l) 
+	for (u = 0; u <= 2; ++u) 
+	  for (r = -1;  r < 1; ++r) {
 	    // generate empty program with all possible
 	    // defaults, and test solver / bound status functions
 	    CGAL::Quadratic_program<int> qp 
@@ -40,7 +57,7 @@ int main()
 
 	    // now manipulate program
 	    qp.set_c(0, 1);        //       min x_0
-	    //      l <= x_0 <= u
+	                           //      l <= x_0 <= u
 	    // test solver
 	    s = CGAL::solve_quadratic_program (qp, ET());
 	    if (fl) {
@@ -101,13 +118,13 @@ int main()
 	    assert (s.is_unbounded());
 	  
 	    // manipulate program
-	    qp.set_c(0, -1);      //        max x_0
+	    qp.set_c(0, -1);      //        min -x_0
 
 	    // test solver
 	    s = CGAL::solve_quadratic_program (qp, ET());
 	    if (fu) {
 	      assert (s.is_optimal());
-	      assert (s.objective_value() == u);
+	      assert (s.objective_value() == -u);
 	    } else
 	      assert (s.is_unbounded());
 	  

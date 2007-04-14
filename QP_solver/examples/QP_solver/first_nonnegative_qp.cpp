@@ -1,3 +1,4 @@
+#include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -12,28 +13,22 @@ typedef CGAL::Gmpz ET;
 #endif
 
 // program and solution types
-typedef CGAL::Nonnegative_quadratic_program_from_pointers<int> Program;
+typedef CGAL::Quadratic_program<int> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
-  int  Ax[] = {1, -1};                        // column for x
-  int  Ay[] = {1,  2};                        // column for y
-  int*  A[] = {Ax, Ay};                       // A comes columnwise
-  int   b[] = {7, 4};                         // right-hand side
-  CGAL::Comparison_result
-        r[] = {CGAL::SMALLER, CGAL::SMALLER}; // constraints are "<="
-  int  D1[] = {2};                            // 2D_{1,1}
-  int  D2[] = {0, 8};                         // 2D_{2,1}, 2D_{2,2}
-  int*  D[] = {D1, D2};                       // D-entries on/below diagonal
-  int   c[] = {0, -32};
-  int  c0   = 64;                             // constant term
-
-  // now construct the quadratic program; the first two parameters are
-  // the number of variables and the number of constraints (rows of A)
-  Program qp (2, 2, A, b, r, D, c, c0);
+  // by default, we have a nonnegative QP with Ax <= b
+  Program qp (CGAL::SMALLER, true, 0, false, 0); 
+  
+  // now set the non-default entries: 0 <-> x, 1 <-> y
+  qp.set_a(0, 0,  1); qp.set_a(1, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
+  qp.set_a(0, 1, -1); qp.set_a(1, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
+  qp.set_d(0, 0, 2); qp.set_d (1, 1, 8);                  // x^2 + 4 y^2
+  qp.set_c(1, -32);                                       // -32y
+  qp.set_c0(64);                                          // +64
 
   // solve the program, using ET as the exact type
-  Solution s = CGAL::solve_nonnegative_quadratic_program(qp, ET());
+  Solution s = CGAL::solve_quadratic_program(qp, ET());
 
   // output solution
   if (s.is_optimal()) { // we know that, don't we?

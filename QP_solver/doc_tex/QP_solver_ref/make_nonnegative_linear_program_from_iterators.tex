@@ -9,10 +9,10 @@ iterators are too complicated (or of too little interest for you)
 to write them down explicitly.
 
 \ccFunction{template <
-  typename A_it, 
-  typename B_it, 
-  typename R_it,  
-  typename C_it >  
+   A_it, 
+   B_it, 
+   R_it,  
+   C_it >  
 Nonnegative_linear_program_from_iterators
 <A_it, B_it, R_it, C_it>
 make_nonnegative_linear_program_from_iterators (
@@ -21,9 +21,12 @@ make_nonnegative_linear_program_from_iterators (
    const B_it& b, 
    const R_it& r, 
    const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0 =
-   typename std::iterator_traits<C_it>::value_type(0));}
+   std::iterator_traits<C_it>::value_type c0 =
+   std::iterator_traits<C_it>::value_type(0));}
 {returns an instance of \ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}, constructed from the given iterators.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp2.h}
 
 \ccSeeAlso
 \ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}

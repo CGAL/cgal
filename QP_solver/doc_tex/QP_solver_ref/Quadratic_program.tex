@@ -31,11 +31,17 @@ $x$,
 \end{itemize}
 
 This class allows you to build your program entry by entry, using
-the set-methods below. If you only need to wrap existing (random-access)
-iterators, then you may use the classes 
-\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>} and \ccc{Quadratic_program_from_pointers<NT>}). If you want
-to read a quadratic program in \ccc{MPSFormat} from a file, please use
-the model \ccc{Quadratic_program_from_mps<NT>}.
+the set-methods below. 
+
+If you only need to wrap existing (random-access)
+iterators over your own data, then you may use any of the four models
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}, 
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}, 
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}, and
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}. 
+
+If you want to read a quadratic program in \ccc{MPSFormat} from a stream, 
+please use the model \ccc{Quadratic_program_from_mps<NT>}.
 
 \ccIsModel
 \ccc{QuadraticProgramInterface}\\
@@ -110,10 +116,18 @@ $2D_{ij}$ and $2D_{ji}$ of \ccVar\ to \ccc{val}. Existing entries are
 overwritten. \ccVar\ is enlarged if necessary to accomodate these entries.
 \ccPrecond \ccc{j <= i}}
 
+\ccExample
+
+\ccReferToExampleCode{QP_solver/first_qp.cpp}\\
+\ccReferToExampleCode{QP_solver/first_lp.cpp}\\
+\ccReferToExampleCode{QP_solver/first_nonnegative_qp.cpp}\\
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}
 
 \ccSeeAlso
 \ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
-\ccc{Quadratic_program_from_pointers<NT>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\ 
 \ccc{Quadratic_program_from_mps<NT>}
 
 \end{ccRefClass}
