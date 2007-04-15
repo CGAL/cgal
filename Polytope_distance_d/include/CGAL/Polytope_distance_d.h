@@ -25,6 +25,7 @@
 #include <CGAL/Optimisation/basic.h>
 #include <CGAL/function_objects.h>
 
+#include <CGAL/QP_options.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_solver/iterator.h>
@@ -357,7 +358,8 @@ public:
   Polytope_distance_d( const Traits&  traits  = Traits())
     : nt_0(0), nt_1(1),
       tco( traits), da_coord (tco.access_coordinates_begin_d_object()),
-      d( -1), solver(0), strategy(0) {}
+      d( -1), solver(0) 
+  {}
     
   template < class InputIterator1, class InputIterator2 >
   Polytope_distance_d( InputIterator1 p_first,
@@ -367,7 +369,7 @@ public:
 		       const Traits&  traits = Traits())
     : nt_0(0), nt_1(1), 
       tco( traits), da_coord (tco.access_coordinates_begin_d_object()),
-      solver(0), strategy(0)
+      solver(0)
   {
     set( p_first, p_last, q_first, q_last);
   }
@@ -375,8 +377,6 @@ public:
   ~Polytope_distance_d() {    
     if (solver)
       delete solver;
-    if (strategy)
-      delete strategy;
   }
 
   // access to point sets
@@ -642,7 +642,6 @@ private:
   ET_vector                q_coords;          // realizing point of Q
     
   Solver                   *solver;    // quadratic programming solver
-  Pricing_strategy         *strategy;  // ...and its pricing strategy
     
   Index_vector             p_support_indices;
   Index_vector             q_support_indices;
@@ -694,10 +693,10 @@ private:
 	   D_iterator (0, D_matrix (d)),
 	   C_iterator (nt_0));
 
-    delete strategy;
-    strategy = pricing_strategy(NT());
     delete solver;
-    solver = new Solver(qp, strategy);
+    Quadratic_program_options options;
+    options.set_pricing_strategy(pricing_strategy(NT()));
+    solver = new Solver(qp, options);
     CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
     // compute support and realizing points
     ET  et_0 = 0;
@@ -730,12 +729,12 @@ private:
   }
     
   template < class NT >
-  Pricing_strategy *pricing_strategy( NT) {
-    return new QP_full_filtered_pricing<QP, ET, QP_tags>;
+  Quadratic_program_pricing_strategy pricing_strategy( NT) {
+    return QP_FULL_FILTERED;
   }
   
-  Pricing_strategy *pricing_strategy( ET) {
-    return new QP_full_exact_pricing<QP, ET, QP_tags>;
+  Quadratic_program_pricing_strategy pricing_strategy( ET) {
+    return QP_FULL_EXACT;
   }
     
 };
