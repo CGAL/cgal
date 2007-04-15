@@ -3,11 +3,13 @@
 \ccInclude{CGAL/QP_functions.h}
 
 This function solves a nonnegative linear program, using some exact
-Integral Domain \ccc{ET} for its computations.   
+Integral Domain \ccc{ET} for its computations. Various
+options may be provided, see \ccc{Quadratic_program_options}. 
 
 \ccFunction{template <NonnegativeLinearProgramInterface, ET>
   Quadratic_program_solution<ET> solve_nonnegative_linear_program 
-  (const NonnegativeLinearProgramInterface& lp, const ET&);}
+  (const NonnegativeLinearProgramInterface& lp, const ET&,
+  const Quadratic_program_options& options = Quadratic_program_options());}
 {returns the solution of the nonnegative linear program \ccc{lp}, solved
 with exact number type \ccc{ET}.}
 

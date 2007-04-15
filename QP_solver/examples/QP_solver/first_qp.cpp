@@ -26,7 +26,7 @@ int main() {
   qp.set_a(0, 0,  1); qp.set_a(1, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
   qp.set_a(0, 1, -1); qp.set_a(1, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
   qp.set_u(1, true, 4);                                   //       y <= 4
-  qp.set_d(0, 0, 2); qp.set_d (1, 1, 8);                  // x^2 + 4 y^2
+  qp.set_d(0, 0, 2); qp.set_d (1, 1, 8); // !!specify 2D!!    x^2 + 4 y^2
   qp.set_c(1, -32);                                       // -32y
   qp.set_c0(64);                                          // +64
 

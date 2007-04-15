@@ -1,0 +1,59 @@
+\begin{ccRefClass}{Quadratic_program_options}
+
+\ccInclude{CGAL/QP_options.h}
+
+\ccDefinition
+This is a class used for passing options to the linear and
+quadratic programming solvers. Currently, we support only
+two types of options, but the idea is that this list
+grows in the future.
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{options}
+
+\ccConstructor{Quadratic_program_options();}
+{constructs an instance of \ccRefName\ where all available options
+are at their defaults.}
+
+\ccOperations
+Here we just have set/get pairs for any option type.
+
+\ccHeading{Verbosity}
+
+\ccMethod{void set_verbosity (int verbosity);}
+{sets the verbosity of the solver to the value \ccc{verbosity} when
+\ccVar\ is passed to any of the four solution functions. The provided
+value must be a number between $0$ and $5$. Verbosity $0$ is the default and
+results in the solver running silently. Verbosity $1$ prints a short
+summary of every iteration. Higher verbosity values print more information
+about the solution process, but these are useful mainly for debugging 
+purposes.}
+
+\ccMethod{int get_verbosity () const;}
+{returns the verbosity level of \ccVar.}
+
+\ccHeading{Pricing strategy}
+
+\ccMethod{void set_pricing_strategy
+  (Quadratic_program_pricing_strategy pricing_strategy);}
+{sets the pricing strategy of the solver to the value \ccc{pricing_strategy}
+when \ccVar\ is passed to any of the four solution functions. The pricing
+strategy controls how the solver proceeds from any intermediate solution.
+The provided value must be \ccc{QP_FULL_EXACT} (the default), or 
+\ccc{QP_EXACT_BLAND}. The latter value guarantees that the solver does
+not internally cycle.}
+
+\ccMethod{Quadratic_program_pricing_strategy get_pricing_strategy() const;}
+{returns the pricing strategy of \ccVar.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/cycling.cpp}
+
+\ccSeeAlso
+
+\ccc{solve_quadratic_program}\\
+\ccc{solve_linear_program}\\
+\ccc{solve_nonnegative_quadratic_program}\\
+\ccc{solve_nonnegative_linear_program}
+\end{ccRefClass}
