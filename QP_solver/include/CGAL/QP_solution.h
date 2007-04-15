@@ -52,7 +52,13 @@ namespace QP_solution_detail {
 }
 
 // global status type
-enum Quadratic_program_status { QP_UPDATE, QP_INFEASIBLE, QP_UNBOUNDED, QP_OPTIMAL };
+enum Quadratic_program_status 
+  { 
+    QP_UPDATE, 
+    QP_INFEASIBLE, 
+    QP_UNBOUNDED, 
+    QP_OPTIMAL 
+  };
 
 // abstract base class of all QP-solvers
 // -------------------------------------

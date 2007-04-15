@@ -28,9 +28,9 @@ CGAL_BEGIN_NAMESPACE
 // -------------------------
 template < typename Q, typename ET, typename Tags >
 QP_solver<Q, ET, Tags>::
-QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
+QP_solver(const Q& qp, const Quadratic_program_options& options)
   : et0(0), et1(1), et2(2),
-    defaultStrategy(0),
+    strategyP(0),
     inv_M_B(vout4),
     d(inv_M_B.denominator()),
     m_phase(-1), is_phaseI(false), is_phaseII(false),
@@ -46,8 +46,10 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
   diagnostics.redundant_equations = false;
 
   // initialization as in the standard-form case:
-  set_verbosity(verbosity); 
-  set_pricing_strategy(strategy); 
+  set_verbosity(options.get_verbosity());
+  // only if C_entry is double, we actually get filtered strategies,
+  // otherwise we fall back to the respective non-filtered ones
+  set_pricing_strategy(options.get_pricing_strategy()); 
 
   // Note: we first set the bounds and then call set() because set()
   // accesses qp_fl, qp_l, etc.

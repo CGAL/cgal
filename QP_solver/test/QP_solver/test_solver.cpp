@@ -71,7 +71,6 @@
 #define QP_RATIONAL true
 #endif
 
-enum Pricing_strategy_type { FE, EB, FF, PE, PF }; // EB == Exact Bland
 enum Input_type { Int_type, Double_type, Rational_type };
 using CGAL::Tag_true;
 using CGAL::Tag_false;
@@ -90,18 +89,6 @@ typedef CGAL::Gmpq Rational;
 //typedef CGAL::Quotient<CGAL::MP_Float> Rational;  // too slow
 #endif
 
-// The following selector is used to derive the "cheap" number-type
-// used during the pricing:
-template<typename ET>
-struct NT_selector {
-  typedef ET NT;
-};
-
-template<>
-struct NT_selector<Float> {
-  typedef double NT;
-};
-
 template<typename T>
 bool is_double(const T&)            { return false; }
 bool is_double(const double&)       { return true; }
@@ -115,10 +102,9 @@ template<typename T>
 bool is_rational(const T&)          { return false; }
 bool is_rational(const Rational&)   { return true; }
 
-template <typename T>
-T string_to(const std::string& s) {
+int string_to_int(const std::string& s) {
   std::stringstream strm(s);
-  T t;
+  int t;
   strm >> t;
   return t;
 }
@@ -211,24 +197,24 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
 
   // read verbosity:
   std::string t = Token::token(in);
-  const int v = string_to<int>(t);
+  const int v = string_to_int(t);
   if (v<0 || v>5)
     bailout("illegal verbosity");
   options.insert(Arg("Verbosity",v));
 
   // read strategy:
   std::string st = Token::token(in);
-  Pricing_strategy_type type = FE; // to kill warnings
+  CGAL::Quadratic_program_pricing_strategy type = CGAL::QP_FULL_EXACT;
   if (st=="fe")
-    type = FE;
+    type = CGAL::QP_FULL_EXACT;
   else if (st=="eb")
-    type = EB;
+    type = CGAL::QP_EXACT_BLAND;
   else if (st=="ff")
-    type = FF;
+    type = CGAL::QP_FULL_FILTERED;
   else if (st=="pe")
-    type = PE;
+    type = CGAL::QP_PARTIAL_EXACT;
   else if (st=="pf")
-    type = PF;
+    type = CGAL::QP_PARTIAL_FILTERED;
   else
     bailout1("illegal pricing strategy '%'",st);
   options.insert(Arg("Strategy",static_cast<int>(type)));
@@ -296,34 +282,6 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   return true;
 }
 
-template<typename Q, typename ET, typename Tags>
-CGAL::QP_pricing_strategy<Q, ET, Tags> *
-  create_strategy(const std::map<std::string,int>& options)
-{
-  Key_const_iterator it = options.find("Strategy");
-  CGAL::QP_pricing_strategy<Q, ET, Tags> *strat = 0;
-  typedef typename NT_selector<ET>::NT NT;
-  switch (it->second) {
-  case FE:
-    strat = new CGAL::QP_full_exact_pricing<Q, ET, Tags>;
-    break;  
-  case EB:
-    strat = new CGAL::QP_exact_bland_pricing<Q, ET, Tags>;
-    break;
-  case FF:
-    strat = new CGAL::QP_full_filtered_pricing<Q, ET, Tags,NT>;
-    break;
-  case PE:
-    strat = new CGAL::QP_partial_exact_pricing<Q, ET, Tags>;
-    break;
-  case PF:
-    strat = new CGAL::QP_partial_filtered_pricing<Q, ET, Tags,NT>;
-  }
-  return strat;
-}
-
-
-
 template<typename Is_linear,
 	 typename Is_nonnegative,
 	 typename IT,
@@ -380,7 +338,9 @@ bool process(const std::string& filename,
   // finally, filtered pricing strategies are only to be used if the input
   // type is double
   Key_const_iterator it = options.find("Strategy");
-  if (!is_double(IT()) && (it->second == FF || it->second == PF)) 
+  if (!is_double(IT()) && 
+      (it->second == CGAL::QP_FULL_FILTERED || 
+       it->second == CGAL::QP_PARTIAL_FILTERED)) 
     return true;
 
   if (verbosity > 0)
@@ -443,20 +403,23 @@ bool process(const std::string& filename,
   typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_nonnegative> Tags;
 
   // now comes the actual, output-generating run 
-  CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s =
-    create_strategy<QP_instance, ET, Tags>(options);
+  // make options
+  CGAL::Quadratic_program_options solver_options;
+  solver_options.set_verbosity(verbosity);
+  solver_options.set_pricing_strategy
+    (static_cast<CGAL::Quadratic_program_pricing_strategy>
+     (options.find("Strategy")->second));
 
-  CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, s, verbosity);
+  CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, solver_options);
   // output solution + number of iterations
   cout << CGAL::to_double(solver.solution()) << "(" 
        << solver.iterations() << ") ";
   // the solver previously checked itself through an assertion
   const bool is_valid = true; 
-  delete s;
 
   // the last step: solve poblem from copied QP, if full exact pricing
   // and general form
-  if (options.find("Strategy")->second == FE && 
+  if (options.find("Strategy")->second == CGAL::QP_FULL_EXACT && 
       !check_tag(Is_linear()) &&
       !check_tag(Is_nonnegative()))
     { 
@@ -465,16 +428,16 @@ bool process(const std::string& filename,
       LocalTags;
     typedef CGAL::Quadratic_program<IT> 
       LocalQP;
-    CGAL::QP_pricing_strategy<LocalQP, ET, LocalTags> *slocal = new
-      CGAL::QP_full_exact_pricing <LocalQP, ET, LocalTags>();
-      
+    CGAL::Quadratic_program_options local_options;
+    local_options.set_verbosity(0);
+    local_options.set_pricing_strategy(CGAL::QP_FULL_EXACT);
     LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), 
 		     qp.get_r(), 
 		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
 		     qp.get_d(), qp.get_c(), qp.get_c0()); 
-    CGAL::QP_solver<LocalQP, ET, LocalTags> solverlocal (qplocal, slocal, 0);
+    CGAL::QP_solver<LocalQP, ET, LocalTags> solverlocal 
+      (qplocal, local_options);
     std::cout << "(c) ";
-    delete slocal;
   }
  
 

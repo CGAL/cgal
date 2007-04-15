@@ -22,6 +22,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/functional.h>
+#include <CGAL/QP_options.h>
 #include <CGAL/QP_solution.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/iterator.h>
@@ -30,6 +31,9 @@
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
+#include <CGAL/QP_solver/QP_full_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_exact_bland_pricing.h>
 
 #include <CGAL/algorithm.h>
 
@@ -88,7 +92,21 @@ namespace QP_solver_impl {   // namespace for implemenation details
     typedef int* L_iterator;
     typedef int* FU_iterator;
     typedef int* U_iterator;
+  };
 
+  // only allow filtered pricing if NT = double
+  template <typename Q, typename ET, typename Tags, typename NT>
+  struct Filtered_pricing_strategy_selector
+  {
+    typedef QP_full_exact_pricing<Q, ET, Tags> FF;
+    typedef QP_partial_exact_pricing<Q, ET, Tags> PF;
+  };
+
+  template <typename Q, typename ET, typename Tags>
+  struct Filtered_pricing_strategy_selector<Q, ET, Tags, double> 
+  {
+    typedef QP_full_filtered_pricing<Q, ET, Tags> FF;
+    typedef QP_partial_filtered_pricing<Q, ET, Tags> PF;
   };
 
 } // end of namespace for implementation details
@@ -312,8 +330,7 @@ private:
     
   // pricing strategy
   Pricing_strategy*        strategyP;
-  Pricing_strategy*        defaultStrategy;
-    
+
   // given QP
   int                      qp_n;      // number of variables
   int                      qp_m;      // number of constraints
@@ -500,12 +517,13 @@ public:
   // creation & initialization
   // -------------------------
   // creation
-  QP_solver(const Q& qp, Pricing_strategy* strategy = 0, int verbosity = 0 );
+  QP_solver(const Q& qp, 
+	    const Quadratic_program_options& options = 
+	    Quadratic_program_options());
 
   virtual ~QP_solver()
   {
-    delete defaultStrategy;
-    defaultStrategy = 0;
+    delete strategyP;
   }
 
 	      
@@ -771,8 +789,8 @@ public: // only the pricing strategies (including user-defined ones
 private:
   // miscellaneous
   // -------------
-  // altering the pricing strategy
-  void  set_pricing_strategy( Pricing_strategy *strategy);
+  // setting the pricing strategy:
+  void  set_pricing_strategy ( Quadratic_program_pricing_strategy strategy);
 
   // diagnostic output
   void  set_verbosity( int verbose = 0, std::ostream& stream = std::cout);

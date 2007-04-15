@@ -579,7 +579,11 @@ public:
       default_r(relation), default_fl(finite_lower),
       default_l(lower), default_fu(finite_upper), 
       default_u(upper), is_valid_(true) 
-  {}
+  {
+    CGAL_qpe_assertion(!finite_lower || !finite_upper || lower <= upper);
+  }
+
+
   // constructor from iterators
   template <typename A_it, typename B_it, typename R_it, typename FL_it, 
 	    typename L_it, typename FU_it, typename U_it, typename D_it, 

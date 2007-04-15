@@ -2945,21 +2945,35 @@ check_basis_inverse( Tag_false)
     return res;
 }
 
-// setting the strategy
+// filtered strategies are only allowed if the input type as
+// indicated by C_entry is double; this may still fail if the
+// types of some other program entries are not double, but 
+// since the filtered stuff is internal anyway, we can probably
+// live with this simple check
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
-set_pricing_strategy( Pricing_strategy *strategy)
+set_pricing_strategy
+( Quadratic_program_pricing_strategy strategy)
 {
     CGAL_qpe_assertion( phase() != 1);
     CGAL_qpe_assertion( phase() != 2);
 
-    if (defaultStrategy != static_cast< Pricing_strategy*>( 0))
-      delete defaultStrategy;
-
-    if (strategy == 0) // use default strategy:
-      strategy = defaultStrategy = new QP_full_exact_pricing<Q, ET, Tags>();
-
-    strategyP = strategy;
+    if (strategy == QP_FULL_EXACT)
+      strategyP = new QP_full_exact_pricing<Q, ET, Tags>;
+    else if (strategy == QP_FULL_FILTERED)
+      strategyP = 
+	new typename QP_solver_impl::Filtered_pricing_strategy_selector
+	<Q, ET, Tags, C_entry>::FF;
+    else if (strategy == QP_PARTIAL_EXACT)
+      strategyP = new QP_partial_exact_pricing<Q, ET, Tags>;
+    else if (strategy == QP_PARTIAL_FILTERED)
+      strategyP = 
+	new typename QP_solver_impl::Filtered_pricing_strategy_selector
+	<Q, ET, Tags, C_entry>::PF;
+    else if (strategy == QP_EXACT_BLAND) 
+      strategyP = new QP_exact_bland_pricing<Q, ET, Tags>;
+    CGAL_qpe_assertion(strategyP != static_cast<Pricing_strategy*>(0));
+   
     if ( phase() != -1) strategyP->set( *this, vout2);
 }
 

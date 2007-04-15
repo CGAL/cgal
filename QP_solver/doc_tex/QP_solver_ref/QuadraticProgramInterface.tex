@@ -102,7 +102,9 @@ comes in \emph{dense} representation which includes zero entries.
 
 \ccMethod{L_iterator get_l() const;}{returns an iterator for the
   entries of $l$. If $\ccVar.\ccc{fl()}[j]=\ccc{false}$, the value 
-  $\ccVar.\ccc{l()}[j]$ is not accessed.}
+  $\ccVar.\ccc{l()}[j]$ is not accessed.\ccPrecond if 
+  $\ccVar.\ccc{fl()}[j]=\ccVar.\ccc{fu()}[j]=\ccc{true}$, then
+  $\ccVar.\ccc{l()}[j]\leq \ccVar.\ccc{u()}[j]$}
 
 \ccMethod{FU_iterator get_fu() const;}{returns an iterator over the
   existence of the upper bounds $u_j, j=0,\ldots,n-1$. If 
@@ -111,7 +113,9 @@ comes in \emph{dense} representation which includes zero entries.
 
 \ccMethod{U_iterator get_u() const;}{returns an iterator over the
   entries of $u$. If $\ccVar.\ccc{fu()}[j]=\ccc{false}$, the value 
-  $\ccVar.\ccc{u()}[j]$ is not accessed.}
+  $\ccVar.\ccc{u()}[j]$ is not accessed. \ccPrecond if 
+  $\ccVar.\ccc{fl()}[j]=\ccVar.\ccc{fu()}[j]=\ccc{true}$, then
+  $\ccVar.\ccc{l()}[j]\leq \ccVar.\ccc{u()}[j]$}
 
 \ccMethod{D_iterator get_d() const;}{returns an iterator for the rows of
   $2D$. For $i=0,\ldots,n-1$, $\ccc{*(d()+i)}$ is a random access

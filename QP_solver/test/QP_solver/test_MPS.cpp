@@ -70,10 +70,11 @@ int main(const int argNr,const char **args) {
     cout << std::endl;
   }
   typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> Tags;
-  CGAL::QP_pricing_strategy<QP, ET, Tags> *pricing_strategy =
-    new CGAL::QP_full_exact_pricing<QP, ET, Tags>;
+  CGAL::Quadratic_program_options options;
+  options.set_pricing_strategy(CGAL::QP_FULL_EXACT);
+  options.set_verbosity(0);
   typedef CGAL::QP_solver<QP, ET, Tags> Solver;
-  Solver s (qp, pricing_strategy, 0);
+  Solver s (qp, options);
 
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {
@@ -93,7 +94,5 @@ int main(const int argNr,const char **args) {
     cout << "Problem is infeasible." << endl;
   else // unbounded
     cout << "Problem is unbounded." << endl;
-
-  delete pricing_strategy;
   return 0;
 }

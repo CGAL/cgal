@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <string>
+#include <CGAL/QP_options.h>
 #include <CGAL/QP_solution.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -100,19 +101,23 @@ void print_nonnegative_linear_program
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_quadratic_program 
-(const QuadraticProgram &qp, const ET& );
+(const QuadraticProgram &qp, const ET&,
+const Quadratic_program_options& options = Quadratic_program_options());
 
-template <typename QuadraticProgram, typename ET>
+template <typename NonnegativeQuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_quadratic_program 
-(const QuadraticProgram &qp, const ET& );
+(const NonnegativeQuadraticProgram &qp, const ET&,
+const Quadratic_program_options& options = Quadratic_program_options());
 
-template <typename QuadraticProgram, typename ET>
+template <typename LinearProgram, typename ET>
 Quadratic_program_solution<ET> solve_linear_program 
-(const QuadraticProgram &qp, const ET& );
+(const LinearProgram &lp, const ET&, 
+const Quadratic_program_options& options = Quadratic_program_options());
 
-template <typename QuadraticProgram, typename ET>
+template <typename NonnegativeLinearProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_linear_program 
-(const QuadraticProgram &qp, const ET& );
+(const NonnegativeLinearProgram &lp, const ET&,
+const Quadratic_program_options& options = Quadratic_program_options());
 
 
 CGAL_END_NAMESPACE
