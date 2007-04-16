@@ -406,7 +406,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
                                         const Type& y) const { 
             typedef Algebraic_structure_traits<Type> AST; 
             typedef typename AST::Is_exact Is_exact;
-	    bool ie = Is_exact::value;
+	    CGAL_precondition_code( bool ie = Is_exact::value; )
             CGAL_precondition_msg( !ie || (x / y) * y  == x,
                     "'x' must be divisible by 'y' in "
                     "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
