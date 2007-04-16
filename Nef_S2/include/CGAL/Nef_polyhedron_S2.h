@@ -259,7 +259,7 @@ public:
     D.simplify();
   }
 
-  Nef_polyhedron_S2(const Self& N1) : Base(N1) {
+  Nef_polyhedron_S2(const Self& N1) : Base(N1), Const_decorator() {
     set_sm(&sphere_map());
   }
   Nef_polyhedron_S2& operator=(const Self& N1)
