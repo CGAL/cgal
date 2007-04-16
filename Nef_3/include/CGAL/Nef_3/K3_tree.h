@@ -1,4 +1,4 @@
- // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -388,7 +388,7 @@ public:
     }
 
     Side_of_plane sop;
-    Oriented_side side = sop(splitting_plane, splitting_plane.point(), f, depth);
+    Oriented_side side = sop(splitting_plane.point(), f, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       left_node->add_facet(f, depth+1);
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
@@ -403,7 +403,7 @@ public:
     }
 
     Side_of_plane sop;
-    Oriented_side side = sop(splitting_plane, splitting_plane.point(), e, depth);
+    Oriented_side side = sop(splitting_plane.point(), e, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       left_node->add_edge(e, depth+1);
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
@@ -418,7 +418,7 @@ public:
     }
 
     Side_of_plane sop;
-    Oriented_side side = sop(splitting_plane, splitting_plane.point(), v, depth);
+    Oriented_side side = sop(splitting_plane.point(), v, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       left_node->add_vertex(v, depth+1);
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
@@ -620,10 +620,12 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;
-      CGAL_NEF_TRACEN("bounding box " << b.get_min() << "->" << b.get_max());
       int c = (CGAL::abs(vec[0]) > CGAL::abs(vec[1]) ? 0 : 1); 
       c = (CGAL::abs(vec[2]) > CGAL::abs(vec[c]) ? 2 : c); 
-      Point_3 pt_on_minus_x_plane = vec[c] < 0 ? b.get_min() : b.get_max();
+
+      Point_3 pt_on_minus_x_plane = vec[c] < 0 ? 
+	Point_3(RT(b.min_coord(0)), RT(b.min_coord(1)),RT(b.min_coord(2))) :
+	Point_3(RT(b.max_coord(0)), RT(b.max_coord(1)),RT(b.max_coord(2)));
       // We compute the intersection between a plane with normal vector in 
       // the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
       Plane_3 pl_on_minus_x;      
@@ -829,23 +831,20 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
     root->add_vertex(v,0);
   }
 
-  template<typename SNCd>
-  class BBox_updater {
-    SNCd D;
+  class BBox_updater {  
     Bounding_box_3 b;
 
   public:	
-    BBox_updater(const SNCd& sncd) : D(sncd), b(Point_3(0,0,0),Point_3(0,0,0)) {}
+    BBox_updater() {}
 
     void pre_visit(const Node*) {}
     void post_visit(const Node* n) {
       typename Object_list::const_iterator o;
-      for( o = n->objects().begin(); o != n->objects().end(); ++o) {
+      for( o = n->objects().begin(); 
+	   o != n->objects().end(); ++o) {
         Vertex_handle v;
-        if( CGAL::assign( v, *o)) {
-	  Point_3 p(v->point());
-          b = b + Bounding_box_3(p,p);
-        }
+        if( CGAL::assign( v, *o))
+          b.extend(v->point());
       }
     }
 
@@ -873,8 +872,7 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
     if(root != 0)
       root->transform(t);
 
-    SNC_decorator D;
-    BBox_updater<SNC_decorator> bbup(D);
+    BBox_updater bbup;
     visit_k3tree(root, bbup);
     bounding_box = bbup.box();
   }
@@ -1105,7 +1103,7 @@ bool classify_objects(Object_iterator start, Object_iterator end,
       }
     }
 #endif
-    Oriented_side side = sop( partition_plane, point_on_plane, *o, depth);
+    Oriented_side side = sop( point_on_plane, *o, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
       ++o1;
