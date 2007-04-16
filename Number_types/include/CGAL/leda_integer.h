@@ -78,10 +78,16 @@ template <> class Algebraic_structure_traits< leda_integer >
                                         const Type& y ) const {
           Type m = x % y;
 
-          // Fix wrong lede result if first operand is negative
+#if CGAL_LEDA_VERSION < 520
+          // Fix wrong leda result
           if( x < 0 && m != 0 )
             m -= y;
-
+#else
+          // Fix another wrong leda result
+          // TODO: be careful for future improvements of LEDA
+          if( x < 0 && y > 0 && m != 0 )
+            m -= y;
+#endif
           return m;
         }
 
