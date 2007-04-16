@@ -173,19 +173,22 @@ template <> class Real_embeddable_traits< CORE::Expr >
       : public Unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-
             std::pair<double,double> result;
+            x.approx(52,1);
             x.doubleInterval(result.first, result.second);
-            CGAL_expensive_assertion(result.first <= x);
+            CGAL_expensive_assertion(result.first  <= x);
             CGAL_expensive_assertion(result.second >= x);
             return result;
         }
     };
 };
 
-
-
-
 CGAL_END_NAMESPACE
+
+//since types are included by CORE_coercion_traits.h:
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/CORE_BigInt.h> 
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_BigFloat.h>
 
 #endif // CGAL_CORE_EXPR_H

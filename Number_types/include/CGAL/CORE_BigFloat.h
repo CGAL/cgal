@@ -24,8 +24,6 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
 
-#include <CGAL/CORE_Expr.h> // used for To_interval-functor
-
 CGAL_BEGIN_NAMESPACE
 
 //
@@ -109,18 +107,30 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
 
     class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
-      public:
+    public:
         std::pair<double, double> operator()( const Type& x ) const {
+                        
+            CORE::Expr lower_expr = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
+            CORE::Expr upper_expr = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
 
-            Real_embeddable_traits<CORE::Expr>::To_interval to_interval;
-            CORE::Expr temp(x);
+            std::pair<double, double> lower,upper;
+            lower_expr.doubleInterval(lower.first, lower.second);
+            upper_expr.doubleInterval(upper.first, upper.second);
+            
+            CGAL_postcondition(lower.first  <= upper.first);
+            CGAL_postcondition(lower.second <= upper.second);
 
-            return to_interval(temp);
+            return std::pair<double, double>(lower.first,upper.second);
         }
     };
 };
 
-
 CGAL_END_NAMESPACE
+
+//since types are included by CORE_coercion_traits.h:
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_BigFloat.h>
 
 #endif // CGAL_CORE_BIGFLOAT_H

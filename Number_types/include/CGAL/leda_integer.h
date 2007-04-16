@@ -192,5 +192,10 @@ namespace leda {
     inline integer operator+( const integer& i) { return i; }
 } // namespace leda
 
+//since types are included by leda_coercion_traits.h:
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#include <CGAL/leda_bigfloat.h>
+#include <CGAL/leda_real.h>
 
 #endif // CGAL_LEDA_INTEGER_H

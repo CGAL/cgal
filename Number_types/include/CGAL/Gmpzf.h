@@ -23,7 +23,6 @@
 
 // includes
 #include <CGAL/number_type_basic.h>
-#include <CGAL/GMP/Gmpzf_type.h>
 #include <CGAL/Gmp_coercion_traits.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Interval_nt.h>
@@ -167,6 +166,11 @@ public:
 };
 
 CGAL_END_NAMESPACE
+
+//since types are included by Gmp_coercion_traits.h:
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpzf.h>
 
 #endif // CGAL_GMPZF_H
 

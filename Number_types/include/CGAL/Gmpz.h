@@ -30,9 +30,7 @@
 #endif
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/Gmp_coercion_traits.h>
-
 #include <CGAL/Quotient.h> // spec of AST for Quotient<Gmpz>
 
 #include <string>
@@ -198,5 +196,11 @@ CGAL_END_NAMESPACE
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+
+//since types are included by Gmp_coercion_traits.h:
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpzf.h>
 
 #endif // CGAL_GMPZ_H

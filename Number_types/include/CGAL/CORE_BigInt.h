@@ -24,7 +24,6 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
- #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
 CGAL_BEGIN_NAMESPACE
 
@@ -119,11 +118,13 @@ template <> class Real_embeddable_traits< CORE::BigInt >
     class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Type& x ) const {
-          Real_embeddable_traits<CORE::Expr>::To_interval to_interval;
-          CORE::Expr temp(x);
-
-          return to_interval(temp);
+        std::pair<double, double> operator()( const Type& x_ ) const {
+            CORE::Expr x(x_);
+            std::pair<double,double> result;
+            x.doubleInterval(result.first, result.second);
+            CGAL_expensive_assertion(result.first  <= x);
+            CGAL_expensive_assertion(result.second >= x);
+            return result;
         }
     };
 };
@@ -135,7 +136,12 @@ struct Needs_parens_as_product<CORE::BigInt>{
     }
 };
 
-
 CGAL_END_NAMESPACE
+
+//since types are included by CORE_coercion_traits.h:
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_BigFloat.h>
 
 #endif // CGAL_CORE_BIGINT_H

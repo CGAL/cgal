@@ -249,8 +249,10 @@ namespace leda {
     inline real operator+( const real& i) { return i; }
 } // namespace leda
 
-
-
-
+//since types are included by leda_coercion_traits.h:
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#include <CGAL/leda_bigfloat.h>
+#include <CGAL/leda_real.h>
 
 #endif // CGAL_LEDA_REAL_H
