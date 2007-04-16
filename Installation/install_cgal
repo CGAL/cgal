@@ -1568,18 +1568,19 @@ concat_path()
   if [ $# != 0 ] ; then
     ${_printf} "%s" "$1"
     shift
-    if [ -n "${CYGWIN_COMPILER}" ]; then
-        for elem in "$@"
-        do
-            ${_printf} "%s%s" '\' "${elem}"
+# it seems ms tools can also handle slashed paths...
+#    if [ -n "${CYGWIN_COMPILER}" ]; then
+#        for elem in "$@"
+#        do
+#            ${_printf} "%s%s" '\' "${elem}"
 #This character ' is just to please font-lock-mode under (x)emacs
-        done
-    else
+#        done
+#    else
         for elem in "$@"
         do
             ${_printf} "/%s" "${elem}"
         done
-    fi
+#    fi
   fi
 }
 
