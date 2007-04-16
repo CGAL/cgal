@@ -32,6 +32,7 @@
 #include <CGAL/Optimisation_d_traits_d.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
+#include <CGAL/Gmpq.h>
 typedef CGAL::Gmpzf RT;
 typedef CGAL::Gmpq FT;
 #else
