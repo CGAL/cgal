@@ -256,11 +256,13 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
   
   int set_se_index(int index1, int index2,
 		   bool v1, bool v2) {
-    if(v1)
-      if(v2)
+    if(v1) {
+      if(v2) {
 	return index1<index2 ? index1 : index2;
-      else
+      } else {
 	return index1;
+      }
+    }
     if(v2)
       return index2;
     return index1<index2 ? index1 : index2;
