@@ -16,16 +16,11 @@
 \lciCopyCSSFile{modern}
 
 
-\newcommand{\lciMirroredTocEntry}[1]{%
-  \begin{savebox}{\mysavebox}
-    #1
-  \end{savebox}
-  \lciPushOutput{toc}%
-    \usebox{\mysavebox}%
-  \lciPopOutput
-  \lciPushOutput{shorttoc}%
-    \usebox{\mysavebox}%
-  \lciPopOutput
+\newcommand{\lcTocCommand}[1]{%
+  \lciTocNewLayout%
+    {\lciPushOutput{minitoc}}%
+    {\lciPushOutput{toc}}%
+  #1\lciPopOutput%
 }
 
 % ___________________________________________________________________________
@@ -40,10 +35,12 @@
 \gdef{\lcBodyAttributes}{\lcRawHtml{bgcolor="white"}}
 \gdef\lciFileSpecificCSS{}
 
-% Args: <title-text>
-\newcommand{\lciHtmlFileHeader}[1]{%
-    \lciHtmlFileHeaderX{#1}{\lciExtractHtmlRelease}{\lciInputFilename}}
-\newcommand{\lciHtmlFileHeaderX}[3]{%
+\newcommand{\lciHtmlFileHeader}[1]{\lciHtmlFileHeaderExtra{#1}{}}
+
+% Args: <title-text> <extra head text>
+\newcommand{\lciHtmlFileHeaderExtra}[2]{%
+    \lciHtmlFileHeaderX{#1}{\lciExtractHtmlRelease}{\lciInputFilename}{#2}}
+\newcommand{\lciHtmlFileHeaderX}[4]{%
   \lcRawHtml{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- Page automatically generated from latex_to_html converter. -->
 <!-- by cc_extract_html, #XC2 -->
@@ -52,8 +49,9 @@
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 <link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">}
 \lciFileSpecificCSS%
-\lcRawHtml{<title>}#1\lcRawHtml{</title>
-</head>
+\lcRawHtml{<title>}#1\lcRawHtml{</title>}%
+#4
+\lcRawHtml{</head>
 <body }\lcBodyAttributes\lcRawHtml{>
 <!-- =================================================================== -->
 
@@ -65,7 +63,6 @@
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}}
   \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,&nbsp;
-  <a href="}\lciOutputUppath\lcRawHtml{shortcontents.html">Short Table of Contents</A>,&nbsp;
   <a href="}\lciOutputUppath\lciPkgOverviewFilename\lcRawHtml{">Package Overview</a>,&nbsp;
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,&nbsp;
   <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,&nbsp;
@@ -83,14 +80,13 @@
 \newcommand{\lciHtmlNavigationBottom}{
   \lcRawHtml{<div class="NavBottom"><hr>}
   \lciHtmlNavigation
-  \lcRawHtml{</div>}
+  \lcRawHtml{<hr></div>}
 }
 
 % Args: none
 \newcommand{\lciHtmlFileFooter}{%
   \lcRawHtml{
-<hr><!-- =============================================================== -->
-<div class="NavAddress">
+<div class="NavAddress"><hr>
 }{\small
 \lciIfEqualExpanded{\lciManualAuthor}{}{}{%
     \lcRawHtmlExpanded{\lciManualAuthor}.}
@@ -116,7 +112,8 @@
 % ###########################################################################
 
 % manage even/odd outer table blocks
-\newcommand{\lcTocToggleOdd}{\lciIfEqualExpanded{\lciTocOdd}{Odd}{%
+\newcommand{\lcTocToggleOdd}{\lciTocToggleOdd}
+\newcommand{\lciTocToggleOdd}{\lciIfEqualExpanded{\lciTocOdd}{Odd}{%
     \gdef\lciTocOdd{Even}}{\gdef\lciTocOdd{Odd}}}
 \gdef\lciTocOdd{Even}
 
@@ -130,7 +127,7 @@
 % to the TOC, so they have to switch, while \lciToc assumes we
 % are currently writing to the TOC
 \gdef\lciTocOuterState{Sync}
-\newcommand{\lcTocSync}{\lciMirroredTocEntry{\lciTocSync}}
+\newcommand{\lcTocSync}{\lcTocCommand{\lciTocSync}}
 \newcommand{\lciTocSync}{%
   \lciTocCloseInner
   \lciIfEqualExpanded{\lciTocOuterState}{Left}{%
@@ -150,7 +147,7 @@
   \gdef\lciTocOuterState{Sync}%
 }
 
-\newcommand{\lcTocCompleteRow}{\lciMirroredTocEntry{\lciTocCompleteRow}}
+\newcommand{\lcTocCompleteRow}{\lcTocCommand{\lciTocCompleteRow}}
 \newcommand{\lciTocCompleteRow}{%
   \lciTocCloseInner
   \lciTocSync
@@ -163,7 +160,7 @@
   %\lcTocToggleOdd
 }
 
-\newcommand{\lcTocLeft}{\lciMirroredTocEntry{\lciTocLeft}}
+\newcommand{\lcTocLeft}{\lcTocCommand{\lciTocLeft}}
 \newcommand{\lciTocLeft}{%
   \lciTocCloseInner
   \lciIfEqualExpanded{\lciTocOuterState}{Right}{\lciTocSync}{}%
@@ -173,7 +170,7 @@
 }}{}%
   \gdef\lciTocOuterState{Left}%
 }
-\newcommand{\lcTocRight}{\lciMirroredTocEntry{\lciTocRight}}
+\newcommand{\lcTocRight}{\lcTocCommand{\lciTocRight}}
 \newcommand{\lciTocRight}{%
   \lciIfTwoColumnToc{%
     \lciTocCloseInner
@@ -236,30 +233,63 @@
 
 % Args: none
 \newcommand{\lciTocFileHeader}[1]{%
-    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
-      #1}%
-    \lciHtmlNavigationTop
-    \lcRawHtml{
-<h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{
-    \lciManualTitle\lcRawHtml{<br>}}
-    #1\lcRawHtml{</h1>
-<hr>
+    \lciHtmlFileHeaderExtra{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      #1}{
+      \lcRawHtml{
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<!--
 
-<!-- Begin of the list of contents entries -->
-}}
+var DHTML = (document.getElementById || document.all || document.layers);
+
+function changeCol(col,suffix)
+{
+    if (!DHTML) return;
+    new getObj('usermanual'+suffix).style.color=col;
+    new getObj('refmanual'+suffix).style.color=col;
+}
+
+function getObj(name)
+{
+  if (document.getElementById)
+  {
+    this.obj = document.getElementById(name);
+    this.style = document.getElementById(name).style;
+  }
+  else if (document.all)
+  {
+    this.obj = document.all[name];
+    this.style = document.all[name].style;
+  }
+  else if (document.layers)
+  {
+    this.obj = document.layers[name];
+    this.style = document.layers[name];
+  }
+}
+// -->
+</SCRIPT>
+      }%
+    }%
+    \lciHtmlNavigationTop
+    \lcRawHtml{<h1>}
+    \lciIfEqualExpanded{\lciManualTitle}{}
+      {}
+      {\lciManualTitle\lcRawHtml{<br>}}
+    #1\lcRawHtml{</h1>}
+}
 
 \newcommand{\lciTocBegin}{%
+\lciTocNewLayout{}{
 \lciTocOuterTable
   \lciIfTwoColumnToc{
-    \lcTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
-    \lcTocRight{\lcRawHtml{<a class="TocLinkBibliography" href="biblio.html">Bibliography</a>}}%
-    \lcTocToggleOdd%
-    \lcTocLeft{\lcRawHtml{<a class="TocLinkPkgDesc" href="packages.html">Package Overview</a>}}%
-    \lcTocRight{\lcRawHtml{<a class="TocLinkIndex" href="manual_index.html">Index</a>}}%
-    \lcTocToggleOdd%
-    \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
-    \lcTocRight{\lcRawHtml{<a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>}}%
-    \lcTocToggleOdd%
+    \lciTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
+    \lciTocRight{\lcRawHtml{<a class="TocLinkBibliography" href="biblio.html">Bibliography</a>}}%
+    \lciTocToggleOdd%
+    \lciTocLeft{\lcRawHtml{<a class="TocLinkPkgDesc" href="packages.html">Package Overview&nbsp;&nbsp;</a>}}%
+    \lciTocRight{\lcRawHtml{<a class="TocLinkIndex" href="manual_index.html">Index</a>}}%
+    \lciTocToggleOdd%
+    \lciTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
+\lciTocToggleOdd%
   }{%
   \lcRawHtml{
   <tr valign="top"><td class="TocGroupOddLeft">
@@ -275,24 +305,27 @@
     <tr><td class="TocContents">
         <a class="TocLinkContents" href="contents.html">Table of Contents</a>
     </td></tr>
-    <tr><td class="TocContents">
-        <a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>
-    </td></tr>
   </table></td></tr>
 
 }%
-    \lcTocToggleOdd%
-
-  %  \gdef\lciTocOuterState{Sync}
-    %\lcTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
-    %\lcTocToggleOdd%
-    %\lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
-    %\lcTocToggleOdd%
+    \lciTocToggleOdd%
   }%
+}
+  %\lciTocNewLayout
+  %  {\lciTocSync\lcRawHtml{</table>}}
+  %  {}
+}
+
+\newcommand{\lciHtmlMinitocBegin}{
+  \lciMinitocOpen
+  \lciPushOutput{minitoc}
+\lcRawHtml{<h2>Table of Contents</h2>}
+  \lciPopOutput
 }
 
 % Args: none
 \newcommand{\lciTocFileFooter}{%
+  \lciTocNewLayout{}{
     \lciTocSync
     \lciIfTwoColumnToc{}{
         \lcTocToggleOdd%
@@ -314,8 +347,9 @@
 </table>
 <!-- End of the list of contents entries -->
 }%
-    \lciHtmlNavigationBottom
-    \lciHtmlFileFooter
+  }
+  \lciHtmlNavigationBottom
+  \lciHtmlFileFooter
 }
 
 % ___________________________________________________________________________
@@ -437,24 +471,42 @@
     % upon \label ..so we temporarily redefine the function
     % to only generate an html-anchor
     \newcommand{\label}[1]{\lcRawHtml{<A NAME="}##C1\lcRawHtml{"></A>}}
-    \lciMirroredTocEntry{\lciLocalVariableLabel}
+    \lciTocNewLayout{
+      \begin{savestream}{pkgtoc}
+        \lciLocalVariableLabel
+      \end{savestream}
+    }{
+      \lciPushOutput{toc}
+        \lciLocalVariableLabel
+      \lciPopOutput
+    }
   \endgroup
 
-  \lciIfEqualExpanded{\lciDocumentClass}{article}%
-    {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
-  \lciIfLessExpanded{\lciCountertocdepth}{\lciPartNum}{}{%
+  \lciIfEqualExpanded{\lciDocumentClass}{article}{}{%
 %% %% make part entries unlinked until full output support is there
     \edef\lciOut{\lciOutputFilename}%
-    \lciMirroredTocEntry{
-      \lciTocCloseInner
-      % make sure we are not in Sync state
-      \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
-%%    \lcRawHtml{<a href="}\lcRawHtmlExpanded{\lciOut}%
-%%    \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }%
-      \lcRawHtml{    <!-- =================================================== -->
-    <h3 class="TocPart"><br>}\lciLocalVariableCurrentPartName\lcRawHtml{</h3>
-}%
-    }
+    \lciTocNewLayout{
+      \begin{savestream}{parttoc}
+        \lcRawHtml{<tr>}
+        \lciTocIndentWidth
+        \lcRawHtml{<td><a href="##part_}\thepart\lcRawHtml{">}
+        \lciLocalVariableCurrentPartName\lcRawHtml{</a></td></tr>}
+      \end{savestream}
+      \begin{savestream}{pkgtoc}
+        \lcRawHtml{<tr><td colspan="4"><a name="part_}\thepart\lcRawHtml{"></a>}
+        %\lcRawHtml{<h3>}\lciLocalVariableCurrentPartName\lcRawHtml{</h3></td></tr>}
+        \lcRawHtml{<h3>}\lciLocalVariableCurrentPartName\lcRawHtml{</h3>}
+      \end{savestream}
+   }{ % plain old toc layout
+     \lciPushOutput{toc}
+       \lciTocCloseInner
+       % make sure we are not in Sync state
+       \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
+  %%   \lcRawHtml{<a href="}\lcRawHtmlExpanded{\lciOut}%
+  %%   \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }%
+       \lcRawHtml{<h3 class="TocPart"><br>}#1~~~\lciLocalVariableCurrentPartName\lcRawHtml{</h3>}
+     \lciPopOutput
+   }
 }}
 
 \newcommand{\lciHtmlPartPkgDesciption}[2]{
@@ -484,38 +536,46 @@
 
 % Args: <anchor-counter> <toc-entry>: Respect secnumdepth counter.
 \newcommand{\lciHtmlChapterToc}[2]{%
-  %\lciCheckForLabelInsideHeading{#2}%
-  %    {\lciLocalVariableChapterName}%
-  %    {\lciLocalVariableLabel}%
   \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
       \lcRawHtml{<a name="Chapter_}#C1\lcRawHtml{"></a>}}}
   \lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
     \edef\lciOut{\lciOutputFilename}%
-    \lciMirroredTocEntry{%
-    % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
-    \lcRawHtml{<span class="TocChapter">
-      <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}% \lciLocalVariableChapterName
-      \lcRawHtml{">}
-          #C2
-      \lcRawHtml{</a></span>}%
-    \lcTocRight\lcTocLeft\lciTocOpenInner%
-    }
+    \lciTocNewLayout{
+      \begin{savestream}{pkgtoc}
+        \lcRawHtml{<tr onMouseOver="javascript:changeCol('blue','}\thechapter\lcRawHtml{')"
+          onMouseOut="javascript:changeCol('##cccccc','}\thechapter\lcRawHtml{')">}
+        \lciTocIndentWidth
+        \lcRawHtml{<td>}
+        \lcRawHtml{<a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}
+        \lcRawHtml{">}#C2\lcRawHtml{</a>}%
+        \lcRawHtml{</td>}
+      \end{savestream}
+   }{
+    \lciPushOutput{toc}
+     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
+     \lcRawHtml{<a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}
+     \lcRawHtml{">}#C1~~~#C2\lcRawHtml{</a>}%
+     \lcTocRight\lcTocLeft\lciTocOpenInner%
+    \lciPopOutput
+   }
 }}
 
 
-\newcommand{\lciChapterPartTocEntry}[1]{
-    \edef\lciOut{\lciOutputFilename}%
-    \lciMirroredTocEntry{\lciTocOpenInner}
-    \lciPushOutput{toc}%
-    \lcRawHtml{      <tr>}
-    \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{}
-    \lcRawHtml{        <td class="TocSection" width="35">&nbsp;</td><td class="TocSection" colspan="5">
-          <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
-    \lcRawHtml{"><i>}#1\lcRawHtml{</i></a>
-        </td>
+\newcommand{\lciHtmlChapterPartToc}[1]{
+  \edef\lciOut{\lciOutputFilename}%
+  \lciTocNewLayout{}{
+    \lciPushOutput{toc}
+      \lciTocOpenInner
+      \lcRawHtml{      <tr>}
+      \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{}
+      \lcRawHtml{        <td class="TocSection" width="35">&nbsp;</td><td class="TocSection" colspan="5">
+      <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+      \lcRawHtml{"><i>}#1\lcRawHtml{</i></a>
+      </td>
       </tr>
-}%
+      }%
     \lciPopOutput
+  }
 }
 
 % Args: <header-text>:
@@ -535,46 +595,31 @@
       {\lciLocalVariableLabel}%
     \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
         \lcRawHtml{<a name="Section_}#C1\lcRawHtml{"></a>}
-        \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}%
+        \lciTocNewLayout{%
+          \edef\lciOut{\lciOutputBasename}%
+          \lciPushOutput{minitoc}
+        }{% old layout
+          \edef\lciOut{\lciOutputFilename}%
+          \lciPushOutput{toc}
+        }%
         \lciTocOpenInner
-        \lcRawHtml{      <tr>
-}\lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{}
-        \lcRawHtml{        <td class="TocSection"><a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{<tr>}
+        \lciTocNewLayout{}{
+\lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{}}
+        \lcRawHtml{  <td class="TocSection"><a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
         \lcRawHtml{##Section_}#C1\lcRawHtml{">}#2\lcRawHtml{</a></td>}
-        \lcRawHtml{        <td class="TocSection" colspan="5">
-          <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
-        \lcRawHtml{##Section_}#C1\lcRawHtml{"
-          >}\lciLocalVariableSectionName\lcRawHtml{</a>
-        </td>
-      </tr>
-}%
-        \lciPopOutput}}
+        \lcRawHtml{  <td class="TocSection" colspan="5">
+        <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Section_}#C1\lcRawHtml{">}%
+        \lciLocalVariableSectionName\lcRawHtml{</a></td></tr>}%
+        \lciPopOutput%
+    }
+}
 
 % Args: <header-text>:
 \newcommand{\lciHtmlReferenceHeader}[1]{
   \lcRawHtml{<h2>}#C1\lcRawHtml{</h2>}
 }
-
-% Args: <anchor-counter> <toc-entry>:  Respect secnumdepth counter.
-\newcommand{\lciHtmlReferenceToc}[2]{%
-    \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
-        \lcRawHtml{<a name="Reference_}#C1\lcRawHtml{"></a>}
-        \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}%
-        \lciTocOpenInner
-        \lcRawHtml{      <tr>
-}\lciTocIndentWidth
-        \lcRawHtml{        <td class="TocReference" colspan="5">
-          <a class="TocLinkReference" href="}\lcRawHtmlExpanded{\lciOut}%
-        %\lcRawHtml{##Reference_}#C1 % go to top of file, not the anchor
-        \lcRawHtml{"
-          >}#C2\lcRawHtml{</a>
-        </td>
-      </tr>
-}%
-        \lciPopOutput}}
-
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
 % anchor is defined. Respect secnumdepth counter.
@@ -594,18 +639,25 @@
       {\lciLocalVariableSubSectionName}%
       {\lciLocalVariableLabel}%
     \lciIfLessExpanded{\lciCountertocdepth}{2}{}{%
-        \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}%
+        \lciTocNewLayout{%
+          \edef\lciOut{\lciOutputBasename}%
+          \lciPushOutput{minitoc}
+        }{% old layout
+          \edef\lciOut{\lciOutputFilename}%
+          \lciPushOutput{toc}
+        }%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
-}\lciTocIndentWidth\lciTocIndentWidth
+}\lciTocNewLayout{}{\lciTocIndentWidth}\lciTocIndentWidth
         \lcRawHtml{        <td class="TocSubsection" colspan="4">
           <a class="TocLinkSubsection" href="}\lcRawHtmlExpanded{\lciOut}%
         \lcRawHtml{##Subsection_}#C1\lcRawHtml{">}\lciLocalVariableSubSectionName\lcRawHtml{</a>
         </td>
       </tr>
 }%
-        \lciPopOutput}}
+        \lciPopOutput%
+    }%
+}
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
 % anchor is defined. Respect secnumdepth counter.
@@ -618,11 +670,16 @@
 % Args: <anchor-counter> <toc-entry>
 \newcommand{\lciHtmlSubsubsectionToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{3}{}{%
-        \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}%
+        \lciTocNewLayout{%
+          \edef\lciOut{\lciOutputBasename}%
+          \lciPushOutput{minitoc}
+        }{% old layout
+          \edef\lciOut{\lciOutputFilename}%
+          \lciPushOutput{toc}
+        }%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
-}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
+}\lciTocNewLayout{}{\lciTocIndentWidth}\lciTocIndentWidth\lciTocIndentWidth
         \lcRawHtml{        <td class="TocSubsubsection" colspan="3">
           <a class="TocLinkSubsubsection" href="}\lcRawHtmlExpanded{\lciOut}%
         \lcRawHtml{##Subsubsection_}#C1\lcRawHtml{"
@@ -630,7 +687,8 @@
         </td>
       </tr>
 }%
-       \lciPopOutput}}
+       \lciPopOutput}%
+}
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
 % anchor is defined. Respect secnumdepth counter.
@@ -643,11 +701,16 @@
 % Args: <anchor-counter> <toc-entry>
 \newcommand{\lciHtmlParagraphToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{4}{}{%
-        \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}%
+        \lciTocNewLayout{%
+          \edef\lciOut{\lciOutputBasename}%
+          \lciPushOutput{minitoc}
+        }{% old layout
+          \edef\lciOut{\lciOutputFilename}%
+          \lciPushOutput{toc}
+        }%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
-}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
+}\lciTocNewLayout{}{\lciTocIndentWidth}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
         \lcRawHtml{        <td class="TocParagraph" colspan="2">
           <a class="TocLinkParagraph" href="}\lcRawHtmlExpanded{\lciOut}%
         \lcRawHtml{##Paragraph_}#C1\lcRawHtml{"
@@ -655,7 +718,8 @@
         </td>
       </tr>
 }%
-        \lciPopOutput}}
+        \lciPopOutput}%
+}
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
 % anchor is defined. Respect secnumdepth counter.
@@ -668,11 +732,16 @@
 % Args: <anchor-counter> <toc-entry>
 \newcommand{\lciHtmlSubparagraphToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{5}{}{%
-        \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}%
+        \lciTocNewLayout{%
+          \edef\lciOut{\lciOutputBasename}%
+          \lciPushOutput{minitoc}%
+        }{% old layout
+          \edef\lciOut{\lciOutputFilename}%
+          \lciPushOutput{toc}
+        }%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
-}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
+}\lciTocNewLayout{}{\lciTocIndentWidth}\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
 \lciTocIndentWidth
         \lcRawHtml{        <td class="TocSubparagraph">
           <a class="TocLinkSubparagraph" href="}\lcRawHtmlExpanded{\lciOut}%
@@ -681,7 +750,8 @@
         </td>
       </tr>
 }%
-        \lciPopOutput}}
+        \lciPopOutput}%
+}
 
 
 % ___________________________________________________________________________

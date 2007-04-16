@@ -402,6 +402,28 @@ convert() {
     run_command cc_extract_html ${ExtractOptions} -main ${RootName}.html $ExOpt $1
     CurrentLen=0
 
+    # create minitocs
+    
+    cd ${TmpDir}
+
+    find . -name "*.minitoc" | while read minitoc ; do
+      targetfilename=${minitoc%.minitoc}
+      lgout -n "minitoc: [$minitoc] target: [$targetfilename]"
+      cat ${targetfilename} | sed '/LATEX_TO_HTML_REPLACE_WITH_MINITOC_HERE/ {
+r '"$minitoc"'
+d
+}' > ${targetfilename}.tmp
+      mv $targetfilename.tmp $targetfilename
+    done
+    
+    #find . -name "*.html" | while read minitoc ; do
+     # targetfilename=${minitoc%.minitoc}
+     # lgout -n "minitoc: [$minitoc] target: [$targetfilename]"
+     # cat ${targetfilename} | ./replace_minitoc $minitoc > ${targetfilename}.tmp
+     # #cat ${targetfilename} | sed "s/LATEX_TO_HTML_TOKEN_2374627354263542_REPLACE_WITH_MINITOC_HERE/xxx/" > ${targetfilename}.tmp
+     # mv $targetfilename.tmp $targetfilename
+    #done
+
     # Duplicate directory structure into OutDir
     # ---------------------------------------------------------------------
     lgout -n "duplicating directory structure"
@@ -538,7 +560,6 @@ convert() {
     done
 
     cd $CurrentDir
-
     # Copy cascaded style sheet (CSS) file
     # -------------------------------------------------------
     lgout -n "copying CSS file"

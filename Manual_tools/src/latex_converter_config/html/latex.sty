@@ -221,33 +221,21 @@
 % ###########################################################################
 
 \newenvironment{document}{%
-    \lciSavestreamOpen{completetoc}
     % prepare main HTML file
     \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
-      \lciMainRootname}%
+      \lciMainRootname}
+      
     \lciHtmlNavigationTop
 
+    \lciTocNewLayout{
+      \lciSavestreamOpen{pkgtoc}
+      \lciSavestreamOpen{parttoc}
+    }{}
     % prepare TOC
     \lciPushOutput{toc}
       \lciTocFileHeader{Table of Contents}
+      \lciTocBegin
     \lciPopOutput
-    \lciPushOutput{shorttoc}
-      \gdef\lciFileSpecificCSS{%
-        \lcRawHtml{
-<style type="text/css">
-td.TocGroupOddLeft,
-td.TocEmptyOddLeft,
-td.TocGroupOddRight,
-td.TocEmptyOddRight    { background-color: #ffffff; }
-td.TocChapter          { font-weight: normal; }
-</style>}%
-      }
-      \lciTocFileHeader{Short Table of Contents}
-      \gdef\lciFileSpecificCSS{}
-    \lciPopOutput
-
-    \lciMirroredTocEntry{\lciTocBegin}
-
     \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
     \lciPushOutput{packages}%
@@ -263,7 +251,20 @@ td.TocChapter          { font-weight: normal; }
     % close all parts, chapters, and sections at the end of the conversion
     \lciEndPart
     % finish table of contents
-    \lciMirroredTocEntry{\lciTocFileFooter}
+    \lciPushOutput{toc}
+      \lciTocNewLayout{
+        \lcRawHtml{<div class="NavTop"><hr><h2>Parts</h2><hr></div>}
+        \lcRawHtml{<br><table border="0">}
+        \lciSavestreamUse{parttoc}
+        \lcRawHtml{</table><br>}
+        \lcRawHtml{<div class="NavTop"><hr><h2>Packages</h2><hr></div>}
+        \lcRawHtml{<table border="0">}
+        \lciSavestreamUse{pkgtoc}
+        \lcRawHtml{</table>}
+      }{}
+      %\lciTocSync
+      \lciTocFileFooter
+    \lciPopOutput
     % finish main HTML file
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
@@ -1124,13 +1125,7 @@ td.TocChapter          { font-weight: normal; }
     \refstepcounter{part}%
     %\setcounter{chapter}{0}%
     \lciUndef{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}
-    \lciIfEqualExpanded{\lciDocumentClass}{article}%
-        {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
-    \lciIfLessExpanded{\lciCountersecnumdepth}{\lciPartNum}{%
-      %\lciHtmlPartHeader{\value{part}}{#2}%
-      \lciHtmlPartToc{\thepart}{#1}}%
-    {%\lciHtmlPartHeader{\value{part}}{\thepart~~~#2}%
-      \lciHtmlPartToc{\thepart}{\thepart~~~#1}}
+    \lciHtmlPartToc{\thepart}{#1}
 }
 \newcommand{\part*}[1]{%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
@@ -1156,6 +1151,7 @@ td.TocChapter          { font-weight: normal; }
       {\lciLocalVariableChapterNameTOC}%
       {\lciLocalVariableLabel}%
     \lciChapter% does also a PushOutput
+    \lciTocNewLayout{\lciHtmlMinitocBegin}{}
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
@@ -1170,7 +1166,7 @@ td.TocChapter          { font-weight: normal; }
     \lcRawHtmlExpanded{\lciOutputBasename}%
     \lcRawHtml{">}Up\lcRawHtml{</a>,
 }%
-    \lciPopOutput%
+    \lciPopOutput
     \gdef\lciInsideListOfRefPages{\lcFalse}%
     \ccEnableRawListOfRefpages
     \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
@@ -1181,14 +1177,10 @@ td.TocChapter          { font-weight: normal; }
     % file header
     \lciHtmlFileHeader{\lciLocalVariableChapterNameTOC}%
     \lciHtmlNavigationTop
+    \lciHtmlChapterToc{\thechapter}{\lciLocalVariableChapterNameTOC}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{0}%
-    {%
-      \lciHtmlChapterToc{\thechapter}{\lciLocalVariableChapterNameTOC}%
-      \lciHtmlChapterHeader{#2}%
-    }{%
-      \lciHtmlChapterToc{\thechapter}{\thechapter~~~\lciLocalVariableChapterNameTOC}%
-      \lciHtmlChapterHeader{Chapter \thechapter\\#2}%
-    }%
+      {\lciHtmlChapterHeader{#2}}%
+      {\lciHtmlChapterHeader{Chapter \thechapter\\#2}}%
 }
 \newcommand{\chapter*}[1]{%
     \lciHtmlChapterHeader{#1}}
@@ -1196,6 +1188,7 @@ td.TocChapter          { font-weight: normal; }
 \newcommand{\lciEndChapter}{\lciEndChapterX{chapter}}
 
 \newcommand{\lciEndChapterX}[1]{%
+  \lciTocNewLayout{\lciMinitocClose}{}%
   \lciEndSection
   \lciIfPrintRawListOfRefpages{}{\ccPrintSortedListOfRefpagesX}
   \lciIfDefined{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{% check for first chapter
@@ -1213,7 +1206,7 @@ td.TocChapter          { font-weight: normal; }
 }
 
 \newcommand{\lciSplitChapter}[3]{
-    \lciEndChapter{chapterpart}
+    \lciEndChapter%{chapterpart}
     \lciPushFootnotes
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
@@ -1223,6 +1216,7 @@ td.TocChapter          { font-weight: normal; }
       {\lciLocalVariableLabel}%
     \gdef\lciCurrentLabel{\thechapter}%
     \lciChapter% does also a PushOutput
+    \lciTocNewLayout{\lciHtmlMinitocBegin}{}
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
@@ -1248,7 +1242,7 @@ td.TocChapter          { font-weight: normal; }
     \lciHtmlFileHeader{\lciLocalVariableChapterNameTOC}%
     \lciHtmlNavigationTop
 
-    \lciChapterPartTocEntry{#1}
+    \lciHtmlChapterPartToc{#1}
     \lciHtmlChapterHeader{#3}%
 }
 
@@ -1361,7 +1355,8 @@ td.TocChapter          { font-weight: normal; }
 
 \newcommand{\lciEndSubparagraph}{%
   \lciIfEqualExpanded{\lciCountersubparagraph}{0}{}{% check 1st subparagraph
-}}
+}%
+}
 
 
 % appendix changes numbering of chapters
@@ -1370,7 +1365,11 @@ td.TocChapter          { font-weight: normal; }
     \gdef{\thesection}{\Alph{section}}\setcounter{section}{0}}{%
     \gdef{\thechapter}{\Alph{chapter}}\setcounter{chapter}{0}}}
 
-\newcommand{\minitoc}{}
+\newcommand{\minitoc}{%
+\lciTocNewLayout%
+{\lcRawHtml{LATEX_TO_HTML_REPLACE_WITH_MINITOC_HERE}}
+{}%
+}
 \newcommand{\tableofcontents}{}
 \newcommand{\listoffigures}{}
 \newcommand{\listoftables}{}

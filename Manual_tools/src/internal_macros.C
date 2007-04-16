@@ -1486,6 +1486,20 @@ handle_savestream_close( const string&, string param[], size_t n, size_t opt) {
 }
 
 string
+handle_minitoc_open( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 0, 0);
+  minitoc_open();
+  return string();
+}
+
+string
+handle_minitoc_close( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 0, 0);
+  minitoc_close();
+  return string();
+}
+
+string
 handle_shell_command( const string&, string param[], size_t n, size_t opt) {
   NParamCheck( 1, 0);
   string cmd = param[0];
@@ -1596,18 +1610,21 @@ void init_internal_macros() {
 
     insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
 
-    insertInternalGlobalMacro( "\\lciIncludeOnly",  handle_include_only,  1);
-    insertInternalGlobalMacro( "\\lciIfToBeIncluded",  handle_to_be_included,  1);
-    insertInternalGlobalMacro( "\\lciToHtmlWidth",  to_html_width,  1);
+    insertInternalGlobalMacro( "\\lciIncludeOnly",    handle_include_only,  1);
+    insertInternalGlobalMacro( "\\lciIfToBeIncluded", handle_to_be_included,  1);
+    insertInternalGlobalMacro( "\\lciToHtmlWidth",    to_html_width,  1);
 
-    insertInternalGlobalMacro( "\\lciRegexRegister",  handle_regex_register,   2 );
-    insertInternalGlobalMacro( "\\lcRegexDoesMatch", handle_regex_does_match, 2 );
-    insertInternalGlobalMacro( "\\lcRegexStoreResult",  handle_regex_store_result, 2 );
+    insertInternalGlobalMacro( "\\lciRegexRegister",   handle_regex_register,   2 );
+    insertInternalGlobalMacro( "\\lcRegexDoesMatch",   handle_regex_does_match, 2 );
+    insertInternalGlobalMacro( "\\lcRegexStoreResult", handle_regex_store_result, 2 );
 
-    insertInternalGlobalMacro( "\\lciStoreSavebox",  handle_store_savebox, 1 );
+    insertInternalGlobalMacro( "\\lciStoreSavebox",    handle_store_savebox, 1 );
     insertInternalGlobalMacro( "\\lciSavestreamOpen",  handle_savestream_open, 1 );
-    insertInternalGlobalMacro( "\\lciSavestreamUse",  handle_savestream_use, 1 );
-    insertInternalGlobalMacro( "\\lciSavestreamClose",  handle_savestream_close, 1 );
+    insertInternalGlobalMacro( "\\lciSavestreamUse",   handle_savestream_use, 1 );
+    insertInternalGlobalMacro( "\\lciSavestreamClose", handle_savestream_close, 1 );
+
+    insertInternalGlobalMacro( "\\lciMinitocOpen",   handle_minitoc_open, 0 );
+    insertInternalGlobalMacro( "\\lciMinitocClose",  handle_minitoc_close, 0 );
 
     insertInternalGlobalMacro( "\\lciShellCommand",  handle_shell_command, 1 );
 }

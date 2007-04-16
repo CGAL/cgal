@@ -159,6 +159,8 @@ ostream* savestream_get    ( const string& name );
 string   savestream_use    ( const string& name );
 void     savestream_close  ( const string& name );
 
+void     minitoc_open();
+void     minitoc_close();
 
 #endif // OUTPUT_H //
 // EOF //

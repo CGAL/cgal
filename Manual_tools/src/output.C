@@ -57,6 +57,7 @@ ostream* comments_stream = 0;
 ostream* index_stream = 0;
 ostream* HREF_stream = 0;
 ostream* HREF_counter_stream = 0;
+ostream* minitoc_stream = 0;
 
 ostringstream* savebox_stream = new ostringstream;
 
@@ -165,31 +166,31 @@ void push_current_output() {
     if (contents_stream)
         (*contents_stream) << flush;
     current_output = Output_file( current_ostream, current_filename);
-    output_file_stack.push_front( current_output);
-    anchor_file_stack.push_front( anchor_stream);
+    output_file_stack.push_front( current_output );
+    anchor_file_stack.push_front( anchor_stream );
 }
 
 void pop_current_output() {
-    if ( output_file_stack.empty())
-	printErrorMessage( OutputStackEmptyError);
+    if( output_file_stack.empty() )
+        printErrorMessage( OutputStackEmptyError);
     else {
-        if (contents_stream)
+        if( contents_stream )
             (*contents_stream) << flush;
-	current_output   = output_file_stack.front();
+        current_output   = output_file_stack.front();
         anchor_stream    = anchor_file_stack.front( );
-	current_ostream  = current_output.stream_ptr();
-	current_filename = current_output.name();
-	current_basename = basename_string( current_filename);
-	current_rootname = rootname_string( current_basename);
-	current_filepath = path_string( current_filename);
-	current_uppath   = uppath_string( current_filepath);
+        current_ostream  = current_output.stream_ptr();
+        current_filename = current_output.name();
+        current_basename = basename_string( current_filename );
+        current_rootname = rootname_string( current_basename );
+        current_filepath = path_string( current_filename );
+        current_uppath   = uppath_string( current_filepath );
         insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
         insertInternalGlobalMacro( "\\lciOutputBasename",current_basename);
         insertInternalGlobalMacro( "\\lciOutputRootname",current_rootname);
         insertInternalGlobalMacro( "\\lciOutputPath",    current_filepath);
         insertInternalGlobalMacro( "\\lciOutputUppath",  current_uppath);
-	output_file_stack.pop_front();
-	anchor_file_stack.pop_front();
+        output_file_stack.pop_front();
+        anchor_file_stack.pop_front();
     }
 }
 
@@ -210,10 +211,6 @@ void set_current_output( const string& key) {
     } else if ( key == "toc") {
         current_output = Output_file( contents_stream,
                                       macroX( "\\lciContentsFilename") );
-        anchor_stream = global_anchor_stream;
-    } else if ( key == "shorttoc") {
-        current_output = Output_file( short_contents_stream,
-                                      macroX( "\\lciShortContentsFilename") );
         anchor_stream = global_anchor_stream;
     } else if ( key == "comments") {
         current_output = Output_file( comments_stream, string("comments.xml") );
@@ -240,7 +237,12 @@ void set_current_output( const string& key) {
           return;
         }
         new_filename = false;
-    } else {
+    } else if ( key == "minitoc" ) {
+        string filename = macroX( "\\lciMinitocFilename" );
+        current_output = Output_file( minitoc_stream, filename );
+        new_filename = false;
+    }
+    else {
         printErrorMessage( OutputStackKeyError);
     }
     current_ostream  = current_output.stream_ptr();
@@ -318,6 +320,26 @@ savestream_close( const string& name ) {
     delete out;
     savestream_table[name] = NULL;
   }
+}
+
+void
+minitoc_open() {
+   if( minitoc_stream != NULL ) {
+     std::cerr << "!! Error: minitoc opened twice ... current filepath: " << current_filepath << std::endl;
+     delete minitoc_stream;
+   }
+   string filename = current_filename + ".minitoc";
+   insertInternalGlobalMacro( "\\lciMinitocFilename",filename);
+   
+   minitoc_stream = open_file_for_write_with_path( tmp_path + filename );
+}
+
+void
+minitoc_close() {
+   if( minitoc_stream != NULL ) {
+     delete minitoc_stream;
+     minitoc_stream = NULL;
+   }
 }
 
 // EOF //

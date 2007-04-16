@@ -44,7 +44,16 @@
 \gdef\lciInsideListOfRefPages{\lcFalse}
 \gdef\lciCloseCommentHeadingTable{}%
 
-\newcommand{\ccUserChapter}[1]{\chapter{#1}\lciChapterPartTocEntry{User Manual}}
+\newcommand{\lcEnableNewTocLayout}{%
+  \gdef\lciTocNewLayout{\lcTrue}%
+  \setcounter{tocdepth}{3}%
+}
+\newcommand{\lcDisableNewTocLayout}{%
+  \gdef\lciTocNewLayout{\lcFalse}%
+}
+\lcDisableNewTocLayout
+
+\newcommand{\ccUserChapter}[1]{\chapter{#1}\lciHtmlChapterPartToc{User Manual}}
 \newcommand{\ccRefChapter}[1]{%
  %\chapter[#1 Reference~Manual]{#1\\
 %\textit{Reference~Manual}}%
@@ -511,8 +520,6 @@
     % file header
     \lciHtmlFileHeader{\ccReferenceFileContX #X1}%
     \lciHtmlNavigationTop%
-    %\lciHtmlReferenceToc{\thereferencepage}{#1}%
-    %\lciHtmlReferenceHeader{#1}%
 }
 % skips a leading \ccc command, useful for formatted title from reference pages
 \newcommand{\ccReferenceFileContX}[1]{%
@@ -1064,8 +1071,17 @@
   \lciPushOutput{packages}%
 }
 
-\newcommand{\lciFlushPkgDescription}[2]{%
-  \lciFlushPkgDescriptionX{#X1}{#X2}{\ccValueofPkgName}%
+\newcommand{\lciEndPackage}[2]{%
+  \lciTocNewLayout{
+    \begin{savestream}{pkgtoc}
+      \lcRawHtml{
+        <td><a id="usermanual}\thechapter\lcRawHtml{" class="TocInactive" href="#XC1">User Manual</a></td>
+        <td width="4">&nbsp;</td>
+        <td><a id="refmanual}\thechapter\lcRawHtml{" class="TocInactive" href="#XC2">Reference Manual</a></td>
+      </tr>}%
+    \end{savestream}
+  }{}
+  \lciFlushPkgDescriptionX{#X1}{#X2}{\ccValueofPkgName}
 }
 
 \newcommand{\lciCheckForLabelInsideHeadingX}[2]{%

@@ -377,6 +377,8 @@ expandMacro(const string & macro,
               index = size_t(s[i + 1]) - size_t('a') + 9;       //'a'==9
             if (index >= n_parameters + n_options) {
               printErrorMessage(ParamIndexError);
+              std::cerr << "macro: " << s << " i=" << i << std::endl << std::endl;
+              std::cerr << "index: " << index << " n_parameters: " << n_parameters << std::endl;
               ++i;
             } else {
               string repl;
@@ -390,7 +392,6 @@ expandMacro(const string & macro,
                     repl = expand_cache[index];
                   else {
                     repl = expandFirstMacro(parameters[index],expand_only_once);
-                    //std::cout << "replacement text for \"" << parameters[index] << "\": " << repl << std::endl;
                     expand_cache[index] = repl;
                     cache_valid[index] = true;
                   }
