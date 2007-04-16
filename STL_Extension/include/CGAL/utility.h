@@ -85,9 +85,7 @@ template <class T1, class T2, class T3>
 inline bool operator!=(const Triple<T1, T2, T3>& x,
                        const Triple<T1, T2, T3>& y)
 {
-  return ( (x.first != y.first) ||
-           (x.second != y.second) ||
-           (x.third != y.third) );
+  return !(x == y);
 }
 
 template <class T1, class T2, class T3>
@@ -164,10 +162,7 @@ bool
 operator!=(const Quadruple<T1, T2, T3, T4>& x,
            const Quadruple<T1, T2, T3, T4>& y)
 {
-  return ( (x.first == y.first) &&
-           (x.second == y.second) &&
-           (x.third == y.third) &&
-           (x.fourth == y.fourth) );
+  return ! (x == y);
 }
 
 template <class T1, class T2, class T3, class T4>
