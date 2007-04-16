@@ -522,12 +522,13 @@ public:
 
     if(this->has_shalfloop()) {
       Sphere_circle cl(this->shalfloop()->circle());
-      if(!s_init || s.is_long())
+      if(!s_init || s.is_long()) {
 	if(cl.has_on(p)) {
 	  ip = p.antipode();
 	  return Object_handle(SHalfloop_handle(this->shalfloop()));
 	} else 	  
 	  s = Sphere_segment(p,p.antipode(),c);
+      }
       Sphere_point p_res;
       CGAL_NEF_TRACEN("do intersect " << cl << ", " << s);
       if(!do_intersect_internally(cl,s,p_res))
@@ -591,9 +592,9 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
     CGAL_assertion(e->circle().has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+e->circle().orthogonal_vector());
     CGAL_NEF_TRACEN("on edge "<<op);
-    if (axis==0 && ((op.z() < 0) || (op.z() == 0) && (op.x() < 0))) e = e->twin();
-    if (axis==1 && ((op.x() > 0) || (op.x() == 0) && (op.y() < 0))) e = e->twin();
-    if (axis==2 && ((op.x() > 0) || (op.x() == 0) && (op.z() < 0))) e = e->twin();
+    if (axis==0 && ((op.z() < 0) || ((op.z() == 0) && (op.x() < 0)))) e = e->twin();
+    if (axis==1 && ((op.x() > 0) || ((op.x() == 0) && (op.y() < 0)))) e = e->twin();
+    if (axis==2 && ((op.x() > 0) || ((op.x() == 0) && (op.z() < 0)))) e = e->twin();
     upper = e->incident_sface()->mark();
     lower = e->twin()->incident_sface()->mark();
     return;
@@ -604,9 +605,9 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
     CGAL_assertion(l->circle().has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+l->circle().orthogonal_vector());
     CGAL_NEF_TRACEN("on loop "<<op);
-    if (axis==0 && ((op.z() < 0) || (op.z() == 0) && (op.x() < 0))) l = l->twin();
-    if (axis==1 && ((op.x() > 0) || (op.x() == 0) && (op.y() < 0))) l = l->twin();
-    if (axis==2 && ((op.x() > 0) || (op.x() == 0) && (op.z() < 0))) l = l->twin();
+    if (axis==0 && ((op.z() < 0) || ((op.z() == 0) && (op.x() < 0)))) l = l->twin();
+    if (axis==1 && ((op.x() > 0) || ((op.x() == 0) && (op.y() < 0)))) l = l->twin();
+    if (axis==2 && ((op.x() > 0) || ((op.x() == 0) && (op.z() < 0)))) l = l->twin();
     upper = l->incident_sface()->mark();
     lower = l->twin()->incident_sface()->mark();
     return;
