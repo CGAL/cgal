@@ -1739,7 +1739,12 @@ Reference~Manual}%
                   }
 
 \newcommand{\ccTexHtml}[2]{#1}
-\newcommand{\ccAnchor}[2]{#2}
+\newcommand{\ccAnchor}[2]{%
+\ifpdf%
+  \href{#1}{#2}%
+\else%
+  #2 (\begingroup\def\ccFont{\tt}\ccc{#1}\endgroup)%
+\fi}
 %\newcommand{\ccAnchor}[3][t]{#3}
 \newenvironment{ccTexOnly}{}{}
 \newenvironment{ccHtmlOnly}{\begingroup\ccHtmlCatcode \ccParseHtmlOnlyBody}{
