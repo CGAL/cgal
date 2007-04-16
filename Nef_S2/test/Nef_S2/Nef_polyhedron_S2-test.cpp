@@ -6,8 +6,8 @@
 #include <CGAL/leda_integer.h>
 typedef leda_integer NT;
 #else
-#include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float NT;
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz NT;
 #endif
 
 typedef CGAL::Homogeneous<NT> Kernel;
