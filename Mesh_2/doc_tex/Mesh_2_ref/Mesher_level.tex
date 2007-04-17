@@ -25,7 +25,7 @@ based on Delaunay refinement.
 Typically, a  Delaunay refinement algorithm
 involves not only  the refinement of the mesh cells
 but also the refinements of lower dimensional mesh elements
-which represents  constaints including e.g.
+which represents  constraints including e.g.
 the boundary of the domain to be meshed. 
 Such a process can be seen
 as a cascade of processes called mesher level  where each  level
@@ -38,10 +38,10 @@ and edges (1-dimensional constraints) will involve
 three  instances of \ccRefName\ .
 The class \ccRefName\ 
 is designed to serve as the base class
-in a CRTP (curiously recurent template pattern ).
-It captures what can be seen as the commmon functionalities
+in a CRTP (curiously recurring template pattern ).
+It captures what can be seen as the common functionalities
 of mesher levels, deferring the  detailed implementation
-of elememtary operations to its derived classes.
+of elementary operations to its derived classes.
 
 
 \ccInclude{CGAL/Mesher_level_base.h}
@@ -53,7 +53,7 @@ The class \ccRefName\ has five template parameters: \\
  \ccc{MeshTriangulation}.\\
 - The parameter \ccc{Mesher_level} stands for the derived class
 in the CRTP pattern. This classes provides the implementation
-of basic operation in  the refinement pocess and will be the actual
+of basic operation in  the refinement process and will be the actual
 mesher level used by the meshing application. 
 It must be a model of the concept \ccc{MesherLevel} \\
 - The parameter \ccc{Element} is the type of mesh elements 
@@ -241,7 +241,7 @@ and visitor is the visitor.}
 			  Mesh_visitor& visitor);}
 { Actions  to be performed when  point \ccc{p}  
   with conflict zone \ccc{zone} has been tested for insertion and
-rejected, meaning that ni insertion took place.}
+rejected, meaning that an insertion took place.}
 
 
  
@@ -251,7 +251,7 @@ rejected, meaning that ni insertion took place.}
   \ccMethod{ template <class Mesh_visitor>
   bool try_to_insert_one_point(Mesh_visitor& visitor);}
  {Inserts exactly one new vertex in the mesh  and returns \ccc{true}
- exept when the algorithm is done, in which case no point is inserted
+ except when the algorithm is done, in which case no point is inserted
 and \ccc{false} is returned.}
 \ccGlue  
   \ccMethod{template <class Mesh_visitor>
