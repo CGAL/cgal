@@ -28,8 +28,10 @@
 
 // debug
 // -----
-#if (    defined( CGAL_QP_NO_DEBUG) \
-      || defined( CGAL_NO_DEGUG) || defined( NDEBUG))
+#if (    defined( CGAL_QP_NO_DEBUG)\
+      || defined( CGAL_QP_NO_ASSERTIONS)\
+      || defined( CGAL_NO_ASSERTIONS)\
+      || defined( CGAL_NO_DEBUG) || defined( NDEBUG))
 #  define  CGAL_qpe_debug  if ( 0)
 #else
 #  define  CGAL_qpe_debug  if ( 1)

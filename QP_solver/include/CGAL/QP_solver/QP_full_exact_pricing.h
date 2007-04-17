@@ -120,7 +120,9 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/)
       if (mu < min_mu) { min_j = j; min_mu = mu; }
     }
   }
-  this->vout() << std::endl;
+  CGAL_qpe_debug { 
+    this->vout() << std::endl;
+  }
 
   // return index of entering variable:
   return min_j;
@@ -159,7 +161,9 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
       price_dantzig (j, mu, this->et0, min_j, min_mu, direction);          
     }
   }
-  this->vout() << std::endl;
+  CGAL_qpe_debug { 
+    this->vout() << std::endl;
+  }
 
   // return index of entering variable
   return min_j;

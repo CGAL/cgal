@@ -245,7 +245,9 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 	    }
 	}
     }
-    this->vout() << std::endl;
+    CGAL_qpe_debug { 
+      this->vout() << std::endl;
+    }
 
     // return index of entering variable, if any
     if ( min_mu < this->nt0) {
@@ -388,7 +390,9 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 	    }
 	}
     }
-    this->vout() << std::endl;
+    CGAL_qpe_debug { 
+      this->vout() << std::endl;
+    }
 
     // return index of entering variable, if any
     if ( min_j >= 0) {

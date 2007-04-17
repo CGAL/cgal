@@ -120,7 +120,9 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/)
       if (mu < this->et0) return j;
     }
   }
-  this->vout() << std::endl;
+  CGAL_qpe_debug { 
+    this->vout() << std::endl;
+  }
 
   // fallback option
   return -1;
@@ -159,8 +161,9 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
       if (min_j >= 0) return j;
     }
   }
-  this->vout() << std::endl;
-
+  CGAL_qpe_debug { 
+    this->vout() << std::endl;
+  }
   // fallback option
   return -1;
     

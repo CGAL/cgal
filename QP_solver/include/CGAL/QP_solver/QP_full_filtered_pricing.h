@@ -165,8 +165,9 @@ pricing_helper(int& /*direction*/, Tag_true ) // standard form
 	    }
 	}
     }
-    this->vout() << std::endl;
-
+    CGAL_qpe_debug { 
+      this->vout() << std::endl;
+    }
     // return index of entering variable
     return min_j;
 }
@@ -243,7 +244,9 @@ pricing_helper(int& direction, Tag_false ) // bounds for variables
 	    }
 	}
     }
-    this->vout() << std::endl;
+    CGAL_qpe_debug { 
+      this->vout() << std::endl;
+    }
 
     // return index of entering variable
     return min_j;
