@@ -1,4 +1,4 @@
-personal_ws-1.1 en 285 
+personal_ws-1.1 en 319 
 fourtuple
 Farin
 Overmars
@@ -7,6 +7,7 @@ Seel
 Voronoi
 catenating
 Hanniel
+recurses
 Lutz
 Melkman
 arity
@@ -20,12 +21,15 @@ trilinear
 halfedge
 bijective
 interoperate
+isorectangular
 Halperin
 Dcel
 lvalue
 Fabri
 Oudot
+preprocessing
 versa
+barycenters
 Toussaint
 Delaunay
 inlined
@@ -52,6 +56,8 @@ Tutte's
 Fichel
 Jacobian
 inlining
+subpolygons
+unextended
 Geert
 GALIA
 UML
@@ -62,6 +68,7 @@ halfegde
 Acml
 NURBS
 CopyConstructible
+eigen
 Emiris
 unsymmetric
 Frechet
@@ -79,6 +86,7 @@ dereferencing
 typenames
 dereference
 GIS
+HDS
 polyline
 roundoff
 authalic
@@ -87,10 +95,11 @@ Berberich
 lookup
 parameterizer
 parameterizes
-Fsf
 FPU
+Fsf
 makefile
 simplices
+Arya
 Gmp
 enum
 combinatorics
@@ -100,6 +109,7 @@ iff
 Institut
 Postconditions
 unsetting
+resized
 multiprecision
 GeometryFactory
 bool
@@ -109,9 +119,11 @@ unary
 vertices
 Farin's
 quadrisection
+Triedge
 Supernodal
 Wein
 Raab
+resizes
 Laguerre
 inline
 Catmull
@@ -126,7 +138,9 @@ Aviv
 wrt
 Runge
 istream
+Hertel
 ostream
+Oberstein
 Kde
 multi
 predicate's
@@ -138,12 +152,16 @@ sixtuple
 accessors
 deallocated
 Desbrun
+resizable
 isometry
 halfspace
+Hjaltason
+Eigenvectors
 tritangent
 tetrahedralization
 sidedness
 Zukerman
+halfplane
 PostScript
 unnormalized
 iso
@@ -154,6 +172,7 @@ Unmarks
 Apollonius
 dereferenced
 reals
+Samet
 bidirected
 subcomplex
 Guigue
@@ -162,13 +181,16 @@ Graduiertenkolleg
 halfedges
 Sylvain
 Kettner
+nonoverlapping
 dereferences
 const
 homonymous
+grassfire
 indices
 Informatik
 Flato
 circumradius
+resize
 nonnegative
 templated
 polylines
@@ -176,6 +198,7 @@ significand
 Minkowski
 postcondition
 Taucs
+infimum
 Amenta
 halfspaces
 subring
@@ -194,6 +217,7 @@ Hert
 submeshes
 functors
 functor
+OpenInventor
 Ressler
 Hoffmann
 Boissonnat
@@ -203,11 +227,13 @@ implementor
 quadric
 Kruithof
 Kutta
+Idar
 parameterization
 Diskrete
 leda
 affinely
 DefaultConstructible
+subtree
 Fogel
 zlib
 formulae
@@ -218,12 +244,14 @@ incircle
 bitangent
 hermitian
 superclass
+supremum
 homeomorphic
 Ieee
 simplicial
 Trolltech
 remeshing
 Shewchuk's
+halfplanes
 quadrics
 typedef
 tuple
@@ -247,12 +275,15 @@ Polthier
 OpenNL
 equiareal
 subsequence
+Friedmann
 Akl
 CCB
 Amd
+smoothes
 precomputation
 inserter
 Bernd
+Finkel
 subfaces
 suborthogonal
 Genericity
@@ -263,13 +294,16 @@ Mathematik
 VRML
 rejectors
 subdeterminants
+subsegment
 struct
 PQQ
+CCW
 API
 bivariate
 Cgal
 Umbilics
 DAP
+subgraph
 Blas
 Inria
 Sibson's
