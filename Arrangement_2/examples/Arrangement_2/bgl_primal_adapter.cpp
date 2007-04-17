@@ -44,6 +44,42 @@ double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
   return edge_length(e);
 }
 
+namespace boost {
+
+template <typename Arrangement_2>
+class Arr_vertex_index_map_boost :
+    public CGAL::Arr_vertex_index_map<Arrangement_2>
+{
+ public:
+  typedef CGAL::Arr_vertex_index_map<Arrangement_2>     Base;
+  /*! Default constructor. */
+  Arr_vertex_index_map_boost() : Base() {}
+
+  /*! Constructor from CGAL index map. */
+  Arr_vertex_index_map_boost(Base & other) :
+    CGAL::Arr_vertex_index_map<Arrangement_2>(other)
+  {}
+};
+
+/*!
+ * Get the index property-map function. Provided so that boost is able to
+ * access the Arr_vertex_index_map above.
+ * \param index_map The index map.
+ * \param v A vertex handle.
+ * \return The vertex index.
+ */
+template<class Arrangement>
+unsigned int
+get(const boost::Arr_vertex_index_map_boost<Arrangement> & index_map,
+    typename Arrangement::Vertex_handle v) 
+{
+  const CGAL::Arr_vertex_index_map<Arrangement> & index_map_tmp =
+    static_cast<const CGAL::Arr_vertex_index_map<Arrangement> &>(index_map);
+  return CGAL::get<Arrangement>(index_map_tmp, v);
+}
+
+}
+ 
 int main()
 {
   Arrangement_2   arr;
@@ -61,8 +97,9 @@ int main()
   insert_curve(arr, Segment_2(Point_2(3, 7), Point_2(9, 3)));
 
   // Create a mapping of the arrangement vertices to indices.
-  CGAL::Arr_vertex_index_map<Arrangement_2>             index_map(arr);
-
+  CGAL::Arr_vertex_index_map<Arrangement_2>        index_map_tmp(arr);
+  boost::Arr_vertex_index_map_boost<Arrangement_2> index_map(index_map_tmp);
+  
   // Perform Dijkstra's algorithm from the vertex v0.
   Edge_length_func                                      edge_length;
   CGAL::Arr_vertex_property_map<Arrangement_2, double>  dist_map(index_map);
