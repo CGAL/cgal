@@ -19,8 +19,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial/may_have_common_factor.h>
 #include <CGAL/Algebraic_kernel_d/interval_support.h>
-#include <CGAL/Algebraic_kernel_d/may_have_common_factor.h>
 //#include <NiX/NT_traits.h>
 //#include <NiX/univariate_polynomial_utils.h>
 
