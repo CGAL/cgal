@@ -748,8 +748,10 @@ private:
     while(it != nef_2_list.end()) {
       if((*it).name == text)
         return (*it).N;
-      it++;
+      ++it;
     }
+    CGAL_assertion(false);
+    return Nef_polyhedron(); // kill warning.
   }
 
   void  something_changed(){current_state+=2;};
