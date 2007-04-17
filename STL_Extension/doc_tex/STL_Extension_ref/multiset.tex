@@ -77,7 +77,7 @@ The \ccc{Multiset} class-template has three parameters:
 \begin{itemize}
 \item \ccc{Type} --- the type of the stored elements.
 \item \ccc{Compare} --- the comparison-functor type. This type should provide
-    the following opeator for comparing two \ccc{Type} elements, namely: \\
+    the following operator for comparing two \ccc{Type} elements, namely: \\
   \ccc{Comparison_result operator() (const Type& t1, const Type& t2) const;}\\
     The \ccc{CGAL::Compare<Type>} functor is used by default. In this case,
     \ccc{Type} must support an equality operator (\ccc{operator==}) and a
