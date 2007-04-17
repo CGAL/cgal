@@ -142,9 +142,9 @@ namespace CGALi {
         struct Floor_log2_abs
             : public Unary_function< leda_bigfloat, long > {
             long operator()( leda_bigfloat x ) const {
-              CGAL_precondition(sign(x) != LiS::ZERO);
-              ::leda::integer abs_sign = abs(x.get_significant());
-              return (x.get_exponent() + ::leda::log(abs_sign)).to_long();
+                CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
+                ::leda::integer abs_sign = abs(x.get_significant());
+                return (x.get_exponent() + ::leda::log(abs_sign)).to_long();
                 
             }
         };
@@ -152,8 +152,8 @@ namespace CGALi {
         struct Ceil_log2_abs
             : public Unary_function< leda_bigfloat, long > {
             long operator()( leda_bigfloat x ) const {
-              CGAL_precondition(sign(x) != LiS::ZERO);
-              return ::leda::ilog2(x).to_long();                
+                CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
+                return ::leda::ilog2(x).to_long();                
             }
         };
     };

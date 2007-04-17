@@ -118,8 +118,7 @@ public:
         while (it != tree.end()) {
             lower_bounds.push_back(tree.lower(it));
             upper_bounds.push_back(tree.upper(it));
-            CGAL_postcondition(CGALi::descartes(
-                         polynomial_,tree.lower(it),tree.upper(it)) == 1);
+            // CGAL_postcondition(CGALi::descartes(polynomial_,tree.lower(it),tree.upper(it)) == 1);
             it++;
             }
         number_of_real_roots_ = lower_bounds.size();

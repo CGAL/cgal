@@ -18,7 +18,12 @@
  This is the test file for the class NiX::Descartes.
 */
 
+
 #include <CGAL/basic.h>
+
+// include these traits here by 'hand', since not in release 3.3
+#include <CGAL/Algebraic_extension_traits.h>
+#include <CGAL/Scalar_factor_traits.h>
 
 #include <CGAL/Polynomial.h>
 #include <CGAL/_test_real_root_isolator.h>

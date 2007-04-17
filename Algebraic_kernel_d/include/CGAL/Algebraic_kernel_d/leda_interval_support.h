@@ -21,7 +21,7 @@
 #define CGAL_ALGEBRAIC_KERNEL_D_LEDA_INTERVAL_SUPPORT_H
 
 #include <CGAL/basic.h>
-//#include <NiX/LEDA/bigfloat.h>
+#include <CGAL/leda_bigfloat.h>
 #include <boost/numeric/interval.hpp>
 
 //#include <NiX/LEDA/integer.h>

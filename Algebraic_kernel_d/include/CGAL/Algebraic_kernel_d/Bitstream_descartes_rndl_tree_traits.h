@@ -24,9 +24,8 @@
 #define CGAL_INTERN_USE_BFI
 
 #include <CGAL/basic.h>
-/*#include <NiX/Sqrt_extension.h>
-#include <NiX/Get_arithmetic_traits.h>
-#include <NiX/interval_support.h>*/
+#include <CGAL/Sqrt_extension.h>
+#include <CGAL/Algebraic_kernel_d/interval_support.h>
 
 #include <CGAL/Algebraic_kernel_d/Integer_iterator.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
@@ -104,7 +103,7 @@ public:
 
 private:   
 //member
-    POLY polynomial_;
+    POLY polynomial;
     mutable std::vector<BFI>          polynomial_approx; 
     mutable long                      current_prec; 
     
@@ -115,7 +114,7 @@ private:
         long old_prec = set_precision(BF(),current_prec);
         polynomial_approx.clear();
         convert_coeffs(
-                polynomial_,
+                polynomial,
                 std::back_inserter(polynomial_approx));
         set_precision(BF(),old_prec);
     };
@@ -125,10 +124,10 @@ public:
     IIterator begin(){return IIterator(0);};
     IIterator end()  {return IIterator(polynomial_approx.size());}
 
-    Bitstream_descartes_rndl_tree_traits(const POLY& p):polynomial_(p){
+    Bitstream_descartes_rndl_tree_traits(const POLY& p):polynomial(p){
         current_prec = 60; 
         long old_prec = set_precision(BF(), current_prec); 
-        convert_coeffs(polynomial_,std::back_inserter(polynomial_approx));
+        convert_coeffs(polynomial,std::back_inserter(polynomial_approx));
         set_precision(BF(),old_prec);
     };
     
@@ -168,7 +167,7 @@ public:
         Upper_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
         
         bool initial_upper_bound(int i, long& upper_log, bool& is_certainly_zero){
-            if (is_certainly_zero = ( ptr->polynomial_[i] == NT(0) )) return true;
+            if (is_certainly_zero = ( ptr->polynomial[i] == NT(0) )) return true;
  
             typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs ceil_log2_abs;
             upper_log = ceil_log2_abs(ptr->polynomial_approx[i]);
@@ -221,7 +220,7 @@ public:
               m = (m >> shift);
             }else{
                 // add 0 bits 
-                CGAL_precondition(NiX::singleton(approx));
+                CGAL_precondition(CGALi::singleton(approx));
                 m = (m << -shift);   
             }     
             // std::cout << " Approximator end  " << std::endl;

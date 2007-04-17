@@ -29,6 +29,8 @@
 #endif
 
 #include <CGAL/basic.h> 
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h> 
+#include <CGAL/Handle.h> 
 #include <CGAL/Arithmetic_kernel.h>
 
 #ifdef CGAL_USE_LEDA
@@ -46,10 +48,8 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 // Forward declaration of Algebraic_real_pure
-template< class COEFF, class RAT, class POLICY, class REPCLASS >
+template< class COEFF, class RAT, class POLICY, class REPCLASS>
 class Algebraic_real_pure;
-
-
 
 template <class NTX>
 typename Get_arithmetic_kernel<NTX>::Arithmetic_kernel::Bigfloat_interval

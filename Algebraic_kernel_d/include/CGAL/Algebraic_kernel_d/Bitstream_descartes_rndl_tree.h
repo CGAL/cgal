@@ -31,8 +31,8 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
-/*#include <LiS/Handle.h>
-#include <LiS/Random.h>*/
+/*#include <CGAL/Handle.h>
+#include <CGAL/Random.h>*/
 
 /*
  *  AUXILIARY CLASSES AND FUNCTIONS
@@ -42,7 +42,7 @@ CGAL_BEGIN_NAMESPACE
 ;
 namespace CGALi {
 
-// TODO: Copied from LiS/enums.h:
+// TODO: Copied from CGAL/enums.h:
 enum Three_valued_estimate {
     CLEARLY_NEGATIVE         = -1, //!< = -1. Sign of a value is clearly
                                    //!<       negative.
@@ -102,7 +102,7 @@ inline Three_valued_estimate operator- ( Three_valued_estimate sign ) {
 }
 
 
-// END: Copied from LiS/enums.h
+// END: Copied from CGAL/enums.h
 
 /*
  * Helper functions
@@ -225,7 +225,7 @@ polynomial_power_to_bernstein_approx(
 
 // min/max number of variations in epsilon-sign
 template <class InputIterator, class UnaryFunction>
-void var_eps(
+void var_eps( 
         InputIterator first, InputIterator beyond,
         int& min_var, int& max_var,
         const UnaryFunction& sign_eps
@@ -236,7 +236,7 @@ void var_eps(
 
     CGALi::Three_valued_estimate last_sign_min, last_sign_max; // always non-zero
     last_sign_min = last_sign_max = sign_eps(*it);
-    CGAL_assertion(last_sign_min != LiS::UNCLEAR_SIGN);
+    CGAL_assertion(last_sign_min != CGALi::UNCLEAR_SIGN);
 
     while (++it != beyond) {
         CGALi::Three_valued_estimate cur_sign = sign_eps(*it);
@@ -715,7 +715,7 @@ public:
     construction is constant.)
 
     Unlike STL containers, this class is implemented using
-    \c LiS::Handle.  That means, an object is just a ref-counted
+    \c CGAL::Handle.  That means, an object is just a ref-counted
     pointer to the actual representation.  Thus, copying an
     object is cheap.  However, all copies of an object alias
     each other.  If you modify one, this changes the state
@@ -797,7 +797,7 @@ public:
        <i>x</i>&nbsp;<tt>*</tt>&nbsp;2<sup><i>p</i></sup>.
        If \c Boundary has a matching constructor
        (as \c NiX::Exact_float_number<Integer> does), you can simply
-       <tt>typedef LiS::Creator_2 <Integer, long, Boundary>
+       <tt>typedef CGAL::Creator_2 <Integer, long, Boundary>
        Boundary_creator;</tt>.
      - \c Sign: A functor working identically to
        \c NiX::NT_traits::Sign for \c NT equal to \c Integer.
@@ -850,7 +850,7 @@ public:
         typedef typename NiX::NT_traits<Coefficient>::Floor_log2_abs Lower_bound_log2_abs;
         Lower_bound_log2_abs lower_bound_log2_abs_object() const { return Lower_bound_log2_abs(); }
 
-        typedef LiS::Creator_2<Integer, long, Boundary> Boundary_creator;
+        typedef CGAL::Creator_2<Integer, long, Boundary> Boundary_creator;
         typedef typename NiX::NT_traits<Integer>::Sign Sign;
         typedef typename NiX::NT_traits<Integer>::Ceil_log2_abs Ceil_log2_abs_Integer;
         typedef typename NiX::NT_traits<long>::Ceil_log2_abs Ceil_log2_abs_long;
@@ -906,7 +906,7 @@ public:
  */
 template <class BitstreamDescartesRndlTreeTraits>
 class Bitstream_descartes_rndl_tree
-// TODO: Replaced LiS::Handle by following CGAL::Handle_with_policy, is this correct?
+// TODO: Replaced CGAL::Handle by following CGAL::Handle_with_policy, is this correct?
     : public ::CGAL::Handle_with_policy< INTERN_RNDL_TREE::Bitstream_descartes_rndl_tree_rep<
         BitstreamDescartesRndlTreeTraits
     >, ::CGAL::Handle_policy_no_union >
