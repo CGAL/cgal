@@ -1,18 +1,23 @@
-personal_ws-1.1 en 207 
+personal_ws-1.1 en 222 
+fourtuple
 Farin
 Overmars
 Seel
 Voronoi
+catenating
 Hanniel
 Lutz
 Melkman
+arity
 TDS
 Geomview
 Lgpl
+dereferenceable
 trilinear
 halfedge
 Halperin
 Dcel
+lvalue
 Fabri
 Oudot
 Toussaint
@@ -69,7 +74,9 @@ Institut
 Postconditions
 unsetting
 GeometryFactory
+bool
 Gpl
+arities
 unary
 vertices
 Farin's
@@ -88,9 +95,13 @@ wrt
 Runge
 Kde
 multi
+predicate's
 Melkman's
+deallocate
 Freiseisen
 Pion
+sixtuple
+deallocated
 isometry
 halfspace
 tritangent
@@ -105,6 +116,7 @@ Teillaud
 Unmarks
 Apollonius
 reals
+dereferenced
 bidirected
 subcomplex
 Guigue
@@ -113,6 +125,7 @@ Graduiertenkolleg
 halfedges
 Sylvain
 Kettner
+dereferences
 const
 homonymous
 indices
@@ -167,6 +180,7 @@ tuple
 circumcircles
 Devillers
 Mpfr
+defragment
 enums
 Karavelas
 PLC
@@ -177,8 +191,8 @@ massless
 Luh's
 OpenNL
 subsequence
-CCB
 Akl
+CCB
 Amd
 precomputation
 inserter
@@ -202,6 +216,7 @@ Inria
 Sibson's
 Giezeman
 Qpl
+SGI
 circulator
 bijection
 Yvinec
