@@ -63,7 +63,7 @@ The argument \ccc{c2t3} of type \ccc{SurfaceMeshC2T3},  passed by reference
 to the surface mesh generator, 
 is used to maintain  the current approximating mesh and it stores
 the final mesh at the end of the procedure.
-The type \ccc{SurfaceMeshC2T3} is in particuler required to
+The type \ccc{SurfaceMeshC2T3} is in particular required to
 provide a type \ccc{SurfaceMeshC2T3::Triangulation_3}
 for the three dimensional triangulation
 embedding the surface mesh.
@@ -85,8 +85,8 @@ The traits class is required to be a model
 of the concept \ccc{SurfaceMeshTraits_3}.
 
 In the first  version
-of  \ccRefName\, the surface type is a template paramater \ccc{Surface}
-and the surface meshe generator traits type 
+of  \ccRefName\, the surface type is a template parameter \ccc{Surface}
+and the surface mesh generator traits type 
 is  automatically generated form the surface type  through
 the class 
 \ccc{Surface_mesh_traits_generator_3<Surface>}.
@@ -98,8 +98,8 @@ can be explained as follows
 \item
 In the first  overloaded version of
 of \ccc{make_surface_mesh},  the surface type  is given  
-as template paramater  (\ccc{Surface}) and the \ccc{surface}
-to be meshed is passed as parameter to the meshe generator.
+as template parameter  (\ccc{Surface}) and the \ccc{surface}
+to be meshed is passed as parameter to the mesh generator.
 In that case the surface mesh generator traits type 
 is  automatically generated form the surface type
 by an auxiliary class called  the \ccc{Surface_mesh_traits_generator_3}.
@@ -127,7 +127,7 @@ is provided.
 Currently, the library provides partial specializations
 of  \ccc{Surface_mesher_traits_generator_3<Surface>}
 for implicit surfaces (\ccc{Implicit_surface_3<Traits, Function> }) and 
-grey level images (\ccc{Gray_level_image_3<FT, Point> }).
+gray level images (\ccc{Gray_level_image_3<FT, Point> }).
 
 
 
@@ -138,7 +138,7 @@ mesh generator specifies the size and shape  requirements
 on the output surface mesh.
 
 The template parameter \ccc{Tag}
-is a tag whose type affects the behaviour of the
+is a tag whose type affects the behavior of the
 meshing algorithm. The function \ccRefName\  has specialized versions
 for the following  tag types: \\
 - \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold

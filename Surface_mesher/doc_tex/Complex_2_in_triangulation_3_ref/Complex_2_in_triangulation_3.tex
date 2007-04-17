@@ -23,8 +23,8 @@
 The class \ccRefName\ provides a data structure to maintain a 
 simplicial complex of dimension at most 2
 as a subcomplex of a 3D triangulation.
-The data structure maintains explicitely the maximal faces
-in the 2D complex, i. e. its facets, antena edges and 
+The data structure maintains explicitly the maximal faces
+in the 2D complex, i. e. its facets, antenna edges and 
 isolated vertices.
 
 In addition the data structure enables to mark
@@ -45,12 +45,12 @@ facets of the 2D complex and to antenna edges or  marked edges.
 \ccParameters
 The class \ccRefName\ is parametrized by the underlying
 3D triangulation.
-Any triangulation can of CGAL can be used to instanciate this parameter.
+Any triangulation can of CGAL can be used to instantiate this parameter.
 The parameters \ccc{Facet_info} and \ccc{Edge_info}
 provide the types of the information the wishes to attached
 respectively to the facets of the 2D complex  or to the marked
 or antenna edges. These parameters default to \ccc{void}
-if there are no additionnal information to attach to those facets
+if there are no additional information to attach to those facets
 and edges.
 
 
@@ -64,9 +64,9 @@ I rather see \ccRefName\  as a small class  besides the
 triangulation, storing just a ref to the triangulation.
 Then the class \ccc{Restricted_Delaunay_triangulation_3}
 and \ccc{Constrained_Delaunay_triangulation_3}  will be able 
-to agregate both  the triangulation and the \ccc{Complex_2_in_triangulation_3}.
+to aggregate both  the triangulation and the \ccc{Complex_2_in_triangulation_3}.
 If implemented with a map of facets, \ccRefName\ 
-can then be view as an additionnal data structure
+can then be view as an additional data structure
 for the triangulation (something like the constraint hierarchy).
 It can even store only a const ref or const pointer
 to the triangulation.
@@ -78,7 +78,7 @@ a \ccc{const Triangulation&}....
 
 The implementation may even allow  to have more than one 2D complex embedded
 on top of the same triangulation. I don't know if this is really
-usefull.
+useful.
 
 Avoiding the derivation also  avoid  to get the usual critics of Lutz and Co
 regarding derived classes with non virtual functions.... \\
@@ -116,7 +116,7 @@ SINGULAR};}
 {A type to describe the type of a face (facet, edge or vertex) with respect to 
 the 2D complex. A \ccc{NOT_IN_COMPLEX} face does not belong to the 2D complex.
 Facets can only be  \ccc{NOT_IN_COMPLEX}  or \ccc{REGULAR}
-depending on wether they belong to the 2D complex on not.
+depending on whether they belong to the 2D complex on not.
 An edge in the complex is said to be respectively \ccc{ISOLATED}, 
 \ccc{BOUNDARY},
 \ccc{REGULAR} or \ccc{SINGULAR}
@@ -152,7 +152,7 @@ the isolated vertices of the 2D complex.}
 \ccGlue
 \ccNestedType{Boundary_or_regular_vertices_iterator}
 {An iterator type to visit 
-vertices of the 2D complex which are boundary  or reguar vertices.}
+vertices of the 2D complex which are boundary  or regular vertices.}
 
 
 
@@ -460,7 +460,7 @@ The vertices of the facet \ccc{f = (cell  c, i)} are numbered
 (0,1,2) (according to the \ccc{vertex_triple_index(i,j)} member function
 of Triangulation)
 in such a way that facet \ccc{f} is oriented by the
-outward normal of tetraedra \ccc{c}.}
+outward normal of tetrahedra \ccc{c}.}
 
 
 \ccMethod{Facet neighbor(Cell_handle c, int i, int j);}

@@ -49,9 +49,9 @@ build a 3D triangulation and extract from there
 a 2D simplicial complex approximating the surface to be reconstructed.
 Embedding the approximated surface in a 3D
 triangulation allows to deal with any kind of topology and to handle
-topology changes occuring in the process of reconstruction.
+topology changes occurring in the process of reconstruction.
 The surface to be reconstructed can be 
-a polyedral surface, a smooth surface or a general curved surface
+a polyhedral surface, a smooth surface or a general curved surface
 with singularities and sharp features. See e.g. \cite{prisme-bo-03}.
 
 \section{Representation  and main functionalities}
@@ -64,13 +64,13 @@ a subset of facets, edges and vertices are marked as belonging to the
 A 2D complex is fully described by the set of its maximal faces
 where a maximal face of a complex is a face which is not
 a subface of a higher dimensional face of the complex.
-The data structure maintains explicitely the set of maximal faces 
+The data structure maintains explicitly the set of maximal faces 
 of the 2D complex, that is 
 the set of facets, antenna edges and isolated vertices.
 
 In addition, the data structure also allows to maintain a subset
 of the complex edges which are of particular interest to the user.
-Those edges are refered to in the documentation as marked
+Those edges are referred to in the documentation as marked
 edges.
 
 \subsection{Creation, modification}
@@ -85,7 +85,7 @@ to set or get the information attached to facets in the 2D complex
 and  to antenna or  marked edges.
 
 The underlying 3D triangulation remains  available to the user
-and can be modified,  however it is the responsability
+and can be modified,  however it is the responsibility
 of the user, to update the set of faces of the 2D complex
 when  it is affected by  the modification of the 3D triangulation.
 
@@ -105,7 +105,7 @@ regular if it is incident to exactly two facets in the complex  and
 singular if it is incident to three or more facets in the complex.
 
 Likewise, the vertices of the complex are classified as  isolated, boundary
-regular or singular.  The classifivation of a vertex is best
+regular or singular.  The classification of a vertex is best
 described by looking  as the adjacency graph of the set 
 of facets of the 2D complex
 incidents to that vertex. 
@@ -127,14 +127,14 @@ as the number of connected components of its boundary.
 can be obtained. 
 Counting the number of vertices, edges and
 facets of each  pure connected component  and the number
-of ites boundary edges allows to get
+of its boundary edges allows to get
  (through Euler formula)
 the  topology, that is the number of handles of this component.
 
  
 
 \subsection{Traversal of the complex}
-The data sructure provides iterators to enumerate 
+The data structure provides iterators to enumerate 
 the facets of the complex, the isolated vertices and edges.
 
 The basic tool to traverse the 2D  complex is the \ccc{neighbor_facet}
