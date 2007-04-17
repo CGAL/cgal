@@ -137,12 +137,6 @@ namespace CGALi {
     
 typedef boost::numeric::interval<leda::bigfloat> leda_bigfloat_interval;
 
-std::pair<double, double> to_interval( const leda_bigfloat_interval& x ) {
-    return std::pair< double, double >( CGAL::to_double( x.lower() ),
-                                        CGAL::to_double( x.upper() ) );
-}
-
-
 CGAL::Sign inline sign(const leda::bigfloat& x){
     if (x < 0 ) return CGAL::NEGATIVE;
     if (x > 0 ) return CGAL::POSITIVE; 
@@ -222,6 +216,11 @@ bool inline overlap(const leda_bigfloat_interval& x, const leda_bigfloat_interva
     }
 }
 
+bool inline singleton( const leda_bigfloat_interval& a ) {
+    return ::boost::numeric::singleton(a); 
+}
+
+
 leda_bigfloat_interval  inline convert_to_bfi(const leda::real& x) {
     long current_prec = ::leda::bigfloat::get_precision();
     //x.improve_approximation_to(current_prec);
@@ -287,6 +286,12 @@ leda_bigfloat_interval  inline convert_to_bfi(const ::leda::rational& x) {
 
 
 } // namespace CGALi
+
+std::pair<double, double> to_interval( const CGALi::leda_bigfloat_interval& x ) {
+    return std::pair< double, double >( CGAL::to_double( x.lower() ),
+                                        CGAL::to_double( x.upper() ) );
+}
+
 
 CGAL_END_NAMESPACE
 
