@@ -102,6 +102,7 @@ defined in windows.h
 - Added support for unbounded curves.
 - Added a traits class that supports bounded and unbounded linear objects,
   namely lines, rays and line segments.
+- Added traits classes that handle circular arcs based on the circular kernel.
 - Added a traits class that supports Bezier curves.
 - Enhanced the traits class that supports rational functions to     
   handle unbounded (as well as bounded) arcs
