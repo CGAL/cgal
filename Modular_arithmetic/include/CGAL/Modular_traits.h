@@ -5,9 +5,17 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Modular.h>
-#include <CGAL/leda_integer.h>
 #include <CGAL/Sqrt_extension.h>
 #include <vector>
+
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+#endif// CGAL_USE_LEDA
+
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_BigInt.h>
+#endif// CGAL_USE_CORE
+
 
 namespace CGAL { 
 
@@ -80,7 +88,7 @@ public:
     };    
 };
 
-
+#ifdef CGAL_USE_LEDA
 // TODO: mv to leda_integer.h 
 template<>
 class Modular_traits< ::leda::integer > {
@@ -101,6 +109,43 @@ class Modular_traits< ::leda::integer > {
         }
     };    
 };
+#endif // CGAL_USE_LEDA
+
+#ifdef CGAL_USE_CORE
+// ---------------------------------
+// TODO: mv to CORE_BigInt.h
+
+/*! \ingroup NiX_Modular_traits_spec
+ *  \brief a model of concept ModularTraits, 
+ *  specialization of NiX::Modular_traits. 
+ */
+template<>
+class Modular_traits< ::CORE::BigInt > {
+    typedef Modular MOD;
+ public:
+    typedef ::CORE::BigInt NT;
+    typedef CGAL::Tag_true Is_modularizable;
+    typedef MOD Modular_NT;
+
+    struct Modular_image{
+        Modular_NT operator()(const NT& a){
+            NT tmp = a % NT(MOD::get_current_prime());
+// TODO: reactivate this assertion
+// it fails with core_v1.6x_20040329
+//            NiX_assert(tmp.isInt());
+            int mi(tmp.longValue());
+            if (mi < 0) mi += MOD::get_current_prime();
+            return Modular_NT(mi);
+        }
+    };
+    struct Modular_image_inv{
+        NT operator()(const Modular& x){
+            return NT(x.get_value());
+        }
+    };    
+};
+#endif //  CGAL_USE_CORE
+
 
 //--------------------------------
 // TODO : mv to Sqrt_extension.h
