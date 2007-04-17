@@ -274,10 +274,10 @@ sites using an homonymous iterator defined by the
 
 Since storing hidden sites may not be of interest in some cases (e.g.,
 for example this is the case if we only perform insertions in the
-Apollonius graph), the user has the possibility of controllong this
+Apollonius graph), the user has the possibility of controlling this
 behavior. More precisely, the class
 \ccc{Apollonius_graph_vertex_base_2<Gt,StoreHidden>} has two template
-parameters, the second of which is a boolean value. This value is by
+parameters, the second of which is a Boolean value. This value is by
 default \ccc{true} and it indicates that hidden sites should be
 stored. The user can indicate that hidden sites may be discarded
 by setting this value to \ccc{false}.
@@ -308,7 +308,7 @@ circle $P_2$. As its name indicates, it determines if a circle is
 hidden or not. The second predicate involves two circles $P_1$ and
 $P_2$ and a point $q$. It answers the question whether $q$ is closer
 to $P_1$ or $P_2$. Its name stems from the fact that answering the
-afore-mentioned question is equivalent to determining the oriented
+aforementioned question is equivalent to determining the oriented
 side of the bisector of $P_1$ and $P_2$ that contains the query point
 $q$. This predicate is used by the algorithm for closest neighbor
 queries for points.
@@ -383,7 +383,7 @@ predicate is different for the two endpoints. If the two values are
 the same then we need an additional test which determines if the interior
 of the Apollonius diagram edge is destroyed by the new circle. This is
 what the \ccc{Finite_edge_interior_conflict_2} and
-\ccc{Infinite_edge_interior_conflict_2} predicates do. In essense, it
+\ccc{Infinite_edge_interior_conflict_2} predicates do. In essence, it
 is the same predicate (same idea) applied to two different types of
 edges in the Apollonius diagram: a finite or an infinite edge. An edge
 is infinite if its dual edge in the Apollonius graph connects the
@@ -418,9 +418,9 @@ otherwise it is a finite edge.
   title="In conflict with a neighborhood of the left-most vertex of the Apollonius edge">
   <!-- -->
   <img border=1 src="./apollonius-right_vertex.gif" align=middle
-  alt="In conflict with a neighborhoof of the right-most vertex of the
+  alt="In conflict with a neighborhood of the right-most vertex of the
   Apollonius edge"
-  title="In conflict with a neighborhoof of the right-most vertex of the Apollonius edge">
+  title="In conflict with a neighborhood of the right-most vertex of the Apollonius edge">
   <br><br>
   <!-- -->
   <img border=1 src="./apollonius-no_conflict.gif" align=middle
@@ -476,7 +476,7 @@ coincide. In the Apollonius graph such an edge corresponds to one of
 the additional edges that we use to triangulate the non-triangular
 faces.
 
-The afore mentioned predicates are part of the
+The aforementioned predicates are part of the
 \ccc{ApolloniusGraphTraits_2} concept of \cgal. \cgal{} also provides
 a model for this concept, the
 \ccc{Apollonius_graph_traits_2<K,Method_tag>} class. The first
@@ -511,7 +511,7 @@ Apollonius graph traits. To give a concrete example,
 \ccc{CGAL::Filtered_exact<double,CGAL::MP_Float>} with 
 \ccc{CGAL::Ring_tag} will produce exact predicates.
 
-Another possibility for fast and exact predicate evalutation is to use
+Another possibility for fast and exact predicate evaluation is to use
 the
 \ccc{Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
 class. This class is the analog of a filtered kernel. It takes a
