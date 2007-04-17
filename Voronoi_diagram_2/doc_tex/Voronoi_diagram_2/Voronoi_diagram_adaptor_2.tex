@@ -61,7 +61,7 @@ subdivision of the plane, i.e., it is a planar graph.
 We typically think of faces as 2-dimensional objects, edges as
 1-dimensional objects and vertices as 0-dimensional objects. However,
 this may not be the case for several combinations of sites and
-distance fuctions (for example points in $\mathbb{R}^2$ under the
+distance functions (for example points in $\mathbb{R}^2$ under the
 $L_1$ or the $L_\infty$ distance can produce 2-dimensional Voronoi
 edges). We call a Voronoi diagram \emph{nice} if no such artifacts
 exist, i.e., if all vertices edges and faces are 0-, 1- and
@@ -131,8 +131,8 @@ diagram that has all its vertices of degree 3, and for that purpose we
 are going to call it a \emph{degree-3 Voronoi diagram} in order to
 distinguish it from the true Voronoi diagram of the input sites. A
 degree-3 Voronoi diagram can have degenerate features, namely Voronoi
-edges of zero length, and/or Voronoi faces of zero area. Athough we
-can potentially treat such artifacts, they are nontheless artifacts of
+edges of zero length, and/or Voronoi faces of zero area. Although we
+can potentially treat such artifacts, they are nonetheless artifacts of
 the algorithm we used and do not correspond to the true geometry of
 the Voronoi diagram.
 
@@ -168,7 +168,7 @@ Voronoi diagram adaptor is also mutable is slightly more complex to
 answer. As long as the adaptation policy used does not maintain a
 state, the Voronoi diagram adaptor is a mutable one; this is the case,
 for example, with our identity policy or the degeneracy removal
-policies. If, however, the adaptor mantains a state, then whether it
+policies. If, however, the adaptor maintains a state, then whether it
 is mutable or non-mutable really depends on whether its state can be
 updated after every change in the Delaunay graph. Such policies are
 our caching degeneracy removal policies: some of them result in
@@ -303,7 +303,7 @@ Delaunay graph corresponding to this site is returned. If the
 query point is closest to exactly two site, the edge of the
 Delaunay graph that is dual to the Voronoi edges on which the query
 point lies is returned. If three (or more) sites are closest to
-the query point, then the query point conicides with a vertex in the
+the query point, then the query point coincides with a vertex in the
 Voronoi diagram, and the face handle of the face in the Delaunay graph
 that is dual to the Voronoi vertex is returned.
 This way of abstracting the point location mechanism allows
@@ -341,7 +341,7 @@ the Voronoi edges of zero length or, for the Voronoi diagram of a set
 of segments forming a polygon, all edges outside the polygon).
 The manner that we treat such issues in this package in a generic way
 is by defining an adaptation policy. The adaptation policy is
-reponsible for determining which features in the degree-3 Voronoi
+responsible for determining which features in the degree-3 Voronoi
 diagram are to be rejected and which not. The policy to be used can
 vary depending on the application or the intended usage of the
 resulting Voronoi diagram.
@@ -423,7 +423,7 @@ compute the answer, cache it and return it. Such a policy really pays
 off when we have a lot of degenerate data in our input set of
 sites. Verifying whether a Voronoi edge is degenerate or not implies
 computing the outcome of a predicate in a possibly degenerate or near
-degenerate configuration, which is typically very constly (compared to
+degenerate configuration, which is typically very costly (compared to
 computing the same predicate in a generic configuration). To avoid this cost
 every single time we want to check if a Voronoi edge is degenerate or
 not, we compute the result of the geometric predicate the first time
@@ -440,7 +440,7 @@ or non-mutable one, in the sense of whether we can add/remove sites in
 an on-line fashion. The answer to this question depends on: (1) whether the
 Delaunay graph adapted allows for on-line insertions/removals and (2)
 whether the adaptation policies maintains a state and whether this
-state is easily maintanable when we want to allow for on-line
+state is easily maintainable when we want to allow for on-line
 modifications.
 
 The way we indicate if we allow on-line insertions of sites is via the
@@ -475,7 +475,7 @@ necessary.
 
 Consider a caching degeneracy removal policy. If we do not allow for
 on-line insertions then the cached quantities are always valid since
-the Voronoi diagram nevers changes. If we allow for on-line insertions
+the Voronoi diagram never changes. If we allow for on-line insertions
 the Voronoi diagram can change, which implies that the results of the edge
 and faces degeneracy testers that we have cached are no longer valid
 or relevant. In these cases, we need to somehow update these cached
@@ -547,7 +547,7 @@ results, they increase the space requirements by linear additive
 factor.
 %
 To conclude, if the user is interested in getting a Voronoi diagram
-without degenerate features and knowns all sites in advance, the best course
+without degenerate features and knows all sites in advance, the best course
 of action is to insert all sites at construction time and use a caching
 degeneracy removal policy. This strategy avoids the updates of the
 cached results after each individual insertion, due to the features of
