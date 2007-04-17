@@ -46,25 +46,25 @@ the result is a polyhedron, the plane equations of each face are computed.
 Both functions require the following:
 \begin{enumerate}
    \item \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Point_3}.
-   \item \ccc{Traits} is a model of the concept ConvexHullTraits\_3
+   \item \ccc{Traits} is a model of the concept \ccc{ConvexHullTraits_3}
          \ccIndexMainItem[c]{ConvexHullTraits_3}.  When it is known that
          the input points are not all coplanar, the types \ccc{Traits_xy}, 
          \ccc{Traits_yx}, and \ccc{Traits_yz} need not be provided.
          For the purposes of checking the postcondition that the convex hull
          is valid, \ccc{Traits} should also be a model of the concept
-         IsStronglyConvexTraits\_3.
+         \ccc{IsStronglyConvexTraits_3}.
         %\ccIndexMainItem[c]{IsStronglyConvexTraits_3}
 \end{enumerate}
 
 Both functions have an additional requirement for the polyhedron that is
 to be constructed. For the first version this is that:
 \begin{itemize}
-  \item \ccc{Polyhedron_3} is a model of ConvexHullPolyhedron\_3,
+  \item \ccc{Polyhedron_3} is a model of \ccc{ConvexHullPolyhedron_3},
 \end{itemize}
 and for the second, it is required that
 \begin{itemize}
  \item \ccc{Traits} defines a type \ccc{Polyhedron_3} that is a model of 
-       ConvexHullPolyhedron\_3.
+       \ccc{ConvexHullPolyhedron_3}.
 \end{itemize}
 
 The default traits class for both versions of \ccc{convex_hull_3} is 
