@@ -490,7 +490,9 @@ function getObj(name)
         \lcRawHtml{<tr>}
         \lciTocIndentWidth
         \lcRawHtml{<td><a href="##part_}\thepart\lcRawHtml{">}
-        #1~~~\lciLocalVariableCurrentPartName\lcRawHtml{</a></td></tr>}
+        #1\lcRawHtml{</a></td><td>&nbsp;</td>}
+        \lcRawHtml{<td><a href="##part_}\thepart\lcRawHtml{">}
+        \lciLocalVariableCurrentPartName\lcRawHtml{</a></td></tr>}
       \end{savestream}
       \begin{savestream}{pkgtoc}
         \lcRawHtml{<tr><td colspan="4"><a name="part_}\thepart\lcRawHtml{"></a>}
