@@ -168,7 +168,7 @@ public:
             long old_precision = get_precision( BF() );
             set_precision( BF(), 53 );
             this->ptr()->interval_option = 
-            typename Algebraic_real_rep<Coefficient,Rational>::Interval_option( CGALi::to_interval( convert_to_bfi( (*this) ) ) );
+            typename Algebraic_real_rep<Coefficient,Rational>::Interval_option( CGAL::to_interval( convert_to_bfi( (*this) ) ) );
             //CGALi::to_interval( convert_to_bfi( (*this) ) );
             set_precision( BF(), old_precision );
             return *(this->ptr()->interval_option);            
