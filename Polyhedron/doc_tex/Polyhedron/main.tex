@@ -306,8 +306,8 @@ We provide a set of operations for polyhedra: \ccc{split_facet()},
 operators, such as \ccc{split_edge()}. However, they could be implemented 
 using the six operators above. Furthermore, we provide more operators
 to work with polyhedral surfaces with border edges, for example, creating
-and deleting holes. We refere to the references manual for the 
-definition and illustratives figures of the Euler operators.
+and deleting holes. We refer to the references manual for the 
+definition and illustrative figures of the Euler operators.
 
 The following example implements a function that appends a unit cube
 to a polyhedral surface. To keep track of the different steps during
@@ -347,7 +347,7 @@ equation or any user-added attributes, such as color.
 
 The default file format supported in \cgal\ for output as well as for
 input is the Object File Format, OFF, with file extension {\tt .off},
-which is also understood by GeomView~\cite{cgal:p-gmgv16-96}. For OFF
+which is also understood by Geomview~\cite{cgal:p-gmgv16-96}. For OFF
 an ASCII and a binary format exist. The format can be selected with
 the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
 \ccc{set_binary_mode} respectively. The modifier \ccc{set_pretty_mode}
@@ -375,7 +375,7 @@ Additional formats supported for writing are OpenInventor ({\tt .iv})
 \cite{cgal:w-impoo-94}, VRML 1.0 and 2.0 ({\tt .wrl})
 \cite{cgal:bpp-vrml-95,cgal:vrmls-96,cgal:hw-vrml2h-96}, and Wavefront Advanced
 Visualizer object format ({\tt .obj}). Another convenient output
-function writes a polyhedral surface to a GeomView process spawned
+function writes a polyhedral surface to a Geomview process spawned
 from the \cgal\ program.  These output functions are provided as
 stream operators, now acting on the stream type of the respective
 format.
@@ -584,7 +584,7 @@ This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
 output are in the Object File Format, OFF, with the common file
 extension {\tt .off}, which is also understood by
-GeomView~\cite{cgal:p-gmgv16-96}.
+Geomview~\cite{cgal:p-gmgv16-96}.
 
 The refinement is a single step of the $\sqrt{3}$-scheme for creating
 a subdivision surface~\cite{cgal:k-s-00}. Each step subdivides a facet
