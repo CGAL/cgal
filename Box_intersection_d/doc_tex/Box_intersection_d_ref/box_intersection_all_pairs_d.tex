@@ -37,13 +37,13 @@ The algorithm is interface compatible with the
 either our box type or a pointer type to our box type.
 
 A $d$-dimensional iso-oriented box is defined as the
-\ccHtmlNoLinksFrom{Cartesian} product of $d$ intervals. We call the
+Cartesian product of $d$ intervals. We call the
 box \emph{half-open} if the $d$ intervals $\{ [lo_i,hi_i) \,|\, 0 \leq
 i < d\}$ are half-open intervals, and we call the box \emph{closed} if
 the $d$ intervals $\{ [lo_i,hi_i] \,|\, 0 \leq i < d\}$ are closed
 intervals. Note that closed boxes support zero-width boxes and they
 can intersect at their boundaries, while non-empty half-open boxes
-always have a positive \ccHtmlNoLinksFrom{volume} and they only intersect iff their
+always have a positive volume and they only intersect iff their
 interiors overlap.  The distinction between closed or half-open boxes
 does not require a different representation of boxes, just a different
 interpretation when comparing boxes, which is selected with the
