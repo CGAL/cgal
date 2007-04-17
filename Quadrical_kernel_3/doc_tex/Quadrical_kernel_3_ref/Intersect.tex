@@ -37,28 +37,13 @@ be either
 \end{itemize} 
 
 and depending on the types \ccc{Type_1} and \ccc{Type_2}, the computed 
-\ccc{CGAL::Object}s can be assigned to 
-\begin{itemize}
-\item {} \ccc{std::pair<QuadricalKernel_3::Curve_point_3, unsigned>},
-where the unsigned integer is the multiplicity of the corresponding
-intersection point between \ccc{obj_1} and \ccc{obj_2},
-\item {} \ccc{Type_1}, when \ccc{Type_1} and \ccc{Type_2} are equal, and 
-if the two objects \ccc{obj1} and \ccc{obj2} are equal,
-\item {} \ccc{QuadricalKernel_3::Curve_arc_3} in case of an overlap of 
-two arcs
-\end{itemize} 
-
-For the \textbf{second operator}, \ccc{Type_1}, \ccc{Type_2} and \ccc{Type_3}
-are of type \ccc{QuadricalKernel_3::Quadric_3}. 
-The computed \ccc{CGAL::Object}s can be assigned to 
-\begin{itemize}
-\item {} \ccc{std::pair<QuadricalKernel_3::Curve_point_3, unsigned>},
-where the unsigned integer is the multiplicity of the corresponding
-intersection point,
-\item {} \ccc{QuadricalKernel_3::Curve_3} or
-\item {} \ccc{Type_1}, when \ccc{Type_1}, \ccc{Type_2} and \ccc{Type_3} 
-are equal, and if the three objects \ccc{obj1} and \ccc{obj2} and \ccc{obj3}
-are equal.
-\end{itemize} 
+\ccc{CGAL::Object}s be assigned to pairs of
+\ccc{Quadric_3}, \ccc{Curve_3}, \ccc{Curve_arc_3}, or \ccc{Curve_point_3}
+and {\tt unsigned int} where the first part describe
+one object that both input objects have in common, and the second
+value gives its multiplicity. Note that, e.g., two quadrics
+can intersect in a third quadric that is not equal to one of the input
+quadrics. An example are plane-pairs that have one plane in common.
+Similar for curves and arcs.
 
 \end{ccRefFunctionObjectConcept}
