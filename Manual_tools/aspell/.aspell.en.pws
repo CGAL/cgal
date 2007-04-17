@@ -1,4 +1,4 @@
-personal_ws-1.1 en 197 
+personal_ws-1.1 en 204 
 Farin
 Overmars
 Seel
@@ -38,6 +38,7 @@ unoriented
 halfegde
 Acml
 CopyConstructible
+Emiris
 Frechet
 Lapack
 accessor
@@ -65,6 +66,7 @@ combinatorially
 iff
 Institut
 Postconditions
+unsetting
 GeometryFactory
 Gpl
 unary
@@ -90,6 +92,7 @@ Freiseisen
 Pion
 isometry
 halfspace
+tritangent
 tetrahedralization
 sidedness
 Zukerman
@@ -110,6 +113,7 @@ halfedges
 Sylvain
 Kettner
 const
+homonymous
 indices
 Informatik
 Flato
@@ -151,6 +155,8 @@ formulae
 Veltkamp
 Algorithmische
 Bykat
+incircle
+bitangent
 homeomorphic
 simplicial
 Trolltech
@@ -161,6 +167,7 @@ circumcircles
 Devillers
 Mpfr
 enums
+Karavelas
 PLC
 Sklansky
 Destructor
