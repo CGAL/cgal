@@ -41,7 +41,7 @@ function gradient given a point.
   value at the point \ccc{p} using Sibson's $Z^1$ interpolant
   \cite{s-bdnni-81}.\\
   If the functor \ccc{function_gradient} cannot supply the gradient of
-  a point, the function returns a pair where the boolean is set to
+  a point, the function returns a pair where the Boolean is set to
   \ccc{false}.  If the interpolation was successful, the pair contains
   the interpolated function value as first and \ccc{true} as second
   value.  \ccPrecond{\ccc{norm} $\neq 0$.
@@ -60,12 +60,12 @@ function gradient given a point.
   \ccc{Traits::FT}.
 \item \ccc{Functor::argument_type} must be equivalent to
   \ccc{Traits::Point_d} and \ccc{Functor::result_type} is a pair of
-  the function value type and a boolean. The function value type must
+  the function value type and a Boolean. The function value type must
   provide a multiplication and addition operation with the type
   \ccc{Traits::FT} as well as a constructor with argument $0$.
 \item \ccc{GradFunctor::argument_type} must be equivalent to
   \ccc{Traits::Point_d} and \ccc{Functor::result_type} is a pair of
-  the function's gradient type and a boolean. The
+  the function's gradient type and a Boolean. The
   function gradient type must provide a multiplication operation with
   \ccc{Traits::Vector_d}.
 \item A model of the functor types \ccc{Functor} (resp.\ 

@@ -46,7 +46,7 @@ the sample points onto the tangent plane at \ccc{p}.
   starting at \ccc{out}. The function returns a triple with an
   iterator that is placed past-the-end of the resulting sequence of
   point/coordinate pairs, the normalization factor of the coordinates
-  and a boolean value which is set to true iff the coordinate
+  and a Boolean value which is set to true iff the coordinate
   computation was successful, i.e. if \ccc{p} lies inside the convex
   hull of the projection of the points $\mathcal{P}$ onto the tangent
   plane.}
@@ -61,8 +61,8 @@ the sample points onto the tangent plane at \ccc{p}.
   to \ccc{Voronoi_intersection_2_traits_3<K>}.}
 
 
-The next functions return, in addition, a second boolean value (the
-fourth value of the quadrupel) that certifies whether or not, the
+The next functions return, in addition, a second Boolean value (the
+fourth value of the quadruple) that certifies whether or not, the
 Voronoi cell of \ccc{p} can be affected by points that lie outside the
 input range, i.e.\ outside the ball centered on \ccc{p} passing
 through the furthest sample point from \ccc{p} in the range
