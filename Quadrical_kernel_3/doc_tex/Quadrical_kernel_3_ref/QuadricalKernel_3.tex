@@ -18,7 +18,7 @@ A model of \ccc{QuadricalKernel_3} is supposed to provide some basic types
 
 %\ccNestedType{Polynomial_1_3}{Model of \ccc{AlgebraicKernelForQuadrics::Polynomial_1_3}.}
 %\ccGlue
-%\ccNestedType{Polynomial_2_3}{Model of \ccc{AlgebraicKernelForQuadrics::Polynomial_2_3}.}
+%\ccNestedType{Polynomial_3}{Model of \ccc{AlgebraicKernelForQuadrics::Polynomial_3}.}
 
 %\ccNestedType{Root_of_1}{Model of \ccc{AlgebraicKernelForQuadrics::RootOf_1}.}
 %\ccGlue
@@ -77,11 +77,15 @@ constructions and other functionalities.
 
 \ccNestedType{Construct_quadric_3}{Model of \ccc{QuadricalKernel_3::ConstructQuadric_3}.}
 \ccGlue
-\ccNestedType{Construct_curve_3}{Model of \ccc{QuadricalKernel_3::ConstructCurve_3}. Construction from \ccc{Linear_kernel::Line_3} is required.}
-\ccGlue
-\ccNestedType{Construct_curve_point_3}{Model of \ccc{QuadricalKernel_3::ConstructCurvePoint_3}. Construction from \ccc{Linear_kernel::Point_3} is required.}
-\ccGlue
-\ccNestedType{Construct_curve_arc_3}{Model of \ccc{QuadricalKernel_3::ConstructCurveArc_3}. Construction from \ccc{Linear_kernel::Segment_3} is required.}
+\ccNestedType{Construct_curve_3}{Model of \ccc{QuadricalKernel_3::ConstructCurve_3}. %Construction from \ccc{Linear_kernel::Line_3} is required.
+}
+
+\ccNestedType{Arcs_of_curve_3}{Model of \ccc{QuadricalKernel_3::ArcsOfCurve_3}.}
+
+%\ccGlue
+%\ccNestedType{Construct_curve_point_3}{Model of \ccc{QuadricalKernel_3::ConstructCurvePoint_8_3}. Construction from \ccc{Linear_kernel::Point_3} is required.}
+%\ccGlue
+%\ccNestedType{Construct_curve_arc_3}{Model of \ccc{QuadricalKernel_3::ConstructCurveArc_3}. Construction from \ccc{Linear_kernel::Segment_3} is required.}
 
 \ccNestedType{Construct_curve_arc_min_vertex_3}{Model of \ccc{QuadricalKernel_3::ConstructCurveArcMinVertex_3}.}
 \ccGlue
@@ -93,7 +97,7 @@ constructions and other functionalities.
 
 \ccNestedType{Construct_supporting_curve_3}{Model of \ccc{QuadricalKernel_3::ConstructSupportingCurve_3}.}
 
-\ccNestedType{Construct_bbox_3}{Model of \ccc{QuadricalKernel_3::ConstructBbox_3}.}
+%\ccNestedType{Construct_bbox_3}{Model of \ccc{QuadricalKernel_3::ConstructBbox_3}.}
 
 \ccNestedType{Intersect_3}{Model of \ccc{QuadricalKernel_3::Intersect_3}.}
 
@@ -101,7 +105,7 @@ constructions and other functionalities.
 
 \ccHeading{Link with the algebraic kernel}
 
-\ccNestedType{Get_equation}{Model of \ccc{QuadricalKernel_3::GetEquation}. It \ccc{return_type} is \ccc{Algebraic_kernel::Polynomial_2_3}.}
+\ccNestedType{Get_equation}{Model of \ccc{QuadricalKernel_3::GetEquation}. Its \ccc{return_type} is \ccc{Algebraic_kernel::Polynomial_3}.}
 
 \ccOperations
 
@@ -110,14 +114,14 @@ above, there must exist a member function that requires no arguments
 and returns an instance of that function object. The name of the
 member function is the uncapitalized name of the type returned with
 the suffix \ccc{_object} appended. For example, for the function object 
-\ccc{QuadricalKernel_3::Construct_curve_arc_3} 
+\ccc{QuadricalKernel_3::Construct_quadric_3} 
 the following member function must exist: 
 
 \ccCreationVariable{ck}
-\ccMethod{Construct_curve_arc_3 construct_curve_arc_3_object() const;}{}
+\ccMethod{Construct_quadric_3 construct_quadric_3_object() const;}{}
 
-\ccSeeAlso
+%\ccSeeAlso
 
-\ccRefIdfierPage{SphericalKernel}
+%\ccRefIdfierPage{SphericalKernel}
 
 \end{ccRefConcept}
