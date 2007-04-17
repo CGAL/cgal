@@ -18,13 +18,13 @@ can be used for shape reconstruction from a dense unorganized set of
 data points. Indeed, an $\alpha$-shape is demarcated by a frontier,
 which is a linear approximation of the original shape \cite{bb-srmua-97t}.
 
-As mentionned in Edelsbrunner's and M\"ucke's paper \cite{em-tdas-94},
+As mentioned in Edelsbrunner's and M\"ucke's paper \cite{em-tdas-94},
 one can intuitively think of an $\alpha$-shape as the
 following. Imagine a huge mass of ice-cream making up the space $\R^3$
 and containing the points as ``hard'' chocolate pieces. Using one of
 these sphere-formed ice-cream spoons we carve out all parts of the
 ice-cream block we can reach without bumping into chocolate pieces,
-thereby even carving out holes in the inside (eg. parts not reachable
+thereby even carving out holes in the inside (e.g. parts not reachable
 by simply moving the spoon from the outside). We will eventually end
 up with a (not necessarily convex) object bounded by caps, arcs and
 points. If we now straighten all ``round'' faces to triangles and line
@@ -143,7 +143,7 @@ points cannot be inserted or removed.
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a basic alpha-shape are the classes
 \ccc{CGAL::Delaunay_triangulation_2} and 
-\ccc{CGAL::Triangulation_hierarchy_2} templatized with a Delaunay
+\ccc{CGAL::Triangulation_hierarchy_2} templated with a Delaunay
 triangulation. A model that works for a weighted alpha-shape is 
 the class \ccc{CGAL::Regular_triangulation_2}.
 
@@ -182,7 +182,7 @@ and  \ccc{CGAL::Triangulation_face_base_2<Gt>} respectively.
 
 
 
-The following code sniplet shows how to obtain a basic
+The following code snippet shows how to obtain a basic
 alpha shape type.
 
 \begin{cprog}
@@ -203,7 +203,7 @@ typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
          \label{I1_SectClassicAS2DHier}}
 
 When the input data set is huge, say more than 10.000 points, it pays
-off to use a triangulation hierarchy. It has the same {\sc Api} as the
+off to use a triangulation hierarchy. It has the same API as the
 Delaunay triangulation and differs only in the types of the vertices
 and faces. Therefore, the only part that changes are the typedefs in the beginning.
 

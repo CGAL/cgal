@@ -18,7 +18,7 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a small data strructure to store
+The class \ccRefName\ is a small data structure to store
 the critical alpha values of faces of an alpha shape.
 Each face has three critical alpha values, called
 \ccc{alpha_min}, \ccc{alpha_mid} and \ccc{alpha_max} in increasing order.
@@ -31,10 +31,10 @@ faces and therefore do not appear in the alpha complex
 without any of their
 including face. The value \ccc{alpha_max} is undefined
 for convex hull faces which can never be interior,
-The data structure also includes two boolean to mark
+The data structure also includes two Boolean to mark
 if the face is a Gabriel face or a convex hull face.
 
-The class \ccRefName\ is paremetrized by a number type \ccc{NT}.
+The class \ccRefName\ is parameterized by a number type \ccc{NT}.
 
 \ccInclude{CGAL/Alpha_shape_cell_base_3.h}
 
@@ -61,7 +61,7 @@ The class \ccRefName\ is paremetrized by a number type \ccc{NT}.
 \ccAccessFunctions
 \ccMethod{  bool is_Gabriel() const ;}{Returns true for Gabriel faces;}
 \ccGlue
-\ccMethod{  bool is_on_chull() const;} {Returns true forconvex hull faces;}
+\ccMethod{  bool is_on_chull() const;} {Returns true for convex hull faces;}
 \ccGlue
 \ccMethod{  NT alpha_min() const;} 
 { Returns the \ccc{alpha_min}

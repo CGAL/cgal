@@ -136,8 +136,8 @@ current alpha value to \ccc{alpha} and the mode to \ccc{m}.}
 	NT alpha = 0, 
 	Mode m = REGULARIZED);}
 {Build an alpha shape of mode \ccc{m} 
-from the triangulation dt. 
-Be carefull that this operation destroy the triangulation.}
+from the triangulation \ccc{dt}. 
+Be careful that this operation destroy the triangulation.}
 
 \ccConstructor{template < class InputIterator >
 		Alpha_shape_3(
@@ -145,7 +145,7 @@ Be carefull that this operation destroy the triangulation.}
 			InputIterator last,
                 const FT& alpha = 0,
 	        Mode m = REGULARIZED);}
-{Buil an alpha shape data structure in mode \ccc{m} 
+{Build an alpha shape data structure in mode \ccc{m} 
 for the points in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
 set the current alpha value to \ccc{alpha}.
@@ -185,7 +185,7 @@ before initialization.
 {Sets \ccVar\ in GENERAL  or REGULARIZED. 
 Returns the previous mode. 
 Changing the mode of an alpha shape data structure
-entails a partial recomputation of the data structure.}
+entails a partial re-computation of the data structure.}
 
 % dynamic version	
 % 
