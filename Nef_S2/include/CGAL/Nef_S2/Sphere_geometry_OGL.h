@@ -234,7 +234,7 @@ public:
   Sphere_point(const CGAL::Sphere_point<R>& p,
     CGAL::Color c = CGAL::BLACK, unsigned w = 10) : 
     VPoint(Approximator<R>::approximate(p)), p_(p), c_(c), w_(w) {}
-  Sphere_point(const Sphere_point<R>& p) : VPoint(p)
+  Sphere_point(const Sphere_point<R>& p) : VPoint(p), Gen_object()
   { p_ = p.p_; c_ = p.c_; w_ = p.w_; }
   Sphere_point<R>& operator=(const Sphere_point<R>& p)
   { VPoint::operator=(p); p_ = p.p_;  c_ = p.c_; w_ = p.w_;
@@ -277,7 +277,7 @@ public:
   Sphere_segment(const CGAL::Sphere_segment<R>& s,
     CGAL::Color c = CGAL::BLACK, unsigned w = 2) 
     : VSegment(Approximator<R>::approximate(s)), s_(s), c_(c), w_(w) {}
-  Sphere_segment(const Sphere_segment<R>& s) : VSegment(s)
+  Sphere_segment(const Sphere_segment<R>& s) : VSegment(s), Gen_object()
   { s_ = s.s_; c_ = s.c_; w_ = s.w_; }
   Sphere_segment<R>& operator=(const Sphere_segment<R>& s)
   { VSegment::operator=(s); s_ = s.s_; c_ = s.c_; w_ = s.w_;
@@ -330,7 +330,7 @@ public:
   Sphere_circle(const CGAL::Sphere_circle<R>& s,
     CGAL::Color c = CGAL::BLACK, unsigned w = 2) 
     : VSegment(Approximator<R>::approximate(s)), s_(s), c_(c), w_(w) {}
-  Sphere_circle(const Sphere_circle<R>& s) : VSegment(s)
+  Sphere_circle(const Sphere_circle<R>& s) : VSegment(s), Gen_object()
   { s_ = s.s_; c_ = s.c_; w_ = s.w_; }
   Sphere_circle<R>& operator=(const Sphere_circle<R>& s)
   { VSegment::operator=(s); s_ = s.s_; c_ = s.c_; w_ = s.w_;
@@ -377,7 +377,7 @@ public:
     CGAL::Color c = CGAL::Color(100,100,120)) 
     : VTriangle(Approximator<R>::approximate(t)), t_(t), c_(c) {}
 
-  Sphere_triangle(const Sphere_triangle<R>& t) : VTriangle(t)
+  Sphere_triangle(const Sphere_triangle<R>& t) : VTriangle(t), Gen_object()
   { t_ = t.t_; c_ = t.c_; }
 
   Sphere_triangle<R>& operator=(const Sphere_triangle<R>& t)
@@ -489,7 +489,7 @@ void print() const
   std::cerr << std::endl;
 }
 
-Unit_sphere(const Unit_sphere& S) : switches(2)
+Unit_sphere(const Unit_sphere& S) : OGL_base_object(), switches(2)
 { CGAL_NEF_TRACEN("copyconstruction");
   sphere_ = gluNewQuadric();
   initialized_ = S.initialized_;

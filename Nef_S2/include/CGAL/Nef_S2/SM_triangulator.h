@@ -599,7 +599,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
   for (SVertex_iterator v = v_start; v != v_end; ++v) { 
     CGAL_NEF_TRACEN(" vertex = "<<PH(v));
     SHalfedge_handle e_below = halfedge_below(v);
-    if ( v != v_start )
+    if ( v != v_start ) {
       if ( e_below != SHalfedge_handle() ) {
 	m_buffer = incident_mark(e_below); 
       } else { // e_below does not exist
@@ -608,7 +608,8 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	//	CGAL_assertion( point(v).z() == 0 && 
 	//	  ( pos > 0 ? (point(v).x() >= 0) : (point(v).x()<=0)) );
 	m_buffer = incident_mark(first_out_edge(v)->sprev());
-      } 
+      }
+    }
     CGAL_NEF_TRACEN(" face mark below "<<m_buffer);
 
     Object_handle o = support(v);
