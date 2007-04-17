@@ -614,11 +614,12 @@ class Infimaximal_box<Tag_true, Kernel> {
     typename Sphere_map::SHalfedge_const_iterator sei;
     bool found = false;
     CGAL_forall_sedges(sei, sm) {
-      if(!is_sedge_on_infibox(sei))
+      if(!is_sedge_on_infibox(sei)) {
 	if(found)
 	  return true;
 	else
 	  found = true;
+      }
     }
     return false;
   }
