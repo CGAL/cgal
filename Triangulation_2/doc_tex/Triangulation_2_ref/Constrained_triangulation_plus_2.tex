@@ -55,13 +55,13 @@ constrained edge,  the set of input constraints that overlap it.
 \ccGlue
 \ccTypedef{typedef Itag Intersection_tag;}{the intersection tag.s}
 
-\ccNestedType{Constraint_iterator;}{An iterator to visit
+\ccNestedType{Constraint_iterator}{An iterator to visit
 all the input  constraints. The order of visit is arbitrary.
 The value type of this iterator  is a pair 
 \ccc{std::pair<Vertex_handle, Vertex_handle>} corresponding to the
 endpoints of the constraint.}
 
-\ccNestedType{Subconstraint_iterator;}{An iterator 
+\ccNestedType{Subconstraint_iterator}{An iterator 
 to visit all the sub-constraints  of the triangulation.
 The order of visit is arbitrary.
 The value type of this iterator is a pair 
@@ -69,7 +69,7 @@ The value type of this iterator is a pair
 corresponding to the vertices of  the
 sub-constraint.}
 
-\ccNestedType{Vertices_in_constraint_iterator;}{ An iterator on the
+\ccNestedType{Vertices_in_constraint_iterator}{ An iterator on the
 vertices of the chain of triangulation edges representing a
 constraint. The value type of this iterator is \ccc{Vertex_handle}.}
 
