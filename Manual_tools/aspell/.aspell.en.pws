@@ -1,8 +1,10 @@
-personal_ws-1.1 en 178 
+personal_ws-1.1 en 187 
 halfedge
+affinely
 Devillers
 dereference
 sidedness
+circumsphere
 Sibson's
 functor
 homeomorphic
@@ -55,6 +57,7 @@ const
 iostream
 Fabri
 Trolltech
+nonnegative
 Mpfr
 Overmars
 Fichel
@@ -87,13 +90,14 @@ Cgal
 Guigue
 templated
 reals
+bidirected
 Farin's
 Austern
 Kruithof
 circulators
 Blas
-typedefs
 VRML
+typedefs
 GALIA
 Pion
 parameterization
@@ -103,6 +107,7 @@ halfedges
 Geert
 PostScript
 indices
+halfspaces
 simplicial
 quadric
 inlining
@@ -113,6 +118,7 @@ GIS
 bivariate
 Oudot
 polytope
+unoriented
 accessor
 Bykat
 Yvinec
@@ -124,6 +130,7 @@ combinatorics
 subface
 Lutz
 tetrahedra
+Seel
 Gmp
 Amenta
 Lgpl
@@ -175,5 +182,7 @@ trilinear
 Veltkamp
 Minkowski
 Geomview
+dereferencing
+checkable
 circulator
 Hert
