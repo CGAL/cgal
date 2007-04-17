@@ -1,4 +1,4 @@
-personal_ws-1.1 en 273 
+personal_ws-1.1 en 285 
 fourtuple
 Farin
 Overmars
@@ -19,6 +19,7 @@ dereferenceable
 trilinear
 halfedge
 bijective
+interoperate
 Halperin
 Dcel
 lvalue
@@ -29,6 +30,7 @@ Toussaint
 Delaunay
 inlined
 bilinear
+expectable
 adaptor's
 adaptors
 Haran
@@ -78,6 +80,7 @@ typenames
 dereference
 GIS
 polyline
+roundoff
 authalic
 Wittenberg
 Berberich
@@ -85,20 +88,23 @@ lookup
 parameterizer
 parameterizes
 Fsf
+FPU
 makefile
 simplices
 Gmp
 enum
 combinatorics
 combinatorially
+Seminumerical
 iff
 Institut
 Postconditions
 unsetting
+multiprecision
 GeometryFactory
 bool
-arities
 Gpl
+arities
 unary
 vertices
 Farin's
@@ -119,6 +125,8 @@ Schirra
 Aviv
 wrt
 Runge
+istream
+ostream
 Kde
 multi
 predicate's
@@ -164,11 +172,13 @@ circumradius
 nonnegative
 templated
 polylines
+significand
 Minkowski
 postcondition
 Taucs
 Amenta
 halfspaces
+subring
 Nechushtan
 LSCM
 subconcept
@@ -195,6 +205,7 @@ Kruithof
 Kutta
 parameterization
 Diskrete
+leda
 affinely
 DefaultConstructible
 Fogel
@@ -208,6 +219,7 @@ bitangent
 hermitian
 superclass
 homeomorphic
+Ieee
 simplicial
 Trolltech
 remeshing
@@ -226,7 +238,7 @@ PLC
 Sklansky
 submesh
 parameterizations
-Destructor
+destructor
 Interpolants
 Cholesky
 massless
