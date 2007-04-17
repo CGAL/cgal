@@ -1,4 +1,4 @@
-personal_ws-1.1 en 222 
+personal_ws-1.1 en 228 
 fourtuple
 Farin
 Overmars
@@ -9,6 +9,7 @@ Hanniel
 Lutz
 Melkman
 arity
+Pslg
 TDS
 Geomview
 Lgpl
@@ -32,6 +33,7 @@ Sibson
 Delage
 iostream
 Stl
+subconstraints
 quickhull
 Remco
 Fichel
@@ -75,8 +77,8 @@ Postconditions
 unsetting
 GeometryFactory
 bool
-Gpl
 arities
+Gpl
 unary
 vertices
 Farin's
@@ -115,8 +117,8 @@ ISR
 Teillaud
 Unmarks
 Apollonius
-reals
 dereferenced
+reals
 bidirected
 subcomplex
 Guigue
@@ -131,6 +133,7 @@ homonymous
 indices
 Informatik
 Flato
+circumradius
 nonnegative
 templated
 polylines
@@ -140,6 +143,7 @@ Taucs
 Amenta
 halfspaces
 Nechushtan
+subconcept
 functionalities
 constructible
 checkable
@@ -174,6 +178,7 @@ bitangent
 homeomorphic
 simplicial
 Trolltech
+Shewchuk's
 quadrics
 typedef
 tuple
@@ -202,6 +207,7 @@ suborthogonal
 Genericity
 interpolant
 circumcircle
+CRTP
 Mathematik
 VRML
 rejectors
