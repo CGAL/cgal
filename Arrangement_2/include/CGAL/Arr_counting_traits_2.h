@@ -226,7 +226,7 @@ public:
       m_object(base->split_2_object()), m_counter(counter) {}
     void operator()(const X_monotone_curve_2 & cv, const Point_2 & p,
                     X_monotone_curve_2 & cv1, X_monotone_curve_2 & cv2)
-    { ++m_counter; return m_object(cv, p, cv1, cv2); }
+    { ++m_counter; m_object(cv, p, cv1, cv2); }
   };
 
   /*! compute intersections */
@@ -268,7 +268,7 @@ public:
     void operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2,
                     X_monotone_curve_2 & cv)
-    { ++m_counter; return m_object(cv1, cv2, cv); }
+    { ++m_counter; m_object(cv1, cv2, cv); }
   };
 
   /*! Construct an opposite x-monotone curve */
