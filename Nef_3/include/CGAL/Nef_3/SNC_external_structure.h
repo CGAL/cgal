@@ -48,16 +48,18 @@ template <typename Edge_handle>
 struct Halfedge_key_lt4 {
 
   bool operator()(const Edge_handle& e1, const Edge_handle& e2) const {
-    if(CGAL::sign(e1->point().x()) != 0)
+    if(CGAL::sign(e1->point().x()) != 0) {
       if(e1->source() != e2->source())
 	return CGAL::compare_x(e1->source()->point(), e2->source()->point()) < 0; 
       else 
 	return e1->point().x() < 0;
-    if(CGAL::sign(e1->point().y()) != 0)
+    }
+    if(CGAL::sign(e1->point().y()) != 0) {
       if(e1->source() != e2->source())
 	return CGAL::compare_y(e1->source()->point(), e2->source()->point()) < 0; 
       else 
 	return e1->point().y() < 0;
+    }
     if(e1->source() != e2->source())
       return CGAL::compare_z(e1->source()->point(), e2->source()->point()) < 0; 
     return e1->point().z() < 0;

@@ -474,21 +474,24 @@ public:
   Vertex_handle create_from_point_on_infibox_facet(const Point_3& p) const {
     
     CGAL_assertion(!Infi_box::is_standard(p));
-    if(Infi_box::x_on_box(p))
+    if(Infi_box::x_on_box(p)) {
       if(p.hx() > 0) 
 	return create_from_plane(Plane_3(1,0,0,1), p, 1, 1, 0);
       else
 	return create_from_plane(Plane_3(-1,0,0,1), p, 1, 1, 0);
-    if(Infi_box::y_on_box(p))
+    }
+    if(Infi_box::y_on_box(p)) {
       if(p.hy() > 0) 
 	return create_from_plane(Plane_3(0,1,0,1), p, 1, 1, 0);
       else
 	return create_from_plane(Plane_3(0,-1,0,1), p, 1, 1, 0);
-    if(Infi_box::z_on_box(p))
+    }
+    if(Infi_box::z_on_box(p)) {
       if(p.hz() > 0) 
 	return create_from_plane(Plane_3(0,0,1,1), p, 1, 1, 0);
       else
 	return create_from_plane(Plane_3(0,0,-1,1), p, 1, 1, 0);
+    }
     CGAL_assertion_msg(0, "something is wrong");
     return Vertex_handle();
   }
