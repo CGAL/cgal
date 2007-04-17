@@ -109,12 +109,15 @@ namespace CGALi {
                 OutputIterator operator()( const Polynomial_1& p,
                                            OutputIterator res,
                                            bool known_to_be_square_free = false ) const {
-                    Polynomial_1 poly = (known_to_be_square_free) ? p :
-                             typename Polynomial_traits_d< Polynomial_1 >::Make_square_free()(p);
-                             
                     CGALi::Real_roots< Algebraic_real_1, Isolator > real_roots;
+
+                    if( known_to_be_square_free ) {
+                        real_roots( p, res );
+                    } else {
+                        std::vector< int > dummy;
+                        real_roots( p, res, std::back_inserter( dummy ) );
+                    }
                     
-                    real_roots( poly, res );
                     return res;
                 }
                 
