@@ -17,34 +17,13 @@ A model of \ccc{AlgebraicKernelForQuadrics} is supposed to provide
 
 \ccNestedType{Coefficient}{A model of \ccc{IntegralDomain}. }
 
-%\ccNestedType{RT}{A model of \ccc{RingNumberType}. }%In addition, the
-%class \ccc{Root_of_traits_2<RT>} must be defined and provide a nested
-%type \ccc{Type} which must be the same as \ccc{Root_of_2} and a
-%function \ccc{make_root_of_2(RT,RT,RT,int)} whose return type is
-%\ccc{Type}.} 
-%\ccGlue
-%\ccNestedType{FT}{A model of \ccc{FieldNumberType}\ccc{<RT>}.}
-%\footnote{concept template...?} 
+\ccNestedType{Polynomial_3}{A model of
+\ccc{AlgebraicKernelForQuadrics::Polynomial_3}, for trivariate polynomials.} 
 
-%\ccNestedType{Polynomial_1_3}{A model of 
-%\ccc{AlgebraicKernelForQuadrics::Polynomial_1_3}, for trivariate polynomials
-%of degree up to~1.}
-%\ccGlue
-\ccNestedType{Polynomial_2_3}{A model of
-\ccc{AlgebraicKernelForQuadrics::Polynomial_2_3}, for trivariate polynomials 
-of degree up to~2.} 
-
-\ccNestedType{Root_of_8_1}{A model of 
-\ccc{RootOf_8_1}, for algebraic numbers 
-of degree at most 8} 
-\ccGlue
-\ccNestedType{Root_of_8_3}{A model of 
-\ccc{AlgebraicKernelForQuadrics::Root_of_8_3}, for
-solutions of systems of three models of 
-\ccc{AlgebraicKernelForQuadrics::Polynomial_2_3}.} 
-
-\ccNestedType{Construct_polynomial_2_3}{A model of
-\ccc{AlgebraicKernelForQuadrics::ConstructPolynomial_2_3}.}
+\ccNestedType{Algebraic_real_3}{A model of 
+\ccc{AlgebraicKernelForQuadrics::AlgebraicReal_3}, for
+solutions of systems of three instances of 
+\ccc{AlgebraicKernelForQuadrics::Polynomial_3}.} 
 
 \ccNestedType{Compare_x}{A model of the concept 
 \ccc{AlgebraicKernelForQuadrics::CompareX}.}
