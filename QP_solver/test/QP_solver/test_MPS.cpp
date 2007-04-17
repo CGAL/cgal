@@ -86,7 +86,7 @@ int main(const int argNr,const char **args) {
     Solver::Variable_value_iterator it 
       = s.original_variable_values_begin() ;
     for (int i=0; i < qp.get_n(); ++it, ++i)
-      cout << "  " << qp.get_name_of_variable(i) << " = "
+      cout << "  " << qp.variable_name_by_index(i) << " = "
 	   << CGAL::to_double(*it) << endl;
     return 0;
   }

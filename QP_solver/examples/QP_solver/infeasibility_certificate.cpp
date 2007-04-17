@@ -52,7 +52,7 @@ int main() {
   Solution s = CGAL::solve_nonnegative_linear_program(lp, ET());
 
   // get certificate for infeasibility
-  assert (s.status() == CGAL::QP_INFEASIBLE);
+  assert (s.is_infeasible());
   Solution::Infeasibility_certificate_iterator y = 
     s.infeasibility_certificate_begin();
   // check y >= 0

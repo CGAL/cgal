@@ -46,14 +46,6 @@ int main() {
   Solution s = CGAL::solve_nonnegative_quadratic_program(qp, ET());
 
   // output solution
-  if (s.is_optimal()) { // we know that, don't we?
-    std::cout << "Optimal feasible solution: ";
-    for (Solution::Variable_value_iterator it = s.variable_values_begin();
-	 it != s.variable_values_end(); ++it)
-      std::cout << *it << "  ";
-    std::cout << std::endl << "Optimal objective function value: "
-	      << s.objective_value() << std::endl;
-  }
-
+  std::cout << s;
   return 0;
 }

@@ -23,25 +23,19 @@ int main() {
   // by default, we have a nonnegative QP with Ax <= b
   Program qp (CGAL::SMALLER, true, 0, false, 0); 
   
-  // now set the non-default entries: 0 <-> x, 1 <-> y
-  qp.set_a(0, 0,  1); qp.set_a(1, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
-  qp.set_a(0, 1, -1); qp.set_a(1, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
-  qp.set_d(0, 0, 2); qp.set_d (1, 1, 8);                  // x^2 + 4 y^2
-  qp.set_c(1, -32);                                       // -32y
+  // now set the non-default entries
+  const int X = 0; 
+  const int Y = 1;
+  qp.set_a(X, 0,  1); qp.set_a(Y, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
+  qp.set_a(X, 1, -1); qp.set_a(Y, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
+  qp.set_d(X, X, 2); qp.set_d (Y, Y, 8); // !!specify 2D!!    x^2 + 4 y^2
+  qp.set_c(Y, -32);                                       // -32y
   qp.set_c0(64);                                          // +64
 
   // solve the program, using ET as the exact type
   Solution s = CGAL::solve_nonnegative_quadratic_program(qp, ET());
 
   // output solution
-  if (s.is_optimal()) { // we know that, don't we?
-    std::cout << "Optimal feasible solution: ";
-    for (Solution::Variable_value_iterator it = s.variable_values_begin();
-	 it != s.variable_values_end(); ++it)
-      std::cout << *it << "  ";
-    std::cout << std::endl << "Optimal objective function value: "
-	      << s.objective_value() << std::endl;
-  }
-
+  std::cout << s; 
   return 0;
 }

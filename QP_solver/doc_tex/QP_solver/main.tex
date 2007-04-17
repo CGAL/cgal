@@ -4,6 +4,14 @@
 % Section: QP solver
 % =============================================================================
 \newcommand{\qprel}{\ccTexHtml{\gtreqless}{&nbsp;~&nbsp;}}
+\newcommand{\qpx}{\mathbf{x}}
+\newcommand{\qpl}{\mathbf{l}}
+\newcommand{\qpu}{\mathbf{u}}
+\newcommand{\qpc}{\mathbf{c}}
+\newcommand{\qpb}{\mathbf{b}}
+\newcommand{\qpy}{\mathbf{y}}
+\newcommand{\qpw}{\mathbf{w}}
+\newcommand{\qplambda}{\mathbf{\lambda}}
 
 \ccUserChapter{Linear and Quadratic Programming Solver}\label{QPsolver}
 \ccChapterRelease{Release: WIP (\today)}
@@ -14,37 +22,19 @@
 \label{sec:QP-def}
 This package lets you solve \emph{convex quadratic programs} of the 
 general form
-\begin{eqnarray*}
-\mbox{(QP)}&\mbox{minimize} & x^{T}Dx + c^{T}x + c_0 \\
-&\mbox{subject to}   & Ax\qprel b, \\
-&& l \leq x \leq u
-\end{eqnarray*}
-over $n$ variables $x=(x_0,\ldots,x_{n-1})$.
-Here, 
-\begin{itemize}
-\item $A$ is an $m\times n$ matrix (the constraint matrix), 
-\item $b$ is an $m$-dimensional vector (the right-hand side),
-\item $\qprel$ is an $m$-dimensional vector of relations 
-from $\{\leq, =, \geq\}$, 
-\item $l$ is an $n$-dimensional vector of lower
-bounds for $x$,
-\item $u$ is an $n$-dimensional vector of upper bounds for
-$x$, 
-\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
-  quadratic objective function),
-\item $c$ is an $n$-dimensional vector (the linear objective
-  function), and 
-\item $c_0$ is a constant.
-\end{itemize}
+%
+\input{QP_solver_ref/_qp_description}
 
 If $D=0$, the program (QP) is actually a \emph{linear program}.
 Section \ref{sec:QP-robustness} on robustness briefly discusses
 the case of $D$ not being positive-semidefinite and therefore not
 defining a convex program. 
 
-\emph{Solving} the program means to find an $n$-vector $x^*$ 
-such that $Ax^*\qprel b, l\leq x^*\leq u$ (a \emph{feasible solution}),
-and with the smallest objective function value ${x^*}^TDx^*+c^Tx^*+c_0$ 
+\emph{Solving} the program means to find an $n$-vector $\qpx^*$ 
+such that $A\qpx^*\qprel \qpb, 
+\qpl\leq \qpx^*\leq \qpu$ (a \emph{feasible solution}),
+and with the smallest objective function value 
+${\qpx^*}^TD\qpx^*+\qpc^T\qpx^*+c_0$ 
 among all feasible solutions. 
 
 There might be no feasible solution at all, in which
@@ -69,7 +59,7 @@ in the solution process.
 The output of this is an object of \ccc{Quadratic_program_solution<ET>}
 which you can in turn query for various things: what is the status of 
 the program (optimally solved, infeasible, or unbounded?), what are 
-the values of the optimal solution $x^*$, what is the associated
+the values of the optimal solution $\qpx^*$, what is the associated
 objective function value, etc. 
 
 You can in particular get \emph{certificates} for the solution. In short,
@@ -80,7 +70,7 @@ Section \ref{sec:QP-certificates} says more about this.
 
 \subsection{Efficiency}
 The concept \ccc{QuadraticProgramInterface} (as well as the
-other specialized ones) require a \emph{dense} interface 
+other specialized ones) require a \emph{dense interface} 
 of the program, in terms of \emph{random-access iterators} over 
 the matrices and vectors of (QP). Zero entries therefore play no
 special role and are treated like all other entries by the
@@ -95,15 +85,17 @@ the \cgal\ packages \ccc{Min_annulus_d<Traits>} and
 and quadratic programming solver. 
 
 As a user, however, you don't necessarily have to provide a dense
-\emph{representation} of your program. The iterator abstraction 
+\emph{representation} of your program. You do not pass vectors or
+matrices to the solution functions, but rather specify the vectors 
+and matrices through iterators. The iterator abstraction 
 easily allows to build models that convert a sparse representation 
 into a dense interface. The predefined models \ccc{Quadratic_program<NT>} 
 and \ccc{Quadratic_program_from_mps<NT>} do exactly this; in using them, 
-you can ``forget about'' the dense interface.  
+you can forget about the dense interface.  
 
 Nevertheless, if you care about efficiency, you cannot completely 
-ignore the issue, and that's why we used the quotation marks. If
-you think about a a quadratic program in $n$ variables and $m$
+ignore the issue. If
+you think about a quadratic program in $n$ variables and $m$
 constraints, its dense interface has $\Theta(n^2 + mn)$ entries,
 even if actually very few of them are nonzero. This has consequences 
 for the complexity of the internal computations. In fact, a single
@@ -153,8 +145,7 @@ Given that you use an \emph{exact number type} in the function
 solution functions),  the solver
 will give you \emph{exact rational output}, for \emph{every}
 convex quadratic program. This means, there are no robustness
-issues with the solver. Not taking bugs into account, the solver 
-may fail to compute a solution only if
+issues with the solver. It may fail to compute a solution only if
 \begin{itemize}
 \item the quadratic program is too large (see the previous subsection 
 on efficiency), 
@@ -178,8 +169,8 @@ $D$ in the relevant case where $r$, the rank of $D$, is small.
 Nevertheless, the solver contains some (suppressable) runtime checks
 that may detect that the matrix $D$ is not positive-semidefinite. But
 you may as well get an ``optimal solution'' in this case, even with
-valid certificates. But the validity of these certificates depends on
-$D$ being positive-semidefinite; if this is not the case, the
+valid certificates. The validity of these certificates, however, 
+depends on $D$ being positive-semidefinite; if this is not the case, the
 certificates only prove that the solver has found a ``critical point'' of
 your (nonconvex) program, but there are no guarantees whatsoever that
 this is a global optimum, or even a local optimum.
@@ -239,7 +230,7 @@ function at this optimal solution is $2^2 + 4(3-4)^2 = 8$.
 
 \begin{ccHtmlOnly}
 <CENTER>
-<IMG BORDER=0 SRC="./first_qp.gif" ALIGN=middle ALT="A quadratic program in two variables">
+<IMG BORDER=0 SRC="./first_qp.png" ALIGN=middle ALT="A quadratic program in two variables">
 </CENTER>
 \end{ccHtmlOnly}
 
@@ -257,18 +248,21 @@ internal computations. For examples
 how to work with the input type \ccc{double}, we refer to 
 Sections \ref{sec:QP-iterators} and \ref{sec:QP-customization}.
 
-The output of the following program will be:
-\begin{verbatim}
-Optimal feasible solution: 2/1  3/1
-Optimal objective function value: 8/1
-\end{verbatim}
-
-\ccIncludeExampleCode{QP_solver/first_qp.cpp}
-
 {\bf Note:} in specifying $D$, we have to provide the entries
 of the matrix $2D$. Although this is common to almost all
 quadratic programming solvers, it can easily be overlooked by
 a novice.
+
+\ccIncludeExampleCode{QP_solver/first_qp.cpp}
+
+The output of the following program will be:
+\begin{verbatim}
+status:          OPTIMAL
+objective value: 8/1
+variable values:
+  0: 2/1
+  1: 3/1
+\end{verbatim}
 
 \subsection{Constructing a program from a stream}
 Here, the program data must be available in \ccc{MPSFormat} (the
@@ -330,7 +324,8 @@ advance whether $D=0$ is not an option in general, since this may require
 $\Omega(n^2)$ time on the dense interface.
 
 Similarly, if the solver knows that the program is nonnegative, it
-will be more efficient than under the general bounds $l\leq x \leq u$.
+will be more efficient than under the general bounds 
+$\qpl\leq \qpx \leq \qpu$.
 You can argue that nonnegativity \emph{is} something that could easily
 be checked in time $O(n)$ beforehand, but then again nonnegative
 programs are so frequent that the syntactic sugar aspect becomes
@@ -340,7 +335,8 @@ specifying a nonnegative linear program in terms of the concept
 \ccc{LinearProgramInterface}.
 
 Often, there are no bounds at all for the variables, i.e.\ all entries
-of $l$ are $-\infty$, and all entries of $u$ are $\infty$ (this is
+of $\qpl$ are $-\infty$, and all entries of $\qpu$ 
+are $\infty$ (this is
 called a \emph{free} program). There is no dedicated solution method
 for this case (a free quadratic or linear program is treated like a
 general quadratic or linear program), but all predefined models make
@@ -381,7 +377,7 @@ value is $-32(11/3)+64=-160/3$.
 
 \begin{ccHtmlOnly}
 <CENTER>
-<IMG BORDER=0 SRC="./first_lp.gif" ALIGN=middle ALT="A linear program in two variables">
+<IMG BORDER=0 SRC="./first_lp.png" ALIGN=middle ALT="A linear program in two variables">
 </CENTER>
 \end{ccHtmlOnly}
 
@@ -392,15 +388,19 @@ value is $-32(11/3)+64=-160/3$.
 Here is \cgal\ code for solving it, using the dedicated LP solver, and
 according to the three ways for constructing a program that we have
 already discussed in Section \ref{sec:QP-first}. 
-In all cases, the output is
-\begin{verbatim}
-Optimal feasible solution: 10/3  11/3
-Optimal objective function value: -160/3
-\end{verbatim}
 
 \ccReferToExampleCode{QP_solver/first_lp.cpp}\\
 \ccReferToExampleCode{QP_solver/first_lp_from_mps.cpp}\\
 \ccReferToExampleCode{QP_solver/first_lp_from_iterators.cpp}
+
+In all cases, the output is
+\begin{verbatim}
+status:          OPTIMAL
+objective value: -160/3
+variable values:
+  0: 10/3
+  1: 11/3
+\end{verbatim}
 
 \subsection{The  nonnegative quadratic programming solver}
 If we go back to our first quadratic program and
@@ -430,7 +430,7 @@ not change.
 
 \begin{ccHtmlOnly}
 <CENTER>
-<IMG BORDER=0 SRC="./first_nonnegative_qp.gif" ALIGN=middle ALT="A linear program in two variables">
+<IMG BORDER=0 SRC="./first_nonnegative_qp.png" ALIGN=middle ALT="A linear program in two variables">
 </CENTER>
 \end{ccHtmlOnly}
 
@@ -441,8 +441,11 @@ not change.
 The following programs (using the dedicated solver for nonnegative
 quadratic programs) will therefore again output
 \begin{verbatim}
-Optimal feasible solution: 2/1  3/1
-Optimal objective function value: 8/1
+status:          OPTIMAL
+objective value: 8/1
+variable values:
+  0: 2/1
+  1: 3/1
 \end{verbatim}
 
 \ccReferToExampleCode{QP_solver/first_nonnegative_qp.cpp}\\
@@ -466,16 +469,20 @@ $-32(11/3)=-352/3$.
 \end{array}
 \] 
 
-This can be solved by any of the following three programs; in
-any case, the output is
-\begin{verbatim}
-Optimal feasible solution: 10/3  11/3
-Optimal objective function value: -352/3
-\end{verbatim}
+This can be solved by any of the following three programs
 
 \ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}\\
 \ccReferToExampleCode{QP_solver/first_nonnegative_lp_from_mps.cpp}\\
 \ccReferToExampleCode{QP_solver/first_nonnegative_lp_from_iterators.cpp}
+
+The output will always be
+\begin{verbatim}
+status:          OPTIMAL
+objective value: -352/3
+variable values:
+  0: 10/3
+  1: 11/3
+\end{verbatim}
 
 \section{Working from iterators}
 \label{sec:QP-iterators}
@@ -552,7 +559,7 @@ readable code.
 
 
 \section{Important variables and constraints}
-If you have a solution $x^*$ of a linear or quadratic program,
+If you have a solution $\qpx^*$ of a linear or quadratic program,
 the ``important'' variables are typically the ones that are not on
 their bounds. In case of a nonnegative program, these are the nonzero
 variables.  Going back to the example of the previous Section
@@ -560,7 +567,10 @@ variables.  Going back to the example of the previous Section
 importance: the nonzero variables correspond to points $p_j$ that
 actually contribute to the convex combination that yields $p$. 
 
-The following example shows how we can access the important variables.
+The following example shows how we can access the important variables,
+using the iterators \ccc{basic_variable_indices_begin()} and
+\ccc{basic_variable_indices_end()}.
+
 We generate a set of points that form a 4-gon in $[0,4]^2$, and then find 
 the ones that contribute to the convex combinations of all 25 lattice 
 points in $[0,4]^2$. If the lattice point in question is not in the 4-gon, 
@@ -579,12 +589,16 @@ also have this property. In linear and quadratic programming terms,
 such a situation is called a \emph{degeneracy}.
 
 There is also the concept of an important constraint: this is 
-typically a constraint in the system $Ax\qprel b$ that is
-satisfied with equality at $x^*$. Program
+typically a constraint in the system $A\qpx\qprel\qpb$ 
+that is satisfied with equality at $\qpx^*$. Program
 \ccReferToExampleCode{QP_solver/first_qp_basic_constraints.cpp}
-shows how these can be accessed. Again, we have a disagreement
+shows how these can be accessed, using the iterators
+\ccc{basic_constraint_indices_begin()} and
+\ccc{basic_constraint_indices_end()}.
+
+Again, we have a disagreement
 between ``basic'' and ``important'': it is guaranteed that all
-basic constraints are satisfied with equality at $x^*$, but there 
+basic constraints are satisfied with equality at $\qpx^*$, but there 
 might be non-basic constraints that are satisfied with equality
 as well.
 
@@ -597,35 +611,35 @@ but why is there no better one?
 
 Certificates are proofs that the solver can give you in order
 to convince you that what it claims is indeed true. The archetype 
-of such a proof is \emph{Farkas Lemma}. 
+of such a proof is \emph{Farkas Lemma} \cite{cgal:mg-uulp-06}.
 
 {\bf Farkas Lemma:} \emph{Either} the inequality system
 \[
 \begin{array}{rcl}
-A x & \leq & b \\
-  x & \geq & 0
+A \qpx & \leq & \qpb \\
+  \qpx & \geq & 0
 \end{array}
 \]
-has a solution $x^*$, \emph{or} there exists a vector $y$ such
+has a solution $\qpx^*$, \emph{or} there exists a vector $\qpy$ such
 that
 \[
 \begin{array}{rcl}
-   y &\geq& 0\\ 
-y^TA &\geq& 0\\ 
-y^Tb & < &  0,
+   \qpy &\geq& 0\\ 
+\qpy^TA &\geq& 0\\ 
+\qpy^T\qpb & < &  0,
 \end{array}
 \]
 but not both.
 
 Thus, if someone wants to convince you that the first system in
 the Farkas Lemma is infeasible, that person can simply give you
-a vector $y$ that solves the second system. Since you can easily
-verify yourself that the $y$ you got satisfies this second system, 
+a vector $\qpy$ that solves the second system. Since you can easily
+verify yourself that the $\qpy$ you got satisfies this second system, 
 you now have a certificate for the infeasibility of the first system,
 assuming that you believe in Farkas Lemma. 
 
 Here we show how the solver can convince you. We first set up an infeasible
-linear program with constraints of the type $Ax\leq b, x\geq 0$; then
+linear program with constraints of the type $A\qpx\leq \qpb, \qpx\geq 0$; then
 we solve it and ask for a certificate. Finally, we verify the certificate
 by simply checking the inequalities of the second system in Farkas
 Lemma.

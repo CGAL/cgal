@@ -59,7 +59,7 @@ int main() {
   Solution s = CGAL::solve_nonnegative_linear_program(lp, ET());
 
   // get certificate for unboundedness
-  assert (s.status() == CGAL::QP_UNBOUNDED);
+  assert (s.is_unbounded());
   Solution::Unboundedness_certificate_iterator w =
     s.unboundedness_certificate_begin();
   // check w >= 0

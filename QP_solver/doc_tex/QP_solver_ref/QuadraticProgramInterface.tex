@@ -2,30 +2,7 @@
 
 \ccDefinition
 A model of \ccRefName\ describes a convex quadratic program of the form
-%%
-\begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
-&\mbox{subject to}   & Ax\qprel b, \\
-&                    & l \leq x \leq u
-\end{eqnarray*}
-%%
-in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
-Here, 
-\begin{itemize}
-\item $A$ is an $m\times n$ matrix (the constraint matrix), 
-\item $b$ is an $m$-dimensional vector (the right-hand side),
-\item $\qprel$ is an $m$-dimensional vector of relations 
-from $\{\leq, =, \geq\}$, 
-\item $l$ is an $n$-dimensional vector of lower
-bounds for $x$,
-\item $u$ is an $n$-dimensional vector of upper bounds for
-$x$, 
-\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
-  quadratic objective function),
-\item $c$ is an $n$-dimensional vector (the linear objective
-  function), and 
-\item $c_0$ is a constant.
-\end{itemize}
+\input{QP_solver_ref/_qp_description.tex}
 
 The description is given by appropriate \emph{random-access} 
 iterators over the program data, see below. The program therefore 
@@ -38,94 +15,25 @@ comes in \emph{dense} representation which includes zero entries.
 
 \ccTypes
 
-\ccNestedType{A_iterator}{A random access iterator type to go 
-  columnwise over the constraint matrix $A$. The value type
-  is a random access iterator type for an individual column that
-  goes over the entries in that column.}
+\input{QP_solver_ref/_abr_types.tex}
 
-\ccNestedType{B_iterator}{A random access iterator type to go over 
-  the entries of the right-hand side $b$.}
+\input{QP_solver_ref/_lu_types.tex}
 
-\ccNestedType{R_iterator}{A random access iterator type to go over the
-  relations $\qprel$. The value type of \ccc{R_iterator} is
-  \ccc{CGAL::Comparison_result}.}
+\input{QP_solver_ref/_d_types.tex}
 
-\ccNestedType{FL_iterator}{A random access iterator type to go over the
-  existence (finiteness) of the lower bounds $l_j, j=0,\ldots,n-1$.
-  The value type of \ccc{FL_iterator} is \ccc{bool}.}
-
-\ccNestedType{L_iterator}{A random acess iterator type to go over
-  the entries of the lower bound vector $l$.}
-
-\ccNestedType{UL_iterator}{A random access iterator type to go over the
-  existence (finiteness) of the upper bounds $u_j, j=0,\ldots,n-1$.
-  The value type of \ccc{UL_iterator} is \ccc{bool}.}
-
-\ccNestedType{U_iterator}{A random acess iterator type to go over 
-  the entries of the upper bound vector $u$.}
-
-\ccNestedType{D_iterator}{A random access iterator type to go rowwise 
-  over the matrix $2D$. The value type
-  is a random access iterator type for an individual row that
-  goes over the entries in that row, up to (and including) the
-  entry on the main diagonal.}
-
-\ccNestedType{C_iterator}{A random access iterator type to go over the
-  entries of the linear objective function vector $c$.}
+\input{QP_solver_ref/_c_types.tex}
 
 \ccOperations
 
 \ccCreationVariable{qp}
 
-\ccMethod{int get_n() const;}{returns the number $n$ of variables (number
-  of columns of $A$) in \ccVar.}
+\input{QP_solver_ref/_nmabr_methods.tex}
 
-\ccMethod{int get_m() const;}{returns the number $m$ of constraints
-  (number of rows of $A$) in \ccVar.}
+\input{QP_solver_ref/_lu_methods.tex}
 
-\ccMethod{A_iterator get_a() const;}{returns an iterator over the columns
-  of $A$. For $j=0,\ldots,n-1$, $\ccc{*(a()+j)}$ is a random access
-  iterator for column $j$.}
+\input{QP_solver_ref/_d_methods.tex}
 
-\ccMethod{B_iterator get_b() const;}{returns an iterator over the entries
-  of $b$.}
-
-\ccMethod{R_iterator get_r() const;}{returns an iterator over the entries
-  of $\qprel$. The value \ccc{CGAL::SMALLER} stands
-  for $\leq$, \ccc{CGAL::EQUAL} stands for $=$, and \ccc{CGAL::LARGER}
-  stands for $\geq$.}
-
-\ccMethod{FL_iterator get_fl() const;}{returns an iterator over the
-  existence of the lower bounds $l_j, j=0,\ldots,n-1$. If 
-  $\ccVar.\ccc{fl()}[j]=true$, the variable $x_j$ has a lower
-  bound, otherwise it has no lower bound.}
-
-\ccMethod{L_iterator get_l() const;}{returns an iterator for the
-  entries of $l$. If $\ccVar.\ccc{fl()}[j]=\ccc{false}$, the value 
-  $\ccVar.\ccc{l()}[j]$ is not accessed.\ccPrecond if 
-  $\ccVar.\ccc{fl()}[j]=\ccVar.\ccc{fu()}[j]=\ccc{true}$, then
-  $\ccVar.\ccc{l()}[j]\leq \ccVar.\ccc{u()}[j]$}
-
-\ccMethod{FU_iterator get_fu() const;}{returns an iterator over the
-  existence of the upper bounds $u_j, j=0,\ldots,n-1$. If 
-  $\ccVar.\ccc{fu()}[j]=true$, the variable $x_j$ has an upper
-  bound, otherwise it has no upper bound.}
-
-\ccMethod{U_iterator get_u() const;}{returns an iterator over the
-  entries of $u$. If $\ccVar.\ccc{fu()}[j]=\ccc{false}$, the value 
-  $\ccVar.\ccc{u()}[j]$ is not accessed. \ccPrecond if 
-  $\ccVar.\ccc{fl()}[j]=\ccVar.\ccc{fu()}[j]=\ccc{true}$, then
-  $\ccVar.\ccc{l()}[j]\leq \ccVar.\ccc{u()}[j]$}
-
-\ccMethod{D_iterator get_d() const;}{returns an iterator for the rows of
-  $2D$. For $i=0,\ldots,n-1$, $\ccc{*(d()+i)}$ is a random access
-  iterator for the entries in row $i$ below or on the diagonal.}
-
-\ccMethod{C_iterator get_c() const;}{returns an iterator over the entries
-  of $c$.}
-
-\ccMethod{std::iterator_traits<C_iterator>::value_type c0() const;}
-{returns the constant term $c_0$ of the objective function.}
+\input{QP_solver_ref/_c_methods.tex}
 
 \ccRequirements
 

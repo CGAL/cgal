@@ -23,13 +23,14 @@
 #ifndef CGAL_QP_SOLUTION_H
 #define CGAL_QP_SOLUTION_H
 
+#include <iostream>
+#include <vector>
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/functional.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/QP_solver/iterator.h>
-#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -426,6 +427,33 @@ public:
     if (!this->is_shared()) delete *(this->ptr());
   }
 }; 
+
+// output
+template <typename ET>
+std::ostream& operator<<
+  (std::ostream& o, const Quadratic_program_solution<ET>& s)
+{
+  o << "status:          ";
+  switch (s.status()) {
+  case QP_INFEASIBLE:
+    return o << "INFEASIBLE\n";
+  case QP_UNBOUNDED:
+    return o << "UNBOUNDED\n";
+  case QP_OPTIMAL:
+    o << "OPTIMAL\n";
+    break;
+  default:
+    CGAL_qpe_assertion(false);
+  }
+  o << "objective value: " << s.objective_value() << "\n";
+  o << "variable values:\n";
+  int j=0;
+  for ( typename Quadratic_program_solution<ET>::Variable_value_iterator 
+	  it = s.variable_values_begin(); 
+	it < s.variable_values_end(); ++it, ++j)
+    o << "  " << j << ": " << *it << "\n";
+  return o; 
+}
 
 // Details
 namespace QP_solution_detail {

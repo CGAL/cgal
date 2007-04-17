@@ -27,19 +27,11 @@ int main() {
   // solve the program, using ET as the exact type
   // choose verbose mode and Bland pricing
   CGAL::Quadratic_program_options options;
-  options.set_verbosity(1);                              // verbose mode 
+  options.set_verbosity(2);                              // verbose mode 
   options.set_pricing_strategy(CGAL::QP_EXACT_BLAND);    // Bland's rule
   Solution s = CGAL::solve_nonnegative_linear_program(lp, ET(), options);
 
   // output solution
-  if (s.is_optimal()) { // we know that, don't we?
-    std::cout << "Optimal feasible solution: ";
-    for (Solution::Variable_value_iterator it = s.variable_values_begin();
-	 it != s.variable_values_end(); ++it)
-      std::cout << *it << "  ";
-    std::cout << std::endl << "Optimal objective function value: "
-	      << s.objective_value() << std::endl;
-  }
-
+  std::cout << s;
   return 0;
 }

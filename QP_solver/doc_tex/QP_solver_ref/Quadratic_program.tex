@@ -4,31 +4,11 @@
 
 \ccDefinition
 An object of class \ccRefName\ describes a convex quadratic program of the form
-%%
-\begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
-&\mbox{subject to}   & Ax\qprel b, \\
-&                    & l \leq x \leq u
-\end{eqnarray*}
-%%
-in $n$ real variables $x=(x_0,\ldots,x_{n-1})$. If $D=0$, the program is
+\input{QP_solver_ref/_qp_description.tex}
+
+If $D=0$, the program is
 a linear program; if the variable bounds are $x\geq 0$, we have a 
-nonnegative program. More specifically,  
-\begin{itemize}
-\item $A$ is an $m\times n$ matrix (the constraint matrix), 
-\item $b$ is an $m$-dimensional vector (the right-hand side),
-\item $\qprel$ is an $m$-dimensional vector of relations 
-from $\{\leq, =, \geq\}$, 
-\item $l$ is an $n$-dimensional vector of lower
-bounds for $x$,
-\item $u$ is an $n$-dimensional vector of upper bounds for
-$x$, 
-\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
-  quadratic objective function),
-\item $c$ is an $n$-dimensional vector (the linear objective
-  function), and 
-\item $c_0$ is a constant.
-\end{itemize}
+nonnegative program.
 
 This class allows you to build your program entry by entry, using
 the set-methods below. 
@@ -81,42 +61,7 @@ explicitly set will default to $0$.\ccPrecond if
 
 \ccCreationVariable{qp}
 
-\ccMethod{bool is_linear() const;}{returns \ccc{true} if and only if 
-\ccVar\ is a linear program.}
-
-\ccMethod{bool is_nonnegative() const;}{returns \ccc{true} if and only if  
-\ccVar\ is a nonnegative program.}
-
-\ccMethod{void set_a (int j, int i, const NT& val);}{sets the entry $A_{ij}$
-in column $j$ and row $i$ of the constraint matrix $A$ of \ccVar\ to 
-\ccc{val}. An existing entry is overwritten. \ccVar\ is enlarged if
-necessary to accomodate this entry.}
-
-\ccMethod{void set_b (int i, const NT& val);}{sets the entry $b_i$
-of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
-
-\ccMethod{void set_l (int j, bool is_finite, const NT& val = NT(0));}
-{if \ccc{is_finite}, this sets the entry $l_j$ of \ccVar\ to \ccc{val},
-otherwise it sets $l_j$ to $-\infty$. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
-
-\ccMethod{void set_u (int j, bool is_finite, const NT& val = NT(0));}
-{if \ccc{is_finite}, this sets the entry $u_j$ of \ccVar\ to \ccc{val},
-otherwise it sets $u_j$ to $\infty$. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
-
-\ccMethod{void set_c (int j, const NT& val);}{sets the entry $c_j$
-of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
-\ccVar\ is enlarged if necessary to accomodate this entry.}
-
-\ccMethod{void set_c0 (const NT& val);}{sets the entry $c_0$
-of \ccVar\ to \ccc{val}. An existing entry is overwritten.}
-
-\ccMethod{void set_d (int i, int j, const NT& val);}{sets the entries 
-$2D_{ij}$ and $2D_{ji}$ of \ccVar\ to \ccc{val}. Existing entries are 
-overwritten. \ccVar\ is enlarged if necessary to accomodate these entries.
-\ccPrecond \ccc{j <= i}}
+\input{QP_solver_ref/_set_methods.tex}
 
 \ccExample
 

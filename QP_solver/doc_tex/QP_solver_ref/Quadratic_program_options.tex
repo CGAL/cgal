@@ -28,7 +28,8 @@ value must be a number between $0$ and $5$. Verbosity $0$ is the default and
 results in the solver running silently. Verbosity $1$ prints a short
 summary of every iteration. Higher verbosity values print more information
 about the solution process, but these are useful mainly for debugging 
-purposes.}
+purposes. {\bf Note:} setting the verbosity has no effect if you compile 
+with \texttt{CGAL\_QP\_NO\_ASSERTIONS} or \texttt{NDEBUG}.}
 
 \ccMethod{int get_verbosity () const;}
 {returns the verbosity level of \ccVar.}

@@ -906,8 +906,9 @@ public:
       return;
     }
 
-    // remember the number of variables that we have now
+    // remember the number of variables/constraint that we have now
     n_after_construction = this->get_n();
+    m_after_construction = this->get_m();
   }
 
   // returns the first comment that was read from the MPS stream
@@ -922,12 +923,38 @@ public:
     return name;
   }
 
-  const std::string& get_name_of_variable(int i)
+  const std::string& variable_name_by_index(int j) const
   {
     CGAL_qpe_assertion(this->is_valid());
-    CGAL_qpe_assertion(0<=i && i<n_after_construction);
-    return var_by_index[i];
+    CGAL_qpe_assertion(0<=j && j<n_after_construction);
+    return var_by_index[j];
   } 
+
+  int variable_index_by_name (const std::string& name) const
+  {
+    const Index_map::const_iterator var_name = var_names.find(name);
+    if (var_name == var_names.end()) // unknown variable
+      return -1;
+    else 
+      return var_name->second;
+  }
+    
+  const std::string& constraint_name_by_index(int i) const
+  {
+    CGAL_qpe_assertion(this->is_valid());
+    CGAL_qpe_assertion(0<=i && i<m_after_construction);
+    return row_by_index[i];
+  } 
+
+  int constraint_index_by_name (const std::string& name) const
+  {
+    const Index_map::const_iterator row_name = row_names.find(name);
+    if (row_name == row_names.end()) // unknown constraint
+      return -1;
+    else 
+      return row_name->second;
+  }
+
 private:
   // data
   // ----
@@ -939,6 +966,7 @@ private:
   std::string comment_;  // first comment in the input, if any
   std::string obj;       // name of the objective "constraint"
   int n_after_construction;
+  int m_after_construction;
 
   Index_map row_names;
   Index_map duplicated_row_names; // to handle RANGES section

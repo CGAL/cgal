@@ -43,15 +43,15 @@ template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::is_valid() const
 {
   CGAL_qpe_debug {
-    vout << std::endl;
-    vout << "========" << std::endl;
-    vout << "Validity" << std::endl;
-    vout << "========" << std::endl;
+    vout2 << std::endl;
+    vout2 << "========" << std::endl;
+    vout2 << "Validity" << std::endl;
+    vout2 << "========" << std::endl;
   }
     switch(this->m_status) {
     case QP_UPDATE:
 	CGAL_qpe_debug {
-	  vout << " still in Update state!" << std::endl;
+	  vout2 << " still in Update state!" << std::endl;
 	}
       return false;
     case QP_OPTIMAL:
@@ -60,14 +60,14 @@ bool QP_solver<Q, ET, Tags>::is_valid() const
 	const bool o = this->is_solution_optimal();
 	const bool v = this->is_value_correct();
 	CGAL_qpe_debug {
-	  vout << std::endl
+	  vout2 << std::endl
 	       << "----------" << std::endl
 	       << "Validation" << std::endl
 	       << "----------" << std::endl;
-	  vout << " is in phase II: " << is_phaseII << std::endl;
-	  vout << "       feasible: " << f << std::endl;
-	  vout << "        optimal: " << o << std::endl;
-	  vout << "  correct value: " << v << std::endl;
+	  vout2 << " is in phase II: " << is_phaseII << std::endl;
+	  vout2 << "       feasible: " << f << std::endl;
+	  vout2 << "        optimal: " << o << std::endl;
+	  vout2 << "  correct value: " << v << std::endl;
 	}
 	return is_phaseII && f && o && v;
       }
@@ -79,15 +79,15 @@ bool QP_solver<Q, ET, Tags>::is_valid() const
 	const bool aux_positive = 
 	  ( (this->solution_numerator() > et0) && (d > et0) );
 	CGAL_qpe_debug {
-	  vout << std::endl
+	  vout2 << std::endl
 	       << "----------" << std::endl
 	       << "Validation" << std::endl
 	       << "----------" << std::endl;
-	  vout << "      is in phase I: " << is_phaseI << std::endl;
-	  vout << "       feasible_aux: " << f << std::endl;
-	  vout << "        optimal_aux: " << o << std::endl;
-	  vout << "        infeasible:  " << i << std::endl;
-	  vout << " obj. val. positive: " << aux_positive << std::endl;
+	  vout2 << "      is in phase I: " << is_phaseI << std::endl;
+	  vout2 << "       feasible_aux: " << f << std::endl;
+	  vout2 << "        optimal_aux: " << o << std::endl;
+	  vout2 << "        infeasible:  " << i << std::endl;
+	  vout2 << " obj. val. positive: " << aux_positive << std::endl;
 	}
 	return is_phaseI && f && o && i && aux_positive;
       }
@@ -96,19 +96,19 @@ bool QP_solver<Q, ET, Tags>::is_valid() const
 	const bool f = this->is_solution_feasible();
 	const bool u = this->is_solution_unbounded();
 	CGAL_qpe_debug {
-	  vout << std::endl
+	  vout2 << std::endl
 	       << "----------" << std::endl
 	       << "Validation" << std::endl
 	       << "----------" << std::endl;
-	  vout << " is in phase II: " << is_phaseII << std::endl;
-	  vout << "       feasible: " << f << std::endl;
-	  vout << "      unbounded: " << u << std::endl;
+	  vout2 << " is in phase II: " << is_phaseII << std::endl;
+	  vout2 << "       feasible: " << f << std::endl;
+	  vout2 << "      unbounded: " << u << std::endl;
 	}
 	return is_phaseII && f && u;
       }
     default: 	      
 	CGAL_qpe_debug {
-	  vout << " unknown state!" << std::endl;
+	  vout2 << " unknown state!" << std::endl;
 	}
       return false;
     }

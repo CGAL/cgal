@@ -58,7 +58,7 @@ int main() {
   Solution s = CGAL::solve_nonnegative_linear_program(lp, ET());
 
   // get certificate for optimality
-  assert (s.status() == CGAL::QP_OPTIMAL);
+  assert (s.is_optimal());
   Solution::Variable_value_iterator x = 
     s.variable_values_begin();
   Solution::Optimality_certificate_iterator y = 

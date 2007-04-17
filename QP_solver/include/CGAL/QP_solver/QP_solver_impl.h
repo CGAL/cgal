@@ -181,9 +181,9 @@ pivot_step( )
               << "==========" << std::endl
               << "Pivot Step" << std::endl
               << "==========" << std::endl;
-        vout  << "[ phase " << ( is_phaseI ? "I" : "II")
-              << ", iteration " << m_pivots << " ]" << std::endl; 
     }
+    vout  << "[ phase " << ( is_phaseI ? "I" : "II")
+	  << ", iteration " << m_pivots << " ]" << std::endl;
     
 	    
     // pricing
@@ -201,10 +201,10 @@ pivot_step( )
 	      // problem is infeasible
 	        m_phase  = 3;
 	        m_status = QP_INFEASIBLE;
-	        CGAL_qpe_debug {
-		    vout1 << "  ";
-		    vout << "problem is INFEASIBLE" << std::endl;
-	        }
+	        
+		vout << "  ";
+		vout << "problem is INFEASIBLE" << std::endl;
+	       
 	    } else {  // Drive/remove artificials out of basis
 	        expel_artificial_variables_from_basis();
 	        transition();
@@ -215,11 +215,9 @@ pivot_step( )
 	    m_phase  = 3;
             m_status = QP_OPTIMAL;
   
-            CGAL_qpe_debug {
-                vout1 << "  ";
-		vout2 << std::endl;
-                vout  << "solution is OPTIMAL" << std::endl;
-            }
+	    vout << "  ";
+	    vout  << "solution is OPTIMAL" << std::endl;
+            
         }
         return;
     }
@@ -251,9 +249,11 @@ pivot_step( )
         if ( q_i == et0) {
             m_phase  = 3;
             m_status = QP_UNBOUNDED;
-            CGAL_qpe_debug {
-                vout1 << "  ";
-                vout << "problem is UNBOUNDED" << std::endl;
+            
+	    vout << "  ";
+	    vout << "problem is UNBOUNDED" << std::endl;
+	    
+	    CGAL_qpe_debug {
 		//nu should be zero in this case
 		// note: (-1)/hat{\nu} is stored instead of \hat{\nu}
 		// todo kf: as this is just used for an assertion check,
@@ -336,10 +336,9 @@ pivot_step( )
     CGAL_qpe_assertion_msg( i < 0, "Step 3 should never be reached!");
 
     // diagnostic output
-    CGAL_qpe_debug {
-	if ( vout1.verbose()) print_basis();
-	if ( vout .verbose()) print_solution();
-    }
+    
+    if ( vout.verbose()) print_basis();
+    if ( vout.verbose()) print_solution();
 
     // transition to phase II (if possible)
     // ------------------------------------
@@ -375,38 +374,23 @@ pricing( )
     j = strategyP->pricing(direction);
 
     // diagnostic output
-    CGAL_qpe_debug {
-        if ( vout.verbose()) {
-            if ( j < 0) {
-                vout2 << "entering variable: none" << std::endl;
-	       } else {
-                vout1 << "  ";
-                vout  << "entering"; vout2 << " variable"; vout << ": ";
-                vout  << j;
-                vout2 << " (" << variable_type( j) << ')' << std::endl;
-                vout2 << "direction: "
-                    << ((direction == 1) ? "positive" : "negative")
-                    << std::endl;
-            }
-        }
-    }
 
-    #if 0 // kf: debugging -- may be removed
-    vout << std::endl
-	 << "debug: checking whether file 'ask-for-entering-variable' exists\n"
-	 << "(if it starts with '1', you will be asked for a new entering\n"
-	 << "variable index) ...\n";
-    std::ifstream f("ask-for-entering-variable");
-    if (f) {
-      char flag = 0;
-      f >> flag;
-      if (flag == '1') {
-	std::cout << "  new entering variable (j=)? ";
-	std::cin >> j;
+    if ( vout.verbose()) {
+      if ( j < 0) {
+	CGAL_qpe_debug {
+	  vout2 << "entering variable: none" << std::endl;
+	}
+      } else {
+	vout  << "  ";
+	vout  << "entering: ";
+	vout  << j;
+	CGAL_qpe_debug {
+	  vout2 << " (" << variable_type( j) << ')' << std::endl;
+	  vout2 << "direction: "
+		<< ((direction == 1) ? "positive" : "negative") << std::endl;
+	}
       }
-      f.close();
     }
-    #endif
 }
 
 // initialization of ratio-test
@@ -593,25 +577,29 @@ ratio_test_1( )
 	    }
 	    vout2.out() << std::endl;
 	}
-	if ( q_i > et0) {
-	    if ( i < 0) {
-		vout2 << "leaving variable: none" << std::endl;
-	    } else {
-		vout1 << ", ";
-		vout  << "leaving"; vout2 << " variable"; vout << ": ";
-		vout  << i;
-		if ( vout2.verbose()) {
-		    if ( ( i < qp_n) || ( i >= (int)( qp_n+slack_A.size()))) {
-			vout2.out() << " (= B_O[ " << in_B[ i] << "]: "
-				    << variable_type( i) << ')' << std::endl;
-		    } else {
-			vout2.out() << " (= B_S[ " << in_B[ i] << "]: slack)"
-				    << std::endl;
-		    }
-		}
-	    }
-	}
     }
+    if ( q_i > et0) {
+      if ( i < 0) {
+	vout2 << "leaving variable: none" << std::endl;
+      } else {
+	vout << ", ";
+	vout  << "leaving: ";
+	vout  << i;
+	CGAL_qpe_debug {
+	  if ( vout2.verbose()) {
+	    if ( ( i < qp_n) || ( i >= (int)( qp_n+slack_A.size()))) {
+	      vout2.out() << " (= B_O[ " << in_B[ i] << "]: "
+			  << variable_type( i) << ')';
+	    } else {
+	      vout2.out() << " (= B_S[ " << in_B[ i] << "]: slack)";
+	    }
+	  }
+	  vout2 << std::endl;
+	}
+	
+      }
+    }
+    
 }
 
 
@@ -1076,23 +1064,24 @@ ratio_test_2( Tag_false)
 	    }
 	    vout2.out() << std::endl;
 	}
-	if ( i < 0) {
-	    vout2 << "leaving variable: none" << std::endl;
-	} else {
-	    vout1 << ", ";
-	    vout  << "leaving"; vout2 << " variable"; vout << ": ";
-	    vout  << i;
-	    if ( vout2.verbose()) {
-		if ( i < qp_n) {
-		    vout2.out() << " (= B_O[ " << in_B[ i] << "]: original)"
-				<< std::endl;
-		} else {
-		    vout2.out() << " (= B_S[ " << in_B[ i] << "]: slack)"
-				<< std::endl;
-		}
-	    }
-	}
     }
+    if ( i < 0) {
+      vout2 << "leaving variable: none" << std::endl;
+    } else {
+      vout1 << ", ";
+      vout  << "leaving"; vout2 << " variable"; vout << ": ";
+      vout  << i;
+      if ( vout2.verbose()) {
+	if ( i < qp_n) {
+	  vout2.out() << " (= B_O[ " << in_B[ i] << "]: original)"
+		      << std::endl;
+	} else {
+	  vout2.out() << " (= B_S[ " << in_B[ i] << "]: slack)"
+		      << std::endl;
+	}
+      }
+    }
+    
 }
 
 // update (step 1)
@@ -3075,59 +3064,66 @@ void  QP_solver<Q, ET, Tags>::
 print_basis( ) const
 {
     char label;
-    vout1 << "  basis: ";
-    vout2 << "basic variables" << ( has_ineq ? "  " : "") << ":  ";
+    vout << "  basis: ";
+    CGAL_qpe_debug {
+      vout2 << "basic variables" << ( has_ineq ? "  " : "") << ":  ";
+    }
     std::copy( B_O.begin(), B_O.end  (),
 	       std::ostream_iterator<int>( vout.out(), " "));
-    if ( vout2.verbose()) {
+    CGAL_qpe_debug {
+      if ( vout2.verbose()) {
 	if ( has_ineq && ( ! slack_A.empty())) {
-	    vout2.out() << " |  ";
-	    std::copy( B_S.begin(), B_S.end(),
-		       std::ostream_iterator<int>( vout2.out(), " "));
+	  vout2.out() << " |  ";
+	  std::copy( B_S.begin(), B_S.end(),
+		     std::ostream_iterator<int>( vout2.out(), " "));
 	}
 	if ( is_phaseI) {
-	    vout2.out() << " (# of artificials: " << art_basic << ')';
+	  vout2.out() << " (# of artificials: " << art_basic << ')';
 	}
 	if ( has_ineq) {
-	    vout2.out() << std::endl
-			<< "basic constraints:  ";
-	    for (Index_const_iterator i_it = 
-		   C.begin(); i_it != C.end(); ++i_it) {
-	        label = (qp_r[*i_it] == CGAL::EQUAL) ? 'e' : 'i';
-		    vout2.out() << *i_it << ":" << label << " ";
-	    }
-	/*
+	  vout2.out() << std::endl
+		      << "basic constraints:  ";
+	  for (Index_const_iterator i_it = 
+		 C.begin(); i_it != C.end(); ++i_it) {
+	    label = (qp_r[*i_it] == CGAL::EQUAL) ? 'e' : 'i';
+	    vout2.out() << *i_it << ":" << label << " ";
+	  }
+	  /*
 	    std::copy( C.begin(), C.begin()+(C.size()-slack_A.size()),
-		       std::ostream_iterator<int>( vout2.out(), " "));
+	    std::ostream_iterator<int>( vout2.out(), " "));
 	    if ( ! slack_A.empty()) {
-		vout2.out() << " |  ";
-		std::copy( C.end() - slack_A.size(), C.end(),
-			   std::ostream_iterator<int>( vout2.out(), " "));
+	    vout2.out() << " |  ";
+	    std::copy( C.end() - slack_A.size(), C.end(),
+	    std::ostream_iterator<int>( vout2.out(), " "));
 	    }
-	*/
+	  */
 	}
 	if ( vout3.verbose()) {
+	  vout3.out() << std::endl
+		      << std::endl
+		      << "    in_B: ";
+	  std::copy( in_B.begin(), in_B.end(),
+		     std::ostream_iterator<int>( vout3.out(), " "));
+	  if ( has_ineq) {
 	    vout3.out() << std::endl
-			<< std::endl
-			<< "    in_B: ";
-	    std::copy( in_B.begin(), in_B.end(),
+			<< "    in_C: ";
+	    std::copy( in_C.begin(), in_C.end(),
 		       std::ostream_iterator<int>( vout3.out(), " "));
-	    if ( has_ineq) {
-		vout3.out() << std::endl
-			    << "    in_C: ";
-		std::copy( in_C.begin(), in_C.end(),
-			   std::ostream_iterator<int>( vout3.out(), " "));
-	    }
+	  }
 	}
+      }
     }
     vout.out() << std::endl;
-    vout4 << std::endl << "basis-inverse:" << std::endl;
+    CGAL_qpe_debug {
+      vout4 << std::endl << "basis-inverse:" << std::endl;
+    }
 }
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 print_solution( ) const
 {
+  CGAL_qpe_debug {
     if ( vout3.verbose()) {
 	   vout3.out() << std::endl
             << "     b_C: ";
@@ -3181,20 +3177,24 @@ print_solution( ) const
         vout2.out() << "   denominator: " << denom << std::endl;
         vout2.out() << std::endl;
     }
-    vout1 << "  ";
-    vout.out() << "solution: " 
-	       << solution_numerator() << " / " << solution_denominator() 
-	       << "  ~= " 
-      << to_double(solution_numerator())/to_double(solution_denominator())
-      << std::endl;
-    vout2 << std::endl;
+  }
+  vout << "  ";
+  vout.out() 
+    << "solution: " 
+    << solution_numerator() << " / " << solution_denominator() 
+    << "  ~= " 
+    << to_double(solution_numerator())/to_double(solution_denominator())
+    << std::endl;
+  CGAL_qpe_debug {
+      vout2 << std::endl;
+  }
 }
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
 {
-    if (is_nonnegative) {                      // => direction == 1
+    if (is_nonnegative) {                      // => direction== 1
         if (q_k > et0) {                            // check for lower bound
             vout2.out() << "t_O_" << k << ": "
             << x_k << '/' << q_k

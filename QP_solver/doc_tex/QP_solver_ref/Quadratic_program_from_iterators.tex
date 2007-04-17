@@ -4,41 +4,11 @@
 
 \ccDefinition
 An object of class \ccRefName\ describes a convex quadratic program of the form
-%%
-\begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
-&\mbox{subject to}   & Ax\qprel b, \\
-&                    & l \leq x \leq u
-\end{eqnarray*}
-%%
-in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
-Here, 
-\begin{itemize}
-\item $A$ is an $m\times n$ matrix (the constraint matrix), 
-\item $b$ is an $m$-dimensional vector (the right-hand side),
-\item $\qprel$ is an $m$-dimensional vector of relations 
-from $\{\leq, =, \geq\}$, 
-\item $l$ is an $n$-dimensional vector of lower
-bounds for $x$,
-\item $u$ is an $n$-dimensional vector of upper bounds for
-$x$, 
-\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
-  quadratic objective function),
-\item $c$ is an $n$-dimensional vector (the linear objective
-  function), and 
-\item $c_0$ is a constant.
-\end{itemize}
 
-This class is simply a wrapper for existing iterators over these program
-data, and it does not copy the program data (if you need a copy, you may 
-use the class \ccc{Quadratic_program<NT>}). 
+\input{QP_solver_ref/_qp_description.tex}
 
-It frequently happens that all values in one of the vectors from
-above are the same, for example if the system $Ax\qprel b$ is 
-actually a system of equations $Ax=b$. To get an iterator over such a 
-vector, it is not necessary to store multiple copies of the value in
-some container; an instance of the class \ccc{Const_oneset_iterator<T>},
-constructed from the value in question, does the job more efficiently.
+\input{QP_solver_ref/_from_iterator_description.tex}
+
 
 \ccIsModel
 \ccc{QuadraticProgramInterface}

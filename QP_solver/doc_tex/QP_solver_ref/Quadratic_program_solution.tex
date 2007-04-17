@@ -5,15 +5,11 @@
 \ccDefinition
 An object of class \ccRefName\ represents the solution of a linear or 
 convex quadratic program of the general form
-%%
-\begin{eqnarray*}
-\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
-&\mbox{subject to}   & Ax\qprel b, \\
-&                    & l \leq x \leq u
-\end{eqnarray*}
-%%
-in $n$ real variables $x=(x_0,\ldots,x_{n-1})$. If $D=0$, the program is
-a linear program; if the variable bounds are $x\geq 0$, we have a 
+
+\input{QP_solver_ref/_qp_formula.tex}
+
+If $D=0$, the program is
+a linear program; if the variable bounds are $\qpx\geq 0$, we have a 
 nonnegative program. Objects of type \ccRefName\ are returned by any of 
 the four functions 
 \ccc{solve_quadratic_program}, \ccc{solve_linear_program},
@@ -24,9 +20,9 @@ the four functions
 \ccReferToExampleCode{QP_solver/first_qp.cpp}
 
 \ccHeading{Terminology}
-If there is no $x$ that satisfies all the (in)equalities,
+If there is no $\qpx$ that satisfies all the (in)equalities,
 the program is called \emph{infeasible}, otherwise, it is \emph{feasible},
-and any $x$ that satisfies all (in)equalities is called a \emph{feasible
+and any $\qpx$ that satisfies all (in)equalities is called a \emph{feasible
 solution}. 
 
 If the objective function value becomes arbitrarily small over the
@@ -34,7 +30,7 @@ If the objective function value becomes arbitrarily small over the
 is called \emph{unbounded}, and \emph{bounded} otherwise. 
 
 Any program that is both feasible and bounded has at least one
-feasible solution $x^*$ whose objective function value is not larger
+feasible solution $\qpx^*$ whose objective function value is not larger
 than that of any other feasible solution. This is called an 
 \emph{optimal solution}.
 
@@ -57,19 +53,19 @@ with respect to a common denominator.}
 to go over the indices of the basic variables and the basic constraints.}
 
 \ccNestedType{Optimality_certificate_iterator}{An iterator type with 
-value type \ccc{Quotient<ET>} to go over an $m$-vector $\lambda$ that proves 
+value type \ccc{Quotient<ET>} to go over an $m$-vector $\qplambda$ that proves 
 optimality of the solution.} 
 
 \ccNestedType{Optimality_certificate_numerator_iterator}{An iterator type 
-with value type \ccc{ET} to go over the numerators of the vector $\lambda$
+with value type \ccc{ET} to go over the numerators of the vector $\qplambda$
 with respect to a common denominator.}
 
 \ccNestedType{Infeasibility_certificate_iterator}{An iterator type with 
-value type \ccc{ET} to go over an $m$-vector $\lambda$ that proves 
+value type \ccc{ET} to go over an $m$-vector $\qplambda$ that proves 
 infeasibility of the solution.} 
 
 \ccNestedType{Unboundedness_certificate_iterator}{An iterator type with 
-value type \ccc{ET} to go over an $n$-vector $w$ that proves unboundedness 
+value type \ccc{ET} to go over an $n$-vector $\qpw$ that proves unboundedness 
 of the solution.} 
 
 \ccCreation
@@ -159,7 +155,7 @@ methods grant access to them.
 {returns a random access iterator over the indices of the basic
 variables. The value type is \ccc{int}. It is guaranteed that any 
 variable that is not basic in \ccVar\ attains one of its bounds. 
-In particular, if the bounds are of type $x\geq 0$, all non-basic 
+In particular, if the bounds are of type $\qpx\geq 0$, all non-basic 
 variables have value $0$.}
 
 \ccMethod{Index_iterator basic_variable_indices_end() const;}
@@ -174,9 +170,9 @@ of the range determined by the previous two iterators.}
 
 \ccMethod{Index_iterator basic_constraint_indices_begin() const;}
 {returns a random access iterator over the indices of the basic
-constraints in the system $Ax\qprel b$. The value type is \ccc{int}. 
+constraints in the system $A\qpx\qprel \qpb$. The value type is \ccc{int}. 
 It is guaranteed that any basic constraint is satisfied with equality.
-In particular, if the system is of type $Ax=b$, all constraints are
+In particular, if the system is of type $A\qpx=\qpb$, all constraints are
 basic.}
 
 \ccMethod{Index_iterator basic_constraint_indices_end() const;}
@@ -189,6 +185,19 @@ of the range determined by the previous two iterators.}
 \ccExample
 \ccReferToExampleCode{QP_solver/first_qp_basic_constraints.cpp}
 
+\ccHeading{Output}
+
+\ccFunction{
+template <typename ET>
+std::ostream& operator<<
+(std::ostream& out, 
+ const Quadratic_program_solution<ET>& sol);}%>>
+{writes the status of \ccc{sol} to the stream \ccc{out}. In case the
+status is \ccc{QP_OPTIMAL}, the optimal objective value and the values
+of the variables at the optimal solution are output as well. For more
+detailed information about the solution (like basic variables/constraints) 
+please use the dedicated methods of \ccc{Quadratic_program_solution<ET>}.}
+
 \begin{ccAdvanced}
 \ccHeading{Certificates}
 
@@ -196,50 +205,50 @@ A certificate is a vector that admits a simple proof for the
 correctness of the solution. Any non-void object of \ccRefName\ 
 comes with such a certificate.
 
-{\bf Lemma 1 (optimality certificate):} A feasible $n$-vector $x^*$ 
-is an optimal solution of (QP) if an $m$-vector $\lambda$ with the
+{\bf Lemma 1 (optimality certificate):} A feasible $n$-vector $\qpx^*$ 
+is an optimal solution of (QP) if an $m$-vector $\qplambda$ with the
 following properties exist.
 \begin{enumerate}
 \item if the $i$-th constraint is of type $\leq$ ($\geq$, respectively), 
 then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
-\item $\lambda^T(Ax^*-b) = 0$.
+\item $\qplambda^T(A\qpx^*-\qpb) = 0$.
 \item \[
 \begin{array}{llll}
 &&\geq 0, & \mbox{if $x^*_j = l_j < u_j$} \\
-(c^T + \lambda^T A + 2{x^*}^TD)_j& \quad  &= 0, & \mbox{if $l_j < x^*_j < u_j$} \\
+(\qpc^T + \qplambda^T A + 2{\qpx^*}^TD)_j& \quad  &= 0, & \mbox{if $l_j < x^*_j < u_j$} \\
 &&\leq 0, & \mbox{if $l_j < u_j = x^*_j$.}
 \end{array}\]
 \end{enumerate}
 
-{\bf Proof:} Let $x$ be any feasible solution. We need to prove that
-\[c^Tx + x^TDx \geq c^Tx^* + {x^*}^TDx^*.\]
+{\bf Proof:} Let $\qpx$ be any feasible solution. We need to prove that
+\[\qpc^T\qpx + \qpx^TD\qpx \geq \qpc^T\qpx^* + {\qpx^*}^TD\qpx^*.\]
 
 For this, we argue as follows.
 \[
 \begin{array}{lcll}
-c^Tx + 2{x^*}^TDx &\geq& c^Tx + 2{x^*}^TDx + \lambda^T(Ax-b) &  
-\mbox{(by $Ax\qprel b$ and 1.)} \\
-                  &=& (c^T + \lambda^T A + 2{x^*}^TD)x - \lambda^Tb \\
-                  &\geq& (c^T + \lambda^T A + 2{x^*}^TD)x^* - \lambda^Tb &
-\mbox{(by $l\leq x \leq u$ and 3.)} \\
-                  &=& c^Tx^* + 2{x^*}^TDx^* &
+\qpc^T\qpx + 2{\qpx^*}^TD\qpx &\geq& \qpc^T\qpx + 2{\qpx^*}^TD\qpx + \qplambda^T(A\qpx-\qpb) &  
+\mbox{(by $A\qpx\qprel \qpb$ and 1.)} \\
+                  &=& (\qpc^T + \qplambda^T A + 2{\qpx^*}^TD)\qpx - \qplambda^Tb \\
+                  &\geq& (\qpc^T + \qplambda^T A + 2{\qpx^*}^TD)\qpx^* - \qplambda^Tb &
+\mbox{(by $\qpl\leq \qpx \leq \qpu$ and 3.)} \\
+                  &=& \qpc^T\qpx^* + 2{\qpx^*}^TD\qpx^* &
 \mbox{(by 2.)}
 \end{array}
 \]
 
-After adding $x^TDx - x^TDx - {x^*}^TDx^* = -{x^*}^TDx^*$ to both sides of
+After adding $\qpx^TD\qpx - \qpx^TD\qpx - {\qpx^*}^TD\qpx^* = -{\qpx^*}^TD\qpx^*$ to both sides of
 this inequality, we get
 \[
-c^Tx + x^TDx - (x-x^*)^TD(x-x^*) \geq c^Tx^* + {x^*}^TDx^*,
+\qpc^T\qpx + \qpx^TD\qpx - (\qpx-\qpx^*)^TD(\qpx-\qpx^*) \geq \qpc^T\qpx^* + {\qpx^*}^TD\qpx^*,
 \] 
 and since $D$ is positive semidefinite, we have
-$(x-x^*)^TD(x-x^*)\geq 0$ and the lemma follows.
+$(\qpx-\qpx^*)^TD(\qpx-\qpx^*)\geq 0$ and the lemma follows.
 
 
 \ccMethod{Optimality_certificate_iterator 
 optimality_certifcate_begin() const;}
 {returns a random access iterator over the optimality certificate 
-$\lambda$ as given in Lemma 1, with respect to the solution $x^*$ 
+$\qplambda$ as given in Lemma 1, with respect to the solution $\qpx^*$ 
 obtained from \ccVar\ccc{.variable_values_begin()}. The value type
 is \ccc{Quotient<ET>}, and the valid iterator range has length $m$.
 \ccPrecond \ccVar\ccc{.is_optimal()}}
@@ -251,7 +260,7 @@ is \ccc{Quotient<ET>}, and the valid iterator range has length $m$.
 \ccMethod{Optimality_certificate_numerator_iterator 
 optimality_certifcate_numerator_begin() const;}
 {returns a random access iterator over the numerator values
-of the optimality certificate $\lambda$, with respect to a 
+of the optimality certificate $\qplambda$, with respect to a 
 common denominator of all values. The value type
 is \ccc{ET}, and the valid iterator range has length $m$.}
 
@@ -261,13 +270,13 @@ is \ccc{ET}, and the valid iterator range has length $m$.}
 
 \ccMethod{ET optimality_certificate_denominator() const;}
 {returns the common denominator of the certificate values 
-$\lambda$ as referred to by the previous two methods.}
+$\qplambda$ as referred to by the previous two methods.}
 
 \ccExample
 \ccReferToExampleCode{QP_solver/optimality_certificate.cpp}
 
 {\bf Lemma 2 (infeasibility certificate):} The program (QP) is
-infeasible if an $m$-vector $\lambda$ with the
+infeasible if an $m$-vector $\qplambda$ with the
 following properties exist.
 \begin{enumerate}
 \item if the $i$-th constraint is of type $\leq$ ($\geq$, respectively), 
@@ -276,24 +285,24 @@ then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
 \[
 \begin{array}{llll}
 &&\geq 0 & \mbox{if $u_j=\infty$} \\
-\lambda^T A_j &\quad  \\
+\qplambda^T A_j &\quad  \\
 &&\leq 0 & \mbox{if $l_j=-\infty$.}
 \end{array}
 \]
-\item \[\lambda^Tb \quad<\quad \sum_{j: \lambda^TA_j <0} \lambda^TA_j u_j 
-\quad+\quad  \sum_{j: \lambda^TA_j >0} \lambda^TA_j l_j.\]
+\item \[\qplambda^T\qpb \quad<\quad \sum_{j: \qplambda^TA_j <0} \qplambda^TA_j u_j 
+\quad+\quad  \sum_{j: \qplambda^TA_j >0} \qplambda^TA_j l_j.\]
 \end{enumerate}
 
 {\bf Proof:} Let us assume for the purpose of obtaining a contradiction
-that there is a feasible solution $x$. Then we get
+that there is a feasible solution $\qpx$. Then we get
 \[
 \begin{array}{lcll}
-0 &\geq& \lambda^T(Ax -b) &  \mbox{(by $Ax\qprel b$ and 1.)} \\
-  &=& \sum_{j: \lambda^TA_j <0} \lambda^TA_j x_j 
-\quad+\quad  \sum_{j: \lambda^TA_j >0} \lambda^TA_j x_j - \lambda^T b \\
-  &\geq& \sum_{j: \lambda^TA_j <0} \lambda^TA_j u_j 
-\quad+\quad  \sum_{j: \lambda^TA_j >0} \lambda^TA_j l_j - \lambda^T b &
-\mbox{(by $l\leq x \leq u$ and 2.)} \\
+0 &\geq& \qplambda^T(A\qpx -\qpb) &  \mbox{(by $A\qpx\qprel \qpb$ and 1.)} \\
+  &=& \sum_{j: \qplambda^TA_j <0} \qplambda^TA_j x_j 
+\quad+\quad  \sum_{j: \qplambda^TA_j >0} \qplambda^TA_j x_j - \qplambda^T \qpb \\
+  &\geq& \sum_{j: \qplambda^TA_j <0} \qplambda^TA_j u_j 
+\quad+\quad  \sum_{j: \qplambda^TA_j >0} \qplambda^TA_j l_j - \qplambda^T \qpb &
+\mbox{(by $\qpl\leq \qpx \leq \qpu$ and 2.)} \\
   &>& 0 & \mbox{(by 3.)}, 
 \end{array}
 \]
@@ -303,7 +312,7 @@ and this is the desired contradiction $0>0$.
 \ccMethod{Infeasibility_certificate_iterator 
   infeasibility_certificate_begin() const;}
 {returns a random access iterator over the infeasibility certificate 
-$\lambda$ as given in Lemma 2. The value type
+$\qplambda$ as given in Lemma 2. The value type
 is \ccc{ET}, and the valid iterator range has length $m$.
 \ccPrecond \ccVar\ccc{.is_infeasible()}}
 
@@ -314,12 +323,12 @@ is \ccc{ET}, and the valid iterator range has length $m$.
 \ccExample
 \ccReferToExampleCode{QP_solver/infeasibility_certificate.cpp}
 
-{\bf Lemma 3 (unboundedness certificate:)} Let $x^*$ be a feasible
+{\bf Lemma 3 (unboundedness certificate:)} Let $\qpx^*$ be a feasible
 solution of (QP). The program (QP) is unbounded if an $n$-vector 
-$w$ with the following properties exist.
+$\qpw$ with the following properties exist.
 \begin{enumerate}
 \item if the $i$-th constraint is of type $\leq$ ($\geq, =$, respectively),
-then $(Aw)_j\leq 0$ ($(Aw)_j\geq 0, (Aw)_j=0$, respectively).
+then $(A\qpw)_j\leq 0$ ($(A\qpw)_j\geq 0, (A\qpw)_j=0$, respectively).
 \item 
 \[
 \begin{array}{llll}
@@ -328,26 +337,26 @@ w_j &\quad  \\
 &&\leq 0 & \mbox{if $u_j$ is finite.}
 \end{array}
 \]
-\item $w^TDw=0$ and $(c^T+2{x^*}^TD)w<0$.
+\item $\qpw^TD\qpw=0$ and $(\qpc^T+2{\qpx^*}^TD)\qpw<0$.
 \end{enumerate}
 
-The vector $w$ is called an \emph{unbounded direction}.
+The vector $\qpw$ is called an \emph{unbounded direction}.
 
-{\bf Proof:} For a real number $t$, consider the vector $x(t):=x^*+tw$. By 1.
-and 2., $x(t)$ is feasible for all $t\geq 0$. The objective function value
-of $x(t)$ is
+{\bf Proof:} For a real number $t$, consider the vector $\qpx(t):=\qpx^*+t\qpw$. By 1.
+and 2., $\qpx(t)$ is feasible for all $t\geq 0$. The objective function value
+of $\qpx(t)$ is
 \begin{eqnarray*}
-c^T x(t) + x(t)^TD x(t) &=& 
-c^Tx^* + tc^Tw + {x^*}^TDx^* +  2t{x^*}^TDw + t^2 w^TDw  \\
-&=& c^Tx^* + {x^*}^TDx^* + t(c^T + 2{x^*}^TD)w + t^2w^TDw.
+\qpc^T \qpx(t) + \qpx(t)^TD \qpx(t) &=& 
+\qpc^T\qpx^* + t\qpc^T\qpw + {\qpx^*}^TD\qpx^* +  2t{\qpx^*}^TD\qpw + t^2 \qpw^TD\qpw  \\
+&=& \qpc^T\qpx^* + {\qpx^*}^TD\qpx^* + t(\qpc^T + 2{\qpx^*}^TD)\qpw + t^2\qpw^TD\qpw.
 \end{eqnarray*}
 By condition 3., this tends to $-\infty$ for $t\rightarrow\infty$, so
 the problem is indeed unbounded. 
 
 \ccMethod{Unboundedness_certificate_iterator 
 unboundedness_certificate_begin() const;}
-{returns a random acess iterator over the unbounded direction $w$
-as given in Lemma 3,with respect to the solution $x^*$ 
+{returns a random acess iterator over the unbounded direction $\qpw$
+as given in Lemma 3,with respect to the solution $\qpx^*$ 
 obtained from \ccVar\ccc{.variable_values_begin()}. The value type
 is \ccc{ET}, and the valid iterator range has length $n$.
 \ccPrecond \ccVar\ccc{.is_unbounded()}}
