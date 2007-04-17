@@ -81,7 +81,7 @@ possible values for the \ccc{topology} parameter:
   \item \ccc{CGAL::Box_intersection_d::CLOSED}.
 \end{itemize}
 
-The number type of the interval boundaries must be one of the builtin
+The number type of the interval boundaries must be one of the built-in
 types \texttt{int}, \texttt{unsigned int}, \texttt{double} or
 \texttt{float}.
 
@@ -135,7 +135,7 @@ void box_intersection_d(
 
 
 Additional parameters to the functions calls are a \emph{cutoff\/}
-value to adjust performance tradeoffs, and a \emph{topology\/} parameter
+value to adjust performance trade-offs, and a \emph{topology\/} parameter
 selecting between topologically closed boxes (the default) and
 topologically half-open boxes.
 
@@ -330,7 +330,7 @@ pointers was 20\% faster than the version above that copies the boxes
 for 10000 boxes, but the picture reversed for 100000 boxes, where the
 version above that copies the boxes becomes 300\% faster.
 
-Note that switching to the builtin type \ccc{float} is supported by
+Note that switching to the built-in type \ccc{float} is supported by
 the box \ccHtmlNoLinksFrom{intersection} algorithm, but the interfacing with the \cgal\ 
 bounding box \ccc{CGAL::Bbox_3} would not be that easy. In particular,
 just converting from the \ccc{double} to the \ccc{float}
