@@ -1,0 +1,80 @@
+%\ignore{
+
+\section{Introduction}
+
+The 3D quadrical kernel aims to provide the user basic functionality
+on quadrics and their spatial intersection curves. It is 
+consistent to most existing design choices taken in \cgal. To better
+understand its principles we refer to the kernel manual if \cgal.
+
+\section{Software Design}
+
+The quadrical kernel is documented as a concept that can be 
+implemented by various models, like the projection approach, or
+or the parameterization method. TODO cites!
+
+The quadrical kernel is instanciated with two template parameters:
+\begin{itemize}
+\item {} the \ccc{SphericalKernel}, from which the quadrical
+kernel inherits basic elementary linear and also
+spherical objects.
+\item {} the second parameter is the algebraic kernel, which is 
+responsible for computations on polynomials and algebraic numbers. It 
+has to be a model of concept \ccc{AlgebraicKernelForQuadrics}. The
+robustness of the package relies on the fact that the algebraic kernel
+provides exact computations on algebraic objects.
+\end{itemize}
+
+Note that the 3D quadrical provides most basic types taking from one
+of its two template parameters. Main new geometric objects
+are \ccc{Quadric_3}, \ccc{Curve_3}, \ccc{Curve_point_3} and \ccc{Curve_arc_3}.
+
+\section{Design Rationales and Discussion}
+
+The proposed concept follows main discussions of underlying
+geometry and algebraic kernels. In contrast to the circular
+and spherical world, quadrics poses additional problems that do 
+not appear before. 
+
+One point is the correct handling of infinite objects. Quadrics
+and also their intersection curves can approach infinity in each variable.
+Due to the affine view of the geometric kernel, we can exclude
+for sure that the later concept of \ccc{Curve_point_3} never has 
+to represent curve-ends at infinity. The situation will be different
+when designing a homogeneous kernel. 
+
+Another difficulty is hidden in the spatial intersection curves.
+Spheres intersect in spatial circles, that might be degenerated
+to a point in case the spheres only touch. Spatial circles
+have three advantages: (1)~they are bounded, (2)~consists of one irreducible
+algebraic component which implies (3)~consists of a single
+connected component.
+In general, all properties get lost when switching to arbitrary quadrics.
+It is possible to think of an instance of \ccc{Curve_3} being either
+(1)~The one-dimensional zero set of a polynomial
+system, i.e., the algebraic space curve, or (2)~an algebraically 
+irreducible factor of the former system, or (3)~a maximal connected component
+of the spatial curve. 
+The concept of \ccc{Curve_3} should either be fixed to one of the
+three definitions, we can think of additional types, which might be
+confusing, or the type is polymorphic, i.e., it is possible
+to represent all definitions. But then proper decomposition
+methods are required, i.e., at least from (1) to (2) and from (2) to (3).
+
+For curve arcs the situation is similar. Since spatial curves can be infinite,
+consist of several algebraic or connected components and event can have 
+self-intersection, we carefully have to decide what is described by a curve
+arc. Three different objects can be be distinguished: (a)~Both ends of an 
+arc are finite, (b)~one end of an arc is finite, like a ``ray'', or 
+(c)~both ends are infinite, like a ``branch''. It is unclear
+whether different types should be introduced, or
+all can be encoded by a single ``polymorphic'' type. In the latter
+case, end-points can only be accessed if they are finite. As mentioned before,
+in a homogenous version, this condition can be removed.
+
+\section{Acknowledgements}
+
+This work is partially supported by the IST Programme of the 6th
+Framework Programme of the EU as a STREP (FET Open Scheme) Project
+under Contract No IST-006413 (\ccAnchor{http://acs.cs.rug.nl/}{ACS} -
+Algorithms for Complex Shapes).
