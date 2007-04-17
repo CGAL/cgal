@@ -1072,7 +1072,8 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
 };
 
 template <class ET1, class ET2, class F>
-class Lazy_exact_nt_coercion_traits_base{
+class Lazy_exact_nt_coercion_traits_base {
+public:
     typedef Tag_false Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
     //typedef Null_type    Type
@@ -1080,8 +1081,8 @@ class Lazy_exact_nt_coercion_traits_base{
 };
 
 template <class ET1, class ET2>
-class Lazy_exact_nt_coercion_traits_base
-< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, Tag_true >{
+class Lazy_exact_nt_coercion_traits_base < Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, Tag_true >
+{
     typedef Coercion_traits<ET1,ET2> CT;
     typedef Lazy_exact_nt<ET1> A;
     typedef Lazy_exact_nt<ET2> B;
@@ -1093,8 +1094,8 @@ public:
     class Cast{
     private:
         template <class T>
-        inline Type cast(const T& x) const{ return Type(x); }
-        inline Type cast(const Type& x) const{ return x; }
+        Type cast(const T& x) const{ return Type(x); }
+        Type cast(const Type& x) const{ return x; }
     public:
         typedef Type result_type;
         Type operator()(const A& x) const { return cast(x);}
