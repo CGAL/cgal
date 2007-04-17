@@ -80,7 +80,7 @@ interpolation), and $p_0$ is the initial position.  The position after
 a given interval $\Delta t$ is given by : $$p(t + \Delta t) = p(t) +
 \int_t^{t+\Delta t} v(p(t)) dt$$. Several numeric methods have been
 proposed to solve this equation. In this package, the Euler, and the
-Second Order Runge Kutta algorithm are implemented.
+Second Order Runge-Kutta algorithm are implemented.
 
 \subsection{Euler integrator}
 
@@ -109,7 +109,7 @@ can be done forward (resp. backward) by specifying a positive
 constructed by successive integration from a seed point both forward
 and backward.
 
-\subsection{Second Order Runge Kutta Integrator}
+\subsection{Second Order Runge-Kutta Integrator}
 
 \begin{figure}[h!]
 \begin{ccTexOnly}
@@ -123,7 +123,7 @@ and backward.
 </CENTER>
 \end{ccHtmlOnly}
 \begin{center}
-\caption{Runge-kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point).
+\caption{Runge-Kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point).
 \label{runge_kutta_fig}}
 \end{center}
 \end{figure}
