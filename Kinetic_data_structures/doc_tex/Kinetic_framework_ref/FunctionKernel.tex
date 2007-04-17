@@ -147,13 +147,13 @@ typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
 When using the function kernel in kinetic data structures, especially
 one that is in exact, it is useful to wrap the root stack. The wrapper
 checks the sign of the certificate function being solved and uses that
-to handle degenacies. This is done by, for the inexact solvers 
+to handle degeneracies. This is done by, for the inexact solvers 
 \begin{ccExampleCode}
-typedef \ccc{Kinetic::Derivitive}_filter_function_kernel<Function_kernel> KDS_function_kernel;
+typedef Kinetic::Derivitive_filter_function_kernel<Function_kernel> KDS_function_kernel;
 \end{ccExampleCode}
 and for exact solvers
 \begin{ccExampleCode}
-typedef \ccc{Kinetic::Handle}_degeneracy_function_kernel<Function_kernel> KDS_function_kernel;
+typedef Kinetic::Handle_degeneracy_function_kernel<Function_kernel> KDS_function_kernel;
 \end{ccExampleCode}
 
 For exact computations, the primary representation for roots is the
