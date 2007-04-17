@@ -242,10 +242,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
-
-namespace boost {
-
 /*!
  * Get the index property-map function. Provided so that boost is able to
  * access the Arr_vertex_index_map above.
@@ -259,10 +255,6 @@ unsigned int get(const CGAL::Arr_vertex_index_map<Arrangement>& index_map,
 { 
   return index_map[v];
 }
-
-} // end boost namespace
-
-CGAL_BEGIN_NAMESPACE
 
 /*! \class
  * An auxiliary class that automatically maintains a mapping of the
