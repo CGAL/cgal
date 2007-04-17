@@ -151,7 +151,7 @@ struct test
 
 
 
-int main( int argc, char ** argv ) {
+int main() {
     test<unsigned int> a;
     test<int> b;
     test<float> c;

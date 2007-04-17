@@ -125,7 +125,7 @@ operator()( const char* filename1, const char* filename2 )
 
 }; // end class test
 
-int main( int argc, char ** argv ) {
+int main() {
     _test<int,3,true> test1;
     _test<int,3,false> test2;
      for( unsigned int n = 1; n <= 6; ++n ) {
