@@ -132,7 +132,7 @@ have the common precondition that $\ccc{x.dimension()} = \ccc{DT.dimension()}$.
 
 \ccMethod{int current_dimension() ;}{returns the affine dimension of the current point set, i.e.,
 $-1$ is $S$ is empty, $0$ if $S$ consists of a single point,
-$1$ if all points of $S$ lie on a common line, etcetera. 
+$1$ if all points of $S$ lie on a common line, etc. 
 }
 
 \ccMethod{bool is_simplex_of_nearest(Simplex_handle s) ;}{returns true if \ccc{s} is a simplex of the nearest site 
@@ -176,7 +176,7 @@ to $v$.
 \ccMethod{ bool empty() ;}{decides whether \ccc{DT} is empty. 
 }
 
-\ccMethod{void clear() ;}{reinitializes \ccc{DT} to the empty Delaunay triangulation. 
+\ccMethod{void clear() ;}{re-initializes \ccc{DT} to the empty Delaunay triangulation. 
 }
 
 \ccMethod{Vertex_handle insert(const Point_d& x) ;}{inserts point $x$ into \ccc{DT} and returns the corresponding

@@ -196,7 +196,7 @@ x);}{returns the list of all facets that are visible from \ccc{x}.\\
 contained in the exterior) of \ccc{C}. \ccPrecond \ccc{x} is contained
 in the affine hull of \ccc{S}.  }
 
-\ccMethod{void clear(int d) ;}{reinitializes \ccc{C} to an empty hull
+\ccMethod{void clear(int d) ;}{re-initializes \ccc{C} to an empty hull
 in $d$-dimensional space.  }
 
 \ccMethod{int number_of_vertices() ;}{returns the number of vertices
@@ -322,7 +322,7 @@ number of points.
 include \ccc{<CGAL/Convex_hull_d_to_polyhedron_3.h>}
 
 \ccFunction{template <class R, class T, class HDS>
-void convex_hull_d_to_polyhedron_3(   const Convex_hull_d<R>& C, Polyhedron_3<T,HDS>& P) ;}{converts the convex hull \ccc{C} to polyedral surface stored in 
+void convex_hull_d_to_polyhedron_3(   const Convex_hull_d<R>& C, Polyhedron_3<T,HDS>& P) ;}{converts the convex hull \ccc{C} to polyhedral surface stored in 
    \ccc{P}.\\ \ccPrecond \ccc{dim == 3} and \ccc{dcur == 3}.  
 }
 
