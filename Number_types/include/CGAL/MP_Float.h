@@ -268,14 +268,14 @@ public:
       return 0;
 
     MP_Float::const_iterator i;
-    exponent_type exp = min_exp() * log_limb;
+    exponent_type exp2 = min_exp() * log_limb;
     T res = 0;
 
-    for (i = v.begin(); i != v.end(); i++)
+    for (i = v.begin(); i != v.end(); ++i)
     {
       res += CGAL_CLIB_STD::ldexp(static_cast<double>(*i),
-                                  static_cast<int>(exp));
-      exp += log_limb;
+                                  static_cast<int>(exp2));
+      exp2 += log_limb;
     }
 
     return res;
