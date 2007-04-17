@@ -66,11 +66,12 @@ class moreLeft : public T {
       return 0;
     
     if(vec1.x() == RT(0) && vec2.x() == RT(0)) {
-      if(vec1.y() != vec2.y())
+      if(vec1.y() != vec2.y()) {
 	if(vec1.y() < vec2.y())
 	  return -1;
 	else 
 	  return 1;
+      }
       if(vec1.z() < vec2.z())
 	return -1;
       else
@@ -80,21 +81,23 @@ class moreLeft : public T {
     Vector_3 minus(-1,0,0);
     FT sk1(minus*vec1),  sk2(minus*vec2);
     if((sk1 >= FT(0) && sk2 <= FT(0)) ||
-       (sk1 <= FT(0) && sk2 >= FT(0)))
+       (sk1 <= FT(0) && sk2 >= FT(0))) {
       if(sk1 > FT(0) || sk2 < FT(0))
 	return -1;
       else
 	return 1;
-    
+    }
+
     FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
     FT len2 = vec2.x()*vec2.x()+vec2.y()*vec2.y()+vec2.z()*vec2.z();
     FT diff = len1*sk2*sk2 - len2*sk1*sk1;
     
-    if(diff != FT(0))
+    if(diff != FT(0)) {
       if((sk1>FT(0) && diff<FT(0)) || (sk1<FT(0) && diff>FT(0)))
 	return -1;
       else 
 	return 1;
+    }
 
     return 0;
   }
@@ -199,7 +202,7 @@ class sort_sedges : public SNC_decorator<T> {
 		    " , " << se2->source()->source()->point());
     if(se1->source()->source() != se2->source()->source())
       return SORT(se1->source()->source(),se2->source()->source());
-    if(se1 == se2->twin())
+    if(se1 == se2->twin()) {
       if(se1->source() == se2->source()) {
 	Sphere_circle vec1 = se1->circle();
 	Sphere_circle vec2 = se2->circle();
@@ -211,7 +214,8 @@ class sort_sedges : public SNC_decorator<T> {
       }
       else
 	return SORT(se1->source()->twin()->source(), se2->source()->twin()->source());
-    
+    }
+
     if(SORT(se1->twin()->source()->twin()->source(), 
 	    se1->source()->twin()->source()))
       se1 = se1->twin();
