@@ -44,7 +44,7 @@ type \ccc{InputIterator::value_type} is defined.
             \ccc{OutputIterator::value_type}
             are equivalent to \ccc{Traits::Point_2}.
    \item    \ccc{Traits} defines the following subset of types from
-            the concept ConvexHullTraits\_2 and their corresponding member
+            the concept \ccc{ConvexHullTraits_2} and their corresponding member
             %\ccIndexMainItem[c]{ConvexHullTraits_2}
             functions that return instances of these types:
             \begin{itemize}
@@ -69,7 +69,7 @@ type \ccc{InputIterator::value_type} is defined.
 
 \ccImplementation
 This function implements Andrew's variant of the Graham
-scan algorithm \cite{a-aeach-79} and follows the presenation of Mehlhorn
+scan algorithm \cite{a-aeach-79} and follows the presentation of Mehlhorn
 \cite{m-mdscg-84}. This algorithm requires $O(n \log n)$ time 
 in the worst case for $n$ input points.  
 

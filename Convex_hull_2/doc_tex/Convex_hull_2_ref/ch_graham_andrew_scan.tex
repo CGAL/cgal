@@ -50,7 +50,7 @@ type \ccc{BidirectionalIterator::value_type} is defined.
             \ccc{OutputIterator::value_type}
             are equivalent to \ccc{Traits::Point_2}.
    \item    \ccc{Traits} defines the following two types from
-            the concept ConvexHullTraits\_2 and their corresponding member
+            the concept \ccc{ConvexHullTraits_2} and their corresponding member
             %\ccIndexMainItem[c]{ConvexHullTraits_2}
             functions that return instances of these types:
             \begin{itemize}
@@ -78,7 +78,7 @@ In the following example \ccc{ch_graham_andrew_scan()} is used to
 realize Anderson's variant \cite{a-readc-78} of the Graham Scan 
 \cite{g-eadch-72}.  The points are sorted counterclockwise around the leftmost 
 point using the \ccc{Less_rotate_ccw_2} predicate, as defined in
-the concept ConvexHullTraits\_2. According to the definition 
+the concept \ccc{ConvexHullTraits_2}. According to the definition 
 of \ccc{Less_rotate_ccw_2}, the leftmost point is the last point in the sorted 
 sequence and its predecessor on the convex hull is the first point in the 
 sorted sequence.  It is not hard to see that the preconditions of
