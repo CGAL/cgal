@@ -135,9 +135,9 @@ Check parameterize() preconditions:\begin{itemize}
 \ccGlue
 \ccMethod{void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh);}
 {
-Initialize A, Bu and Bv after border parameterization. Fill the border vertices' lines in both linear systems: {\em u = constant} and {\em v = constant}.
+Initialize A, Bu and \ccc{Bv} after border parameterization. Fill the border vertices' lines in both linear systems: {\em u = constant} and {\em v = constant}.
 Preconditions:\begin{itemize}
-\item vertices must be indexed.\item A, Bu and Bv must be allocated.\item border vertices must be parameterized. \end{itemize}
+\item vertices must be indexed.\item A, Bu and \ccc{Bv} must be allocated.\item border vertices must be parameterized. \end{itemize}
 }
 \ccGlue
 \ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
@@ -150,12 +150,12 @@ Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. 
 Compute the line i of matrix A for i inner vertex:\begin{itemize}
 \item call \ccc{compute_w_ij}() to compute the A coefficient \ccc{w_ij} for each neighbor \ccc{v_j}.\item compute \ccc{w_ii} = - sum of \ccc{w_ijs}.\end{itemize}
 Preconditions:\begin{itemize}
-\item vertices must be indexed.\item vertex i musn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
+\item vertices must be indexed.\item vertex i mustn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
 }
 \ccGlue
 \ccMethod{void set_mesh_uv_from_system(Adaptor& mesh, const Vector& Xu, const Vector& Xv);}
 {
-Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
+Copy \ccc{Xu} and Xv coordinates into the (u,v) pair of each surface vertex.
 }
 \ccGlue
 \ccMethod{Parameterizer_traits_3<Adaptor>::Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}

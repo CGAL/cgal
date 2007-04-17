@@ -405,7 +405,7 @@ Return true if a vertex belongs to ANY mesh's border.
 \ccGlue
 \ccMethod{bool is_vertex_on_main_border(Vertex_const_handle vertex) const;}
 {
-Return true if a vertex belongs to the UNIQUE mesh's main border, ie the mesh's LONGEST border.
+Return true if a vertex belongs to the UNIQUE mesh's main border, i.e. the mesh's LONGEST border.
 }
 \ccGlue
 \ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin(Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
@@ -428,7 +428,7 @@ Get/set vertex seaming flag. Default value is undefined.
 \ccGlue
 \ccMethod{int get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;}
 {
-Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to the UNIQUE main border.
+Get/set oriented edge's seaming flag, i.e. position of the oriented edge wrt to the UNIQUE main border.
 }
 \ccGlue
 \ccMethod{void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming);}
