@@ -67,7 +67,7 @@ with support for storage of the incident halfedge. The \ccRefName\ concept requi
   \ccGlue
   \ccMethod{Halfedge_around_vertex_const_circulator halfedge_around_vertex_begin() const;}
 {Returns a bi-directional circulator pointing to one of the incident halfedges (which one is unspecified).\\
-There will always be as many incident halffedges as the degree of the vertex.\\
+There will always be as many incident halfedges as the degree of the vertex.\\
 If this is a \textit{contour} vertex, its degree is exactly 3, and from the halfedges pointed to by the circulator, 2 are contour and 1 is a bisector.\\
 If this is an \ccc{skeleton} vertex, its degree is at least 3 and all of the halfedges pointed to by the circulator are bisectors.\\
 Each halfedge pointed to by this circulator is the one which is oriented towards the vertex (according to the geometric embedding).}

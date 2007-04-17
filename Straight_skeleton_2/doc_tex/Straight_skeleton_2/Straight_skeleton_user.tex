@@ -331,7 +331,7 @@ halfedges and incident skeleton halfedges. That is, the degree of a skeleton ver
 The defining contour halfedges and incident halfedges around a vertex can be traced using the circulators provided by the vertex class. The degree of a vertex is not cached and cannot be directly obtained from the vertex, but you can calculate this number by manually counting the number of incident halfedges around the vertex.
 
 Each vertex stores a 2D point and a \ccc{time}, which is the euclidean distance from the vertex's point to the \textit{lines} supporting each of the defining contour edges of the vertex (the distance is the same to each line). Unless the polygon is convex, this distance is not equidistant to the edges, as in the case of a Medial Axis, therefore, the time of a skeleton vertex does not correspond to the distance from the polygon to the vertex (so it cannot be used to obtain the deep of a region in a shape, for instance).\\
-If the polygon \textit{is} convex, the straight skeleton is exactly equivalent to the polygon's voronoi diagram and each vertex time is the equidistance to the defining edges.\\
+If the polygon \textit{is} convex, the straight skeleton is exactly equivalent to the polygon's Voronoi diagram and each vertex time is the equidistance to the defining edges.\\
 Contour vertices have time zero.
 
 \begin{figure}[htbp]
@@ -478,8 +478,8 @@ If you use this function to place the outer frame you are guaranteed to obtain a
 \section{Straight Skeletons, Medial Axis and Voronoi Diagrams}  
 
 The straight skeleton of a polygon is similar to the medial
-axis and the voronoi diagram of a polygon in the way it partitions
-it; however, unlike the medial axis and voronoi diagram, the
+axis and the Voronoi diagram of a polygon in the way it partitions
+it; however, unlike the medial axis and Voronoi diagram, the
 bisectors are not equidistant to its defining edges but to the
 supporting lines of such edges. As a result, Straight Skeleton
 bisectors might not be located in the center of the polygon and so
@@ -504,7 +504,7 @@ Anther usage, perhaps its very first, is roof design: The straight skeleton of a
 
 Just like medial axes, 2D straight skeletons can also be used for 2D shape description and matching. Essentially, all the applications of image-based skeletonization (for which there is a vast literature) are also direct applications of the straight skeleton, specially since skeleton edges are simply straight line segments.
 
-Consider the subgraph formed only by \textit{inner bisectors} (that is, only the skeleton halfeges which are not incident upon a contour vertex). Call this subgraph a {\em skeleton axis}.
+Consider the subgraph formed only by \textit{inner bisectors} (that is, only the skeleton halfedges which are not incident upon a contour vertex). Call this subgraph a {\em skeleton axis}.
 Each node in the skeleton axis whose degree is $>=3$ roots more than one skeleton tree. Each skeleton tree roughly corresponds to a region in the input topologically equivalent to a rectangle; that is, without branches. For example, a simple letter "H" would contain 2 higher degree nodes separating the skeleton axis in 5 trees; while the letter "@" would contain just 1 higher degree node separating the skeleton axis in 2 curly trees. 
 
 Since a skeleton edge is a 2D straight line, each branch in a skeleton tree is a polyline. Thus, the path-length of the tree can be directly computed. Furthermore, the polyline for a particular tree can be interpolated to obtain curve-related information.
