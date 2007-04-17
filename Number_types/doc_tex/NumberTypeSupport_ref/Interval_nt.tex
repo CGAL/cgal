@@ -43,7 +43,7 @@ an interval that does not contain zero, then you can safely determine its sign.
 
 \ccParameters
 
-The template parameter \ccc{Protected} is a boolean parameter, which defaults
+The template parameter \ccc{Protected} is a Boolean parameter, which defaults
 to \ccc{true}.  It provides a way to select faster computations by avoiding
 rounding mode switches, at the expense of more care to be taken by the user
 (see below).  The default value, \ccc{true}, is the safe way, and takes care of
@@ -164,7 +164,7 @@ exception.}
 
 \ccTypedef{typedef Interval_nt<false>  Interval_nt_advanced;}
 {This typedef (at namespace CGAL scope) exists for backward compatibility,
- as well as removing the need to remember the boolean value for the template
+ as well as removing the need to remember the Boolean value for the template
  parameter.}
 
 \begin{ccAdvanced}
