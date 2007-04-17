@@ -1,2 +1,4 @@
 Scalar_factor_traits.h
 Algebraic_extension_traits.h
+Algebraic_extension_traits.cpp
+Scalar_factor_traits.cpp
