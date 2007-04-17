@@ -13,16 +13,6 @@ or is unbounded, the algorithms also deliver proofs for these facts.
 These proofs can easily (and independently from the algorithms) be 
 checked for correctness.
 
-The solution algorithms expect the linear and quadratic programs to
-be in dense format, and they also compute with this dense representation
-internally. Adapters are provided to bring sparse programs (as encoded in
-MPS format, for example) into the required dense representation, but the 
-ability to solve large, sparse problems is limited.
-
-The solver is efficient if the minimum of the number of variables
-(columns) and the number of constraints (rows) is of moderate size
-(100, say).
-
 The solution algorithms are based on a generalization of the simplex 
 method to quadratic objective functions.
 }
