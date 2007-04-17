@@ -40,13 +40,19 @@ Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >
 \ccc{Assignable}\\
 \ccc{CopyConstructible}\\
 \ccc{DefaultConstructible}\\
-\ccc{FromIntConstructible}\\ 
 \ccc{EqualityComparable}\\
+\\
+\ccc{FromIntConstructible}\\ 
 
 \ccOperations
+\ccCreationVariable{a}
 
-\ccTwo{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
-\ccThree{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxx}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a);}{ unary plus }
+\ccGlue
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a);}{ unary minus}
+\ccGlue
 \ccFunction{IntegralDomainWithoutDivision 
             operator+(const IntegralDomainWithoutDivision &a, 
                       const IntegralDomainWithoutDivision &b);}{}
@@ -61,20 +67,14 @@ Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >
             operator*(const IntegralDomainWithoutDivision &a, 
                       const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
-\ccFunction{IntegralDomainWithoutDivision 
-            operator+(const IntegralDomainWithoutDivision &a);}{}
-\ccGlue
-\ccFunction{IntegralDomainWithoutDivision 
-            operator-(const IntegralDomainWithoutDivision &a);}{}
+\ccMethod{IntegralDomainWithoutDivision 
+            operator+=(const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
 \ccMethod{IntegralDomainWithoutDivision 
-            operator+=(const IntegralDomainWithoutDivision &a);}{}
+            operator-=(const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
 \ccMethod{IntegralDomainWithoutDivision 
-            operator-=(const IntegralDomainWithoutDivision &a);}{}
-\ccGlue
-\ccMethod{IntegralDomainWithoutDivision 
-            operator*=(const IntegralDomainWithoutDivision &a);}{}
+            operator*=(const IntegralDomainWithoutDivision &b);}{}
 
 Equality comparable: 
 
@@ -87,12 +87,6 @@ Equality comparable:
                       const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
  
-\ccRefines
- \ccc{DefaultConstructible} \\
- \ccc{EqualityComparable}\\
- \ccc{Assignable}\\
- \ccc{FromIntConstructible}
-
 \ccSeeAlso
 
 \ccRefIdfierPage{IntegralDomainWithoutDivision}\\
