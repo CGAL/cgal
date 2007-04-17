@@ -81,7 +81,7 @@ requirements on what is called a {\em field type} in \cgal. This
 roughly means that \ccStyle{R::FT} is a type for which operations $+$,
 $-$, $*$ and $/$ are defined with semantics (approximately)
 corresponding to those of a field in a mathematical sense. Note that,
-strictly speaking, the built-in type \ccc{int} does not fullfil the
+strictly speaking, the built-in type \ccc{int} does not fulfill the
 requirements on a field type, since \ccc{int}s correspond to elements
 of a ring rather than a field, especially operation $/$ is not the
 inverse of $*$.  The requirements on the type \ccStyle{R::RT} are
@@ -190,8 +190,8 @@ computations. Examples are triangulation of point sets and convex hull
 computation.  
 
 The dimension $d$ of our affine space determines the dimension of the
-matrix computions in the mathematical evaluation of predicates.  As
-rounding errors accumulate fast the homogeneous represenation used
+matrix computations in the mathematical evaluation of predicates.  As
+rounding errors accumulate fast the homogeneous representation used
 with multi-precision integers is the kernel of choice for well-behaved
 algorithms.  Note, that unless you use an arbitrary precision integer
 type, incorrect results might arise due to overflow.
