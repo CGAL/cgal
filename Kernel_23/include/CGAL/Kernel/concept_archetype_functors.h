@@ -686,7 +686,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     FT
-    operator()(const Vector_2& v, const Vector_2& w) const
+    operator()(const Vector_2&, const Vector_2&) const
     { FT val = 0; return val; }
 };
 
@@ -700,7 +700,7 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     FT
-    operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
+    operator()(const Vector_3&, const Vector_3&, const Vector_3&) const
     { FT val = 0; return val; }
 };
 
@@ -714,7 +714,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     FT
-    operator()(const Vector_2& v, const Vector_2& w) const
+    operator()(const Vector_2&, const Vector_2&) const
     { FT val = 0; return val; }
 };
 
@@ -728,7 +728,7 @@ public:
     typedef Arity_tag< 2 >   Arity;
 
     FT
-    operator()(const Vector_3& v, const Vector_3& w) const
+    operator()(const Vector_3&, const Vector_3&) const
     { FT val = 0; return val; }
 };
 
@@ -1332,7 +1332,7 @@ public:
     typedef Arity_tag< 1 >    Arity;
 
     Point_2
-    operator()(const Iso_rectangle_2& r) const
+    operator()(const Iso_rectangle_2&) const
     { return Point_2(); }
   };
 
@@ -1346,7 +1346,7 @@ public:
     typedef Arity_tag< 1 >    Arity;
 
     Point_2
-    operator()(const Iso_rectangle_2& r) const
+    operator()(const Iso_rectangle_2&) const
     { return Point_2(); }
   };
 
@@ -1361,7 +1361,7 @@ public:
     typedef Arity_tag< 1 >    Arity;
 
     Point_3
-    operator()(const Iso_cuboid_3& r) const
+    operator()(const Iso_cuboid_3&) const
     { return Point_3(); }
   };
 
@@ -1375,7 +1375,7 @@ public:
     typedef Arity_tag< 1 >    Arity;
 
     Point_3
-    operator()(const Iso_cuboid_3& r) const
+    operator()(const Iso_cuboid_3&) const
     { return Point_3(); }
   };
 
@@ -2313,24 +2313,24 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Bbox_2
-    operator()( const Point_2& p) const
+    operator()( const Point_2&) const
     { Bbox_2 b; return b; }
 
     Bbox_2
-    operator()( const Segment_2& s) const
+    operator()( const Segment_2&) const
     { Bbox_2 b; return b; }
 
     
     Bbox_2
-    operator()( const Triangle_2& t) const
+    operator()( const Triangle_2&) const
     { Bbox_2 b; return b; }
 
     Bbox_2
-    operator()( const Iso_rectangle_2& r) const
+    operator()( const Iso_rectangle_2&) const
     { Bbox_2 b; return b; }
 
     Bbox_2
-    operator()( const Circle_2& c) const
+    operator()( const Circle_2&) const
     { Bbox_2 b; return b; }
 };
 
@@ -2349,28 +2349,28 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Bbox_3
-    operator()( const Point_3& p) const
+    operator()( const Point_3&) const
     { Bbox_3 b; return b; }
 
     Bbox_3
-    operator()( const Segment_3& s) const
+    operator()( const Segment_3&) const
     { Bbox_3 b; return b; }
 
     
     Bbox_3
-    operator()( const Triangle_3& t) const
+    operator()( const Triangle_3&) const
     { Bbox_3 b; return b; }
 
     Bbox_3
-    operator()( const Iso_cuboid_3& r) const
+    operator()( const Iso_cuboid_3&) const
     { Bbox_3 b; return b; }
 
     Bbox_3
-    operator()( const Tetrahedron_3& t) const
+    operator()( const Tetrahedron_3&) const
     { Bbox_3 b; return b; }
 
     Bbox_3
-    operator()( const Sphere_3& s) const
+    operator()( const Sphere_3&) const
     { Bbox_3 b; return b;  }
 };
 
@@ -2386,13 +2386,13 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Cartesian_const_iterator_2
-      operator()( const Point_2& p) const
+      operator()( const Point_2&) const
       {
 	return Cartesian_const_iterator_2();
       }
 
     Cartesian_const_iterator_2
-      operator()( const Point_2& p, int) const
+      operator()( const Point_2&, int) const
       {
 	return Cartesian_const_iterator_2();
       }
@@ -2410,13 +2410,13 @@ public:
     typedef Arity_tag< 1 >   Arity;
 
     Cartesian_const_iterator_3
-      operator()( const Point_3& p) const
+      operator()( const Point_3&) const
       {
 	return Cartesian_const_iterator_3();
       }
 
     Cartesian_const_iterator_3
-      operator()( const Point_3& p, int) const
+      operator()( const Point_3&, int) const
       {
 	return Cartesian_const_iterator_3();
       }
