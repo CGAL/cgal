@@ -23,8 +23,8 @@ a:visited { text-decoration: none;}
 a:hover   { text-decoration: underline;}
 a:active  { text-decoration: underline;}
 
-a.TocInactive:link    { color: #CCCCCC }
-a.TocInactive:visited { color: #CCCCCC }
+a.TocInactive:link    { color: #AAAAAA }
+a.TocInactive:visited { color: #AAAAAA }
 a.TocInactive:hover   { color: blue }
 a.TocInactive:active  { color: blue }
 
