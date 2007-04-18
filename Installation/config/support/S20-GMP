@@ -1,4 +1,4 @@
-# GNU Multiple Precision Arithmetic Library (http://www.swox.com/gmp/)
+# GNU Multiple Precision Arithmetic Library (http://gmplib.org/)
 
 DESCRIPTION = 
 PROVIDES = GMP

@@ -1,4 +1,4 @@
-# GNU Multiple Precision Arithmetic Library C++ Interface (http://www.swox.com/gmp/)
+# GNU Multiple Precision Arithmetic Library C++ Interface (http://gmplib.org/)
 
 DESCRIPTION = 
 PROVIDES = GMPXX
