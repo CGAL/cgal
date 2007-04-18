@@ -44,6 +44,24 @@ double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
   return edge_length(e);
 }
 
+/* The folowing is a workaround a bug in the BGL upto and including version
+ * 103400.
+ *
+ * Unfortunately some of the calls to the get() function below from the BGL
+ * code are qualified with the boost namespace, while others are not. For The
+ * qualified calls the compiler naturally looks for the definition of the
+ * function in boost namespace. For the other calls it searches the CGAL
+ * namespace according to ADL (Koenig Lookup), as the type of the 1st
+ * parameter is in CGAL namespace.
+ *
+ * One way to get around it is to provide 2 similar functions that do the
+ * same thing. One in CGAL namespace provided in CGAL/Arr_vertex_map.h, and
+ * the other in boost namespace below. The signature of the latter is slightly
+ * changed to avoid redefinition. The type of its 1st parameter is defined in
+ * boost namespace, and is a simple derivation of the 1st parameter of the
+ * CGAL::get() function.
+ */
+
 namespace boost {
 
 template <typename Arrangement_2>
