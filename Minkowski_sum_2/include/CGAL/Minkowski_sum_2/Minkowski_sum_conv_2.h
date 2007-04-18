@@ -266,11 +266,15 @@ public:
         else
           --next1;
         
-        if (used_labels.count (Convolution_label (k1, k2, 1)) == 0 &&
-            (f_ccw_in_between (dirs1[k1], 
-                               dirs2[(n2 + k2 - 1) % n2],
-                               dirs2[k2]) ||
-             f_equal (dirs1[k1], dirs2[k2])))
+        if ((used_labels.count (Convolution_label (k1, k2, 1)) == 0 &&
+             (f_ccw_in_between (dirs1[k1],
+                                dirs2[(n2 + k2 - 1) % n2],
+                                dirs2[k2]) ||
+              f_equal (dirs1[k1], dirs2[k2]))) ||
+            (used_labels.count (Convolution_label (k1, k2, 2)) == 0 &&
+             f_ccw_in_between (dirs2[k2],
+                               dirs1[(n1 + k1 - 1) % n1],
+                               dirs1[k1])))
         {
           // Construct the current convolution cycle.
           queue.clear();
