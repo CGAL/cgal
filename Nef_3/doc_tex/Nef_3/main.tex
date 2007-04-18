@@ -1,4 +1,4 @@
-% +------------------------------------------------------------------------+
+vn % +------------------------------------------------------------------------+
 % | CGAL User Manual: 
 % +------------------------------------------------------------------------+
 % |
@@ -517,16 +517,30 @@ traits class, and on the output operators of the used number type.
 Therefore, it is necessary to use the same kernel and the same number
 type for input and output operations.
 
-We recommend to use the \cgal\ kernels \ccc{Homogeneous},
-\ccc{Simple_homogeneous}, or \ccc{Extended_homogeneous}. We provide
-compatibility between the input and output of these kernels.
-Especially, it is possible to write a bounded Nef polyhedron using the
-\ccc{Extended_homogeneous} kernel and to read it afterwards using one
-of the two others.
+We recommend the use of the \cgal\ kernels \ccc{Homogeneous}, 
+\ccc{Exact_predicates_exact_constructions_kernel}, or \ccc{Extended_homogeneous}.
+The Homogeneous kernel provides reliable fast performance. In combination with
+\ccc{leda_integer} it is the fastest kernel for \ccc{Nef_polyhedron_3}. The
+\ccc{Exact_predicates_exact_constructions_kernel} uses filtering. In non-degenerate
+scenarios it's faster than the \ccc{Homogeneous} kernel. The most
+important advantage of the filtered kernel is that it is a Cartesian
+kernel, which allows the proper handling of OFF files using
+floating-point coordinates. 
 
-Using \cgal\ stream modifiers the following output formats can be chosen: 
-ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
-pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format.
+For effective filtering we had to change some concepts. The new
+concepts must be activated by using the \ccc{SNC_indexed_items},
+because they don't apply for the extended kernels, yet. The new
+concepts also speed up \ccc{Nef_polyhedron_3} also in combination with
+all other standard kernels. The following example illustrates their usage.
+
+\ccIncludeExampleCode{Nef_3/handling_double_coordinates.cpp}
+
+We provide compatibility between the input and output of various
+kernels. For most of the \cgal\ kernels it is possible to write a file
+constructed with one kernel and reread it with another. Also, it is
+possible to write a bounded Nef polyhedron using the
+\ccc{Extended_homogeneous} kernel and to read it afterwards using a
+standard kernel.
 
 \ccIncludeExampleCode{Nef_3/nefIO.cpp}
 
