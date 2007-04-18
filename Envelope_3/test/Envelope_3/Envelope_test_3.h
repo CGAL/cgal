@@ -238,83 +238,31 @@ public:
       Face_handle fh = fi;
       // first we find the surfaces that are defined over the face
       std::list<Xy_monotone_surface_3> defined_surfaces;
-      for(int i=0; i<number_of_surfaces; ++i)
+      for (int i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_face(fh, surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
       
       // now compare them over the face
-      set_minimum_over_face(fh, defined_surfaces.begin(), defined_surfaces.end());
+      set_minimum_over_face(fh, defined_surfaces.begin(),
+                            defined_surfaces.end());
     }
   }
 
-  // compare the 2 envelopes by overlaying them, and then comparing the surfaces over
-  // the faces of the result map
-  // if faces_only = false we also compare the data over the edges & vertices
+  /*!
+   * compare the 2 envelopes by overlaying them, and then comparing the
+   * surfaces over the faces of the result map.
+   *
+   * \todo The overlay compares the data using assertions. This should be
+   * replaced, but since we want to terminate the overlay once we
+   * determine that the 2 diagrams differ, we cannot simply remove the
+   * assertions. One option is to generate an exeption and catch it.
+   */
   bool compare_diagrams(Minimization_diagram_2 &test_env,
-                        Minimization_diagram_2 &env,
-                        bool /* faces_only */ = false)
+                        Minimization_diagram_2 &env)
   {
     Minimization_diagram_2 overlay_map;
-    // overlay the 2 maps
     overlay(test_env, env, overlay_map);
     return true;
-//    // foreach face in the result map, compare the surfaces over it
-//    Face_iterator fi = overlay_map.faces_begin();
-//    bool eq, result = true;
-//    for (; fi != overlay_map.faces_end(); ++fi)
-//    {
-//      Face_handle fh = fi;
-//      if (!fh->is_unbounded())
-//      {
-//        CGAL_assertion(fh->get_aux_is_set(0));
-//        CGAL_assertion(fh->get_aux_is_set(1));
-//        eq = fh->is_equal_aux_data(0, fh->begin_aux_data(1), fh->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over face");
-//        result &= eq;
-//      }
-//    }
-//
-//    if (!faces_only)
-//    {
-//      // foreach edge in the result map, compare the surfaces over it
-//      Halfedge_iterator hi = overlay_map.halfedges_begin();
-//      for (; hi != overlay_map.halfedges_end(); ++hi)
-//      {
-//        Halfedge_handle hh = hi;
-//        CGAL_assertion(hh->get_aux_is_set(0));
-//        CGAL_assertion(hh->get_aux_is_set(1));
-//        eq = hh->is_equal_aux_data(0, hh->begin_aux_data(1), hh->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over edge");
-//        result &= eq;
-//
-//        // check the opposite halfedge
-//        CGAL_assertion(hh->twin()->get_aux_is_set(0));
-//        CGAL_assertion(hh->twin()->get_aux_is_set(1));
-//        eq = hh->is_equal_aux_data(0, hh->twin()->begin_aux_data(1),
-//                                      hh->twin()->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over twin halfedges");
-//        result &= eq;
-//
-//      }
-//
-//      // foreach vertex in the result map, compare the surfaces over it
-//      Vertex_iterator vi = overlay_map.vertices_begin();
-//      for (; vi != overlay_map.vertices_end(); ++vi)
-//      {
-//        Vertex_handle vh = vi;
-//        #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
-//          std::cout << "check vertex: " << vh->point() << std::endl;
-//        #endif
-//
-//        CGAL_assertion(vh->get_aux_is_set(0));
-//        CGAL_assertion(vh->get_aux_is_set(1));
-//        eq = vh->is_equal_aux_data(0, vh->begin_aux_data(1), vh->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over vertex");
-//        result &= eq;
-//      }
-//    }
-//    
-//    return result;
   }
 
 protected:
@@ -322,7 +270,8 @@ protected:
   // fill the vertex with the surface on the envelope
   // all the surfaces are known to be defined over the vertex' point
   template <class SurfaceIterator>
-  void set_minimum_over_vertex(const Vertex_handle& v, SurfaceIterator begin, SurfaceIterator end)
+  void set_minimum_over_vertex(const Vertex_handle& v,
+                               SurfaceIterator begin, SurfaceIterator end)
   {
     if (begin == end)
       v->set_no_data();

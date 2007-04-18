@@ -76,7 +76,8 @@ bool test_one_file(std::ifstream& inp)
           result.number_of_faces() << " faces" << endl;
 
   timer.start();
-  lu_alg_test.construct_lu_envelope(surfaces.begin(), surfaces.end(), test_result);
+  lu_alg_test.construct_lu_envelope(surfaces.begin(), surfaces.end(),
+                                    test_result);
   timer.stop();
   cout << "construct test map took " << timer.time() << " seconds" << endl;
   timer.reset();
@@ -87,7 +88,7 @@ bool test_one_file(std::ifstream& inp)
           test_result.number_of_faces() << " faces" << endl;
 
   timer.start();
-  bool test = lu_alg_test.compare_diagrams(test_result, result, /*only faces = */false);
+  bool test = lu_alg_test.compare_diagrams(test_result, result);
   timer.stop();
   
   return (test);
