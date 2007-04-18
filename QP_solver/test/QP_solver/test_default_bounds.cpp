@@ -40,7 +40,7 @@ int main()
 	  for (r = -1;  r < 1; ++r) {
 	    // generate empty program with all possible
 	    // defaults, and test solver / bound status functions
-	    CGAL::Quadratic_program<int> qp 
+	    CGAL::Quadratic_program<int> qp = CGAL::Quadratic_program<int>
 	      (CGAL::Comparison_result(r), fl, l, fu, u); 
 	    assert (qp.is_valid());
 	 
