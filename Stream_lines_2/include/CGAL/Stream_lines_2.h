@@ -136,13 +136,13 @@ public:
 protected:
   void place_stream_lines(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator,
         const int & sampling_step, const bool & step_by_step = false);
-  bool get_next_seed_point(FT & distanceg, Point_2 & seed_point);
+  bool get_next_seed_point(FT & distanceg, Point_2 & seed_point_);
   FT find_smallest_circle(const Vertex_handle & pVertex_handle);
   Vertex_handle insert_point(const Point_2 & pPoint, FT& fDist,bool bDistanceCalculation);
   Vertex_handle insert_point(const Point_2 & pPoint, const Face_handle & m_Face_handle, FT& fDist,
            bool bDistanceCalculation);
   void integrate_streamline(const Vector_field_2 & vector_field_2,  const Integrator_2 & integrator,
-          Point_container_2& stl, Point_2& seed_point, Vertex_container_2& stl_vertices, const int & sampling_step);
+          Point_container_2& stl, Point_2& seed_point_, Vertex_container_2& stl_vertices, const int & sampling_step);
   void integrate_forward(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator,
        Point_container_2& stl,Point_2&  seed_point,
        Vertex_container_2& stl_vertices, const int & sampling_step);
@@ -298,9 +298,9 @@ bool Stream_lines_2<VectorField_2, Integrator_2>::continue_next(const Vector_fie
 template <class VectorField_2, class Integrator_2>
 void 
 Stream_lines_2<VectorField_2,Integrator_2>::integrate_streamline(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator, Point_container_2& stl, Point_2&
-seed_point, Vertex_container_2& stl_vertices, const int & sampling_step)
+seed_point_, Vertex_container_2& stl_vertices, const int & sampling_step)
 {
-  integrate_forward(vector_field_2, integrator, stl, seed_point, stl_vertices, sampling_step);
+  integrate_forward(vector_field_2, integrator, stl, seed_point_, stl_vertices, sampling_step);
   integrate_backward(vector_field_2, integrator, stl, stl_vertices, sampling_step);
 }
 
@@ -356,7 +356,7 @@ Stream_lines_2<VectorField_2,Integrator_2>::insert_point(const Point_2 & pPoint,
 
 template <class VectorField_2, class Integrator_2>
 void
-Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator, Point_container_2& stl, Point_2& seed_point, Vertex_container_2& stl_vertices, const int & sampling_step)
+Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator, Point_container_2& stl, Point_2& seed_point_, Vertex_container_2& stl_vertices, const int & sampling_step)
 {
   int sampling = 0; // sampling step;
   int insertion = 0; // insertion order;
@@ -367,12 +367,12 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
   Point_2 pPoint1;
   bool bEnd = false;
   FT dist;
-  Point_2 new_point = Point_2 (seed_point.x(), seed_point.y());
+  Point_2 new_point = Point_2 (seed_point_.x(), seed_point_.y());
   Vertex_handle m_Vertex_handle = insert_point(new_point, dist, true);
   stl_vertices.push_front(m_Vertex_handle);
   stl.push_front(new_point);
   number_of_points++;
-  Point_2 old_point = seed_point;
+  Point_2 old_point = seed_point_;
   insertion_step = (int) (((dist)-fSepStl_seed) / (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
   if (insertion_step < 0) insertion_step = 0;
   while (!bEnd)
@@ -764,7 +764,7 @@ template <class VectorField_2, class Integrator_2>
 inline 
 bool
 Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
-                 distance, Point_2 & seed_point)
+                 distance, Point_2 & seed_point_)
 {
   Vertex_handle v0, v1, v2; 
   Face_handle fr;
@@ -780,7 +780,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
     pq.pop();
     b0 = m_DT.is_face(v0,v1,v2,fr);
     if (b0){
-      seed_point = m_Pq_element.fourth.first;}
+      seed_point_ = m_Pq_element.fourth.first;}
     b = (!pq.empty());
   }while ((b)&&(!b0));
   Biggest_circle = m_Pq_element;
@@ -824,9 +824,8 @@ template <class VectorField_2, class Integrator_2>
 void
 Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstream & fw)
 {
-  typename Stream_line_container_2::iterator begin_iterator;
+  typename Stream_line_container_2::iterator it;
   Stream_line_container_2 stl_container_temp = stl_container;
-  Point_container_2 stl;
   fw << "%!PS-Adobe-2.0 EPSF-2.0\n";
   fw << "%%BoundingBox: 0 0" << " " << max_x - min_x << " " << max_y - min_y << "\n";
   fw << "gsave\n";
@@ -834,10 +833,10 @@ Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstrea
   fw << 0.5 << " setlinewidth\n";
   fw << 0.0 << " " << 0.0 << " " << 0.0 << " setrgbcolor\n";
   
-  for(begin_iterator=stl_container_temp.begin();begin_iterator!=stl_container_temp.end();begin_iterator++)
+  for(it=stl_container_temp.begin(); it!=stl_container_temp.end(); ++it)
     {
-      typename Point_container_2::iterator begin_point_iterator = (*begin_iterator).begin();
-      typename Point_container_2::iterator end_point_iterator = (*begin_iterator).end();
+      typename Point_container_2::iterator begin_point_iterator = (*it).begin();
+      typename Point_container_2::iterator end_point_iterator = (*it).end();
     
       FT i_prec = (*begin_point_iterator).x() - min_x;
       FT j_prec = (*begin_point_iterator).y() - min_y;
@@ -864,16 +863,15 @@ template <class VectorField_2, class Integrator_2>
 void 
 Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(std::ofstream & fw)
 {
-  typename Stream_line_container_2::iterator begin_iterator;
+  typename Stream_line_container_2::iterator it;
   Stream_line_container_2 stl_container_temp = stl_container;
-  Point_container_2 stl;
   fw << max_x - min_x << " " << max_y - min_y << "\n";
   fw << stl_container.size() << "\n";
-  for(begin_iterator=stl_container_temp.begin();begin_iterator!=stl_container_temp.end();begin_iterator++)
+  for(it=stl_container_temp.begin(); it!=stl_container_temp.end(); ++it)
     {
-      fw << (*begin_iterator).size() << "\n";
-      typename Point_container_2::iterator begin_point_iterator = (*begin_iterator).begin();
-      typename Point_container_2::iterator end_point_iterator = (*begin_iterator).end();
+      fw << (*it).size() << "\n";
+      typename Point_container_2::iterator begin_point_iterator = (*it).begin();
+      typename Point_container_2::iterator end_point_iterator = (*it).end();
       FT i , j;
       for(;begin_point_iterator!=end_point_iterator;begin_point_iterator++){
   Point_2 p = *begin_point_iterator;
