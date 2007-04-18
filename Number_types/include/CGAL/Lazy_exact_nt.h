@@ -609,6 +609,45 @@ operator==(const Lazy_exact_nt<ET>& a, int b)
 }
 
 
+// Mixed operators with double.
+template <typename ET>
+bool
+operator<(const Lazy_exact_nt<ET>& a, double b)
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  Uncertain<bool> res = a.approx() < b;
+  if (is_singleton(res))
+    return res;
+  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return a.exact() < b;
+}
+
+template <typename ET>
+bool
+operator>(const Lazy_exact_nt<ET>& a, double b)
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  Uncertain<bool> res = b < a.approx();
+  if (is_singleton(res))
+    return res;
+  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return b < a.exact();
+}
+
+template <typename ET>
+bool
+operator==(const Lazy_exact_nt<ET>& a, double b)
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  Uncertain<bool> res = b == a.approx();
+  if (is_singleton(res))
+    return res;
+  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return b == a.exact();
+}
+
+
+
 template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Type >
 operator+(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)

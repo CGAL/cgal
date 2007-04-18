@@ -129,6 +129,14 @@ public:
     return IA(-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE);
   }
 
+#if 0 // def CGAL_HISTOGRAM_PROFILER  // not yet ready
+  ~Interval_nt()
+  {
+    CGAL_HISTOGRAM_PROFILER("[Interval_nt relative precision in log2 scale]",
+                             (unsigned) ( ::log(relative_precision(*this))) / ::log(2.0) )  );
+  }
+#endif
+
 private:
   // Pair inf_sup;
   double _inf, _sup;
@@ -182,7 +190,8 @@ Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 { return ! (a == b); }
 
-// Mixed operators.
+
+// Mixed operators with int.
 
 template <bool Protected>
 inline
@@ -280,6 +289,107 @@ Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, int b)
 { return ! (a == b); }
 
+
+// Mixed operators with double.
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator<(double a, const Interval_nt<Protected> &b)
+{
+  if (a < b.inf()) return true;
+  if (a >= b.sup()) return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator>(double a, const Interval_nt<Protected> &b)
+{ return b < a; }
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator<=(double a, const Interval_nt<Protected> &b)
+{
+  if (a <= b.inf()) return true;
+  if (a >  b.sup()) return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator>=(double a, const Interval_nt<Protected> &b)
+{ return b <= a; }
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator==(double a, const Interval_nt<Protected> &b)
+{
+  if (b.inf() >  a || b.sup() <  a) return false;
+  if (b.inf() == a && b.sup() == a) return true;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator!=(double a, const Interval_nt<Protected> &b)
+{ return ! (a == b); }
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator<(const Interval_nt<Protected> &a, double b)
+{
+  if (a.sup()  < b) return true;
+  if (a.inf() >= b) return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator>(const Interval_nt<Protected> &a, double b)
+{ return b < a; }
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator<=(const Interval_nt<Protected> &a, double b)
+{
+  if (a.sup() <= b) return true;
+  if (a.inf() >  b) return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator>=(const Interval_nt<Protected> &a, double b)
+{ return b <= a; }
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator==(const Interval_nt<Protected> &a, double b)
+{
+  if (b >  a.sup() || b <  a.inf()) return false;
+  if (b == a.sup() && b == a.inf()) return true;
+  return Uncertain<bool>::indeterminate();
+}
+
+template <bool Protected>
+inline
+Uncertain<bool>
+operator!=(const Interval_nt<Protected> &a, double b)
+{ return ! (a == b); }
+
+
+
 // Non-documented
 // Returns true if the interval is a unique representable double.
 template <bool Protected>
@@ -327,6 +437,16 @@ Comparison_result
 compare_relative_precision(const Interval_nt<Protected> & d, double prec)
 {
   return CGAL::compare(width(d), prec * magnitude(d));
+}
+
+// Non-documented
+template <bool Protected>
+double
+relative_precision(const Interval_nt<Protected> & d)
+{
+  if (magnitude(d) == 0.0)
+    return 0.0;
+  return width(d) / magnitude(d);
 }
 
 

@@ -194,5 +194,13 @@ int main ()
   q==q; q==r; r==q; q==1; 1==q;
   q!=q; q!=r; r!=q; q!=1; 1!=q;
 
+  // Test comparisons with double.
+  two<1.0; 1.0<two;
+  two>1.0; 1.0>two;
+  two<=1.0; 1.0<=two;
+  two>=1.0; 1.0>=two;
+  two!=1.0; 1.0!=two;
+  two==1.0; 1.0==two;
+
   return 0;
 }
