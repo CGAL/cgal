@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-//
+// 
 //
 // Author(s)     : Lutz Kettner
 //                 Peter Hachenberger
@@ -21,62 +21,16 @@
 // Demo program maintaining a stack of Nef polyhedra in the space and
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
-#include <CGAL/basic.h>
 
-#ifdef CGAL_USE_LEDA
-  #ifdef CGAL_NEF3_CARTESIAN
-  #include <CGAL/leda_rational.h>
-  typedef leda_rational LNT;
-  #else
-  #include <CGAL/leda_integer.h>
-  typedef leda_integer LNT;
-  #endif
-#else
-  #ifdef CGAL_NEF3_CARTESIAN
-  #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq LNT;
-  #else
-  #include <CGAL/Gmpz.h>
-  typedef CGAL::Gmpz LNT;
-  #endif
-#endif
-
-#ifdef CGAL_USE_LAZY_EXACT_NT
-  #include <CGAL/Filtered_exact.h>
-  #include <CGAL/Nef_3/Filtered_gcd.h>
-  #include <CGAL/Lazy_exact_nt.h>
-  typedef CGAL::Lazy_exact_nt<LNT>  NT;
-#else
-  typedef LNT  NT;
-#endif
-
-#ifdef CGAL_USE_EXTENDED_KERNEL
-  #ifdef CGAL_NEF3_CARTESIAN
-  #include <CGAL/Extended_cartesian.h>
-  typedef CGAL::Extended_cartesian<LNT>   Kernel;
-  const char *kernelversion = "Extended cartesian kernel.";
-  #else
-  #include <CGAL/Extended_homogeneous.h>
-  typedef CGAL::Extended_homogeneous<LNT>   Kernel;
-  const char *kernelversion = "Extended homogeneous kernel.";
-  #endif
-#else
-  #ifdef CGAL_NEF3_CARTESIAN
-  #include <CGAL/Cartesian.h>
-  typedef CGAL::Cartesian<NT> Kernel;
-  const char *kernelversion = "Cartesian kernel.";
-  #else
-  #include <CGAL/Homogeneous.h>
-  typedef CGAL::Homogeneous<NT> Kernel;
-  const char *kernelversion = "Homogeneous kernel.";
-  #endif
-#endif
+#ifndef CGAL_NEF_DEMO_STACK_H
+#define CGAL_NEF_DEMO_STACK_H
 
 #include <CGAL/rational_rotation.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
-#include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/Nef_3/SNC_items.h>
 
 #ifdef CGAL_NEF3_OLD_VISUALIZATION
 
@@ -92,78 +46,82 @@
 #include <cmath>
 #include <cstddef>
 
-typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
-typedef std::vector< Nef_polyhedron>       Nef_vector;
-typedef Nef_vector::iterator               Iterator;
-
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::strcmp;
 using std::exit;
 
-// Global data
-Nef_vector nef;  // contains stack of Nef_polyhedron
+CGAL_BEGIN_NAMESPACE
 
+template<typename Kernel, typename Items = CGAL::SNC_items>
+class demo_stack {
 
-// Functions
+  typedef typename Kernel::RT                    NT;
+  typedef CGAL::Polyhedron_3<Kernel>             Polyhedron;
+  typedef CGAL::Nef_polyhedron_3<Kernel, Items>  Nef_polyhedron;
+  typedef std::vector< Nef_polyhedron>           Nef_vector;
+  typedef typename Nef_vector::iterator          Iterator;
 
-void help_message( std::ostream& out) {
-    out << "Usage: nef_3 [<Options>] <Command> [<Command> ...]\n"
-"Options:\n"
-"    -h/-help    this message\n"
-"Command: all commands work on the top of a stack of Nef polyhedra:\n"
-"    h/help/?               this message\n"
-"    pop                    removes top from stack.\n"
-"    dup                    duplicates top of stack.\n"
-"    dupn <n>               duplicates <n>-th element (top = 1st element).\n"
-"    swap                   swaps top two elements on stack.\n"
-"    swapn <n>              swaps <n>-th element with top (top = 1st element).\n"
-"    clear                  clears stack\n"
-"    size                   prints stack and top polyhedron size to stdout.\n"
-"    bytes                  prints the number of bytes used by top.\n"
-"    simple                 tests if top is convertible to Polyhedron_2.\n"
-"    valid                  tests if the data structure of top is valid.\n"
-"    plane <a> <b> <c> <d>  creates a halfspace bounded by the plane ax+by+cz+d=0.\n"
-"    loadnef3 <filename>    loads nef3 file and pushes it on stack.\n"
-"    loadoff <filename>     loads file in OFF format and pushes it on stack.\n"
-"    saveoff <filename>     saves top in OFF format if top is simple.\n"
-"    dump                   dump Ascii description of top to stderr.\n"
-      // "    sorted                 dump standard Ascii description of top to stderr. \n"
-"    vis                    visualize it in OpenGL if available\n"
-"The following commands take their arguments from the stack, where the\n"
-"top of the stack is the first argument. They remove those arguments from\n"
-"the stack and push the result onto the stack.\n"
-"    trans <x> <y> <z> <w>  translate top with homogeneous vector (x,y,z,w).\n"
-"    scale <s> <w>          scale top with rational scale factor (s/w).\n"
-"    rotx <double>          rotate (approx) <double> degrees around x-axis.\n"
-"    roty <double>          rotate (approx) <double> degrees around y-axis.\n"
-"    rotz <double>          rotate (approx) <double> degrees around z-axis.\n"
-"    inters                 intersection of two polyhedra.\n"
-"    union                  union of two polyhedra.\n"
-"    diff                   top polyhedron minus the second polyhedron.\n"
-"    symdiff                symmetric difference of two polyhedra.\n"
-"    compl                  complement of top polyhedron.\n"
-"    int                    interior of top polyhedron.\n"
-"    clos                   closure of top polyhedron.\n"
-"    bnd                    boundary of top polyhedron.\n"
-"    reg                    regularization of top polyhedron.\n" << endl;
-}
+  Nef_vector nef;  // contains stack of Nef_polyhedron
 
-// assert that there are at least n arguments left for the command
-bool assert_argc( const char* command, int n, int arg_left) {
+public:
+  void help_message( std::ostream& out) {
+      out << "Usage: nef_3 [<Options>] <Command> [<Command> ...]\n"
+          "Options:\n"
+          "    -h/-help    this message\n"
+          "Command: all commands work on the top of a stack of Nef polyhedra:\n"
+          "    h/help/?               this message\n"
+          "    pop                    removes top from stack.\n"
+          "    dup                    duplicates top of stack.\n"
+          "    dupn <n>               duplicates <n>-th element (top = 1st element).\n"
+          "    swap                   swaps top two elements on stack.\n"
+          "    swapn <n>              swaps <n>-th element with top (top = 1st element).\n"
+          "    clear                  clears stack\n"
+          "    size                   prints stack and top polyhedron size to stdout.\n"
+          "    bytes                  prints the number of bytes used by top.\n"
+          "    simple                 tests if top is convertible to Polyhedron_2.\n"
+          "    valid                  tests if the data structure of top is valid.\n"
+          "    plane <a> <b> <c> <d>  creates a halfspace bounded by the plane ax+by+cz+d=0.\n"
+          "    loadnef3 <filename>    loads nef3 file and pushes it on stack.\n"
+          "    loadoff <filename>     loads file in OFF format and pushes it on stack.\n"
+          "    saveoff <filename>     saves top in OFF format if top is simple.\n"
+          "    dump                   dump Ascii description of top to stderr.\n"
+          // "    sorted                 dump standard Ascii description of top to stderr. \n"
+          "    vis                    visualize it in OpenGL if available\n"
+          "The following commands take their arguments from the stack, where the\n"
+          "top of the stack is the first argument. They remove those arguments from\n"
+          "the stack and push the result onto the stack.\n"
+          "    trans <x> <y> <z> <w>  translate top with homogeneous vector (x,y,z,w).\n"
+          "    scale <s> <w>          scale top with rational scale factor (s/w).\n"
+          "    rotx <double>          rotate (approx) <double> degrees around x-axis.\n"
+          "    roty <double>          rotate (approx) <double> degrees around y-axis.\n"
+          "    rotz <double>          rotate (approx) <double> degrees around z-axis.\n"
+          "    inters                 intersection of two polyhedra.\n"
+          "    union                  union of two polyhedra.\n"
+          "    diff                   top polyhedron minus the second polyhedron.\n"
+          "    symdiff                symmetric difference of two polyhedra.\n"
+          "    compl                  complement of top polyhedron.\n"
+          "    int                    interior of top polyhedron.\n"
+          "    clos                   closure of top polyhedron.\n"
+          "    bnd                    boundary of top polyhedron.\n"
+          "    reg                    regularization of top polyhedron.\n" << endl;
+  }
+
+  // assert that there are at least n arguments left for the command
+  bool assert_argc( const char* command, int n, int arg_left) {
     if ( n > arg_left) {
         cerr << "Error: command '" << command << "' needs " << n
              << " arguments." << endl;
         return false;
     }
     return true;
-}
+  }
 
-// evaluate the commands (and arguments) in argv[0..argc-1].
-// returns 0 if all is o.k., and != 0 otherwise.
-int eval( int argc, char* argv[]) {
+public:
+  // evaluate the commands (and arguments) in argv[0..argc-1].
+  // returns 0 if all is o.k., and != 0 otherwise.
+  int eval( int argc, char* argv[]) {
     CGAL::Timer t;
     int error = 0;
     for ( int i = 0; error == 0 && i < argc; ++i) {
@@ -239,14 +197,14 @@ int eval( int argc, char* argv[]) {
 	    error = 2;
 	    continue;
 	  }
-	  cout << "Top uses " << nef.back().bytes() << " bytes" << std::endl;
+	  cout << "Top uses " << nef.back().bytes() << " bytes" << std::endl; 
 	} else if ( strcmp( argv[i], "bytes_reduced") == 0) {
 	  if ( nef.size() == 0) {
 	    cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
 	    error = 2;
 	    continue;
 	  }
-	  cout << "Reduced Version of top uses " << nef.back().bytes_reduced() << " bytes" << std::endl;
+	  cout << "Reduced Version of top uses " << nef.back().bytes_reduced() << " bytes" << std::endl; 
         } else if ( strcmp( argv[i], "simple") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -281,11 +239,11 @@ int eval( int argc, char* argv[]) {
 		cerr << "Error: loadnef3 cannot open file '" << argv[i+1]
 		     << "'." << endl;
 		error = 5;
-	      } else {
+	      } else {	     
 		Nef_polyhedron nf;
 		in >> nf;
 		if ( ! in) {
-		  cerr << "Error: loadnef3 cannot read nef3 file '"
+		  cerr << "Error: loadnef3 cannot read nef3 file '" 
 		       << argv[i+1] << "' correctly." << endl;
 		  error = 5;
 		} else {
@@ -307,7 +265,7 @@ int eval( int argc, char* argv[]) {
                     Polyhedron poly;
                     in >> poly;
                     if ( ! in) {
-                        cerr << "Error: loadoff cannot read OFF file '"
+                        cerr << "Error: loadoff cannot read OFF file '" 
                              << argv[i+1] << "' correctly." << endl;
                         error = 5;
                     } else {
@@ -342,7 +300,7 @@ int eval( int argc, char* argv[]) {
                     nef.back().convert_to_Polyhedron(poly);
                     out << poly;
                     if ( ! out) {
-                        cerr << "Error: saveoff cannot write OFF file '"
+                        cerr << "Error: saveoff cannot write OFF file '" 
                              << argv[i+1] << "' correctly." << endl;
                         error = 5;
                     }
@@ -357,7 +315,6 @@ int eval( int argc, char* argv[]) {
                 error = 2;
                 continue;
             }
-	    //	    nef.back().dump(false, std::cout);
 	    std::cout << nef.back();
 	    /*
         } else if ( strcmp( argv[i], "sorted") == 0) {
@@ -373,7 +330,7 @@ int eval( int argc, char* argv[]) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
                 error = 2;
                 continue;
-            }
+            }	  
 	    std::cout << "Number of Vertices " << nef.back().number_of_vertices() << std::endl;
 	    std::cout << "Number of Facets " << nef.back().number_of_facets() << std::endl;
         } else if ( strcmp( argv[i], "vis") == 0) {
@@ -386,7 +343,7 @@ int eval( int argc, char* argv[]) {
 	    nef.back().visualize();
 #elif defined (CGAL_USE_QT)
 	    QApplication a(argc, argv);
-	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
+	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
 	      new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
 	    a.setMainWidget(w);
 	    w->show();
@@ -408,15 +365,15 @@ int eval( int argc, char* argv[]) {
 		if(w == 0)
 		  error = 4;
 		else {
-		  Kernel::Vector_3 vec( x, y, z, w);
-		  Kernel::Aff_transformation_3 aff( CGAL::TRANSLATION, vec);
+                  typename Kernel::Vector_3 vec( x, y, z, w);
+		  typename Kernel::Aff_transformation_3 aff( CGAL::TRANSLATION, vec);
 		  nef.back().transform( aff);
 		  i += 4;
 		}
             } else {
                 error = 4;
             }
-
+	   
         } else if ( strcmp( argv[i], "scale") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -426,7 +383,7 @@ int eval( int argc, char* argv[]) {
             if ( assert_argc( argv[i], 2, argc - i - 1)) {
                 NT s( std::atoi( argv[i+1]));
                 NT w( std::atoi( argv[i+2]));
-                Kernel::Aff_transformation_3 aff( CGAL::SCALING, s, w);
+                typename Kernel::Aff_transformation_3 aff( CGAL::SCALING, s, w);
                 nef.back().transform( aff);
                 i += 2;
             } else {
@@ -445,10 +402,10 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                CGAL::rational_rotation_approximation( dirx, diry,
+                CGAL::rational_rotation_approximation( dirx, diry, 
 						       sin_alpha, cos_alpha, w,
 						       NT(1), NT( 1000000));
-                Kernel::Aff_transformation_3 aff( w, NT(0), NT(0),
+                typename Kernel::Aff_transformation_3 aff( w, NT(0), NT(0),
                                                   NT(0), cos_alpha,-sin_alpha,
                                                   NT(0), sin_alpha, cos_alpha,
                                                   w);
@@ -470,10 +427,10 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                CGAL::rational_rotation_approximation( dirx, diry,
+                CGAL::rational_rotation_approximation( dirx, diry, 
 						       sin_alpha, cos_alpha, w,
 						       NT(1), NT( 1000000));
-                Kernel::Aff_transformation_3 aff( cos_alpha, NT(0), sin_alpha,
+                typename Kernel::Aff_transformation_3 aff( cos_alpha, NT(0), sin_alpha,
                                                   NT(0), w, NT(0),
                                                   -sin_alpha, NT(0), cos_alpha,
                                                   w);
@@ -495,10 +452,10 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                CGAL::rational_rotation_approximation( dirx, diry,
+                CGAL::rational_rotation_approximation( dirx, diry, 
 						       sin_alpha, cos_alpha, w,
 						       NT(1), NT( 1000000));
-                Kernel::Aff_transformation_3 aff( cos_alpha,-sin_alpha, NT(0),
+                typename Kernel::Aff_transformation_3 aff( cos_alpha,-sin_alpha, NT(0),
                                                   sin_alpha, cos_alpha, NT(0),
                                                   NT(0), NT(0), w,
                                                   w);
@@ -615,11 +572,11 @@ int eval( int argc, char* argv[]) {
 	    NT b( std::atoi( argv[i+2]));
 	    NT c( std::atoi( argv[i+3]));
 	    NT d( std::atoi( argv[i+4]));
-	    Kernel::Plane_3 pl( a, b, c, d);
+	    typename Kernel::Plane_3 pl( a, b, c, d);
 	    Nef_polyhedron nf(pl);
 	    nef.push_back( nf);
-	    i += 4;
-	  } else
+	    i += 4; 
+	  } else 
 	    error = 4;
 	} else if ( strcmp( argv[i], "start") == 0) {
 	  t.start();
@@ -636,17 +593,9 @@ int eval( int argc, char* argv[]) {
         }
     }
     return error;
-}
+  }
+};
 
-int main(  int argc, char* argv[]) {
-    if ( argc < 2
-         || strcmp( argv[1], "-h") == 0
-         || strcmp( argv[1], "-help") == 0 )
-    {
-        help_message( cerr);
-        exit(1);
-    }
-    CGAL::set_pretty_mode(std::cerr);
-    //    std::cout<<kernelversion<<std::endl;
-    return eval( argc-1, argv+1);
-}
+CGAL_END_NAMESPACE
+
+#endif // CGAL_NEF_DEMO_STACK_H
