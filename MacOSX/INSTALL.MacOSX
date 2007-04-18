@@ -31,7 +31,7 @@ recommended to use the default install path).
 
 GMP
 Some examples and demos need GMP. In order to use it you have to
-install it. You can either download the sources from www.swox.com/gmp
+install it. You can either download the sources from http://gmplib.org/
 and follow the installation instructions in there or use fink to do
 that (try: fink install gmp; you need to install both the gmp and
 gmp-shlibs packages).
