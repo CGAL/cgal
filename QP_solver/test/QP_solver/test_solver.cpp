@@ -360,6 +360,18 @@ bool process(const std::string& filename,
 	 << "Error: " << qp.get_error() << endl;
     return false;
   }
+
+  // check name <-> index mapping
+  for (int j=0; j<qp.get_n(); ++j) 
+    if (j != qp.variable_index_by_name (qp.variable_name_by_index (j))) {
+      cout << "incorrect name <-> index mapping (variables)" << endl;
+      return false;
+    }
+  for (int i=0; i<qp.get_m(); ++i) 
+    if (i != qp.constraint_index_by_name (qp.constraint_name_by_index (i))) {
+      cout << "incorrect name <-> index mapping (constraints)" << endl;
+      return false;
+    }
   
   // print program (using QMATRIX format), read it back in and check 
   // whether it still agrees with the original program

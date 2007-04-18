@@ -1290,7 +1290,10 @@ private:
 	      return this->err1
 		("duplicate row identifier '%' in section RANGES",t);
 	    duplicated_row_names.insert(*row_name);
+	    std::string dup_name = row_name->first+std::string("_DUPLICATED"); 
 	    int new_index = this->get_m();
+	    row_names.insert(String_int_pair (dup_name, new_index)); 
+	    row_by_index.push_back (dup_name);	    
 	    for (unsigned int j=0; j<var_names.size(); ++j) {
 	      NT val = (*(this->get_a()+j))[index];
 	      this->set_a (j, new_index, val);
