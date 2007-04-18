@@ -22,12 +22,14 @@ An object \ccVar\ of this type must provide:
 	operator()(const Type1 &obj1, const Type2 &obj2);}
 {Returns \ccc{true} when \ccc{obj1} contains \ccc{obj2},}
 
-where we \ccc{Type_1} $>$ \ccc{Type_1} with the defined order:
-\ccc{QuadricalKernel_3::Quadric_3} $>$ 
-\ccc{QuadricalKernel_3::Curve_3} $>$ 
-\ccc{QuadricalKernel_3::Curve_arc_3} $>$ 
-\ccc{QuadricalKernel_3::Curve_point_3}.
+where we \ccc{Type_1} $>$ \ccc{Type_1} with the defined order: \\
 
+\begin{tabular}{lll}
+\ccc{QuadricalKernel_3::Quadric_3}&$>$&\ccc{QuadricalKernel_3::Curve_3}\\
+                                  &$>$&\ccc{QuadricalKernel_3::Curve_arc_3}\\
+                                  &$>$&\ccc{QuadricalKernel_3::Curve_point_3}
+
+\end{tabular}
 \end{ccRefFunctionObjectConcept}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
