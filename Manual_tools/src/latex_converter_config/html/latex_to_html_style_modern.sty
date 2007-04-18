@@ -554,10 +554,11 @@ function getObj(name)
       \end{savestream}
    }{
     \lciPushOutput{toc}
-     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
-     \lcRawHtml{<a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}
-     \lcRawHtml{">}#C1~~~#C2\lcRawHtml{</a>}%
-     \lcTocRight\lcTocLeft\lciTocOpenInner%
+      \lciTocCompleteRow
+      \lcRawHtml{<span class="TocChapter">
+      <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}
+      \lcRawHtml{">}#C1~~~#C2\lcRawHtml{</a></span>}%
+      \lcTocRight\lcTocLeft\lciTocOpenInner%
     \lciPopOutput
    }
 }}
