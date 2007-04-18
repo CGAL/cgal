@@ -39,7 +39,7 @@ where we \ccc{Type_1} $>$ \ccc{Type_1} with the defined order:
 An object \ccVar\ of this type must provide:
 
 \ccMemberFunction{QuadricalKernel_3::Quadric_3
-  operator()(QuadricalKernel_3::Algebraic_kernel::Polynomial_3 polynomial);}
+  operator()(const QuadricalKernel_3::Algebraic_kernel::Polynomial_3& polynomial);}
 {constructs the quadric from the \ccc{polynomial}. As a precondition
 we have total\_degree(polynomial) $\leq 2$.}
 
@@ -54,7 +54,7 @@ we have total\_degree(polynomial) $\leq 2$.}
 An object \ccVar\ of this type must provide:
 
 \ccMemberFunction{QuadricalKernel_3::Curve_3
-  operator()(QuadricalKernel_3::Quadric_3 q1, QuadricalKernel_3::Quadric_3 q2);}
+  operator()(const QuadricalKernel_3::Quadric_3& q1, const QuadricalKernel_3::Quadric_3& q2);}
 {constructs the intersection curve of \ccc{q1} and \ccc{q2}.}
 
 \begin{ccAdvanced}
@@ -65,7 +65,7 @@ it might be changed to
 \ccMemberFunction{
 template< class OutputIterator >
 OutputIterator
-  operator()(QuadricalKernel_3::Quadric_3 q1, QuadricalKernel_3::Quadric_3 q2,
+  operator()(const QuadricalKernel_3::Quadric_3& q1, const QuadricalKernel_3::Quadric_3& q2,
   OutputIterator oi);}
 {constructs the intersection curves of \ccc{q1} and \ccc{q2} returning through
   \ccc{oi}.}
@@ -87,14 +87,14 @@ An object \ccVar\ of this type must provide:
 \ccMemberFunction{
 template< class OutputIterator >
 OutputIterator
-  operator()(QuadricalKernel_3::Curve_3 curve, OutputIterator oi);}
+  operator()(const QuadricalKernel_3::Curve_3& curve, OutputIterator oi);}
 {decomposes a curve into maximal objects of type 
 \ccc{QuadricalKernel::Curve_arc_3} and returning them through \ccc{oi}.}
 
 \ccMemberFunction{
 template< class OutputIterator >
 OutputIterator
-  operator()(QuadricalKernel_3::Curve_3 curve, QuadricalKernel_3::Quadric_3 q,
+  operator()(const QuadricalKernel_3::Curve_3& curve, const QuadricalKernel_3::Quadric_3& q,
 OutputIterator oi);}
 {decomposes a curve into maximal objects of type 
 \ccc{QuadricalKernel::Curve_arc_3} when intersected with \ccc{q} 
