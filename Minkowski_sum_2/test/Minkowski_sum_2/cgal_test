@@ -74,6 +74,8 @@ Minkowski_sum_tests()
     run_test_Minkowski_sum data/mchain -sh
     run_test_Minkowski_sum data/random -sg
     run_test_Minkowski_sum data/wheels -hg
+    run_test_Minkowski_sum data/r35975 -sohg
+    run_test_Minkowski_sum data/r38305 -sohg
   fi
   clean_tests
 }
