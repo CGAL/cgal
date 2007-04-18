@@ -55,50 +55,35 @@ is to make it so complicated that there are no obvious deficiencies.
 
 \cgal\ is physically structured into
 packages\ccIndexMainItem{package}, which is reflected in the SVN
-package structure, see Chapter~\ref{chap:svn}.  Generally, each
+repository structure, see Chapter~\ref{chap:svn}.  Generally, each
 package in the library will contribute some chapters to the manuals,
 some might only contribute a section to some larger chapter.
 
-\textbf{The following is the current plan and in the process of
-  realization}
-
-\cgal\ is logically presented to the users in
-modules\ccIndexMainItemDef{module}. A module consists of one or
-several packages. A package can be part of several modules. An example
-for a module would be the \cgal\ Kernel, and also the whole library.
-
-Generally, a manual is created for a particular module. Such a manual
-consists of a wrapper file\ccIndexMainItem{wrapper
-  file}\ccIndexSubitem{documentation}{wrapper file} that will include
-the manual parts from the individual packages that comprise the
-module.  However, manuals can be created for individual packages,
+Generally, a manual is created for the whole \cgal\ library.
+However, manuals can be created for individual packages,
 mostly for editing and reviewing, and also only reasonably if the
 package contributes a whole chapter.
 
-\textbf{The division into different manuals is currently under
-  revision. We merge several manuals into one manual with different parts.}
-
 The official \cgal\
 \ccAnchor{http://www.cgal.org/Manual/}{documentation}
-is currently divided into six separate manuals:
+is currently divided into four separate manuals:
 \begin{itemize}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsInstallation.html}{Installation Guide}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsKernel.html}{Kernel}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsBasic.html}{Basic Library}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{Support Library}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsUseOfSTL.html}{Use of \stl\ and \stl\ Extensions in \cgal}
+   \item User and Reference Manual
+   \item Installation Guide
+   \item Developers Manual
+   \item Use of \stl\ and \stl\ Extensions in \cgal
 \end{itemize}
 Not surprisingly, the Installation Guide describes how to install \cgal
 \ccIndexMainItem{installation} and the Use of \stl\ manual describes
 features of \stl\ \ccIndexMainItem{\stl} that are used and extended in \cgal.
 
 Documentation of new packages and features will likely be included in
-the Kernel, Basic Library, and Support Library documentation.  See
-Section~\ref{sec:overall_design} for a description of what these three
-parts of the library contain. Each of these manuals is further
-subdivided into two parts: a Users' Manual and a Reference Manual.
+the User and Reference Manual.  It is further
+subdivided into several parts representing the overall thematic structure
+of \cgal, each part containing chapters, each chapter having a user
+and a reference manual.
 Sections~\ref{sec:users_manual} and~\ref{sec:ref_manual} below
-describe the contents of these two parts.
+describe the contents of these two manuals.
 
 The manuals are produced from \LaTeX\ input files in PostScript, PDF, and
 HTML format. We provide a set of style files with numerous commands
@@ -130,8 +115,8 @@ requirements and recommendations for the specification documentation.
 \ccIndexSubitemBegin{manuals}{source files}
 \ccIndexSubitemBegin{source files}{documentation}
 
-We start with the organization of the documentation of a
-package. After that, we describe the organization of a module documentation.
+We start with the organization of the documentation of a package.
+After that, we describe the organization of a module documentation.
 
 Generally, each package in the library will have its own chapter in
 both the reference manual and the users' manual%
@@ -214,9 +199,10 @@ Section~\ref{subsec:cgal_manual_program} will create the necessary
 wrapper file automatically on the fly to create PostScript, PDF, or
 HTML manuals for an individual package.
 
-For modules, an additional wrapper file is needed. The following rules
-describe the details, and Section~\ref{subsec:wrapper_module_manual}
-lists an example wrapper file:
+For modules (collections of packages, note: maybe an outdated idea),
+an additional wrapper file is needed.
+The following rules describe the details, and
+Section~\ref{subsec:wrapper_module_manual} lists an example wrapper file:
 
 \begin{itemize}
    \item To be detected automatically by the tools in
