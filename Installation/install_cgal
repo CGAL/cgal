@@ -907,6 +907,7 @@ set_compiler_flags()
 	    CGAL_STATIC_LIBNAME="\$(LIB_NAME_BASE).lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
+	    CGAL_LIBS_OPTFLAGS="-Od"
 	    ;;
 	*CL*|*cl*)
 	    #### settings Microsoft Visual C++ compiler
