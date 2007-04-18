@@ -833,8 +833,8 @@ private:
     }
     template <class TT>
     Rep* make_from_single_arg( TT t, ::CGAL::Tag_true ) {
-        Bind bind; // trigger compile-time check
-        (void)bind;
+        Bind bind_; // trigger compile-time check
+        (void)bind_;
         return t; // has to be a pointer convertible to Rep*
     }
 
@@ -889,8 +889,8 @@ protected:
     Handle_with_policy( Rep* p) : ptr_( p) {
         BOOST_STATIC_ASSERT((
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
-        Bind bind; // trigger compile-time check
-        (void)bind;
+        Bind bind_; // trigger compile-time check
+        (void)bind_;
     }
 
     //! initializes the representation after the constructor from 
@@ -902,8 +902,8 @@ protected:
     void initialize_with( Rep* p) {
         BOOST_STATIC_ASSERT((
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
-        Bind bind; // trigger compile-time check
-        (void)bind;
+        Bind bind_; // trigger compile-time check
+        (void)bind_;
         CGAL_precondition_msg( ptr_ == 0, "Handle_with_policy::initialize_with(): the "
                          "representation has already been initialized.");
         ptr_ = p;
@@ -1088,8 +1088,8 @@ public:
 
     //! destructor, decrements reference count.
     ~Handle_with_policy() {
-        Bind bind; // trigger compile-time check
-        (void)bind;
+        Bind bind_; // trigger compile-time check
+        (void)bind_;
         CGAL_precondition_msg( ptr_ != 0, "Handle_with_policy::~Handle_with_policy(): probably used "
                          "special protected constructor and not the "
                          "'initialize_with()' function.");
