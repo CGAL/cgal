@@ -35,6 +35,7 @@
 #  pragma warning(push)
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt,
@@ -136,7 +137,12 @@ public:
   {
     int n = number_of_vertices();
 
-    std::vector<Weighted_point> points CGAL_make_vector(first, last);
+#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
+    std::vector<Weighted_point> points;
+    std::copy(first, last, std::back_inserter(points));
+#else
+    std::vector<Weighted_point> points(first, last);
+#endif
     std::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 
