@@ -1739,11 +1739,15 @@ Reference~Manual}%
                   }
 
 \newcommand{\ccTexHtml}[2]{#1}
-\newcommand{\ccAnchor}[2]{%
+
+
+\newcommand{\ccAnchor}{\begingroup\ccCatcode\ccAnchorX}
+\def\ccAnchorX #1{\endgroup\ccAnchorXX{#1}}
+\newcommand{\ccAnchorXX}[2]{%
 \ifpdf%
   \href{#1}{#2}%
 \else%
-  #2 (\begingroup\def\ccFont{\tt}\ccc{#1}\endgroup)%
+  #2 {\texttt{(#1)}}
 \fi}
 %\newcommand{\ccAnchor}[3][t]{#3}
 \newenvironment{ccTexOnly}{}{}
