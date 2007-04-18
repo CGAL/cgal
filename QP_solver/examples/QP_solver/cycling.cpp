@@ -7,14 +7,13 @@
 #include <CGAL/QP_functions.h>
 
 // choose exact floating-point type
-#ifndef CGAL_USE_GMP
-#include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float ET;
-#else
+#ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
 #endif
-
 // program and solution types
 typedef CGAL::Quadratic_program_from_mps<double> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;

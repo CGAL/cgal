@@ -1,10 +1,10 @@
 \begin{ccRefConcept}{MPSFormat}
 
 MPS is a commonly used file format for storing linear and quadratic 
-programs according to the concepts \ccc{QuadraticProgramInterface},
-\ccc{LinearProgramInterface},
-\ccc{NonnegativeQuadraticProgramInterface}, and
-\ccc{NonnegativeLinearProgramInterface}, see also
+programs according to the concepts \ccc{QuadraticProgram},
+\ccc{LinearProgram},
+\ccc{NonnegativeQuadraticProgram}, and
+\ccc{NonnegativeLinearProgram}, see also
 \path'http://en.wikipedia.org/wiki/MPS_(format)'.
 
 \cgal\ supports a large subset of
@@ -106,8 +106,8 @@ and $u$ for the variables. The default bounds for any variable $x_j$ are
 $0\leq x_j\leq \infty$; the
 \texttt{BOUNDS} section is used to override these defaults. In particular,
 if there is no \texttt{BOUNDS} section, the program is nonnegative and
-actually a model of the concept \ccc{NonnegativeQuadraticProgramInterface} 
-or \ccc{NonnegativeLinearProgramInterface}.
+actually a model of the concept \ccc{NonnegativeQuadraticProgram} 
+or \ccc{NonnegativeLinearProgram}.
 
 The first token in every line is succeeded by an (optional) identifier
 (here: \texttt{BND}). An MPS file may encode several bound vectors $l$
@@ -148,7 +148,7 @@ symmetry. It is not allowed to specify two or more \emph{different}
 nonzero values for an unordered pair $\{i,j\}$.
 
 If this section is missing or does not contain nonzero values, the
-program is a model of the concept \ccc{LinearProgramInterface}.
+program is a model of the concept \ccc{LinearProgram}.
 
 \section*{Miscellaneous}
 Our MPS format also supports an (optional) \texttt{RANGES} section,

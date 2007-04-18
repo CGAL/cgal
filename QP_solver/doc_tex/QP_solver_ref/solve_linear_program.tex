@@ -6,9 +6,9 @@ This function solves a linear program, using some exact
 Integral Domain \ccc{ET} for its computations. Various
 options may be provided, see \ccc{Quadratic_program_options}.  
 
-\ccFunction{template <LinearProgramInterface, ET>
+\ccFunction{template <LinearProgram, ET>
   Quadratic_program_solution<ET> solve_linear_program 
-  (const LinearProgramInterface& lp, const ET&,
+  (const LinearProgram& lp, const ET&,
   const Quadratic_program_options& options = Quadratic_program_options());}
 {returns the solution of the linear program \ccc{lp}, solved
 with exact number type \ccc{ET}.}
@@ -20,7 +20,7 @@ with exact number type \ccc{ET}.}
 
 \ccSeeAlso
 
-The  models of \ccRefIdfierPage{LinearProgramInterface}:
+The  models of \ccRefIdfierPage{LinearProgram}:
 
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}\\

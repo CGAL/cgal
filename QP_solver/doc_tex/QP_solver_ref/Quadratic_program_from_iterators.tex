@@ -9,10 +9,8 @@ An object of class \ccRefName\ describes a convex quadratic program of the form
 
 \input{QP_solver_ref/_from_iterator_description.tex}
 
-
 \ccIsModel
-\ccc{QuadraticProgramInterface}
-
+\ccc{QuadraticProgram}
 
 \ccCreation
 \ccIndexClassCreation
@@ -30,7 +28,7 @@ An object of class \ccRefName\ describes a convex quadratic program of the form
   const C_it& c,
   const std::iterator_traits<C_it>value_type& c0 = 0
   )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the quadratic program is
-described in \ccc{QuadraticProgramInterface}.}
+described in \ccc{QuadraticProgram}.}
 
 \ccExample
 
@@ -44,7 +42,7 @@ model in practice.
 \ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp.h}\\
 \ccReferToExampleCode{QP_solver/convex_hull_containment.cpp}
 \ccSeeAlso
-\ccc{QuadraticProgramInterface}
+\ccc{QuadraticProgram}
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}
 

@@ -10,8 +10,8 @@ An object of class \ccRefName\ describes a linear program of the form
 \input{QP_solver_ref/_from_iterator_description.tex}
 
 \ccIsModel
-\ccc{LinearProgramInterface}
-
+\ccc{QuadraticProgram}\\
+\ccc{LinearProgram}
 
 \ccCreation
 \ccIndexClassCreation
@@ -28,7 +28,7 @@ An object of class \ccRefName\ describes a linear program of the form
   const C_it& c,
   const std::iterator_traits<C_it>value_type& c0 = 0
   )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the linear program is
-described in \ccc{LinearProgramInterface}. }
+described in \ccc{LinearProgram}. }
 
 \ccExample
 
@@ -43,7 +43,7 @@ model in practice.
 \ccReferToExampleCode{QP_solver/convex_hull_containment.cpp}
 
 \ccSeeAlso
-\ccc{LinearProgramInterface}
+\ccc{LinearProgram}
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}
 

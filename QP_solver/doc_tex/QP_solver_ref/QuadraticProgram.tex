@@ -1,8 +1,8 @@
-\begin{ccRefConcept}{NonnegativeQuadraticProgramInterface}
+\begin{ccRefConcept}{QuadraticProgram}
 
 \ccDefinition
 A model of \ccRefName\ describes a convex quadratic program of the form
-\input{QP_solver_ref/_nqp_description}
+\input{QP_solver_ref/_qp_description.tex}
 
 The description is given by appropriate \emph{random-access} 
 iterators over the program data, see below. The program therefore 
@@ -11,11 +11,13 @@ comes in \emph{dense} representation which includes zero entries.
 \ccHasModels
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}\\
-\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
 
 \ccTypes
 
 \input{QP_solver_ref/_abr_types.tex}
+
+\input{QP_solver_ref/_lu_types.tex}
 
 \input{QP_solver_ref/_d_types.tex}
 
@@ -26,6 +28,8 @@ comes in \emph{dense} representation which includes zero entries.
 \ccCreationVariable{qp}
 
 \input{QP_solver_ref/_nmabr_methods.tex}
+
+\input{QP_solver_ref/_lu_methods.tex}
 
 \input{QP_solver_ref/_d_methods.tex}
 
@@ -42,10 +46,11 @@ The models
 
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}\\
-\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}
-and the other concepts
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>} 
 
-\ccc{QuadraticProgramInterface}\\
+and the other conepts
+
+\ccc{NonnegativeQuadraticProgramInterface}\\
 \ccc{LinearProgramInterface}\\
 \ccc{NonnegativeLinearProgramInterface}
 \end{ccRefConcept}

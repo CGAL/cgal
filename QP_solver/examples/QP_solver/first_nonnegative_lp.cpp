@@ -7,12 +7,12 @@
 #include <CGAL/QP_functions.h>
 
 // choose exact integral type
-#ifndef CGAL_USE_GMP
-#include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float ET;
-#else
+#ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
 #endif
 
 // program and solution types

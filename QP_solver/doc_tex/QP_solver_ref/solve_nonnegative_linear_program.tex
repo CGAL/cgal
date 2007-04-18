@@ -6,9 +6,9 @@ This function solves a nonnegative linear program, using some exact
 Integral Domain \ccc{ET} for its computations. Various
 options may be provided, see \ccc{Quadratic_program_options}. 
 
-\ccFunction{template <NonnegativeLinearProgramInterface, ET>
+\ccFunction{template <NonnegativeLinearProgram, ET>
   Quadratic_program_solution<ET> solve_nonnegative_linear_program 
-  (const NonnegativeLinearProgramInterface& lp, const ET&,
+  (const NonnegativeLinearProgram& lp, const ET&,
   const Quadratic_program_options& options = Quadratic_program_options());}
 {returns the solution of the nonnegative linear program \ccc{lp}, solved
 with exact number type \ccc{ET}.}
@@ -20,7 +20,7 @@ with exact number type \ccc{ET}.}
 
 \ccSeeAlso
 
-The  models of \ccRefIdfierPage{NonnegativeLinearProgramInterface}:
+The  models of \ccRefIdfierPage{NonnegativeLinearProgram}:
 
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}\\

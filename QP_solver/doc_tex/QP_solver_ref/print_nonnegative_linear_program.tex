@@ -6,9 +6,9 @@ This function writes a nonnegative linear program to an output stream
 (in \ccc{MPSFormat}). The time
 complexity is $\Theta (mn)$, even if the program is very sparse.
 
-\ccFunction{template <NonnegativeLinearProgramInterface>
+\ccFunction{template <NonnegativeLinearProgram>
 void print_nonnegative_linear_program 
-(std::ostream& out, const NonnegativeLinearProgramInterface &lp, 
+(std::ostream& out, const NonnegativeLinearProgram &lp, 
  const std::string& problem_name = std::string("MY_MPS"));}
 {writes the nonnegative linear program \ccc{lp} to \ccc{out} in 
 \ccc{MPSFormat}. The name of the program will be the one provided 
@@ -24,6 +24,6 @@ Output operators are defined for all entry types of \ccc{lp}.
 
 The concept
 
-\ccc{NonnegativeLinearProgramInterface}
+\ccc{NonnegativeLinearProgram}
 
 \end{ccRefFunction}

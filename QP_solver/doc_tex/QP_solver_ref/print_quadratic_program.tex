@@ -6,9 +6,9 @@ This function writes a quadratic program to an output stream (in
 \ccc{MPSFormat}). The time complexity is $\Theta (n^2 + mn)$, even 
 if the program is very sparse.
 
-\ccFunction{template <QuadraticProgramInterface>
+\ccFunction{template <QuadraticProgram>
 void print_quadratic_program 
-(std::ostream& out, const QuadraticProgramInterface &qp, 
+(std::ostream& out, const QuadraticProgram &qp, 
  const std::string& problem_name = std::string("MY_MPS"));}
 {writes the quadratic program \ccc{qp} to \ccc{out} in \ccc{MPSFormat}.
 The name of the program will be the one provided by \ccc{problem_name}.}
@@ -23,6 +23,6 @@ Output operators are defined for all entry types of \ccc{qp}.
 
 The concept
 
-\ccc{QuadraticProgramInterface}
+\ccc{QuadraticProgram}
 
 \end{ccRefFunction}

@@ -11,8 +11,10 @@ An object of class \ccRefName\ describes a linear program of the form
 
 
 \ccIsModel
-\ccc{NonnegativeLinearProgramInterface}
-
+\ccc{QuadraticProgram}\\
+\ccc{LinearProgram}\\
+\ccc{NonnegativeQuadraticProgram}\\
+\ccc{NonnegativeLinearProgram}
 
 \ccCreation
 \ccIndexClassCreation
@@ -27,7 +29,7 @@ An object of class \ccRefName\ describes a linear program of the form
   )}{constructs \ccVar\ from given random-access iterators and the constant 
 \ccc{c0}. The passed iterators are merely stored, no copying of the program 
 data takes place. How these iterators are supposed to encode the nonnegative 
-linear program is described in \ccc{NonnegativeLinearProgramInterface}.}
+linear program is described in \ccc{NonnegativeLinearProgram}.}
 
 \ccExample
 
@@ -36,7 +38,7 @@ linear program is described in \ccc{NonnegativeLinearProgramInterface}.}
 \ccReferToExampleCode{QP_solver/convex_hull_containment.cpp}
 
 \ccSeeAlso
-\ccc{NonnegativeLinearProgramInterface}
+\ccc{NonnegativeLinearProgram}
 \ccc{Quadratic_program<NT>}\\
 \ccc{Quadratic_program_from_mps<NT>}
 \end{ccRefClass}

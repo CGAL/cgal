@@ -20,7 +20,7 @@
 
 \input{QP_solver/PkgDescription}
 
-\section{Which programs can be solved?\label{sec:QP-def}}
+\section{Which Programs can be Solved?\label{sec:QP-def}}
 This package lets you solve \emph{convex quadratic programs} of the 
 general form
 %
@@ -43,10 +43,10 @@ case the quadratic program is \emph{infeasible}, or there might be
 feasible solutions of arbitrarily small objective function value, in
 which case the program is \emph{unbounded}.  
 
-\section{Design, efficiency, and robustness}
+\section{Design, Efficiency, and Robustness}
 The design of the package is quite simple. The linear
 or quadratic program to be solved is supplied in form of an object 
-of a class that is a model of the concept \ccc{QuadraticProgramInterface} 
+of a class that is a model of the concept \ccc{QuadraticProgram} 
 (or some specialized other concepts, e.g.\ for linear programs). \cgal\
 provides a number of easy-to-use and flexible models, see Section 
 \ref{sec:QP-first} below. The input data may be of any given number 
@@ -70,7 +70,7 @@ or ``unbounded''), you can verify it yourself by using the certificates.
 Section \ref{sec:QP-certificates} says more about this.
 
 \subsection{Efficiency}
-The concept \ccc{QuadraticProgramInterface} (as well as the
+The concept \ccc{QuadraticProgram} (as well as the
 other specialized ones) require a \emph{dense interface} 
 of the program, in terms of \emph{random-access iterators} over 
 the matrices and vectors of (QP). Zero entries therefore play no
@@ -166,7 +166,7 @@ $\Omega(n^2)$ time already to access all entries of the matrix $D$.
 The solver itself gets away with accessing much less entries of 
 $D$ in the relevant case where $r$, the rank of $D$, is small.
 
-Nevertheless, the solver contains some (suppressable) runtime checks
+Nevertheless, the solver contains some runtime checks
 that may detect that the matrix $D$ is not positive-semidefinite. But
 you may as well get an ``optimal solution'' in this case, even with
 valid certificates. The validity of these certificates, however, 
@@ -176,7 +176,7 @@ your (nonconvex) program, but there are no guarantees whatsoever that
 this is a global optimum, or even a local optimum.
 
 
-\section{How to enter and solve a program\label{sec:QP-first}}
+\section{How to Enter and Solve a Program\label{sec:QP-first}}
 In this section, we describe how you can supply and solve your problem, 
 using the \cgal\ program models and solution functions. 
 There are two essentially different ways to proceed, 
@@ -212,7 +212,7 @@ Figure \ref{fig:QP-first_qp} shows a picture. It
 depicts the five inequalities of the program, along with the
 \emph{feasible region} (green), the set of points that satisfy all the
 five constraints. The dashed elliptic curves represent \emph{contour lines} 
-of the objective function, i.e. along each dashed curve, the objective
+of the objective function, i.e., along each dashed curve, the objective
 function value is constant. 
 
 The global minimum of the objective function is attained at 
@@ -247,14 +247,14 @@ internal computations. For examples
 how to work with the input type \ccc{double}, we refer to 
 Sections \ref{sec:QP-iterators} and \ref{sec:QP-customization}.
 
-{\bf Note:} in specifying $D$, we have to provide the entries
-of the matrix $2D$. Although this is common to almost all
-quadratic programming solvers, it can easily be overlooked by
-a novice.
+{\bf Note:} For the quadratic objective function, the entries 
+of the matrix $2D$ have to be provided, rather than $D$. Although 
+this is common to almost all quadratic programming solvers, it 
+can easily be overlooked by a novice.
 
 \ccIncludeExampleCode{QP_solver/first_qp.cpp}
 
-The output of the following program will be:
+The output of the above program is:
 \begin{verbatim}
 status:          OPTIMAL
 objective value: 8/1
@@ -286,17 +286,17 @@ example where it makes sense to use the iterator-based approach.
 
 {\bf Note 1:} The example shows an interesting feature of this approach:
 not all data need to come from containers. Here, the iterator over the
-vector $\qprel$ of relations can be provided through the class
+vector of relations can be provided through the class
 \ccc{Const_oneset_iterator<T>}, since all entries of this vector
 are equal to \ccc{CGAL::SMALLER}. The same could have been done with
 the vector \ccc{fl} for the finiteness of the lower bounds. 
 
 {\bf Note 2:} The program type looks a bit scary, with its total of
 9 template arguments, one for each iterator type. In Section
-\ref{sec:QP-iterators} we show how the explicit construction of
+\ref{sec:QP-makers} we show how the explicit construction of
 this type can be circumvented.
 
-\section{Solving linear and nonnegative programs\label{sec:QP-lp}}
+\section{Solving Linear and Nonnegative Programs\label{sec:QP-lp}}
 Let us reconsider the general form of (QP) from Section \ref{sec:QP-def} 
 above. If $D=0$, the quadratic program is in fact a \emph{linear program},
 and in the case that the bound vectors $l$ is the zero vector and all 
@@ -329,10 +329,10 @@ be checked in time $O(n)$ beforehand, but then again nonnegative
 programs are so frequent that the syntactic sugar aspect becomes
 somewhat important. After all, we can save four iterators in 
 specifying a nonnegative linear program in terms of the concept 
-\ccc{NonnegativeLinearProgramInterface} rather than 
-\ccc{LinearProgramInterface}.
+\ccc{NonnegativeLinearProgram} rather than 
+\ccc{LinearProgram}.
 
-Often, there are no bounds at all for the variables, i.e.\ all entries
+Often, there are no bounds at all for the variables, i.e., all entries
 of $\qpl$ are $-\infty$, and all entries of $\qpu$ 
 are $\infty$ (this is
 called a \emph{free} program). There is no dedicated solution method
@@ -482,7 +482,7 @@ variable values:
   1: 11/3
 \end{verbatim}
 
-\section{Working from iterators\label{sec:QP-iterators}}
+\section{Working from Iterators\label{sec:QP-iterators}}
 Here we present a somewhat more advanced example that emphasizes the
 usefulness of solving linear and quadratic programs from iterators. 
 Let's look at a situation in which a linear program is given implicitly, 
@@ -533,7 +533,7 @@ most. As the exact type, we use \ccc{MP_Float}.
 
 \ccIncludeExampleCode{QP_solver/convex_hull_containment.cpp}
 
-\subsection{Using makers}
+\subsection{Using makers}\label{sec:QP-makers}
 You already noticed in the previous example that the actual 
 template arguments for 
 \ccc{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
@@ -555,7 +555,7 @@ readable code.
 \ccIncludeExampleCode{QP_solver/solve_convex_hull_containment_lp2.h}
 
 
-\section{Important variables and constraints}
+\section{Important Variables and Constraints}
 If you have a solution $\qpx^*$ of a linear or quadratic program,
 the ``important'' variables are typically the ones that are not on
 their bounds. In case of a nonnegative program, these are the nonzero
@@ -599,7 +599,7 @@ basic constraints are satisfied with equality at $\qpx^*$, but there
 might be non-basic constraints that are satisfied with equality
 as well.
 
-\section{Solution certificates\label{sec:QP-certificates}}
+\section{Solution Certificates\label{sec:QP-certificates}}
 Suppose the solver tells you that the problem you have entered is
 infeasible. Why should you believe this? Similarly, you can
 quite easily verify that a claimed optimal solution is feasible,
@@ -652,7 +652,7 @@ bounds. The certificate section of \ccc{Quadratic_program_solution<ET>}
 gives the full picture and mathematically proves the correctness
 of the certificates.
 
-\section{Customizing the solver\label{sec:QP-customization}}
+\section{Customizing the Solver\label{sec:QP-customization}}
 Sometimes it is necessary to alter the default behavior of the solver.
 The most notable case is when the solver internally cycles. Consider
 the following program. It reads a nonnegative linear program from the

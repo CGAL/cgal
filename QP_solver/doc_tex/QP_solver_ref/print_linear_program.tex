@@ -6,9 +6,9 @@ This function writes a linear program to an output stream (in
 \ccc{MPSFormat}). The time
 complexity is $\Theta (mn)$, even if the program is very sparse.
 
-\ccFunction{template <LinearProgramInterface>
+\ccFunction{template <LinearProgram>
 void print_linear_program 
-(std::ostream& out, const LinearProgramInterface &lp, 
+(std::ostream& out, const LinearProgram &lp, 
  const std::string& problem_name = std::string("MY_MPS"));}
 {writes the linear program \ccc{lp} to \ccc{out} in 
 \ccc{MPSFormat}. The name of the program will be the one provided 
@@ -24,5 +24,5 @@ Output operators are defined for all entry types of \ccc{lp}.
 
 The concept
 
-\ccc{LinearProgramInterface}
+\ccc{LinearProgram}
 \end{ccRefFunction}
