@@ -41,20 +41,28 @@ int main()
     std::string file_name = os.str();
 
     std::ifstream infile(file_name.c_str(), std::ios::in);
+    if (!infile) {
+      std::cout << "Unable to open file " << os.str()
+                << "  ... skipping it." << std::endl;
+      continue;
+    }
+
     double iXSize, iYSize;
     unsigned int x_samples, y_samples;
     iXSize = iYSize = 512;
-    infile >> x_samples;
-    infile >> y_samples;
+    infile >> x_samples >> y_samples;
     Field regular_grid_2(x_samples, y_samples, iXSize, iYSize);
     /*fill the grid with the appropriate values*/
     for (unsigned int i=0;i<x_samples;i++)
       for (unsigned int j=0;j<y_samples;j++)
     {
       double xval, yval;
-      infile >> xval;
-      infile >> yval;
+      infile >> xval >> yval;
       regular_grid_2.set_field(i, j, Vector_2(xval, yval));
+    }
+    if (!infile) {
+      std::cout << "An error occurred while parsing file "
+                << os.str() << std::endl;
     }
     infile.close();
     std::cout << "processing... (" << file_name << ")\n";
