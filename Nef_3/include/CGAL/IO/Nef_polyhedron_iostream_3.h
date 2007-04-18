@@ -30,7 +30,11 @@ std::ostream& operator<<
  (std::ostream& os, Nef_polyhedron_3<Kernel,Items,Mark>& NP)
 {
   typedef typename Nef_polyhedron_3<Kernel,Items, Mark>::SNC_structure SNC_structure;
-  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc(),true);
+#ifdef CGAL_NEF3_SORT_OUTPUT
+  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc(), true);
+#else
+  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc());
+#endif
   O.print();
   return os;
 }
