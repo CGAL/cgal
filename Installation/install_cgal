@@ -1085,8 +1085,11 @@ set_compiler_flags()
     case `compiler_description` in
 	*GNU*)
 	    case `compiler_version` in
-		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-50";;
 		3.*) : ;;
+		4.2*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math"
+
+	              CGAL_LIBS_OPTFLAGS="${CGAL_LIBS_OPTFLAGS} -fno-strict-aliasing" # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=31268
+                      ;;
 		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
