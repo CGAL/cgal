@@ -29,7 +29,7 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
 //! from P1 to P2
 template<class P1, class P2, class Converter_t =
-	 NT_converter<typename P1::NT,typename P2::NT> >
+	 CGAL_POLYNOMIAL_NS::NT_converter<typename P1::NT,typename P2::NT> >
 class Polynomial_converter
 {
   class Iterator
