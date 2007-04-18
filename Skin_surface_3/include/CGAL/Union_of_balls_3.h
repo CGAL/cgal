@@ -91,12 +91,12 @@ template < class WP_iterator >
 Union_of_balls_3<MixedComplexTraits_3>::
 Union_of_balls_3(WP_iterator begin, WP_iterator end, 
                  Gt gt_,
-                 bool verbose) 
-  : Base(begin, end, 1, false, gt_, verbose) {
+                 bool _verbose) 
+  : Base(begin, end, 1, false, gt_, _verbose) {
     
   // Construct the Triangulated_mixed_complex:
   Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
-  triangulate_power_diagram_3(regular(), triangulated_mixed_complex(), observer, verbose);
+  triangulate_power_diagram_3(regular(), triangulated_mixed_complex(), observer, _verbose);
 
   CGAL_assertion(triangulated_mixed_complex().dimension() == 3);
 //   { // NGHK: debug code:
