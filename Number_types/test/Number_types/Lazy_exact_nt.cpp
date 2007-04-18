@@ -202,5 +202,12 @@ int main ()
   two!=1.0; 1.0!=two;
   two==1.0; 1.0==two;
 
+  zwei<1.0; 1.0<zwei;
+  zwei>1.0; 1.0>zwei;
+  zwei<=1.0; 1.0<=zwei;
+  zwei>=1.0; 1.0>=zwei;
+  zwei!=1.0; 1.0!=zwei;
+  zwei==1.0; 1.0==zwei;
+
   return 0;
 }

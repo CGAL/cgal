@@ -65,7 +65,8 @@ class Quotient
   : boost::ordered_field_operators1< Quotient<NT_>
   , boost::ordered_field_operators2< Quotient<NT_>, NT_
   , boost::ordered_field_operators2< Quotient<NT_>, CGAL_int(NT_)
-    > > >
+  , boost::ordered_field_operators2< Quotient<NT_>, CGAL_double(NT_)
+    > > > >
 {
  public:
   typedef NT_        NT;
@@ -104,6 +105,10 @@ class Quotient
   Quotient<NT>& operator-= (const CGAL_int(NT)& r);
   Quotient<NT>& operator*= (const CGAL_int(NT)& r);
   Quotient<NT>& operator/= (const CGAL_int(NT)& r);
+  Quotient<NT>& operator+= (const CGAL_double(NT)& r);
+  Quotient<NT>& operator-= (const CGAL_double(NT)& r);
+  Quotient<NT>& operator*= (const CGAL_double(NT)& r);
+  Quotient<NT>& operator/= (const CGAL_double(NT)& r);
 
   Quotient<NT>&    normalize();
 
@@ -279,6 +284,43 @@ Quotient<NT>::operator/= (const CGAL_int(NT)& r)
 
 template <class NT>
 CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator+= (const CGAL_double(NT)& r)
+{
+    num += r * den;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator-= (const CGAL_double(NT)& r)
+{
+    num -= r * den;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator*= (const CGAL_double(NT)& r)
+{
+    num *= r;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator/= (const CGAL_double(NT)& r)
+{
+    CGAL_precondition( r != 0 );
+    den *= r;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
 Comparison_result
 quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
 {
@@ -399,6 +441,12 @@ bool
 operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
 { return x.den * y == x.num; }
 
+template <class NT>
+inline
+bool
+operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
+{ return x.den * y == x.num; }
+
 
 
 template <class NT>
@@ -425,6 +473,14 @@ operator<(const Quotient<NT>& x, const CGAL_int(NT)& y)
   return quotient_cmp(x,Quotient<NT>(y)) == SMALLER;
 }
 
+template <class NT>
+CGAL_MEDIUM_INLINE
+bool
+operator<(const Quotient<NT>& x, const CGAL_double(NT)& y)
+{
+  return quotient_cmp(x,Quotient<NT>(y)) == SMALLER;
+}
+
 
 template <class NT>
 inline
@@ -436,6 +492,12 @@ template <class NT>
 inline
 bool
 operator>(const Quotient<NT>& x, const CGAL_int(NT)& y)
+{ return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
+
+template <class NT>
+inline
+bool
+operator>(const Quotient<NT>& x, const CGAL_double(NT)& y)
 { return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
 
 
