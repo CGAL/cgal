@@ -10,8 +10,7 @@
 %% $Date$
 %% =============================================================================
 
-\chapter{Portability Issues}
-\label{chap:portability}
+\chapter{Portability Issues\label{chap:portability}}
 \ccChapterRelease{Chapter Version: 1.0}
 \ccChapterAuthor{Michael Hoffmann ({\tt hoffmann@inf.ethz.ch})\\
                  Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})\\
@@ -43,8 +42,7 @@ Section~\ref{sec:workaround_flags} to get an idea of which ``features'' are
 still present.  
 
 \ccIndexMainItemBegin{configuration}
-\section{Checking for \leda\ or GMP support}
-\label{sec:leda_gmp_support}
+\section{Checking for \leda\ or GMP support\label{sec:leda_gmp_support}}
 \ccIndexSubsubitem{\leda}{support}{checking for}
 %\index{leda support@\leda\ support!checking for}
 \index{gmp support@GMP support!checking for}
@@ -63,8 +61,7 @@ CGAL_USE_LEDA, CGAL_USE_GMP
 \index{flag!for GMP}
 iff \cgal\ is configured with \leda\ or GMP support, respectively.
 
-\section{Using Boost}
-\label{sec:boost_support}
+\section{Using Boost\label{sec:boost_support}}
 \cgal\ code can rely on Boost libraries to some extent.
 
 Boost was installed with \cgal\ Release 3.1, and is no longer
@@ -116,8 +113,7 @@ with question marks are not decided yet) :
 
 
 
-\section{Using the version-number and configuration macros and flags}
-\label{sec:using_version_macros}
+\section{Using the version-number and configuration macros and flags\label{sec:using_version_macros}}
 \index{LEDA macro@{\tt \_\_LEDA\_\_} macro!using}
 \index{CGAL_USE_LEDA flag@{\tt CGAL\_USE\_LEDA} flag!using}
 \index{CGAL_USE_GMP flag@{\tt CGAL\_USE\_GMP} flag!using}
@@ -136,8 +132,7 @@ piece of code that depends on whether you have \leda-4.0 or later.
 #endif 
 \end{verbatim}
 
-\section{Identifying compilers and architectures}
-\label{sec:which_compiler}
+\section{Identifying compilers and architectures\label{sec:which_compiler}}
 \ccIndexSubitem{compilers}{identifying}
 \ccIndexSubitem{macros}{for compiler identification}
 \ccIndexSubitem{flag}{for copmiler}
@@ -171,8 +166,7 @@ SUN 5.3         & \texttt{\_\_SUNPRO\_CC}           & 0x530\\
     Linux & \texttt{\_\_linux}\\
 \end{tabular}}\vspace{5mm}
 
-\section{Known problems and workarounds}
-\label{sec:problems_and_workarounds}
+\section{Known problems and workarounds\label{sec:problems_and_workarounds}}
 
 For (good) reasons that will not be discussed here, it was decided to
 use \CC\ for the development of \cgal. An international standard for
@@ -180,8 +174,7 @@ use \CC\ for the development of \cgal. An international standard for
 level of compliance varies widely between different
 compilers\index{C++ standard@\CC\ standard}, let alone bugs.
 
-\subsection{Workaround flags}
-\label{sec:workaround_flags}
+\subsection{Workaround flags\label{sec:workaround_flags}}
 \ccIndexMainItemBegin{workaround flags}
 
 In order to provide a uniform development environment for \cgal\ that
@@ -371,8 +364,7 @@ uptodate version of this list.
 \end{description}
 \ccIndexMainItemEnd{workaround flags}
 
-\subsection{Macros connected to workarounds/compilers}
-\label{sec:workaround_macros}
+\subsection{Macros connected to workarounds/compilers\label{sec:workaround_macros}}
 \ccIndexSubitemBegin{macros}{for workarounds}
 
 Some macros are defined according to certain workaround flags. This is
@@ -398,8 +390,7 @@ done to avoid some \texttt{\#ifdef}s in our actual code.
 \ccIndexSubitemEnd{macros}{for workarounds}
 
 
-\subsection{Various other problems and solutions}
-\label{sec:various_problems}
+\subsection{Various other problems and solutions\label{sec:various_problems}}
 
 %\subsection{The Long-name Problem}
 %\label{sec:long_name_problem}
@@ -498,8 +489,7 @@ into, {\textit e.g.,} :
 
 
 \InternalOnly{
-\section{Requirements and recommendations}
-\label{sec:portability_req_and_rec}
+\section{Requirements and recommendations\label{sec:portability_req_and_rec}}
 }
 \InternalOnly{
 \noindent

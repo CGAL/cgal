@@ -9,8 +9,7 @@
 % $Date$
 % =============================================================================
 
-\chapter{Iterators and Circulators (and Handles)}
-\label{chap:iterators_and_circulators}
+\chapter{Iterators and Circulators (and Handles)\label{chap:iterators_and_circulators}}
 \ccIndexMainItemBegin{iterators}
 \ccIndexMainItemBegin{circulators}
 \ccIndexMainItemBegin{\stl} 
@@ -68,8 +67,7 @@ categories (forward, bidirectional, random-access, etc.) of iterators and
 circulators.
 
 
-\section{Iterator and circulator traits}
-\label{sec:iterator_traits}
+\section{Iterator and circulator traits\label{sec:iterator_traits}}
 \ccIndexMainItemBegin{iterator traits}
 
 The algorithms working with iterators and/or circulators often need to refer
@@ -112,8 +110,7 @@ struct iterator_traits<T*> {
 \ccIndexMainItemEnd{iterator traits}
 
 
-\section{Input and output iterators}
-\label{sec:input_and_output_iterators}
+\section{Input and output iterators\label{sec:input_and_output_iterators}}
 \ccIndexSubitemBegin{iterators}{input}
 \ccIndexSubitemBegin{iterators}{output}
 
@@ -357,8 +354,7 @@ so they can be used with generic algorithms from the \stl\ and other
 these goals.
 
 
-\subsection{Handle, iterator, or circulator?}
-\label{sec:handle_vs_it_vs_circ}
+\subsection{Handle, iterator, or circulator?\label{sec:handle_vs_it_vs_circ}}
 \ccIndexSubitem{handles}{when to use}
 \ccIndexSubitem{iterators}{when to use}
 \ccIndexSubitem{circulators}{when to use}
@@ -370,8 +366,7 @@ In contrast, iterators should be used when you want to move (that is,
 iterate) over a linear sequences of elements.
 When the sequence is circular, prefer a circulator over an iterator.
 
-\subsection{Writing functions for iterators AND circulators}
-\label{sec:it_and_circ_code}
+\subsection{Writing functions for iterators AND circulators\label{sec:it_and_circ_code}}
 \ccIndexSubitem{iterators}{writing code for}
 \ccIndexSubitem{circulators}{writing code for}
 
@@ -416,8 +411,7 @@ over either a linear or circular sequence:
 See the \ccAnchor{http://www.cgal.org/Manual/doc_html/support_lib/Circulator/Chapter_circulator.html}{Circulator documentation} in the
 Support Library Reference Manual for more information and examples.
 
-\subsection{Writing an iterator for your container}
-\label{sec:class_iterator}
+\subsection{Writing an iterator for your container\label{sec:class_iterator}}
 \ccIndexSubitemBegin{iterators}{writing}
 \ccIndexSubitemBegin{containers}{iterators for}
 
@@ -446,8 +440,7 @@ for iterators and their access functions.
 \ccIndexSubitemEnd{containers}{iterators for}
 \ccIndexSubitemEnd{iterators}{writing}
 
-\subsection{Writing a circulator for your container}
-\label{sec:class_circulator}
+\subsection{Writing a circulator for your container\label{sec:class_circulator}}
 \ccIndexSubitemBegin{circulators}{writing}
 \ccIndexSubitemBegin{containers}{circulators for}
 
@@ -467,8 +460,7 @@ that end in the suffix \ccc{_circulator} (Section~\ref{sec:naming_scheme}).
 
 \InternalOnly{
 
-\section{Requirements and recommendations}
-\label{it_and_circ:it_and_circ_req_and_rec}
+\section{Requirements and recommendations\label{it_and_circ:it_and_circ_req_and_rec}}
 
 \noindent
 Requirements:

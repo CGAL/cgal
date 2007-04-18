@@ -38,8 +38,7 @@ used to model the streamlines and the spaces within the domain
 \end{center}
 \end{figure}
 
-\section{Definitions}
-\label{Section_2D_Streamlines_Definitions}
+\section{Definitions\label{Section_2D_Streamlines_Definitions}}
 
 In physics, a \ccc{field} is an assignment of a quantity to every
 point in space. For example, a gravitational field assigns a
@@ -64,8 +63,7 @@ domain with a set of tangential streamlines in accordance with a
 specified \ccc{density}, determined by the \ccc{separating distance}
 between the streamlines.
 
-\section{Fundamental Notions}
-\label{Section_2D_Streamlines_Fundamental_notions}
+\section{Fundamental Notions\label{Section_2D_Streamlines_Fundamental_notions}}
 
 A streamline can be considered as the path traced by an imaginary
 massless particle dropped into a steady fluid flow described by the
@@ -141,8 +139,7 @@ $$
 See~\cite{cgal:ptvf-nrcpp-02} for further details about numerical
 integration.
 
-\section{Farthest Point Seeding Strategy}
-\label{Section_2D_Streamlines_Strategy}
+\section{Farthest Point Seeding Strategy\label{Section_2D_Streamlines_Strategy}}
 
 The algorithm implemented in this package~\cite{cgal:mad-fpsep-05}
 consists of placing one streamline at a time by numerical integration
@@ -190,8 +187,7 @@ Our algorithm terminates when the priority queue is empty. The size of
 the biggest cavity being monotonically decreasing, our algorithm
 guarantees the domain saturation.
 
-\section{Implementation}
-\label{Section_2D_Streamlines_Implementation}
+\section{Implementation\label{Section_2D_Streamlines_Implementation}}
 
 Streamlines are represented as polylines, and are obtained by
 iterative integration from the seed point. A polyline is represented as a range of points. The computation is
@@ -202,8 +198,7 @@ To implement the triangular grid, the \cgal\
 to store candidate seed points is taken from the Standard Template
 Library~\cite{cgal:sgcsi-stlpg-97}.
 
-\section{Examples}
-\label{Section_2D_Streamlines_Example}
+\section{Examples\label{Section_2D_Streamlines_Example}}
 
 The first example illustrates the generation of a 2D streamline
 placement from a vector field defined on a regular grid.

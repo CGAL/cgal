@@ -9,8 +9,7 @@
 % $Date$
 % =============================================================================
 
-\chapter{Traits Classes}
-\label{chap:traits_classes}
+\chapter{Traits Classes\label{chap:traits_classes}}
 \ccChapterRelease{Chapter Version: 1.0}
 \ccChapterAuthor{Bernd G\"artner ({\tt gaertner@inf.ethz.ch})}
 \ccIndexMainItemBegin{traits class}
@@ -21,8 +20,7 @@ class'' comes from a standard \CC\ design pattern
 follow this design pattern. In \cgal, traits classes are something
 different, although the philosophy is similar in a certain sense.
 
-\section{What are traits classes in \cgal?} 
-\label{sec:what_is_a_traits_class}
+\section{What are traits classes in \cgal?\label{sec:what_is_a_traits_class}}
 \ccIndexMainItemDef{traits class}
 
 The algorithms in \cgal's basic library are implemented as function templates
@@ -33,8 +31,7 @@ define the interface between the algorithm and the geometric (or numeric)
 primitives it uses.  Any concrete class that serves as a model for this 
 concept is a traits class for the given algorithm or data structure.
 
-\section{Why are traits classes in \cgal?}
-\label{sec:why_traits_classes}
+\section{Why are traits classes in \cgal?\label{sec:why_traits_classes}}
 
 Using traits concepts as template parameters allows for customization
 of the behavior of algorithms without changing implementations.  At
@@ -59,8 +56,7 @@ the proper primitives through a proper initialization of the traits
 class object.  For this reason, traits class objects are passed as
 parameters to functions.\ccIndexSubitem{traits class}{as parameter}
 
-\section{An example -- planar convex hulls}
-\label{sec:traits_class_example}
+\section{An example -- planar convex hulls\label{sec:traits_class_example}}
 \ccIndexSubitemBegin{traits class}{example}
 
 Consider convex hulls in the plane. What are the geometric primitives a 
@@ -99,8 +95,7 @@ test, while \ccc{Less_xy_2} does the sorting. So, obviously, the traits class
 must provide these three identifiers. The requirements it has to satisfy
 beyond that are documented in full with the concept ConvexHullTraits\_2.
 
-\subsection{Traits class requirements}
-\label{subsec:traits_class_requirements}
+\subsection{Traits class requirements\label{subsec:traits_class_requirements}}
 \ccIndexSubitemBegin{traits class}{requirements}
 
 Whenever you write a function or class that is  parameterized with a traits
@@ -184,8 +179,7 @@ the Graham Scan, a traits class meeting only the specifications listed above
 is sufficient.
 \ccIndexSubitemEnd{traits class}{requirements}
 
-\subsection{\cgal-provided traits classes}
-\label{subsec:cgal_traits_classes}
+\subsection{\cgal-provided traits classes\label{subsec:cgal_traits_classes}}
 \ccIndexSubitemBegin{traits class}{providing}
 
 As mentioned in Section~\ref{sec:what_is_a_traits_class},
@@ -221,8 +215,7 @@ the specified requirements.
 \ccIndexSubitemEnd{traits class}{example}
 
 
-\section{Kernel as traits} 
-\label{sec:kernel_traits}
+\section{Kernel as traits\label{sec:kernel_traits}}
 
 \ccIndexSubitemBegin{kernel}{as traits} %
 Most default traits classes in \cgal\ are written in terms of the
@@ -239,8 +232,7 @@ be used to make the library more consistent and thus easier to use.
 \ccIndexSubitemEnd{kernel}{as traits} %
 
 \InternalOnly{
-\section{Requirements and recommendations}
-\label{sec:traits_class_req_and_rec}
+\section{Requirements and recommendations\label{sec:traits_class_req_and_rec}}
 \ccIndexSubitemBegin{traits class}{design}
 
 This section condenses the previous material into a few guidelines you

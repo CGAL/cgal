@@ -28,8 +28,7 @@ discuss the traits required for performing the adaptation, and finally
 in Section~\ref{sec:vda2-examples} we present a few examples using
 this adaptor.
 
-\section{Introduction}
-\label{sec:vda2-intro}
+\section{Introduction\label{sec:vda2-intro}}
 
 A Voronoi diagram is typically defined for a set of objects, also
 called sites in the sequel, that lie in some space $\Sigma$ and a
@@ -178,8 +177,7 @@ Section~\ref{sec:vda2-ap} we discuss the issue in more detail.
 
 
 
-\section{Software Design}
-\label{sec:vda2-design}
+\section{Software Design\label{sec:vda2-design}}
 
 The \ccc{Voronoi_diagram_2<DG,AT,AP>} class is parameterized by
 three template parameters. The first one must be a model of the
@@ -281,8 +279,7 @@ face) on which $p$ lies.
 %an incircle test.
 
 
-\section{The Adaptation Traits}
-\label{sec:vda2-traits}
+\section{The Adaptation Traits\label{sec:vda2-traits}}
 
 The \ccc{AdaptationTraits_2} concept defines the types and
 functor required by the adaptor in order to access geometric
@@ -330,8 +327,7 @@ support nearest site queries:
   provides the adaptation traits for segment Delaunay graphs.
 \end{itemize}
 
-\section{The Adaptation Policy}
-\label{sec:vda2-ap}
+\section{The Adaptation Policy\label{sec:vda2-ap}}
 
 As mentioned above, when we perform the adaptation of a triangulated
 Delaunay graph to a Voronoi diagram, a question that arises is whether
@@ -515,8 +511,7 @@ three caching degeneracy removal policies support on-line insertions.
 
 
 
-\subsection{Efficiency Considerations}
-\label{subsec:vda2-efficiency}
+\subsection{Efficiency Considerations\label{subsec:vda2-efficiency}}
 
 One last item that merits some discussion are the different choices
 from the point of view of time- and space-efficiency.

@@ -37,8 +37,7 @@
 }
 
 
-\chapter{Specification Documentation}
-\label{chap:specification}
+\chapter{Specification Documentation\label{chap:specification}}
 \ccChapterRelease{Chapter Version: 2.0}
 \ccChapterAuthor{Susan Hert ({\tt hert@mpi-sb.mpg.de})\\
                  Lutz Kettner ({\tt kettner@mpi-sb.mpg.de}) }
@@ -110,8 +109,7 @@ Section~\ref{sec:specification_req_and_rec} concludes with the
 requirements and recommendations for the specification documentation.
 
 % =============================================================================
-\section{File and directory organization}
-\label{sec:files_required}
+\section{File and directory organization\label{sec:files_required}}
 \ccIndexSubitemBegin{manuals}{source files}
 \ccIndexSubitemBegin{source files}{documentation}
 
@@ -220,8 +218,7 @@ Section~\ref{subsec:wrapper_module_manual} lists an example wrapper file:
 
 
 % =============================================================================
-\section{The manual tools}
-\label{sec:manual_tools}
+\section{The manual tools\label{sec:manual_tools}}
 \ccModifierCrossRefOff
 \ccIndexSubitemBegin{tools}{manual}
 
@@ -587,8 +584,7 @@ come with this package that can be of independent interest.
 \ccModifierCrossRefOn
 
 % -----------------------------------
-\subsection{Example wrapper file for a module manual}
-\label{subsec:wrapper_module_manual}
+\subsection{Example wrapper file for a module manual\label{subsec:wrapper_module_manual}}
 
 The \texttt{cgal\_manual} program can be used with the option
 \texttt{-wrapper} to create the default wrapper file for a particular
@@ -796,8 +792,7 @@ The additional macros defined are:
 
 
 % =============================================================================
-\section{Users' manual}
-\label{sec:users_manual}
+\section{Users' manual\label{sec:users_manual}}
 \ccIndexMainItemBegin{users' manual}
 
 In contrast to the reference manual, the users' manual is intended to be
@@ -921,8 +916,7 @@ example, you might say:
 
 
 % =============================================================================
-\section{Reference manual}
-\label{sec:ref_manual}
+\section{Reference manual\label{sec:ref_manual}}
 \ccIndexMainItemBegin{reference manual}
 
 The reference manual is meant to be a place where programmers already
@@ -980,8 +974,7 @@ commands for each section.  See
 for a full description of these environments and the other commands
 available.
 
-\subsection{Section headings}
-\label{sec:section_headings}
+\subsection{Section headings\label{sec:section_headings}}
 \ccIndexSubitemBegin{reference manual}{section headings}
 
 The following commands defined in {\tt cc\_manual.sty} produce non-numbered
@@ -1027,8 +1020,7 @@ that are empty for a particular item should, obviously, be left out.
 \ccIndexSubitemEnd{reference manual}{section headings}
 
 
-\subsection{Classes}
-\label{sec:ref_class}
+\subsection{Classes\label{sec:ref_class}}
 \ccIndexSubitemBegin{reference manual}{classes}
 \ccIndexSubitem{classes}{documenting}
 
@@ -1050,8 +1042,7 @@ provides all types and operations required by a concept it models.  The
 point is to document the implementation details here so people can find
 out, for example, exactly what type of point is being used in the computation.
 
-\subsection{Concepts}
-\label{sec:ref_concept}
+\subsection{Concepts\label{sec:ref_concept}}
 \ccIndexSubitemBegin{reference manual}{concepts}
 \ccIndexSubitem{concepts}{documenting}
 
@@ -1066,8 +1057,7 @@ the heading produced by  \verb|\ccHasModels| you should list  the classes
 in the library that are models for this concept.
 \ccIndexSubitemEnd{reference manual}{concepts}
 
-\subsection{Constants}
-\label{sec:ref_constant}
+\subsection{Constants\label{sec:ref_constant}}
 \ccIndexSubitemBegin{reference manual}{constants}
 \ccIndexSubitem{constants, global}{documenting}
 
@@ -1084,8 +1074,7 @@ should be formatted using \verb|\ccGlobalVariable|.
 Another possible section heading here is \verb|\ccSeeAlso|.
 \ccIndexSubitemEnd{reference manual}{constants}
 
-\subsection{Enums}
-\label{sec:ref_enums}
+\subsection{Enums\label{sec:ref_enums}}
 \ccIndexSubitemBegin{reference manual}{enums}
 \ccIndexSubitem{enumerations}{documenting}
 
@@ -1099,8 +1088,7 @@ other section headings listed in Section~\ref{sec:section_headings} as
 appropriate ({\em e.g.}, \verb|\ccSeeAlso|, or \verb|\ccExample|).
 \ccIndexSubitemEnd{reference manual}{enums}
 
-\subsection{Functions}
-\label{sec:ref_function}
+\subsection{Functions\label{sec:ref_function}}
 \ccIndexSubitemBegin{reference manual}{functions}
 \ccIndexSubitem{functions}{documenting}
 
@@ -1122,8 +1110,7 @@ of the function should be documented using \verb|\ccPrecond| and
 \verb|\ccSeeAlso|, \verb|\ccImplementation|, and \verb|\ccExample|.
 \ccIndexSubitemEnd{reference manual}{functions}
 
-\subsection{Function Object Classes}
-\label{sec:ref_function_object_class}
+\subsection{Function Object Classes\label{sec:ref_function_object_class}}
 \ccIndexSubitemBegin{reference manual}{function object classes}
 \ccIndexSubitem{function object classes}{documenting}
 \ccIndexSubsubitem{classes}{function object}{documenting}
@@ -1138,8 +1125,7 @@ member functions (a set of \ccc{operator()} functions) should be
 listed. Another possible heading here is \verb|\ccSeeAlso|.
 \ccIndexSubitemEnd{reference manual}{function object classes}
 
-\subsection{Function Object Concepts}
-\label{sec:ref_function_object_concept}
+\subsection{Function Object Concepts\label{sec:ref_function_object_concept}}
 \ccIndexSubitemBegin{reference manual}{function object concepts}
 \ccIndexSubitem{function object concepts}{documenting}
 \ccIndexSubsubitem{concepts}{function object}{documenting}
@@ -1155,8 +1141,7 @@ under \verb|\ccHasModels| list the classes that are models of this
 concept.
 \ccIndexSubitemEnd{reference manual}{function object concepts}
 
-\subsection{Macros}
-\label{sec:ref_macro}
+\subsection{Macros\label{sec:ref_macro}}
 \ccIndexSubitemBegin{reference manual}{macros}
 \ccIndexSubitem{macros}{documenting}
 
@@ -1169,8 +1154,7 @@ defined.  Following this, the macro together with its arguments should
 be formatted using \verb|\ccc|.
 \ccIndexSubitemEnd{reference manual}{macros}
 
-\subsection{Variables}
-\label{sec:ref_variable}
+\subsection{Variables\label{sec:ref_variable}}
 \ccIndexSubitemBegin{reference manual}{variables}
 \ccIndexSubitem{variables, global}{documenting}
 %\ccIndexSubitem{types, global}{documenting}
@@ -1190,8 +1174,7 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 
 
 % =============================================================================
-\section{Figures}
-\label{sec:doc_figures}
+\section{Figures\label{sec:doc_figures}}
 \ccIndexSubitemBegin{manuals}{figures}
 
 When including pictures in your documentation, you must provide versions
@@ -1267,8 +1250,7 @@ instead of the bottom (and thus be visible in the browser).
 
 
 % =============================================================================
-\section{Indexing}
-\label{sec:indexing}
+\section{Indexing\label{sec:indexing}}
 \ccIndexSubitemBegin{index}{PostScript}
 \ccIndexSubitemBegin{manuals}{index}
 
@@ -1309,8 +1291,7 @@ should and should not be indexed.
 
 
 % =============================================================================
-\section{Test suite}
-\label{sec:doc_test_suite}
+\section{Test suite\label{sec:doc_test_suite}}
 \ccIndexSubitemBegin{manuals}{test suite}
 \ccIndexSubitemBegin{test suite}{for manuals}
 
@@ -1336,8 +1317,7 @@ any problems.
 
 
 % =============================================================================
-\section{Common problems and solutions}
-\label{sec:common_problems}
+\section{Common problems and solutions\label{sec:common_problems}}
 
 \subsection*{Problem --- Undesired Links in HTML Manual}
 \ccIndexSubsubitemBegin{manuals}{HTML}{preventing links}
@@ -1487,8 +1467,7 @@ program with the same name in the same package, so try to avoid this.
 
 
 % =============================================================================
-\section{Requirements and recommendations}
-\label{sec:specification_req_and_rec}
+\section{Requirements and recommendations\label{sec:specification_req_and_rec}}
 
 \noindent
 Requirements:

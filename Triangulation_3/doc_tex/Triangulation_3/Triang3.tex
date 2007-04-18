@@ -22,8 +22,7 @@ partition of $\R^3$. Its cells ($3$-faces) are such that two cells
 either do not intersect or share a common facet ($2$-face), edge
 ($1$-face) or vertex ($0$-face).
 
-\section{Representation}
-\label{Triangulation3-sec-intro}
+\section{Representation\label{Triangulation3-sec-intro}}
 
 In order to deal
 only with tetrahedra, which is convenient for many applications, the
@@ -152,8 +151,7 @@ and vertex removal.
 The user is advised to use the class \ccc{Triangulation_hierarchy_3} in
 order to benefit from an increased efficiency for large data sets. 
 
-\section{Regular Triangulation} 
-\label{Triangulation3-sec-class-Regulartriangulation}
+\section{Regular Triangulation\label{Triangulation3-sec-class-Regulartriangulation}}
 
 The class \ccc{Regular_triangulation_3} implements incremental regular
 triangulations, also known as weighted Delaunay triangulations.
@@ -227,8 +225,7 @@ Note that, since the algorithms that are provided are randomized, the
 running time of constructing a triangulation with a hierarchy may be
 improved when shuffling the data points.
 
-\section{Software Design}
-\label{Triangulation3-sec-design}
+\section{Software Design\label{Triangulation3-sec-design}}
 
 The main classes \ccc{Triangulation_3}, \ccc{Delaunay_triangulation_3} and
 \ccc{Regular_triangulation_3} are connected to each other by the
@@ -279,8 +276,7 @@ The class \ccc{Triangulation_hierarchy_3} is parameterized by a class, which at
 the moment can only be \ccc{Delaunay_triangulation_3}.  It fetches its
 geometric traits from this parameter directly.
 
-\subsection{The Geometric Traits Parameter}
-\label{Triangulation3-sec-Traits}
+\subsection{The Geometric Traits Parameter\label{Triangulation3-sec-Traits}}
 
 The first template parameter of the triangulation class
 \ccc{Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3>}
@@ -340,8 +336,7 @@ predicates (exact and efficient). The template parameter \ccc{FK} must be a
 model of the \ccc{Kernel} concept, and it is also restricted to be a
 instance of the \ccc{Filtered_kernel} template. 
 
-\subsection{The Triangulation Data Structure Parameter}
-\label{Triangulation3-sec-tds}
+\subsection{The Triangulation Data Structure Parameter\label{Triangulation3-sec-tds}}
 
 The second template parameter of the main classes (\ccc{Triangulation_3},
 \ccc{Delaunay_triangulation_3} and \ccc{Regular_triangulation_3}) is a
@@ -412,8 +407,7 @@ base classes.
 \label{T3-fig-layers}}
 \end{figure}
 
-\subsection{Backward compatibility}
-\label{T3-sec-compat}
+\subsection{Backward compatibility\label{T3-sec-compat}}
 
 Starting with \cgal\ release 3.0, the design of the triangulation data
 structure has been changed in order to give the possibility to store handles
@@ -495,8 +489,7 @@ The changes that need to be made are the following:
 The situation is exactly similar for cell base classes.
 Section~\ref{TDS3-sec-design} provides more detailed information.
 
-\section{Examples}
-\label{Triangulation3-sec-examples}
+\section{Examples\label{Triangulation3-sec-examples}}
 \subsection{Basic example}
 This example shows the incremental construction of a 3D triangulation, the
 location of a point and how to perform elementary operations on indices in a
@@ -508,8 +501,7 @@ cell. It uses the default parameter of the \ccc{Triangulation_3} class.
 The following two examples show how the user can plug his own vertex base in a
 triangulation.  Changing the cell base is similar.
 
-\subsubsection{Adding a color}
-\label{Triangulation3-sec-examples-color}
+\subsubsection{Adding a color\label{Triangulation3-sec-examples-color}}
 When the user doesn't need to add a type in a vertex which depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he can use the
@@ -527,8 +519,7 @@ as the following example shows.
 
 \ccIncludeExampleCode{Triangulation_3/adding_handles.cpp}
 
-\subsection{The Simplex class}
-\label{Triangulation3-sec-simplex}
+\subsection{The Simplex class\label{Triangulation3-sec-simplex}}
 The triangulation defines a \ccc{Simplex} class that represents a
 simplex (vertex, edge, facet or cell). This example demonstrates how
 simplices can be stored in a set.

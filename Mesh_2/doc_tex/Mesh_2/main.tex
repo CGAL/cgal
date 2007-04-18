@@ -1,5 +1,4 @@
-\ccUserChapter{2D Conforming Triangulations and Meshes}
-\label{user_chapter_2D_Meshes}
+\ccUserChapter{2D Conforming Triangulations and Meshes\label{user_chapter_2D_Meshes}}
 
 \ccChapterAuthor{Laurent Rineau}
 
@@ -12,11 +11,9 @@ conforming triangulations and 2D meshes. Conforming triangulations will be
 described in Section~\ref{sec:Mesh_2_conforming_triangulation} and
 meshes in Section~\ref{sec:Mesh_2_meshes}.
 
-\section{Conforming Triangulations}
-\label{sec:Mesh_2_conforming_triangulation}
+\section{Conforming Triangulations\label{sec:Mesh_2_conforming_triangulation}}
 
-\subsection{Definitions}
-\label{sec:Mesh_2_conforming_definitions}
+\subsection{Definitions\label{sec:Mesh_2_conforming_definitions}}
 
 A triangulation is a \emph{Delaunay triangulation} if the circumscribing
 circle of any facet of the triangulation contains no vertex in its
@@ -48,8 +45,7 @@ triangulation by adding vertices, called \emph{Steiner vertices}, on
 constrained edges until they are decomposed into subconstraints small enough
 to be Delaunay or Gabriel edges.
 
-\subsection{Building Conforming Triangulations}
-\label{sec:Mesh_2_building_conforming}
+\subsection{Building Conforming Triangulations\label{sec:Mesh_2_building_conforming}}
 
 Constrained Delaunay triangulations can be refined into
 conforming triangulations 
@@ -82,8 +78,7 @@ additional control of the refinement algorithm, this class also provides
 separate functions to insert one Steiner point at a time.
 
 \subsection{Example: Making a Triangulation Conforming Delaunay and Then
-  Conforming Gabriel}
-\label{sec:Mesh_2_example_making_conforming}
+  Conforming Gabriel\label{sec:Mesh_2_example_making_conforming}}
 
 This example inserts several segments into a constrained Delaunay
 triangulation, makes it conforming Delaunay, and then conforming
@@ -138,12 +133,10 @@ and~\ref{Conform-example-conform-Gabriel}.
 \label{Conform-example-conform-Gabriel}
 \end{figure}
 
-\section{Meshes}
-\label{sec:Mesh_2_meshes}
+\section{Meshes\label{sec:Mesh_2_meshes}}
 
 
-\subsection{Definitions}
-\label{sec:Mesh_2_meshes_definition}
+\subsection{Definitions\label{sec:Mesh_2_meshes_definition}}
 
 A mesh is a partition of a given region into simplices whose shapes
 and sizes satisfy several criteria.
@@ -229,8 +222,7 @@ two holes are triangulated but not meshed.
 \label{Domain-seeds-mesh}
 \end{figure}
 
-\subsection{Shape and Size Criteria}
-\label{sec:Mesh_2_criteria}
+\subsection{Shape and Size Criteria\label{sec:Mesh_2_criteria}}
 
 The shape criterion for triangles is a lower bound $B$ on the ratio
 between the circumradius and the shortest edge length.  Such a bound
@@ -277,8 +269,7 @@ satisfy size and shape criteria except for the small input angles.
 In addition, the algorithm may succeed in producing meshes with a lower
 angle bound greater than $20.7$~degrees, but there is no such guarantee.
 
-\subsection{Building Meshes}
-\label{sec:Mesh_2_building_meshes}
+\subsection{Building Meshes\label{sec:Mesh_2_building_meshes}}
 
 Meshes are obtained from
 constrained Delaunay triangulations by calling the global function \\

@@ -80,8 +80,7 @@ new applications.
 the {\sc Qpl}, which is Trolltech's open source license. For more details
 on the {\sc Qpl} see \verb+http://www.trolltech.com/developer/licensing/qpl.html+.
 
-\section{Qt\_widget}
-\label{Qt_widget}
+\section{Qt\_widget\label{Qt_widget}}
 
 The class \ccStyle{Qt_widget} is derived from the class 
 \ccStyle{QWidget} 
@@ -226,8 +225,7 @@ memory leak. It is in Qt's responsability to free widgets that have a
 parent. In that example the \ccc{My_window} object is the parent of
 \ccc{widget} and will deallocate it automatically at its destruction.
 
-\section{Layers}
-\label{Qt_widget_layers}
+\section{Layers\label{Qt_widget_layers}}
 \subsection{Using Layers to Draw}
 
 In the examples from the previous section the code for drawing on the
@@ -325,8 +323,7 @@ the code for drawing the triangulation is no longer in the
 
 
 
-\subsection{Using Layers to Build New Objects }
-\label{Qt_widget_tools}
+\subsection{Using Layers to Build New Objects \label{Qt_widget_tools}}
 
 The main purpose of layers is to have more modular code for drawing on
 the widget. Things are similar for handling input. In the previous
@@ -471,8 +468,7 @@ connect(qt_widget_ptr, SIGNAL(new_cgal_object(CGAL::Object)),
 The first argument must be a pointer to an instance of \ccc{Qt_widget}.
 In the example we connect it to \ccc{MyWindow::get_new_object(CGAL::Object)}.
 
-\section{The Standard Toolbar}
-\label{Qt_widget_standard_toolbar}
+\section{The Standard Toolbar\label{Qt_widget_standard_toolbar}}
 
 The \ccStyle{Qt\_widget} allows to zoom and pan. This functionality is 
 accessible through the class \ccStyle{Qt_widget_standard_toolbar}. The 
@@ -523,8 +519,7 @@ This example generates 100 points and inserts them in a Delaunay
 triangulation. Using the standard toolbar you can zoom in, zoom out,
 translate.
 
-\section{The Help Window}
-\label{The Help Window}
+\section{The Help Window\label{The Help Window}}
 
 We provide a class in the \ccc{Qt_widget} library that was taken from
 an example of \ccc{Qt} and adapted to our needs. This class has the
@@ -545,8 +540,7 @@ distribution.
     help->show();
 \end{ccExampleCode}
 
-\section{Some Predefined Icons}
-\label{The predefined icons}
+\section{Some Predefined Icons\label{The predefined icons}}
 
 \cgal\ provides some icons defined in some header files. The icons are
 pixmaps, having the extension \ccc{.xpm}. Their location is \ccc{/include/CGAL/IO/pixmaps}.

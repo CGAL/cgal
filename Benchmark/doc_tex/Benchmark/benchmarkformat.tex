@@ -62,8 +62,7 @@ Classification( "Arrangement", "Lines", "BoundedArcs", "Rnd", "2", "Sept-2004")
 LineSegment_2( Point_2(1,1,1), Point_2(8,5,2))
 \end{verbatim}
 
-\subsection{Lexer Tokens, Comments, and White Spaces}
-\label{lexer}
+\subsection{Lexer Tokens, Comments, and White Spaces\label{lexer}}
 
 A \verb|#| character starts a single-line comment up to the end of the
 current line. 
@@ -107,8 +106,7 @@ constants \ts{VOID}, \ts{MINUS\_INFTY}, \ts{PLUS\_INFTY},
 \end{tabular}
 \end{ccTexOnly}
 
-\subsubsection{IncludeFile}
-\label{inclfiles}
+\subsubsection{IncludeFile\label{inclfiles}}
 
 The file format and the reference parser implementation support
 include files. They are not used in the current plans for benchmarks,
@@ -124,8 +122,7 @@ arbitrary depth. An example:
 IncludeFile( FullConicsRnd_10_1.arr)
 \end{verbatim}
 
-\subsubsection{FileFormat}
-\label{headerformat}
+\subsubsection{FileFormat\label{headerformat}}
 
 The mandatory \ts{FileFormat} field contains the \emph{magic-key\/}
 string ``AcsBenchmark'' such that the parser recognizes that this file
@@ -141,8 +138,7 @@ any longer and throws an exception. An example:
 FileFormat( "AcsBenchmark", 0, 1 )
 \end{verbatim}
 
-\subsubsection{FileHeaderOption}
-\label{headeropt}
+\subsubsection{FileHeaderOption\label{headeropt}}
 
 Currently, only one file header option is specified, the
 \ts{BenchmarkName}. It corresponds to the filename and reflects part

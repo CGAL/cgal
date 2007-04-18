@@ -9,7 +9,7 @@
 % $Date$
 % =============================================================================
 
-\chapter{Geometry Kernels} \label{chap:kernels}
+\chapter{Geometry Kernels\label{chap:kernels}}
 \ccChapterAuthor{Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})}
 
 
@@ -33,8 +33,7 @@ structure; see also Chapter~\ref{chap:traits_classes}. If you need
 primitives not provided by the kernel (yet), please read
 Section~\ref{sec:NewKernelTraits} below.
 
-\section{Cartesian and homogeneous representation}
-\label{sec:cart_and_hom_representation}
+\section{Cartesian and homogeneous representation\label{sec:cart_and_hom_representation}}
 
 There are two different coordinate representations%
 \ccIndexMainItem[t]{coordinate}%
@@ -129,8 +128,7 @@ $$\textstyle
 (N_0 \prod D_i /D_0, N_1\prod D_i /D_1, \ldots, N_{d-1}\prod D_i /D_{d-1},
 \prod D_i )$$. 
 
-\section{Cartesian versus homogeneous computation}
-\label{sec:CartesianHomogeneousComputation}
+\section{Cartesian versus homogeneous computation\label{sec:CartesianHomogeneousComputation}}
 Homogeneous representation has the disadvantage that predicates become
 more complicated. Testing equality of points is more complicated because
 the homogeneous representation is not unique. In the orientation predicate,
@@ -314,8 +312,7 @@ For a number of predicates, there are versions that operate on
 the coordinates directly, not on the geometric objects. These
 number-type based predicates ease re-use with non-\cgal\ types.
 
-\section{Missing functionality}
-\label{sec:NewKernelTraits}
+\section{Missing functionality\label{sec:NewKernelTraits}}
 \ccIndexSubitem{predicate}{missing} Kernel traits do not provide
 redundant functionality. In particular, they do not provide a right
 turn predicate, since a left turn predicate exists. A right turn

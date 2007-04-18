@@ -269,8 +269,7 @@ class Interval_traits{
 %\vfill
 
 %\pagebreak
-\section{k-dimensional Range Trees}
-\label{k-range}
+\section{k-dimensional Range Trees\label{k-range}}
 \cgal\ provides four range tree classes for $k\in\{1,\ldots,4\}$.
 
 \begin{ccClassTemplate}{Range_tree_k <Traits>}
@@ -338,8 +337,7 @@ to the last location the function wrote to.
 
 \end{ccClassTemplate}
 
-\section{k-dimensional Segment Trees}
-\label{segment-k}
+\section{k-dimensional Segment Trees\label{segment-k}}
 
 %\subsection{CGAL\_Segment\_tree\_{\tt k} }
 
@@ -712,8 +710,7 @@ class Int_double_tree_traits_2{
 \end{ccClass} 
 
 
-\section{Creating an arbitrary multilayer tree}
-\label{general}
+\section{Creating an arbitrary multilayer tree\label{general}}
 
 Now let us have a closer look on how a multilayer tree is built.
 In case of creating a $d$-dimensional tree,  we handle a
@@ -738,8 +735,7 @@ defining a traits class for each layer.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Interface %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Tree Traits class and its Requirements}
-\label{TreeInterface}
+\subsection{Tree Traits class and its Requirements\label{TreeInterface}}
 
 Tree class \ccStyle{Range_tree_d} and class
 \ccStyle{Segment_tree_d} are templatized with a parameter
@@ -992,8 +988,7 @@ the traits class that accesses the inverse range query point.
 
 
 \begin{ccClassTemplate}{Range_tree_d<Data, Window, Traits>}
-\subsubsection{Range\_tree}
-\label{RangeTree}
+\subsubsection{Range\_tree\label{RangeTree}}
 
 \ccTypes
 \ccNestedType{Data}{container \ccStyle{Data}.}
@@ -1088,8 +1083,7 @@ The tree uses ${O}(n\log n^{d-1})$ storage.
 %%%%%%%%%%%%%%%%%% Segment_tree %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{ccClassTemplate} {Segment_tree_d<Data, Window, Traits>}
-\subsubsection{Segment\_tree}
-\label{SegmentTree}
+\subsubsection{Segment\_tree\label{SegmentTree}}
 
 \ccTypes
 \ccNestedType{Data}{container \ccStyle{Data}.}
@@ -1198,8 +1192,7 @@ The tree uses ${O}(n\log n^d)$ storage.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% Sub_type %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Sublayer\_type}
-\label{SubtypeRequirements}
+\subsection{Sublayer\_type\label{SubtypeRequirements}}
 A \ccStyle{Sublayer\_type} of class \ccStyle{Range\_tree\_d}
 or \ccStyle{Segment\_tree\_d} has
 to fulfill the following requirements:
@@ -1221,8 +1214,7 @@ return \ccStyle{true}, \ccStyle{false} otherwise.
 Such a recursion anchor class is provided by the following class.
 
 \begin{ccClassTemplate}{Tree_anchor<Data, Window>}
-\subsubsection{Tree\_anchor}
-\label{CGALTreeanchor}
+\subsubsection{Tree\_anchor\label{CGALTreeanchor}}
 
 \ccDefinition
 \ccStyle{Tree\_anchor} is also derived from

@@ -1,6 +1,5 @@
 % -------------------------------------------------------------------------
-\subsection{Visitor Design Pattern for the Parser}
-\label{visitor}
+\subsection{Visitor Design Pattern for the Parser\label{visitor}}
 
 To ease the use of the parser, we provide a visitor interface,
 following the visitor design pattern~\cite{cgal:ghjv-dpero-95}.  An
@@ -19,8 +18,7 @@ structure for later use in the application. The visitor has to convert
 the string parameters to the application specific types, for example,
 for long integers for curve coefficients. 
 
-\subsubsection{A First Visitor}
-\label{checker}
+\subsubsection{A First Visitor\label{checker}}
 
 We start with an example for a basic visitor that just checks a
 benchmark file for correct syntax, i.e., it does not actually process
@@ -150,8 +148,7 @@ bool benchmark_parse_stream( std::istream&  in, std::string name,
 \end{verbatim}
 
 
-\subsubsection{Benchmark Visitor Functions}
-\label{functions}
+\subsubsection{Benchmark Visitor Functions\label{functions}}
 
 In the following table the functions that exist in the
 \ccc{Benchmark_visitor} class are listed.  The \$-bison syntax

@@ -24,8 +24,7 @@ maintain the combinatorial information for 3D-geometric
 triangulations. The reader interested in geometric triangulations of
 $\R^3$ is advised to read Chapter~\ref{chapter-Triangulation3}.
 
-\section{Representation}
-\label{TDS3-sec-intro}
+\section{Representation\label{TDS3-sec-intro}}
 
 In \cgal, a 3D triangulation data structure is a
 container of cells ($3$-faces) and vertices ($0$-faces). Each cell gives
@@ -212,8 +211,7 @@ The \ccc{is_valid()} method provided by
 \ccc{Triangulation_data_structure_3} checks the local validity of a
 given triangulation data structure.
  
-\section{Software Design}
-\label{TDS3-sec-design}
+\section{Software Design\label{TDS3-sec-design}}
 
 The 3D-triangulation data structure class of CGAL,
 \ccc{Triangulation_data_structure_3}, is designed to be used as a combinatorial
@@ -281,8 +279,7 @@ concepts \ccc{TriangulationCellBase_3} and \ccc{TriangulationVertexBase_3}
 \ccRefPage{TriangulationVertexBase_3})}.
 \end{itemize}
 
-\subsection{Cyclic Dependency}
-\label{tds3-cyclic}
+\subsection{Cyclic Dependency\label{tds3-cyclic}}
 
 Since adjacency relations are stored in the vertices and cells, it means that
 the vertex and cell base classes have to be able to store handles (an entity
@@ -363,8 +360,7 @@ his own vertex or cell base class.  In these cases, the user needs to add
 the rebind nested template class appropriately.  More information is given
 in~\ref{T3-sec-compat}.
 
-\section{Examples}
-\label{TDS3-sec-examples}
+\section{Examples\label{TDS3-sec-examples}}
 
 \subsection{Incremental construction}
 The following example shows how to construct a 3D triangulation data

@@ -9,8 +9,7 @@
 % $Date$
 % =============================================================================
 
-\chapter{Memory Management}
-\label{chap:memory_management}
+\chapter{Memory Management\label{chap:memory_management}}
 \ccChapterRelease{Chapter Version: 1.0}
 \ccChapterAuthor{Michael Seel ({\tt seel@mpi-sb.mpg.de})}
 
@@ -21,8 +20,7 @@ but also implementing them efficiently.  One way to improve the efficiency
 of an implementation is through efficient memory management.  Here we
 describe one way to address this using the allocator interface.
 
-\section{The \CC\ standard allocator interface}
-\label{sec:allocator_interface}
+\section{The \CC\ standard allocator interface\label{sec:allocator_interface}}
 \ccIndexMainItemBegin{allocator}
 
 We first give a short presentation of the memory allocator interface.
@@ -39,8 +37,7 @@ an allocator:
 \input{Developers_manual/Allocator}
 \ccIndexMainItemEnd{allocator}
 
-\section{The allocator macro}
-\label{sec:allocator_macro}
+\section{The allocator macro\label{sec:allocator_macro}}
 \ccIndexSubitemBegin{allocator}{macro}
 
 The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
@@ -55,8 +52,7 @@ he can define it (before including any CGAL header file) this way :
 \end{verbatim}
 \ccIndexSubitemEnd{allocator}{macro}
 
-\section{Using the allocator}
-\label{sec:using_memory_allocator}
+\section{Using the allocator\label{sec:using_memory_allocator}}
 \ccIndexSubitemBegin{allocator}{as template parameter}
 
 How should a data structure use the allocator mechanism? Just make the
@@ -111,8 +107,7 @@ int main()
 
 \InternalOnly{
 
-\section{Requirements and recommendations}
-\label{sec:memory_req_and_rec}
+\section{Requirements and recommendations\label{sec:memory_req_and_rec}}
 
 %\noindent
 %Requirements:
