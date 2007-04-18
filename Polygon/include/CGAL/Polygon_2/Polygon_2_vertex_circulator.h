@@ -83,10 +83,20 @@ public:
         CGAL_assertion( current_iterator() != ctnr->end());
         return *i;
     }
+
+private:
+// For cases where iterator is a pointer.
+    template < typename T >
+    static pointer deref(const T& t) { return t.operator->(); }
+    template < typename T >
+    static pointer deref(T* t) { return t; }
+
+public:
+
     pointer  operator->() const {
         CGAL_assertion( ctnr != NULL);
         CGAL_assertion( current_iterator() != ctnr->end());
-        return i.operator->();
+        return deref(i);
     }
     Self& operator++() {
         CGAL_assertion( ctnr != NULL);
