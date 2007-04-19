@@ -273,6 +273,9 @@ print_usage_information()
   --build <config>
 	       builds libraries for the compiler specified by its
                configuration file config/install/<config>.
+  -os <compiler>         
+               prints the identifier for the configuration which uses
+               the specified compiler.
   --rebuild <config>
 	       (re)builds the compiler configuration file and libraries
 	       for the compiler specified by its configuration file
@@ -281,7 +284,7 @@ print_usage_information()
                (not generally recommended).
 "
 #  --version    prints ${CGAL_INSTALL_CGAL} version number.
-#  -os          prints architecture/os/compiler specifications.
+#  
 
 # --non-interactive or -ni
 #               runs the script in non-interactive mode.
@@ -937,7 +940,6 @@ set_compiler_flags()
 	    CGAL_STATIC_LIBNAME="\$(LIB_NAME_BASE).lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
-	    CGAL_LIBS_OPTFLAGS="-Od"
 	    ;;
 	*CL*|*cl*)
 	    #### settings Microsoft Visual C++ compiler
@@ -1082,8 +1084,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
-	    #CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
-	    RUNTIME_LINKER_FLAG='-Wl,-install_name'
+	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
 	    CGAL_SHARED_LIB_EXT=".dylib"
 	    RANLIB="ranlib"
 	    ;;
@@ -1116,11 +1117,8 @@ set_compiler_flags()
     case `compiler_description` in
 	*GNU*)
 	    case `compiler_version` in
+		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-50";;
 		3.*) : ;;
-		4.2*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math"
-
-	              CGAL_LIBS_OPTFLAGS="${CGAL_LIBS_OPTFLAGS} -fno-strict-aliasing" # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=31268
-                      ;;
 		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
@@ -1603,19 +1601,18 @@ concat_path()
   if [ $# != 0 ] ; then
     ${_printf} "%s" "$1"
     shift
-# it seems ms tools can also handle slashed paths...
-#    if [ -n "${CYGWIN_COMPILER}" ]; then
-#        for elem in "$@"
-#        do
-#            ${_printf} "%s%s" '\' "${elem}"
+    if [ -n "${CYGWIN_COMPILER}" ]; then
+        for elem in "$@"
+        do
+            ${_printf} "%s%s" '\' "${elem}"
 #This character ' is just to please font-lock-mode under (x)emacs
-#        done
-#    else
+        done
+    else
         for elem in "$@"
         do
             ${_printf} "/%s" "${elem}"
         done
-#    fi
+    fi
   fi
 }
 
@@ -4205,13 +4202,8 @@ create_include_makefile()
   #
   print_as_shell_comment "*** Qt meta object compiler executable ***" >> ${FILE}
   if [ -n "`value_of \"PROVIDE_PKG_QT\"`" ]; then
-      if [ -n ${QTDIR} ]; then
-          ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
-          ${_printf} "\t%s\n\n" "`posix_path \"${QTDIR}/bin/moc\"`" >> ${FILE}
-      else
-          ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
-          ${_printf} "\t%s\n\n" "`which moc`" >> ${FILE}
-      fi
+      ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
+      ${_printf} "\t%s\n\n" "`posix_path \"${QTDIR}/bin/moc\"`" >> ${FILE}
   else
       print_as_shell_comment "    (No Qt; therefore, we fake it...)" >> ${FILE}
       ${_printf} "%s\n\n" "QT_MOC = echo dummymoc" >> ${FILE}
@@ -4577,8 +4569,8 @@ installation()
 	*Darwin*)
 	    for i in `cd "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"; ls *${CGAL_SHARED_LIB_EXT}`; do
 		log_print "Fixing lib paths in" "${i}"
-		#${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
-		#${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
+		${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
+		${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
 	    done;;
     esac
 
@@ -5047,11 +5039,11 @@ _check_comp_executable()
 cgal_install_header()
 {
     ${_printf} "\n%s\n" \
-	"----------------------------------------------------------------------------"
+	"--------------------------------------------------------"
     ${_printf} "%s\n" \
-	"  This is the configuration and installation script for CGAL ${CGAL_VERSION}."
+	"  This is the install script for CGAL ${CGAL_VERSION}."
     ${_printf} "%s\n\n" \
-	"----------------------------------------------------------------------------"
+	"--------------------------------------------------------"
 }
 
 
@@ -5441,7 +5433,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     # --- end of parsing commandline options ---
 fi
 
-#log_to_file_and_screen
+log_to_file_and_screen
 ${_rm} -f "${EXTRA_INSTALL_LOGFILE}"
 
 if [ -z "${_WHAT_TO_DO}" ]; then 
@@ -5548,15 +5540,15 @@ case ${_WHAT_TO_DO} in
 	build_one
 	finish
 	;;
-#    *help*)
-#        get_cgal_version
-#	cgal_install_header
-#	print_usage_information
-#	;;
-    *)
+    *help*)
         get_cgal_version
 	cgal_install_header
 	print_usage_information
+	;;
+    *)
+        get_cgal_version
+	cgal_install_header
+	print_general_information
 	;;
 esac
 exit 0
