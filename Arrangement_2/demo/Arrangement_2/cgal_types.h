@@ -44,7 +44,7 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
 
-#ifdef CGAL_USE_LEDA
+#if 0
 #include <CGAL/IO/Postscript_file_stream.h>
 #endif
 

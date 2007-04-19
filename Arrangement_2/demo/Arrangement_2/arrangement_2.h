@@ -63,8 +63,6 @@
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget_handtool.h>
 
-//#include <CGAL/IO/Pm_Postscript_file_stream.h>
-
 //////////////////////////////////////////////////////////////////////////////
 class Qt_layer;
 class Qt_widget_base_tab;
