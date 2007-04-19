@@ -27,13 +27,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename Traits>
+template <typename Extended_tag, typename Kernel> class Bounding_box_3;
+
+template <typename Extended_tag, typename Kernel>
 class Bounding_box_3 : 
 public Box_intersection_d::Box_d< double, 3> {
 
   typedef Box_intersection_d::Box_d< double, 3>  Base;
-
-  typedef typename Traits::Point_3             Point_3;
+  typedef typename Kernel::Point_3             Point_3;
 
 public:
   Bounding_box_3() : Base() {}
@@ -43,8 +44,28 @@ public:
     q[0] = CGAL::to_interval( p.x() );
     q[1] = CGAL::to_interval( p.y() );
     q[2] = CGAL::to_interval( p.z() );
-    Box_intersection_d::Box_d< double, 3 >::extend(q);
+    Base::extend(q);
   }	
+};
+
+template <typename Kernel>
+class Bounding_box_3<Tag_true, Kernel> : 
+public Box_intersection_d::Box_d<typename Kernel::FT, 3> {
+  
+  typedef typename Kernel::FT               FT;
+  typedef Box_intersection_d::Box_d<FT, 3>  Base;
+  typedef typename Kernel::Point_3          Point_3;
+
+public:
+  Bounding_box_3() : Base() {}
+    
+  void extend( const Point_3& p) {
+    FT q[3];
+    q[0] = p.x();
+    q[1] = p.y();
+    q[2] = p.z();
+    Base::extend(q);
+  }	  
 };
 
 CGAL_END_NAMESPACE

@@ -196,18 +196,77 @@ public:
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef CGAL::Bounding_box_3<Kernel> Bounding_box_3;
+  typedef CGAL::Bounding_box_3
+    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+    Bounding_box_3;
   
-  virtual Bounding_box_3 operator()(const Object_list& o) const;
-  virtual Bounding_box_3 operator()(Object_handle o) const;
-  virtual Bounding_box_3 operator()(Vertex_handle v) const;
-  virtual Bounding_box_3 operator()(Halfedge_handle e) const;
-  virtual Bounding_box_3 operator()(Halffacet_handle f) const;
-  virtual Bounding_box_3 operator()(Halffacet_triangle_handle f) const;
+  Bounding_box_3 operator()( const Object_list& O) const {
+    Bounding_box_3 b;
+    typename Object_list::const_iterator o;
+    for( o = O.begin(); o != O.end(); ++o) {
+      Vertex_handle v;
+      if( CGAL::assign( v, *o)) {
+	b.extend(v->point());
+      }	
+    }
+    return b;
+  }
 
-  virtual ~Objects_bbox() {}
+  Bounding_box_3 operator()(Object_handle o) const {
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    if( CGAL::assign( v, o))
+      return operator()(v);
+    else if( CGAL::assign( e, o))
+      return operator()(e);
+    else if( CGAL::assign( f, o))
+      return operator()(f);
+    else {
+      Halffacet_triangle_handle t;
+      if( CGAL::assign( t, o))
+	return operator()(t);
+      else
+	CGAL_assertion_msg( 0, "wrong handle");
+    }
+    return Bounding_box_3(); // never reached
+  }
 
-  SNC_decorator D;
+  Bounding_box_3 operator()(Vertex_handle v) const {    
+    Bounding_box_3 b;
+    b.extend(v->point());
+    return b;
+  }
+
+  Bounding_box_3 operator()(Halfedge_handle e) const {
+    Bounding_box_3 b;
+    b.extend(e->source()->point());
+    b.extend(e->twin()->source()->point());
+    return b;
+  }
+
+  Bounding_box_3 operator()(Halffacet_triangle_handle t) const {
+    Bounding_box_3 bbox;
+    Triangle_3 tr(t.get_triangle());
+    for( int i = 0; i < 3; ++i)
+      bbox.extend(tr[i]);
+    return bbox;
+  }
+
+  Bounding_box_3 operator()(Halffacet_handle f) const {
+    CGAL_assertion( f->facet_cycles_begin() != 
+		    Halffacet_cycle_iterator());
+    Halffacet_cycle_iterator fc(f->facet_cycles_begin());
+    SHalfedge_handle e;
+    CGAL_assertion(fc.is_shalfedge());
+    e = SHalfedge_handle(fc);
+    SHalfedge_around_facet_circulator sc(e), send(sc);
+    CGAL_assertion( !is_empty_range( sc, send));
+    Bounding_box_3 b;
+    CGAL_For_all( sc, send)
+      b.extend(sc->source()->source()->point());
+    return b;
+  }
 };
 
 template <class Decorator>
@@ -244,7 +303,9 @@ public:
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef CGAL::Bounding_box_3<Kernel> Bounding_box_3;
+  typedef CGAL::Bounding_box_3
+    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+    Bounding_box_3;
 
   typedef typename Kernel::Intersect_3 Intersect;
   typedef CGAL::Objects_bbox<SNC_decorator> Objects_bbox;
@@ -547,91 +608,6 @@ Side_of_plane<SNC_decorator>::operator()
   }
   return facet_side;
   //#endif
-}
-
-template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel>
-Objects_bbox<SNC_decorator>::operator()
-  ( const Object_list& O) const {
-  Bounding_box_3 b;
-  typename Object_list::const_iterator o;
-  for( o = O.begin(); o != O.end(); ++o) {
-    Vertex_handle v;
-    if( CGAL::assign( v, *o)) {
-      b.extend(v->point());
-    }	
-  }
-  return b;
-}
-
-template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel>
-Objects_bbox<SNC_decorator>::operator()
-  (Object_handle o) const {
-  Vertex_handle v;
-  Halfedge_handle e;
-  Halffacet_handle f;
-  if( CGAL::assign( v, o))
-    return operator()(v);
-  else if( CGAL::assign( e, o))
-    return operator()(e);
-  else if( CGAL::assign( f, o))
-    return operator()(f);
-  else {
-    Halffacet_triangle_handle t;
-    if( CGAL::assign( t, o))
-      return operator()(t);
-    else
-      CGAL_assertion_msg( 0, "wrong handle");
-  }
-  return Bounding_box_3(); // never reached
-}
-
-template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel>
-Objects_bbox<SNC_decorator>::operator()
-  (Vertex_handle v) const {
-  Bounding_box_3 b;
-  b.extend(v->point());
-  return b;
-}
-
-template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel>
-Objects_bbox<SNC_decorator>::operator()
-  (Halfedge_handle e) const {
-  Bounding_box_3 b;
-  b.extend(e->source()->point());
-  b.extend(e->twin()->source()->point());
-  return b;
-}
-
-template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
-Objects_bbox<SNC_decorator>::operator()
-  (Halffacet_triangle_handle t) const {
-  Bounding_box_3 bbox;
-  Triangle_3 tr(t.get_triangle());
-  for( int i = 0; i < 3; ++i)
-    bbox.extend(tr[i]);
-  return bbox;
-}
-
-template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
-Objects_bbox<SNC_decorator>::operator()
-  (Halffacet_handle f) const {
-  CGAL_assertion( f->facet_cycles_begin() != Halffacet_cycle_iterator());
-  Halffacet_cycle_iterator fc(f->facet_cycles_begin());
-  SHalfedge_handle e;
-  CGAL_assertion(fc.is_shalfedge());
-  e = SHalfedge_handle(fc);
-  SHalfedge_around_facet_circulator sc(e), send(sc);
-  CGAL_assertion( !is_empty_range( sc, send));
-  Bounding_box_3 b;
-  CGAL_For_all( sc, send)
-    b.extend(sc->source()->source()->point());
-  return b;
 }
 
 CGAL_END_NAMESPACE

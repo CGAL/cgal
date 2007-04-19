@@ -283,6 +283,7 @@ typedef typename Traits::Objects_bbox Objects_bbox;
 
 typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::RT RT;
+typedef typename Kernel::FT FT;
 
 typedef Smaller_than<
   Kernel,
@@ -624,8 +625,8 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
       c = (CGAL::abs(vec[2]) > CGAL::abs(vec[c]) ? 2 : c); 
 
       Point_3 pt_on_minus_x_plane = vec[c] < 0 ? 
-	Point_3(RT(b.min_coord(0)), RT(b.min_coord(1)),RT(b.min_coord(2))) :
-	Point_3(RT(b.max_coord(0)), RT(b.max_coord(1)),RT(b.max_coord(2)));
+	Point_3(FT(b.min_coord(0)), FT(b.min_coord(1)),FT(b.min_coord(2))) :
+	Point_3(FT(b.max_coord(0)), FT(b.max_coord(1)),FT(b.max_coord(2)));
       // We compute the intersection between a plane with normal vector in 
       // the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
       Plane_3 pl_on_minus_x;      
