@@ -76,15 +76,12 @@ string convert_to_C_printable( string s);
 // Old style conversion routines
 // =======================================
 
-inline bool
-is_html_multi_character( char c) {
-    return c == SEPARATOR || c == '"' || c == '&' || c == '<' || c == '>';
-}
+void encode_backslash( bool );
 
-const char* html_multi_character( char c);
+bool     is_html_multi_character( char c );
+const char* html_multi_character( char c );
 
 void print_ascii_to_html( ostream& out, const char* txt);
-
 void print_ascii_len_to_html( ostream& out, const char* txt, int n);
 
 // This version eliminates multiple spaces.

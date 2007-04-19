@@ -171,6 +171,7 @@ void push_current_output() {
 }
 
 void pop_current_output() {
+    encode_backslash( true );
     if( output_file_stack.empty() )
         printErrorMessage( OutputStackEmptyError);
     else {
@@ -215,6 +216,7 @@ void set_current_output( const string& key) {
     } else if ( key == "comments") {
         current_output = Output_file( comments_stream, string("comments.xml") );
         new_filename = false;
+        encode_backslash( false );
     } else if ( key == "index") {
         current_output = Output_file( index_stream,
                                       macroX( "\\lciIndexFilename") );

@@ -462,6 +462,19 @@ void open_file_to_string( const string& name, string& s) {
 // Old style conversion routines
 // =======================================
 
+static bool encode_backslash_flag = true;
+
+void encode_backslash( bool b ) {
+  encode_backslash_flag = b;
+}
+
+bool
+is_html_multi_character( char c ) {
+    if( c == SEPARATOR || c == '"' || c == '&' || c == '<' || c == '>' )
+      return true;
+    return encode_backslash_flag && c == '\\';
+}
+
 static char multi_char_default[2];
 
 const char* html_multi_character( char c) {
@@ -471,6 +484,7 @@ const char* html_multi_character( char c) {
     case '&': return "&amp;";
     case '<': return "&lt;";
     case '>': return "&gt;";
+    case '\\': return "&#92;";
     default:  
 	multi_char_default[0] = c;
 	multi_char_default[1] = '\0';
