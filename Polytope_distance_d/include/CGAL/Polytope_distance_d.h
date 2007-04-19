@@ -730,11 +730,11 @@ private:
     
   template < class NT >
   Quadratic_program_pricing_strategy pricing_strategy( NT) {
-    return QP_FULL_FILTERED;
+    return QP_PARTIAL_FILTERED_DANTZIG;
   }
   
   Quadratic_program_pricing_strategy pricing_strategy( ET) {
-    return QP_FULL_EXACT;
+    return QP_PARTIAL_DANTZIG;
   }
     
 };
