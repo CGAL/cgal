@@ -169,44 +169,94 @@ LGPL_LICENSE_HEADER=\
 # ---------------------------------------------------------------------
 # How to use this script
 # ---------------------------------------------------------------------
-print_general_information()
-{
-    ${_printf} "%s\n\n" \
-"You can get a list of all options with \"${CGAL_INSTALL_CGAL} --help\"
-
-First-time installers:
-----------------------
-Just type \"${CGAL_INSTALL_CGAL} -i\" and follow the menus.
-If you get stuck, please read the documentation."
-}
+#print_general_information()
+#{
+#    ${_printf} "%s\n\n" \
+#"You can get a list of all options with \"${CGAL_INSTALL_CGAL} --help\"
+#
+#First-time installers:
+#----------------------
+#Just type \"${CGAL_INSTALL_CGAL} -i\" and follow the menus.
+#If you get stuck, please read the documentation."
+#}
 
 print_usage_information()
 {
 	${_printf} "%s\n" \
-"Usage: ${CGAL_INSTALL_CGAL}
-      [--help | --version | -i | --interactive |
-       -u <dir> | --upgrade <dir> | --build-all | --rebuild-all |
-       --build <config> | --rebuild <config> |
-       --disable-shared | --disable-static |
-       -ni | --non-interactive | -os]
-      [--verbose]
-      [--without-autofind]
-      [--prefix <dir>]
-      [--CGAL_DIR <dir>]
-      [--CXX <comp>] [--CXXFLAGS <flags>] [--LDFLAGS <flags>]
-      [--ostype_tag <tag>]"
-      for i in ${SUPPORT_PKGS}; do
-	  ${_printf} "      [--with-%s]\n" "$i"
-      done
-      for i in ${SUPPORT_FEATURES}; do
-	  ${_printf} "      [--%s_INCL_DIR <dir>] [--%s_LIB_DIR <dir>]\n" "$i" "$i"
-      done
+"Usage: ${CGAL_INSTALL_CGAL} [OPTION]"
+#      [--help | --version | -i | --interactive |
+#       -u <dir> | --upgrade <dir> | --build-all | --rebuild-all |
+#       --build <config> | --rebuild <config> |
+#       --disable-shared | --disable-static |
+#       -ni | --non-interactive | -os]
+#      [--verbose]
+#      [--without-autofind]
+#      [--prefix <dir>]
+#      [--CGAL_DIR <dir>]
+#      [--CXX <comp>] [--CXXFLAGS <flags>] [--LDFLAGS <flags>]
+#      [--ostype_tag <tag>]"
+
+#      for i in ${SUPPORT_PKGS}; do
+#	  ${_printf} "      [--with-%s]\n" "$i"
+#      done
+
+#      for i in ${SUPPORT_FEATURES}; do
+#	  ${_printf} "      [--%s_INCL_DIR <dir>] [--%s_LIB_DIR <dir>]\n" "$i" "$i"
+#      done
       ${_printf} "\n%s\n" \
-"  --help       gives this message.
-  --version    prints ${CGAL_INSTALL_CGAL} version number.
+"Basic options:
+  --help       gives this message.
+  --prefix <dir>
+               Specify an installation directory.
+  --disable-shared
+               Do not build shared libraries, only the static archives.
+  --disable-static
+               Do not build static archives, only the shared libraries.
+"
+
+ ${_printf} "\n\n%s\n" \
+"Environment variables:
+  CXX          Use \$CXX as the compiler instead of searching for one. 
+  CPPFLAGS,CXXFLAGS 
+               The values of these two environment variables are combined 
+               and passed as command line arguments to the compiler.
+  LDFLAGS      \$LDFLAGS are passed as command line arguments to the linker.
+
+  The environment variables can be overridden using 
+  --CXX <comp> 
+  --CXXLFLAGS <flags> (for both CPPFLAGS and CXXFLAGS) 
+  --LDFLAGS <flags>
+"
+
+ ${_printf} "\n%s" \
+"External library management options:
+  --without-autofind
+               Disable support for all external dependencies not, specified 
+               explicitly using --with-PACKAGE
+  --with-PACKAGENAME
+               When using --without-autofind, use package PACKAGENAME
+  PACKAGENAME is one of"
+#     for i in ${SUPPORT_PKGS}; do
+#	  ${_printf} "      [--with-%s]\n" "$i"
+#     done
+     for i in ${SUPPORT_PKGS}; do
+	  ${_printf} " %s" "$i"
+     done
+ ${_printf} "\n\n%s\n" \
+"Advanced options:
   --interactive or -i
                runs the script in interactive mode
                (other options - except for --CGAL_DIR - are ignored).
+  --CGAL_DIR <dir>
+               Specify an explicit path to use for the CGAL directory. This is
+               useful if \`pwd\` does not return the desired path to the CGAL 
+               source.
+  --ostype_tag <tag>
+               Add this tag to the architecture/os/compiler specification.
+  --PACKAGENAME_INCL_DIR <dir>
+               Add \"-I<dir>\" to the CPPFLAGS. See above for valid PACKAGENAMEs.
+  --PACKAGENAME_LIB_DIR <dir>
+               Add \"-L<dir>\" to LDFLAGS.
   --upgrade <dir> or -u <dir>
                runs the script in upgrade mode.
 	       Use this option, if you upgrade from a previously installed
@@ -227,36 +277,15 @@ print_usage_information()
 	       (re)builds the compiler configuration file and libraries
 	       for the compiler specified by its configuration file
                config/install/<config>.
-  --non-interactive or -ni
-               runs the script in non-interactive mode.
-  -os          prints architecture/os/compiler specifications.
   --verbose    Give report for each test that fails
                (not generally recommended).
-  --CGAL_DIR <dir>
-               Specify an explicit path to use for the CGAL directory.
-  --prefix <dir>
-               Specify an installation directory.
-  --without-autofind
-               Do not enable support for 3rd party libraries, unless
-               specified explicitly.
-  --with-PACKAGE
-               When using --without-autofind, still consider configuring
-               with PACKAGE.
-  --PACKAGE_INCL_DIR <dir>
-               Specify the include directory for PACKAGE.
-  --PACKAGE_LIB_DIR <dir>
-               Specify the library directory for PACKAGE.
-  --disable-shared
-               Do not build shared libraries, only the static archives.
-  --disable-static
-               Do not build static archives, only the shared libraries.
-  --CXX <comp> Use <comp> as a C++ compiler.
-  --CXXFLAGS <flags>
-               Pass the specified <flags> to the compiler.
-  --LDFLAGS  <flags>
-               Pass the specified <flags> to the linker.
-  --ostype_tag <tag>
-               Weave this tag into architecture/os/compiler specification."
+"
+#  --version    prints ${CGAL_INSTALL_CGAL} version number.
+#  -os          prints architecture/os/compiler specifications.
+
+# --non-interactive or -ni
+#               runs the script in non-interactive mode.
+
 }
 
 # ---------------------------------------------------------------------
@@ -507,19 +536,20 @@ parse_support_options()
     SUPPORT_PKGS=''
     R_SUPPORT_PKGS=''
 
-    INSTALL_LOGFILE_REDIRECTION_BAK="${INSTALL_LOGFILE_REDIRECTION}"
-    log_to_file_and_screen
+    #INSTALL_LOGFILE_REDIRECTION_BAK="${INSTALL_LOGFILE_REDIRECTION}"
+    #log_to_file_and_screen
     _no_indent
     log_print "Parsing support specfiles for 3rd party libraries:"
     _set_indent
-    INSTALL_LOGFILE_REDIRECTION="${INSTALL_LOGFILE_REDIRECTION_BAK}"
+    ${_printf} "%s" "Loading support for 3rd party libraries..."
+    #INSTALL_LOGFILE_REDIRECTION="${INSTALL_LOGFILE_REDIRECTION_BAK}"
 
     # read all specfiles at once
     _tmp="`${_awk} -f "${CGAL_SUPPORT_DIR}"/parse_files.awk  "${CGAL_SUPPORT_DIR}"/S*`"
     eval "${_tmp}"
     for i in ${SUPPORT_PKGS}; do
         log_print "${i}"
-        ${_printf} "%s" "${i}, "
+        #${_printf} "%s" "${i}, "
         # is PROVIDES already among SUPPORT_FEATURES?
 	for j in `value_of "${i}_PROVIDES"`; do
 	    if [ -z "`value_of \"SUPPORT_PKG_${j}\"`" ]; then
@@ -1052,7 +1082,8 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
-	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
+	    #CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
+	    RUNTIME_LINKER_FLAG='-Wl,-install_name'
 	    CGAL_SHARED_LIB_EXT=".dylib"
 	    RANLIB="ranlib"
 	    ;;
@@ -4174,8 +4205,13 @@ create_include_makefile()
   #
   print_as_shell_comment "*** Qt meta object compiler executable ***" >> ${FILE}
   if [ -n "`value_of \"PROVIDE_PKG_QT\"`" ]; then
-      ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
-      ${_printf} "\t%s\n\n" "`posix_path \"${QTDIR}/bin/moc\"`" >> ${FILE}
+      if [ -n ${QTDIR} ]; then
+          ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
+          ${_printf} "\t%s\n\n" "`posix_path \"${QTDIR}/bin/moc\"`" >> ${FILE}
+      else
+          ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
+          ${_printf} "\t%s\n\n" "`which moc`" >> ${FILE}
+      fi
   else
       print_as_shell_comment "    (No Qt; therefore, we fake it...)" >> ${FILE}
       ${_printf} "%s\n\n" "QT_MOC = echo dummymoc" >> ${FILE}
@@ -4541,8 +4577,8 @@ installation()
 	*Darwin*)
 	    for i in `cd "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"; ls *${CGAL_SHARED_LIB_EXT}`; do
 		log_print "Fixing lib paths in" "${i}"
-		${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
-		${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
+		#${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
+		#${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
 	    done;;
     esac
 
@@ -5011,11 +5047,11 @@ _check_comp_executable()
 cgal_install_header()
 {
     ${_printf} "\n%s\n" \
-	"--------------------------------------------------------"
+	"----------------------------------------------------------------------------"
     ${_printf} "%s\n" \
-	"  This is the install script for CGAL ${CGAL_VERSION}."
+	"  This is the configuration and installation script for CGAL ${CGAL_VERSION}."
     ${_printf} "%s\n\n" \
-	"--------------------------------------------------------"
+	"----------------------------------------------------------------------------"
 }
 
 
@@ -5405,7 +5441,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     # --- end of parsing commandline options ---
 fi
 
-log_to_file_and_screen
+#log_to_file_and_screen
 ${_rm} -f "${EXTRA_INSTALL_LOGFILE}"
 
 if [ -z "${_WHAT_TO_DO}" ]; then 
@@ -5512,15 +5548,15 @@ case ${_WHAT_TO_DO} in
 	build_one
 	finish
 	;;
-    *help*)
-        get_cgal_version
-	cgal_install_header
-	print_usage_information
-	;;
+#    *help*)
+#        get_cgal_version
+#	cgal_install_header
+#	print_usage_information
+#	;;
     *)
         get_cgal_version
 	cgal_install_header
-	print_general_information
+	print_usage_information
 	;;
 esac
 exit 0
