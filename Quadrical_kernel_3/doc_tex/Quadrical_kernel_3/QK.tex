@@ -15,9 +15,11 @@ concept are \ccc{Quadric_3}, \ccc{Curve_3}, \ccc{Curve_point_3},
  and \ccc{Curve_arc_3}.
 
 We currently can think of two approaches that
-could provide models for a quadrical kernel concept.
-The implementations differ on the question whether intersection curves get 
-parameterized~\cite{lazard04b}, or projected~\cite{bhksw-eceicpmqic-05}.
+could provide models for the quadrical kernel concept.
+The available 
+implementations differ on the question whether intersection curves get 
+parameterized~\cite{cgal:lazard04b}, 
+or projected~\cite{cgal:bhksw-eceicpmqic-05}.
 
 %\section{Software Design}
 
@@ -35,8 +37,8 @@ parameterized~\cite{lazard04b}, or projected~\cite{bhksw-eceicpmqic-05}.
 
 \section{Design Rationales and Discussion}
 
-The proposed concept follows main discussions of similar
-geometry and algebraic kernels. In contrast to the circular
+The proposed concept follows mainly the discussions of similar
+geometric and algebraic kernels. In contrast to the circular
 and spherical world, quadrics poses additional problems that do 
 not have appeared before. 
 
@@ -52,7 +54,7 @@ third.
 \item They are even embedded in a rational plane.
 \end{itemize}
 In general, all properties get lost when switching to spatial 
-intersection curves arbitrary quadrics.
+intersection curves of arbitrary quadrics.
 Actually, we can think of three different definitions for
 a type called \ccc{Curve_3}.
 \begin{enumerate}
@@ -63,7 +65,7 @@ system, i.e., the algebraic space curve, or
 of the zero set.
 \end{enumerate}
 One solution is to fix the concept of \ccc{Curve_3} to one of the
-three definitions and modifying involved methods accordingly.
+three definitions and to modify involved methods accordingly.
 On the other hand, we can assume the type to be 
 polymorphic, i.e., it is possible
 to represent all definitions and marking each instance with a corresponding
@@ -71,7 +73,7 @@ flag. In both cases proper decomposition/transversions
 methods may be required, i.e., at least from (1) to (2) and from (2) to (3).
 
 
-An other problem is the correct handling of infinite objects. In the linear
+Another problem is the correct handling of infinite objects. In the linear
 world planes, lines, and rays are also infinite, but have a
 simple behavior towards infinity. These objects have proper interfaces,
 but only recently they have been considered to be handled, e.g.,
@@ -88,7 +90,7 @@ by an instance of \ccc{CurveArc_3}.
 Spatial curves can be infinite,
 can consist of several algebraic or connected components, or even can have 
 self-intersection. Four different situations for maximal connected
-components can be be distinguished: 
+components can be distinguished: 
 \begin{itemize}
 \item it is closed, i.e., it forms a loop. Otherwise,
 \item both ends are finite, or
@@ -101,36 +103,36 @@ whether different types should be introduced, like \ccc{Curve_loop_3},
 \ccc{Curve_ray_3} and \ccc{Curve_branch_3}, or
 all are encoded by a single ``polymorphic'' type \ccc{Curve_arc_3}. 
 We decided for the latter, with the precondition
-that end-points can only be accessed if they are finite. Loops can be
-decomposed into \ccc{Curve_arc_3}s.
+that end-points can only be accessed if they are finite. Loops, e.g.,
+could be decomposed into two or more \ccc{Curve_arc_3}s.
 
 \section{Functors}
 
-The quadrical kernel, as well as its supporting algebraic kernel, offers
-a list of functors. The reference manual of the concepts only mention
+The quadrical kernel offers a list of functors. 
+The reference manual of the concepts only mentions
 the main functors, while similar or easy ones are omitted in full details.
-We list their main ideas here. For the quadrical kernel, the following
-functors are easy of have similar one described in reference part
-of the manual.
+We list these concepts here, together with their task.
+
 \begin{description}
-\item[Compare\_y\_3] compares $y$-coordinates of two points
-\item[Compare\_z\_3] compares $z$-coordinates of two points
-\item[Compare\_xy\_3] compares $x$- and $y$-coordinates of two points 
+\item[CompareY\_3] compares $y$-coordinates of two points
+\item[CompareZ\_3] compares $z$-coordinates of two points
+\item[CompareXY\_3] compares $x$- and $y$-coordinates of two points 
 lexicographically
-\item[Compare\_xyz\_3] compare $x$-, $y$, and $z$-coordinates of two points
+\item[CompareXYZ\_3] compare $x$-, $y$, and $z$-coordinates of two points
 lexicographically
 \item [Equal\_3] returns whether two objects of the same type are equal
-\item [Do\_overlap\_3] returns whether two objects intersect in an infinite 
+\item [DoOverlap\_3] returns whether two objects intersect in an infinite 
 number of points
-\item [Construct\_curve\_arc\_min\_vertex\_3, 
-Construct\_curve\_arc\_max\_vertex\_3]
-returns the desired point of an arc, if it is finite
-\item [Construct\_curve\_arc\_source\_vertex\_3, 
-Construct\_curve\_arc\_target\_vertex\_3] 
-returns the desired point of an arc, if it is finite
-\item [Construct\_supporting\_curve\_3] returns for a point or an arc its
+\item [ConstructCurveArcMinVertex\_3, 
+ConstructCurveArcMaxVertex\_3]
+returns the lexicgraphical smaller, or larger respectlively, 
+point of an arc, if it is finite
+\item [ConstructCurveArcSourceVertex\_3, 
+ConstructCurveArcTargetVertex\_3] 
+returns source point, or target point respectively, of an arc, if it is finite
+\item [ConstructSupportingCurve\_3] returns for a point or an arc its
 supporting \ccc{Curve_3}
-\item [Get\_equation] returns the polynomial for a given quadric
+\item [GetEquation] returns the polynomial for a given quadric
 \end{description}
 
 %TODO explain functors .. only the main ones are described with full details 
@@ -160,19 +162,20 @@ Framework Programme of the EU as a STREP (FET Open Scheme) Project
 under Contract No IST-006413 (\ccAnchor{http://acs.cs.rug.nl/}{ACS} -
 Algorithms for Complex Shapes).
 
-\begin{thebibliography}{10}
+%\begin{thebibliography}{10}
+%
+%\bibitem{bhksw-eceicpmqic-05}
+%E.~Berberich, M.~Hemmer, L.~Kettner, E.~Sch{\"o}mer, and N.~Wolpert.
+%\newblock An exact, complete and efficient implementation for computing planar
+%  maps of quadric intersection curves.
+%\newblock In {\em Proc. 21st Annu. Sympos. Comput. Geom. (SCG)}, pages 99--106,
+%  2005.
 
-\bibitem{bhksw-eceicpmqic-05}
-E.~Berberich, M.~Hemmer, L.~Kettner, E.~Sch{\"o}mer, and N.~Wolpert.
-\newblock An exact, complete and efficient implementation for computing planar
-  maps of quadric intersection curves.
-\newblock In {\em Proc. 21st Annu. Sympos. Comput. Geom. (SCG)}, pages 99--106,
-  2005.
+%\bibitem{lazard04b}
+%S.~Lazard, L.~M. Pe{\~n}aranda, and S.~Petitjean.
+%\newblock Intersecting quadrics\,: An efficient and exact implementation.
+%\newblock In {\em {ACM Symposium on Computational Geometry - SoCG'2004,
+%  Brooklyn, NY}}, Jun 2004.
 
-\bibitem{lazard04b}
-S.~Lazard, L.~M. Pe{\~n}aranda, and S.~Petitjean.
-\newblock Intersecting quadrics\,: An efficient and exact implementation.
-\newblock In {\em {ACM Symposium on Computational Geometry - SoCG'2004,
-  Brooklyn, NY}}, Jun 2004.
+%\end{thebibliography}
 
-\end{thebibliography}
