@@ -1905,10 +1905,13 @@ QP_solver/doc_tex/QP_solver_ref/solve_linear_program.tex -text
 QP_solver/doc_tex/QP_solver_ref/solve_nonnegative_linear_program.tex -text
 QP_solver/doc_tex/QP_solver_ref/solve_nonnegative_quadratic_program.tex -text
 QP_solver/doc_tex/QP_solver_ref/solve_quadratic_program.tex -text
+QP_solver/examples/QP_solver/convex_hull_containment_benchmarks.cpp -text
 QP_solver/examples/QP_solver/cycling.cpp -text
 QP_solver/examples/QP_solver/cycling.mps -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
+QP_solver/examples/QP_solver/filter_failure.cpp -text
+QP_solver/examples/QP_solver/filter_failure.mps -text
 QP_solver/examples/QP_solver/first_lp.cpp -text
 QP_solver/examples/QP_solver/first_lp.mps -text
 QP_solver/examples/QP_solver/first_lp_from_mps.cpp -text
@@ -1933,6 +1936,7 @@ QP_solver/examples/QP_solver/print_first_nonnegative_qp.cpp -text
 QP_solver/examples/QP_solver/print_first_qp.cpp -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
+QP_solver/examples/QP_solver/solve_convex_hull_containment_lp3.h -text
 QP_solver/examples/QP_solver/unboundedness_certificate.cpp -text
 QP_solver/include/CGAL/QP_options.h -text
 QP_solver/maintainer -text

@@ -29,11 +29,12 @@ CGAL_BEGIN_NAMESPACE
 
 enum Quadratic_program_pricing_strategy 
 { 
-  QP_FULL_EXACT, 
-  QP_FULL_FILTERED, 
-  QP_PARTIAL_EXACT, 
-  QP_PARTIAL_FILTERED,
-  QP_EXACT_BLAND
+  QP_CHOOSE_DEFAULT,
+  QP_DANTZIG, 
+  QP_FILTERED_DANTZIG, 
+  QP_PARTIAL_DANTZIG, 
+  QP_PARTIAL_FILTERED_DANTZIG,
+  QP_BLAND
 };
 
 class Quadratic_program_options 
@@ -42,7 +43,7 @@ public:
   // default constructor
   // -------------------
   Quadratic_program_options ()
-    : verbosity_ (0), pricing_strategy_ (QP_FULL_EXACT)
+    : verbosity_ (0), pricing_strategy_ (QP_CHOOSE_DEFAULT)
   {}
 
   // set/get verbosity

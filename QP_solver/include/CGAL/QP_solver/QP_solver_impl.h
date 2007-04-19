@@ -2947,19 +2947,20 @@ set_pricing_strategy
     CGAL_qpe_assertion( phase() != 1);
     CGAL_qpe_assertion( phase() != 2);
 
-    if (strategy == QP_FULL_EXACT)
+    if (strategy == QP_DANTZIG)
       strategyP = new QP_full_exact_pricing<Q, ET, Tags>;
-    else if (strategy == QP_FULL_FILTERED)
+    else if (strategy == QP_FILTERED_DANTZIG)
       strategyP = 
 	new typename QP_solver_impl::Filtered_pricing_strategy_selector
 	<Q, ET, Tags, C_entry>::FF;
-    else if (strategy == QP_PARTIAL_EXACT)
+    else if (strategy == QP_PARTIAL_DANTZIG)
       strategyP = new QP_partial_exact_pricing<Q, ET, Tags>;
-    else if (strategy == QP_PARTIAL_FILTERED)
+    else if (strategy == QP_PARTIAL_FILTERED_DANTZIG
+	     || strategy == QP_CHOOSE_DEFAULT)
       strategyP = 
 	new typename QP_solver_impl::Filtered_pricing_strategy_selector
 	<Q, ET, Tags, C_entry>::PF;
-    else if (strategy == QP_EXACT_BLAND) 
+    else if (strategy == QP_BLAND) 
       strategyP = new QP_exact_bland_pricing<Q, ET, Tags>;
     CGAL_qpe_assertion(strategyP != static_cast<Pricing_strategy*>(0));
    

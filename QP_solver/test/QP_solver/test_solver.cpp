@@ -26,6 +26,7 @@
 
 #include <cstdlib>
 #include <CGAL/basic.h>
+#include <CGAL/Timer.h>
 
 #ifndef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>       // Quotient<MP_Float> is too slow, even
@@ -204,17 +205,17 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
 
   // read strategy:
   std::string st = Token::token(in);
-  CGAL::Quadratic_program_pricing_strategy type = CGAL::QP_FULL_EXACT;
+  CGAL::Quadratic_program_pricing_strategy type = CGAL::QP_CHOOSE_DEFAULT;
   if (st=="fe")
-    type = CGAL::QP_FULL_EXACT;
+    type = CGAL::QP_DANTZIG;
   else if (st=="eb")
-    type = CGAL::QP_EXACT_BLAND;
+    type = CGAL::QP_BLAND;
   else if (st=="ff")
-    type = CGAL::QP_FULL_FILTERED;
+    type = CGAL::QP_FILTERED_DANTZIG;
   else if (st=="pe")
-    type = CGAL::QP_PARTIAL_EXACT;
+    type = CGAL::QP_PARTIAL_DANTZIG;
   else if (st=="pf")
-    type = CGAL::QP_PARTIAL_FILTERED;
+    type = CGAL::QP_PARTIAL_FILTERED_DANTZIG;
   else
     bailout1("illegal pricing strategy '%'",st);
   options.insert(Arg("Strategy",static_cast<int>(type)));
@@ -292,6 +293,8 @@ bool process(const std::string& filename,
   using std::cout;
   using std::endl;
 
+  CGAL::Timer timer;
+
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
 
@@ -339,8 +342,8 @@ bool process(const std::string& filename,
   // type is double
   Key_const_iterator it = options.find("Strategy");
   if (!is_double(IT()) && 
-      (it->second == CGAL::QP_FULL_FILTERED || 
-       it->second == CGAL::QP_PARTIAL_FILTERED)) 
+      (it->second == CGAL::QP_FILTERED_DANTZIG || 
+       it->second == CGAL::QP_PARTIAL_FILTERED_DANTZIG)) 
     return true;
 
   if (verbosity > 0)
@@ -422,16 +425,19 @@ bool process(const std::string& filename,
     (static_cast<CGAL::Quadratic_program_pricing_strategy>
      (options.find("Strategy")->second));
 
+  timer.reset();
+  timer.start();
   CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, solver_options);
-  // output solution + number of iterations
-  cout << CGAL::to_double(solver.solution()) << "(" 
-       << solver.iterations() << ") ";
+  timer.stop();
+  // output solution + number of iterations + time
+  cout << CGAL::to_double(solver.solution()) << " (it: " 
+       << solver.iterations() << ",time: " << timer.time() << ") ";
   // the solver previously checked itself through an assertion
   const bool is_valid = true; 
 
   // the last step: solve poblem from copied QP, if full exact pricing
   // and general form
-  if (options.find("Strategy")->second == CGAL::QP_FULL_EXACT && 
+  if (options.find("Strategy")->second == CGAL::QP_DANTZIG && 
       !check_tag(Is_linear()) &&
       !check_tag(Is_nonnegative()))
     { 
@@ -442,7 +448,7 @@ bool process(const std::string& filename,
       LocalQP;
     CGAL::Quadratic_program_options local_options;
     local_options.set_verbosity(0);
-    local_options.set_pricing_strategy(CGAL::QP_FULL_EXACT);
+    local_options.set_pricing_strategy(CGAL::QP_DANTZIG);
     LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), 
 		     qp.get_r(), 
 		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 

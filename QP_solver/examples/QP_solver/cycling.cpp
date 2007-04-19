@@ -21,13 +21,15 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 int main() {
   std::ifstream in ("cycling.mps");
   Program lp(in);         // read program from file
-  assert (lp.is_valid()); // we should have a valid mps file
+  assert (lp.is_valid()); // we should have a valid mps file...
+  assert (lp.is_linear());      // ... and it should be linear...
+  assert (lp.is_nonnegative()); // as well as nonnegative
 
   // solve the program, using ET as the exact type
   // choose verbose mode and Bland pricing
   CGAL::Quadratic_program_options options;
   options.set_verbosity(1);                              // verbose mode 
-  options.set_pricing_strategy(CGAL::QP_EXACT_BLAND);    // Bland's rule
+  options.set_pricing_strategy(CGAL::QP_BLAND);          // Bland's rule
   Solution s = CGAL::solve_nonnegative_linear_program(lp, ET(), options);
 
   // output solution

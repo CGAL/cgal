@@ -71,7 +71,7 @@ int main(const int argNr,const char **args) {
   }
   typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> Tags;
   CGAL::Quadratic_program_options options;
-  options.set_pricing_strategy(CGAL::QP_FULL_EXACT);
+  options.set_pricing_strategy(CGAL::QP_DANTZIG);
   options.set_verbosity(0);
   typedef CGAL::QP_solver<QP, ET, Tags> Solver;
   Solver s (qp, options);

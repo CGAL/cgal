@@ -4,9 +4,56 @@
 
 \ccDefinition
 This is an enumeration type containing the values
-\ccc{QP_FULL_EXACT}, and \ccc{QP_EXACT_BLAND}. 
+\ccc{QP_CHOOSE_DEFAULT}, \ccc{QP_DANTZIG}, 
+\ccc{QP_PARTIAL_DANTZIG}, \ccc{QP_FILTERED_DANTZIG},
+\ccc{QP_PARTIAL_FILTERED_DANTZIG}, and\ccc{QP_BLAND}. 
+
 It indicates the pricing strategy to be used in
-solving a linear or quadratic program.
+solving a linear or quadratic program. Here we describe when to 
+choose which strategy.
+
+\ccHeading{\ccc{QP_CHOOSE_DEFAULT}}
+This is the default value of the pricing strategy in
+\ccc{Quadratic_program_options}, and it lets the solver choose the
+strategy that it thinks is most appropriate for the problem at hand.
+There are only few reasons to deviate from this default, but you are
+free to experiment, of course.
+
+\ccHeading{\ccc{QP_DANTZIG}} 
+If the input type is \textbf{not} \ccc{double}, this is usually the best choice
+for `''typical'' sparse linear and quadratic programs of medium size,
+where the number of variables has roughly the same order of magnitude 
+as the number of constraints. 
+
+\ccHeading{\ccc{QP_PARTIAL_DANTZIG}}
+If the input type is \textbf{not} \ccc{double}, this is usually the best choice
+for linear and quadratic programs with few (up to 100, say), constraints,
+but a possibly large number of variables, or the other way around 
+(few variables, but possibly many constraints) 
+
+\ccHeading{\ccc{QP_FILTERED_DANTZIG}} 
+If the input type \textbf{is} \ccc{double}, this is usually the best choice
+for `''typical'' sparse linear and quadratic programs of medium size,
+where the number of variables has roughly the same order of magnitude 
+as the number of constraints. 
+
+{\bf Note:} filtered strategies may occasionally fail due to double 
+exponent overflows. In this case, the slower fallback option is
+the non-filtered variant \ccc{QP_DANTZIG} of this strategy.
+
+\ccHeading{\ccc{QP_PARTIAL_FILTERED_DANTZIG}}
+If the input type \textbf{is} \ccc{double}, this is usually the best choice
+for linear and quadratic programs with few (up to 100, say), constraints,
+but a possibly large number of variables, or the other way around 
+(few variables, but possibly many constraints). 
+
+{\bf Note:} filtered strategies may occasionally fail due to double 
+exponent overflows. In this case, the slower fallback option is
+the non-filtered variant \ccc{QP_PARTIAL_DANTZIG} of this strategy.
+
+\ccHeading{\ccc{QP_BLAND}}
+This is hardly ever the most efficient choice, but it is guaranteed
+to avoid internal cycling of the solution algorithm.
 
 \ccSeeAlso
 

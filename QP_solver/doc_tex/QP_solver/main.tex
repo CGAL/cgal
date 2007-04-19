@@ -55,7 +55,10 @@ type, such as \ccc{double}, \ccc{int}, or any exact type.
 Then the program is solved using the function \ccc{solve_quadratic_program}
 (or some specialized other functions, e.g.\ for linear programs). For this,
 you also have to provide a suitable \emph{exact} number type \ccc{ET} used
-in the solution process.
+in the solution process. In case of input type \ccc{double}, solution 
+methods that use floating-point-filtering are chosen by default (in some 
+cases, this is not appropriate, and the default should be changed; 
+see Section \ref{sec:QP-customization} for details).
 
 The output of this is an object of \ccc{Quadratic_program_solution<ET>}
 which you can in turn query for various things: what is the status of 
@@ -135,29 +138,34 @@ probably be very fast, even if $\max(n,m)$ goes into the millions.
 If $\min(n,m)+r$ is up to a few hundreds, you may still get a solution 
 within reasonable time, depending on the problem characteristics.
 
-If you have a problem where both $n$ and $e$ are above
+If you have a problem where both $n$ and $e$ are well above
 $1,000$, say, then chances are high that \cgal\ cannot solve it
-within any reasonable time.
+within reasonable time.
 
 \subsection{Robustness\label{sec:QP-robustness}}
 Given that you use an \emph{exact number type} in the function
 \ccc{solve_quadratic_program} (or in the other, specialized 
 solution functions),  the solver
 will give you \emph{exact rational output}, for \emph{every}
-convex quadratic program. This means, there are no robustness
-issues with the solver. It may fail to compute a solution only if
-\begin{itemize}
-\item the quadratic program is too large (see the previous subsection 
-on efficiency), 
-\item the quadratic objective function matrix $D$ is not 
-positive-semidefinite, or
-\item the solver internally cycles. This may happen in very rare
-cases (so rare actually that it does not pay off to take
-precautions against internal cycling by default). However, if
+convex quadratic program. It may fail to compute a solution only if
+\begin{enumerate}
+\item The quadratic program is too large (see the previous subsection 
+on efficiency).
+\item The quadratic objective function matrix $D$ is not 
+positive-semidefinite (see the discussion below).
+\item The floating-point filter used by default for input type
+\ccc{double} fails due to a \emph{double} exponent overflow. This 
+happens in rare cases only, and it does not pay off to sacrifice
+the efficiency of the filtered approach in order to cope with these
+rare cases. There are means, however, to avoid such
+problems by switching to a slower non-filtered variant, see
+Section  \ref{sec:QP-customization-filtering}.
+\item The solver internally cycles. This also happens in rare
+cases only. However, if
 you have a hunch that the solver cycles on your problem,
 there are means to switch to a slower variant that is guaranteed
-not to cycle, see Section \ref{sec:QP-customization}.
-\end{itemize}
+not to cycle, see Section \ref{sec:QP-customization-cycling}.
+\end{enumerate}
 
 The second item merits special attention. First, you may ask why the
 solver does not check that $D$ is positive semidefinite. But recall
@@ -533,7 +541,7 @@ most. As the exact type, we use \ccc{MP_Float}.
 
 \ccIncludeExampleCode{QP_solver/convex_hull_containment.cpp}
 
-\subsection{Using makers}\label{sec:QP-makers}
+\subsection{Using makers\label{sec:QP-makers}}
 You already noticed in the previous example that the actual 
 template arguments for 
 \ccc{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
@@ -654,24 +662,151 @@ of the certificates.
 
 \section{Customizing the Solver\label{sec:QP-customization}}
 Sometimes it is necessary to alter the default behavior of the solver.
-The most notable case is when the solver internally cycles. Consider
-the following program. It reads a nonnegative linear program from the
-file \texttt{cycling.mps} (which is in the example directory as well),
-and then solves it in verbose mode, using \emph{Bland's rule}.
+There are two notable case that we want to discuss here. There are
+other situations where such changes are not critical but simply beneficial
+for the performance (see the class \ccc{Quadratic_program_pricing_strategy}
+for a discussion).
+
+\subsection{Exponent overflow in double using floating-point filters\label{sec:QP-customization-filtering}}
+The filtered version of the solver that is used by default on input
+type \ccc{double} internally constructs double-approximations of exact
+multiprecision values. If these exact values are extremely large, this
+may lead to \emph{infinite} \ccc{double} values and incorrect results.
+In debug mode, the solver will notice this through a certificate 
+cross-check in the end (or even earlier). In this case, it is advisable
+to switch to a non-filtered \emph{pricing strategy}, see
+\ccc{Quadratic_program_pricing_strategy}.
+
+Consider the following program. It reads a nonnegative linear program from
+the file \texttt{filter\_failure.mps} (which is in the example directory as 
+well), and then solves it using \emph{Dantzig's rule}.
+
+\ccIncludeExampleCode{QP_solver/filter_failure.cpp}
+
+If your comment the line
+\begin{verbatim}
+options.set_pricing_strategy(CGAL::QP_DANTZIG);        // Dantzig's rule
+\end{verbatim}
+you will see that the solver fails (in debug mode, it will run into
+an assertion, and in non-debug mode, the objective value is simply 
+wrong). This is due to a filture failure, and switching to a non-filtered
+variant like \ccc{QP_DANTZIG} solves the problem.
+
+\subsection{The solver internally cycles\label{sec:QP-customization-cycling}}
+Consider the following program. It reads a nonnegative linear program from 
+the file \texttt{cycling.mps} (which is in the example directory as well),
+and then solves it in verbose mode, using \emph{Bland's rule}, see
+\ccc{Quadratic_program_pricing_strategy}.
 
 \ccIncludeExampleCode{QP_solver/cycling.cpp}
 
 If you comment the line 
 \begin{verbatim}
-options.set_pricing_strategy(CGAL::QP_EXACT_BLAND);    // Bland's rule
+options.set_pricing_strategy(CGAL::QP_BLAND);          // Bland's rule
 \end{verbatim}
 you will see that the solver cycles: the verbose mode outputs the same
 sequence of six iterations over and over again. By switching to 
-Bland's rule, the solution process typically slows down a bit 
+\ccc{QP_BLAND}, the solution process typically slows down a bit 
 (it may also speed up in some cases), but now it is guaranteed that
 no cycling occurs.
 
-The verbose mode can be of use when you are not sure whether the
-solver ``has died'', or whether it simply takes very long to solve
+In general, the verbose mode can be of use when you are not sure whether 
+the solver ``has died'', or whether it simply takes very long to solve
 your problem.  We refer to the class \ccc{Quadratic_program_options}
 for further details.
+
+\section{Some Benchmarks\label{sec:QP-benchmark}}
+Here we want to show what you can expect from the solver's performance
+in a specific application; we don't know whether this application is 
+typical in your case, and we make no claims whatsoever about the 
+performance in other applications.
+
+Still, the example shows that the performance can be dramatically 
+affected by switching between pricing strategies, and this message
+is important to know if you want to achieve good performance in 
+general. 
+
+The application is the one already discussed in Section \ref{sec:QP-iterators}
+above: testing whether a point is in the convex hull of other points.
+To be able to switch between pricing strategies, we add another
+parameter of type \ccc{Quadratic_program_options} to the function
+\ccc{solve_convex_hull_containment_lp} that we pass on to the solution
+function:
+
+\ccIncludeExampleCode{QP_solver/solve_convex_hull_containment_lp3.h}
+
+Now let us test containment of the origin in the convex hull
+of $n$ random points in $[0,1]^d$ (it will most likely not be contained,
+and it turns out that this is the most expensive case). In the program
+below, we use $d=10$ and $n=100,000$, and we comment on some other
+combinations of $n$ and $d$ below (feel free to experiment with still other
+values).
+
+\ccIncludeExampleCode{QP_solver/convex_hull_containment_benchmarks.cpp}
+
+If you compile with the macros \texttt{NDEBUG} or
+\texttt{CGAL\_QP\_NO\_ASSERTIONS} set (this is essential for good
+performance!!), you will see runtimes that qualitatively look as
+follows (on your machine, the actual runtimes will roughly be some
+fixed multiples of the numbers in the table below). The default
+choice of the pricing strategy in that case is 
+\ccc{QP_PARTIAL_FILTERED_DANTZIG}.
+
+\begin{tabular}{lcl}
+strategy & &runtime in seconds \\ \hline
+\ccc{CGAL::QP_CHOOSE_DEFAULT} & | &  0.32\\
+\ccc{CGAL::QP_DANTZIG}     & | &    10.7    \\      
+\ccc{CGAL::QP_PARTIAL_DANTZIG}  & | &  3.72  \\     
+\ccc{CGAL::QP_BLAND}  & | &            3.65  \\
+\ccc{CGAL::QP_FILTERED_DANTZIG}   & | &  0.43  \\  
+\ccc{CGAL::QP_PARTIAL_FILTERED_DANTZIG}& | & 0.32
+\end{tabular}
+
+We clearly see the effect of filtering: we gain a factor of ten,
+roughly, compared to the next best non-filtered variant. 
+
+\subsection{$d=3$, $n=1,000,000$} 
+The filtering effect is amplified if the points/dimension ratio becomes
+larger. This is what you might see in dimension three, with one million
+points. 
+
+\begin{tabular}{lcl}
+strategy & &runtime in seconds \\ \hline
+\ccc{CGAL::QP_CHOOSE_DEFAULT} & | & 1.34 \\
+\ccc{CGAL::QP_DANTZIG}     & | &    47.6   \\      
+\ccc{CGAL::QP_PARTIAL_DANTZIG}  & | &  15.6  \\     
+\ccc{CGAL::QP_BLAND}  & | &            16.02  \\
+\ccc{CGAL::QP_FILTERED_DANTZIG}   & | &  1.89  \\  
+\ccc{CGAL::QP_PARTIAL_FILTERED_DANTZIG}& | & 1.34
+\end{tabular}
+
+\subsection{$d=100$, $n=100,000$}
+Increasing the dimension to $100$ compared to the above example clearly
+shows that the filtering effect deteriorates with higher dimension but
+is still noticeable.
+
+\begin{tabular}{lcl}
+strategy & &runtime in seconds \\ \hline
+\ccc{CGAL::QP_CHOOSE_DEFAULT} & | & 3.05 \\
+\ccc{CGAL::QP_DANTZIG}     & | &    78.4   \\      
+\ccc{CGAL::QP_PARTIAL_DANTZIG}  & | &  45.9  \\     
+\ccc{CGAL::QP_BLAND}  & | &            33.2  \\
+\ccc{CGAL::QP_FILTERED_DANTZIG}   & | &  3.36  \\  
+\ccc{CGAL::QP_PARTIAL_FILTERED_DANTZIG}& | & 3.06
+\end{tabular}
+
+\subsection{$d=500$, $n=1,000$} 
+If the points/dimension ratio tends to a constant, filtering is no
+longer a clear winner. The reason is that the numbers involved in the
+necessary exact calculations are so large that the overall performance is
+dominated by them.
+
+\begin{tabular}{lcl}
+strategy & &runtime in seconds \\ \hline
+\ccc{CGAL::QP_CHOOSE_DEFAULT} & | & 2.65 \\
+\ccc{CGAL::QP_DANTZIG}     & | &  5.55     \\      
+\ccc{CGAL::QP_PARTIAL_DANTZIG}  & | & 5.6   \\     
+\ccc{CGAL::QP_BLAND}  & | &       4.46       \\
+\ccc{CGAL::QP_FILTERED_DANTZIG}   & | &  2.65  \\  
+\ccc{CGAL::QP_PARTIAL_FILTERED_DANTZIG}& | & 2.61
+\end{tabular}
