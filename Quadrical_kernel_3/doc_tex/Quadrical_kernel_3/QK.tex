@@ -1,94 +1,157 @@
 %\ignore{
 
-\section{Introduction}
+\section{Introduction and Software Design}
 
 The 3D quadrical kernel aims to provide the user basic functionality
 on quadrics and their spatial intersection curves. It is 
 consistent to most existing design choices taken in \cgal. To better
-understand its principles we refer to the kernel manual if \cgal.
+understand these principles we refer to the kernel manual of \cgal.
+In its current version, it should be seen as design study of its desired
+content. Full details will be worked out, such as the concrete
+interoperability with the existing linear and spherical kernel of \cgal.
+Note that the 3D quadrical kernel uses basic types taking 
+from these kernels. Main new geometric object provided by the proposed
+concept are \ccc{Quadric_3}, \ccc{Curve_3}, \ccc{Curve_point_3},
+ and \ccc{Curve_arc_3}.
 
-\section{Software Design}
+We currently can think of two approaches that
+could provide models for a quadrical kernel concept.
+The implementations differ on the question whether intersection curves get 
+parameterized~\cite{lazard04b}, or projected~\cite{bhksw-eceicpmqic-05}.
 
-The quadrical kernel is documented as a concept that can be 
-implemented by various models, like the projection approach, or
-or the parameterization method. TODO cites!
+%\section{Software Design}
 
-The quadrical kernel is instanciated with two template parameters:
-\begin{itemize}
-\item {} the \ccc{SphericalKernel}, from which the quadrical
-kernel inherits basic elementary linear and also
-spherical objects.
-\item {} the second parameter is the algebraic kernel, which is 
-responsible for computations on polynomials and algebraic numbers. It 
-has to be a model of concept \ccc{AlgebraicKernelForQuadrics}. The
-robustness of the package relies on the fact that the algebraic kernel
-provides exact computations on algebraic objects.
-\end{itemize}
-
-Note that the 3D quadrical provides most basic types taking from one
-of its two template parameters. Main new geometric objects
-are \ccc{Quadric_3}, \ccc{Curve_3}, \ccc{Curve_point_3} and \ccc{Curve_arc_3}.
+%The quadrical kernel is instantiated with two template parameters:
+%\begin{itemize}
+%\item {} the \ccc{SphericalKernel}, from which the quadrical
+%kernel inherits basic elementary linear and also
+%spherical objects.
+%\item {} the second parameter is an algebraic kernel, which is 
+%responsible for computations on polynomials and real algebraic numbers. It 
+%has to be a model of concept \ccc{AlgebraicKernelForQuadrics}. The
+%robustness of the package relies on the fact that the algebraic kernel
+%provides exact computations on algebraic objects.
+%\end{itemize}
 
 \section{Design Rationales and Discussion}
 
-The proposed concept follows main discussions of underlying
+The proposed concept follows main discussions of similar
 geometry and algebraic kernels. In contrast to the circular
 and spherical world, quadrics poses additional problems that do 
-not appear before. 
+not have appeared before. 
 
-One point is the correct handling of infinite objects. Quadrics
-and also their intersection curves can approach infinity in each variable.
-Due to the affine view of the geometric kernel, we can exclude
-for sure that the later concept of \ccc{Curve_point_3} never has 
-to represent curve-ends at infinity. The situation will be different
-when designing a homogeneous kernel. 
-
-Another difficulty is hidden in the spatial intersection curves.
+The first difficulty is hidden in the spatial intersection curves.
 Spheres intersect in spatial circles, that might be degenerated
-to a point in case the spheres only touch. Spatial circles
-have three advantages: (1)~they are bounded, (2)~consists of one irreducible
-algebraic component which implies (3)~consists of a single
-connected component.
-In general, all properties get lost when switching to arbitrary quadrics.
-It is possible to think of an instance of \ccc{Curve_3} being either
-(1)~The one-dimensional zero set of a polynomial
-system, i.e., the algebraic space curve, or (2)~an algebraically 
-irreducible factor of the former system, or (3)~a maximal connected component
-of the spatial curve. 
-The concept of \ccc{Curve_3} should either be fixed to one of the
-three definitions, we can think of additional types, which might be
-confusing, or the type is polymorphic, i.e., it is possible
-to represent all definitions. But then proper decomposition
-methods are required, i.e., at least from (1) to (2) and from (2) to (3).
+to a point in the case where two spheres only touch. These spatial circles
+have advantages: 
+\begin{itemize}
+\item They are bounded. 
+\item They consist of one irreducible algebraic component. This implies the 
+third.
+\item They consist of a single connected component.
+\item They are even embedded in a rational plane.
+\end{itemize}
+In general, all properties get lost when switching to spatial 
+intersection curves arbitrary quadrics.
+Actually, we can think of three different definitions for
+a type called \ccc{Curve_3}.
+\begin{enumerate}
+\item The one-dimensional zero set of a polynomial
+system, i.e., the algebraic space curve, or 
+\item an algebraically irreducible factor of the former system, or 
+\item a maximal connected component
+of the zero set.
+\end{enumerate}
+One solution is to fix the concept of \ccc{Curve_3} to one of the
+three definitions and modifying involved methods accordingly.
+On the other hand, we can assume the type to be 
+polymorphic, i.e., it is possible
+to represent all definitions and marking each instance with a corresponding
+flag. In both cases proper decomposition/transversions
+methods may be required, i.e., at least from (1) to (2) and from (2) to (3).
 
-For curve arcs the situation is similar. Since spatial curves can be infinite,
-consist of several algebraic or connected components and event can have 
-self-intersection, we carefully have to decide what is described by a curve
-arc. Three different objects can be be distinguished: (a)~Both ends of an 
-arc are finite, (b)~one end of an arc is finite, like a ``ray'', or 
-(c)~both ends are infinite, like a ``branch''. It is unclear
-whether different types should be introduced, or
-all can be encoded by a single ``polymorphic'' type. In the latter
-case, end-points can only be accessed if they are finite. As mentioned before,
-in a homogenous version, this condition can be removed. To find the 
-proper splitting of a \ccc{Curve_3} into maximal \ccc{Curve_arc_3}s depends
-on this question.
+
+An other problem is the correct handling of infinite objects. In the linear
+world planes, lines, and rays are also infinite, but have a
+simple behavior towards infinity. These objects have proper interfaces,
+but only recently they have been considered to be handled, e.g.,
+in the {\tt Arrangement\_2} package. 
+Handling infinity for quadrics and also their intersection curves cannot
+be neglected, since they pose a significant subset of the possible input.
+In a homogeneous version of a quadrical kernel, the handling of infinity
+is done automatically. More care has to be taken 
+for the affine version that is presented.
+A first observation is that instances of the later concept 
+\ccc{CurvePoint_3} only have to represent finite points.
+This fact has implications on the decision of what is represented
+by an instance of \ccc{CurveArc_3}.
+Spatial curves can be infinite,
+can consist of several algebraic or connected components, or even can have 
+self-intersection. Four different situations for maximal connected
+components can be be distinguished: 
+\begin{itemize}
+\item it is closed, i.e., it forms a loop. Otherwise,
+\item both ends are finite, or
+\item only one end is finite, like a {\em ray}, or 
+\item both ends are infinite, like a {\em branch}
+\end{itemize}
+It is unclear
+whether different types should be introduced, like \ccc{Curve_loop_3},
+\ccc{Curve_arc_3}, 
+\ccc{Curve_ray_3} and \ccc{Curve_branch_3}, or
+all are encoded by a single ``polymorphic'' type \ccc{Curve_arc_3}. 
+We decided for the latter, with the precondition
+that end-points can only be accessed if they are finite. Loops can be
+decomposed into \ccc{Curve_arc_3}s.
 
 \section{Functors}
 
-TODO explain functors .. only the main ones are described with full details 
-later, namely: CompareX\_3, HasOn\_3, ConstructQuadric\_3, ConstructCurve\_3,
-ArcOfCurve\_3, Intersect\_3, GetEquation
+The quadrical kernel, as well as its supporting algebraic kernel, offers
+a list of functors. The reference manual of the concepts only mention
+the main functors, while similar or easy ones are omitted in full details.
+We list their main ideas here. For the quadrical kernel, the following
+functors are easy of have similar one described in reference part
+of the manual.
+\begin{description}
+\item[Compare\_y\_3] compares $y$-coordinates of two points
+\item[Compare\_z\_3] compares $z$-coordinates of two points
+\item[Compare\_xy\_3] compares $x$- and $y$-coordinates of two points 
+lexicographically
+\item[Compare\_xyz\_3] compare $x$-, $y$, and $z$-coordinates of two points
+lexicographically
+\item [Equal\_3] returns whether two objects of the same type are equal
+\item [Do\_overlap\_3] returns whether two objects intersect in an infinite 
+number of points
+\item [Construct\_curve\_arc\_min\_vertex\_3, 
+Construct\_curve\_arc\_max\_vertex\_3]
+returns the desired point of an arc, if it is finite
+\item [Construct\_curve\_arc\_source\_vertex\_3, 
+Construct\_curve\_arc\_target\_vertex\_3] 
+returns the desired point of an arc, if it is finite
+\item [Construct\_supporting\_curve\_3] returns for a point or an arc its
+supporting \ccc{Curve_3}
+\item [Get\_equation] returns the polynomial for a given quadric
+\end{description}
 
+%TODO explain functors .. only the main ones are described with full details 
+%later, namely: 
+% CompareX\_3, ConstructQuadric\_3, ConstructCurve\_3,
+%ArcsOfCurve\_3
 
+%For the algebraic kernel the functors in the following list
+%are similar to ones explained later in full detail.
+%\begin{description}
+%\item[Compare\_y] compares $y$-values of two \ccc{AlgebraicReal_3}
+%\item[Compare\_z] compares $z$-values of two \ccc{AlgebraicReal_3}
+%\item[Compare\_xy] compares $x$- and $y$-values of two \ccc{AlgebraicReal_3}
+%lexicographically
+%\item[Compare\_xyz] compare $x$-, $y$, and $z$-values of two 
+%\ccc{AlgebraicReal_3} lexicographically
+%\item[Y\_critical\_points] computes $y$-critical points of an algebraic object
+%\item[Z\_critical\_points] computes $z$-critical points of an algebraic object
+%\end{description}
 
-We mention here: CompareY\_3, CompareZ\_3, CompareXy\_3, CompareXyz\_3,
-Equal\_3, DoOverlap\_3, ConstructVertices, ConstructSuppportingCurve\_3
-
-
-AK-Detailed: CompareX, SignAt, XCriticalPoints, Solve
-AK-List: OtherCompares, YZCriticalPoints
-
+%AK-Detailed: CompareX, SignAt, XCriticalPoints, Solve
 
 \section{Acknowledgements}
 
@@ -96,3 +159,20 @@ This work is partially supported by the IST Programme of the 6th
 Framework Programme of the EU as a STREP (FET Open Scheme) Project
 under Contract No IST-006413 (\ccAnchor{http://acs.cs.rug.nl/}{ACS} -
 Algorithms for Complex Shapes).
+
+\begin{thebibliography}{10}
+
+\bibitem{bhksw-eceicpmqic-05}
+E.~Berberich, M.~Hemmer, L.~Kettner, E.~Sch{\"o}mer, and N.~Wolpert.
+\newblock An exact, complete and efficient implementation for computing planar
+  maps of quadric intersection curves.
+\newblock In {\em Proc. 21st Annu. Sympos. Comput. Geom. (SCG)}, pages 99--106,
+  2005.
+
+\bibitem{lazard04b}
+S.~Lazard, L.~M. Pe{\~n}aranda, and S.~Petitjean.
+\newblock Intersecting quadrics\,: An efficient and exact implementation.
+\newblock In {\em {ACM Symposium on Computational Geometry - SoCG'2004,
+  Brooklyn, NY}}, Jun 2004.
+
+\end{thebibliography}
