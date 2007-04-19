@@ -41,9 +41,9 @@ where we \ccc{Type_1} $>$ \ccc{Type_1} with the defined order: \\
 An object \ccVar\ of this type must provide:
 
 \ccMemberFunction{QuadricalKernel_3::Quadric_3
-  operator()(const QuadricalKernel_3::Algebraic_kernel::Polynomial_3& polynomial);}
+  operator()(const QuadricalKernel_3::Polynomial_3& polynomial);}
 {constructs the quadric from the \ccc{polynomial}. As a precondition
-we have total\_degree(polynomial) $\leq 2$.}
+we have total\_degree(polynomial) $= 2$.}
 
 \end{ccRefFunctionObjectConcept}
 
@@ -141,6 +141,7 @@ be either
 
 \begin{itemize}
 \item {} \ccc{QuadricalKernel_3::Quadric_3},
+\item {} \ccc{QuadricalKernel_3::Linear_kernel_3::Plane_3},
 \item {} \ccc{QuadricalKernel_3::Curve_3},
 \item {} \ccc{QuadricalKernel_3::Curve_arc_3},
 \end{itemize} 
@@ -151,8 +152,8 @@ and depending on the types \ccc{Type_1} and \ccc{Type_2}, the computed
 and {\tt unsigned int} where the first part describe
 one object that both input objects have in common, and the second
 value gives its multiplicity. Note that, e.g., two quadrics
-can intersect in a third quadric that is not equal to one of the input
-quadrics. An example are plane-pairs that have one plane in common.
-Similar for curves and arcs.
+can intersect in a rational plane. 
+An example are plane-pairs that have one plane in common.
+%Similar for curves and arcs.
 
 \end{ccRefFunctionObjectConcept}
