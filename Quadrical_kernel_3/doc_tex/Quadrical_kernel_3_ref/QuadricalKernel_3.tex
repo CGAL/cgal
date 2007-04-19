@@ -1,7 +1,7 @@
 \begin{ccRefConcept}{QuadricalKernel_3}
 
-\ccRefines
-\ccc{SphericalKernel}
+%\ccRefines
+%\ccc{SphericalKernel}
 
 %\ccHasModels
 %\ccc{CGAL::Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}
@@ -13,8 +13,12 @@ A model of \ccc{QuadricalKernel_3} is supposed to provide some basic types
 \ccNestedType{Linear_kernel}{Model of \ccc{LinearKernel}.}
 \ccGlue
 \ccNestedType{Spherical_kernel}{Model of \ccc{SphericalKernel}.}
-\ccGlue
-\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernelForQuadrics}.}
+
+\ccNestedType{Polynomial_3}{Model of \ccc{CGAL::Polynomial\_d} specialized to
+$d = 3$.\footnote{\cgal\ already has a polynomial concept in another package.}}
+
+%\ccGlue
+%\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernelForQuadrics}.}
 
 %\ccNestedType{Polynomial_1_3}{Model of \ccc{AlgebraicKernelForQuadrics::Polynomial_1_3}.}
 %\ccGlue
@@ -37,7 +41,8 @@ and to define the following geometric objects
 Note that the \ccRefName\ does not provide triangular patches. 
 A triangular patch would consist of three instances of 
 \ccc{Curve_arc_3} embedded on an instance of \ccc{Quadric_3}.
-But in general it is not possible to define an instance of \ccc{Quadric_3} that 
+But in general it is not possible to define an instance of \ccc{Quadric_3} 
+that 
 passes through two given instances of \ccc{Curve_point_3}. 
 This is due to the fact, that in general each \ccc{Curve_point_3} is of 
 algebraic degree 8, while the quadric is defined by rational coefficients. 
@@ -122,7 +127,7 @@ constructions and other functionalities.
 
 \ccHeading{Link with the algebraic kernel}
 
-\ccNestedType{Get_equation}{Model of \ccc{QuadricalKernel_3::GetEquation}. Its \ccc{return_type} is \ccc{Algebraic_kernel::Polynomial_3}.}
+\ccNestedType{Get_equation}{Model of \ccc{QuadricalKernel_3::GetEquation}. Its \ccc{return_type} is \ccc{Polynomial_3}.}
 
 \ccOperations
 
