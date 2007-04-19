@@ -31,9 +31,9 @@ std::ostream& operator<<
 {
   typedef typename Nef_polyhedron_3<Kernel,Items, Mark>::SNC_structure SNC_structure;
 #ifdef CGAL_NEF3_SORT_OUTPUT
-  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc(), true);
+  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc(), true, true);
 #else
-  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc());
+  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc(), false, true);
 #endif
   O.print();
   return os;

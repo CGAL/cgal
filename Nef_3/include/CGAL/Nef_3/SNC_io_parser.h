@@ -878,7 +878,8 @@ public:
 
 public:
   SNC_io_parser(std::istream& is, SNC_structure& W);
-  SNC_io_parser(std::ostream& os, SNC_structure& W, bool sort=false);
+  SNC_io_parser(std::ostream& os, SNC_structure& W, 
+		bool sort=false, bool reduce_ = false);
 
   std::string index(Vertex_iterator v) const
   { return VI(v,verbose); } 
@@ -972,7 +973,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) :
 
 template <typename EW>
 SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, 
-                                                   bool sort) : 
+				 bool sort, bool reduce_) : 
   Base(W), in(std::cin), out(os),
   FI(W.halffacets_begin(),W.halffacets_end(),'F'),
   CI(W.volumes_begin(),W.volumes_end(),'C'),
@@ -990,8 +991,10 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
              out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);  
   sorted = sort;
-  reduce = this->is_extended_kernel() && sorted && this->is_bounded();
-  
+  reduce = reduce_;
+  reduce = reduce && this->is_extended_kernel() && this->is_bounded();
+  sorted = sorted || reduce;
+
   Vertex_iterator vi; 
   CGAL_forall_vertices(vi, *this->sncp()) {
     VL.push_back(vi);
