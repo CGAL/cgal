@@ -1,4 +1,4 @@
-\section{Arrangement\_2\label{bi_sec:Arrangement2}}
+\section{Curve\label{bi_cha:Curve}}
 
 A two-dimensional arrangement is the subdivision of the plane into
 maximal connected 0-dimensional (vertices), 1-dimensional (edges), 
@@ -8,26 +8,12 @@ to compute arrangements of curves, incrementally and by the sweep-line
 paradigm. This chapter collects instances to benchmark the 
 {\tt Arrangement\_2} of {\sc Cgal}.
 
-
-\ignore{
-\section{Circles\label{bi_sec:Arrangement2Circles}}
-
-Circles are the simples non-linear objects in 2D. 
-
-\subsection{Random data\label{bi_sec:Arrangement2CirclesRandomdata}}
-
-
-\section{VLSI-Data\label{bi_sec:Arrangement2VLSI}}
-
-VLSI is used in circuit planning. The involved arrangements contain
-circles and segments.
-
-\section{Conics\label{bi_sec:Arrangement2Conics}}
+\subsection{Conics\label{bi_sec:Arrangement2Conics}}
 
 A conic is defined by the zero set of a two-variate polynomial
 of degree 2. A circle is a degenerated conic.
 
-\subsection{Random data\label{bi_sec:Arrangement2ConicsRandomdata}}
+\subsubsection{Random data\label{bi_sec:Arrangement2ConicsRandomdata}}
 
 The following files contain contain randomly generated conics. 
 Each instance of one file inlcudes the same number of conics. Not that
@@ -47,7 +33,9 @@ a generic conic may also be unbounded.
 \ccBenchmarkInstance{Arrangement_2/data/Conic_2/random/number400/}
 \ccBenchmarkInstance{Arrangement_2/data/Conic_2/random/number500/}
 
-\section{Curves of Arbitrary Degree\label{bi_sec:Arrangement2AlgebraicCurve2}}
+\subsection{Cubics}
+
+\subsection{Curves of Arbitrary Degree\label{bi_sec:Arrangement2AlgebraicCurve2}}
 
 Algebraic curves of arbitrary degree can also be considered. Full families
 of instances will be provided in the future. The attached archive
@@ -56,4 +44,4 @@ $x$-extremal points, several cusps, high-degree singularities, et cetera.
 
 \ccBenchmarkInstance{Arrangement_2/data/Algebraic_curve_2/singleton_examples/}
 
-}
+
