@@ -1438,6 +1438,10 @@ Minkowski_sum_2/test/Minkowski_sum_2/data/knife_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/knife_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/mchain_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/mchain_part2.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/r35975_part1.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/r35975_part2.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/r38305_part1.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/r38305_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/random_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/random_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/rooms_part1.dat -text
