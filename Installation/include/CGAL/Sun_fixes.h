@@ -99,6 +99,15 @@ namespace std {
     return n;
   }
 
+  template <class InputIterator, class T>
+  inline typename iterator_traits<InputIterator>::difference_type
+  count (InputIterator first, InputIterator last, const T& value)
+  {
+    typename iterator_traits<InputIterator>::difference_type result;
+    count(first,last,value,result);
+    return result;
+  }
+
 } // namespace std
 
 namespace CGAL {
