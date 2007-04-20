@@ -2949,14 +2949,16 @@ set_pricing_strategy
 
     if (strategy == QP_DANTZIG)
       strategyP = new QP_full_exact_pricing<Q, ET, Tags>;
-    else if (strategy == QP_FILTERED_DANTZIG)
+    else if (strategy == QP_FILTERED_DANTZIG)    
+      // choose between FF (double) and FE (anything else)
       strategyP = 
 	new typename QP_solver_impl::Filtered_pricing_strategy_selector
 	<Q, ET, Tags, C_entry>::FF;
     else if (strategy == QP_PARTIAL_DANTZIG)
       strategyP = new QP_partial_exact_pricing<Q, ET, Tags>;
     else if (strategy == QP_PARTIAL_FILTERED_DANTZIG
-	     || strategy == QP_CHOOSE_DEFAULT)
+	     || strategy == QP_CHOOSE_DEFAULT)   
+      // choose between PF (double) and PE (anything else)
       strategyP = 
 	new typename QP_solver_impl::Filtered_pricing_strategy_selector
 	<Q, ET, Tags, C_entry>::PF;
@@ -3184,7 +3186,8 @@ print_solution( ) const
     << "solution: " 
     << solution_numerator() << " / " << solution_denominator() 
     << "  ~= " 
-    << to_double(solution_numerator())/to_double(solution_denominator())
+    << to_double
+    (CGAL::Quotient<ET>(solution_numerator(), solution_denominator()))
     << std::endl;
   CGAL_qpe_debug {
       vout2 << std::endl;

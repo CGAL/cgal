@@ -3,15 +3,15 @@ Reading from standard in...
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0) (c) 
+ Solution:   0(1) 0(1) (c) 
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
@@ -23,15 +23,15 @@ Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_shifted.mps
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.000999) 0 (it: 1,time: 0.001) (c) 
+ Solution:   0(1) 0(1) (c) 
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
@@ -43,15 +43,15 @@ Processing:    test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_free.mps
 Processing:    test_solver_data/masters/cgal/LP_U6_zero_c_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) (c) 
+ Solution:   0(1) 0(1) 0(1) 0(1) (c) 
 Processing:    test_solver_data/masters/cgal/LP_U6_zero_c_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_U6_zero_c_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_U6_zero_c_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
@@ -63,1355 +63,1355 @@ Processing:    test_solver_data/masters/cgal/LP_U6_zero_c_QPE_solver.mps
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10123 (it: 8,time: 0.001999) -10123 (it: 8,time: 0.002) -10123 (it: 8,time: 0.001999) -10123 (it: 8,time: 0.003) (c) -10123 (it: 8,time: 0.003999) (c) -10123 (it: 8,time: 0.005999) (c) 
+ Solution:   -10123(8) -10123(8) -10123(8) -10123(8) (c) -10123(8) (c) -10123(8) (c) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10123 (it: 8,time: 0.001) -10123 (it: 8,time: 0.002) -10123 (it: 8,time: 0.002) -10123 (it: 8,time: 0.003) -10123 (it: 8,time: 0.003999) -10123 (it: 8,time: 0.005999) 
+ Solution:   -10123(8) -10123(8) -10123(8) -10123(8) -10123(8) -10123(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10123 (it: 6,time: 0.001) -10123 (it: 6,time: 0.002) -10123 (it: 6,time: 0.002) -10123 (it: 6,time: 0.002) -10123 (it: 6,time: 0.001999) -10123 (it: 6,time: 0.004999) 
+ Solution:   -10123(6) -10123(6) -10123(6) -10123(6) -10123(6) -10123(6) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10123 (it: 8,time: 0.002) -10123 (it: 8,time: 0.003) 
+ Solution:   -10123(8) -10123(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10123 (it: 8,time: 0.002) -10123 (it: 8,time: 0.002999) 
+ Solution:   -10123(8) -10123(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.004) (c) -10000 (it: 8,time: 0.004999) (c) -10000 (it: 8,time: 0.009999) (c) 
+ Solution:   -10000(8) -10000(8) -10000(8) -10000(8) (c) -10000(8) (c) -10000(8) (c) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.001999) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.003999) -10000 (it: 8,time: 0.004999) -10000 (it: 8,time: 0.009998) 
+ Solution:   -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 6,time: 0.001) -10000 (it: 6,time: 0.002) -10000 (it: 6,time: 0.002999) -10000 (it: 6,time: 0.003999) -10000 (it: 6,time: 0.004) -10000 (it: 6,time: 0.006999) 
+ Solution:   -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.004) 
+ Solution:   -10000(8) -10000(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.004999) 
+ Solution:   -10000(8) -10000(8) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.002999) -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.001999) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.004999) -10000 (it: 8,time: 0.002999) (c) -10000 (it: 8,time: 0.002999) (c) -10000 (it: 8,time: 0.005999) (c) 
+ Solution:   -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) (c) -10000(8) (c) -10000(8) (c) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.001999) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.001999) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.004999) -10000 (it: 8,time: 0.002999) -10000 (it: 8,time: 0.003) -10000 (it: 8,time: 0.004999) 
+ Solution:   -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) -10000(8) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 6,time: 0) -10000 (it: 6,time: 0.001999) -10000 (it: 6,time: 0.002) -10000 (it: 6,time: 0.001) -10000 (it: 6,time: 0.001) -10000 (it: 6,time: 0.002) -10000 (it: 6,time: 0.001999) -10000 (it: 6,time: 0.002) -10000 (it: 6,time: 0.003999) -10000 (it: 6,time: 0.002) -10000 (it: 6,time: 0.002) -10000 (it: 6,time: 0.003999) 
+ Solution:   -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) -10000(6) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.002) -10000 (it: 8,time: 0.002999) -10000 (it: 8,time: 0.002999) 
+ Solution:   -10000(8) -10000(8) -10000(8) -10000(8) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.001) -10000 (it: 8,time: 0.001999) -10000 (it: 8,time: 0.003) 
+ Solution:   -10000(8) -10000(8) -10000(8) -10000(8) 
 Processing:    test_solver_data/masters/cgal/PRIMALC1.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -6155.25 (it: 19,time: 0.487926) (c) -6155.25 (it: 19,time: 1.02085) (c) 
+ Solution:   -6155.25(19) (c) -6155.25(19) (c) 
 Processing:    test_solver_data/masters/cgal/PRIMALC1.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -6155.25 (it: 19,time: 0.374943) -6155.25 (it: 19,time: 0.841872) 
+ Solution:   -6155.25(19) -6155.25(19) 
 Processing:    test_solver_data/masters/cgal/PRIMALC1.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -6155.25 (it: 20,time: 0.432934) -6155.25 (it: 20,time: 0.960854) 
+ Solution:   -6155.25(20) -6155.25(20) 
 Processing:    test_solver_data/masters/cgal/PRIMALC1.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -6155.25 (it: 19,time: 0.33295) 
+ Solution:   -6155.25(19) 
 Processing:    test_solver_data/masters/cgal/PRIMALC1.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -6155.25 (it: 19,time: 0.313952) 
+ Solution:   -6155.25(19) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.000999) (c) -10000 (it: 2,time: 0.002) (c) 
+ Solution:   -10000(2) -10000(2) -10000(2) (c) -10000(2) (c) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001999) -10000 (it: 2,time: 0.002) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.000999) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.002) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.000999) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) -10000 (it: 3,time: 0.001999) (c) -10000 (it: 3,time: 0.002) (c) 
+ Solution:   -10000(3) -10000(3) -10000(3) (c) -10000(3) (c) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) 
+ Solution:   -10000(3) -10000(3) -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.000999) -10000 (it: 3,time: 0.002) -10000 (it: 3,time: 0.002) 
+ Solution:   -10000(3) -10000(3) -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.002) -10000 (it: 3,time: 0.002) 
+ Solution:   -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001) 
+ Solution:   -10000(3) -10000(3) 
 Processing:    test_solver_data/masters/cgal/b_float.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) (c) -10000 (it: 2,time: 0.001) (c) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) (c) -10000(2) (c) 
 Processing:    test_solver_data/masters/cgal/b_float.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/masters/cgal/b_float.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.000999) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/masters/cgal/b_float.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/masters/cgal/b_float.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.000999) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   5 (it: 2,time: 0) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.000999) 5 (it: 2,time: 0.001) (c) 5 (it: 2,time: 0.001) (c) 5 (it: 2,time: 0.001999) (c) 
+ Solution:   5(2) 5(2) 5(2) 5(2) (c) 5(2) (c) 5(2) (c) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.002) 
+ Solution:   5(2) 5(2) 5(2) 5(2) 5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   5 (it: 2,time: 0.001) 5 (it: 2,time: 0.000999) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.000999) 5 (it: 2,time: 0.002) 
+ Solution:   5(2) 5(2) 5(2) 5(2) 5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 
+ Solution:   5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   5 (it: 2,time: 0) 5 (it: 2,time: 0.001) 
+ Solution:   5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.000999) (c) 0 (it: 5,time: 0.002) (c) 0 (it: 5,time: 0.004) (c) 
+ Solution:   0(5) 0(5) 0(5) 0(5) (c) 0(5) (c) 0(5) (c) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.000999) 0 (it: 5,time: 0.002) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots_Remove_Pivots.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0) (c) 0 (it: 2,time: 0.000999) (c) 0 (it: 2,time: 0.001) (c) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) (c) 0(2) (c) 0(2) (c) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots_Remove_Pivots.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0.001) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots_Remove_Pivots.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 2,time: 0) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0.001) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots_Remove_Pivots.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0.001) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots_Remove_Pivots.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) (c) -6 (it: 4,time: 0.001) (c) -6 (it: 4,time: 0.001999) (c) 
+ Solution:   -6(4) (c) -6(4) (c) -6(4) (c) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) -6 (it: 4,time: 0.001) -6 (it: 4,time: 0.001999) 
+ Solution:   -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) -6 (it: 4,time: 0.001999) -6 (it: 4,time: 0.002) 
+ Solution:   -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) 
+ Solution:   -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) 
+ Solution:   -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001999) (c) 0 (it: 4,time: 0.002) (c) 0 (it: 4,time: 0.003999) (c) 
+ Solution:   0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.003999) 
+ Solution:   0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.003) 0 (it: 4,time: 0.004999) 
+ Solution:   0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.003) 
+ Solution:   0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.002) 
+ Solution:   0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.001999) (c) 
+ Solution:   0(4) 0(4) 0(4) 0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   17 (it: 4,time: 0.001) 17 (it: 4,time: 0) 17 (it: 4,time: 0.002) 17 (it: 4,time: 0.001) (c) 17 (it: 4,time: 0.001999) (c) 17 (it: 4,time: 0.001999) (c) 
+ Solution:   17(4) 17(4) 17(4) 17(4) (c) 17(4) (c) 17(4) (c) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   17 (it: 4,time: 0.001) 17 (it: 4,time: 0.002) 17 (it: 4,time: 0.001) 17 (it: 4,time: 0.001) 17 (it: 4,time: 0.001999) 17 (it: 4,time: 0.003) 
+ Solution:   17(4) 17(4) 17(4) 17(4) 17(4) 17(4) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   17 (it: 6,time: 0.001) 17 (it: 6,time: 0.001) 17 (it: 6,time: 0.003) 17 (it: 6,time: 0.001999) 17 (it: 6,time: 0.002) 17 (it: 6,time: 0.002999) 
+ Solution:   17(6) 17(6) 17(6) 17(6) 17(6) 17(6) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   17 (it: 4,time: 0.002) 17 (it: 4,time: 0.002) 
+ Solution:   17(4) 17(4) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   17 (it: 4,time: 0.001999) 17 (it: 4,time: 0.000999) 
+ Solution:   17(4) 17(4) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2 (it: 7,time: 0.002999) 2 (it: 7,time: 0.003) 2 (it: 7,time: 0.007999) 2 (it: 7,time: 0.005) (c) 2 (it: 7,time: 0.005999) (c) 2 (it: 7,time: 0.010998) (c) 
+ Solution:   2(7) 2(7) 2(7) 2(7) (c) 2(7) (c) 2(7) (c) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2 (it: 7,time: 0.003) 2 (it: 7,time: 0.003999) 2 (it: 7,time: 0.007999) 2 (it: 7,time: 0.004999) 2 (it: 7,time: 0.005999) 2 (it: 7,time: 0.010998) 
+ Solution:   2(7) 2(7) 2(7) 2(7) 2(7) 2(7) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2 (it: 7,time: 0.003) 2 (it: 7,time: 0.004) 2 (it: 7,time: 0.007998) 2 (it: 7,time: 0.003999) 2 (it: 7,time: 0.005) 2 (it: 7,time: 0.010999) 
+ Solution:   2(7) 2(7) 2(7) 2(7) 2(7) 2(7) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2 (it: 7,time: 0.003999) 2 (it: 7,time: 0.004999) 
+ Solution:   2(7) 2(7) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2 (it: 7,time: 0.004999) 2 (it: 7,time: 0.005999) 
+ Solution:   2(7) 2(7) 
 Processing:    test_solver_data/masters/cgal/LP_Row_Rank_lt_m_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2 (it: 4,time: 0.000999) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.002) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001999) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001999) 2 (it: 4,time: 0.001) (c) 2 (it: 4,time: 0.001999) (c) 2 (it: 4,time: 0.002) (c) 
+ Solution:   2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) (c) 2(4) (c) 2(4) (c) 
 Processing:    test_solver_data/masters/cgal/LP_Row_Rank_lt_m_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2 (it: 4,time: 0.001) 2 (it: 4,time: 0.002) 2 (it: 4,time: 0.002) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.002) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.002) 2 (it: 4,time: 0.000999) 2 (it: 4,time: 0.002) 2 (it: 4,time: 0.001999) 
+ Solution:   2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 2(4) 
 Processing:    test_solver_data/masters/cgal/LP_Row_Rank_lt_m_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.001) 2 (it: 6,time: 0.002) 2 (it: 6,time: 0.002) 2 (it: 6,time: 0.001) 2 (it: 6,time: 0.001999) 2 (it: 6,time: 0.002) 2 (it: 6,time: 0.001) 2 (it: 6,time: 0.001) 2 (it: 6,time: 0.003) 2 (it: 6,time: 0.001999) 2 (it: 6,time: 0.003) 2 (it: 6,time: 0.002999) 
+ Solution:   2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 
 Processing:    test_solver_data/masters/cgal/LP_Row_Rank_lt_m_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2 (it: 4,time: 0.001) 2 (it: 4,time: 0.000999) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001999) 
+ Solution:   2(4) 2(4) 2(4) 2(4) 
 Processing:    test_solver_data/masters/cgal/LP_Row_Rank_lt_m_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001999) 2 (it: 4,time: 0.001) 2 (it: 4,time: 0.001999) 
+ Solution:   2(4) 2(4) 2(4) 2(4) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) (c) 1 (it: 1,time: 0.001) (c) 1 (it: 1,time: 0) (c) 
+ Solution:   1(1) 1(1) 1(1) 1(1) (c) 1(1) (c) 1(1) (c) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0.001) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0.001) 
+ Solution:   1(1) 1(1) 1(1) 1(1) 1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 
+ Solution:   1(1) 1(1) 1(1) 1(1) 1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   1 (it: 1,time: 0) 1 (it: 1,time: 0) 
+ Solution:   1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   1 (it: 1,time: 0.000999) 1 (it: 1,time: 0.001) 
+ Solution:   1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0.001) (c) 0 (it: 1,time: 0.001) (c) 
+ Solution:   0(1) 0(1) 0(1) 0(1) (c) 0(1) (c) 0(1) (c) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_two_var_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.000999) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0) (c) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) (c) 0(1) (c) 0(1) (c) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_two_var_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_two_var_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_two_var_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.000999) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_two_var_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) (c) -6 (it: 4,time: 0.001) (c) -6 (it: 4,time: 0.001999) (c) 
+ Solution:   -6(4) (c) -6(4) (c) -6(4) (c) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001999) -6 (it: 4,time: 0.001) -6 (it: 4,time: 0.001999) 
+ Solution:   -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.000999) -6 (it: 4,time: 0.002) -6 (it: 4,time: 0.001999) 
+ Solution:   -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.002) 
+ Solution:   -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001999) 
+ Solution:   -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.001999) (c) 0 (it: 4,time: 0.003999) (c) 
+ Solution:   0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002999) 0 (it: 4,time: 0.003999) 
+ Solution:   0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.004) 
+ Solution:   0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.003) 
+ Solution:   0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.002) 
+ Solution:   0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.001999) (c) 
+ Solution:   0(4) 0(4) 0(4) 0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002999) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002999) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.001999) -729 (it: 8,time: 0.004) -729 (it: 8,time: 0.005) (c) -729 (it: 8,time: 0.004999) (c) -729 (it: 8,time: 0.009999) (c) 
+ Solution:   -729(8) -729(8) -729(8) -729(8) (c) -729(8) (c) -729(8) (c) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.001999) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.004) -729 (it: 8,time: 0.005999) -729 (it: 8,time: 0.009998) 
+ Solution:   -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -729 (it: 6,time: 0.001) -729 (it: 6,time: 0.001999) -729 (it: 6,time: 0.002) -729 (it: 6,time: 0.003) -729 (it: 6,time: 0.003999) -729 (it: 6,time: 0.006999) 
+ Solution:   -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.002999) -729 (it: 8,time: 0.005999) 
+ Solution:   -729(8) -729(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.001999) -729 (it: 8,time: 0.003999) 
+ Solution:   -729(8) -729(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -747 (it: 8,time: 0.001) -747 (it: 8,time: 0.002) -747 (it: 8,time: 0.003) -747 (it: 8,time: 0.002999) (c) -747 (it: 8,time: 0.002999) (c) -747 (it: 8,time: 0.005999) (c) 
+ Solution:   -747(8) -747(8) -747(8) -747(8) (c) -747(8) (c) -747(8) (c) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -747 (it: 8,time: 0.001) -747 (it: 8,time: 0.002) -747 (it: 8,time: 0.002999) -747 (it: 8,time: 0.002999) -747 (it: 8,time: 0.003) -747 (it: 8,time: 0.005999) 
+ Solution:   -747(8) -747(8) -747(8) -747(8) -747(8) -747(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -747 (it: 6,time: 0.000999) -747 (it: 6,time: 0.001) -747 (it: 6,time: 0.002) -747 (it: 6,time: 0.002) -747 (it: 6,time: 0.002) -747 (it: 6,time: 0.004999) 
+ Solution:   -747(6) -747(6) -747(6) -747(6) -747(6) -747(6) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -747 (it: 8,time: 0.002) -747 (it: 8,time: 0.002999) 
+ Solution:   -747(8) -747(8) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -747 (it: 8,time: 0.001999) -747 (it: 8,time: 0.003) 
+ Solution:   -747(8) -747(8) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_base_3_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.002999) -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.004999) -729 (it: 8,time: 0.003) (c) -729 (it: 8,time: 0.003) (c) -729 (it: 8,time: 0.005999) (c) 
+ Solution:   -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) (c) -729(8) (c) -729(8) (c) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_base_3_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.001999) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.001999) -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.004999) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.003) -729 (it: 8,time: 0.005999) 
+ Solution:   -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) -729(8) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_base_3_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -729 (it: 6,time: 0.001) -729 (it: 6,time: 0.000999) -729 (it: 6,time: 0.002) -729 (it: 6,time: 0.001) -729 (it: 6,time: 0.001) -729 (it: 6,time: 0.002) -729 (it: 6,time: 0.002) -729 (it: 6,time: 0.001999) -729 (it: 6,time: 0.004) -729 (it: 6,time: 0.001999) -729 (it: 6,time: 0.003) -729 (it: 6,time: 0.004999) 
+ Solution:   -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) -729(6) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_base_3_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.002999) -729 (it: 8,time: 0.003) 
+ Solution:   -729(8) -729(8) -729(8) -729(8) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_base_3_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -729 (it: 8,time: 0.001) -729 (it: 8,time: 0.002) -729 (it: 8,time: 0.001999) -729 (it: 8,time: 0.002999) 
+ Solution:   -729(8) -729(8) -729(8) -729(8) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   1 (it: 1,time: 0.001) 1 (it: 1,time: 0.001) 1 (it: 1,time: 0.001) 1 (it: 1,time: 0.001) (c) 1 (it: 1,time: 0) (c) 1 (it: 1,time: 0) (c) 
+ Solution:   1(1) 1(1) 1(1) 1(1) (c) 1(1) (c) 1(1) (c) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0.001) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 
+ Solution:   1(1) 1(1) 1(1) 1(1) 1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   1 (it: 1,time: 0.000999) 1 (it: 1,time: 0.001) 1 (it: 1,time: 0.001) 1 (it: 1,time: 0) 1 (it: 1,time: 0) 1 (it: 1,time: 0.001) 
+ Solution:   1(1) 1(1) 1(1) 1(1) 1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   1 (it: 1,time: 0.001) 1 (it: 1,time: 0) 
+ Solution:   1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   1 (it: 1,time: 0) 1 (it: 1,time: 0) 
+ Solution:   1(1) 1(1) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 0 (it: 2,time: 0) 0 (it: 2,time: 0) (c) 0 (it: 2,time: 0.001) (c) 0 (it: 2,time: 0.001) (c) 
+ Solution:   0(2) 0(2) 0(2) 0(2) (c) 0(2) (c) 0(2) (c) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 2,time: 0) 0 (it: 2,time: 0) 0 (it: 2,time: 0) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 0 (it: 2,time: 0.000999) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0) 
+ Solution:   0(2) 0(2) 
 Processing:    test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.000999) 0 (it: 2,time: 0) 
+ Solution:   0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_one_var_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0) (c) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) (c) 0(1) (c) 0(1) (c) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_one_var_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_one_var_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_one_var_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_no_cons_one_var_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.004999) (c) -5.5 (it: 7,time: 0.008999) (c) -5.5 (it: 7,time: 0.012998) (c) 
+ Solution:   -5.5(7) (c) -5.5(7) (c) -5.5(7) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.005999) -5.5 (it: 7,time: 0.005999) -5.5 (it: 7,time: 0.012998) 
+ Solution:   -5.5(7) -5.5(7) -5.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.003999) -5.5 (it: 7,time: 0.005999) -5.5 (it: 7,time: 0.011998) 
+ Solution:   -5.5(7) -5.5(7) -5.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.006999) 
+ Solution:   -5.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.006999) 
+ Solution:   -5.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.005999) (c) 2.5 (it: 7,time: 0.007999) (c) 2.5 (it: 7,time: 0.020997) (c) 
+ Solution:   2.5(7) (c) 2.5(7) (c) 2.5(7) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.006999) 2.5 (it: 7,time: 0.006999) 2.5 (it: 7,time: 0.014998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.004) 2.5 (it: 7,time: 0.006999) 2.5 (it: 7,time: 0.011998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.007999) 
+ Solution:   2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.006999) 
+ Solution:   2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_x_shifted_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.004999) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.011998) 2.5 (it: 7,time: 0.005999) (c) 2.5 (it: 7,time: 0.006999) (c) 2.5 (it: 7,time: 0.012998) (c) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 2.5(7) (c) 2.5(7) (c) 2.5(7) (c) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_x_shifted_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.004999) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.011998) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.007999) 2.5 (it: 7,time: 0.012998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_x_shifted_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.003999) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.010998) 2.5 (it: 7,time: 0.003999) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.011998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_x_shifted_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.006999) 
+ Solution:   2.5(7) 2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_x_shifted_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.006999) 2.5 (it: 7,time: 0.005999) 
+ Solution:   2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) (c) 5 (it: 2,time: 0.001) (c) 5 (it: 2,time: 0.001) (c) 
+ Solution:   5(2) 5(2) 5(2) 5(2) (c) 5(2) (c) 5(2) (c) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   5 (it: 2,time: 0) 5 (it: 2,time: 0) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.002) 
+ Solution:   5(2) 5(2) 5(2) 5(2) 5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   5 (it: 2,time: 0) 5 (it: 2,time: 0) 5 (it: 2,time: 0.000999) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 5 (it: 2,time: 0.002) 
+ Solution:   5(2) 5(2) 5(2) 5(2) 5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 
+ Solution:   5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   5 (it: 2,time: 0.001) 5 (it: 2,time: 0.001) 
+ Solution:   5(2) 5(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) (c) 0 (it: 5,time: 0.002) (c) 0 (it: 5,time: 0.004) (c) 
+ Solution:   0(5) 0(5) 0(5) 0(5) (c) 0(5) (c) 0(5) (c) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.000999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.000999) 0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.004) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.001) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   50 (it: 2,time: 0.000999) 50 (it: 2,time: 0.001) 50 (it: 2,time: 0.002) 50 (it: 2,time: 0.002) (c) 50 (it: 2,time: 0.002) (c) 50 (it: 2,time: 0.004) (c) 
+ Solution:   50(2) 50(2) 50(2) 50(2) (c) 50(2) (c) 50(2) (c) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   50 (it: 2,time: 0.001) 50 (it: 2,time: 0.000999) 50 (it: 2,time: 0.002) 50 (it: 2,time: 0.002) 50 (it: 2,time: 0.001999) 50 (it: 2,time: 0.003999) 
+ Solution:   50(2) 50(2) 50(2) 50(2) 50(2) 50(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   50 (it: 2,time: 0.001) 50 (it: 2,time: 0.001) 50 (it: 2,time: 0.001999) 50 (it: 2,time: 0.001) 50 (it: 2,time: 0.002) 50 (it: 2,time: 0.004999) 
+ Solution:   50(2) 50(2) 50(2) 50(2) 50(2) 50(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   50 (it: 2,time: 0.002) 50 (it: 2,time: 0.002) 
+ Solution:   50(2) 50(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   50 (it: 2,time: 0.000999) 50 (it: 2,time: 0.002) 
+ Solution:   50(2) 50(2) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.002999) (c) 0 (it: 5,time: 0.002999) (c) 0 (it: 5,time: 0.005999) (c) 
+ Solution:   0(5) 0(5) 0(5) 0(5) (c) 0(5) (c) 0(5) (c) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.005) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.005999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.004) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.005999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001999) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002999) 0 (it: 2,time: 0.001) (c) 0 (it: 2,time: 0.002) (c) 0 (it: 2,time: 0.003) (c) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) (c) 0(2) (c) 0(2) (c) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.000999) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.003999) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.003999) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001999) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.003) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.003999) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 2,time: 0.001) 0 (it: 2,time: 0.001) 0 (it: 2,time: 0.002) 0 (it: 2,time: 0.001999) 
+ Solution:   0(2) 0(2) 0(2) 0(2) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -11873.5 (it: 6,time: 0.002999) (c) -11873.5 (it: 6,time: 0.003999) (c) -11873.5 (it: 6,time: 0.005999) (c) 
+ Solution:   -11873.5(6) (c) -11873.5(6) (c) -11873.5(6) (c) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -11873.5 (it: 6,time: 0.003) -11873.5 (it: 6,time: 0.003999) -11873.5 (it: 6,time: 0.005999) 
+ Solution:   -11873.5(6) -11873.5(6) -11873.5(6) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -11873.5 (it: 6,time: 0.001999) -11873.5 (it: 6,time: 0.004) -11873.5 (it: 6,time: 0.004999) 
+ Solution:   -11873.5(6) -11873.5(6) -11873.5(6) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -11873.5 (it: 6,time: 0.003) 
+ Solution:   -11873.5(6) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -11873.5 (it: 6,time: 0.003) 
+ Solution:   -11873.5(6) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.007998) (c) 2.5 (it: 7,time: 0.009998) (c) 2.5 (it: 7,time: 0.019997) (c) 
+ Solution:   2.5(7) (c) 2.5(7) (c) 2.5(7) (c) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.006999) 2.5 (it: 7,time: 0.008998) 2.5 (it: 7,time: 0.017997) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.007999) 2.5 (it: 7,time: 0.010998) 2.5 (it: 7,time: 0.018997) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.009998) 
+ Solution:   2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.007999) 
+ Solution:   2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Primal_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 6,time: 0.002) 2.5 (it: 6,time: 0.003) 2.5 (it: 6,time: 0.005) 2.5 (it: 6,time: 0.002999) (c) 2.5 (it: 6,time: 0.001999) (c) 2.5 (it: 6,time: 0.005999) (c) 
+ Solution:   2.5(6) 2.5(6) 2.5(6) 2.5(6) (c) 2.5(6) (c) 2.5(6) (c) 
 Processing:    test_solver_data/masters/cgal/PD_Primal_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 6,time: 0.001999) 2.5 (it: 6,time: 0.002) 2.5 (it: 6,time: 0.005) 2.5 (it: 6,time: 0.002) 2.5 (it: 6,time: 0.003999) 2.5 (it: 6,time: 0.005999) 
+ Solution:   2.5(6) 2.5(6) 2.5(6) 2.5(6) 2.5(6) 2.5(6) 
 Processing:    test_solver_data/masters/cgal/PD_Primal_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 6,time: 0.001999) 2.5 (it: 6,time: 0.003) 2.5 (it: 6,time: 0.004) 2.5 (it: 6,time: 0.002) 2.5 (it: 6,time: 0.002999) 2.5 (it: 6,time: 0.005999) 
+ Solution:   2.5(6) 2.5(6) 2.5(6) 2.5(6) 2.5(6) 2.5(6) 
 Processing:    test_solver_data/masters/cgal/PD_Primal_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 6,time: 0.003) 2.5 (it: 6,time: 0.003) 
+ Solution:   2.5(6) 2.5(6) 
 Processing:    test_solver_data/masters/cgal/PD_Primal_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 6,time: 0.002) 2.5 (it: 6,time: 0.003) 
+ Solution:   2.5(6) 2.5(6) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -11.5 (it: 4,time: 0.001) (c) -11.5 (it: 4,time: 0.001) (c) -11.5 (it: 4,time: 0.002) (c) 
+ Solution:   -11.5(4) (c) -11.5(4) (c) -11.5(4) (c) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -11.5 (it: 4,time: 0) -11.5 (it: 4,time: 0.001) -11.5 (it: 4,time: 0.000999) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -11.5 (it: 4,time: 0.001) -11.5 (it: 4,time: 0.000999) -11.5 (it: 4,time: 0.002) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -11.5 (it: 4,time: 0.000999) 
+ Solution:   -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -11.5 (it: 4,time: 0.001) 
+ Solution:   -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -2.5 (it: 5,time: 0.002) (c) -2.5 (it: 5,time: 0.001999) (c) -2.5 (it: 5,time: 0.002999) (c) 
+ Solution:   -2.5(5) (c) -2.5(5) (c) -2.5(5) (c) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -2.5 (it: 5,time: 0.001999) -2.5 (it: 5,time: 0.001) -2.5 (it: 5,time: 0.002999) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -2.5 (it: 5,time: 0.002) -2.5 (it: 5,time: 0.002) -2.5 (it: 5,time: 0.003) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -2.5 (it: 5,time: 0.001) 
+ Solution:   -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -2.5 (it: 5,time: 0.002) 
+ Solution:   -2.5(5) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -2.5 (it: 4,time: 0.000999) -2.5 (it: 4,time: 0) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) (c) -2.5 (it: 4,time: 0.001) (c) -2.5 (it: 4,time: 0.001) (c) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) (c) -2.5(4) (c) -2.5(4) (c) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -2.5 (it: 4,time: 0) -2.5 (it: 4,time: 0) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001999) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) 
+ Solution:   -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -2.5 (it: 4,time: 0.001) -2.5 (it: 4,time: 0.001) 
+ Solution:   -2.5(4) -2.5(4) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 7,time: 0.002) 0 (it: 7,time: 0.001999) 0 (it: 7,time: 0.002999) 0 (it: 7,time: 0.002999) (c) 0 (it: 7,time: 0.004999) (c) 0 (it: 7,time: 0.006998) (c) 
+ Solution:   0(7) 0(7) 0(7) 0(7) (c) 0(7) (c) 0(7) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.001999) 0 (it: 8,time: 0.002) 0 (it: 8,time: 0.003) 0 (it: 8,time: 0.004) 0 (it: 8,time: 0.004999) 0 (it: 8,time: 0.007999) 
+ Solution:   0(8) 0(8) 0(8) 0(8) 0(8) 0(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.002) 0 (it: 8,time: 0.002) 0 (it: 8,time: 0.003) 0 (it: 8,time: 0.003999) 0 (it: 8,time: 0.003999) 0 (it: 8,time: 0.006999) 
+ Solution:   0(8) 0(8) 0(8) 0(8) 0(8) 0(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 7,time: 0.001999) 0 (it: 7,time: 0.001999) 
+ Solution:   0(7) 0(7) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.002) 0 (it: 8,time: 0.003999) 
+ Solution:   0(8) 0(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -24 (it: 11,time: 0.009999) -24 (it: 11,time: 0.011999) -24 (it: 11,time: 0.024996) -24 (it: 11,time: 0.028996) (c) -24 (it: 11,time: 0.033995) (c) -24 (it: 11,time: 0.077988) (c) 
+ Solution:   -24(11) -24(11) -24(11) -24(11) (c) -24(11) (c) -24(11) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -24 (it: 11,time: 0.009999) -24 (it: 11,time: 0.011998) -24 (it: 11,time: 0.022996) -24 (it: 11,time: 0.029996) -24 (it: 11,time: 0.029995) -24 (it: 11,time: 0.079988) 
+ Solution:   -24(11) -24(11) -24(11) -24(11) -24(11) -24(11) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -24 (it: 14,time: 0.012998) -24 (it: 14,time: 0.016998) -24 (it: 14,time: 0.031995) -24 (it: 14,time: 0.047993) -24 (it: 14,time: 0.051992) -24 (it: 14,time: 0.13398) 
+ Solution:   -24(14) -24(14) -24(14) -24(14) -24(14) -24(14) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -24 (it: 11,time: 0.012998) -24 (it: 11,time: 0.032995) 
+ Solution:   -24(11) -24(11) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -24 (it: 11,time: 0.011998) -24 (it: 11,time: 0.032995) 
+ Solution:   -24(11) -24(11) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_a_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -24 (it: 7,time: 0.001999) -24 (it: 7,time: 0.003) -24 (it: 7,time: 0.003) -24 (it: 7,time: 0.003) (c) -24 (it: 7,time: 0.005) (c) -24 (it: 7,time: 0.006999) (c) 
+ Solution:   -24(7) -24(7) -24(7) -24(7) (c) -24(7) (c) -24(7) (c) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_a_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -24 (it: 8,time: 0.001) -24 (it: 8,time: 0.002) -24 (it: 8,time: 0.003) -24 (it: 8,time: 0.002999) -24 (it: 8,time: 0.004999) -24 (it: 8,time: 0.006999) 
+ Solution:   -24(8) -24(8) -24(8) -24(8) -24(8) -24(8) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_a_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -24 (it: 8,time: 0.001) -24 (it: 8,time: 0.001999) -24 (it: 8,time: 0.002) -24 (it: 8,time: 0.004) -24 (it: 8,time: 0.003999) -24 (it: 8,time: 0.006999) 
+ Solution:   -24(8) -24(8) -24(8) -24(8) -24(8) -24(8) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_a_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -24 (it: 7,time: 0.002) -24 (it: 7,time: 0.003999) 
+ Solution:   -24(7) -24(7) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_a_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -24 (it: 8,time: 0.001999) -24 (it: 8,time: 0.005) 
+ Solution:   -24(8) -24(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -51 (it: 4,time: 0) -51 (it: 4,time: 0.001999) -51 (it: 4,time: 0.002) -51 (it: 4,time: 0.001) (c) -51 (it: 4,time: 0.001999) (c) -51 (it: 4,time: 0.001999) (c) 
+ Solution:   -51(4) -51(4) -51(4) -51(4) (c) -51(4) (c) -51(4) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -87 (it: 5,time: 0.001) -87 (it: 5,time: 0.001) -87 (it: 5,time: 0.002) -87 (it: 5,time: 0.002) -87 (it: 5,time: 0.002) -87 (it: 5,time: 0.003999) 
+ Solution:   -87(5) -87(5) -87(5) -87(5) -87(5) -87(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -94 (it: 7,time: 0.001) -94 (it: 7,time: 0.001999) -94 (it: 7,time: 0.003) -94 (it: 7,time: 0.002) -94 (it: 7,time: 0.002) -94 (it: 7,time: 0.002999) 
+ Solution:   -94(7) -94(7) -94(7) -94(7) -94(7) -94(7) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -51 (it: 4,time: 0.001) -51 (it: 4,time: 0.001999) 
+ Solution:   -51(4) -51(4) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -87 (it: 5,time: 0.001) -87 (it: 5,time: 0.001) 
+ Solution:   -87(5) -87(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -5 (it: 5,time: 0.002) -5 (it: 5,time: 0.002999) -5 (it: 5,time: 0.003999) -5 (it: 5,time: 0.003) (c) -5 (it: 5,time: 0.003999) (c) -5 (it: 5,time: 0.008999) (c) 
+ Solution:   -5(5) -5(5) -5(5) -5(5) (c) -5(5) (c) -5(5) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -5 (it: 5,time: 0.002) -5 (it: 5,time: 0.002) -5 (it: 5,time: 0.004999) -5 (it: 5,time: 0.003) -5 (it: 5,time: 0.003999) -5 (it: 5,time: 0.008998) 
+ Solution:   -5(5) -5(5) -5(5) -5(5) -5(5) -5(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -7 (it: 7,time: 0.002999) -7 (it: 7,time: 0.003999) -7 (it: 7,time: 0.007999) -7 (it: 7,time: 0.007999) -7 (it: 7,time: 0.007999) -7 (it: 7,time: 0.016998) 
+ Solution:   -7(7) -7(7) -7(7) -7(7) -7(7) -7(7) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -5 (it: 5,time: 0.001999) -5 (it: 5,time: 0.003999) 
+ Solution:   -5(5) -5(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -5 (it: 5,time: 0.003) -5 (it: 5,time: 0.004) 
+ Solution:   -5(5) -5(5) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_c_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -5 (it: 3,time: 0) -5 (it: 3,time: 0.001) -5 (it: 3,time: 0.000999) -5 (it: 3,time: 0.002) (c) -5 (it: 3,time: 0.001) (c) -5 (it: 3,time: 0.002) (c) 
+ Solution:   -5(3) -5(3) -5(3) -5(3) (c) -5(3) (c) -5(3) (c) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_c_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -11.5 (it: 3,time: 0.001) -11.5 (it: 3,time: 0.001) -11.5 (it: 3,time: 0.001) -11.5 (it: 3,time: 0.001) -11.5 (it: 3,time: 0.001) -11.5 (it: 3,time: 0.001999) 
+ Solution:   -11.5(3) -11.5(3) -11.5(3) -11.5(3) -11.5(3) -11.5(3) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_c_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -14.2787 (it: 8,time: 0.002) -14.2787 (it: 8,time: 0.002999) -14.2787 (it: 8,time: 0.002999) -14.2787 (it: 8,time: 0.003999) -14.2787 (it: 8,time: 0.004999) -14.2787 (it: 8,time: 0.008999) 
+ Solution:   -14.2787(8) -14.2787(8) -14.2787(8) -14.2787(8) -14.2787(8) -14.2787(8) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_c_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -5 (it: 3,time: 0.001) -5 (it: 3,time: 0.001) 
+ Solution:   -5(3) -5(3) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_c_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -11.5 (it: 3,time: 0.001) -11.5 (it: 3,time: 0.001999) 
+ Solution:   -11.5(3) -11.5(3) 
 Processing:    test_solver_data/derivatives/Bernd3_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.001999) (c) -24.5 (it: 5,time: 0.002) (c) -24.5 (it: 5,time: 0.003) (c) 
+ Solution:   -24.5(5) (c) -24.5(5) (c) -24.5(5) (c) 
 Processing:    test_solver_data/derivatives/Bernd3_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.001999) -24.5 (it: 5,time: 0.002) -24.5 (it: 5,time: 0.002999) 
+ Solution:   -24.5(5) -24.5(5) -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.000999) -24.5 (it: 5,time: 0.002) -24.5 (it: 5,time: 0.002999) 
+ Solution:   -24.5(5) -24.5(5) -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.002999) 
+ Solution:   -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.002) 
+ Solution:   -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) (c) -7.5 (it: 5,time: 0.002) (c) -7.5 (it: 5,time: 0.004) (c) 
+ Solution:   -7.5(5) (c) -7.5(5) (c) -7.5(5) (c) 
 Processing:    test_solver_data/derivatives/Bernd3_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.003) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001999) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.003) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) 
+ Solution:   -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd3_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) 
+ Solution:   -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd3.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.001) (c) -7.5 (it: 5,time: 0.002999) (c) -7.5 (it: 5,time: 0.001999) (c) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) -7.5(5) (c) -7.5(5) (c) -7.5(5) (c) 
 Processing:    test_solver_data/masters/cgal/Bernd3.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002999) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001999) -7.5 (it: 5,time: 0.003) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd3.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002999) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002999) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd3.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.002999) 
+ Solution:   -7.5(5) -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd3.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001999) -7.5 (it: 5,time: 0.002) 
+ Solution:   -7.5(5) -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.002) (c) -24.5 (it: 5,time: 0.001999) (c) -24.5 (it: 5,time: 0.001999) (c) 
+ Solution:   -24.5(5) (c) -24.5(5) (c) -24.5(5) (c) 
 Processing:    test_solver_data/derivatives/Bernd4_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.002) -24.5 (it: 5,time: 0.003999) -24.5 (it: 5,time: 0.004999) 
+ Solution:   -24.5(5) -24.5(5) -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.001999) -24.5 (it: 5,time: 0.002) -24.5 (it: 5,time: 0.003999) 
+ Solution:   -24.5(5) -24.5(5) -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.001) 
+ Solution:   -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -24.5 (it: 5,time: 0.002) 
+ Solution:   -24.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) (c) -7.5 (it: 5,time: 0.001) (c) -7.5 (it: 5,time: 0.003) (c) 
+ Solution:   -7.5(5) (c) -7.5(5) (c) -7.5(5) (c) 
 Processing:    test_solver_data/derivatives/Bernd4_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001999) -7.5 (it: 5,time: 0.003) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.001999) -7.5 (it: 5,time: 0.003) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) 
+ Solution:   -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd4_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) 
+ Solution:   -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd4.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002999) -7.5 (it: 5,time: 0.002) (c) -7.5 (it: 5,time: 0.001999) (c) -7.5 (it: 5,time: 0.002999) (c) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) -7.5(5) (c) -7.5(5) (c) -7.5(5) (c) 
 Processing:    test_solver_data/masters/cgal/Bernd4.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.000999) -7.5 (it: 5,time: 0.003) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd4.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.001) -7.5 (it: 5,time: 0.001999) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.000999) -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.001999) 
+ Solution:   -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd4.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.000999) -7.5 (it: 5,time: 0.002) 
+ Solution:   -7.5(5) -7.5(5) 
 Processing:    test_solver_data/masters/cgal/Bernd4.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -7.5 (it: 5,time: 0.002) -7.5 (it: 5,time: 0.001999) 
+ Solution:   -7.5(5) -7.5(5) 
 Processing:    test_solver_data/derivatives/Bernd5_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.000999) (c) 0 (it: 4,time: 0.002) (c) 
+ Solution:   0(4) 0(4) 0(4) 0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/derivatives/Bernd5_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.003) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001999) (c) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.002999) (c) 
+ Solution:   0(4) 0(4) 0(4) 0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/derivatives/Bernd5_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002999) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.003) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/derivatives/Bernd5_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/Bernd5.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.000999) (c) 0 (it: 4,time: 0.002999) (c) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/masters/cgal/Bernd5.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.003) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.003) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/Bernd5.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/Bernd5.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/Bernd5.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001) (c) 14 (it: 1,time: 0.001) (c) 14 (it: 1,time: 0.000999) (c) 
+ Solution:   14(1) 14(1) 14(1) 14(1) (c) 14(1) (c) 14(1) (c) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   14 (it: 1,time: 0) 14 (it: 1,time: 0.000999) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001999) 
+ Solution:   14(1) 14(1) 14(1) 14(1) 14(1) 14(1) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   14 (it: 1,time: 0) 14 (it: 1,time: 0) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.001) 14 (it: 1,time: 0.000999) 14 (it: 1,time: 0.002) 
+ Solution:   14(1) 14(1) 14(1) 14(1) 14(1) 14(1) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   14 (it: 1,time: 0) 14 (it: 1,time: 0.001) 
+ Solution:   14(1) 14(1) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   14 (it: 1,time: 0) 14 (it: 1,time: 0.001) 
+ Solution:   14(1) 14(1) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.004) 0 (it: 8,time: 0.005) 0 (it: 8,time: 0.009999) 0 (it: 8,time: 0.011998) (c) 0 (it: 8,time: 0.012998) (c) 0 (it: 8,time: 0.033995) (c) 
+ Solution:   0(8) 0(8) 0(8) 0(8) (c) 0(8) (c) 0(8) (c) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.003999) 0 (it: 8,time: 0.004999) 0 (it: 8,time: 0.009998) 0 (it: 8,time: 0.011998) 0 (it: 8,time: 0.013997) 0 (it: 8,time: 0.024996) 
+ Solution:   0(8) 0(8) 0(8) 0(8) 0(8) 0(8) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.003999) 0 (it: 8,time: 0.003999) 0 (it: 8,time: 0.008999) 0 (it: 8,time: 0.012998) 0 (it: 8,time: 0.012998) 0 (it: 8,time: 0.031995) 
+ Solution:   0(8) 0(8) 0(8) 0(8) 0(8) 0(8) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.004999) 0 (it: 8,time: 0.012998) 
+ Solution:   0(8) 0(8) 
 Processing:    test_solver_data/derivatives/LP_Unbounded_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 8,time: 0.003999) 0 (it: 8,time: 0.012998) 
+ Solution:   0(8) 0(8) 
 Processing:    test_solver_data/masters/cgal/LP_Unbounded_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.000999) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) (c) 0 (it: 1,time: 0.001) (c) 0 (it: 1,time: 0.002) (c) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) (c) 0(1) (c) 0(1) (c) 
 Processing:    test_solver_data/masters/cgal/LP_Unbounded_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.002) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_Unbounded_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.000999) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.002) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_Unbounded_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/LP_Unbounded_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/QPTEST_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -26.1281 (it: 3,time: 0.000999) (c) -26.1281 (it: 3,time: 0.001) (c) 
+ Solution:   -26.1281(3) (c) -26.1281(3) (c) 
 Processing:    test_solver_data/derivatives/QPTEST_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -26.1281 (it: 3,time: 0.001) -26.1281 (it: 3,time: 0.001) 
+ Solution:   -26.1281(3) -26.1281(3) 
 Processing:    test_solver_data/derivatives/QPTEST_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -26.1281 (it: 3,time: 0.001) -26.1281 (it: 3,time: 0.002) 
+ Solution:   -26.1281(3) -26.1281(3) 
 Processing:    test_solver_data/derivatives/QPTEST_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -26.1281 (it: 3,time: 0.001) 
+ Solution:   -26.1281(3) 
 Processing:    test_solver_data/derivatives/QPTEST_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -26.1281 (it: 3,time: 0.000999) 
+ Solution:   -26.1281(3) 
 Processing:    test_solver_data/derivatives/QPTEST_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.001) (c) 4.37188 (it: 3,time: 0.001999) (c) 
+ Solution:   4.37188(3) (c) 4.37188(3) (c) 
 Processing:    test_solver_data/derivatives/QPTEST_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.002) 4.37188 (it: 3,time: 0.002) 
+ Solution:   4.37188(3) 4.37188(3) 
 Processing:    test_solver_data/derivatives/QPTEST_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.002) 4.37188 (it: 3,time: 0.001999) 
+ Solution:   4.37188(3) 4.37188(3) 
 Processing:    test_solver_data/derivatives/QPTEST_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.000999) 
+ Solution:   4.37188(3) 
 Processing:    test_solver_data/derivatives/QPTEST_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.001) 
+ Solution:   4.37188(3) 
 Processing:    test_solver_data/masters/cgal/QPTEST.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.000999) (c) 4.37188 (it: 3,time: 0.001) (c) 
+ Solution:   4.37188(3) (c) 4.37188(3) (c) 
 Processing:    test_solver_data/masters/cgal/QPTEST.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.001) 4.37188 (it: 3,time: 0.001) 
+ Solution:   4.37188(3) 4.37188(3) 
 Processing:    test_solver_data/masters/cgal/QPTEST.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.001) 4.37188 (it: 3,time: 0.002) 
+ Solution:   4.37188(3) 4.37188(3) 
 Processing:    test_solver_data/masters/cgal/QPTEST.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.001) 
+ Solution:   4.37188(3) 
 Processing:    test_solver_data/masters/cgal/QPTEST.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   4.37188 (it: 3,time: 0.000999) 
+ Solution:   4.37188(3) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) (c) -10000 (it: 2,time: 0.001999) (c) 
+ Solution:   -10000(2) -10000(2) -10000(2) (c) -10000(2) (c) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.000999) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.002) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0) -10000 (it: 3,time: 0.002) -10000 (it: 3,time: 0.001) (c) -10000 (it: 3,time: 0.001999) (c) 
+ Solution:   -10000(3) -10000(3) -10000(3) (c) -10000(3) (c) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) -10000 (it: 3,time: 0.002) -10000 (it: 3,time: 0.001999) 
+ Solution:   -10000(3) -10000(3) -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0) -10000 (it: 3,time: 0.000999) -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) 
+ Solution:   -10000(3) -10000(3) -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) 
+ Solution:   -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) 
+ Solution:   -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) (c) -10000 (it: 2,time: 0.001) (c) 
+ Solution:   -10000(2) -10000(2) -10000(2) (c) -10000(2) (c) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.000999) -10000 (it: 2,time: 0.002) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.000999) 
+ Solution:   -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) (c) -10000 (it: 3,time: 0.002) (c) 
+ Solution:   -10000(3) -10000(3) -10000(3) (c) -10000(3) (c) 
 Processing:    test_solver_data/derivatives/b_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.002) 
+ Solution:   -10000(3) -10000(3) -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.002) -10000 (it: 3,time: 0.002) -10000 (it: 3,time: 0.002) 
+ Solution:   -10000(3) -10000(3) -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001) 
+ Solution:   -10000(3) -10000(3) 
 Processing:    test_solver_data/derivatives/b_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10000 (it: 3,time: 0.001) -10000 (it: 3,time: 0.001999) 
+ Solution:   -10000(3) -10000(3) 
 Processing:    test_solver_data/masters/cgal/b.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.000999) (c) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) (c) 
 Processing:    test_solver_data/masters/cgal/b.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.000999) -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/masters/cgal/b.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10000 (it: 2,time: 0) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) -10000 (it: 2,time: 0.001) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/masters/cgal/b.mps
  Strategy:     ff
  Verbosity:    0
@@ -1423,735 +1423,735 @@ Processing:    test_solver_data/masters/cgal/b.mps
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -3 (it: 1,time: 0) (c) -3 (it: 1,time: 0.001) (c) -3 (it: 1,time: 0.001) (c) 
+ Solution:   -3(1) (c) -3(1) (c) -3(1) (c) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -3 (it: 1,time: 0) -3 (it: 1,time: 0.001) -3 (it: 1,time: 0) 
+ Solution:   -3(1) -3(1) -3(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -3 (it: 1,time: 0) -3 (it: 1,time: 0) -3 (it: 1,time: 0.001) 
+ Solution:   -3(1) -3(1) -3(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -3 (it: 1,time: 0.000999) 
+ Solution:   -3(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -3 (it: 1,time: 0.001) 
+ Solution:   -3(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) (c) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0.000999) (c) 
+ Solution:   0(1) (c) 0(1) (c) 0(1) (c) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 
+ Solution:   0(1) 
 Processing:    test_solver_data/derivatives/QP_Unbounded_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 1,time: 0.001) 
+ Solution:   0(1) 
 Processing:    test_solver_data/masters/cgal/QP_Unbounded_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) (c) 0 (it: 1,time: 0.000999) (c) 0 (it: 1,time: 0.001) (c) 
+ Solution:   0(1) 0(1) 0(1) 0(1) (c) 0(1) (c) 0(1) (c) 
 Processing:    test_solver_data/masters/cgal/QP_Unbounded_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/QP_Unbounded_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 0 (it: 1,time: 0) 0 (it: 1,time: 0) 0 (it: 1,time: 0.001) 
+ Solution:   0(1) 0(1) 0(1) 0(1) 0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/QP_Unbounded_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/masters/cgal/QP_Unbounded_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 1,time: 0) 0 (it: 1,time: 0) 
+ Solution:   0(1) 0(1) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -2.78571 (it: 5,time: 0.001) -2.78571 (it: 5,time: 0.003) -2.78571 (it: 5,time: 0.003) -2.78571 (it: 5,time: 0.001999) (c) -2.78571 (it: 5,time: 0.003999) (c) -2.78571 (it: 5,time: 0.009999) (c) 
+ Solution:   -2.78571(5) -2.78571(5) -2.78571(5) -2.78571(5) (c) -2.78571(5) (c) -2.78571(5) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -2.78571 (it: 5,time: 0.001) -2.78571 (it: 5,time: 0.002999) -2.78571 (it: 5,time: 0.004) -2.78571 (it: 5,time: 0.002) -2.78571 (it: 5,time: 0.003999) -2.78571 (it: 5,time: 0.005999) 
+ Solution:   -2.78571(5) -2.78571(5) -2.78571(5) -2.78571(5) -2.78571(5) -2.78571(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -2.78571 (it: 7,time: 0.002) -2.78571 (it: 7,time: 0.003) -2.78571 (it: 7,time: 0.003999) -2.78571 (it: 7,time: 0.003999) -2.78571 (it: 7,time: 0.004) -2.78571 (it: 7,time: 0.006998) 
+ Solution:   -2.78571(7) -2.78571(7) -2.78571(7) -2.78571(7) -2.78571(7) -2.78571(7) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -2.78571 (it: 5,time: 0.001999) -2.78571 (it: 5,time: 0.003999) 
+ Solution:   -2.78571(5) -2.78571(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -2.78571 (it: 5,time: 0.001999) -2.78571 (it: 5,time: 0.003) 
+ Solution:   -2.78571(5) -2.78571(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1.78571 (it: 9,time: 0.003999) -1.78571 (it: 9,time: 0.005999) -1.78571 (it: 9,time: 0.010999) -1.78571 (it: 9,time: 0.012998) (c) -1.78571 (it: 9,time: 0.015998) (c) -1.78571 (it: 9,time: 0.034995) (c) 
+ Solution:   -1.78571(9) -1.78571(9) -1.78571(9) -1.78571(9) (c) -1.78571(9) (c) -1.78571(9) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1.78571 (it: 9,time: 0.005) -1.78571 (it: 9,time: 0.005) -1.78571 (it: 9,time: 0.009999) -1.78571 (it: 9,time: 0.012998) -1.78571 (it: 9,time: 0.014998) -1.78571 (it: 9,time: 0.033995) 
+ Solution:   -1.78571(9) -1.78571(9) -1.78571(9) -1.78571(9) -1.78571(9) -1.78571(9) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1.78571 (it: 10,time: 0.006999) -1.78571 (it: 10,time: 0.007999) -1.78571 (it: 10,time: 0.018997) -1.78571 (it: 10,time: 0.013998) -1.78571 (it: 10,time: 0.016997) -1.78571 (it: 10,time: 0.038994) 
+ Solution:   -1.78571(10) -1.78571(10) -1.78571(10) -1.78571(10) -1.78571(10) -1.78571(10) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1.78571 (it: 9,time: 0.005999) -1.78571 (it: 9,time: 0.012998) 
+ Solution:   -1.78571(9) -1.78571(9) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1.78571 (it: 9,time: 0.003999) -1.78571 (it: 9,time: 0.013998) 
+ Solution:   -1.78571(9) -1.78571(9) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_e_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1.78571 (it: 5,time: 0.000999) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.002999) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.003999) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.003) -1.78571 (it: 5,time: 0.003999) -1.78571 (it: 5,time: 0.001999) (c) -1.78571 (it: 5,time: 0.003999) (c) -1.78571 (it: 5,time: 0.007999) (c) 
+ Solution:   -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) (c) -1.78571(5) (c) -1.78571(5) (c) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_e_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.003) -1.78571 (it: 5,time: 0.002999) -1.78571 (it: 5,time: 0.001) -1.78571 (it: 5,time: 0.002999) -1.78571 (it: 5,time: 0.003999) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.002999) -1.78571 (it: 5,time: 0.003999) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.003) -1.78571 (it: 5,time: 0.004999) 
+ Solution:   -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_e_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1.78571 (it: 7,time: 0.001999) -1.78571 (it: 7,time: 0.002) -1.78571 (it: 7,time: 0.002999) -1.78571 (it: 7,time: 0.002) -1.78571 (it: 7,time: 0.003) -1.78571 (it: 7,time: 0.003999) -1.78571 (it: 7,time: 0.001999) -1.78571 (it: 7,time: 0.003) -1.78571 (it: 7,time: 0.005) -1.78571 (it: 7,time: 0.001999) -1.78571 (it: 7,time: 0.004) -1.78571 (it: 7,time: 0.006999) 
+ Solution:   -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) -1.78571(7) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_e_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.001999) -1.78571 (it: 5,time: 0.002) 
+ Solution:   -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_e_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1.78571 (it: 5,time: 0.002) -1.78571 (it: 5,time: 0.001999) -1.78571 (it: 5,time: 0.003) -1.78571 (it: 5,time: 0.003) 
+ Solution:   -1.78571(5) -1.78571(5) -1.78571(5) -1.78571(5) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   1 (it: 2,time: 0) (c) 1 (it: 2,time: 0.001) (c) 1 (it: 2,time: 0) (c) 
+ Solution:   1(2) (c) 1(2) (c) 1(2) (c) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   1 (it: 2,time: 0) 1 (it: 2,time: 0.001) 1 (it: 2,time: 0.001) 
+ Solution:   1(2) 1(2) 1(2) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   1 (it: 2,time: 0.001) 1 (it: 2,time: 0) 1 (it: 2,time: 0.000999) 
+ Solution:   1(2) 1(2) 1(2) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   1 (it: 2,time: 0) 
+ Solution:   1(2) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   1 (it: 2,time: 0.001) 
+ Solution:   1(2) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   4 (it: 3,time: 0.001) (c) 4 (it: 3,time: 0.000999) (c) 4 (it: 3,time: 0.001) (c) 
+ Solution:   4(3) (c) 4(3) (c) 4(3) (c) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   4 (it: 3,time: 0.001) 4 (it: 3,time: 0.001) 4 (it: 3,time: 0.001999) 
+ Solution:   4(3) 4(3) 4(3) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   4 (it: 3,time: 0.001) 4 (it: 3,time: 0.001) 4 (it: 3,time: 0.001) 
+ Solution:   4(3) 4(3) 4(3) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   4 (it: 3,time: 0.001) 
+ Solution:   4(3) 
 Processing:    test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   4 (it: 3,time: 0.001) 
+ Solution:   4(3) 
 Processing:    test_solver_data/masters/cgal/QP_Bounded_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   4 (it: 2,time: 0) 4 (it: 2,time: 0) 4 (it: 2,time: 0.001) 4 (it: 2,time: 0) (c) 4 (it: 2,time: 0) (c) 4 (it: 2,time: 0.001) (c) 
+ Solution:   4(2) 4(2) 4(2) 4(2) (c) 4(2) (c) 4(2) (c) 
 Processing:    test_solver_data/masters/cgal/QP_Bounded_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   4 (it: 2,time: 0.000999) 4 (it: 2,time: 0) 4 (it: 2,time: 0.001) 4 (it: 2,time: 0.001) 4 (it: 2,time: 0.001) 4 (it: 2,time: 0.001) 
+ Solution:   4(2) 4(2) 4(2) 4(2) 4(2) 4(2) 
 Processing:    test_solver_data/masters/cgal/QP_Bounded_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   4 (it: 2,time: 0) 4 (it: 2,time: 0.000999) 4 (it: 2,time: 0) 4 (it: 2,time: 0.001) 4 (it: 2,time: 0) 4 (it: 2,time: 0.001) 
+ Solution:   4(2) 4(2) 4(2) 4(2) 4(2) 4(2) 
 Processing:    test_solver_data/masters/cgal/QP_Bounded_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   4 (it: 2,time: 0.001) 4 (it: 2,time: 0) 
+ Solution:   4(2) 4(2) 
 Processing:    test_solver_data/masters/cgal/QP_Bounded_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   4 (it: 2,time: 0) 4 (it: 2,time: 0.001) 
+ Solution:   4(2) 4(2) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -20.125 (it: 4,time: 0.001) (c) -20.125 (it: 4,time: 0.003) (c) 
+ Solution:   -20.125(4) (c) -20.125(4) (c) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -20.125 (it: 4,time: 0.001999) -20.125 (it: 4,time: 0.002) 
+ Solution:   -20.125(4) -20.125(4) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -20.125 (it: 3,time: 0.001) -20.125 (it: 3,time: 0.001) 
+ Solution:   -20.125(3) -20.125(3) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -20.125 (it: 4,time: 0.001) 
+ Solution:   -20.125(4) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -20.125 (it: 4,time: 0.000999) 
+ Solution:   -20.125(4) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.000999) (c) -4.125 (it: 4,time: 0.002999) (c) 
+ Solution:   -4.125(4) (c) -4.125(4) (c) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.001999) -4.125 (it: 4,time: 0.003) 
+ Solution:   -4.125(4) -4.125(4) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -4.125 (it: 3,time: 0.001) -4.125 (it: 3,time: 0.002) 
+ Solution:   -4.125(3) -4.125(3) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.002) 
+ Solution:   -4.125(4) 
 Processing:    test_solver_data/derivatives/ZECEVIC2_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.001999) 
+ Solution:   -4.125(4) 
 Processing:    test_solver_data/masters/cgal/ZECEVIC2.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.001) (c) -4.125 (it: 4,time: 0.001999) (c) 
+ Solution:   -4.125(4) (c) -4.125(4) (c) 
 Processing:    test_solver_data/masters/cgal/ZECEVIC2.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.001999) -4.125 (it: 4,time: 0.003) 
+ Solution:   -4.125(4) -4.125(4) 
 Processing:    test_solver_data/masters/cgal/ZECEVIC2.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -4.125 (it: 3,time: 0.000999) -4.125 (it: 3,time: 0.002) 
+ Solution:   -4.125(3) -4.125(3) 
 Processing:    test_solver_data/masters/cgal/ZECEVIC2.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.001999) 
+ Solution:   -4.125(4) 
 Processing:    test_solver_data/masters/cgal/ZECEVIC2.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -4.125 (it: 4,time: 0.001999) 
+ Solution:   -4.125(4) 
 Processing:    test_solver_data/derivatives/HS118_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   912.172 (it: 20,time: 0.190971) (c) 912.172 (it: 20,time: 0.489925) (c) 
+ Solution:   912.172(20) (c) 912.172(20) (c) 
 Processing:    test_solver_data/derivatives/HS118_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   912.172 (it: 20,time: 0.19497) 912.172 (it: 20,time: 0.483927) 
+ Solution:   912.172(20) 912.172(20) 
 Processing:    test_solver_data/derivatives/HS118_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   912.172 (it: 21,time: 0.20097) 912.172 (it: 21,time: 0.52792) 
+ Solution:   912.172(21) 912.172(21) 
 Processing:    test_solver_data/derivatives/HS118_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   912.172 (it: 20,time: 0.188971) 
+ Solution:   912.172(20) 
 Processing:    test_solver_data/derivatives/HS118_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   912.172 (it: 20,time: 0.19897) 
+ Solution:   912.172(20) 
 Processing:    test_solver_data/derivatives/HS118_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   664.82 (it: 23,time: 0.376943) (c) 664.82 (it: 23,time: 0.963853) (c) 
+ Solution:   664.82(23) (c) 664.82(23) (c) 
 Processing:    test_solver_data/derivatives/HS118_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   664.82 (it: 23,time: 0.398939) 664.82 (it: 23,time: 0.971852) 
+ Solution:   664.82(23) 664.82(23) 
 Processing:    test_solver_data/derivatives/HS118_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   664.82 (it: 29,time: 0.619905) 664.82 (it: 29,time: 1.63275) 
+ Solution:   664.82(29) 664.82(29) 
 Processing:    test_solver_data/derivatives/HS118_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   664.82 (it: 23,time: 0.374943) 
+ Solution:   664.82(23) 
 Processing:    test_solver_data/derivatives/HS118_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   664.82 (it: 23,time: 0.373943) 
+ Solution:   664.82(23) 
 Processing:    test_solver_data/masters/cgal/HS118.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   664.82 (it: 20,time: 0.19597) (c) 664.82 (it: 20,time: 0.487925) (c) 
+ Solution:   664.82(20) (c) 664.82(20) (c) 
 Processing:    test_solver_data/masters/cgal/HS118.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   664.82 (it: 20,time: 0.207968) 664.82 (it: 20,time: 0.498924) 
+ Solution:   664.82(20) 664.82(20) 
 Processing:    test_solver_data/masters/cgal/HS118.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   664.82 (it: 21,time: 0.205968) 664.82 (it: 21,time: 0.52592) 
+ Solution:   664.82(21) 664.82(21) 
 Processing:    test_solver_data/masters/cgal/HS118.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   664.82 (it: 20,time: 0.193971) 
+ Solution:   664.82(20) 
 Processing:    test_solver_data/masters/cgal/HS118.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   664.82 (it: 20,time: 0.187971) 
+ Solution:   664.82(20) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.004) 0 (it: 5,time: 0.002) (c) 0 (it: 5,time: 0.003) (c) 0 (it: 5,time: 0.004999) (c) 
+ Solution:   0(5) 0(5) 0(5) 0(5) (c) 0(5) (c) 0(5) (c) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.004) 0 (it: 5,time: 0.006) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.004) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.005) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002999) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.003) 0 (it: 5,time: 0.004) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.005) 0 (it: 5,time: 0.003) (c) 0 (it: 5,time: 0.002999) (c) 0 (it: 5,time: 0.005999) (c) 
+ Solution:   0(5) 0(5) 0(5) 0(5) (c) 0(5) (c) 0(5) (c) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.005999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.006999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.003999) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.003) 0 (it: 5,time: 0.003) 
+ Solution:   0(5) 0(5) 
 Processing:    test_solver_data/masters/cgal/QP_zero_obj_func_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.005999) 0 (it: 5,time: 0.001999) (c) 0 (it: 5,time: 0.002999) (c) 0 (it: 5,time: 0.003999) (c) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) (c) 0(5) (c) 0(5) (c) 
 Processing:    test_solver_data/masters/cgal/QP_zero_obj_func_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.000999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.005999) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.003) 0 (it: 5,time: 0.005999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/masters/cgal/QP_zero_obj_func_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002999) 0 (it: 5,time: 0.005999) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.004999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/masters/cgal/QP_zero_obj_func_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.002) 0 (it: 5,time: 0.001999) 0 (it: 5,time: 0.003999) 0 (it: 5,time: 0.002999) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/masters/cgal/QP_zero_obj_func_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 5,time: 0.001) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.002) 0 (it: 5,time: 0.003) 
+ Solution:   0(5) 0(5) 0(5) 0(5) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -4.71429 (it: 4,time: 0.000999) -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.002) -4.71429 (it: 4,time: 0.001) (c) -4.71429 (it: 4,time: 0.001999) (c) -4.71429 (it: 4,time: 0.003) (c) 
+ Solution:   -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) (c) -4.71429(4) (c) -4.71429(4) (c) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.000999) -4.71429 (it: 4,time: 0.002) -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.001999) -4.71429 (it: 4,time: 0.003) 
+ Solution:   -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -4.71429 (it: 4,time: 0.000999) -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.001999) -4.71429 (it: 4,time: 0.003) 
+ Solution:   -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) -4.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -4.71429 (it: 4,time: 0) -4.71429 (it: 4,time: 0) 
+ Solution:   -4.71429(4) -4.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -4.71429 (it: 4,time: 0.001) -4.71429 (it: 4,time: 0.002) 
+ Solution:   -4.71429(4) -4.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.002) -1.71429 (it: 4,time: 0.001999) (c) -1.71429 (it: 4,time: 0.002) (c) -1.71429 (it: 4,time: 0.003) (c) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) (c) -1.71429(4) (c) -1.71429(4) (c) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001999) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001999) -1.71429 (it: 4,time: 0.004) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.000999) -1.71429 (it: 4,time: 0.003) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0.000999) -1.71429 (it: 4,time: 0.001) 
+ Solution:   -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/derivatives/LP_U6_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.002) 
+ Solution:   -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/masters/cgal/LP_U6_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001999) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.002999) -1.71429 (it: 4,time: 0.001) (c) -1.71429 (it: 4,time: 0.000999) (c) -1.71429 (it: 4,time: 0.002) (c) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) (c) -1.71429(4) (c) -1.71429(4) (c) 
 Processing:    test_solver_data/masters/cgal/LP_U6_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.002) -1.71429 (it: 4,time: 0.003) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001999) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/masters/cgal/LP_U6_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.000999) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.002) -1.71429 (it: 4,time: 0.002999) -1.71429 (it: 4,time: 0.002) -1.71429 (it: 4,time: 0.002) -1.71429 (it: 4,time: 0.001999) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/masters/cgal/LP_U6_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.000999) -1.71429 (it: 4,time: 0.002) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/masters/cgal/LP_U6_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1.71429 (it: 4,time: 0) -1.71429 (it: 4,time: 0.001) -1.71429 (it: 4,time: 0.002) -1.71429 (it: 4,time: 0.001) 
+ Solution:   -1.71429(4) -1.71429(4) -1.71429(4) -1.71429(4) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1.00123e+06 (it: 16,time: 0.003) -1.00123e+06 (it: 16,time: 0.003) -1.00123e+06 (it: 16,time: 0.005) -1.00123e+06 (it: 16,time: 0.007999) (c) -1.00123e+06 (it: 16,time: 0.008998) (c) -1.00123e+06 (it: 16,time: 0.016997) (c) 
+ Solution:   -1.00123e+06(16) -1.00123e+06(16) -1.00123e+06(16) -1.00123e+06(16) (c) -1.00123e+06(16) (c) -1.00123e+06(16) (c) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1.00123e+06 (it: 16,time: 0.003) -1.00123e+06 (it: 16,time: 0.003999) -1.00123e+06 (it: 16,time: 0.005999) -1.00123e+06 (it: 16,time: 0.007998) -1.00123e+06 (it: 16,time: 0.008999) -1.00123e+06 (it: 16,time: 0.016997) 
+ Solution:   -1.00123e+06(16) -1.00123e+06(16) -1.00123e+06(16) -1.00123e+06(16) -1.00123e+06(16) -1.00123e+06(16) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1.00123e+06 (it: 10,time: 0.002) -1.00123e+06 (it: 10,time: 0.002999) -1.00123e+06 (it: 10,time: 0.004) -1.00123e+06 (it: 10,time: 0.004999) -1.00123e+06 (it: 10,time: 0.005999) -1.00123e+06 (it: 10,time: 0.011998) 
+ Solution:   -1.00123e+06(10) -1.00123e+06(10) -1.00123e+06(10) -1.00123e+06(10) -1.00123e+06(10) -1.00123e+06(10) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1.00123e+06 (it: 16,time: 0.003999) -1.00123e+06 (it: 16,time: 0.008999) 
+ Solution:   -1.00123e+06(16) -1.00123e+06(16) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1.00123e+06 (it: 16,time: 0.004) -1.00123e+06 (it: 16,time: 0.007999) 
+ Solution:   -1.00123e+06(16) -1.00123e+06(16) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.004) -1e+06 (it: 16,time: 0.004999) -1e+06 (it: 16,time: 0.009999) -1e+06 (it: 16,time: 0.012998) (c) -1e+06 (it: 16,time: 0.015997) (c) -1e+06 (it: 16,time: 0.036994) (c) 
+ Solution:   -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) (c) -1e+06(16) (c) -1e+06(16) (c) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.004) -1e+06 (it: 16,time: 0.006) -1e+06 (it: 16,time: 0.009999) -1e+06 (it: 16,time: 0.013997) -1e+06 (it: 16,time: 0.016998) -1e+06 (it: 16,time: 0.035995) 
+ Solution:   -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1e+06 (it: 8,time: 0.002999) -1e+06 (it: 8,time: 0.003) -1e+06 (it: 8,time: 0.005) -1e+06 (it: 8,time: 0.006999) -1e+06 (it: 8,time: 0.007999) -1e+06 (it: 8,time: 0.015998) 
+ Solution:   -1e+06(8) -1e+06(8) -1e+06(8) -1e+06(8) -1e+06(8) -1e+06(8) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.005) -1e+06 (it: 16,time: 0.014998) 
+ Solution:   -1e+06(16) -1e+06(16) 
 Processing:    test_solver_data/derivatives/LP_KM4_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.004999) -1e+06 (it: 16,time: 0.015997) 
+ Solution:   -1e+06(16) -1e+06(16) 
 Processing:    test_solver_data/masters/cgal/LP_KM4_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.002) -1e+06 (it: 16,time: 0.003) -1e+06 (it: 16,time: 0.004999) -1e+06 (it: 16,time: 0.004) -1e+06 (it: 16,time: 0.004) -1e+06 (it: 16,time: 0.006999) -1e+06 (it: 16,time: 0.005999) -1e+06 (it: 16,time: 0.007999) -1e+06 (it: 16,time: 0.014997) -1e+06 (it: 16,time: 0.006999) (c) -1e+06 (it: 16,time: 0.008999) (c) -1e+06 (it: 16,time: 0.017997) (c) 
+ Solution:   -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) (c) -1e+06(16) (c) -1e+06(16) (c) 
 Processing:    test_solver_data/masters/cgal/LP_KM4_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.003) -1e+06 (it: 16,time: 0.002999) -1e+06 (it: 16,time: 0.005999) -1e+06 (it: 16,time: 0.003) -1e+06 (it: 16,time: 0.004999) -1e+06 (it: 16,time: 0.003999) -1e+06 (it: 16,time: 0.004999) -1e+06 (it: 16,time: 0.006999) -1e+06 (it: 16,time: 0.014997) -1e+06 (it: 16,time: 0.006999) -1e+06 (it: 16,time: 0.007999) -1e+06 (it: 16,time: 0.016998) 
+ Solution:   -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) 
 Processing:    test_solver_data/masters/cgal/LP_KM4_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1e+06 (it: 10,time: 0.001) -1e+06 (it: 10,time: 0.002999) -1e+06 (it: 10,time: 0.003999) -1e+06 (it: 10,time: 0.002) -1e+06 (it: 10,time: 0.001999) -1e+06 (it: 10,time: 0.004) -1e+06 (it: 10,time: 0.003999) -1e+06 (it: 10,time: 0.004999) -1e+06 (it: 10,time: 0.009998) -1e+06 (it: 10,time: 0.004999) -1e+06 (it: 10,time: 0.005999) -1e+06 (it: 10,time: 0.011998) 
+ Solution:   -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) -1e+06(10) 
 Processing:    test_solver_data/masters/cgal/LP_KM4_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.003) -1e+06 (it: 16,time: 0.003) -1e+06 (it: 16,time: 0.007999) -1e+06 (it: 16,time: 0.007999) 
+ Solution:   -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) 
 Processing:    test_solver_data/masters/cgal/LP_KM4_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1e+06 (it: 16,time: 0.002999) -1e+06 (it: 16,time: 0.003999) -1e+06 (it: 16,time: 0.007999) -1e+06 (it: 16,time: 0.007999) 
+ Solution:   -1e+06(16) -1e+06(16) -1e+06(16) -1e+06(16) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -1513.06 (it: 17,time: 0.046993) (c) -1513.06 (it: 17,time: 0.095985) (c) 
+ Solution:   -1513.06(17) (c) -1513.06(17) (c) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -1513.06 (it: 17,time: 0.046992) -1513.06 (it: 17,time: 0.094985) 
+ Solution:   -1513.06(17) -1513.06(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -1513.06 (it: 17,time: 0.041993) -1513.06 (it: 17,time: 0.088987) 
+ Solution:   -1513.06(17) -1513.06(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -1513.06 (it: 17,time: 0.041994) 
+ Solution:   -1513.06(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -1513.06 (it: 17,time: 0.043994) 
+ Solution:   -1513.06(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.054992) (c) -0.0625 (it: 17,time: 0.115983) (c) 
+ Solution:   -0.0625(17) (c) -0.0625(17) (c) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.050992) -0.0625 (it: 17,time: 0.117982) 
+ Solution:   -0.0625(17) -0.0625(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.053992) -0.0625 (it: 17,time: 0.106983) 
+ Solution:   -0.0625(17) -0.0625(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.052992) 
+ Solution:   -0.0625(17) 
 Processing:    test_solver_data/derivatives/QP_center_of_gravity_simplex_n_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.057991) 
+ Solution:   -0.0625(17) 
 Processing:    test_solver_data/masters/cgal/QP_center_of_gravity_simplex_n.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.040993) -0.0625 (it: 17,time: 0.089986) -0.0625 (it: 17,time: 0.044993) (c) -0.0625 (it: 17,time: 0.093986) (c) 
+ Solution:   -0.0625(17) -0.0625(17) -0.0625(17) (c) -0.0625(17) (c) 
 Processing:    test_solver_data/masters/cgal/QP_center_of_gravity_simplex_n.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.041993) -0.0625 (it: 17,time: 0.086987) -0.0625 (it: 17,time: 0.043993) -0.0625 (it: 17,time: 0.095985) 
+ Solution:   -0.0625(17) -0.0625(17) -0.0625(17) -0.0625(17) 
 Processing:    test_solver_data/masters/cgal/QP_center_of_gravity_simplex_n.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.035995) -0.0625 (it: 17,time: 0.085987) -0.0625 (it: 17,time: 0.041993) -0.0625 (it: 17,time: 0.089986) 
+ Solution:   -0.0625(17) -0.0625(17) -0.0625(17) -0.0625(17) 
 Processing:    test_solver_data/masters/cgal/QP_center_of_gravity_simplex_n.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.039994) -0.0625 (it: 17,time: 0.043993) 
+ Solution:   -0.0625(17) -0.0625(17) 
 Processing:    test_solver_data/masters/cgal/QP_center_of_gravity_simplex_n.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -0.0625 (it: 17,time: 0.039994) -0.0625 (it: 17,time: 0.041994) 
+ Solution:   -0.0625(17) -0.0625(17) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) (c) 40201 (it: 3,time: 0.000999) (c) 40201 (it: 3,time: 0.002) (c) 
+ Solution:   40201(3) 40201(3) 40201(3) 40201(3) (c) 40201(3) (c) 40201(3) (c) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.000999) 40201 (it: 3,time: 0.001) 
+ Solution:   40201(3) 40201(3) 40201(3) 40201(3) 40201(3) 40201(3) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   40201 (it: 7,time: 0.001) 40201 (it: 7,time: 0.001999) 40201 (it: 7,time: 0.003) 40201 (it: 7,time: 0.001999) 40201 (it: 7,time: 0.002) 40201 (it: 7,time: 0.001999) 
+ Solution:   40201(7) 40201(7) 40201(7) 40201(7) 40201(7) 40201(7) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   40201 (it: 3,time: 0) 40201 (it: 3,time: 0.001) 
+ Solution:   40201(3) 40201(3) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   40201 (it: 3,time: 0.001) 40201 (it: 3,time: 0.001) 
+ Solution:   40201(3) 40201(3) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   10000 (it: 5,time: 0.000999) 10000 (it: 5,time: 0.001) 10000 (it: 5,time: 0.002999) 10000 (it: 5,time: 0.001) (c) 10000 (it: 5,time: 0.002) (c) 10000 (it: 5,time: 0.004) (c) 
+ Solution:   10000(5) 10000(5) 10000(5) 10000(5) (c) 10000(5) (c) 10000(5) (c) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   10000 (it: 5,time: 0.001999) 10000 (it: 5,time: 0.002) 10000 (it: 5,time: 0.003) 10000 (it: 5,time: 0.002) 10000 (it: 5,time: 0.003) 10000 (it: 5,time: 0.004) 
+ Solution:   10000(5) 10000(5) 10000(5) 10000(5) 10000(5) 10000(5) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   10000 (it: 6,time: 0.001999) 10000 (it: 6,time: 0.002) 10000 (it: 6,time: 0.003999) 10000 (it: 6,time: 0.002) 10000 (it: 6,time: 0.002999) 10000 (it: 6,time: 0.004) 
+ Solution:   10000(6) 10000(6) 10000(6) 10000(6) 10000(6) 10000(6) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   10000 (it: 5,time: 0.002) 10000 (it: 5,time: 0.001) 
+ Solution:   10000(5) 10000(5) 
 Processing:    test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   10000 (it: 5,time: 0.001) 10000 (it: 5,time: 0.002) 
+ Solution:   10000(5) 10000(5) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_Dual_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   10000 (it: 3,time: 0) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0.000999) (c) 10000 (it: 3,time: 0.001) (c) 10000 (it: 3,time: 0.001) (c) 
+ Solution:   10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) (c) 10000(3) (c) 10000(3) (c) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_Dual_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   10000 (it: 3,time: 0) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0.000999) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0.000999) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0.001) 
+ Solution:   10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 10000(3) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_Dual_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   10000 (it: 7,time: 0.001) 10000 (it: 7,time: 0.001) 10000 (it: 7,time: 0.001999) 10000 (it: 7,time: 0.001) 10000 (it: 7,time: 0.002) 10000 (it: 7,time: 0.001999) 10000 (it: 7,time: 0.001) 10000 (it: 7,time: 0.002) 10000 (it: 7,time: 0.001999) 10000 (it: 7,time: 0.002) 10000 (it: 7,time: 0.001) 10000 (it: 7,time: 0.003) 
+ Solution:   10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 10000(7) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_Dual_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   10000 (it: 3,time: 0) 10000 (it: 3,time: 0.000999) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0.001) 
+ Solution:   10000(3) 10000(3) 10000(3) 10000(3) 
 Processing:    test_solver_data/masters/cgal/LP_KM3_Dual_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   10000 (it: 3,time: 0.000999) 10000 (it: 3,time: 0.001) 10000 (it: 3,time: 0) 10000 (it: 3,time: 0.000999) 
+ Solution:   10000(3) 10000(3) 10000(3) 10000(3) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) (c) -6 (it: 4,time: 0.001) (c) -6 (it: 4,time: 0.001999) (c) 
+ Solution:   -6(4) (c) -6(4) (c) -6(4) (c) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) -6 (it: 4,time: 0.002) -6 (it: 4,time: 0.002) 
+ Solution:   -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) -6 (it: 4,time: 0.001999) -6 (it: 4,time: 0.002) 
+ Solution:   -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.000999) 
+ Solution:   -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -6 (it: 4,time: 0.001) 
+ Solution:   -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.002) (c) 0 (it: 4,time: 0.002999) (c) 0 (it: 4,time: 0.003999) (c) 
+ Solution:   0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.003) 0 (it: 4,time: 0.003999) 
+ Solution:   0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.002) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.003) 
+ Solution:   0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.002) 
+ Solution:   0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.003) 
+ Solution:   0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001999) 0 (it: 4,time: 0.001) (c) 0 (it: 4,time: 0.002) (c) 0 (it: 4,time: 0.002) (c) 
+ Solution:   0(4) 0(4) 0(4) 0(4) (c) 0(4) (c) 0(4) (c) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.003) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.002) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.001) 0 (it: 4,time: 0.002) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0 (it: 4,time: 0.000999) 0 (it: 4,time: 0.001) 
+ Solution:   0(4) 0(4) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.002999) (c) 2 (it: 6,time: 0.006) (c) 2 (it: 6,time: 0.009998) (c) 
+ Solution:   2(6) (c) 2(6) (c) 2(6) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.004) 2 (it: 6,time: 0.004999) 2 (it: 6,time: 0.009998) 
+ Solution:   2(6) 2(6) 2(6) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2 (it: 5,time: 0.001999) 2 (it: 5,time: 0.004) 2 (it: 5,time: 0.006) 
+ Solution:   2(5) 2(5) 2(5) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.004999) 
+ Solution:   2(6) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.004999) 
+ Solution:   2(6) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.004999) (c) 10 (it: 6,time: 0.005) (c) 10 (it: 6,time: 0.010999) (c) 
+ Solution:   10(6) (c) 10(6) (c) 10(6) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.003999) 10 (it: 6,time: 0.004999) 10 (it: 6,time: 0.010999) 
+ Solution:   10(6) 10(6) 10(6) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   10 (it: 5,time: 0.003) 10 (it: 5,time: 0.002999) 10 (it: 5,time: 0.006999) 
+ Solution:   10(5) 10(5) 10(5) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.005999) 
+ Solution:   10(6) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.004999) 
+ Solution:   10(6) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_Eq_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.002999) 10 (it: 6,time: 0.004999) 10 (it: 6,time: 0.007999) 10 (it: 6,time: 0.003999) (c) 10 (it: 6,time: 0.004999) (c) 10 (it: 6,time: 0.008999) (c) 
+ Solution:   10(6) 10(6) 10(6) 10(6) (c) 10(6) (c) 10(6) (c) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_Eq_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.003999) 10 (it: 6,time: 0.003999) 10 (it: 6,time: 0.005999) 10 (it: 6,time: 0.003) 10 (it: 6,time: 0.004999) 10 (it: 6,time: 0.008999) 
+ Solution:   10(6) 10(6) 10(6) 10(6) 10(6) 10(6) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_Eq_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   10 (it: 5,time: 0.001999) 10 (it: 5,time: 0.003) 10 (it: 5,time: 0.005999) 10 (it: 5,time: 0.002) 10 (it: 5,time: 0.003999) 10 (it: 5,time: 0.006999) 
+ Solution:   10(5) 10(5) 10(5) 10(5) 10(5) 10(5) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_Eq_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.004) 10 (it: 6,time: 0.005) 
+ Solution:   10(6) 10(6) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_Eq_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   10 (it: 6,time: 0.004999) 10 (it: 6,time: 0.004999) 
+ Solution:   10(6) 10(6) 
 Processing:    test_solver_data/derivatives/mps_features_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -4 (it: 4,time: 0.002) (c) 
+ Solution:   -4(4) (c) 
 Processing:    test_solver_data/derivatives/mps_features_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -4 (it: 4,time: 0.002) 
+ Solution:   -4(4) 
 Processing:    test_solver_data/derivatives/mps_features_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -4 (it: 4,time: 0.002) 
+ Solution:   -4(4) 
 Processing:    test_solver_data/derivatives/mps_features_shifted.mps
  Strategy:     ff
  Verbosity:    0
@@ -2163,15 +2163,15 @@ Processing:    test_solver_data/derivatives/mps_features_shifted.mps
 Processing:    test_solver_data/derivatives/mps_features_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   1 (it: 4,time: 0.001999) (c) 
+ Solution:   1(4) (c) 
 Processing:    test_solver_data/derivatives/mps_features_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   1 (it: 4,time: 0.003) 
+ Solution:   1(4) 
 Processing:    test_solver_data/derivatives/mps_features_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   1 (it: 4,time: 0.002) 
+ Solution:   1(4) 
 Processing:    test_solver_data/derivatives/mps_features_free.mps
  Strategy:     ff
  Verbosity:    0
@@ -2183,15 +2183,15 @@ Processing:    test_solver_data/derivatives/mps_features_free.mps
 Processing:    test_solver_data/masters/cgal/mps_features.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   1 (it: 4,time: 0.001) 1 (it: 4,time: 0.001999) (c) 
+ Solution:   1(4) 1(4) (c) 
 Processing:    test_solver_data/masters/cgal/mps_features.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   1 (it: 4,time: 0.001999) 1 (it: 4,time: 0.002) 
+ Solution:   1(4) 1(4) 
 Processing:    test_solver_data/masters/cgal/mps_features.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   1 (it: 4,time: 0.002) 1 (it: 4,time: 0.002) 
+ Solution:   1(4) 1(4) 
 Processing:    test_solver_data/masters/cgal/mps_features.mps
  Strategy:     ff
  Verbosity:    0
@@ -2203,301 +2203,301 @@ Processing:    test_solver_data/masters/cgal/mps_features.mps
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.004999) (c) -5.5 (it: 9,time: 0.007998) (c) -5.5 (it: 9,time: 0.016997) (c) 
+ Solution:   -5.5(9) (c) -5.5(9) (c) -5.5(9) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.005999) -5.5 (it: 9,time: 0.007999) -5.5 (it: 9,time: 0.015998) 
+ Solution:   -5.5(9) -5.5(9) -5.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.005999) -5.5 (it: 7,time: 0.006998) -5.5 (it: 7,time: 0.011998) 
+ Solution:   -5.5(7) -5.5(7) -5.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.008998) 
+ Solution:   -5.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.007999) 
+ Solution:   -5.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.007999) (c) 2.5 (it: 9,time: 0.009999) (c) 2.5 (it: 9,time: 0.019997) (c) 
+ Solution:   2.5(9) (c) 2.5(9) (c) 2.5(9) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.011999) 2.5 (it: 9,time: 0.019997) 
+ Solution:   2.5(9) 2.5(9) 2.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.007998) 2.5 (it: 7,time: 0.015998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.009998) 
+ Solution:   2.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.009998) 
+ Solution:   2.5(9) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_y_shifted_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.005999) 2.5 (it: 9,time: 0.006999) 2.5 (it: 9,time: 0.015998) 2.5 (it: 9,time: 0.006999) (c) 2.5 (it: 9,time: 0.006999) (c) 2.5 (it: 9,time: 0.014998) (c) 
+ Solution:   2.5(9) 2.5(9) 2.5(9) 2.5(9) (c) 2.5(9) (c) 2.5(9) (c) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_y_shifted_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.005999) 2.5 (it: 9,time: 0.006999) 2.5 (it: 9,time: 0.016997) 2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.008998) 2.5 (it: 9,time: 0.015998) 
+ Solution:   2.5(9) 2.5(9) 2.5(9) 2.5(9) 2.5(9) 2.5(9) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_y_shifted_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.003999) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.011998) 2.5 (it: 7,time: 0.004999) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.011998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_y_shifted_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.007998) 2.5 (it: 9,time: 0.007999) 
+ Solution:   2.5(9) 2.5(9) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_y_shifted_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.007999) 
+ Solution:   2.5(9) 2.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.004999) (c) -5.5 (it: 9,time: 0.007999) (c) -5.5 (it: 9,time: 0.016998) (c) 
+ Solution:   -5.5(9) (c) -5.5(9) (c) -5.5(9) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.005999) -5.5 (it: 9,time: 0.008998) -5.5 (it: 9,time: 0.015997) 
+ Solution:   -5.5(9) -5.5(9) -5.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -5.5 (it: 7,time: 0.003999) -5.5 (it: 7,time: 0.007998) -5.5 (it: 7,time: 0.011998) 
+ Solution:   -5.5(7) -5.5(7) -5.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.008999) 
+ Solution:   -5.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -5.5 (it: 9,time: 0.008999) 
+ Solution:   -5.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.009998) (c) 2.5 (it: 9,time: 0.009998) (c) 2.5 (it: 9,time: 0.020996) (c) 
+ Solution:   2.5(9) (c) 2.5(9) (c) 2.5(9) (c) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.008999) 2.5 (it: 9,time: 0.009999) 2.5 (it: 9,time: 0.020996) 
+ Solution:   2.5(9) 2.5(9) 2.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.007999) 2.5 (it: 7,time: 0.018997) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.009998) 
+ Solution:   2.5(9) 
 Processing:    test_solver_data/derivatives/PD_Dual_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.009999) 
+ Solution:   2.5(9) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.008999) 2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.014997) 2.5 (it: 9,time: 0.005999) (c) 2.5 (it: 9,time: 0.007999) (c) 2.5 (it: 9,time: 0.015998) (c) 
+ Solution:   2.5(9) 2.5(9) 2.5(9) 2.5(9) (c) 2.5(9) (c) 2.5(9) (c) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.005999) 2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.016997) 2.5 (it: 9,time: 0.006999) 2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.016998) 
+ Solution:   2.5(9) 2.5(9) 2.5(9) 2.5(9) 2.5(9) 2.5(9) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   2.5 (it: 7,time: 0.004) 2.5 (it: 7,time: 0.005999) 2.5 (it: 7,time: 0.010999) 2.5 (it: 7,time: 0.006) 2.5 (it: 7,time: 0.008999) 2.5 (it: 7,time: 0.011998) 
+ Solution:   2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 2.5(7) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.007999) 2.5 (it: 9,time: 0.007999) 
+ Solution:   2.5(9) 2.5(9) 
 Processing:    test_solver_data/masters/cgal/PD_Dual_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2.5 (it: 9,time: 0.006999) 2.5 (it: 9,time: 0.007998) 
+ Solution:   2.5(9) 2.5(9) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -64 (it: 4,time: 0.001) -64 (it: 4,time: 0.002) -64 (it: 4,time: 0.002) -64 (it: 4,time: 0.001) (c) -64 (it: 4,time: 0.002) (c) -64 (it: 4,time: 0.003) (c) 
+ Solution:   -64(4) -64(4) -64(4) -64(4) (c) -64(4) (c) -64(4) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -64 (it: 4,time: 0.001) -64 (it: 4,time: 0.001) -64 (it: 4,time: 0.001) -64 (it: 4,time: 0.002) -64 (it: 4,time: 0.001999) -64 (it: 4,time: 0.003) 
+ Solution:   -64(4) -64(4) -64(4) -64(4) -64(4) -64(4) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -64 (it: 3,time: 0) -64 (it: 3,time: 0) -64 (it: 3,time: 0.001) -64 (it: 3,time: 0.000999) -64 (it: 3,time: 0.002) -64 (it: 3,time: 0.001999) 
+ Solution:   -64(3) -64(3) -64(3) -64(3) -64(3) -64(3) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -64 (it: 4,time: 0.001) -64 (it: 4,time: 0.002) 
+ Solution:   -64(4) -64(4) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -64 (it: 4,time: 0.000999) -64 (it: 4,time: 0.002) 
+ Solution:   -64(4) -64(4) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -39 (it: 8,time: 0.002) -39 (it: 8,time: 0.002) -39 (it: 8,time: 0.003999) -39 (it: 8,time: 0.003999) (c) -39 (it: 8,time: 0.006999) (c) -39 (it: 8,time: 0.010998) (c) 
+ Solution:   -39(8) -39(8) -39(8) -39(8) (c) -39(8) (c) -39(8) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -39 (it: 8,time: 0.002) -39 (it: 8,time: 0.003) -39 (it: 8,time: 0.003999) -39 (it: 8,time: 0.003999) -39 (it: 8,time: 0.005999) -39 (it: 8,time: 0.011998) 
+ Solution:   -39(8) -39(8) -39(8) -39(8) -39(8) -39(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -39 (it: 5,time: 0.001) -39 (it: 5,time: 0.002) -39 (it: 5,time: 0.002) -39 (it: 5,time: 0.003) -39 (it: 5,time: 0.002999) -39 (it: 5,time: 0.007999) 
+ Solution:   -39(5) -39(5) -39(5) -39(5) -39(5) -39(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -39 (it: 8,time: 0.003) -39 (it: 8,time: 0.004999) 
+ Solution:   -39(8) -39(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -39 (it: 8,time: 0.002) -39 (it: 8,time: 0.005999) 
+ Solution:   -39(8) -39(8) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_b_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -39 (it: 7,time: 0.002) -39 (it: 7,time: 0.001999) -39 (it: 7,time: 0.002) -39 (it: 7,time: 0.003999) (c) -39 (it: 7,time: 0.003999) (c) -39 (it: 7,time: 0.006999) (c) 
+ Solution:   -39(7) -39(7) -39(7) -39(7) (c) -39(7) (c) -39(7) (c) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_b_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -39 (it: 7,time: 0.002) -39 (it: 7,time: 0.002) -39 (it: 7,time: 0.003) -39 (it: 7,time: 0.002999) -39 (it: 7,time: 0.003999) -39 (it: 7,time: 0.006999) 
+ Solution:   -39(7) -39(7) -39(7) -39(7) -39(7) -39(7) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_b_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -39 (it: 3,time: 0) -39 (it: 3,time: 0.001) -39 (it: 3,time: 0.001) -39 (it: 3,time: 0.001) -39 (it: 3,time: 0.001) -39 (it: 3,time: 0.002999) 
+ Solution:   -39(3) -39(3) -39(3) -39(3) -39(3) -39(3) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_b_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -39 (it: 7,time: 0.001) -39 (it: 7,time: 0.004) 
+ Solution:   -39(7) -39(7) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_b_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -39 (it: 7,time: 0.002) -39 (it: 7,time: 0.004) 
+ Solution:   -39(7) -39(7) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.001999) 2 (it: 6,time: 0.003999) 2 (it: 6,time: 0.005999) 2 (it: 6,time: 0.002999) (c) 2 (it: 6,time: 0.004) (c) 2 (it: 6,time: 0.005999) (c) 
+ Solution:   2(6) 2(6) 2(6) 2(6) (c) 2(6) (c) 2(6) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.003) 2 (it: 6,time: 0.003999) 2 (it: 6,time: 0.005999) 2 (it: 6,time: 0.003) 2 (it: 6,time: 0.002999) 2 (it: 6,time: 0.005999) 
+ Solution:   2(6) 2(6) 2(6) 2(6) 2(6) 2(6) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   5 (it: 5,time: 0.003) 5 (it: 5,time: 0.003) 5 (it: 5,time: 0.005) 5 (it: 5,time: 0.001999) 5 (it: 5,time: 0.003) 5 (it: 5,time: 0.004999) 
+ Solution:   5(5) 5(5) 5(5) 5(5) 5(5) 5(5) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.003999) 2 (it: 6,time: 0.002999) 
+ Solution:   2(6) 2(6) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   2 (it: 6,time: 0.003) 2 (it: 6,time: 0.003) 
+ Solution:   2(6) 2(6) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   5 (it: 8,time: 0.007999) 5 (it: 8,time: 0.005999) 5 (it: 8,time: 0.011999) 5 (it: 8,time: 0.004999) (c) 5 (it: 8,time: 0.005999) (c) 5 (it: 8,time: 0.014998) (c) 
+ Solution:   5(8) 5(8) 5(8) 5(8) (c) 5(8) (c) 5(8) (c) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   5 (it: 8,time: 0.003999) 5 (it: 8,time: 0.006999) 5 (it: 8,time: 0.010998) 5 (it: 8,time: 0.004999) 5 (it: 8,time: 0.006999) 5 (it: 8,time: 0.015997) 
+ Solution:   5(8) 5(8) 5(8) 5(8) 5(8) 5(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   5 (it: 6,time: 0.004999) 5 (it: 6,time: 0.003999) 5 (it: 6,time: 0.008998) 5 (it: 6,time: 0.003) 5 (it: 6,time: 0.004999) 5 (it: 6,time: 0.009998) 
+ Solution:   5(6) 5(6) 5(6) 5(6) 5(6) 5(6) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   5 (it: 8,time: 0.005) 5 (it: 8,time: 0.003999) 
+ Solution:   5(8) 5(8) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   5 (it: 8,time: 0.004999) 5 (it: 8,time: 0.005) 
+ Solution:   5(8) 5(8) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_d_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   5 (it: 4,time: 0.002) 5 (it: 4,time: 0.001999) 5 (it: 4,time: 0.003999) 5 (it: 4,time: 0.002) (c) 5 (it: 4,time: 0.002) (c) 5 (it: 4,time: 0.003999) (c) 
+ Solution:   5(4) 5(4) 5(4) 5(4) (c) 5(4) (c) 5(4) (c) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_d_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   5 (it: 4,time: 0.001) 5 (it: 4,time: 0.001999) 5 (it: 4,time: 0.004) 5 (it: 4,time: 0.002) 5 (it: 4,time: 0.003) 5 (it: 4,time: 0.003999) 
+ Solution:   5(4) 5(4) 5(4) 5(4) 5(4) 5(4) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_d_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   5 (it: 5,time: 0.002) 5 (it: 5,time: 0.002999) 5 (it: 5,time: 0.004999) 5 (it: 5,time: 0.001999) 5 (it: 5,time: 0.003) 5 (it: 5,time: 0.004999) 
+ Solution:   5(5) 5(5) 5(5) 5(5) 5(5) 5(5) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_d_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   5 (it: 4,time: 0.002999) 5 (it: 4,time: 0.002) 
+ Solution:   5(4) 5(4) 
 Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_d_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   5 (it: 4,time: 0.003) 5 (it: 4,time: 0.002999) 
+ Solution:   5(4) 5(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -60 (it: 4,time: 0.001) (c) -60 (it: 4,time: 0.001) (c) -60 (it: 4,time: 0.002) (c) 
+ Solution:   -60(4) (c) -60(4) (c) -60(4) (c) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -60 (it: 4,time: 0.001) -60 (it: 4,time: 0.001) -60 (it: 4,time: 0.001999) 
+ Solution:   -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -60 (it: 4,time: 0.000999) -60 (it: 4,time: 0.001) -60 (it: 4,time: 0.002) 
+ Solution:   -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -60 (it: 4,time: 0.001) 
+ Solution:   -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -60 (it: 4,time: 0.001) 
+ Solution:   -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22 (it: 6,time: 0.002) (c) -22 (it: 6,time: 0.003) (c) -22 (it: 6,time: 0.005) (c) 
+ Solution:   -22(6) (c) -22(6) (c) -22(6) (c) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22 (it: 6,time: 0.002) -22 (it: 6,time: 0.003) -22 (it: 6,time: 0.005999) 
+ Solution:   -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22 (it: 6,time: 0.003) -22 (it: 6,time: 0.002999) -22 (it: 6,time: 0.005) 
+ Solution:   -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22 (it: 6,time: 0.002999) 
+ Solution:   -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22 (it: 6,time: 0.003) 
+ Solution:   -22(6) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22 (it: 4,time: 0.001) (c) -22 (it: 4,time: 0.002) (c) -22 (it: 4,time: 0.002) (c) 
+ Solution:   -22(4) (c) -22(4) (c) -22(4) (c) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22 (it: 4,time: 0.001) -22 (it: 4,time: 0.001) -22 (it: 4,time: 0.001) 
+ Solution:   -22(4) -22(4) -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22 (it: 4,time: 0.001) -22 (it: 4,time: 0.001999) -22 (it: 4,time: 0.001) 
+ Solution:   -22(4) -22(4) -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22 (it: 4,time: 0.002) 
+ Solution:   -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22 (it: 4,time: 0.001999) 
+ Solution:   -22(4) 
 All test cases were successfully passed.

@@ -125,19 +125,21 @@ set(const Q& qp)
 		    << "Set-Up" << std::endl
 		    << "======" << std::endl;
       }
-      vout.out() << "[ " << (is_LP ? "LP" : "QP")
-		 << ", " << qp_n << " variables, " << qp_m << " constraints";
+    }
+  }
+  vout    << "[ " << (is_LP ? "LP" : "QP")
+	  << ", " << qp_n << " variables, " << qp_m << " constraints"
+	  << " ]" << std::endl;
+  CGAL_qpe_debug {   
       if (vout2.verbose() && (!slack_A.empty())) {
 	vout2.out() << " (" << slack_A.size() << " inequalities)";
       }
-      vout.out() << " ]" << std::endl;
       if (vout2.verbose()) {
 	if (has_ineq)
 	  vout2.out() << "flag: has inequalities or rank not full"
 		      << std::endl;
 	if (vout4.verbose()) print_program();
       }
-    }
   }
   
   // set up pricing strategy:

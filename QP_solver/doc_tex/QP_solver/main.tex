@@ -52,13 +52,14 @@ provides a number of easy-to-use and flexible models, see Section
 \ref{sec:QP-first} below. The input data may be of any given number 
 type, such as \ccc{double}, \ccc{int}, or any exact type. 
 
-Then the program is solved using the function \ccc{solve_quadratic_program}
-(or some specialized other functions, e.g.\ for linear programs). For this,
-you also have to provide a suitable \emph{exact} number type \ccc{ET} used
-in the solution process. In case of input type \ccc{double}, solution 
-methods that use floating-point-filtering are chosen by default (in some 
-cases, this is not appropriate, and the default should be changed; 
-see Section \ref{sec:QP-customization} for details).
+Then the program is solved using the function
+\ccc{solve_quadratic_program} (or some specialized other functions,
+e.g.\ for linear programs). For this, you also have to provide a
+suitable \emph{exact} number type \ccc{ET} used in the solution
+process. In case of input type \ccc{double}, solution methods that use
+floating-point-filtering are chosen by default for certain programs
+(in some cases, this is not appropriate, and the default should be
+changed; see Section \ref{sec:QP-customization} for details).
 
 The output of this is an object of \ccc{Quadratic_program_solution<ET>}
 which you can in turn query for various things: what is the status of 
@@ -153,13 +154,13 @@ convex quadratic program. It may fail to compute a solution only if
 on efficiency).
 \item The quadratic objective function matrix $D$ is not 
 positive-semidefinite (see the discussion below).
-\item The floating-point filter used by default for input type
-\ccc{double} fails due to a \emph{double} exponent overflow. This 
-happens in rare cases only, and it does not pay off to sacrifice
-the efficiency of the filtered approach in order to cope with these
-rare cases. There are means, however, to avoid such
-problems by switching to a slower non-filtered variant, see
-Section  \ref{sec:QP-customization-filtering}.
+\item The floating-point filter used by default for certain programs
+  and input type \ccc{double} fails due to a \emph{double} exponent
+  overflow. This happens in rare cases only, and it does not pay off
+  to sacrifice the efficiency of the filtered approach in order to
+  cope with these rare cases. There are means, however, to avoid such
+  problems by switching to a slower non-filtered variant, see Section
+  \ref{sec:QP-customization-filtering}.
 \item The solver internally cycles. This also happens in rare
 cases only. However, if
 you have a hunch that the solver cycles on your problem,
@@ -190,7 +191,7 @@ using the \cgal\ program models and solution functions.
 There are two essentially different ways to proceed, 
 and we will discuss them in turn. In short, 
 \begin{itemize}
-\item you can let the model take care of yor program data; you start 
+\item you can let the model take care of your program data; you start 
 from an empty program and then simply insert the non-zero entries, or
 read them from a file (more generally, any input stream) in 
 \ccc{MPSFormat}. You can also change program entries at any time. 
@@ -198,7 +199,7 @@ This is usually the most convenient way if you don't want to care
 about representation issues;
 \item you can maintain the data yourself and only supply suitable 
 random-access iterators over the matrices and vectors. This is 
-advantageous if you already have the data (explicitly, or implictly
+advantageous if you already have the data (explicitly, or implicitly
 encoded, for example through iterators) and want to avoid copying 
 of data. Typically, this happens if you write generic iterator-based 
 code. 
@@ -249,7 +250,7 @@ function at this optimal solution is $2^2 + 4(3-4)^2 = 8$.
 Here is how this quadratic program can be solved in \cgal\ 
 according to the first way (letting the model take care of
 the data). We use \ccc{int} as the entry type, and 
-\ccc{MP_Float} or \ccc{Gmpz} (which is faster and preferrable if
+\ccc{MP_Float} or \ccc{Gmpz} (which is faster and preferable if
 \texttt{GMP} is installed) as the exact type for the
 internal computations. For examples 
 how to work with the input type \ccc{double}, we refer to 
@@ -286,7 +287,7 @@ The following program again solves our running example from above,
 with the same output, but this time with iterators over data stored 
 in suitable containers. You can see that we also store zero 
 entries here (in $D$). For this toy problem, the previous two
-approaches (program from data/stream) are clearly preferrable, 
+approaches (program from data/stream) are clearly preferable, 
 but Section \ref{sec:QP-iterators} shows an
 example where it makes sense to use the iterator-based approach.
 
@@ -668,29 +669,25 @@ for the performance (see the class \ccc{Quadratic_program_pricing_strategy}
 for a discussion).
 
 \subsection{Exponent overflow in double using floating-point filters\label{sec:QP-customization-filtering}}
-The filtered version of the solver that is used by default on input
+The filtered version of the solver that is used for some problems
+by default on input
 type \ccc{double} internally constructs double-approximations of exact
 multiprecision values. If these exact values are extremely large, this
 may lead to \emph{infinite} \ccc{double} values and incorrect results.
 In debug mode, the solver will notice this through a certificate 
 cross-check in the end (or even earlier). In this case, it is advisable
-to switch to a non-filtered \emph{pricing strategy}, see
+to explicitly switch to a non-filtered \emph{pricing strategy}, see
 \ccc{Quadratic_program_pricing_strategy}.
 
-Consider the following program. It reads a nonnegative linear program from
-the file \texttt{filter\_failure.mps} (which is in the example directory as 
-well), and then solves it using \emph{Dantzig's rule}.
-
-\ccIncludeExampleCode{QP_solver/filter_failure.cpp}
-
-If your comment the line
-\begin{verbatim}
-options.set_pricing_strategy(CGAL::QP_DANTZIG);        // Dantzig's rule
-\end{verbatim}
-you will see that the solver fails (in debug mode, it will run into
-an assertion, and in non-debug mode, the objective value is simply 
-wrong). This is due to a filter failure, and switching to a non-filtered
-variant like \ccc{QP_DANTZIG} solves the problem.
+{\bf Hint:} 
+If you have a program where the number of variables $n$ and the number of
+constraints $m$ have the same order of 
+magnitude, the filtering will usually have
+no dramatic effect on the performance, so in that case you might as well 
+switch to \ccc{QP_PARTIAL_DANTZIG} 
+to be safe from the issue described here (see 
+\ccReferToExampleCode{QP_solver/cycling.cpp} 
+for an example that shows how to change the pricing strategy).
 
 \subsection{The solver internally cycles\label{sec:QP-customization-cycling}}
 Consider the following program. It reads a nonnegative linear program from 
@@ -722,9 +719,8 @@ typical in your case, and we make no claims whatsoever about the
 performance in other applications.
 
 Still, the example shows that the performance can be dramatically 
-affected by switching between pricing strategies, and this message
-is important to know if you want to achieve good performance in 
-general. 
+affected by switching between pricing strategies, and we give some
+hints on how to achieve good performance in general. 
 
 The application is the one already discussed in Section \ref{sec:QP-iterators}
 above: testing whether a point is in the convex hull of other points.
@@ -748,9 +744,9 @@ If you compile with the macros \texttt{NDEBUG} or
 \texttt{CGAL\_QP\_NO\_ASSERTIONS} set (this is essential for good
 performance!!), you will see runtimes that qualitatively look as
 follows (on your machine, the actual runtimes will roughly be some
-fixed multiples of the numbers in the table below). The default
-choice of the pricing strategy in that case is 
-\ccc{QP_PARTIAL_FILTERED_DANTZIG}.
+fixed multiples of the numbers in the table below, and they might
+vary with the random choices). The default choice of the pricing 
+strategy in that case is \ccc{QP_PARTIAL_FILTERED_DANTZIG}.
 
 \begin{tabular}{lcl}
 strategy & &runtime in seconds \\ \hline
@@ -780,10 +776,15 @@ strategy & &runtime in seconds \\ \hline
 \ccc{CGAL::QP_PARTIAL_FILTERED_DANTZIG}& | & 1.34
 \end{tabular}
 
+In general, if your problem has a high variable/constraint or
+constraint/variable ratio, then filtering will typically pay off.  
+In such cases, it might be beneficial to encode your problem using
+input type \ccc{double} in order to profit from the filtering (but 
+see the issue discussed in Section \ref{sec:QP-customization-filtering}).
+
 \subsection{$d=100$, $n=100,000$}
-Increasing the dimension to $100$ compared to the above example clearly
-shows that the filtering effect deteriorates with higher dimension but
-is still noticeable.
+Conversely, the filtering effect deteriorates if the points/dimension ratio 
+becomes smaller. 
 
 \begin{tabular}{lcl}
 strategy & &runtime in seconds \\ \hline
@@ -797,9 +798,9 @@ strategy & &runtime in seconds \\ \hline
 
 \subsection{$d=500$, $n=1,000$} 
 If the points/dimension ratio tends to a constant, filtering is no
-longer a clear winner. The reason is that the numbers involved in the
-necessary exact calculations are so large that the overall performance is
-dominated by them.
+longer a clear winner. The reason is that in this case, 
+the necessary exact calculations with multiprecision numbers
+dominate the overall runtime. 
 
 \begin{tabular}{lcl}
 strategy & &runtime in seconds \\ \hline
@@ -810,3 +811,10 @@ strategy & &runtime in seconds \\ \hline
 \ccc{CGAL::QP_FILTERED_DANTZIG}   & | &  2.65  \\  
 \ccc{CGAL::QP_PARTIAL_FILTERED_DANTZIG}& | & 2.61
 \end{tabular}
+
+In general, if you have a program where the number of variables
+and the number of constraints have the same order of magnitude, then 
+the saving gained from using the filtered approach is typically
+small. In such a situation, you should consider switching to
+a non-filtered variant in order to avoid the rare issue discussed
+in Section \ref{sec:QP-customization-filtering} altogether.

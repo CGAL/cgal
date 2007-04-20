@@ -1,7 +1,6 @@
 // Example: assess the solver performance under any of the available 
 // pricing strategies, in the convex-hull-containment problem
 // NOTE: in order to see meaningful results, compile with -DNDEBUG
-#include <cassert>
 #include <vector>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>

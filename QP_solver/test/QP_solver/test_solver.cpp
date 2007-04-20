@@ -26,7 +26,6 @@
 
 #include <cstdlib>
 #include <CGAL/basic.h>
-#include <CGAL/Timer.h>
 
 #ifndef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>       // Quotient<MP_Float> is too slow, even
@@ -293,8 +292,6 @@ bool process(const std::string& filename,
   using std::cout;
   using std::endl;
 
-  CGAL::Timer timer;
-
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
 
@@ -425,13 +422,10 @@ bool process(const std::string& filename,
     (static_cast<CGAL::Quadratic_program_pricing_strategy>
      (options.find("Strategy")->second));
 
-  timer.reset();
-  timer.start();
   CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, solver_options);
-  timer.stop();
-  // output solution + number of iterations + time
-  cout << CGAL::to_double(solver.solution()) << " (it: " 
-       << solver.iterations() << ",time: " << timer.time() << ") ";
+  // output solution + number of iterations
+  cout << CGAL::to_double(solver.solution()) << "(" 
+       << solver.iterations() << ") ";
   // the solver previously checked itself through an assertion
   const bool is_valid = true; 
 

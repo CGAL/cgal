@@ -1914,8 +1914,6 @@ QP_solver/examples/QP_solver/cycling.cpp -text
 QP_solver/examples/QP_solver/cycling.mps -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
-QP_solver/examples/QP_solver/filter_failure.cpp -text
-QP_solver/examples/QP_solver/filter_failure.mps -text
 QP_solver/examples/QP_solver/first_lp.cpp -text
 QP_solver/examples/QP_solver/first_lp.mps -text
 QP_solver/examples/QP_solver/first_lp_from_mps.cpp -text
@@ -1949,6 +1947,7 @@ QP_solver/test/QP_solver/debug_bug.cpp -text
 QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
+QP_solver/test/QP_solver/test_solver_data/masters/additional/QSCORPIO.QPS -text
 Qt_widget/demo/Qt_widget/hellosegment.vcproj eol=crlf
 Qt_widget/demo/Qt_widget/layer.vcproj eol=crlf
 Qt_widget/demo/Qt_widget/standard_toolbar.vcproj eol=crlf

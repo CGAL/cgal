@@ -142,6 +142,8 @@ init( )
     // initialize size of active set
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
+    // we also want to cover the high constraints/variable ratio
+    if (n < m) (std::swap)(n,m); 
 
     s = (std::min)( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
 		    static_cast< unsigned int>(N.size()));
