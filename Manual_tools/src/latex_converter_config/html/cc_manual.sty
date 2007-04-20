@@ -1168,18 +1168,19 @@
 \def\lciBenchmarkPath{}
 \lciShellCommand{perl -e '
 $location = "#C1";
-$pattern="-name \"*.bff\"";
+$pattern=" -name \"*.bff\"";
 if( $location =~ /\/([^\/]*[*\[\]?][^\/]*)$/ ) {
   $pattern = " -name \"$1\"";
   $location = $`;
+} elsif( $location =~ /\.bff$/ ) {
+  $pattern="";
 }
 if( $location =~ /\/$/ ) { $location =$`; }
 $benchname=$location;
 if( $benchname =~ /^[^\/]+\/[^\/]+\/(.*)$/ ) { $tarname = $1; }
 $benchname =~ s/\//__/g;
-$benchname =~ s/_data_//;
-if( ! -d $location && -d "../benchmark/$location" ) {
-  $location = "../benchmark/$location";
+if( ! -r $location && -r "../benchmark/data/$location" ) {
+  $location = "../benchmark/data/$location";
 }
 print "\\def\\benchlocation{$location}\\def\\benchpattern{$pattern}\\def\\benchname{$benchname}";
 '
@@ -1220,11 +1221,17 @@ print "\\def\\benchlocation{$location}\\def\\benchpattern{$pattern}\\def\\benchn
 OLDPWD=`pwd`;
 mkdir -p #XC4/benchmarks/#XC3;
 cd #XC4/benchmarks;
-ln -s `find $OLDPWD/#XC1 #XC2` #XC3;
-tar -czhf #XC3.tar.gz #XC3;
+files=`find $OLDPWD/#XC1 #XC2`
+if [ "${files}" != "" ] ; then
+  ln -s $files #XC3;
+  tar -czhf #XC3.tar.gz #XC3;
+else
+  echo "\\lciError{no files found at #XC1}"
+fi
 rm -rf #XC3;
 cd $OLDPWD;
 }
+\lciShellStdout
 \lcRawHtml{<a href="../benchmarks/#XC3.tar.gz">#XC3.tar.gz</a>}
 }
 % ___________________________________________________________________________
