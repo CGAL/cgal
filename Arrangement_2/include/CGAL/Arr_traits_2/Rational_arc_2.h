@@ -1098,7 +1098,7 @@ public:
   /*!
    * Compare the two arcs at x = -oo.
    * \param arc The given arc.
-   * \pre Both arcs are have a left end which is unbounded in x.
+   * \pre Both arcs have a left end which is unbounded in x.
    * \return SMALLER if (*this) lies below the other arc;
    *         EQUAL if the two supporting functions are equal;
    *         LARGER if (*this) lies above the other arc.
@@ -1110,7 +1110,7 @@ public:
 
     // Check for easy cases, when the infinity at y of both ends is different.
     const Boundary_type  inf_y1 = left_boundary_in_y();
-    const Boundary_type  inf_y2 = left_boundary_in_y();
+    const Boundary_type  inf_y2 = arc.left_boundary_in_y();
 
     if (inf_y1 != inf_y2)
     {
@@ -1166,7 +1166,7 @@ public:
 
     // Check for easy cases, when the infinity at y of both ends is different.
     const Boundary_type  inf_y1 = right_boundary_in_y();
-    const Boundary_type  inf_y2 = right_boundary_in_y();
+    const Boundary_type  inf_y2 = arc.right_boundary_in_y();
 
     if (inf_y1 != inf_y2)
     {
