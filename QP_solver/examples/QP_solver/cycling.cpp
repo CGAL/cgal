@@ -14,6 +14,7 @@ typedef CGAL::Gmpzf ET;
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float ET;
 #endif
+
 // program and solution types
 typedef CGAL::Quadratic_program_from_mps<double> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;

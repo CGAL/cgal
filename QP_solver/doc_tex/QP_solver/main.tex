@@ -249,10 +249,14 @@ function at this optimal solution is $2^2 + 4(3-4)^2 = 8$.
 \subsection{Constructing a program from data}
 Here is how this quadratic program can be solved in \cgal\ 
 according to the first way (letting the model take care of
-the data). We use \ccc{int} as the entry type, and 
+the data). We use \ccc{int} as the input type, and 
 \ccc{MP_Float} or \ccc{Gmpz} (which is faster and preferable if
 \texttt{GMP} is installed) as the exact type for the
-internal computations. For examples 
+internal computations. In larger examples, it pays off to use
+\ccc{double} as input type in order to profit from the 
+automatic floating-point filtering that takes place then.
+
+For examples 
 how to work with the input type \ccc{double}, we refer to 
 Sections \ref{sec:QP-iterators} and \ref{sec:QP-customization}.
 
@@ -538,7 +542,8 @@ To see this in action, let us call it with $p_1=(0,0), p_2=(10,0),
 p_3=(0,10)$ fixed (they define a triangle) and all integral points $p$
 in $[0,10]^2$. We know that $p$ is in the convex hull of
 $\{p_1,p_2,p_3\}$ if and only if its two coordinates sum up to $10$ at
-most. As the exact type, we use \ccc{MP_Float}.
+most. As the exact type, we use \ccc{MP_Float} or \ccc{Gmpzf} 
+(which is faster and preferable if \texttt{GMP} is installed).
 
 \ccIncludeExampleCode{QP_solver/convex_hull_containment.cpp}
 

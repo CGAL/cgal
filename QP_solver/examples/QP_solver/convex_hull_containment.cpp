@@ -5,6 +5,15 @@
 #include <CGAL/MP_Float.h>
 #include "solve_convex_hull_containment_lp.h"
 
+// choose exact floating-point type
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpzf.h>
+typedef CGAL::Gmpzf ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
+#endif
+
 typedef CGAL::Cartesian_d<double> Kernel_d;
 typedef Kernel_d::Point_d Point_d;
 
@@ -12,8 +21,8 @@ bool is_in_convex_hull (const Point_d& p,
 			std::vector<Point_d>::const_iterator begin,
 			std::vector<Point_d>::const_iterator end)
 {
-  CGAL::Quadratic_program_solution<CGAL::MP_Float> s =
-    solve_convex_hull_containment_lp (p, begin, end, CGAL::MP_Float());
+  CGAL::Quadratic_program_solution<ET> s =
+    solve_convex_hull_containment_lp (p, begin, end, ET(0));
   return !s.is_infeasible();
 }
 
