@@ -192,6 +192,7 @@ public:
   Comparison_result compare (const Gmpzf &b) const;
   double to_double() const ;
   std::pair<double, double> to_interval() const ;
+  std::pair<double, long> Gmpzf::to_double_exp() const;
   std::pair<std::pair<double, double>, long> to_interval_exp() const ;
 private:
   void canonicalize();
@@ -400,7 +401,17 @@ double Gmpzf::to_double() const
   return std::ldexp(l, k+exp());
 }
 
-// internal function
+
+
+// internal functions
+inline
+std::pair<double, long> Gmpzf::to_double_exp() const
+{
+  Exponent k = 0;
+  double l = mpz_get_d_2exp (&k, man());
+  return std::pair<double, long>(l, k+exp());
+}
+
 inline
 std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
 {

@@ -138,14 +138,11 @@ public:
     struct To_double: public Unary_function<Quotient<Gmpzf>, double>{
         inline
         double operator()(const Quotient<Gmpzf>& q) const {
-            double man = to_double(Quotient<Gmpz>(
-                                           q.numerator().man(),
-                                           q.denominator().man()));
-                return std::ldexp(
-                        man,
-                        q.numerator().exp()-q.denominator().exp()
-                );
-        }
+	  std::pair<double, long> n = q.numerator().to_double_exp();
+	  std::pair<double, long> d = q.denominator().to_double_exp();
+	  double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
+	  return (n.first / d.first) * scale;
+	}
     };
     struct To_interval
         : public Unary_function<Quotient<Gmpzf>, std::pair<double,double> >{
