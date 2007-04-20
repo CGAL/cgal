@@ -192,7 +192,7 @@ public:
   Comparison_result compare (const Gmpzf &b) const;
   double to_double() const ;
   std::pair<double, double> to_interval() const ;
-  std::pair<double, long> Gmpzf::to_double_exp() const;
+  std::pair<double, long> to_double_exp() const;
   std::pair<std::pair<double, double>, long> to_interval_exp() const ;
 private:
   void canonicalize();
