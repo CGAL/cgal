@@ -395,7 +395,9 @@ Comparison_result Gmpzf::compare (const Gmpzf &b) const
 inline
 double Gmpzf::to_double() const
 {
-    return std::ldexp( mpz_get_d(man()),exp());
+  Exponent k;                                 // exponent
+  double l = mpz_get_d_2exp (&k, man());      // mantissa in [0.5,1)
+  return std::ldexp(l, k+exp());
 }
 
 // internal function
