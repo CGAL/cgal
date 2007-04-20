@@ -31,32 +31,17 @@ curves, their {\em lower envelope} is defined as the point-wise minimum of
 all curves. Namely, the lower envelope of the set ${\cal C}$ can be
 defined as the following function:
 \begin{eqnarray*}
-{\cal L}_{{\cal C}} (x) = \min_{1 \leq k \leq n}{
-\begin{ccTexOnly}\overline{C}\end{ccTexOnly}
-\begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
-_k (x)} \ ,
+{\cal L}_{{\cal C}} (x) = \min_{1 \leq k \leq n}{\overline{C}_k (x)} \ ,
 \end{eqnarray*}
-where we define $
-\begin{ccTexOnly}\overline{C}\end{ccTexOnly}
-\begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
-_k(x) = C_k(x)$ for $x \in R_{C_k}$,
-and $
-\begin{ccTexOnly}\overline{C}\end{ccTexOnly}
-\begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
-_k(x) = \infty$ otherwise.
+where we define $\overline{C}_k(x) = C_k(x)$ for $x \in R_{C_k}$,
+and $\overline{C}_k(x) = \infty$ otherwise.
 
 Similarly, the {\em upper envelope} of ${\cal C}$ is the point-wise maximum of
 the $x$-monotone curves in the set:
 \begin{eqnarray*}
-{\cal U}_{{\cal C}} (x) = \max_{1 \leq k \leq n}{
-\begin{ccTexOnly}\underline{C}\end{ccTexOnly}
-\begin{ccHtmlOnly}<span style="text-decoration:underline">C</span>\end{ccHtmlOnly}
-_k (x)} \ ,
+{\cal U}_{{\cal C}} (x) = \max_{1 \leq k \leq n}{\underline{C}_k (x)} \ ,
 \end{eqnarray*}
-where in this case $
-\begin{ccTexOnly}\underline{C}\end{ccTexOnly}
-\begin{ccHtmlOnly}<span style="text-decoration:underline">C</span>\end{ccHtmlOnly}
-_k(x) = -\infty$ for $x 
+where in this case $\underline{C}_k(x) = -\infty$ for $x 
 \not\in R_{C_k}$.
 
 Given a set of $x$-monotone curves ${\cal C}$, the {\em minimization
