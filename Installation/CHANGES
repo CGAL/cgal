@@ -9,10 +9,11 @@ Additional supported platforms:
  - Intel C++ compiler 9
  - Microsoft Visual C++ compiler 8.0
 
-CGAL now supports Visual C++ "Checked iterators" as well as "libstdc++ debug mode".
+CGAL now supports Visual C++ "Checked iterators" as well as the debug mode
+of GNU g++'s STL (-D_GLIBCXX_DEBUG).
 
-CGAL has no longer problems with the preprocessor macros 'min' and 'max' 
-defined in windows.h
+CGAL now works around the preprocessor macros 'min' and 'max' defined
+in <windows.h> which were clashing with min/max functions.
 
 
 2 Installation
