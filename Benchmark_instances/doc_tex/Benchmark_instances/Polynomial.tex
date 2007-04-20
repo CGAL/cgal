@@ -1,9 +1,30 @@
 \section{Polynomial Data}
 
+Polynonomials form fundamenatal mathematical objects, especially
+in algebraic computation geometry. Several algorithms need to be implemented
+when defining curves and surfaces as zero sets of polynomials. Several
+problems can also be reduced to the univariate case, i.e., using elimination
+theory. As problems real root isolation, or gcd computations can be
+analysed using these data sets.
 
-\subsection{Quadric Resultants}
+\subsection{Resultants}
+
+The following instances collect univariate polynomials
+of different size (number of polynomials, bitsize) that appear
+when computing intersections of quadrics using resultants.
+
+\ccBenchmarkInstance{data/Polynomial/Polynomial_1/Sqrt_extension/quadric_resultants/}
 
 \subsection{Pairs of Bivariate Polynomials}
+
+Concerning bivariate polynomials we list instances of various pairs.
+\begin{itemize}
+\item \ccBenchmarkInstance{data/Polynomial/Polynomial_2_pair/ci.bff}
+\item \ccBenchmarkInstance{data/Polynomial/Polynomial_2_pair/di.bff}
+\item \ccBenchmarkInstance{data/Polynomial/Polynomial_2_pair/mi.bff}
+\item \ccBenchmarkInstance{data/Polynomial/Polynomial_2_pair/ri.bff}
+\item \ccBenchmarkInstance{data/Polynomial/Polynomial_2_pair/wi.bff}
+\end{itemize}
 
 %labels
 
