@@ -118,7 +118,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    CTP_vertex_handle t_vh, t_vh_0;
    CTP_face_handle t_fh;
    CTP_face_circulator t_fc, t_fc_0;
-   int idx;
+   int idx(0);
    {  // search a constrained edge from "outside"
       t_fh = ctp.infinite_face ();
       cond = t_fh->has_vertex(ctp.infinite_vertex(), idx);
