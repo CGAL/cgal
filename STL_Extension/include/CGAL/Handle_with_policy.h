@@ -32,23 +32,20 @@
 #include <cstddef>
 
 #ifdef CGAL_USE_LEDA
-#include <LEDA/memory.h>
+#  if CGAL_LEDA_VERSION < 500
+#    include <LEDA/memory.h>
+#  else
+#    include <LEDA/system/memory.h>
+#  endif
 #endif
 
-//#define  LiS_HANDLE_OLD_ALLOCATION
 
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-#ifdef CGAL_USE_LEDA
-#include <LEDA/memory.h>
-#endif // CGAL_USE_LEDA
-#endif // LiS_HANDLE_OLD_ALLOCATION
 
 CGAL_BEGIN_NAMESPACE
 
 /*! \brief <tt>\#include <CGAL/Handle_with_policy.h></tt> for handles with policy
     parameter for reference counting and union-find strategy. Uses 
-    \c LEDA_MEMORY if available. The old memory allocation can be
-    selected by defining the \c HANDLE_OLD_ALLOCATION macro.
+    \c LEDA_MEMORY if available. 
 
     There are two fundamentally different usages of this base class:
 
@@ -202,12 +199,6 @@ public:
     bool is_shared() const   { return count > 1; }
     int  union_size() const  { return 1+count; }
     void add_union_size(int) {}
-
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-#ifdef CGAL_USE_LEDA
-    LEDA_MEMORY( Self)
-#endif // CGAL_USE_LEDA
-#endif // LiS_HANDLE_OLD_ALLOCATION
 };
 
 /*!\brief
@@ -245,12 +236,6 @@ public:
         CGAL_precondition( u_size + a > 0);
         u_size += a;
     }
-
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-#ifdef CGAL_USE_LEDA
-    LEDA_MEMORY( Self)
-#endif // CGAL_USE_LEDA
-#endif // LiS_HANDLE_OLD_ALLOCATION
 };
 
 
@@ -511,11 +496,7 @@ public:
             hrep->add_union_size( grep->union_size());
             grep->next = hrep;
         } else {
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-            delete grep; // did not survive loss of handle g
-#else  // LiS_HANDLE_OLD_ALLOCATION
             g.delete_rep( grep); // did not survive loss of handle g
-#endif // LiS_HANDLE_OLD_ALLOCATION
         }
         // redirect handle g and incr. hrep's counter
         g.ptr_ = hrep;
@@ -567,11 +548,7 @@ public:
                         new_rep->add_reference();
                     }
                 } else {
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-                    delete rep; // we have to delete the current rep
-#else  // LiS_HANDLE_OLD_ALLOCATION
                     h.delete_rep( rep); // we have to delete the current rep
-#endif // LiS_HANDLE_OLD_ALLOCATION
                 }                
                 rep = tmp;
             }
@@ -727,9 +704,6 @@ public:
         - \b Allocator_: a model of the \c Allocator concept,
           has the default \c CGAL_ALLOCATOR(T).
 
-    Uses \c LEDA_MEMORY if available. The old memory allocation can be
-    selected by defining the \c LiS_HANDLE_OLD_ALLOCATION macro.
-    Otherwise the allocator is used.  
 */
 template <class T, 
           class HandlePolicy = Handle_policy_no_union, 
@@ -780,15 +754,6 @@ private:
     // and where we have a class hierarchy of representations, where the
     // user is responsible for allocating the first representations
     // and we can just \c clone and delete them.
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-    static Rep* new_rep( const Rep& rep) {
-        BOOST_STATIC_ASSERT( !(
-           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
-        
-        return new Rep(rep);
-    }
-    static void delete_rep( Rep* p)      { delete p; }
-#else // LiS_HANDLE_OLD_ALLOCATION
     static Rep_allocator allocator;
 
     static Rep* new_rep( const Rep& rep) { 
@@ -806,7 +771,6 @@ private:
         delete p;
     }
     static void delete_rep( Rep* p) { delete_rep(p, Class_hierarchy()); }
-#endif // LiS_HANDLE_OLD_ALLOCATION
 
     static Rep* clone_rep( Rep* p, ::CGAL::Tag_false ) {
         return new_rep( *p);
@@ -1132,26 +1096,18 @@ public:
     // backwards compatible
     bool identical( const Self& h) const { return is_identical(h); }
 
-#ifdef HANDLE_WITH_POLICY_TEST
+#ifdef CGAL_HANDLE_WITH_POLICY_INTERNAL_TEST
     // provide access to pointer for testing only!!
     const Rep* test_ptr() const { return ptr_; }
     // provide access to pointer for testing only!!
     bool test_identical_ptr( const Self& h) const { return ptr_ == h.ptr_; }
-#endif // LiS_TEST_H
-
-#ifdef LiS_HANDLE_OLD_ALLOCATION
-#ifdef CGAL_USE_LEDA
-    LEDA_MEMORY( Self)
-#endif // CGAL_USE_LEDA
-#endif // LiS_HANDLE_OLD_ALLOCATION
+#endif // CGAL_HANDLE_WITH_POLICY_INTERNAL_TEST
 };
 
 // instantiate Rep_bind to activate compile time check in there
 template <class T, class Policy, class Alloc>
 typename Handle_with_policy<T,Policy,Alloc>::Bind Handle_with_policy<T,Policy,Alloc>::bind;
 
-
-// LiS2CGAL: avaiblable also in CGFAL
 
 //! alternative syntax for \c h.id() to allow use with LEDA
 /*! This is only provided for \c Handle_policy_no_union because
@@ -1161,11 +1117,9 @@ template <class T, class A>
 unsigned long ID_Number(const Handle_with_policy<T, Handle_policy_no_union, A>& h)
     { return h.id(); }
 
-#ifndef LiS_HANDLE_OLD_ALLOCATION
 template <class T, class Policy, class Alloc>
 typename Handle_with_policy<T, Policy, Alloc>::Rep_allocator 
     Handle_with_policy<T, Policy, Alloc>::allocator;
-#endif // LiS_HANDLE_OLD_ALLOCATION
 
 
 /*! \brief specialization of the base class for handles for non-reference
@@ -1375,12 +1329,12 @@ public:
     // backwards compatible
     bool identical( const Self& h) const { return is_identical(h); }
 
-#ifdef HANDLE_WITH_POLICY_TEST
+#ifdef CGAL_HANDLE_WITH_POLICY_INTERNAL_TEST
     // provide access to pointer for testing only!!
     const Rep* test_ptr() const { return *rep; }
     // provide access to pointer for testing only!!
     bool test_identical_ptr( const Self& h) const { return this == &h; }
-#endif // HANDLE_WITH_POLICY_TEST
+#endif // CGAL_HANDLE_WITH_POLICY_INTERNAL_TEST
 
 #ifdef CGAL_USE_LEDA
     LEDA_MEMORY( Self)
