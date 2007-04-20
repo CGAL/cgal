@@ -689,7 +689,7 @@ options.set_pricing_strategy(CGAL::QP_DANTZIG);        // Dantzig's rule
 \end{verbatim}
 you will see that the solver fails (in debug mode, it will run into
 an assertion, and in non-debug mode, the objective value is simply 
-wrong). This is due to a filture failure, and switching to a non-filtered
+wrong). This is due to a filter failure, and switching to a non-filtered
 variant like \ccc{QP_DANTZIG} solves the problem.
 
 \subsection{The solver internally cycles\label{sec:QP-customization-cycling}}
