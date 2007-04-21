@@ -96,8 +96,8 @@ template<typename T>
 bool is_int(const T&)               { return false; }
 bool is_int(const int&)             { return true; }
 template<typename T>
-bool is_integer(const T&)           { return false; }
-bool is_integer(const Integer&)     { return true; }
+bool is_Integer(const T&)           { return false; }
+bool is_Integer(const Integer&)     { return true; }
 template<typename T>
 bool is_rational(const T&)          { return false; }
 bool is_rational(const Rational&)   { return true; }
@@ -350,7 +350,7 @@ bool process(const std::string& filename,
 	 << "file-IT=" << number_type << ' '
 	 << "IT=" << (is_double(IT())? "double" :
 		      (is_rational(IT())? "Gmpq" : "int")) << ' '
-	 << "ET=" << (is_integer(ET())? "Gmpz" :
+	 << "ET=" << (is_Integer(ET())? "Gmpz" :
 		      (is_rational(ET())? "Gmpq" : "Double"))
 	 << endl;
 
