@@ -97,7 +97,7 @@ public:
 
   Gmpz(double d)
   {
-     CGAL_warning_msg(is_integral(d), "Gmpz constructed from non-integral double value");
+     CGAL_warning_msg(is_integer(d), "Gmpz constructed from non-integer double value");
      mpz_init_set_d(mpz(), d);
    }
 

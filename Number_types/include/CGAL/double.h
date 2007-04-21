@@ -247,7 +247,7 @@ nextafter(double d1, double d2)
 }
 
 bool
-is_integral(double d);
+is_integer(double d);
 
 CGAL_END_NAMESPACE
 

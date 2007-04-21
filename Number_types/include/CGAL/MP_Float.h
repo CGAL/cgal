@@ -338,7 +338,7 @@ public:
     return (sign() > 0) ? r : -r;
   }
 
-  bool is_integral() const
+  bool is_integer() const
   {
     return is_zero() || (exp >= 0);
   }
@@ -630,9 +630,9 @@ division(const MP_Float & n, const MP_Float & d)
 
 inline
 bool
-is_integral(const MP_Float &m)
+is_integer(const MP_Float &m)
 {
-  return m.is_integral();
+  return m.is_integer();
 }
 
 inline // Move it to libCGAL once it's stable.
