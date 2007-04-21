@@ -246,6 +246,9 @@ nextafter(double d1, double d2)
 #endif
 }
 
+bool
+is_integral(double d);
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_DOUBLE_H

@@ -338,6 +338,11 @@ public:
     return (sign() > 0) ? r : -r;
   }
 
+  bool is_integral() const
+  {
+    return is_zero() || (exp >= 0);
+  }
+
   V v;
   exponent_type exp;
 };
@@ -623,6 +628,12 @@ division(const MP_Float & n, const MP_Float & d)
 
 } // namespace CGALi
 
+inline
+bool
+is_integral(const MP_Float &m)
+{
+  return m.is_integral();
+}
 
 inline // Move it to libCGAL once it's stable.
 bool

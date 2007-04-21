@@ -27,6 +27,35 @@ double non_zero_double(){
  return d;
 }
 
+void test_is_integral()
+{
+  std::cout << "Testing is_integral()" << std::endl;
+  assert (! is_integral(MPF(0.5)));
+  assert (! is_integral(MPF(0.25)));
+  assert (! is_integral(MPF(0.1)));
+  assert (! is_integral(MPF(1e-100)));
+  assert (! is_integral(MPF(1.5)));
+  assert (! is_integral(MPF(15.1)));
+  assert (! is_integral(MPF(1e100)+0.5));
+  assert (! is_integral(MPF(-0.5)));
+  assert (! is_integral(MPF(-0.25)));
+  assert (! is_integral(MPF(-0.1)));
+  assert (! is_integral(MPF(-1e-100)));
+  assert (! is_integral(MPF(-1.5)));
+  assert (! is_integral(MPF(-15.1)));
+  assert (! is_integral(MPF(-1e100)+0.5));
+
+  assert (is_integral(MPF(0)));
+  assert (is_integral(MPF(1)));
+  assert (is_integral(MPF(2)));
+  assert (is_integral(MPF(1e100)));
+  assert (is_integral(MPF(1e100)+1));
+  assert (is_integral(MPF(-0)));
+  assert (is_integral(MPF(-1)));
+  assert (is_integral(MPF(-2)));
+  assert (is_integral(MPF(-1e100)));
+  assert (is_integral(MPF(-1e100)+1));
+}
 
 void test_integral_division()
 {
@@ -367,6 +396,8 @@ int main(int argc, char **argv)
 #endif // CGAL_USE_GMP
 
   test_integral_division();
+
+  test_is_integral();
 
   return 0;
 }

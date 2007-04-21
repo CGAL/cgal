@@ -523,4 +523,10 @@ operator>> (std::istream & is, MP_Float &b)
   return is;
 }
 
+// OK, this one is declared in <CGAL/double.h>, but I define it here since it is simple.
+bool is_integral(double d)
+{
+  return CGAL::is_finite(d) && is_integral(MP_Float(d));
+}
+
 CGAL_END_NAMESPACE
