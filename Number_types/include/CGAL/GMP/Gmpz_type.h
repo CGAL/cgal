@@ -96,7 +96,10 @@ public:
   { mpz_init_set_ui(mpz(), l); }
 
   Gmpz(double d)
-  { mpz_init_set_d(mpz(), d); }
+  {
+     CGAL_warning_msg(is_integral(d), "Gmpz constructed from non-integral double value");
+     mpz_init_set_d(mpz(), d);
+   }
 
   Gmpz(const std::string& str, int base = 10)
   { mpz_init_set_str(mpz(), str.c_str(), base); }
