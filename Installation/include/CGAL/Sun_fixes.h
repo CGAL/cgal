@@ -108,10 +108,6 @@ namespace std {
     return result;
   }
 
-} // namespace std
-
-namespace CGAL {
-
   template < class T >
   inline typename T::value_type*
   __value_type (const T&)
@@ -130,21 +126,7 @@ namespace CGAL {
     return tmp;
   }
 
-  template < class T >
-  inline T* __value_type(T*)
-  { return (T*)(0); }
-
-  template <class T>
-  inline std::ptrdiff_t* 
-  __distance_type (T*)
-  { return (std::ptrdiff_t*)(0); }
-
-  template <class T>
-  inline std::random_access_iterator_tag 
-  __iterator_category (T*)
-  { return std::random_access_iterator_tag(); }
-
-} // namespace CGAL
+} // namespace std
 
 #endif // CGAL_CFG_SUNPRO_RWSTD
 
