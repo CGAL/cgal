@@ -246,8 +246,12 @@ nextafter(double d1, double d2)
 #endif
 }
 
+inline
 bool
-is_integer(double d);
+is_integer(double d)
+{
+  return CGAL::is_finite(d) && (std::ceil(d) == d);
+}
 
 CGAL_END_NAMESPACE
 

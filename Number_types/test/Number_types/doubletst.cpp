@@ -1,5 +1,31 @@
 #include <CGAL/basic.h>
 
+void test_is_integer()
+{
+  std::cout << "Testing is_integer(double)" << std::endl;
+  assert (! CGAL::is_integer(0.5));
+  assert (! CGAL::is_integer(0.25));
+  assert (! CGAL::is_integer(0.1));
+  assert (! CGAL::is_integer(1e-100));
+  assert (! CGAL::is_integer(1.5));
+  assert (! CGAL::is_integer(15.1));
+  assert (! CGAL::is_integer(0.5));
+  assert (! CGAL::is_integer(0.25));
+  assert (! CGAL::is_integer(0.1));
+  assert (! CGAL::is_integer(1e-100));
+  assert (! CGAL::is_integer(1.5));
+  assert (! CGAL::is_integer(15.1));
+
+  assert (CGAL::is_integer(0));
+  assert (CGAL::is_integer(1));
+  assert (CGAL::is_integer(2));
+  assert (CGAL::is_integer(1e100));
+  assert (CGAL::is_integer(0));
+  assert (CGAL::is_integer(1));
+  assert (CGAL::is_integer(2));
+  assert (CGAL::is_integer(1e100));
+}
+
 int main()
 {
     double zero = 0.0;
@@ -33,5 +59,8 @@ int main()
 	return 1;
     if (CGAL_NTS is_finite(neginf))
 	return 1;
+
+    test_is_integer();
+
     return 0;
 }
