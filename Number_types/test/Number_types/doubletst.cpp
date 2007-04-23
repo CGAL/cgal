@@ -1,4 +1,5 @@
 #include <CGAL/basic.h>
+#include <CGAL/double.h>
 
 void test_is_integer()
 {
@@ -24,6 +25,20 @@ void test_is_integer()
   assert (CGAL::is_integer(1));
   assert (CGAL::is_integer(2));
   assert (CGAL::is_integer(1e100));
+}
+
+void test_split_num_den()
+{
+  std::cout << "Testing split_numerator_denominator(double)" << std::endl;
+  assert( CGAL::split_numerator_denominator(1.0) == std::make_pair(1.0, 1.0) );
+  assert( CGAL::split_numerator_denominator(2.0) == std::make_pair(2.0, 1.0) );
+  assert( CGAL::split_numerator_denominator(0.5) == std::make_pair(1.0, 2.0) );
+  assert( CGAL::split_numerator_denominator(0.0) == std::make_pair(0.0, 1.0) );
+  assert( CGAL::split_numerator_denominator(1e100) == std::make_pair(1e100, 1.0) );
+  assert( CGAL::split_numerator_denominator(-1.0) == std::make_pair(-1.0, 1.0));
+  assert( CGAL::split_numerator_denominator(-2.0) == std::make_pair(-2.0, 1.0));
+  assert( CGAL::split_numerator_denominator(-0.5) == std::make_pair(-1.0, 2.0));
+  assert( CGAL::split_numerator_denominator(-0.0) == std::make_pair(0.0, 1.0));
 }
 
 int main()
@@ -61,6 +76,7 @@ int main()
 	return 1;
 
     test_is_integer();
+    test_split_num_den();
 
     return 0;
 }

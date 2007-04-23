@@ -253,6 +253,23 @@ is_integer(double d)
   return CGAL::is_finite(d) && (std::ceil(d) == d);
 }
 
+// Returns a pair of integers <num,den> such that d == num/den.
+inline
+std::pair<double, double>
+split_numerator_denominator(double d)
+{
+  // Note that it could probably be optimized.
+  double num = d;
+  double den = 1.0;
+  while (std::ceil(num) != num)
+  {
+    num *= 2.0;
+    den *= 2.0;
+  }
+  CGAL_postcondition(d == num/den);
+  return std::make_pair(num, den);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_DOUBLE_H
