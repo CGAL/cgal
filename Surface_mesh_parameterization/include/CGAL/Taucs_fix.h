@@ -45,7 +45,7 @@
         #include <taucs.h>
     }
 
-    // Undefine Taucs' min/max macros to avoid an error 
+    // Undefine Taucs' min/max macros to avoid an error
     // with std::min()/std::max() calls in standard C++ headers.
     #ifdef CGAL_TAUCS_DEFINES_MIN
         #undef min
@@ -89,7 +89,7 @@ inline double cgal_taucs_available_memory_size()
     m = taucs_available_memory_size();
 #endif
 
-    taucs_printf("cgal_taucs_available_memory_size returns %lfMB\n", m/1048576.0);
+    taucs_printf((const)"cgal_taucs_available_memory_size returns %lfMB\n", m/1048576.0);
 
     return m;
 }
