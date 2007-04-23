@@ -196,9 +196,11 @@ public:
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef CGAL::Bounding_box_3
-    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+  typedef CGAL::Bounding_box_3<Tag_true, Kernel> 
     Bounding_box_3;
+  //  typedef CGAL::Bounding_box_3
+  //    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+  //    Bounding_box_3;
   
   Bounding_box_3 operator()( const Object_list& O) const {
     Bounding_box_3 b;
@@ -303,8 +305,10 @@ public:
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef CGAL::Bounding_box_3
-    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+  //  typedef CGAL::Bounding_box_3
+  //    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+  //    Bounding_box_3;
+  typedef CGAL::Bounding_box_3<Tag_true, Kernel> 
     Bounding_box_3;
 
   typedef typename Kernel::Intersect_3 Intersect;
