@@ -149,14 +149,14 @@ protected:
         Vector_3 edge = position_v_i - position_v_j;
         double square_len = edge*edge;
 
-        // Compute cotangent of (v_k,v_j,v_i) corner (ie cotan of v_j corner)
+        // Compute cotangent of (v_k,v_j,v_i) corner (i.e. cotan of v_j corner)
         // if v_k is the vertex before v_j when circulating around v_i
         Vertex_around_vertex_const_circulator previous_vertex_v_k = neighbor_vertex_v_j;
         previous_vertex_v_k --;
         Point_3 position_v_k = mesh.get_vertex_position(previous_vertex_v_k);
         double cotg_psi_ij  = cotangent(position_v_k, position_v_j, position_v_i);
 
-        // Compute cotangent of (v_i,v_j,v_l) corner (ie cotan of v_j corner)
+        // Compute cotangent of (v_i,v_j,v_l) corner (i.e. cotan of v_j corner)
         // if v_l is the vertex after v_j when circulating around v_i
         Vertex_around_vertex_const_circulator next_vertex_v_l = neighbor_vertex_v_j;
         next_vertex_v_l ++;

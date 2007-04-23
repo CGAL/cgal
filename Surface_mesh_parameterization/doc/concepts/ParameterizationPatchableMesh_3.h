@@ -64,8 +64,8 @@ public:
 
     // EDGE INTERFACE
 
-    /// Get/set oriented edge's seaming flag, ie position of the oriented edge
-    /// wrt to the UNIQUE main border.
+    /// Get/set oriented edge's seaming flag, i.e. position of the oriented edge
+    /// w.r.t. to the UNIQUE main border.
     int  get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;
     void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming);
 

@@ -116,7 +116,7 @@ public:
     /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
-    /// Get message (in english) corresponding to an error code
+    /// Get message (in English) corresponding to an error code
     /// \param error_code The code returned by parameterize()
     /// \return           The string describing the error code
     static const char* get_error_message(int error_code)
@@ -143,8 +143,8 @@ public:
 // Protected operations
 /// @cond SKIP_IN_MANUAL
 protected:
-    //                                                  -> ->
-    /// Return cotangent of (P,Q,R) corner (ie cotan of QP,QR angle).
+    //                                                    -> ->
+    /// Return cotangent of (P,Q,R) corner (i.e. cotan of QP,QR angle).
     double cotangent(const Point_3& P,
                      const Point_3& Q,
                      const Point_3& R)
@@ -162,8 +162,8 @@ protected:
             return 0.0; // undefined
     }
 
-    //                                                  -> ->
-    /// Return tangent of (P,Q,R) corner (ie tangent of QP,QR angle).
+    //                                                    -> ->
+    /// Return tangent of (P,Q,R) corner (i.e. tangent of QP,QR angle).
     double tangent(const Point_3& P,
                    const Point_3& Q,
                    const Point_3& R)
@@ -181,8 +181,8 @@ protected:
             return 0.0; // undefined
     }
 
-    //                                                     -> ->
-    /// Return angle (in radians) of of (P,Q,R) corner (ie QP,QR angle).
+    //                                                       -> ->
+    /// Return angle (in radians) of of (P,Q,R) corner (i.e. QP,QR angle).
     static double compute_angle_rad(const Point_3& P,
                                     const Point_3& Q,
                                     const Point_3& R)

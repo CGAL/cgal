@@ -44,7 +44,7 @@ public:
 public:
     // Construction and destruction are undefined
 
-    /// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
+    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
     /// on border's shape. Mark them as "parameterized".
     /// Return false on error.
     Error_code parameterize_border (Adaptor& mesh);

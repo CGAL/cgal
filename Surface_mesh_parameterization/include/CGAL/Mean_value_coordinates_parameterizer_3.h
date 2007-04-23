@@ -149,14 +149,14 @@ protected:
         Vector_3 edge = position_v_i - position_v_j;
         double len = std::sqrt(edge*edge);
 
-        // Compute angle of (v_j,v_i,v_k) corner (ie angle of v_i corner)
+        // Compute angle of (v_j,v_i,v_k) corner (i.e. angle of v_i corner)
         // if v_k is the vertex before v_j when circulating around v_i
         Vertex_around_vertex_const_circulator previous_vertex_v_k = neighbor_vertex_v_j;
         previous_vertex_v_k --;
         Point_3 position_v_k = mesh.get_vertex_position(previous_vertex_v_k);
         double gamma_ij  = compute_angle_rad(position_v_j, position_v_i, position_v_k);
 
-        // Compute angle of (v_l,v_i,v_j) corner (ie angle of v_i corner)
+        // Compute angle of (v_l,v_i,v_j) corner (i.e. angle of v_i corner)
         // if v_l is the vertex after v_j when circulating around v_i
         Vertex_around_vertex_const_circulator next_vertex_v_l = neighbor_vertex_v_j;
         next_vertex_v_l ++;

@@ -167,7 +167,7 @@ public:
     ///
     /// Preconditions:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   ie Parameterization_mesh_patch_3 will export the "right" of the seam.
+    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
     /// - The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
@@ -187,7 +187,7 @@ public:
 #endif
 
         // Set seaming flag of all vertices and edges to INNER, BORDER or OUTER
-        // wrt the first_seam_vertex -> end_seam_vertex border
+        // w.r.t. the first_seam_vertex -> end_seam_vertex border
         set_mesh_seaming(first_seam_vertex, end_seam_vertex);
 
         // Check that the cut mesh is 2-manifold
@@ -196,7 +196,7 @@ public:
             m_is_valid = mesh.is_valid() && check_seam(first_seam_vertex, end_seam_vertex); \
         );
 
-        // Construct the list of all exported vertices, ie INNER and BORDER vertices
+        // Construct the list of all exported vertices, i.e. INNER and BORDER vertices
         //
         // 1) add inner vertices
         for (typename Adaptor::Vertex_iterator it = mesh.mesh_vertices_begin();
@@ -206,7 +206,7 @@ public:
             if (m_mesh_adaptor.get_vertex_seaming(it) == INNER)
                 m_inner_and_border_vertices.push_back( Vertex(it) );
         }
-        // 2) add seam vertices, wrt outer seam/border order
+        // 2) add seam vertices, w.r.t. outer seam/border order
         InputIterator border_it      = first_seam_vertex;
         InputIterator prev_border_it = end_seam_vertex; prev_border_it--;
         InputIterator next_border_it = first_seam_vertex; next_border_it++;
@@ -613,12 +613,12 @@ private:
     Parameterization_mesh_patch_3& operator =(const Parameterization_mesh_patch_3& toCopy);
 
     /// Set seaming flag of all vertices and edges to INNER, BORDER or OUTER
-    /// wrt the first_seam_vertex -> end_seam_vertex border
+    /// w.r.t. the first_seam_vertex -> end_seam_vertex border
     /// (outer seam edges are marked BORDER).
     ///
     /// Preconditions:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   ie Parameterization_mesh_patch_3 will export the "right" of the seam.
+    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
     /// - The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
@@ -760,16 +760,16 @@ private:
         }
     }
 
-    // Check that the seam is valid, ie that the cut mesh is 2-manifold.
+    // Check that the seam is valid, i.e. that the cut mesh is 2-manifold.
     ///
     /// Preconditions:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   ie Parameterization_mesh_patch_3 will export the "right" of the seam.
+    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
     /// - The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     /// - The seaming flag of all vertices and edges to INNER, BORDER or OUTER
-    ///   wrt the first_seam_vertex -> end_seam_vertex border is set
+    ///   w.r.t. the first_seam_vertex -> end_seam_vertex border is set
     ///   (outer seam edges are marked BORDER).
     template<class InputIterator>
     bool check_seam(InputIterator first_seam_vertex,
@@ -816,7 +816,7 @@ private:
             }
         }
 
-        // A "seam along a line" must be at least 2 edges long (ie 4 vertices in list)
+        // A "seam along a line" must be at least 2 edges long (i.e. 4 vertices in list)
         if (is_seam_along_a_line) {
             if (seam_length < 4)
                 return false;
@@ -845,7 +845,7 @@ private:
     }
 
     /// Get/set vertex seaming flag,
-    /// ie position of the vertex wrt to the UNIQUE main border.
+    /// i.e. position of the vertex w.r.t. to the UNIQUE main border.
     Seaming_status  get_vertex_seaming(Vertex_const_handle vertex) const {
         CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return (Seaming_status) m_mesh_adaptor.get_vertex_seaming(
@@ -1050,8 +1050,8 @@ private:
     {
         Inner_facets_filter(const Parameterization_mesh_patch_3& mesh) : m_mesh_patch(mesh) {}
 
-        /// Return TRUE <=> the facet IS NOT EXPORTED by Parameterization_mesh_patch_3,
-        /// ie is out of the topological disc.
+        /// Return true <=> the facet is NOT EXPORTED by Parameterization_mesh_patch_3,
+        /// i.e. is out of the topological disc.
         bool operator()(const typename Adaptor::Facet_iterator& f) const       {
             return m_mesh_patch.get_facet_seaming(f) == OUTER;
         }

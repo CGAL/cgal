@@ -646,7 +646,7 @@ public:
     }
 
     /// Return true if a vertex belongs to the UNIQUE mesh's main border,
-    /// ie the mesh's LONGEST border.
+    /// i.e. the mesh's LONGEST border.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
         return std::find(m_main_border.begin(),
                          m_main_border.end(),
@@ -697,8 +697,8 @@ public:
 
     // EDGE INTERFACE
 
-    /// Get/set oriented edge's seaming flag, ie position of the oriented edge
-    /// wrt to the UNIQUE main border.
+    /// Get/set oriented edge's seaming flag, i.e. position of the oriented edge
+    /// w.r.t. to the UNIQUE main border.
     int  get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const {
         return info(get_halfedge(source, target))->seaming();
     }

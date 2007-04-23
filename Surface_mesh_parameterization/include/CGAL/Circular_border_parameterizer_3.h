@@ -99,7 +99,7 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
+    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
     /// on border's shape. Mark them as "parameterized".
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
@@ -146,7 +146,7 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
     return len;
 }
 
-/// Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
+/// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
 /// on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
