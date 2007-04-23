@@ -169,40 +169,11 @@ LGPL_LICENSE_HEADER=\
 # ---------------------------------------------------------------------
 # How to use this script
 # ---------------------------------------------------------------------
-#print_general_information()
-#{
-#    ${_printf} "%s\n\n" \
-#"You can get a list of all options with \"${CGAL_INSTALL_CGAL} --help\"
-#
-#First-time installers:
-#----------------------
-#Just type \"${CGAL_INSTALL_CGAL} -i\" and follow the menus.
-#If you get stuck, please read the documentation."
-#}
 
 print_usage_information()
 {
 	${_printf} "%s\n" \
 "Usage: ${CGAL_INSTALL_CGAL} [OPTION]"
-#      [--help | --version | -i | --interactive |
-#       -u <dir> | --upgrade <dir> | --build-all | --rebuild-all |
-#       --build <config> | --rebuild <config> |
-#       --disable-shared | --disable-static |
-#       -ni | --non-interactive | -os]
-#      [--verbose]
-#      [--without-autofind]
-#      [--prefix <dir>]
-#      [--CGAL_DIR <dir>]
-#      [--CXX <comp>] [--CXXFLAGS <flags>] [--LDFLAGS <flags>]
-#      [--ostype_tag <tag>]"
-
-#      for i in ${SUPPORT_PKGS}; do
-#	  ${_printf} "      [--with-%s]\n" "$i"
-#      done
-
-#      for i in ${SUPPORT_FEATURES}; do
-#	  ${_printf} "      [--%s_INCL_DIR <dir>] [--%s_LIB_DIR <dir>]\n" "$i" "$i"
-#      done
       ${_printf} "\n%s\n" \
 "Basic options:
   --help       gives this message.
@@ -236,17 +207,16 @@ print_usage_information()
   --with-PACKAGENAME
                When using --without-autofind, use package PACKAGENAME
   PACKAGENAME is one of"
-#     for i in ${SUPPORT_PKGS}; do
-#	  ${_printf} "      [--with-%s]\n" "$i"
-#     done
      for i in ${SUPPORT_PKGS}; do
 	  ${_printf} " %s" "$i"
      done
  ${_printf} "\n\n%s\n" \
 "Advanced options:
   --interactive or -i
-               runs the script in interactive mode
-               (other options - except for --CGAL_DIR - are ignored).
+               runs the script in interactive mode. Interactive mode
+               can only be used for in place installations (ones where
+               the library is left in the CGAL-3.3/lib directory)
+               except on Mac OS.
   --CGAL_DIR <dir>
                Specify an explicit path to use for the CGAL directory. This is
                useful if \`pwd\` does not return the desired path to the CGAL 
@@ -283,12 +253,6 @@ print_usage_information()
   --verbose    Give report for each test that fails
                (not generally recommended).
 "
-#  --version    prints ${CGAL_INSTALL_CGAL} version number.
-#  
-
-# --non-interactive or -ni
-#               runs the script in non-interactive mode.
-
 }
 
 # ---------------------------------------------------------------------
@@ -940,6 +904,7 @@ set_compiler_flags()
 	    CGAL_STATIC_LIBNAME="\$(LIB_NAME_BASE).lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
+	    CGAL_LIBS_OPTFLAGS="-Od"
 	    ;;
 	*CL*|*cl*)
 	    #### settings Microsoft Visual C++ compiler
@@ -1117,8 +1082,11 @@ set_compiler_flags()
     case `compiler_description` in
 	*GNU*)
 	    case `compiler_version` in
-		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-50";;
 		3.*) : ;;
+		4.2*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math"
+
+	              CGAL_LIBS_OPTFLAGS="${CGAL_LIBS_OPTFLAGS} -fno-strict-aliasing" # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=31268
+                      ;;
 		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
@@ -4588,19 +4556,10 @@ installation()
     CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/makefile"
     OS_CGAL_DIR=`os_path "${CGAL_DIR}"`
     OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
-
-    log_print "(${_cp} \"${CGAL_MAKEFILE}\" \"${CGAL_INSTALL_MAKEFILE}\")"
-    _do_command "(${_cp} \"${CGAL_MAKEFILE}\" \"${CGAL_INSTALL_MAKEFILE}\")" "Install CGAL Makefile"
-		
-    TMP_CONCAT_LIBPATH=`concat_path "\\\$(CGAL_LIB_DIR)" "\\\$(CGAL_OS_COMPILER)"`
-    TMP_OLD_LIBPATH_OPTION=`libpath_option_pure "$TMP_CONCAT_LIBPATH"`
-    TMP_NEW_LIBPATH_OPTION=`libpath_option_pure '\$(CGAL_LIB_DIR)'`
-    
-    ${_mv} "${CGAL_INSTALL_MAKEFILE}" "${CGAL_INSTALL_MAKEFILE}.bak"
-    ${_sed} -e "s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g" \
-            -e "s'-I\$(CGAL_INCL_CONF_DIR)'" \
-            -e "s${TMP_OLD_LIBPATH_OPTION}${TMP_NEW_LIBPATH_OPTION}" "${CGAL_INSTALL_MAKEFILE}.bak" > "${CGAL_INSTALL_MAKEFILE}"
-    ${_rm} "${CGAL_INSTALL_MAKEFILE}.bak"
+    log_print "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")"
+    _do_command \
+      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s\'-I\$\(CGAL_INCL_CONF_DIR\)\'\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" | ${_sed} \"\"s-Wl,-R\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-Wl,-R\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
+      "Install CGAL Makefile"
 
     write_buffer "\n"
     print_filled_line
@@ -4624,7 +4583,7 @@ install_menu()
 	menu_header 'Install'
 	print_lib_information
 	print_empty_line
-        print_line "${_bold_on}<D>${_bold_off}  Change Installation root directory"
+        print_line "${_bold_on}<D>${_bold_off}  Change Installation root directory (Mac OS only)."
 	print_multi_line "${CGAL_INSTALL_DIR}"
 	print_line "${_bold_on}<I>${_bold_off}  Install CGAL"
 	menu_tailer 'Main Menu'
