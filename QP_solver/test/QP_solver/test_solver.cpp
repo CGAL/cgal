@@ -422,10 +422,12 @@ bool process(const std::string& filename,
     (static_cast<CGAL::Quadratic_program_pricing_strategy>
      (options.find("Strategy")->second));
 
-  CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, solver_options);
+  CGAL::Quadratic_program_solution<ET> solution =
+    CGAL::QP_functions_detail::solve_program 
+    (qp, ET(0), Is_linear(), Is_nonnegative(), solver_options); 
   // output solution + number of iterations
-  cout << CGAL::to_double(solver.solution()) << "(" 
-       << solver.iterations() << ") ";
+  cout << CGAL::to_double(solution.objective_value()) << "(" 
+       << solution.number_of_iterations() << ") ";
   // the solver previously checked itself through an assertion
   const bool is_valid = true; 
 
@@ -436,8 +438,6 @@ bool process(const std::string& filename,
       !check_tag(Is_nonnegative()))
     { 
     // general form
-    typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> 
-      LocalTags;
     typedef CGAL::Quadratic_program<IT> 
       LocalQP;
     CGAL::Quadratic_program_options local_options;
@@ -447,8 +447,7 @@ bool process(const std::string& filename,
 		     qp.get_r(), 
 		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
 		     qp.get_d(), qp.get_c(), qp.get_c0()); 
-    CGAL::QP_solver<LocalQP, ET, LocalTags> solverlocal 
-      (qplocal, local_options);
+    CGAL::solve_quadratic_program (qplocal, ET(), local_options);
     std::cout << "(c) ";
   }
  

@@ -108,8 +108,12 @@ associated program is unbounded.}
 \ccMethod{Quadratic_program_status status() const;}
 {returns the status of the solution;
 this is one of the values \ccc{QP_OPTIMAL}, \ccc{QP_INFEASIBLE}, and 
-\ccc{QP_UNBOUNDED}, depending on whether the quadratic program asociated
+\ccc{QP_UNBOUNDED}, depending on whether the program asociated
 to \ccVar\ has an optimal solution, is infeasible, or is unbounded.}
+
+\ccMethod{int number_of_iterations() const;}
+{returns the number of iterations that it took to solve the 
+program asociated to \ccVar.}
 
 \ccHeading{Solution values}
 The actual solution (variable and objective function values) can be

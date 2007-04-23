@@ -45,6 +45,15 @@ namespace QP_functions_detail {
    Is_linear is_linear, 
    Is_nonnegative is_nonnegative); 
 
+  // internal routine: solves a program, depending on the tags
+  template <typename Program, typename ET, 
+	    typename Is_linear,typename Is_nonnegative >
+  Quadratic_program_solution<ET> solve_program 
+  (const Program &p, const ET&, 
+   Is_linear is_linear, 
+   Is_nonnegative is_nonnegative,
+   const Quadratic_program_options& options = Quadratic_program_options()); 
+
   // internal routine:
   // test whether the system is of the form A x == b (equations only)
   template <typename R>

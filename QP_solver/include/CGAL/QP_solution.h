@@ -132,6 +132,7 @@ public:
   virtual ET solution_numerator() const = 0;
   virtual ET solution_denominator() const = 0;
   virtual Quadratic_program_status status() const = 0;
+  virtual int iterations() const = 0;
 
   // Variable values
   // ---------------
@@ -269,17 +270,26 @@ public:
 
   bool is_optimal() const
   {
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return status() == QP_OPTIMAL;
   }
 
   bool is_infeasible() const
   {
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return status() == QP_INFEASIBLE;
   }
 
   bool is_unbounded() const
   {
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     return status() == QP_UNBOUNDED;
+  }
+
+  int number_of_iterations() const
+  { 
+    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
+    return (*(this->Ptr()))->iterations();
   }
 
   Variable_value_iterator variable_values_begin() const
