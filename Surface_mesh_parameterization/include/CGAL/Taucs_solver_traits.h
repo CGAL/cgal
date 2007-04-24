@@ -241,9 +241,9 @@ public:
             taucs_ccs_order((taucs_ccs_matrix*) A.get_taucs_matrix(),
                             &perm,
                             &invperm,
-                            (const)"colamd");
+                            (char*)"colamd");
             if (perm == NULL) {
-                taucs_printf((const)"\tOrdering Failed\n");
+                taucs_printf((char*)"\tOrdering Failed\n");
                 return false;
             }
 
@@ -252,7 +252,7 @@ public:
             taucs_io_handle* oocL = taucs_io_create_multifile(matrixfile);
             free(matrixfile); matrixfile = NULL;
             if (oocL == NULL) {
-                taucs_printf((const)"\tCannot Create Multifile\n");
+                taucs_printf((char*)"\tCannot Create Multifile\n");
                 return false;
             }
 
@@ -263,7 +263,7 @@ public:
                                         oocL,
                                         memory_mb*1048576.0);
             if (success != TAUCS_SUCCESS) {
-                taucs_printf((const)"\tFactorization Failed\n");
+                taucs_printf((char*)"\tFactorization Failed\n");
                 return false;
             }
 
@@ -272,7 +272,7 @@ public:
                                         X.get_taucs_vector(),
                                         (T*) B.get_taucs_vector());
             if (success != TAUCS_SUCCESS) {
-                taucs_printf((const)"\tSolving Failed\n");
+                taucs_printf((char*)"\tSolving Failed\n");
                 return false;
             }
 

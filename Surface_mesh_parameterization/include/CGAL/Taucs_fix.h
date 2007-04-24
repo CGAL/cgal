@@ -89,7 +89,7 @@ inline double cgal_taucs_available_memory_size()
     m = taucs_available_memory_size();
 #endif
 
-    taucs_printf((const)"cgal_taucs_available_memory_size returns %lfMB\n", m/1048576.0);
+    taucs_printf((char*)"cgal_taucs_available_memory_size returns %lfMB\n", m/1048576.0);
 
     return m;
 }
