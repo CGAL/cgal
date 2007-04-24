@@ -195,6 +195,7 @@ public:
   typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename Kernel::RT RT;
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
   typedef CGAL::Bounding_box_3<Tag_true, Kernel> 
     Bounding_box_3;
@@ -204,16 +205,28 @@ public:
   
   Bounding_box_3 operator()( const Object_list& O) const {
     Bounding_box_3 b;
-    typename Object_list::const_iterator o;
-    for( o = O.begin(); o != O.end(); ++o) {
-      Vertex_handle v;
-      if( CGAL::assign( v, *o)) {
-	b.extend(v->point());
-      }	
+    typename Object_list::const_iterator o = O.begin();
+    Vertex_handle v;
+    while(o != O.end() && !CGAL::assign(v, *o)) ++o;
+    if(o != O.end()) {
+      FT q[3];
+      q[0] = v->point().x();
+      q[1] = v->point().y();
+      q[2] = v->point().z();
+      Bounding_box_3 b(q);
+      for(++o; o != O.end(); ++o) {
+	if( CGAL::assign( v, *o)) {
+	  b.extend(v->point());
+	}
+      }
+      return b;
     }
-    return b;
+    FT q[3];
+    q[0] = q[1] = q[2] = 0;
+    return Bounding_box_3(q);
   }
 
+  /*
   Bounding_box_3 operator()(Object_handle o) const {
     Vertex_handle v;
     Halfedge_handle e;
@@ -269,6 +282,7 @@ public:
       b.extend(sc->source()->source()->point());
     return b;
   }
+  */
 };
 
 template <class Decorator>

@@ -37,7 +37,9 @@ public Box_intersection_d::Box_d< double, 3> {
   typedef typename Kernel::Point_3             Point_3;
 
 public:
-  Bounding_box_3() : Base() {}
+  Bounding_box_3() : Base() {
+    CGAL_assertion_msg(false, "code not stable");
+  }
     
   void extend( const Point_3& p) {
     std::pair<double, double> q[3];
@@ -58,6 +60,8 @@ public Box_intersection_d::Box_d<typename Kernel::FT, 3> {
 
 public:
   Bounding_box_3() : Base() {}
+
+  Bounding_box_3(FT q[3]) : Base(q,q) {}
     
   void extend( const Point_3& p) {
     FT q[3];
