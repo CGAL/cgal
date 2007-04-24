@@ -78,47 +78,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-//#ifdef DEBUG_TRACE
-//       // Turn on TAUCS trace
-//       std::cerr.flush();
-//       taucs_logfile("stderr");
-//#endif
-
-//#ifdef DEBUG_TRACE
-//        // Debug trace
-//        fprintf(stderr, "\n");
-//        fprintf(stderr, "linear_solver:\n");
-//        int n = A.row_dimension();
-//        if (n < 20)	// if small matrix, print it entirely
-//        {
-//	    fprintf(stderr, "******************  A:  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		    for (int j=0; j<n; j++)
-//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
-//		    fprintf(stderr, "\n");
-//	    }
-//	    fprintf(stderr, "******************  B:  ******************\n");
-//	    for (int j=0; j<n; j++)
-//		    fprintf(stderr, "%lf\t", (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//        else		// if large matrix, print only not null elements
-//        {
-//	    fprintf(stderr, "******************  A*X=B  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		for (int j=0; j<n; j++)
-//		    if ( ! IsZero(A.get_coef(i, j)) )
-//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
-//		fprintf(stderr, "\n");
-//	    }
-//	    for (int j=0; j<n; j++)
-//		if ( ! IsZero(B[j]) )
-//		    fprintf(stderr, "B[%d] = %lf\t", j, (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//#endif
+#ifdef DEBUG_TRACE
+      // Turn on TAUCS trace
+      std::cerr.flush();
+      taucs_logfile("stderr");
+#endif
 
         try
         {
@@ -189,47 +153,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-//#ifdef DEBUG_TRACE
-//       // Turn on TAUCS trace
-//       std::cerr.flush();
-//       taucs_logfile("stderr");
-//#endif
-
-//#ifdef DEBUG_TRACE
-//        // Debug trace
-//        fprintf(stderr, "\n");
-//        fprintf(stderr, "linear_solver:\n");
-//        int n = A.row_dimension();
-//        if (n < 20)	// if small matrix, print it entirely
-//        {
-//	    fprintf(stderr, "******************  A:  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		    for (int j=0; j<n; j++)
-//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
-//		    fprintf(stderr, "\n");
-//	    }
-//	    fprintf(stderr, "******************  B:  ******************\n");
-//	    for (int j=0; j<n; j++)
-//		    fprintf(stderr, "%lf\t", (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//        else		// if large matrix, print only not null elements
-//        {
-//	    fprintf(stderr, "******************  A*X=B  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		for (int j=0; j<n; j++)
-//		    if ( ! IsZero(A.get_coef(i, j)) )
-//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
-//		fprintf(stderr, "\n");
-//	    }
-//	    for (int j=0; j<n; j++)
-//		if ( ! IsZero(B[j]) )
-//		    fprintf(stderr, "B[%d] = %lf\t", j, (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//#endif
+#ifdef DEBUG_TRACE
+      // Turn on TAUCS trace
+      std::cerr.flush();
+      taucs_logfile("stderr");
+#endif
 
         try
         {
@@ -247,10 +175,19 @@ public:
                 return false;
             }
 
-            // create multifile for out-of-core swapping
-            char*   matrixfile = tempnam(NULL, "taucs.L");
+            // create multi-file for out-of-core swapping
+        #ifndef __GNUC__
+            char* matrixfile = tempnam(NULL, "taucs.L");
+            if (matrixfile == NULL) {
+                taucs_printf((char*)"\tCannot Create Multifile\n");
+                return false;
+            }
             taucs_io_handle* oocL = taucs_io_create_multifile(matrixfile);
             free(matrixfile); matrixfile = NULL;
+        #else
+            const char* matrixfile = "/tmp/taucs.L"; // less robust but g++ complains that tempnam() is deprecated
+            taucs_io_handle* oocL = taucs_io_create_multifile((char*)matrixfile);
+        #endif
             if (oocL == NULL) {
                 taucs_printf((char*)"\tCannot Create Multifile\n");
                 return false;
