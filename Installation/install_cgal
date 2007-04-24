@@ -4556,10 +4556,19 @@ installation()
     CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/makefile"
     OS_CGAL_DIR=`os_path "${CGAL_DIR}"`
     OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
-    log_print "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")"
-    _do_command \
-      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s\'-I\$\(CGAL_INCL_CONF_DIR\)\'\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" | ${_sed} \"\"s-Wl,-R\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-Wl,-R\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
-      "Install CGAL Makefile"
+
+    log_print "(${_cp} \"${CGAL_MAKEFILE}\" \"${CGAL_INSTALL_MAKEFILE}\")"
+    _do_command "(${_cp} \"${CGAL_MAKEFILE}\" \"${CGAL_INSTALL_MAKEFILE}\")" "Install CGAL Makefile"
+		
+    TMP_CONCAT_LIBPATH=`concat_path "\\\$(CGAL_LIB_DIR)" "\\\$(CGAL_OS_COMPILER)"`
+    TMP_OLD_LIBPATH_OPTION=`libpath_option_pure "$TMP_CONCAT_LIBPATH"`
+    TMP_NEW_LIBPATH_OPTION=`libpath_option_pure '\$(CGAL_LIB_DIR)'`
+    
+    ${_mv} "${CGAL_INSTALL_MAKEFILE}" "${CGAL_INSTALL_MAKEFILE}.bak"
+    ${_sed} -e "s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g" \
+            -e "s'-I\$(CGAL_INCL_CONF_DIR)'" \
+            -e "s${TMP_OLD_LIBPATH_OPTION}${TMP_NEW_LIBPATH_OPTION}" "${CGAL_INSTALL_MAKEFILE}.bak" > "${CGAL_INSTALL_MAKEFILE}"
+    ${_rm} "${CGAL_INSTALL_MAKEFILE}.bak"
 
     write_buffer "\n"
     print_filled_line
