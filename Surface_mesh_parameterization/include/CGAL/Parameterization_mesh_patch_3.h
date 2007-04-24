@@ -178,13 +178,13 @@ public:
         // Store reference to adapted mesh
       : m_mesh_adaptor(mesh)
     {
-#ifdef DEBUG_TRACE
-        // Dump input border (for debug purpose)
-        fprintf(stderr,"  input border is: ");
-        for (InputIterator it = first_seam_vertex; it != end_seam_vertex; it++)
-            fprintf(stderr, "%s ", get_vertex_index_as_string(*it).c_str());
-        fprintf(stderr,"ok\n");
-#endif
+// #ifdef DEBUG_TRACE
+//         // Dump input border (for debug purpose)
+//         fprintf(stderr,"  input border is: ");
+//         for (InputIterator it = first_seam_vertex; it != end_seam_vertex; it++)
+//             fprintf(stderr, "%s ", get_vertex_index_as_string(*it).c_str());
+//         fprintf(stderr,"ok\n");
+// #endif
 
         // Set seaming flag of all vertices and edges to INNER, BORDER or OUTER
         // w.r.t. the first_seam_vertex -> end_seam_vertex border
@@ -249,7 +249,7 @@ public:
         // Index vertices right away to ease debugging
         index_mesh_vertices();
 
-    #ifdef DEBUG_TRACE
+/*    #ifdef DEBUG_TRACE
         // Dump seam (for debug purpose)
         fprintf(stderr,"  seam is: ");
         for (Border_vertex_iterator border_it = mesh_main_border_vertices_begin();
@@ -259,7 +259,7 @@ public:
             fprintf(stderr, "#%d ", get_vertex_index(border_it));
         }
         fprintf(stderr,"ok\n");
-    #endif
+    #endif*/
 #endif
     }
 
@@ -314,13 +314,13 @@ public:
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             fprintf(stderr, "    #%d = {%s,%s,%s}\n",
                             index,
                             get_vertex_index_as_string(it->vertex()).c_str(),
                             get_vertex_index_as_string(it->last_cw_neighbor()).c_str(),
                             get_vertex_index_as_string(it->first_cw_neighbor()).c_str());
-#endif
+#endif*/
             set_vertex_index(it, index++);
         }
 #ifdef DEBUG_TRACE
@@ -472,9 +472,6 @@ public:
     }
     void  set_vertex_uv(Vertex_handle vertex, const Point_2& uv)
     {
-#ifdef DEBUG_TRACE
-        std::cerr << "    #" << get_vertex_index(vertex) << " <- (" << uv.x() << "," << uv.y() << ")\n";
-#endif
         CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor.set_corners_uv(vertex->vertex(),
                                              vertex->last_cw_neighbor(),

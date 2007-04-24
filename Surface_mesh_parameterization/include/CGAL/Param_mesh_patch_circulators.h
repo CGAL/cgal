@@ -98,11 +98,11 @@ public:
         CGAL_surface_mesh_parameterization_assertion(m_mesh_patch->is_valid(vertex));
         CGAL_surface_mesh_parameterization_assertion(m_mesh_patch->is_valid(start_position));
 
-#ifdef DEBUG_TRACE
-        std::cerr << "    Mesh_patch_vertex_around_vertex_cir(";
-        std::cerr << "#" << m_mesh_patch->get_vertex_index(vertex) << ",";
-        std::cerr << "#" << m_mesh_patch->get_vertex_index(start_position) << ")\n";
-#endif
+// #ifdef DEBUG_TRACE
+//         std::cerr << "    Mesh_patch_vertex_around_vertex_cir(";
+//         std::cerr << "#" << m_mesh_patch->get_vertex_index(vertex) << ",";
+//         std::cerr << "#" << m_mesh_patch->get_vertex_index(start_position) << ")\n";
+// #endif
 
         // Construct an adaptor circulator over the vertices
         // incident to vertex->vertex()
@@ -143,9 +143,9 @@ public:
     /// Clockwise rotation
     Self& operator++()
     {
-#ifdef DEBUG_TRACE
-        std::cerr << "    Mesh_patch_vertex_around_vertex_cir ++\n";
-#endif
+// #ifdef DEBUG_TRACE
+//         std::cerr << "    Mesh_patch_vertex_around_vertex_cir ++\n";
+// #endif
 
         // Check that the inherited vertex handle is valid
         assert((*this)->vertex() == m_adaptor_circulator);
@@ -201,12 +201,12 @@ public:
             Vertex_handle current_decorated_vertex((*this)->vertex(),
                                                    (*this)->first_cw_neighbor(), // order...
                                                    (*this)->last_cw_neighbor()); // ...inverted!
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
             std::cerr << ")\n";
-#endif
+#endif*/
             assert(m_mesh_patch->is_valid(current_decorated_vertex));
             Base::operator=(current_decorated_vertex);
 
@@ -228,12 +228,12 @@ public:
                     = m_mesh_patch->get_decorated_vertex_from_border_edge(m_adaptor_circulator,
                                                                           NULL,
                                                                           m_center->vertex());
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
             std::cerr << ")\n";
-#endif
+#endif*/
             assert(m_mesh_patch->is_valid(current_decorated_vertex));
             Base::operator=(current_decorated_vertex);
 
@@ -259,9 +259,9 @@ public:
     /// Counter-clockwise rotation
     Self& operator--()
     {
-#ifdef DEBUG_TRACE
-        std::cerr << "    Mesh_patch_vertex_around_vertex_cir --\n";
-#endif
+// #ifdef DEBUG_TRACE
+//         std::cerr << "    Mesh_patch_vertex_around_vertex_cir --\n";
+// #endif
 
         // Check that the inherited vertex handle is valid
         assert((*this)->vertex() == m_adaptor_circulator);
@@ -317,12 +317,12 @@ public:
             Vertex_handle current_decorated_vertex((*this)->vertex(),
                                                    (*this)->first_cw_neighbor(), // order...
                                                    (*this)->last_cw_neighbor()); // ...inverted!
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
             std::cerr << ")\n";
-#endif
+#endif*/
             assert(m_mesh_patch->is_valid(current_decorated_vertex));
             Base::operator=(current_decorated_vertex);
 
@@ -344,12 +344,12 @@ public:
                     = m_mesh_patch->get_decorated_vertex_from_border_edge(m_adaptor_circulator,
                                                                           m_center->vertex(),
                                                                           NULL);
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
             std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
             std::cerr << ")\n";
-#endif
+#endif*/
             assert(m_mesh_patch->is_valid(current_decorated_vertex));
             Base::operator=(current_decorated_vertex);
 
@@ -383,7 +383,7 @@ private:
         || m_mesh_patch->m_mesh_adaptor.get_halfedge_seaming(
             m_center->vertex(), m_adaptor_circulator) != Parameterization_mesh_patch_3::BORDER)
         {
-            current_decorated_vertex 
+            current_decorated_vertex
                 = m_mesh_patch->get_decorated_vertex_from_inner_edge(m_adaptor_circulator,
                                                                      m_center->vertex());
         }
@@ -393,7 +393,7 @@ private:
             //                 and m_adaptor_circulator is on the seam
             assert(m_center->last_cw_neighbor() != m_adaptor_circulator
                 || m_center->first_cw_neighbor() != m_adaptor_circulator);
-                
+
             if (m_center->first_cw_neighbor() == m_adaptor_circulator)
             {
                 current_decorated_vertex
@@ -408,12 +408,12 @@ private:
             }
         }
 
-#ifdef DEBUG_TRACE
-        std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
-        std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
-        std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
-        std::cerr << ")\n";
-#endif
+// #ifdef DEBUG_TRACE
+//         std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
+//         std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
+//         std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
+//         std::cerr << ")\n";
+// #endif
 
         // Update the inherited vertex handle
         assert(m_mesh_patch->is_valid(current_decorated_vertex));

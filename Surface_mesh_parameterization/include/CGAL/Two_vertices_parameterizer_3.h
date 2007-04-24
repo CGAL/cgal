@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -255,8 +255,8 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 
 #ifdef DEBUG_TRACE
     std::cerr << "  map two vertices..." << std::endl;
-    std::cerr << "    #" << mesh.get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
-    std::cerr << "    #" << mesh.get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
+    // std::cerr << "    #" << mesh.get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
+    // std::cerr << "    #" << mesh.get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
 #endif
 
     return Parameterizer_traits_3<Adaptor>::OK;

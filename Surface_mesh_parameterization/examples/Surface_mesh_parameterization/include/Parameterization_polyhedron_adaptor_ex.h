@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -163,7 +163,7 @@ public:
     // It can have have any number of borders. Its "main border"
     // will be the mesh's longest border (if there is at least one border).
     Parameterization_polyhedron_adaptor_ex(Polyhedron_ex& mesh)
-        // Store reference to adapted mesh 
+        // Store reference to adapted mesh
       : m_polyhedron(mesh)
     {
         // Extract mesh's longest border
@@ -252,13 +252,13 @@ public:
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
             Point_3 position = get_vertex_position(it);
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             fprintf(stderr, "    %d=(%f,%f,%f)\n",
                             index,
                             (float)position.x(),
                             (float)position.y(),
                             (float)position.z());
-#endif
+#endif*/
             set_vertex_index(it, index++);
         }
 #ifdef DEBUG_TRACE

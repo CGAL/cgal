@@ -441,13 +441,13 @@ public:
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
             Point_3 position = get_vertex_position(it);
-#ifdef DEBUG_TRACE
+/*#ifdef DEBUG_TRACE
             fprintf(stderr, "    %d=(%f,%f,%f)\n",
                             index,
                             (float)position.x(),
                             (float)position.y(),
                             (float)position.z());
-#endif
+#endif*/
             set_vertex_index(it, index++);
         }
 #ifdef DEBUG_TRACE
