@@ -1,11 +1,12 @@
 # BLAS (Basic Linear Algebra Subprograms)
+# ATLAS provides an optimized version of BLAS and a subset of LAPACK.
 # Note: this configuration has been tested with VisualC++ 7.1.
 
 DESCRIPTION = ATLAS for MS Windows
 PROVIDES = BLAS
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =
-LIBS = libf77blas libcblas libatlas vcf2c
+LIBS = liblapack libf77blas libcblas libatlas vcf2c
 REQUIRES = DOLLAR_WINDOWS_COMPILER
 INCOMPATIBLE =
 STDINCLDIRS =

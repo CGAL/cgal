@@ -59,7 +59,6 @@ int main(int argc, char* argv[])
         pMatrix->rowind[i] = i;
         pMatrix->taucs_values[i] = i;
     }
-    taucs_dccs_free(pMatrix);
 
     // Call a method needing TAUCS external library Metis
     int*    perm;
@@ -69,9 +68,21 @@ int main(int argc, char* argv[])
                     &invperm,
                     "metis");
 
+    // Call dpotrf() Lapack routine (Cholesky factorization)
+    int INFO;
+    int sn_size = 0;
+    taucs_potrf("LOWER",
+                &sn_size,
+                NULL,
+                &sn_size,
+                &INFO);
+
     // TAUCS provides no version number :-(
     // Version 1 is obsolete, thus we assume version 2 (latest is 2.2 on 03/2006)
     std::cout << "version=2.x" << std::endl;
+
+    // clean up
+    taucs_dccs_free(pMatrix);
 
     return 0;
 }
