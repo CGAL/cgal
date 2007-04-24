@@ -4553,7 +4553,7 @@ installation()
     # install makefile
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/share/cgal"
     _check_dir_exists_create "${_CGAL_IDIR}"
-    CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/makefile"
+    CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/cgal.mk"
     OS_CGAL_DIR=`os_path "${CGAL_DIR}"`
     OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
 
