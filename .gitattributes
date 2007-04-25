@@ -1941,6 +1941,7 @@ QP_solver/examples/QP_solver/rational_qp_solver.data -text
 QP_solver/examples/QP_solver/solve_convex_hull_containment_lp3.h -text
 QP_solver/examples/QP_solver/unboundedness_certificate.cpp -text
 QP_solver/include/CGAL/QP_options.h -text
+QP_solver/include/CGAL/QP_solver/QP_solution_impl.h -text
 QP_solver/maintainer -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/debug_bug.cpp -text

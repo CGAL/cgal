@@ -43,7 +43,8 @@ public:
   // default constructor
   // -------------------
   Quadratic_program_options ()
-    : verbosity_ (0), pricing_strategy_ (QP_CHOOSE_DEFAULT)
+    : verbosity_ (0), pricing_strategy_ (QP_CHOOSE_DEFAULT),
+      validation_flag_ (false)
   {}
 
   // set/get verbosity
@@ -71,6 +72,18 @@ public:
     pricing_strategy_ = pricing_strategy;
   }
 
+  // set/get validation flag
+  // -----------------------
+  bool get_validation_flag() const
+  {
+    return validation_flag_;
+  }
+
+  void set_validation_flag (bool validate)
+  {
+    validation_flag_ = validate;
+  }
+
 private:
   // verbosity
   // ---------
@@ -83,7 +96,41 @@ private:
   // ----------------
   Quadratic_program_pricing_strategy pricing_strategy_;
 
+  // validation
+  // ----------
+  bool validation_flag_;
 };
+
+// output
+// ------
+std::ostream& operator<< (std::ostream& o, 
+			  const Quadratic_program_options& options)
+{
+  o << "   Verbosity:        " << options.get_verbosity() << "\n";
+  o << "   Pricing strategy: ";
+  switch (options.get_pricing_strategy()) {
+  case QP_CHOOSE_DEFAULT:
+    o << "QP_CHOOSE_DEFAULT";
+    break;
+  case QP_DANTZIG:
+    o << "QP_DANTZIG";
+    break;
+  case QP_FILTERED_DANTZIG:
+    o << "QP_FILTERED_DANTZIG";
+    break;
+  case QP_PARTIAL_DANTZIG: 
+    o << "QP_PARTIAL_FILTERED_DANTZIG";
+    break;
+  case QP_PARTIAL_FILTERED_DANTZIG:
+    o << "QP_PARTIAL_FILTERED_DANTZIG";
+    break;
+  case QP_BLAND:
+    o << "QP_BLAND";
+  }
+  o << "\n";
+  o << "   Validation flag:  " << options.get_validation_flag() << std::endl;
+  return o;
+}
 
 CGAL_END_NAMESPACE
 

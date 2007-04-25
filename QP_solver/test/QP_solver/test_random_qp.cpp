@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_options.h>
 #include <CGAL/QP_functions.h>
 
 // choose exact integral type
@@ -29,7 +30,7 @@ typedef CGAL::Quadratic_program_from_iterators
 Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
-// randum number generator
+// random number generator
 CGAL::Random rd;
 
 // random entries
@@ -90,6 +91,10 @@ unsigned int nlp_unbounded = 0;
 int tries = 50000;
 
 int main() {
+  // options
+  CGAL::Quadratic_program_options options;
+  options.set_validation_flag(true);
+
   // generate a set of small random qp's
   for (int i=0; i<tries; ++i) {
     int  Ax[] = {random_signed(), random_signed()};         
@@ -128,15 +133,19 @@ int main() {
     assert (CGAL::QP_functions_detail::are_equal_qp (qp, qp2));
   
     // solve it
-    Solution s = CGAL::solve_quadratic_program (qp, ET());
+    Solution s = CGAL::solve_quadratic_program (qp, ET(), options);
+    assert (s.is_valid());
     statistics (s, qp_optimal, qp_infeasible, qp_unbounded);
 
     // also solve it as nqp, lp, nlp
-    s = CGAL::solve_nonnegative_quadratic_program (qp, ET());
+    s = CGAL::solve_nonnegative_quadratic_program (qp, ET(), options); 
+    assert (s.is_valid());
     statistics (s, nqp_optimal, nqp_infeasible, nqp_unbounded);
-    s = CGAL::solve_linear_program (qp, ET());    
+    s = CGAL::solve_linear_program (qp, ET(), options);    
+    assert (s.is_valid()); 
     statistics (s, lp_optimal, lp_infeasible, lp_unbounded);
-    s = CGAL::solve_nonnegative_linear_program (qp, ET());    
+    s = CGAL::solve_nonnegative_linear_program (qp, ET(), options);   
+    assert (s.is_valid());  
     statistics (s, nlp_optimal, nlp_infeasible, nlp_unbounded);
   }
   

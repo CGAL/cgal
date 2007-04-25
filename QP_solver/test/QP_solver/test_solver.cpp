@@ -421,6 +421,7 @@ bool process(const std::string& filename,
   solver_options.set_pricing_strategy
     (static_cast<CGAL::Quadratic_program_pricing_strategy>
      (options.find("Strategy")->second));
+  solver_options.set_validation_flag(true);
 
   CGAL::Quadratic_program_solution<ET> solution =
     CGAL::QP_functions_detail::solve_program 
@@ -428,8 +429,7 @@ bool process(const std::string& filename,
   // output solution + number of iterations
   cout << CGAL::to_double(solution.objective_value()) << "(" 
        << solution.number_of_iterations() << ") ";
-  // the solver previously checked itself through an assertion
-  const bool is_valid = true; 
+  bool is_valid = solution.is_valid(); 
 
   // the last step: solve poblem from copied QP, if full exact pricing
   // and general form
@@ -443,6 +443,7 @@ bool process(const std::string& filename,
     CGAL::Quadratic_program_options local_options;
     local_options.set_verbosity(0);
     local_options.set_pricing_strategy(CGAL::QP_DANTZIG);
+    local_options.set_validation_flag(true);
     LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), 
 		     qp.get_r(), 
 		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
@@ -450,8 +451,6 @@ bool process(const std::string& filename,
     CGAL::solve_quadratic_program (qplocal, ET(), local_options);
     std::cout << "(c) ";
   }
- 
-
 
   if (verbosity > 0 || !is_valid)
     cout << "  Solution is valid: " << is_valid << endl;

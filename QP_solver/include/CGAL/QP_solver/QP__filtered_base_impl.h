@@ -84,8 +84,8 @@ init_NT( )
     // ToDo: scale 'x_B_O', 'lambda', and 'd' if necessary
 
     // get inexact version of 'lambda'
-    std::transform( this->solver().lambda_numerator_begin(),
-		    this->solver().lambda_numerator_end(),
+    std::transform( this->solver().get_lambda_begin(),
+		    this->solver().get_lambda_end(),
 		    lambda_NT.begin(), et2nt_obj);
 
     // get inexact version of 'x_B_O'

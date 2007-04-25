@@ -3,6 +3,7 @@
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_options.h>
 #include <CGAL/QP_functions.h>
 
 // choose exact integral type
@@ -32,7 +33,11 @@ int r;
 // }
 
 int main() 
-{
+{  
+  // options
+  CGAL::Quadratic_program_options options;
+  options.set_validation_flag(true);
+
   for (fl = 0; fl < 2; ++fl) 
     for (fu = 0; fu < 2; ++fu)
       for (l = -2; l <= 0; ++l) 
@@ -46,9 +51,9 @@ int main()
 	 
 	    // test solver
 	    CGAL::Quadratic_program_solution<ET> s = 
-	      CGAL::solve_quadratic_program (qp, ET());
+	      CGAL::solve_quadratic_program (qp, ET(), options);
 	    assert (CGAL::is_zero(s.objective_value()));
-	    assert (s.is_optimal());
+	    assert (s.is_optimal()); assert (s.is_valid());
 
 	    // test bounds (program is empty, so everything should hold)
 	    assert (qp.is_nonnegative());
@@ -59,7 +64,8 @@ int main()
 	    qp.set_c(0, 1);        //       min x_0
 	                           //      l <= x_0 <= u
 	    // test solver
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    if (fl) {
 	      assert (s.is_optimal());
 	      assert (s.objective_value() == l);
@@ -98,7 +104,8 @@ int main()
 	    qp.set_l(0, true, 0);  //      0 <= x_0 <= u 
 
 	    // test solver
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    assert (s.is_optimal());
 	    assert (CGAL::is_zero(s.objective_value()));
 	  
@@ -114,14 +121,16 @@ int main()
 	    qp.set_l(0, false);    // -infty <= x_0 <= u
 	  
 	    // test solver
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    assert (s.is_unbounded());
 	  
 	    // manipulate program
 	    qp.set_c(0, -1);      //        min -x_0
 
 	    // test solver
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    if (fu) {
 	      assert (s.is_optimal());
 	      assert (s.objective_value() == -u);
@@ -146,7 +155,8 @@ int main()
 	    qp.set_u(0, true, 0); //  -infty <= x_0 <= 0 
 
 	    // test solver
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    assert (s.is_optimal());
 	    assert (s.objective_value() == 5);
 
@@ -156,7 +166,8 @@ int main()
 	    assert (!qp.is_free());
 
 	    qp.set_u(0, false);  //   -infty <= x_0 <= infty
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    assert (s.is_unbounded());
 	    assert (qp.is_free());
 	    assert (!qp.is_nonnegative());
@@ -168,7 +179,8 @@ int main()
 	    qp.set_b(0,1);
 	    
 	    // test solver
-	    s = CGAL::solve_quadratic_program (qp, ET());
+	    s = CGAL::solve_quadratic_program (qp, ET(), options);
+	    assert (s.is_valid());
 	    if (r == -1)
 	      assert (s.is_unbounded());
 	    else

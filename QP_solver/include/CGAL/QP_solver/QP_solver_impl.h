@@ -134,13 +134,13 @@ solution_numerator( ) const
 	// quadratic part
 	i=0;
 	for (Variable_numerator_iterator 
-	       i_it = original_variables_numerator_begin(); 
-	     i_it < original_variables_numerator_end(); ++i_it, ++i) {
+	       i_it = this->original_variables_numerator_begin(); 
+	     i_it < this->original_variables_numerator_end(); ++i_it, ++i) {
 	  // do something only if *i_it != 0
 	  if (*i_it == et0) continue;
 	  s = et0; // contribution of i-th row
 	  Variable_numerator_iterator j_it = 
-	    original_variables_numerator_begin();
+	    this->original_variables_numerator_begin();
 	  // half the off-diagonal contribution
 	  j=0;
 	  for (; j<i; ++j_it, ++j)
@@ -156,8 +156,8 @@ solution_numerator( ) const
       // linear part
       j=0; s = et0;
       for (Variable_numerator_iterator 
-	     j_it = original_variables_numerator_begin();
-	   j_it < original_variables_numerator_end(); ++j_it, ++j)
+	     j_it = this->original_variables_numerator_begin();
+	   j_it < this->original_variables_numerator_end(); ++j_it, ++j)
 	s +=  et2 * ET(qp_c[j]) * *j_it;
       z += d * s;
     }
@@ -3324,7 +3324,5 @@ get_l() const
 }
 
 CGAL_END_NAMESPACE
-
-#include <CGAL/QP_solver/QP_solver_validity_impl.h>
 
 // ===== EOF ==================================================================

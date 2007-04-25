@@ -202,6 +202,55 @@ of the variables at the optimal solution are output as well. For more
 detailed information about the solution (like basic variables/constraints) 
 please use the dedicated methods of \ccc{Quadratic_program_solution<ET>}.}
 
+\ccHeading{Validity}
+The following four methods allow you to check whether \ccc{sol} indeed
+solves the program that you intended to solve. The methods 
+use the certificates described in the advanced section below and
+thus save you from validating the certificates yourself (if you believe 
+in the correctness of these methods; otherwise, you can look at their
+implementation to convince yourself). 
+
+By passing a suitable option to the solution function, you can make sure that 
+this check is done automatically after the solution of the program, see 
+\ccc{Quadratic_program_options}.
+
+\ccMethod{template <class QuadraticProgram>
+  bool solves_quadratic_program 
+  (const QuadraticProgram& qp);}
+{returns \ccc{true} iff \ccVar\ solves the quadratic program \ccc{qp}. 
+If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}.}
+
+\ccMethod{template <class LinearProgram>
+  bool solves_linear_program 
+  (const LinearProgram& qp);}
+{returns \ccc{true} iff \ccVar\ solves the linear program \ccc{lp}.
+If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}. }
+
+\ccMethod{template <class NonnegativeQuadraticProgram>
+  bool solves_nonnegative_quadratic_program 
+  (const NonnegativeQuadraticProgram& qp);}
+{returns \ccc{true} iff \ccVar\ solves the nonnegative 
+quadratic program \ccc{qp}.
+If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}. }
+
+\ccMethod{template <class NonnegativeLinearProgram>
+  bool solves_nonnegative_linear_program 
+  (const NonnegativeLinearProgram& qp);}
+{returns \ccc{true} iff \ccVar\ solves the nonnegative
+linear program \ccc{lp}.If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}. }
+
+\ccMethod{bool is_valid() const;}
+{returns \ccc{false} iff the validation through one of the 
+previous four functions has failed.}
+
+\ccMethod{const std::string& get_error() const;}
+{returns an error message in case any of the
+previous four validation functions has returned \ccc{false}.}
+
 \begin{ccAdvanced}
 \ccHeading{Certificates}
 
@@ -262,19 +311,15 @@ is \ccc{Quotient<ET>}, and the valid iterator range has length $m$.
 {returns the corresponding past-the-end iterator.}
 
 \ccMethod{Optimality_certificate_numerator_iterator 
-optimality_certifcate_numerator_begin() const;}
+optimality_certifcate_numerators_begin() const;}
 {returns a random access iterator over the numerator values
-of the optimality certificate $\qplambda$, with respect to a 
-common denominator of all values. The value type
-is \ccc{ET}, and the valid iterator range has length $m$.}
+of the optimality certificate $\qplambda$, with respect to the
+common denominator returned by \ccVar.\ccc{variables_common_denominator()}. 
+The value type is \ccc{ET}, and the valid iterator range has length $m$.}
 
 \ccMethod{Optimality_certificate_numerator_iterator 
-  optimality_certificate_numerator_end() const;}
+  optimality_certificate_numerators_end() const;}
 {returns the corresponding past-the-end iterator.}
-
-\ccMethod{ET optimality_certificate_denominator() const;}
-{returns the common denominator of the certificate values 
-$\qplambda$ as referred to by the previous two methods.}
 
 \ccExample
 \ccReferToExampleCode{QP_solver/optimality_certificate.cpp}
@@ -332,7 +377,7 @@ solution of (QP). The program (QP) is unbounded if an $n$-vector
 $\qpw$ with the following properties exist.
 \begin{enumerate}
 \item if the $i$-th constraint is of type $\leq$ ($\geq, =$, respectively),
-then $(A\qpw)_j\leq 0$ ($(A\qpw)_j\geq 0, (A\qpw)_j=0$, respectively).
+then $(A\qpw)_i\leq 0$ ($(A\qpw)_i\geq 0, (A\qpw)_i=0$, respectively).
 \item 
 \[
 \begin{array}{llll}

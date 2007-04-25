@@ -49,7 +49,7 @@ namespace QP_solution_detail {
   class Unbounded_direction_by_index;
 
   template <typename ET>
-  class Optimality_certificate_by_index;
+  class Lambda_by_index;
 }
 
 // global status type
@@ -108,18 +108,15 @@ public:
   typedef Transform_diff_const_iterator<int, Unbounded_direction_by_index>
   Unbounded_direction_iterator;
 
-  typedef typename QP_solution_detail::Optimality_certificate_by_index<ET> 
-  Optimality_certificate_by_index;
+  typedef typename QP_solution_detail::Lambda_by_index<ET> 
+  Lambda_by_index;
   
-  typedef Transform_diff_const_iterator<int, Optimality_certificate_by_index>
-  Optimality_certificate_numerator_iterator;
+  typedef Transform_diff_const_iterator<int, Lambda_by_index>
+  Lambda_numerator_iterator;
 
-  typedef Join_input_iterator_1<Optimality_certificate_numerator_iterator,
+  typedef Join_input_iterator_1<Lambda_numerator_iterator,
 				Quotient_maker >
-  Optimality_certificate_iterator;
-
-  typedef Optimality_certificate_numerator_iterator 
-  Infeasibility_certificate_iterator;
+  Lambda_iterator;
 
 public:
 
@@ -128,9 +125,15 @@ public:
 
   // Solution
   // --------
-  virtual Quotient<ET> solution() const = 0;
   virtual ET solution_numerator() const = 0;
   virtual ET solution_denominator() const = 0;
+  Quotient<ET> solution( ) const
+  { 
+    return 
+      Quotient_creator 
+      (Quotient_normalizer(),
+       U_Quotient_creator()) (solution_numerator(), solution_denominator());
+  }
   virtual Quadratic_program_status status() const = 0;
   virtual int iterations() const = 0;
 
@@ -138,17 +141,38 @@ public:
   // ---------------
   virtual ET variable_numerator_value (int i) const = 0; 
   virtual const ET& variables_common_denominator( ) const = 0;
+  virtual int number_of_variables() const = 0;
 
   // value type ET
-  virtual Variable_numerator_iterator 
-  original_variables_numerator_begin() const = 0;
-  virtual Variable_numerator_iterator 
-  original_variables_numerator_end() const = 0;
+  Variable_numerator_iterator
+  original_variables_numerator_begin( ) const
+  { return Variable_numerator_iterator (0, Value_by_index(this));}
+				  
+    
+  Variable_numerator_iterator
+  original_variables_numerator_end  ( ) const
+  { return Variable_numerator_iterator 
+      (0, Value_by_index(this)) + number_of_variables();} 
 
-  // value type Quotient<ET>
-  virtual Variable_value_iterator original_variable_values_begin() const = 0;
-  virtual Variable_value_iterator original_variable_values_end() const = 0;
-
+  // value type Quotient<ET>   
+  Variable_value_iterator
+  original_variable_values_begin( ) const
+  { return Variable_value_iterator
+      (original_variables_numerator_begin(),
+       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+					U_Quotient_creator()) , 
+		       variables_common_denominator())); 
+  }
+    
+  Variable_value_iterator
+  original_variable_values_end  ( ) const
+  { return Variable_value_iterator
+      (original_variables_numerator_end(),
+       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+					U_Quotient_creator()) ,
+		       variables_common_denominator())); 
+  }
+    
   // Basic variables and constraints
   // -------------------------------
   virtual Index_const_iterator 
@@ -165,25 +189,55 @@ public:
   // Unboundedness
   // -------------
   virtual ET unbounded_direction_value(int i) const = 0;
-  virtual Unbounded_direction_iterator unbounded_direction_begin() const = 0;
-  virtual Unbounded_direction_iterator unbounded_direction_end() const = 0;
+
+  Unbounded_direction_iterator unbounded_direction_begin() const 
+  { return Unbounded_direction_iterator 
+      (0, Unbounded_direction_by_index(this));}
+
+  // Returns the past-the-end iterator corresponding to
+  // unbounded_direction_begin().
+  Unbounded_direction_iterator unbounded_direction_end() const
+  { return Unbounded_direction_iterator 
+      (0, Unbounded_direction_by_index(this)) + number_of_variables();}
+
 
   // Optimality
   // ----------
-  virtual ET optimality_certificate_numerator(int i) const = 0;
-  virtual ET optimality_certificate_denominator() const = 0;
+  virtual ET lambda_numerator(int i) const = 0;
+  virtual int number_of_constraints() const = 0;
 
   // value type ET
-  virtual Optimality_certificate_numerator_iterator 
-  optimality_certificate_numerator_begin() const = 0;
-  virtual Optimality_certificate_numerator_iterator 
-  optimality_certificate_numerator_end() const = 0;
+  Lambda_numerator_iterator 
+  lambda_numerator_begin() const 
+  { return Lambda_numerator_iterator 
+      (0, Lambda_by_index(this));}
+
+  Lambda_numerator_iterator 
+  lambda_numerator_end() const
+  { return Lambda_numerator_iterator 
+      (0, Lambda_by_index(this)) + number_of_constraints();}
 
   // value type Quotient<ET>
-  virtual Optimality_certificate_iterator 
-  optimality_certificate_begin() const = 0;
-  virtual Optimality_certificate_iterator 
-  optimality_certificate_end() const = 0;
+  Lambda_iterator
+  lambda_begin() const
+  {
+    return Lambda_iterator
+     (lambda_numerator_begin(),
+      Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+				       U_Quotient_creator()) ,
+		      variables_common_denominator() ));
+  }
+
+  Lambda_iterator
+  lambda_end() const
+  {
+    return Lambda_iterator
+     (lambda_numerator_end(),
+      Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+				       U_Quotient_creator()) , 
+		      variables_common_denominator()));
+  }
+
 
   // destruction
   // -----------
@@ -218,54 +272,61 @@ public:
   Unboundedness_certificate_iterator;
   
   typedef 
-  typename QP_solver_base<ET>::Optimality_certificate_numerator_iterator
+  typename QP_solver_base<ET>::Lambda_numerator_iterator
   Optimality_certificate_numerator_iterator;
   
-  typedef typename QP_solver_base<ET>::Optimality_certificate_iterator
+  typedef typename QP_solver_base<ET>::Lambda_iterator
   Optimality_certificate_iterator;
 
-  typedef Optimality_certificate_numerator_iterator
+  typedef typename QP_solver_base<ET>::Lambda_numerator_iterator
   Infeasibility_certificate_iterator;
 
   // methods
   // -------
   Quadratic_program_solution ()
-    : Handle_for<const QP_solver_base<ET>*>()
+    : Handle_for<const QP_solver_base<ET>*>(), et0(0)
   {
     *(this->ptr()) = 0; // unitialized solution
   }
 
   Quadratic_program_solution (const QP_solver_base<ET>* s)
-    : Handle_for<const QP_solver_base<ET>*>(s)
+    : Handle_for<const QP_solver_base<ET>*>(s), et0(0)
   {}
 
+private:
+  const QP_solver_base<ET>* solver() const 
+  {
+    return *(this->Ptr());
+  }
+
+public:
   bool is_void() const 
   {
-    return (*(this->ptr()) == 0);
+    return solver() == 0;
   }
 
   Quotient<ET> objective_value() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->solution();
+    return solver()->solution();
   }
 
   ET objective_value_numerator() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->solution_numerator();
+    return solver()->solution_numerator();
   }
 
   ET objective_value_denominator() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->solution_denominator();
+    return solver()->solution_denominator();
   }
 
   Quadratic_program_status status() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->status();
+    return solver()->status();
   }
 
   bool is_optimal() const
@@ -289,89 +350,89 @@ public:
   int number_of_iterations() const
   { 
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->iterations();
+    return solver()->iterations();
   }
 
   Variable_value_iterator variable_values_begin() const
   {
    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-   return (*(this->Ptr()))->original_variable_values_begin();
+   return solver()->original_variable_values_begin();
   }
 
   Variable_value_iterator variable_values_end() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->original_variable_values_end();
+    return solver()->original_variable_values_end();
   }
 
   Variable_numerator_iterator variable_numerators_begin() const
   {
    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-   return (*(this->Ptr()))->original_variables_numerator_begin();
+   return solver()->original_variables_numerator_begin();
   }
 
   Variable_numerator_iterator variable_numerators_end() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->original_variables_numerator_end();
+    return solver()->original_variables_numerator_end();
   }
 
   const ET& variables_common_denominator() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->variables_common_denominator();
+    return solver()->variables_common_denominator();
   }
 
   Index_iterator basic_variable_indices_begin() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->basic_original_variable_indices_begin();
+    return solver()->basic_original_variable_indices_begin();
   }
 
   Index_iterator basic_variable_indices_end() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->basic_original_variable_indices_end();
+    return solver()->basic_original_variable_indices_end();
   }
 
   int number_of_basic_variables() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->number_of_basic_original_variables();
+    return solver()->number_of_basic_original_variables();
   }
 
   Index_iterator basic_constraint_indices_begin() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->basic_constraint_indices_begin();
+    return solver()->basic_constraint_indices_begin();
   }
 
   Index_iterator basic_constraint_indices_end() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->basic_constraint_indices_end();
+    return solver()->basic_constraint_indices_end();
   }
 
   int number_of_basic_constraints() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    return (*(this->Ptr()))->number_of_basic_constraints();
+    return solver()->number_of_basic_constraints();
   }
 
   Optimality_certificate_numerator_iterator 
-  optimality_certifcate_numerator_begin() const
+  optimality_certificate_numerators_begin() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
-    return (*(this->Ptr()))->optimality_certifcate_numerator_begin();
+    return solver()->lambda_numerator_begin();
   }
 
   Optimality_certificate_numerator_iterator 
-  optimality_certifcate_numerator_end() const
+  optimality_certificate_numerators_end() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
-    return (*(this->Ptr()))->optimality_certifcate_numerator_end();
+    return solver()->lambda_numerator_end();
   }
 
   Optimality_certificate_iterator 
@@ -379,7 +440,7 @@ public:
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
-    return (*(this->Ptr()))->optimality_certificate_begin();
+    return solver()->lambda_begin();
   }
 
   Optimality_certificate_iterator 
@@ -387,14 +448,7 @@ public:
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_OPTIMAL);
-    return (*(this->Ptr()))->optimality_certificate_end();
-  }
-
-  ET optimality_certificate_denominator() const
-  {
-    CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
-    CGAL_qpe_assertion(status() == QP_OPTIMAL);
-    return (*(this->Ptr()))->optimality_certificate_denominator();
+    return solver()->lambda_end();
   }
 
   // infeasibility
@@ -404,7 +458,7 @@ public:
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_INFEASIBLE);
-    return (*(this->Ptr()))->optimality_certificate_numerator_begin();
+    return solver()->lambda_numerator_begin();
   }
 
   Infeasibility_certificate_iterator 
@@ -412,7 +466,7 @@ public:
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_INFEASIBLE);
-    return (*(this->Ptr()))->optimality_certificate_numerator_end();
+    return solver()->lambda_numerator_end();
   }
   
   // unboundedness
@@ -421,17 +475,164 @@ public:
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_UNBOUNDED);
-    return (*(this->Ptr()))->unbounded_direction_begin();
+    return solver()->unbounded_direction_begin();
   }
 
   Unboundedness_certificate_iterator unboundedness_certificate_end() const
   {
     CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
     CGAL_qpe_assertion(status() == QP_UNBOUNDED);
-    return (*(this->Ptr()))->unbounded_direction_end();
+    return solver()->unbounded_direction_end();
   }
 
+private:
+  ET et0; // 0
 
+  // validity
+  // --------
+  
+  // error message returned by failing validation
+  std::string err_msg;
+
+  // the error message is set by the following function
+  bool error (const std::string& message) 
+  {
+    err_msg = message;
+    return false;
+  }
+
+public:
+  bool is_valid() const
+  {
+    return err_msg.empty();
+  }
+
+  const std::string& get_error() const
+  {
+    return err_msg;
+  }
+
+  // these four methods use the certificates to validate the solution
+  // of all four program types
+  template <class QuadraticProgram>
+  bool solves_quadratic_program 
+  (const QuadraticProgram& qp)
+  { return solves_program(qp, Tag_false(), Tag_false()); }
+
+  template <class LinearProgram>
+  bool solves_linear_program 
+  (const LinearProgram& lp)
+  { return solves_program(lp, Tag_true(), Tag_false()); }
+
+  template <class NonnegativeQuadraticProgram>
+  bool solves_nonnegative_quadratic_program 
+  (const NonnegativeQuadraticProgram& qp)
+  { return solves_program(qp, Tag_false(), Tag_true()); }
+
+  template <class NonnegativeLinearProgram>
+  bool solves_nonngative_linear_program 
+  (const NonnegativeLinearProgram& lp)
+  { return solves_program(lp, Tag_true(), Tag_true()); }
+
+  // helper used by all four validation methods above
+  template <class Program, typename Is_linear, typename Is_nonnegative>
+  bool solves_program (const Program& p, 
+		       Is_linear is_linear, Is_nonnegative is_nonnegative);
+
+private:
+  // helpers used by the previous method 
+  template <typename Program>
+  bool is_feasible (const Program& p, 
+		    typename std::vector<ET>& ax_minus_b,
+		    Tag_true is_nonnegative);
+  template <typename Program>
+  bool is_feasible (const Program& p, 
+		    typename std::vector<ET>& ax_minus_b,
+		    Tag_false is_nonnegative);
+
+  template <typename Program>
+  bool is_optimal_1 (const Program& p);
+
+  template <typename Program>
+  bool is_optimal_2 (const Program& p, 
+		     const typename std::vector<ET>& ax_minus_b);
+
+  template <typename Program>
+  bool is_optimal_3 (const Program& p, 
+		     Tag_true is_linear, Tag_true is_nonnegative);
+  template <typename Program>
+  bool is_optimal_3 (const Program& p, 
+		     Tag_false is_linear, Tag_true is_nonnegative);
+  template <typename Program>
+  bool is_optimal_3 (const Program& p, 
+		     Tag_true is_linear, Tag_false is_nonnegative);
+  template <typename Program>
+  bool is_optimal_3 (const Program& p, 
+		     Tag_false is_linear, Tag_false is_nonnegative);
+
+  template <typename Program>
+  bool is_infeasible_1 (const Program& p);
+
+  template <typename Program>
+  bool is_infeasible_2 (const Program& p, 
+			typename std::vector<ET>& lambda_a,
+			Tag_true is_nonnegative);
+  template <typename Program>
+  bool is_infeasible_2 (const Program& p, 
+			typename std::vector<ET>& lambda_a,
+			Tag_false is_nonnegative);
+
+  template <typename Program>
+  bool is_infeasible_3 (const Program& p, 
+			const typename std::vector<ET>& lambda_a,
+			Tag_true is_nonnegative); 
+  template <typename Program>
+  bool is_infeasible_3 (const Program& p, 
+			const typename std::vector<ET>& lambda_a,
+			Tag_false is_nonnegative);
+ 
+  template <typename Program>
+  bool is_unbounded_1 (const Program& p);
+ 
+  template <typename Program>
+  bool is_unbounded_2 (const Program& p, Tag_true is_nonnegative);
+  template <typename Program>
+  bool is_unbounded_2 (const Program& p, Tag_false is_nonnegative);
+
+  template <typename Program>
+  bool is_unbounded_3 (const Program& p, Tag_true is_linear);
+  template <typename Program>
+  bool is_unbounded_3 (const Program& p, Tag_false is_linear);
+
+  template <typename Program>
+  bool are_constraints_feasible 
+  (const Program& p, typename std::vector<ET>& ax);
+
+  template <typename Program>
+  bool are_bounds_feasible (const Program& p,  Tag_true is_nonnegative);
+  template <typename Program>
+  bool are_bounds_feasible (const Program& p,  Tag_false is_nonnegative);
+  
+  template <typename Program, typename Z_iterator >
+  void add_Az 
+  (const Program& p, Z_iterator z, typename std::vector<ET>& v);
+
+  template <typename Program, typename Z_iterator >
+  void add_two_Dz 
+  (const Program& p, Z_iterator z, typename std::vector<ET>& v);
+  
+  template <typename Program, typename Z_iterator >
+  void add_zA 
+  (const Program& p, Z_iterator z, typename std::vector<ET>& v);
+
+  template <typename Program>
+  void add_c
+  (const Program& p, typename std::vector<ET>& v);
+
+
+public:
+  // destruction
+  // -----------
   ~Quadratic_program_solution()
   {
     if (!this->is_shared()) delete *(this->ptr());
@@ -574,27 +775,29 @@ namespace QP_solution_detail {
     const QP* s;
   };
 
-  // Optimality_certificate_by_index
-  // -------------------------------
+  // Lambda_by_index
+  // ---------------
   template < typename ET>
-  class Optimality_certificate_by_index : public std::unary_function< int, ET>
+  class Lambda_by_index : public std::unary_function< int, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
     typedef ET result_type;
 
-    Optimality_certificate_by_index(const QP* solver)
+    Lambda_by_index(const QP* solver)
       : s (solver)
     {}
 
     result_type operator () ( int i) const
     {
-      return s->optimality_certificate_numerator(i);
+      return s->lambda_numerator(i);
     }
       
     const QP* s;
   };
 }
 CGAL_END_NAMESPACE
+
+#include <CGAL/QP_solver/QP_solution_impl.h>
 
 #endif// CGAL_QP_SOLUTION_H

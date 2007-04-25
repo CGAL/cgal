@@ -20,6 +20,7 @@
 #define CGAL_QP_FUNCTIONS_IMPL_H
 
 #include <iostream>
+#include <fstream>
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_models.h>
@@ -353,7 +354,30 @@ namespace QP_functions_detail {
       QP_solver_impl::QP_tags<Is_linear, Is_nonnegative> >
       Solver;
     const Solver* s = new Solver(p, options);
-    return Quadratic_program_solution<ET>(s);
+    Quadratic_program_solution<ET> solution(s);
+    if (options.get_validation_flag()) {
+      // validate solution
+      if (options.get_verbosity() > 0)
+	std::cout << "Validating solution...\n";
+      if (!solution.solves_program(p, Is_linear(), Is_nonnegative())) {
+	// write log file
+	std::ofstream out("QP_solver.log");
+	out << "Error: Program solution is invalid\n"
+	    << "  (" << solution.get_error() << ")\n"
+	    << "Program:\n" 
+	    << "--------\n";
+	print_program (out, p, "unsolved", Is_linear(), Is_nonnegative());
+	out << "Options:\n"
+	    << "--------\n"
+	    << options << std::endl;
+	// print warning
+	std::cerr 
+	  << "Error: Program solution is invalid "
+	  << "(see QP_solver.log for details)" << std::endl;
+      }
+    }
+    return solution;
+      
   }
 }
 

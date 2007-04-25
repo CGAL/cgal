@@ -8,9 +8,11 @@ quadratic programming solvers. Currently, we support only
 options referring to
 \begin{enumerate}
 \item the verbosity, 
-\item the pricing strategy (see \ccc{Quadratic_program_pricing_strategy}).
+\item the pricing strategy (see \ccc{Quadratic_program_pricing_strategy}),
+\item the validation mode (see the Validity section of
+\ccc{Quadratic_program_solution})
 \end{enumerate}
-The idea is that this list grows in the futurex.
+The idea is that this list grows in the future.
 
 \ccCreation
 \ccIndexClassCreation
@@ -52,11 +54,24 @@ not internally cycle.}
 \ccMethod{Quadratic_program_pricing_strategy get_pricing_strategy() const;}
 {returns the pricing strategy of \ccVar.}
 
+\ccHeading{Validation mode}
+
+\ccMethod{void set_validation_flag(bool validate);}
+{sets the validation flag of the solver to the value \ccc{validate}.
+The default is \ccc{false}. By providing value \ccc{true} you can
+tell the solver to automatically check whether the program has
+correctly been solved, see the Validity section of the class
+\ccc{Quadratic_program_solution}.}
+
+\ccMethod{bool get_validation_flag() const;}
+{returns the validation flag of \ccVar.}
+
 \ccExample
 \ccReferToExampleCode{QP_solver/cycling.cpp}
 
 \ccSeeAlso
 
+\ccc{Quadratic_program_solution}\\
 \ccc{solve_quadratic_program}\\
 \ccc{solve_linear_program}\\
 \ccc{solve_nonnegative_quadratic_program}\\

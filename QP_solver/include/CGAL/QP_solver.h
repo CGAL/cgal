@@ -22,11 +22,11 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/functional.h>
-#include <CGAL/QP_options.h>
-#include <CGAL/QP_solution.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/iterator.h>
 #include <CGAL/QP_solver/functors.h>
+#include <CGAL/QP_options.h>
+#include <CGAL/QP_solution.h>
 #include <CGAL/QP_solver/QP_basis_inverse.h>
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
@@ -55,6 +55,15 @@ template <class ET>
 class QP_solution; 
 
 namespace QP_solver_impl {   // namespace for implemenation details
+  // --------------
+  // Tags generator
+  // --------------
+  template < typename Linear, 
+	     typename Nonnegative >
+  struct QP_tags {
+    typedef Linear                Is_linear;
+    typedef Nonnegative           Is_nonnegative;
+  };
 
   template < class Q, class Is_linear >
   struct D_selector {};
@@ -222,19 +231,10 @@ private:
   typedef  typename Values::iterator  Value_iterator;
   typedef  typename Values::const_iterator
   Value_const_iterator;
-
-  // quotient functors:
-  typedef typename Base::U_Quotient_creator U_Quotient_creator;
-  typedef typename Base::Quotient_normalizer Quotient_normalizer;
-  typedef typename Base::Quotient_creator Quotient_creator;
-  typedef typename Base::Quotient_maker Quotient_maker;
     
   // access values by basic index functor:
   typedef  CGAL::Value_by_basic_index<Value_const_iterator>
   Value_by_basic_index;
-
-  // access values by original index
-  typedef typename Base::Value_by_index Value_by_index;
 
   // access to original problem by basic variable/constraint index:
   typedef  QP_vector_accessor<A_column, false, false >  A_by_index_accessor;
@@ -293,23 +293,14 @@ public:
 
   typedef typename Base::Variable_numerator_iterator
   Variable_numerator_iterator;
-  typedef typename Base::Variable_value_iterator
-  Variable_value_iterator;
-  typedef typename Base::Original_index_const_iterator
-  Original_index_const_iterator;
+
+//   typedef typename Base::Original_index_const_iterator
+//   Original_index_const_iterator;
 
   typedef  Index_const_iterator       Basic_variable_index_iterator;
   typedef  Value_const_iterator       Basic_variable_numerator_iterator;
-  typedef  Join_input_iterator_1< Basic_variable_numerator_iterator,
-				  Quotient_maker >
-  Basic_variable_value_iterator;
-    
   typedef  Index_const_iterator       Basic_constraint_index_iterator;
-    
-  typedef  Value_const_iterator       Lambda_numerator_iterator;
-  typedef  Join_input_iterator_1< Lambda_numerator_iterator, Quotient_maker >
-  Lambda_value_iterator;
-    
+        
   typedef  QP_pricing_strategy<Q, ET, Tags>  Pricing_strategy;
 
 private:
@@ -594,7 +585,11 @@ public:
   int     iterations( ) const { return m_pivots; }
     
   // access to common denominator
-  const ET&  variables_common_denominator( ) const { return d; }
+  const ET& variables_common_denominator( ) const 
+  { 
+    CGAL_qpe_assertion (d > 0);
+    return d; 
+  }
 
   // access to current solution
   ET  solution_numerator( ) const;
@@ -602,41 +597,8 @@ public:
   // access to current solution
   ET  solution_denominator( ) const { return et2*d*d; }
     
-  Quotient<ET>  solution( ) const
-  { 
-    return 
-      Quotient_creator 
-      (Quotient_normalizer(),
-       U_Quotient_creator())(solution_numerator(), solution_denominator());
-  }
   // access to original variables
   int  number_of_original_variables( ) const { return qp_n; }
-    
- 
-  Variable_numerator_iterator
-  original_variables_numerator_begin( ) const
-  { return Variable_numerator_iterator (0, Value_by_index(this));}
-				  
-    
-  Variable_numerator_iterator
-  original_variables_numerator_end  ( ) const
-  { return Variable_numerator_iterator (0, Value_by_index(this)) + qp_n;} 
-    
-  Variable_value_iterator
-  original_variable_values_begin( ) const
-  { return Variable_value_iterator
-      (original_variables_numerator_begin(),
-       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
-					U_Quotient_creator()) , d)); 
-  }
-    
-  Variable_value_iterator
-  original_variable_values_end  ( ) const
-  { return Variable_value_iterator
-      (original_variables_numerator_end(),
-       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
-					U_Quotient_creator()) , d)); 
-  }
     
   // access to slack variables
   int  number_of_slack_variables( ) const { return slack_A.size(); }
@@ -664,37 +626,6 @@ public:
   Basic_variable_numerator_iterator
   basic_original_variables_numerator_end  ( ) const { return x_B_O.begin()
 							+ B_O.size(); }
-  Basic_variable_value_iterator
-  basic_original_variable_values_begin( ) const
-  { return Basic_variable_value_iterator(
-					 basic_original_variables_numerator_begin(),
-					 Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
-  Basic_variable_value_iterator
-  basic_original_variable_values_end  ( ) const
-  { return Basic_variable_value_iterator(
-					 basic_original_variables_numerator_end(),
-					 Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
-
-  Basic_variable_index_iterator
-  basic_slack_variables_index_begin( ) const { return B_S.begin(); }
-  Basic_variable_index_iterator
-  basic_slack_variables_index_end  ( ) const { return B_S.end(); }
-    
-  Basic_variable_numerator_iterator
-  basic_slack_variables_numerator_begin( ) const { return x_B_S.begin(); }
-  Basic_variable_numerator_iterator
-  basic_slack_variables_numerator_end  ( ) const { return x_B_S.begin()
-						     + B_S.size(); }
-  Basic_variable_value_iterator
-  basic_slack_variable_values_begin( ) const
-  { return Basic_variable_value_iterator(
-					 basic_slack_variables_numerator_begin(),
-					 Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
-  Basic_variable_value_iterator
-  basic_slack_variable_values_end  ( ) const
-  { return Basic_variable_value_iterator(
-					 basic_slack_variables_numerator_end(),
-					 Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
 
 public: // only the pricing strategies (including user-defined ones
         // need access to this) -- make them friends?
@@ -722,25 +653,6 @@ public: // only the pricing strategies (including user-defined ones
 
   int get_l() const;
 
-  // access to lambda
-  Lambda_numerator_iterator
-  lambda_numerator_begin( ) const { return lambda.begin(); }
-    
-  Lambda_numerator_iterator
-  lambda_numerator_end  ( ) const { return lambda.begin() + C.size(); }
-
-  Lambda_value_iterator
-  lambda_value_begin( ) const
-  { return Lambda_value_iterator(
-				 lambda_numerator_begin(),
-				 Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
-    
-  Lambda_value_iterator
-  lambda_value_end  ( ) const
-  { return Lambda_value_iterator(
-				 lambda_numerator_end(),
-				 Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
-        
   // Returns w[j] for an original variable x_j.
   ET w_j_numerator(int j) const
   { 
@@ -819,70 +731,16 @@ public:
   }
 
 public:
-
-  typedef typename Base::Unbounded_direction_by_index 
-  Unbounded_direction_by_index;
-  typedef typename Base::Unbounded_direction_iterator 
-  Unbounded_direction_iterator;
-
-  // Returns an iterator over an unbounded direction, that is a |n|-vector
-  // w such that if x denotes the solver's current solution then the point
-  //
-  //    x - t w              for           t > 0,
-  //
-  // is a feasible point of the problem and the objective function on
-  // this ray is unbounded (i.e., it decreases when t increases).
-  Unbounded_direction_iterator unbounded_direction_begin() const 
-  { return Unbounded_direction_iterator 
-      (0, Unbounded_direction_by_index(this));}
-
-  // Returns the past-the-end iterator corresponding to
-  // unbounded_direction_begin().
-  Unbounded_direction_iterator unbounded_direction_end() const
-  { return Unbounded_direction_iterator 
-      (0, Unbounded_direction_by_index(this)) + qp_n;}
-
-  // Optimality; iterators for the vector lambda, see the doc in
-  // QP_solver_validity_impl.C
-  typedef typename Base::Optimality_certificate_by_index
-  Optimality_certificate_by_index;
-  typedef typename Base::Optimality_certificate_numerator_iterator 
-  Optimality_certificate_numerator_iterator;
-  typedef typename Base::Optimality_certificate_iterator 
-  Optimality_certificate_iterator;
+  // public access to compressed lambda (used in filtered base)
+  Value_const_iterator get_lambda_begin() const
+  {
+    return lambda.begin();
+  }
+  Value_const_iterator get_lambda_end() const
+  {
+    return lambda.begin() + C.size();
+  }
   
-  Optimality_certificate_numerator_iterator 
-  optimality_certificate_numerator_begin() const 
-  { return Optimality_certificate_numerator_iterator 
-      (0, Optimality_certificate_by_index(this));}
-
-  Optimality_certificate_numerator_iterator 
-  optimality_certificate_numerator_end() const
-  { return Optimality_certificate_numerator_iterator 
-      (0, Optimality_certificate_by_index(this)) + qp_m;}
-
-  ET optimality_certificate_denominator() const
-  { return d;}
-
-  Optimality_certificate_iterator
-  optimality_certificate_begin() const
-  {
-    return Optimality_certificate_iterator
-     (optimality_certificate_numerator_begin(),
-      Quotient_maker( Quotient_creator(Quotient_normalizer(), 
-				       U_Quotient_creator()) ,
-		      optimality_certificate_denominator() ));
-  }
-
-  Optimality_certificate_iterator
-  optimality_certificate_end() const
-  {
-    return Optimality_certificate_iterator
-     (optimality_certificate_numerator_end(),
-      Quotient_maker( Quotient_creator(Quotient_normalizer(), 
-				       U_Quotient_creator()) , 
-		      optimality_certificate_denominator()));
-  }
 
 private:    
 
@@ -1277,7 +1135,21 @@ public:
   // for original variables
   ET variable_numerator_value(int i) const;
   ET unbounded_direction_value(int i) const;
-  ET optimality_certificate_numerator(int i) const;
+  ET lambda_numerator(int i) const
+  {
+    // we use the vector lambda which conforms to C (basic constraints)
+    CGAL_qpe_assertion (i >= 0);
+    CGAL_qpe_assertion (i <= qp_m);
+    if (no_ineq)
+      return lambda[i];
+    else {
+      int k = in_C[i];     // position of i in C
+      if (k != -1) 
+	return lambda[k];
+      else 
+	return et0;
+    }   
+}
 
 private:
   // check basis inverse
@@ -1360,16 +1232,7 @@ private:  // (inefficient) access to bounds of variables:
   Bnd upper_bnd(int i) const;
 
 private:
-  // validity checks:
-  bool is_solution_feasible_for_auxiliary_problem() const;
-  bool is_solution_optimal_for_auxiliary_problem() const;
-  bool is_solution_feasible() const;  
-  bool is_solution_infeasible() const;
-  bool is_solution_optimal() const;
   bool is_value_correct() const;
-  bool is_solution_unbounded() const;
-  bool is_valid() const;
-
   // ----------------------------------------------------------------------------
 
   // ===============================
@@ -1449,13 +1312,13 @@ public:
 	!check_tag(Is_linear()) &&
 	!is_phaseI && is_original(j)) {
       return mu_j(j,
-		  lambda_numerator_begin(),
+		  lambda.begin(),
 		  basic_original_variables_numerator_begin(),
 		  w_j_numerator(j),
 		  variables_common_denominator());
     } else {
       return mu_j(j,
-		  lambda_numerator_begin(),
+		  lambda.begin(),
 		  basic_original_variables_numerator_begin(),
 		  variables_common_denominator());
     }
@@ -2097,19 +1960,6 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
   }
        
 }
-
-namespace QP_solver_impl {
-  // --------------
-  // Tags generator
-  // --------------
-  template < typename Linear, 
-	     typename Nonnegative >
-  struct QP_tags {
-    typedef Linear                Is_linear;
-    typedef Nonnegative           Is_nonnegative;
-  };
-
-} // end namespace QP_solver_impl
 
 CGAL_END_NAMESPACE
 
