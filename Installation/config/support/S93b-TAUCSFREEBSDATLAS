@@ -1,15 +1,15 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
-# MacOSX requires crypto library for ftime().
+# FreeBSD requires compat library for ftime().
 # Note: TAUCS requires either ATLAS or LAPACK for dpotrf() Lapack routine.
 # This configuration has *not* been tested.
 
-DESCRIPTION = MacOSX
+DESCRIPTION = FreeBSD with ATLAS
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
-LIBS = taucs metis crypto
-REQUIRES = BLAS LAPACK DOLLAR_DARWIN_COMPILER
-INCOMPATIBLE =
+LIBS = taucs metis compat
+REQUIRES = BLAS ATLAS
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
 STDINCLDIRS =
 INCLTHING =
 STDLIBDIRS =

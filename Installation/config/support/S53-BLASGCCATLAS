@@ -4,7 +4,7 @@
 # This configuration has been tested with g++ and icpc.
 
 DESCRIPTION = ATLAS for gcc
-PROVIDES = BLAS
+PROVIDES = ATLAS BLAS
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =
 LIBS = lapack f77blas cblas atlas g2c

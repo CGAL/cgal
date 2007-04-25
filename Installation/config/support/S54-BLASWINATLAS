@@ -3,7 +3,7 @@
 # Note: this configuration has been tested with VisualC++ 7.1.
 
 DESCRIPTION = ATLAS for MS Windows
-PROVIDES = BLAS
+PROVIDES = ATLAS BLAS
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =
 LIBS = liblapack libf77blas libcblas libatlas vcf2c

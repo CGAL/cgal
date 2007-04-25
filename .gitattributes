@@ -711,9 +711,12 @@ Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
 Installation/config/support/S83-QT3MSST -text
-Installation/config/support/S91-TAUCSWIN -text
-Installation/config/support/S92-TAUCS -text
-Installation/config/support/S93-TAUCSFREEBSD -text
+Installation/config/support/S91a-TAUCSWINLAPACK -text
+Installation/config/support/S91b-TAUCSWINATLAS -text
+Installation/config/support/S92a-TAUCSLAPACK -text
+Installation/config/support/S92b-TAUCSATLAS -text
+Installation/config/support/S93a-TAUCSFREEBSDLAPACK -text
+Installation/config/support/S93b-TAUCSFREEBSDATLAS -text
 Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text

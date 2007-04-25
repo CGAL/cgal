@@ -1,14 +1,13 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
-# MacOSX requires crypto library for ftime().
 # Note: TAUCS requires either ATLAS or LAPACK for dpotrf() Lapack routine.
-# This configuration has *not* been tested.
+# Note: this configuration has been tested with VisualC++ 7.1.
 
-DESCRIPTION = MacOSX
+DESCRIPTION = MS Windows with ATLAS
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
-LIBS = taucs metis crypto
-REQUIRES = BLAS LAPACK DOLLAR_DARWIN_COMPILER
+LIBS = libtaucs libmetis
+REQUIRES = BLAS ATLAS DOLLAR_WINDOWS_COMPILER
 INCOMPATIBLE =
 STDINCLDIRS =
 INCLTHING =
