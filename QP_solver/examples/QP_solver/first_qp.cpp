@@ -1,6 +1,7 @@
 // example: construct a quadratic program from data
 // the QP below is the first quadratic program example in the user manual
 #include <iostream>
+#include <cassert>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -34,6 +35,7 @@ int main() {
 
   // solve the program, using ET as the exact type
   Solution s = CGAL::solve_quadratic_program(qp, ET());
+  assert (s.solves_quadratic_program(qp));
 
   // output solution
   std::cout << s; 

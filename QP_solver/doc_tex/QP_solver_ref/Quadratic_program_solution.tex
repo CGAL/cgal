@@ -221,12 +221,16 @@ this check is done automatically after the solution of the program, see
 If the result is \ccc{false}, you can get a message that describes the
 problem, through the method \ccc{get_error()}.}
 
+\ccReferToExampleCode{QP_solver/first_qp.cpp}
+
 \ccMethod{template <class LinearProgram>
   bool solves_linear_program 
   (const LinearProgram& qp);}
 {returns \ccc{true} iff \ccVar\ solves the linear program \ccc{lp}.
 If the result is \ccc{false}, you can get a message that describes the
 problem, through the method \ccc{get_error()}. }
+
+\ccReferToExampleCode{QP_solver/first_lp.cpp}
 
 \ccMethod{template <class NonnegativeQuadraticProgram>
   bool solves_nonnegative_quadratic_program 
@@ -236,12 +240,16 @@ quadratic program \ccc{qp}.
 If the result is \ccc{false}, you can get a message that describes the
 problem, through the method \ccc{get_error()}. }
 
+\ccReferToExampleCode{QP_solver/first_nonnegative_qp.cpp}
+
 \ccMethod{template <class NonnegativeLinearProgram>
   bool solves_nonnegative_linear_program 
   (const NonnegativeLinearProgram& qp);}
 {returns \ccc{true} iff \ccVar\ solves the nonnegative
 linear program \ccc{lp}.If the result is \ccc{false}, you can get a message that describes the
 problem, through the method \ccc{get_error()}. }
+
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}
 
 \ccMethod{bool is_valid() const;}
 {returns \ccc{false} iff the validation through one of the 

@@ -1,6 +1,7 @@
 // example: construct a linear program from data
 // the LP below is the first linear program example in the user manual
 #include <iostream>
+#include <cassert>
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -33,6 +34,7 @@ int main() {
 
   // solve the program, using ET as the exact type
   Solution s = CGAL::solve_linear_program(lp, ET());
+  assert (s.solves_linear_program(lp));
 
   // output solution
   std::cout << s; 

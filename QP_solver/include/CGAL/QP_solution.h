@@ -530,7 +530,7 @@ public:
   { return solves_program(qp, Tag_false(), Tag_true()); }
 
   template <class NonnegativeLinearProgram>
-  bool solves_nonngative_linear_program 
+  bool solves_nonnegative_linear_program 
   (const NonnegativeLinearProgram& lp)
   { return solves_program(lp, Tag_true(), Tag_true()); }
 
