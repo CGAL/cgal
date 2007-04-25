@@ -289,10 +289,10 @@ Savestream_table savestream_table;
 void
 savestream_open( const string& name ) {
   Savestream_table::iterator it = savestream_table.find( name );
-  if( it != savestream_table.end() )
-    std::cerr << "!! Error: savestream \"" << name << "\" already open!" << std::endl;
-  else
+  if( it == savestream_table.end() || savestream_table[ name ] == NULL)
     savestream_table[ name ] = new ostringstream;
+  else
+    std::cerr << "!! Error: savestream \"" << name << "\" already open!" << std::endl;
 }
 
 ostream*
@@ -310,7 +310,7 @@ savestream_use( const string& name ) {
   if( out != NULL ) {
     ostringstream *sout = dynamic_cast<ostringstream*>(out);
     assert( sout != NULL );
-    return "\\lcRawHtml{" + sout->str() + "}";
+    return "\\gdef\\lciSavestreamBuffer" + name + "{" + sout->str() + "}";
   }
   return string();
 }

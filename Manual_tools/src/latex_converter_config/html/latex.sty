@@ -213,6 +213,17 @@
 
 \newcommand{\protect}{}
 
+% trivial implementation: not "reentrant" !
+\newcommand{\expandafter}[2]{%
+  \lciSavestreamOpen{expandafter}%
+  \begin{savestream}{expandafter}#2\end{savestream}%
+  \lciSavestreamUse{expandafter}%
+  \expandafterX{#1}{\lciSavestreamBufferexpandafter}%
+  \lciSavestreamClose{expandafter}%
+}
+
+\newcommand{\expandafterX}[2]{#1{#X2}}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -256,10 +267,12 @@
         \lcRawHtml{<div class="NavTop"><hr><h2>Parts</h2><hr></div>}
         \lcRawHtml{<br><table border="0">}
         \lciSavestreamUse{parttoc}
+        \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
         \lcRawHtml{</table><br>}
         \lcRawHtml{<div class="NavTop"><hr><h2>Packages</h2><hr></div>}
         \lcRawHtml{<table border="0">}
         \lciSavestreamUse{pkgtoc}
+        \lcRawHtmlExpanded{\lciSavestreamBufferpkgtoc}
         \lcRawHtml{</table>}
       }{}
       %\lciTocSync

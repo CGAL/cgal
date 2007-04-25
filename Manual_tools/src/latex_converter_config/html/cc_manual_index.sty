@@ -140,15 +140,15 @@
 \gdef{\lciItem}{}
 
 \newcommand{\ccFonts}[2]{%
-   \lciIfEqualExpanded{a}{#1}{{\ccIndexAbbreviationFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{a}{#1}{{\ccIndexAbbreviationFont \lcRawHtmlExpanded{#2}}}{%
    \lciIfEqualExpanded{C}{#1}{{\ccc{#2}}}{%
-   \lciIfEqualExpanded{c}{#1}{{\ccIndexConceptFont \lcRawHtml{#2}}}{%
-   \lciIfEqualExpanded{d}{#1}{{\ccIndexDSFont \lcRawHtml{#2}}}{%
-   \lciIfEqualExpanded{f}{#1}{{\ccIndexFunctionalityFont \lcRawHtml{#2}}}{%
-   \lciIfEqualExpanded{h}{#1}{{\ccIndexHintFont \lcRawHtml{#2}}}{%
-   \lciIfEqualExpanded{l}{#1}{{\ccIndexLibraryFont \lcRawHtml{#2}}}{%
-   \lciIfEqualExpanded{p}{#1}{{\ccIndexPackageFont \lcRawHtml{#2}}}{%
-   \lciIfEqualExpanded{t}{#1}{{\ccIndexTermFont \lcRawHtml{#2}}}{
+   \lciIfEqualExpanded{c}{#1}{{\ccIndexConceptFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{d}{#1}{{\ccIndexDSFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{f}{#1}{{\ccIndexFunctionalityFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{h}{#1}{{\ccIndexHintFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{l}{#1}{{\ccIndexLibraryFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{p}{#1}{{\ccIndexPackageFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{t}{#1}{{\ccIndexTermFont \lcRawHtmlExpanded{#2}}}{
    {#2}}}}}}}}}}%
 }
 
