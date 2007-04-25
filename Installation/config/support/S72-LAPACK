@@ -1,9 +1,9 @@
 # LAPACK is a linear algebra library.
-# We search for a LAPACK library named "liblapack.a". It may be an hybrid LAPACK/Atlas library,
+# We search for a LAPACK library named "liblapack.a/.so". It may be an hybrid LAPACK/Atlas library,
 # which is the solution recommended by ATLAS. See http://math-atlas.sourceforge.net/errata.html#completelp.
 # Note: this configuration has been tested with:
 # - "lapack" package for Cygwin
-# - "lapack" RPM for Linux Fedora
+# - "lapack-devel" RPM for Linux Fedora
 
 DESCRIPTION = Unix default
 PROVIDES = LAPACK

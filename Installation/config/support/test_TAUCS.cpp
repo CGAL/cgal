@@ -26,6 +26,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/timeb.h>
 
 #define TAUCS_CORE_DOUBLE
 
@@ -66,16 +68,21 @@ int main(int argc, char* argv[])
     taucs_ccs_order(pMatrix,
                     &perm,
                     &invperm,
-                    "metis");
+                    (char*)"metis");
 
     // Call dpotrf() Lapack routine (Cholesky factorization)
-    int INFO;
     int sn_size = 0;
-    taucs_potrf("LOWER",
+    int lda = 1;
+    int info;
+    taucs_potrf((char*)"LOWER",
                 &sn_size,
                 NULL,
-                &sn_size,
-                &INFO);
+                &lda,
+                &info);
+
+    // ftime() is in compat lib. on FreeBSD and crypto lib. on MacOSX
+    struct timeb tb;
+    ftime(&tb);
 
     // TAUCS provides no version number :-(
     // Version 1 is obsolete, thus we assume version 2 (latest is 2.2 on 03/2006)

@@ -3,13 +3,13 @@
 # This configuration has been tested with Sun CC on Solaris (Sun WorkShop 6.2
 # and Sun Studio 11) and Linux (Sun Studio Express 3).
 
-DESCRIPTION = Sun Performance Library for Sun CC
+DESCRIPTION = Sun Performance for Sun CC
 PROVIDES = BLAS LAPACK
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS = -library=sunperf
 LIBS =
 REQUIRES = DOLLAR_SUNCC_COMPILER
-INCOMPATIBLE = 
+INCOMPATIBLE =
 STDINCLDIRS =
 INCLTHING =
 STDLIBDIRS =
