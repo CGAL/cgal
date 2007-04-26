@@ -1,5 +1,6 @@
-//! \file examples/Boolean_set_operations_2/ex_simple_join_intersect.cpp
-// Computing the union and the intersection of two simple polygons.
+/*! \file simple_join_intersect.cpp
+ * Computing the union and the intersection of two simple polygons.
+ */
 
 #include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>

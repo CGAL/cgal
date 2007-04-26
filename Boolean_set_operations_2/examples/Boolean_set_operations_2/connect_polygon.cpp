@@ -1,5 +1,6 @@
-//! \file examples/Boolean_set_operations_2/ex_connect_polygon.cpp
-// Connecting a polygon with holes.
+/*! \file connect_polygon.cpp
+ * Connecting a polygon with holes.
+ */
 
 #include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>

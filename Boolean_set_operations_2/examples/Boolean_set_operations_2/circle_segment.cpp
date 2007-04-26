@@ -1,5 +1,6 @@
-//! \file examples/Boolean_set_operations_2/ex_circle_segment.cpp
-// Handling circles and linear segments concurrently.
+/*! \file circle_segment.cpp
+ * Handling circles and linear segments concurrently.
+ */
 
 #include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>

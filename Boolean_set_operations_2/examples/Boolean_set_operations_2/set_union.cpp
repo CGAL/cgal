@@ -1,5 +1,6 @@
-//! \file examples/Boolean_set_operations_2/ex_set_union.cpp
-// Computing the union of a set of circles.
+/*! \file set_union.cpp
+ * Computing the union of a set of circles.
+ */
 
 #include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>

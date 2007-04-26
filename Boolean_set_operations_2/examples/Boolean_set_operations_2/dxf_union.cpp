@@ -1,5 +1,6 @@
-//! \file examples/Boolean_set_operations_2/ex_dxf_union.cpp
-// Computing the union of a set of circular polygons read from a DXF file.
+/*! \file dxf_union.cpp
+ * Computing the union of a set of circular polygons read from a DXF file.
+ */
 
 #include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>
