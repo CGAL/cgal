@@ -16,6 +16,8 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
+//                 Ron Wein               <wein@post.tau.ac.il>
+//                 Efi Fogel              <fogel@post.tau.ac.il>
 
 #ifndef CGAL_ENV_SPHERE_TRAITS_3_H
 #define CGAL_ENV_SPHERE_TRAITS_3_H
@@ -26,11 +28,8 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 
-
 CGAL_BEGIN_NAMESPACE
 
-template <class Kernel_> class Env_sphere_3;
- 
 template <class ConicTraits_2>
 class Env_sphere_traits_3 : public ConicTraits_2
 {
@@ -57,7 +56,7 @@ public:
   typedef typename Alg_kernel::Point_2              Alg_point_2;
   typedef typename Alg_kernel::Circle_2             Alg_circle_2;
   
-  typedef Env_sphere_3<Rat_kernel>                  Surface_3;
+  typedef typename Rat_kernel::Sphere_3             Surface_3;
   
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
@@ -1254,103 +1253,38 @@ protected:
 };
 
 /*!
- * \class A representation of a sphere, as used by the
- * Env_sphere_traits_3 traits-class.
+ * Compare two spheres: first compare their center points in an
+ * xyz-lexicographic order, then by their radii.
  */
-template <class Kernel_>
-class Env_sphere_3 : public Kernel_::Sphere_3
-{
-  typedef Kernel_                                                  Kernel;
-  typedef typename Kernel::Sphere_3                                Sphere_3;
-  typedef typename Kernel::Point_3                                 Point_3;
-  typedef typename Kernel::FT                                      NT;
-  
-  typedef typename Kernel::Sphere_3                                Base;
-
-public:
-
-  /*!
-   * Default constructor.
-   */
-  Env_sphere_3() :
-    Base()
-  {}
-
-  /*!
-   * Constructor from a "kernel" triangle.
-   * \param seg The segment.
-   */
-  Env_sphere_3(const Sphere_3& s) :
-    Base(s)
-  {}
-
-  /*!
-   * Construct a triangle from 3 end-points.
-   * \param p1 The first point.
-   * \param p2 The second point.
-   * \param p3 The third point.
-   */
-  Env_sphere_3(const Point_3 &c, const NT &r_sqr) :
-      Base(c, r_sqr)
-  {}
-
-  /*!
-   * Cast to a triangle.
-   */
-  operator Sphere_3() const
-  {
-    return (Sphere_3(this->center(), this->squared_radius()));
-  }
-};
-
 template <class Kernel>
-bool
-operator<(const Env_sphere_3<Kernel> &a,
-          const Env_sphere_3<Kernel> &b)
+bool operator< (const CGAL::Sphere_3<Kernel> & a,
+                const CGAL::Sphere_3<Kernel> & b)
 {
-  Kernel k;
+  Kernel            k;
   Comparison_result res = k.compare_xyz_3_object()(a.center(), b.center());
-  if(res == SMALLER)
-    return true;
-  if(res == LARGER)
-    return false;
 
-  if(a.squared_radius() < b.squared_radius())
-    return true;
-  if(a.squared_radius() > b.squared_radius())
-    return false;
+  if (res == EQUAL)
+  {
+    res = CGAL::compare (a.squared_radius(), b.squared_radius());
+  }
 
-  return false;
+  return (res == SMALLER);
 }
+
+/*!
+ * Compare two spheres for equality.
+ */
 template <class Kernel>
-bool
-operator==(const Env_sphere_3<Kernel> &a,
-           const Env_sphere_3<Kernel> &b)
+bool operator== (const typename Kernel::Sphere_3& a,
+                 const typename Kernel::Sphere_3& b)
 {
-  return (a.center() == b.center() && a.squared_radius() == b.squared_radius());
-}
-/*!
- * Exporter for the triangle class used by the traits-class.
- */
-template <class Kernel, class OutputStream>
-OutputStream& operator<< (OutputStream& os, const Env_sphere_3<Kernel>& s)
-{
-  os << static_cast<typename Kernel::Sphere_3>(s);
-  return (os);
-}
+  Kernel            k;
 
-/*!
- * Importer for the triangle class used by the traits-class.
- */
-template <class Kernel, class InputStream>
-InputStream& operator>> (InputStream& is, Env_sphere_3<Kernel>& s)
-{
-  typename Kernel::Sphere_3   kernel_s;
-  is >> kernel_s;
-  s = kernel_s;
-  return (is);
-}
+  if (! k.equal_3_object() (a.center(), b.center()))
+    return (false);
 
+  return (CGAL::compare (a.squared_radius(), b.squared_radius()) == EQUAL);
+}
 
 CGAL_END_NAMESPACE
 
