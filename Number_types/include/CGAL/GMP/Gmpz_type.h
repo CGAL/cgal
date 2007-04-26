@@ -479,6 +479,17 @@ operator>>(std::istream& is, Gmpz &z)
   return gmpz_new_read(is, z);
 }
 
+template <>
+struct Split_double<Gmpz>
+{
+  void operator()(double d, Gmpz &num, Gmpz &den) const
+  {
+    std::pair<double, double> p = split_numerator_denominator(d);
+    num = Gmpz(p.first);
+    den = Gmpz(p.second);
+  }
+};
+
 #include <CGAL/auto_link/GMP.h>
 #include <CGAL/auto_link/MPFR.h>
 

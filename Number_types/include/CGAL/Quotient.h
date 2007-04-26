@@ -60,6 +60,19 @@ template < typename NT >
 inline void
 simplify_quotient(NT &, NT &) {}
 
+// This one should be replaced by some functor or tag.
+// Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
+template < typename NT >
+struct Split_double
+{
+  void operator()(double d, NT &num, NT &den) const
+  {
+    num = NT(d);
+    den = 1;
+  }
+};
+
+
 template <class NT_>
 class Quotient
   : boost::ordered_field_operators1< Quotient<NT_>
@@ -78,7 +91,7 @@ class Quotient
     : num(n), den(1) {}
 
   Quotient(const CGAL_double(NT) & n)
-    : num(n), den(1) {}
+  { Split_double<NT>()(n, num, den); }
 
   Quotient(const CGAL_int(NT) & n)
     : num(n), den(1) {}
