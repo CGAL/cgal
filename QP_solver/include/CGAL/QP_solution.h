@@ -293,6 +293,22 @@ public:
     : Handle_for<const QP_solver_base<ET>*>(s), et0(0)
   {}
 
+  Quadratic_program_solution& 
+  operator= (const Quadratic_program_solution& sol)
+  {
+    if (this != &sol) {
+      // delete the old solver if necessary
+      if (!this->is_shared()) delete *(this->ptr());
+      this->Handle_for<const QP_solver_base<ET>*>::operator=(sol);
+    }
+    return *this;
+  }
+
+  ~Quadratic_program_solution()
+  {
+    if (!this->is_shared()) delete *(this->ptr());
+  }
+
 private:
   const QP_solver_base<ET>* solver() const 
   {
@@ -513,7 +529,8 @@ public:
   }
 
   // these four methods use the certificates to validate the solution
-  // of all four program types
+  // of all four program types; in case this fails, the solution becomes
+  // invalid (and this explains why the methods are non-const)
   template <class QuadraticProgram>
   bool solves_quadratic_program 
   (const QuadraticProgram& qp)
@@ -534,7 +551,8 @@ public:
   (const NonnegativeLinearProgram& lp)
   { return solves_program(lp, Tag_true(), Tag_true()); }
 
-  // helper used by all four validation methods above
+  // helper used by all four validation methods above; see
+  // QP_solver/QP_solution_impl.h for its implementation 
   template <class Program, typename Is_linear, typename Is_nonnegative>
   bool solves_program (const Program& p, 
 		       Is_linear is_linear, Is_nonnegative is_nonnegative);
@@ -544,11 +562,11 @@ private:
   template <typename Program>
   bool is_feasible (const Program& p, 
 		    typename std::vector<ET>& ax_minus_b,
-		    Tag_true is_nonnegative);
+		    Tag_true /*is_nonnegative*/);
   template <typename Program>
   bool is_feasible (const Program& p, 
 		    typename std::vector<ET>& ax_minus_b,
-		    Tag_false is_nonnegative);
+		    Tag_false /*is_nonnegative*/);
 
   template <typename Program>
   bool is_optimal_1 (const Program& p);
@@ -558,17 +576,17 @@ private:
 		     const typename std::vector<ET>& ax_minus_b);
 
   template <typename Program>
-  bool is_optimal_3 (const Program& p, 
-		     Tag_true is_linear, Tag_true is_nonnegative);
+  bool is_optimal_3 (const Program& p, typename std::vector<ET>& two_Dx,
+		     Tag_true /*is_linear*/, Tag_true /*is_nonnegative*/);
   template <typename Program>
-  bool is_optimal_3 (const Program& p, 
-		     Tag_false is_linear, Tag_true is_nonnegative);
+  bool is_optimal_3 (const Program& p, typename std::vector<ET>& two_Dx,
+		     Tag_false /*is_linear*/, Tag_true /*is_nonnegative*/);
   template <typename Program>
-  bool is_optimal_3 (const Program& p, 
-		     Tag_true is_linear, Tag_false is_nonnegative);
+  bool is_optimal_3 (const Program& p, typename std::vector<ET>& two_Dx,
+		     Tag_true /*is_linear*/, Tag_false /*is_nonnegative*/);
   template <typename Program>
-  bool is_optimal_3 (const Program& p, 
-		     Tag_false is_linear, Tag_false is_nonnegative);
+  bool is_optimal_3 (const Program& p, typename std::vector<ET>& two_Dx,
+		     Tag_false /*is_linear*/, Tag_false /*is_nonnegative*/);
 
   template <typename Program>
   bool is_infeasible_1 (const Program& p);
@@ -576,42 +594,52 @@ private:
   template <typename Program>
   bool is_infeasible_2 (const Program& p, 
 			typename std::vector<ET>& lambda_a,
-			Tag_true is_nonnegative);
+			Tag_true /*is_nonnegative*/);
   template <typename Program>
   bool is_infeasible_2 (const Program& p, 
 			typename std::vector<ET>& lambda_a,
-			Tag_false is_nonnegative);
+			Tag_false /*is_nonnegative*/);
 
   template <typename Program>
   bool is_infeasible_3 (const Program& p, 
 			const typename std::vector<ET>& lambda_a,
-			Tag_true is_nonnegative); 
+			Tag_true /*is_nonnegative*/); 
   template <typename Program>
   bool is_infeasible_3 (const Program& p, 
 			const typename std::vector<ET>& lambda_a,
-			Tag_false is_nonnegative);
+			Tag_false /*is_nonnegative*/);
  
   template <typename Program>
   bool is_unbounded_1 (const Program& p);
  
   template <typename Program>
-  bool is_unbounded_2 (const Program& p, Tag_true is_nonnegative);
+  bool is_unbounded_2 (const Program& p, Tag_true /*is_nonnegative*/);
   template <typename Program>
-  bool is_unbounded_2 (const Program& p, Tag_false is_nonnegative);
+  bool is_unbounded_2 (const Program& p, Tag_false /*is_nonnegative*/);
 
   template <typename Program>
-  bool is_unbounded_3 (const Program& p, Tag_true is_linear);
+  bool is_unbounded_3 (const Program& p, Tag_true /*is_linear*/);
   template <typename Program>
-  bool is_unbounded_3 (const Program& p, Tag_false is_linear);
+  bool is_unbounded_3 (const Program& p, Tag_false /*is_linear*/);
+
+  template <typename Program>
+  bool is_value_correct 
+  (const Program& p, typename std::vector<ET>& two_Dx, 
+   Tag_true /*is_linear*/); 
+  
+  template <typename Program>
+  bool is_value_correct 
+  (const Program& p, typename std::vector<ET>& two_Dx,
+   Tag_false /*is_linear*/); 
 
   template <typename Program>
   bool are_constraints_feasible 
   (const Program& p, typename std::vector<ET>& ax);
 
   template <typename Program>
-  bool are_bounds_feasible (const Program& p,  Tag_true is_nonnegative);
+  bool are_bounds_feasible (const Program& p,  Tag_true /*is_nonnegative*/);
   template <typename Program>
-  bool are_bounds_feasible (const Program& p,  Tag_false is_nonnegative);
+  bool are_bounds_feasible (const Program& p,  Tag_false /*is_nonnegative*/);
   
   template <typename Program, typename Z_iterator >
   void add_Az 
@@ -629,14 +657,6 @@ private:
   void add_c
   (const Program& p, typename std::vector<ET>& v);
 
-
-public:
-  // destruction
-  // -----------
-  ~Quadratic_program_solution()
-  {
-    if (!this->is_shared()) delete *(this->ptr());
-  }
 }; 
 
 // output

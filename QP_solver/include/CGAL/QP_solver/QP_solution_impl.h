@@ -46,13 +46,17 @@ bool Quadratic_program_solution<ET>::solves_program
   switch (status()) {
   case QP_OPTIMAL: {
     std::vector<ET> ax_minus_b (m, et0); // d(Ax-b)
+    std::vector<ET> two_Dx (n, et0);     // d(2Dx)
     return 
       // the following fills ax_minus_b...
       is_feasible (p, ax_minus_b, is_nonnegative) &&          // feasible?
+      // the following fills two_Dx...
+      is_value_correct (p, two_Dx, is_linear) &&              // obj. value?
       is_optimal_1 (p) &&                                     // condition 1?
       // ...and the following uses ax_minus_b
       is_optimal_2 (p, ax_minus_b)         &&                 // condition 2?
-      is_optimal_3 (p, is_linear, is_nonnegative);            // condition 3?
+      // ...and the following uses two_Dx
+      is_optimal_3 (p, two_Dx, is_linear, is_nonnegative);    // condition 3?
   }
   case QP_INFEASIBLE: {
     std::vector<ET> lambda_a (n, et0); // lambda^TA
@@ -77,7 +81,7 @@ bool Quadratic_program_solution<ET>::solves_program
 }
 
 // tests whether Ax ~ b is satisfied and computes d(Ax-b);
-// precondition ax_minus_b has length m and is zero
+// precondition: ax_minus_b has length m and is zero
 // ------------------------------------------------------
 template <typename ET>
 template <typename Program>
@@ -123,7 +127,7 @@ template <typename Program>
 bool Quadratic_program_solution<ET>::is_feasible 
 (const Program& p, 
  typename std::vector<ET>& ax_minus_b,
- Tag_true is_nonnegative)
+ Tag_true /*is_nonnegative*/)
 {
   // test Ax ~ b
   if (!are_constraints_feasible (p, ax_minus_b)) return false;
@@ -144,7 +148,7 @@ template <typename Program>
 bool Quadratic_program_solution<ET>::is_feasible 
 (const Program& p, 
  typename std::vector<ET>& ax_minus_b,
- Tag_false is_nonnegative)
+ Tag_false /*is_nonnegative*/)
 {
   // test Ax ~ b
   if (!are_constraints_feasible (p, ax_minus_b)) return false; // (*)
@@ -230,32 +234,18 @@ bool Quadratic_program_solution<ET>::is_optimal_2
   return true;					     
 }
 
-// checks whether (c^T + lambda^TA)_j >= (==) 0 if x_j = (>) 0,
-// and whether the objective value is correct
+// checks whether (c^T + lambda^TA)_j >= (==) 0 if x_j = (>) 0
 // -----------------------------------------------------------
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_optimal_3 
-(const Program& p, 
- Tag_true is_linear, Tag_true is_nonnegative)
+(const Program& p, std::vector<ET>& q,
+ Tag_true /*is_linear*/, Tag_true /*is_nonnegative*/)
 {
-  int n = p.get_n();
-  std::vector<ET> q (n, et0);
+  int n = p.get_n();                                           // q = 0
   add_c (p, q);                                                // d c^T
-  // check objective value c^T x + c_0
-  ET d = variables_common_denominator();
-  if (d <= et0)
-    return error ("common variable denominator is negative");
-  Variable_numerator_iterator v = variable_numerators_begin();
-  ET obj = d * d * ET(p.get_c0());                            // d^2 * c_0
-  for (int j=0; j<n; ++j, ++v)
-    obj += q[j] * *v;                                         // d^2 * c^T x
-  if (Quotient<ET>(obj, d*d) != objective_value())
-    return error ("optimal objective value incorrect");
-    
   add_zA (p, optimality_certificate_numerators_begin(), q);    // d lambda^T A
-  // now the actual check of the optimality conditions
-  v = variable_numerators_begin();
+  Variable_numerator_iterator v = variable_numerators_begin();
   for (int j=0; j<n; ++j, ++v) {
     if (q[j] < et0) 
       return error("some (c^T + lambda^TA)_j is negative");
@@ -266,37 +256,17 @@ bool Quadratic_program_solution<ET>::is_optimal_3
 }
 
 // checks whether (c^T + lambda^TA + 2x^TD)_j >= (==) 0 if x_j = (>) 0
-// and whether the objective value is correct
 // -------------------------------------------------------------------
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_optimal_3 
-(const Program& p, 
- Tag_false is_linear, Tag_true is_nonnegative)
+(const Program& p, std::vector<ET>& q,
+ Tag_false /*is_linear*/, Tag_true /*is_nonnegative*/)
 {
-  int n = p.get_n();
-  std::vector<ET> q (n, et0);
-  add_two_Dz (p, variable_numerators_begin(), q);              // d * 2Dx  
-  // check objective value x^TDx + c^T x + c_0
-  ET d = variables_common_denominator();
-  if (d <= et0)
-    return error ("common variable denominator is negative");
-  Variable_numerator_iterator v = variable_numerators_begin();
-  ET et2(2);
-  ET obj = et2 * d * d * ET(p.get_c0());                    // 2d^2 * c_0
-  typedef typename Program::C_iterator C_column_iterator;
-  C_column_iterator c = p.get_c();
-  for (int j=0; j<n; ++j, ++v, ++c) {
-    obj += et2 * d * ET(*c) * *v;                           // 2d^2 * c^T x
-    obj += q[j] * *v;                                       // 2d^2 * x^TDx
-  }  
-  if (Quotient<ET>(obj, et2*d*d) != objective_value())
-    return error ("optimal objective value incorrect");
-
+  int n = p.get_n();                                          // q = 2Dx
   add_c (p, q);                                               // d * c^T
   add_zA (p, optimality_certificate_numerators_begin(), q);   // d * lambda^T A
-  // now the actual check
-  v = variable_numerators_begin();
+  Variable_numerator_iterator v = variable_numerators_begin();
   for (int j=0; j<n; ++j, ++v) {
     if (q[j] < et0) 
       return error("some (c^T + lambda^TA + 2Dx)_j is negative");
@@ -308,30 +278,16 @@ bool Quadratic_program_solution<ET>::is_optimal_3
 
 // checks whether (c^T + lambda^TA )_j >= (==, <=) 0 if 
 // x_j = l_j < u_j (l_j < x_j < u_j,  l_j < u_j = x_j)
-// and whether the objective value is correct
 // ---------------------------------------------------
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_optimal_3 
-(const Program& p, 
- Tag_true is_linear, Tag_false is_nonnegative)
+(const Program& p, std::vector<ET>& q, 
+ Tag_true /*is_linear*/, Tag_false /*is_nonnegative*/)
 {
-  int n = p.get_n();
-  std::vector<ET> q (n, et0);
-  add_c (p, q);                                                // d * c^T
-  // check objective value c^T x + c_0
-  ET d = variables_common_denominator();
-  if (d <= et0)
-    return error ("common variable denominator is negative");
-  Variable_numerator_iterator v = variable_numerators_begin();
-  ET obj = d * d * ET(p.get_c0());                            // d^2 * c_0
-  for (int j=0; j<n; ++j, ++v)
-    obj += q[j] * *v;                                         // d^2 * c^T x
-  if (Quotient<ET>(obj, d*d) != objective_value())
-    return error ("optimal objective value incorrect");
-
+  int n = p.get_n();                                          // q = 0
+  add_c (p, q);                                               // d * c^T
   add_zA (p, optimality_certificate_numerators_begin(), q);   // d * lambda^T A
-  // now the actual check
   typedef typename Program::FL_iterator FL_column_iterator;
   typedef typename Program::L_iterator L_column_iterator;  
   typedef typename Program::FU_iterator FU_column_iterator;
@@ -340,7 +296,10 @@ bool Quadratic_program_solution<ET>::is_optimal_3
   FU_column_iterator fu = p.get_fu();
   L_column_iterator l = p.get_l();
   U_column_iterator u = p.get_u();  
-  v = variable_numerators_begin();
+  Variable_numerator_iterator v = variable_numerators_begin();  
+  ET d = variables_common_denominator();
+  if (d <= et0)
+    return error ("common variable denominator is negative");
   for (int j=0; j<n; ++j, ++v, ++fl, ++l, ++fu, ++u) {
     if (*fl && *v == ET(*l) * d && (!*fu || *l < *u) && q[j] < et0) 
       return error("x_j = l_j < u_j but (c^T + lambda^TA )_j < 0");
@@ -354,36 +313,16 @@ bool Quadratic_program_solution<ET>::is_optimal_3
 
 // checks whether (c^T + lambda^TA +2x^*D)_j >= (==, <=) 0 if 
 // x_j = l_j < u_j (l_j < x_j < u_j,  l_j < u_j = x_j)
-// and whether the objective value is correct
 // ----------------------------------------------------------
 template <typename ET>
 template <typename Program>
 bool  Quadratic_program_solution<ET>::is_optimal_3 
-(const Program& p, 
- Tag_false is_linear, Tag_false is_nonnegative)
+(const Program& p, std::vector<ET>& q, 
+ Tag_false /*is_linear*/, Tag_false /*is_nonnegative*/)
 {
-  int n = p.get_n();
-  std::vector<ET> q (n, et0);
-  add_two_Dz (p, variable_numerators_begin(), q);            // d * 2Dx
-  // check objective value x^TDx + c^T x + c_0
-  ET d = variables_common_denominator();
-  if (d <= et0)
-    return error ("common variable denominator is negative");
-  Variable_numerator_iterator v = variable_numerators_begin();
-  ET et2(2);
-  ET obj = et2 * d * d * ET(p.get_c0());                    // 2d^2 * c_0
-  typedef typename Program::C_iterator C_column_iterator;
-  C_column_iterator c = p.get_c();
-  for (int j=0; j<n; ++j, ++v, ++c) {
-    obj += et2 * d * ET(*c) * *v;                           // 2d^2 * c^T x
-    obj += q[j] * *v;                                       // 2d^2 * x^TDx
-  }  
-  if (Quotient<ET>(obj, et2*d*d) != objective_value())
-    return error ("optimal objective value incorrect");
- 
+  int n = p.get_n();                                         // q = d * 2Dx
   add_c (p, q);                                              // d * c^T
   add_zA (p, optimality_certificate_numerators_begin(), q);  // d * lambda^T A
-  // now the actual check
   typedef typename Program::FL_iterator FL_column_iterator;
   typedef typename Program::L_iterator L_column_iterator;  
   typedef typename Program::FU_iterator FU_column_iterator;
@@ -392,7 +331,10 @@ bool  Quadratic_program_solution<ET>::is_optimal_3
   FU_column_iterator fu = p.get_fu();
   L_column_iterator l = p.get_l();
   U_column_iterator u = p.get_u();  
-  v = variable_numerators_begin();
+  Variable_numerator_iterator v = variable_numerators_begin();  
+  ET d = variables_common_denominator();
+  if (d <= et0)
+    return error ("common variable denominator is negative");
   for (int j=0; j<n; ++j, ++v, ++fl, ++l, ++fu, ++u) {
     if (*fl && *v == ET(*l) * d && (!*fu || *l < *u) && q[j] < et0) 
       return error("x_j = l_j < u_j but (c^T + lambda^TA + 2Dx)_j < 0");
@@ -404,13 +346,64 @@ bool  Quadratic_program_solution<ET>::is_optimal_3
   return true;
 }
 
+// checks whether objective function value is c^T x + c_0, but
+// leaves the vector q alone
+// -------------------------------------------------------------- 
+template <typename ET>
+template <typename Program>
+bool Quadratic_program_solution<ET>::is_value_correct 
+(const Program& p, std::vector<ET>& q, Tag_true /*is_linear*/)
+{
+  // check objective value c^T x + c_0
+  ET d = variables_common_denominator();
+  if (d <= et0)
+    return error ("common variable denominator is negative");
+  Variable_numerator_iterator v = variable_numerators_begin();
+  ET obj = d  * ET(p.get_c0());                             // d * c_0
+  typedef typename Program::C_iterator C_column_iterator;
+  C_column_iterator c = p.get_c();
+  int n = p.get_n();
+  for (int j=0; j<n; ++j, ++v, ++c)
+    obj += ET(*c) * *v;                                     // d * c^T x
+  if (Quotient<ET>(obj, d) != objective_value())
+    return error ("optimal objective value c^T x + c_0 incorrect");
+  return true;
+}
+
+// checks whether objective function value is x^TDx + c^T x + c_0
+// and fills the vector q with 2Dx
+// -------------------------------------------------------------- 
+template <typename ET>
+template <typename Program>
+bool Quadratic_program_solution<ET>::is_value_correct 
+(const Program& p, std::vector<ET>& q, Tag_false /*is_linear*/)
+{
+  ET d = variables_common_denominator();
+  if (d <= et0)
+    return error ("common variable denominator is negative");
+  Variable_numerator_iterator v = variable_numerators_begin();  
+  int n = p.get_n();
+  add_two_Dz (p, v, q);                                     // 2d * Dx
+  ET et2(2);
+  ET obj = et2 * d * d * ET(p.get_c0());                    // 2d^2 * c_0
+  typedef typename Program::C_iterator C_column_iterator;
+  C_column_iterator c = p.get_c();  
+  for (int j=0; j<n; ++j, ++v, ++c) {
+    obj += et2 * d * ET(*c) * *v;                           // 2d^2 * c^T x
+    obj += q[j] * *v;                                       // 2d^2 * x^TDx
+  }  
+  if (Quotient<ET>(obj, et2*d*d) != objective_value())
+    return error ("optimal objective value x^TDx + c^T x + c_0 incorrect");
+  return true;
+}
+
 // checks whether lambda^TA >= 0
 // -----------------------------
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_infeasible_2 
 (const Program& p, typename std::vector<ET>& lambda_a, 
- Tag_true is_nonnegative)
+ Tag_true /*is_nonnegative*/)
 {
   // fill lambda_a
   add_zA (p, infeasibility_certificate_begin(), lambda_a); 
@@ -427,7 +420,7 @@ template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_infeasible_2 
 (const Program& p, typename std::vector<ET>& lambda_a, 
- Tag_false is_nonnegative)
+ Tag_false /*is_nonnegative*/)
 {
   // fill lambda_a
   add_zA (p, infeasibility_certificate_begin(), lambda_a); 
@@ -451,7 +444,7 @@ template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_infeasible_3 
 (const Program& p, const typename std::vector<ET>& lambda_a,
- Tag_true is_nonnegative)
+ Tag_true /*is_nonnegative*/)
 {
   ET lambda_b(0);
   int m = p.get_m();
@@ -472,7 +465,7 @@ template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_infeasible_3 
 (const Program& p, const typename std::vector<ET>& lambda_a,
- Tag_false is_nonnegative)
+ Tag_false /*is_nonnegative*/)
 {
   ET lambda_b(0);
   int m = p.get_m(); 
@@ -533,7 +526,7 @@ bool Quadratic_program_solution<ET>::is_unbounded_1
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_unbounded_2 
-(const Program& p, Tag_true is_nonnegative)
+(const Program& p, Tag_true /*is_nonnegative*/)
 {
   int n = p.get_n();
   Unboundedness_certificate_iterator unb = unboundedness_certificate_begin();
@@ -548,7 +541,7 @@ bool Quadratic_program_solution<ET>::is_unbounded_2
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_unbounded_2 
-(const Program& p, Tag_false is_nonnegative)
+(const Program& p, Tag_false /*is_nonnegative*/)
 {
   int n = p.get_n();
   typedef typename Program::FL_iterator FL_column_iterator;
@@ -570,7 +563,7 @@ bool Quadratic_program_solution<ET>::is_unbounded_2
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_unbounded_3 
-(const Program& p, Tag_true is_linear)
+(const Program& p, Tag_true /*is_linear*/)
 {
   ET cw(0);
   int n = p.get_n();
@@ -589,7 +582,7 @@ bool Quadratic_program_solution<ET>::is_unbounded_3
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_unbounded_3 
-(const Program& p, Tag_false is_linear)
+(const Program& p, Tag_false /*is_linear*/)
 {
   int n = p.get_n();
   std::vector<ET> two_dw (n, et0);

@@ -514,7 +514,8 @@ public:
 
   virtual ~QP_solver()
   {
-    delete strategyP;
+    if (strategyP != static_cast<Pricing_strategy*>(0))
+      delete strategyP;
   }
 
 	      

@@ -363,11 +363,18 @@ namespace QP_functions_detail {
 	// write log file
 	std::ofstream out("QP_solver.log");
 	out << "Error: Program solution is invalid\n"
-	    << "  (" << solution.get_error() << ")\n"
+	    << "  (error message: " << solution.get_error() << ")\n"
+	    << "------------------\n"
+	    << "Solution function:\n"
+	    << "------------------\n";
+	print_solution_function (out, Is_linear(), Is_nonnegative());
+	out << "\n"
+	    << "--------\n"
 	    << "Program:\n" 
 	    << "--------\n";
 	print_program (out, p, "unsolved", Is_linear(), Is_nonnegative());
-	out << "Options:\n"
+	out << "--------\n"
+	    << "Options:\n"
 	    << "--------\n"
 	    << options << std::endl;
 	// print warning

@@ -54,6 +54,32 @@ namespace QP_functions_detail {
    Is_nonnegative is_nonnegative,
    const Quadratic_program_options& options = Quadratic_program_options()); 
 
+  // internal routines: prints name of solution function
+  void print_solution_function 
+  (std::ostream& out, 
+   Tag_true /*is_linear*/, Tag_true /*is_nonnegative*/)
+  {
+    out << "solve_nonnegative_linear_program"; 
+  }
+  void print_solution_function 
+  (std::ostream& out, 
+   Tag_false /*is_linear*/, Tag_true /*is_nonnegative*/)
+  {
+    out << "solve_nonnegative_quadratic_program"; 
+  }
+  void print_solution_function 
+  (std::ostream& out, 
+   Tag_true /*is_linear*/, Tag_false /*is_nonnegative*/)
+  {
+    out << "solve_linear_program"; 
+  }
+  void print_solution_function 
+  (std::ostream& out, 
+   Tag_false /*is_linear*/, Tag_false /*is_nonnegative*/)
+  {
+    out << "solve_quadratic_program"; 
+  }
+				
   // internal routine:
   // test whether the system is of the form A x == b (equations only)
   template <typename R>
@@ -127,7 +153,6 @@ template <typename NonnegativeLinearProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_linear_program 
 (const NonnegativeLinearProgram &lp, const ET&,
 const Quadratic_program_options& options = Quadratic_program_options());
-
 
 CGAL_END_NAMESPACE
 

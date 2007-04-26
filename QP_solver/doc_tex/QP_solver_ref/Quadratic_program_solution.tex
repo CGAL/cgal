@@ -212,7 +212,10 @@ implementation to convince yourself).
 
 By passing a suitable option to the solution function, you can make sure that 
 this check is done automatically after the solution of the program, see 
-\ccc{Quadratic_program_options}.
+\ccc{Quadratic_program_options}. If the check fails, a logfile is generated
+that contains the details, and an error message is written to \ccc{std::cerr}
+(see \ccReferToExampleCode{QP_solver/cycling.cpp} for an example that uses
+this option).
 
 \ccMethod{template <class QuadraticProgram>
   bool solves_quadratic_program 
@@ -225,7 +228,7 @@ problem, through the method \ccc{get_error()}.}
 
 \ccMethod{template <class LinearProgram>
   bool solves_linear_program 
-  (const LinearProgram& qp);}
+  (const LinearProgram& lp);}
 {returns \ccc{true} iff \ccVar\ solves the linear program \ccc{lp}.
 If the result is \ccc{false}, you can get a message that describes the
 problem, through the method \ccc{get_error()}. }
@@ -244,9 +247,9 @@ problem, through the method \ccc{get_error()}. }
 
 \ccMethod{template <class NonnegativeLinearProgram>
   bool solves_nonnegative_linear_program 
-  (const NonnegativeLinearProgram& qp);}
+  (const NonnegativeLinearProgram& lp);}
 {returns \ccc{true} iff \ccVar\ solves the nonnegative
-linear program \ccc{lp}.If the result is \ccc{false}, you can get a message that describes the
+linear program \ccc{lp}. If the result is \ccc{false}, you can get a message that describes the
 problem, through the method \ccc{get_error()}. }
 
 \ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}

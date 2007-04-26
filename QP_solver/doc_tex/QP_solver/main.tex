@@ -668,10 +668,10 @@ of the certificates.
 
 \section{Customizing the Solver\label{sec:QP-customization}}
 Sometimes it is necessary to alter the default behavior of the solver.
-There are two notable case that we want to discuss here. There are
-other situations where such changes are not critical but simply beneficial
-for the performance (see the class \ccc{Quadratic_program_pricing_strategy}
-for a discussion).
+This can be done by passing a suitably prepared object of the class
+\ccc{Quadratic_program_options} to the solution functions. Most options 
+concern ``soft'' issues like verbosity, but there are two notable case 
+where it is of critical importance to be able to change the defaults.
 
 \subsection{Exponent overflow in double using floating-point filters\label{sec:QP-customization-filtering}}
 The filtered version of the solver that is used for some problems
