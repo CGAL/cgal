@@ -73,7 +73,7 @@ class Polyline_constructor : public Modifier_base<typename Nef3::SNC_structure> 
  public:
     void operator()(SNC_structure& snc) {
       point_iterator pbegin, pend, pnext, pprev;
-      for(;begin != end; ++end) {
+      for(;begin != end; ++begin) {
 	pend = begin->second;
 	pprev = pnext = pbegin = begin->first;
 	++pnext;

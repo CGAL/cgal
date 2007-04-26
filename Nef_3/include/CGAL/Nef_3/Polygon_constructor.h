@@ -85,7 +85,7 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
     void operator()(SNC_structure& snc) {
       Sphere_circle c;
       point_iterator pbegin, pend, pnext, pprev;
-      for(;begin != end; ++end) {
+      for(;begin != end; ++begin) {
 	pprev = pend = begin->second;
 	pnext = pbegin = begin->first;
 	--pprev;
