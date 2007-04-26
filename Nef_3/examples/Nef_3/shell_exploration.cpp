@@ -31,11 +31,11 @@ public:
     }
   }
 
-  void visit(Halfedge_const_handle e) {}
-  void visit(Halffacet_const_handle f) {}
-  void visit(SHalfedge_const_handle se) {}
-  void visit(SHalfloop_const_handle sl) {}
-  void visit(SFace_const_handle sf) {}
+  void visit(Halfedge_const_handle ) {}
+  void visit(Halffacet_const_handle ) {}
+  void visit(SHalfedge_const_handle ) {}
+  void visit(SHalfloop_const_handle ) {}
+  void visit(SFace_const_handle ) {}
 
   Vertex_const_handle& minimal_vertex() { return v_min; }
   void reset_minimal_vertex() { first = true; }
