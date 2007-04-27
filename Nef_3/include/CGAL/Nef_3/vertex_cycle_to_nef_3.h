@@ -129,7 +129,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
 
       t_fc = t_fc_0 = ctp.incident_faces(t_vh, t_fh);
       do
-      {  if (cond=t_fc->is_constrained(ctp.cw(t_fc->index(t_vh)))) break;
+      {  if ((cond=t_fc->is_constrained(ctp.cw(t_fc->index(t_vh))))) break;
       } while (--t_fc != t_fc_0)
       ; CGAL_assertion ( cond ); // do-while ends with break
       t_fh = t_fc->neighbor(ctp.cw(t_fc->index(t_vh)));
@@ -190,7 +190,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
          p_seh->mark() = p_seh->twin()->mark() = true;
 
 	 // constrained edge detected?
-	 if ( cond = t_fc->is_constrained(ctp.cw(idx)) )
+	 if ((cond = t_fc->is_constrained(ctp.cw(idx))))
 	 {  // create new sface in SM
 	    SFace_handle p_fh = p_dec.new_sface ();
 	    p_fh->mark() = false;

@@ -862,11 +862,12 @@ public:
     SNC_intersection is;
     Point_3 ip;
     bool flag=is.does_intersect_internally(Segment_3(*s1,*t1),Segment_3(*s2,*t2),ip);
-    if(!flag)
+    if(!flag) {
       if(*s1 == *s2) return normalized(*s1);
       else if(*s1 == *t2) return normalized(*s1);
       else if(*t1 == *s2) return normalized(*t1);
       else if(*t1 == *t2) return normalized(*t1);
+    }
     return normalized(ip);
   }
 
@@ -945,7 +946,7 @@ public:
 	       " direction("<<e->vector()<<")"<<
 	       " line("<<l<<")"<<" inverted="<<inverted);
 	
-	if(Infi_box::is_edge_on_infibox(e))
+	if(Infi_box::is_edge_on_infibox(e)) {
 	  if(Infi_box::is_type4(e))
 	    M4[l].push_back(Halfedge_key(p,inverted,e, D));
 	  else
@@ -953,6 +954,7 @@ public:
 	      M3[l].push_back(Halfedge_key(p,inverted,e, D));
 	    else
 	      M2[l].push_back(Halfedge_key(p,inverted,e, D));
+	}
       }
       
       typename Pluecker_line_map::iterator it;
