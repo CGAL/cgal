@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  ETH Zurich (Switzerland).
+// Copyright (c) 1997-2007  ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,10 +15,10 @@
 // $Id$
 // 
 //
-// Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
+// Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp <fransw@inf.ethz.ch>
-//                 Kaspar Fischer <fischerk@inf.ethz.ch>
+//                 Franz Wessendorp
+//                 Kaspar Fischer
 
 #ifndef CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H
 #define CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H

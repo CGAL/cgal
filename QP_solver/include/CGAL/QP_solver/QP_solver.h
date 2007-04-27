@@ -1,3 +1,6 @@
+// Copyright (c) 1997-2007  ETH Zurich (Switzerland).
+// All rights reserved.
+//
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
@@ -12,10 +15,10 @@
 // $Id$
 // 
 //
-// Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
+// Author(s)     : Kaspar Fischer
 //               : Bernd Gaertner <gaertner@inf.ethz.ch>
-//               : Sven Schoenherr <sven@inf.ethz.ch>
-//               : Franz Wessendorp < fransw@inf.ethz.ch>
+//               : Sven Schoenherr 
+//               : Franz Wessendorp 
 
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H

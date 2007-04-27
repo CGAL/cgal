@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  ETH Zurich (Switzerland).
+// Copyright (c) 1997-2007  ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,7 +22,7 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/iterator.h>
-#include <CGAL/QP_solver.h>
+#include <CGAL/QP_solver/QP_solver.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_solution.h>
 

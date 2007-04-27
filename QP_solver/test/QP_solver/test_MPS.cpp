@@ -28,7 +28,7 @@
 #include <CGAL/Gmpz.h>
 #endif
 
-#include <CGAL/QP_solver.h>
+#include <CGAL/QP_solver/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
