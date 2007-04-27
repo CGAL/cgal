@@ -1,6 +1,12 @@
 README
 ======
 
+backport for etch:
+- debian/changelog:
+  * adjust version suffix from -X to -X~etch1
+  * adjust suite from unstable to stable
+  * maintain other differences
+
 backport for sarge:
 - debian/control:
   * adjust Standards-Version: to 3.6.1
@@ -11,11 +17,9 @@ backport for sarge:
 - debian/compat:
   * adjust debhelper compatibility level from 5 to 4
 - debian/changelog:
-  * adjust version suffix from -X to -0sargeY
-  * adjust suite from unstable to stable
+  * adjust version suffix from -X to -Ysarge1 (with Y=X-1)
+  * adjust suite from unstable to oldstable
   * maintain other differences
-
-backport for etch:
 
 tagging:
 svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.2.1-1

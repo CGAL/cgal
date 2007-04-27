@@ -61,7 +61,7 @@ install: build
 
 	rm debian/tmp/usr/bin/cgal_make_macosx_app
 
-	cat make/makefile_* | sed -f debian/misc/adjust-default-makefile.sed >debian/tmp/usr/share/cgal/makefile
+	cat make/makefile_* | sed -f debian/misc/adjust-default-makefile.sed >debian/tmp/usr/share/cgal/cgal.mk
 
 	mv examples examples.orig
 	cp -a examples.orig examples

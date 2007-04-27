@@ -1,4 +1,4 @@
-include ../tmp/usr/share/cgal/makefile
+include ../tmp/usr/share/cgal/cgal.mk
 
 rounding_modes: rounding_modes.o
 	$(CGAL_CXX) -o rounding_modes rounding_modes.o $(CGAL_LDFLAGS) $(CGAL_LIBPATH)
