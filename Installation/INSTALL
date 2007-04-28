@@ -4,27 +4,29 @@ This file describes how to install CGAL on Unix or Unix-like systems
 such as Linux, Solaris, Irix, and Cygwin on Windows. For installation
 under Windows using native tools, see INSTALL.win32.
 
-The documentation of CGAL is available in various formats (HTML, PostScript,
-PDF). It is not bundled with the software but can be downloaded separately at
-<http://www.cgal.org/Manual>.
+The documentation of CGAL is available in various formats (HTML,
+PostScript, PDF). It is not bundled with the software but can be
+downloaded separately at <http://www.cgal.org/Manual>.
 
-For more information about CGAL, see the URL <http://www.cgal.org/>.
+For more information about CGAL, see the <http://www.cgal.org/>.
 
 To install CGAL, you should:
 
- - download the compressed archive file from the CGAL web site www.cgal.org
+ - download the compressed archive file from the CGAL web site
+   http://www.cgal.org
 
  - unpack the file
 
  - build and install the CGAL libraries by running
         "./install_cgal --prefix=/usr/local" to install CGAL in /usr/local
-              (or where ever else is desired)
-        or,  for an interactive installer run "./install_cgal -i"
-    Either way the installer will try to locate the libraries used
-    and required by CGAL. These libraries are detailed in the CGAL
-    install notes at 
+              (or where ever else is desired) 
+    The installer will try to locate the libraries used and required
+    by CGAL. These libraries are detailed in the CGAL install notes at
     <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
 
-    
+NOTE: the interactive installer, available by running 
+"./install_cgal -i" only works for in-place installs of CGAL (ones
+where the libraries live in the CGAL source directory).  The exception
+is Mac OS where installs from the interactive installer work.
 
 -------------------------------------------------------------------------------
