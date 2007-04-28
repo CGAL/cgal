@@ -220,13 +220,16 @@ print_usage_information()
                the library is left in the lib directory below install_cgal)
                except on Mac OS.
   --PACKAGENAME_INCL_DIR <dir>
-               Add \"-I<dir>\" to CPPFLAGS. See above for valid PACKAGENAMEs.
+               Add \"-I<dir>\" to CPPFLAGS. The valid PACKAGENAMEs in this 
+               context are BOOST, BOOST_PROGRAM_OPTIONS, BOOST_BIMAP, X11, 
+               GMP, GMPXX, MPFR, ZLIB, BLAS, LAPACK, LEDA, LEDAWIN, OPENGL,
+               QT, TAUCS
   --PACKAGENAME_LIB_DIR <dir>
                Add \"-L<dir>\" to LDFLAGS.
   --upgrade <dir> or -u <dir>
-               runs the script in upgrade mode.
-               Use this option, if you upgrade from a previously installed
-               CGAL and supply the directory where it is installed on your
+               runs the script in upgrade mode.  Use this option, if
+               you upgrade from a previously installed CGAL and supply
+               the directory where the old source is found on your
                system. The config/install files are copied from there.
   --build-all
                builds libraries for all compilers for which a
@@ -247,9 +250,9 @@ print_usage_information()
                prints the identifier for the configuration which uses
                the specified compiler.
   --CGAL_DIR <dir>
-               Specify an explicit path to use for the CGAL directory. This
-               is useful if \`pwd\` does not return the desired path to the
-               CGAL source.
+               Specify an explicit path to use for the CGAL
+               directory. This is useful if \`pwd\` does not return
+               the desired path to the CGAL source.
   --verbose    Give report for each test that fails
                (not generally recommended).
 "
