@@ -172,7 +172,7 @@ LGPL_LICENSE_HEADER=\
 
 print_usage_information()
 {
-	${_printf} "%s\n" \
+        ${_printf} "%s\n" \
 "Usage: ${CGAL_INSTALL_CGAL} [OPTION]"
       ${_printf} "\n%s\n" \
 "Basic options:
@@ -185,7 +185,7 @@ print_usage_information()
                Do not build static archives, only the shared libraries.
 "
 
- ${_printf} "\n\n%s\n" \
+ ${_printf} "%s\n" \
 "Environment variables:
   CXX          Use \$CXX as the compiler instead of searching for one. 
   CPPFLAGS,CXXFLAGS 
@@ -194,62 +194,62 @@ print_usage_information()
   LDFLAGS      \$LDFLAGS are passed as command line arguments to the linker.
 
   The environment variables can be overridden using 
-  --CXX <comp> 
-  --CXXLFLAGS <flags> (for both CPPFLAGS and CXXFLAGS) 
-  --LDFLAGS <flags>
+  --CXX <comp>, 
+  --CXXLFLAGS <flags> (for both CPPFLAGS and CXXFLAGS) and
+  --LDFLAGS <flags>.
 "
 
- ${_printf} "\n%s" \
+ ${_printf} "%s" \
 "External library management options:
   --without-autofind
-               Disable support for all external dependencies not, specified 
-               explicitly using --with-PACKAGE
+               Disable support for all external dependencies not explicitly
+               specified using --with-PACKAGE.
   --with-PACKAGENAME
-               When using --without-autofind, use package PACKAGENAME
+               When using --without-autofind, use package PACKAGENAME.
+
   PACKAGENAME is one of"
      for i in ${SUPPORT_PKGS}; do
-	  ${_printf} " %s" "$i"
+          ${_printf} " %s" "$i"
      done
+
  ${_printf} "\n\n%s\n" \
 "Advanced options:
   --interactive or -i
                runs the script in interactive mode. Interactive mode
                can only be used for in place installations (ones where
-               the library is left in the CGAL-3.3/lib directory)
+               the library is left in the lib directory below install_cgal)
                except on Mac OS.
-  --CGAL_DIR <dir>
-               Specify an explicit path to use for the CGAL directory. This is
-               useful if \`pwd\` does not return the desired path to the CGAL 
-               source.
-  --ostype_tag <tag>
-               Add this tag to the architecture/os/compiler specification.
   --PACKAGENAME_INCL_DIR <dir>
-               Add \"-I<dir>\" to the CPPFLAGS. See above for valid PACKAGENAMEs.
+               Add \"-I<dir>\" to CPPFLAGS. See above for valid PACKAGENAMEs.
   --PACKAGENAME_LIB_DIR <dir>
                Add \"-L<dir>\" to LDFLAGS.
   --upgrade <dir> or -u <dir>
                runs the script in upgrade mode.
-	       Use this option, if you upgrade from a previously installed
-	       CGAL and supply the directory where it is installed
-	       on your system.
-	       The config/install files are copied from there.
+               Use this option, if you upgrade from a previously installed
+               CGAL and supply the directory where it is installed on your
+               system. The config/install files are copied from there.
   --build-all
-	       builds libraries for all compilers for which a
+               builds libraries for all compilers for which a
                config/install file exists.
   --rebuild-all
-	       (re)builds compiler configuration files and libraries
-	       for all compilers for which a config/install file
-	       exists.
+               (re)builds compiler configuration files and libraries
+               for all compilers for which a config/install file exists.
   --build <config>
-	       builds libraries for the compiler specified by its
+               builds libraries for the compiler specified by its
                configuration file config/install/<config>.
+  --rebuild <config>
+               (re)builds the compiler configuration file and libraries
+               for the compiler specified by its configuration file
+               config/install/<config>.
+  --ostype_tag <tag>
+               Add this tag to the architecture/os/compiler specification.
   -os <compiler>         
                prints the identifier for the configuration which uses
                the specified compiler.
-  --rebuild <config>
-	       (re)builds the compiler configuration file and libraries
-	       for the compiler specified by its configuration file
-               config/install/<config>.
+  --CGAL_DIR <dir>
+               Specify an explicit path to use for the CGAL directory. This
+               is useful if \`pwd\` does not return the desired path to the
+               CGAL source.
   --verbose    Give report for each test that fails
                (not generally recommended).
 "
