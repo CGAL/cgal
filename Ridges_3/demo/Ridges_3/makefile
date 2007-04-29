@@ -42,7 +42,7 @@ INTRO_LD_FLAGS= -L$(INTROSPEC_DIR) -lIntrospect -lglut
 all:	visu
 
 visu: 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) \
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ridges_viewer$(EXE_EXT) \
 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) \
 	$(LDFLAGS) $(INTRO_LD_FLAGS)
 

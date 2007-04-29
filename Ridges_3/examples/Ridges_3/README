@@ -6,7 +6,7 @@ it computes a jet fitting to set the monge data at each vertex
 
 it outputs the results in :
 1. filename.offRIDGES-d?-m?-t?-a?-p?.4ogl.txt  which can be visualized with 
-	the demo program introspect-qt
+	the demo program ridges_viewer.exe
 2. if option -vtrue, filename.offRIDGES-d?-m?-t?-a?-p?.verb.txt contains human readable results
 
 
@@ -49,8 +49,9 @@ Note : if the nb of collected points is less than the required min number of
  
 EXAMPLES
 ---------------------------------------------------------
-./Compute_Ridges_Umbilics -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3 -v0
+./Compute_Ridges_Umbilics -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a4 -t3 -v0 
 
 visu with:
 
- ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
+ ../../demo/Ridges_3/ridges_viewer data/poly2x^2+y^2-0.062500.off  data/data_poly2x^2+y^2-0.062500.offRIDGES-d4-m4-t3-a4-p0.4ogl.txt 0 0
+

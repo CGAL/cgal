@@ -8,9 +8,5 @@ takes as input
 
 it displays an OpenGL view of both the mesh and the ridge lines
 
-./introspect-qt.exe ../../examples/Ridges_3/data/ellipe0.003.off ../../examples/Ridges_3/data_ellipe0.003.off.4ogl.txt
-
-
-./introspect-qt.exe ../../examples/Ridges_3/data/poly2x^2+y^2-0.062500.off ../../examples/Ridges_3/data_poly2x^2+y^2-0.062500.off.4ogl.txt
-
+ ../../demo/Ridges_3/ridges_viewer data/poly2x^2+y^2-0.062500.off  data/data_poly2x^2+y^2-0.062500.offRIDGES-d4-m4-t3-a4-p0.4ogl.txt 0 0
 
