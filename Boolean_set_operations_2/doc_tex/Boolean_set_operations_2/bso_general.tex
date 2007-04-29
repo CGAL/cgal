@@ -277,7 +277,7 @@ typedef CGAL::General_polygon_set_2<Traits_2>               General_polygon_set_
 \end{alltt}
 
 \lcTex{%
-  \setlength{\BooleanSetOpsWidthRight}{6cm}
+  \setlength{\BooleanSetOpsWidthRight}{3.4cm}
   \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
   \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
   \begin{minipage}{\BooleanSetOpsWidthLeft}
@@ -302,6 +302,21 @@ the characters {\bf g} and {\bf m} in the Times New Roman font
 respectively. Their intersection comprises nine simple polygons, as
 depicted to the right.
 
+% One is an ellipse given by $x^2 + 9y^2 - 9 = 0$,
+% and the other is bounded by the two parabolic arcs whose underlying
+% parabola are given by $x^2 + 2y - 4 = 0$, and $x^2 - 2y - 4 = 0$. The
+% code in the example adapts the traits model that handles conics
+% included with the \ccc{Arrangement_2} package.
+
+\lcTex{%
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
+    \begin{center}
+    \includegraphics[width=4cm]{Boolean_set_operations_2/fig/tnr_m_g}
+    \end{center}
+  \end{minipage}
+}
+
 Recall that every B\'ezier curve is defined by a sequence of control
 points that form chains (see Section~\ref{arr_ssec:tr_bez}. The last
 control point of every curve must be identical to the first control
@@ -313,21 +328,6 @@ polygons that correspond to holes in the area bounded by the outer
 boundary. Note that this function is also responsible for subdividing
 the input B\'ezier curves into $x$-monotone subcurves, as required by
 the \ccc{Gps_traits_2} adapter.
-
-% One is an ellipse given by $x^2 + 9y^2 - 9 = 0$,
-% and the other is bounded by the two parabolic arcs whose underlying
-% parabola are given by $x^2 + 2y - 4 = 0$, and $x^2 - 2y - 4 = 0$. The
-% code in the example adapts the traits model that handles conics
-% included with the \ccc{Arrangement_2} package.
-
-\lcTex{%
-  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
-  \begin{minipage}{\BooleanSetOpsWidthRight}
-    \begin{center}
-    \includegraphics{Boolean_set_operations_2/fig/tnr_m_g}
-    \end{center}
-  \end{minipage}
-}
 
 \ccIncludeExampleCode{Boolean_set_operations_2/bezier_traits_adapter.cpp}
 
