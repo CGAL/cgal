@@ -21,8 +21,7 @@
 #ifndef CGAL_QT_WIDGET_TOOLBAR_H
 #define CGAL_QT_WIDGET_TOOLBAR_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 
 // TODO: check if some of those includes shouldn't be in the .C file
@@ -36,7 +35,7 @@
 #include <qbuttongroup.h>
 #include <qmainwindow.h>
 
-typedef CGAL::Cartesian<double>	  Rp;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Rp;
 typedef Rp::Point_2		  Point_2;
 
 class Tools_toolbar : public QToolBar
