@@ -76,6 +76,9 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
         &pointbut, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
         &movepointbut, SLOT(stateChanged(int)));
+
+  but[1]->toggle();
+
 };
 
 #include "Qt_widget_toolbar.moc"
