@@ -35,8 +35,7 @@ int main(int, char*)
 #include "cgal_types.h"
 //global flags and variables
 int current_state;
-const QString my_title_string("Snap_rounding_2 Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string("2D Snap Rounding");
 std::list<Segment_2> seg_list;
 std::list<std::list<Point_2> > output_list;
 Number_type prec;
@@ -172,10 +171,10 @@ public:
     connect(but4, SIGNAL(stateChanged(int)),
           this, SLOT(toggle_grid(int)));
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
 
     resize(w,h);
-    widget->set_window(-1, 1, -1, 1);
+    widget->set_window(-10.1, 10.1, -10.1, 10.1);
     widget->setMouseTracking(TRUE);
 
     //connect the widget to the main function that receives the objects
@@ -204,7 +203,7 @@ public slots:
     seg_list.clear();
     output_list.clear();
     stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    widget->set_window(-10.1, 10.1, -10.1, 10.1);
 		// set the Visible Area to the Interval
     widget->unlock();
     something_changed();
@@ -349,7 +348,7 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
     ed->stoolbar->clear_history();
-    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->widget->set_window(-10.1, 10.1, -10.1, 10.1);
     ed->show();
     something_changed();
   }

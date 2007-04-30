@@ -33,7 +33,7 @@ public:
    */
   void draw_grid()
   {
-    *widget << CGAL::WHITE << CGAL::LineWidth(1);
+    *widget << CGAL::GRAY << CGAL::LineWidth(1);
 
     // get the edge coordinate
     int min_x = static_cast<int>(widget->x_min());
@@ -61,7 +61,7 @@ public:
     widget->lock();
     widget->setRasterOp(CopyROP);
     if(show_input) {
-      *widget << CGAL::WHITE << CGAL::LineWidth(1);
+      *widget << CGAL::BLUE << CGAL::LineWidth(1);
       for(Segment_2_list_const_iterator i1 = seg_list.begin();
         i1 != seg_list.end();
         ++i1)
