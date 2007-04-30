@@ -267,7 +267,8 @@ can easily be overlooked by a novice.
 
 \ccIncludeExampleCode{QP_solver/first_qp.cpp}
 
-The output of the above program is:
+Asuming that \texttt{GMP} is installed, the 
+output of the of the above program is:
 \begin{verbatim}
 status:          OPTIMAL
 objective value: 8/1
@@ -275,6 +276,9 @@ variable values:
   0: 2/1
   1: 3/1
 \end{verbatim}
+If \texttt{GMP} is not installed, the values are of course the same, 
+but numerator and denominator might have a common divisor that is not
+factored out.  
 
 \subsection{Constructing a program from a stream}
 Here, the program data must be available in \ccc{MPSFormat} (the
