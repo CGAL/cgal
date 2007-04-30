@@ -40,7 +40,7 @@ int main(int, char*)
 #include <set>
 #include <string>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/point_generators_2.h>
@@ -67,14 +67,12 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rep;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Rep;
 
 typedef CGAL::Point_2<Rep>    Point_2;
 typedef CGAL::Segment_2<Rep>  Segment;
 
-const QString my_title_string("Convex_Hull_2 Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string("2D Convex Hull");
 
 //global flags and variables
 int current_state;
@@ -88,7 +86,7 @@ public:
   {
     widget->lock();
     *widget << CGAL::PointSize(3);
-    *widget << CGAL::GREEN;
+    *widget << CGAL::BLACK;
     std::list<Point_2>::iterator itp = list_of_points.begin();
     while(itp!=list_of_points.end())
     {
@@ -116,7 +114,7 @@ public:
       }
       Sl.push_back(Segment(pakt,pstart));
 
-      *widget << CGAL::RED;
+      *widget << CGAL::BLUE;
       std::list<Segment>::iterator its = Sl.begin();
       while(its!=Sl.end())
       {
@@ -172,7 +170,7 @@ public:
     //the new tools toolbar
     newtoolbar = new Tools_toolbar(widget, this, &list_of_points);
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
