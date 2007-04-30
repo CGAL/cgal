@@ -25,7 +25,7 @@
 
 // includes
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
-#include <CGAL/QP_solver.h>
+#include <CGAL/QP_solver/QP_solver.h>
 #include <cmath>
 
 CGAL_BEGIN_NAMESPACE

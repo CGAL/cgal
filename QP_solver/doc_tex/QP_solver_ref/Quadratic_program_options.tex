@@ -56,15 +56,15 @@ not internally cycle.}
 
 \ccHeading{Validation mode}
 
-\ccMethod{void set_validation_flag(bool validate);}
-{sets the validation flag of the solver to the value \ccc{validate}.
+\ccMethod{void set_auto_validation(bool validate);}
+{sets the automatic validation mode of the solver to the value \ccc{validate}.
 The default is \ccc{false}. By providing value \ccc{true} you can
 tell the solver to automatically check whether the program has
 correctly been solved, see the Validity section of the class
 \ccc{Quadratic_program_solution}.}
 
-\ccMethod{bool get_validation_flag() const;}
-{returns the validation flag of \ccVar.}
+\ccMethod{bool get_auto_validation() const;}
+{returns the validation mode of \ccVar.}
 
 \ccExample
 \ccReferToExampleCode{QP_solver/cycling.cpp}

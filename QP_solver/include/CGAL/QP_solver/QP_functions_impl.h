@@ -355,7 +355,7 @@ namespace QP_functions_detail {
       Solver;
     const Solver* s = new Solver(p, options);
     Quadratic_program_solution<ET> solution(s);
-    if (options.get_validation_flag()) {
+    if (options.get_auto_validation()) {
       // validate solution
       if (options.get_verbosity() > 0)
 	std::cout << "Validating solution...\n";

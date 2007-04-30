@@ -74,12 +74,12 @@ public:
 
   // set/get validation flag
   // -----------------------
-  bool get_validation_flag() const
+  bool get_auto_validation() const
   {
     return validation_flag_;
   }
 
-  void set_validation_flag (bool validate)
+  void set_auto_validation (bool validate)
   {
     validation_flag_ = validate;
   }
@@ -128,7 +128,7 @@ std::ostream& operator<< (std::ostream& o,
     o << "QP_BLAND";
   }
   o << "\n";
-  o << "   Validation flag:  " << options.get_validation_flag() << std::endl;
+  o << "   Validation flag:  " << options.get_auto_validation() << std::endl;
   return o;
 }
 

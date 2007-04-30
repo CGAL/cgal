@@ -36,7 +36,7 @@ int main()
 {  
   // options
   CGAL::Quadratic_program_options options;
-  options.set_validation_flag(true);
+  options.set_auto_validation(true);
 
   for (fl = 0; fl < 2; ++fl) 
     for (fu = 0; fu < 2; ++fu)

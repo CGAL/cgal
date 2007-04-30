@@ -93,7 +93,7 @@ int tries = 50000;
 int main() {
   // options
   CGAL::Quadratic_program_options options;
-  options.set_validation_flag(true);
+  options.set_auto_validation(true);
 
   // generate a set of small random qp's
   for (int i=0; i<tries; ++i) {

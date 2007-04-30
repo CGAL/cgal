@@ -421,7 +421,7 @@ bool process(const std::string& filename,
   solver_options.set_pricing_strategy
     (static_cast<CGAL::Quadratic_program_pricing_strategy>
      (options.find("Strategy")->second));
-  solver_options.set_validation_flag(true);
+  solver_options.set_auto_validation(true);
 
   CGAL::Quadratic_program_solution<ET> solution =
     CGAL::QP_functions_detail::solve_program 
@@ -443,7 +443,7 @@ bool process(const std::string& filename,
     CGAL::Quadratic_program_options local_options;
     local_options.set_verbosity(0);
     local_options.set_pricing_strategy(CGAL::QP_DANTZIG);
-    local_options.set_validation_flag(true);
+    local_options.set_auto_validation(true);
     LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), 
 		     qp.get_r(), 
 		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
