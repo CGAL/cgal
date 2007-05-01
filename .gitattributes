@@ -124,6 +124,13 @@ Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#app
 Arrangement_2/bench/data/benchArrPolylines.xml svneol=native#text/xml
 Arrangement_2/bench/data/benchArrSegments.xml svneol=native#text/xml
 Arrangement_2/demo/Arrangement_2/arrangement_2.vcproj eol=crlf
+Arrangement_2/demo/Arrangement_2/data/segment/onebig_100_x.dat -text
+Arrangement_2/demo/Arrangement_2/data/segment/onebig_250_x.dat -text
+Arrangement_2/demo/Arrangement_2/data/segment/polygon_100.dat -text
+Arrangement_2/demo/Arrangement_2/data/segment/random_segments_100_x.dat -text
+Arrangement_2/demo/Arrangement_2/data/segment/random_segments_500_x.dat -text
+Arrangement_2/demo/Arrangement_2/data/segment/tilt_grid_200.dat -text
+Arrangement_2/demo/Arrangement_2/data/segment/world.seg.cut.rand.dat -text
 Arrangement_2/demo/Arrangement_2/help/index.html svneol=native#text/html
 Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#image/bmp
 Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#image/bmp
