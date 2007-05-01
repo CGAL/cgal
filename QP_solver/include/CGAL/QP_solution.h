@@ -602,7 +602,7 @@ private:
 
   template <typename Program>
   bool is_infeasible_3 (const Program& p, 
-			const typename std::vector<ET>& lambda_a,
+			const typename std::vector<ET>& /*lambda_a*/,
 			Tag_true /*is_nonnegative*/); 
   template <typename Program>
   bool is_infeasible_3 (const Program& p, 
@@ -624,7 +624,7 @@ private:
 
   template <typename Program>
   bool is_value_correct 
-  (const Program& p, typename std::vector<ET>& two_Dx, 
+  (const Program& p, typename std::vector<ET>& /*two_Dx*/, 
    Tag_true /*is_linear*/); 
   
   template <typename Program>

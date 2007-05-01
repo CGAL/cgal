@@ -347,7 +347,7 @@ namespace QP_functions_detail {
   (const Program &p, const ET&, 
    Is_linear, 
    Is_nonnegative,
-   const Quadratic_program_options& options = Quadratic_program_options())
+   const Quadratic_program_options& options)
   { 
     typedef QP_solver<
       Program, ET, 

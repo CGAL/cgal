@@ -352,7 +352,7 @@ bool  Quadratic_program_solution<ET>::is_optimal_3
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_value_correct 
-(const Program& p, std::vector<ET>& q, Tag_true /*is_linear*/)
+(const Program& p, std::vector<ET>& /*q*/, Tag_true /*is_linear*/)
 {
   // check objective value c^T x + c_0
   ET d = variables_common_denominator();
@@ -443,7 +443,7 @@ bool Quadratic_program_solution<ET>::is_infeasible_2
 template <typename ET>
 template <typename Program>
 bool Quadratic_program_solution<ET>::is_infeasible_3 
-(const Program& p, const typename std::vector<ET>& lambda_a,
+(const Program& p, const typename std::vector<ET>& /*lambda_a*/,
  Tag_true /*is_nonnegative*/)
 {
   ET lambda_b(0);
