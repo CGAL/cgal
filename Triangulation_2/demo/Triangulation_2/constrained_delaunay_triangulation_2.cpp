@@ -55,8 +55,7 @@
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-const QString my_title_string("Constrained Delaunay Triangulation Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string("2D Constrained Delaunay Triangulation");
 
 CDT   ct;
 int   current_state;
@@ -121,7 +120,7 @@ public:
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &ct);
 
-    *widget << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::BackgroundColor (CGAL::WHITE);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);

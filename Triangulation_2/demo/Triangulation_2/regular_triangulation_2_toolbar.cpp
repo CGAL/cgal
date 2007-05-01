@@ -83,6 +83,8 @@
         &input_circle_layer, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
         &edit_vertex_layer, SLOT(stateChanged(int)));
+  but[2]->toggle();
+
 };
 
 

@@ -81,6 +81,7 @@
         &segmentbut, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
         &polygonbut, SLOT(stateChanged(int)));
+  but[2]->toggle();
 
 };
 
