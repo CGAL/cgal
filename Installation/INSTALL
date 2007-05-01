@@ -24,9 +24,18 @@ To install CGAL, you should:
     by CGAL. These libraries are detailed in the CGAL install notes at
     <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
 
-NOTE: the interactive installer, available by running 
-"./install_cgal -i" only works for in-place installs of CGAL (ones
-where the libraries live in the CGAL source directory).  The exception
-is Mac OS where installs from the interactive installer work.
+NOTE ON INTERACTIVE INSTALLS: the interactive installer, available by
+running "./install_cgal -i" only works for in-place installs of CGAL
+(ones where the libraries live in the CGAL source directory).  The
+exception is Mac OS where installs from the interactive installer
+work.
+
+NOTE ON REPEATED INSTALLS: the installer maintains a cache in
+config/install/ which records which external libraries were found as
+well as the relevant environment variables. The cached values are used
+on subsequent runs of the installer on the same architecture. Delete
+the contents of this directly if the environment has changed (for
+example, boost or GMP was installed or the CPPFLAGS changed) and you
+want the installer to pick up these changes.
 
 -------------------------------------------------------------------------------
