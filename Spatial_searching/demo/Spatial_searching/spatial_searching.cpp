@@ -56,8 +56,7 @@ int main(int, char*){
 int current_state;
 std::vector<Point_2>                      vector_of_points;
 
-const QString my_title_string("Spatial Searching Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string("Spatial searching");
 
 
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
@@ -132,7 +131,7 @@ public:
     //the new tools toolbar
     newtoolbar = new Tools_toolbar(widget, this, &vector_of_points);
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);

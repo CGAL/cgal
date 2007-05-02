@@ -36,7 +36,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: spatial_searching
+all: spatial_searching$(EXE_EXT)
 
 spatial_searching_toolbar$(OBJ_EXT): spatial_searching_toolbar.cpp spatial_searching_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) spatial_searching_toolbar.cpp
