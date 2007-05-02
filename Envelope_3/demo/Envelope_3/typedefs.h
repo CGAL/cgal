@@ -130,7 +130,10 @@ typedef Double_kernel::Point_2                          Double_point_2;
 typedef CGAL::Polygon_2<Double_kernel>                  Polygon_2;
 
 template<class Arrangement, class OutputIterator>
-class Faces_visitor {
+class Faces_visitor : public CGAL::_Arr_default_overlay_traits<Arrangement,
+                                           Arrangement,
+                                           Arrangement>
+{
 private:
   typedef typename Arrangement::Vertex_const_handle     V_const_handle;
   typedef typename Arrangement::Halfedge_const_handle   He_const_handle;
@@ -327,7 +330,7 @@ void construct_polygon(CGAL::Qt_widget* w,
                                            cv_list.end());
 
       Faces_visitor<Envelope_plane_diagram_2, OutoutIterator>
-        visitor(eh->face(), he->face(), oi);
+        visitor(e->face(), he->face(), oi);
       Envelope_plane_diagram_2 res;
       CGAL::overlay(arr_box, arr_unb_f, res, visitor);
     }
