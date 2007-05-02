@@ -216,7 +216,9 @@ class Optimisation_ellipse_2 {
 	// but in general, this optimization is NOT valid.
 	n_boundary_points = 5;
 	CGAL_optimisation_assertion(helper_conic.is_ellipse());	
-	CGAL_optimisation_assertion(helper_conic.has_on_boundary(p5));	
+	// the following assertion is too strict if we run under
+	// double (which is sometimes the case, e.g. in demos)
+	// CGAL_optimisation_assertion(helper_conic.has_on_boundary(p5));
 	CGAL_optimisation_precondition(boundary_point1 == p1);
         CGAL_optimisation_precondition(boundary_point2 == p2);
 	CGAL_optimisation_precondition(boundary_point3 == p3);
