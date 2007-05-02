@@ -616,11 +616,24 @@ public:
     {
       if (! e->is_empty())
       {
-        for (cit = e->curves_begin(); cit != e->curves_end(); ++cit)
-          m_tab_traits.draw_xcurve(this , *cit);
+        // The edge is not empty: draw a representative curve.
+        // Note that the we only draw the portion of the curve
+        // that overlaps the x-range defined by the two vertices
+        // that are incident to this edge.
+        m_tab_traits.draw_xcurve_segment(this , e->curve(),
+                                         e->left()->point(),
+                                         e->right()->point());
       }
+
       v = e->right();
-      // Draw the point ???
+
+      // Draw the point associated with the current vertex.
+      Coord_point p(CGAL::to_double(v->point().x()) /
+                    m_tab_traits.COORD_SCALE,
+                    CGAL::to_double(v->point().y()) /
+                    m_tab_traits.COORD_SCALE);
+      static_cast<CGAL::Qt_widget&>(*this) << p;
+      
       e = v->right();
     }
   }
@@ -1659,9 +1672,43 @@ public:
     (*w) << c;
   }
 
-  /*! draw_curve - use Qt_Widget operator to draw
-   *\ param w - the demo widget
-   *\ c - curve to be drawen
+  /*! Use Qt_Widget operator to draw a portion of an x-monotone curve.
+   * \param w The demo widget.
+   * \param xcurve The curve to be drawn.
+   * \param p_left Defines the left end.
+   * \param p_right Defines the right end.
+   */
+  void draw_xcurve_segment(Qt_widget_demo_tab<Segment_tab_traits> * w,
+                           const X_monotone_curve_2 & c,
+                           const Point_2 & p_left, const Point_2 & p_right)
+  {
+    if (m_traits.is_vertical_2_object() (c)) {
+      (*w) << c;
+      return;
+    }
+
+    // Trim the segment, if necessary.
+    const Point_2 & p_min = m_traits.construct_min_vertex_2_object()(c);
+    const Point_2 & p_max = m_traits.construct_max_vertex_2_object()(c);
+    Kernel          ker;
+    Kernel::Line_2  l = ker.construct_line_2_object() (p_min, p_max);
+
+    const Point_2 & p1 =
+      (ker.compare_x_2_object() (p_left, p_min) == CGAL::LARGER) ?
+      Point_2(p_left.x(), ker.compute_y_at_x_2_object()(l, p_left.x())) :
+      p_min;
+
+    const Point_2 & p2 =
+      (ker.compare_x_2_object() (p_right, p_max) == CGAL::SMALLER) ?
+      Point_2(p_right.x(), ker.compute_y_at_x_2_object()(l, p_right.x())) :
+      p_max;
+
+    (*w) << ker.construct_segment_2_object() (p1, p2);
+  }
+
+  /*! Draw a curve to a Qt widget
+   * \param w the demo widget
+   * \param c curve to be drawen
    */
   void draw_curve(Qt_widget_demo_tab<Segment_tab_traits> * w , Curve_2 c )
   {
@@ -1675,9 +1722,9 @@ public:
     m_p1 = m_p2 = p;
   }
 
-  /*! middle_point - the last point of a segment
+  /*! Obtain the last point of a segment
    */
-  void middle_point(Coord_point p ,
+  void middle_point(Coord_point p,
                     Qt_widget_demo_tab<Segment_tab_traits> * w)
   {
     Coord_kernel      ker;
@@ -1968,8 +2015,58 @@ public:
     }
   }
 
+  /*! Use Qt_Widget operator to draw a portion of an x-monotone polyline.
+   * \param w The demo widget.
+   * \param xcurve The curve to be drawn.
+   * \param p_left Defines the left end.
+   * \param p_right Defines the right end.
+   */
+  void draw_xcurve_segment(Qt_widget_demo_tab<Polyline_tab_traits> * w,
+                           const X_monotone_curve_2 & pol,
+                           const Point_2 & p_left, const Point_2 & p_right)
+  {
+    if (m_traits.is_vertical_2_object() (pol)) {
+      Curve_2::const_iterator pi = pol.begin();
+      const Point_2 & source = *pi++;
+      const Point_2 & target = *pi;
+      Coord_segment coord_seg = convert(source , target);
+      (*w) << coord_seg;
+      return;
+    }
 
-  /*! draw_curve -
+    Curve_2::const_iterator ps = pol.begin();
+    Curve_2::const_iterator pt = ps; ++pt;
+    Kernel                  ker;
+    Kernel::Compare_x_2     comp_x = ker.compare_x_2_object();
+    Point_2                 src, trg;
+
+    while (pt != pol.end()) {
+      // Skip this segment if it is not in the relevant x-range.
+      if (comp_x (p_left, *pt) == CGAL::LARGER)
+        continue;
+
+      if (comp_x (p_right, *ps) == CGAL::SMALLER)
+        break;
+
+      // Trim the current segment, if necessary.
+      Kernel::Line_2      l = ker.construct_line_2_object() (*ps, *pt);
+
+      src = (comp_x (p_left, *ps) == CGAL::LARGER) ?
+        Point_2 (p_left.x(), ker.compute_y_at_x_2_object() (l, p_left.x())) :
+        *ps;
+
+      trg = (comp_x (p_right, *pt) == CGAL::SMALLER) ?
+        Point_2 (p_right.x(), ker.compute_y_at_x_2_object() (l, p_right.x())) :
+        *pt;
+
+      Coord_segment coord_seg = convert (src, trg);
+      (*w) << coord_seg;
+      ++ps; ++pt;
+    }
+  }
+
+
+  /*! Draw a curve
    */
   void draw_curve(Qt_widget_demo_tab<Polyline_tab_traits> * w , Curve_2 pol )
   {
@@ -2433,7 +2530,69 @@ public:
     return;
   }
 
-  /*! draw_curve -
+  /*! Use Qt_Widget operator to draw a portion of an x-monotone conic arc.
+   * \param w The demo widget.
+   * \param c The curve to be drawn.
+   * \param p_left Defines the left end.
+   * \param p_right Defines the right end.
+   */
+  void draw_xcurve_segment(Qt_widget_demo_tab<Conic_tab_traits> * w,
+                           const X_monotone_curve_2 & c,
+                           const Point_2 & p_left, const Point_2 & p_right)
+  {
+    // Get a polyline approximation of the curve.
+    const Point_2 & p_min = m_traits.construct_min_vertex_2_object() (c);
+    const Point_2 & p_max = m_traits.construct_max_vertex_2_object() (c);
+    Alg_kernel      ker;
+
+    // Trim the curve, if necessary.
+    const Point_2 & p1 =
+      (ker.compare_x_2_object() (p_left, p_min) == CGAL::LARGER) ?
+      p_left : p_min;
+
+    const Point_2 & p2 =
+      (ker.compare_x_2_object() (p_right, p_max) == CGAL::SMALLER) ?
+      p_right : p_max;
+
+    const double    x_min = CGAL::to_double (p1.x());
+    const double    x_max = CGAL::to_double (p2.x());
+    const int       ix_min = (*w).x_pixel(x_min);
+    const int       ix_max = (*w).x_pixel(x_max);
+    unsigned int    n = static_cast<unsigned int> (ix_max - ix_min);
+
+    if (w->x_min() > x_max || w->x_max() < x_min)
+      return;
+
+    if(n == 0)
+      return;
+
+    CGAL::Bbox_2    c_bbox = c.bbox();
+
+    if (w->y_min() > c_bbox.ymax() || w->y_max() < c_bbox.ymin())
+      return;
+
+    std::pair<double, double>  *app_pts = new std::pair<double, double> [n + 1];
+    std::pair<double, double>  *end_pts = c.polyline_approximation (n, app_pts);
+    std::pair<double, double>  *p_curr = app_pts;
+    std::pair<double, double>  *p_next = p_curr + 1;
+    Coord_point     ps (p_curr->first, p_curr->second);
+
+    p_curr = app_pts;
+    p_next = p_curr + 1;
+    do {
+      Coord_point     pt (p_next->first, p_next->second);
+
+      *w << Coord_segment(ps, pt);
+      ps = pt;
+      p_curr++;
+      p_next++;
+    } while (p_next != end_pts);
+
+    delete[] app_pts;
+    return;
+  }
+
+  /*! Draw_a curve
    */
   void draw_curve(Qt_widget_demo_tab<Conic_tab_traits> * w , Curve_2 conic )
   {
