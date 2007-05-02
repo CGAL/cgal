@@ -179,7 +179,6 @@ public:
 	  Splitter s = Splitter()) 
     : split(s), built_(false) 
   {
-    CGAL_assertion(first != beyond);
     std::copy(first, beyond, std::back_inserter(pts));
   }
 
@@ -239,11 +238,14 @@ public:
   OutputIterator 
   search(OutputIterator it, const FuzzyQueryItem& q) 
   {
-    if(! is_built()){
-      build();
+    if(! pts.empty()){
+  
+      if(! is_built()){
+	build();
+      }
+      Kd_tree_rectangle<SearchTraits> b(*bbox);
+      tree_root->search(it,q,b);
     }
-    Kd_tree_rectangle<SearchTraits> b(*bbox);
-    tree_root->search(it,q,b);
     return it;
   }
 
