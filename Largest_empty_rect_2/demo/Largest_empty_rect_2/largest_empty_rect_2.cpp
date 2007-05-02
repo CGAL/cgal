@@ -62,8 +62,7 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-const QString my_title_string("Largest_empty_rectangle_2 Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string("2D Largest empty rectangle");
 
 //global flags and variables
 int                 current_state;
@@ -83,7 +82,7 @@ public:
     widget->lock();
       //The ISO_RECTANGLE
       *widget << CGAL::RED << CGAL::LineWidth(3);
-      *widget << CGAL::FillColor(CGAL::BLACK);
+      *widget << CGAL::FillColor(CGAL::WHITE);
       *widget << iso_rect;
       *widget << CGAL::RED << CGAL::LineWidth(2);
 

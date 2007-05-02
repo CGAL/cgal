@@ -33,7 +33,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:largest_empty_rect_2
+all: largest_empty_rect_2$(EXE_EXT)
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.cpp Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.cpp
