@@ -1054,6 +1054,8 @@
 \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgHowToCiteCgal}[1]{\gdef\ccValueofPkgHowToCiteCgal{\lcRawHtml{<b>BibTeX Key:</b>}\ccHowToCiteCgal{#1}\lcRawHtml{<br>}}}
+\newcommand{\ccPkgDemo}[2]{\gdef\ccValueofPkgDemo{%
+    \lcRawHtml{<b>Demo: </b><a href="http://www.cgal.org/#2}\lcRawHtml{">}#1\lcRawHtml{</a><br>}}}
 
 \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
 
@@ -1068,6 +1070,7 @@
   \gdef\ccValueofPkgDependsOn{}%
   \gdef\ccValueofPkgLicense{}%
   \gdef\ccValueofPkgHowToCiteCgal{}
+  \gdef\ccValueofPkgDemo{}
   \lciPushOutput{packages}%
 }
 
@@ -1122,6 +1125,8 @@
     \ccValueofPkgDependsOn%
     \ccValueofPkgLicense%
     \ccValueofPkgHowToCiteCgal%
+    \ccValueofPkgDemo%
+    %\lcRawHtml{<b>Manuals :</b><br>}%
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td>}
     \lciPopOutput%
