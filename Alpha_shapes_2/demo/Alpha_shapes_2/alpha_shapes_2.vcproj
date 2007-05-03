@@ -20,17 +20,17 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;"
+				AdditionalIncludeDirectories="../../include/CGAL/config/msvc;../../include;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
-				CompileAs="2"/>
+				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -38,6 +38,7 @@
 				AdditionalDependencies=" qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/alpha_shapes_2.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(QTDIR)/lib;../../lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/alpha_shapes_2.pdb"
@@ -77,7 +78,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;"
+				AdditionalIncludeDirectories="../../include/CGAL/config/msvc;../../include;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -95,6 +96,7 @@
 				AdditionalDependencies=" qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/alpha_shapes_2.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)/lib&quot;;../../lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
