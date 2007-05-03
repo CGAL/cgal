@@ -216,7 +216,9 @@ const char* handle_template_layout( ostream& out,
                 else
                     two_cols_html_begin( out);
 
+                out << "[cccbegin]" << std::endl;
                 print_ascii_len_to_html( out, decl, p - decl);
+                out << "[cccend]" << std::endl;
 
                 if ( three_col)
                     three_cols_html_premature_end( out);
@@ -1024,8 +1026,11 @@ void format_function( bool method, const char* signature,
     // end index
     // ----------
 
-    if ( return_value)
+    if ( return_value) {
+        *current_ostream << "[cccbegin]" << std::endl;
         print_ascii_to_html_spc( *current_ostream, return_value);
+        *current_ostream << "[cccend]" << std::endl;
+    }
     if ( conversion_operator)
         print_ascii_to_html_spc( *current_ostream, op_symbols);
 
@@ -1107,7 +1112,9 @@ void format_function( bool method, const char* signature,
                                             macroX( "\\ccPureVar"));
                 else if (n) {
                     --n;
+                    *current_ostream << "[cccbegin]" << std::endl;
                     print_ascii_to_html_spc(*current_ostream, p);
+                    *current_ostream << "[cccend]" << std::endl;
                     p += strlen( p) + 1;  // skip to next parameter
                 }
             }
@@ -1131,7 +1138,9 @@ void format_function( bool method, const char* signature,
 
                 // ---  end-of copy&paste
                 while ( n--) {
+                    *current_ostream << "[cccbegin]" << std::endl;
                     print_ascii_to_html_spc(*current_ostream, p);
+                    *current_ostream << "[cccend]" << std::endl;
                     p += strlen( p) + 1;  // skip to next parameter
                     if ( n) {
                         *current_ostream << ", ";
@@ -1265,9 +1274,7 @@ void format_function( bool method, const char* signature,
             }
             if ( scope)
                 print_ascii_to_html_spc( *current_ostream, scope);
-            //*current_ostream << "[cccend]";
             print_ascii_to_html_spc( *current_ostream, function_name);
-            //*current_ostream << "[cccbegin]";
             if ( parameter_list) {
                 *current_ostream << " ( ";
                 if ( exp_size > dd_width) {
@@ -1284,7 +1291,9 @@ void format_function( bool method, const char* signature,
                 }
                 char* p = parameter_list;
                 while ( n--) {
+                    *current_ostream << "[cccbegin]";
                     print_ascii_to_html_spc( *current_ostream, p);
+                    *current_ostream << "[cccend]";
                     p += strlen( p) + 1;  // skip to next parameter
                     if ( n) {
                         *current_ostream << ", ";
@@ -1378,8 +1387,11 @@ void format_variable( const char* signature,
     }
     // end index
 
-    if ( return_value)
+    if ( return_value) {
+        *current_ostream << "[cccbegin]";
         print_ascii_to_html_spc( *current_ostream, return_value);
+        *current_ostream << "[cccend]";
+    }
 
     // handle function body or operation signature
     // first, estimate size
@@ -1398,13 +1410,12 @@ void format_variable( const char* signature,
         );
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
-    //*current_ostream << "[cccend]";
     print_ascii_to_html_spc( *current_ostream, variable_name);
-    //*current_ostream << "[cccbegin]";
-    // *current_ostream << formatted_var;
     if ( rest) {
         *current_ostream << ' ';
+        *current_ostream << "[cccbegin]";
         print_ascii_to_html_spc( *current_ostream, rest);
+        *current_ostream << "[cccend]";
     }
     *current_ostream << ';';
 
@@ -1541,8 +1552,9 @@ void format_struct( const char* signature) {
       *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     if ( return_value) {
+        *current_ostream << "[cccbegin]";
         print_ascii_to_html_spc( *current_ostream, return_value);
-        *current_ostream << ' ';
+        *current_ostream << "[cccend]" << ' ';
     }
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
@@ -1558,7 +1570,9 @@ void format_struct( const char* signature) {
         while ( n--) {
             while ( *p && *p <= ' ')
                 ++p;
+            *current_ostream << "[cccbegin]";
             print_ascii_to_html_spc( *current_ostream, p);
+            *current_ostream << "[cccend]";
 
             p += strlen( p) + 1;  // skip to next parameter
             if ( n) {
@@ -1730,8 +1744,9 @@ void format_enum( const char* signature) {
       *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     if ( return_value) {
+        *current_ostream << "[cccbegin]";
         print_ascii_to_html_spc( *current_ostream, return_value);
-        *current_ostream << ' ';
+        *current_ostream << "[cccend]" << ' ';
     }
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
@@ -1749,7 +1764,9 @@ void format_enum( const char* signature) {
             // crop whitespace
             while ( *p && *p <= ' ')
                 ++p;
+            *current_ostream << "[cccbegin]";
             print_ascii_to_html_spc( *current_ostream, p);
+            *current_ostream << "[cccend]";
 
             if ( (class_name.empty() ||
                   !(macroIsTrue( "\\lciIfHtmlClassIndex"))) &&
@@ -1891,7 +1908,9 @@ void format_constructor( const char* signature) {
         }
         char* p = parameter_list;
         while ( n--) {
+            *current_ostream << "[cccbegin]";
             print_ascii_to_html_spc( *current_ostream, p);
+            *current_ostream << "[cccend]";
             p += strlen( p) + 1;  // skip to next parameter
             if ( n) {
                 *current_ostream << ", ";
@@ -1922,7 +1941,7 @@ void handle_two_column_layout( char key, const char* decl) {
     string my_decl = decl;
     crop_string( my_decl );
     if ( current_ostream) {
-        *current_ostream << "[cccbegin]";
+        //*current_ostream << "[cccbegin]";
         (*comments_stream) << "  <item>" << std::endl
                            << "    <kind>";
         decl = handle_template_layout( *current_ostream, decl, false);
@@ -1950,7 +1969,7 @@ void handle_two_column_layout( char key, const char* decl) {
         default:
             printErrorMessage( UnknownKeyError);
         }
-        *current_ostream << "[cccend]";
+        //*current_ostream << "[cccend]";
     }
     (*comments_stream) << "</kind>" << std::endl
                        << "    <name>";
@@ -1962,7 +1981,7 @@ void handle_three_column_layout( char key, const char* decl, bool empty) {
     string my_decl = decl;
     crop_string( my_decl );
     if ( current_ostream) {
-        *current_ostream << "[cccbegin]";
+        // *current_ostream << "[cccbegin]";
         (*comments_stream) << "  <item>" << std::endl
                            << "    <kind>";
         decl = handle_template_layout( *current_ostream, decl, true);
@@ -1986,7 +2005,7 @@ void handle_three_column_layout( char key, const char* decl, bool empty) {
         default:
             printErrorMessage( UnknownKeyError);
         }
-        *current_ostream << "[cccend]";
+        // *current_ostream << "[cccend]";
     }
     (*comments_stream) << "</kind>" << std::endl
                        << "    <name>";
