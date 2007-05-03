@@ -432,42 +432,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h
+"
 						Outputs="Kinetic_QT_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h
+"
 						Outputs="Kinetic_QT_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h
+"
 						Outputs="Kinetic_QT_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h
+"
 						Outputs="Kinetic_QT_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h
+"
 						Outputs="Kinetic_QT_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_core.h
+"
 						Outputs="Kinetic_QT_core.moc"/>
 				</FileConfiguration>
 			</File>
@@ -477,42 +483,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h
+"
 						Outputs="QT_help_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h
+"
 						Outputs="QT_help_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h
+"
 						Outputs="QT_help_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h
+"
 						Outputs="QT_help_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h
+"
 						Outputs="QT_help_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_help_window.moc  ../../include/CGAL/IO/QT_help_window.h
+"
 						Outputs="QT_help_window.moc"/>
 				</FileConfiguration>
 			</File>
@@ -522,42 +534,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h
+"
 						Outputs="Kinetic_QT_timer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h
+"
 						Outputs="Kinetic_QT_timer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h
+"
 						Outputs="Kinetic_QT_timer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h
+"
 						Outputs="Kinetic_QT_timer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h
+"
 						Outputs="Kinetic_QT_timer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_timer.moc  ../../include/CGAL/Kinetic/IO/internal/QT_timer.h
+"
 						Outputs="Kinetic_QT_timer.moc"/>
 				</FileConfiguration>
 			</File>
@@ -567,42 +585,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h
+"
 						Outputs="QT_widget.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h
+"
 						Outputs="QT_widget.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h
+"
 						Outputs="QT_widget.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h
+"
 						Outputs="QT_widget.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h
+"
 						Outputs="QT_widget.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget.moc  ../../include/CGAL/IO/QT_widget.h
+"
 						Outputs="QT_widget.moc"/>
 				</FileConfiguration>
 			</File>
@@ -612,7 +636,8 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h
+"
 						AdditionalDependencies=""
 						Outputs="Kinetic_QT_widget_2_core.moc"/>
 				</FileConfiguration>
@@ -620,14 +645,16 @@
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h
+"
 						Outputs="Kinetic_QT_widget_2_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h
+"
 						AdditionalDependencies=""
 						Outputs="Kinetic_QT_widget_2_core.moc"/>
 				</FileConfiguration>
@@ -635,21 +662,24 @@
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h
+"
 						Outputs="Kinetic_QT_widget_2_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h
+"
 						Outputs="Kinetic_QT_widget_2_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_widget_2_core.moc  ../../include/CGAL/Kinetic/IO/internal/QT_widget_2_core.h
+"
 						Outputs="Kinetic_QT_widget_2_core.moc"/>
 				</FileConfiguration>
 			</File>
@@ -659,42 +689,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h
+"
 						Outputs="QT_widget_history.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h
+"
 						Outputs="QT_widget_history.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h
+"
 						Outputs="QT_widget_history.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h
+"
 						Outputs="QT_widget_history.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h
+"
 						Outputs="QT_widget_history.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_history.moc  ../../include/CGAL/IO/QT_widget_history.h
+"
 						Outputs="QT_widget_history.moc"/>
 				</FileConfiguration>
 			</File>
@@ -704,42 +740,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h
+"
 						Outputs="QT_widget_layer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h
+"
 						Outputs="QT_widget_layer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h
+"
 						Outputs="QT_widget_layer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h
+"
 						Outputs="QT_widget_layer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h
+"
 						Outputs="QT_widget_layer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_layer.moc  ../../include/CGAL/IO/QT_widget_layer.h
+"
 						Outputs="QT_widget_layer.moc"/>
 				</FileConfiguration>
 			</File>
@@ -749,28 +791,28 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  QT_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  ../../include/CGAL/IO/QT_widget_OpenGL.h"
 						Outputs="QT_widget_OpenGL.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  QT_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  ../../include/CGAL/IO/QT_widget_OpenGL.h"
 						Outputs="QT_widget_OpenGL.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  QT_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  ../../include/CGAL/IO/QT_widget_OpenGL.h"
 						Outputs="QT_widget_OpenGL.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  QT_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  ../../include/CGAL/IO/QT_widget_OpenGL.h"
 						Outputs="QT_widget_OpenGL.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -784,7 +826,7 @@
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  QT_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_OpenGL.moc  ../../include/CGAL/IO/QT_widget_OpenGL.h"
 						Outputs="QT_widget_OpenGL.moc"/>
 				</FileConfiguration>
 			</File>
@@ -794,42 +836,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h
+"
 						Outputs="QT_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h
+"
 						Outputs="QT_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h
+"
 						Outputs="QT_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h
+"
 						Outputs="QT_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h
+"
 						Outputs="QT_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o QT_widget_standard_toolbar.moc  ../../include/CGAL/IO/QT_widget_standard_toolbar.h
+"
 						Outputs="QT_widget_standard_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
@@ -839,42 +887,48 @@
 					Name="Debug_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h
+"
 						Outputs="Kinetic_QT_window_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h
+"
 						Outputs="Kinetic_QT_window_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_SingleThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h
+"
 						Outputs="Kinetic_QT_window_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_StaticCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h
+"
 						Outputs="Kinetic_QT_window_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h
+"
 						Outputs="Kinetic_QT_window_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_MultiThreaded_DynamicCRT|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_QT_window_2.moc  ../../include/CGAL/Kinetic/IO/internal/QT_window_2.h
+"
 						Outputs="Kinetic_QT_window_2.moc"/>
 				</FileConfiguration>
 			</File>
