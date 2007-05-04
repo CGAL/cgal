@@ -1060,7 +1060,7 @@
 #Y3\lcRawHtml{<b>Demo: </b><a href="http://www.cgal.org/#2}\lcRawHtml{">}#1\lcRawHtml{</a><br>}}%
 }
 
-\newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
+\newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\end{savestream}}
 
 \newcommand{\ccPkgDescriptionX}[1]{%
   \gdef\ccValueofPkgName{#1}%
@@ -1074,7 +1074,7 @@
   \gdef\ccValueofPkgLicense{}%
   \gdef\ccValueofPkgHowToCiteCgal{}
   \gdef\ccValueofPkgDemo{}
-  \lciPushOutput{packages}%
+  \begin{savestream}{packages}%
 }
 
 \newcommand{\lciEndPackage}[2]{%
@@ -1102,7 +1102,7 @@
       \lciHtmlPartPkgDesciption{\lciCurrentPartName}{\lciCurrentPartLabel}%
       \gdef\lciCurrentPartName{}%
     }%
-    \lciPushOutput{packages}%
+    \begin{savestream}{packages}%
     
     \lcRawHtml{<tr><td valign="top" width="140" class="TocGroupEvenLeft"}
     \lciIfDefined{\lciPkgDescriptionAlignPicWithText}%
@@ -1132,7 +1132,7 @@
     %\lcRawHtml{<b>Manuals :</b><br>}%
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td>}
-    \lciPopOutput%
+    \end{savestream}
     \gdef\ccValueofPkgName{}%
   }%
 }
@@ -1140,13 +1140,13 @@
 \newcommand{\ccPartDescriptionEnsureHR}{}
 
 \newcommand{\ccPartDescriptionImpl}[2]{
-  \lciPushOutput{packages}%
+  \begin{savestream}{packages}%
   \ccPartDescriptionEnsureHR
   \lcRawHtml{<h2>}#1\lcRawHtml{</h2>}
   \def\ccValueofPkgSummary{}
   #2
   \ccValueofPkgSummary
-  \lciPopOutput%
+  \end{savestream}
   \newcommand{\ccPartDescriptionEnsureHR}{\lcRawHtml{<hr>}}
 }
 

@@ -488,7 +488,7 @@ function getObj(name)
     \lciTocNewLayout{
       \begin{savestream}{parttoc}
         \lcRawHtml{<tr>}
-        \lciTocIndentWidth
+        %\lciTocIndentWidth
         \lcRawHtml{<td><a href="##part_}\thepart\lcRawHtml{">}
         #1\lcRawHtml{</a></td><td>&nbsp;</td>}
         \lcRawHtml{<td><a href="##part_}\thepart\lcRawHtml{">}
@@ -518,12 +518,13 @@ function getObj(name)
     % upon \label ..so we temporarily redefine the function
     % to only generate an html-anchor
     \newcommand{\label}[1]{\lcRawHtml{<A NAME="}##C1\lcRawHtml{"></A>}}
-    \lciPushOutput{packages}
+    \begin{savestream}{packages}
     \lcRawHtml{
     <tr><td colspan="4">
-      <h2 class="PkgDescPart"><br>}#XC1#2\lcRawHtml{</h2>
+      <a name="part_}\thepart\lcRawHtml{"></a>
+      <h2 class="PkgDescPart"><br>}\thepart~~~#XC1#2\lcRawHtml{</h2>
     </td></tr>}
-    \lciPopOutput
+    \end{savestream}
   \endgroup
 }
 

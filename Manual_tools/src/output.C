@@ -238,7 +238,7 @@ void set_current_output( const string& key) {
           std::cerr << "!! Error: savestream \"" << savestream_name << "\" unknown!" << std::endl;
           return;
         }
-        new_filename = false;
+        //new_filename = false;
     } else if ( key == "minitoc" ) {
         string filename = macroX( "\\lciMinitocFilename" );
         current_output = Output_file( minitoc_stream, filename );

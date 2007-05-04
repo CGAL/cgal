@@ -50,7 +50,7 @@ td.TocEmptyEvenLeft,
 td.TocGroupEvenRight,
 td.TocEmptyEvenRight   {  }
 
-h3.TocPart             { background-color: #ffffa0; }
+h3.TocPart             { }
 h2.PkgDescPart         { background-color: #ffffa0; }
 
 table.TocInnerTable    {  }
@@ -84,7 +84,8 @@ a.TocLinkSubparagraph  {  }
 /* ----------------------------------------------------------------------- */
 div.NavBottom,
 div.NavAddress,
-div.NavTop             { background-color: #ffffa0; }
+div.NavTop             { background-color: #ffff90; }
+div.NavTOC,
 div.NavNext,
 div.NavPrev            { background-color: #c0ffc0; }
 

@@ -238,6 +238,7 @@
       
     \lciHtmlNavigationTop
 
+    \lciSavestreamOpen{packages}
     \lciTocNewLayout{
       \lciSavestreamOpen{pkgtoc}
       \lciSavestreamOpen{parttoc}
@@ -250,11 +251,12 @@
     \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
     \lciPushOutput{packages}%
-    \lciHtmlFileHeader{Package Overview}%
-    \lciHtmlNavigationTop
-    \lcRawHtml{<H1>Package Overview</H1>}
-    \lcRawHtml{<table cellpadding="2" cellspacing="0">}
+      \lciHtmlFileHeader{Package Overview}%
+      \lciHtmlNavigationTop
+      \lcRawHtml{<h1>Package Overview</h1>}
+      \lcRawHtml{<br><table border="0">}
     \lciPopOutput%
+    
     \lciPushOutput{comments}%
 \lcRawHtml{<manual_tools_output>}
 \lciPopOutput%
@@ -264,12 +266,12 @@
     % finish table of contents
     \lciPushOutput{toc}
       \lciTocNewLayout{
-        \lcRawHtml{<div class="NavTop"><hr><h2>Parts</h2><hr></div>}
+        \lcRawHtml{<div class="NavTOC"><hr><h2>Parts</h2><hr></div>}
         \lcRawHtml{<br><table border="0">}
         \lciSavestreamUse{parttoc}
         \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
         \lcRawHtml{</table><br>}
-        \lcRawHtml{<div class="NavTop"><hr><h2>Packages</h2><hr></div>}
+        \lcRawHtml{<div class="NavTOC"><hr><h2>Packages</h2><hr></div>}
         \lcRawHtml{<table border="0">}
         \lciSavestreamUse{pkgtoc}
         \lcRawHtmlExpanded{\lciSavestreamBufferpkgtoc}
@@ -285,9 +287,15 @@
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
     \lciPushOutput{packages}%
-    \lcRawHtml{</table>}
-    \lciHtmlNavigationBottom
-    \lciHtmlFileFooter%
+      \lciSavestreamUse{parttoc}
+      \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
+      \lcRawHtml{</table>}
+      \lcRawHtml{<table cellpadding="2" cellspacing="0">}
+      \lciSavestreamUse{packages}
+      \lcRawHtmlExpanded{\lciSavestreamBufferpackages}
+      \lcRawHtml{</table>}
+      \lciHtmlNavigationBottom
+      \lciHtmlFileFooter%
     \lciPopOutput%
     \lciPushOutput{comments}%
 \lcRawHtml{</manual_tools_output>}
@@ -1239,7 +1247,7 @@
     \lcRawHtml{	<div class="NavNext"><hr> Next: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a></div>}
+    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a><hr></div>}
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
