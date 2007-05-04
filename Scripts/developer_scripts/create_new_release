@@ -136,9 +136,7 @@ echo "Release number is ${release_number}"
 ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${TMPDIR}/${SOURCES_DIR} -r ${release_name} -n ${release_number}
 # Add the SVN revision to version.h
 cd "${release_name}"
-mv include/CGAL/version.h include/CGAL/version.h.internal
-sed -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h.internal > include/CGAL/version.h
-rm include/CGAL/version.h.internal
+sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
 cd ..
 # Make the release tarball
 tar -cf "${release_name}.tar" "${release_name}"
@@ -183,9 +181,7 @@ if [ "$DO_PUBLIC" ]; then
     cd ${public_release_name}
     rm -rf test Packages developer_scripts doc_tex winutils
     rm -f examples/*/cgal_test demo/*/cgal_test
-    mv include/CGAL/version.h include/CGAL/version.h.internal
-    sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h
-    rm include/CGAL/version.h.internal
+    sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
     echo -n $public_release_version > VERSION 2>&1
     cd ..
     tar -cf "${public_release_name}.tar" "${public_release_name}"
