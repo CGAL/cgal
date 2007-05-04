@@ -1541,6 +1541,7 @@ Nef_3/Visual_hull/Nef_3/mpi.off -text svneol=unset#application/octet-stream
 Nef_3/Visual_hull/Nef_3/mpi_triang.off -text svneol=unset#application/octet-stream
 Nef_3/Visual_hull/Nef_3/octahedron.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
+Nef_3/demo/Nef_3/makefile -text
 Nef_3/demo/Nef_3/mpi.vsh -text
 Nef_3/demo/Nef_3/nef_3.vcproj eol=crlf
 Nef_3/demo/Nef_3/visual_hull.vcproj eol=crlf
