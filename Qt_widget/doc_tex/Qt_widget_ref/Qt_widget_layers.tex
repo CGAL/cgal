@@ -67,6 +67,11 @@ the layer's state from activated to deactivated and reverse if it is
 triggered. The layer is activated if \ccc{s} is 2, or it is
 deactivated if \ccc{s} is 0. These values match with the signal
 \ccc{stateChanged(int)} in the \ccc{QButton} widget.}
+\ccMethod{void toggle(bool b);}{This slot is provided to change
+the layer's state from activated to deactivated and reverse if it is
+triggered. The layer is activated if \ccc{b} is \ccc{true}, or it is
+deactivated if \ccc{b} is \ccc{false}. These values match with the signal
+\ccc{toggled(bool)} in the \ccc{QButton} widget.}
 \ccMethod{bool activate();}{Activate and return \ccc{true} if it was not active.}
 \ccMethod{bool deactivate();}{Deactivate and return \ccc{true} if it was active.}
 

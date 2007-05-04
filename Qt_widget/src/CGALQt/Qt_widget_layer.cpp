@@ -36,6 +36,14 @@ namespace CGAL {
     else if(i == 0)
       deactivate();
   }
+
+  void Qt_widget_layer::toggle(bool b) {
+    if(b)
+      activate();
+    else
+      deactivate();
+  }
+
   bool Qt_widget_layer::activate(){
     if(active)
       return false;

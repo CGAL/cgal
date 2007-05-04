@@ -63,7 +63,8 @@ SHARED_LIB_ADDITIONAL_LDFLAGS = \
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
 #---------------------------------------------------------------------#
-include ../CGAL/common.mk
+CGAL_COMMON_MK = ../CGAL/common.mk
+include $(CGAL_COMMON_MK)
 
 #---------------------------------------------------------------------#
 #                    specific rules for libCGALQt

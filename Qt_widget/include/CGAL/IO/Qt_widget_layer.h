@@ -52,6 +52,7 @@ public:
 public slots:
   virtual void draw(){};
   void    stateChanged(int);
+  void    toggle(bool);
   bool    activate(); //activate and return true if it was not active
   bool    deactivate();//deactivate and return true if it was active
 signals:
