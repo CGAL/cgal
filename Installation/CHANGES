@@ -27,7 +27,9 @@ in <windows.h> which were clashing with min/max functions.
 
 
 3 Algebraic Foundations (new package)
-
+  This package defines what algebra means for CGAL, in terms of concepts, classes and functions. 
+  The main features are: (i) explicit concepts for interoperability of types (ii) separation 
+  between algebraic types  and number types .
 
 4 Number Types
 
@@ -145,6 +147,11 @@ which can improve the performance of algorithms like triangulations.
 It is used by the constructors of the triangulation package which have
 an iterator range of points as argument.
 
+
+7.3 Linear and Quadratic Programming Solver
+
+This package contains algorithms for minimizing linear and convex quadratic functions 
+over polyhedral domains, described by linear equations and inequalities. 
 
 
 ----------------------------- Release 3.2.1---------------------------------
