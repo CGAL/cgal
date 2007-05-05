@@ -42,7 +42,11 @@
 \newcommand{\lciIfRef}{\ccFalse}
 
 \gdef\lciInsideListOfRefPages{\lcFalse}
-\gdef\lciCloseCommentHeadingTable{}%
+
+\gdef\lciInsideComment{\ccFalse}%
+\gdef\lciCloseCommentHeadingTable{}
+
+
 
 \newcommand{\lcEnableNewTocLayout}{%
   \gdef\lciTocNewLayout{\lcTrue}%
@@ -361,9 +365,11 @@
 
 \newcommand{\ccHeading}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}}
 \newcommand{\ccCommentHeading}[1]{%
-\lciCloseCommentHeadingTable%
-\lcRawHtml{<table border="0" cellspacing="0" cellpadding="0"><tr valign="top"><td><u>}#1:\lcRawHtml{</u>&nbsp;</td><td>}%
-\gdef\lciCloseCommentHeadingTable{\lcRawHtml{</td></tr></table>}\gdef\lciCloseCommentHeadingTable{}}%
+\lciInsideComment{%
+  \lciCloseCommentHeadingTable%
+  \lcRawHtml{<table border="0" cellspacing="0" cellpadding="0"><tr valign="top"><td><u>}#1:\lcRawHtml{</u>&nbsp;</td><td>}%
+  \gdef\lciCloseCommentHeadingTable{\lcRawHtml{</td></tr></table>}\gdef\lciCloseCommentHeadingTable{}}%
+}{\lcRawHtml{<p><u>}#1\lcRawHtml{</u></p>}}%
 }
 
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
@@ -878,8 +884,10 @@
     {\lciTwoColumnX{#1}}}
 \newcommand{\lciTwoColumnX}[2]{\lciGluePostProcessing
     \lciTwoColumnLayout{#1}\lciIfEmpty{#C2}
-    {\lciTwoColsEndEmpty}{\lciTwoColsSecond #C2%
+    {\lciTwoColsEndEmpty}{\gdef\lciInsideComment{\ccTrue}%
+    \lciTwoColsSecond #C2%
     \lciCloseCommentHeadingTable%
+    \gdef\lciInsideComment{\ccFalse}%
      \lciTwoColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
@@ -922,9 +930,10 @@
     {\lciThreeColumnX{#1}}}
 \newcommand{\lciThreeColumnX}[2]{\lciGluePostProcessing\lciIfEmpty{#C2}
     {\lciThreeColumnLayout{#1}{1}\lciThreeColsEndEmpty}
-    {\lciThreeColumnLayout{#1}{0}%
+    {\lciThreeColumnLayout{#1}{0}\gdef\lciInsideComment{\ccTrue}%%
     #C2%
     \lciCloseCommentHeadingTable%
+    \gdef\lciInsideComment{\ccFalse}%
     \lciThreeColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%

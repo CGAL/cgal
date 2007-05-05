@@ -84,8 +84,8 @@ a.TocLinkSubparagraph  {  }
 /* ----------------------------------------------------------------------- */
 div.NavBottom,
 div.NavAddress,
-div.NavTop             { background-color: #ffff90; }
 div.NavTOC,
+div.NavTop             { background-color: #ffff90; }
 div.NavNext,
 div.NavPrev            { background-color: #c0ffc0; }
 
