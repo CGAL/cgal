@@ -128,7 +128,7 @@ std::ostream& operator<< (std::ostream& o,
     o << "QP_BLAND";
   }
   o << "\n";
-  o << "   Validation flag:  " << options.get_auto_validation() << std::endl;
+  o << "   Auto-validation:  " << options.get_auto_validation() << std::endl;
   return o;
 }
 
