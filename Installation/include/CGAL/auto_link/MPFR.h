@@ -22,7 +22,6 @@
 
 #ifndef CGAL_NO_AUTOLINK_MPFR
 
-#define CGAL_AUTO_LINK_NOMANGLE
 #define CGAL_LIB_NAME mpfr
 #include <CGAL/auto_link/auto_link.h>
 

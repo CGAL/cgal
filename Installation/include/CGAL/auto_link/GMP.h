@@ -22,7 +22,6 @@
 
 #ifndef CGAL_NO_AUTOLINK_GMP
 
-#define CGAL_AUTO_LINK_NOMANGLE
 #define CGAL_LIB_NAME gmp
 #include <CGAL/auto_link/auto_link.h>
 

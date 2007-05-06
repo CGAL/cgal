@@ -2,7 +2,7 @@
 ; Copyright 2007 GeometryFactory (France)
 ; Author: Andreas Fabri (andreas.fabri@geometryfactrory.com), Fernando Cacciola (fernando.cacciola@geometryfactrory.com)
 ;============================
-; Some portions of this file have been extracted/derived from "boost,.nsi", the Boost Windows Installer, contributed by www.boost-consulting.org.
+; Some portions of this file have been derived from "boost.nsi", the Boost Windows Installer, contributed by www.boost-consulting.org.
 ;
 ; Copyright 2006 Daniel Wallin
 ; Copyright 2006 Eric Niebler
@@ -10,6 +10,8 @@
 ; accompanying file LICENSE_1_0.txt or copy at
 ; http://www.boost.org/LICENSE_1_0.txt)
 ;============================
+
+;!define TestingOnly
 
 Var no_default_compilers
 Var no_default_variants
@@ -19,14 +21,6 @@ Var selected_libs
 ; Macros
 ;--------------------------------
 
-!macro AddConfigFlag CFLAG ADDED
-  StrCmp $ADDED "y" Set
-    return
-  Set:  
-    Push "#define CGAL_USE_${CFLAG} 1$\r$\n"
-    Call AppendLineToCompilerConfig
-    StrCpy $ADDED "y"
-!macroend
 
 !define MultiVariantSection "!insertmacro MultiVariantSection"
 
@@ -72,75 +66,35 @@ Var selected_libs
 !macroend
 
 !macro InstallThirdPartyLib SRC_MISC SRC_INC SRC_LIB TGT
+!ifndef TestingOnly
   SetOutPath "$INSTDIR\auxiliary\${TGT}"
-  FILE /r "${SRC_MISC}"
+  File /r "${SRC_MISC}"
   SetOutPath "$INSTDIR\auxiliary\${TGT}\include"
-  FILE /r "${SRC_INC}"
+  File /r "${SRC_INC}"
   SetOutPath "$INSTDIR\auxiliary\${TGT}\lib"
-  FILE /r "${SRC_LIB}"
+  File /r "${SRC_LIB}"
+!endif
 !macroend
 
 !macro Install_CGAL_libs VARIANT
-  
+!ifndef TestingOnly
   SetOutPath "$INSTDIR\lib"
-  FILE /r "${CGAL_SRC}\lib\cgal-${VARIANT}.lib"
-  FILE /r "${CGAL_SRC}\lib\CGALcore++-${VARIANT}.lib"
+  File /r "${CGAL_SRC}\lib\cgal-${VARIANT}.lib"
+  File /r "${CGAL_SRC}\lib\CGALcore++-${VARIANT}.lib"
+!endif  
 !macroend
 
 !macro Install_GMP_MPFR VARIANT
   !insertmacro InstallThirdPartyLib "${GMP_SRC}\README" "${GMP_SRC}\*.h" "${GMP_SRC}\*-${VARIANT}.lib" "gmp"
 !macroend
 
-!macro Install_TAUCS VARIANT
-  !insertmacro InstallThirdPartyLib "${TAUCS_SRC}\LICENSE" "${TAUCS_SRC}\*.h" "${TAUCS_SRC}\*-${VARIANT}.lib" "taucs"
-!macroend
-
-!macro Install_ZLIB VARIANT
-  !insertmacro InstallThirdPartyLib "${ZLIB_SRC}\*.txt" "${TAUCS_SRC}\*.h" "${TAUCS_SRC}\*-${VARIANT}.lib" "zlib"
-!macroend
 
 ;--------------------------------
 ; Functions
 ;--------------------------------
 
-
-# Appends "Line" to "compiler_config.h"
-# Usage:
-#   Push Line
-#   Call  AppendLineToCompilerConfig
-Function AppendLineToCompilerConfig
-  Push "$INSTDIR\include\CGAL\config\msvc\CGAL\compiler_config.h"
-  Call AppendLineToFile
-FunctionEnd
-
-# Appends "Line" to "Fle"
-# Usage:
-#   Push Line
-#   Push File
-#   Call  AppendLineToFile
-Function AppendLineToFile
-  Exch $0 # file
-  Exch
-  Exch $1 # line
-  Push $2 # handle 
-  FileOpen $2 $0 a
-  IfErrors error
-  FileSeek $2 0 END
-  FileWrite $2 $1
-  FileClose $2
-  Goto done
-  error:
-    DetailPrint "ERROR: Unable to add line:$\r$\n  $1 $\r$\nto file:$\r$\n  $0 $\r$\n"
-  done:
-  Pop $2
-  Pop $1
-  Pop $0  
-FunctionEnd
-
 Function initSelectionFlags
 
-    ${LogText} "initSelectionFlags..."
-  
     StrCpy $selected_libs ""
     ClearErrors
     StrCpy $0 0
@@ -149,10 +103,8 @@ Function initSelectionFlags
   next:
     SectionGetText $0 $1
     IfErrors bail
-    ${LogText} "Section $0 is '$1'"
     StrCpy $2 $1 "" -4
     StrCmp $2 "libs" 0 not_lib
-    ${LogText} "Section $0 is a libray"
     Push $0
     call SelectDefaultVariants
     StrCpy $selected_libs "$selected_libs1"
@@ -182,8 +134,6 @@ Function MaybeSelectVariant
     Exch 2
     ; r0, r1, r2
 
-    ${LogText} "MaybeSelectVariant comp=$0 variant=$1 section=$2"
-    
     Push $3
     Push $4
 
@@ -196,7 +146,6 @@ Function MaybeSelectVariant
     StrCpy $5 0
 
     ${If} $3 != 0
-      ${LogText} "$0 is checked. Looking for variant in selection."
     
         StrCpy $3 6
       next:
@@ -204,21 +153,17 @@ Function MaybeSelectVariant
         IfErrors bail
         ${If} $4 == $1
             !insertmacro MUI_INSTALLOPTIONS_READ $5 "default_variants.ini" "Field $3" "State"
-            ${LogText} "variant found. selected=$5"
             goto bail
         ${EndIf}
         IntOp $3 $3 + 1
         goto next
       bail:
-        ${If} $3 == 12
-          ${LogText} "ERROR!! variant NOT found in selection"
-        ${EndIf} 
     ${EndIf}
 
     ${If} $5 == 0
-      !insertmacro SelectSection $2
-    ${Else}
       !insertmacro UnselectSection $2
+    ${Else}
+      !insertmacro SelectSection $2
     ${EndIf}
 
     Pop $4
@@ -236,8 +181,6 @@ Function SelectDefaultVariants
     Push $3
     Push $4
 
-    ${LogText} "SelectDefaultVariants for section $0"
-    
     IntOp $0 $0 + 1
 
     StrCpy $1 0 ; Last section was group end

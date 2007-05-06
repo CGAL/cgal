@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc&quot;;&quot;..\..\include&quot;;$(BOOSTROOT);$(GMP_INC_VC80);$(MPFR_INC_VC80)"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;_DEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -69,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgal-vc80-mt-sgd.lib"
+				OutputFile="$(CGALROOT)\lib\cgal-vc80-mt-sgd.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -111,7 +111,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc&quot;;&quot;..\..\include&quot;;$(BOOSTROOT);$(GMP_INC_VC80);$(MPFR_INC_VC80)"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;NDEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -131,7 +131,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgal-vc80-mt-s.lib"
+				OutputFile="$(CGALROOT)\lib\cgal-vc80-mt-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -178,7 +178,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc&quot;;&quot;..\..\include&quot;;$(BOOSTROOT);$(GMP_INC_VC80);$(MPFR_INC_VC80)"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;NDEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -203,7 +203,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgal-vc80-mt.lib"
+				OutputFile="$(CGALROOT)\lib\cgal-vc80-mt.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -248,7 +248,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc&quot;;&quot;..\..\include&quot;;$(BOOSTROOT);$(GMP_INC_VC80);$(MPFR_INC_VC80)"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;_DEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -275,7 +275,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgal-vc80-mt-gd.lib"
+				OutputFile="$(CGALROOT)\lib\cgal-vc80-mt-gd.lib"
 				AdditionalLibraryDirectories=""
 			/>
 			<Tool
