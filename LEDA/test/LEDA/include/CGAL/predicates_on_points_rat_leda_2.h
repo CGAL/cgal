@@ -47,7 +47,6 @@ orientation(const Point_2<use_rat_leda_kernel>& p,
 */
 }
 
-// #ifdef CGAL_CFG_NO_KOENIG_LOOKUP
 template <class use_rat_leda_kernel>
 inline
 bool
@@ -67,7 +66,6 @@ collinear(const Point_2<use_rat_leda_kernel>& p,
                   (const use_rat_leda_kernel::Point_2_base&)r);
 */
 }
-// #endif // CGAL_CFG_NO_KOENIG_LOOKUP
 
 CGAL_END_NAMESPACE
 

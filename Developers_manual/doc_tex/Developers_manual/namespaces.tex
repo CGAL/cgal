@@ -118,41 +118,6 @@ name and no scope resolution%
 name lookup, but name lookup for a function call is supposed to search also 
 the namespaces of the argument types for a matching function name. 
 This is sometimes called Koenig-lookup.\ccIndexMainItem{Koenig lookup}
-\cgal\ checks for Koenig-lookup. If this is not available, 
-the flag \ccc{CGAL_CFG_NO_KOENIG_LOOKUP}%
-\index{CGAL_CFG_NO_KOENIG_LOOKUP flag@{\tt CGAL\_CFG\_NO\_KOENIG\_LOOKUP} flag}
-is set. As a workaround,
-you can add matching function(s) with the same name in the using namespace; 
-most likely, this will be the global scope.
-Here is an example:
-
-\ccIncludeVerbatim{Developers_manual/kl.cpp}
-
-While \verb+gcc+ doesn't have problems with correctly compiling the program
-above, the MipsPro compiler on {\sc IRIX} (up till version 7.30) does not
-implement Koenig lookup, so it fails:
-
-{\small
-\begin{verbatim}
-bash-2.03$ CC -64 kl.cpp  
-cc-1387 CC: ERROR File = kl.cpp, Line = 19
-  No suitable conversion function from "A::Cls" to "int" exists.
-
-    foo( c );
-         ^
-
-1 error detected in the compilation of "kl.cpp".
-\end{verbatim}
-
-}
-Workaround for missing Koenig lookup:\ccIndexSubitem{Koenig lookup}{workaround}
-Define 
-\begin{verbatim}
-bool
-foo( const A::Cls& cls)
-{ return A::foo( cls); }
-\end{verbatim}
-in global scope, too.
 
 \subsection{Point of instantiation of a template}
 Name lookup in a template is slightly more complicated.
