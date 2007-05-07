@@ -145,21 +145,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\options.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\polyhedron_ex_parameterization.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -181,9 +166,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\include\Mesh_cutter.h">
-			</File>
-			<File
-				RelativePath=".\include\options.h">
 			</File>
 			<File
 				RelativePath=".\include\Parameterization_polyhedron_adaptor_ex.h">
