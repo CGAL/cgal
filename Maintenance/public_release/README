@@ -11,7 +11,6 @@ So it seems best to branch as late as possible, in order to avoid the pain
 of committing things twice during the final stabilization phase.
 
 For branching, you need to :
-  - have write access to all packages
   - export svncgal=svn+ssh://scm.gforge.inria.fr/svn/cgal
   - svn cp $svncgal/trunk $svncgal/tags/CGAL-M.m-branch-tag
   - svn cp $svncgal/trunk $svncgal/branches/CGAL-M.m-branch
@@ -70,8 +69,6 @@ For the web pages:
              Manual/web_pages/doc_pdf/index.html
       2.  update the cgi-bin/cgal_download.pl script to add the new release,
           goes then to /www/pub/cgi-bin/www.cgal.org/
-      3.  Perhaps update the download/CGALWin directory with new versions
-          of the library for new platforms. [obsolete since CGAL 3.0, Lutz]
 
 Install everything:
       1.  install the manual (and include files) in
