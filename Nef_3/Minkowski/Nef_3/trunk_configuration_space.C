@@ -1,7 +1,10 @@
-//#include <CGAL/leda_integer.h>
-//#include <CGAL/leda_rational.h>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#else
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+#endif
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Simple_cartesian.h>
@@ -15,7 +18,11 @@
 #include <CGAL/Nef_3/convex_decomposition_3.h> 
 #include <CGAL/convexity_check_3.h>
 
+#ifdef CGAL_TCSP_BRUTE_FORCE
+#include <CGAL/Nef_3/trunk_offset_brute_force.h>
+#else
 #include <CGAL/Nef_3/trunk_offset.h>
+#endif
 
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
@@ -23,24 +30,27 @@
 #include <fstream>
 #include <sstream>
 
+//#define CGAL_WITH_LAZY_KERNEL
 #ifdef CGAL_WITH_LAZY_KERNEL
 typedef CGAL::Gmpq NT;
 //typedef leda_rational NT;
 typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > Kernel;
 #else
+#ifdef CGAL_USE_LEDA
+typedef leda_integer NT;
+#else
 typedef CGAL::Gmpz NT;
+#endif
 typedef CGAL::Homogeneous<NT> Kernel;
 #endif
 typedef Kernel::RT RT;
+typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Plane_3 Plane_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 //typedef Polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
-#ifdef CGAL_NEF_INDEXED_ITEMS
-typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron_3;
-#else
+//typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron_3;
 typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron_3;
-#endif
 typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
 typedef Nef_polyhedron_3::Vertex_const_handle Vertex_const_handle;
 typedef Nef_polyhedron_3::Halfedge_const_handle Halfedge_const_handle;
@@ -109,7 +119,7 @@ void read( const char* name, Polyhedron_3& poly) {
 
 int main(int argc, char* argv[]) {
 
-  if ( argc < 3 || argc > 5) {
+  if ( argc < 3 || argc > 7) {
     std::cerr << "Usage: " << argv[0] << " <infile>" << std::endl;
     std::exit(1);
   }
@@ -146,32 +156,32 @@ int main(int argc, char* argv[]) {
   for(int i=0;i<nv;++i) {
     double a,b,c;
     trunk >> a >> b >> c;
-    RT x(round(a)), y(round(b)), z(round(c));
-    //    FT x(a), y(b), z(c);
-/*
+    leda_rational x(round(a)), y(round(b)), z(round(c));
+    //    leda_rational x(a), y(b), z(c);
+
     Point_3 p(x.numerator()   * y.denominator() * z.denominator(),
 	      x.denominator() * y.numerator()   * z.denominator(),
 	      x.denominator() * y.denominator() * z.numerator(),
 	      x.denominator() * y.denominator() * z.denominator() );
-*/
-    Point_3 p(x,y,z,1);
-//    p = normalized(p);
+
+    //    Point_3 p(x,y,z,1);
+    p = normalized(p);
+    std::cerr << "input " << p << std::endl;
     points.push_back(p);
   }
  
   std::cerr << "number of facets " << nf << std::endl;
   trunk.getline(buffer,80);
   trunk.getline(buffer,80);
-
-  int mod = argc > 3 ? std::atoi(argv[3]) : 256; 
-  int suf = argc > 4 ? std::atoi(argv[4]) : 0;
-  int off = argc > 5 ? std::atoi(argv[5]) : 0;
+  
+  int mod = argc > 3 ? std::atoi(argv[3]) : 256;
+  int step = argc > 4 ? std::atoi(argv[4]) : 2;
+  int mp = argc > 5 ? std::atoi(argv[5]) : nv/63;
 
   int face[3*nf];
   for(int i=0;i<nf;++i){
     trunk >> face[3*i] >> face[3*i+1] >> face[3*i+2] >> col >> man;
-    if(i>=off)
-      facets.push_back(std::make_pair(face+(3*i),face+(3*i+3))); 
+    facets.push_back(std::make_pair(face+(3*i),face+(3*i+3))); 
   }
 
   Polyhedron_3 P;
@@ -181,11 +191,22 @@ int main(int argc, char* argv[]) {
 
   CGAL::Timer t;
   t.start();
-  TO to(mod, suf);
-  Nef_polyhedron_3 CSP = to(points.begin(), points.end(),
-			    facets.begin(), facets.end(), P);
+  std::vector<Point_3>::const_iterator 
+    pbegin(points.begin()), pend(points.end());
+  std::list<std::pair<int*, int*> >::const_iterator
+    fbegin(facets.begin()), fend(facets.end());
+#ifdef CGAL_TCSP_BRUTE_FORCE
+  TO to;
+#else
+  TO to(mod, step, mp);
+#endif
 
-  CSP = !CSP;
+  Nef_polyhedron_3 CSP
+    (to(pbegin, pend, fbegin, fend, P));
+
+  CGAL_assertion(CSP.number_of_volumes() == 2);
+  CGAL_assertion(!CSP.volumes_begin()->mark());
+  CGAL_assertion((++CSP.volumes_begin())->mark());
 
   t.stop();
   std::cerr << "Runtime CSP: " << t.time() << std::endl;
@@ -243,9 +264,6 @@ int main(int argc, char* argv[]) {
 	    << t.time() << std::endl;    
 
   /*
-  std::ofstream out("temp.nef3");
-  out << result;
-
   QApplication a(argc, argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>* w =
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>(result);
