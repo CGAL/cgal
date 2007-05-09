@@ -1194,10 +1194,10 @@ $LGPL_LICENSE_HEADER
 // Author(s): install_cgal script
 
 // This file was automatically generated during installation.
-// It wraps a standard header file that did not exist for this compiler
+// It wraps a C++98 standard header file that did not exist for this compiler
 // and adds its symbols to namespace std.
 // The existence of this file indicates that your compiler does not
-// conform to the ISO/IEC standard 14882 for C++.
+// conform to the ISO/IEC standard 14882 for C++ (C++98).
 
 EOF3
 	    ${_printf} "%s\n" "#include <$arg>" >> ${replacement_header}
@@ -1258,7 +1258,7 @@ EOF3
 
 create_standard_header_replacements()
 {
-    ${_printf} "%s\n" "${_LEFTSPACE}Checking for standard header files"
+    ${_printf} "%s\n" "${_LEFTSPACE}Checking for C++98 standard header files"
 
     #
     # A global test for all std header files at once, to speed up the rest
