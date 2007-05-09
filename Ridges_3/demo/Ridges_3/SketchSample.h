@@ -39,6 +39,7 @@ class SketchSample : public Sketcher {
   bool highlight;
   Mesh* p_mesh;
   DS* p_ridge_data;
+  double mesh_center_x, mesh_center_y, mesh_center_z, mesh_radius;
 
  public:
   SketchSample(Mesh* mesh, DS* ridge_data);
@@ -55,4 +56,5 @@ class SketchSample : public Sketcher {
   double rmm();
   const double* rcoord();
   void draw_one_ridge(data_line* line);
+  void compute_mesh_position();
 };

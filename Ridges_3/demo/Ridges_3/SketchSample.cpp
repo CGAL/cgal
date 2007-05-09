@@ -5,6 +5,7 @@
 // Version: 1.0
 
 #include "SketchSample.h"
+#include <CGAL/bounding_box.h>
 
 extern double strength_threshold;
 extern double sharpness_threshold;
@@ -13,6 +14,7 @@ SketchSample::SketchSample(Mesh* mesh, DS* ridge_data) {
   highlight = false;
   p_mesh = mesh;
   p_ridge_data = ridge_data;
+  this->compute_mesh_position();
 }
 
 SketchSample::~SketchSample() {
@@ -105,21 +107,33 @@ void SketchSample::drawHighlighted() {
 }
 
 double SketchSample::rcx() {
-  return 0.;
+  return mesh_center_x;
 }
 
 double SketchSample::rcy() {
-  return 0.;
+  return mesh_center_y;
 }
 
 double SketchSample::rcz() {
-  return 0.;
+  return mesh_center_z;
 }
 
 double SketchSample::rmm() {
-  return 2.;
+  return mesh_radius;
 }
 
 const double* SketchSample::rcoord() {
   return 0;
+}
+
+void SketchSample::compute_mesh_position() {
+  typedef CGAL::Cartesian<double> Kernel;
+  Kernel::Iso_cuboid_3  box = CGAL::bounding_box(p_mesh->points_begin(),
+					   p_mesh->points_end());
+  Kernel::Point_3 center = CGAL::midpoint(box.min(), box.max());
+  Kernel::Vector_3 diameter = box.min() - box.max();
+  mesh_center_x = center.x();
+  mesh_center_y = center.y();
+  mesh_center_z = center.z();
+  mesh_radius = CGAL::sqrt( diameter * diameter )/2;
 }
