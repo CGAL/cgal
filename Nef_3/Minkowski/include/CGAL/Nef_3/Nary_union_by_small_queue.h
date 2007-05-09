@@ -14,6 +14,7 @@ class Nary_union_by_small_queue {
   int inserted;
   std::list<Polyhedron> queue;
   typedef typename std::list<Polyhedron>::iterator pit;
+  Polyhedron empty;
 
  public:
   Nary_union_by_small_queue() : inserted(0) {}
@@ -24,7 +25,7 @@ class Nary_union_by_small_queue {
 
 #ifdef CGAL_NEF_FAST_UNION
     CGAL::Binary_union<Polyhedron> bu(*i1, *i2);
-    Polyhedron tmp;
+    Polyhedron tmp(empty);
     tmp.delegate(bu, false, false);
 #else
     Polyhedron tmp(*i1 + *i2);
@@ -38,6 +39,7 @@ class Nary_union_by_small_queue {
   void add_polyhedron(const Polyhedron& P) {
     queue.push_front(P);
     ++inserted;
+    std::cerr << "inserted " << inserted << std::endl;
     for(int i=2;(inserted%i) == 0; i*=2) {
       unite();
     }
