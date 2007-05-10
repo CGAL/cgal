@@ -21,7 +21,7 @@
 				AdditionalOptions="/Zm200"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT"
+				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="  qt-mt.lib qtmain.lib gmp.lib mpfr.lib wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/demo.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
@@ -79,7 +79,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc&quot;;&quot;../../include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
