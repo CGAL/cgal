@@ -38,6 +38,7 @@
 				OutputFile="$(OutDir)/straight_skeleton_2.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
@@ -93,6 +94,7 @@
 				OutputFile="$(OutDir)/straight_skeleton_2.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

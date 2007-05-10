@@ -39,6 +39,7 @@
 				OutputFile="$(OutDir)/constrained_delaunay_triangulation_2.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/constrained_delaunay_triangulation_2.pdb"
 				SubSystem="2"/>
@@ -94,6 +95,7 @@
 				OutputFile="$(OutDir)/constrained_delaunay_triangulation_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"

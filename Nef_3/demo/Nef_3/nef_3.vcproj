@@ -38,6 +38,7 @@
 				OutputFile="$(OutDir)/nef_3.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
@@ -90,6 +91,7 @@
 				OutputFile="$(OutDir)/nef_3.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

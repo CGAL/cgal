@@ -39,7 +39,8 @@
 				OutputFile="$(OutDir)/delaunay_triangulation_2.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
-				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
+ 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/delaunay_triangulation_2.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
@@ -96,6 +97,7 @@
 				OutputFile="$(OutDir)/delaunay_triangulation_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
