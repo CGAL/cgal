@@ -1,4 +1,4 @@
-% ___________________________________________________________________________
+f% ___________________________________________________________________________
 % |#########################################################################|
 % |                                                                         |
 % | Latex Converter Style File: cc_manual.sty                               |
@@ -264,12 +264,13 @@
 % Format exernal file:  #1  the file name.
 %\newcommand{\ccIncludeExampleCode}[1]{\ccIncludeVerbatim{#1}}
 \newcommand{\ccIncludeExampleCode}[1]{%
+\lciIfFileExists{#1.filename}{
 \begin{alltt}%
 \textbf{File: }\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}%
 \input{#1.filename}%
 \lcRawHtml{</a>}%
 \end{alltt}%
-\ccIncludeVerbatim{#1.noheader}
+\ccIncludeVerbatim{#1.noheader}}{\lciError{Example file \ccc{#1} missing}}
 }
 
 \newcommand{\ccReferToExampleCode}[1]{%
@@ -639,7 +640,7 @@
   \lciPrintToComments{localscope}{#XC1}
   \lciPrintToComments{refcat}{#XC3}
   \lciPrintToComments{globalscope}{#XC4}
-  \lciPrintToComments{other}{#XC5}
+  \lciPrintToComments{definition}{#XC5}
 \lciPopOutput
 
     \newcommand{\ccPureClassName}{#XC1#C2}%
