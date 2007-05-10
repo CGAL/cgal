@@ -39,7 +39,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
-				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
+				ProgramDatabaseFile="$(OutDir)/Delaunay_triangulation_2.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool

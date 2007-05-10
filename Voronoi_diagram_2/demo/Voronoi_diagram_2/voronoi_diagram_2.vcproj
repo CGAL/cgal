@@ -39,7 +39,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
+				ProgramDatabaseFile="$(OutDir)/voronoi_diagram_2.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool

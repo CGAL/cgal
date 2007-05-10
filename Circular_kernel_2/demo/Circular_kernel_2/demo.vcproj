@@ -41,7 +41,7 @@
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
-				ProgramDatabaseFile="$(OutDir)/alpha_shapes_2.pdb"
+				ProgramDatabaseFile="$(OutDir)/demo.pdb"
 				SubSystem="2"
 				TargetMachine="0"/>
 			<Tool

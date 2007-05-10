@@ -39,7 +39,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
-				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
+				ProgramDatabaseFile="$(OutDir)/visual_hull.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
