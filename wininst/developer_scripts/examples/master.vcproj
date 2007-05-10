@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="${ConfigurationName}"
-			IntermediateDirectory="${ConfigurationName}"
+			OutputDirectory="OUTDIR"
+			IntermediateDirectory="OUTDIR"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -22,7 +22,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
+				PreprocessorDefinitions="WIN32;_DEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -61,8 +61,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="${ConfigurationName}"
-			IntermediateDirectory="${ConfigurationName}"
+			OutputDirectory="OUTDIR"
+			IntermediateDirectory="OUTDIR"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -72,7 +72,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"

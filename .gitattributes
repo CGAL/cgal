@@ -2789,6 +2789,8 @@ wininst/developer_scripts/examples/master_71_proj_line.sln eol=crlf
 wininst/developer_scripts/examples/master_80.vcproj -text
 wininst/developer_scripts/examples/master_80_head.sln eol=crlf
 wininst/developer_scripts/examples/master_80_proj_line.sln eol=crlf
+wininst/developer_scripts/examples/master_head.sln -text
+wininst/developer_scripts/examples/master_proj_line.sln -text
 wininst/developer_scripts/script_cgal_3_3.nsh -text
 wininst/developer_scripts/zirkel.bmp -text svneol=unset#image/bmp
 wininst/src/CGAL/cgallib_71.vcproj -text
