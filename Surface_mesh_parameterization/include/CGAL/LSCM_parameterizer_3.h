@@ -237,7 +237,7 @@ private:
 /// 5) Copy OpenNL solution to the u,v coordinates.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor& mesh)
 {
@@ -344,7 +344,7 @@ parameterize(Adaptor& mesh)
 /// - 'mesh' must be a triangular mesh
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(Adaptor& mesh)
 {
@@ -472,7 +472,7 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,   // i
 /// in presence of degenerate triangles
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_triangle_relations(LeastSquaresSolver& solver,
                          const Adaptor& mesh,
@@ -587,7 +587,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
 /// - 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_postconditions(const Adaptor& mesh,
                                   const LeastSquaresSolver& solver)

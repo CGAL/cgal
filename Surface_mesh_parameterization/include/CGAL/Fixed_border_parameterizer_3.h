@@ -248,7 +248,7 @@ private:
 /// - the mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor& mesh)
 {
@@ -378,7 +378,7 @@ parameterize(Adaptor& mesh)
 /// - the mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(Adaptor& mesh)
 {
@@ -471,7 +471,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
 /// - line i of A must contain only zeros.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix& A,
                              Vector& ,
@@ -541,7 +541,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
 /// - 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
+typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_postconditions(const Adaptor& mesh,
                                   const Matrix& A,
