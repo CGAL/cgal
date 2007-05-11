@@ -24,6 +24,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/circulator.h>
 #include <set>
+#include <vector>
 
 namespace CGAL {
 
@@ -54,9 +55,9 @@ namespace CGAL {
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef std::pair<Vertex_handle, Vertex_handle> EdgeVV;
       typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
-      typedef std::list<Edge> Edges;
-      typedef std::list<Facet> Facets;
-      typedef Const_circulator_from_container<Facets> Facet_circulator;
+      typedef std::vector<Edge> Edges;
+      typedef std::vector<Facet> Facets;
+      typedef typename C2T3::Facet_circulator Facet_circulator;
       typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
 
   protected:
@@ -159,7 +160,8 @@ namespace CGAL {
       // For before_insertion
 
       // Actions to perform on a facet inside the conflict zone
-      void handle_facet_inside_conflict_zone (const Facet& f) {
+      void 
+      before_insertion_handle_facet_inside_conflict_zone (const Facet& f) {
 	Facet cote = f;
 	Facet autre_cote = SMB::mirror_facet(cote);
 
@@ -177,9 +179,11 @@ namespace CGAL {
       }
 
       // Action to perform on a facet on the boundary of the conflict zone
-      void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
+      void 
+      before_insertion_handle_facet_on_boundary_of_conflict_zone(const Facet& f)
+      {
 	// perform the same operations as for an internal facet
-	handle_facet_inside_conflict_zone (f);
+	before_insertion_handle_facet_inside_conflict_zone (f);
       }
 
     public:
@@ -264,12 +268,12 @@ namespace CGAL {
                zone.internal_facets.begin();
              fit != zone.internal_facets.end();
              ++fit)
-          handle_facet_inside_conflict_zone (*fit);
+          before_insertion_handle_facet_inside_conflict_zone (*fit);
 
         for (typename Zone::Facets_iterator fit =
                zone.boundary_facets.begin(); fit !=
                zone.boundary_facets.end(); ++fit)
-          handle_facet_on_boundary_of_conflict_zone (*fit);
+          before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit);
       }
       SMB::before_insertion_impl(Facet(), s, zone);
     }

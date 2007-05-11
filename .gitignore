@@ -280,9 +280,12 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/release
 Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/*.exe
 Surface_mesher/demo/Surface_mesher/.*.deps
+Surface_mesher/demo/Surface_mesher/dump.ff
 Surface_mesher/demo/Surface_mesher/implicit_surface_mesher
 Surface_mesher/demo/Surface_mesher/my_makefile
+Surface_mesher/demo/Surface_mesher/out.off
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher
+Surface_mesher/demo/Surface_mesher/polyhedron_remesher_with_edges
 Surface_mesher/doc_html
 Surface_mesher/doc_pdf
 Surface_mesher/doc_ps
@@ -306,6 +309,7 @@ Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.hlg
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.ilg
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.log
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.pdflg
+Surface_mesher/doc_tex/Complex_2_in_triangulation_3/auto
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.aux
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.bbl
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.blg
@@ -315,6 +319,7 @@ Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.hlg
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.ilg
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.log
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/*.pdflg
+Surface_mesher/doc_tex/Complex_2_in_triangulation_3_ref/auto
 Surface_mesher/doc_tex/Surface_mesher/*.aux
 Surface_mesher/doc_tex/Surface_mesher/*.bbl
 Surface_mesher/doc_tex/Surface_mesher/*.blg
@@ -324,6 +329,7 @@ Surface_mesher/doc_tex/Surface_mesher/*.hlg
 Surface_mesher/doc_tex/Surface_mesher/*.ilg
 Surface_mesher/doc_tex/Surface_mesher/*.log
 Surface_mesher/doc_tex/Surface_mesher/*.pdflg
+Surface_mesher/doc_tex/Surface_mesher/auto
 Surface_mesher/doc_tex/Surface_mesher_ref/*.aux
 Surface_mesher/doc_tex/Surface_mesher_ref/*.bbl
 Surface_mesher/doc_tex/Surface_mesher_ref/*.blg
@@ -333,6 +339,8 @@ Surface_mesher/doc_tex/Surface_mesher_ref/*.hlg
 Surface_mesher/doc_tex/Surface_mesher_ref/*.ilg
 Surface_mesher/doc_tex/Surface_mesher_ref/*.log
 Surface_mesher/doc_tex/Surface_mesher_ref/*.pdflg
+Surface_mesher/doc_tex/Surface_mesher_ref/auto
+Surface_mesher/doc_tex/auto
 Surface_mesher/doxygen
 Surface_mesher/examples/Surface_mesher/*.exe
 Surface_mesher/examples/Surface_mesher/.*.deps
@@ -344,6 +352,7 @@ Surface_mesher/examples/Surface_mesher/out.off
 Surface_mesher/examples/Surface_mesher/sphere_union-before.mesh
 Surface_mesher/examples/Surface_mesher/sphere_union.mesh
 Surface_mesher/examples/Surface_mesher/sphere_union.off
+Surface_mesher/examples/Surface_mesher/test_imageio
 Surface_mesher/include/CGAL/Mesh_3
 Surface_mesher/test/Surface_mesher/*.exe
 Surface_mesher/test/Surface_mesher/.*.deps
@@ -352,6 +361,7 @@ Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test
 Surface_mesher/test/Surface_mesher/internal-test-surface-mesher
 Surface_mesher/test/Surface_mesher/my_makefile
 Surface_mesher/test/Surface_mesher/test_c2t3_iterators
+Surface_mesher/test/Surface_mesher/test_canonical_edge
 Surface_mesher/test/Surface_mesher/test_robust_circumcenter
 Triangulation_2/test/Triangulation_2/T??.triangulation
 Triangulation_2/test/Triangulation_2/file_tds*

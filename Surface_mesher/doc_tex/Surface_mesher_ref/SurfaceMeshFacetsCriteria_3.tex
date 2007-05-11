@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: SurfaceMeshCriteria.tex
+% | Reference manual page: SurfaceMeshFacetsCriteria.tex
 % +------------------------------------------------------------------------+
 % | 02.12.2005   Mariette Yvinec, Laurent Rineau
 % | Package: Surface_mesher
 % | 
-\RCSdef{\RCSSurfaceMeshCriteriaRev}{$Id$}
-\RCSdefDate{\RCSSurfaceMeshCriteriaDate}{$Date$}
+\RCSdef{\RCSSurfaceMeshFacetsCriteriaRev}{$Id$}
+\RCSdefDate{\RCSSurfaceMeshFacetsCriteriaDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{SurfaceMeshCriteria_3}
+\begin{ccRefConcept}{SurfaceMeshFacetsCriteria_3}
 
 \ccDefinition
   
@@ -21,8 +21,11 @@ is guided by a set of refinement criteria.
 The concept \ccRefName\ describes the type  which
 handles those criteria. 
 It corresponds to the requirements for the template parameter
-\ccc{Criteria} of the surface mesher function
-\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,Criteria,Tag>}.
+\ccc{FacetsCriteria} of the surface mesher function
+\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>} and the
+piecewise smooth mesher
+function \ccc{make_piecewise_smooth_surface_mesh<SurfaceMeshC2T3,Surface,
+  FacetsCriteria,EdgesCriteria,Tag>}.
 
 Typically the meshing criteria are a set
 of elementary criteria, each of which
@@ -39,7 +42,7 @@ The concept \ccRefName\
 defines a type \ccc{Quality} designed to measure
 the quality of a mesh facet. 
 Typically this quality
-is a multi-component variable.  Each component corresponds to
+is a multicomponent variable.  Each component corresponds to
 one criterion and measures how much the facet deviates from
 meeting this criterion. Then, the  comparison operator on qualities
 is just a lexicographical comparison. The meshing algorithm handles facets
@@ -72,7 +75,7 @@ provided by the the model of
 \ccc{Surface_mesh_default_criteria_3<Tr>}
 
 \ccSeeAlso
-\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,Criteria,Tag>}
+\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>}
 
 
 \end{ccRefConcept}

@@ -28,39 +28,141 @@
 #include <CGAL/Union_find.h>
 #include <set>
 #include <map>
-#include <list>
 #include <vector>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
-template < class Tr >
-class Complex_2_in_triangulation_3 {
+  namespace details {
 
- public:
+    template <typename Tr, typename Edge_info>
+    class C2t3_helper_class
+    {
+    protected:
+      typedef typename Tr::Vertex_handle Vertex_handle;
+      typedef std::pair<Vertex_handle, Vertex_handle> Pair_of_vertices;
+      // computes and return an ordered pair of Vertex
+      Pair_of_vertices
+      make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
+	if (vh1 < vh2) {
+	  return std::make_pair(vh1, vh2);
+	}
+	else {
+	  return std::make_pair(vh2, vh1);
+	}
+      }
+    };
 
-  typedef Complex_2_in_triangulation_3 < Tr > Self;
+    template <typename Tr, typename Edge_info>
+    class C2t3_mark_edges_helper_class : public C2t3_helper_class<Tr,Edge_info>
+    {
+    protected:
+      typedef typename Tr::Vertex_handle Vertex_handle;
+      typedef typename Tr::Cell_handle Cell_handle;
+      typedef typename Tr::Edge Edge;
+      typedef typename C2t3_helper_class<Tr,Edge_info>::Pair_of_vertices Pair_of_vertices;
+      typedef std::map<Pair_of_vertices, Edge_info> Marked_edges;
+      Marked_edges marked_edges;
+    public:
+      void mark(const Cell_handle& c, const int& i, const int& j,
+		const Edge_info& info = Edge_info())
+      {
+	marked_edges.insert(std::make_pair(this->make_ordered_pair(c->vertex(i),
+								   c->vertex(j)),
+					   info));
+      }
+      void mark(const Edge& e,
+		const Edge_info& info = Edge_info())
+      {
+	mark(e.first, e.second, e.third, info);
+      }
+      void   unmark(const Cell_handle& c, const int& i, const int& j)
+      {
+	marked_edges.erase(this->make_ordered_pair(c->vertex(i), c->vertex(j)));
+      }
+      void unmark(const Edge& e)
+      {
+	unmark(e.first, e.second, e.third);
+      }
+      Edge_info& 
+      get_info(const Edge& e)
+      {
+	return get_info(e.first, e.second, e.third);
+      }
+      Edge_info& 
+      get_info(const Cell_handle& c, const int& i, const int& j)
+      {
+	return this->marked_edges[this->make_ordered_pair(c->vertex(i),
+							  c->vertex(j))];
+      }
+
+    }; // end of class C2t3_mark_edges_helper_class<Tr, Edge_info>
+
+    template <typename Tr>
+    class C2t3_mark_edges_helper_class<Tr,void> 
+      : public C2t3_helper_class<Tr,void>
+    {
+    protected:
+      typedef typename Tr::Vertex_handle Vertex_handle;
+      typedef typename Tr::Cell_handle Cell_handle;
+      typedef typename Tr::Edge Edge;
+      typedef typename C2t3_helper_class<Tr,void>::Pair_of_vertices Pair_of_vertices;
+      typedef std::set<Pair_of_vertices> Marked_edges;
+      Marked_edges marked_edges;
+    public:
+      void mark(const Cell_handle& c, const int& i, const int& j)
+      {
+	marked_edges.insert(this->make_ordered_pair(c->vertex(i),
+						    c->vertex(j)));
+      }
+      void mark(const Edge& e)
+      {
+	mark(e.first, e.second, e.third);
+      }
+      void unmark(const Cell_handle& c, const int& i, const int& j)
+      {
+	marked_edges.erase(this->make_ordered_pair(c->vertex(i), 
+						   c->vertex(j)));
+      }
+      void unmark(const Edge& e)
+      {
+	unmark(e.first, e.second, e.third);
+      }
+    }; // end of specialiazation C2t3_mark_edges_helper_class<Tr,void>
+
+    
+  } // end nested-namespace details (in CGAL::)
+
+template < class Tr, typename Edge_info_ = void >
+class Complex_2_in_triangulation_3 :
+    public details::C2t3_mark_edges_helper_class<Tr, Edge_info_>
+{
+public:
+  typedef Complex_2_in_triangulation_3 <Tr, Edge_info_> Self;
+  typedef details::C2t3_mark_edges_helper_class<Tr, Edge_info_> Base;
+  typedef typename Base::Marked_edges Marked_edges;
 
   typedef Tr Triangulation;
+  typedef Edge_info_ Edge_info;
 
   typedef typename Triangulation::Vertex_handle Vertex_handle;
   typedef typename Triangulation::Cell_handle Cell_handle;
   typedef typename Triangulation::Facet Facet;
   typedef typename Triangulation::Edge Edge;
 
-  typedef std::list<Facet> Facets;
-  typedef std::list<Cell_handle> Cells;
-  typedef typename Facets::iterator Facet_list_iterator;
+  typedef std::set<Facet> Facets;
 
   typedef std::size_t size_type;
 
   typedef Const_circulator_from_container<Facets> Facet_circulator;
 
-  typedef std::map <std::pair <Vertex_handle, Vertex_handle>,
-		    std::pair<int, std::list<Facet> > >
+  typedef typename Base::Pair_of_vertices Pair_of_vertices;
+  typedef std::map <Pair_of_vertices,
+		    std::pair<int, Facets > >
                                                   Edge_facet_counter;
-
   enum Face_status{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
-
 
   class Iterator_not_in_complex {
     Self* self;
@@ -153,18 +255,6 @@ protected:
   Edge_facet_counter  edge_facet_counter;
   size_type m_number_of_facets;
 
- private:
-  // computes and return an ordered pair of Vertex
-  std::pair<Vertex_handle, Vertex_handle>
-  make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
-    if (vh1 < vh2) {
-      return std::make_pair(vh1, vh2);
-    }
-    else {
-      return std::make_pair(vh2, vh1);
-    }
-  }
-
 public:
   Facet canonical_facet(Cell_handle c, int i) const {
     Cell_handle c2 = c->neighbor(i);
@@ -188,6 +278,7 @@ public:
   {
     m_number_of_facets = 0;
     edge_facet_counter.clear();
+    this->marked_edges.clear();
   }
 
   // Access functions
@@ -218,10 +309,15 @@ public:
                            const Vertex_handle& vb) const
   {
     typename Edge_facet_counter::const_iterator it =
-      edge_facet_counter.find(make_ordered_pair(va, vb));
+      edge_facet_counter.find(this->make_ordered_pair(va, vb));
 
     if (it == edge_facet_counter.end())
-      return NOT_IN_COMPLEX;
+    {
+      if(is_marked(va, vb))
+	return ISOLATED;
+      else
+	return NOT_IN_COMPLEX;
+    }
 
     switch (it->second.first)
     {
@@ -272,6 +368,22 @@ public:
     }
   } //end of face_status(Vertex_handle)
 
+  bool is_marked(const Vertex_handle& va, const Vertex_handle& vb) const
+  {
+    typename Marked_edges::const_iterator it = 
+      this->marked_edges.find(this->make_ordered_pair(va, vb));
+    return it != this->marked_edges.end();
+  }
+
+  bool is_marked(const Cell_handle& c, const int& i, const int& j) const
+  {
+    return is_marked(c->vertex(i),c->vertex(j));
+  }
+
+  bool is_marked(const Edge& e) const
+  {
+    return is_marked(e.first, e.second, e.third);
+  }
 
   // This function should be called only when incident edges
   // are known to be REGULAR OR BOUNDARY
@@ -349,16 +461,26 @@ public:
     return m_number_of_facets;
   }
 
+  size_type number_of_edges() const
+  {
+    return edge_facet_counter.size();
+  }
+
+  size_type number_of_marked_edges() const
+  {
+    return this->marked_edges.size();
+  }
+
   Facet_circulator incident_facets (const Edge& e) {
     typename Edge_facet_counter::iterator it = 
-      edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
-                                                e.first->vertex(e.third)));
+      edge_facet_counter.find(this->make_ordered_pair(e.first->vertex(e.second),
+						      e.first->vertex(e.third)));
     
     if( it == edge_facet_counter.end() )
       return Facet_circulator();
     else
     {
-      // position the circulator on the first element of the facets list
+      // position the circulator on the first element of the facets set
       Facets& lof = it->second.second;
       return Facet_circulator(&lof);
     }
@@ -374,8 +496,8 @@ public:
 
     // We assume that for the generated facets the Cell_handle is smaller than the opposite one
     tr.incident_facets(v,
-                  CGAL::filter_output_iterator(it, 
-                                               Facet_not_in_complex(this)));
+		       CGAL::filter_output_iterator(it, 
+						    Facet_not_in_complex(this)));
     return it;
   }
 
@@ -400,12 +522,33 @@ public:
 
   // Setting functions
 
-  void set_in_complex (const Facet& f) {
-    set_in_complex (f.first, f.second);
+  void add_to_complex (const Facet& f) {
+    add_to_complex (f.first, f.second);
   }
 
-  void set_in_complex (const Cell_handle c, const int i) {
+  void add_to_complex (const Cell_handle c, const int i) {
     change_in_complex_status<true, false>(c, i);
+  }
+
+  void add_to_complex(const Edge& e) {
+    add_to_complex(e.first, e.second, e.third);
+  }
+
+  void add_to_complex(const Cell_handle& c,
+		      const int& i,
+		      const int& j) {
+    // Search for e in edge_facet_counter.
+    // That search creates the entry if the search result is negative.
+    edge_facet_counter[this->make_ordered_pair(c->vertex(j))];
+  }
+
+  // backward compatibility with implementation of CGAL-3.2
+  void set_in_complex (const Facet& f) {
+    add_to_complex(f);
+  }
+  // backward compatibility with implementation of CGAL-3.2
+  void set_in_complex (const Cell_handle c, const int i) {
+    add_to_complex(c, i);
   }
 
   template <bool in_complex, bool force_modification>
@@ -449,14 +592,14 @@ public:
         for (int k = j + 1; k < dimension_plus_1; k++) {
           if ( (i != j) && (i != k) ){
 
-            const std::pair<Vertex_handle, Vertex_handle> e = 
-              make_ordered_pair(c->vertex(j),
-                                c->vertex(k));
+            const Pair_of_vertices e = 
+              this->make_ordered_pair(c->vertex(j),
+				      c->vertex(k));
 
             if(in_complex)
             {
-              (edge_facet_counter[e]).first++;
-              (edge_facet_counter[e]).second.push_back(f); // @TODO: beurk.
+              ++(edge_facet_counter[e].first);
+              edge_facet_counter[e].second.insert(f); // @TODO: beurk.
                                                            // Recode this!
             }
             else 
@@ -466,11 +609,16 @@ public:
 
               CGAL_assertion( it != edge_facet_counter.end() );
               
-	      if(--(it->second.first) > 0)
-                it->second.second.remove(f);
-              else
-                edge_facet_counter.erase(it);
-            }              
+	      it->second.second.erase(f);
+	      --(it->second.first);
+	      CGAL_assertion(it->second.first >= 0);
+	      if(it->second.first == 0)
+	      {
+		// if the edge is marked, leave it ISOLATED.
+		if(!is_marked(e.first, e.second))
+		  edge_facet_counter.erase(it);
+	      }
+            }            
           }
         }
       }
@@ -483,6 +631,19 @@ public:
     }
   }
 
+  void remove_from_complex(const Edge& e) {
+    remove_from_complex(e.first, e.second, e.third);
+  }
+
+  void remove_from_complex(const Cell_handle& c,
+			   const int& i,
+			   const int& j) {
+      Pair_of_vertices pair = this->make_ordered_pair(c->vertex(i),
+						      c->vertex(j));
+      this->marked_edges.erase(pair);
+      edge_facet_counter.erase(pair);
+  }
+ 
   void remove_from_complex (const Facet& f) {
     remove_from_complex (f.first, f.second);
   }

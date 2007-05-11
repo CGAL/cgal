@@ -209,7 +209,7 @@ namespace CGAL {
         return s.str();
       }
 
-      static CGAL::Sign surf_equation (Surface_3 surface,
+      static CGAL::Sign surf_equation (const Surface_3& surface,
                                        const Point& p) 
       {
         return CGAL::sign(surface(p));

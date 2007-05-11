@@ -396,24 +396,24 @@ Returns the resulting output iterator.
 %singular. For a boundary  vertex,  the circulator will wrap from the last
 %incident vertex  to the first one.}
 
-%The following function is the basic function to walk on the 2D
-%complex
+The following function is the basic function to walk on the 2D
+complex
 
-%\ccMethod{Facet neighbor(Facet f, int j);}
-%{Returns the facet of the complex which is the neighbor of 
-%the facet \ccc{f} opposite to the vertex with index \ccc{j} of
-%\ccc{f}.
-%The vertices of the facet \ccc{f = (cell  c, i)} are numbered
-%(0,1,2) (according to the \ccc{vertex_triple_index(i,j)} member function
-%of \ccc{Triangulation_3})
-%in such a way that facet \ccc{f} is oriented by the
-%outward normal of tetraedra \ccc{c}. 
-%If there is no such neighbor, or if the edge is singular the functions returns \ccc{Facet()}.}
-%\ccGlue
-%\ccMethod{Facet neighbor(Cell_handle c, int i, int j);}
-%{Returns the facet of the complex which is the neighbor of 
-%the facet \ccc{f} opposite to the vertex with index \ccc{j} of \ccc{f}.
-%See above.}
+\ccMethod{Facet neighbor(Facet f, int j);}
+{Returns the facet of the complex which is the neighbor of 
+the facet \ccc{f} opposite to the vertex with index \ccc{j} of
+\ccc{f}.
+The vertices of the facet \ccc{f = (cell  c, i)} are numbered
+(0,1,2) (according to the \ccc{vertex_triple_index(i,j)} member function
+of \ccc{Triangulation_3})
+in such a way that facet \ccc{f} is oriented by the
+outward normal of tetraedra \ccc{c}. 
+If there is no such neighbor, or if the edge is singular the functions returns \ccc{Facet()}.}
+\ccGlue
+\ccMethod{Facet neighbor(Cell_handle c, int i, int j);}
+{Returns the facet of the complex which is the neighbor of 
+the facet \ccc{f} opposite to the vertex with index \ccc{j} of \ccc{f}.
+See above.}
 
 
 

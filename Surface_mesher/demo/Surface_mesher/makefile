@@ -50,6 +50,9 @@ implicit_surface_mesher$(EXE_EXT): implicit_surface_mesher$(OBJ_EXT) implicit_fu
 polyhedron_remesher$(EXE_EXT): polyhedron_remesher$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_remesher implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) polyhedron_remesher$(OBJ_EXT) $(LDFLAGS)
 
+polyhedron_remesher_with_edges$(EXE_EXT): polyhedron_remesher_with_edges$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_remesher_with_edges implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) polyhedron_remesher_with_edges$(OBJ_EXT) $(LDFLAGS)
+
 test_imageio$(EXE_EXT): test_imageio$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_imageio test_imageio$(OBJ_EXT) $(LDFLAGS)
 

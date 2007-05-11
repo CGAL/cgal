@@ -21,6 +21,8 @@
 
 #include <CGAL/basic.h>
 
+#include <boost/shared_ptr.hpp>
+
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
 #include <boost/format.hpp>
 #endif
@@ -44,7 +46,18 @@ namespace CGAL {
   template <typename FT, typename Point>
 class Gray_level_image_3
 {
-  _image *image;
+  struct Image_deleter {
+    void operator()(_image* image)
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
+      std::cerr << ::boost::format("Deletion of image %1%.\n") % image;
+      ::_freeImage(image);
+#endif
+    }
+  };
+  typedef boost::shared_ptr<_image> Image_shared_ptr;
+  Image_shared_ptr image_ptr;
+
   float isovalue;
   float min_x, min_y, min_z;
   float max_x, max_y, max_z;
@@ -52,8 +65,7 @@ class Gray_level_image_3
 
 public:
   Gray_level_image_3(const char* file, float isoval)
-    : image(0),
-      isovalue(isoval),
+    : isovalue(isoval),
       min_x(0.f),
       min_y(0.f),
       min_z(0.f),
@@ -66,28 +78,21 @@ public:
     std::cerr << 
       ::boost::format("Constructing a Gray_level_image_3(\"%1%\")... ") % file;
 #endif
-    image = ::_readImage(file);
-    if( image != 0 )
+    image_ptr = Image_shared_ptr(::_readImage(file), Image_deleter());
+    if( image_ptr.get() != 0 )
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
-      std::cerr << ::boost::format(" = %1%\n") % image;
+      std::cerr << ::boost::format(" = %1%\n") % image_ptr.get();
 #endif
       is_valid = true;
-      ::convertImageTypeToFloat(image);
+      ::convertImageTypeToFloat(image_ptr.get());
       isovalue=isoval;
-      ::_get_image_bounding_box(image,
+      ::_get_image_bounding_box(image_ptr.get(),
 				&min_x, &min_y, &min_z,
 				&max_x, &max_y, &max_z);
     }
   }
 
-  // BUG
-  /** @FIXME This destructor should call ::freeImage(), but objects of type
-      Gray_level_image_3 are copied a lot of time during the execution of
-      the Surface_mesher algorithm. image should perhaps be a smart
-      pointer. We need to bench if the handling of smart pointer has a
-      cost.
-   */
   ~Gray_level_image_3()
   {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
@@ -115,7 +120,7 @@ public:
     if (!inside(X,Y,Z))
       return FT(1);
     else{
-      float value = ::triLinInterp(image, X, Y, Z); 
+      float value = ::triLinInterp(image_ptr.get(), X, Y, Z); 
 
       if (value > isovalue) // inside
 	return FT(-1);

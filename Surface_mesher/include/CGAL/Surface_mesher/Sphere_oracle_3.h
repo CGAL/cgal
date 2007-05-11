@@ -1,4 +1,4 @@
-// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -149,9 +149,12 @@ namespace CGAL {
         case ZERO:
           return boost::make_tuple(1, ab_ac / ab2, 0);
         case POSITIVE:
-          return boost::make_tuple(2,
-                                   (ab_ac - CGAL::sqrt(deltaprime)) / ab2,
-                                   (ab_ac + CGAL::sqrt(deltaprime)) / ab2);
+	  {
+	    const FT sqrt_deltaprime = CGAL::sqrt(deltaprime);
+	    return boost::make_tuple(2,
+				     (ab_ac - sqrt_deltaprime) / ab2,
+				     (ab_ac + sqrt_deltaprime) / ab2);
+	  }
         case NEGATIVE:
           break;
         }

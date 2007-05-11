@@ -34,7 +34,7 @@ public:
   {
   }
 
-  FT operator()(const Point_3& p)
+  FT operator()(const Point_3& p) const
   {
     FT x = p.x();
     FT y = p.y();
@@ -60,7 +60,7 @@ public:
   {
   }
 
-  FT operator()(const Point_3 p)
+  FT operator()(const Point_3 p) const
   {
     return sphere1(p)*sphere2(p);
   }

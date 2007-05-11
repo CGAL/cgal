@@ -45,16 +45,18 @@ namespace CGAL {
 
     Implicit_surface_3(Function f,
 		       const Sphere_3 bounding_sphere,
-		       const FT error_bound = FT(1e-3))
+		       const FT error_bound = FT(1e-3),
+		       Geom_traits gt = Geom_traits())
       : func(f),
-	sphere(bounding_sphere)
+	sphere(bounding_sphere),
+	gt(gt)
     {
       squared_error = error_bound * error_bound;
       squared_error = squared_error * 
-        GT().compute_squared_radius_3_object()(bounding_sphere);
+        gt.compute_squared_radius_3_object()(bounding_sphere);
     }
 
-    FT operator()(Point p)
+    FT operator()(Point p) const
     {
       return func(p);
     }
@@ -69,10 +71,16 @@ namespace CGAL {
       return sphere;
     }
 
+    const Sphere_3& bounding_sphere_squared_radius() const
+    {
+      return gt.compute_squared_radius_3_object()(sphere);
+    }
+
   private:
     Function func;
     Sphere_3 sphere;
     FT squared_error;
+    Geom_traits gt;
   }; // end Implicit_surface_3
 
 

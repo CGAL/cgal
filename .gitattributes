@@ -2535,6 +2535,7 @@ Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text svneol=unset#image
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr -text
+Surface_mesher/examples/Surface_mesher/data/triceratops.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image.vcproj eol=crlf
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text

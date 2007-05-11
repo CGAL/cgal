@@ -21,6 +21,7 @@ using CGAL::Surface_mesher::Surface_mesher_base;
 using CGAL::Surface_mesher::Surface_mesher_manifold_base;
 using CGAL::Surface_mesher::Surface_mesher_regular_edges_base;
 using CGAL::Surface_mesher::VERBOSE;
+using CGAL::Null_mesher_level;
 
 // define the surface meshers
 typedef Surface_mesher_base<C2t3, Surface_3, SMTraits, Criteria> SM_base;
@@ -29,11 +30,11 @@ typedef Surface_mesher_regular_edges_base<C2t3, Surface_3, SMTraits, Criteria, t
 typedef Surface_mesher_manifold_base<C2t3, Surface_3, SMTraits, Criteria, SMRE_base> SMM_base;
 typedef Surface_mesher_manifold_base<C2t3, Surface_3, SMTraits, Criteria, SMREWB_base> SMMWB_base;
 
-typedef Surface_mesher<SM_base, VERBOSE> SM;
-typedef Surface_mesher<SMRE_base, VERBOSE> SMRE;
-typedef Surface_mesher<SMREWB_base, VERBOSE> SMREWB;
-typedef Surface_mesher<SMM_base, VERBOSE> SMM;
-typedef Surface_mesher<SMMWB_base, VERBOSE> SMWB;
+typedef Surface_mesher<SM_base, Tr::Facet, Null_mesher_level, VERBOSE> SM;
+typedef Surface_mesher<SMRE_base, Tr::Facet, Null_mesher_level, VERBOSE> SMRE;
+typedef Surface_mesher<SMREWB_base, Tr::Facet, Null_mesher_level, VERBOSE> SMREWB;
+typedef Surface_mesher<SMM_base, Tr::Facet, Null_mesher_level, VERBOSE> SMM;
+typedef Surface_mesher<SMMWB_base, Tr::Facet, Null_mesher_level, VERBOSE> SMWB;
 
 // typedef SM Mesher;
 // typedef SMRE Mesher;

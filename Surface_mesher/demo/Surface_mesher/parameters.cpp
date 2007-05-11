@@ -83,6 +83,8 @@ void init_double_options()
   double_options["center_z"] = 0.0;
   double_options["number_of_initial_points"] = 20;
   double_options["iso_value"] = 0.;
+  double_options["edges_radius_bound"] = 0.;
+  double_options["edges_distance_bound"] = 0.;
 }
 
 void init_functions()

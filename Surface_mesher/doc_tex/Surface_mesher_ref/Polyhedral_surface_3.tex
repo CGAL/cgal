@@ -1,0 +1,37 @@
+\begin{ccRefClass}{Polyhedral_surface_3<Traits>}
+
+\ccDefinition
+
+The class \ccRefName\  implements a surface described as a polyhedron. That
+polyhedron is supposed to represent a piecewise smooth surface, potentially
+with borders.
+
+For each regular edge of the polyhedron, if its dihedral angle is greater
+than a given bound, that edge is called a \emph{smooth edge}.
+
+The 1D curves of the surface is the union of border edges and non-smooth
+edges.
+
+For this type of surface, the library provides a partial specialization
+of the  surface mesher traits generator:
+\ccc{Surface_mesh_traits_generator_3<Polyhedral_surface_3<Traits> >},
+that provides a traits class, model of the concept
+\ccc{SurfaceMeshTraits_3}, to be used by the surface mesh generator.
+
+\ccInclude{CGAL/Polyhedral_surface_3.h}
+
+\ccCreation
+\ccCreationVariable{surface}
+
+\ccConstructor{
+Polyhedral_surface_3(std::istream& off_stream,
+                     const FT cosine_bound)}
+{\ccc{off_tream} is an STL input stream whose content has the OFF
+  format. \ccc{cosine_bound} is a positive upper bound on the cosine of the
+  dihedral angle at a smooth edge.}
+
+\ccSeeAlso
+\ccc{make_piecewise_smooth_surface_mesh},\\
+\ccc{Surface_3} \\
+\ccc{Surface_mesh_traits_generator_3<Surface>}
+\end{ccRefClass}

@@ -33,6 +33,9 @@
 #include <string>
 #include <sstream>
 
+#include <CGAL/Surface_mesher/Verbose_flag.h>
+#include <CGAL/Surface_mesher/Types_generators.h>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -56,9 +59,12 @@ namespace CGAL {
     typedef Criteria_ Criteria;
 
     typedef typename C2T3::Triangulation Tr;
+
     typedef typename Tr::Point Point;
-    typedef typename Tr::Edge Edge;
+
     typedef typename Tr::Vertex_handle Vertex_handle;
+    typedef typename Tr::Edge Edge;
+    typedef typename Tr::Facet Facet;
     typedef typename Tr::Cell_handle Cell_handle;
 
     typedef typename Tr::Geom_traits GT;
@@ -67,7 +73,6 @@ namespace CGAL {
     typedef typename Triangulation_traits::Zone Zone;
 
     typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
-    typedef typename Tr::Facet Facet;
 
     typedef typename Criteria::Quality Quality;
 
@@ -334,12 +339,12 @@ namespace CGAL {
 	       zone.internal_facets.begin();
 	     fit != zone.internal_facets.end();
 	     ++fit)
-	  handle_facet_inside_conflict_zone (*fit);
+	  before_insertion_handle_facet_inside_conflict_zone (*fit);
 
 	for (typename Zone::Facets_iterator fit =
 	       zone.boundary_facets.begin(); fit !=
 	       zone.boundary_facets.end(); ++fit)
-	  handle_facet_on_boundary_of_conflict_zone (*fit);
+	  before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit);
       }
 
       // If dim < 3, then the triangulation has only one facet and the
@@ -364,25 +369,24 @@ namespace CGAL {
 
     void restore_restricted_Delaunay(const Vertex_handle& v)
     {
-      Cell_handle cellule;
-
       // On met a jour les flags des nouvelles facettes (celles a
       // l'interieur du trou et celles sur le bord du trou)
 
-      std::list<Cell_handle> cellules;
+      std::vector<Cell_handle> cellules;
       tr.incident_cells (v, std::back_inserter(cellules));
 
-      while(!cellules.empty()) {
-	cellule=cellules.front();
-	cellules.pop_front();
-
+      for(typename std::vector<Cell_handle>::iterator cellule =
+	    cellules.begin();
+	  cellule != cellules.end();
+	  ++cellule) 
+      {
 	// Look at all four facets of the cell, starting with the
 	// facet opposite to the new vertex
-	int indice = cellule->index (v);
-	handle_opposite_facet (Facet (cellule, indice));
+	int indice = (*cellule)->index (v);
+	after_insertion_handle_opposite_facet (Facet (*cellule, indice));
 
 	for (int i = 1; i <= 3; ++i)
-	  handle_incident_facet (Facet (cellule, (indice+i)&3));
+	  after_insertion_handle_incident_facet (Facet (*cellule, (indice+i)&3));
       }
 
 
@@ -408,8 +412,11 @@ namespace CGAL {
     // For before_insertion
 
     // Actions to perform on a facet inside the conflict zone
-    void handle_facet_inside_conflict_zone (Facet f) {
+    void before_insertion_handle_facet_inside_conflict_zone (Facet f) 
+    {
       Facet other_side = mirror_facet(f);
+
+      if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first)) return;
 
       // On enleve la facette de la liste des mauvaises facettes
       if(f.first < other_side.first)
@@ -427,9 +434,9 @@ namespace CGAL {
     }
 
     // Action to perform on a facet on the boundary of the conflict zone
-    void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
+    void before_insertion_handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
       // perform the same operations as for an internal facet
-      handle_facet_inside_conflict_zone (f);
+      before_insertion_handle_facet_inside_conflict_zone (f);
     }
 
 
@@ -438,7 +445,7 @@ namespace CGAL {
     // For after_insertion
 
     // Action to perform on a facet incident to the new vertex
-    void handle_incident_facet (const Facet& f) {
+    void after_insertion_handle_incident_facet (const Facet& f) {
 
       // If the facet is infinite or has been already visited,
       // then there is nothing to do as for it or its edges
@@ -449,11 +456,14 @@ namespace CGAL {
     }
 
     // Action to perform on any new facet
-    template <bool remove_from_complex_if_not_in_rectricted_Delaunay>
-    void new_facet (const Facet& f) {
+    template <bool remove_from_complex_if_not_in_restricted_Delaunay>
+    void new_facet (const Facet& f) 
+    {
       Facet other_side = mirror_facet(f);
 
-      // NB: set_facet_visited() is implementation dependant
+      if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first)) return;
+
+      // NB: set_facet_visited() is implementation dependent
       // and each side of the real facet has to be considered
       // separately
       set_facet_visited(f);
@@ -464,11 +474,11 @@ namespace CGAL {
       Point center;
       if (is_facet_on_surface(f, center)) {
 
-	// NB: set_in_complex() is implementation independant and
+	// NB: set_in_complex() is implementation independent and
 	// consider both sides of the facet at once
 	c2t3.set_in_complex(f);
 
-	// NB: set_facet_surface_center() is implementation dependant
+	// NB: set_facet_surface_center() is implementation dependent
 	// and each side of the real facet has to be considered
 	// separately
 	set_facet_surface_center(f, center);
@@ -484,15 +494,15 @@ namespace CGAL {
 	}
       }
       else
-        if( remove_from_complex_if_not_in_rectricted_Delaunay )
+        if( remove_from_complex_if_not_in_restricted_Delaunay )
           c2t3.remove_from_complex(f);
     }
 
     // Action to perform on a facet opposite to the new vertex
-    void handle_opposite_facet (const Facet& f) {
+    void after_insertion_handle_opposite_facet (const Facet& f) {
       // perform the same operations as for a facet incident to the
       // new vertex
-      handle_incident_facet (f);
+      after_insertion_handle_incident_facet (f);
     }
 
 
@@ -596,35 +606,20 @@ namespace CGAL {
     }
   };  // end Surface_mesher_base
 
-    namespace details {
-
-      template <typename Base, typename Self>
-      class Mesher_level_generator {
-        typedef typename Base::Complex_2_in_triangulation_3 C2T3;
-        typedef typename C2T3::Triangulation Triangulation;
-        typedef typename Triangulation::Facet Facet;
-        typedef Triangulation_mesher_level_traits_3<Triangulation> Tr_m_l_traits_3;
-      public:
-        typedef Mesher_level <Triangulation,
-                              Self,
-                              Facet,
-                              Null_mesher_level,
-                              Tr_m_l_traits_3> Type;
-        typedef Type type;
-      }; // end class Mesher_level_generator<Base, Self>
-      
-    } // end namespace details
-
-    enum Verbose_flag { VERBOSE, NOT_VERBOSE};
-
   template <
     typename Base,
+    typename Element = typename details::Facet_generator<Base>::type,
+    typename PreviousLevel = Null_mesher_level,
     Verbose_flag verbose = NOT_VERBOSE
     >
   struct Surface_mesher
     : public Base,
-      public details::Mesher_level_generator<Base,
-                                             Surface_mesher<Base> >::Type
+      public details::Mesher_level_generator<
+        Base,
+        Surface_mesher<Base, Element, PreviousLevel, verbose>,
+        Element,
+        PreviousLevel
+      >::Type
   {
   public:
     typedef typename Base::Complex_2_in_triangulation_3 C2T3;
@@ -636,8 +631,12 @@ namespace CGAL {
 
     typedef Surface_mesher<Base> Self;
 
-    typedef typename details::Mesher_level_generator<Base,
-      Surface_mesher<Base> >::Type Mesher_lvl;
+    typedef typename details::Mesher_level_generator<
+      Base,
+      Surface_mesher<Base, Element, PreviousLevel, verbose>,
+      Element,
+      PreviousLevel
+      >::Type Mesher_lvl;
 
     using Mesher_lvl::scan_triangulation;
     using Mesher_lvl::refine;
@@ -666,6 +665,20 @@ namespace CGAL {
 #endif
     }
 
+    Surface_mesher(C2T3& c2t3,
+                   const Surface& surface,
+                   const Surface_mesh_traits& mesh_traits,
+                   const Criteria& criteria,
+		   PreviousLevel& previous)
+      : Base(c2t3, surface, mesh_traits, criteria), 
+        Mesher_lvl(previous),
+        initialized(false)
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher\n";
+#endif
+    }
+
     // Initialization
     void init()
       {
@@ -675,11 +688,16 @@ namespace CGAL {
       }
 
     void refine_mesh () {
+      refine_mesh(null_visitor);
+    }
+
+    template <typename Visitor>
+    void refine_mesh(Visitor visitor) {
       if(!initialized)
 	init();
 
       if (verbose == NOT_VERBOSE)
-	refine (null_visitor);
+	refine (visitor);
       else {
 	std::cerr << "Refining...\n";
 	int nbsteps = 0;
@@ -687,9 +705,9 @@ namespace CGAL {
                   << "(number of steps," << this->debug_info_header()
                   << ")\n";
 	std::cerr << "(" << nbsteps << ","
-		  << this->facets_to_refine.size() << ")";
+		  << this->debug_info() << ")";
 	while (!is_algorithm_done()) {
-	  one_step (null_visitor);
+	  one_step (visitor);
 	  std::cerr << "\r             \r"
 		    << "(" << ++nbsteps << ","
 		    << this->debug_info()

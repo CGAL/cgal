@@ -94,16 +94,16 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \\
 underlying 3D triangulation.}
 \ccGlue
 \ccTypedef{typedef Triangulation::Vertex_handle Vertex_handle;}{ The type of
-the underlying triangulation vertex handles.}
+the embedding triangulation vertex handles.}
 \ccGlue
 \ccTypedef{typedef Triangulation::Cell_handle  Cell_handle;}{ The  type of
-the  underlying triangulation cell handles.}
+the  embedding triangulation cell handles.}
 \ccGlue
 \ccTypedef{typedef Triangulation::Facet Facet;}{The  type of
-the  underlying triangulation facets.}
+the  embedding triangulation facets.}
 \ccGlue
 \ccTypedef{typedef Triangulation::Edge Edge;} {The  type of
-the  underlying triangulation edges.}
+the  embedding triangulation edges.}
 
 \ccTypedef{typedef Facet_info Facet_info;}
 {The type of information attached to the facets of the 2D complex.}
@@ -111,9 +111,9 @@ the  underlying triangulation edges.}
 \ccTypedef{typedef Edge_info Edge_info;}
 {The type of information attached to antenna or marked edges of the 2D complex.}
 
-\ccEnum{enum Face_type {NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR,
+\ccEnum{enum Face_status {NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR,
 SINGULAR};}
-{A type to describe the type of a face (facet, edge or vertex) with respect to 
+{A type to describe the status of a face (facet, edge, or vertex) with respect to 
 the 2D complex. A \ccc{NOT_IN_COMPLEX} face does not belong to the 2D complex.
 Facets can only be  \ccc{NOT_IN_COMPLEX}  or \ccc{REGULAR}
 depending on whether they belong to the 2D complex on not.
@@ -129,10 +129,10 @@ is a simple path  and \ccc{REGULAR} if this graph is  a cycle.
 Any other vertex of the complex is \ccc{SINGULAR}.}
 
 
-\ccNestedType{Facets_iterator}{An iterator type to visit the facets
-of the 2D complex}
+\ccNestedType{Facet_iterator}{An iterator type to visit the facets
+of the 2D complex.}
 \ccGlue
-\ccNestedType{Edges_iterator}{An iterator type to visit  the
+\ccNestedType{Edge_iterator}{An iterator type to visit  the
 edges of the 2D complex which are not isolated edges}
 \ccGlue
 \ccNestedType{Isolated_edges_iterator}{An iterator type to visit
@@ -144,7 +144,7 @@ boundary edges of the complex.}
 \ccNestedType{Marked_edges_iterator}{An iterator type to visit
 marked edges.}
 \ccGlue
-\ccNestedType{Vertices_iterator}{An iterator type to visit 
+\ccNestedType{Vertex_iterator}{An iterator type to visit 
 vertices of the 2D complex which are not isolated.}
 \ccGlue
 \ccNestedType{Isolated_vertices_iterator}{An iterator type to visit 
@@ -261,20 +261,20 @@ complex.}
 \ccHeading{Queries}
 
 Queries on the type of individual face with respect to the 2D complex.
-\ccMethod{Face_type  complex_subface_type(Facet f);}
+\ccMethod{Face_status  complex_subface_type(Facet f);}
 {Returns the type of the facet \ccc{f}  with respect to  the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Cell_handle c, int i);}
+\ccMethod{Face_status  face_type(Cell_handle c, int i);}
 {Returns the type of the facet \ccc{(c,i)} with respect to  the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Edge e);}
+\ccMethod{Face_status  face_type(Edge e);}
 {Returns the type of edge \ccc{e} in the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Cell_handle c, int
+\ccMethod{Face_status  face_type(Cell_handle c, int
 i, int j);}
 {Returns the type of edge \ccc{(c,i,j)}  in the 2D complex.}
 \ccGlue
-\ccMethod{Face_type  face_type(Vertex_handle v);}
+\ccMethod{Face_status  face_type(Vertex_handle v);}
 {Returns the type of vertex \ccc{v} in the 2D complex.}
 
 \ccMethod{bool is_marked(Edge e);}{}

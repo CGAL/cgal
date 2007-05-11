@@ -67,7 +67,9 @@ namespace CGAL {
       }
 
       // Action to perform on a facet on the boundary of the conflict zone
-      void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
+      void 
+      before_insertion_handle_facet_on_boundary_of_conflict_zone(const Facet& f)
+      {
 	const Facet f1 = canonical_facet(f);
 	const Cell_handle& c = f1.first;
 	const int i = f1.second;
@@ -78,7 +80,9 @@ namespace CGAL {
             bad_vertices.erase(c->vertex(j));
       }
 
-      Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) const {
+      Facet 
+      biggest_incident_facet_in_complex(const Vertex_handle sommet) const
+      {
 
 	std::list<Facet> facets;
 	SMMBB::c2t3.incident_facets(sommet, std::back_inserter(facets));
@@ -93,7 +97,8 @@ namespace CGAL {
 	  Facet current_facet = *it;
 	  // is the current facet bigger than the current biggest one
 	  if ( SMMBB::compute_distance_to_facet_center(current_facet, sommet) >
-	       SMMBB::compute_distance_to_facet_center(biggest_facet, sommet) ) {
+	       SMMBB::compute_distance_to_facet_center(biggest_facet, sommet) )
+	  {
 	    biggest_facet = current_facet;
 	  }
 	}
@@ -175,7 +180,7 @@ namespace CGAL {
                  zone.boundary_facets.begin(); fit !=
                  zone.boundary_facets.end(); ++fit)
             if (SMMBB::c2t3.is_in_complex(*fit)) {
-              handle_facet_on_boundary_of_conflict_zone (*fit); 
+              before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit); 
             }
         }
 	SMMBB::before_insertion_impl(Facet(), s, zone);

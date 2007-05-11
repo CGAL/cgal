@@ -135,6 +135,24 @@ public:
                                      int n = 20) const // WARNING: why 20?    
     {
       for (typename std::vector<Point>::const_iterator vit =
+             surface.corner_points.begin();
+           vit != surface.corner_points.end() && n > 0;
+           ++vit, --n)
+      {
+        Point p = *vit;
+        self.visitor.new_point(p);
+        *out++= p;
+      }
+      for (typename std::vector<Point>::const_iterator vit =
+             surface.edges_points.begin();
+           vit != surface.edges_points.end() && n > 0;
+           ++vit, --n)
+      {
+        Point p = *vit;
+        self.visitor.new_point(p);
+        *out++= p;
+      }
+      for (typename std::set<Point>::const_iterator vit =
              surface.input_points.begin();
            vit != surface.input_points.end() && n > 0;
            ++vit, --n)
@@ -143,7 +161,6 @@ public:
         self.visitor.new_point(p);
         *out++= p;
       }
-      
       return out;
     }
   };
@@ -172,6 +189,20 @@ public:
     return (result.second % 2) == 1;
   }
 
+  Object intersect_curves_with_triangle(const Surface_3& surface,
+					const Triangle_3& t) const
+  {
+    Object o = surface.subsegments_octree.intersection(t);
+    Kernel_point kp;
+    if( assign(kp, o) )
+    {
+      Point p = kp;
+      visitor.new_point(p);
+      return make_object(p);
+    }
+    else
+      return Object();
+  }
 //   // Basic intersection function for segments/rays/lines with the polyhedron
 //   template <class Elt>
 //   CGAL::Object intersect_with_surface (Octree data_struct, Elt e) {
