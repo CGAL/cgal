@@ -207,10 +207,9 @@ void convex_decomposition_3(Nef_polyhedron& N) {
 #endif
 
   N.delegate(esb);
-  /*
+
   CGAL_assertion_code(typename Nef_polyhedron::SHalfedge_const_iterator cse);
   CGAL_assertion_code(CGAL_forall_shalfedges(cse, N)
     if(cse->incident_sface()->mark())
       CGAL_assertion(!CGAL::is_reflex_sedge_in_any_direction<Nef_polyhedron>(cse)));
-  */
 }
