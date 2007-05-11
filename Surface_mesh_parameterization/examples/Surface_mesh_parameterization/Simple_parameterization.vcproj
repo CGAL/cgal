@@ -4,7 +4,7 @@
 	Version="7.10"
 	Name="Simple_parameterization"
 	ProjectGUID="{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
-	Keyword="Win32Proj">
+	Keyword="ManagedCProj">
 	<Platforms>
 		<Platform
 			Name="Win32"/>
@@ -12,35 +12,35 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="2">
+			CharacterSet="2"
+			ManagedExtensions="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include"
-				PreprocessorDefinitions="WIN32;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
-				MinimalRebuild="TRUE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				PreprocessorDefinitions="WIN32;_DEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
+				MinimalRebuild="FALSE"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
-				BrowseInformation="0"
+				BrowseInformation="1"
 				WarningLevel="2"
 				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CGAL.lib"
+				AdditionalDependencies=""
+				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib"
 				GenerateDebugInformation="TRUE"
-				SubSystem="1"
-				TargetMachine="1"/>
+				LargeAddressAware="2"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -64,40 +64,38 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="2">
+			CharacterSet="2"
+			ManagedExtensions="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900 /Og-"
 				Optimization="2"
 				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="1"
 				EnableIntrinsicFunctions="TRUE"
 				ImproveFloatingPointConsistency="TRUE"
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include"
-				PreprocessorDefinitions="WIN32;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
+				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
-				WarningLevel="2"
-				DebugInformationFormat="0"/>
+				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CGAL.lib"
+				AdditionalDependencies=""
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib"
 				GenerateDebugInformation="FALSE"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"/>
+				LargeAddressAware="2"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -125,8 +123,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
 				RelativePath=".\Simple_parameterization.cpp">
 				<FileConfiguration
@@ -145,8 +142,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			Filter="h;hpp;hxx;hm;inl;inc">
 		</Filter>
 		<Filter
 			Name="Surface_mesh_parameterization package"
