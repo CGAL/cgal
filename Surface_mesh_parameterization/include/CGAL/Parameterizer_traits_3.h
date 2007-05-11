@@ -64,8 +64,8 @@ public:
     /// Export ParameterizationMesh_3 template parameter
     typedef ParameterizationMesh_3          Adaptor;
 
-// Private types
-private:
+// Protected types
+protected:
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
