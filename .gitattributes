@@ -553,6 +553,7 @@ Envelope_2/test/Envelope_2/data/Europe.dat -text
 Envelope_2/test/Envelope_2/data/onebig_100.dat -text
 Envelope_2/test/Envelope_2/data/random_500.dat -text
 Envelope_2/test/Envelope_2/data/segs_4.dat -text
+Envelope_3/demo/Envelope_3/envelope_3.vcproj -text
 Envelope_3/demo/Envelope_3/help/index.html svneol=native#text/html
 Envelope_3/demo/Envelope_3/icons/edges.bmp -text svneol=unset#image/bmp
 Envelope_3/demo/Envelope_3/icons/faces.bmp -text svneol=unset#image/bmp
