@@ -1,4 +1,0 @@
-FileFormat( "AcsBenchmark", 0, 1 )
-BenchmarkName( "fish.bff")
-Classification("Arrangements", "arbitrary degree curves", "FullCurves", "Example", "fish.bff", "April-2007")
-Polynomial<4>((1,(0,4))(0,(0,3))(0,(0,2))(1,(1,2))(0,(0,1))(0,(0,0))(0,(1,0))(0,(2,0))(-1,(3,0))(2,(4,0)))

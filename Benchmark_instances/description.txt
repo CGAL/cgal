@@ -1,4 +1,0 @@
-Contains benchmarks instances that are generic to the project. In addition
-each package may add its own instances. The package further provides a script 
-that create an html-output of the instances together with descriptions such
-that they can be published on a website.
