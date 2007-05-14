@@ -68,11 +68,14 @@ linear_least_squares_fitting_2(InputIterator first,
   // 0
   // 1 2
   //Final combined covariance matrix for all triangles and their combined mass
-  FT mass=0.0,cov[3]={0.0,0.0,0.0};
+  FT mass = 0.0;
+	FT cov[3] = {0.0,0.0,0.0};
 
   // step 1: assemble the 2nd order moment about the origin.  
-  FT cov_temp[4] = {1.0,0.5,0.5,1.0};
+  FT cov_temp[4] = {1.0, 0.5,
+		                0.5, 1.0};
   Matrix covariance = (std::sqrt(2)/3.0) * init_Matrix<K>(2,cov_temp);
+
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -80,6 +83,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // Now for each triangle, construct the 2nd order moment about the origin.
     // step 2: assemble the transformation matrix.
     const Segment& t = *it;
+
     // defined for convenience.
     FT delta[4] = {t[0].x(), t[1].x(), t[0].y(), t[1].y()};
 
