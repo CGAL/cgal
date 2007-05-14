@@ -2,7 +2,6 @@
 
 # Intensive test: test all surface parameterization methods with all models in data folder
 
-./test_model.sh cube
 ./test_model.sh holes
 ./test_model.sh mannequin-devil
 ./test_model.sh mask_cone
@@ -27,7 +26,7 @@ do
     # Find executable name (different on Windows and Unix)
     [ -f ./release/$TST.exe ] && PARAM_APPLICATION="./release/$TST.exe"
     [ -x ./$TST ] && PARAM_APPLICATION="./$TST"
-    
+
     COMMAND="$PARAM_APPLICATION `cat $TST.cmd | tr '\n' ' ' | tr '\r' ' '`"
     eval $COMMAND 2>&1
 done
