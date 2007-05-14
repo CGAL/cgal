@@ -88,6 +88,39 @@ centroid(InputIterator begin,
   return ORIGIN + v / (FT)nb_pts;
 }// end centroid of a 3D point set
 
+// computes the centroid of a 2D segment set
+// takes an iterator range over K::Segment_2
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& ,
+         const typename K::Segment_2*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_2 Vector;
+  typedef typename K::Point_2  Point;
+  typedef typename K::Segment_2 Segment;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_lengths = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Segment& s = *it;
+    FT length = std::sqrt(std::abs(s.squared_length()));
+    //    Point c = K().construct_centroid_2_object()(s[0],s[1]);??
+    v = v + length * (((s[0] - ORIGIN) + (s[1] - ORIGIN))/2);
+    sum_lengths += length;
+  }
+  CGAL_assertion(sum_lengths != 0.0);
+  return ORIGIN + v / sum_lengths;
+} // end centroid of a 2D triangle set
+
 // computes the centroid of a 2D triangle set
 // takes an iterator range over K::Triangle_2
 template < typename InputIterator, 
@@ -122,7 +155,7 @@ centroid(InputIterator begin,
 } // end centroid of a 2D triangle set
 
 // computes the centroid of a 3D triangle set
-// takes an iterator range over K::Triangle_2
+// takes an iterator range over K::Triangle_3
 template < typename InputIterator, 
            typename K >
 typename K::Point_3

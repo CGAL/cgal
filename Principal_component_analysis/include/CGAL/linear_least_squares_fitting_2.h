@@ -23,10 +23,17 @@
 #include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen_2.h>
+#include <CGAL/eigen.h>
+#include <CGAL/Linear_algebraCd.h>
+//#include <CGAL/Kernel_d/Matrix__.h>
+#include <CGAL/linear_least_squares_fitting_triangles.h>
+#include <CGAL/linear_least_squares_fitting_segments.h>
 
 #include <iterator>
 #include <list>
 #include <string>
+#include <vector>
+#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 
