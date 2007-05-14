@@ -9,7 +9,7 @@
 // output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t conformal -b circle -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t conformal -b circle mesh.off mesh.eps
 
 //----------------------------------------------------------
 // floater parameterization
@@ -18,7 +18,7 @@
 // output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t floater -b square -s taucs -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t floater -b square -s taucs mesh.off mesh.eps
 
 //----------------------------------------------------------
 // Least Squares Conformal Maps parameterization
@@ -27,7 +27,7 @@
 // output is a .obj
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t lscm -b 2pts -o obj mesh.off mesh.obj
+// polyhedron_ex_parameterization -t lscm -b 2pts mesh.off mesh.obj
 
 
 #include <CGAL/Cartesian.h>
@@ -60,8 +60,8 @@
 #include <cassert>
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+    #include <boost/program_options.hpp>
+    namespace po = boost::program_options;
 #endif
 
 #ifdef WIN32
@@ -315,54 +315,55 @@ int main(int argc, char * argv[])
 
     std::cerr << "PARAMETERIZATION" << std::endl;
 
-    // options
-    std::string type;       // default: Floater param
-    std::string border;      // default: circular border param.
-    std::string solver;      // default: OpenNL solver
-    std::string input;            // default: no output
-    std::string output;            // default: no output
+    //***************************************
+    // Read options on the command line
+    //***************************************
 
-    try {
+    std::string type;               // default: Floater param
+    std::string border;             // default: circular border param.
+    std::string solver;             // default: OpenNL solver
+    std::string input;              // required
+    std::string output;             // default: no output
+    try
+    {
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
-      po::options_description desc("Allowed options");
-      desc.add_options()
-	("help,h", "produce help message.")
-	("border,b", po::value<std::string>(&border)->default_value("circle"),
-	 "circle, square or 2pts")
-	("type,t", po::value<std::string>(&type)->default_value("floater"),
-	 "floater (default), conformal, barycentric, authalic or lscm")
-	("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
-	 "opennl (default) or taucs")
-	("input,i", po::value<std::string>(&input)->default_value("mesh-in.off"),
-	 "polyhedral mesh")
-	("output,o", po::value<std::string>(&output)->default_value("mesh-out.eps"),
-	 "eps or obj")
-	;
-      
-      
-      po::positional_options_description p;
-      p.add("input", 1);
-      p.add("output", 2);
-      
-      po::variables_map vm;
-      po::store(po::command_line_parser(argc, argv).
-		options(desc).positional(p).run(), vm);
-      
-      po::notify(vm);
-      
-      if (vm.count("help")) {
-	std::cout << desc << "\n";
-	return 1;
-      }
+        po::options_description desc("Allowed options");
+        desc.add_options()
+            ("help,h", "prints this help message")
+            ("type,t", po::value<std::string>(&type)->default_value("floater"),
+            "parameterization method: floater, conformal, barycentric, authalic or lscm")
+            ("border,b", po::value<std::string>(&border)->default_value("circle"),
+            "border shape: circle, square or 2pts (lscm only)")
+            ("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
+            "solver: opennl or taucs")
+            ("input,i", po::value<std::string>(&input)->default_value(""),
+            "input mesh (OFF)")
+            ("output,o", po::value<std::string>(&output)->default_value("out.eps"),
+            "output file (EPS or OBJ)")
+            ;
 
-#else 
-    std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    border = "square";
-    type = "floater";
-    solver = "opennl";
-    input = "data/rotor.off";
-    output = "rotor_floater_square_opennl_parameterized.obj";
-      
+
+        po::positional_options_description p;
+        p.add("input", 1);
+        p.add("output", 2);
+
+        po::variables_map vm;
+        po::store(po::command_line_parser(argc, argv).
+                    options(desc).positional(p).run(), vm);
+
+        po::notify(vm);
+
+        if (vm.count("help")) {
+            std::cout << desc << "\n";
+            return 1;
+        }
+#else
+        std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
+        border = "square";
+        type = "floater";
+        solver = "opennl";
+        input = "data/rotor.off";
+        output = "rotor_floater_square_opennl_parameterized.obj";
 #endif
     }
     catch(std::exception& e) {
@@ -372,7 +373,6 @@ int main(int argc, char * argv[])
     catch(...) {
       std::cerr << "Exception of unknown type!\n";
     }
-    
 
     //***************************************
     // Read the mesh
