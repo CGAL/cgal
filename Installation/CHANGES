@@ -130,6 +130,18 @@ in <windows.h> which were clashing with min/max functions.
   in order to speed up the insertion.
 
 
+6.11 Optimal Distances
+
+- Polytope_distance_d
+  * support for homogeneous points
+  * bugfix in fast exact version
+
+6.12 Bounding Volumes
+
+- Min_annulus_d:   
+  * support for homogeneous points
+  * bugfix in fast exact version
+
 
 7 Support Library
 
