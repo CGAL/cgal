@@ -1541,6 +1541,9 @@ Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/makefile -text
 Nef_3/demo/Nef_3/mpi.vsh -text
 Nef_3/demo/Nef_3/nef_3.vcproj eol=crlf
+Nef_3/demo/Nef_3/nef_3_extended.vcproj -text
+Nef_3/demo/Nef_3/nef_3_filtered.vcproj -text
+Nef_3/demo/Nef_3/nef_3_homogeneous.vcproj -text
 Nef_3/demo/Nef_3/visual_hull.vcproj eol=crlf
 Nef_3/demo/Nef_3/visualization_SM.vcproj eol=crlf
 Nef_3/demo/Nef_3/visualization_SNC.vcproj eol=crlf
