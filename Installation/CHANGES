@@ -23,13 +23,17 @@ in <windows.h> which were clashing with min/max functions.
   built in release or debug mode. The libraries to link against are
   chosen with linker pragmas in header files.
 
-  On all platforms but Windows shared and static versions of the libraries are generated
+  On all platforms but Windows shared and static versions of the libraries 
+  are generated
 
 
 3 Algebraic Foundations (new package)
-  This package defines what algebra means for CGAL, in terms of concepts, classes and functions. 
-  The main features are: (i) explicit concepts for interoperability of types (ii) separation 
-  between algebraic types  and number types .
+
+  This package defines what algebra means for CGAL, in terms of concepts, 
+  classes and functions. 
+  The main features are: (i) explicit concepts for interoperability of types 
+  (ii) separation between algebraic types  and number types.
+
 
 4 Number Types
 
@@ -40,9 +44,9 @@ in <windows.h> which were clashing with min/max functions.
 
 5.1 Circular Kernel in 2D
 
-  Efficiency improved through geometric filtering of predicates, introduced with 
-  the filtered kernel Filtered_bbox_circular_kernel_2<.>, and also chosen for the 
-  predefined kernel Exact_circular_kernel_2. 
+  Efficiency improved through geometric filtering of predicates, introduced 
+  with the filtered kernel Filtered_bbox_circular_kernel_2<.>, and also chosen 
+  for the predefined kernel Exact_circular_kernel_2. 
 
 
 5.2 Linear Kernel
@@ -62,10 +66,11 @@ in <windows.h> which were clashing with min/max functions.
 
 6.2 Estimation of Local Differential Properties (new package)
 
-  This package allows to compute local differential quantities of a surface from a point sample
+  This package allows to compute local differential quantities of a surface 
+  from a point sample
 
 
-6.3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes  (new package)
+6.3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes (new package)
 
   This package enables the approximation of differential features on
   triangulated surface meshes. Such curvature related features are
@@ -74,23 +79,24 @@ in <windows.h> which were clashing with min/max functions.
 
 6.4 Envelopes of Curves in 2D (new package)
 
-  This package contains two sets of functions that construct the lower and upper envelope diagram 
-  for a given range of bounded or unbounded curves.
+  This package contains two sets of functions that construct the lower and 
+  upper envelope diagram for a given range of bounded or unbounded curves.
 
 
 6.5 Envelopes of Surfaces in 3D (new package)
 
-  This package contains two sets of functions that construct the lower and upper envelope diagram 
-  for a given range of bounded or unbounded surfaces. The envelope diagram is realized as a 
-  2D arrangement.
+  This package contains two sets of functions that construct the lower and 
+  upper envelope diagram for a given range of bounded or unbounded surfaces. 
+  The envelope diagram is realized as a 2D arrangement.
 
 
 6.6 Minkowski Sums in 2D (new package)
 
-  This package contains functions for computing planar Minkowski sums of two closed polygons, 
-  and for a polygon and a disc (an operation also known as offsetting or dilating a polygon). 
-  The package also contains an efficient approximation algorithm for the offset computation, 
-  which provides a guaranteed approximation bound while significantly expediting the running 
+  This package contains functions for computing planar Minkowski sums of two 
+  closed polygons, and for a polygon and a disc (an operation also known as 
+  offsetting or dilating a polygon). The package also contains an efficient 
+  approximation algorithm for the offset computation, which provides a 
+  guaranteed approximation bound while significantly expediting the running 
   times w.r.t. the exact computation procedure.
 
 
@@ -109,25 +115,28 @@ in <windows.h> which were clashing with min/max functions.
 - Added a traits class that supports Bezier curves.
 - Enhanced the traits class that supports rational functions to     
   handle unbounded (as well as bounded) arcs
-- Added a free function called decompose() that produces the symbolic vertical decomposition of a 
-  given arrangement, performing a batched vertical ray-shooting query from all arrangement vertices.
+- Added a free function called decompose() that produces the symbolic vertical 
+  decomposition of a given arrangement, performing a batched vertical ray-
+  shooting query from all arrangement vertices.
 - Fixed a memory leak in the sweep-line code.
 - Fixed a bug in computing the minor axis of non-degenerate hyperbolas.
 
 
 6.9 Boolean Set Operations
 
-- Added the DCEL as a default template parameter to the General_polygon_set_2 and Polygon_set_2 classes. 
+- Added the DCEL as a default template parameter to the General_polygon_set_2 
+  and Polygon_set_2 classes. 
   This allows users to extend the DCEL of the underlying arrangement.
-- Added a function template called connect_holes() that connects the holes in a given polygon with holes, 
-  turning it into a sequence of points, where the holes are connceted to the outer boundary using
-  zero-width passages. 
-- Added a non-const function member to General_polygon_set_2 that obtains the underlying arrangement. 
+- Added a function template called connect_holes() that connects the holes in 
+  a given polygon with holes, turning it into a sequence of points, where the 
+  holes are connceted to the outer boundary using zero-width passages. 
+- Added a non-const function member to General_polygon_set_2 that obtains the 
+  underlying arrangement. 
 
 6.10 2D and 3D Triangulations
 
-- The constructors and insert member functions which take an iterator range perform spatial sorting 
-  in order to speed up the insertion.
+- The constructors and insert member functions which take an iterator range 
+  perform spatial sorting in order to speed up the insertion.
 
 
 6.11 Optimal Distances
@@ -148,22 +157,23 @@ in <windows.h> which were clashing with min/max functions.
 
 7.1 CGAL and the Boost Graph Library (BGL)
 
-This package provides the glue layer for several CGAL data structures such that
-they become models of the BGL graph concept.
+  This package provides the glue layer for several CGAL data structures such 
+  that they become models of the BGL graph concept.
  
 
 7.2 Spatial Sorting (new package)
 
-This package allows to sort points and other objects along a Hilbert curve
-which can improve the performance of algorithms like triangulations.
-It is used by the constructors of the triangulation package which have
-an iterator range of points as argument.
+  This package allows to sort points and other objects along a Hilbert curve
+  which can improve the performance of algorithms like triangulations.
+  It is used by the constructors of the triangulation package which have
+  an iterator range of points as argument.
 
 
 7.3 Linear and Quadratic Programming Solver
 
-This package contains algorithms for minimizing linear and convex quadratic functions 
-over polyhedral domains, described by linear equations and inequalities. 
+  This package contains algorithms for minimizing linear and convex quadratic 
+  functions over polyhedral domains, described by linear equations and 
+  inequalities. 
 
 
 ----------------------------- Release 3.2.1---------------------------------
