@@ -25,9 +25,9 @@
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
-//#include <CGAL/Kernel_d/Matrix__.h>
-#include <CGAL/linear_least_squares_fitting_triangles.h>
-#include <CGAL/linear_least_squares_fitting_segments.h>
+#include <CGAL/linear_least_squares_fitting_points_2.h>
+#include <CGAL/linear_least_squares_fitting_segments_2.h>
+#include <CGAL/linear_least_squares_fitting_triangles_2.h>
 
 #include <iterator>
 #include <list>

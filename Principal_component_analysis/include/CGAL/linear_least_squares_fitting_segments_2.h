@@ -16,8 +16,8 @@
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
-#ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_H
-#define CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_H
+#ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_2_H
+#define CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
@@ -71,42 +71,46 @@ linear_least_squares_fitting_2(InputIterator first,
   FT mass = 0.0;
 	FT cov[3] = {0.0,0.0,0.0};
 
-  // step 1: assemble the 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.  
   FT cov_temp[4] = {1.0, 0.5,
 		                0.5, 1.0};
-  Matrix covariance = (std::sqrt(2)/3.0) * init_Matrix<K>(2,cov_temp);
+  Matrix moment = (std::sqrt(2)/3.0) * init_Matrix<K>(2,cov_temp);
 
   for(InputIterator it = first;
       it != beyond;
       it++)
   {
-    // Now for each triangle, construct the 2nd order moment about the origin.
+    // Now for each segment, construct the 2nd order moment about the origin.
     // step 2: assemble the transformation matrix.
     const Segment& t = *it;
 
     // defined for convenience.
+		// FT example = CGAL::to_double(t[0].x());
     FT delta[4] = {t[0].x(), t[1].x(), t[0].y(), t[1].y()};
-
     Matrix transformation = init_Matrix<K>(2,delta);
     FT length = std::sqrt(t.squared_length());
-    CGAL_assertion(length!=0);
+    CGAL_assertion(length != 0.0);
+
     // step 3: Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
     
     // step 3.1: Transform the standard 2nd order moment using the transformation matrix
-    transformation = length*transformation*covariance*LA::transpose(transformation);
+    transformation = length * transformation * moment * LA::transpose(transformation);
     
-    //step 3.2: Translate the 2nd order moment to (x0,y0):Not Required Here
-    
-    cov[0]+=transformation[0][0];
-    cov[1]+=transformation[0][1];
-    cov[2]+=transformation[1][1];
+		// add to covariance matrix
+		cov[0] += transformation[0][0];
+    cov[1] += transformation[0][1];
+    cov[2] += transformation[1][1];
 
-    mass+=length;
+    mass += length;
   }
-  //step 4: Translace the 2nd order miment calculated about the origin to the center of mass to get the covariance.
-  cov[0]+=mass*(-1.0*c.x()*c.x());
-  cov[1]+=mass*(-1.0*c.x()*c.y());
-  cov[2]+=mass*(-1.0*c.y()*c.y());
+
+	// Translate the 2nd order moment calculated about the origin to
+	// the center of mass to get the covariance.
+  cov[0] += mass * (-1.0 * c.x() * c.x());
+  cov[1] += mass * (-1.0 * c.x() * c.y());
+  cov[2] += mass * (-1.0 * c.y() * c.y());
+
+	// to remove later
   std::cout<<cov[0]<<" "<<cov[1]<<" "<<cov[2]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
@@ -135,8 +139,10 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } 
-} // end linear_least_squares_fitting_2 for triangle set
+} // end linear_least_squares_fitting_2 for segment set
 
 } // end namespace CGALi
+
 CGAL_END_NAMESPACE
-#endif
+
+#endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_2_H

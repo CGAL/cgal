@@ -113,13 +113,13 @@ centroid(InputIterator begin,
   {
     const Segment& s = *it;
     FT length = std::sqrt(std::abs(s.squared_length()));
-    //    Point c = K().construct_centroid_2_object()(s[0],s[1]);??
-    v = v + length * (((s[0] - ORIGIN) + (s[1] - ORIGIN))/2);
+    Point c = K().construct_midpoint_2_object()(s[0],s[1]);
+		v = v + length * (c - ORIGIN);
     sum_lengths += length;
   }
   CGAL_assertion(sum_lengths != 0.0);
   return ORIGIN + v / sum_lengths;
-} // end centroid of a 2D triangle set
+} // end centroid of a 2D segment set
 
 // computes the centroid of a 2D triangle set
 // takes an iterator range over K::Triangle_2
