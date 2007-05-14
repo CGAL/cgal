@@ -114,7 +114,7 @@ centroid(InputIterator begin,
     const Segment& s = *it;
     FT length = std::sqrt(std::abs(s.squared_length()));
     Point c = K().construct_midpoint_2_object()(s[0],s[1]);
-		v = v + length * (c - ORIGIN);
+    v = v + length * (c - ORIGIN);
     sum_lengths += length;
   }
   CGAL_assertion(sum_lengths != 0.0);

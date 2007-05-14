@@ -3,6 +3,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 
+#include <list>
+
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
 typedef K::Line_2            Line_2;

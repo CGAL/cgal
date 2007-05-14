@@ -25,6 +25,7 @@
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
+#include <CGAL/util.h>
 
 #include <iterator>
 #include <vector>
@@ -69,49 +70,49 @@ linear_least_squares_fitting_2(InputIterator first,
   // 1 2
   //Final combined covariance matrix for all triangles and their combined mass
   FT mass = 0.0;
-	FT cov[3] = {0.0,0.0,0.0};
+  FT covariance[3] = {0.0,0.0,0.0};
 
   // assemble 2nd order moment about the origin.  
-  FT cov_temp[4] = {1.0, 0.5,
-		                0.5, 1.0};
-  Matrix moment = (std::sqrt(2)/3.0) * init_Matrix<K>(2,cov_temp);
+  FT temp[4] = {1.0, 0.5,
+		0.5, 1.0};
+  Matrix moment = (std::sqrt(2)/3.0) * init_Matrix<K>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
       it++)
   {
     // Now for each segment, construct the 2nd order moment about the origin.
-    // step 2: assemble the transformation matrix.
+    // assemble the transformation matrix.
     const Segment& t = *it;
 
     // defined for convenience.
-		// FT example = CGAL::to_double(t[0].x());
+    // FT example = CGAL::to_double(t[0].x());
     FT delta[4] = {t[0].x(), t[1].x(), t[0].y(), t[1].y()};
     Matrix transformation = init_Matrix<K>(2,delta);
     FT length = std::sqrt(t.squared_length());
     CGAL_assertion(length != 0.0);
 
-    // step 3: Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
+    // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
     
-    // step 3.1: Transform the standard 2nd order moment using the transformation matrix
+    // Transform the standard 2nd order moment using the transformation matrix
     transformation = length * transformation * moment * LA::transpose(transformation);
     
-		// add to covariance matrix
-		cov[0] += transformation[0][0];
-    cov[1] += transformation[0][1];
-    cov[2] += transformation[1][1];
+    // add to covariance matrix
+    covariance[0] += transformation[0][0];
+    covariance[1] += transformation[0][1];
+    covariance[2] += transformation[1][1];
 
     mass += length;
   }
 
-	// Translate the 2nd order moment calculated about the origin to
-	// the center of mass to get the covariance.
-  cov[0] += mass * (-1.0 * c.x() * c.x());
-  cov[1] += mass * (-1.0 * c.x() * c.y());
-  cov[2] += mass * (-1.0 * c.y() * c.y());
+  // Translate the 2nd order moment calculated about the origin to
+  // the center of mass to get the covariance.
+  covariance[0] += mass * (-1.0 * c.x() * c.x());
+  covariance[1] += mass * (-1.0 * c.x() * c.y());
+  covariance[2] += mass * (-1.0 * c.y() * c.y());
 
-	// to remove later
-  std::cout<<cov[0]<<" "<<cov[1]<<" "<<cov[2]<<std::endl;
+  // to remove later
+  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -121,7 +122,7 @@ linear_least_squares_fitting_2(InputIterator first,
   //  CGALi::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
   FT eigen_vectors1[4];
   FT eigen_values1[2];
-  eigen_symmetric<FT>(cov,2, eigen_vectors1, eigen_values1);
+  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
   eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
   eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
   // check unicity and build fitting line accordingly
