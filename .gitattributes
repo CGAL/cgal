@@ -1877,6 +1877,7 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
 Principal_component_analysis/doc_tex/Principal_component_analysis/teaserLeastSquaresFitting.png -text
+Principal_component_analysis/include/CGAL/linear_least_squares_fitting_circles.h -text
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_segments.h -text
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles.h -text
 QP_solver/doc_tex/QP_solver/PkgDescription.tex -text
