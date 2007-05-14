@@ -66,9 +66,9 @@ namespace CGALi {
     {
       if(b == 0.0) 
       {
-        assert(a == 0 || c == 0.0);
-        eigen_values.first  = 1.0;
-        eigen_values.second = 0.0;
+				// to fix 
+        eigen_values.first  = a;
+        eigen_values.second = c;
         if(a == 0)
         {
           eigen_vectors.first  = Vector((FT)0.0, (FT)1.0);

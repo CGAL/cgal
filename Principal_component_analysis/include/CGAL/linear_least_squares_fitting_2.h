@@ -60,6 +60,8 @@ linear_least_squares_fitting_2(InputIterator first,
   typedef typename K::Point_2  Point;
   typedef typename K::Vector_2 Vector;
 
+	// if internally double, declare a kernel
+
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
