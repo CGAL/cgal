@@ -179,15 +179,7 @@ namespace CGAL {
 #  include <CGAL/Sun_fixes.h>
 #endif
 
-//--------------------------------------------------------------------//
-// This addresses a bug in VC++ 7.0 that (re)defines min(a, b)
-// and max(a, b) in windows.h and windef.h 
-//-------------------------------------------------------------------//
 
-#ifdef _MSC_VER
-// AF: Temporary thing to mimic users including this file which defines min max macros
-//#  define NOMINMAX 1
-#endif
 
 //-------------------------------------------------------------------//
 // When the global min and max are no longer defined (as macros) 
