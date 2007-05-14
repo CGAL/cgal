@@ -53,10 +53,18 @@ public:
   typedef typename Boost_bimap::right_map_type Reverse_func;
   typedef typename Reverse_func::iterator reverse_iterator;
   typedef typename Boost_bimap::relation relation;
+  typedef typename Boost_bimap::left_key_type left_key_type;
+  typedef typename Boost_bimap::left_value_type left_value_type;
+  typedef typename Boost_bimap::right_key_type right_key_type;
+  typedef typename Boost_bimap::right_value_type right_value_type;
 #else
   typedef std::multimap <Data, Key, Reverse_compare> Reverse_func;
   typedef typename Reverse_func::iterator reverse_iterator;
   typedef std::map <Key, reverse_iterator, Direct_compare> Direct_func;
+  typedef typename Boost_bimap::Direct_func::key_type left_key_type;
+  typedef typename Boost_bimap::Direct_func::value_type left_value_type;
+  typedef typename Boost_bimap::Reverse_func::key_type right_key_type;
+  typedef typename Boost_bimap::Reverse_func::value_type right_value_type;
 #endif
   typedef typename Direct_func::value_type Direct_entry;
                // std::pair<Key, reverse_iterator> 
