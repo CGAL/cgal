@@ -114,7 +114,7 @@ namespace CGAL {
   public:
     Implicit_function_wrapper(Implicit_function f) : function(f) {}
 
-    FT operator()(Point p)
+    FT operator()(Point p) const
     {
       return function(p.x(), p.y(), p.z());
     }
