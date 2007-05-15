@@ -1,3 +1,5 @@
+
+
 \begin{figure}[!htp]
 \begin{center}
 \begin{ccTexOnly}
@@ -14,6 +16,7 @@ arc.}
 \end{center}
 \end{figure}
 
+\section{Introduction}
 
 A continuous curve $C$ in ${\mathbb R}^2$ is called {\em $x$-monotone}, if
 every vertical line intersects it at a single point at most. For
@@ -157,6 +160,8 @@ subcurves.
 \section{Examples}
 %=================
 
+\subsection{Example for Envelope of Line Segments}
+
 The following example demonstrates how to compute and traverse the
 minimization diagram of line segments, as illustrated in
 Figure~\ref{env2_fig:min_diag}. We use the curve-data traits
@@ -165,6 +170,8 @@ attach a label (a \ccc{char} in this case) to each input segment.
 We use these labels when we print the minimization diagram:
 
 \ccIncludeExampleCode{Envelope_2/ex_envelope_segments.cpp}
+
+\subsection{Example for Computing the Convex Hull with Envelopes}
 
 The next example computes the convex hull of a set of input points
 by constructing envelopes of unbounded curves, in our case lines
@@ -203,6 +210,8 @@ diagrams:
 envelope are shown using thick dashed lines of different colors
 respectively.\label{env2_fig:ex_circ}}
 \end{figure}
+
+\subsection{Example for Envelope of Non-Linear Curves}
 
 We conclude by an example of envelopes of non-linear curves. 
 We use the \ccc{Arr_circle_segment_traits_2} class to construct the

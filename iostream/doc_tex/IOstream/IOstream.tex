@@ -150,7 +150,7 @@ main()
 \section{IO for non-\cgal\ types\label{sec:iofornoncgaltypes}}
 
 
-\subsection{Using output formatting}
+\subsection{Using Output Formatting}
 To ensure that non-\cgal\ types are formatted correctly (i.e., respecting \ccc{IO::Mode}), \ccc{oformat} can be used. For types with a \ccc{Output_rep} specialization, the respective output routine of \ccc{Output_rep} will be called by \ccc{oformat}. Otherwise, the stream output operator will be called.
 
 \ccExample
@@ -167,7 +167,7 @@ std::cout << CGAL::oformat( myobject, My_formatting_tag() );
 
 For a list of formatting tags supported by the type \texttt{T}, please refer to the documentation of the respective type.
 
-\subsection{Customizing output formatting}
+\subsection{Customizing Output Formatting}
 In some situations, you want to control the output formatting for a type \texttt{T}. For external types (third party libraries etc.), there might be problems if their stream output operator does not respect \ccc{IO::Mode}. The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
 
 Instead of putting \texttt{T} directly into an output stream, \texttt{T} is wrapped into an output representation \ccc{Output_rep}. For convenience, a function \ccc{oformat} exists which constructs an instance of \ccc{Output_rep}.

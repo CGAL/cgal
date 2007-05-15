@@ -407,7 +407,7 @@ base classes.
 \label{T3-fig-layers}}
 \end{figure}
 
-\subsection{Backward compatibility\label{T3-sec-compat}}
+\subsection{Backward Compatibility\label{T3-sec-compat}}
 
 Starting with \cgal\ release 3.0, the design of the triangulation data
 structure has been changed in order to give the possibility to store handles
@@ -490,18 +490,18 @@ The situation is exactly similar for cell base classes.
 Section~\ref{TDS3-sec-design} provides more detailed information.
 
 \section{Examples\label{Triangulation3-sec-examples}}
-\subsection{Basic example}
+\subsection{Basic Example}
 This example shows the incremental construction of a 3D triangulation, the
 location of a point and how to perform elementary operations on indices in a
 cell. It uses the default parameter of the \ccc{Triangulation_3} class.
 
 \ccIncludeExampleCode{Triangulation_3/simple.cpp}
 
-\subsection{Changing the vertex base}
+\subsection{Changing the Vertex Base}
 The following two examples show how the user can plug his own vertex base in a
 triangulation.  Changing the cell base is similar.
 
-\subsubsection{Adding a color\label{Triangulation3-sec-examples-color}}
+\subsubsection{Adding a Color\label{Triangulation3-sec-examples-color}}
 When the user doesn't need to add a type in a vertex which depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he can use the
@@ -511,7 +511,7 @@ this way.
 
 \ccIncludeExampleCode{Triangulation_3/color.cpp}
 
-\subsubsection{Adding handles}
+\subsubsection{Adding Handles}
 When the user needs to add a type in a vertex which depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he has to derive his own vertex base class,
@@ -519,7 +519,7 @@ as the following example shows.
 
 \ccIncludeExampleCode{Triangulation_3/adding_handles.cpp}
 
-\subsection{The Simplex class\label{Triangulation3-sec-simplex}}
+\subsection{The Simplex Class\label{Triangulation3-sec-simplex}}
 The triangulation defines a \ccc{Simplex} class that represents a
 simplex (vertex, edge, facet or cell). This example demonstrates how
 simplices can be stored in a set.
@@ -527,16 +527,16 @@ simplices can be stored in a set.
 \ccIncludeExampleCode{Triangulation_3/simplex.cpp}
 
 
-\subsection{Use of the Delaunay hierarchy}
+\subsection{Use of the Delaunay Hierarchy}
 
 \ccIncludeExampleCode{Triangulation_3/hierarchy.cpp}
 
-\subsection{Finding the cells in conflict with a point in a Delaunay
-triangulation}
+\subsection{Finding the Cells in Conflict with a Point in a Delaunay
+Triangulation}
 
 \ccIncludeExampleCode{Triangulation_3/find_conflicts.cpp}
 
-\subsection{Regular triangulation}
+\subsection{Regular Triangulation}
 This example shows the building of a regular triangulation.  In this
 triangulation, points have an associated weight, and some points can
 be hidden and do not result in vertices in the triangulation.

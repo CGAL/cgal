@@ -93,11 +93,13 @@ returned. If the query point is already located and/or the boundary
 edges of the conflict zone are already determined, alternative
 functions allow to avoid the re-computation.
 
-\subsection{Example}
+\subsection{Example for Natural Neighbor Coordinates}
+
 The signature of all coordinate computation functions is about the
 same.
 \ccIncludeExampleCode{Interpolation/nn_coordinates_2.cpp}
-\subsubsection{Regular neighbor coordinate computation}
+
+\subsection{Example for Regular Neighbor Coordinates}
 For regular neighbor coordinates, it is sufficient to replace the name
 of the function and the type of triangulation passed as parameter. A
 special traits class is needed.
