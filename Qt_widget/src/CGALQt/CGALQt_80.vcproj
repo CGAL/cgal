@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;$(BOOSTROOT);..\..\auxiliary\gmp\include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(BOOSTROOT);$(CGALROOT)\auxiliary\gmp\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -68,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgalqt-vc80-sgd.lib"
+				OutputFile="$(CGALROOT)\lib\cgalqt-vc80-sgd.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -113,7 +113,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;$(BOOSTROOT);..\..\auxiliary\gmp\include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(BOOSTROOT);$(CGALROOT)\auxiliary\gmp\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgalqt-vc80-mt-sgd.lib"
+				OutputFile="$(CGALROOT)\lib\cgalqt-vc80-mt-sgd.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -187,7 +187,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;$(BOOSTROOT);..\..\auxiliary\gmp\include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(BOOSTROOT);$(CGALROOT)\auxiliary\gmp\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;NDEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -212,7 +212,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgalqt-vc80-s.lib"
+				OutputFile="$(CGALROOT)\lib\cgalqt-vc80-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -254,7 +254,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;$(BOOSTROOT);..\..\auxiliary\gmp\include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(BOOSTROOT);$(CGALROOT)\auxiliary\gmp\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;NDEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -274,7 +274,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgalqt-vc80-mt-s.lib"
+				OutputFile="$(CGALROOT)\lib\cgalqt-vc80-mt-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -321,7 +321,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;$(BOOSTROOT);..\..\auxiliary\gmp\include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(BOOSTROOT);$(CGALROOT)\auxiliary\gmp\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;NDEBUG;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -346,7 +346,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgalqt-vc80-mt.lib"
+				OutputFile="$(CGALROOT)\lib\cgalqt-vc80-mt.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -391,7 +391,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;$(BOOSTROOT);..\..\auxiliary\gmp\include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(BOOSTROOT);$(CGALROOT)\auxiliary\gmp\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;CGAL_USE_GMP;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -418,7 +418,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\cgalqt-vc80-mt-gd.lib"
+				OutputFile="$(CGALROOT)\lib\cgalqt-vc80-mt-gd.lib"
 				AdditionalLibraryDirectories=""
 			/>
 			<Tool
@@ -611,14 +611,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h"
+				RelativePath="$(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_core.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_core.h&#x0D;&#x0A;"
 						Outputs="Kinetic_Qt_core.moc"
 					/>
 				</FileConfiguration>
@@ -634,7 +634,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_core.h&#x0D;&#x0A;"
 						Outputs="Kinetic_Qt_core.moc"
 					/>
 				</FileConfiguration>
@@ -661,14 +661,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_help_window.h"
+				RelativePath="$(CGALROOT)\include\CGAL\IO\Qt_help_window.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc ../../include/CGAL/IO/Qt_help_window.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc $(CGALROOT)\include/CGAL/IO/Qt_help_window.h&#x0D;&#x0A;"
 						Outputs="Qt_help_window.moc"
 					/>
 				</FileConfiguration>
@@ -684,7 +684,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc ../../include/CGAL/IO/Qt_help_window.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc $(CGALROOT)\include/CGAL/IO/Qt_help_window.h&#x0D;&#x0A;"
 						Outputs="Qt_help_window.moc"
 					/>
 				</FileConfiguration>
@@ -711,14 +711,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h"
+				RelativePath="$(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_timer.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_timer.h&#x0D;&#x0A;"
 						Outputs="Kinetic_Qt_timer.moc"
 					/>
 				</FileConfiguration>
@@ -734,7 +734,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_timer.h&#x0D;&#x0A;"
 						Outputs="Kinetic_Qt_timer.moc"
 					/>
 				</FileConfiguration>
@@ -761,14 +761,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_widget.h"
+				RelativePath="$(CGALROOT)\include\CGAL\IO\Qt_widget.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc ../../include/CGAL/IO/Qt_widget.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)\include/CGAL/IO/Qt_widget.h&#x0D;&#x0A;"
 						Outputs="Qt_widget.moc"
 					/>
 				</FileConfiguration>
@@ -784,7 +784,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc ../../include/CGAL/IO/Qt_widget.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)\include/CGAL/IO/Qt_widget.h&#x0D;&#x0A;"
 						Outputs="Qt_widget.moc"
 					/>
 				</FileConfiguration>
@@ -811,14 +811,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h"
+				RelativePath="$(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h&#x0D;&#x0A;"
 						AdditionalDependencies=""
 						Outputs="Kinetic_Qt_widget_2_core.moc"
 					/>
@@ -835,7 +835,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h&#x0D;&#x0A;"
 						AdditionalDependencies=""
 						Outputs="Kinetic_Qt_widget_2_core.moc"
 					/>
@@ -863,14 +863,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_widget_history.h"
+				RelativePath="$(CGALROOT)\include\CGAL\IO\Qt_widget_history.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc ../../include/CGAL/IO/Qt_widget_history.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)\include/CGAL/IO/Qt_widget_history.h&#x0D;&#x0A;"
 						Outputs="Qt_widget_history.moc"
 					/>
 				</FileConfiguration>
@@ -886,7 +886,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc ../../include/CGAL/IO/Qt_widget_history.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)\include/CGAL/IO/Qt_widget_history.h&#x0D;&#x0A;"
 						Outputs="Qt_widget_history.moc"
 					/>
 				</FileConfiguration>
@@ -913,14 +913,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_widget_layer.h"
+				RelativePath="$(CGALROOT)\include\CGAL\IO\Qt_widget_layer.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)\include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc&#x0D;&#x0A;"
 						Outputs="Qt_widget_layer.moc"
 					/>
 				</FileConfiguration>
@@ -936,7 +936,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)\include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc&#x0D;&#x0A;"
 						Outputs="Qt_widget_layer.moc"
 					/>
 				</FileConfiguration>
@@ -963,14 +963,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Io\Qt_widget_OpenGL.h"
+				RelativePath="$(CGALROOT)\include\Cgal\Io\Qt_widget_OpenGL.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc $(CGALROOT)\include\Cgal\Io\Qt_widget_OpenGL.h&#x0D;&#x0A;"
 						Outputs="Qt_widget_OpenGL.moc"
 					/>
 				</FileConfiguration>
@@ -986,7 +986,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc $(CGALROOT)\include\Cgal\Io\Qt_widget_OpenGL.h&#x0D;&#x0A;"
 						Outputs="Qt_widget_OpenGL.moc"
 					/>
 				</FileConfiguration>
@@ -1013,14 +1013,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h"
+				RelativePath="$(CGALROOT)\include\CGAL\IO\Qt_widget_standard_toolbar.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)\include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc&#x0D;&#x0A;"
 						Outputs="Qt_widget_standard_toolbar.moc"
 					/>
 				</FileConfiguration>
@@ -1036,7 +1036,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)\include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc&#x0D;&#x0A;"
 						Outputs="Qt_widget_standard_toolbar.moc"
 					/>
 				</FileConfiguration>
@@ -1063,14 +1063,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h"
+				RelativePath="$(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_window_2.h"
 				>
 				<FileConfiguration
 					Name="Debug_SingleThreaded_StaticCRT|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_window_2.h&#x0D;&#x0A;"
 						Outputs="Kinetic_Qt_window_2.moc"
 					/>
 				</FileConfiguration>
@@ -1086,7 +1086,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc $(CGALROOT)\include\Cgal\Kinetic\Io\internal\Qt_window_2.h&#x0D;&#x0A;"
 						Outputs="Kinetic_Qt_window_2.moc"
 					/>
 				</FileConfiguration>

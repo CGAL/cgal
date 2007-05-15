@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="./include$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories=".\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -40,7 +40,7 @@
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				ProgramDatabaseFile="$(OutDir)/alpha_shapes_2.pdb"
 				SubSystem="2"
 				TargetMachine="0"/>
@@ -78,7 +78,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="./include$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories=".\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -87,7 +87,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -97,9 +97,9 @@
 				OutputFile="$(OutDir)/alpha_shapes_2.exe"
 				LinkIncremental="1"
 
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				IgnoreDefaultLibraryNames=""
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

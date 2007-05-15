@@ -24,7 +24,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -37,7 +37,6 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="2"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/regular_triangulation_2.pdb"
 				SubSystem="2"
@@ -76,7 +75,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -85,7 +84,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -93,8 +92,8 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="1"
-				AdditionalIncludeDirectories="./include;$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include"
-				GenerateDebugInformation="TRUE"
+				AdditionalIncludeDirectories=".\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

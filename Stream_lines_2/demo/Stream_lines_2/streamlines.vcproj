@@ -20,11 +20,11 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -37,7 +37,7 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib Opengl32.lib Glu32.lib"
 				OutputFile="$(OutDir)/streamlines.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/streamlines.pdb"
 				SubSystem="2"
@@ -76,7 +76,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -85,7 +85,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -93,8 +93,8 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib Opengl32.lib Glu32.lib"
 				OutputFile="$(OutDir)/streamlines.exe"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)/lib;"
+				GenerateDebugInformation="FALSE"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

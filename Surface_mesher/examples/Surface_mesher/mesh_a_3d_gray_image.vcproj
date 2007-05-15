@@ -21,11 +21,11 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\imageio\;&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;"
+				AdditionalIncludeDirectories=".\imageio\;$(CGALROOT)\include\CGAL\config\msvc7;$(CGALROOT)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				WarningLevel="2"
 				DebugInformationFormat="3"
@@ -37,7 +37,7 @@
 				AdditionalDependencies=" zdll.lib"
 				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;..\..\lib\msvc7&quot;"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib\msvc7"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -72,7 +72,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".\imageio;&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;"
+				AdditionalIncludeDirectories=".\imageio;$(CGALROOT)\include\CGAL\config\msvc7;$(CGALROOT)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -86,8 +86,8 @@
 				AdditionalDependencies=" zdll.lib"
 				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;..\..\lib\msvc7&quot;"
-				GenerateDebugInformation="TRUE"/>
+				AdditionalLibraryDirectories="$(CGALROOT)\lib\msvc7"
+				GenerateDebugInformation="FALSE"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
