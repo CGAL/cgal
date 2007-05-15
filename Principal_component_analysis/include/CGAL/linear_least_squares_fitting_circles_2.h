@@ -11,15 +11,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://gankit@scm.gforge.inria.fr/svn/cgal/trunk/Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles.h $
+// $URL: svn+ssh://gankit@scm.gforge.inria.fr/svn/cgal/trunk/Principal_component_analysis/include/CGAL/linear_least_squares_fitting_circles.h $
 // $Id: linear_least_squares_fitting_2.h 37882 2007-04-03 15:15:30Z spion $
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
-#ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_CIRCLES_H
-#define CGAL_LINEAR_LEAST_SQUARES_FITTING_CIRCLES_H
+#ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_CIRCLES_2_H
+#define CGAL_LINEAR_LEAST_SQUARES_FITTING_CIRCLES_2_H
 
-#define PI 3.1416
+#define PI 3.1415926535
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
@@ -27,6 +27,7 @@
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
+#include <CGAL/util.h>
 
 #include <iterator>
 #include <vector>
@@ -48,7 +49,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
-                               const typename K::Circle_2*) // used for indirection
+                               const typename K::Circle_2*,// used for indirection
+			       bool non_standard_geometry)  // true means it is a disk
 {
   // types
   typedef typename K::FT       FT;
@@ -61,7 +63,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
-
+  if(!non_standard_geometry) {
   // compute centroid
   c = centroid(first,beyond,K());
 
@@ -69,43 +71,58 @@ linear_least_squares_fitting_2(InputIterator first,
   // Matrix numbering:
   // 0
   // 1 2
-  //Final combined covariance matrix for all triangles and their combined mass
-  FT mass=0.0,cov[3]={0.0,0.0,0.0};
+  //Final combined covariance matrix for all circles and their combined mass
+  FT mass = 0.0;
+  FT covariance[3] = {0.0,0.0,0.0};
 
-  // step 1: assemble the 2nd order moment about the origin.  
-  //  FT cov_temp[4] = {1.0,0.5,0.5,1.0};
-  Matrix covariance = Matrix(2,true,PI); //DEFINE PI PROPERLY
+  // assemble 2nd order moment about the origin.  
+  FT temp[4] = {1.0, 0.0,
+		0.0, 1.0};
+  Matrix moment = init_Matrix<K>(2,temp);
+  //  Matrix moment = Matrix(2,true,PI);
+
   for(InputIterator it = first;
       it != beyond;
       it++)
   {
-    // Now for each triangle, construct the 2nd order moment about the origin.
-    // step 2: assemble the transformation matrix.
-    const Segment& t = *it;
+    // Now for each circle, construct the 2nd order moment about the origin.
+    // assemble the transformation matrix.
+    const Circle& t = *it;
+
     // defined for convenience.
-    FT delta[4] = {t[0].x(), t[1].x(), t[0].y(), t[1].y()};
-
+    // FT example = CGAL::to_double(t[0].x());
+    FT radius = std::sqrt(t.squared_radius());
+    FT delta[4] = {radius, 0.0, 
+		   0.0, radius};
     Matrix transformation = init_Matrix<K>(2,delta);
-    FT length = std::sqrt(t.squared_length());
-    CGAL_assertion(length!=0);
-    // step 3: Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
-    
-    // step 3.1: Transform the standard 2nd order moment using the transformation matrix
-    transformation = length*transformation*covariance*LA::transpose(transformation);
-    
-    //step 3.2: Translate the 2nd order moment to (x0,y0):Not Required Here
-    
-    cov[0]+=transformation[0][0];
-    cov[1]+=transformation[0][1];
-    cov[2]+=transformation[1][1];
+    FT area = t.squared_radius();
+    CGAL_assertion(area != 0.0);
 
-    mass+=length;
+    // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
+    
+    // Transform the standard 2nd order moment using the transformation matrix
+    transformation = area * transformation * moment * LA::transpose(transformation);
+    
+    // Translate the 2nd order moment to the center of the circle.
+    FT x0 = t.center().x();
+    FT y0 = t.center().y();
+
+    // and add to covariance matrix
+    covariance[0] += transformation[0][0] + area * x0*x0;
+    covariance[1] += transformation[0][1] + area * x0*y0;
+    covariance[2] += transformation[1][1] + area * y0*y0;
+
+    mass += area;
   }
-  //step 4: Translace the 2nd order miment calculated about the origin to the center of mass to get the covariance.
-  cov[0]+=mass*(-1.0*c.x()*c.x());
-  cov[1]+=mass*(-1.0*c.x()*c.y());
-  cov[2]+=mass*(-1.0*c.y()*c.y());
-  std::cout<<cov[0]<<" "<<cov[1]<<" "<<cov[2]<<std::endl;
+
+  // Translate the 2nd order moment calculated about the origin to
+  // the center of mass to get the covariance.
+  covariance[0] += mass * (-1.0 * c.x() * c.x());
+  covariance[1] += mass * (-1.0 * c.x() * c.y());
+  covariance[2] += mass * (-1.0 * c.y() * c.y());
+
+  // to remove later
+  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -115,7 +132,7 @@ linear_least_squares_fitting_2(InputIterator first,
   //  CGALi::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
   FT eigen_vectors1[4];
   FT eigen_values1[2];
-  eigen_symmetric<FT>(cov,2, eigen_vectors1, eigen_values1);
+  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
   eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
   eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
   // check unicity and build fitting line accordingly
@@ -133,8 +150,100 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } 
-} // end linear_least_squares_fitting_2 for triangle set
+  }
+  else {
+    // ::::::::::DISK:::::::::::::::
+  // compute centroid
+  c = centroid(first,beyond,K());
+
+  // assemble covariance matrix as a semi-definite matrix. 
+  // Matrix numbering:
+  // 0
+  // 1 2
+  //Final combined covariance matrix for all circles and their combined mass
+  FT mass = 0.0;
+  FT covariance[3] = {0.0,0.0,0.0};
+
+  // assemble 2nd order moment about the origin.  
+  FT temp[4] = {0.25, 0.0,
+		0.0, 0.25};
+  Matrix moment = init_Matrix<K>(2,temp);
+  //  Matrix moment = Matrix(2,true,PI);
+
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    // Now for each circle, construct the 2nd order moment about the origin.
+    // assemble the transformation matrix.
+    const Circle& t = *it;
+
+    // defined for convenience.
+    // FT example = CGAL::to_double(t[0].x());
+    FT radius = std::sqrt(t.squared_radius());
+    FT delta[4] = {radius, 0.0, 
+		   0.0, radius};
+    Matrix transformation = init_Matrix<K>(2,delta);
+    FT area = t.squared_radius();
+    CGAL_assertion(area != 0.0);
+
+    // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
+    
+    // Transform the standard 2nd order moment using the transformation matrix
+    transformation = area * transformation * moment * LA::transpose(transformation);
+    
+    // Translate the 2nd order moment to the center of the circle.
+    FT x0 = t.center().x();
+    FT y0 = t.center().y();
+
+    // and add to covariance matrix
+    covariance[0] += transformation[0][0] + area * x0*x0;
+    covariance[1] += transformation[0][1] + area * x0*y0;
+    covariance[2] += transformation[1][1] + area * y0*y0;
+
+    mass += area;
+  }
+
+  // Translate the 2nd order moment calculated about the origin to
+  // the center of mass to get the covariance.
+  covariance[0] += mass * (-1.0 * c.x() * c.x());
+  covariance[1] += mass * (-1.0 * c.x() * c.y());
+  covariance[2] += mass * (-1.0 * c.y() * c.y());
+
+  // to remove later
+  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
+
+  // solve for eigenvalues and eigenvectors.
+  // eigen values are sorted in descending order, 
+  // eigen vectors are sorted in accordance.
+  std::pair<FT,FT> eigen_values;
+  std::pair<Vector,Vector> eigen_vectors;
+  //  CGALi::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
+  FT eigen_vectors1[4];
+  FT eigen_values1[2];
+  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
+  eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
+  eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
+  // check unicity and build fitting line accordingly
+  if(eigen_values.first != eigen_values.second)
+  {
+    // regular case
+    line = Line(c, eigen_vectors.first);
+    return (FT)1.0 - eigen_values.second / eigen_values.first;
+  } 
+  else
+  {
+    // isotropic case (infinite number of directions)
+    // by default: assemble a line that goes through 
+    // the centroid and with a default horizontal vector.
+    line = Line(c, Vector(1.0, 0.0));
+    return (FT)0.0;
+  } 
+  }
+} // end linear_least_squares_fitting_2 for circle set
 
 } // end namespace CGALi
+
 CGAL_END_NAMESPACE
-#endif
+
+#endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_CIRCLES_2_H

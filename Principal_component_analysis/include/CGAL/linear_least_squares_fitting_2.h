@@ -25,6 +25,7 @@
 #include <CGAL/linear_least_squares_fitting_points_2.h>
 #include <CGAL/linear_least_squares_fitting_segments_2.h>
 #include <CGAL/linear_least_squares_fitting_triangles_2.h>
+#include <CGAL/linear_least_squares_fitting_circles_2.h>
 
 #include <iterator>
 
@@ -38,11 +39,12 @@ linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,
                                typename K::Point_2& centroid,
-                               const K& k)
+                               const K& k,
+			       bool non_standard_geometry = false)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,
-                                               centroid, k, (Value_type*) NULL);
+                                               centroid, k, (Value_type*) NULL, non_standard_geometry);
 }
 
 template < typename InputIterator, 
@@ -52,12 +54,13 @@ typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,
-                               const K& k)
+                               const K& k,
+			       bool non_standard_geometry = false)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typename K::Point_2 centroid;
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,
-                                               centroid, k,(Value_type*) NULL);
+                                               centroid, k,(Value_type*) NULL, non_standard_geometry);
 }
 
 // deduces the kernel from the points in container.
@@ -69,11 +72,12 @@ typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                Line& line,
-                               Point& centroid)
+                               Point& centroid,
+			       bool non_standard_geometry = false)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,K());
+  return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,K(), non_standard_geometry);
 }
 
 // does not return the centroid and deduces the kernel as well.
@@ -83,11 +87,12 @@ inline
 typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
-                               Line& line)
+                               Line& line,
+			       bool non_standard_geometry = false)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_2(first,beyond,line,K());
+  return CGAL::linear_least_squares_fitting_2(first,beyond,line,K(), non_standard_geometry);
 }
 
 CGAL_END_NAMESPACE

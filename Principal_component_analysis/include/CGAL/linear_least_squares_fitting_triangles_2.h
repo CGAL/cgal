@@ -30,6 +30,7 @@
 #include <iterator>
 #include <vector>
 #include <cmath>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +48,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
-                               const typename K::Triangle_2*) // used for indirection
+                               const typename K::Triangle_2*,// used for indirection
+			       bool non_standard_geometry)  // true means it is a hollow triangle
 {
   // types
   typedef typename K::FT       FT;
@@ -57,10 +59,12 @@ linear_least_squares_fitting_2(InputIterator first,
   typedef typename K::Triangle_2 Triangle;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
+  typedef typename K::Segment_2         Segment_2;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
+  if(!non_standard_geometry) {
   // compute centroid
   c = centroid(first,beyond,K());
 
@@ -105,7 +109,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT xav0 = (delta[0]+delta[1])/3.0;
     FT yav0 = (delta[2]+delta[3])/3.0;
     
-    // add to the covariance matrix
+    // and add to the covariance matrix
     covariance[0] += transformation[0][0] + 0.5 * detA * (x0*xav0*2 + x0*x0);
     covariance[1] += transformation[0][1] + 0.5 * detA * (x0*yav0 + xav0*y0 + x0*y0);
     covariance[2] += transformation[1][1] + 0.5 * detA * (y0*yav0*2 + y0*y0);
@@ -145,6 +149,22 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } 
+  }
+  else {
+    std::list<Segment_2> segments;
+    
+    for(InputIterator it = first;
+	it != beyond;
+	it++)
+    {
+      const Triangle& t = *it;
+      segments.push_back(Segment_2(t[0],t[1]));
+      segments.push_back(Segment_2(t[1],t[2]));
+      segments.push_back(Segment_2(t[2],t[0]));      
+    }    
+
+    return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K());
+  }
 } // end linear_least_squares_fitting_2 for triangle set
 
 } // end namespace CGALi

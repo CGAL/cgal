@@ -154,6 +154,40 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_areas;
 } // end centroid of a 2D triangle set
 
+// computes the centroid of a 2D circle set
+// takes an iterator range over K::Circle_2
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& ,
+         const typename K::Circle_2*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_2 Vector;
+  typedef typename K::Point_2  Point;
+  typedef typename K::Circle_2 Circle;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_areas = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Circle& s = *it;
+    FT sq_radius = s.squared_radius();
+    //    Point c = K().construct_midpoint_2_object()(s[0],s[1]);
+    Point c = s.center();
+    v = v + sq_radius * (c - ORIGIN);
+    sum_areas += sq_radius;
+  }
+  CGAL_assertion(sum_areas != 0.0);
+  return ORIGIN + v / sum_areas;
+} // end centroid of a 2D circle set
+
 // computes the centroid of a 3D triangle set
 // takes an iterator range over K::Triangle_3
 template < typename InputIterator, 

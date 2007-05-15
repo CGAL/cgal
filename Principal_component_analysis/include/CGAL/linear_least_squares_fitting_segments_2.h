@@ -11,7 +11,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://gankit@scm.gforge.inria.fr/svn/cgal/trunk/Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles.h $
+// $URL: svn+ssh://gankit@scm.gforge.inria.fr/svn/cgal/trunk/Principal_component_analysis/include/CGAL/linear_least_squares_fitting_segments.h $
 // $Id: linear_least_squares_fitting_2.h 37882 2007-04-03 15:15:30Z spion $
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
@@ -47,7 +47,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
-                               const typename K::Segment_2*) // used for indirection
+                               const typename K::Segment_2*,// used for indirection
+			       bool non_standard_geometry)  // not useful 
 {
   // types
   typedef typename K::FT       FT;
@@ -68,7 +69,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // Matrix numbering:
   // 0
   // 1 2
-  //Final combined covariance matrix for all triangles and their combined mass
+  //Final combined covariance matrix for all segments and their combined mass
   FT mass = 0.0;
   FT covariance[3] = {0.0,0.0,0.0};
 
@@ -92,7 +93,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT length = std::sqrt(t.squared_length());
     CGAL_assertion(length != 0.0);
 
-    // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
+    // Find the 2nd order moment for the segment wrt to the origin by an affine transformation.
     
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = length * transformation * moment * LA::transpose(transformation);
