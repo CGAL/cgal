@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="${ConfigurationName}"
-			IntermediateDirectory="${ConfigurationName}"
+			OutputDirectory="OUTDIR"
+			IntermediateDirectory="OUTDIR"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -21,8 +21,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
+				AdditionalIncludeDirectories="..\..\..\include\CGAL\config\msvc;..\..\..\include;..\..\..\auxiliary\gmp\include;..\..\..\auxiliary\TAUCS\include;$(BOOSTROOT)"
+				PreprocessorDefinitions="WIN32;_DEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -36,7 +36,7 @@
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)/SOURCE.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\auxiliary\gmp\lib;;..\..\..\auxiliary\TAUCS\lib"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -61,8 +61,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="${ConfigurationName}"
-			IntermediateDirectory="${ConfigurationName}"
+			OutputDirectory="OUTDIR"
+			IntermediateDirectory="OUTDIR"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -71,8 +71,8 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
+				AdditionalIncludeDirectories="..\..\..\include\CGAL\config\msvc;..\..\..\include;..\..\..\auxiliary\gmp\include;..\..\..\auxiliary\TAUCS\include;$(BOOSTROOT)"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -84,8 +84,8 @@
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)/SOURCE.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib"
-				GenerateDebugInformation="TRUE"/>
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\auxiliary\gmp\lib;..\..\..\auxiliary\TAUCS\lib"
+				GenerateDebugInformation="FALSE"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -115,7 +115,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath=".\SOURCE.EXT">
+				RelativePath="..\SOURCE.EXT">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
