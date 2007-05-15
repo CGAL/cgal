@@ -46,15 +46,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// From polynomial.h TODO: Where to put this?
-inline static void swallow(std::istream &is, char d) {
-    char c;
-    do c = is.get(); while (isspace(c));
-    if (c != d) CGAL_assertion_msg( false,
-                             "input error: unexpected character in polynomial");
-}
-//// END: From polynomial.h
-
 template <class NT,class ROOT> class Sqrt_extension;
 
 template <class NT,class ROOT> Sqrt_extension<NT,ROOT>

@@ -247,6 +247,11 @@ std::istream &operator>>(std::istream &is, Color& col)
 
 const char* mode_name( IO::Mode m );
 
+// From polynomial.h TODO: Where to put this?
+void swallow(std::istream &is, char d);
+void swallow(std::istream &is, const std::string& s );
+
+
 
 CGAL_END_NAMESPACE
 

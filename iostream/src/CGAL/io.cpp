@@ -29,6 +29,12 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/assertions.h>
 
+#include <sstream>
+
+extern "C" {
+  #include <ctype.h>
+}
+
 CGAL_BEGIN_NAMESPACE
 
 int IO::mode = std::ios::xalloc();
@@ -93,12 +99,34 @@ is_binary(std::ios& i)
     return i.iword(IO::mode) == IO::BINARY;
 }
 
-const char* mode_name( IO::Mode m) {
+const char* 
+mode_name( IO::Mode m) {
     static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
     CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
     return names[m];
 }
 
+void 
+swallow(std::istream &is, char d) {
+    char c;
+    do is.get(c); while (isspace(c));
+    if (c != d) {
+      std::stringstream msg;
+      msg << "input error: expected '" << d << "' but got '" << c << "'";
+      CGAL_error( msg.str().c_str() );
+    }
+}
+
+void 
+swallow(std::istream &is, const std::string& s ) {
+    std::string t;
+    is >> t;
+    if (s != t) {
+      std::stringstream msg;
+      msg << "input error: expected '" << s << "' but got '" << t << "'";
+      CGAL_error( msg.str().c_str() );
+    }
+}
 
 CGAL_END_NAMESPACE
 
