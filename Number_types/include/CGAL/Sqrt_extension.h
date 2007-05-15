@@ -17,7 +17,7 @@
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
-
+//                 Ron Wein         <wein@post.tau.ac.il>
 
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
@@ -35,6 +35,12 @@
 #define CGAL_SQRT_EXTENSION_H
 
 #include <CGAL/number_type_basic.h>
+
+
+// #define SQRT_EXT_USE_FILTER 1
+#ifdef SQRT_EXT_USE_FILTER
+  #include <CGAL/Interval_arithmetic.h> 
+#endif
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
@@ -158,19 +164,56 @@ public:
     }
 
     //! Access operator for a0_, \c const
-    const NT& a0() const { return a0_; }
+    inline const NT& a0() const { return a0_; }
     //! Access operator for a0_
     NT&        a0()       { return a0_; }
     //! Access operator for a1_, \c const
-    const NT& a1() const { return a1_; }
+    inline const NT& a1() const { return a1_; }
     //! Access operator for a1_
     NT&        a1()       { return a1_; }
     //! Access operator for root_, \c const
-    const ROOT& root() const { return root_; }
+    inline const ROOT& root() const { return root_; }
     //! Access operator for is_extended_, \c const
-    const bool& is_extended() const { return is_extended_; }
+    inline const bool& is_extended() const { return is_extended_; }
     //! Access operator for root_
     //ROOT& root() { return root_; }
+
+    //! determines the sign of xx by repeated squaring (with no filtering).
+    ::CGAL::Sign sign_() const
+    {
+       
+        ::CGAL::Sign s0,s1;
+
+        s0 = CGAL_NTS sign(a0_);
+        s1 = CGAL_NTS sign(a1_);
+
+        if (s0 == s1) return s0;
+        if (s0 == CGAL::ZERO) return s1;
+        if (s1 == CGAL::ZERO) return s0;
+
+        // s0*s1=-1
+        NT r = a1_*a1_*NT(root_) - a0_*a0_;
+        // if(r>0) return s1 else s0
+        if (s1 == CGAL::POSITIVE)
+            return CGAL_NTS sign(r);
+        else
+            return CGAL::opposite (CGAL_NTS sign(r));
+    }
+
+
+std::pair<double, double> to_interval() const{
+   
+    if (! is_extended_)
+        return CGAL_NTS to_interval(a0_);
+    
+    const CGAL::Interval_nt<true>&  a0_int = CGAL_NTS to_interval(a0_);
+    const CGAL::Interval_nt<true>&  a1_int = CGAL_NTS to_interval(a1_);
+    const CGAL::Interval_nt<true>&  root_int = CGAL_NTS to_interval(root_);
+    const CGAL::Interval_nt<true>&  x_int = 
+        a0_int + (a1_int * CGAL::sqrt(root_int));
+
+    return (std::make_pair (x_int.inf(), x_int.sup()));
+}
 
 public:
 
@@ -183,28 +226,20 @@ public:
 
     //! determines the sign of xx by repeated squaring.
     ::CGAL::Sign sign() const {
-        if (!is_extended())
+        if (! is_extended_)
             return CGAL_NTS sign(a0());
 
-        ::CGAL::Sign s0,s1;
+#ifdef SQRT_EXT_USE_FILTER
+        const std::pair<double, double>&  x_in = this->to_interval(); 
 
-        s0 = CGAL_NTS sign(a0());
-        s1 = CGAL_NTS sign(a1());
+        if (x_in.first > 0)
+          return (CGAL::POSITIVE);
+        else if (x_in.second < 0)
+          return (CGAL::NEGATIVE);
+#endif
 
-        if (s0 == s1) return s0;
-        if (s0 == CGAL::ZERO) return s1;
-        if (s1 == CGAL::ZERO) return s0;
-
-        // s0*s1=-1
-        NT r = a1()*a1()*NT(root())-a0()*a0();
-        // if(r>0) return s1 else s0
-        if (s1 == CGAL::POSITIVE)
-            return CGAL_NTS sign(r);
-        else
-            return -CGAL_NTS sign(r); // TODO: Is this valid??? Was: -CGAL::sign(..)
+        return (this->sign_());
     }
-
-
 
     template < class BOOL_TAG >
     bool is_zero_(const BOOL_TAG&) const{
@@ -339,35 +374,69 @@ public:
     static Sqrt_extension<NT,ROOT> input_ascii(std::istream& is);
 
 public:
+
+// compare with NT
+CGAL::Comparison_result
+compare (const NT& num) const
+{
+    if (! is_extended_)
+        return (CGAL::compare (a0_, num));
+
+#ifdef SQRT_EXT_USE_FILTER
+    const std::pair<double, double>&  x_in = this->to_interval(); 
+    const std::pair<double, double>&  y_in = CGAL::to_interval (num); 
+    
+    if (x_in.second < y_in.first)
+      return (SMALLER);
+    else if (x_in.first > y_in.second)
+      return (LARGER);
+#endif
+
+    return ((Self(a0_ - num, a1_, root_)).sign_());
+}
+
 // compare of two values with different extension
 CGAL::Comparison_result
-compare(const Self& y, bool in_same_extension = false ) const {
+compare(const Self& y, bool in_same_extension = false ) const
+{
+    if (! is_extended_)
+        return (CGAL::opposite (y.compare (a0_)));
+    else if (! y.is_extended_)
+        return (this->compare (y.a0_));
 
-    if (!this->is_extended() || !y.is_extended() || in_same_extension)
-        return ((*this)-y).sign();
+    if (in_same_extension)
+        return ((*this) - y).sign();
 
+#ifdef SQRT_EXT_USE_FILTER
+    const std::pair<double, double>&  x_in = this->to_interval(); 
+    const std::pair<double, double>&  y_in = y.to_interval(); 
+    
+    if (x_in.second < y_in.first)
+      return (SMALLER);
+    else if (x_in.first > y_in.second)
+      return (LARGER);
+#endif
 
   // Perform the exact comparison:
   // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
   // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
   // We first determine the signs of these terms.
-
-  const NT          diff_a0 = this->a0() - y.a0();
+  const NT          diff_a0 = a0_ - y.a0_;
   const CGAL::Sign  sign_left = CGAL::sign (diff_a0);
-  const NT          x_sqr = this->a1()*this->a1() * this->root();
-  const NT          y_sqr = y.a1()*y.a1() * y.root();
+  const NT          x_sqr = a1_*a1_ * NT(root_);
+  const NT          y_sqr = y.a1_*y.a1_ * NT(y.root_);
   Comparison_result right_res = CGAL::compare (y_sqr, x_sqr);
   CGAL::Sign        sign_right = ZERO;
 
   if (right_res == LARGER)
   {
     // Take the sign of b2:
-    sign_right = CGAL::sign (y.a1());
+    sign_right = CGAL::sign (y.a1_);
   }
   else if (right_res == SMALLER)
   {
     // Take the opposite sign of b1:
-    switch (CGAL::sign (this->a1()))
+    switch (CGAL::sign (a1_))
     {
     case POSITIVE :
       sign_right = NEGATIVE;
@@ -388,8 +457,8 @@ compare(const Self& y, bool in_same_extension = false ) const {
     // We take the sign of (b2*sqrt(c2) -  b1*sqrt(c1)), where both terms
     // have the same absolute value. The sign is equal to the sign of b2,
     // unless both terms have the same sign, so the whole expression is 0.
-    sign_right = CGAL::sign (y.a1());
-    if (sign_right == CGAL::sign (this->a1()))
+    sign_right = CGAL::sign (y.a1_);
+    if (sign_right == CGAL::sign (a1_))
       sign_right = ZERO;
   }
 
@@ -424,14 +493,14 @@ compare(const Self& y, bool in_same_extension = false ) const {
   }
 
   // We now square both terms and look at the sign of the one-root number:
-  //   ((a1 - a2)2 - (b12*c1 + b22*c2)) + 2*b1*b2*sqrt(c1*c2)
+  //   ((a1 - a2)^2 - (b12*c1 + b22*c2)) + 2*b1*b2*sqrt(c1*c2)
   //
   // If both signs are negative, we should swap the comparsion result
   // we eventually compute.
   const NT          A = diff_a0*diff_a0 - (x_sqr + y_sqr);
-  const NT          B = 2 * this->a1() * y.a1();
-  const NT          C = this->root() * y.root();
-  const CGAL::Sign  sgn = (Self(A, B, C)).sign();
+  const NT          B = 2 * a1_ * y.a1_;
+  const ROOT        C = root_ * y.root_;
+  const CGAL::Sign  sgn = (Self(A, B, C)).sign_();
   const bool        swap_res = (sign_left == NEGATIVE);
 
   if (sgn == POSITIVE)
@@ -441,8 +510,6 @@ compare(const Self& y, bool in_same_extension = false ) const {
 
   return (EQUAL);
 }
-
-
 };
 
 template <class NT,class ROOT> Sqrt_extension<NT,ROOT>
@@ -574,13 +641,37 @@ operator >= (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p
 // lefthand side
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator +
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
-{ return (Sqrt_extension<NT,ROOT>(num) + p2); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p2.is_extended())
+        return EXT (num + p2.a0(), p2.a1(), p2.root());
+    else
+        return EXT (num + p2.a0());
+}
+
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator -
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
-{ return (Sqrt_extension<NT,ROOT>(num) - p2); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p2.is_extended())
+        return EXT (num - p2.a0(), -p2.a1(), p2.root());
+    else
+        return EXT (num - p2.a0());
+}
+
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator *
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
-{ return (Sqrt_extension<NT,ROOT>(num) * p2); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p2.is_extended())
+        return EXT (num * p2.a0(), num * p2.a1(), p2.root());
+    else
+        return EXT (num * p2.a0());
+}
+
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 (const NT& num, const Sqrt_extension<NT,ROOT>& p2)
 { return (Sqrt_extension<NT,ROOT>(num)/p2); }
@@ -588,16 +679,47 @@ template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 // righthand side
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator +
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
-{ return (p1 + Sqrt_extension<NT,ROOT>(num)); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p1.is_extended())
+        return EXT (p1.a0() + num, p1.a1(), p1.root());
+    else
+        return EXT (p1.a0() + num);
+}
+
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator -
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
-{ return (p1 - Sqrt_extension<NT,ROOT>(num)); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p1.is_extended())
+        return EXT (p1.a0() - num, p1.a1(), p1.root());
+    else
+        return EXT (p1.a0() - num);
+}
+
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator *
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
-{ return (p1 * Sqrt_extension<NT,ROOT>(num)); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p1.is_extended())
+        return EXT (p1.a0() * num, p1.a1() * num, p1.root());
+    else
+        return EXT (p1.a0() * num);
+}
+
 template <class NT,class ROOT>    Sqrt_extension<NT,ROOT> operator /
 (const Sqrt_extension<NT,ROOT>& p1, const NT& num)
-{ return (p1 / Sqrt_extension<NT,ROOT>(num)); }
+{
+    typedef Sqrt_extension<NT,ROOT> EXT;
+
+    if (p1.is_extended())
+        return EXT (p1.a0() / num, p1.a1() / num, p1.root());
+    else
+        return EXT (p1.a0() / num);
+}
 
 // lefthand side
 template <class NT,class ROOT>    bool operator ==
@@ -773,24 +895,31 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
   public:
     typedef Sqrt_extension<COEFF, ROOT> Type;
 
+    class Sign
+        : public Unary_function< Type, ::CGAL::Sign >{
+    public:
+        ::CGAL::Sign operator()( const Type& x ) const {
+            return x.sign();
+        }
+    };
+    
+    class Compare
+        : public Binary_function< Type, Type, Comparison_result > {
+    public:
+        Comparison_result operator()( const Type& x, const Type& y) const {
+            // must be from the same extension 
+            return x.compare(y);
+        }
+        
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type, 
+                Comparison_result )
+    };
+
     class To_interval
       : public Unary_function< Type, std::pair< double, double > > {
-      private:
-        typedef CGAL::Interval_nt<> Double_interval;
       public:
         std::pair<double,double> operator()(const Type& x) const {
-            if(x.is_extended()){
-              std::pair<double, double> pair_a0 = CGAL_NTS to_interval( x.a0() );
-              std::pair<double, double> pair_a1_root = CGAL_NTS to_interval(
-                                         x.a1() * x.a1() * COEFF( x.root() ) );
-
-              Double_interval result = pair_a0;
-              result += ( Double_interval( (int) CGAL_NTS sign(x.a1())) *
-                      CGAL::sqrt( Double_interval( pair_a1_root ) ) );
-              return result.pair();
-            } else {
-                return CGAL_NTS to_interval( x.a0());
-            }
+            return x.to_interval();
         }
     };
 
