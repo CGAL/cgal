@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Iso_rectangle_2*,// used for indirection
-			       bool non_standard_geometry)  // true means it is an empty rectangle
+			       const bool non_standard_geometry)  // true means it is an empty rectangle
 {
   // types
   typedef typename K::FT       FT;

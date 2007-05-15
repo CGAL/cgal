@@ -41,7 +41,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,
                                typename K::Point_2& centroid,
                                const K& k,
-			       bool non_standard_geometry = false)
+			       const bool non_standard_geometry = false)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,

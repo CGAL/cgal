@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Segment_2*,// used for indirection
-			       bool non_standard_geometry)  // not useful 
+			       const bool non_standard_geometry)  // not useful 
 {
   // types
   typedef typename K::FT       FT;

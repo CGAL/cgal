@@ -50,7 +50,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Circle_2*,// used for indirection
-			       bool non_standard_geometry)  // true means it is a disk
+			       const bool non_standard_geometry)  // true means it is a disk
 {
   // types
   typedef typename K::FT       FT;

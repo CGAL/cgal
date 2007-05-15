@@ -49,7 +49,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Triangle_2*,// used for indirection
-			       bool non_standard_geometry)  // true means it is a hollow triangle
+			       const bool non_standard_geometry)  // true means it is a hollow triangle
 {
   // types
   typedef typename K::FT       FT;
