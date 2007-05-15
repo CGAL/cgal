@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)/include/CGAL/config/msvc&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT;CGAL_USE_GMP"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -76,7 +76,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="$(CGALROOT)/include/CGAL/config/msvc;$(CGALROOT)/include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)/include/CGAL/config/msvc&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
@@ -134,6 +134,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
 				RelativePath=".\typedefs.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o envelope_3.moc envelope_3.cpp"
+						Outputs="envelope_3.moc"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
