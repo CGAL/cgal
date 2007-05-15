@@ -47,7 +47,7 @@ namespace CGALi {
     FT a = matrix[0];
     FT b = matrix[1];
     FT c = matrix[2];
-    FT p = c*c - 2*a*c + 4*b*b + a*a;
+    FT p = c*c - 2*a*c - 4*b*b + a*a;
 
     CGAL_assertion(a >= 0.0 && c >= 0.0);
 
@@ -66,24 +66,25 @@ namespace CGALi {
     {
       if(b == 0.0) 
       {
-				// to fix 
-        eigen_values.first  = a;
-        eigen_values.second = c;
-        if(a == 0)
-        {
-          eigen_vectors.first  = Vector((FT)0.0, (FT)1.0);
-          eigen_vectors.second  = Vector((FT)1.0, (FT)0.0);
-        }
-        else
-        {
-          eigen_vectors.first  = Vector((FT)1.0, (FT)0.0);
-          eigen_vectors.second  = Vector((FT)0.0, (FT)1.0);
-        }
+	if(a>=c) 
+	{
+	  eigen_values.first  = a;
+	  eigen_values.second = c;
+	  eigen_vectors.first  = Vector((FT)1.0, (FT)0.0);
+	  eigen_vectors.second  = Vector((FT)0.0, (FT)1.0);
+	}
+	else
+	{
+	  eigen_values.first  = c;
+	  eigen_values.second = a;
+	  eigen_vectors.first  = Vector((FT)0.0, (FT)1.0);
+	  eigen_vectors.second  = Vector((FT)1.0, (FT)0.0);
+	}
       }
       else // generic case
       {
-        FT l1 = (FT)(0.5 * ( -std::sqrt(p) + c + a));
-        FT l2 = (FT)(0.5 * (  std::sqrt(p) + c + a));
+        FT l1 = (FT)(0.5 * ( -1*std::sqrt(p) + c + a));
+        FT l2 = (FT)(0.5 * (    std::sqrt(p) + c + a));
 
         // all eigen values of a symmetric positive
         // definite matrix must be real and positive
