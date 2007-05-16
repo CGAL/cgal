@@ -22,11 +22,11 @@
 				AdditionalOptions="/Zm900"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;$(CGALROOT)\include;$(CGALROOT)\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(CGALROOT)\auxiliary\taucs\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_TAUCS;CGAL_USE_BOOST_PROGRAM_OPTIONS;_WIN32_WINNT=0x0400"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="3"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				BrowseInformation="1"
 				WarningLevel="2"
@@ -38,7 +38,7 @@
 				AdditionalDependencies="libtaucs.lib lapack_win32.lib blas_win32.lib libmetis.lib vcf2c.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(CGALROOT)\auxiliary\taucs\lib"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;;&quot;$(BOOSTROOT)\..\..\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				LargeAddressAware="2"/>
 			<Tool
@@ -80,7 +80,7 @@
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".\include;$(CGALROOT)\include;$(CGALROOT)\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(CGALROOT)\auxiliary\taucs\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_TAUCS;CGAL_USE_BOOST_PROGRAM_OPTIONS;_WIN32_WINNT=0x0400"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -93,7 +93,7 @@
 				AdditionalDependencies="libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(CGALROOT)\auxiliary\taucs\lib"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;;&quot;$(BOOSTROOT)\..\..\lib&quot;"
 				GenerateDebugInformation="FALSE"
 				LargeAddressAware="2"/>
 			<Tool
@@ -172,104 +172,104 @@
 			Name="Surface_mesh_parameterization package"
 			Filter="">
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Barycentric_mapping_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Barycentric_mapping_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Circular_Border_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Circular_Border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Convertible_circulator_project.h">
+				RelativePath="..\..\include\Cgal\Convertible_circulator_project.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Convertible_filter_iterator.h">
+				RelativePath="..\..\include\Cgal\Convertible_filter_iterator.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Convertible_iterator_project.h">
+				RelativePath="..\..\include\Cgal\Convertible_iterator_project.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Discrete_authalic_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Discrete_authalic_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Discrete_conformal_map_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Discrete_conformal_map_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Fixed_border_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Fixed_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\LSCM_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\LSCM_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Param_mesh_patch_circulators.h">
+				RelativePath="..\..\include\Cgal\Param_mesh_patch_circulators.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Param_mesh_patch_iterators.h">
+				RelativePath="..\..\include\Cgal\Param_mesh_patch_iterators.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Param_mesh_patch_vertex.h">
+				RelativePath="..\..\include\Cgal\Param_mesh_patch_vertex.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Parameterization_mesh_feature_extractor.h">
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Parameterization_mesh_patch_3.h">
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\CGAL\Parameterization_polyhedron_adaptor_3.h">
+				RelativePath="..\..\include\CGAL\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\parameterize.h">
+				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Square_border_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Square_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\surface_mesh_parameterization_assertions.h">
+				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Taucs_fix.h">
+				RelativePath="..\..\include\Cgal\Taucs_fix.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Taucs_matrix.h">
+				RelativePath="..\..\include\Cgal\Taucs_matrix.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Taucs_solver_traits.h">
+				RelativePath="..\..\include\Cgal\Taucs_solver_traits.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Taucs_vector.h">
+				RelativePath="..\..\include\Cgal\Taucs_vector.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\include\Cgal\Two_vertices_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Two_vertices_parameterizer_3.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="OpenNL"
 			Filter="">
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\blas.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\blas.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\preconditioner.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\preconditioner.h">
 			</File>
 			<File
-				RelativePath="$(CGALROOT)\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
+				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
 			</File>
 		</Filter>
 	</Files>
