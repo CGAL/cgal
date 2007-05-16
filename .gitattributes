@@ -1633,6 +1633,14 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Fraction_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
+Number_types/include/CGAL/Sqrt_extension/io.h -text
 Optimisation_doc/doc_tex/Bounded_volumes/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Bounded_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounded_volumes/annulus.pdf -text svneol=unset#application/pdf
