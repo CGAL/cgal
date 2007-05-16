@@ -60,8 +60,8 @@
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Rational_traits.h>
 
-//#include <CGAL/Scalar_factor_traits.h>       // not part of CGAL 3.3
-//#include <CGAL/Algebraic_extension_traits.h> // not part of CGAL 3.3 
+#include <CGAL/Scalar_factor_traits.h>       // not part of CGAL 3.3
+#include <CGAL/Algebraic_extension_traits.h> // not part of CGAL 3.3 
 
 #include <CGAL/Needs_parens_as_product.h>
 
@@ -69,7 +69,6 @@
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
-
 
 #include <CGAL/FPU.h>
 
