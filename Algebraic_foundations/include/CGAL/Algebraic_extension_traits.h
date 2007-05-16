@@ -138,18 +138,21 @@ public:
         typedef NT result_type;
         //! determine normalization factor
         NT operator () (const NT& a) const {
+            
+            typename Algebraic_structure_traits<COEFF>::Is_zero is_zero;
+            
             typedef Algebraic_extension_traits<COEFF> SET;
             typename  SET::Normalization_factor normalization_factor;
             CGAL_precondition(a != NT(0));
 
             NT result;
-            if(a.is_extended() && CGAL::sign(a.a1())!= CGAL::ZERO){
+            if(a.is_extended() && ! is_zero(a.a1())){
                 NT tmp1(a.a0(),-a.a1(),a.root());
 
                 NT tmp2= a*tmp1;
                 CGAL_postcondition(tmp2.a1()==COEFF(0));
                 result = tmp1*NT(normalization_factor(tmp2.a0()));
-                CGAL_postcondition(CGAL::sign(result.a1()) != CGAL::ZERO);
+                CGAL_postcondition(! is_zero (result.a1()));
             }else{
                 result = NT(normalization_factor(a.a0()));
             }
