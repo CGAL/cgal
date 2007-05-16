@@ -35,6 +35,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-sgd.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -84,6 +85,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt-sgd.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -133,6 +135,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-s.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -172,6 +175,7 @@
 				EnableFunctionLevelLinking="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt-s.pdb"
 				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -221,6 +225,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -270,6 +275,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt-gd.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

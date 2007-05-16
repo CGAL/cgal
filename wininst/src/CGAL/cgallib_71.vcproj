@@ -32,6 +32,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="..\..\lib\cgal-vc71-sgd.pdb"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
@@ -81,6 +82,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="..\..\lib\cgal-vc71-mt-sgd.pdb"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
@@ -130,6 +132,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="..\..\lib\cgal-vc71-s.pdb"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
@@ -172,6 +175,7 @@
 				EnableFunctionLevelLinking="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
+				ProgramDataBaseFileName="..\..\lib\cgal-vc71-mt-s.pdb"
 				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -218,6 +222,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="..\..\lib\cgal-vc71-mt.pdb"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
@@ -267,6 +272,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="..\..\lib\cgal-vc71-mt-gd.pdb"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"

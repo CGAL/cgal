@@ -56,6 +56,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc80-mt-sgd.pdb"
 				CompileAs="0"
 			/>
 			<Tool
@@ -119,6 +120,7 @@
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
 				WarningLevel="2"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc80-mt-s.pdb"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -190,6 +192,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc80-mt.pdb"
 				CompileAs="0"
 			/>
 			<Tool
@@ -262,6 +265,7 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc80-mt-gd.pdb"
 				CompileAs="0"
 			/>
 			<Tool
