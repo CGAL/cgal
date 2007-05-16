@@ -473,6 +473,8 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text svneol=un
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
+CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
+CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
@@ -1700,6 +1702,8 @@ PDB/include/CGAL/PDB/iterator.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/include/CGAL/PDB/transforms.h -text
 PDB/maintainer -text
+PDB/src/CGALPDB/CGALPDB_71.vcproj eol=crlf
+PDB/src/CGALPDB/CGALPDB_80.vcproj eol=crlf
 PDB/src/CGALPDB/PDB_Atom.cpp -text
 PDB/src/CGALPDB/PDB_Error_logger.cpp -text
 PDB/src/CGALPDB/PDB_Model.cpp -text
