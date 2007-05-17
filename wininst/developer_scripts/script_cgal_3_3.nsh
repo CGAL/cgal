@@ -11,11 +11,16 @@
 ; http://www.boost.org/LICENSE_1_0.txt)
 ;============================
 
+${StrStr}
+
 ;!define TestingOnly
+
+;!define SkipDownload
 
 Var no_default_compilers
 Var no_default_variants
 Var selected_libs
+Var FoundBoostFolder
 
 ;--------------------------------
 ; Macros
@@ -65,29 +70,83 @@ Var selected_libs
   SectionGroupEnd
 !macroend
 
-!macro InstallThirdPartyLib SRC_MISC SRC_INC SRC_LIB TGT
-!ifndef TestingOnly
-  SetOutPath "$INSTDIR\auxiliary\${TGT}"
-  File /r "${SRC_MISC}"
-  SetOutPath "$INSTDIR\auxiliary\${TGT}\include"
-  File /r "${SRC_INC}"
-  SetOutPath "$INSTDIR\auxiliary\${TGT}\lib"
-  File /r "${SRC_LIB}"
-!endif
+!macro DownloadFile FILE TGT
+    ${LogText} "Downloading ${FILE}"
+!ifndef SkipDownload
+    NSISdl::download ${FTP_SRC}${FILE} ${TGT}\${FILE}
+    Pop $1
+    StrCmp $1 "success" +2
+    StrCmp $1 "cancel" +1
+    MessageBox MB_OK "Download failed: $1"
+!endif	
 !macroend
 
-!macro Install_CGAL_libs VARIANT
-!ifndef TestingOnly
-  SetOutPath "$INSTDIR\lib"
-  File /r "${CGAL_SRC}\lib\cgal-${VARIANT}.lib"
-  File /r "${CGAL_SRC}\lib\CGALcore++-${VARIANT}.lib"
+!macro Install_CGAL_libs_aux SUFFIX
+!ifndef FetchLocal
+  !insertmacro DownloadFile "cgal-${SUFFIX}"         "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGALcore++-${SUFFIX}"   "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGALimageIO-${SUFFIX}"  "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGALPDB-${SUFFIX}"      "$INSTDIR\lib"
+!else
+  !ifndef TestingOnly
+    SetOutPath "$INSTDIR\lib"
+    File /r "${CGAL_SRC}\lib\cgal-${SUFFIX}"
+    File /r "${CGAL_SRC}\lib\CGALcore++-${SUFFIX}"
+    File /r "${CGAL_SRC}\lib\CGALimageIO-${SUFFIX}"
+    File /r "${CGAL_SRC}\lib\CGALPDB-${SUFFIX}"
+  !endif  
 !endif  
 !macroend
 
-!macro Install_GMP_MPFR VARIANT
-  !insertmacro InstallThirdPartyLib "${GMP_SRC}\README" "${GMP_SRC}\*.h" "${GMP_SRC}\*-${VARIANT}.lib" "gmp"
+!macro Install_PDB_if_debug_variant HANDLER VARIANT
+  ${StrStr} $R0 ${VARIANT} "gd"
+  ${If} "$R0" != ""
+    !insertmacro "${HANDLER}" "${VARIANT}.pdb"
+  ${EndIf}  
 !macroend
 
+!macro Install_CGAL_libs VARIANT
+  !insertmacro Install_CGAL_libs_aux "${VARIANT}.lib"
+  !insertmacro Install_PDB_if_debug_variant Install_CGAL_libs_aux ${VARIANT}
+!macroend
+
+!macro Install_GMP_MPFR_libs_aux SUFFIX
+!ifndef FetchLocal
+    !insertmacro DownloadFile "gmp-${SUFFIX}"  "$INSTDIR\auxiliary\gmp\lib"
+    !insertmacro DownloadFile "mpfr-${SUFFIX}" "$INSTDIR\auxiliary\gmp\lib"
+!else
+  !ifndef TestingOnly
+    SetOutPath "$INSTDIR\auxiliary\gmp\lib"
+    File /r "${GMP_SRC}\gmp-${SUFFIX}"
+    File /r "${GMP_SRC}\mpfr-${SUFFIX}"
+  !endif  
+!endif
+!macroend
+
+!macro Install_GMP_MPFR_libs VARIANT
+  !insertmacro Install_GMP_MPFR_libs_aux "${VARIANT}.lib"
+  !insertmacro Install_PDB_if_debug_variant Install_GMP_MPFR_libs_aux ${VARIANT}
+!macroend
+
+!macro SetEnvStr ALLUSERS VAR VALUE
+  # ${ALLUSERS} is 0 or 1
+  # ${VAR}      is the env var to set
+  # ${VALUE}    is the env var value
+  
+  ${If} ${ALLUSERS} = 1 
+    ${LogText} "Setting enviroment variable ${VAR}='${VALUE}' for All Users."
+    !define ALL_USERS
+    !ifndef TestingOnly
+      ${WriteEnvStr} ${VAR} ${VALUE}
+    !endif
+  ${Else}
+    ${LogText} "Setting enviroment variable ${VAR}='${VALUE}' for Current User Only."
+    !undef ALL_USERS
+    !ifndef TestingOnly
+      ${WriteEnvStr} ${VAR} ${VALUE}
+    !endif
+  ${Endif}
+!macroend
 
 ;--------------------------------
 ; Functions
@@ -212,6 +271,76 @@ Function SelectDefaultVariants
     Pop $2
     Pop $1
     Pop $0
+FunctionEnd
+
+Function FixupProjectFile
+  Exch $0
+  ${LogText} "Removing CGAL_USE_GMP from $0"
+  !insertmacro ReplaceInFile $0 "CGAL_USE_GMP" ""
+  Pop $0
+FunctionEnd
+
+Function FixupProjectFiles
+  Push $0
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  Push $5
+  Push $6
+  
+  ${LogText} "Fixing up project files..."
+  ${locate::Open} "$INSTDIR" "/D=0 /X=vcproj" $0
+	${If} $0 != 0
+    ${Do}
+  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
+      ${If} "$1" != ""
+        Push $1
+        Call FixupProjectFile
+      ${EndIf}
+    ${LoopUntil} "$1" == ""
+  ${EndIf}  
+	${locate::Close} $0
+	${locate::Unload}
+  
+  Pop $6
+  Pop $5
+  Pop $4
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
+FunctionEnd
+
+Function FindBoostFolder
+  Push $0
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  Push $5
+  Push $6
+  
+  ${LogText} "Fixing up project files..."
+  ${locate::Open} "$PROGRAMFILES\boost" "/F=0 /D=1 /M=boost_*" $0
+	${If} $0 != 0
+    ${DoUntil} "$FoundBoostFolder" != ""
+  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
+      ${If} "$2" != ""
+        StrCpy $FoundBoostFolder $1
+      ${EndIf}
+    ${Loop}
+  ${EndIf}  
+  ${locate::Close} $0
+  ${locate::Unload}
+  
+  Pop $6
+  Pop $5
+  Pop $4
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
 FunctionEnd
 
 
