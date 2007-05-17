@@ -37,8 +37,8 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/arrangement_2.exe"
 				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
+				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/arrangement.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
@@ -92,8 +92,8 @@
 				AdditionalDependencies="  qt-mt.lib  qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/arrangement_2.exe"
 				LinkIncremental="1"
-				GenerateDebugInformation="FALSE"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -128,21 +128,6 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
 				RelativePath=".\forms.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\MyWindow.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -235,32 +220,17 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o forms.moc forms.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o forms.moc forms.h
+"
 						Outputs="forms.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o forms.moc forms.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o forms.moc forms.h
+"
 						Outputs="forms.moc"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\MyWindow.h">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o MyWindow.moc MyWindow.h"
-						Outputs="MyWindow.moc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o MyWindow.moc MyWindow.h"
-						Outputs="MyWindow.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
