@@ -20,33 +20,40 @@
 // 
 // Author(s)     : Laurent Saboret
 
-#ifndef CGAL_AUTO_LINK_TAUCS_H
-#define CGAL_AUTO_LINK_TAUCS_H
+#ifndef CGAL_AUTO_LINK_LAPACK_H
+#define CGAL_AUTO_LINK_LAPACK_H
 
-#ifndef CGAL_NO_AUTOLINK_TAUCS
+#ifndef CGAL_NO_AUTOLINK_LAPACK
 
 // Link with this set of libraries (for /MD):
-// libtaucs-vc71-mt.lib libmetis-vc71-mt.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
+// liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
 // Notes: - Order matters.
 //        - VC++ 7.1 libraries work with VC++ 8.0. 
 //        - Libraries with no "vc71" toolset are compiled by gcc/g77. They are 
 //          compatible with VC++ 7.1 and 8.0.
 //        - Tested with VC++ 7.1 and 8.0 only.
 
-// debug
-#define CGAL_LIB_DIAGNOSTIC
+#define CGAL_LIB_NAME liblapack
+#define CGAL_AUTO_LINK_NOMANGLE
+#include <CGAL/auto_link/auto_link.h>
 
-#define CGAL_LIB_NAME libtaucs
+#define CGAL_LIB_NAME libf77blas
+#define CGAL_AUTO_LINK_NOMANGLE
+#include <CGAL/auto_link/auto_link.h>
+
+#define CGAL_LIB_NAME libcblas
+#define CGAL_AUTO_LINK_NOMANGLE
+#include <CGAL/auto_link/auto_link.h>
+
+#define CGAL_LIB_NAME libatlas
+#define CGAL_AUTO_LINK_NOMANGLE
+#include <CGAL/auto_link/auto_link.h>
+
+#define CGAL_LIB_NAME vcf2c
 #define CGAL_LIB_TOOLSET "vc71"
 #include <CGAL/auto_link/auto_link.h>
 
-#define CGAL_LIB_NAME libmetis
-#define CGAL_LIB_TOOLSET "vc71"
-#include <CGAL/auto_link/auto_link.h>
+#endif // CGAL_NO_AUTOLINK_LAPACK
 
-#include <CGAL/auto_link/LAPACK.h>
-
-#endif // CGAL_NO_AUTOLINK_TAUCS
-
-#endif // CGAL_AUTO_LINK_TAUCS_H
+#endif // CGAL_AUTO_LINK_LAPACK_H
 
