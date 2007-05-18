@@ -1054,7 +1054,7 @@
 \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1}}
 \newcommand{\ccPkgIllustration}[2]{%
   \gdef\ccValueofPkgIllustration{%
-    \lcRawHtml{<a href="#C2"><img src="}\lciOutputUppath\lcRawHtml{#C1" alt="}%
+    \lcRawHtml{<a href="#C2"><img src="#C1" alt="}%
     \ccValueofPkgNameWithoutLabel\lcRawHtml{ Illustration" width="120" height="120" border="0"}%
      \lciIfDefined{\lciPkgDescriptionAlignPicWithText}{}{\lcRawHtml{vspace="22"}}%
      \lcRawHtml{></a>}}%
@@ -1084,7 +1084,7 @@
   \gdef\ccValueofPkgLicense{}%
   \gdef\ccValueofPkgHowToCiteCgal{}
   \gdef\ccValueofPkgDemo{}
-  \begin{savestream}{packages}%
+  \begin{savestream}{packages.html}%
 }
 
 \newcommand{\lciEndPackage}[2]{%
@@ -1112,7 +1112,7 @@
       \lciHtmlPartPkgDesciption{\lciCurrentPartName}{\lciCurrentPartLabel}%
       \gdef\lciCurrentPartName{}%
     }%
-    \begin{savestream}{packages}%
+    \begin{savestream}{packages.html}%
     
     \lcRawHtml{<tr><td valign="top" width="140" class="TocGroupEvenLeft"}
     \lciIfDefined{\lciPkgDescriptionAlignPicWithText}%
@@ -1150,7 +1150,7 @@
 \newcommand{\ccPartDescriptionEnsureHR}{}
 
 \newcommand{\ccPartDescriptionImpl}[2]{
-  \begin{savestream}{packages}%
+  \begin{savestream}{packages.html}%
   \ccPartDescriptionEnsureHR
   \lcRawHtml{<h2>}#1\lcRawHtml{</h2>}
   \def\ccValueofPkgSummary{}

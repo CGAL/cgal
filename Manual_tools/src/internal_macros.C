@@ -1474,8 +1474,8 @@ handle_savestream_open( const string&, string param[], size_t n, size_t opt) {
 
 string
 handle_savestream_use( const string&, string param[], size_t n, size_t opt) {
-  NParamCheck( 1, 0);
-  return savestream_use( param[0] );
+  NParamCheck( 2, 0);
+  return savestream_use( param[0], param[1] );
 }
 
 string
@@ -1620,7 +1620,7 @@ void init_internal_macros() {
 
     insertInternalGlobalMacro( "\\lciStoreSavebox",    handle_store_savebox, 1 );
     insertInternalGlobalMacro( "\\lciSavestreamOpen",  handle_savestream_open, 1 );
-    insertInternalGlobalMacro( "\\lciSavestreamUse",   handle_savestream_use, 1 );
+    insertInternalGlobalMacro( "\\lciSavestreamUseX",  handle_savestream_use, 2 );
     insertInternalGlobalMacro( "\\lciSavestreamClose", handle_savestream_close, 1 );
 
     insertInternalGlobalMacro( "\\lciMinitocOpen",   handle_minitoc_open, 0 );

@@ -436,10 +436,17 @@
 \newcommand{\ccDate}{\lcDate}
 
 
-\newcommand{\savestreamX}[1]{\gdef\lciSaveStreamName{#C1}\lciPushOutput{savestream}}
+\newcommand{\savestreamX}[1]{%
+  \gdef\lciSaveStreamName{#C1}%
+  \lciPushOutput{savestream}%
+}
 \newenvironment{savestream}
-  {\savestreamX}
-  {\lciPopOutput}
+  {\savestreamX}%
+  {\lciPopOutput%
+  }
+
+\newcommand{\lciSavestreamUse}[1]{\lciSavestreamUse[lciSavestreamBuffer#GC1]{#C1}}
+\newcommand{\lciSavestreamUse@om}{\lciSavestreamUseX{#C2}{#C1}}
 
 % ___________________________________________________________________________
 % ###########################################################################

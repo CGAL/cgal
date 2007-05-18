@@ -156,7 +156,7 @@ void     make_path( string path);
 void     savestream_open   ( const string& name );
 // returns NULL if not open
 ostream* savestream_get    ( const string& name );
-string   savestream_use    ( const string& name );
+string   savestream_use    ( const string& name, const string& targetvarname );
 void     savestream_close  ( const string& name );
 
 void     minitoc_open();

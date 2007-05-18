@@ -233,12 +233,13 @@ void set_current_output( const string& key) {
         string savestream_name = macroX( "\\lciSaveStreamName" );
         ostream* savestream = savestream_get( savestream_name );
         if( savestream != NULL )
-          current_output = Output_file( savestream, string("savestream") + savestream_name );
+          current_output = Output_file( savestream, savestream_name );
         else {
           std::cerr << "!! Error: savestream \"" << savestream_name << "\" unknown!" << std::endl;
           return;
         }
         //new_filename = false;
+        anchor_stream = global_anchor_stream;
     } else if ( key == "minitoc" ) {
         string filename = macroX( "\\lciMinitocFilename" );
         current_output = Output_file( minitoc_stream, filename );
@@ -305,12 +306,14 @@ savestream_get( const string& name ) {
 }
 
 string
-savestream_use( const string& name ) {
+savestream_use( const string& name, const string& targetvarname ) {
   ostream *out = savestream_get( name );
   if( out != NULL ) {
     ostringstream *sout = dynamic_cast<ostringstream*>(out);
     assert( sout != NULL );
-    return "\\gdef\\lciSavestreamBuffer" + name + "{" + sout->str() + "}";
+    return "\\gdef\\" + targetvarname + "{" + sout->str() + "}";
+  } else {
+    std::cerr << "!! Warning: savestream '" << name << "' not found" << std::endl;
   }
   return string();
 }
