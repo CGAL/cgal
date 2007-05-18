@@ -70,23 +70,24 @@ Var FoundBoostFolder
   SectionGroupEnd
 !macroend
 
-!macro DownloadFile FILE TGT
-    ${LogText} "Downloading ${FILE}"
+!macro DownloadFile SRC_FOLDER FILE TGT
+    ${LogText} "Downloading ${FILE}       from ${FTP_SRC}${SRC_FOLDER}${FILE}"
 !ifndef SkipDownload
-    NSISdl::download ${FTP_SRC}${FILE} ${TGT}\${FILE}
+    NSISdl::download ${FTP_SRC}${SRC_FOLDER}${FILE} ${TGT}\${FILE}
     Pop $1
-    StrCmp $1 "success" +2
-    StrCmp $1 "cancel" +1
-    MessageBox MB_OK "Download failed: $1"
+	${Unless}    "$1" == "success"
+	${AndUnless} "$1" == "cancel"
+      MessageBox MB_OK "Download failed: $1.\r\nFile ${FILE} not found at server ${FTP_SRC}${SRC_FOLDER}"
+	${Endif}
 !endif	
 !macroend
 
 !macro Install_CGAL_libs_aux SUFFIX
 !ifndef FetchLocal
-  !insertmacro DownloadFile "cgal-${SUFFIX}"         "$INSTDIR\lib"
-  !insertmacro DownloadFile "CGALcore++-${SUFFIX}"   "$INSTDIR\lib"
-  !insertmacro DownloadFile "CGALimageIO-${SUFFIX}"  "$INSTDIR\lib"
-  !insertmacro DownloadFile "CGALPDB-${SUFFIX}"      "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGAL/3.3/" "cgal-${SUFFIX}"         "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGAL/3.3/" "CGALcore++-${SUFFIX}"   "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGAL/3.3/" "CGALimageIO-${SUFFIX}"  "$INSTDIR\lib"
+  !insertmacro DownloadFile "CGAL/3.3/" "CGALPDB-${SUFFIX}"      "$INSTDIR\lib"
 !else
   !ifndef TestingOnly
     SetOutPath "$INSTDIR\lib"
@@ -112,8 +113,8 @@ Var FoundBoostFolder
 
 !macro Install_GMP_MPFR_libs_aux SUFFIX
 !ifndef FetchLocal
-    !insertmacro DownloadFile "gmp-${SUFFIX}"  "$INSTDIR\auxiliary\gmp\lib"
-    !insertmacro DownloadFile "mpfr-${SUFFIX}" "$INSTDIR\auxiliary\gmp\lib"
+    !insertmacro DownloadFile "auxiliary/GMP/4.2.1/"  "gmp-${SUFFIX}"   "$INSTDIR\auxiliary\gmp\lib"
+    !insertmacro DownloadFile "auxiliary/MPFR/2.2.1/" "mpfr-${SUFFIX}" "$INSTDIR\auxiliary\gmp\lib"
 !else
   !ifndef TestingOnly
     SetOutPath "$INSTDIR\auxiliary\gmp\lib"

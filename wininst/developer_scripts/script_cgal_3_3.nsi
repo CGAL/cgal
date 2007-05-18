@@ -51,7 +51,8 @@
 
 !define CGAL_SRC  "CGAL-3.3"
 !define GMP_SRC   "gmp-4.1.2-gladman"
-!define FTP_SRC   "ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/"
+!define FTP_SRC   "http://www.geometryfactory.com/precompiled_libs/"
+
 ;--------------------------------
 ; General
 ;--------------------------------
