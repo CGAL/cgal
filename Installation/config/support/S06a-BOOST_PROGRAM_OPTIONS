@@ -7,9 +7,9 @@ LDFLAGS =
 LIBS = boost_program_options 
 REQUIRES = BOOST
 INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
-STDINCLDIRS = /usr/include/\*
+STDINCLDIRS = /usr/include/\*:/sw/include/\*
 INCLTHING = boost/program_options.hpp
-STDLIBDIRS = /usr/lib/
+STDLIBDIRS = /usr/lib/:/sw/lib
 LIBTHING = libboost_program_options.\* 
 COMPILETESTFLAGS = 
 
