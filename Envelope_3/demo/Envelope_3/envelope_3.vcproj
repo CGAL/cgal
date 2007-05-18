@@ -133,12 +133,30 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
-				RelativePath=".\typedefs.h">
+				RelativePath=".\envelope_3.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						CommandLine="$(QTDIR)/bin/moc.exe -o envelope_3.moc envelope_3.cpp"
+						Outputs="envelope_3.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o envelope_3.moc envelope_3.cpp"
+						Outputs="envelope_3.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\typedefs.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o envelope_3.moc envelope_3.cpp
+"
 						Outputs="envelope_3.moc"/>
 				</FileConfiguration>
 			</File>
