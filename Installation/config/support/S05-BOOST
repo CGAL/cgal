@@ -7,9 +7,9 @@ LDFLAGS =
 LIBS = 
 REQUIRES = 
 INCOMPATIBLE = 
-STDINCLDIRS = /usr/include/\*:/sw/include/\*
+STDINCLDIRS = /usr/include/\*:/sw/include
 INCLTHING = boost
-STDLIBDIRS = /sw/lib
+STDLIBDIRS = 
 LIBTHING = 
 COMPILETESTFLAGS = 
 
