@@ -1,11 +1,10 @@
 $CGAL/INSTALL.MacOSX
 -----------------------------------------------------------------------------
-This file describes how to install CGAL on the MacOSX operating
-system. CGAL has been tested on Panther and Tiger. The instructions
-below refer to both Panther and Tiger unless otherwise stated explicitly.
+This file describes how to install CGAL on the MacOSX operating system.
+CGAL has been tested on Tiger (MacOSX 10.4).
 
 For installation on Unix and on Cygwin, please see INSTALL.
-For installation under Windows using native tools, see INSTALL.win32
+For installation under Windows using native tools, see INSTALL.win32.
 
 The documentation of CGAL is available in various formats (HTML, PostScript,
 PDF). It is not bundled with the software but can be downloaded separately.
@@ -17,24 +16,22 @@ Installation
 - Download the compressed archive file from the CGAL web site www.cgal.org
 - unpack the file in the place in which you wish to install it
 - install the CGAL libraries: 
-  the impatient can just try to run "./install_cgal -i", but we recommend
+  the impatient can just try to run "./install_cgal -ni g++", but we recommend
   to first have a look at the Installation notes available from the
   CGAL web site. http://www.cgal.org/Manual/
 
 
 Boost
-CGAL needs boost in order to work. To install boost go to
-www.boost.org and download the source tarball and the tarball for
-bjam. To install boost follow the instructions in www.boost.org (it is
-recommended to use the default install path).
+CGAL needs boost in order to work.  Boost can be easily installed via Fink.
+Alternatively, go to www.boost.org and download the source tarball and
+the tarball for bjam.  To install boost follow the instructions in
+www.boost.org (it is recommended to use the default install path).
 
 
-GMP
-Some examples and demos need GMP. In order to use it you have to
-install it. You can either download the sources from http://gmplib.org/
-and follow the installation instructions in there or use fink to do
-that (try: fink install gmp; you need to install both the gmp and
-gmp-shlibs packages).
+GMP and MPFR
+Most examples and demos need GMP and MPFR.  GMP and MPFR can be installed via Fink.
+Alternatively, you can either download the sources from http://gmplib.org/
+and http://mpfr.org/ and follow the installation instructions in there.
 
 
 Building the Demos
@@ -56,5 +53,3 @@ The script creates a directory <demo-executable>.app/ which is the
 root directory of the directory structure needed by MacOSX.
 To run the demo use the "open" command from the prompt:
     prompt:> open <demo-executable>.app
-
------------------------------------------------------------------------------
