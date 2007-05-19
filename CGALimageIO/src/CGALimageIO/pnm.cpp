@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "pnm.h"
+#include "fgetns.h"
 
 
 
@@ -73,21 +74,6 @@ PTRIMAGE_FORMAT createPpmFormat() {
   strcpy(f->fileExtension,".ppm,.ppm.gz");
   strcpy(f->realName,"Ppm");
   return f;
-}
-
-/* get a string from a file and discard the ending newline character
-   if any */
-static char *fgetns(char *str, int n, _image *im ) 
-{
-  char *ret;
-  int l;
-
-  ret = ImageIO_gets( im, str, n );
-  
-  if(!ret) return NULL;
-  l = strlen(str);
-  if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';
-  return ret;
 }
 
 

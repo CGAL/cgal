@@ -37,7 +37,8 @@ OBJECTS = \
   pnm$(OBJ_EXT) \
   recbuffer$(OBJ_EXT) \
   recline$(OBJ_EXT) \
-  reech4x4$(OBJ_EXT)
+  reech4x4$(OBJ_EXT) \
+  fgetns$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    libCGALimageIO settings

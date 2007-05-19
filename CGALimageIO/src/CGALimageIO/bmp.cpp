@@ -15,7 +15,7 @@
 
 
 
-static int _VERBOSE_ = 1;
+static int _VERBOSE_BMP_ = 1;
 
 
 
@@ -80,7 +80,7 @@ void *_readBmpImage( const char *name,
     
     fp = fopen(name, "rb");
     if (fp == NULL) {
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: error in opening %s\n", proc, name );
       return( (void*)NULL );
     }
@@ -93,7 +93,7 @@ void *_readBmpImage( const char *name,
     filePos = ftell(fp);
     rc = readUINT16little(fp, &fileType);
     if (rc != 0) {
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: error in getting file type %s\n", proc, name );
       return( (void*)NULL );
     }
@@ -198,29 +198,29 @@ void *_readBmpImage( const char *name,
     switch (rc) {
     case 1000:
     case 1006:
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: File is not a valid bitmap file\n", proc );
       break;
     case 1001:
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: Illegal information in an image\n", proc );
       break;
     case 1002:
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: Legal information that I can't handle yet in an image\n", proc );
       break;
     case 1003:
     case 1004:
     case 1005:
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: Ran out of memory\n", proc );
       break;
     case 0:
-      if ( _VERBOSE_ > 1 ) 
+      if ( _VERBOSE_BMP_ > 1 ) 
 	fprintf( stderr, "%s: Got good data from file, writing results\n", proc );
       break;
     default:
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: Error reading file rc=%d\n", proc,rc );
       break;
     }
@@ -254,7 +254,7 @@ void *_readBmpImage( const char *name,
     /*
      * Dump the images.
      */
-    if ( _VERBOSE_ > 1 ) 
+    if ( _VERBOSE_BMP_ > 1 ) 
       fprintf (stderr, "%s: There are %d images in the file\n", proc, numImages);
 
     if ( numImages >= 2 ) 
@@ -269,7 +269,7 @@ void *_readBmpImage( const char *name,
 
       buf = (void*)malloc( widths[0]*heights[0]*3 * sizeof( unsigned char ) );
       if ( buf == (void*)NULL ) {
-	if ( _VERBOSE_ ) 
+	if ( _VERBOSE_BMP_ ) 
 	  fprintf( stderr, "%s: error in allocating data buffer for %s\n", proc, name );
 
 	for (i=0; i<numImages; i++) {
@@ -303,7 +303,7 @@ void *_readBmpImage( const char *name,
       *dimz = 3;
 
     } else {
-      if ( _VERBOSE_ ) 
+      if ( _VERBOSE_BMP_ ) 
 	fprintf( stderr, "%s: no image or null image\n", proc );
       
       for (i=0; i<numImages; i++) {
@@ -355,7 +355,7 @@ void *_readBmpImage( const char *name,
 	/*
 	 * Loop through all the images that were returned.
 	 */
-      if ( _VERBOSE_ ) {
+      if ( _VERBOSE_BMP_ ) {
 	fprintf (stderr, "%s: Doing image number %d\n\n", proc, i+1);
 	fprintf (stderr, "%s: Image dimensions: (%ld,%ld)\n", proc, widths[i], heights[i]);
       }
@@ -469,15 +469,15 @@ void *_readBmpImage( const char *name,
 
 void IoBmp_verbose ( )
 {
-  if ( _VERBOSE_ <= 0 )
-    _VERBOSE_ = 1;
+  if ( _VERBOSE_BMP_ <= 0 )
+    _VERBOSE_BMP_ = 1;
   else 
-    _VERBOSE_ += 1;
+    _VERBOSE_BMP_ += 1;
 }
 
 void IoBmp_noverbose ( )
 {
-  _VERBOSE_ = 0;
+  _VERBOSE_BMP_ = 0;
 }
 
 

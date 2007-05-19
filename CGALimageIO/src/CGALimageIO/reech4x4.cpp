@@ -30,7 +30,7 @@
 
 #define _CONVERTR_(R) ( R )
 #define _CONVERTI_(R) ( (R) >= 0.0 ? ((int)((R)+0.5)) : ((int)((R)-0.5)) )
-static int _VERBOSE_ = 0;
+static int _VERBOSE_REECH_ = 0;
 
 
 
@@ -80,7 +80,7 @@ void Reech3DTriLin4x4_u8 ( void* theBuf, /* buffer to be resampled */
   register u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -243,7 +243,7 @@ void Reech3DTriLin4x4gb_u8 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -405,7 +405,7 @@ void Reech3DNearest4x4_u8 ( void* theBuf, /* buffer to be resampled */
   register u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -445,7 +445,7 @@ void Reech2DTriLin4x4_u8 ( void* theBuf, /* buffer to be resampled */
   register u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (u8*)theBuf;
@@ -536,7 +536,7 @@ void Reech2DTriLin4x4gb_u8 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (u8*)theBuf;
@@ -624,7 +624,7 @@ void Reech2DNearest4x4_u8 ( void* theBuf, /* buffer to be resampled */
   register u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (u8*)theBuf;
@@ -691,7 +691,7 @@ void Reech3DTriLin4x4_s8 ( void* theBuf, /* buffer to be resampled */
   register s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -854,7 +854,7 @@ void Reech3DTriLin4x4gb_s8 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -1016,7 +1016,7 @@ void Reech3DNearest4x4_s8 ( void* theBuf, /* buffer to be resampled */
   register s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -1056,7 +1056,7 @@ void Reech2DTriLin4x4_s8 ( void* theBuf, /* buffer to be resampled */
   register s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (s8*)theBuf;
@@ -1147,7 +1147,7 @@ void Reech2DTriLin4x4gb_s8 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (s8*)theBuf;
@@ -1235,7 +1235,7 @@ void Reech2DNearest4x4_s8 ( void* theBuf, /* buffer to be resampled */
   register s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (s8*)theBuf;
@@ -1302,7 +1302,7 @@ void Reech3DTriLin4x4_u16 ( void* theBuf, /* buffer to be resampled */
   register u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -1465,7 +1465,7 @@ void Reech3DTriLin4x4gb_u16 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -1627,7 +1627,7 @@ void Reech3DNearest4x4_u16 ( void* theBuf, /* buffer to be resampled */
   register u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -1667,7 +1667,7 @@ void Reech2DTriLin4x4_u16 ( void* theBuf, /* buffer to be resampled */
   register u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (u16*)theBuf;
@@ -1758,7 +1758,7 @@ void Reech2DTriLin4x4gb_u16 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (u16*)theBuf;
@@ -1846,7 +1846,7 @@ void Reech2DNearest4x4_u16 ( void* theBuf, /* buffer to be resampled */
   register u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (u16*)theBuf;
@@ -1913,7 +1913,7 @@ void Reech3DTriLin4x4_s16 ( void* theBuf, /* buffer to be resampled */
   register s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -2076,7 +2076,7 @@ void Reech3DTriLin4x4gb_s16 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -2238,7 +2238,7 @@ void Reech3DNearest4x4_s16 ( void* theBuf, /* buffer to be resampled */
   register s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -2278,7 +2278,7 @@ void Reech2DTriLin4x4_s16 ( void* theBuf, /* buffer to be resampled */
   register s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (s16*)theBuf;
@@ -2369,7 +2369,7 @@ void Reech2DTriLin4x4gb_s16 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (s16*)theBuf;
@@ -2457,7 +2457,7 @@ void Reech2DNearest4x4_s16 ( void* theBuf, /* buffer to be resampled */
   register s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (s16*)theBuf;
@@ -2524,7 +2524,7 @@ void Reech3DTriLin4x4_r32 ( void* theBuf, /* buffer to be resampled */
   register r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -2687,7 +2687,7 @@ void Reech3DTriLin4x4gb_r32 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -2849,7 +2849,7 @@ void Reech3DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
   register r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     for ( j = 0; j < rdimy; j ++ )
     for ( i = 0; i < rdimx; i ++, rbuf ++ ) {
@@ -2889,7 +2889,7 @@ void Reech2DTriLin4x4_r32 ( void* theBuf, /* buffer to be resampled */
   register r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (r32*)theBuf;
@@ -2980,7 +2980,7 @@ void Reech2DTriLin4x4gb_r32 ( void* theBuf, /* buffer to be resampled */
   register double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (r32*)theBuf;
@@ -3068,7 +3068,7 @@ void Reech2DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
   register r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
-    if ( _VERBOSE_ != 0 )
+    if ( _VERBOSE_REECH_ != 0 )
       fprintf( stderr, "Processing slice %d\r", k );
     /* tbuf represente le premier point du plan */
     tbuf  = (r32*)theBuf;
@@ -3095,11 +3095,11 @@ void Reech2DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
 
 void Reech4x4_verbose ( )
 {
-  _VERBOSE_ = 1;
+  _VERBOSE_REECH_ = 1;
 }
 
 void Reech4x4_noverbose ( )
 {
-  _VERBOSE_ = 0;
+  _VERBOSE_REECH_ = 0;
 }
 
