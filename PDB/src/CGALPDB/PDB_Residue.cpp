@@ -27,9 +27,12 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <limits>
 #include <sstream>
+
 CGAL_PDB_BEGIN_NAMESPACE
 
-static Atom dummy_atom_;
+namespace {
+Atom dummy_atom_2;
+}
 
 void Residue::set_has_bonds(bool tf) {
   typedef Residue_data::Possible_bond Possible_bond;
@@ -89,7 +92,7 @@ const Atom &Residue::atom(Residue::Atom_label al) const {
   //int fa= find_atom(al);
   if (atoms_.find(fal) != atoms_.end()) return atoms_.find(fal)->second;
   else {
-    return dummy_atom_;
+    return dummy_atom_2;
   }
 }
     

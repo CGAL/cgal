@@ -22,10 +22,13 @@
 #include <CGAL/PDB/Residue.h>
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <sstream>
+
 CGAL_PDB_BEGIN_NAMESPACE
 
-static Residue dummy_residue_;
-static Atom dummy_atom_;
+namespace {
+Residue dummy_residue_;
+Atom dummy_atom_;
+}
 
 Protein::Protein(): chain_(' '){}
 
