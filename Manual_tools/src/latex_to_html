@@ -394,7 +394,7 @@ convert() {
     # check for <rootname>.aux files automatically
     ExOpt=""
     if [ -r ${PathName}${RootName}.aux ]; then
-	grep "\\bibcite[{]" ${PathName}${RootName}.aux > ${TmpDir}/${RootName}.auxtmp
+    grep "\\bibcite[{]" ${PathName}${RootName}.aux > ${TmpDir}/${RootName}.auxtmp
     fi
 
     # Convert LaTeX into HTML.

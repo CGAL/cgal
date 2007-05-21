@@ -82,7 +82,8 @@ HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
 		 	latex_converter_config/html/*.css	\
 			latex_converter_config/html/*.mst	
 BIB_CONFIG_FILES =	latex_converter_config/html/Biblio/how_to_cite_cgal.html \
-			latex_converter_config/html/Biblio/how_to_cite_cgal.bib
+			latex_converter_config/html/Biblio/how_to_cite_cgal.bib \
+			latex_converter_config/html/Biblio/cgal.bib
 GIF_CONFIG_FILES  =	latex_converter_config/gif/*.gif
 REF_CONFIG_FILES  =	latex_converter_config/ref_pages/*.tex
 

@@ -21,7 +21,7 @@
     {\lciPushOutput{minitoc}}%
     {\lciPushOutput{toc}}%
   #1\lciPopOutput%
-}
+}   
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -67,6 +67,9 @@
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,&nbsp;
   <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,&nbsp;
   <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>}
+  \lciIfHowToCite{%
+    \lcRawHtml{,&nbsp;<a href="}\lciOutputUppath\lcRawHtml{acknowledge.html">Acknowledging CGAL</a>}%
+  }{}%
 }
 
 % Args: none
@@ -757,6 +760,51 @@ function getObj(name)
         \lciPopOutput}%
 }
 
+\newcommand{\lcHtmlHowToCite}{
+    \lciOpenTmpFile{acknowledge.html}
+\lciHtmlFileHeader{Acknowledging CGAL}
+\lciHtmlNavigationTop
+\lcRawHtml{
+<p>CGAL is implemented for the most part by researchers.  The academic
+world evaluates and rewards researchers for a good part by the
+analysis of the number of published papers and the number of citations
+of their papers, which measures their impact.  In order to make the
+CGAL project attractive for researchers to contribute their work
+(which allows users to benefit from new contributions), we are pushing
+a model where the CGAL manual chapters are considered like
+publications, and can be cited in articles as such.
+
+<br>We therefore kindly ask users to cite CGAL as appropriately as
+possible in their papers, and to mention the use of CGAL on the web
+pages of their <a href="http://www.cgal.org/projects.html">projects using CGAL</a>
+and provide us with links to these web pages.  Feel free to contact us
+in case you have any question or remark on this topic.</p>
+
+<p>We provide bibtex entries for the chapters of the 
+<em>User and Reference Manual</em>, as well as for
+publications directly related to the CGAL software.</p>
+
+<h3>Citing the CGAL Library or the CGAL project</h3>
+
+If you want to cite the CGAL Library or project as a whole, please
+<ul>
+<li>cite:
+<br><strong>CGAL</strong>, Computational Geometry Algorithms Library, http://www.cgal.org
+<li>use the following <a href="Biblio/cgal.bib">bibtex entry</a>.
+</ul>
+
+<h3>Citing the User and Reference Manual</h3>
+
+<p>If you want to refer to CGAL manual, please 
+<ul>
+  <li>cite the appropriate entry from the 
+    <a href="Biblio/how_to_cite_cgal.html">bibliographic entries for individual chapters.</a>
+  <li>use the following <a href="Biblio/how_to_cite_cgal.bib">bibtex file</a>.
+</ul>}
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    \lciCloseFile
+}
 
 % ___________________________________________________________________________
 % ###########################################################################
