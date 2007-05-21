@@ -64,7 +64,6 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // compute centroid
   c = centroid(first,beyond,K());
-
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
   // 0
@@ -76,7 +75,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {1.0, 0.5,
 		0.5, 1.0};
-  Matrix moment = (std::sqrt(2)/3.0) * init_Matrix<K>(2,temp);
+  Matrix moment = (1.0/3.0) * init_Matrix<K>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -88,7 +87,8 @@ linear_least_squares_fitting_2(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT delta[4] = {t[0].x(), t[1].x(), t[0].y(), t[1].y()};
+    FT delta[4] = {t[0].x(), t[1].x(), 
+		   t[0].y(), t[1].y()};
     Matrix transformation = init_Matrix<K>(2,delta);
     FT length = std::sqrt(t.squared_length());
     CGAL_assertion(length != 0.0);
@@ -113,19 +113,19 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
   // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
+  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<(std::sqrt(2)/3.0)<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  //  CGALi::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
-  FT eigen_vectors1[4];
-  FT eigen_values1[2];
-  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
-  eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
-  eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
+  //  CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
+    FT eigen_vectors1[4];
+    FT eigen_values1[2];
+    eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
+    eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
+    eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
   // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
   {

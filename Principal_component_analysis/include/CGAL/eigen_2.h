@@ -47,8 +47,7 @@ namespace CGALi {
     FT a = matrix[0];
     FT b = matrix[1];
     FT c = matrix[2];
-    FT p = c*c - 2*a*c - 4*b*b + a*a;
-
+    FT p = c*c - 2*a*c + 4*b*b + a*a;
     CGAL_assertion(a >= 0.0 && c >= 0.0);
 
     // degenerate or isotropic case
