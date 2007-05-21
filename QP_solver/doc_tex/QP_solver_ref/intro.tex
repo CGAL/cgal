@@ -24,7 +24,7 @@ There is a class that represents the solution of a linear
 or quadratic program. An instance of this class is returned by any of 
 the solution functions below.
 
-\ccRefIdfierPage{Quadratic_program_solution}
+\ccRefIdfierPage{CGAL::Quadratic_program_solution<ET>}
 
 We offer a number of predefined models for the above program concepts.
 The following two are simultaneously models for all four concepts and
@@ -34,10 +34,10 @@ linear or quadratic programs entry by entry, or from streams in
 linearity and nonnegativity and thus select the appropriate 
 solution function.
 
-\ccRefIdfierPage{Quadratic_program}\\
+\ccRefIdfierPage{CGAL::Quadratic_program<NT>}\\
 $\quad$ (for linear and quadratic programs that own their 
 data and are built entry-wise)\\
-\ccRefIdfierPage{Quadratic_program_from_mps}\\
+\ccRefIdfierPage{CGAL::Quadratic_program_from_mps<NT>}\\
 $\quad$ (for linear and quadratic programs read from an input stream in 
 \ccc{MPSFormat}; the constructed program can also be manipulate entry-wise)
 
@@ -46,17 +46,17 @@ these are useful if you want to maintain the program data yourself, since
 they simply wrap random access iterators over the program data and involve
 no further copying of data.
 
-\ccRefIdfierPage{Quadratic_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
 $\quad$ (for quadratic programs that wrap given iterators, without copying 
 data) 
 
-\ccRefIdfierPage{Linear_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
 $\quad$ (for linear programs wrapping given iterators) 
 
-\ccRefIdfierPage{Nonnegative_quadratic_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
 $\quad$ (for nonnegative quadratic programs, wrapping given iterators)
 
-\ccRefIdfierPage{Nonnegative_linear_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\
 $\quad$ (for nonnegative linear programs, wrapping given iterators)
 \ccHeading{Functions}
 
@@ -64,18 +64,18 @@ In case you want to construct a program from complicated iterators
 (whose types you don't know, or simply don't want to bother with), 
 we provide four makers.
 
-\ccRefIdfierPage{make_quadratic_program_from_iterators}\\
-\ccRefIdfierPage{make_linear_program_from_iterators}\\
-\ccRefIdfierPage{make_nonnegative_quadratic_program_from_iterators}\\
-\ccRefIdfierPage{make_nonnegative_linear_program_from_iterators}
+\ccRefIdfierPage{CGAL::make_quadratic_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::make_linear_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::make_nonnegative_quadratic_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::make_nonnegative_linear_program_from_iterators}
 
 There are four functions to solve a program, one for each program
 concept. 
 
-\ccRefIdfierPage{solve_quadratic_program}\\
-\ccRefIdfierPage{solve_linear_program}\\
-\ccRefIdfierPage{solve_nonnegative_quadratic_program}\\
-\ccRefIdfierPage{solve_nonnegative_linear_program}
+\ccRefIdfierPage{CGAL::solve_quadratic_program}\\
+\ccRefIdfierPage{CGAL::solve_linear_program}\\
+\ccRefIdfierPage{CGAL::solve_nonnegative_quadratic_program}\\
+\ccRefIdfierPage{CGAL::solve_nonnegative_linear_program}
 
 The solution process can customized by passing an object of the class
 
@@ -84,7 +84,7 @@ The solution process can customized by passing an object of the class
 Programs can be written to an output stream in \ccc{MPSFormat}, using
 one of the following four functions.
 
-\ccRefIdfierPage{print_quadratic_program}\\
-\ccRefIdfierPage{print_linear_program}\\
-\ccRefIdfierPage{print_nonnegative_quadratic_program}\\
-\ccRefIdfierPage{print_nonnegative_linear_program}
+\ccRefIdfierPage{CGAL::print_quadratic_program}\\
+\ccRefIdfierPage{CGAL::print_linear_program}\\
+\ccRefIdfierPage{CGAL::print_nonnegative_quadratic_program}\\
+\ccRefIdfierPage{CGAL::print_nonnegative_linear_program}
