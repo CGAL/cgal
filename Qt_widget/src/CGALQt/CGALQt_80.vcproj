@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="CGALQt_80"
 	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2201}"
 	Keyword="Win32Proj"
@@ -365,6 +365,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_core.h"
+						Outputs="Kinetic_Qt_core.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -372,6 +374,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_core.h"
+						Outputs="Kinetic_Qt_core.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -379,6 +383,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_core.h"
+						Outputs="Kinetic_Qt_core.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -386,6 +392,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_core.h"
+						Outputs="Kinetic_Qt_core.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -397,6 +405,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_help_window.moc ..\..\include\CGAL\IO\Qt_help_window.h"
+						Outputs="Qt_help_window.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -404,6 +414,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_help_window.moc ..\..\include\CGAL\IO\Qt_help_window.h"
+						Outputs="Qt_help_window.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -411,6 +423,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_help_window.moc ..\..\include\CGAL\IO\Qt_help_window.h"
+						Outputs="Qt_help_window.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -418,6 +432,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_help_window.moc ..\..\include\CGAL\IO\Qt_help_window.h"
+						Outputs="Qt_help_window.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -429,6 +445,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_timer.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_timer.h"
+						Outputs="Kinetic_Qt_timer.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -436,6 +454,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_timer.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_timer.h"
+						Outputs="Kinetic_Qt_timer.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -443,6 +463,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_timer.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_timer.h"
+						Outputs="Kinetic_Qt_timer.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -450,6 +472,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_timer.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_timer.h"
+						Outputs="Kinetic_Qt_timer.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -461,6 +485,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget.moc ..\..\include\CGAL\IO\Qt_widget.h"
+						Outputs="Qt_widget.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -468,6 +494,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget.moc ..\..\include\CGAL\IO\Qt_widget.h"
+						Outputs="Qt_widget.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -475,6 +503,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget.moc ..\..\include\CGAL\IO\Qt_widget.h"
+						Outputs="Qt_widget.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -482,6 +512,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget.moc ..\..\include\CGAL\IO\Qt_widget.h"
+						Outputs="Qt_widget.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -493,6 +525,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_widget_2_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_widget_2_core.h"
+						Outputs="Kinetic_Qt_widget_2_core.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -500,6 +534,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_widget_2_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_widget_2_core.h"
+						Outputs="Kinetic_Qt_widget_2_core.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -507,6 +543,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_widget_2_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_widget_2_core.h"
+						Outputs="Kinetic_Qt_widget_2_core.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -514,6 +552,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_widget_2_core.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_widget_2_core.h"
+						Outputs="Kinetic_Qt_widget_2_core.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -525,6 +565,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_history.moc ..\..\include\CGAL\IO\Qt_widget_history.h"
+						Outputs="Qt_widget_history.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -532,6 +574,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_history.moc ..\..\include\CGAL\IO\Qt_widget_history.h"
+						Outputs="Qt_widget_history.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -539,6 +583,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_history.moc ..\..\include\CGAL\IO\Qt_widget_history.h"
+						Outputs="Qt_widget_history.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -546,6 +592,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_history.moc ..\..\include\CGAL\IO\Qt_widget_history.h"
+						Outputs="Qt_widget_history.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -557,6 +605,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_layer.moc ..\..\include\CGAL\IO\Qt_widget_layer.h"
+						Outputs="Qt_widget_layer.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -564,6 +614,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_layer.moc ..\..\include\CGAL\IO\Qt_widget_layer.h"
+						Outputs="Qt_widget_layer.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -571,6 +623,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_layer.moc ..\..\include\CGAL\IO\Qt_widget_layer.h"
+						Outputs="Qt_widget_layer.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -578,6 +632,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_layer.moc ..\..\include\CGAL\IO\Qt_widget_layer.h"
+						Outputs="Qt_widget_layer.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -589,6 +645,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_OpenGL.moc ..\..\include\CGAL\IO\Qt_widget_OpenGL.h"
+						Outputs="Qt_widget_OenGL.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -596,6 +654,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_OpenGL.moc ..\..\include\CGAL\IO\Qt_widget_OpenGL.h"
+						Outputs="Qt_widget_OenGL.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -603,6 +663,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_OpenGL.moc ..\..\include\CGAL\IO\Qt_widget_OpenGL.h"
+						Outputs="Qt_widget_OenGL.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -610,6 +672,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_OpenGL.moc ..\..\include\CGAL\IO\Qt_widget_OpenGL.h"
+						Outputs="Qt_widget_OenGL.moc"
 					/>
 				</FileConfiguration>
 			</File>
@@ -621,6 +685,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_standard_toolbar.moc ..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h"
+						Outputs="Qt_widget_standard_toolbar.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -628,6 +694,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_standard_toolbar.moc ..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h"
+						Outputs="Qt_widget_standard_toolbar.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -635,6 +703,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_standard_toolbar.moc ..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h"
+						Outputs="Qt_widget_standard_toolbar.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -642,6 +712,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oQt_widget_standard_toolbar.moc ..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h"
+						Outputs="Qt_widget_standard_toolbar.h"
 					/>
 				</FileConfiguration>
 			</File>
@@ -653,6 +725,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_window_2.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_window_2.h"
+						Outputs="Kinetic_Qt_window_2.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -660,6 +734,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_window_2.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_window_2.h"
+						Outputs="Kinetic_Qt_window_2.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -667,6 +743,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_window_2.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_window_2.h"
+						Outputs="Kinetic_Qt_window_2.moc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -674,6 +752,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -oKinetic_Qt_window_2.moc ..\..\include\CGAL\Kinetic\IO\internal\Qt_window_2.h"
+						Outputs="Kinetic_Qt_window_2.moc"
 					/>
 				</FileConfiguration>
 			</File>
