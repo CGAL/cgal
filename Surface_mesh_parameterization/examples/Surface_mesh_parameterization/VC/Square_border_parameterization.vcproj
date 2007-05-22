@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Authalic_parameterization"
+	Name="Square_border_parameterization"
 	ProjectGUID="{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
 	Keyword="ManagedCProj">
 	<Platforms>
@@ -119,7 +119,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath=".\Authalic_parameterization.cpp">
+				RelativePath="..\Square_border_parameterization.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -142,28 +142,28 @@
 			Name="Surface_mesh_parameterization package"
 			Filter="">
 			<File
-				RelativePath="..\..\include\Cgal\Circular_Border_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Fixed_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Discrete_authalic_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Fixed_border_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
+				RelativePath="..\..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
+				RelativePath="..\..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterize.h">
+				RelativePath="..\..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\..\include\Cgal\Square_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
+				RelativePath="..\..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 		</Filter>
 		<Filter

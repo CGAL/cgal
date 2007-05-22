@@ -119,7 +119,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath=".\Taucs_parameterization.cpp">
+				RelativePath="..\Taucs_parameterization.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -142,40 +142,40 @@
 			Name="Surface_mesh_parameterization package"
 			Filter="">
 			<File
-				RelativePath="..\..\include\Cgal\Circular_Border_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Circular_Border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Fixed_border_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Fixed_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
+				RelativePath="..\..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
+				RelativePath="..\..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterize.h">
+				RelativePath="..\..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
+				RelativePath="..\..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Taucs_fix.h">
+				RelativePath="..\..\..\include\Cgal\Taucs_fix.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Taucs_matrix.h">
+				RelativePath="..\..\..\include\Cgal\Taucs_matrix.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Taucs_solver_traits.h">
+				RelativePath="..\..\..\include\Cgal\Taucs_solver_traits.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Taucs_vector.h">
+				RelativePath="..\..\..\include\Cgal\Taucs_vector.h">
 			</File>
 		</Filter>
 		<Filter
