@@ -23,12 +23,20 @@ default-qtwidget: $(CGAL_SHARED_LIBNAME)
 #                    KDS sub-makefile
 #---------------------------------------------------------------------#
 
+vpath %.cpp ../../../Kinetic_data_structures/src/CGALQt
+
 # This rule to be able to compile Qt_widget without KDS.
 # For Solaris make, need to be *before* the inclusion.
 kds.makefile:
 	touch kds.makefile
 
-include kds.makefile
+ifneq ($(willcard kds.makefile),)
+  include kds.makefile
+else
+  ifneq ($(willcard ../../../Kinetic_data_structures/src/CGALQt/kds.makefile),)
+    include ../../../Kinetic_data_structures/src/CGALQt/kds.makefile
+  endif
+endif
 
 #---------------------------------------------------------------------#
 #                    object files
@@ -64,6 +72,9 @@ SHARED_LIB_ADDITIONAL_LDFLAGS = \
 #                    common rules for all libraries
 #---------------------------------------------------------------------#
 CGAL_COMMON_MK = ../CGAL/common.mk
+ifeq ($(willcard $(CGAL_COMMON_MK)),)
+  CGAL_COMMON_MK = ../../../Installation/src/CGAL/common.mk
+endif
 include $(CGAL_COMMON_MK)
 
 #---------------------------------------------------------------------#
@@ -73,8 +84,7 @@ include $(CGAL_COMMON_MK)
 %.moc : %.h
 	$(QT_MOC) $< -o $@
 
-vpath %.h ../../include/CGAL/IO
-vpath %.h ../../../Nef_S2/include/CGAL/IO/
+vpath %.h ../../include/CGAL/IO ../../../Nef_S2/include/CGAL/IO/ ../../../Kinetic_data_structures/include/CGAL/Kinetic/IO/internal ../../include/CGAL/Kinetic/IO/internal
 vpath Kinetic_% ../../../Kinetic_data_structures/src/CGALQt
 vpath Qt_widget_OpenGL.cpp ../../../Nef_S2/src/CGALQt/
 
@@ -106,4 +116,10 @@ Qt_widget_OpenGL$(OBJ_EXT): Qt_widget_OpenGL.moc
 kds_deps.makefile:
 	touch kds_deps.makefile
 
-include kds_deps.makefile
+ifneq ($(willcard kds_deps.makefile),)
+  include kds_deps.makefile
+else
+  ifneq ($(willcard ../../../Kinetic_data_structures/src/CGALQt/kds_deps.makefile),)
+    include ../../../Kinetic_data_structures/src/CGALQt/kds_deps.makefile
+  endif
+endif
