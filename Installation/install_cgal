@@ -195,7 +195,7 @@ print_usage_information()
 
   The environment variables can be overridden using 
   --CXX <comp>, 
-  --CXXLFLAGS <flags> (for both CPPFLAGS and CXXFLAGS) and
+  --CXXFLAGS <flags> (for both CPPFLAGS and CXXFLAGS) and
   --LDFLAGS <flags>.
 "
 
