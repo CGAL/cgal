@@ -6,9 +6,10 @@
 # Example: test.sh lscm 2pts taucs eps sphere966
 
 # Find executable name (different on Windows and Unix)
+[ -f ./debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./debug/polyhedron_ex_parameterization.exe"
 [ -f ./release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./release/polyhedron_ex_parameterization.exe"
 [ -x ./polyhedron_ex_parameterization ] && PARAM_APPLICATION="./polyhedron_ex_parameterization"
-if [[ ! -f $PARAM_APPLICATION ]] ; then
+if [ -z "$PARAM_APPLICATION" ]; then
     echo "Cannot find polyhedron_ex_parameterization application"
     exit 1;
 fi
@@ -28,8 +29,7 @@ fi
 DESTINATION_FILE="test/test_$5_$1_$2.$4"
 [ -f $DESTINATION_FILE ] && rm -f $DESTINATION_FILE
 
-# echo on
+# run test (echo on)
 set -x
-
 $PARAM_APPLICATION -t "$1" -b "$2" -s "$3" $SOURCE_FILE $DESTINATION_FILE 2>&1
 
