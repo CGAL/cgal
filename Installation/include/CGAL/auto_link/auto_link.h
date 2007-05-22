@@ -315,11 +315,9 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #if defined(CGAL_LIB_NAME)
 #  undef CGAL_LIB_NAME
 #endif
-// Don't undef this one: it can be set by the user and should be the 
-// same for all libraries:
-//#if defined(CGAL_LIB_TOOLSET)
-//#  undef CGAL_LIB_TOOLSET
-//#endif
+#if defined(CGAL_LIB_TOOLSET)
+#  undef CGAL_LIB_TOOLSET
+#endif
 #if defined(CGAL_LIB_THREAD_OPT)
 #  undef CGAL_LIB_THREAD_OPT
 #endif
