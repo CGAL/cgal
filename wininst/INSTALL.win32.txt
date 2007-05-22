@@ -26,8 +26,7 @@ Boost
 
 CGAL needs some parts of Boost. You can download it from http://www.boost.org.
 It is enough to unzip the file. Currently only some demo programs
-in the Kinetic_data_structures directory need the compiled Boost
-library program_options.
+need the compiled Boost library "program_options".
 Alternatively you can use the Installer for Boost provided
 by Boost Consulting: http://www.boostconsulting/download.html.
 It allows you to select precompiled libraries. 
@@ -36,7 +35,7 @@ GMP and MPFR
 ------------
 
 Some examples and demos need GMP. The CGAL Windows Installer installs
-precompiled versions of GMP 4.1.4 and MPFR 2.1.0. in the directory
+precompiled versions of GMP 4.2.1 and MPFR 2.1.1. in the directory
 CGAL-3.3/auxiliary/gmp. 
 We compiled GMP and MPFR, using both VC7.1 and VC8 using a variety
 of configurations (with all without any processor specific assembler).
@@ -44,27 +43,22 @@ of configurations (with all without any processor specific assembler).
 Qt
 --
 
-Most demos use Qt 3. You can download it from http://www.trolltech.no.
-You must build the multi-threaded version (/MD).
+Most demos use Qt 3. You can download it from http://www.trolltech.com.
 
 
 TAUCS
 -----
 
 Only examples in the Surface_mesh_parameterization directory need TAUCS.
+The CGAL Windows Installer installs precompiled versions of TAUCS
+(and all its dependencies) in the directory CGAL-3.3/auxiliary/taucs. 
 
-If you want to compile those you need to download and compile TAUCS yourself.
-You can download the official source code from http://www.tau.ac.il/~stoledo/taucs
-or download a version modified for VC7.1 using the /MD option from the Download section
-of http://www.cgal.org.
+If you want to compile those yourself you can download the official source code
+from http://www.tau.ac.il/~stoledo/taucs.
 
 Due to an incompatibility between ATLAS (a dependency of TAUCS) and Visual C++ debugger,
 we provide also the Blas and Lapack reference implementations. They are notably slow and 
 should be used only for debugging.
-
-See TAUCS documentation to create a "variant" makefile to compile TAUCS 
-with the /MD option and the appropriate Blas library.
-
 
 Zlib
 ----
@@ -136,6 +130,11 @@ Projects files for demos and examples are only provided for VC7.1.
 However, they have been specificaly designed to work as-is in Developer Studio 2005, so you only need to open
 and convert them right away via the VS Conversion Wizard.
 
+Besides CGAL itself there is a number of related CGAL-specific libraries that are needed by some demos and examples.
+These are CGALCore, CGALImageIO, CGALPDB and CGALQt.
+Project and source files for all these libraries are located under CGALROOT/src/<library>.
+There is a global solution file under CGALROOT/src/. You can use it to build all these libraries at once.
+
 Paths for Header Files and Libraries
 ------------------------------------
 
@@ -143,8 +142,8 @@ The individual project files (for the libraries, demos and examples)
 use the following enviroment variables to find paths:
 
 $(BOOSTROOT) // Required to build libraries, examples and demos.
-$(CGALROOT)  // Also required to build libraries, examples and demos.
-$(QTDIR)     // Only required by some demos.
+$(CGALROOT)  // Also required to build examples and demos (but not the libraries).
+$(QTDIR)     // Only required to build some demos.
 
 Each of these must point to the ROOT location of the corresponding library.
 
