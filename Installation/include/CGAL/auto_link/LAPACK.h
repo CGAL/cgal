@@ -25,8 +25,9 @@
 
 #ifndef CGAL_NO_AUTOLINK_LAPACK
 
-// Link with this set of libraries (for /MD):
+// Link with this set of libraries (e.g. for /MD):
 // liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
+//
 // Notes: - Order matters.
 //        - VC++ 7.1 libraries work with VC++ 8.0. 
 //        - Libraries with no "vc71" toolset are compiled by gcc/g77. They are 

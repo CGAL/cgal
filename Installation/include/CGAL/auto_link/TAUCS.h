@@ -25,16 +25,14 @@
 
 #ifndef CGAL_NO_AUTOLINK_TAUCS
 
-// Link with this set of libraries (for /MD):
+// Link with this set of libraries (e.g. for /MD):
 // libtaucs-vc71-mt.lib libmetis-vc71-mt.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
+//
 // Notes: - Order matters.
 //        - VC++ 7.1 libraries work with VC++ 8.0. 
 //        - Libraries with no "vc71" toolset are compiled by gcc/g77. They are 
 //          compatible with VC++ 7.1 and 8.0.
 //        - Tested with VC++ 7.1 and 8.0 only.
-
-// debug
-#define CGAL_LIB_DIAGNOSTIC
 
 #define CGAL_LIB_NAME libtaucs
 #define CGAL_LIB_TOOLSET "vc71"
