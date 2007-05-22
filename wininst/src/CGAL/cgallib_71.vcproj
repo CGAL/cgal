@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="cgallib"
-	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2201}"
+	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2202}"
 	RootNamespace="cgallib"
 	Keyword="Win32Proj">
 	<Platforms>

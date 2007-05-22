@@ -3,16 +3,12 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="CGALQt_80"
-	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2201}"
-	Keyword="Win32Proj"
-	>
+	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2205}"
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug_MultiThreaded_StaticCRT|Win32"

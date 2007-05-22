@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="CGALQt"
-	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2201}"
+	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2205}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -323,108 +323,24 @@
 			</File>
 			<File
 				RelativePath=".\Qt_help_window.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Qt_widget.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Qt_widget_history.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Qt_widget_layer.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Qt_widget_OpenGL.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Qt_widget_standard_toolbar.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Qt_widget_xpm_icons.cpp">
-				<FileConfiguration
-					Name="Debug_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_SingleThreaded_StaticCRT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter

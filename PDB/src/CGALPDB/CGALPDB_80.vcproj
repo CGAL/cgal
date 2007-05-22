@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="CGALPDB"
-	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2201}"
+	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2204}"
 	RootNamespace="CGALPDB"
 	Keyword="Win32Proj"
 	>
