@@ -933,39 +933,6 @@ set_compiler_flags()
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
-	*IRIX*5.*CC*)
-	    #### settings for sgi mipspro compiler on irix5
-	    CGAL_SHARED_LIB_CXXFLAGS=
-	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    RUNTIME_LINKER_FLAG="-rpath "
-	    PRINT_STACKTRACE_PROGRAM="dbx"
-	    ;;
-	*IRIX*6.*CC*7.3*)
-	    #### settings for sgi mipspro compiler V7.3 on irix6
-	    ADDITIONAL_CXXFLAGS="-LANG:std"
-	    ADDITIONAL_LDFLAGS="-LANG:std"
-	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
-	    CGAL_SHARED_LIB_CXXFLAGS=
-	    RUNTIME_LINKER_FLAG="-rpath "
-	    PRINT_STACKTRACE_PROGRAM="dbx"
-	    ;;
-	*IRIX*6.*CC*)
-	    #### settings for sgi mipspro compiler on irix6
-	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
-	    CGAL_SHARED_LIB_CXXFLAGS=
-	    RUNTIME_LINKER_FLAG="-rpath "
-	    PRINT_STACKTRACE_PROGRAM="dbx"
-	    ;;
-	*IRIX*g++*)
-	    #### settings for gcc on irix
-	    ADDITIONAL_CXXFLAGS="-Wall"
-	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
-	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
-	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
-	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
-	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
-	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
 	    SUNCC_COMPILER="y"
@@ -979,7 +946,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
 	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    CGAL_LIBS_OPTFLAGS="-O"
-
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for gcc on solaris
@@ -2431,27 +2397,7 @@ search_for_compilers()
     CUSTOM_OSTYPE_TAG=''
     _search_compiler gcc g++ ''
     case ${SYST} in
-	*IRIX64*)
-	    if _search_compiler cc CC 'n'; then
-		_check_and_register_compiler \
-		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
-		_check_and_register_compiler \
-		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
-		if [ -n "${SUPPORT_MIPSPRO_64}" ]; then
-		    _check_and_register_compiler \
-			"`_add_flags \"${COMPILER}\" '-64' ' (64)' ' -64'`"
-		fi
-	    fi
-	    ;;
-	*IRIX*-6*)
-	    if _search_compiler cc CC 'n'; then
-		_check_and_register_compiler \
-		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
-		_check_and_register_compiler \
-		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
-	    fi
-	    ;;
-	*IRIX*|*SunOS*)
+	*SunOS*)
 	    _search_compiler cc CC ''
 	    ;;
 	*CYGWIN*)
@@ -4129,14 +4075,7 @@ create_include_makefile()
           ${_printf} " \$*%s" "${extension}" >> ${FILE}
       done
   fi
-  case ${CGAL_OS_COMPILER} in
-	mips_IRIX*-6*_CC-*32-*)
-	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
-	*)
-	    ${_printf} "\n" >> ${FILE};;
-  esac
-  ${_printf} "\n" >> ${FILE}
-
+  ${_printf} "\n\n" >> ${FILE}
 
 
   ${_printf} "\n.cpp.clean:\n" >> ${FILE}
@@ -4147,13 +4086,7 @@ create_include_makefile()
           ${_printf} " \$*%s" "${extension}" >> ${FILE}
       done
   fi
-  case ${CGAL_OS_COMPILER} in
-	mips_IRIX*-6*_CC-*32-*)
-	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
-	*)
-	    ${_printf} "\n" >> ${FILE};;
-  esac
-  ${_printf} "\n" >> ${FILE}
+  ${_printf} "\n\n" >> ${FILE}
 
 
   #

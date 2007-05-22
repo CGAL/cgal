@@ -702,7 +702,6 @@ Installation/config/support/S41-ZLIBMS -text
 Installation/config/support/S45-APPLEVECLIB -text
 Installation/config/support/S46a-SUNPERFORMANCECC -text
 Installation/config/support/S46b-SUNPERFORMANCEGCC -text
-Installation/config/support/S47-SGICOMPLIB -text
 Installation/config/support/S48a-MKL64 -text
 Installation/config/support/S48b-MKL32 -text
 Installation/config/support/S49a-MKLWIN64 -text
@@ -740,8 +739,6 @@ Installation/config/support/S92b-TAUCSATLAS -text
 Installation/config/support/S93a-TAUCSFREEBSDLAPACK -text
 Installation/config/support/S93b-TAUCSFREEBSDATLAS -text
 Installation/config/support/S96-TAUCSDARWIN -text
-Installation/config/support/S98-TAUCSIRIXCC32 -text
-Installation/config/support/S99-TAUCSIRIXCC64 -text
 Installation/config/support/parse_files.awk -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
