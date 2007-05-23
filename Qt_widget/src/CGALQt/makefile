@@ -30,10 +30,10 @@ vpath %.cpp ../../../Kinetic_data_structures/src/CGALQt
 kds.makefile:
 	touch kds.makefile
 
-ifneq ($(willcard kds.makefile),)
+ifneq ($(wildcard kds.makefile),)
   include kds.makefile
 else
-  ifneq ($(willcard ../../../Kinetic_data_structures/src/CGALQt/kds.makefile),)
+  ifneq ($(wildcard ../../../Kinetic_data_structures/src/CGALQt/kds.makefile),)
     include ../../../Kinetic_data_structures/src/CGALQt/kds.makefile
   endif
 endif
@@ -42,7 +42,12 @@ endif
 #                    object files
 #---------------------------------------------------------------------#
 
-OBJECTS = \
+# We now compile all source files at once since it is faster
+# When adding a new file, please update app_files.cpp
+OBJECTS = all_files$(OBJ_EXT)
+
+# Below variable is not used now (but may come back so let's keep it)
+OBJECTS_OLD = \
 Qt_widget$(OBJ_EXT) \
 Qt_widget_layer$(OBJ_EXT) \
 Qt_widget_standard_toolbar$(OBJ_EXT) \
@@ -61,7 +66,10 @@ SOMAJOR=2
 
 LIB_NAME_BASE = CGALQt
 
-ADDITIONAL_CXXFLAGS = $(ALL_QT_CXXFLAGS) $(ALL_OPENGL_CXXFLAGS) -I.
+ADDITIONAL_CXXFLAGS = $(ALL_QT_CXXFLAGS) $(ALL_OPENGL_CXXFLAGS) \
+			-I. \
+			-I ../../../Kinetic_data_structures/src/CGALQt \
+			-I ../../../Nef_S2/src/CGALQt/
 SHARED_LIB_ADDITIONAL_LDFLAGS = \
             $(QT_LIBPATHFLAGS) $(QT_LDFLAGS) \
             $(OPENGL_LIBPATHFLAGS) $(OPENGL_LDFLAGS) \
@@ -91,6 +99,16 @@ vpath Qt_widget_OpenGL.cpp ../../../Nef_S2/src/CGALQt/
 clean_temp_files::
 	rm -f *.moc
 
+.PHONY: regenerate_all_files.cpp
+
+regenerate_all_files:
+	echo $(OBJECTS_OLD)
+	rm -f all_files.cpp
+	touch all_files.cpp
+	for f in $(foreach file,$(OBJECTS_OLD),$(basename $(file))); do \
+	  echo "#include \"$$f.cpp\"" >> all_files.cpp; \
+	done
+
 #---------------------------------------------------------------------#
 #                    moc rules
 #---------------------------------------------------------------------#
@@ -107,6 +125,19 @@ Qt_widget_history$(OBJ_EXT) : Qt_widget_history.moc
 
 Qt_widget_OpenGL$(OBJ_EXT): Qt_widget_OpenGL.moc
 
+all_files$(OBJ_EXT) : \
+	Qt_widget.moc \
+	Qt_widget_layer.moc \
+	Qt_widget_standard_toolbar.moc \
+	Qt_help_window.moc \
+	Qt_widget_history.moc \
+	Qt_widget_OpenGL.moc \
+	Kinetic_Qt_widget_2_core.moc \
+	Kinetic_Qt_core.moc \
+	Kinetic_Qt_timer.moc \
+	Kinetic_Qt_window_2.moc \
+	$(wildcard Kinetic_*.xpm)
+
 #---------------------------------------------------------------------#
 #                    KDS sub-makefile
 #---------------------------------------------------------------------#
@@ -116,10 +147,10 @@ Qt_widget_OpenGL$(OBJ_EXT): Qt_widget_OpenGL.moc
 kds_deps.makefile:
 	touch kds_deps.makefile
 
-ifneq ($(willcard kds_deps.makefile),)
+ifneq ($(wildcard kds_deps.makefile),)
   include kds_deps.makefile
 else
-  ifneq ($(willcard ../../../Kinetic_data_structures/src/CGALQt/kds_deps.makefile),)
+  ifneq ($(wildcard ../../../Kinetic_data_structures/src/CGALQt/kds_deps.makefile),)
     include ../../../Kinetic_data_structures/src/CGALQt/kds_deps.makefile
   endif
 endif
