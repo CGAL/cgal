@@ -2421,6 +2421,7 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test.sh eol
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.bat eol=crlf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.sh eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_model.sh eol=lf
+Surface_mesh_parameterization/test/Surface_mesh_parameterization/VC/extensive_parameterization_test.vcproj eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/aircraft.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text svneol=unset#application/octet-stream
@@ -2428,7 +2429,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off 
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.cmd eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.sln eol=crlf
-Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.vcproj eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/test_all.bat eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/test_all.sh eol=lf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.eps -text svneol=unset#application/postscript

@@ -22,7 +22,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -74,7 +74,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -170,22 +170,22 @@
 			Name="OpenNL"
 			Filter="">
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\blas.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\blas.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
 			</File>
 		</Filter>
 	</Files>
