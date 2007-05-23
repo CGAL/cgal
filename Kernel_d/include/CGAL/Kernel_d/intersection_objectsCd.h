@@ -25,8 +25,8 @@
 
 #include <CGAL/basic.h>
 
-#undef _DEBUG
-#define _DEBUG 11
+#undef CGAL_KD_DEBUG
+#define CGAL_KD_DEBUG 11
 #include <CGAL/Kernel_d/debug.h>
 
 

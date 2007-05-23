@@ -29,12 +29,12 @@
 #include <CGAL/enum.h>
 #endif
 
-#undef TRACE
-#undef TRACEN
-#undef TRACEV
-#define TRACE(t)  std::cerr << t
-#define TRACEN(t) std::cerr << t << std::endl
-#define TRACEV(t) std::cerr << #t << " = " << (t) << std::endl
+#undef CGAL_KD_TRACE
+#undef CGAL_KD_TRACEN
+#undef CGAL_KD_TRACEV
+#define CGAL_KD_TRACE(t)  std::cerr << t
+#define CGAL_KD_TRACEN(t) std::cerr << t << std::endl
+#define CGAL_KD_TRACEV(t) std::cerr << #t << " = " << (t) << std::endl
  
 CGAL_BEGIN_NAMESPACE
 

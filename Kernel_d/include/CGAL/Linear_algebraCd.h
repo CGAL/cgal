@@ -29,8 +29,8 @@
 #include <memory>
 #include <vector>
 
-#undef _DEBUG
-#define _DEBUG 13
+#undef CGAL_KD_DEBUG
+#define CGAL_KD_DEBUG 13
 #include <CGAL/Kernel_d/debug.h>
 
 
