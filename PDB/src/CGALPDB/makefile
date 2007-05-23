@@ -22,7 +22,12 @@
 #                    object files
 #---------------------------------------------------------------------#
 
-OBJECTS = \
+# We now compile all source files at once since it is faster
+# When adding a new file, please update app_files.cpp
+OBJECTS = all_files$(OBJ_EXT)
+
+# Below variable is not used now (but may come back so let's keep it)
+OBJECTS_OLD = \
 PDB_Atom$(OBJ_EXT) \
 PDB_Protein_pdb$(OBJ_EXT) \
 PDB_align$(OBJ_EXT) \
