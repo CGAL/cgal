@@ -509,6 +509,7 @@ Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
 Core/src/CGALCore/Core_71.vcproj -text
 Core/src/CGALCore/Core_80.vcproj -text
+Core/src/CGALCore/all_files.cpp -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text svneol=unset#application/postscript

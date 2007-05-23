@@ -1,0 +1,8 @@
+#include "CoreAux.cpp"
+#include "extLong.cpp"
+#include "CoreDefs.cpp"
+#include "CoreIO.cpp"
+#include "BigFloat.cpp"
+#include "Real.cpp"
+#include "Expr.cpp"
+#include "GmpIO.cpp"

@@ -21,7 +21,12 @@
 #                    object files
 #---------------------------------------------------------------------#
 
-OBJECTS = \
+# We now compile all source files at once since it is faster
+# When adding a new file, please update app_files.cpp
+OBJECTS = all_files$(OBJ_EXT)
+
+# Below variable is not used now (but may come back so let's keep it)
+OBJECTS_OLD = \
 CoreAux$(OBJ_EXT) \
 extLong$(OBJ_EXT) \
 CoreDefs$(OBJ_EXT) \
