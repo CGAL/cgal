@@ -769,6 +769,9 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.jpg -text svneol=unset#
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
+Jet_fitting_3/examples/Jet_fitting_3/Jet_fitting_3.sln eol=crlf
+Jet_fitting_3/examples/Jet_fitting_3/VC/Mesh_estimation.vcproj eol=crlf
+Jet_fitting_3/examples/Jet_fitting_3/VC/Single_estimation.vcproj eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text svneol=unset#application/postscript
@@ -2015,6 +2018,8 @@ Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.eps -text svneol
 Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/star.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/star.png -text svneol=unset#image/png
+Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
+Ridges_3/examples/Ridges_3/VC/Compute_Ridges_Umbilics.vcproj eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
