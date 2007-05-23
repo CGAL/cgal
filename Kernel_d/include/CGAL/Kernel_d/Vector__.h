@@ -27,8 +27,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 
-#undef _DEBUG
-#define _DEBUG 51
+#undef CGAL_KD_DEBUG
+#define CGAL_KD_DEBUG 51
 #include <CGAL/Kernel_d/debug.h>
 
 #include <cmath>

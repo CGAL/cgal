@@ -23,7 +23,7 @@ typedef double RT;
 
 int main()
 {
-  SETDTHREAD(11);  
+  CGAL_KD_SETDTHREAD(11);  
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   {

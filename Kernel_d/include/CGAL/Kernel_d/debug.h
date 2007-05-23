@@ -20,19 +20,20 @@
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-#ifndef CGAL_DEBUG_H
-#define CGAL_DEBUG_H
+//
+#ifndef CGAL_KERNEL_D_DEBUG_H
+#define CGAL_KERNEL_D_DEBUG_H
 
 #include <iostream>
 #include <string>
 #include <sstream>
 
-#undef TRACE
-#undef TRACEN
-#undef TRACEV
-#undef CTRACE
-#undef CTRACEN
-#undef ASSERT
+#undef CGAL_KD_TRACE
+#undef CGAL_KD_TRACEN
+#undef CGAL_KD_TRACEV
+#undef CGAL_KD_CTRACE
+#undef CGAL_KD_CTRACEN
+#undef CGAL_KD_ASSERT
 
 static int debugthread=3141592;
 namespace {
@@ -40,49 +41,49 @@ namespace {
     int Avoid_warning_for_unused_debugthread::x = debugthread;
 }
 
-#if _DEBUG>0
-#define SETDTHREAD(l) debugthread=l
+#if CGAL_KD_DEBUG>0
+#define CGAL_KD_SETDTHREAD(l) debugthread=l
 #else
-#define SETDTHREAD(l)
+#define CGAL_KD_SETDTHREAD(l)
 #endif
 
-#if _DEBUG>0
-#define TRACE(t)   if((debugthread%_DEBUG)==0)\
+#if CGAL_KD_DEBUG>0
+#define CGAL_KD_TRACE(t)   if((debugthread%CGAL_KD_DEBUG)==0)\
  std::cerr<<" "<<t;std::cerr.flush()
 #else
-#define TRACE(t) 
+#define CGAL_KD_TRACE(t) 
 #endif
 
-#if _DEBUG>0
-#define TRACEV(t)  if((debugthread%_DEBUG)==0)\
+#if CGAL_KD_DEBUG>0
+#define CGAL_KD_TRACEV(t)  if((debugthread%CGAL_KD_DEBUG)==0)\
  std::cerr<<" "<<#t<<" = "<<(t)<<std::endl;std::cerr.flush()
 #else
-#define TRACEV(t) 
+#define CGAL_KD_TRACEV(t) 
 #endif
 
-#if _DEBUG>0
-#define TRACEN(t)  if((debugthread%_DEBUG)==0)\
+#if CGAL_KD_DEBUG>0
+#define CGAL_KD_TRACEN(t)  if((debugthread%CGAL_KD_DEBUG)==0)\
  std::cerr<<" "<<t<<std::endl;std::cerr.flush()
 #else
-#define TRACEN(t) 
+#define CGAL_KD_TRACEN(t) 
 #endif
 
-#if _DEBUG>0
-#define CTRACE(b,t)  if(b) std::cerr << " " << t; else std::cerr << " 0"
+#if CGAL_KD_DEBUG>0
+#define CGAL_KD_CTRACE(b,t)  if(b) std::cerr << " " << t; else std::cerr << " 0"
 #else
-#define CTRACE(b,t) 
+#define CGAL_KD_CTRACE(b,t) 
 #endif
 
-#if _DEBUG>0
-#define CTRACEN(b,t)  if(b) std::cerr<< " " <<t<<"\n"; else std::cerr<<" 0\n"
+#if CGAL_KD_DEBUG>0
+#define CGAL_KD_CTRACEN(b,t)  if(b) std::cerr<< " " <<t<<"\n"; else std::cerr<<" 0\n"
 #else
-#define CTRACEN(b,t) 
+#define CGAL_KD_CTRACEN(b,t) 
 #endif
 
-#ifndef _ASSERT
-#define  ASSERT(cond,fstr) 
+#ifndef CGAL_KD__ASSERT
+#define  CGAL_KD_ASSERT(cond,fstr) 
 #else
-#define ASSERT(cond,fstr)   \
+#define CGAL_KD_ASSERT(cond,fstr)   \
   if (!(cond)) {       \
     std::cerr << "   ASSERT:   " << #fstr << endl; \
     std::cerr << "   COND:     " << #cond << endl; \
@@ -118,6 +119,4 @@ std::string make_std_string(const T& t)
 } // MSDEBUG
 
 
-#endif //CGAL_DEBUG_H
-
-
+#endif //CGAL_KERNEL_D_DEBUG_H

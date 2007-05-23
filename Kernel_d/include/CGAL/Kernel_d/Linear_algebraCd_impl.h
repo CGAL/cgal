@@ -73,30 +73,30 @@ Gaussian_elimination(const Matrix &M,
   for (i=0; i<cdim; ++i) column_permutation.push_back(i);
   // Main loop : invariant is that L * M[q] = U
   // M[q] stands for M with row i permuted with row q[i]
-    TRACEN("START GAUSS ELIMINATION");
+    CGAL_KD_TRACEN("START GAUSS ELIMINATION");
   det = 1;
   for (k=0; k<dim; ++k) {
     // Total pivoting, without looking for the maximum entry
     for (i=k,j=k;
          j<cdim && U[i][j] == FT(0);
          (++i==dim)? ++j,i=k : 0 ) ;
-      TRACEN("before swap [k="<<k<<"] :");
-      TRACEN(" found i="<<i<<" and j="<<j);
-      TRACEV(U);
+      CGAL_KD_TRACEN("before swap [k="<<k<<"] :");
+      CGAL_KD_TRACEN(" found i="<<i<<" and j="<<j);
+      CGAL_KD_TRACEV(U);
     if (j==cdim) break;
     if (i!=k) {
-      TRACEN("swap row i="<<i<<" and k="<<k);
+      CGAL_KD_TRACEN("swap row i="<<i<<" and k="<<k);
       U.swap_rows(i,k); L.swap_rows(i,k);
       std::swap(row_permutation[k], row_permutation[i]);
       sign = -sign;
     }
     if (j!=k) {
-      TRACEN("swap column j="<<j<<" and k="<<k);
+      CGAL_KD_TRACEN("swap column j="<<j<<" and k="<<k);
       U.swap_columns(j,k);  
       std::swap(column_permutation[j],column_permutation[k]);
       sign = -sign;
     }
-      TRACEN("after swap: "<<U);
+      CGAL_KD_TRACEN("after swap: "<<U);
     FT pivot = U[k][k];
     CGAL_assertion(pivot != FT(0));
     det *= pivot;
@@ -110,7 +110,7 @@ Gaussian_elimination(const Matrix &M,
     }
   }
 
-    TRACEN("END GAUSS ELIMINATION"); TRACEV(L);TRACEV(U);
+    CGAL_KD_TRACEN("END GAUSS ELIMINATION"); CGAL_KD_TRACEV(L);CGAL_KD_TRACEV(U);
     // By invariant, L * M[q] = U and det(M) = det
   rank = k;
   if (rank == dim) {
@@ -132,7 +132,7 @@ Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b,
   // back substitution of x[rdim], x[rdim-1], etc.
   // depends on "free" variables x[rdim+1], etc. x[cdim]
   CGAL_kernel_assertion( U.row_dimension() == b.dimension());
-    TRACEN("Triangular_system_solver");TRACEV(U);TRACEV(b);
+    CGAL_KD_TRACEN("Triangular_system_solver");CGAL_KD_TRACEV(U);CGAL_KD_TRACEV(b);
   D = FT(1); int i;
   for (i = rank; i < U.row_dimension(); ++i) 
     if ( b[i] != FT(0) ) { x = L.row(i); return false; }
@@ -155,7 +155,7 @@ Triangular_left_inverse(const Matrix &U, Matrix &Uinv)
 {
   int i, j, k;
   CGAL_kernel_precondition(U.dimension() == transpose(Uinv.dimension()));
-    TRACEN("system : " << U);
+    CGAL_KD_TRACEN("system : " << U);
   for (i=U.row_dimension()-1; i>=0; --i) {
     Uinv[i][i] = FT(1)/U[i][i];
     for (j=i+1; j<U.column_dimension(); ++j) {
@@ -164,7 +164,7 @@ Triangular_left_inverse(const Matrix &U, Matrix &Uinv)
       Uinv[i][j] /= U[j][j];
     }
   }
-    TRACEN("finally : " << Uinv);
+    CGAL_KD_TRACEN("finally : " << Uinv);
 }
 
 template < class FT, class AL >
@@ -184,7 +184,7 @@ inverse(const Matrix &M, Matrix &I, FT &D, Vector &c)
   Uinv = Uinv * L;
   // Don't forget to permute the rows of M back
 
-    TRACEN("inverse before permutation : "<<I);
+    CGAL_KD_TRACEN("inverse before permutation : "<<I);
   I = Matrix(M.column_dimension(),M.row_dimension());
   typename Matrix::row_iterator rit, wit;
   for (rank=0; rank<I.column_dimension(); ++rank)
@@ -264,7 +264,7 @@ linear_solver(const Matrix &M, const Vector &b,
   Matrix L,U;
   int rank;
   std::vector<int> dummy, var;
-    TRACEN("linear_solver");TRACEV(M); TRACEV(b);
+    CGAL_KD_TRACEN("linear_solver");CGAL_KD_TRACEV(M); CGAL_KD_TRACEV(b);
   Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
   // Compute a solution by solving triangular system
   // Since LM=U, and x is a solution of Mx=b, then Ux=Lb
@@ -294,7 +294,7 @@ linear_solver(const Matrix &M, const Vector &b,
   Matrix L,U;
   int rank;
   std::vector<int> dummy, var;
-    TRACEN("linear_solver");TRACEV(M); TRACEV(b);
+    CGAL_KD_TRACEN("linear_solver");CGAL_KD_TRACEV(M); CGAL_KD_TRACEV(b);
   Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
   // Compute a solution by solving triangular system
   // Since LM=U, and x is a solution of Mx=b, then Ux=Lb
@@ -320,7 +320,7 @@ linear_solver(const Matrix &M, const Vector &b,
           h -= U(i,j)*spanning_vectors(var[j],l); 
         spanning_vectors(var[i],l)= h / U(i,i); 
       }
-      TRACEV(spanning_vectors.column(l));
+      CGAL_KD_TRACEV(spanning_vectors.column(l));
 
 #ifdef CGAL_LA_SELFTEST
       CGAL_assertion( (M*spanning_vectors.column(l)).is_zero() );
@@ -362,7 +362,7 @@ homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
 #ifdef CGAL_LA_SELFTEST
   Vector x;
   Triangular_system_solver(U, L, b, rank, c, D);
-  TRACEV(M);TRACEV(U);TRACEV(b);TRACEV(rank);TRACEV(c);TRACEV(D);
+  CGAL_KD_TRACEV(M);CGAL_KD_TRACEV(U);CGAL_KD_TRACEV(b);CGAL_KD_TRACEV(rank);CGAL_KD_TRACEV(c);CGAL_KD_TRACEV(D);
   x = Vector(M.column_dimension());
   for (i=0; i<U.row_dimension(); ++i)
     x[ var[i] ] = c[i];
@@ -386,7 +386,7 @@ homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
           h -= U(i,j)*spanning_vectors(var[j],l); 
         spanning_vectors(var[i],l)= h / U(i,i); 
       }
-      TRACEV(spanning_vectors.column(l));
+      CGAL_KD_TRACEV(spanning_vectors.column(l));
 
 #ifdef CGAL_LA_SELFTEST
       /* we check whether the $l$ - th spanning vector is a solution 

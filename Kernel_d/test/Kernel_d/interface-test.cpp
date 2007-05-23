@@ -30,7 +30,7 @@ typedef double FT_;
 #endif
 
 int main()
-{ SETDTHREAD(2);
+{ CGAL_KD_SETDTHREAD(2);
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
 { // Homogeneous Kernel

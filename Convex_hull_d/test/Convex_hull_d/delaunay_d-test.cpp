@@ -27,7 +27,7 @@ typedef double FT;
 int main()
 {
   CGAL::set_pretty_mode ( std::cerr );
-  SETDTHREAD(193);
+  CGAL_KD_SETDTHREAD(193);
   CGAL_TEST_START;
   {
   typedef CGAL::Cartesian_d<FT> Kernel;
