@@ -21,9 +21,12 @@
 #ifndef CGAL_TAUCS_SOLVER_TRAITS
 #define CGAL_TAUCS_SOLVER_TRAITS
 
+#include <CGAL/auto_link/TAUCS.h>
 #include <CGAL/Taucs_matrix.h>
 #include <CGAL/Taucs_vector.h>
 #include <CGAL/Taucs_fix.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <cassert>
 #include <stdio.h>
@@ -79,26 +82,31 @@ public:
         D = 1;          // TAUCS does not support homogeneous coordinates
 
 #ifdef DEBUG_TRACE
-      // Turn on TAUCS trace
-      std::cerr.flush();
-      taucs_logfile("stderr");
+        // Turn on TAUCS trace
+        std::cerr.flush();
+        taucs_logfile("stderr");
 #endif
 
         try
         {
             // Factor, solve and free
             int success = taucs_linsolve((taucs_ccs_matrix*) A.get_taucs_matrix(),
-                                        NULL,
-                                        1,
-                                        X.get_taucs_vector(),
-                                        (T*) B.get_taucs_vector(),
-                                        (char**) m_options,
-                                        (void**) m_arguments);
-            return (success == TAUCS_SUCCESS);
+                                         NULL,
+                                         1,
+                                         X.get_taucs_vector(),
+                                         (T*) B.get_taucs_vector(),
+                                         (char**) m_options,
+                                         (void**) m_arguments);
+            if (success != TAUCS_SUCCESS) {
+                taucs_printf((char*)"\tSolving Failed\n");
+                return false;
+            } else {
+                return true;
+            }
         }
         catch (...)
         {
-            // if incorrect matrix
+            taucs_printf((char*)"\tIncorrect Matrix\n");
             return false;
         }
     }
@@ -154,9 +162,9 @@ public:
         D = 1;          // TAUCS does not support homogeneous coordinates
 
 #ifdef DEBUG_TRACE
-      // Turn on TAUCS trace
-      std::cerr.flush();
-      taucs_logfile("stderr");
+        // Turn on TAUCS trace
+        std::cerr.flush();
+        taucs_logfile("stderr");
 #endif
 
         try
@@ -164,63 +172,58 @@ public:
             int     success;
 
             // ordering
-            int*    perm;
-            int*    invperm;
+            int*    perm_raw = NULL;
+            int*    invperm_raw = NULL;
             taucs_ccs_order((taucs_ccs_matrix*) A.get_taucs_matrix(),
-                            &perm,
-                            &invperm,
+                            &perm_raw,
+                            &invperm_raw,
                             (char*)"colamd");
-            if (perm == NULL) {
-                taucs_printf((char*)"\tOrdering Failed\n");
-                return false;
-            }
+            boost::shared_ptr<int> perm(perm_raw, free);
+            boost::shared_ptr<int> invperm(invperm_raw, free);
+            if ( perm == NULL || invperm == NULL)
+                throw std::runtime_error("Ordering Failed");
 
             // create multi-file for out-of-core swapping
         #ifndef __GNUC__
-            char* matrixfile = tempnam(NULL, "taucs.L");
-            if (matrixfile == NULL) {
-                taucs_printf((char*)"\tCannot Create Multifile\n");
-                return false;
-            }
-            taucs_io_handle* oocL = taucs_io_create_multifile(matrixfile);
-            free(matrixfile); matrixfile = NULL;
+            boost::shared_ptr<char> matrixfile(tempnam(NULL, "taucs.L"), free);
+            if (matrixfile == NULL)
+                throw std::runtime_error("Cannot Create Multifile");
+            boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile.get()), taucs_io_delete);
         #else
             const char* matrixfile = "/tmp/taucs.L"; // less robust but g++ complains that tempnam() is deprecated
-            taucs_io_handle* oocL = taucs_io_create_multifile((char*)matrixfile);
+            boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile((char*)matrixfile), taucs_io_delete);
         #endif
-            if (oocL == NULL) {
-                taucs_printf((char*)"\tCannot Create Multifile\n");
-                return false;
-            }
+            if (oocL == NULL)
+                throw std::runtime_error("Cannot Create Multifile");
 
             // factor
             int memory_mb = int(taucs_available_memory_size()/1048576.0);
             success = taucs_ooc_factor_lu((taucs_ccs_matrix*) A.get_taucs_matrix(),
-                                        perm,
-                                        oocL,
-                                        memory_mb*1048576.0);
-            if (success != TAUCS_SUCCESS) {
-                taucs_printf((char*)"\tFactorization Failed\n");
-                return false;
-            }
+                                           perm.get(),
+                                           oocL.get(),
+                                           memory_mb*1048576.0);
+            if (success != TAUCS_SUCCESS)
+                throw std::runtime_error("Factorization Failed");
 
             // solve
-            success = taucs_ooc_solve_lu(oocL,
-                                        X.get_taucs_vector(),
+            success = taucs_ooc_solve_lu(oocL.get(),
+                                         X.get_taucs_vector(),
                                         (T*) B.get_taucs_vector());
-            if (success != TAUCS_SUCCESS) {
-                taucs_printf((char*)"\tSolving Failed\n");
-                return false;
-            }
-
-            // free
-            taucs_io_delete(oocL);
+            if (success != TAUCS_SUCCESS)
+                throw std::runtime_error("Solving Failed");
 
             return true;
         }
+        catch (std::exception& e)
+        {
+            taucs_printf((char*)"\t");
+            taucs_printf((char*)(e.what() != NULL ? e.what() : "Incorrect Matrix"));
+            taucs_printf((char*)"\n");
+            return false;
+        }
         catch (...)
         {
-            // if incorrect matrix
+            taucs_printf((char*)"\tIncorrect Matrix\n");
             return false;
         }
     }
