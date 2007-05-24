@@ -24,8 +24,13 @@ do
     echo "*** $TST ***"
 
     # Find executable name (different on Windows and Unix)
-    [ -f ./release/$TST.exe ] && PARAM_APPLICATION="./release/$TST.exe"
+    [ -f ./VC/debug/$TST.exe ] && PARAM_APPLICATION="./VC/debug/$TST.exe"
+    [ -f ./VC/release/$TST.exe ] && PARAM_APPLICATION="./VC/release/$TST.exe"
     [ -x ./$TST ] && PARAM_APPLICATION="./$TST"
+    if [ -z "$PARAM_APPLICATION" ]; then
+        echo "Cannot find $TST executable"
+        exit 1
+    fi
 
     COMMAND="$PARAM_APPLICATION `cat $TST.cmd | tr '\n' ' ' | tr '\r' ' '`"
     eval $COMMAND 2>&1

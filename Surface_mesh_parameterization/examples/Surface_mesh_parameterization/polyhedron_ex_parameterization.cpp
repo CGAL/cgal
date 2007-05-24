@@ -64,9 +64,6 @@
     namespace po = boost::program_options;
 #endif
 
-#ifdef WIN32
-    #include <Windows.h>
-#endif
 
 // ----------------------------------------------------------------------------
 // Private types
@@ -302,14 +299,6 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
 
 int main(int argc, char * argv[])
 {
-#if _WIN32_WINNT >= 0x0400
-    // Trick to be prompted by VisualC++ debugger when an assertion
-    // fails even though we use NON debug runtime libraries
-    // (the only ones compatible with TAUCS)
-    if (IsDebuggerPresent())
-        _set_error_mode(_OUT_TO_MSGBOX);
-#endif
-
     CGAL::Timer total_timer;
     total_timer.start();
 

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Authalic_parameterization"
+	Name="Square_border_parameterization"
 	ProjectGUID="{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
 	Keyword="ManagedCProj">
 	<Platforms>
@@ -22,11 +22,11 @@
 				AdditionalOptions="/Zm900"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="3"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				BrowseInformation="1"
 				WarningLevel="2"
@@ -35,7 +35,6 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=""
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib"
@@ -73,15 +72,10 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900 /Og-"
 				Optimization="2"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
-				EnableIntrinsicFunctions="TRUE"
 				ImproveFloatingPointConsistency="TRUE"
-				FavorSizeOrSpeed="1"
-				OptimizeForProcessor="3"
-				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -125,7 +119,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath=".\Authalic_parameterization.cpp">
+				RelativePath="..\Square_border_parameterization.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -148,50 +142,50 @@
 			Name="Surface_mesh_parameterization package"
 			Filter="">
 			<File
-				RelativePath="..\..\include\Cgal\Circular_Border_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Fixed_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Discrete_authalic_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Fixed_border_parameterizer_3.h">
+				RelativePath="..\..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
+				RelativePath="..\..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
+				RelativePath="..\..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterize.h">
+				RelativePath="..\..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\..\include\Cgal\Square_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
+				RelativePath="..\..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="OpenNL"
 			Filter="">
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\bicgstab.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\blas.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\blas.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\conjugate_gradient.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\full_vector.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\linear_solver.h">
 			</File>
 			<File
-				RelativePath="..\..\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
+				RelativePath="..\..\..\..\OpenNL\include\CGAL\OpenNL\sparse_matrix.h">
 			</File>
 		</Filter>
 	</Files>
