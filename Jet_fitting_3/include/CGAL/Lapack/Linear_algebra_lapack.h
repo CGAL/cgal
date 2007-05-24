@@ -18,6 +18,8 @@
 #ifndef CGAL_LAPACK_H
 #define CGAL_LAPACK_H
 
+#include <CGAL/auto_link/LAPACK.h>
+
 extern "C" {
   // taken from acml.h
 void dgelss(int m, int n, int nrhs, 
