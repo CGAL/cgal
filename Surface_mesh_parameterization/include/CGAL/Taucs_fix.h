@@ -205,8 +205,9 @@ double taucs_available_memory_size()
   double m_sys;   /* size of physical memory */
   double m;       /* size of memory available for allocation */
 
-  m_sys = taucs_system_memory_size();
-  
+    m_sys  = (double) sysconf(_SC_PAGESIZE);
+    m_sys *= (double) sysconf(_SC_PHYS_PAGES);
+
   /* we limit m by 0.75*m_sys */
   m = floor(0.75 * m_sys);
 
