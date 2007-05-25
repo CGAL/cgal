@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -DDEBUG_TRACE \
            -Iinclude \
            -I../../include \
            -I../../../OpenNL/include \

@@ -23,6 +23,7 @@ EXAMPLES = `./find_first ../../examples/Surface_mesh_parameterization $(CGAL)/ex
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -DDEBUG_TRACE \
            -Iinclude \
            -I$(EXAMPLES) \
            -I$(EXAMPLES)/include \
