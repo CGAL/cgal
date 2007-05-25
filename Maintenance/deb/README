@@ -5,7 +5,10 @@ backport for etch:
 - debian/changelog:
   * adjust version suffix from -X to -X~etch1
   * adjust suite from unstable to stable
-  * maintain other differences
+- debian/patches/boost-library-name.dpatch
+  * remove
+- debian/patches/00list
+  * adjust
 
 backport for sarge:
 - debian/control:
@@ -19,7 +22,10 @@ backport for sarge:
 - debian/changelog:
   * adjust version suffix from -X to -Ysarge1 (with Y=X-1)
   * adjust suite from unstable to oldstable
-  * maintain other differences
+- debian/patches/boost-library-name.dpatch
+  * remove
+- debian/patches/00list
+  * adjust
 
 tagging:
 svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.2.1-1
