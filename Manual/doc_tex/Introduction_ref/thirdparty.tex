@@ -18,24 +18,32 @@ Boost is a collection of libraries. \cgal\ needs some of them, that is
 it is mandatory.  If Boost is not already on your system, e.g., on
 Windows, you can download it from \path'http://www.boost.org'.
 
+
 \subsection{Blas \label{thirdparty:Blas}}
 
-A library for Basic Linear Algebra Subroutines.
-It is used in the packages \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3} 
-and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3}.
+The \blas\ (Basic Linear Algebra Subprograms) are routines that provide
+standard building blocks for performing basic vector and matrix operations.
+In \cgal, \blas\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
 
-For {\sc Amd} processors \blas\ is freely provided by  the {\sc Amd} Core Math Library ({\sc Acml}) and can be downloaded
-from \path'http://developer.amd.com/acml.jsp'.
+You can download the official release from \path'http://www.netlib.org/blas/'
+or download optimized implementations from \path'http://www.netlib.org/blas/faq.html#5'.
+Alternatively, installing \taucs\ provides \blas.
+
 
 \subsection{Lapack \label{thirdparty:Lapack}}
 
-A library providing a full suite of Linear Algebra.
-It is used in the packages \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3} 
-and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3}.
+\lapack\ provides routines for solving systems of simultaneous linear equations,
+least-squares solutions of linear systems of equations, eigenvalue problems,
+and singular value problems.
+In \cgal, \lapack\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
 
+You can download the official release from \path'http://www.netlib.org/lapack/'.
+Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
 
-For {\sc Amd} processors \lapack\ is freely provided by  the {\sc Amd} Core Math Library ({\sc Acml}) and can be downloaded
-from \path'http://developer.amd.com/acml.jsp'.
 
 \subsection{GMP \label{thirdparty:GMP}}
 
@@ -63,12 +71,16 @@ It is only available commercially from \path'http://www.algorithmic-solutions.co
 
 \subsection{Taucs \label{thirdparty:Taucs}}
 
-A library of sparse linear solvers.
-It can be used by the \ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package
-in order to speed up the algorithm.
-You can download the official release from
-\path'http://www.tau.ac.il/~stoledo/taucs/' or download a version customized
-by \cgal\ team from the Download section of \path'http://www.cgal.org'.
+\taucs\ is a library of sparse linear solvers.
+In \cgal, it is used to improve (a lot) the computations within the
+\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} package only.
+
+You can download the official release from \path'http://www.tau.ac.il/~stoledo/taucs/'
+or download a version customized for \cgal\
+from the Download section of \path'http://www.cgal.org'.
+We highly recommend to install the version customized for \cgal\
+which contains an installer, bug fixes, and a complete \lapack\
+implementation.
 
 
 \subsection{OpenNL \label{thirdparty:OpenNL}}

@@ -2,7 +2,7 @@ $CGAL/INSTALL.win32
 ======================================================================
 
 This file describes how to install CGAL on MS Windows for
-Developer Studio .Net 2003 (VC 7.1) and 2005 (VC 8.0) 
+Developer Studio .Net 2003 (VC 7.1) and 2005 (VC 8.0)
 
 Note that you can alternatively install CGAL with the Microsoft compilers using
 Cygwin. For installation on Unix systems and on Cygwin, please see the INSTALL
@@ -29,36 +29,42 @@ It is enough to unzip the file. Currently only some demo programs
 need the compiled Boost library "program_options".
 Alternatively you can use the Installer for Boost provided
 by Boost Consulting: http://www.boostconsulting/download.html.
-It allows you to select precompiled libraries. 
+It allows you to select precompiled libraries.
 
 GMP and MPFR
 ------------
 
 Some examples and demos need GMP. The CGAL Windows Installer installs
 precompiled versions of GMP 4.2.1 and MPFR 2.1.1. in the directory
-CGAL-3.3/auxiliary/gmp. 
+CGAL-3.3/auxiliary/gmp.
 We compiled GMP and MPFR, using both VC7.1 and VC8 using a variety
 of configurations (with all without any processor specific assembler).
- 
+
 Qt
 --
 
 Most demos use Qt 3. You can download it from http://www.trolltech.com.
 
 
+BLAS and LAPACK
+---------------
+
+Only the Jet_fitting_3 and Ridges_3 packages require BLAS and LAPACK.
+The CGAL Windows Installer installs precompiled versions of BLAS and LAPACK
+in the directory CGAL-3.3/auxiliary/taucs.
+
+
 TAUCS
 -----
 
-Only examples in the Surface_mesh_parameterization directory need TAUCS.
+TAUCS is a library of sparse linear solvers. In CGAL, it is used to improve (a lot)
+the computations within the Surface_mesh_parameterization package only.
 The CGAL Windows Installer installs precompiled versions of TAUCS
-(and all its dependencies) in the directory CGAL-3.3/auxiliary/taucs. 
+(and all its dependencies) in the directory CGAL-3.3/auxiliary/taucs.
 
-If you want to compile those yourself you can download the official source code
-from http://www.tau.ac.il/~stoledo/taucs.
-
-Due to an incompatibility between ATLAS (a dependency of TAUCS) and Visual C++ debugger,
-we provide also the Blas and Lapack reference implementations. They are notably slow and 
-should be used only for debugging.
+If you want to compile those yourself, you can download the official release
+from http://www.tau.ac.il/~stoledo/taucs/ or download a version customized for CGAL
+from the Download section of http://www.cgal.org.
 
 Zlib
 ----
@@ -87,7 +93,7 @@ For that feature to work, the names of the CGAL libraries must follow a conventi
 that reflects the compiler and configuration variants.
 
 Thus, while in previous versions of CGAL you could build "CGAL.lib" and link against it,
-starting from this version you build different variants with names like 
+starting from this version you build different variants with names like
 "cgal-vc71-mt-sgd.lib" and such.
 
 Each library project file contains one configuration for each supported variant.
@@ -110,7 +116,7 @@ COMPILER is 'vc71' or 'vc80'
    '-sgd' : a static and debug version of the CRT is used. Also, the lib is built with debug information enabled.
    '-gd'  : a dynamic and debug version of the CRT is used (a DLL). Also, the lib is built with debug information enabled.
    '' (empty) : a dynamic version of the CRT is used (a DLL). There is no debug information (neither in the lib nor the CRT used).
-   
+
 There isn't any configuration mixing a debug CRT with a release library or viceversa.
 
 If you want to rebuild the CGAL library you should go into the CGALROOT/src/CGAL directory
@@ -123,10 +129,11 @@ If you want to build all variants at once, go to BatchBuild, select all, and cli
 NOTE: In previous versions, CGAL.lib was created in CGALROOT/lib/msvc7/, while in this
 version all variants are created in CGALROOT/lib/
 
-The windows installer allows you to install precompiled versions of mpfr and gmp under $(CGALROOT)/auxiliary/gmp.
-Following the mangling scheme described above, we precompiled all the variants for mpfr and gmp.
+The CGAL Windows installer allows you to install precompiled versions of GMP, MPFR,
+BLAS, LAPACK and TAUCS under $(CGALROOT)/auxiliary.
+Following the mangling scheme described above, we precompiled all the variants for these libraries.
 
-Projects files for demos and examples are only provided for VC7.1. 
+Projects files for demos and examples are only provided for VC7.1.
 However, they have been specificaly designed to work as-is in Developer Studio 2005, so you only need to open
 and convert them right away via the VS Conversion Wizard.
 
@@ -138,7 +145,7 @@ There is a global solution file under CGALROOT/src/. You can use it to build all
 Paths for Header Files and Libraries
 ------------------------------------
 
-The individual project files (for the libraries, demos and examples) 
+The individual project files (for the libraries, demos and examples)
 use the following enviroment variables to find paths:
 
 $(BOOSTROOT) // Required to build libraries, examples and demos.
@@ -147,12 +154,12 @@ $(QTDIR)     // Only required to build some demos.
 
 Each of these must point to the ROOT location of the corresponding library.
 
-The windows installer allows you to set $CGALDIR and $BOOSTROOT, for all or just the current user, via
+The Windows installer allows you to set $CGALDIR and $BOOSTROOT, for all or just the current user, via
 an editable text slot and a confirmation checkbox.
 If any of these variables are already defined in your system, the text slot shows the current value
 and the checkbox is unchecked to prevent you from accidentally overriding them.
 
-For other third party libraries, such as TAUCS, Zlib etc, you must add
+For other third party libraries, such as Zlib, you must add
 the corresponding paths manually, either by modifiying specific project files or from within
 Developer Studio, going to Tools->Options->Projects->VC++Directories,
 tab "Show Directories" for "Include Files" and "Library Files".
@@ -164,15 +171,15 @@ Building the Examples
 ---------------------
 
 The examples come in CGALROOT/examples directory. Each example directory contains the
-VC++ 7.1 project files (.vcproj). If you use VC8.0, just open the .vcproj and let the 
+VC++ 7.1 project files (.sln and/or .vcproj). If you use VC8.0, just open the .sln/.vcproj and let the
 conversion wizard proceed since the projects files have been designed to work as-is on VC8.0 as well.
 
 Building the Demos
 ------------------
 
 The demos come in CGALROOT/demo directory. Each demo directory contains the
-VC++ 7.1 project files (.vcproj). To build one demo you should open one of those files.
-If you use VC8.0, just open the .vcproj and let the conversion wizard proceed since 
+VC++ 7.1 project files (.sln and/or .vcproj). To build one demo you should open one of those files.
+If you use VC8.0, just open the .sln/.vcproj and let the conversion wizard proceed since
 the projects files have been designed to work as-is on VC8.0 as well.
 The demos need Qt installed. The projects are configured for commercial users.
 The libraries that are used are qt-mt.lib and qtmain.lib, and you should change
@@ -186,19 +193,21 @@ Running the Examples and Demos
 ------------------------------
 
 The corresponding executable(s) then can be run as usual, from the
-command prompt, or via Explorer. 
+command prompt, or via Explorer.
 
 Building user projects that use CGAL
 ------------------------------------
 
 The simplest way to create a project that uses CGAL is to take some demo .vcproj
-(for VC7.1 or VC80) and start from there. Alternatively, you can create 
-the project file from scratch. 
+(for VC7.1 or VC80) and start from there. Alternatively, you can create
+the project file from scratch.
 Add "$(CGALROOT)/include/CGAL/config/msvc";"$(CGALROOT)/include" -IN THAT ORDER-
 and "$(CGALROOT)/lib" to the include and library paths.
-If the project needs gmp, mpfr or CORE, also add "$(CGALROOT)/auxiliary/gmp/include"
-and "$(CGALROOT)/auxiliary/gmp/lib"
-Since auto-linking is used, there is no need to specify any library (not even gmp.lib nor mpfr.lib).
+If the project needs GMP, MPFR or CORE, also add "$(CGALROOT)/auxiliary/gmp/include"
+and "$(CGALROOT)/auxiliary/gmp/lib".
+If the project needs BLAS, LAPACK or TAUCS, also add "$(CGALROOT)/auxiliary/taucs/include"
+and "$(CGALROOT)/auxiliary/taucs/lib".
+Since auto-linking is used, there is no need to specify any library (not even gmp.lib, mpfr.lib, ...)
 
 NOTE: Before version 3.3, the include path had "msvc7" instead of "msvc" as the leaf
 folder. Likewise, the libraries where located at "/lib/msvc7" instead of just "/lib".

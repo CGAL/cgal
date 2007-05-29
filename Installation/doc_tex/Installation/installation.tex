@@ -841,8 +841,9 @@ switch ``\texttt{--with-BOOSTPROGRAMOPTIONS}''.
 
 The \blas\ (Basic Linear Algebra Subprograms) are routines that provide
 standard building blocks for performing basic vector and matrix operations.
-In \cgal, \blas\ is required by the \ccc{Jet_fitting_3} and \ccc{Ridges_3}
-packages only.
+In \cgal, \blas\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
 
 You can download the official release from \blaspage
 or download optimized implementations from \path'http://www.netlib.org/blas/faq.html#5'.
@@ -882,8 +883,9 @@ Usually, \atlas\ setup is automatically deduced from \blas\ setup
 \lapack\ provides routines for solving systems of simultaneous linear equations,
 least-squares solutions of linear systems of equations, eigenvalue problems,
 and singular value problems.
-In \cgal, \lapack\ is required by the \ccc{Jet_fitting_3} and \ccc{Ridges_3}
-packages only.
+In \cgal, \lapack\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
 
 You can download the official release from \lapackpage.
 Alternatively, installing \taucs\ customized for \cgal\ provides \lapack\
@@ -905,9 +907,8 @@ support for \lapack\ can be enabled with the command line switches
 \index{TAUCS@\taucs!enable support}
 
 \taucs\ is a library of sparse linear solvers.
-In \cgal, it is used to improve (a lot) the computations within
-the \ccc{Surface_mesh_parameterization} package (Planar Parameterization
-of Triangulated Surface Meshes) only.
+In \cgal, it is used to improve (a lot) the computations within the
+\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} package only.
 
 You can download the official release from \taucspage
 or download a version customized for \cgal\
