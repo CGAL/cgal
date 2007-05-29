@@ -870,9 +870,10 @@ as well as a few routines from \lapack.
 
 You can download the official release from \atlaspage.
 Alternatively, installing \taucs\ provides \atlas\ on systems with
-no native \blas\ implementation (see Section~\ref{sec:taucs-setup}).
+no native \blas\ and \lapack\ implementations (see Section~\ref{sec:taucs-setup}).
 
-Usually, \atlas\ setup is automatically deduced from \blas\ and \taucs\ setup.
+Usually, \atlas\ setup is automatically deduced from \blas\ setup
+(i.e. install\_cgal will detect if the \blas\ library on your machine is \atlas).
 
 
 \subsection{Setup Support for LAPACK\label{sec:lapack-setup}}
@@ -885,7 +886,8 @@ In \cgal, \lapack\ is required by the \ccc{Jet_fitting_3} and \ccc{Ridges_3}
 packages only.
 
 You can download the official release from \lapackpage.
-Alternatively, installing \taucs\ provides \lapack\ (see Section~\ref{sec:taucs-setup}).
+Alternatively, installing \taucs\ customized for \cgal\ provides \lapack\
+(see Section~\ref{sec:taucs-setup}).
 
 If installed in a standard location, \lapack\ should be found
 automatically. Otherwise, you have to specify where \lapack\ is located
@@ -896,7 +898,7 @@ In case you disabled the automatic support for third party libraries,
 support for \lapack\ can be enabled with the command line switches
 ``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
 \texttt{LAPACK, LAPACKWIN, REFLAPACKLINUXGCC or REFLAPACKWIN}
-(depending of your platform and BLAS library).
+(depending of your platform and \lapack\ library name).
 
 
 \subsection{Setup Support for TAUCS\label{sec:taucs-setup}}
@@ -919,7 +921,7 @@ automatically. Otherwise, you have to specify where \taucs\ is located
 on your system using the command line options
 ``\texttt{--TAUCS\_INCL\_DIR}'' and ``\texttt{--TAUCS\_LIB\_DIR}''
 (you may also have to use the command line options for \blas, \lapack\
-or \atlas\ as \taucs\ requires \blas\ plus \lapack\ or \atlas). For
+or \atlas\ as \taucs\ requires either \blas\ plus \lapack\ or \atlas). For
 instance, if you installed \taucs\ customized for \cgal\
 in \texttt{/opt/TAUCS/}, type
 %%
@@ -933,7 +935,7 @@ support for \taucs\ can be enabled with the command line switches
 ``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
 \texttt{TAUCSWINLAPACK, TAUCSWINATLAS, TAUCSLAPACK, TAUCSATLAS,
 TAUCSFREEBSDLAPACK, TAUCSFREEBSDATLAS, TAUCSDARWIN, TAUCSIRIXCC32 or TAUCSIRIXCC64}
-(depending of your platform and BLAS library).
+(depending of your platform and if \lapack\ or \atlas\ is installed).
 
 
 \subsection{Setup Support for X11\label{sec:x11-setup}}
