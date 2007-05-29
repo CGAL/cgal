@@ -96,8 +96,9 @@ in <windows.h> which were clashing with min/max functions.
 
 6.7 Surface Mesh Parametrization
 
-  Added Jacobi and SSOR preconditioners to OpenNL solver, which makes it
+- Added Jacobi and SSOR preconditioners to OpenNL solver, which makes it
   much faster and more stable.
+- Updated the precompiled libraries for BLAS, LAPACK and TAUCS.
 
 
 6.8 2D Arrangements
@@ -179,8 +180,8 @@ This is a bug fix release
 - Surface Mesher
   Fixed a bug in iterators of the class template Surface_mesh_complex_2_in_triangulation_3
 
-- Surface Mesh Parametrisation 
-  * Updated the precompiled taucs lib
+- Surface Mesh Parametrisation
+  * Updated the precompiled TAUCS lib
 
 - Kinetic Data Structures
   * Fixed problems caused by old versions of gcc being confused by operator! and operator int()

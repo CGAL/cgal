@@ -40,7 +40,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{3.2}
+\newcommand{\cgalrelease}{3.3}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -61,6 +61,9 @@
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
 \newcommand{\qtpage}{\path'http://doc.trolltech.com/'}
 \newcommand{\qtmocpage}{\path'http://doc.trolltech.com/moc.html'}
+\newcommand{\blaspage}{\path'http://www.netlib.org/blas/'}
+\newcommand{\atlaspage}{\path'http://math-atlas.sourceforge.net/'}
+\newcommand{\lapackpage}{\path'http://www.netlib.org/lapack/'}
 \newcommand{\taucspage}{\path'http://www.tau.ac.il/~stoledo/taucs/'}
 \newcommand{\xpage}{\path'http://www.x.org/'}
 \newcommand{\zlibpage}{\path'http://www.zlib.net/'}
@@ -91,7 +94,9 @@ libraries\footnote{\boostpage}, the \gnu\ Multiple Precision library
 multiple-precision floating-point computations with exact rounding,
 the \core\ library\footnote{\corepage} for robust numerical and
 geometric computation, \leda, the Library of Efficient Datatypes and
-Algorithms\footnote{\ledapage}, \taucs, a library of sparse linear
+Algorithms\footnote{\ledapage}, \blas, the Basic Linear Algebra Subprograms
+library\footnote{\blaspage}, \lapack, the Linear Algebra PACKage library
+\footnote{\lapackpage}, \taucs, a library of sparse linear
 solvers\footnote{\taucspage}, or Trolltech's\footnote{\trolltechpage}
 \qt\ toolkit.
 
@@ -241,7 +246,7 @@ mode refer to Section~\ref{sec:non-interactive}.
 \section{A Sample Installation\label{sec:sample-inst}}
 
 In this section we sketch an example installation on a Linux machine
-with the \Gcc{3.4.5} compiler. For a complete description of the
+with the \Gcc{4.1.1} compiler. For a complete description of the
 different menus and their options refer to
 Section~\ref{sec:interactive-mode}.
 
@@ -255,36 +260,31 @@ Go to the \cgaldir\ directory and enter the command
 The script first parses support options for various third party
 libraries that can be use together with \cgal. Then you get a message
 indicating the \cgal\ version you are going to install and that you
-are running the interactive mode. It takes some time while the script
-locates a number of utility programs. You will not get informed about
-this\footnote{If you are that curious what happens exactly, have a
-  look at the file
-  \texttt{\cgaldir/install.log}.\TTindex{install.log}}, but you see
-some dots written to the screen indicating progress.
+are running the interactive mode.
 
 {\ccTexHtml{\scriptsize}{}
 \begin{alltt}
-Parsing support specfiles for 3rd party libraries:
-BOOST, BOOSTPROGRAMOPTIONS, X11, GMP, GMPXX, MPFR, CORE, CGALCORE, ZLIB, ZLIBMS, LEDA, LEDAWIN, LEDAMS, LEDAWINMS, QT3MT, QT3ST, QT3MSMT, QT3MSST, TAUCSSOLARISCC, TAUCSWINMKL, TAUCSWINATLAS, TAUCSGCCATLAS, TAUCSGCCATLAS2, TAUCSINTELCCATLAS, TAUCSINTELCCMUMPS, TAUCSDARWIN, TAUCSGCCMKL, TAUCSIRIXCC32, TAUCSIRIXCC64, done.
+Looking for POSIX utilities... done.
+Loading support for 3rd party libraries...done.
 
 --------------------------------------------------------
   This is the install script for CGAL \cgalrelease
 --------------------------------------------------------
 
 starting interactive mode - one moment, please
-.
+
 --------------------------------------------------------
 Settings from Command Line/Environment:
 --------------------------------------------------------
 
-  Choosing compiler GNU 3.4.5.
+  Choosing compiler GNU 4.1.1.
 \end{alltt}}
 
 The script searches for \CC\ compilers that are installed on your
 system and accessible through your \texttt{PATH} environment variable.
 If more than one compiler (that is supported by \cgal) is found on
 your system, you are presented a list of compilers to choose from. In
-this example, only one compiler, \Gcc{3.4.5}, was found on the system
+this example, only one compiler, \Gcc{4.1.1}, was found on the system
 and the script selects this compiler without any user interaction. In
 general, the selection of which compiler to use can be made from the
 compiler menu (cf. Section~\ref{sec:compiler-menu}).
@@ -301,11 +301,11 @@ A menu similar to the following will appear on your screen.\index{main
 {\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **             CGAL 3.2 Installation Main Menu                **
+  **             CGAL 3.3 Installation Main Menu                **
   **             ===============================                **
   **                                                            **
   **   OS:          i686_Linux-2.6                              **
-  **   Compiler:    GNU 3.4.5                                   **
+  **   Compiler:    GNU 4.1.1                                   **
   **   Support for: no other library.                           **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
@@ -383,13 +383,14 @@ found.
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   ****************************************************************
-  **              CGAL 3.2 Installation Main Menu               **
+  **              CGAL 3.3 Installation Main Menu               **
   **              ===============================               **
   **                                                            **
   **   OS:          i686_Linux-2.6                              **
-  **   Compiler:    GNU 3.4.5                                   **
+  **   Compiler:    GNU 4.1.1                                   **
   **   Support for: BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP,     **
-  **                GMPXX, MPFR, CORE, ZLIB, QT, and TAUCS.     **
+  **                GMPXX, MPFR, ZLIB, BLAS, LAPACK, ATLAS,     **
+  **                OPENGL, QT, and TAUCS.                      **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
   **   The setup has been tested ok.                            **
@@ -429,25 +430,29 @@ at the error messages from compiler or linker.)
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 3.2                     **
+  **                     Compiling CGAL 3.3                     **
   **                     ==================                     **
   **                                                            **
   ****************************************************************
 
   OS:                           i686_Linux-2.6
-  COMPILER:                     GNU 3.4.5
-  BOOST:			supported
-  BOOST_PROGRAM_OPTIONS:	supported
-  X11:				supported
-  GMP:				supported
-  GMPXX:			supported
-  MPFR:				supported
-  CORE:				supported
-  ZLIB:				supported
-  LEDA:				not supported
-  LEDAWIN:			not supported
-  QT:				supported
-  TAUCS:			supported
+  COMPILER:                     GNU 4.1.1
+  BOOST:                        supported (1.33.1)
+  BOOST_PROGRAM_OPTIONS:        supported (1.33.1)
+  BOOST_BIMAP:                  not supported
+  X11:                          supported (11.0)
+  GMP:                          supported (4.1.4)
+  GMPXX:                        supported (4.1.4)
+  MPFR:                         supported (unknown)
+  ZLIB:                         supported (1.2.3)
+  BLAS:                         supported (unknown version)
+  LAPACK:                       supported (unknown version)
+  ATLAS:                        supported (unknown version)
+  LEDA:                         not supported
+  LEDAWIN:                      not supported
+  OPENGL:                       supported (2.0)
+  QT:                           supported (3.3.7)
+  TAUCS:                        supported (2.x)
 
   Generating Makefiles ... done.
   Building libCGAL static ... done.
@@ -478,13 +483,14 @@ install menu by choosing the option ``\texttt{i}'' from the main menu.
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   ****************************************************************
-  **             CGAL 3.2 Installation Install Menu             **
+  **             CGAL 3.3 Installation Install Menu             **
   **             ==================================             **
   **                                                            **
   **   OS:          i686_Linux-2.6                              **
-  **   Compiler:    GNU 3.4.5                                   **
+  **   Compiler:    GNU 4.1.1                                   **
   **   Support for: BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP,     **
-  **                GMPXX, MPFR, CORE, ZLIB, QT, and TAUCS.     **
+  **                GMPXX, MPFR, ZLIB, BLAS, LAPACK, ATLAS,     **
+  **                OPENGL, QT, and TAUCS.                      **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
   **   The setup has been tested ok.                            **
@@ -492,7 +498,7 @@ install menu by choosing the option ``\texttt{i}'' from the main menu.
   **   Libs built:          19 Apr 17:20                        **
   **                                                            **
   **   <D>  Change Installation root directory                  **
-  **       /usr/local/CGAL-3.2                                  **
+  **       /usr/local/CGAL-3.3                                  **
   **   <I>  Install CGAL                                        **
   **                                                            **
   **   <Q>  Back to Main Menu                                   **
@@ -511,7 +517,7 @@ installation by selecting ``\texttt{i}''.
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                    Installing CGAL 3.2                     **
+  **                    Installing CGAL 3.3                     **
   **                    ===================                     **
   **                                                            **
   ****************************************************************
@@ -521,7 +527,7 @@ installation by selecting ``\texttt{i}''.
 
   ****************************************************************
   **                                                            **
-  **   Target Directory: /usr/local/CGAL-3.2.                   **
+  **   Target Directory: /usr/local/CGAL-3.3.                   **
   **   Do you want to install CGAL into this directory (y/N)?   **
   **                                                            **
   ****************************************************************
@@ -562,11 +568,11 @@ of \texttt{CGAL\_MAKEFILE} for the last active configuration. Remember
 to set this environment variable before compiling \cgal\ applications.
 On Bourne shell derivatives, you would type in our example
 \begin{alltt}
-      export CGAL_MAKEFILE=\cgaldir/make/makefile_sparc_SunOS-5.6_g++-3.4.3
+      export CGAL_MAKEFILE=\cgaldir/make/makefile_i686_Linux-2.6_g++-4.1.1
 \end{alltt}
 while for \texttt{csh} descendants the syntax is
 \begin{alltt}
-      setenv CGAL_MAKEFILE \cgaldir/make/makefile_sparc_SunOS-5.6_g++-3.4.3
+      setenv CGAL_MAKEFILE \cgaldir/make/makefile_i686_Linux-2.6_g++-4.1.1
 \end{alltt}
 In Section~\ref{sec:makefiles} you can find more information on the
 \cgal\ makefile structure, and how to set \texttt{CGAL\_MAKEFILE} when
@@ -593,9 +599,9 @@ where you can choose the compiler you want to work with and set custom
 compiler or linker options. The compiler menu is described in
 Section~\ref{sec:compiler-menu}.
 
-If you want to use other libraries such as \boost, \taucs, \gmp,
-\mpfr, \core, \leda, or \qt\ with \cgal, you can setup support for
-these libraries from the support menu that is described in
+If you want to use other libraries such as \boost, \gmp, \mpfr, \core,
+\blas, \lapack, \taucs, \leda, or \qt\ with \cgal, you can setup
+support for these libraries from the support menu that is described in
 Section~\ref{sec:support-menu}.
 
 At some point, you most probably want to build the \cgal\ libraries by
@@ -693,8 +699,8 @@ libraries.\bigskip
 \index{support menu}\index{menus!support}
 
 This menu provides the starting point to setup support for third-party
-software libraries such as \boost, \taucs, \gmp, \mpfr, \core, \leda,
-or \qt.\bigskip
+software libraries such as \boost, \gmp, \mpfr, \core,
+\blas, \lapack, \taucs, \leda, or \qt.\bigskip
 
 First, it provides an option ``\texttt{Auto-find all libraries}'' to
 find and enable support for as many of those third-party software
@@ -814,7 +820,7 @@ type
 Even in case you disabled the automatic support for third party
 libraries, boost support is still enabled because it is required.
 
-\subsection{Setup Support for Boostprogramoptions\label{sec:boostlibs-setup}}
+\subsection{Setup Support for Boost program options\label{sec:boostlibs-setup}}
 \index{Boost@\boost!enable support}
 
 The \boost\ library program\_options is used by a few demo programs to
@@ -830,51 +836,107 @@ support for program\_options can be enabled with the command line
 switch ``\texttt{--with-BOOSTPROGRAMOPTIONS}''.
 
 
+\subsection{Setup Support for BLAS\label{sec:blas-setup}}
+\index{BLAS@\blas!enable support}
+
+The \blas\ (Basic Linear Algebra Subprograms) are routines that provide
+standard building blocks for performing basic vector and matrix operations.
+In \cgal, \blas\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+
+You can download the official release from \blaspage
+or download optimized implementations from \path'http://www.netlib.org/blas/faq.html#5'.
+Alternatively, installing \taucs\ provides \blas\ (see Section~\ref{sec:taucs-setup}).
+
+If installed in a standard location, \blas\ should be found
+automatically. Otherwise, you have to specify where \blas\ is located
+on your system using the command line options
+``\texttt{--BLAS\_INCL\_DIR}'' and ``\texttt{--BLAS\_LIB\_DIR}''.
+
+In case you disabled the automatic support for third party libraries,
+support for \blas\ can be enabled with the command line switches
+``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
+\texttt{APPLEVECLIB, SUNPERFORMANCECC, SUNPERFORMANCEGCC,
+MKL64, MKL32, MKLWIN64, MKLWIN32, ACML, ACMLWIN, BLASIFORTATLAS, BLASGCCATLAS,
+BLASWINATLAS, REFBLASGCC, REFBLASLINUXGCC, REFBLASSHARED or REFBLASWIN}
+(depending of your platform and BLAS library).
+
+
+\subsection{Setup Support for ATLAS\label{sec:atlas-setup}}
+\index{ATLAS@\atlas!enable support}
+
+\atlas\ provides a portably efficient \blas\ implementation,
+as well as a few routines from \lapack.
+
+You can download the official release from \atlaspage.
+Alternatively, installing \taucs\ provides \atlas\ on systems with
+no native \blas\ and \lapack\ implementations (see Section~\ref{sec:taucs-setup}).
+
+Usually, \atlas\ setup is automatically deduced from \blas\ setup
+(i.e. install\_cgal will detect if the \blas\ library on your machine is \atlas).
+
+
+\subsection{Setup Support for LAPACK\label{sec:lapack-setup}}
+\index{LAPACK@\lapack!enable support}
+
+\lapack\ provides routines for solving systems of simultaneous linear equations,
+least-squares solutions of linear systems of equations, eigenvalue problems,
+and singular value problems.
+In \cgal, \lapack\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+
+You can download the official release from \lapackpage.
+Alternatively, installing \taucs\ customized for \cgal\ provides \lapack\
+(see Section~\ref{sec:taucs-setup}).
+
+If installed in a standard location, \lapack\ should be found
+automatically. Otherwise, you have to specify where \lapack\ is located
+on your system using the command line options
+``\texttt{--LAPACK\_INCL\_DIR}'' and ``\texttt{--LAPACK\_LIB\_DIR}''.
+
+In case you disabled the automatic support for third party libraries,
+support for \lapack\ can be enabled with the command line switches
+``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
+\texttt{LAPACK, LAPACKWIN, REFLAPACKLINUXGCC or REFLAPACKWIN}
+(depending of your platform and \lapack\ library name).
+
+
 \subsection{Setup Support for TAUCS\label{sec:taucs-setup}}
 \index{TAUCS@\taucs!enable support}
 
-\taucs\ is library of sparse linear solvers.
-In \cgal\ it is used to speedup the computations within
-the \ccc{Surface_mesh_parameterization} package (Planar Parameterization
-of Triangulated Surface Meshes) only.
+\taucs\ is a library of sparse linear solvers.
+In \cgal, it is used to improve (a lot) the computations within the
+\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} package only.
 
 You can download the official release from \taucspage
-or download a version customized
-by \cgal\ team from the Download section of \path'http://www.cgal.org'.
-
-See \taucs\ documentation to compile it. In a nutshell, on Unix machines:
-\begin{verbatim}
-  ./configure [prefix=PREFIX]
-  make
-  make install  # only available in the version customized by CGAL team
-\end{verbatim}
+or download a version customized for \cgal\
+from the Download section of \path'http://www.cgal.org'.
+We highly recommend to install the version customized for \cgal\
+which contains an installer, bug fixes, and a complete \lapack\
+implementation.
 
 If installed in a standard location, \taucs\ should be found
 automatically. Otherwise, you have to specify where \taucs\ is located
 on your system using the command line options
-``\texttt{--TAUCS\_INCL\_DIR}'' and ``\texttt{--TAUCS\_LIB\_DIR}''. For
-instance, if you have uncompressed and compiled the official release of \taucs\
-(which has no ``\texttt{make install}'' option) in \texttt{/opt/TAUCS/}, type
+``\texttt{--TAUCS\_INCL\_DIR}'' and ``\texttt{--TAUCS\_LIB\_DIR}''
+(you may also have to use the command line options for \blas, \lapack\
+or \atlas\ as \taucs\ requires either \blas\ plus \lapack\ or \atlas). For
+instance, if you installed \taucs\ customized for \cgal\
+in \texttt{/opt/TAUCS/}, type
 %%
 \begin{verbatim}
-  --TAUCS_INCL_DIR "/opt/TAUCS/build/linux:/opt/TAUCS/src" --TAUCS_LIB_DIR "/opt/TAUCS/external/lib/linux:/opt/TAUCS/lib/linux"
+  --BLAS_INCL_DIR "/opt/TAUCS/include" --BLAS_LIB_DIR "/opt/TAUCS/lib"
 \end{verbatim}
 %%
-(replace ``\texttt{linux}'' by your platform).
 
 In case you disabled the automatic support for third party libraries,
 support for \taucs\ can be enabled with the command line switches
-``\texttt{--with-TAUCSSOLARISCC}'',
-``\texttt{--with-TAUCSWINMKL}'',
-``\texttt{--with-TAUCSWINATLAS}'',
-``\texttt{--with-TAUCSGCCATLAS}'',
-``\texttt{--with-TAUCSGCCATLAS2}'',
-``\texttt{--with-TAUCSINTELCCATLAS}'',
-``\texttt{--with-TAUCSINTELCCMUMPS}'',
-``\texttt{--with-TAUCSDARWIN}'',
-``\texttt{--with-TAUCSGCCMKL}'',
-``\texttt{--with-TAUCSIRIXCC32}'', and
-``\texttt{--with-TAUCSIRIXCC64}'' (depending of your platform and BLAS library).
+``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
+\texttt{TAUCSWINLAPACK, TAUCSWINATLAS, TAUCSLAPACK, TAUCSATLAS,
+TAUCSFREEBSDLAPACK, TAUCSFREEBSDATLAS or TAUCSDARWIN}
+(depending of your platform and if \lapack\ or \atlas\ is installed).
 
 
 \subsection{Setup Support for X11\label{sec:x11-setup}}
@@ -1250,7 +1312,7 @@ whereas in csh derivatives you use
 \end{alltt}
 For instance,
 \begin{verbatim}
-  setenv CGAL_MAKEFILE /usr/CGAL-3.2/make/makefile_i686_Linux-2.6_g++-3.4.4
+  setenv CGAL_MAKEFILE /usr/CGAL-3.3/make/makefile_i686_Linux-2.6_g++-3.4.4
 \end{verbatim}
 
 If you use \cgal\ with several different OS/compiler combination, a
