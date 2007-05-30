@@ -37,6 +37,7 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/regular_triangulation_2.pdb"
 				SubSystem="2"
@@ -92,7 +93,7 @@
 				AdditionalDependencies="  qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="1"
-				AdditionalIncludeDirectories=".\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(QTDIR)\include"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -203,7 +204,8 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2_toolbar.moc regular_triangulation_2_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2_toolbar.moc regular_triangulation_2_toolbar.h
+"
 						Outputs="regular_triangulation_2_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -221,7 +223,8 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2_toolbar_layers.moc regular_triangulation_2_toolbar_layers.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2_toolbar_layers.moc regular_triangulation_2_toolbar_layers.h
+"
 						Outputs="regular_triangulation_2_toolbar_layers.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
