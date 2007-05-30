@@ -1,9 +1,10 @@
-\begin{ccRefConcept}{PolynomialTraits_d::TotalDegree}
+\begin{ccRefConcept}{PolynomialTraits_d::DegreeVector}
 
 \ccDefinition
 
-This \ccc{AdaptableUnaryFunction} computes the total degree 
-of a \ccc{PolynomialTraits_d::Polynomial_d}. 
+This \ccc{AdaptableUnaryFunction} returns the exponent vector of 
+the innermost leading coefficient of a 
+\ccc{PolynomialTraits_d::Polynomial_d}. 
 
 \ccRefines 
 \ccc{AdaptableUnaryFunction}
@@ -12,14 +13,14 @@ of a \ccc{PolynomialTraits_d::Polynomial_d}.
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef int result_type;}{}\ccGlue
+
+\ccCreationVariable{degree_vector}
+\ccTypedef{typedef Exponent_vector result_type;}{}\ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
 
 \ccOperations
-\ccCreationVariable{total_degree}
 \ccMethod{result_type operator()(argument_type p);}
-         {Computes the total degree of $p$.}
-
+         {Returns the degree vector.}
 
 %\ccHasModels
 
@@ -28,6 +29,7 @@ of a \ccc{PolynomialTraits_d::Polynomial_d}.
 \ccRefIdfierPage{Polynomial_d}\\
 \ccRefIdfierPage{PolynomialTraits_d}\\
 \ccRefIdfierPage{PolynomialTraits_d::Degree}\\
-\ccRefIdfierPage{PolynomialTraits_d::DegreeVector}
+\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}
 
 \end{ccRefConcept}
+
