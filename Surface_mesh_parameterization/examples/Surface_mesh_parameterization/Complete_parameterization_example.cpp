@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 
 // ----------------------------------------------------------------------------
@@ -287,8 +288,7 @@ int main(int argc, char * argv[])
 
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
 
 // ----------------------------------------------------------------------------
 // Empty main() if TAUCS is not installed
