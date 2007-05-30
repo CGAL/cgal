@@ -1,3 +1,4 @@
+#include "debug_macros.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -6,7 +7,7 @@
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 
-#define CGAL_C2T3_USE_POLYHEDRON
+// #define CGAL_C2T3_USE_POLYHEDRON
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h>
@@ -261,6 +262,25 @@ int main(int argc, char **argv) {
     tr.insert (initial_point_sample.begin(), initial_point_sample.end());
   }
 
+  std::cerr << "Inserting bbox points... ";
+  {
+    const double
+      xm = (surface.bbox().xmax()-surface.bbox().xmin())/2,
+      ym = (surface.bbox().ymax()-surface.bbox().ymin())/2,
+      zm = (surface.bbox().zmax()-surface.bbox().zmin())/2;
+    
+
+    K::Iso_cuboid_3 bbox(surface.bbox().xmin()-xm,
+			 surface.bbox().ymin()-ym,
+			 surface.bbox().zmin()-zm,
+			 surface.bbox().xmax()+xm,
+			 surface.bbox().ymax()+ym,
+			 surface.bbox().zmax()+zm);
+    for(int i =0; i < 8; ++i)
+      tr.insert(bbox.vertex(i));
+  }
+  std::cerr << "done\n";
+
   // Meshing criteria
   CGAL::Surface_mesher::Curvature_size_criterion<Tr>
     curvature_size_criterion (get_double_option("distance_bound"));
@@ -286,12 +306,12 @@ int main(int argc, char **argv) {
   // Surface meshing
 
   timer.start();
-  make_piecesize_smooth_surface_mesh(c2t3,
-				     surface,
-				     criteria,
-				     edges_criteria,
-				     CGAL::Manifold_with_boundary_tag(),
-				     0);
+  CGAL::make_piecewise_smooth_surface_mesh(c2t3,
+					   surface,
+					   criteria,
+					   edges_criteria,
+					   CGAL::Manifold_with_boundary_tag(),
+					   0);
   timer.stop();
   std::cerr << ::boost::format("\nFinal number of points: %1%"
 			       "\nFinal number of facets: %2%"

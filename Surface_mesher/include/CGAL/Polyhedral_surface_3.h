@@ -126,6 +126,10 @@ public:
     CGAL::scan_OFF(input_file, polyhedron, true);
     CGAL_assertion(input_file);
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    {
+      std::ofstream dump("input_dump.off");
+      dump << polyhedron;
+    }
     timer.stop();
     std::cerr << 
       ::boost::format("done (%1%s)\n"

@@ -78,13 +78,14 @@ namespace CGAL {
       {
 	mark(e.first, e.second, e.third, info);
       }
-      void   unmark(const Cell_handle& c, const int& i, const int& j)
+      bool unmark(const Cell_handle& c, const int& i, const int& j)
       {
-	marked_edges.erase(this->make_ordered_pair(c->vertex(i), c->vertex(j)));
+	return marked_edges.erase(this->make_ordered_pair(c->vertex(i),
+							  c->vertex(j))) > 0;
       }
-      void unmark(const Edge& e)
+      bool unmark(const Edge& e)
       {
-	unmark(e.first, e.second, e.third);
+	return unmark(e.first, e.second, e.third);
       }
       Edge_info& 
       get_info(const Edge& e)
@@ -121,14 +122,14 @@ namespace CGAL {
       {
 	mark(e.first, e.second, e.third);
       }
-      void unmark(const Cell_handle& c, const int& i, const int& j)
+      bool unmark(const Cell_handle& c, const int& i, const int& j)
       {
-	marked_edges.erase(this->make_ordered_pair(c->vertex(i), 
-						   c->vertex(j)));
+	return marked_edges.erase(this->make_ordered_pair(c->vertex(i), 
+							  c->vertex(j))) > 0;
       }
-      void unmark(const Edge& e)
+      bool unmark(const Edge& e)
       {
-	unmark(e.first, e.second, e.third);
+	return unmark(e.first, e.second, e.third);
       }
     }; // end of specialiazation C2t3_mark_edges_helper_class<Tr,void>
 
@@ -167,13 +168,16 @@ public:
   class Iterator_not_in_complex {
     Self* self;
   public:
-    Iterator_not_in_complex(Self* self) : self(self) 
+    Iterator_not_in_complex(Self* self = 0) : self(self) 
     {
     }
     
     template <typename Iterator> // Facet or Edges iterators
     bool operator()(Iterator it) const {
-      return ! self->is_in_complex(*it);
+      if(self)
+	return ! self->is_in_complex(*it);
+      else
+	return true;
     }
   }; // end struct Iterator_not_in_complex
 
@@ -618,7 +622,7 @@ public:
 		if(!is_marked(e.first, e.second))
 		  edge_facet_counter.erase(it);
 	      }
-            }            
+            }
           }
         }
       }

@@ -36,9 +36,7 @@ public:
 
   Surface_mesh_default_edges_criteria_3(const FT radius_bound,
 					const FT distance_bound)
-    : tr(tr),
-      surface(surf),
-      sq_distance_bound(distance_bound*distance_bound),
+    : sq_distance_bound(distance_bound*distance_bound),
       sq_radius_bound(FT(4)*radius_bound*radius_bound)
   {
   }
@@ -59,7 +57,7 @@ public:
     typename GT::Construct_midpoint_3 midpoint = 
       GT().construct_midpoint_3_object();
 
-    return sq_distance_bound == FT(0) || 
+    return sq_distance_bound != FT(0) &&
       sq_distance(lineic_center, midpoint(va->point(), vb->point())) > 
       sq_distance_bound;
   }

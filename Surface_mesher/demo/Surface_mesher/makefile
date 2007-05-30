@@ -64,6 +64,7 @@ clean: \
                    implicit_surface_mesher.clean \
                    parameters.clean \
                    polyhedron_remesher.clean \
+                   polyhedron_remesher_with_edges.clean \
                    test_imageio.clean \
                    convert_inr_to_float.clean
 

@@ -22,6 +22,8 @@
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
 #include <CGAL/Surface_mesher/Surface_mesher_edges_level.h>
+#include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
+#include <CGAL/Surface_mesher/Surface_mesher_edges_level_visitor.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 
@@ -256,7 +258,10 @@ make_piecewise_smooth_surface_mesh(C2T3& c2t3,
   typename SurfaceMeshTraits_3::Construct_initial_points get_initial_points =
     surface_mesh_traits.construct_initial_points_object();
 
-  typedef Null_mesh_visitor Facets_and_edges_visitor;
+  typedef Surface_mesher::Visitor<typename C2T3::Triangulation, 
+    Facets_level, Null_mesh_visitor> Edges_level_visitor;
+  typedef Surface_mesher::Edges_level_visitor<typename C2T3::Triangulation, 
+    Edges_level, Edges_level_visitor> Facets_and_edges_visitor;
 
   get_initial_points(surface,
                      CGAL::inserter(c2t3.triangulation()),
@@ -264,12 +269,15 @@ make_piecewise_smooth_surface_mesh(C2T3& c2t3,
   Edges_level edges_level(c2t3, surface, surface_mesh_traits, edges_criteria);
   Facets_level facets_level(c2t3, surface, surface_mesh_traits, facets_criteria,
 			    edges_level);
-  Facets_and_edges_visitor facets_and_edges_visitor;
+
+  Null_mesh_visitor null_mesh_visitor;
+  Edges_level_visitor edges_level_visitor(&facets_level, &null_mesh_visitor);
+  Facets_and_edges_visitor facets_and_edges_visitor(&edges_level, &edges_level_visitor);
 
   edges_level.init();
   edges_level.refine_mesh();
   facets_level.scan_triangulation();
-  facets_level.refine(facets_and_edges_visitor);
+  facets_level.refine_mesh(facets_and_edges_visitor);
 }
 
 } // end namespace CGAL

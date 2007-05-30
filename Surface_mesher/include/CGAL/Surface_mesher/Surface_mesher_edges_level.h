@@ -31,44 +31,44 @@
 namespace CGAL {
 namespace Surface_mesher {
 
-  template <class Tr>
-  typename Tr::Edge
-  canonical_edge(const Tr& tr, 
-		 const typename Tr::Edge e) 
-  {
-    typedef typename Tr::Cell_handle Cell_handle;
-    typedef typename Tr::Vertex_handle Vertex_handle;
+//   template <class Tr>
+//   typename Tr::Edge
+//   canonical_edge(const Tr& tr, 
+// 		 const typename Tr::Edge e) 
+//   {
+//     typedef typename Tr::Cell_handle Cell_handle;
+//     typedef typename Tr::Vertex_handle Vertex_handle;
 
-    const Vertex_handle& va = e.first->vertex(e.second);
-    const Vertex_handle& vb = e.first->vertex(e.third);
+//     const Vertex_handle& va = e.first->vertex(e.second);
+//     const Vertex_handle& vb = e.first->vertex(e.third);
 
-    typename Tr::Cell_circulator
-      ccirc = tr.incident_cells(e),
-      begin(ccirc);
-    Cell_handle cell = ccirc;
-    do {
-      if(Cell_handle(++ccirc) < cell)
-	cell = ccirc;
-    } while(ccirc != begin);
-    return typename Tr::Edge(cell,
-			     cell->index(va),
-			     cell->index(vb));
-  }
+//     typename Tr::Cell_circulator
+//       ccirc = tr.incident_cells(e),
+//       begin(ccirc);
+//     Cell_handle cell = ccirc;
+//     do {
+//       if(Cell_handle(++ccirc) < cell)
+// 	cell = ccirc;
+//     } while(ccirc != begin);
+//     return typename Tr::Edge(cell,
+// 			     cell->index(va),
+// 			     cell->index(vb));
+//   }
 
-  template <class Tr,
-	    typename ForwardIterator, typename OutputIterator>
-  void canonical_edges(const Tr& tr,
-		       ForwardIterator begin,
-		       ForwardIterator end,
-		       OutputIterator it)
-  {
-    typedef typename Tr::Edge Edge;
+//   template <class Tr,
+// 	    typename ForwardIterator, typename OutputIterator>
+//   void canonical_edges(const Tr& tr,
+// 		       ForwardIterator begin,
+// 		       ForwardIterator end,
+// 		       OutputIterator it)
+//   {
+//     typedef typename Tr::Edge Edge;
 
-    for(ForwardIterator cit = begin; cit != end; ++cit)
-      for(int i = 1; i < 4; ++i)
-	for(int j = 0 ; j < i; ++j)
-	  *it++=canonical_edge(tr, Edge(*cit, i, j));
-  }
+//     for(ForwardIterator cit = begin; cit != end; ++cit)
+//       for(int i = 1; i < 4; ++i)
+// 	for(int j = 0 ; j < i; ++j)
+// 	  *it++=canonical_edge(tr, Edge(*cit, i, j));
+//   }
 
   template <typename Tr, 
 	    typename Surface_mesh_traits>
@@ -101,12 +101,12 @@ namespace Surface_mesher {
       tr.geom_traits().construct_midpoint_3_object();
     typename GT::Construct_circumcenter_3 circumcenter = 
       tr.geom_traits().construct_circumcenter_3_object();
-    typename GT::Construct_equidistant_line_3 equidist_line =
-      tr.geom_traits().construct_equidistant_line_3_object();
     typename GT::Construct_ray_3 create_ray = 
       tr.geom_traits().construct_ray_3_object();
     typename GT::Construct_vector_3 create_vector = 
       tr.geom_traits().construct_vector_3_object();
+    typename GT::Construct_cross_product_vector_3 cross_product = 
+      tr.geom_traits().construct_cross_product_vector_3_object();
     typename GT::Construct_point_on_3 point_on = 
       tr.geom_traits().construct_point_on_3_object();
     typename GT::Construct_translated_point_3 translate = 
@@ -192,12 +192,11 @@ namespace Surface_mesher {
 	  next_circumcenter = edge_dual[0];
 
 	// remember vc is finite.
-	const Ray_3 first_ray = create_ray(last_circumcenter,
-					   equidist_line(va->point(),
-							 vb->point(),
-							 vc->point()));
-	CGAL_assertion_code(first_ray == // to be removed
-			    object_cast<Ray_3>(tr.dual(current_cell, index_d)));
+	const Vector_3 first_vector = 
+	  cross_product(create_vector(va->point(),
+				      vb->point()),
+			create_vector(va->point(),
+				      vc->point()));
 
 	// 'index_d_in_next' is the index of the other finite vertex (with
 	// va and vd), in 'next_cell'.
@@ -205,16 +204,12 @@ namespace Surface_mesher {
 	const Vertex_handle& vd_in_next = next_cell->vertex(index_d_in_next);
 	CGAL_assertion_code(tr.is_infinite(vd_in_next));
 
-	const Ray_3 second_ray = create_ray(next_circumcenter,
-					    equidist_line(vb->point(),// special
-							  va->point(),// order
-							  vd_in_next->point()));
-	CGAL_assertion_code(second_ray == // to be removed
-			    object_cast<Ray_3>(tr.dual(cell_after,
-						       cell_after->index(next_cell))));
+	const Vector_3 second_vector = 
+	  cross_product(create_vector(vb->point(), // special
+				      va->point()),// order
+			create_vector(vb->point(),
+				      vd_in_next->point()));
 
-	const Vector_3 first_vector = create_vector(first_ray);
-	const Vector_3 second_vector = create_vector(second_ray);
 	const Vector_3 middle_vector = sum(first_vector, second_vector);
 
 	const FT sq_norm_first_vector = sq_length(first_vector);
@@ -308,7 +303,15 @@ namespace Surface_mesher {
 #endif // CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
       Point_3 point;
       if(assign(point, o))
+      {
+#ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
+        CGAL_assertion_code(
+        std::cerr << boost::format("  result=(%1%)\n")
+          % point;
+			    )
+#endif
 	return o;
+      }
     }
 
     return Object();
@@ -342,9 +345,12 @@ namespace Surface_mesher {
       typedef C2T3 Complex_2_in_triangulation_3;
       typedef typename C2T3::Triangulation Tr;
       typedef typename Tr::Edge Edge;
+      typedef typename Tr::Vertex_handle Vertex_handle;
       typedef typename Tr::Point Point_3;
-      typedef ::CGAL::Mesh_3::Simple_map_container<Edge,
-						   Point_3> Default_container;
+      typedef std::pair<Vertex_handle, Vertex_handle> Pair_of_vertices;
+      typedef std::pair<Edge, Point_3> Edge_info;
+      typedef ::CGAL::Mesh_3::Simple_map_container<Pair_of_vertices,
+						   Edge_info> Default_container;
     }; // end struct Surface_mesher_edges_base_types
 
   } // end namespace details
@@ -372,14 +378,14 @@ namespace Surface_mesher {
     typedef EdgesCriteria Edges_criteria;
     typedef Edges_criteria Criteria;
 
-    typedef typename Container::value_type Pair_edge_info;
-
     typedef typename C2T3::Triangulation Tr;
     typedef typename Tr::Point Point_3;
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Facet Facet;
     typedef typename Tr::Cell_handle Cell_handle;
+
+    typedef std::pair<Vertex_handle, Vertex_handle> Pair_of_vertices;
 
     typedef typename Tr::Geom_traits GT;
     typedef typename GT::Triangle_3 Triangle_3;
@@ -400,10 +406,68 @@ namespace Surface_mesher {
 
   private:
     template <typename T>
+    static
     void order_pair(T& a, T& b)
     {
-      if( a < b )
+      if( b < a )
 	std::swap(a, b);
+    }
+
+    template <typename T>
+    static
+    std::pair<T, T>
+    make_ordered_pair(const T& a, const T& b)
+    {
+      if( a < b )
+	return std::make_pair(a, b);
+      else
+	return std::make_pair(b, a);
+    }
+
+    static
+    Pair_of_vertices make_pair_of_vertices(const Vertex_handle& va,
+					   const Vertex_handle& vb)
+    {
+      return make_ordered_pair(va, vb);
+    }
+
+    static
+    Pair_of_vertices make_pair_of_vertices(const Edge e)
+    {
+      return make_pair_of_vertices(e.first->vertex(e.second),
+				   e.first->vertex(e.third));
+    }
+
+    template <typename ForwardIterator, typename OutputIterator>
+    static
+    void all_pair_of_vertices(ForwardIterator begin,
+			      ForwardIterator end,
+			      OutputIterator it)
+    {
+      for(ForwardIterator cit = begin; cit != end; ++cit)
+	for(int i = 1; i < 4; ++i)
+	  for(int j = 0 ; j < i; ++j)
+	    *it++=make_pair_of_vertices(Edge(*cit, i, j));
+    }
+
+    template <typename ForwardIterator, typename OutputIterator>
+    static
+    void all_edges(ForwardIterator begin,
+		   ForwardIterator end,
+		   OutputIterator it)
+    {
+      std::set<Pair_of_vertices> edges;
+      for(ForwardIterator cit = begin; cit != end; ++cit)
+	for(int i = 1; i < 4; ++i)
+	  for(int j = 0 ; j < i; ++j)
+	  {
+	    const Pair_of_vertices pair = make_pair_of_vertices(Edge(*cit, i, j));
+	    if(edges.find(pair) == edges.end())
+	    {
+	      *it++=Edge(*cit, i, j);
+	      edges.insert(pair);
+	    }
+	  }
     }
   public:
     // Constructor
@@ -435,15 +499,18 @@ namespace Surface_mesher {
 
     Edge get_next_element_impl()
     {
-      const Pair_edge_info pair = Container::get_next_element_impl();
-      refinement_point_cache = pair.second;
-      CGAL_assertion_code(Cell_handle c);
-      CGAL_assertion_code(int i);
-      CGAL_assertion_code(int j);
-      CGAL_assertion(tr.is_edge(pair.first.first->vertex(pair.first.second),
-				pair.first.first->vertex(pair.first.third),
-				c, i, j));
-      return pair.first;
+      const typename Container::value_type container_value = 
+	Container::get_next_element_impl();
+      refinement_point_cache = container_value.second.second;
+      const Edge& e = container_value.second.first;
+      CGAL_assertion_code(const Vertex_handle& va = container_value.first.first);    
+      CGAL_assertion_code(const Vertex_handle& vb = container_value.first.second);    
+      CGAL_assertion_code(const Cell_handle& c = e.first);
+      CGAL_assertion_code(const int i = e.second);
+      CGAL_assertion_code(const int j = e.third);
+      CGAL_assertion(va < vb);
+      CGAL_assertion( (c->vertex(i) == va) ? c->vertex(j) == vb : (c->vertex(j) == va && c->vertex(i) == vb) );
+      return e;
     }
 
     Point_3 refinement_point_impl(const Edge&) const
@@ -496,8 +563,8 @@ namespace Surface_mesher {
     {
       std::set<Edge> edges;
 
-      canonical_edges(tr, zone.cells.begin(), zone.cells.end(), 
-		      inserter(edges));
+      all_edges(zone.cells.begin(), zone.cells.end(), 
+		inserter(edges));
 
       for(typename std::set<Edge>::iterator eit = edges.begin();
 	  eit != edges.end();
@@ -510,27 +577,71 @@ namespace Surface_mesher {
 
     void before_insertion_impl(const Edge& e, const Point_3&, const Zone& zone)
     {
-      std::set<Edge> edges;
       CGAL_assertion_code(bool is_e_removed = false);
+      CGAL_assertion_code(const Cell_handle& c = e.first);
+      CGAL_assertion_code(Vertex_handle va = c->vertex(e.second));
+      CGAL_assertion_code(Vertex_handle vb = c->vertex(e.third));
+      CGAL_assertion_code((order_pair(va, vb)));
 
-      canonical_edges(tr, zone.cells.begin(), zone.cells.end(), 
-		      CGAL::inserter(edges));
+      std::set<Edge> edges;
+      all_edges(zone.cells.begin(), zone.cells.end(), 
+		CGAL::inserter(edges));
+
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
-      std::cerr << 
-	boost::format("     before insertion: remove %1% edges\n")
-	% edges.size();
+      int number_of_edges_removed = 0;
 #endif // CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
 
       for(typename std::set<Edge>::iterator eit = edges.begin();
 	  eit != edges.end();
 	  ++eit)
-	if(!tr.is_infinite(*eit))
+	if( !tr.is_infinite(*eit) &&
+	    c2t3.unmark(*eit) )
 	{
-	  CGAL_assertion_code(if( *eit == e) is_e_removed = true);
-	  c2t3.remove_from_complex(*eit);
-	  this->remove_element(*eit);
+	  CGAL_assertion_code(Vertex_handle eit_va = eit->first->vertex(eit->second));
+	  CGAL_assertion_code(Vertex_handle eit_vb = eit->first->vertex(eit->third));
+	  CGAL_assertion_code(order_pair(eit_va, eit_vb));
+	  CGAL_assertion_code(if(va == eit_va && vb == eit_vb) is_e_removed = true);
+// 	  c2t3.remove_from_complex(*eit);
+	  this->remove_element(make_pair_of_vertices(*eit));
+#ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
+	  ++number_of_edges_removed;
+#endif
 	}
+#ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
+      std::cerr << 
+	boost::format("     before insertion: remove %1% edges\n")
+	% number_of_edges_removed;
+#endif
       CGAL_assertion(is_e_removed == true);
+    }
+
+    // for visitors
+    void remove_edges(const Point_3&, const Zone& zone)
+    {
+      std::set<Edge> edges;
+      all_edges(zone.cells.begin(), zone.cells.end(), 
+		CGAL::inserter(edges));
+
+#ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
+      int number_of_edges_removed = 0;
+#endif // CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
+
+      for(typename std::set<Edge>::iterator eit = edges.begin();
+	  eit != edges.end();
+	  ++eit)
+	if( !tr.is_infinite(*eit) &&
+	    c2t3.unmark(*eit) )
+	{
+	  this->remove_element(make_pair_of_vertices(*eit));
+#ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
+	  ++number_of_edges_removed;
+#endif
+	}
+#ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
+      std::cerr << 
+	boost::format("     before insertion: remove %1% edges\n")
+	% number_of_edges_removed;
+#endif
     }
 
     void after_insertion_impl(const Vertex_handle& v)
@@ -540,8 +651,8 @@ namespace Surface_mesher {
 
       std::set<Edge> edges;
 
-      canonical_edges(tr, cellules.begin(), cellules.end(),
-		      inserter(edges));
+      all_edges(cellules.begin(), cellules.end(),
+		CGAL::inserter(edges));
 
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
       std::cerr << 
@@ -564,15 +675,14 @@ namespace Surface_mesher {
   private: 
     /** Test if the edge e is encroached by the point p, that is if the
 	circumscribed sphere centered a the surfacic center of e contains
-	the point p in its interior.
-
-	Note: e needs to be canonical. */
-    bool test_if_edge_is_encroached(const Edge& e, const Point_3& p)
+	the point p in its interior. */
+    bool test_if_edge_is_encroached(const Edge e, const Point_3& p)
     {
       typename GT::Compute_squared_distance_3 sq_distance =
 	tr.geom_traits().compute_squared_distance_3_object();
 
-      if( (!tr.is_infinite(e)) && c2t3.is_marked(e))
+      if( !tr.is_infinite(e) &&
+	  c2t3.is_marked(e) )
       {
 	Edge_info& info = c2t3.get_info(e);
 	if(!info.is_cached)
@@ -587,7 +697,9 @@ namespace Surface_mesher {
 	   sq_distance(info.lineic_center,
 		       e.first->vertex(e.second)->point()))
 	{
-	  this->add_element(e, info.lineic_center);
+	  this->add_element(make_pair_of_vertices(e),
+			    std::make_pair(e,
+					   info.lineic_center));
 	  return true;
 	}
 	else
@@ -613,13 +725,17 @@ namespace Surface_mesher {
       Point_3 center;
       if(is_edge_in_restricted_triangulation(e, center))
       {
-	CGAL_assertion(e == canonical_edge(tr, e));
+// 	CGAL_assertion(e == canonical_edge(tr, e));
 	Edge_info info;
 	info.is_cached = true;
 	info.lineic_center = center;
 	c2t3.mark(e, info);
 	if(criteria.is_bad(e, center))
-	  this->add_element(e, center);
+	{
+	  this->add_element(make_pair_of_vertices(e),
+			    std::make_pair(e,
+					   center));
+	}
       }
     }
 

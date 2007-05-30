@@ -73,11 +73,14 @@ complex. If \ccc{e} is not in the complex, inserts it.}
 {Marks edge \ccc{(c,i,j)} of  the 2D complex. If \ccc{e} is not in the
   complex, inserts it.}
 \ccGlue
-\ccMethod{void unmark(Edge e);}{Unmarks edge \ccc{e} of the 2D
-complex (but do not remove it from the complex).}
+\ccMethod{bool unmark(Edge e);}{Unmarks edge \ccc{e} of the 2D
+complex (but do not remove it from the complex).
+ Returns \ccc{true} iff \ccc{e} was marked.}
 \ccGlue
-\ccMethod{void unmark(Cell_handle c, int i, int j);}
-{Unmarks edge \ccc{(c,i,j)} of  the 2D complex (but do not remove it from the complex).}
+\ccMethod{bool unmark(Cell_handle c, int i, int j);}
+{Unmarks edge \ccc{(c,i,j)} of  the 2D complex (but do not remove it from
+  the complex).
+Returns \ccc{true} iff \ccc{e} was marked.}
 
 \ccMethod{void set_info(Edge e, Edge_info ei);}
 {Sets info attached to edge \ccc{e} in the 2D complex.
