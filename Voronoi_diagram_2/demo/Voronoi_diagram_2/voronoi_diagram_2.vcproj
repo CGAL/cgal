@@ -90,7 +90,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
-				OutputFile="$(OutDir)/robustness.exe"
+				OutputFile="$(OutDir)/voronoi_diagram_2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				GenerateDebugInformation="FALSE"
@@ -103,8 +103,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o robustness.moc robustness.cpp"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -152,14 +151,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o my_window.moc my_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o my_window.moc my_window.h
+"
 						Outputs="my_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o my_window.moc my_window.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o my_window.moc my_window.h
+"
 						Outputs="my_window.moc"/>
 				</FileConfiguration>
 			</File>
@@ -169,14 +170,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h
+"
 						Outputs="qt_file_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h
+"
 						Outputs="qt_file_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
@@ -186,14 +189,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h
+"
 						Outputs="qt_layers_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h
+"
 						Outputs="qt_layers_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
