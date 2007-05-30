@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="OUTDIR"
-			IntermediateDirectory="OUTDIR"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -61,8 +61,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="OUTDIR"
-			IntermediateDirectory="OUTDIR"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
