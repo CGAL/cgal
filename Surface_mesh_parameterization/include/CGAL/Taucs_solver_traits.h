@@ -29,7 +29,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include <cassert>
-#include <stdio.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -84,7 +83,7 @@ public:
 #ifdef DEBUG_TRACE
         // Turn on TAUCS trace
         std::cerr.flush();
-        taucs_logfile("stderr");
+        taucs_logfile((char*)"stderr");
 #endif
 
         try
@@ -164,7 +163,7 @@ public:
 #ifdef DEBUG_TRACE
         // Turn on TAUCS trace
         std::cerr.flush();
-        taucs_logfile("stderr");
+        taucs_logfile((char*)"stderr");
 #endif
 
         try
