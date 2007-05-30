@@ -6,8 +6,7 @@
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
 #include <fstream>
 
 

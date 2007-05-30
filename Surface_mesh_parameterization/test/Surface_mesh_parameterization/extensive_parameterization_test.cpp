@@ -37,10 +37,7 @@
 #include "Parameterization_polyhedron_adaptor_ex.h"
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+#include <cstdlib>
 #include <fstream>
 #include <cassert>
 
@@ -59,7 +56,8 @@ typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
 typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
 
 // Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>                                                            Seam;
+typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
+                                                            Seam;
 
 
 // ----------------------------------------------------------------------------

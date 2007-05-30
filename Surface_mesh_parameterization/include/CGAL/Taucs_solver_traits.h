@@ -29,7 +29,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include <cassert>
-#include <stdio.h>
 
 CGAL_BEGIN_NAMESPACE
 
