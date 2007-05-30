@@ -49,7 +49,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Triangle_2*,// used for indirection
-			       const bool non_standard_geometry)  // true means it is a hollow triangle
+			       const CGAL::PCA_dimension_2_tag& tag)
 {
   // types
   typedef typename K::FT       FT;
@@ -64,9 +64,8 @@ linear_least_squares_fitting_2(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  if(!non_standard_geometry) {
   // compute centroid
-  c = centroid(first,beyond,K());
+  c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
@@ -97,24 +96,24 @@ linear_least_squares_fitting_2(InputIterator first,
 		   t[1].y() - y0, t[2].y() - y0};
 
     Matrix transformation = init_Matrix<K>(2,delta);
-    FT detA = fabs(LA::determinant(transformation));
-    CGAL_assertion(detA!=0);
+    FT area = 0.5 * std::abs(LA::determinant(transformation));
+    CGAL_assertion(area!=0);
 
     // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
     
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = detA * transformation * moment * LA::transpose(transformation);
+    transformation = 2 * area * transformation * moment * LA::transpose(transformation);
     
     // Translate the 2nd order moment to (x0,y0).
     FT xav0 = (delta[0]+delta[1])/3.0;
     FT yav0 = (delta[2]+delta[3])/3.0;
     
     // and add to the covariance matrix
-    covariance[0] += transformation[0][0] + 0.5 * detA * (x0*xav0*2 + x0*x0);
-    covariance[1] += transformation[0][1] + 0.5 * detA * (x0*yav0 + xav0*y0 + x0*y0);
-    covariance[2] += transformation[1][1] + 0.5 * detA * (y0*yav0*2 + y0*y0);
+    covariance[0] += transformation[0][0] + area * (x0*xav0*2 + x0*x0);
+    covariance[1] += transformation[0][1] + area * (x0*yav0 + xav0*y0 + x0*y0);
+    covariance[2] += transformation[1][1] + area * (y0*yav0*2 + y0*y0);
 
-    mass += 0.5 *detA;
+    mass += area;
   }
   
   // Translate the 2nd order moment calculated about the origin to 
@@ -122,6 +121,8 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
   covariance[2] += mass * (-1.0 * c.y() * c.y());
+  // to remove later
+  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -149,23 +150,73 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } 
-  }
-  else {
-    std::list<Segment_2> segments;
-    
-    for(InputIterator it = first;
-	it != beyond;
-	it++)
-    {
-      const Triangle& t = *it;
-      segments.push_back(Segment_2(t[0],t[1]));
-      segments.push_back(Segment_2(t[1],t[2]));
-      segments.push_back(Segment_2(t[2],t[0]));      
-    }    
+} // end linear_least_squares_fitting_2 for triangle set with 2D tag
 
-    return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K());
-  }
-} // end linear_least_squares_fitting_2 for triangle set
+template < typename InputIterator, typename K >
+typename K::FT
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_2& line,   // best fit line
+                               typename K::Point_2& c,     // centroid
+                               const K&,                   // kernel
+                               const typename K::Triangle_2*,// used for indirection
+			       const CGAL::PCA_dimension_1_tag& tag)
+{
+  // types
+
+  typedef typename K::Triangle_2 Triangle;
+  typedef typename K::Segment_2  Segment_2;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+  
+  std::list<Segment_2> segments;  
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    const Triangle& t = *it;
+    segments.push_back(Segment_2(t[0],t[1]));
+    segments.push_back(Segment_2(t[1],t[2]));
+    segments.push_back(Segment_2(t[2],t[0]));      
+  }    
+  
+  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag);
+  
+} // end linear_least_squares_fitting_2 for triangle set with 1D tag
+
+template < typename InputIterator, typename K >
+typename K::FT
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_2& line,   // best fit line
+                               typename K::Point_2& c,     // centroid
+                               const K&,                   // kernel
+                               const typename K::Triangle_2*,// used for indirection
+			       const CGAL::PCA_dimension_0_tag& tag)
+{
+  // types
+
+  typedef typename K::Triangle_2 Triangle;
+  typedef typename K::Point_2  Point_2;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+  
+  std::list<Point_2> points;  
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    const Triangle& t = *it;
+    points.push_back(Point_2(t[0]));
+    points.push_back(Point_2(t[1]));
+    points.push_back(Point_2(t[2]));      
+  }    
+  
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag);
+  
+} // end linear_least_squares_fitting_2 for triangle set with 0D tag
 
 } // end namespace CGALi
 

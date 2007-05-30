@@ -18,7 +18,7 @@ int main()
   points.push_back(Point_2(3.0,0.0));
 
   Line_2 line;
-  linear_least_squares_fitting_2(points.begin(),points.end(),line);
+  linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
 
   return 0;
 }

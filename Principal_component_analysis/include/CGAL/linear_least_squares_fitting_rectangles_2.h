@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Iso_rectangle_2*,// used for indirection
-			       const bool non_standard_geometry)  // true means it is an empty rectangle
+			       const CGAL::PCA_dimension_2_tag& tag)
 {
   // types
   typedef typename K::FT       FT;
@@ -62,9 +62,9 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
-  if(!non_standard_geometry) {
+
   // compute centroid
-  c = centroid(first,beyond,K());
+  c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
@@ -125,7 +125,7 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
   // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
+  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -153,24 +153,75 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } 
-  }
-  else {
-    std::list<Segment_2> segments;
-    
-    for(InputIterator it = first;
-	it != beyond;
-	it++)
-    {
-      const Iso_rectangle& t = *it;
-      segments.push_back(Segment_2(t[0],t[1]));
-      segments.push_back(Segment_2(t[1],t[2]));
-      segments.push_back(Segment_2(t[2],t[3]));      
-      segments.push_back(Segment_2(t[3],t[0]));      
-    }    
+} // end linear_least_squares_fitting_2 for rectangle set with 2D tag
 
-    return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K());
-  }
-} // end linear_least_squares_fitting_2 for rectangle set
+template < typename InputIterator, typename K >
+typename K::FT
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_2& line,   // best fit line
+                               typename K::Point_2& c,     // centroid
+                               const K&,                   // kernel
+                               const typename K::Iso_rectangle_2*,// used for indirection
+			       const CGAL::PCA_dimension_1_tag& tag)
+{
+  // types
+  typedef typename K::Iso_rectangle_2 Iso_rectangle;
+  typedef typename K::Segment_2         Segment_2;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  std::list<Segment_2> segments;
+  
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    const Iso_rectangle& t = *it;
+    segments.push_back(Segment_2(t[0],t[1]));
+    segments.push_back(Segment_2(t[1],t[2]));
+    segments.push_back(Segment_2(t[2],t[3]));      
+    segments.push_back(Segment_2(t[3],t[0]));      
+  }    
+
+  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag);
+
+} // end linear_least_squares_fitting_2 for rectangle set with 1D tag
+
+template < typename InputIterator, typename K >
+typename K::FT
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_2& line,   // best fit line
+                               typename K::Point_2& c,     // centroid
+                               const K&,                   // kernel
+                               const typename K::Iso_rectangle_2*,// used for indirection
+			       const CGAL::PCA_dimension_0_tag& tag)
+{
+  // types
+  typedef typename K::Iso_rectangle_2 Iso_rectangle;
+  typedef typename K::Point_2         Point_2;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  std::list<Point_2> points;
+  
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    const Iso_rectangle& t = *it;
+    points.push_back(Point_2(t[0]));
+    points.push_back(Point_2(t[1]));
+    points.push_back(Point_2(t[2]));      
+    points.push_back(Point_2(t[3]));      
+  }    
+
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag);
+
+} // end linear_least_squares_fitting_2 for rectangle set with 0D tag
 
 } // end namespace CGALi
 

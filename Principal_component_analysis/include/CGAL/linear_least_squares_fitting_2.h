@@ -21,19 +21,21 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
-#include <CGAL/centroid.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/linear_least_squares_fitting_points_2.h>
 #include <CGAL/linear_least_squares_fitting_segments_2.h>
 #include <CGAL/linear_least_squares_fitting_triangles_2.h>
 #include <CGAL/linear_least_squares_fitting_circles_2.h>
 #include <CGAL/linear_least_squares_fitting_rectangles_2.h>
+#include <CGAL/PCA_tags.h>
 
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
 template < typename InputIterator, 
-           typename K >
+           typename K , typename tag>
 inline
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
@@ -41,59 +43,63 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,
                                typename K::Point_2& centroid,
                                const K& k,
-			       const bool non_standard_geometry = false)
+			       const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,
-                                               centroid, k, (Value_type*) NULL, non_standard_geometry);
+                                               centroid, k, (Value_type*) NULL, t);
 }
 
 template < typename InputIterator, 
-           typename K >
+           typename K, typename tag >
 inline
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,
                                const K& k,
-			       bool non_standard_geometry = false)
+			       const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
   typename K::Point_2 centroid;
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,
-                                               centroid, k,(Value_type*) NULL, non_standard_geometry);
+                                               centroid, k,(Value_type*) NULL, t);
 }
 
 // deduces the kernel from the points in container.
 template < typename InputIterator, 
            typename Line,
-           typename Point>
+           typename Point, typename tag>
 inline
 typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                Line& line,
                                Point& centroid,
-			       bool non_standard_geometry = false)
+			       const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,K(), non_standard_geometry);
+  return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,K(), t);
 }
 
 // does not return the centroid and deduces the kernel as well.
 template < typename InputIterator, 
-           typename Line >
+           typename Line, typename tag >
 inline
 typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                Line& line,
-			       bool non_standard_geometry = false)
+			       const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_2(first,beyond,line,K(), non_standard_geometry);
+  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
+  return CGAL::linear_least_squares_fitting_2(first,beyond,line,K(), t);
 }
 
 CGAL_END_NAMESPACE

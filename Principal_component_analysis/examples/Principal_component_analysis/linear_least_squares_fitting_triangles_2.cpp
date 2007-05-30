@@ -14,13 +14,15 @@ typedef K::Triangle_2        Triangle_2;
 int main()
 {
   std::list<Triangle_2> triangles;
-  triangles.push_back(Triangle_2(Point_2(1.0,0.0),Point_2(0.0,1.0),Point_2(1.0,1.0)));
-  triangles.push_back(Triangle_2(Point_2(-1.0,0.0),Point_2(0.0,1.0),Point_2(-1.0,1.0)));
+  Point_2 c;
+  triangles.push_back(Triangle_2(Point_2(0.0,0.0),Point_2(0.0,1.0),Point_2(1.0,0.0)));
+  //  triangles.push_back(Triangle_2(Point_2(-1.0,0.0),Point_2(0.0,1.0),Point_2(-1.0,1.0)));
 
   Line_2 line;
-  FT i = linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line);
+  FT i = linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,c,CGAL::PCA_dimension_0_tag());
 
   std::cout<<"accuracy: "<<i<<std::endl;
   std::cout<<line<<std::endl;
+  std::cout<<"centroid: "<<c<<std::endl;
   return 0;
 }

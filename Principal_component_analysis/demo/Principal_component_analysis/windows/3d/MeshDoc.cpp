@@ -85,41 +85,41 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// off extension
 	if(extension == ".off")
 	{
-		// read from stream
-		std::ifstream stream(lpszPathName);
-		if(!stream)
-		{
-			AfxMessageBox("Unable to open file");
-			return false;
-		}
-		stream >> m_mesh;
-
-    // add mesh points to point set
-    for(Mesh::Point_iterator it = m_mesh.points_begin();
-        it != m_mesh.points_end();
-        it++)
-      m_points.push_back(*it);
-
-    // add mesh triangles to triangle set
-    for(Mesh::Facet_iterator f = m_mesh.facets_begin();
-        f != m_mesh.facets_end();
-        f++)
-    {
-      const Point& a = f->halfedge()->vertex()->point();
-      const Point& b = f->halfedge()->next()->vertex()->point();
-      const Point& c = f->halfedge()->next()->next()->vertex()->point();
-      m_triangles.push_back(Triangle(a,b,c));
-    }
+	  // read from stream
+	  std::ifstream stream(lpszPathName);
+	  if(!stream)
+	    {
+	      AfxMessageBox("Unable to open file");
+	      return false;
+	    }
+	  stream >> m_mesh;
+	  
+	  // add mesh points to point set
+	  for(Mesh::Point_iterator it = m_mesh.points_begin();
+	      it != m_mesh.points_end();
+	      it++)
+	    m_points.push_back(*it);
+	  
+	  // add mesh triangles to triangle set
+	  for(Mesh::Facet_iterator f = m_mesh.facets_begin();
+	      f != m_mesh.facets_end();
+	      f++)
+	    {
+	      const Point& a = f->halfedge()->vertex()->point();
+	      const Point& b = f->halfedge()->next()->vertex()->point();
+	      const Point& c = f->halfedge()->next()->next()->vertex()->point();
+	      m_triangles.push_back(Triangle(a,b,c));
+	    }
 	}
 	else
-		{
-			AfxMessageBox("Unknown extension");
-			return false;
-		}
+	  {
+	    AfxMessageBox("Unknown extension");
+	    return false;
+	  }
+	
+	OnFitFitpointset();
 
-  OnFitFitpointset();
-
-
+	
 	return TRUE;
 }
 

@@ -25,7 +25,9 @@
 #include <iterator>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/Dimension_utils.h>
+#include <CGAL/PCA_tags.h>
 
+#include <list>
 // Functions to compute the centroid of N points.
 // Works in 2D and 3D.
 
@@ -38,6 +40,8 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
+//:::::::::: 2D Objects :::::::::::::::::::
+
 // computes the centroid of a 2D point set
 // takes an iterator range over K::Point_2
 template < typename InputIterator, 
@@ -46,7 +50,8 @@ typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
          const K&,
-         const typename K::Point_2*)
+         const typename K::Point_2*,
+	 const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::Vector_2 Vector;
   typedef typename K::FT FT;
@@ -63,40 +68,45 @@ centroid(InputIterator begin,
   return ORIGIN + v / (FT)nb_pts;
 }// end centroid of a 2D point set
 
-// computes the centroid of a 3D point set
-// takes an iterator range over K::Point_3
-template < typename InputIterator, 
-           typename K >
-typename K::Point_3
-centroid(InputIterator begin, 
-         InputIterator end, 
-         const K& ,
-         const typename K::Point_3*)
-{
-  typedef typename K::Vector_3 Vector;
-  typedef typename K::FT FT;
-
-  CGAL_precondition(begin != end);
-
-  Vector v = NULL_VECTOR;
-  unsigned int nb_pts = 0;
-  while (begin != end) 
-  {
-    v = v + (*begin++ - ORIGIN);
-    nb_pts++;
-  }
-  return ORIGIN + v / (FT)nb_pts;
-}// end centroid of a 3D point set
-
 // computes the centroid of a 2D segment set
 // takes an iterator range over K::Segment_2
+
+// centriod for 2D segment set with 0D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Segment_2*,
+	 const CGAL::PCA_dimension_0_tag& tag)
+{
+  typedef typename K::Point_2  Point;
+  typedef typename K::Segment_2 Segment;
+  
+  CGAL_precondition(begin != end);
+  
+  std::list<Point> points;  
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Segment& s = *it;
+    points.push_back(s[0]);
+    points.push_back(s[1]);
+  } 
+  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+}// end centriod for 2D segment set with 0D tag
+
+// centriod for 2D segment set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
          const K& ,
-         const typename K::Segment_2*)
+         const typename K::Segment_2*,
+	 const CGAL::PCA_dimension_1_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -119,17 +129,78 @@ centroid(InputIterator begin,
   }
   CGAL_assertion(sum_lengths != 0.0);
   return ORIGIN + v / sum_lengths;
-} // end centroid of a 2D segment set
+} // end centroid of a 2D segment set with 1D tag
 
 // computes the centroid of a 2D triangle set
 // takes an iterator range over K::Triangle_2
+
+// centriod for 2D triangle set with 0D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Triangle_2*,
+	 const CGAL::PCA_dimension_0_tag& tag)
+{
+  typedef typename K::Triangle_2 Triangle;
+  typedef typename K::Point_2 Point;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Point> points;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Triangle& triangle = *it;
+    points.push_back(triangle[0]);
+    points.push_back(triangle[1]);
+    points.push_back(triangle[2]);
+  }
+  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+
+} // end centroid of a 2D triangle set with 0D tag
+
+// centriod for 2D triangle set with 1D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Triangle_2*,
+	 const CGAL::PCA_dimension_1_tag& tag)
+{
+  typedef typename K::Triangle_2 Triangle;
+  typedef typename K::Segment_2 Segment;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Segment> segments;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Triangle& triangle = *it;
+    segments.push_back(triangle[0],triangle[1]);
+    segments.push_back(triangle[1],triangle[2]);
+    segments.push_back(triangle[2],triangle[0]);
+  }
+  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+
+} // end centroid of a 2D triangle set with 1D tag
+
+// centriod for 2D triangle set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
          const K& ,
-         const typename K::Triangle_2*)
+         const typename K::Triangle_2*,
+	 const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -152,17 +223,53 @@ centroid(InputIterator begin,
   }
   CGAL_assertion(sum_areas != 0.0);
   return ORIGIN + v / sum_areas;
-} // end centroid of a 2D triangle set
+} // end centroid of a 2D triangle set with 2D tag
 
 // computes the centroid of a 2D circle set
 // takes an iterator range over K::Circle_2
+
+// centriod for 2D circle set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
          const K& ,
-         const typename K::Circle_2*)
+         const typename K::Circle_2*,
+	 const CGAL::PCA_dimension_1_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_2 Vector;
+  typedef typename K::Point_2  Point;
+  typedef typename K::Circle_2 Circle;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_lengths = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Circle& s = *it;
+    FT radius = std::sqrt(s.squared_radius());
+    Point c = s.center();
+    v = v + radius * (c - ORIGIN);
+    sum_lengths += radius;
+  }
+  CGAL_assertion(sum_lengths != 0.0);
+  return ORIGIN + v / sum_lengths;
+} // end centroid of a 2D circle set with 1D tag
+
+// centriod for 2D circle set with 2D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& ,
+         const typename K::Circle_2*,
+	 const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -179,24 +286,86 @@ centroid(InputIterator begin,
   {
     const Circle& s = *it;
     FT sq_radius = s.squared_radius();
-    //    Point c = K().construct_midpoint_2_object()(s[0],s[1]);
     Point c = s.center();
     v = v + sq_radius * (c - ORIGIN);
     sum_areas += sq_radius;
   }
   CGAL_assertion(sum_areas != 0.0);
   return ORIGIN + v / sum_areas;
-} // end centroid of a 2D circle set
+} // end centroid of a 2D circle set with 2D tag
 
 // computes the centroid of a 2D rectangle set
 // takes an iterator range over K::Iso_Rectangle_2
+
+// centriod for 2D rectangle set with 0D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Iso_rectangle_2*,
+	 const CGAL::PCA_dimension_0_tag& tag)
+{
+  typedef typename K::Iso_rectangle_2 Iso_rectangle;
+  typedef typename K::Point_2 Point;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Point> points;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Iso_rectangle& r = *it;
+    points.push_back(r[0]);
+    points.push_back(r[1]);
+    points.push_back(r[2]);
+    points.push_back(r[3]);
+  }
+  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+
+} // end centroid of a 2D rectangle set with 0D tag
+
+// centriod for 2D rectangle set with 1D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Iso_rectangle_2*,
+	 const CGAL::PCA_dimension_1_tag& tag)
+{
+  typedef typename K::Iso_rectangle_2 Iso_rectangle;
+  typedef typename K::Segment_2 Segment;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Segment> segments;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Iso_rectangle& r = *it;
+    segments.push_back(r[0],r[1]);
+    segments.push_back(r[1],r[2]);
+    segments.push_back(r[2],r[3]);
+    segments.push_back(r[3],r[0]);
+  }
+  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+
+} // end centroid of a 2D rectangle set with 1D tag
+
+// centriod for 2D rectangle set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
 centroid(InputIterator begin, 
          InputIterator end, 
          const K& ,
-         const typename K::Iso_rectangle_2*)
+         const typename K::Iso_rectangle_2*,
+	 const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -219,17 +388,141 @@ centroid(InputIterator begin,
   }
   CGAL_assertion(sum_areas != 0.0);
   return ORIGIN + v / sum_areas;
-} // end centroid of a 2D rectangle set
+} // end centroid of a 2D rectangle set with 2D tag
 
-// computes the centroid of a 3D triangle set
-// takes an iterator range over K::Triangle_3
+//::::::::::: 3D Objects ::::::::::::::::::::::::::
+
+// computes the centroid of a 3D point set
+// takes an iterator range over K::Point_3
+
+// centriod for 3D point set with 0D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K&,
+         const typename K::Point_3*,
+	 const CGAL::PCA_dimension_0_tag& tag)
+{
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::FT FT;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  unsigned int nb_pts = 0;
+  while (begin != end) 
+  {
+    v = v + (*begin++ - ORIGIN);
+    nb_pts++;
+  }
+  return ORIGIN + v / (FT)nb_pts;
+}// end centroid of a 3D point set with 0D tag
+
+// centriod for 3D segment set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
 centroid(InputIterator begin, 
          InputIterator end, 
          const K& ,
-         const typename K::Triangle_3*)
+         const typename K::Segment_3*,
+	 const CGAL::PCA_dimension_1_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Segment_3 Segment;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_lengths = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Segment& s = *it;
+    FT length = std::sqrt(std::abs(s.squared_length()));
+    Point c = K().construct_midpoint_3_object()(s[0],s[1]);
+    v = v + length * (c - ORIGIN);
+    sum_lengths += length;
+  }
+  CGAL_assertion(sum_lengths != 0.0);
+  return ORIGIN + v / sum_lengths;
+} // end centroid of a 3D segment set with 1D tag
+
+// computes the centroid of a 3D triangle set
+// takes an iterator range over K::Triangle_3
+
+// centriod for 3D triangle set with 0D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Triangle_3*,
+	 const CGAL::PCA_dimension_0_tag& tag)
+{
+  typedef typename K::Triangle_3 Triangle;
+  typedef typename K::Point_3 Point;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Point> points;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Triangle& triangle = *it;
+    points.push_back(triangle[0]);
+    points.push_back(triangle[1]);
+    points.push_back(triangle[2]);
+  }
+  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+
+} // end centroid of a 3D triangle set with 0D tag
+
+// centriod for 3D triangle set with 1D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Triangle_3*,
+	 const CGAL::PCA_dimension_1_tag& tag)
+{
+  typedef typename K::Triangle_3 Triangle;
+  typedef typename K::Segment_3 Segment;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Segment> segments;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Triangle& triangle = *it;
+    segments.push_back(triangle[0],triangle[1]);
+    segments.push_back(triangle[1],triangle[2]);
+    segments.push_back(triangle[2],triangle[0]);
+  }
+  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+
+} // end centroid of a 3D triangle set with 1D tag
+
+// centriod for 3D triangle set with 2D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& ,
+         const typename K::Triangle_3*,
+	 const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -252,39 +545,284 @@ centroid(InputIterator begin,
   }
   CGAL_assertion(sum_areas != 0.0);
   return ORIGIN + v / sum_areas;
-} // end centroid of a 3D triangle set
+} // end centroid of a 3D triangle set with 2D tag
+
+// computes the centroid of a 3D sphere set
+// takes an iterator range over K::Sphere_3
+
+// centriod for 3D sphere set with 2D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& ,
+         const typename K::Sphere_3*,
+	 const CGAL::PCA_dimension_2_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Sphere_3 Sphere;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_areas = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Sphere& sphere = *it;
+    FT unsigned_area = sphere.squared_radius();
+    Point c = sphere.center();
+    v = v + unsigned_area * (c - ORIGIN);
+    sum_areas += unsigned_area;
+  }
+  CGAL_assertion(sum_areas != 0.0);
+  return ORIGIN + v / sum_areas;
+} // end centroid of a 3D sphere set with 2D tag
+
+// centriod for 3D sphere set with 3D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& ,
+         const typename K::Sphere_3*,
+	 const CGAL::PCA_dimension_3_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Sphere_3 Sphere;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_volumes = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Sphere& sphere = *it;
+    FT unsigned_volume = sphere.squared_radius() * std::sqrt(sphere.squared_radius());
+    Point c = sphere.center();
+    v = v + unsigned_volume * (c - ORIGIN);
+    sum_volumes += unsigned_volume;
+  }
+  CGAL_assertion(sum_volumes != 0.0);
+  return ORIGIN + v / sum_volumes;
+} // end centroid of a 3D sphere set with 3 tag
+
+// computes the centroid of a 3D cuboid set
+// takes an iterator range over K::Iso_cuboid_3
+
+// centriod for 3D cuboid set with 0D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+          const K& k,
+         const typename K::Iso_cuboid_3*,
+	 const CGAL::PCA_dimension_0_tag& tag)
+{
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
+  typedef typename K::Point_3 Point;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Point> points;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Iso_cuboid& cuboid = *it;
+    points.push_back(cuboid[0]);
+    points.push_back(cuboid[1]);
+    points.push_back(cuboid[2]);
+    points.push_back(cuboid[3]);
+    points.push_back(cuboid[4]);
+    points.push_back(cuboid[5]);
+    points.push_back(cuboid[6]);
+    points.push_back(cuboid[7]);
+  }
+  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+
+} // end centroid of a 3D cuboid set with 0D tag
+
+// centriod for 3D cuboid set with 1D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+          const K& k,
+         const typename K::Iso_cuboid_3*,
+	 const CGAL::PCA_dimension_1_tag& tag)
+{
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
+  typedef typename K::Segment_3 Segment;
+
+  CGAL_precondition(begin != end);
+  
+  std::list<Segment> segments;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Iso_cuboid& cuboid = *it;
+    segments.push_back(cuboid[0],cuboid[1]);
+    segments.push_back(cuboid[1],cuboid[2]);
+    segments.push_back(cuboid[2],cuboid[3]);
+    segments.push_back(cuboid[3],cuboid[0]);
+    segments.push_back(cuboid[0],cuboid[5]);
+    segments.push_back(cuboid[5],cuboid[4]);
+    segments.push_back(cuboid[4],cuboid[3]);
+    segments.push_back(cuboid[1],cuboid[6]);
+    segments.push_back(cuboid[6],cuboid[7]);
+    segments.push_back(cuboid[7],cuboid[2]);
+    segments.push_back(cuboid[4],cuboid[7]);
+    segments.push_back(cuboid[5],cuboid[6]);
+  }
+  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+
+} // end centroid of a 3D cuboid set with 1D tag
+
+// centriod for 3D cuboid set with 2D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+          const K& ,
+         const typename K::Iso_cuboid_3*,
+	 const CGAL::PCA_dimension_2_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_areas = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Iso_cuboid& cuboid = *it;
+    FT unsigned_area = 2 * ((cuboid.xmax()-cuboid.xmin())*(cuboid.ymax()-cuboid.ymin()) + (cuboid.xmax()-cuboid.xmin())*(cuboid.zmax()-cuboid.zmin()) + (cuboid.ymax()-cuboid.ymin())*(cuboid.zmax()-cuboid.zmin()));
+    Point c = K().construct_centroid_3_object()(cuboid[0],cuboid[1],cuboid[3],cuboid[5]);
+    v = v + unsigned_area * (c - ORIGIN);
+    sum_areas += unsigned_area;
+  }
+  CGAL_assertion(sum_areas != 0.0);
+  return ORIGIN + v / sum_areas;
+} // end centroid of a 3D cuboid set with 2D tag
+
+// centriod for 3D cuboid set with 3D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+          const K& ,
+         const typename K::Iso_cuboid_3*,
+	 const CGAL::PCA_dimension_3_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_volumes = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Iso_cuboid& cuboid = *it;
+    FT unsigned_volume = cuboid.volume();
+    Point c = K().construct_centroid_3_object()(cuboid[0],cuboid[1],cuboid[3],cuboid[5]);
+    v = v + unsigned_volume * (c - ORIGIN);
+    sum_volumes += unsigned_volume;
+  }
+  CGAL_assertion(sum_volumes != 0.0);
+  return ORIGIN + v / sum_volumes;
+} // end centroid of a 3D cuboid set with 3D tag
+
+// centriod for 3D Tetrahedron set with 3D tag
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+          const K& ,
+         const typename K::Tetrahedron_3*,
+	 const CGAL::PCA_dimension_3_tag& tag)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Tetrahedron_3 Tetrahedron;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_volumes = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Tetrahedron& Tetrahedron = *it;
+    FT unsigned_volume = Tetrahedron.volume();
+    Point c = K().construct_centroid_3_object()(Tetrahedron[0],Tetrahedron[1],Tetrahedron[2],Tetrahedron[3]);
+    v = v + unsigned_volume * (c - ORIGIN);
+    sum_volumes += unsigned_volume;
+  }
+  CGAL_assertion(sum_volumes != 0.0);
+  return ORIGIN + v / sum_volumes;
+} // end centroid of a 3D Tetrahedron set with 3D tag
 
 } // namespace CGALi
 
 // computes the centroid of a set of kernel objects
 // takes an iterator range over kernel objects
 template < typename InputIterator, 
-           typename K >
+           typename K, 
+	   typename tag  >
 inline
 typename Point<Dimension<typename std::iterator_traits<InputIterator>::value_type, K>::value,
                K
               >::type
 centroid(InputIterator begin,
          InputIterator end, 
-         const K& k)
+         const K& k,
+	 const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return CGALi::centroid(begin, end, k,(Value_type*) NULL);
+  return CGALi::centroid(begin, end, k,(Value_type*) NULL, t);
 }
 
 // this one takes an iterator range over kernel objects
 // and uses Kernel_traits<> to find out its kernel.
-template < typename InputIterator >
+template < typename InputIterator, typename tag >
 inline
 typename Point<Dimension<
                typename std::iterator_traits<InputIterator>::value_type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::value,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type
-centroid(InputIterator begin, InputIterator end)
+centroid(InputIterator begin, InputIterator end, const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
   typedef typename Kernel_traits<Point>::Kernel                     K;
-  return CGAL::centroid(begin, end, K());
+  return CGAL::centroid(begin, end, K(), t);
 }
 
 CGAL_END_NAMESPACE

@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Segment_2*,// used for indirection
-			       const bool non_standard_geometry)  // not useful 
+			       const CGAL::PCA_dimension_1_tag& tag)   
 {
   // types
   typedef typename K::FT       FT;
@@ -63,7 +63,7 @@ linear_least_squares_fitting_2(InputIterator first,
   CGAL_precondition(first != beyond);
 
   // compute centroid
-  c = centroid(first,beyond,K());
+  c = centroid(first,beyond,K(),tag);
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
   // 0
@@ -111,6 +111,7 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
   covariance[2] += mass * (-1.0 * c.y() * c.y());
+  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<(std::sqrt(2)/3.0)<<std::endl;
 
   // to remove later
   //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<(std::sqrt(2)/3.0)<<std::endl;
@@ -141,7 +142,37 @@ linear_least_squares_fitting_2(InputIterator first,
     line = Line(c, Vector(1.0, 0.0));
     return (FT)0.0;
   } 
-} // end linear_least_squares_fitting_2 for segment set
+} // end linear_least_squares_fitting_2 for segment set with 1D tag
+
+template < typename InputIterator, typename K >
+typename K::FT
+linear_least_squares_fitting_2(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_2& line,   // best fit line
+                               typename K::Point_2& c,     // centroid
+                               const K& k,                   // kernel
+                               const typename K::Segment_2*,// used for indirection
+			       const CGAL::PCA_dimension_0_tag& tag)   
+{
+  // types
+  typedef typename K::Point_2  Point;
+  typedef typename K::Segment_2 Segment;
+ 
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  std::list<Point> points;  
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    const Segment& s = *it;
+    points.push_back(s[0]);
+    points.push_back(s[1]);
+  } 
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,k,(Point*)NULL,tag);
+
+} // end linear_least_squares_fitting_2 for segment set with 1D tag
 
 } // end namespace CGALi
 
