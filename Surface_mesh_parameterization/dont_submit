@@ -1,3 +1,4 @@
 doc
 test*.sh
 test*.bat
+skip_vcproj_auto_generation
