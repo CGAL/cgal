@@ -35,8 +35,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="  qt-mt.lib qtmain.lib  wsock32.lib winmm.lib imm32.lib Opengl32.lib Glu32.lib"
-				OutputFile="$(OutDir)/nef_3.exe"
+				OutputFile="$(OutDir)/nef_3_extended.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
 				SubSystem="1"
@@ -87,8 +88,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="  qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib Opengl32.lib Glu32.lib"
-				OutputFile="$(OutDir)/nef_3.exe"
+				OutputFile="$(OutDir)/nef_3_extended.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(QTDIR)\lib;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
