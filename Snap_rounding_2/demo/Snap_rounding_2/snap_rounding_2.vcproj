@@ -1,4 +1,4 @@
-x<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
@@ -34,7 +34,7 @@ x<?xml version="1.0" encoding="Windows-1252"?>
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CGAL.lib CGALQt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/snap_rounding_2.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -85,7 +85,7 @@ x<?xml version="1.0" encoding="Windows-1252"?>
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CGAL.lib CGALQt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
+				AdditionalDependencies="qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/snap_rounding_2.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
@@ -150,16 +150,14 @@ x<?xml version="1.0" encoding="Windows-1252"?>
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2_toolbar.moc snap_rounding_2_toolbar.h
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2_toolbar.moc snap_rounding_2_toolbar.h"
 						Outputs="snap_rounding_2_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2_toolbar.moc snap_rounding_2_toolbar.h
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2_toolbar.moc snap_rounding_2_toolbar.h"
 						Outputs="snap_rounding_2_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
