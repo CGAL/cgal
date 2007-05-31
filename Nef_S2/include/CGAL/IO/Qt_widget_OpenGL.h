@@ -33,6 +33,8 @@
 #include <qpopupmenu.h>
 #include <qpoint.h>
 
+#include <CGAL/auto_link/CGALQt.h>
+
 namespace CGAL {
 
 class Qt_widget_OpenGL : public QGLWidget {
