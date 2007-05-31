@@ -453,7 +453,7 @@ _Bezier_cache<NtTraits>::get_intersections
     }
 
     // Check if the s- and t-values both lie in the legal range of [0,1].
-    // If so, report the the parameter pair as an intersection.
+    // If so, report the parameter pair as an intersection.
     if (CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
         CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER)
     {

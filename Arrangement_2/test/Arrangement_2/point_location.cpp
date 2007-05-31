@@ -269,7 +269,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //std::cout << " location took " << timer.time() <<std::endl;
   std::cout << std::endl;
 
-  // ===> Add a call to operate the the new point location. <===
+  // ===> Add a call to operate the new point location. <===
 
   //END LOCATION 
   int pls_num = NUM_OF_POINT_LOCATION_STRATEGIES;

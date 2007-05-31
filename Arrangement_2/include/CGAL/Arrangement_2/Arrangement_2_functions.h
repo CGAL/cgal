@@ -850,7 +850,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   fict_prev2 = _split_fictitious_edge (fict_prev2,
                                        inf_x2, inf_y2);
 
-  // Insert the curve and create an edge connecting the the two vertices.
+  // Insert the curve and create an edge connecting the two vertices.
   // Note that we may create a new unbounded face.
   bool        new_face_created = false;
   DHalfedge  *new_he = _insert_at_vertices (cv,
@@ -1151,7 +1151,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   fict_prev1 = _split_fictitious_edge (fict_prev1,
                                        inf_x1, inf_y1);
 
-  // Insert the curve and create an edge connecting the the two vertices.
+  // Insert the curve and create an edge connecting the two vertices.
   // Note that we may create a new unbounded face.
   bool        new_face_created = false;
   DHalfedge  *new_he = _insert_at_vertices (cv,

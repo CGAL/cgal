@@ -598,7 +598,7 @@ public:
         }
       }
 
-      // Check if the the left endpoint lies on the other polyline.
+      // Check if the left endpoint lies on the other polyline.
       bool left_coincides = (left_res == EQUAL);
       bool left_overlap = false;
 

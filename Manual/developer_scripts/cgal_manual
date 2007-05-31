@@ -168,7 +168,7 @@ TestSuiteCppHeader="../../include"
 # is written for better overview.
 TestSuiteTableHeightMax=12
 
-# Counter counting the lines written the the testsuite result tables
+# Counter counting the lines written the testsuite result tables
 TestSuiteTableHeight=0
 
 # The corresponding address in the file space for copying the

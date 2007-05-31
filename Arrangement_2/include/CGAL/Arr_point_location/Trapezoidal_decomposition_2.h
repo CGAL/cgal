@@ -586,7 +586,7 @@ public:
 #endif
 
   /* input: X_curve,
-     two Trapezoidal maps that corespond the the
+     two Trapezoidal maps that corespond the
      X_curve's source degenerate trapezoid and the
      X_curve's target degenerate trapezoid
      output: trapezoid iterator
