@@ -1,3 +1,6 @@
+4 June 2007:  Menelaos Karavelas
+- minor modification to fix .NET warning
+
 10 August 2006:  Menelaos Karavelas
 - fixes to please VC++ (could not accept within classes typedefs of
   the form:  typedef MyClass<T>  MyClass;)

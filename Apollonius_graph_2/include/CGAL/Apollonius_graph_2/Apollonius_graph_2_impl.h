@@ -1841,7 +1841,7 @@ remove_degree_d_vertex(Vertex_handle v)
 #endif
 
   for (unsigned int i = 0; i < num_fe; i++) {
-    delete flipped_edges[i];
+    delete[] flipped_edges[i];
   }
 }
 
