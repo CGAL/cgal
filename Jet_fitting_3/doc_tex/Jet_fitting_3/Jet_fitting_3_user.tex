@@ -5,18 +5,19 @@
 \centerline{
 \includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back}}
 \end{ccTexOnly}
-\caption{Principal directions associated with $k_{max}$ scaled by $k_{min}$.}
+
 
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./david-dirmaxkmin-white-back.jpg" width=400>
 </CENTER>
 \end{ccHtmlOnly}
+\caption{Principal directions associated with $k_{max}$ scaled by $k_{min}$.}
 \label{fig:jet3:fig-david}
 \end{figure}
 
-This chapter describes the \cgal's package geared towards the
-estimation of local differential quantities on sampled surfaces, given
-either as a mesh or as point cloud.
+This package allows the estimation of local differential quantities of
+  a surface from a point sample, given either as a mesh or as point
+  cloud.
 
 Note that this package needs the third party libraries
 \ccThirdPartyLapack\ and \ccThirdPartyBlas\ to be installed to compile
@@ -301,7 +302,8 @@ Second the Monge basis and coefficients, computed with the
 \section{Examples} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\paragraph{Single estimation about a point of a point cloud.}
+\subsection{Single Estimation about a Point of a Point Cloud}
+
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
@@ -309,7 +311,7 @@ is performed. The user has to specify a file for the input points and
 the degrees $d$ and $d'$.
 \ccIncludeExampleCode{Jet_fitting_3/Single_estimation.cpp}
 
-\paragraph{On a mesh.}
+\subsection{On a Mesh}
 The second example (cf Mesh\_estimation.cpp in the example directory)
 illustrates the computation of local differential quantities for all
 vertices of a given mesh. The neighborhood of a given vertex is
