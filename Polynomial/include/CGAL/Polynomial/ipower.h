@@ -16,7 +16,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace INTERN_POLYNOMIAL {
+namespace POLYNOMIAL {
 
     template <typename NT>
     inline
@@ -42,7 +42,7 @@ namespace INTERN_POLYNOMIAL {
         return res;
     }
 
-} // namespace INTERN_POLYNOMIAL
+} // namespace POLYNOMIAL
 
 CGAL_END_NAMESPACE
 

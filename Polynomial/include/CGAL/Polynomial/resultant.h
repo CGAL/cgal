@@ -27,7 +27,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace POLYNOMIAL {
 
     template <class NT> inline
     NT resultant_(Polynomial<NT> A, Polynomial<NT> B) {
@@ -99,10 +99,10 @@ namespace CGALi {
      */
     template <class NT> inline
     NT resultant(Polynomial<NT> A, Polynomial<NT> B) {
-        return CGALi::resultant_(A, B);
+        return POLYNOMIAL::resultant_(A, B);
     }   
 
-} // namespace CGALi
+} // namespace POLYNOMIAL
 
 CGAL_END_NAMESPACE
 

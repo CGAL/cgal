@@ -46,7 +46,7 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
     }
 
     NT a = A.content(), b = B.content();
-    NT g(1), h(1), t = INTERN_POLYNOMIAL::ipower(a, B.degree()) * INTERN_POLYNOMIAL::ipower(b, A.degree());
+    NT g(1), h(1), t = POLYNOMIAL::ipower(a, B.degree()) * POLYNOMIAL::ipower(b, A.degree());
     Polynomial<NT> Q, R; NT d;
     int delta;
 
@@ -57,17 +57,17 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
         delta = A.degree() - B.degree();
         CGAL_expensive_assertion( 
            typename CGAL::Algebraic_structure_traits<NT>::Is_exact == CGAL_Tag_false  
-          || d == INTERN_POLYNOMIAL::ipower(B.lcoeff(), delta + 1) );
+          || d == POLYNOMIAL::ipower(B.lcoeff(), delta + 1) );
         A = B;
-        B = R / (g * INTERN_POLYNOMIAL::ipower(h, delta));
+        B = R / (g * POLYNOMIAL::ipower(h, delta));
         g = A.lcoeff();
         // h = h^(1-delta) * g^delta
-        INTERN_POLYNOMIAL::hgdelta_update(h, g, delta);
+        POLYNOMIAL::hgdelta_update(h, g, delta);
     } while (B.degree() > 0);
     // h = h^(1-deg(A)) * lcoeff(B)^deg(A)
     delta = A.degree();
     g = B.lcoeff();
-    INTERN_POLYNOMIAL::hgdelta_update(h, g, delta);
+    POLYNOMIAL::hgdelta_update(h, g, delta);
     h = signflip ? -(t*h) : t*h;
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(h);
@@ -94,11 +94,11 @@ NT prs_resultant_field(Polynomial<NT> A, Polynomial<NT> B) {
     while (B.degree() > 0) {
         signflip ^= (A.degree() & B.degree() & 1);
         Polynomial<NT>::euclidean_division(A, B, Q, R);
-        res *= INTERN_POLYNOMIAL::ipower(B.lcoeff(), A.degree() - R.degree());
+        res *= POLYNOMIAL::ipower(B.lcoeff(), A.degree() - R.degree());
         A = B;
         B = R;
     }
-    res = INTERN_POLYNOMIAL::ipower(B.lcoeff(), A.degree()) * (signflip ? -res : res);
+    res = POLYNOMIAL::ipower(B.lcoeff(), A.degree()) * (signflip ? -res : res);
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(res);
     return res;
@@ -143,7 +143,7 @@ NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
     B.simplify_coefficients();
     INTPOLY A0 = integralize_polynomial(A, a);
     INTPOLY B0 = integralize_polynomial(B, b);
-    DENOM c = INTERN_POLYNOMIAL::ipower(a, B.degree()) * INTERN_POLYNOMIAL::ipower(b, A.degree());
+    DENOM c = POLYNOMIAL::ipower(a, B.degree()) * POLYNOMIAL::ipower(b, A.degree());
     typedef typename Algebraic_structure_traits<RES>::Algebraic_category Algebraic_category;
     RES res0 = INTERN_PRS_RESULTANT::prs_resultant_(A0, B0, Algebraic_category());
     typename Fraction_traits<NT>::Compose comp_frac;

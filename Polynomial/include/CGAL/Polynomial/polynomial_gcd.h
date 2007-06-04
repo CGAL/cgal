@@ -25,6 +25,7 @@
 #include <CGAL/Polynomial/ipower.h>
 #include <CGAL/Polynomial/hgdelta_update.h>
 #include <CGAL/Polynomial/square_free_factorization.h>
+#include <CGAL/Polynomial/modular_filter.h>
 
 #ifndef CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
 #define CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
@@ -39,9 +40,9 @@ CGAL_BEGIN_NAMESPACE
 
 // Forward declarations of ALL functions of this file to avoid problems with
 //  some compilers.
-template< class NT > inline bool may_have_multiple_root( const Polynomial<NT>& P );
+//template< class NT > inline bool may_have_multiple_root( const Polynomial<NT>& P );
 
-namespace INTERN_POLYNOMIAL_GCD {
+namespace POLYNOMIAL {
 
 template <class NT> inline 
 Polynomial<NT> gcd_( const Polynomial<NT>& p1, const Polynomial<NT>& p2 );
@@ -90,7 +91,7 @@ template <class NT>
 Polynomial<NT> gcd_utcf_( Polynomial<NT> p1, Polynomial<NT> p2, 
                                                          Integral_domain_tag );
 
-} // namespace INTERN_POLYNOMIAL_GCD
+} // namespace POLYNOMIAL
 
 template <class NT> inline
 Polynomial<NT> gcd_utcf( const Polynomial<NT>& p1, const Polynomial<NT>& p2 );
@@ -107,7 +108,7 @@ template <class NT> inline
 Polynomial<NT> gcdex_( Polynomial<NT> x, Polynomial<NT> y, Polynomial<NT>& xf, 
                                         Polynomial<NT>& yf, ::CGAL::Tag_true );
 
-} // namespace INTERN_POLYNOMIAL_GCD
+} // namespace POLYNOMIAL
 
 template <class NT> inline
 Polynomial<NT> gcdex( Polynomial<NT> p1, Polynomial<NT> p2, Polynomial<NT>& f1, 
@@ -138,10 +139,10 @@ int filtered_square_free_factorization_utcf( const Polynomial<NT>& p,
 // TODO: This is a dummy-version of may_have_multiple_root. The original
 //       EXACUS function is defined in polynomial_utils.h, but does currently
 //       not work because of the missing modular traits (and other stuff).
-template <class NT> inline
+/*template <class NT> inline
 bool may_have_multiple_root(const Polynomial<NT>& P){
   return true;
-}
+}*/
 
 
 // 1) gcd (basic form without cofactors)
@@ -153,7 +154,7 @@ bool may_have_multiple_root(const Polynomial<NT>& P){
 //     c) over a field (unless integralized), use the Euclidean algorithm;
 //         over a UFD, use the subresultant algorithm
 
-namespace INTERN_POLYNOMIAL_GCD {
+namespace POLYNOMIAL {
 
 template <class NT> inline
 Polynomial<NT> gcd_(
@@ -236,10 +237,10 @@ Polynomial<NT> gcd_(
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         int delta = p1.degree() - p2.degree();
         p1 = p2;
-        p2 = r / (g * INTERN_POLYNOMIAL::ipower(h, delta));
+        p2 = r / (g * POLYNOMIAL::ipower(h, delta));
         g = p1.lcoeff();
         // h = h^(1-delta) * g^delta
-        INTERN_POLYNOMIAL::hgdelta_update(h, g, delta);
+        POLYNOMIAL::hgdelta_update(h, g, delta);
     }
     
 
@@ -309,7 +310,7 @@ Polynomial<NT> gcd_(
     return p1;
 }
 
-} // namespace INTERN_POLYNOMIAL_GCD
+} // namespace POLYNOMIAL
 
 // name gcd() forwarded to the Intern::gcd_() dispatch function
 /*! \ingroup NiX_Polynomial
@@ -335,18 +336,18 @@ Polynomial<NT> gcd_(
  *  <B>do</B> matter, and unit-normality typically means something
  *  like <I>d</I><TT>.lcoeff()</TT> being positive.
  */
-namespace INTERN_POLYNOMIAL_GCD {
+namespace POLYNOMIAL {
 template <class NT> inline
 Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ return INTERN_POLYNOMIAL_GCD::gcd_(p1,p2); }
-} // namespace INTERN_POLYNOMIAL_GCD
+{ return POLYNOMIAL::gcd_(p1,p2); }
+} // namespace POLYNOMIAL
 
 // 2) gcd_utcf computation
 //     (gcd up to scalar factors, for non-UFD non-field coefficients)
 //     a) first try to decompose the coefficients
 //     b) second dispatch depends on the algebra type of NT
 
-namespace INTERN_POLYNOMIAL_GCD {
+namespace POLYNOMIAL {
 
 template <class NT> inline
 NT gcd_utcf_(const NT& a, const NT& b)
@@ -481,7 +482,7 @@ Polynomial<NT> gcd_utcf_(
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         int delta = p1.degree() - p2.degree();
         p1 = p2;
-        p2 = r / (g * INTERN_POLYNOMIAL::ipower(h, delta));
+        p2 = r / (g * POLYNOMIAL::ipower(h, delta));
         g = p1.lcoeff();
         // h = h^(1-delta) * g^delta
         Intern::hgdelta_update(h, g, delta);
@@ -519,7 +520,7 @@ Polynomial<NT> gcd_utcf_(
  
 }
 
-} // namespace INTERN_POLYNOMIAL_GCD
+} // namespace POLYNOMIAL
 
 // name gcd_utcf() forwarded to the Intern::gcd_utcf_() dispatch function
 /*! \relates NiX::Polynomial
@@ -537,13 +538,13 @@ Polynomial<NT> gcd_utcf_(
  */
 template <class NT> inline
 Polynomial<NT> gcd_utcf(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ return INTERN_POLYNOMIAL_GCD::gcd_utcf_(p1,p2); }
+{ return POLYNOMIAL::gcd_utcf_(p1,p2); }
 
 
 // 3) extended gcd computation (with cofactors)
 //     with dispatch similar to gcd
 
-namespace INTERN_POLYNOMIAL_GCD {
+namespace POLYNOMIAL {
 
 template <class NT> inline
 Polynomial<NT> gcdex_(
@@ -668,7 +669,7 @@ Polynomial<NT> gcdex_(
     return v;
 };
 
-} // namespace INTERN_POLYNOMIAL_GCD
+} // namespace POLYNOMIAL
 
 /*! \ingroup NiX_Polynomial
  *  \relates NiX::Polynomial
@@ -698,7 +699,7 @@ Polynomial<NT> gcdex(
 ) {
     typedef typename Fraction_traits< Polynomial<NT> >
         ::Is_fraction Is_fraction;
-    return INTERN_POLYNOMIAL_GCD::gcdex_(p1, p2, f1, f2, Is_fraction());
+    return POLYNOMIAL::gcdex_(p1, p2, f1, f2, Is_fraction());
 };
 
 
@@ -771,9 +772,9 @@ Polynomial<NT> pseudo_gcdex(
     for (;;) {
         int delta = u.degree() - v.degree();
         POLY::pseudo_division(u, v, q, r, d);
-        CGAL_assertion(d == INTERN_POLYNOMIAL::ipower(v.lcoeff(), delta+1));
+        CGAL_assertion(d == POLYNOMIAL::ipower(v.lcoeff(), delta+1));
         if (r.is_zero()) break;
-        rho = g * INTERN_POLYNOMIAL::ipower(h, delta);
+        rho = g * POLYNOMIAL::ipower(h, delta);
         u = v; v = r / rho;
         m21old = m21; m21 = (d*m11 - q*m21) / rho; m11 = m21old;
         /* The transition from (u, v) to (v, r/rho) corresponds
@@ -784,7 +785,7 @@ Polynomial<NT> pseudo_gcdex(
          * gcdex(..., Field_tag) apply analogously.
          */
         g = u.lcoeff();
-        INTERN_POLYNOMIAL::hgdelta_update(h, g, delta);
+        POLYNOMIAL::hgdelta_update(h, g, delta);
         if (r.degree() == 0) break;
     }
 
@@ -828,8 +829,8 @@ int filtered_square_free_factorization(
                                        OutputIterator1 factors,
                                        OutputIterator2 multiplicities)
 {
-  if(may_have_multiple_root(p)){
-      return CGALi::square_free_factorization(p, factors, multiplicities);
+  if(CGAL::POLYNOMIAL::may_have_multiple_factor(p)){
+      return POLYNOMIAL::square_free_factorization(p, factors, multiplicities);
   }else{
 #if NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE
       *factors++ = p;
@@ -852,8 +853,9 @@ int filtered_square_free_factorization_utcf( const Polynomial<NT>& p,
                                          OutputIterator1 factors,
                                          OutputIterator2 multiplicities)
 {
-    if(may_have_multiple_root(p)){
-        return CGALi::square_free_factorization_utcf(p,factors,multiplicities);
+    if(CGAL::POLYNOMIAL::may_have_multiple_factor(p)){
+        return POLYNOMIAL::square_free_factorization_utcf(p,factors,multiplicities);
+        
     }else{
 #if NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE
         *factors++ = p;

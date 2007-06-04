@@ -50,7 +50,7 @@ template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                            const Polynomial<NT>& p2);
 
-namespace INTERN_POLYNOMIAL {
+namespace POLYNOMIAL {
 
 template <class NT> class Polynomial_rep;
 
@@ -117,7 +117,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
     va_end(ap);
 }
 
-}// namespace INTERN_POLYNOMIAL
+}// namespace POLYNOMIAL
 
 //
 // The actual class Polynomial<NT>
@@ -191,7 +191,7 @@ latter is more convenient.
 from Michael Seel's PhD thesis.  */ 
 template <class NT_>
 class Polynomial 
-  : public Handle_with_policy< INTERN_POLYNOMIAL::Polynomial_rep<NT_> >
+  : public Handle_with_policy< POLYNOMIAL::Polynomial_rep<NT_> >
 {
 public: 
     //! \name Typedefs 
@@ -199,7 +199,7 @@ public:
     //! coefficient type of this instance 
     typedef NT_ NT; 
     //! representation pointed to by this handle 
-    typedef INTERN_POLYNOMIAL::Polynomial_rep<NT> Rep;
+    typedef POLYNOMIAL::Polynomial_rep<NT> Rep;
     //! base class  
     typedef Handle_with_policy< Rep > Base;
     //! container used to store coefficient sequence
@@ -220,8 +220,8 @@ protected:
     //! const access to the internal coefficient sequence
     const Vector& coeffs() const { return this->ptr()->coeff; }
     //! create an empty polynomial with s coefficients (degree up to s-1)
-    Polynomial(INTERN_POLYNOMIAL::Creation_tag f, size_type s)
-        : Base(INTERN_POLYNOMIAL::Polynomial_rep<NT>(f,s) )
+    Polynomial(POLYNOMIAL::Creation_tag f, size_type s)
+        : Base(POLYNOMIAL::Polynomial_rep<NT>(f,s) )
     {}
     //! non-const access to coefficient \c i
     /*! The polynomial's representation must not be shared between
@@ -256,7 +256,7 @@ public:
     //@{
 
     //! default constructor: a new polynomial of undefined value.
-    Polynomial() : Base( Rep(INTERN_POLYNOMIAL::Creation_tag(), 1) ) 
+    Polynomial() : Base( Rep(POLYNOMIAL::Creation_tag(), 1) ) 
     { coeff(0) = NT(0); }
     
 
@@ -266,7 +266,7 @@ public:
     //! construct the constant polynomial a0 from any type convertible to NT
     template <class T>
     explicit Polynomial(const T& a0)
-        : Base(Rep(INTERN_POLYNOMIAL::Creation_tag(), 1))
+        : Base(Rep(POLYNOMIAL::Creation_tag(), 1))
     { coeff(0) = NT(a0); reduce(); simplify_coefficients(); }
    
     //! construct the constant polynomial a0
@@ -467,7 +467,7 @@ public:
         Type monom;
         Type y(0);
         for(int i = 0; i <= hom_degree; i++){
-            monom = INTERN_POLYNOMIAL::ipower(v,hom_degree-i)*INTERN_POLYNOMIAL::ipower(u,i);
+            monom = POLYNOMIAL::ipower(v,hom_degree-i)*POLYNOMIAL::ipower(u,i);
             if(i <= degree())
                 y += monom * cast(this->ptr()->coeff[i]);  
         }
@@ -974,7 +974,7 @@ Polynomial<NT> operator + (const Polynomial<NT>& p1,
     int min,max,i;
     if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
     else                 { max = p1.degree(); min = p2.degree(); }
-    INTERN_POLYNOMIAL::Creation_tag TAG;
+    POLYNOMIAL::Creation_tag TAG;
     Polynomial<NT> p(TAG, size_type(max + 1));
     for (i = 0; i <= min; ++i ) p.coeff(i) = p1[i]+p2[i];
     if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)=p2[i];
@@ -993,7 +993,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p1,
     int min,max,i;
     if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
     else                 { max = p1.degree(); min = p2.degree(); }
-    INTERN_POLYNOMIAL::Creation_tag TAG;
+    POLYNOMIAL::Creation_tag TAG;
     Polynomial<NT> p(TAG, size_type(max + 1));
     for (i = 0; i <= min; ++i ) p.coeff(i)=p1[i]-p2[i];
     if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)= -p2[i];
@@ -1008,7 +1008,7 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
 {
     typedef typename Polynomial<NT>::size_type size_type;
     CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
-    INTERN_POLYNOMIAL::Creation_tag TAG;
+    POLYNOMIAL::Creation_tag TAG;
     Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
     // initialized with zeros
     for (int i=0; i <= p1.degree(); ++i)
@@ -1200,7 +1200,7 @@ void Polynomial<NT>::euclidean_division(
     // now we know fd >= gd 
     int qd = fd-gd, delta = qd+1, rd = fd;
 
-    INTERN_POLYNOMIAL::Creation_tag TAG;    
+    POLYNOMIAL::Creation_tag TAG;    
     q = Polynomial<NT>(TAG, delta ); 
     r = f; r.copy_on_write();
     while ( qd >= 0 ) {
@@ -1239,8 +1239,8 @@ void Polynomial<NT>::pseudo_division(
     }
     const NT d = B.lcoeff();
     int e = delta + 1;
-    D = INTERN_POLYNOMIAL::ipower(d, e);
-    INTERN_POLYNOMIAL::Creation_tag TAG;
+    D = POLYNOMIAL::ipower(d, e);
+    POLYNOMIAL::Creation_tag TAG;
     Q = Polynomial<NT>(TAG, e);
     R = A; R.copy_on_write(); R.simplify_coefficients();
 
@@ -1257,7 +1257,7 @@ void Polynomial<NT>::pseudo_division(
     } while (delta > 0 || delta == 0 && !R.is_zero());
     // funny termination condition because deg(0) = 0, not -\infty
 
-    NT q = INTERN_POLYNOMIAL::ipower(d, e);
+    NT q = POLYNOMIAL::ipower(d, e);
     Q *= q; Q.simplify_coefficients();
     R *= q; R.simplify_coefficients();
 
@@ -1284,10 +1284,10 @@ void Polynomial<NT>::pseudo_division(
     }
     // now we know rd >= gd 
     int qd = fd-gd, delta = qd+1, rd = fd;
-    INTERN_POLYNOMIAL::Creation_tag TAG;
+    POLYNOMIAL::Creation_tag TAG;
     q = Polynomial<NT>(TAG, delta );
     NT G = g[gd]; // highest order coeff of g
-    D = INTERN_POLYNOMIAL::ipower(G, delta);
+    D = POLYNOMIAL::ipower(G, delta);
     Polynomial<NT> res = D*f;
     res.simplify_coefficients();
     while ( qd >= 0 ) {
@@ -1438,27 +1438,27 @@ void Polynomial<NT>::output_benchmark(std::ostream &os) const {
 
 // Moved to internal namespace because of name clashes
 // TODO: Is this OK?
-namespace INTERN_POLYNOMIAL {
+namespace POLYNOMIAL {
 
   inline static void swallow(std::istream &is, char d) {
       char c;
       do c = is.get(); while (isspace(c));
       if (c != d) CGAL_assertion_msg( false, "input error: unexpected character in polynomial");
   }
-} // namespace INTERN_POLYNOMIAL
+} // namespace POLYNOMIAL
 
 template <class NT>
 Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
     char c;
     int degr = -1, i;
 
-    INTERN_POLYNOMIAL::swallow(is, 'P');
-    INTERN_POLYNOMIAL::swallow(is, '[');
+    POLYNOMIAL::swallow(is, 'P');
+    POLYNOMIAL::swallow(is, '[');
     is >> CGAL::iformat(degr);
     if (degr < 0) {
         CGAL_assertion_msg( false, "input error: negative degree of polynomial specified");
     }
-    INTERN_POLYNOMIAL::Creation_tag TAG;
+    POLYNOMIAL::Creation_tag TAG;
     Polynomial<NT> p(TAG, degr+1);
 
     do c = is.get(); while (isspace(c));
@@ -1468,9 +1468,9 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
         if (!(i >= 0 && i <= degr && p[i] == NT(0))) {
             CGAL_assertion_msg( false, "input error: invalid exponent in polynomial");
         };
-        INTERN_POLYNOMIAL::swallow(is, ',');
+        POLYNOMIAL::swallow(is, ',');
         is >> CGAL::iformat(p.coeff(i));
-        INTERN_POLYNOMIAL::swallow(is, ')');
+        POLYNOMIAL::swallow(is, ')');
         do c = is.get(); while (isspace(c));
     } while (c != ']');
 

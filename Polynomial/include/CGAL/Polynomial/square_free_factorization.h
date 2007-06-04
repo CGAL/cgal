@@ -19,7 +19,7 @@
 CGAL_BEGIN_NAMESPACE
 ;
 
-namespace CGALi {
+namespace POLYNOMIAL {
 
 // square-free factorization
 // 
@@ -343,7 +343,7 @@ int square_free_factorization_utcf(
 
 
 
-} // namespace CGALi
+} // namespace POLYNOMIAL
 
 CGAL_END_NAMESPACE
 
