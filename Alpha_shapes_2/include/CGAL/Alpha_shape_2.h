@@ -315,6 +315,14 @@ private:
       {
 	return alpha < ie.first.first; 
       }
+
+    // Needed for STL implementations of upper_bound which in debug mode 
+    // check sortedness of range
+    bool operator()(const Interval_edge& ie, 
+		    const Interval_edge& ie2) const
+      {
+	return ie < ie2;
+      }
   };
 
   
