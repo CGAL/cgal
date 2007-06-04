@@ -21,7 +21,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace INTERN_POLYNOMIAL {
+namespace POLYNOMIAL {
     //! return an upper bound on the absolute value of all real roots of \c P.
     /*! The upper bound is a power of two. Only works for univariate polynomials.
      *  \pre \c NT must be \c RealComparable.
@@ -70,7 +70,28 @@ namespace INTERN_POLYNOMIAL {
         return variations;
     }
 
-} // namespace INTERN_POLYNOMIAL
+    /*! \ingroup NiX_polynomial_utils
+     *  \brief checks whether a univariate polynomial is square-free
+     */    
+    
+    /*template < class NT >
+    bool is_square_free(const Polynomial<NT>& p) {
+        if( may_have_multiple_factor(p) ) {
+            Polynomial<NT> d = p; d.diff();
+            return gcd_utcf(p, d).degree() == 0;
+        } else {
+            return true;
+        }
+    }
+    
+    template< class NT >
+    bool is_square_free( const Polynomail< Polynomial< NT > >& ) { 
+        
+        
+        return true;
+    } */   
+
+} // namespace POLYNOMIAL
 
 CGAL_END_NAMESPACE
 
