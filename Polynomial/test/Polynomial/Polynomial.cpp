@@ -606,6 +606,31 @@ void sqff() {
     CGAL_test_assert(mul[0] == 1 && fac[0] == p1);
     CGAL_test_assert(mul[1] == 3 && fac[1] == p3);
     CGAL_test_assert(mul[2] == 4 && fac[2] == p4);
+    
+    /*p = POLY( NT(1), NT(-2), NT(1) );
+    std::cerr << p << std::endl;
+    fac.clear();
+    mul.clear();
+    fac_bi = std::back_insert_iterator<PVEC>(fac);
+    mul_bi = std::back_insert_iterator<IVEC>(mul);
+    std::cerr << CGAL::filtered_square_free_factorization( p, fac_bi, mul_bi ) << std::endl;
+    std::cerr << fac[0] << std::endl;*/
+    //std::cerr << fac[1] << std::endl;
+    
+    typedef CGAL::Polynomial< CGAL::Polynomial< NT > > BPOLY;
+    typedef std::vector< BPOLY > BPVEC;
+    BPOLY bp( POLY( NT(1), NT(-2), NT(1) ) );
+//    std::cerr << bp << std::endl;
+//    typename CGAL::Polynomial_traits_d< BPOLY >::Make_square_free make_square_free;
+//    std::cerr << make_square_free( bp ) << std::endl;
+//    std::cerr << "^^^^^^^^^^" << std::endl;
+    BPVEC bfac;
+    mul.clear();
+    std::back_insert_iterator< BPVEC > bfac_bi( bfac );
+    mul_bi = std::back_insert_iterator<IVEC>(mul);
+//    std::cerr << CGAL::POLYNOMIAL::square_free_factorization( bp, bfac_bi, mul_bi ) << std::endl;
+//    std::cerr << bfac[0] << std::endl;
+    
 }
 
 template <class FNT>
@@ -898,7 +923,7 @@ void test_AT(){
     basic_tests<double>();
     // TODO: The flat_iterator_test leads to compile errors. Need to be fixed
     flat_iterator_tests<int>();
-    
+        
     {
         typedef typename AT::Integer Integer;
         typedef typename CGAL::Polynomial<Integer> Polynomial;
