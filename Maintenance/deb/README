@@ -5,9 +5,15 @@ backport for etch:
 - debian/changelog:
   * adjust version suffix from -X to -X~etch1
   * adjust suite from unstable to stable
-  * maintain other differences
+- debian/patches/boost-library-name.dpatch
+  * remove
+- debian/patches/00list
+  * adjust
 
 backport for sarge:
+- debian/changelog:
+  * adjust version suffix from -X to -Ysarge1 (with Y=X-1)
+  * adjust suite from unstable to oldstable
 - debian/control:
   * adjust Standards-Version: to 3.6.1
   * adjust debhelper dependency from >= 5 to >= 4
@@ -16,11 +22,12 @@ backport for sarge:
   * replace binary: by Source-
 - debian/compat:
   * adjust debhelper compatibility level from 5 to 4
-- debian/changelog:
-  * adjust version suffix from -X to -Ysarge1 (with Y=X-1)
-  * adjust suite from unstable to oldstable
-  * maintain other differences
+- debian/patches/boost-library-name.dpatch
+  * remove
+- debian/patches/00list
+  * adjust
 
 tagging:
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.2.1-1
-svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.2.1-0sarge1
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3-1
+svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3-1~etch1
+svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3-0sarge1

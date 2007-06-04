@@ -1,8 +1,8 @@
-cgal (3.2.99.311-0sarge1) oldstable; urgency=low
+cgal (3.3-0sarge1) oldstable; urgency=low
 
-  * New upstream release
+  * New upstream release.
 
- -- Joachim Reichel <joachim.reichel@gmx.de>  Fri, 27 Apr 2007 21:46:52 +0200
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Sun,  3 Jun 2007 09:36:36 +0200
 
 cgal (3.2.1-2) unstable; urgency=low
 
