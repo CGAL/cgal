@@ -9,7 +9,7 @@
 % +------------------------------------------------------------------------+
 
 
-
+\section{Introduction}
 A variety of generators for geometric objects are provided in \cgal.
 They are useful as synthetic test data sets, e.g.~for testing
 algorithms on degenerate object sets and for performance analysis.
@@ -54,7 +54,7 @@ point set of a given size where the points are drawn from a specific
 domain and \ccc{random_polygon_2} generates a random simple polygon from
 points drawn from a specific domain.  
 
-\paragraph{Random Perturbations}
+\subsection{Random Perturbations}
 \ccIndexMainItem{random perturbations}
 
 Degenerate input sets like grid points can be randomly perturbed by a
@@ -63,7 +63,7 @@ challenges numerical stability of algorithms using inexact arithmetic and
 exact predicates to compute the sign of expressions slightly off from zero.
 For this the function \ccc{perturb_points_2} is provided.
 
-\paragraph{Adding Degeneracies}
+\subsection{Adding Degeneracies}
 \ccModifierCrossRefOff
 \ccIndexSubitem{degeneracies}{adding to input}
 \ccModifierCrossRefOn
@@ -74,7 +74,7 @@ useful for generating multiple copies of identical points.
 The function \ccc{random_collinear_points_2()} adds collinearities to
 a point set.
 
-\paragraph{Support Functions and Classes for Generators}
+\subsection{Support Functions and Classes for Generators}
 
 The function \ccc{random_selection} chooses $n$ items at random from a random
 access iterator range which is useful to produce degenerate input data

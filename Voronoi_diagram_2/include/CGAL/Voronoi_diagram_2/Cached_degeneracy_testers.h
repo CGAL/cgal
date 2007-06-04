@@ -440,7 +440,7 @@ private:
 
 // Specialization for the identity face degeneracy tester
 
-template<class DG> class Identity_face_rejector;
+template<class DG> struct Identity_face_rejector;
 
 template<class DG>
 class Cached_face_rejector<Identity_face_rejector<DG>,Tag_false>
