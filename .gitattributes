@@ -1847,6 +1847,7 @@ Polynomial/include/CGAL/Polynomial/determinant.h -text
 Polynomial/include/CGAL/Polynomial/hgdelta_update.h -text
 Polynomial/include/CGAL/Polynomial/ipower.h -text
 Polynomial/include/CGAL/Polynomial/may_have_common_factor.h -text
+Polynomial/include/CGAL/Polynomial/modular_filter.h -text
 Polynomial/include/CGAL/Polynomial/resultant.h -text
 Polynomial/include/CGAL/Polynomial/square_free_factorization.h -text
 Polynomial/include/CGAL/Polynomial/univariate_polynomial_utils.h -text
