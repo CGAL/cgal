@@ -127,18 +127,19 @@ class Placement : public QObject
     void clear()
     {
       if (Stream_lines != NULL)
-	{
-	  delete Stream_lines;
-	  Stream_lines = NULL;
-	  delete runge_kutta_integrator;
-	  runge_kutta_integrator = NULL;
-	  delete regular_grid;
-	  regular_grid = NULL;
-	  d_stl = true;
-	  d_pq = false;
-	  d_tr = false;
-	  d_bc = false;
-	}
+      {
+        delete Stream_lines;
+        Stream_lines = NULL;
+        delete runge_kutta_integrator;
+        runge_kutta_integrator = NULL;
+        delete regular_grid;
+        regular_grid = NULL;
+        d_stl = true;
+        d_pq = false;
+        d_tr = false;
+        d_bc = false;
+        completed = false;
+      }
     }
     void load( const QString & s )
     {
@@ -190,20 +191,25 @@ class Placement : public QObject
     }
     void generateFirst()
     {
+      std::cout << "processing 000 ...\n";
       if (!completed)
         Stream_lines = new Strl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
+      std::cout << "processing 001 ...\n";
       number_of_lines_ = Stream_lines->number_of_lines();
+      std::cout << "processing 002 ...\n";
       d_stl = true;
       d_pq = false;
       d_tr = false;
       d_bc = false;
-      draw();
       placement->setItemEnabled(generate_id, false);
       placement->setItemEnabled(generatefirst_id, false);
       placement->setItemEnabled(generatenext_id, !completed);
       placement->setItemEnabled(generateten_id,  !completed);
       placement->setItemEnabled(generateresume_id,  !completed);
       placement->setItemEnabled(clear_id,  !completed);
+      std::cout << "processing 003 ...\n";
+      draw();
+      std::cout << "processing 004 ...\n";
     }
     void generateNext(bool b = true)
     {
@@ -240,7 +246,7 @@ class Placement : public QObject
         delete Stream_lines;
       Stream_lines = NULL;
 
-		// desable all generator menu items
+    // desable all generator menu items
       placement->setItemEnabled(generate_id, true);
       placement->setItemEnabled(generatefirst_id, true);
       placement->setItemEnabled(generatenext_id, false);
@@ -248,6 +254,7 @@ class Placement : public QObject
       placement->setItemEnabled(generateresume_id, false);
       placement->setItemEnabled(clear_id, false);
       file->setItemEnabled(save_id, false);
+      completed = false;
 
       draw();
     }
@@ -578,7 +585,7 @@ MyWidget::MyWidget(QGLWidget *parent)
   view_id = menu->insertItem( "&View ", view );
   file->insertItem( "&Quit", qApp, SLOT(quit()), ALT+Key_F4 );
 
-	// desable all generator menu items
+  // desable all generator menu items
   placement->setItemEnabled(generate_id, false);
   placement->setItemEnabled(generatefirst_id, false);
   placement->setItemEnabled(generatenext_id, false);
