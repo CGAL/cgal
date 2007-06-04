@@ -24,7 +24,7 @@ Section~\ref{Section_2D_Triangulations_Software_Design} presents
 the overall software
 design of the 2D triangulations package. 
 The next sections present the different two dimensional triangulations classes
-available in  \cgal\ : 
+available in  \cgal: 
 basic triangulations (section~\ref{Section_2D_Triangulations_Basic}),
 Delaunay triangulations
 (Section~\ref{Section_2D_Triangulations_Delaunay}),
@@ -216,7 +216,7 @@ compute respectively $i+1$ and $i-1$ modulo 3.
 
 The edges are not explicitly represented, they are only implicitly
 represented through the adjacency relations of two faces.
-Each edge has two implicit representations : the edge
+Each edge has two implicit representations: the edge
 of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
 can be represented as well as an edge of the \ccc{neighbor(i)} of 
 \ccc{f}. 
@@ -255,7 +255,7 @@ of all the combinatorial aspects of the triangulation.
 This separation between the
 geometric aspect and the combinatorial part
 is reflected in the software design by the fact
-that the triangulation classes have two template parameters :
+that the triangulation classes have two template parameters:
 
 \begin{itemize}
 \item {} the first parameter stands for a
@@ -644,7 +644,7 @@ worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
 for vertices distributed uniformly at random  and any query point. 
 
 
-\subsection{Example : a Delaunay Terrain\label{Subsection_2D_Triangulations_Delaunay_Terrain}}
+\subsection{Example: a Delaunay Terrain\label{Subsection_2D_Triangulations_Delaunay_Terrain}}
 
 The following code  creates a Delaunay triangulation with 
 the usual Euclidean metric for the vertical projection of a 
@@ -654,7 +654,7 @@ are computed using only  the $x$ and $y$ coordinates
 of these points. 
 \ccIncludeExampleCode{Triangulation_2/terrain.cpp}
 
-\subsection{Example : Voronoi Diagram\label{Subsection_2D_Triangulations_Voronoi}}
+\subsection{Example: Voronoi Diagram\label{Subsection_2D_Triangulations_Voronoi}}
 \ccIndexMainItem{Voronoi diagram}
 The following code computes the edges of Voronoi diagram
 of a set of data points
@@ -832,7 +832,7 @@ as a default base class for faces of regular triangulations.
 
 
 
-\subsection{Example : a Regular Triangulation\label{Subsection_2D_Triangulations_Regular_Example}}
+\subsection{Example: a Regular Triangulation\label{Subsection_2D_Triangulations_Regular_Example}}
 
 The following code  creates a regular triangulation 
 of a set of weighted points and output the number
@@ -980,7 +980,7 @@ and adds three Boolean data members to store the status of its edges.
 </CENTER>
 \end{ccHtmlOnly}
 
-\caption{Constrained and Constrained Delaunay triangulation : 
+\caption{Constrained and Constrained Delaunay triangulation: 
  the constraining edges are the green edges,  a constrained
 triangulation is shown on the left, the constrained Delaunay
 triangulation with two examples of circumcircles is shown on the right.}
@@ -1074,7 +1074,7 @@ of \ccc{ConstrainedTriangulationFaceBase_2}.
 
 
 
-\subsection{Example : a  constrained Delaunay triangulation\label{Subsection_2D_Triangulations_Constrained_Delaunay_Example}}
+\subsection{Example: a  Constrained Delaunay Triangulation\label{Subsection_2D_Triangulations_Constrained_Delaunay_Example}}
 The following code inserts a set of intersecting constraint segments
 into a triangulation 
 and counts the number of constrained edges of the
@@ -1116,7 +1116,7 @@ Indeed in this case, the \ccc{Constrained_triangulation_plus_2<Tr>}
 is specially designed to avoid cascading in the computations of
 intersection  points.
 
-\subsection{Example : Building a triangulated arrangement of segments}
+\subsection{Example: Building a Triangulated Arrangement of Segments}
 
 The following code inserts a set of intersecting constraint segments
 into a triangulation 
@@ -1190,12 +1190,12 @@ either the default
 vertex class or a user customized
 vertex class with additional functionalities.
 
-\subsection{Examples of the Use of a  Triangulation Hierarchy\label{Subsection_2D_Triangulations_Hierarchy_Examples}}
+\subsection{Examples For the Use of a  Triangulation Hierarchy\label{Subsection_2D_Triangulations_Hierarchy_Examples}}
 
 The following program is example
-of the  standard use of a  triangulation hierarchy
+for the  standard use of a  triangulation hierarchy
 to enhance the efficiency
-of a Delaunay triangulation. The program output the number of vertices
+of a Delaunay triangulation. The program outputs the number of vertices
 at the different levels of the hierarchy.
 \ccIncludeExampleCode{Triangulation_2/hierarchy.cpp}
 
@@ -1211,7 +1211,7 @@ To be able to adapt to  various needs, a highly
 flexible design has been  selected for 2D triangulations.
 We have already seen that
 the triangulation classes have two
-parameters : a geometric traits class
+parameters: a geometric traits class
 and a triangulation data structure  class
 which the user can instantiate with his own customized classes.
 
