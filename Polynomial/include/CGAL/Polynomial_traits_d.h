@@ -21,7 +21,7 @@
 #include <CGAL/Polynomial/resultant.h>
 #include <CGAL/Polynomial/square_free_factorization.h>
 
-#define CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                         \
+#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                         \
     typedef Polynomial_traits_d< Coefficient_ > PTC;                          \
     typedef Polynomial_traits_d< Polynomial< Coefficient_ > > PT;             \
                                                                               \
@@ -51,7 +51,7 @@ private:
 CGAL_BEGIN_NAMESPACE
 ;
 
-namespace CGALi {
+namespace POLYNOMIAL {
 
 // Base class for functors depending on the algebraic category of the
 // innermost coefficient
@@ -79,7 +79,7 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
             Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
     : public Polynomial_traits_d_base_icoeff_algebraic_category< 
                 Polynomial< Coefficient_ >, Integral_domain_tag > {
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+    CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
     
     public:    
     
@@ -112,7 +112,7 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
             Polynomial< Coefficient_ >, Field_tag >
     : public Polynomial_traits_d_base_icoeff_algebraic_category< 
                 Polynomial< Coefficient_ >, Integral_domain_tag > {
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+    CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
     public:
     
@@ -175,7 +175,7 @@ class Polynomial_traits_d_base_polynomial_algebraic_category<
             Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
     : public Polynomial_traits_d_base_polynomial_algebraic_category<
                 Polynomial< Coefficient_ >, Integral_domain_tag > {
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+    CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
     public:
     
@@ -265,6 +265,13 @@ class Polynomial_traits_d_base {
     typedef Null_functor  Scale_homogeneous;
     typedef Null_functor  Derivative;
     
+    struct Is_square_free
+        : public Unary_function< ICoeff, bool > {
+        bool operator()( const ICoeff& ) const {
+            return true;
+        }
+    };
+    
     struct Make_square_free 
         : public Unary_function< ICoeff, ICoeff>{
         ICoeff operator()( const ICoeff& x ) const {
@@ -305,12 +312,12 @@ class Polynomial_traits_d_base {
         ICoeff operator()(const ICoeff& x){return x;}
     };
     struct Degree_vector{
-        typedef std::vector<int>        result_type;
+        typedef Exponent_vector         result_type;
         typedef Coefficient             argument_type;
         
         // returns the exponent vector of inner_most_lcoeff. 
         result_type operator()(const Coefficient& constant){
-            return std::vector<int>();
+            return Exponent_vector();
         }
     };
     
@@ -400,7 +407,7 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_ >,
       public Polynomial_traits_d_base_polynomial_algebraic_category<
         Polynomial< Coefficient_ >, PolynomialAlgebraicCategory > {
 
-    CGAL_INTERN_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+    CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
 public:
 
@@ -746,7 +753,7 @@ public:
         : public Unary_function<Polynomial_d, Polynomial_d>{
         Polynomial_d
         operator()( const Polynomial_d& p ) const {
-            return CGAL::INTERN_POLYNOMIAL::canonicalize_polynomial(p);
+            return CGAL::POLYNOMIAL::canonicalize_polynomial(p);
         }  
      };
 
@@ -914,6 +921,31 @@ public:
             return typename Coefficient_flattening::Flatten()(p.end(),p.end());    
         }                                                                          
     };                                                                             
+
+    //       Is_square_free;
+    struct Is_square_free 
+        : public Unary_function< Polynomial_d, bool >{
+        bool operator()( const Polynomial_d& p ) const {
+            if( !POLYNOMIAL::may_have_multiple_factor( p ) )
+                return true;
+            
+            Univariate_content_up_to_constant_factor ucontent_utcf;
+            Integral_division_up_to_constant_factor  idiv_utcf;
+            Derivative diff;
+            
+            Coefficient content = ucontent_utcf( p );
+            typename PTC::Is_square_free isf;
+            
+            if( !isf( content ) )
+                return false;
+            
+            Polynomial_d regular_part = idiv_utcf( p, Polynomial_d( content ) ); 
+            
+            Polynomial_d g = gcd_utcf(regular_part,diff(regular_part));
+            return ( g.degree() == 0 );
+        }
+    };
+
                    
     //       Make_square_free;
     struct Make_square_free 
@@ -935,21 +967,7 @@ public:
             
             result *= idiv_utcf(regular_part,g);
             return Canonicalize()(result);
-           
-#if 0
-           
-            Square_free_factorization sqff_utcf;
-            std::vector<Polynomial_d> facs;
-            std::vector<int> mults;
-            sqff_utcf(p,std::back_inserter(facs), std::back_inserter(mults));
-            for(typename std::vector<Polynomial_d>::iterator it = facs.begin();
-                it != facs.end();
-                it++){
-                result *= *it;
-            }   
-            return result;
-#endif
-         
+                    
         }
     };
 
@@ -1306,10 +1324,8 @@ public:
     };
 
     // returns the Exponten_vector of the innermost leading coefficient 
-    // TODO use Exponent vector 
-    // TODO document 
     struct Degree_vector{
-        typedef std::vector<int>        result_type;
+        typedef Exponent_vector           result_type;
         typedef Polynomial_d              argument_type;
         
         // returns the exponent vector of inner_most_lcoeff. 
@@ -1317,14 +1333,14 @@ public:
             
             typename PTC::Degree_vector degree_vector;
             
-            std::vector<int> result = degree_vector(polynomial.lcoeff());
+            Exponent_vector result = degree_vector(polynomial.lcoeff());
             result.insert(result.begin(),polynomial.degree());
             return result;
         }
     };        
 };
 
-} // namespace CGALi
+} // namespace POLYNOMIAL
 
 // Definition of Polynomial_traits_d
 //
@@ -1332,9 +1348,9 @@ public:
 //  the Polynomial_traits_d_base class with "Null_tag" is used.
 template< class Polynomial >
 class Polynomial_traits_d
-    : public CGALi::Polynomial_traits_d_base< Polynomial,  
+    : public POLYNOMIAL::Polynomial_traits_d_base< Polynomial,  
     typename Algebraic_structure_traits<
-        typename CGALi::Polynomial_traits_d_base< Polynomial, Null_tag, Null_tag >
+        typename POLYNOMIAL::Polynomial_traits_d_base< Polynomial, Null_tag, Null_tag >
                              ::Innermost_coefficient >::Algebraic_category,
     typename Algebraic_structure_traits< Polynomial >::Algebraic_category > {};
 
