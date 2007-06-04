@@ -221,6 +221,7 @@ class Placement : public QObject
         placement->setItemEnabled(generateten_id, !completed);
         placement->setItemEnabled(generateresume_id, !completed);
         placement->setItemEnabled(clear_id,  !completed);
+
     }
     void generateTen()
     {
@@ -248,6 +249,7 @@ class Placement : public QObject
       placement->setItemEnabled(generateresume_id, false);
       placement->setItemEnabled(clear_id, false);
       file->setItemEnabled(save_id, false);
+      completed = false;
 
       draw();
     }
