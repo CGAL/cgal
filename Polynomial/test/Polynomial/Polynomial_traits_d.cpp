@@ -733,7 +733,7 @@ void test_square_free_factorization(){
         //std::cerr << "faktor= " << (*it) << ", ";
         //std::cerr << "mult= " << (*mults_it) << std::endl; 
         CGAL_test_assert( mults_it != mults.end() );
-        rec_p *= CGAL::INTERN_POLYNOMIAL::ipower( (*it),(*mults_it++) );
+        rec_p *= CGAL::POLYNOMIAL::ipower( (*it),(*mults_it++) );
     }
     
     rec_p *= Polynomial_d( alpha );
