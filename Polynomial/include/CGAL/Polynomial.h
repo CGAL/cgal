@@ -49,7 +49,7 @@
 #include <CGAL/Polynomial/Real_embeddable_traits.h>
 #include <CGAL/Polynomial/Fraction_traits.h>
 #include <CGAL/Polynomial/Scalar_factor_traits.h>
-// #include <CGAL/Polynomial/Modular_traits.h>
+#include <CGAL/Polynomial/Modular_traits.h>
 #include <CGAL/Polynomial/Coercion_traits.h>
 
 // TODO: Are these still includes necessary?
