@@ -48,7 +48,7 @@ a set of balls and a shrink factor using the algorithm described in
 An optimized algorithm is implemented for meshing the union of a set
 of balls.
 
-\section{Definition of a skin surface\label{sec:skindefinition}}
+\section{Definition of a Skin Surface\label{sec:skindefinition}}
 
 \begin{figure}
   \begin{ccTexOnly}
@@ -152,7 +152,7 @@ wrap around the (unshrunk) input balls, we can first increase the
 weights of the input balls by multiplying them with a factor $1/s$ and
 then compute the skin surface.
 
-\section{The interface}
+\section{The Interface}
 \ccThree{void}{b}{}
 \ccThreeToTwo
 
@@ -263,14 +263,14 @@ GHz, with 1 Gb of memory.
   \end{tabular}
 \end{center}
 
-\section{Example programs}
-\subsection{Meshing a skin surface}
+\section{Example Programs}
+\subsection{Meshing a Skin Surface}
 The following example shows the construction of a coarse mesh of the
 skin surface using the function \ccc{make_skin_surface_mesh_3}. The
 output is a \ccc{CGAL::Polyhedron}.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.cpp}
 
-\subsection{Meshing and subdividing a skin surface}
+\subsection{Meshing and Subdividing a Skin Surface}
 The following example shows the construction of mesh of the skin
 surface by explicitly performing different steps of the algorithm. It
 first constructs a \ccc{Skin_surface_3} object from an iterator range
