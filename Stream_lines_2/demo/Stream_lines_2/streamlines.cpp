@@ -174,7 +174,6 @@ class Placement : public QObject
     }
     void generate()
     {
-      std::cout << "processing...\n";
       Stream_lines = new Strl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_);
       number_of_lines_ = Stream_lines->number_of_lines();
       std::cout << "success\n";
@@ -191,12 +190,9 @@ class Placement : public QObject
     }
     void generateFirst()
     {
-      std::cout << "processing 000 ...\n";
       if (!completed)
         Stream_lines = new Strl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
-      std::cout << "processing 001 ...\n";
       number_of_lines_ = Stream_lines->number_of_lines();
-      std::cout << "processing 002 ...\n";
       d_stl = true;
       d_pq = false;
       d_tr = false;
@@ -207,9 +203,7 @@ class Placement : public QObject
       placement->setItemEnabled(generateten_id,  !completed);
       placement->setItemEnabled(generateresume_id,  !completed);
       placement->setItemEnabled(clear_id,  !completed);
-      std::cout << "processing 003 ...\n";
       draw();
-      std::cout << "processing 004 ...\n";
     }
     void generateNext(bool b = true)
     {
