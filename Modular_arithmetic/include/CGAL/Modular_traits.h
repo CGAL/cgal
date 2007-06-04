@@ -196,7 +196,7 @@ public:
     };
 };
 
-template < typename  Coeffcient > class Polynomial; 
+//template < typename  Coeffcient > class Polynomial; 
 /*! \ingroup NiX_Polynomial
  *  \ingroup NiX_Modular_traits_spec
  *  \brief Specialization of Modular_traits for NiX::Polynomial.
@@ -204,7 +204,7 @@ template < typename  Coeffcient > class Polynomial;
  *  NiX::Modular_traits::Modular_image maps the coefficients of a polynomial
  *  to their Modular_image and returns the resulting polynomial.  
  */
-template< class COEFF >
+/*template< class COEFF >
 class Modular_traits< Polynomial<COEFF> > {
     
 private:
@@ -233,7 +233,7 @@ public:
             return NT(V.begin(),V.end());           
         }
     };
-};
+};*/
 
 // TODO: put this into Modular_arithmetic/src/ 
 int primes[64] = {
