@@ -22,6 +22,7 @@
 #define CGAL_POLYNOMIAL_MODULAR_TRAITS_TRAITS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -32,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
  *  NiX::Modular_traits::Modular_image maps the coefficients of a polynomial
  *  to their Modular_image and returns the resulting polynomial.  
  */
-/*template< class COEFF >
+template< class COEFF >
 class Modular_traits< Polynomial<COEFF> > {
     
 private:
@@ -52,7 +53,7 @@ public:
             return Modular_NT(V.begin(),V.end());           
         }
     };
-};*/
+};
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POLYNOMIAL_MODULAR_TRAITS_TRAITS_H
