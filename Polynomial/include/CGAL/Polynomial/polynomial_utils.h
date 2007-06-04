@@ -59,7 +59,7 @@ Polynomial<NT> reversal(const Polynomial<NT>& p)
 ////////////////////////////////////////////////////////////////////////////////
 
 
-namespace INTERN_POLYNOMIAL {
+namespace POLYNOMIAL {
 
     template <class NT>
     Polynomial<NT> canonicalize_polynomial_(Polynomial<NT> p, CGAL::Tag_true)
@@ -118,12 +118,12 @@ namespace INTERN_POLYNOMIAL {
         return canonicalize_polynomial_(p, Is_extended());
     };
 
-} // namespace INTERN_POLYNOMIAL
+} // namespace POLYNOMIAL
 
 // div_utfc functions //////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace INTERN_POLYNOMIAL {
+namespace POLYNOMIAL {
 
     // Polynomial<NT> / Polynomial<NT>  -  coefficient type is extended
     template <class NT>
@@ -241,7 +241,7 @@ namespace INTERN_POLYNOMIAL {
         return div_utcf_(f, g, is_canonicalized, Is_extended());
     }
 
-} // namespace INTERN_POLYNOMIAL
+} // namespace POLYNOMIAL
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POLYNOMIAL_POLYNOMIAL_UTILS_H
