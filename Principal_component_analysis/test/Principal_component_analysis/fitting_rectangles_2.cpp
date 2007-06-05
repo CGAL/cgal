@@ -158,7 +158,7 @@ int main()
   std::cout << "Test 2D linear_least_squares_fitting_rectangles"  << std::endl;
 
   test_1();
-  test_2();
+  //  test_2();
 
 
   return 0; // success
