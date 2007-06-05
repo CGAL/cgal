@@ -1338,10 +1338,10 @@ Matrix_search/demo/Matrix_search/help/index.html svneol=native#text/html
 Matrix_search/demo/Matrix_search/help/rindex.html svneol=native#text/html
 Matrix_search/demo/Matrix_search/max_k-gon.vcproj eol=crlf
 Matrix_search/demo/Matrix_search/rectangular_p_center_2.vcproj eol=crlf
-Matrix_search/doc_tex/Bounded_volumes_ref/MatrixSearch_pcenter1.gif -text svneol=unset#image/gif
-Matrix_search/doc_tex/Bounded_volumes_ref/MatrixSearch_pcenter2.gif -text svneol=unset#image/gif
-Matrix_search/doc_tex/Bounded_volumes_ref/MatrixSearch_pcenter3.gif -text svneol=unset#image/gif
-Matrix_search/doc_tex/Bounded_volumes_ref/MatrixSearch_pcenter4.gif -text svneol=unset#image/gif
+Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter1.gif -text svneol=unset#image/gif
+Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter2.gif -text svneol=unset#image/gif
+Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter3.gif -text svneol=unset#image/gif
+Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter4.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Matrix_search_ref/MatrixSearch_sorted1.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Matrix_search_ref/MatrixSearch_sorted2.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Matrix_search_ref/MatrixSearch_sorted3.gif -text svneol=unset#image/gif
@@ -1644,16 +1644,16 @@ Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
-Optimisation_doc/doc_tex/Bounded_volumes/annulus.eps -text svneol=unset#application/postscript
-Optimisation_doc/doc_tex/Bounded_volumes/annulus.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounded_volumes/annulus.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounded_volumes/ball.eps -text svneol=unset#application/postscript
-Optimisation_doc/doc_tex/Bounded_volumes/ball.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounded_volumes/ball.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounded_volumes/minCircle.png -text
-Optimisation_doc/doc_tex/Bounded_volumes/pcenter.eps -text svneol=unset#application/postscript
-Optimisation_doc/doc_tex/Bounded_volumes/pcenter.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounded_volumes/pcenter.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Bounding_volumes/annulus.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Bounding_volumes/ball.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Bounding_volumes/ball.pdf -text svneol=unset#application/pdf
+Optimisation_doc/doc_tex/Bounding_volumes/minCircle.png -text
+Optimisation_doc/doc_tex/Bounding_volumes/pcenter.eps -text svneol=unset#application/postscript
+Optimisation_doc/doc_tex/Bounding_volumes/pcenter.gif -text svneol=unset#image/gif
+Optimisation_doc/doc_tex/Bounding_volumes/pcenter.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
