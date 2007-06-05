@@ -10,9 +10,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: /KM/projects/ecg/CVS/BMTools/parser/src/check_syntax.C,v $
-// $Revision$ $Date$
-// $Name:  $
+// $URL$
+// $Id$
 //
 // Author(s) : Andreas Meyer
 **************************************************************************/
