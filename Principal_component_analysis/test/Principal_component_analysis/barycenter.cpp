@@ -49,9 +49,9 @@ void test_2()
   assert( CGAL::barycenter(pts.begin(), pts.end(), weights.begin(), K())
           == CGAL::midpoint(p0, p1) );
 
-  assert( CGAL::centroid(pts.begin(), pts.begin()+1, K()) == p0);
-  assert( CGAL::centroid(pts.begin(), pts.begin()+2) == p0);
-  assert( CGAL::centroid(pts.begin()+1, pts.begin()+3)
+  assert( CGAL::centroid(pts.begin(), pts.begin()+1, K(),CGAL::PCA_dimension_0_tag()) == p0);
+  assert( CGAL::centroid(pts.begin(), pts.begin()+2,CGAL::PCA_dimension_0_tag()) == p0);
+  assert( CGAL::centroid(pts.begin()+1, pts.begin()+3,CGAL::PCA_dimension_0_tag())
           == CGAL::midpoint(p0, p1) );
 }
 
@@ -90,9 +90,9 @@ void test_3()
   assert( CGAL::barycenter(pts.begin(), pts.end(), weights.begin(), K())
           == CGAL::midpoint(p0, p1) );
 
-  assert( CGAL::centroid(pts.begin(), pts.begin()+1, K()) == p0);
-  assert( CGAL::centroid(pts.begin(), pts.begin()+2) == p0);
-  assert( CGAL::centroid(pts.begin()+1, pts.begin()+3)
+  assert( CGAL::centroid(pts.begin(), pts.begin()+1, K(),CGAL::PCA_dimension_0_tag()) == p0);
+  assert( CGAL::centroid(pts.begin(), pts.begin()+2,CGAL::PCA_dimension_0_tag()) == p0);
+  assert( CGAL::centroid(pts.begin()+1, pts.begin()+3,CGAL::PCA_dimension_0_tag())
           == CGAL::midpoint(p0, p1) );
 }
 

@@ -30,13 +30,13 @@ void fit_point_set(std::list<Point>& points,
   FT quality;
   Point centroid;
 
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line);
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid);
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,k);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,k,CGAL::PCA_dimension_0_tag());
 
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane);
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid);
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::PCA_dimension_0_tag());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k,CGAL::PCA_dimension_0_tag());
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
 }
@@ -108,13 +108,13 @@ void test_3D_triangle_set(const unsigned int nb_triangles)
   Plane plane;
   Point centroid;
 
-  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line);
-  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid);
-  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid,k);
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_2_tag());
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid,k,CGAL::PCA_dimension_2_tag());
 
-  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane);
-  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid);
-  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,k);
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_2_tag());
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::PCA_dimension_2_tag());
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,k,CGAL::PCA_dimension_2_tag());
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
