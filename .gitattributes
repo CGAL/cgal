@@ -775,6 +775,7 @@ Jet_fitting_3/examples/Jet_fitting_3/Jet_fitting_3.sln eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/VC/Mesh_estimation.vcproj eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/VC/Single_estimation.vcproj eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
+Jet_fitting_3/examples/Jet_fitting_3/skip_vcproj_auto_generation -text
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text svneol=unset#application/postscript
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#image/gif
@@ -2145,6 +2146,7 @@ Ridges_3/doc_tex/Ridges_3/star.png -text svneol=unset#image/png
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
 Ridges_3/examples/Ridges_3/VC/Compute_Ridges_Umbilics.vcproj eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
+Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
 Robustness/demo/Robustness/robustness.vcproj eol=crlf
@@ -2546,6 +2548,7 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/rotor.
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/sphere966.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/three_peaks.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/polyhedron_ex_parameterization.cmd eol=lf
+Surface_mesh_parameterization/examples/Surface_mesh_parameterization/skip_vcproj_auto_generation -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test.sh eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.bat eol=crlf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.sh eol=lf
@@ -2670,6 +2673,7 @@ Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#imag
 Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr -text
 Surface_mesher/examples/Surface_mesher/data/triceratops.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image.vcproj eol=crlf
+Surface_mesher/examples/Surface_mesher/skip_vcproj_auto_generation -text
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
