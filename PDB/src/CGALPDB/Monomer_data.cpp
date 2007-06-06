@@ -146,12 +146,12 @@ namespace Monomer_data {
     {"P   ", Monomer::AL_P, Atom::P},
     {"O1P ", Monomer::AL_OP1, Atom::O},
     {"O2P ", Monomer::AL_OP2, Atom::O},
-    {"O2P ", Monomer::AL_O5p, Atom::O},
+    {"O5* ", Monomer::AL_O5p, Atom::O},
     {"C5* ", Monomer::AL_H5p, Atom::C}, 
     {"H5**", Monomer::AL_H5pp, Atom::H},
     {"C4* ", Monomer::AL_C4p, Atom::C},
     {"H4* ", Monomer::AL_H4p, Atom::H},
-    {"04* ", Monomer::AL_O4p, Atom::O},
+    {"O4* ", Monomer::AL_O4p, Atom::O},
     {"C1* ", Monomer::AL_C1p, Atom::C},
     {"H1* ", Monomer::AL_H1p, Atom::H},
     {"C3* ", Monomer::AL_C3p, Atom::C},
@@ -788,13 +788,13 @@ namespace Monomer_data {
     for (unsigned int i=0; i< num_res; ++i){
       Monomer::Type cur_res=Monomer::Type(i);
       amino_acid_data_[cur_res]= Amino_acid_data();
-      if (cur_res == Monomer::ADE && cur_res == Monomer::CYT
-	  && cur_res == Monomer::GUA && cur_res == Monomer::URA && cur_res == Monomer::THY){
+      if (cur_res == Monomer::ADE || cur_res == Monomer::CYT
+	  || cur_res == Monomer::GUA || cur_res == Monomer::URA || cur_res == Monomer::THY){
 	Monomer::Atom_key bl[]={Monomer::AL_P, Monomer::AL_OP1, Monomer::AL_OP2,
 				Monomer::AL_O5p, Monomer::AL_C5p, Monomer::AL_H5p,
 				Monomer::AL_H5pp,
-				Monomer::AL_C4p, Monomer::AL_H4p, Monomer::AL_O4p
-				, Monomer::AL_C1p, Monomer::AL_H1p,
+				Monomer::AL_C4p, Monomer::AL_H4p, Monomer::AL_O4p,
+				Monomer::AL_C1p, Monomer::AL_H1p,
 				Monomer::AL_C3p, Monomer::AL_H3p, Monomer::AL_O3p,
 				Monomer::AL_C2p, Monomer::AL_H2p,
 				Monomer::AL_H2pp, Monomer::AL_O2p, Monomer::AL_HO2p};

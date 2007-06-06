@@ -156,9 +156,9 @@ public:
   CGAL_PDB_FIND(Atom, Atom_key al= fix_atom_key(k);
 		return atoms_.find(al));
 
-  CGAL_PDB_INSERT(Atom, insert_internal(k,m));
+  CGAL_PDB_INSERT(Atom, return insert_internal(k,m));
 
-  void insert_internal(Atom_key k, const Atom &a);
+  Atom_iterator insert_internal(Atom_key k, const Atom &a);
 
   //! Return true if monomer of this type can have atoms of that type
   bool can_have_atom(Atom_key al) const;

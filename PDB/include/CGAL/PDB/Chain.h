@@ -129,11 +129,11 @@ public:
   //! A chemical bond within the protein
   typedef std::pair<Bond_endpoint, Bond_endpoint> Bond; 
 
-  CGAL_PDB_INSERT(Monomer,  insert_internal(k,m));
+  CGAL_PDB_INSERT(Monomer,  return insert_internal(k,m));
 
 
 protected:
-  void insert_internal(Monomer_key k, const Monomer &m);
+  Monomer_iterator insert_internal(Monomer_key k, const Monomer &m);
 
   struct Iterator_traits {
     typedef Monomer_iterator Outer_it;

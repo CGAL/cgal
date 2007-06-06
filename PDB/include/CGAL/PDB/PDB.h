@@ -54,9 +54,7 @@ public:
   std::ostream& write(std::ostream &out) const;
 
  
-   //! Add a model (or change an existing one).
-  CGAL_PDB_INSERT(Model, models_[k]=m);
-
+  
   //! Return the number of models. 
   CGAL_PDB_SIZE(models, return models_.size());
 
@@ -104,6 +102,9 @@ public:
 		return models_.end());
   //! Find a Model with the given key, return models_end() if none is found
   CGAL_PDB_FIND(Model, return models_.find(k));
+
+ //! Add a model (or change an existing one).
+  CGAL_PDB_INSERT(Model, return models_.insert(Models::value_type(k,m)));
 
 protected:
 

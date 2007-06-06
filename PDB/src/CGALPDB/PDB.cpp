@@ -22,6 +22,7 @@
 #include <CGAL/PDB/internal/pdb_utils.h>
 #include <cassert>
 #include <CGAL/PDB/internal/Error_logger.h>
+#include <cctype>
 CGAL_PDB_BEGIN_NAMESPACE
 
 PDB::PDB(std::istream &in, bool print_errors) {
@@ -49,7 +50,21 @@ void PDB::load(std::istream &in, bool print_errors){
       if (sscanf(line, "COMPND %d CHAIN: %c", &ti, &chain) == 2) {
 	names[chain]=last_name;
       } else if (sscanf(line, "COMPND %d MOLECULE:", &ti) ==1) {
-	last_name= std::string(line+20);
+	int len= std::strlen(line);
+	CGAL_assertion(line[len]=='\0');
+	--len;
+	while (std::isspace(line[len])
+	       || std::ispunct(line[len])
+	       /*|| std::isctrl(line[len])*/) {
+	  line[len]='\0';
+	  --len;
+	  if (len==0) break;
+	}
+	int offset=20;
+	while (std::isspace(line[offset]) && !line[offset]=='\0'){
+	  ++offset;
+	}
+	last_name= std::string(line+offset);
       }
     } else if (lt== CGAL_PDB_INTERNAL_NS::DBREF){
       header_.push_back(std::string(line));

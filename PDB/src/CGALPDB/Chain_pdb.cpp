@@ -166,8 +166,12 @@ void Chain::process_line(const char *line) {
 	CGAL_PDB_INTERNAL_NS::error_logger.new_fatal_error(oss.str().c_str());
       }
       //assert(cur_residue->type() == Residue::type(resname));
-	
-      cur_residue->insert(al, a);
+      Monomer::Atom_iterator rit= cur_residue->insert(al, a);
+      if (rit == cur_residue->atoms_end()) {
+	std::ostringstream oss;
+	oss << "Error adding atom to residue " <<  resindex << std::endl;
+	CGAL_PDB_INTERNAL_NS::error_logger.new_warning(oss.str().c_str());
+      }
 	
       //residue(resnum-1)->set_coords (al, Point(x,y,z));
       //residue(resnum-1)->set_index(al, snum);

@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 
   using namespace CGAL::PDB;
   std::ifstream in(input_file.c_str());
-  PDB pdb(in);;
+  PDB pdb(in, verbose);;
   for (PDB::Model_iterator it= pdb.models_begin(); it != pdb.models_end(); ++it){
     std::cout << "Model " << it->key() << ":" << std::endl;
     for (Model::Chain_iterator cit= it->model().chains_begin(); 

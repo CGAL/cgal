@@ -75,14 +75,14 @@ void Chain::set_has_bonds(bool tf) {
   }
 }
 
-void Chain::insert_internal(Monomer_key k, const Monomer &m) {
+Chain::Monomer_iterator Chain::insert_internal(Monomer_key k, const Monomer &m) {
   if (residues_.find(k) != residues_.end()){
     std::ostringstream eout;
     eout << "Warning, newly added residue has index "<< k
 	 << " which already exists.";
     CGAL_PDB_INTERNAL_NS::error_logger.new_warning(eout.str().c_str());
   }
-  residues_.insert(Container::value_type(k,m));
+  return residues_.insert(Container::value_type(k,m));
 }
 
 bool Chain::has_bonds() const {

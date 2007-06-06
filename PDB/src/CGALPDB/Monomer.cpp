@@ -92,35 +92,37 @@ void Monomer::erase_atom(Monomer::Atom_key al) {
 
 
 
-void Monomer::insert_internal(Atom_key ial, const Atom &a) {
+Monomer::Atom_iterator Monomer::insert_internal(Atom_key ial, const Atom &a) {
   Monomer::Atom_key al= Monomer_data::fix_atom_label(label_, ial);
   if (!can_have_atom(al)){
     CGAL_PDB_INTERNAL_NS::error_logger.new_warning((std::string("Trying to set invalid atom ")
 						    + atom_key_string(ial) 
 						    + " on a residue of type "
 						    + type_string(label_)).c_str());
+    return atoms_end();
   }
   if (al == AL_INVALID) {
-    return;
+    return atoms_end();
   }
   if (atoms_.find(al) != atoms_.end()) {
     CGAL_PDB_INTERNAL_NS::error_logger.new_warning((std::string("Duplicate atoms ")
 						    + atom_key_string(ial) 
 						    + " on a residue of type "
 						    + type_string(label_)).c_str());
-    return;
+    return atoms_end();
   }
   //assert(atoms_.find(al)== atoms_.end());
   //bonds_.clear();
 
-  atoms_.insert(Atoms::value_type(al,a));
+  Atom_iterator ret= atoms_.insert(Atoms::value_type(al,a));
   // This is a bit evil, I haven't figured out a better way though.
-  atoms_.find(al)->atom().set_type(element(al));
+  ret->atom().set_type(element(al));
   if (has_bonds()){
     set_has_bonds(false);
     set_has_bonds(true);
   }
   //atoms_.push_back(a);
+  return ret;
 }
 
 

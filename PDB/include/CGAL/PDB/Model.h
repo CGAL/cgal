@@ -70,7 +70,7 @@ public:
   //! get the chain identified by c
   CGAL_PDB_FIND(Chain, return chains_.find(k));
 
-  CGAL_PDB_INSERT(Chain, chains_[k]=m;);
+  CGAL_PDB_INSERT(Chain, return chains_.insert(Chains::value_type(k, m)););
 
   CGAL_PDB_SIZE(chains, return chains_.size());
 

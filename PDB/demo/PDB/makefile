@@ -22,11 +22,10 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LIBPATH = \
+LIBPATH = -L../../src/CGALPDB\
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-	-L../../src/CGALPDB\
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -35,12 +34,17 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                pdb_split$(EXE_EXT) \
                 pdb_tree$(EXE_EXT) 
+
+pdb_split$(EXE_EXT): pdb_split$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)pdb_split pdb_split$(OBJ_EXT) $(LDFLAGS)
 
 pdb_tree$(EXE_EXT): pdb_tree$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)pdb_tree pdb_tree$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   pdb_split.clean \
                    pdb_tree.clean 
 
 #---------------------------------------------------------------------#

@@ -1764,6 +1764,7 @@ PDB.tmpout/test/PDB/data/check_refine_alignment_2.pdb -text
 PDB.tmpout/test/PDB/include/check_equal.h -text
 PDB.tmpout/todo -text
 PDB/demo/PDB/makefile -text
+PDB/demo/PDB/pdb_split.cpp -text
 PDB/demo/PDB/pdb_tree.cpp -text
 PDB/dont_submit -text
 PDB/include/CGAL/PDB/Atom.h -text
@@ -1780,7 +1781,9 @@ PDB/include/CGAL/PDB/basic.h -text
 PDB/include/CGAL/PDB/distance.h -text
 PDB/include/CGAL/PDB/internal/Error_logger.h -text
 PDB/include/CGAL/PDB/internal/Monomer_data.h -text
+PDB/include/CGAL/PDB/internal/Nested_iterator.h -text
 PDB/include/CGAL/PDB/internal/align_points.out.h -text
+PDB/include/CGAL/PDB/internal/dummies.h -text
 PDB/include/CGAL/PDB/internal/pdb_utils.h -text
 PDB/include/CGAL/PDB/internal/tnt/jama_cholesky.h -text
 PDB/include/CGAL/PDB/internal/tnt/jama_eig.h -text
@@ -1797,6 +1800,7 @@ PDB/include/CGAL/PDB/internal/tnt/tnt_math_utils.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_subscript.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_vec.h -text
 PDB/include/CGAL/PDB/iterator.h -text
+PDB/include/CGAL/PDB/macros.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/maintainer -text
 PDB/src/CGALPDB/Atom.cpp -text
@@ -1815,6 +1819,7 @@ PDB/src/CGALPDB/align.cpp -text
 PDB/src/CGALPDB/makefile -text
 PDB/src/CGALPDB/pdb_utils.cpp -text
 PDB/test/PDB/check_hetatom.cpp -text
+PDB/test/PDB/check_iterators.cpp -text
 PDB/test/PDB/check_pdb.cpp -text
 PDB/test/PDB/check_protein.cpp -text
 PDB/test/PDB/check_small_map.cpp -text
