@@ -603,7 +603,7 @@ namespace CGAL {
       return s.str();
     }
 
-    static std::string debug_info_header()
+    std::string debug_info_header() const
     {
       return "number of facets";
     }
@@ -680,6 +680,22 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
       std::cerr << "CONS: Surface_mesher\n";
 #endif
+    }
+
+    std::string debug_info() const
+    {
+      std::stringstream s;
+      s << Base::debug_info() 
+	<< ", " << this->previous().debug_info();
+      return s.str();
+    }
+
+    std::string debug_info_header() const
+    {
+      std::stringstream s;
+      s << Base::debug_info_header()
+	<< ", " << this->previous().debug_info_header();
+      return s.str();
     }
 
     // Initialization

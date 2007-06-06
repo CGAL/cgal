@@ -612,7 +612,7 @@ namespace Surface_mesher {
 	boost::format("     before insertion: remove %1% edges\n")
 	% number_of_edges_removed;
 #endif
-      CGAL_assertion(is_e_removed == true);
+//       CGAL_assertion(is_e_removed == true);
     }
 
     // for visitors

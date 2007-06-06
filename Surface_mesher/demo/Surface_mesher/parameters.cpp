@@ -85,6 +85,7 @@ void init_double_options()
   double_options["iso_value"] = 0.;
   double_options["edges_radius_bound"] = 0.;
   double_options["edges_distance_bound"] = 0.;
+  double_options["sharp_edge_cosine_bound"] = 0.5;
 }
 
 void init_functions()

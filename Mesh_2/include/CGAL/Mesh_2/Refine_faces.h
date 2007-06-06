@@ -176,7 +176,7 @@ public:
   }
 
   /** Remove the conflicting faces from the bad faces map. */
-  void before_insertion_impl(const Face_handle& fh, const Point&,
+  void before_insertion_impl(const Face_handle&, const Point&,
 			     Zone& zone)
   {
     /** @todo Perhaps this function is useless. */
@@ -184,7 +184,7 @@ public:
         fh_it != zone.faces.end();
         ++fh_it)
       {
-        if(*fh_it != fh && (*fh_it)->is_in_domain() )
+        if((*fh_it)->is_in_domain() )
           remove_bad_face(*fh_it);
         (*fh_it)->set_in_domain(false);
       }

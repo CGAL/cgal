@@ -136,8 +136,8 @@ public:
     {
       for (typename std::vector<Point>::const_iterator vit =
              surface.corner_points.begin();
-           vit != surface.corner_points.end() && n > 0;
-           ++vit, --n)
+           vit != surface.corner_points.end();
+           ++vit)
       {
         Point p = *vit;
         self.visitor.new_point(p);
@@ -219,9 +219,10 @@ public:
   CGAL::Object intersect_segment_surface(const Subfacets_octree& data_struct,
                                          const Segment_3& s) const
     {
+      typename Geom_traits::Is_degenerate_3  is_degenerate;
       // debug: test if segment is degenerate
       // (can happen, because of rounding in circumcenter computations)
-      if (s.vertex(0)==s.vertex(1)) {
+      if (is_degenerate(s)) {
 	std::cerr << "Warning: degenerate segment (" << s << ")\n";
 	return CGAL::Object();
       }
@@ -259,6 +260,13 @@ public:
   CGAL::Object intersect_ray_surface(const Subfacets_octree& data_struct,
                                      const Ray_3 &r) const
     {
+      typename Geom_traits::Is_degenerate_3  is_degenerate;
+      // debug: test if segment is degenerate
+      // (can happen, because of rounding in circumcenter computations)
+      if (is_degenerate(r)) {
+	std::cerr << "Warning: degenerate ray (" << r << ")\n";
+	return CGAL::Object();
+      }
       // debug: for detecting whether Marie's code works
       // (we compare with our basic intersection function)
 //       CGAL::Object oun, odeux;

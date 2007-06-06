@@ -331,9 +331,11 @@ namespace CGAL {
       return s.str();
     }
 
-    static std::string debug_info_header()
+    std::string debug_info_header() const
     {
-      return SMB::debug_info_header() + "," + "number of bad edges";
+      std::stringstream s;
+      s << SMB::debug_info_header() << "," << "number of bad edges";
+      return s.str();
     }
   };  // end Surface_mesher_regular_edges_base
 

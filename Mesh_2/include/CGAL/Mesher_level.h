@@ -56,6 +56,15 @@ struct Null_mesher_level {
     return false;
   }
 
+  std::string debug_info() const
+  {
+    return "";
+  }
+  std::string debug_info_header() const
+  {
+    return "";
+  }
+
 }; // end Null_mesher_level
 
 template <
@@ -131,6 +140,11 @@ public:
     return derived().triangulation_ref_impl();
   }
 
+  const Previous_level& previous() const
+  {
+    return previous_level;
+  }
+
   Vertex_handle insert(Point p, Zone& z)
   {
     return derived().insert_impl(p, z);
@@ -176,7 +190,7 @@ public:
   /** Actions before testing conflicts for point \c p and element \c e */
   template <typename Mesh_visitor>
   void before_conflicts(const Element& e, const Point& p,
-			Mesh_visitor& visitor)
+			Mesh_visitor visitor)
   {
     visitor.before_conflicts(e, p);
     derived().before_conflicts_impl(e, p);
@@ -216,7 +230,7 @@ public:
    */  
   template <class Mesh_visitor>
   void before_insertion(Element& e, const Point& p, Zone& zone, 
-                        Mesh_visitor& visitor)
+                        Mesh_visitor visitor)
   {
     visitor.before_insertion(e, p, zone);
     derived().before_insertion_impl(e, p, zone);
@@ -227,7 +241,7 @@ public:
    *  \param visitor is the visitor.
    */
   template <class Mesh_visitor>
-  void after_insertion(Vertex_handle vh, Mesh_visitor& visitor)
+  void after_insertion(Vertex_handle vh, Mesh_visitor visitor)
   {
     derived().after_insertion_impl(vh);
     visitor.after_insertion(vh);
@@ -237,7 +251,7 @@ public:
    *  if no point is inserted. */
   template <class Mesh_visitor>
   void after_no_insertion(const Element& e, const Point& p, Zone& zone,
-			  Mesh_visitor& visitor)
+			  Mesh_visitor visitor)
   {
     derived().after_no_insertion_impl(e, p, zone);
     visitor.after_no_insertion(e, p, zone);
@@ -262,7 +276,7 @@ public:
 
   /** Refines elements of this level and previous levels. */
   template <class Mesh_visitor>
-  void refine(Mesh_visitor& visitor)
+  void refine(Mesh_visitor visitor)
   {
     while(! is_algorithm_done() )
     {
@@ -278,21 +292,21 @@ public:
    * @todo Merge with try_to_refine_element().
    */
   template <class Mesh_visitor>
-  bool process_one_element(Mesh_visitor& visitor)
+  bool process_one_element(Mesh_visitor visitor)
   {
     Element e = get_next_element();
 
     const Mesher_level_conflict_status result 
       = try_to_refine_element(e, visitor);
 
-    if(result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+    if(result == CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED)
       pop_next_element();
     return result == NO_CONFLICT;
   }
 
   template <class Mesh_visitor>
   Mesher_level_conflict_status
-  try_to_refine_element(Element e, Mesh_visitor& visitor)
+  try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Point& p = refinement_point(e);
 
@@ -351,7 +365,7 @@ public:
    * point has been inserted because the algorithm is done.
    */
   template <class Mesh_visitor>
-  bool try_to_insert_one_point(Mesh_visitor& visitor)
+  bool try_to_insert_one_point(Mesh_visitor visitor)
   {
     while(! is_algorithm_done() )
     {
@@ -370,7 +384,7 @@ public:
    * <tt> is_algorithm_done()==true </tt>.
    */
   template <class Mesh_visitor>
-  bool one_step(Mesh_visitor& visitor)
+  bool one_step(Mesh_visitor visitor)
   {
     if( ! previous_level.is_algorithm_done() )
       previous_level.one_step(visitor.previous_level());

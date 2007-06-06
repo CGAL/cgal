@@ -1,4 +1,4 @@
-// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,9 +20,14 @@
 #ifndef CGAL_MESHES_OUTPUT_STREAM_H
 
 #ifndef CGAL_MESHES_OUTPUT_ON_CERR
-#define CGAL_MESHES_OUTPUT_STREAM std::cout
+#  define CGAL_MESHES_OUTPUT_STREAM std::cout
 #else
-#define CGAL_MESHES_OUTPUT_STREAM std::cerr
+#  ifdef CGAL_MESHES_NO_OUTPUT
+#    include <CGAL/IO/Verbose_ostream.h>
+#  define CGAL_MESHES_OUTPUT_STREAM CGAL::Verbose_ostream()
+#  else
+#    define CGAL_MESHES_OUTPUT_STREAM std::cerr
+#  endif
 #endif
 
 #endif

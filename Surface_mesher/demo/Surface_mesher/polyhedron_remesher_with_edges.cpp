@@ -194,7 +194,8 @@ int main(int argc, char **argv) {
     usage("Empty input file name");
 
   std::ifstream surface_ifs(function_name.c_str());
-  Surface surface(surface_ifs);
+  Surface surface(surface_ifs,
+		  FT(get_double_option("sharp_edge_cosine_bound")));
   surface_ifs.close();
 
   std::cerr << "Surface bounding box: " << surface.bbox() << "\n";
@@ -310,7 +311,8 @@ int main(int argc, char **argv) {
 					   surface,
 					   criteria,
 					   edges_criteria,
-					   CGAL::Manifold_with_boundary_tag(),
+					   CGAL::Non_manifold_tag(),
+// 					   CGAL::Manifold_with_boundary_tag(),
 					   0);
   timer.stop();
   std::cerr << ::boost::format("\nFinal number of points: %1%"

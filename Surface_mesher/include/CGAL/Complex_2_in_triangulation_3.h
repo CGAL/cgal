@@ -710,9 +710,9 @@ public:
 #endif
 }; // end Complex_2_in_triangulation_3
 
-template < class Tr >
+template < class Tr, typename Edge_info>
 std::istream & 
-operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr>& c2t3)
+operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr, Edge_info>& c2t3)
 {
   c2t3.clear();
   is >> c2t3.triangulation();
@@ -728,9 +728,9 @@ operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr>& c2t3)
   return is;
 }
 
-template < class Tr>
+template < class Tr, typename Edge_info>
 std::ostream & 
-operator<< (std::ostream& os, const Complex_2_in_triangulation_3<Tr> &c2t3)
+operator<< (std::ostream& os, const Complex_2_in_triangulation_3<Tr, Edge_info> &c2t3)
 {
   return os << c2t3.triangulation();
 }

@@ -52,7 +52,7 @@ namespace CGAL {
       template <class E>
       void before_insertion(E,
                             const Point& p,
-                            Zone& zone)
+                            Zone zone)
       {
 	surface_mesher->remove_edges(p, zone);
       }
