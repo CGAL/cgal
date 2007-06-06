@@ -95,9 +95,10 @@ public:
     if(list_of_points.size()>1){
       Line_2 line;
       linear_least_squares_fitting_2(list_of_points.begin(),
-						                         list_of_points.end(),
-						                         line);
-
+				     list_of_points.end(),
+				     line,
+				     CGAL::PCA_dimension_0_tag());
+      
       *widget << line;
     }
     widget->unlock();

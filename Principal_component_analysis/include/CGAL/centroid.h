@@ -51,7 +51,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K&,
          const typename K::Point_2*,
-	 const CGAL::PCA_dimension_0_tag& tag)
+	 const CGAL::PCA_dimension_0_tag&)
 {
   typedef typename K::Vector_2 Vector;
   typedef typename K::FT FT;
