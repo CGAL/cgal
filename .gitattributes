@@ -2929,3 +2929,5 @@ wininst/developer_scripts/script_cgal_3_3.nsh -text
 wininst/developer_scripts/zirkel.bmp -text svneol=unset#image/bmp
 wininst/src/CGAL/cgallib_71.vcproj -text
 wininst/src/CGAL/cgallib_80.vcproj -text
+wininst/src/CGAL_71.sln eol=crlf
+wininst/src/CGAL_80.sln eol=crlf

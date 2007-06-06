@@ -1,0 +1,77 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CORE", "CGALCore\Core_80.vcproj", "{C1F788D5-DC18-4223-B77D-924CBAED2201}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cgallib", "CGAL\cgallib_80.vcproj", "{C1F788D5-DC18-4223-B77D-924CBAED2202}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1F788D5-DC18-4223-B77D-924CBAED2201} = {C1F788D5-DC18-4223-B77D-924CBAED2201}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CGALImageIO", "CGALimageIO\CGALimageIO_80.vcproj", "{C1F788D5-DC18-4223-B77D-924CBAED2203}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1F788D5-DC18-4223-B77D-924CBAED2202} = {C1F788D5-DC18-4223-B77D-924CBAED2202}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CGALPDB", "CGALPDB\CGALPDB_80.vcproj", "{C1F788D5-DC18-4223-B77D-924CBAED2204}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1F788D5-DC18-4223-B77D-924CBAED2202} = {C1F788D5-DC18-4223-B77D-924CBAED2202}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CGALQt", "CGALQt\CGALQt_80.vcproj", "{C1F788D5-DC18-4223-B77D-924CBAED2205}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1F788D5-DC18-4223-B77D-924CBAED2202} = {C1F788D5-DC18-4223-B77D-924CBAED2202}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_MultiThreaded_DynamicCRT|Win32 = Debug_MultiThreaded_DynamicCRT|Win32
+		Debug_MultiThreaded_StaticCRT|Win32 = Debug_MultiThreaded_StaticCRT|Win32
+		Release_MultiThreaded_DynamicCRT|Win32 = Release_MultiThreaded_DynamicCRT|Win32
+		Release_MultiThreaded_StaticCRT|Win32 = Release_MultiThreaded_StaticCRT|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Debug_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Debug_MultiThreaded_DynamicCRT|Win32.Build.0 = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Debug_MultiThreaded_StaticCRT|Win32.ActiveCfg = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Debug_MultiThreaded_StaticCRT|Win32.Build.0 = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Release_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Release_MultiThreaded_DynamicCRT|Win32.Build.0 = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Release_MultiThreaded_StaticCRT|Win32.ActiveCfg = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2201}.Release_MultiThreaded_StaticCRT|Win32.Build.0 = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Debug_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Debug_MultiThreaded_DynamicCRT|Win32.Build.0 = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Debug_MultiThreaded_StaticCRT|Win32.ActiveCfg = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Debug_MultiThreaded_StaticCRT|Win32.Build.0 = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Release_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Release_MultiThreaded_DynamicCRT|Win32.Build.0 = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Release_MultiThreaded_StaticCRT|Win32.ActiveCfg = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2202}.Release_MultiThreaded_StaticCRT|Win32.Build.0 = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Debug_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Debug_MultiThreaded_DynamicCRT|Win32.Build.0 = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Debug_MultiThreaded_StaticCRT|Win32.ActiveCfg = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Debug_MultiThreaded_StaticCRT|Win32.Build.0 = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Release_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Release_MultiThreaded_DynamicCRT|Win32.Build.0 = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Release_MultiThreaded_StaticCRT|Win32.ActiveCfg = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2203}.Release_MultiThreaded_StaticCRT|Win32.Build.0 = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Debug_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Debug_MultiThreaded_DynamicCRT|Win32.Build.0 = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Debug_MultiThreaded_StaticCRT|Win32.ActiveCfg = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Debug_MultiThreaded_StaticCRT|Win32.Build.0 = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Release_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Release_MultiThreaded_DynamicCRT|Win32.Build.0 = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Release_MultiThreaded_StaticCRT|Win32.ActiveCfg = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2204}.Release_MultiThreaded_StaticCRT|Win32.Build.0 = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Debug_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Debug_MultiThreaded_DynamicCRT|Win32.Build.0 = Debug_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Debug_MultiThreaded_StaticCRT|Win32.ActiveCfg = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Debug_MultiThreaded_StaticCRT|Win32.Build.0 = Debug_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Release_MultiThreaded_DynamicCRT|Win32.ActiveCfg = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Release_MultiThreaded_DynamicCRT|Win32.Build.0 = Release_MultiThreaded_DynamicCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Release_MultiThreaded_StaticCRT|Win32.ActiveCfg = Release_MultiThreaded_StaticCRT|Win32
+		{C1F788D5-DC18-4223-B77D-924CBAED2205}.Release_MultiThreaded_StaticCRT|Win32.Build.0 = Release_MultiThreaded_StaticCRT|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
