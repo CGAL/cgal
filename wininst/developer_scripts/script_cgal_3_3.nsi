@@ -1,4 +1,4 @@
-;============================
+;===========================
 ; Copyright 2007 GeometryFactory (France)
 ; Author: Andreas Fabri (andreas.fabri@geometryfactrory.com), Fernando Cacciola (fernando.cacciola@geometryfactrory.com)
 ;============================
@@ -11,69 +11,66 @@
 ; http://www.boost.org/LICENSE_1_0.txt)
 ;============================
 
-;Include Modern UI
 
 !include "MUI.nsh"
 !include "WriteEnvStr.nsh"
 !include "StrFunc.nsh"
 !include "Sections.nsh"
 !include "LogicLib.nsh"
+!include "Locate.nsh"
+!include "StrRep.nsh"
+!include "ReplaceInFile.nsh"
 
-!include "TextLog.nsh"
+
 !include "script_cgal_3_3.nsh"
 
-
-;-------------------------------------------------------------------------------------------------------
-;
-;                                          -= SOURCES =-
-;
-;
-; The following defintions specify the source folders for the files to install. 
-; ALL the variants for the precompiled libraries for ALL dependencies must exist.
-;
-; These are:
-;   LIB-vc71-mt-gd.lib 
-;   LIB-vc71-mt-s.lib
-;   LIB-vc71-mt-sgd.lib
-;   LIB-vc71-mt.lib
-;   LIB-vc71-s.lib
-;   LIB-vc71-sgd.lib
-;   LIB-vc80-mt-gd.lib
-;   LIB-vc80-mt-s.lib
-;   LIB-vc80-mt-sgd.lib
-;   LIB-vc80-mt.lib
-;
-; where LIB is: cgal,CGALcore++,gmp,mpfr
-;
-; For MPFR/GMP, ALL files (.h, .lib, .txt etc) must be in a single folder.
-;--------------------------------
+!ifdef DebugLog
+!include "TextLog.nsh"
+!EndIf
 
 !define CGAL_SRC  "CGAL-3.3"
-!define GMP_SRC   "gmp-4.1.2-gladman"
-
+;!define FTP_SRC   "http://www.geometryfactory.com/precompiled_libs/"
+!define FTP_SRC   "ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/precompiled_libs/"
 
 ;--------------------------------
 ; General
 ;--------------------------------
 
   ;Name and file
-  Name "CGAL-3.3"
+  Name "GAL-3.3"
+  
+  !ifdef FetchLocal
+  OutFile "CGAL-3.3-Full-Setup.exe"
+  !else
   OutFile "CGAL-3.3-Setup.exe"
+  !endif
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\CGAL-3.3a"
+  InstallDir "$PROGRAMFILES\CGAL-3.3"
 
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\CGAL-3.3" ""
   
-  BrandingText "The CGAL Project and GeometryFactory"
+  BrandingText "The CGAL Project and GeometryFactory - Installer created with NSIS."
 
+  VIProductVersion "3.3.0.0"
+  VIAddVersionKey "ProductName"     "CGAL Windows Installer"
+  VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
+  VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
+  VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
+  VIAddVersionKey "FileVersion"     "3.3"
+  
 ;--------------------------------
 ; Variables
 ;--------------------------------
 
   Var MUI_TEMP
   Var STARTMENU_FOLDER
+  Var DoFixupProjectFiles
+  Var SetCGALROOT
+  Var SetBOOSTROOT
+  Var SetEnvAllUsers
+  Var IsGmpInstalled
   
 ;--------------------------------
 ; Interface Settings
@@ -94,21 +91,20 @@
   !define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
-  
-;  !define MUI_PAGE_HEADER_TEXT "page header text"
 
   !define MUI_WELCOMEPAGE_TEXT "This installs CGAL-3.3 on your machine, precompiled with .Net 2003 and 2005 (VC 7.1 and 8.0).\r\nThe project files for building the library itself are provided for both VC7.1 and VC8.0 separatedly, but for examples and demos, only the VC7.1 project files are provided since all its settings are compatible with VC8.0 (thus you can just open them with Visual Studio 2005 and follow the conversion wizard)."
 
 
   !define MUI_FINISHPAGE_TITLE "Installation Not Finished Yet!!!"
 
-  !define MUI_FINISHPAGE_TEXT "CGAL needs part of the Boost Library which you must download yourself (from www.boost.org or www.boost-consulting.com/download.html).\r\nMost demos need the Qt 3 library which you must also download yourself (from www.trolltech.com).\r\nThe vcproj files in the example, demo amd src subdirectories all use the enviroment variables CGALROOT and BOOSTROOT to locate CGAL and Boost resp., but for other third-party libraries like Qt3, TAUCS and ZLib, you must add the corresponding include/lib paths manually."
+  !define MUI_FINISHPAGE_TEXT "CGAL needs part of the Boost Library which you must download yourself (from www.boost.org or www.boost-consulting.com/download.html).\r\nMost demos need the Qt 3 library which you must also download yourself (from www.trolltech.com).\r\nThe vcproj files in the example, demo amd src subdirectories all use the environment variables CGALROOT and BOOSTROOT to locate CGAL and Boost resp., but for other third-party libraries like Qt3 and ZLib, you must add the corresponding include/lib paths manually."
 
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\INSTALL.win32.txt"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "Read the full installation notes for further instructions"
   
   !define MUI_FINISHPAGE_LINK "More information about CGAL and Visual C++"
   !define MUI_FINISHPAGE_LINK_LOCATION http://www.cgal.org/platforms_frame.html
+  
 ;--------------------------------
 ; Pages
 ;--------------------------------
@@ -116,18 +112,21 @@
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "${CGAL_SRC}\LICENSE"
   
-  ; A page were the user can specify a default variant configuration (taken from the boost installer)
+  ; A page where the user can specify a default variant configuration (taken from the boost installer)
   Page custom defaultVariantsPage 
   
   !insertmacro MUI_PAGE_COMPONENTS
+ 
+  !insertmacro MUI_PAGE_DIRECTORY
   
-  
-  ; A page were the user can check/uncheck the enviroment variables
+  ; A page where the user can check/uncheck the environment variables
   ; used to specify paths in vproj files to be added.
   Page custom envarsPage 
   
-  !insertmacro MUI_PAGE_DIRECTORY
-  
+  ; A page where the user can decide not to remove CGAL_USE_GMP from project files.
+  ; This page is only shown if the MPFR/GMP component has not been installed.
+  Page custom fixupPage  
+
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "CGAL-3.3" 
@@ -136,7 +135,6 @@
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
   
   !insertmacro MUI_PAGE_INSTFILES
-  
   
   !insertmacro MUI_PAGE_FINISH
 
@@ -158,10 +156,8 @@
 ;--------------------------------
 Section "!Main CGAL" MAIN_Idx
 
-!ifndef TestingOnly
+!ifndef SkipFiles
   SectionIn RO 
-  SetOutPath "$INSTDIR\auxiliary"
-  File /r "${CGAL_SRC}\auxiliary\*.*"
   SetOutPath "$INSTDIR\config"
   File /r "${CGAL_SRC}\config\*.*"
   SetOutPath "$INSTDIR\include"
@@ -174,6 +170,8 @@ Section "!Main CGAL" MAIN_Idx
   File /r "${CGAL_SRC}\examples\*.*"
   SetOutPath "$INSTDIR\scripts"
   File /r "${CGAL_SRC}\scripts\*.*"
+  SetOutPath "$INSTDIR\lib"
+  File /nonfatal "${CGAL_SRC}\lib\README"
 
   SetOutPath "$INSTDIR"
   File "${CGAL_SRC}\Changes"
@@ -203,12 +201,11 @@ SectionEnd
 ;--------------------------------
 Section "CGAL Demos" DEMOS_Idx
 
-!ifndef TestingOnly
+!ifndef SkipFiles
   SetOutPath "$INSTDIR\demo"
   File /r "${CGAL_SRC}\demo\*.*"
 !endif
 SectionEnd
-
 ;--------------------------------
 
 ;--------------------------------
@@ -217,9 +214,82 @@ SectionEnd
 ; NOTE: The variant selection code uses the trailing "libs" in the group name to identify components.
 ;       DO NOT change the trailing "libs" in the section name.
 ;
-${MultiVariantSection} "CGAL precomp libs"                      Install_CGAL_libs CGAL_Idx
-${MultiVariantSection} "GMP and MPFR headers and precomp libs"  Install_GMP_MPFR  GMP_Idx
+${MultiVariantSection} "CGAL precompiled libs"          Install_CGAL_bin     CGAL_LIB_Idx
+${MultiVariantSection} "GMP and MPFR precompiled libs"  Install_GMP_MPFR_bin GMP_LIB_Idx
 ;--------------------------------
+
+;--------------------------------
+Section /o "LAPACK and TAUCS precompiled libs" TAUCS_LIB_Idx
+
+!ifndef SkipFiles
+  SetOutPath "$INSTDIR\auxiliary\taucs\include"
+  File /r "${CGAL_SRC}\auxiliary\taucs\include\*.*"
+!endif
+
+!ifndef FetchLocal
+    SetOutPath "$INSTDIR\auxiliary\taucs\lib"
+    File "${CGAL_SRC}\auxiliary\taucs\lib\README"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libatlas.lib.zip"           "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libcblas.lib.zip"           "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libf77blas.lib.zip"         "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "liblapack.lib.zip"          "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libmetis-vc71-mt-s.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libmetis-vc71-mt.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libmetis-vc71-s.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libtaucs-vc71-mt-s.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libtaucs-vc71-mt.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libtaucs-vc71-s.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "libtstatlas.lib.zip"        "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "vcf2c-vc71-mt-s.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "vcf2c-vc71-mt.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "vcf2c-vc71-s.lib.zip"       "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "vcf2c-vc71-mt-sgd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "vcf2c-vc71-mt-gd.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+	!insertmacro DownloadFile "auxiliary/TAUCS-CGAL-3.3/" "vcf2c-vc71-sgd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+!else
+  !ifndef SkipFiles
+    SetOutPath "$INSTDIR\auxiliary\taucs\lib"
+    File "${CGAL_SRC}\auxiliary\taucs\lib\README"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libatlas.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libcblas.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libf77blas.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\liblapack.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libmetis-vc71-mt-s.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libmetis-vc71-mt.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libmetis-vc71-s.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libtaucs-vc71-mt-s.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libtaucs-vc71-mt.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libtstatlas.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt-s.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-s.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt-sgd.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt-gd.lib"
+    File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-sgd.lib"
+  !endif  
+!endif  
+SectionEnd
+;--------------------------------
+
+Section "-unzip" UNZIP_Idx
+  
+  ${locate::Open} "$INSTDIR" "/D=0 /X=zip" $0
+  ${If} $0 != 0
+    ${Do}
+  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
+      ${If} "$1" != ""
+        ZipDLL::extractall $1 $2
+		Pop $7
+		${If} "$7" == "success"
+          Delete $1
+		${EndIf}
+      ${EndIf}
+    ${LoopUntil} "$1" == ""
+  ${EndIf}  
+  ${locate::Close} $0
+  ${locate::Unload}
+  
+SectionEnd
 
 ;--------------------------------
 ;Uninstaller Section
@@ -260,18 +330,20 @@ SectionEnd
 ;Descriptions
 
   ;Language strings
-  LangString DESC_MAIN    ${LANG_ENGLISH} "The main components of the CGAL Library."
-  LangString DESC_DEMOS   ${LANG_ENGLISH} "The CGAL demos, for which you will need Qt 3 in order to build them."
-  LangString DESC_CGAL    ${LANG_ENGLISH} "The precompiled CGAL libraries."
-  LangString DESC_GMP     ${LANG_ENGLISH} "The precompiled GMP and MPFR libraries, which provide exact number types."
-  LangString DESC_EVARSET ${LANG_ENGLISH} "(this enviroment variable already exists in your system)"
+  LangString DESC_MAIN      ${LANG_ENGLISH} "The main components of the CGAL Library."
+  LangString DESC_DEMOS     ${LANG_ENGLISH} "The CGAL demos, for which you need Qt 3 in order to build them."
+  LangString DESC_CGAL_LIB  ${LANG_ENGLISH} "The precompiled CGAL libraries."
+  LangString DESC_GMP_LIB   ${LANG_ENGLISH} "The precompiled GMP and MPFR libraries (needed for exact constructions)."
+  LangString DESC_TAUCS_LIB ${LANG_ENGLISH} "The precompiled LAPACK and TAUCS libraries."
+  LangString DESC_ENVSET    ${LANG_ENGLISH} "already set"
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${MAIN_Idx}  $(DESC_MAIN)
-    !insertmacro MUI_DESCRIPTION_TEXT ${DEMOS_Idx} $(DESC_DEMOS)
-    !insertmacro MUI_DESCRIPTION_TEXT ${CGAL_Idx}  $(DESC_CGAL)
-    !insertmacro MUI_DESCRIPTION_TEXT ${GMP_Idx}   $(DESC_GMP)
+    !insertmacro MUI_DESCRIPTION_TEXT ${MAIN_Idx}      $(DESC_MAIN)
+    !insertmacro MUI_DESCRIPTION_TEXT ${DEMOS_Idx}     $(DESC_DEMOS)
+    !insertmacro MUI_DESCRIPTION_TEXT ${CGAL_LIB_Idx}  $(DESC_CGAL_LIB)
+    !insertmacro MUI_DESCRIPTION_TEXT ${GMP_LIB_Idx}   $(DESC_GMP_LIB)
+    !insertmacro MUI_DESCRIPTION_TEXT ${TAUCS_LIB_Idx} $(DESC_TAUCS_LIB)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 
@@ -281,8 +353,10 @@ SectionEnd
 
 Function .onInit
 
-	${LogSetFileName} "$INSTDIR\windows_install.log"
-	${LogSetOn}
+  !ifdef DebugLog
+  ${LogSetFileName} "$INSTDIR\windows_install_log.txt"
+  ${LogSetOn}
+  !endif	
 
   # the plugins dir is automatically deleted when the installer exits
   InitPluginsDir
@@ -290,8 +364,11 @@ Function .onInit
   advsplash::show 1000 600 400 -1 $PLUGINSDIR\splash
   
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "default_variants.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "enviroment_variables.ini"
-
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "environment_variables.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "fixup_projects.ini"
+  
+  !insertmacro SelectSection ${UNZIP_Idx}
+  
 FunctionEnd
 
 Function .onSelChange
@@ -325,15 +402,32 @@ Function .onSelChange
     IntOp $0 $0 + 1
     goto next
   bail:
+  
+  !insertmacro SelectSection ${UNZIP_Idx}
+  
+FunctionEnd
+
+Function .onInstSuccess
+  !insertmacro SelectSection ${UNZIP_Idx}
+  
+  ${If} "$SetBOOSTROOT" != ""
+    !insertmacro SetEnvStr $SetEnvAllUsers "BOOSTROOT"  $SetBOOSTROOT
+  ${EndIf}
+  
+  ${If} "$SetCGALROOT" != ""
+    !insertmacro SetEnvStr $SetEnvAllUsers "CGALROOT"  $SetCGALROOT
+  ${EndIf}
+  
+  ${If} "$DoFixupProjectFiles" == "y"
+    Call FixupProjectFiles
+  ${EndIf}
 FunctionEnd
 
 Function defaultVariantsPage
 
     !insertmacro MUI_HEADER_TEXT "Select Default Variants" "Choose the default variants to autoselect in the next page."
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "default_variants.ini"
-    Pop $0
     !insertmacro MUI_INSTALLOPTIONS_SHOW
-    Pop $0
 
     !insertmacro MUI_INSTALLOPTIONS_READ $0 "default_variants.ini" "Field 4" "State"
     ${If} $0 == 0
@@ -360,83 +454,105 @@ FunctionEnd
 
 # Disables the env var checkbox # FN and textbox # FN+1
 !macro UncheckEnvStrCheckbox FN
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "enviroment_variables.ini" "Field ${FN}" "State" "0"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "environment_variables.ini" "Field ${FN}" "State" "0"
 !macroend
 
 # Disables the env var checkbox # FN
 !macro SetEnvStrValueSlot FN VAL
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "enviroment_variables.ini" "Field ${FN}" "State" "${VAL}"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "environment_variables.ini" "Field ${FN}" "State" "${VAL}"
 !macroend
 
 !macro SetEnvStrLabel FN VAL
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "enviroment_variables.ini" "Field ${FN}" "Text" "${VAL}"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "environment_variables.ini" "Field ${FN}" "Text" "${VAL}"
 !macroend
 
-!macro ProcessEnvStrCB ALLUSERS VAR FN
-
-  # ${ALLUSERS} is 0 or 1
-  # ${VAR} is the env var to set
-  # ${FN} is the filed number of the checkbox corresponding to the env var
-  
-  # $6  is the filed number of the textbox corresponding to the env var value 
-  # $7  is the state of checkbox
-  # $8  is the value of the env var
-  
-  IntOp $6 ${FN} + 1
-  
-  !insertmacro MUI_INSTALLOPTIONS_READ $7 "enviroment_variables.ini" "Field ${FN}" "State" 
-  !insertmacro MUI_INSTALLOPTIONS_READ $8 "enviroment_variables.ini" "Field $6"    "State"
-  
-  ${If} $7 = 1 # checkbox selected - set the env var
-    ${If} ${ALLUSERS} = 1 
-      ${LogText} "Setting enviroment variable ${VAR}='$8' for All Users."
-      !define ALL_USERS
-      !ifndef TestingOnly
-        ${WriteEnvStr} ${VAR} $8
-      !endif
-    ${Else}
-      ${LogText} "Setting enviroment variable ${VAR}='$8' for Current User Only."
-      !undef ALL_USERS
-      !ifndef TestingOnly
-        ${WriteEnvStr} ${VAR} $8
-      !endif
-    ${Endif}
-  ${EndIF}
-!macroend
 
 Function envarsPage
 
-  !insertmacro MUI_HEADER_TEXT "Setting Enviroment Variables" "Choose whether to set or not the following enviroment variables"
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  
+  !insertmacro MUI_HEADER_TEXT "Setting Environment Variables" "Choose whether to set or not the following environment variables"
   
   ReadEnvStr $1 "CGALROOT"   # $1 = existing value for CGALROOT
   
+  !insertmacro SetEnvStrValueSlot 7 $INSTDIR
+  !insertmacro SetEnvStrValueSlot 7 $INSTDIR
+ 
   ${If} $1 != ""
+      StrCpy $3 "($(DESC_ENVSET):  $1 )"    
       !insertmacro UncheckEnvStrCheckbox 6
-      !insertmacro SetEnvStrValueSlot    7 $1
-      !insertmacro SetEnvStrLabel        8 $(DESC_EVARSET)
- ${Else}
-      !insertmacro SetEnvStrValueSlot 7 $INSTDIR
+      !insertmacro SetEnvStrLabel        8 $3
   ${Endif}
   
   ReadEnvStr $2 "BOOSTROOT"  # $2 = existing value for BOOSTROOT
   ${If} $2 != ""
+      StrCpy $4 "($(DESC_ENVSET):  $2 )"    
       !insertmacro UncheckEnvStrCheckbox 10
       !insertmacro SetEnvStrValueSlot    11 $2
-      !insertmacro SetEnvStrLabel        12 $(DESC_EVARSET)
+      !insertmacro SetEnvStrLabel        12 $4
   ${Else}
-      !insertmacro SetEnvStrValueSlot 11 "guess of boost"
+      Call FindBoostFolder
+	  ${If} "$FoundBoostFolder" == ""
+	    StrCpy $FoundBoostFolder "(insert here the root folder of the boost libraries)"
+	  ${EndIf}
+      !insertmacro SetEnvStrValueSlot 11 $FoundBoostFolder
   ${Endif}
   
-  !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "enviroment_variables.ini"
-  Pop $0
+  !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "environment_variables.ini"
 
-  !insertmacro MUI_INSTALLOPTIONS_SHOW
+  !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
   Pop $0
+  ${If} "$0" = "success"
+    # PROCESSING - Installs selected environment variables
+    
+    !insertmacro MUI_INSTALLOPTIONS_READ $SetEnvAllUsers "environment_variables.ini" "Field 2" "State" # $3=Is ALL USERS selected
+    
+    !insertmacro MUI_INSTALLOPTIONS_READ $3 "environment_variables.ini" "Field 6" "State" # CGALROOT checkbox
+    !insertmacro MUI_INSTALLOPTIONS_READ $4 "environment_variables.ini" "Field 7" "State" # CGALROOT value
+    ${If} $3 = 1 
+      StrCpy $SetCGALROOT $4
+    ${EndIF}
 
-  # PROCESSING - Installs selected enviroment variables
+    !insertmacro MUI_INSTALLOPTIONS_READ $3 "environment_variables.ini" "Field 10" "State" # BOOSTROOT checkbox
+    !insertmacro MUI_INSTALLOPTIONS_READ $4 "environment_variables.ini" "Field 11" "State" # BOOSTROOT value 
+    ${If} $3 = 1 
+      StrCpy $SetBOOSTROOT $4
+    ${EndIF}
+  ${EndIf}
   
-  !insertmacro MUI_INSTALLOPTIONS_READ $3 "enviroment_variables.ini" "Field 2" "State" # $3=Is ALL USERS selected
+  Pop $4
+  Pop $3
+  Pop $2
+  Pop $1
   
-  !insertmacro ProcessEnvStrCB $3 "CGALROOT"  6
-  !insertmacro ProcessEnvStrCB $3 "BOOSTROOT" 10
+FunctionEnd
+
+Function fixupPage
+
+  !insertmacro SelectSection ${UNZIP_Idx}
+
+  ${Unless}    ${SectionIsSelected}          ${GMP_LIB_Idx}
+  ${AndUnless} ${SectionIsPartiallySelected} ${GMP_LIB_Idx}
+    !insertmacro MUI_HEADER_TEXT "Customizing Project Files" "Customize the installed project files"
+    
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "fixup_projects.ini" "Field 2" "State" "1"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "fixup_projects.ini" "Field 3" "Text"  "(because MPFR/GMP has not been installed)"
+
+    !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "fixup_projects.ini"
+
+    !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
+    Pop $0
+    ${If} "$0" = "success"
+    
+      !insertmacro MUI_INSTALLOPTIONS_READ $1 "fixup_projects.ini" "Field 2" "State" # $1=Remove CGAL_USE_GMP flags
+      
+      ${If} $1 == 1
+        StrCpy $DoFixupProjectFiles "y"
+      ${EndIf}
+      
+    ${EndIf}
+  ${EndUnless}
 FunctionEnd

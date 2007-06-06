@@ -2910,6 +2910,9 @@ Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/test/iostream/data/io.cin -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
+wininst/developer_scripts/DumpLogToFile.nsh -text
+wininst/developer_scripts/ReplaceInFile.nsh -text
+wininst/developer_scripts/StrRep.nsh -text
 wininst/developer_scripts/TextLog.nsh -text
 wininst/developer_scripts/WriteEnvStr.nsh -text
 wininst/developer_scripts/cgal-16.ico -text svneol=unset#image/x-icon
