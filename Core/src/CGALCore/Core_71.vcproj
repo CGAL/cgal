@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;..\..\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_GMP;_DEBUG"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,12 +35,13 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-sgd.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(CGALROOT)/lib/CGALcore++-vc71-sgd.lib"/>
+				OutputFile="..\..\lib\CGALcore++-vc71-sgd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -70,7 +71,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;..\..\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_GMP;_DEBUG"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -84,12 +85,13 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt-sgd.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(CGALROOT)/lib/CGALcore++-vc71-mt-sgd.lib"/>
+				OutputFile="..\..\lib\CGALcore++-vc71-mt-sgd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -121,7 +123,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;..\..\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;NDEBUG;CGAL_USE_GMP"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
@@ -133,12 +135,13 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-s.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(CGALROOT)/lib/CGALcore++-vc71-s.lib"/>
+				OutputFile="..\..\lib\CGALcore++-vc71-s.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -165,19 +168,20 @@
 			ConfigurationType="4">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;..\..\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;NDEBUG;CGAL_USE_GMP"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt-s.pdb"
 				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(CGALROOT)/lib/CGALcore++-vc71-mt-s.lib"/>
+				OutputFile="..\..\lib\CGALcore++-vc71-mt-s.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -209,7 +213,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;..\..\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;NDEBUG;CGAL_USE_GMP"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -221,12 +225,13 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(CGALROOT)/lib/CGALcore++-vc71-mt.lib"/>
+				OutputFile="..\..\lib\CGALcore++-vc71-mt.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -256,7 +261,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
+				AdditionalIncludeDirectories="..\..\include\CGAL\config\msvc;..\..\include;..\..\auxiliary\gmp\include;$(BOOSTROOT)"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_GMP;_DEBUG"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -270,12 +275,13 @@
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
+				ProgramDataBaseFileName="..\..\lib\CGALcore++-vc71-mt-gd.pdb"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(CGALROOT)/lib/CGALcore++-vc71-mt-gd.lib"
+				OutputFile="..\..\lib\CGALcore++-vc71-mt-gd.lib"
 				AdditionalLibraryDirectories=""/>
 			<Tool
 				Name="VCMIDLTool"/>

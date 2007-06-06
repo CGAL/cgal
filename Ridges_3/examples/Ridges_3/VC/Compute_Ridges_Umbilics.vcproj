@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="mesh_a_3d_gray_image"
-	ProjectGUID="{7E47FDD3-2BE2-4190-B391-03778A146F31}"
+	Name="Compute_Ridges_Umbilics"
+	ProjectGUID="{00000000-0000-0000-0000-000000018403}"
 	Keyword="ManagedCProj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -21,23 +21,23 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\imageio\;$(CGALROOT)\include\CGAL\config\msvc7;$(CGALROOT)\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;"
+				AdditionalIncludeDirectories="..\..\..\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Installation\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_LAPACK;CGAL_USE_F2C;CGAL_USE_BOOST_PROGRAM_OPTIONS"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
+				BrowseInformation="1"
 				WarningLevel="2"
-				DebugInformationFormat="3"
-				CompileAs="1"/>
+				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" zdll.lib"
-				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
+				AdditionalDependencies=""
+				OutputFile="$(OutDir)/Compute_Ridges_Umbilics.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib\msvc7"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;;&quot;$(BOOSTROOT)\..\..\lib&quot;"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -62,8 +62,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			ManagedExtensions="FALSE">
@@ -72,21 +72,20 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".\imageio;$(CGALROOT)\include\CGAL\config\msvc7;$(CGALROOT)\include"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				AdditionalIncludeDirectories="..\..\..\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Installation\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_LAPACK;CGAL_USE_F2C;CGAL_USE_BOOST_PROGRAM_OPTIONS"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				WarningLevel="2"
-				CompileAs="1"/>
+				WarningLevel="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" zdll.lib"
-				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
+				AdditionalDependencies=""
+				OutputFile="$(OutDir)/Compute_Ridges_Umbilics.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(CGALROOT)\lib\msvc7"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;;&quot;$(BOOSTROOT)\..\..\lib&quot;"
 				GenerateDebugInformation="FALSE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -117,7 +116,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="mesh_a_3d_gray_image.cpp">
+				RelativePath="..\Compute_Ridges_Umbilics.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -132,66 +131,21 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\ImageIO\analyze.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\bmp.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\bmpendian.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\bmpread.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\convert.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\gif.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\gis.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\ImageIO.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\ImageIO\inr.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\iris.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\mincio.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\pnm.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\recbuffer.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\recline.c">
-			</File>
-			<File
-				RelativePath=".\ImageIO\reech4x4.c">
+				RelativePath="..\PolyhedralSurf.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
+			<File
+				RelativePath="..\PolyhedralSurf.h">
+			</File>
+			<File
+				RelativePath="..\PolyhedralSurf_operations.h">
+			</File>
+			<File
+				RelativePath="..\PolyhedralSurf_rings.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;&quot;..\..\..\include\CGAL\config\msvc&quot;;&quot;..\..\..\include&quot;;$(BOOSTROOT);$(GMP_INC_VC71);$(MPFR_INC_VC71)"
+				AdditionalIncludeDirectories="..\;$(CGALROOT)\..\include\CGAL\config\msvc;$(CGALROOT)\..\include;$(BOOSTROOT);$(GMP_INC_VC71);$(MPFR_INC_VC71)"
 				PreprocessorDefinitions="WIN32;_DEBUG;"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -36,7 +36,7 @@
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)/SOURCE.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;..\..\..\lib&quot;;$(GMP_LIB_VC71);$(MPFR_LIB_VC71)"
+				AdditionalLibraryDirectories="$(CGALROOT)\..\lib;$(GMP_LIB_VC71);$(MPFR_LIB_VC71)"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -71,7 +71,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\;&quot;..\..\..\include\CGAL\config\msvc&quot;;&quot;..\..\..\include&quot;;$(BOOSTROOT);$(GMP_INC_VC71);$(MPFR_INC_VC71)"
+				AdditionalIncludeDirectories="..\;$(CGALROOT)\..\include\CGAL\config\msvc;$(CGALROOT)\..\include;$(BOOSTROOT);$(GMP_INC_VC71);$(MPFR_INC_VC71)"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -84,7 +84,7 @@
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)/SOURCE.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;..\..\..\lib&quot;;$(GMP_LIB_VC71);$(MPFR_LIB_VC71)"
+				AdditionalLibraryDirectories="$(CGALROOT)\..\lib;$(GMP_LIB_VC71);$(MPFR_LIB_VC71)"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>

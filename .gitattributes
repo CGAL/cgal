@@ -476,6 +476,8 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text svneol=un
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
+CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
+CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
@@ -557,6 +559,7 @@ Envelope_2/test/Envelope_2/data/Europe.dat -text
 Envelope_2/test/Envelope_2/data/onebig_100.dat -text
 Envelope_2/test/Envelope_2/data/random_500.dat -text
 Envelope_2/test/Envelope_2/data/segs_4.dat -text
+Envelope_3/demo/Envelope_3/envelope_3.vcproj eol=crlf
 Envelope_3/demo/Envelope_3/help/index.html svneol=native#text/html
 Envelope_3/demo/Envelope_3/icons/edges.bmp -text svneol=unset#image/bmp
 Envelope_3/demo/Envelope_3/icons/faces.bmp -text svneol=unset#image/bmp
@@ -1548,6 +1551,9 @@ Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/makefile -text
 Nef_3/demo/Nef_3/mpi.vsh -text
 Nef_3/demo/Nef_3/nef_3.vcproj eol=crlf
+Nef_3/demo/Nef_3/nef_3_extended.vcproj eol=crlf
+Nef_3/demo/Nef_3/nef_3_filtered.vcproj eol=crlf
+Nef_3/demo/Nef_3/nef_3_homogeneous.vcproj eol=crlf
 Nef_3/demo/Nef_3/visual_hull.vcproj eol=crlf
 Nef_3/demo/Nef_3/visualization_SM.vcproj eol=crlf
 Nef_3/demo/Nef_3/visualization_SNC.vcproj eol=crlf
@@ -1793,6 +1799,8 @@ PDB/include/CGAL/PDB/iterator.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/maintainer -text
 PDB/src/CGALPDB/Atom.cpp -text
+PDB/src/CGALPDB/CGALPDB_71.vcproj eol=crlf
+PDB/src/CGALPDB/CGALPDB_80.vcproj eol=crlf
 PDB/src/CGALPDB/Chain.cpp -text
 PDB/src/CGALPDB/Chain_pdb.cpp -text
 PDB/src/CGALPDB/Error_logger.cpp -text
@@ -2135,6 +2143,7 @@ Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol
 Ridges_3/doc_tex/Ridges_3/star.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/star.png -text svneol=unset#image/png
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
+Ridges_3/examples/Ridges_3/VC/Compute_Ridges_Umbilics.vcproj eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html

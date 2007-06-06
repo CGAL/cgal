@@ -20,11 +20,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(PCA)&quot;"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc7;$(CGALROOT)\include;$(PCA)"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;NOMINMAX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="TRUE"
 				UsePrecompiledHeader="3"
 				WarningLevel="4"
@@ -76,15 +76,15 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(PCA)&quot;"
+				AdditionalIncludeDirectories="$(CGALROOT)\include\CGAL\config\msvc7;$(CGALROOT)\include;$(PCA)"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;NOMINMAX"
 				MinimalRebuild="FALSE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="TRUE"
 				UsePrecompiledHeader="3"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4311;4541"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -93,7 +93,7 @@
 				AdditionalOptions=" /NODEFAULTLIB:library $(CGALROOT)/lib/msvc7/cgal_mt_release.lib"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
