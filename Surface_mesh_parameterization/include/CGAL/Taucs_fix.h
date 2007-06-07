@@ -77,7 +77,7 @@ extern "C"
 /* Redirect call to avoid link error */
 #define taucs_system_memory_size cgal_taucs_system_memory_size
 
-double taucs_system_memory_size()
+inline double taucs_system_memory_size()
 {
   /* LS 2006: The original code below is buggy on Linux 2.6 */
   /*          (because /proc/meminfo format changed)        */
@@ -118,7 +118,7 @@ double taucs_system_memory_size()
 /* Redirect call to avoid link error */
 #define taucs_system_memory_size cgal_taucs_system_memory_size
 
-double taucs_system_memory_size()
+inline double taucs_system_memory_size()
 {
   double m_sc;
   m_sc  = (double) 4096; /* page size */
@@ -143,7 +143,7 @@ double taucs_system_memory_size()
 /* LS 2007: if m_sys is meaningful, then we limit malloc test by 0.75*m_sys */
 #define limit_memory(mem) ((mem) < m_max ? (mem) : m_max)
 
-double taucs_available_memory_size() 
+inline double taucs_available_memory_size() 
 {
 /* LS 2007: The original code below creates an infinite loop on Linux     */
 /*          (optimistic memory allocation => malloc() never returns NULL) */
