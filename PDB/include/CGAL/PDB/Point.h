@@ -30,21 +30,21 @@ CGAL_PDB_BEGIN_NAMESPACE
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 Point;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Vector_3 Vector;
-
+//! \cond
   struct Squared_distance{
     double operator()(const Point &a, const Point &b) const {
       return CGAL::squared_distance(a,b);
     }
   };
 
-  //! Functor to compute the squared norm of a Vector
+
   struct Squared_norm{
     double operator()(const Vector &v) const {
       return v.x()*v.x()+v.y()*v.y()+ v.z()*v.z();
     }
   };
 
-  //! Functor to compute the cross product of two vectors
+ 
   struct Cross_product{
     Vector operator()(const Vector &a, const Vector &b) const {
       double x = a.y() * b.z() - b.y() * a.z();
@@ -55,18 +55,16 @@ CGAL_PDB_BEGIN_NAMESPACE
     }
   };
 
-  /*!
-    This class represents a point in spherical coordinates. 
-  */
+ 
   struct Spherical_point{
-    //! Construct a spherical point from coordinates.
+    // Construct a spherical point from coordinates.
     Spherical_point(double r, double theta, double phi) {
       phi_=phi;
       theta_=theta;
       r_=r;
     }
 
-    //! Construct a point from a vector.
+    // Construct a point from a vector.
     Spherical_point(const Vector &v) {
       double xy2=v.x()*v.x()+v.y()*v.y();
       double sd= std::sqrt(xy2+v.z()*v.z());
@@ -100,8 +98,8 @@ CGAL_PDB_BEGIN_NAMESPACE
   };
 
 
-  //! Construct a spherical point with a certain axis.
-  /*!  \note This class is poorly designed having two completely
+  // Construct a spherical point with a certain axis.
+  /*  \note This class is poorly designed having two completely
     separate usages just sharing internal code.
   */
   struct Construct_spherical_point{
@@ -118,7 +116,7 @@ CGAL_PDB_BEGIN_NAMESPACE
       make_axis(p-pop, popop-pop);
     }
     
-    //! Construct the spherical coordinates of a vector.
+    // Construct the spherical coordinates of a vector.
     Spherical_point operator()(const Vector &v) const {
       double vz= v*z_;
       double vx= v*x_;
@@ -126,7 +124,7 @@ CGAL_PDB_BEGIN_NAMESPACE
       return Spherical_point(vx, vy, vz);
     };
 
-    //! Construct the spherical coordinates of a point relative to the base passed in the constructor.
+    // Construct the spherical coordinates of a point relative to the base passed in the constructor.
     Spherical_point operator()(const Point &p) const {
       return operator()(p-base_);
     }
@@ -148,5 +146,6 @@ CGAL_PDB_BEGIN_NAMESPACE
     Point base_;
   };
   
+//! \endcond
 CGAL_PDB_END_NAMESPACE
 #endif

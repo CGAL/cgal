@@ -7,7 +7,7 @@
 
 CGAL_PDB_BEGIN_NAMESPACE
 
-
+//! \cond
 inline double structal_score(const CGAL_PDB_NS::Point& a, 
 			     const CGAL_PDB_NS::Point& b) {
   CGAL_PDB_NS::Squared_distance sd;
@@ -28,6 +28,7 @@ struct DpP {
 inline std::ostream &operator<<(std::ostream &o, DpP p){
   return o << "(" << p.first << " " << p.second << ")";
 }
+//! \endcond
 
 
 /*!  This computes the optimal rigid transform minimizing the least

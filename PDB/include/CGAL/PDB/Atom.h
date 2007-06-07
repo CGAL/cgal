@@ -70,7 +70,7 @@ public:
   //! Returns the van der Waals radius of the atom.
   /*!  Values take from the wikipedia so beware.
    */
-  inline double radius() const;
+  CGAL_PDB_ACCESSOR(double, radius, return radii_[type_]);
 
 
   //! This is a label which identifies an Atom uniquely within some scale.
@@ -126,25 +126,31 @@ inline int index_atoms(It b, It e, int start=0) {
 
 
 
-//! Take an atom label, atom pair and return the coordinates
+//! Take an Atom and return the Atom::point()
+/*!
+ */
 struct Point_from_atom {
   typedef Point result_type;
  
   const result_type& operator()(const Atom& a) const {
     return a.point();
   }
-  /*result_type& operator()(Atom& a) const {
-    return a.cartesian_coords();
-    }*/
 };
 
+//! Returns an interator which takes an Atom and return the coordinates
+/*!
+  The iterator value_type should be an Atom.
+
+ */
 template <class It>
 boost::transform_iterator<Point_from_atom, It>
 make_point_iterator(It it) {
   return boost::make_transform_iterator(it, Point_from_atom());
 }
 
-
+//! Take an Atom and return the Atom::index()
+/*!
+ */
 struct Index_from_atom {
   typedef Atom::Index result_type;
   
@@ -152,13 +158,20 @@ struct Index_from_atom {
     return a.index();
   }
 };
+//! Returns an interator which takes an Atom and return the Atom::index()
+/*!
+  The iterator value_type should be an Atom.
+
+ */
 template <class It>
 boost::transform_iterator<Index_from_atom, It>
 make_index_iterator(It it) {
   return boost::make_transform_iterator(it, Index_from_atom());
 }
 
-
+//! Take an Atom and return the a K::Weighted_point
+/*!
+ */
 template <class K>
 struct Weighted_point_from_atom {
   typedef typename K::Weighted_point result_type;
@@ -171,12 +184,19 @@ struct Weighted_point_from_atom {
   }
 };
 
+//! Return an interator which takes an Atom and return the a K::Weighted_point
+/*!
+  The iterator value_type should be an Atom.
+ */
 template <class It, class K>
 boost::transform_iterator<Weighted_point_from_atom<K>, It>
 make_weighted_point_iterator(It it, K k) {
   return boost::make_transform_iterator(it, Weighted_point_from_atom<K>());
 }
 
+//! Take an Atom and return the a K::Sphere_3
+/*!
+ */
 template <class K>
 struct Sphere_3_from_atom {
   typedef typename K::Sphere_3 result_type;
@@ -188,12 +208,17 @@ struct Sphere_3_from_atom {
 		       b.radius()*b.radius());
   }
 };
+//! Take an Atom and return the a K::Sphere_3
+/*!
+ */
 template <class It, class K>
 boost::transform_iterator<Sphere_3_from_atom<K>, It>
-make_weighted_point_iterator(It it, K k) {
+make_sphere_3_iterator(It it, K) {
   return boost::make_transform_iterator(it, Sphere_3_from_atom<K>());
 }
 
+
+//! Apply a transformation to the coordinates of an Atom
 class Transform_atom {
   Transform t_;
 public:

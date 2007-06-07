@@ -49,7 +49,7 @@ boost::transform_iterator<Get_atom, It> make_atom_iterator(It it){
 
 
 struct Get_bond_indices {
-  typedef std::pair<int,int> result_type;
+  typedef std::pair<unsigned int,unsigned int> result_type;
   template <class B>
   const result_type& operator()(const B & b) const {
     static result_type ret;
@@ -149,6 +149,10 @@ make_ok_bond_iterator( OKA oka, It itb, It ite){
 }
 
 
+
+/*! \example extracting_geometry.cpp
+  This example shows how to use the various iterator adaptors for extracting geometry and connectivity.
+ */
 
 CGAL_PDB_END_NAMESPACE
 #endif

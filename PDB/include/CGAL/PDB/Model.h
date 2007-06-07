@@ -74,6 +74,7 @@ public:
 
   CGAL_PDB_SIZE(chains, return chains_.size());
 
+  //! \cond
   class Hetatom_data {
   public:
     Hetatom_data(const char *rnm, 
@@ -117,10 +118,13 @@ public:
     Chain_key chain_;
       
   };
+  //! \endcond
+
 
   CGAL_SMALL_MAP_VALUE_TYPE(Hetatom_vt, Hetatom_data, Atom, atom);
-
+  //! \cond
   typedef std::vector<Hetatom_vt > Hetatoms;
+  //! \endcond
 
   //! An iterator through CGAL::PDB::Atom values for the HETATM records.
   CGAL_PDB_CONST_ITERATOR(Hetatom, hetatom, 
@@ -180,20 +184,30 @@ public:
 
   //! A chemical bond within the protein
   typedef std::pair<Bond_endpoint, Bond_endpoint> Bond; 
-
+  class Atom_iterator_value_type {
+      Atom_key index_;
+      Atom *atom_;
+  public:
+      Atom_iterator_value_type(Atom_key f, Atom* s): index_(f), atom_(s){}
+      Atom_key key() const {return index_;}
+      Atom &atom() const {return *atom_;}
+      Atom_iterator_value_type():atom_(NULL){}
+    };
+  class Atom_const_iterator_value_type {
+      Atom_key index_;
+      const Atom *atom_;
+  public:
+      Atom_const_iterator_value_type(Atom_key f, const Atom* s): index_(f), atom_(s){}
+      Atom_key key() const {return index_;}
+      const Atom &atom() const {return *atom_;}
+      Atom_const_iterator_value_type():atom_(NULL){}
+    };
 protected:
-
+  //! \cond
  struct Iterator_traits {
     typedef Chain_iterator Outer_it;
     typedef Chain::Atom_iterator Inner_it;
-    struct value_type {
-      Atom_key index_;
-      Atom *atom_;
-      value_type(Atom_key f, Atom* s): index_(f), atom_(s){}
-      Atom_key key() const {return index_;}
-      Atom &atom() const {return *atom_;}
-      value_type():atom_(NULL){}
-    };
+   typedef Atom_iterator_value_type value_type;
     struct Inner_range{
       std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
 	return std::make_pair(it->chain().atoms_begin(), it->chain().atoms_end());
@@ -211,14 +225,7 @@ protected:
   struct Iterator_const_traits {
     typedef Chain_const_iterator Outer_it;
     typedef Chain::Atom_const_iterator Inner_it;
-    struct value_type {
-      Atom_key index_;
-      const Atom *atom_;
-      value_type(Atom_key f, const Atom* s): index_(f), atom_(s){}
-      Atom_key key() const {return index_;}
-      const Atom &atom() const {return *atom_;}
-      value_type():atom_(NULL){}
-    };
+    typedef Atom_const_iterator_value_type value_type;
    struct Inner_range{
       std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
 	return std::make_pair(it->chain().atoms_begin(), it->chain().atoms_end());
@@ -231,7 +238,7 @@ protected:
       }
     };
   };
-
+  //! \endcond
 public:
  //! An iterator to iterate through all the atoms of the protein  
   CGAL_PDB_ITERATOR(Atom, atom, 
@@ -245,7 +252,7 @@ public:
 		    return Atom_const_iterator(chains_.end(), chains_.end()));
 
 
- //! An iterator through the bonds of a CGAL::PDB::Chain
+  //! \cond
   class Bond_it {
     friend class Model;
   public:
@@ -321,7 +328,7 @@ public:
     Chain::Bond_const_iterator ait_;
     Bond ret_;
   };
-
+  //! \endcond
 
   CGAL_PDB_CONST_ITERATOR(Bond, bond, Bond_it,
 			  return Bond_const_iterator(chains_.begin(),
@@ -330,7 +337,7 @@ public:
 						     chains_.end()));
  
 
-protected:
+private:
   void process_line(const char *c);
 
   std::vector<std::string> extra_;

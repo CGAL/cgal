@@ -47,4 +47,5 @@ Atom::Type Atom::string_to_type(const char *cp) {
     return INVALID;
   }
 }
+
 CGAL_PDB_END_NAMESPACE

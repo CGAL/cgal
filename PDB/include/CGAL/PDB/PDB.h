@@ -85,7 +85,7 @@ public:
   };
 
 
- //! An iterator through the unparsed std::string lines of the header of the PDB.
+  //! An iterator through the unparsed std::string lines of the header of the PDB.
   CGAL_PDB_CONST_ITERATOR(Header, header, 
 		      std::vector<std::string>::const_iterator,
 		      return header_.begin(),
@@ -100,26 +100,38 @@ public:
   CGAL_PDB_CONST_ITERATOR(Model, model, Models::const_iterator, 
 		return models_.begin(),
 		return models_.end());
+
   //! Find a Model with the given key, return models_end() if none is found
   CGAL_PDB_FIND(Model, return models_.find(k));
 
- //! Add a model (or change an existing one).
+  //! Add a model (or change an existing one).
   CGAL_PDB_INSERT(Model, return models_.insert(Models::value_type(k,m)));
 
-protected:
 
-  struct Iterator_traits {
-    typedef Model_iterator Outer_it;
-    typedef Model::Chain_iterator Inner_it;
-    class value_type {
+  class Chain_iterator_value_type {
       Chain_key index_;
       Chain *chain_;
     public:
-      value_type(Chain_key f, Chain* s): index_(f), chain_(s){}
+      Chain_iterator_value_type(Chain_key f, Chain* s): index_(f), chain_(s){}
       Chain_key key() const {return index_;}
       Chain &chain() const {return *chain_;}
-      value_type():chain_(NULL){}
+      Chain_iterator_value_type():chain_(NULL){}
     };
+  class Chain_const_iterator_value_type {
+      Chain_key index_;
+      const Chain *chain_;
+    public:
+      Chain_const_iterator_value_type(Chain_key f, const Chain* s): index_(f), chain_(s){}
+      Chain_key key() const {return index_;}
+      const Chain &chain() const {return *chain_;}
+      Chain_const_iterator_value_type():chain_(NULL){}
+    };
+protected:
+  //! \cond
+  struct Iterator_traits {
+    typedef Model_iterator Outer_it;
+    typedef Model::Chain_iterator Inner_it;
+    typedef Chain_iterator_value_type value_type;
     struct Inner_range{
       std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
 	return std::make_pair(it->model().chains_begin(), it->model().chains_end());
@@ -136,15 +148,7 @@ protected:
   struct Iterator_const_traits {
     typedef Model_const_iterator Outer_it;
     typedef Model::Chain_const_iterator Inner_it;
-     class value_type {
-      Chain_key index_;
-      const Chain *chain_;
-    public:
-      value_type(Chain_key f, const Chain* s): index_(f), chain_(s){}
-      Chain_key key() const {return index_;}
-      const Chain &chain() const {return *chain_;}
-      value_type():chain_(NULL){}
-    };
+    typedef Chain_const_iterator_value_type value_type;
     struct Inner_range{
       std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
 	return std::make_pair(it->model().chains_begin(), it->model().chains_end());
@@ -156,7 +160,7 @@ protected:
       }
     };
   };
- 
+  //! \endcond
 public:
  
   //! An iterator through the CGAL::PDB::Chain objects contained in the PDB.
@@ -174,7 +178,7 @@ public:
 
  
 
-protected:
+private:
   void load(std::istream &in, bool print_errors);
 
   std::vector<std::string> header_;

@@ -7,8 +7,7 @@
 #include <iostream>
 
 CGAL_PDB_BEGIN_NAMESPACE
-
-//! A trivial class for representing quaternions
+//! \cond
 class Quaternion {
 protected:
   typedef double NT;
@@ -82,5 +81,6 @@ inline std::ostream &operator<<(std::ostream &out, const Quaternion &q) {
   return out;
 }
 
+//! \endcond
 CGAL_PDB_END_NAMESPACE
 #endif

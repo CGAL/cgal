@@ -33,8 +33,15 @@
 #include <CGAL/PDB/internal/dummies.h>
 #include <CGAL/PDB/internal/Nested_iterator.h>
 #include <boost/tuple/tuple.hpp>
+#include <CGAL/PDB/macros.h>
 
 CGAL_PDB_BEGIN_NAMESPACE
+
+/*!
+  \file Chain.h 
+
+  This file contains the class Chain.
+*/
 
 class Model;
   
@@ -65,12 +72,6 @@ public:
   };
 
   typedef small_map<Monomer_iterator_value_type> Container;
-
- 
-  /*!
-    \example check_protein.cpp
-  */
-
   
   /*! Build a protein from a pdb file.
     See check_protein.cpp for an example of using this to read a
@@ -95,21 +96,23 @@ public:
 
 
   //! A unique identified of an atom in the chain
-  struct Atom_key: public std::pair<Monomer_key, Monomer::Atom_key>{
-    typedef std::pair<Monomer_key, Monomer::Atom_key> P;
-    Atom_key(Monomer_key mk, Monomer::Atom_key at): P(mk, at){}
+  class Atom_key {
+    Monomer_key mk_;
+    Monomer::Atom_key ak_;
+   public:
+    Atom_key(Monomer_key mk, Monomer::Atom_key ak): mk_(mk), ak_(ak){}
     Atom_key(){}
     operator Monomer::Atom_key() const {
-      return P::second;
+      return ak_;
     }
     operator Monomer_key() const {
-      return P::first;
+      return mk_;
     }
     Monomer::Atom_key atom_key() const {
-      return P::second;
+      return ak_;
     }
     Monomer_key monomer_key() const {
-      return P::first;
+      return mk_;
     }
   };
 
@@ -131,21 +134,34 @@ public:
 
   CGAL_PDB_INSERT(Monomer,  return insert_internal(k,m));
 
+  class Atom_iterator_value_type {
+      Atom_key index_;
+      Atom *atom_;
+    public:
+      Atom_iterator_value_type(Atom_key f, Atom* s): index_(f), atom_(s){}
+      Atom_key key() const {return index_;}
+      Atom &atom() const {return *atom_;}
+      Atom_iterator_value_type():atom_(NULL){}
+    };
 
-protected:
+  class Atom_const_iterator_value_type {
+    Atom_key index_;
+    const Atom *atom_;
+  public:
+    Atom_const_iterator_value_type(Atom_key f, const Atom* s): index_(f), atom_(s){}
+    Atom_key key() const {return index_;}
+    const Atom &atom() const {return *atom_;}
+    Atom_const_iterator_value_type():atom_(NULL){}
+  };
+private:
+
+  //! \cond
   Monomer_iterator insert_internal(Monomer_key k, const Monomer &m);
 
   struct Iterator_traits {
     typedef Monomer_iterator Outer_it;
     typedef Monomer::Atom_iterator Inner_it;
-    struct value_type {
-      Atom_key index_;
-      Atom *atom_;
-      value_type(Atom_key f, Atom* s): index_(f), atom_(s){}
-      Atom_key key() const {return index_;}
-      Atom &atom() const {return *atom_;}
-      value_type():atom_(NULL){}
-    };
+    typedef Atom_iterator_value_type value_type;
     struct Inner_range{
       std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
 	return std::make_pair(it->monomer().atoms_begin(), it->monomer().atoms_end());
@@ -162,14 +178,7 @@ protected:
   struct Iterator_const_traits {
     typedef Monomer_const_iterator Outer_it;
     typedef Monomer::Atom_const_iterator Inner_it;
-    struct value_type {
-      Atom_key index_;
-      const Atom *atom_;
-      value_type(Atom_key f, const Atom* s): index_(f), atom_(s){}
-      Atom_key key() const {return index_;}
-      const Atom &atom() const {return *atom_;}
-      value_type():atom_(NULL){}
-    };
+    typedef Atom_const_iterator_value_type value_type;
     struct Inner_range{
       boost::tuple<Inner_it, Inner_it> operator()(Outer_it it) const {
 	return boost::make_tuple(it->monomer().atoms_begin(), it->monomer().atoms_end());
@@ -181,10 +190,10 @@ protected:
       }
     };
   };
+  //! \endcond
 public:
-
-  void swap_with(Chain &o);
-
+  
+  
   //! An iterator to iterate through all the atoms of the protein  
   CGAL_PDB_ITERATOR(Atom, atom, 
 		    internal::Nested_iterator<Iterator_traits >,
@@ -200,11 +209,12 @@ public:
   //! This is non-const time.
   unsigned int number_of_atoms() const;
 
-  //! An iterator through the bonds of a CGAL::PDB::Chain
+  //! \cond
+  void swap_with(Chain &o);
+
   class Bond_it {
     friend class Chain;
   public:
-    //! The value_type is a CGAL::PDB::Chain::Bond
     typedef Bond value_type;
     typedef std::forward_iterator_tag iterator_category;
     typedef std::size_t difference_type;
@@ -257,7 +267,7 @@ public:
     CGAL_PDB_COPY_CONSTRUCTOR(Bond_it);
 
   
-  protected:
+  private:
     void copy_from(const Bond_it &o) {
       rit_= o.rit_;
       rend_= o.rend_;
@@ -297,7 +307,7 @@ public:
     bool between_;
     Bond ret_;
   };
-
+  //! \endcond
 
   CGAL_PDB_CONST_ITERATOR(Bond, bond, Bond_it,
 			  return Bond_const_iterator(residues_.begin(), residues_.end()),
@@ -350,7 +360,7 @@ public:
   void set_has_bonds(bool tf);
 
   CGAL_PDB_RWFIELD(std::string, name, name_);
-protected:
+private:
   void process_line(const char *line);
     
   //unsigned int residue_offset_of_atom_key(Atom::Index i) const;
