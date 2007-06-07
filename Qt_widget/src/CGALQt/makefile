@@ -80,7 +80,7 @@ SHARED_LIB_ADDITIONAL_LDFLAGS = \
 #                    common rules for all libraries
 #---------------------------------------------------------------------#
 CGAL_COMMON_MK = ../CGAL/common.mk
-ifeq ($(willcard $(CGAL_COMMON_MK)),)
+ifeq ($(wildcard $(CGAL_COMMON_MK)),)
   CGAL_COMMON_MK = ../../../Installation/src/CGAL/common.mk
 endif
 include $(CGAL_COMMON_MK)
