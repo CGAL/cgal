@@ -21,8 +21,8 @@
 #ifndef CGAL_TRIANGULATION_2_LAYERS_H
 #define CGAL_TRIANGULATION_2_LAYERS_H
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Circle_2.h>
+
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_Triangulation_2.h>
 #include <qobject.h>
@@ -153,8 +153,6 @@ public:
   typedef typename T::Face_handle		Face_handle;
   typedef typename T::Vertex_handle		Vertex_handle;
   typedef typename T::Geom_traits::FT		FT;
-  typedef typename CGAL::Cartesian<FT> Rep;
-  typedef typename CGAL::Circle_2<Rep>           Circle;
 
   Qt_layer_circum_circle(T &t) : tr(t), first_time(TRUE) {};
 

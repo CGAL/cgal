@@ -55,7 +55,7 @@ int main()
 
 
 
-const QString title_string("Regular_triangulation_2");
+const QString title_string("2D Regular Triangulation");
 
 Regular_triangulation rt;
 int		 current_state;

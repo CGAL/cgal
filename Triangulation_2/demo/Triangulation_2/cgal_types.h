@@ -19,21 +19,22 @@
 
 
 //CGAL headers
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
-
+#include <CGAL/bounding_box.h>
+#include <CGAL/Timer.h>
 
 typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>	    Rep;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel	    Rep;
 
 typedef CGAL::Point_2<Rep>                  Point_2;
 typedef CGAL::Segment_2<Rep>                Segment;
 typedef CGAL::Line_2<Rep>                   Line;
 typedef CGAL::Triangle_2<Rep>               Triangle;
 typedef CGAL::Circle_2<Rep>                 Circle;
+typedef CGAL::Iso_rectangle_2<Rep>          Iso_rectangle_2;
 
 typedef CGAL::Triangulation_2<Rep>          Triangulation;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;

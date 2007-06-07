@@ -61,8 +61,7 @@ int main()
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-const QString my_title_string("Delaunay Triangulation Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string("2D Delaunay Triangulation");
 
 Delaunay	tr1;
 int		current_state;
@@ -92,6 +91,8 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
+    file->insertItem("&Load Points", this,
+		      SLOT(load_points()), CTRL+Key_D);
     file->insertItem("&Load Triangulation", this,
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
@@ -335,8 +336,33 @@ private slots:
     widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
+  void load_points()
+  {
+    QString s( QFileDialog::getOpenFileName( QString::null,
+			    "point files (*.pts)", this ) );
+    if ( s.isEmpty() )
+        return;
+
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
+
+    std::vector<Point_2> points;
+    Point_2 p;
+    while(in >> p){
+      points.push_back(p);
+    }
+    Iso_rectangle_2 ir = CGAL::bounding_box(points.begin(), points.end());
+    tr1.clear();
+    tr1.insert(points.begin(), points.end());
+
+    stoolbar->clear_history();
+    widget->set_window(ir.xmin(), ir.xmax(), ir.ymin(), ir.ymax());
+    something_changed();
+  }
 
 private:
+
+
   void show_conflicts(Point_2 p)
   {
     if(tr1.dimension()<2) return;

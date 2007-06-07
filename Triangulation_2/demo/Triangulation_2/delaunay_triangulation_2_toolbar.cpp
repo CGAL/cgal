@@ -87,6 +87,7 @@
         &edit_vertex_layer, SLOT(stateChanged(int)));
   connect(&edit_vertex_layer, SIGNAL(triangulation_changed()),
 	  this, SLOT(triangulation_changed()));
+  but[1]->toggle();
 };
 
 #include "delaunay_triangulation_2_toolbar.moc"
