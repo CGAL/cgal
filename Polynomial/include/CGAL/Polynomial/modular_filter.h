@@ -35,7 +35,6 @@ namespace POLYNOMIAL {
         const Polynomial<NT>& p1,
         const Polynomial<NT>& p2,
         ::CGAL::Tag_true){
-        std::cerr << "HALLO! HALLO!" << std::endl;
         CGAL_precondition(p1.degree()!=-1);
         CGAL_precondition(p2.degree()!=-1);
         
