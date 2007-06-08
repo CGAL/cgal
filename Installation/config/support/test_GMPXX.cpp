@@ -24,6 +24,7 @@
 // Tests if GMPXX is available.
 
 #include <iostream>
+#include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
 #include <gmpxx.h>
 
 int main()

@@ -32,6 +32,7 @@
 
 #ifdef CGAL_USE_GMP
 
+#include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
 #include <gmpxx.h>
 #include <mpfr.h>
 
