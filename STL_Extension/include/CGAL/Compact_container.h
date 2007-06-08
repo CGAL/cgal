@@ -28,6 +28,7 @@
 
 #include <iterator>
 #include <algorithm>
+#include <vector>
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
@@ -186,6 +187,7 @@ public:
     std::swap(first_item, c.first_item);
     std::swap(last_item, c.last_item);
     std::swap(free_list, c.free_list);
+    all_items.swap(c.all_items);
   }
 
   iterator begin() { return iterator(first_item, 0, 0); }
@@ -481,6 +483,15 @@ private:
     Traits::pointer(*ptr) = menion(p, t).p;
   }
 
+  // We store a vector of pointers to all allocated blocks and their sizes.
+  // Knowing all pointers, we don't have to walk to the end of a block to reach
+  // the pointer to the next block.
+  // Knowing the sizes allows to deallocate() without having to compute the size
+  // by walking through the block till its end.
+  // This opens up the possibility for the compiler to optimize the clear()
+  // function considerably when has_trivial_destructor<T>.
+  typedef std::vector<std::pair<pointer, size_type> >  All_items;
+
   void init()
   {
     block_size = 14;
@@ -489,6 +500,7 @@ private:
     free_list  = NULL;
     first_item = NULL;
     last_item  = NULL;
+    all_items  = All_items();
   }
 
   allocator_type   alloc;
@@ -498,6 +510,7 @@ private:
   pointer          free_list;
   pointer          first_item;
   pointer          last_item;
+  All_items        all_items;
 };
 
 template < class T, class Allocator >
@@ -539,23 +552,16 @@ void Compact_container<T, Allocator>::merge(Self &d)
 template < class T, class Allocator >
 void Compact_container<T, Allocator>::clear()
 {
-  // erase(begin(), end()); // nicer, but doesn't free memory.
-  pointer p = first_item;
-  while (p != NULL) { // catches the empty container case.
-    ++p;
-    if (type(p) == USED)
-      alloc.destroy(p); // destroy used elements
-    else if (type(p) == BLOCK_BOUNDARY ||
-             type(p) == START_END) {
-      const_pointer end = p;
-      p = clean_pointee(p);
-      // p becomes NULL if end of block
-      alloc.deallocate(first_item, end - first_item + 1);
-      capacity_ -= end - first_item -1;
-      first_item = p; // keep pointer to begining of current block.
+  for (typename All_items::iterator it = all_items.begin(), end = all_items.end();
+       it != end; ++it) {
+    pointer p = it->first;
+    size_type s = it->second;
+    for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
+      if (type(pp) == USED)
+        alloc.destroy(pp);
     }
-  };
-  CGAL_assertion(capacity_==0);
+    alloc.deallocate(p, s);
+  }
   init();
 }
 
@@ -563,6 +569,7 @@ template < class T, class Allocator >
 void Compact_container<T, Allocator>::allocate_new_block()
 {
   pointer new_block = alloc.allocate(block_size + 2);
+  all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
   // We don't touch the first and the last one.
   // We mark them free in reverse order, so that the insertion order
