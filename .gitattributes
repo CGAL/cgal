@@ -744,7 +744,6 @@ Installation/config/support/S93a-TAUCSFREEBSDLAPACK -text
 Installation/config/support/S93b-TAUCSFREEBSDATLAS -text
 Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/parse_files.awk -text
-Installation/config/testfiles/CGAL_CFG_NO_TYPE_TRAITS.cpp -text
 Installation/src/CGAL/all_files.cpp -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
