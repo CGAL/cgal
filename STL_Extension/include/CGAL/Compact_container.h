@@ -571,21 +571,20 @@ void Compact_container<T, Allocator>::allocate_new_block()
     put_on_free_list(new_block + i);
   // We insert this new block at the end.
   if (last_item == NULL) // First time
-    {
+  {
       first_item = new_block;
       last_item  = new_block + block_size + 1;
       set_type(first_item, NULL, START_END);
-      set_type(last_item, NULL, START_END);
-    }
+  }
   else
-    {
+  {
       set_type(last_item, new_block, BLOCK_BOUNDARY);
       set_type(new_block, last_item, BLOCK_BOUNDARY);
       last_item = new_block + block_size + 1;
-      set_type(last_item, NULL, START_END);
-    }
-    // Increase the block_size for the next time.
-    block_size += 16;
+  }
+  set_type(last_item, NULL, START_END);
+  // Increase the block_size for the next time.
+  block_size += 16;
 }
 
 template < class T, class Allocator >
