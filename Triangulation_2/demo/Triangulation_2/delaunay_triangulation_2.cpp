@@ -353,8 +353,11 @@ private slots:
     }
     Iso_rectangle_2 ir = CGAL::bounding_box(points.begin(), points.end());
     tr1.clear();
+    CGAL::Timer timer;
+    timer.start();
     tr1.insert(points.begin(), points.end());
-
+    timer.stop();
+    std::cerr << "Insertion of " << points.size() << " points took " << timer.time() << " sec." << std::endl;
     stoolbar->clear_history();
     widget->set_window(ir.xmin(), ir.xmax(), ir.ymin(), ir.ymax());
     something_changed();
