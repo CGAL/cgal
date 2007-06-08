@@ -44,11 +44,8 @@ CGAL_END_NAMESPACE
 #  include <windows.h>
 #  include "psapi.h"
 #elif defined __linux__ 
+#  include <fstream>
 #  include <cstddef>
-#  include <cstdio>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <fcntl.h>
 #  include <unistd.h>
 #endif
 
@@ -99,6 +96,8 @@ private:
     //                   This does not include pages which
     //                   have not been demand-loaded in, or
     //                   which are swapped out.
+    //
+    // Note : the following may be buggy in case of space in the executable name...
 
     int pid;
     char name[1024];
@@ -106,20 +105,16 @@ private:
     int ppid, pgrp, session, tty, tpgid;
     unsigned flags, minflt, cminflt, majflt, cmajflt;
     int utime, stime, cutime, cstime, counter, priority, timeout;
-    unsigned itrealvalue, starttime, vsize = 0, rss = 0;
+    unsigned itrealvalue, starttime;
+    size_type vsize = 0, rss = 0;
 
-    FILE *f = fopen("/proc/self/stat", "r");
+    std::ifstream f("/proc/self/stat");
     CGAL_assertion(f);
-    fscanf(f, "%d %s %c %d %d %d %d %d %u "
-              "%u %u %u %u %d %d %d "
-              "%d %d %d %u %u %d "
-	      "%u %u",
-        &pid, name, &state, &ppid, &pgrp, &session, &tty, &tpgid, &flags,
-        &minflt, &cminflt, &majflt, &cmajflt, &utime, &stime, &cutime,
-        &cstime, &counter, &priority, &timeout, &itrealvalue, &starttime,
-        &vsize, &rss);
 
-    fclose(f);
+    f >> pid >> name >> state >> ppid >> pgrp >> session >> tty >> tpgid >> flags;
+    f >> minflt >> cminflt >> majflt >> cmajflt >> utime >> stime >> cutime;
+    f >> cstime >> counter >> priority >> timeout >> itrealvalue >> starttime;
+    f >> vsize >> rss;
 
     return virtual_size ? vsize : rss * getpagesize();
 #endif
