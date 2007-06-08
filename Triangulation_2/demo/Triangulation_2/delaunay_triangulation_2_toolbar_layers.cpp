@@ -147,7 +147,7 @@ static const char * circum_circle_small_xpm[] = {
     but[3]->setTextLabel("Vertices");
     but[4] = new QToolButton(this, "circles");
     but[4]->setIconSet(set4);
-    but[4]->setTextLabel("Circusmcribed Circle");
+    but[4]->setTextLabel("Circumscribed Circle");
 
     nr_of_buttons = 5;
 	  button_group = new QButtonGroup(0, "nonexclusive");
