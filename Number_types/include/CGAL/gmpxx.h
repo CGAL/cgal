@@ -39,6 +39,7 @@
 
 #include <CGAL/number_type_basic.h>
 
+#include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
 #include <gmpxx.h>
 #include <utility>
 
