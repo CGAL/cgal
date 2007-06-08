@@ -378,9 +378,9 @@ operator>>(std::istream& in, Quotient<NT>& r)
   char c = 0;
 
 #ifndef CGAL_CFG_NO_LOCALE
-  while (in.get(c) && std::isspace(c, std::locale::classic() ));
+  while (in.get(c) && std::isspace(c, std::locale::classic() )) {}
 #else
-  while (in.get(c) && CGAL_CLIB_STD::isspace(c));
+  while (in.get(c) && CGAL_CLIB_STD::isspace(c)) {}
 #endif // CGAL_CFG_NO_LOCALE
   if ( !in ) return in;
   in.putback(c);
@@ -390,16 +390,16 @@ operator>>(std::istream& in, Quotient<NT>& r)
   in >> num;
 
 #ifndef CGAL_CFG_NO_LOCALE
-  while (in.get(c) && std::isspace(c, std::locale::classic() ));
+  while (in.get(c) && std::isspace(c, std::locale::classic() )) {}
 #else
-  while (in.get(c) && CGAL_CLIB_STD::isspace(c));
+  while (in.get(c) && CGAL_CLIB_STD::isspace(c)) {}
 #endif // CGAL_CFG_NO_LOCALE
   if (( in ) && ( c == '/'))
   {
 #ifndef CGAL_CFG_NO_LOCALE
-      while (in.get(c) && std::isspace(c, std::locale::classic() ));
+      while (in.get(c) && std::isspace(c, std::locale::classic() )) {}
 #else
-      while (in.get(c) && CGAL_CLIB_STD::isspace(c));
+      while (in.get(c) && CGAL_CLIB_STD::isspace(c)) {}
 #endif // CGAL_CFG_NO_LOCALE
       CGAL_assertion( in );
       in.putback(c);
