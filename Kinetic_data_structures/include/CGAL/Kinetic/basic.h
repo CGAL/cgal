@@ -93,4 +93,10 @@ CGAL_KINETIC_END_NAMESPACE
 #define CGAL_KINETIC_ERROR(expr) std::cerr << expr << std::endl;
 #define CGAL_KINETIC_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
 #define CGAL_KINETIC_SET_LOG_LEVEL(level) CGAL::Kinetic::internal::Logs::get().set_level(level);
+
+#include <CGAL/Tools/utility_macros.h>
+
+
+
+
 #endif

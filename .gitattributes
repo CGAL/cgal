@@ -871,6 +871,7 @@ Kinetic_data_structures/examples/Kinetic_framework/defining_a_simulation_traits.
 Kinetic_data_structures/include/CGAL/Kinetic/Exact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Inexact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h -text
+Kinetic_data_structures/include/CGAL/Tools/utility_macros.h -text
 Kinetic_data_structures/src/CGALQt/Kinetic_print.xpm -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text

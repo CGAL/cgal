@@ -194,7 +194,9 @@ public:
     order.
   */
   void set_current_time(const Time &t) {
-    CGAL_precondition(CGAL::compare(t, cur_time_) != CGAL::SMALLER);
+    CGAL_precondition_code(CGAL::Comparison_result debug_cr
+			   =CGAL::compare(t, cur_time_));
+    CGAL_precondition(debug_cr != CGAL::SMALLER);
     /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
       if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
