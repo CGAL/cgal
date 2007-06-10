@@ -23,8 +23,12 @@
 namespace CGAL {
   namespace Surface_mesher {
 
-    struct Has_edges {};
-    struct Has_no_edges {};
+    struct Has_edges {
+      static bool has_edges() { return true; }
+    };
+    struct Has_no_edges {
+      static bool has_edges() { return false; }
+    };
 
   } // end namespace Surface_mesher
 } // end namespace CGAL

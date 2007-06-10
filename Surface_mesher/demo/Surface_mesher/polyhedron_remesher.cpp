@@ -1,3 +1,4 @@
+#include "debug_macros.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>

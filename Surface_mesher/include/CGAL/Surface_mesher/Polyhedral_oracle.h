@@ -33,7 +33,8 @@ template <
   class Surface,
   class Point_creator = Creator_uniform_3<typename Surface::Geom_traits::FT,
     typename Surface::Geom_traits::Point_3>,
-  class Visitor = Null_oracle_visitor
+  class Visitor = Null_oracle_visitor,
+  typename Has_edges_tag_ = typename Surface::Has_edges_tag
   >
 class Polyhedral_oracle
 {
@@ -178,6 +179,12 @@ public:
       Geom_traits().construct_vector_3_object();
     typename Geom_traits::Construct_ray_3 ray =
       Geom_traits().construct_ray_3_object();
+    typename Geom_traits::Bounded_side_3 bounded_side =
+      Geom_traits().bounded_side_3_object();
+
+    if( bounded_side(surface.subfacets_octree.iso_cuboid(),
+		     p) == ON_UNBOUNDED_SIDE )
+      return false;
 
     std::pair<bool, int> result = std::make_pair(false, 0);
     while(! result.first)

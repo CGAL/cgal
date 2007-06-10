@@ -41,7 +41,7 @@ typedef K::Point_3 Point_3;
 typedef K::Sphere_3 Sphere_3;
 typedef K::FT FT;
 
-typedef CGAL::Polyhedral_surface_3<K> Surface;
+typedef CGAL::Polyhedral_surface_3<K, CGAL::Surface_mesher::Has_edges> Surface;
 
 struct Edge_info {
   bool is_cached;
