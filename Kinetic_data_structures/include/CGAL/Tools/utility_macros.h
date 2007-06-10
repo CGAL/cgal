@@ -10,7 +10,7 @@
 #define CGAL_ACCESSOR(type, name, expr) const type &name() const{expr;}
 #define CGAL_ACCESSORNR(type, name, expr) const type &name() const{expr;}
 
-#define CGAL_IS(name, expor) bool is_##name() const {expr;}
+#define CGAL_IS(name, expr) bool is_##name() const {expr;}
 
 #define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;}
 
@@ -21,6 +21,18 @@
 
 #define CGAL_OUTPUT(type)\
   inline std::ostream& operator<<(std::ostream&out, const type &t){	\
+    return t.write(out);						\
+  }
+
+#define CGAL_OUTPUT1(type)			\
+  template <class A>						\
+  inline std::ostream& operator<<(std::ostream&out, const type<A> &t){ \
+    return t.write(out);						\
+  }
+
+#define CGAL_OUTPUT2(type)			\
+  template <class A, class B>						\
+  inline std::ostream& operator<<(std::ostream&out, const type<A,B> &t){ \
     return t.write(out);						\
   }
 
@@ -55,57 +67,46 @@
 #define CGAL_IFNONEQUAL(a,b,cmp) if (a cmp b) return true;	\
   else if (b cmp a) return false;
 
-#include CGAL_COMPARISONS1(ucname, field) bool operator==(const ucname &o) const {\
-  return (field== o.field);\
-  }\
-  bool operator!=(const ucname &o) const {	\
-  return (field!= o.field);\
-  }\
-  bool operator<(const ucname &o) const {	\
-  return (field< o.field);		\
-  }\
-  bool operator>(const ucname &o) const {	\
-  return (field> o.field);\
-  }\
-  bool operator>=(const ucname &o) const {	\
-  return (field>= o.field);\
-  }\
-  bool operator<=(const ucname &o) const {	\
-  return (field<= o.field);\
+#define CGAL_COMPARISONS1(ucname, field) bool operator==(const ucname &o) const { \
+    return (field== o.field);						\
+  }									\
+  bool operator!=(const ucname &o) const {				\
+    return (field!= o.field);						\
+  }									\
+  bool operator<(const ucname &o) const {				\
+    return (field< o.field);						\
+  }									\
+  bool operator>(const ucname &o) const {				\
+    return (field> o.field);						\
+  }									\
+  bool operator>=(const ucname &o) const {				\
+    return (field>= o.field);						\
+  }									\
+  bool operator<=(const ucname &o) const {				\
+    return (field<= o.field);						\
   }
 
-#include CGAL_COMPARISONS2(ucname, a, b) bool operator==(const ucname &o) const {	\
-  return (a== o.a && b== o.b);\
-  }\
-  bool operator!=(const ucname &o) const {	\
-  return (a!= o.a || b != o.b);\
-  }\
-  bool operator<(const ucname &o) const {	\
-  if (a< o.a ) return true;			\
-  else if (a > o.a) return false;		\
-  else return b < o.b;				\
-  }						\
-  bool operator>(const ucname &o) const {	\
-  if (a> o.a ) return true;			\
-  else if (a < o.a) return false;		\
-  else return b > o.b;				\
-  }						\
-  bool operator>=(const ucname &o) const {	\
-  return !operator<(o);				\
-  }						\
-  bool operator<=(const ucname &o) const {	\
-  return !operator>(o);				\
+#define CGAL_COMPARISONS2(ucname, a, b) bool operator==(const ucname &o) const { \
+    return (a== o.a && b== o.b);					\
+  }									\
+  bool operator!=(const ucname &o) const {				\
+    return (a!= o.a || b != o.b);					\
+  }									\
+  bool operator<(const ucname &o) const {				\
+    if (a< o.a ) return true;						\
+    else if (a > o.a) return false;					\
+    else return b < o.b;						\
+  }									\
+  bool operator>(const ucname &o) const {				\
+    if (a> o.a ) return true;						\
+    else if (a < o.a) return false;					\
+    else return b > o.b;						\
+  }									\
+  bool operator>=(const ucname &o) const {				\
+    return !operator<(o);						\
+  }									\
+  bool operator<=(const ucname &o) const {				\
+    return !operator>(o);						\
   }
-
-#include <CGAL/Kinetic/internal/Log.h>
-
-#define CGAL_LOG(level, expr) if (CGAL::Kinetic::internal::Logs::get().is_output(level))\
-{ CGAL::Kinetic::internal::Logs::get().stream(level) << expr;};
-#define CGAL_LOG_WRITE(level, expr) if (CGAL::Kinetic::internal::Logs::get().is_output(level))\
-{std::ostream &LOG_STREAM= CGAL::Kinetic::internal::Logs::get().stream(level); expr;}
-#define CGAL_ERROR(expr) std::cerr << expr << std::endl;
-#define CGAL_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
-#define CGAL_SET_LOG_LEVEL(level) CGAL::Kinetic::internal::Logs::get().set_level(level);
-
 
 #endif

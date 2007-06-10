@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iterator>
 
-int main(int, char *[])
+int main(int argc, char *argv[])
 {
 
   typedef CGAL::Kinetic::Exact_simulation_traits Simulation_traits;
@@ -20,26 +20,50 @@ int main(int, char *[])
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
-  std::ifstream in("data/Delaunay_triangulation_3.input");
-  if (!in) {
-    std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_3.input" << std::endl;
-    return EXIT_FAILURE;
+  if (argc==1) {
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
+    std::ifstream in("data/Delaunay_triangulation_3.input");
+    if (!in) {
+      std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_3.input" << std::endl;
+      return EXIT_FAILURE;
+    }
+    char buf[1000];
+    int nread=0;
+    while (true ) {
+      in.getline(buf, 1000);
+      if (!in) break;
+      std::istringstream il(buf);
+      Simulation_traits::Kinetic_kernel::Point_3 p;
+      il >> p;
+      //std::cout << p << std::endl;
+      simtr.active_points_3_table_handle()->insert(p);
+      ++nread;
+    }
+    kdel.set_has_certificates(true);
+    kdel.audit();
+
+  } else {
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    std::ifstream in(argv[1]);
+    if (!in) {
+      std::cerr << "Error opening input file: " << argv[1] << std::endl;
+      return EXIT_FAILURE;
+    }
+    char buf[1000];
+    int nread=0;
+    while (true ) {
+      in.getline(buf, 1000);
+      if (!in) break;
+      std::istringstream il(buf);
+      Simulation_traits::Kinetic_kernel::Point_3 p;
+      il >> p;
+      //std::cout << p << std::endl;
+      simtr.active_points_3_table_handle()->insert(p);
+      ++nread;
+    }
+    kdel.set_has_certificates(true);
+    kdel.audit();
   }
-  char buf[1000];
-  int nread=0;
-  while (true ) {
-    in.getline(buf, 1000);
-    if (!in) break;
-    std::istringstream il(buf);
-    Simulation_traits::Kinetic_kernel::Point_3 p;
-    il >> p;
-    //std::cout << p << std::endl;
-    simtr.active_points_3_table_handle()->insert(p);
-    ++nread;
-  }
-  kdel.set_has_certificates(true);
-  kdel.audit();
 
   while (simtr.simulator_handle()->next_event_time()
 	 < simtr.simulator_handle()->end_time()) {
@@ -78,6 +102,8 @@ int main(int, char *[])
 
   if (error_count != 0) {
     std::cerr << "ERROR " << error_count << " errors in " << kdel.visitor().size() << " events.\n";
+  } else {
+    std::cout << "No errors for " << kdel.visitor().size() << " events" << std::endl;
   }
 
   //std::cout << "Too late on " << too_late__ << " and filtered " << filtered__ << std::endl;

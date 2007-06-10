@@ -19,13 +19,13 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 
-#include <CGAL/Kinetic/internal/Log.h>
+#include <CGAL/Tools/Log.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
 #include <iostream>
-
+CGAL_BEGIN_NAMESPACE
+Log::State Log::state_;
+CGAL_END_NAMESPACE
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
-
-Logs kds_logs;
 
   unsigned int function_degeneracies__=0;
   unsigned int zero_certificates__=0;

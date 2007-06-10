@@ -747,7 +747,7 @@ void Default_simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
     is_forward_= !is_forward_;
     //end_time_=-end_time_;
     //last_event_time_= -std::numeric_limits<Time>::infinity();
-    CGAL_KINETIC_LOG(LOG_SOME, "Current time is " << cur_time_ << " and was " << oct
+    CGAL_LOG(Log::SOME, "Current time is " << cur_time_ << " and was " << oct
 		     << ", end_time() is " << end_time() << std::endl);
     for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
       (*it)->new_notification(Listener::DIRECTION_OF_TIME);
@@ -755,7 +755,7 @@ void Default_simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
     }
   }
   else {
-    CGAL_KINETIC_LOG(LOG_SOME, dir << " " << end_time() << " " << cur_time_ << std::endl);
+    CGAL_LOG(Log::SOME, dir << " " << end_time() << " " << cur_time_ << std::endl);
   }
 }
 
@@ -765,7 +765,7 @@ void Default_simulator<S, PQ>::audit_all_kdss()
 {
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
   cur_time_= Time(audit_time_);
-  CGAL_KINETIC_LOG(LOG_SOME, "Auditing KDSs at time " << audit_time() << std::endl);
+  CGAL_LOG(Log::SOME, "Auditing KDSs at time " << audit_time() << std::endl);
   for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
     //CGAL_exactness_postcondition_code((*it)->new_notification(Listener::HAS_VERIFICATION_TIME));
     CGAL_postcondition_code((*it)->new_notification(Listener::HAS_AUDIT_TIME));
@@ -775,12 +775,8 @@ void Default_simulator<S, PQ>::audit_all_kdss()
 }
 
 
-template <class S, class PQ>
-std::ostream &operator<<(std::ostream &out, const Default_simulator<S, PQ> &s)
-{
-  s.write(out);
-  return out;
-}
+
+CGAL_OUTPUT2(Default_simulator);
 
 
 CGAL_KINETIC_END_NAMESPACE;

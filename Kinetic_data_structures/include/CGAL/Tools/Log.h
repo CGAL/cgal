@@ -20,103 +20,105 @@
 
 #ifndef CGAL_KINETIC_LOG_H_
 #define CGAL_KINETIC_LOG_H_
-#include <CGAL/Kinetic/basic.h>
+#include <CGAL/basic.h>
+#include <CGAL/Tools/utility_macros.h>
 #include <iostream>
 #include <fstream>
 #include <ios>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+CGAL_BEGIN_NAMESPACE
 
-class Logs
+class Log
 {
+public: 
+  typedef enum Level {NONE=0, SOME=2, LOTS=3};
+  
+  typedef enum Target {COUT, FILE, DEVNULL};
+private:
+  struct State {
+    Target target_;
+    Level level_;
+    std::ofstream fstream_;
+    std::ofstream null_;
+    std::ofstream maple_;
+    bool maple_is_open_;
+    bool output_maple_;
+    State(){
+      level_= NONE;
+      target_= COUT;
+      null_.open("/dev/null");
+      //maple_.open("maple.log");
+      maple_is_open_=false;
+      output_maple_=true;
+    }
+  };
+  static State state_;
 public:
   // The different types of logs supported
   /*  MAPLE is a log which should be able to be fed directly in to
       maple and preferably will produce obviously good or bad outwhen
       when evaluated.
   */
-  typedef CGAL::Kinetic::Log_level Level;
-  typedef enum Target {COUT, FILE, DEVNULL}
-    Target;
 
-  Level level() const
-  {
-    return level_;
-  }
+  static Level level() {return state_.level_;}
+  static void set_level(Level &l) {state_.level_=l;}
 
-  void set_level(Level l) {
-    level_= l;
-  }
-
-  std::ostream &stream(Level l) {
+  static std::ostream &stream(Level l) {
     if (is_output(l)) {
-      if (target_== COUT) {
+      if (state_.target_== COUT) {
 	return std::cout;
       }
       else {
-	return fstream_;
+	return state_.fstream_;
       }
     }
     else {
-      return null_;
+      return state_.null_;
     }
   }
-  bool is_output(Level l) {
+
+  static bool is_output(Level l) {
     return l <= level();
   }
-  Target target() const
-  {
-    return target_;
-  }
-  void set_target(Target t) {
-    target_=t;
-  }
+  static Target target() {return state_.target_;}
+  static CGAL_SET(Target, target, state_.target_=k);
+  static CGAL_SET(std::string, filename, state_.fstream_.open(k.c_str()));
 
-  void set_filename(const char *name) {
-    fstream_.open(name);
-  }
-
-  static Logs& get() ;
-
-  bool output_maple() const
-  {
-    return output_maple_;
-  }
-  void set_output_maple(bool b) {
-    output_maple_=b;
+  static bool is_output_maple(){return state_.output_maple_;}
+  
+  static void set_output_maple(bool b) {
+    state_.output_maple_=b;
   }
   std::ofstream &maple_stream() {
-    if (!maple_is_open_) {
-      maple_is_open_=true;
-      maple_.open("maple.log");
+    if (!state_.maple_is_open_) {
+      state_.maple_is_open_=true;
+      state_.maple_.open("maple.log");
     }
-    return maple_;
+    return state_.maple_;
   }
-  Logs() {
-    level_= LOG_NONE;
-    target_= COUT;
-    null_.open("/dev/null");
-    //maple_.open("maple.log");
-    maple_is_open_=false;
-    output_maple_=true;
+private:
+  Log() {
+   
   }
-
-protected:
-
-  Target target_;
-  Level level_;
-  std::ofstream fstream_;
-  std::ofstream null_;
-  std::ofstream maple_;
-  bool maple_is_open_;
-  bool output_maple_;
 };
 
-extern Logs kds_logs;
 
-inline Logs& Logs::get() {
-  return kds_logs;
-}
+#ifndef CGAL_DISABLE_LOGGING
+#define CGAL_LOG(level, expr) if (CGAL::Log::is_output(level))\
+    { CGAL::Log::stream(level) << expr << std::flush;};
+#define CGAL_LOG_WRITE(level, expr) if (CGAL::Log::is_output(level))\
+{std::ostream &LOG_STREAM= CGAL::Log::stream(level); expr;}
+#define CGAL_ERROR(expr) std::cerr << expr << std::endl;
+#define CGAL_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
+#define CGAL_SET_LOG_LEVEL(level) CGAL::Logs::set_level(level);
+#else
+#define CGAL_LOG(l,e)
+#define CGAL_LOG_WRITE(l,e)
+#define CGAL_ERROR(e)
+#define CGAL_ERROR_WRITE(e)
+#define CGAL_SET_LOG_LEVEL(l)
+#endif
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+
+CGAL_END_NAMESPACE
 #endif
