@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
   std::cout << "Using " << num_points  << " degree " << degree << " points."
 	    << std::endl;
-  //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
+  //CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::SOME);
   typedef CGAL::Kinetic::Inexact_simulation_traits Tr;
   Tr tr(0,std::numeric_limits<double>::infinity());
   typedef Tr::Simulator::Time Time;

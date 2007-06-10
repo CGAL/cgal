@@ -281,7 +281,7 @@ public:
       }
       
       batched_certs_.clear();
-      /*CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, 
+      /*CGAL_LOG(CGAL::Kinetic::Log::SOME, 
        *traits_.simulator_handle() << std::endl;);*/
       //int dnum= num_certificates_-num_certs;
       //std::cout << "Edit had " << dnum << " certificate computations" << std::endl;
@@ -309,7 +309,7 @@ public:
 
     } else {
       if (tf==true && del_.dimension()==2) {
-        CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY2: Creating certificates."<< std::endl);
+        CGAL_LOG(CGAL::Kinetic::Log::SOME, "DELAUNAY2: Creating certificates."<< std::endl);
         if (no_failures) {
           for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
             f->set_event(traits_.simulator_handle()->null_event());
@@ -337,7 +337,7 @@ public:
           delete_certificate(f);
         }
       } 
-      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, 
+      CGAL_LOG(CGAL::Kinetic::Log::SOME, 
 		       *traits_.simulator_handle() << std::endl;);
       has_certificates_=tf;
     }
@@ -352,7 +352,7 @@ public:
     // erase all incident certificates
     Vertex_handle vh= vertex_handle(k);
     if (vh == Vertex_handle()) {
-      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Point " << k << " is not in triangulation on removal."<< std::endl);
+      CGAL_LOG(CGAL::Kinetic::Log::SOME, "Point " << k << " is not in triangulation on removal."<< std::endl);
       return;
     }
     watcher_.remove_vertex(vh);
@@ -400,13 +400,13 @@ public:
     //new_edges_.clear();
     traits_.point_changed(k);
     if (del_.dimension() != 2) {
-      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME,"Triangulation is still 1D.\n");
+      CGAL_LOG(CGAL::Kinetic::Log::SOME,"Triangulation is still 1D.\n");
       return;
     }
 
     Vertex_handle vh=vertex_handle(k);
     if (vh == Vertex_handle()) {
-      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Point " << k << " is not in triangulation on set."<< std::endl);
+      CGAL_LOG(CGAL::Kinetic::Log::SOME, "Point " << k << " is not in triangulation on set."<< std::endl);
       return;
     }
 
@@ -526,13 +526,13 @@ public:
   void flip(const Edge &e) {
     ++num_events_;
     CGAL_precondition(!batching_);
-    CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "\n\n\n\n\n\nFlipping edge "
+    CGAL_LOG(CGAL::Kinetic::Log::SOME, "\n\n\n\n\n\nFlipping edge "
 		     << TDS_helper::origin(e)->point()
 		     << TDS_helper::destination(e)->point() 
 		     << " to get " << TDS_helper::third_vertex(e)->point()
 		     << ", " << TDS_helper::mirror_vertex(e)->point()<< std::endl);
-    //CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, TDS_helper::destination(e)->point() << std::endl);
-    //CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, " at "  << traits_.simulator()->current_time() << std::endl);
+    //CGAL_LOG(CGAL::Kinetic::Log::NONE, TDS_helper::destination(e)->point() << std::endl);
+    //CGAL_LOG(CGAL::Kinetic::Log::SOME, " at "  << traits_.simulator()->current_time() << std::endl);
 
     Face_handle face= e.first;
     int index= e.second;

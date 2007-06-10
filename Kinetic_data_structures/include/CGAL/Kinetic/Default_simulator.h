@@ -355,8 +355,8 @@ public:
     //log()->stream(Log::SOME)
     CGAL_exactness_precondition(CGAL::compare(t, current_time()) != CGAL::SMALLER);
 
-    CGAL_KINETIC_LOG(LOG_SOME, "Created event " << key << std::endl);
-    CGAL_KINETIC_LOG(LOG_SOME, *this << std::endl);
+    CGAL_LOG(Log::SOME, "Created event " << key << std::endl);
+    CGAL_LOG(Log::SOME, *this << std::endl);
     //if (log()->is_output(Log::LOTS)) write(log()->stream(Log::LOTS));
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
@@ -404,9 +404,9 @@ public:
       return;
     }
     //#endif
-    CGAL_KINETIC_LOG(LOG_SOME, "Deleting event " << k << std::endl);
+    CGAL_LOG(Log::SOME, "Deleting event " << k << std::endl);
     queue_.erase(k);
-    //CGAL_KINETIC_LOG(LOG_LOTS , *this);
+    //CGAL_LOG(Log::LOTS , *this);
   }
 
   //! The type for a handle to an event.
@@ -437,7 +437,7 @@ public:
   */
   /*template <class Ev>
     typename Queue::template Event_pointer<Ev>::Pointer event(const Event_key &k, const Ev& e) const {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
+    CGAL_LOG(Log::LOTS, "Accessing event for key " << k << std::endl);
     return queue_.event(k,e);
     }*/
 
@@ -446,7 +446,7 @@ public:
   {
     CGAL_precondition(k != Event_key());
     CGAL_precondition(k != null_event());
-    //CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
+    //CGAL_LOG(Log::LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);
   }
 
@@ -455,13 +455,13 @@ public:
   Event_type& event(const Event_key &k){
     CGAL_precondition(k != Event_key());
     CGAL_precondition(k != null_event());
-    //CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
+    //CGAL_LOG(Log::LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);
   }
 
   /*template <class Event_type>
     const Event_type& event(const Event_key &k, const Event_type&) const {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
+    CGAL_LOG(Log::LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);
     }*/
 
@@ -477,10 +477,10 @@ public:
    */
   template <class Ev>
   Event_key set_event(const Event_key &k, const Ev& ev) {
-    CGAL_KINETIC_LOG(LOG_SOME, "Changed event " << k << std::flush);
+    CGAL_LOG(Log::SOME, "Changed event " << k << std::flush);
     Event_key rk= queue_.set(k, ev);
-    CGAL_KINETIC_LOG(LOG_SOME, " to event " << rk << std::endl);
-    CGAL_KINETIC_LOG(LOG_LOTS, *this);
+    CGAL_LOG(Log::SOME, " to event " << rk << std::endl);
+    CGAL_LOG(Log::LOTS, *this);
     return rk;
   }
 
@@ -547,7 +547,7 @@ public:
       CGAL_assertion(k != Event_key());
 #ifndef NDEBUG
       if (!queue_.contains(k)) {
-	CGAL_KINETIC_ERROR("Event " << k << " is not in queue.");
+	CGAL_ERROR("Event " << k << " is not in queue.");
       }
 #endif
       CGAL_assertion(queue_.contains(k));
@@ -613,7 +613,7 @@ protected:
 
   //! Process the next event
   void process_next_event() {
-    CGAL_KINETIC_LOG(LOG_LOTS, *this);
+    CGAL_LOG(Log::LOTS, *this);
     /*#ifndef NDEBUG
       if (cur_time_ < audit_time_){
       audit_all_kdss();
@@ -622,12 +622,12 @@ protected:
     /*#ifdef CGAL_KINETIC_ENABLE_AUDITING
       if (CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
       //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-      CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
+      CGAL_LOG(Log::SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
       //}
       } else {
-      CGAL_KINETIC_LOG(LOG_SOME, "Can't audit between events.\n");
+      CGAL_LOG(Log::SOME, "Can't audit between events.\n");
       }
       #endif*/
 
@@ -641,11 +641,11 @@ protected:
     queue_.process_front();
     ++number_of_events_;
       
-    CGAL_KINETIC_LOG(LOG_LOTS, *this);
+    CGAL_LOG(Log::LOTS, *this);
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
     if (compute_audit_time(current_time())) {
-      CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
+      CGAL_LOG(Log::SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
     }

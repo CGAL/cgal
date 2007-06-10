@@ -184,7 +184,7 @@ public:
   //! Gui will call output_drawing
   void draw() {
     //std::cout << "GUI: Starting drawing.\n";
-    //CGAL_KINETIC_LOG(LOG_LOTS, "GUI: Drawing in gui.\n");
+    //CGAL_LOG(Log::LOTS, "GUI: Drawing in gui.\n");
     for (typename std::set<Listener*>::iterator dit= drawables_.begin();
 	 dit != drawables_.end(); ++dit) {
       //std::cout << "GUI: Drawing something " << *dit << ".\n";
@@ -196,14 +196,14 @@ public:
 
 private:
   void new_listener(Listener* d) {
-    CGAL_KINETIC_LOG(LOG_SOME, "GUI: Registered a drawable.\n");
+    CGAL_LOG(Log::SOME, "GUI: Registered a drawable.\n");
     drawables_.insert(d);
     d->set_widget(widget());
     //
     //d->new_notification(PICTURE_IS_VALID);
   }
   void delete_listener(Listener* d) {
-    CGAL_KINETIC_LOG(LOG_SOME,"GUI: Unregistered a drawable.\n");
+    CGAL_LOG(Log::SOME,"GUI: Unregistered a drawable.\n");
     drawables_.erase(d);
   }
 

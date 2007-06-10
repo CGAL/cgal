@@ -100,7 +100,7 @@ public:
     bounds_[RIGHT]=xmax;
     bounds_[TOP]=ymax;
     bounds_[BOTTOM]=ymin;
-    CGAL_KINETIC_LOG(LOG_SOME, "Constructed box with sides [" << bounds_[LEFT] << "..." << bounds_[RIGHT]
+    CGAL_LOG(Log::SOME, "Constructed box with sides [" << bounds_[LEFT] << "..." << bounds_[RIGHT]
 		 << "]x[" << bounds_[BOTTOM] << "..." << bounds_[TOP] << "]" << std::endl);
   };
 
@@ -178,7 +178,7 @@ protected:
 
   Side try_bound(Side try_side, Point_key k,Side old_side,  double& old_time) const
   {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Trying point " << traits_.active_points_2_table_handle()->at(k) << " on side " << try_side << std::endl);
+    CGAL_LOG(Log::LOTS, "Trying point " << traits_.active_points_2_table_handle()->at(k) << " on side " << try_side << std::endl);
     Function nf;
     NT bound=bounds_[try_side];
     typename Kinetic_kernel::Certificate re;
@@ -202,7 +202,7 @@ protected:
       }
     }
     if (re.will_fail()) {
-      CGAL_KINETIC_LOG(LOG_LOTS, "Side fails at " << re.failure_time() << std::endl);
+      CGAL_LOG(Log::LOTS, "Side fails at " << re.failure_time() << std::endl);
       double dv= CGAL::to_interval(re.failure_time()).first;
       if (dv < old_time) {
 	old_time=dv;

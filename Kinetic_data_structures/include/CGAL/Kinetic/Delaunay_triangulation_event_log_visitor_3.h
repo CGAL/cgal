@@ -43,7 +43,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         Point b= internal::vertex_of_edge(e, 1)->point();
         out << "Flipping away edge {" << (std::min)(a,b) << ", " << (std::max)(a,b) << "}";
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
     template <class Edge>
     void post_facet_flip(Edge e) {
@@ -53,7 +53,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         Point b= internal::vertex_of_edge(e, 1)->point();
         out << "Flipping in edge {" << (std::min)(a,b) << ", " << (std::max)(a,b) << "}";
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
     template <class Facet>
@@ -68,7 +68,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         out << "Flipping away facet {" << pts[0] << ", " 
 	    << pts[1] << ", " << pts[2] <<"}";
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
     template <class Facet>
@@ -83,7 +83,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         out << "Flipping in facet {" << pts[0] << ", " 
 	    << pts[1] << ", " << pts[2] <<"}";
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
   template <class Vertex_handle>
@@ -91,14 +91,14 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
      std::ostringstream out;
     out << "Inserted vertex " << e->point();
     log_.push_back(out.str());
-    CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
   }
   template <class Vertex_handle>
     void pre_remove_vertex(Vertex_handle e) {
      std::ostringstream out;
     out << "Removing vertex " << e->point();
     log_.push_back(out.str());
-    CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+    CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
   }
 
     typedef std::vector<std::string>::const_iterator Event_iterator;

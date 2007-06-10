@@ -159,7 +159,7 @@ public:
   }
   virtual void process() {
     CGAL_assertion(0);
-    CGAL_KINETIC_ERROR("Writing dummy queue element.");
+    CGAL_ERROR("Writing dummy queue element.");
   }
   virtual CGAL::Comparison_result compare_concurrent(Key , Key ) const {
     CGAL_assertion(0);
@@ -565,14 +565,14 @@ public:
     CGAL_expensive_precondition(audit());
     if (!front_.empty()) {
       Item *i= &front_.front();
-      CGAL_KINETIC_LOG(LOG_SOME, "Processing event " << *i << std::endl);
+      CGAL_LOG(Log::SOME, "Processing event " << *i << std::endl);
       front_.pop_front();
       CGAL_expensive_postcondition(audit());
       if (front_.empty() && !back_.empty()) grow_front();
       i->process();
 
       /*if (!front_.empty() && i->time() == front_.front().time()) {
-	CGAL_KINETIC_LOG(LOG_SOME, "Degeneracy at time "
+	CGAL_LOG(Log::SOME, "Degeneracy at time "
 	<< i->time() << " the events are: "
 	<< *i << " and " << front_.front() << std::endl);
 	}*/
@@ -876,8 +876,8 @@ protected:
 	  cand.swap(front_);
 	  //ub_=lb_;
 	  if (step_ == 0) {
-	    CGAL_KINETIC_ERROR( "underflow in queue ");
-	    CGAL_KINETIC_ERROR_WRITE(write(LOG_STREAM));
+	    CGAL_ERROR( "underflow in queue ");
+	    CGAL_ERROR_WRITE(write(LOG_STREAM));
 	    CGAL_assertion(cand.empty());
 	    step_=.0000001;
 	    return;
@@ -982,7 +982,7 @@ protected:
 	if (step_<=0) {
 	  /*if (dprint) std::cout << "fixing step since " << oub 
 	    << " equals new bound" << std::endl;*/
-	  CGAL_KINETIC_ERROR("Roundoff error in split " << split << " " << ub_ << " "
+	  CGAL_ERROR("Roundoff error in split " << split << " " << ub_ << " "
 			     <<  oub);
 	  step_=.00001;
 	}

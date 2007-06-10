@@ -150,10 +150,10 @@ int main(int argc, char *argv[])
 
 
     if (verbose) {
-        CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+        CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
     }
     else {
-        CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
+        CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::NONE);
     }
 
     if (file.empty()) {

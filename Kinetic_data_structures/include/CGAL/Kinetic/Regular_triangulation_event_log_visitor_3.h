@@ -49,7 +49,7 @@ public Delaunay_triangulation_event_log_visitor_3
         out << "Moving " << k << " from ";
         log_cell(c, out);
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
   template <class Key, class Cell>
@@ -58,7 +58,7 @@ public Delaunay_triangulation_event_log_visitor_3
         out << "Moved " << k << " from ";
         log_cell(c, out);
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
   /*template <class Key, class Cell>
@@ -67,7 +67,7 @@ public Delaunay_triangulation_event_log_visitor_3
         out << "Pushing " << k << " into ";
         log_cell(c, out);
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
     template <class Vertex_handle>
@@ -75,7 +75,7 @@ public Delaunay_triangulation_event_log_visitor_3
         std::ostringstream out;
         out << "Pushed " << vh->point();
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
     template <class Vertex_handle>
@@ -83,7 +83,7 @@ public Delaunay_triangulation_event_log_visitor_3
         std::ostringstream out;
         out << "Popping " << vh->point();
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
     template <class Key, class Cell>
@@ -92,7 +92,7 @@ public Delaunay_triangulation_event_log_visitor_3
         out << "Popped " << k << " from ";
         log_cell(c, out);
         log_.push_back(out.str());
-        CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
 	}*/
 };
 

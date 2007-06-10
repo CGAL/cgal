@@ -49,7 +49,7 @@ namespace CGAL
 	  typedef enum {PICTURE_IS_CURRENT}
 	  Notification_type;
 	  virtual void new_notification(Notification_type) {
-	    //CGAL_KINETIC_ERROR( "draw not implemented.\n");
+	    //CGAL_ERROR( "draw not implemented.\n");
 	    std::cerr << "Drawing but nothing is to be drawn.\n";
 	  }
 	  Qt_widget_2_core *widget(){return widget_;}

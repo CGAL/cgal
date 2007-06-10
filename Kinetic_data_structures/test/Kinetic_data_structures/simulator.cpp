@@ -234,7 +234,7 @@ struct Test
 int main(int, char *[])
 {
   CGAL::Timer timer;
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
+  CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::NONE);
 
  {
     timer.reset();

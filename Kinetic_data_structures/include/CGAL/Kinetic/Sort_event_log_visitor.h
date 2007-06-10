@@ -37,7 +37,7 @@ struct Sort_event_log_visitor
       std::ostringstream out;
       out << "Removing vertex " << *a;
       log_.push_back(out.str());
-      CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str());
+      CGAL_LOG(Log::LOTS, "Logging: " << out.str());
     }
 
     template <class Vertex_handle>
@@ -46,7 +46,7 @@ struct Sort_event_log_visitor
       std::ostringstream out;
       out << "Creating vertex " << *a;
       log_.push_back(out.str());
-      CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str());
+      CGAL_LOG(Log::LOTS, "Logging: " << out.str());
     }
 
     template <class Vertex_handle>
@@ -55,7 +55,7 @@ struct Sort_event_log_visitor
       std::ostringstream out;
       out << "Changing vertex " << *a;
       log_.push_back(out.str());
-      CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str());
+      CGAL_LOG(Log::LOTS, "Logging: " << out.str());
     }
 
     template <class Vertex_handle>
@@ -64,7 +64,7 @@ struct Sort_event_log_visitor
       std::ostringstream out;
       out << "Before swap of " << *a << " and " << *b;
       log_.push_back(out.str());
-      CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str());
+      CGAL_LOG(Log::LOTS, "Logging: " << out.str());
 
     }
     template <class Vertex_handle>
@@ -73,7 +73,7 @@ struct Sort_event_log_visitor
       std::ostringstream out; 
       out << "After swap of " << *a << " and " << *b;
       log_.push_back(out.str());
-      CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str());
+      CGAL_LOG(Log::LOTS, "Logging: " << out.str());
 
     }
 

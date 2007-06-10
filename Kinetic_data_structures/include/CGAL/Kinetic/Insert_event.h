@@ -39,7 +39,7 @@ public:
 	       Pointer mot):mot_(mot),
 			    obj_(obj){}
   void process() {
-    CGAL_KINETIC_LOG(LOG_SOME, "Inserting object.\n");
+    CGAL_LOG(Log::SOME, "Inserting object.\n");
     mot_->insert(obj_);
   }
   void* kds() const {return NULL;}

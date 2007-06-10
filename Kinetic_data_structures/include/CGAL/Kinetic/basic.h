@@ -78,9 +78,6 @@ CGAL_KINETIC_END_NAMESPACE
 #endif
 
 CGAL_KINETIC_BEGIN_NAMESPACE
-//! The types of logs available.
-typedef enum {LOG_NONE=0, LOG_SOME=2, LOG_LOTS=3}
-Log_level;
 
 CGAL_KINETIC_END_NAMESPACE
 
@@ -88,8 +85,5 @@ CGAL_KINETIC_END_NAMESPACE
 
 
 #include <CGAL/Tools/utility_macros.h>
-
-
-
 
 #endif

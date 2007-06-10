@@ -19,7 +19,7 @@ int main(int, char *[])
     KDS kds(tr);
 
 
-    //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    //CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
     std::ifstream in("data/points_1");
     in >> *tr.active_points_1_table_handle();
     std::cout << *tr.active_points_1_table_handle();

@@ -93,7 +93,7 @@ public:
       mode_= mode;
     }
 
-    CGAL_KINETIC_LOG(LOG_SOME, "Mode changed to " << mode_string(this->mode()) << std::endl);
+    CGAL_LOG(Log::SOME, "Mode changed to " << mode_string(this->mode()) << std::endl);
     timer_->clear();
     switch(this->mode()) {
     case RUNNING_TO_EVENT:

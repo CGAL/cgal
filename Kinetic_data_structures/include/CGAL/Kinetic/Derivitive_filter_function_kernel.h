@@ -41,11 +41,11 @@ struct Derivitive_filter_function_kernel: public Traits
     Root_stack(const typename Traits::Function &f,
     Root lb, Root ub,
     const Traits&k): Parent(f, lb, ub, k){
-    CGAL_KINETIC_LOG(LOG_LOTS, "Solved " << f << " from " << lb << " to " << ub << " to get ");
+    CGAL_LOG(Log::LOTS, "Solved " << f << " from " << lb << " to " << ub << " to get ");
     for (unsigned int i=0; i< Parent::roots_.size(); ++i){
-    CGAL_KINETIC_LOG(LOG_LOTS, Parent::roots_[i] << " ");
+    CGAL_LOG(Log::LOTS, Parent::roots_[i] << " ");
     }
-    CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
+    CGAL_LOG(Log::LOTS, std::endl);
     }
 
     Root_stack(){};

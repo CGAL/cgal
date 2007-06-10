@@ -39,7 +39,7 @@ public:
 	      Handle mot):mot_(mot),
 			   k_(k){}
   void process() {
-    CGAL_KINETIC_LOG(LOG_SOME,"Deleting object.\n");
+    CGAL_LOG(Log::SOME,"Deleting object.\n");
     mot_->erase(k_);
   }
 

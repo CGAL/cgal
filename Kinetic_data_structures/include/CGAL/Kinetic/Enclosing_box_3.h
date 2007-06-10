@@ -147,7 +147,7 @@ public:
   }
 
   void bounce(Point_key k, NT time, Side s) {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Bouncing " << k << " off side " << s << std::endl);
+    CGAL_LOG(Log::LOTS, "Bouncing " << k << " off side " << s << std::endl);
     certs_.erase(k);
     std::vector<NT> coefs[3];
     if (s==TOP || s== BOTTOM) {
@@ -232,7 +232,7 @@ protected:
       }
     }
     if (re.will_fail()) {
-      CGAL_KINETIC_LOG(LOG_LOTS, "Side fails at " << re.failure_time() << std::endl);
+      CGAL_LOG(Log::LOTS, "Side fails at " << re.failure_time() << std::endl);
       double dv= CGAL::to_interval(re.failure_time()).first;
       if (dv < old_time) {
 	old_time=dv;

@@ -32,87 +32,87 @@ Qt_core::Qt_core() {
 }
 
 void Qt_core::play_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Play button pushed.\n");
+  CGAL_LOG(Log::SOME, "Play button pushed.\n");
   mode_=RUN;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR("...but no handler was registered.\n");
+    CGAL_ERROR("...but no handler was registered.\n");
   }
 };
 
 void Qt_core::pause_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Pause button pushed.\n");
+  CGAL_LOG(Log::SOME, "Pause button pushed.\n");
   mode_=PAUSE;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR("...but no handler was registered.\n");
+    CGAL_ERROR("...but no handler was registered.\n");
   }
 }
 
 void Qt_core::stop_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Stop button pushed.\n");
+  CGAL_LOG(Log::SOME, "Stop button pushed.\n");
   mode_=STOP;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR( "...but no handler was registered.\n");
+    CGAL_ERROR( "...but no handler was registered.\n");
   }
 }
 
 void Qt_core::play_to_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Play_to button pushed.\n");
+  CGAL_LOG(Log::SOME, "Play_to button pushed.\n");
   mode_=RUN_TO;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR( "...but no handler was registered.\n");
+    CGAL_ERROR( "...but no handler was registered.\n");
   }
 }
 
 void Qt_core::play_through_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Play through button pushed.\n");
+  CGAL_LOG(Log::SOME, "Play through button pushed.\n");
   mode_= RUN_THROUGH;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR( "...but no handler was registered.\n");
+    CGAL_ERROR( "...but no handler was registered.\n");
   }
 }
 void Qt_core::reverse_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Reverse button pushed.\n");
+  CGAL_LOG(Log::SOME, "Reverse button pushed.\n");
   mode_=REVERSE;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR("...but no handler was registered.\n");
+    CGAL_ERROR("...but no handler was registered.\n");
   }
 }
 void Qt_core::faster_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Faster button pushed.\n");
+  CGAL_LOG(Log::SOME, "Faster button pushed.\n");
   mode_=FASTER;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR( "...but no handler was registered.\n");
+    CGAL_ERROR( "...but no handler was registered.\n");
   }
 }
 void Qt_core::slower_button() {
-  CGAL_KINETIC_LOG(LOG_SOME, "Slower button pushed.\n");
+  CGAL_LOG(Log::SOME, "Slower button pushed.\n");
   mode_=SLOWER;
   if (playable_ != NULL) {
     playable_->new_notification(Listener::LAST_BUTTON_PRESSED);
   }
   else {
-    CGAL_KINETIC_ERROR("...but no handler was registered.\n");
+    CGAL_ERROR("...but no handler was registered.\n");
   }
 }
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

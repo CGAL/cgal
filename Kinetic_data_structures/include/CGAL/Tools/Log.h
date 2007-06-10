@@ -18,8 +18,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KINETIC_LOG_H_
-#define CGAL_KINETIC_LOG_H_
+#ifndef CGAL_LOG_H_
+#define CGAL_LOG_H_
 #include <CGAL/basic.h>
 #include <CGAL/Tools/utility_macros.h>
 #include <iostream>

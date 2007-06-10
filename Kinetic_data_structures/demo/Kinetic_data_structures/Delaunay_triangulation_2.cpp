@@ -29,7 +29,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
   typedef CGAL::Kinetic::Qt_triangulation_2<KDel, typename Traits::Instantaneous_kernel, Qt_gui> Qt_triangulation;
   typedef CGAL::Kinetic::Enclosing_box_2<Traits> Box;
 
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+  CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
 
   Traits tr(0, 10000000);
   typename Box::Handle box= new Box(tr);

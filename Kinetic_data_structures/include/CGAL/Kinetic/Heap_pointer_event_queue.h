@@ -411,7 +411,7 @@ public:
     CGAL_precondition(!empty());
     //if (queue_.front()->time() < end_priority()) {
     //CGAL_precondition_code(Item_handle k= queue_.front());
-    CGAL_KINETIC_LOG(LOG_SOME, "Processing " << queue_.front() << std::endl);
+    CGAL_LOG(Log::SOME, "Processing " << queue_.front() << std::endl);
     Item_handle ih= queue_.front();
     pop_front();
     //std::pop_heap(queue_.begin(), queue_.end());

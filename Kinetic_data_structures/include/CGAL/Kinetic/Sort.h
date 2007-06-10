@@ -166,11 +166,11 @@ public:
     ik_.set_time(nt);
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   k, iless_);
-    CGAL_KINETIC_LOG(LOG_LOTS, "\nInserting " << k);
+    CGAL_LOG(Log::LOTS, "\nInserting " << k);
     if (it != sorted_.end()) {
-      CGAL_KINETIC_LOG(LOG_LOTS, " before " << it->object() <<std::endl;); 
+      CGAL_LOG(Log::LOTS, " before " << it->object() <<std::endl;); 
     } else {
-      CGAL_KINETIC_LOG(LOG_LOTS, " before end" <<std::endl;); 
+      CGAL_LOG(Log::LOTS, " before end" <<std::endl;); 
     }
     /*if (it != sorted_.end()) {
       v_.remove_edge(prior(it), it);
@@ -187,8 +187,8 @@ public:
     }
 
     v_.post_insert_vertex(prior(it));
-    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
-    CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
+    CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
+    CGAL_LOG(Log::LOTS, std::endl);
     return it;
     //write(std::cout);
   }
@@ -196,7 +196,7 @@ public:
   /* Rebuild the certificate for the pair of points *it and *(++it).
      If there is a previous certificate there, deschedule it.*/
   void rebuild_certificate(const iterator it) {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Building certifiate for " << it->object() << " and " << next(it)->object()<< std::endl);
+    CGAL_LOG(Log::LOTS, "Building certifiate for " << it->object() << " and " << next(it)->object()<< std::endl);
     CGAL_precondition(it != sorted_.end());
     if (it->event() != Event_key()) {
       simulator_->delete_event(it->event());
@@ -225,8 +225,8 @@ public:
      solver is used to compute the next root between the two points
      being swapped. This method is called by an Event object.*/
   void swap(iterator it, typename KLess::result_type &s) {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Swapping " << it->object() << " and " << next(it)->object() << std::endl);
-    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
+    CGAL_LOG(Log::LOTS, "Swapping " << it->object() << " and " << next(it)->object() << std::endl);
+    CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
     v_.pre_swap(it, next(it));
     it->set_event(Event_key());
     iterator n= next(it);
@@ -237,11 +237,11 @@ public:
     
     it->swap(*n);
     
-    CGAL_KINETIC_LOG(LOG_LOTS, "Updating next certificate " << std::endl);
+    CGAL_LOG(Log::LOTS, "Updating next certificate " << std::endl);
     if (n != sorted_.end()) {
       rebuild_certificate(n);
     }
-    CGAL_KINETIC_LOG(LOG_LOTS, "Updating middle certificate " << std::endl);
+    CGAL_LOG(Log::LOTS, "Updating middle certificate " << std::endl);
     if (s.will_fail()) {
       Time t= s.failure_time(); s.pop_failure_time();
       it->set_event(simulator_->new_event(t, Event(it, this,s)));
@@ -250,13 +250,13 @@ public:
     }
     
    
-    CGAL_KINETIC_LOG(LOG_LOTS, "Updating prev certificate " << std::endl);
+    CGAL_LOG(Log::LOTS, "Updating prev certificate " << std::endl);
     if (it != sorted_.begin()) {
       rebuild_certificate(prior(it));
     }
     v_.post_swap(it, n);
     
-    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
+    CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
   }
 
   void audit_order() const {
@@ -338,8 +338,8 @@ public:
     if (sorted_.size() <2) return;
 
     ik_.set_time(simulator_->audit_time());
-    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
-    CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
+    CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
+    CGAL_LOG(Log::LOTS, std::endl);
 
     
     //typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();

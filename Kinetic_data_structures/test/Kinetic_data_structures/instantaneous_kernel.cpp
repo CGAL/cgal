@@ -14,7 +14,7 @@ int main(int, char *[])
   typedef CGAL::Kinetic::Exact_simulation_traits Traits;
 
   Traits tr(0,10000000);  
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+  CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
  
   std::ifstream in("data/Delaunay_triangulation_2.input");
   if (!in) {

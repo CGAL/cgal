@@ -1214,7 +1214,7 @@ struct Updatable_Delaunay_triangulation_2 {
     //typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
  
 
-    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
+    CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::SOME);
 
 
 
