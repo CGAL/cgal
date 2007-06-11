@@ -2,7 +2,7 @@
 // as input type and some internal EXACT floating point type
 #include <iostream>
 #include <cassert>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Polytope_distance_d_traits_3.h>
 
@@ -15,7 +15,7 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an EXACT kernel...
-typedef CGAL::Simple_cartesian<ET>            K;
+typedef CGAL::Homogeneous<ET>                 K;
 typedef K::Point_3                            Point;
 // ...and the traits class based on the exact kernel
 typedef CGAL::Polytope_distance_d_traits_3<K> Traits;
