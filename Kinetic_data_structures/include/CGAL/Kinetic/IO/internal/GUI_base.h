@@ -304,7 +304,7 @@ protected:
     default:
       std::cerr << "Run callback in invalid mode." << std::endl;
     }
-    CGAL_KINETIC_SIGNAL(CURRENT_TIME);
+    CGAL_KINETIC_NOTIFY(CURRENT_TIME);
     //    if (drawable_ != NULL) drawable_->new_notification(Listener::CURRENT_TIME);
 
     set_is_processing(false);

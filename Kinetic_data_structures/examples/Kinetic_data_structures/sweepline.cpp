@@ -1,11 +1,10 @@
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Erase_event.h>
 #include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Ref_counted.h>
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Kinetic/Sort_visitor_base.h>
 #include <algorithm>

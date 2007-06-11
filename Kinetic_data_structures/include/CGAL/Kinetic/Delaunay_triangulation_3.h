@@ -207,7 +207,7 @@ public:
   CGAL_KINETIC_LISTENER(TRIANGULATION);
 
  void on_geometry_changed() {
-    CGAL_KINETIC_SIGNAL(TRIANGULATION);
+   CGAL_KINETIC_NOTIFY(TRIANGULATION);
   }
 
   KDel kdel_;

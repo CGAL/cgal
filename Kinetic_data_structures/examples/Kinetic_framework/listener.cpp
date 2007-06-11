@@ -1,80 +1,55 @@
 #include <CGAL/Kinetic/Listener.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 
-template <typename H>
-struct Listener_interface_impl
-  {
-  public:
-    typedef enum Notification_type {DATA_CHANGED}
-      Notification_type;
-   typedef H Notifier_handle;
-  };
-
-
-struct Notifier: public CGAL::Kinetic::Ref_counted<Notifier>
+template <class Data>
+struct Notifier: public CGAL::Kinetic::Ref_counted<Notifier<Data> >
 {
+  typedef Notifier<Data> This;
 public:
-  Notifier(): data_(0), listener_(NULL){}
+  Notifier(): data_(0){}
 
   typedef CGAL::Kinetic::Ref_counted<Notifier> Base;
-  typedef Listener_interface_impl<Base::Handle> Listener_interface;
-  typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
-
+  CGAL_KINETIC_LISTENER(DATA_CHANGED);
+public:
 
   int data() const {return data_;}
   void set_data(int d) {
     if (d != data_) {
       data_=d;
-      if (listener_ != NULL) listener_->new_notification(Listener_interface::DATA_CHANGED);
+      CGAL_KINETIC_NOTIFY(DATA_CHANGED);
     }
   }
 
-  //protected:
-  void set_listener(Listener *l) {
-    listener_= l;
-  }
-  Listener* listener() const {return listener_;}
 
-  int data_;
-  Listener *listener_;
+  Data data_;
 };
 
-struct My_listener: public Notifier::Listener, public CGAL::Kinetic::Ref_counted<My_listener>
-{
-  typedef Notifier::Listener P;
-  typedef P::Notifier_handle PP;
-  My_listener(PP p): P(p){}
-
-  void new_notification(P::Notification_type nt) {
-    if (nt == P::DATA_CHANGED) {
-      std::cout << "Data is now " << P::notifier()->data()<< std::endl;
-    }
-    else {
-      std::cerr << "Unknown notification type: " << nt << std::endl;
-    }
+template <class Data>
+class Receiver: public CGAL::Kinetic::Ref_counted<Receiver<Data> > {
+  typedef Receiver<Data> This;
+  typedef Notifier<Data> Noti;
+  CGAL_KINETIC_LISTEN1(Noti, DATA_CHANGED, ping);
+public:
+  Receiver( Noti* p){
+    CGAL_KINETIC_INIT_LISTEN(Noti, p);
+  }
+  void ping() const {
+    std::cout << "Data changed " << std::endl;
   }
 };
+
 
 int main(int, char *[])
 {
   {
-    Notifier::Handle n= new Notifier;
-    My_listener::Handle ml= new My_listener(n);
+    Notifier<int>::Handle n= new Notifier<int>();
+    Receiver<int>::Handle r= new Receiver<int>(n.get());
 
     n->set_data(4);
     n->set_data(4);
     n->set_data(5);
-    ml=NULL;
+    r=NULL;
     n->set_data(6);
-  }
-  {
-    Notifier::Handle n= new Notifier;
-    My_listener::Handle ml= new My_listener(n);
-
-    n->set_data(4);
-    n->set_data(4);
-    n->set_data(5);
-    n=NULL;
   }
 
   return EXIT_SUCCESS;

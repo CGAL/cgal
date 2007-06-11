@@ -1,7 +1,6 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
-#include <CGAL/Kinetic/Active_objects_listener_helper.h>
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/Event_base.h>
 #include <iostream>
 #include <set>
@@ -57,17 +56,15 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
   typedef typename Traits::Simulator::Time Time;
   typedef typename Traits::Active_points_1_table::Key Point_key;
   typedef typename Traits::Simulator::Event_key Event_key;
-  typedef CGAL::Kinetic::Active_objects_listener_helper<
-    typename Traits::Active_points_1_table::Listener, This> Active_points_1_helper;
-  typedef CGAL::Kinetic::Simulator_kds_listener<
-    typename Traits::Simulator::Listener, This> Simulator_helper;
-
+  CGAL_KINETIC_DECLARE_LISTENERS(typename Traits::Simulator, typename Traits::Active_points_1_table);
+public:
   typedef Trivial_event<Point, Time, This> Event;
 
   Trivial_kds(Traits tr): has_certificates_(true),
-			  tr_(tr),
-			  nth_(tr.active_points_1_table_handle(), this),
-			  sh_(tr.simulator_handle(), this){}
+			  tr_(tr){
+    CGAL_KINETIC_INITIALIZE_LISTENERS(tr_.simulator_handle(),
+				      tr_.active_points_1_table_handle());
+  }
 
   // this method is called with the value true when the event is processed
   void set_processed(bool tf) {
@@ -158,8 +155,6 @@ protected:
   std::set<Point_key > objects_;
   Event_key event_;
   Traits tr_;
-  Active_points_1_helper nth_;
-  Simulator_helper sh_;
 };
 
 int main(int, char *[])

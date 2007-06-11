@@ -22,6 +22,7 @@
 #define CGAL_TOOLS_LISTENER_BASE_H
 #include <CGAL/Kinetic/basic.h>
 #include <boost/utility.hpp>
+#include <CGAL/Tools/Log.h>
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! This is the base class for all listener objects.
@@ -63,46 +64,53 @@ CGAL_KINETIC_BEGIN_NAMESPACE
   saving over writing my own.
 */
 template <class Interface>
-class Listener_base: public Interface
+class Listener_base: public Interface, public boost::noncopyable
 {
   typedef Listener_base<Interface> LB_this;
 public:
   typedef typename Interface::Notifier_handle::element_type Notifier;
 
   //typedef typename Notifier::Handle Notifier_handle;
-  Listener_base(typename Interface::Notifier_handle &nh): h_(nh) {
-    CGAL_precondition(h_->listener()==NULL);
-    h_->set_listener(this);
+  Listener_base(typename Interface::Notifier_handle nh): h_(NULL) {
+    set_notifier(nh.get());
   }
 
-  Listener_base(Notifier* nh): h_(nh) {
-    CGAL_precondition(h_->listener()==NULL);
-    h_->set_listener(this);
+  Listener_base(Notifier* nh): h_(NULL) {
+    set_notifier(nh);
   }
 
   Listener_base(){}
 
   virtual ~Listener_base() {
-    CGAL_precondition(h_->listener()==this);
-    h_->set_listener(NULL);
+    set_notifier(NULL);
   }
   //! Access the object providing notifications.
   /*!  This pointer is not intended to be stored, so a bare pointer is
     passed. Wrap it with a Notifier_pointer if you for some reason
     which to store it.
   */
-  typename Interface::Notifier_handle::element_type* notifier() {
-    return h_.get();
-  }
+  CGAL_ACCESSORNR(typename Interface::Notifier_handle::element_type*, notifier, return h_.get());
+ 
   //! Constant version.
   /*!
     See Listener::notifier()
   */
-  const typename Interface::Notifier_handle::element_type* notifier() const
+  typename Interface::Notifier_handle::element_type* notifier()
   {
     return h_.get();
   }
 
+  void set_notifier(typename Interface::Notifier_handle::element_type* n) {
+    if (h_!= NULL) {
+      CGAL_precondition(h_->listener()==this);
+      h_->set_listener(NULL);
+    } 
+    h_=n;
+    if (h_ != NULL) {
+      h_->set_listener(this);
+    }
+  }
+  
   //! The method called when there is a runtime notification to be made
   /*!  The Notification_type is the type of notification to be made,
     generally an enum with the name of a field of the object providing
@@ -131,21 +139,12 @@ public:
       
     }*/
     LB_this* get() {return p_;}
+    LB_this* get() const {return p_;}
   private:
     
     LB_this *p_;
   };
   
-private:
-  Listener_base(const LB_this &o) {
-    h_->this_is_not_a_function();
-    CGAL_assertion(0);
-  }
-  const LB_this& operator=(const LB_this &o) {
-    CGAL_assertion(0);
-    h_->this_is_not_a_function();
-    return *this;
-  }
 protected:
   typename Interface::Notifier_handle h_;
 };
@@ -158,7 +157,7 @@ protected:
   };						   \
 public:\
   typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
-  friend class Listener_base<Listener_core>;				\
+  friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
 private:							\
   void set_listener(Listener *sk) {				\
     listener_=sk;						\
@@ -166,23 +165,26 @@ private:							\
   Listener* listener() const {return listener_.get();}		\
   typename Listener::Pointer listener_;
 
-#define CGAL_KINETIC_SIGNAL(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
+#define CGAL_KINETIC_NOTIFY(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
 
 #define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL);
 
 #define CGAL_KINETIC_LISTEN1(Notifier, Signal, func) private:\
   class Notifier##_listener: public Notifier::Listener {\
     This *t_;						\
-  public:					\
-    Notifier##_listener(Notifier* tm, This &t): Notifier::Listener(tm), t_(t){}	\
+  public:								\
+    Notifier##_listener():t_(NULL){}					\
+    void set_listener(This *t){t_=t;}					\
     void new_notification(typename Notifier::Listener::Notification_type t) {\
       if (t== Notifier::Listener::Signal) t_->func();			\
+      else {CGAL_LOG(CGAL::Log::LOTS, "Unknown notification type.\n");}; \
     }\
   };\
   friend class Notifier##_listener;\
   Notifier##_listener listener_##Notifier##_;
 
-#define CGAL_KINETIC_INIT_LISTEN(Notifier, ptr) listener_##Notifier##_=Notifier##_listener(ptr, const_cast<This*>(this))
+#define CGAL_KINETIC_INIT_LISTEN(Notifier, ptr) listener_##Notifier##_.set_notifier(ptr);\
+  listener_##Notifier##_.set_listener(this);
  
 CGAL_KINETIC_END_NAMESPACE
 #endif
