@@ -4,7 +4,7 @@
 // internal computations
 #include <iostream>
 #include <cassert>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Polytope_distance_d_traits_3.h>
 
@@ -17,7 +17,7 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an inexact kernel...
-typedef CGAL::Simple_cartesian<double>                    K;
+typedef CGAL::Homogeneous<double>                         K;
 typedef K::Point_3                                        Point;
 // ... and the EXACT traits class based on the inexcat kernel
 typedef CGAL::Polytope_distance_d_traits_3<K, ET, double> Traits;
