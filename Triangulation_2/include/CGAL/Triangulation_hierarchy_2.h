@@ -105,8 +105,8 @@ public:
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
 
       Face_handle hint;
-      for (typename std::vector<Point>::const_iterator p = points.begin();
-              p != points.end(); ++p)
+      for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
+              p != end; ++p)
           hint = insert (*p, hint)->face();
 
       return this->number_of_vertices() - n;
