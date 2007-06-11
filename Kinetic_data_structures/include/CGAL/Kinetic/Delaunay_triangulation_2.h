@@ -26,8 +26,7 @@
 #include <CGAL/Kinetic/Delaunay_triangulation_face_base_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_vertex_base_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_2.h>
-#include <CGAL/Kinetic/Active_objects_batch_listener_helper.h>
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/internal/tds_2_helpers.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Kinetic/Ref_counted.h>
@@ -148,10 +147,12 @@ public:
   //friend class Delaunay_edge_failure_event<This>;
   //friend class Delaunay_hull_edge_failure_event<This>;
 
-  typedef typename CGAL::Kinetic::Simulator_kds_listener<typename Simulator::Listener, This> Simulator_listener;
+  /*typedef typename CGAL::Kinetic::Simulator_kds_listener<typename Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::Kinetic::Simulator_kds_listener<typename Simulator::Listener, This>;
   typedef typename CGAL::Kinetic::Active_objects_batch_listener_helper<typename Moving_point_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::Kinetic::Active_objects_batch_listener_helper<typename Moving_point_table::Listener, This>;
+  friend class CGAL::Kinetic::Active_objects_batch_listener_helper<typename Moving_point_table::Listener, This>;*/
+  CGAL_KINETIC_DECLARE_BATCH_LISTENERS(typename Simulator,
+				       typename Moving_point_table);
 
   /*struct Compare_edges{
     bool operator()(const Edge &a, const Edge &b) const {
@@ -169,8 +170,11 @@ public:
     };*/
 
   void init_data(bool insert) {
-    siml_ = Simulator_listener(traits_.simulator_handle(), this);
-    motl_= Moving_point_table_listener(traits_.active_points_2_table_handle(), this, insert);
+    /*siml_ = Simulator_listener(traits_.simulator_handle(), this);
+      motl_= Moving_point_table_listener(traits_.active_points_2_table_handle(), this, insert);*/
+    CGAL_KINETIC_INITIALIZE_BATCH_LISTENERS(traits_.simulator_handle(),
+					    traits_.active_points_2_table_handle(),
+					    insert);
     has_certificates_=false; 
     clear_stats();
    
@@ -731,8 +735,6 @@ protected:
   Triangulation del_;
 
 
-  Simulator_listener siml_;
-  Moving_point_table_listener motl_; 
   std::vector<Vertex_handle> vhs_;
 
   bool has_certificates_;

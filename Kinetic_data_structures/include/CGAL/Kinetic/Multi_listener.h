@@ -30,23 +30,23 @@ CGAL_KINETIC_BEGIN_NAMESPACE
   In contrast to listener, this can be copied.
 */
 template <class Interface>
-class Multi_listener: public Interface
+class Multi_listener_base: public Interface
 {
-  typedef Multi_listener<Interface> This;
+  typedef Multi_listener_base<Interface> This;
 public:
   typedef typename Interface::Notifier_handle::element_type Notifier;
 
-  Multi_listener(typename Interface::Notifier_handle &nh): h_(nh) {
+  Multi_listener_base(typename Interface::Notifier_handle &nh): h_(nh) {
     h_->new_listener(this);
   }
 
-  Multi_listener(Notifier* nh): h_(nh) {
+  Multi_listener_base(Notifier* nh): h_(nh) {
     h_->new_listener(this);
   }
 
-  Multi_listener(){}
+  Multi_listener_base(){}
 
-  virtual ~Multi_listener() {
+  virtual ~Multi_listener_base() {
     h_->delete_listener(this);
   }
 
@@ -63,7 +63,7 @@ public:
   virtual void new_notification(typename Interface::Notification_type nt)=0;
 
 
-  Multi_listener(const This &o) {
+  Multi_listener_base(const This &o) {
     h_= o.h_;
     h_->new_listener(this);
   }
@@ -77,5 +77,34 @@ protected:
   typename Interface::Notifier_handle h_;
 };
 
+
+#define CGAL_KINETIC_MULTILISTENER(...) private:	\
+  struct Listener_core{ \
+      typedef typename This::Handle Notifier_handle;	\
+      typedef enum {__VA_ARGS__} Notification_type;	\
+  };							\
+public:							\
+  typedef Multi_listener_base<Listener_core> Listener;       \
+  friend class Multi_listener_base<Listener_core>;		\
+private:						\
+  void new_listener(Listener *sk) {			\
+    listeners_.push_back(sk);				\
+  }							\
+  void delete_listener(Listener *kds) {			\
+    for (unsigned int i=0; i< listeners_.size(); ++i){	\
+      if (listeners_[i] == kds) {			\
+	std::swap(listeners_[i], listeners_.back());	\
+	listeners_.pop_back();				\
+	return;						\
+      }							\
+    }							\
+  }							\
+  std::vector<Listener*> listeners_;
+
+#define CGAL_KINETIC_MULTISIGNAL(field) for(typename std::vector<Listener*>::iterator it= listeners_.begin(); it != listeners_.end(); ++it){ \
+    (*it)->new_notification(Listener::field);				\
+  }
+
+#define CGAL_KINETIC_MULTILISTENER_DESTRUCTOR CGAL_assertion(listeners_.empty());
 CGAL_KINETIC_END_NAMESPACE
 #endif

@@ -21,10 +21,9 @@
 #ifndef CGAL_KINETIC_TESTING_SORT_H
 #define CGAL_KINETIC_TESTING_SORT_H
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Active_objects_listener_helper.h>
+#include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <CGAL/Kinetic/Sort_visitor_base.h>
 #include <CGAL/Kinetic/Event_base.h>
 #include <algorithm>
@@ -118,13 +117,8 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
   typedef Swap_event<This,iterator, typename KLess::result_type> Event;
   friend class Swap_event<This,iterator, typename KLess::result_type>;
   // Redirects the Simulator notifications to function calls
-  typedef typename CGAL::Kinetic::
-  Simulator_kds_listener<typename Traits::Simulator::Listener,
-			 This> Sim_listener;
-  // Redirects the MovingObjectTable notifications to function calls
-  typedef typename CGAL::Kinetic::
-  Active_objects_listener_helper<typename Active_objects_table::Listener,
-				 This> MOT_listener;
+  CGAL_KINETIC_DECLARE_LISTENERS(typename Traits::Simulator,
+				 typename Active_objects_table);
 public:
   
   // Register this KDS with the MovingObjectTable and the Simulator
@@ -136,8 +130,7 @@ public:
 				    iless_(ik_.compare_x_1_object()), v_(v),
 				    aot_(tr.active_points_1_table_handle()),
 				    simulator_(tr.simulator_handle()){
-    sim_listener_= Sim_listener(simulator_, this);
-    mot_listener_= MOT_listener(aot_, this);
+    CGAL_KINETIC_INITIALIZE_LISTENERS(simulator_, aot_);
     wrote_objects_= false;
   }
 
@@ -289,9 +282,9 @@ public:
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
 	  std::cerr << "Objects are: ";
-	  for (typename Active_objects_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
-	       kit != mot_listener_.notifier()->keys_end(); ++kit){
-	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+	  for (typename Active_objects_table::Key_iterator kit= aot_->keys_begin();
+	       kit != aot_->keys_end(); ++kit){
+	    std::cerr <<  aot_->at(*kit) << std::endl;
 	  }
 	}
       }
@@ -321,9 +314,9 @@ public:
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
 	  std::cerr << "Objects are: ";
-	  for (typename Active_objects_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
-	       kit != mot_listener_.notifier()->keys_end(); ++kit){
-	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+	  for (typename Active_objects_table::Key_iterator kit= aot_->keys_begin();
+	       kit != aot_->keys_end(); ++kit){
+	    std::cerr << aot_->at(*kit) << std::endl;
 	  }
 	}
       }
@@ -413,8 +406,6 @@ public:
     return sorted_.end();
   }
 
-  Sim_listener sim_listener_;
-  MOT_listener mot_listener_;
   // The points in sorted order
   std::list<OD > sorted_;
   // events_[k] is the certificates between k and the object after it

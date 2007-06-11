@@ -68,25 +68,14 @@ protected:
   typedef Active_objects_vector<Value_t> This;
   typedef std::pair<Key, Value_t> Storage_item;
   typedef std::vector<Storage_item > Storage;
-  struct Listener_core
-  {
-    typedef enum {IS_EDITING}
-      Notification_type;
-    typedef typename This::Handle Notifier_handle;
-  };
-public:
-  //! The interface to implement if you want to receive notifications.
-  typedef Multi_listener<Listener_core> Listener;
-
-protected:
-  // This is evil here.
-  typedef std::set<Listener*> Subscribers;
+  CGAL_KINETIC_MULTILISTENER(IS_EDITING);
+  
 public:
 
   //! default constructor
   Active_objects_vector():editing_(false), num_valid_(false){}
 
-  ~Active_objects_vector(){CGAL_precondition(subscribers_.empty());}
+  ~Active_objects_vector(){CGAL_KINETIC_MULTILISTENER_DESTRUCTOR;}
 
   //! access a point
   const Data &operator[](Key key) const
@@ -325,24 +314,9 @@ CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second)
   }
 
 private:
-  friend class Multi_listener<Listener_core>;
-
-  //! listen for changes
-  void new_listener(Listener *sub) const
-  {
-    subscribers_.insert(sub);
-  }
-
-  //! end listening for changes
-  void delete_listener(Listener *sub) const
-  {
-    subscribers_.erase(sub);
-  }
 
   void finish_editing() {
-    for (typename Subscribers::iterator it= subscribers_.begin(); it != subscribers_.end(); ++it) {
-      (*it)->new_notification(Listener::IS_EDITING);
-    }
+    CGAL_KINETIC_MULTISIGNAL(IS_EDITING);
 
     num_valid_+= new_objects_.size();
     num_valid_-= deleted_objects_.size();
@@ -362,7 +336,6 @@ protected:
 
   Storage storage_;
   std::vector<bool> valid_;
-  mutable Subscribers subscribers_;
   std::vector<Key> changed_objects_;
   std::vector<Key> deleted_objects_;
   std::vector<Key> new_objects_;

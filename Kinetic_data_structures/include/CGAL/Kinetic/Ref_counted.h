@@ -22,6 +22,7 @@
 #define CGAL_REF_COUNTED_H
 #include <CGAL/Kinetic/basic.h>
 #include <boost/intrusive_ptr.hpp>
+#include <boost/utility.hpp>
 
 //#define NEW_REF_COUNTED
 
@@ -33,7 +34,7 @@ void intrusive_ptr_add_ref(const Ref_counted_base *t);
 
 void intrusive_ptr_release(const Ref_counted_base *t);
 
-class Ref_counted_base
+class Ref_counted_base: boost::noncopyable
 {
   typedef Ref_counted_base This;
   Ref_counted_base(const Ref_counted_base&) : reference_count_(0) {

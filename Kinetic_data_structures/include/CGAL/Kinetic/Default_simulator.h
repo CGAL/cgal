@@ -85,12 +85,7 @@ protected:
   typedef Default_simulator<Polynomial_kernel_t, Queue> This;
   //typedef typename Polynomial_kernel_t::Function Poly;
 
-  struct Listener_core
-  {
-    typedef typename This::Handle Notifier_handle;
-    typedef enum {HAS_AUDIT_TIME, DIRECTION_OF_TIME}
-      Notification_type;
-  };
+  
 
   typedef typename Queue::Priority Queue_time;
 
@@ -102,16 +97,6 @@ public:
     maybe it should not be exposed.
   */
   typedef Polynomial_kernel_t Function_kernel;
-
-  //! The base class to extend if you want to recieve notifications of events
-  /*!
-    See CGAL::Listener for a description of the
-    notification framework and
-    CGAL/Kinetic/notification_helpers.h for some classes to
-    aid in using notifications.
-  */
-  typedef Multi_listener<Listener_core> Listener;
-  friend class  Multi_listener<Listener_core>;
 
   //! The solver.
   //typedef typename Function_kernel::Root_stack Root_stack;
@@ -182,10 +167,7 @@ public:
     failure time of that event. Otherwise it is between the last event
     which was processed and the next event to be processed.
   */
-  const Time& current_time() const
-  {
-    return cur_time_;
-  }
+  CGAL_ACCESSOR(Time, current_time, return cur_time_);
 
   //! Set the current time to t
   /*!
@@ -296,31 +278,20 @@ public:
   /*!
     Or end_time() if the queue is empty.
   */
-  Time next_event_time() const
-  {
-    if (queue_.empty()) return end_time();
-    else return Time(queue_.front_priority());
-  }
+  CGAL_ACCESSORNR(Time, next_event_time, return queue_.empty()?
+		  end_time(): Time(queue_.front_priority()));
 
-  Event_key next_event() const
-  {
-    if (queue_.empty()) return Event_key();
-    else return queue_.front();
-  }
+  CGAL_ACCESSORNR(Event_key, next_event, queue_.empty()?
+		  Event_key(): queue_.front());
 
   //! The last time of interest
   /*!
     If time is running backwards, then this returns Time::infinity()
   */
-  Time end_time() const
-  {
-    if (is_forward_) {
-      return queue_.end_priority();
-    }
-    else {
-      return std::numeric_limits<Time>::infinity();
-    }
-  }
+  CGAL_ACCESSORNR(Time, end_time, return  is_forward_?
+		  queue_.end_priority():
+		  std::numeric_limits<Time>::infinity()
+		  );
 
   //! Set the last time to track events for
   /*!
@@ -375,10 +346,8 @@ public:
   /*!  Events can never occur if their time is past the end time or
     their certificate function has no roots.
   */
-  Event_key null_event() const
-  {
-    return queue_.end_key();
-  }
+  CGAL_ACCESSORNR(Event_key, null_event, return queue_.end_key());
+
   /*const Event_key& final_event() const {
     return queue_.final_event();
     }*/
@@ -491,18 +460,13 @@ public:
   void set_direction_of_time(Sign sn);
 
   //! Return the direction of time.
-  CGAL::Sign direction_of_time() const
-  {
-    if (is_forward_) return CGAL::POSITIVE;
-    else return CGAL::NEGATIVE;
-  }
+  CGAL_ACCESSORNR(CGAL::Sign, direction_of_time, return is_forward_?
+		  CGAL::POSITIVE: CGAL::NEGATIVE);
 
   //! Return the number of events which has been processed.
-  unsigned int current_event_number() const
-  {
-    return number_of_events_;
-  }
+  CGAL_ACCESSORNR(unsigned int, current_event_number, return number_of_events_);
 
+  
   bool empty() const {
     return queue_.empty();
   }
@@ -511,8 +475,8 @@ public:
   /*!
     i must be greater than current_event_number().
   */
-  void set_current_event_number(unsigned int i) {
-    while (!queue_.empty() && number_of_events_ < i) {
+  CGAL_SET(unsigned int, current_event_number,
+    while (!queue_.empty() && number_of_events_ < k) {
       /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
 	if (current_time() < audit_time_ && next_event_time() >= audit_time_) {
 	audit_all_kdss();
@@ -520,7 +484,7 @@ public:
 	#endif*/
       process_next_event();
     }
-  }
+	   );
 
   std::ostream& write(std::ostream &out) const
   {
@@ -655,42 +619,18 @@ protected:
 
   void audit_all_kdss() ;
 
-  /*const Time &last_event_time() const
-    {
-    return last_event_time_;
-    }*/
+ 
 
-private:
-  //! add a kds to the simulator
-  /*!
-    Note, these use Prof. Cheritons naming convention (sort of).
-  */
-  void new_listener(Listener *sk) {
-    //std::cout << "new sim listener.\n";
-#ifndef NDEBUG
-    for (unsigned int i=0; i< kdss_.size(); ++i){
-      CGAL_precondition(kdss_[i] != sk);
-    }
-#endif
-    kdss_.push_back(sk);
-  }
-
-  //! Remove a kds
-  void delete_listener(Listener *kds) {
-    //std::cout << "delete sim listener.\n";
-    //kdss_.erase(kds);
-    for (unsigned int i=0; i< kdss_.size(); ++i){
-      if (kdss_[i] == kds) {
-	std::swap(kdss_[i], kdss_.back());
-	kdss_.pop_back();
-	return;
-      }
-    }
-  }
+  /*struct Listener_core
+  {
+    typedef typename This::Handle Notifier_handle;
+    typedef enum {}
+      Notification_type;
+      };*/
+  CGAL_KINETIC_MULTILISTENER(HAS_AUDIT_TIME, DIRECTION_OF_TIME);
 
 protected:
   Queue queue_;
-  std::vector<Listener*> kdss_;
   Time cur_time_; //,  last_event_time_;
   unsigned int number_of_events_;
   typename Function_kernel::Rational_between_roots mp_;
@@ -750,10 +690,7 @@ void Default_simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
     //last_event_time_= -std::numeric_limits<Time>::infinity();
     CGAL_LOG(Log::SOME, "Current time is " << cur_time_ << " and was " << oct
 		     << ", end_time() is " << end_time() << std::endl);
-    for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
-      (*it)->new_notification(Listener::DIRECTION_OF_TIME);
-      //std::cout << "called on something.\n";
-    }
+    CGAL_KINETIC_MULTISIGNAL(DIRECTION_OF_TIME);
   }
   else {
     CGAL_LOG(Log::SOME, dir << " " << end_time() << " " << cur_time_ << std::endl);
@@ -767,10 +704,7 @@ void Default_simulator<S, PQ>::audit_all_kdss()
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
   cur_time_= Time(audit_time_);
   CGAL_LOG(Log::SOME, "Auditing KDSs at time " << audit_time() << std::endl);
-  for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
-    //CGAL_exactness_postcondition_code((*it)->new_notification(Listener::HAS_VERIFICATION_TIME));
-    CGAL_postcondition_code((*it)->new_notification(Listener::HAS_AUDIT_TIME));
-  }
+  CGAL_KINETIC_MULTISIGNAL(HAS_AUDIT_TIME);
   queue_.audit_events();
 #endif
 }

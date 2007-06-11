@@ -21,6 +21,7 @@
 #ifndef CGAL_TOOLS_LISTENER_BASE_H
 #define CGAL_TOOLS_LISTENER_BASE_H
 #include <CGAL/Kinetic/basic.h>
+#include <boost/utility.hpp>
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! This is the base class for all listener objects.
@@ -62,26 +63,26 @@ CGAL_KINETIC_BEGIN_NAMESPACE
   saving over writing my own.
 */
 template <class Interface>
-class Listener: public Interface
+class Listener_base: public Interface
 {
-  typedef Listener<Interface> LB_this;
+  typedef Listener_base<Interface> LB_this;
 public:
   typedef typename Interface::Notifier_handle::element_type Notifier;
 
   //typedef typename Notifier::Handle Notifier_handle;
-  Listener(typename Interface::Notifier_handle &nh): h_(nh) {
+  Listener_base(typename Interface::Notifier_handle &nh): h_(nh) {
     CGAL_precondition(h_->listener()==NULL);
     h_->set_listener(this);
   }
 
-  Listener(Notifier* nh): h_(nh) {
+  Listener_base(Notifier* nh): h_(nh) {
     CGAL_precondition(h_->listener()==NULL);
     h_->set_listener(this);
   }
 
-  Listener(){}
+  Listener_base(){}
 
-  virtual ~Listener() {
+  virtual ~Listener_base() {
     CGAL_precondition(h_->listener()==this);
     h_->set_listener(NULL);
   }
@@ -109,8 +110,34 @@ public:
   */
   virtual void new_notification(typename Interface::Notification_type nt)=0;
 
+  struct Pointer:public boost::noncopyable {
+    Pointer(): p_(NULL){}
+    Pointer(LB_this *p):p_(p){}
+    LB_this &operator*(){return *p_;}
+    const LB_this &operator*() const {return *p_;}
+    LB_this *operator->(){return p_;}
+    const LB_this *operator->() const {return p_;}
+    bool operator==(void* o) const {
+      return p_== o;
+    }
+    bool operator!=(void* o) const {
+      return p_!= o;
+    }
+    void operator=(LB_this *o) {
+      p_=o;
+    }
+    /*CGAL_COPY_CONSTRUCTOR(Pointer);
+    void copy_from(const LB_this &o) {
+      
+    }*/
+    LB_this* get() {return p_;}
+  private:
+    
+    LB_this *p_;
+  };
+  
 private:
-  Listener(const LB_this &o) {
+  Listener_base(const LB_this &o) {
     h_->this_is_not_a_function();
     CGAL_assertion(0);
   }
@@ -123,5 +150,24 @@ protected:
   typename Interface::Notifier_handle h_;
 };
 
+
+#define CGAL_KINETIC_LISTENER(...) private:		  \
+  struct Listener_core{\
+      typedef typename This::Handle Notifier_handle;\
+      typedef enum {__VA_ARGS__} Notification_type;\
+  };						   \
+public:\
+  typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
+  friend class Listener_base<Listener_core>;				\
+private:							\
+  void set_listener(Listener *sk) {				\
+    listener_=sk;						\
+  }								\
+  Listener* listener() const {return listener_.get();}		\
+  typename Listener::Pointer listener_;
+
+#define CGAL_KINETIC_SIGNAL(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
+
+#define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL);
 CGAL_KINETIC_END_NAMESPACE
 #endif

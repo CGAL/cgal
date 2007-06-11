@@ -31,8 +31,8 @@
 #include <CGAL/Kinetic/Listener.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
-#include <CGAL/Kinetic/Active_objects_listener_helper.h>
+#include <CGAL/Kinetic/listeners.h>
+
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -434,20 +434,15 @@ protected:
 
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Delaunay_visitor> KDel;
 
-  typedef typename CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>
-  Simulator_listener;
-  friend  class CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-  typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>
-  Moving_point_table_listener;// here
-  friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>; // here
+  CGAL_KINETIC_DECLARE_LISTENERS(typename TraitsT::Simulator,
+				 typename Traits::Active_points_3_table);
 
 public:
   
 
-  Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), Delaunay_visitor(this, v)),
-							    listener_(NULL) {
-    siml_= Simulator_listener(tr.simulator_handle(), this);
-    motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this); // here
+  Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), Delaunay_visitor(this, v)) {
+    CGAL_KINETIC_INITIALIZE_LISTENERS(tr.simulator_handle(),
+				      tr.active_points_3_table_handle());
   }
 
 
@@ -462,15 +457,8 @@ public:
     return kdel_.triangulation();
   }
 
-  struct Listener_core
-  {
-    typedef typename This::Handle Notifier_handle;
-    typedef enum {TRIANGULATION}
-      Notification_type;
-  };
-  friend class Listener<Listener_core>;
-  typedef Kinetic::Listener<Listener_core> Listener;
-
+  CGAL_KINETIC_LISTENER(TRIANGULATION)
+  public:
 
   void audit_move(Event_key k, Point_key pk, Cell_handle h, int) const {
     CGAL_assertion(kdel_.vertex_handle(pk) == Vertex_handle());
@@ -829,13 +817,7 @@ protected:
     }
   }
 
-  void set_listener(Listener *l) {
-    listener_= l;
-  }
-  Listener* listener() const
-  {
-    return listener_;
-  }
+  
   void audit_structure() const
   {
     if (!has_certificates()) {
@@ -1127,9 +1109,7 @@ protected:
 
 
   void on_geometry_changed() {
-    if (listener_!= NULL) {
-      listener_->new_notification(Listener::TRIANGULATION);
-    }
+    CGAL_KINETIC_SIGNAL(TRIANGULATION);
     CGAL_LOG(Log::LOTS, *this);
     audit_structure();
   }
@@ -1210,9 +1190,6 @@ protected:
  
 
   KDel kdel_;
-  Simulator_listener siml_;
-  Moving_point_table_listener motl_;
-  Listener *listener_;
   RPMap redundant_points_;
   RCMap redundant_cells_;
   std::vector<Point_key> unhandled_keys_;
