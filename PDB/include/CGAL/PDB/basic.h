@@ -1,7 +1,7 @@
 #ifndef CGAL_PDB_BASIC_H
 #define CGAL_PDB_BASIC_H
 #include <CGAL/basic.h>
-#include <CGAL/PDB/macros.h>
+#include <CGAL/Tools/utility_macros.h>
 
 #define CGAL_PDB_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE namespace PDB{
 #define CGAL_PDB_END_NAMESPACE CGAL_END_NAMESPACE }

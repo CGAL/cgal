@@ -56,7 +56,7 @@ public:
  
   
   //! Return the number of models. 
-  CGAL_PDB_SIZE(models, return models_.size());
+  CGAL_SIZE(models, return models_.size());
 
   //! add a model with an automatically chosen number
   Model_key push_back(const Model &m);
@@ -86,26 +86,26 @@ public:
 
 
   //! An iterator through the unparsed std::string lines of the header of the PDB.
-  CGAL_PDB_CONST_ITERATOR(Header, header, 
+  CGAL_CONST_ITERATOR(Header, header, 
 		      std::vector<std::string>::const_iterator,
 		      return header_.begin(),
 		      return header_.end());
 
   //! An iterator through the Model objects in the PDB
-  CGAL_PDB_ITERATOR(Model, model, Models::iterator, 
+  CGAL_ITERATOR(Model, model, Models::iterator, 
 		return models_.begin(),
 		return models_.end());
 
   //! An iterator through the Model objects in the PDB
-  CGAL_PDB_CONST_ITERATOR(Model, model, Models::const_iterator, 
+  CGAL_CONST_ITERATOR(Model, model, Models::const_iterator, 
 		return models_.begin(),
 		return models_.end());
 
   //! Find a Model with the given key, return models_end() if none is found
-  CGAL_PDB_FIND(Model, return models_.find(k));
+  CGAL_FIND(Model, return models_.find(k));
 
   //! Add a model (or change an existing one).
-  CGAL_PDB_INSERT(Model, return models_.insert(Models::value_type(k,m)));
+  CGAL_INSERT(Model, return models_.insert(Models::value_type(k,m)));
 
 
   class Chain_iterator_value_type {
@@ -164,13 +164,13 @@ protected:
 public:
  
   //! An iterator through the CGAL::PDB::Chain objects contained in the PDB.
-  CGAL_PDB_ITERATOR(Chain, chain,
+  CGAL_ITERATOR(Chain, chain,
 		internal::Nested_iterator<Iterator_traits>,  
 		return Chain_iterator(models_begin(), models_end()),
 		return Chain_iterator(models_begin(), models_end()));
   
   //! An iterator through the CGAL::PDB::Chain objects contained in the PDB.
-  CGAL_PDB_CONST_ITERATOR(Chain, chain,
+  CGAL_CONST_ITERATOR(Chain, chain,
 		      internal::Nested_iterator<Iterator_const_traits>,  
 		      return Chain_const_iterator(models_begin(), models_end()),
 		      return Chain_const_iterator(models_begin(), models_end()));
@@ -197,9 +197,9 @@ inline int index_atoms(const PDB &c, int start=0) {
   return start;
 }
 
-CGAL_PDB_OUTPUT(PDB);
+CGAL_OUTPUT(PDB);
 
-CGAL_PDB_SWAP(PDB);
+CGAL_SWAP(PDB);
 
 CGAL_PDB_END_NAMESPACE
 #endif

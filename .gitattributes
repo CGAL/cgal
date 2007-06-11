@@ -1807,7 +1807,6 @@ PDB/include/CGAL/PDB/internal/tnt/tnt_math_utils.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_subscript.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_vec.h -text
 PDB/include/CGAL/PDB/iterator.h -text
-PDB/include/CGAL/PDB/macros.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/maintainer -text
 PDB/src/CGALPDB/Atom.cpp -text

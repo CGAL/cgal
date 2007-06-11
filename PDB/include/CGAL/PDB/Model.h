@@ -59,20 +59,20 @@ public:
 
 
   //! Iterator through the chains
-  CGAL_PDB_ITERATOR(Chain, chain, Chains::iterator, 
+  CGAL_ITERATOR(Chain, chain, Chains::iterator, 
 		    return chains_.begin(), return chains_.end());
 
  //! Iterator through the chains
-  CGAL_PDB_CONST_ITERATOR(Chain, chain, Chains::const_iterator, 
+  CGAL_CONST_ITERATOR(Chain, chain, Chains::const_iterator, 
 			  return chains_.begin(), return chains_.end());
 
 
   //! get the chain identified by c
-  CGAL_PDB_FIND(Chain, return chains_.find(k));
+  CGAL_FIND(Chain, return chains_.find(k));
 
-  CGAL_PDB_INSERT(Chain, return chains_.insert(Chains::value_type(k, m)););
+  CGAL_INSERT(Chain, return chains_.insert(Chains::value_type(k, m)););
 
-  CGAL_PDB_SIZE(chains, return chains_.size());
+  CGAL_SIZE(chains, return chains_.size());
 
   //! \cond
   class Hetatom_data {
@@ -83,34 +83,16 @@ public:
 						    rnum_(rn), chain_(ch){
     }
     Hetatom_data(){}
-    const char *molecule_name() const {
-      return resname_.c_str();
-    }
-    const char *atom_name() const {
-      return atomname_.c_str();
-    }
-    int molecule_number() const {
-      return rnum_;
-    }
-    Chain_key chain() const {
-      return chain_;
-    }
-    bool operator<(const Hetatom_data &o) const {
-      CGAL_PDB_IFNONEQUAL(rnum_, o.rnum_, <)
-      else CGAL_PDB_IFNONEQUAL(chain_, o.chain_, <)
-      else return false;
-    }
-    bool operator>(const Hetatom_data &o) const {
-      CGAL_PDB_IFNONEQUAL(rnum_, o.rnum_, >)
-      else CGAL_PDB_IFNONEQUAL(chain_, o.chain_, >)
-      else return false;
-    }
-    bool operator==(const Hetatom_data &o) const {
-      return rnum_==o.rnum_ && chain_==o.chain_;
-    }
-    bool operator!=(const Hetatom_data &o) const {
-      return rnum_!=o.rnum_ || chain_!=o.chain_;
-    }
+    CGAL_ACCESSORNR( char*, molecular_name, return resname_.c_str())
+    
+    CGAL_ACCESSORNR( char*, atom_name, return atomname_.c_str())
+    
+    CGAL_ACCESSORNR(int, molecular_number, return rnum_)
+    
+    CGAL_ACCESSORNR(Chain_key, chain, return chain_)
+
+    CGAL_COMPARISONS2(Hetatom_data, rnum_, chain_)
+
   protected:
     std::string resname_;
     std::string atomname_;
@@ -127,14 +109,14 @@ public:
   //! \endcond
 
   //! An iterator through CGAL::PDB::Atom values for the HETATM records.
-  CGAL_PDB_CONST_ITERATOR(Hetatom, hetatom, 
+  CGAL_CONST_ITERATOR(Hetatom, hetatom, 
 			  Hetatoms::const_iterator,
 			  return hetatoms_.begin(),
 			  return hetatoms_.end());
 
 
   //! The number of hetatoms
-  CGAL_PDB_SIZE(hetatoms, return hetatoms_.size());
+  CGAL_SIZE(hetatoms, return hetatoms_.size());
 
 
 
@@ -241,12 +223,12 @@ protected:
   //! \endcond
 public:
  //! An iterator to iterate through all the atoms of the protein  
-  CGAL_PDB_ITERATOR(Atom, atom, 
+  CGAL_ITERATOR(Atom, atom, 
 		    internal::Nested_iterator<Iterator_traits >,
 		    return Atom_iterator(chains_.begin(), chains_.end()),
 		    return Atom_iterator(chains_.end(), chains_.end()));
   //! An iterator to iterate through all the atoms of the protein  
-  CGAL_PDB_CONST_ITERATOR(Atom, atom, 
+  CGAL_CONST_ITERATOR(Atom, atom, 
 		    internal::Nested_iterator<Iterator_const_traits >,
 		    return Atom_const_iterator(chains_.begin(), chains_.end()),
 		    return Atom_const_iterator(chains_.end(), chains_.end()));
@@ -292,7 +274,7 @@ public:
     
     Bond_it(){}
 
-    CGAL_PDB_COPY_CONSTRUCTOR(Bond_it);
+    CGAL_COPY_CONSTRUCTOR(Bond_it);
 
   
   protected:
@@ -330,7 +312,7 @@ public:
   };
   //! \endcond
 
-  CGAL_PDB_CONST_ITERATOR(Bond, bond, Bond_it,
+  CGAL_CONST_ITERATOR(Bond, bond, Bond_it,
 			  return Bond_const_iterator(chains_.begin(),
 						     chains_.end()),
 			  return Bond_const_iterator(chains_.end(), 
@@ -345,9 +327,9 @@ private:
   Hetatoms hetatoms_;
 };
 
-CGAL_PDB_SWAP(Model);
+CGAL_SWAP(Model);
 
-CGAL_PDB_OUTPUT(Model);
+CGAL_OUTPUT(Model);
 
 //! Assign unique indices to all atoms in the Model, starting at optional start value
 /*!

@@ -130,7 +130,7 @@ public:
   //! Make a monomer of a given type
   Monomer(Type al);
 
-  CGAL_PDB_COPY_CONSTRUCTOR(Monomer);
+  CGAL_COPY_CONSTRUCTOR(Monomer);
 
   void copy_from(const Monomer &o);
 
@@ -144,19 +144,19 @@ public:
 
  
 
-  CGAL_PDB_CONST_ITERATOR(Atom, atom, Atoms::const_iterator, 
+  CGAL_CONST_ITERATOR(Atom, atom, Atoms::const_iterator, 
 			  return atoms_.begin(),
 			  return atoms_.end());
-  CGAL_PDB_ITERATOR(Atom, atom, Atoms::iterator, 
+  CGAL_ITERATOR(Atom, atom, Atoms::iterator, 
 			  return atoms_.begin(),
 			  return atoms_.end());
   
-  CGAL_PDB_SIZE(atoms, return atoms_.size());
+  CGAL_SIZE(atoms, return atoms_.size());
 
-  CGAL_PDB_FIND(Atom, Atom_key al= fix_atom_key(k);
+  CGAL_FIND(Atom, Atom_key al= fix_atom_key(k);
 		return atoms_.find(al));
 
-  CGAL_PDB_INSERT(Atom, return insert_internal(k,m));
+  CGAL_INSERT(Atom, return insert_internal(k,m));
 
   Atom_iterator insert_internal(Atom_key k, const Atom &a);
 
@@ -209,14 +209,14 @@ public:
   typedef std::pair<Bond_endpoint, Bond_endpoint> Bond;
 
   //! Return a list of all the bonds in the monomer
-  CGAL_PDB_CONST_ITERATOR(Bond, bond, 
+  CGAL_CONST_ITERATOR(Bond, bond, 
 			  std::vector<Bond>::const_iterator,
 			  return bonds_.begin(),
 			  return bonds_.end());
 
 
   //! The number of atoms present in the monomer
-  CGAL_PDB_SIZE(bonds, return bonds_.size());
+  CGAL_SIZE(bonds, return bonds_.size());
 
 
   //! Return a point representing the sidechain
@@ -306,8 +306,8 @@ inline int index_atoms(const Monomer &m, int start=0) {
 }
 
 
-CGAL_PDB_SWAP(Monomer);
-CGAL_PDB_OUTPUT(Monomer);
+CGAL_SWAP(Monomer);
+CGAL_OUTPUT(Monomer);
 
 CGAL_PDB_END_NAMESPACE
 #endif

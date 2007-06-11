@@ -40,7 +40,7 @@ public:
  
   //inline Atom_label label() const;
   //! Cartesian coordinates (x,y,z) for the atom.
-  CGAL_PDB_RWFIELD(Point, point, coordinates_);
+  CGAL_FIELDRW(Point, point, coordinates_);
 
   /*inline Point &cartesian_coords() {
     return coordinates_;
@@ -50,27 +50,27 @@ public:
   inline bool operator==(const Atom& al) const;
   inline bool operator!=(const Atom& al) const;
   //! The PDB occupancy field.
-  CGAL_PDB_RWFIELD(float, occupancy, occupancy_);
+  CGAL_FIELDRW(float, occupancy, occupancy_);
 
   //! The PDB temperature factor field.
-  CGAL_PDB_RWFIELD(float, temperature_factor, temp_factor_);
+  CGAL_FIELDRW(float, temperature_factor, temp_factor_);
 
   //! The PDB segment ID char
-  CGAL_PDB_RWFIELD(std::string, segment_id, segID_);
+  CGAL_FIELDRW(std::string, segment_id, segID_);
 
   //! The PDB element field
-  CGAL_PDB_RWFIELD(std::string, element, element_);
+  CGAL_FIELDRW(std::string, element, element_);
 
   //! The PDB charge field.
-  CGAL_PDB_RWFIELD(std::string, charge, charge_);
+  CGAL_FIELDRW(std::string, charge, charge_);
 
   //! The type of the atoms (basically what element).
-  CGAL_PDB_RWFIELD(Type, type, type_);
+  CGAL_FIELDRW(Type, type, type_);
 
   //! Returns the van der Waals radius of the atom.
   /*!  Values take from the wikipedia so beware.
    */
-  CGAL_PDB_ACCESSOR(double, radius, return radii_[type_]);
+  CGAL_ACCESSOR(double, radius, return radii_[type_]);
 
 
   //! This is a label which identifies an Atom uniquely within some scale.
@@ -78,13 +78,23 @@ public:
     The uniqueness is only valid if working within the object which assigned the indices,
     and if nothing has changed since the corresponding index_atoms() function was called.
   */
-  CGAL_PDB_ACCESSOR(Index, index, return index_);
+  CGAL_ACCESSOR(Index, index, return index_);
 
-  void set_index(Index i) const {
-    index_=i;
-  }
+  //! note const
+  void set_index(Index i) const {index_=i;}
 
   static Type string_to_type(const char *c);
+
+  void swap_with(Atom &o) {
+    CGAL_ISWAP(type_);
+    CGAL_ISWAP(coordinates_);
+    CGAL_ISWAP(occupancy_);
+    CGAL_ISWAP(temp_factor_);
+    CGAL_ISWAP(segID_);
+    CGAL_ISWAP(element_);
+    CGAL_ISWAP(charge_);
+    CGAL_ISWAP(index_);
+  }
 protected:
   Type type_;
   Point coordinates_;
@@ -94,6 +104,8 @@ protected:
   mutable Index index_;
 };
 
+
+CGAL_SWAP(Atom);
 
 /*inline bool Atom::operator<(const Atom &o) const {
   if (index_ < o.index_) return true;

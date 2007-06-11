@@ -33,7 +33,6 @@
 #include <CGAL/PDB/internal/dummies.h>
 #include <CGAL/PDB/internal/Nested_iterator.h>
 #include <boost/tuple/tuple.hpp>
-#include <CGAL/PDB/macros.h>
 
 CGAL_PDB_BEGIN_NAMESPACE
 
@@ -85,14 +84,14 @@ public:
   //! Default
   Chain();
 
-  CGAL_PDB_ITERATOR(Monomer, monomer, Container::iterator,
+  CGAL_ITERATOR(Monomer, monomer, Container::iterator,
 		    return residues_.begin(),
 		    return residues_.end());
-  CGAL_PDB_CONST_ITERATOR(Monomer, monomer, Container::const_iterator,
+  CGAL_CONST_ITERATOR(Monomer, monomer, Container::const_iterator,
 			  return residues_.begin(),
 			  return residues_.end());
   
-  CGAL_PDB_SIZE(monomers, return residues_.size());
+  CGAL_SIZE(monomers, return residues_.size());
 
 
   //! A unique identified of an atom in the chain
@@ -132,7 +131,7 @@ public:
   //! A chemical bond within the protein
   typedef std::pair<Bond_endpoint, Bond_endpoint> Bond; 
 
-  CGAL_PDB_INSERT(Monomer,  return insert_internal(k,m));
+  CGAL_INSERT(Monomer,  return insert_internal(k,m));
 
   class Atom_iterator_value_type {
       Atom_key index_;
@@ -195,12 +194,12 @@ public:
   
   
   //! An iterator to iterate through all the atoms of the protein  
-  CGAL_PDB_ITERATOR(Atom, atom, 
+  CGAL_ITERATOR(Atom, atom, 
 		    internal::Nested_iterator<Iterator_traits >,
 		    return Atom_iterator(residues_.begin(), residues_.end()),
 		    return Atom_iterator(residues_.end(), residues_.end()));
   //! An iterator to iterate through all the atoms of the protein  
-  CGAL_PDB_CONST_ITERATOR(Atom, atom, 
+  CGAL_CONST_ITERATOR(Atom, atom, 
 			  internal::Nested_iterator<Iterator_const_traits >,
 			  return Atom_const_iterator(residues_.begin(), residues_.end()),
 			  return Atom_const_iterator(residues_.end(), residues_.end()));
@@ -264,7 +263,7 @@ public:
     
     Bond_it(){}
 
-    CGAL_PDB_COPY_CONSTRUCTOR(Bond_it);
+    CGAL_COPY_CONSTRUCTOR(Bond_it);
 
   
   private:
@@ -309,7 +308,7 @@ public:
   };
   //! \endcond
 
-  CGAL_PDB_CONST_ITERATOR(Bond, bond, Bond_it,
+  CGAL_CONST_ITERATOR(Bond, bond, Bond_it,
 			  return Bond_const_iterator(residues_.begin(), residues_.end()),
 			  return Bond_const_iterator(residues_.end(), residues_.end()));
  
@@ -344,7 +343,7 @@ public:
   //! Dump as human readable.
   std::ostream& write(std::ostream &out) const{dump(out); return out;}
 
-  CGAL_PDB_FIND(Monomer, return residues_.find(k));
+  CGAL_FIND(Monomer, return residues_.find(k));
 
   /*const Atom &atom(unsigned int i) const {
     for (Const_residues_iterator it = residues_begin(); it != residues_.end(); ++it){
@@ -359,7 +358,7 @@ public:
   //! Set whether the protein has bonds or not.
   void set_has_bonds(bool tf);
 
-  CGAL_PDB_RWFIELD(std::string, name, name_);
+  CGAL_FIELDRW(std::string, name, name_);
 private:
   void process_line(const char *line);
     
@@ -377,8 +376,8 @@ private:
 };
 
 
-CGAL_PDB_SWAP(Chain);
-CGAL_PDB_OUTPUT(Chain);
+CGAL_SWAP(Chain);
+CGAL_OUTPUT(Chain);
 
 
 
