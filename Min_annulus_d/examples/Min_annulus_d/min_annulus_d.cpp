@@ -3,7 +3,7 @@
 // as input type and some internal EXACT floating point type
 #include <iostream>
 #include <cassert>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_2.h>
 
@@ -16,7 +16,7 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an EXACT kernel...
-typedef CGAL::Simple_cartesian<ET>             K;
+typedef CGAL::Homogeneous<ET>                  K;
 typedef K::Point_2                             Point;
 // ...and the traits class based on the exact kernel
 typedef CGAL::Min_sphere_annulus_d_traits_2<K> Traits;
