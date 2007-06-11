@@ -169,5 +169,20 @@ private:							\
 #define CGAL_KINETIC_SIGNAL(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
 
 #define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL);
+
+#define CGAL_KINETIC_LISTEN1(Notifier, Signal, func) private:\
+  class Notifier##_listener: public Notifier::Listener {\
+    This *t_;						\
+  public:					\
+    Notifier##_listener(Notifier* tm, This &t): Notifier::Listener(tm), t_(t){}	\
+    void new_notification(typename Notifier::Listener::Notification_type t) {\
+      if (t== Notifier::Listener::Signal) t_->func();			\
+    }\
+  };\
+  friend class Notifier##_listener;\
+  Notifier##_listener listener_##Notifier##_;
+
+#define CGAL_KINETIC_INIT_LISTEN(Notifier, ptr) listener_##Notifier##_=Notifier##_listener(ptr, const_cast<This*>(this))
+ 
 CGAL_KINETIC_END_NAMESPACE
 #endif

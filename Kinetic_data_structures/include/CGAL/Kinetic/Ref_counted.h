@@ -37,14 +37,14 @@ void intrusive_ptr_release(const Ref_counted_base *t);
 class Ref_counted_base: boost::noncopyable
 {
   typedef Ref_counted_base This;
-  Ref_counted_base(const Ref_counted_base&) : reference_count_(0) {
+  /*Ref_counted_base(const Ref_counted_base&) : reference_count_(0) {
     std::cerr << "Copy constructor called. Why?" << std::endl;
-  }
-  Ref_counted_base operator=(const Ref_counted_base&) const
+    }*/
+  /*Ref_counted_base operator=(const Ref_counted_base&) const
   {
     std::cerr << "Assignment called. Why?" << std::endl;
     return *this;
-  }
+    }*/
 public:
   Ref_counted_base() : reference_count_(0) {}
 
