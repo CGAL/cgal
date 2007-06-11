@@ -22,19 +22,22 @@
 #                    object files
 #---------------------------------------------------------------------#
 
-OBJECTS = \
-Atom$(OBJ_EXT) \
-Chain_pdb$(OBJ_EXT) \
-Error_logger$(OBJ_EXT) \
-Quaternion$(OBJ_EXT) \
-Model$(OBJ_EXT) \
-Monomer$(OBJ_EXT) \
-pdb_utils$(OBJ_EXT) \
-PDB$(OBJ_EXT) \
-Monomer_data$(OBJ_EXT) \
-Chain$(OBJ_EXT) \
-Transform$(OBJ_EXT)
+OBJECTS = all_files$(OBJ_EXT)\
 
+OLD_OBJECTS= Atom$(OBJ_EXT)\
+Error_logger$(OBJ_EXT)\
+Monomer_data$(OBJ_EXT)\
+Transform$(OBJ_EXT)\
+Chain$(OBJ_EXT)\
+Model$(OBJ_EXT)\
+PDB$(OBJ_EXT)\
+Chain_pdb$(OBJ_EXT)\
+Monomer$(OBJ_EXT)\
+Quaternion$(OBJ_EXT)\
+pdb_utils$(OBJ_EXT)
+
+
+# out for now align$(OBJ_EXT)
 #---------------------------------------------------------------------#
 #                    libCGALPDB settings
 #---------------------------------------------------------------------#

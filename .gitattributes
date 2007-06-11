@@ -1821,6 +1821,7 @@ PDB/src/CGALPDB/PDB.cpp -text
 PDB/src/CGALPDB/Quaternion.cpp -text
 PDB/src/CGALPDB/Transform.cpp -text
 PDB/src/CGALPDB/align.cpp -text
+PDB/src/CGALPDB/all_files.cpp -text
 PDB/src/CGALPDB/makefile -text
 PDB/src/CGALPDB/pdb_utils.cpp -text
 PDB/test/PDB/check_hetatom.cpp -text

@@ -1,6 +1,5 @@
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/iterator.h>
-#include <CGAL/PDB/geometry.h>
 #include <CGAL/PDB/align.h>
 #include <CGAL/PDB/align_generic.h>
 #include <cassert>
