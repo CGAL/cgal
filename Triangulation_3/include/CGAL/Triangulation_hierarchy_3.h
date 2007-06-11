@@ -109,8 +109,8 @@ public:
       // Thanks to spatial sort, they are better hints than what the hierarchy
       // would give us.
       Cell_handle hints[maxlevel];
-      for (typename std::vector<Point>::const_iterator p = points.begin();
-              p != points.end(); ++p)
+      for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
+              p != end; ++p)
       {
           int vertex_level = random_level();
 

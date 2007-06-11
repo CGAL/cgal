@@ -147,8 +147,8 @@ public:
     spatial_sort (points.begin(), points.end(), geom_traits());
 
     Cell_handle hint;
-    for (typename std::vector<Weighted_point>::const_iterator p = points.begin();
-            p != points.end(); ++p)
+    for (typename std::vector<Weighted_point>::const_iterator p = points.begin(),
+		    end = points.end(); p != end; ++p)
     {
         Locate_type lt;
         Cell_handle c;
