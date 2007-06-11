@@ -5,7 +5,7 @@
 // internal computations
 #include <iostream>
 #include <cassert>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_2.h>
 
@@ -18,7 +18,7 @@ typedef CGAL::MP_Float ET;
 #endif
 
 // use an inexact kernel...
-typedef CGAL::Simple_cartesian<double>                     K;
+typedef CGAL::Homogeneous<double>                          K;
 typedef K::Point_2                                         Point;
 // ... and the EXACT traits class based on the inexcat kernel
 typedef CGAL::Min_sphere_annulus_d_traits_2<K, ET, double> Traits;
