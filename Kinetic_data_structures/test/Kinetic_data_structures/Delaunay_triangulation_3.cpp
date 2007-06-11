@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
   KDel kdel(simtr);
   if (argc==1) {
-    CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::NONE);
+    CGAL_SET_LOG_LEVEL(CGAL::Log::NONE);
     std::ifstream in("data/Delaunay_triangulation_3.input");
     if (!in) {
       std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_3.input" << std::endl;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     kdel.audit();
 
   } else {
-    CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
+    CGAL_SET_LOG_LEVEL(CGAL::Log::LOTS);
     std::ifstream in(argv[1]);
     if (!in) {
       std::cerr << "Error opening input file: " << argv[1] << std::endl;

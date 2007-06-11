@@ -50,7 +50,7 @@ struct Delaunay_triangulation_event_log_visitor_2: public Delaunay_triangulation
         Point b= e.first->vertex((e.second+2)%3)->point();
         out << "Flipping in edge {" << (std::min)(a,b) << ", " << (std::max)(a,b) << "}";
         log_.push_back(out.str());
-        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl;);
+        CGAL_LOG(Log::LOTS, "Logging: " << out.str() << std::endl);
     }
 
     typedef std::vector<std::string>::const_iterator Event_iterator;

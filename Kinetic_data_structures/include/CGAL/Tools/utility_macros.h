@@ -30,9 +30,9 @@
     return t.write(out);						\
   }
 
-#define CGAL_OUTPUT2(type)			\
+#define CGAL_OUTPUT2(T)			\
   template <class A, class B>						\
-  inline std::ostream& operator<<(std::ostream&out, const type<A,B> &t){ \
+  inline std::ostream& operator<<(std::ostream&out, const T<A,B> &t){ \
     return t.write(out);						\
   }
 

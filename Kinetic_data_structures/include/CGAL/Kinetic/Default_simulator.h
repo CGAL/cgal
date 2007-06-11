@@ -522,11 +522,12 @@ public:
     }
   }
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Simulator: (" << to_double(current_time())
 	<< "..." << to_double(end_time()) << ")\n";
     out << queue_ << std::endl;
+    return out;
   }
 
   void print() const

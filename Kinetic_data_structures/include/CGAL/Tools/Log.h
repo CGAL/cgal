@@ -61,7 +61,7 @@ public:
   */
 
   static Level level() {return state_.level_;}
-  static void set_level(Level &l) {state_.level_=l;}
+  static void set_level(Level l) {state_.level_=l;}
 
   static std::ostream &stream(Level l) {
     if (is_output(l)) {
@@ -110,7 +110,7 @@ private:
 {std::ostream &LOG_STREAM= CGAL::Log::stream(level); expr;}
 #define CGAL_ERROR(expr) std::cerr << expr << std::endl;
 #define CGAL_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
-#define CGAL_SET_LOG_LEVEL(level) CGAL::Logs::set_level(level);
+#define CGAL_SET_LOG_LEVEL(level) CGAL::Log::set_level(level);
 #else
 #define CGAL_LOG(l,e)
 #define CGAL_LOG_WRITE(l,e)

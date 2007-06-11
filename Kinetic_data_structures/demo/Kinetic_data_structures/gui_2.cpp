@@ -16,7 +16,7 @@ int main(int argc, char*argv[])
 {
 
 #ifdef CGAL_USE_QT
-  CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
+  CGAL_SET_LOG_LEVEL(CGAL::Log::LOTS);
 
   typedef CGAL::Kinetic::Exact_simulation_traits Traits;
 

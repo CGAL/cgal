@@ -168,9 +168,9 @@ public:
 				   k, iless_);
     CGAL_LOG(Log::LOTS, "\nInserting " << k);
     if (it != sorted_.end()) {
-      CGAL_LOG(Log::LOTS, " before " << it->object() <<std::endl;); 
+      CGAL_LOG(Log::LOTS, " before " << it->object() <<std::endl); 
     } else {
-      CGAL_LOG(Log::LOTS, " before end" <<std::endl;); 
+      CGAL_LOG(Log::LOTS, " before end" <<std::endl); 
     }
     /*if (it != sorted_.end()) {
       v_.remove_edge(prior(it), it);
