@@ -1772,6 +1772,8 @@ PDB/doc_doxygen/Doxyfile -text
 PDB/doc_doxygen/doc_footer -text
 PDB/doc_doxygen/main_doc -text
 PDB/dont_submit -text
+PDB/examples/PDB/data/simple.pdb -text
+PDB/examples/PDB/extracting_geometry.cpp -text
 PDB/include/CGAL/PDB/Atom.h -text
 PDB/include/CGAL/PDB/Chain.h -text
 PDB/include/CGAL/PDB/Matrix.h -text
