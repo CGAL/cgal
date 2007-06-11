@@ -83,11 +83,11 @@ public:
 						    rnum_(rn), chain_(ch){
     }
     Hetatom_data(){}
-    CGAL_ACCESSORNR( char*, molecular_name, return resname_.c_str())
+    CGAL_ACCESSORNR( char*, molecule_name, return resname_.c_str())
     
     CGAL_ACCESSORNR( char*, atom_name, return atomname_.c_str())
     
-    CGAL_ACCESSORNR(int, molecular_number, return rnum_)
+    CGAL_ACCESSORNR(int, molecule_number, return rnum_)
     
     CGAL_ACCESSORNR(Chain_key, chain, return chain_)
 

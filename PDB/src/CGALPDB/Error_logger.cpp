@@ -19,29 +19,30 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
   }
 
   void Error_logger::new_fatal_error(const char *err) {
-    std::cerr << "DSRPDB fatal error: " << err << std::endl;
-    assert(0);
-    exit(EXIT_FAILURE);
+    CGAL_ERROR("DSRPDB fatal error: " << err);
+    CGAL_assertion(0);
+    //exit(EXIT_FAILURE);
   }
 
   void Error_logger::new_internal_error(const char* err) {
-    std::cerr << "DSRPDB internal error: " << err << std::endl;
-    std::cerr << "Please report this to the author (and provide a PDB)." << std::endl;
-    assert(0);
-    exit(EXIT_FAILURE);
+    CGAL_ERROR( "DSRPDB internal error: " << err);
+    CGAL_ERROR( "Please report this to the author (and provide a PDB).");
+    CGAL_assertion(0);
+    //exit(EXIT_FAILURE);
   }
 
   void Error_logger::dump() {
     if (enabled_) {
       if (!context_.empty()) {
-	std::cerr << "In PDB file " << context_ << ":\n";
+	CGAL_LOG(Log::SOME, "In PDB file " << context_ << ":\n");
       }
       for (std::map<std::string, int>::const_iterator it =warnings_.begin(); 
 	   it != warnings_.end(); ++it){
 	if (it->second==1) {
-	  std::cerr << "DSRPDB Warning: " << it->first << std::endl;
+	  CGAL_LOG(Log::SOME, "DSRPDB Warning: " << it->first << std::endl);
 	} else {
-	  std::cerr << "DSRPDB " << it->second << " occurences of Warning: " << it->first << std::endl;
+	  CGAL_LOG(Log::SOME, "DSRPDB " << it->second 
+		   << " occurences of Warning: " << it->first << std::endl);
 	}
       }
     }

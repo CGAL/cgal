@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <CGAL/Tools/Log.h>
 
 CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
   class Error_logger {
