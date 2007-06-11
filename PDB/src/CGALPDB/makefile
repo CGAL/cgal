@@ -22,12 +22,11 @@
 #                    object files
 #---------------------------------------------------------------------#
 
-OBJECTS = all_files$(OBJ_EXT)\
+OBJECTS = all_files$(OBJ_EXT)
 
 OLD_OBJECTS= Atom$(OBJ_EXT)\
 Error_logger$(OBJ_EXT)\
 Monomer_data$(OBJ_EXT)\
-Transform$(OBJ_EXT)\
 Chain$(OBJ_EXT)\
 Model$(OBJ_EXT)\
 PDB$(OBJ_EXT)\

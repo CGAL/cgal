@@ -1819,7 +1819,6 @@ PDB/src/CGALPDB/Monomer.cpp -text
 PDB/src/CGALPDB/Monomer_data.cpp -text
 PDB/src/CGALPDB/PDB.cpp -text
 PDB/src/CGALPDB/Quaternion.cpp -text
-PDB/src/CGALPDB/Transform.cpp -text
 PDB/src/CGALPDB/align.cpp -text
 PDB/src/CGALPDB/all_files.cpp -text
 PDB/src/CGALPDB/makefile -text
