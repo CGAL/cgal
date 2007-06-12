@@ -364,7 +364,6 @@ namespace Surface_mesher {
       typename details::Surface_mesher_edges_base_types<C2T3>::Default_container
     >
   class Surface_mesher_edges_level_base :
-    public No_private_test_point_conflict,
     public No_after_no_insertion,
     public No_before_conflicts,
     public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>,
@@ -516,6 +515,19 @@ namespace Surface_mesher {
     Point_3 refinement_point_impl(const Edge&) const
     {
       return refinement_point_cache;
+    }
+
+    Mesher_level_conflict_status private_test_point_conflict_impl(const Point_3& p,
+								  Zone& )
+    {
+      Vertex_handle v;
+      if( tr.is_vertex(p, v) )
+      {
+	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
+	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
+      }
+      else
+	return NO_CONFLICT;
     }
 
     Zone conflicts_zone_impl(const Point_3& p,

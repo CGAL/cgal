@@ -32,6 +32,7 @@
 #include <list>
 #include <string>
 #include <sstream>
+#include <boost/format.hpp>
 
 #include <CGAL/Surface_mesher/Verbose_flag.h>
 #include <CGAL/Surface_mesher/Types_generators.h>
@@ -198,7 +199,9 @@ namespace CGAL {
     // deletes the next element from the set of elements to refine
     // NB: it is useless here, since the update of the restricted
     // Delaunay triangulation automatically deletes the next element
-    void pop_next_element_impl() {}
+    void pop_next_element_impl() {
+      facets_to_refine.pop_front();
+    }
 
     // From the element to refine, gets the point to insert
     Point refinement_point_impl(const Facet& f) const
@@ -225,11 +228,18 @@ namespace CGAL {
     }
 
   // Useless here
-    Mesher_level_conflict_status private_test_point_conflict_impl(const Point&,
-								  Zone&)
+    Mesher_level_conflict_status private_test_point_conflict_impl(const Point& p,
+								  Zone& )
+    {
+      Vertex_handle v;
+      if( tr.is_vertex(p, v) )
       {
-	return NO_CONFLICT;
+	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
+	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
       }
+      else
+	return NO_CONFLICT;
+    }
 
     // Useless here
     void after_no_insertion_impl(const Facet&, const Point&, const Zone&)
