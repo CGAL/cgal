@@ -49,6 +49,11 @@ int main(int , char *[]){
   }
   p.write(of);
 
+  if (false){
+    std::ofstream outf("/tmp/ht.pdb");
+    p.write(outf);
+  }
+
   std::ifstream in2("data/check_hetatom.pdb");
   std::istringstream iss(of.str().c_str());
   check_equal(in2, iss);

@@ -23,6 +23,7 @@ MA 02110-1301, USA. */
 #include <fstream>
 #include <cassert>
 #include <iterator>
+#include <CGAL/Tools/Log.h>
 
 #include "check_equal.h"
 
@@ -50,8 +51,8 @@ int main(int , char *[]){
   std::cout << "There are " << na << " atoms" << std::endl;
   unsigned int nb= std::distance(p.bonds_begin(), p.bonds_end());
   std::cout << "There are " << nb << " bonds" << std::endl;
-  CGAL_assertion(na==1221);
-  CGAL_assertion(nb==2835);
+  CGAL_assert_equal(na, 1221);
+  CGAL_assert_equal(nb, 1248);
 
   return return_code__;
 }
