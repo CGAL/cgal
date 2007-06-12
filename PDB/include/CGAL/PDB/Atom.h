@@ -70,7 +70,7 @@ public:
   //! Returns the van der Waals radius of the atom.
   /*!  Values take from the wikipedia so beware.
    */
-  CGAL_ACCESSOR(double, radius, return radii_[type_]);
+  CGAL_GET(double, radius, return radii_[type_]);
 
 
   //! This is a label which identifies an Atom uniquely within some scale.
@@ -78,7 +78,7 @@ public:
     The uniqueness is only valid if working within the object which assigned the indices,
     and if nothing has changed since the corresponding index_atoms() function was called.
   */
-  CGAL_ACCESSOR(Index, index, return index_);
+  CGAL_GET(Index, index, return index_);
 
   //! note const
   void set_index(Index i) const {index_=i;}

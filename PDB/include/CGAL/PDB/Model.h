@@ -83,13 +83,13 @@ public:
 						    rnum_(rn), chain_(ch){
     }
     Hetatom_data(){}
-    CGAL_ACCESSORNR( char*, molecule_name, return resname_.c_str())
+    CGAL_GETNR( char*, molecule_name, return resname_.c_str())
     
-    CGAL_ACCESSORNR( char*, atom_name, return atomname_.c_str())
+    CGAL_GETNR( char*, atom_name, return atomname_.c_str())
     
-    CGAL_ACCESSORNR(int, molecule_number, return rnum_)
+    CGAL_GETNR(int, molecule_number, return rnum_)
     
-    CGAL_ACCESSORNR(Chain_key, chain, return chain_)
+    CGAL_GETNR(Chain_key, chain, return chain_)
 
     CGAL_COMPARISONS2(Hetatom_data, rnum_, chain_)
 
