@@ -111,13 +111,18 @@ private:
 #define CGAL_ERROR(expr) std::cerr << expr << std::endl;
 #define CGAL_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
 #define CGAL_SET_LOG_LEVEL(level) CGAL::Log::set_level(level);
+#define CGAL_assert_equal(a,b) if (a != b) { CGAL_ERROR("" #a " = " << a); CGAL_ERROR("" #b " = " << b); CGAL_assertion(a ==b);}
+
+
 #else
 #define CGAL_LOG(l,e)
 #define CGAL_LOG_WRITE(l,e)
 #define CGAL_ERROR(e)
 #define CGAL_ERROR_WRITE(e)
 #define CGAL_SET_LOG_LEVEL(l)
+#define CGAL_assert_equal(a,b) 
 #endif
+
 
 
 CGAL_END_NAMESPACE

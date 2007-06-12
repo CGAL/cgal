@@ -28,8 +28,8 @@
 #define CGAL_COPY_CONSTRUCTOR(TC) TC(const TC &o){copy_from(o);}\
   TC& operator=(const TC &o) {copy_from(o); return *this;}
 
-#define CGAL_ACCESSOR(type, name, expr) const type &name() const{expr;}
-#define CGAL_ACCESSORNR(type, name, expr) const type name() const{expr;}
+#define CGAL_GET(type, name, expr) const type &name() const{expr;}
+#define CGAL_GETNR(type, name, expr) const type name() const{expr;}
 
 #define CGAL_IS(name, expr) bool is_##name() const {expr;}
 
@@ -38,8 +38,6 @@
 #define CGAL_FIELDRW(type, name, var) \
   const type &name() const {return var;}\
   void set_##name(const type &k) {var=k;}
-
-
 
 
 #define CGAL_OUTPUT(type)\
@@ -135,5 +133,6 @@
   bool operator<=(const ucname &o) const {				\
     return !operator>(o);						\
   }
+
 
 #endif
