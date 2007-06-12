@@ -23,32 +23,33 @@
 #include <vector>
 
 #include <CGAL/Object.h>
-#include <CGAL/Benchmark/benchmark_visitor.hpp>
+#include <CGAL/Benchmark/Benchmark_visitor.hpp>
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
-class Polynomial_benchmark_visitor
+class Polynomial_visitor
   : public Benchmark_visitor 
 {
     typedef std::vector< Object >       Object_container;
-    typedef Object_container::iterator  iterator;
     
     // feel free to extend this list.
-    //enum Coefficient_numbertype {
-    //  Not_supported = 0, 
-    //  Integer, 
-    //  Sqrt_ext_int_int 
-    //};
+    enum Coefficient_numbertype {
+      Not_supported = 0, 
+      Integer, 
+      Sqrt_ext_int_int 
+    };
+    
+    // dummy polynomial
+    struct Monom {
+      std::vector< int >  exponent_vector;
+      Object                       coefficient;
+    };
+    
+    std::vector< Monom >        polynomial;
     
     bool                        inside_monom;
-    
-    Object                      coefficient_value;
-    std::vector< unsigned int > exponent_vector;
-    
     unsigned int                number_of_variables;
-    //Coefficient_numbertype      coefficient_numbertype;
-    
-    
+    Coefficient_numbertype      coefficient_numbertype;
     Object_container            object_container;
     
 public:
@@ -69,11 +70,15 @@ public:
     virtual void end_polynomial();
     
     virtual void begin_monom( std::string coefficient );
-    virtual void end_monom()
+    virtual void end_monom();
     virtual void accept_integer( std::string s );
+    
+    typedef Object_container::iterator  iterator;
     
     iterator objects_begin() { return object_container.begin(); }
     iterator objects_end()   { return object_container.end();   }
 };
 
 CGAL_BENCHMARK_END_NAMESPACE
+
+#endif

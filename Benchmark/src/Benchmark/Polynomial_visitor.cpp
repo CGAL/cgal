@@ -17,86 +17,115 @@
 **************************************************************************/
 
 #include <iostream>
+#include <algorithm>
 
+#include <CGAL/basic.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Benchmark/Polynomial_visitor.hpp>
 
+
+// work around c++ preprocessor. rationale: 
+//   (1) giving a<b,c> as macro parameter directly does not work
+//   (2) surrounding a<b,c> with () also does not work, because then,
+//       c++ does not recognise (a<b,c>) as a type
+typedef CGAL::Sqrt_extension<int,int> CGAL_Sqrt_extension;
+
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
-template< typename NT, int vars >
-struct Polynomial_type_creator {
-  typedef typename Polynomial_type_creator<NT,vars-1>::result result;
-};
 
-template< typename NT >
-struct Polynomial_type_creator<NT,1> {
-  typedef CGAL::Polynomial< NT > result;
-};
-
-template< typename NT >
-struct Polynomial_type_creator<NT,0> {
-  typedef void result;
-};
-
-Polynomial_visitor::Polynomial_visitor() {
-
-}
+Polynomial_visitor::Polynomial_visitor() {}
 
 void
 Polynomial_visitor::begin_polynomial( unsigned int variables,
                                       std::string  coeff_typename )
 {
+  //std::cout << "begin polynomial with coeff type " << coeff_typename << std::endl;
   number_of_variables = variables;
   if( coeff_typename == "Integer" ) {
     coefficient_numbertype = Integer;
-    CGAL::Polynomial< int > p;
-    object_container.push_back(  make_object( p ) );
   } else if( coeff_typename == "Sqrt_extension<Integer,Integer>" ) {
     coefficient_numbertype = Sqrt_ext_int_int;
-    CGAL::Polynomial< CGAL::Sqrt_extension<int,int> > p;
-    object_container.push_back(  make_object( p ) );
   } else {
     coefficient_numbertype = Not_supported;
   }
 }
 
-void Polynomial_visitor::end_polynomial() {}
+void Polynomial_visitor::end_polynomial() {
+#define CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE(NT,NAME)               \
+    case NAME: {                                                               \
+      CGAL::Polynomial_traits_d<CGAL::Polynomial<NT> >::Construct_polynomial construct_polynomial; \
+      typedef std::pair< std::vector<int>, NT > Monom_rep;                \
+      Monom_rep monom_rep;                                                     \
+      std::vector< Monom_rep > polygon_rep;                                    \
+      for( std::vector< Monom >::iterator it = polynomial.begin(); it != polynomial.end(); ++it ) { \
+        NT coeff;                                                                \
+        /*std::cout << "expecting coeff object with type " << #NAME  << std::endl;*/ \
+        if( assign( coeff, it->coefficient ) )                                   \
+          polygon_rep.push_back( std::make_pair( it->exponent_vector, coeff ) ); \
+        else                                                                     \
+          CGAL_error("cannot happen");                                           \
+      }                                                                          \
+      object_container.push_back(                                                \
+        make_object(                                                             \
+          construct_polynomial( polygon_rep.begin(), polygon_rep.end() ) ) );    \
+      break; }
+
+  //std::cout << "end polynomial" << std::endl;
+  switch( coefficient_numbertype ) {
+    CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( int, Integer )
+    CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( CGAL_Sqrt_extension, Sqrt_ext_int_int )
+    default:
+      CGAL_error("if you can read this, something went wrong");
+  }
+#undef CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE
+  coefficient_numbertype = Not_supported;
+  number_of_variables = 0;
+  polynomial.clear();
+}
 
 void
 Polynomial_visitor::begin_monom( std::string coefficient )
 {
+#define CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( NT, NAME )     \
+    case NAME : {                                                    \
+      NT coeff;                                                      \
+      input >> coeff;                                                \
+      polynomial.back().coefficient = CGAL::make_object( coeff );    \
+      /*std::cout << "created coeff object with type " << #NAME  << std::endl;*/ \
+      break; }
+  //std::cout << "begin monom" << std::endl;
+  std::stringstream input( coefficient );              
+  polynomial.push_back( Polynomial_visitor::Monom() );
 
-#define CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( NT )             \
-    if( CGAL::Polynomial< NT > *p =                                    \
-        object_cast< CGAL::Polynomial< NT > >( object_container.back() ) ) { \
-      NT c;                                                            \
-      std::stringstream input( coefficient );                          \
-      input >> c;                                                      \
-      coefficient_value = CGAL::make_object( ex );                     \
-    }
+  switch( coefficient_numbertype ) {
+    CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( int, Integer )
+    CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( CGAL_Sqrt_extension, Sqrt_ext_int_int )
+    default:
+      CGAL_error("if you can read this, something went wrong");
+  }
 
-    exponent_vector.clear();
-    
-    CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( int )
-    CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( CGAL::Sqrt_extension<int,int> )
-    // ...
-    
-    inside_monom = true;
+  inside_monom = true;
 #undef CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE
 }
 
 void
 Polynomial_visitor::end_monom()
 {
-    exponent_vector.reverse();
-    inside_monom = false;
+  //std::cout << "end monom" << std::endl;
+  std::reverse( polynomial.back().exponent_vector.begin(), polynomial.back().exponent_vector.end() );
+  inside_monom = false;
 }
 
 void
 Polynomial_visitor::accept_integer( std::string s )
 {
-    if( ! inside_monom )
-        return;
-    exponent_vector.push_back( atoi( s.c_str() ) );
+  //std::cout << "accept int" << std::endl;
+  if( ! inside_monom )
+    return;
+  polynomial.back().exponent_vector.push_back( atoi( s.c_str() ) );
 }
+
+CGAL_BENCHMARK_END_NAMESPACE
