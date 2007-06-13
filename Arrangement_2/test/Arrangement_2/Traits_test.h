@@ -579,7 +579,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
   char one_line[128];
   char buff[128];
   bool abort=false;
-  int counter=0;
+//  int counter=0;
   while (!(is.eof() || abort)) 
   {
     skip_comments(is, one_line);
@@ -615,10 +615,10 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       std::cout << "Test " << violation_map[violation_tested] 
                 << " violation : ";
     }
-    if (!test_result)
+/*    if (!test_result)
       std::cout << "bug" << std::endl;
     counter++;
-    std::cout << "iter number : " << counter << std::endl;
+    std::cout << "iter number : " << counter << std::endl;*/
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;

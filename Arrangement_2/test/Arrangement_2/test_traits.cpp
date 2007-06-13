@@ -492,12 +492,6 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
     Circle_2 c;
     Point_2 ps,pt;
     is >> c >> ps >> pt;
-/*
-    std::cout << "c " << c << std::endl;
-    std::cout << "ps " << ps << std::endl;
-    std::cout << "pt " << pt << std::endl;
-    std::cout << "orient " << orient << std::endl;
-*/
     xcv=Traits::X_monotone_curve_2(c,ps,pt,c.orientation());
     return true;
   }
