@@ -13,7 +13,6 @@ bool read_arc_point(stream & is, typename T_Traits::Point_2 & p)
   is >> x >> y;
   Circular_kernel::Point_2 lp(x, y);
   p = typename T_Traits::Point_2(lp);
-  //std::cout << "lp: " << lp << ", p: " << p << std::endl;
   return true;
 }
 
@@ -28,22 +27,7 @@ bool is_deg_2(char c)
   return (c=='b' || c=='B') || (c=='c' || c=='C') ||
          (c=='d' || c=='D') || (c=='e' || c=='E');
 }
-/*
-#if TEST_TRAITS == LINE_ARC_TRAITS || \
-  TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
-template <typename stream>
-Line_arc_2 read_line_arc(stream & is)
-{
-  Basic_number_type x1, y1, x2, y2;
-  is >> x1 >> y1 >> x2 >> y2;
-  Circular_kernel::Point_2 lp1(x1, y1);
-  Circular_kernel::Point_2 lp2(x2, y2);
-  CGAL_assertion(lp1 != lp2);
-  Circular_kernel::Line_arc_2 l(lp1, lp2);
-  return l;
-}
-#endif
-*/
+
 #if TEST_TRAITS == LINE_ARC_TRAITS || \
   TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
 template <class stream>
@@ -95,7 +79,6 @@ Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
 {
   if (type == 'b' || type == 'B')
   {
-    std::cout << "got here bbb" << std::endl;
     Circular_kernel::Circle_2 c_temp,c_temp1,c_temp2;
     bool b1,b2;
     is >> c_temp >> c_temp1 >> b1 >> c_temp2 >> b2 ;
@@ -118,27 +101,12 @@ Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
   }
   else if (type == 'e' || type == 'E')
   {
-    std::cout << "got here eee" << std::endl;
     Circular_kernel::Circular_arc_2 a_temp;
     Circular_kernel::Circle_2 c_temp;
     bool b1,b2;
     is >> a_temp >> b1 >> c_temp >> b2;
     return Circular_kernel::Circular_arc_2(a_temp,b1,c_temp,b2);
   }
-  /*else if (type == 'f' || type == 'F')
-  { //is not exact
-    //read_arc_point
-    Circular_kernel::Point_2 p0,p1,p2;
-    is >> p0 >> p1 >> p2;
-    return Circular_kernel::Circular_arc_2(p0,p1,p2);
-  }
-  else if (type == 'g' || type == 'G')
-  { // for autocad
-    Circular_kernel::Point_2 p0,p1;
-    Circular_kernel::FT bulge;
-    is >> p0 >> p1 >> bulge;
-    return Circular_kernel::Circular_arc_2(p0,p1,bulge);
-  }*/
   std::cout << "should never happen Circular_arc_2" << std::endl;
   return Circular_kernel::Circular_arc_2(); //should never happen
 }
