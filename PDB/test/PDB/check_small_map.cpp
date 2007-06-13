@@ -28,9 +28,9 @@ int main(int, char *[]) {
   {
     std::set<unsigned int> vals;
     for (SM::const_iterator it= sm.begin(); it != sm.end(); ++it) {
-      CGAL_assertion(Data(it->key().to_index(), 1) == it->data());
-      CGAL_assertion(vals.find(it->key().to_index()) == vals.end());
-      vals.insert(it->key().to_index());
+      CGAL_assertion(Data(it->key().index(), 1) == it->data());
+      CGAL_assertion(vals.find(it->key().index()) == vals.end());
+      vals.insert(it->key().index());
     }
     std::cout << "size is " << sm.size() << std::endl;
   }
@@ -43,9 +43,9 @@ int main(int, char *[]) {
  {
     std::set<unsigned int> vals;
     for (SM::const_iterator it= sm.begin(); it != sm.end(); ++it) {
-      CGAL_assertion(Data(it->key().to_index(),1) == it->data());
-      CGAL_assertion(vals.find(it->key().to_index()) == vals.end());
-      vals.insert(it->key().to_index());
+      CGAL_assertion(Data(it->key().index(),1) == it->data());
+      CGAL_assertion(vals.find(it->key().index()) == vals.end());
+      vals.insert(it->key().index());
     }
     std::cout << "size is " << sm.size() << std::endl;
   }

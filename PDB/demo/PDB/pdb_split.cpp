@@ -112,17 +112,17 @@ int main(int argc, char *argv[]){
       if (split_models && !split_chains){
 	PDB out;
 	out.insert(PDB::Model_key(0), it->model());
-	outputs[make_fname(output_template, it->key().to_index(),
+	outputs[make_fname(output_template, it->key().index(),
 			   '-', std::string())]= out;
       } else {
 	for (Model::Chain_const_iterator cit= it->model().chains_begin();
 	     cit != it->model().chains_end(); ++cit) {
 	  std::string name;
 	  if (split_models) {
-	    name= make_fname(output_template, it->key().to_index(), cit->key().to_index(),
+	    name= make_fname(output_template, it->key().index(), cit->key().index(),
 			     cit->chain().name());
 	  } else {
-	    name= make_fname(output_template, -1, cit->key().to_index(),
+	    name= make_fname(output_template, -1, cit->key().index(),
 			     cit->chain().name());
 	  }
 	  Model model;

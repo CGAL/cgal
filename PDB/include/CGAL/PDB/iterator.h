@@ -56,8 +56,8 @@ struct Get_bond_indices {
     //Chain::Monomer_iterator ma= b.first.first;
     //Monomer::Atom_label la= b.first.second;
 
-    ret= std::make_pair(b.first.atom().index().to_index(),
-			b.second.atom().index().to_index());
+    ret= std::make_pair(b.first.atom().index().index(),
+			b.second.atom().index().index());
     return ret;
   }
     

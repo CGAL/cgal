@@ -102,7 +102,7 @@ void Model::write(int model_index, std::ostream &out) const {
   out << line << std::endl;
   int index=1;
   for (Chain_const_iterator it= chains_.begin(); it != chains_.end(); ++it){
-    index= it->chain().write(it->key().to_index(), index, out);
+    index= it->chain().write(it->key().index(), index, out);
   }
   for (Hetatoms::const_iterator it = hetatoms_.begin();
        it != hetatoms_.end(); ++it){
@@ -115,7 +115,7 @@ void Model::write(int model_index, std::ostream &out) const {
 	    index++, 
 	    it->key().atom_name(), alt,
 	    it->key().molecule_name(), 
-	    it->key().chain().to_index(), 
+	    it->key().chain().index(), 
 	    static_cast<unsigned int>(it->key().molecule_number()), 
 	    insertion_residue_code,
 	    pt.x(), pt.y(), pt.z(), 

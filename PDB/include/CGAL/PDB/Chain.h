@@ -241,7 +241,7 @@ public:
 	  ++nrit;
 	  between_=true;
 	  if (nrit == rend_ 
-	      || nrit->key().to_index() != rit_->key().to_index()+1){
+	      || nrit->key().index() != rit_->key().index()+1){
 	    operator++();
 	  } else {
 	    make_bond();

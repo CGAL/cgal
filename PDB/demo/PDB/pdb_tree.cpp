@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Model " << it->key() << ":" << std::endl;
     for (Model::Chain_iterator cit= it->model().chains_begin(); 
 	 cit != it->model().chains_end(); ++cit) {
-      std::cout << " Chain: " << static_cast<char>(cit->key().to_index());
+      std::cout << " Chain: " << static_cast<char>(cit->key().index());
       if (!cit->chain().name().empty()) {
 	std::cout << cit->chain().name();
       }

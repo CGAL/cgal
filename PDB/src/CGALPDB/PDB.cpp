@@ -89,8 +89,8 @@ void PDB::load(std::istream &in, bool print_errors){
   for (Model_iterator it= models_begin(); it != models_end(); ++it){
     for (Model::Chain_iterator cit = it->model().chains_begin(); cit != it->model().chains_end(); ++cit){
       cit->chain().set_has_bonds(true);
-      if (names.find(cit->key().to_index()) != names.end()) {
-	cit->chain().set_name(names[cit->key().to_index()]);
+      if (names.find(cit->key().index()) != names.end()) {
+	cit->chain().set_name(names[cit->key().index()]);
       }
     }
   }
@@ -110,7 +110,7 @@ std::ostream& PDB::write(std::ostream &out) const {
     out << header_[i] << std::endl;
   }
   for (Model_const_iterator it = models_begin(); it != models_end(); ++it){
-    it->model().write(it->key().to_index(), out);
+    it->model().write(it->key().index(), out);
   }
   out << "END   \n";
   return out;
@@ -119,7 +119,7 @@ std::ostream& PDB::write(std::ostream &out) const {
 
 PDB::Model_key PDB::push_back(const Model &m) {
   Model_key k(0);
-  if (!empty()) k= Model_key((--models_end())->key().to_index()+1);
+  if (!empty()) k= Model_key((--models_end())->key().index()+1);
   insert(k, m);
   return k;
 }

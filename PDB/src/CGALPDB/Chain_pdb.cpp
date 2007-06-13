@@ -148,7 +148,7 @@ void Chain::process_line(const char *line) {
       a.set_element(element);
       a.set_charge(charge);
       
-      /*if (cur_residue->index().to_index() 
+      /*if (cur_residue->index().index() 
 	!= static_cast<unsigned int>(resnum)){
 	std::ostringstream oss;
 	oss << "Confusion over residue numbers. Expected" << cur_residue->index()
@@ -241,14 +241,14 @@ int Chain::write(char chain, int start_index, std::ostream &out) const {
     const Monomer &res= it->monomer();
     //Residue::Label rl =  res.label();
     //residues_[i]->atoms();
-    start_index= res.write(chain, it->key().to_index(), ' ', start_index, out);
+    start_index= res.write(chain, it->key().index(), ' ', start_index, out);
     
     IR_Map::const_iterator irit= insert_residues_.find(it->key());
     if (irit!= insert_residues_.end()) {
       for (unsigned int i=0; i< irit->data().size(); ++i){
 	start_index= 
-	  irit->data().find(IR_key(i))->data().write(chain, it->key().to_index(),
-						     irit->data().find(IR_key(i))->key().to_index(), start_index, out);
+	  irit->data().find(IR_key(i))->data().write(chain, it->key().index(),
+						     irit->data().find(IR_key(i))->key().index(), start_index, out);
       }
     }
     last_resindex= it->key();
@@ -258,7 +258,7 @@ int Chain::write(char chain, int start_index, std::ostream &out) const {
   if (!residues_.empty()) {
     sprintf(line, terformat, start_index, 
 	    Monomer::type_string(last_type).c_str(), chain, 
-	    last_resindex.to_index(),' ');
+	    last_resindex.index(),' ');
     out << line << std::endl;
   }
   return start_index+1;

@@ -163,7 +163,7 @@ std::vector<Point> Chain::backbone() const {
 /*unsigned int Chain::residue_offset(Residue::Index i) const {
   unsigned int cur= residues_.size();
   if (!residues_.empty()){
-    cur = std::min BOOST_PREVENT_MACRO_SUBSTITUTION(i.to_index(), cur-1);
+    cur = std::min BOOST_PREVENT_MACRO_SUBSTITUTION(i.index(), cur-1);
     if (residues_[cur].index() > i) {
       do {
 	--cur;
