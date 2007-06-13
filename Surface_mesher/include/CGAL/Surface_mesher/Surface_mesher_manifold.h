@@ -224,7 +224,7 @@ namespace CGAL {
     std::string debug_info_header() const
     {
       std::stringstream s;
-      s << SMMBB::debug_info_header() << "," << "number of bad vertices";
+      s << SMMBB::debug_info_header() << "," << "#bad vertices";
       return s.str();
     }
   };  // end Surface_mesher_manifold_base

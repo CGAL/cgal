@@ -29,6 +29,7 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Double_map.h>
+#include <CGAL/Timer.h>
 #include <list>
 #include <string>
 #include <sstream>
@@ -231,13 +232,13 @@ namespace CGAL {
     Mesher_level_conflict_status private_test_point_conflict_impl(const Point& p,
 								  Zone& )
     {
-      Vertex_handle v;
-      if( tr.is_vertex(p, v) )
-      {
-	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
-	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
-      }
-      else
+//       Vertex_handle v;
+//       if( tr.is_vertex(p, v) )
+//       {
+// 	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
+// 	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
+//       }
+//       else
 	return NO_CONFLICT;
     }
 
@@ -615,7 +616,7 @@ namespace CGAL {
 
     std::string debug_info_header() const
     {
-      return "number of facets";
+      return "#facets";
     }
   };  // end Surface_mesher_base
 
@@ -696,7 +697,7 @@ namespace CGAL {
     {
       std::stringstream s;
       s << Base::debug_info() 
-	<< ", " << this->previous().debug_info();
+	<< "," << this->previous().debug_info();
       return s.str();
     }
 
@@ -704,7 +705,7 @@ namespace CGAL {
     {
       std::stringstream s;
       s << Base::debug_info_header()
-	<< ", " << this->previous().debug_info_header();
+	<< "," << this->previous().debug_info_header();
       return s.str();
     }
 
@@ -722,6 +723,8 @@ namespace CGAL {
 
     template <typename Visitor>
     void refine_mesh(Visitor visitor) {
+      Tr& tr = this->triangulation_ref_impl();
+
       if(!initialized)
 	init();
 
@@ -730,17 +733,25 @@ namespace CGAL {
       else {
 	std::cerr << "Refining...\n";
 	int nbsteps = 0;
+	CGAL::Timer timer;
         std::cerr << "Legende of the following line: "
-                  << "(number of steps," << this->debug_info_header()
+                  << "(#vertices,#steps," << this->debug_info_header()
                   << ")\n";
-	std::cerr << "(" << nbsteps << ","
-		  << this->debug_info() << ")";
+	std::cerr 
+	  << boost::format("\r             \r"
+			   "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+	  % tr.number_of_vertices()
+	  % (++nbsteps) % this->debug_info()
+	  % (nbsteps / timer.time());
+	timer.start();
 	while (!is_algorithm_done()) {
 	  one_step (visitor);
-	  std::cerr << "\r             \r"
-		    << "(" << ++nbsteps << ","
-		    << this->debug_info()
-		    << ")";
+	  std::cerr 
+	    << boost::format("\r             \r"
+			     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+	    % tr.number_of_vertices()
+	    % (++nbsteps) % this->debug_info()
+	    % (nbsteps / timer.time());
 	}
 	std::cerr << "\ndone.\n";
       }

@@ -334,7 +334,7 @@ namespace CGAL {
     std::string debug_info_header() const
     {
       std::stringstream s;
-      s << SMB::debug_info_header() << "," << "number of bad edges";
+      s << SMB::debug_info_header() << "," << "#bad edges";
       return s.str();
     }
   };  // end Surface_mesher_regular_edges_base
