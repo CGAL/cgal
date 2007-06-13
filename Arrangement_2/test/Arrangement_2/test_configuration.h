@@ -31,6 +31,9 @@
 #define LINE_ARC_TRAITS                 5
 #define CIRCULAR_ARC_TRAITS             6
 #define CIRCULAR_LINE_ARC_TRAITS        7
+#define CIRCLE_TRAITS                   8
+#define CIRCLE_SEGMENT_TRAITS           9
+#define BEZIER_TRAITS                  10
 
 // Default value based on dependencies:
 #if TEST_TRAITS == CORE_CONIC_TRAITS
