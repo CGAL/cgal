@@ -237,7 +237,6 @@ test_polyline_traits()
     run_trapped_test test_traits data/polylines/vertex polyline_traits
     run_trapped_test test_traits data/polylines/is_vertical polyline_traits
     run_trapped_test test_traits data/polylines/compare_y_at_x polyline_traits
-    #run_trapped_test test_traits data/polylines/compare_y_at_x_left polyline_traits
     run_trapped_test test_traits data/polylines/make_x_monotone polyline_traits
     run_trapped_test test_traits data/polylines/intersect polyline_traits
     run_trapped_test test_traits data/polylines/split polyline_traits
@@ -261,7 +260,6 @@ test_non_caching_polyline_traits()
     run_trapped_test test_traits data/polylines/vertex non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/is_vertical non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/compare_y_at_x non_caching_polyline_traits
-    #run_trapped_test test_traits data/polylines/compare_y_at_x_left non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/make_x_monotone non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/intersect non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/split non_caching_polyline_traits
@@ -285,7 +283,6 @@ test_conic_traits()
     run_trapped_test test_traits data/conics/vertex conic_traits
     run_trapped_test test_traits data/conics/is_vertical conic_traits
     run_trapped_test test_traits data/conics/compare_y_at_x conic_traits
-#   run_trapped_test test_traits data/conics/compare_y_at_x_left conic_traits
     run_trapped_test test_traits data/conics/make_x_monotone conic_traits
     run_trapped_test test_traits data/conics/intersect conic_traits
     run_trapped_test test_traits data/conics/split conic_traits
@@ -306,14 +303,13 @@ test_line_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-#    run_trapped_test test_traits data/compare line_arc_traits
-#    run_trapped_test test_traits data/circular_lines/vertex line_arc_traits
-#    run_trapped_test test_traits data/circular_lines/is_vertical line_arc_traits
-#    run_trapped_test test_traits data/circular_lines/compare_y_at_x line_arc_traits
-#    run_trapped_test test_traits data/circular_lines/make_x_monotone line_arc_traits
-#    run_trapped_test test_traits data/circular_lines/intersect line_arc_traits
-#    run_trapped_test test_traits data/circular_lines/split line_arc_traits
-    #run_trapped_test test_traits data/circular_lines/error line_arc_traits
+    run_trapped_test test_traits data/compare line_arc_traits
+    run_trapped_test test_traits data/circular_lines/vertex line_arc_traits
+    run_trapped_test test_traits data/circular_lines/is_vertical line_arc_traits
+    run_trapped_test test_traits data/circular_lines/compare_y_at_x line_arc_traits
+    run_trapped_test test_traits data/circular_lines/make_x_monotone line_arc_traits
+    run_trapped_test test_traits data/circular_lines/intersect line_arc_traits
+    run_trapped_test test_traits data/circular_lines/split line_arc_traits
     run_trapped_test test_traits data/circular_lines/constructor line_arc_traits
   fi
   clean_tests
@@ -329,13 +325,13 @@ test_circular_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-#    run_trapped_test test_traits data/compare circular_arc_traits
-#    run_trapped_test test_traits data/circular_arcs/vertex circular_arc_traits
-#    run_trapped_test test_traits data/circular_arcs/is_vertical circular_arc_traits
-#    run_trapped_test test_traits data/circular_arcs/compare_y_at_x circular_arc_traits
-#    run_trapped_test test_traits data/circular_arcs/make_x_monotone circular_arc_traits
-#    run_trapped_test test_traits data/circular_arcs/intersect circular_arc_traits
-#    run_trapped_test test_traits data/circular_arcs/split circular_arc_traits
+    run_trapped_test test_traits data/compare circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/vertex circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/is_vertical circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/compare_y_at_x circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/make_x_monotone circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/intersect circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/split circular_arc_traits
     run_trapped_test test_traits data/circular_arcs/constructor circular_arc_traits
   fi
   clean_tests
@@ -445,28 +441,28 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-#  test_segment_traits
-#  test_non_caching_segment_traits
-#  test_polyline_traits
-#  test_non_caching_polyline_traits
-#  test_conic_traits
-#!!test_circle_traits
-#  test_circle_segments_traits
-#  test_bezier_traits
+  test_segment_traits
+  test_non_caching_segment_traits
+  test_polyline_traits
+  test_non_caching_polyline_traits
+  test_conic_traits
+# ! test_circle_traits
+  test_circle_segments_traits
+  test_bezier_traits
 
-#  test_line_arc_traits # "line arcs" (segments) only
+  test_line_arc_traits # "line arcs" (segments) only
   test_circular_arc_traits # circular arcs only
-#  test_circular_line_arc_traits # for both
+  test_circular_line_arc_traits # for both
 
-#  compile_and_run test_insertion
-#  compile_and_run test_removal
-#  compile_and_run test_iso_verts
+  compile_and_run test_insertion
+  compile_and_run test_removal
+  compile_and_run test_iso_verts
 
-#  compile_and_run test_insertion
-#  compile_and_run test_removal
-#  compile_and_run test_iso_verts
+  compile_and_run test_insertion
+  compile_and_run test_removal
+  compile_and_run test_iso_verts
 
-#  compile_and_run point_location_mem_segs_ann
-#  compile_and_run test_vert_ray_shoot_vert_segments
-#  compile_and_run test_construction
+  compile_and_run point_location_mem_segs_ann
+  compile_and_run test_vert_ray_shoot_vert_segments
+  compile_and_run test_construction
 fi
