@@ -6,5 +6,6 @@
 // #define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 // #define CGAL_DEBUG_OCTREE_CONSTRUCTION
 
-// not a debugging macro
-#define CGAL_C2T3_USE_POLYHEDRON
+// not debugging macros
+// #define CGAL_C2T3_USE_POLYHEDRON
+#define CGAL_C2T3_USE_FILE_WRITER_OFF

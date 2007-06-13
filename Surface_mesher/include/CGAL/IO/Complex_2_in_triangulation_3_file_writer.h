@@ -21,6 +21,10 @@
 #ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 #define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 
+#ifdef CGAL_C2T3_USE_FILE_WRITER_OFF
+#  include <CGAL/IO/File_writer_OFF.h>
+#endif
+
 #ifdef CGAL_C2T3_USE_POLYHEDRON
 #  include <CGAL/Polyhedron_3.h>
 #  include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -53,8 +57,80 @@ output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;
   typedef typename Tr::Geom_traits Gt;
+#ifdef CGAL_C2T3_USE_FILE_WRITER_OFF
+  CGAL::File_writer_OFF off;
+  const Tr& tr = c2t3.triangulation();
+  const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
 
-#ifdef CGAL_C2T3_USE_POLYHEDRON
+  off.write_header(os,
+		   tr.number_of_vertices(),
+		   0, // fake number of halfedges, not used.
+		   number_of_facets);
+
+  std::map<Vertex_handle, int> V;
+  int inum = 0;
+  for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
+      vit != tr.finite_vertices_end();
+      ++vit)
+  {
+    V[vit] = inum++;
+    Point p = static_cast<Point>(vit->point());
+    off.write_vertex(p.x(), p.y(), p.z());
+  }
+
+  off.write_facet_header();
+
+  Finite_facets_iterator fit = tr.finite_facets_begin();
+  std::set<Facet> oriented_set;
+  std::stack<Facet> stack;
+
+  CGAL_assertion_code(typename Tr::size_type nb_facets = 0; )
+
+    while (oriented_set.size() != number_of_facets) {
+      while ( fit->first->is_facet_on_surface(fit->second) == false ||
+	      oriented_set.find(*fit) != oriented_set.end() ||
+
+	      oriented_set.find(c2t3.opposite_facet(*fit)) !=
+	      oriented_set.end() ) {
+	++fit;
+      }
+      oriented_set.insert(*fit);
+      stack.push(*fit);
+      while(! stack.empty() ) {
+	Facet f = stack.top();
+	stack.pop();
+	for(int ih = 0 ; ih < 3 ; ++ih) {
+	  const int i1  = tr.vertex_triple_index(f.second, tr. cw(ih));
+	  const int i2  = tr.vertex_triple_index(f.second, tr.ccw(ih));
+	  if( c2t3.face_status(Edge(f.first, i1, i2)) == C2t3::REGULAR ) {
+	    Facet fn = c2t3.neighbor(f, ih);
+	    if (oriented_set.find(fn) == oriented_set.end() &&
+		oriented_set.find(c2t3.opposite_facet(fn)) == oriented_set.end())
+	    {
+	      oriented_set.insert(fn);
+	      stack.push(fn);
+	    }
+	  } // end "if the edge is regular"
+	} // end "for each neighbor of f"
+      } // end "stack non empty"
+    } // end "oriented_set not full"
+
+  for(typename std::set<Facet>::const_iterator fit = 
+	oriented_set.begin();
+      fit != oriented_set.end();
+      ++fit)
+  {
+    off.write_facet_begin(3);
+    for (int i=0; i<3; i++)
+      off.write_facet_vertex_index(V[fit->first->vertex(tr.vertex_triple_index(fit->second, i))]);
+    CGAL_assertion_code(++nb_facets);
+    off.write_facet_end();
+  }
+
+  CGAL_assertion(nb_facets == number_of_facets);
+  off.write_footer();
+
+#elif defined(CGAL_C2T3_USE_POLYHEDRON)
   typedef CGAL::Polyhedron_3<Gt> Polyhedron_3;
   typedef typename Polyhedron_3::HalfedgeDS HalfedgeDS;
 
