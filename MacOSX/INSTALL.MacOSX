@@ -53,3 +53,6 @@ The script creates a directory <demo-executable>.app/ which is the
 root directory of the directory structure needed by MacOSX.
 To run the demo use the "open" command from the prompt:
     prompt:> open <demo-executable>.app
+Since this does not allow to pass arguments on the command-line or reading <stdin>,
+an alternative way to this last step is to call:
+    prompt:> /<full-path>/<demo-executable>.app/Contents/MacOS/<demo-executable>  <arguments>
