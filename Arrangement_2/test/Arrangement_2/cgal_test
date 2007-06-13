@@ -28,6 +28,9 @@ CORE_CONIC_TRAITS=4
 LINE_ARC_TRAITS=5
 CIRCULAR_ARC_TRAITS=6
 CIRCULAR_LINE_ARC_TRAITS=7
+CIRCLE_TRAITS=8
+CIRCLE_SEGMENT_TRAITS=9
+BEZIER_TRAITS=10
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -69,18 +72,20 @@ run_test()
 {
   local name=$1;
   local datafile=$2;
+  local traits_type=$3
+
 
   basedata=`basename "$datafile"`
-  OUTPUTFILE=ProgramOutput.$basedata.$name.$PLATFORM
+  OUTPUTFILE=ProgramOutput.`echo $datafile | tr '/' '.'`.$name.$traits_type
 #  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$name"
   echo "Executing $name $datafile ... "
   echo
   if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
-    echo "   succesful execution of $name $datafile" >> $ERRORFILE
+    echo "   succesful execution of $name $datafile $traits_type" >> $ERRORFILE
   else
-    echo "   ERROR:    execution of $name $datafile" >> $ERRORFILE
+    echo "   ERROR:    execution of $name $datafile $traits_type" >> $ERRORFILE
   fi
 }
 
@@ -91,9 +96,9 @@ run_trapped_test()
 
   if [ "${OSTYPE}" != "cygwin" ]; then
     ulimit -t 1200
-    run_test $1 $2
+    run_test $1 $2 $3
   else
-    run_test $1 $2 &
+    run_test $1 $2 $3 &
     WPID=$!
     trap "kill -9 $WPID" INT
     (sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
@@ -106,8 +111,8 @@ run_trapped_test()
 }
 
 clean_tests()
-{
-  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+{ 
+  eval "make clean > /dev/null 2>&1"
 }
 
 compile_and_run()
@@ -116,6 +121,8 @@ compile_and_run()
 
   echo "Compiling $name ... "
   SUCCES="y"
+  TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS"
+  TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS"
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name' ; then
@@ -178,15 +185,16 @@ test_segment_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-    run_trapped_test test_traits data/segments/vertex
-    run_trapped_test test_traits data/segments/is_vertical
-    run_trapped_test test_traits data/segments/compare_y_at_x
-    run_trapped_test test_traits data/segments/compare_y_at_x_left
-    run_trapped_test test_traits data/segments/make_x_monotone
-    run_trapped_test test_traits data/segments/intersect
-    run_trapped_test test_traits data/segments/split
-    run_trapped_test test_traits data/segments/merge
+    run_trapped_test test_traits data/compare segment_traits
+    run_trapped_test test_traits data/segments/vertex segment_traits
+    run_trapped_test test_traits data/segments/is_vertical segment_traits
+    run_trapped_test test_traits data/segments/compare_y_at_x segment_traits
+    run_trapped_test test_traits data/segments/compare_y_at_x_left segment_traits
+    run_trapped_test test_traits data/segments/make_x_monotone segment_traits
+    run_trapped_test test_traits data/segments/intersect segment_traits
+    run_trapped_test test_traits data/segments/split segment_traits
+    run_trapped_test test_traits data/segments/merge segment_traits
+    run_trapped_test test_traits data/segments/errors segment_traits
   fi
   clean_tests
 }
@@ -197,19 +205,20 @@ test_segment_traits()
 test_non_caching_segment_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_TRAITS
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_TRAITS
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-    run_trapped_test test_traits data/segments/vertex
-    run_trapped_test test_traits data/segments/is_vertical
-    run_trapped_test test_traits data/segments/compare_y_at_x
-    run_trapped_test test_traits data/segments/compare_y_at_x_left
-    run_trapped_test test_traits data/segments/make_x_monotone
-    run_trapped_test test_traits data/segments/intersect
-    run_trapped_test test_traits data/segments/split
-    run_trapped_test test_traits data/segments/merge
+    run_trapped_test test_traits data/compare non_caching_segment_traits
+    run_trapped_test test_traits data/segments/vertex non_caching_segment_traits
+    run_trapped_test test_traits data/segments/is_vertical non_caching_segment_traits
+    run_trapped_test test_traits data/segments/compare_y_at_x non_caching_segment_traits
+    run_trapped_test test_traits data/segments/compare_y_at_x_left non_caching_segment_traits
+    run_trapped_test test_traits data/segments/make_x_monotone non_caching_segment_traits
+    run_trapped_test test_traits data/segments/intersect non_caching_segment_traits
+    run_trapped_test test_traits data/segments/split non_caching_segment_traits
+    run_trapped_test test_traits data/segments/merge non_caching_segment_traits
+    run_trapped_test test_traits data/segments/errors non_caching_segment_traits
   fi
   clean_tests
 }
@@ -220,18 +229,20 @@ test_non_caching_segment_traits()
 test_polyline_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $POLYLINE_TRAITS
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_TRAITS
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-    run_trapped_test test_traits data/polylines/vertex
-    run_trapped_test test_traits data/polylines/is_vertical
-    run_trapped_test test_traits data/polylines/compare_y_at_x
-    run_trapped_test test_traits data/polylines/make_x_monotone
-    run_trapped_test test_traits data/polylines/intersect
-    run_trapped_test test_traits data/polylines/split
-    run_trapped_test test_traits data/polylines/merge
+    run_trapped_test test_traits data/compare polyline_traits
+    run_trapped_test test_traits data/polylines/vertex polyline_traits
+    run_trapped_test test_traits data/polylines/is_vertical polyline_traits
+    run_trapped_test test_traits data/polylines/compare_y_at_x polyline_traits
+    #run_trapped_test test_traits data/polylines/compare_y_at_x_left polyline_traits
+    run_trapped_test test_traits data/polylines/make_x_monotone polyline_traits
+    run_trapped_test test_traits data/polylines/intersect polyline_traits
+    run_trapped_test test_traits data/polylines/split polyline_traits
+    run_trapped_test test_traits data/polylines/merge polyline_traits
+    run_trapped_test test_traits data/polylines/errors polyline_traits
   fi
   clean_tests
 }
@@ -242,18 +253,20 @@ test_polyline_traits()
 test_non_caching_polyline_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_TRAITS
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_TRAITS
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-    run_trapped_test test_traits data/polylines/vertex
-    run_trapped_test test_traits data/polylines/is_vertical
-    run_trapped_test test_traits data/polylines/compare_y_at_x
-    run_trapped_test test_traits data/polylines/make_x_monotone
-    run_trapped_test test_traits data/polylines/intersect
-    run_trapped_test test_traits data/polylines/split
-    run_trapped_test test_traits data/polylines/merge
+    run_trapped_test test_traits data/compare non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/vertex non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/is_vertical non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/compare_y_at_x non_caching_polyline_traits
+    #run_trapped_test test_traits data/polylines/compare_y_at_x_left non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/make_x_monotone non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/intersect non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/split non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/merge non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/errors non_caching_polyline_traits
   fi
   clean_tests
 }
@@ -268,14 +281,17 @@ test_conic_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/conics/compare
-    run_trapped_test test_traits data/conics/vertex
-    run_trapped_test test_traits data/conics/is_vertical
-    run_trapped_test test_traits data/conics/compare_y_at_x
-    run_trapped_test test_traits data/conics/make_x_monotone
-    run_trapped_test test_traits data/conics/intersect
-    run_trapped_test test_traits data/conics/split
-    run_trapped_test test_traits data/conics/merge
+    run_trapped_test test_traits data/compare conic_traits
+    run_trapped_test test_traits data/conics/vertex conic_traits
+    run_trapped_test test_traits data/conics/is_vertical conic_traits
+    run_trapped_test test_traits data/conics/compare_y_at_x conic_traits
+#   run_trapped_test test_traits data/conics/compare_y_at_x_left conic_traits
+    run_trapped_test test_traits data/conics/make_x_monotone conic_traits
+    run_trapped_test test_traits data/conics/intersect conic_traits
+    run_trapped_test test_traits data/conics/split conic_traits
+    run_trapped_test test_traits data/conics/merge conic_traits
+    run_trapped_test test_traits data/conics/errors conic_traits
+    run_trapped_test test_traits data/conics/constructor conic_traits
   fi
   clean_tests
 }
@@ -290,13 +306,15 @@ test_line_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-    run_trapped_test test_traits data/segments/vertex
-    run_trapped_test test_traits data/segments/is_vertical
-    run_trapped_test test_traits data/segments/compare_y_at_x
-    run_trapped_test test_traits data/segments/make_x_monotone
-    run_trapped_test test_traits data/segments/intersect
-    run_trapped_test test_traits data/segments/split
+#    run_trapped_test test_traits data/compare line_arc_traits
+#    run_trapped_test test_traits data/circular_lines/vertex line_arc_traits
+#    run_trapped_test test_traits data/circular_lines/is_vertical line_arc_traits
+#    run_trapped_test test_traits data/circular_lines/compare_y_at_x line_arc_traits
+#    run_trapped_test test_traits data/circular_lines/make_x_monotone line_arc_traits
+#    run_trapped_test test_traits data/circular_lines/intersect line_arc_traits
+#    run_trapped_test test_traits data/circular_lines/split line_arc_traits
+    #run_trapped_test test_traits data/circular_lines/error line_arc_traits
+    run_trapped_test test_traits data/circular_lines/constructor line_arc_traits
   fi
   clean_tests
 }
@@ -311,13 +329,14 @@ test_circular_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-#    run_trapped_test test_traits data/arcs/vertex
-#    run_trapped_test test_traits data/arcs/is_vertical
-#    run_trapped_test test_traits data/arcs/compare_y_at_x
-#    run_trapped_test test_traits data/arcs/make_x_monotone
-#    run_trapped_test test_traits data/arcs/intersect
-#    run_trapped_test test_traits data/arcs/split
+#    run_trapped_test test_traits data/compare circular_arc_traits
+#    run_trapped_test test_traits data/circular_arcs/vertex circular_arc_traits
+#    run_trapped_test test_traits data/circular_arcs/is_vertical circular_arc_traits
+#    run_trapped_test test_traits data/circular_arcs/compare_y_at_x circular_arc_traits
+#    run_trapped_test test_traits data/circular_arcs/make_x_monotone circular_arc_traits
+#    run_trapped_test test_traits data/circular_arcs/intersect circular_arc_traits
+#    run_trapped_test test_traits data/circular_arcs/split circular_arc_traits
+    run_trapped_test test_traits data/circular_arcs/constructor circular_arc_traits
   fi
   clean_tests
 }
@@ -332,13 +351,80 @@ test_circular_line_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/compare
-#    run_trapped_test test_traits data/arcs/vertex
-#    run_trapped_test test_traits data/arcs/is_vertical
-#    run_trapped_test test_traits data/arcs/compare_y_at_x
-#    run_trapped_test test_traits data/arcs/make_x_monotone
-#    run_trapped_test test_traits data/arcs/intersect
-#    run_trapped_test test_traits data/arcs/split
+    run_trapped_test test_traits data/compare circular_line_arc_traits
+    run_trapped_test test_traits data/circular_line_arcs/vertex circular_line_arc_traits
+    run_trapped_test test_traits data/circular_line_arcs/is_vertical circular_line_arc_traits
+    run_trapped_test test_traits data/circular_line_arcs/compare_y_at_x circular_line_arc_traits
+    run_trapped_test test_traits data/circular_line_arcs/make_x_monotone circular_line_arc_traits
+    run_trapped_test test_traits data/circular_line_arcs/intersect circular_line_arc_traits
+    run_trapped_test test_traits data/circular_line_arcs/split circular_line_arc_traits
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# circle traits
+#---------------------------------------------------------------------#
+test_circle_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare circle_traits
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# circle segment traits
+#---------------------------------------------------------------------#
+test_circle_segments_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/vertex circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/is_vertical circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/compare_y_at_x circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/compare_y_at_x_left circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/compare_y_at_x_right circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/make_x_monotone circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/intersect circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/split circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/merge circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/errors circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/constructor circle_segments_traits
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# bezier traits
+#---------------------------------------------------------------------#
+test_bezier_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_TRAITS
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare bezier_traits
+    #run_trapped_test test_traits data/bezier/vertex bezier_traits
+    #run_trapped_test test_traits data/bezier/is_vertical bezier_traits
+    #run_trapped_test test_traits data/bezier/compare_y_at_x bezier_traits
+    #run_trapped_test test_traits data/bezier/compare_y_at_x_left bezier_traits
+    #run_trapped_test test_traits data/bezier/compare_y_at_x_right bezier_traits
+    #run_trapped_test test_traits data/bezier/make_x_monotone bezier_traits
+    #run_trapped_test test_traits data/bezier/intersect bezier_traits
+    #run_trapped_test test_traits data/bezier/split bezier_traits
+    #run_trapped_test test_traits data/bezier/merge bezier_traits
+    #run_trapped_test test_traits data/bezier/errors bezier_traits
+    #run_trapped_test test_traits data/bezier/constructor bezier_traits
   fi
   clean_tests
 }
@@ -359,21 +445,28 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  test_segment_traits
-  test_non_caching_segment_traits
-  test_polyline_traits
-  test_non_caching_polyline_traits
-  test_conic_traits
+#  test_segment_traits
+#  test_non_caching_segment_traits
+#  test_polyline_traits
+#  test_non_caching_polyline_traits
+#  test_conic_traits
+#!!test_circle_traits
+#  test_circle_segments_traits
+#  test_bezier_traits
 
-  test_line_arc_traits		# "line arcs" (segments) only
-  test_circular_arc_traits	# circular arcs only
-  test_circular_line_arc_traits	# for both
+#  test_line_arc_traits # "line arcs" (segments) only
+  test_circular_arc_traits # circular arcs only
+#  test_circular_line_arc_traits # for both
 
-  compile_and_run test_insertion
-  compile_and_run test_removal
-  compile_and_run test_iso_verts
+#  compile_and_run test_insertion
+#  compile_and_run test_removal
+#  compile_and_run test_iso_verts
 
-  compile_and_run point_location
-  compile_and_run test_vert_ray_shoot_vert_segments
-  compile_and_run test_construction
+#  compile_and_run test_insertion
+#  compile_and_run test_removal
+#  compile_and_run test_iso_verts
+
+#  compile_and_run point_location_mem_segs_ann
+#  compile_and_run test_vert_ray_shoot_vert_segments
+#  compile_and_run test_construction
 fi
