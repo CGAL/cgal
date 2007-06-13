@@ -37,7 +37,18 @@
 #elif TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_circular_line_arc_traits_2.h>
+
+#elif TEST_TRAITS == CIRCLE_TRAITS
+#include <CGAL/Arr_circle_traits_2.h>
+
+#elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
+#include <CGAL/Arr_circle_segment_traits_2.h>
+
+#elif TEST_TRAITS == BEZIER_TRAITS
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
 
 #else
 #error No traits (TRAITS) specified!
@@ -82,6 +93,7 @@ typedef Kernel                                                Linear_kernel;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   Algebraic_kernel;
 typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>
                                                               Circular_kernel;
+typedef Circular_kernel::Line_arc_2                           Line_arc_2;
 typedef CGAL::Arr_line_arc_traits_2<Circular_kernel>          Traits;
 
 #define TRAITS_TYPE "Line Arc"
@@ -105,6 +117,34 @@ typedef Circular_kernel::Line_arc_2                           Line_arc_2;
 typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel> Traits;
 
 #define TRAITS_TYPE "Circular Line Arc"
+
+#elif TEST_TRAITS == CIRCLE_TRAITS
+typedef CGAL::Cartesian<Number_type>                          Rat_kernel;
+typedef CGAL::Arr_circle_traits_2<Kernel>                     Traits;
+#define TRAITS_TYPE "Circles"
+
+#elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
+typedef CGAL::Cartesian<Number_type>                          Rat_kernel;
+typedef CGAL::Arr_circle_segment_traits_2<Kernel>             Traits;
+typedef Rat_kernel::FT                                        Rat_nt;
+typedef Rat_kernel::Circle_2                                  Circle_2;
+typedef Rat_kernel::Line_2                                    Line_2;
+typedef Rat_kernel::Segment_2                                 Segment_2;
+typedef Rat_kernel::Point_2                                   Rat_point_2;
+typedef Traits::Point_2                                       Point_2;
+#define TRAITS_TYPE "Circle Segments"
+
+#elif TEST_TRAITS == BEZIER_TRAITS
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits;
+//typedef Traits::Point_2                                 Point_2;
+
+#define TRAITS_TYPE "Bezier"
 
 #else
 #error No traits (TRAITS) specified!
