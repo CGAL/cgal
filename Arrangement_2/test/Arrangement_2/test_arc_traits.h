@@ -118,7 +118,7 @@ Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
   }
   else if (type == 'e' || type == 'E')
   {
-        std::cout << "got here eee" << std::endl;
+    std::cout << "got here eee" << std::endl;
     Circular_kernel::Circular_arc_2 a_temp;
     Circular_kernel::Circle_2 c_temp;
     bool b1,b2;
@@ -165,16 +165,12 @@ bool
 Traits_test<Traits >::
 read_xcurve(stream & is, Traits::X_monotone_curve_2 & xc)
 {
-/*  xc = CGAL::Arr_line_arc_traits_2<Circular_kernel>::
-             X_monotone_curve_2(read_line_arc(is));
-  return true;*/
   // Get the arc type:
   char type;
   is >> type;
   if (is_deg_1(type))
   {
     xc=read_line(type,is);
-    std::cout << "last place xc " << xc << std::endl;
     return true;
   }
   return false;
@@ -188,11 +184,6 @@ bool
 Traits_test<Traits >::
 read_curve(stream & is, Traits::Curve_2 & cv)
 {
-/*
-  cv = CGAL::Arr_line_arc_traits_2<Circular_kernel>::
-             Curve_2(read_line_arc(is));
-  return true;*/
-
   // Get the arc type:
   char type;
   is >> type;
@@ -202,7 +193,6 @@ read_curve(stream & is, Traits::Curve_2 & cv)
     return true;
   }
   return false;
-
 }
 
 #elif TEST_TRAITS == CIRCULAR_ARC_TRAITS
@@ -215,7 +205,6 @@ Traits_test<Traits >::
 read_point(stream & is,
            Traits::Point_2 & p)
 {
-  //typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>          Traits;
   return read_arc_point<Traits, stream>(is, p);
 }
 
@@ -271,7 +260,6 @@ bool
 Traits_test<Traits >::
 read_point(stream & is, Traits::Point_2 & p)
 {
-  //typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel>      Traits;
   return read_arc_point<Traits, stream>(is, p);
 }
 
@@ -285,13 +273,7 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xc)
   // Get the arc type:
   char type;
   is >> type;
-  /*if (type == 'l' || type == 'L')
-  {
-    xc = CGAL::Arr_circular_line_arc_traits_2<Circular_kernel>::
-               X_monotone_curve_2(read_line_arc(is));
-    return true;
-  }
-  else */ if (is_deg_1(type))
+  if (is_deg_1(type))
   {
     xc = read_line(type,is);
     return true;
@@ -314,13 +296,7 @@ read_curve(stream & is, Traits::Curve_2 & cv)
   // Get the arc type:
   char type;
   is >> type;
-  /*if (type == 'l' || type == 'L')
-  {
-    cv = CGAL::Arr_circular_line_arc_traits_2<Circular_kernel>::
-               Curve_2(read_line_arc(is));
-    return true;
-  }
-  else */ if (type == 'a' || type == 'A') 
+  if (type == 'a' || type == 'A') 
   {
     Circular_kernel::Circle_2 c_temp;
     is >> c_temp;
