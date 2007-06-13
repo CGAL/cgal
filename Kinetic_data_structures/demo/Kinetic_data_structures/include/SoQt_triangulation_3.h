@@ -384,12 +384,12 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
 
       }
       else {
-	coords[index]= facet_vertex(*ffi, 0)->point().to_index();
+	coords[index]= facet_vertex(*ffi, 0)->point().index();
 	//coords[index]= ffi->vertex(0)->point().index();
 	++index;;
-	coords[index]= facet_vertex(*ffi, 1)->point().to_index();
+	coords[index]= facet_vertex(*ffi, 1)->point().index();
 	++index;
-	coords[index]= facet_vertex(*ffi, 2)->point().to_index();
+	coords[index]= facet_vertex(*ffi, 2)->point().index();
 	++index;
 	coords[index]= SO_END_LINE_INDEX;
 	++index;
@@ -414,10 +414,10 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
       }
       else {
 	Object_key k= edge_vertex(*fei, 0)->point();
-	coords[index]= k.to_index();
+	coords[index]= k.index();
 	++index;
 	k= edge_vertex(*fei, 1)->point();
-	coords[index]=k.to_index();
+	coords[index]=k.index();
 	++index;
 	coords[index]= SO_END_LINE_INDEX;
 	++index;

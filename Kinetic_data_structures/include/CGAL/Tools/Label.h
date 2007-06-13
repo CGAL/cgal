@@ -47,49 +47,20 @@ public:
     if(0) print();                        // make sure it is compiled
   }
   //! Make the next label
-  This  next_label() {
-    return Label(id_+1);
-  }
-  //! Return the null label
-  bool is_valid() const {
-    return id_ >=0;
-  }
-  unsigned int to_index() const {
-    //CGAL_precondition(is_valid());
-    assert(is_valid()); // change to remove PDB dependency on libCGAL
-    return id_;
-  }
+  
+  CGAL_GETNR(This, successor, return This(id_+1));
 
-  bool operator<(const This &o) const
-  {
-    return id_ < o.id_;
-  }
-  bool operator>=(const This &o) const
-  {
-    return id_ >= o.id_;
-  }  
-  bool operator<=(const This &o) const
-  {
-    return id_ <= o.id_;
-  }
-  bool operator>(const This &o) const
-  {
-    return id_ > o.id_;
-  }
-  bool operator==(const This &o) const
-  {
-    return id_ == o.id_;
-  }
-  bool operator!=(const This &o) const
-  {
-    return id_ != o.id_;
-  }
+  CGAL_IS(valid, return id_ >=0);
 
-  template <class OS>
-  void write(OS &out) const
+  CGAL_GETNR(unsigned int, index, CGAL_assertion(is_valid()); return id_);
+
+  CGAL_COMPARISONS1(id_);
+
+  std::ostream& write(std::ostream &out) const
   {
-    if (id_ == -1) out << "N";
-    else out << id_;
+    if (id_ == -1) out << "(N)";
+    else out << "(" << id_ << ")";
+    return out;
   }
   void print() const
   {
@@ -104,14 +75,7 @@ public:
   }
 };
 
-template <class A_type>
-std::ostream& operator<<(std::ostream &out, const Label<A_type> &label)
-{
-  out << "(";
-  label.write(out);
-  out << ")";
-  return out;
-}
+CGAL_OUTPUT1(Label);
 
 
 CGAL_END_NAMESPACE

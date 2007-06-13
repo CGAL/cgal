@@ -81,11 +81,11 @@ public:
   const Data &operator[](Key key) const
   {
     CGAL_precondition(key.is_valid());
-    CGAL_precondition(storage_[key.to_index()].first == key);
-    CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
+    CGAL_precondition(storage_[key.index()].first == key);
+    CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
     //if (static_cast<unsigned int>(key.index()) >= storage_.size()) return null_object();
     /*else*/
-    return storage_[key.to_index()].second;
+    return storage_[key.index()].second;
   }
 
   //! non operator based method to access a point.
@@ -129,17 +129,17 @@ public:
   */
   void set(Key key, const Data &new_value) {
     CGAL_precondition(key.is_valid());
-    CGAL_precondition(storage_[key.to_index()].first == key);
+    CGAL_precondition(storage_[key.index()].first == key);
     //CGAL_precondition(editing_);
         //CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
-    if (storage_.size() <= static_cast<unsigned int>(key.to_index())) {
-      storage_.resize(key.to_index()+1);
+    if (storage_.size() <= static_cast<unsigned int>(key.index())) {
+      storage_.resize(key.index()+1);
     }
-    storage_[key.to_index()].first=key;
-    storage_[key.to_index()].second=new_value;
+    storage_[key.index()].first=key;
+    storage_[key.index()].second=new_value;
     changed_objects_.push_back(key);
     CGAL_expensive_assertion_code(for (unsigned int i=0; i< storage_.size(); ++i) ) {
-      CGAL_expensive_assertion_code(if (key.to_index() != i && storage_[i].second == storage_[key.to_index()].second) CGAL_LOG(Log::SOME, "WARNING Objects " << Key(i) << " and " << key << " have equal trajectories.\n"));
+      CGAL_expensive_assertion_code(if (key.index() != i && storage_[i].second == storage_[key.index()].second) CGAL_LOG(Log::SOME, "WARNING Objects " << Key(i) << " and " << key << " have equal trajectories.\n"));
     }
 				  
     if (!editing_) finish_editing();
@@ -173,9 +173,9 @@ CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second)
   */
   void erase(Key key) {
     CGAL_precondition(key.is_valid());
-    CGAL_precondition(storage_[key.to_index()].first == key);
+    CGAL_precondition(storage_[key.index()].first == key);
     //CGAL_precondition(editing_);
-    CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
+    CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
     CGAL_expensive_precondition_code(for (Inserted_iterator dit= inserted_begin(); dit != inserted_end(); ++dit))
       {CGAL_expensive_precondition(*dit != key);}
     CGAL_expensive_precondition_code(for (Changed_iterator dit= changed_begin(); dit != changed_end(); ++dit))
@@ -322,8 +322,8 @@ private:
     num_valid_-= deleted_objects_.size();
     CGAL_assertion(num_valid_ >=0);
     for (Erased_iterator it= erased_begin(); it != erased_end(); ++it) {
-      storage_[it->to_index()].second=Data();
-      storage_[it->to_index()].first=Key();
+      storage_[it->index()].second=Data();
+      storage_[it->index()].first=Key();
     }
 
     changed_objects_.clear();

@@ -805,8 +805,8 @@ public:
 
   Vertex_handle vertex_handle(Point_key k) const
   {
-    if (k.is_valid() && k.to_index() < vhs_.size()) {
-      return vhs_[k.to_index()];
+    if (k.is_valid() && k.index() < vhs_.size()) {
+      return vhs_[k.index()];
     }
     else {
       return NULL;
@@ -815,14 +815,14 @@ public:
 
   void set_vertex_handle(Point_key k, Vertex_handle vh) {
     CGAL_precondition(k != Point_key());
-    unsigned int bin= k.to_index();
+    unsigned int bin= k.index();
     while (vhs_.size() <= bin) {
       vhs_.push_back(NULL);
     }
     /*if (vhs_.size() <=bin){
       vhs_.resize(bin+1);
       }*/
-    vhs_[k.to_index()]=vh;
+    vhs_[k.index()]=vh;
   }
 
   typename TraitsT::Side_of_oriented_sphere_3 power_test_object() const
@@ -1010,8 +1010,8 @@ public:
   Point_key replace_vertex(Vertex_handle vh, Point_key k) {
     Point_key ok= vh->point();
     vh->point()=k;
-    vhs_[ok.to_index()]= Vertex_handle();
-    vhs_[k.to_index()]= vh;
+    vhs_[ok.index()]= Vertex_handle();
+    vhs_[k.index()]= vh;
     return ok;
   }
 protected:

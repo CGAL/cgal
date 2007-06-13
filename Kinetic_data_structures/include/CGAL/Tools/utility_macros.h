@@ -92,47 +92,48 @@
 #define CGAL_IFNONEQUAL(a,b,cmp) if (a cmp b) return true;	\
   else if (b cmp a) return false;
 
-#define CGAL_COMPARISONS1(ucname, field) bool operator==(const ucname &o) const { \
+#define CGAL_COMPARISONS1(field) bool operator==(const This &o) const { \
     return (field== o.field);						\
   }									\
-  bool operator!=(const ucname &o) const {				\
+  bool operator!=(const This &o) const {				\
     return (field!= o.field);						\
   }									\
-  bool operator<(const ucname &o) const {				\
+  bool operator<(const This &o) const {				\
     return (field< o.field);						\
   }									\
-  bool operator>(const ucname &o) const {				\
+  bool operator>(const This &o) const {				\
     return (field> o.field);						\
   }									\
-  bool operator>=(const ucname &o) const {				\
+  bool operator>=(const This &o) const {				\
     return (field>= o.field);						\
   }									\
-  bool operator<=(const ucname &o) const {				\
+  bool operator<=(const This &o) const {				\
     return (field<= o.field);						\
   }
 
-#define CGAL_COMPARISONS2(ucname, a, b) bool operator==(const ucname &o) const { \
+#define CGAL_COMPARISONS2(a, b) bool operator==(const This &o) const {	\
     return (a== o.a && b== o.b);					\
   }									\
-  bool operator!=(const ucname &o) const {				\
+  bool operator!=(const This &o) const {				\
     return (a!= o.a || b != o.b);					\
   }									\
-  bool operator<(const ucname &o) const {				\
+  bool operator<(const This &o) const {				\
     if (a< o.a ) return true;						\
     else if (a > o.a) return false;					\
     else return b < o.b;						\
   }									\
-  bool operator>(const ucname &o) const {				\
+  bool operator>(const This &o) const {				\
     if (a> o.a ) return true;						\
     else if (a < o.a) return false;					\
     else return b > o.b;						\
   }									\
-  bool operator>=(const ucname &o) const {				\
+  bool operator>=(const This &o) const {				\
     return !operator<(o);						\
   }									\
-  bool operator<=(const ucname &o) const {				\
+  bool operator<=(const This &o) const {				\
     return !operator>(o);						\
   }
 
 
 #endif
+

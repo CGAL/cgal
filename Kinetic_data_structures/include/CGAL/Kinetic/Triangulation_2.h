@@ -189,8 +189,8 @@ public:
     del_(del) {
     vhs_.resize(del_.number_of_vertices());
     for (typename Triangulation::Vertex_iterator vit = del_.vertices_begin(); vit != del_.vertices_end(); ++vit) {
-      CGAL_assertion(vit->point().to_index() < del_.number_of_vertices());
-      vhs_[vit->point().to_index()]=vit;
+      CGAL_assertion(vit->point().index() < del_.number_of_vertices());
+      vhs_[vit->point().index()]=vit;
     }
     init_data(false);
   
@@ -451,7 +451,7 @@ public:
 
   void insert(Point_key k) {
     // evil hack
-    CGAL_precondition(k.to_index() >= vhs_.size() || vertex_handle(k) == Vertex_handle());
+    CGAL_precondition(k.index() >= vhs_.size() || vertex_handle(k) == Vertex_handle());
     CGAL_TRIANGULATION_2_DEBUG(std::cout << "Inserting " << k << std::endl);
     bool was_2d= (del_.dimension()==2);
 
@@ -641,15 +641,15 @@ protected:
 
 
   Vertex_handle vertex_handle(Point_key k) const {
-    //if (k.to_index() >= vhs_.size()) return Vertex_handle();
-    CGAL_precondition(k.to_index() < vhs_.size());
-    return vhs_[k.to_index()];
+    //if (k.index() >= vhs_.size()) return Vertex_handle();
+    CGAL_precondition(k.index() < vhs_.size());
+    return vhs_[k.index()];
   }
 
 
   void set_vertex_handle(Point_key k, Vertex_handle vh) {
-    vhs_.resize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(k.to_index()+1, vhs_.size()));
-    vhs_[k.to_index()]=vh;
+    vhs_.resize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(k.index()+1, vhs_.size()));
+    vhs_[k.index()]=vh;
   }
 
 

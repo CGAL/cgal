@@ -91,10 +91,10 @@ public:
   const Data &operator[](Key key) const
   {
     CGAL_expensive_precondition(key.is_valid());
-    CGAL_precondition(storage_.find(key.to_index()) != storage_.end());
+    CGAL_precondition(storage_.find(key.index()) != storage_.end());
     //if (static_cast<unsigned int>(key.index()) >= storage_.size()) return null_object();
     /*else*/
-    return storage_.find(key.to_index())->second;
+    return storage_.find(key.index())->second;
   }
 
   //! non operator based method to access a point.
@@ -140,7 +140,7 @@ public:
     //CGAL_precondition(editing_);
     CGAL_precondition(key.is_valid());
     //CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
-    storage_[key.to_index()]=new_value;
+    storage_[key.index()]=new_value;
     changed_objects_.push_back(key);
     if (!editing_) finish_editing();
   }
@@ -153,7 +153,7 @@ public:
     //CGAL_precondition(editing_);
     Key ret(next_key_); ++next_key_;
     new_objects_.push_back(ret);
-    storage_[ret.to_index()]=ob;
+    storage_[ret.index()]=ob;
 
     if (!editing_) finish_editing();
     return ret;
@@ -171,7 +171,7 @@ public:
   void erase(Key key) {
     //CGAL_precondition(editing_);
     CGAL_precondition(key.is_valid());
-    CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
+    CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
     CGAL_expensive_precondition_code(for (Inserted_iterator dit= inserted_begin(); dit != inserted_end(); ++dit))
       {CGAL_expensive_precondition(*dit != key);}
     CGAL_expensive_precondition_code(for (Changed_iterator dit= changed_begin(); dit != changed_end(); ++dit))
@@ -322,7 +322,7 @@ private:
     }
 
     for (Erased_iterator it= erased_begin(); it != erased_end(); ++it) {
-      storage_.erase(it->to_index());
+      storage_.erase(it-.index());
     }
 
     changed_objects_.clear();

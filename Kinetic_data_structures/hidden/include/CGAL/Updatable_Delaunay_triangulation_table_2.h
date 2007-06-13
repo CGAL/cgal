@@ -573,7 +573,7 @@ public:
 #else
       if (is_active(key)) {
         Static_point_2 fp= final(key);
-        double start_time= coef_cache_[key.to_index()].start_time();
+        double start_time= coef_cache_[key.index()].start_time();
         
         for (unsigned int i=0; i< 2; ++i){
           NT c[2];
@@ -631,8 +631,8 @@ public:
  
   /*void set(Key key, const Data &new_value) {
     CGAL_precondition(key.is_valid());
-    CGAL_assertion(storage_.size() > static_cast<unsigned int>(key.to_index()));
-    storage_[key.to_index()]=new_value;
+    CGAL_assertion(storage_.size() > static_cast<unsigned int>(key.index()));
+    storage_[key.index()]=new_value;
     if (editing_== LOGGED) changed_objects_.push_back(key);
     }*/
 
@@ -829,7 +829,7 @@ public:
 #else
 
     if (is_active(a)) {
-      return coef_cache_[a.to_index()][i][0] + ct*coef_cache_[a.to_index()][i][1];
+      return coef_cache_[a.index()][i][0] + ct*coef_cache_[a.index()][i][1];
     } else {
       return CGAL::to_interval(initial(a)[i]);
     }
@@ -868,13 +868,13 @@ public:
     return c[0]- bc[0] + ct*(c[1]-bc[1]);
 #else
     if (is_active(a) && is_active(base)) {
-      return coef_cache_[a.to_index()][i][0]
-	- coef_cache_[base.to_index()][i][0] 
-	+ ct*(coef_cache_[a.to_index()][i][1]- coef_cache_[base.to_index()][i][1]);
+      return coef_cache_[a.index()][i][0]
+	- coef_cache_[base.index()][i][0] 
+	+ ct*(coef_cache_[a.index()][i][1]- coef_cache_[base.index()][i][1]);
     } else if (is_active(a)) {
-      return coef_cache_[a.to_index()][i][0] - INT(initial(base)[i]) + ct*coef_cache_[a.to_index()][i][1];
+      return coef_cache_[a.index()][i][0] - INT(initial(base)[i]) + ct*coef_cache_[a.index()][i][1];
     } else if (is_active(base)) {
-      return INT(initial(a)[i])- coef_cache_[base.to_index()][i][0] - ct*coef_cache_[base.to_index()][i][1];
+      return INT(initial(a)[i])- coef_cache_[base.index()][i][0] - ct*coef_cache_[base.index()][i][1];
     } else {
       return INT(initial(a)[i]) - INT(initial(base)[i]);
     }
@@ -920,7 +920,7 @@ public:
 
 
   bool is_active(Key k) const {
-    return active_[k.to_index()];
+    return active_[k.index()];
   }
 
   void preactivate(double t, Key k) {
@@ -934,20 +934,20 @@ public:
 		INT(CGAL::to_interval(final(k)[1])),
 		INT(t), Protected_array_pointer<INT, 2>(y));
   
-    coef_cache_[k.to_index()]= Coef_data(t, x[0], x[1], y[0], y[1]);
+    coef_cache_[k.index()]= Coef_data(t, x[0], x[1], y[0], y[1]);
   }
 
   /*bool is_activating(Key k) const {
-    return coef_cache_[k.to_index()].start_time() == next_activation_;
+    return coef_cache_[k.index()].start_time() == next_activation_;
     }*/
 
   void activate(double, Key k) {
 
     ++stat_number_of_activated_vertices_;
     //CGAL_precondition(t.inf() == t.sup());
-    //CGAL_precondition(active_[k.to_index()]==false);
-    if (!active_[k.to_index()]) {
-      active_[k.to_index()]=true;
+    //CGAL_precondition(active_[k.index()]==false);
+    if (!active_[k.index()]) {
+      active_[k.index()]=true;
       changed_objects_.push_back(k);
       exact_points_.erase(k);
       //aot_->set(k, kp);
@@ -1369,14 +1369,14 @@ public:
 	       ret);
     
 #else
-    incircle_p(coef_cache_[a.to_index()][0],
-	       coef_cache_[a.to_index()][1],
-	       coef_cache_[b.to_index()][0],
-	       coef_cache_[b.to_index()][1],
-	       coef_cache_[c.to_index()][0],
-	       coef_cache_[c.to_index()][1],
-	       coef_cache_[d.to_index()][0],
-	       coef_cache_[d.to_index()][1],
+    incircle_p(coef_cache_[a.index()][0],
+	       coef_cache_[a.index()][1],
+	       coef_cache_[b.index()][0],
+	       coef_cache_[b.index()][1],
+	       coef_cache_[c.index()][0],
+	       coef_cache_[c.index()][1],
+	       coef_cache_[d.index()][0],
+	       coef_cache_[d.index()][1],
 	       ret);
 #endif
 

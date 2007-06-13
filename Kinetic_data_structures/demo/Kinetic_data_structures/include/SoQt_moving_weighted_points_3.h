@@ -291,7 +291,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_coordinates()
     double w= CGAL::to_double(pt.weight());
     if (w < 0) w=0;
     double radius = std::sqrt(w);
-    pts[it->to_index()].setValue(CGAL::to_double(pt.point().x()), CGAL::to_double(pt.point().y()),
+    pts[it-.index()].setValue(CGAL::to_double(pt.point().x()), CGAL::to_double(pt.point().y()),
 			      CGAL::to_double(pt.point().z()));
     if (vpts != NULL) vpts[cp].setValue(CGAL::to_double(pt.point().x()),
 					CGAL::to_double(pt.point().y()),
@@ -338,7 +338,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_tree()
   int maxl=-1;
   int num=0;
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin(); it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
-    if (static_cast<int>(it->to_index()) > maxl) maxl= it->to_index();
+    if (static_cast<int>(it-.index()) > maxl) maxl= it-.index();
     ++num;
   }
 

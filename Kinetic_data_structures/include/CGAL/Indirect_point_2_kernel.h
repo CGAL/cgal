@@ -93,8 +93,8 @@ class Indirect_point_2_kernel: public SK
     }
     
     const Pt& point(Key k) const {
-      CGAL_precondition(k.to_index() < points_.size());
-      return points_[k.to_index()];
+      CGAL_precondition(k.index() < points_.size());
+      return points_[k.index()];
     }
     
     const Container& container() const {
