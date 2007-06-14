@@ -5,6 +5,7 @@
 //#include <CGAL/Kinetic/IO/Qt_widget_2.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/internal/tds_2_helpers.h>
+#include <CGAL/Kinetic/Listener.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
@@ -27,9 +28,9 @@ public:
 			      typename Qt_mpt::Handle &mps,
 			      typename Kinetic_Delaunay::Handle &kdel,
 			      double threshold): mpt_(mps),
-						 listener_(gui, this),
 						 kdel_(kdel),
 						 threshold_(threshold) {
+    CGAL_KINETIC_INIT_LISTEN(Qt_gui, gui);
   }
 
 protected:
@@ -51,12 +52,14 @@ protected:
     return std::acos(ac);
   }
 
+  CGAL_KINETIC_LISTEN1(Qt_gui, PICTURE_IS_VALID, draw());
+  
         typedef typename Qt_gui::Listener QTL;
 
   //! This class listens for redraw requests (PICTURE_IS_VALID becoming false)
   /*!
     It calls the draw method when it recieves a notification.
-  */
+  
   class Listener: public QTL
   {
     typedef QTL P;
@@ -70,7 +73,11 @@ protected:
   protected:
     Qt_del *t_;
   };
-  friend class Listener;
+  friend class Listener;*/
+
+  void draw() const {
+    draw(CGAL_KINETIC_NOTIFIER(Qt_gui)->widget(), CGAL_KINETIC_NOTIFIER(Qt_gui)->current_time());
+  }
 
   //! Draw the triangulation.
   void draw( CGAL::Qt_widget &w, double t) const
@@ -131,7 +138,7 @@ protected:
   }
 
   typename Qt_mpt::Handle mpt_;
-  Listener listener_;
+  //Listener listener_;
   typename Kinetic_Delaunay::Handle kdel_;
   double threshold_;
 };

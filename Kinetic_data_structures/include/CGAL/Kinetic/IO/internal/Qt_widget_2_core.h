@@ -35,7 +35,26 @@ namespace CGAL
       {
 	Q_OBJECT
       public:
-	class Listener
+
+	typedef Qt_widget_2_core* Handle;
+	typedef Qt_widget_2_core This;
+      private:			
+	struct Listener_core{						
+	  typedef  This Notifier;		
+	  typedef enum {PICTURE_IS_CURRENT} Notification_type;		
+	};								
+      public:							
+	typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	
+	friend class CGAL::Kinetic::Listener_base<Listener_core>;	
+      private:							
+	void set_listener(Listener *sk) {				
+	  listener_=sk;						
+	}								
+	Listener* listener() {return listener_.get();}		
+	Listener::Handle listener_;
+      public:
+
+	/*class Listener
 	{
 	public:
 	  Listener(Qt_widget_2_core *widget): widget_(widget) {
@@ -55,7 +74,7 @@ namespace CGAL
 	  Qt_widget_2_core *widget(){return widget_;}
 	protected:
 	  Qt_widget_2_core *widget_;
-	};
+	  };*/
 
 	Qt_widget_2_core(QMainWindow *parent);
 
@@ -70,15 +89,8 @@ namespace CGAL
 	  if (tf==false) redraw();
 	}
       protected:
-	Listener *drawable_;
 	bool is_drawn_;
-      private:
-	friend class Listener;
-	void set_listener(Listener *d) {
-	  //CGAL_precondition(drawable_==NULL);
-	  drawable_=d;
-	  //redraw(); // this doesn't work since virtual functions can't be called from teh constructor
-	}
+
       };
     }
   }

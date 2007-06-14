@@ -22,8 +22,7 @@
 #define CGAL_KINETIC_ENCLOSING_BOX_3_H
 #include <CGAL/basic.h>
 #include <CGAL/Kinetic/Ref_counted.h>
-#include <CGAL/Kinetic/Active_objects_listener_helper.h>
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/Enclosing_box_3.h>
 #include <CGAL/Kinetic/Event_base.h>
 
@@ -74,10 +73,7 @@ class  Enclosing_box_3: public Ref_counted<Enclosing_box_3<Traits> >
   typedef typename Traits::Kinetic_kernel Kinetic_kernel;
   typedef typename Traits::Active_points_3_table Active_points_3_table;
 
-  typedef typename CGAL::Kinetic::Simulator_kds_listener<typename Simulator::Listener, This> Simulator_listener;
-  friend  class CGAL::Kinetic::Simulator_kds_listener<typename Simulator::Listener, This>;
-  typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename Active_points_3_table::Listener, This> Active_points_3_table_listener;
-  friend class CGAL::Kinetic::Active_objects_listener_helper<typename Active_points_3_table::Listener, This>;
+  CGAL_KINETIC_DECLARE_AOT_LISTENER(typename Active_points_3_table);
 
   typedef typename Simulator::Event_key Event_key;
   typedef typename Simulator::Time Time;
@@ -99,8 +95,7 @@ public:
 
   typedef typename Fn::NT NT;
   //typedef double NT;
-  Enclosing_box_3(Traits tr, NT xmin=-10, NT xmax=10, NT ymin=-10, NT ymax=10, NT zmin=-10, NT zmax=10):traits_(tr),
-													motl_(tr.active_points_3_table_handle(), this) {
+  Enclosing_box_3(Traits tr, NT xmin=-10, NT xmax=10, NT ymin=-10, NT ymax=10, NT zmin=-10, NT zmax=10):traits_(tr) {
     CGAL_assertion(xmin<xmax);
     CGAL_assertion(ymin<ymax);
     CGAL_assertion(zmin<zmax);
@@ -110,6 +105,7 @@ public:
     bounds_[BOTTOM]=ymin;
     bounds_[FRONT]=zmax;
     bounds_[BACK]=zmin;
+    CGAL_KINETIC_INITIALIZE_AOT_LISTENER(tr.active_points_3_table_handle());
   };
 
   ~Enclosing_box_3() {
@@ -287,8 +283,6 @@ protected:
   NT bounds_[6];
   Traits traits_;
   std::map<Point_key, Event_key> certs_;
-  Active_points_3_table_listener motl_;
-
 };
 
 CGAL_KINETIC_END_NAMESPACE

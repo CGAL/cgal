@@ -690,7 +690,7 @@ void Default_simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
     //last_event_time_= -std::numeric_limits<Time>::infinity();
     CGAL_LOG(Log::SOME, "Current time is " << cur_time_ << " and was " << oct
 		     << ", end_time() is " << end_time() << std::endl);
-    CGAL_KINETIC_MULTISIGNAL(DIRECTION_OF_TIME);
+    CGAL_KINETIC_MULTINOTIFY(DIRECTION_OF_TIME);
   }
   else {
     CGAL_LOG(Log::SOME, dir << " " << end_time() << " " << cur_time_ << std::endl);
@@ -704,7 +704,7 @@ void Default_simulator<S, PQ>::audit_all_kdss()
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
   cur_time_= Time(audit_time_);
   CGAL_LOG(Log::SOME, "Auditing KDSs at time " << audit_time() << std::endl);
-  CGAL_KINETIC_MULTISIGNAL(HAS_AUDIT_TIME);
+  CGAL_KINETIC_MULTINOTIFY(HAS_AUDIT_TIME);
   queue_.audit_events();
 #endif
 }

@@ -36,19 +36,21 @@ class Multi_listener_base: public Interface
 public:
   typedef typename Interface::Notifier_handle::element_type Notifier;
 
-  Multi_listener_base(typename Interface::Notifier_handle &nh): h_(nh) {
-    h_->new_listener(this);
-  }
-
-  Multi_listener_base(Notifier* nh): h_(nh) {
-    h_->new_listener(this);
-  }
-
   Multi_listener_base(){}
 
   virtual ~Multi_listener_base() {
-    h_->delete_listener(this);
+    if (h_ != NULL) h_->delete_listener(this);
   }
+
+  void set_notifier(Notifier * n) {
+    if (h_!= NULL) h_->delete_listener(this);
+    h_=n;
+    h_->new_listener(this);
+  }
+  void set_notifier(typename Interface::Notifier_handle t) {
+    set_notifier(t.get());
+  }
+
 
   typename Interface::Notifier_handle::element_type* notifier() {
     return h_.get();
@@ -101,7 +103,7 @@ private:						\
   }							\
   std::vector<Listener*> listeners_;
 
-#define CGAL_KINETIC_MULTISIGNAL(field) for(typename std::vector<Listener*>::iterator it= listeners_.begin(); it != listeners_.end(); ++it){ \
+#define CGAL_KINETIC_MULTINOTIFY(field) for(typename std::vector<Listener*>::iterator it= listeners_.begin(); it != listeners_.end(); ++it){ \
     (*it)->new_notification(Listener::field);				\
   }
 

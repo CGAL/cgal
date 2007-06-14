@@ -24,6 +24,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_objects_listener.h>
+#include <CGAL/Kinetic/Listener.h>
 #include <sstream>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
@@ -45,12 +46,13 @@ protected:
   typedef Qt_moving_points_2<Traits, GUI> This;
 
   typedef typename Traits::Simulator Simulator;
-  typedef typename GUI::Listener Gui_listener;
-  typedef typename Simulator::Listener Simulator_listener;
-  typedef CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This> Siml;
-  friend class CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This>;
+  // typedef typename GUI::Listener Gui_listener;
+  //typedef typename Simulator::Listener Simulator_listener;
+  //typedef CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This> Siml;
+  //  friend class CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This>;
   typedef typename Traits::Static_kernel::FT NT;
-  class Guil;
+  //class Guil;
+  CGAL_KINETIC_LISTEN1(Simulator, DIRECTION_OF_TIME, reverse_time());
 public:
   //typedef typename CGAL::Ref_counted_pointer<This> Pointer;
   //typedef typename CGAL::Const_ref_counted_pointer<This> Const_handle;
@@ -66,9 +68,11 @@ public:
 				 cc_(ik_.current_coordinates_object()),
 				 _mode(POINT), _radius(.2),
 				 direction_of_time_(CGAL::POSITIVE),
-				 guil_(sim, const_cast<This*>(this)),
-				 siml_(tr.simulator_handle(),const_cast<This*>( this)),
+				 //guil_(sim, const_cast<This*>(this)),
+				 //siml_(tr.simulator_handle(),const_cast<This*>( this)),
 				 rt_(tr.kinetic_kernel_object().reverse_time_object()) {
+    CGAL_KINETIC_INIT_LISTEN(GUI, sim);
+    CGAL_KINETIC_INIT_LISTEN(Simulator, tr.simulator_handle());
     ptsz_=10;
   };
 
@@ -103,7 +107,7 @@ public:
 
 
   unsigned int number_visible(NT xmin, NT xmax, NT ymin, NT ymax) const {
-    typename Traits::Simulator::NT ntt(guil_.notifier()->current_time());
+    typename Traits::Simulator::NT ntt(CGAL_KINETIC_NOTIFIER(GUI)->current_time());
     ik_.set_time(ntt);
     unsigned int ret=0;
     for (typename Traits::Active_points_2_table::Key_iterator
@@ -129,8 +133,8 @@ public:
     }*/
 
 protected:
-
-  class Guil: public Gui_listener
+  CGAL_KINETIC_LISTEN1(GUI,PICTURE_IS_VALID, draw());
+  /*class Guil: public Gui_listener
   {
     typedef Gui_listener P;
     typedef Qt_moving_points_2<Traits, GUI> QtMP;
@@ -144,7 +148,7 @@ protected:
   protected:
     QtMP *t_;
   };
-  friend class Guil;
+  friend class Guil;*/
 
   void draw() const;
 
@@ -156,8 +160,8 @@ protected:
   Draw_mode _mode;
   double _radius;
   CGAL::Sign direction_of_time_;
-  Guil guil_;
-  Siml siml_;
+  //Guil guil_;
+  //Siml siml_;
   int ptsz_;
   typename Traits::Kinetic_kernel::Reverse_time rt_;
 };
@@ -170,22 +174,22 @@ void Qt_moving_points_2<T,G>::draw() const
   typedef typename Traits::Static_kernel::Circle_2 C;
   typedef typename Traits::Kinetic_kernel::Is_constant IC;
   IC ic = traits_.kinetic_kernel_object().is_constant_object();
-  typename Traits::Simulator::NT ntt(guil_.notifier()->current_time());
+  typename Traits::Simulator::NT ntt(CGAL_KINETIC_NOTIFIER(GUI)->current_time());
   ik_.set_time(ntt);
 
-  CGAL::Qt_widget *w= guil_.widget();
+  CGAL::Qt_widget &w= CGAL_KINETIC_NOTIFIER(GUI)->widget();
 
 
-  unsigned int numv= number_visible(w->x_min(), w->x_max(),
-				    w->y_min(), w->y_max());
+  unsigned int numv= number_visible(w.x_min(), w.x_max(),
+				    w.y_min(), w.y_max());
   if (numv < 200) {
-    *w << CGAL::PointSize(ptsz_) << CGAL::LineWidth(1);
+    w << CGAL::PointSize(ptsz_) << CGAL::LineWidth(1);
   } else if (numv < 800) {
-    *w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(1,ptsz_/2)) << CGAL::LineWidth(1);
+    w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(1,ptsz_/2)) << CGAL::LineWidth(1);
   } else if (numv < 2000) {
-    *w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(1,ptsz_/4)) << CGAL::LineWidth(1);
+    w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(1,ptsz_/4)) << CGAL::LineWidth(1);
   } else {
-    *w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(ptsz_/8, 1)) << CGAL::LineWidth(1);
+    w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(ptsz_/8, 1)) << CGAL::LineWidth(1);
   }
   //out << C(P2(0,0), 2) << C(P2(0,0), 1);
   //out << CGAL::BackgroundColor(CGAL::Color(125,125,125));
@@ -195,26 +199,26 @@ void Qt_moving_points_2<T,G>::draw() const
        it != traits_.active_points_2_table_handle()->keys_end(); ++it) {
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
     if (ic(traits_.active_points_2_table_handle()->at(*it))) {
-      *w << CGAL::FillColor(CGAL::Color(150,150,150));
+      w << CGAL::FillColor(CGAL::Color(150,150,150));
       //out.setFillColor(CGAL::Color(0,255,0));
-      *w << CGAL::Color(150,150,150);
+      w << CGAL::Color(150,150,150);
     } else {
-      *w << CGAL::FillColor(CGAL::Color(0,0,0));
+      w << CGAL::FillColor(CGAL::Color(0,0,0));
       //out.setFillColor(CGAL::Color(0,255,0));
-      *w << CGAL::Color(0,0,0);
+      w << CGAL::Color(0,0,0);
     }
     typename Traits::Static_kernel::Point_2 pt= cc_(*it);
     if (_mode== OUTLINE) {
-      *w << C(pt, _radius);
+      w << C(pt, _radius);
     }
     else if (_mode == POINT) {
-      *w << pt;
+      w << pt;
     }
     if (numv < 150) {
       std::ostringstream oss;
       oss << *it;
-      w->get_painter().drawText(w->x_pixel(CGAL::to_double(pt.x()))+3,
-				w->y_pixel(CGAL::to_double(pt.y()))-3,
+      w.get_painter().drawText(w.x_pixel(CGAL::to_double(pt.x()))+3,
+				w.y_pixel(CGAL::to_double(pt.y()))-3,
 				QString(oss.str().c_str()));
     }
   }

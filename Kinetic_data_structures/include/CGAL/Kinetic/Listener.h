@@ -67,18 +67,7 @@ class Listener_base: public Interface, public boost::noncopyable
 {
   typedef Listener_base<Interface> LB_this;
 public:
-  typedef typename Interface::Notifier_handle::element_type Notifier;
-
-  //typedef typename Notifier::Handle Notifier_handle;
-  Listener_base(typename Interface::Notifier_handle &nh): h_(nh) {
-    CGAL_precondition(h_->listener()==NULL);
-    h_->set_listener(this);
-  }
-
-  Listener_base(Notifier* nh): h_(nh) {
-    CGAL_precondition(h_->listener()==NULL);
-    h_->set_listener(this);
-  }
+  typedef typename Interface::Notifier Notifier;  
 
   Listener_base(){}
 
@@ -91,24 +80,27 @@ public:
     passed. Wrap it with a Notifier_pointer if you for some reason
     which to store it.
   */
-  typename Interface::Notifier_handle::element_type* notifier() {
+  Notifier* notifier() {
     return h_.get();
   }
   //! Constant version.
   /*!
     See Listener::notifier()
   */
-  const typename Interface::Notifier_handle::element_type* notifier() const
+  const Notifier* notifier() const
   {
     return h_.get();
   }
 
-  void set_notifier(typename Interface::Notifier_handle::element_type* t) {
+  template <class Ptr>
+ void set_notifier(Ptr t) {
     if (h_!= NULL) h_->set_listener(NULL);
     h_=t;
+    CGAL_precondition(h_->listener() == NULL);
     h_->set_listener(this);
   }
 
+ 
   //! The method called when there is a runtime notification to be made
   /*!  The Notification_type is the type of notification to be made,
     generally an enum with the name of a field of the object providing
@@ -116,9 +108,9 @@ public:
   */
   virtual void new_notification(typename Interface::Notification_type nt)=0;
 
-  struct Pointer:public boost::noncopyable {
-    Pointer(): p_(NULL){}
-    Pointer(LB_this *p):p_(p){}
+  struct Handle:public boost::noncopyable {
+    Handle(): p_(NULL){}
+    Handle(LB_this *p):p_(p){}
     LB_this &operator*(){return *p_;}
     const LB_this &operator*() const {return *p_;}
     LB_this *operator->(){return p_;}
@@ -132,7 +124,7 @@ public:
     void operator=(LB_this *o) {
       p_=o;
     }
-    /*CGAL_COPY_CONSTRUCTOR(Pointer);
+    /*CGAL_COPY_CONSTRUCTOR(Handle);
     void copy_from(const LB_this &o) {
       
     }*/
@@ -143,16 +135,16 @@ public:
   };
   
 protected:
-  typename Interface::Notifier_handle h_;
+  typename Notifier::Handle h_;
 };
 
 
-#define CGAL_KINETIC_LISTENER(...) private:		  \
-  struct Listener_core{\
-      typedef typename This::Handle Notifier_handle;\
-      typedef enum {__VA_ARGS__} Notification_type;\
-  };						   \
-public:\
+#define CGAL_KINETIC_LISTENER(...) private:			\
+  struct Listener_core{						\
+    typedef This Notifier;					\
+    typedef enum {__VA_ARGS__} Notification_type;		\
+  };								\
+  public:							\
   typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
   friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
 private:							\
@@ -160,35 +152,65 @@ private:							\
     listener_=sk;						\
   }								\
   Listener* listener() {return listener_.get();}		\
-  typename Listener::Pointer listener_;
+  typename Listener::Handle listener_;
+
+
+
 
 #define CGAL_KINETIC_NOTIFY(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
 
 #define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL);
 
+
+#define CGAL_KINETIC_LISTENER_BASICS(Name, KDS)	\
+  public:					\
+  Name(): recipient_(NULL){}			\
+  typedef KDS Recipient;				\
+  Recipient* recipient() const {return recipient_;}\
+  void set_recipient(Recipient *r){recipient_=r;}	\
+  private:					\
+  Recipient* recipient_;
+
+
+
+
 #define CGAL_KINETIC_LISTEN1(Notifier, NOTIF, function)\
   private:								\
-  struct Notifier##_listener: public Notifier::Listener {			\
-    Notifier##_listener(): t_(NULL){}					\
-    void set_recipient(This *t){CGAL_precondition(t_==NULL); t_=t;}	\
+  struct Notifier##_listener: public Notifier::Listener {		\
+    CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This);		\
+  public:								\
     virtual void new_notification(typename Notifier::Listener::Notification_type t) { \
-      if (t== Notifier::Listener::NOTIF) 	t_->function();		\
+      if (recipient() != NULL && t== Notifier::Listener::NOTIF) recipient()->function; \
       else {								\
       }									\
     }									\
-private:							\
-    This *t_;							\
   };								\
-  friend class Listener;\
+  friend class Notifier##_listener;					\
   Notifier##_listener listener_##Notifier##_;
 
-/*  						   ********/
-  
+#define CGAL_KINETIC_LISTEN2(Notifier, NOTIF, function, NOTIF2, function2) \
+  private:								\
+  struct Notifier##_listener: public Notifier::Listener {			\
+    CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This);		\
+  public:								\
+    virtual void new_notification(typename Notifier::Listener::Notification_type t) { \
+      if (recipient()== NULL) return;					\
+      if (t== Notifier::Listener::NOTIF) 	recipient()->function();	\
+      else if (t== Notifier::Listener::NOTIF2) 	recipient()->function2; \
+      else {								\
+      }									\
+    }									\
+  };								\
+  friend class Notifier##_listener;					\
+  Notifier##_listener listener_##Notifier##_;
+
+#define CGAL_KINETIC_NOTIFIER(Notifier) listener_##Notifier##_.notifier()
 
 #define CGAL_KINETIC_INIT_LISTEN(Notifier, ptr)	\
   listener_##Notifier##_.set_recipient(this);	\
   listener_##Notifier##_.set_notifier(ptr);
   
 
+  
 CGAL_KINETIC_END_NAMESPACE
 #endif

@@ -59,9 +59,9 @@ public:
   typedef internal::Qt_widget_2_core Qt_widget;
   typedef internal::Qt_window_2 Qt_window;
  
-   class Base_listener;
+  //class Base_listener;
 
-  struct Listener_core
+  /* struct Listener_core
   {
     typedef Qt_widget_2<Simulator_t> Container;
     typedef enum {PICTURE_IS_VALID}
@@ -77,7 +77,12 @@ public:
 
   //! The base class for listeners for events.
   typedef Multi_listener<Listener_core> Listener;
-  friend class  Multi_listener<Listener_core>;
+  friend class  Multi_listener<Listener_core>;*/
+  CGAL_KINETIC_LISTEN1(Qt_widget, PICTURE_IS_CURRENT, draw());
+  CGAL_KINETIC_LISTEN1(Graphical_base, CURRENT_TIME, widget().set_picture_is_current(false));
+
+  CGAL_KINETIC_MULTILISTENER(PICTURE_IS_VALID);
+public:
   typedef Simulator_t Simulator;
   //typedef Const_ref_counted_pointer<This> Const_point;
 
@@ -85,8 +90,7 @@ public:
   Qt_widget_2(int argc, char *argv[],
 	      typename  Simulator::Handle sh,
 	      double xmin=-10,double xmax=10, double ymin=-10, double ymax=10): app_(new QApplication(argc, argv)),
-										base_(new Graphical_base(sh)),
-										base_l_( base_, this) {
+										base_(new Graphical_base(sh)){
 
     app_->setMainWidget(new Qt_window(static_cast<int>(std::floor(xmin)),
 				      static_cast<int>(std::ceil(xmax)),
@@ -94,13 +98,16 @@ public:
 				      static_cast<int>(std::ceil(ymax))));
     window()->setCaption("KDS");
     window()->show();
-    window_l_ = std::auto_ptr<Window_listener>(new Window_listener(window()->button_handler(), base_));
-    widget_l_ = std::auto_ptr<Widget_listener>(new Widget_listener(widget(), this));
+    CGAL_KINETIC_INIT_LISTEN(Qt_widget, &widget());
+    CGAL_KINETIC_INIT_LISTEN(Graphical_base, base_);
+    //CGAL_KINETIC_INIT_LISTENER(Graphical_base, window()->button_handler()
+    //window_l_ = std::auto_ptr<Window_listener>(new Window_listener(window()->button_handler(), base_));
+    //widget_l_ = std::auto_ptr<Widget_listener>(new Widget_listener(widget(), this));
   }
 
   //! start the gui
   int begin_event_loop() {
-    widget()->set_picture_is_current(false);
+    widget().set_picture_is_current(false);
     return app_->exec();
   }
 
@@ -143,7 +150,8 @@ public:
   }
 
   // these should be protected, but vc seems to have problems
-  typedef typename Graphical_base::Listener GBL;
+
+  /*typedef typename Graphical_base::Listener GBL;
   class Base_listener: public GBL
   {
     typedef Qt_widget_2<Simulator_t> Container;
@@ -152,14 +160,14 @@ public:
 
     virtual void new_notification(typename GBL::Notification_type nt) {
       if (nt== GBL::CURRENT_TIME) {
-	t_->widget()->set_picture_is_current(false);
+	t_->
       }
     }
   protected:
     Container *t_;
-  };
+    };*/
 
-  typedef typename Qt_widget::Listener QTL;
+  /*typedef typename Qt_widget::Listener QTL;
   class Widget_listener: public QTL
   {
     typedef Qt_widget_2<Simulator_t> Container;
@@ -179,7 +187,7 @@ public:
     }
   protected:
     Container *t_;
-  };
+    };*/
 
   //! Gui will call output_drawing
   void draw() {
@@ -193,9 +201,16 @@ public:
   }
 
         
+  /*Qt_widget* widget() {
+    return window()->widget();
+    }*/
 
+   Qt_widget& widget() const
+  {
+    return *window()->widget();
+  }
 private:
-  void new_listener(Listener* d) {
+  /*void new_listener(Listener* d) {
     CGAL_LOG(Log::SOME, "GUI: Registered a drawable.\n");
     drawables_.insert(d);
     d->set_widget(widget());
@@ -205,27 +220,20 @@ private:
   void delete_listener(Listener* d) {
     CGAL_LOG(Log::SOME,"GUI: Unregistered a drawable.\n");
     drawables_.erase(d);
-  }
+    }*/
 
   friend class Widget_listener; friend class Base_listener;
 
-  Qt_window *window() {
+  /*Qt_window *window() {
     return reinterpret_cast<Qt_window*>(app_->mainWidget());
-  }
+    }*/
 
-  const Qt_window *window() const
+  Qt_window *window() const
   {
-    return reinterpret_cast<const Qt_window*>(app_->mainWidget());
+    return reinterpret_cast< Qt_window*>(app_->mainWidget());
   }
 
-  Qt_widget* widget() {
-    return window()->widget();
-  }
-
-  const Qt_widget* widget() const
-  {
-    return window()->widget();
-  }
+ 
   This operator=(const This &o) {
     return *this;
   }
@@ -234,9 +242,9 @@ protected:
   std::auto_ptr<QApplication> app_;
   typename Graphical_base::Handle base_;
   std::set<Listener*> drawables_;
-  Base_listener base_l_;
-  std::auto_ptr<Window_listener> window_l_;
-  std::auto_ptr<Widget_listener> widget_l_;
+  //Base_listener base_l_;
+  //std::auto_ptr<Window_listener> window_l_;
+  //std::auto_ptr<Widget_listener> widget_l_;
 };
 
 CGAL_KINETIC_END_NAMESPACE

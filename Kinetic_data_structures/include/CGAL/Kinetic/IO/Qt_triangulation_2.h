@@ -45,22 +45,8 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<KDel, IK, Qt_gui
   typedef typename Triangulation::Edge Edge;
 
   // maybe icl wants the class definition before the useage. 
-  typedef typename Qt_gui::Listener QTL;
-  class Listener: public QTL
-  {
-    typedef Qt_triangulation_2<KDel, IK, Qt_gui> Container;
-    typedef QTL P;
-  public:
-    Listener(typename Qt_gui::Handle &h, Container *t): P(h), t_(t){}
-    virtual void new_notification(typename P::Notification_type nt) {
-      if (nt == P::PICTURE_IS_VALID) {
-	t_->draw(*P::widget(), P::notifier()->current_time());
-      }
-    }
-  protected:
-    Container *t_;
-  };
-  friend class Listener;
+  CGAL_KINETIC_LISTEN1(Qt_gui, PICTURE_IS_VALID, draw());
+
 
 public:
   //typedef Kinetic_Delaunay Kinetic_Delaunay;
@@ -68,9 +54,10 @@ public:
 
   Qt_triangulation_2(typename KDel::Handle kdel,
 		     IK ik,
-		     typename Qt_gui::Handle gui): listener_(gui, this),
+		     typename Qt_gui::Handle gui): 
 						   ik_(ik),
 						   kdel_(kdel) {
+    CGAL_KINETIC_INIT_LISTEN(Qt_gui, gui);
   }
 
 protected:
@@ -106,7 +93,9 @@ protected:
       w << CGAL::Color(0,0,0);
     }
   }
-
+  void draw() const {
+    draw(CGAL_KINETIC_NOTIFIER(Qt_gui)->widget(), CGAL_KINETIC_NOTIFIER(Qt_gui)->current_time());
+  }
   //! Draw the triangulation.
   void draw( CGAL::Qt_widget &w, double t) const
   {
@@ -131,7 +120,6 @@ protected:
     }
   }
 
-  Listener listener_;
   IK ik_;
   typename KDel::Handle kdel_;
 };

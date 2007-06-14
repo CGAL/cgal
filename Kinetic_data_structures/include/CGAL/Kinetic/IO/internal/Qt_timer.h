@@ -24,56 +24,54 @@
 #include <qtimer.h>
 namespace CGAL
 {
-    namespace Kinetic
+  namespace Kinetic
+  {
+    namespace internal
     {
-        namespace internal
-        {
-            class Qt_timer: QObject
-            {
-                Q_OBJECT
-                    public:
-                    class Listener
-                    {
-                        public:
-                            typedef Qt_timer* Notifier_handle;
-                            Listener(Notifier_handle h): h_(h){h->set_listener(this);}
-                            typedef enum {TICKS}
-                            Notification_type;
-                            virtual void new_notification(Notification_type) =0;
-                            virtual ~Listener() {
-                                h_->set_listener(NULL);
-                            }
-                        protected:
-                            Notifier_handle h_;
-                    };
+      class Qt_timer: QObject
+      {
+	Q_OBJECT
+	typedef Qt_timer This;
+      public:
+	typedef Qt_timer* Handle;
 
-                    Qt_timer();
-
-                    int ticks() const
-                    {
-                        return tick_;
-                    }
-                    void clear() {
-//CGAL_precondition(id_!=-1);
-                        if (id_!= -1) timer_.killTimer(id_);
-                        id_=-1;
-                    };
-                    void run(double time_in_seconds);
-                protected:
-                    QTimer timer_;
-                    Listener *cb_;
-                    int tick_;
-                    int id_;
-
-                    friend class Listener;
-                    void set_listener(Listener *l) {
-                        cb_=l;
-                    }
-
-                private slots:
-                    void timerDone();
-            };
-        };
+      private:			
+	struct Listener_core{						
+	  typedef  This Notifier;		
+	  typedef enum {TICKS} Notification_type;		
+	};								
+      public:							
+	typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	
+	friend class CGAL::Kinetic::Listener_base<Listener_core>;	
+      private:							
+	void set_listener(Listener *sk) {				
+	  listener_=sk;						
+	}								
+	Listener* listener() {return listener_.get();}		
+	Listener::Handle listener_;
+      public:
+	Qt_timer();
+	
+	int ticks() const
+	{
+	  return tick_;
+	}
+	void clear() {
+	  //CGAL_precondition(id_!=-1);
+	  if (id_!= -1) timer_.killTimer(id_);
+	  id_=-1;
+	};
+	void run(double time_in_seconds);
+      protected:
+	QTimer timer_;
+	int tick_;
+	int id_;
+	
+	
+	 private slots:
+	 void timerDone();
+      };
     };
+  };
 };
 #endif

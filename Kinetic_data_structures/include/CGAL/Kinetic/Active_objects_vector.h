@@ -316,7 +316,7 @@ CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second)
 private:
 
   void finish_editing() {
-    CGAL_KINETIC_MULTISIGNAL(IS_EDITING);
+    CGAL_KINETIC_MULTINOTIFY(IS_EDITING);
 
     num_valid_+= new_objects_.size();
     num_valid_-= deleted_objects_.size();

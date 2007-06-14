@@ -1109,7 +1109,7 @@ protected:
 
 
   void on_geometry_changed() {
-    CGAL_KINETIC_SIGNAL(TRIANGULATION);
+    CGAL_KINETIC_NOTIFY(TRIANGULATION);
     CGAL_LOG(Log::LOTS, *this);
     audit_structure();
   }
