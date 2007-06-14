@@ -230,15 +230,14 @@ namespace CGAL {
 
   // Useless here
     Mesher_level_conflict_status private_test_point_conflict_impl(const Point& p,
-								  Zone& )
+								  Zone& zone)
     {
-//       Vertex_handle v;
-//       if( tr.is_vertex(p, v) )
-//       {
-// 	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
-// 	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
-//       }
-//       else
+      if( zone.locate_type == Tr::VERTEX )
+      {
+	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
+	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
+      }
+      else
 	return NO_CONFLICT;
     }
 
@@ -329,10 +328,11 @@ namespace CGAL {
 	zone.cell =
 	  tr.locate(p, zone.locate_type, zone.i, zone.j, f.first);
 
-        tr.find_conflicts(p, zone.cell,
-                          std::back_inserter(zone.boundary_facets),
-                          std::back_inserter(zone.cells),
-                          std::back_inserter(zone.internal_facets));
+        if(zone.locate_type != Tr::VERTEX)
+          tr.find_conflicts(p, zone.cell,
+                            std::back_inserter(zone.boundary_facets),
+                            std::back_inserter(zone.cells),
+                            std::back_inserter(zone.internal_facets));
 	return zone;
     }
 
