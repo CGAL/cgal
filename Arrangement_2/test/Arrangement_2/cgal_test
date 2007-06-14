@@ -194,7 +194,7 @@ test_segment_traits()
     run_trapped_test test_traits data/segments/intersect segment_traits
     run_trapped_test test_traits data/segments/split segment_traits
     run_trapped_test test_traits data/segments/merge segment_traits
-    run_trapped_test test_traits data/segments/errors segment_traits
+    #run_trapped_test test_traits data/segments/errors segment_traits
   fi
   clean_tests
 }
@@ -218,7 +218,7 @@ test_non_caching_segment_traits()
     run_trapped_test test_traits data/segments/intersect non_caching_segment_traits
     run_trapped_test test_traits data/segments/split non_caching_segment_traits
     run_trapped_test test_traits data/segments/merge non_caching_segment_traits
-    run_trapped_test test_traits data/segments/errors non_caching_segment_traits
+    #run_trapped_test test_traits data/segments/errors non_caching_segment_traits
   fi
   clean_tests
 }
@@ -241,7 +241,7 @@ test_polyline_traits()
     run_trapped_test test_traits data/polylines/intersect polyline_traits
     run_trapped_test test_traits data/polylines/split polyline_traits
     run_trapped_test test_traits data/polylines/merge polyline_traits
-    run_trapped_test test_traits data/polylines/errors polyline_traits
+    #run_trapped_test test_traits data/polylines/errors polyline_traits
   fi
   clean_tests
 }
@@ -264,7 +264,7 @@ test_non_caching_polyline_traits()
     run_trapped_test test_traits data/polylines/intersect non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/split non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/merge non_caching_polyline_traits
-    run_trapped_test test_traits data/polylines/errors non_caching_polyline_traits
+    #run_trapped_test test_traits data/polylines/errors non_caching_polyline_traits
   fi
   clean_tests
 }
@@ -287,7 +287,7 @@ test_conic_traits()
     run_trapped_test test_traits data/conics/intersect conic_traits
     run_trapped_test test_traits data/conics/split conic_traits
     run_trapped_test test_traits data/conics/merge conic_traits
-    run_trapped_test test_traits data/conics/errors conic_traits
+    #run_trapped_test test_traits data/conics/errors conic_traits
     run_trapped_test test_traits data/conics/constructor conic_traits
   fi
   clean_tests
