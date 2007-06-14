@@ -31,6 +31,8 @@ class Point_with_surface_index : public Point
 {
   typedef CGAL::Point_traits<Point> Point_traits;
   typedef typename Point_traits::Bare_point Bare_point;
+  typedef typename Kernel_traits<Bare_point>::Kernel Kernel;
+  typedef typename Kernel::FT FT;
 
 public:
   Point_with_surface_index() : Point(), index(0) {}
@@ -41,9 +43,8 @@ public:
   Point_with_surface_index(const Point_with_surface_index& pi)
     : Point(pi), index(pi.surface_index()) {}
 
-//   template <typename RT>
-//   Point_with_surface_index(const RT& x, const RT& y, const RT& z)
-//     : Point(Point_traits().point(Bare_point(x, y, z))), index(0) {}
+  Point_with_surface_index(const FT& x, const FT& y, const FT& z, const FT& w = FT(1))
+    : Point(Point_traits().point(Bare_point(x, y, z, w))), index(0) {}
 
   int surface_index() const
   {
