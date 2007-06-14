@@ -199,6 +199,9 @@ public:
   Object intersect_curves_with_triangle(const Surface_3& surface,
 					const Triangle_3& t) const
   {
+    if(! surface.has_edges())
+      return Object();
+
     Object o = surface.subsegments_octree.intersection(t);
     Kernel_point kp;
     if( assign(kp, o) )
