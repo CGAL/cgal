@@ -27,11 +27,11 @@ public:
 template <class Data>
 class Receiver: public CGAL::Kinetic::Ref_counted<Receiver<Data> > {
   typedef Receiver<Data> This;
-  typedef Notifier<Data> Noti;
-  CGAL_KINETIC_LISTEN1(Noti, DATA_CHANGED, ping);
+  typedef Notifier<Data> Notifier;
+  CGAL_KINETIC_LISTEN1(Notifier, DATA_CHANGED, ping);
 public:
-  Receiver( Noti* p){
-    CGAL_KINETIC_INIT_LISTEN(Noti, p);
+  Receiver( Notifier* p){
+    CGAL_KINETIC_INIT_LISTEN(Notifier, p);
   }
   void ping() const {
     std::cout << "Data changed " << std::endl;
