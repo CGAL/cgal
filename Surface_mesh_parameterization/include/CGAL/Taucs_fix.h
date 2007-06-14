@@ -72,7 +72,7 @@ extern "C"
 /* (see taucs_memory.c)                                             */
 /********************************************************************/
 
-#ifdef OSTYPE_linux
+#if defined(OSTYPE_linux) || defined(OSTYPE_linux64)
 
 /* Redirect call to avoid link error */
 #define taucs_system_memory_size cgal_taucs_system_memory_size
@@ -147,7 +147,7 @@ inline double taucs_available_memory_size()
 {
 /* LS 2007: The original code below creates an infinite loop on Linux     */
 /*          (optimistic memory allocation => malloc() never returns NULL) */
-#ifndef OSTYPE_linux
+#if !defined(OSTYPE_linux) && !defined(OSTYPE_linux64)
 
   double m_sys;
   double m,m_low,m_high,m_tol;
@@ -155,11 +155,11 @@ inline double taucs_available_memory_size()
   double m_max;
 
   m_sys = taucs_system_memory_size();
-  
+
   /* LS 2007: if m_sys is meaningful, then we limit malloc test by 0.75*m_sys */
 
-  if (m_sys > 0) 
-    m_max = floor(0.75 * m_sys); 
+  if (m_sys > 0)
+    m_max = floor(0.75 * m_sys);
   else
     m_max = DBL_MAX;
 
@@ -169,7 +169,7 @@ inline double taucs_available_memory_size()
 
   while ( (m < m_max-1) /* m_max not reached */
        && ((p=(char*) taucs_malloc( (size_t) limit_memory(m*2.0) )) != NULL) ) {
-    taucs_printf("taucs_avail_memory_size: %.0lf Mb\n", limit_memory(m*2.0) / 1048576.0);
+    taucs_printf("taucs_available_memory_size: %.0lf Mb\n", limit_memory(m*2.0) / 1048576.0);
     taucs_free(p);
     m = limit_memory(m*2.0);
   }
@@ -180,20 +180,20 @@ inline double taucs_available_memory_size()
 
   while ( m_high - m_low > m_tol ) {
     m = m_low + ( (m_high-m_low)/2.0 );
-    taucs_printf("taucs_avail_memory_size: [%.0lf %.0lf %.0lf]\n",
+    taucs_printf("taucs_available_memory_size: [%.0lf %.0lf %.0lf]\n",
 	       m_low  / 1048576.0,
 	       m      / 1048576.0,
 	       m_high / 1048576.0);
-    if ( (p=(char*) taucs_malloc( (size_t) m )) != NULL ) 
+    if ( (p=(char*) taucs_malloc( (size_t) m )) != NULL )
       m_low = m;
-    else 
+    else
       m_high = m;
     taucs_free(p);
   }
 
   m = m_low;
 
-  taucs_printf("taucs_avail_memory_size: malloc test=%.0lf MB sys test=%.0lf MB\n",
+  taucs_printf("taucs_available_memory_size: malloc test=%.0lf MB sys test=%.0lf MB\n",
 	     m / 1048576.0,
 	     m_sys / 1048576.0
 	     );
@@ -205,8 +205,8 @@ inline double taucs_available_memory_size()
   double m_sys;   /* size of physical memory */
   double m;       /* size of memory available for allocation */
 
-    m_sys  = (double) sysconf(_SC_PAGESIZE);
-    m_sys *= (double) sysconf(_SC_PHYS_PAGES);
+  m_sys  = (double) sysconf(_SC_PAGESIZE);
+  m_sys *= (double) sysconf(_SC_PHYS_PAGES);
 
   /* we limit m by 0.75*m_sys */
   m = floor(0.75 * m_sys);
@@ -214,7 +214,7 @@ inline double taucs_available_memory_size()
   taucs_printf((char*)"taucs_available_memory_size returns %lfMB\n", m/1048576.0);
 
   return m;
-    
+
 #endif
 }
 
