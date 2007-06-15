@@ -34,6 +34,7 @@ class PDB;
   You can iterator through the chains and soon the heterogens. 
 */
 class Model {
+  typedef Model This;
   friend class PDB;
 
   CGAL_SMALL_MAP_VALUE_TYPE(Model_vt, CGAL::Label<Model>, Chain, chain); 
@@ -76,6 +77,7 @@ public:
 
   //! \cond
   class Hetatom_data {
+    typedef Hetatom_data This;
   public:
     Hetatom_data(const char *rnm, 
 		 const char *anm, int rn, char ch): resname_(rnm),
@@ -83,15 +85,15 @@ public:
 						    rnum_(rn), chain_(ch){
     }
     Hetatom_data(){}
-    CGAL_GETNR( char*, molecule_name, return resname_.c_str())
+    CGAL_GETNR( char*, molecule_name, return resname_.c_str());
     
-    CGAL_GETNR( char*, atom_name, return atomname_.c_str())
+    CGAL_GETNR( char*, atom_name, return atomname_.c_str());
     
-    CGAL_GETNR(int, molecule_number, return rnum_)
+    CGAL_GETNR(int, molecule_number, return rnum_);
     
-    CGAL_GETNR(Chain_key, chain, return chain_)
-
-    CGAL_COMPARISONS2(Hetatom_data, rnum_, chain_)
+    CGAL_GETNR(Chain_key, chain, return chain_);
+    
+    CGAL_COMPARISONS2(rnum_, chain_);
 
   protected:
     std::string resname_;

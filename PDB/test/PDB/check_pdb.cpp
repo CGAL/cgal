@@ -25,7 +25,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Tools/Log.h>
 
 #include "check_equal.h"
 
@@ -53,8 +52,8 @@ int main(int , char *[]){
     unsigned int nb= std::distance(m.bonds_begin(), m.bonds_end());
     std::cout << "There are " << nb << " bonds" << std::endl;
 
-    CGAL_assert_equal(na, 1059);
-    CGAL_assert_equal(nb, 1062);
+    CGAL_assertion(na==1059);
+    CGAL_assertion(nb==1062);
 
     unsigned int totaL_atoms=0;
     unsigned int total_bonds=0;
@@ -65,8 +64,8 @@ int main(int , char *[]){
       totaL_atoms += std::distance(it->chain().atoms_begin(), it->chain().atoms_end());
       total_bonds += std::distance(it->chain().bonds_begin(), it->chain().bonds_end());
     }
-    CGAL_assert_equal(std::distance(m.atoms_begin(), m.atoms_end()), totaL_atoms);
-    CGAL_assert_equal(std::distance(m.bonds_begin(), m.bonds_end()), total_bonds);
+    CGAL_assertion(std::distance(m.atoms_begin(), m.atoms_end()) == totaL_atoms);
+    CGAL_assertion(std::distance(m.bonds_begin(), m.bonds_end()) == total_bonds);
   }
 	
   p.write(of);
