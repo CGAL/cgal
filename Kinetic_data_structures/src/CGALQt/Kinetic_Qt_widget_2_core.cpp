@@ -29,14 +29,15 @@ void Qt_widget_2_core::redraw() {
   clear();
   //std::cout << "size of drawables = " << drawable_s.size() << std::endl;
   is_drawn_=false;
-  if (drawable_!= NULL) drawable_->new_notification(Listener::PICTURE_IS_CURRENT);
+  CGAL_KINETIC_NOTIFY(PICTURE_IS_CURRENT);
+  //if (drawable_!= NULL) drawable_->new_notification(Listener::PICTURE_IS_CURRENT);
   is_drawn_=true;
   unlock();
   //::CGAL::Qt_widget::redraw();
 }
 
 Qt_widget_2_core::Qt_widget_2_core(QMainWindow *parent): ::CGAL::Qt_widget(parent) {
-  drawable_=NULL;
+  //drawable_=NULL;
   is_drawn_=false;
 }
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

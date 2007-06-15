@@ -40,6 +40,7 @@ void Qt_timer::run(double time_in_seconds) {
 
 void Qt_timer::timerDone() {
   ++tick_;
-  cb_->new_notification(Listener::TICKS);
+  CGAL_KINETIC_NOTIFY(TICKS);
+  //cb_->new_notification(Listener::TICKS);
 }
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

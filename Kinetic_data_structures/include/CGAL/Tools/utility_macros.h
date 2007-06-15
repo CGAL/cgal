@@ -134,6 +134,33 @@
     return !operator>(o);						\
   }
 
+#define CGAL_COMPARISONS3(a, b, c) bool operator==(const This &o) const { \
+    return (a== o.a && b== o.b && c == o.c);				\
+  }									\
+  bool operator!=(const This &o) const {				\
+    return (a!= o.a || b != o.b || c != o.c);				\
+  }									\
+  bool operator<(const This &o) const {					\
+    if (a < o.a ) return true;						\
+    else if (a > o.a) return false;					\
+    else if (b < o.b) return true;					\
+    else if (b > o.b) return false;					\
+    else return c < o.c;						\
+  }									\
+  bool operator>(const This &o) const {					\
+    if (a > o.a ) return true;						\
+    else if (a < o.a) return false;					\
+    else if (b > o.b) return true;					\
+    else if (b < o.b) return false;					\
+    else return c > o.c;						\
+  }									\
+  bool operator>=(const This &o) const {				\
+    return !operator<(o);						\
+  }									\
+  bool operator<=(const This &o) const {				\
+    return !operator>(o);						\
+  }
+
 
 #endif
 

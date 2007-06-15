@@ -22,6 +22,7 @@
 #define CGAL_KINETIC_IO_INTERNAL_QT_TIMER_H
 #include <map>
 #include <qtimer.h>
+#include <CGAL/Kinetic/Listener.h>
 namespace CGAL
 {
   namespace Kinetic

@@ -24,6 +24,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <qmainwindow.h>
+#include <CGAL/Kinetic/Listener.h>
 
 namespace CGAL
 {
