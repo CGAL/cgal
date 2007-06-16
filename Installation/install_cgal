@@ -991,7 +991,7 @@ set_compiler_flags()
 	*Linux*sunCC*|*Linux*CC*)
 	    #### settings for sunpro compiler on linux
 	    SUNCC_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR -Qoption ccfe -abiopt=mangle6"
+	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
