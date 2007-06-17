@@ -33,18 +33,24 @@
 //| "Error: The function B<int>::g() has not had a body defined."
 //| Note that the subtlely is that the error message does not mention
 //| "Member"...
+//| This test is updated (hijacked) to detect an issue with sunpro 5.9
+//| that instantiates a function twice.
 
+template < class T >
 struct A
 {
   A() {}
 
-  void f() {}
+  void f();
 };
 
+template < class T >
+void A<T>::f(){}
+
 template < class GT >
-struct B : A
+struct B : A<GT>
 {
-  using A::f;
+  using A<GT>::f;
 
   B() {}
 
@@ -54,7 +60,11 @@ struct B : A
 template < class GT >
 void
 B<GT>::g()
-{}
+{
+  f();
+}
+
+template struct B<int>;
 
 int main()
 {
