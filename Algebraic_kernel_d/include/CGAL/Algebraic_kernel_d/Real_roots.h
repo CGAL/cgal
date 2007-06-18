@@ -127,7 +127,7 @@ template <class AlgebraicRealOutputIterator>
 int operator()(Polynomial                  poly , 
                AlgebraicRealOutputIterator it){        
     
-    CGAL_precondition_msg(is_square_free(poly), "P not square free."); 
+    CGAL_precondition_msg( typename CGAL::Polynomial_traits_d< Polynomial >::Is_square_free()(poly), "P not square free.");
     return (*this)(Real_root_isolator(poly),it);
 };
    
