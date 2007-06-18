@@ -448,9 +448,9 @@ else
   test_polyline_traits
   test_non_caching_polyline_traits
   test_conic_traits
-# ! test_circle_traits
+# !test_circle_traits
   test_circle_segments_traits
-#  test_bezier_traits
+  test_bezier_traits
 
   test_line_arc_traits # "line arcs" (segments) only
   test_circular_arc_traits # circular arcs only
