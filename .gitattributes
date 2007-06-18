@@ -367,6 +367,15 @@ Arrangement_2/examples/Arrangement_2/Bezier.dat -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
 Arrangement_2/test/Arrangement_2/cgal_test eol=lf
+Arrangement_2/test/Arrangement_2/data/bezier/compare -text
+Arrangement_2/test/Arrangement_2/data/bezier/compare_y_at_x -text
+Arrangement_2/test/Arrangement_2/data/bezier/errors -text
+Arrangement_2/test/Arrangement_2/data/bezier/intersect -text
+Arrangement_2/test/Arrangement_2/data/bezier/is_vertical -text
+Arrangement_2/test/Arrangement_2/data/bezier/make_x_monotone -text
+Arrangement_2/test/Arrangement_2/data/bezier/merge -text
+Arrangement_2/test/Arrangement_2/data/bezier/split -text
+Arrangement_2/test/Arrangement_2/data/bezier/vertex -text
 Arrangement_2/test/Arrangement_2/data/circle_segments/compare_y_at_x -text
 Arrangement_2/test/Arrangement_2/data/circle_segments/compare_y_at_x_left -text
 Arrangement_2/test/Arrangement_2/data/circle_segments/compare_y_at_x_right -text
