@@ -19,6 +19,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial/may_have_common_factor.h>
 #include <CGAL/Algebraic_kernel_d/interval_support.h>
 //#include <NiX/NT_traits.h>
@@ -79,6 +80,12 @@ private:
         is_rational_    = y.is_rational_;
     }
      
+    
+protected:
+    virtual CGAL::Sign sign_of_polynomial_at( const Field& f ) const {
+        return polynomial().sign_at( f );
+    }
+    
 protected:
     // joins the two lists of related algebraic reals  
     void introduce(const Algebraic_real_rep& y) const{
@@ -112,18 +119,19 @@ protected:
 protected:
     void set_implicit_rep(const Poly & P, 
                           const Field& LOW, 
-                          const Field& HIGH) const {
+                          const Field& HIGH,
+                          bool use_expensive_sign = false ) const {
         CGAL_precondition(LOW < HIGH);        
         CGAL_precondition(P.sign_at(LOW)  != CGAL::ZERO);       
         CGAL_precondition(P.sign_at(HIGH) != CGAL::ZERO);     
         CGAL_precondition(P.sign_at(HIGH) != P.sign_at(LOW));
-        // TODO: is_square_free not available!!
-        //CGAL_precondition_msg(is_square_free(P), "Polynomial not square-free.");
+        CGAL_precondition_msg(typename CGAL::Polynomial_traits_d< Poly >::Is_square_free()(P), "Polynomial not square-free.");
                
-        polynomial_=P;
+        polynomial_ = P;
         low_=LOW;
         high_=HIGH;
-        sign_at_low_=P.sign_at(LOW);
+        sign_at_low_=(use_expensive_sign ? P.sign_at(LOW) : sign_of_polynomial_at(LOW) );
+
         is_rational_=false;
 
         // interval_option left out
@@ -173,8 +181,7 @@ public:
             CGAL_precondition(P.sign_at(LOW)  != CGAL::ZERO);       
             CGAL_precondition(P.sign_at(HIGH) != CGAL::ZERO);     
             CGAL_precondition(P.sign_at(HIGH) != P.sign_at(LOW));
-            // TODO: Kein is_square_free vorhanden!!
-            //CGAL_precondition_msg(typename CGAL::Polynomial_traits_d<Poly>::Is_square_free()(P), "Polynomial not square-free.");
+            CGAL_precondition_msg(typename CGAL::Polynomial_traits_d<Poly>::Is_square_free()(P), "Polynomial not square-free.");
             set_implicit_rep(P,LOW,HIGH);
         }
         next=prev=this;
@@ -187,7 +194,7 @@ public:
         introduce(y);  
     }
     //! destructor
-    ~Algebraic_real_rep(){
+    virtual ~Algebraic_real_rep(){
         erase_from_list();
     }
 
@@ -206,6 +213,7 @@ public:
     const Field&           low()           const {return low_;}
     const Field&           high()          const {return high_;}
     const Poly&            polynomial()    const {return polynomial_;}
+        
     const TRI_BOOL&        sign_at_low()   const {return sign_at_low_;}
     
     /*const std::pair< double, double>& interval() const {
@@ -272,7 +280,7 @@ public:
         Field m = (low()+high())/Field(2);
         CGAL::simplify(m);
         
-        CGAL::Sign s = polynomial().sign_at(m);
+        CGAL::Sign s = sign_of_polynomial_at(m);
         if ( s == CGAL::ZERO ) learn_from(m);
         else 
             if ( s == sign_at_low() ) low_  = m;
@@ -296,7 +304,7 @@ public:
         if( m <= low() || high() <= m ) return;
         
         // now: low < m < high 
-        CGAL::Sign s = polynomial().sign_at(m);
+        CGAL::Sign s = sign_of_polynomial_at(m);
         if(s == CGAL::ZERO)         learn_from(m);
         else (s == sign_at_low())? low_ = m : high_=m;
     }
@@ -316,7 +324,7 @@ public:
         
         // now: low < y < high 
         if(!are_distinct){
-            if(polynomial().sign_at(y)==CGAL::ZERO){
+            if(sign_of_polynomial_at(y)==CGAL::ZERO){
                 learn_from(y);
                 return CGAL::EQUAL ;
             }
@@ -465,7 +473,7 @@ protected:
                 dummy1.prev=current;
                 current->set_implicit_rep(pfactor1,
                                           current->low(),
-                                          current->high());
+                                          current->high(), true );
             }else{
                 current->next=&dummy2;
                 current->prev=dummy2.prev;
@@ -473,7 +481,7 @@ protected:
                 dummy2.prev=current;                    
                 current->set_implicit_rep(pfactor2,
                                           current->low(),
-                                          current->high());
+                                          current->high(), true );
             }
             
             if(current==last) break;
