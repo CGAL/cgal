@@ -402,6 +402,7 @@ Arrangement_2/test/Arrangement_2/data/circular_lines/merge -text
 Arrangement_2/test/Arrangement_2/data/circular_lines/split -text
 Arrangement_2/test/Arrangement_2/data/circular_lines/vertex -text
 Arrangement_2/test/Arrangement_2/data/conics/constructor -text
+Arrangement_2/test/Arrangement_2/data/polylines/errors -text
 Arrangement_2/test/Arrangement_2/data/segments/compare_y_at_x_left -text
 Arrangement_2/test/Arrangement_2/data/segments/errors -text
 Arrangement_2/test/Arrangement_2/point_location.cmd eol=lf
