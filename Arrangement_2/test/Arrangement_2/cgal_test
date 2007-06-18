@@ -52,6 +52,7 @@ compile_test()
   local nt=$2;
   local kernel=$3;
   local traits=$4;
+  local traits_type=$5
 
   TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits";
   echo $TESTSUITE_CXXFLAGS;
@@ -60,10 +61,10 @@ compile_test()
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name'; then
-    echo "   succesful compilation of $name" >> $ERRORFILE;
+    echo "   succesful compilation of $name $traits_type" >> $ERRORFILE;
     res=1;
   else
-    echo "   ERROR:    compilation of $name" >> $ERRORFILE;
+    echo "   ERROR:    compilation of $name $traits_type" >> $ERRORFILE;
     res=0;
   fi
 }
@@ -194,7 +195,7 @@ test_segment_traits()
     run_trapped_test test_traits data/segments/intersect segment_traits
     run_trapped_test test_traits data/segments/split segment_traits
     run_trapped_test test_traits data/segments/merge segment_traits
-    #run_trapped_test test_traits data/segments/errors segment_traits
+    run_trapped_test test_traits data/segments/errors segment_traits
   fi
   clean_tests
 }
@@ -218,7 +219,7 @@ test_non_caching_segment_traits()
     run_trapped_test test_traits data/segments/intersect non_caching_segment_traits
     run_trapped_test test_traits data/segments/split non_caching_segment_traits
     run_trapped_test test_traits data/segments/merge non_caching_segment_traits
-    #run_trapped_test test_traits data/segments/errors non_caching_segment_traits
+    run_trapped_test test_traits data/segments/errors non_caching_segment_traits
   fi
   clean_tests
 }
@@ -241,7 +242,7 @@ test_polyline_traits()
     run_trapped_test test_traits data/polylines/intersect polyline_traits
     run_trapped_test test_traits data/polylines/split polyline_traits
     run_trapped_test test_traits data/polylines/merge polyline_traits
-    #run_trapped_test test_traits data/polylines/errors polyline_traits
+    run_trapped_test test_traits data/polylines/errors polyline_traits
   fi
   clean_tests
 }
@@ -264,7 +265,7 @@ test_non_caching_polyline_traits()
     run_trapped_test test_traits data/polylines/intersect non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/split non_caching_polyline_traits
     run_trapped_test test_traits data/polylines/merge non_caching_polyline_traits
-    #run_trapped_test test_traits data/polylines/errors non_caching_polyline_traits
+    run_trapped_test test_traits data/polylines/errors non_caching_polyline_traits
   fi
   clean_tests
 }
@@ -287,7 +288,7 @@ test_conic_traits()
     run_trapped_test test_traits data/conics/intersect conic_traits
     run_trapped_test test_traits data/conics/split conic_traits
     run_trapped_test test_traits data/conics/merge conic_traits
-    #run_trapped_test test_traits data/conics/errors conic_traits
+    run_trapped_test test_traits data/conics/errors conic_traits
     run_trapped_test test_traits data/conics/constructor conic_traits
   fi
   clean_tests
@@ -311,6 +312,7 @@ test_line_arc_traits()
     run_trapped_test test_traits data/circular_lines/intersect line_arc_traits
     run_trapped_test test_traits data/circular_lines/split line_arc_traits
     run_trapped_test test_traits data/circular_lines/constructor line_arc_traits
+    #run_trapped_test test_traits data/circular_lines/errors line_arc_traits
   fi
   clean_tests
 }
@@ -447,8 +449,8 @@ else
   test_non_caching_polyline_traits
   test_conic_traits
 # ! test_circle_traits
-# test_circle_segments_traits
-# test_bezier_traits
+  test_circle_segments_traits
+#  test_bezier_traits
 
   test_line_arc_traits # "line arcs" (segments) only
   test_circular_arc_traits # circular arcs only
