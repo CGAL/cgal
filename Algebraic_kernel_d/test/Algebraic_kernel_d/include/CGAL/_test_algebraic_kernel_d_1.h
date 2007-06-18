@@ -177,7 +177,7 @@ void test_algebraic_kernel_d_1() {
 
     refine( ar, 100 );
     CGAL_test_assert( CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) ) < 
-        (typename ART::Boundary(1) / INTERN_POLYNOMIAL::ipower(typename ART::Boundary(2), 99 )) );
+        (typename ART::Boundary(1) / POLYNOMIAL::ipower(typename ART::Boundary(2), 99 )) );
 
 }
 
