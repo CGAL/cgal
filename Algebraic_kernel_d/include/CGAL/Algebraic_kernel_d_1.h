@@ -86,7 +86,7 @@ namespace CGALi {
                             
                             // Calculate the needed precision
                             Boundary prec = Boundary(1) / 
-                                            INTERN_POLYNOMIAL::ipower( Boundary(2), rel_prec );
+                                            POLYNOMIAL::ipower( Boundary(2), rel_prec );
                             
                             // Refine until precision is reached
                             while( CGAL::abs( t.high() - t.low() ) /
@@ -157,7 +157,8 @@ namespace CGALi {
             struct Is_square_free_1 
                 : public Unary_function< Polynomial_1, bool > {
                     bool operator()( const Polynomial_1& p ) const {
-                        return INTERN_POLYNOMIAL::is_square_free(p);
+                        typename CGAL::Polynomial_traits_d< Polynomial_1 >::Is_square_free isf;
+                        return isf(p);
                     }
             };
             
