@@ -40,6 +40,8 @@ template<typename Nef3>
     
   void operator()(SNC_structure& snc) {
 
+    snc.clear();
+
 #ifdef CGAL_NEF_INDEXED_ITEMS
     CGAL::Unique_hash_map<SHalfedge_const_handle, int> SE2i;
     SHalfedge_const_iterator sei;
