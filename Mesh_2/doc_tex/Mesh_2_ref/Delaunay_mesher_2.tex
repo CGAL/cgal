@@ -2,6 +2,9 @@
 
 This class implements a 2D mesh generator.
 
+\ccInclude{CGAL/Delaunay_mesher_2.h}
+
+
 \ccParameters The template parameter \ccc{CDT} should be a model of the
 concept \ccc{ConstrainedDelaunayTriangulation_2}, and type \ccc{CDT::Face}
 should be a model of the concept \ccc{MeshFaceBase_2}.
@@ -34,7 +37,6 @@ components including at least one seed, or the union of the bounded
 connected components that do no contain any seed. Note that the unbounded
 component of the plane is never meshed.
 
-\ccInclude{CGAL/Delaunay_mesher_2.h}
 
 \ccTypes 
 \ccTypedef{typedef CDT::Geom_traits Geom_traits;}{the geometric traits class.}
