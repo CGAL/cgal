@@ -33,24 +33,28 @@
 //#define CGAL_WITH_LAZY_KERNEL
 #ifdef CGAL_WITH_LAZY_KERNEL
 typedef CGAL::Gmpq NT;
-//typedef leda_rational NT;
 typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > Kernel;
+typedef Kernel::FT FT;
 #else
 #ifdef CGAL_USE_LEDA
 typedef leda_integer NT;
+typedef leda_rational FT;
 #else
 typedef CGAL::Gmpz NT;
+typedef CGAL::Gmpq FT;
 #endif
 typedef CGAL::Homogeneous<NT> Kernel;
 #endif
 typedef Kernel::RT RT;
-typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Plane_3 Plane_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 //typedef Polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
-//typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron_3;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron_3;
+#else
 typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron_3;
+#endif
 typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
 typedef Nef_polyhedron_3::Vertex_const_handle Vertex_const_handle;
 typedef Nef_polyhedron_3::Halfedge_const_handle Halfedge_const_handle;
@@ -156,17 +160,19 @@ int main(int argc, char* argv[]) {
   for(int i=0;i<nv;++i) {
     double a,b,c;
     trunk >> a >> b >> c;
-    leda_rational x(round(a)), y(round(b)), z(round(c));
-    //    leda_rational x(a), y(b), z(c);
+    FT x(round(a)), y(round(b)), z(round(c));
+    //    FT x(a), y(b), z(c);
 
+#ifdef CGAL_WITH_LAZY_KERNEL
+    Point_3 p(x,y,z,1);
+#else
     Point_3 p(x.numerator()   * y.denominator() * z.denominator(),
 	      x.denominator() * y.numerator()   * z.denominator(),
 	      x.denominator() * y.denominator() * z.numerator(),
 	      x.denominator() * y.denominator() * z.denominator() );
-
-    //    Point_3 p(x,y,z,1);
     p = normalized(p);
-    std::cerr << "input " << p << std::endl;
+#endif
+    //    std::cerr << "input " << p << std::endl;
     points.push_back(p);
   }
  
