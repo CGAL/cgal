@@ -37,7 +37,7 @@ public Box_intersection_d::Box_d< double, 3> {
   typedef typename Kernel::Point_3             Point_3;
 
 public:
-  Bounding_box_3() : Base() {
+  Bounding_box_3() : Base(false) {
     CGAL_assertion_msg(false, "code not stable");
   }
     
