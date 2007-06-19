@@ -69,11 +69,7 @@ class Single_wall_creator3 : public Modifier_base<typename Nef_::SNC_and_PL> {
   bool need_to_create_wall() const {
     CGAL_assertion(ein->point() == Sphere_point(1,0,0) ||
 		   ein->twin()->point() == Sphere_point(1,0,0));
-    //    Sphere_circle c(ein->point(), spin);
-    //    c=normalized(c);
-    //    std::cerr << "need_to_create_wall " << ein->point() << ", " << spin << std::endl;
-    //    std::cerr << "need_to_create_wall " << c << std::endl;
-    
+
     SHalfedge_around_svertex_circulator svc(ein->out_sedge()), send(svc);
     CGAL_For_all(svc,send) {
       //      std::cerr << "check circles " << svc->circle() << std::endl;
@@ -96,7 +92,6 @@ class Single_wall_creator3 : public Modifier_base<typename Nef_::SNC_and_PL> {
     CGAL_NEF_TRACEN( "double coords" << CGAL::to_double(ein->twin()->source()->point().x())
 		     << ", " << CGAL::to_double(ein->twin()->source()->point().y())
 		     << ", " << CGAL::to_double(ein->twin()->source()->point().z()) );    
-    //    CGAL_NEF_TRACEN( "Single_wall_creator3: spin " << spin );
 
     if(!need_to_create_wall())
       return;
@@ -109,10 +104,7 @@ class Single_wall_creator3 : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     SM_walls SMW_src(&*ein->source());
     SM_walls SMW_tgt(&*ein->twin()->source());
-    //    Sphere_segment sphere_ray_src(ein->point(), spin);  
-    //    Sphere_segment sphere_ray_tgt(ein->twin()->point(), spin);    
-    //CGAL_assertion(sphere_ray_src.sphere_circle().opposite() == 
-    //		   sphere_ray_tgt.sphere_circle());
+
     Sphere_segment sphere_ray_src(ein->point(), ein->twin()->point(), c);
     Sphere_segment sphere_ray_tgt(ein->twin()->point(), ein->point(), c.opposite());
     SVertex_handle lateral_sv_tgt[2];
@@ -121,23 +113,30 @@ class Single_wall_creator3 : public Modifier_base<typename Nef_::SNC_and_PL> {
     CGAL_NEF_TRACEN("lateral_sv_tgt " << lateral_sv_tgt[0]->point() << 
 		    ", " << lateral_sv_tgt[1]->point());
 
-    CGAL_assertion(sphere_ray_src.sphere_circle() == sphere_ray_tgt.sphere_circle().opposite());
+    CGAL_assertion(sphere_ray_src.sphere_circle() == 
+		   sphere_ray_tgt.sphere_circle().opposite());
     CGAL_assertion(sphere_ray_src.sphere_circle() == c);
 
 #ifdef CGAL_NEF_INDEXED_ITEMS
-    CGAL_assertion(!Sphere_segment(ein->point(), lateral_sv_tgt[0]->point(), sphere_ray_src.sphere_circle()).is_long());
-    CGAL_assertion(!Sphere_segment(ein->twin()->point(), lateral_sv_tgt[1]->point(), sphere_ray_tgt.sphere_circle()).is_long());
+    CGAL_assertion(!Sphere_segment(ein->point(), 
+				   lateral_sv_tgt[0]->point(), 
+				   sphere_ray_src.sphere_circle()).is_long());
+    CGAL_assertion(!Sphere_segment(ein->twin()->point(), 
+				   lateral_sv_tgt[1]->point(), 
+				   sphere_ray_tgt.sphere_circle()).is_long());
     SMW_src.add_sedge_between(ein, lateral_sv_tgt[0], index1, index2, sphere_ray_src.sphere_circle());
     SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1], index2, index1, sphere_ray_tgt.sphere_circle());
 #else 
-    CGAL_assertion(!Sphere_segment(ein->point(), lateral_sv_tgt[0]->point(), sphere_ray_src.sphere_circle()).is_long());
-    CGAL_assertion(!Sphere_segment(ein->twin()->point(), lateral_sv_tgt[1]->point(), sphere_ray_tgt.sphere_circle()).is_long());
+    CGAL_assertion(!Sphere_segment(ein->point(), 
+				   lateral_sv_tgt[0]->point(), 
+				   sphere_ray_src.sphere_circle()).is_long());
+    CGAL_assertion(!Sphere_segment(ein->twin()->point(), 
+				   lateral_sv_tgt[1]->point(), 
+				   sphere_ray_tgt.sphere_circle()).is_long());
     SMW_src.add_sedge_between(ein, lateral_sv_tgt[0], sphere_ray_src.sphere_circle());
     SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1], sphere_ray_tgt.sphere_circle());
 #endif
-    //    Sphere_circle c(sphere_ray_src.sphere_circle());
-    //    CGAL_assertion(c.a()==0 && c.b()==0);
-    Ray_hit rh(sncp, pl);
+    Ray_hit rh(sncp, pl, 3);
 
     do {
       Ray_3 r(lateral_sv_tgt[0]->source()->point(),lateral_sv_tgt[0]->point()-CGAL::ORIGIN);
@@ -159,28 +158,30 @@ class Single_wall_creator3 : public Modifier_base<typename Nef_::SNC_and_PL> {
 	lateral_sv_tgt[0]->set_index();
 	lateral_sv_tgt[1]->set_index(lateral_sv_tgt[0]->get_index());
 #endif
+	pl->add_edge(lateral_sv_tgt[0]);
 	return;
       }
 
- 	SM_walls SMW_tgt(&*v);	
-	SVertex_handle opp = SMW_tgt.add_ray_svertex(lateral_sv_tgt[0]->point().antipode());
-	opp->twin() = lateral_sv_tgt[0];
-	lateral_sv_tgt[0]->twin() = opp;
+      SM_walls SMW_tgt(&*v);
+      SVertex_handle opp = SMW_tgt.add_ray_svertex(lateral_sv_tgt[0]->point().antipode());
+      opp->twin() = lateral_sv_tgt[0];
+      lateral_sv_tgt[0]->twin() = opp;
+      pl->add_edge(opp);
 #ifdef CGAL_NEF_INDEXED_ITEMS
-	opp->set_index();
-	lateral_sv_tgt[0]->set_index(opp->get_index());
+      opp->set_index();
+      lateral_sv_tgt[0]->set_index(opp->get_index());
 #endif
-	lateral_sv_tgt[0] = 
-	  SMW_tgt.add_lateral_svertex(Sphere_segment(lateral_sv_tgt[0]->point().antipode(), 
-						     lateral_sv_tgt[0]->point(),c));
+      lateral_sv_tgt[0] = 
+	SMW_tgt.add_lateral_svertex(Sphere_segment(lateral_sv_tgt[0]->point().antipode(), 
+						   lateral_sv_tgt[0]->point(),c));
 #ifdef CGAL_NEF_INDEXED_ITEMS
-	CGAL_assertion(!Sphere_segment(opp->point(), lateral_sv_tgt[0]->point(), c).is_long());
-	SMW_tgt.add_sedge_between(opp, lateral_sv_tgt[0], index1, index2, c);
+      CGAL_assertion(!Sphere_segment(opp->point(), lateral_sv_tgt[0]->point(), c).is_long());
+      SMW_tgt.add_sedge_between(opp, lateral_sv_tgt[0], index1, index2, c);
 #else
-	CGAL_assertion(!Sphere_segment(opp->point(), lateral_sv_tgt[0]->point(), c).is_long());
-	SMW_tgt.add_sedge_between(opp, lateral_sv_tgt[0], c);	
+      CGAL_assertion(!Sphere_segment(opp->point(), lateral_sv_tgt[0]->point(), c).is_long());
+      SMW_tgt.add_sedge_between(opp, lateral_sv_tgt[0], c);	
 #endif
-
+      
     } while(true);
   }
 };
