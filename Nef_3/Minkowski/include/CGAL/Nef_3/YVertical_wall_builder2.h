@@ -76,6 +76,7 @@ class YVertical_wall_builder2 : public Modifier_base<typename Nef_::SNC_and_PL> 
     for(vri = redges_begin(); vri != redges_end(); ++vri) {
       if((++i%100)==0)
 	std::cerr << "handle Y2 " << i << std::endl;
+      Halfedge_handle ei(*vri);
       SHalfedge_around_svertex_circulator 
 	svc(ei->out_sedge()), send(svc);
       CGAL_For_all(svc, send) {
@@ -84,6 +85,7 @@ class YVertical_wall_builder2 : public Modifier_base<typename Nef_::SNC_and_PL> 
 	  continue;
 	Single_wall3 W(svc);
 	W(sncpl);
+	break;
       }
     }
 
