@@ -1422,10 +1422,13 @@ read_vertex(Vertex_handle vh) {
   in >> index;
   vh->shalfloop() = index >= 0 ? SLoop_of[index] : this->shalfloops_end();
   OK = OK && test_string("|");
-  //  in >> hx >> hy >> hz >> hw;
-  //  vh->point() = Point_3(hx,hy,hz,hw);
+#ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
+  in >> hx >> hy >> hz >> hw;
+  vh->point() = Point_3(hx,hy,hz,hw);
+#else
   vh->point() = 
     Geometry_io<typename K::Kernel_tag, Kernel>::template read_point<Kernel, K>(in);
+#endif
   OK = OK && test_string("}");
   in >> vh->mark();
   
@@ -1448,7 +1451,11 @@ void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
   else
     Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_point(out, (Point_3) e->point());
 
-  out << " } "<< e->mark() << std::endl;
+  out << " } "<< e->mark();
+#ifdef CGAL_NEF_OUTPUT_INDEXES
+  out << " " << e->get_index();
+#endif
+  out << std::endl;
 }
 
 template <typename EW>
@@ -1478,10 +1485,13 @@ read_edge(Halfedge_handle eh) {
     eh->incident_sface() = SFace_of[index];
   }
   OK = OK && test_string("|");
-  //    in >> hx >> hy >> hz >> hw;
-  //    eh->point() = Sphere_point(hx,hy,hz);
+#ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
+  in >> hx >> hy >> hz >> hw;
+  eh->point() = Sphere_point(hx,hy,hz);
+#else
   eh->point() = 
     Geometry_io<typename K::Kernel_tag, Kernel>::template read_point<Kernel,K>(in);
+#endif
   OK = OK && test_string("}");
   in >> eh->mark();
 
@@ -1546,11 +1556,14 @@ read_facet(Halffacet_handle fh) {
   in >> index;
   fh->incident_volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("|");
-  //  in >> a >> b >> c >> d;
-  //  fh->plane() = Plane_3(a,b,c,d);
+#ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
+  in >> a >> b >> c >> d;
+  fh->plane() = Plane_3(a,b,c,d);
+#else
   fh->plane() = 
     Geometry_io<typename K::Kernel_tag, Kernel>::
     template read_plane<Kernel, K>(in);
+#endif
   OK = OK && test_string("}");
   in >> fh->mark();
 
@@ -1610,7 +1623,12 @@ print_sedge(SHalfedge_handle e) const {
     Geometry_io<typename Kernel::Kernel_tag, Kernel>::
       print_plane(out, (Plane_3) e->circle());
 
-  out << " } " << e->mark() << "\n";
+  out << " } " << e->mark();
+#ifdef CGAL_NEF_OUTPUT_INDEXES
+  out << " " << e->get_forward_index() 
+      << " " << e->get_backward_index();
+#endif 
+  out << std::endl;
 }
 
 template <typename EW>
@@ -1649,11 +1667,14 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   seh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");
-  //  in >> a >> b >> c >> d;
-  //  seh->circle() = Sphere_circle(Plane_3(a,b,c,d));
+#ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
+  in >> a >> b >> c >> d;
+  seh->circle() = Sphere_circle(Plane_3(a,b,c,d));
+#else
   seh->circle() =     
     Geometry_io<typename K::Kernel_tag, Kernel>::
     template read_plane<Kernel, K>(in);
+#endif
   OK = OK && test_string("}");
   in >> seh->mark();
 
@@ -1700,11 +1721,14 @@ read_sloop(SHalfloop_handle slh) {
   in >> index;
   slh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");	
-  //  in >> a >> b >> c >> d;
-  //  slh->circle() = Sphere_circle(Plane_3(a,b,c,d));
+#ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
+  in >> a >> b >> c >> d;
+  slh->circle() = Sphere_circle(Plane_3(a,b,c,d));
+#else
   slh->circle() =
     Geometry_io<typename K::Kernel_tag, Kernel>::
     template read_plane<Kernel, K>(in);	
+#endif
   OK = OK && test_string("}");	
   in >> slh->mark();
   
