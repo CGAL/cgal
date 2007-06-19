@@ -95,6 +95,7 @@ class Nary_union_using_distinct_uniter {
   
   Polyhedron get_union() {
     
+    Polyhedron empty;
     while(queue.size() > 1) {
       if(queue.size()%100 == 0 || queue.size()<30)     
 	std::cerr << queue.size() << " polyhedra in the queue" << std::endl;
@@ -104,7 +105,7 @@ class Nary_union_using_distinct_uniter {
 	std::list<Polyhedron> N_list;
 	N_list.push_back(i1->first);
 	N_list.push_back(i2->first);
-	Polyhedron tmp;
+	Polyhedron tmp(empty);
 	Distinct_polyhedron_uniter dpu(N_list);
 	tmp.delegate(dpu,false,false);
 	PolyBox pb(tmp,
