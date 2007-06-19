@@ -15,6 +15,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_NEF_NARY_UNION_L1_SORT
 template<typename Point_3>
 struct L1_sort {
   bool operator()(Point_3 p0, Point_3 p1) {
@@ -22,6 +23,18 @@ struct L1_sort {
       p0.x() + p0.y() + p0.z() < p1.x() + p1.y() + p1.z();
   }
 };
+#define NARY_SORT L1_sort<Point_3>
+#elif defined CGAL_NEF_NARY_UNION_L2_SORT
+template<typename Point_3>
+struct L2_sort {
+  bool operator()(Point_3 p0, Point_3 p1) {
+    return
+      p0.x()*p0.x() + p0.y()*p0.y() + p0.z()*p0.z() < 
+      p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
+  }
+};
+#define NARY_SORT L2_sort<Point_3>
+#endif
 
 template<typename Nef_polyhedron>
 Nef_polyhedron 
@@ -58,7 +71,11 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   typedef typename std::list<Gausian_map> GM_list;
   typedef typename GM_list::const_iterator GM_iterator;
   typedef typename std::pair<GM_iterator, GM_iterator> GM_pair;
+#ifdef NARY_SORT
+  typedef typename std::multimap<Point_3, GM_pair, NARY_SORT> PQ;
+#else
   typedef typename std::multimap<Point_3, GM_pair> PQ;
+#endif
   typedef typename PQ::iterator PQ_iterator;
 
   GM_list GM0;
@@ -107,7 +124,8 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     }
   }
 
-  while(pq.size() > 1) {
+  Nef_polyhedron empty;
+  while(pq.size() > 0) {
     std::cerr << pq.size() << " Gaussian maps in priority queue" << std::endl;
 
     PQ_iterator pqi(pq.begin());
@@ -118,7 +136,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
 		      *pqi->second.second);
     t1.stop();
     pq.erase(pqi);
-    Nef_polyhedron Ntmp;
+    Nef_polyhedron Ntmp(empty);
     t3.start();
     CGAL::gausian_map_to_nef_3<Nef_polyhedron> Converter(GcG);
     Ntmp.delegate(Converter, true);
