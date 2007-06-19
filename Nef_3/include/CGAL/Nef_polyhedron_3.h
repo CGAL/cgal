@@ -20,6 +20,7 @@
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 //                 Ralf Osbild     <osbild@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
 
@@ -32,13 +33,12 @@
 #include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_external_structure.h>
+#include <CGAL/Nef_3/Combine_with_halfspace.h>
 //#include <CGAL/Nef_3/SNC_binop.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
-#include <CGAL/Nef_S2/SM_io_parser.h>
-#include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_3/SNC_SM_explorer.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Modifier_base.h>
@@ -106,7 +106,6 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SM_const_decorator<Sphere_map>     SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<I, SM_decorator>  SM_overlayer;
   typedef CGAL::SM_point_locator<SNC_structure>    SM_point_locator;
-  typedef CGAL::SM_io_parser<SM_decorator>         SM_io_parser;
 
 #ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
@@ -182,14 +181,15 @@ protected:
   typedef typename Nef_rep::SNC_external_structure SNC_external_structure;
  //  typedef typename Nef_rep::SNC_binop           SNC_binop;
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
-  typedef typename Nef_rep::SNC_point_locator_default 
+  typedef typename Nef_rep::SNC_point_locator_default
     SNC_point_locator_default;
+  typedef CGAL::Combine_with_halfspace<SNC_structure, SNC_point_locator> 
+          Combine_with_halfspace;
 
   typedef typename Nef_rep::SM_decorator        SM_decorator;
   typedef typename Nef_rep::SM_const_decorator  SM_const_decorator;
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
-  typedef typename Nef_rep::SM_io_parser        SM_io_parser;
   typedef typename Nef_rep::SNC_simplify        SNC_simplify;
 #ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef typename Nef_rep::SM_visualizor       SM_visualizor;
@@ -297,6 +297,8 @@ protected:
   typedef typename SNC_decorator::SFace_cycle_const_iterator     
                                                    SFace_cycle_const_iterator;
 
+  typedef typename SNC_decorator::Association  Association;
+ 
  protected: 
   void initialize_infibox_vertices(Content space) {
     SNC_constructor C(snc()); 
@@ -503,6 +505,160 @@ protected:
 
   };
 
+  template <class HDS>
+  class Build_polyhedron2 : public CGAL::Modifier_base<HDS> {
+    
+    class Find_holes {
+
+      Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      int nov, nof;
+
+    public:
+      Find_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_) 
+	: omit_vertex(omit_vertex_), nov(0), nof(0) {}
+
+      void visit(Halffacet_const_handle f) {
+	++nof;
+	Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+	for(++fc; fc != f->facet_cycles_end(); ++fc) {
+	  if(fc.is_shalfedge()) {
+	    --nof;
+	    SHalfedge_around_facet_const_circulator 
+	      sfc(fc), send(sfc);
+	    CGAL_For_all(sfc, send) {
+	      omit_vertex[sfc->source()->source()] = true;
+	      --nov;
+	    }
+	  } else if(fc.is_shalfloop()) {
+	    SHalfloop_const_handle sl(fc);
+	    omit_vertex[sl->incident_sface()->center_vertex()];
+	    --nov;
+	  } else
+	    CGAL_assertion_msg(false, "wrong handle type");
+	}
+      }
+
+      void visit(Vertex_const_handle) { ++nov; }
+      void visit(SFace_const_handle) {}
+      void visit(Halfedge_const_handle) {}
+      void visit(SHalfedge_const_handle) {}
+      void visit(SHalfloop_const_handle) {}
+
+      int number_of_vertices() const {
+	return nov;
+      }
+
+      int number_of_facets() const {
+	return nof;
+      }
+    };
+
+    class Add_vertices {
+      
+      Polyhedron_incremental_builder_3<HDS>& B;
+      Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      Object_index<Vertex_const_iterator>& VI;      
+      int vertex_index;
+
+    public:
+      Add_vertices(Polyhedron_incremental_builder_3<HDS>& B_,
+		   Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
+		   Object_index<Vertex_const_iterator>& VI_) 
+	: B(B_), omit_vertex(omit_vertex_), VI(VI_), vertex_index(0) {}
+	
+      void visit(Vertex_const_handle v) {
+	if(omit_vertex[v]) return;
+	VI[v]=vertex_index++;
+	B.add_vertex(v->point());
+      }
+
+      void visit(Halffacet_const_handle) {}
+      void visit(SFace_const_handle) {}
+      void visit(Halfedge_const_handle) {}
+      void visit(SHalfedge_const_handle) {}
+      void visit(SHalfloop_const_handle) {}
+
+    };
+
+    class Visitor {
+
+      const Object_index<Vertex_const_iterator>& VI;
+      Polyhedron_incremental_builder_3<HDS>& B;
+      const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      SNC_const_decorator& D;
+      
+    public:
+      Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
+	      const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
+	      SNC_const_decorator& sd,
+	      Object_index<Vertex_const_iterator>& vi) 
+	: VI(vi), B(BB), omit_vertex(omit_vertex_), D(sd){}
+
+      void visit(Halffacet_const_handle opposite_facet) {
+
+	CGAL_NEF_TRACEN("Build_polyhedron: visit facet " << opposite_facet->plane());
+ 
+	CGAL_assertion(Infi_box::is_standard(opposite_facet->plane()));
+	
+	SHalfedge_const_handle se;
+	Halffacet_cycle_const_iterator fc;
+     	
+	Halffacet_const_handle f = opposite_facet->twin();
+
+	B.begin_facet();
+	fc = f->facet_cycles_begin();
+	se = SHalfedge_const_handle(fc);
+	CGAL_assertion(se!=0);
+	if(omit_vertex[se->source()->source()]) return;
+	SHalfedge_around_facet_const_circulator hc_start(se);
+	SHalfedge_around_facet_const_circulator hc_end(hc_start);
+	CGAL_For_all(hc_start,hc_end) {
+	  CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
+	  B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+	}
+	B.end_facet();
+      }
+
+      void visit(SFace_const_handle) {}
+      void visit(Halfedge_const_handle) {}
+      void visit(Vertex_const_handle) {}
+      void visit(SHalfedge_const_handle) {}
+      void visit(SHalfloop_const_handle) {}
+    };
+
+  public:
+
+    SFace_const_handle sf;
+    SNC_const_decorator& scd;
+    Object_index<Vertex_const_iterator> VI;
+    Unique_hash_map<Vertex_const_handle, bool> omit_vertex;
+
+    Build_polyhedron2(SFace_const_handle sf_, SNC_const_decorator& s) : 
+      sf(sf_), scd(s), VI(s.vertices_begin(),s.vertices_end(),'V'), 
+      omit_vertex(false) {}
+    
+      void operator()(HDS& hds) {
+
+      Polyhedron_incremental_builder_3<HDS> B(hds, true);
+      
+      Find_holes F(omit_vertex);
+      scd.visit_shell_objects(sf, F);
+
+      B.begin_surface(F.number_of_vertices(), 
+		      F.number_of_facets(),
+		      F.number_of_vertices()+F.number_of_facets()-2);
+
+      Add_vertices A(B,omit_vertex, VI);
+      scd.visit_shell_objects(sf, A);
+
+      Visitor V(B,omit_vertex, scd,VI);
+      scd.visit_shell_objects(sf, V);
+      B.end_surface();
+    }
+
+  };
+
+
  public:
  void delegate( Modifier_base<SNC_structure>& modifier, 
 		bool compute_external = false, 
@@ -510,10 +666,12 @@ protected:
 
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
+   if( this->is_shared()) clone_rep();
    modifier(snc());
    if(compute_external) {
      SNC_external_structure es(snc());
      es.clear_external_structure();
+     
      build_external_structure();
    }
    if(do_simplify)
@@ -533,6 +691,7 @@ protected:
 		bool do_simplify = false) {
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
+   if( this->is_shared()) clone_rep();
    SNC_and_PL sncpl(&snc(),pl());
    modifier(sncpl);
    pl() = sncpl.pl;
@@ -610,8 +769,10 @@ protected:
     P.delegate(bp);
   }
 
- //  void dump(bool sorted = false, std::ostream& os = std::cout) 
- //  { SNC_io_parser::dump( snc(), os, sorted); }
+ void convert_inner_shell_to_polyhedron(SFace_const_iterator sf, Polyhedron& P) {
+   Build_polyhedron2<HalfedgeDS> bp(sf, *this);
+   P.delegate(bp);
+ }
 
   bool is_valid( bool verb = false, int level = 0) {
     // checks the combinatorial consistency.
@@ -910,6 +1071,16 @@ protected:
     Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
     SNC_decorator D( res.snc());
     D.binary_operation(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _and);
+    return res;
+  }
+
+  Nef_polyhedron_3<Kernel,Items, Mark>
+  intersection(const Plane_3& plane) {
+    AND _and;
+    SNC_structure rsnc;
+    Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
+    Combine_with_halfspace cwh(res.snc(), res.pl());
+    cwh.combine_with_halfspace(snc(), plane, _and);
     return res;
   }
 
@@ -1219,6 +1390,7 @@ protected:
 	}
       }
 
+      Association A;
       SNC_external_structure es(snc());
       es.clear_external_structure();
       for(li = vertex_list.begin(); li != vertex_list.end();++li){
@@ -1246,10 +1418,10 @@ protected:
 	  }
 	  Vertex_handle v = snc().new_vertex(v1->point(), (*li)->mark());
 	  SM_overlayer O(&*v);
-	  O.subdivide(&*v1,&*v2);
+	  O.subdivide(&*v1, &*v2, A);
 	  AND _and;
 	  O.select(_and);
-	  O.simplify();
+	  O.simplify(A);
 	  snc().delete_vertex(v1);
 	  snc().delete_vertex(v2);
 	}
@@ -1476,8 +1648,7 @@ Nef_polyhedron_3( Content space) {
     build_external_structure();
   } else {
     build_external_structure();
-    SNC_decorator D(snc());
-    D.volumes_begin()->mark() = (space == COMPLETE) ? 1 : 0;
+    snc().volumes_begin()->mark() = (space == COMPLETE) ? 1 : 0;
   }
 }
 
