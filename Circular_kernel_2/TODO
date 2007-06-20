@@ -1,3 +1,5 @@
+fix manual for operator>>
+
 manual filtered bbox kernel, ref counting
 manual calculs aires, longueurs, etc
 manual bounded_side etc
