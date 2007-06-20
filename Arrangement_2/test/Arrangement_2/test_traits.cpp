@@ -22,7 +22,7 @@ int main ()
 
 #include "test_traits.h"
 #include "Traits_test.h"
-#include "test_arc_traits.h"
+
 
 // Arrangement types:
 typedef CGAL::Arr_default_dcel<Traits>                  Dcel;
@@ -435,32 +435,6 @@ read_curve(stream & is,
   return (false);
 }
 
-#elif TEST_TRAITS == CIRCLE_TRAITS
-
-/* is it in use ??? to ask efi about Has_boundary_category */
-
-/*! Read an x-monotone conic curve */
-template <>
-template <class stream>
-bool
-Traits_test<Traits >::
-read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
-{
-  is >> xcv;
-  return true;
-}
-
-/*! Read a general conic curve */
-template <>
-template <class stream>
-bool
-Traits_test<Traits >::
-read_curve(stream & is,Traits::Curve_2 & cv)
-{
-  is >> cv;
-  return true;
-}
-
 #elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
 
 /*! Read an x-monotone conic curve */
@@ -589,6 +563,9 @@ std::list<CGAL::Object>                  x_objs;
 
 std::list<CGAL::Object>::const_iterator  xoit;
 
+int i=0;
+int j=0;
+
 template <>
 template <class stream>
 bool
@@ -609,19 +586,22 @@ Traits_test<Traits>::read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
   Traits::Point_2 B_pt(B_ptx, B_pty);
 
   //std::cout << "B_ps " << B_ps << " B_pt " << B_pt << std::endl;
-
+  j=0;
   make_x_monotone (tmp_cv, std::back_inserter (x_objs));
-  int idx=0;
-  for (xoit = x_objs.begin(); xoit != x_objs.end() && idx==0; ++xoit) {
+  //
+  for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
     // this loop should make only one iteration
-    idx++;
-    if (CGAL::assign (xcv, *xoit))
+    if (CGAL::assign (xcv, *xoit) && i==j)
+    {
+      i++;
+      //std::cout << "Traits_test BEZIER_TRAITS xcv " << xcv <<std::endl;
+      //std::cout << "Traits_test BEZIER_TRAITS *xoit " << (*xoit) <<std::endl;
       return true;
-    else
-      return false;
+    }
+    j++;
   }
   //xcv = Traits::X_monotone_curve_2(tmp_cv, B_ps, B_pt, Traits::Bezier_cache());
-  return true;
+  return false;
 }
 
 /*! Read a general bezier curve */
@@ -633,6 +613,290 @@ Traits_test<Traits >::read_curve(stream & is,Traits::Curve_2 & cv)
   is >> cv;
   return true;
 }
+
+#elif TEST_TRAITS == LINE_ARC_TRAITS || \
+  TEST_TRAITS == CIRCULAR_ARC_TRAITS || \
+  TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
+
+/*! Read an arc point */
+template < typename T_Traits , typename stream >
+bool read_arc_point(stream & is, typename T_Traits::Point_2 & p)
+{
+  Basic_number_type x, y;
+  is >> x >> y;
+  Circular_kernel::Point_2 lp(x, y);
+  p = typename T_Traits::Point_2(lp);
+  return true;
+}
+
+bool is_deg_1(char c)
+{
+  return (c=='z' || c=='Z') || (c=='y' || c=='Y') || (c=='x' || c=='X') ||
+         (c=='w' || c=='W') || (c=='v' || c=='V') || (c=='l' || c=='L');
+}
+
+bool is_deg_2(char c)
+{
+  return (c=='b' || c=='B') || (c=='c' || c=='C') ||
+         (c=='d' || c=='D') || (c=='e' || c=='E');
+}
+
+#if TEST_TRAITS == LINE_ARC_TRAITS || \
+  TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
+template <class stream>
+Circular_kernel::Line_arc_2 read_line(char type,stream & is)
+{
+  if (type == 'z' || type == 'Z')
+  {
+    Circular_kernel::Line_2 l_temp;
+    Circular_kernel::Circle_2 c_temp1,c_temp2;
+    bool b1,b2;
+    is >> l_temp >> c_temp1 >> b1 >> c_temp2 >> b2;
+    return Circular_kernel::Line_arc_2(l_temp,c_temp1,b1,c_temp2,b2);
+  }
+  else if (type == 'y' || type == 'Y')
+  {
+    Circular_kernel::Line_2 l_temp,l_temp1,l_temp2;
+    is >> l_temp >> l_temp1 >> l_temp2;
+    return Circular_kernel::Line_arc_2(l_temp,l_temp1,l_temp2);
+  }
+  else if (type == 'x' || type == 'X')
+  {
+    Circular_kernel::Line_2 l_temp;
+    Circular_kernel::Circular_arc_point_2 p0,p1;
+    is >> l_temp >> p0 >> p1;
+    //std::cout << "got here l_temp p0 p1 " << l_temp << " " << p0 << " " << p1 << std::endl;
+    return Circular_kernel::Line_arc_2(l_temp,p0,p1);
+  }
+  else if (type == 'w' || type == 'W' || type == 'l' || type == 'L')
+  {
+    Circular_kernel::Point_2 p0,p1;
+    is >> p0 >> p1;
+    return Circular_kernel::Line_arc_2(p0,p1);
+  }
+  else if (type == 'v' || type == 'V')
+  {
+    Circular_kernel::Segment_2 seg;
+    is >> seg;
+    return Circular_kernel::Line_arc_2(seg);
+  }
+  std::cout << "should never happen Line_arc_2 " << type <<std::endl;
+  return Circular_kernel::Line_arc_2(); //should never happen
+}
+#endif
+
+#if TEST_TRAITS == CIRCULAR_ARC_TRAITS || \
+  TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
+template <class stream>
+Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
+{
+  if (type == 'b' || type == 'B')
+  {
+    Circular_kernel::Circle_2 c_temp,c_temp1,c_temp2;
+    bool b1,b2;
+    is >> c_temp >> c_temp1 >> b1 >> c_temp2 >> b2 ;
+    return Circular_kernel::Circular_arc_2(c_temp,c_temp1,b1,c_temp2,b2);
+  }
+  else if (type == 'c' || type == 'C')
+  {
+    Circular_kernel::Circle_2 c_temp;
+    Circular_kernel::Circular_arc_point_2 p0,p1;
+    is >> c_temp >> p0 >> p1;
+    return Circular_kernel::Circular_arc_2(c_temp,p0,p1);
+  }
+  else if (type == 'd' || type == 'D')
+  {
+    Circular_kernel::Circle_2 c_temp;
+    Circular_kernel::Line_2 l_temp1,l_temp2;
+    bool b1,b2;
+    is >> c_temp >> l_temp1 >> b1 >> l_temp2 >> b2;
+    return Circular_kernel::Circular_arc_2(c_temp,l_temp1,b1,l_temp2,b2);
+  }
+  else if (type == 'e' || type == 'E')
+  {
+    Circular_kernel::Circular_arc_2 a_temp;
+    Circular_kernel::Circle_2 c_temp;
+    bool b1,b2;
+    is >> a_temp >> b1 >> c_temp >> b2;
+    return Circular_kernel::Circular_arc_2(a_temp,b1,c_temp,b2);
+  }
+  std::cout << "should never happen Circular_arc_2" << std::endl;
+  return Circular_kernel::Circular_arc_2(); //should never happen
+}
+#endif
+
+#if TEST_TRAITS == LINE_ARC_TRAITS
+
+/*! Read a line arc point */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::
+read_point(stream & is, Traits::Point_2 & p)
+{
+  return read_arc_point<Traits, stream>(is, p);
+}
+
+/*! Read an x-monotone line arc curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_xcurve(stream & is, Traits::X_monotone_curve_2 & xc)
+{
+  // Get the arc type:
+  char type;
+  is >> type;
+  if (is_deg_1(type))
+  {
+    xc=read_line(type,is);
+    return true;
+  }
+  return false;
+
+}
+
+/*! Read a general line arc curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_curve(stream & is, Traits::Curve_2 & cv)
+{
+  // Get the arc type:
+  char type;
+  is >> type;
+  if (is_deg_1(type))
+  {
+    cv=read_line(type,is);
+    return true;
+  }
+  return false;
+}
+
+#elif TEST_TRAITS == CIRCULAR_ARC_TRAITS
+
+/*! Read a circular arc point */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::
+read_point(stream & is,
+           Traits::Point_2 & p)
+{
+  return read_arc_point<Traits, stream>(is, p);
+}
+
+/*! Read an x-monotone circular arc curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_xcurve(stream & is,Traits::X_monotone_curve_2 & xc)
+{
+  // Get the arc type:
+  char type;
+  is >> type;
+  if (is_deg_2(type))
+  {
+    xc=read_arc(type,is);
+    return true;
+  }
+  return false;
+}
+
+/*! Read a general circular curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_curve(stream & is, Traits::Curve_2 & cv)
+{
+  // Get the arc type:
+  char type;
+  is >> type;
+  if (type == 'a' || type == 'A') 
+  {
+    Circular_kernel::Circle_2 c_temp;
+    is >> c_temp;
+    cv=Circular_kernel::Circular_arc_2(c_temp);
+    return true;
+  }
+  else if (is_deg_2(type))
+  {
+    cv=read_arc(type,is);
+    return true;
+  }
+  return false;
+}
+
+#elif TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
+
+/*! Read a circular-line arc point */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::
+read_point(stream & is, Traits::Point_2 & p)
+{
+  return read_arc_point<Traits, stream>(is, p);
+}
+
+/*! Read an x-monotone circular-line arc curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_xcurve(stream & is,Traits::X_monotone_curve_2 & xc)
+{
+  // Get the arc type:
+  char type;
+  is >> type;
+  if (is_deg_1(type))
+  {
+    xc = read_line(type,is);
+    return true;
+  }
+  else if (is_deg_2(type))
+  {
+    xc = Traits::X_monotone_curve_2(read_arc(type,is));
+    return true;
+  }
+  return false;
+}
+
+/*! Read a general circular-line curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_curve(stream & is, Traits::Curve_2 & cv)
+{
+  // Get the arc type:
+  char type;
+  is >> type;
+  if (type == 'a' || type == 'A') 
+  {
+    Circular_kernel::Circle_2 c_temp;
+    is >> c_temp;
+    cv=Traits::Curve_2(c_temp);
+    return true;
+  }
+  else if (is_deg_1(type))
+  {
+    cv = Traits::Curve_2(read_line(type,is));
+    return true;
+  }
+  else if (is_deg_2(type))
+  {
+    cv = read_arc(type,is);
+    return true;
+  }
+  return false;
+
+}
+
+#endif
 
 #endif
 
