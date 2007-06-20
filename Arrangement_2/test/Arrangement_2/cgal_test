@@ -28,9 +28,8 @@ CORE_CONIC_TRAITS=4
 LINE_ARC_TRAITS=5
 CIRCULAR_ARC_TRAITS=6
 CIRCULAR_LINE_ARC_TRAITS=7
-CIRCLE_TRAITS=8
-CIRCLE_SEGMENT_TRAITS=9
-BEZIER_TRAITS=10
+CIRCLE_SEGMENT_TRAITS=8
+BEZIER_TRAITS=9
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -77,7 +76,7 @@ run_test()
 
 
   basedata=`basename "$datafile"`
-  OUTPUTFILE=ProgramOutput.`echo $datafile | tr '/' '.'`.$name.$traits_type
+  OUTPUTFILE=ProgramOutput.$name.`echo $datafile | tr '/' '.'`.$traits_type
 #  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$name"
@@ -312,7 +311,7 @@ test_line_arc_traits()
     run_trapped_test test_traits data/circular_lines/intersect line_arc_traits
     run_trapped_test test_traits data/circular_lines/split line_arc_traits
     run_trapped_test test_traits data/circular_lines/constructor line_arc_traits
-    #run_trapped_test test_traits data/circular_lines/errors line_arc_traits
+    # !needs more attention! run_trapped_test test_traits data/circular_lines/errors line_arc_traits
   fi
   clean_tests
 }
@@ -361,21 +360,6 @@ test_circular_line_arc_traits()
 }
 
 #---------------------------------------------------------------------#
-# circle traits
-#---------------------------------------------------------------------#
-test_circle_traits()
-{
-# function     executable  number type   kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_TRAITS
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
-  else
-    run_trapped_test test_traits data/compare circle_traits
-  fi
-  clean_tests
-}
-
-#---------------------------------------------------------------------#
 # circle segment traits
 #---------------------------------------------------------------------#
 test_circle_segments_traits()
@@ -395,7 +379,7 @@ test_circle_segments_traits()
     run_trapped_test test_traits data/circle_segments/intersect circle_segments_traits
     run_trapped_test test_traits data/circle_segments/split circle_segments_traits
     run_trapped_test test_traits data/circle_segments/merge circle_segments_traits
-    run_trapped_test test_traits data/circle_segments/errors circle_segments_traits
+    # !first update arr_circle_segments!  run_trapped_test test_traits data/circle_segments/errors circle_segments_traits
     run_trapped_test test_traits data/circle_segments/constructor circle_segments_traits
   fi
   clean_tests
@@ -412,17 +396,17 @@ test_bezier_traits()
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
     run_trapped_test test_traits data/compare bezier_traits
-    #run_trapped_test test_traits data/bezier/vertex bezier_traits
-    #run_trapped_test test_traits data/bezier/is_vertical bezier_traits
-    #run_trapped_test test_traits data/bezier/compare_y_at_x bezier_traits
-    #run_trapped_test test_traits data/bezier/compare_y_at_x_left bezier_traits
-    #run_trapped_test test_traits data/bezier/compare_y_at_x_right bezier_traits
-    #run_trapped_test test_traits data/bezier/make_x_monotone bezier_traits
+    run_trapped_test test_traits data/bezier/vertex bezier_traits
+    run_trapped_test test_traits data/bezier/is_vertical bezier_traits
+    run_trapped_test test_traits data/bezier/compare_y_at_x bezier_traits
+    # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_left bezier_traits
+    # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_right bezier_traits
+    run_trapped_test test_traits data/bezier/make_x_monotone bezier_traits
     #run_trapped_test test_traits data/bezier/intersect bezier_traits
-    #run_trapped_test test_traits data/bezier/split bezier_traits
+    # !need to think! run_trapped_test test_traits data/bezier/split bezier_traits
     #run_trapped_test test_traits data/bezier/merge bezier_traits
     #run_trapped_test test_traits data/bezier/errors bezier_traits
-    #run_trapped_test test_traits data/bezier/constructor bezier_traits
+    # !no such file! run_trapped_test test_traits data/bezier/constructor bezier_traits
   fi
   clean_tests
 }
@@ -432,6 +416,7 @@ test_bezier_traits()
 #---------------------------------------------------------------------#
 
 rm -f $ERRORFILE
+rm -f ProgramOutput.test_traits.*
 touch $ERRORFILE
 
 #---------------------------------------------------------------------#
@@ -448,13 +433,13 @@ else
   test_polyline_traits
   test_non_caching_polyline_traits
   test_conic_traits
-# !test_circle_traits
-  test_circle_segments_traits
-  test_bezier_traits
 
   test_line_arc_traits # "line arcs" (segments) only
   test_circular_arc_traits # circular arcs only
   test_circular_line_arc_traits # for both
+
+  test_circle_segments_traits
+  test_bezier_traits
 
   compile_and_run test_insertion
   compile_and_run test_removal
@@ -475,4 +460,3 @@ echo "***********************************************" >> $ERRORFILE
 for file in `ls ProgramOutput.*`; do
     cat $file >> $ERRORFILE
 done
-
