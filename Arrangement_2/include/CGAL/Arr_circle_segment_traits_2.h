@@ -246,9 +246,26 @@ public:
       CGAL_precondition (cv1.point_position (p) == EQUAL &&
                          cv2.point_position (p) == EQUAL);
 
-      CGAL_precondition (CGAL::compare (p.x(), cv1.right().x()) != LARGER &&
-                         CGAL::compare (p.x(), cv2.right().x()) != LARGER);
-
+      if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+		  (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
+	  { //both cv1 and cv2 are vertical
+         CGAL_precondition (!(cv1.right()).equals(p) && !(cv2.right()).equals(p));
+	  }
+	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
+		       (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
+	  { //only cv1 is vertical
+         CGAL_precondition (!(cv1.right()).equals(p));
+	  }
+	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+		       (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL))
+	  { //only cv2 is vertical
+         CGAL_precondition (!(cv2.right()).equals(p));
+	  }
+	  else
+	  { //both cv1 and cv2 are non vertical
+        CGAL_precondition (CGAL::compare (cv1.right().x(),p.x()) == LARGER &&
+                           CGAL::compare (cv2.right().x(),p.x()) == LARGER);
+	  }
       // Compare the two curves immediately to the right of p:
       return (cv1.compare_to_right (cv2, p));
     }
@@ -280,12 +297,30 @@ public:
     {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
+
       CGAL_precondition (cv1.point_position (p) == EQUAL &&
                          cv2.point_position (p) == EQUAL);
 
-      CGAL_precondition (CGAL::compare (p.x(), cv1.left().x()) != SMALLER &&
-                         CGAL::compare (p.x(), cv2.left().x()) != SMALLER);
-
+      if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+		  (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
+	  { //both cv1 and cv2 are vertical
+         CGAL_precondition (!(cv1.left()).equals(p) && !(cv2.left()).equals(p));
+	  }
+	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
+		       (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
+	  { //only cv1 is vertical
+         CGAL_precondition (!(cv1.left()).equals(p));
+	  }
+	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+		       (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL))
+	  { //only cv2 is vertical
+         CGAL_precondition (!(cv2.left()).equals(p));
+	  }
+	  else
+	  { //both cv1 and cv2 are non vertical
+        CGAL_precondition (CGAL::compare (cv1.left().x(),p.x()) == SMALLER &&
+                           CGAL::compare (cv2.left().x(),p.x()) == SMALLER);
+	  }
       // Compare the two curves immediately to the left of p:
       return (cv1.compare_to_left (cv2, p));
     }
@@ -350,11 +385,11 @@ public:
     {}
 
     /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves 
+     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves 
      * and insert them to the given output iterator.
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects are all wrappers X_monotone_curve_2 objects.
+     *           objects are all wrcv.is_in_x_range (p)appers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
@@ -488,8 +523,9 @@ public:
     void operator() (const X_monotone_curve_2& cv, const Point_2& p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
-      CGAL_precondition (cv.is_in_x_range (p) &&
-                         ! p.equals (cv.source()) && ! p.equals (cv.target()));
+      CGAL_precondition (cv.point_position(p)==EQUAL &&
+      ! p.equals (cv.source()) &&
+      ! p.equals (cv.target()));
 
       cv.split (p, c1, c2);
       return;
