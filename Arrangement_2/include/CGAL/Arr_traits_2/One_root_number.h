@@ -214,6 +214,26 @@ public:
   //@}
 };
 
+template <class NT, bool Filter>
+std::istream & operator >> (std::istream & is, 
+                            _One_root_number<NT, Filter>& ort)
+{
+  bool is_rat;
+  NT alpha,beta,gamma;
+  is >> is_rat;
+  if (is_rat)
+  {
+    is >> alpha;
+    ort=_One_root_number<NT, Filter>(alpha);
+  }
+  else
+  {
+    is >> alpha >> beta >> gamma;
+    ort=_One_root_number<NT, Filter>(alpha,beta,gamma);
+  }
+  return is;
+}
+
 /*!
  * Compute an isolating interval for the one-root number.
  */
