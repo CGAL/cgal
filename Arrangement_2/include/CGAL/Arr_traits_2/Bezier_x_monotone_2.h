@@ -571,17 +571,17 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   _is_vert (false)
 {
   // Get the originators of the point that correspond to the curve B.
-  Originator_iterator   ps_org = ps.get_originator(B);
-  CGAL_precondition (ps_org != ps.originators_end()); 
-  
+  Originator_iterator ps_org = ps.get_originator(B);
+  CGAL_precondition (ps_org != ps.originators_end());
+
   Originator_iterator   pt_org = pt.get_originator(B);
   CGAL_precondition (pt_org != pt.originators_end());
-  
+
   // Check if the subcurve is directed left or right.
   const Comparison_result    res = _ps.compare_x (_pt, cache);
   // Iddo: TODO - alternative check if the original curve is vertical,
   //       a check that can work on intervals.
-  
+
   if (res == EQUAL)
   {
     // We have a vertical segment. Check if the source is below the target.
@@ -593,12 +593,12 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   {
     _dir_right = (res == SMALLER);
   }
-  
+
   // Check if the value of the parameter t increases when we traverse the
   // curve from left to right: If the curve is directed to the right, we
   // check if t_src < t_trg, otherwise we check whether t_src > t_trg.
   Comparison_result      t_res;
-  
+
   if (CGAL::compare (ps_org->point_bound().t_max,
                      pt_org->point_bound().t_min) == SMALLER ||
       CGAL::compare (ps_org->point_bound().t_min,
@@ -1259,40 +1259,32 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
         (const Self& cv) const
 {
   CGAL_precondition (_curve.is_same (cv._curve));
-  
   Self    res = cv;
-  
   if (right().is_same (cv.left()))
   {
     // Extend the subcurve to the right.
     if (_dir_right)
     {
-      res._trg = (cv._dir_right ? cv._trg : cv._src);
       res._pt = cv.right();
     }
     else
     {
-      res._src = (cv._dir_right ? cv._trg : cv._src);
       res._ps = cv.right();
     }
   }
   else
   {
     CGAL_precondition (left().is_same (cv.right()));
-    
     // Extend the subcurve to the left.
     if (_dir_right)
     {
-      res._src = (cv._dir_right ? cv._src : cv._trg);
       res._ps = cv.left();
     }
     else
     {
-      res._trg = (cv._dir_right ? cv._src : cv._trg);
       res._pt = cv.left();
     }
   }
-
   return (res);
 }
 
