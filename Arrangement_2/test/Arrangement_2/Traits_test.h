@@ -216,9 +216,38 @@ private:
   bool translate_boolean(std::string & str_value);
   unsigned int translate_enumerator(std::string & str_value);
 
-  template <class T1, class T2>  
-  bool compare(const T1 & exp_answer, const T2 & real_answer,
+  template <class T1, class T2>
+  bool compare_with_functor(const T1 & exp_answer, const T2 & real_answer,
                const char * str = "result")
+  {
+
+#if TEST_TRAITS == BEZIER_TRAITS
+
+    typename T_Traits::Bezier_cache cache;
+    if (!exp_answer.equals(real_answer,cache)) {
+
+#elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
+
+    if (!exp_answer.equals(real_answer)) {
+
+#else
+
+    if (exp_answer != real_answer) {
+
+#endif
+
+      if (!end_of_line_printed) print_end_of_line();
+      std::cout << "Expected " << str << ": " << exp_answer << std::endl
+                << "Obtained " << str << ": " << real_answer << std::endl;
+      end_of_line_printed = true;
+      return false;
+    }
+    return true;
+  }
+
+  bool compare_with_operator(const unsigned int & exp_answer,
+                    const unsigned int & real_answer,
+                    const char * str = "result")
   {
     if (exp_answer != real_answer) {
       if (!end_of_line_printed) print_end_of_line();
@@ -226,15 +255,23 @@ private:
                 << "Obtained " << str << ": " << real_answer << std::endl;
       end_of_line_printed = true;
       return false;
-    } 
+    }
     return true;
   }
 
   template <class T1, class T2>  
-  bool compare_and_print(const T1 & exp_answer, const T2 & real_answer,
+  bool compare_and_print_with_functor(const T1 & exp_answer, const T2 & real_answer,
                          const char * str = "result")
   {
-    bool result = compare(exp_answer, real_answer, str);
+    bool result = compare_with_functor(exp_answer, real_answer, str);
+    print_result(result);
+    return result;
+  }
+
+  bool compare_and_print_with_operator(const unsigned int & exp_answer, const unsigned int & real_answer,
+                         const char * str = "result")
+  {
+    bool result = compare_with_operator(exp_answer, real_answer, str);
     print_result(result);
     return result;
   }
@@ -524,25 +561,40 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
 	   }//switch
        str_stream.clear();
      }//for
+/*     for (int i = 0; i < num; ++i)
+     { //for debug
+        switch (obj_t)
+        {
+          case POINT :
+            std::cout << "POINT size " << i << " " << m_points.size() << " := " << m_points[i] << std::endl;
+            break;
+          case CURVE :
+            std::cout << "CURVE size " << i << " " << m_curves.size() << " := " << m_curves[i] << std::endl;
+            break;
+          case XCURVE :
+            std::cout << "XCURVE size " << i << " " << m_xcurves.size() << " := " << m_xcurves[i] << std::endl;
+            break;
+        } //switch
+     } for*/
    }//try
    catch (std::exception e)
    {
       switch (obj_t)
       {
-         case POINT : 
+         case POINT :
            std::cout << "Abort Test, a violation during reading point!" 
                      << std::endl;
            break;
-         case CURVE : 
+         case CURVE :
            std::cout << "Abort Test, a violation during reading curve!" 
                      << std::endl;
            break;
-         case XCURVE : 
+         case XCURVE :
            std::cout << "Abort Test, a violation during reading xcurve!" 
                      << std::endl;
            break;
       }//switch
-      is.close(); 
+      is.close();
       return false;
     }//catch
   } //if num>0
@@ -579,7 +631,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
   char one_line[128];
   char buff[128];
   bool abort=false;
-//  int counter=0;
+  int counter=0;
   while (!(is.eof() || abort)) 
   {
     skip_comments(is, one_line);
@@ -615,10 +667,10 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       std::cout << "Test " << violation_map[violation_tested] 
                 << " violation : ";
     }
-/*    if (!test_result)
-      std::cout << "bug" << std::endl;
+/*  if (!test_result)
+      std::cout << "bug" << std::endl;*/
     counter++;
-    std::cout << "iter number : " << counter << std::endl;*/
+    std::cout << "iter number : " << counter << std::endl;
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
@@ -777,7 +829,7 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
   std::cout << "Test: compare_x( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Test Compare_xy_2
@@ -794,7 +846,7 @@ bool Traits_test<T_Traits>::compare_xy_wrapper(std::istringstream & str_stream)
   std::cout << "Test: compare_xy( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Construct_min_vertex_2.
@@ -811,7 +863,7 @@ bool Traits_test<T_Traits>::min_vertex_wrapper(std::istringstream & str_stream)
   did_violation_occur();
   std::cout << "Test: min_vertex( " << m_xcurves[id1] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_functor(exp_answer, real_answer);
 }
 
 /*! Tests Construct_max_vertex_2.
@@ -828,7 +880,7 @@ bool Traits_test<T_Traits>::max_vertex_wrapper(std::istringstream & str_stream)
   did_violation_occur();
   std::cout << "Test: max_vertex( " << m_xcurves[id1] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_functor(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -839,11 +891,13 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream & str_stream)
   str_stream >> id;
   bool exp_answer = get_expected_boolean(str_stream);
   bool real_answer = m_traits.is_vertical_2_object()(m_xcurves[id]);
+/*  std::cout << "id " << id << (exp_answer?" exp_answer true ":" exp_answer false ")
+            << (real_answer?" real_answer true ":" real_answer false ") << std::endl;*/
   did_violation_occur();
   std::cout << "Test: is_vertical( " << m_xcurves[id]
             << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Compare_y_at_x_2.
@@ -865,7 +919,7 @@ Traits_test<T_Traits>::compare_y_at_x_wrapper(std::istringstream & str_stream)
             << m_xcurves[id2]
             << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Compare_y_at_x_left_2.
@@ -910,7 +964,7 @@ compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
             << " ) ? "; 
   std::cout << exp_answer << " ";
 
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Compare_y_at_x_right_2.
@@ -936,7 +990,7 @@ compare_y_at_x_right_wrapper(std::istringstream & str_stream)
             << m_xcurves[id2] << ", " << m_points[id3]
             << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Equal_2::operator()(Point_2, Point_2).
@@ -954,7 +1008,7 @@ Traits_test<T_Traits>::equal_points_wrapper(std::istringstream & str_stream)
   std::cout << "Test: equal( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Equal_2::operator()(X_monotone_curve_2, X_monotone_curve_2).
@@ -973,7 +1027,7 @@ Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream & str_stream)
   std::cout << "Test: equal( " << m_xcurves[id1] << ", "
             << m_xcurves[id2] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Make_x_monotone_2.
@@ -1003,7 +1057,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
             << " ) ? ";
   unsigned int num;
   str_stream >> num;
-  if (!compare(num, object_vec.size(), "size")) {
+  if (!compare_with_operator(num, (unsigned int)object_vec.size(), "size")) {
     print_result(false);
     return false;
   }
@@ -1019,7 +1073,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
     const X_monotone_curve_2 * xcv_ptr;
     xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
     if (xcv_ptr != NULL) {
-      if (!compare(type, exp_type, "type")) {
+      if (!compare_with_operator(type, exp_type, "type")) {
         print_result(false);
         return false;
       }
@@ -1039,7 +1093,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
     const Point_2 * pt_ptr;
     pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
     CGAL_assertion (pt_ptr != NULL);
-    if (!compare(type, exp_type, "type")) {
+    if (!compare_with_operator(type, exp_type, "type")) {
       print_result(false);
       return false;
     }
@@ -1085,7 +1139,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
             << " ) ? ";
   unsigned int num;
   str_stream >> num;
-  if (!compare(num, object_vec.size(), "size")) {
+  if (!compare_with_operator(num, object_vec.size(), "size")) {
     print_result(false);
     return false;
   }
@@ -1103,7 +1157,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
     const X_monotone_curve_2 * xcv_ptr;
     xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
     if (xcv_ptr != NULL) {
-      if (!compare(type, exp_type, "type")) {
+      if (!compare_with_operator(type, exp_type, "type")) {
         print_result(false);
         return false;
       }
@@ -1124,7 +1178,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
     const Point_2_pair * pt_pair_ptr;
     pt_pair_ptr = CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
     CGAL_assertion (pt_pair_ptr != NULL);
-    if (!compare(type, exp_type, "type")) {
+    if (!compare_with_operator(type, exp_type, "type")) {
       print_result(false);
       return false;
     }
@@ -1137,7 +1191,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
       print_result(false);
       return false;
     }
-    if (!compare(monotonicity, (*pt_pair_ptr).second, "monotonicity")) {
+    if (!compare_with_operator(monotonicity, (*pt_pair_ptr).second, "monotonicity")) {
       print_result(false);
       return false;
     }
@@ -1216,7 +1270,7 @@ are_mergeable_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
   std::cout << "Test: are_mergeable( " << m_xcurves[id1] << ", "
             << m_xcurves[id2] << " ) ? ";
   std::cout << exp_answer << " ";
-  return compare_and_print(exp_answer, real_answer);
+  return compare_and_print_with_operator(exp_answer, real_answer);
 }
 
 /*! Tests Merge_2.
@@ -1288,9 +1342,11 @@ template <class stream>
 bool
 Traits_test<T_Traits>::read_point(stream & is, typename T_Traits::Point_2 & p)
 {
-//  std::cout << "error point " <<std::endl;
+//  std::cout << "read_point from Test_traits.h" <<std::endl;
   Basic_number_type x, y;
-  is >> x >> y;
+  is >> x;
+  is >> y;
+  std::cout << "x = " << x << " y = " << y << std::endl ;
   p = typename T_Traits::Point_2(x, y);
   return true;
 }
