@@ -175,6 +175,7 @@ operator<< (std::ostream& os,
   return (os);
 }
 
+/*
 template <class NT, bool Filter>
 std::istream & operator >> (std::istream & is, 
                             _One_root_point_2<NT, Filter>& p)
@@ -184,6 +185,7 @@ std::istream & operator >> (std::istream & is,
   p=_One_root_point_2<NT, Filter>(ort1,ort2);
   return is;
 }
+*/
 
 /*! \class
  * Representation of a circle, a circular arc or a line segment.
