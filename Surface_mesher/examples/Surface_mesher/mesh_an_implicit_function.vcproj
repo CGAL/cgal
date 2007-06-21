@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="mesh_a_3d_gray_image"
+	Name="mesh_an_implicit_function"
 	ProjectGUID="{7E47FDD3-2BE2-4190-B391-03778A146F31}"
 	Keyword="ManagedCProj">
 	<Platforms>
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
+				OutputFile="$(OutDir)/mesh_an_implicit_function.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib"
 				GenerateDebugInformation="TRUE"/>
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
+				OutputFile="$(OutDir)/mesh_an_implicit_function.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib"
 				GenerateDebugInformation="FALSE"/>
@@ -116,7 +116,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="mesh_a_3d_gray_image.cpp">
+				RelativePath="mesh_an_implicit_function.cpp">
 			</File>
 		</Filter>
 	</Files>
