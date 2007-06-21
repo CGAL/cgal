@@ -21,6 +21,8 @@ MA 02110-1301, USA. */
 #ifndef CGAL_DSR_PDB_H
 #define CGAL_DSR_PDB_H
 
+#include <CGAL/auto_link/PDB.h>
+
 #include <CGAL/PDB/basic.h>
 #include <CGAL/PDB/Model.h>
 #include <iostream>
