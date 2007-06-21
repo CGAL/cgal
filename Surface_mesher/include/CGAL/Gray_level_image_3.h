@@ -21,6 +21,8 @@
 
 #include <CGAL/basic.h>
 
+#include <CGAL/auto_link/ImageIO.h>
+
 #include <boost/shared_ptr.hpp>
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
