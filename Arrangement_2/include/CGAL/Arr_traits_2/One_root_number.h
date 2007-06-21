@@ -214,6 +214,7 @@ public:
   //@}
 };
 
+/*
 template <class NT, bool Filter>
 std::istream & operator >> (std::istream & is, 
                             _One_root_number<NT, Filter>& ort)
@@ -233,6 +234,7 @@ std::istream & operator >> (std::istream & is,
   }
   return is;
 }
+*/
 
 /*!
  * Compute an isolating interval for the one-root number.
