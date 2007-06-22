@@ -477,12 +477,10 @@ bool Traits_test<T_Traits>::start()
     end_of_line_printed = true;
     return false;
   }
-
     if (!collect_data(is)) {
       is.close(); 
       return false;
     }
-
   if (!perform(is)) {
     is.close(); 
     return false;
@@ -669,7 +667,6 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     }
     catch (Test_exception e)
     {
-      //std::cout << "library " << e.library() <<std::endl;
       bool display_all_violation_info=false;//change to true for more info
       if (display_all_violation_info)
       {
@@ -678,7 +675,6 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
         std::cout << "line_number " << e.line_number() << std::endl;
         std::cout << "expression " << e.expression() << std::endl;
       }
-      //std::cout << "message " << e.message() <<std::endl;
       Exception_type e_t = e.get();
       if ( e_t==UNEXPECTED_CONTINUE || e_t==UNEXPECTED_ABORT )
         test_result=false;
@@ -1330,11 +1326,8 @@ template <class stream>
 bool
 Traits_test<T_Traits>::read_point(stream & is, typename T_Traits::Point_2 & p)
 {
-//  std::cout << "read_point from Test_traits.h" <<std::endl;
   Basic_number_type x, y;
-  is >> x;
-  is >> y;
-  std::cout << "x = " << x << " y = " << y << std::endl ;
+  is >> x >> y;
   p = typename T_Traits::Point_2(x, y);
   return true;
 }
@@ -1345,7 +1338,6 @@ bool
 Traits_test<T_Traits>::read_xcurve(stream & is,
                                    typename T_Traits::X_monotone_curve_2 & cv)
 {
-//  std::cout << "error xcurve " <<std::endl;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
@@ -1360,7 +1352,6 @@ template <class stream>
 bool
 Traits_test<T_Traits>::read_curve(stream & is, typename T_Traits::Curve_2 & cv)
 {
-//  std::cout << "error curve " <<std::endl; 
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
