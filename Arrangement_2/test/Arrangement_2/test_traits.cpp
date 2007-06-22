@@ -110,7 +110,6 @@ read_point(stream & is,
 {
   Basic_number_type x, y;
   is >> x >> y;
-  //std::cout << "exec x = " << x << std::endl << "y = " << y << std::endl;
   p = Point_2(x, y);
   return true;
 }
@@ -132,7 +131,6 @@ bool read_app_point(stream & is, Point_2 & p)
 {
   double x, y;
   is >> x >> y;
-  //std::cout << "app x = " << x << " y = " << y << std::endl; 
   p = Point_2(Algebraic(x), Algebraic(y));
   return true;
 }
@@ -166,9 +164,6 @@ bool read_ellipse(stream & is, bool & is_circle, Rat_circle & circle,
   Rational a, b, x0, y0;
   is >> a >> b >> x0 >> y0;
 
-  //Rational a_sq = a*a; ???!!!
-  //Rational b_sq = b*b; ???!!!
-
   if (a == b) {
     is_circle = true;
     circle = Rat_circle (Traits::Rat_point_2 (x0, y0), a);
@@ -192,7 +187,6 @@ bool read_partial_ellipse(stream & is, Curve & cv)
   Rat_circle circle;
   Rational r, s, t, u, v, w;
   if (!read_ellipse(is, is_circle, circle, r, s, t, u, v, w)) return false;
-  //std::cout << "r = " << r  << " s = " << s << " t = " << t << " u = " << u << " v = " << v << " w = " << w <<std::endl;
   CGAL::Orientation orient;
   Point_2 source, target;
   if (!read_orientation_and_end_points(is, orient, source, target))  //!!!
@@ -232,10 +226,6 @@ bool read_hyperbola(stream & is, Curve & cv)
   Rational a, b, x0, y0;
   is >> a >> b >> x0 >> y0;
 
-  //Rational a_sq = a * a;
-  //Rational b_sq = b * b;
-
-  
   Rational r = b;
   Rational s= -a;
   Rational t = 0;
@@ -293,8 +283,6 @@ bool read_segment(stream & is, Curve & cv)
   Rational x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   
-  //std::cout << "x1 " << x1 << " y1 " << y1 << " x2 " << x2 << " y2 " << y2 << std::endl;
-  
   Rat_point source (x1, y1);
   Rat_point target (x2, y2);
   Rat_segment segment (source, target);
@@ -312,7 +300,6 @@ bool read_general_arc(stream & is, Curve & cv)
   Rational r, s, t, u, v, w;                // The conic coefficients.
   is >> r >> s >> t >> u >> v >> w;
     // Read the orientation.
-  //std::cout << r <<" "<< s <<" "<< t <<" "<< u <<" "<< v <<" "<< w <<std::endl;
   int i_orient;
   is >> i_orient;
   CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
@@ -371,9 +358,6 @@ read_xcurve(stream & is,
   if (!read_curve(is,tmp_cv))
     return false;
   xcv=Traits::X_monotone_curve_2(tmp_cv);
-
-//std::cout <<"debug " <<xcv<<std::endl;
-
   return true;
 }
 
@@ -388,9 +372,6 @@ read_curve(stream & is,
   // Get the arc type:
   char type;
   is >> type;
-
-  //std::cout << "type = " << type << std::endl;
-
   if (type == 'f' || type == 'F') 
   {
     return read_full_ellipse(is, cv);
@@ -437,6 +418,38 @@ read_curve(stream & is,
 
 #elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
 
+template <class stream>
+bool read_ort_point(stream & is, Point_2 & p)
+{
+  bool is_rat;
+  typename Point_2::CoordNT ort_x , ort_y;
+  Traits::NT alpha,beta,gamma;
+  is >> is_rat;
+  if (is_rat)
+  {
+    is >> alpha;
+    ort_x=Point_2::CoordNT(alpha);
+  }
+  else
+  {
+    is >> alpha >> beta >> gamma;
+    ort_x=Point_2::CoordNT(alpha,beta,gamma);
+  }
+  is >> is_rat;
+  if (is_rat)
+  {
+    is >> alpha;
+    ort_y=Point_2::CoordNT(alpha);
+  }
+  else
+  {
+    is >> alpha >> beta >> gamma;
+    ort_y=Point_2::CoordNT(alpha,beta,gamma);
+  }
+  p = Point_2(ort_x , ort_y);
+  return true;
+}
+
 /*! Read an x-monotone conic curve */
 template <>
 template <class stream>
@@ -444,15 +457,18 @@ bool
 Traits_test<Traits >::
 read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
 {
+  bool ans=true;
   char type;
   is >> type;
   if (type == 'z' || type == 'Z')
   {
     Line_2 l;
     Point_2 ps,pt;
-    is >> l >> ps >> pt;
+    is >> l;
+    ans &= read_ort_point(is, ps);
+    ans &= read_ort_point(is, pt);
     xcv=Traits::X_monotone_curve_2(l,ps,pt);
-    return true;
+    return ans;
   }
   else if (type == 'y' || type == 'Y')
   {
@@ -465,9 +481,11 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
   {
     Circle_2 c;
     Point_2 ps,pt;
-    is >> c >> ps >> pt;
+    is >> c;
+    ans &= read_ort_point(is, ps);
+    ans &= read_ort_point(is, pt);
     xcv=Traits::X_monotone_curve_2(c,ps,pt,c.orientation());
-    return true;
+    return ans;
   }
   // If we reached here, we have an unknown conic type:
   std::cerr << "Illegal circle segment type specification: " << type << std::endl;
@@ -481,6 +499,7 @@ bool
 Traits_test<Traits >::
 read_curve(stream & is,Traits::Curve_2 & cv)
 {
+  bool ans=true;
   char type;
   is >> type;
   if (type == 'a' || type == 'A')
@@ -502,9 +521,11 @@ read_curve(stream & is,Traits::Curve_2 & cv)
   {
     Line_2 l;
     Point_2 ps,pt;
-    is >> l >> ps >> pt;
+    is >> l;
+    ans &= read_ort_point(is, ps);
+    ans &= read_ort_point(is, pt);
     cv=Traits::Curve_2(l,ps,pt);
-    return true;
+    return ans;
   }
   else if (type == 'd' || type == 'D')
   {
@@ -526,9 +547,11 @@ read_curve(stream & is,Traits::Curve_2 & cv)
   {
     Circle_2 c;
     Point_2 ps,pt;
-    is >> c >> ps >> pt;
+    is >> c;
+    ans &= read_ort_point(is, ps);
+    ans &= read_ort_point(is, pt);
     cv=Traits::Curve_2(c,ps,pt);
-    return true;
+    return ans;
   }
   else if (type == 'g' || type == 'G')
   {
@@ -536,9 +559,11 @@ read_curve(stream & is,Traits::Curve_2 & cv)
     Rat_nt r;
     int orient;
     Point_2 ps,pt;
-    is >> p >> r >> orient >> ps >> pt;
+    is >> p >> r >> orient;
+    ans &= read_ort_point(is, ps);
+    ans &= read_ort_point(is, pt);
     cv=Traits::Curve_2(p,r,static_cast<CGAL::Orientation>(orient),ps,pt);
-    return true;
+    return ans;
   }
   else if (type == 'h' || type == 'H')
   {
@@ -556,11 +581,8 @@ read_curve(stream & is,Traits::Curve_2 & cv)
 /*! Read an x-monotone bezier curve */
 
 Traits traits;
-
 Traits::Make_x_monotone_2  make_x_monotone = traits.make_x_monotone_2_object();
-
 std::list<CGAL::Object>                  x_objs;
-
 std::list<CGAL::Object>::const_iterator  xoit;
 
 int i=0;
@@ -580,27 +602,20 @@ Traits_test<Traits>::read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
   Algebraic B_ptx = Algebraic(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).x());
   Algebraic B_pty = Algebraic(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
 
-  //std::cout << "B_psx " << B_psx << " B_psy " << B_psy << " B_ptx " << B_ptx << " B_pty " << B_pty << std::endl;
-
   Traits::Point_2 B_ps(B_psx, B_psy);
   Traits::Point_2 B_pt(B_ptx, B_pty);
 
-  //std::cout << "B_ps " << B_ps << " B_pt " << B_pt << std::endl;
   j=0;
   make_x_monotone (tmp_cv, std::back_inserter (x_objs));
-  //
+
   for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
-    // this loop should make only one iteration
     if (CGAL::assign (xcv, *xoit) && i==j)
     {
       i++;
-      //std::cout << "Traits_test BEZIER_TRAITS xcv " << xcv <<std::endl;
-      //std::cout << "Traits_test BEZIER_TRAITS *xoit " << (*xoit) <<std::endl;
       return true;
     }
     j++;
   }
-  //xcv = Traits::X_monotone_curve_2(tmp_cv, B_ps, B_pt, Traits::Bezier_cache());
   return false;
 }
 
