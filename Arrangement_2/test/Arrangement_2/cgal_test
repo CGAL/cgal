@@ -53,10 +53,16 @@ compile_test()
   local traits=$4;
   local traits_type=$5
 
-  TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits";
+  #compilation without gdb
+  TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits ";
+
+  #compilation with gdb
+  #TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits -ggdb";
+  #TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS -ggdb"
+
   echo $TESTSUITE_CXXFLAGS;
   
-  echo "Compiling $name ... "
+  echo "Compiling $name $traits_type ... "
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name'; then
@@ -181,7 +187,7 @@ compile_and_run_trapped_test()
 test_segment_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -205,7 +211,7 @@ test_segment_traits()
 test_non_caching_segment_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_TRAITS
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_TRAITS non_caching_segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -229,7 +235,7 @@ test_non_caching_segment_traits()
 test_polyline_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_TRAITS
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_TRAITS polyline_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -252,7 +258,7 @@ test_polyline_traits()
 test_non_caching_polyline_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_TRAITS
+  compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_TRAITS non_caching_polyline_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -275,7 +281,7 @@ test_non_caching_polyline_traits()
 test_conic_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_TRAITS
+  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_TRAITS conic_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -299,7 +305,7 @@ test_conic_traits()
 test_line_arc_traits()
 {
 # function     executable  number type           kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_TRAITS
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_TRAITS line_arc_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -322,7 +328,7 @@ test_line_arc_traits()
 test_circular_arc_traits()
 {
 # function     executable  number type           kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_TRAITS
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_TRAITS circular_arc_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -344,7 +350,7 @@ test_circular_arc_traits()
 test_circular_line_arc_traits()
 {
 # function     executable  number type           kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_TRAITS
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_TRAITS circular_line_arc_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -365,7 +371,7 @@ test_circular_line_arc_traits()
 test_circle_segments_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_TRAITS
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_TRAITS circle_segments_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -379,7 +385,7 @@ test_circle_segments_traits()
     run_trapped_test test_traits data/circle_segments/intersect circle_segments_traits
     run_trapped_test test_traits data/circle_segments/split circle_segments_traits
     run_trapped_test test_traits data/circle_segments/merge circle_segments_traits
-    # !first update arr_circle_segments!  run_trapped_test test_traits data/circle_segments/errors circle_segments_traits
+    run_trapped_test test_traits data/circle_segments/errors circle_segments_traits
     run_trapped_test test_traits data/circle_segments/constructor circle_segments_traits
   fi
   clean_tests
@@ -391,7 +397,7 @@ test_circle_segments_traits()
 test_bezier_traits()
 {
 # function     executable  number type   kernel            traits
-  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_TRAITS
+  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_TRAITS bezier_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
@@ -416,7 +422,7 @@ test_bezier_traits()
 #---------------------------------------------------------------------#
 
 rm -f $ERRORFILE
-rm -f ProgramOutput.test_traits.*
+rm -f ProgramOutput.test_*
 touch $ERRORFILE
 
 #---------------------------------------------------------------------#
@@ -457,6 +463,6 @@ echo "***********************************************" >> $ERRORFILE
 echo "********     test traits outputs     **********" >> $ERRORFILE
 echo "***********************************************" >> $ERRORFILE
 
-for file in `ls ProgramOutput.*`; do
+for file in `ls ProgramOutput.test_traits.*`; do
     cat $file >> $ERRORFILE
 done
