@@ -40,9 +40,6 @@
 #include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_circular_line_arc_traits_2.h>
 
-#elif TEST_TRAITS == CIRCLE_TRAITS
-#include <CGAL/Arr_circle_traits_2.h>
-
 #elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
 #include <CGAL/Arr_circle_segment_traits_2.h>
 
@@ -118,11 +115,6 @@ typedef CGAL::Arr_circular_line_arc_traits_2<Circular_kernel> Traits;
 
 #define TRAITS_TYPE "Circular Line Arc"
 
-#elif TEST_TRAITS == CIRCLE_TRAITS
-typedef CGAL::Cartesian<Number_type>                          Rat_kernel;
-typedef CGAL::Arr_circle_traits_2<Kernel>                     Traits;
-#define TRAITS_TYPE "Circles"
-
 #elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
 typedef CGAL::Cartesian<Number_type>                          Rat_kernel;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>             Traits;
@@ -142,7 +134,7 @@ typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
                                                         Traits;
-//typedef Traits::Point_2                                 Point_2;
+typedef Traits::Bezier_cache                            Bezier_cache;
 
 #define TRAITS_TYPE "Bezier"
 
