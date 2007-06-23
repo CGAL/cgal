@@ -31,15 +31,14 @@
 #define LINE_ARC_TRAITS                 5
 #define CIRCULAR_ARC_TRAITS             6
 #define CIRCULAR_LINE_ARC_TRAITS        7
-#define CIRCLE_TRAITS                   8
-#define CIRCLE_SEGMENT_TRAITS           9
-#define BEZIER_TRAITS                  10
+#define CIRCLE_SEGMENT_TRAITS           8
+#define BEZIER_TRAITS                   9
 
 // Default value based on dependencies:
 #if TEST_TRAITS == CORE_CONIC_TRAITS
-#if !defined(TEST_NT)
-#define TEST_NT CORE_EXPR_NT
-#endif
+  #if !defined(TEST_NT)
+  #define TEST_NT CORE_EXPR_NT
+  #endif
 #endif
 
 // Default values:
@@ -58,6 +57,10 @@
 // Illegal combinations:
 #if TEST_TRAITS == CORE_CONIC_TRAITS && TEST_NT != CORE_EXPR_NT
 #error "Core conic traits implies Core Expr number type!"
+#endif
+
+#if TEST_TRAITS == BEZIER_TRAITS && TEST_NT != CORE_EXPR_NT
+#error "Core bezier traits implies Core Expr number type!"
 #endif
 
 #endif
