@@ -624,7 +624,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     buff[0] = '\0';
     str_stream.getline(buff, 128, ' ');
     std::string str_command(buff);
-    unsigned int location;
+    unsigned int location=0;
     violation_occurred=violation_tested=NON;
     if (str_command.find("_precondition",0)!=std::string::npos)
     {
