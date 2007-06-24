@@ -18,6 +18,7 @@
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
+//                 Ophir Setter      <ophirset@post.tau.ac.il>
 //
 #ifndef CGAL_ARRANGEMENT_2_INSERT_H
 #define CGAL_ARRANGEMENT_2_INSERT_H
@@ -32,6 +33,8 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
+#include <CGAL/Arrangement_2/Arr_compute_zone_visitor.h>
+#include <CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_construction.h>
 #include <CGAL/Sweep_line_2/Arr_addition.h>
 #include <CGAL/Sweep_line_2/Arr_non_x_construction.h>
@@ -1049,6 +1052,176 @@ bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
   // If we reached here, the arrangement is valid:
   return true;
 }
+
+
+
+//-----------------------------------------------------------------------------
+// Compute the zone of the given x-monotone curve in the existing arrangement.
+// Meaning, it output the arrangment's vertices, edges and faces that the 
+// x-monotone curve intersects.
+template <class Traits, class Dcel, class OutputIterator, class PointLocation>
+OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
+                                   const typename Traits::X_monotone_curve_2& c,
+                                   OutputIterator oi,
+                                   const PointLocation& pl)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  // Define a zone-computation object an a visitor that performs the
+  // intersection check.
+  typedef Arr_compute_zone_visitor<Arrangement_2, OutputIterator>  
+    Zone_visitor;
+  
+  Zone_visitor                                     visitor (oi);
+  Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
+
+  arr_zone.init (c, pl);
+  arr_zone.compute_zone();
+
+  return (oi);
+}
+
+//-----------------------------------------------------------------------------
+// Compute the zone of the given x-monotone curve in the existing arrangement.b
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+//
+template <class Traits, class Dcel, class OutputIterator>
+OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
+                                   const typename Traits::X_monotone_curve_2& c,
+                                   OutputIterator oi)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  //insert the curve using the walk point location
+  compute_curve_zone (arr, c, oi, walk_pl);
+  return oi;
+}
+
+
+//-----------------------------------------------------------------------------
+// Checks if the given x-monotone curve intersects the existing arrangement.
+//
+template <class Traits, class Dcel, class PointLocation>
+bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr, 
+                                    const typename Traits::X_monotone_curve_2& c,
+                                    const PointLocation& pl)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  // Define a zone-computation object an a visitor that performs the
+  // intersection check.
+  typedef Arr_do_intersect_zone_visitor<Arrangement_2>  Zone_visitor;
+  
+  Zone_visitor                                     visitor;
+  Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
+
+  arr_zone.init (c, pl);
+  arr_zone.compute_zone();
+
+  return (visitor.do_intersect());
+}
+
+//-----------------------------------------------------------------------------
+// Checks if the given x-monotone curve intersects the existing arrangement.
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+//
+template <class Traits, class Dcel>
+bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr, 
+                                    const typename Traits::X_monotone_curve_2& c)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  //insert the curve using the walk point location
+  do_intersect_x_monotone_curve (arr, c, walk_pl);
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Checks if the given curve intersects the existing arrangement.
+//
+template <class Traits, class Dcel, class PointLocation>
+bool do_intersect_curve (Arrangement_2<Traits,Dcel>& arr, 
+                         const typename Traits::Curve_2& c,
+                         const PointLocation& pl)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  // Break the input curve into x-monotone subcurves and isolated points.
+  typedef Arr_traits_adaptor_2<Traits>                   Traits_adaptor_2;
+
+  Traits_adaptor_2   *traits =
+                        static_cast<Traits_adaptor_2*> (arr.get_traits());
+
+  std::list<CGAL::Object>                     x_objects;
+  std::list<CGAL::Object>::const_iterator     obj_iter;
+  const typename Traits::X_monotone_curve_2  *x_curve;
+  const typename Traits::Point_2             *iso_p;
+
+  traits->make_x_monotone_2_object() (c,
+                                      std::back_inserter (x_objects));
+
+  // Insert each x-monotone curve into the arrangement.
+  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter)
+  {
+    // Act according to the type of the current object.
+    x_curve = object_cast<typename Traits::X_monotone_curve_2> (&(*obj_iter));
+    if (x_curve != NULL)
+    {
+      // Check if the x-monotone subcurve intersects the arrangement.
+      if (do_intersect_x_monotone_curve(arr, *x_curve, pl) == true)
+        return true;
+    }
+    else
+    {
+      iso_p = object_cast<typename Traits::Point_2> (&(*obj_iter));
+      CGAL_assertion (iso_p != NULL);
+
+      // Check whether the isolated point lies inside a face (otherwise,
+      // it conincides with a vertex or an edge).
+      CGAL::Object  obj = pl.locate (*iso_p);
+
+      return (object_cast<typename Arrangement_2::Face_const_handle>(&obj) !=
+              NULL);
+    }
+  }
+
+  // If we reached here, the curve does not intersect the arrangement.
+  return (false);
+}
+
+//-----------------------------------------------------------------------------
+// Checks if the given curve intersects the existing arrangement.
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+//
+template <class Traits, class Dcel>
+bool do_intersect_curve (Arrangement_2<Traits, Dcel>& arr, 
+                         const typename Traits::Curve_2& c)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  // check if the curve intersects the arrangement using the walk point 
+  // location.
+  return do_intersect_curve (arr, c, walk_pl);
+}
+
 
 CGAL_END_NAMESPACE
 

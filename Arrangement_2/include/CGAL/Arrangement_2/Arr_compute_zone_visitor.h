@@ -1,3 +1,22 @@
+// Copyright (c) 2005  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: 
+// $Id: 
+// 
+//
+// Author(s)     : Ophir Setter      <ophirset@post.tau.ac.il>
+//
 #ifndef CGAL_ARR_COMPUTE_ZONE_VISITOR_H
 #define CGAL_ARR_COMPUTE_ZONE_VISITOR_H
 
@@ -169,52 +188,6 @@ public:
   }
 };
 
-
-//-----------------------------------------------------------------------------
-// Checks if the given x-monotone curve intersects the existing arrangement.
-//
-template <class Traits, class Dcel, class OutputIterator, class PointLocation>
-OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
-                                   const typename Traits::X_monotone_curve_2& c,
-                                   OutputIterator oi,
-                                   const PointLocation& pl)
-{
-  // Obtain an arrangement accessor.
-  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
-
-  // Define a zone-computation object an a visitor that performs the
-  // intersection check.
-  typedef Arr_compute_zone_visitor<Arrangement_2, OutputIterator>  Zone_visitor;
-  
-  Zone_visitor                                     visitor (oi);
-  Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
-
-  arr_zone.init (c, pl);
-  arr_zone.compute_zone();
-
-  return (oi);
-}
-
-//-----------------------------------------------------------------------------
-// Checks if the given x-monotone curve intersects the existing arrangement.
-// Overloaded version with no point location object - the walk point-location
-// strategy is used as default.
-//
-template <class Traits, class Dcel, class OutputIterator>
-OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
-                                   const typename Traits::X_monotone_curve_2& c,
-                                   OutputIterator oi)
-{
-  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
-  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
-  
-  // create walk point location object
-  Walk_pl    walk_pl(arr);
-
-  //insert the curve using the walk point location
-  compute_curve_zone (arr, c, oi, walk_pl);
-  return oi;
-}
 
 CGAL_END_NAMESPACE
 
