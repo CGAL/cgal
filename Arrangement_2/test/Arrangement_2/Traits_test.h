@@ -131,7 +131,7 @@ void failure_handler(const char * type, const char * expr, const char * file,
 {
   std::string tmp=std::string(file);
   unsigned int loc = tmp.find_last_of("/"); // !!!for windows use back slash !!!to ask efi
-  if (loc==-1)
+  if ((int)loc==-1)
   {
     global_lib=std::string("");
     global_file=tmp;
@@ -626,22 +626,22 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     std::string str_command(buff);
     unsigned int location=0;
     violation_occurred=violation_tested=NON;
-    if (str_command.find("_precondition",0)!=-1)
+    if ((int)str_command.find("_precondition",0)!=-1)
     {
       location=str_command.find("_precondition",0);
       violation_tested=PRECONDITION;
     }
-    else if (str_command.find("_postcondition",0)!=-1)
+    else if ((int)str_command.find("_postcondition",0)!=-1)
     {
       location=str_command.find("_postcondition",0);
       violation_tested=POSTCONDITION;
     }
-    else if (str_command.find("_assertion",0)!=-1)
+    else if ((int)str_command.find("_assertion",0)!=-1)
     {
       location=str_command.find("_assertion",0);
       violation_tested=ASSERTION;
     }
-    else if (str_command.find("_warning",0)!=-1)
+    else if ((int)str_command.find("_warning",0)!=-1)
     {
       location=str_command.find("_warning",0);
       violation_tested=WARNING;
