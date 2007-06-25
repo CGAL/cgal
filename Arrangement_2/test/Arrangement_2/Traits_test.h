@@ -925,9 +925,10 @@ compare_y_at_x_left_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool
 Traits_test<T_Traits>::
-compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
+compare_y_at_x_left_wrapper_imp(std::istringstream & ,
                                 CGAL::Tag_false)
 {
+//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   return false;
 }
 
@@ -1235,8 +1236,9 @@ Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool
 Traits_test<T_Traits>::
-are_mergeable_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_false)
+are_mergeable_wrapper_imp(std::istringstream & , CGAL::Tag_false)
 {
+//  std::istringstream dummy_stream = str_stream; //to avoid warnings of unused variable
   return false;
 }
 
@@ -1268,9 +1270,10 @@ bool Traits_test<T_Traits>::merge_wrapper(std::istringstream & str_stream)
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & str_stream,
+bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & ,
                                               CGAL::Tag_false)
 {
+//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   return false;
 }
 
@@ -1308,6 +1311,7 @@ template <class T_Traits>
 bool
 Traits_test<T_Traits>::approximate_wrapper(std::istringstream & )
 {
+//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   return false;
 }
 
@@ -1318,6 +1322,7 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::
 construct_x_monotone_curve_wrapper(std::istringstream & )
 {
+//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   return false;
 }
 
