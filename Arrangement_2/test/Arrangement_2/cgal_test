@@ -459,14 +459,11 @@ else
   compile_and_run test_construction
 fi
 
-echo "***********************************************************" >> $ERRORFILE
-echo "******** test traits (circle_segments and bezier) *********" >> $ERRORFILE
-echo "***********************************************************" >> $ERRORFILE
+echo "*******************************" >> $ERRORFILE
+echo "******** test traits  *********" >> $ERRORFILE
+echo "*******************************" >> $ERRORFILE
 
-for file in `ls ProgramOutput.test_traits.data.circle_segments.*`; do
+for file in `ls ProgramOutput.test_traits.data.*`; do
     cat $file >> $ERRORFILE
 done
-for file in `ls ProgramOutput.test_traits.data.bezier.*`; do
-    cat $file >> $ERRORFILE
-done
-    
+
