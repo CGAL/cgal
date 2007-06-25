@@ -1060,10 +1060,10 @@ bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
 // Meaning, it output the arrangment's vertices, edges and faces that the 
 // x-monotone curve intersects.
 template <class Traits, class Dcel, class OutputIterator, class PointLocation>
-OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
-                                   const typename Traits::X_monotone_curve_2& c,
-                                   OutputIterator oi,
-                                   const PointLocation& pl)
+OutputIterator zone (Arrangement_2<Traits,Dcel>& arr, 
+                     const typename Traits::X_monotone_curve_2& c,
+                     OutputIterator oi,
+                     const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -1088,9 +1088,9 @@ OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr,
 // strategy is used as default.
 //
 template <class Traits, class Dcel, class OutputIterator>
-OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
-                                   const typename Traits::X_monotone_curve_2& c,
-                                   OutputIterator oi)
+OutputIterator zone (Arrangement_2<Traits,Dcel>& arr, 
+                     const typename Traits::X_monotone_curve_2& c,
+                     OutputIterator oi)
 {
   typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
   typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
@@ -1099,7 +1099,7 @@ OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr,
   Walk_pl    walk_pl(arr);
 
   //insert the curve using the walk point location
-  compute_curve_zone (arr, c, oi, walk_pl);
+  zone (arr, c, oi, walk_pl);
   return oi;
 }
 

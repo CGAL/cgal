@@ -2968,10 +2968,10 @@ bool is_valid (const Arrangement_2<Traits,Dcel>& arr);
  * \return The output iterator that the curves were inserted to.
  */
 template <class Traits, class Dcel, class OutputIterator, class PointLocation>
-OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
-                                   const typename Traits::X_monotone_curve_2& c,
-                                   OutputIterator oi,
-                                   const PointLocation& pl);
+OutputIterator zone (Arrangement_2<Traits,Dcel>& arr, 
+                     const typename Traits::X_monotone_curve_2& c,
+                     OutputIterator oi,
+                     const PointLocation& pl);
 
 /*!
  * Compute the zone of the given x-monotone curve in the existing arrangement.
@@ -2983,9 +2983,9 @@ OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr,
  * \return The output iterator that the curves were inserted to.
  */
 template <class Traits, class Dcel, class OutputIterator>
-OutputIterator compute_curve_zone (Arrangement_2<Traits,Dcel>& arr, 
-                                   const typename Traits::X_monotone_curve_2& c,
-                                   OutputIterator oi);
+OutputIterator zone (Arrangement_2<Traits,Dcel>& arr, 
+                     const typename Traits::X_monotone_curve_2& c,
+                     OutputIterator oi);
 
 /*!
  * Checks if the given x-monotone curve intersects the existing arrangement.
