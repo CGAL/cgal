@@ -81,7 +81,9 @@ typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
                                                         Traits;
 typedef Traits::Point_2                                 Point_2;
+typedef Traits::Rat_point_2                             Rat_point;
 typedef Traits::Rat_circle_2                            Rat_circle;
+typedef Traits::Rat_segment_2                           Rat_segment;
 
 #define TRAITS_TYPE "Conics"
 
@@ -105,6 +107,7 @@ typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>      Traits;
 #define TRAITS_TYPE "Circular Arc"
 
 #elif TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
+
 typedef Kernel                                                Linear_kernel;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   Algebraic_kernel;
 typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>
