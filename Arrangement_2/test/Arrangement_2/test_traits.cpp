@@ -104,9 +104,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_point(stream & is,
-           Traits::
-           Point_2 & p)
+read_point(stream & is, Point_2 & p)
 {
   Basic_number_type x, y;
   is >> x >> y;
@@ -166,7 +164,7 @@ bool read_ellipse(stream & is, bool & is_circle, Rat_circle & circle,
 
   if (a == b) {
     is_circle = true;
-    circle = Rat_circle (Traits::Rat_point_2 (x0, y0), a);
+    circle = Rat_circle (Rat_point (x0, y0), a);
   }
   else {
     r = 1/a;
@@ -276,8 +274,6 @@ bool read_parabola(stream & is, Curve & cv)
 template <class stream, class Curve>
 bool read_segment(stream & is, Curve & cv)
 {
-  typedef Traits::Rat_point_2        Rat_point;
-  typedef Traits::Rat_segment_2      Rat_segment;
 
   // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
   Rational x1, y1, x2, y2;
@@ -352,12 +348,12 @@ template <class stream>
 bool
 Traits_test<Traits>::
 read_xcurve(stream & is,
-            Traits::X_monotone_curve_2 & xcv)
+            X_monotone_curve_2 & xcv)
 {
-  Traits::Curve_2 tmp_cv;
+  Curve_2 tmp_cv;
   if (!read_curve(is,tmp_cv))
     return false;
-  xcv=Traits::X_monotone_curve_2(tmp_cv);
+  xcv=X_monotone_curve_2(tmp_cv);
   return true;
 }
 
@@ -367,7 +363,7 @@ template <class stream>
 bool
 Traits_test<Traits >::
 read_curve(stream & is,
-           Traits::Curve_2 & cv)
+           Curve_2 & cv)
 {
   // Get the arc type:
   char type;
@@ -423,7 +419,7 @@ bool read_ort_point(stream & is, Point_2 & p)
 {
   bool is_rat;
   typename Point_2::CoordNT ort_x , ort_y;
-  Traits::NT alpha,beta,gamma;
+  Number_type alpha,beta,gamma;
   is >> is_rat;
   if (is_rat)
   {
@@ -450,12 +446,12 @@ bool read_ort_point(stream & is, Point_2 & p)
   return true;
 }
 
-/*! Read an x-monotone conic curve */
+/*! Read an x-monotone circle segment curve */
 template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
+read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 {
   bool ans=true;
   char type;
@@ -467,14 +463,14 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
     is >> l;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    xcv=Traits::X_monotone_curve_2(l,ps,pt);
+    xcv=X_monotone_curve_2(l,ps,pt);
     return ans;
   }
   else if (type == 'y' || type == 'Y')
   {
     Rat_point_2 ps,pt;
     is >> ps >> pt;
-    xcv=Traits::X_monotone_curve_2(ps,pt);
+    xcv=X_monotone_curve_2(ps,pt);
     return true;
   }
   else if (type == 'x' || type == 'X')
@@ -484,7 +480,7 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
     is >> c;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    xcv=Traits::X_monotone_curve_2(c,ps,pt,c.orientation());
+    xcv=X_monotone_curve_2(c,ps,pt,c.orientation());
     return ans;
   }
   // If we reached here, we have an unknown conic type:
@@ -492,12 +488,12 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
   return false;
 }
 
-/*! Read a general conic curve */
+/*! Read a general circle segment curve */
 template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_curve(stream & is,Traits::Curve_2 & cv)
+read_curve(stream & is,Curve_2 & cv)
 {
   bool ans=true;
   char type;
@@ -507,14 +503,14 @@ read_curve(stream & is,Traits::Curve_2 & cv)
     Rat_point_2 ps,pt;
     is >> ps >> pt;
     Segment_2 s(ps,pt);
-    cv=Traits::Curve_2(s);
+    cv=Curve_2(s);
     return true;
   }
   else if (type == 'b' || type == 'B')
   {
     Rat_point_2 ps,pt;
     is >> ps >> pt;
-    cv=Traits::Curve_2(ps,pt);
+    cv=Curve_2(ps,pt);
     return true;
   }
   else if (type == 'c' || type == 'C')
@@ -524,14 +520,14 @@ read_curve(stream & is,Traits::Curve_2 & cv)
     is >> l;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    cv=Traits::Curve_2(l,ps,pt);
+    cv=Curve_2(l,ps,pt);
     return ans;
   }
   else if (type == 'd' || type == 'D')
   {
     Circle_2 c;
     is >> c;
-    cv=Traits::Curve_2(c);
+    cv=Curve_2(c);
     return true;
   }
   else if (type == 'e' || type == 'E')
@@ -540,7 +536,7 @@ read_curve(stream & is,Traits::Curve_2 & cv)
     Rat_nt r;
     int orient;
     is >> p >> r >> orient;
-    cv=Traits::Curve_2(p,r,static_cast<CGAL::Orientation>(orient));
+    cv=Curve_2(p,r,static_cast<CGAL::Orientation>(orient));
     return true;
   }
   else if (type == 'f' || type == 'F')
@@ -550,7 +546,7 @@ read_curve(stream & is,Traits::Curve_2 & cv)
     is >> c;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    cv=Traits::Curve_2(c,ps,pt);
+    cv=Curve_2(c,ps,pt);
     return ans;
   }
   else if (type == 'g' || type == 'G')
@@ -562,14 +558,14 @@ read_curve(stream & is,Traits::Curve_2 & cv)
     is >> p >> r >> orient;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    cv=Traits::Curve_2(p,r,static_cast<CGAL::Orientation>(orient),ps,pt);
+    cv=Curve_2(p,r,static_cast<CGAL::Orientation>(orient),ps,pt);
     return ans;
   }
   else if (type == 'h' || type == 'H')
   {
     Rat_point_2 ps,pm,pt;
     is >> ps >> pm >> pt;
-    cv=Traits::Curve_2(ps,pm,pt);
+    cv=Curve_2(ps,pm,pt);
     return true;
   }
   // If we reached here, we have an unknown conic type:
@@ -580,42 +576,26 @@ read_curve(stream & is,Traits::Curve_2 & cv)
 #elif TEST_TRAITS == BEZIER_TRAITS
 /*! Read an x-monotone bezier curve */
 
-Traits traits;
-Traits::Make_x_monotone_2  make_x_monotone = traits.make_x_monotone_2_object();
-std::list<CGAL::Object>                  x_objs;
-std::list<CGAL::Object>::const_iterator  xoit;
-
-int i=0;
-int j=0;
-
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
+Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
-  Traits::Curve_2 tmp_cv;
-
+  std::list<CGAL::Object>                  x_objs;
+  std::list<CGAL::Object>::const_iterator  xoit;
+  Curve_2 tmp_cv;
   is >> tmp_cv;
-
   Algebraic B_psx = Algebraic(tmp_cv.control_point(0).x());
   Algebraic B_psy = Algebraic(tmp_cv.control_point(0).y());
   Algebraic B_ptx = Algebraic(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).x());
   Algebraic B_pty = Algebraic(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
-
-  Traits::Point_2 B_ps(B_psx, B_psy);
-  Traits::Point_2 B_pt(B_ptx, B_pty);
-
-  j=0;
-  make_x_monotone (tmp_cv, std::back_inserter (x_objs));
-
-  for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
-    if (CGAL::assign (xcv, *xoit) && i==j)
-    {
-      i++;
-      return true;
-    }
-    j++;
-  }
+  Point_2 B_ps(B_psx, B_psy);
+  Point_2 B_pt(B_ptx, B_pty);
+  Traits::Make_x_monotone_2 make_x_monotone = this->m_traits.make_x_monotone_2_object();
+  make_x_monotone (tmp_cv, std::front_inserter (x_objs));
+  xoit = x_objs.begin();
+  if (CGAL::assign (xcv, *xoit))
+    return true;
   return false;
 }
 
@@ -623,7 +603,7 @@ Traits_test<Traits>::read_xcurve(stream & is,Traits::X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::read_curve(stream & is,Traits::Curve_2 & cv)
+Traits_test<Traits >::read_curve(stream & is,Curve_2 & cv)
 {
   is >> cv;
   return true;
@@ -635,12 +615,12 @@ Traits_test<Traits >::read_curve(stream & is,Traits::Curve_2 & cv)
 
 /*! Read an arc point */
 template < typename T_Traits , typename stream >
-bool read_arc_point(stream & is, typename T_Traits::Point_2 & p)
+bool read_arc_point(stream & is, Point_2 & p)
 {
   Basic_number_type x, y;
   is >> x >> y;
   Circular_kernel::Point_2 lp(x, y);
-  p = typename T_Traits::Point_2(lp);
+  p = Point_2(lp);
   return true;
 }
 
@@ -747,7 +727,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits>::
-read_point(stream & is, Traits::Point_2 & p)
+read_point(stream & is, Point_2 & p)
 {
   return read_arc_point<Traits, stream>(is, p);
 }
@@ -757,7 +737,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_xcurve(stream & is, Traits::X_monotone_curve_2 & xc)
+read_xcurve(stream & is, X_monotone_curve_2 & xc)
 {
   // Get the arc type:
   char type;
@@ -776,7 +756,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_curve(stream & is, Traits::Curve_2 & cv)
+read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
   char type;
@@ -797,7 +777,7 @@ template <class stream>
 bool
 Traits_test<Traits>::
 read_point(stream & is,
-           Traits::Point_2 & p)
+           Point_2 & p)
 {
   return read_arc_point<Traits, stream>(is, p);
 }
@@ -807,7 +787,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_xcurve(stream & is,Traits::X_monotone_curve_2 & xc)
+read_xcurve(stream & is,X_monotone_curve_2 & xc)
 {
   // Get the arc type:
   char type;
@@ -825,7 +805,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_curve(stream & is, Traits::Curve_2 & cv)
+read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
   char type;
@@ -852,7 +832,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits>::
-read_point(stream & is, Traits::Point_2 & p)
+read_point(stream & is, Point_2 & p)
 {
   return read_arc_point<Traits, stream>(is, p);
 }
@@ -862,7 +842,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_xcurve(stream & is,Traits::X_monotone_curve_2 & xc)
+read_xcurve(stream & is,X_monotone_curve_2 & xc)
 {
   // Get the arc type:
   char type;
@@ -874,7 +854,7 @@ read_xcurve(stream & is,Traits::X_monotone_curve_2 & xc)
   }
   else if (is_deg_2(type))
   {
-    xc = Traits::X_monotone_curve_2(read_arc(type,is));
+    xc = X_monotone_curve_2(read_arc(type,is));
     return true;
   }
   return false;
@@ -885,7 +865,7 @@ template <>
 template <class stream>
 bool
 Traits_test<Traits >::
-read_curve(stream & is, Traits::Curve_2 & cv)
+read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
   char type;
@@ -894,12 +874,12 @@ read_curve(stream & is, Traits::Curve_2 & cv)
   {
     Circular_kernel::Circle_2 c_temp;
     is >> c_temp;
-    cv=Traits::Curve_2(c_temp);
+    cv=Curve_2(c_temp);
     return true;
   }
   else if (is_deg_1(type))
   {
-    cv = Traits::Curve_2(read_line(type,is));
+    cv = Curve_2(read_line(type,is));
     return true;
   }
   else if (is_deg_2(type))
