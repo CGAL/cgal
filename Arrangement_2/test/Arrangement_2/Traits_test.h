@@ -264,13 +264,13 @@ private:
   }
 
   template <class stream>
-  bool read_point(stream & is, Point_2 & p);
+  bool read_point(stream & is, Point_2 &);
 
   template <class stream>
-  bool read_xcurve(stream & is, X_monotone_curve_2 & cv);
+  bool read_xcurve(stream & is, X_monotone_curve_2 &);
 
   template <class stream>
-  bool read_curve(stream & is, Curve_2 & cv);
+  bool read_curve(stream & is, Curve_2 &);
 
   //@{
 
@@ -667,7 +667,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     }
     catch (Test_exception e)
     {
-      bool display_all_violation_info=false;//change to true for more info
+      bool display_all_violation_info=true;//change to true for more info
       if (display_all_violation_info)
       {
         std::cout << "library " << e.library() << std::endl;
