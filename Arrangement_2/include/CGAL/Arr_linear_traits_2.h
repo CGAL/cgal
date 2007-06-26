@@ -677,7 +677,8 @@ public:
       CGAL_assertion (cv2.is_vertical());
 
       Kernel                    kernel;
-      return (kernel.compare_x_at_y_2_object() (ORIGIN,
+      Point_2 org = kernel.construct_point_2_object()(ORIGIN);
+      return (kernel.compare_x_at_y_2_object() (org,
                                                 cv1.supp_line(),
                                                 cv2.supp_line()));
     }
@@ -909,7 +910,8 @@ public:
         // In case the two supporting line are parallel, compare their
         // relative position at x = 0, which is the same as their position
         // at infinity.
-        return (kernel.compare_y_at_x_2_object() (ORIGIN,
+        Point_2 org = kernel.construct_point_2_object()(ORIGIN);          
+        return (kernel.compare_y_at_x_2_object() (org,
                                                   cv1.supp_line(),
                                                   cv2.supp_line()));
       }
