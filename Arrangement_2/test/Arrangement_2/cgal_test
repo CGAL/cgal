@@ -466,7 +466,6 @@ echo "*******************************" >> $ERRORFILE
 echo "******** test traits  *********" >> $ERRORFILE
 echo "*******************************" >> $ERRORFILE
 
-for file in `ls ProgramOutput.test_traits.data.*`; do
+for file in `ls ProgramOutput*.non_caching_*`; do
     cat $file >> $ERRORFILE
 done
-
