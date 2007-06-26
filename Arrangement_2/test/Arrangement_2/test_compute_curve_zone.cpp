@@ -41,7 +41,7 @@ int main ()
   for (k = 0; k < N_SEGMENTS; k++)
   {
     std::list<CGAL::Object> zone_elems;
-    compute_curve_zone(arr, segs[k], std::back_inserter(zone_elems));
+    zone(arr, segs[k], std::back_inserter(zone_elems));
     int zone_actual_comp = zone_elems.size();
     
     std::cout << "Segment: " << segs[k];
