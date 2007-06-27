@@ -139,6 +139,7 @@ Bbox_2 bbox_2(InputIterator first,
 //-----------------------------------------------------------------------//
 // uses Traits::Less_xy_2 and less_xy_2_object()
 //      Traits::Orientation_2 and orientation_2_object()
+//      Traits::Equal_2 for filtering repeated points
 
 template <class ForwardIterator, class Traits>
 bool is_convex_2(ForwardIterator first,
@@ -154,6 +155,14 @@ bool is_convex_2(ForwardIterator first,
   ForwardIterator next = current; ++next;
   if (next == last) return true;
 
+  typename Traits::Equal_2 equal = traits.equal_2_object();
+  
+  while(equal(*previous, *current)) {
+    current = next;
+    ++next;
+    if (next == last) return true;
+  }
+
   typename Traits::Less_xy_2 less_xy_2 = traits.less_xy_2_object();
   typename Traits::Orientation_2 orientation = traits.orientation_2_object();
   // initialization
@@ -163,6 +172,7 @@ bool is_convex_2(ForwardIterator first,
   int NumOrderChanges = 0;
 
   do {
+  switch_orient:
     switch (orientation(*previous, *current, *next)) {
       case CLOCKWISE:
         HasClockwiseTriples = true;
@@ -170,8 +180,17 @@ bool is_convex_2(ForwardIterator first,
       case COUNTERCLOCKWISE:
         HasCounterClockwiseTriples = true;
         break;
-      default:
-	;
+      case ZERO:
+	if(equal(*current, *next)) {
+	  if(next == first) {
+	    first = current;
+	  }
+	  ++next;
+	  if (next == last)
+	    next = first;
+	  goto switch_orient;
+	}
+	break;
     }
 
     bool NewOrder = less_xy_2(*current, *next);
