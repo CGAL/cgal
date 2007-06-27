@@ -669,9 +669,11 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   {    
     // Locate a halfedge along the outer CCB of the incident face of prev1
     // that contains cv's right end in its range.
-    CGAL_assertion (prev1->face()->is_unbounded());
+    DFace      *uf = prev1->is_on_hole() ? prev1->hole()->face() :
+                                           prev1->face();
+    CGAL_assertion (uf->is_unbounded());
 
-    fict_prev2 = _locate_along_ccb (prev1->face(), cv, MAX_END,
+    fict_prev2 = _locate_along_ccb (uf, cv, MAX_END,
                                     inf_x2, inf_y2);
 
     CGAL_assertion (fict_prev2 != NULL);
@@ -757,9 +759,11 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   {    
     // Locate a halfedge along the outer CCB of prev's incident face that
     // contains cv's right end in its range.
-    CGAL_precondition (prev->face()->is_unbounded());
+    DFace      *uf = prev1->is_on_hole() ? prev1->hole()->face() :
+                                           prev1->face();
+    CGAL_precondition (uf->is_unbounded());
 
-    fict_prev2 = _locate_along_ccb (prev1->face(), cv, MAX_END,
+    fict_prev2 = _locate_along_ccb (uf, cv, MAX_END,
                                     inf_x2, inf_y2);
 
     CGAL_assertion (fict_prev2 != NULL);
@@ -850,7 +854,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   fict_prev2 = _split_fictitious_edge (fict_prev2,
                                        inf_x2, inf_y2);
 
-  // Insert the curve and create an edge connecting the two vertices.
+  // Insert the curve and create an edge connecting the the two vertices.
   // Note that we may create a new unbounded face.
   bool        new_face_created = false;
   DHalfedge  *new_he = _insert_at_vertices (cv,
@@ -968,9 +972,11 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   {    
     // Locate a halfedge along the outer CCB of the incident face of prev2
     // that contains cv's left end in its range.
-    CGAL_assertion (prev2->face()->is_unbounded());
+    DFace      *uf = prev2->is_on_hole() ? prev2->hole()->face() :
+                                           prev2->face();
+    CGAL_assertion (uf->is_unbounded());
 
-    fict_prev1 = _locate_along_ccb (prev2->face(), cv, MIN_END,
+    fict_prev1 = _locate_along_ccb (uf, cv, MIN_END,
                                     inf_x1, inf_y1);
 
     CGAL_assertion (fict_prev1 != NULL);
@@ -1058,9 +1064,11 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   {    
     // Locate a halfedge along the outer CCB of prev's incident face that
     // contains cv's left end in its range.
-    CGAL_precondition (prev->face()->is_unbounded());
+    DFace      *uf = prev2->is_on_hole() ? prev2->hole()->face() :
+                                           prev2->face();
+    CGAL_precondition (uf->is_unbounded());
 
-    fict_prev1 = _locate_along_ccb (prev2->face(), cv, MIN_END,
+    fict_prev1 = _locate_along_ccb (uf, cv, MIN_END,
                                     inf_x1, inf_y1);
 
     CGAL_assertion (fict_prev1 != NULL);
@@ -1151,7 +1159,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   fict_prev1 = _split_fictitious_edge (fict_prev1,
                                        inf_x1, inf_y1);
 
-  // Insert the curve and create an edge connecting the two vertices.
+  // Insert the curve and create an edge connecting the the two vertices.
   // Note that we may create a new unbounded face.
   bool        new_face_created = false;
   DHalfedge  *new_he = _insert_at_vertices (cv,
