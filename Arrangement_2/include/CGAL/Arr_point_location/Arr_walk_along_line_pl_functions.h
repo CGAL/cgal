@@ -846,9 +846,10 @@ _first_around_vertex (Vertex_const_handle v,
       // of v.
       if (lowest_left == invalid_handle ||
           (! curr->is_fictitious() &&
-           compare_y_at_x_left (curr->curve(),
-                                lowest_left->curve(), 
-                                v->point()) == SMALLER))
+           (lowest_left->is_fictitious() ||
+            compare_y_at_x_left (curr->curve(),
+                                 lowest_left->curve(), 
+                                 v->point()) == SMALLER)))
       {
         lowest_left = curr;
       }
@@ -859,9 +860,10 @@ _first_around_vertex (Vertex_const_handle v,
       // of v.
       if (top_right == invalid_handle ||
           (! curr->is_fictitious() &&
-           compare_y_at_x_right (curr->curve(),
-                                 top_right->curve(), 
-                                 v->point()) == LARGER))
+           (top_right->is_fictitious() ||
+            compare_y_at_x_right (curr->curve(),
+                                  top_right->curve(), 
+                                  v->point()) == LARGER)))
       {
         top_right = curr;
       }
