@@ -2,7 +2,7 @@
 % | Reference manual page: linear_least_squares_fitting_3.tex
 % +------------------------------------------------------------------------+
 % | 
-% | March 2005  Pierre Alliez and Sylvain Pion
+% | March 2005  Pierre Alliez and Sylvain Pion and Ankit Gupta
 % | Package:   Principal Component Analysis
 % | 
 % |
@@ -14,19 +14,20 @@
 \ccDefinition
   
 The function \ccRefName\ computes the best fitting 3D line or plane of 3D
-point sets or triangle sets. The best fit linear sub-space minimizes
+sets of Points, Segments, Triangles, Rectangles, Circles, Spheres, Cuboids and Tetrahedrons. The best fit linear sub-space minimizes
 the sum of squared distances from the points to their projections onto the
 sub-space.
 
 \ccInclude{CGAL/linear_least_squares_fitting_3.h}
 
-\ccFunction{template < typename InputIterator, typename K> 
+\ccFunction{template < typename InputIterator, typename K, typename Tag > 
             typename K::FT 
              linear_least_squares_fitting_3(InputIterator first,
                                             InputIterator beyond,
                                             typename K::Line_3 & line,
                                             typename K::Point_3 & centroid,     
-                                            const K & k);}
+                                            const K & k,
+					    const Tag& t);}
 { computes the best fitting 3D line of a 3D point set or triangle set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same
@@ -38,6 +39,8 @@ The class \ccc{K} is the kernel in which the type
 \ccc{InputIterator::value_type} is defined. It can be omitted and
 deduced automatically from the value type.
 
+The tag \ccc{t} identifies the type of manifold of the objects in the object set.
+
 \ccHeading{Requirements}
 
 \begin{enumerate}
@@ -45,16 +48,18 @@ deduced automatically from the value type.
    \item  \ccc{line} is the best fitting line computed.
    \item  \ccc{centroid} is the centroid computed. This parameter can be
           omitted.
+   \item  \ccc{t} is the tag identifying the type of manifold of the objects in the object set. It should be one of \ccc{PCA_dimension_0_tag}, \ccc{PCA_dimension_1_tag}, \ccc{PCA_dimension_2_tag} or \ccc{PCA_dimension_3_tag}. Also, it shouldn't be of a greater dimension than the geometry of the object. For example, a \ccc{Circle} can't have a \ccc{PCA_dimension_3_tag} tag.
 \end{enumerate}
 
 
-\ccFunction{template < typename InputIterator, typename K> 
+\ccFunction{template < typename InputIterator, typename K, typename Tag > 
             typename K::FT 
              linear_least_squares_fitting_3(InputIterator first,
                                             InputIterator beyond,
                                             typename K::Plane_3 & plane,
                                             typename K::Point_3 & centroid,     
-                                            const K & k);}
+                                            const K & k,
+					    const Tag& t);}
 { computes the best fitting 3D plane of a 3D point set or triangle set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same
@@ -66,6 +71,8 @@ The class \ccc{K} is the kernel in which the type
 \ccc{InputIterator::value_type} is defined. It can be omitted and
 deduced automatically from the value type.
 
+The tag \ccc{t} identifies the type of manifold of the objects in the object set.
+
 \ccHeading{Requirements}
 
 \begin{enumerate}
@@ -73,6 +80,7 @@ deduced automatically from the value type.
    \item  \ccc{plane} is the best fitting plane computed.
    \item  \ccc{centroid} is the centroid computed. This parameter can be
           omitted.
+   \item  \ccc{t} is the tag identifying the type of manifold of the objects in the object set. It should be one of \ccc{PCA_dimension_0_tag}, \ccc{PCA_dimension_1_tag}, \ccc{PCA_dimension_2_tag} or \ccc{PCA_dimension_3_tag}. Also, it shouldn't be of a greater dimension than the geometry of the object. For example, a \ccc{Circle} can't have a \ccc{PCA_dimension_3_tag} tag.
 \end{enumerate}
 
 \end{ccRefFunction}

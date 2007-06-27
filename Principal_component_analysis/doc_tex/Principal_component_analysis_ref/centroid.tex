@@ -2,7 +2,7 @@
 % | Reference manual page: centroid.tex
 % +------------------------------------------------------------------------+
 % | 
-% | March 2005  Pierre Alliez and Sylvain Pion
+% | March 2005  Pierre Alliez and Sylvain Pion and Ankit Gupta
 % | Package:   Principal Component Analysis
 % |
 % +------------------------------------------------------------------------+
@@ -13,41 +13,42 @@
 \ccDefinition
   
 The function \ccRefName\ computes the centroid (center of mass) of a set
-of 2D or 3D objects. These include Points, Segments, Triangles, Rectangles and Circles.
+of 2D or 3D objects. These include Points, Segments, Triangles, Rectangles and Circles in 2D and in addition, Cuboids, Spheres and Tetrahedrons in 3D.
 
 \ccInclude{CGAL/centroid.h}
 
 There is a set of overloaded \ccc{centroid} functions for 2D and 3D objects.
 The user can also optionally pass an explicit kernel, in case the default,
 based on \ccc{Kernel_traits} is not sufficient.
-The dimension is also deduced automatically.
+The dimension is also deduced automatically. The user also has to pass a \ccc{tag}
+specifying the type of manifold of the objects.
 
-\ccFunction{template < typename InputIterator >
+\ccFunction{template < typename InputIterator, typename Tag >
             K::Point_2
-            centroid(InputIterator first, InputIterator beyond);}
-{ computes the centroid of a non-empty set of 2D objects.
+            centroid(InputIterator first, InputIterator beyond, const Tag& t);}
+{ computes the centroid of a non-empty set of 2D objects having a manifold described by t.
   \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.  The value type must be \ccc{K::Point_2}.
 \ccPrecond{first != beyond.} }
 
-\ccFunction{template < typename InputIterator, typename K >
+\ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_2
-            centroid(InputIterator first, InputIterator beyond, const K & k);}
-{ computes the centroid of a non-empty set of 2D objects.
+            centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
+{ computes the centroid of a non-empty set of 2D objects having a manifold described by t.
   The value type must be \ccc{K::Point_2}.
 \ccPrecond{first != beyond.} }
 
-\ccFunction{template < typename InputIterator >
+\ccFunction{template < typename InputIterator, typename Tag >
             K::Point_3
-            centroid(InputIterator first, InputIterator beyond);}
-{ computes the centroid of a non-empty set of 3D points.
+            centroid(InputIterator first, InputIterator beyond, const Tag& t);}
+{ computes the centroid of a non-empty set of 3D points having a manifold described by t.
   \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
   The value type must be \ccc{K::Point_3}.
 \ccPrecond{first != beyond.} }
 
-\ccFunction{template < typename InputIterator, typename K >
+\ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_3
-            centroid(InputIterator first, InputIterator beyond, const K & k);}
-{ computes the centroid of a non-empty set of 3D points.
+            centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
+{ computes the centroid of a non-empty set of 3D points having a manifold described by t.
   The value type must be \ccc{K::Point_3}.
 \ccPrecond{first != beyond.} }
 
