@@ -86,9 +86,9 @@ run_test()
 #  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$name"
-  echo "Executing $name $datafile ... "
+  echo "Executing $name $datafile $traits_type... "
   echo
-  if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
+  if eval $COMMAND $datafile $traits_type > $OUTPUTFILE 2>&1 ; then
     echo "   succesful execution of $name $datafile $traits_type" >> $ERRORFILE
   else
     echo "   ERROR:    execution of $name $datafile $traits_type" >> $ERRORFILE
@@ -466,6 +466,6 @@ echo "*******************************" >> $ERRORFILE
 echo "******** test traits  *********" >> $ERRORFILE
 echo "*******************************" >> $ERRORFILE
 
-for file in `ls ProgramOutput*.non_caching_*`; do
+for file in `ls ProgramOutput.test_traits.*`; do
     cat $file >> $ERRORFILE
 done
