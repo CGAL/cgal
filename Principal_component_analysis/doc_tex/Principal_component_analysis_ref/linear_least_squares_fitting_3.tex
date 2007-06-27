@@ -28,7 +28,7 @@ sub-space.
                                             typename K::Point_3 & centroid,     
                                             const K & k,
 					    const Tag& t);}
-{ computes the best fitting 3D line of a 3D point set or triangle set in the range
+{ computes the best fitting 3D line of a 3D object set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same
 along any line (a horizontal line going through the centroid is output
@@ -60,7 +60,7 @@ The tag \ccc{t} identifies the type of manifold of the objects in the object set
                                             typename K::Point_3 & centroid,     
                                             const K & k,
 					    const Tag& t);}
-{ computes the best fitting 3D plane of a 3D point set or triangle set in the range
+{ computes the best fitting 3D plane of a 3D object set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same
 along any plane (a horizontal plane going through the centroid is output

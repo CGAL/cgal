@@ -40,7 +40,7 @@ specifying the type of manifold of the objects.
 \ccFunction{template < typename InputIterator, typename Tag >
             K::Point_3
             centroid(InputIterator first, InputIterator beyond, const Tag& t);}
-{ computes the centroid of a non-empty set of 3D points having a manifold described by t.
+{ computes the centroid of a non-empty set of 3D objects having a manifold described by t.
   \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
   The value type must be \ccc{K::Point_3}.
 \ccPrecond{first != beyond.} }
@@ -48,7 +48,7 @@ specifying the type of manifold of the objects.
 \ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_3
             centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
-{ computes the centroid of a non-empty set of 3D points having a manifold described by t.
+{ computes the centroid of a non-empty set of 3D objects having a manifold described by t.
   The value type must be \ccc{K::Point_3}.
 \ccPrecond{first != beyond.} }
 
