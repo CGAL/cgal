@@ -181,6 +181,9 @@ private:
   /*! The input data file */
   std::string m_filename;
 
+  /*! The traits type */
+  std::string m_traitstype;
+
   /*! An instance of the traits */
   Traits m_traits;
 
@@ -411,11 +414,15 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
   violation_map[POSTCONDITION]=std::string("postcondition");
   violation_map[ASSERTION]=std::string("assertion");
   violation_map[WARNING]=std::string("warning");
-  if (argc < 2 || argc >= 3) {
-    std::cout << "Usage: " << argv[0] << " test_data_file" << std::endl;
+  if (argc < 2 || argc > 3) {
+    std::cout << "Usage: " << argv[0] << " test_data_file traits_type" << std::endl;
     end_of_line_printed = true;
-  } else
+  }
+  else
+  {
     m_filename = argv[1];
+    m_traitstype = argv[2];
+  }
   m_wrappers[std::string("compare_x")] =
     &Traits_test<Traits>::compare_x_wrapper;
   m_wrappers[std::string("compare_xy")] =
@@ -611,7 +618,7 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::perform(std::ifstream & is)
 {
   bool test_result = true;
-  std::cout << "Performing test ..." << std::endl;  
+  std::cout << "Performing test : traits type is " << m_traitstype << ", input filename is " << m_filename << std::endl;
   end_of_line_printed = true;
   char one_line[128];
   char buff[128];
