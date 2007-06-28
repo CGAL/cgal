@@ -63,24 +63,6 @@ public:
   Info&       info()       { return _info; }
 };
 
-template <typename Info_, class GT, class Fb >
-std::ostream&
-operator<<(std::ostream &os, const Triangulation_face_base_with_info_2<Info_, GT, Fb> &f)
-  // non combinatorial information
-{
-  os << static_cast<const Fb&>(f);
-  if(is_ascii(os)) 
-    os << " ";
-  return os << f.info();
-}
-
-template <typename Info_, class GT, class Fb >
-std::istream&
-operator>>(std::istream &is, Triangulation_face_base_with_info_2<Info_, GT, Fb> &f)
-  // non combinatorial information
-{
-  return is >> static_cast<Fb&>(f) >> f.info();
-}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_TRIANGULATION_FACE_BASE_WITH_INFO_2_H

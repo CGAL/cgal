@@ -58,24 +58,6 @@ public:
   Info&       info()       { return _info; }
 };
 
-template <typename Info_, class GT, class Vb >
-std::ostream&
-operator<<(std::ostream &os, const Triangulation_vertex_base_with_info_2<Info_, GT, Vb> &v)
-  // non combinatorial information. Default = point
-{
-  os << static_cast<const Vb&>(v);    
-  if(is_ascii(os)) 
-    os << " ";
-  return os << v.info();
-}
-
-template <typename Info_, class GT, class Vb >
-std::istream&
-operator>>(std::istream &is, Triangulation_vertex_base_with_info_2<Info_, GT, Vb> &v)
-  // non combinatorial information. Default = point
-{
- return is >> static_cast<Vb&>(v)  >> v.info();
-}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_TRIANGULATION_VERTEX_BASE_WITH_INFO_2_H
