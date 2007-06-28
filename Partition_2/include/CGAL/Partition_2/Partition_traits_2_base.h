@@ -34,12 +34,17 @@ class Partition_traits_2_base
     typedef typename Kernel::Point_2                Point_2;
     typedef ::std::list<Point_2>                    Container;
     typedef CGAL::Polygon_2<Kernel, Container>      Polygon_2;
+    typedef typename Kernel::Equal_2                Equal_2;
     typedef typename Kernel::Less_yx_2              Less_yx_2;
     typedef typename Kernel::Less_xy_2              Less_xy_2;
     typedef typename Kernel::Left_turn_2             Left_turn_2;
     typedef typename Kernel::Orientation_2          Orientation_2;
     typedef typename Kernel::Compare_y_2            Compare_y_2;
     typedef typename Kernel::Compare_x_2            Compare_x_2;
+
+    Equal_2
+    equal_2_object() const
+    { return Equal_2(); }
 
     Less_yx_2
     less_yx_2_object() const
