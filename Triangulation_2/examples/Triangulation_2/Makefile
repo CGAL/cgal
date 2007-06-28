@@ -43,6 +43,7 @@ all:            \
                 constrained_hierarchy_plus$(EXE_EXT) \
                 constrained_plus$(EXE_EXT) \
                 hierarchy$(EXE_EXT) \
+                io$(EXE_EXT) \
                 regular$(EXE_EXT) \
                 terrain$(EXE_EXT) \
                 triangulation_prog1$(EXE_EXT) \
@@ -66,6 +67,9 @@ constrained_plus$(EXE_EXT): constrained_plus$(OBJ_EXT)
 hierarchy$(EXE_EXT): hierarchy$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hierarchy hierarchy$(OBJ_EXT) $(LDFLAGS)
 
+io$(EXE_EXT): io$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)io io$(OBJ_EXT) $(LDFLAGS)
+
 regular$(EXE_EXT): regular$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular regular$(OBJ_EXT) $(LDFLAGS)
 
@@ -85,6 +89,7 @@ clean: \
                    constrained_hierarchy_plus.clean \
                    constrained_plus.clean \
                    hierarchy.clean \
+                   io.clean \
                    regular.clean \
                    terrain.clean \
                    triangulation_prog1.clean \
