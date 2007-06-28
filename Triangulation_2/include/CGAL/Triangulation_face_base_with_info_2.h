@@ -68,7 +68,10 @@ std::ostream&
 operator<<(std::ostream &os, const Triangulation_face_base_with_info_2<Info_, GT, Fb> &f)
   // non combinatorial information
 {
-  return os << static_cast<const Fb&>(f) << " " << f.info();
+  os << static_cast<const Fb&>(f);
+  if(is_ascii(os)) 
+    os << " ";
+  return os << f.info();
 }
 
 template <typename Info_, class GT, class Fb >

@@ -63,7 +63,10 @@ std::ostream&
 operator<<(std::ostream &os, const Triangulation_vertex_base_with_info_2<Info_, GT, Vb> &v)
   // non combinatorial information. Default = point
 {
-  return os << static_cast<const Vb&>(v)  << " " << v.info();
+  os << static_cast<const Vb&>(v);    
+  if(is_ascii(os)) 
+    os << " ";
+  return os << v.info();
 }
 
 template <typename Info_, class GT, class Vb >
