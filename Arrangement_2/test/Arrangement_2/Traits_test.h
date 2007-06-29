@@ -1355,7 +1355,7 @@ Traits_test<T_Traits>::read_xcurve(stream & is,
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
-  cv = typename T_Traits::X_monotone_curve_2(p1, p2);
+  xcv = typename T_Traits::X_monotone_curve_2(p1, p2);
   return true;
 }
 
