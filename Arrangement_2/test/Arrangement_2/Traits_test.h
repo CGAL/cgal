@@ -1348,7 +1348,7 @@ template <class T_Traits>
 template <class stream>
 bool
 Traits_test<T_Traits>::read_xcurve(stream & is,
-                                   typename T_Traits::X_monotone_curve_2 & cv)
+                                   typename T_Traits::X_monotone_curve_2 & xcv)
 {
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
