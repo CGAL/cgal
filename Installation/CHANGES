@@ -1,4 +1,16 @@
 CHANGES
+----------------------------- Release 3.3.1 ----------------------------------
+The following corrections have been made:
+
+- The new Skin Surface Meshing package had been forgotten in the list of
+  changes and the release announcement of CGAL 3.3:
+    This package allows to build a triangular mesh of a skin surface.
+    Skin surfaces are used for modeling large molecules in biological computing.
+- Fix bug in Memory_sizer and TAUCS when using more than 4GB of memory (64bit).
+- Fix bug in degenerate case of Partition_2::is_convex() for equal points.
+- Fix bug in Regular_triangulation_2.
+- Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
+
 ----------------------------- Release 3.3 ----------------------------------
 The following functionality has been added or changed:
 
