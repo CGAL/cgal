@@ -85,8 +85,8 @@ public:
    * \return A handle to the halfedge obtained from the insertion of the
    *         subcurve into the arrangement.
    */
-  Result found_subcurve (const X_monotone_curve_2& cv,
-                         Face_handle face,
+  Result found_subcurve (const X_monotone_curve_2&,
+                         Face_handle,
                          Vertex_handle left_v, Halfedge_handle left_he,
                          Vertex_handle right_v, Halfedge_handle right_he)
   { 
@@ -116,9 +116,9 @@ public:
    * \return A handle to the halfedge obtained from the insertion of the
    *         overlapping subcurve into the arrangement.
    */
-  Result found_overlap (const X_monotone_curve_2& cv,
-                        Halfedge_handle he,
-                        Vertex_handle left_v, Vertex_handle right_v)
+  Result found_overlap (const X_monotone_curve_2&,
+                        Halfedge_handle,
+                        Vertex_handle, Vertex_handle)
   {
     // We found an overlap (hence an intersection). Note we return a result
     // indicating that the zone-computation can stop here.
