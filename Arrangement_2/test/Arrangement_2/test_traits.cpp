@@ -55,7 +55,7 @@ bool
 Traits_test<CGAL::Arr_polyline_traits_2<Segment_traits> >::
 read_xcurve(stream & is,
             CGAL::
-            Arr_polyline_traits_2<Segment_traits>::X_monotone_curve_2 & cv)
+            Arr_polyline_traits_2<Segment_traits>::X_monotone_curve_2 & xcv)
 {
   unsigned int num_points;
   is >> num_points;
@@ -67,7 +67,7 @@ read_xcurve(stream & is,
     Point_2 p(x, y);
     points.push_back(p);
   }
-  cv =
+  xcv =
     CGAL::
     Arr_polyline_traits_2<Segment_traits>::X_monotone_curve_2(points.begin(),
                                                               points.end());
