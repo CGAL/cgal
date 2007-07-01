@@ -1480,9 +1480,11 @@ public:
                                 const X_monotone_curve_2& cv) const
   {
     CGAL_precondition(!cv.is_vertical());
+
+    typename Kernel::Segment_2 seg = cv;
     Kernel k;
     // If the curve contains pt, return it.
-    if (k.has_on_2_object() (cv, pt))
+    if (k.has_on_2_object() (seg, pt))
       return (pt);
 
     // Construct a vertical line passing through pt.
@@ -1490,7 +1492,7 @@ public:
     typename Kernel::Line_2        vl = k.construct_line_2_object() (pt, dir);
 
     // Compute the intersetion between the vertical line and the given curve.
-    Object    res = k.intersect_2_object()(cv, vl);
+    Object    res = k.intersect_2_object()(seg, vl);
     Point_2   ip;
     bool      ray_shoot_successful = k.assign_2_object()(ip, res);
 
