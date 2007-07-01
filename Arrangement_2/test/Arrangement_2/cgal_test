@@ -57,8 +57,7 @@ compile_test()
   TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits ";
 
   #compilation with gdb
-  #TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits -ggdb";
-  #TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS -ggdb"
+  #TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits -g";
 
   echo $TESTSUITE_CXXFLAGS;
   
@@ -462,10 +461,19 @@ else
   compile_and_run test_compute_curve_zone
 fi
 
-echo "*******************************" >> $ERRORFILE
-echo "******** test traits  *********" >> $ERRORFILE
-echo "*******************************" >> $ERRORFILE
+echo "********************************************************" >> $ERRORFILE
+echo "***** test traits (non_caching, conics and bezier) *****" >> $ERRORFILE
+echo "********************************************************" >> $ERRORFILE
 
-for file in `ls ProgramOutput.test_traits.*`; do
+for file in `ls ProgramOutput.test_traits.data.*.non_caching_*`; do
     cat $file >> $ERRORFILE
 done
+
+for file in `ls ProgramOutput.test_traits.data.conics.*`; do
+    cat $file >> $ERRORFILE
+done
+
+for file in `ls ProgramOutput.test_traits.data.bezier.*`; do
+    cat $file >> $ERRORFILE
+done
+
