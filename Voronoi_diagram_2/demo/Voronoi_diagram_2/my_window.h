@@ -467,15 +467,30 @@ private slots:
     timer.start();
 
     Rep::Point_2 p;
-    while (f >> p) {
-      vvd->insert(p);
-      counter++;
+    Rep::Circle_2 c;
+    double r;
+    if ( vvd == cad || vvd == cpd ) {
+      while (f >> p >> r) {
+	c = Rep::Circle_2(p,r);
+	vvd->insert(c);
+	counter++;
 
-      if ( counter % 500 == 0 ) {
-	sprintf(msg, "%d sites have been inserted...", counter);
-	widget->get_label()->setText(msg);
-      }
-    } // endwhile
+	if ( counter % 500 == 0 ) {
+	  sprintf(msg, "%d sites have been inserted...", counter);
+	  widget->get_label()->setText(msg);
+	}
+      } // endwhile
+    } else {
+      while (f >> p) {
+	vvd->insert(p);
+	counter++;
+
+	if ( counter % 500 == 0 ) {
+	  sprintf(msg, "%d sites have been inserted...", counter);
+	  widget->get_label()->setText(msg);
+	}
+      } // endwhile
+    }
 
     timer.stop();
 

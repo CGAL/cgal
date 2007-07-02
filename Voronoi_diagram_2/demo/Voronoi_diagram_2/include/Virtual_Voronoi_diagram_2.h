@@ -493,6 +493,17 @@ class Concrete_Apollonius_diagram_2
   }
 
 #ifdef CGAL_USE_QT
+  virtual void draw_sites(Qt_widget& widget) const
+  {
+    VBase::draw_sites(widget);
+
+    Base::Delaunay_graph::Hidden_sites_iterator hit;
+    for (hit = this->dual().hidden_sites_begin();
+	 hit != this->dual().hidden_sites_end(); ++hit) {
+      widget << *hit;
+    }
+  }
+
   virtual void draw_conflicts(const Point_2& p, const Object& o,
   			      Qt_widget& widget) const
   {
