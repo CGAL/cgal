@@ -12,6 +12,7 @@
 # - the script should clean up object files and executables
 
 ERRORFILE=error.txt
+ERROR_FULL_DESCRIPTION_FILE=ProgramOutput.error.txt
 
 #---------------------------------------------------------------------#
 #                    compile_and_run <target>
@@ -91,6 +92,7 @@ run_test()
     echo "   succesful execution of $name $datafile $traits_type" >> $ERRORFILE
   else
     echo "   ERROR:    execution of $name $datafile $traits_type" >> $ERRORFILE
+    cat $OUTPUTFILE >> $ERROR_FULL_DESCRIPTION_FILE
   fi
 }
 
@@ -153,6 +155,7 @@ compile_and_run()
       echo "   succesful execution   of $name" >> $ERRORFILE
     else
       echo "   ERROR:    execution   of $name" >> $ERRORFILE
+      cat $OUTPUTFILE >> $ERROR_FULL_DESCRIPTION_FILE
     fi
   else
     echo   "   ERROR:    not executed   $name" >> $ERRORFILE
@@ -421,8 +424,10 @@ test_bezier_traits()
 #---------------------------------------------------------------------#
 
 rm -f $ERRORFILE
+rm -f $ERROR_FULL_DESCRIPTION_FILE
 rm -f ProgramOutput.test_*
 touch $ERRORFILE
+
 
 #---------------------------------------------------------------------#
 #                    compile and run the tests
@@ -461,19 +466,17 @@ else
   compile_and_run test_compute_curve_zone
 fi
 
-echo "********************************************************" >> $ERRORFILE
-echo "***** test traits (non_caching, conics and bezier) *****" >> $ERRORFILE
-echo "********************************************************" >> $ERRORFILE
+#if any error occured then appened the the full error description file to error file
 
-for file in `ls ProgramOutput.test_traits.data.*.non_caching_*`; do
-    cat $file >> $ERRORFILE
-done
+if [ -f $ERROR_FULL_DESCRIPTION_FILE ] ; then
+  echo "********************************************************" >> $ERRORFILE
+  echo "************* ERROR FULL DESCRIPTION FILE **************" >> $ERRORFILE
+  echo "********************************************************" >> $ERRORFILE
+  cat $ERROR_FULL_DESCRIPTION_FILE >> $ERRORFILE
+fi
 
-for file in `ls ProgramOutput.test_traits.data.conics.*`; do
-    cat $file >> $ERRORFILE
-done
 
-for file in `ls ProgramOutput.test_traits.data.bezier.*`; do
-    cat $file >> $ERRORFILE
-done
+
+
+
 
