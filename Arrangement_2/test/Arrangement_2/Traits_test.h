@@ -420,8 +420,13 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
   }
   else
   {
+    m_traitstype = "";
     m_filename = argv[1];
-    m_traitstype = argv[2];
+    if (argc == 3 )
+    {
+      m_filename = argv[1];
+      m_traitstype = argv[2];
+    }
   }
   m_wrappers[std::string("compare_x")] =
     &Traits_test<Traits>::compare_x_wrapper;
