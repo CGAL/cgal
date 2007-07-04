@@ -47,6 +47,28 @@ int main (int argc, char * argv[])
   return (rc) ? 0 : -1;
 }
 
+#if TEST_TRAITS == CORE_CONIC_TRAITS || TEST_TRAITS == BEZIER_TRAITS
+
+// bezier traits and conic traits use same number type CORE:Expr
+// so this code can beshared by both traits types
+
+/*! Read a point */
+
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_point(stream & is, Point_2 & p)
+{
+  Rational rat_x,rat_y;
+  is >> rat_x >> rat_y;
+  Basic_number_type x(rat_x), y(rat_y);
+  p = Point_2(x, y);
+  return true;
+}
+
+#endif
+
 #if TEST_TRAITS == POLYLINE_TRAITS || TEST_TRAITS == NON_CACHING_POLYLINE_TRAITS
 
 template <>
@@ -99,18 +121,6 @@ read_curve(stream & is,
 }
 
 #elif TEST_TRAITS == CORE_CONIC_TRAITS
-
-template <>
-template <class stream>
-bool
-Traits_test<Traits >::
-read_point(stream & is, Point_2 & p)
-{
-  Basic_number_type x, y;
-  is >> x >> y;
-  p = Point_2(x, y);
-  return true;
-}
 
 /*! */
 template <class stream>
@@ -574,6 +584,7 @@ read_curve(stream & is,Curve_2 & cv)
 }
 
 #elif TEST_TRAITS == BEZIER_TRAITS
+
 /*! Read an x-monotone bezier curve */
 
 template <>
