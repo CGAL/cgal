@@ -157,7 +157,7 @@ public:
     CGAL_precondition(intersection_point.bound2.can_refine);
     // The following precondition makes sure the point is not rational already
     // (in which case it would not need refinement).
-    CGAL_precondition(intersection_point.bbox.min_x != intersection_point.bbox.max_x);
+//    CGAL_precondition(intersection_point.bbox.min_x != intersection_point.bbox.max_x);
 
     const Control_point_vec& cv1 = intersection_point.bound1.bounding_polyline;
     const NT& l1 = intersection_point.bound1.t_min;
