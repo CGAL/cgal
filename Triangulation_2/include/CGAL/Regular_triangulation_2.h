@@ -1068,16 +1068,24 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
             }
 
             Vertex_handle vv = loc->vertex(li);
-            if (power_test (vv->point(), p) < 0) {
-                return hide_new_vertex (loc, p);
-            }
-
-            v = this->_tds.create_vertex(); 
-            v->set_point(p);
-            exchange_incidences(v,vv);
-            hide_vertex(loc, vv);
-            regularize (v);
-            return v;
+	    CGAL::Oriented_side side = power_test (vv->point(), p);
+	    
+	    switch(side) {
+	      
+	    case ON_NEGATIVE_SIDE:
+	      return hide_new_vertex (loc, p);
+	      
+	    case ON_POSITIVE_SIDE:
+	      v = this->_tds.create_vertex(); 
+	      v->set_point(p);
+	      exchange_incidences(v,vv);
+	      hide_vertex(loc, vv);
+	      regularize (v);
+	      return v;
+	      
+	    case ON_ORIENTED_BOUNDARY:
+	      return vv;
+	    }
         }
     case Base::EDGE:
         {
