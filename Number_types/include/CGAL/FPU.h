@@ -269,15 +269,6 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       FP_RND_RP
 #define CGAL_FE_DOWNWARD     FP_RND_RM
 
-#elif defined __alpha__  // preliminary support.
-#define CGAL_IA_SETFPCW(CW) (__ieee_set_fp_control(CW))
-#define CGAL_IA_GETFPCW(CW) (CW = __ieee_get_fp_control())
-typedef unsigned long FPU_CW_t;
-#define CGAL_FE_TONEAREST   FE_TONEAREST
-#define CGAL_FE_TOWARDZERO  FE_TOWARDZERO
-#define CGAL_FE_UPWARD      FE_UPWARD
-#define CGAL_FE_DOWNWARD    FE_DOWNWARD
-
 #elif defined ( _MSC_VER )
 #if ( _MSC_VER < 1400)
 #define CGAL_IA_SETFPCW(CW) _controlfp (CW, _MCW_RC )
