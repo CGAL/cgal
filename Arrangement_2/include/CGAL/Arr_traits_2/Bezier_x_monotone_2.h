@@ -571,17 +571,17 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   _is_vert (false)
 {
   // Get the originators of the point that correspond to the curve B.
-  Originator_iterator ps_org = ps.get_originator(B);
-  CGAL_precondition (ps_org != ps.originators_end());
-
+  Originator_iterator   ps_org = ps.get_originator(B);
+  CGAL_precondition (ps_org != ps.originators_end()); 
+  
   Originator_iterator   pt_org = pt.get_originator(B);
   CGAL_precondition (pt_org != pt.originators_end());
-
+  
   // Check if the subcurve is directed left or right.
   const Comparison_result    res = _ps.compare_x (_pt, cache);
   // Iddo: TODO - alternative check if the original curve is vertical,
   //       a check that can work on intervals.
-
+  
   if (res == EQUAL)
   {
     // We have a vertical segment. Check if the source is below the target.
@@ -593,12 +593,12 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   {
     _dir_right = (res == SMALLER);
   }
-
+  
   // Check if the value of the parameter t increases when we traverse the
   // curve from left to right: If the curve is directed to the right, we
   // check if t_src < t_trg, otherwise we check whether t_src > t_trg.
   Comparison_result      t_res;
-
+  
   if (CGAL::compare (ps_org->point_bound().t_max,
                      pt_org->point_bound().t_min) == SMALLER ||
       CGAL::compare (ps_org->point_bound().t_min,
@@ -1141,7 +1141,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
   // Compare the slopes of the two supporting curves at p. In the general
   // case, the slopes are not equal and their comparison gives us the
   // vertical order to p's right; note that we swap the order of the curves
-  // to obtains their position to the left.
+  // to obtain their position to the left.
   Comparison_result   slope_res = cv._compare_slopes (*this, p);
   
   if (slope_res != EQUAL)
@@ -1259,7 +1259,9 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
         (const Self& cv) const
 {
   CGAL_precondition (_curve.is_same (cv._curve));
+  
   Self    res = cv;
+  
   if (right().is_same (cv.left()))
   {
     // Extend the subcurve to the right.
@@ -1275,6 +1277,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
   else
   {
     CGAL_precondition (left().is_same (cv.right()));
+    
     // Extend the subcurve to the left.
     if (_dir_right)
     {
@@ -1285,6 +1288,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
       res._pt = cv.left();
     }
   }
+
   return (res);
 }
 
@@ -1504,26 +1508,70 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
   
   // The slope of (X(t), Y(t)) at t0 is Y'(t)/X'(t).
   // Compute the slope of (*this).
+  // Note that we take special care of the case X'(t) = 0, when the tangent
+  // is vertical and its slope is +/- oo.
   CGAL_assertion (org1->has_parameter() && org2->has_parameter());
   
   Nt_traits         nt_traits;
   const Algebraic&  t1 = org1->parameter();
   Polynomial        derivX = nt_traits.derive (_curve.x_polynomial());
   Polynomial        derivY = nt_traits.derive (_curve.y_polynomial());
+  Algebraic         numer1 = nt_traits.evaluate_at (derivY, t1) *
+                             nt_traits.convert (_curve.x_norm());
+  Algebraic         denom1 = nt_traits.evaluate_at (derivX, t1) *
+                             nt_traits.convert (_curve.y_norm());
+  CGAL::Sign        inf_slope1 = CGAL::ZERO;
+  Algebraic         slope1;
 
-  Algebraic         slope1 = (nt_traits.evaluate_at (derivY, t1) *
-                              nt_traits.convert (_curve.x_norm())) /
-                             (nt_traits.evaluate_at (derivX, t1) *
-                              nt_traits.convert (_curve.y_norm()));
+  if (CGAL::sign (denom1) == CGAL::ZERO)
+  {
+    inf_slope1 = CGAL::sign (numer1);
+
+    // If also Y'(t) = 0, we cannot perform the comparison:
+    if (inf_slope1 == CGAL::ZERO)
+      return (EQUAL);
+  }
+  else
+  {
+    slope1 = numer1 / denom1;
+  }
 
   // Compute the slope of the other subcurve.
   const Algebraic&  t2 = org2->parameter();
   derivX = nt_traits.derive (cv._curve.x_polynomial());
   derivY = nt_traits.derive (cv._curve.y_polynomial());
-  Algebraic         slope2 = (nt_traits.evaluate_at (derivY, t2) *
-                              nt_traits.convert (cv._curve.x_norm())) /
-                             (nt_traits.evaluate_at (derivX, t2) *
-                              nt_traits.convert (cv._curve.y_norm()));
+  Algebraic         numer2 = nt_traits.evaluate_at (derivY, t2) *
+                             nt_traits.convert (cv._curve.x_norm());
+  Algebraic         denom2 = nt_traits.evaluate_at (derivX, t2) *
+                             nt_traits.convert (cv._curve.y_norm());
+  CGAL::Sign        inf_slope2 = CGAL::ZERO;
+  Algebraic         slope2;
+
+  if (CGAL::sign (denom2) == CGAL::ZERO)
+  {
+    inf_slope2 = CGAL::sign (numer2);
+
+    // If also Y'(t) = 0, we cannot perform the comparison:
+    if (inf_slope2 == CGAL::ZERO)
+      return (EQUAL);
+  }
+  else
+  {
+    slope2 = numer2 / denom2;
+  }
+
+  // Handle the comparison when one slope (or both) is +/- oo.
+  if (inf_slope1 == CGAL::POSITIVE)
+    return (inf_slope2 == CGAL::POSITIVE ? EQUAL : LARGER);
+  
+  if (inf_slope1 == CGAL::NEGATIVE)
+    return (inf_slope2 == CGAL::NEGATIVE ? EQUAL : SMALLER);
+
+  if (inf_slope2 == CGAL::POSITIVE)
+    return (SMALLER);
+
+  if (inf_slope2 == CGAL::NEGATIVE)
+    return (LARGER);
 
   // Compare the slopes.
   return (CGAL::compare (slope1, slope2));
