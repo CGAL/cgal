@@ -27,6 +27,7 @@
 #ifndef CGAL_FUNCTIONAL_BASE_H
 #define CGAL_FUNCTIONAL_BASE_H
 
+#include <CGAL/basic.h>
 #include <functional>
 
 CGAL_BEGIN_NAMESPACE

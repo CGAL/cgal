@@ -101,6 +101,32 @@ template <class T>
 Input_rep<T>
 iformat( T& t) { return Input_rep<T>(t); }
 
+
+template <class T, class F = Null_tag >
+class Benchmark_rep {
+    const T& t;
+public:
+    //! initialize with a const reference to \a t.
+    Benchmark_rep( const T& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const {
+        return out << t;
+    }
+};
+
+template <class T, class F>
+std::ostream& operator<<( std::ostream& out, Benchmark_rep<T,F> rep) {
+    return rep( out);
+}
+
+template <class T>
+Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
+
+template <class T, class F>
+Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
+
+
+
 IO::Mode
 get_mode(std::ios& i);
 
@@ -114,9 +140,6 @@ IO::Mode
 set_pretty_mode(std::ios& i);
 
 IO::Mode
-set_benchmark_mode(std::ios& i);
-
-IO::Mode
 set_mode(std::ios& i, IO::Mode m);
 
 bool
@@ -127,9 +150,6 @@ is_ascii(std::ios& i);
 
 bool
 is_binary(std::ios& i);
-
-bool
-is_benchmark(std::ios& i);
 
 template < class T >
 inline

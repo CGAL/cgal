@@ -1341,6 +1341,35 @@ public:
 #endif
 };
 
+/*\brief
+ * This class' function call operator test whether one handle's \c id is
+ * less than the \c id of the other handle.
+ *
+ * "Less" is defined in terms of the second template argument,
+ * which defaults to \c std::less<Handle::Id_type>
+ */
+template <class Handle, class Less = std::less<typename Handle::Id_type> >
+class Handle_id_less_than {
+public:
+    //! result_type
+    typedef bool result_type;
+    //! type of first argument
+    typedef Handle first_argument_type;
+    //! type of second argument
+    typedef Handle second_argument_type;
+    //! returns \c true iff \c h1.id() < \c h2.id()
+    bool operator () (Handle h1, Handle h2) {
+        Less is_less;
+        return is_less(h1.id(), h2.id());
+    }
+    //! returns \c true iff \c h1.id() < \c h2.id()
+    bool operator () (Handle h1, Handle h2) const {
+        Less is_less;
+        return is_less(h1.id(), h2.id());
+    }
+};
+
+
 //@}
 
 CGAL_END_NAMESPACE

@@ -521,6 +521,35 @@ inline Compare_to_less<Op>
 compare_to_less(const Op& op)
 { return Compare_to_less<Op>(op); }
 
+
+/*!\brief
+ * Functor class to determine lexicographical order of pairs
+ */
+template < class T1, class T2,
+           class Less1 = std::less<T1>, class Less2 = std::less<T2> >
+struct Pair_lexicographical_less_than {
+    typedef bool result_type;
+    typedef std::pair<T1,T2> first_argument_type;
+    typedef std::pair<T1,T2> second_argument_type;
+    /*!\brief
+     * returns \c true iff \c x is lexicograhically smaller than \c y
+     * using \c Less1 and \c Less2 functors.
+     */
+    bool operator () (const std::pair<T1,T2>& x, const std::pair<T1,T2>& y) {
+        Less1 lt1;
+        Less2 lt2;
+
+        if (lt1(x.first, y.first)) {
+            return true;
+        } else if (lt1(y.first, x.first)) {
+            return false;
+        } else /* neither is less than the other */ {
+            return lt2(x.second, y.second);
+        }
+    }
+};
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FUNCTION_OBJECTS_H
