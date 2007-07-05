@@ -9,6 +9,8 @@ The following corrections have been made:
 - Fix bug in Memory_sizer and TAUCS when using more than 4GB of memory (64bit).
 - Fix bug in degenerate case of Partition_2::is_convex() for equal points.
 - Fix bug in Regular_triangulation_2.
+- Fix bug walk along a line point location for unbounded curves.
+- Fix bug in Arrangment_2 class when inserting an unbounded curve from an existing vertex.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
 
 ----------------------------- Release 3.3 ----------------------------------
