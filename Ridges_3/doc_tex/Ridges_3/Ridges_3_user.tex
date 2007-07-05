@@ -24,8 +24,8 @@ ridges and umbilics of a smooth surface discretized by a triangle
 mesh.  Given a smooth surface, a ridge is a curve along which one of
 the principal curvatures has an extremum along its curvature line. An
 umbilic is a point at which both principal curvatures are
-equal. Ridges define a singular curve ---i.e. a self-intersecting
-curve, and umbilics are are special points on this curve. Ridges are
+equal. Ridges define a singular curve, i.e., a self-intersecting
+curve, and umbilics are special points on this curve. Ridges are
 curves of {\em extremal} curvature and therefore encode important
 informations used in segmentation, registration, matching and surface
 analysis.  Based on the results of the article
@@ -68,7 +68,7 @@ we denote them $d_1$ and $d_2$.
 %%
 In local coordinates, we denote $\langle , \rangle$ the inner product
 induced by the ambient Euclidean space, and $dk_1$, $dk_2$ the
-gradients of the principal curvatures. Ridges, illustrated on figure
+gradients of the principal curvatures. Ridges, illustrated in Figure
 \ref{ellipsoid-ridges} for the standard ellipsoid, are defined by:
 
 \begin{definition}
@@ -76,12 +76,12 @@ gradients of the principal curvatures. Ridges, illustrated on figure
 A non umbilical point is called
 \begin{itemize}
 \item
-a max ridge point if the {\em extremality coefficient} $b_0=\langle
+a max ridge point, if the {\em extremality coefficient} $b_0=\langle
 dk_1,d_1 \rangle$ vanishes, i.e. $b_0=0$.
 
-\item a min ridge point if the {\em extremality coefficient}
+\item a min ridge point, if the {\em extremality coefficient}
   $b_3=\langle dk_2,d_2 \rangle$ vanishes, i.e. $b_3=0$
-  \footnote{Notations $b_0, b_3$ comes from equation \ref{eq:monge} }.
+  \footnote{Notations $b_0, b_3$ comes from Equation~\ref{eq:monge} }.
 \end{itemize}
 \end{definition}
 
@@ -90,17 +90,18 @@ The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
 ridge point can further be qualified as {\em elliptic} if it
 corresponds to a maximum of $k_1$ or a minimum of $k_2$, or {\em
-hyperbolic} otherwise. Hence we end with four types of ridges, namely
-: \ccc{MAX_ELLIPTIC_RIDGE}, \ccc{MAX_HYPERBOLIC_RIDGE}, \ccc{MIN_ELLIPTIC_RIDGE},
-\ccc{MIN_HYPERBOLIC_RIDGE}, see figure \ref{ellipsoid-ridges}.
+hyperbolic} otherwise. Hence we end up with four types of ridges, namely:
+ \ccc{MAX_ELLIPTIC_RIDGE}, \ccc{MAX_HYPERBOLIC_RIDGE}, \ccc{MIN_ELLIPTIC_RIDGE},
+\ccc{MIN_HYPERBOLIC_RIDGE}, which are illustrated in  Figure~\ref{ellipsoid-ridges}.
 %%
 Also of interest are the {\em crest lines}, a crest line being an
 elliptic ridge which is a maximum of $\max(|k_1|,|k_2|)$. Crest lines
 form a subset of elliptic ridges, and can be seen as the visually most
 salient curves on a surface.
 %%
-Hence we provide two additional ridge types :
-\ccc{MAX_CREST_RIDGE} and \ccc{MIN_CREST_RIDGE}, see figure \ref{david-crest}.
+Hence we provide the two additional ridge types
+\ccc{MAX_CREST_RIDGE} and \ccc{MIN_CREST_RIDGE}, which are illustrated  in
+Figure~\ref{david-crest}.
 
 \begin{figure}[!ht]
 \begin{ccTexOnly}
@@ -113,7 +114,7 @@ Hence we provide two additional ridge types :
 </CENTER>
 \end{ccHtmlOnly}
 \caption{Ridges on the ellipsoid, normals pointing outward.  Color
-  coding~: \ccc{MAX_ELLIPTIC_RIDGE} are blue,
+  coding: \ccc{MAX_ELLIPTIC_RIDGE} are blue,
   \ccc{MAX_HYPERBOLIC_RIDGE} are green, \ccc{MIN_ELLIPTIC_RIDGE} are
   red and \ccc{MIN_HYPERBOLIC_RIDGE} are yellow. The red line is also
   the \ccc{MIN_CREST_RIDGE} and this is the only crest ridge of the
@@ -171,17 +172,17 @@ Hence ridge types are characterized by
 \end{itemize}
 
 
-As illustrated on Fig.  \ref{index_umbilic} and \ref{umbilics}, the
+As illustrated in Figures~\ref{index_umbilic} and \ref{umbilics}, the
 patterns made by curvature lines around an umbilic can be
-characterized using the notion of {\em index} associated to the
-principal directions ---see also \cite{cgal:cp-ssulc-05}.
+characterized using the notion of an {\em index} associated to the
+principal directions --- see also \cite{cgal:cp-ssulc-05}.
 %%
-As depicted on Fig. \ref{index_umbilic}, consider a small circuit $C$ around the
+As depicted in Figure~\ref{index_umbilic}, consider a small circuit $C$ around the
 umbilic, and a point $p \in C$. Starting from an initial orientation
 $u$ of a tangent vector to the curvature line through point $p$,
 propagate {\em by continuity} this orientation around the circuit.  The
 index is defined by the angle swept by $u$ around this revolution,
-normalized by $2\pi$. On our example, the index is thus 1/2.
+normalized by $2\pi$. In our example, the index is thus 1/2.
 
 If the index of the principal direction field is $1/2$
 then it is called a
@@ -234,7 +235,7 @@ order quantities $b_0, b_3$ and optionally fourth order quantities
 $P_1, P_2$). These differential quantities may be computed for the
 smooth surface the mesh is inscribed in (analytically or using
 approximation methods), or may be estimated for a mesh given without
-reference to a underlying smooth surface. Although the ridge
+reference to an underlying smooth surface. Although the ridge
 approximation algorithm is the same in both cases, one cannot ambition
 to ask for the same certificates.  This distinction calls for the
 notion of {\em compliant} mesh.
@@ -257,7 +258,7 @@ compliant} meshes.  \medskip
 As 0-level set of the extremality coefficients $b_0$ and $b_3$, ridges
 are extracted by a marching triangles algorithm.\footnote{A marching
 triangles algorithm is similar to a 2d marching cubes algorithm (or
-marching rectangles algorithm), excepted that a one-manifold is
+marching rectangles algorithm), except that a one-manifold is
 reported on a two-manifold tessellated by triangles.}
 
 %% instead of  rectangles.}.
@@ -269,25 +270,25 @@ orientation of the principal directions, we expect both extremalities
 and vectors orienting the principal direction to be given at each
 point vertex of the mesh. Except in the neighborhood of umbilics, if
 the mesh is dense enough, a coherent orientation of principal
-directions at both endpoints of an edge is chosen such than the angle
+directions at both endpoints of an edge is chosen such that the angle
 between the two vectors is acute. This rule, the {\em acute rule}, is
 precisely analyzed in \cite{cgal:cp-tdare-05}.
 %%
-Moreover, we only seek ridges in triangles such than one can find an
+Moreover, we only seek ridges in triangles for which one can find an
 orientation of its three vertices such that the three edges are
-coherently oriented by the acute rule. Such triangles are termed
+coherently oriented by the acute rule. Such triangles are called
 {\em regular}. This said, two remarks are in order.
 
 \noindent {\em ---Regular triangles and ridge segments.}
 A regular triangle has 0 or 2 edges crossed by a max (resp. min)
 ridge, which is tantamount to a sign change of $b_0$ (resp. $b_3$)
-along the corresponding edges. In the later case, we say that the
+along the corresponding edges. In the latter case, we say that the
 triangle contains a ridge segment.
 %%
 Two methods are provided to compute its type, be it elliptic or
 hyperbolic. First, if fourth order differential quantities are
-provided, one can use the $P_1$ ($P_2$) values of Eq.
-(\ref{eq:taylor_along_line}) ((\ref{eq:taylor_along_red_line})) for a
+provided, one can use the $P_1$ ($P_2$) values of Equations
+\ref{eq:taylor_along_line} (\ref{eq:taylor_along_red_line}) for a
 max (min) ridge. The value of $P_i$ for a ridge segment is defined as
 the mean value of the $P_i$ values of the two crossing points on edges
 (while the value at a crossing point on an edge is the $b_i$-weighted
@@ -500,19 +501,19 @@ enables the definition of models for the concepts
 using \ccc{std::maps} and \ccc{boost::associative_property_map}.
 
 
-\section{Illustrations - Examples}
+\section{Examples}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-\paragraph{Example program.}\footnote{Model data may be downloaded via
+\subsection{Example program}
+The following program computes ridges and umbilics from an off
+file.\footnote{Model data may be downloaded via
   ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges\_3\_datafiles.tgz .
   The mechanical part model has been provided courtesy of Dassault
-  System to produce figure \ref{fig:mechanical_crest_filtered-intro},
+  System to produce Figure~\ref{fig:mechanical_crest_filtered-intro},
   due to copyright issues the available model is not the same, it is
-  provided by the AIM@SHAPE Shape Repository.}
-The following program computes ridges and umbilics from an off
-file. It uses the Jet fitting package to estimate the differential
+  provided by the AIM@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
 quantities. 
 %introspect-qt and the demo rep not in the public release%%% 
 %The output file contains data to be visualized with the
@@ -621,8 +622,9 @@ int main(int argc, char *argv[])
  }
 \end{ccExampleCode}
 
-\paragraph{Example:  Fig. \ref{ellipsoid-ridges-example}.}
-For that figure, the data have been computed as follows
+\subsection{Example: Ridges and Umbilics  on an Ellipsoid}
+
+For Figure\ref{ellipsoid-ridges-example}, the data have been computed as follows:
 %%
 \begin{ccExampleCode}
 ./Compute_Ridges_Umbilics -f data/ellipsoid_u_0.02.off -d 4 -m 4 -a 3 -t 3
@@ -658,9 +660,10 @@ Umbilic at location (0.81413 0.0018689 0.290339) of type elliptic
 \label{ellipsoid-ridges-example}
 \end{figure}
 
-\paragraph{Example:  Fig.  \ref{fig:mechanical_crest_filtered-intro}.}
-This Fig. illustrates the filtering of crest ridges on a mechanical
-model, and has been computed as follows:
+\subsection{Example: Filtering of Crest Ridges on a Mechanical Par}
+
+Figure~\ref{fig:mechanical_crest_filtered-intro} illustrates the filtering 
+of crest ridges on a mechanical model, and has been computed as follows:
 %%
 \begin{ccExampleCode}
 ./Compute_Ridges_Umbilics -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
