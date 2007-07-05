@@ -1267,12 +1267,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
     // Extend the subcurve to the right.
     if (_dir_right)
     {
-      res._trg = (cv._dir_right ? cv._trg : cv._src);
       res._pt = cv.right();
     }
     else
     {
-      res._src = (cv._dir_right ? cv._trg : cv._src);
       res._ps = cv.right();
     }
   }
@@ -1283,12 +1281,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
     // Extend the subcurve to the left.
     if (_dir_right)
     {
-      res._src = (cv._dir_right ? cv._src : cv._trg);
       res._ps = cv.left();
     }
     else
     {
-      res._trg = (cv._dir_right ? cv._src : cv._trg);
       res._pt = cv.left();
     }
   }
