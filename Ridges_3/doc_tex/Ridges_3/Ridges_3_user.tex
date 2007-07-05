@@ -255,7 +255,7 @@ See \cite{cgal:cp-tdare-05} for a detailed discussion of {\em
 compliant} meshes.  \medskip
 
 As 0-level set of the extremality coefficients $b_0$ and $b_3$, ridges
-are extracted by a marching triangles algorithm \footnote{A marching
+are extracted by a marching triangles algorithm.\footnote{A marching
 triangles algorithm is similar to a 2d marching cubes algorithm (or
 marching rectangles algorithm), excepted that a one-manifold is
 reported on a two-manifold tessellated by triangles.}
@@ -308,7 +308,7 @@ triangle are less likely to be regular and the detection of ridges
 cannot be relevant by this method.  This is why we propose another
 method to detect umbilics independently.
 
-\paragraph{Non compliant meshes : filtering ridges on {\em
+\paragraph{Non compliant meshes: filtering ridges on {\em
 strength} and {\em sharpness}.}
 %%
 For real world applications dealing with coarse meshes, or meshes
@@ -325,7 +325,7 @@ zero crossings of $b_0$ and $b_3$, one can expect erroneous detections
 as long as these coefficients remain small. In order to select the
 most prominent ridge points, we focus on points where the variation of
 the curvature is fast along the curvature line.  One can observe that,
-at a ridge point, according to  equation
+at a ridge point, according to  Equation
 \ref{eq:taylor_along_line}, the second derivative of $k_1$ along its
 curvature line satisfies $k_1^{''}(0) = P_1/(k_1-k_2)$.  Using this
 observation, one can define the {\em sharpness of a ridge} as the
