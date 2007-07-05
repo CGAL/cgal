@@ -12,6 +12,7 @@ The following corrections have been made:
 - Fix bug walk along a line point location for unbounded curves.
 - Fix bug in Arrangment_2 class when inserting an unbounded curve from an existing vertex.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
+- Fix bug in FPU rounding mode macros (affected only alpha architecture).
 
 ----------------------------- Release 3.3 ----------------------------------
 The following functionality has been added or changed:
