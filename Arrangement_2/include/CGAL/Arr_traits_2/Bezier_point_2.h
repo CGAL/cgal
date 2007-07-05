@@ -1182,7 +1182,7 @@ bool _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_refine ()
   }
 
   // We should never reach here:
-  CGAL_assertion (false);
+  //CGAL_assertion (false);
   return (false);
 }
 
