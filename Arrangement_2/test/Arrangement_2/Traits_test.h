@@ -96,6 +96,7 @@ class Test_exception : public CGAL::Failure_exception
     {
       return e;
     }
+    ~Test_exception() throw() {}
 };
 
 //function that throws exceptions with the appropriate data 
