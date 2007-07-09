@@ -142,6 +142,9 @@ public:
   typedef typename container::iterator iterator;
   typedef typename container::const_iterator const_iterator;
 
+  typedef typename container::reverse_iterator reverse_iterator;
+  typedef typename container::const_reverse_iterator const_reverse_iterator;
+
 
   small_map(std::size_t sz=0){
     CGAL_SMALL_STATIC_MAP_CHECK_LOCK(sorted_=true);
@@ -180,12 +183,31 @@ public:
     return c_.end();
   }
 
+
+  reverse_iterator rbegin() {
+    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
+    return c_.rbegin();
+  }
+
+  reverse_iterator rend() {
+    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
+    return c_.rend();
+  }
+
   const_iterator begin() const {
     return c_.begin();
   }
 
   const_iterator end() const {
     return c_.end();
+  }
+
+  const_reverse_iterator rbegin() const {
+    return c_.rbegin();
+  }
+
+  const_reverse_iterator rend() const {
+    return c_.rend();
   }
 
   template <class K>

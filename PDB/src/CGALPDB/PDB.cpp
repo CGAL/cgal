@@ -119,7 +119,7 @@ std::ostream& PDB::write(std::ostream &out) const {
 
 PDB::Model_key PDB::push_back(const Model &m) {
   Model_key k(0);
-  if (!empty()) k= Model_key((--models_end())->key().index()+1);
+  if (!empty()) k= Model_key(models_.rbegin()->key().index()+1);
   insert(k, m);
   return k;
 }
