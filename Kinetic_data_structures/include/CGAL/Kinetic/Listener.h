@@ -152,7 +152,7 @@ private:							\
     listener_=sk;						\
   }								\
   Listener* listener() {return listener_.get();}		\
-  typename Listener::Handle listener_;
+  typename Listener::Handle listener_
 
 
 
@@ -169,7 +169,7 @@ private:							\
   Recipient* recipient() const {return recipient_;}\
   void set_recipient(Recipient *r){recipient_=r;}	\
   private:					\
-  Recipient* recipient_;
+  Recipient* recipient_
 
 
 
@@ -202,13 +202,13 @@ private:							\
     }									\
   };								\
   friend class Notifier##_listener;					\
-  Notifier##_listener listener_##Notifier##_;
+  Notifier##_listener listener_##Notifier##_
 
 #define CGAL_KINETIC_NOTIFIER(Notifier) listener_##Notifier##_.notifier()
 
 #define CGAL_KINETIC_INIT_LISTEN(Notifier, ptr)	\
   listener_##Notifier##_.set_recipient(this);	\
-  listener_##Notifier##_.set_notifier(ptr);
+  listener_##Notifier##_.set_notifier(ptr)
   
 
   

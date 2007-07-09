@@ -461,7 +461,7 @@ public:
 
   //! Return the direction of time.
   CGAL_GETNR(CGAL::Sign, direction_of_time, return is_forward_?
-		  CGAL::POSITIVE: CGAL::NEGATIVE);
+	     CGAL::POSITIVE: CGAL::NEGATIVE);
 
   //! Return the number of events which has been processed.
   CGAL_GETNR(unsigned int, current_event_number, return number_of_events_);

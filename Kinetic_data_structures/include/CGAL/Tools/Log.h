@@ -31,9 +31,9 @@ CGAL_BEGIN_NAMESPACE
 class Log
 {
 public: 
-  typedef enum Level {NONE=0, SOME=2, LOTS=3};
+  enum Level {NONE=0, SOME=2, LOTS=3};
   
-  typedef enum Target {COUT, FILE, DEVNULL};
+  enum Target {COUT, FILE, DEVNULL};
 private:
   struct State {
     Target target_;

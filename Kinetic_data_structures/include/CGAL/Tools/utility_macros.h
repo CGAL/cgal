@@ -22,65 +22,71 @@
 #ifndef CGAL_UTILITY_MACROS_H
 #define CGAL_UTILITY_MACROS_H
 
-#define CGAL_SUBSCRIPT(type, expr) type& operator[](unsigned int i){ expr;}\
+//#include <boost/call_traits.hpp>
+
+#define CGAL_SUBSCRIPT(type, expr) type& operator[](unsigned int i){ expr;} \
   const type& operator[](unsigned int i) const { expr;}
 
 #define CGAL_COPY_CONSTRUCTOR(TC) TC(const TC &o){copy_from(o);}\
   TC& operator=(const TC &o) {copy_from(o); return *this;}
 
-#define CGAL_GET(type, name, expr) const type &name() const{expr;}
+// 
+#define CGAL_GET(type, name, expr) const type & name() const{expr;}
+#define CGAL_GETOBJECT(UC, lc, expr) const UC & lc##_object() const {expr;}
 #define CGAL_GETNR(type, name, expr) const type name() const{expr;}
+//#define CGAL_GET(type, name, expr) typename boost::call_traits<type>::param_type name() const {expr;}
 
 #define CGAL_IS(name, expr) bool is_##name() const {expr;}
+#define CGAL_SET_IS(name, expr) void set_is_##name(bool tf) {expr;}
 
 #define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;}
 
-#define CGAL_FIELDRW(type, name, var) \
-  const type &name() const {return var;}\
+#define CGAL_FIELDRW(type, name, var)		\
+  const type &name() const {return var;}	\
   void set_##name(const type &k) {var=k;}
 
 
-#define CGAL_OUTPUT(type)\
+#define CGAL_OUTPUT(type)						\
   inline std::ostream& operator<<(std::ostream&out, const type &t){	\
     return t.write(out);						\
   }
 
-#define CGAL_OUTPUT1(type)			\
-  template <class A>						\
-  inline std::ostream& operator<<(std::ostream&out, const type<A> &t){ \
+#define CGAL_OUTPUT1(type)						\
+  template <class A>							\
+  inline std::ostream& operator<<(std::ostream&out, const type<A> &t){	\
     return t.write(out);						\
   }
 
-#define CGAL_OUTPUT2(T)			\
+#define CGAL_OUTPUT2(T)							\
   template <class A, class B>						\
-  inline std::ostream& operator<<(std::ostream&out, const T<A,B> &t){ \
+  inline std::ostream& operator<<(std::ostream&out, const T<A,B> &t){	\
     return t.write(out);						\
   }
 
-#define CGAL_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)	\
+#define CGAL_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)		\
   typedef it_type uc_name##_iterator;					\
   uc_name##_iterator lc_name##s_begin() {bexpr;}			\
   uc_name##_iterator lc_name##s_end() {eexpr;}
 
-#define CGAL_CONST_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr) \
+#define CGAL_CONST_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)	\
   typedef it_type uc_name##_const_iterator;				\
   uc_name##_const_iterator lc_name##s_begin() const {bexpr;}		\
   uc_name##_const_iterator lc_name##s_end() const {eexpr;}
 
-#define CGAL_FIND(ucname, expr)				\
+#define CGAL_FIND(ucname, expr)					\
   ucname##_const_iterator find(ucname##_key k) const {expr;}	\
   ucname##_iterator find(ucname##_key k) {expr;}
 
-#define CGAL_INSERT(ucname, expr)			\
+#define CGAL_INSERT(ucname, expr)					\
   ucname##_iterator insert(ucname##_key k, const ucname &m) {expr;}
 
 #define CGAL_INSERTNK(ucname, expr)			\
   ucname##_iterator insert(const ucname &m) {expr;}
 
-#define CGAL_SIZE(lcname, expr)		\
+#define CGAL_SIZE(lcname, expr)			\
   size_t number_of_##lcname() const {expr;}
 
-#define CGAL_SWAP(type)			\
+#define CGAL_SWAP(type)				\
   inline void swap(type &a, type &b) {		\
     a.swap_with(b);				\
   }
@@ -92,16 +98,35 @@
 #define CGAL_IFNONEQUAL(a,b,cmp) if (a cmp b) return true;	\
   else if (b cmp a) return false;
 
+#define CGAL_COMPARISONS bool operator==(const This &o) const {		\
+    return compare(o) == CGAL::EQUAL;					\
+  }									\
+  bool operator!=(const This &o) const {				\
+    return compare(o) != CGAL::EQUAL;					\
+  }									\
+  bool operator<(const This &o) const {					\
+    return compare(o) == CGAL::SMALLER;					\
+  }									\
+  bool operator>(const This &o) const {					\
+    return compare(o) == CGAL::LARGER;					\
+  }									\
+  bool operator>=(const This &o) const {				\
+    return compare(o) != CGAL::SMALLER;					\
+  }									\
+  bool operator<=(const This &o) const {				\
+    return compare(o) != CGAL::LARGER;					\
+  }
+
 #define CGAL_COMPARISONS1(field) bool operator==(const This &o) const { \
     return (field== o.field);						\
   }									\
   bool operator!=(const This &o) const {				\
     return (field!= o.field);						\
   }									\
-  bool operator<(const This &o) const {				\
+  bool operator<(const This &o) const {					\
     return (field< o.field);						\
   }									\
-  bool operator>(const This &o) const {				\
+  bool operator>(const This &o) const {					\
     return (field> o.field);						\
   }									\
   bool operator>=(const This &o) const {				\
@@ -111,18 +136,20 @@
     return (field<= o.field);						\
   }
 
+
+
 #define CGAL_COMPARISONS2(a, b) bool operator==(const This &o) const {	\
     return (a== o.a && b== o.b);					\
   }									\
   bool operator!=(const This &o) const {				\
     return (a!= o.a || b != o.b);					\
   }									\
-  bool operator<(const This &o) const {				\
+  bool operator<(const This &o) const {					\
     if (a< o.a ) return true;						\
     else if (a > o.a) return false;					\
     else return b < o.b;						\
   }									\
-  bool operator>(const This &o) const {				\
+  bool operator>(const This &o) const {					\
     if (a> o.a ) return true;						\
     else if (a < o.a) return false;					\
     else return b > o.b;						\
@@ -134,7 +161,8 @@
     return !operator>(o);						\
   }
 
-#define CGAL_COMPARISONS3(a, b, c) bool operator==(const This &o) const { \
+#define CGAL_COMPARISONS3(a, b, c)					\
+  bool operator==(const This &o) const {				\
     return (a== o.a && b== o.b && c == o.c);				\
   }									\
   bool operator!=(const This &o) const {				\
@@ -160,6 +188,137 @@
   bool operator<=(const This &o) const {				\
     return !operator>(o);						\
   }
+
+#define CGAL_REAL_EMBEDDABLE_BODY					\
+  class Abs								\
+    : public Unary_function< Type, Type > {				\
+  public:								\
+    Type operator()( const Type& x ) const {				\
+      if (x < Type(0)) return -x;					\
+      else return x;							\
+    }									\
+  };									\
+  									\
+  class Sign								\
+    : public Unary_function< Type, ::CGAL::Sign > {			\
+  public:								\
+    ::CGAL::Sign operator()( const Type& x ) const {			\
+      return static_cast<CGAL::Sign>(x.compare(0));			\
+    }									\
+  };									\
+  									\
+  class Compare								\
+    : public Binary_function< Type, Type,				\
+			      Comparison_result > {			\
+  public:								\
+      Comparison_result operator()( const Type& x,			\
+				    const Type& y ) const {		\
+	return x.compare(y);						\
+      }									\
+    									\
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,		\
+							 Comparison_result ); \
+									\
+  };									\
+									\
+  class To_double							\
+    : public Unary_function< Type, double > {				\
+  public:								\
+    double operator()( const Type& x ) const {				\
+      return x.approximation(.00000001);				\
+    }									\
+  };									\
+									\
+  class To_interval							\
+    : public Unary_function< Type, std::pair< double, double > > {	\
+  public:								\
+    std::pair<double, double> operator()( const Type& x ) const {	\
+									\
+      return x.approximating_interval(.00001);				\
+    }									\
+  }			
+
+#define CGAL_HAS_INFINITY_BODY						\
+  static const bool is_specialized = true;				\
+  static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return -T::infinity();} \
+  static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return T::infinity();} \
+  static const int digits =0;						\
+  static const int digits10 =0;						\
+  static const bool is_signed = true;					\
+  static const bool is_integer = false;					\
+  static const bool is_exact = true;					\
+  static const int radix =0;						\
+  static T epsilon() throw(){return T(0);}				\
+  static T round_error() throw(){return T(0);}				\
+  static const int min_exponent=0;					\
+  static const int min_exponent10=0;					\
+  static const int max_exponent=0;					\
+  static const int max_exponent10=0;					\
+  static const bool has_infinity=true;					\
+  static const bool has_quiet_NaN = true;				\
+  static const bool has_signaling_NaN= false;				\
+  static const float_denorm_style has_denorm= denorm_absent;		\
+  static const bool has_denorm_loss = false;				\
+  static T infinity() throw() {return T::infinity();}			\
+  static T quiet_NaN() throw(){return T();}				\
+  static T denorm_min() throw() {return T(0);}				\
+  static const bool is_iec559=false;					\
+  static const bool is_bounded =false;					\
+  static const bool is_modulo= false;					\
+  static const bool traps = false;					\
+  static const bool tinyness_before =false;				\
+  static const float_round_style round_stype = round_toward_zero	\
+    
+
+#define CGAL_REAL_EMBEDDABLE1(name)					\
+  CGAL_BEGIN_NAMESPACE							\
+  template <class T>							\
+  class Real_embeddable_traits< name<T> >				\
+    : public Real_embeddable_traits_base< name<T> > {			\
+  public:								\
+    typedef name<T>  Type;						\
+    CGAL_REAL_EMBEDDABLE_BODY;						\
+  };									\
+  CGAL_END_NAMESPACE							
+
+#define CGAL_HAS_INFINITY1(name)					\
+  namespace std								\
+  {									\
+    template <class Tr>							\
+      class numeric_limits<name<Tr> >					\
+    {									\
+    public:								\
+      typedef name<Tr> T;						\
+      CGAL_HAS_INFINITY_BODY;						\
+    };									\
+  };
+
+
+
+
+#define CGAL_REAL_EMBEDABLE2(name)					\
+  CGAL_BEGIN_NAMESPACE							\
+  template <class T,class U>						\
+  class Real_embeddable_traits< name<T, U> >				\
+    : public Real_embeddable_traits_base< name<T, U> > {		\
+  public:								\
+    typedef name<T, U>  Type;						\
+    CGAL_REAL_EMBEDDABLE_BODY						\
+  };									\
+  CGAL_END_NAMESPACE							
+
+#define CGAL_HAS_INFINITY2(name)					\
+  namespace std								\
+  {									\
+    template <class Tr, Ur>						\
+      class numeric_limits<name<Tr, Ur> >				\
+    {									\
+    public:								\
+      typedef name<Tr, Ur> T;						\
+      CGAL_HAS_INFINITY_BODY;						\
+    };									\
+  };
+
 
 
 #endif

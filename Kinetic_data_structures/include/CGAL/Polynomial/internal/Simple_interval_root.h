@@ -169,7 +169,7 @@ public:
   }
 
   //! Write lots of info about the interval
-  void write(std::ostream &o) const
+  std::ostream& write(std::ostream &o) const
   {
 #ifndef NDEBUG
     This t=*this;
@@ -177,6 +177,7 @@ public:
 #else
     write_internal(o);
 #endif
+    return o;
   }
 
   void print() const
@@ -233,7 +234,7 @@ public:
       else return compare_finite(o);
     }
   }
- std::pair<double, double> compute_interval(double accuracy=.0001) const
+ std::pair<double, double> approximating_interval(double accuracy=.0001) const
   {
     if (interval_.first > interval_.second) {
       //std::cout << "Computing interval for ";
@@ -246,7 +247,7 @@ public:
     return interval_;
   }
 
-  double compute_double(double accuracy) const
+  double approximation(double accuracy) const
   {
     if (is_infinite()) {
       if (is_up()) {
@@ -257,7 +258,7 @@ public:
       }
     }
     //This t= *this;
-    std::pair<double, double> i= compute_interval(accuracy);
+    std::pair<double, double> i= approximating_interval(accuracy);
     return (i.first+i.second)/2.0;
   }
 
@@ -606,12 +607,9 @@ protected:
   return f.to_ii_;
   }*/
 
-template <class F>
-std::ostream &operator<<(std::ostream &out, const Simple_interval_root<F> &f)
-{
-  f.write(out);
-  return out;
-}
+
+
+CGAL_OUTPUT1(Simple_interval_root);
 
 /*
 template <class F>
@@ -637,105 +635,8 @@ bool is_rational(const Simple_interval_root<F> &f)
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE
+CGAL_REAL_EMBEDDABLE1(CGAL::POLYNOMIAL::internal::Simple_interval_root);
+CGAL_HAS_INFINITY1(CGAL::POLYNOMIAL::internal::Simple_interval_root);
 
 
-template <class T>
-class Real_embeddable_traits< CGAL::POLYNOMIAL::internal::Simple_interval_root<T> > 
-  : public Real_embeddable_traits_base< CGAL::POLYNOMIAL::internal::Simple_interval_root<T> > {
-public:
-  typedef CGAL::POLYNOMIAL::internal::Simple_interval_root<T>  Type;
-  class Abs 
-    : public Unary_function< Type, Type > {
-  public:
-    Type operator()( const Type& x ) const {
-      if (x < Type(0)) return -x;
-      else return x;
-    }
-  };
-    
-  class Sign 
-    : public Unary_function< Type, ::CGAL::Sign > {
-  public:
-    ::CGAL::Sign operator()( const Type& x ) const {
-      return static_cast<CGAL::Sign>(x.compare(0));
-    }        
-  };
-    
-  class Compare 
-    : public Binary_function< Type, Type,
-			      Comparison_result > {
-  public:
-    Comparison_result operator()( const Type& x, 
-				  const Type& y ) const {
-      return x.compare(y);
-    }
-        
-    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-							 Comparison_result )
-        
-      };
-    
-  class To_double 
-    : public Unary_function< Type, double > {
-  public:
-    double operator()( const Type& x ) const {
-      // this call is required to get reasonable values for the double
-      // approximation
-      return x.compute_double(.00000001);
-    }
-  };
-    
-  class To_interval 
-    : public Unary_function< Type, std::pair< double, double > > {
-  public:
-    std::pair<double, double> operator()( const Type& x ) const {
-
-      return x.compute_interval(.00001);
-    }          
-  };
-};
-
-
-
-CGAL_END_NAMESPACE
-
-namespace std
-{
-  template <class Tr>
-  class numeric_limits<CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> >
-  {
-  public:
-    typedef CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> T;
-    static const bool is_specialized = true;
-    static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return -T::infinity();}
-    static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return T::infinity();}
-    static const int digits =0;
-    static const int digits10 =0;
-    static const bool is_signed = true;
-    static const bool is_integer = false;
-    static const bool is_exact = true;
-    static const int radix =0;
-    static T epsilon() throw(){return T(0);}
-    static T round_error() throw(){return T(0);}
-    static const int min_exponent=0;
-    static const int min_exponent10=0;
-    static const int max_exponent=0;
-    static const int max_exponent10=0;
-    static const bool has_infinity=true;
-    static const bool has_quiet_NaN = true;
-    static const bool has_signaling_NaN= false;
-    static const float_denorm_style has_denorm= denorm_absent;
-    static const bool has_denorm_loss = false;
-    static T infinity() throw() {return T::infinity();}
-    static T quiet_NaN() throw(){return T();}
-    static T denorm_min() throw() {return T(0);}
-    static const bool is_iec559=false;
-    static const bool is_bounded =false;
-    static const bool is_modulo= false;
-    static const bool traps = false;
-    static const bool tinyness_before =false;
-    static const float_round_style round_stype = round_toward_zero;
-  };
-};
 #endif
