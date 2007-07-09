@@ -24,7 +24,6 @@ intersect 1 2 1 0 2 1
 intersect 2 1 1 0 2 1
 intersect 0 2 1 0 0 1
 intersect 2 0 1 0 0 1
-# this is not working
 intersect 0 1 1 0 1 1
 intersect 1 0 1 0 1 1
 intersect 3 4 2 0 0 1 0 1 1
