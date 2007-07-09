@@ -2988,54 +2988,28 @@ OutputIterator zone (Arrangement_2<Traits,Dcel>& arr,
                      OutputIterator oi);
 
 /*!
- * Checks if the given x-monotone curve intersects the existing arrangement.
+ * Checks if the given curve/x-monotone curve intersects the existing arrangement.
  * \param arr The arrangement.
- * \param c The x-monotone curve.
+ * \param c The curve/x-monotone curve.
  * \param pi The point location strategy that is used to locate the starting
  * point.
  * \return True if the curve intersect the arrangement, false otherwise.
  */
-template <class Traits, class Dcel, class PointLocation>
-bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr, 
-                                    const typename Traits::X_monotone_curve_2& c,
-                                    const PointLocation& pl);
+template <class Traits, class Dcel, class Curve, class PointLocation>
+bool do_intersect (Arrangement_2<Traits,Dcel>& arr, const Curve& c, 
+                   const PointLocation& pl);
 
 /*!
- * Checks if the given x-monotone curve intersects the existing arrangement.
+ * Checks if the given curve/x-monotone curve intersects the existing arrangement.
  * Overloaded version with no point location object - the walk point-location
  * strategy is used as default.
  * \param arr The arrangement.
- * \param c The x-monotone curve.
+ * \param c The x-monotone curve/curve.
  * \return True if the curve intersect the arrangement, false otherwise.
  */
-template <class Traits, class Dcel>
-bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr, 
-                                    const typename Traits::X_monotone_curve_2& c);
-
-/*!
- * Checks if the given curve intersects the existing arrangement.
- * \param arr The arrangement.
- * \param c The x-monotone curve.
- * \param pi The point location strategy that is used to locate the starting
- * point.
- * \return True if the curve intersect the arrangement, false otherwise.
- */
-template <class Traits, class Dcel, class PointLocation>
-bool do_intersect_curve (Arrangement_2<Traits,Dcel>& arr, 
-                         const typename Traits::Curve_2& c,
-                         const PointLocation& pl);
-
-/*!
- * Checks if the given curve intersects the existing arrangement.
- * Overloaded version with no point location object - the walk point-location
- * strategy is used as default.
- * \param arr The arrangement.
- * \param c The x-monotone curve.
- * \return True if the curve intersect the arrangement, false otherwise.
- */
-template <class Traits, class Dcel>
-bool do_intersect_curve (Arrangement_2<Traits, Dcel>& arr, 
-                         const typename Traits::Curve_2& c);
+template <class Traits, class Dcel, class Curve>
+bool do_intersect (Arrangement_2<Traits, Dcel>& arr, 
+                   const Curve& c);
 
 
 CGAL_END_NAMESPACE

@@ -1,4 +1,4 @@
-// Testing the do_intersect_curve function
+// Testing the do_intersect function
 
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
@@ -40,7 +40,7 @@ int main ()
 
   for (k = 0; k < N_SEGMENTS; k++)
   {
-    bool do_inter = do_intersect_curve(arr, segs[k]);
+    bool do_inter = do_intersect(arr, segs[k]);
     
     std::cout << "Segment: " << segs[k];
     std::cout << "        Expected: " << expected_intersect[k];

@@ -42,6 +42,9 @@
 #include <CGAL/Sweep_line_2/Sweep_line_2_visitors.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Arr_naive_point_location.h>
+
+#include <boost/type_traits.hpp>
+
 #include <set>
 #include <list>
 #include <map>
@@ -1108,9 +1111,9 @@ OutputIterator zone (Arrangement_2<Traits,Dcel>& arr,
 // Checks if the given x-monotone curve intersects the existing arrangement.
 //
 template <class Traits, class Dcel, class PointLocation>
-bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr, 
-                                    const typename Traits::X_monotone_curve_2& c,
-                                    const PointLocation& pl)
+bool do_intersect (Arrangement_2<Traits,Dcel>& arr, 
+                   const typename Traits::X_monotone_curve_2& c,
+                   const PointLocation& pl, boost::true_type t)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -1129,32 +1132,12 @@ bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
 }
 
 //-----------------------------------------------------------------------------
-// Checks if the given x-monotone curve intersects the existing arrangement.
-// Overloaded version with no point location object - the walk point-location
-// strategy is used as default.
-//
-template <class Traits, class Dcel>
-bool do_intersect_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr, 
-                                    const typename Traits::X_monotone_curve_2& c)
-{
-  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
-  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
-  
-  // create walk point location object
-  Walk_pl    walk_pl(arr);
-
-  //insert the curve using the walk point location
-  do_intersect_x_monotone_curve (arr, c, walk_pl);
-  return;
-}
-
-//-----------------------------------------------------------------------------
 // Checks if the given curve intersects the existing arrangement.
 //
 template <class Traits, class Dcel, class PointLocation>
-bool do_intersect_curve (Arrangement_2<Traits,Dcel>& arr, 
-                         const typename Traits::Curve_2& c,
-                         const PointLocation& pl)
+bool do_intersect (Arrangement_2<Traits,Dcel>& arr, 
+                   const typename Traits::Curve_2& c,
+                   const PointLocation& pl, boost::false_type t)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -1181,7 +1164,7 @@ bool do_intersect_curve (Arrangement_2<Traits,Dcel>& arr,
     if (x_curve != NULL)
     {
       // Check if the x-monotone subcurve intersects the arrangement.
-      if (do_intersect_x_monotone_curve(arr, *x_curve, pl) == true)
+      if (do_intersect(arr, *x_curve, pl) == true)
         return true;
     }
     else
@@ -1203,23 +1186,36 @@ bool do_intersect_curve (Arrangement_2<Traits,Dcel>& arr,
 }
 
 //-----------------------------------------------------------------------------
+// Common interface for the do_intersect of the Curve_2 and X_monotone_curve_2
+template <class Traits, class Dcel, class Curve, class PointLocation>
+bool do_intersect (Arrangement_2<Traits,Dcel>& arr, const Curve& c, 
+                   const PointLocation& pl)
+{
+  typedef typename Traits::X_monotone_curve_2       X_monotone_curve_2;
+  
+  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+    Is_x_monotone;
+  
+  return do_intersect(arr, c, pl, Is_x_monotone());
+}
+
+//-----------------------------------------------------------------------------
 // Checks if the given curve intersects the existing arrangement.
 // Overloaded version with no point location object - the walk point-location
 // strategy is used as default.
-//
-template <class Traits, class Dcel>
-bool do_intersect_curve (Arrangement_2<Traits, Dcel>& arr, 
-                         const typename Traits::Curve_2& c)
+template <class Traits, class Dcel, class Curve>
+bool do_intersect (Arrangement_2<Traits, Dcel>& arr, 
+                   const Curve& c)
 {
   typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
   typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
   
   // create walk point location object
   Walk_pl    walk_pl(arr);
-
+  
   // check if the curve intersects the arrangement using the walk point 
   // location.
-  return do_intersect_curve (arr, c, walk_pl);
+  return do_intersect (arr, c, walk_pl);
 }
 
 
