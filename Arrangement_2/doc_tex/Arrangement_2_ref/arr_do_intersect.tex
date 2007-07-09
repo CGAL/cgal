@@ -1,13 +1,14 @@
 \ccRefPageBegin
 
-\begin{ccRefFunction}{do_intersect_curve}
+\begin{ccRefFunction}{do_intersect}
 
 \ccDefinition
 
 The function \ccRefName{} checks if a given curve or $x$-monotone
 curve intersects an existing arrangement's edges or vertices. 
 
-It subdivides the given curve into $x$-monotone subcurves and isolated
+If the give curve is not an $x$-monotone curve then the function
+subdivides the given curve into $x$-monotone subcurves and isolated
 vertices . Each subcurve is in turn checked for intersection.
 The function uses the zone algorithm to check if the curve intersects
 the arrangement. First, the curve's left endpoint is located. Then, 
@@ -26,7 +27,7 @@ instance of the class
 \ccInclude{CGAL/Arrangement_2.h}
 
 \ccGlobalFunction{template <class Traits, class Dcel, class PointLocation>
-  bool do_intersect_curve (Arrangement_2<Traits,Dcel>& arr, 
+  bool do_intersect (Arrangement_2<Traits,Dcel>& arr, 
   const typename Traits::Curve_2& c, const PointLocation& pl);}
 Checks if the given curve or $x$-monotone curve \ccc{c} intersects
   edges or vertices of the existing arrangement \ccc{arr}.
