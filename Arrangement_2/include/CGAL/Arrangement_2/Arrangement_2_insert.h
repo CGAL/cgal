@@ -1109,11 +1109,18 @@ OutputIterator zone (Arrangement_2<Traits,Dcel>& arr,
 
 //-----------------------------------------------------------------------------
 // Checks if the given x-monotone curve intersects the existing arrangement.
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the 
+// same class. The last parameter should be boost::true_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
 //
 template <class Traits, class Dcel, class PointLocation>
 bool do_intersect (Arrangement_2<Traits,Dcel>& arr, 
                    const typename Traits::X_monotone_curve_2& c,
-                   const PointLocation& pl, boost::true_type t)
+                   const PointLocation& pl, boost::is_same<int, int>::type)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -1133,11 +1140,19 @@ bool do_intersect (Arrangement_2<Traits,Dcel>& arr,
 
 //-----------------------------------------------------------------------------
 // Checks if the given curve intersects the existing arrangement.
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and 
+// Curve_2 are the same class. 
+// The last parameter should be boost::false_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
 //
 template <class Traits, class Dcel, class PointLocation>
 bool do_intersect (Arrangement_2<Traits,Dcel>& arr, 
                    const typename Traits::Curve_2& c,
-                   const PointLocation& pl, boost::false_type t)
+                   const PointLocation& pl, boost::is_same<int, double>::type)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
