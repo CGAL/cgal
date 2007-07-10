@@ -80,33 +80,57 @@ protected:
 };
 
 
-#define CGAL_KINETIC_MULTILISTENER(...) private:	\
-  struct Listener_core{ \
-      typedef typename This::Handle Notifier_handle;	\
-      typedef enum {__VA_ARGS__} Notification_type;	\
-  };							\
-public:							\
-  typedef Multi_listener_base<Listener_core> Listener;       \
-  friend class Multi_listener_base<Listener_core>;		\
-private:						\
-  void new_listener(Listener *sk) {			\
-    listeners_.push_back(sk);				\
-  }							\
-  void delete_listener(Listener *kds) {			\
-    for (unsigned int i=0; i< listeners_.size(); ++i){	\
-      if (listeners_[i] == kds) {			\
-	std::swap(listeners_[i], listeners_.back());	\
-	listeners_.pop_back();				\
-	return;						\
-      }							\
-    }							\
-  }							\
-  std::vector<Listener*> listeners_
+#define CGAL_KINETIC_MULTILISTENER(...) private:		\
+  struct Listener_core{						\
+    typedef typename This::Handle Notifier_handle;		\
+      typedef enum {__VA_ARGS__} Notification_type;		\
+  };								\
+public:								\
+ typedef Multi_listener_base<Listener_core> Listener;		\
+ friend class Multi_listener_base<Listener_core>;		\
+private:							\
+ void new_listener(Listener *sk) {				\
+   listeners_.push_back(sk);					\
+ }								\
+ void delete_listener(Listener *kds) {				\
+   for (unsigned int i=0; i< listeners_.size(); ++i){		\
+     if (listeners_[i] == kds) {				\
+       std::swap(listeners_[i], listeners_.back());		\
+       listeners_.pop_back();					\
+       return;							\
+     }								\
+   }								\
+ }								\
+ std::vector<Listener*> listeners_;
+
+
+#define CGAL_KINETIC_MULTILISTENERNT(...) private:		\
+  struct Listener_core{						\
+    typedef This::Handle Notifier_handle;			\
+    typedef enum {__VA_ARGS__} Notification_type;		\
+  };								\
+public:								\
+ typedef Multi_listener_base<Listener_core> Listener;		\
+ friend class Multi_listener_base<Listener_core>;		\
+private:							\
+ void new_listener(Listener *sk) {				\
+   listeners_.push_back(sk);					\
+ }								\
+ void delete_listener(Listener *kds) {				\
+   for (unsigned int i=0; i< listeners_.size(); ++i){		\
+     if (listeners_[i] == kds) {				\
+       std::swap(listeners_[i], listeners_.back());		\
+       listeners_.pop_back();					\
+       return;							\
+     }								\
+   }								\
+ }								\
+ std::vector<Listener*> listeners_;
 
 #define CGAL_KINETIC_MULTINOTIFY(field) for(typename std::vector<Listener*>::iterator it= listeners_.begin(); it != listeners_.end(); ++it){ \
     (*it)->new_notification(Listener::field);				\
   }
 
-#define CGAL_KINETIC_MULTILISTENER_DESTRUCTOR CGAL_assertion(listeners_.empty())
+#define CGAL_KINETIC_MULTILISTENER_DESTRUCTOR CGAL_assertion(listeners_.empty());
 CGAL_KINETIC_END_NAMESPACE
 #endif

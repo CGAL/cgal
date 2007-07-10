@@ -22,6 +22,9 @@
 #define CGAL_KINETIC_IO_INTERNAL_QT_SIMULATOR_CORE_H
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/IO/internal/GUI_base.h>
+#include <CGAL/Kinetic/Multi_listener.h>
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <vector>
 #include <qobject.h>
 
 namespace CGAL
@@ -30,33 +33,37 @@ namespace CGAL
   {
     namespace internal
     {
-      class Qt_core: public QObject
+      class Qt_core: public QObject, public Non_ref_counted<Qt_core>
       {
+	typedef Qt_core This;
 	Q_OBJECT
-      public:
+	public:
 	//typedef int Timer_id;
 
 	Qt_core();
 
-	class Listener
-	{
-	public:
+	CGAL_KINETIC_LISTENERNT(LAST_BUTTON_PRESSED);
+      public:
+      
+	/*class Listener
+	  {
+	  public:
 	  typedef Qt_core* Notifier_handle;
 	  Listener(Qt_core *c): h_(c) {
-	    c->set_listener(this);
+	  c->set_listener(this);
 	  }
 	  virtual ~Listener() {
-	    h_->set_listener(NULL);
+	  h_->set_listener(NULL);
 	  }
 	  typedef enum {LAST_BUTTON_PRESSED}
-	    Notification_type;
+	  Notification_type;
 	  virtual void new_notification(Notification_type tp)=0;
 	  Qt_core *notifier() {
-	    return h_;
+	  return h_;
 	  }
-	protected:
+	  protected:
 	  Qt_core *h_;
-	};
+	  };*/
 
 	enum Button {RUN, STOP, RUN_TO, RUN_THROUGH, REVERSE, PAUSE, FASTER, SLOWER};
 	typedef enum Button Button;
@@ -66,20 +73,20 @@ namespace CGAL
 	  return mode_;
 	}
       protected:
-	Listener *playable_;
+	//Listener *playable_;
 	Button mode_;
       private:
-	friend class Listener;
-	void set_listener(Listener *p) {
+	//friend class Listener;
+	/*void set_listener(Listener *p) {
 	  playable_= p;
-	}
-	const Listener *listener() const
-	{
+	  }
+	  const Listener *listener() const
+	  {
 	  return playable_;
-	}
-					public slots:                     //functions
-
-					void play_button();
+	  }*/
+      public slots:                     //functions
+	
+	void play_button();
 	void pause_button();
 	void stop_button();
 	void play_to_button();
@@ -95,7 +102,7 @@ namespace CGAL
 	typedef typename Qt_core::Listener IF;
 	typedef Qt_core BH;
       public:
-	Qt_core_listener(typename IF::Notifier_handle w, typename Base::Handle &t): IF(w),  t_(t) {
+	Qt_core_listener(typename Base::Handle &t): t_(t) {
 	}
 	virtual void new_notification(typename IF::Notification_type nt) {
 	  if (nt == IF::LAST_BUTTON_PRESSED) {

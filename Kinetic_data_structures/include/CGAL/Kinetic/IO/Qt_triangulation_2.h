@@ -108,7 +108,7 @@ protected:
     w << CGAL::LineWidth(1);
     // << CGAL::FillColor(CGAL::Color(0,0,0));
     if (tri.dimension() != 2) return;
-
+    ik_.set_time(typename IK::NT(t));
     typename IK::Current_coordinates cc= ik_.current_coordinates_object();
     for (typename Triangulation::Finite_edges_iterator fit = tri.finite_edges_begin();
 	 fit != tri.finite_edges_end(); ++fit) {

@@ -72,8 +72,10 @@ public:
   Listener_base(){}
 
   virtual ~Listener_base() {
-    CGAL_precondition(h_->listener()==this);
-    h_->set_listener(NULL);
+    if (h_ != NULL) {
+      CGAL_precondition(h_->listener()==this);
+      h_->set_listener(NULL);
+    }
   }
   //! Access the object providing notifications.
   /*!  This pointer is not intended to be stored, so a bare pointer is
@@ -93,7 +95,7 @@ public:
   }
 
   template <class Ptr>
- void set_notifier(Ptr t) {
+  void set_notifier(Ptr t) {
     if (h_!= NULL) h_->set_listener(NULL);
     h_=t;
     CGAL_precondition(h_->listener() == NULL);
@@ -108,7 +110,7 @@ public:
   */
   virtual void new_notification(typename Interface::Notification_type nt)=0;
 
-  struct Handle:public boost::noncopyable {
+  struct Handle: public boost::noncopyable {
     Handle(): p_(NULL){}
     Handle(LB_this *p):p_(p){}
     LB_this &operator*(){return *p_;}
@@ -124,10 +126,6 @@ public:
     void operator=(LB_this *o) {
       p_=o;
     }
-    /*CGAL_COPY_CONSTRUCTOR(Handle);
-    void copy_from(const LB_this &o) {
-      
-    }*/
     LB_this* get() {return p_;}
   private:
     
@@ -152,7 +150,23 @@ private:							\
     listener_=sk;						\
   }								\
   Listener* listener() {return listener_.get();}		\
-  typename Listener::Handle listener_
+  typename Listener::Handle listener_;
+
+
+#define CGAL_KINETIC_LISTENERNT(...) private:			\
+  struct Listener_core{						\
+    typedef This Notifier;					\
+    typedef enum {__VA_ARGS__} Notification_type;		\
+  };								\
+public:								\
+ typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
+ friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
+private:							\
+ void set_listener(Listener *sk) {				\
+   listener_=sk;						\
+ }								\
+ Listener* listener() {return listener_.get();}			\
+ Listener::Handle listener_;
 
 
 
@@ -162,14 +176,14 @@ private:							\
 #define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL);
 
 
-#define CGAL_KINETIC_LISTENER_BASICS(Name, KDS)	\
-  public:					\
-  Name(): recipient_(NULL){}			\
+#define CGAL_KINETIC_LISTENER_BASICS(Name, KDS)		\
+  public:						\
+  Name(): recipient_(NULL){}				\
   typedef KDS Recipient;				\
-  Recipient* recipient() const {return recipient_;}\
+  Recipient* recipient() const {return recipient_;}	\
   void set_recipient(Recipient *r){recipient_=r;}	\
-  private:					\
-  Recipient* recipient_
+private:						\
+ Recipient* recipient_;
 
 
 
@@ -202,13 +216,13 @@ private:							\
     }									\
   };								\
   friend class Notifier##_listener;					\
-  Notifier##_listener listener_##Notifier##_
+  Notifier##_listener listener_##Notifier##_;
 
 #define CGAL_KINETIC_NOTIFIER(Notifier) listener_##Notifier##_.notifier()
 
 #define CGAL_KINETIC_INIT_LISTEN(Notifier, ptr)	\
   listener_##Notifier##_.set_recipient(this);	\
-  listener_##Notifier##_.set_notifier(ptr)
+  listener_##Notifier##_.set_notifier(ptr);
   
 
   

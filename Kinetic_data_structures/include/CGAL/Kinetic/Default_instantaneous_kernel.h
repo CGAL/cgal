@@ -83,20 +83,17 @@ public:
 
   void set_time(const NT &t, bool limit)
   {
-    if (!initialized_) {
-      time_is_nt_=true;
-      time_nt_=t;
-      time_= Time(t);
-    } else {
-      if ((time_is_nt_ && time_nt_ != t) || !time_is_nt_) {
-	time_is_nt_=true;
-	time_= Time(t);
-	time_nt_=t;
-	cache_1_.clear();
-	cache_2_.clear();
-	cache_3_.clear();
-      }
+ 
+    
+    if (initialized_ && ((time_is_nt_ && time_nt_ != t) || !time_is_nt_)) {
+      cache_1_.clear();
+      cache_2_.clear();
+      cache_3_.clear();
     }
+    time_is_nt_=true;
+    time_nt_=t;
+    time_= Time(t);
+
     initialized_=true;
     after_=limit;
   }

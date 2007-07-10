@@ -64,11 +64,11 @@ public:
 					   /*drawable_(NULL),*/ processing_(false) {
     sim_= sh;
     target_cur_time_= CGAL::to_interval(sim_->current_time()).first;
-    CGAL_KINETIC_INIT_LISTEN(Timer, timer_);
+    CGAL_KINETIC_INIT_LISTEN(Timer, timer_.get());
   }
 
   virtual ~Gui_base() {
-    delete timer_;
+   
   }
 
   //! Return the current mode.
@@ -323,7 +323,7 @@ protected:
   double target_cur_time_;
   int dir_of_time_;
   typename Simulator::Handle sim_;
-  Timer *timer_;
+  std::auto_ptr<Timer> timer_;
   //Timer_listener timer_callback_;
   //Listener *drawable_;
   bool processing_;

@@ -23,33 +23,18 @@
 #include <map>
 #include <qtimer.h>
 #include <CGAL/Kinetic/Listener.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 namespace CGAL
 {
   namespace Kinetic
   {
     namespace internal
     {
-      class Qt_timer: QObject
+      class Qt_timer: public QObject, public Non_ref_counted<Qt_timer>
       {
 	Q_OBJECT
-	typedef Qt_timer This;
-      public:
-	typedef Qt_timer* Handle;
-
-      private:			
-	struct Listener_core{						
-	  typedef  This Notifier;		
-	  typedef enum {TICKS} Notification_type;		
-	};								
-      public:							
-	typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	
-	friend class CGAL::Kinetic::Listener_base<Listener_core>;	
-      private:							
-	void set_listener(Listener *sk) {				
-	  listener_=sk;						
-	}								
-	Listener* listener() {return listener_.get();}		
-	Listener::Handle listener_;
+    	CGAL_KINETIC_LISTENERNT(TICKS);
+     
       public:
 	Qt_timer();
 	

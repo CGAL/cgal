@@ -90,7 +90,8 @@ public:
   Qt_widget_2(int argc, char *argv[],
 	      typename  Simulator::Handle sh,
 	      double xmin=-10,double xmax=10, double ymin=-10, double ymax=10): app_(new QApplication(argc, argv)),
-										base_(new Graphical_base(sh)){
+										base_(new Graphical_base(sh)),
+										window_l_(base_){
 
     app_->setMainWidget(new Qt_window(static_cast<int>(std::floor(xmin)),
 				      static_cast<int>(std::ceil(xmax)),
@@ -101,6 +102,7 @@ public:
     CGAL_KINETIC_INIT_LISTEN(Qt_widget, &widget());
     CGAL_KINETIC_INIT_LISTEN(Graphical_base, base_);
     //CGAL_KINETIC_INIT_LISTENER(Graphical_base, window()->button_handler()
+    window_l_.set_notifier(window()->button_handler());
     //window_l_ = std::auto_ptr<Window_listener>(new Window_listener(window()->button_handler(), base_));
     //widget_l_ = std::auto_ptr<Widget_listener>(new Widget_listener(widget(), this));
   }
@@ -193,11 +195,12 @@ public:
   void draw() {
     //std::cout << "GUI: Starting drawing.\n";
     //CGAL_LOG(Log::LOTS, "GUI: Drawing in gui.\n");
-    for (typename std::set<Listener*>::iterator dit= drawables_.begin();
+    CGAL_KINETIC_MULTINOTIFY(PICTURE_IS_VALID);
+    /*for (typename std::set<Listener*>::iterator dit= drawables_.begin();
 	 dit != drawables_.end(); ++dit) {
       //std::cout << "GUI: Drawing something " << *dit << ".\n";
       (*dit)->new_notification(Listener::PICTURE_IS_VALID);
-    }
+      }*/
   }
 
         
@@ -241,9 +244,9 @@ private:
 protected:
   std::auto_ptr<QApplication> app_;
   typename Graphical_base::Handle base_;
-  std::set<Listener*> drawables_;
+  //std::set<Listener*> drawables_;
   //Base_listener base_l_;
-  //std::auto_ptr<Window_listener> window_l_;
+  Window_listener window_l_;
   //std::auto_ptr<Widget_listener> widget_l_;
 };
 

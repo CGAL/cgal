@@ -32,13 +32,9 @@ namespace CGAL
   {
     namespace internal
     {
-      class Qt_widget_2_core: public ::CGAL::Qt_widget
+      class Qt_widget_2_core: public ::CGAL::Qt_widget, public Non_ref_counted<Qt_widget_2_core>
       {
 	Q_OBJECT
-      public:
-
-	typedef Qt_widget_2_core* Handle;
-	typedef Qt_widget_2_core This;
       private:			
 	struct Listener_core{						
 	  typedef  This Notifier;		
