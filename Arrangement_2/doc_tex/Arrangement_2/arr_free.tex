@@ -197,6 +197,46 @@ coordinates:
 
 \ccIncludeExampleCode{Arrangement_2/incremental_insertion.cpp}
 
+\subsubsection{Other Zone Related Functions\label{arr_sssec:zone}}
+%------------------------------------------
+
+In this section we have described so far free functions that
+insert curves and points to a given arrangement. Now we will describe
+functions that don't insert curves or points to an arrangement nor do
+they change the arrangement, but they are closely related to the
+incremental insertion functions as they also use the zone algorithm.
+
+The free function \ccc{do_intersect()} checks if a given curve or $x$-monotone
+curve intersects an existing arrangement's edges or vertices. 
+If the give curve is not an $x$-monotone curve then the function
+subdivides the given curve into $x$-monotone subcurves and isolated
+vertices . Each subcurve is in turn checked for intersection.
+The function uses the zone algorithm to check if the curve intersects
+the arrangement. First, the curve's left endpoint is located. Then, 
+its zone is computed starting from its left endpoint location. The
+zone computation terminates when an intersection with an arrangement's
+edge/vertex is found or when the right endpoint is reached. 
+A given point-location object is used for locating the left endpoint 
+of the given curve in the existing arrangement. By default, the function 
+uses the ``walk along line'' point-location strategy --- namely an 
+instance of the class 
+\ccc{Arr_walk_along_line_point_location}.
+If the given curve is $x$-monotone then the traits
+class must model the  \ccc{ArrangementXMonotoneTraits_2} concept. If
+the curve is not $x$-monotone curve then the traits class must
+model the \ccc{ArrangementTraits_2} concept. 
+
+The \ccc{zone()} function computes the zone of a given $x$-monotone
+curve in a given arrangement. Meaning, it outputs all the arrangement's
+elements (vertices, edges and faces) that the $x$-monotone curve 
+intersects in the order that they are
+discovered when traversing the $x$-monotone curve from left to right.
+The function uses a given point-location object to locate the left
+endpoint of the given $x$-monotone curve. By default, the function 
+uses the ``walk along line'' point-location strategy.
+The function requires that the traits class will model the
+\ccc{ArrangementXMonotoneTraits_2} concept. 
+
 \subsection{Aggregated Insertion Functions\label{arr_ssec:agg_insert}}
 %------------------------------------------
 
