@@ -2758,32 +2758,34 @@ private:
 //-----------------------------------------------------------------------------
 
 /*!
- * Insert a curve into the arrangement (incremental insertion).
- * The inserted curve may not necessarily be x-monotone and may intersect the
+ * Insert a curve or x-monotone curve into the arrangement (incremental 
+ * insertion).
+ * The inserted curve can be x-monotone (or not) and may intersect the
  * existing arrangement.
  * \param arr The arrangement.
  * \param cv The curve to be inserted.
  * \param pl A point-location object associated with the arrangement.
  */
-template <class Traits, class Dcel, class PointLocation>
+template <class Traits, class Dcel, class Curve, class PointLocation>
 void insert_curve (Arrangement_2<Traits,Dcel>& arr,
-                   const typename Traits::Curve_2& c,
-                   const PointLocation& pl);
+                   const Curve& c, const PointLocation& pl);
 
 /*!
- * Insert a curve into the arrangement (incremental insertion).
- * The inserted curve may not necessarily be x-monotone and may intersect the
+ * Insert a curve or x-monotone curve into the arrangement (incremental
+ * insertion).
+ * The inserted curve can be x-monotone (or not) and may intersect the
  * existing arrangement. The default "walk" point-location strategy is used
  * for the curve insertion.
  * \param arr The arrangement.
  * \param cv The curve to be inserted.
  */
-template <class Traits, class Dcel>
+template <class Traits, class Dcel, class Curve>
 void insert_curve (Arrangement_2<Traits,Dcel>& arr,
-                   const typename Traits::Curve_2& c);
+                   const Curve& c);
 
 /*!
- * Insert a range of curves into the arrangement (aggregated insertion). 
+ * Insert a range of curves or x-monotone curves into the arrangement 
+ * (aggregated insertion). 
  * The inserted curves may intersect one another and may also intersect the 
  * existing arrangement.
  * \param arr The arrangement.
@@ -2795,17 +2797,6 @@ template <class Traits, class Dcel, class InputIterator>
 void insert_curves (Arrangement_2<Traits,Dcel>& arr,
                     InputIterator begin, InputIterator end);
 
-/*!
- * Insert an x-monotone curve into the arrangement (incremental insertion).
- * The inserted x-monotone curve may intersect the existing arrangement.
- * \param arr The arrangement.
- * \param cv The x-monotone curve to be inserted.
- * \param pl A point-location object associated with the arrangement.
- */
-template <class Traits, class Dcel, class PointLocation>
-void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                              const typename Traits::X_monotone_curve_2& c,
-                              const PointLocation& pl);
 
 /*!
  * Insert an x-monotone curve into the arrangement (incremental insertion)
@@ -2819,33 +2810,9 @@ void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
  */
 
 template <class Traits, class Dcel>
-void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                              const typename Traits::X_monotone_curve_2& c,
-                              const Object& obj);
-
-/*!
- * Insert an x-monotone curve into the arrangement (incremental insertion).
- * The inserted x-monotone curve may intersect the existing arrangement.
- * The default "walk" point-location strategy is used for the curve insertion.
- * \param arr The arrangement.
- * \param cv The x-monotone curve to be inserted.
- */
-template <class Traits, class Dcel>
-void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                              const typename Traits::X_monotone_curve_2& c);
-
-/*!
- * Insert a range of x-monotone curves into the arrangement (aggregated
- * insertion). The inserted x-monotone curves may intersect one another and
- * may also intersect the existing arrangement.
- * \param arr The arrangement.
- * \param begin An iterator for the first curve in the range.
- * \param end A past-the-end iterator for the curve range.
- * \pre The value type of the iterators must be X_monotone_curve_2.
- */
-template <class Traits, class Dcel, class InputIterator>
-void insert_x_monotone_curves (Arrangement_2<Traits,Dcel>& arr,
-                               InputIterator begin, InputIterator end);
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const typename Traits::X_monotone_curve_2& c,
+                   const Object& obj);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve

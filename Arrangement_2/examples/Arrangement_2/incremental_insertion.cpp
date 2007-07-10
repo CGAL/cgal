@@ -31,8 +31,8 @@ int main ()
 
   insert_non_intersecting_curve (arr, s1, pl);
   insert_non_intersecting_curve (arr, s2, pl);
-  insert_x_monotone_curve (arr, s3, pl);
-  insert_x_monotone_curve (arr, s4, pl);
+  insert_curve (arr, s3, pl);
+  insert_curve (arr, s4, pl);
   insert_curve (arr, s5, pl);
 
   // Print the size of the arrangement.

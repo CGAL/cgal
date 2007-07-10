@@ -55,10 +55,20 @@ CGAL_BEGIN_NAMESPACE
 // Insert a curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and 
+// Curve_2 are the same class. 
+// The last parameter should be boost::false_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, 
+// mpl_::bool_< true>)'
+//
 template <class Traits, class Dcel, class PointLocation>
 void insert_curve (Arrangement_2<Traits,Dcel>& arr, 
                    const typename Traits::Curve_2& c,
-                   const PointLocation& pl)
+                   const PointLocation& pl, boost::is_same<int, double>::type)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -122,70 +132,23 @@ void insert_curve (Arrangement_2<Traits,Dcel>& arr,
 }
 
 //-----------------------------------------------------------------------------
-// Insert a curve into the arrangement (incremental insertion).
-// The inserted x-monotone curve may intersect the existing arrangement.
-// Overloaded version with no point location object - the walk point-location
-// strategy is used as default.
-//
-template <class Traits, class Dcel>
-void insert_curve (Arrangement_2<Traits,Dcel>& arr,
-                   const typename Traits::Curve_2& c)
-{
-  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
-  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
-  
-  // create walk point location object
-  Walk_pl    walk_pl(arr);
-
-  //insert the curve using the walk point location
-  insert_curve (arr, c, walk_pl);
-  return;
-}
-
-//-----------------------------------------------------------------------------
-// Insert a range of curves into the arrangement (aggregated insertion). 
-// The inserted curves may intersect one another and may also intersect the 
-// existing arrangement.
-//
-template <class Traits, class Dcel, class InputIterator>
-void insert_curves (Arrangement_2<Traits,Dcel>& arr,
-                    InputIterator begin, InputIterator end)
-{
-  // Notify the arrangement observers that a global operation is about to 
-  // take place.
-  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
-
-  Arr_accessor<Arrangement_2>                      arr_access (arr);
-
-  arr_access.notify_before_global_change();
-
-  if(arr.is_empty())
-  {
-    // Perform the aggregated insertion.
-    Arr_construction<Arrangement_2>              arr_construct (arr);
-    arr_construct.insert_curves (begin, end);
-  }
-  else
-  {
-    Arr_addition<Arrangement_2>                  arr_adder(arr);
-    arr_adder.insert_curves (begin, end);
-  }
-
-  // Notify the arrangement observers that the global operation has been
-  // completed.
-  arr_access.notify_after_global_change();
-
-  return;
-}
-
-//-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the 
+// same class. The last parameter should be boost::true_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, 
+// mpl_::bool_< true>)'
+//
 template <class Traits, class Dcel, class PointLocation>
-void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                              const typename Traits::X_monotone_curve_2& c,
-                              const PointLocation& pl)
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const typename Traits::X_monotone_curve_2& c,
+                   const PointLocation& pl, 
+                   boost::is_same<int, int>::type)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -216,15 +179,162 @@ void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
 }
 
 //-----------------------------------------------------------------------------
+// Common interface for the insert_curve of the Curve_2 and X_monotone_curve_2
+template <class Traits, class Dcel, class Curve, class PointLocation>
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const Curve& c, const PointLocation& pl)
+{
+  typedef typename Traits::X_monotone_curve_2       X_monotone_curve_2;
+  
+  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+    Is_x_monotone;
+  
+  return insert_curve(arr, c, pl, Is_x_monotone());
+}
+
+//-----------------------------------------------------------------------------
+// Insert a curve/x-monotone curve into the arrangement (incremental 
+// insertion).
+// The inserted x-monotone curve may intersect the existing arrangement.
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+//
+template <class Traits, class Dcel, class Curve>
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const Curve& c)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  //insert the curve using the walk point location
+  insert_curve (arr, c, walk_pl);
+  return;
+}
+
+
+//-----------------------------------------------------------------------------
+// Insert a range of curves into the arrangement (aggregated insertion). 
+// The inserted curves may intersect one another and may also intersect the 
+// existing arrangement.
+//
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and 
+// Curve_2 are the same class. 
+// The last parameter should be boost::false_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, 
+// mpl_::bool_< true>)'
+//
+template <class Traits, class Dcel, class InputIterator>
+void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                    InputIterator begin, InputIterator end,
+                    boost::is_same<int, double>::type)
+{
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
+
+  arr_access.notify_before_global_change();
+
+  if(arr.is_empty())
+  {
+    // Perform the aggregated insertion.
+    Arr_construction<Arrangement_2>              arr_construct (arr);
+    arr_construct.insert_curves (begin, end);
+  }
+  else
+  {
+    Arr_addition<Arrangement_2>                  arr_adder(arr);
+    arr_adder.insert_curves (begin, end);
+  }
+
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Insert a range of x-monotone curves into the arrangement (aggregated
+// insertion). The inserted x-monotone curves may intersect one another and
+// may also intersect the existing arrangement.
+//
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the 
+// same class. The last parameter should be boost::true_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, 
+// mpl_::bool_< true>)'
+//
+template <class Traits, class Dcel, class InputIterator>
+void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                    InputIterator begin, InputIterator end,
+                    boost::is_same<int, int>::type)
+{
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
+
+  arr_access.notify_before_global_change();
+
+  // Perform the aggregated insertion.
+  if(arr.is_empty())
+  {
+    // Perform the aggregated insertion.
+    Arr_construction<Arrangement_2>              arr_construct (arr);
+    arr_construct.insert_x_curves (begin, end);
+  }
+  else
+  {
+    Arr_addition<Arrangement_2>                  arr_adder(arr);
+    arr_adder.insert_x_curves (begin, end);
+  }
+ 
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Common interface for the insert_curves of the Curve_2 and X_monotone_curve_2
+template <class Traits, class Dcel, class InputIterator>
+void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                    InputIterator begin, InputIterator end)
+{
+  typedef typename Traits::X_monotone_curve_2       X_monotone_curve_2;
+  typedef typename std::iterator_traits<InputIterator>::value_type 
+    Iterator_value_type;
+
+  typedef typename boost::is_same<Iterator_value_type, 
+    X_monotone_curve_2>::type    Is_x_monotone;
+  
+  return insert_curves (arr, begin, end, Is_x_monotone());
+}
+
+//-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement (incremental insertion)
 // when the location of the left endpoint of the curve is known and is
 // given as an isertion hint.
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
 template <class Traits, class Dcel>
-void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
-                              const typename Traits::X_monotone_curve_2& c,
-                              const Object& obj)
+void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+                   const typename Traits::X_monotone_curve_2& c,
+                   const Object& obj)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -254,61 +364,33 @@ void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
   return;
 }
 
-//-----------------------------------------------------------------------------
-// Insert an x-monotone curve into the arrangement (incremental insertion).
-// The inserted x-monotone curve may intersect the existing arrangement.
-// Overloaded version with no point location object - the walk point-location
-// strategy is used as default.
-//
+// ----------------------------------------------------------------------------
+// backward compatibility functions.
+template <class Traits, class Dcel, class PointLocation>
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c,
+                              const PointLocation& pl)
+{
+  insert_curve(arr, c, pl);
+}
 template <class Traits, class Dcel>
 void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
                               const typename Traits::X_monotone_curve_2& c)
 {
-  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
-  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
-  
-  // create walk point location object
-  Walk_pl    walk_pl(arr);
-
-  insert_x_monotone_curve (arr, c, walk_pl);
-  return;
+  insert_curve(arr, c);
 }
-
-//-----------------------------------------------------------------------------
-// Insert a range of x-monotone curves into the arrangement (aggregated
-// insertion). The inserted x-monotone curves may intersect one another and
-// may also intersect the existing arrangement.
-//
 template <class Traits, class Dcel, class InputIterator>
 void insert_x_monotone_curves (Arrangement_2<Traits,Dcel>& arr,
                                InputIterator begin, InputIterator end)
 {
-  // Notify the arrangement observers that a global operation is about to 
-  // take place.
-  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
-
-  Arr_accessor<Arrangement_2>                      arr_access (arr);
-
-  arr_access.notify_before_global_change();
-
-  // Perform the aggregated insertion.
-  if(arr.is_empty())
-  {
-    // Perform the aggregated insertion.
-    Arr_construction<Arrangement_2>              arr_construct (arr);
-    arr_construct.insert_x_curves (begin, end);
-  }
-  else
-  {
-    Arr_addition<Arrangement_2>                  arr_adder(arr);
-    arr_adder.insert_x_curves (begin, end);
-  }
- 
-  // Notify the arrangement observers that the global operation has been
-  // completed.
-  arr_access.notify_after_global_change();
-
-  return;
+  insert_curves(arr, begin, end);
+}
+template <class Traits, class Dcel>
+void insert_x_monotone_curve (Arrangement_2<Traits,Dcel>& arr,
+                              const typename Traits::X_monotone_curve_2& c,
+                              const Object& obj)
+{
+  insert_curve(arr, c, obj);
 }
 
 //-----------------------------------------------------------------------------
