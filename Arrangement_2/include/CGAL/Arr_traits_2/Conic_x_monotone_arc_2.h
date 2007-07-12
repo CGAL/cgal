@@ -1302,15 +1302,20 @@ private:
         CGAL::sign (this->_s) != ZERO ||
         CGAL::sign (this->_t) != ZERO)
     {
-      if (this->_orient == COLLINEAR &&
-          ker.compare_x_2_object() (this->_source, this->_target) == EQUAL)
-      {
-        // The arc is a vertical segment:
-        this->_info = (this->_info | IS_VERTICAL_SEGMENT);
-	return;
-      }
-
       this->_info = (this->_info | DEGREE_2);
+      
+      if (this->_orient == COLLINEAR)
+      {
+        this->_info = (this->_info | IS_SPECIAL_SEGMENT);
+        
+        if (ker.compare_x_2_object() (this->_source, this->_target) == EQUAL)
+        {
+          // The arc is a vertical segment:
+          this->_info = (this->_info | IS_VERTICAL_SEGMENT);
+        }
+        
+        return;
+      }
     }
     else
     {
@@ -1940,7 +1945,7 @@ private:
         ip.set_generating_conic (arc._id);
 
         // In case the other curve is of degree 2, this is a tangency point.
-        mult = (deg1 == 1) ? 1 : 2;
+        mult = (deg1 == 1 || _is_special_segment()) ? 1 : 2;
         inter_list.push_back (Intersection_point_2 (ip, mult));
       }
       else if (n_xs == 1 && n_ys == 2)
