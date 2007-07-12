@@ -11,6 +11,7 @@ The following corrections have been made:
 - Fix bug in Regular_triangulation_2.
 - Fix bug walk along a line point location for unbounded curves.
 - Fix bug in Arrangment_2 class when inserting an unbounded curve from an existing vertex.
+- Fix bug when dealing with a degenerate conic arc in Arr_conic_traits_2 of the Arrangment package, meaning a line segments which is part of a degenerate parabola/hyperbola.
 - Fix bug in the Bezier traits-class:
     properly handle line segments.
     properly handle comprison near a vertical tangency.
