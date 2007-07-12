@@ -315,7 +315,7 @@ public:
   void _handle_right_curves()
   {
     CGAL_PRINT("Handling right curves (" ;);
-    CGAL_SL_DEBUG(PrintEvent(m_currentEvent););
+    CGAL_SL_DEBUG(PrintEvent(this->m_currentEvent););
     CGAL_PRINT(")\n";);
     
     if(! this->m_currentEvent->has_right_curves())
@@ -340,7 +340,7 @@ public:
                                         *currentOne);
     ((Subcurve*)(*currentOne))->set_hint(slIter);
   
-    CGAL_SL_DEBUG(PrintStatusLine(););
+    CGAL_SL_DEBUG(this->PrintStatusLine(););
     if ( slIter != this->m_statusLine.begin() )
     { 
       //  get the previous curve in the y-str
@@ -359,7 +359,7 @@ public:
         (this->m_status_line_insert_hint, *currentOne);
       ((Subcurve*)(*currentOne))->set_hint(slIter);
         
-      CGAL_SL_DEBUG(PrintStatusLine(););
+      CGAL_SL_DEBUG(this->PrintStatusLine(););
     
       //BZBZ
       // if the two curves were neighbours before, we dont need to intersect them again
@@ -370,7 +370,7 @@ public:
       ++currentOne;
     }        
       
-    CGAL_SL_DEBUG(PrintStatusLine(););
+    CGAL_SL_DEBUG(this->PrintStatusLine(););
 
     //the next Subcurve at the Y-str 
     ++slIter;
@@ -493,7 +493,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
                               
 {
   CGAL_PRINT("remove_curve_from_status_line\n";);
-  CGAL_SL_DEBUG(PrintStatusLine(););
+  CGAL_SL_DEBUG(this->PrintStatusLine(););
   CGAL_SL_DEBUG(leftCurve->Print(););
 
   StatusLineIter sliter = leftCurve->get_hint(); 

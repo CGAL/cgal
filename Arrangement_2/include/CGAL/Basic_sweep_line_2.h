@@ -47,7 +47,7 @@
 #define CGAL_PRINT_INSERT(a) { std::cout << "+++ inserting "; \
                           (a)->Print(); \
                           std::cout << "    currentPos = "; \
-                          PrintEvent(m_currentEvent); \
+                          PrintEvent(this->m_currentEvent); \
                           std::cout << "\n"; \
                           }
 #define CGAL_PRINT_ERASE(a)  { std::cout << "--- erasing " ; \
