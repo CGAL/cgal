@@ -25,6 +25,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <qmainwindow.h>
 #include <CGAL/Kinetic/Listener.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 
 namespace CGAL
 {
