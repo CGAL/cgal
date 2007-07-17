@@ -14,6 +14,13 @@ endif
 ifndef CXX
 	CXX = g++
 endif
+ifeq ($(DEB_BUILD_ARCH), arm)
+	LAPACK_OPTION=
+else ifeq ($(DEB_BUILD_ARCH), m68k)
+	LAPACK_OPTION=
+else
+	LAPACK_OPTION=--with-LAPACK
+endif
 
 build: build-stamp
 build-stamp: patch-stamp
@@ -24,10 +31,10 @@ build-stamp: patch-stamp
 	  --without-autofind --with-ZLIB --with-BOOST --with-BOOST_PROGRAM_OPTIONS \
 	  --with-GMP --with-GMPXX --with-MPFR \
 	  --with-X11 --with-OPENGL --with-QT3MT \
-	  --with-BLASGCCATLAS --with-LAPACK
+	  --with-BLASGCCATLAS $(LAPACK_OPTION)
 	$(MAKE) -C $(CURDIR)/debian/tests rounding_modes
 	-LD_LIBRARY_PATH=$(CURDIR)/debian/tmp/usr/lib $(CURDIR)/debian/tests/rounding_modes
-	-$(MAKE) -C $(CURDIR)/debian/tests clean
+	$(MAKE) -C $(CURDIR)/debian/tests clean
 	touch build-stamp
 
 clean: clean-patched unpatch
@@ -35,7 +42,7 @@ clean-patched: patch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-	-for DIR in src/*; do $(MAKE) -C $$DIR clean; done
+	for DIR in src/*; do $(MAKE) -C $$DIR clean; done
 	-rm -f compile.log install.log install.completed
 	-rm -f config/support/tmp_test*
 	-rm -f config/testfiles/a.out
