@@ -1,3 +1,7 @@
+18 July 2007:  Menelaos Karavelas
+- added files for alternate evalutation of the incircle, orientation and
+  finite edge conflict tests
+
 4 June 2007:  Menelaos Karavelas
 - minor modification to fix .NET warning
 
