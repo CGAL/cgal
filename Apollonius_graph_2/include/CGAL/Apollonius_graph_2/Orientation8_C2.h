@@ -128,8 +128,6 @@ public:
     Orientation o = predicate(s1, s2, s3, p1, p2);
     Orientation o_old = Base::operator()(s1, s2, s3, p1, p2);
 
-    std::cerr << "Orientation predicate called" << std::endl;
-
     CGAL_assertion( o == o_old );
     return o;
   }
