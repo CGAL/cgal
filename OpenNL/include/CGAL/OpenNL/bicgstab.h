@@ -112,7 +112,7 @@ public:
         BLAS<Vector>::copy(r,d);
         BLAS<Vector>::copy(d,h);
         BLAS<Vector>::copy(h,rT);
-        assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
+        //assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
         rTh=BLAS<Vector>::dot(rT,h);                            // rTh = (rT|h)
         rTr=BLAS<Vector>::dot(r,r);                             // Current error rTr = (r|r)
 
@@ -240,7 +240,7 @@ public:
         mult(C,r,d);
         BLAS<Vector>::copy(d,h);
         BLAS<Vector>::copy(h,rT);
-        assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
+        //assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
         rTh=BLAS<Vector>::dot(rT,h);                            // rTh = (rT|h)
         rTr=BLAS<Vector>::dot(r,r);                             // Current error rTr = (r|r)
 
