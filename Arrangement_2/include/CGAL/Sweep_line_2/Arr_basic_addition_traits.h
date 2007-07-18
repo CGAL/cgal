@@ -77,16 +77,22 @@ public:
     typedef  Base_x_monotone_curve_2 Base;
     typedef  Base_point_2            Point_2;
 
-    Ex_x_monotone_curve_2():m_base_cv(),
-                            m_he_handle(NULL)
+    Ex_x_monotone_curve_2() :
+      m_base_cv(),
+      m_he_handle(),
+      m_overlap(false)
     {}
 
-    Ex_x_monotone_curve_2(const Base& cv):m_base_cv(cv),
-                                          m_he_handle(NULL)
+    Ex_x_monotone_curve_2(const Base& cv) :
+      m_base_cv(cv),
+      m_he_handle(),
+      m_overlap(false)
     {}
 
-    Ex_x_monotone_curve_2(const Base& cv, Halfedge_handle he):m_base_cv(cv),
-                                                              m_he_handle(he)
+    Ex_x_monotone_curve_2(const Base& cv, Halfedge_handle he) :
+      m_base_cv(cv),
+      m_he_handle(he),
+      m_overlap(false)
     {}
 
     const Base& base() const
@@ -121,9 +127,20 @@ public:
       m_he_handle = he;
     }
 
+    bool is_overlapping () const
+    {
+      return m_overlap;
+    }
+
+    void set_overlapping ()
+    {
+      m_overlap = true;
+    }
+
   protected:
     Base                m_base_cv;
     Halfedge_handle     m_he_handle;
+    bool                m_overlap;
 
   };
 
@@ -267,28 +284,47 @@ public:
   {
   private:
     Base_Construct_min_vertex_2 m_base_min_v;
+    Base_Equal_2                m_base_equal;
 
   public:
 
-    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base):
-        m_base_min_v(base)
+    Construct_min_vertex_2 (const Base_Construct_min_vertex_2& base_min_v,
+                            const Base_Equal_2& base_equal):
+      m_base_min_v (base_min_v),
+      m_base_equal (base_equal)
     {}
 
     Point_2 operator() (const X_monotone_curve_2 & cv) 
     {
+      // If there is not halfedge associated with the curve, just return
+      // a point with invalid halfedge handle.
+      const Base_point_2&  base_p = m_base_min_v(cv.base());
 
-      if(cv.get_halfedge_handle() == Halfedge_handle())
-        return (Point_2(m_base_min_v(cv.base()), Vertex_handle()));
+      if (cv.get_halfedge_handle() == Halfedge_handle())
+        return (Point_2 (base_p, Vertex_handle()));
 
-      Vertex_handle vh = cv.get_halfedge_handle()->target();
-      return (Point_2(m_base_min_v(cv.base()), vh));
+      // We probably have to associate the point with the target vertex of
+      // the halfedge associated with the curve.
+      Vertex_handle        vh = cv.get_halfedge_handle()->target();
+
+      if (! cv.is_overlapping())
+        return (Point_2(base_p, vh));
+
+      // In case of an overlapping curve, make sure the curve endpoint equals
+      // the point associated with the vertex. If not, we attach an invalid
+      // vertex to the extended point.
+      if (m_base_equal (base_p, vh->point()))
+        return (Point_2(base_p, vh));
+      else
+        return (Point_2 (base_p, Vertex_handle()));
     }
   };
 
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
     return (Construct_min_vertex_2
-	    (m_base_traits->construct_min_vertex_2_object()));
+                (m_base_traits->construct_min_vertex_2_object(),
+                 m_base_traits->equal_2_object()));
   }
 
   /*! \class
@@ -298,27 +334,47 @@ public:
   {
   private:
     Base_Construct_max_vertex_2 m_base_max_v;
+    Base_Equal_2                m_base_equal;
 
   public:
 
-    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base):
-        m_base_max_v(base)
+    Construct_max_vertex_2 (const Base_Construct_max_vertex_2& base_max_v,
+                            const Base_Equal_2& base_equal):
+      m_base_max_v (base_max_v),
+      m_base_equal (base_equal)
     {}
 
     Point_2 operator() (const X_monotone_curve_2 & cv) 
     {
-      if(cv.get_halfedge_handle() == Halfedge_handle())
-        return (Point_2(m_base_max_v(cv.base()), Vertex_handle()));
+      // If there is not halfedge associated with the curve, just return
+      // a point with invalid halfedge handle.
+      const Base_point_2&  base_p = m_base_max_v(cv.base());
 
-      Vertex_handle vh = cv.get_halfedge_handle()->source();
-      return (Point_2(m_base_max_v(cv.base()), vh));
+      if (cv.get_halfedge_handle() == Halfedge_handle())
+        return (Point_2 (base_p, Vertex_handle()));
+
+      // We probably have to associate the point with the source vertex of
+      // the halfedge associated with the curve.
+      Vertex_handle        vh = cv.get_halfedge_handle()->source();
+
+      if (! cv.is_overlapping())
+        return (Point_2(base_p, vh));
+
+      // In case of an overlapping curve, make sure the curve endpoint equals
+      // the point associated with the vertex. If not, we attach an invalid
+      // vertex to the extended point.
+      if (m_base_equal (base_p, vh->point()))
+        return (Point_2(base_p, vh));
+      else
+        return (Point_2 (base_p, Vertex_handle()));
     }
   };
 
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
     return (Construct_max_vertex_2
-	    (m_base_traits->construct_max_vertex_2_object()));
+                (m_base_traits->construct_max_vertex_2_object(),
+                 m_base_traits->equal_2_object()));
   }
 
   /*! \class

@@ -80,15 +80,15 @@ public:
 
       OutputIterator           oi_end = m_base_intersect(cv1.base(),
                                                          cv2.base(), oi);
-      const Base_x_monotone_curve_2                *overlap_cv;
+      const Base_x_monotone_curve_2                *base_overlap_cv;
       const std::pair<Base_point_2, unsigned int>  *intersect_p;
 
       // convert objects that are associated with Base_x_monotone_curve_2 to
       // X_monotone_curve_2 
       for(; oi != oi_end; ++oi)
       {
-        overlap_cv = object_cast<Base_x_monotone_curve_2> (&(*oi));
-        if (overlap_cv != NULL)
+        base_overlap_cv = object_cast<Base_x_monotone_curve_2> (&(*oi));
+        if (base_overlap_cv != NULL)
         {
           // Add halfedge handles to the resulting curve.
           Halfedge_handle  he;
@@ -98,7 +98,9 @@ public:
           else if (cv2.get_halfedge_handle() != Halfedge_handle())
             he = cv2.get_halfedge_handle();
 
-          *oi = make_object (X_monotone_curve_2 (*overlap_cv, he));
+          X_monotone_curve_2    overlap_cv (*base_overlap_cv, he);
+          overlap_cv.set_overlapping();
+          *oi = make_object (overlap_cv);
         }
         else
         {
