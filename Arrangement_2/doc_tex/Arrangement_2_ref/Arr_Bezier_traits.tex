@@ -71,8 +71,10 @@ library, with its ability to exactly represent simple algebraic numbers.
 %========================================================================
 
 The \ccc{Curve_2} class nested within the B\'ezier traits class is used
-to represent a general B\'ezier curve, which is defined by a sequence
-of rational control points. In addition to the methods listed below, the
+to represent a B\'ezier curve of arbitrary degree, which is defined by a
+sequence of rational control points. The only resriction we have is that
+the curve does not contain any self-intersections. In addition to the
+methods listed below, the
 I/O operators \ccc{operator<<} and \ccc{operator>>} for standard output
 streams are also supported. The copy constructor and assigment operator
 are also supported.
@@ -88,9 +90,15 @@ are also supported.
   {default constructor.}
 
 \ccConstructor{template <class InputIterator>
-               Curve_2 (InputIterator pts_begin, InputIterator pts_end);}
-  {constructs a B\'ezier curve as defined by the given range of control
-   points. The value-type of \ccc{InputIterator} is \ccc{RatKernel::Point_2}.}
+               Curve_2 (InputIterator pts_begin, InputIterator pts_end);}{%
+  constructs a B\'ezier curve as defined by the given range of control
+  points. The value-type of \ccc{InputIterator} is \ccc{RatKernel::Point_2}.
+  \ccPrecond{The input range must contain at least two control points, and
+    the polyline defined by these points must not be self-intersecting. That
+    is, if we denote the control points by $p_0, \ldots, p_n$, then the $n$
+    segements defined by $p_{i-1}p_i$ (with $1 \leq i \leq n$) must be
+    pairwise disjoint in their interior.}
+}
 
 \ccAccessFunctions
 %-----------------

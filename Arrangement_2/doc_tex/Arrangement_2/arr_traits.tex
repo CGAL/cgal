@@ -771,7 +771,11 @@ fonts.
 Using the \ccc{Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>}
 class template it is possible to construct and maintain arrangements of
 B\'ezier curves that are given by rational control points (a sequence
-of objects of the \ccc{RatKernel::Point_2} type). The template parameters
+of objects of the \ccc{RatKernel::Point_2} type). We can handle curves
+of arbitrary degree (in general, a sequence of $n+1$ control points define a 
+B\'ezier curve of degree $n$) that do not contain any
+self-intersections.\footnote{B\'ezier curves that contain self-intersections
+will be supported in future releases.} The template parameters
 are the same ones used by the \ccc{Arr_conic_traits_2} class template, and
 here it is also recommended to use the \ccc{CORE_algebraic_number_traits}
 class, with Cartesian kernels instantiated
