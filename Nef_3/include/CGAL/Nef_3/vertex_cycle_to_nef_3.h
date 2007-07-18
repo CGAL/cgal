@@ -72,8 +72,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
 
    snc.clear();
 
-   // insert projected points into triangulation
-   for (nov=0, v_it=v_first; v_it!=v_last; v_it++)
+   for (nov=0, v_it=v_first; v_it!=v_last; ++v_it)
    {  if ( *v_it != (ctp.insert (*v_it))->point() )
       {  ostr << " -> Different vertices are projected to same location!";
 	 return false;
@@ -81,7 +80,6 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
       ++nov;
    }
 
-   // assertions
    if ( ctp.number_of_vertices() != nov )
    {  ostr << " -> Same vertex appears multiple in cycle.";
       return false;
@@ -128,6 +126,8 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
       // now: *t_vh lies ccw from the infinite vertex
 
       t_fc = t_fc_0 = ctp.incident_faces(t_vh, t_fh);
+      if(t_fc == CTP_face_circulator())
+	return false;
       do
       {  if ((cond=t_fc->is_constrained(ctp.cw(t_fc->index(t_vh))))) break;
       } while (--t_fc != t_fc_0)
