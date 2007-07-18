@@ -39,12 +39,10 @@ public:
   typedef K                                 Kernel;
   typedef MTag                              Method_tag;
   typedef typename K::Site_2                Site_2;
-  //  typedef typename K::FT                    FT;
-  //  typedef typename K::Sign                  Sign;
   typedef typename K::Orientation           Orientation;
-  //  typedef typename K::Comparison_result     Comparison_result;
 
   typedef Orientation8_C2<K,MTag>           Orientation_2;
+  typedef Constructive_orientation8_C2<K,MTag>   Constructive_orientation_2;
 
 public:
   bool
@@ -54,6 +52,31 @@ public:
 	     const Site_2& p4,
 	     const Site_2& q, bool b, const Method_tag& tag) const
   {
+#if 1
+#if 0
+    Constructive_orientation_2 orientation123_1(p1, p2, p3, p1);
+    Constructive_orientation_2 orientation142_1(p1, p4, p2, p1);
+
+    Orientation o123_s = orientation123_1(p2);
+    Orientation o142_s = orientation142_1(p2);
+
+    Orientation o123_1 = orientation123_1(q);
+    Orientation o142_1 = orientation142_1(q);
+    Orientation o123_2 = orientation123_1(p2, q);
+    Orientation o142_2 = orientation142_1(p2, q);
+#else
+    Constructive_orientation_2 orientation123(p1, p2, p3);
+    Constructive_orientation_2 orientation142(p1, p4, p2);
+
+    Orientation o123_s = orientation123(p1, p2);
+    Orientation o142_s = orientation142(p1, p2);
+
+    Orientation o123_1 = orientation123(p1, q);
+    Orientation o142_1 = orientation142(p1, q);
+    Orientation o123_2 = orientation123(p2, q);
+    Orientation o142_2 = orientation142(p2, q);
+#endif
+#else
     Orientation_2 orientation;
 
     Orientation o123_s = orientation(p1, p2, p3, p1, p2);
@@ -63,7 +86,7 @@ public:
     Orientation o142_1 = orientation(p1, p4, p2, p1, q);
     Orientation o123_2 = orientation(p1, p2, p3, p2, q);
     Orientation o142_2 = orientation(p1, p4, p2, p2, q);
-
+#endif
     // first we consider the case where both Voronoi circles are in
     // conflict; we want to determine if the entire edge is in
     // conflict
@@ -114,7 +137,7 @@ public:
 
 //--------------------------------------------------------------------
 
-template < class K >
+template < class K, class MTag >
 class Finite_edge_interior_conflict_degenerated8
 {
 public:
@@ -127,10 +150,12 @@ public:
   typedef typename K::FT                    FT;
   typedef typename K::Sign                  Sign;
   typedef typename K::Comparison_result     Comparison_result;
+  typedef typename K::Orientation           Orientation;
   typedef typename K::Bounded_side          Bounded_side;
 
   typedef Bounded_side_of_CCW_circle_2<K>   Bounded_side_of_CCW_circle;
   typedef Order_on_finite_bisector_2<K>     Order_on_finite_bisector;
+  typedef Orientation8_C2<K,MTag>           Orientation_2;
 
   typedef Sign_of_distance_from_bitangent_line_2<K>
                                      Sign_of_distance_from_bitangent_line;
@@ -213,6 +238,54 @@ public:
     return ( r != SMALLER );
   }
 
+  inline
+  Sign sqrt_ext_sign(const FT& A1, const FT& Dr, const FT& B,
+		     const FT& Dx1, const FT& Dy1, 
+		     const FT& Dx2, const FT& Dy2, 
+		     const Field_with_sqrt_tag&) const
+  {
+    FT D = CGAL::square(Dx1) + CGAL::square(Dy1) - CGAL::square(Dr);
+    return CGAL::sign(A1 * Dr + B * CGAL::sqrt(D));
+  }
+
+  inline
+  Sign sqrt_ext_sign(const FT& A1, const FT& Dr, const FT& B,
+		     const FT& Dx1, const FT& Dy1, 
+		     const FT& Dx2, const FT& Dy2,
+		     const Integral_domain_without_division_tag&) const
+  {
+    Sign sA = CGAL::sign(A1) * CGAL::sign(Dr);
+    Sign sB = CGAL::sign(B);
+
+    if ( sA == CGAL::ZERO ) { return sB; }
+    if ( sB == CGAL::ZERO ) { return sA; }
+    if ( sA == sB ) { return sA; }
+
+    FT C = (CGAL::square(Dx2) + CGAL::square(Dy2)) * CGAL::square(Dr);
+    return sA * CGAL::sign(C - CGAL::square(B));
+  }
+
+  Orientation
+  orientation_wrt_bitangent_perp(const Site_2& p1, const Site_2& p2,
+				 const Site_2& q1, const Site_2& q2,
+				 const Method_tag& tag) const
+  {
+    // computes the orientation predicate of the line perpendicular to
+    // the bitangent of p1 and p2, passing through the center of q1,
+    // and the center of q2
+
+    FT Dx1 = p1.x() - p2.x();
+    FT Dy1 = p1.y() - p2.y();
+    FT Dr = p1.weight() - p2.weight();
+
+    FT Dx2 = q1.x() - q2.x();
+    FT Dy2 = q1.y() - q2.y();
+
+    FT A1 = Dx1 * Dy2 - Dy1 * Dx2;
+    FT B = Dx1 * Dx2 + Dy1 * Dy2;
+
+    return sqrt_ext_sign(A1, Dr, B, Dx1, Dy1, Dx2, Dy2, tag);
+  }
 
 
 
@@ -221,6 +294,40 @@ public:
   operator()(const Site_2& p1, const Site_2& p2,
 	     const Site_2& q, bool b, const Method_tag& tag) const
   {
+#if 1
+#if 1
+    Orientation o12_sym = Orientation_2()(p1, p2, q);
+
+    if ( o12_sym == CGAL::POSITIVE ) {
+      Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
+      Orientation o21_2 = orientation_wrt_bitangent_perp(p2, p1, p2, q, tag);
+
+      return o21_1 == NEGATIVE && o21_2 == POSITIVE;
+    } else {
+      Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
+      Orientation o12_2 = orientation_wrt_bitangent_perp(p1, p2, p2, q, tag);
+
+      return o12_1 == POSITIVE && o12_2 == NEGATIVE;
+    }
+#else
+    Comparison_result cr = CGAL::compare(p1.weight(), p2.weight());
+
+    Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
+    Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
+    Orientation o12_2 = orientation_wrt_bitangent_perp(p1, p2, p2, q, tag);
+    Orientation o21_2 = orientation_wrt_bitangent_perp(p2, p1, p2, q, tag);
+
+    if ( cr == CGAL::LARGER ) {
+      return ((o12_1 == POSITIVE && o21_1 == NEGATIVE) &&
+	      (o12_2 == NEGATIVE || o21_2 == POSITIVE));
+    } else if ( cr == CGAL::SMALLER ) {
+      return ((o12_1 == POSITIVE || o21_1 == NEGATIVE) &&
+	      (o12_2 == NEGATIVE && o21_2 == POSITIVE));
+    } else {
+      return o12_1 == POSITIVE && o21_1 == NEGATIVE;
+    }
+#endif
+#else
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -255,6 +362,7 @@ public:
     // of the form (a, b) or (-oo, a) U (b, +oo)
 
     return !b;
+#endif
   }
 };
 
@@ -271,8 +379,8 @@ public:
   typedef typename K::Site_2     Site_2;
 
 private:
-  typedef Finite_edge_interior_conflict_degenerated8<K>   Test_degenerated;
-  typedef Finite_edge_interior_conflict8<K,MTag>          Test;
+  typedef Finite_edge_interior_conflict_degenerated8<K,MTag>  Test_degenerated;
+  typedef Finite_edge_interior_conflict8<K,MTag>              Test;
 
 public:
   typedef bool                  result_type;
@@ -283,7 +391,24 @@ public:
   bool operator()(const Site_2& p1, const Site_2& p2,
 		  const Site_2& q, bool b) const
   {
-    return Test_degenerated()(p1, p2, q, b, Method_tag());
+    typedef Finite_edge_interior_conflict_2<K,MTag> Old_Test;
+    bool t = Test_degenerated()(p1, p2, q, b, Method_tag());    
+    //    bool t = Old_Test()(p1, p2, q, b);
+#ifndef NDEBUG
+    bool t_old = Old_Test()(p1, p2, q, b);
+
+    if ( t != t_old ) {
+      std::cerr << std::endl;
+      std::cerr << "b: " << b << "; t: " << t
+		<< "; t_old: " << t_old << std::endl;
+      std::cerr << "p1: " << p1 << std::endl;
+      std::cerr << "p2: " << p2 << std::endl;
+      std::cerr << "q: " << q << std::endl;
+    }
+
+    CGAL_assertion( t == t_old );
+#endif
+    return t;
   }
 
   inline
@@ -300,6 +425,8 @@ public:
   {
     typedef Finite_edge_interior_conflict_2<K,MTag> Old_Test;
     bool t = Test()(p1, p2, p3, p4, q, b, Method_tag());    
+    //    bool t = Old_Test()(p1, p2, p3, p4, q, b);
+#ifndef NDEBUG
     bool t_old = Old_Test()(p1, p2, p3, p4, q, b);
 
     if ( t != t_old ) {
@@ -312,7 +439,7 @@ public:
     }
 
     CGAL_assertion( t == t_old );
-
+#endif
     return t; //Test()(p1, p2, p3, p4, q, b, Method_tag());    
   }
 };
