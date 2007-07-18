@@ -194,6 +194,7 @@ public:
   typedef typename Traits::Compare_y_at_x_2         Base_Compare_y_at_x_2;
   typedef typename Traits::Compare_y_at_x_right_2   Base_Compare_y_at_x_right_2;
   typedef typename Traits::Compare_x_2              Base_Compare_x_2;
+  typedef typename Traits::Equal_2                  Base_Equal_2;
   typedef typename Traits::Has_boundary_category    Base_has_boundary_category;
   
   typedef CGAL::Curve_info<Halfedge_handle_red,
@@ -578,15 +579,16 @@ public:
   class Construct_min_vertex_2
   {
   private:
-    Base_Construct_min_vertex_2 m_base_min_v;
+    Base_Construct_min_vertex_2  m_base_min_v;
+    Base_Equal_2                 m_base_equal;
 
   public:
 
-    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base):
-        m_base_min_v(base)
+    Construct_min_vertex_2 (const Base_Construct_min_vertex_2& base_min_v,
+                            const Base_Equal_2& base_equal):
+      m_base_min_v (base_min_v),
+      m_base_equal (base_equal)
     {}
-
-
 
     /*!
      * Get the left endpoint of the x-monotone curve (segment).
@@ -595,46 +597,60 @@ public:
      */
     Point_2 operator() (const X_monotone_curve_2 & cv) 
     {
-      Object red, blue;
+      const Base_Point_2&   base_p = m_base_min_v (cv.base_curve());
+      Object                red, blue;
+
       if(cv.get_color() == Curve_info::RED)
       {
         red = CGAL::make_object(cv.get_red_halfedge_handle()->target());
       }
+      else if(cv.get_color() == Curve_info::BLUE)
+      {
+        blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
+      }
       else
-        if(cv.get_color() == Curve_info::BLUE)
+      {
+        CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
+
+        if (m_base_equal (base_p,
+                          cv.get_red_halfedge_handle()->target()->point()))
         {
-          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
-        }
-        else
-        {
-          CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
           red = CGAL::make_object(cv.get_red_halfedge_handle()->target());
-          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
         }
 
-      return Point_2 (m_base_min_v(cv.base_curve()), red, blue);
+        if (m_base_equal (base_p,
+                          cv.get_blue_halfedge_handle()->target()->point()))
+        {
+          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
+        }
+      }
+
+      return Point_2 (base_p, red, blue);
     }
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
-    return Construct_min_vertex_2(m_base_traits->construct_min_vertex_2_object());
+    return (Construct_min_vertex_2 
+            (m_base_traits->construct_min_vertex_2_object(),
+             m_base_traits->equal_2_object()));
   }
 
 
   class Construct_max_vertex_2
   {
   private:
-    Base_Construct_max_vertex_2 m_base_max_v;
+    Base_Construct_max_vertex_2  m_base_max_v;
+    Base_Equal_2                 m_base_equal;
 
   public:
 
-    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base):
-        m_base_max_v(base)
+    Construct_max_vertex_2 (const Base_Construct_max_vertex_2& base_max_v,
+                            const Base_Equal_2& base_equal):
+      m_base_max_v (base_max_v),
+      m_base_equal (base_equal)
     {}
-
-
 
     /*!
      * Get the left endpoint of the x-monotone curve (segment).
@@ -643,31 +659,44 @@ public:
      */
     Point_2 operator() (const X_monotone_curve_2 & cv) const
     {
-      Object red, blue;
+      const Base_Point_2&   base_p = m_base_max_v (cv.base_curve());
+      Object                red, blue;
+
       if(cv.get_color() == Curve_info::RED)
       {
         red = CGAL::make_object(cv.get_red_halfedge_handle()->source());
       }
+      else if(cv.get_color() == Curve_info::BLUE)
+      {
+        blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
+      }
       else
-        if(cv.get_color() == Curve_info::BLUE)
-        {
-          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
-        }
-        else
-        {
-          CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
-          red = CGAL::make_object(cv.get_red_halfedge_handle()->source());
-          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
-        }
+      {
+        CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
 
-      return Point_2 (m_base_max_v(cv.base_curve()), red, blue);
+        if (m_base_equal (base_p,
+                          cv.get_red_halfedge_handle()->source()->point()))
+        {
+          red = CGAL::make_object(cv.get_red_halfedge_handle()->source());
+        }
+          
+        if (m_base_equal (base_p,
+                          cv.get_blue_halfedge_handle()->source()->point()))
+        {
+          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
+        }
+      }
+
+      return Point_2 (base_p, red, blue);
     }
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
-    return Construct_max_vertex_2(m_base_traits->construct_max_vertex_2_object());
+    return (Construct_max_vertex_2 
+            (m_base_traits->construct_max_vertex_2_object(),
+             m_base_traits->equal_2_object()));
   }
 
 
