@@ -11,7 +11,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hachenb@scm.gforge.inria.fr/svn/cgal/branches/Filtered_Nef/Nef_3/include/CGAL/Nef_3/SNC_external_structure.h $
+// $URL: $
 // $Id: SNC_external_structure.h 36279 2007-02-15 10:29:45Z hachenb $
 // 
 //
@@ -80,14 +80,13 @@ struct Halfedge_key_lt3 {
   }
 };
 
-template <typename Point, typename Edge, class Decorator>
+template <typename Point, typename Edge>
 struct Halfedge_key {
-  typedef Halfedge_key<Point,Edge,Decorator> Self;
+  typedef Halfedge_key<Point,Edge> Self;
   Point p; int i; Edge e;
-  Decorator& D;
-  Halfedge_key(Point pi, int ii, Edge ei, Decorator& Di ) : 
-    p(pi), i(ii), e(ei), D(Di) {}
-  Halfedge_key(const Self& k) : p(k.p), i(k.i), e(k.e), D(k.D) {}
+  Halfedge_key(Point pi, int ii, Edge ei) : 
+    p(pi), i(ii), e(ei) {}
+  Halfedge_key(const Self& k) : p(k.p), i(k.i), e(k.e) {}
   Self& operator=(const Self& k) { p=k.p; i=k.i; e=k.e; return *this; }
   bool operator==(const Self& k) const { return p==k.p && i==k.i; }
   bool operator!=(const Self& k) const { return !operator==(k); }
@@ -95,7 +94,7 @@ struct Halfedge_key {
 
 template <typename Point, typename Edge, class Decorator>
 struct Halfedge_key_lt {
-  typedef Halfedge_key<Point,Edge,Decorator> Key;
+  typedef Halfedge_key<Point,Edge> Key;
   typedef typename Point::R R;
   typedef typename R::Vector_3 Vector;
   typedef typename R::Direction_3 Direction;
@@ -108,9 +107,9 @@ struct Halfedge_key_lt {
   }
 };
 
-template <typename Point, typename Edge, class Decorator>
+template <typename Point, typename Edge>
 std::ostream& operator<<(std::ostream& os, 
-                         const Halfedge_key<Point,Edge,Decorator>& k )
+                         const Halfedge_key<Point,Edge>& k )
 { os << k.p << " " << k.i; return os; }
 
 template <typename R>
@@ -287,7 +286,7 @@ public:
     Pluecker_line_map M3;
     Pluecker_line_map M4;
     
-    NT eval(Infi_box::compute_evaluation_constant_for_halfedge_pairup(*this->sncp()));;
+    NT eval(Infi_box::compute_evaluation_constant_for_halfedge_pairup(*this->sncp()));
     
     Halfedge_iterator e;
     CGAL_forall_halfedges(e,*this->sncp()) {
@@ -441,7 +440,7 @@ public:
 
 //    CGAL_NEF_SETDTHREAD(43*61);
     CGAL_NEF_TRACEN(">>>>>pair_up_halfedges");
-    typedef Halfedge_key< Point_3, Halfedge_handle, SNC_decorator>
+    typedef Halfedge_key< Point_3, Halfedge_handle>
       Halfedge_key;
     typedef Halfedge_key_lt< Point_3, Halfedge_handle, SNC_decorator> 
       Halfedge_key_lt;
@@ -477,14 +476,14 @@ public:
       
       if(Infi_box::is_edge_on_infibox(e))
 	if(Infi_box::is_type4(e))
-	  M4[l].push_back(Halfedge_key(p,inverted,e, D));
+	  M4[l].push_back(Halfedge_key(p,inverted,e));
 	else
 	  if(Infi_box::is_type3(e))
-	    M3[l].push_back(Halfedge_key(p,inverted,e, D));
+	    M3[l].push_back(Halfedge_key(p,inverted,e));
 	  else
-	    M2[l].push_back(Halfedge_key(p,inverted,e, D));
+	    M2[l].push_back(Halfedge_key(p,inverted,e));
       else
-	M[l].push_back(Halfedge_key(p,inverted,e,D));
+	M[l].push_back(Halfedge_key(p,inverted,e));
       
       // the following trace crashes when compiling with optimizations (-O{n})
       //CGAL_NEF_TRACEN(Infi_box::standard_point(point(vertex(e)))+
@@ -618,9 +617,7 @@ public:
 	       cet->source()->twin() == ce->source() ) 
             break;
 
-      /*
       // DEBUG     
-      CGAL_NEF_SETDTHREAD(43);
       if( cet->circle() != ce->circle().opposite() )
 	CGAL_NEF_TRACEN("assertion failed!");
       
@@ -646,9 +643,6 @@ public:
 		      " tgt="<<sct->target()->point()<<std::endl<<
 		      " circle=" << sct->circle());
       CGAL_NEF_TRACEN("");
-
-      CGAL_NEF_SETDTHREAD(1);
-      */
 
       CGAL_assertion( normalized(cet->circle()) == normalized(ce->circle().opposite()) ); 
       CGAL_assertion( cet->source()->twin() == ce->source()); 
@@ -686,16 +680,41 @@ public:
     Map_planes M;
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e,*this->sncp()) {
-     Sphere_circle c(e->circle());
-     Plane_3 h = c.plane_through(e->source()->source()->point());
-     CGAL_NEF_TRACEN("\n" << e->source()->twin()->source()->point() <<" - "
-		     << e->source()->source()->point() <<" - "<< 
-		     e->twin()->source()->twin()->source()->point() << 
-		     " has plane " << h << " has circle " << e->circle() << 
-		     " has signum " << sign_of(h));
-     if ( sign_of(h)<0 ) continue;
-     M[normalized(h)].push_back(Object_handle(e->twin())); 
-     CGAL_NEF_TRACEN(" normalized as " << normalized(h)); 
+      Sphere_circle c(e->circle());
+      Plane_3 h = c.plane_through(e->source()->source()->point());
+      CGAL_NEF_TRACEN("\n" << e->source()->twin()->source()->point() <<" - "
+		      << e->source()->source()->point() <<" - "<< 
+		      e->twin()->source()->twin()->source()->point() << 
+		      " has plane " << h << " has circle " << e->circle() << 
+		      " has signum " << sign_of(h));
+      if ( sign_of(h)<0 ) continue;
+      M[normalized(h)].push_back(Object_handle(e->twin())); 
+      CGAL_NEF_TRACEN(" normalized as " << normalized(h));
+      /*
+	Unique_hash_map<SHalfedge_handle, bool> Done(false);
+	SHalfedge_iterator ei;
+	CGAL_forall_sedges(ei,*this->sncp()) {
+	if(Done[ei]) continue;
+	Sphere_circle c(ei->circle());
+	Plane_3 h = c.plane_through(ei->source()->source()->point());
+	CGAL_NEF_TRACEN("\n" << ei->source()->twin()->source()->point() <<" - "
+	<< ei->source()->source()->point() <<" - "<< 
+		      ei->twin()->source()->twin()->source()->point() << 
+		      " has plane " << h << " has circle " << ei->circle() << 
+		      " has signum " << sign_of(h));
+      SHalfedge_handle e(ei);
+      if ( sign_of(h)<0 ) {
+	h = h.opposite();
+	e = e->twin();
+      }
+      SHalfedge_around_facet_circulator sfc(e), send(sfc);
+      CGAL_For_all(sfc, send) {
+	M[normalized(h)].push_back(Object_handle(e->twin())); 
+	Done[sfc] = true;
+	Done[sfc->twin()] = true;
+	CGAL_NEF_TRACEN(" normalized as " << normalized(h)); 
+      }
+      */
     }
     SHalfloop_iterator l;
     CGAL_forall_shalfloops(l,*this->sncp()) {
@@ -924,7 +943,6 @@ public:
   }
    
   void build_external_structure() {
-//    CGAL_NEF_SETDTHREAD(503*509);
 
 #ifdef CGAL_NEF3_TIMER_EXTERNAL_STRUCTURE
     CGAL::Timer timer_external_structure;
@@ -944,9 +962,9 @@ public:
       std::cout << "Runtime_pluecker: " 
 		<< timer_pluecker.time() << std::endl;
 #endif
-     //     SNC_io_parser<SNC_structure> O0(std::cerr,*this->sncp());
-     //     O0.print();
     link_shalfedges_to_facet_cycles();
+    //    SNC_io_parser<SNC_structure> O0(std::cerr,*this->sncp());
+    //    O0.print();
     categorize_facet_cycles_and_create_facets();
     create_volumes();
 
@@ -958,7 +976,8 @@ public:
 #endif
   }
 
-  void build_after_binary_operation() {
+  template<typename Association>
+  void build_after_binary_operation(Association) {
 
 #ifdef CGAL_NEF3_TIMER_SIMPLIFICATION
     CGAL::Timer timer_simplification;
@@ -1067,6 +1086,7 @@ public:
     
     typename index_map::iterator it;
     CGAL_forall_iterators(it,i2he) {
+      CGAL_NEF_TRACEN("pair up " << it->first);
       it->second.sort(Halfedge_key_lt());
       typename Halfedge_list::iterator itl;
       CGAL_forall_iterators(itl,it->second) {
@@ -1110,10 +1130,8 @@ public:
 	  break;
       }
 
-      /*
       CGAL_NEF_TRACEN("vertices " << e->source()->point() << 
       "    "      << et->source()->point());
-      
       
       SHalfedge_around_svertex_circulator sc(D.first_out_edge(e));
       SHalfedge_around_svertex_circulator sct(Dt.first_out_edge(et));
@@ -1141,9 +1159,9 @@ public:
 		      "         " << sct->twin()->get_forward_index() <<
 	              "," << sct->twin()->get_backward_index());
       CGAL_NEF_TRACEN("");
-      */
-      //      CGAL_NEF_SETDTHREAD(1);
 
+      CGAL_assertion( cet->get_index() == ce->twin()->get_index());
+      CGAL_assertion( cet->twin()->get_index() == ce->get_index());
       CGAL_assertion( normalized(cet->circle()) == normalized(ce->circle().opposite()) ); 
       CGAL_assertion( cet->source()->twin() == ce->source()); 
       CGAL_For_all(ce,cee) { 
@@ -1169,8 +1187,8 @@ public:
     CGAL_NEF_TRACEN(">>>>>categorize_facet_cycles_and_create_facets");
     
     typedef std::list<Object_handle> Object_list;
-     typedef std::map<int, Object_list> 
-       Map_planes;
+    typedef std::map<int, Object_list> 
+      Map_planes;
    
     Map_planes M;
     SHalfedge_iterator e;
@@ -1193,8 +1211,8 @@ public:
 
     typename Map_planes::iterator it;
     CGAL_forall_iterators(it,M) { 
-      //    progress2++;
-      //      CGAL_NEF_TRACEN("  plane "<<it->first<<"             "<<(it->first).point());
+      CGAL_NEF_TRACEN("  plane "<< it->first);
+      CGAL_NEF_TRACEN("  size "<< it->second.size());
       FM_decorator D(*this->sncp());
       Plane_3 h;
       Object_handle o(*it->second.begin());
@@ -1244,23 +1262,21 @@ public:
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
-      hash[sei->get_forward_index()] = sei->get_forward_index();
-      hash[sei->get_backward_index()] = sei->get_backward_index();
+      hash[sei->get_index()] = sei->get_index();
     }
     
     CGAL_forall_shalfedges(sei, *this->sncp()) {
       if(done[sei])
 	continue;
       SHalfedge_around_facet_circulator circ(sei), end(circ);
-      int index = circ->get_smaller_index();
+      int index = circ->get_index();
       ++circ;
       CGAL_For_all(circ, end)
-	if(circ->get_smaller_index() < index)
-	  index = circ->get_smaller_index();      
+	if(circ->get_index() < index)
+	  index = circ->get_index();      
       index = hash[index];
       CGAL_For_all(circ, end) {
-	hash[circ->get_forward_index()] = index;
-	hash[circ->get_backward_index()] = index;
+	hash[circ->get_index()] = index;
 	circ->set_index(index);
 	done[circ] = true;
       }
@@ -1285,45 +1301,51 @@ public:
     Base::clear_external_structure();    
   }
 
-  void build_after_binary_operation() {
+  template<typename Association>
+  void build_after_binary_operation(Association& A) {
     
+    SHalfedge_iterator sei;
+    CGAL_forall_shalfedges(sei, *this->sncp()) {
+      CGAL_NEF_TRACEN("hash sedge " << sei->get_index() 
+		      << "->" << A.get_hash(sei->get_index()));
+      sei->set_index(A.get_hash(sei->get_index()));
+    }
+
+    SHalfloop_iterator sli;
+    CGAL_forall_shalfloops(sli, *this->sncp()) {
+      CGAL_NEF_TRACEN("hash sloop " << sli->get_index() 
+		      << "->" << A.get_hash(sli->get_index()));
+      sli->set_index(A.get_hash(sli->get_index()));
+    }
+
+    //    CGAL_NEF_SETDTHREAD(43);
+    /*
+    {    CGAL::SNC_io_parser<SNC_structure> O
+      (std::cerr, *this->sncp(), false, true);
+      O.print();}
+    */
     pair_up_halfedges();
+    /*
+    {      CGAL::SNC_io_parser<SNC_structure> O
+	(std::cerr, *this->sncp(), false, true);
+      O.print();}
+    */
     link_shalfedges_to_facet_cycles();
 
     SNC_simplify simp(*this->sncp());
     simp.vertex_simplificationI();
 
-    std::map<int, int> hash;
+    //    std::map<int, int> hash;
     CGAL::Unique_hash_map<SHalfedge_handle, bool> 
       done(false);
 
+    /*
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
       hash[sei->get_forward_index()] = sei->get_forward_index();
       hash[sei->get_backward_index()] = sei->get_backward_index();
     }
-    
-    CGAL_forall_shalfedges(sei, *this->sncp()) {
-      if(done[sei])
-	continue;
-      SHalfedge_around_facet_circulator circ(sei), end(circ);
-      int index = circ->get_smaller_index();
-      ++circ;
-      CGAL_For_all(circ, end)
-	if(circ->get_smaller_index() < index)
-	  index = circ->get_smaller_index();      
-      index = hash[index];
-      CGAL_For_all(circ, end) {
-	hash[circ->get_forward_index()] = index;
-	hash[circ->get_backward_index()] = index;
-	circ->set_index(index);
-	done[circ] = true;
-      }
-    }
-    
-    SHalfloop_iterator sli;
-    CGAL_forall_shalfloops(sli, *this->sncp())
-      sli->set_index(hash[sli->get_index()]);
+    */
 
     categorize_facet_cycles_and_create_facets();
     create_volumes();
