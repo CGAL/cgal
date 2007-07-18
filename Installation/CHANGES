@@ -2,22 +2,23 @@ CHANGES
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
 
+- TAUCS supports now 64 bits platforms.
 - The new Skin Surface Meshing package had been forgotten in the list of
   changes and the release announcement of CGAL 3.3:
     This package allows to build a triangular mesh of a skin surface.
     Skin surfaces are used for modeling large molecules in biological computing.
-- Fix bug in Memory_sizer and TAUCS when using more than 4GB of memory (64bit).
-- Fix bug in degenerate case of Polygon_2::is_convex() for equal points.
-- Fix bug in Regular_triangulation_2.
-- Fix bug walk along a line point location for unbounded curves.
-- Fix bug in aggrigated insertion to Arrangement_2.
-- Fix bug in Arrangment_2 class when inserting an unbounded curve from an existing vertex.
-- Fix bug when dealing with a degenerate conic arc in Arr_conic_traits_2 of the Arrangment package, meaning a line segments which is part of a degenerate parabola/hyperbola.
-- Fix bug in the Bezier traits-class:
+- Fixed bug in Memory_sizer when using more than 4GB of memory (64bit).
+- Fixed bug in degenerate case of Polygon_2::is_convex() for equal points.
+- Fixed bug in Regular_triangulation_2.
+- Fixed bug walk along a line point location for unbounded curves.
+- Fixed bug in aggrigated insertion to Arrangement_2.
+- Fixed bug in Arrangment_2 class when inserting an unbounded curve from an existing vertex.
+- Fixed bug when dealing with a degenerate conic arc in Arr_conic_traits_2 of the Arrangment package, meaning a line segments which is part of a degenerate parabola/hyperbola.
+- Fixed bug in the Bezier traits-class:
     properly handle line segments.
     properly handle comprison near a vertical tangency.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
-- Fix bug in FPU rounding mode macros (affected only alpha architecture).
+- Fixed bug in FPU rounding mode macros (affected only alpha architecture).
 
 ----------------------------- Release 3.3 ----------------------------------
 The following functionality has been added or changed:
@@ -201,7 +202,7 @@ in <windows.h> which were clashing with min/max functions.
 This is a bug fix release
 
 - Number Types
-  Fix MP_Float constructor which crashed for some values.
+  Fixed MP_Float constructor which crashed for some values.
 
 - Kernel
   Rename Bool to avoid a clash with a macro in X11 headers.
