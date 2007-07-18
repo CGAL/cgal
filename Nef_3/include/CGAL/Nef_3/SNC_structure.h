@@ -25,6 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/In_place_list.h>
+#include <CGAL/Nef_3/SNC_list.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
@@ -1340,10 +1341,10 @@ protected:
   void pointer_update(const Self& D);
   
   typedef boost::optional<Object_iterator> Optional_object_iterator ;
-  
+ private:
   Generic_handle_map<Optional_object_iterator> boundary_item_;
   Generic_handle_map<Optional_object_iterator> sm_boundary_item_;
-
+ protected:
   Vertex_list    vertices_;
   Halfedge_list  halfedges_;
   Halffacet_list halffacets_;
