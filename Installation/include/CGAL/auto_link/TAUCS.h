@@ -25,7 +25,14 @@
 
 #ifndef CGAL_NO_AUTOLINK_TAUCS
 
-// Link with this set of libraries (e.g. for /MD):
+// debug
+#define CGAL_LIB_DIAGNOSTIC
+
+
+#ifndef _WIN64
+
+// CGAL ships with TAUCS for Windows 32 bits, compiled with VC++ 2003.
+// The set set of libraries is (e.g. for /MD):
 // libtaucs-vc71-mt.lib libmetis-vc71-mt.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
 //
 // Notes: - Order matters.
@@ -43,6 +50,30 @@
 #include <CGAL/auto_link/auto_link.h>
 
 #include <CGAL/auto_link/LAPACK.h>
+
+# else // if _WIN64
+
+// VC++ >= 8.0 is compatible with Windows x64.
+// The set set of libraries is (e.g. for /MD):
+// libtaucs-vc80-mt.lib libmetis-vc80-mt.lib mkl_em64t.lib libguide40.lib vcf2c-vc80-mt.lib
+//
+// Notes: - Order matters.
+//        - Libraries with no "vc80" toolset are compiled by Intel Fortran. They are 
+//          compatible with all VC++ runtimes.
+//        - Tested with VC++ 8.0 only.
+
+#define CGAL_LIB_NAME libtaucs
+#define CGAL_LIB_TOOLSET "vc80"
+#include <CGAL/auto_link/auto_link.h>
+
+#define CGAL_LIB_NAME libmetis
+#define CGAL_LIB_TOOLSET "vc80"
+#include <CGAL/auto_link/auto_link.h>
+
+#include <CGAL/auto_link/LAPACK.h>
+
+#endif // _WIN64
+
 
 #endif // CGAL_NO_AUTOLINK_TAUCS
 

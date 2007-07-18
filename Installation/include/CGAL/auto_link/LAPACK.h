@@ -25,13 +25,16 @@
 
 #ifndef CGAL_NO_AUTOLINK_LAPACK
 
-// Link with this set of libraries (e.g. for /MD):
+
+#ifndef _WIN64
+
+// CGAL ships with ATLAS for Windows 32 bits, i.e this set of libraries (e.g. for /MD):
 // liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
 //
 // Notes: - Order matters.
 //        - VC++ 7.1 libraries work with VC++ 8.0. 
 //        - Libraries with no "vc71" toolset are compiled by gcc/g77. They are 
-//          compatible with VC++ 7.1 and 8.0.
+//          compatible with VC++ 7.1 and 8.0, and with all VC++ runtimes.
 //        - Tested with VC++ 7.1 and 8.0 only.
 
 #define CGAL_LIB_NAME liblapack
@@ -53,6 +56,33 @@
 #define CGAL_LIB_NAME vcf2c
 #define CGAL_LIB_TOOLSET "vc71"
 #include <CGAL/auto_link/auto_link.h>
+
+# else // if _WIN64
+
+// VC++ >= 8.0 is compatible with Windows x64.
+// ATLAS is not compatible with Win64, thus we assume Intel MKL.
+// The set set of libraries is (e.g. for /MD):
+// mkl_em64t.lib libguide40.lib vcf2c-vc80-mt.lib
+//
+// Notes: - Order matters.
+//        - Libraries with no "vc80" toolset are compiled by Intel Fortran. They are 
+//          compatible with all VC++ runtimes.
+//        - Tested with VC++ 8.0 only.
+
+#define CGAL_LIB_NAME mkl_em64t
+#define CGAL_AUTO_LINK_NOMANGLE
+#include <CGAL/auto_link/auto_link.h>
+
+#define CGAL_LIB_NAME libguide40
+#define CGAL_AUTO_LINK_NOMANGLE
+#include <CGAL/auto_link/auto_link.h>
+
+#define CGAL_LIB_NAME vcf2c
+#define CGAL_LIB_TOOLSET "vc80"
+#include <CGAL/auto_link/auto_link.h>
+
+#endif // _WIN64
+
 
 #endif // CGAL_NO_AUTOLINK_LAPACK
 
