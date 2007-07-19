@@ -3,6 +3,9 @@ CHANGES
 The following corrections have been made:
 
 - TAUCS supports now 64 bits platforms.
+- CAUTION: CGAL is not compatible anymore with TAUCS 2.2 official release.
+           You must use the version modified by CGAL team and available 
+           from the Download section of http://www.cgal.org.
 - The new Skin Surface Meshing package had been forgotten in the list of
   changes and the release announcement of CGAL 3.3:
     This package allows to build a triangular mesh of a skin surface.
