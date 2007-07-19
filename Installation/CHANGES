@@ -19,6 +19,7 @@ The following corrections have been made:
     properly handle comprison near a vertical tangency.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
 - Fixed bug in FPU rounding mode macros (affected only alpha architecture).
+- Intel C++ 9 was wrongly recognized as unsupported by install_cgal.
 
 ----------------------------- Release 3.3 ----------------------------------
 The following functionality has been added or changed:
