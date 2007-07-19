@@ -3397,7 +3397,7 @@ _set_support()
 	    ;;
 	*Intel*|*ICC*)
 	    case `compiler_version` in
-		[78]*) CGAL_SUPPORT_COMPILER='y';;
+		[789]*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*VC++*)
