@@ -169,13 +169,12 @@ public:
 
 private:
   FT s1x, s1y;
-  FT xj, xk, yj, yk, rj, rk, pj, pk, Exp, Eyp, Erp, Exy, Exr, Eyr, A1;
-
-  FT xl_, yl_, ca1, ca2, ca3, cb1, cb2, cb3;
+  FT xj, xk, yj, yk, rj, rk, nj, nk, pj, pk, Exp, Eyp, Erp, Exy, Exr, Eyr, A1;
+  Orientation o_sym;
 
 public:
   Constructive_orientation8_C2(const Site_2& s1, const Site_2& s2,
-			       const Site_2& s3)
+			       const Site_2& s3, bool use_xj)
   {
     s1x = s1.x();
     s1y = s1.y();
@@ -189,37 +188,11 @@ public:
     rj = s2.weight() - s1.weight();
     rk = s3.weight() - s1.weight();
 
-    pj = CGAL::square(xj) + CGAL::square(yj) - CGAL::square(rj);
-    pk = CGAL::square(xk) + CGAL::square(yk) - CGAL::square(rk);
+    nj = CGAL::square(xj) + CGAL::square(yj);
+    nk = CGAL::square(xk) + CGAL::square(yk);
 
-    Exp = det2x2_by_formula(xj, pj, xk, pk);
-    Eyp = det2x2_by_formula(yj, pj, yk, pk);
-    Erp = det2x2_by_formula(rj, pj, rk, pk);
-
-    Exy = det2x2_by_formula(xj, yj, xk, yk);
-    Exr = det2x2_by_formula(xj, rj, xk, rk);
-    Eyr = det2x2_by_formula(yj, rj, yk, rk);
-
-    A1 = Exp * Exr + Eyp * Eyr;
-  }
-
-  Constructive_orientation8_C2(const Site_2& s1, const Site_2& s2,
-			       const Site_2& s3, const Site_2& p1)
-  {
-    s1x = s1.x();
-    s1y = s1.y();
-    
-    xj = s2.x() - s1.x();
-    xk = s3.x() - s1.x();
-
-    yj = s2.y() - s1.y();
-    yk = s3.y() - s1.y();
-
-    rj = s2.weight() - s1.weight();
-    rk = s3.weight() - s1.weight();
-
-    pj = CGAL::square(xj) + CGAL::square(yj) - CGAL::square(rj);
-    pk = CGAL::square(xk) + CGAL::square(yk) - CGAL::square(rk);
+    pj = nj - CGAL::square(rj);
+    pk = nk - CGAL::square(rk);
 
     Exp = det2x2_by_formula(xj, pj, xk, pk);
     Eyp = det2x2_by_formula(yj, pj, yk, pk);
@@ -231,37 +204,54 @@ public:
 
     A1 = Exp * Exr + Eyp * Eyr;
 
-    xl_ = p1.x() - s1.x();
-    yl_ = p1.y() - s1.y();
+    FT A, B, norm;
+    if ( use_xj ) {
+      A = (-Eyp * xj + Exp * yj) * Erp;
+      B = Exp * xj + Eyp * yj;
+      norm = nj;
+    } else {
+      A = (-Eyp * xk + Exp * yk) * Erp;
+      B = Exp * xk + Eyp * yk;
+      norm = nk;
+    }
 
-    ca1 = 2 * A1 * xl_ - Eyp * Erp;
-    ca2 = -2 * A1 * yl_ + Exp * Erp;
-    ca3 = (Eyp * xl_ - Exp * yl_) * Erp;
-
-    cb1 = Exp + Exy * xl_;
-    cb2 = Eyp - Exy * yl_;
-    cb3 = -Exp * xl_ - Eyp * yl_;
+    o_sym = sqrt_ext_sign(A, B, norm, Method_tag());
   }
 
-
-
-public:
-  inline
-  Orientation operator()(const Site_2& s1, const Site_2& s2,
-			 const Site_2& s3) const
-  {
-    return Kernel().orientation_2_object()(s1.point(), s2.point(),
-					   s3.point());
-  }
-
+private:
   inline
   Sign sqrt_ext_sign(const FT& A, const FT& B, const FT& Exy2, 
-		     const FT dx, const FT& dy,
+		     const FT& dx, const FT& dy,
 		     const Field_with_sqrt_tag&) const
   {
     FT G = CGAL::square(Exp) + CGAL::square(Eyp) - CGAL::square(Erp);
     return CGAL::sign(A + B * CGAL::sqrt(G));
   }
+
+  inline
+  Sign sqrt_ext_sign(const FT& A, const FT& B, const FT&,
+		     const Field_with_sqrt_tag&) const
+  {
+    FT G = CGAL::square(Exp) + CGAL::square(Eyp) - CGAL::square(Erp);
+    return CGAL::sign(A + B * CGAL::sqrt(G));
+  }
+
+
+  inline
+  Sign sqrt_ext_sign(const FT& A, const FT& B, const FT& norm,
+		     const Integral_domain_without_division_tag&) const
+  {
+    Sign sA = CGAL::sign(A);
+    Sign sB = CGAL::sign(B);
+
+    if ( sA == CGAL::ZERO ) { return sB; }
+    if ( sB == CGAL::ZERO ) { return sA; }
+    if ( sA == sB ) { return sA; }
+
+    Sign s = CGAL::sign(CGAL::square(Erp) * norm - CGAL::square(B));
+    return sA * s;
+  }
+
 
   inline
   Sign sqrt_ext_sign(const FT& A, const FT& B, const FT& Exy2,
@@ -302,37 +292,26 @@ public:
     return sqrt_ext_sign(A, B, Exy2, dx, dy, Method_tag());
   }
 
-  Orientation predicate(const Site_2& p2) const
+public:
+  inline
+  Orientation operator()(const Site_2& s1, const Site_2& s2,
+			 const Site_2& s3) const
   {
-    // computes the orientation of the Voronoi vertex of s1, s2, s3 and
-    // the points p1 and p2
-    FT xm = p2.x() - s1x;
-    FT ym = p2.y() - s1y;
-
-    FT dx = xl_ - xm;
-    FT dy = yl_ - ym;
-
-    FT Exy2 = 2 * det2x2_by_formula(xl_, yl_, xm, ym);
-
-    FT A = ca1 * xm + ca2 * ym + ca3;
-    FT B = cb1 * xm + cb2 * ym + cb3;
-
-    return sqrt_ext_sign(A, B, Exy2, dx, dy, Method_tag());
+    return Kernel().orientation_2_object()(s1.point(), s2.point(),
+					   s3.point());
   }
 
-
+  inline
   Orientation operator()(const Site_2& p1, const Site_2& p2) const
   {
     Orientation o = predicate(p1, p2);
     return o;
   }
 
-  Orientation operator()(const Site_2& p2) const
-  {
-    Orientation o = predicate(p2);
-    return o;
+  inline
+  Orientation operator()() const {
+    return o_sym;
   }
-
 };
 
 //--------------------------------------------------------------------

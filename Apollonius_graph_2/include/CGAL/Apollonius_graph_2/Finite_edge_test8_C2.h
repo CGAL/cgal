@@ -23,6 +23,7 @@
 
 #include <CGAL/Apollonius_graph_2/Finite_edge_test_C2.h>
 #include <CGAL/Apollonius_graph_2/Orientation8_C2.h>
+#include <CGAL/Apollonius_graph_2/Oriented_side_of_bisector_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -40,9 +41,12 @@ public:
   typedef MTag                              Method_tag;
   typedef typename K::Site_2                Site_2;
   typedef typename K::Orientation           Orientation;
+  typedef typename K::Oriented_side         Oriented_side;
 
+private:
   typedef Orientation8_C2<K,MTag>           Orientation_2;
   typedef Constructive_orientation8_C2<K,MTag>   Constructive_orientation_2;
+  typedef Oriented_side_of_bisector_2<K,MTag>    Side_of_bisector_2;
 
 public:
   bool
@@ -53,62 +57,73 @@ public:
 	     const Site_2& q, bool b, const Method_tag& tag) const
   {
 #if 1
+    Constructive_orientation_2 orientation123(p1, p2, p3, true);
+    Constructive_orientation_2 orientation142(p1, p4, p2, false);
+
+    Orientation o123_s = orientation123();
+    Orientation o142_s = orientation142();
+
 #if 0
-    Constructive_orientation_2 orientation123_1(p1, p2, p3, p1);
-    Constructive_orientation_2 orientation142_1(p1, p4, p2, p1);
+#ifndef NDEBUG
+    Orientation o123_s1 = orientation123(p1, p2);
+    Orientation o142_s1 = orientation142(p1, p2);
 
-    Orientation o123_s = orientation123_1(p2);
-    Orientation o142_s = orientation142_1(p2);
-
-    Orientation o123_1 = orientation123_1(q);
-    Orientation o142_1 = orientation142_1(q);
-    Orientation o123_2 = orientation123_1(p2, q);
-    Orientation o142_2 = orientation142_1(p2, q);
-#else
-    Constructive_orientation_2 orientation123(p1, p2, p3);
-    Constructive_orientation_2 orientation142(p1, p4, p2);
-
-    Orientation o123_s = orientation123(p1, p2);
-    Orientation o142_s = orientation142(p1, p2);
-
-    Orientation o123_1 = orientation123(p1, q);
-    Orientation o142_1 = orientation142(p1, q);
-    Orientation o123_2 = orientation123(p2, q);
-    Orientation o142_2 = orientation142(p2, q);
+    CGAL_assertion( o123_s == o123_s1 );
+    CGAL_assertion( o142_s == o142_s1 );
 #endif
-#else
-    Orientation_2 orientation;
-
-    Orientation o123_s = orientation(p1, p2, p3, p1, p2);
-    Orientation o142_s = orientation(p1, p4, p2, p1, p2);
-
-    Orientation o123_1 = orientation(p1, p2, p3, p1, q);
-    Orientation o142_1 = orientation(p1, p4, p2, p1, q);
-    Orientation o123_2 = orientation(p1, p2, p3, p2, q);
-    Orientation o142_2 = orientation(p1, p4, p2, p2, q);
 #endif
+
     // first we consider the case where both Voronoi circles are in
     // conflict; we want to determine if the entire edge is in
     // conflict
 
     if ( b ) {
       if ( o123_s != o142_s ) {
-	return !((o123_1 == NEGATIVE || o123_2 == POSITIVE) &&
-		 (o142_1 == POSITIVE || o142_2 == NEGATIVE));
+	Orientation o123_1 = orientation123(p1, q);
+	Orientation o123_2 = orientation123(p2, q);
+	if ( o123_1 == POSITIVE && o123_2 == NEGATIVE ) { return true; }
+
+	Orientation o142_1 = orientation142(p1, q);
+	Orientation o142_2 = orientation142(p2, q);
+	return (o142_1 == NEGATIVE && o142_2 == POSITIVE);
       }
 
+      Oriented_side os = Side_of_bisector_2()(p1, p2, q.point());
+
       if ( o123_s == POSITIVE ) {
-	return !((o123_1 == NEGATIVE || o123_2 == POSITIVE) &&
-		 (o142_1 == POSITIVE && o142_2 == NEGATIVE));
+	if ( os == ON_POSITIVE_SIDE ) {
+	  Orientation o142_1 = orientation142(p1, q);
+	  if ( o142_1 == NEGATIVE ) { return true; }
+
+	  Orientation o123_1 = orientation123(p1, q);
+	  return o123_1 == POSITIVE;
+	}
+
+	Orientation o142_2 = orientation142(p2, q);
+	if ( o142_2 == POSITIVE ) { return true; }
+
+	Orientation o123_2 = orientation123(p2, q);
+	return o123_2 == NEGATIVE;
       }
 
       if ( o123_s == NEGATIVE ) {
-	return !((o123_1 == NEGATIVE && o123_2 == POSITIVE) &&
-		 (o142_1 == POSITIVE || o142_2 == NEGATIVE));
+	if ( os == ON_POSITIVE_SIDE ) {
+	  Orientation o123_1 = orientation123(p1, q);
+	  if ( o123_1 == POSITIVE ) { return true; }
+
+	  Orientation o142_1 = orientation142(p1, q);
+	  return o142_1 == NEGATIVE;
+	}
+
+	Orientation o123_2 = orientation123(p2, q);	
+	if ( o123_2 == NEGATIVE ) { return true; }
+
+	Orientation o142_2 = orientation142(p2, q);
+	return o142_2 == POSITIVE;
       }
 
       CGAL_assertion( o123_s == ZERO );
-      return true;      
+      return true;
     }
 
     // now consider the case where the two Voronoi circles are not in
@@ -116,22 +131,181 @@ public:
     // conflict
 
     if ( o123_s != o142_s ) {
-      return ((o123_1 == POSITIVE && o123_2 == NEGATIVE) &&
-	      (o142_1 == NEGATIVE && o142_2 == POSITIVE));
+      Orientation o123_1 = orientation123(p1, q);
+      if ( o123_1 != POSITIVE ) { return false; }
+
+      Orientation o123_2 = orientation123(p2, q);
+      if ( o123_2 != NEGATIVE ) { return false; }
+      
+      Orientation o142_1 = orientation142(p1, q);
+      if ( o142_1 != NEGATIVE ) { return false; }
+
+      Orientation o142_2 = orientation142(p2, q);
+      return o142_2 == POSITIVE;
     }
 
+    Oriented_side os = Side_of_bisector_2()(p1, p2, q.point());
+
     if ( o123_s == POSITIVE ) {
-      return ((o123_1 == POSITIVE && o123_2 == NEGATIVE) &&
-	      (o142_1 == NEGATIVE || o142_2 == POSITIVE));
+      if ( os == ON_POSITIVE_SIDE ) {
+	Orientation o123_1 = orientation123(p1, q);
+	if ( o123_1 != POSITIVE ) { return false; }
+
+	Orientation o142_1 = orientation142(p1, q);
+	return o142_1 == NEGATIVE;
+      }
+
+      Orientation o123_2 = orientation123(p2, q);
+      if ( o123_2 != NEGATIVE ) { return false; }
+
+      Orientation o142_2 = orientation142(p2, q);
+      return o142_2 == POSITIVE;
     }
 
     if ( o123_s == NEGATIVE ) {
-      return ((o123_1 == POSITIVE || o123_2 == NEGATIVE) &&
-	      (o142_1 == NEGATIVE && o142_2 == POSITIVE));
+      if ( os == ON_POSITIVE_SIDE ) {
+	Orientation o142_1 = orientation142(p1, q);
+	if ( o142_1 != NEGATIVE ) { return false; }
+
+	Orientation o123_1 = orientation123(p1, q);
+	return o123_1 == POSITIVE;
+      }
+      Orientation o142_2 = orientation142(p2, q);
+      if ( o142_2 != POSITIVE ) { return false; }
+
+      Orientation o123_2 = orientation123(p2, q);
+      return o123_2 == NEGATIVE;
     }
 
     CGAL_assertion( o123_s == ZERO );
     return false;
+
+#if 0
+    if ( os == ON_POSITIVE_SIDE ) {
+      Orientation o123_1 = orientation(p1, p2, p3, p1, q);
+      Orientation o142_1 = orientation(p1, p4, p2, p1, q);
+      //      std::cerr << "o123_1: " << o123_1 << std::endl;
+      //      std::cerr << "o142_1: " << o142_1 << std::endl;
+
+      if ( b ) {
+	return !(o123_1 == NEGATIVE && o142_1 == POSITIVE);
+      }
+      return o123_1 == POSITIVE && o142_1 == NEGATIVE;
+    }
+
+    Orientation o123_2 = orientation(p1, p2, p3, p2, q);
+    Orientation o142_2 = orientation(p1, p4, p2, p2, q);
+    //    std::cerr << "o123_2: " << o123_2 << std::endl;
+    //    std::cerr << "o142_2: " << o142_2 << std::endl;
+
+    if ( b ) {
+      return !(o123_2 == POSITIVE && o142_2 == NEGATIVE);
+    }
+    return o123_2 == NEGATIVE && o142_2 == POSITIVE;
+#endif
+#else
+    Constructive_orientation_2 orientation123(p1, p2, p3);
+    Constructive_orientation_2 orientation142(p1, p4, p2);
+
+    Orientation o123_s = orientation123(p1, p2);
+    Orientation o142_s = orientation142(p1, p2);
+
+    // first we consider the case where both Voronoi circles are in
+    // conflict; we want to determine if the entire edge is in
+    // conflict
+
+    if ( b ) {
+      if ( o123_s != o142_s ) {
+	Orientation o123_1 = orientation123(p1, q);
+	Orientation o123_2 = orientation123(p2, q);
+	if ( o123_1 == POSITIVE && o123_2 == NEGATIVE ) { return true; }
+
+	Orientation o142_1 = orientation142(p1, q);
+	Orientation o142_2 = orientation142(p2, q);
+	return (o142_1 == NEGATIVE && o142_2 == POSITIVE);
+      }
+
+      if ( o123_s == POSITIVE ) {
+	Orientation o142_1 = orientation142(p1, q);
+	if ( o142_1 == NEGATIVE ) { return true; }
+
+	Orientation o142_2 = orientation142(p2, q);
+	if ( o142_2 == POSITIVE ) { return true; }
+
+	Orientation o123_1 = orientation123(p1, q);
+	if ( o123_1 != POSITIVE ) { return false; }
+
+	Orientation o123_2 = orientation123(p2, q);
+	return o123_2 == NEGATIVE;
+      }
+
+      if ( o123_s == NEGATIVE ) {
+	Orientation o123_1 = orientation123(p1, q);
+	if ( o123_1 == POSITIVE ) { return true; }
+
+	Orientation o123_2 = orientation123(p2, q);
+	if ( o123_2 == NEGATIVE ) { return true; }
+
+	Orientation o142_1 = orientation142(p1, q);
+	if ( o142_1 != NEGATIVE ) { return false; }
+
+	Orientation o142_2 = orientation142(p2, q);
+	return o142_2 == POSITIVE;
+      }
+
+      CGAL_assertion( o123_s == ZERO );
+      return true;
+    }
+
+    // now consider the case where the two Voronoi circles are not in
+    // conflict; we want to determine if part of the interior is in
+    // conflict
+
+    if ( o123_s != o142_s ) {
+      Orientation o123_1 = orientation123(p1, q);
+      if ( o123_1 != POSITIVE ) { return false; }
+
+      Orientation o123_2 = orientation123(p2, q);
+      if ( o123_2 != NEGATIVE ) { return false; }
+      
+      Orientation o142_1 = orientation142(p1, q);
+      if ( o142_1 != NEGATIVE ) { return false; }
+
+      Orientation o142_2 = orientation142(p2, q);
+      return o142_2 == POSITIVE;
+    }
+
+    if ( o123_s == POSITIVE ) {
+      Orientation o123_1 = orientation123(p1, q);
+      if ( o123_1 != POSITIVE ) { return false; }
+
+      Orientation o123_2 = orientation123(p2, q);
+      if ( o123_2 != NEGATIVE ) { return false; }
+
+      Orientation o142_1 = orientation142(p1, q);
+      if ( o142_1 == NEGATIVE ) { return true; }
+
+      Orientation o142_2 = orientation142(p2, q);
+      return o142_2 == POSITIVE;
+    }
+
+    if ( o123_s == NEGATIVE ) {
+      Orientation o142_1 = orientation142(p1, q);
+      if ( o142_1 != NEGATIVE ) { return false; }
+
+      Orientation o142_2 = orientation142(p2, q);
+      if ( o142_2 != POSITIVE ) { return false; }
+
+      Orientation o123_1 = orientation123(p1, q);
+      if ( o123_1 == POSITIVE ) { return true; }
+
+      Orientation o123_2 = orientation123(p2, q);
+      return o123_2 == NEGATIVE;
+    }
+
+    CGAL_assertion( o123_s == ZERO );
+    return false;
+#endif
   }
 };
 
@@ -152,6 +326,7 @@ public:
   typedef typename K::Comparison_result     Comparison_result;
   typedef typename K::Orientation           Orientation;
   typedef typename K::Bounded_side          Bounded_side;
+  typedef typename K::Oriented_side         Oriented_side;
 
   typedef Bounded_side_of_CCW_circle_2<K>   Bounded_side_of_CCW_circle;
   typedef Order_on_finite_bisector_2<K>     Order_on_finite_bisector;
@@ -162,6 +337,9 @@ public:
 
   typedef Sign_of_distance_from_CCW_circle_2<K>
                                          Sign_of_distance_from_CCW_circle;
+
+  typedef Oriented_side_of_bisector_2<K,MTag>    Side_of_bisector_2;
+
 public:
   template<class Method_tag>
   bool
@@ -294,74 +472,53 @@ public:
   operator()(const Site_2& p1, const Site_2& p2,
 	     const Site_2& q, bool b, const Method_tag& tag) const
   {
-#if 1
-#if 1
+#if 0
+    Side_of_bisector_2 side_of_bisector;
+    Orientation o12_sym = Orientation_2()(p1, p2, q);
+
+    Oriented_side os = side_of_bisector(p1, p2, q.point());
+
+    if ( o12_sym == CGAL::POSITIVE ) {
+      if ( os == ON_POSITIVE_SIDE ) {
+	Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
+	return o21_1 == NEGATIVE;
+      }
+
+      Orientation o21_2 = orientation_wrt_bitangent_perp(p2, p1, p2, q, tag);
+      return o21_2 == POSITIVE;
+
+    } else {
+      if ( os == ON_POSITIVE_SIDE ) {
+	Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
+	return o12_1 == POSITIVE;
+      }
+
+      Orientation o12_2 = orientation_wrt_bitangent_perp(p1, p2, p2, q, tag);
+      return o12_2 == NEGATIVE;
+    }
+#else
     Orientation o12_sym = Orientation_2()(p1, p2, q);
 
     if ( o12_sym == CGAL::POSITIVE ) {
       Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
+
+      if ( o21_1 != NEGATIVE ) { return false; }
+
       Orientation o21_2 = orientation_wrt_bitangent_perp(p2, p1, p2, q, tag);
 
-      return o21_1 == NEGATIVE && o21_2 == POSITIVE;
+      return o21_2 == POSITIVE;
     } else {
       Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
+
+      if ( o12_1 != POSITIVE ) { return false; }
+
       Orientation o12_2 = orientation_wrt_bitangent_perp(p1, p2, p2, q, tag);
 
-      return o12_1 == POSITIVE && o12_2 == NEGATIVE;
-    }
-#else
-    Comparison_result cr = CGAL::compare(p1.weight(), p2.weight());
-
-    Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
-    Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
-    Orientation o12_2 = orientation_wrt_bitangent_perp(p1, p2, p2, q, tag);
-    Orientation o21_2 = orientation_wrt_bitangent_perp(p2, p1, p2, q, tag);
-
-    if ( cr == CGAL::LARGER ) {
-      return ((o12_1 == POSITIVE && o21_1 == NEGATIVE) &&
-	      (o12_2 == NEGATIVE || o21_2 == POSITIVE));
-    } else if ( cr == CGAL::SMALLER ) {
-      return ((o12_1 == POSITIVE || o21_1 == NEGATIVE) &&
-	      (o12_2 == NEGATIVE && o21_2 == POSITIVE));
-    } else {
-      return o12_1 == POSITIVE && o21_1 == NEGATIVE;
+      return o12_2 == NEGATIVE;
     }
 #endif
-#else
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
-#endif
-    //
-    Weighted_point_inverter inverter(p1);
-    Inverted_weighted_point u2 = inverter(p2);
-    Inverted_weighted_point v = inverter(q);
-
-    Voronoi_radius vr_12q(u2, v);
-    Voronoi_radius vr_1q2 = vr_12q.get_symmetric();
-
-    Bounded_side bs1 = Bounded_side_of_CCW_circle()(vr_12q, tag );
-    Bounded_side bs2 = Bounded_side_of_CCW_circle()(vr_1q2, tag );
-
-    bool is_bs1 = (bs1 == ON_UNBOUNDED_SIDE);
-    bool is_bs2 = (bs2 == ON_UNBOUNDED_SIDE);
-
-    // both the ccw and cw circles do not exist
-    if ( !is_bs1 && !is_bs2 ) {
-      return b;
-    }
-
-    // only the ccw circle exists
-    if ( is_bs1 && !is_bs2 ) { return false; }
-
-    // only the cw circle exists
-    if ( !is_bs1 && is_bs2 ) { return false; }
-
-    // both circles exist
-    
-    // check whether the shadow region is connected, i.e., wether it is
-    // of the form (a, b) or (-oo, a) U (b, +oo)
-
-    return !b;
 #endif
   }
 };
@@ -430,7 +587,13 @@ public:
     bool t_old = Old_Test()(p1, p2, p3, p4, q, b);
 
     if ( t != t_old ) {
+      Oriented_side_of_bisector_2<K,MTag> side_of_bisector;
+
+      Oriented_side os = side_of_bisector(p1, p2, q.point());
+
+      std::cerr << "b: " << b << std::endl;
       std::cerr << "t: " << t << "; t_old: " << t_old << std::endl;
+      std::cerr << "os: " << os << std::endl;
       std::cerr << "p1: " << p1 << std::endl;
       std::cerr << "p2: " << p2 << std::endl;
       std::cerr << "p3: " << p3 << std::endl;
