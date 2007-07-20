@@ -236,6 +236,27 @@ void test_overflow_exponent()
 
 int main(int argc, char **argv)
 {
+  using CGAL::MP_Float;
+
+  const unsigned        log_limb         = 8 * sizeof(MP_Float::limb);
+  const MP_Float::limb2 base             = 1 << log_limb;
+  const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
+
+  const double trunc_max = double(base)*(base/2-1)/double(base-1);
+  const double trunc_min = double(-base)*(base/2)/double(base-1);
+
+  std::cout.precision(20);
+
+  std::cout << " base = " << base << std::endl;
+  std::cout << " trunc_min = " << trunc_min << std::endl;
+  std::cout << " trunc_max = " << trunc_max << std::endl;
+  std::cout << " limbs_per_double = " << limbs_per_double << std::endl;
+
+  // Bug report by Stefan Uhrig on 18/06/07:
+  double bug = 0.49999237058324297;
+  std::cout << "bug = " << bug << std::endl;
+  CGAL::MP_Float mpf(bug);
+
   std::cout << "sizeof(long) = " << sizeof(long) << std::endl;
   std::cout << "sizeof(int) = " << sizeof(int) << std::endl;
   std::cout << "sizeof(short) = " << sizeof(short) << std::endl;
