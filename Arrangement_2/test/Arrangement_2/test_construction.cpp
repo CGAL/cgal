@@ -128,6 +128,7 @@ bool are_same_results
 
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Base_traits_2;
+typedef Base_traits_2::Point_2                        Base_point_2;
 typedef Base_traits_2::Curve_2                        Base_curve_2;
 typedef Base_traits_2::X_monotone_curve_2             Base_x_monotone_curve_2;
 typedef CGAL::Arr_curve_data_traits_2<Base_traits_2,
@@ -151,16 +152,22 @@ bool  test_one_file(std::ifstream& in_file)
 
   unsigned int num_of_curves;
   in_file >> num_of_curves;
-  curves.resize(num_of_curves);
   unsigned int i;
   for(i=0 ; i < num_of_curves ; i++)
   { 
-    Base_curve_2 base_cv;
-    in_file >> base_cv;
-    curves[i] = Curve_2(base_cv, 1);
-    if(curves[i].is_degenerate())
-      iso_verts.push_back(curves[i].left());
-
+    Base_point_2 source, target;
+    in_file >> source >> target;
+    
+    Kernel ker;
+    if (ker.compare_xy_2_object() (source, target) != CGAL::EQUAL)
+    {
+      Base_curve_2 base_cv(source, target);
+      curves.push_back(Curve_2(base_cv, 1));
+    }
+    else
+    {
+      iso_verts.push_back(source);
+    }
   }
 
   unsigned int n_vertices;
@@ -188,10 +195,19 @@ bool  test_one_file(std::ifstream& in_file)
   Arrangement_2 arr;
 
   // test incremental construction
-  for(i=0; i<num_of_curves; ++i)
+  for(CurveContainer::const_iterator it = curves.begin(); 
+      it != curves.end(); ++it)
   {
-    CGAL::insert_curve(arr, curves[i]);
+    CGAL::insert_curve(arr, *it);
   }
+
+  std::vector<Point_2>::const_iterator poit;
+  for (poit = iso_verts.begin();
+       poit != iso_verts.end(); ++poit)
+  {
+    CGAL::insert_point(arr, *poit);
+  }
+
   if (! are_same_results (arr,
                           n_vertices, n_edges, n_faces,
                           pts_from_file, subcurves_from_file) ||
@@ -207,6 +223,13 @@ bool  test_one_file(std::ifstream& in_file)
   // test aggregate construction
 
   CGAL::insert_curves(arr, curves.begin(), curves.end());
+  // when creating insert_points, this call should be fixed to insert_points.
+  for (poit = iso_verts.begin();
+       poit != iso_verts.end(); ++poit)
+  {
+    CGAL::insert_point(arr, *poit);
+  }
+
   if (! are_same_results (arr,
                           n_vertices, n_edges, n_faces,
                           pts_from_file, subcurves_from_file) ||
@@ -220,9 +243,15 @@ bool  test_one_file(std::ifstream& in_file)
   /////////////////////////////////////////////////////////////
   // insert half of the curves aggregatley and than insert the rest
   // aggregatley (test the addition visitor)
-  CGAL::insert_curves(arr, curves.begin(), curves.begin() + (num_of_curves/2));
-  CGAL::insert_curves(arr, curves.begin() + (num_of_curves/2), curves.end());
-  
+  CGAL::insert_curves(arr, curves.begin(), curves.begin() + (curves.size()/2));
+  CGAL::insert_curves(arr, curves.begin() + (curves.size()/2), curves.end());
+  // when creating insert_points, this call should be fixed to insert_points.
+  for (poit = iso_verts.begin();
+       poit != iso_verts.end(); ++poit)
+  {
+    CGAL::insert_point(arr, *poit);
+  }
+
   if (! are_same_results (arr,
                           n_vertices, n_edges, n_faces,
                           pts_from_file, subcurves_from_file) ||
