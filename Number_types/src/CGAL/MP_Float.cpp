@@ -93,9 +93,10 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     // Put them in v (in reverse order temporarily).
     T orig = d, sum = 0;
     while (true) {
-      v.push_back(my_nearbyint(d));
-      if (d-v.back() >= T(base/2-1)/(base-1))
-        ++v.back();
+      int r = my_nearbyint(d);
+      if (d-r >= T(base/2-1)/(base-1))
+        ++r;
+      v.push_back(r);
       // We used to do simply "d -= v.back();", but when the most significant
       // limb is 1 and the second is -32768, then it can happen that
       // |d - v.back()| > |d|, hence a bit of precision can be lost.

@@ -14,14 +14,17 @@ The following corrections have been made:
 - Fixed bug in degenerate case of Polygon_2::is_convex() for equal points.
 - Fixed bug in Regular_triangulation_2.
 - Fixed bug walk along a line point location for unbounded curves.
-- Fixed bug in aggrigated insertion to Arrangement_2.
+- Fixed bug in aggregated insertion to Arrangement_2.
 - Fixed bug in Arrangment_2 class when inserting an unbounded curve from an existing vertex.
-- Fixed bug when dealing with a degenerate conic arc in Arr_conic_traits_2 of the Arrangment package, meaning a line segments which is part of a degenerate parabola/hyperbola.
+- Fixed bug when dealing with a degenerate conic arc in Arr_conic_traits_2 of
+  the Arrangment package, meaning a line segments which is part of a degenerate
+  parabola/hyperbola.
 - Fixed bug in the Bezier traits-class:
     properly handle line segments.
     properly handle comprison near a vertical tangency.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
 - Fixed bug in FPU rounding mode macros (affected only alpha architecture).
+- Fixed bug in MP_Float constructor from double for some particular values.
 - Intel C++ 9 was wrongly recognized as unsupported by install_cgal.
 
 ----------------------------- Release 3.3 ----------------------------------
