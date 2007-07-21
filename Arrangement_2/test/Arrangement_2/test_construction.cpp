@@ -28,6 +28,20 @@
 
 #include "utils.h"
 
+#include <CGAL/assertions.h>
+
+CGAL::Failure_function prev_error_handler;
+CGAL::Failure_function prev_warning_handler;
+
+void failure_handler(const char * type, const char * expr, const char * file,
+                        int line, const char * msg)
+{
+    std::cout << "type " << type << std::endl;
+    std::cout << "expr " << expr << std::endl;
+    std::cout << "file " << file << std::endl;
+    std::cout << "line " << line << std::endl;
+}
+
 template <class Traits>
 class Point_equal
 {
@@ -362,6 +376,10 @@ bool  test_one_file(std::ifstream& in_file)
 
 int main(int argc, char **argv)
 {
+  CGAL::set_error_behaviour(CGAL::CONTINUE);
+  CGAL::set_warning_behaviour(CGAL::CONTINUE);
+  prev_error_handler = CGAL::set_error_handler(failure_handler);
+  prev_warning_handler = CGAL::set_warning_handler(failure_handler);
   if(argc < 2)
   {
     std::cerr<<"Missing input file\n";
@@ -396,18 +414,57 @@ int main(int argc, char **argv)
       std::cerr<<"Failed to open " <<str<<"\n";
       return (-1);
     }
-    if (! test_one_file(inp))
+    try
+    {
+      if (! test_one_file(inp))
+      {
+        inp.close();
+        std::cout<<str<<": ERROR\n";
+        success = -1;
+      }
+      else
+      {
+        std::cout<<str<<": succeeded\n";
+      }
+    }
+    catch (std::bad_cast e)
     {
       inp.close();
-      std::cout<<str<<": ERROR\n";
+      std::cout<<str<<": ERROR problem with casting\n";
+      std::cout<< e.what() << std::endl;
+      success = -1;			    
+    }
+    catch (std::bad_alloc e)
+    {
+      inp.close();
+      std::cout<<str<<": ERROR problem with memory allocation\n";
+      std::cout<< e.what() << std::endl;
       success = -1;
     }
-    else
+    catch (std::bad_typeid e)
     {
-      std::cout<<str<<": succeeded\n";
+      inp.close();
+      std::cout<<str<<": ERROR problem with typeid\n";
+      std::cout<< e.what() << std::endl;
+      success = -1;
+    }
+    catch (std::runtime_error e)
+    {
+      inp.close();
+      std::cout<<str<<": ERROR runtime error\n";
+      std::cout<< e.what() << std::endl;
+      success = -1;
+    }
+    catch (std::exception e)
+    {
+      inp.close();
+      std::cout<<str<<": ERROR file exists but general exception is thrown\n";
+      std::cout<< e.what() << std::endl;
+      success = -1;
     }
     inp.close();
   }
-  
+  CGAL::set_error_handler(prev_error_handler);
+  CGAL::set_warning_handler(prev_warning_handler);
   return success;
 }
