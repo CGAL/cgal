@@ -612,20 +612,22 @@ public:
       {
         CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
 
-        if (m_base_equal (base_p,
+        if (! cv.get_red_halfedge_handle()->target()->is_at_infinity() &&
+            m_base_equal (base_p,
                           cv.get_red_halfedge_handle()->target()->point()))
         {
           red = CGAL::make_object(cv.get_red_halfedge_handle()->target());
         }
 
-        if (m_base_equal (base_p,
+        if (! cv.get_blue_halfedge_handle()->target()->is_at_infinity() &&
+            m_base_equal (base_p,
                           cv.get_blue_halfedge_handle()->target()->point()))
         {
           blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
         }
       }
 
-      return Point_2 (base_p, red, blue);
+      return (Point_2 (base_p, red, blue));
     }
   };
 
@@ -674,20 +676,22 @@ public:
       {
         CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
 
-        if (m_base_equal (base_p,
+        if (! cv.get_red_halfedge_handle()->source()->is_at_infinity() &&
+            m_base_equal (base_p,
                           cv.get_red_halfedge_handle()->source()->point()))
         {
           red = CGAL::make_object(cv.get_red_halfedge_handle()->source());
         }
           
-        if (m_base_equal (base_p,
+        if (! cv.get_blue_halfedge_handle()->source()->is_at_infinity() &&
+            m_base_equal (base_p,
                           cv.get_blue_halfedge_handle()->source()->point()))
         {
           blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
         }
       }
 
-      return Point_2 (base_p, red, blue);
+      return (Point_2 (base_p, red, blue));
     }
   };
 
