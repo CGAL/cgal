@@ -313,7 +313,7 @@ public:
       // In case of an overlapping curve, make sure the curve endpoint equals
       // the point associated with the vertex. If not, we attach an invalid
       // vertex to the extended point.
-      if (m_base_equal (base_p, vh->point()))
+      if (! vh->is_at_infinity() && m_base_equal (base_p, vh->point()))
         return (Point_2(base_p, vh));
       else
         return (Point_2 (base_p, Vertex_handle()));
@@ -363,7 +363,7 @@ public:
       // In case of an overlapping curve, make sure the curve endpoint equals
       // the point associated with the vertex. If not, we attach an invalid
       // vertex to the extended point.
-      if (m_base_equal (base_p, vh->point()))
+      if (! vh->is_at_infinity() && m_base_equal (base_p, vh->point()))
         return (Point_2(base_p, vh));
       else
         return (Point_2 (base_p, Vertex_handle()));
