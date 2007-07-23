@@ -32,7 +32,7 @@ benchmark_parser$(OBJ_EXT) \
 benchmark_lexer$(OBJ_EXT) \
 Benchmark_visitor$(OBJ_EXT) \
 Option_parser$(OBJ_EXT) \
-Polynomial_visitor$(OBJ_EXT)
+# Polynomial_visitor$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    libCGAL settings
