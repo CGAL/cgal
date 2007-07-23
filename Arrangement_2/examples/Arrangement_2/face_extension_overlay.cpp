@@ -6,19 +6,19 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_extended_dcel.h>
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
-typedef CGAL::Cartesian<Number_type>                     Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>               Traits_2;
-typedef Traits_2::Point_2                                Point_2;
-typedef Traits_2::X_monotone_curve_2                     Segment_2;
-typedef CGAL::Arr_face_extended_dcel<Traits_2, bool>     Dcel;
-typedef CGAL::Arrangement_2<Traits_2, Dcel>              Arrangement_2;
+typedef CGAL::Cartesian<Number_type>                            Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
+typedef Traits_2::Point_2                                       Point_2;
+typedef Traits_2::X_monotone_curve_2                            Segment_2;
+typedef CGAL::Arr_face_extended_dcel<Traits_2, bool>            Dcel;
+typedef CGAL::Arrangement_2<Traits_2, Dcel>                     Arrangement_2;
 typedef CGAL::Arr_face_overlay_traits<Arrangement_2,
                                       Arrangement_2,
                                       Arrangement_2,
-                                      std::logical_and<bool> > Overlay_traits;
+                                      std::logical_and<bool> >  Overlay_traits;
 
 int main ()
 {
@@ -72,20 +72,18 @@ int main ()
   Arrangement_2::Ccb_halfedge_circulator    curr;
 
   std::cout << "The union is: ";
-  for (fit = overlay_arr.faces_begin(); fit != overlay_arr.faces_end(); ++fit)
-  {
+  for (fit = overlay_arr.faces_begin(); fit != overlay_arr.faces_end(); ++fit) {
     if (! fit->data())
       continue;
 
     curr = fit->outer_ccb();
     std::cout << curr->source()->point();
-    do
-    {
+    do {
       std::cout << " --> " << curr->target()->point();
       ++curr;
     } while (curr != fit->outer_ccb());
     std::cout << std::endl;
   }
 
-  return (0);
+  return 0;
 }

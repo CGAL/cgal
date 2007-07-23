@@ -7,7 +7,7 @@
 int main ()
 {
   std::cout << "Sorry, this example needs CORE ..." << std::endl;
-  return (0);
+  return 0;
 }
 #else
 
@@ -23,28 +23,23 @@ typedef Nt_traits::Algebraic                            Algebraic;
 typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef Rat_kernel::Point_2                             Rat_point_2;
-typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel,
-                                        Alg_kernel,
-                                        Nt_traits>      Traits_2;
+typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits_2;
 typedef Traits_2::Curve_2                               Bezier_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 
-int main (int argc, char **argv)
+int main (int argc, char *argv[])
 {
   // Get the name of the input file from the command line, or use the default
   // Bezier.dat file if no command-line parameters are given.
-  const char   *filename = "Bezier.dat";
-
-  if (argc > 1)
-    filename = argv[1];
+  const char   *filename = (argc > 1) ? argv[1] : "Bezier.dat";
 
   // Open the input file.
   std::ifstream   in_file (filename);
 
-  if (! in_file.is_open())
-  {
+  if (! in_file.is_open()) {
     std::cerr << "Failed to open " << filename << std::endl;
-    return (1);
+    return 1;
   }
 
   // Read the curves from the input file.
@@ -54,18 +49,15 @@ int main (int argc, char **argv)
   unsigned int               k;
 
   in_file >> n_curves;
-  for (k = 0; k < n_curves; k++)
-  {
+  for (k = 0; k < n_curves; k++) {
     // Read the current curve (specified by its control points).
     in_file >> B;
     curves.push_back (B);
-
     std::cout << "B = {" << B << "}" << std::endl;
   }
 
   // Construct the arrangement.
   Arrangement_2                     arr;
-
   insert_curves (arr, curves.begin(), curves.end());
 
   // Print the arrangement size.
@@ -74,7 +66,7 @@ int main (int argc, char **argv)
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
-  return (0);
+  return 0;
 }
 
 #endif

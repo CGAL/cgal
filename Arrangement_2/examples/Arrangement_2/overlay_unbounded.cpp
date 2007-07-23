@@ -9,7 +9,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_extended_dcel.h>
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
 // Define a functor for creating a label from a characer and an integer.
@@ -27,15 +27,15 @@ struct Overlay_label
 // workaround for VC++
 struct Kernel : public CGAL::Cartesian<Number_type> {};
 
-typedef CGAL::Arr_linear_traits_2<Kernel>                Traits_2;
-typedef Traits_2::Point_2                                Point_2;
-typedef Traits_2::Segment_2                              Segment_2;
-typedef Traits_2::Ray_2                                  Ray_2;
-typedef Traits_2::Line_2                                 Line_2;
-typedef Traits_2::X_monotone_curve_2                     X_monotone_curves_2;
-typedef CGAL::Arr_face_extended_dcel<Traits_2, char>     DcelA;
-typedef CGAL::Arrangement_2<Traits_2, DcelA>             ArrangementA_2;
-typedef CGAL::Arr_face_extended_dcel<Traits_2, int>      DcelB;
+typedef CGAL::Arr_linear_traits_2<Kernel>                   Traits_2;
+typedef Traits_2::Point_2                                   Point_2;
+typedef Traits_2::Segment_2                                 Segment_2;
+typedef Traits_2::Ray_2                                     Ray_2;
+typedef Traits_2::Line_2                                    Line_2;
+typedef Traits_2::X_monotone_curve_2                        X_monotone_curves_2;
+typedef CGAL::Arr_face_extended_dcel<Traits_2, char>        DcelA;
+typedef CGAL::Arrangement_2<Traits_2, DcelA>                ArrangementA_2;
+typedef CGAL::Arr_face_extended_dcel<Traits_2, int>         DcelB;
 typedef CGAL::Arrangement_2<Traits_2, DcelB>                ArrangementB_2;
 typedef CGAL::Arr_face_extended_dcel<Traits_2, std::string> DcelRes;
 typedef CGAL::Arrangement_2<Traits_2, DcelRes>              ArrangementRes_2;
@@ -61,8 +61,7 @@ int main ()
   char                                               clabel = 'A';
 
   curr = first = arr1.vertices_begin()->incident_halfedges();
-  do
-  {
+  do {
     curr->face()->set_data (clabel);
     ++clabel;
     ++curr;
@@ -104,5 +103,5 @@ int main ()
               << ")." << std::endl;
   }
 
-  return (0);
+  return 0;
 }

@@ -20,22 +20,18 @@ typedef Traits_2::Point_2                                  Point_2;
 typedef Traits_2::X_monotone_curve_2                       Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                      Arrangement_2;
 
-int main (int argc, char **argv)
+int main (int argc, char *argv[])
 {
   // Get the name of the input file from the command line, or use the default
   // fan_grids.dat file if no command-line parameters are given.
-  const char   *filename = "fan_grids.dat";
-
-  if (argc > 1)
-    filename = argv[1];
+  const char   *filename = (argc > 1) ? argv[1] : "fan_grids.dat";
 
   // Open the input file.
   std::ifstream     in_file (filename);
 
-  if (! in_file.is_open())
-  {
+  if (! in_file.is_open()) {
     std::cerr << "Failed to open " << filename << " ..." << std::endl;
-    return (1);
+    return 1;
   }
 
   // Read the segments from the file.
@@ -51,14 +47,11 @@ int main (int argc, char **argv)
   int                   i;
 
   in_file >> n;
-  for (i = 0; i < n; i++)
-  {
+  for (i = 0; i < n; i++) {
     in_file >> sx >> sy >> tx >> ty;
 
-    segments.push_back (Segment_2 (Point_2 (Number_type (sx),
-                                            Number_type (sy)),
-                                   Point_2 (Number_type (tx),
-                                            Number_type (ty))));
+    segments.push_back (Segment_2 (Point_2 (Number_type(sx), Number_type(sy)),
+                                   Point_2 (Number_type(tx), Number_type(ty))));
   }
   in_file.close();
 

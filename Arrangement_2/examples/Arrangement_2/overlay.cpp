@@ -5,7 +5,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
 typedef CGAL::Cartesian<Number_type>                     Kernel;
@@ -55,5 +55,5 @@ int main ()
             << ",  E = " << overlay_arr.number_of_edges()
             << ",  F = " << overlay_arr.number_of_faces() << std::endl;
 
-  return (0);
+  return 0;
 }

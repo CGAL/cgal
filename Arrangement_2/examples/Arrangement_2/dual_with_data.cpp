@@ -12,8 +12,8 @@ typedef CGAL::Cartesian<Number_type>                     Kernel;
 typedef CGAL::Arr_linear_traits_2<Kernel>                Linear_traits_2;
 typedef Linear_traits_2::Point_2                         Point_2;
 typedef Linear_traits_2::Line_2                          Line_2;
-typedef CGAL::Arr_curve_data_traits_2<Linear_traits_2,
-                                      unsigned int>      Traits_2;
+typedef CGAL::Arr_curve_data_traits_2<Linear_traits_2, unsigned int>
+                                                         Traits_2;
 typedef Traits_2::X_monotone_curve_2                     X_monotone_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                    Arrangement_2;
 
@@ -21,18 +21,14 @@ int main (int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
   // points.dat file if no command-line parameters are given.
-  const char   *filename = "coll_points.dat";
-
-  if (argc > 1)
-    filename = argv[1];
+  const char   *filename = (argc > 1) ? argv[1] : "coll_points.dat";
 
   // Open the input file.
   std::ifstream     in_file (filename);
 
-  if (! in_file.is_open())
-  {
+  if (! in_file.is_open()) {
     std::cerr << "Failed to open " << filename << " ..." << std::endl;
-    return (1);
+    return 1;
   }
 
   // Read the points from the file, and consturct their dual lines.
@@ -45,8 +41,7 @@ int main (int argc, char **argv)
 
   in_file >> n;
   points.resize (n);
-  for (k = 0; k < n; k++)
-  {
+  for (k = 0; k < n; k++) {
     in_file >> px >> py;
     points[k] = Point_2 (px, py);
 
@@ -69,15 +64,12 @@ int main (int argc, char **argv)
   Arrangement_2::Halfedge_around_vertex_const_circulator  circ;
   unsigned int                                            d;
 
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-  {
-    if (vit->degree() > 4)
-    {
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    if (vit->degree() > 4) {
       // There should be vit->degree()/2 lines intersecting at the current
       // vertex. We print their primal points and their indices.
       circ = vit->incident_halfedges();
-      for (d = 0; d < vit->degree() / 2; d++)
-      {
+      for (d = 0; d < vit->degree() / 2; d++) {
         k = circ->curve().data();     // The index of the primal point.
         std::cout << "Point no. " << k+1 << ": (" << points[k] << "), ";
         ++circ;
@@ -86,5 +78,5 @@ int main (int argc, char **argv)
     }
   }
 
-  return (0);
+  return 0;
 }
