@@ -268,7 +268,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 	    }
 	}
     }
-  norm_coeff=1;
+  norm_coeff=0;
   for (coor_it = coordinate.begin(); 
        coor_it != coordinate.end();
        ++coor_it)
