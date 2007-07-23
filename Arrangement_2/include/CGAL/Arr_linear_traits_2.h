@@ -912,7 +912,7 @@ public:
         // relative position at x = 0, which is the same as their position
         // at infinity.
         typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
-        return (kernel.compare_x_at_y_2_object() (p,
+        return (kernel.compare_y_at_x_2_object() (p,
                                                   cv1.supp_line(),
                                                   cv2.supp_line()));
       }
