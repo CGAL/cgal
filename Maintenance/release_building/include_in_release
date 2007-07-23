@@ -11,6 +11,7 @@ BGL
 Cartesian_kernel
 CGALimageIO
 Circular_kernel_2
+Circular_kernel_3
 Circulator
 Conic_2
 Convex_hull_2
@@ -54,6 +55,7 @@ Min_quadrilateral_2
 Min_sphere_d
 Min_sphere_of_spheres_d
 Modifier
+Modular_arithmetic
 Nef_2
 Nef_3
 Nef_S2
@@ -67,6 +69,7 @@ Point_set_2
 Polygon
 Polyhedron
 Polyhedron_IO
+Polynomial
 Polytope_distance_d
 Principal_component_analysis
 QP_solver
