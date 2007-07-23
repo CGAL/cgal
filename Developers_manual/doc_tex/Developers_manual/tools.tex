@@ -366,6 +366,14 @@ it should be {\tt ''-p -v -n''} (the default), on cygwin it should be {\tt ''-v 
 {\tt nice} command, which is used to prevent the test-suite from keeping
 all CPU time for itself.  The default value is {\tt ''-19''}.
 
+{\tt ULIMIT\_OPTIONS} specifies the command line options to pass to the
+{\tt ulimit} command, which is used to prevent the test-suite from using
+various system ressources.  It can be used to help killing looping programs.
+For example, specifying {\tt ''-c 0 -t 10800 -v 2000000''} will prevent
+the creation of dumped core files, will stop processes after 3 hours,
+and will kill them if they reach 2GB of memory.
+The default value is empty (no limit).
+
 \index{.autocgalrc configuration file@{\tt .autocgalrc} configuration file|)}
 \index{autotest_cgal script@{\tt autotest\_cgal} script|)}
 

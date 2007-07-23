@@ -244,6 +244,7 @@ export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
 rm -rf ${LOCAL_TEST_DIR};
 cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
 cd ${LOCAL_TEST_DIR};
+[ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS};
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults;
