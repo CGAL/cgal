@@ -1092,7 +1092,7 @@ set_compiler_flags()
                       # At some point before g++ 4.2.0 we have been hit by this bug:
                       # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=31268
                       # The workaround does not seem to be needed anymore.
-	              # CGAL_LIBS_OPTFLAGS="${CGAL_LIBS_OPTFLAGS} -fno-strict-aliasing"
+	              CGAL_LIBS_OPTFLAGS="${CGAL_LIBS_OPTFLAGS} -fno-strict-aliasing"
                       ;;
 		*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -frounding-math";;
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
