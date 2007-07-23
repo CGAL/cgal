@@ -1,4 +1,4 @@
-// Example program for the linear_least_square_fitting function
+// Example program for the linear_least_square_fitting function on a set of circles in 2D
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
@@ -19,9 +19,12 @@ int main()
   circles.push_back(Circle_2(Point_2(10.0,0.0),49));
 
   Line_2 line;
-  FT i = linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_1_tag());
+  Point_2 c;
 
-  std::cout<<"accuracy: "<<i<<std::endl;
-  std::cout<<line<<std::endl;
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,c,CGAL::PCA_dimension_1_tag());
+
+  //Fit Disks
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,c,CGAL::PCA_dimension_2_tag());
+
   return 0;
 }

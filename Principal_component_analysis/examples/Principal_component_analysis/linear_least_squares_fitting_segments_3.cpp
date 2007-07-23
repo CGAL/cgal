@@ -1,4 +1,4 @@
-// Example program for the linear_least_square_fitting function
+// Example program for the linear_least_square_fitting function on set of segments in 3D
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -16,22 +16,14 @@ int main()
 {
   std::list<Segment_3> segments;
   segments.push_back(Segment_3(Point_3(1.0,1.0,1.0),Point_3(2.0,2.0,2.0)));
-  //  segments.push_back(Segment_3(Point_3(0.0,1.0),Point_3(1.0,0.0)));
-  //  segments.push_back(Segment_3(Point_3(0.0,0.0),Point_3(1.0,0.0)));
+  segments.push_back(Segment_3(Point_3(3.0,3.0,3.0),Point_3(8.0,8.0,8.0)));
 
   Line_3 line;
   Point_3 c;
-  FT i = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,CGAL::PCA_dimension_1_tag());
-
-  std::cout<<"accuracy: "<<i<<std::endl;
-  std::cout<<line<<std::endl;
-  std::cout<<"centroid: "<<c<<std::endl;
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,CGAL::PCA_dimension_1_tag());
 
   Plane_3 plane;
-  i = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,CGAL::PCA_dimension_1_tag());
 
-  std::cout<<"accuracy: "<<i<<std::endl;
-  std::cout<<plane<<std::endl;
-  std::cout<<"centroid: "<<c<<std::endl;
   return 0;
 }

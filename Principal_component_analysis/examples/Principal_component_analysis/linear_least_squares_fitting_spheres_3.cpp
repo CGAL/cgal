@@ -19,15 +19,17 @@ int main()
   spheres.push_back(Sphere_3(Point_3(0.0,10.0,0.0),25));
 
   Line_3 line;
-  FT i = linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::PCA_dimension_3_tag());
-
-  std::cout<<"Line's accuracy: "<<i<<std::endl;
-  std::cout<<"Line: "<<line<<std::endl;
-
   Plane_3 plane;
-  FT j = linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_3_tag());
 
-  std::cout<<"Plane's accuracy: "<<j<<std::endl;
-  std::cout<<"Plane: "<<plane<<std::endl;
+  //fit solid spheres
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::PCA_dimension_3_tag());
+
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_3_tag());
+
+  // Fit hollow spheres
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::PCA_dimension_2_tag());
+
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_2_tag());
+
   return 0;
 }
