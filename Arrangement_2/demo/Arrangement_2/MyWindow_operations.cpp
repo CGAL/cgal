@@ -388,7 +388,7 @@ void MyWindow::updateTraitsType( QAction *action )
   //initialize the new tab widget
   *widget << CGAL::LineWidth(2);
   widget->setBackgroundColor(def_bg_color);
-   widget->setMouseTracking(TRUE);
+  widget->setMouseTracking(TRUE);
   connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
           this, SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);

@@ -17,7 +17,9 @@
 //
 // Author(s)     : Michal Meyerovitch <gorgymic@post.tau.ac.il>
 //                 Ron Wein           <wein@post.tau.ac.il>
+//                 Efi Fogel          <efif@post.tau.ac.il>
 //                 (based on old version by Ester Ezra)
+
 #ifndef CGAL_IO_ARRANGEMENT_2_WRITER_H
 #define CGAL_IO_ARRANGEMENT_2_WRITER_H
 
