@@ -28,7 +28,7 @@
 
 #ifdef CGAL_USE_CORE
 
-#include <CGAL/Algebraic_kernel_d/core_interval_support.h>
+#include <CGAL/Number_types/core_interval_support.h>
 
 #endif
 

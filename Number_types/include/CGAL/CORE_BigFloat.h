@@ -26,6 +26,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// forward declarations of interval support
+namespace CGALi {
+CORE::BigFloat 
+inline 
+round(const CORE::BigFloat& x, long rel_prec );
+
+CORE::BigFloat 
+inline
+upper(CORE::BigFloat x);
+
+CORE::BigFloat 
+inline 
+lower(CORE::BigFloat x);
+
+} // namespace CGALi
+
 //
 // Algebraic structure traits
 //
@@ -40,7 +56,32 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
-          return CORE::sqrt( x );
+            // What I want is a sqrt computed with ::CORE::defRelPrec bits.
+            // And not ::CORE::defBFsqrtAbsPrec as CORE does. 
+            
+            CGAL_precondition(::CORE::defRelPrec.toLong() > 0);
+            CGAL_precondition(x > 0);
+            
+            Type a = CGALi::round(x, ::CORE::defRelPrec.toLong()*2);
+            CGAL_postcondition(a > 0); 
+
+            Type tmp1 = 
+                CORE::BigFloat(a.m(),0,0).sqrt(::CORE::defRelPrec.toLong());
+            Type err  =  
+                Type(0,long(std::sqrt(double(a.err()))),0) 
+                * CORE::BigFloat::exp2(a.exp()*7);
+            Type result = tmp1*CORE::BigFloat::exp2(a.exp()*7) + err;
+           
+            CGAL_postcondition(result >= 0);
+//#ifndef NDEBUG
+//            Type tmp = result * result; 
+//            typedef Bigfloat_interval_traits<CORE::BigFloat> bfi_traits;
+            //bfi_traits::Upper upper;
+            //bfi_traits::Lower lower;
+//            CGAL_postcondition(NiX::lower(tmp) <= NiX::lower(x));
+//            CGAL_postcondition(NiX::upper(tmp) >= NiX::upper(x));
+//#endif
+            return result;
         }
     };
 
@@ -73,7 +114,32 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
-            return CORE::abs( x );
+            Type result; 
+          
+            if(x.isZeroIn()){
+                CORE::BigInt m; 
+                if(x.m() < 0 ){
+                    m = -(x.m()-x.err());
+                }else{
+                    m =  x.m()+x.err();
+                }
+                if(m % 2 == 1) m += 1;
+                
+                Type upper(m,0,x.exp());
+                result = CORE::centerize(CORE::BigFloat(0),upper);
+                
+                CGAL_postcondition(result.m()-result.err() <= 0); 
+                if(result.m()-result.err() != 0){
+                    result = this->operator()(result);
+                }
+                CGAL_postcondition(result.m()-result.err() == 0); 
+            }else{
+                result = CORE::abs(x);
+            }
+            CGAL_postcondition(result.m()-result.err() >= 0); 
+            CGAL_postcondition(Type(result.m()+result.err(),0,result.exp()) 
+                         >= Type(x.m()+x.err(),0,x.exp()));       
+            return result;
         }
     };
 
@@ -81,7 +147,8 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
       : public Unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
-            return (::CGAL::Sign) CORE::sign( x );
+            ::CGAL::Sign result =  sign( x.sign());
+            return result; 
         }
     };
 
@@ -91,7 +158,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
       public:
         Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
-          return (Comparison_result) CORE::cmp( x, y );
+          return (Comparison_result) sign( (x-y).sign());
         }
     };
 
@@ -110,22 +177,28 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     public:
         std::pair<double, double> operator()( const Type& x ) const {
                         
-            CORE::Expr lower_expr = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
-            CORE::Expr upper_expr = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
-
-            std::pair<double, double> lower,upper;
-            lower_expr.doubleInterval(lower.first, lower.second);
-            upper_expr.doubleInterval(upper.first, upper.second);
+            double lb,ub;
+           
+            Type x_lower = CGALi::lower(CGALi::round(CGALi::lower(x),52));
+            Type x_upper = CGALi::upper(CGALi::round(CGALi::upper(x),52));
             
-            CGAL_postcondition(lower.first  <= upper.first);
-            CGAL_postcondition(lower.second <= upper.second);
-
-            return std::pair<double, double>(lower.first,upper.second);
+            // since matissa has 52 bits only, conversion to double is exact 
+            lb = x_lower.doubleValue();
+            CGAL_postcondition(lb == x_lower);
+            ub = x_upper.doubleValue();
+            CGAL_postcondition(ub == x_upper);             
+            
+            std::pair<double, double> result(lb,ub);
+            CGAL_postcondition( result.first <=  CORE::Expr(CGALi::lower(x)));
+            CGAL_postcondition( result.second >=  CORE::Expr(CGALi::upper(x)));
+            return result;      
         }
     };
 };
 
 CGAL_END_NAMESPACE
+
+#include <CGAL/Number_types/core_interval_support.h>
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>

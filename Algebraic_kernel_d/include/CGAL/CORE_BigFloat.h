@@ -180,6 +180,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 
-#include <CGAL/Algebraic_kernel_d/core_interval_support.h>
+#include <CGAL/Number_types/core_interval_support.h>
 
 #endif // CGAL_CORE_BIGFLOAT_H
