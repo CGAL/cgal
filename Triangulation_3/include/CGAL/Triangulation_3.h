@@ -52,10 +52,6 @@ template < class GT, class Tds > class Triangulation_3;
 template < class GT, class Tds > std::istream& operator>> 
 (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
-template < class GT, class Tds >
-bool operator==(const Triangulation_3<GT, Tds> &t1,
-	        const Triangulation_3<GT, Tds> &t2);
- 
 template < class GT, 
            class Tds = Triangulation_data_structure_3 <
                                    Triangulation_vertex_base_3<GT>,
@@ -65,9 +61,6 @@ class Triangulation_3
 {
   friend std::istream& operator>> <>
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
-
-  friend bool operator== <>
-  (const Triangulation_3<GT,Tds> &t1, const Triangulation_3<GT,Tds> &t2);
 
   typedef Triangulation_3<GT, Tds>             Self;
 public:
@@ -2844,14 +2837,16 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 namespace CGALi {
 
 // Internal function used by operator==.
-template <class Tr>
+template < class GT, class Tds1, class Tds2 >
 bool
-test_next(const Tr &t1, const Tr &t2,
-	  typename Tr::Cell_handle c1, typename Tr::Cell_handle c2,
-	  std::map<typename Tr::Cell_handle,
-                   typename Tr::Cell_handle> &Cmap,
-	  std::map<typename Tr::Vertex_handle,
-                   typename Tr::Vertex_handle> &Vmap)
+test_next(const Triangulation_3<GT, Tds1> &t1,
+          const Triangulation_3<GT, Tds2> &t2,
+	  typename Triangulation_3<GT, Tds1>::Cell_handle c1,
+	  typename Triangulation_3<GT, Tds2>::Cell_handle c2,
+	  std::map<typename Triangulation_3<GT, Tds1>::Cell_handle,
+                   typename Triangulation_3<GT, Tds2>::Cell_handle> &Cmap,
+	  std::map<typename Triangulation_3<GT, Tds1>::Vertex_handle,
+                   typename Triangulation_3<GT, Tds2>::Vertex_handle> &Vmap)
 {
     // This function tests and registers the 4 neighbors of c1/c2,
     // and recursively calls itself over them.
@@ -2866,18 +2861,22 @@ test_next(const Tr &t1, const Tr &t2,
     CGAL_triangulation_precondition(t1.dimension() == 2 ||
                                     Vmap.find(c1->vertex(3)) != Vmap.end());
 
-    typedef typename Tr::Vertex_handle  Vertex_handle;
-    typedef typename Tr::Cell_handle    Cell_handle;
-    typedef typename std::map<Cell_handle, Cell_handle>::const_iterator  Cit;
-    typedef typename std::map<Vertex_handle,
-                              Vertex_handle>::const_iterator Vit;
+    typedef Triangulation_3<GT, Tds1> Tr1;
+    typedef Triangulation_3<GT, Tds2> Tr2;
+    typedef typename Tr1::Vertex_handle  Vertex_handle1;
+    typedef typename Tr1::Cell_handle    Cell_handle1;
+    typedef typename Tr2::Vertex_handle  Vertex_handle2;
+    typedef typename Tr2::Cell_handle    Cell_handle2;
+    typedef typename std::map<Cell_handle1, Cell_handle2>::const_iterator  Cit;
+    typedef typename std::map<Vertex_handle1,
+                              Vertex_handle2>::const_iterator Vit;
 
     for (int i=0; i <= t1.dimension(); ++i) {
-	Cell_handle n1 = c1->neighbor(i);
+	Cell_handle1 n1 = c1->neighbor(i);
 	Cit cit = Cmap.find(n1);
-	Vertex_handle v1 = c1->vertex(i);
-	Vertex_handle v2 = Vmap[v1];
-	Cell_handle n2 = c2->neighbor(c2->index(v2));
+	Vertex_handle1 v1 = c1->vertex(i);
+	Vertex_handle2 v2 = Vmap[v1];
+	Cell_handle2 n2 = c2->neighbor(c2->index(v2));
 	if (cit != Cmap.end()) {
             // n1 was already registered.
 	    if (cit->second != n2)
@@ -2887,8 +2886,8 @@ test_next(const Tr &t1, const Tr &t2,
         // n1 has not yet been registered.
         // We check that the new vertices match geometrically.
         // And we register them.
-        Vertex_handle vn1 = n1->vertex(n1->index(c1));
-        Vertex_handle vn2 = n2->vertex(n2->index(c2));
+        Vertex_handle1 vn1 = n1->vertex(n1->index(c1));
+        Vertex_handle2 vn2 = n2->vertex(n2->index(c2));
         Vit vit = Vmap.find(vn1);
         if (vit != Vmap.end()) {
             // vn1 already registered
@@ -2920,14 +2919,23 @@ test_next(const Tr &t1, const Tr &t2,
 } // namespace CGALi
 
 
-template < class GT, class Tds >
+template < class GT, class Tds1, class Tds2 >
 bool
-operator==(const Triangulation_3<GT, Tds> &t1,
-	   const Triangulation_3<GT, Tds> &t2)
+operator==(const Triangulation_3<GT, Tds1> &t1,
+	   const Triangulation_3<GT, Tds2> &t2)
 {
-    typedef typename Triangulation_3<GT, Tds>::Vertex_handle Vertex_handle;
-    typedef typename Triangulation_3<GT, Tds>::Cell_handle   Cell_handle;
-    typedef typename Triangulation_3<GT, Tds>::Point         Point;
+    typedef typename Triangulation_3<GT, Tds1>::Vertex_handle Vertex_handle1;
+    typedef typename Triangulation_3<GT, Tds1>::Cell_handle   Cell_handle1;
+    typedef typename Triangulation_3<GT, Tds2>::Vertex_handle Vertex_handle2;
+    typedef typename Triangulation_3<GT, Tds2>::Cell_handle   Cell_handle2;
+
+    typedef typename Triangulation_3<GT, Tds1>::Point                       Point;
+    typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Equal_3        Equal_3;
+    typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Compare_xyz_3  Compare_xyz_3;
+
+    Equal_3 equal = t1.geom_traits().equal_3_object();
+    Compare_xyz_3 cmp1 = t1.geom_traits().compare_xyz_3_object();
+    Compare_xyz_3 cmp2 = t2.geom_traits().compare_xyz_3_object();
 
     // Some quick checks.
     if (t1.dimension() != t2.dimension()
@@ -2949,67 +2957,67 @@ operator==(const Triangulation_3<GT, Tds> &t1,
         std::vector<Point> V2 CGAL_make_vector(t2.points_begin(), t2.points_end());
         std::sort(V1.begin(), V1.end(),
                 compose(Is_negative<int>(),// implicit conversion of CGAL::Sign 
-                        t1.geom_traits().compare_xyz_3_object()));
+                        cmp1));
         std::sort(V2.begin(), V2.end(),
                 compose(Is_negative<int>(),// implicit conversion of CGAL::Sign 
-                        t2.geom_traits().compare_xyz_3_object()));
+                        cmp2));
         return V1 == V2;
     }
 
     // We will store the mapping between the 2 triangulations vertices and
     // cells in 2 maps.
-    std::map<Vertex_handle, Vertex_handle> Vmap;
-    std::map<Cell_handle, Cell_handle> Cmap;
+    std::map<Vertex_handle1, Vertex_handle2> Vmap;
+    std::map<Cell_handle1, Cell_handle2> Cmap;
 
     // Handle the infinite vertex.
-    Vertex_handle v1 = t1.infinite_vertex();
-    Vertex_handle iv2 = t2.infinite_vertex();
+    Vertex_handle1 v1 = t1.infinite_vertex();
+    Vertex_handle2 iv2 = t2.infinite_vertex();
     Vmap.insert(std::make_pair(v1, iv2));
 
     // We pick one infinite cell of t1, and try to match it against the
     // infinite cells of t2.
-    Cell_handle c = v1->cell();
-    Vertex_handle v2 = c->vertex((c->index(v1)+1)%(dim+1));
-    Vertex_handle v3 = c->vertex((c->index(v1)+2)%(dim+1));
-    Vertex_handle v4 = c->vertex((c->index(v1)+3)%(dim+1));
+    Cell_handle1 c = v1->cell();
+    Vertex_handle1 v2 = c->vertex((c->index(v1)+1)%(dim+1));
+    Vertex_handle1 v3 = c->vertex((c->index(v1)+2)%(dim+1));
+    Vertex_handle1 v4 = c->vertex((c->index(v1)+3)%(dim+1));
     const Point &p2 = v2->point();
     const Point &p3 = v3->point();
     const Point &p4 = v4->point();
 
-    std::vector<Cell_handle> ics;
+    std::vector<Cell_handle2> ics;
     t2.incident_cells(iv2, std::back_inserter(ics));
-    for (typename std::vector<Cell_handle>::const_iterator cit = ics.begin();
+    for (typename std::vector<Cell_handle2>::const_iterator cit = ics.begin();
 	    cit != ics.end(); ++cit) {
 	int inf = (*cit)->index(iv2);
 
-	if (t1.equal(p2, (*cit)->vertex((inf+1)%(dim+1))->point()))
+	if (equal(p2, (*cit)->vertex((inf+1)%(dim+1))->point()))
 	    Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+1)%(dim+1))));
-	else if (t1.equal(p2, (*cit)->vertex((inf+2)%(dim+1))->point()))
+	else if (equal(p2, (*cit)->vertex((inf+2)%(dim+1))->point()))
 	    Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+2)%(dim+1))));
 	else if (dim == 3 &&
-                 t1.equal(p2, (*cit)->vertex((inf+3)%(dim+1))->point()))
+                 equal(p2, (*cit)->vertex((inf+3)%(dim+1))->point()))
 	    Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+3)%(dim+1))));
 	else
 	    continue; // None matched v2.
 
-	if (t1.equal(p3, (*cit)->vertex((inf+1)%(dim+1))->point()))
+	if (equal(p3, (*cit)->vertex((inf+1)%(dim+1))->point()))
 	    Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+1)%(dim+1))));
-	else if (t1.equal(p3, (*cit)->vertex((inf+2)%(dim+1))->point()))
+	else if (equal(p3, (*cit)->vertex((inf+2)%(dim+1))->point()))
 	    Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+2)%(dim+1))));
 	else if (dim == 3 &&
-                 t1.equal(p3, (*cit)->vertex((inf+3)%(dim+1))->point()))
+                 equal(p3, (*cit)->vertex((inf+3)%(dim+1))->point()))
 	    Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+3)%(dim+1))));
 	else
 	    continue; // None matched v3.
 
         if (dim == 3) {
-	    if (t1.equal(p4, (*cit)->vertex((inf+1)%(dim+1))->point()))
+	    if (equal(p4, (*cit)->vertex((inf+1)%(dim+1))->point()))
 	        Vmap.insert(std::make_pair(v4,
                                            (*cit)->vertex((inf+1)%(dim+1))));
-	    else if (t1.equal(p4, (*cit)->vertex((inf+2)%(dim+1))->point()))
+	    else if (equal(p4, (*cit)->vertex((inf+2)%(dim+1))->point()))
 	        Vmap.insert(std::make_pair(v4,
                                            (*cit)->vertex((inf+2)%(dim+1))));
-	    else if (t1.equal(p4, (*cit)->vertex((inf+3)%(dim+1))->point()))
+	    else if (equal(p4, (*cit)->vertex((inf+3)%(dim+1))->point()))
 	        Vmap.insert(std::make_pair(v4,
                                            (*cit)->vertex((inf+3)%(dim+1))));
 	    else
@@ -3029,11 +3037,11 @@ operator==(const Triangulation_3<GT, Tds> &t1,
 	             Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 
-template < class GT, class Tds >
+template < class GT, class Tds1, class Tds2 >
 inline
 bool
-operator!=(const Triangulation_3<GT, Tds> &t1,
-	   const Triangulation_3<GT, Tds> &t2)
+operator!=(const Triangulation_3<GT, Tds1> &t1,
+	   const Triangulation_3<GT, Tds2> &t2)
 {
   return ! (t1 == t2);
 }

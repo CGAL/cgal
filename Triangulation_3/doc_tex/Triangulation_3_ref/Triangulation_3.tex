@@ -175,9 +175,9 @@ copy of cells and vertices, thus this method runs in constant time.}
 \ccMethod{void clear();}
 {Deletes all finite vertices and all cells of \ccVar.}
 
-\ccFunction{template < class GT, class Tds >
-            bool operator==(const Triangulation_3<GT, Tds> & t1,
-                            const Triangulation_3<GT, Tds> & t2);}
+\ccFunction{template < class GT, class Tds1, class Tds2 >
+            bool operator==(const Triangulation_3<GT, Tds1> & t1,
+                            const Triangulation_3<GT, Tds2> & t2);}
 {Equality operator.  Returns true iff there exist a bijection between the
 vertices of \ccc{t1} and those of \ccc{t2} and a bijection between the cells of
 \ccc{t1} and those of \ccc{t2}, which preserve the geometry of the
@@ -185,9 +185,9 @@ triangulation, that is, the points of each corresponding pair of vertices are
 equal, and the tetrahedra corresponding to each pair of cells are equal (up to
 a permutation of their vertices).}
 \ccGlue
-\ccFunction{template < class GT, class Tds >
-            bool operator!=(const Triangulation_3<GT, Tds> & t1,
-                            const Triangulation_3<GT, Tds> & t2);}
+\ccFunction{template < class GT, class Tds1, class Tds2 >
+            bool operator!=(const Triangulation_3<GT, Tds1> & t1,
+                            const Triangulation_3<GT, Tds2> & t2);}
 {The opposite of \ccc{operator==}.}
 
 \ccAccessFunctions
