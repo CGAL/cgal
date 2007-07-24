@@ -232,9 +232,8 @@ The directory \cgaldir\ contains a Bourne shell script called
 \texttt{install\_cgal}\TTindex{install\_cgal}
 \index{scripts!\texttt{install\_cgal}}. The script can be run in two
 modes: a menu-driven interactive mode and a non-interactive mode.
-Normally you should use the interactive mode, but in case you run into
-problems with it or do not like it for some reason, you can still use
-the non-interactive mode.
+The non-interactive mode is prefered, but you may try the interactive
+mode which is meant to guide the user a bit more.
 
 We first describe a sample installation in
 Section~\ref{sec:sample-inst}. This section provides an overview on
@@ -738,6 +737,8 @@ supported by \cgal\ can be found in sections
 To run the install script in the non-interactive mode, you have to
 specify the compiler to use by setting the environment variable
 \texttt{CXX} to the C++ compiler executable.\index{compilers!choosing}
+Make sure you do pass a \CC\ compiler, not a C compiler, otherwise
+you will probably get some link errors.
 You can either specify a full path, e.g.
 \texttt{CXX=/usr/local/bin/g++}, or just the basename, e.g.
 \texttt{CXX=g++}, which means the script searches your \texttt{PATH}
