@@ -630,14 +630,17 @@ public:
         CGAL_assertion_code(bool b = )
         k.assign_3_object()(curve, inter_obj);
         CGAL_assertion(b);
-        
-        const X_monotone_curve_2& projected_cv = parent->project(curve);
-        if (projected_cv.is_degenerate())
-          *o++ = make_object(projected_cv.left());
+
+        Segment_2  proj_seg = parent->project(curve);
+        if (! k.is_degenerate_2_object() (proj_seg))
+        {
+          Intersection_curve inter_cv (proj_seg, 1);
+          *o++ = make_object(inter_cv);
+        }
         else
         {
-          Intersection_curve inter_cv(projected_cv, 1);
-          *o++ = make_object(inter_cv);
+          const Point_2&  p = k.construct_point_2_object() (proj_seg, 0);
+          *o++ = make_object(p);
         }
       }
 
@@ -958,16 +961,19 @@ public:
     return Is_defined_over();
   }
 
-  X_monotone_curve_2 project(const Segment_3& segment_3) const
+  Segment_2 project (const Segment_3& seg) const
   {
-    Kernel k;
-    Construct_vertex_3 vertex_on = k.construct_vertex_3_object();
+    typedef typename Kernel::Construct_vertex_3 Construct_vertex_3;
+    
+    Kernel              k;
+    Construct_vertex_3  vertex_on = k.construct_vertex_3_object();
 
-    const Point_3&  end1 = vertex_on(segment_3, 0),
-                    end2 = vertex_on(segment_3, 1);
-    Point_2 projected_end1(end1.x(), end1.y()),
-            projected_end2(end2.x(), end2.y());
-    return X_monotone_curve_2(projected_end1, projected_end2);
+    const Point_3      q0 = (vertex_on (seg, 0));
+    const Point_3      q1 = (vertex_on (seg, 1));
+    const Point_2      p0 (q0.x(), q0.y());
+    const Point_2      p1 (q1.x(), q1.y());
+    
+    return (k.construct_segment_2_object() (p0, p1));
   }
 
   Point_2 project(const Point_3& obj) const
