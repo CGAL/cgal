@@ -71,13 +71,13 @@ linear_least_squares_fitting_2(InputIterator first,
 // deduces the kernel from the points in container.
 template < typename InputIterator, 
            typename Line,
-           typename Point, typename tag>
+	   typename tag>
 inline
 typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                Line& line,
-                               Point& centroid,
+                               typename Kernel_traits<Line>::Kernel::Point_2& centroid,
 			       const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;

@@ -444,8 +444,9 @@ centroid(InputIterator begin,
       it++)
   {
     const Segment& s = *it;
-    FT length = std::sqrt(std::abs(s.squared_length()));
-    Point c = K().construct_midpoint_3_object()(s[0],s[1]);
+    FT length = std::sqrt(s.squared_length());
+    //    Point c = K().construct_midpoint_3_object()(s[0],s[1]);
+    Point c = Point((s[0][0] + s[1][0])/2.0, (s[0][1] + s[1][1])/2.0, (s[0][2] + s[1][2])/2.0);
     v = v + length * (c - ORIGIN);
     sum_lengths += length;
   }

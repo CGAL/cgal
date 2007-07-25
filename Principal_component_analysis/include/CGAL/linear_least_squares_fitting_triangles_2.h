@@ -121,8 +121,8 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
   covariance[2] += mass * (-1.0 * c.y() * c.y());
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
+
+  //  std::cout<<"cov: "<<covariance[0]*covariance[2]<<" =? "<<covariance[1]*covariance[1]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -139,11 +139,13 @@ linear_least_squares_fitting_2(InputIterator first,
   if(eigen_values.first != eigen_values.second)
   {
     // regular case
+    //    std::cout<<"AnIsotropic!! "<<eigen_values.second<<" "<<eigen_values.first<<" "<<std::sqrt((double)covariance[0]/(double)covariance[2])<<std::endl;
     line = Line(c, eigen_vectors.first);
     return (FT)1.0 - eigen_values.second / eigen_values.first;
   } 
   else
   {
+    //    std::cout<<"Isotropic!!"<<std::endl;
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through 
     // the centroid and with a default horizontal vector.

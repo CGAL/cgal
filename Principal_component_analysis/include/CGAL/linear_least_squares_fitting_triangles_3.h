@@ -55,9 +55,6 @@ linear_least_squares_fitting_3(InputIterator first,
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Triangle*) NULL,tag);
-
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
   
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k);
@@ -71,7 +68,7 @@ typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Plane_3& plane,   // best fit plane
-                               typename K::Segment_3& c,       // centroid
+                               typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
 			       const CGAL::PCA_dimension_1_tag& tag)
@@ -89,9 +86,9 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Triangle& t = *it;
-    segments.push_back(t[0],t[1]);
-    segments.push_back(t[1],t[2]);
-    segments.push_back(t[2],t[0]);    
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[2],t[0]));    
   }
 
   // compute fitting plane
@@ -159,9 +156,6 @@ linear_least_squares_fitting_3(InputIterator first,
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Triangle*) NULL,tag);
 
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
-
   // compute fitting line
   return fitting_line_3(covariance,c,line,k);
   
@@ -174,7 +168,7 @@ typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_3& line,   // best fit line
-                               typename K::Segment_3& c,       // centroid
+                               typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
 			       const CGAL::PCA_dimension_1_tag& tag)
@@ -192,9 +186,9 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Triangle& t = *it;
-    segments.push_back(t[0],t[1]);
-    segments.push_back(t[1],t[2]);
-    segments.push_back(t[2],t[0]);    
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[2],t[0]));    
   }
 
   // compute fitting line

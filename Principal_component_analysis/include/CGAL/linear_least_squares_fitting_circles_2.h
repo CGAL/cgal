@@ -120,9 +120,6 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[1] += mass * (-1.0 * c.x() * c.y());
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
-
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
@@ -229,9 +226,6 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
   covariance[2] += mass * (-1.0 * c.y() * c.y());
-
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 

@@ -116,8 +116,6 @@ linear_least_squares_fitting_3(InputIterator first,
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
 
-  // to remove later
-  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
 
   // compute fitting line
   return fitting_line_3(covariance,c,line,k);
@@ -148,9 +146,6 @@ linear_least_squares_fitting_3(InputIterator first,
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
-
-  // to remove later
-  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
 
   // compute fitting line
   return fitting_line_3(covariance,c,line,k);

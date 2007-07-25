@@ -56,9 +56,6 @@ linear_least_squares_fitting_3(InputIterator first,
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
 
-  // to remove later
-  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
-  
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k);
 
@@ -90,9 +87,6 @@ linear_least_squares_fitting_3(InputIterator first,
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
 
-  // to remove later
-  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
-  
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k);
 
@@ -106,7 +100,7 @@ typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Plane_3& plane,   // best fit plane
-                               typename K::Segment_3& c,       // centroid
+                               typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
 			       const CGAL::PCA_dimension_1_tag& tag)
@@ -124,18 +118,18 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Iso_cuboid& t = *it;
-    segments.push_back(t[0],t[1]);
-    segments.push_back(t[1],t[2]);
-    segments.push_back(t[2],t[3]);    
-    segments.push_back(t[3],t[0]);
-    segments.push_back(t[4],t[5]);
-    segments.push_back(t[5],t[6]);
-    segments.push_back(t[6],t[7]);
-    segments.push_back(t[7],t[4]);
-    segments.push_back(t[5],t[0]);
-    segments.push_back(t[1],t[6]);
-    segments.push_back(t[2],t[7]);
-    segments.push_back(t[3],t[4]);
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[2],t[3]));    
+    segments.push_back(Segment(t[3],t[0]));
+    segments.push_back(Segment(t[4],t[5]));
+    segments.push_back(Segment(t[5],t[6]));
+    segments.push_back(Segment(t[6],t[7]));
+    segments.push_back(Segment(t[7],t[4]));
+    segments.push_back(Segment(t[5],t[0]));
+    segments.push_back(Segment(t[1],t[6]));
+    segments.push_back(Segment(t[2],t[7]));
+    segments.push_back(Segment(t[3],t[4]));
   }
 
   // compute fitting plane
@@ -233,9 +227,6 @@ linear_least_squares_fitting_3(InputIterator first,
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
-
-  // to remove later
-  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
   
   // compute fitting line
   return fitting_line_3(covariance,c,line,k);
@@ -250,7 +241,7 @@ typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_3& line,   // best fit line
-                               typename K::Segment_3& c,       // centroid
+                               typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
 			       const CGAL::PCA_dimension_1_tag& tag)
@@ -268,18 +259,18 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Iso_cuboid& t = *it;
-    segments.push_back(t[0],t[1]);
-    segments.push_back(t[1],t[2]);
-    segments.push_back(t[2],t[3]);    
-    segments.push_back(t[3],t[0]);
-    segments.push_back(t[4],t[5]);
-    segments.push_back(t[5],t[6]);
-    segments.push_back(t[6],t[7]);
-    segments.push_back(t[7],t[4]);
-    segments.push_back(t[5],t[0]);
-    segments.push_back(t[1],t[6]);
-    segments.push_back(t[2],t[7]);
-    segments.push_back(t[3],t[4]);
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[2],t[3]));    
+    segments.push_back(Segment(t[3],t[0]));
+    segments.push_back(Segment(t[4],t[5]));
+    segments.push_back(Segment(t[5],t[6]));
+    segments.push_back(Segment(t[6],t[7]));
+    segments.push_back(Segment(t[7],t[4]));
+    segments.push_back(Segment(t[5],t[0]));
+    segments.push_back(Segment(t[1],t[6]));
+    segments.push_back(Segment(t[2],t[7]));
+    segments.push_back(Segment(t[3],t[4]));
   }
 
   // compute fitting line

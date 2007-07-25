@@ -292,13 +292,13 @@ assemble_covariance_matrix_3(InputIterator first,
 		   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation = init_Matrix<K>(3,delta);
-    FT volume = t.volume();
-    CGAL_assertion(volume != 0.0);
+    FT area = pow(delta[0]*delta[0] + delta[3]*delta[3] + delta[6]*delta[6],1/3.0)*pow(delta[1]*delta[1] + delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 + pow(delta[0]*delta[0] + delta[3]*delta[3] + delta[6]*delta[6],1/3.0)*pow(delta[2]*delta[2] + delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2 + pow(delta[1]*delta[1] + delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*pow(delta[2]*delta[2] + delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2;
+    CGAL_assertion(area != 0.0);
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
     
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = volume * transformation * moment * LA::transpose(transformation);
+    transformation = area * transformation * moment * LA::transpose(transformation);
     
     // Translate the 2nd order moment to the minimum corner (x0,y0,z0) of the cuboid.
     FT xav0 = (delta[0] + delta[1] + delta[2])/4.0;
@@ -306,14 +306,14 @@ assemble_covariance_matrix_3(InputIterator first,
     FT zav0 = (delta[6] + delta[7] + delta[8])/4.0;
 
     // and add to covariance matrix
-    covariance[0] += transformation[0][0] + volume * (2*x0*xav0 + x0*x0);
-    covariance[1] += transformation[1][0] + volume * (xav0*y0 + yav0*x0 + x0*y0);
-    covariance[2] += transformation[1][1] + volume * (2*y0*yav0 + y0*y0);
-    covariance[3] += transformation[2][0] + volume * (x0*zav0 + xav0*z0 + x0*z0);
-    covariance[4] += transformation[2][1] + volume * (yav0*z0 + y0*zav0 + z0*y0);
-    covariance[5] += transformation[2][2] + volume * (2*zav0*z0 + z0*z0);
+    covariance[0] += transformation[0][0] + area * (2*x0*xav0 + x0*x0);
+    covariance[1] += transformation[1][0] + area * (xav0*y0 + yav0*x0 + x0*y0);
+    covariance[2] += transformation[1][1] + area * (2*y0*yav0 + y0*y0);
+    covariance[3] += transformation[2][0] + area * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[4] += transformation[2][1] + area * (yav0*z0 + y0*zav0 + z0*y0);
+    covariance[5] += transformation[2][2] + area * (2*zav0*z0 + z0*z0);
 
-    mass += volume;
+    mass += area;
   }
 
   // Translate the 2nd order moment calculated about the origin to
@@ -375,13 +375,95 @@ assemble_covariance_matrix_3(InputIterator first,
 		   0.0, radius, 0.0,
                    0.0, 0.0, radius};
     Matrix transformation = init_Matrix<K>(3,delta);
-    FT area = 4/3.0 * radius*t.squared_radius();
+    FT volume = 4/3.0 * radius*t.squared_radius();
+    CGAL_assertion(volume != 0.0);
+
+    // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
+    
+    // Transform the standard 2nd order moment using the transformation matrix
+    transformation = (3.0/4.0) * volume * transformation * moment * LA::transpose(transformation);
+    
+    // Translate the 2nd order moment to the center of the sphere.
+    FT x0 = t.center().x();
+    FT y0 = t.center().y();
+    FT z0 = t.center().z();
+
+    // and add to covariance matrix
+    covariance[0] += transformation[0][0] + volume * x0*x0;
+    covariance[1] += transformation[1][0] + volume * x0*y0;
+    covariance[2] += transformation[1][1] + volume * y0*y0;
+    covariance[3] += transformation[2][0] + volume * x0*z0;
+    covariance[4] += transformation[2][1] + volume * z0*y0;
+    covariance[5] += transformation[2][2] + volume * z0*z0;
+
+    mass += volume;
+  }
+
+  // Translate the 2nd order moment calculated about the origin to
+  // the center of mass to get the covariance.
+  covariance[0] += mass * (-1.0 * c.x() * c.x());
+  covariance[1] += mass * (-1.0 * c.x() * c.y());
+  covariance[2] += mass * (-1.0 * c.y() * c.y());
+  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[4] += mass * (-1.0 * c.z() * c.y());
+  covariance[5] += mass * (-1.0 * c.z() * c.z());
+
+}
+// assemble covariance matrix from a sphere set 
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+                             typename K::FT covariance[6], // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& ,                    // kernel
+                             const typename K::Sphere_3*,// used for indirection
+			     const CGAL::PCA_dimension_2_tag& tag)
+{
+  typedef typename K::FT          FT;
+  typedef typename K::Point_3     Point;
+  typedef typename K::Vector_3    Vector;
+  typedef typename K::Sphere_3  Sphere;
+  typedef typename CGAL::Linear_algebraCd<FT> LA;
+  typedef typename LA::Matrix Matrix;
+
+  // assemble covariance matrix as a semi-definite matrix. 
+  // Matrix numbering:
+  // 0
+  // 1 2 
+  // 3 4 5
+  //Final combined covariance matrix for all spheres and their combined mass
+  FT mass = 0.0;
+
+  // assemble 2nd order moment about the origin.  
+  FT temp[9] = {4.0/3.0, 0.0,     0.0,
+		0.0,     4.0/3.0, 0.0,
+                0.0,     0.0,     4.0/3.0};
+  Matrix moment = init_Matrix<K>(3,temp);
+
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    // Now for each sphere, construct the 2nd order moment about the origin.
+    // assemble the transformation matrix.
+    const Sphere& t = *it;
+
+    // defined for convenience.
+    // FT example = CGAL::to_double(t[0].x());
+    FT radius = std::sqrt(t.squared_radius());
+    FT delta[9] = {radius, 0.0, 0.0, 
+		   0.0, radius, 0.0,
+                   0.0, 0.0, radius};
+    Matrix transformation = init_Matrix<K>(3,delta);
+    FT area = 4 * t.squared_radius();
     CGAL_assertion(area != 0.0);
 
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
     
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = (3.0/4.0) * area * transformation * moment * LA::transpose(transformation);
+    transformation = (1.0/4.0) * area * transformation * moment * LA::transpose(transformation);
     
     // Translate the 2nd order moment to the center of the sphere.
     FT x0 = t.center().x();
@@ -550,7 +632,7 @@ assemble_covariance_matrix_3(InputIterator first,
     
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = length * transformation * moment * LA::transpose(transformation);
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;    
+
     // and add to covariance matrix
     covariance[0] += transformation[0][0];
     covariance[1] += transformation[1][0];
@@ -558,7 +640,7 @@ assemble_covariance_matrix_3(InputIterator first,
     covariance[3] += transformation[2][0];
     covariance[4] += transformation[2][1];
     covariance[5] += transformation[2][2];
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
+
     mass += length;
   }
 

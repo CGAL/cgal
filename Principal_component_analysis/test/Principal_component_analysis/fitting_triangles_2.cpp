@@ -17,49 +17,18 @@ typedef Kernel::FT FT;
 
 typedef Kernel::Line_2 Line_2;
 typedef Kernel::Point_2 Point_2;
+typedef Kernel::Triangle_2   Triangle_2;
 typedef Kernel::Iso_rectangle_2   Iso_rectangle_2;
 typedef Kernel::Segment_2 Segment_2;
 typedef Kernel::Vector_2 Vector_2;
 
-// case with only one rectangle in container
-// the fitting line must be y = 1/2
+// case with one rectangle in container vs it split into two triangles
+// the fitting line must be the same.
 void test_1()
 {
-  
-  std::list<Iso_rectangle_2> Iso_rectangles;
-  Iso_rectangles.push_back(Iso_rectangle_2(Point_2(0.0,0.0),Point_2(5.0,4.0)));
-  //  Iso_rectangles.push_back(Iso_rectangle_2(Point_2(4.0,0.0),Point_2(5.0,1.0)));
-
-  // fit a line
-  // call all versions of the function
   std::cout<<"Test 1"<<std::endl;
-  std::cout << "fit 2D line...";
-  Kernel k;
-  Line_2 line;
-  Point_2 centroid;
-  FT quality;
-  quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,k,CGAL::PCA_dimension_2_tag());
-  std::cout << "done (quality: " << quality << ") Line: " << line<<std::endl;
-
-  
-  if(!(line.is_horizontal() && std::abs(line.c()/line.b()- -2) <= THRESHOLD))
-  {
-    std::cout << "failure" << std::endl;
-    exit(1); // failure
-  }
-}
-
-// case with only one rectangle vs two rectangles that it is composed of
-// in container
-// the fitting line must be the same
-void test_2()
-{
-  std::cout<<"Test 2"<<std::endl;
   std::list<Iso_rectangle_2> Iso_rectangles;
   Iso_rectangles.push_back(Iso_rectangle_2(Point_2(1.6,15.2),Point_2(11.6,19.2)));
-  //  Iso_rectangles.push_back(Iso_rectangle_2(Point_2(4.0,0.0),Point_2(5.0,1.0)));
 
   // fit a line
   // call all versions of the function
@@ -74,19 +43,20 @@ void test_2()
   std::cout << "done (quality: " << quality << ") Line: " << line<<" centroid: "<<centroid<<std::endl;
 
 
+  std::list<Triangle_2> Triangles1;
+  Triangles1.push_back(Triangle_2(Point_2(1.6,15.2),Point_2(1.6,19.2),Point_2(11.6,19.2)));
+  Triangles1.push_back(Triangle_2(Point_2(1.6,15.2),Point_2(11.6,19.2),Point_2(11.6,15.2)));
+
   // fit a line
   // call all versions of the function
-  std::list<Iso_rectangle_2> Iso_rectangles1;
-  Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(1.6,15.2),Point_2(6.6,19.2)));
-  Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(6.6,15.2),Point_2(11.6,19.2)));
-  std::cout << "fit 2D line to two small rectangles...";
+  std::cout << "fit 2D line to two small triangles...";
   Kernel k1;
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,k1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(Triangles1.begin(),Triangles1.end(),line1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(Triangles1.begin(),Triangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(Triangles1.begin(),Triangles1.end(),line1,centroid1,k1,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
   
@@ -97,14 +67,13 @@ void test_2()
   }
 }
 
-// case with only one rectangle vs two rectangles horizontally splitting the previous one in half 
-// the fitting line must be the same
-void test_3()
+// case with one rectangle in container vs it split into four triangles
+// the fitting line must be the same.
+void test_2()
 {
-  std::cout<<"Test 3"<<std::endl;
+  std::cout<<"Test 2"<<std::endl;
   std::list<Iso_rectangle_2> Iso_rectangles;
   Iso_rectangles.push_back(Iso_rectangle_2(Point_2(1.6,15.2),Point_2(11.6,19.2)));
-  //  Iso_rectangles.push_back(Iso_rectangle_2(Point_2(4.0,0.0),Point_2(5.0,1.0)));
 
   // fit a line
   // call all versions of the function
@@ -119,19 +88,22 @@ void test_3()
   std::cout << "done (quality: " << quality << ") Line: " << line<<" centroid: "<<centroid<<std::endl;
 
 
+  std::list<Triangle_2> Triangles1;
+  Triangles1.push_back(Triangle_2(Point_2(1.6,15.2),Point_2(1.6,19.2),Point_2(6.6,17.2)));
+  Triangles1.push_back(Triangle_2(Point_2(11.6,19.2),Point_2(11.6,15.2),Point_2(6.6,17.2)));
+  Triangles1.push_back(Triangle_2(Point_2(1.6,19.2),Point_2(11.6,19.2),Point_2(6.6,17.2)));
+  Triangles1.push_back(Triangle_2(Point_2(1.6,15.2),Point_2(11.6,15.2),Point_2(6.6,17.2)));
+
   // fit a line
   // call all versions of the function
-  std::list<Iso_rectangle_2> Iso_rectangles1;
-  Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(1.6,15.2),Point_2(11.6,17.2)));
-  Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(1.6,17.2),Point_2(11.6,19.2)));
-  std::cout << "fit 2D line to two small rectangles...";
+  std::cout << "fit 2D line to four small triangles...";
   Kernel k1;
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,k1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(Triangles1.begin(),Triangles1.end(),line1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(Triangles1.begin(),Triangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(Triangles1.begin(),Triangles1.end(),line1,centroid1,k1,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
   
@@ -144,12 +116,10 @@ void test_3()
 
 int main()
 {
-  std::cout << "Test 2D linear_least_squares_fitting_rectangles"  << std::endl;
+  std::cout << "Test 2D linear_least_squares_fitting_triangles"  << std::endl;
 
   test_1();
   test_2();
-  test_3();
-
 
   return 0; // success
 }

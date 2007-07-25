@@ -55,9 +55,6 @@ linear_least_squares_fitting_3(InputIterator first,
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag);
-
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
   
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k);
@@ -90,10 +87,10 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Tetrahedron& t = *it;
-    triangles.push_back(t[0],t[1],t[2]);
-    triangles.push_back(t[0],t[2],t[3]);
-    triangles.push_back(t[0],t[3],t[1]); 
-    triangles.push_back(t[3],t[1],t[2]);
+    triangles.push_back(Triangle(t[0],t[1],t[2]));
+    triangles.push_back(Triangle(t[0],t[2],t[3]));
+    triangles.push_back(Triangle(t[0],t[3],t[1])); 
+    triangles.push_back(Triangle(t[3],t[1],t[2]));
  }
 
   // compute fitting plane
@@ -126,12 +123,12 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Tetrahedron& t = *it;
-    segments.push_back(t[0],t[1]);
-    segments.push_back(t[1],t[2]);
-    segments.push_back(t[1],t[3]);
-    segments.push_back(t[2],t[3]); 
-    segments.push_back(t[0],t[2]);
-    segments.push_back(t[0],t[3]);
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[1],t[3]));
+    segments.push_back(Segment(t[2],t[3])); 
+    segments.push_back(Segment(t[0],t[2]));
+    segments.push_back(Segment(t[0],t[3]));
  }
 
   // compute fitting plane
@@ -199,10 +196,7 @@ linear_least_squares_fitting_3(InputIterator first,
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag);
-  
-  // to remove later
-  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<" "<<covariance[3]<<" "<<covariance[4]<<" "<<covariance[5]<<std::endl;
-  
+    
   // compute fitting line
   return fitting_line_3(covariance,c,line,k);
   
@@ -233,10 +227,10 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Tetrahedron& t = *it;
-    triangles.push_back(t[0],t[1],t[2]);
-    triangles.push_back(t[0],t[2],t[3]);
-    triangles.push_back(t[0],t[3],t[1]); 
-    triangles.push_back(t[3],t[1],t[2]);
+    triangles.push_back(Triangle(t[0],t[1],t[2]));
+    triangles.push_back(Triangle(t[0],t[2],t[3]));
+    triangles.push_back(Triangle(t[0],t[3],t[1])); 
+    triangles.push_back(Triangle(t[3],t[1],t[2]));
  }
 
   // compute fitting line
@@ -269,12 +263,12 @@ linear_least_squares_fitting_3(InputIterator first,
       it++)
   {
     const Tetrahedron& t = *it;
-    segments.push_back(t[0],t[1]);
-    segments.push_back(t[1],t[2]);
-    segments.push_back(t[1],t[3]);
-    segments.push_back(t[2],t[3]); 
-    segments.push_back(t[0],t[2]);
-    segments.push_back(t[0],t[3]);
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[1],t[3]));
+    segments.push_back(Segment(t[2],t[3])); 
+    segments.push_back(Segment(t[0],t[2]));
+    segments.push_back(Segment(t[0],t[3]));
  }
 
   // compute fitting line
