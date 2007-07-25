@@ -27,6 +27,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include <limits.h>
 
 #if !(defined _MSC_VER)
 #include <unistd.h>
