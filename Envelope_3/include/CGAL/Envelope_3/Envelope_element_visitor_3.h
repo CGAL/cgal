@@ -620,7 +620,8 @@ public:
       // if we get to the target vertex, we end the loop, since no more splits
 
       // are needed
-      if (!original_trg->is_at_infinity() && cur_p.first == original_trg->point())
+      if (!original_trg->is_at_infinity() && 
+           traits->equal_2_object() (cur_p.first, original_trg->point()))
         break;
         
       Vertex_handle cur_src_vertex = cur_part->source();
