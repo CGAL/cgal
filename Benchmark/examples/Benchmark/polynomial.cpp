@@ -1,3 +1,18 @@
+//! \file examples/Benchmark/polynomial.cpp
+// Measure the performance of ???
+
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#include <iostream>
+int main()
+{
+  std::cout << "Sorry, this example needs boost program options ..."
+            << std::endl;
+  return 0;
+}
+#else
+
 /**************************************************************************
 // Copyright (c) 2004-2007  Max-Planck-Institut Saarbruecken (Germany)
 // All rights reserved.
@@ -10,7 +25,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: /KM/projects/ecg/CVS/BMTools/parser/src/check_syntax.C,v $
+// $Source: $
 // $Revision: 34400 $ $Date: 2006-09-20 12:52:41 +0200 (Wed, 20 Sep 2006) $
 // $Name:  $
 //
@@ -133,3 +148,5 @@ int main( int argc, char* argv[] ) {
     }
     return exit_status;
 }
+
+#endif

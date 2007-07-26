@@ -1,3 +1,18 @@
+//! \file examples/Benchmark/simple.cpp
+// Measure the performance of computing sqrt(3.14159265358979323846) in double
+
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#include <iostream>
+int main()
+{
+  std::cout << "Sorry, this example needs boost program options ..."
+            << std::endl;
+  return 0;
+}
+#else
+
 #include <math.h>
 
 #include <CGAL/Benchmark/Benchmark.hpp>
@@ -52,3 +67,5 @@ int main(int argc, char * argv[])
   bench();
   return 0;
 }
+
+#endif

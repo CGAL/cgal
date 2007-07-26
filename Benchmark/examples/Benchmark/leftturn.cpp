@@ -1,3 +1,18 @@
+//! \file examples/Benchmark/leftturn.cpp
+// Measure the performance of the kernel predicate Left_turn_2
+
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#include <iostream>
+int main()
+{
+  std::cout << "Sorry, this example needs boost program options ..."
+            << std::endl;
+  return 0;
+}
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -59,3 +74,5 @@ int main(int argc, char * argv[])
   bench();
   return 0;
 }
+
+#endif
