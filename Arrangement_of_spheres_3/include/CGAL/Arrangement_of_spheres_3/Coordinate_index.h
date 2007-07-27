@@ -110,7 +110,6 @@ struct Coordinate_Z {
     static V v(0,0,1);
     return v;
   }
-
 };
 
 
