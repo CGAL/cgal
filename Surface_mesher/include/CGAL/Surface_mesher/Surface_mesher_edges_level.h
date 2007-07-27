@@ -522,7 +522,7 @@ namespace Surface_mesher {
     {
       if( zone.locate_type == Tr::VERTEX )
       {
-	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
+	std::cerr << boost::format("Error: (%1%) is already inserted on edge\n") % p;
 	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
       }
       else
