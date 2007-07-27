@@ -198,9 +198,15 @@ namespace CGAL {
       const Point& p2 = fh.first->vertex ((fh.second+2)&3)->point();
       const Point& p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
-      q = B / gt.compute_squared_distance_3_object()
+      const FT denom = gt.compute_squared_distance_3_object()
 	(gt.construct_circumcenter_3_object()(p1,p2,p3),
 	 fh.first->get_facet_surface_center(fh.second));
+      if(denom == FT(0)) {
+	q = 1;
+      }
+      else {
+	q = B / denom;
+      }
       return q < FT(1);
     }
 
