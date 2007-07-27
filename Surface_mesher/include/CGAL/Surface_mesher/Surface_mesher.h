@@ -697,7 +697,7 @@ namespace CGAL {
     {
       std::stringstream s;
       s << Base::debug_info() 
-	<< "," << this->previous().debug_info();
+	<< "," << Mesher_lvl::previous().debug_info();
       return s.str();
     }
 
@@ -705,7 +705,7 @@ namespace CGAL {
     {
       std::stringstream s;
       s << Base::debug_info_header()
-	<< "," << this->previous().debug_info_header();
+	<< "," << Mesher_lvl::previous().debug_info_header();
       return s.str();
     }
 
