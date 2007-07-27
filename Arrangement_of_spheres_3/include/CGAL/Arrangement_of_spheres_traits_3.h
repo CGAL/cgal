@@ -151,10 +151,10 @@ struct Arrangement_of_spheres_traits_3 {
 
   CGAL::Oriented_side oriented_side_of_equipower_plane(Key sphere_0, Key sphere_1,
 						       const Sphere_point_3 &s) const;
-
+  */
   CGAL::Oriented_side oriented_side_of_separating_plane(Sphere_3_key sphere_0, Sphere_3_key sphere_1, 
 							const Sphere_point_3& sp) const ;
-  */
+  
   CGAL::Comparison_result compare_sphere_centers_c(Sphere_3_key a, Sphere_3_key b, Coordinate_index C) const;
 
   CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
@@ -164,11 +164,11 @@ struct Arrangement_of_spheres_traits_3 {
   CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
 						  const Sphere_point_3& d,
 						  Coordinate_index C) const;
-  /*
   // return true if the interval defined by the sphere in C contains d.C
   bool is_over_circle_c(Sphere_3_key c, const Sphere_point_3& d,
 			      Coordinate_index C) const;
-  
+  /*
+
   CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
 							 Sphere_3_key sphere0,
 							 Sphere_3_key Sphere1,
@@ -183,17 +183,19 @@ struct Arrangement_of_spheres_traits_3 {
 						       Sphere_3_key planex,
 						       const Sphere_point_3 &pt,
 						       Coordinate_index C) const;
+  */
   CGAL::Bounded_side bounded_side_of_sphere(Sphere_3_key sphere,
 					    const Sphere_point_3 &z) const;
   CGAL::Bounded_side bounded_side_of_sphere(Sphere_3_key sphere,
 					    Sphere_3_key x,
 					    Sphere_3_key y,
 					    const Sphere_point_3 &z) const;
-
+  
   CGAL::Comparison_result compare_depths(const Sphere_point_3 &a, 
 					 const Sphere_point_3 &b) const;
+  
   CGAL::Oriented_side oriented_side(const Plane_3 &p,
-  const Sphere_point_3 &pt) const;*/
+				    const Sphere_point_3 &pt) const;
 
 
   // Sweep types ------------------------------------------------------

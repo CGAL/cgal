@@ -155,13 +155,13 @@ Combinatorial_cross_section CGAL_AOS3_TARG::split_face(Curve c,
   
   CGAL_precondition(o->face() == d->face());
   std::cout << "Spliting face ";
-  write_face(o, std::cout) << std::endl;
+  write(o->face(), std::cout) << std::endl;
   CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
   Halfedge_handle h= hdsd.split_face(o,d);
   set_curve(h, c);
   std::cout << "Got ";
-  write_face(h, std::cout) << " and ";
-  write_face(h->opposite(), std::cout) << std::endl;
+  write(h->face(), std::cout) << " and ";
+  write(h->opposite()->face(), std::cout) << std::endl;
   return h;
 }
 
@@ -210,8 +210,8 @@ CGAL_AOS3_TEMPLATE
 void
 Combinatorial_cross_section CGAL_AOS3_TARG::merge_faces(Halfedge_handle h) {
   std::cout << "Merging faces ";
-  write_face(h, std::cout) << " and ";
-  write_face(h->opposite(), std::cout) << std::endl;
+  write(h->face(), std::cout) << " and ";
+  write(h->opposite()->face(), std::cout) << std::endl;
 
   CGAL_precondition(degree(h->vertex()) >=3);
   CGAL_precondition(degree(h->opposite()->vertex()) >=3);
@@ -228,7 +228,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::merge_faces(Halfedge_handle h) {
   dec.join_face(h);
   
   std::cout << "Got face ";
-  write_face(f->halfedge(), std::cout) << std::endl;
+  write(f->halfedge()->face(), std::cout) << std::endl;
   std::cout << "And edge ";
   write(sh, std::cout);
   std::cout << " and ";
@@ -492,9 +492,9 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k, Face_handle
     }
     std::cout << "done." << std::endl;
     std::cout << "Outside: ";
-    write_face(vs[0], std::cout) << std::endl;
+    write(vs[0]->face(), std::cout) << std::endl;
     std::cout << "Inside: ";
-    write_face(ivs[0], std::cout) << std::endl;
+    write(ivs[0]->face(), std::cout) << std::endl;
 
     if (0) {
       std::cout << "Auditing const decorator..." << std::flush;
@@ -562,10 +562,10 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_target(Curve::Key k,
 	dec.set_face_in_face_loop(c[i], ft[i]);
 	ft[i]->set_halfedge(c[i]);
       }
-      write_face(c[0], std::cout) << std::endl;
-      write_face(c[1], std::cout) << std::endl;
-      write_face(c[2], std::cout) << std::endl;
-      write_face(c[3], std::cout) << std::endl;
+      write(c[0]->face(), std::cout) << std::endl;
+      write(c[1]->face(), std::cout) << std::endl;
+      write(c[2]->face(), std::cout) << std::endl;
+      write(c[3]->face(), std::cout) << std::endl;
       
       std::cout << "Auditing const decorator..." << std::flush;
       CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
@@ -613,7 +613,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_target(Curve::Key k,
   Face_handle old_face= vs[0]->face();
   
   std::cout << "Inserting into ";
-  write_face(vs[0], std::cout) << std::endl;
+  write(vs[0]->face(), std::cout) << std::endl;
 
   for (unsigned int i=0; i< 4; ++i){
     std::cout << i << " is " << vs[i]->curve() << "--" << vs[i]->vertex()->point() 
@@ -633,7 +633,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_target(Curve::Key k,
   
   std::cout << "Got:" << std::endl;
   for (unsigned int i=0; i< 4; ++i) {
-    write_face(vs[i], std::cout) << std::endl;
+    write(vs[i]->face(), std::cout) << std::endl;
   }
 
   CGAL::HalfedgeDS_items_decorator<HDS> dec;
@@ -730,7 +730,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::remove_target(Halfedge_handle ts[4],
   CGAL::HalfedgeDS_items_decorator<HDS> dec;
   dec.set_face_in_face_loop(out, f);
   std::cout << "Got face ";
-  write_face(out, std::cout) << std::endl;
+  write(out->face(), std::cout) << std::endl;
 
   {
     Vertex_handle rv= new_vertex(Point::make_special(Curve::Key::target_key()));
@@ -1098,9 +1098,9 @@ std::ostream &Combinatorial_cross_section CGAL_AOS3_TARG::write(Halfedge_const_h
 
 
 CGAL_AOS3_TEMPLATE
-std::ostream &Combinatorial_cross_section CGAL_AOS3_TARG::write_face(Halfedge_const_handle h,
-					       std::ostream &out) const {
-  Halfedge_const_handle e= h;
+std::ostream &Combinatorial_cross_section CGAL_AOS3_TARG::write(Face_const_handle f,
+								std::ostream &out) const {
+  Halfedge_const_handle e= f->halfedge(), h= f->halfedge();
   do {
     out << h->curve() << "--" << h->vertex()->point() << "--" << std::flush;
     h=h->next();

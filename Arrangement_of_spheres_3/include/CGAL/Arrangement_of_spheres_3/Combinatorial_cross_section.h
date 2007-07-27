@@ -132,7 +132,7 @@ public:
 
   std::ostream &write(Halfedge_const_handle h, std::ostream &out) const;
 
-  std::ostream &write_face(Halfedge_const_handle h, std::ostream &out) const;
+  std::ostream &write(Face_const_handle h, std::ostream &out) const;
 
   bool is_in_slice(Vertex_const_handle v) const;
   bool is_in_slice(Halfedge_const_handle h) const;

@@ -17,8 +17,8 @@ void read_spheres(std::istream &in, std::vector<typename K::Sphere_3> &out) {
 		    
   while (true){
     char buf[1000];
-    std::cin.getline(buf, 1000);
-    if (!std::cin) break;
+    in.getline(buf, 1000);
+    if (!in) break;
     {
       std::istringstream iss(buf);
       if (buf[0]=='#') continue;

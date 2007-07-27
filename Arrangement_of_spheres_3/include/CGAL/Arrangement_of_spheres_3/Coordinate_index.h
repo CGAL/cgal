@@ -1,6 +1,6 @@
 #ifndef CGAL_SPHERE_COORDINATE_H
 #define CGAL_SPHERE_COORDINATE_H
-#include <CGAL/Arrangement_of_spheres_3_basic.h>
+//#include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <iostream>
 
 
@@ -154,6 +154,39 @@ inline Point sweep_point(NT n) {
   v[sweep_coordinate().index()]=n;
   return Point(v[0], v[1], v[2]);
 }
+
+template <class K>
+class Unprojector {
+  typename K::FT z_;
+public:
+  Unprojector(typename K::FT z): z_(z){}
+ 
+  typename K::Point_3 operator()(const typename K::Point_2 &pt) const {
+    typename K::FT v[3];
+    v[Sweep_coordinate::index()]= z_;
+    v[Plane_coordinate_0::index()]= pt.x();
+    v[Plane_coordinate_1::index()]= pt.y();
+    return typename K::Point_3(v[0], v[1], v[2]);
+  }
+
+  typename K::Vector_3 operator()(const typename K::Vector_2 &pt) const {
+      typename K::FT v[3];
+      v[Sweep_coordinate::index()]= 0;
+      v[Plane_coordinate_0::index()]= pt.x();
+      v[Plane_coordinate_1::index()]= pt.y();
+      return typename K::Vector_3(v[0], v[1], v[2]);
+  }
+  typename K::Point_2 operator()(const typename K::Point_3 &pt) const {
+    return typename K::Point_2(pt[Plane_coordinate_0::index()],
+			       pt[Plane_coordinate_1::index()]);
+  }
+
+  typename K::Vector_2 operator()(const typename K::Vector_3 &pt) const {
+     return typename K::Vector_2(pt[Plane_coordinate_0::index()],
+				 pt[Plane_coordinate_1::index()]);
+  }
+  
+};
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 #endif

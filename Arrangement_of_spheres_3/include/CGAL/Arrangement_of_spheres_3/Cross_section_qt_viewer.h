@@ -14,17 +14,16 @@ class Cross_section_qt_viewer {
   typedef CGAL::Simple_cartesian<double> K;
 public:
   typedef CGAL_AOS3_TYPENAME Traits::FT NT;
-  Cross_section_qt_viewer(Traits tr,  const CS &cs, Qt_examiner_viewer_2 *qtv): tr_(tr),
+  Cross_section_qt_viewer(Traits tr,  const CS &cs): tr_(tr),
 										cs_(cs),
-										rcs_(cs, tr_),
-										qtv_(qtv){}
+										rcs_(cs, tr_){}
 
-  void operator()(NT z) {
+  void operator()(NT z, Qt_examiner_viewer_2 *qtv) {
     rcs_.set_z(z);
     //t_.set_temp_sphere(T::Sphere_3(T::Point_3(0,0,z), 0));
     
-    *qtv_ << CGAL::RED;
-    qtv_->set_updating_box(true);
+    *qtv << CGAL::RED;
+    qtv->set_updating_box(true);
     //T::Intersect_with_sweep is=t_.sphere_intersects_rule(z);
     
     
@@ -38,8 +37,8 @@ public:
       c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(.99));
       }
       if (t_.sphere(*sit).center().z() != z){
-      *qtv_ << CGAL::YELLOW;
-      *qtv_ << c2;
+      *qtv << CGAL::YELLOW;
+      *qtv << c2;
       }
       }
       }*/
@@ -48,28 +47,28 @@ public:
 	 hit != cs_.halfedges_end(); ++hit){
       if (hit->curve().key().is_target()) continue;
       if (hit->curve().is_rule() && hit->curve().is_inside()){
-	qtv_->set_updating_box(false);
+	qtv->set_updating_box(false);
 	std::cout << "Displaying rule " << hit->curve() << std::endl;
 	CGAL_AOS3_TYPENAME K::Point_2 t= display_point(hit->vertex()->point());
 	CGAL_AOS3_TYPENAME K::Point_2 s= display_point(hit->opposite()->vertex()->point());
    
-	*qtv_ << CGAL::GRAY;
-	*qtv_ << CGAL_AOS3_TYPENAME K::Segment_2(t,s);
+	*qtv << CGAL::GRAY;
+	*qtv << CGAL_AOS3_TYPENAME K::Segment_2(t,s);
       } else if (hit->curve().is_arc() && hit->curve().is_inside()){
-	qtv_->set_updating_box(true);
+	qtv->set_updating_box(true);
 	std::cout << "Displaying arc " << hit->curve() << std::endl;
 	CGAL_AOS3_TYPENAME K::Point_2 t= display_point(hit->vertex()->point());
 	CGAL_AOS3_TYPENAME K::Point_2 s= display_point(hit->opposite()->vertex()->point());
 	//DT::Circle_2 c= ;
 	if (tr_.compare_sphere_center_c(hit->curve().key(), z,
 					sweep_coordinate())== CGAL::LARGER) {
-	  *qtv_ << CGAL::Color(150,50,50);
+	  *qtv << CGAL::Color(150,50,50);
 	} else {
-	  *qtv_ << CGAL::Color(50,150,50);
+	  *qtv << CGAL::Color(50,150,50);
 	}
 
 	CGAL_AOS3_TYPENAME Traits::Circle_2 c2= rcs_.circle(hit->curve().key());
-	qtv_->new_circular_arc(c2, s, t);
+	qtv->new_circular_arc(c2, s, t);
       
       }
     }
@@ -78,13 +77,13 @@ public:
 	 hit != cs_.vertices_end(); ++hit){
       if (!cs_.is_in_slice(hit)) continue;
       CGAL_AOS3_TYPENAME K::Point_2 p= display_point(hit->point());
-      *qtv_ << CGAL::BLUE;
+      *qtv << CGAL::BLUE;
       if (hit->point().is_finite()) {
-	qtv_->set_updating_box(true);
+	qtv->set_updating_box(true);
       } else {
-	qtv_->set_updating_box(false);
+	qtv->set_updating_box(false);
       }
-      *qtv_ << p;
+      *qtv << p;
    
       std::ostringstream out;
       out << hit->point();
@@ -105,28 +104,28 @@ public:
 	}*/
       //out << hit->point().first() << ":" << hit->point().second();
     
-      *qtv_ << CGAL::GRAY;
-      *qtv_ << out.str().c_str();
+      *qtv << CGAL::GRAY;
+      *qtv << out.str().c_str();
     }
     /*
-     *qtv_ << CGAL::Color(255, 155, 155);
+     *qtv << CGAL::Color(255, 155, 155);
      for (CGAL_AOS3_TYPENAME Intersections_2::const_iterator it= intersections_2_.begin();
      it != intersections_2_.end(); ++it) {
      if (it->second.first != Event_key()) {
      T::Event_point_3 ep= sim_->event_time(it->second.first);
      DT::Point_2 dp(ep.approximate_coordinate(plane_coordinate(0)), 
      ep.approximate_coordinate(plane_coordinate(1)));
-     *qtv_ << dp;
+     *qtv << dp;
      }
      if (it->second.second != Event_key()) {
      T::Event_point_3 ep= sim_->event_time(it->second.second);
      DT::Point_2 dp(ep.approximate_coordinate(plane_coordinate(0)), 
      ep.approximate_coordinate(plane_coordinate(1)));
-     *qtv_ << dp;
+     *qtv << dp;
      }
      }
 
-     *qtv_ << CGAL::Color(255, 255, 255);
+     *qtv << CGAL::Color(255, 255, 255);
      for (Intersections_3::const_iterator it= intersections_3_.begin();
      it != intersections_3_.end(); ++it) {
      if (it->second.second != Event_key()) {
@@ -134,13 +133,13 @@ public:
      T::Event_point_3 ep= sim_->event_time(it->second.second);
      DT::Point_2 dp(ep.approximate_coordinate(plane_coordinate(0)), 
      ep.approximate_coordinate(plane_coordinate(1)));
-     *qtv_ << dp;
+     *qtv << dp;
      }
      {
      T::Event_point_3 ep= sim_->event_time(it->second.second);
      DT::Point_2 dp(ep.approximate_coordinate(plane_coordinate(0)), 
      ep.approximate_coordinate(plane_coordinate(1)));
-     *qtv_ << dp;
+     *qtv << dp;
      }
      }
      }
@@ -168,7 +167,6 @@ private:
   Traits tr_;
   const CS &cs_;
   RCS rcs_;
-  Qt_examiner_viewer_2 *qtv_;
 };
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE

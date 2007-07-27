@@ -33,8 +33,8 @@ struct Compute_slice {
     arr.initialize_at(z_,cs);
 
     typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer CGAL_AOS3_TARG CSV;
-    CSV csv(tr, cs, qtv);
-    csv(z_);
+    CSV csv(tr, cs);
+    csv(z_, qtv);
   }
 
   std::vector<typename DK::Sphere_3> spheres_;
