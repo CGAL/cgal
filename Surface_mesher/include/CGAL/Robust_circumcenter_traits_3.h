@@ -100,6 +100,74 @@ public:
   }
 };
 
+template <typename K>
+class Robust_squared_radius_3
+{
+  typedef Exact_predicates_exact_constructions_kernel EK;
+  typedef typename K::FT          FT;
+  typedef typename K::Point_3     Point_3;
+  typedef typename K::Sphere_3    Sphere_3;
+
+  typedef Cartesian_converter<K,EK> To_exact;
+  typedef Cartesian_converter<EK,
+			      K,
+			      To_double<EK::FT> > Back_from_exact;
+public:
+  typedef FT               result_type;
+  typedef Arity_tag< 1 >   Arity;
+
+  result_type
+  operator()( const Sphere_3& s) const
+  {
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    EK::Compute_squared_radius_3
+      exact_sq_radius = EK().compute_squared_radius_3_object(); 
+
+    return back_from_exact(exact_sq_radius( to_exact(s) ));
+  }
+
+  result_type
+  operator()( const Point_3& p, const Point_3& q) const
+  {
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    EK::Compute_squared_radius_3
+      exact_sq_radius = EK().compute_squared_radius_3_object(); 
+
+    return back_from_exact(exact_sq_radius( to_exact(p),
+					    to_exact(q) ));
+  }
+
+  result_type
+  operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
+  {
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    EK::Compute_squared_radius_3
+      exact_sq_radius = EK().compute_squared_radius_3_object(); 
+
+    return back_from_exact(exact_sq_radius( to_exact(p), 
+					    to_exact(q),
+					    to_exact(r)));
+  }
+
+  result_type
+  operator()( const Point_3& p, const Point_3& q,
+	      const Point_3& r, const Point_3& s) const
+  {
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    EK::Compute_squared_radius_3
+      exact_sq_radius = EK().compute_squared_radius_3_object(); 
+
+    return back_from_exact(exact_sq_radius( to_exact(p), 
+					    to_exact(q),
+					    to_exact(r),
+					    to_exact(s)));
+  }
+};
+
 template < typename K >
 class Robust_construct_weighted_circumcenter_3
 {
@@ -171,10 +239,15 @@ class Robust_circumcenter_traits_3
 {
  public:
   typedef CGAL::Robust_construct_circumcenter_3<K> Construct_circumcenter_3;
+  typedef CGAL::Robust_squared_radius_3<K> Compute_squared_radius_3;
 
   Construct_circumcenter_3
   construct_circumcenter_3_object() const
   { return Construct_circumcenter_3(); }
+
+  Compute_squared_radius_3
+  compute_squared_radius_3_object() const
+  { return Compute_squared_radius_3(); }
 };
 
 template < class K>
@@ -183,6 +256,7 @@ class Robust_weighted_circumcenter_traits_3
 {
  public:
   typedef CGAL::Robust_construct_circumcenter_3<typename K::Kernel> Construct_circumcenter_3;
+  typedef CGAL::Robust_squared_radius_3<K> Compute_squared_radius_3;
 
   Construct_circumcenter_3
   construct_circumcenter_3_object() const
@@ -193,6 +267,10 @@ class Robust_weighted_circumcenter_traits_3
   Construct_weighted_circumcenter_3
   construct_weighted_circumcenter_3_object() const
   { return Construct_weighted_circumcenter_3(); }
+
+  Compute_squared_radius_3
+  compute_squared_radius_3_object() const
+  { return Compute_squared_radius_3(); }
 };
 
 CGAL_END_NAMESPACE
