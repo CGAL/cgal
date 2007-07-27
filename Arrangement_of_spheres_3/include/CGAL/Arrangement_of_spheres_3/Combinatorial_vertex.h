@@ -3,6 +3,7 @@
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_curve.h>
 #include <CGAL/basic.h>
+
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
 

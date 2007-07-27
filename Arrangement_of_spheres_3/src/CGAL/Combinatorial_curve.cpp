@@ -4,9 +4,9 @@
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
+#define inline 
 
-
-bool Combinatorial_curve::can_intersect(int t) const {
+inline bool Combinatorial_curve::can_intersect(int t) const {
   CGAL_precondition( (t & ~(L_BIT | R_BIT | T_BIT | B_BIT)) == 0);
   if (is_rule()) {
     if (!is_vertical() && ((t&R_BIT) || (t &L_BIT))) return false;
@@ -26,7 +26,7 @@ bool Combinatorial_curve::can_intersect(int t) const {
 }
 
 
-int Combinatorial_curve::quadrant() const {
+inline int Combinatorial_curve::quadrant() const {
   if (is_rule()) {
     if (is_vertical() && is_inside()) return R_BIT;
     else if (is_vertical() && !is_inside()) return L_BIT;
@@ -42,21 +42,21 @@ int Combinatorial_curve::quadrant() const {
 }
 
 
-Rule_direction Combinatorial_curve::rule_direction(const Combinatorial_curve &a,
-						   const Combinatorial_curve &b) {
+inline Rule_direction Combinatorial_curve::rule_direction(const Combinatorial_curve &a,
+							  const Combinatorial_curve &b) {
   CGAL_precondition(a.is_arc());
   CGAL_precondition(b.is_arc());
   CGAL_precondition(a.key() == b.key());
   /*switch(a.pt_ & b.pt_ & (L_BIT | T_BIT | R_BIT | B_BIT)) {
-  case R_BIT:
+    case R_BIT:
     return 0;
-  case T_BIT:
+    case T_BIT:
     return 1;
-  case L_BIT:
+    case L_BIT:
     return 2;
-  case B_BIT:
+    case B_BIT:
     return 3;
-  default:
+    default:
     CGAL_assertion(0);
     return -1;
     }*/
@@ -66,7 +66,7 @@ Rule_direction Combinatorial_curve::rule_direction(const Combinatorial_curve &a,
 
   
 
-bool Combinatorial_curve::is_compatible_location(int i) const {
+inline bool Combinatorial_curve::is_compatible_location(int i) const {
   //typedef Arrangement_of_spheres_traits_3::Sphere_location SL;
   if (is_rule()) {
     if (is_vertical()) {
@@ -94,7 +94,7 @@ bool Combinatorial_curve::is_compatible_location(int i) const {
   }
 }
 
-const char *Combinatorial_curve::to_string(int pt){
+inline const char *Combinatorial_curve::to_string(int pt){
   switch (pt) {
   case INVALID:
     return "Invalid";
@@ -157,7 +157,7 @@ const char *Combinatorial_curve::to_string(int pt){
 }
 
 
-bool Combinatorial_curve::is_arc() const {
+inline bool Combinatorial_curve::is_arc() const {
   bool nb= (pt_ &ARC_BIT) != 0;
   if (pt_&ARC_BIT) {
     CGAL_assertion(nb);
@@ -167,7 +167,7 @@ bool Combinatorial_curve::is_arc() const {
   }
   return nb;
 }
-bool Combinatorial_curve::is_vertical() const {
+inline bool Combinatorial_curve::is_vertical() const {
   CGAL_precondition(is_rule());
   //if (is_finite()) {
   return (pt_ & T_BIT) || (pt_ & B_BIT);
@@ -175,13 +175,13 @@ bool Combinatorial_curve::is_vertical() const {
     return (pt_ & L_BIT) || (pt_ & R_BIT);
     }*/
 }
-bool Combinatorial_curve::is_same_side(Combinatorial_curve o) const {
+inline bool Combinatorial_curve::is_same_side(Combinatorial_curve o) const {
   int u= o.pt_ & pt_; 
   return u &( T_BIT | L_BIT | R_BIT | B_BIT);
 }
 
 
-std::ostream &Combinatorial_curve::write(std::ostream&out) const {
+inline std::ostream &Combinatorial_curve::write(std::ostream&out) const {
   //CGAL_precondition(is_valid());
   out << to_string(pt_);
   /*if (is_finite())*/  out << index_;
@@ -190,19 +190,19 @@ std::ostream &Combinatorial_curve::write(std::ostream&out) const {
 
 
 
-Coordinate_index Combinatorial_curve::is_weakly_incompatible(int i) const {
+inline Coordinate_index Combinatorial_curve::is_weakly_incompatible(int i) const {
   int a= i&pt_&(~lOUT_BIT) &(~lIN_BIT);
   if (a== L_BIT || a==R_BIT) return plane_coordinate(1);
   else if (a== T_BIT || a== B_BIT) return plane_coordinate(0);
   else return Coordinate_index();
 }
 
-Rule_direction Combinatorial_curve::rule_direction() const {
+inline Rule_direction Combinatorial_curve::rule_direction() const {
   CGAL_precondition(is_rule());
   return Rule_direction::make_from_part(pt_&(R_BIT | L_BIT | T_BIT|B_BIT));
 }
 
-int Combinatorial_curve::arc_index() const {
+inline int Combinatorial_curve::arc_index() const {
   CGAL_precondition(is_arc());
   if ((pt_& RT_ARC) == RT_ARC) return 0;
   else if ((pt_& LT_ARC) == LT_ARC) return 1;
@@ -214,12 +214,12 @@ int Combinatorial_curve::arc_index() const {
   }
 }
 
-Combinatorial_curve Combinatorial_curve::make_rule(Key k,
-						   Rule_direction ruleindex) {
+inline Combinatorial_curve Combinatorial_curve::make_rule(Key k,
+							  Rule_direction ruleindex) {
   return Combinatorial_curve(k, Part(ruleindex.part()));
 }
 
-Coordinate_index
+inline Coordinate_index
 Combinatorial_curve::constant_coordinate() const {
   CGAL_precondition(is_rule());
   Coordinate_index r;
@@ -231,14 +231,14 @@ Combinatorial_curve::constant_coordinate() const {
   return r;
 }
 
-bool Combinatorial_curve::is_same_part(const Combinatorial_curve &o) const {
+inline bool Combinatorial_curve::is_same_part(const Combinatorial_curve &o) const {
   CGAL_precondition(is_inside() == o.is_inside());
   CGAL_precondition(is_rule());
   CGAL_precondition(o.is_rule());
   return o.pt_==pt_;
 }
 
-void Combinatorial_curve::flip_rule(Key k) {
+inline void Combinatorial_curve::flip_rule(Key k) {
   CGAL_precondition(is_rule());
   index_=k;
   if (is_vertical()) {
@@ -249,14 +249,14 @@ void Combinatorial_curve::flip_rule(Key k) {
 }
 
 
-const Combinatorial_curve Combinatorial_curve::strip_inside() const {
+inline const Combinatorial_curve Combinatorial_curve::strip_inside() const {
   Combinatorial_curve ret(index_, pt_& (~IN_BIT), true);
   CGAL_assertion(!ret.is_inside());
   CGAL_assertion(ret.is_valid());
   return ret;
 }
 
-const Combinatorial_curve Combinatorial_curve::other_side() const {
+inline const Combinatorial_curve Combinatorial_curve::other_side() const {
   Combinatorial_curve ret=*this;
   ret.set_is_inside(!is_inside());
   CGAL_assertion(!(is_inside() && ret.is_inside()));
@@ -264,7 +264,7 @@ const Combinatorial_curve Combinatorial_curve::other_side() const {
 }
 
 
-bool Combinatorial_curve::is_valid() const {
+inline bool Combinatorial_curve::is_valid() const {
   return pt_>0 && pt_ < 128
     //&& (pt_ ^ IN_BIT)
     && index_.is_valid()
@@ -273,12 +273,12 @@ bool Combinatorial_curve::is_valid() const {
 }
 
 
-void Combinatorial_curve::set_key(Key k) {
+inline void Combinatorial_curve::set_key(Key k) {
   index_=k;
 }
 
 
-void Combinatorial_curve::audit(unsigned int numv) const {
+inline void Combinatorial_curve::audit(unsigned int numv) const {
   if (is_special()) return;
   if (index_.is_input()) {
     CGAL_assertion(index_.input_index() < numv);
@@ -287,4 +287,14 @@ void Combinatorial_curve::audit(unsigned int numv) const {
   }
 }
 
+
+inline bool Combinatorial_curve::is_outward_rule() const {
+  CGAL_precondition(is_rule());
+  switch (rule_direction().is_outwards()) {
+    return !is_inside();
+  default:
+    return is_inside();
+  }
+}
+  
 CGAL_AOS3_END_INTERNAL_NAMESPACE

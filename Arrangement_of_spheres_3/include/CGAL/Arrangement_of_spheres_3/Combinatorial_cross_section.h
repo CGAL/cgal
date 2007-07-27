@@ -19,9 +19,11 @@ CGAL_AOS3_TEMPLATE
 class Cross_section_initializer;
 
 CGAL_AOS3_TEMPLATE
-class Cross_section {
+class Combinatorial_cross_section {
 public:
   CGAL_AOS3_TRAITS;
+
+  friend class Cross_section_initializer CGAL_AOS3_TARG;
 
   /*
     Use an hds. For each halfedge mark what sphere, what part and if
@@ -29,7 +31,7 @@ public:
 
     For each edge we also might have an event
   */
-
+public:
   typedef Combinatorial_vertex Point;
   typedef Combinatorial_curve Curve;
 
@@ -85,7 +87,7 @@ public:
   typedef CGAL_AOS3_TYPENAME HDS::Face_handle Face_handle;
   typedef CGAL_AOS3_TYPENAME HDS::Face_const_handle Face_const_handle;
 
-  Cross_section(int num);
+  Combinatorial_cross_section(int num);
 
   HDS& hds();
 
@@ -140,8 +142,11 @@ public:
 
   bool is_redundant(Vertex_const_handle v) const;
 
+ void clear();
 
-protected:
+  CGAL_GETNR(Face_handle, infinite_face, return inf_);
+  //Face_handle infinite_face(){return inf_;}
+
   CGAL_ITERATOR(Halfedge, halfedge, CGAL_AOS3_TYPENAME HDS::Halfedge_iterator,
 		return hds_.halfedges_begin(),
 		return hds_.halfedges_end());
@@ -149,6 +154,7 @@ protected:
   CGAL_ITERATOR(Face, face,CGAL_AOS3_TYPENAME HDS::Face_iterator,
 		return hds_.faces_begin(),
 		return hds_.faces_end());
+
   
   // the first is the target of h, second the source
   std::pair<Halfedge_handle, Halfedge_handle> remove_edge(Halfedge_handle h);
@@ -229,15 +235,25 @@ protected:
 
   std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
 
-  void clear();
-
+ 
   
-  friend class Cross_section_initializer CGAL_AOS3_TARG;
+  //friend class Cross_section_initializer CGAL_AOS3_TARG;
  
 
   void relabel_rule(Halfedge_handle h, Curve nl);
 
  
+
+  typedef boost::array<Halfedge_handle, 4> Halfedge_quad;
+
+  const Halfedge_quad& halfedges(CGAL_AOS3_TYPENAME Curve::Key k) const {
+    return halfedges_[k.input_index()];
+  }
+
+   Halfedge_quad& halfedges(CGAL_AOS3_TYPENAME Curve::Key k)  {
+    return halfedges_[k.input_index()];
+  }
+
 
 
 private:
@@ -308,16 +324,15 @@ private:
 
   Vertex_handle new_vertex(Point p);
 
-  
- 
 
+  
+protected:
 
 
   mutable HDS hds_;
   Face_handle inf_;
   mutable std::vector<Curve> errors_;
   std::vector<Vertex_handle> targets_;
-  typedef boost::array<Halfedge_handle, 4> Halfedge_quad;
   std::vector<Halfedge_quad> halfedges_;
 
   // for new_face when constructing things
@@ -329,7 +344,7 @@ private:
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 
 #ifdef CGAL_AOS3_USE_TEMPLATES
-#include <CGAL/Arrangement_of_spheres_3/Cross_section_impl.h>
+#include <CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section_impl.h>
 #endif
 
 #endif

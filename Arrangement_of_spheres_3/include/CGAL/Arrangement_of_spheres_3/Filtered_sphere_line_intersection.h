@@ -246,11 +246,11 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
       if (tl > tu) std::swap(tl,tu);
       if (ol > ou) std::swap(ol,ou);
       if (tu < ol) {
-	CGAL_assertion(Coordinate_index(C()) != CC 
+	CGAL_assertion(C::object() != CC 
 		       || a.double_value() < b.double_value());
 	return SMALLER;
       } else if (ou < tl) {
-	CGAL_assertion(Coordinate_index(C()) != CC 
+	CGAL_assertion(C::object() != CC 
 		       || a.double_value() > b.double_value());
 	return LARGER;
       }
@@ -316,10 +316,10 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
     // question of <= vs <
     // if so cut at shared part
     // not useful if we are comparing at another coordinate than C, but not really harmful either.
-    else if (typename P::Coordinate_index(C())==CC && lb_ <= o.lb_) {
+    else if (C::object()==CC && lb_ <= o.lb_) {
       if (ub_ != o.lb_) refine(o.lb_);
       if (ub_ < o.ub_) o.refine(ub_);
-    } else if (typename P::Coordinate_index(C())==CC && o.lb_ <= lb_) {
+    } else if (C::object()==CC && o.lb_ <= lb_) {
       if (o.ub_ != lb_) o.refine(lb_);
       if (o.ub_ < ub_) refine(o.ub_);
     }

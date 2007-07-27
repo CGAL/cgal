@@ -24,9 +24,9 @@ CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 CGAL_AOS3_TEMPLATE
 class Cross_section_arrangement {
 #ifdef CGAL_AOS3_USE_TEMPLATES
-  typedef Cross_section<Traits_t> CS;
+  typedef Combinatorial_cross_section<Traits_t> CS;
 #else
-  typedef Cross_section CS;
+  typedef Combinatorial_cross_section CS;
 #endif
 public:
   typedef CGAL_AOS3_TYPENAME CS::Curve Curve;

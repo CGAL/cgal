@@ -1,13 +1,14 @@
 #ifndef CGAL_ARRANGEMENT_OF_SPHERES_CROSS_SECTION_INIT_H
 #define CGAL_ARRANGEMENT_OF_SPHERES_CROSS_SECTION_INIT_H
 
-#include <CGAL/Arrangement_of_spheres_3/Cross_section.h>
+#include <CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section.h>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 CGAL_AOS3_TEMPLATE
 struct Cross_section_initializer {
   CGAL_AOS3_TRAITS;
-  typedef Cross_section CGAL_AOS3_TARG CS;
+public:
+  typedef Combinatorial_cross_section CGAL_AOS3_TARG CS;
   Cross_section_initializer (CS& cs, const Traits& tr);
 
   void operator()(CGAL_AOS3_TYPENAME Traits::FT z);
@@ -69,7 +70,7 @@ private:
   CGAL_AOS3_TYPENAME CS::Halfedge_handle new_halfedge(CGAL_AOS3_TYPENAME CS::Point s, 
 						      CGAL_AOS3_TYPENAME CS::Curve ff, 
 						      CGAL_AOS3_TYPENAME CS::Point f);
-  Cross_section CGAL_AOS3_TARG &cs_;
+  Combinatorial_cross_section CGAL_AOS3_TARG &cs_;
   const Traits& traits_;
   std::map<Edge, CGAL_AOS3_TYPENAME CS::Halfedge_handle> unmatched_hedges_;
   std::map<CGAL_AOS3_TYPENAME CS::Point, CGAL_AOS3_TYPENAME CS::Vertex_handle> points_;
@@ -77,7 +78,7 @@ private:
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 
 
-#ifdef CGAL_AOS3_TEMPLATE
+#ifdef CGAL_AOS3_USE_TEMPLATES
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_initializer_impl.h>
 #endif
 

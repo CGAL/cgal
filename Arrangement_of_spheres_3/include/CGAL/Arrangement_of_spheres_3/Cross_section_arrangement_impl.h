@@ -37,106 +37,113 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
     return Sphere_3(unproject(c.center()), c.squared_radius());
   }
   static Line_3 unproject(Line_2 c){
-    NT vc[3]={0,0,0};
-    vc[0]= c.to_vector().x();
-    vc[1]= c.to_vector().y();
-    return Line_3(unproject(c.point()), Vector_3(vc[0], vc[1], vc[2]));
+    return Line_3(unproject(c.point()), unproject(c.to_vector()));
   }
   static Point_3 unproject(Point_2 c){
-    NT pt[3]={0,0,0};
-    pt[0]= c.x();
-    pt[1]= c.y();
+    NT pt[3]={666,666,666};
+    pt[plane_coordinate(0).index()]= c.x();
+    pt[plane_coordinate(1).index()]= c.y();
     return Point_3(pt[0], pt[1], pt[2]);
+  }
+  static Vector_3 unproject(Vector_2 c){
+    NT pt[3]={0,0,0};
+    pt[plane_coordinate(0).index()]= c.x();
+    pt[plane_coordinate(1).index()]= c.y();
+    return Vector_3(pt[0], pt[1], pt[2]);
+  }
+  static Point_2 project(Point_3 c) {
+    CGAL_assertion(c[Sweep_coordinate::index()]== 666);
+    return Point_2(c[Plane_coordinate_0::index()], c[Plane_coordinate_1::index()]);
+  }
+  static Vector_2 project(Vector_3 c){
+    CGAL_assertion(c[Sweep_coordinate::index()]== 0);
+    return Vector_2(c[Plane_coordinate_0::index()], c[Plane_coordinate_1::index()]);
   }
   Rule(Circle_2 s, Curve f, NT inf): f_(f) {
     CGAL_precondition(f.is_rule());
-    NT v=1;
-    if (!f.is_negative()) v=-1;
-    NT vc[3]={0,0,0};
-    vc[C::index()]=v;
+    Vector_3 v= C::template basis_3<Vector_3>();
+    if (!f.is_negative()) v=-v;
+   
     /*if (C== 0) {
       vc[plane_coordinate(0).index()]= v;
     } else {
       vc[plane_coordinate(1).index()]= v;
       }*/
-    NT pt[3]={0,0,0};
-    pt[0]=s.center()[0];
-    pt[1]=s.center()[1];
-    Point_3 ppt(pt[0], pt[1], pt[2]);
-    std::cout << f_ << std::endl;
-    std::cout << "ppt is " << ppt << std::endl;
+    //NT pt[3]=unproject(s.center()); //{0,0,0};
+    //pt[plane_coordinate(0).index()]=s.center().x();
+    //pt[plane_coordinate(1).index()]=s.center().y();
+    Point_3 ppt= unproject(s.center()); //(pt[0], pt[1], pt[2]);
+    //std::cout << f_ << std::endl;
+    //std::cout << "ppt is " << ppt << std::endl;
 
-    Line_3 l= Line_3(ppt, Vector_3(vc[0], vc[1], vc[2]));
+    Line_3 l= Line_3(ppt, v);
 
-    std::cout << "l is " << l << std::endl;
+    //std::cout << "l is " << l << std::endl;
    
 
     Sphere_3 s3(ppt, 
 		s.squared_radius());
     start_= SLI(s3,l);
-    std::cout << "start_ is " << start_ << std::endl;
+    //std::cout << "start_ is " << start_ << std::endl;
 
-    NT pc[3]={0,0,0};
-    pc[1-C::index()] =s.center()[1-C::index()];
-    pc[C::index()]=inf;
-    if (f.is_negative()) pc[C::index()]= -pc[C::index()];
+    NT pc[3]={666,666,666};
+    pc[C::Other_plane_coordinate::index()] =s.center()[C::Other_plane_coordinate::plane_index()];
+    pc[C::index()]= (f.is_negative())? -inf: inf; // pc[C::index()]= -pc[C::index()];
 
     Point_3 ppc(pc[0], pc[1], pc[2]);
-    std::cout << "ppc is " << ppc << std::endl;
+    //std::cout << "ppc is " << ppc << std::endl;
    
     end_= SLI(ppc, l);
-    std::cout << "Type: " << f_ << " from " << start_ << " to " << end_ << std::endl;
+    //std::cout << "Type: " << f_ << " from " << start_ << " to " << end_ << std::endl;
   }
 
   bool is_on(const Point_2 &p) const {
-    CGAL_precondition(p[1-C::index()] == constant_coordinate());// return false;
-    SLI pc(unproject(p), unproject(line()));
+    CGAL_precondition(p[C::Other_plane_coordinate::plane_index()] == constant_coordinate());// return false;
+    SLI pc(unproject(p), start_.line());
+    CGAL_assertion(pc != SLI());
+    return is_on(pc);
+  }
+
+  bool is_on(const SLI &pc) const {
     if (f_.is_negative()) {
-      return pc > end_ && pc < start_;
+      return  end_.compare(pc, C::object())== CGAL::SMALLER && start_.compare(pc, C::object()) == CGAL::LARGER;
     } else {
-      return pc < end_ && pc > start_;
+      return end_.compare(pc, C::object())== CGAL::LARGER && start_.compare(pc, C::object()) == CGAL::SMALLER;
     }
   }
 
   NT constant_coordinate() const {
-    return line().point()[1-C::index()];
+    return line().point()[C::Other_plane_coordinate::plane_index()];
   }
 
   typename SLI::Quadratic_NT source_coordinate() const {
-    return start_.exact_coordinate(Coordinate_index(C()));
+    return start_.exact_coordinate(C::object());
   }
 
   typename SLI::Quadratic_NT target_coordinate() const {
-    return end_.exact_coordinate(Coordinate_index(C()));
+    return end_.exact_coordinate(C::object());
   }
 
   void clip(SLI o) {
     std::cout << "Clipping " << f_ << " " << start_ << " to " << end_ 
-	      << " against " << o << std::endl;
+      << " against " << o << std::endl;
     if (!o.is_valid()) return;
-    CGAL_precondition(start_.line() == o.line() || start_.line().opposite() == o.line());
-    if (f_.is_negative()){
-      if (o > end_ && o < start_) end_=o;
-    } else {
-      if (o < end_ && o > start_) end_=o;
-    }
+    if (is_on(o)) end_=o;
 
   }
   Line_2 line() const {
     //std::cout << start_.line() << std::endl;
     //std::cout << end_.line() << std::endl;
     CGAL_assertion(start_.line() == end_.line()  || start_.line().opposite() == end_.line());
-    return Line_2(Point_2(start_.line().point()[0], 
-			  start_.line().point()[1]),
-		  Vector_2(start_.line().to_vector()[0], 
-			   start_.line().to_vector()[1]));
+    return Line_2(project(start_.line().point()),
+		  project(start_.line().to_vector()));
   }
   Curve curve() const {
     return f_;
   }
 
   void clip(Circle_2 c) {
-    std::cout << "Clipping " << f_ << " against " << c << std::endl;
+    //std::cout << "Clipping " << f_ << " against " << c << std::endl;
     SLI i0(unproject(c), start_.line());
     SLI i1(unproject(c), start_.line().opposite());
     clip(i0);
@@ -144,19 +151,17 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
   }
   
   void clip(Rule<typename C::Other_plane_coordinate> ra) {
-    std::cout << "Clipping " << f_ << " from " << start_ << " to " 
+    /*std::cout << "Clipping " << f_ << " from " << start_ << " to " 
 	      << end_ << " against " << ra.f_ << " from " << ra.start_ 
-	      << " to " << ra.end_ << std::endl;
+	      << " to " << ra.end_ << std::endl;*/
     //CGAL_precondition(CA!=CB);
-    NT pc[3]={0,0,0};
+    NT pc[3]={666,666, 666};
     pc[C::index()]= ra.constant_coordinate();
-    pc[1-C::index()]= constant_coordinate();
-    Point_2 pi(pc[0], pc[1]);
+    pc[C::Other_plane_coordinate::index()]= constant_coordinate();
+    Point_2 pi(pc[plane_coordinate(0).index()], pc[plane_coordinate(1).index()]);
     //if (CGAL::assign(pi, oi)){
-    if (ra.is_on(Point_2(pi.x(), pi.y()))){
-      SLI ib(unproject(pi), start_.line()); 
-      clip(ib);
-    }
+    SLI ib(unproject(pi), start_.line()); 
+    clip(ib);
   }
 
   SLI start_, end_;
@@ -184,19 +189,19 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
 
 
 
-  std::vector<Rule<Coordinate_X> > horizontal_rules;
-  std::vector<Rule<Coordinate_Y> > vertical_rules;
+  std::vector<Rule<Plane_coordinate_0> > horizontal_rules;
+  std::vector<Rule<Plane_coordinate_1> > vertical_rules;
 
   //std::vector<std::vector<Line_3> > lines;
-  std::cout << "Constructing circles..." << std::flush;
+  //std::cout << "Constructing circles..." << std::flush;
   for (unsigned int i=0; i< circles.size(); ++i){
-    horizontal_rules.push_back(Rule<Coordinate_X>(circles[i], 
+    horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i], 
 				       Curve(names[i], Curve::L_RULE), inf_));
-    horizontal_rules.push_back(Rule<Coordinate_X>(circles[i],
+    horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i],
 				       Curve(names[i], Curve::R_RULE), inf_));
-    vertical_rules.push_back(Rule<Coordinate_Y>(circles[i],
+    vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[i],
 				     Curve(names[i], Curve::B_RULE), inf_));
-    vertical_rules.push_back(Rule<Coordinate_Y>(circles[i], 
+    vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[i], 
 				     Curve(names[i], Curve::T_RULE), inf_));
   }
   std::cout << "done." << std::endl;

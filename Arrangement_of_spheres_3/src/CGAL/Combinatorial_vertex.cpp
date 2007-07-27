@@ -4,8 +4,10 @@
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
-Combinatorial_vertex::Combinatorial_vertex(Combinatorial_curve a, 
-					   Combinatorial_curve b){
+
+
+ Combinatorial_vertex::Combinatorial_vertex(Combinatorial_curve a, 
+					    Combinatorial_curve b){
   CGAL_precondition(a.key() != b.key() 
 		    || !a.key().is_input() && !b.key().is_input());
   if (a.is_rule() && b.is_rule()){
@@ -38,7 +40,7 @@ Combinatorial_vertex::Combinatorial_vertex(Combinatorial_curve a,
   CGAL_postcondition(is_valid());
 }
 
-Combinatorial_vertex 
+ Combinatorial_vertex 
 Combinatorial_vertex::make_special(Combinatorial_curve::Key i) {
   Combinatorial_vertex cv;
   cv.type_= SPECIAL;
@@ -48,12 +50,12 @@ Combinatorial_vertex::make_special(Combinatorial_curve::Key i) {
 }
 
 
-bool Combinatorial_vertex::is_special() const {
+ bool Combinatorial_vertex::is_special() const {
   return type_== SPECIAL || k_[0].is_target();
 }
 
 
-Combinatorial_vertex Combinatorial_vertex::make_extremum(Key k,
+ Combinatorial_vertex Combinatorial_vertex::make_extremum(Key k,
 							 Rule_direction dir) {
   Combinatorial_vertex ret;
   ret.k_[0]=k;
@@ -69,7 +71,7 @@ Combinatorial_vertex Combinatorial_vertex::make_extremum(Key k,
   return ret;
 }
 
-Rule_direction Combinatorial_vertex::sphere_extremum_index() const {
+ Rule_direction Combinatorial_vertex::sphere_extremum_index() const {
   CGAL_precondition(is_sphere_extremum());
   if (rule_coordinate() == plane_coordinate(1)){
     if (!is_smaller()) return Rule_direction(0);
@@ -80,7 +82,7 @@ Rule_direction Combinatorial_vertex::sphere_extremum_index() const {
   }
 }
 
-void Combinatorial_vertex::audit(unsigned int numv) const {
+ void Combinatorial_vertex::audit(unsigned int numv) const {
   if (is_special()) return;
   if (k_[0].is_input()) {
     CGAL_assertion(k_[0].input_index() < numv);
@@ -90,7 +92,7 @@ void Combinatorial_vertex::audit(unsigned int numv) const {
   }
 }
 
-std::ostream &Combinatorial_vertex::write(std::ostream &out) const {
+ std::ostream &Combinatorial_vertex::write(std::ostream &out) const {
   if ( type_ & RR_BIT) {
     out << k_[0] << "," << k_[1];
   } else if (is_sphere_extremum()) {

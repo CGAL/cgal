@@ -3,6 +3,7 @@
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
+#include <CGAL/Tools/Log.h>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
@@ -11,6 +12,7 @@ class Sphere_3_table: public CGAL::Kinetic::Ref_counted<Sphere_3_table CGAL_AOS3
 public:
 #ifdef CGAL_AOS3_USE_TEMPLATES
   CGAL_AOS3_TRAITS;
+public:
   typedef typename Traits::Geom_traits Geom_traits;
 #else
   typedef Arrangement_of_spheres_3_geom_traits Geom_traits;
@@ -44,6 +46,8 @@ public:
   }
 
 
+  std::ostream &write(std::ostream &out) const ;
+
   void set_temp_sphere(const Sphere_3 &s) {
     has_temp_=true;
     spheres_[0]=s;
@@ -57,10 +61,17 @@ public:
 
   CGAL_GETNR(unsigned int, size, return spheres_.size()-3);
 
-
   CGAL_CONST_ITERATOR(Sphere_3, sphere_3, CGAL_AOS3_TYPENAME Spheres::const_iterator,
 		return spheres_.begin()+3,
 		return spheres_.end());
+
+  Sphere_3 operator[](Key k) const {
+    //CGAL_precondition(static_cast<unsigned int> (k.index()+4) < spheres_.size());
+    //CGAL_precondition(k.index()+4 >= 0);
+    CGAL_check_bounds(k.internal_index(), 0, spheres_.size());
+    return spheres_[k.internal_index()];
+  }
+
 
   CGAL_SIZE(sphere_3s, return spheres_.size());
 
@@ -79,7 +90,7 @@ public:
       return *this;
     }
     Sphere_key_iterator_t operator++(int) {
-      Sphere_key_iterator ret=*this;
+      Sphere_key_iterator_t ret=*this;
       operator++();
       return ret;
     }
@@ -89,9 +100,9 @@ public:
   };
 
 
-  CGAL_ITERATOR(Sphere_key, sphere_key, Sphere_key_iterator_t, 
-		return Sphere_key_iterator(0),
-		return Sphere_key_iterator(spheres_.size()-3));
+  CGAL_CONST_ITERATOR(Sphere_key, sphere_key, Sphere_key_iterator_t, 
+		return Sphere_key_iterator_t(0),
+		return Sphere_key_iterator_t(spheres_.size()-3));
 
   
   NT discriminant(Key i) const;
@@ -128,12 +139,17 @@ public:
   CGAL_AOS3_TYPENAME Geom_traits::Intersect_3 di_;
   Bbox_3 bbox_;
 };
-
+#ifdef CGAL_AOS3_USE_TEMPLATES
+CGAL_OUTPUT1(Sphere_3_table);
+#else
+CGAL_OUTPUT(Sphere_3_table);
+#endif
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 
 #ifdef CGAL_AOS3_USE_TEMPLATES
 #include <CGAL/Arrangement_of_spheres_3/Sphere_3_table_impl.h>
+
 #endif
 
 #endif

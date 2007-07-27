@@ -2,26 +2,26 @@
 #define CGAL_ARRANGEMENT_OF_SPHERES_3_H
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 
-#include <CGAL/Arrangement_of_spheres_3/Cross_section.h>
+#include <CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section.h>
 
 CGAL_BEGIN_NAMESPACE
 CGAL_AOS3_TEMPLATE
 class Arrangement_of_spheres_3 {
   CGAL_AOS3_TRAITS;
 
-  typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Cross_section CGAL_AOS3_TARG Cross_section;
-  Traits tr_;
-  Cross_section cs_;
+    Traits tr_;
 public:
-  Arrangement_of_spheres_3(const Traits& tr): tr_(tr), cs_(tr_.number_of_sphere_3s()){
+  typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Combinatorial_cross_section CGAL_AOS3_TARG Cross_section;
+
+
+  Arrangement_of_spheres_3(const Traits& tr): tr_(tr){
   }
   
   
   
-  void sweep_to(CGAL_AOS3_TYPENAME Traits::FT max);
-  void initialize_at(CGAL_AOS3_TYPENAME Traits::FT z);
+  void sweep_to(CGAL_AOS3_TYPENAME Traits::FT max, Cross_section &cs);
+  void initialize_at(CGAL_AOS3_TYPENAME Traits::FT z, Cross_section &cs);
   
-  CGAL_GET(Cross_section, cross_section, return cs_);
 };
 
 

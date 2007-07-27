@@ -8,8 +8,8 @@
 #include <CGAL/Arrangement_of_spheres_3/Sphere_3_table.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_line_intersection.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Arrangement_of_spheres_3/Event_point_3.h>
 /*#include <CGAL/Arrangement_of_spheres_traits_3/Filtered_sphere_line_intersection.h>
-#include <CGAL/Arrangement_of_spheres_traits_3/Event_point_3.h>
 #include <CGAL/Arrangement_of_spheres_traits_3/Sphere_key.h>
 #include <CGAL/Arrangement_of_spheres_traits_3/template_types.h>*/
 
@@ -32,7 +32,8 @@ struct Arrangement_of_spheres_traits_3 {
   typedef This Traits_t;
 #else
   typedef Arrangement_of_spheres_traits_3 This;
-  typedef Arrangement_of_spheres_3_geom_traits GT;
+  typedef CGAL_AOS3_INTERNAL_NS::Arrangement_of_spheres_3_geom_traits GT;
+  typedef GT Geom_traits;
 #endif
  
   typedef CGAL_AOS3_TYPENAME Geom_traits::FT FT;
@@ -52,7 +53,7 @@ struct Arrangement_of_spheres_traits_3 {
   typedef int Event_key;
 
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_line_intersection<This> Sphere_point_3;
-  //typedef Event_point_3<This> Event_point_3;
+  typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Event_point_3<This> Event_point_3;
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_3_table CGAL_AOS3_TARG Table;
   typedef CGAL_AOS3_TYPENAME Table::Key Sphere_3_key;
 
@@ -69,6 +70,7 @@ struct Arrangement_of_spheres_traits_3 {
   template <class It> 
   Arrangement_of_spheres_traits_3(It bs, It es): table_(new Table(bs, es)){
     //di_= table_->geometric_traits_object().intersect_3_object();
+    std::cout << *table_ << std::endl;
   }
   
   CGAL_GET(Bbox_3, bbox_3, return table_->bbox_3());
@@ -79,6 +81,9 @@ struct Arrangement_of_spheres_traits_3 {
 		      return table_->sphere_3s_end());
 
   //CGAL_CONST_FIND(Sphere_3, return table_->find(k));
+  Sphere_3 sphere_3(Sphere_3_key k) const {
+    return table_->operator[](k);
+  }
   //CGAL_INSERTNK(Sphere_3, return table_->insert(s));
   CGAL_SIZE(sphere_3s, return table_->number_of_sphere_3s());
  
@@ -92,10 +97,10 @@ struct Arrangement_of_spheres_traits_3 {
      quadratic constructions ------------------------------------------------
   */
 
-  /*typedef  std::pair<Event_point_3, Event_point_3> Event_pair;
-
-  Event_pair sphere_events(Key s) const;
-
+  typedef  std::pair<Event_point_3, Event_point_3> Event_pair;
+  
+  Event_pair sphere_events(Sphere_3_key s) const;
+  /*
   Event_pair intersection_2_events(Key a, Key b) const;
 
   Event_pair intersection_3_events(Key a, Key b, Key c) const;
@@ -127,9 +132,9 @@ struct Arrangement_of_spheres_traits_3 {
 
   bool sphere_intersects_rule(Key sphere, const Sphere_point_3& sp, 
 			      Coordinate_index C) const;
-
-  bool sphere_intersects_sweep(Key sphere, const Sphere_point_3& ep) const;
-
+  */
+  bool sphere_intersects_sweep(Sphere_3_key sphere, const Sphere_point_3& ep) const;
+  /*
 
   CGAL::Comparison_result compare_equipower_point_to_rule(Key sphere0,
 							  Key sphere1,
@@ -147,26 +152,26 @@ struct Arrangement_of_spheres_traits_3 {
   CGAL::Oriented_side oriented_side_of_equipower_plane(Key sphere_0, Key sphere_1,
 						       const Sphere_point_3 &s) const;
 
-  CGAL::Oriented_side oriented_side_of_separating_plane(Key sphere_0, Key sphere_1, 
+  CGAL::Oriented_side oriented_side_of_separating_plane(Sphere_3_key sphere_0, Sphere_3_key sphere_1, 
 							const Sphere_point_3& sp) const ;
- 
-  CGAL::Comparison_result compare_sphere_centers_c(Key a, Key b, Coordinate_index C) const;
+  */
+  CGAL::Comparison_result compare_sphere_centers_c(Sphere_3_key a, Sphere_3_key b, Coordinate_index C) const;
 
-  CGAL::Comparison_result compare_sphere_center_c(Key a,
+  CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
 						  FT d,
 						  Coordinate_index C) const;
 
-  CGAL::Comparison_result compare_sphere_center_c(Key a,
+  CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
 						  const Sphere_point_3& d,
 						  Coordinate_index C) const;
-
+  /*
   // return true if the interval defined by the sphere in C contains d.C
-  bool is_over_circle_c(Key c, const Sphere_point_3& d,
+  bool is_over_circle_c(Sphere_3_key c, const Sphere_point_3& d,
 			      Coordinate_index C) const;
   
   CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
-							 Key sphere0,
-							 Key Sphere1,
+							 Sphere_3_key sphere0,
+							 Sphere_3_key Sphere1,
 							 const Sphere_point_3 &pt,
 							 Coordinate_index C) const;
 
@@ -174,15 +179,15 @@ struct Arrangement_of_spheres_traits_3 {
   // Find the line which has as coordinate C pt[C] and gets it other coord
   // from planex. See if it is inside the sphere at t
   CGAL::Bounded_side bounded_side_of_sphere_projected( const Sphere_point_3 &t,
-						       Key sphere,
-						       Key planex,
+						       Sphere_3_key sphere,
+						       Sphere_3_key planex,
 						       const Sphere_point_3 &pt,
 						       Coordinate_index C) const;
-  CGAL::Bounded_side bounded_side_of_sphere(Key sphere,
+  CGAL::Bounded_side bounded_side_of_sphere(Sphere_3_key sphere,
 					    const Sphere_point_3 &z) const;
-  CGAL::Bounded_side bounded_side_of_sphere(Key sphere,
-					    Key x,
-					    Key y,
+  CGAL::Bounded_side bounded_side_of_sphere(Sphere_3_key sphere,
+					    Sphere_3_key x,
+					    Sphere_3_key y,
 					    const Sphere_point_3 &z) const;
 
   CGAL::Comparison_result compare_depths(const Sphere_point_3 &a, 
@@ -210,4 +215,8 @@ private:
     Geom_traits::Intersect_3 di_;*/
 };
 CGAL_END_NAMESPACE
+
+#ifdef CGAL_AOS3_USE_TEMPLATES
+#include <CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_traits_3_impl.h>
+#endif
 #endif

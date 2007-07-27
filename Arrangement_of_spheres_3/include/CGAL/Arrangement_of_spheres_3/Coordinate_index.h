@@ -6,25 +6,6 @@
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
-class Coordinate_X;
-class Coordinate_Y;
-class Coordinate_Z;
-
-struct Coordinate_X {
-  static int index() {return 0;}
-  typedef Coordinate_Y Other_plane_coordinate;
-};
-
-struct Coordinate_Y {
-  static int index() {return 1;}
-  typedef Coordinate_X Other_plane_coordinate;
-};
-
-struct Coordinate_Z {
-  static int index() {return 2;}
-};
-
-
 class Coordinate_index {
   int c_;
 public:
@@ -35,9 +16,9 @@ public:
     CGAL_assertion(c_ >=0 && c_ < 3);
     // bool check_constructor;
   }
-  Coordinate_index(Coordinate_X):c_(0){}
+  /*Coordinate_index(Coordinate_X):c_(0){}
   Coordinate_index(Coordinate_Y):c_(1){}
-  Coordinate_index(Coordinate_Z):c_(2){}
+  Coordinate_index(Coordinate_Z):c_(2){}*/
   
   /*explicit Coordinate_index(int c, bool): c_(c){
     CGAL_assertion(c_ >=0 && c_<3);
@@ -93,6 +74,87 @@ public:
 CGAL_OUTPUT(Coordinate_index);
 
 
+class Coordinate_X;
+class Coordinate_Y;
+class Coordinate_Z;
+
+struct Coordinate_X {
+  static int index() {return 0;}
+  static Coordinate_index object() {return Coordinate_index(0);}
+  template <class V>
+  static const V& basis_3() {
+    static V v(1,0,0);
+    return v;
+  }
+};
+
+struct Coordinate_Y {
+  static int index() {return 1;}
+  typedef Coordinate_Z Other_plane_coordinate;
+  static int plane_index() {return 0;}
+  static Coordinate_index object() {return Coordinate_index(1);}
+  template <class V>
+  static const V& basis_3() {
+    static V v(0,1,0);
+    return v;
+  }
+};
+
+struct Coordinate_Z {
+  static int index() {return 2;}
+  typedef Coordinate_Y Other_plane_coordinate;
+  static int plane_index() {return 1;}
+  static Coordinate_index object() {return Coordinate_index(2);}
+  template <class V>
+  static const V& basis_3() {
+    static V v(0,0,1);
+    return v;
+  }
+
+};
+
+
+typedef Coordinate_X Sweep_coordinate;
+typedef Coordinate_Y Plane_coordinate_0;
+typedef Coordinate_Z Plane_coordinate_1;
+
+
+inline Coordinate_index sweep_coordinate() {
+  return Sweep_coordinate::object();
+}
+inline Coordinate_index plane_coordinate(int i) {
+  if (i ==0) return Plane_coordinate_0::object();
+  else return Plane_coordinate_1::object();
+}
+inline unsigned int project(Coordinate_index i) {
+  if (i == Plane_coordinate_0::object()) return 0;
+  else {
+    CGAL_assertion(i== Plane_coordinate_1::object());
+    return 1;
+  }
+}
+
+inline Coordinate_index other_plane_coordinate(Coordinate_index i) {
+  if (i == Plane_coordinate_0::object()) return Plane_coordinate_1::object();
+  else {
+    CGAL_assertion(i== Plane_coordinate_1::object());
+    return Plane_coordinate_0::object();
+  }
+}
+
+template <class Vector>
+inline Vector sweep_vector() {
+  int v[3]={0,0,0};
+  v[sweep_coordinate().index()]=1;
+  return Vector(v[0], v[1], v[2]);
+}
+
+template <class Point, class NT>
+inline Point sweep_point(NT n) {
+  NT v[3]={0,0,0};
+  v[sweep_coordinate().index()]=n;
+  return Point(v[0], v[1], v[2]);
+}
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 #endif

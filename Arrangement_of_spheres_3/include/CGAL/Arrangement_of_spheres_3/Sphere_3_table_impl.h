@@ -36,6 +36,18 @@ void Sphere_3_table CGAL_AOS3_TARG::initialize_2() {
 }
 
 
+CGAL_AOS3_TEMPLATE
+std::ostream &Sphere_3_table CGAL_AOS3_TARG::write(std::ostream &out) const {
+  out << "Spheres:\n";
+  out << Key(Key::BL) << ": " << operator[](Key(Key::BL)) << "\n";
+  out << Key(Key::TR) << ": " << operator[](Key(Key::TR)) << "\n";
+  for (Sphere_key_const_iterator it= sphere_keys_begin(); it != sphere_keys_end(); ++it) {
+    out << *it << ": " << operator[](*it) << "\n";
+  }
+  out << "Bbox: " << bbox_ << std::endl;
+  return out;
+}
+
 /* 
    Constructions--------------------------------------------------------
 */
