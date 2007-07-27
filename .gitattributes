@@ -444,7 +444,6 @@ Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_circles.cpp -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_3_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_traits_3_impl.h -text
-Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Combinatoria_vertex.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Combinatorial_curve.h -text
