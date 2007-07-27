@@ -5,6 +5,7 @@
 #include <CGAL/HalfedgeDS_vertex_base.h>
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_face_base.h>
+#include <CGAL/Arrangement_of_spheres_3/Rule_direction.h>
 
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_vertex.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_curve.h>
@@ -34,6 +35,7 @@ public:
 public:
   typedef Combinatorial_vertex Point;
   typedef Combinatorial_curve Curve;
+  typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Rule_direction Rule_direction;
 
   typedef CGAL_AOS3_TYPENAME Traits::Event_key Event_key;
 

@@ -5,12 +5,13 @@ CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 #define inline 
 
 inline Rule_direction::Rule_direction(int d): dir_(2){
-  CGAL_precondition(d >=0 && d < 4);
+  //CGAL_precondition(d >=0 && d < 4);
   dir_= dir_ << d;
   if (d==0) CGAL_assertion(dir_== Combinatorial_curve::R_BIT);
   else if (d==1) CGAL_assertion(dir_==  Combinatorial_curve::T_BIT);
   else if (d==2) CGAL_assertion(dir_== Combinatorial_curve::L_BIT);
   else if (d==3) CGAL_assertion(dir_==  Combinatorial_curve::B_BIT);
+  else CGAL_assertion(0);
 }
 
 

@@ -90,7 +90,7 @@ struct Arrangement_of_spheres_traits_3 {
   /*
     Helpers -----------------------------------------------------------------
   */
-  //Plane_3 rule_plane(Key a, Coordinate_index C) const;
+  //Plane_3 rule_plane(Sphere_3_key a, Coordinate_index C) const;
   
 
   /* 
@@ -100,56 +100,56 @@ struct Arrangement_of_spheres_traits_3 {
   typedef  std::pair<Event_point_3, Event_point_3> Event_pair;
   
   Event_pair sphere_events(Sphere_3_key s) const;
+  
+  Event_pair intersection_2_events(Sphere_3_key a, Sphere_3_key b) const;
   /*
-  Event_pair intersection_2_events(Key a, Key b) const;
+  Event_pair intersection_3_events(Sphere_3_key a, Sphere_3_key b, Sphere_3_key c) const;
 
-  Event_pair intersection_3_events(Key a, Key b, Key c) const;
+  Event_pair sphere_intersect_extremum_events(Sphere_3_key a,  Coordinate_index C,
+					      Sphere_3_key b) const;
 
-  Event_pair sphere_intersect_extremum_events(Key a,  Coordinate_index C,
-					      Key b) const;
+  Event_pair sphere_intersect_rule_events(Sphere_3_key a, Sphere_3_key r, Coordinate_index C) const;
 
-  Event_pair sphere_intersect_rule_events(Key a, Key r, Coordinate_index C) const;
+  Event_pair circle_cross_rule_events(Sphere_3_key a, Sphere_3_key b,
+				      Sphere_3_key rs, Coordinate_index C) const;
 
-  Event_pair circle_cross_rule_events(Key a, Key b,
-				      Key rs, Coordinate_index C) const;
-
-  Event_pair sphere_intersect_rule_rule_events(Key s, Key rx, Key ry) const;
+  Event_pair sphere_intersect_rule_rule_events(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
 
   // not really used
-  Quadratic_NT intersection_c(Key s, Line_3 l, Coordinate_index C) const;*/
+  Quadratic_NT intersection_c(Sphere_3_key s, Line_3 l, Coordinate_index C) const;*/
 
 
   /* 
      predictes--------------------------------------------------------------
   */
 
-  /*bool intersects(Key a, Key b) const;
+  bool intersects(Sphere_3_key a, Sphere_3_key b) const;
 
-  bool intersects(Key a, Key b, Key c) const;
-
-  bool sphere_intersects_rule(Key sphere, Key rule_sphere, 
+  bool intersects(Sphere_3_key a, Sphere_3_key b, Sphere_3_key c) const;
+  
+  bool sphere_intersects_rule(Sphere_3_key sphere, Sphere_3_key rule_sphere, 
 			      Coordinate_index C) const;
-
-  bool sphere_intersects_rule(Key sphere, const Sphere_point_3& sp, 
+  
+  bool sphere_intersects_rule(Sphere_3_key sphere, const Sphere_point_3& sp, 
 			      Coordinate_index C) const;
-  */
+  
   bool sphere_intersects_sweep(Sphere_3_key sphere, const Sphere_point_3& ep) const;
-  /*
+  
 
-  CGAL::Comparison_result compare_equipower_point_to_rule(Key sphere0,
-							  Key sphere1,
+  CGAL::Comparison_result compare_equipower_point_to_rule(Sphere_3_key sphere0,
+							  Sphere_3_key sphere1,
 							  const Sphere_point_3& sp,
 							  Coordinate_index C) const;
-
-  CGAL::Sign sign_of_separating_plane_normal_c(Key sphere0, Key sphere1,
+  /*
+  CGAL::Sign sign_of_separating_plane_normal_c(Sphere_3_key sphere0, Sphere_3_key sphere1,
 					       Coordinate_index C) const ;
 
 
-  CGAL::Sign sign_of_equipower_plane_normal_c(Key sphere0, Key sphere1, 
+  CGAL::Sign sign_of_equipower_plane_normal_c(Sphere_3_key sphere0, Sphere_3_key sphere1, 
 					      Coordinate_index C) const;
 
 
-  CGAL::Oriented_side oriented_side_of_equipower_plane(Key sphere_0, Key sphere_1,
+  CGAL::Oriented_side oriented_side_of_equipower_plane(Sphere_3_key sphere_0, Sphere_3_key sphere_1,
 						       const Sphere_point_3 &s) const;
   */
   CGAL::Oriented_side oriented_side_of_separating_plane(Sphere_3_key sphere_0, Sphere_3_key sphere_1, 
@@ -167,14 +167,14 @@ struct Arrangement_of_spheres_traits_3 {
   // return true if the interval defined by the sphere in C contains d.C
   bool is_over_circle_c(Sphere_3_key c, const Sphere_point_3& d,
 			      Coordinate_index C) const;
-  /*
+  
 
   CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
 							 Sphere_3_key sphere0,
 							 Sphere_3_key Sphere1,
 							 const Sphere_point_3 &pt,
 							 Coordinate_index C) const;
-
+  
   // name sucks
   // Find the line which has as coordinate C pt[C] and gets it other coord
   // from planex. See if it is inside the sphere at t
@@ -183,7 +183,7 @@ struct Arrangement_of_spheres_traits_3 {
 						       Sphere_3_key planex,
 						       const Sphere_point_3 &pt,
 						       Coordinate_index C) const;
-  */
+ 
   CGAL::Bounded_side bounded_side_of_sphere(Sphere_3_key sphere,
 					    const Sphere_point_3 &z) const;
   CGAL::Bounded_side bounded_side_of_sphere(Sphere_3_key sphere,
