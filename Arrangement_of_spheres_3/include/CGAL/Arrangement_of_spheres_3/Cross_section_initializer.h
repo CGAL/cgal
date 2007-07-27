@@ -41,7 +41,7 @@ public:
     CGAL_AOS3_TYPENAME CS::Point lp= em1->second;
     if (points_.find(lp)==points_.end()) new_vertex_cached(lp);
       
-    CGAL_AOS3_TYPENAME CS::Face_handle f= cs_.hds_.faces_push_back(CS::HDS::Face());
+    CGAL_AOS3_TYPENAME CS::Face_handle f= cs_.hds_.faces_push_back(CGAL_AOS3_TYPENAME CS::HDS::Face());
     It c=b;
     CGAL_AOS3_TYPENAME CS::Halfedge_handle le, fst;
     while (c != e) {
@@ -51,7 +51,7 @@ public:
       h->set_face(f);
       f->set_halfedge(h);
       lp=cp;
-      if (le != CS::Halfedge_handle()) {
+      if (le != CGAL_AOS3_TYPENAME CS::Halfedge_handle()) {
 	le->set_next(h);
 	h->set_prev(le);
 	CGAL_assertion(le->next()->opposite()->vertex() == le->vertex());
