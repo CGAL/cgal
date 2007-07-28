@@ -4356,7 +4356,7 @@ build_cgal()
 	    _do_compile libCGALQt shared
 	fi
 	# Move CGALBenchmark into libCGAL?
-	if [ -d "${CGAL_SRC_DIR}/Benchmark" ]; then
+	if [ -d "${CGAL_SRC_DIR}/Benchmark" -a -n "${PROVIDE_PKG_BOOST_PROGRAM_OPTIONS}" ]; then
 	    cd "${CGAL_SRC_DIR}/Benchmark"
 	    _do_compile libCGALBenchmark static
 	    _do_compile libCGALBenchmark shared
