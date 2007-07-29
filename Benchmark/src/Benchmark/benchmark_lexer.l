@@ -117,6 +117,9 @@ static int  comment_nesting = 0; // counts nesting depth of () in Comments
 %x IncludeMode
 %x CommentMode
 
+/* the scanner is never interactive */
+%option never-interactive
+
 space           [\t \r]*
 newline         [\n]
 spcnl           [\t \n\r]*
