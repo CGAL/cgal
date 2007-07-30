@@ -20,7 +20,8 @@
 #ifndef CGAL_OVERLAY_VISITOR_H
 #define CGAL_OVERLAY_VISITOR_H
 
-#include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h> 
 
@@ -34,7 +35,12 @@ template < class Traits_,
            class Subcurve_,
            class OverlayTraits >
 class Overlay_visitor : 
-  public Arr_construction_visitor<Traits_, Arrangement_, Event_, Subcurve_>
+  public  Arr_construction_sl_visitor< 
+            Arr_bounded_planar_construction_helper<
+                                                Traits_, 
+                                                Arrangement_, 
+                                                Event_, 
+                                                Subcurve_> >
 {
 public:
 
@@ -73,10 +79,11 @@ public:
                            Subcurve,
                            OverlayTraits >               Self;
 
-  typedef Arr_construction_visitor< Traits,
-                                  Arrangement,
-                                  Event,
-                                  Subcurve >             Base;
+  typedef Arr_bounded_planar_construction_helper<Traits, 
+                                              Arrangement, 
+                                              Event, 
+                                              Subcurve> Construction_helper;
+  typedef Arr_construction_sl_visitor<Construction_helper> Base;
 
   typedef typename Base::SubCurveIter                    SubCurveIter;
   typedef typename Base::SubCurveRevIter                 SubCurveRevIter;
@@ -241,7 +248,7 @@ public:
     if(!e->is_finite())
       return;
 
-    Point_2& pt = e->get_point();
+    Point_2& pt = e->point();
     if(pt.is_red_object_null())
     {
       pt.set_red_object(end_point.get_red_object());
@@ -264,7 +271,7 @@ public:
   void update_event(Event *e,
                     Subcurve* sc)
   {
-    Point_2& pt = e->get_point();
+    Point_2& pt = e->point();
 
     if(pt.is_red_object_null())
     {
@@ -283,7 +290,7 @@ public:
 
   void update_event(Event* e, const Point_2& p)
   {
-    Point_2& pt = e->get_point();
+    Point_2& pt = e->point();
     if(pt.is_red_object_null())
     {
       pt.set_red_object(p.get_red_object());
@@ -590,7 +597,7 @@ public:
 
   void create_vertex(Event *event, Vertex_handle res_v, Subcurve* sc)
   {
-    const Point_2& pt = event->get_point();
+    const Point_2& pt = event->point();
     CGAL_assertion( !pt.is_red_object_null() || !pt.is_blue_object_null());
     const Object& red_obj  = pt.get_red_object();
     const Object& blue_obj = pt.get_blue_object();

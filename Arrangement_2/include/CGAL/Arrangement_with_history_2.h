@@ -27,7 +27,7 @@
  */
 
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/In_place_list.h>

@@ -17,23 +17,32 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
+
 #ifndef CGAL_ARR_BASIC_ADDITION_VISITOR_H
 #define CGAL_ARR_BASIC_ADDITION_VISITOR_H
+
+#include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class Traits, class Arrangement_, class Event,class Subcurve>
 class Arr_basic_addition_visitor : 
-  public Arr_construction_visitor<Traits,Arrangement_,Event,Subcurve>
+  public  Arr_construction_sl_visitor< 
+            Arr_bounded_planar_construction_helper<
+                                                Traits, 
+                                                Arrangement_, 
+                                                Event, 
+                                                Subcurve> >
 {
 protected:
 
   typedef Arrangement_                                     Arrangement;
   
-  typedef Arr_construction_visitor<Traits,
-                                   Arrangement,
-                                   Event,
-                                   Subcurve>               Base;
+  typedef Arr_bounded_planar_construction_helper<Traits, 
+                                              Arrangement, 
+                                              Event, 
+                                              Subcurve> Construction_helper;
+  typedef Arr_construction_sl_visitor<Construction_helper> Base;
 
   typedef Arr_basic_addition_visitor<Traits,
                                Arrangement,
@@ -135,7 +144,7 @@ public:
        }
     }
 
-    event->get_is_curve_in_arr().resize(event->get_num_right_curves(),false);
+    event->get_is_curve_in_arr().resize(event->number_of_right_curves(),false);
 
     if(!event->has_right_curves())
     {
@@ -196,7 +205,7 @@ public:
         {
           he = split_edge((*iter)->get_last_curve().get_halfedge_handle(),
                           (*iter),
-                           event->get_point());
+                           event->point());
           
           // 'he' has the same source as the splitted halfedge
           event->set_halfedge_handle(he);
@@ -266,9 +275,9 @@ public:
   {
     Halfedge_handle he_above = ray_shoot_up(sc);
     Vertex_handle v1 = 
-      this->m_arr_access.create_vertex(this->get_last_event(sc)->get_point());
+      this->m_arr_access.create_vertex(this->get_last_event(sc)->point());
     Vertex_handle v2 =
-      this->m_arr_access.create_vertex(this->current_event()->get_point());
+      this->m_arr_access.create_vertex(this->current_event()->point());
     if(he_above == Halfedge_handle(NULL))
       return this->m_arr_access.insert_in_face_interior_ex(cv.base(),
                                                    this->m_th->face(),
@@ -381,8 +390,8 @@ public:
   void update_event(Event* e, const Point_2& pt)
   {
     Vertex_handle vh;
-    if(e->get_point().get_vertex_handle() == vh)
-      e->get_point().set_vertex_handle(pt.get_vertex_handle());
+    if(e->point().get_vertex_handle() == vh)
+      e->point().set_vertex_handle(pt.get_vertex_handle());
   }
 
   virtual Halfedge_handle
@@ -390,9 +399,9 @@ public:
                             Subcurve* sc)
   {
     Event *lastEvent = this->get_last_event(sc);
-    Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
+    Vertex_handle last_v = lastEvent->point().get_vertex_handle();
     Vertex_handle curr_v =
-      this->current_event()->get_point().get_vertex_handle();
+      this->current_event()->point().get_vertex_handle();
     Vertex_handle null_v;
 
     if(last_v == null_v && curr_v == null_v)
@@ -418,7 +427,7 @@ public:
                               Subcurve* sc)
   {
     Event *lastEvent = this->get_last_event(sc);
-    Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
+    Vertex_handle last_v = lastEvent->point().get_vertex_handle();
 
     if(last_v != Vertex_handle())
       return (this->m_arr_access.arrangement().insert_at_vertices (cv.base(), he, last_v));
@@ -432,7 +441,7 @@ public:
                              Subcurve* sc)
   {
     Vertex_handle curr_v =
-      this->current_event()->get_point().get_vertex_handle();
+      this->current_event()->point().get_vertex_handle();
 
      if(curr_v != Vertex_handle())
        return (this->m_arr_access.arrangement().insert_at_vertices (cv.base(), he, curr_v));
@@ -446,7 +455,7 @@ public:
   {
     Event* curr_event = this->current_event();
     Vertex_handle v = 
-        this->m_arr_access.create_vertex(curr_event->get_point().base());
+        this->m_arr_access.create_vertex(curr_event->point().base());
       return this->m_arr_access.insert_from_vertex_ex(cv.base(), he, v, SMALLER);
   }
 
@@ -456,7 +465,7 @@ public:
   {
     Event* last_event = this->get_last_event(sc);
     Vertex_handle v = 
-        this->m_arr_access.create_vertex(last_event->get_point().base());
+        this->m_arr_access.create_vertex(last_event->point().base());
       return this->m_arr_access.insert_from_vertex_ex(cv.base(), he, v, LARGER);
   }
 

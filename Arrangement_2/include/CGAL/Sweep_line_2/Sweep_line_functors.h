@@ -47,13 +47,13 @@ public:
   {
     
     if(e1->is_finite() && e2->is_finite())
-      return (m_traits->compare_xy_2_object()(e1->get_point(),
-                                              e2->get_point()));
+      return (m_traits->compare_xy_2_object()(e1->point(),
+                                              e2->point()));
     if(e1->is_finite())
-      return ( this->operator()(e1->get_point(), e2) );
+      return ( this->operator()(e1->point(), e2) );
     
     if(e2->is_finite())
-      return (CGAL::opposite(this->operator()(e2->get_point(), e1)));
+      return (CGAL::opposite(this->operator()(e2->point(), e1)));
     
     
     
@@ -70,7 +70,7 @@ public:
 
     if(e2->is_finite())
       // e2 is also a normal event, use compare_xy.
-      return (m_traits->compare_xy_2_object()(pt, e2->get_point()));
+      return (m_traits->compare_xy_2_object()(pt, e2->point()));
 
     Boundary_type e2_x = e2->infinity_at_x();
     switch (e2_x)
@@ -194,7 +194,7 @@ public:
 
     case NO_BOUNDARY:
       // e2 is a normal event
-      res = m_traits->compare_x_2_object()(e2->get_point(), cv, index);
+      res = m_traits->compare_x_2_object()(e2->point(), cv, index);
       if(res != EQUAL)
         return CGAL::opposite(res);
 
@@ -202,7 +202,11 @@ public:
         return SMALLER;
 
       CGAL_assertion(boundary_in_y == PLUS_INFINITY);
-      return LARGER;      
+      return LARGER;
+     default:
+        CGAL_assertion(false); 
+	break;
+
     }
 
     //doesnt suppose to reach here (all options have been handles by now)
@@ -279,7 +283,7 @@ public:
                  c2) != (*m_curr_event)->right_curves_end())
 
      return m_traits->compare_y_at_x_right_2_object()
-       (c1->get_last_curve(), c2->get_last_curve(), (*m_curr_event)->get_point());
+       (c1->get_last_curve(), c2->get_last_curve(), (*m_curr_event)->point());
 
     Boundary_type x_inf_c1 =
       m_traits->boundary_in_x_2_object()(c1->get_last_curve(), MIN_END);

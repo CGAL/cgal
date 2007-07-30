@@ -633,7 +633,7 @@ public:
      if(m_currentEvent->is_finite())
      {
        const std::pair<StatusLineIter, bool>& pair_res =
-         m_statusLine.find_lower (m_currentEvent->get_point(), 
+         m_statusLine.find_lower (m_currentEvent->point(), 
 				                          m_statusLineCurveLess);
 
        m_status_line_insert_hint = pair_res.first;
@@ -721,7 +721,7 @@ public:
   virtual void _handle_right_curves()
   {
     CGAL_PRINT("Handling right curves (" ;)
-    CGAL_PRINT(m_currentEvent->get_point() << ")\n";)
+    CGAL_PRINT(m_currentEvent->point() << ")\n";)
     
     if(! m_currentEvent->has_right_curves())
       return;
@@ -838,7 +838,9 @@ protected:
  
 
   /*! Allocate an event object */
-  Event* allocate_event(const Point_2& pt, Attribute type)
+  Event* _allocate_event(const Point_2& pt, Attribute type,
+			Boundary_type x_dummy = NO_BOUNDARY,
+			Boundary_type y_dummy = NO_BOUNDARY)
   {
     Event *e =  m_eventAlloc.allocate(1); 
     m_eventAlloc.construct(e, m_masterEvent);
@@ -863,7 +865,7 @@ protected:
     if (! exist)
     {
       // We have a new event
-      e = allocate_event(pt, type);
+      e = _allocate_event(pt, type);
       e->set_finite();
 
       if(sc != NULL)
@@ -931,7 +933,7 @@ protected:
     {
       // We have a new event
       Point_2 pt = Point_2();
-      e = allocate_event(pt, type);
+      e = _allocate_event(pt, type);
       _set_attributes_of_infinity(e, x_inf, y_inf);
       if(sc != NULL)
       {

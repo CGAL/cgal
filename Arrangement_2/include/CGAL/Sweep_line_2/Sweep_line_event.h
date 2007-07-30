@@ -108,6 +108,7 @@ public:
   {
     m_point = point;
     m_type = type;
+    set_finite();
   }
 
 
@@ -264,13 +265,13 @@ public:
 
   /*! Returns the number of intersecting curves that are defined
       to the right of the event point. */
-  int get_num_right_curves() {
+  int number_of_right_curves() {
     return m_rightCurves.size();
   }
 
   /*! Returns the number of intersecting curves that are defined
       to the left of the event point. */
-  int get_num_left_curves() {
+  int number_of_left_curves() {
     return m_leftCurves.size();
   }
 
@@ -287,13 +288,13 @@ public:
   }
 
   /*! Returns the actual point of the event */
-  const Point_2 &get_point() const {
+  const Point_2 &point() const {
     CGAL_assertion(is_finite());
     return m_point;
   }
 
   /*! Returns the actual point of the event (non-const) */
-  Point_2& get_point()
+  Point_2& point()
   {
     CGAL_assertion(is_finite());
     return m_point;

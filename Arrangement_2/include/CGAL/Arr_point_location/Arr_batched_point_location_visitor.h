@@ -23,14 +23,14 @@
 CGAL_BEGIN_NAMESPACE
 
 
-#include <CGAL/Sweep_line_2_empty_visitor.h>
+#include <CGAL/Sweep_line_empty_visitor.h>
 #include <CGAL/Object.h>
 #include <CGAL/Arr_accessor.h>
 #include <utility>
 
 
 template< class Traits_, class OutputIerator, class Arrangement_ >
-class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
+class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Traits_ >
 {
   typedef Arr_batched_point_location_visitor<Traits_,
                                              OutputIerator,
@@ -39,7 +39,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   typedef Traits_                                                 Traits;
   
 
-  typedef Empty_visitor<Traits>                        Base;
+  typedef Sweep_line_empty_visitor<Traits>             Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
   typedef typename Base::SL_iterator                   SL_iterator;

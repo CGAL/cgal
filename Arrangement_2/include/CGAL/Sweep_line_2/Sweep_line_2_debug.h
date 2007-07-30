@@ -90,7 +90,7 @@ PrintStatusLine()
   }
   std::cout << std::endl << "Status line: (" ;
   if(m_currentEvent->is_finite())
-    std::cout << m_currentEvent->get_point() << ")" << std::endl;
+    std::cout << m_currentEvent->point() << ")" << std::endl;
   else
   {
     Boundary_type x = m_currentEvent->infinity_at_x(),
@@ -159,7 +159,7 @@ Basic_sweep_line_2<Traits_,
 PrintEvent(const Event* e)
 {
   if(e->is_finite())
-    std::cout<< e->get_point();
+    std::cout<< e->point();
   else
   {
     Boundary_type x = e->infinity_at_x(),

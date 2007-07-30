@@ -42,13 +42,14 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_event
  */
 
-template<class SweepLineTraits_2, class CurveWrap, class Halfedge_handle_>
+template<class SweepLineTraits_2, class CurveWrap, class Arrangement_>
 class Arr_construction_event : 
   public Sweep_line_event<SweepLineTraits_2, CurveWrap>
 {
 public:
   typedef SweepLineTraits_2                               Traits;
-  typedef Halfedge_handle_                                Halfedge_handle;
+  typedef Arrangement_                                    Arrangement;
+  typedef typename Arrangement::Halfedge_handle           Halfedge_handle;
   typedef typename Traits::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Traits::Point_2                        Point_2;
 
@@ -56,12 +57,12 @@ public:
                            CurveWrap>                     Base;
   typedef Arr_construction_event<Traits,
                                  CurveWrap,
-                                 Halfedge_handle>         Self;
+                                 Arrangement>             Self;
 
   typedef CurveWrap                                       SubCurve;
   typedef typename Base::template SC_container<SubCurve*> SC_container_rebind;
   typedef typename SC_container_rebind::other             SubcurveContainer;
-  typedef typename SubcurveContainer::iterator            SubCurveIter;
+  typedef typename SubcurveContainer::iterator            Subcurve_iterator;//SubCurveIter;
   typedef typename SubcurveContainer::reverse_iterator    SubCurveRevIter;
    
   typedef std::vector<bool>                               BitVector;
@@ -80,16 +81,16 @@ public:
   {}
 
 
-  std::pair<bool, SubCurveIter> add_curve_to_right(SubCurve *curve,
+  std::pair<bool, Subcurve_iterator> add_curve_to_right(SubCurve *curve,
                                                    Traits* tr)
   {
-    std::pair<bool,SubCurveIter> res = Base::add_curve_to_right(curve, tr);
+    std::pair<bool,Subcurve_iterator> res = Base::add_curve_to_right(curve, tr);
     if(res.second != m_rightCurves.end() && res.first == false )
       this->inc_right_curves_counter();
     return res;
   }
 
-  std::pair<bool, SubCurveIter> add_pair_curves_to_right
+  std::pair<bool, Subcurve_iterator> add_pair_curves_to_right
     (SubCurve *sc1, SubCurve *sc2)
   {
     //increment twice the counter of right curves
@@ -116,10 +117,10 @@ public:
     skip--;  // now 'skip' holds the amount of the right curves of the event
 		         // that are already inserted to the planar map  - 1 (minus 1)
 
-    SubCurveIter iter = this->m_rightCurves.end();
+    Subcurve_iterator iter = this->m_rightCurves.end();
     --iter;
     
-    unsigned int num_left_curves = this->get_num_left_curves();
+    unsigned int num_left_curves = this->number_of_left_curves();
     for ( ; iter != m_rightCurves.begin() ; --iter,++counter )
     {
       if(curve == (*iter))

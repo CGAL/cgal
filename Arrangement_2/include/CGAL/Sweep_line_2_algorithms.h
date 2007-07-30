@@ -96,7 +96,7 @@ struct Default_arr_traits<CGAL::Arr_linear_object_2<Kernel> >
  *      value-type of OutputIterator is Traits::Point_2.
  */
 template <class CurveInputIterator, class OutputIterator, class Traits>
-OutputIterator get_intersection_points (CurveInputIterator curves_begin,
+OutputIterator compute_intersection_points (CurveInputIterator curves_begin,
                                         CurveInputIterator curves_end,
                                         OutputIterator points,
                                         bool report_endpoints,
@@ -118,14 +118,14 @@ OutputIterator get_intersection_points (CurveInputIterator curves_begin,
 }
 
 template <class CurveInputIterator, class OutputIterator>
-OutputIterator get_intersection_points (CurveInputIterator curves_begin,
+OutputIterator compute_intersection_points (CurveInputIterator curves_begin,
                                         CurveInputIterator curves_end,
                                         OutputIterator points,
                                         bool report_endpoints = false)
 {
   typedef typename std::iterator_traits<CurveInputIterator>::value_type    Curve;
   typename Default_arr_traits<Curve>::Traits   tr;
-  return (get_intersection_points(curves_begin,
+  return (compute_intersection_points(curves_begin,
                                   curves_end,
                                   points,
                                   report_endpoints,

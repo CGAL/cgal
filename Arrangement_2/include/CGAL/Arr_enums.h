@@ -20,22 +20,62 @@
 #ifndef CGAL_ARR_ENUM_H
 #define CGAL_ARR_ENUM_H
 
+/*! \file
+ * Definition of the enumeration types for the arrangement package.
+ */
+
 #include <CGAL/enum.h>
 
 CGAL_BEGIN_NAMESPACE
 
+/*! \enum
+ * Selection of a curve end.
+ */
 enum Curve_end
 {
   MIN_END,
   MAX_END
 };
 
+/*! \enum
+ * Indicator whether a halfedge is directed from left to right (from the
+ * xy-lexicographically smaller vertex to the larger one), or from right to
+ * left.
+ */
+enum Halfedge_direction
+{
+  LEFT_TO_RIGHT = -1,
+  RIGHT_TO_LEFT = 1
+};
+
+/*! \enum
+ * The various boundary conditions.
+ */
 enum Boundary_type
 {
+  NO_BOUNDARY = 0,
   MINUS_INFINITY = -1,
-  NO_BOUNDARY,
-  PLUS_INFINITY
+  PLUS_INFINITY = 1,
+  AFTER_DISCONTINUITY = -2,
+  BEFORE_DISCONTINUITY = 2,
+  AFTER_SINGULARITY = -3,
+  BEFORE_SINGULARITY = 3
 };
+
+inline CGAL::Sign sign (Boundary_type bt)
+{
+  if (static_cast<int> (bt) < 0)
+    return (CGAL::NEGATIVE);
+  else if (static_cast<int> (bt) > 0)
+    return (CGAL::POSITIVE);
+
+  return (CGAL::ZERO);
+}
+
+inline CGAL::Sign sign (Halfedge_direction dir)
+{
+  return enum_cast<Sign, Halfedge_direction>(dir);
+}
 
 CGAL_END_NAMESPACE
 

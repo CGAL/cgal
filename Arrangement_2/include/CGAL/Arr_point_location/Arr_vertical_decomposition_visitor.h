@@ -22,7 +22,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#include <CGAL/Sweep_line_2_empty_visitor.h>
+#include <CGAL/Sweep_line_empty_visitor.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Object.h>
 
@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
  * A sweep-line visitor for the vertical decomposition operation.
  */
 template< class Traits_, class Arrangement_, class OutputIterator_>
-class Arr_vertical_decomposition_visitor : public Empty_visitor<Traits_>
+class Arr_vertical_decomposition_visitor : public Sweep_line_empty_visitor<Traits_>
 {
   typedef Traits_                                            Traits_2;
   typedef Arrangement_                                       Arrangement_2;
@@ -40,7 +40,7 @@ class Arr_vertical_decomposition_visitor : public Empty_visitor<Traits_>
                                              Arrangement_2,
                                              OutputIterator> Self;
   
-  typedef Empty_visitor<Traits_2>                            Base;
+  typedef Sweep_line_empty_visitor<Traits_2>                 Base;
   typedef typename Base::Event                               Event;
   typedef typename Base::Subcurve                            Subcurve;
   typedef typename Base::SL_iterator                         SL_iterator;

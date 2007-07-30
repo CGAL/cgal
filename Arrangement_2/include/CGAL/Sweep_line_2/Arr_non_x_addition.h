@@ -26,7 +26,7 @@
 
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_curve.h>
+#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
 #include <CGAL/Sweep_line_2/Arr_basic_addition_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_basic_addition_traits.h>
 
@@ -54,10 +54,10 @@ class Arr_non_x_addition
 
   typedef Arr_basic_addition_traits<Base_traits,
                                     Arrangement>           Traits;
-  typedef Arr_construction_curve<Traits>                   Subcurve; 
+  typedef Arr_construction_subcurve<Traits>                Subcurve; 
   typedef Arr_construction_event<Traits,
                                  Subcurve,
-                                 Halfedge_handle>          Event;
+                                 Arrangement>              Event;
   
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;

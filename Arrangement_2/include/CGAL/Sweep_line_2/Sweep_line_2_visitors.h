@@ -23,7 +23,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
-#include <CGAL/Sweep_line_2_empty_visitor.h>
+#include <CGAL/Sweep_line_empty_visitor.h>
 #include <vector>
 #include <iterator>
 
@@ -33,15 +33,15 @@ CGAL_BEGIN_NAMESPACE
 /*! */
 template <class Traits,class OutputIerator>
 class Sweep_line_points_visitor : 
-  public Empty_visitor<Traits>
+  public Sweep_line_empty_visitor<Traits>
 
 {
   typedef Sweep_line_points_visitor<Traits,OutputIerator>     Self;
-  typedef Empty_visitor<Traits>                        Base;
+  typedef Sweep_line_empty_visitor<Traits>                        Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
   typedef typename Base::SubCurveIter                  SubCurveIter;
-  typedef typename Base::SL_iterator                   SL_iterator;
+  typedef typename Base::Status_line_iterator          SL_iterator;
 
    
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
@@ -88,7 +88,7 @@ public:
     if((m_includeEndPoints ||
        event->is_intersection() ||
        event->is_weak_intersection()) && event->is_finite())
-      *m_out++ = event->get_point();
+      *m_out++ = event->point();
     return true;
   }
 
@@ -114,16 +114,16 @@ protected:
 
 /*! */
 template <class Traits,class OutputIerator>
-class Sweep_line_subcurves_visitor : public Empty_visitor<Traits>
+class Sweep_line_subcurves_visitor : public Sweep_line_empty_visitor<Traits>
 {
   typedef Sweep_line_subcurves_visitor<Traits,OutputIerator>    Self;
   typedef typename Traits::X_monotone_curve_2                   X_monotone_curve_2;
   typedef typename Traits::Point_2                              Point_2;
 
-  typedef Empty_visitor<Traits>                        Base;
+  typedef Sweep_line_empty_visitor<Traits>                        Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
-  typedef typename Base::SL_iterator                   SL_iterator;
+  typedef typename Base::Status_line_iterator          SL_iterator;
 
   typedef Basic_sweep_line_2<Traits,
                              Self>                Sweep_line;
@@ -198,16 +198,16 @@ public:
 
 /*! */
 template <class Traits>
-class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
+class Sweep_line_do_curves_x_visitor : public Sweep_line_empty_visitor<Traits>
 {
   typedef Sweep_line_do_curves_x_visitor<Traits>       Self;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
   typedef typename Traits::Point_2                     Point_2;
 
-  typedef Empty_visitor<Traits>                        Base;
+  typedef Sweep_line_empty_visitor<Traits>             Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
-  typedef typename Base::SL_iterator                   SL_iterator;
+  typedef typename Base::Status_line_iterator          SL_iterator;
 
   typedef Basic_sweep_line_2<Traits, Self>             Sweep_line;
 

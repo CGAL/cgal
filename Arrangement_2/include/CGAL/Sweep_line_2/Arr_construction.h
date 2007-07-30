@@ -26,8 +26,9 @@
 
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_curve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
+#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/assertions.h>
 #include <list>
@@ -48,17 +49,18 @@ class Arr_construction
   typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
   typedef typename Arrangement_2::Vertex_iterator   Vertex_iterator;
   typedef typename Arrangement_2::Traits_2          Traits_2;
-  typedef Arr_construction_curve<Traits_2>          Subcurve; 
+  typedef Arr_construction_subcurve<Traits_2>       Subcurve; 
   typedef Arr_construction_event<Traits_2,
                                Subcurve,
-                               Halfedge_handle>     Event;
+                               Arrangement_2>       Event;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Traits_2::Point_2                Point_2;
 
-  typedef Arr_construction_visitor<Traits_2,
-                                 Arrangement_2,
-                                 Event,
-                                 Subcurve>          Visitor;
+  typedef Arr_bounded_planar_construction_helper<Traits_2, 
+                                              Arrangement_2, 
+                                              Event, 
+                                              Subcurve> Construction_helper;
+  typedef Arr_construction_sl_visitor<Construction_helper> Visitor;
 
   typedef CGAL::Sweep_line_2<Traits_2,
                              Visitor,
