@@ -11,9 +11,10 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
+#-I../../../Arrangement_2/include \
 
 CXXFLAGS = \
-       -I../../../Arrangement_2/include \
+           -I ../../../Arrangement_2/include \
 	   -I../../include \
 	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

@@ -549,7 +549,7 @@ find_hot_pixels_and_create_kd_trees(NT pixel_size,
   // get intersection points (with endpoints)
   Point_list mypointlist;
 
-  CGAL::get_intersection_points(segments.begin(), segments.end(),
+  CGAL::compute_intersection_points(segments.begin(), segments.end(),
                              std::back_inserter(mypointlist), true, m_gt);
 
   for (Point_const_iter v_iter = mypointlist.begin();
