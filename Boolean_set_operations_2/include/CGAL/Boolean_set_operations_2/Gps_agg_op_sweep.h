@@ -37,7 +37,7 @@ class Gps_agg_op_sweep_line_2 :
                       SweepVisitor,
                       CurveWrap,
                       SweepEvent,
-                      Allocator>          
+                      Allocator>
 {
 public:
 
@@ -59,8 +59,10 @@ public:
                        Allocator>                 Base;
 
   typedef SweepEvent                              Event;
-  typedef typename Base::EventQueueIter           EventQueueIter;
-  typedef typename Event::SubCurveIter            EventCurveIter;
+
+
+  typedef typename Base::Event_queue_iterator     EventQueueIter;
+  typedef typename Event::Subcurve_iterator       EventCurveIter;
 
   typedef typename Base::Base_event               Base_event;
   typedef typename Base_event::Attribute          Attribute;
@@ -72,7 +74,8 @@ public:
   typedef std::list<Subcurve*>                    SubCurveList;
   typedef typename SubCurveList::iterator         SubCurveListIter; 
 
-  typedef typename Base::StatusLineIter           StatusLineIter;
+
+  typedef typename Base::Status_line_iterator     StatusLineIter;
 
 public:
 
@@ -138,10 +141,10 @@ public:
       if (event_type == Base_event::DEFAULT)
         continue;
 
-      event = this->allocate_event (vh->point(), event_type);
-      //TODO: when the boolean set operations will be exteneded to support
-      // unbounded curves, we will need here a special treatment.
-      event->set_finite();
+      event = this->_allocate_event (vh->point(), event_type,
+                                     NO_BOUNDARY, NO_BOUNDARY);
+      // \todo When the boolean set operations are exteneded to support
+      //       unbounded curves, we will need here a special treatment.
 
       if (! first)
       {
@@ -159,7 +162,7 @@ public:
     Comparison_result  res = LARGER;
     Compare_xy_2       comp_xy = this->m_traits->compare_xy_2_object();
     EventQueueIter     q_end = this->m_queue->end();
-    
+
     for (i += jump; i <= upper; i += jump)
     {
       // Merge the vertices of the other vectors into the existing queue.
@@ -173,20 +176,20 @@ public:
         event_type = _type_of_vertex (vh);
         if (event_type == Base_event::DEFAULT)
           continue;
-        
+
         while (q_iter != q_end &&
-               (res = comp_xy (vh->point(), (*q_iter)->get_point())) == LARGER)
+               (res = comp_xy (vh->point(), (*q_iter)->point())) == LARGER)
         {
           ++q_iter;
         }
 
         if (res == SMALLER || q_iter == q_end)
         {
-          event = this->allocate_event (vh->point(), event_type);
+          event = this->_allocate_event (vh->point(), event_type,
+                                         NO_BOUNDARY, NO_BOUNDARY);
+          // \todo When the boolean set operations are exteneded to support
+          //       unbounded curves, we will need here a special treatment.
 
-          //TODO: when the boolean set operations will be exteneded to support
-          // unbounded curves, we will need here a special treatment.
-          event->set_finite();
           this->m_queue->insert_before (q_iter, event);
           vert_map[vh] = event;
         }
@@ -216,7 +219,7 @@ public:
       CGAL_assertion (vert_map.is_defined (he->source()));
       CGAL_assertion (vert_map.is_defined (he->target()));
 
-      if (he->direction() == SMALLER)
+      if ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT)
       {
         e_left = vert_map[he->source()];
         e_right = vert_map[he->target()];
@@ -240,7 +243,6 @@ public:
     }
 
     // Perform the sweep:
-    this->m_visitor->after_init();
     this->_sweep();
     this->_complete_sweep();
     this->m_visitor->after_sweep();
@@ -265,7 +267,7 @@ private:
       // containment flags (otherwise we will simply not keep it).
       if (circ->face()->contained() != circ->twin()->face()->contained())
       {
-        if (circ->direction() == SMALLER)
+        if ((Halfedge_direction)circ->direction() == LEFT_TO_RIGHT)
           return (Base_event::RIGHT_END);
         else
           return (Base_event::LEFT_END);

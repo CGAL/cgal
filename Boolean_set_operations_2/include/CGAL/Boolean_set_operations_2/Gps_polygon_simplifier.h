@@ -22,7 +22,7 @@
 
 #include <CGAL/Boolean_set_operations_2/Gps_simplifier_traits.h>
 #include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_curve.h>
+#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_visitor.h>
@@ -57,10 +57,10 @@ class Gps_polygon_simplifier
                                                       Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
                                                       Ccb_halfedge_circulator;
-  typedef Arr_construction_curve<Meta_traits>         Subcurve; 
+  typedef Arr_construction_subcurve<Meta_traits>      Subcurve; 
   typedef Arr_construction_event<Meta_traits,
                                  Subcurve,
-                                 Halfedge_handle>     Event;
+                                 Arrangement_2>       Event;
 
   typedef Gps_agg_op_base_visitor<Meta_traits,
                                   Arrangement_2,

@@ -22,28 +22,33 @@
 #define CGAL_GSP_AGG_OP_VISITOR_H
 
 #include <CGAL/Unique_hash_map.h> 
-#include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class Traits, class Arrangement_, class Event,class Subcurve>
-class Gps_agg_op_base_visitor : 
-  public Arr_construction_visitor<Traits,Arrangement_,Event,Subcurve>
+class Gps_agg_op_base_visitor :
+  public
+  Arr_construction_sl_visitor<Arr_bounded_planar_construction_helper<Traits,
+                                                                     Arrangement_,
+                                                                     Event,
+                                                                     Subcurve> >
 {
   protected:
-
   typedef Arrangement_                                     Arrangement;
-  
-  typedef Arr_construction_visitor<Traits,
-                                   Arrangement,
-                                   Event,
-                                   Subcurve>               Base;
 
-  typedef typename Base::SL_iterator                       SL_iterator;
+  typedef Arr_bounded_planar_construction_helper<Traits,
+                                                 Arrangement,
+                                                 Event,
+                                                 Subcurve> Construction_helper;
+  typedef Arr_construction_sl_visitor<Construction_helper> Base;
+
+  typedef typename Base::Status_line_iterator              SL_iterator;
   typedef typename Base::Halfedge_handle                   Halfedge_handle;
   typedef typename Base::Vertex_handle                     Vertex_handle;
-  typedef typename Base::SubCurveIter                      SubCurveIter;
-  typedef typename Base::SubCurveRevIter                   SubCurveRevIter;
+  typedef typename Base::Event_subcurve_iterator           SubCurveIter;
+  typedef typename Base::Event_subcurve_reverse_iterator   SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
   
@@ -110,11 +115,14 @@ private:
 
   void insert_edge_to_hash(Halfedge_handle he, const X_monotone_curve_2& cv)
   {
-    Comparison_result he_dir = he->direction();
-    Comparison_result cv_dir =
-      this->m_arr_access.arrangement().get_traits()->compare_endpoints_xy_2_object()(cv);
+    const Comparison_result he_dir = 
+      ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT) ? SMALLER : LARGER;
 
-    if(he_dir == cv_dir)
+    const Comparison_result cv_dir =
+      this->m_arr_access.arrangement().get_traits()->
+            compare_endpoints_xy_2_object()(cv);
+
+    if (he_dir == cv_dir)
     {
       (*m_edges_hash)[he] = cv.data().bc();
       (*m_edges_hash)[he->twin()] = cv.data().twin_bc();
@@ -209,9 +217,9 @@ public:
     // We now have a halfedge whose source vertex is associated with the
     // last event and whose target vertex is associated with the current event:
     Event *curr_event = reinterpret_cast<Event*>(this->current_event());
-    Event *last_event = reinterpret_cast<Event*>((sc)->get_last_event());
+    Event *last_event = reinterpret_cast<Event*>((sc)->last_event());
 
-    CGAL_assertion (res_he->direction() == SMALLER);
+    CGAL_assertion ((Halfedge_direction)res_he->direction() == LEFT_TO_RIGHT);
     _insert_vertex (curr_event, res_he->target());
     _insert_vertex (last_event, res_he->source());
 
@@ -227,9 +235,8 @@ public:
 
     // We now have a halfedge whose target vertex is associated with the
     // last event (we have already dealt with its source vertex).
-    Event *last_event = reinterpret_cast<Event*>((sc)->get_last_event());
-
-    CGAL_assertion (res_he->direction() == LARGER);
+    Event *last_event = reinterpret_cast<Event*>((sc)->last_event());
+    CGAL_assertion ((Halfedge_direction)res_he->direction() == RIGHT_TO_LEFT);
     _insert_vertex (last_event, res_he->target());
 
     return (res_he);
@@ -246,7 +253,7 @@ public:
     // current event (we have already dealt with its source vertex).
     Event *curr_event = reinterpret_cast<Event*>(this->current_event());
 
-    CGAL_assertion (res_he->direction() == SMALLER);
+    CGAL_assertion ((Halfedge_direction)res_he->direction() == LEFT_TO_RIGHT);
     _insert_vertex (curr_event, res_he->target());
 
     return (res_he);

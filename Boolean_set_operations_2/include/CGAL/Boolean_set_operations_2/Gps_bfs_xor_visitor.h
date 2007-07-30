@@ -76,12 +76,14 @@ public:
         eit != arr.edges_end();
         ++eit)
     {
-      Halfedge_iterator he = eit;
-      X_monotone_curve_2&  cv = he->curve();
-      bool is_cont = he->face()->contained();
-      bool has_same_dir = (cmp_endpoints(cv) == he->direction());
-      if((is_cont && !has_same_dir) ||
-         (!is_cont && has_same_dir))
+      Halfedge_iterator         he = eit;
+      const X_monotone_curve_2& cv = he->curve();
+      const bool                is_cont = he->face()->contained();
+      const Comparison_result   he_res = ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT) ?
+                                         SMALLER : LARGER;
+      const bool has_same_dir = (cmp_endpoints(cv) == he_res);
+      
+      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir))
         arr.modify_edge(he, ctr_opp(cv));
     }
   }

@@ -29,7 +29,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
 #include <CGAL/Boolean_set_operations_2/Gps_do_intersect_functor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_intersection_functor.h>
@@ -427,12 +427,14 @@ public:
         eit != arr.edges_end();
         ++eit)
     {
-      Halfedge_handle he = eit;
-      X_monotone_curve_2&  cv = he->curve();
-      bool is_cont = he->face()->contained();
-      bool has_same_dir = (cmp_endpoints(cv) == he->direction());
-      if ((is_cont && !has_same_dir) ||
-         (!is_cont && has_same_dir))
+      Halfedge_handle            he = eit;
+      const X_monotone_curve_2&  cv = he->curve();
+      const bool                 is_cont = he->face()->contained();
+      const Comparison_result    he_res = ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT) ?
+                                          SMALLER : LARGER;
+      const bool                 has_same_dir = (cmp_endpoints(cv) == he_res);
+
+      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir))
         arr.modify_edge(he, ctr_opp(cv));
     }
   }
@@ -564,16 +566,18 @@ public:
       {
         return false;
       }
+
       const X_monotone_curve_2&  cv = he->curve();
-      bool is_cont = he->face()->contained();
-      bool has_same_dir = (cmp_endpoints(cv) == he->direction());
-      if ((is_cont && !has_same_dir) ||
-         (!is_cont && has_same_dir))
+      const bool                 is_cont = he->face()->contained();
+      const Comparison_result    he_res = ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT) ?
+                                          SMALLER : LARGER;
+      const bool                 has_same_dir = (cmp_endpoints(cv) == he_res);
+
+      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir))
         return false;
     }
     return true;
   }
-
 
   // get the simple polygons, takes O(n)
   template <class OutputIterator>

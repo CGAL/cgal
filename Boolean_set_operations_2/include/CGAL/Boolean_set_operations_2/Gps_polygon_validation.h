@@ -24,7 +24,7 @@
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2_empty_visitor.h>
+#include <CGAL/Sweep_line_empty_visitor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -34,7 +34,9 @@ CGAL_BEGIN_NAMESPACE
  * non-intersecting.
  */
 template <class ArrTraits_>
-class Gps_polygon_validation_visitor : public Empty_visitor<ArrTraits_>
+
+class Gps_polygon_validation_visitor : 
+    public Sweep_line_empty_visitor<ArrTraits_>
 {
 private:
 
@@ -44,10 +46,10 @@ private:
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Point_2                   Point_2;
 
-  typedef Empty_visitor<Traits_2>                      Base;
+  typedef Sweep_line_empty_visitor<Traits_2>           Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
-  typedef typename Base::SL_iterator                   SL_iterator;
+  typedef typename Base::Status_line_iterator          SL_iterator;
 
   typedef Basic_sweep_line_2<Traits_2, Self>           Sweep_line;
 
@@ -76,12 +78,16 @@ public:
       reinterpret_cast<Sweep_line*>(this->m_sweep_line) -> stop_sweep();
     }
     else
-      if(m_is_s_simple && 
-         (event->get_num_right_curves() + event->get_num_left_curves()) != 2)
+    {
+      if (m_is_s_simple && 
+          (event->number_of_right_curves() +
+           event->number_of_left_curves()) != 2)
       {
          m_is_valid = false;
          reinterpret_cast<Sweep_line*>(this->m_sweep_line) -> stop_sweep();
       }
+    }
+
     return (true);
   }
 

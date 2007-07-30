@@ -22,7 +22,7 @@
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_meta_traits.h>
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_sweep.h>
-#include <CGAL/Sweep_line_2/Arr_construction_curve.h>
+#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_visitor.h>
@@ -56,10 +56,12 @@ class Gps_agg_op
   typedef std::pair<Arrangement_2 *,
                     std::vector<Vertex_handle> *>     Arr_entry;
 
-  typedef Arr_construction_curve<Meta_traits>         Subcurve; 
+  typedef Arr_construction_subcurve<Meta_traits>      Subcurve; 
+
   typedef Arr_construction_event<Meta_traits,
                                  Subcurve,
-                                 Halfedge_handle>     Base_event;
+//				 Halfedge_handle>       Base_event;
+                                 Arrangement_2>       Base_event;
 
   typedef Indexed_event<Base_event>                   Event;
 
@@ -130,8 +132,7 @@ public:
         Halfedge_iterator he = itr;
         if(he->face()->contained() == he->twin()->face()->contained())
           continue;
-
-        if(he->direction() == LARGER)
+        if ((Halfedge_direction)he->direction() == RIGHT_TO_LEFT)
           he = he->twin();
 
         Curve_data cv_data(arr, he, 1, 0);
