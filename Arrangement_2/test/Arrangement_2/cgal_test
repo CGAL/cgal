@@ -408,7 +408,7 @@ test_bezier_traits()
     run_trapped_test test_traits data/bezier/compare_y_at_x bezier_traits
     # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_left bezier_traits
     # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_right bezier_traits
-#   run_trapped_test test_traits data/bezier/make_x_monotone bezier_traits !!!problem
+    run_trapped_test test_traits data/bezier/make_x_monotone bezier_traits
     run_trapped_test test_traits data/bezier/intersect bezier_traits
     # !need to think! run_trapped_test test_traits data/bezier/split bezier_traits
     #run_trapped_test test_traits data/bezier/merge bezier_traits
