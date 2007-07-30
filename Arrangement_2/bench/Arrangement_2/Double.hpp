@@ -21,6 +21,8 @@ public:
   typedef Tag_false     Has_exact_ring_operations;
   typedef Tag_false     Has_exact_division;
   typedef Tag_false     Has_exact_sqrt;
+
+  typedef Tag_true      Is_real_embeddable;
   
   // Constructors.
   Double() : val(0) {}
@@ -58,7 +60,7 @@ public:
   // Equality operators. Note that x equals y iff:
   //
   //     |x - y|
-  //   ----------- < ERR_EPSILON 
+  //   ----------- <ERR_EPSILON 
   //    |x| + |y|
   //
   bool operator==(const Double& x) const
@@ -66,10 +68,10 @@ public:
     double numer = fabs(val - x.val);
     double denom = fabs(val) + fabs(x.val);
 
-    if (denom < ZERO_EPSILON)
+    if (denom <ZERO_EPSILON)
       return true;           // The two numbers are very close to 0.
     else
-      return (numer / denom < ERR_EPSILON);
+      return (numer / denom <ERR_EPSILON);
   }
 
   bool operator!=(const Double& x) const
@@ -90,12 +92,12 @@ public:
 
   bool operator<(const Double & x) const
   {
-    return (val < x.val && !(*this == x));
+    return (val <x.val && !(*this == x));
   }
 
   bool operator<=(const Double & x) const
   {
-    return (val < x.val || (*this == x));
+    return (val <x.val || (*this == x));
   }
 
   // Friend operators:
@@ -119,6 +121,7 @@ public:
   friend Double acos(const Double& x);
   friend Double atan(const Double& x);
   friend Double atan2(const Double& x, const Double& y);
+  friend Double fabs(const Double& x);
 
   // I/O operations.
   friend std::istream & operator>>(std::istream & is, Double & x);
@@ -149,11 +152,11 @@ inline Double operator/(const double & x, const Double & y)
 }
 
 // Order operators.
-inline bool operator<(const double & a, const Double & b) { return a < b; }
+inline bool operator<(const double & a, const Double & b) { return a <b; }
 
-inline bool operator>(const double & a, const Double & b) { return b < a; }
+inline bool operator>(const double & a, const Double & b) { return b <a; }
 
-inline bool operator>=(const double & a, const Double & b) { return !(a < b); }
+inline bool operator>=(const double & a, const Double & b) { return !(a <b); }
 
 inline bool operator<=(const double & a, const Double & b) { return !(a > b); }
 
@@ -197,6 +200,8 @@ inline Double atan(const Double & x) { return Double(::atan(x.val)); }
 inline Double atan2(const Double & x, const Double & y)
 { return Double(::atan2(x.val, y.val)); }
 
+inline Double fabs(const Double & x) { return Double(::fabs(x.val)); }
+
 // I/O operations.
 inline std::istream & operator>>(std::istream & is, Double & x)
 {
@@ -206,9 +211,78 @@ inline std::istream & operator>>(std::istream & is, Double & x)
 
 inline std::ostream & operator<<(std::ostream & os, const Double & x)
 {
-  os << x.val;
+  os <<x.val;
   return os;
 }
+
+// Real embeddable traits
+template <> class Real_embeddable_traits<Double>
+  : public Real_embeddable_traits_base<Double> {
+public:
+
+// GCC is faster with std::fabs().
+#ifdef __GNUG__
+  class Abs : public Unary_function<Type, Type> {
+  public:
+    Type operator()( const Type& x ) const {
+      return fabs( x );
+    }
+  };
+#endif
+
+  typedef INTERN_RET::To_double_by_conversion<Type>     To_double;
+  typedef INTERN_RET::To_interval_by_conversion<Type>   To_interval;
+
+// Is_finite depends on platform
+#ifdef __sgi
+  class Is_finite : public Unary_function<Type, bool> {
+  public:
+    bool operator()( const Type& x ) const {
+      switch (fp_class_d(x)) {
+       case FP_POS_NORM:
+       case FP_NEG_NORM:
+       case FP_POS_ZERO:
+       case FP_NEG_ZERO:
+       case FP_POS_DENORM:
+       case FP_NEG_DENORM:
+        return true;
+       case FP_SNAN:
+       case FP_QNAN:
+       case FP_POS_INF:
+       case FP_NEG_INF:
+        return false;
+      }
+      return false; // NOT REACHED
+    }
+  };
+
+#elif defined CGAL_CFG_IEEE_754_BUG
+  class Is_finite : public Unary_function<Type, bool > {
+  public:
+    bool operator()( const Type& x ) const {
+      Type d = x;
+      IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
+      return is_finite_by_mask_double( p->c.H );
+    }
+  };
+#elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
+  class Is_finite : public Unary_function<Type, bool > {
+  public:
+    bool operator()( const Type& x ) const {
+      return (x == x) && (is_valid(x-x));
+    }
+  };
+#else
+  class Is_finite : public Unary_function<Type, bool > {
+  public:
+    bool operator()( const Type& x ) const {
+      return (x != std::numeric_limits<Type>::infinity())
+        && (-x != std::numeric_limits<Type>::infinity())
+        && is_valid(x);
+    }
+  };
+#endif
+};
 
 CGAL_END_NAMESPACE
 

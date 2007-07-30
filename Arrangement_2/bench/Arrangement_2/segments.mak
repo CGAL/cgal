@@ -209,36 +209,42 @@ double_non_caching_seg_inst:
 	$(MAKEF) "BENCH_NT=$(DOUBLE_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(NON_CACHING_SEGMENT_TRAITS)" install
 
 #
-seg_caching_inst: leda_rat_cartesian_seg_inst \
-        leda_rat_simple_cartesian_seg_inst \
+seg_caching_inst: \
 	quotient_mp_float_seg_inst \
 	quotient_cgal_gmpz_seg_inst \
-	lazy_rat_seg_inst \
 	lazy_quotient_mp_float_seg_inst \
-	cgal_gmpq_exact_seg_inst \
 	cgal_gmpq_cartesian_seg_inst \
 	cgal_gmpq_simple_cartesian_seg_inst \
+	lazy_cgal_gmpq_cartesian_seg_inst \
+	double_seg_inst \
 	cgal_gmpq_lazy_cartesian_seg_inst \
 	cgal_gmpq_lazy_simple_cartesian_seg_inst \
-	lazy_cgal_gmpq_cartesian_seg_inst \
-	double_seg_inst
+	cgal_gmpq_exact_seg_inst \
+
+# No more LEDA support:
+#       leda_rat_cartesian_seg_inst
+#       leda_rat_simple_cartesian_seg_inst
+#	lazy_rat_seg_inst
 
 # The leda kernel is missing the Min_vertex_2 and Max_vertex_2 constructors
 #	leda_kernel_seg_inst
 
-seg_non_caching_inst: leda_rat_cartesian_non_caching_seg_inst \
-        leda_rat_simple_cartesian_non_caching_seg_inst \
+seg_non_caching_inst: \
 	quotient_mp_float_non_caching_seg_inst \
 	quotient_cgal_gmpz_non_caching_seg_inst \
-	lazy_rat_non_caching_seg_inst \
 	lazy_quotient_mp_float_non_caching_seg_inst \
-	cgal_gmpq_exact_non_caching_seg_inst \
 	cgal_gmpq_cartesian_non_caching_seg_inst \
 	cgal_gmpq_simple_cartesian_non_caching_seg_inst \
+	lazy_cgal_gmpq_cartesian_non_caching_seg_inst \
+	double_non_caching_seg_inst \
 	cgal_gmpq_lazy_cartesian_non_caching_seg_inst \
 	cgal_gmpq_lazy_simple_cartesian_non_caching_seg_inst \
-	lazy_cgal_gmpq_cartesian_non_caching_seg_inst \
-	double_non_caching_seg_inst
+	cgal_gmpq_exact_non_caching_seg_inst \
+
+# No more LEDA support:
+#       leda_rat_cartesian_non_caching_seg_inst
+#       leda_rat_simple_cartesian_non_caching_seg_inst
+#	lazy_rat_non_caching_seg_inst
 
 # The leda kernel is missing the Min_vertex_2 and Max_vertex_2 constructors
 #	non_caching_seg_leda_kernel_inst

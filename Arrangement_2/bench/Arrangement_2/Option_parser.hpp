@@ -3,18 +3,20 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <boost/program_options.hpp>
+#include <boost/filesystem/path.hpp>
 
-#include <CGAL/Bench_option_parser.hpp>
-#include <CGAL/Dir_search.hpp>
+#include <CGAL/Benchmark/Option_parser.hpp>
 
 #define DEF_WIN_WIDTH   512
 #define DEF_WIN_HEIGHT  512
 
 namespace cb = CGAL::benchmark;
 namespace po = boost::program_options;
+namespace fi = boost::filesystem;
 
-class Option_parser : public cb::Bench_option_parser {
+class Option_parser : public cb::Option_parser {
 public:
   /*! Type code */
   enum Type_code {
@@ -154,6 +156,32 @@ protected:
   po::positional_options_description m_positional_opts;
 
 private:
+  typedef std::list<fi::path>           Path_list;
+  typedef Path_list::iterator           Path_iter;
+
+  typedef std::vector<std::string>      Input_path;
+  typedef Input_path::const_iterator    Input_path_const_iterator;
+  
+  Input_path_const_iterator dirs_begin()
+  { return m_variable_map["input-path"].as<Input_path>().begin(); }
+
+  Input_path_const_iterator dirs_end()
+  { return m_variable_map["input-path"].as<Input_path>().end(); }
+
+  template <class UnaryFunction>
+  UnaryFunction for_each_dir(UnaryFunction func)
+  {
+    if (!m_variable_map.count("input-path")) return func;
+    return std::for_each(dirs_begin(), dirs_end(), func);
+  }
+  
+  /*! A functor that adds a directory to the directory-search structure */
+  struct Add_dir {
+    Path_list & m_dirs;
+    Add_dir(Path_list & dirs) : m_dirs(dirs) {}
+    void operator()(const std::string & dir) { m_dirs.push_back(dir); }
+  };
+
   /*! Type options */
   static char * s_type_opts[];
 
@@ -175,8 +203,9 @@ private:
   bool m_postscript;
 
   unsigned int m_number_files;
-  
-  Dir_search m_dirs;
+
+  /*! A collection of directories to search files in */
+  Path_list m_dirs;
 
   std::vector<std::string> m_full_names;
 };

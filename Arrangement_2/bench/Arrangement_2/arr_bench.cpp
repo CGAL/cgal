@@ -1,12 +1,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/benchmark_basic.hpp>
+#include <CGAL/Benchmark/config.hpp>
 #if defined(CGAL_TRAITS_COUNTING)
 #include <CGAL/Arr_counting_traits_2.h>
 #endif
 
 #include "bench_config.hpp"
 #include "number_type.hpp"
+
+CGAL_BENCHMARK_BEGIN_NAMESPACE
+CGAL_BENCHMARK_END_NAMESPACE
 
 namespace cb = CGAL::benchmark;
 
@@ -200,7 +203,7 @@ enum MaxFilesNumber {
 #include <CGAL/Arr_triangle_point_location.h>
 #endif
 
-#include <CGAL/Bench.hpp>
+#include <CGAL/Benchmark/Benchmark.hpp>
 
 #if defined(USE_CGAL_WINDOW)
 #include <CGAL/IO/Window_stream.h>
@@ -506,22 +509,22 @@ public:
 };
 
 typedef Increment_arr<Trap_point_location>      Trap_inc_arr;
-typedef cb::Bench<Trap_inc_arr>                 Trap_inc_arr_bench;
+typedef cb::Benchmark<Trap_inc_arr>             Trap_inc_arr_bench;
 
 typedef Increment_arr<Naive_point_location>     Naive_inc_arr;
-typedef cb::Bench<Naive_inc_arr>                Naive_inc_arr_bench;
+typedef cb::Benchmark<Naive_inc_arr>            Naive_inc_arr_bench;
 
 typedef Increment_arr<Walk_point_location>      Walk_inc_arr;
-typedef cb::Bench<Walk_inc_arr>                 Walk_inc_arr_bench;
+typedef cb::Benchmark<Walk_inc_arr>             Walk_inc_arr_bench;
 
 #if defined(LANDMARK_SUPPORTED)
 typedef Increment_arr<Landmarks_point_location> Landmarks_inc_arr;
-typedef cb::Bench<Landmarks_inc_arr>            Landmarks_inc_arr_bench;
+typedef cb::Benchmark<Landmarks_inc_arr>        Landmarks_inc_arr_bench;
 #endif
 
 #if defined(TRIANGLE_SUPPORTED)
 typedef Increment_arr<Triangle_point_location>  Triangle_inc_arr;
-typedef cb::Bench<Triangle_inc_arr>             Triangle_inc_arr_bench;
+typedef cb::Benchmark<Triangle_inc_arr>         Triangle_inc_arr_bench;
 #endif
 
 /*! */
@@ -549,7 +552,7 @@ public:
 };
 
 /*! */
-typedef cb::Bench<Aggregate_arr>                Agg_arr_bench;
+typedef cb::Benchmark<Aggregate_arr>            Agg_arr_bench;
 
 /*! */
 class Display_arr : public Basic_arr {
@@ -668,14 +671,16 @@ public:
   
 private:
   /*! */
+#if defined(USE_CGAL_WINDOW)
   static void
     redraw(leda_window * wp, double x0, double y0, double x1, double y1) 
   { wp->flush_buffer(x0,y0,x1,y1); }
-
+#endif
+  
   Window_stream * m_window;
 };
 
-typedef cb::Bench<Display_arr>                  Dis_arr_bench;
+typedef cb::Benchmark<Display_arr>              Dis_arr_bench;
 
 /*! */
 template <class Bench_inst, class Benchable>
@@ -736,8 +741,8 @@ int main(int argc, char * argv[])
   const char * full_name = option_parser.get_full_name(0).c_str();
   if (!file_name || !full_name) return -1;
 
-  cb::Bench_base::set_name_length(nameLength);
-  if (print_header) cb::Bench_base::print_header();
+  cb::Benchmark_base::set_name_length(nameLength);
+  if (print_header) cb::Benchmark_base::print_header();
   //end parameters from command line
 
   //start bench

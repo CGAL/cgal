@@ -3,6 +3,9 @@
 #include <fstream>
 #include <vector>
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
+
 #include "Option_parser.hpp"
 
 char * Option_parser::s_type_opts[] = {
@@ -64,13 +67,18 @@ Option_parser::Option_parser() :
   m_postscript(false),
   m_number_files(0)
 {
-  m_dirs.add(".");
+  m_dirs.push_front(".");
 
-  const char * root = getenv("ROOT");
-  if (root) {
-    m_dirs.add(std::string(root) + "/data/Segments_2");
-    m_dirs.add(std::string(root) + "/data/Conics_2");
-    m_dirs.add(std::string(root) + "/data/Polylines_2");
+  const char * root_c = getenv("ROOT");
+  if (root_c) {
+    fi::path root(root_c, fi::native);
+    fi::path dir;
+    dir = root / "data/Segments_2";
+    m_dirs.push_back(dir);
+    dir = root / "data/Conics_2";
+    m_dirs.push_back(dir);
+    dir = root / "data/Polylines_2";
+    m_dirs.push_back(dir);
   }
 
   // Generic options:
@@ -80,12 +88,10 @@ Option_parser::Option_parser() :
     ("license,l", "print licence information")
     ("version,v", "print version string")
     ;
-  
-  typedef std::vector<std::string> vs;
-  
+    
   // Options allowed on the command line, config file, or env. variables
   m_config_opts.add_options()
-    ("input-path,P", po::value<vs>()->composing(), "input path")
+    ("input-path,P", po::value<Input_path>()->composing(), "input path")
     ("verbose,V", po::value<unsigned int>(&m_verbose_level)->default_value(0),
      "verbose level")
     ("type", po::value<std::vector<Type_id> >()->composing(),
@@ -119,7 +125,7 @@ Option_parser::Option_parser() :
   
   // Options hidden to the user. Allowed only on the command line:
   m_hidden_opts.add_options()
-    ("input-file", po::value<vs>()->composing(), "input file")
+    ("input-file", po::value<Input_path>()->composing(), "input file")
     ;
 
   m_visible_opts.add(m_generic_opts).add(m_bench_opts).add(m_config_opts);
@@ -184,14 +190,9 @@ void Option_parser::operator()(int argc, char * argv[])
       m_strategy_mask |= 0x1 << ((*it).m_id % size);
     }
   }
-  
-  typedef std::vector<std::string> vs;
-  if (m_variable_map.count("input-path")) {
-    vs dirs = m_variable_map["input-path"].as<vs>();
-    for (vs::iterator it = dirs.begin(); it != dirs.end(); ++it) {
-      m_dirs.add((*it).c_str());
-    }
-  }
+
+  // Add directories specified on the command line via the "input-path" opt.:
+  Add_dir tmp = for_each_dir(Add_dir(m_dirs));
   
   if (!m_variable_map.count("input-file")) {
     std::string str("input file missing!");
@@ -199,23 +200,35 @@ void Option_parser::operator()(int argc, char * argv[])
     return;
   }
 
-  vs files = m_variable_map["input-file"].as<vs>();
+  Input_path files = m_variable_map["input-file"].as<Input_path>();
   m_full_names.resize(files.size());
-  for (vs::iterator it = files.begin(); it != files.end(); ++it) {
-    const char * file_name = (*it).c_str();
-    if (!m_dirs.find(file_name, m_full_names[m_number_files++])) {
-      std::cerr << "cannot find file " << file_name << "!" << std::endl;
+  Input_path_const_iterator it;
+  for (it = files.begin(); it != files.end(); ++it) {
+    fi::path file_path(*it, fi::native);
+    if (file_path.is_complete()) {
+      if (fi::exists(file_path))
+        m_full_names[m_number_files] = file_path.native_file_string();
+    } else {
+      for (Path_iter pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
+        fi::path full_file_path = *pi / file_path;
+        if (!fi::exists(full_file_path)) continue;
+        m_full_names[m_number_files] = full_file_path.native_file_string();
+        break;
+      }
+    }
+    if (m_full_names[m_number_files].empty()) {      
+      std::cerr << "cannot find file " << (*it).c_str() << "!" << std::endl;
       throw Error_exception(FILE_NOT_FOUND);
       return;
     }
+    ++m_number_files;
   }
 }
 
 /*! Obtain the base file-name */
 const std::string & Option_parser::get_file_name(unsigned int i) const
 {
-  typedef std::vector<std::string> vs;
-  return m_variable_map["input-file"].as<vs>()[i];
+  return m_variable_map["input-file"].as<Input_path>()[i];
 }
 
 /*! Obtain the full file-name */

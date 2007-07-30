@@ -1,7 +1,6 @@
 BASEDIR =.
 
 USE_QT=1
-USE_LEDA=1
 USE_CORE=1
 
 include $(ROOT)/include/make/cgaldef.mak
@@ -75,7 +74,7 @@ endif
 
 # default value:
 BENCH_KERNEL ?= $(CARTESIAN_KERNEL)
-BENCH_NT ?= $(LEDA_RAT_NT)
+BENCH_NT ?= $(QUOTIENT_MP_FLOAT_NT)
 BENCH_TRAITS ?= $(SEGMENT_TRAITS)
 
 # illegal combinations:
@@ -361,8 +360,8 @@ TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
 LCPPINCS = -I.
 LCPPINCS+= -I$(BASEDIR)
 LCPPINCS+= -I$(BASEDIR)/../../include
-LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
-LCPPINCS+= -I$(BASEDIR)/../../../Arrangement_2/include
+# LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
+# LCPPINCS+= -I$(BASEDIR)/../../../Arrangement_2/include
 
 # ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LCPPINCS+= -I$(COREROOT)/inc
@@ -389,28 +388,26 @@ LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
 endif
 LCPPINCS+= $(CGALINCS)
 
-LLDOPTS+= -L$(CGAL_WORKDIR)/Benchmark/src/Benchmark
-LLDLIBS+= -lCGALBenchmark
-
-# ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
-LLDOPTS+= -L$(COREROOT)/lib
+LLDLIBS = -lCGALBenchmark
 LLDLIBS+= -lCGALcore++
-# else
+ifeq ($(USE_QT), 1)
+LLDLIBS+= $(CGALQTLIB) $(QTLIB)
+endif
+LLDLIBS+= $(CGALLIB)
+ifeq ($(USE_LEDA), 1)
+LLDLIBS+= $(LEDALIBS)
+endif
+LLDLIBS+= $(GMPLIBS)
+LLDLIBS+= -lm
+LLDLIBS+= -lboost_program_options
+LLDLIBS+= -lboost_filesystem
+
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDLIBS+= $(EXACUS_ROOT)/ConiX/src/.libs/libCnX.so
 LLDLIBS+= $(EXACUS_ROOT)/SweepX/src/.libs/libSoX.so
 LLDLIBS+= $(EXACUS_ROOT)/NumeriX/src/.libs/libNiX.so
 LLDLIBS+= $(EXACUS_ROOT)/Support/src/.libs/libLiS.so
 endif
-LLDLIBS+= $(CGALLIB) $(LEDALIBS) $(CGALQTLIB) $(QTLIB)
-# ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
-# LLDLIBS+= $(CGALCORELIB)
-# endif
-LLDLIBS+= $(GMPLIBS)
-# LLDLIBS+= -lX11
-LLDLIBS+= -lm
-LLDLIBS+= -lboost_program_options
-LLDOPTS+= $(CGALLIBOPTS) $(CGALLIBDIRS)
 
 include $(ROOT)/include/make/cgalrul.mak
 

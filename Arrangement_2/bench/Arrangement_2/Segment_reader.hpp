@@ -5,8 +5,9 @@
 #include <CGAL/Bbox_2.h>
 #include <string>
 
-#include "CGAL/benchmark_basic.hpp"
-#include "CGAL/Benchmark_visitor.hpp"
+#include "CGAL/Benchmark/config.hpp"
+#include "CGAL/Benchmark/Benchmark_visitor.hpp"
+#include "CGAL/Benchmark/benchmark_format.hpp"
 #include <CGAL/number_utils_classes.h>
 
 #include "number_type.hpp"
