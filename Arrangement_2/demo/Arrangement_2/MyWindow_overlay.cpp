@@ -28,7 +28,7 @@
 #include "demo_tab.h"
 #include "overlay_functor.h"
 
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 
 /*! open the overlay dialog form and read its output */
 void MyWindow::overlay_pm()
