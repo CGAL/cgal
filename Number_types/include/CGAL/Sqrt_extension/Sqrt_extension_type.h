@@ -35,6 +35,7 @@
 #define CGAL_SQRT_EXTENSION_TYPE_H
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/Sqrt_extension/io.h>
 
 //#define SQRT_EXT_USE_FILTER 1
 #ifdef SQRT_EXT_USE_FILTER
@@ -90,6 +91,9 @@ private:
 
     typedef CGAL::Algebraic_structure_traits<NT> Algebraic_structure_traits_nt;
     typedef CGAL::Real_embeddable_traits<NT> Real_embeddable_traits_nt;
+    
+    typedef typename CGAL::Coercion_traits< ROOT, NT >::Cast Root_nt_cast;
+    
 public:
     //! Default constructor of \c Sqrt_extension
     Sqrt_extension()
@@ -155,6 +159,12 @@ public:
     //ROOT& root() { return root_; }
 
 
+    // output_maple function for EXACUS compatibility
+    // TODO: remove if no longer needed
+    inline void output_maple(std::ostream& os ) const {
+        CGAL::output_maple( os, *this );
+    }
+
 std::pair<double, double> to_interval() const{
    
     if (! is_extended_)
@@ -189,7 +199,7 @@ std::pair<double, double> to_interval() const{
         if (s1 == CGAL::ZERO) return s0;
 
         // s0*s1=-1
-        NT r = a1_*a1_*NT(root_) - a0_*a0_;
+        NT r = a1_*a1_*Root_nt_cast()(root_) - a0_*a0_;
         // if(r>0) return s1 else s0
         if (s1 == CGAL::POSITIVE)
             return CGAL_NTS sign(r);
@@ -275,18 +285,18 @@ std::pair<double, double> to_interval() const{
             }
         }else{
             if (p.is_extended_)
-                return *this = Self (a0_-p.a0_, p.a1_, p.root_);
+                return *this = Self (a0_-p.a0_, -p.a1_, p.root_);
             else
                 return *this = Self (a0_-p.a0_);
         }
     }
       
-    Self& operator *= (const Self& p){
+    Self& operator *= (const Self& p){        
         if(is_extended_){
             if (p.is_extended_){
                 CGAL_precondition(root_==p.root_);
                 return *this = Self (
-                        a0_*p.a0_+a1_*p.a1_*NT(root_),
+                        a0_*p.a0_+a1_*p.a1_*Root_nt_cast()(root_),  
                         a0_*p.a1_+a1_*p.a0_,
                         root_);
             }else{
@@ -305,7 +315,7 @@ std::pair<double, double> to_interval() const{
         typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
         
         if(p.is_extended_){
-            NT denom = p.a0_*p.a0_ - p.a1_*p.a1_ * NT(p.root_);
+            NT denom = p.a0_*p.a0_ - p.a1_*p.a1_ * Root_nt_cast()(p.root_);
             if ( CGAL_NTS is_zero(denom) ) {                         
                 // this is for the rare case in which root is a square
                 // and the (pseudo) algebraic conjugate of p becomes zero 
@@ -421,8 +431,8 @@ compare(const Self& y, bool in_same_extension = false ) const
   // We first determine the signs of these terms.
   const NT          diff_a0 = a0_ - y.a0_;
   const CGAL::Sign  sign_left = CGAL::sign (diff_a0);
-  const NT          x_sqr = a1_*a1_ * NT(root_);
-  const NT          y_sqr = y.a1_*y.a1_ * NT(y.root_);
+  const NT          x_sqr = a1_*a1_ * Root_nt_cast()(root_);
+  const NT          y_sqr = y.a1_*y.a1_ * Root_nt_cast()(y.root_);
   Comparison_result right_res = CGAL::compare (y_sqr, x_sqr);
   CGAL::Sign        sign_right = ZERO;
 
