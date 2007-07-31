@@ -67,7 +67,6 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
   typedef typename Base::Plane_3 Plane_3;
 
   typedef typename Base::Mark Mark;
-  typedef typename Base::Items Items;
 
   typedef CGAL::ID_support_handler<Items, Base> Association;
 
