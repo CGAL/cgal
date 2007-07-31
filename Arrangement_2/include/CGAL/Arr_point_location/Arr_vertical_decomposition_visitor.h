@@ -43,7 +43,7 @@ class Arr_vertical_decomposition_visitor : public Sweep_line_empty_visitor<Trait
   typedef Sweep_line_empty_visitor<Traits_2>                 Base;
   typedef typename Base::Event                               Event;
   typedef typename Base::Subcurve                            Subcurve;
-  typedef typename Base::SL_iterator                         SL_iterator;
+  typedef typename Base::Status_line_iterator                SL_iterator;
  
   typedef typename Traits_2::X_monotone_curve_2          X_monotone_curve_2;
   typedef typename Traits_2::Point_2                     Point_2;
@@ -135,7 +135,7 @@ public:
 
     // Get the vertex handle associated with the current event, and insert
     // it into the output iterator.
-    Vertex_const_handle vh = event->get_point().get_vertex_handle();
+    Vertex_const_handle vh = event->point().get_vertex_handle();
     CGAL::Object        obj_above, obj_below;
 
     // Check the feature from above.
@@ -165,7 +165,7 @@ public:
     // event is n_right, we decrement the iterator n_right times, then
     // check if it is possible to further decrement it.
     SL_iterator        below = above;
-    int                n_right = event->get_num_right_curves();
+    int                n_right = event->number_of_right_curves();
     int                k;
 
     for (k = 0; k < n_right; k++)
