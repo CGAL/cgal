@@ -1733,6 +1733,7 @@ Nef_3/test/Nef_3/data/cube.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/nine_planes.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/octa.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/star.off -text svneol=unset#application/octet-stream
+Nef_3/test/Nef_3/data/wrongly_oriented_cube.off -text
 Nef_3/test/Nef_3/makefile -text
 Nef_S2/demo/Nef_S2/visualization.vcproj eol=crlf
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#image/gif

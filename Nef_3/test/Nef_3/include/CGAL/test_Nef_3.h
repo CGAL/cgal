@@ -42,6 +42,7 @@ class test_Nef_3 {
   typedef CGAL::Nef_polyhedron_3<Kernel, Items>             Nef_polyhedron;
   typedef typename Nef_polyhedron::Mark                     Mark;
   typedef typename Kernel::RT                               RT;
+  typedef typename Kernel::FT                               FT;
   typedef typename Kernel::Point_3                          Point_3;
   typedef typename Kernel::Plane_3                          Plane_3;
   typedef typename Kernel::Vector_3                         Vector_3;
@@ -177,6 +178,10 @@ private:
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
       
+      N = load_off("data/wrongly_oriented_cube.off");
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+
       N = load_off("data/cube+v.off");
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
@@ -242,8 +247,6 @@ private:
   }
 
   void transformation() {
-    typedef typename Kernel::RT NT;
-
     Nef_polyhedron C = load_off("data/cube.off");
     Nef_polyhedron N(C);
     
@@ -257,17 +260,17 @@ private:
     CGAL_assertion(N == C);
 
     double alpha = CGAL_PI * 20 / 180.0;
-    NT diry = std::sin( alpha) * 256*256*256;
-    NT dirx = std::cos( alpha) * 256*256*256;
-    NT sin_alpha;
-    NT cos_alpha;
-    NT w;
+    RT diry = std::sin( alpha) * 256*256*256;
+    RT dirx = std::cos( alpha) * 256*256*256;
+    RT sin_alpha;
+    RT cos_alpha;
+    RT w;
     CGAL::rational_rotation_approximation( dirx, diry, 
 					   sin_alpha, cos_alpha, w,
-					   NT(1), NT( 1000000));
-    Aff_transformation_3 rotx20( w, NT(0), NT(0),
-				 NT(0), cos_alpha,-sin_alpha,
-				 NT(0), sin_alpha, cos_alpha,
+					   RT(1), RT( 1000000));
+    Aff_transformation_3 rotx20( w, RT(0), RT(0),
+				 RT(0), cos_alpha,-sin_alpha,
+				 RT(0), sin_alpha, cos_alpha,
 				 w);
     N = C;
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,1,0,1)));
@@ -1210,7 +1213,6 @@ private:
     
 public:
   void run_test() {
-
     loadSave();
     newell();
     transformation();
