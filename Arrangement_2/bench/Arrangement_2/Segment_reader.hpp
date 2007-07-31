@@ -66,7 +66,9 @@ public:
     template <class FT>
     void make_point(FT & x, FT & y, Point_2 & p)
     {
-      p = Point_2(x,y);
+      Kernel::FT kx(x);
+      Kernel::FT ky(y);      
+      p = Point_2(kx, ky);
       double dx = CGAL::to_double(x);
       double dy = CGAL::to_double(y);
       CGAL::Bbox_2 b(dx, dy, dx, dy);
@@ -77,7 +79,9 @@ public:
     template <class FT>
     void make_point(FT & x, FT & y, FT & w, Point_2 & p)
     {
-      p = Point_2(x/w, y/w);
+      Kernel::FT kx(x/w);
+      Kernel::FT ky(y/w);      
+      p = Point_2(kx, ky);
     }
 
     /*! A point maker */

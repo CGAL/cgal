@@ -7,6 +7,7 @@
 
 #include "bench_config.hpp"
 #include "number_type.hpp"
+#include "kernel_type.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 CGAL_BENCHMARK_END_NAMESPACE
@@ -41,34 +42,7 @@ enum MaxFilesNumber {
 #endif
 #undef TRIANGLE_SUPPORTED
 
-// Kernel:
-#if BENCH_KERNEL == EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#elif BENCH_KERNEL == LEDA_KERNEL
-#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
-
-#elif BENCH_KERNEL == MY_KERNEL
-#include <CGAL/Arr_segment_traits_leda_kernel_2.h>
-
-#elif BENCH_KERNEL == CARTESIAN_KERNEL
-#include <CGAL/Cartesian.h>
-
-#elif BENCH_KERNEL == SIMPLE_CARTESIAN_KERNEL
-#include <CGAL/Simple_cartesian.h>
-
-#elif BENCH_KERNEL == LAZY_CARTESIAN_KERNEL
-#include <CGAL/Cartesian.h>
-#include <CGAL/Lazy_kernel.h>
-
-#elif BENCH_KERNEL == LAZY_SIMPLE_CARTESIAN_KERNEL
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Lazy_kernel.h>
-
-#else
-#error No kernel (KERNEL) specified!
-#endif
-
+// Stream:
 #if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
 #if defined(USE_CGAL_WINDOW)
 #if CGAL_LEDA_VERSION < 500
@@ -131,52 +105,7 @@ enum MaxFilesNumber {
 
 // Curved-kernel Conics:
 #elif BENCH_TRAITS == CK_CIRCLE_TRAITS
-
-// This does not belong here
-#if BENCH_NT == DOUBLE_NT
-#include <ECG/Root_of/double.h>
-#elif BENCH_NT == LEDA_REAL_NT
-#include <ECG/Root_of/leda_real.h>
-#elif BENCH_NT == QUOTIENT_MP_FLOAT_NT
-#include <ECG/Root_of/CGAL_Quotient.h>
-#elif BENCH_NT == GMPZ_NT
-#include <ECG/Root_of/gmpxx.h>
-#elif BENCH_NT == GMPQ_NT
-#include <ECG/Root_of/gmpxx.h>
-#elif BENCH_NT == CGAL_GMPQ_NT
-#include <ECG/Root_of/CGAL_Gmpq.h>
-#elif BENCH_NT == LAZY_LEDA_RAT_NT
-#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
-#elif BENCH_NT == LAZY_CGAL_GMPQ_NT
-#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
-#include <ECG/Root_of/gmpxx.h>
-#elif BENCH_NT == LAZY_GMPZ_NT
-#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
-#include <ECG/Root_of/gmpxx.h>
-#elif BENCH_NT == LAZY_QUOTIENT_MP_FLOAT_NT
-#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
-#include <ECG/Root_of/CGAL_Quotient.h>
-#elif BENCH_NT == CORE_EXPR_NT
-#include <ECG/Root_of/CORE_Expr.h>
-#endif
-
-#include <ECG/Root_of/Root_of_2.h>
-
-#include <ECG/Circular_kernel.h>
-#include <ECG/Circular_arc_traits.h>
-#include <ECG/Circular_arc_traits_tracer.h> 
-#include <ECG/IO/Qt_widget_circular_arc_2.h>
-#include <ECG/IO/Qt_widget_circular_arc_endpoint_2.h>
-
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
-// #include <CGAL/Random.h>
-#include <ECG/Synaps_kernel.h>
-#include <ECG/Conic_kernel.h>
-#include <ECG/Conic_arc_traits.h>
-#include <ECG/Conic_arc_traits_tracer.h> 
-#include <ECG/IO/Qt_widget_conic_arc_2.h>
-#include <ECG/IO/Qt_widget_conic_arc_endpoint_2.h>
-
 #else
 #error No traits (TRAITS) specified!
 #endif
@@ -217,58 +146,6 @@ enum MaxFilesNumber {
 #include <list>
 
 #include "Option_parser.hpp"
-
-// Readers:
-// Conic reader:
-#if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == NON_CACHING_SEGMENT_TRAITS
-#include "Segment_reader.hpp"
-
-#elif BENCH_TRAITS == LEDA_CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS ||\
-      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
-      BENCH_TRAITS == EXACUS_CONIC_TRAITS
-#include "Conic_reader.hpp"
-
-// Polyline reader:
-#elif BENCH_TRAITS == POLYLINE_TRAITS || \
-      BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
-#include "Polyline_reader.hpp"
-
-#else
-#error No traits (TRAITS) specified
-#endif
-
-// Kernel:
-#if BENCH_KERNEL == EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
-typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-#define KERNEL_TYPE "Exact"
-
-#elif BENCH_KERNEL == LEDA_KERNEL
-typedef CGAL::leda_rat_kernel_traits                            Kernel;
-#define KERNEL_TYPE "Leda"
-
-#elif BENCH_KERNEL == MY_KERNEL
-typedef CGAL::Arr_segment_traits_leda_kernel_2                  Kernel;
-#define KERNEL_TYPE "Partial Leda"
-
-#elif BENCH_KERNEL == CARTESIAN_KERNEL
-typedef CGAL::Cartesian<Number_type>                            Kernel;
-#define KERNEL_TYPE "Cartesian"
-
-#elif BENCH_KERNEL == SIMPLE_CARTESIAN_KERNEL
-typedef CGAL::Simple_cartesian<Number_type>                     Kernel;
-#define KERNEL_TYPE "Simple Cartesian"
-
-#elif BENCH_KERNEL == LAZY_CARTESIAN_KERNEL
-typedef CGAL::Lazy_kernel<CGAL::Cartesian<Number_type> >        Kernel;
-#define KERNEL_TYPE "Lazy Cartesian"
-
-#elif BENCH_KERNEL == LAZY_SIMPLE_CARTESIAN_KERNEL
-typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<Number_type> > Kernel;
-#define KERNEL_TYPE "Lazy Simple Cartesian"
-
-#else
-#error No kernel (KERNEL) specified!
-#endif
 
 // Traits:
 #if BENCH_TRAITS == SEGMENT_TRAITS
@@ -314,19 +191,6 @@ typedef CnX::Conic_segment_2< CST>                      Input_segment;
 typedef SoX::CGAL_Arr_2_for_GAPS_traits< Input_segment, CST> Base_traits;
 #define TRAITS_TYPE "Exacus Conics"
 
-// Curved-kernel Circle:
-#elif BENCH_TRAITS == CK_CIRCLE_TRAITS
-typedef ECG::Curved_kernel<Kernel>                      Curved_k;
-typedef ECG::Circular_arc_traits<Curved_k>              Base_traits;
-#define TRAITS_TYPE "Curved Kernel Circles"
-
-// Curved-kernel Conics:
-#elif BENCH_TRAITS == CK_CONIC_TRAITS
-typedef ECG::Algebraic::Synaps_kernel<RT,FT>            Algebraic_k;
-typedef ECG::Curved_kernel<Kernel,Algebraic_k>          Curved_k;
-typedef ECG::Conic_arc_traits<Curved_k>                 Base_traits;
-#define TRAITS_TYPE "Curved Kernel Conics"
-
 #else
 #error No traits (TRAITS) specified!
 #endif
@@ -370,6 +234,25 @@ typedef CGAL::Window_stream Window_stream;
 #else
 typedef CGAL::Qt_widget Window_stream;
 QApplication * App;
+#endif
+
+// Readers:
+// Conic reader:
+#if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == NON_CACHING_SEGMENT_TRAITS
+#include "Segment_reader.hpp"
+
+#elif BENCH_TRAITS == LEDA_CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS ||\
+      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
+      BENCH_TRAITS == EXACUS_CONIC_TRAITS
+#include "Conic_reader.hpp"
+
+// Polyline reader:
+#elif BENCH_TRAITS == POLYLINE_TRAITS || \
+      BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
+#include "Polyline_reader.hpp"
+
+#else
+#error No traits (TRAITS) specified
 #endif
 
 CGAL_BEGIN_NAMESPACE
