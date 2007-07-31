@@ -278,7 +278,7 @@ inline Modular operator / (const Modular& p1, int num)
 // I/O 
 inline std::ostream& operator << (std::ostream& os, const Modular& p) {   
     typedef Modular MOD;
-    os <<"("<< p.x()<<"%"<<MOD::get_current_prime()<<")";
+    os <<"("<< int(p.x())<<"%"<<MOD::get_current_prime()<<")";
     return os;
 }
 
