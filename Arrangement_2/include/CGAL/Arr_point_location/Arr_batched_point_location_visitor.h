@@ -42,7 +42,7 @@ class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Trai
   typedef Sweep_line_empty_visitor<Traits>             Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
-  typedef typename Base::SL_iterator                   SL_iterator;
+  typedef typename Base::Status_line_iterator          SL_iterator;
 
    
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
@@ -103,8 +103,8 @@ class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Trai
     // ISOLATED VERTEX
     if(event->is_action())
     {
-      Vertex_const_handle vh = event->get_point().get_vertex_handle();
-      *m_out = std::make_pair(event->get_point().base_point(), 
+      Vertex_const_handle vh = event->point().get_vertex_handle();
+      *m_out = std::make_pair(event->point().base_point(), 
                               CGAL::make_object(vh));
       ++m_out;
       return true;
@@ -117,14 +117,14 @@ class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Trai
       {
         Subcurve* sc = *(event->right_curves_begin());
         Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
-        *m_out = std::make_pair(event->get_point().base_point(), 
+        *m_out = std::make_pair(event->point().base_point(), 
                                 CGAL::make_object(he->target()));
         ++m_out;
         return true;
       }
       Subcurve* sc = *(event->left_curves_begin());
       Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
-      *m_out = std::make_pair (event->get_point().base_point(),
+      *m_out = std::make_pair (event->point().base_point(),
                                make_object(he->source()));
       ++m_out;
       return true;
@@ -133,7 +133,7 @@ class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Trai
      //UNBOUNDED_FACE
     if(above == this ->status_line_end())
     {
-      *m_out = std::make_pair (event->get_point().base_point(),
+      *m_out = std::make_pair (event->point().base_point(),
                                CGAL::make_object(m_top_fict->face()));
       ++m_out;
       return true;
@@ -144,7 +144,7 @@ class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Trai
     {
       Halfedge_const_handle he = 
         (*above)->get_last_curve().get_halfedge_handle();
-      *m_out = std::make_pair (event->get_point().base_point(),
+      *m_out = std::make_pair (event->point().base_point(),
                                make_object(he));
       ++m_out;
       return true;
@@ -153,7 +153,7 @@ class Arr_batched_point_location_visitor : public Sweep_line_empty_visitor< Trai
     //FACE or UNBOUNDED_FACE
     Halfedge_const_handle he = 
       (*above)->get_last_curve().get_halfedge_handle();
-    *m_out = std::make_pair (event->get_point().base_point(),
+    *m_out = std::make_pair (event->point().base_point(),
                              CGAL::make_object(he->face()));
     ++m_out;
     return true;
