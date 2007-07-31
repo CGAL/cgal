@@ -23,7 +23,7 @@ int main()
   // Compute all intersection points.
   std::list<Point_2>     pts;
 
-  CGAL::get_intersection_points (segments, segments + 4,
+  CGAL::compute_intersection_points (segments, segments + 4,
                                  std::back_inserter (pts));
 
   // Print the result.
