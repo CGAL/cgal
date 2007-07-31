@@ -187,8 +187,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 
     SVertex_handle sv_prev = sv_0;
 
+    bool with_border = false;
     do {
-      CGAL_assertion(!pe->is_border());
+      //      CGAL_assertion(!pe->is_border());
       CGAL_assertion(pe_prev->face() == pe->opposite()->face());
       CGAL_assertion(pe_prev->vertex()->point()==pv.point());
       CGAL_assertion(pe->vertex()->point()==pv.point());
@@ -199,9 +200,11 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       SVertex_handle sv = SM.new_svertex(sp);
       sv->mark() = true;
       
-      CGAL_NEF_TRACEN(pe_prev->facet()->plane());
+      //      CGAL_NEF_TRACEN(pe_prev->facet()->plane());
       CGAL_NEF_TRACEN(pe_target);
       CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
+
+      /*
       if(pe_prev->facet()->plane().is_degenerate()) {
 	typename Polyhedron::Halfedge_around_facet_const_circulator fc(pv.vertex_begin()), fcend(fc);
 	std::cerr << "wrong cycle "  << std::endl;
@@ -209,34 +212,42 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 	  std::cerr << "  " << fc->vertex()->point() << std::endl;
 	}
       }
-      CGAL_assertion(!pe_prev->facet()->plane().is_degenerate());
-      CGAL_assertion(pe_prev->facet()->plane().
+      */
+      CGAL_assertion(pe_prev->is_border() ||
+		     !pe_prev->facet()->plane().is_degenerate());
+      CGAL_assertion(pe_prev->is_border() ||
+		     pe_prev->facet()->plane().
 		     has_on(pe_prev->opposite()->vertex()->point()));
-      CGAL_assertion(pe_prev->facet()->plane().has_on(pe_target));
-      CGAL_assertion(pe_prev->facet()->plane().has_on(pv.point()));
+      CGAL_assertion(pe_prev->is_border() || 
+		     pe_prev->facet()->plane().has_on(pe_target));
+      CGAL_assertion(pe_prev->is_border() || 
+		     pe_prev->facet()->plane().has_on(pv.point()));
 
-      typename Polyhedron::Facet::Plane_3 ss_plane
-	(CGAL::ORIGIN, 
-	 pe_prev->facet()->plane().opposite().orthogonal_vector());
-      Sphere_circle ss_circle(ss_plane);
-
-      CGAL_assertion(ss_circle.has_on(sp));
-      CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-
-      SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
-      e->circle() = ss_circle;
-      e->twin()->circle() = ss_circle.opposite();
-      e->mark() = e->twin()->mark() = true;
-
-      index_adder.set_hash(pe_prev, e);
+      if(pe_prev->is_border())
+	with_border = true;
+      else {
+	typename Polyhedron::Facet::Plane_3 ss_plane
+	  (CGAL::ORIGIN, 
+	   pe_prev->facet()->plane().opposite().orthogonal_vector());
+	Sphere_circle ss_circle(ss_plane);
+	
+	CGAL_assertion(ss_circle.has_on(sp));
+	CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+	
+	SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
+	e->circle() = ss_circle;
+	e->twin()->circle() = ss_circle.opposite();
+	e->mark() = e->twin()->mark() = true;
+	
+	index_adder.set_hash(pe_prev, e);
+      }
 
       sv_prev = sv;
       pe_prev = pe;
-      pe++;
+      ++pe;
     }
     while( pe != pv.vertex_begin() );
 
-    CGAL_assertion(!pe_0->is_border());
     CGAL_assertion(pe_prev->face() == pe_0->opposite()->face());
     CGAL_assertion(pe_prev->vertex()->point()==pv.point());
     CGAL_assertion(pe_0->vertex()->point()==pv.point());
@@ -244,37 +255,49 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     CGAL_NEF_TRACEN(pe_prev->facet()->plane());
     CGAL_NEF_TRACEN(pe_target_0);
     CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
-    CGAL_assertion(!pe_prev->facet()->plane().is_degenerate());
-    CGAL_assertion(pe_prev->facet()->plane().
+    CGAL_assertion(pe_prev->is_border() ||
+		   !pe_prev->facet()->plane().is_degenerate());
+    CGAL_assertion(pe_prev->is_border() ||
+		   pe_prev->facet()->plane().
 		   has_on(pe_prev->opposite()->vertex()->point()));
-    CGAL_assertion(pe_prev->facet()->plane().has_on(pe_target_0));
-    CGAL_assertion(pe_prev->facet()->plane().has_on(pv.point()));
+    CGAL_assertion(pe_prev->is_border() || 
+		   pe_prev->facet()->plane().has_on(pe_target_0));
+    CGAL_assertion(pe_prev->is_border() ||
+		   pe_prev->facet()->plane().has_on(pv.point()));
 
-    typename Polyhedron::Facet::Plane_3 ss_plane
-      (CGAL::ORIGIN,
-       pe_prev->facet()->plane().opposite().orthogonal_vector());
-    Sphere_circle ss_circle(ss_plane);
-
-    CGAL_assertion(ss_plane.has_on(sv_prev->point()));
-    CGAL_assertion(ss_circle.has_on(sp_0));
-    CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-   
-    SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv_0);
-    e->circle() = ss_circle;
-    e->twin()->circle() = ss_circle.opposite();
-    e->mark() = e->twin()->mark() = true;
-
-    index_adder.set_hash(pe_prev, e);
+    SHalfedge_handle e;
+    if(pe_prev->is_border()) {
+      with_border = true;
+      e = sv_prev->out_sedge();
+    } else {
+      typename Polyhedron::Facet::Plane_3 ss_plane
+	(CGAL::ORIGIN,
+	 pe_prev->facet()->plane().opposite().orthogonal_vector());
+      Sphere_circle ss_circle(ss_plane);
+      
+      CGAL_assertion(ss_plane.has_on(sv_prev->point()));
+      CGAL_assertion(ss_circle.has_on(sp_0));
+      CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+      
+      e = SM.new_shalfedge_pair(sv_prev, sv_0);
+      e->circle() = ss_circle;
+      e->twin()->circle() = ss_circle.opposite();
+      e->mark() = e->twin()->mark() = true;
+      
+      index_adder.set_hash(pe_prev, e);
+    }
 
     // create faces
-    SFace_handle fint = SM.new_sface();
     SFace_handle fext = SM.new_sface();
-    SM.link_as_face_cycle(e, fint);
     SM.link_as_face_cycle(e->twin(), fext);
-    
-    // mark faces properly...
-    fint->mark() = true;
     fext->mark() = false;
+
+    if(!with_border) {
+      SFace_handle fint = SM.new_sface();
+      SM.link_as_face_cycle(e, fint);
+      fint->mark() = false;
+    }
+
     SM.check_integrity_and_topological_planarity();   
   }
 

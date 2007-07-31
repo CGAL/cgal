@@ -42,6 +42,7 @@
 #include <CGAL/Nef_3/SNC_SM_explorer.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Modifier_base.h>
+#include <CGAL/Nef_3/Mark_bounded_volumes.h>
 
 #ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
@@ -410,15 +411,144 @@ protected:
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
     build_external_structure();
     simplify();
+    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
+    delegate(mbv);
     set_snc(snc());
     //    CGAL_assertion(orientation() == 1);
   }
   
- protected:  
+ protected: 
+
+  template<typename Kernel>
+  class Triangulation_handler2 {
+
+    typedef typename CGAL::Triangulation_vertex_base_2<Kernel>               Vb;
+    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
+    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
+    typedef typename CGAL::No_intersection_tag                               Itag;
+    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>      CT;
+
+    typedef typename CT::Face_handle           Face_handle;
+    typedef typename CT::Vertex_handle         CTVertex_handle;
+    typedef typename CT::Finite_faces_iterator Finite_face_iterator;
+    typedef typename CT::Edge                  Edge;
+
+    CT ct;
+    CGAL::Unique_hash_map<Face_handle, bool> visited;
+    CGAL::Unique_hash_map<CTVertex_handle, Vertex_const_handle> ctv2v;
+    Finite_face_iterator fi;
+    Plane_3 supporting_plane;
+
+  public:
+    Triangulation_handler2(Halffacet_const_handle f) : 
+      visited(false), supporting_plane(f->plane()) {
+
+      Halffacet_cycle_const_iterator fci;
+      for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
+	if(fci.is_shalfedge()) {
+          SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
+	  CGAL_For_all(sfc,send) {
+            CGAL_NEF_TRACEN("  insert point" << sfc->source()->source()->point());
+	    CTVertex_handle ctv = ct.insert(sfc->source()->source()->point());
+	    ctv2v[ctv] = sfc->source()->source();
+          }
+        }
+      }
+
+      for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
+	if(fci.is_shalfedge()) {
+          SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
+	  CGAL_For_all(sfc,send) {
+            CGAL_NEF_TRACEN("  insert constraint" << sfc->source()->source()->point()
+	                     << "->" << sfc->source()->twin()->source()->point());
+	    ct.insert_constraint(sfc->source()->source()->point(),
+	                         sfc->source()->twin()->source()->point());
+          }
+        }
+      }
+      CGAL_assertion(ct.is_valid());
+
+      CGAL_NEF_TRACEN("number of finite triangles " << ct.number_of_faces());
+
+      typename CT::Face_handle infinite = ct.infinite_face();
+      typename CT::Vertex_handle ctv = infinite->vertex(1);
+      if(ct.is_infinite(ctv)) ctv = infinite->vertex(2);
+      CGAL_assertion(!ct.is_infinite(ctv));
+
+      typename CT::Face_handle opposite;
+      typename CT::Face_circulator vc(ctv,infinite);
+      do { opposite = vc++;
+      } while(!ct.is_constrained(typename CT::Edge(vc,vc->index(opposite))));
+      typename CT::Face_handle first = vc;
+
+      CGAL_assertion(!ct.is_infinite(first));
+      traverse_triangulation(first, first->index(opposite));
+
+      fi = ct.finite_faces_begin();
+    }
+
+    void traverse_triangulation(Face_handle f, int parent) {
+      visited[f] = true;
+      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
+	Face_handle child(f->neighbor(ct.cw(parent)));
+	traverse_triangulation(child, child->index(f));
+      } 
+      if(!ct.is_constrained(Edge(f,ct.ccw(parent))) && !visited[f->neighbor(ct.ccw(parent))]) {
+	Face_handle child(f->neighbor(ct.ccw(parent)));
+	traverse_triangulation(child, child->index(f));
+      } 
+    } 
+ 
+    template<typename Triangle_3>
+    bool get_next_triangle(Triangle_3& tr) {
+      while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
+      if(fi == ct.finite_faces_end()) return false;
+      tr = Triangle_3(fi->vertex(0)->point(), fi->vertex(1)->point(), fi->vertex(2)->point());
+      ++fi;
+      return true;
+    }
+
+    bool same_orientation(Plane_3 p1) const {
+      if(p1.a() != 0)
+	return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
+      if(p1.b() != 0)
+	return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
+      return CGAL::sign(p1.c()) == CGAL::sign(supporting_plane.c());
+    }
+
+    template<typename PIB, typename Index>
+    void handle_triangles(PIB& pib, Index& VI) {
+      while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
+      while(fi != ct.finite_faces_end()) {
+	Plane_3 plane(fi->vertex(0)->point(),
+		      fi->vertex(1)->point(),
+		      fi->vertex(2)->point());
+	pib.begin_facet();
+	if(same_orientation(plane)) {
+	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
+	} else {
+	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
+	}
+	pib.end_facet();
+	do {
+	  ++fi;
+	} while(fi != ct.finite_faces_end() && visited[fi] == false);
+      }
+    }
+  };
+ 
   template <class HDS>
   class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     
     class Visitor {
+
+      typedef typename CGAL::Triangulation_euclidean_traits_xy_3<Kernel>       XY;
+      typedef typename CGAL::Triangulation_euclidean_traits_yz_3<Kernel>       YZ;
+      typedef typename CGAL::Triangulation_euclidean_traits_xz_3<Kernel>       XZ;
 
       const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;
@@ -440,17 +570,41 @@ protected:
      	
 	Halffacet_const_handle f = opposite_facet->twin();
 
-	B.begin_facet();
-	fc = f->facet_cycles_begin();
-	se = SHalfedge_const_handle(fc);
-	CGAL_assertion(se!=0);
-	SHalfedge_around_facet_const_circulator hc_start(se);
-	SHalfedge_around_facet_const_circulator hc_end(hc_start);
-	CGAL_For_all(hc_start,hc_end) {
-	  CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
-	  B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+	SHalfedge_around_facet_const_circulator 
+	  sfc1(f->facet_cycles_begin()), sfc2(sfc1);
+	
+	if(++f->facet_cycles_begin() != f->facet_cycles_end() ||
+	   ++(++(++sfc1)) != sfc2) {
+	  Vector_3 orth = f->plane().orthogonal_vector();
+	  int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
+	  c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
+	  
+	  if(c == 0) {
+	    Triangulation_handler2<YZ> th(f);
+	    th.handle_triangles(B, VI);
+	  } else if(c == 1) {
+	    Triangulation_handler2<XZ> th(f);
+	    th.handle_triangles(B, VI);
+	  } else if(c == 2) {
+	    Triangulation_handler2<XY> th(f);
+	    th.handle_triangles(B, VI);
+	  } else
+	    CGAL_assertion_msg(false, "wrong value");
+
+	} else {
+
+	  B.begin_facet();
+	  fc = f->facet_cycles_begin();
+	  se = SHalfedge_const_handle(fc);
+	  CGAL_assertion(se!=0);
+	  SHalfedge_around_facet_const_circulator hc_start(se);
+	  SHalfedge_around_facet_const_circulator hc_end(hc_start);
+	  CGAL_For_all(hc_start,hc_end) {
+	    CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
+	    B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+	  }
+	  B.end_facet();
 	}
-	B.end_facet();
       }
 
       void visit(SFace_const_handle) {}
@@ -481,8 +635,8 @@ protected:
       }
       else {
 	B.begin_surface(scd.number_of_vertices(), 
-			scd.number_of_facets(),
-			scd.number_of_edges());
+			2*scd.number_of_vertices()-4,
+			3*scd.number_of_vertices()-6);
 	skip_volumes = 1;
       }
       
