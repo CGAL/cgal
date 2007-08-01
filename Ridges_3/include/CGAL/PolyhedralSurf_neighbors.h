@@ -232,7 +232,7 @@ compute_neighbors(const Vertex_const_handle v,
     if ( pos_he == contour.end() ) continue;
     // simulate a circulator on the contour: 
     // find the prev and next pos on coutour
-    if ( (++iter) != ite ) pos_next = iter;
+    if ( ite != (++iter) ) pos_next = iter;
     else pos_next = contour.begin();
     iter = pos_he;
     if ( iter != contour.begin() ) pos_prev = --iter;
