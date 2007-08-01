@@ -53,7 +53,18 @@ public:
             return Modular_NT(V.begin(),V.end());           
         }
     };
+
+    struct Modular_image_inv{ 
+        NT operator()(const Modular_NT& p) const {  
+            std::vector<COEFF> V;
+            typename Mtr::Modular_image_inv modular_image_inv;
+            for(int i=0; i<=p.degree();i++)
+                V.push_back(modular_image_inv(p[i]));
+            return NT(V.begin(),V.end());           
+        }
+    };
 };
+
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POLYNOMIAL_MODULAR_TRAITS_TRAITS_H
