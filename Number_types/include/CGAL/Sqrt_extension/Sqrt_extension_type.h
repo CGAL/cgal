@@ -158,6 +158,15 @@ public:
     //! Access operator for root_
     //ROOT& root() { return root_; }
 
+    // TODO: add to documentation
+    static void check_roots(const Self& a, const Self b ) {
+        if(a.is_extended() && b.is_extended()){
+            if (a.root() != b.root()){
+                //CGAL_error("Interoperation of incompatible algebraic extensions");
+                throw std::range_error("Interoperation of incompatible algebraic extensions");
+            }
+        }
+    }
 
     // output_maple function for EXACUS compatibility
     // TODO: remove if no longer needed
@@ -165,7 +174,7 @@ public:
         CGAL::output_maple( os, *this );
     }
 
-std::pair<double, double> to_interval() const{
+    std::pair<double, double> to_interval() const{
    
     if (! is_extended_)
         return CGAL_NTS to_interval(a0_);
@@ -261,7 +270,7 @@ std::pair<double, double> to_interval() const{
     Self& operator += (const Self& p) {
         if(is_extended_){
             if (p.is_extended_){
-                CGAL_precondition(root_==p.root_);
+                Self::check_roots(*this, p);
                 return *this = Self (a0_+p.a0_, a1_+p.a1_, root_);
             }else{
                 return *this = Self (a0_+p.a0_, a1_, root_);
@@ -278,7 +287,7 @@ std::pair<double, double> to_interval() const{
 
         if(is_extended_){
             if (p.is_extended_){
-                CGAL_precondition(root_==p.root_);
+                Self::check_roots(*this, p);
                 return *this = Self (a0_-p.a0_, a1_-p.a1_, root_);
             }else{
                 return *this = Self (a0_-p.a0_, a1_, root_);
@@ -294,7 +303,7 @@ std::pair<double, double> to_interval() const{
     Self& operator *= (const Self& p){        
         if(is_extended_){
             if (p.is_extended_){
-                CGAL_precondition(root_==p.root_);
+                Self::check_roots(*this, p);
                 return *this = Self (
                         a0_*p.a0_+a1_*p.a1_*Root_nt_cast()(root_),  
                         a0_*p.a1_+a1_*p.a0_,
