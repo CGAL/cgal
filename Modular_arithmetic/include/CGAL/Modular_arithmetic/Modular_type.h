@@ -34,7 +34,7 @@ public:
     typedef Modular NT;
 
 private:
-    static const double  CST_CUT = ((3.0*(1<<30))*(1<<21)); 
+    static const double  CST_CUT; 
 private:
    
     static int prime_int;
@@ -201,6 +201,8 @@ public:
     friend Self operator * (const Self&, const Self&);    
     friend Self operator / (const Self& p1, const Self& p2);
 };
+
+const double Modular::CST_CUT = std::ldexp( 3., 51 );
 
 inline Modular operator + (const Modular& p1)
 { return p1; }
