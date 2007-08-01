@@ -538,8 +538,8 @@ public:
     App->setMainWidget(m_window);
     m_window->resize(m_width, m_height);
     m_window->set_window(m_x0, m_x1, m_y0, m_y1);   // logical window size 
-    m_window->setLineWidth(4);
-    m_window->setPointSize(4);
+    m_window->setLineWidth(1);
+    m_window->setPointSize(3);
     m_window->show();
 #endif
     return 0;

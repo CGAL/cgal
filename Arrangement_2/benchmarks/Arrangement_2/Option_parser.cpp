@@ -73,11 +73,11 @@ Option_parser::Option_parser() :
   if (root_c) {
     fi::path root(root_c, fi::native);
     fi::path dir;
-    dir = root / "data/Segments_2";
+    dir = root / "data/curves/segments";
     m_dirs.push_back(dir);
-    dir = root / "data/Conics_2";
+    dir = root / "data/curves/conics";
     m_dirs.push_back(dir);
-    dir = root / "data/Polylines_2";
+    dir = root / "data/curves/polylines";
     m_dirs.push_back(dir);
   }
 
@@ -96,21 +96,21 @@ Option_parser::Option_parser() :
      "verbose level")
     ("type", po::value<std::vector<Type_id> >()->composing(),
      "Type\n"
-     "\t\t\t\t\ti[ncrement]\t(0x1}\n"
-     "\t\t\t\t\ta[ggregate]\t(0x2)\n"
-     "\t\t\t\t\t[point_]l[ocation]\t(0x4)\n"
-     "\t\t\t\t\td[isplay]\t(0x8)\n"
+     "  i[ncrement]        (0x1}\n"
+     "  a[ggregate]        (0x2)\n"
+     "  [point_]l[ocation] (0x4)\n"
+     "  d[isplay]          (0x8)\n"
      )
     ("type-mask,T", po::value<unsigned int>(&m_type_mask)->default_value(0x3f),
      "type mask")
     ("strategy", po::value<std::vector<Strategy_id> >()->composing(),
      "Strategy\n"
-     "\t\t\t\t\tR[IC]\t(0x1}\n"
-     "\t\t\t\t\tn[aive]\t(0x2)\n"
-     "\t\t\t\t\tw[alk]\t(0x4)\n"
-     "\t\t\t\t\ts[imple]\t(0x8)\n"
-     "\t\t\t\t\tt[riangle]\t(0x10)\n"
-     "\t\t\t\t\tl[enmarks]\t(0x20)\n"
+     "  R[IC]      (0x1}\n"
+     "  n[aive]    (0x2)\n"
+     "  w[alk]     (0x4)\n"
+     "  s[imple]   (0x8)\n"
+     "  t[riangle] (0x10)\n"
+     "  l[enmarks] (0x20)\n"
      )
     ("strategy-mask,S",
      po::value<unsigned int>(&m_strategy_mask)->default_value(0x3f),
