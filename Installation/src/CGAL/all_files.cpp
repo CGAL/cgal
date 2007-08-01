@@ -16,6 +16,7 @@
 #include "JAMA_numeric_solver.cpp"
 #include "KDS_Log.cpp"
 #include "kernel.cpp"
+#include "Modular_type.cpp"
 #include "MP_Float.cpp"
 #include "numeric_solvers_support.cpp"
 #include "NefPolynomial.cpp"
