@@ -166,8 +166,13 @@ endif
 endif
 
 # Planar map:
+ifeq ($(USE_AOS), 1)
+TARGET0 := $(TARGET0)Aos
+LOBJDIR :=$(LOBJDIR)_aos
+else
 TARGET0 := $(TARGET0)Arr
 LOBJDIR :=$(LOBJDIR)_arr
+endif
 
 # Number Type:
 LCPPDEFS+= -DBENCH_NT=$(BENCH_NT)
@@ -359,7 +364,11 @@ TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
 
 LCPPINCS = -I.
 LCPPINCS+= -I$(BASEDIR)
+ifeq ($(USE_AOS), 1)
+LCPPINCS+= -I$(BASEDIR)/../../../../branches/experimental-packages/Arrangement_on_surface_2/include
+else
 LCPPINCS+= -I$(BASEDIR)/../../include
+endif
 # LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 # LCPPINCS+= -I$(BASEDIR)/../../../Arrangement_2/include
 
