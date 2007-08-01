@@ -1,5 +1,5 @@
 FileFormat( "AcsBenchmark", 0, 1 )
-BenchmarkName( "onebig_100_x" ) 
+BenchmarkName( "tilt_grid_200" ) 
 Classification( "Arrangement", "Lines", "BoundedArcs", "Dgn", "O", "Jul-2006" )
 
 LineSegment_2(Point_2(0, 0), Point_2(1, 101))

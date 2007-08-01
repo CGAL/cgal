@@ -1,5 +1,5 @@
 FileFormat( "AcsBenchmark", 0, 1 )
-BenchmarkName( "eurcut" ) 
+BenchmarkName( "fork0505_mc.seg.rand" ) 
 Classification( "Arrangement", "Lines", "BoundedArcs", "Dgn", "O", "Jul-2006" )
 
 LineSegment_2(Point_2(Rational(8849800,20833), Rational(8347800,20833)), Point_2(Rational(26545600,62501), Rational(26206600,62501)))

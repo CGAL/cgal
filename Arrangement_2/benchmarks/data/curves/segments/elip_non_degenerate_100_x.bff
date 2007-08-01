@@ -1,5 +1,5 @@
 FileFormat( "AcsBenchmark", 0, 1 )
-BenchmarkName( "onebig_100_x" ) 
+BenchmarkName( "elip_non_degenerate_100_x" ) 
 Classification( "Arrangement", "Lines", "BoundedArcs", "Dgn", "O", "Jul-2006" )
 
 LineSegment_2(Point_2(6600, 1590), Point_2(5999, 2291))
