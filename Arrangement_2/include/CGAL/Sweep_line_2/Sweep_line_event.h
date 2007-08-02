@@ -108,7 +108,9 @@ public:
   {
     m_point = point;
     m_type = type;
-    set_finite();
+    //std::cout << "got here type " << type << std::endl;
+    //std::cout << "got here point " << point << std::endl;
+    //set_finite();
   }
 
 
