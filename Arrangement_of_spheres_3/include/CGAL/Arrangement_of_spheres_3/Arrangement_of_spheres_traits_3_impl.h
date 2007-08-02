@@ -130,28 +130,18 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::bounded_side_of_sphere(Sphere_3_
 
 CGAL_AOS3_TEMPLATE
 bool 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::is_over_circle_c(Sphere_3_key s,
-								 const Sphere_point_3& z,
-								 Coordinate_index C) const {
-  Line_3 l= z.line();
-  FT p[3], v[3];
-  for (unsigned int i=0; i< 3; ++i) {
-    p[i]= l.point()[i];
-    v[i]= l.to_vector()[i];
-  }
-  Coordinate_index oc= CGAL_AOS3_INTERNAL_NS::other_plane_coordinate(C);
-  p[oc.index()]= table_->center(s)[oc.index()];
-  v[oc.index()]= 0;
-  Line_3 nl=Line_3(Point_3(p[0], p[1], p[2]),Vector_3(v[0], v[1], v[2]));
-  Sphere_point_3 sp(table_->sphere(s), nl);
-  if (!sp.is_valid()) return false;
-  else {
-    Sphere_point_3 spo(table_->sphere(s), nl.opposite());
-    CGAL::Comparison_result c= sp.compare(z, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    CGAL::Comparison_result co= spo.compare(z, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    if (co == c) return true;
-    else return false;
-  }
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::start_point_in_slab_c(Sphere_3_key sphere_for_slab, 
+								      const Sphere_3_key sphere_for_point,
+								      Coordinate_index C) const {
+  FT dc2= CGAL::square(table_->center(sphere_for_slab)[C.index()]
+		       - table_->center(sphere_for_point)[C.index()]);
+  FT R2= table_->squared_radius(sphere_for_slab);
+  if (dc2 > R2) return false;
+  FT dt2= CGAL::square(table_->center(sphere_for_slab)[CGAL_AOS3_INTERNAL_NS::Sweep_coordinate::index()]
+		       - table_->center(sphere_for_point)[CGAL_AOS3_INTERNAL_NS::Sweep_coordinate::index()]);
+  
+  FT r2= R2-dt2;
+  return (r2 > dc2);
 }
 
 CGAL_AOS3_TEMPLATE
@@ -514,6 +504,12 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_equipower_point_to_rule(
   // NOTE redo this with computing it directly
   Point_3 pt= table_->equipower_point(a,b);
   return CGAL::Comparison_result(-sp.compare(pt, C));
+}
+
+CGAL_AOS3_TEMPLATE
+ CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Sphere_3_key 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::new_sphere_3(const Sphere_3 &s) {
+  table_->new_sphere(s);
 }
 
 CGAL_END_NAMESPACE

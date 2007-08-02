@@ -9,7 +9,7 @@ class Rational_cross_section{
   typedef Rational_cross_section CGAL_AOS3_TARG This;
   CGAL_AOS3_TRAITS;
   typedef Combinatorial_cross_section CGAL_AOS3_TARG CCS;
-  CCS ccs_;
+  const CCS &ccs_;
   Traits tr_;
   CGAL_AOS3_TYPENAME Traits::FT z_;
 public:

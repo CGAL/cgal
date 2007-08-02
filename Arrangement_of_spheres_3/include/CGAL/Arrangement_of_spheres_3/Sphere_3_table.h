@@ -19,7 +19,7 @@ public:
 #endif
   typedef Sphere_key Key;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Sphere_3 Sphere_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::FT NT;
+  typedef CGAL_AOS3_TYPENAME Geom_traits::FT FT;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Point_3 Point_3;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Plane_3 Plane_3;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Vector_3 Vector_3;
@@ -105,7 +105,7 @@ public:
 		return Sphere_key_iterator_t(spheres_.size()-3));
 
   
-  NT discriminant(Key i) const;
+  FT discriminant(Key i) const;
 
   CGAL_GET(Bbox_3, bbox_3, return bbox_);
 
@@ -114,7 +114,7 @@ public:
      linear constructions----------------------------------------------------
   */
 
-  CGAL_GET(NT, inf, return center(Key(Key::TR))[1]);
+  CGAL_GET(FT, inf, return center(Key(Key::TR))[1]);
 
   // the point described by the vertex (a,b) should be on the positive side
   Plane_3 separating_plane(Key a, Key b) const ;
@@ -126,6 +126,7 @@ public:
   Point_3 equipower_point(Key a, Key b) const ;
 
   Point_3 center(Key ind) const;
+  FT squared_radius(Key ind) const;
 
   Sphere_3 sphere(Key ind) const;
 

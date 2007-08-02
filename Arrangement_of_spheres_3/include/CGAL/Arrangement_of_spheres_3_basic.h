@@ -2,7 +2,8 @@
 #define CGAL_ARRANGEMENT_OF_SPHERES_3_BASIC_H
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Simple_cartesian.h>
-
+#include <CGAL/Cartesian.h>
+#include <CGAL/Gmpq.h>
 //#define CGAL_ARRANGEMENT_OF_SPHERES_3_USE_TEMPLATES
 
 
@@ -26,7 +27,7 @@
 #define CGAL_AOS3_TRAITS public: typedef Arrangement_of_spheres_traits_3 Traits; private: friend class Semicolon_eater
  
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
-typedef struct Geom_traits: Simple_cartesian<double>{} Arrangement_of_spheres_3_geom_traits;
+struct Arrangement_of_spheres_3_geom_traits: Cartesian<CGAL::Gmpq>{};
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 
 #include <CGAL/Arrangement_of_spheres_traits_3.h>

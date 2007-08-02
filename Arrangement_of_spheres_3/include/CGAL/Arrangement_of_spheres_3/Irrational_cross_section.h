@@ -3,7 +3,7 @@
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section.h>
 #include <CGAL/Arrangement_of_spheres_3/Rational_cross_section.h>
-
+#include <CGAL/Arrangement_of_spheres_3/Cross_section_events.h>
 
 #define DPRINT(x) 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
@@ -13,6 +13,7 @@ class Irrational_cross_section {
   CGAL_AOS3_TRAITS;
   typedef Irrational_cross_section CGAL_AOS3_TARG This;
   typedef Combinatorial_cross_section CGAL_AOS3_TARG CS;
+  typedef Cross_section_events CGAL_AOS3_TARG CSE;
   //typedef CGAL_AOS3_TYPENAME CS::Halfedge_handle Halfedge_handle;
   //typedef CGAL_AOS3_TYPENAME CS::Face_handle Face_handle;
 public:
@@ -32,10 +33,9 @@ public:
     CGAL_AOS3_TYPENAME CS::Vertex_handle v_;
   };
 
-  Irrational_cross_section(const Traits &tr, CS &cs, 
-			   const CGAL_AOS3_TYPENAME Traits::Event_point_3 &z): tr_(tr),
-									       cs_(cs),
-									       z_(z){}
+  Irrational_cross_section(const Traits &tr, CS &cs): tr_(tr),
+						      cs_(cs),
+						      cse_(tr, cs){}
 
   
 
@@ -63,8 +63,8 @@ public:
 
   template <class It>
   CGAL_AOS3_TYPENAME CS::Face_handle 
-  locate_point(It b, It e,
-	       const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & ep) {
+  locate(It b, It e,
+	 CGAL_AOS3_TYPENAME Traits::Sphere_3_key k) {
 
     std::vector<int> locations(tr_.number_of_sphere_3s(), 0);
     std::vector<CGAL_AOS3_TYPENAME CS::Face_handle> faces;
@@ -79,7 +79,7 @@ public:
 
     for (It fit = b; fit != e; ++fit){
       if (!cs_.is_in_slice(*fit)) continue;
-      bool ok=locate_point_check_face(ep, *fit, locations/*, edges*/);
+      bool ok=locate_point_check_face(k, *fit, locations/*, edges*/);
       if (ok) faces.push_back(*fit);
     }
     
@@ -94,7 +94,7 @@ public:
     if (faces.size() > 1) {
       std::vector<CGAL_AOS3_TYPENAME CS::Face_handle> clean_faces;
       for (unsigned int i=0; i< faces.size(); ++i){
-	if (locate_point_check_face_arcs(ep, faces[i], locations)) {
+	if (locate_point_check_face_arcs(k, faces[i], locations)) {
 	  clean_faces.push_back(faces[i]);
 	} 
       }
@@ -113,7 +113,7 @@ public:
     if (faces.size() > 1) {
       std::vector<CGAL_AOS3_TYPENAME CS::Face_handle> clean_faces;
       for (unsigned int i=0; i< faces.size(); ++i){
-	if (locate_point_check_face_vertices(ep, faces[i])) {
+	if (locate_point_check_face_vertices(k, faces[i])) {
 	  clean_faces.push_back(faces[i]);
 	} 
       }
@@ -167,68 +167,69 @@ public:
     return CGAL_AOS3_TYPENAME CS::Face_handle();
   }
 
-
+  
   CGAL_AOS3_TYPENAME CS::Face_handle 
-  locate_point(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & ep);
+  locate(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key ep);
 
 
+
+  CGAL_AOS3_TYPENAME CS::Halfedge_handle 
+  find_rule_vertex(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &t, 
+		   CGAL_AOS3_TYPENAME CS::Face_handle f,
+		   CGAL_AOS3_TYPENAME CS::Curve rule) {
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle h;
+    try {
+      h= shoot_rule(t, f, rule.key(), rule.rule_direction());
+      
+      //check_edge_collapse(h->prev());
+    } catch (On_vertex_exception e) {
+      CGAL_AOS3_TYPENAME CS::Vertex_handle v= e.vertex_handle();
+      // if it is a rule in the same direction, return it, otherwise
+      // pick a random edge
+
+
+      if (v->point().is_rule_rule() 
+	  || v->point().is_sphere_rule() 
+	  && v->point().rule_coordinate()== rule.constant_coordinate()) {
+	// insert on vertex
+	return cs_.find_halfedge(v,f);
+      } else {
+	// if I am shooting up, make sure I am above the point etc.
+	/*Halfedge_handle h0= sds_.find_halfedge(v,f);
+	  Halfedge_handle h1= h->next();
+	  if (h0->curve() == h1->curve()) {
+	  bool cum=false;
+	  if (rule.is_vertical()) cum = !cum;
+	  if (h0->curve().arc_index() ==0 || h0->curve().arc_index() ==2) cum= !cum;
+	  if (cum) {
+	  h= h1;
+	  } else {
+	  h= h0;
+	  }
+	  
+	  } else {
+	  CGAL_assertion(0);
+	  }*/
+	h= cs_.find_halfedge(v,f);
+      }
+    }
+    cs_.clean_edge(h);
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle v= cs_.insert_vertex(CGAL_AOS3_TYPENAME CS::Point(rule, 
+											     h->curve()), 
+								h);
+    //check_edge_collapse(h);
+    //CGAL_assertion(h->prev()->vertex()==v);
+    CGAL_assertion(v->face() == f);
+    return v;
+  }
 
 
 
 
   CGAL_AOS3_TYPENAME CS::Halfedge_handle shoot_rule(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & t,
 						    CGAL_AOS3_TYPENAME CS::Face_handle f,
-						    const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & pt,
-						    CGAL_AOS3_TYPENAME CS::Rule_direction rd) {
-    CGAL_assertion(t.compare(z_, CGAL_AOS3_INTERNAL_NS::Sweep_coordinate::object())== CGAL::EQUAL);
-    CGAL_assertion(pt.compare(z_, CGAL_AOS3_INTERNAL_NS::Sweep_coordinate::object())== CGAL::EQUAL);
-    //Sds::Curve rule= Sds::Curve::make_rule(ruledir);
-    bool backwards= rd.is_backwards();
-    DPRINT(std::cout << "Rule is " << rd << std::endl);
-  
-    CGAL_AOS3_TYPENAME CS::Halfedge_handle end= f->halfedge();
-  
-    while (!rd.can_intersect(end->curve())) {
-      end=end->next();
-    }
-    while (rd.can_intersect(end->curve())) {
-      end=end->next();
-    }
-    CGAL_AOS3_TYPENAME CS::Halfedge_handle h=end;
-    while (!rd.can_intersect(h->curve())) {
-      h=h->next();
-    }
-  
-    do {
-      // later skip second one if first is wrong
-      DPRINT(sds_.write(h, std::cout) << " is being tested" << std::endl);
-      if (h->next() == end) {
-	DPRINT(sds_.write(h, std::cout) << " is returned by default" << std::endl);
-	return h;
-      } else {
-	CGAL::Comparison_result cr= rule_shoot_edge_vertex(t,
-							   pt, rd,
-							   h->curve(),
-							   h->vertex()->point(),
-							   h->next()->curve());
-	DPRINT(std::cout << "Result is " << cr << std::endl);
-	if (cr == CGAL::EQUAL) {
-	  DPRINT(std::cout << "On vertex " << h->vertex()->point() << std::endl);
-	  throw On_vertex_exception(h->vertex());
-	}
-	if (backwards && cr == CGAL::SMALLER
-	    || !backwards && cr == CGAL::LARGER) {
-	  DPRINT(sds_.write(h, std::cout) << " is returned " << std::endl);
-	  return h;
-	}
-      }
-      h= h->next();
-    } while (h != end);
-
-    CGAL_assertion(0);
-    return CGAL_AOS3_TYPENAME CS::Halfedge_handle();
-  }
-
+						    const CGAL_AOS3_TYPENAME Traits::Sphere_3_key & center,
+						    CGAL_AOS3_TYPENAME CS::Rule_direction rd) ;
 
 
   // return comparison of point on edge of face to the shot rule on the C coordinate
@@ -238,92 +239,13 @@ public:
 						 CGAL_AOS3_TYPENAME CS::Rule_direction rd,
 						 CGAL_AOS3_TYPENAME CS::Curve hp,
 						 CGAL_AOS3_TYPENAME CS::Point p,
-						 CGAL_AOS3_TYPENAME CS::Curve hn) const {
-    //CGAL_assertion(h != b);
-    //CGAL_assertion(h->curve() != b->curve());
-    CGAL::Comparison_result ret;
-    // add filters on sphere centers when arcs are involved.
-    if (rule_shoot_compare_if_rational(t, pt, rd, p, ret)){
-     
-      bool exact;
-      CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(t, pt, rd,
-								    p, 
-								    exact);
-      debug_rule_shoot_check(debug_answer, ret, exact);
-      return ret;
-    } else if (p.is_sphere_rule()) {
-      if (hp.is_rule() && hn.is_arc()){
-	return rule_shoot_compare_SR(t, pt, rd, hn, hp.key(),
-				     p,
-				     !rd.is_vertical() && 
-				     (hn.quadrant() & CS::Curve::T_BIT) 
-				     || rd.is_vertical() && 
-				     (hn.quadrant() & CS::Curve::R_BIT));
-      } else if (hp.is_arc() && hn.is_rule()){
-	return rule_shoot_compare_SR(t, pt, rd, hp, hn.key(), 
-				     p,
-				     !rd.is_vertical() && 
-				     (hp.quadrant() & CS::Curve::T_BIT) 
-				     || rd.is_vertical() && 
-				     (hp.quadrant() & CS::Curve::R_BIT));
-      } else if (hp.key() == hn.key()){
-	CGAL_assertion(hp.is_arc() && hn.is_arc());
-	if (hp == hn) {
-	  //CGAL_assertion(hp==hn);
-	  bool arc_top;
-	  if (rd.constant_coordinate() == plane_coordinate(0)) {
-	    arc_top= hp.is_right();
-	  } else {
-	    arc_top = hp.is_top();
-	  }
-	  if (!hp.is_inside()) arc_top= !arc_top;
-	  
-	  return rule_shoot_compare_SR(t, pt, rd, hp, p.rule_key(),p, arc_top);
-	} else {
-	  // compare rational should have picked this up
-	  CGAL_assertion(0);
-	}
-      }
-    } else {
-      bool tangent= (hp.key()== hn.key());
-      if (tangent) {
-	std::pair<CGAL_AOS3_TYPENAME Traits::Event_point_3, 
-	  CGAL_AOS3_TYPENAME Traits::Event_point_3> ep3
-	  = tr_.intersection_2_events(p.sphere_key(0),
-				      p.sphere_key(1));
-	std::cout << "Tangent." << std::endl;
-	CGAL::Comparison_result cr= ep3.first.compare(t, sweep_coordinate());
-	//debug_rule_shoot_check(debug_answer, cr, exact);
-	return cr;
-      } else {
-	return rule_shoot_compare_SS(t, pt, rd,p);
-      }
-    }
-
-    CGAL_assertion(0);
-    return CGAL::SMALLER;
-  }
-
+						 CGAL_AOS3_TYPENAME CS::Curve hn) const ;
 
   CGAL::Comparison_result rule_shoot_compare_SS(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & t, 
 						const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & pt, 
 						CGAL_AOS3_TYPENAME CS::Rule_direction rd,
-						CGAL_AOS3_TYPENAME CS::Point point) const {
-    bool exact;
-    CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(t, pt, rd,
-								  point,
-								  exact);
-    //std::cout << "SS " << arc0 << "--" << pt << "--" << arc1 << std::endl;
-   
-    CGAL_AOS3_TYPENAME Traits::Coordinate_index C= rd.constant_coordinate();
-
-    CGAL::Comparison_result cr= tr_.compare_sphere_sphere_at_sweep(t,
-								   point.sphere_key(0),
-								   point.sphere_key(1),
-								   pt, C);
-    debug_rule_shoot_check(debug_answer, cr, exact);
-    return cr;
-  }
+						CGAL_AOS3_TYPENAME CS::Point point) const ;
+  
 
 
 
@@ -333,138 +255,20 @@ public:
 						CGAL_AOS3_TYPENAME CS::Curve arc,
 						CGAL_AOS3_TYPENAME Traits::Sphere_3_key orule,
 						CGAL_AOS3_TYPENAME CS::Point debug_pt,
-						bool arc_above) const {
-    bool exact;
-    CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(t, pt, rd, 
-								  debug_pt,
-								  exact);
-    DPRINT(std::cout << "SR " << arc << "-" << arc_above << "-" << orule 
-	   << ": " << rd << std::endl);
-    //CGAL_precondition(srule.is_vertical() != orule.is_vertical());
-    CGAL_precondition(arc.is_arc());
-    //CGAL_precondition(orule.is_rule());
-    //CGAL_precondition(srule.constant_coordinate() != orule.constant_coordinate());
-
-    CGAL::Comparison_result c= tr_.compare_sphere_center_c(arc.key(), pt,
-							   rd.constant_coordinate());
-    if (rd.is_vertical()) {
-      if (c== CGAL::LARGER && arc.is_right()) {
-	debug_rule_shoot_check(debug_answer, CGAL::LARGER, exact);
-	return CGAL::LARGER;
-      } else if (c== CGAL::SMALLER && arc.is_left()) {
-	debug_rule_shoot_check(debug_answer, CGAL::SMALLER, exact);
-	return CGAL::SMALLER;
-      }
-    } else {
-      if (c== CGAL::SMALLER && arc.is_bottom()) {
-	debug_rule_shoot_check(debug_answer, CGAL::SMALLER, exact);
-	return CGAL::SMALLER;
-      } else if (c== CGAL::LARGER && arc.is_top()) {
-	debug_rule_shoot_check(debug_answer, CGAL::LARGER, exact);
-	return CGAL::LARGER;
-      }
-    }
-
-      
-    CGAL::Bounded_side intersection_side;
-    if (rd.constant_coordinate() == plane_coordinate(0)) {
-      intersection_side=tr_.bounded_side_of_sphere_projected(t, arc.key(),
-							     orule,
-							     pt,
-							     rd.constant_coordinate());
-    } else {
-      intersection_side=tr_.bounded_side_of_sphere_projected(t, arc.key(),
-							     orule,
-							     pt,
-							     rd.constant_coordinate());
-    }
-  
-  
-
-    if (intersection_side== CGAL::ON_BOUNDARY){
-      debug_rule_shoot_check(debug_answer, CGAL::EQUAL, exact);
-      return CGAL::EQUAL;
-    } else {
-      int cum=0;
-      if (arc.is_inside()) ++cum;
-      if (intersection_side== CGAL::ON_BOUNDED_SIDE) ++cum;
-      if (arc_above) ++cum;
-      
-      if (cum%2==1) {
-	debug_rule_shoot_check(debug_answer, CGAL::LARGER, exact);
-	return CGAL::LARGER;
-      } else {
-	debug_rule_shoot_check(debug_answer, CGAL::SMALLER, exact);
-	return CGAL::SMALLER;
-      }
-    }
-    
-  }
+						bool arc_above) const ;
 
 
   CGAL::Comparison_result debug_rule_shoot_answer(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & t, 
 						  const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & pt,
 						  CGAL_AOS3_TYPENAME CS::Rule_direction rd,
 						  CGAL_AOS3_TYPENAME CS::Point point,
-						  bool &exact) const {
-    //CGAL::Comparison_result answer;
-    CGAL_AOS3_TYPENAME Traits::FT z;
-    if (t.has_simple_coordinate(sweep_coordinate())) {
-      z= t.simple_coordinate(sweep_coordinate());
-      exact=true;
-    } else {
-      z= t.approximate_coordinate(sweep_coordinate());
-      exact=false;
-    }
-    /*DPRINT(std::cout << "Comparing " << t_.center(rule.key()) << " on coord " 
-      << rule.constant_coordinate() << " which is " 
-      << t_.center(rule.key())[rule.constant_coordinate()] << std::endl);*/
-
-    //std::cout << "Z is " << z << " and exact is " << exact << std::endl;
-
-    Rational_cross_section CGAL_AOS3_TARG rcs(cs_, tr_);
-    rcs.set_z(z);
-
-    //Sds::Point pt(p,n);
-    const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & sp= rcs.sphere_point(point);
-    /*if (!sp.is_valid()) {
-      const T::Sphere_point_3 & sp2= sphere_point_rz(pt, z);
-      }*/
-    CGAL_assertion(sp.is_valid());
-    
-    DPRINT(std::cout << "The point " << pt << " is " 
-	   << CGAL::to_double(sp.exact_coordinate(plane_coordinate(0))) << " " 
-	   << CGAL::to_double(sp.exact_coordinate(plane_coordinate(1))) << std::endl);
-  
-    DPRINT(std::cout << "The center is " 
-	   << CGAL::to_double(pt.exact_coordinate(plane_coordinate(0))) << " " 
-	   << CGAL::to_double(pt.exact_coordinate(plane_coordinate(1))) << std::endl);
-  
-    CGAL::Comparison_result cr= sp.compare(pt, rd.constant_coordinate());
-   
-    DPRINT(std::cout << "Got " << cr << std::endl);
-    if (cr== CGAL::EQUAL) {
-      /*std::cout << "EQUAL for " << p << " " << n << ": " << sp 
-	<<  " vs " << ep << " on " 
-	<< rule.constant_coordinate() << std::endl;*/
-    }
-    return cr;
-  }
+						  bool &exact) const ;
 
   
   
   void debug_rule_shoot_check(CGAL::Comparison_result check, 
 			      CGAL::Comparison_result computed,
-			      bool exact) const {
-    if (check!= computed) {
-      if (exact){
-	CGAL_assertion(check==computed);
-      } else {
-	std::cerr << "Warning, computed " << computed << " expected " 
-		  << check << std::endl;
-      }
-    }
-  }
+			      bool exact) const;
 
 
   /*bool Slice::rule_shoot_compare_if_rational_arc(const T::Sphere_point_3 & ep,
@@ -499,29 +303,15 @@ public:
 				      const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 & pt,
 				      CGAL_AOS3_TYPENAME CS::Rule_direction rd,
 				      CGAL_AOS3_TYPENAME CS::Point point,
-				      CGAL::Comparison_result &ret) const {
-    //NT coord;
-    if (point.is_rule_rule()) {
-      ret= tr_.compare_sphere_center_c(point.rule_key(rd.constant_coordinate()), pt,
-				       rd.constant_coordinate());
-      return true;
-    } else if (point.is_sphere_rule() 
-	       && point.rule_coordinate() == rd.constant_coordinate()) {
-      ret= tr_.compare_sphere_center_c(point.rule_key(), pt,
-				       rd.constant_coordinate());
-      return true;
-    } else {
-      return false;
-    }
-  }
+				      CGAL::Comparison_result &ret) const ;
 
 
 
 
 
-private:
+protected:
 
-  bool locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &z,
+  bool locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
 			       CGAL_AOS3_TYPENAME CS::Face_const_handle it,
 			       std::vector<int> &locations) const ;
 
@@ -530,17 +320,17 @@ private:
 
 
   // cache checked arcs
-  bool locate_point_check_face_arcs(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &ep,
-				    CGAL_AOS3_TYPENAME CS::Face_const_handle f,
-				    std::vector<int> &locations) const ;
+  bool locate_point_check_face_arcs( CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+				     CGAL_AOS3_TYPENAME CS::Face_const_handle f,
+				     std::vector<int> &locations) const ;
 
 
 
-  bool locate_point_check_face_vertices(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &ep,
+  bool locate_point_check_face_vertices(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
 					CGAL_AOS3_TYPENAME CS::Face_const_handle it) const ;
 
 
-  int sphere_location(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3& sp,
+  int sphere_location(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
 		      CGAL_AOS3_TYPENAME Traits::Sphere_3_key s) const ;
 
 
@@ -551,23 +341,158 @@ private:
 
 
 
-  bool behind_arc(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &ep,
-		  CGAL_AOS3_TYPENAME CS::Curve arc,
-		  int location) const;
+  bool behind_arc( CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+		   CGAL_AOS3_TYPENAME CS::Curve arc,
+		   int location) const;
 
 
-  void point_sphere_orientation(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &time,
+  void point_sphere_orientation(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
 				CGAL_AOS3_TYPENAME Traits::Sphere_3_key sphere,
 				std::vector<int> &locations
 				/*,
 				  std::vector<CS::Curve> &edges*/) const ;
   
 
+  //! Take the vertex pointed to by h with the face h->face() and put a rule in it.
+  CGAL_AOS3_TYPENAME CS::Halfedge_handle
+  extend_rule(const CGAL_AOS3_TYPENAME CS::Event_point_3 &t,
+	      CGAL_AOS3_TYPENAME CS::Halfedge_handle h,
+	      CGAL_AOS3_TYPENAME CS::Curve rule) {
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle v= find_rule_vertex(t,h,rule);
+    return split_face(h, v, rule);
+  }
 
+
+  CGAL_AOS3_TYPENAME Traits::Sphere_3_key 
+  roll_back_rule(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &t,
+		 CGAL_AOS3_TYPENAME CS::Halfedge_handle cur) {
+    std::cout << "Rolling back, rolling back..." << cur->curve()
+	      << " at " << cur->vertex()->point() << std::endl;
+    //<< " with last of ";
+    /*if ( last==Halfedge_handle()) std::cout << "null";
+      else std::cout << last->curve();*/
+    CGAL_AOS3_TYPENAME Traits::Sphere_3_key k;
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle next= cs_.next_edge_on_curve(cur);
+    if (next != CGAL_AOS3_TYPENAME CS::Halfedge_handle()) {
+      if (next->curve().key() == cur->curve().key()) {
+	std::cout << "Recursing..." << std::endl;
+	k=roll_back_rule(t, next);
+      } else {
+	std::cout << "terminating on..." << next->curve() << std::endl;
+	k= next->curve().key();
+      }
+    } else {
+      if (cur->vertex()->point().is_sphere_rule()) {
+	// we hit another sphere;
+	/*CGAL_assertion(cur->vertex()->point().sphere(0).key() 
+	  != cur->vertex()->point().rule(0).key());*/
+	if (cur->vertex()->point().is_sphere_extremum()
+	    && !cur->next()->curve().is_inside()) {
+	  k= cur->next()->curve().key();
+	} 
+      } 
+    }
+   
+
+    if (!cur->opposite()->vertex()->point().is_sphere_extremum()) {
+      if (k != CGAL_AOS3_TYPENAME Traits::Sphere_3_key() && cur->curve().key() != k) {
+	cur->curve().flip_rule(k);
+      } else {
+	CGAL_AOS3_TYPENAME CS::Halfedge_handle vhh= cur->opposite()->prev();
+	//sds_.write(vhh, std::cout);
+	CGAL_assertion(vhh->vertex() == cur->vertex());
+	rotate_rule(t, cur->opposite());
+      }
+    }
+    return k;
+  }							   
+
+  // makes rule go away
+  CGAL_AOS3_TYPENAME CS::Halfedge_handle 
+  rotate_rule(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &ep,
+	      CGAL_AOS3_TYPENAME CS::Halfedge_handle rule) {
+    CGAL_precondition(rule->curve().is_rule());
+    CGAL_precondition(rule->vertex()->point().is_rule_rule());
+  
+    std::cout << "Rotating rule " << rule->curve() << " about vertex "
+	      << rule->vertex()->point() << std::endl;
+
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle oe;
+    CGAL_AOS3_TYPENAME CS::Face_handle f;
+    CGAL_AOS3_TYPENAME CS::Curve ec;
+    if (rule->next()->curve().key() == rule->curve().key()) {
+      oe= rule;
+      f= rule->face();
+      ec= rule->opposite()->prev()->curve();
+    } else {
+      oe= rule->opposite()->prev();
+      f= rule->opposite()->face();
+      ec= rule->next()->opposite()->curve();
+    }
+      
+    CGAL_AOS3_TYPENAME  CS::Halfedge_handle hv= find_rule_vertex(ep, f,   ec);
+    std::cout << "New edge supported by " << ec 
+	      << " from " << oe->vertex()->point() << " to " 
+	      << hv->vertex()->point() << std::endl;
+    CGAL_AOS3_TYPENAME  CS::Halfedge_handle nh=cs_.split_face(ec, oe, hv);
+    cse_.check_edge_collapse(nh);
+  
+    CGAL_AOS3_TYPENAME  CS::Vertex_handle t= rule->vertex();
+    std::cout << "Removing rule ";
+    cs_.write(rule, std::cout);
+    std::cout << std::endl;
+    cse_.clean_edge(rule);
+    
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle th= rule->opposite()->prev();
+    CGAL_assertion(th->vertex() == t);
+
+    cse_.check_merged_faces(rule->face(), rule->opposite()->face());
+    CGAL_AOS3_TYPENAME  CS::Halfedge_handle hpa= rule->next()->opposite();
+    CGAL_AOS3_TYPENAME  CS::Halfedge_handle hpb= rule->prev();
+  
+    cs_.merge_faces(rule);
+    cse_.check_remove_vertex(hpa);
+    cse_.check_remove_vertex(hpb);
+    return hv;
+  }
+
+
+
+  CGAL_AOS3_TYPENAME CS::Face_handle  
+  merge_faces(CGAL_AOS3_TYPENAME CS::Halfedge_handle h) {
+    cse_.clean_edge(h);
+    cse_.check_merged_faces(h->face(), h->opposite()->face());
+    return cs_.merge_faces(h);
+  }
+
+  /*CGAL_AOS3_TYPENAME CS::Face_handle  
+  merge_faces(CGAL_AOS3_TYPENAME CS::Vertex_handle h) {
+    cse_.clean_edge(h);
+    cse_.check_merged_faces(h->face(), h->opposite()->face());
+    return cs_.merge_faces(h);
+    }*/
+
+  CGAL_AOS3_TYPENAME CS::Halfedge_handle 
+  split_face(CGAL_AOS3_TYPENAME CS::Curve c, 
+	     CGAL_AOS3_TYPENAME CS::Halfedge_handle a, 
+	     CGAL_AOS3_TYPENAME CS::Halfedge_handle b) {
+    cse_.clean_edge(a);
+    cse_.clean_edge(b);
+    cse_.clean_edge(a->next());
+    cse_.clean_edge(b->next());
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle n= cs_.split_face(c, a, b);
+    cse_.check_edge_collapse(n);
+    cse_.check_edge_collapse(a);
+    cse_.check_edge_collapse(b);
+    cse_.check_edge_collapse(n->next());
+    cse_.check_edge_collapse(n->opposite()->next());
+    return n;
+  }
 
   Traits tr_;
   CS &cs_;
-  CGAL_AOS3_TYPENAME Traits::Event_point_3 z_;
+  CSE cse_;
+  //CGAL_AOS3_TYPENAME Traits::Event_point_3 z_;
 };
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE

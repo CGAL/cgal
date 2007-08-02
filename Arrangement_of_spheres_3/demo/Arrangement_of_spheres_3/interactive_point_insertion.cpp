@@ -8,6 +8,8 @@
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_markup.h>
 #include <CGAL/Arrangement_of_spheres_3/read_spheres.h>
 #include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section.h>
+#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_insertion.h>
+#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_removal.h>
 #include <vector>
 
 
@@ -35,7 +37,9 @@ struct Do_work {
 
     typename A::Traits tr(ns.begin(), ns.end());
     A arr(tr);
-    typename A::Cross_section cs;
+    typedef typename A::Cross_section CS;
+    CS cs;
+    
     arr.initialize_at(z_,cs);
 
     typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer CGAL_AOS3_TARG CSV;
@@ -48,51 +52,71 @@ struct Do_work {
     q->show_everything();
     //q->redraw();
  
-
-    typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section CGAL_AOS3_TARG ICS;
-    ICS ics(tr, cs);
+    typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section_insertion CGAL_AOS3_TARG ICSI;
+    typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section_removal CGAL_AOS3_TARG ICSR;
+   
+    ICSI icsi(tr, cs);
+    ICSR icsr(tr, cs);
 
     typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer_markup CGAL_AOS3_TARG MCSV;
     MCSV mcsv(tr, cs, CGAL::Layer(1));
 
     while (true) {
-      std::cout << "Enter coordinates: " << std::flush;
+      std::cout << "Enter command: " << std::flush;
       char buf[1000];
       std::cin.getline(buf,1000);
       if (buf[0]== '\0') {
 	std::cout << "bye." << std::endl;
 	break;
-      }
+      } 
       mcsv.clear();
 
-      double x,y;
       std::istringstream iss(buf);
-      iss >> x >> y;
-      if (!iss) {
-	std::cerr << "Can't parse line." << std::endl;
-      } else {
-	*q << CGAL::Layer(2);
-	*q << CGAL::RED;
-	*q << typename K::Point_2(x,y);
-	//q->redraw();
-	typename A::Traits::Sphere_3_key k= tr.new_sphere_3(typename K::Sphere_3(up(typename K::Point_2(x,y)), 0)); 
-					   
-	try {
-	  typename A::Cross_section::Face_const_handle f= ics.locate(k);
-	  //slice.new_marked_face(f);
-	  std::cout << "Found face ";
-	  cs.write(f, std::cout) << std::endl;
-	  mcsv.new_face(f);
+      char action='\0';
+      iss >> action;
+      if (action == 'i') {
+	double x,y;
+	iss >> x >> y;
+	if (!iss) {
+	  std::cerr << "Can't parse line." << std::endl;
+	} else {
+	  *q << CGAL::Layer(2);
+	  *q << CGAL::RED;
+	  *q << typename K::Point_2(x,y);
+	  //q->redraw();
+	  typename A::Traits::Sphere_3_key k= tr.new_sphere_3(typename K::Sphere_3(up(typename K::Point_2(x,y)),
+									      0));
 
-	} catch (ICS::On_edge_exception e) {
-	  std::cout << "On edge!" <<std::endl;
-	  mcsv.new_edge(e.halfedge_handle());
-	} catch (ICS::On_vertex_exception v) {
-	  std::cout << "On vertex!" <<std::endl;
-	  mcsv.new_vertex(v.vertex_handle());
+	  try {
+	    typename A::Cross_section::Face_handle f= icsi.locate(k);
+	    //slice.new_marked_face(f);
+	    std::cout << "Found face ";
+	    cs.write(f, std::cout) << std::endl;
+	    
+	    typename CS::Face_handle nf= icsi.insert(k, f);
+	    mcsv.new_face(nf);
+	  } catch (ICSI::On_edge_exception e) {
+	    std::cout << "On edge!" <<std::endl;
+	    typename CS::Face_handle nf=icsi.insert(k, e.halfedge_handle());
+	    mcsv.new_face(nf);
+	  } catch (ICSI::On_vertex_exception v) {
+	    std::cout << "On vertex!" <<std::endl;
+	    typename CS::Face_handle nf=icsi.insert(k, v.vertex_handle());
+	    mcsv.new_face(nf);
+	  }
 	}
-	mcsv(z_, q);
+      } else if (action == 'r') {
+	int num;
+	iss >> num;
+	typename A::Traits::Sphere_3_key k(num);
+	typename CS::Face_handle nf=icsr.remove_sphere(k);
+	mcsv.new_face(nf);
+      } else {
+	std::cout << "Enter either 'i x y' or 'r n'" << std::endl;
+	continue;
       }
+      mcsv(z_, q);
+      csv(z_, q);
     }
   }
   

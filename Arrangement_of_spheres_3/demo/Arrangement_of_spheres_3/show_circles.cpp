@@ -52,16 +52,16 @@ struct Show_circles {
 
 int main(int argc, char *argv[]) {
 #ifdef CGAL_AOS3_USE_TEMPLATES
-  typedef CGAL::Simple_cartesian<double> K;
+  //typedef CGAL::Simple_cartesian<double> K;
   typedef CGAL::Arrangement_of_spheres_traits_3<K> Traits;
   typedef CGAL::Arrangement_of_spheres_3<Traits> Arrangement;
 #else 
   typedef CGAL::Arrangement_of_spheres_3 Arrangement;
 #endif
 
-  std::vector<Arrangement::Traits::Geom_traits::Sphere_3> spheres;
+  std::vector<K::Sphere_3> spheres;
 
-  CGAL_AOS3_INTERNAL_NS::read_spheres<Arrangement::Traits::Geom_traits, true>(std::cin, spheres);
+  CGAL_AOS3_INTERNAL_NS::read_spheres<K, true>(std::cin, spheres);
   
   double z=std::atof(argv[1]);
 

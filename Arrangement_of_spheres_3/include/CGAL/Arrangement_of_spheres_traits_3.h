@@ -9,6 +9,7 @@
 #include <CGAL/Arrangement_of_spheres_3/Sphere_line_intersection.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Arrangement_of_spheres_3/Event_point_3.h>
+#include <CGAL/Tools/Label.h>
 /*#include <CGAL/Arrangement_of_spheres_traits_3/Filtered_sphere_line_intersection.h>
 #include <CGAL/Arrangement_of_spheres_traits_3/Sphere_key.h>
 #include <CGAL/Arrangement_of_spheres_traits_3/template_types.h>*/
@@ -50,7 +51,7 @@ struct Arrangement_of_spheres_traits_3 {
   typedef CGAL_AOS3_TYPENAME Geom_traits::Circle_2 Circle_2;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Segment_2 Segment_2;
 
-  typedef int Event_key;
+  typedef Label<int> Event_key;
 
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_line_intersection<This> Sphere_point_3;
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Event_point_3<This> Event_point_3;
@@ -84,6 +85,9 @@ struct Arrangement_of_spheres_traits_3 {
   Sphere_3 sphere_3(Sphere_3_key k) const {
     return table_->operator[](k);
   }
+
+  Sphere_3_key new_sphere_3(const Sphere_3 &s);
+
   //CGAL_INSERTNK(Sphere_3, return table_->insert(s));
   CGAL_SIZE(sphere_3s, return table_->number_of_sphere_3s());
  
@@ -165,9 +169,10 @@ struct Arrangement_of_spheres_traits_3 {
 						  const Sphere_point_3& d,
 						  Coordinate_index C) const;
   // return true if the interval defined by the sphere in C contains d.C
-  bool is_over_circle_c(Sphere_3_key c, const Sphere_point_3& d,
-			      Coordinate_index C) const;
+  bool start_point_in_slab_c(Sphere_3_key sphere_for_slab, const Sphere_3_key sphere_for_point,
+			     Coordinate_index C) const;
   
+   
 
   CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
 							 Sphere_3_key sphere0,

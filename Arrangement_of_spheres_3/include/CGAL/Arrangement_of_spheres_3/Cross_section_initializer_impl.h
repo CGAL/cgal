@@ -10,11 +10,14 @@ CGAL_AOS3_TEMPLATE
 Cross_section_initializer CGAL_AOS3_TARG::Cross_section_initializer(Combinatorial_cross_section CGAL_AOS3_TARG &cs,
 								    const Traits &tr): cs_(cs),
 										       traits_(tr){
+  //CGAL_precondition(cs_.number_of_vertices() ==4);
+  //CGAL_precondition(cs_.number_of_faces() == 2);
 }
 
 CGAL_AOS3_TEMPLATE 
 void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Traits::FT z ) {
   cs_.clear();
+  cs_.set_number_of_spheres(traits_.number_of_sphere_3s());
   typedef Cross_section_arrangement CGAL_AOS3_TARG Arr;
   Arr arr(traits_.sphere_3s_begin(),
 				traits_.sphere_3s_end(),z,1000000);
@@ -24,6 +27,8 @@ void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Tra
        fit != arr.faces_end(); ++fit){
     new_face(fit->begin(), fit->end());
   }
+
+
   /*if (gen_certs) {
     initialize_certificates();
   }
@@ -79,13 +84,17 @@ void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Tra
       }
     }
   }
+  cs_.write(std::cout);
   
+  cs_.audit();
+
+
 }
 
 
 CGAL_AOS3_TEMPLATE
 Cross_section_initializer CGAL_AOS3_TARG::~Cross_section_initializer() {
-
+ 
 }
 
 CGAL_AOS3_TEMPLATE

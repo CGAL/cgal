@@ -9,7 +9,7 @@ CGAL_AOS3_TEMPLATE
 void
 Arrangement_of_spheres_3 CGAL_AOS3_TARG::initialize_at(CGAL_AOS3_TYPENAME Traits::FT end,
 						       Cross_section &cs) {
-  cs= Cross_section(tr_.number_of_sphere_3s());
+  cs.set_number_of_spheres(tr_.number_of_sphere_3s());
   std::cout << "Initialize at " << end << std::endl;
   CGAL_AOS3_INTERNAL_NS::Cross_section_initializer CGAL_AOS3_TARG csi(cs, tr_);
   csi(end);

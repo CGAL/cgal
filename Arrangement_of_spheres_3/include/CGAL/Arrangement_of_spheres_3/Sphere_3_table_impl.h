@@ -25,7 +25,7 @@ void Sphere_3_table CGAL_AOS3_TARG::initialize_2() {
   for (unsigned int i=3; i< spheres_.size(); ++i){
     bbox_= bbox_+ spheres_[i].bbox();
   }
-  NT inf=2*std::max(bbox_.xmax(),
+  FT inf=2*std::max(bbox_.xmax(),
 		    std::max(std::abs(bbox_.xmin()),
 			     std::max(bbox_.ymax(),
 				      std::max(std::abs(bbox_.ymin()),
@@ -62,10 +62,16 @@ Sphere_3_table CGAL_AOS3_TARG::center(Key a) const {
 }
 
 CGAL_AOS3_TEMPLATE
+CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::FT 
+Sphere_3_table CGAL_AOS3_TARG::squared_radius(Key a) const {
+  return sphere(a).squared_radius();
+}
+
+CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Plane_3 
 Sphere_3_table CGAL_AOS3_TARG::separating_plane(Key a, Key b) const {
   Vector_3 d(center(b)-center(a));
-  NT nv[3];
+  FT nv[3];
   nv[plane_coordinate(0).index()]=-d[plane_coordinate(1).index()];
   nv[plane_coordinate(1).index()]= d[plane_coordinate(0).index()];
   nv[sweep_coordinate().index()]=0;
@@ -81,7 +87,7 @@ CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Plane_3
 Sphere_3_table CGAL_AOS3_TARG::equipower_plane(Key a, Key b) const {
   CGAL_precondition(a != b);
   Vector_3 n=2*(center(a)-center(b));
-  NT d= discriminant(b) - discriminant(a);
+  FT d= discriminant(b) - discriminant(a);
   return Plane_3(n[0], n[1], n[2], d);
 }
 
@@ -103,7 +109,7 @@ Sphere_3_table CGAL_AOS3_TARG::equipower_point(Key a, Key b) const {
 }
 
 CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::NT 
+CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::FT 
 Sphere_3_table CGAL_AOS3_TARG::discriminant(Key i) const {
   Vector_3 v= center(i)-CGAL::ORIGIN;
   return v*v - sphere(i).squared_radius();

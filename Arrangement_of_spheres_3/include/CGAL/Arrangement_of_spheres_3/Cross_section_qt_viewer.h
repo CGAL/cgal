@@ -156,8 +156,8 @@ private:
 					   sp.approximate_coordinate(plane_coordinate(1)));
     } catch (CGAL_AOS3_TYPENAME Traits::Point_3 pt) {
       std::cout << "Point " << pt << " is no longer valid at " << rcs_.z() << std::endl;
-      return CGAL_AOS3_TYPENAME K::Point_2(pt[plane_coordinate(0).index()],
-					   pt[plane_coordinate(1).index()]);
+      return CGAL_AOS3_TYPENAME K::Point_2(CGAL::to_double(pt[plane_coordinate(0).index()]),
+					   CGAL::to_double(pt[plane_coordinate(1).index()]));
     }
   }
 

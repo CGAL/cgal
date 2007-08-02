@@ -15,7 +15,8 @@ struct Combinatorial_curve{
      Inside means below a horizontal arc and to the left of a vertical one
   */
   enum PART_BITS {R_BIT=2, T_BIT=4, L_BIT=8, B_BIT=16, ARC_BIT=32, /*INF_BIT=32,*/ IN_BIT=1};
-  enum LOCATION_BITS {lL_BIT=2, lR_BIT=4, lT_BIT=8, lB_BIT=16, lIN_BIT=1, lOUT_BIT=32};
+  enum LOCATION_BITS {lR_BIT=R_BIT, lT_BIT=T_BIT, lL_BIT=L_BIT, lB_BIT=B_BIT, 
+		      lIN_BIT=1, lOUT_BIT=32};
   enum Part {INVALID=0, L_RULE=L_BIT, R_RULE=R_BIT, T_RULE=T_BIT, B_RULE=B_BIT,
 	     LB_ARC=L_BIT|B_BIT|ARC_BIT, 
 	     LT_ARC=L_BIT|T_BIT|ARC_BIT,

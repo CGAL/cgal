@@ -7,9 +7,17 @@
 
 typedef CGAL::Simple_cartesian<double> DK;
 
+#ifdef CGAL_AOS3_USE_TEMPLATES
+  typedef CGAL::Simple_cartesian<double> K;
+  typedef CGAL::Arrangement_of_spheres_traits_3<K> Traits;
+  typedef CGAL::Arrangement_of_spheres_3<Traits> Arrangement;
+#else 
+  typedef CGAL::Arrangement_of_spheres_3 Arrangement;
+#endif
+
 template <class A>
 struct Compute_slice {
-  Compute_slice(const std::vector<typename DK::Sphere_3> &ss, double z):
+  Compute_slice(const std::vector<typename Arrangement::Traits::Geom_traits::Sphere_3> &ss, double z):
     spheres_(ss), z_(z){}
 
   void operator()(CGAL::Qt_examiner_viewer_2 *qtv) {
@@ -29,7 +37,7 @@ struct Compute_slice {
 
     typename A::Traits tr(ns.begin(), ns.end());
     A arr(tr);
-    typename A::Cross_section cs(tr.number_of_sphere_3s());
+    typename A::Cross_section cs;
     arr.initialize_at(z_,cs);
 
     typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer CGAL_AOS3_TARG CSV;
@@ -37,20 +45,14 @@ struct Compute_slice {
     csv(z_, qtv);
   }
 
-  std::vector<typename DK::Sphere_3> spheres_;
+  std::vector<typename Arrangement::Traits::Geom_traits::Sphere_3> spheres_;
   double z_;
 };
 
  
 
 int main(int argc, char *argv[]) {
-#ifdef CGAL_AOS3_USE_TEMPLATES
-  typedef CGAL::Simple_cartesian<double> K;
-  typedef CGAL::Arrangement_of_spheres_traits_3<K> Traits;
-  typedef CGAL::Arrangement_of_spheres_3<Traits> Arrangement;
-#else 
-  typedef CGAL::Arrangement_of_spheres_3 Arrangement;
-#endif
+
 
   std::vector<Arrangement::Traits::Geom_traits::Sphere_3> spheres;
 
