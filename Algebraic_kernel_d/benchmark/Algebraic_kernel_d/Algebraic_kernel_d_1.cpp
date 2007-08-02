@@ -14,12 +14,14 @@
 // Benchmark of Algebraic_kernel
 
 #define NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE 1
+//#define CGAL_TEST_ONLY_SOLVE 1
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
-#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
@@ -237,6 +239,7 @@ Benchmark_result do_benchmark( std::string filename, int samples = 5 ) {
     result.number_of_real_roots_found = roots.size();
     
     // Bench Sort
+#ifndef CGAL_TEST_ONLY_SOLVE    
     bench_sort.get_benchable().prepare_op( &roots );
     bench_sort();
     result.sort_time = bench_sort.get_period() / samples;
@@ -245,7 +248,11 @@ Benchmark_result do_benchmark( std::string filename, int samples = 5 ) {
     bench_to_double.get_benchable().prepare_op( roots );
     bench_to_double();
     result.to_double_time = bench_to_double.get_period() / samples;
-    
+#else
+    result.sort_time = 0;
+    result.to_double_time = 0;
+#endif
+
     result.total_time = result.solve_time + result.sort_time + result.to_double_time;
     
     return result;
@@ -258,7 +265,7 @@ void single_benchmark( std::string filename, int samples = 5 ) {
     typedef Boundary_   Boundary;
     typedef RepClass    Rep_class;
     typedef Isolator_   Isolator;
-    typedef CGAL::Algebraic_kernel_d_1< Coeff, Boundary, Rep_class, Isolator > AK;
+    typedef CGAL::Algebraic_kernel_1< Coeff, Boundary, Rep_class, Isolator > AK;
 
     // Output result to cerr
     // I'm using cerr because the benchmark results are written to cout.
@@ -306,11 +313,11 @@ int main( int argc, char** argv ) {
         int samples = (argc == 6 ) ? std::atoi( argv[5] ) : 5;
             
         if( std::string( argv[1] ) == "INT" )
-            single_benchmark< leda_integer >( argv[4], argv[2], argv[3], samples );
-//            single_benchmark< CORE::BigInt >( argv[4], argv[2], argv[3], samples );
+//            single_benchmark< leda_integer >( argv[4], argv[2], argv[3], samples );
+            single_benchmark< CORE::BigInt >( argv[4], argv[2], argv[3], samples );
         else if( std::string( argv[1] ) == "EXT" ) 
-            single_benchmark< CGAL::Sqrt_extension< leda_integer, leda_integer > >( argv[4], argv[2], argv[3], samples );
-//            single_benchmark< CGAL::Sqrt_extension< CORE::BigInt, CORE::BigInt > >( argv[4], argv[2], argv[3], samples );
+//            single_benchmark< CGAL::Sqrt_extension< leda_integer, leda_integer > >( argv[4], argv[2], argv[3], samples );
+            single_benchmark< CGAL::Sqrt_extension< CORE::BigInt, CORE::BigInt > >( argv[4], argv[2], argv[3], samples );
         else
             CGAL_error( "Unknown coefficient type" );
     
