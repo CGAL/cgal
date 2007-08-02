@@ -1762,6 +1762,7 @@ Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Fraction_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Modular_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text

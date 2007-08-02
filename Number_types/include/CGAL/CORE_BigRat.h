@@ -26,6 +26,9 @@
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
+#include <CGAL/Modular.h>
+#include <CGAL/Modular_traits.h>
+
 //#if defined(CGAL_CORE_BIGRAT_NUMER_DENOM_ARE_MEMBERS)
 //  #define CGAL_CORE_NUMERATOR(X) ((X).numerator())
 //  #define CGAL_CORE_DENOMINATOR(X) ((X).denominator())
@@ -151,6 +154,29 @@ public:
         }
     };
 };
+
+/*! \ingroup NiX_Modular_traits_spec
+ *  \brief a model of concept ModularTraits, 
+ *  specialization of NiX::Modular_traits. 
+ */
+template<>
+class Modular_traits< ::CORE::BigRat > {
+    typedef ::CORE::BigInt Integer;
+    typedef Modular_traits<Integer> MT_int;
+public:
+    typedef ::CORE::BigRat NT;
+    typedef ::CGAL::Tag_true Is_modularizable;
+    typedef CGAL::Modular Modular_NT;
+    struct Modular_image{
+        Modular_NT operator()(const NT& rat){
+            MT_int::Modular_image int_mod;
+            Modular_NT num = int_mod(CGAL_CORE_NUMERATOR(rat));
+            Modular_NT den = int_mod(CGAL_CORE_DENOMINATOR(rat));
+            return num/den;
+        }
+    };  
+};
+
 
 template <class F>
 class Output_rep< ::CORE::BigRat, F> {

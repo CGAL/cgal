@@ -25,6 +25,9 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
 
+#include <CGAL/Modular.h>
+#include <CGAL/Modular_traits.h>
+
 CGAL_BEGIN_NAMESPACE
 
 //
@@ -128,6 +131,37 @@ template <> class Real_embeddable_traits< CORE::BigInt >
         }
     };
 };
+
+/*! \ingroup NiX_Modular_traits_spec
+ *  \brief a model of concept ModularTraits, 
+ *  specialization of NiX::Modular_traits. 
+ */
+template<>
+class Modular_traits< ::CORE::BigInt > {
+    typedef Modular MOD;
+ public:
+    typedef ::CORE::BigInt NT;
+    typedef CGAL::Tag_true Is_modularizable;
+    typedef MOD Modular_NT;
+
+    struct Modular_image{
+        Modular_NT operator()(const NT& a){
+            NT tmp = a % NT(MOD::get_current_prime());
+// TODO: reactivate this assertion
+// it fails with core_v1.6x_20040329
+//            NiX_assert(tmp.isInt());
+            int mi(tmp.longValue());
+            if (mi < 0) mi += MOD::get_current_prime();
+            return Modular_NT(mi);
+        }
+    };
+    struct Modular_image_inv{
+        NT operator()(const Modular& x){
+            return NT(x.get_value());
+        }
+    };    
+};
+
 
 template<>
 struct Needs_parens_as_product<CORE::BigInt>{
