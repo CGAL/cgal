@@ -202,8 +202,6 @@ public:
     friend Self operator / (const Self& p1, const Self& p2);
 };
 
-const double Modular::CST_CUT = std::ldexp( 3., 51 );
-
 inline Modular operator + (const Modular& p1)
 { return p1; }
 
