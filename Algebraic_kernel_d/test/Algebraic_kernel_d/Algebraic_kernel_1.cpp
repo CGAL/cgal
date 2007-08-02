@@ -17,7 +17,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
-#include <CGAL/_test_algebraic_kernel_d_1.h>
+#include <CGAL/_test_algebraic_kernel_1.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 
@@ -38,7 +38,7 @@ void test_algebraic_kernel_intern() {
     typedef CGAL::Polynomial< Coefficient >                     Polynomial_1;
     typedef CGAL::CGALi::Descartes< Polynomial_1, Boundary >    Isolator;
 
-    CGAL::CGALi::test_algebraic_kernel_d_1< 
+    CGAL::CGALi::test_algebraic_kernel_1< 
         Kernel, Algebraic_real_1, Isolator, Coefficient, Polynomial_1, Boundary >();    
 }
 

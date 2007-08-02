@@ -16,7 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -Iinclude \
            -I../../include \
-	   -I../../../Number_types/test/Number_types/include \
+           -I../../../Number_types/test/Number_types/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -36,13 +36,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Algebraic_kernel_d_1$(EXE_EXT) \
+                Algebraic_kernel_1$(EXE_EXT) \
                 Algebraic_real_pure$(EXE_EXT) \
                 Bitstream_descartes$(EXE_EXT) \
                 Descartes$(EXE_EXT) 
 
-Algebraic_kernel_d_1$(EXE_EXT): Algebraic_kernel_d_1$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Algebraic_kernel_d_1 Algebraic_kernel_d_1$(OBJ_EXT) $(LDFLAGS)
+Algebraic_kernel_1$(EXE_EXT): Algebraic_kernel_1$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Algebraic_kernel_1 Algebraic_kernel_1$(OBJ_EXT) $(LDFLAGS)
 
 Algebraic_real_pure$(EXE_EXT): Algebraic_real_pure$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Algebraic_real_pure Algebraic_real_pure$(OBJ_EXT) $(LDFLAGS)
@@ -54,7 +54,7 @@ Descartes$(EXE_EXT): Descartes$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Descartes Descartes$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Algebraic_kernel_d_1.clean \
+                   Algebraic_kernel_1.clean \
                    Algebraic_real_pure.clean \
                    Bitstream_descartes.clean \
                    Descartes.clean 

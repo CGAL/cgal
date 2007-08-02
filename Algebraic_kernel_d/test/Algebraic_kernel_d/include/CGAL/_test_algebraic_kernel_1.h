@@ -18,15 +18,15 @@
 #include <CGAL/_test_basic.h>
 
 // Test for the Algebraic_kernel syntax
-#ifndef CGAL_TEST_ALGEBRAIC_KERNEL_D_1_H
-#define CGAL_TEST_ALGEBRAIC_KERNEL_D_1_H
+#ifndef CGAL_TEST_ALGEBRAIC_KERNEL_1_H
+#define CGAL_TEST_ALGEBRAIC_KERNEL_1_H
 
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
 template< class AK_, class AlgebraicReal1, class Isolator_, class Coefficient_, class Polynomial1, class Boundary_  >
-void test_algebraic_kernel_d_1() {
+void test_algebraic_kernel_1() {
     typedef AK_            AK;
     typedef AlgebraicReal1 Algebraic_real_1;
     typedef Isolator_      Isolator;
@@ -185,4 +185,4 @@ void test_algebraic_kernel_d_1() {
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_TEST_ALGEBRAIC_KERNEL_D_1_H
+#endif //CGAL_TEST_ALGEBRAIC_KERNEL_1_H
