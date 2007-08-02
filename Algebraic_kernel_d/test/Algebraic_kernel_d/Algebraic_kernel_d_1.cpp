@@ -15,7 +15,7 @@
 // Test of Algebraic_kernel
 
 #include <CGAL/basic.h>
-#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
 #include <CGAL/_test_algebraic_kernel_d_1.h>
 
@@ -28,7 +28,7 @@ void test_algebraic_kernel_intern() {
     typedef Boundary_    Boundary;
     typedef RepClass     Rep_class;
 
-    typedef CGAL::Algebraic_kernel_d_1< Coefficient, Boundary, Rep_class > 
+    typedef CGAL::Algebraic_kernel_1< Coefficient, Boundary, Rep_class > 
                                                                 Kernel;
     typedef CGAL::CGALi::Algebraic_real_pure< 
              Coefficient, 

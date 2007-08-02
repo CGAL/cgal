@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
     template< class AlgebraicReal1, class Isolator_ >
-    class Algebraic_kernel_d_1_base {
+    class Algebraic_kernel_1_base {
         public:
             
             typedef AlgebraicReal1              Algebraic_real_1;
@@ -103,7 +103,7 @@ namespace CGALi {
                 };                
             }; // class Algebraic_real_traits
             
-            // Functors of Algebraic_kernel_d_1
+            // Functors of Algebraic_kernel_1
             struct Solve_1 {
                 template< class OutputIterator >
                 OutputIterator operator()( const Polynomial_1& p,
@@ -217,8 +217,8 @@ template< class Coefficient,
           class Boundary = typename CGALi::Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Rational,
           class RepClass = CGALi::Algebraic_real_rep< Coefficient, Boundary >,
           class Isolator = CGALi::Descartes< typename CGAL::Polynomial< Coefficient >, Boundary > >
-class Algebraic_kernel_d_1    
-    : public CGALi::Algebraic_kernel_d_1_base< 
+class Algebraic_kernel_1    
+    : public CGALi::Algebraic_kernel_1_base< 
 
     // Template argument #1 (AlgebraicReal1)        
         CGALi::Algebraic_real_pure< 
