@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           -I../../../Polynomial/include \
            -I../../../Number_types/test/Number_types/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -36,44 +35,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                chinese_remainder$(EXE_EXT) \
-                Chinese_remainder_traits$(EXE_EXT) \
-                euclidean_algorithm$(EXE_EXT) \
-                extended_euclidean_algorithm$(EXE_EXT) \
                 Modular$(EXE_EXT) \
-                modular_gcd$(EXE_EXT) \
                 Modular_traits$(EXE_EXT) 
-
-chinese_remainder$(EXE_EXT): chinese_remainder$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)chinese_remainder chinese_remainder$(OBJ_EXT) $(LDFLAGS)
-
-Chinese_remainder_traits$(EXE_EXT): Chinese_remainder_traits$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Chinese_remainder_traits Chinese_remainder_traits$(OBJ_EXT) $(LDFLAGS)
-
-euclidean_algorithm$(EXE_EXT): euclidean_algorithm$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)euclidean_algorithm euclidean_algorithm$(OBJ_EXT) $(LDFLAGS)
-
-extended_euclidean_algorithm$(EXE_EXT): extended_euclidean_algorithm$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extended_euclidean_algorithm extended_euclidean_algorithm$(OBJ_EXT) $(LDFLAGS)
 
 Modular$(EXE_EXT): Modular$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Modular Modular$(OBJ_EXT) $(LDFLAGS)
-
-modular_gcd$(EXE_EXT): modular_gcd$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)modular_gcd modular_gcd$(OBJ_EXT) $(LDFLAGS)
 
 Modular_traits$(EXE_EXT): Modular_traits$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Modular_traits Modular_traits$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   chinese_remainder.clean \
-                   Chinese_remainder_traits.clean \
-                   euclidean_algorithm.clean \
-                   extended_euclidean_algorithm.clean \
                    Modular.clean \
-                   modular_gcd.clean \
-                   Modular_traits.clean \
-                   src_Modular.clean 
+                   Modular_traits.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
