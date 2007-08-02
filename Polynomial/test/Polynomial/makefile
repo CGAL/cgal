@@ -14,10 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -Iinclude \
            -I../../include \
-           -I../../../Algebraic_foundations/include \
-           -I../../../Number_types/include \
            -I../../../Number_types/test/Number_types/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -38,7 +35,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Polynomial$(EXE_EXT)\
+                Polynomial$(EXE_EXT) \
                 Polynomial_traits_d$(EXE_EXT) 
 
 Polynomial$(EXE_EXT): Polynomial$(OBJ_EXT)
