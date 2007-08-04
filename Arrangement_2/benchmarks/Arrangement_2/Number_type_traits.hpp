@@ -82,6 +82,14 @@ struct Number_type_traits<CORE::BigInt> {
   typedef CORE::BigInt                          FT;
   typedef CGAL::Tag_false                       Is_rational;
 };
+
+/*! CORE::BigRat */
+template <>
+struct Number_type_traits<CORE::BigRat> {
+  typedef CORE::BigInt                          RT;
+  typedef CORE::BigRat                          FT;
+  typedef CGAL::Tag_true                        Is_rational;
+};
 #endif
 
 #ifdef CGAL_MP_FLOAT_H
