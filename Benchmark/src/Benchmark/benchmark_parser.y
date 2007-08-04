@@ -145,6 +145,7 @@ static Number_type *expected_number_type = NULL;
 %token ConicPoint_2
 %token LineSegment_2
 %token Conic_2
+%token Polyline_2
 
 
 %token Rotate_2
@@ -233,13 +234,16 @@ stmt: /* */
     error                        { /* parse error restart here */ }
     error_rules                  {}
   | List                         { visitor->begin_list(); }
-       '(' stmt_sequence ')'     { visitor->end_list(); }
-  | Circle_2                     { visitor->begin_circle_2(); }
-        '(' point_2 ',' intorrat ')'
-                                 { visitor->end_circle_2(); }
-  | LineSegment_2                { visitor->begin_line_segment_2(); }
-       '(' point_2 ',' point_2 ')'
-                                 { visitor->end_line_segment_2(); }
+      '(' stmt_sequence ')'      { visitor->end_list(); }
+  | Circle_2 '('                 { visitor->begin_circle_2(); }
+      circle_2
+      ')'                        { visitor->end_circle_2(); }
+  | LineSegment_2 '('            { visitor->begin_line_segment_2(); }
+      point_2 ',' point_2 
+      ')'                        { visitor->end_line_segment_2(); }
+  | Polyline_2 '('               { visitor->begin_polyline_2(); }
+      point_2 ',' point_2_list     
+      ')'                        { visitor->end_polyline_2(); }
   | Conic_2 conic_2
   | ConicArc_2 conic_arc_2
   | transformed_conic
@@ -248,10 +252,15 @@ stmt: /* */
                                  { visitor->accept_cubic_2( $3, $5, $7, $9,
                                                             $11, $13, $15,
                                                             $17, $19, $21); }
-  | quadric_3
+  | Quadric_3 quadric_3
   | csg_operation_3
   | polynomial
 ;
+
+circle_2:
+    point_2 ',' intorrat
+  | point_2 ',' point_2 ',' point_2
+  ;
 
 polynomial: /* */
     // directly encoding '<' does not work, interestingly ...
@@ -261,7 +270,7 @@ polynomial: /* */
                                  }
       '(' monom_list ')'         { visitor->end_polynomial(); 
                                    delete expected_number_type; }
-   | Polynomial_1                { visitor->begin_polynomial_1(); }
+  | Polynomial_1                 { visitor->begin_polynomial_1(); }
       '(' integer_sequence1 ')'  { visitor->end_polynomial_1(); }
   ;
 
@@ -285,6 +294,11 @@ typename :
 monom_list:
     monom
   | monom_list ',' monom
+  ;
+
+point_2_list:
+    point_2
+  | point_2_list ',' point_2
   ;
 
 monom:
@@ -475,11 +489,11 @@ error_rules: /* */
 ;
 
 quadric_3:
-Quadric_3 '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ','
-                  INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
+    '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ','
+        INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
                                 { visitor->accept_quadric_3( $3, $5, $7, $9,
-                                                              $11, $13, $15,
-                                                              $17, $19, $21); }
+                                                             $11, $13, $15,
+                                                             $17, $19, $21); }
 ;
 
 csg_operation_3:

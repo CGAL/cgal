@@ -173,7 +173,7 @@ GT              [>]
 "Circle_2"                      { return Circle_2; }
 "LineSegment_2"                 { return LineSegment_2; }
 "Cubic_2"                       { return Cubic_2; }
-
+"Polyline_2"                    { return Polyline_2; }
 
 "Quadric_3"                     { return Quadric_3; }
 
