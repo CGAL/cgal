@@ -145,6 +145,8 @@ public:
                                      NO_BOUNDARY, NO_BOUNDARY);
       // \todo When the boolean set operations are exteneded to support
       //       unbounded curves, we will need here a special treatment.
+      
+      event->set_finite();
 
       if (! first)
       {
@@ -189,6 +191,8 @@ public:
                                          NO_BOUNDARY, NO_BOUNDARY);
           // \todo When the boolean set operations are exteneded to support
           //       unbounded curves, we will need here a special treatment.
+          
+	  event->set_finite();
 
           this->m_queue->insert_before (q_iter, event);
           vert_map[vh] = event;
