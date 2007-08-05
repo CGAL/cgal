@@ -178,8 +178,15 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Base_traits;
 typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
 typedef Nt_traits::Rational                             Rational;
 typedef Nt_traits::Algebraic                            Algebraic;
+
+#if BENCH_KERNEL == CARTESIAN_KERNEL
 typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+#elif BENCH_KERNEL == SIMPLE_CARTESIAN_KERNEL
+typedef CGAL::Simple_cartesian<Rational>                Rat_kernel;
+typedef CGAL::Simple_cartesian<Algebraic>               Alg_kernel;
+#endif
+
 typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
                                                         Base_traits;
 #define TRAITS_TYPE "Conics"
