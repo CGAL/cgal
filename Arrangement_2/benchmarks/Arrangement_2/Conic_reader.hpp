@@ -26,6 +26,15 @@ CORE::BigInt lexical_cast<CORE::BigInt>(std::string & str)
   return result;
 }
 
+template <>
+CORE::BigRat lexical_cast<CORE::BigRat>(std::string & str)
+{
+  std::stringstream ss(str);
+  CORE::BigRat result;
+  ss >> result;
+  return result;
+}
+
 /*! A reader of conic curves and arcs of conic curves */ 
 template <class Traits>
 class Conic_reader {
@@ -47,19 +56,32 @@ public:
    */
   template <typename OutputIterator>  
   class Conic_parser_visitor :
-    public Point_parser_visitor<Rat_kernel, Rat_point_2, CORE::BigInt> {
+    public Point_parser_visitor<Rat_kernel, Rat_point_2, Rational> {
   private:
+    typedef Point_parser_visitor<Rat_kernel, Rat_point_2, Rational> Base;
+    
     /*! The iterator of the output container */
     OutputIterator & m_output_iterator;
 
     /*! Big ints used to store coefficients */
     std::list<CORE::BigInt> m_bigints;
-    
+
+    /*! Is a conivs arc currently being processed? */
+    bool m_processing_arc;
+
+    /*! A place holder to store the undelying conic of a conic arc */
+    Curve_2 m_conic;
+
+    /*! Last orientation */
+    CGAL::Orientation m_orient;
+
   public:
     /*! Constructor */
     Conic_parser_visitor(OutputIterator & oi, CGAL::Bbox_2 & bbox) :
-      Point_parser_visitor<Rat_kernel, Rat_point_2, CORE::BigInt>(bbox),
-      m_output_iterator(oi)
+      Point_parser_visitor<Rat_kernel, Rat_point_2, Rational>(bbox),
+      m_output_iterator(oi),
+      m_processing_arc(false),
+      m_orient(CGAL::COUNTERCLOCKWISE)
     {}
     
     /*! Accept only unbounded lines for Arrangements */ 
@@ -78,12 +100,36 @@ public:
         this->error_handler( "classification error" );
     }
 
-    /*! Process start line */
-    virtual void begin_line_segment_2() { this->m_points.clear(); }
+    virtual void accept_integer(std::string s)
+    {
+      CORE::BigInt integer = lexical_cast<CORE::BigInt>(s);
+      m_bigints.push_back(integer);
+    }
+    
+    virtual void accept_orientation( std::string s)
+    {
+      m_orient =
+        (s == "COUNTERCLOCKWISE") ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE;
+    }
 
-    /*! Process end line
-     * Add a curve to the container the output iterator refers to
-     */
+    /*! Start a full curve */
+    void begin_full()
+    {
+      this->m_points.clear();
+      m_bigints.clear();
+    }
+
+    /*! Start an arc */
+    void begin_arc()
+    {
+      begin_full();
+      m_processing_arc = true;
+    }
+    
+    /*! Start a line segment */
+    virtual void begin_line_segment_2() { begin_arc(); }
+
+    /*! End a line segment */
     virtual void end_line_segment_2()
     {
       Rat_segment_2 seg (this->m_points.front(), this->m_points.back());
@@ -91,31 +137,137 @@ public:
       ++m_output_iterator = conic;
     }
 
-    /*! Process start circle */
-    virtual void begin_circle_2() { this->m_points.clear(); }
+    /*! Start a circle */
+    virtual void begin_circle_2() { begin_full(); }
 
-    virtual void accept_integer(std::string s)
-    {
-      CORE::BigInt integer = lexical_cast<CORE::BigInt>(s);
-      m_bigints.push_back(integer);
-    }
-    
-    /*! Process end conic
-     * Add a curve to the container the output iterator refers to
-     */
+    /*! End a circle */
     virtual void end_circle_2()
     {
-      std::list<typename Rat_point_2>::iterator it = this->m_points.begin();
       if (this->m_points.size() == 1) {
-        Rat_circle_2 circle(*it, m_bigints.back());
+        Rat_point_2 & point = this->m_points.back();
+        Rational radius_square = m_bigints.back();
+        Rat_circle_2 circle(point, radius_square);
         Curve_2 conic(circle);
-      } else {
-        const Rat_point_2 & p1 = *it++;
-        const Rat_point_2 & p2 = *it++;
-        const Rat_point_2 & p3 = *it++;
-        Curve_2 curve(p1, p2, p3);
-        ++m_output_iterator = curve;
+        ++m_output_iterator = conic;
+
+        double radius = sqrt(CGAL::to_double(radius_square));
+        double x = CGAL::to_double(point.x());
+        double y = CGAL::to_double(point.y());
+        CGAL::Bbox_2 b(x - radius, y - radius, x + radius, y + radius);
+        this->m_bbox = this->m_bbox + b;
+        
+        return;
       }
+
+      typename Base::Rat_point_iter it = this->m_points.begin();
+      const Rat_point_2 & p1 = *it++;
+      const Rat_point_2 & p2 = *it++;
+      const Rat_point_2 & p3 = *it++;
+      Rat_circle_2 circle(p1, p2, p3);
+      Curve_2 conic(circle);
+      ++m_output_iterator = conic;
+    }
+    
+    /*! Start a circle arc */
+    virtual void begin_circle_arc_2() { begin_arc(); }
+
+    /*! End a circle arc */
+    virtual void end_circle_arc_2()
+    {
+      m_processing_arc = false;
+      typename Base::Rat_point_iter it = this->m_points.begin();
+      const Rat_point_2 & p1 = *it++;
+      const Rat_point_2 & p2 = *it++;
+      const Rat_point_2 & p3 = *it++;
+      Curve_2 curve(p1, p2, p3);
+      ++m_output_iterator = curve;
+    }
+
+    /*! Start an iso-ellipse */
+    virtual void begin_iso_ellipse_2() { begin_full(); }
+
+    /*! End an iso-ellipse */
+    virtual void end_iso_ellipse_2()
+    {
+      std::list<CORE::BigInt>::iterator ii = this->m_bigints.end();
+      Rational r = *(--ii);
+      Rational s = *(--ii);
+
+      Rational x = this->m_points.back().x();
+      Rational y = this->m_points.back().y();
+
+      Rational u = -2 * r * x;
+      Rational v = -2 * s * y;
+      Rational w = r * x * x + s * y * y - r * s;
+
+      m_conic = Curve_2(r, s, 0, u, v, w);
+
+      double rx = sqrt(CGAL::to_double(r));
+      double ry = sqrt(CGAL::to_double(s));
+      double xd = CGAL::to_double(x);
+      double yd = CGAL::to_double(y);
+      CGAL::Bbox_2 b(xd - rx, yd - rx, xd + ry, yd + ry);
+      this->m_bbox = this->m_bbox + b;
+
+      this->m_points.clear();
+      if (!m_processing_arc) ++m_output_iterator = m_conic;
+    }
+
+    /*! Start an ellipse arc */
+    virtual void begin_iso_ellipse_arc_2() { begin_arc(); }
+
+    /*! End an ellipse arc */
+    virtual void end_iso_ellipse_arc_2()
+    {
+      m_processing_arc = false;
+      if (this->m_points.size() == 2) {
+        Rat_point_2 & ps_rat = this->m_points.front();
+        Rat_point_2 & pt_rat = this->m_points.back();
+        Point_2 ps(ps_rat.x(), ps_rat.y());
+        Point_2 pt(pt_rat.x(), pt_rat.y());
+        Curve_2 conic_arc(m_conic.r(), m_conic.s(), m_conic.t(),
+                          m_conic.u(), m_conic.v(), m_conic.w(),
+                          m_orient, ps ,pt);
+        ++m_output_iterator = conic_arc;
+        return;
+      }
+      std::cerr << "unsupported iso ellipse arc!" << std::endl;
+    }
+    
+    /*! Accept a conic curve */
+    virtual void accept_conic_2(std::string r_str, std::string s_str,
+                                std::string t_str, std::string u_str,
+                                std::string v_str, std::string w_str)
+    {
+      CORE::BigInt r = lexical_cast<CORE::BigInt>(r_str);
+      CORE::BigInt s = lexical_cast<CORE::BigInt>(s_str);
+      CORE::BigInt t = lexical_cast<CORE::BigInt>(t_str);
+      CORE::BigInt u = lexical_cast<CORE::BigInt>(u_str);
+      CORE::BigInt v = lexical_cast<CORE::BigInt>(v_str);
+      CORE::BigInt w = lexical_cast<CORE::BigInt>(w_str);
+      m_conic = Curve_2(r, s, t, u, v, w);
+      if (!m_processing_arc) ++m_output_iterator = m_conic;
+    }
+
+    /*! Start a conic arc */
+    virtual void begin_conic_arc_2() { begin_arc(); }
+
+    /*! End a conic arc */
+    virtual void end_conic_arc_2()
+    {
+      m_processing_arc = false;
+      if (this->m_points.size() == 2) {
+        Rat_point_2 & ps_rat = this->m_points.front();
+        Rat_point_2 & pt_rat = this->m_points.back();
+        Point_2 ps(ps_rat.x(), ps_rat.y());
+        Point_2 pt(pt_rat.x(), pt_rat.y());
+        Curve_2 conic_arc(m_conic.r(), m_conic.s(), m_conic.t(),
+                          m_conic.u(), m_conic.v(), m_conic.w(),
+                          m_orient, ps ,pt);
+        ++m_output_iterator = conic_arc;
+        return;
+      }
+      std::cerr << "unsupported conic arc!" << std::endl;
     }
   };
 
@@ -134,105 +286,6 @@ public:
   }
 
 #if 0
-  /*! */
-  bool read_curve(std::ifstream & is, Curve_2 & cv)
-  {
-    if (type == 's' || type == 'S')
-    {
-      // Construct a line segment. The line should have the format:
-      //   s <x1> <y1> <x2> <y2>
-      // where (x1, y1), (x2, y2) are the endpoints of a segment.
-      CORE::BigInt x1, y1, x2, y2;
-      str_line >> x1 >> y1 >> x2 >> y2;
-      Rat_point_2   p1(x1, y1), p2(x2, y2);
-      Rat_segment_2 seg (p1, p2);
-      cv = Curve_2 (seg);
-    } else if (type == 'c' || type == 'C') {
-      // Construct a full circle. The line should have the format:
-      //   c <x0> <y0> <R_sq>
-      // where (x0, y0) is the center of the circle and R_sq is its squared
-      // radius.
-      CORE::BigInt    x0, y0, R_sq;
-      
-      str_line >> x0 >> y0 >> R_sq;
-      Rat_point_2   p0(x0, y0);
-      Rat_circle_2  circ(p0, R_sq);
-      cv = Curve_2 (circ);
-    } else if (type == 'e' || type == 'E') {
-      CORE::BigInt    a, b, x0, y0;
-      str_line >> a >> b >> x0 >> y0;
-
-      Rational        r = b * b;
-      Rational        s = a * a;
-      Rational        u = -2 * r * x0;
-      Rational        v = -2 * s * y0;
-      Rational        w = r * x0 * x0 + s * y0 * y0 - r * s;
-      cv = Curve_2 (r, s, 0, u, v, w);
-    }
-    else if (type == 't' || type == 'T')
-    {
-      // Construct a circular arc. The line should have the format:
-      //   t <x1> <y1> <x2> <y2> <x3> <y3>
-      // where (x1, y1), (x2, y2) and (x3, y3) define the arc.
-      CORE::BigInt    x1, y1, x2, y2, x3, y3;
-      
-      str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
-      Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
-      cv = Curve_2 (p1, p2, p3);
-    }
-    else if (type == 'f' || type == 'F')
-    {
-      // Construct a full conic curve. The line should have the format:
-      //   c <r> <s> <t> <u> <v> <w>
-      // where r, s, t, u, v, w define the conic equation.
-      CORE::BigInt    r, s, t, u, v, w;
-      
-      str_line >> r >> s >> t >> u >> v >> w;
-      cv = Curve_2 (r, s, t, u, v, w);
-    }
-    else if (type == 'a' || type == 'A')
-    {
-      // Construct a conic arc. The line should have the format:
-      //   c <r> <s> <t> <u> <v> <w> <orient> <x1> <y1> <x2> <y2>
-      // where r, s, t, u, v, w define the conic equation, while (x1, y1)
-      // and (x2, y2) are the arc's endpoints.
-      CORE::BigInt    r, s, t, u, v, w;
-      
-      str_line >> r >> s >> t >> u >> v >> w;
-      
-      // Read the orientation.
-      int               i_orient;
-      CGAL::Orientation orient;
-      str_line >> i_orient;
-      if (i_orient > 0)
-        orient = CGAL::COUNTERCLOCKWISE;
-      else if (i_orient < 0)
-        orient = CGAL::CLOCKWISE;
-      else
-        orient = CGAL::COLLINEAR;
-      
-      // Read the end points of the arc and create it.
-      // Notice we read the coordinates as strings, then we convert them to 
-      // the CoNT type, as we do not want to initialize CoNT from a double.
-      char    num[50];
-      Rational    x1, y1, x2, y2;
-      
-      str_line >> num;
-      x1 = Rational(num);
-      str_line >> num;
-      y1 = Rational(num);
-      
-      str_line >> num;
-      x2 = Rational(num);
-      str_line >> num;
-      y2 = Rational(num);
-      
-      Point_2 ps (x1, y1);
-      Point_2 pt (x2, y2);
-      
-      cv = Curve_2 (r, s, t, u, v, w, orient, ps ,pt);
-    }
-    else if (type == 'q' || type == 'Q')
     {
       // Construct a circular arc. The line should have the format:
       //   t <x1> <y1> <x2> <y2> <x3> <y3> <x4> <y4> <x5> <y5>
@@ -244,14 +297,6 @@ public:
       Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
       cv = Curve_2 (p1, p2, p3, p4, p5);
     }
-    else
-    {
-      std::cerr << "Illegal conic type specification: " << type << "."
-                << std::endl;
-      return false;
-    }
-    
-    return true;
   }
 #endif
 };
