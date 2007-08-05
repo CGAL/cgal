@@ -159,6 +159,9 @@ public:
     virtual void begin_line_segment_2() { tnh( "Begin_line_segment_2"); }
     virtual void end_line_segment_2() { tnh( "End_line_segment_2"); }
 
+    virtual void begin_polyline_2() { tnh( "Begin_polyline_2"); }
+    virtual void end_polyline_2() { tnh( "End_polyline_2"); }
+
     virtual void accept_conic_2(std::string A, std::string B, std::string C,
                                 std::string D, std::string E, std::string F) {
         tnh("Conic_2");
@@ -186,6 +189,9 @@ public:
 
     virtual void begin_circle_2() { tnh("Begin_circle_2"); }
     virtual void end_circle_2() { tnh("End_circle_2"); }
+
+    virtual void begin_iso_ellipse_2() { tnh("Begin_is_ellipse_2"); }
+    virtual void end_iso_ellipse_2() { tnh("End_iso_ellipse_2"); }
 
     virtual void accept_cubic_2(std::string A, std::string B, std::string C,
                                 std::string D, std::string E, std::string F,
