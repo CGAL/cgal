@@ -141,20 +141,24 @@ static Number_type *expected_number_type = NULL;
 %token Degree
 %token Vector_2
 
-
 %token ConicPoint_2
-%token LineSegment_2
-%token Conic_2
-%token Polyline_2
 
+%token LineSegment_2
+%token Polyline_2
 
 %token Rotate_2
 %token Translate_2
 
-%token ConicArc_2
 %token Circle_2
-%token Cubic_2
+%token CircleArc_2
 
+%token IsoEllipse_2
+%token IsoEllipseArc_2
+
+%token Conic_2
+%token ConicArc_2
+
+%token Cubic_2
 
 %token Quadric_3
 
@@ -172,123 +176,176 @@ static Number_type *expected_number_type = NULL;
 /* ======= */
 
 input: /* an input is a potentially empty sequence of files */
-  /* empty */
-  | error                       { /* parse error restart here */ }
+    /* empty */
+  | error                            { /* parse error restart here */ }
   | input file
-;
+  ;
 
 file: /* must start with unique header */
     file_format file_header_options file_classification file_body
-;
+  ;
 
 file_format: /* mandatory fileformat descriptor */
-    error_rules                 {}
+    error_rules                      {}
   | FileFormat '(' STRING ',' INTEGER ',' INTEGER ')'
-                                { visitor->accept_file_format( $3,
-                                      atoi( $5.c_str()), atoi( $7.c_str()),
-                                      std::string("")); }
+      { visitor->accept_file_format( $3, atoi( $5.c_str()), atoi( $7.c_str()),
+                                     std::string("")); }
   | FileFormat '(' STRING ',' INTEGER ',' INTEGER ',' STRING ')'
-                                { visitor->accept_file_format( $3,
-                                     atoi( $5.c_str()), atoi( $7.c_str()),
-                                                              $9); }
-;
+      { visitor->accept_file_format( $3, atoi( $5.c_str()), atoi( $7.c_str()), 
+                                     $9); }
+  ;
+
 
 file_header_options: /* sequence of optional file header entries */
     /* empty */
   | file_header_options file_header_option
-;
+  ;
 
 file_header_option: /* single optional file header entry */
-    BenchmarkName '(' STRING ')' { visitor->accept_benchmark_name( $3); }
-;
+    BenchmarkName '(' STRING ')'     { visitor->accept_benchmark_name( $3); }
+  ;
 
 file_classification: /* */
     error_rules             {}
   | classificat
   | file_classification classificat
-;
+  ;
 
 classificat: /* */
-  Classification '(' STRING ',' STRING ',' STRING ',' STRING ','
-                     STRING ',' STRING ')'
-                            { visitor->accept_classification( $3, $5, $7,
-                                                              $9, $11, $13); }
-;
+    Classification '(' STRING ',' STRING ',' STRING ',' 
+                       STRING ',' STRING ',' STRING ')'
+      { visitor->accept_classification( $3, $5, $7, $9, $11, $13); }
+  ;
 
 file_body: /* sequence of statements (stmt) */
     /* empty */
   | file_body stmt
-;
+  ;
 
 stmt_sequence: /* comma separated sequence of statements (stmt) */
     /* empty */
   | stmt_sequence_non_empty
-;
+  ;
 
 stmt_sequence_non_empty: /* comma separated sequence of statements (stmt) */
     stmt
   | stmt_sequence_non_empty ',' stmt
-;
+  ;
 
 stmt: /* */
-    error                        { /* parse error restart here */ }
-    error_rules                  {}
-  | List                         { visitor->begin_list(); }
-      '(' stmt_sequence ')'      { visitor->end_list(); }
-  | Circle_2 '('                 { visitor->begin_circle_2(); }
-      circle_2
-      ')'                        { visitor->end_circle_2(); }
-  | LineSegment_2 '('            { visitor->begin_line_segment_2(); }
-      point_2 ',' point_2 
-      ')'                        { visitor->end_line_segment_2(); }
-  | Polyline_2 '('               { visitor->begin_polyline_2(); }
-      point_2 ',' point_2_list     
-      ')'                        { visitor->end_polyline_2(); }
+    error                            { /* parse error restart here */ }
+    error_rules                      {}
+  | List                             { visitor->begin_list(); }
+      '(' stmt_sequence ')'          { visitor->end_list(); }
+  | LineSegment_2 line_segment_2
+  | Polyline_2 polyline_2
+  | Circle_2 circle_2
+  | CircleArc_2 circle_arc_2
+  | IsoEllipse_2 iso_ellipse_2
+  | IsoEllipseArc_2 iso_ellipse_arc_2
   | Conic_2 conic_2
   | ConicArc_2 conic_arc_2
   | transformed_conic
   | Cubic_2 '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ','
                 INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
-                                 { visitor->accept_cubic_2( $3, $5, $7, $9,
-                                                            $11, $13, $15,
-                                                            $17, $19, $21); }
+      { visitor->accept_cubic_2($3, $5, $7, $9, $11, $13, $15,$17, $19, $21); }
   | Quadric_3 quadric_3
   | csg_operation_3
   | polynomial
-;
+  ;
+
+line_segment_2:
+    '('                              { visitor->begin_line_segment_2(); }
+      line_segment_2_body ')'        { visitor->end_line_segment_2(); }
+  ;
+
+line_segment_2_body:
+    point_2 ',' point_2
+  ;
+
+polyline_2:
+    '('                              { visitor->begin_polyline_2(); }
+      polyline_2_body ')'            { visitor->end_polyline_2(); }
+  ;
+
+polyline_2_body:
+    point_2 ',' point_2_list
+  ;
 
 circle_2:
+    '('                              { visitor->begin_circle_2(); }
+      circle_2_body ')'              { visitor->end_circle_2(); }
+  ;
+
+circle_2_body:
     point_2 ',' intorrat
   | point_2 ',' point_2 ',' point_2
+  ;
+
+circle_arc_2:
+    '('                              { visitor->begin_circle_arc_2(); }
+      circle_arc_2_body ')'          { visitor->end_circle_arc_2(); }    
+
+circle_arc_2_body:
+    point_2 ',' point_2 ',' point_2
+  ;
+
+iso_ellipse_2:
+    '('                              { visitor->begin_iso_ellipse_2(); }
+      iso_ellipse_2_body ')'         { visitor->end_iso_ellipse_2(); }
+  ;
+
+iso_ellipse_2_body:
+    point_2 ',' intorrat ',' intorrat
+  ;
+
+iso_ellipse_arc_2:
+    '('                              { visitor->begin_iso_ellipse_arc_2(); }
+      iso_ellipse_arc_2_body ')'     { visitor->end_iso_ellipse_arc_2(); }
+  ;
+
+iso_ellipse_arc_2_body:
+    IsoEllipse_2 iso_ellipse_2 ',' point_2 ',' point_2 ','
+      orientation                    { visitor->accept_orientation( $8); }
   ;
 
 polynomial: /* */
     // directly encoding '<' does not work, interestingly ...
     Polynomial ST INTEGER optional_typename GT
-                                 { polynom_varcount = atoi( $3.c_str() );
-                                   visitor->begin_polynomial( polynom_varcount, expected_number_type->name() );
-                                 }
-      '(' monom_list ')'         { visitor->end_polynomial(); 
-                                   delete expected_number_type; }
-  | Polynomial_1                 { visitor->begin_polynomial_1(); }
-      '(' integer_sequence1 ')'  { visitor->end_polynomial_1(); }
+      { 
+        polynom_varcount = atoi( $3.c_str() );
+        visitor->begin_polynomial( polynom_varcount,
+        expected_number_type->name() );
+      }
+      '(' monom_list ')'             {
+                                       visitor->end_polynomial(); 
+                                       delete expected_number_type; 
+                                     }
+  | Polynomial_1                     { visitor->begin_polynomial_1(); }
+      '(' integer_sequence1 ')'      { visitor->end_polynomial_1(); }
   ;
 
 optional_typename :
-    /* empty */                  { expected_number_type = new Integer_type(); }
-  | ',' typename                 { expected_number_type = number_type_stack.top(); 
-                                   number_type_stack.pop(); 
-                                   assert( number_type_stack.size() == 0 );
-                                 }
+    /* empty */              { expected_number_type = new Integer_type(); }
+  | ',' typename             { 
+                               expected_number_type = number_type_stack.top();
+                               number_type_stack.pop(); 
+                               assert( number_type_stack.size() == 0 );
+                             }
   ;
 
 typename :
-     Sqrt_extension ST typename ',' typename GT { assert( number_type_stack.size() >= 2 );
-                                                  Number_type *t1 = number_type_stack.top(); number_type_stack.pop();
-                                                  Number_type *t0 = number_type_stack.top(); number_type_stack.pop();
-                                                  number_type_stack.push( new Sqrt_extension_type( t0, t1 ) ); }
-  |  Rational                                   { number_type_stack.push( new Rational_type() );   }
-  |  Integer                                    { number_type_stack.push( new Integer_type() );    }
+    Sqrt_extension ST typename ',' typename GT 
+      { 
+        assert( number_type_stack.size() >= 2 );
+        Number_type *t1 = number_type_stack.top(); 
+        number_type_stack.pop();
+        Number_type *t0 = number_type_stack.top();
+        number_type_stack.pop();
+        number_type_stack.push( new Sqrt_extension_type( t0, t1 ) ); 
+      }
+  |  Rational                { number_type_stack.push( new Rational_type() ); }
+  |  Integer                 { number_type_stack.push( new Integer_type() ); }
   ;  
 
 monom_list:
@@ -303,226 +360,216 @@ point_2_list:
 
 monom:
     '(' numeric_value ','
-    {
-      visitor->begin_monom( $2 );
-      int_sequence_counter = 0;
-    }
-    '(' integer_sequence1 ')' ')'
-    {
-      visitor->end_monom();
-      if( int_sequence_counter != polynom_varcount ) {
-        std::stringstream errmsg;
-        errmsg << "expected monom with " << polynom_varcount
-               << " variables.";
-        yyerror( errmsg.str().c_str() );
+      {
+        visitor->begin_monom( $2 );
+        int_sequence_counter = 0;
       }
-    }
+    '(' integer_sequence1 ')' ')'
+      {
+        visitor->end_monom();
+        if( int_sequence_counter != polynom_varcount ) {
+          std::stringstream errmsg;
+          errmsg << "expected monom with " << polynom_varcount 
+		 << " variables.";
+          yyerror( errmsg.str().c_str() );
+        }
+      }
   ;
 
 numeric_value:
-  numeric_value1        { Number_type *actual_number_type = number_type_stack.top();
-                          number_type_stack.pop();
-                          if( ! expected_number_type->is_equal( actual_number_type ) ) {
-                            yyerror( ("type mismatch. expected \n" + expected_number_type->name() + 
-                                     "\nbut got\n" + actual_number_type->name()).c_str() );
-                            exit(EXIT_FAILURE);
-                          } else
-                            $$ = $1; 
-                          delete actual_number_type;
-                        }
+    numeric_value1
+      { 
+        Number_type *actual_number_type = number_type_stack.top();
+        number_type_stack.pop();
+        if( ! expected_number_type->is_equal( actual_number_type ) ) {
+          yyerror( ("type mismatch. expected \n" + 
+                    expected_number_type->name() + 
+                    "\nbut got\n" + actual_number_type->name()).c_str() );
+          exit(EXIT_FAILURE);
+        } else
+          $$ = $1; 
+        delete actual_number_type;
+      }
   ;
   
   
-  
-
-
 numeric_value1:
-    INTEGER                              { $$ = $1;
-                                           number_type_stack.push( new Integer_type() );  }
-  | Rational '(' INTEGER ',' INTEGER ')' { $$ = "RAT[" + $3 + "," + $5 + "]";
-                                           number_type_stack.push( new Rational_type() );  }
+    INTEGER
+      {
+        $$ = $1;
+        number_type_stack.push( new Integer_type() );
+      }
+  | Rational '(' INTEGER ',' INTEGER ')' 
+      {
+        $$ = "RAT[" + $3 + "," + $5 + "]";
+        number_type_stack.push( new Rational_type() );
+      }
   | Sqrt_extension '(' numeric_value1 ',' numeric_value1 ',' numeric_value1 ')'
-                                         { $$ = "EXT[" + $3 + "," + $5 + "," + $7 + "]";
-                                           assert( number_type_stack.size() >= 3 );
-                                           Number_type *t2 = number_type_stack.top(); number_type_stack.pop();
-                                           Number_type *t1 = number_type_stack.top(); number_type_stack.pop();
-                                           Number_type *t0 = number_type_stack.top(); number_type_stack.pop();
+      {
+        $$ = "EXT[" + $3 + "," + $5 + "," + $7 + "]";
+        assert( number_type_stack.size() >= 3 );
+        Number_type *t2 = number_type_stack.top(); number_type_stack.pop();
+        Number_type *t1 = number_type_stack.top(); number_type_stack.pop();
+        Number_type *t0 = number_type_stack.top(); number_type_stack.pop();
 
-                                           if( ! t1->is_equal( t0 ) ) {
-                                             yyerror( "type mismatch. for sqrt_ext, t0 and t1 should be equal" );
-                                             exit(EXIT_FAILURE);
-                                           }
-                                           number_type_stack.push( new Sqrt_extension_type( t0, t2 ) );
-                                         }
+        if( ! t1->is_equal( t0 ) ) {
+          yyerror( "type mismatch. for sqrt_ext, t0 and t1 should be equal" );
+          exit(EXIT_FAILURE);
+        }
+        number_type_stack.push( new Sqrt_extension_type( t0, t2 ) );
+      }
   ;
 
 conic: /* */
-    error_rules                  {}
+    error_rules                      {}
   | Conic_2 conic_2
   | transformed_conic
-;
+  ;
 
 conic_2: /* */
-    error_rules                  {}
-  | '(' INTEGER ',' INTEGER ',' INTEGER ','
-        INTEGER ',' INTEGER ',' INTEGER ')'
-                                 { visitor->accept_conic_2( $2, $4, $6,
-                                                            $8, $10, $12); }
-;
+    error_rules                      {}
+  | '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
+      { visitor->accept_conic_2($2, $4, $6, $8, $10, $12); }
+  ;
 
 
 transformed_conic:  /* */
-    Rotate_2                      { visitor->begin_rotate_2(); }
-            '(' Degree '(' INTEGER
-                                  {visitor->accept_integer( $6); }
-            ')' ',' point_2 ',' conic ')'
-                                  { visitor->end_rotate_2(); }
+    Rotate_2 '('                     { visitor->begin_rotate_2(); }
+      Degree '(' INTEGER ')'         { visitor->accept_integer( $6); }
+      ',' point_2 ',' conic ')'      { visitor->end_rotate_2(); }
+  | Translate_2 '('                  { visitor->begin_translate_2(); }
+      Vector_2 '('                   { visitor->begin_vector_2(); }
+        rational ',' rational ')'    { visitor->end_vector_2(); }
+      ',' conic ')'                  { visitor->end_translate_2(); }
+  ;
 
-  | Translate_2                   { visitor->begin_translate_2(); }
-            '(' Vector_2          { visitor->begin_vector_2(); }
-                    '(' rational ',' rational ')'
-                                  { visitor->end_vector_2(); }
-             ',' conic ')'
-                                  { visitor->end_translate_2(); }
+conic_arc_2:
+    '('                              { visitor->begin_conic_arc_2(); }
+      conic_arc_2_body ')'           { visitor->end_conic_arc_2(); }
+  ;
 
-;
-
-conic_arc_2: /* */
+conic_arc_2_body: /* */
      error_rules {}
-  | '(' Conic_2                  { visitor->begin_conic_arc_2(); }
-            conic_2
-        ',' ConicPoint_2 conic_point_2
-        ',' ConicPoint_2 conic_point_2
-	',' orientation          { visitor->accept_orientation( $12); }
-     ')'
-                                 { visitor->end_conic_arc_2(); }
+  | Conic_2 conic_2 ',' 
+      ConicPoint_2 conic_point_2 ',' ConicPoint_2 conic_point_2 ','
+      orientation                    { visitor->accept_orientation( $10); }
+  | Conic_2 conic_2 ',' point_2 ',' point_2 ','
+      orientation                    { visitor->accept_orientation( $8); }
 
-
-  | '(' ConicPoint_2             { visitor->begin_conic_arc_2(); }
-            conic_point_2 ')'
-                                 { visitor->end_conic_arc_2(); }
-
-;
+  | ConicPoint_2 conic_point_2
+  ;
 
 integer_sequence1: /* comma separated integers */
-    INTEGER                       { visitor->accept_integer( $1); ++int_sequence_counter; }
-  | integer_sequence1 ',' INTEGER { visitor->accept_integer( $3); ++int_sequence_counter; }
-;
-
+    INTEGER          
+      { visitor->accept_integer( $1); ++int_sequence_counter; }
+  | integer_sequence1 ',' INTEGER 
+      { visitor->accept_integer( $3); ++int_sequence_counter; }
+  ;
 
 point_2: /* a 2d point */
-    Point_2 '(' INTEGER ',' INTEGER ')'
-                                  { visitor->accept_point_2( $3, $5); }
+    Point_2 '(' INTEGER ',' INTEGER ')' 
+                                     { visitor->accept_point_2( $3, $5); }
   | Point_2 '(' INTEGER ',' INTEGER ',' INTEGER ')'
-                                  { visitor->accept_point_2( $3, $5, $7); }
+                                     { visitor->accept_point_2( $3, $5, $7); }
   | Point_2 '(' Rational '(' INTEGER ',' INTEGER ')' ','
                 Rational '(' INTEGER ',' INTEGER ')' ')'
-                                  { visitor->accept_point_2( $5, $7,
-                                                             $12, $14); }
-;
+                                { visitor->accept_point_2( $5, $7, $12, $14); }
+  ;
 
 conic_point_2: /* */
-    '(' Conic_2                   { visitor->begin_conic_point_2();}
-            conic_2
-        ',' algorint
-     ')'                          { visitor->end_conic_point_2(); }
-
-;
+    '('                              { visitor->begin_conic_point_2();}
+    Conic_2 conic_2 ',' algorint ')' { visitor->end_conic_point_2(); }
+  ;
 
 algorint: /* */
     algebraic_real ',' inti
-  | infty ',' INTEGER             { visitor->accept_infty( $1);
-                                    visitor->accept_integer( $3); }
-;
+  | infty                            { visitor->accept_infty( $1); }
+      ',' INTEGER                    { visitor->accept_integer( $3); }
+  ;
 
 
 algebraic_real: /* */
-    AlgebraicReal                 { visitor->begin_algebraic_real(); }
-        '(' Polynomial_1          { visitor->begin_polynomial_1(); }
-              '(' integer_sequence1 ')'
-                                  { visitor->end_polynomial_1(); }
-
-        ',' rational
-        ',' rational
-        ',' INTEGER               { visitor->accept_integer($15); }
-        ')'                       { visitor->end_algebraic_real(); }
-;
+    AlgebraicReal '('                { visitor->begin_algebraic_real(); }
+      Polynomial_1 '('               { visitor->begin_polynomial_1(); }
+        integer_sequence1 ')'        { visitor->end_polynomial_1(); }
+      ',' rational ',' rational ',' 
+      INTEGER                        { visitor->accept_integer($15); }
+    ')'                              { visitor->end_algebraic_real(); }
+  ;
 
 intorrat: /* */
-    INTEGER                       { visitor->accept_integer( $1); }
+    INTEGER                          { visitor->accept_integer( $1); }
   | rational
-;
+  ;
 
 rational: /* */
    Rational '(' INTEGER ',' INTEGER ')'
-                                  { visitor->accept_rational( $3, $5); }
-;
+                                     { visitor->accept_rational( $3, $5); }
+  ;
 
 inti: /* */
     algebraic_real
-  | INTEGER                       { visitor->accept_integer( $1); }
-  | infty                         { visitor->accept_infty( $1); }
-
-;
+  | INTEGER                          { visitor->accept_integer( $1); }
+  | infty                            { visitor->accept_infty( $1); }
+  ;
 
 infty: /* */
     MINUS_INFTY
   | PLUS_INFTY
-;
+  ;
 
 orientation: /* */
     COUNTERCLOCKWISE
   | CLOCKWISE
   | VOID
-;
+  ;
 
 /*
 double_val: // a double value can be either an FNUMBER or an INTEGER
     FNUMBER
-  | INTEGER                     { visitor->accept_integer( $1); }
-;
+  | INTEGER                          { visitor->accept_integer( $1); }
+  ;
 */
 
 error_rules: /* */
-    ERROR                       { visitor->parse_error( $1); }
-  | UNKNOWN_TOKEN               { visitor->unknown_token( $1); }
-;
+    ERROR                            { visitor->parse_error( $1); }
+  | UNKNOWN_TOKEN                    { visitor->unknown_token( $1); }
+  ;
 
 quadric_3:
     '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ','
         INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
-                                { visitor->accept_quadric_3( $3, $5, $7, $9,
-                                                             $11, $13, $15,
-                                                             $17, $19, $21); }
-;
+      { visitor->accept_quadric_3( $3, $5, $7, $9, $11, 
+                                   $13, $15, $17, $19, $21); }
+  ;
 
 csg_operation_3:
-    CSGOperationUnion_3         { visitor->begin_csg_union_3(); }
-    csg_operation_union_3       { visitor->end_csg_union_3(); }
-  | CSGOperationIntersection_3  { visitor->begin_csg_intersection_3(); }
-    csg_operation_intersection_3 { visitor->end_csg_intersection_3(); }
-  | CSGOperationNegation_3      { visitor->begin_csg_negation_3(); }
-    csg_operation_negation_3    { visitor->end_csg_negation_3(); }
-;
+    CSGOperationUnion_3              { visitor->begin_csg_union_3(); }
+      csg_operation_union_3          { visitor->end_csg_union_3(); }
+  | CSGOperationIntersection_3       { visitor->begin_csg_intersection_3(); }
+      csg_operation_intersection_3   { visitor->end_csg_intersection_3(); }
+  | CSGOperationNegation_3           { visitor->begin_csg_negation_3(); }
+      csg_operation_negation_3       { visitor->end_csg_negation_3(); }
+  ;
 
 csg_operation_union_3:
-  '(' quadric_3 ',' quadric_3 ')'
+    '(' quadric_3 ',' quadric_3 ')'
   | '(' quadric_3 ',' csg_operation_3 ')'
   | '(' csg_operation_3 ',' quadric_3 ')'
   | '(' csg_operation_3 ',' csg_operation_3 ')'
-;
+  ;
 
 csg_operation_intersection_3:
-  '(' quadric_3 ',' quadric_3 ')'
+    '(' quadric_3 ',' quadric_3 ')'
   | '(' quadric_3 ',' csg_operation_3 ')'
   | '(' csg_operation_3 ',' quadric_3 ')'
   | '(' csg_operation_3 ',' csg_operation_3 ')'
-;
+  ;
 
 csg_operation_negation_3:
-  '(' quadric_3 ')'
+    '(' quadric_3 ')'
   | '(' csg_operation_3 ')'
-;
+  ;
 
 /* End of Grammar */
 /* ============== */

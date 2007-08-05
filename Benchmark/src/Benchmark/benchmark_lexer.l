@@ -117,9 +117,6 @@ static int  comment_nesting = 0; // counts nesting depth of () in Comments
 %x IncludeMode
 %x CommentMode
 
-/* the scanner is never interactive */
-%option never-interactive
-
 space           [\t \r]*
 newline         [\n]
 spcnl           [\t \n\r]*
@@ -171,6 +168,11 @@ GT              [>]
 "ConicArc_2"                    { return ConicArc_2; }
 
 "Circle_2"                      { return Circle_2; }
+"CircleArc_2"                   { return CircleArc_2; }
+
+"IsoEllipse_2"                  { return IsoEllipse_2; }
+"IsoEllipseArc_2"               { return IsoEllipseArc_2; }
+
 "LineSegment_2"                 { return LineSegment_2; }
 "Cubic_2"                       { return Cubic_2; }
 "Polyline_2"                    { return Polyline_2; }
