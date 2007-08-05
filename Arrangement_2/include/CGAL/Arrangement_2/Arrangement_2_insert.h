@@ -53,7 +53,7 @@ CGAL_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------------
 // Insert a curve into the arrangement (incremental insertion).
-// The inserted x-monotone curve may intersect the existing arrangement.
+// The inserted curve may intersect the existing arrangement.
 //
 // The last parameter is used to resolve ambiguity between this function and 
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and 
