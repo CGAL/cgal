@@ -102,11 +102,32 @@ private:
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
   // Data members:
-  Bezier_cache  _cache;   // Caches vertical tangency points and intersection
-                          // points that have been exactly computed.
+  Bezier_cache      *_cache;      // Caches vertical tangency points and
+                                  // intersection points that have been
+                                  // exactly computed.
 
-  Intersection_map  _inter_map;   // Mapping curve pairs to their intersection
+  Intersection_map  *_inter_map;  // Mapping curve pairs to their intersection
                                   // points.
+
+  bool               _owner;      // Does the traits class own its structures.
+
+  /*! \struct _Less_vertical_tangency_bounds
+   * Functor used inside Make_x_monotone_2 to sort points by their bounded
+   * t-parameter.
+   */
+  struct _Less_vertical_tangency_bounds
+  {
+    typedef std::pair<typename Bounding_traits::Bez_point_bound,
+                      typename Bounding_traits::Bez_point_bbox>   Tang_bound;
+
+    bool operator() (const Tang_bound& b1,
+                     const Tang_bound& b2) const
+    {
+      // Compare the pairs based on their t_min (this is possible, since the
+      // t-bounds are disjoint).
+      return (b1.first.t_min < b2.first.t_min);
+    }
+  };
 
 public:
 
@@ -114,7 +135,32 @@ public:
    * Default constructor.
    */
   Arr_Bezier_curve_traits_2 ()
+  {
+    _cache = new Bezier_cache;
+    _inter_map = new Intersection_map;
+    _owner = true;
+  }
+    
+  /*!
+   * Copy constructor.
+   */
+  Arr_Bezier_curve_traits_2 (const Self& tr) :
+    _cache (tr._cache),
+    _inter_map (tr._inter_map),
+    _owner (false)
   {}
+
+  /*!
+   * Destructor.
+   */
+  ~Arr_Bezier_curve_traits_2 ()
+  {
+    if (_owner)
+    {
+      delete _cache;
+      delete _inter_map;
+    }
+  }
 
   /// \name Functor definitions.
   //@{
@@ -130,8 +176,8 @@ public:
   public:
 
     /*! Constructor. */
-    Compare_x_2 (const Bezier_cache& cache) :
-      p_cache (&cache)
+    Compare_x_2 (const Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -166,8 +212,8 @@ public:
   public:
 
     /*! Constructor. */
-    Compare_xy_2 (const Bezier_cache& cache) :
-      p_cache (&cache)
+    Compare_xy_2 (const Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -271,8 +317,8 @@ public:
   public:
 
     /*! Constructor. */
-    Compare_y_at_x_2 (const Bezier_cache& cache) :
-      p_cache (&cache)
+    Compare_y_at_x_2 (const Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -311,8 +357,8 @@ public:
   public:
 
     /*! Constructor. */
-    Compare_y_at_x_left_2 (const Bezier_cache& cache) :
-      p_cache (&cache)
+    Compare_y_at_x_left_2 (const Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -352,8 +398,8 @@ public:
   public:
 
     /*! Constructor. */
-    Compare_y_at_x_right_2 (const Bezier_cache& cache) :
-      p_cache (&cache)
+    Compare_y_at_x_right_2 (const Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -393,8 +439,8 @@ public:
   public:
 
     /*! Constructor. */
-    Equal_2 (const Bezier_cache& cache) :
-      p_cache (&cache)
+    Equal_2 (const Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -440,8 +486,8 @@ public:
   public:
 
     /*! Constructor. */
-    Make_x_monotone_2 (Bezier_cache& cache) :
-      p_cache (&cache)
+    Make_x_monotone_2 (Bezier_cache *cache) :
+      p_cache (cache)
     {}
 
     /*!
@@ -469,33 +515,19 @@ public:
 
       bound_tr.vertical_tangency_points (cpts, 0, 1, tang_bounds);
 
-      // Go over the computed bounds approximated for the vertical tangency
-      // points in increasing order of their t parameters, and construct
-      // Point_2 objects from the bounded tangency points.
+      // Sort the vertical tangency points according to their t parameters.
+      // Ron: Can't the bounding traits return them sorted?
+      tang_bounds.sort (_Less_vertical_tangency_bounds());
+      
+      // Construct Point_2 from bounded tangency points.
       std::list<Point_2>                            tang_points;
       bool                                          app_ok = true;
+      typename std::list<Tang_pair>::const_iterator iter;
 
-      while (! tang_bounds.empty())
+      for (iter = tang_bounds.begin(); iter != tang_bounds.end(); ++iter)
       {
-        // Locate the bound with minimal t-value.
-        typename std::list<Tang_pair>::const_iterator iter;
-        typename std::list<Tang_pair>::const_iterator it_min;
-
-        it_min = iter = tang_bounds.begin();
-        ++iter;
-        while (iter != tang_bounds.end())
-        {
-          if (CGAL::compare (iter->first.t_min,
-                             it_min->first.t_min) == SMALLER)
-          {
-            it_min = iter;
-          }
-          ++iter;
-        }
-
-        // Continue with the bound for the point with minimal t-value.
-        const typename Bounding_traits::Bez_point_bound& bound = it_min->first;
-        const typename Bounding_traits::Bez_point_bbox&  bbox = it_min->second;
+        const typename Bounding_traits::Bez_point_bound& bound = iter->first;
+        const typename Bounding_traits::Bez_point_bbox&  bbox = iter->second;
 
         if (! bound.can_refine)
         {
@@ -509,7 +541,8 @@ public:
         // Construct an approximate vertical tangency point.
         Point_2   pt;
 
-        if (bound.point_type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
+        if (bound.point_type ==
+            Bounding_traits::Bez_point_bound::RATIONAL_PT)
         {
           CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL); 
           Rational  t0 = bound.t_min;
@@ -627,9 +660,9 @@ public:
   public:
 
     /*! Constructor. */
-    Intersect_2 (Bezier_cache& cache, Intersection_map& imap) :
-      p_cache (&cache),
-      p_imap (&imap)
+    Intersect_2 (Bezier_cache *cache, Intersection_map *imap) :
+      p_cache (cache),
+      p_imap (imap)
     {}
 
     /*!
