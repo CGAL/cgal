@@ -193,6 +193,12 @@ public:
     virtual void begin_iso_ellipse_2() { tnh("Begin_is_ellipse_2"); }
     virtual void end_iso_ellipse_2() { tnh("End_iso_ellipse_2"); }
 
+    virtual void begin_circle_arc_2() { tnh( "Begin_circle_arc_2" );}
+    virtual void end_circle_arc_2()   { tnh( "End_circle_arc_2" );}
+
+    virtual void begin_iso_ellipse_arc_2() { tnh( "Begin_iso_ellipse_arc_2" );}
+    virtual void end_iso_ellipse_arc_2()   { tnh( "End_iso_ellipse_arc_2" );}
+
     virtual void accept_cubic_2(std::string A, std::string B, std::string C,
                                 std::string D, std::string E, std::string F,
                                 std::string G, std::string H, std::string K,
