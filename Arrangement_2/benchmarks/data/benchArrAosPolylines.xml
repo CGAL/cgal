@@ -56,11 +56,21 @@
   <bench samples="10" file="sines.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -69,11 +79,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
@@ -85,11 +107,21 @@
   <bench samples="10" file="circs_pol_10.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -98,11 +130,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
@@ -114,11 +158,21 @@
   <bench samples="10" file="netherland_border.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -127,11 +181,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
@@ -143,11 +209,21 @@
   <bench samples="10" file="netherland_cities.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -156,11 +232,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
@@ -172,11 +260,21 @@
   <bench samples="10" file="netherland_oceans.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -185,11 +283,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
@@ -201,11 +311,21 @@
   <bench samples="10" file="netherland_rivers.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -214,11 +334,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
@@ -230,11 +362,21 @@
   <bench samples="10" file="netherland_streets.bff" enable="true">
     <bench>
       <benchArrCgalGmpqCartesianNonCachingPolyline print_header="1"/>
-      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
+      <benchAosCgalGmpqCartesianNonCachingPolyline/>
+
       <benchArrLazyCgalGmpqCartesianNonCachingPolyline/>
+      <benchAosLazyCgalGmpqCartesianNonCachingPolyline/>
+      
       <benchArrLazyQuotientCartesianNonCachingPolyline/>
+      <benchAosLazyQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCartesianNonCachingPolyline/>
+      <benchAosQuotientCartesianNonCachingPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianNonCachingPolyline/>
+      <benchAosQuotientCgalGmpzCartesianNonCachingPolyline/>
+      
+      <benchArrCgalGmpqExactNonCachingPolyline enable="false"/>
       <benchArrLazyRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatCartesianNonCachingPolyline enable="false"/>
       <benchArrLedaRatSimpleCartesianNonCachingPolyline enable="false"/>
@@ -243,11 +385,23 @@
 
     <bench>
       <benchArrCgalGmpqCartesianPolyline print_header="1"/>
+      <benchAosCgalGmpqCartesianPolyline/>
+      
       <benchArrCgalGmpqExactPolyline/>
+      <benchAosCgalGmpqExactPolyline/>
+      
       <benchArrLazyCgalGmpqCartesianPolyline/>
+      <benchAosLazyCgalGmpqCartesianPolyline/>
+      
       <benchArrLazyQuotientCartesianPolyline/>
+      <benchAosLazyQuotientCartesianPolyline/>
+      
       <benchArrQuotientCartesianPolyline/>
+      <benchAosQuotientCartesianPolyline/>
+      
       <benchArrQuotientCgalGmpzCartesianPolyline/>
+      <benchAosQuotientCgalGmpzCartesianPolyline/>
+      
       <benchArrLazyRatCartesianPolyline enable="false"/>
       <benchArrLedaRatCartesianPolyline enable="false"/>
       <benchArrLedaRatLedaPolyline enable="false"/>
