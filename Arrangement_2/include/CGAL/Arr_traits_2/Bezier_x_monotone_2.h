@@ -939,13 +939,24 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
   if (this == &cv)
     return (EQUAL);
   
-  // Make sure that p equals the left endpoint of both curves. Note that this
-  // is important to carry out this test, as it assures us the eventually both
-  // curves are originators of p.
-  if (! p.equals (left(), cache) || ! p.equals (cv.left(), cache))
+  // Make sure that p is incident to both curves (either equals the left
+  // endpoint or lies in the curve interior). Note that this is important to
+  // carry out these tests, as it assures us the eventually both curves are
+  // originators of p.
+  if (! p.equals (left(), cache))
   {
-    CGAL_assertion (p.get_originator(_curve) != p.originators_end() &&
-                    p.get_originator(cv._curve) != p.originators_end());
+    if (point_position (p, cache) != EQUAL)
+    {
+      CGAL_precondition_msg (false, "p is not on cv1");
+    }
+  }
+  
+  if (! p.equals (cv.left(), cache))
+  {
+    if (cv.point_position (p, cache) != EQUAL)
+    {
+      CGAL_precondition_msg (false, "p is not on cv2");
+    }
   }
 
   // Check for vertical subcurves. A vertical segment is above any other
@@ -1062,13 +1073,24 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
   if (this == &cv)
     return (EQUAL);
 
-  // Make sure that p equals the right endpoint of both curves. Note that this
-  // is important to carry out this test, as it assures us the eventually both
-  // curves are originators of p.
-  if (! p.equals (right(), cache) || ! p.equals (cv.right(), cache))
+  // Make sure that p is incident to both curves (either equals the right
+  // endpoint or lies in the curve interior). Note that this is important to
+  // carry out these tests, as it assures us the eventually both curves are
+  // originators of p.
+  if (! p.equals (right(), cache))
   {
-    CGAL_assertion (p.get_originator(_curve) != p.originators_end() &&
-                    p.get_originator(cv._curve) != p.originators_end());
+    if (point_position (p, cache) != EQUAL)
+    {
+      CGAL_precondition_msg (false, "p is not on cv1");
+    }
+  }
+
+  if (! p.equals (cv.right(), cache))
+  {
+    if (cv.point_position (p, cache) != EQUAL)
+    {
+      CGAL_precondition_msg (false, "p is not on cv2");
+    }
   }
   
   // Check for vertical subcurves. A vertical segment is below any other
