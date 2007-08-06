@@ -50,7 +50,7 @@ int main()
 {   
     test_modular_traits<int>();
 #ifdef CGAL_USE_LEDA
-    test_modular_traits<leda::intger>();
+    test_modular_traits<leda::integer>();
 #endif
 #ifdef CGAL_USE_CORE
     test_modular_traits<CORE::BigInt>();
