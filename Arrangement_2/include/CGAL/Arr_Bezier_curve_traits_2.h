@@ -111,24 +111,6 @@ private:
 
   bool               _owner;      // Does the traits class own its structures.
 
-  /*! \struct _Less_vertical_tangency_bounds
-   * Functor used inside Make_x_monotone_2 to sort points by their bounded
-   * t-parameter.
-   */
-  struct _Less_vertical_tangency_bounds
-  {
-    typedef std::pair<typename Bounding_traits::Bez_point_bound,
-                      typename Bounding_traits::Bez_point_bbox>   Tang_bound;
-
-    bool operator() (const Tang_bound& b1,
-                     const Tang_bound& b2) const
-    {
-      // Compare the pairs based on their t_min (this is possible, since the
-      // t-bounds are disjoint).
-      return (b1.first.t_min < b2.first.t_min);
-    }
-  };
-
 public:
 
   /*!
@@ -149,6 +131,20 @@ public:
     _inter_map (tr._inter_map),
     _owner (false)
   {}
+
+  /*!
+   * Assignment operator.
+   */
+  Self& operator= (const Self& tr)
+  {
+    if (this == &tr)
+      return (*this);
+
+    _cache = tr._cache;
+    _inter_map = tr._inter_map;
+    _owner = false;
+    return (*this);
+  }
 
   /*!
    * Destructor.
@@ -515,19 +511,33 @@ public:
 
       bound_tr.vertical_tangency_points (cpts, 0, 1, tang_bounds);
 
-      // Sort the vertical tangency points according to their t parameters.
-      // Ron: Can't the bounding traits return them sorted?
-      tang_bounds.sort (_Less_vertical_tangency_bounds());
-      
-      // Construct Point_2 from bounded tangency points.
+      // Go over the computed bounds approximated for the vertical tangency
+      // points in increasing order of their t parameters, and construct
+      // Point_2 objects from the bounded tangency points.
       std::list<Point_2>                            tang_points;
       bool                                          app_ok = true;
-      typename std::list<Tang_pair>::const_iterator iter;
 
-      for (iter = tang_bounds.begin(); iter != tang_bounds.end(); ++iter)
+      while (! tang_bounds.empty())
       {
-        const typename Bounding_traits::Bez_point_bound& bound = iter->first;
-        const typename Bounding_traits::Bez_point_bbox&  bbox = iter->second;
+        // Locate the bound with minimal t-value.
+        typename std::list<Tang_pair>::iterator   iter;
+        typename std::list<Tang_pair>::iterator   it_min;
+
+        it_min = iter = tang_bounds.begin();
+        ++iter;
+        while (iter != tang_bounds.end())
+        {
+          if (CGAL::compare (iter->first.t_min,
+                             it_min->first.t_min) == SMALLER)
+          {
+            it_min = iter;
+          }
+          ++iter;
+        }
+
+        // Continue with the bound for the point with minimal t-value.
+        const typename Bounding_traits::Bez_point_bound& bound = it_min->first;
+        const typename Bounding_traits::Bez_point_bbox&  bbox = it_min->second;
 
         if (! bound.can_refine)
         {
@@ -541,8 +551,7 @@ public:
         // Construct an approximate vertical tangency point.
         Point_2   pt;
 
-        if (bound.point_type ==
-            Bounding_traits::Bez_point_bound::RATIONAL_PT)
+        if (bound.point_type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
         {
           CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL); 
           Rational  t0 = bound.t_min;
@@ -556,6 +565,9 @@ public:
         pt.set_bbox (bbox);
 
         tang_points.push_back(pt);
+
+        // Remove the tangency point with minimal t-value from the list.
+        tang_bounds.erase (it_min);
       }
 
       // If bounding the approximated vertical-tangency points went fine,
