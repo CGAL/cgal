@@ -49,8 +49,11 @@ void test_modular_traits(){
 int main()
 {   
     test_modular_traits<int>();
-//    test_modular_traits<long>();
-    for (int i = 0 ; i < 64 ; i++){
-        std::cout <<i<< ": "<<CGAL::primes[i] << std::endl;
-    }
+#ifdef CGAL_USE_LEDA
+    test_modular_traits<leda::intger>();
+#endif
+#ifdef CGAL_USE_CORE
+    test_modular_traits<CORE::BigInt>();
+#endif
+
 }
