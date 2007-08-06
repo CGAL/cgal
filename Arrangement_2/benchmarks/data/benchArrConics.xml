@@ -37,6 +37,8 @@
   <clo name="type_mask" string="--type-mask"/> 
   <clo name="strategy_mask" string="--strategy-mask"/> 
 
+  <file name="big_circ_arcs.bff" curves="40"
+    vertices="115" halfedges="368" faces="74"></file>
   <file name="hyper_ellip_18.bff" curves="18"
     vertices="104" halfedges="312" faces="54"></file>
   <file name="box_25_16_org_big.bff" curves="41"
@@ -60,81 +62,64 @@
   <file name="mix_50.bff" curves="50"
     vertices="357" halfedges="1322" faces="306"></file>
 
+  <bench samples="10" file="big_circ_arcs.bff" enable="true">
+    <benchArrCoreExprCartesianCoreConic print_header="1"/>
+    <benchAosCoreExprCartesianCoreConic/>
+  </bench>
+
   <bench samples="10" file="hyper_ellip_18.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="box_25_16_org_big.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="cgal_logo_460.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="circles_21.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="ellipses_30.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="int_circs_30.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="rose_with_holes_14.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="tng_circs_8.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="tng_ellipses_9.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="mix_20.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
   <bench samples="10" file="mix_50.bff" enable="true">
     <benchArrCoreExprCartesianCoreConic print_header="1"/>
     <benchAosCoreExprCartesianCoreConic/>
-    <benchArrCoreExprSimpleCartesianCoreConic/>
-    <benchAosCoreExprSimpleCartesianCoreConic/>
   </bench>
 
 </bench>
