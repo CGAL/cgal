@@ -28,6 +28,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Arr_traits_2/de_Casteljau_2.h>
+#include <CGAL/Sweep_line_2_algorithms.h>
+
 #include <algorithm>
 #include <deque>
 #include <vector>
@@ -136,7 +138,9 @@ public:
    * Constructor from a given range of control points.
    * \param pts_begin An iterator pointing to the first point in the range.
    * \param pts_end A past-the-end iterator for the range.
-   * \pre The value-type of the input iterator must be Rat_kernel::Point_2.
+   *        The value-type of the input iterators must be Rat_kernel::Point_2.
+   * \pre There must be at least 2 control points, and the polyline defined
+   *      by these points may not be self intersecting.
    */
   template <class InputIterator>
   _Bezier_curve_2_rep (InputIterator pts_begin, InputIterator pts_end) :
@@ -145,6 +149,25 @@ public:
     p_polyY(NULL),
     p_normY(NULL)
   {
+    // Make sure that the control polyline is not self-intersecting.
+    CGAL_expensive_precondition_code (
+      Rat_kernel        ker;
+      InputIterator     pt_curr = pts_begin;
+      InputIterator     pt_next = pt_curr;
+      std::list<typename Rat_kernel::Segment_2>  segs;
+
+      ++pt_next;
+      while (pt_next != pts_end)
+      {
+        segs.push_back (ker.construct_segment_2_object() (*pt_curr, *pt_next));
+        pt_curr = pt_next;
+        ++pt_next;
+      }
+    );
+    CGAL_expensive_precondition_msg
+        (! do_curves_intersect (segs.begin(), segs.end()),
+         "The control polyline may be be self-intersecting.");
+
     // Copy the control points and compute their bounding box.
     const int   pts_size = std::distance (pts_begin, pts_end);
     double      x, y;
@@ -326,6 +349,8 @@ public:
    * \param pts_begin An iterator pointing to the first point in the range.
    * \param pts_end A past-the-end iterator for the range.
    * \pre The value-type of the input iterator must be Rat_kernel::Point_2.
+   * \pre There must be at least 2 control points, and the polyline defined
+   *      by these points may not be self intersecting.
    */
   template <class InputIterator>
   _Bezier_curve_2 (InputIterator pts_begin, InputIterator pts_end) :
