@@ -7,6 +7,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Testsuite/assert.h>
 #include <CGAL/Modular_traits.h>
+#include <CGAL/Sqrt_extension.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -51,9 +52,13 @@ int main()
     test_modular_traits<int>();
 #ifdef CGAL_USE_LEDA
     test_modular_traits<leda::integer>();
+    test_modular_traits<leda::rational>();
+    test_modular_traits<CGAL::Sqrt_extension< leda::integer, leda::integer > >();
 #endif
 #ifdef CGAL_USE_CORE
     test_modular_traits<CORE::BigInt>();
+    test_modular_traits<CORE::BigRat>();
+    test_modular_traits<CGAL::Sqrt_extension< CORE::BigInt, CORE::BigInt > >();
 #endif
 
 }
