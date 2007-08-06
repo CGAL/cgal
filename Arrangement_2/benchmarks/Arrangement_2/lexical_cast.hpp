@@ -9,7 +9,6 @@
 #include <CGAL/basic.h>
 #include <string>
 #include <sstream>
-#include <assert.h>
 #include <boost/lexical_cast.hpp>
 
 #include "number_type.hpp"

@@ -147,15 +147,15 @@ public:
         Rat_point_2 & point = this->m_points.back();
         Rational radius_square = m_bigints.back();
         Rat_circle_2 circle(point, radius_square);
-        Curve_2 conic(circle);
-        ++m_output_iterator = conic;
+        m_conic = circle;
+        if (!m_processing_arc) ++m_output_iterator = m_conic;
+        this->m_points.clear();
 
         double radius = sqrt(CGAL::to_double(radius_square));
         double x = CGAL::to_double(point.x());
         double y = CGAL::to_double(point.y());
         CGAL::Bbox_2 b(x - radius, y - radius, x + radius, y + radius);
         this->m_bbox = this->m_bbox + b;
-        
         return;
       }
 
@@ -164,8 +164,24 @@ public:
       const Rat_point_2 & p2 = *it++;
       const Rat_point_2 & p3 = *it++;
       Rat_circle_2 circle(p1, p2, p3);
-      Curve_2 conic(circle);
-      ++m_output_iterator = conic;
+      m_conic = circle;
+      if (!m_processing_arc) ++m_output_iterator = m_conic;
+      this->m_points.clear();
+    }
+
+    /*! End an arc */
+    void end_arc()
+    {
+      m_processing_arc = false;
+      CGAL_assertion(this->m_points.size() == 2);
+      Rat_point_2 & ps_rat = this->m_points.front();
+      Rat_point_2 & pt_rat = this->m_points.back();
+      Point_2 ps(ps_rat.x(), ps_rat.y());
+      Point_2 pt(pt_rat.x(), pt_rat.y());
+      Curve_2 conic_arc(m_conic.r(), m_conic.s(), m_conic.t(),
+                        m_conic.u(), m_conic.v(), m_conic.w(),
+                        m_orient, ps ,pt);
+      ++m_output_iterator = conic_arc;
     }
     
     /*! Start a circle arc */
@@ -174,13 +190,16 @@ public:
     /*! End a circle arc */
     virtual void end_circle_arc_2()
     {
-      m_processing_arc = false;
-      typename Base::Rat_point_iter it = this->m_points.begin();
-      const Rat_point_2 & p1 = *it++;
-      const Rat_point_2 & p2 = *it++;
-      const Rat_point_2 & p3 = *it++;
-      Curve_2 curve(p1, p2, p3);
-      ++m_output_iterator = curve;
+      if (this->m_points.size() == 3) {
+        typename Base::Rat_point_iter it = this->m_points.begin();
+        const Rat_point_2 & p1 = *it++;
+        const Rat_point_2 & p2 = *it++;
+        const Rat_point_2 & p3 = *it++;
+        Curve_2 curve(p1, p2, p3);
+        ++m_output_iterator = curve;
+        return;
+      }
+      end_arc();
     }
 
     /*! Start an iso-ellipse */
@@ -209,30 +228,15 @@ public:
       CGAL::Bbox_2 b(xd - rx, yd - rx, xd + ry, yd + ry);
       this->m_bbox = this->m_bbox + b;
 
-      this->m_points.clear();
       if (!m_processing_arc) ++m_output_iterator = m_conic;
+      this->m_points.clear();
     }
 
     /*! Start an ellipse arc */
     virtual void begin_iso_ellipse_arc_2() { begin_arc(); }
 
     /*! End an ellipse arc */
-    virtual void end_iso_ellipse_arc_2()
-    {
-      m_processing_arc = false;
-      if (this->m_points.size() == 2) {
-        Rat_point_2 & ps_rat = this->m_points.front();
-        Rat_point_2 & pt_rat = this->m_points.back();
-        Point_2 ps(ps_rat.x(), ps_rat.y());
-        Point_2 pt(pt_rat.x(), pt_rat.y());
-        Curve_2 conic_arc(m_conic.r(), m_conic.s(), m_conic.t(),
-                          m_conic.u(), m_conic.v(), m_conic.w(),
-                          m_orient, ps ,pt);
-        ++m_output_iterator = conic_arc;
-        return;
-      }
-      std::cerr << "unsupported iso ellipse arc!" << std::endl;
-    }
+    virtual void end_iso_ellipse_arc_2() { end_arc(); }
     
     /*! Accept a conic curve */
     virtual void accept_conic_2(std::string r_str, std::string s_str,
@@ -253,22 +257,7 @@ public:
     virtual void begin_conic_arc_2() { begin_arc(); }
 
     /*! End a conic arc */
-    virtual void end_conic_arc_2()
-    {
-      m_processing_arc = false;
-      if (this->m_points.size() == 2) {
-        Rat_point_2 & ps_rat = this->m_points.front();
-        Rat_point_2 & pt_rat = this->m_points.back();
-        Point_2 ps(ps_rat.x(), ps_rat.y());
-        Point_2 pt(pt_rat.x(), pt_rat.y());
-        Curve_2 conic_arc(m_conic.r(), m_conic.s(), m_conic.t(),
-                          m_conic.u(), m_conic.v(), m_conic.w(),
-                          m_orient, ps ,pt);
-        ++m_output_iterator = conic_arc;
-        return;
-      }
-      std::cerr << "unsupported conic arc!" << std::endl;
-    }
+    virtual void end_conic_arc_2() { end_arc(); }
   };
 
   /*! Read the conic curves or arcs of conic curves  from the input file
