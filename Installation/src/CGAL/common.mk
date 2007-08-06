@@ -127,6 +127,6 @@ BISON ?=bison
 # Apparently, old versions of bison (e.g., 1.28) name the generated definion
 # header file <base>.cpp.h. The file must be renamed to <base>.hpp
 	@if [ ! -e $*.hpp -a -e $*.cpp.h ]; then \
-	  echo Moving $*.hpp to $*.cpp.h \
+	  echo Moving $*.hpp to $*.cpp.h; \
 	  mv $*.cpp.h $*.hpp; \
 	fi
