@@ -288,6 +288,8 @@ circle_arc_2:
 
 circle_arc_2_body:
     point_2 ',' point_2 ',' point_2
+  | Circle_2 circle_2 ',' point_2 ',' point_2 ','
+      orientation                    { visitor->accept_orientation( $8); }
   ;
 
 iso_ellipse_2:
