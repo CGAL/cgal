@@ -49,7 +49,7 @@
     vertices="1504" halfedges="5408" faces="1202"></file>
   <file name="random_segments_100_x.bff" format="int" curves="100"
     vertices="1129" halfedges="3916" faces="831"></file>
-  <file name="onebig_250_x.bff" format="int" curves="104"
+  <file name="onebig_250_x.bff" format="int" curves="250"
     vertices="1504" halfedges="5408" faces="1202"></file>
   <file name="random_segments_500_x.bff" format="int" curves="500"
     vertices="1129" halfedges="3916" faces="831"></file>
