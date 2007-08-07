@@ -174,6 +174,12 @@ TARGET0 := $(TARGET0)Arr
 LOBJDIR :=$(LOBJDIR)_arr
 endif
 
+ifeq ($(DISAVLE_LAZY), 1)
+LCPPDEFS+= -DCGAL_DONT_USE_LAZY_KERNEL
+TARGET0 := $(TARGET0)LazyDisabled
+LOBJDIR :=$(LOBJDIR)_lazy_disabled
+endif
+
 # Number Type:
 LCPPDEFS+= -DBENCH_NT=$(BENCH_NT)
 
@@ -350,6 +356,11 @@ endif
 # Traits counting
 ifeq ($(CGAL_TRAITS_COUNTING), 1)
 LCPPDEFS+= -DCGAL_TRAITS_COUNTING
+endif
+
+# Traits tracing
+ifeq ($(CGAL_TRAITS_TRACING), 1)
+LCPPDEFS+= -DCGAL_TRAITS_TRACING
 endif
 
 # Window system

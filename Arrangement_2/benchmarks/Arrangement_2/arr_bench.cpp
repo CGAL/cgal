@@ -4,6 +4,9 @@
 #if defined(CGAL_TRAITS_COUNTING)
 #include <CGAL/Arr_counting_traits_2.h>
 #endif
+#if defined(CGAL_TRAITS_TRACING)
+#include <CGAL/Arr_tracing_traits_2.h>
+#endif
 
 #include "bench_config.hpp"
 #include "number_type.hpp"
@@ -205,6 +208,8 @@ typedef SoX::CGAL_Arr_2_for_GAPS_traits< Input_segment, CST> Base_traits;
 // Arrangement types:
 #if defined(CGAL_TRAITS_COUNTING)
 typedef CGAL::Arr_counting_traits_2<Base_traits>        Traits;
+#elif defined(CGAL_TRAITS_TRACING)
+typedef CGAL::Arr_tracing_traits_2<Base_traits>         Traits;
 #else
 typedef  Base_traits                                    Traits;
 #endif
