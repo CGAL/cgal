@@ -1,3 +1,5 @@
+- voir 2 mails recents (juillet 07) de Laurent R. ~ bug fix
+- documenter le 2eme tableau de Triangulation_utils
 
  Regular_triangulation_euclidean_traits_3.h
 - add  a functor Construct_smallest_orthogonal_weighted_point_3
