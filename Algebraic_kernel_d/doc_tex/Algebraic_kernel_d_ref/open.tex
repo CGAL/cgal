@@ -12,7 +12,8 @@
 \subsection{done} 
 \begin{itemize}
 \item MakeCoprime: changed return type to bool\\
-      because IsCoprime is almost as costly as computing the coprime parts iff the polynomials are not coprime. This avoids caching. 
+      because IsCoprime is almost as costly as computing the coprime
+      parts iff the polynomials are not coprime. This avoids caching.  
 \item all functors for \ccc{PolynomialTraits\_d} \ccc{PolynomialToolBox\_d}
       are documented.
 \item added \ccc{SquareFreeFactorization_1}
@@ -23,10 +24,13 @@
 
 
 \section{Questions}
-\subsection{Open}
 \begin{itemize}
-\item problem is due to \ccc{AK_1}<double>.\\
-      The Boundary type is documented as dense in R, which is not true for double.
+\item problem is due to \ccc{AK_1}$<double>$.\\
+    The Boundary type is documented as dense in R, which is not true
+    for double.\\ (Monique: But well, double is also documented as a
+    field, while it is obviously not (no operation is associative
+    due to rounding errors). So, the density problem is not worse
+    than usual problems for double.)
  \item Names of CurveVerticalLine\_1 and CurvePairVerticalLine\_1?
  \item Use "int" at all places, or stick to distinction of \texttt{unsigned
    int} + \texttt{int}?
