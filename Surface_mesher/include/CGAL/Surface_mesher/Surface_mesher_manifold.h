@@ -217,7 +217,11 @@ namespace CGAL {
     std::string debug_info() const
     {
       std::stringstream s;
-      s << SMMBB::debug_info() << "," << bad_vertices.size();
+      s << SMMBB::debug_info() << ",";
+      if(bad_vertices_initialized) 
+	s << bad_vertices.size();
+      else
+	s << "non manifold vertices not initialized"
       return s.str();
     }
 

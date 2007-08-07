@@ -327,7 +327,11 @@ namespace CGAL {
     std::string debug_info() const
     {
       std::stringstream s;
-      s << SMB::debug_info() << "," << bad_edges.size();
+      s << SMB::debug_info() << ",";
+      if(bad_edges_initialized)
+	s << bad_edges.size();
+      else
+	s << "non manifold edges not initialized";
       return s.str();
     }
 
