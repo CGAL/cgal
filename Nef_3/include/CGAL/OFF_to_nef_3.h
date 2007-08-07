@@ -29,6 +29,7 @@
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Nef_S2/Normalizing.h>
+#include<CGAL/Nef_3/Nary_union.h>
 
 #ifdef CGAL_USE_LEDA
 #include<CGAL/leda_integer.h>
@@ -108,22 +109,20 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 {
    // Nef
    typedef typename Nef_3::Kernel          Kernel;
-   typedef typename Nef_3::Point_3           Point_3;
-   typedef typename std::vector<Point_3>       Point_set;
-   typedef std::multimap<typename Nef_3::Size_type,Nef_3> Nef_map;
-   typedef typename Nef_map::iterator      Nef_map_iter;
-
+   typedef typename Nef_3::Point_3         Point_3;
+   typedef typename std::vector<Point_3>   Point_set;
+   CGAL::Nary_union<Nef_3>                 nary_union;
    // input data structure
    typedef double	                   Scan_NT;
    typedef CGAL::Cartesian<Scan_NT>        Scan_kernel;
-   typedef Scan_kernel::Point_3              Scan_point;
-   typedef std::vector<Scan_point>             Scan_point_set;
-   typedef Scan_kernel::Vector_3             Scan_vector;
+   typedef Scan_kernel::Point_3            Scan_point;
+   typedef std::vector<Scan_point>         Scan_point_set;
+   typedef Scan_kernel::Vector_3           Scan_vector;
 
    typedef CGAL::Scanner_OFF<Scan_kernel>  Scan_OFF;
-   typedef Scan_OFF::Vertex_iterator         Scan_vertex_it;
-   typedef Scan_OFF::Facet_iterator          Scan_facet_it;
-   typedef Scan_OFF::Index_iterator          Scan_index_it;
+   typedef Scan_OFF::Vertex_iterator       Scan_vertex_it;
+   typedef Scan_OFF::Facet_iterator        Scan_facet_it;
+   typedef Scan_OFF::Index_iterator        Scan_index_it;
 
    typedef typename Kernel::Kernel_tag Kernel_tag;
    typedef typename CGAL::number_type_converter_nef_3<Kernel_tag,Kernel> ntc;
@@ -131,7 +130,6 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    // declarations and defaults
    std::size_t discarded_facets=0;
    long idx;
-   Nef_map nef_map; // priority queue
 
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER
    CGAL::Timer t_convert, t_union;
@@ -190,7 +188,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
          // construct and enqueue Nef_polyhedron_3 <Kernel>
          Nef_3 nef (V_f.begin(), V_f.end(), normal, verb);
          if ( !nef.is_empty() )
-         {  nef_map.insert (std::make_pair(nef.number_of_vertices(),nef));
+	   {nary_union.add_polyhedron(nef);
             is_nef = true;
          }
       }
@@ -216,27 +214,18 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    t_union.start();
 #endif
 
-   while ( nef_map.size() > 1 )
-   {  Nef_map_iter nm=nef_map.begin(), nm2=nef_map.begin();
-      ++nm2;
-      Nef_3 nef_tmp ((nm->second)+(nm2->second));
-      nef_map.insert ( std::make_pair(nef_tmp.number_of_vertices(),nef_tmp));
-      nef_map.erase(nm);
-      nef_map.erase(nm2);
-   }
-
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER
    t_union.stop();
    std::cout << "time (union): " << t_union.time() << "\n" << std::endl;
 #endif
 
    // return values
-   if ( nef_map.size() == 0 ) nef_union = Nef_3 ();
-   else
-   {  nef_union = nef_map.begin()->second;
-      CGAL::Mark_bounded_volumes<Nef_3> mbv (true);
-      nef_union.delegate (mbv);
-   }
+   //   if ( nef_map.size() == 0 ) nef_union = Nef_3 ();
+   //   else
+   nef_union = nary_union.get_union();
+   CGAL::Mark_bounded_volumes<Nef_3> mbv (true);
+   nef_union.delegate (mbv);
+
    return discarded_facets;
 }
 
