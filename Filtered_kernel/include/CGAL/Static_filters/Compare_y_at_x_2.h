@@ -14,7 +14,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Andreas Meyer
 
@@ -44,19 +43,21 @@ public:
     // compares the y-coordinates of p and the vertical projection of p on s.
     // Precondition : p is in the x-range of s.
     
-    CGAL_kernel_precondition(p.x() >= min(s.source().x(), s.target().x()) &&
-                             p.x() <= max(s.source().x(), s.target().x()));
+    typename Kernel::Less_x_2 less_x = Kernel().less_x_2_object();
+    typename Kernel::Less_y_2 less_y = Kernel().less_y_2_object();
+    typename Kernel::Orientation_2 orientation = Kernel().orientation_2_object();
+
+    CGAL_kernel_precondition( ! ( (less_x(p, s.source()) && less_x(p, s.target())) ||
+		                  (less_x(s.source(), p) && less_x(s.target(), p)) ) );
     
-    if( Kernel().less_x_2_object()( s.source(), s.target() ) )
-      return enum_cast<Comparison_result>(Kernel().orientation_2_object()
-                                          (p, s.source(), s.target() ));
-    else if ( Kernel().less_x_2_object()( s.target(), s.source() ) )
-      return enum_cast<Comparison_result>(Kernel().orientation_2_object()
-                                          (p, s.target(), s.source() ));
+    if( less_x( s.source(), s.target() ) )
+      return enum_cast<Comparison_result>(orientation(p, s.source(), s.target() ));
+    else if ( less_x( s.target(), s.source() ) )
+      return enum_cast<Comparison_result>(orientation(p, s.target(), s.source() ));
     else {
-      if( p.y() < min(s.target().y(), s.source().y()) )
+      if( less_y(p, s.source()) && less_y(p, s.target()) )
         return SMALLER;
-      if( max(s.target().y(), s.source().y()) < p.y() )
+      if( less_y(s.source(), p) && less_y(s.target(), p) )
         return LARGER;
       return EQUAL;
     }
