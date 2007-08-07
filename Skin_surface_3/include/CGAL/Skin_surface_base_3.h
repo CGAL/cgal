@@ -146,18 +146,19 @@ public:
 
   
   template <class Gt2>
-  typename Gt2::Bare_point
-  get_weighted_circumcenter(const Simplex &s, Gt2 &traits) const; 
+  static typename Gt2::Bare_point
+  get_weighted_circumcenter(const Simplex &s, Gt2 &traits);
 
   Vector
   normal(const Bare_point &p, 
          TMC_Cell_handle start = TMC_Cell_handle()) const;
-private:
-  void construct_bounding_box(); 
 
   template <class Gt2>
-  typename Gt2::Bare_point
-  get_anchor_point(const Anchor_point &anchor, Gt2 &traits) const;
+  static typename Gt2::Bare_point
+  get_anchor_point(const Anchor_point &anchor, Gt2 &traits);
+
+private:
+  void construct_bounding_box(); 
 
   template< class Traits >
   Skin_surface_quadratic_surface_3<Traits> 
@@ -555,7 +556,7 @@ template <class MixedComplexTraits_3>
 template <class Gt2>
 typename Gt2::Bare_point
 Skin_surface_base_3<MixedComplexTraits_3>::
-get_anchor_point(const Anchor_point &anchor, Gt2 &traits) const {
+get_anchor_point(const Anchor_point &anchor, Gt2 &traits) {
   typename Gt2::Bare_point p_del, p_vor;
   p_del = get_weighted_circumcenter(anchor.first, traits);
   p_vor = get_weighted_circumcenter(anchor.second, traits);
@@ -697,54 +698,8 @@ locate_in_tmc(const Bare_point &p0,
       Protect_FPU_rounding<true> P;
 
       o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
-
-//       Skin_surface_traits_3<TMC_Geom_traits> filtered_traits(shrink_factor());
-//       std::cout << "* [" 
-//                 << c->vertex(i==0?1:0)->info().first << " - " 
-//                 << c->vertex(i==0?1:0)->info().second << "] -- [" 
-//                 << c->vertex(i==0?1:0)->point() << "]" << std::endl;
-//       std::cout << "# [" 
-//                 << c->vertex(i==0?1:0)->info().first << " - " 
-//                 << c->vertex(i==0?1:0)->info().second << "] -- [" 
-//                 << get_anchor_point(c->vertex(i==0?1:0)->info(),filtered_traits) << "] -- ["
-//                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().first, filtered_traits) << " - "
-//                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().second, filtered_traits) 
-//                 << "]" << std::endl;
-
-//       Protect_FPU_rounding<false> P2(CGAL_FE_TONEAREST);
-//       typedef Exact_predicates_exact_constructions_kernel EK;
-//       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
-
-//       Skin_surface_traits_3<EK> exact_traits(shrink_factor());
-   
-//       typename EK::Point_3 e_pts[4];
-
-//       // We know that the 4 vertices of c are positively oriented.
-//       // So, in order to test if p is seen outside from one of c's facets,
-//       // we just replace the corresponding point by p in the orientation
-//       // test.  We do this using the array below.
-//       for (int k=0; k<4; k++) {
-//         if (k != i) {
-//           e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
-//         } else {
-//           e_pts[k] = converter_ek(p0);
-//         }
-//       }
-
-
-// //       std::cout << "% [" 
-// //                 << c->vertex(i==0?1:0)->info().first << " - " 
-// //                 << c->vertex(i==0?1:0)->info().second << "] -- [" 
-// //                 << get_anchor_point(c->vertex(i==0?1:0)->info(),exact_traits) << "] -- ["
-// //                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().first, exact_traits) << " - "
-// //                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().second, exact_traits) 
-// //                 << "]" << std::endl;
-
-//       CGAL_assertion(o == orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]));
-
     } catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-//       std::cout << "exact" << std::endl;
       typedef Exact_predicates_exact_constructions_kernel EK;
       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
 
@@ -790,7 +745,7 @@ template <class MixedComplexTraits_3>
 template <class Gt2>
 typename Gt2::Bare_point
 Skin_surface_base_3<MixedComplexTraits_3>::
-get_weighted_circumcenter(const Simplex &s, Gt2 &traits) const {
+get_weighted_circumcenter(const Simplex &s, Gt2 &traits) {
   Vertex_handle vh;
   Edge           e;
   Facet          f;

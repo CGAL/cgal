@@ -250,7 +250,12 @@ private:
   void do_collapse(Tmc_Vertex_handle vh, Tmc_Vertex_handle vh_collapse_to);
   
 
+  Sign orientation(Tmc_Cell_handle ch);
+
+
+
 private:
+
   Regular const &regular;
   Rt_FT const &shrink;
   Triangulated_mixed_complex &_tmc;
@@ -1009,30 +1014,23 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
 add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s) {
-  assert((orient==0) || (orient==1));
-  assert(vh[0] != Tmc_Vertex_handle()); assert(vh[1] != Tmc_Vertex_handle());
-  assert(vh[2] != Tmc_Vertex_handle()); assert(vh[3] != Tmc_Vertex_handle());
-  assert(vh[1] != vh[2]); assert(vh[1] != vh[3]); assert(vh[1] != vh[4]);
-  assert(vh[2] != vh[3]); assert(vh[2] != vh[4]); assert(vh[3] != vh[4]);
+  CGAL_assertion((orient==0) || (orient==1));
+  CGAL_assertion(vh[0] != Tmc_Vertex_handle()); 
+  CGAL_assertion(vh[1] != Tmc_Vertex_handle());
+  CGAL_assertion(vh[2] != Tmc_Vertex_handle()); 
+  CGAL_assertion(vh[3] != Tmc_Vertex_handle());
+  CGAL_assertion(vh[1] != vh[2]); CGAL_assertion(vh[1] != vh[3]); 
+  CGAL_assertion(vh[1] != vh[4]); CGAL_assertion(vh[2] != vh[3]); 
+  CGAL_assertion(vh[2] != vh[4]); CGAL_assertion(vh[3] != vh[4]);
 
   Tmc_Cell_handle ch;
 
   if (orient) {
-    if (orientation(vh[0]->point(), vh[1]->point(),
-		    vh[2]->point(), vh[3]->point()) != POSITIVE) {
-      std::cout << orientation(vh[0]->point(), vh[1]->point(),
-			       vh[2]->point(), vh[3]->point())<< std::endl;
-    }
-    CGAL_assertion(orientation(
-			       vh[0]->point(), vh[1]->point(),
-			       vh[2]->point(), vh[3]->point()) == POSITIVE);
     ch = triangulation_incr_builder.add_cell(vh[0], vh[1], vh[2], vh[3]);
   } else {
-    CGAL_assertion(orientation(
-			       vh[0]->point(), vh[1]->point(),
-			       vh[3]->point(), vh[2]->point()) == POSITIVE);
     ch = triangulation_incr_builder.add_cell(vh[0], vh[1], vh[3], vh[2]);
   }
+  CGAL_assertion(orientation(ch) == POSITIVE);
   observer.after_cell_insertion(s, ch);
   return ch;
 }
@@ -1241,6 +1239,56 @@ do_collapse(Tmc_Vertex_handle vh,
     }
   }
   _tmc.tds().delete_vertex(vh);
+}
+
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+Sign 
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+orientation(Tmc_Cell_handle ch) {
+  Orientation o;
+  try {
+    Tmc_Point pts[4];
+    for (int i=0; i<4; i++) pts[i] = ch->vertex(i)->point();
+
+    Protect_FPU_rounding<true> P;
+    
+    // filtered kernel
+    o = _tmc.geom_traits().orientation_3_object()(pts[0], pts[1], 
+                                                  pts[2], pts[3]);
+  } catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+    typedef Exact_predicates_exact_constructions_kernel EK;
+    typedef Cartesian_converter<EK, Tmc_traits>         Exact_converter;
+    typedef Skin_surface_traits_3<EK>                   Exact_traits;
+
+    Exact_converter converter;
+    Exact_traits    exact_traits(shrink);
+    typename EK::Point_3 e_pts[4];
+
+    for (int k=0; k<4; k++) {
+      e_pts[k] = 
+        Skin_surface_base_3<Regular_traits>::
+        get_anchor_point(ch->vertex(k)->info(), exact_traits);
+      // Store the more precise point
+      ch->vertex(k)->point() = converter(e_pts[k]);
+    }
+    o = exact_traits.orientation_3_object()(e_pts[0], e_pts[1], 
+                                            e_pts[2], e_pts[3]);
+  }
+  return o;
+//   return CGAL::orientation(ch->vertex(0)->point(), 
+//                            ch->vertex(1)->point(),
+//                            ch->vertex(2)->point(),
+//                            ch->vertex(3)->point());
+
+  // NGHK: Hack, how to use filtered points?
+  return POSITIVE;
 }
 
 template < 
