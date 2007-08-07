@@ -161,7 +161,7 @@ namespace Surface_mesher {
 
       // index_c and index_d are the two others indices in *current_cell.
       const int index_c = tr.next_around_edge(index_a, index_b);
-      const int index_d = 6 - index_a - index_b - index_c;
+      const int index_d = tr.next_around_edge(index_b, index_a);
       CGAL_assertion(index_c == current_cell->index(next_cell));
       // vertices c and d are the corresponding two vertices, in *circ.
       const Vertex_handle& vc = current_cell->vertex(index_c);
