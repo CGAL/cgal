@@ -166,8 +166,10 @@ void trivial_segment(Vertex_handle v, IT it) const
   if(CGAL::assign(se, si._o)) {
     if(se->source()->point() != v->point())
       se = se->twin();
-    CGAL_assertion(se->source()->point() == v->point());
-    G.supp_object(v,si._from) = Object_handle(se->source());
+    if(se->source()->point() != v->point())
+      G.supp_object(v,si._from) = si._o;
+    else
+      G.supp_object(v,si._from) = Object_handle(se->source());
   } else if(CGAL::assign(sl, si._o)) {
     G.supp_object(v,si._from) = si._o;
   } else if(CGAL::assign(sv, si._o)) {
@@ -1500,6 +1502,7 @@ subdivide(const Map* M0, const Map* M1,
   if(compute_halfsphere[cs][0]) {
     PH_geometry phg(cs);
 
+    /*   
     // the following is only needed for indexed items
     SHalfedge_const_handle se;
     SHalfloop_const_handle sl;
@@ -1511,11 +1514,12 @@ subdivide(const Map* M0, const Map* M1,
 	  if(it->sphere_circle() == se->circle())
 	    From[it] = Seg_info(se->twin(), From[it]._from);
 	} else if(CGAL::assign(sl, o)) {
-	  CGAL_assertion(it->sphere_circle()==sl->circle());
-	  From[it] = Seg_info(sl->twin(), From[it]._from);
+	  if(it->sphere_circle() == sl->circle())
+	    From[it] = Seg_info(sl->twin(), From[it]._from);
 	}
       }
     }
+ */
 
     Positive_halfsphere_sweep SP(
 	Input_range(L_pos.begin(),L_pos.end()),O,phg);
@@ -1529,6 +1533,7 @@ subdivide(const Map* M0, const Map* M1,
   if(compute_halfsphere[cs][1]) {
     NH_geometry nhg(cs);
 
+    /*
     SHalfedge_const_handle se;
     SHalfloop_const_handle sl;
     for(Seg_iterator it=L_neg.begin(); it!=L_neg.end();++it) {
@@ -1539,11 +1544,12 @@ subdivide(const Map* M0, const Map* M1,
 	  if(it->sphere_circle() == se->circle())
 	    From[it] = Seg_info(se->twin(), From[it]._from);
 	} else if(CGAL::assign(sl, o)) {
-	  CGAL_assertion(it->sphere_circle()==sl->circle());
+	  if(it->sphere_circle() == sl->circle())
 	  From[it] = Seg_info(sl->twin(), From[it]._from);
 	}
       }
     }
+    */
 
     Negative_halfsphere_sweep SM(
         Input_range(L_neg.begin(),L_neg.end()),O,
@@ -1650,7 +1656,7 @@ template <typename Map>
 template <typename Association>
 void SM_overlayer<Map>::
 transfer_data(Association& A) {
-  //  std::cerr << "transfer data " << std::endl;
+
   SVertex_iterator sv;
   SHalfedge_handle se;
   SVertex_const_handle sv0,sv1;
@@ -1880,8 +1886,14 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
       CGAL_NEF_TRACEN("  face cycle numbering "<<i);
       CGAL_For_all(hfc,hend) {
 	SFaceCycle[hfc]=i; // assign face cycle number
-	if ( SG.compare_xy(hfc->twin()->source()->point(), e_min->twin()->source()->point()) < 0 )
-	  e_min = hfc;      
+	if (hfc->twin()->source() == e_min->twin()->source()) {
+	  Sphere_point p1 = e->source()->point(), 
+	    p2 = e->twin()->source()->point(), 
+	    p3 = e->snext()->twin()->source()->point();	  
+	  if ( SG.orientation(p1,p2,p3) <= 0 )
+	    e_min = hfc;
+	} else if ( SG.compare_xy(hfc->twin()->source()->point(), e_min->twin()->source()->point()) < 0 )
+	  e_min = hfc;    
 	CGAL_NEF_TRACEN(PH(hfc));
       } CGAL_NEF_TRACEN("");
       MinimalSHalfedge.push_back(e_min);

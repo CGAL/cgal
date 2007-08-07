@@ -58,7 +58,7 @@ class Normalizing<Homogeneous_tag> {
     g=CGAL_NTS abs(g);
 
     for(; i!=end; ++i)
-      *i/=g;
+      *i = CGAL::integral_division(*i,g);
   }
 
   template <typename R> static
