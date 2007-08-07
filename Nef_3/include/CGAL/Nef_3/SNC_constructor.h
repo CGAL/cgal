@@ -44,7 +44,6 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_2/debug.h>
-//#include <CGAL/Nef_3/Progress_indicator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -141,7 +140,7 @@ public:
   typedef CGAL::SM_decorator<Sphere_map>                 SM_decorator;  
   typedef CGAL::SNC_SM_overlayer<Items, SM_decorator>    SM_overlayer;
   typedef CGAL::SM_const_decorator<Sphere_map>           SM_const_decorator;
-  typedef CGAL::SM_point_locator<SM_const_decorator>     SM_point_locator;
+  typedef CGAL::SM_point_locator<SM_decorator>           SM_point_locator;
 
   typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
   typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
@@ -548,7 +547,7 @@ public:
 				      ps.hz(),true,true);
   }
 
-  Vertex_handle create_from_facet(Halffacet_handle f,
+  Vertex_handle create_from_facet(Halffacet_const_handle f,
 				  const Point_3& p) {
     return create_from_plane(f->plane(), p, 
 			     f->mark(), 
@@ -559,14 +558,14 @@ public:
   /*{\Mop produces the sphere map at point $p$ representing the local
      view of $f$. \precond $p$ is part of $f$.}*/
 
-  Vertex_handle create_from_edge(Halfedge_handle e,
+  Vertex_handle create_from_edge(Halfedge_const_handle e,
 				 const Point_3& p) {
     //    typedef typename CGAL::SNC_const_decorator<SNC_structure> SNC_const_decorator;
     
     //    CGAL_assertion(SNC_const_decorator::segment(e).has_on(p));
     Vertex_handle v = this->sncp()->new_vertex( p, e->mark());
     SM_decorator D(&*v);
-    SM_decorator E(&*e->source());
+    SM_const_decorator E(&*e->source());
     Sphere_point ps = e->point();
     SVertex_handle v1 = D.new_svertex(ps);
     SVertex_handle v2 = D.new_svertex(ps.antipode());
@@ -591,7 +590,8 @@ public:
       f->mark() = e->incident_sface()->mark();
     }
     
-    SHalfedge_around_svertex_circulator ec1(e->out_sedge()), ee(ec1);
+    SHalfedge_around_svertex_const_circulator 
+      ec1(e->out_sedge()), ee(ec1);
     SHalfedge_handle e1,e2;
     CGAL_For_all(ec1,ee) {
       if (first) e1 = D.new_shalfedge_pair(v1,v2);
@@ -680,6 +680,7 @@ public:
       D.set_face(sl->twin(), FM[E.shalfloop()->twin()->incident_sface()]);
       sl->circle() = E.shalfloop()->circle();
       sl->twin()->circle() = E.shalfloop()->twin()->circle();
+      sl->mark() = sl->twin()->mark() = E.shalfloop()->mark();
     }
     
     CGAL_forall_svertices(sv, E) {
@@ -713,6 +714,287 @@ public:
     
     return vout;
   }
+
+  
+#ifdef CGAL_NEF_EXPERIMENTAL_CODE
+  template<typename Selection, typename Association>
+  Sphere_map* create_edge_edge_overlay( Halfedge_const_handle e0,
+					Halfedge_const_handle e1,
+					const Point_3& p,
+					const Selection& BOP, bool inv,
+					Association& ) {
+    
+    std::cerr << "edge_edge " << p << std::endl;
+
+    SM_const_decorator E(&*e1->source());
+    if(E.is_isolated(e0)) {
+      if(E.is_isolated(e1)) {
+	CGAL_assertion_msg(false, "not implemented, yet");
+
+      } else {
+	std::swap(e0, e1);
+	inv = !inv;
+	E = SM_const_decorator(&*e1->source());
+      }
+    }
+    
+    Vertex_handle v(create_from_edge(e0,p));
+    v->mark() = BOP(v->mark(), e1->mark(), inv);
+    SM_decorator D(&*v);
+    SVertex_handle sv[4];
+    sv[0] = sv[1] = v->svertices_begin();
+    ++sv[1];
+
+    SM_point_locator PL(&*v);
+    Object_handle o2 = PL.locate(e1->point());
+    Object_handle o3 = PL.locate(e1->twin()->point());
+    sv[2] = D.new_svertex(e1->point());
+    sv[3] = D.new_svertex(e1->twin()->point());
+    
+    Vector_3 vec0 = sv[0]->point() - CGAL::ORIGIN;
+    Vector_3 vec1 = sv[2]->point() - CGAL::ORIGIN;
+    Plane_3 mid_plane(Point_3(0,0,0), cross_product(vec0, vec1));
+
+    bool splitted[2];
+    splitted[0] = splitted[1] = false;
+    bool on_sface[2];
+
+    SHalfedge_handle se0, se1;
+    SFace_handle sf0, sf1;
+    SHalfedge_around_svertex_circulator 
+      seb[2], see[2];
+    SHalfedge_around_svertex_const_circulator 
+      scb[2], sce[2];
+
+    on_sface[0] = CGAL::assign(sf0, o2);
+    on_sface[1] = CGAL::assign(sf1, o3);
+
+    if(on_sface[0]) {
+      std::cerr << "found sf0 " << std::endl;
+      sv[2]->mark() = BOP(sf0->mark(), e1->mark(), inv);
+      SFace_cycle_iterator sfci(sf0->sface_cycles_begin());
+      CGAL_assertion_msg(sfci.is_shalfedge(), "not implemented, yet");
+      SHalfedge_handle se_tmp(sfci);
+      see[0] = se_tmp;
+      if(see[0]->source() != sv[0]) see[0] = see[0]->snext();
+      seb[1] = see[0];
+    } else {
+      CGAL::assign(se0, o2);
+      CGAL_assertion(CGAL::assign(se0, o2));
+      std::cerr << "found se0 " << se0->source()->point()
+		<< "->" << se0->twin()->source()->point() << std::endl;
+      std::cerr << "insert sv " << sv[2]->point() << std::endl;
+      if(se0->source() != sv[0]) se0 = se0->twin();
+      CGAL_assertion(se0->source() == sv[0]);
+      sv[2]->mark() = BOP(se0->mark(), e1->mark(), inv);
+      SHalfedge_handle se_new =
+	D.new_shalfedge_pair();
+      se_new->source() = sv[2];
+      se_new->twin()->source() = se0->twin()->source();
+      se0->twin()->source() = sv[2];
+
+      se_new->snext() = se0->snext();
+      se0->snext()->sprev() = se_new;
+      se_new->twin()->sprev() = se0->twin()->sprev();
+      se0->twin()->sprev()->snext() = se_new->twin();
+
+      se0->snext() = se_new;
+      se0->twin()->sprev() = se_new->twin();
+      se_new->sprev() = se0;
+      se_new->twin()->snext() = se0->twin();
+
+      se_new->mark() = se_new->twin()->mark() = se0->mark();
+      se_new->incident_sface() = se0->incident_sface();
+      se_new->twin()->incident_sface() = se0->twin()->incident_sface();
+      se_new->circle() = se0->circle();
+      se_new->twin()->circle() = se0->twin()->circle();
+
+      SM_io_parser<SM_decorator>::dump(D, std::cerr);
+
+      see[0] = seb[1]= se0;
+      ++seb[1];
+    } 
+
+    if(on_sface[1]) {
+      std::cerr << "found sf1 " << std::endl;
+      sv[3]->mark() = BOP(sf1->mark(), e1->mark(), inv);
+      SFace_cycle_iterator sfci(sf1->sface_cycles_begin());
+      CGAL_assertion_msg(sfci.is_shalfedge(), "not implemented, yet");
+      SHalfedge_handle se_tmp(sfci);
+      see[1] = se_tmp;
+      if(see[1]->source() != sv[0]) see[1] = see[1]->snext();
+      seb[0] = see[1];
+    } else {
+      CGAL::assign(se1, o3);
+      CGAL_assertion(CGAL::assign(se1, o3));
+      std::cerr << "found se1 " << se1->source()->point()
+		<< "->" << se1->twin()->source()->point() << std::endl;
+      std::cerr << "insert sv " << sv[3]->point() << std::endl;
+      if(se1->source() != sv[0]) se1 = se1->twin();
+      CGAL_assertion(se1->source() == sv[0]);
+      sv[3]->mark() = BOP(se1->mark(), e1->mark(), inv);
+      SHalfedge_handle se_new = 
+	D.new_shalfedge_pair();
+      se_new->source() = sv[3];
+      se_new->twin()->source() = se1->twin()->source();
+      se1->twin()->source() = sv[3];
+
+      se_new->snext() = se1->snext();
+      se1->snext()->sprev() = se_new;
+      se_new->twin()->sprev() = se1->twin()->sprev();
+      se1->twin()->sprev()->snext() = se_new->twin();
+
+      se1->snext() = se_new;
+      se1->twin()->sprev() = se_new->twin();
+      se_new->sprev() = se1;
+      se_new->twin()->snext() = se1->twin();
+
+      se_new->mark() = se_new->twin()->mark() = se1->mark();
+      se_new->incident_sface() = se1->incident_sface();
+      se_new->twin()->incident_sface() = se1->twin()->incident_sface();
+      se_new->circle() = se1->circle();
+      se_new->twin()->circle() = se1->twin()->circle();
+
+      SM_io_parser<SM_decorator>::dump(D, std::cerr);
+
+      see[1] = seb[0] = se1;
+      ++seb[1];
+    } 
+
+    if(E.is_isolated(e1)) {
+      CGAL_assertion_msg(false, "not implemented, yet");
+      return D.sphere_map();
+    }
+
+    SHalfedge_around_svertex_const_circulator 
+      svc(e1->out_sedge()), send(svc);
+    CGAL_assertion(svc != svc->twin()->snext());
+    // TODO: one sedge
+    
+    int i=0;
+    bool done = false;
+    Oriented_side os0 =
+      svc->circle().oriented_side(sv[0]->point());
+    Oriented_side os1 = os0;
+    while(os0 == os1 &&
+	  os1 != ON_ORIENTED_BOUNDARY &&
+	  ++svc != send) 
+      os1 = svc->circle().oriented_side(sv[0]->point());
+
+    if(os1 == ON_ORIENTED_BOUNDARY) {
+
+      Sphere_segment seg(sv[2]->point(), sv[3]->point(),
+			 svc->circle());
+      int sv_index =
+	seg.has_on(sv[0]->point()) ? 0 : 1;
+      
+      std::cerr << "sv " << sv[0]->point() << ", " << sv[1]->point() << std::endl;
+
+      if(on_sface[0]) {
+	SFace_cycle_iterator sfci = sf0->sface_cycles_begin();
+	CGAL_assertion(sfci.is_shalfedge());
+	SHalfedge_handle se_tgt(sfci);
+	while(se_tgt->source() != sv[sv_index])
+	  se_tgt = se_tgt->snext();
+	CGAL_assertion(se_tgt->source() == sv[sv_index]);
+	std::cerr << "new_shalfedge_pair" << std::endl;
+	SHalfedge_handle se_new = 
+	  D.new_shalfedge_pair(sv[2], se_tgt);
+	std::cerr << "done" << std::endl;
+	se_new->mark() = se_new->twin()->mark() = 
+	  BOP(sf0->mark(), svc->mark(), inv);
+	splitted[0] = true;
+      }
+
+      if(on_sface[1]) {
+	SFace_cycle_iterator sfci = sf1->sface_cycles_begin();
+	CGAL_assertion(sfci.is_shalfedge());
+	SHalfedge_handle se_tgt(sfci);
+	while(se_tgt->source() != sv[sv_index]) {
+	  se_tgt = se_tgt->snext();
+	  std::cerr << se_tgt->source()->point() << " " << sv[sv_index]->point() << std::endl;
+	  std::cerr << &(se_tgt->source()) << " " << &sv[sv_index] << std::endl;
+	}
+	CGAL_assertion(se_tgt->source() == sv[sv_index]);
+	std::cerr << "new_shalfedge_pair" << std::endl;
+	SHalfedge_handle se_new =
+	  D.new_shalfedge_pair(sv[3], se_tgt);
+	std::cerr << "done" << std::endl;
+	se_new->mark() = se_new->twin()->mark() = 
+	  BOP(sf1->mark(), svc->mark(), inv);
+	splitted[1] = true;
+      }
+      
+      ++svc;
+      os1 = svc->circle().oriented_side(sv[0]->point());
+      if(os1 == ON_ORIENTED_BOUNDARY) {
+	CGAL_assertion_msg(false, "not implemented, yet");
+	++svc;
+	scb[0] = scb[1] = sce[0] = sce[1] = svc;
+	if(svc != send) {
+	  os1 = svc->circle().oriented_side(sv[0]->point());
+	  i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
+	  --sce[1-i];
+	}
+	done = true;
+      } else {
+	i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
+	scb[i] = svc;
+	--svc;
+	sce[1-i] = svc;
+	--svc;
+	if(svc->circle().oriented_side(sv[0]->point()) == os1) {
+	  sce[i] = scb[1-i] = sce[1-i];
+	  done = true;
+	}
+      }
+    } else if(svc == send) {
+      i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
+      CGAL_assertion_msg(false, "not implemented, yet");
+      done = true;
+    } else {
+      CGAL_assertion(os0 != os1);
+      i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
+      sce[1-i] = scb[i] = svc;
+    }
+    CGAL_assertion(scb[i] == svc);
+
+    if(!done) {
+      os0 = svc->circle().oriented_side(sv[0]->point());
+      CGAL_assertion(os0 != ON_ORIENTED_BOUNDARY);
+      do {
+	++svc;
+	os1 = svc->circle().oriented_side(sv[0]->point());
+      } while(os1 == os0);
+
+      sce[i] = scb[1-i] = svc;
+      if(os1 == ON_ORIENTED_BOUNDARY) {
+	CGAL_assertion_msg(false, "degenerate case not handled");
+	++scb[1-i];
+      }
+    }
+
+    for(; scb[0] != sce[0]; ++scb[0]) {
+      for(; seb[0] != see[0]; ++see[0]) {
+	Sphere_segment seg0(sv[0]->point(), sv[1]->point(), seb[0]->circle());
+	Sphere_segment seg1(sv[2]->point(), sv[3]->point(), scb[0]->circle());
+	Sphere_point sp = seg0.intersection(seg1);
+	std::cerr << "intersections oben " << sp << std::endl;
+      }
+    }
+    
+    for(; scb[1] != sce[1]; ++scb[1]) {
+      for(; seb[1] != see[1]; ++see[1]) {
+	Sphere_segment seg0(sv[0]->point(), sv[1]->point(), seb[1]->circle());
+	Sphere_segment seg1(sv[2]->point(), sv[3]->point(), scb[1]->circle());
+	Sphere_point sp = seg0.intersection(seg1);
+	std::cerr << "intersections unten " << sp << std::endl;
+      }
+    }
+
+    return D.sphere_map();
+  }
+#endif
 
   template<typename Selection, typename Association>
   Sphere_map* create_edge_facet_overlay( Halfedge_const_handle e, 
@@ -911,7 +1193,7 @@ public:
     do {
     
       res = false;
-      typedef Halfedge_key< Point_3, Halfedge_handle, SNC_decorator>
+      typedef Halfedge_key< Point_3, Halfedge_handle>
 	Halfedge_key;
       typedef Halfedge_key_lt< Point_3, Halfedge_handle, SNC_decorator> 
 	Halfedge_key_lt;
@@ -948,12 +1230,12 @@ public:
 	
 	if(Infi_box::is_edge_on_infibox(e)) {
 	  if(Infi_box::is_type4(e))
-	    M4[l].push_back(Halfedge_key(p,inverted,e, D));
+	    M4[l].push_back(Halfedge_key(p,inverted,e));
 	  else
 	    if(Infi_box::is_type3(e))
-	      M3[l].push_back(Halfedge_key(p,inverted,e, D));
+	      M3[l].push_back(Halfedge_key(p,inverted,e));
 	    else
-	      M2[l].push_back(Halfedge_key(p,inverted,e, D));
+	      M2[l].push_back(Halfedge_key(p,inverted,e));
 	}
       }
       
@@ -1628,7 +1910,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
   public:
   SNC_constructor( SNC_structure& W) : Base(W) {}
 
-  Vertex_handle create_from_facet(Halffacet_handle f,
+  Vertex_handle create_from_facet(Halffacet_const_handle f,
 				  const Point_3& p) {
 
     Vertex_handle v = create_from_plane(f->plane(), p, 
@@ -1636,10 +1918,10 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 					f->twin()->incident_volume()->mark(), 
 					f->incident_volume()->mark());
     
-    v->shalfloop()->facet() = f->twin();
-    v->shalfloop()->twin()->facet() = f;
+    v->shalfloop()->set_index_facet(f->twin());
+    v->shalfloop()->twin()->set_index_facet(f);
     
-    SHalfedge_handle se = f->twin()->facet_cycles_begin();
+    SHalfedge_const_handle se = f->twin()->facet_cycles_begin();
     CGAL_assertion(v->shalfloop()->circle() == se->circle());
     v->shalfloop()->set_index(se->get_index());
     v->shalfloop()->twin()->set_index(se->twin()->get_index());
@@ -1647,17 +1929,19 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
   }
 
 
-  Vertex_handle create_from_edge(Halfedge_handle e,
+  Vertex_handle create_from_edge(Halfedge_const_handle e,
 				 const Point_3& p) {
 
     Vertex_handle v = Base::create_from_edge(e,p);
     SVertex_iterator sv = v->svertices_begin();
 
-    SHalfedge_around_svertex_circulator 
-      ec1(e->out_sedge()), ee(ec1), ec2(sv->out_sedge());
+    SHalfedge_around_svertex_const_circulator
+      ec1(e->out_sedge()), ee(ec1);
+    SHalfedge_around_svertex_circulator
+      ec2(sv->out_sedge());
     CGAL_For_all(ec1,ee) {
-      ec2->facet() = ec1->facet();
-      ec2->twin()->facet() = ec1->twin()->facet();
+      ec2->set_index_facet(ec1->facet());
+      ec2->twin()->set_index_facet(ec1->twin()->facet());
       ec2->set_index(ec1->get_index());
       ec2->twin()->set_index(ec1->twin()->get_index());
       ++ec2;
@@ -1711,6 +1995,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
       D.set_face(sl->twin(), FM[E.shalfloop()->twin()->incident_sface()]);
       sl->circle() = E.shalfloop()->circle();
       sl->twin()->circle() = E.shalfloop()->twin()->circle();
+      sl->mark() = sl->twin()->mark() = E.shalfloop()->mark();
       sl->set_index(E.shalfloop()->get_index());
       sl->twin()->set_index(E.shalfloop()->twin()->get_index());
     }

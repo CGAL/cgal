@@ -210,17 +210,27 @@ bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
 }; // Halffacet_geometry
 
 
-template<class Kernel, typename SHalfedge_handle> class SmallerXYZ {
+template<class Kernel, typename SHalfedge_handle, typename Halffacet_geometry> 
+class SmallerXYZ {
   
   typedef typename Kernel::Point_3  Point_3;
+  Halffacet_geometry& G;
  public:
-  SmallerXYZ() {}
+  SmallerXYZ(Halffacet_geometry& Gin) : G(Gin) {}
 
-  bool operator()(const SHalfedge_handle se, const Point_3 min, bool /*init*/) {
-    return CGAL::lexicographically_xyz_smaller(se->twin()->source()->twin()->source()->point(), min);
+  bool operator()(SHalfedge_handle se, SHalfedge_handle min, bool /*init*/) {
+    if(se->twin()->source()->twin()->source() == min->twin()->source()->twin()->source()) {
+      Point_3 p1 = se->source()->source()->point(), 
+	p2 = se->twin()->source()->twin()->source()->point(), 
+	p3 = se->next()->twin()->source()->twin()->source()->point();      
+      return !G.left_turn(p1,p2,p3);
+    }
+    return CGAL::lexicographically_xyz_smaller(se->twin()->source()->twin()->source()->point(), 
+					       min->twin()->source()->twin()->source()->point());
   }
 };
 
+/*
 template<typename SHalfedge_handle, typename EK> 
 class SmallerXYZ<CGAL::Lazy_kernel<EK>, SHalfedge_handle> {
 
@@ -246,6 +256,7 @@ class SmallerXYZ<CGAL::Lazy_kernel<EK>, SHalfedge_handle> {
 						 min);
   }
 };
+*/
 
 /*
 template<class K2, typename EK, typename SHalfedge_handle> 
@@ -480,7 +491,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      |MinimalEdge[c]|. */
   int i=0; 
   //  bool xyplane = plane_supporting_facet.b() != 0 || plane_supporting_facet.c() != 0;
-  SmallerXYZ<Kernel, SHalfedge_handle> smallerXYZ;
+  SmallerXYZ<Kernel, SHalfedge_handle, Halffacet_geometry> smallerXYZ(G);
   CGAL_forall_iterators(eit,SHalfedges) { 
     e = *eit;
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
@@ -491,7 +502,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     CGAL_NEF_TRACEN("\n  facet cycle numbering (up) "<<i);
     CGAL_For_all(hfc,hend) {
       FacetCycle[hfc]=i; // assign face cycle number
-      if(smallerXYZ(hfc, e_min->twin()->source()->twin()->source()->point(), init)) {
+      if(smallerXYZ(hfc, e_min, init)) {
 	init = true;
 	e_min = hfc;
       }

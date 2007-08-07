@@ -72,7 +72,8 @@ public:
 		   const Sphere_kernel& G = Sphere_kernel()) 
     : Base(M,G) {}
 
-  void simplify() {
+  template <typename Association>
+  void simplify(Association&) {
     CGAL_NEF_TRACEN("simplifying"); 
     
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
@@ -252,7 +253,8 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     delete_edge_pair_only(e);
   }
   
-  void merge_edge_pairs_at_target(SHalfedge_handle e) {
+  template <typename Association>
+  void merge_edge_pairs_at_target(SHalfedge_handle e, Association& A) {
     /*{\Mop merges the edge pairs at |v = e->target()|. |e| and |twin(e)| 
       are preserved, |e->snext()|, |twin(e->snext())| and |v| are deleted
       in the merger. \precond |v| has outdegree two. The adjacency at 
@@ -277,8 +279,37 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     }
     // set vertex of e and deal with vertex-halfedge incidence
     eo->source() = vn;
-    eo->set_forward_index(eno->get_forward_index());
-    e->set_backward_index(en->get_backward_index());
+    
+    CGAL_NEF_TRACEN("rehash " << en->get_index() << " " << e->get_index());
+    CGAL_NEF_TRACEN("       " << A.get_hash(en->get_index()) << " " << A.get_hash(e->get_index()));
+    CGAL_NEF_TRACEN("rehash " << eno->get_index() << " " << eo->get_index());
+    CGAL_NEF_TRACEN("       " << A.get_hash(eno->get_index()) << " " << A.get_hash(eo->get_index()));
+    
+    int index1 = A.get_hash(e->get_index());
+    int index2 = A.get_hash(en->get_index());
+    if(index2 < index1) {
+      A.set_hash(e->get_index(), index2);
+      e->set_index(index2);
+    } else
+      A.set_hash(en->get_index(), index1);
+
+    index1 = A.get_hash(eo->get_index());
+    index2 = A.get_hash(eno->get_index());    
+    if(index2 < index1) {
+      A.set_hash(eo->get_index(), index2);
+      eo->set_index(index2);
+    } else
+      A.set_hash(eno->get_index(), index1);
+
+    CGAL_NEF_TRACEN("hash sedge " << e->get_index() 
+		    << "->" << A.get_hash(e->get_index()));
+    CGAL_NEF_TRACEN("hash sedge " << en->get_index() 
+		    << "->" << A.get_hash(en->get_index()));
+    CGAL_NEF_TRACEN("hash sedge " << eo->get_index() 
+		    << "->" << A.get_hash(eo->get_index()));
+    CGAL_NEF_TRACEN("hash sedge " << eno->get_index() 
+		    << "->" << A.get_hash(eno->get_index()));
+
 
     if ( first_out_edge(vn) == eno ) set_first_out_edge(vn,eo);
     if ( is_sm_boundary_object(en) )
@@ -290,7 +321,8 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     CGAL_NEF_TRACEN("END "<<PH(e->sprev())<<PH(e)<<PH(e->snext()));
   }
 
-  void simplify() {
+  template <typename Association>
+  void simplify(Association& A) {
     CGAL_NEF_TRACEN("simplifying"); 
     
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
@@ -384,7 +416,7 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
 	    convert_edge_to_loop(e1);
 	  } else {
 	    CGAL_NEF_TRACEN("merge_edge_pairs"); 
-	    merge_edge_pairs_at_target(e1); 
+	    merge_edge_pairs_at_target(e1, A); 
 	  } 	
 	}
       }
@@ -407,10 +439,17 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
       CGAL_NEF_TRACEN("|" << vn->point() << "|" << vn->mark());
     CGAL_NEF_TRACEN(" ");
     
-    CGAL_forall_shalfedges(en,*this)
-      CGAL_NEF_TRACEN("|" << en->circle() <<
-		      "|" << en->mark() << 
-		      " " << en->incident_sface()->mark());
+    CGAL_assertion_code(CGAL_forall_shalfedges(en,*this)
+			CGAL_NEF_TRACEN("|" << en->circle() <<
+					"|" << en->mark() << 
+					" " << en->incident_sface()->mark()));
+
+    CGAL_NEF_TRACEN("check indexes");
+    CGAL_assertion_code(CGAL_forall_sedges(en, *this)
+			CGAL_NEF_TRACEN(en->source()->point() << "->"
+					<< en->twin()->source()->point() << " : "
+					<< en->get_index() << " " 
+					<< en->twin()->get_index()));
     CGAL_NEF_TRACEN("---------------------");
   }
 
