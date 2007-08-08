@@ -1095,16 +1095,6 @@ print_using()
 	"#endif // CGAL_CFG_NO_STD${_tmp}_NAMESPACE && !CGAL_NO_STD${_tmp}_NAMESPACE"
 }
 
-# this function is used to undefine macros (used for cctype)
-print_undef()
-{
-    for i in ${*}; do
-	${_printf} "%s\n" "#ifdef ${i}"
-	${_printf} "%s\n" "#undef ${i}"
-	${_printf} "%s\n" "#endif // ${i}"
-    done
-}
-
 quote()
 {
     if [ -z "${CYGWIN_COMPILER}" ]; then
@@ -1121,12 +1111,6 @@ create_replacement_header()
 #   create_replacement_header standard_header_name suffix replacements...
 #
 {
-    uncond=''
-    # special option to create header unconditionally (for CCTYPE_MACRO_BUG)
-    if [ "${1}" = "notest" ]; then
-	shift
-	uncond='y'
-    fi
     replacement_header=rh
     header_name=$1
     header_suffix=$2
@@ -1135,16 +1119,14 @@ create_replacement_header()
 #
 # Test if the standard header exists. Return if it does.
 #
-    if [ -z "${uncond}" ]; then
-	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
-	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
+    ${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
+    ${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 
-	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${CUSTOM_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
-	    ${_printf} "%s\n" " ok."
-	    return;
-	fi
-	${_printf} "%s\n" " no."
+    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${CUSTOM_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
+        ${_printf} "%s\n" " ok."
+        return;
     fi
+    ${_printf} "%s\n" " no."
 #
 # The standard header does not exist.
 # If some of the replacement headers exist, they are included in a
@@ -1199,15 +1181,7 @@ EOF3
 	    ctime) print_using C size_t time_t clock_t tm asctime ctime clock difftime gmtime localtime mktime time strftime >> ${replacement_header};;
 	    csignal) print_using C sig_atomic_t raise signal >> ${replacement_header};;
 	    cstdlib) print_using C abort atexit exit getenv system calloc malloc free realloc atof atoi atol mblen mbstowcs mbtowc strtod strtol strtoul wcstombs wctomb bsearch qsort div_t ldiv_t abs div labs ldiv rand srand >> ${replacement_header};;
-	    # the functions from cctype are implemented as macros
-	    # on some platforms (IRIX6, Solaris2.6)
-	    # but they have to be functions according to the std!
-	    cctype) ${_printf} "\n%s\n" \
-		"#ifdef CGAL_CFG_CCTYPE_MACRO_BUG" >> ${replacement_header}
-		    print_undef isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header}
-		    ${_printf} "\n%s\n" \
-		"#endif // CGAL_CFG_CCTYPE_MACRO_BUG" >> ${replacement_header}
-		    print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
+	    cctype) print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
 	    cwctype) print_using C wctrans_t wctype_t wint_t iswalnum iswalpha iswcntrl iswctype iswdigit iswgraph iswlower iswprint iswpunct iswspace iswupper iswxdigit towctrans towlower towupper wctrans wctype >> ${replacement_header};;
 	    cstring) print_using C size_t memchr memcmp memcpy memmove memset strcat strchr strcmp strcoll strcpy strcspn strerror strlen strncat strncmp strncpy strpbrk strrchr strspn strstr strtok strxfrm >> ${replacement_header};;
 	    cwchar) print_using C wint_t size_t fgetwc fgetws fputwc fputws getwc getwchar putwc putwchar ungetwc wcscat wcschr wcscmp wcscoll wcscpy wcscspn wcsftime wcslen wcsncat wcsncmp wcsncpy wcspbrk wcsrchr wcsspn wcstod wcstok wcstol wcstoul wcsxfrm >> ${replacement_header};;
@@ -1420,9 +1394,6 @@ EOF5
 	    "${_NO}"
 	then
 	    ${_printf} "%s" "//" >> "${_file}"
-	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_CCTYPE_MACRO_BUG.cpp" ]; then
-	    # we have to generate the redirection header cctype
-	    create_replacement_header notest cctype "" ctype.h
 	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_LONGNAME_BUG.cpp" ]; then
 	    LONG_NAME_PROBLEM=y
 	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_NO_STL.cpp" ]; then
