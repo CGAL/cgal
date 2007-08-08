@@ -13,7 +13,7 @@ class Irrational_cross_section_removal: public Irrational_cross_section CGAL_AOS
   typedef Irrational_cross_section_removal CGAL_AOS3_TARG This;
   typedef Irrational_cross_section CGAL_AOS3_TARG P;
   typedef Combinatorial_cross_section CGAL_AOS3_TARG CS;
-  typedef Cross_section_events CGAL_AOS3_TARG CSE;
+  //typedef Cross_section_events CGAL_AOS3_TARG CSE;
   //typedef CGAL_AOS3_TYPENAME CS::Halfedge_handle Halfedge_handle;
   //typedef CGAL_AOS3_TYPENAME CS::Face_handle Face_handle;
 public:
@@ -53,12 +53,12 @@ public:
     //Halfedge_handle vs[4];
     for (unsigned int i=0; i< 4; ++i){
       rules[i]= P::cs_.rule_halfedge(k,Rule_direction(i))->opposite();
-      keys[i]= P::roll_back_rule(tr_.sphere_events(k).second, rules[i]);
+      //keys[i]= P::roll_back_rule(tr_.sphere_events(k).second, rules[i]);
       /*if (keys[i].is_valid()) {
       vs[i]= rules[i]->opposite()->prev();
       CGAL_assertion(vs[i]->vertex() == rules[i]->vertex());
       }*/
-      P::cse_.clean_edge(rules[i]);
+      //P::cse_.clean_edge(rules[i]);
     }
     
     //Qt_examiner_viewer_2 *qt= new Qt_examiner_viewer_2();
@@ -77,16 +77,19 @@ public:
       sds_.write(hi, std::cerr);
       std::cerr << std::endl;
       }*/
-      P::cse_.clean_edge(hi->opposite()->prev());
+      //P::cse_.clean_edge(hi->opposite()->prev());
     }
     
-    P::cse_.check_merged_faces(P::cs_.rule_halfedge(k, Rule_direction(0))->face(),
-			    P::cs_.rule_halfedge(k, Rule_direction(2))->face());
-    P::cse_.check_merged_faces(P::cs_.rule_halfedge(k, Rule_direction(1))->face(),
-			    P::cs_.rule_halfedge(k, Rule_direction(3))->face());
+    //P::cse_.check_merged_faces(P::cs_.rule_halfedge(k, Rule_direction(0))->face(),
+    //P::cs_.rule_halfedge(k, Rule_direction(2))->face());
+    //P::cse_.check_merged_faces(P::cs_.rule_halfedge(k, Rule_direction(1))->face(),
+    //		    P::cs_.rule_halfedge(k, Rule_direction(3))->face());
     //return Face_handle();
     CGAL_AOS3_TYPENAME CS::Halfedge_handle vertices[4];
-    CGAL_AOS3_TYPENAME CS::Face_handle fr= P::cs_.remove_target(rules, vertices);
+    
+
+    // HERE
+    //CGAL_AOS3_TYPENAME CS::Face_handle fr= P::cs_.remove_target(rules, vertices);
   
     // I guess I don't actually have to extend the rules any more
     // it doesn't  make anything invalid and makes the structure simpler. 
@@ -122,11 +125,11 @@ public:
 	} else {
 	  nh=cs_.split_face(c, vertices[i], hv);
 	}
-	cse_.check_edge_collapse(nh);
+	//cse_.check_edge_collapse(nh);
       } 
     }
     for (unsigned int i=0; i< 4; ++i){ 
-      if (P::cse_.check_remove_vertex(vertices[i]) != vertices[i]) {
+      /*if (P::cse_.check_remove_vertex(vertices[i]) != vertices[i]) {
 	if (P::cs_.is_redundant(h->vertex())
 	    || P::cs_.is_redundant(h->opposite()->vertex())) {
 	  // skipping since it is adjacent to another vertex which will be removed
@@ -135,15 +138,15 @@ public:
 	  P::cs_.write(h, std::cout);
 	  std::cout << std::endl;
 	} else {
-	  P::cse_.check_edge_collapse(h);
+	  //P::cse_.check_edge_collapse(h);
 	}
-      }
+	}*/
     }
 
-    P::cse_.check_reduced_face(fr);
+    //P::cse_.check_reduced_face(fr);
 
     //audit();
-    return fr;
+    return f;
   }
   
 

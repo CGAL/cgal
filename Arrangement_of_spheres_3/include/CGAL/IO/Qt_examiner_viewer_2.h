@@ -189,6 +189,9 @@ private: // private data member
   public:
     // I can't remember why I even have this
     QTEV_layer(NT scale=1);
+    ~QTEV_layer(){
+      QMutexLocker lock(&mutex_);
+    }
 
     CGAL::Bbox_2 bounding_box();
   

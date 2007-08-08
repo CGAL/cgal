@@ -25,7 +25,10 @@ void Sphere_3_table CGAL_AOS3_TARG::initialize_2() {
   for (unsigned int i=3; i< spheres_.size(); ++i){
     bbox_= bbox_+ spheres_[i].bbox();
   }
-  FT inf=2*std::max(bbox_.xmax(),
+  if (spheres_.size() <=3 ) {
+    bbox_= CGAL::Bbox_3(0,0,0,0,0,0);
+  }
+  FT inf=16+2*std::max(bbox_.xmax(),
 		    std::max(std::abs(bbox_.xmin()),
 			     std::max(bbox_.ymax(),
 				      std::max(std::abs(bbox_.ymin()),

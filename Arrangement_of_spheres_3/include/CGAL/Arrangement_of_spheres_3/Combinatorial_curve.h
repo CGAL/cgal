@@ -141,6 +141,9 @@ struct Combinatorial_curve{
   Coordinate_index is_weakly_incompatible(int i) const ;
 
   Rule_direction rule_direction() const;
+
+  Rule_direction direction() const;
+
   int arc_index() const;
 
   static Combinatorial_curve make_rule(Key k, Rule_direction ruleindex);

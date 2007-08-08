@@ -69,6 +69,15 @@ public:
       return e->type() == 9999;
     }
   };
+
+  struct Change_view_event: public QCustomEvent{
+    Change_view_event(CGAL::Bbox_2 bbox): QCustomEvent(9997), bbox_(bbox){}
+    static bool is(QCustomEvent* e) {
+      return e->type() == 9997;
+    }
+    const CGAL::Bbox_2 bbox() const {return bbox_;}
+    CGAL::Bbox_2 bbox_;
+  };
   
   void customEvent( QCustomEvent * e ) {
     if ( Redraw_event::is(e)) {  // It must be a ColorChangeEvent
@@ -78,6 +87,14 @@ public:
     } else if (Show_event::is(e)) {
       //std::cerr << "Show event received." << std::endl;
       show();
+      widget_->redraw();
+    } else if (Change_view_event::is(e)) {
+      Change_view_event *ve= reinterpret_cast<Change_view_event*>(e);
+      widget()->set_window(ve->bbox().xmin(),
+			   ve->bbox().xmax(), 
+			   ve->bbox().ymin(),
+			   ve->bbox().ymax());
+      widget_->redraw();
     } else {
       std::cerr << "Unknown custom event " << e->type() << std::endl;
     }
@@ -107,6 +124,10 @@ public:
 		qApp->postEvent(this, new Redraw_event());
 	      }
   )
+
+  void change_view(CGAL::Bbox_2 b) {
+    qApp->postEvent(this, new Change_view_event(b));
+  }
 
 private: // private data member
   CGAL::Qt_widget* widget_;

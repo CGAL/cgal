@@ -199,7 +199,19 @@ inline Coordinate_index Combinatorial_curve::is_weakly_incompatible(int i) const
 
 inline Rule_direction Combinatorial_curve::rule_direction() const {
   CGAL_precondition(is_rule());
-  return Rule_direction::make_from_part(pt_&(R_BIT | L_BIT | T_BIT|B_BIT));
+  Rule_direction ret= Rule_direction::make_from_part(pt_&(R_BIT | L_BIT | T_BIT|B_BIT));
+  return ret;
+}
+
+inline Rule_direction Combinatorial_curve::direction() const {
+  CGAL_precondition(is_rule());
+  if (is_vertical()) {
+    if (is_inside()) return Rule_direction(1);
+    else return Rule_direction(3);
+  } else {
+    if (is_inside()) return Rule_direction(2);
+    else return Rule_direction(0);
+  }
 }
 
 inline int Combinatorial_curve::arc_index() const {

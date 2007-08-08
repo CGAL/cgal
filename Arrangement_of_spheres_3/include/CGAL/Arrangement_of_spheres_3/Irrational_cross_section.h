@@ -3,7 +3,6 @@
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_cross_section.h>
 #include <CGAL/Arrangement_of_spheres_3/Rational_cross_section.h>
-#include <CGAL/Arrangement_of_spheres_3/Cross_section_events.h>
 
 #define DPRINT(x) 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
@@ -13,7 +12,7 @@ class Irrational_cross_section {
   CGAL_AOS3_TRAITS;
   typedef Irrational_cross_section CGAL_AOS3_TARG This;
   typedef Combinatorial_cross_section CGAL_AOS3_TARG CS;
-  typedef Cross_section_events CGAL_AOS3_TARG CSE;
+  //typedef Cross_section_events CGAL_AOS3_TARG CSE;
   //typedef CGAL_AOS3_TYPENAME CS::Halfedge_handle Halfedge_handle;
   //typedef CGAL_AOS3_TYPENAME CS::Face_handle Face_handle;
 public:
@@ -34,8 +33,8 @@ public:
   };
 
   Irrational_cross_section(const Traits &tr, CS &cs): tr_(tr),
-						      cs_(cs),
-						      cse_(tr, cs){}
+						      cs_(cs)
+						      {}
 
   
 
@@ -178,6 +177,8 @@ public:
 		   CGAL_AOS3_TYPENAME CS::Face_handle f,
 		   CGAL_AOS3_TYPENAME CS::Curve rule) {
     CGAL_AOS3_TYPENAME CS::Halfedge_handle h;
+    std::cout << "Searching for vertex for rule " << rule << " in face ";
+    cs_.write(f, std::cout) << std::endl;
     try {
       h= shoot_rule(t, f, rule.key(), rule.rule_direction());
       
@@ -210,10 +211,20 @@ public:
 	  } else {
 	  CGAL_assertion(0);
 	  }*/
-	h= cs_.find_halfedge(v,f);
+	CGAL_AOS3_TYPENAME CS::Halfedge_handle vh= v->halfedge();
+	do {
+	  if ( vh->curve().is_arc() && vh->face() == f) {
+	    h=vh;
+	    break;
+	  } else if (vh->curve().is_arc() && vh->opposite()->face() == f) {
+	    h= vh->opposite();
+	    break;
+	  }
+	  vh= vh->next()->opposite();
+	} while (true);
       }
     }
-    cs_.clean_edge(h);
+    //cs_.clean_edge(h);
     CGAL_AOS3_TYPENAME CS::Halfedge_handle v= cs_.insert_vertex(CGAL_AOS3_TYPENAME CS::Point(rule, 
 											     h->curve()), 
 								h);
@@ -355,59 +366,92 @@ protected:
 
   //! Take the vertex pointed to by h with the face h->face() and put a rule in it.
   CGAL_AOS3_TYPENAME CS::Halfedge_handle
-  extend_rule(const CGAL_AOS3_TYPENAME CS::Event_point_3 &t,
+  extend_rule(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &t,
 	      CGAL_AOS3_TYPENAME CS::Halfedge_handle h,
 	      CGAL_AOS3_TYPENAME CS::Curve rule) {
-    CGAL_AOS3_TYPENAME CS::Halfedge_handle v= find_rule_vertex(t,h,rule);
-    return split_face(h, v, rule);
+    CGAL_AOS3_TYPENAME CS::Halfedge_handle v= find_rule_vertex(t,h->face(),rule);
+    return cs_.split_face(rule, h, v);
   }
 
-
-  CGAL_AOS3_TYPENAME Traits::Sphere_3_key 
+  /*
+    walk along the rule deleting it. The last segment will be left if it hits a sphere extemum and the first segment will always be left. Other segments will necessarily go away. At the end the first segment will end in a T.
+   */
+  void 
   roll_back_rule(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &t,
 		 CGAL_AOS3_TYPENAME CS::Halfedge_handle cur) {
     std::cout << "Rolling back, rolling back..." << cur->curve()
 	      << " at " << cur->vertex()->point() << std::endl;
-    //<< " with last of ";
-    /*if ( last==Halfedge_handle()) std::cout << "null";
-      else std::cout << last->curve();*/
-    CGAL_AOS3_TYPENAME Traits::Sphere_3_key k;
-    CGAL_AOS3_TYPENAME CS::Halfedge_handle next= cs_.next_edge_on_curve(cur);
-    if (next != CGAL_AOS3_TYPENAME CS::Halfedge_handle()) {
-      if (next->curve().key() == cur->curve().key()) {
-	std::cout << "Recursing..." << std::endl;
-	k=roll_back_rule(t, next);
-      } else {
-	std::cout << "terminating on..." << next->curve() << std::endl;
-	k= next->curve().key();
+    std::vector<CGAL_AOS3_TYPENAME CS::Halfedge_handle> bits;
+    bits.push_back(cur);
+    do {
+      bits.push_back(cs_.next_edge_on_rule(bits.back()));
+    } while (bits.back() != CGAL_AOS3_TYPENAME CS::Halfedge_handle());
+    bits.pop_back();
+    
+    if (bits.size() > 1) {
+      
+      // each internal intersection is either 3 way with only one side or 4 way
+      for (unsigned int i=0; i< bits.size()-1; ++i) {
+	if (cs_.degree(bits[i]->vertex())==4) {
+	  // nothing to do
+	} else {
+	  std::cout << "Filling in vertex from edge ";
+	  cs_.write(bits[i], std::cout) << " with ";
+	  CGAL_AOS3_TYPENAME CS::Halfedge_handle ce= cs_.cross_edge(bits[i]); 
+	  cs_.write(ce, std::cout) << std::endl;
+	  CGAL_AOS3_TYPENAME CS::Face_handle f=ce->prev()->opposite()->face();
+	  
+	  CGAL_AOS3_TYPENAME CS::Halfedge_handle rt= extend_rule(t, 
+								 cs_.find_halfedge(bits[i]->vertex(), f),
+								 ce->opposite()->curve());
+	  
+	  
+	  //std::cout << "Adding rule from ";
+	  //cs_.write(find_halfedge(bits[i]->vertex(),f), std::cout) << " to ";
+	  //cs_.write(rt) << std::endl;
+	  //cs_.split_face(ce->opposite_curve(), find_halfedge(bits[i]->vertex(),f),
+	  //      rt);				    
+	}
       }
-    } else {
-      if (cur->vertex()->point().is_sphere_rule()) {
-	// we hit another sphere;
-	/*CGAL_assertion(cur->vertex()->point().sphere(0).key() 
-	  != cur->vertex()->point().rule(0).key());*/
-	if (cur->vertex()->point().is_sphere_extremum()
-	    && !cur->next()->curve().is_inside()) {
-	  k= cur->next()->curve().key();
-	} 
-      } 
-    }
-   
-
-    if (!cur->opposite()->vertex()->point().is_sphere_extremum()) {
-      if (k != CGAL_AOS3_TYPENAME Traits::Sphere_3_key() && cur->curve().key() != k) {
-	cur->curve().flip_rule(k);
+      if (bits.back()->vertex()->point().is_sphere_extremum()
+	  && !bits.back()->next()->curve().is_inside()) {
+	// need the back
       } else {
-	CGAL_AOS3_TYPENAME CS::Halfedge_handle vhh= cur->opposite()->prev();
-	//sds_.write(vhh, std::cout);
-	CGAL_assertion(vhh->vertex() == cur->vertex());
-	rotate_rule(t, cur->opposite());
+	CGAL_AOS3_TYPENAME CS::Vertex_handle vh= bits.back()->vertex();
+	cs_.merge_faces(bits.back());
+	clean_up_vertex(t, vh);
+      }
+      for (unsigned int i=1; i< bits.size()-1; ++i) {
+	cs_.merge_faces(bits[i]);
       }
     }
-    return k;
+ 
   }							   
 
+  void clean_up_vertex(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &,
+		       CGAL_AOS3_TYPENAME CS::Vertex_handle vh) {
+    if (cs_.is_redundant(vh)) {
+      cs_.remove_vertex(vh->halfedge());
+    }
+    if (vh->point().is_sphere_extremum()) {
+      CGAL_AOS3_TYPENAME Traits::Sphere_3_key k= vh->point().sphere_key();
+      CGAL_AOS3_TYPENAME CS::Halfedge_handle rule, c= vh->halfedge();
+      do {
+	if (c->curve().is_rule() && c->curve().key() == k) {
+	  rule= c;
+	  break;
+	}
+	c= c->next()->opposite();
+      } while (c != vh->halfedge());
+      if (rule == CGAL_AOS3_TYPENAME CS::Halfedge_handle()) {
+	CGAL_assertion(0);
+      }
+    }
+    
+  }
+
   // makes rule go away
+  /*
   CGAL_AOS3_TYPENAME CS::Halfedge_handle 
   rotate_rule(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &ep,
 	      CGAL_AOS3_TYPENAME CS::Halfedge_handle rule) {
@@ -435,63 +479,63 @@ protected:
 	      << " from " << oe->vertex()->point() << " to " 
 	      << hv->vertex()->point() << std::endl;
     CGAL_AOS3_TYPENAME  CS::Halfedge_handle nh=cs_.split_face(ec, oe, hv);
-    cse_.check_edge_collapse(nh);
+    //cse_.check_edge_collapse(nh);
   
     CGAL_AOS3_TYPENAME  CS::Vertex_handle t= rule->vertex();
     std::cout << "Removing rule ";
     cs_.write(rule, std::cout);
     std::cout << std::endl;
-    cse_.clean_edge(rule);
+    //cse_.clean_edge(rule);
     
     CGAL_AOS3_TYPENAME CS::Halfedge_handle th= rule->opposite()->prev();
     CGAL_assertion(th->vertex() == t);
 
-    cse_.check_merged_faces(rule->face(), rule->opposite()->face());
+    //cse_.check_merged_faces(rule->face(), rule->opposite()->face());
     CGAL_AOS3_TYPENAME  CS::Halfedge_handle hpa= rule->next()->opposite();
     CGAL_AOS3_TYPENAME  CS::Halfedge_handle hpb= rule->prev();
   
     cs_.merge_faces(rule);
-    cse_.check_remove_vertex(hpa);
-    cse_.check_remove_vertex(hpb);
+    //cse_.check_remove_vertex(hpa);
+    //cse_.check_remove_vertex(hpb);
     return hv;
-  }
+    }*/
 
 
-
-  CGAL_AOS3_TYPENAME CS::Face_handle  
-  merge_faces(CGAL_AOS3_TYPENAME CS::Halfedge_handle h) {
-    cse_.clean_edge(h);
-    cse_.check_merged_faces(h->face(), h->opposite()->face());
-    return cs_.merge_faces(h);
-  }
 
   /*CGAL_AOS3_TYPENAME CS::Face_handle  
-  merge_faces(CGAL_AOS3_TYPENAME CS::Vertex_handle h) {
-    cse_.clean_edge(h);
-    cse_.check_merged_faces(h->face(), h->opposite()->face());
+  merge_faces(CGAL_AOS3_TYPENAME CS::Halfedge_handle h) {
+    //cse_.clean_edge(h);
+    //cse_.check_merged_faces(h->face(), h->opposite()->face());
     return cs_.merge_faces(h);
     }*/
 
-  CGAL_AOS3_TYPENAME CS::Halfedge_handle 
+  /*CGAL_AOS3_TYPENAME CS::Face_handle  
+  merge_faces(CGAL_AOS3_TYPENAME CS::Vertex_handle h) {
+    //cse_.clean_edge(h);
+    //cse_.check_merged_faces(h->face(), h->opposite()->face());
+    return cs_.merge_faces(h);
+    }*/
+
+  /*CGAL_AOS3_TYPENAME CS::Halfedge_handle 
   split_face(CGAL_AOS3_TYPENAME CS::Curve c, 
 	     CGAL_AOS3_TYPENAME CS::Halfedge_handle a, 
 	     CGAL_AOS3_TYPENAME CS::Halfedge_handle b) {
-    cse_.clean_edge(a);
-    cse_.clean_edge(b);
-    cse_.clean_edge(a->next());
-    cse_.clean_edge(b->next());
+    //cse_.clean_edge(a);
+    //cse_.clean_edge(b);
+    //cse_.clean_edge(a->next());
+    //cse_.clean_edge(b->next());
     CGAL_AOS3_TYPENAME CS::Halfedge_handle n= cs_.split_face(c, a, b);
-    cse_.check_edge_collapse(n);
-    cse_.check_edge_collapse(a);
-    cse_.check_edge_collapse(b);
-    cse_.check_edge_collapse(n->next());
-    cse_.check_edge_collapse(n->opposite()->next());
+    //cse_.check_edge_collapse(n);
+    //cse_.check_edge_collapse(a);
+    //cse_.check_edge_collapse(b);
+    //cse_.check_edge_collapse(n->next());
+    //cse_.check_edge_collapse(n->opposite()->next());
     return n;
-  }
+    }*/
 
   Traits tr_;
   CS &cs_;
-  CSE cse_;
+  //CSE //cse_;
   //CGAL_AOS3_TYPENAME Traits::Event_point_3 z_;
 };
 

@@ -106,9 +106,27 @@ inline Rule_direction Rule_direction::bottom(){
 
 
 inline Rule_direction Rule_direction::make_from_part(int pt) {
-  CGAL_assertion(pt <= Combinatorial_curve::B_BIT && pt >0);
+  CGAL_assertion(pt <= ( Combinatorial_curve::B_BIT) && pt >0);
   Rule_direction r;
   r.dir_=pt;
-  return r;
+  if (pt & Combinatorial_curve::IN_BIT) {
+    return r.opposite();
+  } else return r;
+}
+
+inline Rule_direction Rule_direction::opposite() const {
+  switch( dir_) {
+  case(Combinatorial_curve::T_BIT): 
+    return make_from_part(Combinatorial_curve::B_BIT);
+  case(Combinatorial_curve::B_BIT): 
+    return make_from_part(Combinatorial_curve::T_BIT);
+  case(Combinatorial_curve::L_BIT): 
+    return make_from_part(Combinatorial_curve::R_BIT);
+  case(Combinatorial_curve::R_BIT): 
+    return make_from_part(Combinatorial_curve::L_BIT);
+  default: 
+    CGAL_assertion(0);
+    return Rule_direction();
+  }
 }
 CGAL_AOS3_END_INTERNAL_NAMESPACE

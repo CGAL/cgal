@@ -22,13 +22,15 @@ struct Rule_direction {
   static Rule_direction make_from_part(int pt);
   CGAL_GETNR(int, part, return dir_);
   CGAL_COMPARISONS1(dir_);
-  CGAL_GETNR(Rule_direction, opposite,  return Rule_direction((dir_+2)%4));
+  //CGAL_GETNR(Rule_direction, opposite,  return Rule_direction((dir_+2)%4));
 
   const char *to_str() const ;
   std::ostream& write(std::ostream& out) const{
     out << to_str();
     return out;
   }
+
+  Rule_direction opposite() const;
 
   static Rule_direction right();
   static Rule_direction top();

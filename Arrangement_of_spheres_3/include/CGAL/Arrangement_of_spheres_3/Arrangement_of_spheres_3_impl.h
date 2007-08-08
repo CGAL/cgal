@@ -20,7 +20,7 @@ Arrangement_of_spheres_3 CGAL_AOS3_TARG::initialize_at(CGAL_AOS3_TYPENAME Traits
 CGAL_AOS3_TEMPLATE
 void
 Arrangement_of_spheres_3 CGAL_AOS3_TARG::sweep_to(CGAL_AOS3_TYPENAME Traits::FT end,
-						  Cross_section &cs) {
+						  Cross_section &) {
   std::cout << "Sweeping to " << end << std::endl;
   
 }

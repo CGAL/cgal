@@ -17,6 +17,7 @@ Cross_section_initializer CGAL_AOS3_TARG::Cross_section_initializer(Combinatoria
 CGAL_AOS3_TEMPLATE 
 void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Traits::FT z ) {
   cs_.clear();
+  cs_.num_components_=1;
   cs_.set_number_of_spheres(traits_.number_of_sphere_3s());
   typedef Cross_section_arrangement CGAL_AOS3_TARG Arr;
   Arr arr(traits_.sphere_3s_begin(),
