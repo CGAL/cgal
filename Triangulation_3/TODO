@@ -1,5 +1,7 @@
 - documenter le 2eme tableau de Triangulation_utils
 
+- operator->() dans it/circ de facettes/edges (idem T2, a coordonner)
+
  Regular_triangulation_euclidean_traits_3.h
 - add  a functor Construct_smallest_orthogonal_weighted_point_3
   to build at the same time both the center and the square radius
