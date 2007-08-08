@@ -158,6 +158,7 @@ namespace CircularFunctors {
   
   template < class CK >
   class Has_on_2
+    : public CK::Linear_kernel::Has_on_2
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_point_2    Circular_arc_point_2;
@@ -168,7 +169,9 @@ namespace CircularFunctors {
   public:
     typedef bool         result_type;
     typedef Arity_tag<2> Arity;
-    
+
+    using CK::Linear_kernel::Has_on_2::operator();
+
     result_type
     operator()(const Circle_2 &a, const Circular_arc_point_2 &p) const
     { return has_on<CK>(a, p); }
