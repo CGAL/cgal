@@ -582,11 +582,10 @@ void Sweep_line_2<Traits_,
     CGAL_PRINT("no intersection...\n";);
     return; // no intersection at all
   }
-  
-  // BZBZ
-  //  the two subCurves may start at the same point,in that case we will
+
+  // The two subCurves may start at the same point,in that case we will
   // ignore the first intersection point (if we got to that stage, they cannot 
-  // be overlap )
+  // overlap).
   if((SweepEvent*)c1->get_left_event() == this->m_currentEvent &&
      (SweepEvent*)c2->get_left_event() == this->m_currentEvent)
   {
@@ -594,17 +593,22 @@ void Sweep_line_2<Traits_,
     ++vi;
   }
 
-  //BZBZ
-  // if the two subcurves have a common right-event, 
-  // we can ignore last intersection (re-computing the intersection point
-  // can crash the sweep later with inexact number types
-
+  // If the two subcurves have a common right-event, and the last intersection
+  // object is a point, we can ignore last intersection (note that in case of
+  // an overlap that ends at the common endpoint, we definately want to keep
+  // the intersection object).
   if (reinterpret_cast<SweepEvent*>(c1->get_right_event()) ==
       reinterpret_cast<SweepEvent*>(c2->get_right_event()))
   {
-    CGAL_PRINT(" [Skipping common right endpoint...]\n";);
-    --vi_end; 
-  }  
+    vector_inserter                         vi_last = vi_end;
+
+    --vi_last;
+    if (object_cast<std::pair<Point_2,unsigned int> > (&(*vi_last)) != NULL)
+    {
+      CGAL_PRINT(" [Skipping common right endpoint...]\n";);
+      --vi_end;
+    }
+  }
 
   const std::pair<Point_2,unsigned int>  *xp_point;
   if(vi != vi_end)
