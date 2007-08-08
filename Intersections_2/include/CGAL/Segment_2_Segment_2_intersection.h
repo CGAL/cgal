@@ -115,8 +115,8 @@ bool seg_seg_do_intersect_contained(
 
 template <class K>
 bool
-do_intersect(const typename CGAL_WRAP(K)::Segment_2 &seg1, 
-	     const typename CGAL_WRAP(K)::Segment_2 &seg2,
+do_intersect(const typename K::Segment_2 &seg1, 
+	     const typename K::Segment_2 &seg2,
 	     const K& k)
 {
     typename K::Point_2 const & A1 = seg1.source();
@@ -464,8 +464,8 @@ Segment_2_Segment_2_pair<K>::intersection(typename K::Segment_2 &result) const
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Segment_2 &seg1, 
-	     const typename CGAL_WRAP(K)::Segment_2 &seg2,
+intersection(const typename K::Segment_2 &seg1, 
+	     const typename K::Segment_2 &seg2,
 	     const K&)
 {
     typedef Segment_2_Segment_2_pair<K> is_t;

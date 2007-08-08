@@ -63,8 +63,8 @@ protected:
 
 template <class K>
 inline bool do_intersect(
-    const typename CGAL_WRAP(K)::Ray_2 &p1,
-    const typename CGAL_WRAP(K)::Ray_2 &p2,
+    const typename K::Ray_2 &p1,
+    const typename K::Ray_2 &p2,
     const K& k)
 {
     typedef Ray_2_Ray_2_pair<K> pair_t;
@@ -258,8 +258,8 @@ Ray_2_Ray_2_pair<K>::intersection(typename K::Ray_2 &result) const
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Ray_2 &ray1, 
-	     const typename CGAL_WRAP(K)::Ray_2 &ray2,
+intersection(const typename K::Ray_2 &ray1, 
+	     const typename K::Ray_2 &ray2,
 	     const K&)
 {
     typedef Ray_2_Ray_2_pair<K> is_t;

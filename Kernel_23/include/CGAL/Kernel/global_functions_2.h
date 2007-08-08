@@ -726,7 +726,7 @@ operator!=(const Vector_2<K>& v, const Vector_2<K>& w)
 template < class K >
 inline
 typename K::Vector_2
-operator*(const typename CGAL_WRAP(K)::FT &c, const Vector_2<K> &w)
+operator*(const typename K::FT &c, const Vector_2<K> &w)
 {
   return K().construct_scaled_vector_2_object()(w, c);
 }
@@ -734,7 +734,7 @@ operator*(const typename CGAL_WRAP(K)::FT &c, const Vector_2<K> &w)
 template < class K >
 inline
 typename K::Vector_2
-operator*(const Vector_2<K> &w, const typename CGAL_WRAP(K)::FT &c)
+operator*(const Vector_2<K> &w, const typename K::FT &c)
 {
   return K().construct_scaled_vector_2_object()(w, c);
 }

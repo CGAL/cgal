@@ -107,8 +107,8 @@ bool intersection_test_edge(const typename K::Point_2 *  P1,
 
 
 template <class K>
-bool do_intersect(const typename CGAL_WRAP(K)::Triangle_2 &t1, 
-		  const typename CGAL_WRAP(K)::Triangle_2 &t2,
+bool do_intersect(const typename K::Triangle_2 &t1, 
+		  const typename K::Triangle_2 &t2,
 		  const K & k ){
   
   CGAL_kernel_precondition( ! k.is_degenerate_2_object() (t1) );

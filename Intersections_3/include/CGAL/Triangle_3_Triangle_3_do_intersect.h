@@ -115,8 +115,8 @@ bool  _intersection_test_edge(const typename K::Point_3 * p,
 
 
 template <class K>
-bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Triangle_3 &t1, 
-			   const typename CGAL_WRAP(K)::Triangle_3 &t2,
+bool do_intersect_coplanar(const typename K::Triangle_3 &t1, 
+			   const typename K::Triangle_3 &t2,
 			   const K & k) 
 {
     
@@ -192,8 +192,8 @@ bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Triangle_3 &t1,
 
 
 template <class K>
-bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &t1, 
-		  const typename CGAL_WRAP(K)::Triangle_3 &t2,
+bool do_intersect(const typename K::Triangle_3 &t1, 
+		  const typename K::Triangle_3 &t2,
 		  const K & k) 
 {
 

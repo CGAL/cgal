@@ -34,16 +34,16 @@ namespace CGALi {
 
 template <class K>
 inline bool
-do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt1, 
-	     const typename CGAL_WRAP(K)::Point_2 &pt2)
+do_intersect(const typename K::Point_2 &pt1, 
+	     const typename K::Point_2 &pt2)
 {
     return pt1 == pt2;
 }
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Point_2 &pt1, 
-	     const typename CGAL_WRAP(K)::Point_2 &pt2)
+intersection(const typename K::Point_2 &pt1, 
+	     const typename K::Point_2 &pt2)
 {
     if (pt1 == pt2) {
         return make_object(pt1);

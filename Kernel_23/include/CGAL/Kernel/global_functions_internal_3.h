@@ -34,9 +34,9 @@ namespace CGALi {
 template <typename K>
 inline
 Angle
-angle(const typename CGAL_WRAP(K)::Point_3 &p,
-      const typename CGAL_WRAP(K)::Point_3 &q,
-      const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+angle(const typename K::Point_3 &p,
+      const typename K::Point_3 &q,
+      const typename K::Point_3 &r, const K &k)
 {
   return k.angle_3_object()(p, q, r);
 }
@@ -44,9 +44,9 @@ angle(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-are_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
-                       const typename CGAL_WRAP(K)::Point_3 &q,
-                       const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
+are_ordered_along_line(const typename K::Point_3 &p,
+                       const typename K::Point_3 &q,
+                       const typename K::Point_3 &r, const K& k)
 {
   return k.are_ordered_along_line_3_object()(p, q, r);
 }
@@ -54,9 +54,9 @@ are_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-are_strictly_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
-                                const typename CGAL_WRAP(K)::Point_3 &q,
-                                const typename CGAL_WRAP(K)::Point_3 &r,
+are_strictly_ordered_along_line(const typename K::Point_3 &p,
+                                const typename K::Point_3 &q,
+                                const typename K::Point_3 &r,
                                 const K& k)
 {
   return k.are_strictly_ordered_along_line_3_object()(p, q, r);
@@ -65,8 +65,8 @@ are_strictly_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
 template <typename K>
 inline
 typename K::Plane_3
-bisector(const typename CGAL_WRAP(K)::Point_3 &p,
-         const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+bisector(const typename K::Point_3 &p,
+         const typename K::Point_3 &q, const K &k)
 {
   return k.construct_bisector_3_object()(p, q);
 }
@@ -74,8 +74,8 @@ bisector(const typename CGAL_WRAP(K)::Point_3 &p,
 template <typename K>
 inline
 typename K::Plane_3
-bisector(const typename CGAL_WRAP(K)::Plane_3 &h1,
-         const typename CGAL_WRAP(K)::Plane_3 &h2, const K &k)
+bisector(const typename K::Plane_3 &h1,
+         const typename K::Plane_3 &h2, const K &k)
 {
   return k.construct_bisector_3_object()(h1, h2);
 }
@@ -83,10 +83,10 @@ bisector(const typename CGAL_WRAP(K)::Plane_3 &h1,
 template < class K >
 inline
 typename K::Point_3
-centroid(const typename CGAL_WRAP(K)::Point_3 &p,
-         const typename CGAL_WRAP(K)::Point_3 &q,
-         const typename CGAL_WRAP(K)::Point_3 &r,
-         const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+centroid(const typename K::Point_3 &p,
+         const typename K::Point_3 &q,
+         const typename K::Point_3 &r,
+         const typename K::Point_3 &s, const K &k)
 {
   return k.construct_centroid_3_object()(p, q, r, s);
 }
@@ -94,9 +94,9 @@ centroid(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-centroid(const typename CGAL_WRAP(K)::Point_3 &p,
-         const typename CGAL_WRAP(K)::Point_3 &q,
-         const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+centroid(const typename K::Point_3 &p,
+         const typename K::Point_3 &q,
+         const typename K::Point_3 &r, const K &k)
 {
   return k.construct_centroid_3_object()(p, q, r);
 }
@@ -104,7 +104,7 @@ centroid(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-centroid(const typename CGAL_WRAP(K)::Tetrahedron_3 &t, const K &k)
+centroid(const typename K::Tetrahedron_3 &t, const K &k)
 {
   return k.construct_centroid_3_object()(t);
 }
@@ -112,7 +112,7 @@ centroid(const typename CGAL_WRAP(K)::Tetrahedron_3 &t, const K &k)
 template < class K >
 inline
 typename K::Point_3
-centroid(const typename CGAL_WRAP(K)::Triangle_3 &t, const K &k)
+centroid(const typename K::Triangle_3 &t, const K &k)
 {
   return k.construct_centroid_3_object()(t);
 }
@@ -120,8 +120,8 @@ centroid(const typename CGAL_WRAP(K)::Triangle_3 &t, const K &k)
 template < class K >
 inline
 typename K::Point_3
-circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
-             const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+circumcenter(const typename K::Point_3 &p,
+             const typename K::Point_3 &q, const K &k)
 {
   return k.construct_circumcenter_3_object()(p, q);
 }
@@ -129,9 +129,9 @@ circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
-             const typename CGAL_WRAP(K)::Point_3 &q,
-             const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+circumcenter(const typename K::Point_3 &p,
+             const typename K::Point_3 &q,
+             const typename K::Point_3 &r, const K &k)
 {
   return k.construct_circumcenter_3_object()(p, q, r);
 }
@@ -139,10 +139,10 @@ circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
-             const typename CGAL_WRAP(K)::Point_3 &q,
-             const typename CGAL_WRAP(K)::Point_3 &r,
-             const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+circumcenter(const typename K::Point_3 &p,
+             const typename K::Point_3 &q,
+             const typename K::Point_3 &r,
+             const typename K::Point_3 &s, const K &k)
 {
   return k.construct_circumcenter_3_object()(p, q, r, s);
 }
@@ -150,7 +150,7 @@ circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-circumcenter(const typename CGAL_WRAP(K)::Tetrahedron_3 &t, const K& k)
+circumcenter(const typename K::Tetrahedron_3 &t, const K& k)
 {
   return k.construct_circumcenter_3_object()(t);
 }
@@ -158,7 +158,7 @@ circumcenter(const typename CGAL_WRAP(K)::Tetrahedron_3 &t, const K& k)
 template < class K >
 inline
 typename K::Point_3
-circumcenter(const typename CGAL_WRAP(K)::Triangle_3 &t, const K& k)
+circumcenter(const typename K::Triangle_3 &t, const K& k)
 {
   return k.construct_circumcenter_3_object()(t);
 }
@@ -166,9 +166,9 @@ circumcenter(const typename CGAL_WRAP(K)::Triangle_3 &t, const K& k)
 template < class K >
 inline
 bool
-collinear(const typename CGAL_WRAP(K)::Point_3 &p,
-          const typename CGAL_WRAP(K)::Point_3 &q,
-          const typename CGAL_WRAP(K)::Point_3 &r,
+collinear(const typename K::Point_3 &p,
+          const typename K::Point_3 &q,
+          const typename K::Point_3 &r,
           const K& k)
 {
   return k.collinear_3_object()(p, q, r);
@@ -178,9 +178,9 @@ template < class K >
 inline
 bool
 collinear_are_ordered_along_line(
-          const typename CGAL_WRAP(K)::Point_3 &p,
-          const typename CGAL_WRAP(K)::Point_3 &q,
-          const typename CGAL_WRAP(K)::Point_3 &r,
+          const typename K::Point_3 &p,
+          const typename K::Point_3 &q,
+          const typename K::Point_3 &r,
           const K& k)
 {
   return k.collinear_are_ordered_along_line_3_object()(p, q, r);
@@ -190,9 +190,9 @@ template < class K >
 inline
 bool
 collinear_are_strictly_ordered_along_line(
-          const typename CGAL_WRAP(K)::Point_3 &p,
-          const typename CGAL_WRAP(K)::Point_3 &q,
-          const typename CGAL_WRAP(K)::Point_3 &r,
+          const typename K::Point_3 &p,
+          const typename K::Point_3 &q,
+          const typename K::Point_3 &r,
           const K& k)
 {
   return k.collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
@@ -201,9 +201,9 @@ collinear_are_strictly_ordered_along_line(
 template < class K >
 inline
 Comparison_result
-compare_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
-                          const typename CGAL_WRAP(K)::Point_3 &q,
-                          const typename CGAL_WRAP(K)::Point_3 &r,
+compare_distance_to_point(const typename K::Point_3 &p,
+                          const typename K::Point_3 &q,
+                          const typename K::Point_3 &r,
 			  const K& k)
 {
   return k.compare_distance_3_object()(p, q, r);
@@ -212,9 +212,9 @@ compare_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
-compare_squared_distance(const typename CGAL_WRAP(K)::Point_3 &p,
-                         const typename CGAL_WRAP(K)::Point_3 &q,
-                         const typename CGAL_WRAP(K)::FT &d2,
+compare_squared_distance(const typename K::Point_3 &p,
+                         const typename K::Point_3 &q,
+                         const typename K::FT &d2,
 		         const K& k)
 {
   return k.compare_squared_distance_3_object()(p, q, d2);
@@ -223,8 +223,8 @@ compare_squared_distance(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
-compare_lexicographically_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
-                              const typename CGAL_WRAP(K)::Point_3 &q,
+compare_lexicographically_xyz(const typename K::Point_3 &p,
+                              const typename K::Point_3 &q,
 			      const K& k)
 {
   return k.compare_xyz_3_object()(p, q);
@@ -233,9 +233,9 @@ compare_lexicographically_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
-compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
-				 const typename CGAL_WRAP(K)::Point_3 &p,
-				 const typename CGAL_WRAP(K)::Point_3 &q,
+compare_signed_distance_to_plane(const typename K::Plane_3 &h,
+				 const typename K::Point_3 &p,
+				 const typename K::Point_3 &q,
 				 const K &k)
 { 
   if (k.less_signed_distance_to_plane_3_object()(h, p, q)) return SMALLER;
@@ -246,11 +246,11 @@ compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
 template < class K >
 inline
 Comparison_result
-compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
-				 const typename CGAL_WRAP(K)::Point_3 &hq,
-				 const typename CGAL_WRAP(K)::Point_3 &hr,
-				 const typename CGAL_WRAP(K)::Point_3 &p,
-				 const typename CGAL_WRAP(K)::Point_3 &q,
+compare_signed_distance_to_plane(const typename K::Point_3 &hp,
+				 const typename K::Point_3 &hq,
+				 const typename K::Point_3 &hr,
+				 const typename K::Point_3 &p,
+				 const typename K::Point_3 &q,
 				 const K &k)
 { 
   if (k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q))
@@ -263,8 +263,8 @@ compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
 template < class K >
 inline
 Comparison_result
-compare_x(const typename CGAL_WRAP(K)::Point_3 &p,
-	  const typename CGAL_WRAP(K)::Point_3 &q,
+compare_x(const typename K::Point_3 &p,
+	  const typename K::Point_3 &q,
 	  const K &k)
 { 
   return k.compare_x_3_object()(p, q);
@@ -273,8 +273,8 @@ compare_x(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
-compare_y(const typename CGAL_WRAP(K)::Point_3 &p,
-	  const typename CGAL_WRAP(K)::Point_3 &q,
+compare_y(const typename K::Point_3 &p,
+	  const typename K::Point_3 &q,
 	  const K &k)
 { 
   return k.compare_y_3_object()(p, q);
@@ -283,8 +283,8 @@ compare_y(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
-compare_z(const typename CGAL_WRAP(K)::Point_3 &p,
-	  const typename CGAL_WRAP(K)::Point_3 &q,
+compare_z(const typename K::Point_3 &p,
+	  const typename K::Point_3 &q,
 	  const K &k)
 { 
   return k.compare_z_3_object()(p, q);
@@ -293,8 +293,8 @@ compare_z(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
-compare_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
-	    const typename CGAL_WRAP(K)::Point_3 &q,
+compare_xyz(const typename K::Point_3 &p,
+	    const typename K::Point_3 &q,
 	    const K &k)
 { 
   return k.compare_xyz_3_object()(p, q);
@@ -303,10 +303,10 @@ compare_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-coplanar(const typename CGAL_WRAP(K)::Point_3 &p,
-         const typename CGAL_WRAP(K)::Point_3 &q,
-         const typename CGAL_WRAP(K)::Point_3 &r,
-         const typename CGAL_WRAP(K)::Point_3 &s, const K& k)
+coplanar(const typename K::Point_3 &p,
+         const typename K::Point_3 &q,
+         const typename K::Point_3 &r,
+         const typename K::Point_3 &s, const K& k)
 {
   return k.coplanar_3_object()(p, q, r, s);
 }
@@ -314,10 +314,10 @@ coplanar(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Orientation
-coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
-                     const typename CGAL_WRAP(K)::Point_3 &q,
-                     const typename CGAL_WRAP(K)::Point_3 &r,
-                     const typename CGAL_WRAP(K)::Point_3 &s, const K& k)
+coplanar_orientation(const typename K::Point_3 &p,
+                     const typename K::Point_3 &q,
+                     const typename K::Point_3 &r,
+                     const typename K::Point_3 &s, const K& k)
 {
   return k.coplanar_orientation_3_object()(p, q, r, s);
 }
@@ -325,9 +325,9 @@ coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Orientation
-coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
-                     const typename CGAL_WRAP(K)::Point_3 &q,
-                     const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
+coplanar_orientation(const typename K::Point_3 &p,
+                     const typename K::Point_3 &q,
+                     const typename K::Point_3 &r, const K& k)
 {
   return k.coplanar_orientation_3_object()(p, q, r);
 }
@@ -335,10 +335,10 @@ coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Bounded_side
-coplanar_side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_3 &p,
-                                const typename CGAL_WRAP(K)::Point_3 &q,
-                                const typename CGAL_WRAP(K)::Point_3 &r,
-                                const typename CGAL_WRAP(K)::Point_3 &t,
+coplanar_side_of_bounded_circle(const typename K::Point_3 &p,
+                                const typename K::Point_3 &q,
+                                const typename K::Point_3 &r,
+                                const typename K::Point_3 &t,
                                 const K& k)
 {
   return k.coplanar_side_of_bounded_circle_3_object()(p, q, r, t);
@@ -347,8 +347,8 @@ coplanar_side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Vector_3
-cross_product(const typename CGAL_WRAP(K)::Vector_3 &v,
-              const typename CGAL_WRAP(K)::Vector_3 &w, const K& k)
+cross_product(const typename K::Vector_3 &v,
+              const typename K::Vector_3 &w, const K& k)
 {
   return k.construct_cross_product_vector_3_object()(v, w);
 }
@@ -356,9 +356,9 @@ cross_product(const typename CGAL_WRAP(K)::Vector_3 &v,
 template < class K >
 inline
 typename K::FT
-determinant(const typename CGAL_WRAP(K)::Vector_3 &v0,
-            const typename CGAL_WRAP(K)::Vector_3 &v1,
-            const typename CGAL_WRAP(K)::Vector_3 &v2, const K &k)
+determinant(const typename K::Vector_3 &v0,
+            const typename K::Vector_3 &v1,
+            const typename K::Vector_3 &v2, const K &k)
 {
   return k.compute_determinant_3_object()(v0, v1, v2);
 }
@@ -366,9 +366,9 @@ determinant(const typename CGAL_WRAP(K)::Vector_3 &v0,
 template < class K >
 inline
 typename K::Line_3
-equidistant_line(const typename CGAL_WRAP(K)::Point_3 &p,
-                 const typename CGAL_WRAP(K)::Point_3 &q,
-                 const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
+equidistant_line(const typename K::Point_3 &p,
+                 const typename K::Point_3 &q,
+                 const typename K::Point_3 &r, const K& k)
 {
   return k.construct_equidistant_line_3_object()(p, q, r);
 }
@@ -376,9 +376,9 @@ equidistant_line(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
-                              const typename CGAL_WRAP(K)::Point_3 &q,
-                              const typename CGAL_WRAP(K)::Point_3 &r,
+has_smaller_distance_to_point(const typename K::Point_3 &p,
+                              const typename K::Point_3 &q,
+                              const typename K::Point_3 &r,
 			      const K &k)
 {
   return k.less_distance_to_point_3_object()(p, q, r);
@@ -387,9 +387,9 @@ has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
-			     const typename CGAL_WRAP(K)::Point_3 &q,
-			     const typename CGAL_WRAP(K)::Point_3 &r,
+has_larger_distance_to_point(const typename K::Point_3 &p,
+			     const typename K::Point_3 &q,
+			     const typename K::Point_3 &r,
 			     const K &k)
 {
   return k.compare_distance_3_object()(p, q, r) == LARGER;
@@ -398,9 +398,9 @@ has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
-				    const typename CGAL_WRAP(K)::Point_3 &p,
-				    const typename CGAL_WRAP(K)::Point_3 &q,
+has_larger_signed_distance_to_plane(const typename K::Plane_3 &h,
+				    const typename K::Point_3 &p,
+				    const typename K::Point_3 &q,
 				    const K &k)
 { 
   return k.less_signed_distance_to_plane_3_object()(h, q, p);
@@ -409,11 +409,11 @@ has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
 template < class K >
 inline
 bool
-has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
-				    const typename CGAL_WRAP(K)::Point_3 &hq,
-				    const typename CGAL_WRAP(K)::Point_3 &hr,
-				    const typename CGAL_WRAP(K)::Point_3 &p,
-				    const typename CGAL_WRAP(K)::Point_3 &q,
+has_larger_signed_distance_to_plane(const typename K::Point_3 &hp,
+				    const typename K::Point_3 &hq,
+				    const typename K::Point_3 &hr,
+				    const typename K::Point_3 &p,
+				    const typename K::Point_3 &q,
 				    const K &k)
 { 
   return k.less_signed_distance_to_plane_3_object()(hp, hq, hr, q, p);
@@ -422,9 +422,9 @@ has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
 template < class K >
 inline
 bool
-has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
-                                     const typename CGAL_WRAP(K)::Point_3 &p,
-                                     const typename CGAL_WRAP(K)::Point_3 &q,
+has_smaller_signed_distance_to_plane(const typename K::Plane_3 &h,
+                                     const typename K::Point_3 &p,
+                                     const typename K::Point_3 &q,
 				     const K &k)
 { 
   return k.less_signed_distance_to_plane_3_object()(h, p, q);
@@ -433,11 +433,11 @@ has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
 template < class K >
 inline
 bool
-has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
-                                     const typename CGAL_WRAP(K)::Point_3 &hq,
-                                     const typename CGAL_WRAP(K)::Point_3 &hr,
-                                     const typename CGAL_WRAP(K)::Point_3 &p,
-                                     const typename CGAL_WRAP(K)::Point_3 &q,
+has_smaller_signed_distance_to_plane(const typename K::Point_3 &hp,
+                                     const typename K::Point_3 &hq,
+                                     const typename K::Point_3 &hr,
+                                     const typename K::Point_3 &p,
+                                     const typename K::Point_3 &q,
 				     const K &k)
 { 
   return k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q);
@@ -446,8 +446,8 @@ has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
 template < class K >
 inline
 bool
-less_x(const typename CGAL_WRAP(K)::Point_3 &p,
-       const typename CGAL_WRAP(K)::Point_3 &q,
+less_x(const typename K::Point_3 &p,
+       const typename K::Point_3 &q,
        const K &k)
 { 
   return k.less_x_3_object()(p, q);
@@ -456,8 +456,8 @@ less_x(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-less_y(const typename CGAL_WRAP(K)::Point_3 &p,
-       const typename CGAL_WRAP(K)::Point_3 &q,
+less_y(const typename K::Point_3 &p,
+       const typename K::Point_3 &q,
        const K &k)
 { 
   return k.less_y_3_object()(p, q);
@@ -466,8 +466,8 @@ less_y(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-less_z(const typename CGAL_WRAP(K)::Point_3 &p,
-       const typename CGAL_WRAP(K)::Point_3 &q,
+less_z(const typename K::Point_3 &p,
+       const typename K::Point_3 &q,
        const K &k)
 { 
   return k.less_z_3_object()(p, q);
@@ -476,8 +476,8 @@ less_z(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-lexicographically_xyz_smaller(const typename CGAL_WRAP(K)::Point_3 &p,
-                              const typename CGAL_WRAP(K)::Point_3 &q,
+lexicographically_xyz_smaller(const typename K::Point_3 &p,
+                              const typename K::Point_3 &q,
                               const K &k)
 {
   return k.less_xyz_3_object()(p, q);
@@ -486,8 +486,8 @@ lexicographically_xyz_smaller(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
-         const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+midpoint(const typename K::Point_3 &p,
+         const typename K::Point_3 &q, const K &k)
 {
   return k.construct_midpoint_3_object()(p, q);
 }
@@ -495,7 +495,7 @@ midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
-max_vertex(const typename CGAL_WRAP(K)::Iso_cuboid_3 &ic, const K &k)
+max_vertex(const typename K::Iso_cuboid_3 &ic, const K &k)
 {
   return k.construct_max_vertex_3_object()(ic);
 }
@@ -503,7 +503,7 @@ max_vertex(const typename CGAL_WRAP(K)::Iso_cuboid_3 &ic, const K &k)
 template < class K >
 inline
 typename K::Point_3
-min_vertex(const typename CGAL_WRAP(K)::Iso_cuboid_3 &ic, const K &k)
+min_vertex(const typename K::Iso_cuboid_3 &ic, const K &k)
 {
   return k.construct_min_vertex_3_object()(ic);
 }
@@ -511,10 +511,10 @@ min_vertex(const typename CGAL_WRAP(K)::Iso_cuboid_3 &ic, const K &k)
 template <class K >
 inline
 Orientation
-orientation(const typename CGAL_WRAP(K)::Point_3 &p,
-	    const typename CGAL_WRAP(K)::Point_3 &q,
-	    const typename CGAL_WRAP(K)::Point_3 &r,
-	    const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+orientation(const typename K::Point_3 &p,
+	    const typename K::Point_3 &q,
+	    const typename K::Point_3 &r,
+	    const typename K::Point_3 &s, const K &k)
 {
   return k.orientation_3_object()(p, q, r, s);
 }
@@ -522,9 +522,9 @@ orientation(const typename CGAL_WRAP(K)::Point_3 &p,
 template <class K >
 inline
 Orientation
-orientation(const typename CGAL_WRAP(K)::Vector_3 &u,
-	    const typename CGAL_WRAP(K)::Vector_3 &v,
-	    const typename CGAL_WRAP(K)::Vector_3 &w, const K &k)
+orientation(const typename K::Vector_3 &u,
+	    const typename K::Vector_3 &v,
+	    const typename K::Vector_3 &w, const K &k)
 {
   return k.orientation_3_object()(u, v, w);
 }
@@ -532,9 +532,9 @@ orientation(const typename CGAL_WRAP(K)::Vector_3 &u,
 template < class K >
 inline
 typename K::Vector_3
-orthogonal_vector(const typename CGAL_WRAP(K)::Point_3 &p,
-		  const typename CGAL_WRAP(K)::Point_3 &q,
-		  const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+orthogonal_vector(const typename K::Point_3 &p,
+		  const typename K::Point_3 &q,
+		  const typename K::Point_3 &r, const K &k)
 {
   return k.construct_orthogonal_vector_3_object()(p, q, r);
 }
@@ -542,7 +542,7 @@ orthogonal_vector(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Vector_3
-orthogonal_vector(const typename CGAL_WRAP(K)::Plane_3 &p, const K &k)
+orthogonal_vector(const typename K::Plane_3 &p, const K &k)
 {
   return k.construct_orthogonal_vector_3_object()(p);
 }
@@ -550,8 +550,8 @@ orthogonal_vector(const typename CGAL_WRAP(K)::Plane_3 &p, const K &k)
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Line_3 &l1,
-         const typename CGAL_WRAP(K)::Line_3 &l2, const K &k)
+parallel(const typename K::Line_3 &l1,
+         const typename K::Line_3 &l2, const K &k)
 {
   return k.are_parallel_3_object()(l1, l2);
 }
@@ -559,8 +559,8 @@ parallel(const typename CGAL_WRAP(K)::Line_3 &l1,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Plane_3 &h1,
-         const typename CGAL_WRAP(K)::Plane_3 &h2, const K &k)
+parallel(const typename K::Plane_3 &h1,
+         const typename K::Plane_3 &h2, const K &k)
 {
   return k.are_parallel_3_object()(h1, h2);
 }
@@ -568,8 +568,8 @@ parallel(const typename CGAL_WRAP(K)::Plane_3 &h1,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Ray_3 &r1,
-         const typename CGAL_WRAP(K)::Ray_3 &r2, const K &k)
+parallel(const typename K::Ray_3 &r1,
+         const typename K::Ray_3 &r2, const K &k)
 {
   return k.are_parallel_3_object()(r1, r2);
 }
@@ -577,8 +577,8 @@ parallel(const typename CGAL_WRAP(K)::Ray_3 &r1,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Segment_3 &s1,
-         const typename CGAL_WRAP(K)::Segment_3 &s2, const K &k)
+parallel(const typename K::Segment_3 &s1,
+         const typename K::Segment_3 &s2, const K &k)
 {
   return k.are_parallel_3_object()(s1, s2);
 }
@@ -586,9 +586,9 @@ parallel(const typename CGAL_WRAP(K)::Segment_3 &s1,
 template <class K >
 inline
 Bounded_side
-side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
-                       const typename CGAL_WRAP(K)::Point_3 &q,
-                       const typename CGAL_WRAP(K)::Point_3 &test, const K &k)
+side_of_bounded_sphere(const typename K::Point_3 &p,
+                       const typename K::Point_3 &q,
+                       const typename K::Point_3 &test, const K &k)
 {
   return k.side_of_bounded_sphere_3_object()(p, q, test);
 }
@@ -596,10 +596,10 @@ side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
 template <class K >
 inline
 Bounded_side
-side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
-                       const typename CGAL_WRAP(K)::Point_3 &q,
-                       const typename CGAL_WRAP(K)::Point_3 &r,
-                       const typename CGAL_WRAP(K)::Point_3 &test, const K &k)
+side_of_bounded_sphere(const typename K::Point_3 &p,
+                       const typename K::Point_3 &q,
+                       const typename K::Point_3 &r,
+                       const typename K::Point_3 &test, const K &k)
 {
   return k.side_of_bounded_sphere_3_object()(p, q, r, test);
 }
@@ -607,11 +607,11 @@ side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
 template <class K >
 inline
 Bounded_side
-side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
-                       const typename CGAL_WRAP(K)::Point_3 &q,
-                       const typename CGAL_WRAP(K)::Point_3 &r,
-                       const typename CGAL_WRAP(K)::Point_3 &s,
-                       const typename CGAL_WRAP(K)::Point_3 &test, const K &k)
+side_of_bounded_sphere(const typename K::Point_3 &p,
+                       const typename K::Point_3 &q,
+                       const typename K::Point_3 &r,
+                       const typename K::Point_3 &s,
+                       const typename K::Point_3 &test, const K &k)
 {
   return k.side_of_bounded_sphere_3_object()(p, q, r, s, test);
 }
@@ -619,11 +619,11 @@ side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
 template <class K >
 inline
 Oriented_side
-side_of_oriented_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
-                        const typename CGAL_WRAP(K)::Point_3 &q,
-                        const typename CGAL_WRAP(K)::Point_3 &r,
-                        const typename CGAL_WRAP(K)::Point_3 &s,
-                        const typename CGAL_WRAP(K)::Point_3 &test, const K &k)
+side_of_oriented_sphere(const typename K::Point_3 &p,
+                        const typename K::Point_3 &q,
+                        const typename K::Point_3 &r,
+                        const typename K::Point_3 &s,
+                        const typename K::Point_3 &test, const K &k)
 {
   return k.side_of_oriented_sphere_3_object()(p, q, r, s, test);
 }
@@ -631,9 +631,9 @@ side_of_oriented_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
 template <typename K>
 inline
 typename K::FT
-squared_area(const typename CGAL_WRAP(K)::Point_3 &p,
-	     const typename CGAL_WRAP(K)::Point_3 &q,
-	     const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+squared_area(const typename K::Point_3 &p,
+	     const typename K::Point_3 &q,
+	     const typename K::Point_3 &r, const K &k)
 {
   return k.compute_squared_area_3_object()(p, q, r);
 }
@@ -641,10 +641,10 @@ squared_area(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::FT
-squared_radius(const typename CGAL_WRAP(K)::Point_3 &p,
-	       const typename CGAL_WRAP(K)::Point_3 &q,
-	       const typename CGAL_WRAP(K)::Point_3 &r,
-	       const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+squared_radius(const typename K::Point_3 &p,
+	       const typename K::Point_3 &q,
+	       const typename K::Point_3 &r,
+	       const typename K::Point_3 &s, const K &k)
 {
   return k.compute_squared_radius_3_object()(p, q, r, s);
 }
@@ -652,9 +652,9 @@ squared_radius(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::FT
-squared_radius(const typename CGAL_WRAP(K)::Point_3 &p,
-	       const typename CGAL_WRAP(K)::Point_3 &q,
-	       const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+squared_radius(const typename K::Point_3 &p,
+	       const typename K::Point_3 &q,
+	       const typename K::Point_3 &r, const K &k)
 {
   return k.compute_squared_radius_3_object()(p, q, r);
 }
@@ -662,8 +662,8 @@ squared_radius(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::FT
-squared_radius(const typename CGAL_WRAP(K)::Point_3 &p,
-	       const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+squared_radius(const typename K::Point_3 &p,
+	       const typename K::Point_3 &q, const K &k)
 {
   return k.compute_squared_radius_3_object()(p, q);
 }
@@ -671,10 +671,10 @@ squared_radius(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::FT
-volume(const typename CGAL_WRAP(K)::Point_3 &p,
-       const typename CGAL_WRAP(K)::Point_3 &q,
-       const typename CGAL_WRAP(K)::Point_3 &r,
-       const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+volume(const typename K::Point_3 &p,
+       const typename K::Point_3 &q,
+       const typename K::Point_3 &r,
+       const typename K::Point_3 &s, const K &k)
 {
   return k.compute_volume_3_object()(p, q, r, s);
 }
@@ -682,8 +682,8 @@ volume(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-x_equal(const typename CGAL_WRAP(K)::Point_3 &p,
-        const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+x_equal(const typename K::Point_3 &p,
+        const typename K::Point_3 &q, const K &k)
 {
   return k.equal_x_3_object()(p, q);
 }
@@ -691,8 +691,8 @@ x_equal(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-y_equal(const typename CGAL_WRAP(K)::Point_3 &p,
-        const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+y_equal(const typename K::Point_3 &p,
+        const typename K::Point_3 &q, const K &k)
 {
   return k.equal_y_3_object()(p, q);
 }
@@ -700,8 +700,8 @@ y_equal(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-z_equal(const typename CGAL_WRAP(K)::Point_3 &p,
-        const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+z_equal(const typename K::Point_3 &p,
+        const typename K::Point_3 &q, const K &k)
 {
   return k.equal_z_3_object()(p, q);
 }
@@ -712,10 +712,10 @@ z_equal(const typename CGAL_WRAP(K)::Point_3 &p,
 template <typename K>
 inline
 bool
-are_negative_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
-                      const typename CGAL_WRAP(K)::Point_3 &q,
-                      const typename CGAL_WRAP(K)::Point_3 &r,
-                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+are_negative_oriented(const typename K::Point_3 &p,
+                      const typename K::Point_3 &q,
+                      const typename K::Point_3 &r,
+                      const typename K::Point_3 &s, const K &k)
 {
   return CGALi::orientation(p, q, r, s, k) == NEGATIVE;
 }
@@ -723,10 +723,10 @@ are_negative_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
 template <typename K>
 inline
 bool
-are_positive_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
-                      const typename CGAL_WRAP(K)::Point_3 &q,
-                      const typename CGAL_WRAP(K)::Point_3 &r,
-                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+are_positive_oriented(const typename K::Point_3 &p,
+                      const typename K::Point_3 &q,
+                      const typename K::Point_3 &r,
+                      const typename K::Point_3 &s, const K &k)
 {
   return CGALi::orientation(p, q, r, s, k) == POSITIVE;
 }
@@ -734,8 +734,8 @@ are_positive_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 bool
-lexicographically_xyz_smaller_or_equal(const typename CGAL_WRAP(K)::Point_3 &p,
-                                       const typename CGAL_WRAP(K)::Point_3 &q,
+lexicographically_xyz_smaller_or_equal(const typename K::Point_3 &p,
+                                       const typename K::Point_3 &q,
                                        const K&k)
 {
   return CGALi::compare_lexicographically_xyz(p, q, k) != LARGER;

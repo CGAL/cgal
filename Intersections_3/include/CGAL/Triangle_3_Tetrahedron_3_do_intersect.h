@@ -32,8 +32,8 @@ namespace CGALi {
 
 // This code is not optimized:
 template <class K>
-bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &tr,
-                  const typename CGAL_WRAP(K)::Tetrahedron_3 &tet,
+bool do_intersect(const typename K::Triangle_3 &tr,
+                  const typename K::Tetrahedron_3 &tet,
                   const K & k)
 {
     typedef typename K::Triangle_3 Triangle;
@@ -58,8 +58,8 @@ bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &tr,
 
 template <class K>
 inline
-bool do_intersect(const typename CGAL_WRAP(K)::Tetrahedron_3 &tet,
-		  const typename CGAL_WRAP(K)::Triangle_3 &tr,
+bool do_intersect(const typename K::Tetrahedron_3 &tet,
+		  const typename K::Triangle_3 &tr,
 		  const K & k)
 {
   return do_intersect(tr, tet, k);

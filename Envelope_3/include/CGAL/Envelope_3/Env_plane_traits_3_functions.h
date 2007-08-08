@@ -25,9 +25,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class K>
-Object plane_half_plane_proj_intersection(const typename CGAL_WRAP(K)::Plane_3 &h1, 
-	                                        const typename CGAL_WRAP(K)::Plane_3 &h2,
-                                          const typename CGAL_WRAP(K)::Line_2  &l,
+Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1, 
+	                                        const typename K::Plane_3 &h2,
+                                          const typename K::Line_2  &l,
 	                                        const K& k)
 {
   typedef typename K::Vector_2   Vector_2;
@@ -58,10 +58,10 @@ Object plane_half_plane_proj_intersection(const typename CGAL_WRAP(K)::Plane_3 &
 }
 
 template <class K>
-Object half_plane_half_plane_proj_intersection(const typename CGAL_WRAP(K)::Plane_3 &h1,
-                                          const typename CGAL_WRAP(K)::Line_2  &l1,
-	                                        const typename CGAL_WRAP(K)::Plane_3 &h2,
-                                          const typename CGAL_WRAP(K)::Line_2  &l2,
+Object half_plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
+                                          const typename K::Line_2  &l1,
+	                                        const typename K::Plane_3 &h2,
+                                          const typename K::Line_2  &l2,
 	                                        const K& k)
 {
   typedef typename K::Ray_2      Ray_2;
@@ -84,7 +84,7 @@ Object half_plane_half_plane_proj_intersection(const typename CGAL_WRAP(K)::Plan
 }
 
 template <class K>
-typename CGAL_WRAP(K)::Line_2 project_xy(const typename CGAL_WRAP(K)::Line_3& l,
+typename K::Line_2 project_xy(const typename K::Line_3& l,
                                          const K& k)
 {
   typedef typename K::Vector_3   Vector_3;
@@ -104,8 +104,8 @@ typename CGAL_WRAP(K)::Line_2 project_xy(const typename CGAL_WRAP(K)::Line_3& l,
 // l1 is a line, l2 is a linear constraint (determined by the direction
 // of the line).
 template <class K>
-Object line_under_linear_constraint(const typename CGAL_WRAP(K)::Line_2& l1,
-                                    const typename CGAL_WRAP(K)::Line_2& l2,
+Object line_under_linear_constraint(const typename K::Line_2& l1,
+                                    const typename K::Line_2& l2,
                                     const K& k)
 {
   typedef typename K::Ray_2         Ray_2;
@@ -151,8 +151,8 @@ Object line_under_linear_constraint(const typename CGAL_WRAP(K)::Line_2& l1,
 }
 
 template <class K>
-Object ray_under_linear_constraint(const typename CGAL_WRAP(K)::Ray_2&  ray,
-                                    const typename CGAL_WRAP(K)::Line_2& l,
+Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
+                                    const typename K::Line_2& l,
                                     const K& k)
 {
   typedef typename K::Ray_2         Ray_2;

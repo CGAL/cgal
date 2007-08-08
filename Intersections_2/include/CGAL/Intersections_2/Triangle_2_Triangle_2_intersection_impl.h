@@ -357,8 +357,8 @@ Triangle_2_Triangle_2_pair<K>::intersection(
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1, 
-	     const typename CGAL_WRAP(K)::Triangle_2 &tr2,
+intersection(const typename K::Triangle_2 &tr1, 
+	     const typename K::Triangle_2 &tr2,
 	     const K&)
 {
     typedef Triangle_2_Triangle_2_pair<K> is_t;

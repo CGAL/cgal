@@ -36,8 +36,8 @@ namespace CGALi {
 template <class K>
 inline 
 bool
-do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
-	     const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+do_intersect(const typename K::Point_2 &pt,
+	     const typename K::Iso_rectangle_2 &iso,
 	     const K&)
 {
     return !iso.has_on_unbounded_side(pt);
@@ -46,8 +46,8 @@ do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
 template <class K>
 inline 
 bool
-do_intersect(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
-	     const typename CGAL_WRAP(K)::Point_2 &pt,
+do_intersect(const typename K::Iso_rectangle_2 &iso,
+	     const typename K::Point_2 &pt,
 	     const K&)
 {
     return !iso.has_on_unbounded_side(pt);
@@ -55,8 +55,8 @@ do_intersect(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
-	     const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
+intersection(const typename K::Point_2 &pt,
+	     const typename K::Iso_rectangle_2 &iso,
 	     const K& k)
 {
   if (CGALi::do_intersect(pt,iso,k)) {
@@ -68,8 +68,8 @@ intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
-	     const typename CGAL_WRAP(K)::Point_2 &pt,
+intersection(const typename K::Iso_rectangle_2 &iso,
+	     const typename K::Point_2 &pt,
 	     const K& k)
 {
   if (CGALi::do_intersect(pt,iso,k)) {

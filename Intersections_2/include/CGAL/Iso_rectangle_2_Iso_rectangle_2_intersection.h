@@ -35,8 +35,8 @@ namespace CGALi {
 template <class K>
 Object
 intersection(
-    const typename CGAL_WRAP(K)::Iso_rectangle_2 &irect1,
-    const typename CGAL_WRAP(K)::Iso_rectangle_2 &irect2,
+    const typename K::Iso_rectangle_2 &irect1,
+    const typename K::Iso_rectangle_2 &irect2,
     const K&)
 {
     typedef typename K::FT  FT;

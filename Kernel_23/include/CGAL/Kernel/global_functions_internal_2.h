@@ -38,9 +38,9 @@ namespace CGALi {
 template < class K >
 inline
 Angle
-angle(const typename CGAL_WRAP(K)::Point_2 &p,
-      const typename CGAL_WRAP(K)::Point_2 &q,
-      const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+angle(const typename K::Point_2 &p,
+      const typename K::Point_2 &q,
+      const typename K::Point_2 &r, const K& k)
 {
   return k.angle_2_object()(p, q, r);
 }
@@ -48,9 +48,9 @@ angle(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-are_ordered_along_line(const typename CGAL_WRAP(K)::Point_2 &p,
-                       const typename CGAL_WRAP(K)::Point_2 &q,
-                       const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+are_ordered_along_line(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::Point_2 &r, const K& k)
 {
   return k.are_ordered_along_line_2_object()(p, q, r);
 }
@@ -58,9 +58,9 @@ are_ordered_along_line(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-are_strictly_ordered_along_line(const typename CGAL_WRAP(K)::Point_2 &p,
-                                const typename CGAL_WRAP(K)::Point_2 &q,
-                                const typename CGAL_WRAP(K)::Point_2 &r,
+are_strictly_ordered_along_line(const typename K::Point_2 &p,
+                                const typename K::Point_2 &q,
+                                const typename K::Point_2 &r,
                                 const K& k)
 {
   return k.are_strictly_ordered_along_line_2_object()(p, q, r);
@@ -69,9 +69,9 @@ are_strictly_ordered_along_line(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::FT
-area(const typename CGAL_WRAP(K)::Point_2 &p,
-     const typename CGAL_WRAP(K)::Point_2 &q,
-     const typename CGAL_WRAP(K)::Point_2 &r,
+area(const typename K::Point_2 &p,
+     const typename K::Point_2 &q,
+     const typename K::Point_2 &r,
      const K& k)
 {
   return k.compute_area_2_object()(p, q, r);
@@ -80,8 +80,8 @@ area(const typename CGAL_WRAP(K)::Point_2 &p,
 template <typename K>
 inline
 typename K::Line_2
-bisector(const typename CGAL_WRAP(K)::Point_2 &p,
-         const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
+bisector(const typename K::Point_2 &p,
+         const typename K::Point_2 &q, const K &k)
 {
   return k.construct_bisector_2_object()(p, q);
 }
@@ -89,8 +89,8 @@ bisector(const typename CGAL_WRAP(K)::Point_2 &p,
 template <typename K>
 inline
 typename K::Line_2
-bisector(const typename CGAL_WRAP(K)::Line_2 &l1,
-         const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)
+bisector(const typename K::Line_2 &l1,
+         const typename K::Line_2 &l2, const K &k)
 {
   return k.construct_bisector_2_object()(l1, l2);
 }
@@ -98,9 +98,9 @@ bisector(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 typename K::Point_2
-centroid(const typename CGAL_WRAP(K)::Point_2 &p,
-         const typename CGAL_WRAP(K)::Point_2 &q,
-         const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+centroid(const typename K::Point_2 &p,
+         const typename K::Point_2 &q,
+         const typename K::Point_2 &r, const K& k)
 {
   return k.construct_centroid_2_object()(p, q, r);
 }
@@ -108,10 +108,10 @@ centroid(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::Point_2
-centroid(const typename CGAL_WRAP(K)::Point_2 &p,
-         const typename CGAL_WRAP(K)::Point_2 &q,
-         const typename CGAL_WRAP(K)::Point_2 &r,
-         const typename CGAL_WRAP(K)::Point_2 &s, const K& k)
+centroid(const typename K::Point_2 &p,
+         const typename K::Point_2 &q,
+         const typename K::Point_2 &r,
+         const typename K::Point_2 &s, const K& k)
 {
   return k.construct_centroid_2_object()(p, q, r, s);
 }
@@ -119,7 +119,7 @@ centroid(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::Point_2
-centroid(const typename CGAL_WRAP(K)::Triangle_2 &t, const K& k)
+centroid(const typename K::Triangle_2 &t, const K& k)
 {
   return k.construct_centroid_2_object()(t);
 }
@@ -127,8 +127,8 @@ centroid(const typename CGAL_WRAP(K)::Triangle_2 &t, const K& k)
 template < class K >
 inline
 typename K::Point_2
-circumcenter(const typename CGAL_WRAP(K)::Point_2 &p,
-             const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+circumcenter(const typename K::Point_2 &p,
+             const typename K::Point_2 &q, const K& k)
 {
   return k.construct_circumcenter_2_object()(p, q);
 }
@@ -136,9 +136,9 @@ circumcenter(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::Point_2
-circumcenter(const typename CGAL_WRAP(K)::Point_2 &p,
-             const typename CGAL_WRAP(K)::Point_2 &q,
-             const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+circumcenter(const typename K::Point_2 &p,
+             const typename K::Point_2 &q,
+             const typename K::Point_2 &r, const K& k)
 {
   return k.construct_circumcenter_2_object()(p, q, r);
 }
@@ -146,7 +146,7 @@ circumcenter(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::Point_2
-circumcenter(const typename CGAL_WRAP(K)::Triangle_2 &t, const K& k)
+circumcenter(const typename K::Triangle_2 &t, const K& k)
 {
   return k.construct_circumcenter_2_object()(t);
 }
@@ -154,9 +154,9 @@ circumcenter(const typename CGAL_WRAP(K)::Triangle_2 &t, const K& k)
 template < class K >
 inline
 bool
-collinear(const typename CGAL_WRAP(K)::Point_2 &p,
-          const typename CGAL_WRAP(K)::Point_2 &q,
-          const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+collinear(const typename K::Point_2 &p,
+          const typename K::Point_2 &q,
+          const typename K::Point_2 &r, const K& k)
 {
   return k.collinear_2_object()(p, q, r);
 }
@@ -164,9 +164,9 @@ collinear(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-collinear_are_ordered_along_line(const typename CGAL_WRAP(K)::Point_2 &p,
-                                 const typename CGAL_WRAP(K)::Point_2 &q,
-                                 const typename CGAL_WRAP(K)::Point_2 &r,
+collinear_are_ordered_along_line(const typename K::Point_2 &p,
+                                 const typename K::Point_2 &q,
+                                 const typename K::Point_2 &r,
                                  const K& k)
 {
   return k.collinear_are_ordered_along_line_2_object()(p, q, r);
@@ -176,9 +176,9 @@ template < class K >
 inline
 bool
 collinear_are_strictly_ordered_along_line(
-             const typename CGAL_WRAP(K)::Point_2 &p,
-             const typename CGAL_WRAP(K)::Point_2 &q,
-             const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+             const typename K::Point_2 &p,
+             const typename K::Point_2 &q,
+             const typename K::Point_2 &r, const K& k)
 {
   return k.collinear_are_strictly_ordered_along_line_2_object()(p, q, r);
 }
@@ -186,8 +186,8 @@ collinear_are_strictly_ordered_along_line(
 template < typename K >
 inline
 Comparison_result
-compare_angle_with_x_axis(const typename CGAL_WRAP(K)::Direction_2& d1,
-                          const typename CGAL_WRAP(K)::Direction_2& d2,
+compare_angle_with_x_axis(const typename K::Direction_2& d1,
+                          const typename K::Direction_2& d2,
                           const K& k)
 {
   return k.compare_angle_with_x_axis_2_object()(d1, d2);
@@ -196,9 +196,9 @@ compare_angle_with_x_axis(const typename CGAL_WRAP(K)::Direction_2& d1,
 template <class K >
 inline
 Comparison_result
-compare_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
-                          const typename CGAL_WRAP(K)::Point_2 &q,
-                          const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+compare_distance_to_point(const typename K::Point_2 &p,
+                          const typename K::Point_2 &q,
+                          const typename K::Point_2 &r, const K& k)
 {
   return k.compare_distance_2_object()(p, q, r);
 }
@@ -206,9 +206,9 @@ compare_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K >
 inline
 Comparison_result
-compare_squared_distance(const typename CGAL_WRAP(K)::Point_2 &p,
-                         const typename CGAL_WRAP(K)::Point_2 &q,
-                         const typename CGAL_WRAP(K)::FT &d2, const K& k)
+compare_squared_distance(const typename K::Point_2 &p,
+                         const typename K::Point_2 &q,
+                         const typename K::FT &d2, const K& k)
 {
   return k.compare_squared_distance_2_object()(p, q, d2);
 }
@@ -216,10 +216,10 @@ compare_squared_distance(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 Comparison_result
-compare_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
-				const typename CGAL_WRAP(K)::Point_2& q,
-				const typename CGAL_WRAP(K)::Point_2& r,
-				const typename CGAL_WRAP(K)::Point_2& s,
+compare_signed_distance_to_line(const typename K::Point_2& p,
+				const typename K::Point_2& q,
+				const typename K::Point_2& r,
+				const typename K::Point_2& s,
 				const K& k)
 {
   if (k.less_signed_distance_to_line_2_object()(p, q, r, s)) return SMALLER;
@@ -230,9 +230,9 @@ compare_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
 template <class K>
 inline
 Comparison_result
-compare_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
-				const typename CGAL_WRAP(K)::Point_2& p,
-				const typename CGAL_WRAP(K)::Point_2& q,
+compare_signed_distance_to_line(const typename K::Line_2& l,
+				const typename K::Point_2& p,
+				const typename K::Point_2& q,
 				const K& k)
 {
   if (k.less_signed_distance_to_line_2_object()(l, p, q)) return SMALLER;
@@ -243,8 +243,8 @@ compare_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
 template < class K >
 inline
 Comparison_result
-compare_slopes(const typename CGAL_WRAP(K)::Line_2 &l1,
-               const typename CGAL_WRAP(K)::Line_2 &l2, const K& k)
+compare_slopes(const typename K::Line_2 &l1,
+               const typename K::Line_2 &l2, const K& k)
 {
   return k.compare_slope_2_object()(l1, l2);
 }
@@ -252,8 +252,8 @@ compare_slopes(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 Comparison_result
-compare_slopes(const typename CGAL_WRAP(K)::Segment_2 &s1,
-               const typename CGAL_WRAP(K)::Segment_2 &s2, const K& k)
+compare_slopes(const typename K::Segment_2 &s1,
+               const typename K::Segment_2 &s2, const K& k)
 {
   return k.compare_slope_2_object()(s1, s2);
 }
@@ -261,8 +261,8 @@ compare_slopes(const typename CGAL_WRAP(K)::Segment_2 &s1,
 template < class K >
 inline
 Comparison_result
-compare_x(const typename CGAL_WRAP(K)::Point_2 &p,
-          const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+compare_x(const typename K::Point_2 &p,
+          const typename K::Point_2 &q, const K& k)
 {
   return k.compare_x_2_object()(p, q);
 }
@@ -270,9 +270,9 @@ compare_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_x(const typename CGAL_WRAP(K)::Point_2 &p,
-          const typename CGAL_WRAP(K)::Line_2 &l1,
-          const typename CGAL_WRAP(K)::Line_2 &l2, const K& k)
+compare_x(const typename K::Point_2 &p,
+          const typename K::Line_2 &l1,
+          const typename K::Line_2 &l2, const K& k)
 {
   return k.compare_x_2_object()(p, l1, l2);
 }
@@ -280,9 +280,9 @@ compare_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_x(const typename CGAL_WRAP(K)::Line_2 &l,
-          const typename CGAL_WRAP(K)::Line_2 &h1,
-          const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_x(const typename K::Line_2 &l,
+          const typename K::Line_2 &h1,
+          const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_x_2_object()(l, h1, h2);
 }
@@ -290,10 +290,10 @@ compare_x(const typename CGAL_WRAP(K)::Line_2 &l,
 template < class K >
 inline
 Comparison_result
-compare_x(const typename CGAL_WRAP(K)::Line_2 &l1,
-          const typename CGAL_WRAP(K)::Line_2 &h1,
-          const typename CGAL_WRAP(K)::Line_2 &l2,
-          const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_x(const typename K::Line_2 &l1,
+          const typename K::Line_2 &h1,
+          const typename K::Line_2 &l2,
+          const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_x_2_object()(l1, h1, l2, h2);
 }
@@ -301,8 +301,8 @@ compare_x(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 Comparison_result
-compare_x_at_y(const typename CGAL_WRAP(K)::Point_2& p,
-               const typename CGAL_WRAP(K)::Line_2& h, const K& k)
+compare_x_at_y(const typename K::Point_2& p,
+               const typename K::Line_2& h, const K& k)
 {
   return k.compare_x_at_y_2_object()(p, h);
 }
@@ -311,8 +311,8 @@ compare_x_at_y(const typename CGAL_WRAP(K)::Point_2& p,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Segment_2 &s, const K& k)
+compare_y_at_x(const typename K::Point_2 &p,
+               const typename K::Segment_2 &s, const K& k)
 {
   return k.compare_y_at_x_2_object()(p, s);
 }
@@ -321,9 +321,9 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_x_at_y(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Line_2 &h1,
-               const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_x_at_y(const typename K::Point_2 &p,
+               const typename K::Line_2 &h1,
+               const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_x_at_y_2_object()(p, h1, h2);
 }
@@ -331,9 +331,9 @@ compare_x_at_y(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_x_at_y(const typename CGAL_WRAP(K)::Line_2 &l1,
-               const typename CGAL_WRAP(K)::Line_2 &l2,
-               const typename CGAL_WRAP(K)::Line_2 &h, const K& k)
+compare_x_at_y(const typename K::Line_2 &l1,
+               const typename K::Line_2 &l2,
+               const typename K::Line_2 &h, const K& k)
 {
   return k.compare_x_at_y_2_object()(l1, l2, h);
 }
@@ -341,10 +341,10 @@ compare_x_at_y(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 Comparison_result
-compare_x_at_y(const typename CGAL_WRAP(K)::Line_2 &l1,
-               const typename CGAL_WRAP(K)::Line_2 &l2,
-               const typename CGAL_WRAP(K)::Line_2 &h1,
-               const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_x_at_y(const typename K::Line_2 &l1,
+               const typename K::Line_2 &l2,
+               const typename K::Line_2 &h1,
+               const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_x_at_y_2_object()(l1, l2, h1, h2);
 }
@@ -352,8 +352,8 @@ compare_x_at_y(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 Comparison_result
-compare_xy(const typename CGAL_WRAP(K)::Point_2 &p,
-           const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+compare_xy(const typename K::Point_2 &p,
+           const typename K::Point_2 &q, const K& k)
 {
   return k.compare_xy_2_object()(p, q);
 }
@@ -361,8 +361,8 @@ compare_xy(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_yx(const typename CGAL_WRAP(K)::Point_2 &p,
-           const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+compare_yx(const typename K::Point_2 &p,
+           const typename K::Point_2 &q, const K& k)
 {
   return k.compare_yx_2_object()(p, q);
 }
@@ -370,8 +370,8 @@ compare_yx(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y(const typename CGAL_WRAP(K)::Point_2 &p,
-          const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+compare_y(const typename K::Point_2 &p,
+          const typename K::Point_2 &q, const K& k)
 {
   return k.compare_y_2_object()(p, q);
 }
@@ -379,9 +379,9 @@ compare_y(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y(const typename CGAL_WRAP(K)::Point_2 &p,
-          const typename CGAL_WRAP(K)::Line_2 &l1,
-          const typename CGAL_WRAP(K)::Line_2 &l2, const K& k)
+compare_y(const typename K::Point_2 &p,
+          const typename K::Line_2 &l1,
+          const typename K::Line_2 &l2, const K& k)
 {
   return k.compare_y_2_object()(p, l1, l2);
 }
@@ -389,10 +389,10 @@ compare_y(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y(const typename CGAL_WRAP(K)::Line_2 &l1,
-          const typename CGAL_WRAP(K)::Line_2 &l2,
-          const typename CGAL_WRAP(K)::Line_2 &h1,
-          const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_y(const typename K::Line_2 &l1,
+          const typename K::Line_2 &l2,
+          const typename K::Line_2 &h1,
+          const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_y_2_object()(l1, l2, h1, h2);
 }
@@ -400,9 +400,9 @@ compare_y(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 Comparison_result
-compare_y(const typename CGAL_WRAP(K)::Line_2 &l,
-          const typename CGAL_WRAP(K)::Line_2 &h1,
-          const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_y(const typename K::Line_2 &l,
+          const typename K::Line_2 &h1,
+          const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_y_2_object()(l, h1, h2);
 }
@@ -410,8 +410,8 @@ compare_y(const typename CGAL_WRAP(K)::Line_2 &l,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Segment_2 &s, const K& k)
+compare_y_at_x(const typename K::Point_2 &p,
+               const typename K::Segment_2 &s, const K& k)
 {
   return k.compare_y_at_x_2_object()(p, s);
 }
@@ -419,9 +419,9 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Segment_2 &s1,
-               const typename CGAL_WRAP(K)::Segment_2 &s2, const K& k)
+compare_y_at_x(const typename K::Point_2 &p,
+               const typename K::Segment_2 &s1,
+               const typename K::Segment_2 &s2, const K& k)
 {
   return k.compare_y_at_x_2_object()(p, s1, s2);
 }
@@ -429,8 +429,8 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Line_2 &l, const K& k)
+compare_y_at_x(const typename K::Point_2 &p,
+               const typename K::Line_2 &l, const K& k)
 {
   return k.compare_y_at_x_2_object()(p, l);
 }
@@ -438,9 +438,9 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Line_2 &h1,
-               const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_y_at_x(const typename K::Point_2 &p,
+               const typename K::Line_2 &h1,
+               const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_y_at_x_2_object()(p, h1, h2);
 }
@@ -448,9 +448,9 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Line_2 &l1,
-               const typename CGAL_WRAP(K)::Line_2 &l2,
-               const typename CGAL_WRAP(K)::Line_2 &h, const K& k)
+compare_y_at_x(const typename K::Line_2 &l1,
+               const typename K::Line_2 &l2,
+               const typename K::Line_2 &h, const K& k)
 {
   return k.compare_y_at_x_2_object()(l1, l2, h);
 }
@@ -458,10 +458,10 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Line_2 &l1,
-               const typename CGAL_WRAP(K)::Line_2 &l2,
-               const typename CGAL_WRAP(K)::Line_2 &h1,
-               const typename CGAL_WRAP(K)::Line_2 &h2, const K& k)
+compare_y_at_x(const typename K::Line_2 &l1,
+               const typename K::Line_2 &l2,
+               const typename K::Line_2 &h1,
+               const typename K::Line_2 &h2, const K& k)
 {
   return k.compare_y_at_x_2_object()(l1, l2, h1, h2);
 }
@@ -469,8 +469,8 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Line_2 &l1,
 template < class K >
 inline
 typename K::FT
-determinant(const typename CGAL_WRAP(K)::Vector_2 &v0,
-            const typename CGAL_WRAP(K)::Vector_2 &v1, const K &k)
+determinant(const typename K::Vector_2 &v0,
+            const typename K::Vector_2 &v1, const K &k)
 {
   return k.compute_determinant_2_object()(v0, v1);
 }
@@ -478,9 +478,9 @@ determinant(const typename CGAL_WRAP(K)::Vector_2 &v0,
 template <class K>
 inline
 bool
-has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
-			     const typename CGAL_WRAP(K)::Point_2 &q,
-			     const typename CGAL_WRAP(K)::Point_2 &r,
+has_larger_distance_to_point(const typename K::Point_2 &p,
+			     const typename K::Point_2 &q,
+			     const typename K::Point_2 &r,
 			     const K& k)
 {
   return k.less_distance_to_point_2_object()(p, r, q);
@@ -489,9 +489,9 @@ has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 bool
-has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
-                              const typename CGAL_WRAP(K)::Point_2 &q,
-                              const typename CGAL_WRAP(K)::Point_2 &r,
+has_smaller_distance_to_point(const typename K::Point_2 &p,
+                              const typename K::Point_2 &q,
+                              const typename K::Point_2 &r,
                               const K& k)
 {
   return k.less_distance_to_point_2_object()(p, q, r);
@@ -500,9 +500,9 @@ has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 bool
-has_smaller_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
-				    const typename CGAL_WRAP(K)::Point_2& p,
-				    const typename CGAL_WRAP(K)::Point_2& q,
+has_smaller_signed_distance_to_line(const typename K::Line_2& l,
+				    const typename K::Point_2& p,
+				    const typename K::Point_2& q,
 				    const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(l, p, q);
@@ -511,9 +511,9 @@ has_smaller_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
 template <class K>
 inline
 bool
-has_larger_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
-				   const typename CGAL_WRAP(K)::Point_2& p,
-				   const typename CGAL_WRAP(K)::Point_2& q,
+has_larger_signed_distance_to_line(const typename K::Line_2& l,
+				   const typename K::Point_2& p,
+				   const typename K::Point_2& q,
 				   const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(l, q, p);
@@ -522,10 +522,10 @@ has_larger_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
 template <class K>
 inline
 bool
-has_larger_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
-				   const typename CGAL_WRAP(K)::Point_2& q,
-				   const typename CGAL_WRAP(K)::Point_2& r,
-				   const typename CGAL_WRAP(K)::Point_2& s,
+has_larger_signed_distance_to_line(const typename K::Point_2& p,
+				   const typename K::Point_2& q,
+				   const typename K::Point_2& r,
+				   const typename K::Point_2& s,
 				   const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(p, q, s, r);
@@ -534,10 +534,10 @@ has_larger_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
 template <class K>
 inline
 bool
-has_smaller_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
-                                    const typename CGAL_WRAP(K)::Point_2& q,
-                                    const typename CGAL_WRAP(K)::Point_2& r,
-                                    const typename CGAL_WRAP(K)::Point_2& s,
+has_smaller_signed_distance_to_line(const typename K::Point_2& p,
+                                    const typename K::Point_2& q,
+                                    const typename K::Point_2& r,
+                                    const typename K::Point_2& s,
 				    const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(p, q, r, s);
@@ -546,9 +546,9 @@ has_smaller_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
 template < class K >
 inline
 bool
-left_turn(const typename CGAL_WRAP(K)::Point_2 &p,
-          const typename CGAL_WRAP(K)::Point_2 &q,
-          const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
+left_turn(const typename K::Point_2 &p,
+          const typename K::Point_2 &q,
+          const typename K::Point_2 &r, const K& k)
 {
   return k.left_turn_2_object()(p, q, r);
 }
@@ -556,8 +556,8 @@ left_turn(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-less_x(const typename CGAL_WRAP(K)::Point_2 &p,
-       const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+less_x(const typename K::Point_2 &p,
+       const typename K::Point_2 &q, const K& k)
 {
   return k.less_x_2_object()(p, q);
 }
@@ -565,8 +565,8 @@ less_x(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-less_y(const typename CGAL_WRAP(K)::Point_2 &p,
-       const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+less_y(const typename K::Point_2 &p,
+       const typename K::Point_2 &q, const K& k)
 {
   return k.less_y_2_object()(p, q);
 }
@@ -574,8 +574,8 @@ less_y(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_xy_larger(const typename CGAL_WRAP(K)::Point_2 &p,
-                            const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_xy_larger(const typename K::Point_2 &p,
+                            const typename K::Point_2 &q,
                             const K& k)
 {
   return k.compare_xy_2_object()(p, q) == LARGER;
@@ -584,8 +584,8 @@ lexicographically_xy_larger(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_xy_larger_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
-                                     const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_xy_larger_or_equal(const typename K::Point_2 &p,
+                                     const typename K::Point_2 &q,
                                      const K& k)
 {
   return k.compare_xy_2_object()(p, q) != SMALLER;
@@ -594,8 +594,8 @@ lexicographically_xy_larger_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_xy_smaller(const typename CGAL_WRAP(K)::Point_2 &p,
-                             const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_xy_smaller(const typename K::Point_2 &p,
+                             const typename K::Point_2 &q,
                              const K& k)
 {
   return k.less_xy_2_object()(p, q);
@@ -604,8 +604,8 @@ lexicographically_xy_smaller(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_xy_smaller_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
-                                      const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_xy_smaller_or_equal(const typename K::Point_2 &p,
+                                      const typename K::Point_2 &q,
                                       const K& k)
 {
   return k.compare_xy_2_object()(p, q) != LARGER;
@@ -614,8 +614,8 @@ lexicographically_xy_smaller_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_yx_smaller(const typename CGAL_WRAP(K)::Point_2 &p,
-                             const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_yx_smaller(const typename K::Point_2 &p,
+                             const typename K::Point_2 &q,
                              const K& k)
 {
   return k.less_yx_2_object()(p, q);
@@ -624,8 +624,8 @@ lexicographically_yx_smaller(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_yx_smaller_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
-                                      const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_yx_smaller_or_equal(const typename K::Point_2 &p,
+                                      const typename K::Point_2 &q,
                                       const K& k)
 {
   return !k.less_yx_2_object()(q, p);
@@ -635,8 +635,8 @@ lexicographically_yx_smaller_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_yx_larger(const typename CGAL_WRAP(K)::Point_2 &p,
-                            const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_yx_larger(const typename K::Point_2 &p,
+                            const typename K::Point_2 &q,
                             const K& k)
 {
   return k.less_yx_2_object()(q, p);
@@ -646,8 +646,8 @@ lexicographically_yx_larger(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-lexicographically_yx_larger_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
-                                     const typename CGAL_WRAP(K)::Point_2 &q,
+lexicographically_yx_larger_or_equal(const typename K::Point_2 &p,
+                                     const typename K::Point_2 &q,
                                      const K& k)
 {
   return !k.less_yx_2_object()(p, q);
@@ -656,8 +656,8 @@ lexicographically_yx_larger_or_equal(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::Point_2
-midpoint(const typename CGAL_WRAP(K)::Point_2 &p,
-         const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
+midpoint(const typename K::Point_2 &p,
+         const typename K::Point_2 &q, const K &k)
 {
   return k.construct_midpoint_2_object()(p, q);
 }
@@ -665,7 +665,7 @@ midpoint(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::Point_2
-max_vertex(const typename CGAL_WRAP(K)::Iso_rectangle_2 &ir, const K &k)
+max_vertex(const typename K::Iso_rectangle_2 &ir, const K &k)
 {
   return k.construct_max_vertex_2_object()(ir);
 }
@@ -673,7 +673,7 @@ max_vertex(const typename CGAL_WRAP(K)::Iso_rectangle_2 &ir, const K &k)
 template < class K >
 inline
 typename K::Point_2
-min_vertex(const typename CGAL_WRAP(K)::Iso_rectangle_2 &ir, const K &k)
+min_vertex(const typename K::Iso_rectangle_2 &ir, const K &k)
 {
   return k.construct_min_vertex_2_object()(ir);
 }
@@ -681,9 +681,9 @@ min_vertex(const typename CGAL_WRAP(K)::Iso_rectangle_2 &ir, const K &k)
 template <typename K>
 inline
 Orientation
-orientation(const typename CGAL_WRAP(K)::Point_2 &p,
-            const typename CGAL_WRAP(K)::Point_2 &q,
-            const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+orientation(const typename K::Point_2 &p,
+            const typename K::Point_2 &q,
+            const typename K::Point_2 &r, const K &k)
 {
   return k.orientation_2_object()(p, q, r);
 }
@@ -691,8 +691,8 @@ orientation(const typename CGAL_WRAP(K)::Point_2 &p,
 template <typename K>
 inline
 Orientation
-orientation(const typename CGAL_WRAP(K)::Vector_2 &u,
-            const typename CGAL_WRAP(K)::Vector_2 &v, const K &k)
+orientation(const typename K::Vector_2 &u,
+            const typename K::Vector_2 &v, const K &k)
 {
   return k.orientation_2_object()(u, v);
 }
@@ -700,8 +700,8 @@ orientation(const typename CGAL_WRAP(K)::Vector_2 &u,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Line_2 &l1,
-         const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)
+parallel(const typename K::Line_2 &l1,
+         const typename K::Line_2 &l2, const K &k)
 {
   return k.are_parallel_2_object()(l1, l2);
 }
@@ -709,8 +709,8 @@ parallel(const typename CGAL_WRAP(K)::Line_2 &l1,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Ray_2 &r1,
-         const typename CGAL_WRAP(K)::Ray_2 &r2, const K &k)
+parallel(const typename K::Ray_2 &r1,
+         const typename K::Ray_2 &r2, const K &k)
 {
   return k.are_parallel_2_object()(r1, r2);
 }
@@ -718,8 +718,8 @@ parallel(const typename CGAL_WRAP(K)::Ray_2 &r1,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Segment_2 &s1,
-         const typename CGAL_WRAP(K)::Segment_2 &s2, const K &k)
+parallel(const typename K::Segment_2 &s1,
+         const typename K::Segment_2 &s2, const K &k)
 {
   return k.are_parallel_2_object()(s1, s2);
 }
@@ -727,9 +727,9 @@ parallel(const typename CGAL_WRAP(K)::Segment_2 &s1,
 template <typename K>
 inline
 bool
-right_turn(const typename CGAL_WRAP(K)::Point_2 &p,
-           const typename CGAL_WRAP(K)::Point_2 &q,
-           const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+right_turn(const typename K::Point_2 &p,
+           const typename K::Point_2 &q,
+           const typename K::Point_2 &r, const K &k)
 {
   return CGALi::orientation(p, q, r, k) == RIGHT_TURN;
 }
@@ -737,10 +737,10 @@ right_turn(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 Bounded_side
-side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
-                       const typename CGAL_WRAP(K)::Point_2 &q,
-                       const typename CGAL_WRAP(K)::Point_2 &r,
-                       const typename CGAL_WRAP(K)::Point_2 &t, const K &k)
+side_of_bounded_circle(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::Point_2 &r,
+                       const typename K::Point_2 &t, const K &k)
 {
   return k.side_of_bounded_circle_2_object()(p, q, r, t);
 }
@@ -748,9 +748,9 @@ side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 Bounded_side
-side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
-                       const typename CGAL_WRAP(K)::Point_2 &q,
-                       const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+side_of_bounded_circle(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::Point_2 &r, const K &k)
 {
   return k.side_of_bounded_circle_2_object()(p, q, r);
 }
@@ -758,10 +758,10 @@ side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 Oriented_side
-side_of_oriented_circle(const typename CGAL_WRAP(K)::Point_2 &p,
-                        const typename CGAL_WRAP(K)::Point_2 &q,
-                        const typename CGAL_WRAP(K)::Point_2 &r,
-                        const typename CGAL_WRAP(K)::Point_2 &t, const K &k)
+side_of_oriented_circle(const typename K::Point_2 &p,
+                        const typename K::Point_2 &q,
+                        const typename K::Point_2 &r,
+                        const typename K::Point_2 &t, const K &k)
 {
   return k.side_of_oriented_circle_2_object()(p, q, r, t);
 }
@@ -769,8 +769,8 @@ side_of_oriented_circle(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 typename K::FT
-squared_radius(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
+squared_radius(const typename K::Point_2 &p,
+               const typename K::Point_2 &q, const K &k)
 {
   return k.compute_squared_radius_2_object()(p, q);
 }
@@ -778,9 +778,9 @@ squared_radius(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 CGAL_KERNEL_INLINE
 typename K::FT
-squared_radius(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Point_2 &q,
-               const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+squared_radius(const typename K::Point_2 &p,
+               const typename K::Point_2 &q,
+               const typename K::Point_2 &r, const K &k)
 {
   return k.compute_squared_radius_2_object()(p, q, r);
 }
@@ -788,8 +788,8 @@ squared_radius(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-x_equal(const typename CGAL_WRAP(K)::Point_2 &p,
-        const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
+x_equal(const typename K::Point_2 &p,
+        const typename K::Point_2 &q, const K &k)
 {
   return k.equal_x_2_object()(p, q);
 }
@@ -797,8 +797,8 @@ x_equal(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 bool
-y_equal(const typename CGAL_WRAP(K)::Point_2 &p,
-        const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
+y_equal(const typename K::Point_2 &p,
+        const typename K::Point_2 &q, const K &k)
 {
   return k.equal_y_2_object()(p, q);
 }

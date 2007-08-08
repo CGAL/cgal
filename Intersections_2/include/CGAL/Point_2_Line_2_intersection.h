@@ -35,8 +35,8 @@ namespace CGALi {
 
 template <class K>
 inline bool
-do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt, 
-	     const typename CGAL_WRAP(K)::Line_2 &line,
+do_intersect(const typename K::Point_2 &pt, 
+	     const typename K::Line_2 &line,
 	     const K&)
 {
     return line.has_on(pt);
@@ -44,8 +44,8 @@ do_intersect(const typename CGAL_WRAP(K)::Point_2 &pt,
 
 template <class K>
 inline bool
-do_intersect(const typename CGAL_WRAP(K)::Line_2 &line,
-	     const typename CGAL_WRAP(K)::Point_2 &pt, 
+do_intersect(const typename K::Line_2 &line,
+	     const typename K::Point_2 &pt, 
 	     const K&)
 {
     return line.has_on(pt);
@@ -53,8 +53,8 @@ do_intersect(const typename CGAL_WRAP(K)::Line_2 &line,
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Point_2 &pt, 
-	     const typename CGAL_WRAP(K)::Line_2 &line,
+intersection(const typename K::Point_2 &pt, 
+	     const typename K::Line_2 &line,
 	     const K& k)
 {
     if (do_intersect(pt,line, k)) {
@@ -65,8 +65,8 @@ intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Line_2 &line,
-	     const typename CGAL_WRAP(K)::Point_2 &pt, 
+intersection(const typename K::Line_2 &line,
+	     const typename K::Point_2 &pt, 
 	     const K& k)
 {
     if (do_intersect(pt,line, k)) {

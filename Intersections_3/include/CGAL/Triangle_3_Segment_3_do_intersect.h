@@ -27,8 +27,8 @@ namespace CGALi {
 
 
 template <class K>
-bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Triangle_3 &t, 
-			   const typename CGAL_WRAP(K)::Segment_3  &s,
+bool do_intersect_coplanar(const typename K::Triangle_3 &t, 
+			   const typename K::Segment_3  &s,
 			   const K & k )
 {
 
@@ -181,8 +181,8 @@ bool do_intersect_coplanar(const typename CGAL_WRAP(K)::Triangle_3 &t,
 
 
 template <class K>
-bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &t, 
-		  const typename CGAL_WRAP(K)::Segment_3  &s,
+bool do_intersect(const typename K::Triangle_3 &t, 
+		  const typename K::Segment_3  &s,
 		  const K & k)
 {
   
@@ -293,8 +293,8 @@ bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &t,
 
 template <class K>
 inline
-bool do_intersect(const typename CGAL_WRAP(K)::Segment_3  &s,
-		  const typename CGAL_WRAP(K)::Triangle_3 &t, 
+bool do_intersect(const typename K::Segment_3  &s,
+		  const typename K::Triangle_3 &t, 
 		  const K & k)
 {
   return do_intersect(t, s, k);

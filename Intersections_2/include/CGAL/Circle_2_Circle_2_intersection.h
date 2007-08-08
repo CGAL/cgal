@@ -35,8 +35,8 @@ namespace CGALi {
 
 template <class K>
 bool
-do_intersect(const typename CGAL_WRAP(K)::Circle_2 & circ1, 
-	     const typename CGAL_WRAP(K)::Circle_2& circ2,
+do_intersect(const typename K::Circle_2 & circ1, 
+	     const typename K::Circle_2& circ2,
 	     const K&)
 {
     typedef typename K::FT FT;
