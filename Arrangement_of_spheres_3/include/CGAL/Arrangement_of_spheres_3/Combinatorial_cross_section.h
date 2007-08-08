@@ -14,7 +14,7 @@
 #include <boost/utility.hpp>
 #include <map>
 #include <set>
-#include <boost/array.hpp>
+//#include <boost/array.hpp>
 #include <boost/foreach.hpp>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
@@ -320,7 +320,7 @@ public:
 	hc->set_face(inf_);
 	hc->vertex()->set_halfedge(hc);
 	hc=hc->next();
-      } while (hc != h1->next());
+      } while (hc != inside);
     } else {
       h1->opposite()->vertex()->set_halfedge(Halfedge_handle());
     }
@@ -341,6 +341,8 @@ public:
   }
 
   void delete_component(Vertex_handle vh) {
+    std::cout << "Deleting component from ";
+    write(vh, std::cout) << std::endl;
     --num_components_;
     std::vector<Vertex_handle> stack;
     std::set<Vertex_handle, Handle_compare> vertices;
@@ -352,7 +354,7 @@ public:
       Vertex_handle vhc= stack.back();
       stack.pop_back();
       if (vhc->halfedge() != Halfedge_handle()) {
-	Halfedge_handle h= vhc->halfedge();
+	Halfedge_handle h= vhc->halfedge()->opposite();
 	do {
 	  if (edges.find(h) == edges.end()
 	      && edges.find(h->opposite()) == edges.end() ) {
@@ -362,21 +364,25 @@ public:
 	    vertices.insert(h->vertex());
 	    stack.push_back(h->vertex());
 	  }
-	  if (faces.find(h->face()) == faces.end()) {
+	  if (faces.find(h->face()) == faces.end() && h->face() != inf_) {
 	    faces.insert(h->face());
 	  }
-	  h=h->next()->opposite();
-	} while (h != vhc->halfedge());
+	  h=h->opposite()->next();
+	} while (h != vhc->halfedge()->opposite());
       }
     } while (!stack.empty());
     // hds_.vertices_erase(_1)
+    std::cout << "Deleting: \n";
     BOOST_FOREACH(Vertex_handle v, vertices) {
-      hds_.vertices_erase(v);
+      write(v, std::cout) << std::endl;
+       hds_.vertices_erase(v);
     } 
     BOOST_FOREACH(Halfedge_handle h, edges){
+     write(h, std::cout) << std::endl;
       hds_.edges_erase(h);
     }
     BOOST_FOREACH(Face_handle f, faces){
+     write(f, std::cout) << std::endl;
       hds_.faces_erase(f);
     }
     write(std::cout);
@@ -388,6 +394,11 @@ public:
     }
     std::cout << "done." << std::endl;
     
+  }
+
+  void delete_circle(Vertex_handle v) {
+    halfedges_[v->point().key().input_index()]=Halfedge_handle();
+    delete_component(v);
   }
 
   void audit(bool extra_vertices=false) const ;	 
@@ -426,10 +437,10 @@ public:
   Halfedge_handle a_halfedge(Curve::Key k) const;
 
   // a halfedge on the rule pointing to the extremal vertex
-  Halfedge_handle rule_halfedge(Curve::Key k, Rule_direction i) const;
+  // Halfedge_handle rule_halfedge(Curve::Key k, Rule_direction i) const;
 
   // a halfedge on the circle pointing to the extremal vertex (inside)
-  Halfedge_handle extremum_halfedge(Curve::Key k, Rule_direction i) const;
+  //Halfedge_handle extremum_halfedge(Curve::Key k, Rule_direction i) const;
   
   // insert the vertex so that h->opposite points to it
   Halfedge_handle insert_vertex( Point p, Halfedge_handle h);
@@ -449,15 +460,15 @@ public:
 
  
 
-  typedef boost::array<Halfedge_handle, 4> Halfedge_quad;
+  //typedef boost::array<Halfedge_handle, 4> Halfedge_quad;
 
-  const Halfedge_quad& halfedges(CGAL_AOS3_TYPENAME Curve::Key k) const {
+  /*const Halfedge_handle halfedges(CGAL_AOS3_TYPENAME Curve::Key k) const {
     return halfedges_[k.input_index()];
   }
 
    Halfedge_quad& halfedges(CGAL_AOS3_TYPENAME Curve::Key k)  {
     return halfedges_[k.input_index()];
-  }
+    }*/
   void set_number_of_spheres(unsigned int i) {
     CGAL_assertion(halfedges_.size() <=i);
     halfedges_.resize(i);
@@ -473,7 +484,7 @@ private:
 
   //void new_target(Curve::Key k, Halfedge_handle tar[]);
   
-  void set_extremum_halfedge(Halfedge_handle h);
+  void set_halfedge(Halfedge_handle h);
 
 
   /*Halfedge_handle split_face(Halfedge_handle o, Halfedge_handle d,
@@ -538,7 +549,7 @@ private:
   Face_handle inf_;
   mutable std::vector<Curve> errors_;
   //std::vector<Vertex_handle> targets_;
-  std::vector<Halfedge_quad> halfedges_;
+  std::vector<Halfedge_handle> halfedges_;
   int num_components_;
 
   // for new_face when constructing things

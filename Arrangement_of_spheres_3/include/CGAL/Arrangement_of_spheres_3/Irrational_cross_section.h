@@ -428,23 +428,31 @@ protected:
  
   }							   
 
-  void clean_up_vertex(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &,
+  void clean_up_vertex(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &t,
 		       CGAL_AOS3_TYPENAME CS::Vertex_handle vh) {
     if (cs_.is_redundant(vh)) {
       cs_.remove_vertex(vh->halfedge());
     }
     if (vh->point().is_sphere_extremum()) {
       CGAL_AOS3_TYPENAME Traits::Sphere_3_key k= vh->point().sphere_key();
-      CGAL_AOS3_TYPENAME CS::Halfedge_handle rule, c= vh->halfedge();
+      CGAL_AOS3_TYPENAME CS::Halfedge_handle rule, arc, c= vh->halfedge();
       do {
 	if (c->curve().is_rule() && c->curve().key() == k) {
 	  rule= c;
-	  break;
+	} 
+	if (!c->curve().is_rule()) {
+	  arc= c;
 	}
 	c= c->next()->opposite();
       } while (c != vh->halfedge());
       if (rule == CGAL_AOS3_TYPENAME CS::Halfedge_handle()) {
-	CGAL_assertion(0);
+	if (arc->curve().is_inside()) arc=arc->opposite();
+	CGAL_AOS3_TYPENAME CS::Curve rule= CS::Curve::make_rule(arc->curve().key(),
+								vh->point().sphere_extremum_index());
+	CGAL_AOS3_TYPENAME CS::Halfedge_handle ovh
+	  = find_rule_vertex(t, arc->face(),
+			     rule);
+	cs_.split_face(rule, cs_.find_halfedge(vh, arc->face()), ovh);
       }
     }
     

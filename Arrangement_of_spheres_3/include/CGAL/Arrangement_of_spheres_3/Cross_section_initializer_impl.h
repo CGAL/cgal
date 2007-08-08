@@ -80,8 +80,8 @@ void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Tra
 	&& it->curve().is_inside()) {
       CGAL_AOS3_TYPENAME CS::Halfedge_handle fit= cs_.next_edge_on_curve(it);
       if (fit->curve() != it->curve()) {
-	int ai= (it->curve().arc_index()+1)%4;
-	cs_.halfedges(it->curve().key())[ai]=it;
+	//int ai= (it->curve().arc_index()+1)%4;
+	cs_.halfedges_[it->curve().key().input_index()]=it;
       }
     }
   }
