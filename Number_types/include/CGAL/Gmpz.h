@@ -34,11 +34,7 @@
 #include <CGAL/Quotient.h> // spec of AST for Quotient<Gmpz>
 
 #include <string>
-#ifndef CGAL_CFG_NO_LOCALE
-#  include <locale>
-#else
-#  include <cctype>
-#endif
+#include <locale>
 
 #include <CGAL/Root_of_traits.h>
 

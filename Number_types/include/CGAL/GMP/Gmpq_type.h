@@ -304,14 +304,8 @@ namespace Gmpq_detail {
   bool is_space (const std::istream& /*is*/, std::istream::int_type c)
   {
     std::istream::char_type cc= c;
-    return
-      (c == std::istream::traits_type::eof()) ||
-#ifndef CGAL_CFG_NO_LOCALE
-      std::isspace(cc, std::locale::classic() )
-#else
-      std::isspace(cc)
-#endif
-      ;
+    return (c == std::istream::traits_type::eof()) ||
+           std::isspace(cc, std::locale::classic() );
   }
 
   inline
@@ -324,13 +318,7 @@ namespace Gmpq_detail {
   bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
   {
     std::istream::char_type cc= c;
-    return
-#ifndef CGAL_CFG_NO_LOCALE
-      std::isdigit(cc, std::locale::classic() )
-#else
-      std::isdigit(cc)
-#endif
-      ;
+    return std::isdigit(cc, std::locale::classic() );
   }
 }
 

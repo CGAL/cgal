@@ -135,11 +135,7 @@ std::istream &operator>>(std::istream &in,
   do {
     in >> c;
   }
-#ifndef CGAL_CFG_NO_LOCALE
    while (std::isspace(c,std::locale::classic() ));
-#else
-  while (std::isspace(c));
-#endif
 
   if (c != ',') {
     in.setstate(std::ios_base::failbit);
