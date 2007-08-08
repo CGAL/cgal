@@ -32,7 +32,7 @@
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-#ifndef VERBOSE
+#ifndef CGAL_DEBUG_SWEEP_LINE
 
 #define CGAL_SL_DEBUG(a)
 #define CGAL_PRINT_INSERT(a)
@@ -772,7 +772,7 @@ public:
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line (Subcurve *leftCurve);
 
-#ifdef VERBOSE
+#ifdef CGAL_DEBUG_SWEEP_LINE
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();
@@ -1033,7 +1033,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve)
 
 
 //DEBUG UTILITIES
-#ifdef VERBOSE
+#ifdef CGAL_DEBUG_SWEEP_LINE
   #include <CGAL/Sweep_line_2/Sweep_line_2_debug.h>
 #endif
 

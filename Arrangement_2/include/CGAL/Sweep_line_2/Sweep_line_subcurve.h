@@ -321,7 +321,7 @@ public:
       return (m_orig_subcurve2->overlap_depth() + 1);
   }
  
-#ifdef VERBOSE
+#ifdef CGAL_DEBUG_SWEEP_LINE
   void Print() const;
 #endif
 
@@ -355,7 +355,7 @@ Sweep_line_subcurve(const X_monotone_curve_2 &curve):
   m_lastCurve = curve;
 }
 
-#ifdef VERBOSE
+#ifdef CGAL_DEBUG_SWEEP_LINE
 template<class SweepLineTraits_2>
 void 
 Sweep_line_subcurve<SweepLineTraits_2>::Print() const

@@ -583,7 +583,7 @@ public:
  
   
 
-#ifdef VERBOSE
+#ifdef CGAL_DEBUG_SWEEP_LINE
   void Print() ;
 #endif
  
@@ -611,7 +611,7 @@ public:
 
 
 
-#ifdef VERBOSE
+#ifdef CGAL_DEBUG_SWEEP_LINE
 template<class SweepLineTraits_2, class CurveWrap>
 void 
 Sweep_line_event<SweepLineTraits_2, CurveWrap>::
@@ -625,28 +625,28 @@ Print()
     std::cout << "\t";
     Boundary_type x = this->infinity_at_x(),
                   y = this->infinity_at_y();
-    switch(x)
-    {
-    case MINUS_INFINITY:
-      std::cout<<" X = -00 ";
-      break;
-    case PLUS_INFINITY:
-      std::cout<<" X = +00 ";
-      break;
-    case NO_BOUNDARY:
+    switch (x) {
+     case BEFORE_DISCONTINUITY:
+     case AFTER_DISCONTINUITY:
+     case BEFORE_SINGULARITY:
+     case AFTER_SINGULARITY: CGAL_assertion(false); break;
+      
+     case MINUS_INFINITY: std::cout<<" X = -00 "; break;
+     case PLUS_INFINITY:  std::cout<<" X = +00 "; break;
+     case NO_BOUNDARY:
       {
-        switch(y)
-        {
-        case MINUS_INFINITY:
-          std::cout<<" Y = -00 ";
-          break;
-        case PLUS_INFINITY:
-          std::cout<<" Y = +00 ";
-          break;
+       switch (y) {
+        case BEFORE_DISCONTINUITY:
+        case AFTER_DISCONTINUITY:
+        case BEFORE_SINGULARITY:
+        case AFTER_SINGULARITY: CGAL_assertion(false); break;
+
+        case MINUS_INFINITY: std::cout<<" Y = -00 "; break;
+        case PLUS_INFINITY:  std::cout<<" Y = +00 "; break;
         case NO_BOUNDARY:
-          CGAL_assertion(false);
-        }
-      } 
+         CGAL_assertion(false);
+       }
+      }
     }
   }
   std::cout<<"\n";

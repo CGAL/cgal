@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_SWEEP_LINE_2_DEBUG_H
 #define CGAL_SWEEP_LINE_2_DEBUG_H
@@ -120,27 +121,27 @@ Basic_sweep_line_2<Traits_,
                    Allocator>::
 PrintInfinityType(Boundary_type x, Boundary_type y)
 {
-  switch(x)
-  {
-  case MINUS_INFINITY:
-    std::cout<<" X = -00 ";
-    return;
-  case PLUS_INFINITY:
-    std::cout<<" X = +00 ";
-    return;
-  case NO_BOUNDARY:
+  switch(x) {
+   case MINUS_INFINITY: std::cout<<" X = -00 "; return;
+   case PLUS_INFINITY:  std::cout<<" X = +00 "; return;
+
+   case NO_BOUNDARY:
+   case BEFORE_DISCONTINUITY:
+   case AFTER_DISCONTINUITY:
+   case BEFORE_SINGULARITY:
+   case AFTER_SINGULARITY:
     break;
   }
 
-  switch(y)
-  {
-  case MINUS_INFINITY:
-    std::cout<<" Y = -00 ";
-    return;
-  case PLUS_INFINITY:
-    std::cout<<" Y = +00 ";
-    return;
-  case NO_BOUNDARY:
+  switch(y) {
+   case MINUS_INFINITY: std::cout<<" Y = -00 "; return;
+   case PLUS_INFINITY:  std::cout<<" Y = +00 "; return;
+
+   case NO_BOUNDARY:
+   case BEFORE_DISCONTINUITY:
+   case AFTER_DISCONTINUITY:
+   case BEFORE_SINGULARITY:
+   case AFTER_SINGULARITY:
     CGAL_assertion(false);
   }
 }
