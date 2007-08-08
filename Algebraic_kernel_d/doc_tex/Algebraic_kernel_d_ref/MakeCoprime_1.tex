@@ -14,16 +14,16 @@ coprime parts $q_1$, $q_2$ respectively.
 \ccCreationVariable{fo}
 
 \ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
-\ccMethod{template < class OutputIterator >
-    result_type
+\ccMethod{result_type
     operator()(const AlgebraicKernel_d_1::Polynomial_1 & p1, 
                const AlgebraicKernel_d_1::Polynomial_1 & p2, 
                AlgebraicKernel_d_1::Polynomial_1 & g,  
                AlgebraicKernel_d_1::Polynomial_1 & q1,     
                AlgebraicKernel_d_1::Polynomial_1 & q2);}
-{ Returns true $q_1$ and $q_2$ are coprime. 
-\ccPostcond $c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$.
-\ccPostcond $c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.
+{ Computes $g, q_1, q_2$ such that\\
+$c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$ and\\
+$c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.\\
+Returns true if $q_1$ and $q_2$ are coprime. 
 }
 
 \ccSeeAlso

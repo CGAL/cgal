@@ -14,17 +14,16 @@ coprime parts $q_1$, $q_2$ respectively.
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{template < class OutputIterator >
-    bool
+\ccMethod{result_type
     operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1, 
                const AlgebraicKernel_d_2::Polynomial_2 & p2, 
-               AlgebraicKernel_d_2::Polynomial_2 & common, 
-               OutputIterator oi1
-               OutputIterator oi2);}
-{
-Returns true $q_1$ and $q_2$ are coprime. 
-\ccPostcond $c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$.
-\ccPostcond $c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.
+               AlgebraicKernel_d_2::Polynomial_2 & g, 
+               AlgebraicKernel_d_2::Polynomial_2 & q1,     
+               AlgebraicKernel_d_2::Polynomial_2 & q2);}
+{ Computes $g, q_1, q_2$ such that\\
+$c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$ and\\
+$c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.\\
+Returns true if $q_1$ and $q_2$ are coprime. 
 }
 
 \ccSeeAlso
