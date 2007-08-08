@@ -126,7 +126,7 @@ template <> class Algebraic_structure_traits< long double >
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
-          return CGAL_CLIB_STD::sqrt( x );
+          return std::sqrt( x );
         }
     };
 
@@ -137,7 +137,7 @@ template <> class Algebraic_structure_traits< long double >
                                         const Type& x) const {
           CGAL_precondition_msg( k > 0,
                                     "'k' must be positive for k-th roots");
-          return CGAL_CLIB_STD::pow(x, (long double)1.0 / (long double)(k));
+          return std::pow(x, (long double)1.0 / (long double)(k));
         };
     };
 

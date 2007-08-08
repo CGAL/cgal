@@ -33,16 +33,16 @@ CGAL_BEGIN_NAMESPACE
 template < class Tds>
 class Triangulation_ds_face_circulator_2
   : public Bidirectional_circulator_base< typename Tds::Face,
-                                 CGAL_CLIB_STD::ptrdiff_t,
-				 CGAL_CLIB_STD::size_t>,
+                                 std::ptrdiff_t,
+				 std::size_t>,
     public Triangulation_cw_ccw_2
       
 {
 private:
   typedef
   Bidirectional_circulator_base< typename Tds::Face,
-                                 CGAL_CLIB_STD::ptrdiff_t,
-				 CGAL_CLIB_STD::size_t>  Base_circulator;
+                                 std::ptrdiff_t,
+				 std::size_t>  Base_circulator;
 
 public:
   typedef Triangulation_ds_face_circulator_2<Tds> Face_circulator;
@@ -126,8 +126,8 @@ operator!=(typename Tds_::Face_handle fh,
 template < class Tds >
 class Triangulation_ds_vertex_circulator_2 :
   public Bidirectional_circulator_base< typename Tds::Vertex, 
-                                       CGAL_CLIB_STD::ptrdiff_t,
-                                       CGAL_CLIB_STD::size_t>,
+                                       std::ptrdiff_t,
+                                       std::size_t>,
   public  Triangulation_cw_ccw_2
 {
 public:
@@ -212,8 +212,8 @@ operator!=(typename Tds_::Vertex_handle vh,
 template < class Tds >
 class Triangulation_ds_edge_circulator_2 :
   public Bidirectional_circulator_base < typename Tds::Edge, 
-                                         CGAL_CLIB_STD::ptrdiff_t,
-					 CGAL_CLIB_STD::size_t>,
+                                         std::ptrdiff_t,
+					 std::size_t>,
   public Triangulation_cw_ccw_2
 {
 public:

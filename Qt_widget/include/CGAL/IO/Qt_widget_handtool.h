@@ -121,8 +121,8 @@ private:
       if(!wasrepainted) {
         widget->x_real(x2 - first_x, xcoord);
         widget->x_real(y2 - first_y, ycoord);
-        CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
-        CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
+        std::sprintf(tempc1, " dx=%20.6f", xcoord);
+        std::sprintf(tempc2, ", dy=%20.6f", ycoord);
         strcat(tempc1, tempc2);
         widget->get_painter().drawLine(first_x, first_y, x2, y2);
         *widget << CGAL::GREEN;
@@ -131,8 +131,8 @@ private:
       }
       widget->x_real(x - first_x, xcoord);
       widget->x_real(y - first_y, ycoord);
-      CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
-      CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
+      std::sprintf(tempc1, " dx=%20.6f", xcoord);
+      std::sprintf(tempc2, ", dy=%20.6f", ycoord);
       strcat(tempc1, tempc2);
       widget->get_painter().drawLine(first_x, first_y, x, y);
       *widget << CGAL::GREEN;

@@ -382,7 +382,7 @@ private slots:
 	  msg_valid = "Voronoi diagram is NOT valid.";
 	}
 
-	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	std::sprintf(msg, "Insertion time: %f", timer.time());
 	widget->get_label()->setText(msg_valid + " " + msg);
       }
     } else if ( input_mode == VD_CIRCLE ) {
@@ -401,7 +401,7 @@ private slots:
 	  msg_valid = "Voronoi diagram is NOT valid.";
 	}
 
-	CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
+	std::sprintf(msg,	"Insertion time: %f", timer.time());
 	widget->get_label()->setText(msg_valid + " " + msg);
       }
     }
@@ -502,7 +502,7 @@ private slots:
       msg_valid = "Voronoi diagram is NOT valid.";
     }
 
-    CGAL_CLIB_STD::sprintf(msg,
+    std::sprintf(msg,
 			   "%d sites inserted. Insertion time: %f",
 			   counter, timer.time());
     widget->get_label()->setText(msg_valid + " " + msg);
@@ -567,7 +567,7 @@ private slots:
 
       char msg[100];
       int n_sites = static_cast<int>(svd.number_of_input_sites());
-      CGAL_CLIB_STD::sprintf(msg,
+      std::sprintf(msg,
 			     "%d sites inserted. Insertion time: %f",
 			     n_sites, timer.time());
       widget->get_label()->setText(msg);

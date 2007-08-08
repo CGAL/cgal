@@ -71,22 +71,22 @@ double Real_timer::get_real_time() const {
     return double(t.time) + double(t.millitm) / 1000.0;
 #elif defined(__MWERKS__)
     static bool initialized = false;
-    static CGAL_CLIB_STD::time_t t_begin;
+    static std::time_t t_begin;
     if ( ! initialized) {
-        CGAL_CLIB_STD::time_t tt;
-        CGAL_CLIB_STD::time(&tt);
-        struct std::tm* lt = CGAL_CLIB_STD::localtime(&tt);
+        std::time_t tt;
+        std::time(&tt);
+        struct std::tm* lt = std::localtime(&tt);
         /// we copy them because mktime can modify
         struct std::tm t = *lt;
-        t_begin = CGAL_CLIB_STD::mktime(&t);
+        t_begin = std::mktime(&t);
     }
-    CGAL_CLIB_STD::time_t tt;
-    CGAL_CLIB_STD::time(&tt);
-    struct std::tm* lt = CGAL_CLIB_STD::localtime(&tt);
+    std::time_t tt;
+    std::time(&tt);
+    struct std::tm* lt = std::localtime(&tt);
     /// we copy them because mktime can modify
     struct std::tm t = *lt;
-    CGAL_CLIB_STD::time_t t_end = CGAL_CLIB_STD::mktime(&t);
-    return CGAL_CLIB_STD::difftime(t_end, t_begin);
+    std::time_t t_end = std::mktime(&t);
+    return std::difftime(t_end, t_begin);
 #elif defined (__MINGW32__)
     struct timeb t;
     ftime(&t);

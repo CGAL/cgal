@@ -302,7 +302,7 @@ private slots:
       Apollonius_site_2 wp(p, Weight(0));
       ag.insert(wp);
     }
-    CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f.", timer.time());
+    std::sprintf(msg, "Insertion time: %f.", timer.time());
     qmsg = QString(msg) + " - Validating Apollonius graph...";
     set_msg(qmsg);
     assert( ag.is_valid(false, 1) );
@@ -373,13 +373,13 @@ private slots:
       ag.insert(wp);
       counter++;
       if ( counter % 500 == 0 ) {
-	CGAL_CLIB_STD::sprintf(msg, "%d have been inserted...", counter);
+	std::sprintf(msg, "%d have been inserted...", counter);
 	set_msg(msg);
       }
     }
     timer.stop();
 
-    CGAL_CLIB_STD::sprintf(msg,
+    std::sprintf(msg,
 			   "%d sites inserted. Insertion time: %f "
 			   "- Validating Apollonius graph...",
 			   counter, timer.time());
@@ -454,7 +454,7 @@ private slots:
 
       int n_sites = static_cast<int>(ag.number_of_vertices()) +
 	static_cast<int>(ag.number_of_hidden_sites());
-      CGAL_CLIB_STD::sprintf(msg,
+      std::sprintf(msg,
 			     "%d sites inserted. Insertion time: %f",
 			     n_sites, timer.time());
       qmsg = qmsg + " done! " + msg;

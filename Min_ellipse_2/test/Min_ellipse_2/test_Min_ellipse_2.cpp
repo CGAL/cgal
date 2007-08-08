@@ -614,7 +614,7 @@ main( int argc, char* argv[])
     // --------------------
     // option `-verbose'
     bool  verbose = false;
-    if ( ( argc > 1) && ( CGAL_CLIB_STD::strcmp( argv[ 1], "-verbose") == 0)) {
+    if ( ( argc > 1) && ( std::strcmp( argv[ 1], "-verbose") == 0)) {
         verbose = true;
         --argc;
         ++argv; }

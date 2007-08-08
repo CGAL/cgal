@@ -52,8 +52,7 @@ example, we recommend not to use this in \cgal's example and demo programs.
 \section{Namespace std}
 \ccIndexSubitem{namespace}{\ccFont std}
 The names form the standard \CC\ library, especially those from the standard
-template library, are (supposed to be) in namespace \ccc{std}. This subsumes
-the I/O-library%
+template library, are in namespace \ccc{std}. This subsumes the I/O-library%
 \index{IO library@I/O library!and namespace std@and namespace \texttt{std}}
 and also the C-library%
 \index{C standard library!and namespace std@and namespace
@@ -63,17 +62,7 @@ and also the C-library%
 std::cout << "Hello CGAL" << std::endl;
 \end{verbatim}
 or you have to add \ccc{using} declarations for the names you want to
-use without \ccc{std::} qualification. Whenever a platform does not
-put names into namespace \ccc{std}, \cgal\ adds the names it needs to
-namespace \ccc{std}. This is done by the configuration tools.
-\ccIndexMainItem{configuration}
-
-As for the C-library functions, you should use the macro 
-\texttt{CGAL\_CLIB\_STD} instead of \texttt{std}:
-\begin{verbatim}
-CGAL_CLIB_STD::isspace(c)
-\end{verbatim}
-\index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}
+use without \ccc{std::} qualification.
 
 \section{Namespace CGAL}
 \ccIndexSubitem{namespace}{\ccFont CGAL}
@@ -246,7 +235,7 @@ The following functions can be qualified by \ccc{CGAL_NTS} as well:
 \item[]\ccc{div}\ccIndexGlobalFunction{div}\\
 Whenever the argument of \ccc{sqrt} is a concrete type, \ie, it does
 not depend on a template parameter, you should qualify the call of
-\ccc{sqrt}, for example \verb+CGAL_CLIB_STD::sqrt(2.0)+
+\ccc{sqrt}, for example \verb+std::sqrt(2.0)+
 \end{itemize}
 Here, qualification with \ccc{CGAL} works as well.
 \end{itemize}
@@ -265,9 +254,6 @@ Requirements:
   \ccc{is_positive}, \ccc{sign}, \ccc{abs}, \ccc{compare},
   \ccc{square} by \texttt{CGAL\_NTS}.
   \ccIndexSubitem{qualification}{\ccFont CGAL_NTS}%
-\item use \texttt{CGAL\_CLIB\_STD} with C-library functions.
-  \index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}%
-  \ccIndexSubitem{qualification}{\ccFont CGAL_CLIB_STD}%
 \end{itemize}
 
 %% Recommendations:

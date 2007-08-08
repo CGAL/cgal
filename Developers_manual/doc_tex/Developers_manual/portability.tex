@@ -332,13 +332,6 @@ uptodate version of this list.
 %   principle (Substitution Failure Is Not An Error), which we
 %   eventually plan to use for the next version of the kernel design.
  
-\item[{\tt CGAL\_CFG\_NO\_STDC\_NAMESPACE}]~\\ 
-  \index{C standard library!and namespace std@and namespace \ccStyle{std}} %
-  \ccIndexSubitem{namespace}{\ccFont std} %
-  This flag is set if a compiler does not put the parts of the
-  standard library inherited from the standard C library in namespace
-  {\ccFont std} (only tests for the symbols used in \cgal).
- 
 \item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_DEPENDING\_FUNCTION\_PARAM}]~\\
   \ccIndexSubitem{compiler bugs}{template parameters} %
   \ccIndexSubitem{template}{template parameter} %
@@ -371,13 +364,6 @@ Some macros are defined according to certain workaround flags. This is
 done to avoid some \texttt{\#ifdef}s in our actual code.
 
 \begin{description}
-\item[\texttt{CGAL\_CLIB\_STD}] 
- \index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}
-  \index{C standard library!and namespace std@and namespace \ccStyle{std}} 
-  \ccIndexSubitem{namespace}{\ccFont std}
-  set to \texttt{std}, if
-  {\texttt{CGAL\_CFG\_NO\_STDC\_NAMESPACE}} is not set and
-  empty, otherwise.
 \item[\texttt{CGAL\_LITTLE\_ENDIAN}] set, iff
  \index{cgal_little_endian macro@\texttt{CGAL\_LITTLE\_ENDIAN} macro}
   \ccIndexMainItem{little-endian}

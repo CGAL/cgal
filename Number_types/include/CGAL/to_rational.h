@@ -64,7 +64,7 @@ to_rational(double x)
             while (mantissa != 0.0 && k++ < maxiter)
                 {
                     mantissa *= width; // shift double mantissa
-                    mantissa = CGAL_CLIB_STD::modf(mantissa, &intpart);
+                    mantissa = std::modf(mantissa, &intpart);
                     num *= shift_pow;
                     num += (int)intpart;
                     exponent -= shift;

@@ -49,12 +49,12 @@ template<> class Algebraic_structure_traits< long long int >
       public:
         bool operator()( const Type& x,
                          Type& y ) const {
-          y = (Type) CGAL_CLIB_STD::sqrt( (double)x );
+          y = (Type) std::sqrt( (double)x );
           return x == y * y;
         }
         bool operator()( const Type& x) const {
             Type y
-                = (Type) CGAL_CLIB_STD::sqrt( (double)x );
+                = (Type) std::sqrt( (double)x );
           return x == y * y;
         }
     };

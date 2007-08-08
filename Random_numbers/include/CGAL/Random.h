@@ -93,7 +93,7 @@ bool
 Random::
 get_bool( )
 {
-    return( static_cast< bool>( CGAL_CLIB_STD::rand() & 1));
+    return( static_cast< bool>( std::rand() & 1));
 }
 
 inline
@@ -103,7 +103,7 @@ get_int( int lower, int upper)
 {
     return( lower + static_cast< int>(
       ( static_cast< double>( upper) - lower) * 
-      CGAL_CLIB_STD::rand() / rand_max_plus_1));
+      std::rand() / rand_max_plus_1));
 }
 
 inline
@@ -112,7 +112,7 @@ Random::
 get_double( double lower, double upper)
 {
     return( lower + ( ( upper-lower) * 
-		      CGAL_CLIB_STD::rand() / rand_max_plus_1));
+		      std::rand() / rand_max_plus_1));
 }
 
 inline

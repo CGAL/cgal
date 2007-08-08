@@ -264,7 +264,7 @@ Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
          it != mesh.mesh_main_border_vertices_end();
          it++)
     {
-        double d = CGAL_CLIB_STD::fabs(offset[mesh.get_vertex_index(it)] - value);
+        double d = std::fabs(offset[mesh.get_vertex_index(it)] - value);
         if (d < min)
         {
             best = it;

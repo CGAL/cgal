@@ -65,12 +65,6 @@
 #define CGAL_BEGIN_NAMESPACE namespace CGAL {
 #define CGAL_END_NAMESPACE }
 
-#ifdef CGAL_CFG_NO_STDC_NAMESPACE
-#  define CGAL_CLIB_STD
-#else
-#  define CGAL_CLIB_STD std
-#endif
-
 #ifndef CGAL_CFG_NO_LONG_LONG
 #  define CGAL_USE_LONG_LONG
 #endif

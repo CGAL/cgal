@@ -144,7 +144,7 @@ template <> class Algebraic_structure_traits< double >
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
-          return CGAL_CLIB_STD::sqrt( x );
+          return std::sqrt( x );
         }
     };
 
@@ -154,7 +154,7 @@ template <> class Algebraic_structure_traits< double >
         Type operator()( int k,
                                         const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
-          return CGAL_CLIB_STD::pow(x, 1.0 / double(k));
+          return std::pow(x, 1.0 / double(k));
         }
     };
 
@@ -170,7 +170,7 @@ template <> class Real_embeddable_traits< double >
       : public Unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
-          return CGAL_CLIB_STD::fabs( x );
+          return std::fabs( x );
         }
     };
 #endif

@@ -57,10 +57,10 @@ Random_points_in_disc_2<P,Creator>::
 generate_point() {
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
-    double r = this->d_range * CGAL_CLIB_STD::sqrt( this->_rnd.get_double());
+    double r = this->d_range * std::sqrt( this->_rnd.get_double());
     Creator creator;
-    this->d_item = creator( T(r * CGAL_CLIB_STD::cos(alpha)), 
-                            T(r * CGAL_CLIB_STD::sin(alpha)));
+    this->d_item = creator( T(r * std::cos(alpha)), 
+                            T(r * std::sin(alpha)));
 }
 
 
@@ -93,8 +93,8 @@ generate_point() {
     typedef typename Creator::argument_type T;
     double a = this->_rnd.get_double() * 2.0 * CGAL_PI;
     Creator creator;
-    this->d_item = creator( T(this->d_range * CGAL_CLIB_STD::cos(a)), 
-                            T(this->d_range * CGAL_CLIB_STD::sin(a)));
+    this->d_item = creator( T(this->d_range * std::cos(a)), 
+                            T(this->d_range * std::sin(a)));
 }
 
 
@@ -285,7 +285,7 @@ points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
     typedef typename Creator::argument_type T;
     if  (n == 0)
         return o;
-    int m = int(CGAL_CLIB_STD::ceil(std::sqrt(static_cast<double>(n))));
+    int m = int(std::ceil(std::sqrt(static_cast<double>(n))));
     double base = -a;  // Left and bottom boundary.
     double step = (2*a)/(m - 1);
     int j = 0;

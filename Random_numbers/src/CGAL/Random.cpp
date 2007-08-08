@@ -36,11 +36,11 @@ Random( )
 {
     // get system's time
     std::time_t s;
-    CGAL_CLIB_STD::time( &s);
+    std::time( &s);
     unsigned int  seed = s;
 
     // initialize random numbers generator
-    CGAL_CLIB_STD::srand( seed);
+    std::srand( seed);
     random_value = get_int(0, 1<<15);
 }
 
@@ -49,7 +49,7 @@ Random( unsigned int  seed)
     : rand_max_plus_1( RAND_MAX+1.0), val(0)
 {
     // initialize random numbers generator
-    CGAL_CLIB_STD::srand( seed);
+    std::srand( seed);
     random_value = get_int(0, 1<<15);
 }
 

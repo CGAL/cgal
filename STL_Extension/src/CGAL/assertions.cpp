@@ -104,11 +104,11 @@ assertion_fail( const char* expr,
     (*_error_handler)("assertion", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
-        CGAL_CLIB_STD::abort();
+        std::abort();
     case EXIT:
-        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
+        std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+        std::exit(0);  // EXIT_SUCCESS
     case THROW_EXCEPTION:
         throw Assertion_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
@@ -129,11 +129,11 @@ precondition_fail( const char* expr,
     (*_error_handler)("precondition", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
-        CGAL_CLIB_STD::abort();
+        std::abort();
     case EXIT:
-        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
+        std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+        std::exit(0);  // EXIT_SUCCESS
     case THROW_EXCEPTION:
         throw Precondition_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
@@ -154,11 +154,11 @@ postcondition_fail(const char* expr,
     (*_error_handler)("postcondition", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
-        CGAL_CLIB_STD::abort();
+        std::abort();
     case EXIT:
-        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
+        std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+        std::exit(0);  // EXIT_SUCCESS
     case THROW_EXCEPTION:
         throw Postcondition_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
@@ -182,11 +182,11 @@ warning_fail( const char* expr,
     (*_warning_handler)("warning", expr, file, line, msg);
     switch (_warning_behaviour) {
     case ABORT:
-        CGAL_CLIB_STD::abort();
+        std::abort();
     case EXIT:
-        CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
+        std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
-        CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+        std::exit(0);  // EXIT_SUCCESS
     case THROW_EXCEPTION:
         throw Warning_exception("CGAL", expr, file, line, msg);
     case CONTINUE:

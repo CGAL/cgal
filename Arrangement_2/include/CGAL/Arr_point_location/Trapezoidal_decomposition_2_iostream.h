@@ -96,14 +96,14 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
       for (i=0;i<size;i++)
 	if (value[j]==value[i])
 	  {
-	    CGAL_CLIB_STD::strcat(name[i],"=");
-	    CGAL_CLIB_STD::strcat(name[i],name[j]);
+	    std::strcat(name[i],"=");
+	    std::strcat(name[i],name[j]);
 	    break;
 	  }
       if (i==size)
 	{
 	  value[size]=value[j];
-	  CGAL_CLIB_STD::strcpy(name[size++],name[j]);
+	  std::strcpy(name[size++],name[j]);
 	}
     }
   if (size==null_size) {out << "none";}
@@ -207,14 +207,14 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
       for (i=0;i<size;i++)
 	if (value[j]==value[i])
 	  {
-	    CGAL_CLIB_STD::strcat(name[i],"=");
-	    CGAL_CLIB_STD::strcat(name[i],name[j]);
+	    std::strcat(name[i],"=");
+	    std::strcat(name[i],name[j]);
 	    break;
 	  }
       if (i==size)
 	{
 	  value[size]=value[j];
-	  CGAL_CLIB_STD::strcpy(name[size++],name[j]);
+	  std::strcpy(name[size++],name[j]);
 	}
     }
   if (size==null_size) {out << "none";}

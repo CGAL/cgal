@@ -234,12 +234,12 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     char keyword[max_keyword] = "";
     int i = 0;
     keyword[i++] = c;
-    while( i < max_keyword - 1 && in.get(c) && CGAL_CLIB_STD::isalnum(c))
+    while( i < max_keyword - 1 && in.get(c) && std::isalnum(c))
         keyword[i++] = c;
     keyword[i] = '\0';
-    if ( i < 2 || (CGAL_CLIB_STD::isdigit(keyword[0]) && keyword[0] != '4')
-               || CGAL_CLIB_STD::isdigit(keyword[1])) {
-        h.set_vertices( CGAL_CLIB_STD::atoi( keyword));
+    if ( i < 2 || (std::isdigit(keyword[0]) && keyword[0] != '4')
+               || std::isdigit(keyword[1])) {
+        h.set_vertices( std::atoi( keyword));
     } else {
         h.set_index_offset( 0);
         int j = 0;
@@ -279,7 +279,7 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
             }
         }
         in >> skip_comment_OFF >> c;
-        if ( CGAL_CLIB_STD::isdigit(c)) {
+        if ( std::isdigit(c)) {
             in.putback(c);
             int n;
             in >> n;
@@ -288,10 +288,10 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
             i = 0;
             keyword[i++] = c;
             while( i < max_keyword - 1 && in.get(c) &&
-                   CGAL_CLIB_STD::isalnum(c))
+                   std::isalnum(c))
                 keyword[i++] = c;
             keyword[i] = '\0';
-            if ( CGAL_CLIB_STD::strcmp( keyword, "BINARY") == 0) {
+            if ( std::strcmp( keyword, "BINARY") == 0) {
                 h.set_binary( true);
                 if ( c != '\n')
                     in >> skip_until_EOL;

@@ -179,7 +179,7 @@ inline double IA_bug_sqrt(double d)
 }
 #  define CGAL_BUG_SQRT(d) IA_bug_sqrt(d)
 #else
-#  define CGAL_BUG_SQRT(d) CGAL_CLIB_STD::sqrt(d)
+#  define CGAL_BUG_SQRT(d) std::sqrt(d)
 #endif
 
 // Here are the operator macros that make use of the above.

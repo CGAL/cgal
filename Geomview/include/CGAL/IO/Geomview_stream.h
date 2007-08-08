@@ -464,7 +464,7 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << "SPHERE\n"
-       << CGAL_CLIB_STD::sqrt(CGAL::to_double(S.squared_radius())) << "\n";
+       << std::sqrt(CGAL::to_double(S.squared_radius())) << "\n";
 
     bool raw_bak = gv.set_raw(true);
     gv << Point_3<R>(S.center()) << "}})";

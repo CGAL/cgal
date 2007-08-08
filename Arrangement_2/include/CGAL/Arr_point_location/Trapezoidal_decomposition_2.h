@@ -1642,7 +1642,7 @@ public:
     
     if (right>left)
     {
-      int d=(int)CGAL_CLIB_STD::floor((double(right+left))/2);
+      int d=(int)std::floor((double(right+left))/2);
       // Replacing operator [] of map with find to please MSVC 7
       Point p = (ar.find(d)->second)->right();
       //Point p=ar[d]->right();
@@ -3297,7 +3297,7 @@ public:
     std::cout << "\n|heavy!" << std::flush;
 #endif
     return
-      depth()>(get_depth_threshold()*(CGAL_CLIB_STD::log(double(sz+1))))
+      depth()>(get_depth_threshold()*(std::log(double(sz+1))))
       || size()>(get_size_threshold()*(sz+1));
     /*
       #else

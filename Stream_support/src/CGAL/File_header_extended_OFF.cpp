@@ -149,14 +149,14 @@ std::ostream& operator<<( std::ostream& out,
 #undef OUTBOOL
 
 #define CGAL_IN(item,type)                         \
-    else if ( CGAL_CLIB_STD::strcmp( keyword, #item) == 0) { \
+    else if ( std::strcmp( keyword, #item) == 0) { \
         type t;                               \
         in >> t;                              \
         h.set_##item( t);                     \
     }
 
 #define CGAL_INBOOL(item)                          \
-    else if ( CGAL_CLIB_STD::strcmp( keyword, #item) == 0) { \
+    else if ( std::strcmp( keyword, #item) == 0) { \
         in >> c;                              \
         h.set_##item( c == '1');              \
     }
@@ -167,8 +167,8 @@ std::istream& operator>>( std::istream& in, File_header_extended_OFF& h) {
     char c;
     char keyword[max_keyword] = "";
     in >> keyword;
-    while ( in && CGAL_CLIB_STD::strcmp( keyword, "ENDCBP") != 0) {
-        if ( CGAL_CLIB_STD::strcmp( keyword, "#") == 0)
+    while ( in && std::strcmp( keyword, "ENDCBP") != 0) {
+        if ( std::strcmp( keyword, "#") == 0)
             ;
         CGAL_INBOOL( polyhedral_surface)
         CGAL_IN(     halfedges, int)

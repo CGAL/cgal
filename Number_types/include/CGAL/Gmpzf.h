@@ -140,7 +140,7 @@ public:
         double operator()(const Quotient<Gmpzf>& q) const {
 	  std::pair<double, long> n = q.numerator().to_double_exp();
 	  std::pair<double, long> d = q.denominator().to_double_exp();
-	  double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
+	  double scale = std::ldexp(1.0, n.second - d.second);
 	  return (n.first / d.first) * scale;
 	}
     };

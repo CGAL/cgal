@@ -78,10 +78,10 @@ simplest_rational_in_interval(double x, double y) {
     r_numerator = 0;
     r_denominator = 1;
   } else { // x > 0 && y > 0
-    double xc = CGAL_CLIB_STD::floor(1/x); // First coefficient of cf for x.
-    double xr = CGAL_CLIB_STD::fmod(1/x,1); // Remaining fractional part of x.
-    double yc = CGAL_CLIB_STD::floor(1/y); // First coefficient of cf for y.
-    double yr = CGAL_CLIB_STD::fmod(1/y,1); // Remaining fractional part of y.
+    double xc = std::floor(1/x); // First coefficient of cf for x.
+    double xr = std::fmod(1/x,1); // Remaining fractional part of x.
+    double yc = std::floor(1/y); // First coefficient of cf for y.
+    double yr = std::fmod(1/y,1); // Remaining fractional part of y.
 
     if (xc < yc) {
       // Return 1/(xc+1).

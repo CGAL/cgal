@@ -791,7 +791,7 @@ template < bool b >
 Interval_nt<b>
 ldexp(const Interval_nt<b> &i, int e)
 {
-  double scale = CGAL_CLIB_STD::ldexp(1.0, e);
+  double scale = std::ldexp(1.0, e);
   Interval_nt<b> scale_interval (
                       CGAL_NTS is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
                       scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);

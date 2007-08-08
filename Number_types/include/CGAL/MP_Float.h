@@ -273,7 +273,7 @@ public:
 
     for (i = v.begin(); i != v.end(); ++i)
     {
-      res += CGAL_CLIB_STD::ldexp(static_cast<double>(*i),
+      res += std::ldexp(static_cast<double>(*i),
                                   static_cast<int>(exp2));
       exp2 += log_limb;
     }

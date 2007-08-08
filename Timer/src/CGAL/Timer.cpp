@@ -81,10 +81,10 @@ double Timer::user_process_time() const {
              + double( usage.ru_utime.tv_usec) / 1000000.0; // microseconds
     }
 #else // CGAL__GETRUSAGE //
-    CGAL_CLIB_STD::clock_t clk = CGAL_CLIB_STD::clock();
-    CGAL_warning_msg( clk != (CGAL_CLIB_STD::clock_t)-1,
+    std::clock_t clk = std::clock();
+    CGAL_warning_msg( clk != (std::clock_t)-1,
         "Call to clock() in class CGAL::Timer failed - timings will be 0.");
-    if ( clk != (CGAL_CLIB_STD::clock_t)-1) {
+    if ( clk != (std::clock_t)-1) {
         return double(clk) / CLOCKS_PER_SEC;
     }        
 #endif // CGAL__GETRUSAGE //

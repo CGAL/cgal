@@ -76,7 +76,7 @@ public:
   typedef Compare                                   key_compare;
   typedef Compare                                   value_compare;
   typedef size_t                                    size_type;
-  typedef CGAL_CLIB_STD::ptrdiff_t                  difference_type;
+  typedef std::ptrdiff_t                  difference_type;
 
 protected:
 
@@ -257,7 +257,7 @@ public:
     // Type definitions:
     typedef std::bidirectional_iterator_tag  iterator_category;
     typedef Type                             value_type;
-    typedef CGAL_CLIB_STD::ptrdiff_t         difference_type;
+    typedef std::ptrdiff_t         difference_type;
     typedef size_t                           size_type;
     typedef value_type&                      reference;
     typedef value_type*                      pointer;
@@ -367,7 +367,7 @@ public:
     // Type definitions:
     typedef std::bidirectional_iterator_tag  iterator_category;
     typedef Type                             value_type;
-    typedef CGAL_CLIB_STD::ptrdiff_t         difference_type;
+    typedef std::ptrdiff_t         difference_type;
     typedef size_t                           size_type;
     typedef const value_type&                reference;
     typedef const value_type*                pointer;

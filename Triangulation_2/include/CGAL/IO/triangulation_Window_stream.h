@@ -79,7 +79,7 @@ operator<<(Window_stream& os, const Weighted_point< Point, We > &p)
          rr = to_double(p.weight());
 
   os<<p.point();
-  os.draw_circle(cx, cy , CGAL_CLIB_STD::sqrt(rr));
+  os.draw_circle(cx, cy , std::sqrt(rr));
   return os;
 }
 
@@ -92,7 +92,7 @@ Window_stream& operator>>(Window_stream &os, Weighted_point< Point, We > &wp)
   //os.read_mouse(x1,y1);
   Point center(cx,cy);
 
-  We sr = We(CGAL_CLIB_STD::sqrt( CGAL_NTS square(cx-x1)+ 
+  We sr = We(std::sqrt( CGAL_NTS square(cx-x1)+ 
 				 CGAL_NTS square(cy-y1) ) );
 
   os.draw_circle(cx, cy , sr);

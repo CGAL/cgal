@@ -190,7 +190,7 @@ public:
             //printf( "p_arr(new): %p\n", (void *)p_arr );
             assert( p_arr != NULL );
         
-			CGAL_CLIB_STD::memset( p_arr, 0, sizeof( coordinate_type ) * dim );
+			std::memset( p_arr, 0, sizeof( coordinate_type ) * dim );
         }
 
     public:

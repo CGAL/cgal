@@ -99,7 +99,7 @@ int main( int argc, char **argv) {
     if ( ! (*p_in)) {
         cerr << " " << endl;
         cerr << argv[0] << ": input error: file format is not in OFF." << endl;
-        CGAL_CLIB_STD::abort();
+        std::abort();
     }
     Vertex_vector            vertices;
     vector<Vertex*>          sorted_vertices;

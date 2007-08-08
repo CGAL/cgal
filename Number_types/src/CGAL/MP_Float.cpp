@@ -339,7 +339,7 @@ to_double_exp(const MP_Float &b)
 
   exponent_type exp = b.max_exp();
   int steps = (std::min)(limbs_per_double, b.v.size());
-  double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - static_cast<int>(log_limb));
+  double d_exp_1 = std::ldexp(1.0, - static_cast<int>(log_limb));
   double d_exp   = 1.0;
   double d = 0;
 
@@ -364,7 +364,7 @@ to_interval_exp(const MP_Float &b)
 
   exponent_type exp = b.max_exp();
   int steps = (std::min)(limbs_per_double, b.v.size());
-  double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
+  double d_exp_1 = std::ldexp(1.0, - (int) log_limb);
   double d_exp   = 1.0;
 
   Interval_nt_advanced::Protector P;
@@ -405,7 +405,7 @@ double
 INTERN_MP_FLOAT::to_double(const MP_Float &b)
 {
   pair<double, int> ap = to_double_exp(b);
-  return ap.first * CGAL_CLIB_STD::ldexp(1.0, ap.second);
+  return ap.first * std::ldexp(1.0, ap.second);
 }
 
 double
@@ -413,7 +413,7 @@ INTERN_MP_FLOAT::to_double(const Quotient<MP_Float> &q)
 {
     pair<double, int> n = to_double_exp(q.numerator());
     pair<double, int> d = to_double_exp(q.denominator());
-    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
+    double scale = std::ldexp(1.0, n.second - d.second);
     return (n.first / d.first) * scale;
 }
 
@@ -431,7 +431,7 @@ INTERN_MP_FLOAT::to_double(const Root_of_2<MP_Float> &x)
   if(x.is_rational()) {
     std::pair<double, int> n = to_double_exp(r1);
     std::pair<double, int> d = to_double_exp(d1);
-    double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
+    double scale = std::ldexp(1.0, n.second - d.second);
     return (n.first / d.first) * scale;
   }
 
@@ -442,15 +442,15 @@ INTERN_MP_FLOAT::to_double(const Root_of_2<MP_Float> &x)
 
   std::pair<double, int> n1 = to_double_exp(r1);
   std::pair<double, int> v1 = to_double_exp(d1);
-  double scale1 = CGAL_CLIB_STD::ldexp(1.0, n1.second - v1.second);
+  double scale1 = std::ldexp(1.0, n1.second - v1.second);
 
   std::pair<double, int> n2 = to_double_exp(r2);
   std::pair<double, int> v2 = to_double_exp(d2);
-  double scale2 = CGAL_CLIB_STD::ldexp(1.0, n2.second - v2.second);
+  double scale2 = std::ldexp(1.0, n2.second - v2.second);
 
   std::pair<double, int> n3 = to_double_exp(r3);
   std::pair<double, int> v3 = to_double_exp(d3);
-  double scale3 = CGAL_CLIB_STD::ldexp(1.0, n3.second - v3.second);
+  double scale3 = std::ldexp(1.0, n3.second - v3.second);
 
   return ((n1.first / v1.first) * scale1) + 
          ((n2.first / v2.first) * scale2) *
@@ -503,7 +503,7 @@ print (std::ostream & os, const MP_Float &b)
     if (exp != 0)
       os << " * 2^" << exp;
 
-    approx += CGAL_CLIB_STD::ldexp(static_cast<double>(*i),
+    approx += std::ldexp(static_cast<double>(*i),
                                    static_cast<int>(exp));
 
     exp += log_limb;

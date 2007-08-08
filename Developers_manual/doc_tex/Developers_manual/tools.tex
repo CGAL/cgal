@@ -80,42 +80,6 @@ Section~\ref{sec:checks_controlling}.
 \index{create_assertions.sh script@{\tt create\_assertions.sh} script|)}
 
 
-\section{{\tt rename\_clib\_calls}}
-\label{sec:rename_clib_calls}
-\index{rename_clib_calls script@{\tt rename\_clib\_calls} script|(}
-\ccIndexSubitemBegin{namespace}{\ccFont std}
-
-According to standard C++, when you include a header from the standard C
-library in the modern way (so, \verb+#include <cmath>+ instead of
-\verb+#include <math.h>+), the C functions should be in the namespace
-{\ccFont std}.
-Not all compilers conform to this.
-That's why \cgal\ has a macro, CGAL\_CLIB\_STD,%
-\index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}
-that is set to {\ccFont std} (for
-a conforming compiler) or to the empty string (for a non-conforming
-compiler). This macro should be prepended to all calls of functions from
-the C library. So, you should call \ccc{CGAL_CLIB_STD::sin(x)}, not
-\ccc{std::sin(x)} or \ccc{sin(x)}.
-
-The perl script
-\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/rename_clib_calls?root=cgal&view=markup}
-{{\tt rename\_clib\_calls}}
-does this prepending.
-The script is idempotent, so applying it twice in a row does no harm.
-The script is not perfect, though. Especially, it recognizes complete
-words, but it does not discriminate between a function call and a variable
-or a word in a comment.
-You should check the differences of the modified file with the original
-file (which will be saved, with a {\tt .bak} extension), for example with
-{\tt diff} or {\tt xdiff}.
-
-Before using this script, you should edit the first line. This line
-states where your perl interpreter is located. The command {\tt which perl}
-can help you to find out what to put there.
-\ccIndexSubitemEnd{namespace}{\ccFont std}
-\index{rename_clib_calls script@{\tt rename\_clib\_calls} script|)}
-
 \section{{\tt cgal\_create\_makefile}}
 \label{sec:cgal_create_makefile}
 \index{cgal_create_makefile script@{\tt cgal\_create\_makefile} script|(}

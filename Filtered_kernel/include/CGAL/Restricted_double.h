@@ -68,12 +68,12 @@ private:
 inline
 Restricted_double
 sqrt(const Restricted_double &f)
-{ return CGAL_CLIB_STD::sqrt(f.dbl()); }
+{ return std::sqrt(f.dbl()); }
 
 inline
 Restricted_double
 abs(const Restricted_double &f)
-{ return CGAL_CLIB_STD::fabs(f.dbl()); }
+{ return std::fabs(f.dbl()); }
 
 inline
 double

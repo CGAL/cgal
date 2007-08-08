@@ -112,7 +112,7 @@ int main( int argc, char **argv) {
     if ( ! * p_in) {
         cerr << argv[0] << ": error: file '"<< name
          << "' is not in OFF format." << endl;
-        CGAL_CLIB_STD::abort();
+        std::abort();
     }
     verr << "CGAL::File_writer_OFF( ..." << endl;
     const char*  oname = "cout";

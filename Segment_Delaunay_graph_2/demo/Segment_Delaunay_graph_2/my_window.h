@@ -266,7 +266,7 @@ private:
 	timer.start();
 	bool success = sdg.remove(v);
 	timer.stop();
-	CGAL_CLIB_STD::sprintf(msg, "Removal time: %f", timer.time());
+	std::sprintf(msg, "Removal time: %f", timer.time());
 	if ( success ) {
 	  set_msg(QString("Removal was successful") + " - " + msg);
 	} else {
@@ -395,7 +395,7 @@ private slots:
 	insert_point(sdg, p);
 	timer.stop();
 
-	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	std::sprintf(msg, "Insertion time: %f", timer.time());
 	set_msg(msg);
       }
     } else if ( input_mode == SDG_SEGMENT ) {
@@ -412,7 +412,7 @@ private slots:
 	    insert_segment(sdg, v1->site().point(), v2->site().point() );
 	    timer.stop();
 
-	    CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
+	    std::sprintf(msg,	"Insertion time: %f", timer.time());
 	    set_msg(msg);
 	  }
 	}
@@ -422,7 +422,7 @@ private slots:
 	  insert_segment(sdg, s.source(), s.target());
 	  timer.stop();
 
-	  CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	  std::sprintf(msg, "Insertion time: %f", timer.time());
 	  set_msg(msg);
 	}
       }
@@ -434,7 +434,7 @@ private slots:
 	insert_polygon(sdg, pgn);
 	timer.stop();
 
-	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	std::sprintf(msg, "Insertion time: %f", timer.time());
 	set_msg(msg);
       }
     }
@@ -546,7 +546,7 @@ private slots:
       }
 
       if ( counter % 500 == 0 ) {
-	CGAL_CLIB_STD::sprintf(msg, "%d sites have been inserted...",
+	std::sprintf(msg, "%d sites have been inserted...",
 			       counter);
 	set_msg(msg);
       }
@@ -554,7 +554,7 @@ private slots:
 
     timer.stop();
 
-    CGAL_CLIB_STD::sprintf(msg, "%d sites inserted. Insertion time: %f",
+    std::sprintf(msg, "%d sites inserted. Insertion time: %f",
 			   counter, timer.time());
     qmsg = QString(msg) + " - Validating diagram...";
     set_msg(qmsg);
@@ -640,7 +640,7 @@ private slots:
       timer.stop();
 
       int n_sites = static_cast<int>(sdg.number_of_input_sites());
-      CGAL_CLIB_STD::sprintf(msg,
+      std::sprintf(msg,
 			     "%d sites inserted. Insertion time: %f",
 			     n_sites, timer.time());
       qmsg = qmsg + " done! " + msg;

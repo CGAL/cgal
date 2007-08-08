@@ -101,8 +101,8 @@ generate_point() {
     double z     = 2 * this->_rnd.get_double() - 1.0;
     double r     = std::sqrt( 1 - z * z);
     Creator creator;
-    this->d_item = creator( T(this->d_range * r * CGAL_CLIB_STD::cos(alpha)),
-                            T(this->d_range * r * CGAL_CLIB_STD::sin(alpha)),
+    this->d_item = creator( T(this->d_range * r * std::cos(alpha)),
+                            T(this->d_range * r * std::sin(alpha)),
                             T(this->d_range * z));
 }
 
@@ -147,7 +147,7 @@ points_on_cube_grid_3( double a, std::size_t n,
     if  (n == 0)
         return o;
 
-    int m = int(CGAL_CLIB_STD::ceil(
+    int m = int(std::ceil(
                   std::sqrt(std::sqrt(static_cast<double>(n)))));
 
     while (m*m*m < int(n)) m++;

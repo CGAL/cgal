@@ -669,7 +669,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           {
               NT  nt_div = x.num / x.den;
               double divd = CGAL_NTS to_double(nt_div);
-              if ( divd >= CGAL_CLIB_STD::ldexp(1.0,53) )
+              if ( divd >= std::ldexp(1.0,53) )
               { return divd; }
           }
           if ( CGAL_NTS abs(x.num) < CGAL_NTS abs(x.den) )

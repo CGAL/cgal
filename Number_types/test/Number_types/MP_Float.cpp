@@ -267,7 +267,7 @@ int main(int argc, char **argv)
   QMPF q1(1), q2(2);
   assert(q1+q1 == q2);
 
-  int loops = argc > 1 ? CGAL_CLIB_STD::atoi(argv[1]) : 100;
+  int loops = argc > 1 ? std::atoi(argv[1]) : 100;
   bench(loops);
 
   std::cout.precision(20);
@@ -276,7 +276,7 @@ int main(int argc, char **argv)
   for (int i = 0; i < loops; ++i) {
     float d = CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*256);
-    d = CGAL_CLIB_STD::ldexp(d, exp);
+    d = std::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
     // std::cout << CGAL_NTS to_double(MPF(d)) << std::endl;
@@ -291,7 +291,7 @@ int main(int argc, char **argv)
   for (int i = 0; i < loops; ++i) {
     double d = CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*1024);
-    d = CGAL_CLIB_STD::ldexp(d, exp);
+    d = std::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
     // std::cout << CGAL_NTS to_double(MPF(d)) << std::endl;
@@ -306,7 +306,7 @@ int main(int argc, char **argv)
     long double d = CGAL::default_random.get_double();
     d = d*d; // to get more bits
     int exp = int((CGAL::default_random.get_double()-.5)*1024);
-    d = d * CGAL_CLIB_STD::ldexp(1.0, exp);
+    d = d * std::ldexp(1.0, exp);
     //std::cout << d << std::endl;
     //std::cout << MPF(d) << std::endl;
     //std::cout << CGAL_NTS to_double(MPF(d)) << std::endl;
