@@ -30,6 +30,11 @@ The following corrections have been made:
 - Fixed bug in Interpolation 3D about the normalization coefficient initialization.
 - Intel C++ 9 was wrongly recognized as unsupported by install_cgal.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
+- Fixed bug in construction of Nef_polyhedron_3 from off-file. Now, always the 
+  inner volume is selected.
+- Fixed bug in conversion from Nef_polyhedron_3 to Polyhedron_3. Polyhedron_3 was not cleared 
+  at the beginning.
+- Fixed bug in Nef_polyhedron_3 in update of indexes for construction of external structure.
 
 ----------------------------- Release 3.3 ----------------------------------
 The following functionality has been added or changed:
