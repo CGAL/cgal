@@ -2,6 +2,8 @@ CHANGES
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
 
+- Fixed a bug in the Arrangement sweep-line when using a specific polyline
+  configuration.
 - TAUCS supports now 64 bits platforms.
 - CAUTION: CGAL is not compatible anymore with TAUCS 2.2 official release.
            You must use the version modified by CGAL team and available 
