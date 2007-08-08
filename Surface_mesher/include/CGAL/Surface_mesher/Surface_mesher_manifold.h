@@ -221,7 +221,7 @@ namespace CGAL {
       if(bad_vertices_initialized) 
 	s << bad_vertices.size();
       else
-	s << "non manifold vertices not initialized"
+	s << "non manifold vertices not initialized";
       return s.str();
     }
 

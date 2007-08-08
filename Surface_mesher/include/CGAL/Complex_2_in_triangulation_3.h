@@ -337,7 +337,7 @@ public:
     if(v->is_c2t3_cache_valid() && v->cached_number_of_incident_facets() == 0)
       return NOT_IN_COMPLEX;
 
-    //test incident edges for REUGALIRITY and count BOUNDARY edges
+    //test incident edges for REGULARITY and count BOUNDARY edges
     typename std::vector<Vertex_handle> vertices;
     vertices.reserve(64);
     tr.incident_vertices(v, std::back_inserter(vertices));
