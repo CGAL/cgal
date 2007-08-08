@@ -22,6 +22,7 @@ The following corrections have been made:
 - Fixed bug in the Bezier traits-class:
     properly handle line segments.
     properly handle comparison near a vertical tangency.
+- Fixed forgotten derivation in Circular_kernel_2::Has_on_2
 - Fixed bug in FPU rounding mode macros (affected only the alpha architecture).
 - Fixed bug in MP_Float constructor from double for some particular values.
 - Fixed bug in Interpolation 3D about the normalization coefficient initialization.
