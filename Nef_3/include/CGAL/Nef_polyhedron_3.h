@@ -432,8 +432,7 @@ protected:
     typedef typename CGAL::Triangulation_vertex_base_2<Kernel>               Vb;
     typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
     typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
-    typedef typename CGAL::No_intersection_tag                               Itag;
-    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>      CT;
+    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS>           CT;
 
     typedef typename CT::Face_handle           Face_handle;
     typedef typename CT::Vertex_handle         CTVertex_handle;
