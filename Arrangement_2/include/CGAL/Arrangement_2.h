@@ -84,24 +84,6 @@ protected:
 
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
-public:
-
-  Traits_adaptor_2 * geom_traits;
-
-  /*! Access the geometry-traits object (non-const version). */
-  inline Traits_2* geometry_traits ()
-  {
-      return (geom_traits);
-  }
-
-  /*! Access the geometry-traits object (const version). */
-  inline const Traits_2* geometry_traits () const
-  {
-      return (geom_traits);
-  }
-
-protected:
-
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
 

@@ -76,20 +76,6 @@ private:
 
 public:
 
-  std::pair<Vertex_handle, Halfedge_handle>
-  place_and_set_curve_end (Face_handle f,
-                           const X_monotone_curve_2& cv, Curve_end ind,
-                           Boundary_type bound_x, Boundary_type bound_y)
-  {
-    DHalfedge  *pred;
-    DVertex    *v = p_arr->_place_and_set_curve_end (p_arr->_face (f), cv, ind, bound_x, bound_y, &pred);
-    if (pred == NULL)
-    // No predecessor halfedge, return just the vertex:
-      return (std::make_pair (p_arr->_handle_for(v), Halfedge_handle()));
-    // Return a pair of the vertex and predecessor halfedge:
-    return (std::make_pair (p_arr->_handle_for(v), p_arr->_handle_for(pred)));
-  }
-
   /*! Constructor with an associated arrangement. */
   Arr_accessor (Arrangement_2& arr) :
     p_arr (&arr)
