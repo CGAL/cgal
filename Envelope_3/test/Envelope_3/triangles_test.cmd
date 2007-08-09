@@ -1,5 +1,3 @@
-./data/triangles/test12.cin
-./data/triangles/random_50.in
 ./data/triangles/test.cin
 ./data/triangles/test2.cin
 ./data/triangles/test3.cin
