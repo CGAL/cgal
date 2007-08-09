@@ -4485,7 +4485,7 @@ template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::_is_valid (Face_const_handle f) const
 {   
   // check if all edges of f (on all ccb's) refer to f (as their face)
-  Hole_const_iterator           iccbit;
+  Inner_ccb_const_iterator           iccbit;
   Ccb_halfedge_const_circulator ccb_circ;
    
   if (! f->is_unbounded())

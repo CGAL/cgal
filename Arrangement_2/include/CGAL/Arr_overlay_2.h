@@ -76,7 +76,7 @@ void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
   typedef typename Arrangement2::Face_const_handle    
                                                       Face_handle2;
 
-  typedef typename Res_Arrangement::Halfedge_handle   Halfedge_handle_res;
+  //typedef typename Res_Arrangement::Halfedge_handle   Halfedge_handle_res;
 
   // in order to iterate over isolated vertices
   typedef typename Arrangement1::Vertex_const_iterator

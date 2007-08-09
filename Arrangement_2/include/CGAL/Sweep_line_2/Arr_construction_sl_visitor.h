@@ -49,7 +49,7 @@ protected:
   typedef typename Arrangement::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
   typedef typename Arrangement::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
-  typedef typename Arrangement::Hole_iterator         Hole_iterator;
+  typedef typename Arrangement::Inner_ccb_iterator         Hole_iterator;
 
   typedef Arr_construction_sl_visitor<Helper>          Self;
 
@@ -441,7 +441,7 @@ public:
               //this hole was already relocated
               continue;
 
-            m_arr_access.move_hole (he_on_face->twin()->face(),
+            m_arr_access.move_inner_ccb (he_on_face->twin()->face(),
                                     new_face,
                                     he_on_face->twin()->ccb());
             relocate_holes_and_iso_verts_in_new_face(he_on_face->twin());

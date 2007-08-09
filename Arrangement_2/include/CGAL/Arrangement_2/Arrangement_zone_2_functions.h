@@ -820,7 +820,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   // Go over the boundary of the holes inside the face (if there exist any),
   // and try to locate intersections of cv with the edges along the boundary
   // of each hole.
-  typename Arrangement_2::Hole_iterator   holes_it;
+  typename Arrangement_2::Inner_ccb_iterator   holes_it;
 
   for (holes_it = face->holes_begin();
        holes_it != face->holes_end(); ++holes_it)

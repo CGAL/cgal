@@ -46,6 +46,8 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 
+#include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -72,12 +74,37 @@ public:
 
   typedef typename Dcel::Size                   Size;
 
+
+  struct Topology_traits
+  {
+    typedef Arr_inc_insertion_zone_visitor< Self > Zone_insertion_visitor;
+  };
+
+protected:
+
+  typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
+
+public:
+
+  Traits_adaptor_2 * geom_traits;
+
+  /*! Access the geometry-traits object (non-const version). */
+  inline Traits_2* geometry_traits ()
+  {
+      return (geom_traits);
+  }
+
+  /*! Access the geometry-traits object (const version). */
+  inline const Traits_2* geometry_traits () const
+  {
+      return (geom_traits);
+  }
+
 protected:
 
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
-  
-  typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
+
 
   // Internal DCEL types:
   typedef typename Dcel::Vertex                      DVertex;
@@ -109,6 +136,7 @@ protected:
                                                DIsolated_vertices_iter;
   typedef typename DFace::Isolated_vertex_const_iterator
                                                DIsolated_vertices_const_iter;
+
 
 protected:
   
@@ -359,7 +387,7 @@ public:
      Bidirectional_circulator_tag>    Ccb_halfedge_const_circulator;
   
 private:
-                                                 
+
   struct HalfedgePtrToCirculator
   {
      typedef DHalfedge*              argument_type ;
@@ -389,8 +417,8 @@ private:
   
 public :
 
-  typedef Iterator_transform<DHoles_iter      ,HalfedgePtrToCirculator          > Hole_iterator ;
-  typedef Iterator_transform<DHoles_const_iter,HalfedgeConstPtrToConstCirculator> Hole_const_iterator ;
+  typedef Iterator_transform<DHoles_iter      ,HalfedgePtrToCirculator          > Inner_ccb_iterator;
+  typedef Iterator_transform<DHoles_const_iter,HalfedgeConstPtrToConstCirculator> Inner_ccb_const_iterator;
   
   
 
@@ -910,26 +938,41 @@ public:
         (DHalfedge_const_iter (Base::halfedge()));
     }
 
+    int number_of_outer_ccbs () const
+    {
+      //SGSG!!!
+      int ans = 0;
+      Ccb_halfedge_const_circulator first = outer_ccb ();
+      Ccb_halfedge_const_circulator curr = first;
+      do
+      {
+        // Move to the next halfegde along the CCB.
+        curr++;
+        ans++;
+      } while (curr != first);
+      return ans;
+    }
+
     /*! Get an iterator for the holes inside the face (non-const version). */
-    Hole_iterator holes_begin() 
+    Inner_ccb_iterator inner_ccbs_begin() 
     {
       return (DHoles_iter (Base::holes_begin()));
     }
 
     /*! Get an iterator for the holes inside the face (const version). */
-    Hole_const_iterator holes_begin() const
+    Inner_ccb_const_iterator inner_ccbs_begin() const
     {
       return (DHoles_const_iter (Base::holes_begin()));
     }
-    
+
     /*! Get a past-the-end iterator for the holes (non-const version). */
-    Hole_iterator holes_end() 
+    Inner_ccb_iterator inner_ccbs_end() 
     {
       return (DHoles_iter (Base::holes_end()));
     }
 
     /*! Get a past-the-end iterator for the holes (const version). */
-    Hole_const_iterator holes_end() const 
+    Inner_ccb_const_iterator inner_ccbs_end() const 
     {
       return (DHoles_const_iter (Base::holes_end()));
     }
