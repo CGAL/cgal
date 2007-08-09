@@ -221,13 +221,13 @@ public:
     }
 
   private:
+    Traits_2*                    m_base;
 
     Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& cv,
                                       Curve_end ind,
                                       Tag_true) const
     {
-      Traits_2                    tr;
-      return (tr.boundary_in_x_2_object() (cv.base(), ind));
+      return (m_base->boundary_in_x_2_object() (cv.base(), ind));
     }
 
     Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Curve_end ,
@@ -239,7 +239,7 @@ public:
 
   Boundary_in_x_2 boundary_in_x_2_object () const
   {
-    return Boundary_in_x_2();
+    return Boundary_in_x_2(m_base_traits);
   }
 
   /*! \class
@@ -256,13 +256,13 @@ public:
     }
 
   private:
+    Traits_2*                    m_base;
 
     Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& cv,
                                       Curve_end ind,
                                       Tag_true) const
     {
-      Traits_2                    tr;
-      return (tr.boundary_in_y_2_object() (cv.base(), ind));
+      return (m_base->boundary_in_y_2_object() (cv.base(), ind));
     }
 
     Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Curve_end ,
@@ -274,7 +274,7 @@ public:
 
   Boundary_in_y_2 boundary_in_y_2_object () const
   {
-    return Boundary_in_y_2();
+    return Boundary_in_y_2(m_base_traits);
   }
 
   /*! \class
