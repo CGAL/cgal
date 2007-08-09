@@ -59,22 +59,20 @@
 
 # else // if _WIN64
 
-// VC++ >= 8.0 is compatible with Windows x64.
-// ATLAS is not compatible with Win64, thus we assume Intel MKL.
+// ATLAS is not compatible with Win64, thus CGAL ships with CLAPACK.
+// VC++ >= 8.0 is compatible with Windows 64 bits.
 // The set set of libraries is (e.g. for /MD):
-// mkl_em64t.lib libguide40.lib vcf2c-vc80-mt.lib
+// clapack-vc80-mt.lib blas-vc80-mt.lib vcf2c-vc80-mt.lib
 //
 // Notes: - Order matters.
-//        - Libraries with no "vc80" toolset are compiled by Intel Fortran. They are 
-//          compatible with all VC++ runtimes.
 //        - Tested with VC++ 8.0 only.
 
-#define CGAL_LIB_NAME mkl_em64t
-#define CGAL_AUTO_LINK_NOMANGLE
+#define CGAL_LIB_NAME clapack
+#define CGAL_LIB_TOOLSET "vc80"
 #include <CGAL/auto_link/auto_link.h>
 
-#define CGAL_LIB_NAME libguide40
-#define CGAL_AUTO_LINK_NOMANGLE
+#define CGAL_LIB_NAME blas
+#define CGAL_LIB_TOOLSET "vc80"
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME vcf2c
