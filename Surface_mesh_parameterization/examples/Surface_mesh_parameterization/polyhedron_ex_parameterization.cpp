@@ -312,7 +312,7 @@ int main(int argc, char * argv[])
     std::string border;             // default: circular border param.
     std::string solver;             // default: OpenNL solver
     std::string input;              // required
-    std::string output;             // default: no output
+    std::string output;             // default: out.eps
     try
     {
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
