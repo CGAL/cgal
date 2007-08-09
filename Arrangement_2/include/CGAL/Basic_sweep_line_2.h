@@ -838,9 +838,7 @@ protected:
  
 
   /*! Allocate an event object */
-  Event* _allocate_event(const Point_2& pt, Attribute type,
-			Boundary_type x_dummy = NO_BOUNDARY,
-			Boundary_type y_dummy = NO_BOUNDARY)
+  Event* _allocate_event(const Point_2& pt, Attribute type,Boundary_type,Boundary_type)
   {
     Event *e =  m_eventAlloc.allocate(1); 
     m_eventAlloc.construct(e, m_masterEvent);
