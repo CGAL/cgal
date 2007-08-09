@@ -213,6 +213,10 @@ public:
   class Boundary_in_x_2
   {
   public:
+    Boundary_in_x_2 (Traits_2* base)
+      : m_base(base)
+    {
+    }
 
     Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
@@ -248,6 +252,10 @@ public:
   class Boundary_in_y_2
   {
   public:
+    Boundary_in_y_2 (Traits_2* base)
+      : m_base(base)
+    {
+    }
 
     Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
