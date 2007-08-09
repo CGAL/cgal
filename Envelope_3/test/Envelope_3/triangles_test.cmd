@@ -1,3 +1,5 @@
+./data/triangles/test12.cin
+./data/triangles/random_50.in
 ./data/triangles/test.cin
 ./data/triangles/test2.cin
 ./data/triangles/test3.cin
@@ -9,7 +11,6 @@
 ./data/triangles/test9.cin
 ./data/triangles/test10.cin
 ./data/triangles/test11.cin
-./data/triangles/test12.cin
 ./data/triangles/test_w_overlap.cin
 ./data/triangles/test_w_vertical.cin
 ./data/triangles/holes.cin
@@ -28,7 +29,6 @@
 ./data/triangles/random_30.in
 ./data/triangles/random_40.in
 ./data/triangles/grid_inter_tri_const_envelope_40.cin
-./data/triangles/random_50.in
 ./data/triangles/random_50_small_0.5.in
 ./data/triangles/random_50_small_1.in
 

@@ -40,7 +40,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // Return the comparison result of the halfedge's source and target vertices.
-#define HE_COMP_RES(he) (((he)->direction() == LEFT_TO_RIGHT) ? SMALLER : LARGER)
+#define HE_COMP_RES(he) (((Halfedge_direction)(he)->direction() == LEFT_TO_RIGHT) ? SMALLER : LARGER)
 
 // this class does the resolving of edge and face in the divide & conquer algorithm
 // it should handle all faces (it supports holes in the face)
@@ -475,7 +475,7 @@ public:
     const X_monotone_curve_2& original_cv = edge->curve();
    
     // we want to work on the halfedge going from left to right
-    if (edge->direction() != LEFT_TO_RIGHT)
+    if ((Halfedge_direction)edge->direction() != LEFT_TO_RIGHT)
       edge = edge->twin();
       
     Vertex_handle original_src = edge->source();
@@ -855,7 +855,7 @@ protected:
       const X_monotone_curve_2& cv = (*he)->curve();
 
       // a face is always to the left of its halfedge
-      if ((*he)->direction() == LEFT_TO_RIGHT)
+      if ((Halfedge_direction)(*he)->direction() == LEFT_TO_RIGHT)
       {
         res = traits->compare_z_at_xy_above_3_object()(cv,surf1,surf2);
         if(type == UPPER)

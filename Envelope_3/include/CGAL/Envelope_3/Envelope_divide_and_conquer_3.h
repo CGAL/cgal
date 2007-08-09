@@ -130,7 +130,7 @@ protected:
     Vertex_handle;
   typedef typename Minimization_diagram_2::Vertex_iterator
     Vertex_iterator;
-  typedef typename Minimization_diagram_2::Hole_iterator
+  typedef typename Minimization_diagram_2::Inner_ccb_iterator
     Hole_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
