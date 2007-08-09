@@ -70,12 +70,12 @@
 			ManagedExtensions="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900 /Og-"
+				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;..\..\..\..\Installation\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_TAUCS;CGAL_USE_BOOST_PROGRAM_OPTIONS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS;CGAL_USE_BOOST_PROGRAM_OPTIONS"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
