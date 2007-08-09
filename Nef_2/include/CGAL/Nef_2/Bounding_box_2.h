@@ -69,10 +69,8 @@ class Bounding_box_2<Tag_false,Kernel>
   
  public:
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Box::min_coord;
   using Box::max_coord;
-#endif
 
   template<typename Vertex_iterator>
     Bounding_box_2(Vertex_iterator begin, Vertex_iterator end) {

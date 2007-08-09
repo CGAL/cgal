@@ -129,7 +129,6 @@ public:
    typedef typename PM_decorator_::Halfedge_around_face_circulator Halfedge_around_face_circulator;
    typedef typename PM_decorator_::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::clear;
   using Base::vertices_begin;
   using Base::vertices_end;
@@ -140,7 +139,6 @@ public:
   using Base::number_of_vertices;
   using Base::number_of_halfedges;
   using Base::number_of_faces;
-#endif
 
   Halfedge_const_handle out_wedge(Vertex_const_handle v, 
     const Direction& d, bool& collinear) const
@@ -431,11 +429,9 @@ public:
   typedef typename Base::Halfedge_around_face_circulator Halfedge_around_face_circulator;
   typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::K;
   using Base::number_of_vertices;
   using Base::faces_begin;
-#endif
 
   /*{\Mtypes 2}*/
   /*{\Mtext All local types of |PM_naive_point_locator| are inherited.}*/

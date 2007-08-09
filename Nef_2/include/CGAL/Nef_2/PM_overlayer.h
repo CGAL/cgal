@@ -271,7 +271,6 @@ public:
   typedef typename Decorator::Hole_iterator Hole_iterator;
   typedef typename Decorator::Isolated_vertex_iterator Isolated_vertex_iterator;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::clear;
   using Base::vertices_begin;
   using Base::vertices_end;
@@ -284,7 +283,6 @@ public:
   using Base::number_of_faces;
   using Base::new_vertex;
   using Base::new_face;
-#endif
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }

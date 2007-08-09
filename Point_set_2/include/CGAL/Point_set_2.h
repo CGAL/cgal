@@ -76,14 +76,12 @@ public:
   typedef Unique_hash_map<Vertex_handle, Numb_type>         MAP_TYPE;  
   typedef Delaunay_triangulation_2<Gt,Tds>                  Base;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::finite_vertices_begin;
   using Base::finite_vertices_end;
   using Base::number_of_vertices;
   using Base::VERTEX;
   using Base::insert;
   using Base::remove;
-#endif
 
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  

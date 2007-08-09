@@ -71,13 +71,11 @@ public:
   //for backward compatibility
  typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
   
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Triangulation::geom_traits;
   using Triangulation::cw;
   using Triangulation::ccw;
   using Triangulation::number_of_vertices;
   using Triangulation::vertices_begin;
-#endif
 
 protected:
   Constraint_hierarchy hierarchy;

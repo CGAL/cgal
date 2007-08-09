@@ -31,7 +31,6 @@ private:
   typedef typename Base::Point                  Point;
   typedef typename Base::RasterOp               RasterOp;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::widget;
   using Base::x1;
   using Base::y1;
@@ -40,7 +39,6 @@ private:
   using Base::firstpoint;
   using Base::oldcursor;
   using Base::XorROP;
-#endif
 
   std::list<Segment_2>          *seg_list;
   //true if the user selected the first vertex
