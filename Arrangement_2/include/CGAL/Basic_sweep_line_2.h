@@ -849,6 +849,16 @@ protected:
     return e;
   }
 
+    Event* _allocate_event(const Point_2& pt, Attribute type)
+    {
+       Event *e =  m_eventAlloc.allocate(1);
+       m_eventAlloc.construct(e, m_masterEvent);
+       e->init(pt, type);
+
+       m_allocated_events.insert(e);
+       return e;
+    }
+
   /*! Push a finite event point to x-structure (m_queue) iff it doesnt exist */
   std::pair<Event*, bool> push_event(const Point_2& pt,
                                      Attribute type,
