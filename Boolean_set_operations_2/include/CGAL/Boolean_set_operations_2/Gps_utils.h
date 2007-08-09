@@ -55,7 +55,7 @@ public:
     Ccb_halfedge_const_circulator;
   typedef typename Arrangement::Face_const_iterator     Face_const_iterator;
   typedef typename Arrangement::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
+  typedef typename Arrangement::Inner_ccb_const_iterator     Hole_const_iterator;
 
 
 protected:

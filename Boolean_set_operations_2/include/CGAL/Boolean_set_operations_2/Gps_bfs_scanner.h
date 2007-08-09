@@ -30,7 +30,7 @@ class Gps_bfs_scanner
 {
   typedef Arrangement_     Arrangement;
 
-  typedef typename Arrangement::Hole_iterator    Hole_iterator;
+  typedef typename Arrangement::Inner_ccb_iterator    Hole_iterator;
   typedef typename Arrangement::Ccb_halfedge_circulator 
                                                   Ccb_halfedge_circulator;
   typedef typename Arrangement::Face_iterator    Face_iterator;

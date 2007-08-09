@@ -71,14 +71,14 @@ private:
     Halfedge_const_iterator;
   typedef typename Arrangement_2::Vertex_const_iterator   Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator     Edge_const_iterator;
-  typedef typename Arrangement_2::Hole_const_iterator     Hole_const_iterator;
+  typedef typename Arrangement_2::Inner_ccb_const_iterator     Hole_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
     Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Face_iterator           Face_iterator;
   typedef typename Arrangement_2::Halfedge_iterator       Halfedge_iterator;
   typedef typename Arrangement_2::Vertex_iterator         Vertex_iterator;
   typedef typename Arrangement_2::Edge_iterator           Edge_iterator;
-  typedef typename Arrangement_2::Hole_iterator           Hole_iterator;
+  typedef typename Arrangement_2::Inner_ccb_iterator           Hole_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
   typedef typename Arrangement_2::Face_handle             Face_handle;
