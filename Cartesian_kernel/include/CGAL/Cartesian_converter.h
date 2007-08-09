@@ -62,26 +62,7 @@ public:
     typedef K2         Target_kernel;
     typedef Converter  Number_type_converter;
 
-#ifdef CGAL_CFG_USING_BASE_MEMBER_BUG
-    bool operator()(bool b) const { return Base::operator()(b); }
-    Sign operator()(Sign s) const { return Base::operator()(s); }
-
-    Oriented_side operator()(Oriented_side os) const {
-      return Base::operator()(os);
-    }
-
-    Bounded_side operator()(Bounded_side bs) const {
-      return Base::operator()(bs);
-    }
-
-    Comparison_result operator()(Comparison_result cr) const {
-      return Base::operator()(cr);
-    }
-
-    Angle operator()(Angle a) const { return Base::operator()(a); }
-#else
     using Base::operator();
-#endif
 
     Cartesian_converter() // To shut up a warning with SunPRO.
 	: c(), k() {}

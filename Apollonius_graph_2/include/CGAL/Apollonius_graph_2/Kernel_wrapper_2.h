@@ -52,8 +52,7 @@ private:
 
 
 public:
-#if defined(_MSC_VER) || defined(__sgi) \
-    || defined(CGAL_CFG_USING_BASE_MEMBER_BUG)
+#if defined(_MSC_VER) || defined(__sgi)
   bool operator()(bool b) const {
     return Base::operator()(b);
   }
