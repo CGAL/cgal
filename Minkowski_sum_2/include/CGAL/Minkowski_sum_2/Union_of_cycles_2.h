@@ -51,7 +51,7 @@ protected:
   typedef typename Arrangement_2::Edge_iterator          Edge_iterator;
   typedef typename Arrangement_2::Halfedge_iterator      Halfedge_iterator;
   typedef typename Arrangement_2::Face_iterator          Face_iterator;
-  typedef typename Arrangement_2::Hole_iterator          Hole_iterator;
+  typedef typename Arrangement_2::Inner_ccb_iterator          Hole_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_circulator
                                              Halfedge_around_vertex_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
