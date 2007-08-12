@@ -158,19 +158,52 @@ namespace CircularFunctors {
   
   template < class CK >
   class Has_on_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Has_on_2
+#endif
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_point_2    Circular_arc_point_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
     typedef typename CK::Circle_2                Circle_2;
     typedef typename CK::Line_2                  Line_2;
+    typedef typename CK::Ray_2                   Ray_2;
+    typedef typename CK::Segment_2               Segment_2;
+    typedef typename CK::Point_2                 Point_2;
 
   public:
     typedef bool         result_type;
     typedef Arity_tag<2> Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Has_on_2::operator();
+#else 
+
+    result_type
+    operator()( const Line_2& l, const Point_2& p) const
+    {
+      typedef typename CK::Linear_kernel LK;
+      typedef typename LK::Has_on_2 LK_Has_on_2;
+      return LK_Has_on_2()(l,p); 
+    }
+
+    result_type
+    operator()( const Ray_2& r, const Point_2& p) const
+    {
+      typedef typename CK::Linear_kernel LK;
+      typedef typename LK::Has_on_2 LK_Has_on_2;
+      return LK_Has_on_2()(r,p); 
+}
+
+    result_type
+    operator()( const Segment_2& s, const Point_2& p) const
+    {
+      typedef typename CK::Linear_kernel LK;
+      typedef typename LK::Has_on_2 LK_Has_on_2;
+      return LK_Has_on_2()(s,p); 
+    }
+
+#endif
 
     result_type
     operator()(const Circle_2 &a, const Circular_arc_point_2 &p) const
@@ -640,17 +673,37 @@ template < class CK >
 
   template < class CK >
   class Is_vertical_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Is_vertical_2
+#endif
   {
+    typedef typename CK::Linear_kernel           LK;
+    typedef typename LK::Is_vertical_2           LK_Is_vertical_2;
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
-
+    typedef typename LK::Line_2                  Line_2;
+    typedef typename LK::Segment_2               Segment_2;
+    typedef typename LK::Ray_2                   Ray_2;
   public:
 
     typedef bool         result_type;
     typedef Arity_tag<1> Arity;
     
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Is_vertical_2::operator();
+#else 
+    result_type
+    operator()( const Line_2& l) const
+    { return LK_Is_vertical_2()(l); }
+
+    result_type
+    operator()( const Segment_2& s) const
+    { return LK_Is_vertical_2()(s); }
+
+    result_type
+    operator()( const Ray_2& r) const
+    { return LK_Is_vertical_2()(r); }
+#endif
 
     result_type
     operator()(const Circular_arc_2 &A) const
@@ -1073,7 +1126,10 @@ template < class CK >
 #else
     typedef typename  CK::Linear_kernel LK;
     typedef typename LK::Construct_bbox_2 LK_Construct_bbox_2;
-    typedef typename LK::Point_2 Point_2;
+    typedef typename LK::Point_2    Point_2;
+    typedef typename LK::Segment_2  Segment_2;
+    typedef typename LK::Triangle_2 Triangle_2;
+    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2;
 
     result_type operator() (const Circle_2 & a) const
     {
@@ -1084,6 +1140,22 @@ template < class CK >
     {
       return LK_Construct_bbox_2()(a);
     }
+
+    result_type operator() (const Segment_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+
+    result_type operator() (const Triangle_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+
+    result_type operator() (const Iso_rectangle_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+
 #endif
 
     result_type operator() (const Circular_arc_point_2 & a) const
@@ -1105,7 +1177,9 @@ template < class CK >
 
   template <class CK>
   class Bounded_side_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Bounded_side_2
+#endif
   {
     typedef typename CK::Circle_2              Circle_2;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
@@ -1114,7 +1188,28 @@ template < class CK >
     typedef typename CK::Linear_kernel::Bounded_side    result_type;
     typedef Arity_tag< 2 >              Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Bounded_side_2::operator();
+#else 
+    typedef typename  CK::Linear_kernel  LK;
+    typedef typename LK::Bounded_side_2  LK_Bounded_side_2;    
+    typedef typename LK::Triangle_2      Triangle_2;
+    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Circle_2        Circle_2;
+
+
+    result_type
+    operator()( const Circle_2& c, const Point_2& p) const
+    { return LK_Bounded_side_2()(c,p); }
+
+    result_type
+    operator()( const Triangle_2& t, const Point_2& p) const
+    { return LK_Bounded_side_2()(t,p); }
+
+    result_type
+    operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    { return LK_Bounded_side_2()(r,p); }
+#endif
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
@@ -1124,7 +1219,9 @@ template < class CK >
 
   template <class CK>
   class Has_on_bounded_side_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Has_on_bounded_side_2
+#endif
   {
     typedef typename CK::Circle_2              Circle_2;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
@@ -1133,7 +1230,28 @@ template < class CK >
     typedef bool result_type;
     typedef Arity_tag< 2 >               Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Has_on_bounded_side_2::operator();
+#else
+    typedef typename  CK::Linear_kernel  LK;
+    typedef typename LK::Has_on_bounded_side_2  LK_Has_on_bounded_side_2;    
+    typedef typename LK::Triangle_2      Triangle_2;
+    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Circle_2        Circle_2;
+
+
+    result_type
+    operator()( const Circle_2& c, const Point_2& p) const
+    { return LK_Has_on_bounded_side_2()(c,p); }
+
+    result_type
+    operator()( const Triangle_2& t, const Point_2& p) const
+    { return LK_Has_on_bounded_side_2()(t,p); }
+
+    result_type
+    operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    { return LK_Has_on_bounded_side_2()(r,p); }
+#endif
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
@@ -1143,7 +1261,9 @@ template < class CK >
 
   template <class CK>
   class Has_on_unbounded_side_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Has_on_unbounded_side_2
+#endif
   {
     typedef typename CK::Circle_2              Circle_2;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
@@ -1152,7 +1272,28 @@ template < class CK >
     typedef bool result_type;
     typedef Arity_tag< 2 >               Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Has_on_unbounded_side_2::operator();
+#else
+    typedef typename  CK::Linear_kernel  LK;
+    typedef typename LK::Has_on_unbounded_side_2  LK_Has_on_unbounded_side_2;    
+    typedef typename LK::Triangle_2      Triangle_2;
+    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Circle_2        Circle_2;
+
+
+    result_type
+    operator()( const Circle_2& c, const Point_2& p) const
+    { return LK_Has_on_unbounded_side_2()(c,p); }
+
+    result_type
+    operator()( const Triangle_2& t, const Point_2& p) const
+    { return LK_Has_on_unbounded_side_2()(t,p); }
+
+    result_type
+    operator()( const Iso_rectangle_2& r, const Point_2& p) const
+    { return LK_Has_on_unbounded_side_2()(r,p); }
+#endif
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
@@ -1162,7 +1303,9 @@ template < class CK >
 
   template <class CK>
   class Orientation_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Orientation_2
+#endif
   {
     typedef typename CK::Circular_arc_point_2       Circular_arc_point_2;
 
@@ -1170,7 +1313,28 @@ template < class CK >
     typedef typename CK::Linear_kernel::Orientation   result_type;
     typedef Arity_tag< 3 >            Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Orientation_2::operator();
+#else
+    typedef typename  CK::Linear_kernel  LK;
+    typedef typename LK::Orientation_2 LK_Orientation_2;
+    typedef typename LK::Point_2 Point_2;
+    typedef typename LK::Vector_2 Vector_2;
+    typedef typename LK::Circle_2 Circle_2;
+
+    result_type
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return LK_Orientation_2()(p,q, r); }
+
+
+    result_type
+    operator()(const Vector_2& u, const Vector_2& v) const
+    { return LK_Orientation_2()(u,v); }
+
+    result_type
+    operator()(const Circle_2& c) const
+    { return LK_Orientation_2()(c); }
+#endif
 
     result_type
     operator()(const Circular_arc_point_2& p, 
@@ -1181,15 +1345,27 @@ template < class CK >
 
   template <class CK>
   class Collinear_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Collinear_2
+#endif
   {
     typedef typename CK::Circular_arc_point_2       Circular_arc_point_2;
 
   public:
-    typedef typename CK::Linear_kernel::Orientation   result_type;
+    typedef typename CK::Linear_kernel::Collinear_2::result_type   result_type;
     typedef Arity_tag< 3 >            Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Collinear_2::operator();
+#else
+    typedef typename CK::Linear_kernel  LK;
+    typedef typename LK::Collinear_2 LK_Collinear_2;
+    typedef typename LK::Point_2        Point_2;
+
+    result_type
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return LK_Collinear_2()(p, q, r); }
+#endif
 
     // PRE CONDITION: 
     // The coordinates of P, Q, R have to have the same 
