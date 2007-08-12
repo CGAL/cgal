@@ -27,9 +27,7 @@
 // Sun CC has several issues with templates, and I do not have a testcase
 // for this one, but it means overloading Qualified_result_of does not
 // work in general.
-#ifdef CGAL_CFG_DEDUCABLE_CONTEXT_BUG
 #define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
-#endif
 
 #ifdef CGAL_CFG_SUNPRO_RWSTD
 
