@@ -2,6 +2,8 @@ CHANGES
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
 
+- Fixed a bug in the Arrangement_2 package in dual arrangement representation
+  for Boost graphs when reporting all halfedges of a face.
 - Fixed a bug in the Arrangement sweep-line when using a specific polyline
   configuration.
 - TAUCS supports now 64 bits platforms.
