@@ -463,6 +463,8 @@ else
 
   compile_and_run test_do_intersect
   compile_and_run test_compute_curve_zone
+
+  compile_and_run test_dual
 fi
 
 #if any error occured then appened the the full error description file to error file
@@ -473,9 +475,3 @@ if [ -f $ERROR_FULL_DESCRIPTION_FILE ] ; then
   echo "********************************************************" >> $ERRORFILE
   cat $ERROR_FULL_DESCRIPTION_FILE >> $ERRORFILE
 fi
-
-
-
-
-
-
