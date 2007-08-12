@@ -249,8 +249,10 @@ protected:
       {
         ++_outer_ccb_circ;
 
-        if (_outer_ccb_circ != _face->outer_ccb())
-          return;
+        if ((_outer_ccb_circ == _face->outer_ccb()) &&
+            (_hole_iter == _face->holes_end()))
+          _end = true;
+        return;
       }
 
       // Otherwise, we have to move along the current hole boundary.
