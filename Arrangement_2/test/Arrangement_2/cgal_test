@@ -376,4 +376,6 @@ else
   compile_and_run point_location
   compile_and_run test_vert_ray_shoot_vert_segments
   compile_and_run test_construction
+
+  compile_and_run test_dual
 fi
