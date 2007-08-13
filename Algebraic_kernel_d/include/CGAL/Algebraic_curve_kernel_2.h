@@ -27,6 +27,8 @@
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
 
+#include <algorithm>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class AlgebraicCurvePair_2, class AlgebraicKernel_1 >
@@ -125,6 +127,13 @@ public:
 		{
 			return Curve_2(f);
 		}
+		
+		Curve_2 operator()(const Polynomial_2& f) const
+		{
+			CGAL2NiX_converter cvt;
+			return Curve_2(cvt(f));
+		}
+		
 	};
 	CGAL_Algebraic_Kernel_pred(Construct_curve_2, construct_curve_2_object);
 
@@ -141,8 +150,10 @@ public:
 	{
         Comparison_result operator()(const X_coordinate_1& x1, 
                                          const X_coordinate_1& x2) const {
-            Algebraic_kernel_1 ak;
-			return (ak.compare_x_2_object()(x1, x2));
+		// not yet implemented in Algebraic_kernel_1
+//             Algebraic_kernel_1::C ak;
+// 			return (ak.compare_x_2_object()(x1, x2));
+			return x1.compare(x2);
         }
 
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -195,12 +206,17 @@ public:
 			public Binary_function< Curve_2, Curve_2, bool > { 
 				
 		bool operator()(const Curve_2& c1, const Curve_2& c2) {
-		
+			// if curve ids are the same - non-decomposable
+			if(c1.id() == c2.id()) 
+				return true;
+        
 			typename Polynomial_traits_2::Gcd_up_to_constant_factor gcd_utcf;
 			typename Polynomial_traits_2::Total_degree total_degree;
 			NiX2CGAL_converter cvt;
-			
 			Polynomial_2 p1 = cvt(c1.f()), p2 = cvt(c2.f());
+		/*	std::cout << "p1 = " << c1.f() << "; p2 = " << c2.f() << "\n" <<
+				cvt_back(gcd_utcf(p1, p2)) << "\n";
+		*/	
 			return (total_degree(gcd_utcf(p1, p2)) == 0);  
         }
     };
@@ -244,22 +260,29 @@ public:
         }
         
 		//! \brief computes for a given pair of curves \c c1 and \c c2 their 
-		//! common  part \c oib and comprime parts \c oi1 and \c oi2 
-		//! respectively
+		//! common  part \c oib and coprime parts \c oi1 and \c oi2 
+		//! respectively; returns \c true if the curves were decomposed
 		//!
 		//! returns true if \c c1 and \c c2 are coprime. Template argument
-		//! type of \c oi is \c Curve_2
+		//! type of \c oi* is \c Curve_2
         template < class OutputIterator > 
         bool operator()(const Curve_2& c1, const Curve_2& c2,
-                        OutputIterator oi1,
-                        OutputIterator oi2,
-                        OutputIterator oib) {
-            if(Curve_2::decompose(c1, c2, oi1, oi2)) {
+            OutputIterator oi1, OutputIterator oi2, OutputIterator oib) {
+			
+			typedef std::vector<Curve_2> Curves;
+			Curves parts_f, parts_g;
+            if(Curve_2::decompose(c1, c2, 
+				std::back_inserter(parts_f), std::back_inserter(parts_g))) {
 				// copy the common part returned through both iterators
-				*oib++ = *oi1; 
-				return false;
+				// we need to move a common part from oi1/oi2 to oib
+				*oib++ = parts_f[0];
+				if(parts_f.size() > 1)
+					std::copy(parts_f.begin() + 1, parts_f.end(), oi1);
+				if(parts_g.size() > 1)
+					std::copy(parts_g.begin() + 1, parts_g.end(), oi2);
+				return true;
 			}
-			return true;
+			return false;
         }
     };
 	CGAL_Algebraic_Kernel_pred(Decompose_2, decompose_2_object);
