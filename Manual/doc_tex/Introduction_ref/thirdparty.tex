@@ -75,12 +75,20 @@ It is only available commercially from \path'http://www.algorithmic-solutions.co
 In \cgal, it is used to improve (a lot) the computations within the
 \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} package only.
 
-You can download the official release from \path'http://www.tau.ac.il/~stoledo/taucs/'
-or download a version customized for \cgal\
-from the Download section of \path'http://www.cgal.org'.
-We highly recommend to install the version customized for \cgal\
-which contains an installer, bug fixes, and a complete \lapack\
-implementation.
+\taucs\ web site is \path'http://www.tau.ac.il/~stoledo/taucs/'.\\
+The latest official version is \taucs\ Version 2.2, September 4, 2003.
+Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University,
+stoledo@tau.ac.il. All Rights Reserved.\\
+See \path'http://www.tau.ac.il/~stoledo/taucs/' for License and Availability note.\\
+Used by permission of Sivan Toledo.
+
+A version modified by \cgal\ team to fix bugs, port to 64 bits and simplify
+the installation process is also available from the Download section of \path'http://www.cgal.org'.
+It contains the third-party libraries used by \taucs\ (ATLAS, Metis, f2c, ...)
+precompiled for all platforms supported by \cgal, and a complete \lapack\
+implementation.\\
+{\em CAUTION:} Since \cgal\ 3.3.1, \cgal\ is not compatible anymore with \taucs\ 2.2 official release.
+You must use the version modified by \cgal\ team.
 
 
 \subsection{OpenNL \label{thirdparty:OpenNL}}
