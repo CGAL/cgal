@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2002-2007  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,6 +22,7 @@
 
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Unique_hash_map.h>
+#include <map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 131
