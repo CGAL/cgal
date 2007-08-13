@@ -7,7 +7,7 @@
 // $Id: $
 // 
 //
-// Author(s)     : 
+// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
 // ============================================================================
 
@@ -144,7 +144,7 @@ public:
 	}
 
 	//! \brief returns number of vertical lines that encode an event
-	int number_of_vertical_lines_with_event()
+	int number_of_vertical_lines_with_event() const
 	{
 		return this->ptr()->curve_.num_events();
 	}
@@ -153,29 +153,33 @@ public:
 	//! event
 	//!
 	//! \pre 0 <= i < number_of_vertical_lines_with_event()
-	Curve_vertical_line_1 vertical_line_at_event(int i)
+	Curve_vertical_line_1 vertical_line_at_event(int i) const
 	{
 		CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
 // 		::CGAL::set_pretty_mode(std::cout);
 // 		std::cout << "evt info, i = " << i << ": " <<
 // 				this->ptr()->curve_.event_info(i) << std::endl;
-		return Curve_vertical_line_1(this->ptr()->curve_.event_info(i));
+		return Curve_vertical_line_1(this->ptr()->curve_.event_info(i),
+			*this, i);
 	}
 
 	//! \brief returns an instance of CurveVerticalLine_1 of the i-th 
 	//! interval
 	//!
  	//! \pre 0 <= i < number_of_vertical_lines_with_event()
-	Curve_vertical_line_1 vertical_line_of_interval(int i)
+	Curve_vertical_line_1 vertical_line_of_interval(int i) const
 	{
 		CGAL_precondition(i >= 0&&i <= number_of_vertical_lines_with_event());
-		typedef typename Curve_vertical_line_1::Event1_info Event1_info;
 		int n_arcs = this->ptr()->curve_.arcs_over_interval(i);
 		// # of arcs to the left and to the right is the same over an interval
-		return Curve_vertical_line_1(
-			Event1_info(X_coordinate_1(
+		typename Curve_vertical_line_1::Event1_info ei(X_coordinate_1(
 			this->ptr()->curve_.boundary_value_in_interval(i)),
-				n_arcs, n_arcs));
+				n_arcs, n_arcs);
+		// initialize n continuous arcs
+		std::vector<SoX::Curve_arc_2 > dummy_arcs(n_arcs);
+		ei.set_arcs(dummy_arcs);
+		ei.fix();
+		return Curve_vertical_line_1(ei, *this, i);
 	}
 
 	//! \brief returns vertical_line_at_event(i), if x hits i-th event, 
@@ -188,7 +192,7 @@ public:
 	//! 
 	//! \pre \c x is finite
 	Curve_vertical_line_1 vertical_line_for_x(X_coordinate_1 x, 
-		CGAL::Sign perturb = CGAL::ZERO)
+		CGAL::Sign perturb = CGAL::ZERO) const
 	{
 		// CGAL_precondition(x is finite ??);
 		int i;
@@ -206,7 +210,7 @@ public:
 	//! \brief returns an instance of CurveVerticalLine_1 at a given \c x
 	//!
 	//! \pre \c x is finite
-	Curve_vertical_line_1 vertical_line_at_exact_x(X_coordinate_1 x)
+	Curve_vertical_line_1 vertical_line_at_exact_x(X_coordinate_1 x) const
 	{
 		// CGAL_precondition(x is finite ??);
 		int i;
@@ -214,9 +218,14 @@ public:
 		this->ptr()->curve_.x_to_index(x, i, is_evt);
 		if(is_evt) 
 			return vertical_line_at_event(i);
-		// else construct Event1_info at certain x over the ith interval
+		// otherwise construct Event1_info at certain x over the ith interval
 		int n_arcs = this->ptr()->curve_.arcs_over_interval(i);
-		return Curve_vertical_line_1(Event1_info(x, n_arcs, n_arcs));
+		typename Curve_vertical_line_1::Event1_info ei(x, n_arcs, n_arcs);
+		// initialize n continuous arcs
+		std::vector<SoX::Curve_arc_2 > dummy_arcs(n_arcs);
+		ei.set_arcs(dummy_arcs);
+		ei.fix();
+		return Curve_vertical_line_1(ei, *this, i);
 	}
 	
 }; // class Curve_analysis_2

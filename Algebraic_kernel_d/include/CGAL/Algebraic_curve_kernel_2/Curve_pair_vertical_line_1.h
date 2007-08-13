@@ -7,7 +7,7 @@
 // $Id: $
 // 
 //
-// Author(s)     : 
+// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
 // ============================================================================
 
@@ -155,7 +155,7 @@ public:
 	
 	// overriden member function while the class doesn't have it's own
 	// representation
-	bool is_identical(const Self& line)
+	bool is_identical(const Self& line) const
 	{
 		return this->ptr()->event_slice_.is_identical(line.get_slice());
 	}
@@ -185,12 +185,12 @@ public:
 	//! Note that each event is formed by the first, the second, or both curves
 	//!
 	//! \pre 0 <= k < number of arc defined for the c-th curve at \c x()
-	int get_event_of_curve(int k, bool c)
+	int get_event_of_curve(int k, bool c) const
 	{
 		typename Event2_slice::Int_container ic = 
 			this->ptr()->event_slice_.arcno_to_pos
 					((c == 0 ? SoX::CURVE1 : SoX::CURVE2));
-		CGAL_precondition(0 <= k && k < ic.size());
+		CGAL_precondition(0 <= k && k < static_cast<int>(ic.size()));
 		return (ic[k]);
 	}
 
@@ -199,7 +199,7 @@ public:
 	//!
 	//! \pre There is an intersection of both curves at j-th event
 	//! \pre 0 <= j < number_of_events()
-	int get_multiplicity_of_intersection(int j)
+	int get_multiplicity_of_intersection(int j) const
 	{
 		CGAL_precondition(0 <= j && j < number_of_events());
 		CGAL_precondition(is_event());
@@ -214,7 +214,7 @@ public:
 	//! corresponding curve is not involved.
 	//!
 	//! \pre 0 <= j < number_of_events()
-	std::pair<int, int> get_curves_at_event(int j)
+	std::pair<int, int> get_curves_at_event(int j) const
 	{
 		CGAL_precondition(0 <= j && j < number_of_events());
 		typedef std::vector<typename Event2_slice::Arc_at_event_2> 
@@ -240,7 +240,7 @@ public:
 	//! \brief returns true if there is an intersection of both curves.
 	// is_intersection means that at this x() there is an intersection
 	// of both curves
-	bool is_intersection() 
+	bool is_intersection() const
 	{
 		CGAL_precondition(is_event());
 		return this->ptr()->event_slice_.is_intersection();
@@ -256,16 +256,12 @@ public:
 
 }; // class Curve_pair_vertical_line_1
 
-
-
 template <class CurvePairAnalysis_2, class Rep>
 std::ostream& operator<< (
         std::ostream& os, 
 		const CGALi::Curve_pair_vertical_line_1<CurvePairAnalysis_2, Rep>&
 			 cpv_line) {
-
-    os << (cpv_line.ptr()->event_slice_);
-    
+    os << (cpv_line.get_slice());
     return os;
 }
 

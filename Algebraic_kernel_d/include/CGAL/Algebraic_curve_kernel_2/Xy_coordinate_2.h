@@ -449,7 +449,7 @@ private:
         	return result;
         }
 		// attention: here the cache should be used
-		Curve_pair_vertical_line_1& vline = 
+		const Curve_pair_vertical_line_1& vline = 
 			Curve_pair_analysis_2(
 				Curve_pair_2(f, g)).vertical_line_for_x(x());
         CGAL::Sign result = 
@@ -479,30 +479,36 @@ public:
      */
     void simplify_by(const Curve_pair_analysis_2& pair) const 
 	{ 
-        CGAL_precondition_code(
+		typedef typename Algebraic_curve_kernel_2::Polynomial_2 Poly_2;
+		typename Algebraic_curve_kernel_2::NiX2CGAL_converter cvt;
+		typedef typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree
+			Total_degree;
+		
+		CGAL_precondition_code(
 			typename Curve_2::Poly_d mult =
 					pair.get_curve_analysis(0).get_polynomial_2().f() *
 					pair.get_curve_analysis(1).get_polynomial_2().f();
-			typename CGAL::Polynomial_traits_d<typename Curve_2::Poly_d>::
-				Total_degree total_degree;
+			Total_degree total_degree;
         );
         // common parts
         CGAL_precondition(NiX::resultant(mult, curve().f()).is_zero());
         // full parts
         CGAL_precondition(mult.degree() == curve().f().degree());
-        CGAL_precondition(total_degree(mult) == total_degree(curve().f()));
+        CGAL_precondition(total_degree(cvt(mult)) ==
+			total_degree(cvt(curve().f())));
 
-		Curve_pair_vertical_line_1& vpair = pair.vertical_line_for_x(x());
+		const Curve_pair_vertical_line_1& cpv_line =
+				pair.vertical_line_for_x(x());
         // # of arcs must match
 		CGAL_precondition_code(
-			Curve_vertical_line_1& vline = Curve_analysis_2(curve()).
-				vertical_line_for_x(x);
+			const Curve_vertical_line_1& cv_line = 
+				Curve_analysis_2(curve()).vertical_line_for_x(x());
 		);
-        CGAL_precondition(vpair.number_of_events() == 
-			vline.number_of_events());
+        CGAL_precondition(cpv_line.number_of_events() == 
+			cv_line.number_of_events());
 
         int cid = 0;
-		std::pair<int, int> p = vpair.get_curves_at_event(arcno());
+		std::pair<int, int> p = cpv_line.get_curves_at_event(arcno());
 
         if(p.first != -1 && p.second != -1) {
             // both curves involved: choose simpler one
@@ -511,11 +517,10 @@ public:
             // the point from the composed curved (also including this vertical
             // line). Therefore, the old arc number is also valid in the curve
             // pair.
-			typename CGAL::Polynomial_traits_d<typename Curve_2::Poly_d>::
-				Total_degree total_degree;
-			if(total_degree(pair.get_curve_analysis(0).get_polynomial_2().f())
-				 > 
-			total_degree(pair.get_curve_analysis(1).get_polynomial_2().f())) 
+			Total_degree total_degree;
+			Poly_2 ff = cvt(pair.get_curve_analysis(0).get_polynomial_2().f()),
+				   gg = cvt(pair.get_curve_analysis(1).get_polynomial_2().f());
+			if(total_degree(ff) > total_degree(gg)) 
                 cid = 1;
         } else 
 			cid = (p.first == -1 ? 1 : 0);

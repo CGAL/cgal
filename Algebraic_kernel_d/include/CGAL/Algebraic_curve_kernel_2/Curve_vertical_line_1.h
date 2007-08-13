@@ -7,7 +7,7 @@
 // $Id: $
 // 
 //
-// Author(s)     : 
+// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
 // ============================================================================
 
@@ -28,6 +28,10 @@ namespace CGALi {
 
 template < class CurveAnalysis_2, class Rep_ > 
 class Curve_vertical_line_1;
+
+template <class CurveAnalysis_2, class Rep>
+std::ostream& operator<< (std::ostream&, 
+	const Curve_vertical_line_1<CurveAnalysis_2, Rep>&);
 
 template < class CurveAnalysis_2 >
 class Curve_vertical_line_1_rep {
@@ -56,14 +60,20 @@ public:
 	{   }
 
 	// standard constructor
-    Curve_vertical_line_1_rep(const Event1_info& event_info) : 
-		event_info_(event_info)
+    Curve_vertical_line_1_rep(const Event1_info& info,
+			const Curve_analysis_2& ca_2, int index) : 
+		event_info_(info), ca_2_(ca_2), index_(index)
 	{   }
     
     // data
-	// temporary underlying Event1_info object
+	// temporary added underlying Event1_info object
 	mutable Event1_info event_info_;
-
+	
+	mutable Curve_analysis_2 ca_2_; // supporting curve analysis
+	
+	mutable int index_; // this vertical line id (# of event or # of interval
+			// depending on whether or not this vertical line encodes an event
+		
 	// befriending the handle
     friend class Curve_vertical_line_1<Curve_analysis_2, Self>;
 };
@@ -131,10 +141,20 @@ public:
 	{  }
 
 	/*!\brief
-     * Constructs a new instance from \c Event1_info object
+     * Constructs a new instance from \c Event1_info object, supporting
+	 * \c Curve_analysis_2 and vertical line \c index
+	 *
+	 * \c index encodes the index of event or interval depending on whether
+	 * this vertical line is an event-line or lies in the interval
      */
-    Curve_vertical_line_1(const Event1_info& info) : Base(Rep(info))
-	{   }
+    Curve_vertical_line_1(const Event1_info& info,
+			const Curve_analysis_2& ca_2, int index) : 
+		Base(Rep(info, ca_2, index))
+	{   
+		CGAL_precondition(id >= 0 && index <
+			 this->ptr()->ca_2_.
+			 number_of_vertical_lines_with_event() + (is_event()? 0: 1));
+	}
         
     /*!\brief
      * constructs from a given represenation
@@ -149,16 +169,28 @@ public:
 	
 	// overriden member function while the class doesn't have it's own
 	// representation
-	bool is_identical(const Self& line)
-	{
-		return this->ptr()->event_info_.is_identical(line.get_info());
-	}
-	
+// 	bool is_identical(const Self& line)
+// 	{
+// 		return this->ptr()->event_info_.is_identical(line.get_info());
+// 	}
+// 	
 	//! \brief returns the x-coordinate of the vertical line (always a finite
 	//! value).
 	X_coordinate_1 x() const
 	{
 		return this->ptr()->event_info_.x();
+	}
+	
+	//! \brief returns this vertical line supporting curve analysis
+	Curve_analysis_2 get_curve_analysis_2() const
+	{
+		return this->ptr()->ca_2_;
+	}
+	
+	//! \brief returns this vertical line index (event or interval index)
+	int get_index() const
+	{
+		return this->ptr()->index_;
 	}
 		
 	//! \brief returns true in case the given curve contains the vertical line
@@ -184,7 +216,8 @@ public:
 		CGAL_precondition(0 <= j&&j < number_of_events());
 		// how to get the pointer to the curve ?
 		// we have to store such a pointer for vertical line
-		//return Xy_coordinate_2(x(), curve(), j);
+		return Xy_coordinate_2(x(), 
+			this->ptr()->ca_2_.get_polynomial_2(), j);
 	}
 
 	//!\brief returns the number of branches of the curve connected to j-th
@@ -245,6 +278,14 @@ public:
 	}
 
 }; // class Curve_vertical_line_1
+
+template <class CurveAnalysis_2, class Rep>
+std::ostream& operator<< (
+        std::ostream& os, 
+		const CGALi::Curve_vertical_line_1<CurveAnalysis_2, Rep>& cp_line) {
+    os << (cp_line.get_info());
+    return os;
+}
 
 } // namespace CGALi
 

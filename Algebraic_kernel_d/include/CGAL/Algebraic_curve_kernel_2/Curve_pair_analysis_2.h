@@ -7,7 +7,7 @@
 // $Id: $
 // 
 //
-// Author(s)     : 
+// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
 // ============================================================================
 
@@ -168,7 +168,7 @@ public:
 	}
 
 	//! \brief returns number of vertical lines that encode an event
-	int number_of_vertical_lines_with_event()
+	int number_of_vertical_lines_with_event() const
 	{
 		return this->ptr()->curve_pair_.num_events();
 	}
@@ -178,7 +178,7 @@ public:
 	//! or -1, if the curve has no event at this coordinate.
 	//!
 	//! \pre 0 <= i < number_of_vertical_lines_with_event()
-	int event_of_curve_analysis(int i, bool c)
+	int event_of_curve_analysis(int i, bool c) const
 	{
 		CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
 		SoX::Index_triple triple =  this->ptr()->curve_pair_.event_indices(i);
@@ -189,7 +189,7 @@ public:
 	//! event
 	//!
 	//! \pre 0 <= i < number_of_vertical_lines_with_event()
-	Curve_pair_vertical_line_1 vertical_line_at_event(int i)
+	Curve_pair_vertical_line_1 vertical_line_at_event(int i) const
 	{
 		CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
 		return  this->ptr()->curve_pair_.slice_at_event(i);
@@ -199,7 +199,7 @@ public:
 	//! interval between x-events
 	//!
 	//! \pre 0 <= i < number_of_vertical_lines_with_event() 
-	Curve_pair_vertical_line_1 vertical_line_of_interval(int i)
+	Curve_pair_vertical_line_1 vertical_line_of_interval(int i) const
 	{
 		CGAL_precondition(i >= 0&&i <= number_of_vertical_lines_with_event());
 		return  this->ptr()->curve_pair_.slice_at_interval(i); 
@@ -215,7 +215,7 @@ public:
 	//! 
 	//! \pre \c x is finite
 	Curve_pair_vertical_line_1 vertical_line_for_x(X_coordinate_1 x, 
-		CGAL::Sign perturb = CGAL::ZERO)
+		CGAL::Sign perturb = CGAL::ZERO) const
 	{
 		// CGAL_precondition(x is finite ??);
 		int i;
@@ -233,7 +233,7 @@ public:
 	//! \brief returns an instance of CurvePairVerticalLine_1 at a given \c x
 	//!
 	//! \pre \c x is finite
-	Curve_pair_vertical_line_1 vertical_line_at_exact_x(X_coordinate_1 x)
+	Curve_pair_vertical_line_1 vertical_line_at_exact_x(X_coordinate_1 x) const
 	{
 		// CGAL_precondition(x is finite ??);
 		return vertical_line_for_x(x);
