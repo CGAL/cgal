@@ -7,9 +7,10 @@ The following corrections have been made:
 - Fixed a bug in the Arrangement sweep-line when using a specific polyline
   configuration.
 - TAUCS supports now 64 bits platforms.
-- CAUTION: CGAL is not compatible anymore with TAUCS 2.2 official release.
-           You must use the version modified by CGAL team and available 
-           from the Download section of http://www.cgal.org.
+- CAUTION: Since version 3.3.1, CGAL is no longer compatible with the official
+           release of TAUCS (currently 2.2). Make sure to use the version
+           modified by the CGAL project and available from the download section
+           of http://www.cgal.org.
 - The new Skin Surface Meshing package had been forgotten in the list of
   changes and the release announcement of CGAL 3.3:
     This package allows to build a triangular mesh of a skin surface.
@@ -32,9 +33,9 @@ The following corrections have been made:
 - Fixed bug in Interpolation 3D about the normalization coefficient initialization.
 - Intel C++ 9 was wrongly recognized as unsupported by install_cgal.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
-- Fixed bug in construction of Nef_polyhedron_3 from off-file. Now, always the 
+- Fixed bug in construction of Nef_polyhedron_3 from off-file. Now, always the
   inner volume is selected.
-- Fixed bug in conversion from Nef_polyhedron_3 to Polyhedron_3. Polyhedron_3 was not cleared 
+- Fixed bug in conversion from Nef_polyhedron_3 to Polyhedron_3. Polyhedron_3 was not cleared
   at the beginning.
 - Fixed bug in Nef_polyhedron_3 in update of indexes for construction of external structure.
 
