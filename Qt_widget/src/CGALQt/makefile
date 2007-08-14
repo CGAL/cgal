@@ -48,7 +48,7 @@ $(CGAL_KDS_OBJECTS)
 #                    libCGALQt settings
 #---------------------------------------------------------------------#
 
-SOVERSION=2.0.0
+SOVERSION=2.0.1
 SOMAJOR=2
 
 LIB_NAME_BASE = CGALQt
