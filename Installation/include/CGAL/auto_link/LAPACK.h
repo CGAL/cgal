@@ -57,9 +57,12 @@
 #define CGAL_LIB_TOOLSET "vc71"
 #include <CGAL/auto_link/auto_link.h>
 
+// ATLAS provides BLAS and LAPACK standard Fortran interface
+#define CGAL_USE_F2C
+
 # else // if _WIN64
 
-// ATLAS is not compatible with Win64, thus CGAL ships with CLAPACK.
+// ATLAS is not compatible with Win64, thus CGAL ships with CLAPACK and CBLAS.
 // VC++ >= 8.0 is compatible with Windows 64 bits.
 // The set set of libraries is (e.g. for /MD):
 // clapack-vc80-mt.lib blas-vc80-mt.lib vcf2c-vc80-mt.lib
@@ -78,6 +81,11 @@
 #define CGAL_LIB_NAME vcf2c
 #define CGAL_LIB_TOOLSET "vc80"
 #include <CGAL/auto_link/auto_link.h>
+
+// CLAPACK provides LAPACK standard Fortran interface.
+// blaswrap.h maps CBLAS function names to BLAS standard Fortran interface.
+#define CGAL_USE_F2C
+#include <blaswrap.h>
 
 #endif // _WIN64
 
