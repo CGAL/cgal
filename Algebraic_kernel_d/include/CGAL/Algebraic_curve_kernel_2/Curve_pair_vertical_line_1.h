@@ -20,7 +20,6 @@
 #include <SoX/basic.h>
 //#include <CGAL/algorithm.h>
 #include <SoX/GAPS/types.h>
-#include <SoX/GAPS/Event2_slice.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,9 +53,9 @@ class Curve_pair_vertical_line_1_rep {
 	typedef typename Curve_pair_analysis_2::Curve_pair_2 Curve_pair_2;
 
 	// type of underlying \c Event2_slice
-	typedef SoX::Event2_slice<Curve_pair_2> Event2_slice;
-
-    // constructors
+	typedef typename Curve_pair_2::Event2_slice Event2_slice;
+    
+	// constructors
 public:
     // default constructor ()
     Curve_pair_vertical_line_1_rep()  
@@ -112,7 +111,7 @@ public:
 	typedef typename Curve_pair_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
 
 	//! type of underlying \c Event2_slice
-	typedef SoX::Event2_slice<Curve_pair_2> Event2_slice;
+	typedef typename Curve_pair_2::Event2_slice Event2_slice;
 
 	 //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;

@@ -20,7 +20,6 @@
 #include <SoX/basic.h>
 //#include <CGAL/algorithm.h>
 #include <SoX/GAPS/types.h>
-#include <SoX/GAPS/Event1_info.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,7 +50,7 @@ class Curve_vertical_line_1_rep {
 				Xy_coordinate_2; 
 
 	//! type of underlying \c Event1_info
-	typedef SoX::Event1_info<X_coordinate_1> Event1_info;
+	typedef typename Curve_analysis_2::Curve_2::Event1_info Event1_info;
 
     // constructors
 public:
@@ -117,7 +116,7 @@ public:
 	typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
 
 	//! type of underlying \c Event1_info
-	typedef SoX::Event1_info<X_coordinate_1> Event1_info;
+	typedef typename Curve_analysis_2::Curve_2::Event1_info Event1_info;
 	
 	 //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
@@ -237,12 +236,9 @@ public:
 	//!\brief returns the number of vertical asymptotes at x of the curve
 	//! approaching y=-oo from left and right. A vertical line being component 
 	//! of the curve is ignored.
-	//!
-	//! \pre 0 <= j < num_of_events()
 	std::pair<int, int> 
-		get_number_of_branches_approaching_minus_infinity(int j) const
+		get_number_of_branches_approaching_minus_infinity() const
 	{
-		CGAL_precondition(0 <= j&&j < number_of_events());
 		int left, right, dummy;
 		this->ptr()->event_info_.num_arcs_approaching_vertical_asymptote(
 			left, right, dummy, dummy);
@@ -252,12 +248,9 @@ public:
 	//!\brief returns the number of vertical asymptotes at x of the curve
 	//! approaching y=+oo from left and right. A vertical line being component 
 	//! of the curve is ignored.
-	//!
-	//! \pre 0 <= j < num_of_events()
 	std::pair<int, int> 
-		get_number_of_branches_approaching_plus_infinity(int j) const
+		get_number_of_branches_approaching_plus_infinity() const
 	{
-		CGAL_precondition(0 <= j&&j < number_of_events());
 		int left, right, dummy;
 		this->ptr()->event_info_.num_arcs_approaching_vertical_asymptote(
 			dummy, dummy, left, right);
