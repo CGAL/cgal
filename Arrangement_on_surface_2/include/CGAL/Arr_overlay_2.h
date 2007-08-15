@@ -1,0 +1,172 @@
+// Copyright (c) 2005  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+
+#ifndef CGAL_ARR_OVERLAY_2_H
+#define CGAL_ARR_OVERLAY_2_H
+
+/*! \file
+ * Definition of the global Arr_overlay_2() function.
+ */
+
+#include <CGAL/Arrangement_on_surface_2.h>
+#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Object.h>
+#include <vector>
+
+CGAL_BEGIN_NAMESPACE
+
+/*!
+ * Compute the overlay of two input arrangements.
+ * \param arr1 The first arrangement.
+ * \param arr2 The second arrangement.
+ * \param arr_res Output: The resulting arrangement.
+ * \param ovl_tr An overlay-traits class. As arr1, arr2 and res are all
+ *               templated with the same arrangement-traits class but with
+ *               different DCELs (encapsulated in the various topology-traits
+ *               classes), the overlay-traits class defines the various
+ *               overlay operations of pairs of DCEL features from
+ *               TopTraitsA and TopTraitsB to the resulting ResDcel.
+ */
+template <class GeomTraits,
+          class TopTraitsA,
+          class TopTraitsB,
+          class TopTraitsRes,
+          class OverlayTraits>
+void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
+              const Arrangement_on_surface_2<GeomTraits, TopTraitsB>& arr2,
+              Arrangement_on_surface_2<GeomTraits, TopTraitsRes>& arr_res,
+              OverlayTraits& ovl_tr)
+{
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraitsA>       ArrA;
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraitsB>       ArrB;
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraitsRes>     ArrRes;
+
+  typedef typename TopTraitsRes::template
+    Sweep_line_overlay_visitor<ArrA, ArrB, OverlayTraits>
+                                                      Ovl_visitor;
+
+  typedef typename Ovl_visitor::Traits_2              Ovl_traits_2;
+  typedef typename Ovl_traits_2::X_monotone_curve_2   Ovl_x_monotone_curve_2;
+  typedef typename Ovl_traits_2::Point_2              Ovl_point_2;
+    
+  // The result arrangement cannot be on of the input arrangements.
+  CGAL_precondition(((void *)(&arr_res) != (void *)(&arr1)) && 
+                    ((void *)(&arr_res) != (void *)(&arr2)));
+
+  // Prepare a vector of extended x-monotone curves that represent all edges
+  // in both input arrangements. Each curve is associated with a halfedge
+  // directed from right to left.
+  typename ArrA::Edge_const_iterator     eit1;
+  typename ArrA::Halfedge_const_handle   he1, invalid_he1;
+  typename ArrB::Edge_const_iterator     eit2;
+  typename ArrB::Halfedge_const_handle   he2, invalid_he2;
+  std::vector<Ovl_x_monotone_curve_2>    xcvs_vec (arr1.number_of_edges() +
+                                                   arr2.number_of_edges());
+  unsigned int                           i = 0;
+
+  for (eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, i++)
+  {
+    he1 = eit1;
+    if (he1->direction() != RIGHT_TO_LEFT)
+      he1 = he1->twin();
+
+    xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit1->curve(),
+                                          he1,
+                                          invalid_he2);
+  }
+
+  for (eit2 = arr2.edges_begin(); eit2 != arr2.edges_end(); ++eit2, i++)
+  {
+    he2 = eit2;
+    if (he2->direction() != RIGHT_TO_LEFT)
+      he2 = he2->twin();
+
+    xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit2->curve(),
+                                          invalid_he1,
+                                          he2);
+  }
+
+  // Obtain a extended traits-class object and define the sweep-line visitor.
+  GeomTraits               *geom_traits = arr_res.geometry_traits();
+  Ovl_traits_2              ex_traits (*geom_traits);
+
+  Ovl_visitor               visitor (&arr1, &arr2, &arr_res, &ovl_tr);
+  Sweep_line_2<typename Ovl_visitor::Traits_2,
+               Ovl_visitor,
+               typename Ovl_visitor::Subcurve,
+               typename Ovl_visitor::Event>     sweep_line (&ex_traits,
+                                                            &visitor);
+
+  // In case both arrangement do not contain isolated vertices, go on and
+  // overlay them.
+  const unsigned int  total_iso_verts = arr1.number_of_isolated_vertices() +
+                                        arr2.number_of_isolated_vertices();
+
+  if (total_iso_verts == 0)
+  {
+    // Clear the result arrangement and perform the sweep to construct it.
+    arr_res.clear();
+
+    sweep_line.sweep (xcvs_vec.begin(), xcvs_vec.end());
+    return;
+  }
+
+  // Prepare a vector of extended points that represent all isolated vertices
+  // in both input arrangements.
+  typename ArrA::Vertex_const_iterator  vit1;
+  typename ArrA::Vertex_const_handle    v1;
+  typename ArrB::Vertex_const_iterator  vit2;
+  typename ArrB::Vertex_const_handle    v2;
+  const CGAL::Object                    empty_obj;
+  std::vector<Ovl_point_2>              pts_vec (total_iso_verts);
+
+  i = 0;
+  for (vit1 = arr1.vertices_begin(); vit1 != arr1.vertices_end(); ++vit1)
+  {
+    if (vit1->is_isolated())
+    {
+      v1 = vit1;
+      pts_vec[i++] = Ovl_point_2 (vit1->point(),
+                                  CGAL::make_object (v1),
+                                  empty_obj);
+    }
+  }
+
+  for (vit2 = arr2.vertices_begin(); vit2 != arr2.vertices_end(); ++vit2)
+  {
+    if (vit2->is_isolated())
+    {
+      v2 = vit2;
+      pts_vec[i++] = Ovl_point_2 (vit2->point(),
+                                  empty_obj,
+                                  CGAL::make_object (v2));
+    }
+  }
+
+  // Clear the result arrangement and perform the sweep to construct it.
+  arr_res.clear();
+
+  sweep_line.sweep (xcvs_vec.begin(), xcvs_vec.end(),
+                    pts_vec.begin(), pts_vec.end());
+  return;
+}
+
+CGAL_END_NAMESPACE
+
+#endif

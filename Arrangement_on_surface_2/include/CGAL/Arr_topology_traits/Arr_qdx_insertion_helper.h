@@ -1,0 +1,245 @@
+// Copyright (c) 2007  Tel-Aviv University (Israel), Max-Planck-Institute for
+// Computer Science (Germany)
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Ron Wein <wein@post.tau.ac.il>
+//                 Eric Berberich <eric@mpi-inf.mpg.de>
+
+#ifndef CGAL_ARR_QDX_INSERTION_HELPER_H
+#define CGAL_ARR_QDX_INSERTION_HELPER_H
+
+/*!
+ * Definition of the Arr_qdx_insertion_helper class-template.
+ */
+
+#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_qdx_construction_helper.h>
+
+CGAL_BEGIN_NAMESPACE
+
+/*! \class Arr_qdx_insertion_helper
+ * A helper class for the insertion sweep-line visitors, suitable
+ * for an Arrangement_on_surface_2 instantiated with a topology-traits class
+ * for unbounded curves in the plane.
+ */
+template <class Traits_, class Arrangement_, class Event_, class Subcurve_> 
+class Arr_qdx_insertion_helper :
+    public Arr_qdx_construction_helper<Traits_, Arrangement_,
+                                            Event_, Subcurve_>
+{
+public:
+    
+    typedef Traits_                                      Traits_2;
+    typedef Arrangement_                                 Arrangement_2;
+    typedef Event_                                       Event;
+    typedef Subcurve_                                    Subcurve;
+
+    typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
+    typedef typename Traits_2::Point_2                   Point_2;
+    
+    
+    typedef Arr_qdx_construction_helper<Traits_2,
+                                             Arrangement_2,
+                                             Event,
+                                             Subcurve> Base;
+    
+    typedef Sweep_line_empty_visitor<Traits_2,
+                                   Subcurve,
+                                   Event>              Base_visitor;
+    
+    typedef Arr_qdx_insertion_helper<Traits_2,
+                                          Arrangement_2,
+                                          Event,
+                                          Subcurve>    Self;
+    
+    typedef Arr_construction_sl_visitor<Self>            Parent_visitor;
+    
+    typedef typename Arrangement_2::Face_handle          Face_handle;
+    
+    typedef typename Base::Indices_list                  Indices_list;
+    typedef typename Base::Halfedge_indices_map          Halfedge_indices_map;
+    
+protected:
+    
+    typedef typename Base::Topology_traits               Topology_traits;
+    typedef typename Base::Vertex_handle                 Vertex_handle;
+    typedef typename Base::Halfedge_handle               Halfedge_handle;
+    
+public:
+    
+    /*! Constructor. */
+    Arr_qdx_insertion_helper (Arrangement_2 *arr) :
+        Base (arr)
+    {}
+    
+    /*! Destructor. */
+    virtual ~Arr_qdx_insertion_helper(){}
+    
+    /// \name Notification functions.
+    //@{
+    
+    /* A notification issued before the sweep process starts. */
+    virtual void before_sweep ();
+    
+    /*!
+     * A notification invoked before the sweep-line starts handling the given
+     * event.
+     */
+    virtual void before_handle_event (Event* event);
+    //@}
+};
+
+//-----------------------------------------------------------------------------
+// Memeber-function definitions:
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// A notification issued before the sweep process starts.
+//
+template <class Tr, class Arr, class Evnt, class Sbcv> 
+void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
+{
+#if 0
+    // Obtain the four fictitious vertices that form the "corners" of the
+    // fictitious face in the DCEL.
+    Vertex_handle   v_bl = 
+        Vertex_handle (this->m_top_traits->bottom_left_vertex());
+    Vertex_handle   v_tl = 
+        Vertex_handle (this->m_top_traits->top_left_vertex());
+    Vertex_handle   v_br = 
+        Vertex_handle (this->m_top_traits->bottom_right_vertex());
+    
+    // Get the fictitous halfedges incident to these vertices, and lying on
+    // the left, right, top and bottom edges of the fictitious face.
+    //
+    //            m_th
+    //  v_tl (.)<---x      (.) v_tr
+    //                      ^
+    //        x             | m_rh
+    //   m_lh |             x
+    //        v              
+    //  v_bl (.)----->x    (.) v_br
+    //              m_bh
+    //
+    this->m_lh = v_bl->incident_halfedges();
+    
+    if (this->m_lh->source()->boundary_in_x() != MINUS_INFINITY)
+        this->m_lh = this->m_lh->next()->twin();
+    
+    this->m_bh = this->m_lh->next();
+    
+    this->m_th = v_tl->incident_halfedges();
+    if (this->m_th->source()->boundary_in_x() == MINUS_INFINITY)
+        this->m_th = this->m_th->next()->twin();
+    
+    this->m_rh = v_br->incident_halfedges();
+    if (this->m_rh->source()->boundary_in_x() == PLUS_INFINITY)
+        this->m_rh = this->m_rh->twin();
+    else
+        this->m_rh = this->m_rh->next();
+    
+    CGAL_assertion_code (
+            Face_handle  fict_face = Face_handle (this->m_top_traits->fictitious_face());
+    );
+    CGAL_assertion (this->m_lh->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion (this->m_lh->face() != fict_face);
+    CGAL_assertion (this->m_lh->target() == v_bl);
+    
+    CGAL_assertion (this->m_bh->direction() == LEFT_TO_RIGHT);
+    CGAL_assertion (this->m_bh->face() != fict_face);
+    CGAL_assertion (this->m_bh->source() == v_bl);
+    
+    CGAL_assertion (this->m_rh->direction() == LEFT_TO_RIGHT);
+    CGAL_assertion (this->m_rh->face() != fict_face);
+    CGAL_assertion (this->m_rh->source() == v_br);
+    
+    CGAL_assertion (this->m_th->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion (this->m_th->face() != fict_face);
+    CGAL_assertion (this->m_th->target() == v_tl);
+#endif
+    std::cout << "Arr_qdx_insertion_helper::before_sweep not yet implemenet" 
+              << std::endl;
+    assert(false);
+}
+
+//-----------------------------------------------------------------------------
+// A notification invoked before the sweep-line starts handling the given
+// event.
+//
+template <class Tr, class Arr, class Evnt, class Sbcv> 
+void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
+    (Event* event)
+{
+#if 0
+    if (event->is_finite())
+        return;
+    
+    // In case the event lies at inifinity, check whether its incident curve
+    // is already in the arrangement.
+    if (event->unbounded_curve().halfedge_handle() == Halfedge_handle())
+    {
+        // The curve is not in the arrangement, use the base construction helper
+        // to handle the event:
+        Base::before_handle_event (event);
+        return;
+    }
+    
+    // The curve is already in the arrangement, but has an infinite end,
+    // so we have to update the fictitious halfedges.
+    const Boundary_type x_inf = event->boundary_in_x();
+    
+    if (x_inf == MINUS_INFINITY)
+    {
+        // The event lies on the left fictitious halfedge.
+        this->m_lh = this->m_lh->twin()->next()->twin();
+        this->m_prev_minus_inf_x_event = NULL;
+    }
+    else if (x_inf == PLUS_INFINITY)
+    {
+        // The event lies on the right fictitious halfedge.
+        this->m_rh = this->m_rh->twin()->prev()->twin();
+    }
+    else
+    {
+        const Boundary_type y_inf = event->boundary_in_y();
+        
+        if (y_inf == MINUS_INFINITY)
+        {
+            // The event lies on the bottom fictitious halfedge.
+            this->m_bh = this->m_bh->twin()->prev()->twin();
+        }
+        else
+        {
+            // The event lies on the top fictitious halfedge.
+            CGAL_assertion (y_inf == PLUS_INFINITY);
+            this->m_th = this->m_th->twin()->next()->twin();
+            this->m_prev_plus_inf_y_event = NULL;
+        }
+    }
+    
+    return;
+#endif
+    std::cout << "Arr_qdx_insertion_helper::before_handle_event not yet implemenet" 
+              << std::endl;
+    assert(false);
+    return;
+}
+
+CGAL_END_NAMESPACE
+
+#endif
