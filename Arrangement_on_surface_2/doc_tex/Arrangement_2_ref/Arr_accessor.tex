@@ -1,0 +1,269 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_accessor.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_accessor<Arrangement>}
+\label{arr_ref:arr_access}
+
+\ccDefinition
+%============
+
+\ccClassTemplateName\ provides an access to some of the private
+\ccc{Arrangement} functions. Users may use these functions to achieve
+more efficient programs when they have the exact topological information
+required by the specialized functions.
+
+It is however highly recommended to be very careful when using the
+accessor functions that modify the arrangement. As we have just mentioned,
+these functions have very specific requirement on their input on one hand,
+and perform no preconditions on the other hand, so providing incorrect
+topological input may invalidate the arrangement.
+
+\ccInclude{CGAL/Arr_accessor.h}
+
+\ccTypes
+%=======
+
+\ccNestedType{Arrangement_2}{the type of the associated arrangement.}
+
+\ccTypedef{typedef typename Arrangement_2::Point_2 Point_2;}
+    {the point type.}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
+
+\ccTypedef{typedef typename Arrangement_2::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::Face_handle Face_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::Ccb_halfedge_circulator Ccb_halfedge_circulator;}
+    {represents the boundary of a connected component (CCB).}
+
+\ccCreation
+\ccCreationVariable{acc}
+%=======================
+
+\ccConstructor{Arr_accessor(Arrangement_2& arr);} 
+    {constructs an accessor attached to the given arrangement 
+     \ccc{arr}.}
+
+\ccHeading{Accessing the notification functions}
+%===============================================
+
+\ccMethod{void notify_before_global_change ();}
+    {notifies the arrangement observer that a global change is going to take
+     place (for the usage of the global functions that operate on
+     arrangements).}
+
+\ccMethod{void notify_after_global_change ();}
+    {notifies the arrangement observer that a global change has taken
+     place (for the usage of the global functions that operate on
+     arrangements).}
+
+\begin{ccAdvanced}
+
+\ccHeading{Arrangement Predicates}
+%=================================
+
+\ccMethod{Halfedge_handle
+          locate_around_vertex (Vertex_handle v,
+          	                const X_monotone_curve_2& c) const;}
+    {locates a place for the curve \ccc{c} around the vertex \ccc{v}
+     and returns a halfedge whose target is \ccc{v}, where c should be
+     inserted between this halfedge and the next halfedge around \ccc{v}
+     in a clockwise order.}
+
+\ccMethod{int halfedge_distance (Halfedge_const_handle e1,
+                                 Halfedge_const_handle e2) const;}
+    {counts the number of edges along the path from \ccc{e1} to \ccc{e2}.
+     In case the two halfedges do not belong to the same connected component,
+     the function returns (-1).}
+
+\ccMethod{bool is_inside_new_face (Halfedge_handle pred1,
+                                   Halfedge_handle pred2,
+                                   const X_monotone_curve_2& c) const;}
+    {determines whether a new halfedge we are about to create, which is to be associated
+     with the curve \ccc{c} and directed from \ccc{pred1->target()} to
+     \ccc{pred2->target()}, lies on the inner CCB of the new face that will be created,
+     introducing this new edge.
+     \ccPrecond{\ccc{pred1->target()} and \ccc{pred2->target()} are associated with
+                \ccc{c}'s endpoints.}
+     \ccPrecond{\ccc{pred1} and \ccc{pred2} belong to the same connected component, such
+                that a new face is created by connecting \ccc{pred1->target()} and
+                \ccc{pred2->target()}.}}
+
+\ccMethod{bool point_is_in (const Point_2& p, 
+                            Halfedge_const_handle he) const;}
+    {determines whether a given point lies within the region bounded by
+     a boundary of the connected component that \ccc{he} belongs to.
+     Note that if the function returns \ccc{true}, then \ccc{p} is contained within
+     \ccc{he->face()} (but not on its boundary), or inside one of the holes inside this
+     face, or it may coincide with an isolated vertex in this face.}
+
+\ccMethod{bool is_on_outer_boundary (Halfedge_const_handle he) const;}
+    {determines whether \ccc{he} lies on the outer boundary of its incident
+     face.}
+
+\ccMethod{bool is_on_inner_boundary (Halfedge_const_handle he) const;}
+    {determines whether \ccc{he} lies on the inner boundary of its incident
+     face (that is, whether it lies on the boundary of one of the holes
+     in this face).}
+
+\ccHeading{Arrangement Modifiers}
+%================================
+
+\ccMethod{Vertex_handle create_vertex (const Point_2& p);}
+    {creates a new vertex an associates it with the point \ccc{p}.
+     It is the user's responsibility that there is no existing vertex already
+     associated with \ccc{p}.}
+
+\ccMethod{Halfedge_handle insert_in_face_interior_ex (const X_monotone_curve_2& c,
+                                                      Face_handle f,
+                                                      Vertex_handle v1,
+                                                      Vertex_handle v2,
+                                                      Comparison_result res);}
+   {inserts the curve \ccc{c} as a new hole (inner component) of the face
+    \ccc{f}, connecting the two isolated vertices \ccc{v1} and \ccc{v2}.
+    \ccc{res} is the comparison result between these two end-vertices.
+    The function returns a handle for one of the new halfedges
+    corresponding to the inserted curve, directed from \ccc{v1} to \ccc{v2}.
+    \ccPrecond{It is the user's responsibility that \ccc{v1} and \ccc{v2} 
+    are associated with \ccc{c}'s endpoints, that they lie of \ccc{f}'s
+    interior and that and that they have no incident edges.}}
+
+\ccMethod{Halfedge_handle insert_from_vertex_ex (const X_monotone_curve_2& c,
+                                                 Halfedge_handle pred,
+                                                 Vertex_handle v,
+                                                 Comparison_result res);}
+  {inserts the curve \ccc{c} into the arrangement, such that one of its
+   endpoints corresponds to an arrangement, which is the
+   target vertex of the halfedge \ccc{pred}, such that \ccc{c} is inserted
+   to the circular list of halfedges around \ccc{pred->target()} right
+   between \ccc{pred} and its successor. The other end-vertex is given by
+   an isolated vertex \ccc{v},
+   where \ccc{res} is the comparison result between \ccc{pred->target()} and \ccc{v}.
+   The function returns a handle for one of the new halfedges directed from
+   \ccc{pred->target()} to \ccc{v}.
+   \ccPrecond{It is the user's responsibility that \ccc{pred->target()} and \ccc{v} 
+   are associated with \ccc{c}'s endpoints and that and that \ccc{v} has no
+   incident edges.}}
+
+\ccMethod{Halfedge_handle insert_at_vertices_ex (const X_monotone_curve_2& c,
+                                                 Halfedge_handle pred1, 
+                                                 Halfedge_handle pred2,
+                                                 Comparison_result res,
+                                                 bool& new_face);}
+  {inserts the curve \ccc{c} into the arrangement, such that both \ccc{c}'s
+   endpoints correspond to existing arrangement vertices, given by
+   \ccc{pred1->target()} and \ccc{pred2->target()}. \ccc{res} is the comparison
+   result between these two end-vertices. The function creates a
+   new halfedge pair that connects the two vertices (with \ccc{pred1} and
+   \ccc{pred2} indicate the exact place for these halfedges around the two
+   target vertices) and returns a handle for the halfedge directed from
+   \ccc{pred1->target()} to \ccc{pred2->target()}.
+   The output flag \ccc{new_face} indicates whether a new face has been created
+   following the insertion of the new curve.
+   \ccPrecond{It is the user's responsibility that \ccc{pred1->target()} and 
+   \ccc{pred2->target()} are associated with \ccc{c}'s endpoints and that if a new face
+   is created, then \ccc{is_inside_new_face (pred1, pred2, c)} is \ccc{true}.}}
+
+\ccMethod{void insert_isolated_vertex (Face_handle f, Vertex_handle v);}
+    {inserts \ccc{v} as an isolated vertex inside \ccc{f}.
+     \ccPrecond{It is the user's responsibility that \ccc{v->point()} is
+     contained in the interior of the given face.}}
+
+\ccMethod{void move_hole (Face_handle f1, Face_handle f2,
+                          Ccb_halfedge_circulator hole);}
+    {moves the given hole from the interior of the face \ccc{f1} inside the
+     face \ccc{f2}.
+     \ccPrecond{It is the user's responsibility that \ccc{hole} is currently
+     contained in \ccc{f1} and should be moved to \ccc{f2}.}}
+
+\ccMethod{bool move_isolated_vertex (Face_handle f1, Face_handle f2,
+                                     Vertex_handle v);}
+    {moves the given isolated vertex from the interior of the face \ccc{f1}
+     inside the face \ccc{f2}.
+     \ccPrecond{It is the user's responsibility that \ccc{v} is indeed an
+     isolated vertex currently contained in \ccc{f1} and should be moved
+     to \ccc{f2}.}}
+
+\ccMethod{void relocate_in_new_face (Halfedge_handle he);}
+    {relocates all holes and isolated vertices to their proper position
+     immediately after a face has split due to the insertion of a new halfedge,
+     namely after \ccc{insert_at_vertices_ex()} was invoked and indicated that
+     a new face has been created. \ccc{he} is the halfegde returned by
+     \ccc{insert_at_vertices_ex()},
+     such that \ccc{he->twin()->face} is the face that has just been split and
+     \ccc{he->face()} is the newly created face.}
+
+\ccMethod{void relocate_holes_in_new_face (Halfedge_handle he);}
+    {relocates all holes in a new face, as detailed above.}
+
+\ccMethod{void relocate_isolated_vertices_in_new_face (Halfedge_handle he);}
+    {relocates all isolated vertices in a new face, as detailed above.}
+
+\ccMethod{Vertex_handle modify_vertex_ex (Vertex_handle v,
+                                          const Point_2& p);}
+    {modifies the point associated with the vertex \ccc{v} (the point may be
+     geometrically different than the one currently associated with \ccc{v}).
+     The function returns a handle to the modified vertex (same as \ccc{v}).
+     \ccPrecond{It is the user's responsibility that no other arrangement
+     vertex is already associated with \ccc{p}.}}
+
+\ccMethod{Halfedge_handle modify_edge_ex (Halfedge_handle e,
+                                          const X_monotone_curve_2& c);}
+    {modifies the $x$-monotone curve associated with the edge \ccc{e} (the
+     curve \ccc{c} may be geometrically different than the one currently
+     associated with \ccc{e}).
+     The function returns a handle to the modified edge (same as \ccc{e}).
+     \ccPrecond{It is the user's responsibility that the interior of \ccc{c}
+     is disjoint from all existing arrangement vertices and edges.}}
+ 
+\ccMethod{Halfedge_handle split_edge_ex (Halfedge_handle he,
+                                         const Point_2& p,
+                                         const X_monotone_curve_2& c1, 
+                                         const X_monotone_curve_2& c2);}
+    {splits a given edge into two at the split point \ccc{p}, and associate the
+     x-monotone curves \ccc{c1} and \ccc{c2} with the resulting edges, such that
+     \ccc{c1} connects \ccc{he->source()} with \ccc{p} and \ccc{c2} connects 
+     \ccc{p} with \ccc{he->target()}. The function return a handle to the split 
+     halfedge directed from \ccc{he->source()} to the split point \ccc{p}.
+     \ccPrecond{It is the user's responsibility that the endpoints of \ccc{c1} and \ccc{c2}
+     correspond to \ccc{p} and to \ccc{he}'s end-vertices, as indicated above.}}
+
+\ccMethod{Halfedge_handle split_edge_ex (Halfedge_handle he,
+                                         Vertex_handle v,
+                                         const X_monotone_curve_2& c1, 
+                                         const X_monotone_curve_2& c2);}
+    {splits a given edge into two at by the vertex \ccc{v}, and associate the
+     x-monotone curves \ccc{c1} and \ccc{c2} with the resulting edges, such that
+     \ccc{c1} connects \ccc{he->source()} with \ccc{v} and \ccc{c2} connects 
+     \ccc{v} with \ccc{he->target()}. The function return a handle to the split 
+     halfedge directed from \ccc{he->source()} to \ccc{v}.
+     \ccPrecond{It is the user's responsibility that the endpoints of \ccc{c1} and \ccc{c2}
+     correspond to \ccc{v} and to \ccc{he}'s end-vertices, as indicated above.
+     It is also assumed that \ccc{v} has no incident edges.}}
+
+\ccMethod{Face_handle remove_edge_ex (Halfedge_handle he,
+			              bool remove_source = true,
+			              bool remove_target = true);}
+  {removes the edge \ccc{he} from the arrangement, such that if the edge removal causes
+   the creation of a new hole, \ccc{he->target()} lies on the boundary of this hole.
+   The flags \ccc{remove_source} and \ccc{remove_target} indicate whether the end-vertices
+   of \ccc{he} should be removed as well, in case they have no other incident edges.
+   If the operation causes two faces to merge, the merged face is returned.
+   Otherwise, the face to which the edge was incident is returned.}
+
+\end{ccAdvanced}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

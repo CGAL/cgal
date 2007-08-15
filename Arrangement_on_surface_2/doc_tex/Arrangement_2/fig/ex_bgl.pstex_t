@@ -1,0 +1,17 @@
+\begin{picture}(0,0)%
+\includegraphics{ex_bgl.pstex}%
+\end{picture}%
+\setlength{\unitlength}{2072sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(6518,5618)(1917,-6920)
+\put(6076,-2671){\makebox(0,0)[lb]{\smash{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$f_0$}%
+}}}
+\put(3646,-5236){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$v_0$}%
+}}}
+\end{picture}

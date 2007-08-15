@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_walk_along_line_point_location.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_walk_along_line_point_location<Arrangement>}
+\label{arr_ref:walk_pl}
+
+\ccDefinition
+%============
+
+The \ccRefName\ class implements a very simple point-location (and 
+vertical ray-shooting) strategy that improves the naive one.
+The algorithm considers an imaginary vertical ray emanating from the
+query point, and simulates a walk along the zone of this ray, starting
+from the unbounded face until reaching the query point.
+In dense arrangements this walk can considerably reduce the number
+of traversed arrangement edges, with respect to the na\"{i}ve
+alogrithm.
+
+The walk-along-a-line point-location object (just like the na\"{i}ve one)
+does not use any auxiliary data structures. Thus, attaching it to an
+existing arrangement takes constant time, and any ongoing updates to
+this arrangement do not affect the point-location object.
+It is therefore recommended to use the ``walk'' point-location strategy
+for arrangements that are constantly changing, especially if the number
+of issued queries is not large.
+
+\ccInclude{CGAL/Arr_walk_along_line_point_location.h}
+
+\ccIsModel
+  \ccc{ArrangementPointLocation_2} \\
+  \ccc{ArrangementVerticalRayShoot_2}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

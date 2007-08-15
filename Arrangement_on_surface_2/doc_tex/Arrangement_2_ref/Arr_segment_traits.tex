@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_segment_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_segment_traits_2<Kernel>}
+    
+\ccDefinition 
+%============
+
+The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+concept that allow the construction and maintenance of arrangements of
+line segments. It should be parameterized with a \cgal-kernel model that is
+templated in turn with a number type. To avoid numerical errors and
+robustness problems, the number type should support exact rational
+arithmetic --- that is, the number type should support the arithmetic
+operations $+$, $-$, $\times$ and $\div$ that should be carried out
+without loss of precision.
+
+For example, instatiating the traits
+template with kernels such as \ccStyle{Cartesian<Quotient<MP_Float> >},
+or \ccStyle{Homogeneous<Gmpz>} ensures the exact and robust operation of
+the application. In particular, the \ccStyle{Cartesian<Gmpq>} achieves
+the fastest running times in most cases. Using other (inexact) number
+types (for example, instatiating the template with
+\ccStyle{Simple_cartesian<double>}) is possible at the user's own risk:
+selecting an inexact number type usually leads to faster running time at
+the expence of possible robustness problems.
+
+For optimal performance, we recommend instantiating the traits class with
+the default \ccc{Exact_predicates_exact_constructions_kernel} provided by
+\cgal. Using this kernel guarantees exactness and robustness, while it incurs
+only a minor overhead (in comparison to working with a fast, inexact number
+type) for most inputs.
+
+\ccRefName\ defines \ccc{Kernel::Point_2} as its point type. However, it
+does {\sl not} define \ccc{Kernel::Segment_2} as its curve type, as one may
+expect. The reason is that the kernel segment is represented by its
+two endpoints only, while the traits class needs to store extra data
+with its segments, in order to efficiently operate on them. Nevertheless,
+the nested \ccc{X_monotone_curve_2} and \ccc{Curve_2} types (in this
+case both types refer to the same class, as {\sl every} line segement
+is (weakly) $x$-monotone) are however convertable to the
+\ccc{Kernel::Segment_2}.
+
+\ccRefName\ achieves faster running times than the
+\ccStyle{Arr_non_caching_segment_traits_2<Kernel>} traits-class, when
+arrangements with relatively many intersection points are constructed.
+It also allows for working with less accurate, yet computationally
+efficient number types, such as \ccStyle{Quotient<MP_Float>}, which
+represents floating-point numbers with an unbounded mantissa, but with
+a bounded exponent. Using this traits class is therefore highly recommended
+for almost all applications that rely on arrangements of line segments.
+On the other hand, \ccRefName\  uses more space and stores extra data with
+each segment, so constructing arrangements of huge sets of non-intersecting
+segments (or segments that intersect very sparsely) could be more efficient
+with the \ccStyle{Arr_non_caching_segment_traits_2} traits-class.
+
+\ccInclude{CGAL/Arr_segment_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2} \\
+    \ccc{ArrangementLandmarkTraits_2}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

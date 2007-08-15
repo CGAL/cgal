@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_landmarks_point_location.tex
+% +------------------------------------------------------------------------+
+% |
+% | Package: Arrangement_2
+% |
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_landmarks_point_location<Arrangement,Generator>}
+\label{arr_ref:lm_pl}
+
+The \ccRefName\ class implements a Jump \& Walk algorithm, where special
+points, referred to as ``landmarks'', are chosen in a preprocessing stage,
+their place in the arrangement is found, and they are inserted into a
+data-structure that enables efficient nearest-neighbor search (a
+{\sc Kd}-tree). Given a query point, the nearest landmark is located and a
+``walk'' strategy is applied from the landmark to the query point.
+
+There are various strategies to select the landmark set in the
+arrangement, where the strategy is determined by the
+\ccc{Generator} template parameter. The following landmark-generator
+classes are available:
+\begin{description}
+\item[\ccc{Arr_landmarks_vertices_generator} ---]
+The arrangement vertices are used as the landmarks set.
+
+\item[\ccc{Arr_random_landmarks_generator} ---]
+$n$ random points in the bounding box of the arrangement are chosen
+as the landmarks set.
+
+\item[\ccc{Arr_halton_landmarks_generator} ---]
+$n$ Halton points in the bounding box of the arrangement are chosen
+as the landmarks set.
+
+\item[\ccc{Arr_middle_edges_landmarks_generator} ---]
+The midpoint of each arrangement edge is computed, and the resulting
+set of points is used as the landmarks set. This generator can be applied
+only for arrangements of line segments.
+
+\item[\ccc{Arr_grid_landmarks_generator} ---]
+A set of $n$ landmarks are chosen on a
+$\lceil \sqrt{n} \rceil \times \lceil \sqrt{n} \rceil$
+grid that covers the bounding box of the arrangement.
+\end{description}
+The \ccc{Arr_landmarks_vertices_generator} class is the default generator
+and used if no \ccc{Generator} parameter is specified.
+
+It is recommended to use the landmarks point-location strategy
+when the application frequently issues point-location queries on a
+rather static arrangement that the changes applied to it are mainly
+insertions of curves and not deletions of them.
+
+\ccInclude{CGAL/Arr_landmarks_point_location.h}
+
+\ccIsModel
+  \ccc{ArrangementPointLocation_2} \\
+  \ccc{ArrangementVerticalRayShoot_2}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

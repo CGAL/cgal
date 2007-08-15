@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_with_hist_in_formatter.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementWithHistoryInputFormatter}
+
+A model for the \ccRefName\ concept supports a set of functions that enable
+reading an arrangement-with-history instance from an input stream using a
+specific format.
+
+\ccRefines
+\ccc{ArrangementInputFormatter}
+
+\ccTypes
+%=======
+
+\ccNestedType{Arr_with_history_2}{the type of arrangement to input.}
+
+\ccTypedef{typedef typename Arrangement_2::Curve_2 Curve_2;}
+    {the inducing curve type.}
+
+
+\ccCreationVariable{inf}
+
+\ccHeading{Formatted Input Functions}
+%=====================================
+
+\ccMethod{void read_curves_begin();}
+    {reads a message indicating the beginning of the inducing curves.}
+\ccGlue
+\ccMethod{void read_curves_end();}
+    {reads a message indicating the end of the inducing curves.}
+
+\ccMethod{void read_curve_begin();}
+    {reads a message indicating the beginning of a single curve record.}
+\ccGlue
+\ccMethod{void read_curve_end();}
+    {reads a message indicating the end of a single curve record.}
+
+\ccMethod{void read_curve (Curve_2& c);}
+    {reads a curve.}
+
+\ccMethod{void read_induced_edges_begin();}
+    {reads a message indicating the beginning of the set of edges
+     induced by the current curve.}
+\ccGlue
+\ccMethod{void read_induced_edges_end();}
+    {reads a message indicating the end of the induced edges set.}
+
+\ccHasModels
+%===========
+
+\ccc{Arr_with_history_text_formatter<ArrFormatter>}\lcTex{
+        (\ccRefPage{CGAL::Arr_with_history_text_formatter<ArrFormatter>})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

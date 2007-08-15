@@ -1,0 +1,41 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_text_formatter.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_text_formatter<Arrangement>}
+
+\ccDefinition
+%============
+
+\ccRefName\ defines the format of an arrangement in an input or output stream
+(typically a file stream), thus enabling reading and writing an \ccc{Arrangement}
+instance using a simple text format. The arrangement is assumed to store no auxiliary
+data with its \dcel\ records (and if there are such records they will not be written
+or read by the formatter).
+
+The \ccRefName\ class assumes that the nested \ccc{Point_2} and the \ccc{Curve_2} types
+defined by the \ccc{Arrangement} template-parameter can both be written to an input
+stream using the \ccc{<<} operator and read from an input stream using the \ccc{>>}
+operator.
+
+\ccInclude{CGAL/IO/Arr_text_formatter.h}
+
+\ccIsModel
+    \ccc{ArrangementInputFormatter} \\
+    \ccc{ArrangementOutputFormatter}
+
+\ccSeeAlso
+    \ccc{read}\lcTex{
+     (\ccRefPage{CGAL::read})} \\
+    \ccc{write}\lcTex{
+     (\ccRefPage{CGAL::write})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

@@ -1,0 +1,171 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_in_formatter.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementInputFormatter}
+
+A model for the \ccRefName\ concept supports a set of functions that enable
+reading an arrangement from an input stream using a specific format.
+
+\ccTypes
+%=======
+
+\ccNestedType{Arrangement_2}{the type of arrangement to input.}
+
+\ccTypedef{typedef typename Arrangement_2::Point_2 Point_2;}
+    {the point type.}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
+
+\ccTypedef{typedef typename Arrangement_2::Size Size;}{}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Arrangement_2::Face_handle Face_handle;}{}
+
+\ccCreation
+\ccCreationVariable{inf}
+%=======================
+    
+\ccConstructor{Arr_in_formatter();}
+   {default constructor.}
+
+\ccConstructor{Arr_in_formatter (std::istream& is);}
+   {constructs a formatter that reads from \ccc{is}.}
+
+\ccMethod{void set_in (std::istream& is);}
+   {directs \ccVar\ to read from \ccc{is}.}
+
+\ccAccessFunctions
+%=================
+
+\ccMethod{std::istream& in ();}
+   {returns the stream that \ccVar\ reads from.
+    \ccPrecond{\ccVar\ is directed to a valid output stream.}}
+
+\ccHeading{Formatted Input Functions}
+%=====================================
+
+\ccMethod{void read_arrangement_begin ();}
+    {reads a message indicating the beginning of the arrangement.}
+\ccGlue
+\ccMethod{void read_arrangement_end ();}
+    {reads a message indicating the end of the arrangement.}
+
+\ccMethod{Size read_size (const char *label = NULL);}
+    {reads a size value, which is supposed to be preceeded by the given label.}
+
+\ccMethod{void read_vertices_begin();}
+    {reads a message indicating the beginning of the vertex records.}
+\ccGlue
+\ccMethod{void read_vertices_end();}
+    {reads a message indicating the end of the vertex records.}
+
+\ccMethod{void read_edges_begin();}
+    {reads a message indicating the beginning of the edge records.}
+\ccGlue
+\ccMethod{void read_edges_end();}
+    {reads a message indicating the end of the edge records.}
+
+\ccMethod{void read_faces_begin();}
+    {reads a message indicating the beginning of the face records.}
+\ccGlue
+\ccMethod{void read_faces_end();}
+    {reads a message indicating the end of the face records.}
+
+\ccMethod{void read_vertex_begin();}
+    {reads a message indicating the beginning of a single vertex record.}
+\ccGlue
+\ccMethod{void read_vertex_end();}
+    {reads a message indicating the end of a single vertex record.}
+
+\ccMethod{std::size_t read_vertex_index ();}
+    {reads and returns a vertex index.}
+
+\ccMethod{void read_point (Point_2& p);}
+    {reads a point.}
+
+\ccMethod{void read_vertex_data (Vertex_handle v);}
+    {reads an auxiliary vertex-data object and associates it with the vertex \ccc{v}.}
+
+\ccMethod{void read_edge_begin();}
+    {reads a message indicating the beginning of a single edge record.}
+\ccGlue
+\ccMethod{void read_edge_end();}
+    {reads a message indicating the end of a single edge record.}
+
+\ccMethod{std::size_t read_halfedge_index ();}
+    {reads and returns halfedge index.}
+
+\ccMethod{void read_x_monotone_curve (X_monotone_curve_2& c);}
+    {reads an $x$-monotone curve.}
+
+\ccMethod{void read_halfegde_data (Halfedge_handle he);}
+    {reads an auxiliary halfedge-data object and associates it with the halfedge \ccc{he}.}
+
+\ccMethod{void read_face_begin();}
+    {reads a message indicating the beginning of a single face record.}
+\ccGlue
+\ccMethod{void read_face_end();}
+    {reads a message indicating the end of a single face record.}
+
+\ccMethod{void read_outer_ccb_begin();}
+    {reads a message indicating the beginning of the outer CCB of the current face.}
+\ccGlue
+\ccMethod{void read_outer_ccb_end();}
+    {reads a message indicating the end of the outer CCB of the current face.}
+
+\ccMethod{void read_holes_begin();}
+    {reads a message indicating the beginning of the container of holes inside the
+     current face.}
+\ccGlue
+\ccMethod{void read_holes_end();}
+    {reads a message indicating the end of the container of holes inside the
+     current face.}
+
+\ccMethod{void read_inner_ccb_begin();}
+    {reads a message indicating the beginning of an inner CCB of the current face.}
+\ccGlue
+\ccMethod{void read_inner_ccb_end();}
+    {reads a message indicating the end of an inner CCB of the current face.}
+
+\ccMethod{void read_ccb_halfedges_begin();}
+    {reads a message indicating the beginning a connected component boundary.}
+\ccGlue
+\ccMethod{void read_ccb_halfedges_end();}
+    {reads a message indicating the end of a connected component boundary.}
+
+\ccMethod{void read_isolated_vertices_begin();}
+    {reads a message indicating the beginning of the container of isolated vertices
+     inside the current face.}
+\ccGlue
+\ccMethod{void read_isolated_vertices_end();}
+    {reads a message indicating the end of the container of isolated vertices inside
+     the current face.}
+
+\ccMethod{void read_face_data (Face_handle f);}
+    {reads an auxiliary face-data object and associates it with the face \ccc{f}.}
+
+\ccHasModels
+%===========
+
+\ccc{Arr_text_formatter<Arrangement>}\lcTex{
+        (\ccRefPage{CGAL::Arr_text_formatter<Arrangement>})}\\
+\ccc{Arr_face_extended_text_formatter<Arrangement>}\lcTex{
+        (\ccRefPage{CGAL::Arr_face_extended_text_formatter<Arrangement>})}\\
+\ccc{Arr_extended_dcel_text_formatter<Arrangement>}\lcTex{
+        (\ccRefPage{CGAL::Arr_extended_dcel_text_formatter<Arrangement>})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

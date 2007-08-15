@@ -1,0 +1,49 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_curves}
+
+\ccDefinition
+
+The function \ccRefName{} aggregately inserts curves or $x$-monotone
+curves in a given range into a given arrangement, where no
+restrictions are made on the nature of the inserted curves.  If the
+curves are not $x$-monotone then the input curves are subdivided into
+$x$-monotone subcurves (and perhaps isolated points), which are
+inserted into the arrangement using the sweep-line algorithm.
+
+%%%%
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template<class Traits, class Dcel, class InputIterator>
+            void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+                                InputIterator first, InputIterator last);}
+Inserts the curves or $x$-monotone curves in the range
+\ccc{[first,last)} into the arrangement \ccc{arr}.
+
+%%%%
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccGlobalFunction{template<class Traits, class Dcel, InputIterator>
+            void insert_curves (Arrangement_with_history_2<Traits,Dcel>& arr,
+                         InputIterator first, InputIterator last);}
+Inserts the curves in the range \ccc{[first,last)} into the
+arrangement with history \ccc{arr}.
+
+\ccRequirements
+\begin{itemize}
+\item If the curve is an $x$-monotone curve then The instantiated
+  \ccc{Traits} class must model the \ccc{ArrangementXMonotoneTraits_2}
+  concept. Otherwise, if the curve is not $x$-monotone, the
+  instantiated \ccc{Traits} class must model the
+  \ccc{ArrangementTraits_2} concept. 
+\item \ccc{InputIterator::value_type} must be \ccc{Traits::Curve_2} or
+  \ccc{Traits::X_monotone_curve_2}.
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

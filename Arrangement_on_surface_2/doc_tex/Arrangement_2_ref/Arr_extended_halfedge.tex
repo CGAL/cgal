@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_extended_halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_extended_halfedge<HalfedgeBase,HData>}
+
+\ccThree{HData &}{he.set_data(const HData & data)~}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+  The \ccRefName\ class-template extends the halfedge topological-features of
+  the \dcel. It is parameterized by a halfedge base-type \ccc{HalfedgeBase}
+  and a data type \ccc{HData} used to extend the halfedge base-type.
+
+\ccInclude{CGAL/Arr_extended_dcel.h}
+
+\ccIsModel
+%============
+  \ccc{ArrangementDcelHalfedge}
+
+\ccInheritsFrom
+%============
+  \ccc{HalfedgeBase}
+
+\ccCreation
+\ccCreationVariable{he}
+%==========
+  \ccMethod{void assign (const Self & other);}
+  {assigns \ccVar{} with the contents of the \ccc{other} vertex.}
+
+\ccAccessFunctions
+%=================
+
+\def\ccLongParamLayout{\ccTrue}
+  \ccMethod{const HData & data () const;}
+  {obtains the auxiliary data (a non-const version, returning a reference
+   to a mutable data object is also available).}
+\def\ccLongParamLayout{\ccFalse}
+
+\ccModifiers
+%============
+  \ccMethod{void set_data (const HData & data);}
+  {sets the auxiliary data.}
+
+\ccSeeAlso
+%============
+  \ccc{Arr_dcel_base<V,H,F>}\lcTex{
+  (\ccRefPage{CGAL::Arr_dcel_base<V,H,F>})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

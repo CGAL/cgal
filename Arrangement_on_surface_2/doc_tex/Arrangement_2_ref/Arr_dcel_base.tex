@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_base.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_dcel_base<V,H,F>}
+\label{arr_ref:arr_dcel_base}
+    
+\ccDefinition
+%============
+
+The \ccClassTemplateName\ class is an inportant ingredient in the
+definition of \dcel\ data structures. It serves as a basis class for
+any instance of the \ccc{Dcel} template parameter of the
+\ccc{Arrangement_2} template. In particular it is the basis class of
+the default \ccc{Dcel} template parameter, and the basis class of any
+extended \dcel. The template parameters \ccc{V}, \ccc{H}, and \ccc{F}
+must be instantiated with models of the concepts
+\ccc{ArrangementDcelVertex}, \ccc{ArrangementDcelHalfedge},
+and \ccc{ArrangementDcelFace} respectively.
+
+\ccInclude{CGAL/Arr_dcel_base.h}
+ 
+\ccIsModel
+    \ccc{ArrangementDcel}
+
+%--------------------------------------------------------------------------
+
+\subsection*{Class Arr\_vertex\_base$<$Point$>$}
+%===============================================
+
+\begin{ccClass}{Arr_vertex_base<Point>}
+
+\ccDefinition
+%============
+
+The basic \dcel\ vertex type. Serves as a basis class for an extended
+vertex record with auxiliary data fields. The \ccc{Point} parameter is
+the type of points associated with the vertices.
+
+\ccIsModel
+    \ccc{ArrangementDcelVertex}
+
+\end{ccClass}
+
+%--------------------------------------------------------------------------
+
+\subsection*{Class Arr\_halfedge\_base$<$Curve$>$}
+%=================================================
+
+\begin{ccClass}{Arr_halfedge_base<Curve>}
+
+\ccDefinition
+%============
+
+The basic \dcel\ halfedge type. Serves as a basis class for an
+extended halfedge record with auxiliary data fields. The \ccc{Curve}
+parameter is the type of $x$-monotone curves associated with the vertices.
+
+\ccIsModel
+    \ccc{ArrangementDcelHalfedge}
+
+\end{ccClass}
+
+%--------------------------------------------------------------------------
+
+\subsection*{Class Arr\_face\_base}
+%==================================
+
+\begin{ccClass}{Arr_face_base}
+
+\ccDefinition
+%============
+
+The basic \dcel\ face type. Serves as a basis class for an extended
+face record with auxiliary data fields.
+
+\ccIsModel
+    \ccc{ArrangementDcelFace}
+
+\end{ccClass}
+
+%--------------------------------------------------------------------------
+
+\end{ccRefClass}
+
+\ccRefPageEnd
