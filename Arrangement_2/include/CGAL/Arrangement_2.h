@@ -2528,7 +2528,7 @@ private:
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_split_hole (f, h, e);
+      (*iter)->before_split_inner_ccb (f, h, e);
   }
 
   void _notify_after_split_hole (Face_handle f,
@@ -2539,7 +2539,7 @@ private:
     Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_split_hole (f, h1, h2);
+      (*iter)->after_split_inner_ccb (f, h1, h2);
   }
 
   void _notify_before_add_hole (Face_handle f,
@@ -2549,7 +2549,7 @@ private:
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_add_hole (f, e);
+      (*iter)->before_add_inner_ccb (f, e);
   }
 
   void _notify_after_add_hole (Ccb_halfedge_circulator h)
@@ -2558,7 +2558,7 @@ private:
     Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_add_hole (h);
+      (*iter)->after_add_inner_ccb (h);
   }
 
   void _notify_before_add_isolated_vertex (Face_handle f,
@@ -2648,7 +2648,7 @@ private:
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_merge_hole (f, h1, h2, e);
+      (*iter)->before_merge_inner_ccb (f, h1, h2, e);
   }
 
   void _notify_after_merge_hole (Face_handle f,
@@ -2658,7 +2658,7 @@ private:
     Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_merge_hole (f, h);
+      (*iter)->after_merge_inner_ccb (f, h);
   }
 
   void _notify_before_move_hole (Face_handle from_f,
@@ -2669,7 +2669,7 @@ private:
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_move_hole (from_f, to_f, h);
+      (*iter)->before_move_inner_ccb (from_f, to_f, h);
   }
 
   void _notify_after_move_hole (Ccb_halfedge_circulator h)
@@ -2678,7 +2678,7 @@ private:
     Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_move_hole (h);
+      (*iter)->after_move_inner_ccb (h);
   }
 
   void _notify_before_move_isolated_vertex (Face_handle from_f,
@@ -2763,7 +2763,7 @@ private:
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_remove_hole (f, h);
+      (*iter)->before_remove_inner_ccb (f, h);
   }
 
   void _notify_after_remove_hole (Face_handle f)
@@ -2772,7 +2772,7 @@ private:
     Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_remove_hole (f);
+      (*iter)->after_remove_inner_ccb (f);
   }
   //@}
 

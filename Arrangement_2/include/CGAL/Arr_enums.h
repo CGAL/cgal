@@ -77,6 +77,8 @@ inline CGAL::Sign sign (Halfedge_direction dir)
   return enum_cast<Sign, Halfedge_direction>(dir);
 }
 
+#define HE_COMP_RES(he) ((he)->direction())
+
 CGAL_END_NAMESPACE
 
 #endif

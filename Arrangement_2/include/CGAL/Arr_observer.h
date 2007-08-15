@@ -371,9 +371,9 @@ public:
    * \param h A circulator representing the boundary of the hole.
    * \param e The new edge whose removal causes the hole to split.
    */
-  virtual void before_split_hole (Face_handle /* f */,
-                                  Ccb_halfedge_circulator /* h */,
-                                  Halfedge_handle /* e */)
+  virtual void before_split_inner_ccb (Face_handle /* f */,
+                                       Ccb_halfedge_circulator /* h */,
+                                       Halfedge_handle /* e */)
   {}
 
   /*!
@@ -382,7 +382,7 @@ public:
    * \param h1 A circulator representing the boundary of the first hole.
    * \param h2 A circulator representing the boundary of the second hole.
    */
-  virtual void after_split_hole (Face_handle /* f */,
+  virtual void after_split_inner_ccb (Face_handle /* f */,
                                  Ccb_halfedge_circulator /* h1 */,
                                  Ccb_halfedge_circulator /* h2 */)
   {}
@@ -392,7 +392,7 @@ public:
    * \param f A handle to the face containing the hole.
    * \param e The new halfedge that forms the new hole.
    */
-  virtual void before_add_hole (Face_handle /* f */,
+  virtual void before_add_inner_ccb (Face_handle /* f */,
                                 Halfedge_handle /* e */)
   {}
 
@@ -400,7 +400,7 @@ public:
    * Notification after a hole was created inside a face.
    * \param h A circulator representing the boundary of the new hole.
    */
-  virtual void after_add_hole (Ccb_halfedge_circulator /* h */)
+  virtual void after_add_inner_ccb (Ccb_halfedge_circulator /* h */)
   {}
 
   /*!
@@ -478,7 +478,7 @@ public:
    * \param h2 A circulator representing the boundary of the second hole.
    * \param e The edge whose insertion causes the holes to merge.
    */
-  virtual void before_merge_hole (Face_handle /* f */,
+  virtual void before_merge_inner_ccb (Face_handle /* f */,
                                   Ccb_halfedge_circulator /* h1 */,
                                   Ccb_halfedge_circulator /* h2 */,
                                   Halfedge_handle /* e */)
@@ -489,7 +489,7 @@ public:
    * \param f A handle to the face that contains the holes.
    * \param h A circulator representing the boundary of the merged hole.
    */
-  virtual void after_merge_hole (Face_handle /* f */,
+  virtual void after_merge_inner_ccb (Face_handle /* f */,
                                  Ccb_halfedge_circulator /* h */)
   {}
 
@@ -499,7 +499,7 @@ public:
    * \param to_f A handle to the face that should contain the hole.
    * \param h A circulator representing the boundary of the hole.
    */
-  virtual void before_move_hole (Face_handle /* from_f */,
+  virtual void before_move_inner_ccb (Face_handle /* from_f */,
                                  Face_handle /* to_f */,
                                  Ccb_halfedge_circulator /* h */)
   {}
@@ -508,7 +508,7 @@ public:
    * Notification after a hole is moved from one face to another.
    * \param h A circulator representing the boundary of the hole.
    */
-  virtual void after_move_hole (Ccb_halfedge_circulator /* h */)
+  virtual void after_move_inner_ccb (Ccb_halfedge_circulator /* h */)
   {}
 
   /*!
@@ -573,7 +573,7 @@ public:
    * \param f The face containing the hole.
    * \param h A circulator representing the boundary of the hole.
    */
-  virtual void before_remove_hole (Face_handle /* f */,
+  virtual void before_remove_inner_ccb (Face_handle /* f */,
                                    Ccb_halfedge_circulator /* h */)
   {}
 
@@ -581,7 +581,7 @@ public:
    * Notificaion after the removal of a hole.
     * \param f The face that used to contain the hole.
   */
-  virtual void after_remove_hole (Face_handle /* f */)
+  virtual void after_remove_inner_ccb (Face_handle /* f */)
   {}
 
   //@}
