@@ -2981,7 +2981,7 @@ _relocate_inner_ccbs_in_new_face (DHalfedge *new_he)
     // (note we take the opposite halfedge, as it is incident to the old face),
     // then the new face already forms a hole in the old face, and we do not
     // need to move it.
-    if ((*ic_it)->inner_ccb() == opp_he->inner_ccb())
+    if (*ic_it == opp_he)
     {
       ++ic_it;
       continue;
