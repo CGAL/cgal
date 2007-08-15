@@ -737,14 +737,14 @@ Arrangement_on_surface_2/doc_tex/Arrangement_2/fig/unb_dcel.pstex -text svneol=u
 Arrangement_on_surface_2/doc_tex/Arrangement_2/fig/unb_dcel.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_2_ref/arr_zone.tex -text
-Arrangement_on_surface_2/doc_tex/BasicSweepLineVisitor_2.tex eol=lf
-Arrangement_on_surface_2/doc_tex/Basic_sweep_line_2.tex eol=lf
-Arrangement_on_surface_2/doc_tex/SweepLineVisitor_2.tex eol=lf
-Arrangement_on_surface_2/doc_tex/Sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.ps -text svneol=unset#application/postscript
+Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/BasicSweepLineVisitor_2.tex eol=lf
+Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Basic_sweep_line_2.tex eol=lf
+Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
+Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Europe.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
