@@ -500,6 +500,36 @@ Arrangement_of_spheres_3/src/CGALQt/Qt_examiner_viewer_2.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/compile.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/include/test_arrangement.h -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/template_compile.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_2/arrangement_2.vcproj eol=crlf
+Arrangement_on_surface_2/demo/Arrangement_2/data/conic/big_circ_arcs.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/conic/circles_21.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/polyline/ps_circs.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/polyline/random_polylines_10_20.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/polyline/sines.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/fork0505_mc.seg.rand.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/non_degenerate_100_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/onebig_100.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/onebig_100_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/onebig_250_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/polygon_100.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/random_segments_100.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/random_segments_100_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/random_segments_500_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/tilt_grid_200.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/data/segment/world.seg.cut.rand.dat -text
+Arrangement_on_surface_2/demo/Arrangement_2/help/index.html svneol=native#text/html
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_pointlocation.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_rayshoot.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_snapgrid.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_snapvertex.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_split.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_zoomin.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/doc_tex/BasicSweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Basic_sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/SweepLineVisitor_2.tex eol=lf
