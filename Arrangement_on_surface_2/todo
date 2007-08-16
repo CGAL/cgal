@@ -1,0 +1,60 @@
+- Incoorporate:
+    BasicSweepLineVisitor_2.tex
+    Sweep_line_2.tex
+    SweepLineVisitor_2.tex
+    Basic_sweep_line_2.tex
+   Into the documentation
+
+- Fix vertical decomposition (there are references to ficticious vertices).
+
+- Test RIC trapezoidal point locatoin
+
+- Get rid of the prefix 'get_' from all functions and methods:
+    get_all_inner_nodes()
+    get_all_leaves()
+    get_all_nodes()
+    get_arr_mask()
+    get_bbox()
+    get_boundary_in_x()
+    get_boundary_in_y()
+    get_bounding_box()
+    get_closest_landmark()
+    get_coefficient()
+    get_count()
+    get_curve_at_infinity()
+    get_curve()
+    get_data()
+    get_data_ptr()
+    get_data_structure()
+    get_depth_threshold()
+    get_distinct_nodes()
+    get_double()
+    get_index() 
+    get_intersections()
+    get_is_set()
+    get_lb()
+    get_level()
+    get_lt()
+    get_marked()
+    get_node()
+    get_originator()
+    get_parent()
+    get_point()
+    get_point_at_left_top_infinity(),
+    get_point_at_right_bottom_infinity(),
+    get_point_at_x()
+    get_point()
+    get_points_at_x()
+    get_points_at_y()
+    get_rb()
+    get_rt()
+    get_size_threshold()
+    get_t_at_x()
+    get_t_at_y()
+    get_traits()
+    get_vertex()
+    get_vertical_tangencies()
+    get_x_coordinates()
+    get_y()
+
+- Add CGAL_ to all defines to protect against collision 

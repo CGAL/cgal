@@ -953,6 +953,7 @@ Arrangement_on_surface_2/test/Sweep_line_2/DATA/segments_tight/test88.txt eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/cgal_test eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/test_sweep.cpp eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/test_sweep_conic.cpp eol=lf
+Arrangement_on_surface_2/todo -text
 BGL/doc_tex/BGL/fig/emst-detail.png -text
 BGL/doc_tex/BGL/fig/emst.jpg -text
 BGL/doc_tex/BGL/fig/ex_bgl.eps -text svneol=unset#application/postscript
