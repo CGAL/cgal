@@ -58,7 +58,9 @@
 #include <CGAL/auto_link/auto_link.h>
 
 // ATLAS provides BLAS and LAPACK standard Fortran interface
-#define CGAL_USE_F2C
+#ifndef CGAL_USE_F2C
+  #define CGAL_USE_F2C
+#endif
 
 #endif // Win32
 
@@ -87,7 +89,9 @@
 
 // CLAPACK provides LAPACK standard Fortran interface.
 // blaswrap.h maps CBLAS function names to BLAS standard Fortran interface.
-#define CGAL_USE_F2C
+#ifndef CGAL_USE_F2C
+  #define CGAL_USE_F2C
+#endif
 #include <blaswrap.h>
 
 #endif // _WIN64

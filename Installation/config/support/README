@@ -23,6 +23,9 @@ When adding a new file here:
    packages providing a feature may actually be used at the same time,
    that is, packages providing the same feature are implicitly in
    conflict to each other.
+   
+ * Warning: install_cgal is sometimes confused if a package and a feature
+   have the same name, e.g. "S??-LAPACK" and "LAPACK".
 
    Each file has the following entries.
 

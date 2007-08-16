@@ -718,6 +718,7 @@ Installation/config/support/S55a-REFBLASGCC -text
 Installation/config/support/S55b-REFBLASLINUXGCC -text
 Installation/config/support/S55c-REFBLASSHARED -text
 Installation/config/support/S56-REFBLASWIN -text
+Installation/config/support/S57-CBLASWIN -text
 Installation/config/support/S58-LIDIA -text
 Installation/config/support/S60-LEDA -text
 Installation/config/support/S61-LEDA5X -text
@@ -727,10 +728,11 @@ Installation/config/support/S64-LEDAWIN -text
 Installation/config/support/S65-LEDAWINMS -text
 Installation/config/support/S70-OPENGL -text
 Installation/config/support/S71-OPENGL_W32 -text
-Installation/config/support/S72-LAPACK -text
-Installation/config/support/S74-LAPACKWIN -text
+Installation/config/support/S72-DEFAULTLAPACK -text
+Installation/config/support/S74-DEFAULTLAPACKWIN -text
 Installation/config/support/S75-REFLAPACKLINUXGCC -text
 Installation/config/support/S76-REFLAPACKWIN -text
+Installation/config/support/S77-CLAPACKWIN -text
 Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
