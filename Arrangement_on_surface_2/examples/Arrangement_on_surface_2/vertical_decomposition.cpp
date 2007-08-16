@@ -5,7 +5,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_vertical_decomposition.h>
+#include <CGAL/Arr_vertical_decomposition_2.h>
 #include <list>
 
 typedef CGAL::MP_Float                                  Number_type;
