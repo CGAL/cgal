@@ -26,7 +26,7 @@
 #ifndef CGAL_NO_AUTOLINK_LAPACK
 
 
-#if defined(WIN32) && !defined(_WIN64) // if Windows 32 bits
+#if defined(_WIN32) && !defined(_WIN64) // if Windows 32 bits
 
 // CGAL ships with ATLAS for Windows 32 bits, i.e this set of libraries (e.g. for /MD):
 // liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib

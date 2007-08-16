@@ -26,7 +26,7 @@
 #ifndef CGAL_NO_AUTOLINK_TAUCS
 
 
-#if defined(WIN32) && !defined(_WIN64) // if Windows 32 bits
+#if defined(_WIN32) && !defined(_WIN64) // if Windows 32 bits
 
 // CGAL ships with TAUCS for Windows 32 bits, compiled with VC++ 2003.
 // The set set of libraries is (e.g. for /MD):
