@@ -109,10 +109,12 @@ public:
    */
   virtual void before_handle_event(Event * event)
   {
+    // Act according to the boundary type:
     const Boundary_type bound_x = event->boundary_in_x();
     const Boundary_type bound_y = event->boundary_in_y();
 
-    if (bound_y == AFTER_SINGULARITY) {
+    if (bound_y == AFTER_SINGULARITY)
+    {
       // The event has only one (right or left) curve.
       CGAL_assertion(((event->number_of_left_curves() == 0) &&
                       (event->number_of_right_curves() == 1)) ||
@@ -124,22 +126,26 @@ public:
       const X_monotone_curve_2 & xc = (ind == MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
-  
-      if (m_top_traits->south_pole() == NULL) {
 
+      // Check whether we have a vertex that corresponds to the south pole.
+      // If not, we create one.
+      if (m_top_traits->south_pole() == NULL)
+      {
         Vertex_handle v = m_arr_access.create_vertex(event->point(),
                                                      bound_x, bound_y);
         m_top_traits->notify_on_boundary_vertex_creation(&(*v), xc, ind,
                                                          bound_x, bound_y);
         event->set_vertex_handle(v);
       }
-      else {
+      else
+      {
         event->set_vertex_handle(Vertex_handle (m_top_traits->south_pole()));
       }
       return;
     }
 
-    if (bound_y == BEFORE_SINGULARITY) {
+    if (bound_y == BEFORE_SINGULARITY)
+    {
       // The event has only one (right or left) curve.
       CGAL_assertion(((event->number_of_left_curves() == 0) &&
                       (event->number_of_right_curves() == 1)) ||
@@ -152,16 +158,28 @@ public:
       const X_monotone_curve_2 & xc = (ind == MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
-      
-      if (m_top_traits->north_pole() == NULL) {
 
+      // Check whether we have a vertex that corresponds to the north pole.
+      // If not, we create one.
+      if (m_top_traits->north_pole() == NULL)
+      {
         Vertex_handle v = m_arr_access.create_vertex(event->point(),
                                                      bound_x, bound_y);
         m_top_traits->notify_on_boundary_vertex_creation(&(*v), xc, ind,
                                                          bound_x, bound_y);
-        event->set_vertex_handle(v);  
+        event->set_vertex_handle(v);
+
+        // Since this is the first event corresponding to the north pole,
+        // the list m_subcurves_at_nf contains all subcurves whole left
+        // endpoint lies between the curve of discontinuity and the current
+        // curve incident to the north pole. In case these subcurves represent
+        // holes, these holes should stay in the "north face" that contains the
+        // line of discontinuity, and we should not keep track of them in order
+        // to later move them to another face.
+        m_subcurves_at_nf.clear();
       }
-      else {
+      else
+      {
         event->set_vertex_handle(Vertex_handle (m_top_traits->north_pole()));
 
         DHalfedge * dprev =
@@ -188,9 +206,12 @@ public:
         }
         return;
       }
+
+      return;
     }
-    
-    if (bound_x == AFTER_DISCONTINUITY) {
+
+    if (bound_x == AFTER_DISCONTINUITY)
+    {
       // The event has only right curves.
       CGAL_assertion(event->number_of_left_curves() == 0 &&
                      event->number_of_right_curves() == 1);
@@ -198,7 +219,10 @@ public:
         (*(event->right_curves_begin()))->last_curve();
       DVertex * v = m_top_traits->discontinuity_vertex(xc, MIN_END);
 
-      if (v == NULL) {
+      // Check whether a corresponding vertex already exists on the line
+      // of discontinuity. If not, create one now.
+      if (v == NULL)
+      {
         Vertex_handle vh =  m_arr_access.create_vertex(event->point(),
                                                        bound_x, bound_y);
         m_top_traits->notify_on_boundary_vertex_creation(&(*vh), xc, MIN_END,
@@ -212,7 +236,8 @@ public:
       return;
     }
 
-    if (bound_x == BEFORE_DISCONTINUITY) {
+    if (bound_x == BEFORE_DISCONTINUITY)
+    {
        // The event has only left curves.
       CGAL_assertion(event->number_of_left_curves() == 1 &&
                      event->number_of_right_curves() == 0);
@@ -220,14 +245,18 @@ public:
         (*(event->left_curves_begin()))->last_curve();
       DVertex * v = m_top_traits->discontinuity_vertex(xc, MAX_END);
 
-      if (v == NULL) {
+      // Check whether a corresponding vertex already exists on the line
+      // of discontinuity. If not, create one now.
+      if (v == NULL)
+      {
         Vertex_handle vh = m_arr_access.create_vertex(event->point(),
                                                       bound_x, bound_y);
         m_top_traits->notify_on_boundary_vertex_creation(&(*vh), xc, MAX_END,
                                                          bound_x, bound_y);
         event->set_vertex_handle(vh);
       }
-      else {
+      else
+      {
         event->set_vertex_handle(Vertex_handle(v));
       }
       return;
@@ -261,7 +290,7 @@ public:
   /*! Determine if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
-  bool swap_predecessors(Event * event) const
+  bool swap_predecessors (Event * event) const
   {
     // If we insert an edge whose right end lies on the north pole, we have
     // to flip the order of predecessor halfegdes.
