@@ -440,6 +440,7 @@ public:
     return Key(ni);
   }
 
+
   //! remove the event referenced by item from the queue
   /*!
     \todo Add check that item is actually in the list

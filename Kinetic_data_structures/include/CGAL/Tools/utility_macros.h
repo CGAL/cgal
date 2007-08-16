@@ -24,26 +24,33 @@
 
 //#include <boost/call_traits.hpp>
 
+/*namespace {
+  class Semicolon_eater{};
+  }*/
+
+#define CGAL_EAT_SEMICOLON 
+//friend class Semicolon_eater
+
 #define CGAL_SUBSCRIPT(type, expr) type& operator[](unsigned int i){ expr;} \
-  const type& operator[](unsigned int i) const { expr;}
+  const type& operator[](unsigned int i) const { expr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_COPY_CONSTRUCTOR(TC) TC(const TC &o){copy_from(o);}\
-  TC& operator=(const TC &o) {copy_from(o); return *this;}
+  TC& operator=(const TC &o) {copy_from(o); return *this;}  CGAL_EAT_SEMICOLON
 
 // 
-#define CGAL_GET(type, name, expr) const type & name() const{expr;}
-#define CGAL_GETOBJECT(UC, lc, expr) const UC & lc##_object() const {expr;}
-#define CGAL_GETNR(type, name, expr) const type name() const{expr;}
+#define CGAL_GET(type, name, expr) const type & name() const{expr;} CGAL_EAT_SEMICOLON
+#define CGAL_GETOBJECT(UC, lc, expr) const UC & lc##_object() const {expr;} CGAL_EAT_SEMICOLON
+#define CGAL_GETNR(type, name, expr) const type name() const{expr;} CGAL_EAT_SEMICOLON
 //#define CGAL_GET(type, name, expr) typename boost::call_traits<type>::param_type name() const {expr;}
 
-#define CGAL_IS(name, expr) bool is_##name() const {expr;}
-#define CGAL_SET_IS(name, expr) void set_is_##name(bool tf) {expr;}
+#define CGAL_IS(name, expr) bool is_##name() const {expr;} CGAL_EAT_SEMICOLON
+#define CGAL_SET_IS(name, expr) void set_is_##name(bool tf) {expr;} CGAL_EAT_SEMICOLON
 
-#define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;}
+#define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_FIELDRW(type, name, var)		\
   const type &name() const {return var;}	\
-  void set_##name(const type &k) {var=k;}
+  void set_##name(const type &k) {var=k;} CGAL_EAT_SEMICOLON
 
 
 #define CGAL_OUTPUT(type)						\
@@ -66,28 +73,44 @@
 #define CGAL_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)		\
   typedef it_type uc_name##_iterator;					\
   uc_name##_iterator lc_name##s_begin() {bexpr;}			\
-  uc_name##_iterator lc_name##s_end() {eexpr;}
+  uc_name##_iterator lc_name##s_end() {eexpr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_CONST_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)	\
   typedef it_type uc_name##_const_iterator;				\
   uc_name##_const_iterator lc_name##s_begin() const {bexpr;}		\
-  uc_name##_const_iterator lc_name##s_end() const {eexpr;}
+  uc_name##_const_iterator lc_name##s_end() const {eexpr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_FIND(ucname, expr)					\
   ucname##_const_iterator find(ucname##_key k) const {expr;}	\
-  ucname##_iterator find(ucname##_key k) {expr;}
+  ucname##_iterator find(ucname##_key k) {expr;} CGAL_EAT_SEMICOLON
+
+
+#define CGAL_CONST_FIND(ucname, expr)					\
+  ucname##_const_iterator find(ucname##_key k) const {expr;}	CGAL_EAT_SEMICOLON
 
 #define CGAL_INSERT(ucname, expr)					\
-  ucname##_iterator insert(ucname##_key k, const ucname &m) {expr;}
+  ucname##_iterator insert(ucname##_key k, const ucname &m) {expr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_INSERTNK(ucname, expr)			\
-  ucname##_iterator insert(const ucname &m) {expr;}
+  ucname##_iterator insert(const ucname &m) {expr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_SIZE(lcname, expr)			\
-  size_t number_of_##lcname() const {expr;}
+  size_t number_of_##lcname() const {expr;} CGAL_EAT_SEMICOLON
 
 #define CGAL_SWAP(type)				\
   inline void swap(type &a, type &b) {		\
+    a.swap_with(b);				\
+  }
+
+#define CGAL_SWAP1(type)			\
+  template <class A>				\
+ inline void swap(type<A> &a, type<A> &b) {	\
+    a.swap_with(b);				\
+  }
+
+#define CGAL_SWAP2(type)			\
+template <class A, class B>			\
+ inline void swap(type<A,B> &a, type<A,B> &b) {	\
     a.swap_with(b);				\
   }
 
@@ -96,7 +119,7 @@
 
 
 #define CGAL_IFNONEQUAL(a,b,cmp) if (a cmp b) return true;	\
-  else if (b cmp a) return false;
+  else if (b cmp a) return false
 
 #define CGAL_COMPARISONS bool operator==(const This &o) const {		\
     return compare(o) == CGAL::EQUAL;					\
@@ -115,7 +138,27 @@
   }									\
   bool operator<=(const This &o) const {				\
     return compare(o) != CGAL::LARGER;					\
-  }
+  } CGAL_EAT_SEMICOLON
+
+#define CGAL_COMPARISONS_COMPARE bool operator==(const This &o) const { \
+    return compare(o)==0;						\
+  }									\
+  bool operator!=(const This &o) const {				\
+    return compare(o)!=0;						\
+  }									\
+  bool operator<(const This &o) const {					\
+    return compare(o) < 0;						\
+  }									\
+  bool operator>(const This &o) const {					\
+    return compare(o) > 0;						\
+  }									\
+  bool operator>=(const This &o) const {				\
+    return compare(o) >=0;						\
+  }									\
+  bool operator<=(const This &o) const {				\
+    return compare(o) <= 0;							\
+  } CGAL_EAT_SEMICOLON
+
 
 #define CGAL_COMPARISONS1(field) bool operator==(const This &o) const { \
     return (field== o.field);						\
@@ -134,7 +177,7 @@
   }									\
   bool operator<=(const This &o) const {				\
     return (field<= o.field);						\
-  }
+  } CGAL_EAT_SEMICOLON
 
 
 
@@ -159,7 +202,7 @@
   }									\
   bool operator<=(const This &o) const {				\
     return !operator>(o);						\
-  }
+  } CGAL_EAT_SEMICOLON
 
 #define CGAL_COMPARISONS3(a, b, c)					\
   bool operator==(const This &o) const {				\
@@ -187,7 +230,7 @@
   }									\
   bool operator<=(const This &o) const {				\
     return !operator>(o);						\
-  }
+  } CGAL_EAT_SEMICOLON
 
 #define CGAL_REAL_EMBEDDABLE_BODY					\
   class Abs								\
@@ -281,6 +324,19 @@
   };									\
   CGAL_END_NAMESPACE							
 
+
+#define CGAL_REAL_EMBEDDABLE2(name)					\
+  CGAL_BEGIN_NAMESPACE							\
+  template <class T, class A>						\
+  class Real_embeddable_traits< name<T, A> >				\
+    : public Real_embeddable_traits_base< name<T, A> > {		\
+  public:								\
+    typedef name<T, A>  Type;						\
+    CGAL_REAL_EMBEDDABLE_BODY;						\
+  };									\
+  CGAL_END_NAMESPACE							
+
+
 #define CGAL_HAS_INFINITY1(name)					\
   namespace std								\
   {									\
@@ -310,7 +366,7 @@
 #define CGAL_HAS_INFINITY2(name)					\
   namespace std								\
   {									\
-    template <class Tr, Ur>						\
+    template <class Tr, class Ur>					\
       class numeric_limits<name<Tr, Ur> >				\
     {									\
     public:								\

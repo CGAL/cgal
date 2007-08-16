@@ -520,6 +520,10 @@ public:
     }
   }
 
+  Event_key current_event() const {
+    return cur_event_;
+  }
+
 protected:
 
   template <class Root>
@@ -602,9 +606,10 @@ protected:
     //if (CGAL::compare(next_event_time(),cur_time_) == CGAL::LARGER) {
     cur_time_= next_event_time();
       
-  
+    cur_event_= queue_.front();
     queue_.process_front();
     ++number_of_events_;
+    cur_event_= Event_key();
       
     CGAL_LOG(Log::LOTS, *this);
 
@@ -637,6 +642,7 @@ protected:
   //  typename Function_kernel::Is_rational ir_;
   //  typename Function_kernel::To_rational tr_;
   bool is_forward_;
+  Event_key cur_event_;
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
   NT audit_time_;
 #endif

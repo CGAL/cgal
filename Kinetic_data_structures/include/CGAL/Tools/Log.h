@@ -111,8 +111,21 @@ private:
 #define CGAL_ERROR(expr) std::cerr << expr << std::endl;
 #define CGAL_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
 #define CGAL_SET_LOG_LEVEL(level) CGAL::Log::set_level(level);
-#define CGAL_assert_equal(a,b) if (a != b) { CGAL_ERROR("" #a " = " << a); CGAL_ERROR("" #b " = " << b); CGAL_assertion(a ==b);}
 
+template <class T>
+inline const T& CGAL_assertion_strip_unsigned(const T&t) {
+  return t;
+}
+inline int CGAL_assertion_strip_unsigned(unsigned int t) {
+  return static_cast<int>(t);
+}
+
+inline int CGAL_assertion_strip_unsigned(size_t t) {
+  return static_cast<int>(t);
+}
+
+#define CGAL_assert_equal(a,b) do {if (a != b) { CGAL_ERROR("" #a " = " << a); CGAL_ERROR("" #b " = " << b); CGAL_assertion(a ==b);} } while (0)
+#define CGAL_check_bounds(a,b,e) do {if (CGAL::CGAL_assertion_strip_unsigned(a) < CGAL::CGAL_assertion_strip_unsigned(b) || CGAL::CGAL_assertion_strip_unsigned(a) >=CGAL::CGAL_assertion_strip_unsigned(e)){ CGAL_ERROR("" #a " = " << a); CGAL_ERROR("[" #b "..." #e ") = [" << b << "..." << e << ")"); CGAL_assertion(0);} } while (0)
 
 #else
 #define CGAL_LOG(l,e)
@@ -121,6 +134,7 @@ private:
 #define CGAL_ERROR_WRITE(e)
 #define CGAL_SET_LOG_LEVEL(l)
 #define CGAL_assert_equal(a,b) 
+#define CGAL_check_bounds(a,b,c)
 #endif
 
 
