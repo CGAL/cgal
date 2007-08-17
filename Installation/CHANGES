@@ -48,16 +48,9 @@ Arrangements
 2D Triangulations
 - Fixed bug in Regular_triangulation_2.
 
+
 Interpolation
 - Fixed bug in Interpolation 3D about the normalization coefficient initialization.
-
-
-Third Party Libraries Shipped with CGAL
-- TAUCS supports now 64 bits platforms.
-- CAUTION: Since version 3.3.1, CGAL is no longer compatible with the official
-           release of TAUCS (currently 2.2). Make sure to use the version
-           modified by the CGAL project and available from the download section
-           of http://www.cgal.org.
 
 
 3D Boolean Operations on Nef Polyhedra
@@ -67,6 +60,13 @@ Third Party Libraries Shipped with CGAL
   at the beginning.
 - Fixed bug in Nef_polyhedron_3 in update of indexes for construction of external structure.
 
+
+Third Party Libraries Shipped with CGAL
+- TAUCS supports now 64 bits platforms.
+- CAUTION: Since version 3.3.1, CGAL is no longer compatible with the official
+           release of TAUCS (currently 2.2). Make sure to use the version
+           modified by the CGAL project and available from the download section
+           of http://www.cgal.org.
 
 ----------------------------- Release 3.3 ----------------------------------
 The following functionality has been added or changed:
