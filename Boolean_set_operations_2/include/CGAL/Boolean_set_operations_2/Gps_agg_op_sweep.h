@@ -145,9 +145,11 @@ public:
                                      NO_BOUNDARY, NO_BOUNDARY);
       // \todo When the boolean set operations are exteneded to support
       //       unbounded curves, we will need here a special treatment.
-      
-      event->set_finite();
 
+      #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
+        event->set_finite();
+      #endif
+      
       if (! first)
       {
         q_iter = this->m_queue->insert_after (q_iter, event);
@@ -192,7 +194,9 @@ public:
           // \todo When the boolean set operations are exteneded to support
           //       unbounded curves, we will need here a special treatment.
           
-	  event->set_finite();
+          #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
+             event->set_finite();
+          #endif
 
           this->m_queue->insert_before (q_iter, event);
           vert_map[vh] = event;
