@@ -16,8 +16,9 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_2_H
 
 #include <CGAL/basic.h>
-
 #include <CGAL/Algebraic_kernel_1.h>
+
+#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_vertical_line_1.h>
@@ -25,6 +26,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
@@ -54,7 +56,7 @@ private:
     typedef typename Internal_curve_2::Coefficient Internal_coefficient;
 
     //! type of internal polynomial
-    typedef typename Internal_curve_2::Poly_d    Internal_polynomial_2;
+    typedef typename Internal_curve_2::Poly_d Internal_polynomial_2;
     
     typedef typename NiX::Polynomial_traits<Internal_polynomial_2>::
         Innermost_coefficient Innermost_coefficient;
@@ -117,7 +119,143 @@ private:
             return Poly_1_to(p.begin(), p.end());
         }
     };
+    
+    //! polynomial canonicalizer: temporarily we use NiX functors since
+    //! \c Poly is NiX-type polynomial
+    template <class Poly> 
+    struct Poly_canonicalizer : public Unary_function< Poly, Poly >
+    {
+        Poly operator()(Poly p) 
+        {
+            typedef NiX::Scalar_factor_traits<Poly> Sf_traits;
+            typedef typename Sf_traits::Scalar Scalar;
+            typename Sf_traits::Scalar_factor scalar_factor;
+            typename Sf_traits::Scalar_div scalar_div;
+            Scalar g = scalar_factor(p);
+            CGAL_assertion(g != Scalar(0));
+            if(g != Scalar(1)) 
+                scalar_div(p,g);
+            if(p.lcoeff().lcoeff() < 0) 
+                scalar_div(p,Scalar(-1));
+            return p;        
+        }
+           
+    };
+    
+    //! \brief a simple bivariate polynomial hasher
+    //!
+    //! picks up at most 12 non-zero low-degree coefficients, sums or
+    //! multiplies them and compute floor_log2_abs out of the result
+    template <class Poly_2> 
+    struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
+    {
+        typedef typename Poly_2::NT Poly_1;
+        typedef typename Poly_1::NT NT;
+        
+        size_t operator()(const Poly_2& p) const
+        {
+            int n_count = 12;  
+            NT res(1), sum;
+            typename Poly_2::const_iterator it_2 = p.begin();
+            while(it_2 != p.end() && n_count > 0) {
+                typename Poly_1::const_iterator it_1 = it_2->begin();
+                sum = NT(0);
+                while(it_1 != it_2->end() && n_count > 0) {
+                    NT tmp = *it_1++;
+                    if(tmp == NT(0))
+                        continue;
+                    sum += tmp;
+                    n_count--;
+                }
+                if(sum != 0)
+                    res *= sum;
+                it_2++;   
+            }
+            return static_cast<size_t>(CGALi::floor_log2_abs<NT>(res));
+        }
+    };
+    
+    //! \brief a simple poly-pair hasher
+    template <class Poly_2> 
+    struct Poly_pair_hasher_2 
+    {
+        typedef std::pair<Poly_2, Poly_2> Poly_pair;
+        typedef Poly_pair argument_type;
+        typedef size_t result_type;
+        
+        size_t operator()(const Poly_pair& p) const
+        {
+            Poly_hasher_2<Poly_2> hasher;
+            return hasher(p.first);
+        }  
+    };
+    
+    //! polynomial pair canonicalizer
+    template <class Poly> 
+    struct Poly_pair_canonicalizer  
+    {
+        typedef std::pair<Poly, Poly> Poly_pair;
+        typedef Poly_pair argument_type;
+        typedef Poly_pair result_type;
+        
+        Poly_pair operator()(const Poly_pair& pair) const
+        {
+            if(pair.first > pair.second) 
+                return std::make_pair(pair.second,pair.first);
+            return pair;
+        }
+    };
+    
+    //! polynomial pair gcd creator
+    template <class Poly> 
+    struct Poly_pair_gcd_creator
+    {
+        typedef std::pair<Poly, Poly> Poly_pair;
+        typedef Poly_pair argument_type;
+        typedef Poly result_type;
+            
+        Poly operator()(const Poly_pair& p) const
+        {
+            return NiX::gcd(p.first,p.second);
+        }
+    };     
+    
+    template <class Poly> 
+    struct Poly_pair_creator 
+    {
+        typedef std::pair<Poly, Poly> Poly_pair;
+        typedef Poly_pair argument_type;
+        typedef Curve_pair_2 result_type;
+        
+        Curve_pair_2 operator()(const Poly_pair& p) const 
+        {
+            return Curve_pair_2(p.first, p.second);
+        }
+    };
 
+    typedef CGAL::Pair_lexicographical_less_than<Internal_polynomial_2,
+        Internal_polynomial_2> Poly_pair_compare;
+    
+    //! type of curve cache
+    typedef CGALi::LRU_hashed_map<Internal_polynomial_2, Curve_2,
+        Poly_canonicalizer<Internal_polynomial_2>,
+        Poly_hasher_2<Internal_polynomial_2> > Curve_cache;
+        
+    typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
+        Poly_pair_2;
+        
+    //! type of curve pair cache 
+    typedef CGALi::LRU_hashed_map<Poly_pair_2, Internal_polynomial_2,
+        Poly_pair_canonicalizer<Internal_polynomial_2>, 
+        Poly_pair_hasher_2<Internal_polynomial_2>, 
+        Poly_pair_creator<Internal_polynomial_2>,
+        Poly_pair_compare> Curve_pair_cache;
+    
+    //! an instance of curve cache
+    mutable Curve_cache _m_curve_cache;
+    
+    //! an instance of curve pair cache
+    mutable Curve_pair_cache _m_curve_pair_cache;
     //!@}
 public:
     //! \name public functors and predicates
@@ -129,27 +267,59 @@ public:
     //! CGAL to NumeriX polynomial type conversion
     typedef Polynomial_converter<Polynomial_2, Internal_polynomial_2>
                 CGAL2NiX_converter;
-
+                
+    //! \brief default constructor
+    Algebraic_curve_kernel_2() //: _m_curve_cache() 
+    {  }
+    
     //! \brief constructs \c Curve_2 object, uses caching if appropriate
     struct Construct_curve_2 :
             public Unary_function< Internal_polynomial_2, Curve_2 >
     {
-        //CC_2(ACK_2& ack)
+        //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
+        ////! no default constructor provided
+        Construct_curve_2(Self *pkernel_2) :
+             _m_pkernel_2(pkernel_2)
+         {  }
+     
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
-            return Curve_2(f);
+            Curve_2 cc = _m_pkernel_2->get_curve_cache()(f);
+              //Self::get_curve_cache()(f);
+            /*std::cout << ";hasher: " << 
+                Poly_hasher_2<Internal_polynomial_2>()(f) << "\n";  */
+             return cc;
         }
         Curve_2 operator()(const Polynomial_2& f) const
         {
             CGAL2NiX_converter cvt;
-            return Curve_2(cvt(f));
+            return _m_pkernel_2->get_curve_cache()(cvt(f));
+            //Self::get_curve_cache()(cvt(f));
         }
+        
+    private:
+        //! \c Algebraic_curve_kernel_2 pointer 
+        Self *_m_pkernel_2; 
     };
-    CGAL_Algebraic_Kernel_pred(Construct_curve_2, construct_curve_2_object);
-
-    /*CC_2 cc_2_object() {
-        return CC_2(*this);
-    }*/
+        
+    Construct_curve_2 construct_curve_2_object() 
+    {
+        return Construct_curve_2(this);
+    }
+    
+    //! access to curve cache
+    Curve_cache& get_curve_cache() const
+    {
+        //static Curve_cache _m_curve_cache;
+        return _m_curve_cache;
+    }
+    
+    //! access to curve pair cache
+    Curve_cache& get_curve_pair_cache() const
+    {
+        //static Curve_cache _m_curve_cache;
+        return _m_curve_pair_cache;
+    }
     
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
@@ -242,7 +412,7 @@ public:
             typename Polynomial_traits_2::Make_square_free make_square_free;
             NiX2CGAL_converter cvt;
             CGAL2NiX_converter cvt_back;
-            
+            // Construct_curve_2_object must be used !!
             return Curve_2(cvt_back(make_square_free(cvt(c.f()))));
         }
         
@@ -262,6 +432,7 @@ public:
             std::vector<Polynomial_2> factors;
             int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
                     mit); 
+            // Construct_curve_2_object must be used !!
             for(int i = 0; i < (int)factors.size(); i++) {
                 *fit++ = Curve_2(cvt_back(factors[i]));
             }
