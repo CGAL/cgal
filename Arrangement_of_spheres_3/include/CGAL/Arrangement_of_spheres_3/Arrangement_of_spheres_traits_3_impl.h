@@ -509,7 +509,144 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_equipower_point_to_rule(
 CGAL_AOS3_TEMPLATE
  CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Sphere_3_key 
 Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::new_sphere_3(const Sphere_3 &s) {
-  table_->new_sphere(s);
+  return table_->new_sphere(s);
 }
+
+
+
+
+CGAL_AOS3_TEMPLATE
+CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Event_pair 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::intersection_3_events(Sphere_3_key a,
+								      Sphere_3_key b, 
+								      Sphere_3_key c) const {
+  CGAL_precondition(a != b && a != c && c!= a);
+  if (!intersects(a,b, c)) {
+    return Event_pair();
+  }
+  Plane_3 eqpab= table_->equipower_plane(a,b);
+  Plane_3 eqpac= table_->equipower_plane(a,c);
+
+  CGAL::Object o= geom_traits_object().intersect_3_object()(eqpab, eqpac);
+  Line_3 l;
+  if (!CGAL::assign(l,o)){
+    // they intersect on the same circle. Ick.
+    CGAL_assertion(0);
+  }
+  Line_3 lf, lb;
+  CGAL_assertion(l.to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()] != 0);
+  if (l.to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()] > 0){
+    lf=l;
+    lb=l.opposite();
+  } else {
+    lf=l.opposite();
+    lb=l;
+  }
+  if (l.to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()] ==0) {
+    std::cerr << "Degeneracy, picking one for start of threesome " 
+	      << a << " " << b << " " << c << std::endl;
+  }
+  
+  Event_pair ret(Sphere_point_3(table_->sphere(a), lf),
+		 Sphere_point_3(table_->sphere(a), lb));
+  CGAL_assertion(compare_depths(ret.first, ret.second) != CGAL::LARGER);
+  return ret;
+}
+
+
+
+CGAL_AOS3_TEMPLATE
+CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Plane_3 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::rule_plane(Sphere_3_key r, Coordinate_index C) const {
+  FT n[3]={0,0,0};
+  n[C.index()]= 1;
+  return Plane_3(table_->center(r), Vector_3(n[0], n[1], n[2]));
+}
+
+
+
+
+CGAL_AOS3_TEMPLATE
+CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Event_pair 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_intersect_extremum_events(Sphere_3_key a, 
+										 Coordinate_index C,
+										 Sphere_3_key b) const {
+  CGAL_precondition(intersects(a,b));
+  Plane_3 eqpab= table_->equipower_plane(a,b);
+  Plane_3 rp= rule_plane(a,C);
+  CGAL::Object o= geom_traits_object().intersect_3_object()(eqpab, rp);
+  Line_3 l;
+  if (!CGAL::assign(l,o)){
+    return Event_pair();
+  } else {
+    Sphere_point_3 sa(table_->sphere(a), l);
+    if (!sa.is_valid()) return Event_pair();
+    Event_point_3 pa(sa);
+    Event_point_3 pb(Sphere_point_3(table_->sphere(a), l.opposite()));
+    if (pb < pa) std::swap(pa, pb);
+    return Event_pair(pa, pb);
+  }
+}
+
+
+
+CGAL_AOS3_TEMPLATE
+CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Event_pair 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::circle_cross_rule_events(Sphere_3_key a, 
+									 Sphere_3_key b,
+									 Sphere_3_key rs,
+									 Coordinate_index C) const {
+  Plane_3 eqp= table_->equipower_plane(a,b);
+  /*FT na[3]={0,0,0};
+    na[C.index()]=1;*/
+  Plane_3 rp = rule_plane(rs, C); //(table_->center(rs), Vector_3(na[0], na[1], na[2]));
+  CGAL::Object o=geom_traits_object().intersect_3_object()(eqp, rp);
+  Line_3 l;
+  if (CGAL::assign(l,o)) {
+    Sphere_point_3 sp(table_->sphere(a), l);
+      //Event_point_3 sp();
+    if (!sp.is_valid()) {
+      return Event_pair();
+    } else {
+      Event_point_3 nep(sp);
+      Event_point_3 spp(Sphere_point_3(table_->sphere(a), l.opposite()));
+      Event_pair ep(std::min(nep, spp), std::max(nep, spp));
+      return ep;
+    }
+  } else {
+    return Event_pair();
+  }
+}
+
+CGAL_AOS3_TEMPLATE
+CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Event_pair 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_intersect_rule_rule_events(Sphere_3_key s, 
+										  Sphere_3_key x,
+										  Sphere_3_key y) const {
+  CGAL_precondition(s != Sphere_3_key());
+  CGAL_precondition(x != Sphere_3_key());
+  CGAL_precondition(y != Sphere_3_key());
+
+  std::cout << "SRR event for " << s << " " << x << " " << y << std::endl;
+
+  Plane_3 x_plane= rule_plane(x, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0));
+  Plane_3 y_plane= rule_plane(y, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1));
+  CGAL::Object o= geom_traits_object().intersect_3_object()(x_plane, y_plane);
+  Line_3 l;
+  if (!CGAL::assign(l,o)){
+    return Event_pair();
+  } else {
+    std::cout << "Line is " << l << std::endl;
+    std::cout << "Sphere is " << table_->sphere(s) << std::endl;
+    Sphere_point_3 sa(table_->sphere(s), l);
+    if (!sa.is_valid()) return Event_pair();
+    Event_point_3 pa(sa);
+    Event_point_3 pb(Sphere_point_3(table_->sphere(s), l.opposite()));
+    if (pb < pa) std::swap(pa, pb);
+    std::cout << "Ret is " << pa << " " << pb << std::endl;
+    return Event_pair(pa, pb);
+  }
+}
+
 
 CGAL_END_NAMESPACE

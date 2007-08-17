@@ -24,7 +24,7 @@ CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 template <class K>
 struct Sphere_line_intersection {
 private:
-  static typename K::Point_3 unproject(typename K::Point_2 p) {
+  /*static typename K::Point_3 unproject(typename K::Point_2 p) {
     return typename K::Point_3(p.x(), p.y(),0);
   }
   static typename K::Vector_3 unproject(typename K::Vector_2 p) {
@@ -32,7 +32,7 @@ private:
   }
   static typename K::Line_3 unproject(typename K::Line_2 p) {
     return typename K::Line_3(unproject(p.point()), unproject(p.to_vector()));
-  }
+    }*/
 public:
   typedef K T;
   typedef typename K::FT NT;

@@ -10,21 +10,21 @@
 typedef CGAL::Simple_cartesian<double> K;
 
 
-double squared_depth(K::Point_3 p, double z){
-  return CGAL::square(p[2]-z);
+double squared_depth(K::Point_3 p, double x){
+  return CGAL::square(p[0]-x);
 }
 
-bool has_overlap(const K::Sphere_3 &s,  double z) {
-  double dz2= squared_depth(s.center(), z);
-  if (dz2 <= s.squared_radius()) return true;
+bool has_overlap(const K::Sphere_3 &s,  double x) {
+  double dx2= squared_depth(s.center(), x);
+  if (dx2 <= s.squared_radius()) return true;
   else return false;
 }
 
-K::Circle_2 intersect(K::Sphere_3 s, double z){
-  double r2= s.squared_radius() - squared_depth(s.center(), z);
+K::Circle_2 intersect(K::Sphere_3 s, double x){
+  double r2= s.squared_radius() - squared_depth(s.center(), x);
   CGAL_assertion(r2>=0);
-  K::Circle_2  c(K::Point_2(s.center()[0],
-			    s.center()[1]), r2);
+  K::Circle_2  c(K::Point_2(s.center()[1],
+			    s.center()[2]), r2);
   return c;
 }
 
@@ -38,6 +38,7 @@ struct Show_circles {
     for (unsigned int i=0; i< spheres_.size(); ++i) {
       if (has_overlap(spheres_[i], z_)) {
 	*qtv << intersect(spheres_[i], z_);
+	std::cout << intersect(spheres_[i], z_) << std::endl;
       }
     }
 

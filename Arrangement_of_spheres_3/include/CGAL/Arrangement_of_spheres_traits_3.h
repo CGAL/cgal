@@ -14,12 +14,12 @@
 #include <CGAL/Arrangement_of_spheres_traits_3/Sphere_key.h>
 #include <CGAL/Arrangement_of_spheres_traits_3/template_types.h>*/
 
-/*#include <CGAL/Arrangement_of_spheres_traits_3/Function_kernel.h>
-#include <CGAL/Kinetic/IO/Qt_widget_2.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Kinetic/Default_simulator.h>*/
+#include <CGAL/Kinetic/Default_simulator.h>
+#include <CGAL/Arrangement_of_spheres_3/Function_kernel.h>
 
 /*#include <CGAL/Arrangement_of_spheres_3/coordinates.h>
+  #include <CGAL/Kinetic/IO/Qt_widget_2.h>
   #include <CGAL/Tools/Coordinate_index.h>*/
 
 CGAL_BEGIN_NAMESPACE
@@ -51,12 +51,15 @@ struct Arrangement_of_spheres_traits_3 {
   typedef CGAL_AOS3_TYPENAME Geom_traits::Circle_2 Circle_2;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Segment_2 Segment_2;
 
-  typedef Label<int> Event_key;
-
+  
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_line_intersection<This> Sphere_point_3;
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Event_point_3<This> Event_point_3;
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_3_table CGAL_AOS3_TARG Table;
   typedef CGAL_AOS3_TYPENAME Table::Key Sphere_3_key;
+  typedef CGAL_AOS3_INTERNAL_NS::Function_kernel<This> Function_kernel;
+  typedef CGAL::Kinetic::Default_simulator<Function_kernel> Simulator;
+  typedef CGAL_AOS3_TYPENAME Simulator::Event_key Event_key;
+  
 
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Coordinate_index Coordinate_index;
 
@@ -73,6 +76,8 @@ struct Arrangement_of_spheres_traits_3 {
     //di_= table_->geometric_traits_object().intersect_3_object();
     std::cout << *table_ << std::endl;
   }
+
+  Arrangement_of_spheres_traits_3(){}
   
   CGAL_GET(Bbox_3, bbox_3, return table_->bbox_3());
   CGAL_SET(Sphere_3, temp_sphere, table_->set_temp_sphere(k));
@@ -80,6 +85,11 @@ struct Arrangement_of_spheres_traits_3 {
   CGAL_CONST_ITERATOR(Sphere_3, sphere_3, CGAL_AOS3_TYPENAME Table::Sphere_3_const_iterator,
 		      return table_->sphere_3s_begin(),
 		      return table_->sphere_3s_end());
+
+  CGAL_CONST_ITERATOR(Sphere_3_key, sphere_3_key, CGAL_AOS3_TYPENAME Table::Sphere_key_const_iterator, 
+		      return table_->sphere_keys_begin(),
+		      return table_->sphere_keys_end());
+
 
   //CGAL_CONST_FIND(Sphere_3, return table_->find(k));
   Sphere_3 sphere_3(Sphere_3_key k) const {
@@ -90,11 +100,22 @@ struct Arrangement_of_spheres_traits_3 {
 
   //CGAL_INSERTNK(Sphere_3, return table_->insert(s));
   CGAL_SIZE(sphere_3s, return table_->number_of_sphere_3s());
+
+  Point_3 min_corner() const {
+    return Point_3(table_->bbox_3().xmin(),
+		   table_->bbox_3().ymin(),
+		   table_->bbox_3().zmin());
+  }
+  Point_3 max_corner() const {
+    return Point_3(table_->bbox_3().xmax(),
+		   table_->bbox_3().ymax(),
+		   table_->bbox_3().zmax());
+  }
  
   /*
     Helpers -----------------------------------------------------------------
   */
-  //Plane_3 rule_plane(Sphere_3_key a, Coordinate_index C) const;
+  Plane_3 rule_plane(Sphere_3_key a, Coordinate_index C) const;
   
 
   /* 
@@ -106,13 +127,14 @@ struct Arrangement_of_spheres_traits_3 {
   Event_pair sphere_events(Sphere_3_key s) const;
   
   Event_pair intersection_2_events(Sphere_3_key a, Sphere_3_key b) const;
-  /*
+  
   Event_pair intersection_3_events(Sphere_3_key a, Sphere_3_key b, Sphere_3_key c) const;
-
+  
   Event_pair sphere_intersect_extremum_events(Sphere_3_key a,  Coordinate_index C,
 					      Sphere_3_key b) const;
-
+  /*
   Event_pair sphere_intersect_rule_events(Sphere_3_key a, Sphere_3_key r, Coordinate_index C) const;
+  */
 
   Event_pair circle_cross_rule_events(Sphere_3_key a, Sphere_3_key b,
 				      Sphere_3_key rs, Coordinate_index C) const;
@@ -120,7 +142,7 @@ struct Arrangement_of_spheres_traits_3 {
   Event_pair sphere_intersect_rule_rule_events(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
 
   // not really used
-  Quadratic_NT intersection_c(Sphere_3_key s, Line_3 l, Coordinate_index C) const;*/
+  /*Quadratic_NT intersection_c(Sphere_3_key s, Line_3 l, Coordinate_index C) const;*/
 
 
   /* 

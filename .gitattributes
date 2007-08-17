@@ -475,6 +475,7 @@ Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Cross_section_ini
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_markup.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Event_point_3.h -text
+Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Event_visitor_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Filtered_sphere_line_intersection.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Irrational_cross_section.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Irrational_cross_section_impl.h -text

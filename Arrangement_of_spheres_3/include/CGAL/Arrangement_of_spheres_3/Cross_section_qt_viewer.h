@@ -14,14 +14,15 @@ class Cross_section_qt_viewer {
   typedef CGAL::Simple_cartesian<double> K;
 public:
   typedef CGAL_AOS3_TYPENAME Traits::FT NT;
-  Cross_section_qt_viewer(Traits tr,  const CS &cs): tr_(tr),
-										cs_(cs),
-										rcs_(cs, tr_){}
+  Cross_section_qt_viewer(Traits tr,  const CS &cs, CGAL::Layer l): tr_(tr),
+								    cs_(cs),
+								    rcs_(cs, tr_),
+								    l_(l){}
 
   void operator()(NT z, Qt_examiner_viewer_2 *qtv) {
     rcs_.set_z(z);
     //t_.set_temp_sphere(T::Sphere_3(T::Point_3(0,0,z), 0));
-    
+    *qtv << l_;
     *qtv << CGAL::RED;
     qtv->set_updating_box(true);
     //T::Intersect_with_sweep is=t_.sphere_intersects_rule(z);
@@ -48,7 +49,7 @@ public:
       if (hit->curve().key().is_target()) continue;
       if (hit->curve().is_rule() && hit->curve().is_inside()){
 	qtv->set_updating_box(false);
-	std::cout << "Displaying rule " << hit->curve() << std::endl;
+	//std::cout << "Displaying rule " << hit->curve() << std::endl;
 	CGAL_AOS3_TYPENAME K::Point_2 t= display_point(hit->vertex()->point());
 	CGAL_AOS3_TYPENAME K::Point_2 s= display_point(hit->opposite()->vertex()->point());
    
@@ -56,7 +57,7 @@ public:
 	*qtv << CGAL_AOS3_TYPENAME K::Segment_2(t,s);
       } else if (hit->curve().is_arc() && hit->curve().is_inside()){
 	qtv->set_updating_box(true);
-	std::cout << "Displaying arc " << hit->curve() << std::endl;
+	//std::cout << "Displaying arc " << hit->curve() << std::endl;
 	CGAL_AOS3_TYPENAME K::Point_2 t= display_point(hit->vertex()->point());
 	CGAL_AOS3_TYPENAME K::Point_2 s= display_point(hit->opposite()->vertex()->point());
 	//DT::Circle_2 c= ;
@@ -167,6 +168,7 @@ private:
   Traits tr_;
   const CS &cs_;
   RCS rcs_;
+  CGAL::Layer l_;
 };
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE

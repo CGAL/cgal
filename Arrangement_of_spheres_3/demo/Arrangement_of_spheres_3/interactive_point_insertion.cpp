@@ -6,6 +6,7 @@
 #include <CGAL/IO/Qt_multithreaded_examiner_viewer_2.h>
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer.h>
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_markup.h>
+#include <CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_events.h>
 #include <CGAL/Arrangement_of_spheres_3/read_spheres.h>
 #include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section.h>
 #include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_insertion.h>
@@ -40,14 +41,21 @@ struct Do_work {
     typedef typename A::Cross_section CS;
     CS cs;
     
-    arr.initialize_at(z_,cs);
+    arr.initialize_at(typename A::Traits::FT(z_),cs);
 
     typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer CGAL_AOS3_TARG CSV;
-    CSV csv(tr, cs);
+    CSV csv(tr, cs, CGAL::Layer(0));
+
+
+    typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer_events CGAL_AOS3_TARG CSVE;
+    CSVE csve(tr, cs, CGAL::Layer(4), CGAL::ORANGE);
 
   
-    *q << CGAL::Layer(0);
+
+
+    //*q << CGAL::Layer(0);
     csv(z_, q);
+    csve(z_, q);
     
     q->show_everything();
     //q->redraw();
@@ -117,6 +125,8 @@ struct Do_work {
       }
       mcsv(z_, q);
       csv(z_, q);
+      csve(z_, q);
+      std::cout << *cs.visitor().simulator() << std::endl;
     }
   }
   

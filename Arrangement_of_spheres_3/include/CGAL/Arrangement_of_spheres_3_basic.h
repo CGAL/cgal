@@ -27,6 +27,7 @@
 #define CGAL_AOS3_TRAITS public: typedef Arrangement_of_spheres_traits_3 Traits; private: friend class Semicolon_eater
  
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
+//
 struct Arrangement_of_spheres_3_geom_traits: Cartesian<CGAL::Gmpq>{};
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 

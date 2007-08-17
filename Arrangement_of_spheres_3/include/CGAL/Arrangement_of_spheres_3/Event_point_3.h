@@ -2,6 +2,7 @@
 #define CGAL_ARRANGEMENT_OF_SPHERES_EP_H
 #include <CGAL/Arrangement_of_spheres_3/Sphere_line_intersection.h>
 #include <CGAL/Kinetic/basic.h>
+#include <CGAL/Tools/utility_macros.h>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE 
 
@@ -20,37 +21,28 @@ public:
     //std::cout << P::line() << std::endl;
   }
 
-  bool operator==(const This &o) const {
-    return P::compare(o, sweep_coordinate()) == CGAL::EQUAL;
+  CGAL::Comparison_result compare(const This &o) const {
+    return P::compare(o, sweep_coordinate());
   }
-  bool operator!=(const This &o) const {
-    return P::compare(o, sweep_coordinate()) != CGAL::EQUAL;
-  }
-  bool operator<=(const This &o) const {
-    return P::compare(o, sweep_coordinate()) != CGAL::LARGER;
-  }
-  bool operator>=(const This &o) const {
-    return P::compare(o, sweep_coordinate()) != CGAL::SMALLER;
-  }
-  bool operator<(const This &o) const {
-    return P::compare(o, sweep_coordinate()) == CGAL::SMALLER;
-  }
-  bool operator>(const This &o) const {
-    return P::compare(o, sweep_coordinate()) == CGAL::LARGER;
-  }
+  
+  using P::compare;
 
+  CGAL_COMPARISONS;
+  
+ 
   This operator-() const {
     return This(this->flip_on_sweep());
   }
 
 
-  std::pair<double, double> interval_value() const {
+  std::pair<double, double> approximating_interval(double=0) const {
     return P::interval_coordinate(sweep_coordinate());
   }
 
-  double double_value() const {
+  double approximation(double =0) const {
     return P::approximate_coordinate(sweep_coordinate());
   }
+  
 };
 
 /*template <class Tr>
@@ -66,5 +58,6 @@ double to_double(const ::Event_point_3<Tr> &a) {
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 CGAL_REAL_EMBEDDABLE1(CGAL_AOS3_INTERNAL_NS::Event_point_3);
+//CGAL_COMPARABLE1(CGAL_AOS3_INTERNAL_NS::Event_point_3);
 
 #endif

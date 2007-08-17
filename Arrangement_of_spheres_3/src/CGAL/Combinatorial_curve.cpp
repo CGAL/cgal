@@ -151,7 +151,7 @@ inline const char *Combinatorial_curve::to_string(int pt){
       return "Bi_inf";*/
   default:
     std::cerr << "Oops, I forgot: " << pt <<std::endl; 
-    CGAL_assertion(0);
+    //CGAL_assertion(0);
     return "Missing";
   }
 }

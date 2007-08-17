@@ -6,11 +6,9 @@
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/HalfedgeDS_face_base.h>
-#include <CGAL/Arrangement_of_spheres_3/Rule_direction.h>
-
-#include <CGAL/Arrangement_of_spheres_3/Combinatorial_vertex.h>
-#include <CGAL/Arrangement_of_spheres_3/Combinatorial_curve.h>
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
+#include <CGAL/Arrangement_of_spheres_3/Event_visitor.h>
+#include <CGAL/Arrangement_of_spheres_3/Cross_section_halfedgeDS_items_2.h>
 #include <boost/utility.hpp>
 #include <map>
 #include <set>
@@ -26,7 +24,8 @@ CGAL_AOS3_TEMPLATE
 class Combinatorial_cross_section: public boost::noncopyable {
 public:
   CGAL_AOS3_TRAITS;
-
+  typedef Combinatorial_cross_section CGAL_AOS3_TARG This;
+public:
   friend class Cross_section_initializer CGAL_AOS3_TARG;
 
   /*
@@ -42,55 +41,20 @@ public:
       return &*a < &*b;
     }
   };
-public:
+
+  
+
   typedef Combinatorial_vertex Point;
   typedef Combinatorial_curve Curve;
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Rule_direction Rule_direction;
  
   typedef CGAL_AOS3_TYPENAME Traits::Event_key Event_key;
 
-  struct Slice_halfedgeDS_items_2 {
-    template < class Refs, class Traits>
-    struct Vertex_wrapper {
-     
-      struct Vertex: public CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_true, Point>{
-      };
-    };
-    template < class Refs, class Traits>
-    struct Halfedge_wrapper {
-      struct Halfedge: public CGAL::HalfedgeDS_halfedge_base< Refs> {
-	Halfedge(){}
-	Curve curve() const {
-	  return pt_;
-	}
-	Curve& curve() {
-	  return pt_;
-	}
-	void set_curve(Curve pt) {
-	  pt_=pt;
-	}
-	Event_key event() const {
-	  return ev_;
-	}
-	void set_event(Event_key ev) {
-	  ev_=ev;
-	}
-
-	Event_key ev_;
-	Curve pt_;
-      };
-    };
-    template < class Refs, class Traits>
-    struct Face_wrapper {
-      // maybe want pointers to chains, maybe not
-      typedef CGAL::HalfedgeDS_face_base< Refs> Face;
-    };
-  };
   
 
     
 
-  typedef CGAL::HalfedgeDS_default<int, Slice_halfedgeDS_items_2> HDS;
+  typedef CGAL::HalfedgeDS_default<int, Cross_section_halfedgeDS_items_2 CGAL_AOS3_TARG > HDS;
 
   typedef CGAL_AOS3_TYPENAME HDS::Halfedge_handle Halfedge_handle;
   typedef CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle Halfedge_const_handle;
@@ -98,6 +62,10 @@ public:
   typedef CGAL_AOS3_TYPENAME HDS::Vertex_const_handle Vertex_const_handle;
   typedef CGAL_AOS3_TYPENAME HDS::Face_handle Face_handle;
   typedef CGAL_AOS3_TYPENAME HDS::Face_const_handle Face_const_handle;
+
+  typedef Event_visitor CGAL_AOS3_TARG Visitor;
+
+
 
   Combinatorial_cross_section();
 
@@ -112,6 +80,14 @@ public:
   };
 
 
+  Visitor& visitor() {
+    return v_;
+  }
+
+
+  const Visitor& visitor()const {
+    return v_;
+  }
 
   CGAL_CONST_ITERATOR(Halfedge, halfedge, CGAL_AOS3_TYPENAME HDS::Halfedge_const_iterator,
 		      return hds_.halfedges_begin(),
@@ -167,7 +143,7 @@ public:
   // the first is the target of h, second the source
   std::pair<Halfedge_handle, Halfedge_handle> remove_edge(Halfedge_handle h);
 
-  void set_curve(Halfedge_handle h, Curve c);
+  void init_halfedge(Halfedge_handle h, Curve c);
    
   /*void set_event(Halfedge_handle h, Event_key k) const {
     CGAL_assertion(k != Event_key());
@@ -175,26 +151,26 @@ public:
     CGAL_assertion(h->event() == Event_key());
     h->set_event(k);
     h->opposite()->set_event(k);
-  }
+    }
 
-  void unset_event(Halfedge_handle h) const {
+    void unset_event(Halfedge_handle h) const {
     CGAL_assertion(h->event()== h->opposite()->event());
     h->set_event(Event_key());
     h->opposite()->set_event(Event_key());
     }*/
 
-  Face_handle merge_faces(Halfedge_handle e);
+  Face_handle join_face(Halfedge_handle e, bool cleanup);
 
-  Face_handle merge_faces(Vertex_handle v);
+  //Face_handle join_face(Vertex_handle v);
   
   Halfedge_handle split_face(Curve c, Halfedge_handle source,
 			     Halfedge_handle target);
   
   /*void insert_target(Curve::Key k,
-		     Halfedge_handle cps[]);
+    Halfedge_handle cps[]);
 
-  Face_handle remove_target(Halfedge_handle ts[],
-  Halfedge_handle vert[]);*/
+    Face_handle remove_target(Halfedge_handle ts[],
+    Halfedge_handle vert[]);*/
   /*// move old_edge to have the vertices be in new_source and new_target
     // return the new edge
     Halfedge_handle move_edge(Halfedge_handle old_edge,
@@ -213,7 +189,7 @@ public:
   //! stitch the the HDS together by attaching the vertices pointed to by ib:ie to those in fb,fe
   /*!
     New edges are stuck in edges
-   */
+  */
   template <class It, class Cit>
   void stitch_in(It ib, It ie, It fb, Cit cb) {
     CGAL_precondition(num_components_ > 1);
@@ -252,12 +228,22 @@ public:
     connect(hn->opposite(), (*ib)->next());
     connect(*ib, hn);
 
+    v_.on_new_edge(hn);
+    v_.on_change_edge(hn->next());
+    v_.on_change_edge(hn->prev());
+    v_.on_change_edge(hn->opposite()->next());
+    v_.on_change_edge(hn->opposite()->prev());
+
     ++ib; ++fb; ++cb;
     CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
     for (; ib != ie; ++ib, ++fb, ++cb) {
-      Halfedge_handle h= hdsd.split_face(*ib, *fb);
-      h->set_curve(*cb);
-      h->opposite()->set_curve(cb->other_side());
+      split_face(*cb, *ib, *fb);
+      //Halfedge_handle h= hdsd.split_face(*ib, *fb);
+      //h->set_curve(*cb);
+      //h->opposite()->set_curve(cb->other_side());
+      
+   
+      
       // *edges=h;
       //++edges;
     }
@@ -276,12 +262,28 @@ public:
     ++c; ++c;
     CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
     for (; c!= e; ++c) {
+      v_.on_delete_edge(*c);
+      v_.on_merge_faces(*c);
+      Halfedge_handle n= (*c)->next();
+      //Halfedge_handle p= (*c)->prev();
       hdsd.join_face(*c);
+      v_.on_change_edge(n);
+      v_.on_change_edge(n->prev());
+      //v_.on_changed_edge(p);
+      //v_.on_changed_edge(p->next());
     }
     c=b;
     Halfedge_handle h1= *c;
     ++c;
     Halfedge_handle h2= *c;
+
+    Halfedge_handle h1n= h1->next();
+    Halfedge_handle h2n= h2->next();
+    if (h1n == h2->opposite()) h1n= Halfedge_handle();
+    if (h2n == h1->opposite()) h2n= Halfedge_handle();
+
+    v_.on_delete_edge(h1);
+    v_.on_delete_edge(h2);
 
     Halfedge_handle inside, outside;
     Face_handle f= h1->face();
@@ -327,79 +329,35 @@ public:
     hds_.faces_erase(of);
     delete_edge(h1);
     delete_edge(h2);
+    
+    if (h1n != Halfedge_handle()) {
+      v_.on_change_edge(h1n);
+      v_.on_change_edge(h1n->prev());
+    }
+    if (h2n != Halfedge_handle()) {
+      v_.on_change_edge(h2n);
+      v_.on_change_edge(h2n->prev());
+    }
 
     write(std::cout);
     /* std::cout << "Auditing const decorator..." << std::flush;
-    CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
-    if (!chds.is_valid(true, num_components_==1? 3: 2)) {
-      CGAL_assertion(0);
-      std::cerr << "Not valid." << std::endl;
-    }
-    std::cout << "done." << std::endl;*/
+       CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
+       if (!chds.is_valid(true, num_components_==1? 3: 2)) {
+       CGAL_assertion(0);
+       std::cerr << "Not valid." << std::endl;
+       }
+       std::cout << "done." << std::endl;*/
 
     return f;
   }
 
-  void delete_component(Vertex_handle vh) {
-    std::cout << "Deleting component from ";
-    write(vh, std::cout) << std::endl;
-    --num_components_;
-    std::vector<Vertex_handle> stack;
-    std::set<Vertex_handle, Handle_compare> vertices;
-    std::set<Halfedge_handle, Handle_compare> edges;
-    std::set<Face_handle, Handle_compare> faces;
-    stack.push_back(vh);
-    vertices.insert(vh);
-    do {
-      Vertex_handle vhc= stack.back();
-      stack.pop_back();
-      if (vhc->halfedge() != Halfedge_handle()) {
-	Halfedge_handle h= vhc->halfedge()->opposite();
-	do {
-	  if (edges.find(h) == edges.end()
-	      && edges.find(h->opposite()) == edges.end() ) {
-	    edges.insert(h);
-	  }
-	  if (vertices.find(h->vertex()) == vertices.end()) {
-	    vertices.insert(h->vertex());
-	    stack.push_back(h->vertex());
-	  }
-	  if (faces.find(h->face()) == faces.end() && h->face() != inf_) {
-	    faces.insert(h->face());
-	  }
-	  h=h->opposite()->next();
-	} while (h != vhc->halfedge()->opposite());
-      }
-    } while (!stack.empty());
-    // hds_.vertices_erase(_1)
-    std::cout << "Deleting: \n";
-    BOOST_FOREACH(Vertex_handle v, vertices) {
-      write(v, std::cout) << std::endl;
-       hds_.vertices_erase(v);
-    } 
-    BOOST_FOREACH(Halfedge_handle h, edges){
-     write(h, std::cout) << std::endl;
-      hds_.edges_erase(h);
-    }
-    BOOST_FOREACH(Face_handle f, faces){
-     write(f, std::cout) << std::endl;
-      hds_.faces_erase(f);
-    }
-    write(std::cout);
-    std::cout << "Auditing const decorator..." << std::flush;
-    CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
-    if (!chds.is_valid(true, num_components_==1? 3: 2)) {
-      CGAL_assertion(0);
-      std::cerr << "Not valid." << std::endl;
-    }
-    std::cout << "done." << std::endl;
-    
-  }
+  Face_handle intersect_arcs(Halfedge_handle ha, Halfedge_handle hb);
+  Face_handle unintersect_arcs(Halfedge_handle ha, Halfedge_handle hb);
 
-  void delete_circle(Vertex_handle v) {
-    halfedges_[v->point().key().input_index()]=Halfedge_handle();
-    delete_component(v);
-  }
+
+  void delete_component(Vertex_handle vh) ;
+
+  void delete_circle(Vertex_handle v) ;
 
   void audit(bool extra_vertices=false) const ;	 
 
@@ -413,21 +371,17 @@ public:
 
   bool has_boundary() const;
 
-  Halfedge_handle remove_vertex(Halfedge_handle v);
+  Halfedge_handle remove_vertex(Vertex_handle v);
+
+  //Halfedge_handle remove_vertex(Vertex_handle v, Curve c);
+
+  void move_target(Halfedge_handle h, Vertex_handle nt, bool cleanup);
 
   void exchange_sphere_extremums(Curve::Key k, Curve::Key l);
 
-  Halfedge_handle halfedge(Vertex_handle v, Face_handle f) const {
-    Halfedge_handle h= v->halfedge();
-    do {
-      if (h->face() == f) return h;
-      h= h->next()->opposite();
-    } while(h != v->halfedge());
-    CGAL_assertion(0);
-    return Halfedge_handle();
-  }
+  Halfedge_handle halfedge(Vertex_handle v, Face_handle f) const ;
 
-  Halfedge_handle next_edge_on_curve(Halfedge_handle) const;
+  Halfedge_handle next_edge_on_arc(Halfedge_handle) const;
   Halfedge_handle next_edge_on_rule(Halfedge_handle) const;
 
   // an outward facing edge
@@ -443,20 +397,20 @@ public:
   //Halfedge_handle extremum_halfedge(Curve::Key k, Rule_direction i) const;
   
   // insert the vertex so that h->opposite points to it
-  Halfedge_handle insert_vertex( Point p, Halfedge_handle h);
+  //Halfedge_handle insert_vertex( Point p, Halfedge_handle h);
 
 
-  std::pair<Halfedge_handle,Halfedge_handle> 
+  /*std::pair<Halfedge_handle,Halfedge_handle> 
   intersect(Halfedge_handle ha, Halfedge_handle hb);
 
-  std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
+  std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);*/
 
  
   
   //friend class Cross_section_initializer CGAL_AOS3_TARG;
  
 
-  void relabel_rule(Halfedge_handle h, Curve nl);
+  //void relabel_rule(Halfedge_handle h, Curve nl);
 
  
 
@@ -464,9 +418,9 @@ public:
 
   /*const Halfedge_handle halfedges(CGAL_AOS3_TYPENAME Curve::Key k) const {
     return halfedges_[k.input_index()];
-  }
+    }
 
-   Halfedge_quad& halfedges(CGAL_AOS3_TYPENAME Curve::Key k)  {
+    Halfedge_quad& halfedges(CGAL_AOS3_TYPENAME Curve::Key k)  {
     return halfedges_[k.input_index()];
     }*/
   void set_number_of_spheres(unsigned int i) {
@@ -476,7 +430,18 @@ public:
 
   void new_circle(CGAL_AOS3_TYPENAME Curve::Key k, Halfedge_handle c[]);
 
+  Vertex_handle new_vertex(Point p);
+  
+
+  // insert the vertex so that h->opposite points to it
+  Halfedge_handle insert_vertex(Vertex_handle  vh, Halfedge_handle h);
+
+
 private:
+
+  void swap_curves(Halfedge_handle ha, Halfedge_handle hb);
+  
+
   void connect(Halfedge_handle a, Halfedge_handle b);
 
   /*typedef boost::tuple<Halfedge_handle, Halfedge_handle,
@@ -521,27 +486,22 @@ private:
   
 
 
-  // insert the vertex so that h->opposite points to it
-  Halfedge_handle insert_vertex_in_edge_unsafe(Halfedge_handle h,
-					       Vertex_handle  vh);
-
   // insert a vertex for p in both edges
   // merge the two vertices
-  std::pair<Halfedge_handle, Halfedge_handle> pinch_bl(Halfedge_handle a,
+  /*std::pair<Halfedge_handle, Halfedge_handle> pinch_bl(Halfedge_handle a,
 						       Halfedge_handle b, Point p);
 
   // a and b go to the same vertex. Make them go to different vertices
   // return the new vertex on b
   Vertex_handle unpinch_bl(Halfedge_handle a, Halfedge_handle b);
 
-  void merge_vertices_bl(Halfedge_handle a, Halfedge_handle b);
+  void merge_vertices_bl(Halfedge_handle a, Halfedge_handle b);*/
 
   Halfedge_handle new_halfedge(Curve c);
 
   //typedef std::pair<Point,Point>  ED;
 
-  Vertex_handle new_vertex(Point p);
-
+  
  
 
  
@@ -551,6 +511,7 @@ private:
   //std::vector<Vertex_handle> targets_;
   std::vector<Halfedge_handle> halfedges_;
   int num_components_;
+  Visitor v_;
 
   // for new_face when constructing things
   //std::map<Edge, Halfedge_handle> unmatched_hedges_;
