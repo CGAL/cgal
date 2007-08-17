@@ -23,7 +23,8 @@
 #ifndef CGAL_AUTO_LINK_LAPACK_H
 #define CGAL_AUTO_LINK_LAPACK_H
 
-#ifndef CGAL_NO_AUTOLINK_LAPACK
+// Skip the whole file (e.g. do not define CGAL_USE_F2C) if auto-link is off
+#if !defined(CGAL_NO_AUTOLINK_LAPACK) && !defined(CGAL_NO_AUTOLINK)
 
 
 #if defined(_WIN32) && !defined(_WIN64) // if Windows 32 bits
@@ -97,7 +98,7 @@
 #endif // _WIN64
 
 
-#endif // CGAL_NO_AUTOLINK_LAPACK
+#endif // CGAL_NO_AUTOLINK_LAPACK && CGAL_NO_AUTOLINK
 
 #endif // CGAL_AUTO_LINK_LAPACK_H
 
