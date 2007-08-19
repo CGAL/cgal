@@ -107,8 +107,8 @@ protected:
   typedef typename DFace::Outer_ccb_iterator        DOuter_ccb_iter;
   typedef typename DFace::Outer_ccb_const_iterator  DOuter_ccb_const_iter;
 
-  typedef typename DFace::Outer_ccb_iterator        DInner_ccb_iter;
-  typedef typename DFace::Outer_ccb_const_iterator  DInner_ccb_const_iter;
+  typedef typename DFace::Inner_ccb_iterator        DInner_ccb_iter;
+  typedef typename DFace::Inner_ccb_const_iterator  DInner_ccb_const_iter;
 
   typedef typename DFace::Isolated_vertex_iterator
                                                     DIso_vertex_iter;

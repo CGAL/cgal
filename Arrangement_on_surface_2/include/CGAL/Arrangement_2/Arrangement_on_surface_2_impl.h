@@ -2961,27 +2961,29 @@ _relocate_inner_ccbs_in_new_face (DHalfedge *new_he)
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace        *new_face = (new_he->is_on_inner_ccb()) ?
-                                             new_he->inner_ccb()->face() :
-                                             new_he->outer_ccb()->face();
+    new_he->inner_ccb()->face() :
+    new_he->outer_ccb()->face();
   DHalfedge    *opp_he = new_he->opposite();
-  DFace        *old_face = (opp_he->is_on_inner_ccb()) ?
-                                             opp_he->inner_ccb()->face() :
-                                             opp_he->outer_ccb()->face();
-
+  const bool    opp_on_inner_ccb = opp_he->is_on_inner_ccb();
+  DFace        *old_face = opp_on_inner_ccb ? opp_he->inner_ccb()->face() :
+    opp_he->outer_ccb()->face();
+  
   CGAL_assertion (new_face != old_face);
-
+  
   // Examine the inner CCBs inside the existing old face and move the relevant
   // ones into the new face.
   DInner_ccb_iter    ic_it = old_face->inner_ccbs_begin();
   DInner_ccb_iter    ic_to_move;
-
+  
   while (ic_it != old_face->inner_ccbs_end())
-  {  
+  {
     // In case the new edge represents the current component in the old face
     // (note we take the opposite halfedge, as it is incident to the old face),
     // then the new face already forms a hole in the old face, and we do not
     // need to move it.
-    if (*ic_it == opp_he)
+    CGAL_assertion ((*ic_it)->is_on_inner_ccb());
+    
+    if (opp_on_inner_ccb && (*ic_it)->inner_ccb() == opp_he->inner_ccb())
     {
       ++ic_it;
       continue;
@@ -2997,7 +2999,7 @@ _relocate_inner_ccbs_in_new_face (DHalfedge *new_he)
       // operation invalidates the iterator.
       ic_to_move = ic_it;
       ++ic_it;
-
+      
       // Move the hole.
       _move_inner_ccb (old_face, new_face, *ic_to_move);
     }
@@ -3006,7 +3008,7 @@ _relocate_inner_ccbs_in_new_face (DHalfedge *new_he)
       ++ic_it;
     }
   }
-
+  
   return;
 }
 
