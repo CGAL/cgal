@@ -149,19 +149,19 @@ private:
            
     };
     
+    // to remove a confusion with Curve_pair_2
+    typedef std::pair<Curve_2, Curve_2> Pair_of_curves_2;
+    
     //! polynomial pair canonicalizer
-    template <class Poly> 
-    struct Poly_pair_canonicalizer  
-    {
-        typedef std::pair<Poly, Poly> Poly_pair;
-        typedef Poly_pair argument_type;
-        typedef Poly_pair result_type;
+    struct Curve_pair_canonicalizer  : 
+        public Unary_function< Pair_of_curves_2, Pair_of_curves_2 >  {
         
-        Poly_pair operator()(const Poly_pair& pair) const
+        Pair_of_curves_2 operator()(const Pair_of_curves_2& p) const
         {
-            if(pair.first > pair.second) 
-                return std::make_pair(pair.second,pair.first);
-            return pair;
+            typename Curve_2::Less_than less_than;
+            if(less_than(p.second, p.first)) 
+                return std::make_pair(p.second,p.first);
+            return p;
         }
     };
     
@@ -175,40 +175,32 @@ private:
             
         Poly operator()(const Poly_pair& p) const
         {
-            return NiX::gcd(p.first,p.second);
+            return NiX::gcd(p.first, p.second);
         }
     };     
     
-    template <class Poly> 
-    struct Poly_pair_creator 
-    {
-        typedef std::pair<Poly, Poly> Poly_pair;
-        typedef Poly_pair argument_type;
-        typedef Curve_pair_2 result_type;
-        
-        Curve_pair_2 operator()(const Poly_pair& p) const 
+    struct Curve_pair_creator :
+         public Unary_function< Pair_of_curves_2, Curve_pair_2 >  {
+           
+        Curve_pair_2 operator()(const Pair_of_curves_2& p) const 
         {
             return Curve_pair_2(p.first, p.second);
         }
     };
 
-    typedef CGAL::Pair_lexicographical_less_than<Internal_polynomial_2,
-        Internal_polynomial_2> Poly_pair_compare;
+    //typedef CGAL::Pair_lexicographical_less_than<Internal_polynomial_2,
+      //  Internal_polynomial_2> Poly_pair_compare;
     
     //! type of curve cache
     typedef CGALi::LRU_hashed_map<Internal_polynomial_2, Curve_2,
         Poly_canonicalizer<Internal_polynomial_2>,
         CGALi::Poly_hasher_2<Internal_polynomial_2> > Curve_cache;
         
-    typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
-        Poly_pair_2;
-        
     //! type of curve pair cache 
-    typedef CGALi::LRU_hashed_map<Poly_pair_2, Internal_polynomial_2,
-        Poly_pair_canonicalizer<Internal_polynomial_2>, 
-        CGALi::Poly_pair_hasher_2<Internal_polynomial_2>, 
-        Poly_pair_creator<Internal_polynomial_2>,
-        Poly_pair_compare> Curve_pair_cache;
+    typedef CGALi::LRU_hashed_map<Pair_of_curves_2, Curve_pair_2,
+        Curve_pair_canonicalizer, 
+        CGALi::Curve_pair_hasher_2<Curve_2>, 
+        Curve_pair_creator > Curve_pair_cache;
     
     //! an instance of curve cache
     mutable Curve_cache _m_curve_cache;
@@ -244,10 +236,7 @@ public:
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
             Curve_2 cc = _m_pkernel_2->get_curve_cache()(f);
-              //Self::get_curve_cache()(f);
-            /*std::cout << ";hasher: " << 
-                Poly_hasher_2<Internal_polynomial_2>()(f) << "\n";  */
-             return cc;
+            return cc;
         }
         Curve_2 operator()(const Polynomial_2_CGAL& f) const
         {
@@ -274,7 +263,7 @@ public:
     }
     
     //! access to curve pair cache
-    Curve_cache& get_curve_pair_cache() const
+    Curve_pair_cache& get_curve_pair_cache() const
     {
         //static Curve_cache _m_curve_cache;
         return _m_curve_pair_cache;
@@ -309,7 +298,7 @@ public:
         
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                          const Xy_coordinate_2& xy2) const {
-            
+            return CGAL::EQUAL;
         }
     };
     CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
