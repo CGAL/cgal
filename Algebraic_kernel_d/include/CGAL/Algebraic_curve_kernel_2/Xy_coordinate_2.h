@@ -19,10 +19,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
 template < class AlgebraicCurveKernel_2, class Rep_ > 
 class Xy_coordinate_2;
 
-namespace CGALi {
+template < class AlgebraicCurveKernel_2, class Rep > 
+std::ostream& operator<< (std::ostream&, 
+    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>&);
 
 template < class AlgebraicCurveKernel_2 >
 class Xy_coordinate_2_rep {
@@ -346,7 +350,7 @@ public:
      */
     void simplify_by(const Curve_pair_analysis_2& pair) const 
     { 
-        typedef typename Algebraic_curve_kernel_2::Polynomial_2 Poly_2;
+        typedef typename Algebraic_curve_kernel_2::Polynomial_2_CGAL Poly_2;
         typename Algebraic_curve_kernel_2::NiX2CGAL_converter cvt;
         typedef typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree
             Total_degree;
@@ -396,9 +400,27 @@ public:
             pair.get_curve_analysis(cid).get_polynomial_2();
         this->ptr()->_m_arcno = (cid == 0 ? p.first : p.second);
     }
+    
+    //! befriending output iterator
+    friend std::ostream& operator << <>(std::ostream& os, const Self& pt);
 
     //!@}
 }; // class Xy_coordinate_2
+
+template < class AlgebraicCurveKernel_2, class Rep > 
+std::ostream& operator<< (std::ostream& os, 
+    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>& pt) 
+{
+    if(::CGAL::get_mode(os) == ::CGAL::IO::PRETTY) {
+        os << "[x-coord: " << pt.x() << "; curve: " << pt.curve().f() << 
+            ";arcno: " << pt.arcno() << "]\n";
+    } else { // ASCII output
+        os << pt.x() << std::endl;
+        os << pt.curve() << std::endl;
+        os << pt.arcno() << std::endl;
+    }
+    return os;    
+}
 
 } // namespace CGALi
 

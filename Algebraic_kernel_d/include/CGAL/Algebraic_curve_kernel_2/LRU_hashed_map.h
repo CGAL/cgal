@@ -17,6 +17,8 @@
 
 #include <CGAL/basic.h>
 
+#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
+
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/hashed_index.hpp>
@@ -203,6 +205,59 @@ public:
    
     //!@}
 }; // class LRU_hashed_map
+
+//! \brief a simple bivariate polynomial hasher
+//!
+//! picks up at most 12 non-zero low-degree coefficients, sums and
+//! multiplies them and compute floor_log2_abs out of the result
+template <class Poly_2> 
+struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
+{
+    typedef typename Poly_2::NT Poly_1;
+    typedef typename Poly_1::NT NT;
+    
+    size_t operator()(const Poly_2& p) const
+    {
+        int n_count = 12;  
+        NT res(1), sum;
+        typename Poly_2::const_iterator it_2 = p.begin();
+        while(it_2 != p.end() && n_count > 0) {
+            typename Poly_1::const_iterator it_1 = it_2->begin();
+            sum = NT(0);
+            while(it_1 != it_2->end() && n_count > 0) {
+                NT tmp = *it_1++;
+                if(tmp == NT(0))
+                    continue;
+                sum += tmp;
+                n_count--;
+            }
+            if(sum != 0)
+                res *= sum;
+            it_2++;   
+        }
+        /*typename Algebraic_structure_traits<NT>::Mod mod;
+        NT x = mod(res, 32); */
+        // this is only way to truncate the result back to built-in NT
+        return static_cast<size_t>(CGALi::floor_log2_abs<NT>(res));
+    }
+};
+    
+//! \brief a simple bivariate polynomial pair cacher
+//!
+//! computes hashes of the two polynomials and combines them
+template <class Poly_2> 
+struct Poly_pair_hasher_2 
+{
+    typedef std::pair<Poly_2, Poly_2> Poly_pair;
+    typedef Poly_pair argument_type;
+    typedef size_t result_type;
+        
+    size_t operator()(const Poly_pair& p) const
+    {
+        Poly_hasher_2<Poly_2> hasher;
+        return (hasher(p.first) ^ hasher(p.second));
+    }  
+};
 
 } // namespace CGALi
 
