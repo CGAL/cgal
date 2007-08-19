@@ -18,8 +18,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
-#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
-
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
@@ -38,7 +36,13 @@ class Algebraic_curve_kernel_2 {
 // functor
 #define CGAL_Algebraic_Kernel_pred(Y,Z) \
     Y Z() const { return Y(); }
-
+    
+// makes Y alias of functor X, Z is a member function returnining an insance
+// of this object
+#define CGAL_Algerbaic_Kernel_alias(X, Y, Z) \
+    typedef X Y; \
+    Y Z() const { return Y(); }
+    
 private:
     //! \name wrapping types
     //!@{
@@ -85,12 +89,14 @@ public:
     //! type of x-coordinate
     typedef Internal_x_coordinate X_coordinate_1;
         
-    //! new CGAL univariate polynomial type
-    typedef ::CGAL::Polynomial<Innermost_coefficient> Polynomial_1;
+    //! new CGAL univariate polynomial type (_CGAL postfix is temporary to
+    //! avoid type clashes with \c Polynomial_2 type defined later
+    typedef ::CGAL::Polynomial<Innermost_coefficient> Polynomial_1_CGAL;
     //! new CGAL bivariate polynomial type
-    typedef ::CGAL::Polynomial<Polynomial_1> Polynomial_2;
+    typedef ::CGAL::Polynomial<Polynomial_1_CGAL> Polynomial_2_CGAL;
     //! bivariate polynomial traits
-    typedef ::CGAL::Polynomial_traits_d< Polynomial_2 > Polynomial_traits_2;
+    typedef ::CGAL::Polynomial_traits_d< Polynomial_2_CGAL >
+        Polynomial_traits_2;
     
     //!@}
 private:
@@ -125,6 +131,7 @@ private:
     template <class Poly> 
     struct Poly_canonicalizer : public Unary_function< Poly, Poly >
     {
+    // use Polynomial_traits_d<>::Canonicalize ?
         Poly operator()(Poly p) 
         {
             typedef NiX::Scalar_factor_traits<Poly> Sf_traits;
@@ -140,54 +147,6 @@ private:
             return p;        
         }
            
-    };
-    
-    //! \brief a simple bivariate polynomial hasher
-    //!
-    //! picks up at most 12 non-zero low-degree coefficients, sums or
-    //! multiplies them and compute floor_log2_abs out of the result
-    template <class Poly_2> 
-    struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
-    {
-        typedef typename Poly_2::NT Poly_1;
-        typedef typename Poly_1::NT NT;
-        
-        size_t operator()(const Poly_2& p) const
-        {
-            int n_count = 12;  
-            NT res(1), sum;
-            typename Poly_2::const_iterator it_2 = p.begin();
-            while(it_2 != p.end() && n_count > 0) {
-                typename Poly_1::const_iterator it_1 = it_2->begin();
-                sum = NT(0);
-                while(it_1 != it_2->end() && n_count > 0) {
-                    NT tmp = *it_1++;
-                    if(tmp == NT(0))
-                        continue;
-                    sum += tmp;
-                    n_count--;
-                }
-                if(sum != 0)
-                    res *= sum;
-                it_2++;   
-            }
-            return static_cast<size_t>(CGALi::floor_log2_abs<NT>(res));
-        }
-    };
-    
-    //! \brief a simple poly-pair hasher
-    template <class Poly_2> 
-    struct Poly_pair_hasher_2 
-    {
-        typedef std::pair<Poly_2, Poly_2> Poly_pair;
-        typedef Poly_pair argument_type;
-        typedef size_t result_type;
-        
-        size_t operator()(const Poly_pair& p) const
-        {
-            Poly_hasher_2<Poly_2> hasher;
-            return hasher(p.first);
-        }  
     };
     
     //! polynomial pair canonicalizer
@@ -239,7 +198,7 @@ private:
     //! type of curve cache
     typedef CGALi::LRU_hashed_map<Internal_polynomial_2, Curve_2,
         Poly_canonicalizer<Internal_polynomial_2>,
-        Poly_hasher_2<Internal_polynomial_2> > Curve_cache;
+        CGALi::Poly_hasher_2<Internal_polynomial_2> > Curve_cache;
         
     typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
         Poly_pair_2;
@@ -247,7 +206,7 @@ private:
     //! type of curve pair cache 
     typedef CGALi::LRU_hashed_map<Poly_pair_2, Internal_polynomial_2,
         Poly_pair_canonicalizer<Internal_polynomial_2>, 
-        Poly_pair_hasher_2<Internal_polynomial_2>, 
+        CGALi::Poly_pair_hasher_2<Internal_polynomial_2>, 
         Poly_pair_creator<Internal_polynomial_2>,
         Poly_pair_compare> Curve_pair_cache;
     
@@ -262,10 +221,10 @@ public:
     //!@{
        
     //! NumeriX to CGAL polynomial type conversion
-    typedef Polynomial_converter<Internal_polynomial_2, Polynomial_2>
+    typedef Polynomial_converter<Internal_polynomial_2, Polynomial_2_CGAL>
                 NiX2CGAL_converter;
     //! CGAL to NumeriX polynomial type conversion
-    typedef Polynomial_converter<Polynomial_2, Internal_polynomial_2>
+    typedef Polynomial_converter<Polynomial_2_CGAL, Internal_polynomial_2>
                 CGAL2NiX_converter;
                 
     //! \brief default constructor
@@ -279,9 +238,9 @@ public:
         //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
         ////! no default constructor provided
         Construct_curve_2(Self *pkernel_2) :
-             _m_pkernel_2(pkernel_2)
-         {  }
-     
+             _m_pkernel_2(pkernel_2) {  
+            CGAL_precondition(NULL != _m_pkernel_2);
+        }
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
             Curve_2 cc = _m_pkernel_2->get_curve_cache()(f);
@@ -290,7 +249,7 @@ public:
                 Poly_hasher_2<Internal_polynomial_2>()(f) << "\n";  */
              return cc;
         }
-        Curve_2 operator()(const Polynomial_2& f) const
+        Curve_2 operator()(const Polynomial_2_CGAL& f) const
         {
             CGAL2NiX_converter cvt;
             return _m_pkernel_2->get_curve_cache()(cvt(f));
@@ -298,7 +257,7 @@ public:
         }
         
     private:
-        //! \c Algebraic_curve_kernel_2 pointer 
+        //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
         Self *_m_pkernel_2; 
     };
         
@@ -324,16 +283,16 @@ public:
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
     
-    //! comparison of x-coordinates 
+    //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
          public Binary_function<X_coordinate_1, X_coordinate_1, 
-                Comparison_result >
-    {
+                Comparison_result > {
+
         Comparison_result operator()(const X_coordinate_1& x1, 
                                          const X_coordinate_1& x2) const {
-        // not yet implemented in Algebraic_kernel_1
-//             Algebraic_kernel_1::C ak;
-//             return (ak.compare_x_2_object()(x1, x2));
+        // not yet implemented in Algebraic_kernel_1 (will it be ?)
+        //   Algebraic_kernel_1 ak;
+        //   return (ak.compare_x_2_object()(x1, x2));
             return x1.compare(x2);
         }
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -343,9 +302,15 @@ public:
     };
     CGAL_Algebraic_Kernel_pred(Compare_x_2, compare_x_2_object);
 
-    //! comparison of y-coordinates
-    struct Compare_y_2 {
-        // later!
+    //! \brief comparison of y-coordinates of two points
+    struct Compare_y_2 :
+        public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
+                Comparison_result > {
+        
+        Comparison_result operator()(const Xy_coordinate_2& xy1, 
+                                         const Xy_coordinate_2& xy2) const {
+            
+        }
     };
     CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
     
@@ -372,7 +337,7 @@ public:
         bool operator()(const Curve_2& c) const {
             typename Polynomial_traits_2::Is_square_free is_square_free;
             NiX2CGAL_converter cvt;
-            Polynomial_2 res = cvt(c.f());
+            Polynomial_2_CGAL res = cvt(c.f());
             return is_square_free(res);
         }
     };
@@ -394,7 +359,7 @@ public:
             typename Polynomial_traits_2::Gcd_up_to_constant_factor gcd_utcf;
             typename Polynomial_traits_2::Total_degree total_degree;
             NiX2CGAL_converter cvt;
-            Polynomial_2 p1 = cvt(c1.f()), p2 = cvt(c2.f());
+            Polynomial_2_CGAL p1 = cvt(c1.f()), p2 = cvt(c2.f());
             return (total_degree(gcd_utcf(p1, p2)) == 0);  
         }
     };
@@ -403,7 +368,13 @@ public:
     
     //! a set of verious curve and curve pair decomposition functions
     struct Decompose_2 {
-        
+    
+        //! constructs an instance from ACK_2 pointer (required for caching)
+        Decompose_2(Self *pkernel_2) : 
+            _m_pkernel_2(pkernel_2) {  
+            CGAL_precondition(NULL != _m_pkernel_2);
+        }
+
         //! \brief returns a curve without self-overlapping parts 
         //!
         //! in case of algebraic curves computes square-free part of supporting
@@ -411,9 +382,9 @@ public:
         Curve_2 operator()(const Curve_2& c) {
             typename Polynomial_traits_2::Make_square_free make_square_free;
             NiX2CGAL_converter cvt;
-            CGAL2NiX_converter cvt_back;
-            // Construct_curve_2_object must be used !!
-            return Curve_2(cvt_back(make_square_free(cvt(c.f()))));
+             // Construct_curve_2_object must be used !!
+            return _m_pkernel_2->construct_curve_2_object()
+                (make_square_free(cvt(c.f())));
         }
         
         //! \brief computes a square-free factorization of a curve \c c, 
@@ -429,12 +400,13 @@ public:
                 Square_free_factorization_up_to_constant_factor factorize;
             NiX2CGAL_converter cvt;
             CGAL2NiX_converter cvt_back;
-            std::vector<Polynomial_2> factors;
+            std::vector<Polynomial_2_CGAL> factors;
             int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
                     mit); 
             // Construct_curve_2_object must be used !!
+            Construct_curve_2 cc_2(_m_pkernel_2->construct_curve_2_object());
             for(int i = 0; i < (int)factors.size(); i++) {
-                *fit++ = Curve_2(cvt_back(factors[i]));
+                *fit++ = cc_2(factors[i]);
             }
             return n_factors;
         }
@@ -464,17 +436,24 @@ public:
             }
             return false;
         }
+    private:
+        //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
+        Self *_m_pkernel_2; 
     };
-    CGAL_Algebraic_Kernel_pred(Decompose_2, decompose_2_object);
+        
+    Decompose_2 decompose_2_object() 
+    {
+        return Decompose_2(this);
+    }
     
     //!@}
 public:
     //! \name types and functors for \c Curved_kernel_2<Algebraic_kernel_2>
     //!@{
     
-    typedef Curve_2 Polynomial_2;
+    typedef Curve_2 Polynomial_2; 
     
-    typedef Construct_curve_2 Construct_polynomial_2;
+    typedef Construct_curve_2 Construct_polynomial_2_;
 
     typedef X_coordinate_1 Algebraic_real_1;
     typedef Xy_coordinate_2 Algebraic_real_2;
@@ -486,31 +465,122 @@ public:
     typedef Decompose_2 Square_free_factorization;
     typedef Decompose_2 Make_coprime_2;
     
-    struct Derivative_x_2 {
-        // later
+    //! \brief computes the derivative w.r.t. the first (innermost) variable
+    struct Derivative_x_2 : 
+        public Unary_function< Polynomial_2_CGAL, Polynomial_2_CGAL > {
+        
+        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) const
+        {
+            typename Polynomial_traits_2::Derivative derivate;
+            return derivate(p, 0);
+        }
     };
+    CGAL_Algebraic_Kernel_pred(Derivative_x_2, derivative_x_2_object);
 
-    struct Derivative_y_2 {
-        // later
+    //! \brief computes the derivative w.r.t. the first (outermost) variable
+    struct Derivative_y_2 :
+        public Unary_function< Polynomial_2_CGAL, Polynomial_2_CGAL > {
+        
+        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) const
+        {
+            typename Polynomial_traits_2::Derivative derivate;
+            return derivate(p, 1);
+        }
     };
+    CGAL_Algebraic_Kernel_pred(Derivative_y_2, derivative_y_2_object);
 
-    struct X_critical_points_2 {
-        // later
+    struct X_critical_points_2 : 
+        public Binary_function< Polynomial_2, 
+            std::iterator<output_iterator_tag, Xy_coordinate_2>,
+            std::iterator<output_iterator_tag, Xy_coordinate_2> > {
+       
+        //! \brief copies in the output iterator the x-critical points of
+        //! polynomial \c p as objects of type \c Xy_coordinate_2
+        template <class OutputIterator>
+        OutputIterator operator()(const Polynomial_2& p, 
+            OutputIterator res) const
+        {
+            typename Self::Curve_analysis_2::Curve_vertical_line_1 cv_line;
+            std::pair<int, int> int_pair;
+            // p is of type Curve_2 here
+            typename Self::Curve_analysis_2 ca_2(p); 
+            int i, n_events = ca_2.number_of_vertical_lines_with_event();
+            for(i = 0; i < n_events; i++) {
+                cv_line = ca_2.vertical_line_at_event(i);
+                int j, n_arcs = cv_line.number_of_events();
+                for(j = 0; j < n_arcs; j++) {
+                    int_pair = cv_line.get_number_of_incident_branches(j);
+                    // count only points with the number of incident branches
+                    // different from 1
+                    if(int_pair.first != 1||int_pair.second != 1) 
+                        *res++ = cv_line.get_algebraic_real_2(j);   
+                }
+            }
+            return res;
+        }
+        
+        //! \brief computes the ith x-critical point of polynomial \c p
+        Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
+        {
+            // not clear how to enumerate x-critical points ?..
+        }
     };
+    CGAL_Algebraic_Kernel_pred(X_critical_points_2,
+        x_critical_points_2_object);
+    
+    struct Y_critical_points_2 :
+        public Binary_function< Polynomial_2, 
+            std::iterator<output_iterator_tag, Xy_coordinate_2>,
+            std::iterator<output_iterator_tag, Xy_coordinate_2> > {
+    
+        //! \brief copies in the output iterator the y-critical points of
+        //! polynomial \c p as objects of type \c Xy_coordinate_2
+        //! 
+        //! attention: x and y coordinates in the result are interchanged
+        template <class OutputIterator>
+        OutputIterator operator()(const Polynomial_2& p, 
+            OutputIterator res) const
+        {
+            NiX2CGAL_converter cvt;
+            CGAL2NiX_converter cvt_back;
+            Polynomial_2_CGAL tmp = cvt(p.f());
+            typename Polynomial_traits_2::Swap swap;
+            
+            tmp = swap(tmp, 0, 1); // interchange x and y variables
+            Polynomial_2 swapped(cvt_back(tmp));
+            return X_critical_points_2()(swapped, res);
+        }
+        
+        //! \brief computes the ith y-critical point of polynomial \c p
+        Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
+        {
+            
+        }
+    };
+    CGAL_Algebraic_Kernel_pred(Y_critical_points_2,
+        y_critical_points_2_object);
 
-    struct Y_critical_points_2 {
-        // later
-     };
-
-    struct Sign_at_2 {
+    // attention: here Polynomial_2 is Curve_2 type !!
+    struct Sign_at_2 : 
+        public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
+        
+        Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
+        {
+            return CGAL::Sign();
+        }
         // can be implemented using Curve_pair_analysis -> later
     };
+    CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
     struct Solve_2 {
         // can be implemented using Curve_pair_analysis -> later
     };
-
-    // TYPES AND FUNCTORS for Curved_kernel_2< both >
+    CGAL_Algebraic_Kernel_pred(Solve_2, solve_2_object);
+    
+    //!@}
+public:
+    //! \name types and functors for \c Curved_kernel_2< both >
+    //!@{
     
     //! type of 1-curve analysis
     typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
