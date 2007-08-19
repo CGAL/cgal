@@ -242,20 +242,20 @@ struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
     }
 };
     
-//! \brief a simple bivariate polynomial pair cacher
+//! \brief a simple curve pair hasher
 //!
-//! computes hashes of the two polynomials and combines them
-template <class Poly_2> 
-struct Poly_pair_hasher_2 
+//! computes hashes of two curves and then combines them
+template <class Curve_2> 
+struct Curve_pair_hasher_2 
 {
-    typedef std::pair<Poly_2, Poly_2> Poly_pair;
-    typedef Poly_pair argument_type;
+    typedef std::pair<Curve_2, Curve_2> Pair_of_curves_2;
+    typedef Pair_of_curves_2 argument_type;
     typedef size_t result_type;
         
-    size_t operator()(const Poly_pair& p) const
+    size_t operator()(const Pair_of_curves_2& p) const
     {
-        Poly_hasher_2<Poly_2> hasher;
-        return (hasher(p.first) ^ hasher(p.second));
+        Poly_hasher_2<typename Curve_2::Poly_d> hasher;
+        return (hasher(p.first.f()) ^ hasher(p.second.f()));
     }  
 };
 
