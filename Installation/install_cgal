@@ -1205,6 +1205,7 @@ create_standard_header_replacements()
     #
     # A global test for all std header files at once, to speed up the rest
     # if a compiler is compliant.
+    # Note : <ciso646> is excluded as it is useless and not provided by PGCC 7.
     ${_cat} <<EOF6 >${TMP_CXX_FILE}.cpp
 #include <algorithm>
 #include <ostream>
@@ -1239,7 +1240,6 @@ create_standard_header_replacements()
 #include <cmath>
 #include <clocale>
 #include <climits>
-#include <ciso646>
 #include <cfloat>
 #include <cerrno>
 #include <cctype>
