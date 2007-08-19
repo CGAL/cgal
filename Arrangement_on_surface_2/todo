@@ -1,9 +1,18 @@
-- Incoorporate:
-    BasicSweepLineVisitor_2.tex
-    Sweep_line_2.tex
-    SweepLineVisitor_2.tex
-    Basic_sweep_line_2.tex
-   Into the documentation
+- Documentation
+  - Ron suggests to keep the "2D Arrangements" (which is long enough as it
+    is, but maybe it should be renamed to "2D Planar Arrangements"), and have
+    another chapter on "2D Arrangements on General Surfaces".
+    This chapter can be much shorter, as all you can do with arrangements was
+    explained and demonstrated in the "2D Arrangements" chapter. We should
+    however intorduce the concept of TopologyTraits, and re-interpret the
+    functionality of the GeometryTraits.
+
+  - Incoorporate:
+      BasicSweepLineVisitor_2.tex
+      Sweep_line_2.tex
+      SweepLineVisitor_2.tex
+      Basic_sweep_line_2.tex
+     Into the documentation
 
 - Fix vertical decomposition (there are references to ficticious vertices).
 
@@ -58,3 +67,15 @@
     get_y()
 
 - Add CGAL_ to all defines to protect against collision 
+
+- Add the do_intersect and zone functions.
+
+- Change the interface of all insert_* to be insert.
+
+- Change the interface of Envelope_2 (and Envelope_3):
+  to lower_envelope_2 and upper_envelope_2 (lower_envelope_3 and
+  upper_envelope_3) and remove lower_envelope_x_monotone_2 and
+  upper_envelope_x_monotone_2 (lower_envelope_xy_monotone_3 and
+  upper_envelope_xy_monotone_3).
+  We can use the value-type of the input iterator to determine which
+  operation to perform (just like we do now in insert() ).
