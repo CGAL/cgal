@@ -167,7 +167,7 @@ int main(int argc, char * argv[])
 
   // get intersection points (with endpoints)
   PointList points_with_ends_list_out;
-  CGAL::get_intersection_points(curves.begin(),
+  CGAL::compute_intersection_points(curves.begin(),
                                 curves.end(), 
 			                          std::back_inserter(points_with_ends_list_out),
                                 true);
@@ -175,7 +175,7 @@ int main(int argc, char * argv[])
 
   // get intersection points w/o end points
   PointList points_without_ends_list_out;
-  CGAL::get_intersection_points(curves.begin(),
+  CGAL::compute_intersection_points(curves.begin(),
                                 curves.end(), 
 			                          std::back_inserter(points_without_ends_list_out),
                                 false);
