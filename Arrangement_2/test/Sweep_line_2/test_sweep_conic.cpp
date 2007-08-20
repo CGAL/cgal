@@ -212,7 +212,7 @@ int main (int argc, char** argv)
   
   
   PointList point_list_with_ends;
-  CGAL::get_intersection_points(curves.begin(), curves.end(), 
+  CGAL::compute_intersection_points(curves.begin(), curves.end(), 
                               std::back_inserter(point_list_with_ends), true);
   int point_count_with_ends_calculated = point_list_with_ends.size();
   
