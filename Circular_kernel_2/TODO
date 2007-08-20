@@ -1,3 +1,5 @@
+heriter result_type des foncteurs du Kernel (Bool_type \neq bool...)
+
 fix manual for operator>>
 
 manual filtered bbox kernel, ref counting
