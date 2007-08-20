@@ -37,7 +37,7 @@
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_widget_Conic_arc_2.h>
 #include <CGAL/IO/Qt_widget_Linear_object_2.h>
-#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_overlay_2/Arr_overlay_traits.h>
 
 #include <qpainter.h>
@@ -377,7 +377,7 @@ void draw_face(CGAL::Qt_widget* w, typename Arr::Face_const_iterator f)
     }
   }
 
-  typename Arr::Hole_const_iterator hit;
+  typename Arr::Inner_ccb_const_iterator hit;
   for (hit = f->holes_begin(); hit != f->holes_end(); ++hit) {
     pgns.clear();
     construct_polygon(w, *hit, std::back_inserter(pgns), is_unb, true);
