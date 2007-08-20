@@ -108,6 +108,15 @@ namespace std {
     return result;
   }
 
+  template <class InputIterator, class Predicate>
+  inline typename iterator_traits<InputIterator>::difference_type
+  count_if (InputIterator first, InputIterator last, Predicate pred)
+  {
+    typename iterator_traits<InputIterator>::difference_type result;
+    count_if(first,last,pred,result);
+    return result;
+  }
+
   template < class T >
   inline typename T::value_type*
   __value_type (const T&)
