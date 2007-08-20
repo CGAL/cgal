@@ -125,8 +125,8 @@ public:
                                       Ccb_halfedge_circulator;
   typedef typename Base_arr_2::Ccb_halfedge_const_circulator
                                       Ccb_halfedge_const_circulator;
-  typedef typename Base_arr_2::Hole_iterator          Hole_iterator;
-  typedef typename Base_arr_2::Hole_const_iterator    Hole_const_iterator;
+  typedef typename Base_arr_2::Inner_ccb_iterator          Hole_iterator;
+  typedef typename Base_arr_2::Inner_ccb_const_iterator    Hole_const_iterator;
   typedef typename Base_arr_2::Isolated_vertex_iterator
                                       Isolated_vertex_iterator;
   typedef typename Base_arr_2::Isolated_vertex_const_iterator

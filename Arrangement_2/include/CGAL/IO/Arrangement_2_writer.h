@@ -62,7 +62,7 @@ protected:
   typedef typename Arrangement_2::Face_const_handle   
                                                       Face_const_handle;
  
-  typedef typename Arrangement_2::Hole_const_iterator
+  typedef typename Arrangement_2::Inner_ccb_const_iterator
                                              Hole_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                              Ccb_halfedge_const_circulator;

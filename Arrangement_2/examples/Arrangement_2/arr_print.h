@@ -73,7 +73,7 @@ void print_face (typename Arrangement::Face_const_handle f)
   }
 
   // Print the boundary of each of the holes.
-  typename Arrangement::Hole_const_iterator  hole;
+  typename Arrangement::Inner_ccb_const_iterator  hole;
   int                                         index = 1;
 
   for (hole = f->holes_begin(); hole != f->holes_end(); ++hole, ++index)

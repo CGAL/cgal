@@ -107,7 +107,7 @@ public:
 
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Hole_const_iterator  Hole_const_iterator;
+  typedef typename Arrangement_2::Inner_ccb_const_iterator  Hole_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator  
                                        Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
