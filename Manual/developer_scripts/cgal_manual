@@ -286,8 +286,7 @@ rm -f $cmd_log
 
 search_and_replace() {
     find $1 -type f -name "$2" | while read f ; do
-        sed "s/$3/$4/g" < $f > $f.tmp
-        mv $f.tmp $f
+        sed "s/$3/$4/g" < $f > $f.tmp && mv $f.tmp $f
     done
 }
 
@@ -1457,13 +1456,8 @@ make_manual_prime() {
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
-              cd testsuite/${WrapperRootName}
-              ln -s ../../include .
-              ln -s ../../examples .
-              linklint -doc ../${WrapperRootName}-linklintresults -index contents.html -no_anchors /@  >& /dev/null
-              cd ../..
-
-              search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" 'file:.\+doc_tex\/testsuite\/' '..\/'
+              linklint -doc ${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
+              search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" 'file:\/\/\/www\/pub\/' 'http:\/\/'
 
               if grep 'No errors,' testsuite/${WrapperRootName}-linklintresults/log.txt >& /dev/null; then
                   LinklintExit=0
