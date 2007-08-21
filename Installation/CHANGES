@@ -49,6 +49,13 @@ Arrangements
 - Fixed bug in Regular_triangulation_2.
 
 
+3D Triangulations
+- Add a circumcenter() function in the default Cell type parameter
+  Triangulation_ds_cell_base_3, so that the .dual() member function
+  of Delaunay still work as before, without requiring the explicit
+  use of Triangulation_cell_base.
+
+
 Interpolation
 - Fixed bug in Interpolation 3D about the normalization coefficient initialization.
 
