@@ -120,7 +120,7 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
                 CGAL_assertion(!p.second);
                 
                 // vertices on line of discontiuity
-                m_vertices_on_line_of_discontinuity[(*vit)] = p.first;
+                m_vertices_on_line_of_discontinuity[&(*vit)] = p.first;
             }
         }
     }
@@ -571,7 +571,7 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
     
     // store iterator for vertex 
     // -> needed to delete vertex if becoming redundant
-    m_vertices_on_line_of_discontinuity[*v] = it; 
+    m_vertices_on_line_of_discontinuity[v] = it; 
     CGAL_assertion(
             static_cast< int >(m_vertices_on_line_of_discontinuity.size()) ==
             lod_size + 1
