@@ -242,6 +242,219 @@ public:
     
     return (Face_const_handle (p_oc->face()));
   }
+
+  /*!
+   * Get the bottom left vertex (const version).
+   */
+  Vertex_const_handle bottom_left_fictitious_vertex() const
+  {
+    return bottom_left_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the top left vertex (const version).
+   */
+  Vertex_const_handle top_left_fictitious_vertex() const
+  {
+    return top_left_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the bottom right vertex (const version).
+   */
+  Vertex_const_handle bottom_right_fictitious_vertex() const
+  {
+    return bottom_right_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the top right vertex (const version).
+   */
+  Vertex_const_handle top_right_fictitious_vertex() const
+  {
+    return top_right_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the bottom left vertex (non-const version).
+   */
+  Vertex_handle bottom_left_fictitious_vertex() 
+  {
+    return bottom_left_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the top left vertex (non-const version).
+   */
+  Vertex_handle top_left_fictitious_vertex() 
+  {
+    return top_left_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the bottom right vertex (non-const version).
+   */
+  Vertex_handle bottom_right_fictitious_vertex() 
+  {
+    return bottom_right_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+  /*!
+   * Get the top right vertex (non-const version).
+   */
+  Vertex_handle top_right_fictitious_vertex() 
+  {
+    return top_right_fictitious_vertex_impl
+      (typename Geometry_traits_2::Has_boundary_category());
+  }
+
+/* unbounded case */
+
+  /*!
+   * Get the bottom left vertex (const version).
+   */
+  Vertex_const_handle bottom_left_fictitious_vertex_impl(Tag_true) const
+  {
+    return (_const_handle_for(this->topology_traits()->bottom_left_vertex()));
+  }
+
+  /*!
+   * Get the top left vertex (const version).
+   */
+  Vertex_const_handle top_left_fictitious_vertex_impl(Tag_true) const
+  {
+    return (_const_handle_for(this->topology_traits()->top_left_vertex()));
+  }
+
+  /*!
+   * Get the bottom right vertex (const version).
+   */
+  Vertex_const_handle bottom_right_fictitious_vertex_impl(Tag_true) const
+  {
+    return (_const_handle_for(this->topology_traits()->bottom_right_vertex()));
+  }
+
+  /*!
+   * Get the top right vertex (const version).
+   */
+  Vertex_const_handle top_right_fictitious_vertex_impl(Tag_true) const
+  {
+    return (_const_handle_for(this->topology_traits()->top_right_vertex()));
+  }
+
+  /*!
+   * Get the bottom left vertex (non-const version).
+   */
+  Vertex_handle bottom_left_fictitious_vertex_impl(Tag_true) 
+  {
+    return (_handle_for(this->topology_traits()->bottom_left_vertex()));
+  }
+
+  /*!
+   * Get the top left vertex (non-const version).
+   */
+  Vertex_handle top_left_fictitious_vertex_impl(Tag_true) 
+  {
+    return (_handle_for(this->topology_traits()->top_left_vertex()));
+  }
+
+  /*!
+   * Get the bottom right vertex (non-const version).
+   */
+  Vertex_handle bottom_right_fictitious_vertex_impl(Tag_true) 
+  {
+    return (_handle_for(this->topology_traits()->bottom_right_vertex()));
+  }
+
+  /*!
+   * Get the top right vertex (non-const version).
+   */
+  Vertex_handle top_right_fictitious_vertex_impl(Tag_true) 
+  {
+    return (_handle_for(this->topology_traits()->top_right_vertex()));
+  }
+
+/* bounded case, currently unsupported */
+
+  /*!
+   * Get the bottom left vertex (const version).
+   */
+  Vertex_const_handle bottom_left_fictitious_vertex_impl(Tag_false) const
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the top left vertex (const version).
+   */
+  Vertex_const_handle top_left_fictitious_vertex_impl(Tag_false) const
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the bottom right vertex (const version).
+   */
+  Vertex_const_handle bottom_right_fictitious_vertex_impl(Tag_false) const
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the top right vertex (const version).
+   */
+  Vertex_const_handle top_right_fictitious_vertex_impl(Tag_false) const
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the bottom left vertex (non-const version).
+   */
+  Vertex_handle bottom_left_fictitious_vertex_impl(Tag_false) 
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the top left vertex (non-const version).
+   */
+  Vertex_handle top_left_fictitious_vertex_impl(Tag_false) 
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the bottom right vertex (non-const version).
+   */
+  Vertex_handle bottom_right_fictitious_vertex_impl(Tag_false) 
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
+  /*!
+   * Get the top right vertex (non-const version).
+   */
+  Vertex_handle top_right_fictitious_vertex_impl(Tag_false) 
+  {
+    CGAL_assertion(false);
+    return NULL;
+  }
+
   //@}
 
 protected:
