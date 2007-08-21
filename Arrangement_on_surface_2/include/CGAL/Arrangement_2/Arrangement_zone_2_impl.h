@@ -1432,8 +1432,13 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   }
   else
   {
-    if (arr_access.are_equal (he_right_v,
-                              overlap_cv, MAX_END, cv_bx, cv_by))
+    // In this case overlap_cv has a finite right endpoint. In this case,
+    // if the right vertex of intersect_he is associated with a finite point,
+    // we check whether it is equal to cv_right_pt. Otherwise, we know that
+    // intersect_he extends to the the right of overlap_cv, and there is no
+    // vertex currently associated with overlap_cv's right endpoint.
+    if (! he_right_v->is_at_infinity() &&
+        geom_traits->equal_2_object() (cv_right_pt, he_right_v->point()))
     {
       // The overlap is with the entire halfedge. In this case we set the
       // right end-vertex of the overlapping zone.
