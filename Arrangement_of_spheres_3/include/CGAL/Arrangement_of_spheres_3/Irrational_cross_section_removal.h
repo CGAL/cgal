@@ -51,7 +51,7 @@ public:
     
    
     CGAL_AOS3_TYPENAME CS::Vertex_handle iv= rules[0]->opposite()->vertex();
-    CGAL_AOS3_TYPENAME CS::Face_handle f= P::cs_.snip_out(rules, rules+4);
+    CGAL_AOS3_TYPENAME CS::Face_handle f= P::cs_.snip_out(rules, rules+4, false);
     P::cs_.delete_circle(iv);
     for (unsigned int i=0; i< 4; ++i) {
       P::clean_up_vertex(P::tr_.sphere_events(k).second, vertices[i]);

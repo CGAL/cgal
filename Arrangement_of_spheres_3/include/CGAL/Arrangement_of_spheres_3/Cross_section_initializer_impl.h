@@ -2,6 +2,7 @@
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_initializer.h>
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_arrangement.h>
 
+#include <CGAL/IO/Qt_examiner_viewer_2.h>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
@@ -23,6 +24,16 @@ void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Tra
   Arr arr(traits_.sphere_3s_begin(),
 				traits_.sphere_3s_end(),z,1000000);
 
+
+  /*if (qtv != NULL) {
+      
+    for (CGAL_AOS3_TYPENAME Arr::Halfedge_iterator fit= arr.halfedges_begin(); 
+	 fit != arr.halfedges_end(); ++fit){
+      
+    }
+
+    return;
+    }*/
   
   for (CGAL_AOS3_TYPENAME Arr::Face_iterator fit= arr.faces_begin(); 
        fit != arr.faces_end(); ++fit){

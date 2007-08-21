@@ -186,7 +186,16 @@ public:
 				 pt[Plane_coordinate_1::index()]);
   }
   
+  Bbox_2 operator()(const Bbox_3 &bb) const {
+    typename K::Point_3 minp(bb.xmin(), bb.ymin(), bb.zmin());
+    typename K::Point_3 maxp(bb.xmax(), bb.ymax(), bb.zmax());
+    typename K::Point_2 minp2=operator()(minp);
+    typename K::Point_2 maxp2=operator()(maxp);
+    return minp2.bbox()+ maxp2.bbox();
+  }
 };
+
+
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 #endif

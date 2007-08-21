@@ -47,7 +47,7 @@ public:
 						   std_toolbar_,
 						   "Print");
 
-   
+    connect(this, SIGNAL(redraw_widget()), widget_, SLOT(redraw()));
 
     //const char * filePrintText = "Click this button to print the file you "
     //  "are editing.";
@@ -83,18 +83,18 @@ public:
     if ( Redraw_event::is(e)) {  // It must be a ColorChangeEvent
       //std::cerr << "Redraw event received." << std::endl;
       dirty_=false;
-      widget_->redraw();
+      force_redraw();
     } else if (Show_event::is(e)) {
       //std::cerr << "Show event received." << std::endl;
       show();
-      widget_->redraw();
+      force_redraw();
     } else if (Change_view_event::is(e)) {
       Change_view_event *ve= reinterpret_cast<Change_view_event*>(e);
       widget()->set_window(ve->bbox().xmin(),
 			   ve->bbox().xmax(), 
 			   ve->bbox().ymin(),
 			   ve->bbox().ymax());
-      widget_->redraw();
+      force_redraw();
     } else {
       std::cerr << "Unknown custom event " << e->type() << std::endl;
     }
@@ -117,6 +117,15 @@ public:
     //widget->redraw();
   }
 public:
+  void force_redraw() {
+    emit redraw_widget();
+    widget_->redraw();
+  }
+signals:
+
+  void redraw_widget() ;
+ 
+public: 
   CGAL_IS(dirty, return dirty_);
   CGAL_SET_IS(dirty,
 	      if (tf && !dirty_) {

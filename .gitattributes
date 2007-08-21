@@ -439,13 +439,12 @@ Arrangement_2/test/Arrangement_2/test_compute_curve_zone.cpp -text
 Arrangement_2/test/Arrangement_2/test_construction.cmd eol=lf
 Arrangement_2/test/Arrangement_2/test_do_intersect.cpp -text
 Arrangement_2/test/Sweep_line_2/cgal_test eol=lf
-Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/compute_slice.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/1GWB.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/degen.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/degen2.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/diag.spheres -text
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/event_insert_remove.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/event_intersect2_unintersect2.spheres -text
-Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/insertion.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/intersect2.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/intersect_cross.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/intersect_problem.spheres -text
@@ -460,6 +459,7 @@ Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_point_inserti
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_point_location.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_ray_shooting.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_circles.cpp -text
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_cross_section.cpp -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_3_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_traits_3_impl.h -text
@@ -475,6 +475,7 @@ Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Cross_section_ini
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_markup.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Event_point_3.h -text
+Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Event_processor_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Event_visitor_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Filtered_sphere_line_intersection.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Irrational_cross_section.h -text

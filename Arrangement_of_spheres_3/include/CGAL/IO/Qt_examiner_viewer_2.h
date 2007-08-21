@@ -58,6 +58,7 @@ public:
   // void set_is_editing_layer(bool tf);
   void show_everything() ;
   void show() ;
+  void set_viewport(const Bbox_2 &bb);
   //void redraw();
   template <class K>
   void new_circle(const CGAL::Circle_2<K> &ci) {

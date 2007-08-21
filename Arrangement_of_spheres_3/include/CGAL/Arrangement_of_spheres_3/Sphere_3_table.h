@@ -68,7 +68,7 @@ public:
   Sphere_3 operator[](Key k) const {
     //CGAL_precondition(static_cast<unsigned int> (k.index()+4) < spheres_.size());
     //CGAL_precondition(k.index()+4 >= 0);
-    CGAL_check_bounds(k.internal_index(), 0, spheres_.size());
+    CGAL_check_bounds(static_cast<unsigned int>(k.internal_index()), 0U, spheres_.size());
     return spheres_[k.internal_index()];
   }
 

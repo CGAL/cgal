@@ -58,12 +58,14 @@ public:
 						  l_(l), 
 						  has_exact_(false){
     CGAL_exactness_precondition(l.has_on(p3));
+    CGAL_postcondition(is_valid());
   }
 
 
   Sphere_line_intersection(typename T::Point_3 p3 ): s_(p3,0),
 						     l_(p3, sweep_vector<Vector_3>()),
     has_exact_(false){
+    CGAL_postcondition(is_valid());
    
   }
   // assume the line hits

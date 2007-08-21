@@ -42,6 +42,13 @@ public:
     }
   };
 
+struct Handle_equal{
+    template <class H>
+    bool operator()(H a, H b) const {
+      return &*a == &*b;
+    }
+  };
+
   
 
   typedef Combinatorial_vertex Point;
@@ -125,6 +132,7 @@ public:
   unsigned int degree(Vertex_const_handle v) const;
 
   bool is_redundant(Vertex_const_handle v) const;
+  bool is_redundant(Halfedge_const_handle v) const;
 
   void clear();
 
@@ -228,30 +236,73 @@ public:
     connect(hn->opposite(), (*ib)->next());
     connect(*ib, hn);
 
-    v_.on_new_edge(hn);
-    v_.on_change_edge(hn->next());
-    v_.on_change_edge(hn->prev());
-    v_.on_change_edge(hn->opposite()->next());
-    v_.on_change_edge(hn->opposite()->prev());
+    std::vector<Halfedge_handle> dirty;
+
+    dirty.push_back(hn);
+    v_.on_delete_edge(hn->next());
+    v_.on_delete_edge(hn->prev());
+    v_.on_delete_edge(hn->opposite()->next());
+    v_.on_delete_edge(hn->opposite()->prev());
+    dirty.push_back(hn->next());
+    dirty.push_back(hn->prev());
+    dirty.push_back(hn->opposite()->next());
+    dirty.push_back(hn->opposite()->prev());
+    		  
 
     ++ib; ++fb; ++cb;
     CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
-    for (; ib != ie; ++ib, ++fb, ++cb) {
-      split_face(*cb, *ib, *fb);
-      //Halfedge_handle h= hdsd.split_face(*ib, *fb);
-      //h->set_curve(*cb);
-      //h->opposite()->set_curve(cb->other_side());
-      
    
+    for (; ib != ie; ++ib, ++fb, ++cb) {
+      //split_face(*cb, *ib, *fb);
+      v_.on_delete_edge(*ib);
+      v_.on_delete_edge((*ib)->next());
+      dirty.push_back(*ib);
+      dirty.push_back((*ib)->next());
+      v_.on_delete_edge(*fb);
+      v_.on_delete_edge((*fb)->next());
+      dirty.push_back(*fb);
+      dirty.push_back((*fb)->next());
+      Halfedge_handle h= hdsd.split_face(*ib, *fb);
+      h->set_curve(*cb);
+      h->opposite()->set_curve(cb->other_side());
+      
+      dirty.push_back(h);
+      
       
       // *edges=h;
       //++edges;
     }
+    handle_new_edges(dirty);
+
     audit();
   }
 
+  // edges must be CCW around hole.
+
   template <class It>
-  Face_handle snip_out(It b, It e) {
+  Face_handle snip_out(It b, It e, bool clean) {
+    // want to make this clean up after itself and properly visit changed edges after everything is done. 
+
+#ifndef NDEBUG
+    // edges must be ccw and oriented out
+    for (It c= b; c !=e ; ++c){
+      It cp1= c;
+      ++cp1;
+      if (cp1==e) cp1=b;
+      Halfedge_handle h= *c;
+      h=h->next();
+      do {
+	for (It ic= b; ic !=e ; ++ic){
+	  if (ic == cp1) continue;
+	  CGAL_assertion(h != *ic);
+	  CGAL_assertion(h->opposite()!= *ic);
+	}
+	h=h->next();
+      } while (h->opposite() != *cp1);
+    }
+    
+#endif
+    
     std::cout << "Snipping out ";
     for (It c= b; c != e; ++c) {
       write(*c, std::cout) << ", ";
@@ -261,14 +312,18 @@ public:
     It c=b;
     ++c; ++c;
     CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
+    //std::vector<Halfedge_handle> dirty;
     for (; c!= e; ++c) {
       v_.on_delete_edge(*c);
       v_.on_merge_faces(*c);
       Halfedge_handle n= (*c)->next();
+      v_.on_delete_edge(n);
+      v_.on_delete_edge(n->prev());
       //Halfedge_handle p= (*c)->prev();
       hdsd.join_face(*c);
-      v_.on_change_edge(n);
-      v_.on_change_edge(n->prev());
+      //dirty.push_back(n);
+      //dirty.push_back(n->prev());
+     
       //v_.on_changed_edge(p);
       //v_.on_changed_edge(p->next());
     }
@@ -280,7 +335,16 @@ public:
     Halfedge_handle h1n= h1->next();
     Halfedge_handle h2n= h2->next();
     if (h1n == h2->opposite()) h1n= Halfedge_handle();
+    else {
+      v_.on_delete_edge(h1n);
+      //dirty.push_back(h1n);
+    }
     if (h2n == h1->opposite()) h2n= Halfedge_handle();
+    else {
+      v_.on_delete_edge(h2n);
+      //dirty.push_back(h2n);
+    }
+
 
     v_.on_delete_edge(h1);
     v_.on_delete_edge(h2);
@@ -339,6 +403,17 @@ public:
       v_.on_change_edge(h2n->prev());
     }
 
+    if (clean) {
+      Halfedge_handle c= outside; 
+      do {
+	if (is_redundant(c->vertex())) {
+	  c=remove_vertex(c->vertex());
+	} else {
+	  c=c->next();
+	}
+      } while (c != outside);
+    }
+
     write(std::cout);
     /* std::cout << "Auditing const decorator..." << std::flush;
        CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
@@ -350,6 +425,8 @@ public:
 
     return f;
   }
+
+  void handle_new_edges(std::vector<Halfedge_handle> &edges);
 
   Face_handle intersect_arcs(Halfedge_handle ha, Halfedge_handle hb);
   Face_handle unintersect_arcs(Halfedge_handle ha, Halfedge_handle hb);
@@ -370,6 +447,11 @@ public:
   void set_has_boundary(bool tf);
 
   bool has_boundary() const;
+
+  void set_curve(Halfedge_handle h, Curve c) const {
+    h->set_curve(c);
+    h->opposite()->set_curve(c.other_side());
+  }
 
   Halfedge_handle remove_vertex(Vertex_handle v);
 

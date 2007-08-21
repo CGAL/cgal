@@ -60,10 +60,10 @@ public:
 
 
   //! I need the actual point for handling intersect
-  template <class It>
+  template <class It, class ID>
   CGAL_AOS3_TYPENAME CS::Face_handle 
   locate(It b, It e,
-	 CGAL_AOS3_TYPENAME Traits::Sphere_3_key k) {
+	 ID k) {
 
     std::vector<int> locations(tr_.number_of_sphere_3s(), 0);
     std::vector<CGAL_AOS3_TYPENAME CS::Face_handle> faces;
@@ -270,26 +270,59 @@ public:
 
 protected:
 
-  bool locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+  bool locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &k,
 			       CGAL_AOS3_TYPENAME CS::Face_const_handle it,
 			       std::vector<int> &locations) const ;
 
 
+  bool locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+			       CGAL_AOS3_TYPENAME CS::Face_const_handle it,
+			       std::vector<int> &locations) const {
+    return locate_point_check_face(tr_.sphere_events(k).first, it, locations);
+  }
 
 
 
-  // cache checked arcs
-  bool locate_point_check_face_arcs( CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
-				     CGAL_AOS3_TYPENAME CS::Face_const_handle f,
-				     std::vector<int> &locations) const ;
+
+
+  template <class ID>
+  bool 
+  locate_point_check_face_arcs(ID k,
+			       CGAL_AOS3_TYPENAME CS::Face_const_handle f,
+			       std::vector<int> &locations) const {
+    std::set<CGAL_AOS3_TYPENAME Traits::Sphere_3_key> check_arcs;
+    CGAL_AOS3_TYPENAME CS::Halfedge_const_handle h= f->halfedge();
+    do {
+      if (h->curve().is_arc() && !h->curve().is_inside()
+	  && check_arcs.find(h->curve().key()) == check_arcs.end()){
+	std::cout << "Arc test " << k << " on " << h->curve() << std::endl;
+	check_arcs.insert(h->curve().key());
+	bool ba=behind_arc(k, h->curve(), 
+			   locations[h->curve().key().input_index()]);
+	if (ba) {
+	  std::cout << "Point is behind arc " << std::endl;
+	  return false;
+	} else {
+	std::cout << "Point is not behind arc " << std::endl;
+	}
+      }
+      h= h->next();
+    } while (h != f->halfedge());
+    return true;
+  }
 
 
 
-  bool locate_point_check_face_vertices(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
-					CGAL_AOS3_TYPENAME CS::Face_const_handle it) const ;
+  bool locate_point_check_face_vertices(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+					CGAL_AOS3_TYPENAME CS::Face_const_handle it) const {
+    return locate_point_check_face_vertices(tr_.sphere_events(k).first, it);
+  }
+
+ bool locate_point_check_face_vertices(const CGAL_AOS3_TYPENAME Traits::Event_point_3 & k,
+				       CGAL_AOS3_TYPENAME CS::Face_const_handle it) const ;
 
 
-  int sphere_location(const CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+  int sphere_location(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 k,
 		      CGAL_AOS3_TYPENAME Traits::Sphere_3_key s) const ;
 
 
@@ -305,7 +338,12 @@ protected:
 		   int location) const;
 
 
-  void point_sphere_orientation(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+  bool behind_arc( const CGAL_AOS3_TYPENAME Traits::Sphere_point_3& k,
+		   CGAL_AOS3_TYPENAME CS::Curve arc,
+		   int location) const;
+
+
+  void point_sphere_orientation(CGAL_AOS3_TYPENAME Traits::Sphere_point_3 k,
 				CGAL_AOS3_TYPENAME Traits::Sphere_3_key sphere,
 				std::vector<int> &locations
 				/*,

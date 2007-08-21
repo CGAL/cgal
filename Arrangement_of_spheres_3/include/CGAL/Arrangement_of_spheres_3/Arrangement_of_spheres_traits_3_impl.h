@@ -127,7 +127,10 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::bounded_side_of_sphere(Sphere_3_
   }
 }
 
-
+/*
+  returns true if the point is the the slab defined by the top and bottom (in C) 
+  of the sphere intersecting the sweep plane
+ */
 CGAL_AOS3_TEMPLATE
 bool 
 Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::start_point_in_slab_c(Sphere_3_key sphere_for_slab, 
@@ -141,7 +144,42 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::start_point_in_slab_c(Sphere_3_k
 		       - table_->center(sphere_for_point)[CGAL_AOS3_INTERNAL_NS::Sweep_coordinate::index()]);
   
   FT r2= R2-dt2;
-  return (r2 > dc2);
+  bool myret= (r2 > dc2);
+  CGAL_assertion(myret== point_in_slab_c(sphere_for_slab,
+					 sphere_events(sphere_for_point).first,
+					 C));
+  return myret;
+}
+
+
+/*
+  Project line onto center plane for sphere
+  if it misses sphere, then we are outside plane
+
+  compare plane intersection point (i.e. input) to slab sphere intersection point
+ */
+CGAL_AOS3_TEMPLATE
+bool 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::point_in_slab_c(Sphere_3_key sphere_for_slab, 
+								const Event_point_3 &point,
+								Coordinate_index C) const {
+  FT lpt[3]={point.line().point().x(), point.line().point().y(), point.line().point().z()};
+  lpt[other_plane_coordinate(C).index()]=table_->center(sphere_for_slab)[other_plane_coordinate(C).index()];
+  FT lv[3]={point.line().to_vector().x(), point.line().to_vector().y(), point.line().to_vector().z()};
+  lv[other_plane_coordinate(C).index()]=0;
+  Line_3 l3p(Point_3(lpt[0], lpt[1], lpt[2]),
+	     Vector_3(lv[0], lv[1], lv[2]));
+  Event_point_3 nsp(table_->sphere(sphere_for_slab), l3p);
+  if (nsp.is_valid()) {
+    Event_point_3 onsp(table_->sphere(sphere_for_slab), l3p.opposite());
+    if (nsp > onsp) std::swap(nsp, onsp);
+    return (point >= nsp && point <= onsp);
+  } else {
+    return false;
+  }
+  
+  // if point is above center and intersection then it is outside? 
+  
 }
 
 CGAL_AOS3_TEMPLATE

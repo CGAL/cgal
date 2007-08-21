@@ -23,7 +23,7 @@ Irrational_cross_section CGAL_AOS3_TARG ::locate( CGAL_AOS3_TYPENAME Traits::Sph
 
 CGAL_AOS3_TEMPLATE
 bool 
-Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Event_point_3& k,
 								  CGAL_AOS3_TYPENAME CS::Face_const_handle it,
 								  std::vector<int> &locations) const {
   CGAL_AOS3_TYPENAME CS::Halfedge_const_handle h= it->halfedge();
@@ -65,36 +65,12 @@ Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face(CGAL_AOS3_TYPE
 
 
 // cache checked arcs
-CGAL_AOS3_TEMPLATE
-bool 
-Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face_arcs(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
-								       CGAL_AOS3_TYPENAME CS::Face_const_handle f,
-								       std::vector<int> &locations) const {
-  std::set<CGAL_AOS3_TYPENAME Traits::Sphere_3_key> check_arcs;
-  CGAL_AOS3_TYPENAME CS::Halfedge_const_handle h= f->halfedge();
-  do {
-    if (h->curve().is_arc() && !h->curve().is_inside()
-	&& check_arcs.find(h->curve().key()) == check_arcs.end()){
-      std::cout << "Arc test " << tr_.sphere_events(k).first << " on " << h->curve() << std::endl;
-      check_arcs.insert(h->curve().key());
-      bool ba=behind_arc(k, h->curve(), 
-			 locations[h->curve().key().input_index()]);
-      if (ba) {
-	std::cout << "Point is behind arc " << std::endl;
-	return false;
-      } else {
-	std::cout << "Point is not behind arc " << std::endl;
-      }
-    }
-    h= h->next();
-  } while (h != f->halfedge());
-  return true;
-}
+
 
 
 CGAL_AOS3_TEMPLATE
 bool 
-Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face_vertices(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face_vertices(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &k,
 									   CGAL_AOS3_TYPENAME CS::Face_const_handle it) const {
   
   CGAL_AOS3_TYPENAME CS::Halfedge_const_handle h= it->halfedge();
@@ -107,7 +83,7 @@ Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face_vertices(CGAL_
       CGAL_AOS3_TYPENAME CS::Point npt= h->vertex()->point();
       if (tr_.oriented_side_of_separating_plane(npt.sphere_key(0),
 						npt.sphere_key(1),
-						tr_.sphere_events(k).first) == CGAL::ON_NEGATIVE_SIDE) {
+						k) == CGAL::ON_NEGATIVE_SIDE) {
 	//CGAL_assertion(0);
 	std::cout << "Face nixed by vertex " << npt << std::endl;
 	return false;
@@ -122,11 +98,11 @@ Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face_vertices(CGAL_
 
 CGAL_AOS3_TEMPLATE
 int 
-Irrational_cross_section CGAL_AOS3_TARG ::sphere_location(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+Irrational_cross_section CGAL_AOS3_TARG ::sphere_location(CGAL_AOS3_TYPENAME Traits::Sphere_point_3 p,
 							  CGAL_AOS3_TYPENAME Traits::Sphere_3_key s) const {
   int r=0;
   CGAL::Bounded_side bs=tr_.bounded_side_of_sphere(s,
-						   tr_.sphere_events(k).first);
+						   p);
     
   /*T::Event_point_3 ep=sphere_start(locate_point);
     T::Line_3 l= ep.line();
@@ -149,9 +125,9 @@ Irrational_cross_section CGAL_AOS3_TARG ::sphere_location(CGAL_AOS3_TYPENAME Tra
     NOTE can make it more specific for intersection point location
   */
     
-  CGAL::Comparison_result xo= tr_.compare_sphere_center_c(s, tr_.sphere_events(k).first,
+  CGAL::Comparison_result xo= tr_.compare_sphere_center_c(s, p,
 							  plane_coordinate(0));
-  CGAL::Comparison_result yo= tr_.compare_sphere_center_c(s, tr_.sphere_events(k).first, 
+  CGAL::Comparison_result yo= tr_.compare_sphere_center_c(s,p, 
 							  plane_coordinate(1));
   if (xo  != CGAL::LARGER) {
     r |= CS::Curve::lR_BIT;
@@ -196,9 +172,31 @@ Irrational_cross_section CGAL_AOS3_TARG ::behind_arc(CGAL_AOS3_TYPENAME Traits::
   }
 }
 
+
+CGAL_AOS3_TEMPLATE
+bool 
+Irrational_cross_section CGAL_AOS3_TARG ::behind_arc(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3& k,
+						     CGAL_AOS3_TYPENAME CS::Curve arc,
+						     int location) const{
+  CGAL_precondition(!arc.is_inside());
+  CGAL_precondition(arc.is_compatible_location(location));
+  CGAL_AOS3_TYPENAME Traits::Coordinate_index C=arc.is_weakly_incompatible(location);
+
+  if (C.is_valid()) { // we know it is opposite the center
+    /*CGAL::Comparison_result cr = t_.compare_sphere_center_c(arc.key(),
+      ep, C);
+      if (cr == CGAL::SMALLER && arc.is_negative()
+      || cr == CGAL::LARGER && !arc.is_negative()) return false;*/
+    bool b= tr_.point_in_slab_c(arc.key(), k, other_plane_coordinate(C));
+    return b;
+  } else {
+    return false;
+  }
+}
+
 CGAL_AOS3_TEMPLATE
 void 
-Irrational_cross_section CGAL_AOS3_TARG ::point_sphere_orientation(CGAL_AOS3_TYPENAME Traits::Sphere_3_key k,
+Irrational_cross_section CGAL_AOS3_TARG ::point_sphere_orientation(CGAL_AOS3_TYPENAME Traits::Sphere_point_3 k,
 								   CGAL_AOS3_TYPENAME Traits::Sphere_3_key sphere,
 								   std::vector<int> &locations
 								   /*,

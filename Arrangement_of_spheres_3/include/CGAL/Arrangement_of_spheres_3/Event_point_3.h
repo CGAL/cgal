@@ -20,6 +20,8 @@ public:
     //std::cout << P::sphere() << std::endl;
     //std::cout << P::line() << std::endl;
   }
+  Event_point_3(const typename P::Sphere_3 &s,
+		const typename P::Line_3 &l): P(s,l){}
 
   CGAL::Comparison_result compare(const This &o) const {
     return P::compare(o, sweep_coordinate());

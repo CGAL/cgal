@@ -140,20 +140,26 @@ void Event_visitor CGAL_AOS3_TARG:: audit(Halfedge_const_handle h) const {
 CGAL_AOS3_TEMPLATE
 bool Event_visitor CGAL_AOS3_TARG::should_have_certificate(Halfedge_const_handle h) const {
    if (h->curve().is_arc()) {
-    if (h->vertex()->point().is_sphere_extremum() 
-	&& h->opposite()->vertex()->point().is_sphere_extremum()
-	|| h->vertex()->point().is_sphere_rule()
-	&& h->opposite()->vertex()->point().is_sphere_rule()
-	&&  h->vertex()->point().rule_coordinate()
-	== h->opposite()->vertex()->point().rule_coordinate()
-	|| h->vertex()->point().is_sphere_rule()
-	&& h->opposite()->vertex()->point().is_sphere_rule()
-	&& h->vertex()->point().rule_key()
-	== h->opposite()->vertex()->point().rule_key()) {
-      return false;
-    } else {
-      return true;
-    }
+     if ((h->vertex()->point().is_sphere_rule()
+	  && h->opposite()->vertex()->point().is_sphere_rule()
+	  && h->vertex()->point().rule_coordinate()
+	  != h->opposite()->vertex()->point().rule_coordinate()
+	  && !(h->vertex()->point().is_sphere_extremum() 
+	       && h->opposite()->vertex()->point().is_sphere_extremum()))
+	 || (h->vertex()->point().is_sphere_sphere() 
+	     && h->opposite()->vertex()->point().is_sphere_rule()
+	     && !h->opposite()->vertex()->point().is_sphere_extremum()
+	     && h->opposite()->vertex()->point().rule_key() 
+	     != h->vertex()->point().other_key(h->curve().key()))
+	 || (h->opposite()->vertex()->point().is_sphere_sphere() 
+	     && h->vertex()->point().is_sphere_rule()
+	     && !h->vertex()->point().is_sphere_extremum()
+	     && h->vertex()->point().rule_key() 
+	     != h->opposite()->vertex()->point().other_key(h->curve().key()))){
+       return true;
+     } else {
+       return false;
+     }
    } else {
      if ( h->vertex()->point().is_rule_rule()
 	 && h->opposite()->vertex()->point().is_rule_rule()
@@ -171,7 +177,13 @@ CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
   if (!should_have_certificate(h)) {
     set_event(h, Event_key());
+    std::cout << "Skipping " << h->opposite()->vertex()->point() << "--" 
+	      << h->curve() << "--" << h->vertex()->point() << std::endl;
     return;
+  } else {
+    std::cout << "Making event for " << h->opposite()->vertex()->point() << "--" 
+	      << h->curve() << "--" << h->vertex()->point() << std::endl;
+  
   }
   Event_key ek=sim_->null_event();
 
@@ -197,6 +209,8 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	} else if (ep.second >= sim_->current_time()) {
 	  ek= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::AAR_event(j_, h));
 	} 
+      } else {
+
       }
 	
     } else if (h->vertex()->point().is_sphere_rule()
@@ -211,18 +225,18 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
       Event_pair ep= tr_.sphere_intersect_rule_rule_events(h->vertex()->point().sphere_key(),
 							   rks[0], rks[1]);
       if (ep.first.is_valid()) {
-	if (ep.first >= sim_->current_time()) {
+	if (ep.first > sim_->current_time()) {
 	  ek= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::RAR_event(j_, h));
-	} else if (ep.second >= sim_->current_time()) {
+	} else if (ep.second > sim_->current_time()) {
 	  ek= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::RAR_event(j_, h));
 	} 
       }
     }
   } else {
     if (h->vertex()->point().is_sphere_rule()
-	&& h->opposite()->vertex()->point().is_sphere_sphere()
+	&& h->opposite()->vertex()->point().is_rule_rule()
 	|| h->opposite()->vertex()->point().is_sphere_rule()
-	&& h->vertex()->point().is_sphere_sphere()) {
+	&& h->vertex()->point().is_rule_rule()) {
       // ARR
       // sphere_intersect_rule_rule_events
       Vertex_handle arv= h->vertex();
@@ -237,11 +251,15 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
       Event_pair ep= tr_.sphere_intersect_rule_rule_events(arv->point().sphere_key(),
 							   rks[0], rks[1]);
       if (ep.first.is_valid()) {
-	if (ep.first >= sim_->current_time()) {
+	if (ep.first > sim_->current_time()) {
 	  ek= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::ARR_event(j_, h));
-	} else if (ep.second >= sim_->current_time()) {
+	} else if (ep.second > sim_->current_time()) {
 	  ek= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::ARR_event(j_, h));
-	} 
+	} else {
+	  std::cout << "Both events passed: " << ep.first << " " << ep.second << std::endl;
+	}
+      } else {
+	std::cout << "No valid event." << std::endl;
       }
     }
   }
@@ -293,25 +311,28 @@ void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a,
 	
 	
       // now handle the extremum intersections
-      for (unsigned int i=0; i< 2; ++i){
-	Event_pair ep= tr_.sphere_intersect_extremum_events(a,
-							    plane_coordinate(i),
-							    b);  
-	if (ep.first.is_valid()) {
-	  CGAL_assertion(ep.first <= ep.second);
-	  if (ep.first >= sim_->current_time()) {
-	    Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::AAE_event(j_, a,b, i));
-	    if (k != Event_key() && k != sim_->null_event()) {
-	      free_events_.insert(k);
+      for (unsigned int k=0; k< 2; ++k) {
+	for (unsigned int i=0; i< 2; ++i){
+	  Event_pair ep= tr_.sphere_intersect_extremum_events(a,
+							      plane_coordinate(i),
+							      b);  
+	  if (ep.first.is_valid()) {
+	    CGAL_assertion(ep.first <= ep.second);
+	    if (ep.first >= sim_->current_time()) {
+	      Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::AAE_event(j_, a,b, i));
+	      if (k != Event_key() && k != sim_->null_event()) {
+		free_events_.insert(k);
+	      }
 	    }
-	  }
-	  if (ep.second >= sim_->current_time()) {
-	    Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::AAE_event(j_, a,b, i));
-	    if (k != Event_key() && k != sim_->null_event()) {
-	      free_events_.insert(k);
+	    if (ep.second >= sim_->current_time()) {
+	      Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::AAE_event(j_, a,b, i));
+	      if (k != Event_key() && k != sim_->null_event()) {
+		free_events_.insert(k);
+	      }
 	    }
 	  }
 	}
+	std::swap(a,b);
       }
     }
   }

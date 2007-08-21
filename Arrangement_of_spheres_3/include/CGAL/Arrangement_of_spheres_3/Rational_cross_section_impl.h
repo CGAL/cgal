@@ -12,12 +12,8 @@ Rational_cross_section CGAL_AOS3_TARG ::sphere_point(CGAL_AOS3_TYPENAME CCS::Poi
     pt[plane_coordinate(0).index()]=p.x();
     pt[plane_coordinate(1).index()]=p.y();
     CGAL_AOS3_TYPENAME Traits::Point_3 p3(pt[0], pt[1], pt[2]);
-    CGAL_AOS3_TYPENAME Traits::FT v[3];
-    v[plane_coordinate(0).index()]=0;
-    v[plane_coordinate(1).index()]=0;
-    v[sweep_coordinate().index()]=1;
-    CGAL_AOS3_TYPENAME Traits::Sphere_point_3 ret(p3, CGAL_AOS3_TYPENAME Traits::Line_3(p3,
-											CGAL_AOS3_TYPENAME Traits::Vector_3(v[0], v[1], v[2])));
+  
+    CGAL_AOS3_TYPENAME Traits::Sphere_point_3 ret(p3);
     if (!ret.is_valid()) {
       throw p3;
     } else return ret;
@@ -31,7 +27,7 @@ Rational_cross_section CGAL_AOS3_TARG ::sphere_point(CGAL_AOS3_TYPENAME CCS::Poi
     }
     CGAL_AOS3_TYPENAME Traits::Sphere_point_3 sp (s,l);
     if (!sp.is_valid()) {
-      std::cerr << "Constructing point for " << pt << " at " << z_ << std::endl;
+      std::cerr << "Constructing SR point for " << pt << " at " << z_ << std::endl;
       std::cerr << "Line " << l << " does not intersect sphere " << s << std::endl;
       throw l.projection(s.center());
     } else return sp;

@@ -290,6 +290,11 @@ void Qt_examiner_viewer_2::show_everything() {
   // not safe
   //CGAL_assertion(! mutex_.locked());
 }
+
+void Qt_examiner_viewer_2::set_viewport(const Bbox_2& bb) {
+  window_->change_view(bb);
+}
+
 void Qt_examiner_viewer_2::show() {
   qApp->postEvent(window_, new P::Show_event());
   //P::widget()->redraw();

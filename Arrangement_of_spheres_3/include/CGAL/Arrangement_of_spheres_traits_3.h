@@ -194,7 +194,11 @@ struct Arrangement_of_spheres_traits_3 {
   bool start_point_in_slab_c(Sphere_3_key sphere_for_slab, const Sphere_3_key sphere_for_point,
 			     Coordinate_index C) const;
   
-   
+   bool 
+   point_in_slab_c(Sphere_3_key sphere_for_slab, 
+		   const Event_point_3 &point,
+		   Coordinate_index C) const;
+
 
   CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
 							 Sphere_3_key sphere0,

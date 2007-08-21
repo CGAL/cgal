@@ -36,13 +36,16 @@ struct Compute_slice {
     }
 
     typename A::Traits tr(ns.begin(), ns.end());
-    A arr(tr);
-    typename A::Cross_section cs;
-    arr.initialize_at(z_,cs);
 
-    typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer CGAL_AOS3_TARG CSV;
-    CSV csv(tr, cs);
-    csv(z_, qtv);
+    typename A::Cross_section cs;
+   
+    cs.visitor().set_start_time(end);
+    cs.visitor().set_traits(tr_);
+    cs.visitor().set_cross_section(cs);
+    cs.set_number_of_spheres(tr_.number_of_sphere_3s());
+    std::cout << "Initialize at " << end << std::endl;
+    CGAL_AOS3_INTERNAL_NS::Cross_section_initializer CGAL_AOS3_TARG csi(cs, tr_);
+    csi(end, qtv);
   }
 
   std::vector<typename Arrangement::Traits::Geom_traits::Sphere_3> spheres_;

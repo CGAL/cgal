@@ -108,6 +108,14 @@ bool Combinatorial_cross_section CGAL_AOS3_TARG::is_redundant(Vertex_const_handl
 }
 
 CGAL_AOS3_TEMPLATE
+bool Combinatorial_cross_section CGAL_AOS3_TARG::is_redundant(Halfedge_const_handle v) const {
+  if (v->curve().is_arc()) return false;
+  else {
+    return !v->vertex()->point().is_sphere_extremum() && !v->opposite()->vertex()->point().is_sphere_extremum();
+  }
+}
+
+CGAL_AOS3_TEMPLATE
 unsigned int Combinatorial_cross_section CGAL_AOS3_TARG::degree(Vertex_const_handle v) const {
   unsigned int r=0;
   Halfedge_const_handle h= v->halfedge();
@@ -200,10 +208,20 @@ void
 Combinatorial_cross_section CGAL_AOS3_TARG::move_target(Halfedge_handle h, Vertex_handle v, bool cleanup) {
 
   v_.on_merge_faces(h); // extra work, but...
+  std::cout << "Moving edge ";
+  write(h, std::cout) << " to vertex ";
+  write(v, std::cout) << std::endl;
+  std::cout << "This face is " ;
+  write(h->face(), std::cout) << "\n and opposite face is " ;
+  write(h->opposite()->face(), std::cout) << std::endl;
+
   Halfedge_handle vh= v->halfedge();
   do {
     vh= vh->next()->opposite();
   } while (vh->face() != h->face() && vh->face() != h->opposite()->face());
+
+  std::cout << "The anchor edge is ";
+  write(vh, std::cout) << std::endl;
 
   connect(h->opposite()->prev(), h->next());
   h->vertex()->set_halfedge(h->opposite()->prev());
@@ -220,20 +238,23 @@ Combinatorial_cross_section CGAL_AOS3_TARG::move_target(Halfedge_handle h, Verte
   h->face()->set_halfedge(h);
   h->opposite()->face()->set_halfedge(h->opposite());
   
+
+  connect(h, vh->next());
+  connect(vh, h->opposite());
+
   dec.set_face_in_face_loop(h, h->face());
   dec.set_face_in_face_loop(h->opposite(), h->opposite()->face());
   
-  connect(h, vh->next());
-  connect(vh, h->opposite());
-  v->set_halfedge(h);
+  v->set_halfedge(vh);
   h->set_vertex(v);
   v_.on_change_edge(h);
   v_.on_change_edge(vh);
-  v_.on_change_edge(h->opposite()->prev());
+  v_.on_change_edge(h->next());
   
   // have to update face pointers and visitor with face
- 
-  
+  std::cout << "Final faces are ";
+  write(h->face() , std::cout ) << std::endl;
+  write(h->opposite()->face() , std::cout ) << std::endl;
 }
   
 
@@ -1073,7 +1094,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     CGAL_assertion(it->curve().key().is_target() || it->curve().is_valid());
     CGAL_assertion(it->curve().is_inside() != it->opposite()->curve().is_inside());
 
-    v_.audit(it);
+    if (!extra_vertices) v_.audit(it);
   }
 
   std::cout << "done." << std::endl;
@@ -1727,4 +1748,22 @@ CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::unintersect_arcs(
   audit();
   return f;
 }
+
+
+CGAL_AOS3_TEMPLATE
+void
+CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::handle_new_edges(std::vector<Halfedge_handle>& edges) {
+  std::cout << "Handling edges: ";
+  for (unsigned int i= 0; i< edges.size(); ++i) {
+    write(edges[i], std::cout) << ", ";
+  }
+  std::cout << std::endl;
+
+  std::sort(edges.begin(), edges.end(), Handle_compare());
+  edges.erase(std::unique(edges.begin(), edges.end(), Handle_equal()), edges.end());
+  for (unsigned int i=0; i< edges.size(); ++i) {
+    v_.on_new_edge(edges[i]);
+  }
+}
+
 CGAL_AOS3_END_INTERNAL_NAMESPACE
