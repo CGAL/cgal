@@ -1,4 +1,6 @@
 
+- Test-suite Delaunay : .dual() n'est pas vraiment teste...
+
  Regular_triangulation_euclidean_traits_3.h
 - add  a functor Construct_smallest_orthogonal_weighted_point_3
   to build at the same time both the center and the square radius
@@ -90,7 +92,7 @@ Regular :
 Hierarchie
 - nettoyer hierarchie
 cf mail Mariette 
-la hierarchie surcharge correctement certianes
+la hierarchie surcharge correctement certaines
 versions du insert() et locate()
 et fait n'importe quoi pour les autres....
 (c'est tout ce qui se trouve  apres

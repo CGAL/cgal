@@ -827,6 +827,17 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(T4.is_Gabriel(c,i,j));
     
+  std::cout <<"   Test dual (minimal test for now)" << std::endl;
+
+  // We only test return types and instantiation, basically.
+  {
+    Cell_handle c = T4.finite_cells_begin();
+    Point p = T4.dual(c);
+    Facet f = Facet(c, 2);
+    CGAL::Object o = T4.dual(f);
+    o = T4.dual(f.first, f.second);
+  }
+
   std::cout <<"   Test destructors and quit "<< std::endl;
 
   T0.clear();
