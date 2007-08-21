@@ -1456,7 +1456,7 @@ make_manual_prime() {
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
-              linklint -doc ${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
+              linklint -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
               search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" 'file:\/\/\/www\/pub\/' 'http:\/\/'
 
               if grep 'No errors,' testsuite/${WrapperRootName}-linklintresults/log.txt >& /dev/null; then
@@ -1991,7 +1991,11 @@ find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
 done
 
 GlobalReturnStatus=0
-if [ $MakeTestSuiteResult -eq 1 ]; then testsuite_begin ; fi
+if [ $MakeTestSuiteResult -eq 1 ]; then
+  # needed for linklint
+  ln -s ../{demo,examples,include} .
+  testsuite_begin
+fi
 if [[ "$Parameters" == "" ]]; then
     # no arguments, make Module manuals first
     for m in *[Mm]anual.tex ; do
@@ -2045,6 +2049,10 @@ find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
   rm -f $f.filename $f.noheader
 done
 
-if [ $MakeTestSuiteResult -eq 1 ]; then testsuite_end ; fi
+if [ $MakeTestSuiteResult -eq 1 ]; then
+  # remove temporary links
+  rm {demo,examples,include}
+  testsuite_end
+fi
 
 exit $GlobalReturnStatus
