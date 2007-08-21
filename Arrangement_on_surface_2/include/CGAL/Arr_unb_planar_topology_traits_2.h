@@ -515,6 +515,25 @@ public:
   {
     return (v_tr);
   }
+
+  typedef typename Dcel::Halfedge_const_iterator            Halfedge_const_iterator;
+
+  Halfedge_const_iterator top_halfedge()
+  {
+    Halfedge_const_iterator he = v_tl->halfedge();
+    if (he->vertex()->boundary_in_y() != PLUS_INFINITY)
+      he = he->next()->opposite();
+    return he;
+  }
+
+  Halfedge_const_iterator bottom_halfedge()
+  {
+    Halfedge_const_iterator he = v_bl->halfedge();
+    if (he->vertex()->boundary_in_y() != MINUS_INFINITY)
+      he = he->next()->opposite();
+    return he;
+  }
+
   //@}
 
   /// \name Additional predicates, specialized for this topology-traits class.
