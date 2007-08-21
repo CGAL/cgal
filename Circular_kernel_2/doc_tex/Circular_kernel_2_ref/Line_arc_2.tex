@@ -52,6 +52,10 @@ is \ccc{p1} and whose target is \ccc{p2}.
 \ccGlue
 \ccFunction{ostream& operator<< (std::ostream& os, const Line_arc_2 & ca);}{}
 
+The format for input/output is, for each line arc: a \ccc{Line_2} 
+(the supporting line) and two \ccc{Circular_arc_point_2} (the two endpoints), 
+under the condition that the endpoints are actually lying on the line. 
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}\\
