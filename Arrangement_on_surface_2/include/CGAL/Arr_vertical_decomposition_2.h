@@ -79,7 +79,7 @@ OutputIterator decompose (const Arrangement_2<Traits,Dcel>& arr,
   {
     // Associate each x-monotone curve with the halfedge that represents it
     // and is directed from right to left.
-    if (eit->direction() == LEFT_TO_RIGHT)
+    if (eit->direction() == RIGHT_TO_LEFT)
       xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit);
     else
       xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->twin());
