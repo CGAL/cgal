@@ -76,21 +76,11 @@ public:
     m_oi (oi),
     traits (arr.get_traits())
   {
-    // Get a fictitious halfedge on the top edge of the bounding rectangle.
     Arr_accessor          arr_access (const_cast<Arrangement_2&>(arr));
-
-    Vertex_const_handle   v_tl = arr_access.arrangement().top_left_fictitious_vertex();
-    
-    m_top_he = v_tl->incident_halfedges();
-    if (m_top_he->source()->boundary_in_y() != PLUS_INFINITY)
-      m_top_he = m_top_he->next()->twin();
-
+    //Get a fictitious halfedge on the top edge of the bounding rectangle.
+    m_top_he = arr_access.arrangement().topology_traits()->top_halfedge();
     // Get a fictitious halfedge on the bottom edge of the bounding rectangle.
-    Vertex_const_handle   v_bl = arr_access.arrangement().bottom_left_fictitious_vertex();
-    
-    m_bottom_he = v_bl->incident_halfedges();
-    if (m_bottom_he->source()->boundary_in_y() != MINUS_INFINITY)
-      m_bottom_he = m_bottom_he->next()->twin();
+    m_bottom_he = arr_access.arrangement().topology_traits()->bottom_halfedge();
   }
 
   /*!
