@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /home/teillaud/CGAL/install/default/make/makefile_i686_Linux-2.6_g++-3.4.4_FC3
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -55,6 +55,5 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
