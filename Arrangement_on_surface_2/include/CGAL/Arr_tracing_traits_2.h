@@ -27,14 +27,17 @@
  */
 
 #include <iostream>
+#include <list>
+
 #include <CGAL/basic.h>
+#include <CGAL/Arr_enums.h>
 
 CGAL_BEGIN_NAMESPACE
 
 /*! \class 
  * A model of the ArrangementTraits_2 concept that counts the methods invoked.
  */
-template <class Base_traits>
+template <typename Base_traits>
 class Arr_tracing_traits_2 : public Base_traits {
 public:
   enum Operation_id {
@@ -60,12 +63,31 @@ public:
     NUMBER_OF_OPERATIONS
   };
 
+private:
   typedef Base_traits                           Base;
   typedef Arr_tracing_traits_2<Base>            Self;
 
+  bool m_trace[NUMBER_OF_OPERATIONS];
+  
+public:
   /*! Default constructor */
-  Arr_tracing_traits_2() : Base() { }
+  Arr_tracing_traits_2() :
+    Base()
+  {
+    unsigned int i;
+    for (i = 0; i < NUMBER_OF_OPERATIONS; ++i) m_trace[i] = true;
+  }
 
+  /*! Enable the trace of a traits operation
+   * \param id the operation identifier
+   */
+  void enable_trace(Operation_id id) { m_trace[id] = true; }
+
+  /*! Disable the trace of a traits operation
+   * \param id the operation identifier
+   */
+  void disable_trace(Operation_id id) { m_trace[id] = false; }
+  
   /// \name Types and functors inherited from the base
   //@{
 
@@ -148,7 +170,7 @@ public:
     {
       std::cout << "boundary_in_x" << std::endl
                 << "  ind: " << ind << ", xc: " << xc << std::endl;
-      Boundary_type bt = m_object(p1, p2);
+      Boundary_type bt = m_object(xc, ind);
       std::cout << "  result: " << bt << std::endl;
       return bt;
     }
@@ -348,7 +370,7 @@ public:
   public:
     Make_x_monotone_2(Base * base) :
       m_object(base->make_x_monotone_2_object()) {}
-    template<class OutputIterator>
+    template<typename OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi)
     {
       std::cout << "make_x_monotone" << std::endl
@@ -401,25 +423,21 @@ public:
     typename Base::Intersect_2 m_object;
   public:
     Intersect_2(Base * base) : m_object(base->intersect_2_object()) {}
-    template<class OutputIterator>
+    template<typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xc1,
                               const X_monotone_curve_2 & xc2,
                               OutputIterator oi)
     {
       std::cout << "intersect" << std::endl
                 << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;        
-      OutputIterator res_oi = m_object(xc1, xc2, oi);
-      if (res_oi == oi) return oi;
+                << "  xc2: " << xc2 << std::endl;
+      std::list<CGAL::Object> container;
+      m_object(xc1, xc2, std::back_inserter(container));
+      if (container.empty()) return oi;
 
-#if 0
-      /*! \todo the following code will fail to compile if OutputIterator is
-       * a back_inserter (e.g., of a list container).
-       * What is the right way to write generic code in this case?
-       */
       unsigned int i = 0;
-      OutputIterator it;
-      for (it = oi; it != res_oi; ++it) {
+      std::list<CGAL::Object>::iterator it;
+      for (it = container.begin(); it != container.end(); ++it) {
         X_monotone_curve_2 xc;
         if (assign (xc, *it)) {
           std::cout << "  result[" << i++ << "]: xc: " << xc << std::endl;
@@ -433,8 +451,9 @@ public:
           continue;
         }
       }
-#endif
-      return res_oi;
+      for (it = container.begin(); it != container.end(); ++it) *oi++ = *it;
+      container.clear();
+      return oi;
     }
   };
 
@@ -568,7 +587,7 @@ OutputStream & operator<<(OutputStream & os, Comparison_result cr)
 }
 
 /*! Inserter for the spherical_arc class used by the traits-class */
-#if 1
+#if 0
 template <class T_Kernel, class OutputStream>
 OutputStream & operator<<(OutputStream & os,
                           const Arr_extended_direction_3<T_Kernel> & p)
@@ -604,7 +623,7 @@ OutputStream & operator<<(OutputStream & os,
 #endif
 
 /*! Inserter for the spherical_arc class used by the traits-class */
-#if 1
+#if 0
 template <class T_Kernel, class OutputStream>
 OutputStream & operator<<(OutputStream & os,
                           const Arr_spherical_arc_3<T_Kernel> & xc)
