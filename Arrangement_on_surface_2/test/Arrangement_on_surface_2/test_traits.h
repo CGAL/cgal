@@ -20,6 +20,9 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 
+#elif TEST_TRAITS == LINEAR_TRAITS
+#include <CGAL/Arr_linear_traits_2.h>
+
 #elif TEST_TRAITS == CORE_CONIC_TRAITS
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -87,8 +90,11 @@ typedef Traits::Point_2                                 Point_2;
 typedef Traits::Rat_point_2                             Rat_point;
 typedef Traits::Rat_circle_2                            Rat_circle;
 typedef Traits::Rat_segment_2                           Rat_segment;
-
 #define TRAITS_TYPE "Conics"
+
+#elif TEST_TRAITS == LINEAR_TRAITS
+typedef CGAL::Arr_linear_traits_2<Kernel>               Traits;
+#define TRAITS_TYPE "Linear Lines"
 
 #elif TEST_TRAITS == LINE_ARC_TRAITS
 typedef Kernel                                                Linear_kernel;

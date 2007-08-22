@@ -27,13 +27,14 @@
 #define NON_CACHING_SEGMENT_TRAITS      1
 #define POLYLINE_TRAITS                 2
 #define NON_CACHING_POLYLINE_TRAITS     3
-#define CORE_CONIC_TRAITS               4
-#define LINE_ARC_TRAITS                 5
-#define CIRCULAR_ARC_TRAITS             6
-#define CIRCULAR_LINE_ARC_TRAITS        7
-#define CIRCLE_SEGMENT_TRAITS           8
-#define BEZIER_TRAITS                   9
-#define SPHERICAL_ARC_TRAITS            10
+#define LINEAR_TRAITS                   4
+#define CORE_CONIC_TRAITS               5
+#define LINE_ARC_TRAITS                 6
+#define CIRCULAR_ARC_TRAITS             7
+#define CIRCULAR_LINE_ARC_TRAITS        8
+#define CIRCLE_SEGMENT_TRAITS           9
+#define BEZIER_TRAITS                   10
+#define SPHERICAL_ARC_TRAITS            11
 
 // Default value based on dependencies:
 #if TEST_TRAITS == CORE_CONIC_TRAITS

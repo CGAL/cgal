@@ -25,13 +25,14 @@ SEGMENT_TRAITS=0
 NON_CACHING_SEGMENT_TRAITS=1
 POLYLINE_TRAITS=2
 NON_CACHING_POLYLINE_TRAITS=3
-CORE_CONIC_TRAITS=4
-LINE_ARC_TRAITS=5
-CIRCULAR_ARC_TRAITS=6
-CIRCULAR_LINE_ARC_TRAITS=7
-CIRCLE_SEGMENT_TRAITS=8
-BEZIER_TRAITS=9
-SPHERICAL_ARC_TRAITS=10
+LINEAR_TRAITS=4
+CORE_CONIC_TRAITS=5
+LINE_ARC_TRAITS=6
+CIRCULAR_ARC_TRAITS=7
+CIRCULAR_LINE_ARC_TRAITS=8
+CIRCLE_SEGMENT_TRAITS=9
+BEZIER_TRAITS=10
+SPHERICAL_ARC_TRAITS=11
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -278,6 +279,30 @@ test_non_caching_polyline_traits()
 }
 
 #---------------------------------------------------------------------#
+# linear traits
+#---------------------------------------------------------------------#
+test_linear_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_TRAITS linear_traits
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits data/compare linear_traits
+    #run_trapped_test test_traits data/linear/vertex linear_traits
+    #run_trapped_test test_traits data/linear/is_vertical linear_traits
+    #run_trapped_test test_traits data/linear/compare_y_at_x linear_traits
+    #run_trapped_test test_traits data/linear/compare_y_at_x_left linear_traits
+    #run_trapped_test test_traits data/linear/make_x_monotone linear_traits
+    #run_trapped_test test_traits data/linear/intersect linear_traits
+    #run_trapped_test test_traits data/linear/split linear_traits
+    #run_trapped_test test_traits data/linear/merge linear_traits
+    #run_trapped_test test_traits data/linear/errors linear_traits
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 # conic traits
 #---------------------------------------------------------------------#
 test_conic_traits()
@@ -429,14 +454,14 @@ test_spherical_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits data/spherical_arcs/compare spherical_arc_traits
+# SGSG!!! under construction run_trapped_test test_traits data/spherical_arcs/compare spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/vertex spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/is_vertical spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/compare_y_at_x spherical_arc_traits
-    run_trapped_test test_traits data/spherical_arcs/make_x_monotone spherical_arc_traits
+    #run_trapped_test test_traits data/spherical_arcs/make_x_monotone spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/intersect spherical_arc_traits
-    run_trapped_test test_traits data/spherical_arcs/split spherical_arc_traits
-    run_trapped_test test_traits data/spherical_arcs/merge spherical_arc_traits
+    #run_trapped_test test_traits data/spherical_arcs/split spherical_arc_traits
+    #run_trapped_test test_traits data/spherical_arcs/merge spherical_arc_traits
   fi
   clean_tests
 }
@@ -461,9 +486,10 @@ if [ $# -ne 0 ] ; then
   done
 else
   test_segment_traits
-#  test_non_caching_segment_traits
+  test_non_caching_segment_traits
   test_polyline_traits
-#  test_non_caching_polyline_traits
+  test_non_caching_polyline_traits
+  test_linear_traits
   test_conic_traits
 
   test_line_arc_traits # "line arcs" (segments) only
@@ -473,7 +499,7 @@ else
   test_circle_segments_traits
   test_bezier_traits
 
-#  test_spherical_arc_traits
+  test_spherical_arc_traits
 
   compile_and_run test_insertion
   compile_and_run test_removal
@@ -500,4 +526,3 @@ if [ -f $ERROR_FULL_DESCRIPTION_FILE ] ; then
   echo "********************************************************" >> $ERRORFILE
   cat $ERROR_FULL_DESCRIPTION_FILE >> $ERRORFILE
 fi
-

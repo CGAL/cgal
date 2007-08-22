@@ -69,6 +69,54 @@ read_point(stream & is, Point_2 & p)
 
 #endif
 
+#if TEST_TRAITS == SPHERICAL_ARC_TRAITS
+
+/*! Read a point */
+
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_point(stream & is, Point_2 & p)
+{
+  Basic_number_type x, y, z;
+  is >> x >> y >> z;
+  p = Point_2(x, y, z);
+  return true;
+}
+
+/*! Read a xcurve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & cv)
+{
+  Basic_number_type x1, y1, z1, x2, y2, z2;
+  is >> x1 >> y1 >> z1 >> x2 >> y2 >> z2;
+  Point_2 p1(x1, y1, z1);
+  Point_2 p2(x2, y2, z2);
+  CGAL_assertion(p1 != p2);
+  cv = X_monotone_curve_2(p1, p2);
+  return true;
+}
+
+/*! Read a curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+{
+  Basic_number_type x1, y1, z1, x2, y2, z2;
+  is >> x1 >> y1 >> z1 >> x2 >> y2 >> z2;
+  Point_2 p1(x1, y1, z1);
+  Point_2 p2(x2, y2, z2);
+  CGAL_assertion(p1 != p2);
+  cv = Curve_2(p1, p2);
+  return true;
+}
+
+#endif
+
 #if TEST_TRAITS == POLYLINE_TRAITS || TEST_TRAITS == NON_CACHING_POLYLINE_TRAITS
 
 template <>
