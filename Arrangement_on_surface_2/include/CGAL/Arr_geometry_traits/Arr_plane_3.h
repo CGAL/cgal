@@ -40,6 +40,7 @@ template <class Kernel_>
 class Arr_plane_3 {
 public:
   typedef Kernel_                       Kernel;
+  typedef Arr_plane_3<Kernel>           Self;
   typedef typename Kernel::Point_2      Point_2;
   typedef typename Kernel::Point_3      Point_3;
   typedef typename Kernel::Vector_3     Vector_3;
@@ -92,6 +93,13 @@ public:
   {
     CGAL_assertion(i < 3);
     return (i == 0) ? m_a : ((i == 1) ? m_b : m_c);
+  }
+
+  bool equal(Self plane) const
+  {
+    return ((a() == plane.a()) &&
+            (b() == plane.b()) &&
+            (c() == plane.c()));
   }
 
   /*! Compute the image point of the projection of p under an affine
