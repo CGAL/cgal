@@ -1,4 +1,3 @@
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_Expr.h>
@@ -132,12 +131,6 @@ int main(int argc, char **argv)
   return success;
 }
 
-#if 0
-CGAL_BEGIN_NAMESPACE
-inline bool operator< (const CGAL::Cartesian<CGAL::CORE_algebraic_number_traits::Rational>::Sphere_3& a,
-                       const CGAL::Cartesian<CGAL::CORE_algebraic_number_traits::Rational>::Sphere_3& b)
-{
-  return SMALLER;
-}
 CGAL_END_NAMESPACE
+
 #endif
