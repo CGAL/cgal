@@ -587,25 +587,6 @@ OutputStream & operator<<(OutputStream & os, Comparison_result cr)
 }
 
 /*! Inserter for the spherical_arc class used by the traits-class */
-#if 0
-template <class T_Kernel, class OutputStream>
-OutputStream & operator<<(OutputStream & os,
-                          const Arr_extended_direction_3<T_Kernel> & p)
-{
-  CGAL::To_double<typename T_Kernel::FT> todouble;
-  os << "("
-     << static_cast<float>(todouble(p.dx())) << ","
-     << static_cast<float>(todouble(p.dy())) << ","
-     << static_cast<float>(todouble(p.dz()))
-     << ")"
-     << ", "
-     <<
-    (p.is_min_boundary() ? "min" :
-     p.is_max_boundary() ? "max" :
-     p.is_mid_boundary() ? "dis" : "reg");
-  return os;
-}
-#else
 template <class T_Traits, class OutputStream>
 OutputStream & operator<<(OutputStream & os,
                           const typename
@@ -620,22 +601,8 @@ OutputStream & operator<<(OutputStream & os,
      p.is_mid_boundary() ? "dis" : "reg");
   return os;
 }
-#endif
 
 /*! Inserter for the spherical_arc class used by the traits-class */
-#if 0
-template <class T_Kernel, class OutputStream>
-OutputStream & operator<<(OutputStream & os,
-                          const Arr_spherical_arc_3<T_Kernel> & xc)
-{
-  os << "("
-     << xc.left() << "," << xc.right()
-     << ")"
-     << ", " << (xc.is_vertical() ? " |" : "!|")
-     << ", " << (xc.is_directed_right() ? "=>" : "<=");
-  return os;
-}
-#else
 template <class T_Traits, class OutputStream>
 OutputStream & operator<<(OutputStream & os,
                           const typename
@@ -648,7 +615,6 @@ OutputStream & operator<<(OutputStream & os,
      << ", " << (xc.is_directed_right() ? "=>" : "<=");
   return os;
 }
-#endif
 
 CGAL_END_NAMESPACE
 
