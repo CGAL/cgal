@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/batched_point_location.cpp
+//! \file examples/Arrangement_on_surface_2/batched_point_location.cpp
 // Answering a batched point-location query.
 
 #include <CGAL/Cartesian.h>

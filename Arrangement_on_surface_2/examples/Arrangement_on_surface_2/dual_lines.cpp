@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/dual_lines.cpp
+//! \file examples/Arrangement_on_surface_2/dual_lines.cpp
 // Checking whether there are three collinear points in a given input set
 // using the arrangement of the dual lines.
 

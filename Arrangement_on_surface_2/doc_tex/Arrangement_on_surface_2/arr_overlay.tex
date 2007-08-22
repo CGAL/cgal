@@ -82,7 +82,7 @@ concept. The details of this concept are given in the Reference Manual.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_22}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_22}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -100,7 +100,7 @@ of the two marked faces is denoted by $f_0$.\label{arr_fig:ex_22}}
 The next program constructs two simple arrangements, as depicted in
 Figure~\ref{arr_fig:ex_22} and computes their overlay:
 
-\ccIncludeExampleCode{Arrangement_2/overlay.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/overlay.cpp}
 
 \subsection{Examples for a Face Overlay\label{arr_ssec:face_ovl}}
 %--------------------------------------
@@ -119,7 +119,7 @@ The example computes the intersection between a square and a rhombus, (which is
 actually also a square). The resulting polygon is an octagon, denoted
 by $f_0$ in Figure~\ref{arr_fig:ex_22}:
 
-\ccIncludeExampleCode{Arrangement_2/face_extension_overlay.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/face_extension_overlay.cpp}
 
 The next example demonstrates the face overlay of two arrangements that
 have unbounded faces as well. The first arrangement is formed by the two lines
@@ -129,4 +129,4 @@ segments that form a square-shaped face. When we overlay the two arrangements,
 each of the four faces $A$, $B$, $C$ and $D$ is split into an unbounded
 face (indexed 1) and a bounded face (indexed 2):
 
-\ccIncludeExampleCode{Arrangement_2/overlay_unbounded.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/overlay_unbounded.cpp}

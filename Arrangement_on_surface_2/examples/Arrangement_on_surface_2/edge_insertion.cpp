@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/edge_insertion.cpp
+//! \file examples/Arrangement_on_surface_2/edge_insertion.cpp
 // Constructing an arrangement using the simple edge-insertion functions.
 
 #include <CGAL/Simple_cartesian.h>

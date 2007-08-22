@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/conics.cpp
+//! \file examples/Arrangement_on_surface_2/conics.cpp
 // Constructing an arrangement of various conic arcs.
 #include <CGAL/basic.h>
 

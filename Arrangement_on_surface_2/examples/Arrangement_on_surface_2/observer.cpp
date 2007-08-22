@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/observer.cpp
+//! \file examples/Arrangement_on_surface_2/observer.cpp
 // Using a simple arrangement observer.
 
 #include <CGAL/Cartesian.h>

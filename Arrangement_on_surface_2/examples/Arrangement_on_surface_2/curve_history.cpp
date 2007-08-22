@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/curve_history.cpp
+//! \file examples/Arrangement_on_surface_2/curve_history.cpp
 // Constructing an arrangement with curve history.
 
 #include "arr_rational_nt.h"

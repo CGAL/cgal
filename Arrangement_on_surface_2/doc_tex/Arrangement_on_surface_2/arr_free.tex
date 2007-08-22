@@ -162,7 +162,7 @@ insertion operation may involve splitting curves.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_8}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_8}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -195,7 +195,7 @@ the input coordinates are rational (or integer). Therefore,
 the \ccc{Quotient<int>} number type is used to represent the
 coordinates:
 
-\ccIncludeExampleCode{Arrangement_2/incremental_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/incremental_insertion.cpp}
 
 \subsubsection{Other Zone Related Functions\label{arr_sssec:zone}}
 %------------------------------------------
@@ -295,7 +295,7 @@ section. We use the aggregated insertion function
 Note that no point-location object needs to be defined and attached to the
 arrangement:
 
-\ccIncludeExampleCode{Arrangement_2/aggregated_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/aggregated_insertion.cpp}
 
 In case we have to insert a set of $m$ curves into an existing
 arrangement, where we denote the number of edges in the arrangement by $N$.
@@ -305,7 +305,7 @@ one. For larger input sets, we use the aggregated insertion procedures.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_10}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_10}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -333,7 +333,7 @@ but as they intersect the existing arrangement, we have to use
 single segment $s$ we insert incrementally overlaps an existing
 arrangement edge:
 
-\ccIncludeExampleCode{Arrangement_2/global_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/global_insertion.cpp}
 
 The number type used in the example above,
 \ccc{Quotient<MP_Float>}, is comprised of a numerator and a
@@ -389,9 +389,9 @@ vertical line segments:
   \end{minipage}\hspace{\ArrangementTwoMinipageSpace}
   \begin{minipage}{\ArrangementTwoWidthRight}
     \begin{center}
-    \includegraphics{Arrangement_2/fig/h_shape}
+    \includegraphics{Arrangement_on_surface_2/fig/h_shape}
     \end{center}
   \end{minipage}
 }
 
-\ccIncludeExampleCode{Arrangement_2/global_removal.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/global_removal.cpp}

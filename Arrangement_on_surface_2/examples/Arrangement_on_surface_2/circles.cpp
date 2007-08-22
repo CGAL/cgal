@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/circles.cpp
+//! \file examples/Arrangement_on_surface_2/circles.cpp
 // Constructing an arrangement of circles using the conic-arc traits.
 
 #include "arr_rational_nt.h"

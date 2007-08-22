@@ -1,4 +1,4 @@
-// file: examples/Arrangement_2/old_example2.C
+// file: examples/Arrangement_on_surface_2/old_example2.C
 // Benchmark for arrangements of ellipses.
 
 #include <CGAL/Cartesian.h>

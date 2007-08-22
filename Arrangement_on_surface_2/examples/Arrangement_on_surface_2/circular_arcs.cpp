@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/circular_arc.cpp
+//! \file examples/Arrangement_on_surface_2/circular_arc.cpp
 // Constructing an arrangement of various circular arcs and line segments.
 
 #include "arr_rational_nt.h"

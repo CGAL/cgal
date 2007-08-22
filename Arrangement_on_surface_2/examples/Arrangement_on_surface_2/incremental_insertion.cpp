@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/incremental_insertion.cpp
+//! \file examples/Arrangement_on_surface_2/incremental_insertion.cpp
 // Using the global incremental insertion functions.
 
 #include <CGAL/Cartesian.h>

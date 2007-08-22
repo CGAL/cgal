@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/predefined_kernel_non_intersecting.cpp
+//! \file examples/Arrangement_on_surface_2/predefined_kernel_non_intersecting.cpp
 // Constructing an arrangement of non-intersecting line segments using the
 // predefined kernel with exact predicates.
 

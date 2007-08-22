@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/generic_curve_data.cpp
+//! \file examples/Arrangement_on_surface_2/generic_curve_data.cpp
 // Associating a name attribute with segments using the generic curve-data
 // traits.
 

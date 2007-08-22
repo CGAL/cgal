@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/sweep_line.cpp
+//! \file examples/Arrangement_on_surface_2/sweep_line.cpp
 // Computing intersection points among curves using the sweep line.
 
 #include <CGAL/Cartesian.h>

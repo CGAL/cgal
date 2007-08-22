@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/edge_manipulation.cpp
+//! \file examples/Arrangement_on_surface_2/edge_manipulation.cpp
 // Using the edge-manipulation functions.
 
 #include <CGAL/basic.h>

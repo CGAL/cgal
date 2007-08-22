@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/conic_multiplicities.cpp
+//! \file examples/Arrangement_on_surface_2/conic_multiplicities.cpp
 // Handling intersection points with multiplicity between conic arcs.
 
 #include <CGAL/basic.h>

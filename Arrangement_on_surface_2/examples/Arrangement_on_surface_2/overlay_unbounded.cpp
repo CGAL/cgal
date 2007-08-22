@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/overlay_unbounded.cpp
+//! \file examples/Arrangement_on_surface_2/overlay_unbounded.cpp
 // A face overlay of two arrangements with unbounded faces.
 
 #include <string>

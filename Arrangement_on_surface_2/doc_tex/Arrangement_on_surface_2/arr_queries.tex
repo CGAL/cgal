@@ -31,14 +31,14 @@ on a vertex.
 Note that the handles returned by the \ccc{locate()} functions are
 \ccc{const} (non-mutable) handles. If necessary, such handles may
 be casted to mutable handles using the static functions
-\ccc{Arrangement_2::non_const_handle()} provided by the
+\ccc{Arrangement_on_surface_2::non_const_handle()} provided by the
 arrangement class.
 
 An instance of any point-location class must be attached to an
-\ccc{Arrangement_2} instance so we can use it to issue point-location
+\ccc{Arrangement_on_surface_2} instance so we can use it to issue point-location
 queries. This attachment can be performed when the point-location
 instance is constructed, or at a later time, using the \ccc{init(arr)}
-method, where \ccc{arr} is the attached \ccc{Arrangement_2} instance.
+method, where \ccc{arr} is the attached \ccc{Arrangement_on_surface_2} instance.
 In this chapter we always use the first option.
 
 The following function template, which can be found in the example
@@ -55,17 +55,17 @@ associated with an arrangement:
 template <class PointLocation>
 void point_location_query
         (const PointLocation& pl,
-         const typename PointLocation::Arrangement_2::Point_2& q)
+         const typename PointLocation::Arrangement_on_surface_2::Point_2& q)
 \{
   // Perform the point-location query.
   CGAL::Object obj = pl.locate (q);
 
   // Print the result.
-  typedef typename PointLocation::Arrangement_2  Arrangement_2;
+  typedef typename PointLocation::Arrangement_on_surface_2  Arrangement_on_surface_2;
 
-  typename Arrangement_2::Vertex_const_handle    v;
-  typename Arrangement_2::Halfedge_const_handle  e;
-  typename Arrangement_2::Face_const_handle      f;
+  typename Arrangement_on_surface_2::Vertex_const_handle    v;
+  typename Arrangement_on_surface_2::Halfedge_const_handle  e;
+  typename Arrangement_on_surface_2::Face_const_handle      f;
 
   std::cout << "The point " << q << " is located ";
   if (CGAL::assign (f, obj)) \{
@@ -193,7 +193,7 @@ selected point-location strategy.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_5}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_5}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -217,7 +217,7 @@ can be found in \ccc{point_location_utils.h}).
 It then employs the naive and the landmark strategies to issue
 several point-location queries on this arrangement:
 
-\ccIncludeExampleCode{Arrangement_2/point_location.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/point_location.cpp}
 
 Note that the program uses the auxiliary
 \ccc{point_location_query()} function template to nicely print the
@@ -258,17 +258,17 @@ already associated with an arrangement:
 template <class VerticalRayShoot>
 void vertical_ray_shooting_query
     (const VerticalRayShoot& vrs,
-     const typename VerticalRayShoot::Arrangement_2::Point_2& q)
+     const typename VerticalRayShoot::Arrangement_on_surface_2::Point_2& q)
 \{
   // Perform the point-location query.
   CGAL::Object    obj = vrs.ray_shoot_up (q);
 
   // Print the result.
-  typedef typename VerticalRayShoot::Arrangement_2  Arrangement_2;
+  typedef typename VerticalRayShoot::Arrangement_on_surface_2  Arrangement_on_surface_2;
 
-  typename Arrangement_2::Vertex_const_handle    v;
-  typename Arrangement_2::Halfedge_const_handle  e;
-  typename Arrangement_2::Face_const_handle      f;
+  typename Arrangement_on_surface_2::Vertex_const_handle    v;
+  typename Arrangement_on_surface_2::Halfedge_const_handle  e;
+  typename Arrangement_on_surface_2::Face_const_handle      f;
 
   std::cout << "Shooting up from " << q << " : "; 
   if (CGAL::assign (e, obj)) \{
@@ -299,7 +299,7 @@ perform vertical ray-shooting queries on an arrangement.
 The arrangement and the query points are exactly the same as in
 \ccc{point_location.cpp} (see Figure~\ref{arr_fig:ex_5}):
 
-\ccIncludeExampleCode{Arrangement_2/vertical_ray_shooting.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
 The number type we use in this example is \cgal's built-in
 \ccc{MP_Float} type which is a floating-point number with an
@@ -343,4 +343,4 @@ The following program issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
 \ccc{point_location.cpp} (see Section~\ref{arr_ssec:pl}):
 
-\ccIncludeExampleCode{Arrangement_2/batched_point_location.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/batched_point_location.cpp}

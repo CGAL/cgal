@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/aggregated_insertion.cpp
+//! \file examples/Arrangement_on_surface_2/aggregated_insertion.cpp
 // Using the global aggregated insertion functions.
 
 #include <CGAL/Gmpq.h>

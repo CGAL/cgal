@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/polylines.cpp
+//! \file examples/Arrangement_on_surface_2/polylines.cpp
 // Constructing an arrangement of polylines.
 
 #include <CGAL/Cartesian.h>

@@ -733,6 +733,8 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
      Boundary_type bound_y,
      Subcurve* sc)
 {
+  std::cout << "cv: " << cv.base() << std::endl;
+  
   // Look for the curve end in the event queue.
   Event*    e;  
   

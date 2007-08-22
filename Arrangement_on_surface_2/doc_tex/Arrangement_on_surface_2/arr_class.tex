@@ -66,7 +66,7 @@ in the rest of this chapter.
   \end{minipage}\hspace{\ArrangementTwoMinipageSpace}
   \begin{minipage}{\ArrangementTwoWidthRight}
     \begin{center}
-    \includegraphics{Arrangement_2/fig/triangle}
+    \includegraphics{Arrangement_on_surface_2/fig/triangle}
     \end{center}
   \end{minipage}
 }
@@ -388,9 +388,9 @@ and return to this subsection at a later point in time.}
 \begin{ccTexOnly}
   \begin{center}
   \begin{tabular}{ccc}
-    \includegraphics{Arrangement_2/fig/insert_in_face} &
-    \includegraphics{Arrangement_2/fig/insert_from_vertex} &
-    \includegraphics{Arrangement_2/fig/insert_at_vertices}\\
+    \includegraphics{Arrangement_on_surface_2/fig/insert_in_face} &
+    \includegraphics{Arrangement_on_surface_2/fig/insert_from_vertex} &
+    \includegraphics{Arrangement_on_surface_2/fig/insert_at_vertices}\\
   {\small (a)} & {\small (b)} & {\small (c)}\\
   \end{tabular}
   \end{center}
@@ -469,7 +469,7 @@ figure to the left).
   \end{minipage}%\hspace{\ArrangementTwoMinipageSpace}
   \begin{minipage}{\ArrangementTwoWidthRight}
     \begin{center}\hspace{\ArrangementTwoMinipageSpace}
-    \includegraphics{Arrangement_2/fig/connect_comp}
+    \includegraphics{Arrangement_on_surface_2/fig/connect_comp}
     \end{center}
   \end{minipage}
 }
@@ -502,7 +502,7 @@ from $v_1$ to $v_2$.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_1}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_1}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -531,7 +531,7 @@ many others in this chapter, uses some print-utility functions from
 the file \ccc{print_arr.h}; these functions are also listed in
 Section~\ref{arr_ssec:traverse}.
 
-\ccIncludeExampleCode{Arrangement_2/edge_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/edge_insertion.cpp}
 
 Observe that the first line segment is inserted in the interior of
 the unbounded face. The other line segments are inserted
@@ -562,7 +562,7 @@ an isolated vertex and removes it from the arrangement.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_2}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_2}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -584,7 +584,7 @@ illustration). Finally, it traverses the vertices and removes those
 isolated vertices that are still contained in the unbounded face
 ($u_2$ and $u_3$ in this case):
 
-\ccIncludeExampleCode{Arrangement_2/isolated_vertices.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/isolated_vertices.cpp}
 
 \subsubsection{Manipulating Halfedges\label{arr_sssec:mf_halfedges}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -632,9 +632,9 @@ are to be removed should they become isolated.
 \begin{ccTexOnly}
   \begin{center}
   \begin{tabular}{ccc}
-    \includegraphics{Arrangement_2/fig/ex_3a} &
-    \includegraphics{Arrangement_2/fig/ex_3b} &
-    \includegraphics{Arrangement_2/fig/ex_3c} \\
+    \includegraphics{Arrangement_on_surface_2/fig/ex_3a} &
+    \includegraphics{Arrangement_on_surface_2/fig/ex_3b} &
+    \includegraphics{Arrangement_on_surface_2/fig/ex_3c} \\
   {\small (a)} & {\small (b)} & {\small (c)}\\
   \end{tabular}
   \end{center}
@@ -672,7 +672,7 @@ kernel of \cgal\ as our kernel. This is recommended when the
 kernel is instantiated with a more complex number type, as we
 demonstrate in other examples in this chapter.
 
-\ccIncludeExampleCode{Arrangement_2/edge_manipulation.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/edge_manipulation.cpp}
 
 Note how we use the halfedge handles returned from
 \ccc{split_edge()} and \ccc{merge_edge()}. Also note the insertion
@@ -735,7 +735,7 @@ be carried out in constant time.
   \end{minipage}\hspace{\ArrangementTwoMinipageSpace}
   \begin{minipage}{\ArrangementTwoWidthRight}
     \begin{center}
-    \includegraphics{Arrangement_2/fig/pred_around_vertex}
+    \includegraphics{Arrangement_on_surface_2/fig/pred_around_vertex}
     \end{center}
   \end{minipage}
 }
@@ -762,7 +762,7 @@ vertex.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_4}
+  \includegraphics{Arrangement_on_surface_2/fig/ex_4}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -780,7 +780,7 @@ The following program shows how to construct the arrangement
 depicted in Figure~\ref{arr_fig:ex_4} using the specialized
 insertion functions that accept predecessor halfedges:
 
-\ccIncludeExampleCode{Arrangement_2/special_edge_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/special_edge_insertion.cpp}
 
 It is possible to perform even more refined operations on an
 \ccc{Arrangement_2} instance given specific topological information.

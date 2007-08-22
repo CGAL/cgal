@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/overlay.cpp
+//! \file examples/Arrangement_on_surface_2/overlay.cpp
 // A simple overlay of two arrangements.
 
 #include "arr_rational_nt.h"

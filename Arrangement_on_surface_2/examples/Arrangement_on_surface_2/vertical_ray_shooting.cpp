@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_vertical_ray_shooting.cpp
+//! \file examples/Arrangement_on_surface_2/ex_vertical_ray_shooting.cpp
 // Answering vertical ray-shooting queries.
 
 #include <CGAL/Cartesian.h>

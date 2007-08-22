@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/Bezier_curves.cpp
+//! \file examples/Arrangement_on_surface_2/Bezier_curves.cpp
 // Constructing an arrangement of Bezier curves.
 
 #include <CGAL/basic.h>

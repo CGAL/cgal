@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/vertical_decomposition.cpp
+//! \file examples/Arrangement_on_surface_2/vertical_decomposition.cpp
 // Performing vertical decomposition of an arrangement.
 
 #include <CGAL/Cartesian.h>
