@@ -202,11 +202,15 @@ public:
     //!\brief  returns an object of type \c Xy_coordinate_2 for the j-th event
     //!
     //! \pre 0 <= j < num_of_events()
+    // TODO add get_xy_coordinate() with the same functionality
     Xy_coordinate_2 get_algebraic_real_2(int j) const
     {
         CGAL_precondition(0 <= j&&j < number_of_events());
         // how to get the pointer to the curve ?
         // we have to store such a pointer for vertical line
+        // TODO isn't it a good idea to cache the construction?
+        // this way we get filter failures, e.g., the same point 
+        // is represented twice when accessing it twice
         return Xy_coordinate_2(x(), 
             this->ptr()->_m_ca_2.get_polynomial_2(), j);
     }

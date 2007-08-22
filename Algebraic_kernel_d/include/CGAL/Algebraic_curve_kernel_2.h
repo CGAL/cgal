@@ -282,6 +282,7 @@ public:
 
         Comparison_result operator()(const X_coordinate_1& x1, 
                                          const X_coordinate_1& x2) const {
+            // TODO should ACK_2 derive from AK_1?
         // not yet implemented in Algebraic_kernel_1 (will it be ?)
         //   Algebraic_kernel_1 ak;
         //   return (ak.compare_x_2_object()(x1, x2));

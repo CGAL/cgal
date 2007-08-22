@@ -145,7 +145,7 @@ private:
                 std::back_inserter(common))) {
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
-            // ATTENTION: here the cache must be used !!
+            // TODO ATTENTION: here the cache must be used !!
             if(parts_of_f.size() == 1) {
                 p.simplify_by(Curve_pair_analysis_2(
                     Curve_pair_2(parts_of_f[0], common[0])));
