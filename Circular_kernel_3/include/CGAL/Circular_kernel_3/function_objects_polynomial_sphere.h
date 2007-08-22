@@ -250,9 +250,9 @@ namespace SphericalFunctors {
     typedef typename SK::Linear_kernel LK;
     typedef typename LK::Equal_3 LK_Equal_3;
 
-    typedef typename LK::Point_3 Point_3;
-    typedef typename LK::Direction_3 Direction_3;
-    typedef typename LK::Line_3 Line_3;
+    typedef typename SK::Point_3 Point_3;
+    typedef typename SK::Direction_3 Direction_3;
+    typedef typename SK::Line_3 Line_3;
 
     typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
     typedef typename SK::Circle_3                 Circle_3;
