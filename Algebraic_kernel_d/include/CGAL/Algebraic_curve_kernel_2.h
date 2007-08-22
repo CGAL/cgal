@@ -249,12 +249,15 @@ public:
         //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
         Self *_m_pkernel_2; 
     };
-        
+    
+
+    // TODO documentation
     Construct_curve_2 construct_curve_2_object() 
     {
         return Construct_curve_2(this);
     }
     
+    // TODO grouping
     //! access to curve cache
     Curve_cache& get_curve_cache() const
     {
@@ -297,7 +300,9 @@ public:
                 Comparison_result > {
         
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
-                                         const Xy_coordinate_2& xy2) const {
+                                     const Xy_coordinate_2& xy2) const {
+            
+            CGAL_error("Compare_y_2 functor not yet implemented");
             return CGAL::EQUAL;
         }
     };
@@ -338,7 +343,7 @@ public:
     //!
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
-    struct Has_finite_number_of_intersections_2 :
+    struct Have_finite_number_of_intersections_2 :
             public Binary_function< Curve_2, Curve_2, bool > { 
                
         bool operator()(const Curve_2& c1, const Curve_2& c2) {
@@ -352,8 +357,8 @@ public:
             return (total_degree(gcd_utcf(p1, p2)) == 0);  
         }
     };
-    CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2, 
-            has_finite_number_of_intersections_2_object);
+    CGAL_Algebraic_Kernel_pred(Have_finite_number_of_intersections_2, 
+            have_finite_number_of_intersections_2_object);
     
     //! a set of verious curve and curve pair decomposition functions
     struct Decompose_2 {
@@ -384,7 +389,7 @@ public:
         //! \c Curve_2, and \c mit is \c int
         template< class OutputIterator1, class OutputIterator2 >
         int operator()( const Curve_2& c, OutputIterator1 fit, 
-                OutputIterator2 mit ) const {
+                        OutputIterator2 mit ) const {
             typename Polynomial_traits_2::
                 Square_free_factorization_up_to_constant_factor factorize;
             NiX2CGAL_converter cvt;
@@ -448,7 +453,7 @@ public:
     typedef Xy_coordinate_2 Algebraic_real_2;
     
     typedef Has_finite_number_of_self_intersections_2 Is_square_free_2;
-    typedef Has_finite_number_of_intersections_2 Is_coprime_2;
+    typedef Have_finite_number_of_intersections_2 Is_coprime_2;
 
     typedef Decompose_2 Make_square_free_2;
     typedef Decompose_2 Square_free_factorization;
@@ -501,6 +506,8 @@ public:
                     int_pair = cv_line.get_number_of_incident_branches(j);
                     // count only points with the number of incident branches
                     // different from 1
+                    // TODO be carefull .. there can be an "isolated point"
+                    // on a branch
                     if(int_pair.first != 1||int_pair.second != 1) 
                         *res++ = cv_line.get_algebraic_real_2(j);   
                 }
@@ -537,13 +544,14 @@ public:
             
             tmp = swap(tmp, 0, 1); // interchange x and y variables
             Polynomial_2 swapped(cvt_back(tmp));
+            // TODO ok .. but costly!
             return X_critical_points_2()(swapped, res);
         }
         
         //! \brief computes the ith y-critical point of polynomial \c p
         Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
         {
-            
+            // TODO return?
         }
     };
     CGAL_Algebraic_Kernel_pred(Y_critical_points_2,
@@ -555,6 +563,9 @@ public:
         
         Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
         {
+            // TODO have a look at point on curve in 
+            // QuadriX/include/SfX/
+            // Algebraic_surface_3_z_at_xy_isolator_traits_base.h
             return CGAL::Sign();
         }
         // can be implemented using Curve_pair_analysis -> later
