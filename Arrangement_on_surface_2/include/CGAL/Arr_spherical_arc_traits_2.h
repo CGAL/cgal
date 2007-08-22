@@ -20,7 +20,7 @@
 #ifndef CGAL_ARR_SPHERICAL_ARC_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_ARC_TRAITS_2_H
 
-#define CGAL_ARR_PLANE 1
+//#define CGAL_ARR_PLANE
 
 /*! \file
  * The spherical_arc traits-class for the arrangement package.
@@ -1363,7 +1363,11 @@ public:
 
       Kernel kernel;
       typename Kernel::Equal_3 equal = kernel.equal_3_object();
+      #if defined(CGAL_ARR_PLANE)
+      if (!(xc1.plane()).equal(xc2.plane())) return false;
+      #else
       if (!equal(xc1.plane(), xc2.plane())) return false;
+      #endif
       if (equal(xc1.right(), xc2.left()) && xc2.left().is_no_boundary())
         return true;
       if (equal(xc1.left(), xc2.right()) && xc1.left().is_no_boundary())
@@ -1396,7 +1400,11 @@ public:
         Kernel kernel;
         typename Kernel::Equal_3 equal = kernel.equal_3_object();
       );
+      #if defined(CGAL_ARR_PLANE)
+      CGAL_precondition((xc1.plane()).equal(xc2.plane()));
+      #else
       CGAL_precondition(equal(xc1.plane(), xc2.plane()));
+      #endif
       CGAL_precondition(equal(xc1.right(), xc2.left()) &&
                         xc2.left().is_no_boundary());
 
