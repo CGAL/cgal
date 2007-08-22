@@ -379,9 +379,14 @@ sub processStartCmd
 
   foreach $clo (keys %Clos) {
     $cmd = $Clos{$clo}->{'string'};
-    push @args, $cmd . $fileAttrTable->{$clo}
-      if exists($fileAttrTable->{$clo});
-    push @args, $cmd . $attrTable->{$clo} if exists($attrTable->{$clo});
+    if (exists($fileAttrTable->{$clo})) {
+      push @args, $cmd;
+      push @args, $fileAttrTable->{$clo}
+    }
+    if (exists($attrTable->{$clo})) {
+      push @args, $cmd;
+      push @args, $attrTable->{$clo};
+    }
   }
 
   push @args, $extraArgs if defined($extraArgs);
@@ -605,11 +610,12 @@ sub printEnv
     if (/^(.*LEDA)\/incl/) {
       $ledaFile = $1;
     }
-    open LEDAFILE, $ledaFile or die "Can't open file: $ledaFile\n";
-    undef $/;			# input record separator
-    $_ = <LEDAFILE>;		# whole file
-    if (/#define __LEDA__\s+([^\s]+)/) {
-      $ledaVersion = $1;
+    if (open LEDAFILE, $ledaFile) {
+      undef $/;		# input record separator
+      $_ = <LEDAFILE>;	# whole file
+      if (/#define __LEDA__\s+([^\s]+)/) {
+        $ledaVersion = $1;
+      }
     }
   }
   print "LEDA VERSION: $ledaVersion\n";
