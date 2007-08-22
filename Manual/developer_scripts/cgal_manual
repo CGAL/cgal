@@ -338,6 +338,7 @@ ${BoldColor}Options:${ResetColor}
     ${BoldColor}-testsuite${ResetColor}       runs testsuite, installs results and sends email. Use
                      only after reading the config section of this script.
                      Implies -sub-modules=all
+    ${BoldColor}-nopublish${ResetColor}       do not publish results after running the testsuite
     ${BoldColor}-h${ResetColor}               help (this text).
     ${BoldColor}-V${ResetColor}               version.
     ${BoldColor}-v${ResetColor}               verbose: repeats logfiles on stderr.
@@ -1457,7 +1458,8 @@ make_manual_prime() {
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
               linklint -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
-              search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" 'file:\/\/\/www\/pub\/' 'http:\/\/'
+              #REPLACEPATH="`pwd | sed -e 's/[/]/\\\//g'`"
+              search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" "file:\/\/.\+\/doc_tex\/testsuite\/" '..\/'
 
               if grep 'No errors,' testsuite/${WrapperRootName}-linklintresults/log.txt >& /dev/null; then
                   LinklintExit=0
@@ -1777,7 +1779,7 @@ EOF
         echo "${ErrorColor}ERROR${ResetColor}: The directory '${TestSuiteResultPath}' for the testsuite results does not exist." 1>&2
         GlobalReturnStatus=1
     else
-
+      if [ $DoPublishTestsuiteResults -eq 1 ] ; then
         # When the -testsuite option is used the script will copy all
         # the manuals and logfiles to
         # $TestSuiteResultPath/CGAL-$CgalInternalVersion/ and creates an HTML
@@ -1844,6 +1846,7 @@ EOF
             # use this line on Linux systems
             printf "\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} -s "[automatic] New manual test results ${Target}" ${TestSuiteResultEmail}
         fi
+      fi
     fi
 }
 
@@ -1863,6 +1866,8 @@ SetMakeHTML=0
 DoCmdLog=0
 Parameters=""
 SubModules=""
+# becomes effective then used with -testsuite. default=1 :
+DoPublishTestsuiteResults=1
 
 while [ $# -gt 0 ] ; do
   case "$1" in
@@ -1881,6 +1886,9 @@ while [ $# -gt 0 ] ; do
     -html) SetMakeHTML=1
         ;;
     -wrapper) MakeWrapperOnly=1
+        ;;
+    -nopublish)
+        DoPublishTestsuiteResults=0
         ;;
     -testsuite)
         MakeTestSuiteResult=1
