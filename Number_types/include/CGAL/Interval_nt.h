@@ -433,10 +433,21 @@ width (const Interval_nt<Protected> & d)
 // Non-documented
 template <bool Protected>
 inline
-Comparison_result
-compare_relative_precision(const Interval_nt<Protected> & d, double prec)
+double
+radius (const Interval_nt<Protected> & d)
 {
-  return CGAL::compare(width(d), prec * magnitude(d));
+  return width(d)/2; // This could be improved to avoid overflow.
+}
+
+// Non-documented
+// This is the relative precision of to_double() (the center of the interval),
+// hence we use radius() instead of width().
+template <bool Protected>
+inline
+bool
+has_smaller_relative_precision(const Interval_nt<Protected> & d, double prec)
+{
+  return magnitude(d) == 0 || radius(d) < prec * magnitude(d);
 }
 
 // Non-documented
@@ -446,7 +457,7 @@ relative_precision(const Interval_nt<Protected> & d)
 {
   if (magnitude(d) == 0.0)
     return 0.0;
-  return width(d) / magnitude(d);
+  return radius(d) / magnitude(d);
 }
 
 
