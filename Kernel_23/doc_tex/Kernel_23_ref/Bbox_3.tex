@@ -19,11 +19,13 @@ box in the three-dimensional Euclidean space $\E^3$.
 
 \ccOperations
 
-\ccHidden\ccMethod{bool operator==(const Bbox_3 &c) const;}
+\ccMethod{bool operator==(const Bbox_3 &c) const;}
        {Test for equality.}
 
-\ccHidden\ccMethod{bool operator!=(const Bbox_3 &q) const;}
+\ccMethod{bool operator!=(const Bbox_3 &q) const;}
        {Test for inequality.}
+
+\ccMethod{int dimension() const;}{ Returns 3. }
 
 \ccMethod{double                 xmin() const;}
        {}
@@ -42,6 +44,16 @@ box in the three-dimensional Euclidean space $\E^3$.
 \ccGlue
 \ccMethod{double                 zmax() const;}
        {}
+
+\ccMethod{double                 min(int i) const;}
+         {Returns \ccStyle{xmin()} if \ccStyle{i==0} or \ccStyle{ymin()} if \ccStyle{i==1}
+          or \ccStyle{zmin()} if \ccStyle{i==2}.
+          \ccPrecond{i<=0 and i<=2}}
+\ccGlue
+\ccMethod{double                 max(int i) const;}
+         {Returns \ccStyle{xmax()} if \ccStyle{i==0} or \ccStyle{ymax()} if \ccStyle{i==1}
+          or \ccStyle{zmax()} if \ccStyle{i==2}.
+          \ccPrecond{i==0 and i<=2}}
 
 
 \ccMethod{Bbox_3              operator+(const Bbox_3 &c) const;}
