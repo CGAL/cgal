@@ -16,8 +16,12 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
+<<<<<<< .mine
+//                 Ron Wein               <wein@post.tau.ac.il>
+=======
 //                 Ron Wein               <wein@post.tau.ac.il>
 //                 Efi Fogel              <fogel@post.tau.ac.il>
+>>>>>>> .r38855
 
 #ifndef CGAL_ENV_SPHERE_TRAITS_3_H
 #define CGAL_ENV_SPHERE_TRAITS_3_H
@@ -30,7 +34,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+<<<<<<< .mine
+template <typename ConicTraits_2>
+=======
 template <class ConicTraits_2>
+>>>>>>> .r38855
 class Env_sphere_traits_3 : public ConicTraits_2
 {
 public:
@@ -78,7 +86,7 @@ public:
 
     // create xy-monotone surfaces from a general surface
     // return a past-the-end iterator
-    template <class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Surface_3& s,
                               bool is_lower,
                               OutputIterator o) 
@@ -111,7 +119,7 @@ public:
     // insert into the OutputIterator all the (2d) curves of the boundary of
     // the vertical projection of the surface on the xy-plane
     // the OutputIterator value type is X_monotone_curve_2
-    template <class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator
     operator()(const Xy_monotone_surface_3& s, OutputIterator o)
     {
@@ -171,7 +179,7 @@ public:
     // insert into OutputIterator all the (2d) projections on the xy plane of
     // the intersection objects between the 2 surfaces
     // the data type of OutputIterator is Object
-    template <class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator
     operator()(const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2,
@@ -467,7 +475,7 @@ public:
         Rational lb = envelope_coef*2*b_diff*sign_c_diff;
         Rational lc = envelope_coef*sign_c_diff*(2*c_diff*z_plane - m);
 
-      	if (ellipse_is_point)
+        if (ellipse_is_point)
       	{
       	  // as specified in the is_valid_conic_equation method, the
           // intersection point is:
@@ -1138,7 +1146,7 @@ public:
   // r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
   // has real solutions
   // is_point is set to true if the equation represents just one point
-  template <class NT> 
+  template <typename NT> 
   bool is_valid_conic_equation(const NT& r, const NT& s, const NT& t,
                                const NT& u, const NT& v, const NT& w,
                                bool &is_point) const
@@ -1221,7 +1229,7 @@ public:
       return cv.get_point_at_x(pt);
   }
 
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator add_curve_to_output(const Curve_2& c, OutputIterator oi)
   {
     Object objs[2];
@@ -1256,9 +1264,15 @@ protected:
  * Compare two spheres: first compare their center points in an
  * xyz-lexicographic order, then by their radii.
  */
+<<<<<<< .mine
+template <typename Kernel>
+bool operator< (const typename Kernel::Sphere_3& a,
+                const typename Kernel::Sphere_3& b)
+=======
 template <class Kernel>
 bool operator< (const CGAL::Sphere_3<Kernel> & a,
                 const CGAL::Sphere_3<Kernel> & b)
+>>>>>>> .r38855
 {
   Kernel            k;
   Comparison_result res = k.compare_xyz_3_object()(a.center(), b.center());
@@ -1267,16 +1281,27 @@ bool operator< (const CGAL::Sphere_3<Kernel> & a,
   {
     res = CGAL::compare (a.squared_radius(), b.squared_radius());
   }
+<<<<<<< .mine
+  
+  return (res == SMALLER);
+=======
 
   return (res == SMALLER);
+>>>>>>> .r38855
 }
 
 /*!
  * Compare two spheres for equality.
  */
+<<<<<<< .mine
+template <typename Kernel>
+bool operator== (const typename Kernel::Sphere_3& a,
+                 const typename Kernel::Sphere_3& b)
+=======
 template <class Kernel>
 bool operator== (const typename Kernel::Sphere_3& a,
                  const typename Kernel::Sphere_3& b)
+>>>>>>> .r38855
 {
   Kernel            k;
 
