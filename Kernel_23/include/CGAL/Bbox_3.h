@@ -41,12 +41,19 @@ public:
                double x_max, double y_max, double z_max)
 	  : rep(x_min, y_min, z_min, x_max, y_max, z_max) {}
 
+  inline bool operator==(const Bbox_3 &b) const;
+  inline bool operator!=(const Bbox_3 &b) const;
+
+  inline int dimension() const;
   double  xmin() const;
   double  ymin() const;
   double  zmin() const;
   double  xmax() const;
   double  ymax() const;
   double  zmax() const;
+
+  inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
+  inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   Bbox_3  operator+(const Bbox_3& b) const;
 };
@@ -80,6 +87,47 @@ inline
 double
 Bbox_3::zmax() const
 { return rep.e5; }
+
+inline
+bool
+Bbox_3::operator==(const Bbox_3 &b) const
+{
+  return xmin() == b.xmin() && xmax() == b.xmax()
+      && ymin() == b.ymin() && ymax() == b.ymax()
+      && zmin() == b.zmin() && zmax() == b.zmax();
+}
+
+inline
+bool
+Bbox_3::operator!=(const Bbox_3 &b) const
+{
+  return ! (b == *this);
+}
+
+inline
+int
+Bbox_3::dimension() const
+{ return 3; }
+
+inline
+double
+Bbox_3::min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const
+{
+  CGAL_kernel_precondition( (i == 0 ) || ( i == 1 ) || ( i == 2) );
+  if (i == 0) { return xmin(); }
+  if (i == 1) { return ymin(); }
+  return zmin();
+}
+
+inline
+double
+Bbox_3::max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const
+{
+  CGAL_kernel_precondition( (i == 0 ) || ( i == 1 ) || ( i == 2 ) );
+  if (i == 0) { return xmax(); }
+  if (i == 1) { return ymax(); }
+  return zmax();
+}
 
 inline
 Bbox_3

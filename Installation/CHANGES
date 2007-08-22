@@ -16,6 +16,7 @@ Number Types
 
 Kernel
 - Fixed forgotten derivation in Circular_kernel_2::Has_on_2
+- Added some missing functions in Bbox_3 compared to Bbox_2.
 
 
 Skin Surface Meshing
