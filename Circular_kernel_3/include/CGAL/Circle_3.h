@@ -122,25 +122,45 @@ namespace CGAL {
 
   };
 
-template < typename SK >
-inline
-bool
-operator==(const Circle_3<SK> &p,
-           const Circle_3<SK> &q)
-{
-  return SK().equal_3_object()(p, q);
-}
+  template < typename SK >
+  inline
+  bool
+  operator==(const Circle_3<SK> &p,
+	     const Circle_3<SK> &q)
+  {
+    return SK().equal_3_object()(p, q);
+  }
+  
+  template < typename SK >
+  inline
+  bool
+  operator!=(const Circle_3<SK> &p,
+	     const Circle_3<SK> &q)
+  {
+    return ! (p == q);
+  }
+  
+  template < typename SK >
+  std::ostream &
+  operator<<(std::ostream & os, const Circle_3<SK> &c)
+  {
+    
+    return os << c.supporting_plane() << " "
+	      << c.diametral_sphere() << " ";
+  }
+  
+  template < typename SK >
+  std::istream &
+  operator>>(std::istream & is, Circle_3<SK> &c)
+  {
+    typename SK::Plane_3 p;
+    typename SK::Sphere_3 s;
 
-template < typename SK >
-inline
-bool
-operator!=(const Circle_3<SK> &p,
-           const Circle_3<SK> &q)
-{
-  return ! (p == q);
-}
-
-
+    is >> p >> s ;
+    if (is)
+      c = Circle_3<SK>(p, s);
+    return is;
+  }
 
 }
 

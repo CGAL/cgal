@@ -15,14 +15,14 @@ The design of \ccc{Spherical_kernel_3} is similar to the design of
 \begin{itemize}
 \item {} the \ccc{LinearKernel}, from which the spherical kernel derives,
 provides all elementary geometric objects like points, lines, spheres, and
-elementary functionality on them. It must be a model of the \cgal\ three 
+elementary functionality on them. It must model the \cgal\ three 
 dimensional \ccc{Kernel} concept.
 %The \cgal\ 2D Kernel can be used as parameter,
 %but the user may plug his own kernel 
 %instead, as long as it follows the \cgal\ kernel concept. 
 \item {} the second parameter is the algebraic kernel, which is 
 responsible for computations on polynomials and algebraic numbers. It 
-has to be a model of concept \ccc{AlgebraicKernelForSpheres}. The
+must model the concept \ccc{AlgebraicKernelForSpheres}. The
 robustness of the package relies on the fact that the algebraic kernel
 provides exact computations on algebraic objects.
 \end{itemize}
@@ -34,23 +34,22 @@ by the 3D spherical kernel and some types are taken from the
 \ccc{AlgebraicKernelForSpheres} parameter. New main geometric objects are
 introduced by \ccc{Spherical_kernel_3}: circles in 3D, circular arcs,
 points of circular arcs (used in particular for endpoints of arcs and
-intersection points between arcs) and line segments whose endpoints
+intersection points between arcs), and line segments, whose endpoints
 are points of this new type.
 
 In fact, the spherical kernel is documented as a concept,
 \ccc{SphericalKernel}. One model is currently provided: 
 \ccc{Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}.
-Work is in progress to increase the efficiency by providing filtering
-techniques.
 
 \section{Example}
+\textit{following example to be improved, and more examples and explanations to be added...}
 
 \ccIncludeExampleCode{Circular_kernel_3/spherical_kernel_3.cpp}
 
 \section{Design and Implementation History}
 
 This package follows the 2D circular kernel package (see
-Chapter~\ref{chapter-circular-kernel}), that allowed to make the basic
+Chapter~\ref{chapter-circular-kernel}), which induced the basic
 choices of design.
 
 Julien Hazebrouck and Damien Leroy participated in a first

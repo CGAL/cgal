@@ -173,25 +173,45 @@ namespace CGAL {
 
   };
 
-template < typename SK >
-inline
-bool
-operator==(const Circular_arc_3<SK> &p,
-           const Circular_arc_3<SK> &q)
-{
-  return SK().equal_3_object()(p, q);
-}
-
-template < typename SK >
-inline
-bool
-operator!=(const Circular_arc_3<SK> &p,
-           const Circular_arc_3<SK> &q)
-{
-  return ! (p == q);
-}
-
-
+  template < typename SK >
+  inline
+  bool
+  operator==(const Circular_arc_3<SK> &p,
+	     const Circular_arc_3<SK> &q)
+  {
+    return SK().equal_3_object()(p, q);
+  }
+  
+  template < typename SK >
+  inline
+  bool
+  operator!=(const Circular_arc_3<SK> &p,
+	     const Circular_arc_3<SK> &q)
+  {
+    return ! (p == q);
+  }
+  
+  template < typename SK >
+  std::ostream &
+  operator<<(std::ostream & os, const Circular_arc_3<SK> &a)
+  {
+    return os << a.supporting_circle() << " "
+	      << a.source() << " "
+	      << a.target() << " ";
+  }
+  
+  template < typename SK >
+  std::istream &
+  operator>>(std::istream & is, Circular_arc_3<SK> &a)
+  {
+    typename SK::Circle_3 s;
+    typename SK::Circular_arc_point_3 p1;
+    typename SK::Circular_arc_point_3 p2;
+    is >> s >> p1 >> p2 ;
+    if (is)
+      a = Circular_arc_3<SK>(s, p1, p2);
+    return is;
+  }
 
 }
 

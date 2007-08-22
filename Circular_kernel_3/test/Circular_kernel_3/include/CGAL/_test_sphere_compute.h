@@ -43,11 +43,11 @@ void _test_spherical_kernel_compute(SK sk)
   typedef typename SK::Construct_sphere_3                          Construct_sphere_3;
   typedef typename SK::Construct_circular_arc_3                    Construct_circular_arc_3;
   typedef typename SK::Construct_circular_arc_point_3              Construct_circular_arc_point_3;
-  typedef typename SK::Compute_area_divided_by_pi                  Compute_area_divided_by_pi;
-  typedef typename SK::Compute_squared_length_divided_by_pi_square Compute_squared_length_divided_by_pi_square;
-  typedef typename SK::Compute_approximate_area                    Compute_approximate_area;
-  typedef typename SK::Compute_approximate_squared_length          Compute_approximate_squared_length;
-  typedef typename SK::Compute_approximate_angle                   Compute_approximate_angle;
+  typedef typename SK::Compute_area_divided_by_pi_3                  Compute_area_divided_by_pi_3;
+  typedef typename SK::Compute_squared_length_divided_by_pi_square_3 Compute_squared_length_divided_by_pi_square_3;
+  typedef typename SK::Compute_approximate_area_3                    Compute_approximate_area_3;
+  typedef typename SK::Compute_approximate_squared_length_3         Compute_approximate_squared_length_3;
+  typedef typename SK::Compute_approximate_angle_3                   Compute_approximate_angle_3;
   typedef typename SK::Polynomials_for_circle_3                    Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3                  Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                              Polynomial_1_3;
@@ -62,13 +62,13 @@ void _test_spherical_kernel_compute(SK sk)
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
-  Compute_area_divided_by_pi theCompute_area_divided_by_pi = sk.compute_area_divided_by_pi_object();
-  Compute_squared_length_divided_by_pi_square theCompute_squared_length_divided_by_pi_square = 
-    sk.compute_squared_length_divided_by_pi_square_object();
-  Compute_approximate_area theCompute_approximate_area = sk.compute_approximate_area_object();
-  Compute_approximate_squared_length theCompute_approximate_squared_length = 
-    sk.compute_approximate_squared_length_object();
-  Compute_approximate_angle theCompute_approximate_angle = sk.compute_approximate_angle_object();
+  Compute_area_divided_by_pi_3 theCompute_area_divided_by_pi_3 = sk.compute_area_divided_by_pi_3_object();
+  Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = 
+    sk.compute_squared_length_divided_by_pi_square_3_object();
+  Compute_approximate_area_3 theCompute_approximate_area_3 = sk.compute_approximate_area_3_object();
+  Compute_approximate_squared_length_3 theCompute_approximate_squared_length_3 = 
+    sk.compute_approximate_squared_length_3_object();
+  Compute_approximate_angle_3 theCompute_approximate_angle_3 = sk.compute_approximate_angle_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -114,19 +114,19 @@ void _test_spherical_kernel_compute(SK sk)
       const FT sqr = FT(r*r);
       const Point_3 p = Point_3(x,y,z);
       circle[j] = theConstruct_circle_3(p,sqr,plane);
-      const FT ardp = theCompute_area_divided_by_pi(circle[j]);
-      const FT sldps = theCompute_squared_length_divided_by_pi_square(circle[j]);
+      const FT ardp = theCompute_area_divided_by_pi_3(circle[j]);
+      const FT sldps = theCompute_squared_length_divided_by_pi_square_3(circle[j]);
       assert(ardp == r*r);
       assert(sldps == 4*r*r);
     }
-    const double ar1 = theCompute_approximate_area(circle[0]);
-    const FT ardp1 = theCompute_area_divided_by_pi(circle[0]);
-    const double asl1 = theCompute_approximate_squared_length(circle[0]);
-    const FT sldps1 = theCompute_squared_length_divided_by_pi_square(circle[0]);
-    const double ar2 = theCompute_approximate_area(circle[1]);
-    const FT ardp2 = theCompute_area_divided_by_pi(circle[1]);
-    const double asl2 = theCompute_approximate_squared_length(circle[1]);
-    const FT sldps2 = theCompute_squared_length_divided_by_pi_square(circle[1]);
+    const double ar1 = theCompute_approximate_area_3(circle[0]);
+    const FT ardp1 = theCompute_area_divided_by_pi_3(circle[0]);
+    const double asl1 = theCompute_approximate_squared_length_3(circle[0]);
+    const FT sldps1 = theCompute_squared_length_divided_by_pi_square_3(circle[0]);
+    const double ar2 = theCompute_approximate_area_3(circle[1]);
+    const FT ardp2 = theCompute_area_divided_by_pi_3(circle[1]);
+    const double asl2 = theCompute_approximate_squared_length_3(circle[1]);
+    const FT sldps2 = theCompute_squared_length_divided_by_pi_square_3(circle[1]);
     if(circle[0].squared_radius() > circle[1].squared_radius()) {
       assert(ar1 > ar2); assert(ardp1 > ardp2);
       assert(asl1 > asl2); assert(sldps1 > sldps2);
@@ -171,8 +171,8 @@ void _test_spherical_kernel_compute(SK sk)
       const double num = (double) (j-i);
       const double ang1 = (pi/4.0) * num;
       const double ang2 = 2*pi - ang1;
-      const double app_ang1 = theCompute_approximate_angle(ca);
-      const double app_ang2 = theCompute_approximate_angle(cb);
+      const double app_ang1 = theCompute_approximate_angle_3(ca);
+      const double app_ang2 = theCompute_approximate_angle_3(cb);
       const double v1 = app_ang1 - ang1;
       const double v2 = app_ang2 - ang2;
       const double diff1 = ((v1 > 0) ? (v1) : (-v1));
@@ -183,8 +183,8 @@ void _test_spherical_kernel_compute(SK sk)
 
       const double sql1 = ang1 * ang1;
       const double sql2 = ang2 * ang2;
-      const double app_sql1 = theCompute_approximate_squared_length(ca);
-      const double app_sql2 = theCompute_approximate_squared_length(cb);
+      const double app_sql1 = theCompute_approximate_squared_length_3(ca);
+      const double app_sql2 = theCompute_approximate_squared_length_3(cb);
       const double vv1 = app_sql1 - sql1;
       const double vv2 = app_sql2 - sql2;
       const double diffv1 = ((vv1 > 0) ? (vv1) : (-vv1));

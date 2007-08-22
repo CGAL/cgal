@@ -18,14 +18,19 @@
 \ccConstructor{Circular_arc_3(const SphericalKernel::Circle_3 &c,
 		const SphericalKernel::Circular_arc_point_3 &p1,
 		const SphericalKernel::Circular_arc_point_3 &p2)}
-{Constructs the circular arc supported by \ccc{c}, that is oriented 
-counterclockwise in the \textit{positive} plane containing the circle, 
-whose source is \ccc{p1} and whose target is \ccc{p2}.
-\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}.}}
+{Constructs the circular arc supported by \ccc{c}, whose source and target 
+are respectively \ccc{p1} and \ccc{p2}.
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}. \ccc{p1} and \ccc{p2} 
+are different.}}
 
-Here, we say that a plane is \textit{positive} if its equation is 
-of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$ 
-(i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$). 
+The circular arc defined by a circle, a source, and a target, is
+defined as the set of points of the circle that lie between the source
+\ccc{p1} and the target \ccc{p2}, when traversing the circle
+counterclockwise in the \textit{positive} plane containing the circle.
+
+In this definition, we say that a plane is \textit{positive} if its
+equation is of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$
+(i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
 
 \ccAccessFunctions
 
@@ -33,9 +38,6 @@ of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$
 \ccThreeToTwo
 
 \ccMethod{SphericalKernel::Circle_3 supporting_circle();}{}
-
-A circular arc is supposed to be oriented counterclockwise, from 
-\ccc{source} to \ccc{target}. 
 
 \ccMethod{SphericalKernel::Circular_arc_point_3 source();}{}
 \ccGlue
@@ -46,11 +48,21 @@ the arc is in fact a full circle. %\footnote{so far, arcs of zero length are
 %points, not arcs. But see Menelaos' remark: add functors to test whether an
 %arc is degenerate... to be fixed}
 
+When the arc was constructed from its (full) underlying circle, then
+source and target both return the smallest $x$-extremal point of the
+circle if the circle is not in a plane $x=A$, and the smallest
+$y$-extremal point otherwise.
+
 \ccHeading{I/O}
 
 \ccFunction{istream& operator>> (std::istream& is, Circular_arc_3 & ca);}{}
 \ccGlue
 \ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_3 & ca);}{}
+
+The format for input/output is, for each circular arc: a \ccc{Circle_3} 
+(the supporting circle) and two \ccc{Circular_arc_point_3} 
+(the source and the target), under the condition that the endpoints 
+are actually lying on the circle. 
 
 \ccSeeAlso
 

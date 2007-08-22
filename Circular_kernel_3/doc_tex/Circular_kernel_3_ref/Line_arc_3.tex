@@ -16,8 +16,9 @@
 		const SphericalKernel::Circular_arc_point_3 &p1,
 		const SphericalKernel::Circular_arc_point_3 &p2)}
 {Construct the line segment supported by \ccc{l}, whose source 
-is \ccc{p1} and whose target is \ccc{p2}.
-\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}.}}
+is \ccc{p1}, and whose target is \ccc{p2}.
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}. 
+\ccc{p1} and \ccc{p2} are different.}}
 
 \ccConstructor{Line_arc_3(const SphericalKernel::Line_3 &l,
 		const SphericalKernel::Point_3 &p1,
@@ -41,17 +42,22 @@ is \ccc{p1} and whose target is \ccc{p2}.
 \ccMethod{SphericalKernel::Circular_arc_point_3 min();}
 {Constructs the minimum vertex for the lexicographic ordering of coordinates.}
 \ccGlue
-\ccMethod{SphericalKernel::Circular_arc_point_3 max();}{}
+\ccMethod{SphericalKernel::Circular_arc_point_3 max();}
+{Same for the maximum vertex.}
 
 \ccQueryFunctions
 
-\ccMethod{bool is_vertical();}{}
+\ccMethod{bool is_vertical();}{Returns true \ccc{iff} the segment is vertical.}
 
 \ccHeading{I/O}
 
 \ccFunction{istream& operator>> (std::istream& is, Line_arc_3 & ca);}{}
 \ccGlue
 \ccFunction{ostream& operator<< (std::ostream& os, const Line_arc_3 & ca);}{}
+
+The format for input/output is, for each line arc: a \ccc{Line_3} 
+(the supporting line) and two \ccc{Circular_arc_point_3} (the two endpoints), 
+under the condition that the endpoints are actually lying on the line.
 
 \ccSeeAlso
 

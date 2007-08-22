@@ -209,12 +209,25 @@ public:
 };
 
   template < class SK >
-std::ostream&
-operator<<(std::ostream &os, const Circular_arc_point_3<SK> &p)
-{
-  //I can make it because I know the output format of Root_for_circle
-  return os << p.x() << " " << p.y() << " " << p.z() << " " ;
-}
+  std::ostream&
+  operator<<(std::ostream &os, const Circular_arc_point_3<SK> &p)
+  {
+    return os << p.x() << " " << p.y() << " " << p.z() << " " ;
+  }
+
+  template < typename SK >
+  std::istream &
+  operator>>(std::istream & is, Circular_arc_point_3<SK> &p)
+  {
+    typedef typename SK::Root_of_2               Root_of_2;
+    typedef typename SK::Root_for_spheres_2_3    Root_for_spheres_2_3;
+    
+    Root_for_spheres_2_3 r;
+    is >> r;
+    if(is)
+      p = Circular_arc_point_3<SK>(r);
+    return is;
+  }
 
 }
 

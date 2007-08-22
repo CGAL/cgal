@@ -1414,7 +1414,7 @@ namespace SphericalFunctors {
   };
 
   template <class SK>
-  class Compute_area_divided_by_pi
+  class Compute_area_divided_by_pi_3
   {
     typedef typename SK::Circle_3                  Circle_3;
     typedef typename SK::FT                        FT;
@@ -1430,7 +1430,7 @@ namespace SphericalFunctors {
   };
 
   template <class SK>
-  class Compute_squared_length_divided_by_pi_square
+  class Compute_squared_length_divided_by_pi_square_3
   {
     typedef typename SK::Circle_3                  Circle_3;
     typedef typename SK::FT                        FT;
@@ -1446,7 +1446,7 @@ namespace SphericalFunctors {
   };
 
   template <class SK>
-  class Compute_approximate_area
+  class Compute_approximate_area_3
   {
     typedef typename SK::Circle_3                  Circle_3;
     typedef typename SK::FT                        FT;
@@ -1462,7 +1462,7 @@ namespace SphericalFunctors {
   };
 
   template <class SK>
-  class Compute_approximate_squared_length
+  class Compute_approximate_squared_length_3
   {
     typedef typename SK::Circle_3                  Circle_3;
     typedef typename SK::Circular_arc_3            Circular_arc_3;
@@ -1482,7 +1482,7 @@ namespace SphericalFunctors {
   };
 
   template <class SK>
-  class Compute_approximate_angle
+  class Compute_approximate_angle_3
   {
     typedef typename SK::Circular_arc_3            Circular_arc_3;
 

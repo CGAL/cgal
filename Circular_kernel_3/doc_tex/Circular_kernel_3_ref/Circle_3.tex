@@ -12,7 +12,7 @@
 \ccThree{Circular_arc_point_3}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccConstructor{Circle_3(const SphericalKernel::Point_3& c, 
+\ccConstructor{Circle_3(const SphericalKernel::Point_3& center, 
 	const SphericalKernel::FT& sr, const SphericalKernel::Plane_3& p)}
 {Constructs the circle of center \ccc{c} and squared radius \ccc{sr} in plane \ccc{p}.
 \ccPrecond{$sr>0$.}}
@@ -45,7 +45,18 @@
 
 \ccMethod{SphericalKernel::Bbox_3 bbox();}{}
 
+\ccOperations
+
 \ccFunction{bool operator==(const Circle_3<SphericalKernel> &p,
-		           const Circle_3<SphericalKernel> &q);}{}
+		           const Circle_3<SphericalKernel> &q);}
+{Test for equality.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Circle_3 & c);}
+{Reads a plane and a sphere defining the circle.}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circle_3 &c);}
+{Outputs the supporting plane and the diametral sphere of the circle.}
 
 \end{ccRefClass}
