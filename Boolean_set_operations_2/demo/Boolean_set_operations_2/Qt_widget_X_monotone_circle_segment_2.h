@@ -21,7 +21,7 @@
 #define CGAL_IO_QT_WIDGET_CIRCULAR_ARC_2_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/Arr_traits_2/Circle_segment_2.h>
+#include <CGAL/Arr_geometry_traits/Circle_segment_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <cmath>
 
