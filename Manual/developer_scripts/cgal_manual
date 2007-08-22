@@ -551,7 +551,7 @@ create_wrapper() {
 \documentclass{book}
 \usepackage{Manual/cgal_manual}
 \gdef\lciManualTitle{$QName}%
-
+\lcHtml{\lcEnableHowToCite}
 \makeindex
 EOF
     if [ $# -ne 1 ]; then
