@@ -12,6 +12,7 @@ General
 Number Types
 - Fixed bug in FPU rounding mode macros (affected only the alpha architecture).
 - Fixed bug in MP_Float constructor from double for some particular values.
+- Fixed bug in to_double(Lazy_exact_nt) sometimes returning NaN.
 
 
 Kernel
