@@ -30,7 +30,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
-#include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_planar_inc_insertion_zone_visitor.h>
 
 #include <list>
 #include <map>
