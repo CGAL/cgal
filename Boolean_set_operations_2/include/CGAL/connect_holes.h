@@ -23,7 +23,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_vertical_decomposition.h>
+#include <CGAL/Arr_vertical_decomposition_2.h>
 #include <list>
 #include <set>
 
