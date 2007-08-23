@@ -37,7 +37,6 @@ class Arr_do_intersect_zone_visitor
 public:
 
   typedef Arrangement_                                Arrangement_2;
-  typedef typename Arrangement_2::Traits_2            Traits_2;
 
   typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;

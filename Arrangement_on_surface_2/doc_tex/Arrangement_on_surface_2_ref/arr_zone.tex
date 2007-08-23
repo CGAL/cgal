@@ -19,13 +19,13 @@ class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
 
 \ccInclude{CGAL/Arrangement_2.h}
 
-\ccGlobalFunction{template <class Traits, class Dcel, 
-                  class OutputIterator, class PointLocation>
-		  OutputIterator zone (
-		  Arrangement_2<Traits,Dcel>& arr, 
-                  const typename Traits::X_monotone_curve_2& c,
-                  OutputIterator oi,
-                  const PointLocation& pl);}
+\ccGlobalFunction{template <class GeomTraits, class TopTraits, 
+  class OutputIterator, class PointLocation>
+  OutputIterator zone (
+  Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+  const typename GeomTraits::X_monotone_curve_2& c,
+  OutputIterator oi,
+  const PointLocation& pl);}
 Compute the zone of the given $x$-monotone curve \ccc{c} in the
 arrangement \ccc{arr}.
 \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
@@ -35,7 +35,7 @@ arrangement \ccc{arr}.
 
 \ccRequirements
 \begin{itemize}
-\item The instantiated \ccc{Traits} class must model the
+\item The instantiated \ccc{GeomTraits} class must model the
   \ccc{ArrangementXMonotoneTraits_2} concept. 
 \item The point-location object \ccc{pl}, must model the
   \ccc{ArrangementPointLocation_2} concept.

@@ -2724,6 +2724,63 @@ remove_vertex (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <class GeomTraits, class TopTraits>
 bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr);
 
+/*!
+ * Compute the zone of the given x-monotone curve in the existing arrangement.
+ * Meaning, it output the arrangment's vertices, edges and faces that the 
+ * x-monotone curve intersects.
+ * \param arr The arrangement.
+ * \param c The x-monotone curve that its zone was computed.
+ * \param oi Output iterator of CGAL::Object to insert the zone elements to.
+ * \param pi The point location strategy that is used to locate the starting
+ * point.
+ * \return The output iterator that the curves were inserted to.
+ */
+template <class GeomTraits, class TopTraits, 
+  class OutputIterator, class PointLocation>
+OutputIterator zone (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                     const typename GeomTraits::X_monotone_curve_2& c,
+                     OutputIterator oi,
+                     const PointLocation& pl);
+
+/*!
+ * Compute the zone of the given x-monotone curve in the existing arrangement.
+ * Overloaded version with no point location object - the walk point-location
+ * strategy is used as default.
+ * \param arr The arrangement.
+ * \param c The x-monotone curve that its zone was computed.
+ * \param oi Output iterator of CGAL::Object to insert the zone elements to.
+ * \return The output iterator that the curves were inserted to.
+ */
+template <class GeomTraits, class TopTraits, class OutputIterator>
+OutputIterator zone (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                     const typename GeomTraits::X_monotone_curve_2& c,
+                     OutputIterator oi);
+
+/*!
+ * Checks if the given curve/x-monotone curve intersects the existing arrangement.
+ * \param arr The arrangement.
+ * \param c The curve/x-monotone curve.
+ * \param pi The point location strategy that is used to locate the starting
+ * point.
+ * \return True if the curve intersect the arrangement, false otherwise.
+ */
+template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
+bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                   const Curve& c, const PointLocation& pl);
+
+/*!
+ * Checks if the given curve/x-monotone curve intersects the existing arrangement.
+ * Overloaded version with no point location object - the walk point-location
+ * strategy is used as default.
+ * \param arr The arrangement.
+ * \param c The x-monotone curve/curve.
+ * \return True if the curve intersect the arrangement, false otherwise.
+ */
+template <class GeomTraits, class TopTraits, class Curve>
+bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                   const Curve& c);
+
+
 CGAL_END_NAMESPACE
 
 // The function definitions can be found under:

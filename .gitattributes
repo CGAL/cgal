@@ -835,6 +835,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compa
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/is_vertical -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/vertex -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
 Arrangement_on_surface_2/test/Sweep_line_2/CompareCurveList.h eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/DATA/conics/con01.txt eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/DATA/conics/con02.txt eol=lf

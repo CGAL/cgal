@@ -31,6 +31,8 @@
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Arrangement_zone_2.h>
+#include <CGAL/Arrangement_2/Arr_compute_zone_visitor.h>
+#include <CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_visitors.h>
@@ -1203,6 +1205,189 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   // If we reached here, the arrangement is valid:
   return (true);
 }
+
+//-----------------------------------------------------------------------------
+// Compute the zone of the given x-monotone curve in the existing arrangement.
+// Meaning, it output the arrangment's vertices, edges and faces that the 
+// x-monotone curve intersects.
+template <class GeomTraits, class TopTraits, 
+  class OutputIterator, class PointLocation>
+OutputIterator zone (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                     const typename GeomTraits::X_monotone_curve_2& c,
+                     OutputIterator oi,
+                     const PointLocation& pl)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>      
+    Arrangement_on_surface_2;
+
+  // Define a zone-computation object an a visitor that performs the
+  // intersection check.
+  typedef Arr_compute_zone_visitor<Arrangement_on_surface_2, OutputIterator>  
+    Zone_visitor;
+  
+  Zone_visitor                                     visitor (oi);
+  Arrangement_zone_2<Arrangement_on_surface_2, Zone_visitor>  
+    arr_zone (arr, &visitor);
+
+  arr_zone.init (c, pl);
+  arr_zone.compute_zone();
+
+  return (oi);
+}
+
+//-----------------------------------------------------------------------------
+// Compute the zone of the given x-monotone curve in the existing arrangement.b
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+//
+template <class GeomTraits, class TopTraits, class OutputIterator>
+OutputIterator zone (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                     const typename GeomTraits::X_monotone_curve_2& c,
+                     OutputIterator oi)
+{
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>
+    Arrangement_on_surface_2;
+
+  // Create a default point-location object and use it to insert the curve.
+  typename TopTraits::Default_point_location_strategy    def_pl (arr);
+
+  //insert the curve using the walk point location
+  zone (arr, c, oi, def_pl);
+  return oi;
+}
+
+
+//-----------------------------------------------------------------------------
+// Checks if the given x-monotone curve intersects the existing arrangement.
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the 
+// same class. The last parameter should be boost::true_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_on_surface_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+//
+template <class GeomTraits, class TopTraits, class PointLocation>
+bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                   const typename GeomTraits::X_monotone_curve_2& c,
+                   const PointLocation& pl, boost::is_same<int, int>::type)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>
+    Arrangement_on_surface_2;
+
+  // Define a zone-computation object an a visitor that performs the
+  // intersection check.
+  typedef Arr_do_intersect_zone_visitor<Arrangement_on_surface_2>  Zone_visitor;
+  
+  Zone_visitor                                     visitor;
+  Arrangement_zone_2<Arrangement_on_surface_2, Zone_visitor>  
+    arr_zone (arr, &visitor);
+
+  arr_zone.init (c, pl);
+  arr_zone.compute_zone();
+
+  return (visitor.do_intersect());
+}
+
+//-----------------------------------------------------------------------------
+// Checks if the given curve intersects the existing arrangement.
+// The last parameter is used to resolve ambiguity between this function and 
+// do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and 
+// Curve_2 are the same class. 
+// The last parameter should be boost::false_type but we used a 
+// workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
+//
+// error: no matching function for call to `do_intersect(Arrangement_on_surface_2<>&, 
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+//
+template <class GeomTraits, class TopTraits, class PointLocation>
+bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                   const typename GeomTraits::X_monotone_curve_2& c,
+                   const PointLocation& pl, boost::is_same<int, double>::type)
+{
+  // Obtain an arrangement accessor.
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>
+    Arrangement_on_surface_2;
+
+  // Break the input curve into x-monotone subcurves and isolated points.
+  typedef Arr_traits_adaptor_2<GeomTraits>                   Traits_adaptor_2;
+
+  Traits_adaptor_2   *traits =
+    static_cast<Traits_adaptor_2*> (arr.get_traits());
+
+  std::list<CGAL::Object>                        x_objects;
+  std::list<CGAL::Object>::const_iterator        obj_iter;
+  const typename GeomTraits::X_monotone_curve_2  *x_curve;
+  const typename GeomTraits::Point_2             *iso_p;
+
+  traits->make_x_monotone_2_object() (c,
+                                      std::back_inserter (x_objects));
+
+  // Insert each x-monotone curve into the arrangement.
+  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter)
+  {
+    // Act according to the type of the current object.
+    x_curve = object_cast<typename GeomTraits::X_monotone_curve_2> 
+      (&(*obj_iter));
+    if (x_curve != NULL)
+    {
+      // Check if the x-monotone subcurve intersects the arrangement.
+      if (do_intersect(arr, *x_curve, pl) == true)
+        return true;
+    }
+    else
+    {
+      iso_p = object_cast<typename GeomTraits::Point_2> (&(*obj_iter));
+      CGAL_assertion (iso_p != NULL);
+      
+      // Check whether the isolated point lies inside a face (otherwise,
+      // it conincides with a vertex or an edge).
+      CGAL::Object  obj = pl.locate (*iso_p);
+      
+      return (object_cast<typename 
+              Arrangement_on_surface_2::Face_const_handle>(&obj) != NULL);
+    }
+  }
+
+  // If we reached here, the curve does not intersect the arrangement.
+  return (false);
+}
+
+//-----------------------------------------------------------------------------
+// Common interface for the do_intersect of the Curve_2 and X_monotone_curve_2
+template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
+bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                   const Curve& c, const PointLocation& pl)
+{
+  typedef typename GeomTraits::X_monotone_curve_2       X_monotone_curve_2;
+  
+  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+    Is_x_monotone;
+  
+  return do_intersect(arr, c, pl, Is_x_monotone());
+}
+
+//-----------------------------------------------------------------------------
+// Checks if the given curve intersects the existing arrangement.
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+template <class GeomTraits, class TopTraits, class Curve>
+bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+                   const Curve& c)
+{
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>
+    Arrangement_on_surface_2;
+
+  // Create a default point-location object and use it to insert the curve.
+  typename TopTraits::Default_point_location_strategy    def_pl (arr);
+  
+  // check if the curve intersects the arrangement using the walk point 
+  // location.
+  return do_intersect (arr, c, def_pl);
+}
+
 
 CGAL_END_NAMESPACE
 

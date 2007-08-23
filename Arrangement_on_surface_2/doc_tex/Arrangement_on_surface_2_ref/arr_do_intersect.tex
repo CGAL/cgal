@@ -26,9 +26,11 @@ instance of the class
 
 \ccInclude{CGAL/Arrangement_2.h}
 
-\ccGlobalFunction{template <class Traits, class Dcel, class PointLocation>
-  bool do_intersect (Arrangement_2<Traits,Dcel>& arr, 
-  const typename Traits::Curve_2& c, const PointLocation& pl);}
+\ccGlobalFunction{template <class GeomTraits, class TopTraits, 
+  class Curve, class PointLocation>
+  bool do_intersect (
+  Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+  const Curve& c, const PointLocation& pl);}
 Checks if the given curve or $x$-monotone curve \ccc{c} intersects
   edges or vertices of the existing arrangement \ccc{arr}.
 \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
@@ -38,9 +40,9 @@ Checks if the given curve or $x$-monotone curve \ccc{c} intersects
 
 \ccRequirements
 \begin{itemize}
-\item If \ccc{c} is $x$-monotone then the instantiated \ccc{Traits}
+\item If \ccc{c} is $x$-monotone then the instantiated \ccc{GeomTraits}
   class must model the  \ccc{ArrangementXMonotoneTraits_2} concept. If
-  \ccc{c} is a curve then the instantiated \ccc{Traits} class must
+  \ccc{c} is a curve then the instantiated \ccc{GeomTraits} class must
   model the \ccc{ArrangementTraits_2} concept. That is, it should
   define the \ccc{Curve_2} type, and support its subdivision into
   $x$-monotone subcurves (and perhaps isolated points).
