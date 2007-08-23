@@ -130,7 +130,3 @@ int main(int argc, char **argv)
   
   return success;
 }
-
-CGAL_END_NAMESPACE
-
-#endif
