@@ -18,11 +18,11 @@ void Event_visitor CGAL_AOS3_TARG::initialize() {
     Event_key k;
     if (ep.first >= sim_->current_time()) {
       k= sim_->new_event(ep.first,
-			 CGAL_AOS3_TYPENAME Event_processor::Insert_event(j_, *it));
+			 CGAL_AOS3_TYPENAME Event_processor::I_event(j_, *it));
     }
     if (ep.second >= sim_->current_time()) {
       k= sim_->new_event(ep.second,
-			 CGAL_AOS3_TYPENAME Event_processor::Remove_event(j_, *it));
+			 CGAL_AOS3_TYPENAME Event_processor::R_event(j_, *it));
     }
     if (k != Event_key() && k != sim_->null_event()) {
       free_events_.insert(k);
@@ -297,13 +297,13 @@ void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a,
       CGAL_assertion(ep.first <= ep.second);
 	
       if (ep.first >= sim_->current_time()) {
-	Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::Intersect_event(j_, a,b));
+	Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::I2_event(j_, a,b));
 	if (k != Event_key() && k != sim_->null_event()) {
 	  free_events_.insert(k);
 	}
       }
       if (ep.second >= sim_->current_time()) {
-	Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::Unintersect_event(j_, a,b));
+	Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::U2_event(j_, a,b));
 	if (k != Event_key() && k != sim_->null_event()) {
 	  free_events_.insert(k);
 	}
@@ -357,13 +357,13 @@ void Event_visitor CGAL_AOS3_TARG::process_triple(Halfedge_handle h) {
 	if (ep.first.is_valid()) {
 	  CGAL_assertion(ep.first <= ep.second);
 	  if (ep.first >= sim_->current_time()) {
-	    Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::Intersect_3_event(j_, a,b,c));
+	    Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME Event_processor::I3_event(j_, a,b,c));
 	    if (k != Event_key() && k != sim_->null_event()) {
 	      free_events_.insert(k);
 	    }
 	  }
 	  if (ep.second >= sim_->current_time()) {
-	    Event_key k= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::Unintersect_3_event(j_, a,b,c));
+	    Event_key k= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME Event_processor::U3_event(j_, a,b,c));
 	    if (k != Event_key() && k != sim_->null_event()) {
 	      free_events_.insert(k);
 	    }

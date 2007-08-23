@@ -42,7 +42,7 @@ public:
     }
   };
 
-struct Handle_equal{
+  struct Handle_equal{
     template <class H>
     bool operator()(H a, H b) const {
       return &*a == &*b;
@@ -210,6 +210,11 @@ struct Handle_equal{
       std::cout << " with " << *cc << std::endl;
     }
 
+    for (It ic= ib, fc= fb; ic != ie; ++ic, ++fc, ++cc) {
+      CGAL_assertion(is_valid(*ic));
+      CGAL_assertion(is_valid(*fc));
+    }
+
     --num_components_;
     Face_handle f= (*fb)->face();
     for (It ic=ib, fc= fb; ic != ie; ++ic, ++fc) {
@@ -300,7 +305,9 @@ struct Handle_equal{
 	h=h->next();
       } while (h->opposite() != *cp1);
     }
-    
+    for (It c= b; c !=e ; ++c){
+      CGAL_assertion(is_valid(*c));
+    }
 #endif
     
     std::cout << "Snipping out ";
@@ -517,6 +524,27 @@ struct Handle_equal{
 
   // insert the vertex so that h->opposite points to it
   Halfedge_handle insert_vertex(Vertex_handle  vh, Halfedge_handle h);
+
+  bool is_valid(Halfedge_const_handle h) const {
+    for (Halfedge_const_iterator it =halfedges_begin(); it != halfedges_end(); ++it) {
+      if (it==h) return true;
+    }
+    return false;
+  }
+
+  bool is_valid(Vertex_const_handle h) const {
+    for (Vertex_const_iterator it =vertices_begin(); it != vertices_end(); ++it) {
+      if (it==h) return true;
+    }
+    return false;
+  }
+
+  bool is_valid(Face_const_handle h) const {
+    for (Face_const_iterator it =faces_begin(); it != faces_end(); ++it) {
+      if (it==h) return true;
+    }
+    return false;
+  }
 
 
 private:

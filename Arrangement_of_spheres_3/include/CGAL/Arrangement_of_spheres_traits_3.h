@@ -27,6 +27,15 @@ CGAL_BEGIN_NAMESPACE
 template <class GT>
 #endif
 struct Arrangement_of_spheres_traits_3 {
+  struct Degeneracy_exception {
+    
+    template <class T>
+    void new_face(T){}
+
+    template <class T>
+    void new_edge(T){}
+  };
+
 #ifdef CGAL_AOS3_USE_TEMPLATES
   typedef Arrangement_of_spheres_traits_3<GT> This;
   typedef GT Geom_traits;
@@ -136,10 +145,16 @@ struct Arrangement_of_spheres_traits_3 {
   Event_pair sphere_intersect_rule_events(Sphere_3_key a, Sphere_3_key r, Coordinate_index C) const;
   */
 
-  Event_pair circle_cross_rule_events(Sphere_3_key a, Sphere_3_key b,
-				      Sphere_3_key rs, Coordinate_index C) const;
+  
+  void advance_circle_cross_rule_event(Sphere_3_key a, Sphere_3_key b,
+				       Sphere_3_key rs, Coordinate_index C);
 
-  Event_pair sphere_intersect_rule_rule_events(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
+  Event_point_3 circle_cross_rule_event(Sphere_3_key a, Sphere_3_key b,
+					Sphere_3_key rs, Coordinate_index C) const;
+
+  void advance_sphere_intersect_rule_rule_event(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry);
+
+  Event_point_3 sphere_intersect_rule_rule_event(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
 
   // not really used
   /*Quadratic_NT intersection_c(Sphere_3_key s, Line_3 l, Coordinate_index C) const;*/
@@ -206,6 +221,8 @@ struct Arrangement_of_spheres_traits_3 {
 							 const Sphere_point_3 &pt,
 							 Coordinate_index C) const;
   
+ 
+
   // name sucks
   // Find the line which has as coordinate C pt[C] and gets it other coord
   // from planex. See if it is inside the sphere at t
@@ -238,6 +255,8 @@ struct Arrangement_of_spheres_traits_3 {
 					   typedef CGAL::Kinetic::Qt_widget_2<Simulator> Qt_gui;*/
   
 private:
+
+ 
 
   //  HDS hds_;
   // ick, this is to handle location of points which are not already there

@@ -137,7 +137,10 @@ public:
       
       cs_.write(faces[0], std::cerr) << std::endl;
       cs_.write(faces[1], std::cerr) << std::endl;
-      CGAL_assertion(0);
+      CGAL_AOS3_TYPENAME Traits::Degeneracy_exception d;
+      d.new_face(faces[0]);
+      d.new_face(faces[1]);
+      throw d;
     } else {
       CGAL_assertion(!faces.empty());
       CGAL_AOS3_TYPENAME CS::Halfedge_handle h= faces[0]->halfedge();
@@ -158,8 +161,14 @@ public:
       for (unsigned int i=0; i< faces.size(); ++i){
 	cs_.write(faces[i], std::cerr ) << std::endl;
       }
-      CGAL_assertion(0);
-      
+      {
+	CGAL_AOS3_TYPENAME Traits::Degeneracy_exception d;
+	for (unsigned int i=0; i< faces.size(); ++i){
+	  d.new_face(faces[i]);
+	}
+	
+	throw d;
+      }
     }
   
     CGAL_assertion(0);
@@ -266,9 +275,42 @@ public:
   roll_back_rule(const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &t,
 		 CGAL_AOS3_TYPENAME CS::Halfedge_handle cur);
   
+  bool
+  equal_points(CGAL_AOS3_TYPENAME CS::Vertex_handle vh,
+	       const CGAL_AOS3_TYPENAME Traits::Sphere_point_3 &pt) const {
+    if (vh->point().is_rule_rule()) {
+      for (unsigned int i=0; i< 2; ++i) {
+	Coordinate_index ci=plane_coordinate(i);
+	if (pt.compare(tr_.sphere_3(vh->point().rule_key(ci)).center()[ci.index()],
+		       ci) != CGAL::EQUAL) return false;
+      }
+      return true;
+    } else if (vh->point().is_sphere_rule()) {
+      Coordinate_index ci=vh->point().rule_coordinate();
+      if (pt.compare(tr_.sphere_3(vh->point().rule_key()).center()[ci.index()],
+		     ci) != CGAL::EQUAL) return false;
+      // hmmmm, now what
+      if (tr_.bounded_side_of_sphere_projected(pt, vh->point().sphere_key(),
+					       vh->point().rule_key(),
+					       pt, 
+					       vh->point().rule_coordinate()) != CGAL::ON_BOUNDARY)
+	return false;
+      return true;
+    } else {
+      if ( tr_.compare_sphere_sphere_at_sweep(pt, vh->point().sphere_key(0) , 
+					       vh->point().sphere_key(1), pt, plane_coordinate(0)) != CGAL::EQUAL)
+	return false;
+      if ( tr_.compare_sphere_sphere_at_sweep(pt,  vh->point().sphere_key(0),
+					       vh->point().sphere_key(1), pt, plane_coordinate(1)) != CGAL::EQUAL)
+	return false;
+      return true;
+    }
+  }
 
 
 protected:
+
+  
 
   bool locate_point_check_face(const CGAL_AOS3_TYPENAME Traits::Event_point_3 &k,
 			       CGAL_AOS3_TYPENAME CS::Face_const_handle it,

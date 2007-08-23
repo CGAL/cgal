@@ -576,6 +576,10 @@ Irrational_cross_section CGAL_AOS3_TARG ::roll_back_rule(const CGAL_AOS3_TYPENAM
     bits.push_back(cs_.next_edge_on_rule(bits.back()));
   } while (bits.back() != CGAL_AOS3_TYPENAME CS::Halfedge_handle());
   bits.pop_back();
+  for (unsigned int i=0; i< bits.size(); ++i) {
+    cs_.write(bits[i], std::cout) << ", ";
+  }
+  std::cout << std::endl;
   
   if (bits.size() > 1) {
     

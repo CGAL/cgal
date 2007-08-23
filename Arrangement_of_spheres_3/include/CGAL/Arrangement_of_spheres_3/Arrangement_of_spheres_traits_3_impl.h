@@ -271,9 +271,6 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::intersection_2_events(Sphere_3_k
 
 
 
-
-
-
 CGAL_AOS3_TEMPLATE
 CGAL::Comparison_result 
 Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,

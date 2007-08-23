@@ -133,6 +133,37 @@ public:
   void initialize_1();
   void initialize_2();
 
+
+  /*
+    event data, not really appropriate, but it is the best place to put it
+   */
+  struct Event_pair_data {
+    typedef CGAL_AOS3_TYPENAME Traits::Event_point_3 EP;
+    Event_pair_data():i_(-1){}
+    int index_;
+    EP events_[2];
+  };
+  struct Triple_data {
+    Event_pair_data srr_events_;
+  };
+  struct UPair_data {
+    typedef CGAL_AOS3_TYPENAME Traits::Event_point_3 EP;
+    struct KC_pair{
+      typedef KC_pair This;
+      KC_pair(Key k, Coordinate_index c): k_(k), c_(c){};
+      Key k_;
+      Coordinate_index c_;
+      CGAL_COMPARISONS_2(k_, c_);
+    };
+    
+    std::map<KC_pair, Event_pair_data> cxr_events_;
+  };
+  
+
+
+  std::map<CGAL_AOS3_TYPENAME Sphere_3_key::Triple, Event_pair_data> triple_data_;
+  std::map<CGAL_AOS3_TYPENAME Sphere_3_key::UPair, UPair_data> upair_data_;
+
   Spheres spheres_;
   bool has_temp_;
 

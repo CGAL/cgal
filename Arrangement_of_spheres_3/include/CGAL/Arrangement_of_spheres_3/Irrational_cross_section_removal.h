@@ -45,7 +45,9 @@ public:
 	P::cs_.write(vertices[i], std::cout) << " is vertex " << i << std::endl;
 	h= h->next();
       } while (h != P::cs_.a_halfedge(k));
-      CGAL_assertion(deg==4);
+      if (deg != 4) {
+	throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
+      }
     }
     // roll in each until I have a target in a face
     
