@@ -348,6 +348,17 @@ public:
     return Facet(pos, next_around_edge( pos->index(_s), pos->index(_t) ) );
   }
 
+  struct Proxy_Facet {
+    Proxy_Facet(const Facet & ff) : f(ff) {}
+    Facet f;
+    const Facet* operator->() const { return &f; }
+  };
+
+  Proxy_Facet operator->() const
+  {
+    return Proxy_Facet(* *this);
+  }
+
   bool operator==(const Facet_circulator & ccir) const
   {
     return pos == ccir.pos && _s == ccir._s && _t == ccir._t;

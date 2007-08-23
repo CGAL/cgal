@@ -56,6 +56,7 @@ Arrangements
   Triangulation_ds_cell_base_3, so that the .dual() member function
   of Delaunay still work as before, without requiring the explicit
   use of Triangulation_cell_base.
+- Add missing operator->() to Facet_circulator.
 
 
 Interpolation
