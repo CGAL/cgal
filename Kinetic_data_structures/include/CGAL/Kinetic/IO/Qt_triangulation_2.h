@@ -54,7 +54,7 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<KDel, IK, Qt_gui
     Listener(typename Qt_gui::Handle &h, Container *t): P(h), t_(t){}
     virtual void new_notification(typename P::Notification_type nt) {
       if (nt == P::PICTURE_IS_VALID) {
-	t_->draw(*P::widget(), P::notifier()->current_time());
+        t_->draw(*P::widget(), P::notifier()->current_time());
       }
     }
   protected:
@@ -67,10 +67,10 @@ public:
   //typedef CGAL::Ref_counted_pointer<This> Pointer;
 
   Qt_triangulation_2(typename KDel::Handle kdel,
-		     IK ik,
-		     typename Qt_gui::Handle gui): listener_(gui, this),
-						   ik_(ik),
-						   kdel_(kdel) {
+                     IK ik,
+                     typename Qt_gui::Handle gui): listener_(gui, this),
+                                                   ik_(ik),
+                                                   kdel_(kdel) {
   }
 
 protected:
@@ -119,10 +119,10 @@ protected:
     w << CGAL::LineWidth(1);
     // << CGAL::FillColor(CGAL::Color(0,0,0));
     if (tri.dimension() != 2) return;
-
+    ik_.set_time(typename IK::NT(t));
     typename IK::Current_coordinates cc= ik_.current_coordinates_object();
     for (typename Triangulation::Finite_edges_iterator fit = tri.finite_edges_begin();
-	 fit != tri.finite_edges_end(); ++fit) {
+         fit != tri.finite_edges_end(); ++fit) {
       Static_point p0= cc(fit->first->vertex((fit->second+1)%3)->point());
       Static_point p1= cc(fit->first->vertex((fit->second+2)%3)->point());
       Static_segment ss(p0, p1);

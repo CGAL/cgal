@@ -22,6 +22,7 @@
 #define CGAL_REF_COUNTED_H
 #include <CGAL/Kinetic/basic.h>
 #include <boost/intrusive_ptr.hpp>
+#include <boost/utility.hpp>
 
 //#define NEW_REF_COUNTED
 
@@ -33,17 +34,11 @@ void intrusive_ptr_add_ref(const Ref_counted_base *t);
 
 void intrusive_ptr_release(const Ref_counted_base *t);
 
-class Ref_counted_base
+
+class Ref_counted_base: boost::noncopyable
 {
   typedef Ref_counted_base This;
-  Ref_counted_base(const Ref_counted_base&) : reference_count_(0) {
-    std::cerr << "Copy constructor called. Why?" << std::endl;
-  }
-  Ref_counted_base operator=(const Ref_counted_base&) const
-  {
-    std::cerr << "Assignment called. Why?" << std::endl;
-    return *this;
-  }
+
 public:
   Ref_counted_base() : reference_count_(0) {}
 
@@ -90,6 +85,20 @@ inline void intrusive_ptr_release(const Ref_counted_base *t)
 }
 
 
+
+struct Non_ref_counted_base{};
+
+inline void intrusive_ptr_add_ref(const Non_ref_counted_base *)
+{
+}
+
+
+inline void intrusive_ptr_release(const Non_ref_counted_base *)
+{
+}
+
+
+
 CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
 CGAL_KINETIC_BEGIN_NAMESPACE
@@ -99,27 +108,22 @@ class Ref_counted: public internal::Ref_counted_base
 
 {
   typedef internal::Ref_counted_base P;
-  typedef Ref_counted<T> This;
-
-  This operator=(const This &) {
-    this_should_not_compile(T());
-    assert(0);
-    return *this;
-  }
-  Ref_counted(const Ref_counted&o) {
-    this_should_not_compile(T());
-    assert(0);
-  }
-public:
-
-
-  Ref_counted() {                          
-  }
-
+ public:
+  typedef T This;
   typedef typename boost::intrusive_ptr<T> Handle;
 
   typedef typename boost::intrusive_ptr<const T> Const_handle;
 };
+
+template <class T>
+struct Non_ref_counted: public internal::Non_ref_counted_base
+{
+  typedef T This;
+  typedef typename boost::intrusive_ptr<T> Handle;
+  typedef typename boost::intrusive_ptr<const T> Const_handle;
+};
+
+
 
 CGAL_KINETIC_END_NAMESPACE
 #endif

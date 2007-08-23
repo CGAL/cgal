@@ -71,18 +71,19 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! A 3D kinetic Delaunay triangulation.
 template <class TraitsT,
-	  class Visitor= Delaunay_triangulation_visitor_base_3,
-	  class TriangulationT=typename internal::Delaunay_triangulation_3_types<TraitsT>::Default_triangulation>
+          class Visitor= Delaunay_triangulation_visitor_base_3,
+          class TriangulationT=typename internal::Delaunay_triangulation_3_types<TraitsT>::Default_triangulation>
 class Delaunay_triangulation_3: public Ref_counted<Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> > {
 private:
-   typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This_DT3;
-typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
-
-typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3::result_type Root_stack;
+  typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This_DT3;
+  typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
+public:
+  typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3::result_type Root_stack;
   typedef typename TriangulationT::Facet Facet;
   typedef typename TriangulationT::Edge Edge;
-typedef typename TraitsT::Simulator::Event_key Event_key;
+  typedef typename TraitsT::Simulator::Event_key Event_key;
   typedef typename TraitsT::Active_points_3_table::Key Point_key;
+private:
   struct Base_traits: public TraitsT {
     typedef TriangulationT Triangulation;
     typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
@@ -140,7 +141,7 @@ typedef typename TraitsT::Simulator::Event_key Event_key;
 public:
   //! Initialize it.
   Delaunay_triangulation_3(TraitsT tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
-							      listener_(NULL) {
+                                                              listener_(NULL) {
     siml_= Simulator_listener(tr.simulator_handle(), this);
     motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this);
   }
@@ -224,7 +225,7 @@ public:
     on_geometry_changed();
   }
 
-  void on_geometry_changed() {
+ void on_geometry_changed() {
     if (listener_!= NULL) {
       listener_->new_notification(Listener::TRIANGULATION);
     }
