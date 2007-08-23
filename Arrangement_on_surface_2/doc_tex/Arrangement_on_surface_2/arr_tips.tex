@@ -10,7 +10,7 @@ When the curves to be inserted into an arrangement are $x$-monotone
 and pairwise disjoint in their interior to start with, then it is more
 efficient (in running time) and less demanding (in traits-class
 functionality) to use the non-intersection insertion-functions instead
-of the general ones; e.g., \ccc{insert_curve()}.
+of the general ones; e.g., \ccc{insert()}.
 
 \item
 When the curves to be inserted into an arrangement are segments that
@@ -77,7 +77,7 @@ performed.
 When the curves to be inserted into an arrangement are available in
 advance (as opposed to supplied on-line), it is advised to use the
 more efficient aggregate (sweep-based) insertion over the incremental
-insertion; e.g., \ccc{insert_curves()}.
+insertion; e.g., \ccc{insert()}.
 
 
 \item

@@ -59,9 +59,9 @@ int main ()
   insert_non_intersecting_curve (arr, s1);
   insert_non_intersecting_curve (arr, s2);
   insert_non_intersecting_curve (arr, s3);
-  insert_curve (arr, s4);
-  insert_curve (arr, s5);
-  insert_curve (arr, s6);
+  insert (arr, s4);
+  insert (arr, s5);
+  insert (arr, s6);
 
   // Go over all arrangement faces and print the index of each face and it
   // outer boundary. The face index is stored in its data field in our case.

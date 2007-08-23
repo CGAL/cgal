@@ -31,8 +31,8 @@ int main ()
   Segment_2       s3 (Point_2 (1, 1), Point_2 (1, 6));
   Segment_2       s4 (Point_2 (4, 1), Point_2 (4, 6));
 
-  insert_curve (arr, s3, pl);
-  insert_curve (arr, s4, pl);
+  insert (arr, s3, pl);
+  insert (arr, s4, pl);
 
   std::cout << "The initial arrangement:" << std::endl;
   print_arrangement (arr);

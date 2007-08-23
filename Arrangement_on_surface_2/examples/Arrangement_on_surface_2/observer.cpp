@@ -66,7 +66,7 @@ int main ()
 
   Segment_2      s_horiz (Point_2(-1, 0), Point_2(1, 0));
 
-  insert_curve (arr, s_horiz);
+  insert (arr, s_horiz);
 
   std::cout << "The initial arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()

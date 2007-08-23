@@ -70,10 +70,10 @@ int main ()
   Simple_pl        simple_pl (arr);
   Walk_pl          walk_pl (arr);
 
-  insert_curve (arr, Segment_2 (Point_2 (0, 0), Point_2 (0, 1)));
-  insert_curve (arr, Segment_2 (Point_2 (0, 3), Point_2 (0, 4)));
-  insert_curve (arr, Segment_2 (Point_2 (-1, -1), Point_2 (1, -1)));
-  insert_curve (arr, Segment_2 (Point_2 (-1, 5), Point_2 (1, 5)));
+  insert (arr, Segment_2 (Point_2 (0, 0), Point_2 (0, 1)));
+  insert (arr, Segment_2 (Point_2 (0, 3), Point_2 (0, 4)));
+  insert (arr, Segment_2 (Point_2 (-1, -1), Point_2 (1, -1)));
+  insert (arr, Segment_2 (Point_2 (-1, 5), Point_2 (1, 5)));
 
   // Perform the vertical ray-shooting queries.
   std::cout << "First round of queries: " << std::endl;
@@ -103,8 +103,8 @@ int main ()
   vertical_ray_shooting_query (walk_pl, false, q3);
 
   // Insert additional curves and perform the ray-shooting queries again.
-  insert_curve (arr, Segment_2 (Point_2 (-1, 0), Point_2 (1, 0)));
-  insert_curve (arr, Segment_2 (Point_2 (-1, 4), Point_2 (1, 4)));
+  insert (arr, Segment_2 (Point_2 (-1, 0), Point_2 (1, 0)));
+  insert (arr, Segment_2 (Point_2 (-1, 4), Point_2 (1, 4)));
 
   std::cout << "Second round of queries: " << std::endl;
 

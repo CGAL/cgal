@@ -31,9 +31,9 @@ int main ()
 
   insert_non_intersecting_curve (arr, s1, pl);
   insert_non_intersecting_curve (arr, s2, pl);
-  insert_curve (arr, s3, pl);
-  insert_curve (arr, s4, pl);
-  insert_curve (arr, s5, pl);
+  insert (arr, s3, pl);
+  insert (arr, s4, pl);
+  insert (arr, s5, pl);
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl

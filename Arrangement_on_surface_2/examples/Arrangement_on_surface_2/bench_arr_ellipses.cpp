@@ -113,7 +113,7 @@ int main (int argc, char *argv[])
 
       timer.start();
       for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       timer.stop();
     }
     else {
@@ -126,7 +126,7 @@ int main (int argc, char *argv[])
 
       timer.start();
       for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       timer.stop();
     }
   }
@@ -136,7 +136,7 @@ int main (int argc, char *argv[])
 	      << n << " ellipses." << std::endl;
 
     timer.start();
-    insert_curves (arr, ellipses.begin(), ellipses.end());
+    insert (arr, ellipses.begin(), ellipses.end());
     timer.stop();
   }
 

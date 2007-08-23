@@ -197,7 +197,7 @@ bool  test_one_file (std::ifstream& in_file,
   for(CurveContainer::const_iterator it = curves.begin(); 
       it != curves.end(); ++it)
   {
-    CGAL::insert_curve(arr, *it);
+    CGAL::insert(arr, *it);
   }
 
   std::vector<Point_2>::const_iterator poit;
@@ -224,7 +224,7 @@ bool  test_one_file (std::ifstream& in_file,
   ////////////////////////////////////////////////////////////
   // test aggregated construction
 
-  CGAL::insert_curves(arr, curves.begin(), curves.end());
+  CGAL::insert(arr, curves.begin(), curves.end());
   // when creating insert_points, this call should be fixed to insert_points.
   for (poit = iso_verts.begin();
        poit != iso_verts.end(); ++poit)
@@ -249,8 +249,8 @@ bool  test_one_file (std::ifstream& in_file,
   /////////////////////////////////////////////////////////////
   // insert half of the curves aggregatley and than insert the rest
   // aggregatley (test the addition visitor)
-  CGAL::insert_curves(arr, curves.begin(), curves.begin() + (num_of_curves/2));
-  CGAL::insert_curves(arr, curves.begin() + (num_of_curves/2), curves.end());
+  CGAL::insert(arr, curves.begin(), curves.begin() + (num_of_curves/2));
+  CGAL::insert(arr, curves.begin() + (num_of_curves/2), curves.end());
   // when creating insert_points, this call should be fixed to insert_points.
   for (poit = iso_verts.begin();
        poit != iso_verts.end(); ++poit)

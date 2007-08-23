@@ -70,7 +70,7 @@ int main()
   Point_location _pl(arr);
   for (ArcContainer::const_iterator it = ac.begin(); it != ac.end(); ++it) {
     //insert(arr,_pl,*it);
-    insert_curve(arr, *it, _pl);
+    insert(arr, *it, _pl);
   };
 
   return 0;

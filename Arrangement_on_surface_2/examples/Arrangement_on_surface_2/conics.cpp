@@ -41,21 +41,21 @@ int main ()
   Point_2       pt1 (2, Rational(1,2));
   Conic_arc_2   c1 (0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE, ps1, pt1);
 
-  insert_curve (arr, c1);
+  insert (arr, c1);
 
   // Insert a full ellipse, which is (x/4)^2 + (y/2)^2 = 0 rotated by
   // phi=36.87 degree (such that sin(phi) = 0.6, cos(phi) = 0.8),
   // yielding: 58x^2 + 72y^2 - 48xy - 360 = 0.
   Conic_arc_2   c2 (58, 72, -48, 0, 0, -360);
   
-  insert_curve (arr, c2);
+  insert (arr, c2);
 
   // Insert the segment (1, 1) -- (0, -3).
   Rat_point_2   ps3 (1, 1);
   Rat_point_2   pt3 (0, -3);
   Conic_arc_2   c3 (Rat_segment_2 (ps3, pt3));
 
-  insert_curve (arr, c3);
+  insert (arr, c3);
 
   // Insert a circular arc supported by the circle x^2 + y^2 = 5^2,
   // with (-3, 4) and (4, 3) as its endpoints. We want the arc to be
@@ -66,13 +66,13 @@ int main ()
   Conic_arc_2   c4 (ps4, pm4, pt4);
 
   CGAL_assertion (c4.is_valid());
-  insert_curve (arr, c4);
+  insert (arr, c4);
 
   // Insert a full unit circle that is centered at (0, 4).
   Rat_circle_2  circ5 (Rat_point_2(0,4), 1);
   Conic_arc_2   c5 (circ5);
   
-  insert_curve (arr, c5);
+  insert (arr, c5);
 
   // Insert a parabolic arc that is supported by a parabola y = -x^2
   // (or: x^2 + y = 0) and whose endpoints are (-sqrt(3), -3) ~ (-1.73, -3)
@@ -89,7 +89,7 @@ int main ()
                  0, 0, 0, 0, 1, 2);      // The line: y = -2.
 
   CGAL_assertion (c6.is_valid());
-  insert_curve (arr, c6);
+  insert (arr, c6);
 
   // Insert the right half of the circle centered at (4, 2.5) whose radius
   // is 1/2 (therefore its squared radius is 1/4).
@@ -98,7 +98,7 @@ int main ()
   Point_2       pt7 (4, 2);
   Conic_arc_2   c7 (circ7, CGAL::CLOCKWISE, ps7, pt7);
   
-  insert_curve (arr, c7);
+  insert (arr, c7);
 
   // Print out the size of the resulting arrangement.
   std::cout << "The arrangement size:" << std::endl

@@ -2562,7 +2562,7 @@ protected:
  * \param pl A point-location object associated with the arrangement.
  */
 template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
-void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    const Curve& c, const PointLocation& pl);
 
 /*!
@@ -2575,7 +2575,7 @@ void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * \param cv The curve to be inserted.
  */
 template <class GeomTraits, class TopTraits, class Curve>
-void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    const Curve& c);
 
 /*!
@@ -2589,7 +2589,7 @@ void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * \pre The value type of the iterators must be Curve_2.
  */
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                     InputIterator begin, InputIterator end);
 
 /*!
@@ -2604,10 +2604,9 @@ void insert_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  */
 
 template <class GeomTraits, class TopTraits>
-void
-insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-              const typename GeomTraits::X_monotone_curve_2& c,
-              const Object& obj);
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+             const typename GeomTraits::X_monotone_curve_2& c,
+             const Object& obj);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve

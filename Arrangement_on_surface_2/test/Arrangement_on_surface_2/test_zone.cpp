@@ -33,10 +33,10 @@ int main ()
   zone_expected_comp[1] = 3;
   zone_expected_comp[2] = 4;
   
-  insert_curve(arr, Segment_2(Point_2(0, 0), Point_2(2, 0)));
-  insert_curve(arr, Segment_2(Point_2(2, 0), Point_2(2, 2)));
-  insert_curve(arr, Segment_2(Point_2(2, 2), Point_2(0, 2)));
-  insert_curve(arr, Segment_2(Point_2(0, 2), Point_2(0, 0)));
+  insert(arr, Segment_2(Point_2(0, 0), Point_2(2, 0)));
+  insert(arr, Segment_2(Point_2(2, 0), Point_2(2, 2)));
+  insert(arr, Segment_2(Point_2(2, 2), Point_2(0, 2)));
+  insert(arr, Segment_2(Point_2(0, 2), Point_2(0, 0)));
 
   for (k = 0; k < N_SEGMENTS; k++)
   {

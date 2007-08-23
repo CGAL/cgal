@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
 
   // Construct the arrangement.
   Arrangement_2                     arr;
-  insert_curves (arr, curves.begin(), curves.end());
+  insert (arr, curves.begin(), curves.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl

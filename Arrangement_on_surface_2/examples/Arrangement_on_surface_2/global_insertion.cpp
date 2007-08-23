@@ -35,7 +35,7 @@ int main ()
   // Perform an incremental insertion of a single overlapping segment.
   Naive_pl          pl (arr);
 
-  insert_curve (arr, Segment_2 (Point_2 (0, 2.5), Point_2 (4, 2.5)), pl);
+  insert (arr, Segment_2 (Point_2 (0, 2.5), Point_2 (4, 2.5)), pl);
 
   // Aggregately insert an additional set of five segments.
   Segment_2         S2 [5];
@@ -46,7 +46,7 @@ int main ()
   S2[3] = Segment_2 (Point_2 (0, 1), Point_2 (6, 0));
   S2[4] = Segment_2 (Point_2 (6, 1), Point_2 (6, 4));
 
-  insert_curves (arr, S2, S2 + 5);
+  insert (arr, S2, S2 + 5);
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl

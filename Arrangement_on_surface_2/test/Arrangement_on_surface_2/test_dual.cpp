@@ -39,10 +39,10 @@ int main()
   Arrangement_2   arr;
 
   // Construct an arrangement of seven intersecting line segments.
-  insert_curve(arr, Segment_2(Point_2(0, 0), Point_2(0, 6)));
-  insert_curve(arr, Segment_2(Point_2(0, 6), Point_2(6, 6)));
-  insert_curve(arr, Segment_2(Point_2(6, 6), Point_2(6, 0)));
-  insert_curve(arr, Segment_2(Point_2(6, 0), Point_2(0, 0)));
+  insert(arr, Segment_2(Point_2(0, 0), Point_2(0, 6)));
+  insert(arr, Segment_2(Point_2(0, 6), Point_2(6, 6)));
+  insert(arr, Segment_2(Point_2(6, 6), Point_2(6, 0)));
+  insert(arr, Segment_2(Point_2(6, 0), Point_2(0, 0)));
 
   Arrangement_2::Face_iterator  fit;
   Arrangement_2::Face_handle    f;
@@ -52,12 +52,12 @@ int main()
       f = fit;
   }
 
-  insert_curve(arr, Segment_2(Point_2(2, 2), Point_2(2, 4)));
-  insert_curve(arr, Segment_2(Point_2(2, 4), Point_2(4, 4)));
-  insert_curve(arr, Segment_2(Point_2(4, 4), Point_2(4, 2)));
-  insert_curve(arr, Segment_2(Point_2(4, 2), Point_2(2, 2)));
-  insert_curve(arr, Segment_2(Point_2(2, 2), Point_2(4, 4)));
-  insert_curve(arr, Segment_2(Point_2(4, 2), Point_2(2, 4)));
+  insert(arr, Segment_2(Point_2(2, 2), Point_2(2, 4)));
+  insert(arr, Segment_2(Point_2(2, 4), Point_2(4, 4)));
+  insert(arr, Segment_2(Point_2(4, 4), Point_2(4, 2)));
+  insert(arr, Segment_2(Point_2(4, 2), Point_2(2, 2)));
+  insert(arr, Segment_2(Point_2(2, 2), Point_2(4, 4)));
+  insert(arr, Segment_2(Point_2(4, 2), Point_2(2, 4)));
 
   Dual_arrangement_2                          darr (arr);
   Dual_arrangement_2::Incident_edge_iterator  fnit = darr.out_edges_begin (f);

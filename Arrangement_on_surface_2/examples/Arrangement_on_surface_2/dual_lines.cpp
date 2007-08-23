@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
   // Construct the dual arrangement by aggragately inserting the lines.
   Arrangement_2      arr;
 
-  insert_curves (arr, dual_lines.begin(), dual_lines.end());
+  insert (arr, dual_lines.begin(), dual_lines.end());
 
   std::cout << "The dual arrangement size:" << std::endl
             << "V = " << arr.number_of_vertices()
@@ -95,7 +95,7 @@ int main (int argc, char *argv[])
                                           Number_type(-1), 
                                           Number_type(-p_mid.y()));
 
-  insert_curve (arr, dual_p_mid);
+  insert (arr, dual_p_mid);
 
   // Make sure that we now have three collinear points.
   found_collinear = false;

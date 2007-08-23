@@ -178,7 +178,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -194,7 +194,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -210,7 +210,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -222,7 +222,7 @@ int main (int argc, char **argv)
 	      << n << " segments." << std::endl;
 
     timer.start();
-    insert_curves (arr, segments.begin(), segments.end());
+    insert (arr, segments.begin(), segments.end());
     timer.stop();
   }
 

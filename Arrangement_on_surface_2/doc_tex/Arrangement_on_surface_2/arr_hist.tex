@@ -93,14 +93,14 @@ and the basic arrangement class is the way they handle their input curves.
 \ccc{Arrangement_with_history_2} always stores the \ccc{Curve_2} objects
 that induce it, thus it is impossible to insert $x$-monotone curves into
 an arrangement with history. The free \ccc{insert_non_intersecting_curve()}
-and \ccc{insert_curve()} that receives $x$-monotone curve (as well as
+and \ccc{insert()} that receives $x$-monotone curve (as well as
 their aggregated versions) are therefore not available for
 arrangement-with-history instances and only the free
-\ccc{insert_curve()} and \ccc{insert_curves()} functions that receive
+\ccc{insert()} and \ccc{insert()} functions that receive
 \ccc{Curve_2} (the incremental insertion function and the aggregated
 insertion function) are supported --- see also
 Section~\ref{arr_sssec:insert_gen}. Notice however that while the
-incremental insertion function \ccc{insert_curve(arr,c)} for an
+incremental insertion function \ccc{insert(arr,c)} for an
 \ccc{Arrangement_2} object \ccc{arr} does not have a return value, the
 corresponding arrangement-with-history function returns a
 \ccc{Curve_handle} to the inserted curve. 

@@ -58,7 +58,7 @@ CGAL_BEGIN_NAMESPACE
 // mpl_::bool_< true>)'
 //
 template <class GeomTraits, class TopTraits, class PointLocation>
-void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
                    const typename GeomTraits::Curve_2& c,
                    const PointLocation& pl, boost::is_same<int, double>::type)
 {
@@ -134,7 +134,7 @@ void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 //
 //
 template <class GeomTraits, class TopTraits, class PointLocation>
-void insert_curve(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
      const typename GeomTraits::X_monotone_curve_2& c,
      const PointLocation& pl, boost::is_same<int, int>::type)
 {
@@ -167,9 +167,9 @@ void insert_curve(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 }
 
 //-----------------------------------------------------------------------------
-// Common interface for the insert_curve of the Curve_2 and X_monotone_curve_2
+// Common interface for the insert of the Curve_2 and X_monotone_curve_2
 template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
-void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    const Curve& c, const PointLocation& pl)
 {
   typedef typename GeomTraits::X_monotone_curve_2       X_monotone_curve_2;
@@ -177,7 +177,7 @@ void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
     Is_x_monotone;
   
-  return insert_curve(arr, c, pl, Is_x_monotone());
+  return insert(arr, c, pl, Is_x_monotone());
 }
 
 //-----------------------------------------------------------------------------
@@ -188,13 +188,13 @@ void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 // location.
 //
 template <class GeomTraits, class TopTraits, class Curve>
-void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    const Curve& c)
 {
   // Create a default point-location object and use it to insert the curve.
   typename TopTraits::Default_point_location_strategy    def_pl (arr);
 
-  insert_curve (arr, c, def_pl);
+  insert (arr, c, def_pl);
   return;
 }
 
@@ -214,9 +214,9 @@ void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 // mpl_::bool_< true>)'
 //
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                    InputIterator begin, InputIterator end,
-                    boost::is_same<int, double>::type)
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+             InputIterator begin, InputIterator end,
+             boost::is_same<int, double>::type)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arr;
   typedef typename TopTraits::Sweep_line_construction_visitor
@@ -308,7 +308,7 @@ void insert_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 // mpl_::bool_< true>)'
 //
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_curves(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    InputIterator begin, InputIterator end, 
                    boost::is_same<int, int>::type)
 {
@@ -383,10 +383,10 @@ void insert_curves(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 }
 
 //-----------------------------------------------------------------------------
-// Common interface for the insert_curves of the Curve_2 and X_monotone_curve_2
+// Common interface for the inserts of the Curve_2 and X_monotone_curve_2
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_curves (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
-                    InputIterator begin, InputIterator end)
+void insert (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
+             InputIterator begin, InputIterator end)
 {
   typedef typename GeomTraits::X_monotone_curve_2       X_monotone_curve_2;
   typedef typename std::iterator_traits<InputIterator>::value_type 
@@ -395,7 +395,7 @@ void insert_curves (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
   typedef typename boost::is_same<Iterator_value_type, 
     X_monotone_curve_2>::type    Is_x_monotone;
   
-  return insert_curves (arr, begin, end, Is_x_monotone());
+  return insert (arr, begin, end, Is_x_monotone());
 }
 
 //-----------------------------------------------------------------------------
@@ -405,7 +405,7 @@ void insert_curves (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
 template <class GeomTraits, class TopTraits>
-void insert_curve (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    const typename GeomTraits::X_monotone_curve_2& c,
                    const Object& obj)
 {
@@ -445,21 +445,21 @@ void insert_x_monotone_curve
  const typename GeomTraits::X_monotone_curve_2& c,
  const PointLocation& pl)
 {
-  insert_curve(arr, c, pl);
+  insert(arr, c, pl);
 }
 template <class GeomTraits, class TopTraits>
 void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  const typename GeomTraits::X_monotone_curve_2& c)
 {
-  insert_curve(arr, c);
+  insert(arr, c);
 }
 template <class GeomTraits, class TopTraits, class InputIterator>
 void insert_x_monotone_curves 
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  InputIterator begin, InputIterator end)
 {
-  insert_curves(arr, begin, end);
+  insert(arr, begin, end);
 }
 template <class GeomTraits, class TopTraits>
 void insert_x_monotone_curve
@@ -467,7 +467,7 @@ void insert_x_monotone_curve
  const typename GeomTraits::X_monotone_curve_2& c,
  const Object& obj)
 {
-  insert_curve(arr, c, obj);
+  insert(arr, c, obj);
 }
 
 //-----------------------------------------------------------------------------

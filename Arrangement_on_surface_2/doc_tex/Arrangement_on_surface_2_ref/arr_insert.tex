@@ -1,6 +1,6 @@
 \ccRefPageBegin
 
-\begin{ccRefFunction}{insert_curve}
+\begin{ccRefFunction}{insert}
 
 \ccDefinition
 
@@ -25,7 +25,7 @@ class
 
 \ccGlobalFunction{template<class Traits, class Dcel,
                   class Curve, class PointLocation>
-            void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+            void insert (Arrangement_2<Traits,Dcel>& arr,
                                const Curve& c,
 			       const PointLocation& pl = walk_pl);}
 Inserts the given curve \ccc{c} into the arrangement \ccc{arr}.
@@ -41,7 +41,7 @@ Inserts the given curve \ccc{c} into the arrangement \ccc{arr}.
 \ccGlobalFunction{template<typename Traits, typename Dcel,
                            typename PointLocation>
             typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
-            insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
+            insert (Arrangement_with_history_2<Traits,Dcel>& arr,
                     const typename Traits::Curve_2& c,
                     const PointLocation& pl = walk_pl);}
 Inserts the given curve \ccc{c} into the arrangement with history
@@ -50,7 +50,7 @@ Inserts the given curve \ccc{c} into the arrangement with history
 \ccc{arr}.}
 
 \ccGlobalFunction{template<typename Traits, typename Dcel>
-            void insert_curve (Arrangement_2<Traits,Dcel>& arr,
+            void insert (Arrangement_2<Traits,Dcel>& arr,
                          const typename Traits::X_monotone_curve_2& xc,
                          const Object& obj);}
 Inserts the{\em $x$-monotone (only)} curve \ccc{xc} into the

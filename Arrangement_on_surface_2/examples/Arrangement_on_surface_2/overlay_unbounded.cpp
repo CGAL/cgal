@@ -49,8 +49,8 @@ int main ()
   // Construct the first arrangement, induced by two line y = x and y = -x.
   ArrangementA_2          arr1;
 
-  insert_curve (arr1, Line_2 (Point_2(0, 0), Point_2(1, 1)));
-  insert_curve (arr1, Line_2 (Point_2(0, 0), Point_2(1, -1)));
+  insert (arr1, Line_2 (Point_2(0, 0), Point_2(1, 1)));
+  insert (arr1, Line_2 (Point_2(0, 0), Point_2(1, -1)));
 
   // Label the four (unbounded) face of the arrangement as 'A' to 'D'.
   // We do so by traversing the incident faces to the halfedges aroung the 
@@ -71,10 +71,10 @@ int main ()
   // Construct the second arrangement, containing a single square-shaped face.
   ArrangementB_2          arr2;
 
-  insert_curve (arr2, Segment_2 (Point_2(-4, -4), Point_2(4, -4)));
-  insert_curve (arr2, Segment_2 (Point_2(4, -4), Point_2(4, 4)));
-  insert_curve (arr2, Segment_2 (Point_2(4, 4), Point_2(-4, 4)));
-  insert_curve (arr2, Segment_2 (Point_2(-4, 4), Point_2(-4, -4)));
+  insert (arr2, Segment_2 (Point_2(-4, -4), Point_2(4, -4)));
+  insert (arr2, Segment_2 (Point_2(4, -4), Point_2(4, 4)));
+  insert (arr2, Segment_2 (Point_2(4, 4), Point_2(-4, 4)));
+  insert (arr2, Segment_2 (Point_2(-4, 4), Point_2(-4, -4)));
 
   // Give the unbounded face the index 1, and the bounded face the index 2. 
   CGAL_assertion (arr2.number_of_faces() == 2);

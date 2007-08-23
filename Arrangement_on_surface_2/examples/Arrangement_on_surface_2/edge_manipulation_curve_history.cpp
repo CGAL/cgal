@@ -38,7 +38,7 @@ int main ()
   C[8] = Circle_2 (Rat_point_2 (2, 5), 1, CGAL::CLOCKWISE);
 
   for (k = 0; k < 9; k++)
-    handles[k] = insert_curve (arr, C[k]);
+    handles[k] = insert (arr, C[k]);
 
   std::cout << "The initial arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()

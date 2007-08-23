@@ -25,18 +25,18 @@ int main ()
 
   // Insert s1, s2 and s3 incrementally:
   Segment_2         s1 (Point_2 (0, 3), Point_2 (4, 3));
-  Curve_handle      c1 = insert_curve (arr, s1);
+  Curve_handle      c1 = insert (arr, s1);
   Segment_2         s2 (Point_2 (3, 2), Point_2 (3, 5));
-  Curve_handle      c2 = insert_curve (arr, s2);
+  Curve_handle      c2 = insert (arr, s2);
   Segment_2         s3 (Point_2 (2, 3), Point_2 (5, 3));
-  Curve_handle      c3 = insert_curve (arr, s3);
+  Curve_handle      c3 = insert (arr, s3);
 
   // Insert three additional segments aggregately:
   Segment_2         segs[3];
   segs[0] = Segment_2 (Point_2 (2, 6), Point_2 (7, 1));
   segs[1] = Segment_2 (Point_2 (0, 0), Point_2 (2, 6));
   segs[2] = Segment_2 (Point_2 (3, 4), Point_2 (6, 4));
-  insert_curves (arr, segs, segs + 3);
+  insert (arr, segs, segs + 3);
 
   // Print out the curves and the number of edges each one induces.
   Arr_with_hist_2::Curve_iterator            cit;

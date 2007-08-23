@@ -74,13 +74,13 @@ associated with the existing halfedge as well) and associate new
 edges with the resulting subcurves. Recall that an edge is represented
 by a pair of twin halfedges, so we split it into two halfedge pairs.
 
-The free function \ccc{insert_curve(arr, c, pl)} performs
+The free function \ccc{insert(arr, c, pl)} performs
 this insertion operation. It accepts an $x$-monotone curve $c$,
 which may intersect some of the curves already in the arrangement
 \ccc{arr}, and inserts it into the arrangement by computing its zone.
 Users may supply a point-location object \ccc{pl}, or use the default
 walk point-location strategy (namely, the variant
-\ccc{insert_curve(arr, c)} is also available). The
+\ccc{insert(arr, c)} is also available). The
 running-time of this insertion function is proportional to the
 complexity of the zone of the curve $c$.
 
@@ -89,7 +89,7 @@ In some cases users may have a prior knowledge of the location of the
 left endpoint of the $x$-monotone curve \ccc{c} they wish to insert,
 so they can perform the insertion without issuing any point-location
 queries. This can be done by calling
-\ccc{insert_curve(arr, c, obj)}, where \ccc{obj} is an
+\ccc{insert(arr, c, obj)}, where \ccc{obj} is an
 object represents the location of \ccc{c}'s left endpoint in the
 arrangement --- namely it wraps a \ccc{Vertex_const_handle}, a
 \ccc{Halfedge_const_handle} or a \ccc{Face_const_handle} (see
@@ -102,7 +102,7 @@ also Section~\ref{arr_ssec:pl}).
 So far all our examples were of arrangements of line segments,
 where the \ccc{Arrangement_2} template was instantiated with the
 \ccc{Arr_segment_traits_2} class. In this case, the fact that
-\ccc{insert_curve()} accepts an $x$-monotone curve does not
+\ccc{insert()} accepts an $x$-monotone curve does not
 seem to be a restriction, as all line segments are $x$-monotone
 (note that we consider vertical line segments to be {\em weakly}
 $x$-monotone).
@@ -110,13 +110,13 @@ $x$-monotone).
 Suppose that we construct an arrangement of circles. A circle is
 obviously not $x$-monotone, so we cannot insert it in the same way we
 inserted $x$-monotone curves. \footnote{Note that a key
-operation performed by \ccc{insert_curve()} is to locate the
+operation performed by \ccc{insert()} is to locate the
 left endpoint of the curve in the arrangement. A circle, however, does
 not have any endpoints!} However, it is possible to subdivide each circle
 into two $x$-monotone circular arcs (its upper half and its lower
 half) and to insert each $x$-monotone arc separately.
 
-The free function \ccc{insert_curve()} also supports general curve and
+The free function \ccc{insert()} also supports general curve and
 not necessarily $x$-monotone curves. In this case it requires that the
 traits class used by the arrangement \ccc{arr} to be a model of the
 concept \ccc{ArrangementTraits_2}, which refines the
@@ -124,12 +124,12 @@ concept \ccc{ArrangementTraits_2}, which refines the
 additional \ccc{Curve_2} type (which may differ from the
 \ccc{X_monotone_curve_2} type), and support the subdivision of curves
 of this new type into $x$-monotone curves (see the exact details in
-Section~\ref{arr_sec:traits}). The \ccc{insert_curve(arr, c, pl)}
+Section~\ref{arr_sec:traits}). The \ccc{insert(arr, c, pl)}
 function performs the insertion of the curve $c$, which does not need
 to be $x$-monotone, into the arrangement by subdividing it (if needed)
 into $x$-monotone subcurves and inserting each one separately. Users
 may supply a point-location object \ccc{pl}, or use the default walk
-point-location strategy by calling \ccc{insert_curve(arr, c)}.
+point-location strategy by calling \ccc{insert(arr, c)}.
 
 \subsubsection{Inserting Points\label{arr_sssec:insert_point}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,7 +183,7 @@ The program below constructs an arrangement of intersecting
 line-segments. We know that $s_1$ and $s_2$ do not intersect, so
 we use \ccc{insert_non_intersecting_curve()} to insert them into the
 empty arrangement. The rest of the segments are inserted using
-\ccc{insert_curve()}. The resulting arrangement consists
+\ccc{insert()}. The resulting arrangement consists
 of $13$ vertices, $16$ edges, and $5$ faces, as can be seen in
 Figure~\ref{arr_fig:ex_8}.
 
@@ -253,7 +253,7 @@ a range of $x$-monotone curves given by the input iterators
 curves should be pairwise disjoint in their interior and also
 interior-disjoint from all existing edges and vertices of \ccc{arr}.
 %
-\item \ccc{insert_curves(arr, begin, end)} inserts a range of general
+\item \ccc{insert(arr, begin, end)} inserts a range of general
   (not necessarily $x$-monotone) curves of type \ccc{Curve_2} or
   \ccc{X_monotone_curve_2} that may intersect one another, given by
   the input iterators \ccc{[begin, end)}, into the arrangement
@@ -291,7 +291,7 @@ The example below shows how to construct the arrangement of
 line segments depicted in Figure~\ref{arr_fig:ex_8} and built
 incrementally in \ccc{incremental_insertion.cpp}, as shown in the previous
 section. We use the aggregated insertion function
-\ccc{insert_curves()} as we deal with line segments.
+\ccc{insert()} as we deal with line segments.
 Note that no point-location object needs to be defined and attached to the
 arrangement:
 
@@ -329,7 +329,7 @@ Notice that the line segments of ${\mathcal S}_1$ are pairwise
 interior-disjoint, so we use \ccc{insert_non_intersecting_curves()}.
 ${\mathcal S}_2$ also contain pairwise interior-disjoint segments,
 but as they intersect the existing arrangement, we have to use
-\ccc{insert_curves()} to insert them. Also note that the
+\ccc{insert()} to insert them. Also note that the
 single segment $s$ we insert incrementally overlaps an existing
 arrangement edge:
 

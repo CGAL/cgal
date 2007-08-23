@@ -178,7 +178,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = polylines.begin(); iter != polylines.end(); ++iter)
       {
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -194,7 +194,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = polylines.begin(); iter != polylines.end(); ++iter)
       {
-	insert_curve (arr, *iter, pl);
+	insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -206,7 +206,7 @@ int main (int argc, char **argv)
 	      << n << " polylines." << std::endl;
 
     timer.start();
-    insert_curves (arr, polylines.begin(), polylines.end());
+    insert (arr, polylines.begin(), polylines.end());
     timer.stop();
   }
 

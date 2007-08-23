@@ -90,7 +90,7 @@ int main(int argc, char **argv)
   out_file << std::endl;
   std::cout << "Inserting the curves to the map ... \n";
 
-  CGAL::insert_curves(arr, curves.begin(), curves.end());
+  CGAL::insert(arr, curves.begin(), curves.end());
   
  
   std::cout<< "Finished insertion...\n";

@@ -26,7 +26,7 @@ int main ()
   segs[3] = Segment_2 (Point_2 (2, 6), Point_2 (7, 1));
   segs[4] = Segment_2 (Point_2 (0, 0), Point_2 (2, 6));
   segs[5] = Segment_2 (Point_2 (3, 4), Point_2 (6, 4));
-  insert_curves (arr, segs, segs + 6);
+  insert (arr, segs, segs + 6);
 
   std::cout << "Writing an arrangement of "
             << arr.number_of_curves() << " input segments:" << std::endl

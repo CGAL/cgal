@@ -1,6 +1,6 @@
 \ccRefPageBegin
 
-\begin{ccRefFunction}{insert_curves}
+\begin{ccRefFunction}{insert}
 
 \ccDefinition
 
@@ -16,7 +16,7 @@ inserted into the arrangement using the sweep-line algorithm.
 \ccInclude{CGAL/Arrangement_2.h}
 
 \ccGlobalFunction{template<class Traits, class Dcel, class InputIterator>
-            void insert_curves (Arrangement_2<Traits,Dcel>& arr,
+            void insert (Arrangement_2<Traits,Dcel>& arr,
                                 InputIterator first, InputIterator last);}
 Inserts the curves or $x$-monotone curves in the range
 \ccc{[first,last)} into the arrangement \ccc{arr}.
@@ -28,7 +28,7 @@ Inserts the curves or $x$-monotone curves in the range
 \ccThree{Orientation~~}{}{\hspace*{8.5cm}}
 
 \ccGlobalFunction{template<class Traits, class Dcel, InputIterator>
-            void insert_curves (Arrangement_with_history_2<Traits,Dcel>& arr,
+            void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
                          InputIterator first, InputIterator last);}
 Inserts the curves in the range \ccc{[first,last)} into the
 arrangement with history \ccc{arr}.

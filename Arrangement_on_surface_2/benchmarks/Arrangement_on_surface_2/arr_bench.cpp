@@ -384,7 +384,7 @@ public:
     Curve_list::const_iterator i;
     Strategy strategy(arr);
     for (i = m_curve_list.begin(); i != m_curve_list.end(); ++i)
-      insert_curve(arr, *i, strategy);
+      insert(arr, *i, strategy);
     
     if (m_verbose_level > 0) {      //print to cout
       if (m_verbose_level > 1) {
@@ -429,7 +429,7 @@ public:
   {
     if (m_verbose_level > 0) std::cout << "Inserting Aggregate" << std::endl;
     Arr arr(&m_traits);
-    insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
+    insert(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose_level > 0) {
       if (m_verbose_level > 1) {
         if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -456,7 +456,7 @@ public:
   void op()
   {
     Arr arr(&m_traits);
-    insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
+    insert(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose_level > 0) {
       if (m_verbose_level > 1) {
         if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;

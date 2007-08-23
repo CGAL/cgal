@@ -94,7 +94,7 @@ int main()
   cv[0] = Segment_2 (p1, p2);
   cv[1] = Segment_2 (p2, p3);
   cv[2] = Segment_2 (p3, p1);
-  CGAL::insert_curves (arr, &cv[0], &cv[3]);
+  CGAL::insert (arr, &cv[0], &cv[3]);
 
   return (0);
 \}

@@ -81,7 +81,7 @@ int main ()
   // Construct the arrangement of the curves.
   Arrangement_2    arr;
 
-  insert_curves (arr, curves.begin(), curves.end());
+  insert (arr, curves.begin(), curves.end());
   
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl

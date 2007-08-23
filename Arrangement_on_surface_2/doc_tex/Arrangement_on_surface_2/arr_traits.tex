@@ -179,8 +179,8 @@ part and the lower part of the unit circle) and a single isolated
 point.
 
 Note that the refined model \ccc{ArrangementTraits_2} is required
-only when using the free \ccc{insert_curve()} and
-\ccc{insert_curves()} functions (see Section~\ref{arr_sec:gl_funcs}),
+only when using the free \ccc{insert()} and
+\ccc{insert()} functions (see Section~\ref{arr_sec:gl_funcs}),
 which accept a \ccc{Curve_2} object in the incremental version,
 or a range of \ccc{Curve_2} objects in the aggregated version.
 In all other cases it is sufficient to use a model of the
@@ -599,8 +599,8 @@ type represents a bounded, not necessarily $x$-monotone, conic arc.
 The \ccc{X_monotone_curve_2} type is derived from \ccc{Curve_2},
 but its constructors are to be used only by the traits class.
 You should therefore construct only \ccc{Curve_2} objects and
-insert them into the arrangement using the \ccc{insert_curve()}
-or \ccc{insert_curves()} functions.
+insert them into the arrangement using the \ccc{insert()}
+or \ccc{insert()} functions.
 
 Conic arcs can be constructed from full ellipses or by specifying
 a supporting curve, two endpoints and an orientation. However,

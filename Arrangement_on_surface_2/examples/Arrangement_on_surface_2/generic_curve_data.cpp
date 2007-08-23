@@ -39,17 +39,17 @@ int main ()
 
   Point_2          points1[5] = {Point_2(0,0), Point_2(2,4), Point_2(3,3),
                                  Point_2(4,4), Point_2(6,0)};
-  insert_curve (arr, Curve_2 (Polyline_2 (points1, points1 + 5), "A"));
+  insert (arr, Curve_2 (Polyline_2 (points1, points1 + 5), "A"));
 
   Point_2          points2[3] = {Point_2(1,5), Point_2(3,3), Point_2(5,5)};
-  insert_curve (arr, Curve_2 (Polyline_2 (points2, points2 + 3), "B"));
+  insert (arr, Curve_2 (Polyline_2 (points2, points2 + 3), "B"));
 
   Point_2          points3[4] = {Point_2(1,0), Point_2(2,2),
                                  Point_2(4,2), Point_2(5,0)};
-  insert_curve (arr, Curve_2 (Polyline_2 (points3, points3 + 4), "C"));
+  insert (arr, Curve_2 (Polyline_2 (points3, points3 + 4), "C"));
 
   Point_2          points4[2] = {Point_2(0,2), Point_2(6,2)};
-  insert_curve (arr, Curve_2 (Polyline_2 (points4, points4 + 2), "D"));
+  insert (arr, Curve_2 (Polyline_2 (points4, points4 + 2), "D"));
 
   // Print all edges that correspond to an overlapping polyline.
   Arrangement_2::Edge_iterator    eit;

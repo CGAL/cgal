@@ -352,7 +352,7 @@ bool test(const char* curves_filename, const char* points_filename)
   timer.reset(); 
   timer.start(); //START
   Arrangement_2  arr;
-  insert_curves (arr, curve_list.begin(), curve_list.end());
+  insert (arr, curve_list.begin(), curve_list.end());
   timer.stop(); ///END
   std::cout << "Arrangement aggregate construction took " 
             << timer.time() <<std::endl;  

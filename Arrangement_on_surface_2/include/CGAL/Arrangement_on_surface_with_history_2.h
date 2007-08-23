@@ -661,7 +661,7 @@ protected:
     Data_curve_2       data_curve (cv, p_cv);
     Base_arr_2&        base_arr = *this;
 
-    CGAL::insert_curve (base_arr, data_curve, pl);
+    CGAL::insert (base_arr, data_curve, pl);
     
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
@@ -690,7 +690,7 @@ protected:
     Data_curve_2       data_curve (cv, p_cv);
     Base_arr_2&        base_arr = *this;
 
-    CGAL::insert_curve (base_arr, data_curve);
+    CGAL::insert (base_arr, data_curve);
     
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
@@ -723,7 +723,7 @@ protected:
     // Perform an aggregated insertion operation into the base arrangement.
     Base_arr_2&        base_arr = *this;
 
-    CGAL::insert_curves (base_arr, data_curves.begin(), data_curves.end());
+    CGAL::insert (base_arr, data_curves.begin(), data_curves.end());
     return;
   }
 
@@ -907,7 +907,7 @@ public:
 template <class GeomTraits, class TopTraits, class PointLocation>
 typename Arrangement_on_surface_with_history_2<GeomTraits,
                                                TopTraits>::Curve_handle
-insert_curve (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
+insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
               const typename GeomTraits::Curve_2& c,
               const PointLocation& pl)
 {
@@ -930,7 +930,7 @@ insert_curve (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
 template <class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_with_history_2<GeomTraits,
                                                TopTraits>::Curve_handle
-insert_curve (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
+insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
               const typename GeomTraits::Curve_2& c)
 {
   // Obtain an arrangement accessor and perform the insertion.
@@ -952,7 +952,7 @@ insert_curve (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
  * \pre The value type of the iterators must be Curve_2.
  */
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_curves (Arrangement_on_surface_with_history_2<GeomTraits,
+void insert (Arrangement_on_surface_with_history_2<GeomTraits,
                                                           TopTraits>& arr,
                     InputIterator begin, InputIterator end)
 {

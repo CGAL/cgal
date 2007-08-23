@@ -69,7 +69,7 @@ int main ()
   arcs.push_back (a2);
   arcs.push_back (a3);
   arcs.push_back (a4);
-  insert_curves (arr, arcs.begin(), arcs.end());
+  insert (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl

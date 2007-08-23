@@ -63,9 +63,9 @@ int main ()
   insert_non_intersecting_curve (arr, s1);
   insert_non_intersecting_curve (arr, s2);
   insert_non_intersecting_curve (arr, s3);
-  insert_curve (arr, s4);
-  insert_curve (arr, s5);
-  insert_curve (arr, s6);
+  insert (arr, s4);
+  insert (arr, s5);
+  insert (arr, s6);
 
   // Go over all arrangement vertices and set their colors.
   Arrangement_2::Vertex_iterator            vit;

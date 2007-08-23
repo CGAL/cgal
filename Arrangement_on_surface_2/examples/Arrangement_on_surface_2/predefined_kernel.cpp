@@ -62,7 +62,7 @@ int main (int argc, char **argv)
             << n << " segments." << std::endl;
 
   timer.start();
-  insert_curves (arr, segments.begin(), segments.end());
+  insert (arr, segments.begin(), segments.end());
   timer.stop();
 
   // Print the arrangement dimensions.

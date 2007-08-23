@@ -37,9 +37,9 @@ int main ()
   // Construct the arrangement of the three circles.
   Arrangement_2    arr;
 
-  insert_curve (arr, cv1);
-  insert_curve (arr, cv2);
-  insert_curve (arr, cv3);
+  insert (arr, cv1);
+  insert (arr, cv2);
+  insert (arr, cv3);
   
   // Locate the vertex with maximal degree.
   Arrangement_2::Vertex_const_iterator  vit;

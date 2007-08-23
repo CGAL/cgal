@@ -52,9 +52,9 @@ int main ()
   points3[3] = Point_2 (5, 2);
   Polyline_2            pi3 (points3.begin(), points3.end());
   
-  insert_curve (arr, pi1);
-  insert_curve (arr, pi2);
-  insert_curve (arr, pi3);
+  insert (arr, pi1);
+  insert (arr, pi2);
+  insert (arr, pi3);
   
   print_arrangement (arr);
   return 0;

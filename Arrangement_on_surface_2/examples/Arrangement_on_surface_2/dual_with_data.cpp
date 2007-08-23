@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
   // Construct the dual arrangement by aggragately inserting the lines.
   Arrangement_2      arr;
 
-  insert_curves (arr, dual_lines.begin(), dual_lines.end());
+  insert (arr, dual_lines.begin(), dual_lines.end());
 
   // Look for vertices whose degree is greater than 4.
   Arrangement_2::Vertex_const_iterator                    vit;

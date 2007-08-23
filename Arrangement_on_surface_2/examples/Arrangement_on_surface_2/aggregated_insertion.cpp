@@ -26,7 +26,7 @@ int main ()
   segments.push_back (Segment_2 (Point_2(0, 2), Point_2(6, 0)));
   segments.push_back (Segment_2 (Point_2(3, 0), Point_2(5, 5)));
 
-  insert_curves (arr, segments.begin(), segments.end());
+  insert (arr, segments.begin(), segments.end());
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl

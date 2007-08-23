@@ -128,7 +128,7 @@ int main()
 
   // Insert the curves into the arrangement:
   std::cout << "Inserting the curves to the map ... ";
-  insert_curves(arr, &cv[0], &cv[5]);
+  insert(arr, &cv[0], &cv[5]);
   std::cout << ((arr.is_valid()) ? "map valid!" : "map invalid!") << std::endl
             << std::endl;
 

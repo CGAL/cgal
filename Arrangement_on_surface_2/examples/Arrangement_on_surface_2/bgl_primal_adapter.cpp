@@ -109,12 +109,12 @@ int main()
     insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1), 
                                                    Point_2 (7, 1)));
   Arrangement_2::Vertex_handle    v0 = e->source();
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
-  insert_curve (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
-  insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
-  insert_curve (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
+  insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
+  insert (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
+  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
+  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
+  insert (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
+  insert (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
 
   // Create a mapping of the arrangement vertices to indices.
   CGAL::Arr_vertex_index_map<Arrangement_2>        index_map_tmp(arr);
