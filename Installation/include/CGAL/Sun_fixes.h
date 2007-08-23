@@ -24,10 +24,11 @@
 #ifndef CGAL_SUN_FIXES_H
 #define CGAL_SUN_FIXES_H 1
 
-// Sun CC has several issues with templates, and I do not have a testcase
-// for this one, but it means overloading Qualified_result_of does not
-// work in general.
+// Sun CC has an issue with templates that means overloading
+// Qualified_result_of does not work so well.
+#if __SUNPRO_CC < 0x590
 #define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
+#endif
 
 #ifdef CGAL_CFG_SUNPRO_RWSTD
 
