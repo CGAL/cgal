@@ -36,7 +36,7 @@ public:
 
   static bool _assert_is_point_on (const Point_2& pt,
                                    const X_monotone_curve_2& cv,
-                                   Tag_true tag)
+                                   Tag_true /* tag */)
   {
     Traits_2    traits;
     return (traits.compare_y_at_x_2_object() (pt, cv) == EQUAL);
@@ -44,14 +44,14 @@ public:
 
   static bool _assert_is_point_on (const Point_2& pt,
                                    const X_monotone_curve_2& cv,
-                                   Tag_false tag)
+                                   Tag_false /* tag */)
   {
     return (true);
   }
 
   static bool _assert_is_point_on (const Point_2& pt,
                                    const Line_2& l,
-                                   Tag_true tag)
+                                   Tag_true /* tag */)
   {
     Kernel      kernel;
     return (kernel.has_on_2_object() (l, pt));
@@ -59,7 +59,7 @@ public:
 
   static bool _assert_is_point_on (const Point_2& pt,
                                    const Line_2&  l,
-                                   Tag_false tag)
+                                   Tag_false /* tag */)
   {
     return (true);
   }
