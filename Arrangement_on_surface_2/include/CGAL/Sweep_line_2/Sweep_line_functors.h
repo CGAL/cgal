@@ -345,7 +345,7 @@ class Sweep_line_event;
  * in the sweep-line algorithm.
  */
 template <class Traits_, class Subcurve_> 
-class Compare_curves 
+class Curve_comparer 
 {
 public:
 
@@ -366,7 +366,7 @@ public:
   
   /*! Constructor. */
   template <class Sweep_event>
-  Compare_curves (Traits_adaptor_2 *t, Sweep_event** e_ptr) :
+  Curve_comparer (Traits_adaptor_2 *t, Sweep_event** e_ptr) :
     m_traits(t),
     m_curr_event(reinterpret_cast<Event**>(e_ptr))
   {}

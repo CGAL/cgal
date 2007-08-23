@@ -56,7 +56,7 @@ public:
   typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
 
   typedef Sweep_line_subcurve<Traits_2>              Self;
-  typedef Compare_curves<Traits_2, Self>             Compare_curves;
+  typedef Curve_comparer<Traits_2, Self>             Compare_curves;
   typedef Multiset<Self*,
                    Compare_curves,
                    CGAL_ALLOCATOR(int)>              Status_line;

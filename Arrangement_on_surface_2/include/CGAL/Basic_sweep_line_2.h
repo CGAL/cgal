@@ -106,7 +106,7 @@ public:
   typedef typename Base_event::Attribute               Attribute;
   
   typedef Sweep_line_subcurve<Traits_2>                Base_subcurve;
-  typedef Compare_curves<Traits_2, Base_subcurve>      Compare_curves;
+  typedef Curve_comparer<Traits_2, Base_subcurve>      Compare_curves;
   typedef Multiset<Base_subcurve*,
                    Compare_curves, 
                    Allocator>                          Status_line;
