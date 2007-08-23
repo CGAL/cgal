@@ -1,0 +1,35 @@
+\begin{ccRefConcept}{LinearKernel} 
+
+\ccDefinition
+
+The geometric kernel parameter of \ccc{CGAL::Spherical_kernel_3} is
+supposed to be a model of the \textit{(three-dimensional)} \ccc{Kernel}
+concept, so that the spherical kernel provides all functionalities of a
+\cgal\ kernel.
+
+%In fact, even though all types and operations of the
+%\ccc{CGAL::Kernel} concept are required so that
+%\ccc{CGAL::Circular_kernel_2} actually refines \ccc{CGAL::Kernel}, only
+%the following types are explicitly used by \ccc{Circular_kernel_2} and
+%can thus be considered as minimal requirements:
+
+%\ccNestedType{RT}{A model of \ccc{RingNumberType}.}
+%\ccNestedType{FT}{A model of \ccc{FieldNumberType<RT>}.} \footnote{concept template...?}
+
+%\ccNestedType{Point_2}{A model of \ccc{Point_2}.}
+%\ccNestedType{Line_2}{A model of \ccc{Line_2}.}
+%\ccNestedType{Circle_2}{A model of \ccc{Circle_2}.}
+%\ccNestedType{Object_2}{A model of \ccc{Object_2}.}
+
+%Note that all operations on these types are also required.
+
+\ccHasModels
+
+All \cgal\ kernels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Kernel}\\
+\ccRefIdfierPage{SphericalKernel}
+
+\end{ccRefConcept}

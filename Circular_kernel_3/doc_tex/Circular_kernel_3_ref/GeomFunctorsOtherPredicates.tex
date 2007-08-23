@@ -1,5 +1,9 @@
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOn_3}
 
+\ccRefines
+
+\ccc{Kernel::HasOn_3}
+
 \ccCreationVariable{fo}
 
 An object \ccVar\ of this type must provide:
@@ -36,5 +40,118 @@ where \ccc{Type1} and \ccc{Type2} can be respectively:
 \ccc{SphericalKernel::Sphere_3} & & \\
 \hline
 \end{tabular}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::DoOverlap_3}
+
+\ccRefines
+
+\ccc{Kernel::DoOverlap_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const SphericalKernel::Line_arc_3 & l0,
+	const SphericalKernel::Line_arc_3 & l1,
+	const bool known_equal_supporting_line = false);}
+{For two line arcs.}
+
+\ccMemberFunction{bool operator()
+	(const SphericalKernel::Circular_arc_3 & a0,
+	const SphericalKernel::Circular_arc_3 & a1,
+	const bool known_equal_supporting_circle = false);}
+{For two circular arcs.}
+
+The computation may be faster when the boolean is set to \ccc{true}.
+
+For the sake of completeness, the \ccc{operator()} must also be
+defined for a \ccc{Line_arc_3} and a \ccc{Circular_arc_3} (in any order). 
+In this case, it always returns \ccc{false}.
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::BoundedSide_3}
+
+\ccRefines
+
+\ccc{Kernel::BoundedSide_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{SphericalKernel::Bounded_side 
+	operator()
+	(const SphericalKernel::Sphere_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a sphere.}
+
+\ccMemberFunction{SphericalKernel::Bounded_side
+	operator()
+	(const SphericalKernel::Circle_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::Has_on_bounded_side_3}\\
+\ccRefIdfierPage{SphericalKernel::Has_on_unbounded_side_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOnBoundedSide_3}
+
+\ccRefines
+
+\ccc{Kernel::HasOnBoundedSide_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Sphere_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a sphere.}
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Circle_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::Bounded_side_3}\\
+\ccRefIdfierPage{SphericalKernel::Has_on_unbounded_side_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOnUnboundedSide_3}
+
+\ccRefines
+
+\ccc{Kernel::HasOnUnboundedSide_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Sphere_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a sphere.}
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Circle_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::Bounded_side_3}\\
+\ccRefIdfierPage{SphericalKernel::Has_on_bounded_side_3}
 
 \end{ccRefFunctionObjectConcept}
