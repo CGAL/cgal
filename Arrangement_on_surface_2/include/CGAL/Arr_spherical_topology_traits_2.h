@@ -45,6 +45,7 @@
 #include <CGAL/Arr_topology_traits/Arr_spherical_insertion_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_overlay_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_batched_pl_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_spherical_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_inc_insertion_zone_visitor.h>
 
 #include <map>
@@ -285,6 +286,10 @@ private:
   typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
   typedef Arr_spherical_batched_pl_helper<BplTraits, Arr>       BplHelper;
 
+  // Type definition for the vertical decomposition sweep-line visitor.
+  typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
+  typedef Arr_spherical_vert_decomp_helper<VdTraits, Arr>       VdHelper;
+
   // Type definition for the overlay sweep-line visitor.
   template <class ExGeomTraits_, class ArrangementA_, class ArrangementB_>
   struct _Overlay_helper :
@@ -340,6 +345,23 @@ public:
 
     Sweep_line_bacthed_point_location_visitor(const Arr * arr,
                                               Output_iterator * oi) :
+      Base(arr, oi)
+    {}
+  };
+
+  template <class OutputIterator_>
+  struct Sweep_line_vertical_decomposition_visitor :
+    public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
+  {
+    typedef OutputIterator_                             Output_iterator;
+    typedef Arr_vert_decomp_sl_visitor<VdHelper,Output_iterator>  Base;
+
+    typedef typename Base::Traits_2                     Traits_2;
+    typedef typename Base::Event                        Event;
+    typedef typename Base::Subcurve                     Subcurve;
+
+    Sweep_line_vertical_decomposition_visitor (const Arr * arr,
+                                               Output_iterator * oi) :
       Base(arr, oi)
     {}
   };

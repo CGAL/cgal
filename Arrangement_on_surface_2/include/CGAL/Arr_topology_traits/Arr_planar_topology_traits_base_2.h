@@ -39,6 +39,7 @@
 #include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
 #include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE

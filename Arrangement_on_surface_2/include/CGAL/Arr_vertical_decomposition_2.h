@@ -13,18 +13,14 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_VERTICAL_DECOMPOSITION_2_H
 #define CGAL_ARR_VERTICAL_DECOMPOSITION_2_H
 
+#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Basic_sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Arr_point_location/Arr_vertical_decomposition_visitor.h>
-#include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
@@ -42,72 +38,78 @@ CGAL_BEGIN_NAMESPACE
  *      pair<Vertex_const_handle, pair<Object, Object> >, where
  *      the Object represents a handle to an arrangement feature.
  */
-template<typename Traits, typename Dcel, typename OutputIterator>
-OutputIterator decompose (const Arrangement_2<Traits,Dcel>& arr, 
-                          OutputIterator oi)
+template<typename GeomTraits, typename TopTraits,
+         typename OutputIterator>
+OutputIterator decompose
+    (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+     OutputIterator oi)
 {
   // Arrangement types:
-  typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
-  typedef typename Arrangement_2::Traits_2              Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2         Base_x_monotone_curve_2;
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arrangement_2;
+  typedef typename TopTraits::template
+          Sweep_line_vertical_decomposition_visitor<OutputIterator>
+                                                            Vd_visitor;
+
+//  typedef typename Arrangement_2::Traits_2              Traits_2;
+//  typedef typename Traits_2::X_monotone_curve_2         Base_x_monotone_curve_2;
 
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
   typedef typename Arrangement_2::Size                  Size;
 
-  // Define the meta-traits class:
-  typedef Arr_batched_point_location_traits_2<Arrangement_2>
-                                                        Meta_traits_2;
+  typedef typename Vd_visitor::Traits_2                 Vd_traits_2;
+  typedef typename Vd_traits_2::X_monotone_curve_2      Vd_x_monotone_curve_2;
+  typedef typename Vd_traits_2::Point_2                 Vd_point_2;
 
-  typedef typename Meta_traits_2::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Meta_traits_2::Point_2               Point_2;
-
-  // Define the sweep-line visitor:
-  typedef Arr_vertical_decomposition_visitor<Meta_traits_2,
-                                             Arrangement_2,
-                                             OutputIterator>  Visitor;
-  
-  typedef Basic_sweep_line_2<Meta_traits_2, Visitor>    Sweep_line;
-
-  // Go over all arrangement edges.
-  std::vector<X_monotone_curve_2>  xcurves_vec (arr.number_of_edges());
-  Edge_const_iterator              eit;
-  Size                             i = 0;
+  // Go over all arrangement edges and collect their associated x-monotone
+  // curves. To each curve we attach a halfedge handle going from right to
+  // left.
+  std::vector<Vd_x_monotone_curve_2>  xcurves_vec (arr.number_of_edges());
+  Edge_const_iterator                 eit;
+  Size                                i = 0;
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit, ++i) 
   {
     // Associate each x-monotone curve with the halfedge that represents it
     // and is directed from right to left.
     if (eit->direction() == RIGHT_TO_LEFT)
-      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit);
+      xcurves_vec[i] = Vd_x_monotone_curve_2 (eit->curve(), eit);
     else
-      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->twin());
+      xcurves_vec[i] = Vd_x_monotone_curve_2 (eit->curve(), eit->twin());
   }
 
-  // Go over all arrangement vertices.
-  Vertex_const_iterator   vit;
-  std::vector<Point_2>    iso_points;
+  // Go over all isolated vertices and collect their points. To each point
+  // we attach its vertex handle.
+  std::vector<Vd_point_2>     iso_pts_vec (arr.number_of_isolated_vertices());
+  Vertex_const_iterator       vit;
 
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  i = 0;
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit, ++i)
   {
     // Associate isolated point with the vertex that represents it.
     if (vit->is_isolated())
-      iso_points.push_back (Point_2 (vit->point(), vit));
+      iso_pts_vec[i] = Vd_point_2 (vit->point(), vit);
   }
-  
-  // Perform the sweep and fill the vertical mapping.
-  Visitor          visitor (arr, oi);
-  Meta_traits_2    meta_tr (*(arr.get_traits()));
-  Sweep_line       sweep_line (&meta_tr ,&visitor);
-  
-  sweep_line.sweep (xcurves_vec.begin(),
-                    xcurves_vec.end(),
-                    iso_points.begin(),  
-                    iso_points.end()); 
+
+  // Obtain a extended traits-class object.
+  GeomTraits               *geom_traits =
+                              const_cast<GeomTraits*> (arr.geometry_traits());
+  Vd_traits_2               ex_traits (*geom_traits);
+
+  // Define the sweep-line visitor and perform the sweep.
+  Vd_visitor                                       visitor (&arr, &oi);
+  Basic_sweep_line_2<typename Vd_visitor::Traits_2,
+                     Vd_visitor,
+                     typename Vd_visitor::Subcurve,
+                     typename Vd_visitor::Event>   sweep_line (&ex_traits,
+                                                               &visitor);
+
+  sweep_line.sweep (xcurves_vec.begin(), xcurves_vec.end(),  // Curves.
+                    iso_pts_vec.begin(), iso_pts_vec.end()); // Action points.
 
   // Return a past-the-end iterator.
-  return (visitor.output_iterator());
+  return (oi);
 }
 
 

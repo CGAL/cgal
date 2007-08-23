@@ -85,7 +85,6 @@ public:
   bool after_handle_event (Event* event,
                            Status_line_iterator above,
                            bool on_above);
-
 };
 
 //-----------------------------------------------------------------------------

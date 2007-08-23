@@ -13,7 +13,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
@@ -24,7 +23,6 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Basic_sweep_line_2.h>
 #include <vector>
-#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -105,7 +103,7 @@ OutputIterator locate
   sweep_line.sweep (xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                     iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
                     points_begin, points_end);              // Query points.
-  
+
   return (oi);
 }
 

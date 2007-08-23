@@ -3,19 +3,20 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_vertical_decomposition_2.h>
 #include <list>
 
 typedef CGAL::MP_Float                                  Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef CGAL::Arr_linear_traits_2<Kernel>               Traits_2;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
 typedef Traits_2::Point_2                               Point_2;
-typedef Traits_2::Segment_2                             Segment_2;
+typedef Traits_2::X_monotone_curve_2                    Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 typedef Arrangement_2::Vertex_const_handle              Vertex_const_handle;
 typedef Arrangement_2::Halfedge_const_handle            Halfedge_const_handle;
+typedef Arrangement_2::Face_const_handle                Face_const_handle;
 
 typedef std::pair<Vertex_const_handle, std::pair<CGAL::Object, CGAL::Object> >
                                                         Vert_decomp_entry;
@@ -46,32 +47,29 @@ int main ()
   std::pair<CGAL::Object, CGAL::Object>  curr;
   Vertex_const_handle                    vh;
   Halfedge_const_handle                  hh;
+  Face_const_handle                      fh;
 
   for (vd_iter = vd_list.begin(); vd_iter != vd_list.end(); ++vd_iter) {
     curr = vd_iter->second;
     std::cout << "Vertex (" << vd_iter->first->point() << ") : ";
 
     std::cout << " feature below: ";
-    if (CGAL::assign (hh, curr.first)) {
-      if (! hh->is_fictitious())
-        std::cout << '[' << hh->curve() << ']';
-      else
-        std::cout << "NONE";
-    }
+    if (CGAL::assign (hh, curr.first))
+      std::cout << '[' << hh->curve() << ']';
     else if (CGAL::assign (vh, curr.first))
       std::cout << '(' << vh->point() << ')';
+    else if (CGAL::assign (fh, curr.first))
+      std::cout << "NONE";
     else
       std::cout << "EMPTY";
 
     std::cout << "   feature above: ";
-    if (CGAL::assign (hh, curr.second)) {
-      if (! hh->is_fictitious())
-        std::cout << '[' << hh->curve() << ']' << std::endl;
-      else
-        std::cout << "NONE" << std::endl;
-    }
+    if (CGAL::assign (hh, curr.second))
+      std::cout << '[' << hh->curve() << ']' << std::endl;
     else if (CGAL::assign (vh, curr.second))
       std::cout << '(' << vh->point() << ')' << std::endl;
+    else if (CGAL::assign (fh, curr.second))
+      std::cout << "NONE" << std::endl;
     else
       std::cout << "EMPTY" << std::endl;
   }
