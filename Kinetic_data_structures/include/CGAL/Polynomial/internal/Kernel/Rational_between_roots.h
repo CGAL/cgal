@@ -44,6 +44,22 @@ struct Rational_between_roots
 
 
 protected:
+  template <class T>
+  result_type compute(const T &r0, const T &r1) const {
+    result_type ret= CGAL::to_interval(r0).second;
+    result_type step=.0000000596046447753906250000000;
+    do {
+      while (T(ret) >= r1) {
+	ret-= step;
+      }
+      while (T(ret) <= r0) {
+	ret += step;
+      }
+      step/= 2.0;
+    } while (T(ret) >= r1 || T(ret) <= r0);
+    return ret;
+  }
+
   template <class TK>
   result_type compute(const Simple_interval_root<TK> &r0, const Simple_interval_root<TK> &r1)const  {
     return r0.rational_between(r1);

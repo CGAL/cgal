@@ -52,7 +52,7 @@ public:
   Heap_pointer_event_queue_item():bin_(-1), time_(infinity_or_max<Priority>(Priority(0))){}
   Heap_pointer_event_queue_item(int bin, const Priority &t): bin_(bin), time_(t){}
 
-  virtual void write(std::ostream &out) const =0;
+  virtual std::ostream& write(std::ostream &out) const =0;
   const Priority& time() const {return time_;};
   virtual void process() =0;
   virtual void audit(Key) const=0;
@@ -95,9 +95,10 @@ public:
     else return CGAL::EQUAL;
     //return CGAL::compare(a,b);
   }
-  virtual void write(std::ostream &out) const
+  virtual std::ostream& write(std::ostream &out) const
   {
     out << "Never.";
+    return out;
   }
   virtual void audit(typename P::Key) const {
     std::cout << "Auditing a dummy event" << std::endl;
@@ -134,11 +135,12 @@ public:
   virtual void audit(typename P::Key k) const {
     event_.audit(k);
   }
-  virtual void write(std::ostream &out) const
+  virtual std::ostream& write(std::ostream &out) const
   {
     out << "(";
     event_.write(out);
     out << ")";
+    return out;
   }
   // Access the actual event
   /*
