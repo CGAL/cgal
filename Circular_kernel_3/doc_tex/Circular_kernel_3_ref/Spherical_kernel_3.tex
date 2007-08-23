@@ -1,0 +1,71 @@
+\begin{ccRefClass}{Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}
+
+\ccInclude{CGAL/Spherical_kernel_3.h}
+
+\ccIsModel
+
+\ccc{SphericalKernel}
+
+\ccParameters
+
+The spherical kernel is parameterized by a \ccc{LinearKernel} parameter
+(and derives from it), in order to reuse all needed functionalities on
+basic linear objects provided by one of the \cgal\ kernels. It also
+allows other implementations of these basic functionalities.
+
+The second parameter, \ccc{AlgebraicKernelForSpheres}, is meant to provide the
+spherical kernel with all the algebraic functionalities required for the
+manipulation of algebraic curves. 
+
+\ccInheritsFrom
+
+\ccc{LinearKernel}
+
+\ccTypes
+
+\ccThree{typedef Circular_arc_point_3<Spherical-Kernel_3xxx>}{Root_of_4xxx}{}
+\ccThreeToTwo
+
+The spherical kernel uses basic number types of the algebraic kernel:
+\ccTypedef{typedef AlgebraicKernelForSpheres::RT RT;}{Ring number type.}
+\ccTypedef{typedef AlgebraicKernelForSpheres::FT FT;}{Field number type.}
+In fact, the two number types \ccc{AlgebraicKernelForSpheres::RT} and
+\ccc{LinearKernel::RT} must coincide, as well as
+\ccc{AlgebraicKernelForSpheres::FT} and \ccc{LinearKernel::FT}.
+
+The following types are available, as well as all the functionality on
+them described in the \ccc{SphericalKernel} concept. 
+
+\ccTypedef{typedef Circle_3<Spherical_kernel_3> Circle_3;}{}
+\ccGlue
+\ccTypedef{typedef Line_arc_3<Spherical_kernel_3> Line_arc_3;}{}
+\ccGlue
+\ccTypedef{typedef Circular_arc_3<Spherical_kernel_3> Circular_arc_3;}{}
+\ccGlue
+\ccTypedef{typedef Circular_arc_point_3<Spherical_kernel_3> Circular_arc_point_3;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{LinearKernel}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres}\\
+\ccRefIdfierPage{CGAL::Exact_spherical_kernel_3}
+
+\end{ccRefClass}
+\begin{ccRefClass}{Exact_spherical_kernel_3}
+
+\ccInclude{CGAL/Exact_spherical_kernel.h}
+
+\ccDefinition
+
+A typedef to a spherical kernel that provides
+both exact geometric predicates and exact geometric constructions.
+
+\ccIsModel
+
+\ccc{SphericalKernel}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}
+
+\end{ccRefClass}
