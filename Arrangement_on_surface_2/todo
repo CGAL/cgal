@@ -18,6 +18,8 @@
 
 - Test all landmark sub-strategies
 
+- Fix the reader and writer
+
 - Get rid of the prefix 'get_' from all functions and methods:
     get_all_inner_nodes()
     get_all_leaves()
