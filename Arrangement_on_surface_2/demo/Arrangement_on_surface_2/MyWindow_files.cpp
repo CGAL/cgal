@@ -312,7 +312,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     Conic_reader<Conic_traits>  reader;
     std::list<Arr_conic_2>               curve_list;
     reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
-    CGAL::insert_curves (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
+    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
   }
 
   else if (w_demo->traits_type == POLYLINE_TRAITS)
@@ -351,7 +351,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
 
       pol_list.push_back(curve);
     }
-    CGAL::insert_curves(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
+    CGAL::insert(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
   }
 
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -384,7 +384,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       seg_list.push_back(curve);
     }
 
-    CGAL::insert_curves(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
+    CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
   }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() ,
                      w_demo->bbox.ymin() , w_demo->bbox.ymax());

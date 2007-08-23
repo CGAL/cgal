@@ -1757,7 +1757,7 @@ public:
     Arr_seg_point_2 source(coord_source.x(), coord_source.y());
     Arr_seg_point_2 target(coord_target.x(), coord_target.y());
     Arr_seg_2 seg (source, target);
-    CGAL::insert_curve(*(w->m_curves_arr), seg);
+    CGAL::insert(*(w->m_curves_arr), seg);
     CGAL::Bbox_2 curve_bbox = seg.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
@@ -2238,7 +2238,7 @@ private:
   void get_polyline(Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
     Arr_pol_2  pol (points.begin(), points.end());
-    CGAL::insert_curve(*(w->m_curves_arr), pol);
+    CGAL::insert(*(w->m_curves_arr), pol);
     CGAL::Bbox_2 curve_bbox = pol.bbox();
     w->bbox = w->bbox + curve_bbox;
   }
@@ -2750,7 +2750,7 @@ public:
         break;
       }
 
-      CGAL::insert_curve(*(w->m_curves_arr), cv);
+      CGAL::insert(*(w->m_curves_arr), cv);
       CGAL::Bbox_2 curve_bbox = cv.bbox();
       w->bbox = w->bbox + curve_bbox;
       w->active = false;
