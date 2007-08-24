@@ -994,7 +994,6 @@ Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
 Benchmark/doc_tex/Benchmark/fig/classification.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/classification.gif -text svneol=unset#image/gif
 Benchmark/doc_tex/Benchmark/fig/classification.pdf -text svneol=unset#application/pdf
-Benchmark/examples/Benchmark/polynomial.cpp -text
 Benchmark/src/Benchmark/benchmark_lexer.l -text
 Benchmark_instances/developer_scripts/cgal_create_bench_webpage -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations.vcproj eol=crlf
