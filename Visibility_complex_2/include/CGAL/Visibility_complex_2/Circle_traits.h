@@ -528,49 +528,11 @@ public:
 	    else if (sgn == NEGATIVE) result= RIGHT_TURN; else
 	    result= COLLINEAR;
             return result;
-//             std::cout<<ploum<<" ";
-//             switch (result) {
-//             case LEFT_TURN: std::cout<<"left\n"; break;
-//             case RIGHT_TURN: std::cout<<"right\n"; break;
-//             case COLLINEAR: std::cout<<"colin\n"; break;
-//             }
-//             if (fork()==0) {
-//               int zero=0;
-//               QApplication app(zero,(char**)0);
-//               Qt_widget* w;
-//               w = new CGAL::Qt_widget();
-//               app.setMainWidget( w );
-//               w->resize(600, 600);
-//               w->set_window(-to_double(ru), to_double(ru), -to_double(ru), to_double(ru));
-//               w->show();
-//               w->lock();
-              
-//               *w<<BLACK;
-//               view_bit(a,w);
-//               *w<<RED;
-//               view_bit(b,w);
-
-//               w->unlock();
-//               app.exec();
-//               exit(0);
-//             }
-//             wait(0);
-//             ploum++;
-//             return result;
 	}
     };
     // -------------------------------------------------------------------------
     // The two follwing give the chi2 predicate with a point at infinity
     struct Compare_extreme_yx {
-// 	Comparison_result operator() (bool, const Disk&,
-// 				      bool, const Bitangent_2&) const
-// 	{ CGAL_assertion(false);return EQUAL; } // FIXME - not implemented
-// 	Comparison_result operator() (bool, const Bitangent_2&,
-// 				      bool, const Bitangent_2&) const
-// 	{ CGAL_assertion(false);return EQUAL; } // FIXME - not implemented
-// 	Comparison_result operator() (bool, const Bitangent_2&,
-// 				      bool, const Disk&) const
-// 	{ CGAL_assertion(false);return EQUAL; } // FIXME - not implemented
 	Comparison_result operator() (bool sa , const Disk& a,
 				      bool sb , const Disk& b) const { 
 	    FT ar = (sa) ? -a.radius() : a.radius();

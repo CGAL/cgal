@@ -199,7 +199,7 @@ private:
           if (super==v->sup()) 
             return Border_iterator(super,
                                    v->ccw_source_edge());
-          CGAL_assertion(v->is_constraint());
+          if (!v->is_constraint()) return Border_iterator(super,0);
           v=v->pi();
           if (super==v->target_cusp_face()) 
             return Border_iterator(super,
@@ -221,7 +221,7 @@ private:
           if (super==v->inf())
             return ++Border_iterator(super,
                                      v->cw_target_edge());
-          CGAL_assertion(v->is_constraint());
+          if (!v->is_constraint()) return Border_iterator(super,0);
           if (super==v->target_cusp_face()) 
             return ++Border_iterator(super,
                                      v->target_cusp_edge());
@@ -242,7 +242,7 @@ private:
           if (super==v->sup())
             return Border_iterator(super,
                                    v->ccw_target_edge());
-          CGAL_assertion(v->is_constraint());
+          if (!v->is_constraint()) return Border_iterator(super,0);
           v=v->pi();
           if (super==v->source_cusp_face()) 
             return Border_iterator(super,
@@ -264,7 +264,7 @@ private:
           if (super==v->inf()) 
             return ++Border_iterator(super,
                                      v->cw_source_edge());
-          CGAL_assertion(v->is_constraint());
+          if (!v->is_constraint()) return Border_iterator(super,0);
           if (super==v->source_cusp_face()) 
             return ++Border_iterator(super,
                                      v->source_cusp_edge());
@@ -318,9 +318,10 @@ public:
 
     ~Face_base() {
       Edge_handle constraint_edge=0;
+      Border_iterator border_end(static_cast<Face*>(this),0);
       if (inf()) {
         for (Border_iterator i=bottom_begin();
-             i!=Border_iterator(static_cast<Face*>(this),0);
+             i!=border_end;
              ++i) {
           // if i is a constraint edge, it must not be cleared of its face
           // yet, in order to keep the (top|bottom)_(begin|end) working.
@@ -336,7 +337,7 @@ public:
             i->set_adjacent_faces(i->dl(),i->sign()?i->ur():i->dr(),0);
         }
         for (Border_iterator i=top_begin();
-             i!=Border_iterator(static_cast<Face*>(this),0);
+             i!=border_end;
              ++i) {
           if (!i->object()) {
             constraint_edge=i.operator->();
@@ -351,8 +352,12 @@ public:
         }     
       }
       if (sup()) {
-        if (!top_edge()) set_top_edge(sup()->cw_target_edge());
-        if (!bottom_edge()) set_bottom_edge(sup()->cw_source_edge());
+//         if (!top_edge()) set_top_edge(sup()->cw_target_edge());
+//         if (!bottom_edge()) set_bottom_edge(sup()->cw_source_edge());
+        Border_iterator top=top_end();
+        Border_iterator bot=bottom_end();
+        if (top.operator->()) set_top_edge(top.operator->());
+        if (bot.operator->()) set_bottom_edge(bot.operator->());
       }
       if (top_edge()){
         Edge_handle prev=0;

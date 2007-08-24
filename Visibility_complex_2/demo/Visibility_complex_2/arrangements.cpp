@@ -506,7 +506,7 @@ private slots:
       delete antichain;
       
       std::list<Constraint_input> empty;
-      antichain = new Antichain(true,list_of_points->begin(),
+      antichain = new Antichain(false,list_of_points->begin(),
 				list_of_points->end(),
 				empty.begin(),
 				empty.end());

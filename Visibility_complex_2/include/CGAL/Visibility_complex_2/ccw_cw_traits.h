@@ -33,30 +33,53 @@ struct Duality_traits_base
     typedef typename Vc_::Disk_handle Disk_handle;
     typedef typename Vc_::Vertex         Vertex;
     typedef typename Vc_::Vertex_handle  Vertex_handle;
+    typedef typename Vc_::Vertex_const_handle  Vertex_const_handle;
     typedef typename Vc_::Edge           Edge;
     typedef typename Vc_::Edge_handle    Edge_handle;
+    typedef typename Vc_::Edge_const_handle    Edge_const_handle;
     typedef typename Vc_::Face_handle    Face_handle;
+    typedef typename Vc_::Face_const_handle    Face_const_handle;
     // ------------------------------------------------------------------------- 
     struct Sup {
 	typedef Vertex_handle result_type;
-	template <class Arg_ >
-	Vertex_handle operator()(const Arg_& a) const { return a->sup(); }
-	Face_handle   operator()(const Vertex_handle& v) const 
+	Vertex_handle operator()(Face_handle a) const {
+          return (a->sup());
+        }
+	Vertex_const_handle operator()(Face_const_handle a) const {
+          return (a->sup());
+        }
+	Vertex_handle operator()(Edge_handle a) const {
+          return (a->sup());
+        }
+	Vertex_const_handle operator()(Edge_const_handle a) const {
+          return (a->sup());
+        }
+	Face_handle   operator()(Vertex_handle v) const 
 	{ return v->sup(); }
     };
     // ------------------------------------------------------------------------- 
     struct Set_sup {
-	void operator()(const Vertex_handle& v, Face_handle f) const 
+	void operator()(Vertex_handle v, Face_handle f) const 
 	{ v->set_sup(f); }
 	template <class Arg_ >
-	void operator()(Arg_ a,const Vertex_handle& v) const { a->set_sup(v); }
+	void operator()(Arg_ a,Vertex_handle v) const { a->set_sup(v); }
     };
     // ------------------------------------------------------------------------- 
     struct Inf {
 	typedef Vertex_handle result_type;
-	template <class Arg_ >
-	Vertex_handle operator()(const Arg_& a)   const { return a->inf(); }
-	Face_handle   operator()(const Vertex_handle& v) const 
+	Vertex_handle operator()(Face_handle a) const {
+          return (a->inf());
+        }
+	Vertex_const_handle operator()(Face_const_handle a) const {
+          return (a->inf());
+        }
+	Vertex_handle operator()(Edge_handle a) const {
+          return (a->inf());
+        }
+	Vertex_const_handle operator()(Edge_const_handle a) const {
+          return (a->inf());
+        }
+	Face_handle   operator()(Vertex_handle v) const 
 	{ return v->inf(); }
     };
     // ------------------------------------------------------------------------- 
@@ -68,104 +91,104 @@ struct Duality_traits_base
     // ------------------------------------------------------------------------- 
     struct Ccw_edge
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v, 
-			       const Disk_handle& p) const
+	Edge_handle operator()(Vertex_handle v, 
+			       Disk_handle p) const
 	{ return v->ccw_edge(p); }
     };
     // -------------------------------------------------------------------------
     struct Cw_edge
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v, 
-			       const Disk_handle& p) const
+	Edge_handle operator()(Vertex_handle v, 
+			       Disk_handle p) const
 	{ return v->cw_edge(p); }
     };
     // -------------------------------------------------------------------------
     struct Cusp_edge {
-	Edge_handle operator()(const Vertex_handle& v, 
-			       const Disk_handle& p) const
+	Edge_handle operator()(Vertex_handle v, 
+			       Disk_handle p) const
 	{ return v->cusp_edge(p); }
     };
     // -------------------------------------------------------------------------
     struct Set_cusp_edge {
-	void operator()(const Vertex_handle& v, 
-			Edge_handle e ,const Disk_handle& p) const
+	void operator()(Vertex_handle v, 
+			Edge_handle e ,Disk_handle p) const
 	{ v->set_cusp_edge(e,p); }
     };
     // -------------------------------------------------------------------------
     struct Cusp_face {
-	Face_handle operator()(const Vertex_handle& v, 
-			       const Disk_handle& p) const
+	Face_handle operator()(Vertex_handle v, 
+			       Disk_handle p) const
 	{ return v->cusp_face(p); }
     };
     // -------------------------------------------------------------------------
     struct Set_ccw_edge {
-	void operator()(const Vertex_handle& v, Edge_handle e) const
+	void operator()(Vertex_handle v, Edge_handle e) const
 	{ v->set_ccw_edge(e); }
     };
     // -------------------------------------------------------------------------
     struct Set_cw_edge {
-	void operator()(const Vertex_handle& v, Edge_handle e) const
+	void operator()(Vertex_handle v, Edge_handle e) const
 	{ v->set_cw_edge(e); }
     };
     // -------------------------------------------------------------------------
     struct Source_object 
 	: public std::unary_function<Vertex_handle,Disk_handle> {
-	Disk_handle operator()(const Vertex_handle& v) const 
+	Disk_handle operator()(Vertex_handle v) const 
 	{ return v->source_object(); }
     };
     // -------------------------------------------------------------------------
     struct Target_object
 	: public std::unary_function<Vertex_handle,Disk_handle> {
-	Disk_handle operator()(const Vertex_handle& v) const 
+	Disk_handle operator()(Vertex_handle v) const 
 	{ return v->target_object(); }
     };
     // -------------------------------------------------------------------------
     struct Top_edge
 	: public std::unary_function<Face_handle,Edge_handle> {
-	Edge_handle operator()(const Face_handle& v) const 
+	Edge_handle operator()(Face_handle v) const 
 	{ return v->top_edge(); }
     };
     // -------------------------------------------------------------------------
     struct Bottom_edge
 	: public std::unary_function<Face_handle,Edge_handle> {
-	Edge_handle operator()(const Face_handle& v) const 
+	Edge_handle operator()(Face_handle v) const 
 	{ return v->bottom_edge(); }
     };
     // -------------------------------------------------------------------------
     struct Dl : public std::unary_function<Edge_handle,Face_handle> { 
-	Face_handle operator()(const Edge_handle& e) const { return e->dl(); }
+	Face_handle operator()(Edge_handle e) const { return e->dl(); }
     };
     // ------------------------------------------------------------------------- 
     struct Dr : public std::unary_function<Edge_handle,Face_handle> { 
-	Face_handle operator()(const Edge_handle& e) const { return e->dr(); }
+	Face_handle operator()(Edge_handle e) const { return e->dr(); }
     };
     // ------------------------------------------------------------------------- 
     struct Ul : public std::unary_function<Edge_handle,Face_handle> { 
-	Face_handle operator()(const Edge_handle& e) const { return e->ul(); }
+	Face_handle operator()(Edge_handle e) const { return e->ul(); }
     };
     // ------------------------------------------------------------------------- 
     struct Ur : public std::unary_function<Edge_handle,Face_handle> {
-	Face_handle operator()(const Edge_handle& e) const { return e->ur(); }
+	Face_handle operator()(Edge_handle e) const { return e->ur(); }
     };
     // -------------------------------------------------------------------------
     struct Is_xx_right 
 	: public std::unary_function<Vertex_handle,bool> {
-	bool operator()(const Vertex_handle& v) const { return v->is_xx_right(); }
+	bool operator()(Vertex_handle v) const { return v->is_xx_right(); }
     };
     // ------------------------------------------------------------------------- 
     struct Is_right_xx
 	: public std::unary_function<Vertex_handle,bool> {
-	bool operator()(const Vertex_handle& v) const { return v->is_right_xx(); }
+	bool operator()(Vertex_handle v) const { return v->is_right_xx(); }
     };
     // ------------------------------------------------------------------------- 
     struct Is_xx_left 
 	: public std::unary_function<Vertex_handle,bool> {
-	bool operator()(const Vertex_handle& v) const { return v->is_xx_left(); }
+	bool operator()(Vertex_handle v) const { return v->is_xx_left(); }
     };
     // ------------------------------------------------------------------------- 
     struct Is_left_xx
 	: public std::unary_function<Vertex_handle,bool> {
-	bool operator()(const Vertex_handle& v) const { return v->is_left_xx(); }
+	bool operator()(Vertex_handle v) const { return v->is_left_xx(); }
     };
     // ------------------------------------------------------------------------- 
 };
@@ -291,8 +314,8 @@ struct Ccw_traits
     // -------------------------------------------------------------------------
     /*
     struct Vertex_creator {
-	Vertex_handle operator()(const Edge_handle& b , 
-				 const Edge_handle& t) const {
+	Vertex_handle operator()(Edge_handle b , 
+				 Edge_handle t) const {
 	    typename Vc_::Type_util type;
 	    return new Vertex(type(b->sign(),t->sign()),
 			      b->object(),t->object());
@@ -301,7 +324,7 @@ struct Ccw_traits
     */
     // ------------------------------------------------------------------------- 
     struct Less_vertex_handle {
-	bool operator()(const Vertex_handle& v1,const Vertex_handle& v2) const {
+	bool operator()(Vertex_handle v1,Vertex_handle v2) const {
 	    if (v1 == v2) return false;
 	    return Less_bitangent<Gt>()(*v1,*v2);
 	}
@@ -309,9 +332,9 @@ struct Ccw_traits
     // ------------------------------------------------------------------------- 
     struct Set_adjacent_faces {
 	void operator()(Edge_handle e,
-			const Face_handle& f0,
-			const Face_handle& f1,
-			const Face_handle& f2) const { 
+			Face_handle f0,
+			Face_handle f1,
+			Face_handle f2) const { 
 	    e->set_adjacent_faces(f0,f1,f2); 
 	}
     };
@@ -353,20 +376,20 @@ struct Cw_traits
     typedef typename Base::Set_ccw_edge        Set_cw_edge;
     // -------------------------------------------------------------------------
     struct Cusp_edge {
-	Edge_handle operator()(const Vertex_handle& v, 
-			       const Disk_handle& p) const
+	Edge_handle operator()(Vertex_handle v, 
+			       Disk_handle p) const
 	{ return v->pi()->cusp_edge(p); }
     };
     // -------------------------------------------------------------------------
     struct Set_cusp_edge {
 	void operator()(Vertex_handle v, Edge_handle e ,
-			const Disk_handle& p) const
+			Disk_handle p) const
 	{ v->pi()->set_cusp_edge(e,p); }
     };
     // -------------------------------------------------------------------------
     struct Cusp_face {
-	Face_handle operator()(const Vertex_handle& v, 
-			       const Disk_handle& p) const
+	Face_handle operator()(Vertex_handle v, 
+			       Disk_handle p) const
 	{ return v->pi()->cusp_face(p); }
     };
     // -------------------------------------------------------------------------
@@ -415,8 +438,8 @@ struct Cw_traits
     // -------------------------------------------------------------------------
     /*
     struct Vertex_creator {
-	Vertex_handle operator()(const Edge_handle& b , 
-				 const Edge_handle& t) const {
+	Vertex_handle operator()(Edge_handle b , 
+				 Edge_handle t) const {
 	    typename Vc_::Type_util type;
 	    return new Vertex(type(t->sign(),b->sign()),
 			      t->object(),b->object());
@@ -425,7 +448,7 @@ struct Cw_traits
     */
     // ------------------------------------------------------------------------- 
     struct Less_vertex_handle {
-	bool operator()(const Vertex_handle& v1,const Vertex_handle& v2) const{
+	bool operator()(Vertex_handle v1,Vertex_handle v2) const{
 	    if (v1 == v2) return false;
 	    return Greater_bitangent<Gt>()(*v1,*v2);
 	}
@@ -433,9 +456,9 @@ struct Cw_traits
     // ------------------------------------------------------------------------- 
     struct Set_adjacent_faces {
 	void operator()(Edge_handle e,
-			const Face_handle& f0,
-			const Face_handle& f1,
-			const Face_handle& f2) const { 
+			Face_handle f0,
+			Face_handle f1,
+			Face_handle f2) const { 
 	    if (e->sign()) e->set_adjacent_faces(f0,f2,f1); 
 	    else e->set_adjacent_faces(f1,f0,f2);
 	}
@@ -474,8 +497,8 @@ struct Source_target_traits
     typedef typename Base::Target_object Target_object;
     // -------------------------------------------------------------------------
     struct Vertex_creator {
-	Vertex_handle operator()(const Edge_handle& b , 
-				 const Edge_handle& t) const {
+	Vertex_handle operator()(Edge_handle b , 
+				 Edge_handle t) const {
 	    typename Vc_::Type_util type;
 	    Vertex_handle v= new Vertex(type(b->sign(),t->sign()),
 			      b->object(),t->object());
@@ -498,8 +521,8 @@ struct Target_source_traits
     typedef typename Base::Source_object Target_object;
     // -------------------------------------------------------------------------
     struct Vertex_creator {
-	Vertex_handle operator()(const Edge_handle& b , 
-				 const Edge_handle& t) const {
+	Vertex_handle operator()(Edge_handle b , 
+				 Edge_handle t) const {
 	    typename Vc_::Type_util type;
 	    Vertex_handle v= new Vertex(type(t->sign(),b->sign()),
 			      t->object(),b->object());
@@ -522,19 +545,19 @@ struct Right_traits
     // -------------------------------------------------------------------------
     struct Back_view
 	: public std::unary_function<Face_handle,Edge_handle> {
-	Edge_handle operator()(const Face_handle& f) const 
+	Edge_handle operator()(Face_handle f) const 
 	    { return f->back_view(); }
     };
     // -------------------------------------------------------------------------
     struct Front_view
 	: public std::unary_function<Face_handle,Edge_handle> {
-	Edge_handle operator()(const Face_handle& f) const 
+	Edge_handle operator()(Face_handle f) const 
 	    { return f->front_view(); }
     };
     // -------------------------------------------------------------------------
     struct Sign
 	: public std::unary_function<Edge_handle,bool> {
-	bool operator()(const Edge_handle& e) const { return e->sign(); }
+	bool operator()(Edge_handle e) const { return e->sign(); }
     };
     // ------------------------------------------------------------------------- 
 };
@@ -552,19 +575,19 @@ struct Left_traits
     // -------------------------------------------------------------------------
     struct Back_view
 	: public std::unary_function<Face_handle,Edge_handle> {
-	Edge_handle operator()(const Face_handle& f) const 
+	Edge_handle operator()(Face_handle f) const 
 	    { return f->front_view(); }
     };
     // -------------------------------------------------------------------------
     struct Front_view
 	: public std::unary_function<Face_handle,Edge_handle> {
-	Edge_handle operator()(const Face_handle& f) const 
+	Edge_handle operator()(Face_handle f) const 
 	    { return f->back_view(); }
     };
     // ------------------------------------------------------------------------- 
     struct Sign
 	: public std::unary_function<Edge_handle,bool> {
-	bool operator()(const Edge_handle& e) const { return !e->sign(); }
+	bool operator()(Edge_handle e) const { return !e->sign(); }
     };
     // ------------------------------------------------------------------------- 
 };
@@ -594,25 +617,25 @@ struct Visibility_complex_traits : public C_ , public S_ , public R_
     // -------------------------------------------------------------------------
     struct Ccw_target_edge
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v) const
+	Edge_handle operator()(Vertex_handle v) const
 	{ return Ccw_edge()(v,Target_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct Ccw_source_edge
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v) const
+	Edge_handle operator()(Vertex_handle v) const
 	{ return Ccw_edge()(v,Source_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct Cw_target_edge
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v) const
+	Edge_handle operator()(Vertex_handle v) const
 	{ return Cw_edge()(v,Target_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct Cw_source_edge
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v) const
+	Edge_handle operator()(Vertex_handle v) const
 	{ return Cw_edge()(v,Source_object()(v)); }
     };
     // ------------------------------------------------------------------------- 
@@ -628,32 +651,32 @@ struct Visibility_complex_traits : public C_ , public S_ , public R_
     // -------------------------------------------------------------------------
     struct Target_cusp_edge 
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v) const
+	Edge_handle operator()(Vertex_handle v) const
 	{ return Cusp_edge()(v,Target_object()(v)); }
     };
     // ------------------------------------------------------------------------- 
     struct Source_cusp_edge 
 	: public std::unary_function<Vertex_handle,Edge_handle> {
-	Edge_handle operator()(const Vertex_handle& v) const
+	Edge_handle operator()(Vertex_handle v) const
 	{ return Cusp_edge()(v,Source_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct Target_cusp_face 
 	: public std::unary_function<Vertex_handle,Face_handle> {
-	Face_handle operator()(const Vertex_handle& v) const
+	Face_handle operator()(Vertex_handle v) const
 	{ return Cusp_face()(v,Target_object()(v)); }
     };
     // ------------------------------------------------------------------------- 
     struct Source_cusp_face 
 	: public std::unary_function<Vertex_handle,Face_handle> {
-	Face_handle operator()(const Vertex_handle& v) const
+	Face_handle operator()(Vertex_handle v) const
 	{ return Cusp_face()(v,Source_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct Cc
 	: public std::unary_function<Vertex_handle,Vertex_handle> {
-	Vertex_handle operator()(const Vertex_handle& v,
-				 const Disk_handle& p) const { 
+	Vertex_handle operator()(Vertex_handle v,
+				 Disk_handle p) const { 
 	    typename C_::Ccw_edge ccw_edge; typename C_::Sup sup;
 	    return (ccw_edge(v,p) == 0) ?  0 : sup(ccw_edge(v,p)); 
 	}
@@ -661,8 +684,8 @@ struct Visibility_complex_traits : public C_ , public S_ , public R_
     // -------------------------------------------------------------------------
     struct Cw
 	: public std::unary_function<Vertex_handle,Vertex_handle> {
-	Vertex_handle operator()(const Vertex_handle& v,
-				 const Disk_handle& p) const { 
+	Vertex_handle operator()(Vertex_handle v,
+				 Disk_handle p) const { 
 	    typename C_::Cw_edge cw_edge; typename C_::Inf inf;
 	    return (cw_edge(v,p) == 0) ? 0 : inf(cw_edge(v,p)); 
 	}
@@ -670,31 +693,31 @@ struct Visibility_complex_traits : public C_ , public S_ , public R_
     // -------------------------------------------------------------------------
     struct CcR
 	: public std::unary_function<Vertex_handle,Vertex_handle> {
-	Vertex_handle operator()(const Vertex_handle& v) const
+	Vertex_handle operator()(Vertex_handle v) const
 	{ return Cc()(v,Target_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct CcL
 	: public std::unary_function<Vertex_handle,Vertex_handle> {
-	Vertex_handle operator()(const Vertex_handle& v) const
+	Vertex_handle operator()(Vertex_handle v) const
 	{ return Cc()(v,Source_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct CwR
 	: public std::unary_function<Vertex_handle,Vertex_handle> {
-	Vertex_handle operator()(const Vertex_handle& v) const
+	Vertex_handle operator()(Vertex_handle v) const
 	{ return Cw()(v,Source_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct CwL
 	: public std::unary_function<Vertex_handle,Vertex_handle> {
-	Vertex_handle operator()(const Vertex_handle& v) const
+	Vertex_handle operator()(Vertex_handle v) const
 	{ return Cw()(v,Target_object()(v)); }
     };
     // -------------------------------------------------------------------------
     struct Walk_vertex {
-	Vertex_handle operator()(const Edge_handle& b , 
-				 const Edge_handle& t) const {
+	Vertex_handle operator()(Edge_handle b , 
+				 Edge_handle t) const {
 	    Sup sup; Inf inf; Vertex_creator bit; Sign sign; 
 	    Vertex_handle tmp = bit(b,t); Less_vertex_handle chi2;
 	    if ((sup(b) != 0 && (!sign(b) || sup(b)->is_constraint()) && 
@@ -737,7 +760,7 @@ struct Right_ccw_traits_tp
     typedef typename Vc_::Vertex_handle  Vertex_handle;
     struct Chi3 {
         typedef typename Vc_::Gt::Supports_chi3 is_valid;
-	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
+	bool operator()(Vertex_handle v, Vertex_handle w) const {
 	    typename Vc_::Gt::Orientation_infinite chi3;
 	    return (chi3(*v,*w) == LEFT_TURN);
 	}
@@ -771,7 +794,7 @@ struct Left_ccw_traits_tp
     typedef typename Vc_::Vertex_handle  Vertex_handle;
     struct Chi3 {
         typedef typename Vc_::Gt::Supports_chi3 is_valid;
-	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
+	bool operator()(Vertex_handle v, Vertex_handle w) const {
 	    typename Vc_::Gt::Orientation_infinite chi3;
             typedef typename Vc_::Bitangent_2 Bitangent_2;
 	    return (chi3(*v,Bitangent_2(*w,true,w->type())) == RIGHT_TURN);
@@ -806,7 +829,7 @@ struct Right_cw_traits_tp
     typedef typename Vc_::Vertex_handle  Vertex_handle;
     struct Chi3 {
         typedef typename Vc_::Gt::Supports_chi3 is_valid;
-	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
+	bool operator()(Vertex_handle v, Vertex_handle w) const {
 	    typename Vc_::Gt::Orientation_infinite chi3;
             typedef typename Vc_::Bitangent_2 Bitangent_2;
 	    return (chi3(*v,Bitangent_2(*w,true,w->type())) == LEFT_TURN);
@@ -841,7 +864,7 @@ struct Left_cw_traits_tp
     typedef typename Vc_::Vertex_handle  Vertex_handle;
     struct Chi3 {
         typedef typename Vc_::Gt::Supports_chi3 is_valid;
-	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
+	bool operator()(Vertex_handle v, Vertex_handle w) const {
 	    typename Vc_::Gt::Orientation_infinite chi3;
 	    return (chi3(*v,*w) == RIGHT_TURN);
 	}
@@ -854,7 +877,7 @@ struct Left_cw_traits_tp
 // Functions to convert traits
 template <class Vc_>
 Right_cw_traits_tp<Vc_> 
-change_ccw_cw(const Right_ccw_traits_tp<Vc_>&)
+change_ccw_cw(const Right_ccw_traits_tp<Vc_>)
 { return Right_cw_traits_tp<Vc_>(); }
 
 template <class Vc_>

@@ -20,6 +20,15 @@
 #ifndef CGAL_VISIBILITY_COMPLEX_2_ANTICHAIN_H
 #define CGAL_VISIBILITY_COMPLEX_2_ANTICHAIN_H
 
+// void myassertion(bool b) {
+//   if (!b) {
+//     *static_cast<int*>(0)=0;
+//   }
+// }
+// #define CGAL_assertion myassertion
+// #define CGAL_precondition myassertion
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Visibility_complex_2/function_objects.h>
 #include <CGAL/In_place_list.h>
@@ -626,7 +635,7 @@ public:
 public:
 
 #if 0
-  // Debugging stuff specialized for circles.
+  // Debugging stuff, requires Qt_widget, and unistd.h.
   void view_disks() {
     double ru=900;
     if (fork()==0) {
@@ -644,8 +653,9 @@ public:
         *w<<GREEN;
         for (typename std::vector<Disk_handle>::iterator first=disks.begin();first!=disks.end();first++,j++) {
           *w<<**first;
-          typename CGAL::Point_2<CGAL::Simple_cartesian<double> > A(to_double((*first)->center().x()),to_double((*first)->center().y()));
-          //           std::cout<<A<<"\n";
+          Bbox_2 bb=(*first)->bbox();
+          typename CGAL::Point_2<CGAL::Simple_cartesian<double> > 
+            A((bb.xmin()+bb.xmax())/2,(bb.ymin()+bb.ymax())/2);
           std::ostringstream n;
           n<<j;
           w->get_painter().drawText(w->x_pixel(A.x())-15,w->y_pixel(A.y()),n.str());
@@ -672,7 +682,9 @@ public:
         *w<<GREEN;
         for (typename std::vector<Disk_handle>::iterator first=disks.begin();first!=disks.end();first++,j++) {
           *w<<**first;
-          typename CGAL::Point_2<CGAL::Simple_cartesian<double> > A(to_double((*first)->center().x()),to_double((*first)->center().y()));
+          Bbox_2 bb=(*first)->bbox();
+          typename CGAL::Point_2<CGAL::Simple_cartesian<double> > 
+            A((bb.xmin()+bb.xmax())/2,(bb.ymin()+bb.ymax())/2);
           std::ostringstream n;
           n<<j;
           w->get_painter().drawText(w->x_pixel(A.x())-15,w->y_pixel(A.y()),n.str());
@@ -688,7 +700,8 @@ public:
   }
   template <class ii> void view_pt(ii i,ii ie,Vertex_handle v=0) {
     double ru=900;
-    if (fork()==0) {
+    int pid=fork();
+    if (pid==0) {
       int zero=0;
       QApplication app(zero,(char**)0);
       Qt_widget* w;
@@ -703,7 +716,9 @@ public:
         int j=0;
         for (typename std::vector<Disk_handle>::iterator first=disks.begin();first!=disks.end();first++,j++) {
           *w<<(*(*first));
-          typename CGAL::Point_2<CGAL::Simple_cartesian<double> > A(to_double((*first)->center().x()),to_double((*first)->center().y()));
+          Bbox_2 bb=(*first)->bbox();
+          typename CGAL::Point_2<CGAL::Simple_cartesian<double> > 
+            A((bb.xmin()+bb.xmax())/2,(bb.ymin()+bb.ymax())/2);
           std::ostringstream n;
           n<<j;
           w->get_painter().drawText(w->x_pixel(A.x())-15,w->y_pixel(A.y()),n.str());
@@ -717,9 +732,11 @@ public:
         *w<<BLUE;
         *w<<static_cast<typename Gt::Segment_2>(*v);
         *w<<typename Gt::R::Circle_2(v->source(),100);        
-        *w<<RED;
-        *w<<static_cast<typename Gt::Segment_2>(*v->sup()->sup());
-        *w<<typename Gt::R::Circle_2(v->sup()->sup()->source(),100);        
+        if (!v->is_constraint()) {
+          *w<<RED;
+          *w<<static_cast<typename Gt::Segment_2>(*v->sup()->sup());
+          *w<<typename Gt::R::Circle_2(v->sup()->sup()->source(),100);
+        }
       }
       w->unlock();
       app.exec();
@@ -2239,14 +2256,6 @@ Antichain<Gtr_,It,Flip>::fix_extreme_edges(Tr /*tr*/) const // warning tr is nev
   typename Tr::Ur   ur;  typename Tr::Ul  ul;
   typename Tr::CcL  ccL; typename Tr::CcR ccR;
   typename Tr::Set_adjacent_faces set_adjacent_faces;
-//   typename Tr::Ccw_edge ccw_edge;
-  typename Tr::Ccw_target_edge ccw_target_edge;
-//   typename Tr::Splice splice;
-  typename Tr::Source_object source_object;
-//   typename Tr::Target_object target_object;
-  typename Tr::Ccw_source_edge ccw_source_edge;
-  typename Tr::Ccw_edge ccw_edge;
-  typename Tr::Sign sign;
   // ------------------------------------------------------------------------- 
   Edge_handle bot = infinite_face()->top_edge();    // Bottommost edge
   Edge_handle top = infinite_face()->bottom_edge(); // Topmost edge
@@ -2261,18 +2270,6 @@ Antichain<Gtr_,It,Flip>::fix_extreme_edges(Tr /*tr*/) const // warning tr is nev
     Edge_handle t = f->top_edge();
     set_inf(dl(top),inf(f));
     set_sup(inf(f),dl(top));
-    while (t->object()!=bot->object()) {
-      if (sign(t)) {
-        set_adjacent_faces(t,dl(top),ur(t),ul(t));
-      } else {
-        set_adjacent_faces(t,dl(top),dr(t),ul(t));        
-      }
-      Vertex_handle v=sup(t);
-      if (source_object(v)==t->object()) t=ccw_target_edge(v);
-      else t=ccw_source_edge(v);
-    }
-    set_adjacent_faces(t,dl(top),ur(t),ul(t));
-    t=ccw_edge(sup(t),t->object());
     set_adjacent_faces(t,dl(top),ur(t),ul(t));
     set_adjacent_faces(bot,dl(bot),ur(bot),dl(top));
     delete f;
@@ -2282,19 +2279,7 @@ Antichain<Gtr_,It,Flip>::fix_extreme_edges(Tr /*tr*/) const // warning tr is nev
     Edge_handle t = f->bottom_edge();
     set_inf(ur(bot),inf(f));
     set_sup(inf(f),ur(bot));
-    while (t->object()!=top->object()) {
-      if (sign(t)) {
-        set_adjacent_faces(t,dl(t),ur(bot),ul(t));
-      } else {
-        set_adjacent_faces(t,dl(t),dr(t),ur(bot));        
-      }
-      Vertex_handle v=sup(t);
-      if (source_object(v)==t->object()) t=ccw_target_edge(v);
-      else t=ccw_source_edge(v);
-    }
-    set_adjacent_faces(t,dl(t),ur(bot),ul(t));
-    t=ccw_edge(sup(t),t->object());
-    set_adjacent_faces(t,dl(t),ur(bot),ul(t));
+    set_adjacent_faces(t,dl(t),dr(t),ur(bot));
     set_adjacent_faces(top,dl(top),ur(bot),ul(top));
     delete f;
   }
@@ -2538,6 +2523,8 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
   typename Tr::Cw_source_edge  cw_source_edge;
   typename Tr::Ccw_target_edge ccw_target_edge;
   typename Tr::Ccw_source_edge ccw_source_edge;
+  typename Tr::Source_cusp_edge source_cusp_edge;
+  typename Tr::Target_cusp_edge target_cusp_edge;
   typename Tr::CcR ccR; typename Tr::CcL ccL;
   typename Tr::CwR cwR; typename Tr::CwL cwL;
   typename Tr::Merge  merge(this);
@@ -2546,15 +2533,16 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
   typename Tr::Ur ur;
   typename Tr::Dr dr;
 
+//       std::cout<<"beuh"<<v<<"\n";
 
   CGAL_precondition(is_minimal(v,tr));
   CGAL_precondition(cwL(v) != 0 && cwR(v) != 0);
-
+  CGAL_precondition(v->is_constraint()||inf(v));
   bool dont_delete_inf_v=
     (inf(v)==ul(infinite_face()->top_edge())&&
-      inf(v)==dr(infinite_face()->bottom_edge())) ||
+      inf(v)==dl(infinite_face()->bottom_edge())) ||
     (inf(v)==ur(infinite_face()->top_edge())&&
-     inf(v)==dl(infinite_face()->bottom_edge()));
+     inf(v)==dr(infinite_face()->bottom_edge()));
   // -------------------------------------------------------------------------
   // Removing cwR(v) and cwL(v) from the minimal list corresponding to the
   // opposite orientation. Adding v.
@@ -2577,6 +2565,12 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
   }
   erase(cw_source_edge(v)); 
   erase(cw_target_edge(v));
+  if (v->is_constraint()) {
+    erase(target_cusp_edge(v));
+    erase(source_cusp_edge(v));
+    push_back(*target_cusp_edge(v->pi()));
+    push_back(*source_cusp_edge(v->pi()));
+  }
   //--------------------------------------------------------------------------
   // Pushing the two new created edges 
   push_back(*ccw_source_edge(v)); 
@@ -2595,6 +2589,7 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
       faces[0]=v->source_cusp_face();
       faces[1]=v->target_cusp_face();
     } else {
+//       std::cout<<"meuh"<<v<<"\n";
       faces[0]=v->inf();
     }
     for (int fi=0;faces[fi];++fi) {
@@ -2604,6 +2599,7 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
            i!=faces[fi]->top_end()&&i.operator->()!=prev;--i) {
         vv.push_back(inf(i.operator->()));
         prev=i.operator->();
+        CGAL_assertion(!i->is_in_antichain());
       }
       prev=0;
       for (typename Face::Border_iterator i=--(faces[fi]->bottom_end());
@@ -2611,6 +2607,7 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
         if (inf(i.operator->())!=inf(faces[fi])) 
           vv.push_back(inf(i.operator->()));
         prev=i.operator->();
+        CGAL_assertion(!i->is_in_antichain());
       }
       delete faces[fi];
 
@@ -2766,7 +2763,7 @@ compute_phi(Vertex_handle v, Tr tr) //const
     set_sup(sup(v->pi()),phiv?phiv->pi():0);                        
   }
   // -------------------------------------------------------------------------
-  CGAL_precondition(sup(v) != 0 && (linear_space()||sup(sup(v)) != 0));
+  CGAL_postcondition(sup(v) != 0 && (sup(sup(v)) != 0));
   return phiv;      
 }
 

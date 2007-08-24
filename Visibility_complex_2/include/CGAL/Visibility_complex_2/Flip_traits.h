@@ -411,7 +411,7 @@ Chi2_flip_traits<A_>::start_edge(Vertex_handle v, Tr tr) const
     CGAL_precondition(inf(vR) != 0);
     Vertex_handle phisvR = inf(inf(vR));
     CGAL_precondition(phisvR != 0);
-    if (sup(cusp1) == 0 && chi2(cusp1,phisvR->pi())) 
+    if (sup(cusp1) == 0 && chi2(phisvR,cusp1)) 
 	return ccw_source_edge(cusp1);
     // ------------------------------------------------------------------------- 
     // Now we know that pi(phi_*(vR)) enters the first atom of Rtwo(v). 

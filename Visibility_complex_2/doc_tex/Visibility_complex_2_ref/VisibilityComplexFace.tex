@@ -49,7 +49,7 @@ the containing class.}
 \ccNestedType{Border_iterator}{Iterator over the edges of the upper or
 lower border of a face. Starts from the source, and ends at the sink. Can
 be initialized from an \ccc{Edge_handle} and a \ccc{Face_handle}, or with
-the *_(begin|end) methods.}
+the begin/end methods below.}
 \ccGlue
 \ccNestedType{Border_const_iterator}{Const counterpart.}
 
@@ -74,8 +74,11 @@ the *_(begin|end) methods.}
 \ccMethod{Edge_handle back_view();}{Returns the rear view.}
 \ccGlue
 \ccMethod{Border_iterator top_begin();}{}
+\ccGlue
 \ccMethod{Border_iterator top_end();}{}
+\ccGlue
 \ccMethod{Border_iterator bottom_begin();}{}
+\ccGlue
 \ccMethod{Border_iterator bottom_end();}{Iterators over the
 edges of the lower and upper borders of the face.}
 

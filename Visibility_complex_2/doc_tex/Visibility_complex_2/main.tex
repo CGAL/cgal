@@ -68,7 +68,7 @@ towards the second.
     %\vspace{-7mm}
     \begin{center}
       \parbox{0.4\textwidth}{%
-          \includegraphics[width=0.4\textwidth]{Visibility_complex/fig/bitangent}%
+          \includegraphics[width=0.4\textwidth]{Visibility_complex_2/fig/bitangent}%
       }
     \end{center}
     %\vspace{-5mm}
@@ -133,7 +133,7 @@ are given in the Figure below.
         \psfrag{e}{$e$}
         \psfrag{sup(e)}{$\sup(e)$}
         \psfrag{inf(e)}{$\inf(e)$}
-        \includegraphics[height=8cm,width=\linewidth]{Visibility_complex/fig/edge-vertex}%
+        \includegraphics[height=8cm,width=\linewidth]{Visibility_complex_2/fig/edge-vertex}%
     \end{center}
 \end{ccTexOnly}
 
@@ -197,7 +197,7 @@ the visibility complex are respectively:
         \psfrag{Face}{Face}
         \psfrag{forward view}{forward view}
         \psfrag{backward view}{backward view}
-        \includegraphics[height=5cm,width=\linewidth]{Visibility_complex/fig/vis-complex}%
+        \includegraphics[height=5cm,width=\linewidth]{Visibility_complex_2/fig/vis-complex}%
     \end{center}
 \end{ccTexOnly}
 
@@ -243,7 +243,7 @@ edges which is discussed later on.
             \psfrag{e}{$e$}
             \psfrag{Positive edge}{Positive edge}
             \psfrag{Negative edge}{Negative edge}
-            \includegraphics[height=5cm,width=\linewidth]{Visibility_complex/fig/edge-face}%
+            \includegraphics[height=5cm,width=\linewidth]{Visibility_complex_2/fig/edge-face}%
         \end{center}
     \end{ccTexOnly}
 
@@ -272,7 +272,7 @@ See the Figure below for an illustration.
         \psfrag{face(e)}{face($e$)}
         \psfrag{e}{$e$}
         \psfrag{constraint}{constraint}
-        \includegraphics[height=5cm]{Visibility_complex/fig/constraint-edge}%
+        \includegraphics[height=5cm]{Visibility_complex_2/fig/constraint-edge}%
     \end{center}
 \end{ccTexOnly}
 
@@ -291,7 +291,7 @@ infinitesimal radius.
 
 \begin{ccTexOnly}
     \begin{center}
-        \includegraphics[height=4cm]{Visibility_complex/fig/perturbation}%
+        \includegraphics[height=4cm]{Visibility_complex_2/fig/perturbation}%
     \end{center}
 \end{ccTexOnly}
 
@@ -309,7 +309,7 @@ visualize the visibility complex or graph.
 \begin{ccTexOnly}
     \begin{center}
         \psfrag{Perturbation}{Perturbation}
-        \includegraphics[height=4cm]{Visibility_complex/fig/points}%
+        \includegraphics[height=4cm]{Visibility_complex_2/fig/points}%
     \end{center}
 \end{ccTexOnly}
 
@@ -352,7 +352,7 @@ rational radius (a subclass of \ccc{Circle_2<Kernel>} (convertible to and from
 A traits class defines a type \ccc{Disk} (the type of the convex objects
 manipulated) and a class \ccc{Bitangent_2}. From an object of type
 \ccc{Bitangent_2}, one can obtain its type (as defined in section
-\ref{VC2-bit-type}) with the method \ccc{type()} and pointers to its source
+\ref{VC2-bit-type}) with the method \ccc{type()} and handles to its source
 and target objects with the methods \ccc{source_object()} and
 \ccc{target_object()}. The type of a bitangent is given as a value from the
 nested enum type \ccc{Bitangent_2::Type}, containing values \ccc{LL},
@@ -374,7 +374,7 @@ quadratic.
 The following code sample computes the free bitangents of a set of segments
 read from a file, and prints them on the standard output.
 
-\ccIncludeExampleCode{Visibility_complex/segment_bit.cpp}
+\ccIncludeExampleCode{Visibility_complex_2/segment_bit.cpp}
 
 \subsection{Computing a visibility complex}
 
@@ -382,14 +382,14 @@ The class \ccc{Visibility_complex_2<VC2GeomTraits>} computes and stores a
 visibility complex as defined in section \ref{VC2-vcdef}. The constructor
 takes as argument a pair of iterators defining the sequence of disks, and
 copies them into a container hidden in the constructed object (the
-\ccc{source_object} and \ccc{target_object} pointers in the computed
+\ccc{source_object} and \ccc{target_object} handles in the computed
 bitangents point into this container, not to the original objects).
 
 The nested classes \ccc{Visibility_complex_2<VC2GeomTraits>::Edge},
 \ccc{Visibility_complex_2<VC2GeomTraits>::Vertex}, and
 \ccc{Visibility_complex_2<VC2GeomTraits>::Face} are used to represent the
 edges, vertices and faces of the complex. The class \ccc{Vertex} is a
-subclass of \ccc{VC2GeomTraits::Bitangent_2}, augmented with pointers to
+subclass of \ccc{VC2GeomTraits::Bitangent_2}, augmented with handles to
 its incident edges and faces.
 
 Iterators (\ccc{disks_begin}, \ccc{vertices_begin}, \ccc{edges_begin} and
@@ -402,7 +402,7 @@ The following code sample computes the visibility complex of a set of
 circles, and prints the bitangents incident to the first disk of the
 sequence.
 
-\ccIncludeExampleCode{Visibility_complex/vc_circle.cpp}
+\ccIncludeExampleCode{Visibility_complex_2/vc_circle.cpp}
 
 
 
@@ -431,7 +431,7 @@ has to be given as an input to our algorithms.
 \begin{ccTexOnly}
     \begin{center}
         \psfrag{S}{$S$}
-        \includegraphics[height=8cm]{Visibility_complex/fig/configuration}%
+        \includegraphics[height=8cm]{Visibility_complex_2/fig/configuration}%
     \end{center}
 \end{ccTexOnly}
 
@@ -457,7 +457,7 @@ public:
   Constraint_input(Type t,size_t source,size_t target);
   Type type() const;
   size_t source() const;
-  Type target() const;
+  size_t target() const;
 };
 \end{ccExampleCode}
 It stores the type of the bitangent, and the index of the source and target
@@ -466,7 +466,7 @@ objects in the sequence of disks. An \ccc{operator >>} and an \ccc{operator
 
 For instance, this code reads a list of circles and a list of constraints
 from files, and builds their visibility complex:
-\ccIncludeExampleCode{Visibility_complex/constraints.cpp}
+\ccIncludeExampleCode{Visibility_complex_2/constraints.cpp}
 
 \section{Shortest paths}
 
@@ -495,28 +495,28 @@ which should be built over the set of obstacles, and the set of points
 between which shortest paths are to be computed (converted into
 \ccc{VC2GeomTraits::Disk} using functor
 \ccc{VC2GeomTraits::Make_convex_from_point}). Once the object is
-initialised, its method \ccc{void compute_shortest_paths(Disk * s)} should
-be called to compute the shortest path starting from its argument (which is
-assumed to be a point converted to a \ccc{VC2GeomTraits::Disk}). Then, for
-each target point, the methods \ccc{get_path_vertices} and
-\ccc{get_path_bitangents} can be used to retrieve the shortest path to this
-point. They take as first argument the target point, and, as second
-argument, an output iterator through which the list of bitangents is
-returned. In the case of \ccc{get_path_vertices}, the output iterator
-receives pointers to vertices of the complex, while with
+initialised, its method \ccc{void compute_shortest_paths(const Disk& s)}
+should be called to compute the shortest path starting from its argument
+(which is assumed to be a point converted to a
+\ccc{VC2GeomTraits::Disk}). Then, for each target point, the methods
+\ccc{get_path_vertices} and \ccc{get_path_bitangents} can be used to
+retrieve the shortest path to this point. They take as first argument the
+target point, and, as second argument, an output iterator through which the
+list of bitangents is returned. In the case of \ccc{get_path_vertices}, the
+output iterator receives handles to vertices of the complex, while with
 \ccc{get_path_bitangents}, the output iterator receives copies of the
 underlying bitangents (type \ccc{VC2GeomTraits::Bitangent_2}).
 
 For instance, the following code computes a shortest path between two
 points in a scene made of three segments.
 
-\ccIncludeExampleCode{Visibility_complex/shortest_path.cpp}
+\ccIncludeExampleCode{Visibility_complex_2/shortest_path.cpp}
 
 \section{Augmenting the edges, vertices and faces}
 
 It is possible to customize the edges, vertices and faces. The classes
 \ccc{Visibility_complex_2} and \ccc{Shortest_path_2} accept an extra
-template argument, which should be a model of concept \ccc{VC2Items}, and
+template argument, which should be a model of concept \ccc{VC2Items}. It
 provides bases for edges, vertices, and faces. Here is the skeleton of an
 items class~:
 

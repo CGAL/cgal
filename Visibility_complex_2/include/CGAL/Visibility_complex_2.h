@@ -17,8 +17,6 @@
 //
 // Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#include<wait.h>
-#include<unistd.h>
 
 #ifndef CGAL_VISIBILITY_COMPLEX_2_H
 #define CGAL_VISIBILITY_COMPLEX_2_H
@@ -185,7 +183,10 @@ public:
 
   int size()             const      { return 2*ptr->vertices.size(); }
 
-  Face_handle infinite_face() const {
+  Face_handle infinite_face() {
+    return ptr->antichain.infinite_face();
+  }
+  Face_const_handle infinite_face() const {
     return ptr->antichain.infinite_face();
   }
 
@@ -240,10 +241,17 @@ public:
     return ptr->antichain.constraints_end();
   }
 
-  Edge_handle positive_edge(const Disk&d) const {
+  Edge_handle positive_edge(const Disk&d) {
     return ptr->pos[&d];
   }
-  Edge_handle negative_edge(const Disk& d) const {
+  Edge_handle negative_edge(const Disk& d) {
+    return ptr->neg[&d];
+  }
+
+  Edge_const_handle positive_edge(const Disk&d) const {
+    return ptr->pos[&d];
+  }
+  Edge_const_handle negative_edge(const Disk& d) const {
     return ptr->neg[&d];
   }
 

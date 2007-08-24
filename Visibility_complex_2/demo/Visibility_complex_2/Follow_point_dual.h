@@ -22,7 +22,8 @@ public:
       _point_style(point_style),
       _line_color(line_color),
       _line_width(line_width),
-      other_layer(twin_layer)
+      other_layer(twin_layer),
+      p(0,0)
     {}
 
   void draw(){

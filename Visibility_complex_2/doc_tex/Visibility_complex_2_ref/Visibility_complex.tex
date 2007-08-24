@@ -138,9 +138,7 @@ including constraints.}
 \ccGlue
 \ccMethod{Face_iterator faces_end();}{iterator over all faces, except the
                                       outer face.}
-
-All the latter methods have \ccc{const} versions.
-
+\ccGlue
 \ccMethod{Face_handle infinite_face(); const}{Returns the outer face (the lower
 and the upper outer faces are unified).}
 \ccGlue
@@ -151,7 +149,10 @@ a positive edge supported by d. d must be a reference to a disk copied into
 \ccMethod{Edge_handle negative_edge(const Disk& d); const}{Returns
 a negative edge supported by d. d must be a reference to a disk copied into
 \ccVar{}, not a disk from the original sequence.}
-\ccGlue
+
+All the latter methods have \ccc{const} versions, returning const iterators
+and const handles.
+
 \ccMethod{int size(); const}{Returns the number of vertices (i.e. twice
                               the number of free bitangents).}
 

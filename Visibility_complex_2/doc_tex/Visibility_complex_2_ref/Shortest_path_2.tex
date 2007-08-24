@@ -24,11 +24,11 @@ the vertices, edges and faces of the complex.
 
 \ccNestedType{Gt} {the geometric traits class.}
 \ccGlue
-\ccNestedType{Visibility_complex_2}
-{Defined as \ccc{Visibility_complex_2<Gt,It>}.}
 \ccNestedType{Items}{items class, model of the \ccc{VC2Items}
 		      concept.}
 \ccGlue
+\ccNestedType{Visibility_complex_2}
+{Defined as \ccc{Visibility_complex_2<Gt,Items>}.}
 \ccNestedType{Vertex}{Vertex type. Forwarded from \ccc{Visibility_complex_2}.}
 \ccGlue
 \ccNestedType{Edge}{Edge type. Forwarded from \ccc{Visibility_complex_2}.}
@@ -52,7 +52,7 @@ complex. This method computes the shortest path from
 times.}
 \ccMethod{template <class OutputIterator>
 std::pair<GT::Distance_NT,OutputIterator>
-get_path_vertices(Disk_handle t, OutputIterator result); const}
+get_path_vertices(const Disk& t, OutputIterator result);}
 {\ccc{t} should be a point-disk, and \ccc{compute_shortest_paths} should
 already have been called upon a point-disk. Let \ccc{s} be the point disk
 passed to the latest call of \ccc{compute_shortest_paths}. This method returns
@@ -63,7 +63,7 @@ The result of the function call is a pair made of the
 length of the path, and last value of the iterator.}
 \ccMethod{template <class OutputIterator>
 std::pair<GT::Distance_NT,OutputIterator>
-get_path_bitangents(Disk_handle t, OutputIterator result);const}
+get_path_bitangents(const Disk& t, OutputIterator result);}
 {The same, except \ccc{result} receives copies of bitangents instead of
 handles to vertices.}
 

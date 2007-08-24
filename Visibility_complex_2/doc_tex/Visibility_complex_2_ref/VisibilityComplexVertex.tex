@@ -83,8 +83,8 @@ specified object}
 \ccMethod{Edge_handle ccw_target_edge(Disk_handle);}{next edge on the
 specified object}
 \ccGlue
-\ccMethod{Edge_handle target_cusp_edge();}{If the vertex is araint,
-     returns theraint edge on the source tangency point with sink
+\ccMethod{Edge_handle target_cusp_edge();}{If the vertex is a constraint,
+     returns the cusp-edge on the source tangency point with sink
      \ccVar{}. If the vertex is regular, an invalid handle is returned.}
 \ccGlue
 \ccMethod{Edge_handle source_cusp_edge();}{Same thing, on the target.}
@@ -97,9 +97,11 @@ sink.}
 \ccGlue
 \ccMethod{Vertex_handle pi();}{returns the vertex with opposite
 orientation, allocating it with new if necessary.}
-\ccGlue
+
+
 All the latter methods have const counterparts returning const handles.
-\ccGlue
+
+
 \ccMethod{bool is_constraint(); const}{returns true if the vertex is a
 constraint.}
 
@@ -112,11 +114,19 @@ The following methods set the pointers which the latter accessors return.
 \ccGlue
 \ccMethod{void set_cw_edge(Edge_handle);}{}
 \ccGlue
+\ccMethod{void set_cw_edge(Edge_handle);}{}
+\ccGlue
+\ccMethod{void set_cw_edge(Edge_handle);}{}
+\ccGlue
 \ccMethod{void set_inf(Face_handle);}{}
 \ccGlue
 \ccMethod{void set_sup(Face_handle);}{}
 \ccGlue
 \ccMethod{void set_pi(Vertex_handle);}{}
+\ccGlue
+\ccMethod{void set_target_cusp_edge(Edge_handle e);}
+\ccGlue
+\ccMethod{void set_source_cusp_edge(Edge_handle e);}
 
 
 \ccTagDefaults
