@@ -56,7 +56,7 @@ protected:
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  //typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
                                       Halfedge_around_vertex_const_circulator;
 
