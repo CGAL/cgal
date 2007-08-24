@@ -20,7 +20,7 @@
 #ifndef CGAL_ARR_SPHERICAL_ARC_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_ARC_TRAITS_2_H
 
-//#define CGAL_ARR_PLANE
+#define CGAL_ARR_PLANE
 
 /*! \file
  * The spherical_arc traits-class for the arrangement package.
