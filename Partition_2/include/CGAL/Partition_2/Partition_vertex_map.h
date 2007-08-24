@@ -112,6 +112,10 @@ public:
    typedef typename Traits::Less_xy_2   Less_xy_2;
    typedef typename Traits::Point_2     Point_2;
 
+#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+   CW_indirect_edge_info_compare(){}
+#endif
+
    CW_indirect_edge_info_compare (Vertex_iterator v_info) : vertex_it(v_info),
       left_turn(Traits().left_turn_2_object()),
       less_xy(Traits().less_xy_2_object())
