@@ -41,17 +41,10 @@ struct Type_mapper
 
 // Then we specialize for all kernel objects.
 
-#ifndef CGAL_CFG_DEDUCABLE_CONTEXT_BUG
 #define CGAL_Kernel_obj(X) \
   template < typename K1, typename K2 > \
   struct Type_mapper < typename K1::X, K1, K2 > \
   { typedef typename K2::X type; };
-#else
-#define CGAL_Kernel_obj(X) \
-  template < typename K1, typename K2 > \
-  struct Type_mapper < CGAL::X<K1>, K1, K2 > \
-  { typedef typename K2::X type; };
-#endif
 
 #include <CGAL/Kernel/interface_macros.h>
 

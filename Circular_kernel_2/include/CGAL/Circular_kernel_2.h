@@ -70,10 +70,7 @@ struct Circular_kernel_2
   <
   CGALi::Circular_kernel_base_ref_count
   < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
-    typename LinearKernel::
-#ifndef CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG
-                           template 
-#endif
+    typename LinearKernel:: template 
     Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type 
   >,
   Circular_kernel_2<LinearKernel,AlgebraicKernel> 

@@ -362,10 +362,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A, class Tag>
 struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, Tag> 
 {
   typedef typename CGAL::Polyhedron_property_map<Tag>::
-#ifndef CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG
-      template
-#endif
-      bind_<Gt,I,HDS,A> map_gen;
+      template bind_<Gt,I,HDS,A> map_gen;
   typedef typename map_gen::type       type;
   typedef typename map_gen::const_type const_type;
 };

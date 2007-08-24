@@ -78,11 +78,7 @@ namespace CGAL {
   // LinearKernel::Kernel_base<Self> to have types equalities for
   // the Linearkernel types
   public Spherical_kernel_type_equality_wrapper<CGALi::Spherical_kernel_base_ref_count<Spherical_kernel_3<LinearKernel,AlgebraicKernel>,
-    typename LinearKernel::
-#ifndef CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG
-			   template
-#endif
-				   Base<Spherical_kernel_3<LinearKernel,AlgebraicKernel> >::Type >,
+    typename LinearKernel:: template Base<Spherical_kernel_3<LinearKernel,AlgebraicKernel> >::Type >,
     Spherical_kernel_3<LinearKernel,AlgebraicKernel> >
     {
       typedef Spherical_kernel_3<LinearKernel,AlgebraicKernel>      Self;
