@@ -26,6 +26,8 @@
  * Global insertion functions for the Arrangement_2 class.
  */
 
+#include <boost/type_traits.hpp>
+
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Basic_sweep_line_2.h>
@@ -188,8 +190,8 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 // location.
 //
 template <class GeomTraits, class TopTraits, class Curve>
-void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                   const Curve& c)
+void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+            const Curve& c)
 {
   // Create a default point-location object and use it to insert the curve.
   typename TopTraits::Default_point_location_strategy    def_pl (arr);
@@ -197,6 +199,122 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   insert (arr, c, def_pl);
   return;
 }
+
+/*! Insert a range of x-monotone curves into an empty arrangement
+ * This generic functor is instantiated when the type
+ * Construct_visitor::Traits_2GeomTraits is not convertible to the type
+ * GeomTraits. In this case, we instantiate a local variable of the former
+ * and provide the later as a single parameter to the constructor
+ */
+template <bool b>
+struct Arr_empty_inserter {
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits, typename InputIterator>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  InputIterator begin, InputIterator end)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 traits(*geom_traits);
+
+    // Define a sweep-line instance and perform the sweep:
+    Sweep_line_2<typename Construct_visitor::Traits_2,
+                 Construct_visitor,
+                 typename Construct_visitor::Subcurve,
+                 typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep (begin, end);
+  }
+
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  std::list<typename GeomTraits::X_monotone_curve_2> & xcurves,
+                  std::list<typename GeomTraits::Point_2> & iso_points)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 traits(*geom_traits);
+    // Define a sweep-line instance and perform the sweep.
+    Sweep_line_2<typename Construct_visitor::Traits_2,
+                 Construct_visitor,
+                 typename Construct_visitor::Subcurve,
+                 typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep(xcurves.begin(), xcurves.end(),
+                     iso_points.begin(), iso_points.end());
+  }
+};
+
+/*! Insert a range of x-monotone curves into an empty arrangement
+ * This specialized functor is instantiated when the type
+ * Construct_visitor::Traits_2GeomTraits is convertible to the type
+ * GeomTraits. In this case, we simply assign the former to a reference of
+ * the later to avoid an erroneous call to a copy constructor.
+ */
+template <>
+struct Arr_empty_inserter<true> {
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits, typename InputIterator>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  InputIterator begin, InputIterator end)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 & traits = *geom_traits;
+
+    // Define a sweep-line instance and perform the sweep:
+    Sweep_line_2<typename Construct_visitor::Traits_2,
+                 Construct_visitor,
+                 typename Construct_visitor::Subcurve,
+                 typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep (begin, end);
+  }
+
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  std::list<typename GeomTraits::X_monotone_curve_2> & xcurves,
+                  std::list<typename GeomTraits::Point_2> & iso_points)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 & traits = *geom_traits;
+    // Define a sweep-line instance and perform the sweep.
+    Sweep_line_2<typename Construct_visitor::Traits_2,
+                 Construct_visitor,
+                 typename Construct_visitor::Subcurve,
+                 typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep(xcurves.begin(), xcurves.end(),
+                     iso_points.begin(), iso_points.end());
+  }
+};
 
 //-----------------------------------------------------------------------------
 // Insert a range of curves into the arrangement (aggregated insertion). 
@@ -242,21 +360,13 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    std::back_inserter(iso_points),
                    geom_traits);
 
-  if (arr.is_empty())
-  {
+  if (arr.is_empty()) {
     // The arrangement is empty: use the construction visitor.
-    Construct_visitor                                visitor (&arr);
-    typename Construct_visitor::Traits_2             traits (*geom_traits);
-
-    // Define a sweep-line instance and perform the sweep.
-    Sweep_line_2<typename Construct_visitor::Traits_2,
-                 Construct_visitor,
-                 typename Construct_visitor::Subcurve,
-                 typename Construct_visitor::Event>  sweep_line (&traits,
-                                                                 &visitor);
-
-    sweep_line.sweep (x_curves.begin(), x_curves.end(),
-                      iso_points.begin(), iso_points.end());
+    typedef typename Construct_visitor::Traits_2        Visitor_traits;
+    Arr_empty_inserter<boost::is_convertible<GeomTraits, Visitor_traits>::
+      value>
+      insert_empty;
+    insert_empty(arr, x_curves, iso_points);
   }
   else
   {
@@ -299,7 +409,7 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 // may also intersect the existing arrangement.
 //
 // The last parameter is used to resolve ambiguity between this function and 
-// do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the 
+// insert of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the 
 // same class. The last parameter should be boost::true_type but we used a 
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
@@ -309,8 +419,8 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 //
 template <class GeomTraits, class TopTraits, class InputIterator>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                   InputIterator begin, InputIterator end, 
-                   boost::is_same<int, int>::type)
+            InputIterator begin, InputIterator end, 
+            boost::is_same<int, int>::type)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arr;
   typedef typename TopTraits::Sweep_line_construction_visitor
@@ -331,20 +441,13 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   // the new curves).
   GeomTraits                        *geom_traits = arr.geometry_traits();
 
-  if (arr.is_empty())
-  {
+  if (arr.is_empty()) {
     // The arrangement is empty: use the construction visitor.
-    Construct_visitor                                visitor (&arr);
-    typename Construct_visitor::Traits_2             traits (*geom_traits);
-
-    // Define a sweep-line instance and perform the sweep.
-    Sweep_line_2<typename Construct_visitor::Traits_2,
-                 Construct_visitor,
-                 typename Construct_visitor::Subcurve,
-                 typename Construct_visitor::Event>  sweep_line (&traits,
-                                                                 &visitor);
-
-    sweep_line.sweep (begin, end);
+    typedef typename Construct_visitor::Traits_2        Visitor_traits;
+    Arr_empty_inserter<boost::is_convertible<GeomTraits, Visitor_traits>::
+      value>
+      insert_empty;
+    insert_empty(arr, begin, end);
   }
   else
   {
@@ -657,14 +760,136 @@ insert_non_intersecting_curve
   return (insert_non_intersecting_curve (arr, c, def_pl));
 }
 
+/*! Insert a range of x-monotone curves into an empty arrangement
+ * This generic functor is instantiated when the type
+ * Construct_visitor::Traits_2GeomTraits is not convertible to the type
+ * GeomTraits. In this case, we instantiate a local variable of the former
+ * and provide the later as a single parameter to the constructor
+ */
+template <bool b>
+struct Arr_empty_basic_inserter {
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits, typename InputIterator>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  InputIterator begin, InputIterator end)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 traits(*geom_traits);
+
+    // Define a basic sweep-line instance (which is not supposed to handle
+    // insersections) and perform the sweep.
+    Basic_sweep_line_2<typename Construct_visitor::Traits_2,
+                       Construct_visitor,
+                       typename Construct_visitor::Subcurve,
+                       typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep (begin, end);
+  }
+
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  std::list<typename GeomTraits::X_monotone_curve_2> & xcurves,
+                  std::list<typename GeomTraits::Point_2> & iso_points)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 traits(*geom_traits);
+    // Define a basic sweep-line instance (which is not supposed to handle
+    // insersections) and perform the sweep.
+    Basic_sweep_line_2<typename Construct_visitor::Traits_2,
+                       Construct_visitor,
+                       typename Construct_visitor::Subcurve,
+                       typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep(xcurves.begin(), xcurves.end(),
+                     iso_points.begin(), iso_points.end());
+  }
+};
+
+/*! Insert a range of x-monotone curves into an empty arrangement
+ * This specialized functor is instantiated when the type
+ * Construct_visitor::Traits_2GeomTraits is convertible to the type
+ * GeomTraits. In this case, we simply assign the former to a reference of
+ * the later to avoid an erroneous call to a copy constructor.
+ */
+template <>
+struct Arr_empty_basic_inserter<true> {
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits, typename InputIterator>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  InputIterator begin, InputIterator end)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 & traits = *geom_traits;
+
+    // Define a basic sweep-line instance (which is not supposed to handle
+    // insersections) and perform the sweep.
+    Basic_sweep_line_2<typename Construct_visitor::Traits_2,
+                       Construct_visitor,
+                       typename Construct_visitor::Subcurve,
+                       typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep (begin, end);
+  }
+
+  /*! Insert a range of x-monotone curves into an empty arrangement
+   * \param arr the resulting arrangement
+   * \param begin the begining of the curve range
+   * \param end past-the-end curve range
+   */
+  template <typename GeomTraits, typename TopTraits>
+  void operator()(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  std::list<typename GeomTraits::X_monotone_curve_2> & xcurves,
+                  std::list<typename GeomTraits::Point_2> & iso_points)
+  {
+    GeomTraits * geom_traits = arr.geometry_traits();
+    typedef typename TopTraits::Sweep_line_construction_visitor
+                                                            Construct_visitor;
+    Construct_visitor visitor(&arr);
+    typename Construct_visitor::Traits_2 & traits = *geom_traits;
+
+    // Define a basic sweep-line instance (which is not supposed to handle
+    // insersections) and perform the sweep.
+    Basic_sweep_line_2<typename Construct_visitor::Traits_2,
+                       Construct_visitor,
+                       typename Construct_visitor::Subcurve,
+                       typename Construct_visitor::Event>
+      sweep_line(&traits, &visitor);
+    sweep_line.sweep(xcurves.begin(), xcurves.end(),
+                     iso_points.begin(), iso_points.end());
+  }
+};
+
 //-----------------------------------------------------------------------------
 // Insert a range of pairwise interior-disjoint x-monotone curves into
 // the arrangement, such that the curve interiors do not intersect with
 // any existing edge or vertex in the arragement (aggregated insertion).
 //
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_non_intersecting_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                                     InputIterator begin, InputIterator end)
+void insert_non_intersecting_curves
+  (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+   InputIterator begin, InputIterator end)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arr;
   typedef typename TopTraits::Sweep_line_non_intersecting_construction_visitor
@@ -686,22 +911,13 @@ void insert_non_intersecting_curves (Arrangement_on_surface_2<GeomTraits, TopTra
   // the new curves).
   GeomTraits                        *geom_traits = arr.geometry_traits();
 
-  if (arr.is_empty())
-  {
+  if (arr.is_empty()) {
     // The arrangement is empty: use the construction visitor.
-    Construct_visitor                                visitor (&arr);
-    typename Construct_visitor::Traits_2             traits (*geom_traits);
-
-    // Define a basic sweep-line instance (which is not supposed to handle
-    // insersections) and perform the sweep.
-    Basic_sweep_line_2<typename Construct_visitor::Traits_2,
-                       Construct_visitor,
-                       typename Construct_visitor::Subcurve,
-                       typename Construct_visitor::Event>
-                                                     sweep_line (&traits,
-                                                                 &visitor);
-
-    sweep_line.sweep (begin, end);
+    typedef typename Construct_visitor::Traits_2        Visitor_traits;
+    Arr_empty_basic_inserter<boost::is_convertible<GeomTraits,Visitor_traits>::
+      value>
+      insert_empty;
+    insert_empty(arr, begin, end);
   }
   else
   {
