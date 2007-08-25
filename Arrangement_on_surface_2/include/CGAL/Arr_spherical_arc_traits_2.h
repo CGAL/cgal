@@ -590,7 +590,8 @@ public:
      *   BEFORE_DISCONTINUITY - the curve end is on the open discontinuity arc
      *                          and it is the right endpoint
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Curve_end ind) const
     {
       if (xc.is_vertical()) {
         if (xc.is_on_boundary()) return AFTER_DISCONTINUITY;
@@ -624,7 +625,8 @@ public:
      *   the curve end is on the boundary and
      *     is the left endpoint                     => BEFORE_SINGULARITY.
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Curve_end ind) const
     {
       if (ind == MIN_END)
         return (xc.left().is_min_boundary()) ?
@@ -1517,7 +1519,7 @@ public:
        << static_cast<float>(todouble(p.dz()));
     return os;
   }
-  
+
   /*! Inserter for the spherical_arc class used by the traits-class */
   template <typename OutputStream>
   friend OutputStream & operator<<(OutputStream & os,
@@ -1930,6 +1932,55 @@ public:
     return opp;
   }
 };
+
+/*! Inserter for the spherical_arc class used by the traits-class */
+template <typename Kernel, typename OutputStream>
+OutputStream & operator<<(OutputStream & os,
+                          const Arr_extended_direction_3<Kernel> & ed)
+{
+  CGAL::To_double<typename Kernel::FT> todouble;
+#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+  os << "(";
+#endif
+  os << static_cast<float>(todouble(ed.dx())) << ", "
+     << static_cast<float>(todouble(ed.dy())) << ", "
+     << static_cast<float>(todouble(ed.dz()));
+#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+  os << ")"
+     << ", "
+     <<
+    (ed.is_min_boundary() ? "min" :
+     ed.is_max_boundary() ? "max" :
+     ed.is_mid_boundary() ? "dis" : "reg");
+#endif
+  return os;
+}
+
+/*! Inserter for the spherical_arc class used by the traits-class */
+template <typename Kernel, typename OutputStream>
+OutputStream & operator<<(OutputStream & os,
+                          const Arr_spherical_arc_3<Kernel> & arc)
+{
+#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+  os << "(";
+#endif
+  os << "(" << arc.left() << "), (" << arc.right() << ")";
+#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+  os << "("
+     << ", " << (xc.is_vertical() ? " |" : "!|")
+     << ", " << (xc.is_directed_right() ? "=>" : "<=");
+#endif
+  return os;
+}
+
+/*! Extractor for the spherical_arc class used by the traits-class */
+template <typename Kernel, typename InputStream>
+InputStream & operator>>(InputStream & is,
+                         const Arr_spherical_arc_3<Kernel> & arc)
+{
+  std::cerr << "Not implemented yet!" << std::endl;
+  return is;
+}  
 
 CGAL_END_NAMESPACE
 
