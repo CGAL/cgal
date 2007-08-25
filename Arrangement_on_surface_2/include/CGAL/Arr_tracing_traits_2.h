@@ -138,7 +138,7 @@ public:
   /*! Enable the trace of a traits operation
    * \param id the operation identifier
    */
-  void enable_trace(Operation_id id) { m_flags[id] |= 0x1 << id; }
+  void enable_trace(Operation_id id) { m_flags |= 0x1 << id; }
 
   /*! Enable the trace of all traits operations
    * \param id the operation identifier
@@ -148,7 +148,7 @@ public:
   /*! Disable the trace of a traits operation
    * \param id the operation identifier
    */
-  void disable_trace(Operation_id id) { m_flags[id] &= ~(0x1 << id); }
+  void disable_trace(Operation_id id) { m_flags &= ~(0x1 << id); }
 
   /*! Disable the trace of all traits operations
    * \param id the operation identifier
@@ -660,6 +660,10 @@ public:
     void operator()(const X_monotone_curve_2 & xc, const Point_2 & p,
                     X_monotone_curve_2 & xc1, X_monotone_curve_2 & xc2)
     {
+      if (!m_enabled) {
+        m_object(xc, p, xc1, xc2);
+        return;
+      }
       std::cout << "split: " << std::endl
                 << "  xc: " << xc << std::endl
                 << "  p: " << p << std::endl;
