@@ -60,7 +60,7 @@ public:
   /*! Constructor.
    * \param arr The arrangement.
    */
-  Arr_spherical_batched_pl_helper(const Arrangement_2 *arr) :
+  Arr_spherical_vert_decomp_helper(const Arrangement_2 *arr) :
     m_top_traits(arr->topology_traits())
   {}
 
@@ -71,7 +71,7 @@ public:
   void before_sweep()
   {
     // Get the spherical face of the arrangement.
-    m_north_face = Face_handle_red(m_top_traits->spherical_face());
+    m_north_face = Face_const_handle(m_top_traits->spherical_face());
     return;
   }
 
@@ -89,14 +89,14 @@ public:
   CGAL::Object top_object () const
   {
     // Wrap the north face with a CGAL object.
-    return (m_north_face);
+    return (CGAL::make_object (m_north_face));
   }
 
   /*! Get the current bottom object. */
   CGAL::Object bottom_object () const
   {
     // Wrap the north face with a CGAL object.
-    return (m_north_face);
+    return (CGAL::make_object (m_north_face));
   }
 };
 
