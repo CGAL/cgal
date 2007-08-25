@@ -12,6 +12,12 @@
 //
 // ============================================================================
 
+/*! \file Algebraic_curve_kernel_2.h
+ *  \brief defines class \c Algebraic_curve_kernel_2
+ *  
+ *  Curve and curve pair analysis for algebraic plane curves
+ */
+
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_2_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_2_H
 
@@ -67,7 +73,7 @@ private:
    
     //!@}
 public:
-    //! \name types and functors for \c Curved_kernel_2< >
+    //! \name types and functors for \c GPA_2< >
     //!@{
     
     //! type of 1D algebraic kernel 
@@ -134,7 +140,7 @@ private:
     // use Polynomial_traits_d<>::Canonicalize ?
         Poly operator()(Poly p) 
         {
-            typedef NiX::Scalar_factor_traits<Poly> Sf_traits;
+            typedef CGAL::Scalar_factor_traits<Poly> Sf_traits;
             typedef typename Sf_traits::Scalar Scalar;
             typename Sf_traits::Scalar_factor scalar_factor;
             typename Sf_traits::Scalar_div scalar_div;
@@ -144,6 +150,7 @@ private:
                 scalar_div(p,g);
             if(p.lcoeff().lcoeff() < 0) 
                 scalar_div(p,Scalar(-1));
+            std::cout << "my poly: " << p << "\n";
             return p;        
         }
            
@@ -201,14 +208,26 @@ private:
         Curve_pair_canonicalizer, 
         CGALi::Curve_pair_hasher_2<Curve_2>, 
         Curve_pair_creator > Curve_pair_cache;
-    
-    //! an instance of curve cache
-    mutable Curve_cache _m_curve_cache;
-    
-    //! an instance of curve pair cache
-    mutable Curve_pair_cache _m_curve_pair_cache;
+      
     //!@}
 public:
+    //!\name cache access functions
+    //!@{
+    //! access to the static curve cache
+    static Curve_cache& get_curve_cache() 
+    {
+        static Curve_cache _m_curve_cache;
+        return _m_curve_cache;
+    }
+    
+    //! access to the static curve pair cache
+    static Curve_pair_cache& get_curve_pair_cache() 
+    {
+        static Curve_pair_cache _m_curve_pair_cache;
+        return _m_curve_pair_cache;
+    }
+    
+    //!@}
     //! \name public functors and predicates
     //!@{
        
@@ -228,49 +247,26 @@ public:
             public Unary_function< Internal_polynomial_2, Curve_2 >
     {
         //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
-        ////! no default constructor provided
-        Construct_curve_2(Self *pkernel_2) :
-             _m_pkernel_2(pkernel_2) {  
-            CGAL_precondition(NULL != _m_pkernel_2);
-        }
+        //! no default constructor provided
+        Construct_curve_2(/*Self *pkernel_2*/) 
+        {  }
+            
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
-            Curve_2 cc = _m_pkernel_2->get_curve_cache()(f);
-            return cc;
+            return Self::get_curve_cache()(f);;
         }
         Curve_2 operator()(const Polynomial_2_CGAL& f) const
         {
             CGAL2NiX_converter cvt;
-            return _m_pkernel_2->get_curve_cache()(cvt(f));
-            //Self::get_curve_cache()(cvt(f));
+            return Self::get_curve_cache()(cvt(f));
+                //_m_pkernel_2->get_curve_cache()(cvt(f));
         }
         
     private:
         //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
-        Self *_m_pkernel_2; 
+        //Self *_m_pkernel_2; 
     };
-    
-
-    // TODO documentation
-    Construct_curve_2 construct_curve_2_object() 
-    {
-        return Construct_curve_2(this);
-    }
-    
-    // TODO grouping
-    //! access to curve cache
-    Curve_cache& get_curve_cache() const
-    {
-        //static Curve_cache _m_curve_cache;
-        return _m_curve_cache;
-    }
-    
-    //! access to curve pair cache
-    Curve_pair_cache& get_curve_pair_cache() const
-    {
-        //static Curve_cache _m_curve_cache;
-        return _m_curve_pair_cache;
-    }
+    CGAL_Algebraic_Kernel_pred(Construct_curve_2, construct_curve_2_object);
     
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
@@ -344,7 +340,7 @@ public:
     //!
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
-    struct Have_finite_number_of_intersections_2 :
+    struct Has_finite_number_of_intersections_2 :
             public Binary_function< Curve_2, Curve_2, bool > { 
                
         bool operator()(const Curve_2& c1, const Curve_2& c2) {
@@ -358,17 +354,15 @@ public:
             return (total_degree(gcd_utcf(p1, p2)) == 0);  
         }
     };
-    CGAL_Algebraic_Kernel_pred(Have_finite_number_of_intersections_2, 
-            have_finite_number_of_intersections_2_object);
+    CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2, 
+            has_finite_number_of_intersections_2_object);
     
     //! a set of verious curve and curve pair decomposition functions
     struct Decompose_2 {
     
         //! constructs an instance from ACK_2 pointer (required for caching)
-        Decompose_2(Self *pkernel_2) : 
-            _m_pkernel_2(pkernel_2) {  
-            CGAL_precondition(NULL != _m_pkernel_2);
-        }
+        Decompose_2(/*Self *pkernel_2*/)  
+        {  }
 
         //! \brief returns a curve without self-overlapping parts 
         //!
@@ -377,9 +371,7 @@ public:
         Curve_2 operator()(const Curve_2& c) {
             typename Polynomial_traits_2::Make_square_free make_square_free;
             NiX2CGAL_converter cvt;
-             // Construct_curve_2_object must be used !!
-            return _m_pkernel_2->construct_curve_2_object()
-                (make_square_free(cvt(c.f())));
+            return Construct_curve_2()(make_square_free(cvt(c.f())));
         }
         
         //! \brief computes a square-free factorization of a curve \c c, 
@@ -399,7 +391,7 @@ public:
             int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
                     mit); 
             // Construct_curve_2_object must be used !!
-            Construct_curve_2 cc_2(_m_pkernel_2->construct_curve_2_object());
+            Construct_curve_2 cc_2;
             for(int i = 0; i < (int)factors.size(); i++) {
                 *fit++ = cc_2(factors[i]);
             }
@@ -433,17 +425,13 @@ public:
         }
     private:
         //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
-        Self *_m_pkernel_2; 
+        /*Self *_m_pkernel_2; */
     };
-        
-    Decompose_2 decompose_2_object() 
-    {
-        return Decompose_2(this);
-    }
+    CGAL_Algebraic_Kernel_pred(Decompose_2, decompose_2_object);
     
     //!@}
 public:
-    //! \name types and functors for \c Curved_kernel_2<Algebraic_kernel_2>
+    //! \name types and functors for \c GPA_2<Algebraic_kernel_2>
     //!@{
     
     typedef Curve_2 Polynomial_2; 
@@ -454,7 +442,7 @@ public:
     typedef Xy_coordinate_2 Algebraic_real_2;
     
     typedef Has_finite_number_of_self_intersections_2 Is_square_free_2;
-    typedef Have_finite_number_of_intersections_2 Is_coprime_2;
+    typedef Has_finite_number_of_intersections_2 Is_coprime_2;
 
     typedef Decompose_2 Make_square_free_2;
     typedef Decompose_2 Square_free_factorization;
@@ -509,6 +497,7 @@ public:
                     // different from 1
                     // TODO be carefull .. there can be an "isolated point"
                     // on a branch
+                 // hmm.. what to do if there is vertical asymptote at this x ?
                     if(int_pair.first != 1||int_pair.second != 1) 
                         *res++ = cv_line.get_algebraic_real_2(j);   
                 }
@@ -519,7 +508,10 @@ public:
         //! \brief computes the ith x-critical point of polynomial \c p
         Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
         {
-            // not clear how to enumerate x-critical points ?..
+            std::vector<Xy_coordinate_2> x_points;
+            (*this)(p, std::back_inserter(x_points));
+            CGAL_precondition(0 >= i&&i < x_points.size());
+            return x_points[i];
         }
     };
     CGAL_Algebraic_Kernel_pred(X_critical_points_2,
@@ -533,7 +525,7 @@ public:
         //! \brief copies in the output iterator the y-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
         //! 
-        //! attention: x and y coordinates in the result are interchanged
+        //! attention: x and y variables are interchanged in the result
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_2& p, 
             OutputIterator res) const
@@ -552,13 +544,15 @@ public:
         //! \brief computes the ith y-critical point of polynomial \c p
         Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
         {
-            // TODO return?
+            std::vector<Xy_coordinate_2> y_points;
+            (*this)(p, std::back_inserter(y_points));
+            CGAL_precondition(0 >= i&&i < y_points.size());
+            return y_points[i];
         }
     };
     CGAL_Algebraic_Kernel_pred(Y_critical_points_2,
         y_critical_points_2_object);
 
-    // attention: here Polynomial_2 is Curve_2 type !!
     struct Sign_at_2 : 
         public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
         
@@ -567,9 +561,25 @@ public:
             // TODO have a look at point on curve in 
             // QuadriX/include/SfX/
             // Algebraic_surface_3_z_at_xy_isolator_traits_base.h
-            return CGAL::Sign();
+            if(p.id() == r.curve().id()) // point lies on the same curve
+                return CGAL::ZERO;
+            
+            Curve_pair_2 cp = Self::get_curve_pair_cache()
+                (std::make_pair(p, r.curve()));
+            typename Self::Curve_pair_analysis_2 cpa_2(cp);    
+            typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                cpv_line = cpa_2.vertical_line_at_exact_x(r.x());
+        // check only if there is an intersection of both curve along this line
+            if(cpv_line.is_event() && cpv_line.is_intersection()) {
+                // get an y-position of the point r
+                int idx = cpv_line.get_event_of_curve(r.arcno(), 1);  
+                std::pair<int, int> ipair = cpv_line.get_curves_at_event(idx);
+                if(ipair.first != -1&&ipair.second != -1)
+                    return CGAL::ZERO; // intersection of both curves
+            }
+            // otherwise compute the sign..   
+            return CGAL::SMALLER;
         }
-        // can be implemented using Curve_pair_analysis -> later
     };
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
@@ -580,7 +590,7 @@ public:
     
     //!@}
 public:
-    //! \name types and functors for \c Curved_kernel_2< both >
+    //! \name types and functors for \c GPA_2< both >
     //!@{
     
     //! type of 1-curve analysis
