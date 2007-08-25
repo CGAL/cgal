@@ -27,7 +27,10 @@
  */
 
 #include <iostream>
+#include <string.h>
+
 #include <CGAL/basic.h>
+#include <CGAL/Arr_enums.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,37 +41,105 @@ template <class Base_traits>
 class Arr_counting_traits_2 : public Base_traits {
 public:
   enum Operation_id {
-    COMPARE_X = 0,
-    COMPARE_XY,
-    CONSTRUCT_MIN_VERTEX, 
-    CONSTRUCT_MAX_VERTEX,
-    BOUNDARY_IN_X,
-    BOUNDARY_IN_Y,
-    IS_VERTICAL, 
-    COMPARE_Y_AT_X, 
-    EQUAL_POINTS, 
-    EQUAL_CURVES, 
-    COMPARE_Y_AT_X_LEFT, 
-    COMPARE_Y_AT_X_RIGHT, 
-    MAKE_X_MONOTONE, 
-    SPLIT, 
-    INTERSECT, 
-    ARE_MERGEABLE, 
-    MERGE, 
-    CONSTRUCT_OPPOSITE, 
-    COMPARE_ENDPOINTS_XY,
+    COMPARE_X_OP = 0,
+    COMPARE_XY_OP,
+    CONSTRUCT_MIN_VERTEX_OP,
+    CONSTRUCT_MAX_VERTEX_OP,
+    BOUNDARY_IN_X_OP,
+    BOUNDARY_IN_Y_OP,
+    IS_VERTICAL_OP,
+    COMPARE_Y_AT_X_OP,
+    EQUAL_POINTS_OP,
+    EQUAL_CURVES_OP,
+    COMPARE_Y_AT_X_LEFT_OP,
+    COMPARE_Y_AT_X_RIGHT_OP,
+    MAKE_X_MONOTONE_OP,
+    SPLIT_OP,
+    INTERSECT_OP,
+    ARE_MERGEABLE_OP,
+    MERGE_OP,
+    CONSTRUCT_OPPOSITE_OP,
+    COMPARE_ENDPOINTS_XY_OP,
     NUMBER_OF_OPERATIONS
   };
 
   typedef Base_traits                           Base;
   typedef Arr_counting_traits_2<Base>           Self;
 
-  /*! Default constructor */
+  /*! Construct default */
   Arr_counting_traits_2() : Base()
-  { increment(); bzero(m_counters, sizeof(m_counters)); }
+  {
+    increment();
+    memset(m_counters, 0, sizeof(m_counters));
+  }
 
+  /*! Construct copy */
+  Arr_counting_traits_2(Arr_counting_traits_2 & other) : Base(other)
+  {
+    increment();
+    memset(m_counters, 0, sizeof(m_counters));
+  }
+  
   /*! Obtain the counter of the given operation */
-  unsigned int get_count(Operation_id id) const { return m_counters[id]; }
+  unsigned int count(Operation_id id) const
+  { return m_counters[id]; }
+
+  unsigned int count_compare_x() const
+  { return m_counters[COMPARE_X_OP]; }
+  
+  unsigned int count_compare_xy() const
+  { return m_counters[COMPARE_XY_OP]; }
+
+  unsigned int count_construct_min_vertex() const
+  { return m_counters[CONSTRUCT_MIN_VERTEX_OP]; }
+  
+  unsigned int count_construct_max_vertex() const
+  { return m_counters[CONSTRUCT_MAX_VERTEX_OP]; }
+
+  unsigned int count_boundary_in_x() const
+  { return m_counters[BOUNDARY_IN_X_OP]; }
+  
+  unsigned int count_boundary_in_y() const
+  { return m_counters[BOUNDARY_IN_Y_OP]; }
+  
+  unsigned int count_is_vertical() const
+  { return m_counters[IS_VERTICAL_OP]; }
+  
+  unsigned int count_compare_y_at_x() const
+  { return m_counters[COMPARE_Y_AT_X_OP]; }
+  
+  unsigned int count_equal_points() const
+  { return m_counters[EQUAL_POINTS_OP]; }
+  
+  unsigned int count_equal_curves() const
+  { return m_counters[EQUAL_CURVES_OP]; }
+  
+  unsigned int count_compare_y_at_x_left() const
+  { return m_counters[COMPARE_Y_AT_X_LEFT_OP]; }
+  
+  unsigned int count_compare_y_at_x_right() const
+  { return m_counters[COMPARE_Y_AT_X_RIGHT_OP]; }
+  
+  unsigned int count_make_x_monotone() const
+  { return m_counters[MAKE_X_MONOTONE_OP]; }
+  
+  unsigned int count_split() const
+  { return m_counters[SPLIT_OP]; }
+  
+  unsigned int count_intersect() const
+  { return m_counters[INTERSECT_OP]; }
+  
+  unsigned int count_are_mergeable() const
+  { return m_counters[ARE_MERGEABLE_OP]; }
+  
+  unsigned int count_merge() const
+  { return m_counters[MERGE_OP]; }
+  
+  unsigned int count_construct_opposite() const
+  { return m_counters[CONSTRUCT_OPPOSITE_OP]; }
+  
+  unsigned int count_compare_endpoints_xy() const
+  { return m_counters[COMPARE_ENDPOINTS_XY_OP]; }
   
   /// \name Types and functors inherited from the base
   //@{
@@ -87,20 +158,27 @@ public:
   private:
     typename Base::Compare_x_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Compare_x_2(const Base * base, unsigned int & counter) :
       m_object(base->compare_x_2_object()), m_counter(counter) {}
 
+    /*! Operate */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     { ++m_counter; return m_object(p1, p2); }
 
+    /*! Operate */
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xc, Curve_end ind)
       const
     { ++m_counter; return m_object(p, xc, ind); }
 
-    Comparison_result operator()(const X_monotone_curve_2 & xc1, Curve_end ind1,
-                                 const X_monotone_curve_2 & xc2, Curve_end ind2)
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xc1,
+                                 Curve_end ind1,
+                                 const X_monotone_curve_2 & xc2,
+                                 Curve_end ind2)
       const
     { ++m_counter; return m_object(xc1, ind1, xc2, ind2); }
   };
@@ -110,9 +188,13 @@ public:
   private:
     typename Base::Compare_xy_2 m_object;
     mutable unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Compare_xy_2(const Base * base, unsigned int & counter) :
       m_object(base->compare_xy_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     { ++m_counter; return m_object(p1, p2); }
   };
@@ -124,10 +206,15 @@ public:
   private:
     typename Base::Boundary_in_x_2 m_object;
     mutable unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Boundary_in_x_2(const Base * base, unsigned int & counter) :
       m_object(base->boundary_in_x_2_object()), m_counter(counter) {}
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+
+    /*! Operate */
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Curve_end ind) const
     { ++m_counter; return m_object(xc, ind); }
   };
 
@@ -138,10 +225,15 @@ public:
   private:
     typename Base::Boundary_in_y_2 m_object;
     mutable unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Boundary_in_y_2(const Base * base, unsigned int & counter) :
       m_object(base->boundary_in_y_2_object()), m_counter(counter) {}
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+
+    /*! Operate */
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Curve_end ind) const
     { ++m_counter; return m_object(xc, ind); }
   };
   
@@ -150,9 +242,13 @@ public:
   private:
     typename Base::Construct_min_vertex_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Construct_min_vertex_2(const Base * base, unsigned int & counter) :
       m_object(base->construct_min_vertex_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     const Point_2 operator()(const X_monotone_curve_2 & xc) const
     { ++m_counter; return m_object(xc); }
   };
@@ -162,9 +258,13 @@ public:
   private:
     typename Base::Construct_max_vertex_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Construct_max_vertex_2(const Base * base, unsigned int & counter) :
       m_object(base->construct_max_vertex_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     const Point_2 operator()(const X_monotone_curve_2 & xc) const
     { ++m_counter; return m_object(xc); }
   };
@@ -174,9 +274,13 @@ public:
   private:
     typename Base::Is_vertical_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Is_vertical_2(const Base * base, unsigned int & counter) :
       m_object(base->is_vertical_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     bool operator()(const X_monotone_curve_2 & xc) const
     { ++m_counter; return m_object(xc); }
   };
@@ -188,18 +292,24 @@ public:
   private:
     typename Base::Compare_y_at_x_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Compare_y_at_x_2(const Base * base, unsigned int & counter) :
       m_object(base->compare_y_at_x_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xc) const
     { ++m_counter; return m_object(p, xc); }
 
+    /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2, 
                                  Curve_end ind) const
     { ++m_counter; return m_object(xc1, xc2, ind); }
 
+    /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  Curve_end ind1,
                                  const X_monotone_curve_2 & xc2, 
@@ -213,14 +323,21 @@ public:
     typename Base::Equal_2 m_object;
     unsigned int & m_counter1;
     unsigned int & m_counter2;
+
   public:
-    Equal_2(const Base * base, unsigned int& counter1, unsigned int& counter2) :
+    /*! Construct */
+    Equal_2(const Base * base,
+            unsigned int & counter1, unsigned int & counter2) :
       m_object(base->equal_2_object()),
       m_counter1(counter1), m_counter2(counter2)
     {}
+
+    /*! Operate */
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     { ++m_counter1; return m_object(xc1, xc2); }
+
+    /*! Operate */
     bool operator()(const Point_2 & p1, const Point_2 & p2) const
     { ++m_counter2; return m_object(p1, p2); }    
   };
@@ -232,9 +349,13 @@ public:
   private:
     typename Base::Compare_y_at_x_left_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Compare_y_at_x_left_2(const Base * base, unsigned int & counter) :
       m_object(base->compare_y_at_x_left_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2,
                                  const Point_2 & p) const
@@ -248,9 +369,13 @@ public:
   private:
     typename Base::Compare_y_at_x_right_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Compare_y_at_x_right_2(const Base * base, unsigned int & counter) :
       m_object(base->compare_y_at_x_right_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2,
                                  const Point_2 & p) const
@@ -262,9 +387,13 @@ public:
   private:
     typename Base::Make_x_monotone_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Make_x_monotone_2(Base * base, unsigned int & counter) :
       m_object(base->make_x_monotone_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi)
     { ++m_counter; return m_object(cv, oi); }
@@ -275,9 +404,13 @@ public:
   private:
     typename Base::Split_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Split_2(Base * base, unsigned int & counter) :
       m_object(base->split_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     void operator()(const X_monotone_curve_2 & xc, const Point_2 & p,
                     X_monotone_curve_2 & xc1, X_monotone_curve_2 & xc2)
     { ++m_counter; m_object(xc, p, xc1, xc2); }
@@ -288,9 +421,13 @@ public:
   private:
     typename Base::Intersect_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Intersect_2(Base * base, unsigned int & counter) :
       m_object(base->intersect_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xc1,
                               const X_monotone_curve_2 & xc2,
@@ -303,9 +440,13 @@ public:
   private:
     typename Base::Are_mergeable_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Are_mergeable_2(const Base * base, unsigned int & counter) :
       m_object(base->are_mergeable_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     { ++m_counter; return m_object(xc1, xc2); }
@@ -316,9 +457,13 @@ public:
   private:
     typename Base::Merge_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Merge_2(Base * base, unsigned int & counter) :
       m_object(base->merge_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     void operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2,
                     X_monotone_curve_2 & xc)
@@ -330,9 +475,13 @@ public:
   private:
     typename Base::Construct_opposite_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Construct_opposite_2(const Base * base, unsigned int & counter) :
       m_object(base->construct_opposite_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     X_monotone_curve_2 operator()(const X_monotone_curve_2 & xc)
     { ++m_counter; return m_object(xc); }
   };
@@ -342,9 +491,13 @@ public:
   private:
     typename Base::Compare_endpoints_xy_2 m_object;
     unsigned int & m_counter;
+
   public:
+    /*! Construct */
     Compare_endpoints_xy_2(const Base * base, unsigned int & counter) :
       m_object(base->compare_endpoints_xy_2_object()), m_counter(counter) {}
+
+    /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc)
     { ++m_counter; return m_object(xc); }
   };
@@ -354,58 +507,58 @@ public:
   /// \name Obtain the appropriate functor
   //@{
   Compare_x_2 compare_x_2_object() const
-  { return Compare_x_2(this, m_counters[COMPARE_X]); }
+  { return Compare_x_2(this, m_counters[COMPARE_X_OP]); }
   
-  Compare_xy_2 compare_xy_2_object() const
-  { return Compare_xy_2(this, m_counters[COMPARE_XY]); }
+  Compare_xy_2 compare_xy_2_object() 
+  { return Compare_xy_2(this, m_counters[COMPARE_XY_OP]); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(this, m_counters[CONSTRUCT_MIN_VERTEX]); }
+  { return Construct_min_vertex_2(this, m_counters[CONSTRUCT_MIN_VERTEX_OP]); }
 
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(this, m_counters[CONSTRUCT_MAX_VERTEX]); }
+  { return Construct_max_vertex_2(this, m_counters[CONSTRUCT_MAX_VERTEX_OP]); }
   
   Boundary_in_x_2 boundary_in_x_2_object() const
-  { return Boundary_in_x_2(this, m_counters[BOUNDARY_IN_X]); }
+  { return Boundary_in_x_2(this, m_counters[BOUNDARY_IN_X_OP]); }
 
   Boundary_in_y_2 boundary_in_y_2_object() const
-  { return Boundary_in_y_2(this, m_counters[BOUNDARY_IN_Y]); }  
+  { return Boundary_in_y_2(this, m_counters[BOUNDARY_IN_Y_OP]); }  
 
   Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2(this, m_counters[IS_VERTICAL]); }
+  { return Is_vertical_2(this, m_counters[IS_VERTICAL_OP]); }
   
   Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(this, m_counters[COMPARE_Y_AT_X]); }
+  { return Compare_y_at_x_2(this, m_counters[COMPARE_Y_AT_X_OP]); }
   
   Equal_2 equal_2_object() const
-  { return Equal_2(this, m_counters[EQUAL_POINTS], m_counters[EQUAL_CURVES]); }
+  { return Equal_2(this, m_counters[EQUAL_POINTS_OP], m_counters[EQUAL_CURVES_OP]); }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(this, m_counters[COMPARE_Y_AT_X_LEFT]); }
+  { return Compare_y_at_x_left_2(this, m_counters[COMPARE_Y_AT_X_LEFT_OP]); }
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(this, m_counters[COMPARE_Y_AT_X_RIGHT]); }
+  { return Compare_y_at_x_right_2(this, m_counters[COMPARE_Y_AT_X_RIGHT_OP]); }
   
   Make_x_monotone_2 make_x_monotone_2_object()
-  { return Make_x_monotone_2(this, m_counters[MAKE_X_MONOTONE]); }
+  { return Make_x_monotone_2(this, m_counters[MAKE_X_MONOTONE_OP]); }
 
   Split_2 split_2_object()
-  { return Split_2(this, m_counters[SPLIT]); }
+  { return Split_2(this, m_counters[SPLIT_OP]); }
 
   Intersect_2 intersect_2_object()
-  { return Intersect_2(this, m_counters[INTERSECT]); }
+  { return Intersect_2(this, m_counters[INTERSECT_OP]); }
 
   Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(this, m_counters[ARE_MERGEABLE]); }
+  { return Are_mergeable_2(this, m_counters[ARE_MERGEABLE_OP]); }
 
   Merge_2 merge_2_object()
-  { return Merge_2(this, m_counters[MERGE]); }
+  { return Merge_2(this, m_counters[MERGE_OP]); }
 
   Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(this, m_counters[CONSTRUCT_OPPOSITE]); }
+  { return Construct_opposite_2(this, m_counters[CONSTRUCT_OPPOSITE_OP]); }
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  { return Compare_endpoints_xy_2(this, m_counters[COMPARE_ENDPOINTS_XY]); }
+  { return Compare_endpoints_xy_2(this, m_counters[COMPARE_ENDPOINTS_XY_OP]); }
 
   //@}
 
@@ -415,8 +568,9 @@ public:
     if (doit) ++counter;
     return counter;
   }
-  
+
 private:
+  /*! The operation counters */
   mutable unsigned int m_counters[NUMBER_OF_OPERATIONS];
 };
 
@@ -429,43 +583,48 @@ Out_stream & operator<<(Out_stream & os,
   unsigned int sum = 0;
   unsigned int i;
   for (i = 0; i < Traits::NUMBER_OF_OPERATIONS; ++i)
-    sum += traits.get_count(static_cast<typename Traits::Operation_id>(i));
-  os << "count[COMPARE_X] = "
-     << traits.get_count(Traits::COMPARE_X) << std::endl
-     << "count[COMPARE_XY] = "
-     << traits.get_count(Traits::COMPARE_XY) << std::endl
-     << "count[CONSTRUCT_MIN_VERTEX] = "
-     << traits.get_count(Traits::CONSTRUCT_MIN_VERTEX) << std::endl
-     << "count[CONSTRUCT_MAX_VERTEX] = "
-     << traits.get_count(Traits::CONSTRUCT_MAX_VERTEX) << std::endl
-     << "count[IS_VERTICAL] = "
-     << traits.get_count(Traits::IS_VERTICAL) << std::endl
-     << "count[COMPARE_Y_AT_X] = "
-     << traits.get_count(Traits::COMPARE_Y_AT_X) << std::endl
-     << "count[EQUAL_POINTS] = "
-     << traits.get_count(Traits::EQUAL_POINTS) << std::endl
-     << "count[EQUAL_CURVES] = "
-     << traits.get_count(Traits::EQUAL_CURVES) << std::endl
-     << "count[COMPARE_Y_AT_X_LEFT] = "
-     << traits.get_count(Traits::COMPARE_Y_AT_X_LEFT) << std::endl
-     << "count[COMPARE_Y_AT_X_RIGHT] = "
-     << traits.get_count(Traits::COMPARE_Y_AT_X_RIGHT) << std::endl
-     << "count[MAKE_X_MONOTONE] = "
-     << traits.get_count(Traits::MAKE_X_MONOTONE) << std::endl
-     << "count[SPLIT] = "
-     << traits.get_count(Traits::SPLIT) << std::endl
-     << "count[INTERSECT] = "
-     << traits.get_count(Traits::INTERSECT) << std::endl
-     << "count[ARE_MERGEABLE] = "
-     << traits.get_count(Traits::ARE_MERGEABLE) << std::endl
-     << "count[MERGE] = "
-     << traits.get_count(Traits::MERGE) << std::endl
-     << "count[CONSTRUCT_OPPOSITE] = "
-     << traits.get_count(Traits::CONSTRUCT_OPPOSITE) << std::endl
-     << "count[COMPARE_ENDPOINTS_XY] = "
-     << traits.get_count(Traits::COMPARE_ENDPOINTS_XY) << std::endl
-     << "total = " << sum << std::endl
-     << "No. of traits constructed = " << Traits::increment(false) << std::endl;
+    sum += traits.count(static_cast<typename Traits::Operation_id>(i));
+  os << "# of COMPARE_X operation = "
+     << traits.count_compare_x() << std::endl
+     << "# of COMPARE_XY operation = "
+     << traits.count_compare_xy() << std::endl
+     << "# of CONSTRUCT_MIN_VERTEX operation = "
+     << traits.count_construct_min_vertex() << std::endl
+     << "# of CONSTRUCT_MAX_VERTEX operation = "
+     << traits.count_construct_max_vertex() << std::endl
+     << "# of BOUNDARY_IN_X operation = "
+     << traits.count_boundary_in_x() << std::endl
+     << "# of BOUNDARY_IN_Y operation = "
+     << traits.count_boundary_in_y() << std::endl
+     << "# of IS_VERTICAL operation = "
+     << traits.count_is_vertical() << std::endl
+     << "# of COMPARE_Y_AT_X operation = "
+     << traits.count_compare_y_at_x() << std::endl
+     << "# of EQUAL_POINTS operation = "
+     << traits.count_equal_points() << std::endl
+     << "# of EQUAL_CURVES operation = "
+     << traits.count_equal_curves() << std::endl
+     << "# of COMPARE_Y_AT_X_LEFT operation = "
+     << traits.count_compare_y_at_x_left() << std::endl
+     << "# of COMPARE_Y_AT_X_RIGHT operation = "
+     << traits.count_compare_y_at_x_right() << std::endl
+     << "# of MAKE_X_MONOTONE operation = "
+     << traits.count_make_x_monotone() << std::endl
+     << "# of SPLIT operation = "
+     << traits.count_split() << std::endl
+     << "# of INTERSECT operation = "
+     << traits.count_intersect() << std::endl
+     << "# of ARE_MERGEABLE operation = "
+     << traits.count_are_mergeable() << std::endl
+     << "# of MERGE operation = "
+     << traits.count_merge() << std::endl
+     << "# of CONSTRUCT_OPPOSITE operation = "
+     << traits.count_construct_opposite() << std::endl
+     << "# of COMPARE_ENDPOINTS_XY operation = "
+     << traits.count_compare_endpoints_xy() << std::endl
+     << "total # = " << sum << std::endl
+     << "# of traits constructed = " << Traits::increment(false)
+     << std::endl;
   return os;
 }
 
