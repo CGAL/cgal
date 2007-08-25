@@ -1250,6 +1250,10 @@ Envelope_3/test/Envelope_3/data/triangles/test_w_vertical.cin -text
 Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
+GPA_2/include/CGAL/GPA_2.h -text
+GPA_2/include/CGAL/GPA_2/Arc_2.h -text
+GPA_2/include/CGAL/GPA_2/Point_2.h -text
+GPA_2/maintainer -text
 Generator/demo/Generator/generator.vcproj eol=crlf
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
