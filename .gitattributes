@@ -759,7 +759,10 @@ Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Europe.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/bounded_planar_vertical_decomposition.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/spherical_vertical_decomposition.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unb_planar_vertical_decomposition.cpp -text
 Arrangement_on_surface_2/include/CGAL/Arrangement_2/Arr_compute_zone_visitor.h -text
 Arrangement_on_surface_2/include/CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/compare -text
