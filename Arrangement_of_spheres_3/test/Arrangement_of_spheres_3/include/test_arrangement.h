@@ -14,7 +14,8 @@ void test_arrangement() {
   spheres.push_back(S(P(10,10,10),1));
   typename A::Traits tr(spheres.begin(), spheres.end());
   A arr(tr);
-  typename A::Cross_section cs(tr.number_of_sphere_3s());
+  typename A::Cross_section cs;
+  //cs.set_number_of_spheres(tr.number_of_sphere_3s());
   arr.initialize_at(10,cs);
 
   //typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer CGAL_AOS3_TARG CSV;

@@ -21,9 +21,9 @@ Rational_cross_section CGAL_AOS3_TARG ::sphere_point(CGAL_AOS3_TYPENAME CCS::Poi
     CGAL_AOS3_TYPENAME Traits::Sphere_3 s(tr_.sphere_3(pt.sphere_key()));
     CGAL_AOS3_TYPENAME Traits::Line_3 l;
     if (pt.is_smaller()) {
-      l= positive_line(pt.rule_key(), pt.rule_coordinate());
+      l= positive_line(pt.rule_key(), pt.rule_constant_coordinate());
     } else {
-      l = negative_line(pt.rule_key(), pt.rule_coordinate());
+      l = negative_line(pt.rule_key(), pt.rule_constant_coordinate());
     }
     CGAL_AOS3_TYPENAME Traits::Sphere_point_3 sp (s,l);
     if (!sp.is_valid()) {
@@ -173,7 +173,9 @@ bool Rational_cross_section CGAL_AOS3_TARG ::intersects(CGAL_AOS3_TYPENAME Trait
   p[plane_coordinate(0).index()]=0;
   p[plane_coordinate(1).index()]=1;
   p[sweep_coordinate().index()]=z_;
-  return tr_.sphere_intersects_sweep(a, CGAL_AOS3_TYPENAME Traits::Sphere_point_3(CGAL_AOS3_TYPENAME Traits::Point_3(p[0], p[1], p[2]))); 
+  return tr_.point_bounded_side_of_sphere_c(CGAL_AOS3_TYPENAME Traits::Sphere_point_3(CGAL_AOS3_TYPENAME Traits::Point_3(p[0], p[1], p[2])),
+					    a,
+					    sweep_coordinate()); 
 }
 
 

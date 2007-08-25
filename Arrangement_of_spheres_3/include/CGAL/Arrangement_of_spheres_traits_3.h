@@ -34,6 +34,9 @@ struct Arrangement_of_spheres_traits_3 {
 
     template <class T>
     void new_edge(T){}
+
+    template <class T>
+    void new_vertex(T){}
   };
 
 #ifdef CGAL_AOS3_USE_TEMPLATES
@@ -63,7 +66,7 @@ struct Arrangement_of_spheres_traits_3 {
   
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_line_intersection<This> Sphere_point_3;
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Event_point_3<This> Event_point_3;
-  typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_3_table CGAL_AOS3_TARG Table;
+  typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_3_table<This> Table;
   typedef CGAL_AOS3_TYPENAME Table::Key Sphere_3_key;
   typedef CGAL_AOS3_INTERNAL_NS::Function_kernel<This> Function_kernel;
   typedef CGAL::Kinetic::Default_simulator<Function_kernel> Simulator;
@@ -83,7 +86,7 @@ struct Arrangement_of_spheres_traits_3 {
   template <class It> 
   Arrangement_of_spheres_traits_3(It bs, It es): table_(new Table(bs, es)){
     //di_= table_->geometric_traits_object().intersect_3_object();
-    std::cout << *table_ << std::endl;
+    //std::cout << *table_ << std::endl;
   }
 
   Arrangement_of_spheres_traits_3(){}
@@ -121,10 +124,18 @@ struct Arrangement_of_spheres_traits_3 {
 		   table_->bbox_3().zmax());
   }
  
+
+  Plane_3 debug_separating_plane(Sphere_3_key a, Sphere_3_key b) const {
+    return table_->separating_plane(a,b);
+  }
+
+  Plane_3 debug_equipower_plane(Sphere_3_key a, Sphere_3_key b) const {
+    return table_->equipower_plane(a,b);
+  }
+
   /*
     Helpers -----------------------------------------------------------------
   */
-  Plane_3 rule_plane(Sphere_3_key a, Coordinate_index C) const;
   
 
   /* 
@@ -156,6 +167,7 @@ struct Arrangement_of_spheres_traits_3 {
 
   Event_point_3 sphere_intersect_rule_rule_event(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
 
+ 
   // not really used
   /*Quadratic_NT intersection_c(Sphere_3_key s, Line_3 l, Coordinate_index C) const;*/
 
@@ -168,65 +180,162 @@ struct Arrangement_of_spheres_traits_3 {
 
   bool intersects(Sphere_3_key a, Sphere_3_key b, Sphere_3_key c) const;
   
-  bool sphere_intersects_rule(Sphere_3_key sphere, Sphere_3_key rule_sphere, 
-			      Coordinate_index C) const;
+  /*bool sphere_intersects_rule(Sphere_3_key sphere, Sphere_3_key rule_sphere, 
+    Coordinate_index C) const;*/
   
-  bool sphere_intersects_rule(Sphere_3_key sphere, const Sphere_point_3& sp, 
-			      Coordinate_index C) const;
-  
-  bool sphere_intersects_sweep(Sphere_3_key sphere, const Sphere_point_3& ep) const;
-  
-
-  CGAL::Comparison_result compare_equipower_point_to_rule(Sphere_3_key sphere0,
-							  Sphere_3_key sphere1,
-							  const Sphere_point_3& sp,
-							  Coordinate_index C) const;
   /*
-  CGAL::Sign sign_of_separating_plane_normal_c(Sphere_3_key sphere0, Sphere_3_key sphere1,
-					       Coordinate_index C) const ;
-
-
-  CGAL::Sign sign_of_equipower_plane_normal_c(Sphere_3_key sphere0, Sphere_3_key sphere1, 
-					      Coordinate_index C) const;
-
-
-  CGAL::Oriented_side oriented_side_of_equipower_plane(Sphere_3_key sphere_0, Sphere_3_key sphere_1,
-						       const Sphere_point_3 &s) const;
+    returns true if the point is the the slab defined by the top and bottom (in C) 
+    of the sphere intersecting the sweep plane
   */
-  CGAL::Oriented_side oriented_side_of_separating_plane(Sphere_3_key sphere_0, Sphere_3_key sphere_1, 
-							const Sphere_point_3& sp) const ;
+  /*bool 
+  compare_point_to_circle_c(const Event_point_3 &point,
+			    Sphere_3_key sphere_for_slab,
+			    Coordinate_index C) const;
+
+  // warning, they switched
+  bool compare_center_to_circle_c(Sphere_3_key sphere_for_point, 
+				  const Event_point_3 &t,
+				  const Sphere_3_key sphere_for_sphere,
+				  Coordinate_index C) const;*/
+  
+
+  // 
+  CGAL::Comparison_result compare_point_to_circle_circle_c(const Sphere_point_3 &pt,
+						     Sphere_3_key sphere0,
+						     Sphere_3_key sphere1,
+						     Coordinate_index C) const;
+  
+  //
+  CGAL::Comparison_result compare_center_to_circle_circle_c(Sphere_3_key k,
+							    const Event_point_3 &t,
+							    Sphere_3_key sphere0,
+							    Sphere_3_key sphere1,
+							    Coordinate_index C) const;
+  //
+  CGAL::Comparison_result compare_point_to_circle_rule_c(const Sphere_point_3 &pt,
+							 Sphere_3_key sphere,
+							 Sphere_3_key rule,
+							 Coordinate_index rule_coordinate,
+							 Coordinate_index C) const;
+  //
+  CGAL::Comparison_result compare_center_to_circle_rule_c(Sphere_3_key center,
+							  const Sphere_point_3 &pt,
+							  Sphere_3_key sphere,
+							  Sphere_3_key rule,
+							  Coordinate_index rule_coordinate,
+							  Coordinate_index C) const;
+  
+  //
+  CGAL::Comparison_result compare_point_to_rule_c(const Sphere_point_3 &pt,
+						  Sphere_3_key rule,
+						  Coordinate_index rule_coordinate) const;
+  
+
+ 
+  //bool sphere_intersects_sweep(Sphere_3_key sphere, const Sphere_point_3& ep) const;
+  
+
+  /* CGAL::Comparison_result compare_point_to_equipower_point_c(const Sphere_point_3& sp,
+							     Sphere_3_key sphere0,
+							     Sphere_3_key sphere1,
+							     Coordinate_index C) const;
+
+  CGAL::Comparison_result compare_center_to_equipower_point_c(Sphere_3_key cen,
+							      Sphere_3_key sphere0,
+							      Sphere_3_key sphere1,
+							      Coordinate_index C) const;*/
+  //
+  CGAL::Comparison_result compare_point_to_equipower_line_c(const Sphere_point_3& sp,
+							    Sphere_3_key sphere0,
+							    Sphere_3_key sphere1,
+							    Coordinate_index C) const;
+  //
+  CGAL::Comparison_result compare_center_to_equipower_line_c(Sphere_3_key cen,
+							     const Event_point_3 &t,
+							     Sphere_3_key sphere0,
+							     Sphere_3_key sphere1,
+							     Coordinate_index C) const;
+
+
+  //
+  CGAL::Comparison_result compare_points_c(const Sphere_point_3& a,
+					   const Sphere_point_3& b,
+					   Coordinate_index C) const;
+
+  CGAL::Bounded_side point_bounded_side_of_sphere(const Sphere_point_3 &pt,
+						  Sphere_3_key sphere) const;
+  
+
+  CGAL::Bounded_side center_bounded_side_of_sphere(const Event_point_3 &t,
+						   Sphere_3_key pt,
+						   Sphere_3_key sphere) const;
+  
+
+  CGAL::Bounded_side point_bounded_side_of_sphere_c(const Sphere_point_3 &pt,
+						    Sphere_3_key sphere,
+						    Coordinate_index C) const;
+
+  CGAL::Bounded_side center_bounded_side_of_circle_c(Sphere_3_key k,
+						    const Event_point_3 &t,
+						    Sphere_3_key sphere,
+						    Coordinate_index C) const;
+
+
+  CGAL::Bounded_side rules_bounded_side_of_sphere(const Sphere_point_3 &t,
+						  Sphere_3_key x,
+						  Sphere_3_key y,
+						  Sphere_3_key sphere) const;
+
   
   CGAL::Comparison_result compare_sphere_centers_c(Sphere_3_key a, Sphere_3_key b, Coordinate_index C) const;
 
+
+ CGAL::Oriented_side point_oriented_side_of_separating_plane(const Sphere_point_3& sp,
+							      Sphere_3_key sphere_0, 
+							      Sphere_3_key sphere_1) const ;
+ 
+  CGAL::Oriented_side center_oriented_side_of_separating_plane(Sphere_3_key center,
+							       const Sphere_point_3& t,
+							       Sphere_3_key sphere_0, 
+							       Sphere_3_key sphere_1) const ;
+  
+
+protected:
+
+ 
+protected:
+  /*
+  bool sphere_over_rule(Sphere_3_key sphere, const Sphere_point_3& sp, 
+			      Coordinate_index C) const;
+ 
+  
+ 
+
   CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
 						  FT d,
-						  Coordinate_index C) const;
+						  Coordinate_index C) const;*/
 
-  CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
+  /*CGAL::Comparison_result compare_sphere_center_c(Sphere_3_key a,
 						  const Sphere_point_3& d,
-						  Coordinate_index C) const;
+						  Coordinate_index C) const;*/
+
+
   // return true if the interval defined by the sphere in C contains d.C
-  bool start_point_in_slab_c(Sphere_3_key sphere_for_slab, const Sphere_3_key sphere_for_point,
-			     Coordinate_index C) const;
-  
-   bool 
-   point_in_slab_c(Sphere_3_key sphere_for_slab, 
-		   const Event_point_3 &point,
-		   Coordinate_index C) const;
+   
+ 
 
-
-  CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
+  /*CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
 							 Sphere_3_key sphere0,
 							 Sphere_3_key Sphere1,
 							 const Sphere_point_3 &pt,
-							 Coordinate_index C) const;
+							 Coordinate_index C) const;*/
   
  
 
   // name sucks
   // Find the line which has as coordinate C pt[C] and gets it other coord
   // from planex. See if it is inside the sphere at t
-  CGAL::Bounded_side bounded_side_of_sphere_projected( const Sphere_point_3 &t,
+  /*CGAL::Bounded_side bounded_side_of_sphere_projected( const Sphere_point_3 &t,
 						       Sphere_3_key sphere,
 						       Sphere_3_key planex,
 						       const Sphere_point_3 &pt,
@@ -241,7 +350,7 @@ struct Arrangement_of_spheres_traits_3 {
   
   CGAL::Comparison_result compare_depths(const Sphere_point_3 &a, 
 					 const Sphere_point_3 &b) const;
-  
+  */
   CGAL::Oriented_side oriented_side(const Plane_3 &p,
 				    const Sphere_point_3 &pt) const;
 
@@ -255,7 +364,14 @@ struct Arrangement_of_spheres_traits_3 {
 					   typedef CGAL::Kinetic::Qt_widget_2<Simulator> Qt_gui;*/
   
 private:
+  Event_pair sphere_intersect_rule_rule_events(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
 
+  Event_pair circle_cross_rule_events(Sphere_3_key a, Sphere_3_key b,
+				      Sphere_3_key rs, Coordinate_index C) const;
+
+  Plane_3 rule_plane(Sphere_3_key a, Coordinate_index C) const;
+
+  Plane_3 const_c_plane(const Sphere_point_3 &pt, Coordinate_index C) const;
  
 
   //  HDS hds_;

@@ -7,30 +7,27 @@
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
-CGAL_AOS3_TEMPLATE
-class Sphere_3_table: public CGAL::Kinetic::Ref_counted<Sphere_3_table CGAL_AOS3_TARG > {
+template <class Traits_t>
+class Sphere_3_table: public CGAL::Kinetic::Ref_counted<Sphere_3_table<Traits_t> > {
 public:
-#ifdef CGAL_AOS3_USE_TEMPLATES
-  CGAL_AOS3_TRAITS;
-public:
+  typedef Traits_t Traits;
+  
   typedef typename Traits::Geom_traits Geom_traits;
-#else
-  typedef Arrangement_of_spheres_3_geom_traits Geom_traits;
-#endif
+
   typedef Sphere_key Key;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Sphere_3 Sphere_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::FT FT;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Point_3 Point_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Plane_3 Plane_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Vector_3 Vector_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Segment_3 Segment_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Line_3 Line_3;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Line_2 Line_2;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Point_2 Point_2;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Vector_2 Vector_2;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Circle_2 Circle_2;
-  typedef CGAL_AOS3_TYPENAME Geom_traits::Segment_2 Segment_2;
-  typedef CGAL_AOS3_TYPENAME std::vector<Sphere_3> Spheres;
+  typedef typename Geom_traits::Sphere_3 Sphere_3;
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_3 Point_3;
+  typedef typename Geom_traits::Plane_3 Plane_3;
+  typedef typename Geom_traits::Vector_3 Vector_3;
+  typedef typename Geom_traits::Segment_3 Segment_3;
+  typedef typename Geom_traits::Line_3 Line_3;
+  typedef typename Geom_traits::Line_2 Line_2;
+  typedef typename Geom_traits::Point_2 Point_2;
+  typedef typename Geom_traits::Vector_2 Vector_2;
+  typedef typename Geom_traits::Circle_2 Circle_2;
+  typedef typename Geom_traits::Segment_2 Segment_2;
+  typedef typename std::vector<Sphere_3> Spheres;
 
   struct Equal_centers_exception {
   };
@@ -61,14 +58,14 @@ public:
 
   CGAL_GETNR(unsigned int, size, return spheres_.size()-3);
 
-  CGAL_CONST_ITERATOR(Sphere_3, sphere_3, CGAL_AOS3_TYPENAME Spheres::const_iterator,
-		return spheres_.begin()+3,
-		return spheres_.end());
-
+  CGAL_CONST_ITERATOR(Sphere_3, sphere_3, typename Spheres::const_iterator,
+		      return spheres_.begin()+3,
+		      return spheres_.end());
+  
   Sphere_3 operator[](Key k) const {
     //CGAL_precondition(static_cast<unsigned int> (k.index()+4) < spheres_.size());
     //CGAL_precondition(k.index()+4 >= 0);
-    CGAL_check_bounds(static_cast<unsigned int>(k.internal_index()), 0U, spheres_.size());
+    CGAL_check_bounds(static_cast<unsigned int>(k.internal_index()), static_cast<unsigned int>(0U), spheres_.size());
     return spheres_[k.internal_index()];
   }
 
@@ -122,8 +119,9 @@ public:
   // point from the second to the first
   Plane_3 equipower_plane(Key a, Key b) const ;
   
-  // point from the second to the first
   Point_3 equipower_point(Key a, Key b) const ;
+
+  Line_3 equipower_line(Key a, Key b) const ;
 
   Point_3 center(Key ind) const;
   FT squared_radius(Key ind) const;
@@ -138,8 +136,8 @@ public:
     event data, not really appropriate, but it is the best place to put it
    */
   struct Event_pair_data {
-    typedef CGAL_AOS3_TYPENAME Traits::Event_point_3 EP;
-    Event_pair_data():i_(-1){}
+    typedef typename Traits::Event_point_3 EP;
+    Event_pair_data():index_(-1){}
     int index_;
     EP events_[2];
   };
@@ -147,41 +145,47 @@ public:
     Event_pair_data srr_events_;
   };
   struct UPair_data {
-    typedef CGAL_AOS3_TYPENAME Traits::Event_point_3 EP;
+    typedef typename Traits::Event_point_3 EP;
     struct KC_pair{
       typedef KC_pair This;
       KC_pair(Key k, Coordinate_index c): k_(k), c_(c){};
       Key k_;
       Coordinate_index c_;
-      CGAL_COMPARISONS_2(k_, c_);
+      CGAL_COMPARISONS2(k_, c_);
     };
     
     std::map<KC_pair, Event_pair_data> cxr_events_;
   };
   
 
+  UPair_data &upair_data(const Sphere_key_upair &t) {
+    return upair_data_[t];
+  }
 
-  std::map<CGAL_AOS3_TYPENAME Sphere_3_key::Triple, Event_pair_data> triple_data_;
-  std::map<CGAL_AOS3_TYPENAME Sphere_3_key::UPair, UPair_data> upair_data_;
+  Triple_data &triple_data(const Sphere_key_triple &t) {
+    return triple_data_[t];
+  }
+
+
+
+
+  std::map< Sphere_key_triple, Triple_data> triple_data_;
+  std::map< Sphere_key_upair, UPair_data> upair_data_;
 
   Spheres spheres_;
   bool has_temp_;
 
   Geom_traits t_;
-  CGAL_AOS3_TYPENAME Geom_traits::Intersect_3 di_;
+  typename Geom_traits::Intersect_3 di_;
   Bbox_3 bbox_;
 };
-#ifdef CGAL_AOS3_USE_TEMPLATES
+
 CGAL_OUTPUT1(Sphere_3_table);
-#else
-CGAL_OUTPUT(Sphere_3_table);
-#endif
+
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 
-#ifdef CGAL_AOS3_USE_TEMPLATES
 #include <CGAL/Arrangement_of_spheres_3/Sphere_3_table_impl.h>
 
-#endif
 
 #endif

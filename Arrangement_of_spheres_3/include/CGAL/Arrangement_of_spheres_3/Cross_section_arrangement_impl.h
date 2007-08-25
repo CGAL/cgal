@@ -553,8 +553,8 @@ Cross_section_arrangement CGAL_AOS3_TARG::point(CArr::Vertex_const_handle h) con
     } 
     if (fa.key() == fb.key() && fa.key().is_input() && fb.key().is_input()) {
       Rule_direction ri;
-      if (fa.is_rule()) ri= fa.rule_direction();
-      else ri= fb.rule_direction();
+      if (fa.is_rule()) ri= fa.rule_outward_direction();
+      else ri= fb.rule_outward_direction();
       pv= Point::make_extremum(fa.key(), ri);
     } else {
       pv=Point(fa, fb);

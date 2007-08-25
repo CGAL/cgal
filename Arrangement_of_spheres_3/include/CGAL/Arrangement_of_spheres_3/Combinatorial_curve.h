@@ -31,13 +31,7 @@ struct Combinatorial_curve{
 
   typedef Sphere_key Key;
 
-  static Combinatorial_curve make_special(Key i) {
-    return Combinatorial_curve(i, SPECIAL);
-  }
-
-  bool is_special() const {
-    return pt_==SPECIAL;
-  }
+ 
 
   void audit(unsigned int numvert) const;
 
@@ -59,9 +53,10 @@ struct Combinatorial_curve{
     CGAL_precondition(!is_finite());
     }*/
   Combinatorial_curve():pt_(INVALID){}
+
   bool is_valid() const ;
 
-  const Combinatorial_curve other_side() const;
+  const Combinatorial_curve opposite() const;
   /*bool is_special() const {
     return pt_== SPECIAL;
     }*/
@@ -69,12 +64,6 @@ struct Combinatorial_curve{
   bool is_inside() const {
     return pt_&IN_BIT;
   }
-  void set_is_inside(bool tf) {
-    if (tf) pt_= pt_| IN_BIT;
-    else pt_= pt_ & (~IN_BIT);
-  }
-
-  const Combinatorial_curve strip_inside() const ;
 
   bool is_top() const {
     return pt_ & T_BIT;
@@ -100,8 +89,6 @@ struct Combinatorial_curve{
   Coordinate_index
   constant_coordinate() const ;
 
-  bool is_same_part(const Combinatorial_curve &o) const;
-
   bool can_intersect(int t) const;
 
   int quadrant() const;
@@ -111,24 +98,15 @@ struct Combinatorial_curve{
     return static_cast<Part>(pt_);
   }
 
-  void flip_rule(Key k);
-
   bool is_rule() const {
     return ! is_arc();
   }
-  bool is_negative() const {
-    return pt_&L_BIT || pt_&B_BIT;
-  }
+ 
   bool is_finite() const {
     return index_.is_input(); //! (pt_ & INF_BIT);
   }
   bool is_arc() const ;
   bool is_vertical() const ;
-
-  bool is_same_side(Combinatorial_curve o) const ;
-
-  static Rule_direction rule_direction(const Combinatorial_curve &a,
-				       const Combinatorial_curve &b) ;
 
   CGAL_COMPARISONS2(index_, pt_);
 
@@ -136,13 +114,11 @@ struct Combinatorial_curve{
 
   bool is_compatible_location(int i) const;
 
-
-
   Coordinate_index is_weakly_incompatible(int i) const ;
 
-  Rule_direction rule_direction() const;
+  Rule_direction rule_outward_direction() const;
 
-  Rule_direction direction() const;
+  Rule_direction halfedge_direction() const;
 
   int arc_index() const;
 
@@ -155,9 +131,43 @@ struct Combinatorial_curve{
     return to_string(pt_);
   }
 
-  bool is_outward_rule() const ;
+
+  bool is_negative() const {
+    return pt_&L_BIT || pt_&B_BIT;
+  }
   
+  bool is_same_side(Combinatorial_curve o) const ;
+
+  // Used when building from arrangement
+  void set_is_inside(bool tf) {
+    if (tf) pt_= pt_| IN_BIT;
+    else pt_= pt_ & (~IN_BIT);
+  }
+   
 private:
+  bool is_outward_rule() const ;
+
+  static Rule_direction rule_direction(const Combinatorial_curve &a,
+				       const Combinatorial_curve &b) ;
+
+
+
+  void flip_rule(Key k);
+
+
+  bool is_same_part(const Combinatorial_curve &o) const;
+
+  static Combinatorial_curve make_special(Key i) {
+    return Combinatorial_curve(i, SPECIAL);
+  }
+
+  bool is_special() const {
+    return pt_==SPECIAL;
+  }
+
+
+  const Combinatorial_curve strip_inside() const ;
+
 
   Combinatorial_curve(Key i, int pt, bool): index_(i), pt_(pt){
   }

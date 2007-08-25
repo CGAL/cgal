@@ -47,44 +47,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::set_halfedge(Halfedge_handle h){
   halfedges_[h->curve().key().input_index()] = h;
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle 
-Combinatorial_cross_section CGAL_AOS3_TARG::next_edge_on_rule(Halfedge_handle h) const {
-  CGAL_precondition(h== Halfedge_handle() || is_valid(h));
-  CGAL_precondition(h->curve().is_rule());
-  if (!h->vertex()->point().is_rule_rule()) return Halfedge_handle();
-  //int deg = degree(h->vertex());
-  Halfedge_handle r= h->next();
-  do {
-    if (r->curve().constant_coordinate() == h->curve().constant_coordinate()) {
-      return r;
-    }
-    r=r->opposite()->next();
-  } while (r != h->opposite());
-  return Halfedge_handle();
-}
 
-
-
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle 
-Combinatorial_cross_section CGAL_AOS3_TARG::next_edge_on_arc(Halfedge_handle h) const {
-  CGAL_precondition(h== Halfedge_handle() || is_valid(h));
-  CGAL_precondition(h->curve().is_arc());
-  Halfedge_handle r= h->next();
-  do {
-    if (h->curve().is_arc() == r->curve().is_arc()
-	&& h->curve().key() == r->curve().key()) {
-      CGAL_assertion(h->curve().is_inside()
-		     == r->curve().is_inside());
-      return r;
-    }
-    r=r->opposite()->next();
-    CGAL_assertion(r!= h->opposite());
-  } while (true);
-  CGAL_assertion(0);
-  return Halfedge_handle();
-}
 
 
 CGAL_AOS3_TEMPLATE
@@ -285,6 +248,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::join_face(Halfedge_handle h, bool cl
 
   Face_handle f= h->face();
   v_.on_delete_edge(h);
+  v_.on_merge_faces(h);
 
   Vertex_handle s= h->vertex();
   Vertex_handle t= h->opposite()->vertex();
@@ -464,6 +428,10 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_vertex(Vertex_handle v,
   connect(k, in);
   connect(hp, j);
   //v_.on_new_edge(j);
+  if (v->point().is_sphere_extremum()) {
+    if (!k->vertex()->point().is_sphere_extremum()) set_curve(k, next_edge_on_circle(k)->curve());
+    if (!h->vertex()->point().is_sphere_extremum()) set_curve(h, next_edge_on_circle(h)->curve());
+  }
 
   if (k->curve().is_arc() && k->vertex()->point().is_sphere_extremum()
       && k->curve().is_inside()) {
@@ -592,7 +560,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
     }*/
 
 
-  Face_handle f= hds_.faces_push_back(HDS::Face());
+  Face_handle f= hds_.faces_push_back(CGAL_AOS3_TYPENAME HDS::Face());
   Vertex_handle vhs[4];
   for (unsigned int i=0; i< 4; ++i) {
     vhs[i]= new_vertex(Point::make_extremum(k, Rule_direction(i)));
@@ -964,7 +932,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit_vertex(Vertex_const_handl
   CGAL_assertion(!curves.empty());
   CGAL_assertion(curves.size() != 1);
   if (curves.size() ==2) {
-    if (/*curves[0]== curves[1] ||*/ curves[0].other_side() == curves[1]){
+    if (/*curves[0]== curves[1] ||*/ curves[0].opposite() == curves[1]){
       /* There should never be a rule with an unused vertex in it */
       std::cerr << "Warning, collinear vertex in " << curves[0] << std::endl;
       std::cerr << v->point() << std::endl;
@@ -1089,12 +1057,12 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle h= it;
     CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle ho= it->opposite();
 
-    if (it->next() == HDS::Halfedge_handle()) {
+    if (it->next() == CGAL_AOS3_TYPENAME HDS::Halfedge_handle()) {
       std::cerr<< "Invalid next for ";
       write(it, std::cerr) << std::endl;
       errors_.push_back(it->curve());
     }
-    if (it->prev() == HDS::Halfedge_handle()) {
+    if (it->prev() == CGAL_AOS3_TYPENAME HDS::Halfedge_handle()) {
       std::cerr<< "Invalid prev for ";
       write(it, std::cerr) << std::endl;
       errors_.push_back(it->curve());
@@ -1114,9 +1082,31 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     }
 
     if (it->curve().is_arc()) {
-      CGAL_assertion(next_edge_on_arc(it) != Halfedge_handle());
-      CGAL_assertion(next_edge_on_arc(it->opposite()) != Halfedge_handle());
+      CGAL_assertion(next_edge_on_circle(it) != Halfedge_handle());
+      CGAL_assertion(next_edge_on_circle(it->opposite()) != Halfedge_handle());
       CGAL_assertion(halfedges_[it->curve().key().input_index()] != Halfedge_handle());
+      Halfedge_const_handle hi=it;
+      if (hi->curve().is_inside()) hi= hi->opposite();
+      Halfedge_const_handle hin= next_edge_on_circle(hi);
+      if (hi->vertex()->point().is_sphere_extremum()){
+	if (hi->curve().is_top() && hi->curve().is_right()) {
+	  CGAL_assertion(hin->curve().is_bottom() && hin->curve().is_right());
+
+	} else if (hi->curve().is_bottom() && hi->curve().is_right()) {
+	  CGAL_assertion(hin->curve().is_bottom() && hin->curve().is_left());
+
+	} else if (hi->curve().is_bottom() && hi->curve().is_left()) {
+	  CGAL_assertion(hin->curve().is_top() && hin->curve().is_left());
+
+	} else if (hi->curve().is_top() && hi->curve().is_left()) {
+	  CGAL_assertion(hin->curve().is_top() && hin->curve().is_right());
+
+	} else {
+	  CGAL_assertion(0);
+	}
+      } else {
+	CGAL_assertion(hi->curve() == hin->curve());
+      }
     }
       
     CGAL_assertion(it->curve().key().is_target() || it->curve().is_valid());
@@ -1230,7 +1220,7 @@ std::ostream &Combinatorial_cross_section CGAL_AOS3_TARG::write(Vertex_const_han
 CGAL_AOS3_TEMPLATE
 std::ostream &Combinatorial_cross_section CGAL_AOS3_TARG::write(Halfedge_const_handle h, 
 					  std::ostream &out) const {
-  CGAL_precondition(is_valid(h));
+  CGAL_precondition(h== Halfedge_handle() || is_valid(h));
   if (h == Halfedge_const_handle()) out << "NULL";
   else {
     out << h->opposite()->vertex()->point() << " -- " << h->curve()
@@ -1261,18 +1251,18 @@ std::ostream &Combinatorial_cross_section CGAL_AOS3_TARG::write(std::ostream &ou
   out << "inf=" <<  reinterpret_cast<const void*>(&*inf_) << std::endl;
   out << hds_.size_of_vertices() << " " << hds_.size_of_halfedges() 
       << " " << hds_.size_of_faces() << std::endl;
-  for (CGAL_AOS3_TYPENAME Halfedge_const_iterator it= halfedges_begin(); it != halfedges_end();
+  for ( Halfedge_const_iterator it= halfedges_begin(); it != halfedges_end();
        ++it) {
     write(it, out) << ": " << reinterpret_cast<const void*>(&*it->face()) << std::endl;
   }
 
-  for (CGAL_AOS3_TYPENAME Face_const_iterator it= faces_begin(); it != faces_end();
+  for ( Face_const_iterator it= faces_begin(); it != faces_end();
        ++it) {
     out << reinterpret_cast<const void*>(&*it) << ": ";
     write(it, out) << std::endl;
   }
 
-  for (CGAL_AOS3_TYPENAME Vertex_const_iterator it= vertices_begin(); it != vertices_end();
+  for ( Vertex_const_iterator it= vertices_begin(); it != vertices_end();
        ++it) {
     out << it->point() << ": ";
     write(it->halfedge(), out) << std::endl;
@@ -1390,7 +1380,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_halfedge( Curve ff){
   CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle h=hds_.edges_push_back(CGAL_AOS3_TYPENAME HDS::Halfedge(),
 											  CGAL_AOS3_TYPENAME HDS::Halfedge());
   h->set_curve(ff);
-  h->opposite()->set_curve(ff.other_side());
+  h->opposite()->set_curve(ff.opposite());
   return h;
 }
 
@@ -1479,7 +1469,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_halfedge( Curve ff){
 CGAL_AOS3_TEMPLATE
 void Combinatorial_cross_section CGAL_AOS3_TARG::init_halfedge(Halfedge_handle h, Curve c) {
   h->set_curve(c);
-  h->opposite()->set_curve(c.other_side());
+  h->opposite()->set_curve(c.opposite());
   h->set_event(Event_key());
   h->opposite()->set_event(Event_key());
 }
@@ -1689,7 +1679,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::halfedge(Vertex_handle v, Face_handl
 
 CGAL_AOS3_TEMPLATE
 void
-CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::swap_curves(Halfedge_handle ha, 
+Combinatorial_cross_section CGAL_AOS3_TARG::swap_curves(Halfedge_handle ha, 
 									   Halfedge_handle hb) {
  CGAL_precondition(is_valid(ha));
  CGAL_precondition(is_valid(hb));
@@ -1708,8 +1698,8 @@ CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::swap_curves(Halfe
 
 CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Face_handle 
-CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::intersect_arcs(Halfedge_handle hl,
-										Halfedge_handle hk) {
+Combinatorial_cross_section CGAL_AOS3_TARG::intersect_arcs(Halfedge_handle hl,
+							   Halfedge_handle hk) {
    CGAL_precondition(is_valid(hl));
  CGAL_precondition(is_valid(hk));
   v_.on_delete_edge(hl);
@@ -1759,17 +1749,17 @@ CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::intersect_arcs(Ha
 
 CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Face_handle 
-CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::unintersect_arcs(Halfedge_handle hl,
-										Halfedge_handle hk) {
- CGAL_precondition(is_valid(hl));
- CGAL_precondition(is_valid(hk));
+Combinatorial_cross_section CGAL_AOS3_TARG::unintersect_arcs(Halfedge_handle hl,
+							     Halfedge_handle hk) {
+  CGAL_precondition(is_valid(hl));
+  CGAL_precondition(is_valid(hk));
 
   v_.on_delete_edge(hl);
   v_.on_delete_edge(hk);
-  v_.on_delete_edge(next_edge_on_arc(hl));
-  v_.on_delete_edge(next_edge_on_arc(hl->opposite()));
-  v_.on_delete_edge(next_edge_on_arc(hk));
-  v_.on_delete_edge(next_edge_on_arc(hk->opposite()));
+  v_.on_delete_edge(next_edge_on_circle(hl));
+  v_.on_delete_edge(next_edge_on_circle(hl->opposite()));
+  v_.on_delete_edge(next_edge_on_circle(hk));
+  v_.on_delete_edge(next_edge_on_circle(hk->opposite()));
   swap_curves(hl, hk->opposite());
   Halfedge_handle gk= hk->opposite()->prev()->opposite()->prev();
   //CGAL_precondition(hk->vertex()->point() == hk->opposite()->vertex()->point());
@@ -1794,7 +1784,7 @@ CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::unintersect_arcs(
 
 CGAL_AOS3_TEMPLATE
 void
-CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::handle_new_edges(std::vector<Halfedge_handle>& edges) {
+Combinatorial_cross_section CGAL_AOS3_TARG::handle_new_edges(std::vector<Halfedge_handle>& edges) {
   std::cout << "Handling edges: ";
   for (unsigned int i= 0; i< edges.size(); ++i) {
     write(edges[i], std::cout) << ", ";

@@ -197,13 +197,13 @@ inline Coordinate_index Combinatorial_curve::is_weakly_incompatible(int i) const
   else return Coordinate_index();
 }
 
-inline Rule_direction Combinatorial_curve::rule_direction() const {
+inline Rule_direction Combinatorial_curve::rule_outward_direction() const {
   CGAL_precondition(is_rule());
   Rule_direction ret= Rule_direction::make_from_part(pt_&(R_BIT | L_BIT | T_BIT|B_BIT));
   return ret;
 }
 
-inline Rule_direction Combinatorial_curve::direction() const {
+inline Rule_direction Combinatorial_curve::halfedge_direction() const {
   CGAL_precondition(is_rule());
   if (is_vertical()) {
     if (is_inside()) return Rule_direction(1);
@@ -268,7 +268,7 @@ inline const Combinatorial_curve Combinatorial_curve::strip_inside() const {
   return ret;
 }
 
-inline const Combinatorial_curve Combinatorial_curve::other_side() const {
+inline const Combinatorial_curve Combinatorial_curve::opposite() const {
   Combinatorial_curve ret=*this;
   ret.set_is_inside(!is_inside());
   CGAL_assertion(!(is_inside() && ret.is_inside()));
@@ -301,12 +301,14 @@ inline void Combinatorial_curve::audit(unsigned int numv) const {
 
 
 inline bool Combinatorial_curve::is_outward_rule() const {
-  CGAL_precondition(is_rule());
+  CGAL_assertion(0);
+  /*CGAL_precondition(is_rule());
   switch (rule_direction().is_outwards()) {
     return !is_inside();
   default:
     return is_inside();
-  }
+    }*/
+  return true;
 }
   
 CGAL_AOS3_END_INTERNAL_NAMESPACE

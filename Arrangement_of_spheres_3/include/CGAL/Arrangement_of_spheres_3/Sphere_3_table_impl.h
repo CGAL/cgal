@@ -1,3 +1,7 @@
+#ifndef CGAL_AOS3_SPHERE_3_TABLE_IMPL_H
+#define CGAL_AOS3_SPHERE_3_TABLE_IMPL_H
+
+
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_3_table.h>
 
@@ -6,16 +10,16 @@
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
-CGAL_AOS3_TEMPLATE
-void Sphere_3_table CGAL_AOS3_TARG::initialize_1() {
+template <class Traits_t>
+void Sphere_3_table<Traits_t>::initialize_1() {
   di_ = geom_traits_object().intersect_3_object();
   spheres_.push_back(Sphere_3());
   spheres_.push_back(Sphere_3());
   spheres_.push_back(Sphere_3());
 }
 
-CGAL_AOS3_TEMPLATE
-void Sphere_3_table CGAL_AOS3_TARG::initialize_2() {
+template <class Traits_t>
+void Sphere_3_table<Traits_t>::initialize_2() {
   bbox_= CGAL::Bbox_3(std::numeric_limits<double>::max(),
 		      std::numeric_limits<double>::max(),
 		      std::numeric_limits<double>::max(),
@@ -39,8 +43,8 @@ void Sphere_3_table CGAL_AOS3_TARG::initialize_2() {
 }
 
 
-CGAL_AOS3_TEMPLATE
-std::ostream &Sphere_3_table CGAL_AOS3_TARG::write(std::ostream &out) const {
+template <class Traits_t>
+std::ostream &Sphere_3_table<Traits_t>::write(std::ostream &out) const {
   out << "Spheres:\n";
   out << Key(Key::BL) << ": " << operator[](Key(Key::BL)) << "\n";
   out << Key(Key::TR) << ": " << operator[](Key(Key::TR)) << "\n";
@@ -58,45 +62,45 @@ std::ostream &Sphere_3_table CGAL_AOS3_TARG::write(std::ostream &out) const {
 
 
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Point_3 
-Sphere_3_table CGAL_AOS3_TARG::center(Key a) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::Point_3 
+Sphere_3_table<Traits_t>::center(Key a) const {
   return sphere(a).center();
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::FT 
-Sphere_3_table CGAL_AOS3_TARG::squared_radius(Key a) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::FT 
+Sphere_3_table<Traits_t>::squared_radius(Key a) const {
   return sphere(a).squared_radius();
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Plane_3 
-Sphere_3_table CGAL_AOS3_TARG::separating_plane(Key a, Key b) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::Plane_3 
+Sphere_3_table<Traits_t>::separating_plane(Key a, Key b) const {
   Vector_3 d(center(b)-center(a));
   FT nv[3];
   nv[plane_coordinate(0).index()]=-d[plane_coordinate(1).index()];
   nv[plane_coordinate(1).index()]= d[plane_coordinate(0).index()];
   nv[sweep_coordinate().index()]=0;
-  Vector_3 n(nv[0], nv[1], nv[2]);
+  Vector_3 n(-nv[0], -nv[1], -nv[2]);
   Plane_3 plane(center(b), n);
   std::cout << "The plane for " << a << " and " << b << " is " << plane << std::endl;
   return plane;
 }
 
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Plane_3 
-Sphere_3_table CGAL_AOS3_TARG::equipower_plane(Key a, Key b) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::Plane_3 
+Sphere_3_table<Traits_t>::equipower_plane(Key a, Key b) const {
   CGAL_precondition(a != b);
   Vector_3 n=2*(center(a)-center(b));
   FT d= discriminant(b) - discriminant(a);
   return Plane_3(n[0], n[1], n[2], d);
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Point_3 
-Sphere_3_table CGAL_AOS3_TARG::equipower_point(Key a, Key b) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::Point_3 
+Sphere_3_table<Traits_t>::equipower_point(Key a, Key b) const {
   Plane_3 eqp= equipower_plane(a,b);
   Line_3 l(center(a), (center(a)-center(b)));
   CGAL::Object o= di_(eqp, l);
@@ -111,17 +115,34 @@ Sphere_3_table CGAL_AOS3_TARG::equipower_point(Key a, Key b) const {
   }
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::FT 
-Sphere_3_table CGAL_AOS3_TARG::discriminant(Key i) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::Line_3 
+Sphere_3_table<Traits_t>::equipower_line(Key a, Key b) const {
+  Plane_3 eqp= equipower_plane(a,b);
+  Plane_3 op(center(a), center(b), center(a)+sweep_vector<Vector_3>());
+  Object o= di_(eqp, op);
+  Line_3 l;
+  if (assign(l,o)) {
+    return l;
+  } else {
+    CGAL_assertion(0);
+    return l;
+  }
+}
+
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::FT 
+Sphere_3_table<Traits_t>::discriminant(Key i) const {
   Vector_3 v= center(i)-CGAL::ORIGIN;
   return v*v - sphere(i).squared_radius();
 }
 
 
-CGAL_AOS3_TEMPLATE
-CGAL_AOS3_TYPENAME Sphere_3_table CGAL_AOS3_TARG::Sphere_3 Sphere_3_table CGAL_AOS3_TARG::sphere(Key ind) const {
+template <class Traits_t>
+typename Sphere_3_table<Traits_t>::Sphere_3 Sphere_3_table<Traits_t>::sphere(Key ind) const {
   return spheres_[ind.internal_index()];
 }
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE
+
+#endif

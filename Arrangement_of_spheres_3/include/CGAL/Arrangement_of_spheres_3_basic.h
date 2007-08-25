@@ -4,6 +4,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/CORE_BigRat.h>
 //#define CGAL_ARRANGEMENT_OF_SPHERES_3_USE_TEMPLATES
 
 
@@ -28,7 +30,7 @@
  
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 //
-struct Arrangement_of_spheres_3_geom_traits: Cartesian<CGAL::Gmpq>{};
+struct Arrangement_of_spheres_3_geom_traits: Cartesian<Gmpq>{};
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 
 #include <CGAL/Arrangement_of_spheres_traits_3.h>

@@ -269,7 +269,7 @@ public:
       dirty.push_back((*fb)->next());
       Halfedge_handle h= hdsd.split_face(*ib, *fb);
       h->set_curve(*cb);
-      h->opposite()->set_curve(cb->other_side());
+      h->opposite()->set_curve(cb->opposite());
       
       dirty.push_back(h);
       
@@ -324,8 +324,9 @@ public:
       v_.on_delete_edge(*c);
       v_.on_merge_faces(*c);
       Halfedge_handle n= (*c)->next();
-      v_.on_delete_edge(n);
-      v_.on_delete_edge(n->prev());
+      //v_.on_delete_edge(n);
+      //v_.on_delete_edge(n->prev());
+
       //Halfedge_handle p= (*c)->prev();
       hdsd.join_face(*c);
       //dirty.push_back(n);
@@ -343,12 +344,12 @@ public:
     Halfedge_handle h2n= h2->next();
     if (h1n == h2->opposite()) h1n= Halfedge_handle();
     else {
-      v_.on_delete_edge(h1n);
+      //v_.on_delete_edge(h1n);
       //dirty.push_back(h1n);
     }
     if (h2n == h1->opposite()) h2n= Halfedge_handle();
     else {
-      v_.on_delete_edge(h2n);
+      //v_.on_delete_edge(h2n);
       //dirty.push_back(h2n);
     }
 
@@ -360,15 +361,28 @@ public:
     Face_handle f= h1->face();
     Face_handle of= h1->opposite()->face();
 
+
+    // h1,h2 point out
     if (h1->prev() != h2->opposite()) {
       inside = h1->prev();
     } else if (h2->prev() != h1->opposite()) {
       inside= h2->prev();
+    } else {
+      std::cout << "Single vertex remaining" << std::endl;
+      h1->opposite()->vertex()->set_halfedge(Halfedge_handle());
     }
     if (h1->next() != h2->opposite()) {
       outside= h1->next();
     } else if (h2->next() != h1->opposite()) {
       outside= h2->next();
+    }
+
+    h1->opposite()->prev()->vertex()->set_halfedge(h1->opposite()->prev());
+    h2->opposite()->prev()->vertex()->set_halfedge(h2->opposite()->prev());
+
+    if (inside != Halfedge_handle()) {
+      h1->prev()->vertex()->set_halfedge(h1->prev());
+      h2->prev()->vertex()->set_halfedge(h2->prev());
     }
 
     connect(h1->opposite()->prev(), h1->next());
@@ -401,14 +415,8 @@ public:
     delete_edge(h1);
     delete_edge(h2);
     
-    if (h1n != Halfedge_handle()) {
-      v_.on_change_edge(h1n);
-      v_.on_change_edge(h1n->prev());
-    }
-    if (h2n != Halfedge_handle()) {
-      v_.on_change_edge(h2n);
-      v_.on_change_edge(h2n->prev());
-    }
+    Halfedge_handle ho=h1n;
+    if (ho== Halfedge_handle()) ho=h2n;
 
     if (clean) {
       Halfedge_handle c= outside; 
@@ -420,6 +428,23 @@ public:
 	}
       } while (c != outside);
     }
+    {
+      Halfedge_handle c= f->halfedge(); 
+      do {
+	v_.on_change_edge(c);
+	c=c->next();
+      } while (c != outside);
+    }
+    /* // not efficient and not isolated
+    if (h1n != Halfedge_handle()) {
+      v_.on_change_edge(h1n);
+      v_.on_change_edge(h1n->prev());
+    }
+    if (h2n != Halfedge_handle()) {
+      v_.on_change_edge(h2n);
+      v_.on_change_edge(h2n->prev());
+    }
+    */
 
     write(std::cout);
     /* std::cout << "Auditing const decorator..." << std::flush;
@@ -457,7 +482,7 @@ public:
 
   void set_curve(Halfedge_handle h, Curve c) const {
     h->set_curve(c);
-    h->opposite()->set_curve(c.other_side());
+    h->opposite()->set_curve(c.opposite());
   }
 
   Halfedge_handle remove_vertex(Vertex_handle v);
@@ -470,8 +495,46 @@ public:
 
   Halfedge_handle halfedge(Vertex_handle v, Face_handle f) const ;
 
-  Halfedge_handle next_edge_on_arc(Halfedge_handle) const;
-  Halfedge_handle next_edge_on_rule(Halfedge_handle) const;
+
+
+
+  template <class HH>
+  HH next_edge_on_circle(HH h) const {
+    CGAL_precondition(h== HH() || is_valid(h));
+    CGAL_precondition(h->curve().is_arc());
+    HH r= h->next();
+    do {
+      if (h->curve().is_arc() == r->curve().is_arc()
+	  && h->curve().key() == r->curve().key()) {
+	CGAL_assertion(h->curve().is_inside()
+		     == r->curve().is_inside());
+	return r;
+      }
+      r=r->opposite()->next();
+      CGAL_assertion(r!= h->opposite());
+    } while (true);
+    CGAL_assertion(0);
+    return HH();
+  }
+
+
+
+
+  template <class HH>
+  HH next_edge_on_rule(HH h) const {
+    CGAL_precondition(h== HH() || is_valid(h));
+    CGAL_precondition(h->curve().is_rule());
+    if (!h->vertex()->point().is_rule_rule()) return HH();
+    //int deg = degree(h->vertex());
+    HH r= h->next();
+    do {
+      if (r->curve().constant_coordinate() == h->curve().constant_coordinate()) {
+	return r;
+      }
+      r=r->opposite()->next();
+    } while (r != h->opposite());
+    return HH();
+  }
 
   // an outward facing edge
   Halfedge_handle cross_edge(Halfedge_handle) const;

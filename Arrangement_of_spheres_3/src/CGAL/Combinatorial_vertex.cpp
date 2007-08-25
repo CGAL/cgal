@@ -73,7 +73,7 @@ Combinatorial_vertex::make_special(Combinatorial_curve::Key i) {
 
  Rule_direction Combinatorial_vertex::sphere_extremum_index() const {
   CGAL_precondition(is_sphere_extremum());
-  if (rule_coordinate() == plane_coordinate(1)){
+  if (rule_constant_coordinate() == plane_coordinate(1)){
     if (!is_smaller()) return Rule_direction(0);
     else return Rule_direction(2);
   } else {
@@ -109,7 +109,7 @@ Combinatorial_vertex::make_special(Combinatorial_curve::Key i) {
     }
   } else if (type_ & SR_BIT) {
    
-    if (rule_coordinate() == plane_coordinate(0)){
+    if (rule_constant_coordinate() == plane_coordinate(0)){
       out << rule_key() << "," << sphere_key() << "s";
     } else {
       out << sphere_key() << "s," << rule_key();

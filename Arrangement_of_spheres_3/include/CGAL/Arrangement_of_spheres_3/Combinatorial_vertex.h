@@ -27,9 +27,6 @@ public:
 
   Combinatorial_vertex(): type_(INVALID){}
 
-  static Combinatorial_vertex make_special(Combinatorial_curve::Key i) ;
-
-
 
   static Combinatorial_vertex make_extremum(Key k,
 					    Rule_direction dir) ;
@@ -59,9 +56,7 @@ public:
     else return SS;
     }*/
 
-  CGAL_IS(smaller,  
-		  CGAL_precondition(is_sphere_rule());
-		  return type_&SMALLER_BIT);
+ 
   CGAL_IS(sphere_sphere,
 		  return type_&SS_BIT);
   CGAL_IS(sphere_rule,
@@ -74,16 +69,16 @@ public:
   bool is_special() const;
   
   CGAL_GETNR(Combinatorial_curve::Coordinate_index,
-		     rule_coordinate,
-		     CGAL_precondition(is_sphere_rule());
-		     return plane_coordinate(type_&R_BIT));
-
+	     rule_constant_coordinate,
+	     CGAL_precondition(is_sphere_rule());
+	     return plane_coordinate(type_&R_BIT));
+  
   CGAL_GET(Combinatorial_curve::Key,
-		   sphere_key,
-		   CGAL_precondition(is_sphere_rule());
-		   if (type_&R_BIT) return k_[0];
-		   else return k_[1]);
-
+	   sphere_key,
+	   CGAL_precondition(is_sphere_rule());
+	   if (type_&R_BIT) return k_[0];
+	   else return k_[1]);
+  
   Combinatorial_curve::Key rule_key() const {
     CGAL_precondition(is_sphere_rule());
     if (type_&R_BIT) return k_[1];
@@ -106,47 +101,16 @@ public:
     return k_[i];
   }
 
-  void set_key(Combinatorial_curve::Key k) {
-    CGAL_precondition(is_sphere_extremum());
-    k_[0]=k;
-    k_[1]=k;
-  }
-
-
   void set_rule_key(Combinatorial_curve::Key k) {
     CGAL_precondition(is_sphere_rule());
     if (type_&R_BIT) k_[1]=k;
     else k_[0]=k;
   }
 
-  void swap_key(Combinatorial_curve::Key a, Combinatorial_curve::Key b) {
-    if (k_[0]==a) k_[0]=b;
-    if (k_[1]==a) k_[1]=b;
-  }
-
+ 
   Combinatorial_curve::Key other_key(Combinatorial_curve::Key a) const {
     if (k_[0]== a) return k_[1];
     else return k_[0];
-  }
-
-  Coordinate_index other_curve_constant_coordinate(Combinatorial_curve a) const {
-    CGAL_precondition(is_sphere_rule() || is_rule_rule());
-    if (a.is_arc()) {
-      return rule_coordinate();
-    } else {
-      CGAL_precondition(is_rule_rule());
-      return other_plane_coordinate(a.constant_coordinate());
-    }
-  }
-
-  bool other_curve_is_rule(Combinatorial_curve a) const {
-    if (a.is_arc()) {
-      CGAL_precondition(is_sphere_rule() || is_sphere_sphere());
-      return is_sphere_rule();
-    } else {
-      CGAL_precondition(is_sphere_rule() || is_rule_rule());
-      return is_rule_rule();
-    }
   }
 
 
@@ -170,7 +134,51 @@ public:
     return k_[0].is_input() && k_[1].is_input();
   }
 
+  // Return true if the line defining the rule which defines this point
+  // points in the positive direction (and so it is the smaller of the two points)
+ CGAL_IS(smaller,  
+	  CGAL_precondition(is_sphere_rule());
+	  return type_&SMALLER_BIT);
+ 
+
 protected:
+
+void set_key(Combinatorial_curve::Key k) {
+    CGAL_precondition(is_sphere_extremum());
+    k_[0]=k;
+    k_[1]=k;
+  }
+
+ void swap_key(Combinatorial_curve::Key a, Combinatorial_curve::Key b) {
+    if (k_[0]==a) k_[0]=b;
+    if (k_[1]==a) k_[1]=b;
+  }
+
+    Coordinate_index other_curve_constant_coordinate(Combinatorial_curve a) const {
+    CGAL_precondition(is_sphere_rule() || is_rule_rule());
+    if (a.is_arc()) {
+      return rule_constant_coordinate();
+    } else {
+      CGAL_precondition(is_rule_rule());
+      return other_plane_coordinate(a.constant_coordinate());
+    }
+  }
+
+  bool other_curve_is_rule(Combinatorial_curve a) const {
+    if (a.is_arc()) {
+      CGAL_precondition(is_sphere_rule() || is_sphere_sphere());
+      return is_sphere_rule();
+    } else {
+      CGAL_precondition(is_sphere_rule() || is_rule_rule());
+      return is_rule_rule();
+    }
+  }
+
+
+  static Combinatorial_vertex make_special(Combinatorial_curve::Key i) ;
+
+
+ 
   Combinatorial_curve::Key k_[2];
   Type type_;
 };

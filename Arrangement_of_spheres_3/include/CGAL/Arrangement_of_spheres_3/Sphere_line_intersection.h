@@ -2,6 +2,10 @@
 #define SPHERE_LINE_INTERSECTION_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Arrangement_of_spheres_3_basic.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/CORE_BigRat.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Arrangement_of_spheres_3/Coordinate_index.h>
 #include <CGAL/tags.h>
@@ -37,6 +41,7 @@ public:
   typedef K T;
   typedef typename K::FT NT;
   typedef typename CGAL::Root_of_traits<NT>::RootOf_2 Quadratic_NT;
+  //typedef typename CGAL::Root_of_2<NT> Quadratic_NT;
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Line_3 Line_3;
@@ -217,11 +222,15 @@ public:
   CGAL::Comparison_result compare( NT o, Coordinate_index i) const;
 
   Quadratic_NT exact_coordinate(Coordinate_index i) const {
-    if (has_simple_coordinate(i)) return simple_coordinate(i);
+    if (has_simple_coordinate(i)) {
+      //std::cout << "Coordinate " << i << " is simple " << simple_coordinate(i) << std::endl;
+      return simple_coordinate(i);
+    }
     else {
       if (!has_exact_) {
 	set_has_exact(true);
       } 
+      //std::cout << "Coordinate " << i << " is " << exact_[i.index()] << std::endl;
       return exact_[i.index()];
     }
   }
@@ -298,7 +307,7 @@ template <class K>
 inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(NT o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   Quadratic_NT mc= exact_coordinate(CC);
-  if (mc < o) return CGAL::SMALLER;
+  if (mc - o <0) return CGAL::SMALLER;
   else if (o < mc) return CGAL::LARGER;
   else return CGAL::EQUAL;
 }

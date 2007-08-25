@@ -61,12 +61,12 @@ public:
 	CGAL_AOS3_TYPENAME K::Point_2 t= display_point(hit->vertex()->point());
 	CGAL_AOS3_TYPENAME K::Point_2 s= display_point(hit->opposite()->vertex()->point());
 	//DT::Circle_2 c= ;
-	if (tr_.compare_sphere_center_c(hit->curve().key(), z,
-					sweep_coordinate())== CGAL::LARGER) {
+	//if (tr_.compare_to_sphere_center_c(hit->curve().key(), z,
+	//				sweep_coordinate())== CGAL::LARGER) {
 	  *qtv << CGAL::Color(150,50,50);
-	} else {
-	  *qtv << CGAL::Color(50,150,50);
-	}
+	  //} else {
+	  //*qtv << CGAL::Color(50,150,50);
+	  //}
 
 	CGAL_AOS3_TYPENAME Traits::Circle_2 c2= rcs_.circle(hit->curve().key());
 	qtv->new_circular_arc(c2, s, t);
@@ -79,6 +79,7 @@ public:
       if (!cs_.is_in_slice(hit)) continue;
       CGAL_AOS3_TYPENAME K::Point_2 p= display_point(hit->point());
       *qtv << CGAL::BLUE;
+      *qtv << CGAL::DISC;
       if (hit->point().is_finite()) {
 	qtv->set_updating_box(true);
       } else {

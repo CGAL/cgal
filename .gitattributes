@@ -458,8 +458,9 @@ Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/two.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_point_insertion.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_point_location.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_ray_shooting.cpp -text
-Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_circles.cpp -text
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_2d.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_cross_section.cpp -text
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/show_slice.cpp -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_3_impl.h -text
 Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Arrangement_of_spheres_traits_3_impl.h -text
@@ -501,7 +502,9 @@ Arrangement_of_spheres_3/src/CGAL/Combinatorial_vertex.cpp -text
 Arrangement_of_spheres_3/src/CGAL/Rule_direction.cpp -text
 Arrangement_of_spheres_3/src/CGALQt/Qt_examiner_viewer_2.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/compile.cpp -text
+Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/rational_points -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/include/test_arrangement.h -text
+Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/predicates.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/template_compile.cpp -text
 Arrangement_on_surface_2/benchmarks/data/benchArrAosConics.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmarks/data/benchArrAosPolylines.xml svneol=native#text/xml

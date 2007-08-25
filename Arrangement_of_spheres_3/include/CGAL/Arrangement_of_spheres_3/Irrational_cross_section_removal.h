@@ -1,17 +1,17 @@
 #ifndef CGAL_AOS3_IRRATIONAL_CROSS_SECTION_REMOVAL_H
 #define CGAL_AOS3_IRRATIONAL_CROSS_SECTION_REMOVAL_H
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
-#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section.h>
+#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_rules.h>
 
 
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
 CGAL_AOS3_TEMPLATE
-class Irrational_cross_section_removal: public Irrational_cross_section CGAL_AOS3_TARG {
+class Irrational_cross_section_removal: public Irrational_cross_section_rules CGAL_AOS3_TARG {
   CGAL_AOS3_TRAITS;
   typedef Irrational_cross_section_removal CGAL_AOS3_TARG This;
-  typedef Irrational_cross_section CGAL_AOS3_TARG P;
+  typedef Irrational_cross_section_rules CGAL_AOS3_TARG P;
   typedef Combinatorial_cross_section CGAL_AOS3_TARG CS;
   // typedef Cross_section_events CGAL_AOS3_TARG CSE;
   // typedef CGAL_AOS3_TYPENAME CS::Halfedge_handle Halfedge_handle;

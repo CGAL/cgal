@@ -89,7 +89,7 @@ void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Tra
        it != cs_.halfedges_end(); ++it){
     if (it->curve().is_arc() && it->curve().key().is_input()
 	&& it->curve().is_inside()) {
-      CGAL_AOS3_TYPENAME CS::Halfedge_handle fit= cs_.next_edge_on_arc(it);
+      CGAL_AOS3_TYPENAME CS::Halfedge_handle fit= cs_.next_edge_on_circle(it);
       if (fit->curve() != it->curve()) {
 	//int ai= (it->curve().arc_index()+1)%4;
 	cs_.halfedges_[it->curve().key().input_index()]=it;
@@ -150,7 +150,7 @@ Cross_section_initializer CGAL_AOS3_TARG::new_halfedge(CGAL_AOS3_TYPENAME CS::Po
     h= cs_.new_halfedge(ff);
     //h->set_inside(inside);
     //h->opposite()->set_inside(!inside);
-    unmatched_hedges_[Edge(f, ff.other_side(), s)]= h->opposite();
+    unmatched_hedges_[Edge(f, ff.opposite(), s)]= h->opposite();
   }
   points_[f]->set_halfedge(h);
   h->set_vertex(points_[f]);
