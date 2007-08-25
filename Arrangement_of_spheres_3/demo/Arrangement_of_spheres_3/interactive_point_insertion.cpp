@@ -8,7 +8,7 @@
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_markup.h>
 #include <CGAL/Arrangement_of_spheres_3/Cross_section_qt_viewer_events.h>
 #include <CGAL/Arrangement_of_spheres_3/read_spheres.h>
-#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section.h>
+#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_location.h>
 #include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_insertion.h>
 #include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_removal.h>
 #include <vector>
@@ -60,10 +60,13 @@ struct Do_work {
     q->show_everything();
     //q->redraw();
  
-    typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section_insertion CGAL_AOS3_TARG ICSI;
+   
+ typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section_insertion CGAL_AOS3_TARG ICSI;
+ typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section_location CGAL_AOS3_TARG ICSL;
     typedef typename CGAL_AOS3_INTERNAL_NS::Irrational_cross_section_removal CGAL_AOS3_TARG ICSR;
    
     ICSI icsi(tr, cs);
+    ICSL icsl(tr, cs);
     ICSR icsr(tr, cs);
 
     typedef typename CGAL_AOS3_INTERNAL_NS::Cross_section_qt_viewer_markup CGAL_AOS3_TARG MCSV;
@@ -94,22 +97,61 @@ struct Do_work {
 	  //q->redraw();
 	  typename A::Traits::Sphere_3_key k= tr.new_sphere_3(typename K::Sphere_3(up(typename K::Point_2(x,y)),
 									      0));
-
+	  typename A::Cross_section::Face_handle f, ff;
+	  typename A::Cross_section::Halfedge_handle h, hh;
+	  typename A::Cross_section::Vertex_handle v, vv;
 	  try {
-	    typename A::Cross_section::Face_handle f= icsi.locate(k);
+	    f= icsl.locate(k);
 	    //slice.new_marked_face(f);
 	    std::cout << "Found face ";
 	    cs.write(f, std::cout) << std::endl;
-	    
+	    mcsv.new_face(f); 
+	  } catch (ICSL::On_edge_exception e) {
+	    std::cout << "On edge!" <<std::endl;
+	    h=e.halfedge_handle();
+	    cs.write(h, std::cout ) << std::endl;
+	    mcsv.new_edge(h);
+	  } catch (ICSL::On_vertex_exception ve) {
+	    std::cout << "On vertex!" <<std::endl;
+	    v=ve.vertex_handle();
+	    cs.write(v, std::cout) << std::endl;
+	    mcsv.new_vertex(v);
+	  }
+
+	  try {
+	    std::cout << "Trying again with point " << std::endl;
+	    ff= icsl.locate(tr.sphere_events(k).first);
+	    cs.write(ff, std::cout) << std::endl;
+	    mcsv.new_face(ff);
+	  } catch (ICSL::On_edge_exception e) {
+	    std::cout << "On edge!" <<std::endl;
+	    hh=e.halfedge_handle();
+	    cs.write(hh, std::cout) << std::endl;
+	    mcsv.new_edge(hh);
+	  } catch (ICSL::On_vertex_exception ve) {
+	    std::cout << "On vertex!" <<std::endl;
+	    vv=ve.vertex_handle();
+	    cs.write(vv, std::cout) << std::endl;
+	    mcsv.new_edge(hh);
+	  }
+	  mcsv(z_, q);
+	  csv(z_, q);
+	  csve(z_, q);
+
+	  std::cout << "Press return to continue" << std::flush;
+	  std::cin.getline(buf, 100);
+	  CGAL_assertion(f==ff);
+	  CGAL_assertion(hh == h);
+	  CGAL_assertion(vv == v);
+ 
+	  if (typename A::Cross_section::Face_handle() != f) {
 	    typename CS::Face_handle nf= icsi.insert(k, f);
 	    mcsv.new_face(nf);
-	  } catch (ICSI::On_edge_exception e) {
-	    std::cout << "On edge!" <<std::endl;
-	    typename CS::Face_handle nf=icsi.insert(k, e.halfedge_handle());
+	  } else if (typename A::Cross_section::Halfedge_handle() != h) {
+	    typename CS::Face_handle nf=icsi.insert(k, h);
 	    mcsv.new_face(nf);
-	  } catch (ICSI::On_vertex_exception v) {
-	    std::cout << "On vertex!" <<std::endl;
-	    typename CS::Face_handle nf=icsi.insert(k, v.vertex_handle());
+	  } else if (typename A::Cross_section::Vertex_handle() != v) {
+	    typename CS::Face_handle nf=icsi.insert(k, v);
 	    mcsv.new_face(nf);
 	  }
 	}
