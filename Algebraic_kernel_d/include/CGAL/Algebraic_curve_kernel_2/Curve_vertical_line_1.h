@@ -57,18 +57,22 @@ public:
     // standard constructor
     Curve_vertical_line_1_rep(const Event1_info& info,
             const Curve_analysis_2& ca_2, int index) : 
-        _m_event_info(info), _m_ca_2(ca_2), _m_index(index)
+        _m_event_info(info), _m_ca_2(ca_2), _m_index(index),
+            _m_xy_coords(_m_event_info.num_arcs())
     {   }
     
     // data
     // temporary added underlying Event1_info object
-    mutable Event1_info _m_event_info;
+    Event1_info _m_event_info;
     
-    mutable Curve_analysis_2 _m_ca_2; // supporting curve analysis
+    Curve_analysis_2 _m_ca_2; // supporting curve analysis
     
-    mutable int _m_index; // this vertical line id (# of event or # of
-            // intervaldepending on whether or not this vertical line encodes
-            // an event
+    // this vertical line id (# of event or # of interval depending on whether
+    // or not this vertical line encodes an event
+    int _m_index; 
+            
+    // container storing the vector of events on a vertical line
+    mutable std::vector<boost::optional< Xy_coordinate_2 > >_m_xy_coords;
         
     // befriending the handle
     friend class Curve_vertical_line_1<Curve_analysis_2, Self>;
@@ -202,17 +206,19 @@ public:
     //!\brief  returns an object of type \c Xy_coordinate_2 for the j-th event
     //!
     //! \pre 0 <= j < num_of_events()
-    // TODO add get_xy_coordinate() with the same functionality
     Xy_coordinate_2 get_algebraic_real_2(int j) const
     {
         CGAL_precondition(0 <= j&&j < number_of_events());
-        // how to get the pointer to the curve ?
-        // we have to store such a pointer for vertical line
-        // TODO isn't it a good idea to cache the construction?
-        // this way we get filter failures, e.g., the same point 
-        // is represented twice when accessing it twice
-        return Xy_coordinate_2(x(), 
-            this->ptr()->_m_ca_2.get_polynomial_2(), j);
+        if(!this->ptr()->_m_xy_coords[j])
+            this->ptr()->_m_xy_coords[j] = Xy_coordinate_2(x(), 
+                this->ptr()->_m_ca_2.get_polynomial_2(), j);
+        return *(this->ptr()->_m_xy_coords[j]);
+    }
+    
+    //!\brief alias to \c get_algebraic_real_2() method
+    Xy_coordinate_2 get_xy_coordinate(int j) const
+    {
+        return get_algebraic_real_2(j);
     }
 
     //!\brief returns the number of branches of the curve connected to j-th

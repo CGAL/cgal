@@ -52,16 +52,17 @@ public:
             _m_curve_pair(curve_pair)
     {   }
 
-    // constructs from two curve analysis
+    // constructs from two curve analysis instances
     Curve_pair_analysis_2_rep(const Curve_analysis_2& ca1,
-        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2),
-            _m_curve_pair(ca1.get_polynomial_2(), ca2.get_polynomial_2())
-    {  }
+        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2)
+    {  
+        _m_curve_pair = Algebraic_curve_kernel_2::get_curve_pair_cache()
+            (std::make_pair(ca1.get_polynomial_2(), ca2.get_polynomial_2()));
+    }
 
     // data
     mutable Curve_analysis_2 _m_ca1, _m_ca2;
-    
-    // temporarily this implementation uses underlying Curve_pair_2 from SweepX
+    // temporarily this implementation is based on Curve_pair_2 from GAPS
     mutable Curve_pair_2 _m_curve_pair;
     
     // befriending the handle

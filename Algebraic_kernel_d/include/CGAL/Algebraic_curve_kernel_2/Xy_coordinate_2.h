@@ -145,14 +145,18 @@ private:
                 std::back_inserter(common))) {
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
-            // TODO ATTENTION: here the cache must be used !!
+                        
             if(parts_of_f.size() == 1) {
-                p.simplify_by(Curve_pair_analysis_2(
-                    Curve_pair_2(parts_of_f[0], common[0])));
+                Curve_pair_2 cp = Algebraic_curve_kernel_2::
+                    get_curve_pair_cache()(std::make_pair(parts_of_f[0],
+                        common[0]));
+                p.simplify_by(Curve_pair_analysis_2(cp));
             } 
             if(parts_of_g.size() == 1) {
-                q.simplify_by(Curve_pair_analysis_2(
-                    Curve_pair_2(parts_of_g[0], common[0])));
+                Curve_pair_2 cp = Algebraic_curve_kernel_2::
+                    get_curve_pair_cache()(std::make_pair(parts_of_g[0],
+                        common[0]));
+                q.simplify_by(Curve_pair_analysis_2(cp));
             } 
             return true;
         }
@@ -322,9 +326,11 @@ private:
             CGAL::Sign result = CGAL::sign(this->arcno() - q.arcno());
             return result;
         }
-        // attention: here the cache should be used
+        
+        Curve_pair_2 cp = Algebraic_curve_kernel_2::
+            get_curve_pair_cache()(std::make_pair(f, g));
         const Curve_pair_vertical_line_1& vline = 
-            Curve_pair_analysis_2(Curve_pair_2(f, g)).vertical_line_for_x(x());
+            Curve_pair_analysis_2(cp).vertical_line_for_x(x());
         CGAL::Sign result = 
             CGAL::sign(vline.get_event_of_curve(0, this->arcno()) - 
                     vline.get_event_of_curve(1, q.arcno()));

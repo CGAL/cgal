@@ -116,12 +116,10 @@ public:
     //! \brief default constructor
     LRU_hashed_map(unsigned max_size = -1u) : _m_hashed_map(),
             _m_max_size(max_size) 
-    { std::cout << "constructor LRU\n";  }
+    {  }
     
     ~LRU_hashed_map()
-    {
-        std::cout << "destructor LRU\n";
-    }
+    {  }
     
     /*! \brief implements cache-like behaviour of the map
     *
@@ -141,7 +139,8 @@ public:
             std::cout << "result: " << 
                 insert(Data_type(key, val)).second << "\n";
             return val;
-        } 
+        } else 
+            std::cout << "instance found\n";
         return (p.first)->second;
     }
     
