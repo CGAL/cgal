@@ -20,23 +20,10 @@
 #ifndef CGAL_VISIBILITY_COMPLEX_2_ANTICHAIN_H
 #define CGAL_VISIBILITY_COMPLEX_2_ANTICHAIN_H
 
-// void myassertion(bool b) {
-//   if (!b) {
-//     *static_cast<int*>(0)=0;
-//   }
-// }
-// #define CGAL_assertion myassertion
-// #define CGAL_precondition myassertion
-
-
 #include <CGAL/basic.h>
 #include <CGAL/Visibility_complex_2/function_objects.h>
 #include <CGAL/In_place_list.h>
 
-#define CGAL_MULTISET_NO_ASSERTIONS
-#define CGAL_MULTISET_NO_PRECONDITIONS
-#define CGAL_MULTISET_NO_POSTCONDITIONS
-#define CGAL_MULTISET_NO_WARNINGS
 #include <CGAL/Multiset.h>
 
 #include <CGAL/Visibility_complex_2/Items.h>
@@ -1476,7 +1463,7 @@ compute_gr(DiskIterator first, DiskIterator last,
         (*rc)->left=e->ur();
       } else LC.set_right_neighbour(0);
       if (lc!=YE.end()) {
-        LC.set_left_neighbour(*rc);
+        LC.set_left_neighbour(*lc);
         (*lc)->right=e->ul();
       } else LC.set_left_neighbour(0);
 
@@ -1484,6 +1471,8 @@ compute_gr(DiskIterator first, DiskIterator last,
       e->ul()->set_back_view(f->back_view());
 
       set_adjacent_faces(e,f,e->ur(),e->ul());
+
+      LC.set_currently_inserted(&de->ch);
       typename Ystructure::iterator k=YE.insert_before(rc,&de->ch);
       LC.set_currently_inserted(0);
       de->ch.position=k;
