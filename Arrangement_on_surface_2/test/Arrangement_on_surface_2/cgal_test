@@ -454,7 +454,7 @@ test_spherical_arc_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-# SGSG!!! under construction run_trapped_test test_traits data/spherical_arcs/compare spherical_arc_traits
+    run_trapped_test test_traits data/spherical_arcs/compare spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/vertex spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/is_vertical spherical_arc_traits
     run_trapped_test test_traits data/spherical_arcs/compare_y_at_x spherical_arc_traits
