@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
 
 /*
 * The test test_traits has a global configuration flag, abort_on_error.
@@ -173,11 +174,13 @@ CGAL::Failure_function prev_warning_handler;
 template <class T_Traits>
 class Traits_test {
 private:
+  enum Enum_type {NUMBER, SIGN, CURVE_END};
   typedef T_Traits                                      Traits;
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Curve_2                      Curve_2;
-
+  //typedef typename Traits::Enumerator_type              Enum_type;
+  //typedef typename Traits::Enumerator_type              Enum_type;erator=0=1=2erator
   /*! The input data file */
   std::string m_filename;
 
@@ -219,7 +222,8 @@ private:
   unsigned int get_expected_enum(std::istringstream & str_stream);
   bool translate_boolean(std::string & str_value);
   unsigned int translate_enumerator(std::string & str_value);
-
+  std::pair<enum Enum_type,unsigned int> translate_int_or_text(std::string & str_value);//Enum_type
+  std::pair<enum Enum_type,unsigned int> get_next_input(std::istringstream & str_stream);//Enum_type
 
   bool compare_points(const Point_2 & exp_answer, const Point_2 & real_answer,
                const char * str = "result")
@@ -628,7 +632,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
   char one_line[128];
   char buff[128];
   bool abort=false;
-  int counter=0;
+  //int counter=0;
   while (!(is.eof() || abort)) 
   {
     skip_comments(is, one_line);
@@ -664,11 +668,10 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       std::cout << "Test " << violation_map[violation_tested] 
                 << " violation : ";
     }
-/*  if (!test_result)
-      std::cout << "bug" << std::endl;
-i*/    counter++;
-    std::cout << "iter number : " << counter << std::endl;
-
+    /*if (!test_result)
+    std::cout << "bug" << std::endl;
+    counter++;
+    std::cout << "iter number : " << counter << std::endl;*/
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
@@ -757,9 +760,25 @@ template <class T_Traits>
 std::string Traits_test<T_Traits>::remove_blanks(char * str)
 {
   std::string result = "";
-  //only upper case letters are allowed
+  bool flag = false;
+  //int tmp=0;
+  //only alphanumeric characters or underscores are allowed
   for (; *str != '\0'; ++str)
-   if (*str >= 65 && *str <= 90) result += *str; 
+  {
+    //tmp++;
+    if ((*str >= '0' && *str <= '9') || //digits
+        (*str >= 'A' && *str <= 'Z') || //upper case letters
+        (*str >= 'a' && *str <= 'z') || //lower case letters
+         *str=='_') //underscores
+    {
+      if (!flag)
+        flag=true;
+      result += *str;
+    }
+    if (*str == ' ' && flag)
+      break;
+  }
+  //std::cout << "tmp " << tmp << std::endl;
   return result;
 }
 
@@ -785,7 +804,31 @@ Traits_test<T_Traits>::translate_enumerator(std::string & str_value)
   } else if (str_value == "EQUAL" ) {
     return static_cast<unsigned int>(CGAL::EQUAL);
   }
+  CGAL_assertion(false);
   return static_cast<unsigned int>(-220776); // My birthday :-)
+}
+
+/*!
+ */
+template <class T_Traits>
+std::pair<enum Traits_test<T_Traits>::Enum_type , unsigned int>
+Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
+{
+  if (str_value == "MIN_END" ) {
+    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::MIN_END);
+  } else if (str_value == "MAX_END" ) {
+    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::MAX_END);
+  } else if (str_value == "SMALLER" ) {
+    return std::pair<enum Enum_type,unsigned int>(SIGN,
+                                    static_cast<unsigned int>(CGAL::SMALLER));
+  } else if (str_value == "EQUAL" ) {
+    return std::pair<enum Enum_type,unsigned int>(SIGN,
+                                    static_cast<unsigned int>(CGAL::EQUAL));
+  } else if (str_value == "LARGER" ) {
+    return std::pair<enum Enum_type,unsigned int>(SIGN,
+                                    static_cast<unsigned int>(CGAL::LARGER));
+  }
+  return std::pair<enum Enum_type,unsigned int>(NUMBER,static_cast<unsigned int>(atoi(str_value.c_str())));
 }
 
 /*!
@@ -814,22 +857,76 @@ Traits_test<T_Traits>::get_expected_enum(std::istringstream & str_stream)
   return translate_enumerator(str_expres);
 }
 
+/*!
+ */
+template <class T_Traits>
+std::pair<enum Traits_test<T_Traits>::Enum_type,unsigned int>
+Traits_test<T_Traits>::get_next_input(std::istringstream & str_stream)
+{
+  char buff[128];
+  do
+  {
+    str_stream.getline(buff, 128, ' ');
+  } while (str_stream.gcount()==1);
+  buff[str_stream.gcount()] = '\0';
+  std::string str_expres = remove_blanks(buff);
+  return translate_int_or_text(str_expres);
+}
+
 /*! Test Compare_x_2
  */
 template <class T_Traits>
 bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
 {
   unsigned int id1, id2;
-  str_stream >> id1 >> id2;
-  unsigned int exp_answer = get_expected_enum(str_stream);
-  unsigned int real_answer =
-  m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
+  unsigned int real_answer, exp_answer;
+  str_stream >> id1;
+  std::pair<Enum_type,unsigned int> exp_answer_1 = get_next_input(str_stream);
+  if (exp_answer_1.first==NUMBER)
+  {
+    id2=exp_answer_1.second;
+    std::pair<Enum_type,unsigned int> exp_answer_2 =get_next_input(str_stream);
+    if (exp_answer_2.first==SIGN)
+    {
+      exp_answer = exp_answer_2.second;
+      std::cout << "Test: compare_x( " << m_points[id1]
+                << ", " << m_points[id2] << " ) ? " << exp_answer << " ";
+      real_answer =m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
+    }
+    if (exp_answer_2.first==CURVE_END)
+    {
+      CGAL::Curve_end cv_end_1 = static_cast<CGAL::Curve_end>
+                                            (exp_answer_2.second);
+      exp_answer = get_expected_enum(str_stream);
+      std::cout << "Test: compare_x( " << m_points[id1]
+                << ", " << m_xcurves[id2] << ", "
+                << (exp_answer_2.second==CGAL::MIN_END?" MIN_END ":" MAX_END ")
+                << " ) ? " << exp_answer << " ";
+      #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
+        real_answer = m_traits.compare_x_2_object()
+                               (m_points[id1], m_xcurves[id2],cv_end_1);
+      #endif
+    }
+  }
+  else if (exp_answer_1.first==CURVE_END)
+  {
+    CGAL::Curve_end cv_end_1=static_cast<CGAL::Curve_end>(exp_answer_1.second);
+    str_stream >> id2;
+    std::pair<Enum_type,unsigned int> exp_answer_2 =get_next_input(str_stream);
+    CGAL_assertion(exp_answer_2.first==CURVE_END);
+    CGAL::Curve_end cv_end_2=static_cast<CGAL::Curve_end>(exp_answer_2.second);
+    exp_answer = get_expected_enum(str_stream);
+    std::cout << "Test: compare_x( " << m_xcurves[id1] << ", "
+              << (exp_answer_1.second==CGAL::MIN_END ?" MIN_END ":" MAX_END ")
+              << ", " << m_xcurves[id2] << ", "
+              << (exp_answer_2.second==CGAL::MIN_END ?" MIN_END ":" MAX_END ")
+              << " ) ? " << exp_answer << " ";
+    #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
+      real_answer = m_traits.compare_x_2_object()(m_xcurves[id1], cv_end_1,
+                                                  m_xcurves[id2], cv_end_2);
+    #endif
+  }
   did_violation_occur();
-  //std::cout <<typeid(m_points[id1]).name()<<std::endl;
-  //std::cout <<m_points[id2]<<std::endl;
-  std::cout << "Test: compare_x( " << m_points[id1] << ", "
-            << m_points[id2] << " ) ? ";
-  std::cout << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
