@@ -148,7 +148,11 @@ public:
 template<class T, bool b> class VC_in_place_list 
   :public In_place_list<T,b> {
   typedef In_place_list<T,b> Base;
+private:
+  // Prevent copy.
+  VC_in_place_list(const VC_in_place_list&) {}
 public: 
+  VC_in_place_list() {}
   void detach() {
     this->node->next_link=&*(this->node);
     this->node->prev_link=&*(this->node);    
