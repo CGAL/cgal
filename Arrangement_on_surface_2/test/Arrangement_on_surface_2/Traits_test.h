@@ -893,6 +893,7 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
                 << ", " << m_points[id2] << " ) ? " << exp_answer << " ";
       real_answer =m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
     }
+    #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
     if (exp_answer_2.first==CURVE_END)
     {
       CGAL::Curve_end cv_end_1 = static_cast<CGAL::Curve_end>
@@ -902,12 +903,12 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
                 << ", " << m_xcurves[id2] << ", "
                 << (exp_answer_2.second==CGAL::MIN_END?" MIN_END ":" MAX_END ")
                 << " ) ? " << exp_answer << " ";
-      #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
         real_answer = m_traits.compare_x_2_object()
                                (m_points[id1], m_xcurves[id2],cv_end_1);
-      #endif
     }
+    #endif
   }
+  #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
   else if (exp_answer_1.first==CURVE_END)
   {
     CGAL::Curve_end cv_end_1=static_cast<CGAL::Curve_end>(exp_answer_1.second);
@@ -921,11 +922,10 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
               << ", " << m_xcurves[id2] << ", "
               << (exp_answer_2.second==CGAL::MIN_END ?" MIN_END ":" MAX_END ")
               << " ) ? " << exp_answer << " ";
-    #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
       real_answer = m_traits.compare_x_2_object()(m_xcurves[id1], cv_end_1,
                                                   m_xcurves[id2], cv_end_2);
-    #endif
   }
+  #endif
   did_violation_occur();
   return compare_and_print(exp_answer, real_answer);
 }
