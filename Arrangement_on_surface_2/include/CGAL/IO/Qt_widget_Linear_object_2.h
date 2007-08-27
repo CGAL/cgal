@@ -19,8 +19,8 @@
 // Author(s)     : Ron Wein  <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_QT_WIDGET_POLYLINE_2_H
-#define CGAL_QT_WIDGET_POLYLINE_2_H
+#ifndef CGAL_QT_WIDGET_LINEAR_OBJECT_2_H
+#define CGAL_QT_WIDGET_LINEAR_OBJECT_2_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Arr_linear_traits_2.h>
