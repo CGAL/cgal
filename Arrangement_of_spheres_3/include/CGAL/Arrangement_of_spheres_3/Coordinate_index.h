@@ -36,6 +36,8 @@ public:
 
   CGAL_COMPARISONS1(c_);
 
+  //CGAL_GETNR(unsigned int, plane_index,  CGAL_precondition(is_valid());
+
   /*bool operator==(const Coordinate_index &o) const {
     return c_== o.c_;
   }

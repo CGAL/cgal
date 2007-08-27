@@ -4,6 +4,33 @@
 #include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
 CGAL_BEGIN_NAMESPACE
 
+#define CGAL_AOS3_CANONICAL_PREDICATE_LINE(l, sphere, t, equal_value, inside_value, below_value, above_value, miss_value) \
+  std::cout << "Line is " << l << std::endl;				\
+  Sphere_point_3 sp0(sphere, l);					\
+  if (!sp0.is_valid()) {						\
+      std::cout << "Line misses" << std::endl;				\
+      miss_value;							\
+  } else {								\
+    Sphere_point_3 sp1(sphere, l.opposite());				\
+    Coordinate_index sc=CGAL_AOS3_INTERNAL_NS::sweep_coordinate();	\
+    Comparison_result c0= t.compare(sp0, sc);				\
+    Comparison_result c1= t.compare(sp1, sc);				\
+    if (c0 == CGAL::EQUAL || c1 == CGAL::EQUAL) {			\
+      std::cout << "Equal" << std::endl;				\
+      equal_value;							\
+    } else if (c0 != c1) {						\
+      std::cout << "Inside" << std::endl;				\
+      inside_value;							\
+    } else if (c0 == CGAL::SMALLER) {					\
+      std::cout << "smaller" << std::endl;				\
+      below_value;							\
+    } else {								\
+      std::cout << "larger" << std::endl;				\
+      above_value;							\
+    }									\
+  }									\
+  		
+							
 #define CGAL_AOS3_CANONICAL_PREDICATE(plane0, plane1, sphere, t, equal_value, inside_value, below_value, above_value, miss_value) \
   Plane_3 p0= plane0;							\
   std::cout << "Plane0 is " << p0 << std::endl;				\
@@ -11,31 +38,10 @@ CGAL_BEGIN_NAMESPACE
   std::cout << "Plane1 is " << p1 << std::endl;				\
   Object o= table_->geom_traits_object().intersect_3_object()(p0, p1);	\
   Line_3 l;								\
-  std::cout << "Line is " << l << std::endl;				\
   if (assign(l,o) ){							\
-    Sphere_point_3 sp0(sphere, l);					\
-    if (!sp0.is_valid()) {						\
-      std::cout << "Line misses" << std::endl;				\
-      miss_value;							\
-    } else {								\
-      Sphere_point_3 sp1(sphere, l.opposite());				\
-      Coordinate_index sc=CGAL_AOS3_INTERNAL_NS::sweep_coordinate();	\
-      Comparison_result c0= t.compare(sp0, sc);				\
-      Comparison_result c1= t.compare(sp1, sc);				\
-      if (c0 == CGAL::EQUAL || c1 == CGAL::EQUAL) {			\
-	std::cout << "Equal" << std::endl;				\
-	equal_value;							\
-      } else if (c0 != c1) {						\
-	std::cout << "Inside" << std::endl;				\
-	inside_value;							\
-      } else if (c0 == CGAL::SMALLER) {					\
-	std::cout << "smaller" << std::endl;				\
-	below_value;							\
-      } else {								\
-	std::cout << "larger" << std::endl;				\
-	above_value;							\
-      }									\
-    }									\
+    CGAL_AOS3_CANONICAL_PREDICATE_LINE(l, sphere, t, equal_value,	\
+				       inside_value, below_value,	\
+				       above_value, miss_value);	\
   } else {								\
     std::cout << "Planes miss" << std::endl;				\
     miss_value;								\
@@ -419,11 +425,11 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::point_bounded_side_of_sphere(con
 				const_c_plane(pt, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1)),
 				table_->sphere(s),
 				pt,
-				return ON_BOUNDARY,
-				return ON_BOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE);
+				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_BOUNDARY,
+				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_BOUNDED_SIDE,
+				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_UNBOUNDED_SIDE,
+				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_UNBOUNDED_SIDE,
+				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_UNBOUNDED_SIDE);
   /*
   const Line_3 &l= pt.line();//(Point_3(p[0], p[1], p[2]), Vector_3(v[0],v[1],v[2]));
     
@@ -1123,10 +1129,11 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::rule_plane(Sphere_3_key r, Coord
 CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::Plane_3 
 Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::const_c_plane(const Sphere_point_3 &pt, Coordinate_index C) const {
-  CGAL_precondition(pt.line().to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()] != 0);
-  FT n[3]={0,0,0};
-  n[C.index()]= 1;
-  return Plane_3(pt.line().point(), Vector_3(n[0], n[1], n[2]));
+  FT v[3]={0,0,0};
+  v[other_plane_coordinate(C).index()]=1;
+
+ return Plane_3(pt.line().point(), pt.line().point() + pt.line().to_vector(),
+		pt.line().point()+ Vector_3(v[0], v[1], v[2]));
 }
 
 

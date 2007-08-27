@@ -35,6 +35,7 @@ CI sweep= sweep_coordinate();
 
 std::vector<V> rational_points;
 CGAL::Random_points_in_cube_3<V> random_point_gen(1);
+CGAL::Random_points_in_sphere_3<V> random_point_in_sphere_gen(1);
 CGAL::Random random_number_gen;
 
 
@@ -43,6 +44,14 @@ P random_point(CGAL::Bbox_3 bb=CGAL::Bbox_3(0,0,0,1,1,1)) {
   return P(rp[0]*FT(bb.xmax()-bb.xmin())+FT(bb.xmin()),
 	   rp[1]*FT(bb.ymax()-bb.ymin())+FT(bb.ymin()),
 	   rp[2]*FT(bb.zmax()-bb.zmin())+FT(bb.zmin()));
+}
+
+P random_point(S s) {
+  V rp=*random_point_in_sphere_gen; ++random_point_in_sphere_gen;
+  FT rub= std::sqrt(CGAL::to_interval(s.squared_radius()).first);
+  return P(s.center().x()+rp.x()*rub,
+	   s.center().y()+rp.y()*rub,
+	   s.center().z()+rp.z()*rub);
 }
 
 V random_vector() {
@@ -64,6 +73,22 @@ S random_sphere(FT depth, CGAL::Bbox_3 bb=CGAL::Bbox_3(-1,-1,-1,1,1,1)) {
   return S(P(x, random_coordinate(bb.ymin(), bb.ymax()),
 	     random_coordinate(bb.zmin(), bb.zmax())), rad*rad);
 }
+
+
+
+S random_sphere(CGAL::Bbox_3 bb=CGAL::Bbox_3(-1,-1,-1,1,1,1)) {
+  FT rad= random_radius();
+  return S(P(random_coordinate(bb.xmin(), bb.xmax()),
+	     random_coordinate(bb.ymin(), bb.ymax()),
+	     random_coordinate(bb.zmin(), bb.zmax())), rad*rad);
+}
+
+P random_point_on_sphere(S s) {
+  CGAL_assertion(s.squared_radius()==1);
+  int ri= random_number_gen.get_int(0, rational_points.size());
+  return s.center()+ rational_points[ri];
+}
+
 
 void initialize_rational_points() {
   std::ifstream rpf("data/rational_points");
@@ -113,6 +138,15 @@ SP random_sp(const P &pt) {
 
 SP random_sp(FT x) {
   return random_sp(P(x, random_coordinate(), random_coordinate()));
+}
+
+SP random_sp(S s) {
+  V lv=random_vector();
+  P pt=random_point(s);
+  L line(pt, lv);
+  SP ret(s, line);				
+  CGAL_assertion(ret.is_valid());
+  return ret;
 }
 
 std::pair<S,S> random_sr_point(const P&pt, CI rule_c) {
@@ -198,21 +232,147 @@ P2 equipower_point(C2 a, C2 b) {
     return P2();
   }
 }
+FT squared_depth(P p, FT x){
+  return CGAL::square(p[0]-x);
+}
+/*bool slice(S s, FT x, C2 &c) {
+  FT r2= s.squared_radius() - squared_depth(s.center(), x);
+  if (r2 < 0) return false;
+  CGAL_assertion(r2>=0);
+  c= C2(P2(s.center()[1],
+	   s.center()[2]), r2);
+  return true;
+  }*/
+
+CGAL::Bounded_side check_bounded_side(C2 c, P p, CI ci) {
+  FT d2= CGAL::square(c.center()[CGAL_AOS3_INTERNAL_NS::project(ci)]- p[ci.index()]);
+  if (d2 < c.squared_radius()) return CGAL::ON_BOUNDED_SIDE;
+  else if (d2 == c.squared_radius()) return CGAL::ON_BOUNDARY;
+  else return CGAL::ON_UNBOUNDED_SIDE;
+}
+
 
 int main(int, char *[]) {
 
   initialize_rational_points();
  
-   {
-     std::cout << "\n\nTesting compare_point_to_equipower_line_c" << std::endl;
+  {
+    std::cout << "\n\nTesting center_bounded_side_of_sphere_c" << std::endl;
+    std::vector<S> ss;
+     ss.push_back(S(P(0,0,0), 1));
+     std::cout << ss[0] << std::endl;
+     for (int i=0; i< 100; ++i) {
+	ss.push_back(random_sphere(ss.back().bbox()));
+      }
+     Traits tr(ss.begin(), ss.end());
+     CGAL::Bbox_3 bb= ss.back().bbox();
+     for (int i=0; i< 100; ++i) {
+       FT x= random_coordinate(bb.xmin(), bb.xmax());
+       C2 c2;
+       if (slice(ss[0], x, c2)){
+	 P pt(x, ss[i+1].center().y(), ss[i+1].center().z());
+	 SP sp= random_sp(x);
+	 CGAL::Bounded_side mbs0= tr.center_bounded_side_of_circle_c(K(i+1),sp, K(0), plane_coordinate(0));
+	 CGAL::Bounded_side mbs1= tr.center_bounded_side_of_circle_c(K(i+1),sp, K(0), plane_coordinate(1));
+	 CGAL::Bounded_side cbs0= check_bounded_side(c2, pt, plane_coordinate(0));
+	 CGAL::Bounded_side cbs1= check_bounded_side(c2, pt, plane_coordinate(1));
+	 
+	 CGAL_assertion(mbs0==cbs0);
+	 CGAL_assertion(mbs1==cbs1);
+       }
+     }
+  }
+
+ {
+    std::cout << "\n\nTesting point_bounded_side_of_sphere_c" << std::endl;
+    std::vector<S> ss;
+     ss.push_back(S(P(0,0,0), 1));
+     std::cout << ss[0] << std::endl;
+     Traits tr(ss.begin(), ss.end());
+     CGAL::Bbox_3 bb= ss.back().bbox();
+     for (int i=0; i< 100; ++i) {
+       FT x= random_coordinate(bb.xmin(), bb.xmax());
+       C2 c2;
+       if (slice(ss[0], x, c2)){
+	 P pt(x, random_coordinate(bb.ymin(), bb.ymax()),
+	      random_coordinate(bb.zmin(), bb.zmax()));
+	 SP sp=random_sp(pt);
+	 CGAL::Bounded_side mbs0= tr.point_bounded_side_of_sphere_c(sp, K(0), plane_coordinate(0));
+	 CGAL::Bounded_side mbs1= tr.point_bounded_side_of_sphere_c(sp, K(0), plane_coordinate(1));
+	 CGAL::Bounded_side cbs0= check_bounded_side(c2, pt, plane_coordinate(0));
+	 CGAL::Bounded_side cbs1= check_bounded_side(c2, pt, plane_coordinate(1));
+	 
+	 CGAL_assertion(mbs0==cbs0);
+	 CGAL_assertion(mbs1==cbs1);
+       }
+     }
+  }
+
+  {
+     std::cout << "\n\nTesting point_bounded_side_of_sphere" << std::endl;
  
      std::vector<S> ss;
+     ss.push_back(S(P(0,2,-2), 1));
+     std::cout << ss[0] << std::endl;
+     Traits tr(ss.begin(), ss.end());
+     CGAL::Bbox_3 bb= ss.back().bbox();
      for (unsigned int i=0; i< 100; ++i) {
-       //ss.push_back(random
+       P p= random_point(bb);
+       SP sp=random_sp(p);
+       std::cout << "SP is " << sp << std::endl;
+       CGAL::Bounded_side cbs= ss.back().bounded_side(p);
+       CGAL::Bounded_side mbs= tr.point_bounded_side_of_sphere(sp, K(0));
+       CGAL_assertion(cbs== mbs);
      }
+     for (unsigned int i=0; i< 20; ++i) {
+       SP sp= random_sp(ss.back());
+       CGAL_assertion(sp.sphere() == ss.front());
+       std::cout << "SP is " << sp << std::endl;
+       CGAL::Bounded_side mbs= tr.point_bounded_side_of_sphere(sp, K(0));
+       CGAL_assertion(mbs== CGAL::ON_BOUNDARY);
+     }
+  }
 
-   }
-
+  {
+    std::cout << "\n\nTesting rules/center_bounded_side_of_sphere" << std::endl;
+    {
+      
+      std::vector<S> ss;
+      ss.push_back(S(P(1,3,1), 1));
+      for (int i=0; i< 100; ++i) {
+	ss.push_back(random_sphere(ss.back().bbox()));
+      }
+      Traits tr(ss.begin(), ss.end());
+      
+      for (int i=0; i< 100; ++i) {
+	FT x= random_coordinate(ss.front().bbox().xmin(), ss.front().bbox().xmax());
+	P cpt(x, ss[i+1].center().y(),ss[i+1].center().z());
+	SP sp = random_sp(x);
+	CGAL::Bounded_side cbs= ss.front().bounded_side(cpt);
+	CGAL::Bounded_side mbs= tr.center_bounded_side_of_sphere(sp, K(i+1), K(0));
+	CGAL::Bounded_side rbs= tr.rules_bounded_side_of_sphere(sp, K(i+1), K(i+1), K(0));
+	CGAL_assertion(cbs==mbs);
+	CGAL_assertion(rbs==mbs);
+      }
+    }
+    {
+      std::vector<S> ss;
+      ss.push_back(S(P(-2,1.1,3), 1));
+      for (int i=0; i< 20; ++i) {
+	ss.push_back(S(random_point_on_sphere(ss.front()), random_radius()));
+      }
+      Traits tr(ss.begin(), ss.end());
+      for (int i=0; i< 20; ++i ) {
+	SP sp= random_sp(ss[i+1].center().x());
+	CGAL::Bounded_side cbs= ss.front().bounded_side(ss[i+1].center());
+	CGAL::Bounded_side mbs= tr.center_bounded_side_of_sphere(sp, K(i+1), K(0));
+	CGAL::Bounded_side rbs= tr.rules_bounded_side_of_sphere(sp, K(i+1), K(i+1), K(0));
+	CGAL_assertion(cbs== CGAL::ON_BOUNDARY);
+	CGAL_assertion(mbs== CGAL::ON_BOUNDARY);
+	CGAL_assertion(rbs==mbs);
+      }
+    }
+  }
   {
     std::cout << "\n\nTesting compare_point_to_equipower_line_c" << std::endl;
     for (int j=0; j< 20; ++j) {

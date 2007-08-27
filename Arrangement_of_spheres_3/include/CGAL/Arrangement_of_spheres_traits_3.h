@@ -262,35 +262,39 @@ struct Arrangement_of_spheres_traits_3 {
 					   const Sphere_point_3& b,
 					   Coordinate_index C) const;
 
+  //
   CGAL::Bounded_side point_bounded_side_of_sphere(const Sphere_point_3 &pt,
 						  Sphere_3_key sphere) const;
   
-
+  //
   CGAL::Bounded_side center_bounded_side_of_sphere(const Event_point_3 &t,
 						   Sphere_3_key pt,
 						   Sphere_3_key sphere) const;
   
+  //
+  CGAL::Bounded_side rules_bounded_side_of_sphere(const Sphere_point_3 &t,
+						  Sphere_3_key x,
+						  Sphere_3_key y,
+						  Sphere_3_key sphere) const;
 
+
+  
   CGAL::Bounded_side point_bounded_side_of_sphere_c(const Sphere_point_3 &pt,
 						    Sphere_3_key sphere,
 						    Coordinate_index C) const;
-
+  
   CGAL::Bounded_side center_bounded_side_of_circle_c(Sphere_3_key k,
 						    const Event_point_3 &t,
 						    Sphere_3_key sphere,
 						    Coordinate_index C) const;
 
 
-  CGAL::Bounded_side rules_bounded_side_of_sphere(const Sphere_point_3 &t,
-						  Sphere_3_key x,
-						  Sphere_3_key y,
-						  Sphere_3_key sphere) const;
-
+ 
   
   CGAL::Comparison_result compare_sphere_centers_c(Sphere_3_key a, Sphere_3_key b, Coordinate_index C) const;
 
-
- CGAL::Oriented_side point_oriented_side_of_separating_plane(const Sphere_point_3& sp,
+  
+  CGAL::Oriented_side point_oriented_side_of_separating_plane(const Sphere_point_3& sp,
 							      Sphere_3_key sphere_0, 
 							      Sphere_3_key sphere_1) const ;
  
