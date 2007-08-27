@@ -77,10 +77,9 @@ static Bitangent_type reverse(Bitangent_type t) {
   }
 }
 
-class Constraint_input {
+class Constraint_input :public Bitangent_type_wrapper {
 public:
-  typedef Bitangent_type Type;
-  Constraint_input() {};
+  Constraint_input() :t_(LL), source_(0), target_(0) {};
   Constraint_input(Type t,size_t source,size_t target):
     t_(t),source_(source),target_(target) {}
   Type type() const {return t_;}

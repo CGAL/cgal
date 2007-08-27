@@ -144,13 +144,13 @@ public:
     // -------------------------------------------------------------------------
     // Returns false if phiv is tangent to r
     template < class Tr >
-    bool advance(Edge_handle r, Vertex_handle phiv, const Tr&) const;
+    bool advance(Edge_handle r, Vertex_handle phiv, Tr) const;
     // -------------------------------------------------------------------------
     // Returns the vertex leaving the support disk of r and entering the support
     // disk of l. Check the equality to sup(r),inf(r),sup(l),inf(l) to avoid
     // duplicates
     template < class Tr >
-    Vertex_handle bit(Edge_handle r, Edge_handle l, const Tr&) const;
+    Vertex_handle bit(Edge_handle r, Edge_handle l, Tr) const;
   //template < class Tr >
   //Vertex_handle bit(Edge_handle r, Edge_handle l, Tr) const
   //{ return bit(r,l, Tr()); }
@@ -164,7 +164,7 @@ protected:
 template < class A_ >
 template < class Tr >
 inline bool
-Chi2_flip_traits<A_>::advance(Edge_handle r, Vertex_handle phiv, const Tr&tr) const
+Chi2_flip_traits<A_>::advance(Edge_handle r, Vertex_handle phiv, Tr) const
 {
     typename Tr::Sup sup; typename Tr::Sign sign;
     typename Tr::Less_vertex_handle chi1; 
@@ -186,7 +186,7 @@ template < class A_ >
 template < class Tr >
 inline 
 typename Chi2_flip_traits<A_>::Vertex_handle
-Chi2_flip_traits<A_>::bit(Edge_handle r, Edge_handle l, const Tr&) const
+Chi2_flip_traits<A_>::bit(Edge_handle r, Edge_handle l, Tr) const
 {
     typename Tr::Sup sup; typename Tr::Inf inf;
     typename Tr::Vertex_creator vertex;
@@ -303,7 +303,7 @@ Chi2_flip_traits<A_>::third_cusp_edge(Vertex_handle v, Tr ) const
 template < class A_ >
 template < class Tr >
 typename Chi2_flip_traits<A_>::Edge_handle
-Chi2_flip_traits<A_>::start_edge(Vertex_handle v, Tr tr) const 
+Chi2_flip_traits<A_>::start_edge(Vertex_handle v, Tr) const 
 {
     // ------------------------------------------------------------------------- 
     // Operators used by this method
@@ -333,7 +333,7 @@ Chi2_flip_traits<A_>::start_edge(Vertex_handle v, Tr tr) const
     CGAL_precondition(cusp1 != 0);
     
 //      return ccw_source_edge(cusp1);
-    Vertex_handle tmp;
+    Vertex_handle tmp=0;
 
 
     // ------------------------------------------------------------------------- 
@@ -446,8 +446,8 @@ Chi2_flip_traits<A_>::walk(Edge_handle r , Edge_handle l, Tr) const
 
 
     // ------------------------------------------------------------------------- 
-    typename Tr::Right_traits right_traits;
-    typename Tr::Left_traits  left_traits;
+    typename Tr::Right_traits right_traits=typename Tr::Right_traits();
+    typename Tr::Left_traits  left_traits=typename Tr::Left_traits();
     Skip<typename Tr::Right_traits> skipr;
     Skip<typename Tr::Left_traits> skipl;
     // ------------------------------------------------------------------------- 
@@ -757,7 +757,7 @@ Chi1_flip_traits<A_>::operator()(const Vertex_handle& v , Tr tr) const
     // -------------------------------------------------------------------------
     // Starting point on Rtwo(v)
     Edge_handle r = 0;
-    Vertex_handle tmp;
+    Vertex_handle tmp=0;
     if (is_xx_left(v) && (tmp=skipr.ccR(v),skipr.cwR(tmp) == v)) {
 	if (tmp->phiR() == 0) {
 	    tmp->set_phiR_vertex(phiR(v,right_traits));

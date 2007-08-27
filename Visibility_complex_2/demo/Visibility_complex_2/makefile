@@ -102,65 +102,65 @@ arrangements$(EXE_EXT): arrangements$(OBJ_EXT) \
 		Show_pseudo_triangulation$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangements arrangements$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Qt_widget_style_editor$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT) $(LDFLAGS)
 
-scene_input.moc: scene_input.cpp
-	moc -o scene_input.moc scene_input.cpp
+include/CGAL/scene_input.moc: include/CGAL/scene_input.cpp
+	moc -o include/CGAL/scene_input.moc include/CGAL/scene_input.cpp
 
-point_input: scene_input.cpp scene_input.moc
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_POINT scene_input.cpp $(LDFLAGS)
+point_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_POINT include/CGAL/scene_input.cpp $(LDFLAGS)
 
-segment_input: scene_input.cpp scene_input.moc
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_SEGMENT scene_input.cpp $(LDFLAGS)
+segment_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_SEGMENT include/CGAL/scene_input.cpp $(LDFLAGS)
 
-polygon_input: scene_input.cpp scene_input.moc
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_POLYGON scene_input.cpp $(LDFLAGS)
+polygon_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_POLYGON include/CGAL/scene_input.cpp $(LDFLAGS)
 
-circle_input: scene_input.cpp scene_input.moc
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_CIRCLE scene_input.cpp $(LDFLAGS)
+circle_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_CIRCLE include/CGAL/scene_input.cpp $(LDFLAGS)
 
-point_display: scene_display.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_POINT scene_display.cpp $(LDFLAGS)
+point_display: include/CGAL/scene_display.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_POINT include/CGAL/scene_display.cpp $(LDFLAGS)
 
-segment_display: scene_display.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_SEGMENT scene_display.cpp $(LDFLAGS)
+segment_display: include/CGAL/scene_display.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_SEGMENT include/CGAL/scene_display.cpp $(LDFLAGS)
 
-polygon_display: scene_display.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_POLYGON scene_display.cpp $(LDFLAGS)
+polygon_display: include/CGAL/scene_display.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_POLYGON include/CGAL/scene_display.cpp $(LDFLAGS)
 
-circle_display: scene_display.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_CIRCLE scene_display.cpp $(LDFLAGS)
+circle_display: include/CGAL/scene_display.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_CIRCLE include/CGAL/scene_display.cpp $(LDFLAGS)
 
-point_compute_vc: compute_vc.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_POINT compute_vc.cpp $(LDFLAGS)
+point_compute_vc: include/CGAL/compute_vc.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_POINT include/CGAL/compute_vc.cpp $(LDFLAGS)
 
-segment_compute_vc: compute_vc.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_SEGMENT compute_vc.cpp $(LDFLAGS)
+segment_compute_vc: include/CGAL/compute_vc.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_SEGMENT include/CGAL/compute_vc.cpp $(LDFLAGS)
 
-polygon_compute_vc: compute_vc.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_POLYGON compute_vc.cpp $(LDFLAGS)
+polygon_compute_vc: include/CGAL/compute_vc.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_POLYGON include/CGAL/compute_vc.cpp $(LDFLAGS)
 
-circle_compute_vc: compute_vc.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_CIRCLE compute_vc.cpp $(LDFLAGS)
+circle_compute_vc: include/CGAL/compute_vc.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_CIRCLE include/CGAL/compute_vc.cpp $(LDFLAGS)
 
-point_compute_bit: compute_bit.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_POINT compute_bit.cpp $(LDFLAGS)
+point_compute_bit: include/CGAL/compute_bit.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_POINT include/CGAL/compute_bit.cpp $(LDFLAGS)
 
-segment_compute_bit: compute_bit.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_SEGMENT compute_bit.cpp $(LDFLAGS)
+segment_compute_bit: include/CGAL/compute_bit.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_SEGMENT include/CGAL/compute_bit.cpp $(LDFLAGS)
 
-polygon_compute_bit: compute_bit.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_POLYGON compute_bit.cpp $(LDFLAGS)
+polygon_compute_bit: include/CGAL/compute_bit.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_POLYGON include/CGAL/compute_bit.cpp $(LDFLAGS)
 
-circle_compute_bit: compute_bit.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_CIRCLE compute_bit.cpp $(LDFLAGS)
+circle_compute_bit: include/CGAL/compute_bit.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_CIRCLE include/CGAL/compute_bit.cpp $(LDFLAGS)
 
-point_compute_sp: compute_sp.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_POINT compute_sp.cpp $(LDFLAGS)
+point_compute_sp: include/CGAL/compute_sp.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_POINT include/CGAL/compute_sp.cpp $(LDFLAGS)
 
-segment_compute_sp: compute_sp.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_SEGMENT compute_sp.cpp $(LDFLAGS)
+segment_compute_sp: include/CGAL/compute_sp.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_SEGMENT include/CGAL/compute_sp.cpp $(LDFLAGS)
 
-polygon_compute_sp: compute_sp.cpp 
-	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_POLYGON compute_sp.cpp $(LDFLAGS)
+polygon_compute_sp: include/CGAL/compute_sp.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_POLYGON include/CGAL/compute_sp.cpp $(LDFLAGS)
 
 
 

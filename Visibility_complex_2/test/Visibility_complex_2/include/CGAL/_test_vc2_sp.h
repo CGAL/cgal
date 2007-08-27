@@ -21,7 +21,7 @@ int main() {
 
   std::istringstream pi(path);
   std::istream_iterator<Constraint_input> path_it(pi),path_end;
-  std::vector<Constraint_input> pv(path_it,path_end);
+  std::vector<Constraint_input> pv CGAL_make_vector(path_it,path_end);
   if (vb.size()!=pv.size()) return 1;
   for (std::vector<Gt::Bitangent_2>::size_type i=0;i<vb.size();++i) {
     Gt::Bitangent_2& a=vb.begin()[i];

@@ -122,7 +122,8 @@ private:
 template <class R_,class Container_,class DistanceNT,class RToDistanceNT>
 class Bitangent_2<Polygon_traits<R_,Container_,DistanceNT,RToDistanceNT> >
   : public Polygon_traits<R_,Container_,DistanceNT,RToDistanceNT>::Segment_2 , 
-    public Bitangent_base<typename Polygon_traits<R_,Container_,DistanceNT,RToDistanceNT>::Disk >
+    public Bitangent_base<
+      typename Polygon_traits<R_,Container_,DistanceNT,RToDistanceNT>::Disk >
 {
   // -------------------------------------------------------------------------
 public:
@@ -385,16 +386,16 @@ public:
     // Geometric types
     typedef R_                                R;
     typedef typename R::FT                    FT;
-    typedef Point_2<R>               Point_2;
-    typedef Segment_2<R>             Segment_2;
     typedef Container_                Polygon_container;
-    typedef Polygon_2<R,Polygon_container>    Disk;
 
 private:
     typedef Polygon_traits<R,Polygon_container,DistanceNT,RToDistanceNT> Self;
 public:
-    typedef Bitangent_2<Self> Bitangent_2;
-    typedef Arc_2<Self> Arc_2;
+    typedef CGAL::Point_2<R_> Point_2;
+    typedef Visibility_complex_2_details::Bitangent_2<Self> Bitangent_2;
+    typedef Visibility_complex_2_details::Arc_2<Self>       Arc_2;
+    typedef CGAL::Segment_2<R>                              Segment_2;
+    typedef Polygon_2<R,Polygon_container>    Disk;
     // -------------------------------------------------------------------------
 public:
     // -------------------------------------------------------------------------

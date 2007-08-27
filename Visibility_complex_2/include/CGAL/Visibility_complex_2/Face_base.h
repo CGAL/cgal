@@ -204,13 +204,14 @@ private:
           if (super==v->target_cusp_face()) 
             return Border_iterator(super,
                                    v->target_cusp_edge());
-          if (super==v->source_cusp_face()||v->source_cusp_face()==0)
+          if (super==v->source_cusp_face()||v->source_cusp_face()==0) {
             if (v->is_left_xx())
               return Border_iterator(super,
                                      v->pi()->ccw_target_edge());
             else
               return Border_iterator(super,
-                                     v->pi()->ccw_source_edge());
+                                     v->pi()->ccw_source_edge());            
+          }
           CGAL_assertion(false);
         }
         return Border_iterator();
@@ -225,13 +226,14 @@ private:
           if (super==v->target_cusp_face()) 
             return ++Border_iterator(super,
                                      v->target_cusp_edge());
-          if (super==v->source_cusp_face()||v->source_cusp_face()==0)
+          if (super==v->source_cusp_face()||v->source_cusp_face()==0) {
             if (v->is_left_xx())
               return ++Border_iterator(super,
                                        v->cw_target_edge());
             else
               return ++Border_iterator(super,
-                                       v->cw_source_edge());
+                                       v->cw_source_edge()); 
+          }
           CGAL_assertion(false);
         } 
         return Border_iterator(super,0);
@@ -247,13 +249,14 @@ private:
           if (super==v->source_cusp_face()) 
             return Border_iterator(super,
                                    v->source_cusp_edge());
-          if (super==v->target_cusp_face()||v->target_cusp_face()==0)
+          if (super==v->target_cusp_face()||v->target_cusp_face()==0) {
             if (v->is_xx_left())
               return Border_iterator(super,
                                      v->pi()->ccw_target_edge());
             else
               return Border_iterator(super,
-                                     v->pi()->ccw_source_edge());
+                                     v->pi()->ccw_source_edge());            
+          }
           CGAL_assertion(false);
         } 
         return Border_iterator();
@@ -268,13 +271,14 @@ private:
           if (super==v->source_cusp_face()) 
             return ++Border_iterator(super,
                                      v->source_cusp_edge());
-          if (super==v->target_cusp_face()||v->target_cusp_face()==0)
+          if (super==v->target_cusp_face()||v->target_cusp_face()==0) {
             if (v->is_left_xx())
               return ++Border_iterator(super,
                                        v->cw_target_edge());
             else
               return ++Border_iterator(super,
-                                       v->cw_source_edge());
+                                       v->cw_source_edge());            
+          }
           CGAL_assertion(false);
         } 
         return Border_iterator(super,0);

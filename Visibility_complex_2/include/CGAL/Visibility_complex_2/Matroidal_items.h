@@ -15,7 +15,7 @@ class Matroidal_vertex
 {
 public:
     typedef Matroidal_vertex<Vc_>  Self;
-    typedef Vertex_base<Vc_>     Vertex_base;
+    typedef Visibility_complex_2_details::Vertex_base<Vc_>  Vertex_base;
     typedef typename Vertex_base::Vertex_handle     Vertex_handle;
     typedef typename Vertex_base::Edge_handle       Edge_handle;
     typedef typename Vertex_base::Disk_handle    Disk_handle;

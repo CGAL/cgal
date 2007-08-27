@@ -58,7 +58,6 @@ public:
   typedef typename Antichain::Face_const_handle        Face_const_handle;
   typedef typename Antichain::Bitangent_2              Bitangent_2;
 
-  typedef typename Antichain::Flip_traits              Flip_traits;
   typedef typename Antichain::Ccw_traits               Ccw_traits;
   typedef typename Antichain::Cw_traits                Cw_traits;
 
@@ -129,9 +128,13 @@ private:
             antichain(), vertices() {};
     template <class DiskIterator , class ConstraintIterator> Rep
     (DiskIterator first, DiskIterator last,
-     ConstraintIterator  firstc,ConstraintIterator  lastc) :
-      disks(first,last),
-      antichain(false,disks.begin(),disks.end(),firstc,lastc), vertices() {
+     ConstraintIterator  firstc,ConstraintIterator  lastc)  {
+      std::copy(first,last,std::back_inserter(disks));
+      antichain.~Antichain();
+      // This is awfull, but an antichain cannot be copied, and I cannot
+      // initialise it in the base clause, because disks would have to be
+      // initialised there too, which breaks Sun CC
+      new (&antichain) Antichain(false,disks.begin(),disks.end(),firstc,lastc);
       for (typename Antichain::Edge_iterator e=antichain.edges_begin();
            e!=antichain.edges_end();++e) {
         if (e->object()&&e->sign()) {
@@ -140,7 +143,7 @@ private:
           neg.insert(typename EM::value_type(e->object(),&*e));          
         }
       }
-    };
+    }
     ~Rep() {
       for (Face_iterator i=faces_begin(); i!=faces_end();++i) {
         delete(i.operator ->());

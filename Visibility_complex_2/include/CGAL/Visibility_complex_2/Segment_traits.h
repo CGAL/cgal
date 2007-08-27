@@ -30,7 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 namespace Visibility_complex_2_details {
-// -----------------------------------------------------------------------------
 
 template <class R_,class DistanceNT,class RToDistanceNT> class Segment_traits;
 
@@ -38,7 +37,7 @@ template <class R_,class DistanceNT,class RToDistanceNT>
 class Bitangent_2<Segment_traits<R_,DistanceNT,RToDistanceNT> >
   : public Segment_traits<R_,DistanceNT,RToDistanceNT>::Segment_2, 
     public Bitangent_base<
-             typename Segment_traits<R_,DistanceNT,RToDistanceNT>::Disk>
+      typename Segment_traits<R_,DistanceNT,RToDistanceNT>::Disk>
 {
 public:
   typedef Segment_traits<R_,DistanceNT,RToDistanceNT> Gt;
@@ -46,11 +45,11 @@ public:
 private:
   typedef Bitangent_base<Disk> Base;
   typedef Bitangent_2<Gt> Self;
+public:
   using Base::LL;
   using Base::LR;
   using Base::RL;
   using Base::RR;
-public:
   // -------------------------------------------------------------------------
   typedef R_                          R;
   typedef typename R::FT              FT;
@@ -137,12 +136,12 @@ public:
     // -------------------------------------------------------------------------
     typedef R_                            R;
     typedef typename R::FT                FT;
-    typedef Point_2<R_>          Point_2;
-    typedef CGAL::Segment_2<R_>           Segment_2;
-    typedef Segment_2                     Disk;
+    typedef CGAL::Point_2<R_> Point_2;
+    typedef Visibility_complex_2_details::Bitangent_2<Self> Bitangent_2;
+    typedef Visibility_complex_2_details::Arc_2<Self>       Arc_2;
+    typedef CGAL::Segment_2<R>                              Segment_2;
 
-    typedef Bitangent_2<Self>  Bitangent_2;
-    typedef Arc_2<Self>               Arc_2;
+    typedef Segment_2                     Disk;
 
     // -------------------------------------------------------------------------
     // The chi2 predicate

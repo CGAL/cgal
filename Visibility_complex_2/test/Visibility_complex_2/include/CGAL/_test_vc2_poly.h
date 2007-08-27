@@ -3,7 +3,7 @@
 typedef CGAL::Cartesian<int> K;
 typedef CGAL::Visibility_complex_2_polygon_traits<K> Gt;
 
-char * input_disks="\
+const char * input_disks="\
 1 10 444 \
 1 430 226 \
 4 321 482 234 319 347 242 347 342 \
@@ -20,7 +20,7 @@ char * input_disks="\
 3 190 265 130 112 278 34 \
 ";
 
-char * input_constraints="\
+const char * input_constraints="\
 LR 2 11 \
 RR 9 8 \
 LR 10 9 \
@@ -29,7 +29,7 @@ RR 2 7 \
 RR 6 3 \
 ";
 
-char * path="\
+const char * path="\
 LL 0 6 \
 LR 6 13 \
 RL 13 4 \

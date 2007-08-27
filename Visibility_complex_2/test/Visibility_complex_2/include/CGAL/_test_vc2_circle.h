@@ -4,7 +4,7 @@
 typedef CGAL::Cartesian<CGAL::Gmpz> K;
 typedef CGAL::Visibility_complex_2_circle_traits<K> Gt;
 
-char * input_disks="\
+const char * input_disks="\
 163 443 13000 1 \
 422 232 416 1 \
 332 313 9092 1 \
@@ -16,7 +16,7 @@ char * input_disks="\
 412 92 3620 1 \
 ";
 
-char * input_constraints="\
+const char * input_constraints="\
 LL 8 1 \
 LR 1 2 \
 LL 2 1 \

@@ -465,19 +465,19 @@ private:
       - target_object()->radius();
 
     a  = target_object()->center().x() - source_object()->center().x();
-    b  = target_object()->center().y() - source_object()->center().y();
+    bb  = target_object()->center().y() - source_object()->center().y();
     r  = R2 - R1;
-    aabb = a*a + b*b;
-    p=sqrt(aabb - r*r);    //         pbra = p / to_double(aabb);
+    aabb = a*a + bb*bb;
+    pp=sqrt(aabb - r*r);    //         pbra = p / to_double(aabb);
     //         parb = to_double(r) / to_double(aabb);
-    pbra = (p*b - r*a);
-    parb = (p*a + r*b);
+    pbra = (pp*bb - r*a);
+    parb = (pp*a + r*bb);
 //     pbra = (p*to_double(b) - to_double(r*a)) / to_double(aabb);
 //     parb = (p*to_double(a) + to_double(r*b)) / to_double(aabb);
   }
   
-  FT R1,R2,a,b,r;
-  FT p,pbra,parb,aabb;
+  FT R1,R2,a,bb,r;
+  FT pp,pbra,parb,aabb;
 };
 
 template < class R_>
@@ -493,11 +493,11 @@ public:
 
     typedef Circle_by_radius_2<R>         Disk;
 
-    typedef Point_2<R_> Point_2;
+    typedef CGAL::Point_2<R_> Point_2;
 
-    typedef Bitangent_2<Self>        Bitangent_2;
-    typedef Arc_2<Self>              Arc_2;
-    typedef Segment_2<R>             Segment_2;
+    typedef Visibility_complex_2_details::Bitangent_2<Self> Bitangent_2;
+    typedef Visibility_complex_2_details::Arc_2<Self>       Arc_2;
+    typedef CGAL::Segment_2<R>                              Segment_2;
 
     // -------------------------------------------------------------------------
     // The chi2 predicate
@@ -567,8 +567,8 @@ public:
     // The chi3 predicate
     typedef Tag_false Supports_chi3;
     struct Orientation_infinite {
-	Orientation operator() (const Bitangent_2& a, 
-				const Bitangent_2& b) const { 
+	Orientation operator() (const Bitangent_2&, 
+				const Bitangent_2&) const { 
           CGAL_assertion(false);
           return COLLINEAR;
         }

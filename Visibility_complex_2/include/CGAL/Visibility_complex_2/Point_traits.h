@@ -93,13 +93,14 @@ public:
     // -------------------------------------------------------------------------
     typedef R_                            R;
     typedef typename R::FT                FT;
-    typedef Point_2<R>           Point_2;
-    typedef Segment_2<R>         Segment_2;
-    typedef Point_2                       Disk;
-    typedef Bitangent_2<Self> Bitangent_2;
-    typedef Arc_2<Self>    Arc_2;
+    typedef CGAL::Point_2<R_> Point_2;
 
-    // -------------------------------------------------------------------------
+    typedef Visibility_complex_2_details::Bitangent_2<Self> Bitangent_2;
+    typedef Visibility_complex_2_details::Arc_2<Self>       Arc_2;
+    typedef CGAL::Segment_2<R>                              Segment_2;
+
+    typedef Point_2                       Disk;
+
     // The chi2 predicate
     struct Orientation_object {
 	Orientation operator()(const Bitangent_2& a,const Bitangent_2& b) const{ 

@@ -68,10 +68,9 @@ public:
 	{ return (e_ == 0) ? v_->next_edge(s)   : e_->next_edge(s); }
 };
 
-
 template < class Vc_ >
 class Sh_edge
-    : public Edge_base<Vc_>
+  : public Visibility_complex_2_details::Edge_base<Vc_>
 {
 public:
     typedef typename Vc_::Gt                           Gt;
@@ -82,7 +81,7 @@ public:
     typedef Edge_base<Vc_>          Base;
     typedef typename Base::Vertex_handle                        Vertex_handle;
     typedef typename Base::Edge_handle                          Edge_handle;
-    typedef Atom<Vc_>                               Atom;
+    typedef Visibility_complex_2_details::Atom<Vc_>             Atom;
 
   using Base::inf;
   using Base::sup;
@@ -136,7 +135,7 @@ public:
 
 template < class Vc_ >
 class Sh_vertex
-    : public Vertex_base<Vc_>
+    : public Visibility_complex_2_details::Vertex_base<Vc_>
 {
 public:
     typedef typename Vc_::Gt                       Gt;
@@ -146,8 +145,8 @@ public:
     typedef typename Vc_::Bitangent_2              Bitangent_2;
     typedef Vertex_base<Vc_>    Base;
     typedef typename Base::Disk_handle                   Disk_handle;
-    typedef typename Base::Type                             Type;
-    typedef Atom<Vc_>                           Atom;
+    typedef typename Base::Type                          Type;
+    typedef Visibility_complex_2_details::Atom<Vc_>      Atom;
 
     using Base::is_constraint;
     using Base::source_object;
@@ -231,7 +230,8 @@ class Shortest_path_2 {
 public:
   typedef Gtr_ Gt;
   typedef Items_ Items;
-  typedef Visibility_complex_2<Gt,Items,FlipTraits> Visibility_complex_2;
+  typedef CGAL::Visibility_complex_2<Gt,Items,FlipTraits>
+    Visibility_complex_2;
   typedef typename Visibility_complex_2::Vertex Vertex;
   typedef typename Visibility_complex_2::Edge Edge;
   typedef typename Visibility_complex_2::Face Face;

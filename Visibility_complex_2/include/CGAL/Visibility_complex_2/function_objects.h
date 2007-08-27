@@ -29,7 +29,7 @@ template <class Gtr_> struct Parallel_chi3 {
   // decides whether a.target_object lies before b.source_object along the
   // supporting line of a and b, assuming that b.source_object lies after 
   // a.source_object
-  bool order (const Bitangent_2&a,bool upa, const Bitangent_2&b,bool upb) {
+  bool order (const Bitangent_2&a,bool upa, const Bitangent_2&b) {
     typename Gtr_::Orientation_infinite chi2;
     typename Gtr_::Is_upward_directed upw;
     Bitangent_2 u(Bitangent_2::RL,b.source_object(),a.target_object());
@@ -44,7 +44,7 @@ template <class Gtr_> struct Parallel_chi3 {
   }
 
   Orientation operator () (const Bitangent_2&a,bool upa,
-                           const Bitangent_2&b,bool upb) {
+                           const Bitangent_2&b) {
     typename Gtr_::Orientation_object chi2;
     typename Gtr_::Is_upward_directed upw;
     CGAL_precondition(a.type()==b.type());
@@ -61,9 +61,9 @@ template <class Gtr_> struct Parallel_chi3 {
         if (upa==upw(abll)) {
           // b is left_xx
           if (a.is_xx_left())
-            if (order(a,upa,b,upb)) return LEFT_TURN; else return RIGHT_TURN;
+            if (order(a,upa,b)) return LEFT_TURN; else return RIGHT_TURN;
           else
-            if (order(a,upa,b,upb)) return RIGHT_TURN; else return LEFT_TURN;
+            if (order(a,upa,b)) return RIGHT_TURN; else return LEFT_TURN;
         }
         // else -> carry on
       case LEFT_TURN:
@@ -106,9 +106,9 @@ template <class Gtr_> struct Parallel_chi3 {
         if (upa==upw(abrr)) {
           // b is right_xx
           if (a.is_xx_right())
-            if (order(a,upa,b,upb)) return RIGHT_TURN; else return LEFT_TURN;
+            if (order(a,upa,b)) return RIGHT_TURN; else return LEFT_TURN;
           else
-            if (order(a,upa,b,upb)) return LEFT_TURN; else return RIGHT_TURN;
+            if (order(a,upa,b)) return LEFT_TURN; else return RIGHT_TURN;
         }
         // else -> carry on
       case RIGHT_TURN:
@@ -218,7 +218,7 @@ struct Less_bitangent {
             return a.is_right_xx();
         }
         Parallel_chi3<Gtr_> chi3;
-        Orientation op=chi3(a,upa,b,upb);
+        Orientation op=chi3(a,upa,b);
         if (op == RIGHT_TURN)     return false;
         else if (op == LEFT_TURN) return true;
         CGAL_assertion(false);
