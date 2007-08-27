@@ -49,7 +49,7 @@ private :
           default : 
      
             Tokenizer tk(line,Separator(" "));
-            vector<string> tokens(tk.begin(),tk.end());
+            vector<string> tokens CGAL_make_vector(tk.begin(),tk.end());
 
             CHECK_MSG( tokens.size() >= 1, str(format("Invalid audit line of type I, id field missing: %1%") % line) ) ;
             CHECK_MSG( tokens.size() >= 2, str(format("Invalid audit line of type I, cost field missing: %1%") % line) ) ;
