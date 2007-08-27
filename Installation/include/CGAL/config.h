@@ -215,7 +215,7 @@ make_vector(Iterator begin, Iterator end)
   return v;
 }
 } }
-#  define CGAL_make_vector(begin, end) = CGAL::CGALi::make_vector(begin, end)
+#  define CGAL_make_vector(begin, end) (CGAL::CGALi::make_vector(begin, end))
 #else
 #  define CGAL_make_vector(begin, end) (begin, end)
 #endif
