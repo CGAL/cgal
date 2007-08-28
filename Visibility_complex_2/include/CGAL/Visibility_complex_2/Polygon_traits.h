@@ -485,7 +485,7 @@ public:
       Distance_NT operator () (const Bitangent_2& b) const 
 	{ return Distance()(b.source(),b.target()); }
       Distance_NT operator() (const Arc_2& a, 
-                      const Bitangent_2& inf, const Bitangent_2& sup) const {
+                      const Bitangent_2&, const Bitangent_2& sup) const {
 	// Arc reduced to one point : length is 0
 	if (*a.begin() == sup.source() || *a.begin() == sup.target()) 
           return 0;

@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Visibility_complex_2/function_objects.h>
+
 #include <CGAL/In_place_list.h>
 
 #include <CGAL/Multiset.h>
@@ -50,6 +51,16 @@ namespace Visibility_complex_2_details {
 template<class T> class VC_in_place_list_base: public In_place_list_base<T> {
 public:
   VC_in_place_list_base() {
+    this->next_link=0;
+    this->prev_link=0;
+  }    
+  ~VC_in_place_list_base() {
+    if (this->next_link) {
+      this->next_link->prev_link=this->prev_link;
+    }
+    if (this->prev_link) {
+      this->prev_link->next_link=this->next_link;
+    }
     this->next_link=0;
     this->prev_link=0;
   }    
@@ -151,12 +162,9 @@ template<class T, bool b> class VC_in_place_list
 private:
   // Prevent copy.
   VC_in_place_list(const VC_in_place_list&) {}
+  VC_in_place_list& operator=(const VC_in_place_list&) {}
 public: 
   VC_in_place_list() {}
-  void detach() {
-    this->node->next_link=&*(this->node);
-    this->node->prev_link=&*(this->node);    
-  }
   void erase(T* pos) {
     CGAL_precondition(pos->next_link&&pos->prev_link);
     Base::erase(pos);
@@ -328,11 +336,6 @@ public :
   template < class DiskIterator ,class ConstraintIterator >
   Antichain(bool linear,DiskIterator first, DiskIterator last,
                                ConstraintIterator  firstc,ConstraintIterator lastc); 
-  ~Antichain() { 
-    this->detach();
-    minimals_ccw_.detach();
-    minimals_cw_.detach();
-  }
   // -------------------------------------------------------------------------
   // Options when sweeping
   bool is_valid()               const { return valid_;          }
@@ -454,7 +457,8 @@ public :
   // -------------------------------------------------------------------------
 protected:
   // -------------------------------------------------------------------------
-  // Compute the flipped bitangent phi(v)
+  // Compute the flipped bitangent phi(v). Moved inside the class, because
+  // some compilers don't understand the return type otherwise.
   template < class Tr >
   Vertex_handle compute_phi(Vertex_handle v , Tr tr) {
     // -------------------------------------------------------------------------
@@ -1078,7 +1082,7 @@ struct Antichain<Gtr_,It,Flip>::compute_gr_aux {
     };
     window_type st;
 
-    struct IPLB : VC_in_place_list_base<IPLB> {
+    struct IPLB : In_place_list_base<IPLB> {
       chain * super; // points to the chain
       constraint_entry * v; // points to a vertex
       IPLB(chain * c) : super(c),v(0) {};
@@ -2117,27 +2121,24 @@ Antichain<Gtr_,It,Flip>::compute_vertices(Tr)
   typename Tr::Set_adjacent_faces_one_to_one  set_adjacent_faces;
   typename Tr::Dr      dr;  typename Tr::Dl      dl;
   typename Tr::Ur      ur;  typename Tr::Ul      ul;
+  typename Tr::Sign    sign;
   typename Tr::Cw_target_edge cw_target_edge;
   typename Tr::Cw_source_edge cw_source_edge;
   typename Tr::Ccw_target_edge ccw_target_edge;
   typename Tr::Ccw_source_edge ccw_source_edge;
   typename Tr::Splice splice;
-  typename Tr::Ccw_edge ccw_edge;
   typedef Tr TR;
   // -------------------------------------------------------------------------
 
   // -------------------------------------------------------------------------
   // Saving the Edge --> Face pointers because we will lose them during the
-  // rotational sweep below
-  Edge* aaa=new Edge[this->size()];
-  {
-    size_t i=0;
-    for (Edge_iterator e = edges_begin(); e != edges_end() ; ++e,++i) {
-      new (aaa+i) Edge(e->sign(),0);
-      if (e->sign()) 
-        set_adjacent_old_faces(aaa+i,dl(&(*e)),ur(&(*e)),ul(&(*e)));
-      else set_adjacent_old_faces(aaa+i,dl(&(*e)),dr(&(*e)),ul(&(*e)));
-    }
+  // rotational sweep below.
+  std::vector<Face_handle> aaa;
+  aaa.reserve(3*this->size());
+  for (Edge_iterator e = edges_begin(); e != edges_end() ; ++e) {
+    aaa.push_back(dl(&*e));
+    aaa.push_back(sign(&*e)?ur(&*e):dr(&*e));
+    aaa.push_back(ul(&*e));
   }
 
   // -------------------------------------------------------------------------
@@ -2221,20 +2222,13 @@ Antichain<Gtr_,It,Flip>::compute_vertices(Tr)
 
     // Recovering the initial Edge --> Face pointers with a
   {
-    Edge_handle ea = aaa;
-    for (Edge_iterator e = edges_begin(); e != edges_end() ; ++e,++ea) {
-      if (e->object()) {
-        if (e->sign()) 
-          set_adjacent_faces(&(*e),dl(ea),ur(ea),ul(ea));
-        else set_adjacent_faces(&(*e),dl(ea),dr(ea),ul(ea));
-        for (Edge_handle ee=e.operator->(); sup(ee);) {
-          ee=ccw_edge(sup(ee),ee->object());
-          set_adjacent_faces(ee,0,0,0);     
-        }
-      }
+    typename std::vector<Face_handle>::iterator ia = aaa.begin();
+    for (Edge_iterator e = edges_begin(); e != edges_end() ; ++e,ia+=3) {
+      set_adjacent_faces(&*e,ia[0],ia[1],ia[2]);
     }
+
+
   }
-  delete[] aaa;
 }
 
 

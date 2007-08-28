@@ -70,7 +70,8 @@ public:
 
 template < class Vc_ >
 class Sh_edge
-  : public Visibility_complex_2_details::Edge_base<Vc_>
+  : public Visibility_complex_2_details::Edge_base<Vc_> // Qualified, 
+    // because Sun CC does not understand otherwise.
 {
 public:
     typedef typename Vc_::Gt                           Gt;
