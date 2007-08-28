@@ -168,6 +168,26 @@ read_curve(stream & is,
   return true;
 }
 
+#elif TEST_TRAITS == LINEAR_TRAITS
+
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+{
+  is >> xcv;
+  return true;
+}
+
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::read_curve(stream & is, Curve_2 & cv)
+{
+  is >> cv;
+  return true;
+}
+
 #elif TEST_TRAITS == CORE_CONIC_TRAITS
 
 /*! */
