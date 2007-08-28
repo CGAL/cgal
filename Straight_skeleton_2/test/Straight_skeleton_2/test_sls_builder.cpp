@@ -86,7 +86,7 @@ RegionPtr load_region( string file )
         
         if ( orientation == expected )
              rRegion->push_back(lPoly);
-        else rRegion->push_back( PolygonPtr( new Polygon_2(lPoly->rbegin(),lPoly->rend()) ) ) ;
+        else rRegion->push_back( PolygonPtr( new Polygon_2 CGAL_make_vector(lPoly->rbegin(),lPoly->rend()) ) ) ;
       }
       else cerr << "Degenerate polygon in file " << file << endl ;
     }

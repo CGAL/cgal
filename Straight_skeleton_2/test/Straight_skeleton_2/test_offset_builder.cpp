@@ -59,7 +59,7 @@ PolygonPtr load_polygon( string file )
       CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
         
       if ( orientation != CGAL::CLOCKWISE )
-        rPoly = PolygonPtr( new Polygon_2(rPoly->rbegin(),rPoly->rend()) )  ;
+        rPoly = PolygonPtr( new Polygon_2 CGAL_make_vector(rPoly->rbegin(),rPoly->rend()) )  ;
     }
     else
       rPoly = PolygonPtr();     
