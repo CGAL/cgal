@@ -48,7 +48,7 @@ public:
 
   template <class CurveIterator>
   General_polygon_2(CurveIterator begin,
-                    CurveIterator end) : m_xcurves(begin, end)
+                    CurveIterator end) : m_xcurves CGAL_make_list(begin, end)
   {}
 
   template <class CurveIterator>
