@@ -624,7 +624,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind;
+    Curve_end                  v_ind = MIN_END;
     const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
@@ -659,7 +659,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind;
+    Curve_end                  v_ind = MIN_END;
     const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
 
     CGAL_assertion (v_cv != NULL);
