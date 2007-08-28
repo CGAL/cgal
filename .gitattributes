@@ -503,8 +503,10 @@ Arrangement_of_spheres_3/src/CGAL/Rule_direction.cpp -text
 Arrangement_of_spheres_3/src/CGALQt/Qt_examiner_viewer_2.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/compile.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/rational_points -text
+Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/include/predicates.h -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/include/test_arrangement.h -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/predicates.cpp -text
+Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/predicates_0.cpp -text
+Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/predicates_1.cpp -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/template_compile.cpp -text
 Arrangement_on_surface_2/benchmarks/data/benchArrAosConics.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmarks/data/benchArrAosPolylines.xml svneol=native#text/xml
