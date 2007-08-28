@@ -806,10 +806,10 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2 & xc)
     {
       if (!m_enabled) return m_object(xc);
-      std::cout << "construct_opposite" << std::endl;
-      << "  xc: " << xc << std::endl;
-      X_monotone_curve_2 xc = m_object(xc);
-      std::cout << "  result: " << xc << std::endl;
+      std::cout << "construct_opposite" << std::endl
+                << "  xc: " << xc << std::endl;
+      X_monotone_curve_2 xc_out = m_object(xc);
+      std::cout << "  result: " << xc_out << std::endl;
       return xc;
     }
   };
