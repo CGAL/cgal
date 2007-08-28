@@ -8,6 +8,8 @@
 # Find executable name (different on Windows and Unix)
 [ -f ./VC/debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/debug/polyhedron_ex_parameterization.exe"
 [ -f ./VC/release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/release/polyhedron_ex_parameterization.exe"
+[ -f ./VC/x64/debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/x64/debug/polyhedron_ex_parameterization.exe"
+[ -f ./VC/x64/release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/x64/release/polyhedron_ex_parameterization.exe"
 [ -x ./polyhedron_ex_parameterization ] && PARAM_APPLICATION="./polyhedron_ex_parameterization"
 if [ -z "$PARAM_APPLICATION" ]; then
     echo "Cannot find polyhedron_ex_parameterization application"
@@ -15,10 +17,11 @@ if [ -z "$PARAM_APPLICATION" ]; then
 fi
 
 # Find source file in data or data/extras folders
-[ -f data/extras/"$5".off ] && SOURCE_FILE="data/extras/"$5".off"
-[ -f data/"$5".off ] && SOURCE_FILE="data/"$5".off"
-if [[ ! -f $SOURCE_FILE ]] ; then
-    echo "Cannot find "$5".off"
+[ -f "data/extras/${5}.off" ] && SOURCE_FILE="data/extras/${5}.off"
+[ -f "data/${5}.off" ] && SOURCE_FILE="data/${5}.off"
+[ -f "${5}.off" ] && SOURCE_FILE="${5}.off"
+if [[ ! -f "$SOURCE_FILE" ]] ; then
+    echo "Cannot find ${5}.off"
     exit 1;
 fi
 
@@ -26,10 +29,11 @@ fi
 [ -d test ] || mkdir test
 
 # Remove destination file (if needed)
-DESTINATION_FILE="test/test_$5_$1_$2.$4"
-[ -f $DESTINATION_FILE ] && rm -f $DESTINATION_FILE
+SOURCE_BASENAME=`basename "${5}"`
+DESTINATION_FILE="test/test_${SOURCE_BASENAME}_${1}_${2}.${4}"
+[ -f "$DESTINATION_FILE" ] && rm -f "$DESTINATION_FILE"
 
 # run test (echo on)
 set -x
-$PARAM_APPLICATION -t "$1" -b "$2" -s "$3" $SOURCE_FILE $DESTINATION_FILE 2>&1
+"$PARAM_APPLICATION" -t "$1" -b "$2" -s "$3" "$SOURCE_FILE" "$DESTINATION_FILE" 2>&1
 

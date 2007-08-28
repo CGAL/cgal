@@ -17,6 +17,7 @@ CXXFLAGS = \
            -Iinclude \
            -I../../include \
            -I../../../OpenNL/include \
+           -I../../../Installation/include \
            $(CGAL_CXXFLAGS) \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \

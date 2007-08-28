@@ -26,7 +26,7 @@
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				BrowseInformation="1"
 				WarningLevel="2"
@@ -70,12 +70,12 @@
 			ManagedExtensions="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900 /Og-"
+				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;$(CGALROOT)\include\CGAL\config\msvc;$(CGALROOT)\include;$(CGALROOT)\auxiliary\gmp\include;$(BOOSTROOT)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
