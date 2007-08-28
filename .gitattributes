@@ -823,6 +823,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/compare_y_at_x_left -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/errors -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/is_vertical -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/make_x_monotone -text
