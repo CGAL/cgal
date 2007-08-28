@@ -69,15 +69,15 @@ public:
   /*! Construct default */
   Arr_counting_traits_2() : Base()
   {
+    clear_counters();
     increment();
-    memset(m_counters, 0, sizeof(m_counters));
   }
 
   /*! Construct copy */
   Arr_counting_traits_2(Arr_counting_traits_2 & other) : Base(other)
   {
+    clear_counters();
     increment();
-    memset(m_counters, 0, sizeof(m_counters));
   }
   
   /*! Obtain the counter of the given operation */
@@ -509,7 +509,7 @@ public:
   Compare_x_2 compare_x_2_object() const
   { return Compare_x_2(this, m_counters[COMPARE_X_OP]); }
   
-  Compare_xy_2 compare_xy_2_object() 
+  Compare_xy_2 compare_xy_2_object() const
   { return Compare_xy_2(this, m_counters[COMPARE_XY_OP]); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
@@ -562,12 +562,20 @@ public:
 
   //@}
 
+  /*! Increment the construction counter
+   * \param doit indicates whethet to actually inceremnt the counter or not
+   * \return the counter at the end of the operation
+   */
   static unsigned int increment(bool doit = true)
   {
     static unsigned int counter = 0;
     if (doit) ++counter;
     return counter;
   }
+
+  /*! Clean all operation counters */
+  void clear_counters()
+  { memset(m_counters, 0, sizeof(m_counters)); }
 
 private:
   /*! The operation counters */
