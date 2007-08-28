@@ -284,6 +284,8 @@ private:
   /*! Test Compare_x_2
    */
   bool compare_x_wrapper(std::istringstream & line);
+  bool compare_x_wrapper_impl(std::istringstream & line, CGAL::Tag_false);
+  bool compare_x_wrapper_impl(std::istringstream & line, CGAL::Tag_true);
 
   /*! Compare_xy_2
    */
@@ -878,6 +880,14 @@ Traits_test<T_Traits>::get_next_input(std::istringstream & str_stream)
 template <class T_Traits>
 bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
 {
+  typedef typename T_Traits::Has_boundary_category       Has_boundary_category;
+  return compare_x_wrapper_impl(str_stream, Has_boundary_category());
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::compare_x_wrapper_impl
+                            (std::istringstream & str_stream, CGAL::Tag_true)
+{
   unsigned int id1, id2;
   unsigned int real_answer, exp_answer;
   str_stream >> id1;
@@ -893,7 +903,6 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
                 << ", " << m_points[id2] << " ) ? " << exp_answer << " ";
       real_answer =m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
     }
-    #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
     if (exp_answer_2.first==CURVE_END)
     {
       CGAL::Curve_end cv_end_1 = static_cast<CGAL::Curve_end>
@@ -906,9 +915,7 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
         real_answer = m_traits.compare_x_2_object()
                                (m_points[id1], m_xcurves[id2],cv_end_1);
     }
-    #endif
   }
-  #if TEST_TRAITS == SPHERICAL_ARC_TRAITS
   else if (exp_answer_1.first==CURVE_END)
   {
     CGAL::Curve_end cv_end_1=static_cast<CGAL::Curve_end>(exp_answer_1.second);
@@ -925,9 +932,22 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
       real_answer = m_traits.compare_x_2_object()(m_xcurves[id1], cv_end_1,
                                                   m_xcurves[id2], cv_end_2);
   }
-  #endif
   did_violation_occur();
   return compare_and_print(exp_answer, real_answer);
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::compare_x_wrapper_impl(std::istringstream & str_stream, CGAL::Tag_false)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  unsigned int exp_answer = get_expected_enum(str_stream);
+  unsigned int real_answer =
+  m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
+  did_violation_occur();
+  std::cout << "Test: compare_x( " << m_points[id1] << ", "
+            << m_points[id2] << " ) ? " << exp_answer << " ";
+ return compare_and_print(exp_answer, real_answer);
 }
 
 /*! Test Compare_xy_2
