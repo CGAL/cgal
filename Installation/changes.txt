@@ -1,3 +1,6 @@
+18 July 2007 Laurent Saboret
+- Added support of TAUCS 64 bits
+
 25 Apr 2007 Laurent Saboret
 - Split TAUCS feature as BLAS, ATLAS, LAPACK and TAUCS (for Jet_fitting_3 and Ridges_3 packages)
 - Added support of ACML library (one implementation of BLAS + LAPACK)

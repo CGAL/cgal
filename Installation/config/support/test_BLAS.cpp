@@ -18,6 +18,14 @@
 
 // Test if BLAS is available
 
+// blaswrap.h maps CBLAS function names to BLAS standard Fortran interface.
+#ifdef CGAL_USE_CBLASWRAP
+  #ifndef CGAL_USE_F2C
+    #define CGAL_USE_F2C
+  #endif
+  #include <blaswrap.h>
+#endif
+
 #include <iostream>
 #include <cassert>
 

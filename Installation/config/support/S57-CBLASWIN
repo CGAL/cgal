@@ -1,0 +1,19 @@
+# BLAS (Basic Linear Algebra Subprograms)
+# We search for CBLAS (http://www.netlib.org/cblas).
+# This configuration *must* be the last try as this library is notably slow.
+# Note: this configuration has been tested with VisualC++ 8.0 x64.
+
+DESCRIPTION = CBLAS for MS Windows
+PROVIDES = BLAS
+CXXFLAGS = -DCGAL_USE_F2C -DCGAL_USE_CBLASWRAP
+LDFLAGS =
+LIBS = blas vcf2c
+REQUIRES = DOLLAR_WINDOWS_COMPILER
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS =
+
+# EOF

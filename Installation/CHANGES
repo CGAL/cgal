@@ -250,7 +250,7 @@ in <windows.h> which were clashing with min/max functions.
 This is a bug fix release
 
 - Number Types
-  Fix MP_Float constructor which crashed for some values.
+  Fixed MP_Float constructor which crashed for some values.
 
 - Kernel 
   Rename Bool to avoid a clash with a macro in X11 headers.
