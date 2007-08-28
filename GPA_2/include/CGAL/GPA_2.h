@@ -48,11 +48,17 @@ public:
     //! this instance's template argument
     typedef CurveKernel_2 Curve_kernel_2;
 
-    //! type of a finite point on curve
-    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
-    
     //! myself
     typedef GPA_2<Curve_kernel_2> Self;
+    
+    //! type of a generic curve
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    
+    //! type of point's x-coordinate
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
+    
+    //! type of a finite point on curve
+    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //!@}
 public:
