@@ -2503,8 +2503,8 @@ inline bool
 Antichain<Gtr_,It,Flip>::
 is_minimal(const Vertex_handle& v, Tr /*tr*/)  const
 {
-  typename  Tr::Left_traits lt=typename  Tr::Left_traits();
-  typename Tr::Right_traits rt=typename  Tr::Right_traits();
+  typename  Tr::Left_traits lt;
+  typename Tr::Right_traits rt;
   return (is_xx_minimal(v,lt) && 
           is_xx_minimal(v,rt));
 }
@@ -2615,7 +2615,7 @@ Antichain<Gtr_,It,Flip>::sweep(Vertex_handle v , Tr tr)
   // -------------------------------------------------------------------------
   // Removing cwR(v) and cwL(v) from the minimal list corresponding to the
   // opposite orientation. Adding v.
-  typename Tr::Cw_traits cw_traits=typename Tr::Cw_traits();
+  typename Tr::Cw_traits cw_traits;
   erase_minimal(v,tr); push_back_minimal(v,cw_traits);
   CGAL_assertion(v!=cwR(v)&&v!=cwL(v));  
   if (is_minimal(cwL(v),cw_traits)) erase_minimal(cwL(v),cw_traits);
