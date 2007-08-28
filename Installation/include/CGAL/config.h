@@ -202,6 +202,7 @@ using std::max;
 // SunPRO's STL is missing the std::vector constructor from an iterator range.
 #ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
 #include <vector>
+#include <list>
 #include <iterator>
 #include <algorithm>
 namespace CGAL { namespace CGALi {
@@ -214,10 +215,21 @@ make_vector(Iterator begin, Iterator end)
   std::copy(begin, end, std::back_inserter(v));
   return v;
 }
+template < typename Iterator >
+inline
+std::list<typename std::iterator_traits<Iterator>::value_type>
+make_list(Iterator begin, Iterator end)
+{
+  std::list<typename std::iterator_traits<Iterator>::value_type> v;
+  std::copy(begin, end, std::back_inserter(v));
+  return v;
+}
 } }
 #  define CGAL_make_vector(begin, end) (CGAL::CGALi::make_vector(begin, end))
+#  define CGAL_make_list(begin, end) (CGAL::CGALi::make_list(begin, end))
 #else
 #  define CGAL_make_vector(begin, end) (begin, end)
+#  define CGAL_make_list(begin, end) (begin, end)
 #endif
 
 #endif // CGAL_CONFIG_H
