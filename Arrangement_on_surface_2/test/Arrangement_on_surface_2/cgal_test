@@ -521,7 +521,7 @@ fi
 
 if [ -f $ERROR_FULL_DESCRIPTION_FILE ] ; then
   echo "********************************************************" >> $ERRORFILE
-  echo "************* ERROR FULL DESCRIPTION FILE **************" >> $ERRORFILE
+  echo "************* FULL ERROR DESCRIPTION FILE **************" >> $ERRORFILE
   echo "********************************************************" >> $ERRORFILE
   cat $ERROR_FULL_DESCRIPTION_FILE >> $ERRORFILE
 fi
