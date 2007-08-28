@@ -41,91 +41,47 @@ class Arc_2_rep
     // myself
     typedef Arc_2_rep<GPA_2> Self;
     
-    // arc with finite end-points specificator
-    class Segment_tag {};
-    // arc unbounded at in one direction specificator
-    class Ray_tag {};
-    // arc unbounded in both directions specificator
-    class Branch_tag {};
+    // type of generic curve
+    typedef typename GPA_2::Curve_2 Curve_2;
         
     // type of a point on generic curve
     typedef typename GPA_2::Point_2 Point_2;
     
     // default constructor
     Arc_2_rep() : 
-        arcno_(-1), is_vertical_(false) {  
+        _m_arcno(-1), _m_arcno_s(-1), _m_arcno_t(-1), _m_is_vertical(false) {  
     }
-    
-    // constructs a segment-type arc
-    Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_2& c, int arcno,
-            Segment_tag) :
-        _m_source_(p), _m_target(q), _m_support(c), _m_arcno(arcno) {
         
-        // shall we enforce lexicographical order of end-points here to 
-        // suppress is_reversed tag ?
-        boundary_x_[0] = ::CGAL::NO_BOUNDARY;
-        boundary_y_[0] = ::CGAL::NO_BOUNDARY;
-        boundary_x_[1] = ::CGAL::NO_BOUNDARY;
-        boundary_y_[1] = ::CGAL::NO_BOUNDARY;
-        _m_is_vertical = (GPA_2().compare_x_2_object()(p.x(), q.x()) ==
-             ::CGAL::EQUAL);
-    }
-    
-    // constructs a ray-type arc
-    Arc_2_rep(const Point_2& origin, const Point_2& inf_end, const Curve_2& c,
-        int arcno, Ray_tag) :
-            _m_source_(origin), _m_target(inf_end), _m_support(c),
-                _m_arcno(arcno) {
+    // standard constructor
+    Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_2& c, 
+        int arcno = -1, int arcno_p = -1, int arcno_q = -1,
+        bool is_vertical = false) : _m_source(p), _m_target(q), _m_support(c),
+            _m_arcno(arcno), _m_arcno_s(arcno_p), _m_arcno_t(arcno_q),
+            _m_is_vertical(is_vertical) {
         
-        boundary_x_[0] = ::CGAL::NO_BOUNDARY; // no boundary for origin
-        boundary_y_[0] = ::CGAL::NO_BOUNDARY;
-        boundary_x_[1] = inf_end.boundary_in_x();
-        boundary_y_[1] = inf_end.boundary_in_y();
+        // here starts the game: need to sort end-points lexicographically
+        ::CGAL::Comparison_result res = p.compare_xy(q);
+        CGAL_precondition(res != ::CGAL::EQUAL);
         
-        if(inf_end.boundary_in_x() == ::CGAL::NO_BOUNDARY &&
-            GPA_2().compare_x_2_object()(origin.x(), inf_end.x()) ==
-                ::CGAL::EQUAL) 
-            _m_is_vertical = true;
-        else
-            _m_is_vertical = false;
-    }
-    
-    // constructs a branch-type arc
-    Arc_2_rep(const Point_2& inf_p, const Point_2& inf_q, const Curve_2& c,
-        int arcno, Branch_tag) :
-            _m_source_(inf_p), _m_target(inf_q), _m_support(c) {
-        
-        boundary_x_[0] = inf_p.boundary_in_x();
-        boundary_y_[0] = inf_p.boundary_in_y();
-        boundary_x_[1] = inf_q.boundary_in_x();
-        boundary_y_[1] = inf_q.boundary_in_y();
-        
-        if(inf_p.boundary_in_x() == ::CGAL::NO_BOUNDARY &&
-            inf_q.boundary_in_x() == ::CGAL::NO_BOUNDARY &&
-            GPA_2().compare_x_2_object()(inf_p.x(), inf_q.x()) ==
-                ::CGAL::EQUAL) 
-            _m_is_vertical = true;
-        else {
-            _m_arcno = arcno; 
-            _m_is_vertical = false;
+        if(res == ::CGAL::GREATER) {
+            std::swap(_m_source, _m_target);
+            std::swap(_m_arcno_s, _m_arcno_t);
         }
+        // set end-point arcnos from segment's interior
+        if(_m_arcno_s == -1)
+            _m_arcno_s = _m_arcno;
+        if(_m_arcno_t == -1)
+            _m_arcno_t = _m_arcno;
     }
     
     // source and target end-points of a segment    
-    Point_2 _m_source_, _m_target;
+    Point_2 _m_source, _m_target;
     // supporting curve
     mutable Curve_2 _m_support;
-    // interior arc number (undefined for vertical branches)
-    mutable ::boost::optional<int> _m_arcno;
-    // indicates whether arc is reversed (do we need it ?)
-    bool _m_is_reversed;
+    // interior arcno, source and target arcno
+    mutable int _m_arcno, _m_arcno_s, _m_arcno_t;
     // indicates whether arc is vertical
     bool _m_is_vertical;
-
-    // boundary condition in x for min and max end-point     
-    mutable ::CGAL::Boundary_type _m_boundary_x[2];
-    // boundary condition in y for min and max end-point 
-    mutable ::CGAL::Boundary_type _m_boundary_y[2];
     
     // befriending the handle
     friend class Arc_2<GPA_2, Self>;
@@ -152,19 +108,15 @@ public:
     //! type of a finite point on curve
     typedef typename GPA_2::Xy_coordinate_2 Xy_coordinate_2;
     
+    //! type of generic curve
+    typedef typename GPA_2::Curve_2 Curve_2;
+        
     //! type of a point on generic curve
     typedef typename GPA_2::Point_2 Point_2;
         
-    //! arc with finite end-points specificator
-    typedef typename Rep::Segment_tag Segment_tag;
-    //! arc unbounded at in one direction specificator
-    typedef typename Rep::Ray_tag Ray_tag;
-    //! arc unbounded in both directions specificator
-    typedef typename Rep::Branch_tag Branch_tag;
-        
     //!@}
 public:
-    //!\name constructors
+    //!\name basic constructors
     //!@{
 
     /*!\brief
@@ -181,88 +133,143 @@ public:
             Base(static_cast<const Base&>(p)) {  
     }
     
-    //! \brief 
-    //! constructs an arc supporting by curve \c c with \c arcno, bounded by
-    //! two finite end-points (segment arc). If <tt>p.x() == q.x()</tt>
-    //! vertical segment is assumed
-    //! 
-    //! \pre p != q
-    //! \pre p and q are finite points (i.e., no boundary conditions are set)
-    //! \pre if \c p.x() == \c q.x() the curve must have a vertical component
-    //! at this x
-    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c, int arcno,
-            Segment_tag) : 
-        Base(Rep(p, q, c, arcno, Segment_tag)) { 
-        
-        CGAL_precondition(!p.is_indentical(q));
-        CGAL_precondition(p.boundary_in_x() == ::CGAL::NO_BOUNDARY && 
-                          p.boundary_in_y() == ::CGAL::NO_BOUNDARY && 
-                          q.boundary_in_x() == ::CGAL::NO_BOUNDARY && 
-                          q.boundary_in_y() == ::CGAL::NO_BOUNDARY);
-        CGAL_precondition(GPA_2().compare_xy_2_object()(p, q) != CGAL::EQUAL);
-    }
-    
-    /*!\brief
-     * constructs an infinite ray having one end-point at infinity mutually 
-     * exclusive either in x or y (with the preference given to x)
-     *
-     * point \c origin defines a finite-coordinates origin of the ray, point 
-     * \c inf_end defines the infinite end with boundary conditions set
-     * either for x or y. If <tt>origin.x() == inf_end.x()</tt> vertical
-     * ray is assumed
-     *
-     * \pre \c origin is a point with finite coordinates
-     * \pre \c inf_end has either x or y boundary conditions set
-     * \pre if \c origin.x() == \c inf_end.x() the curve must have a vertical
-     * component at this x
-     */
-    Arc_2(const Point_2& origin, const Point_2& inf_end, const Curve_2& c, 
-            int arcno, Ray_tag) :
-        Base(Rep(origin, inf_end, c, arcno, Ray_tag)) {
-        
-        CGAL_precondition(!origin.is_indentical(inf_end));
-        CGAL_precondition(origin.boundary_in_x() == ::CGAL::NO_BOUNDARY && 
-                          origin.boundary_in_y() == ::CGAL::NO_BOUNDARY);
-        CGAL_precondition(inf_end.boundary_in_x() != ::CGAL::NO_BOUNDARY ||
-            inf_end.boundary_in_y() != ::CGAL::NO_BOUNDARY);
-        
-        if(boundary_x == CGAL::MINUS_INFINITY) {
-            this->ptr()->target_ = p;
-            this->ptr()->boundary_in_x_[0] = boundary_x;
-            this->ptr()->boundary_in_y_[1] = boundary_y_p;
-        } else if(boundary_x == CGAL::PLUS_INFINITY) {
-            this->ptr()->source_ = p;
-            this->ptr()->boundary_in_x_[1] = boundary_x;
-            this->ptr()->boundary_in_y_[0] = boundary_y_p;
-        } 
-    }
-
-    /*!\brief
-     * constructs an arc unbounded in both directions supported by curve \c c
-     * with \c arcno (matters only if \c inf_p.x() != \c inf_q.x() )
-     * 
-     * \pre \c inf_p != \c inf_q
-     * \pre \c inf_p and \c inf_q must have either x or y boundary conditions
-     * set. 
-     * \pre if \c inf_p.x() == \c inf_q.x() the curve must have a vertical
-     * component at this x
-     */
-    Arc_2(const Point_2& inf_p, const Point_2& inf_q, const Curve_2& c, 
-        int arcno, Branch_tag) :
-        Base(Rep(inf_p, inf_q, c, arcno, Branch_tag)) {  
-            
-        CGAL_precondition(!inf_p.is_indentical(inf_q));
-        CGAL_precondition(inf_p.boundary_in_x() != ::CGAL::NO_BOUNDARY ||
-            inf_p.boundary_in_y() != ::CGAL::NO_BOUNDARY);
-        CGAL_precondition(inf_q.boundary_in_x() != ::CGAL::NO_BOUNDARY ||
-            inf_q.boundary_in_y() != ::CGAL::NO_BOUNDARY);
-    }
-    
     /*!\brief
      * constructs an arc from a given represenation
      */
     Arc_2(Rep rep) : 
         Base(rep) { 
+    }
+    
+    //!@}
+    //!\name standard constructors for non-vertical arcs
+    //!@{
+    
+    //! \brief 
+    //! constructs an arc with two finite end-points, supported by curve \c c
+    //! with \c arcno (segment)  
+    //! 
+    //! \c arcno_p and \c arcno_q define arcnos of \c p and \c q w.r.t. 
+    //! the curve \c c
+    //!
+    //! \pre p.x() != q.x()
+    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c, int arcno,
+        int arcno_p, int arcno_q) : 
+        Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
+        
+        CGAL_precondition(!p.is_indentical(q));
+        CGAL_precondition(GPA_2().compare_x_2_object()(p.xy(), q.xy()) !=
+            CGAL::EQUAL);
+        // preconditions for arcnos ?
+    }
+    
+    /*!\brief
+     * constructs an arc with one finite end-point \c origin and one
+     * x-infinite end, supported by curve \c c with \c arcno (ray I)
+     *
+     * \c inf_end defines whether the ray emanates from +/- x-infinity, 
+     * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
+     */
+    Arc_2(const Point_2& origin, ::CGAL::Curve_end inf_end, const Curve_2& c, 
+            int arcno, int arcno, int arcno_o) :
+        Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
+        
+    }
+    
+    /*!\brief
+     * constructs an arc with one finite end-point \c origin and one asymtpotic
+     * (y-infinite) end given by x-coordinate \c asympt_x (ray II)
+     *
+     * \c inf_end specifies +/-oo an asymptotic end is approaching, \c arcno_o
+     * defines an arcno of point \c origin (arcno of asymptotic end is the
+     * same as \c arcno )
+     * \pre origin.x() != asympt_x
+     */
+    Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
+        ::Curve_end inf_end, const Curve_2& c, int arcno, int arcno_o) :
+        Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
+        
+        CGAL_precondition(GPA_2().compare_x_2_object()(origin.x(), asympt_x) !=
+            CGAL::EQUAL);
+    }
+
+    /*!\brief
+     * constructs an arc with two x-infinite ends supported by curve \c c
+     * with \c arcno (branch I)
+     */
+    Arc_2(const Curve_2& c, int arcno) :
+        Base(Rep(Point_2(::CGAL::MIN_END), Point_2(::CGAL::MAX_END), c,
+            arcno)) {  
+    }
+    
+    /*!\brief
+     * constructs an arc with two asymptotic ends defined by \c asympt_x1 and
+     * \c asympt_x2 respectively, supported by curve \c c with \c arcno
+     * (branch II)
+     *
+     * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
+     * \pre asympt_x1 != asympt_x2
+     */
+    Arc_2(const X_coordinate_1& asympt_x1, const X_coordinate_2& asympt_x2, 
+        ::CGAL::Curve_end inf_end1, ::CGAL::Curve_end inf_end2,
+        const Curve_2& c, int arcno) :
+        Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
+            c, arcno)) {  
+            
+        CGAL_precondition(GPA_2().compare_x_2_object()(asympt_x1, asympt_x2) !=
+            CGAL::EQUAL);
+    }
+    
+    /*!\brief
+     * constructs an arc with one x-infinite end and one asymptotic end 
+     * defined by x-coordinate \c asympt_x supported by curve \c c with 
+     * \c arcno (branch III)
+     *
+     * \c inf_endx specifies whether the branch goes to +/- x-infinity,
+     * \c inf_endy specifies +/-oo an asymptotic end is approaching
+     */
+    Arc_2(::CGAL::Curve_end inf_endx, const X_coordinate_1& asympt_x,
+        ::CGAL::Curve_end inf_endy, const Curve_2& c, int arcno) :
+        Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy), c, arcno)) { 
+    }
+    
+    //!@}
+    //!\name standard constructors for vertical arcs
+    //!@{
+    
+    //! \brief 
+    //! constructs a vertcial arc with two finite end-points \c p and \c q ,
+    //! supported by curve \c c (vertical segment)
+    //! 
+    //! \pre p != q && p.x() == q.x()
+    //! \pre c must have a vertical component at this x
+    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c) : 
+        Base(Rep(p, q, c, -1, -1, -1, true)) {  
+        
+        CGAL_precondition(!p.is_indentical(q));
+        CGAL_precondition(GPA_2().compare_x_2_object()(p, q) == CGAL::EQUAL);
+        CGAL_precondition(GPA_2().compare_y_2_object()(p, q) != CGAL::EQUAL);
+    }
+    
+    /*!\brief
+     * constructs a vertical arc with one finite end-point \c origin and one
+     * y-infinite end, supported by curve \c c (vertical ray)
+     *
+     * \c inf_end defines whether the ray emanates from +/- y-infninty, 
+     * \pre c must have a vertical line component at this x
+     */
+    Arc_2(const Point_2& origin, ::CGAL::Curve_end inf_end, const Curve_2& c) :
+        Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
+    }
+    
+    /*!\brief
+     * constructs a vertical arc with two y-infinite ends, at x-coordinate 
+     * \c x , supported by curve \c c (vertical branch)
+     * 
+     * \pre c must have a vertical line component at this x
+     */
+    Arc_2(const X_coordinate_1& x, const Curve_2& c) :
+        Base(Rep(Point_2(x, ::CGAL::MIN_END), Point_2(x, ::CGAL::MAX_END), c,
+            -1, -1, -1, true)) {
     }
    
     //!@}
@@ -270,43 +277,43 @@ public:
     //!\name access functions
     //!@{
 
-    /*! Check if the x-coordinate of the point \c end is infinite. */
-    CGAL::Boundary_type get_boundary_in_x(CGAL::Curve_end end) const 
+    //! returns boundary conditions for arc's end-point \c end x-coordinate 
+    ::CGAL::Boundary_type boundary_in_x(::CGAL::Curve_end end) const 
     {
-        ...
-        return this->ptr()->_m_boundary_in_x[is_src];
+        if(end == ::CGAL::MIN_END)
+            return this->ptr()->_m_source.boundary_in_x();
+        return this->ptr()->_m_target.boundary_in_x();
     }
 
-    /*! Check if the y-coordinate of the point \c end is infinite. */
-    CGAL::Boundary_type get_boundary_in_y(CGAL::Curve_end end) const 
+    //! returns boundary conditions for arc's end-point \c end y-coordinate
+    ::CGAL::Boundary_type boundary_in_y(::CGAL::Curve_end end) const 
     {
-        ...
-        return this->ptr()->_m_boundary_in_y[is_src];
+        if(end == ::CGAL::MIN_END)
+            return this->ptr()->_m_source.boundary_in_y();
+        return this->ptr()->_m_target.boundary_in_y();
     }
 
-    /*! Get the minimal or maximal point. */
-    const Point_2& point (CGAL::Curve_end end) const
+    /*! returns arc's finite end-point \c end
+     *
+     * \pre accessed end-point must have finite x/y-coordinates
+    */
+    Point_2 point(::CGAL::Curve_end end) const
     {
-        ...
-        return (get_src ? (this->ptr()->_m_source) :
+        CGAL_precondition(boundary_in_x(end) == ::CGAL::NO_BOUNDARY &&
+            boundary_in_y(end) == ::CGAL::NO_BOUNDARY);
+        return (end == ::CGAL::MIN_END ? (this->ptr()->_m_source) :
             (this->ptr()->_m_target)); 
     }
 
-    /*! Get the x-coordinate of the source point. */
-    X_coordinate left_x () const
+    /*! returns arc's end-point \c end x-coordinate 
+     *
+     * \pre accessed end-point must have finite x-coordinate
+    */
+    X_coordinate_1 point_x(::CGAL::Curve_end end) const
     {
-        ...
-    }
-
-    /*! Get the x-coordinate of the target point. */
-    X_coordinate right_x () const
-    {
-        ...
-    }
-
-    /*! Check if the arc has reversed direction */
-    bool is_reversed () const {
-        return (this->ptr()->_m_is_reversed);
+        CGAL_precondition(boundary_in_x(end) == ::CGAL::NO_BOUNDARY);
+        return (end == ::CGAL::MIN_END ? (this->ptr()->_m_source.x()) :
+            (this->ptr()->_m_target.x())); 
     }
 
     /*! Check if the arc is vertical */
@@ -320,9 +327,21 @@ public:
     }
   
     //! returns arc's number
+    //!
+    //! \pre the arc is not vertical
     int arcno() const { 
-        CGAL_precondition(this->ptr()->_m_arcno);
-        return *(this->ptr()->_m_arcno); 
+        CGAL_precondition(!is_vertical());
+        return this->ptr()->_m_arcno; 
+    }
+    
+    //! returns arc's end-point \c end arcno
+    //! \pre the accessed arcno must exist (i.e., the corresponding end must
+    //! not be the point at x/y-infinity)
+    int arcno_at(::CGAL::Curve_end end) const { 
+        int arcno = (end == ::CGAL::MIN_END ? this->ptr()->_m_arcno_s :
+             this->ptr()->_m_arcno_t);
+        CGAL_precondition(arcno != -1 );
+        return arcno; 
     }
 
     //!@}
