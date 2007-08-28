@@ -113,7 +113,7 @@ public:
 
   typedef typename Base::Status_line_iterator         Status_line_iterator;
   
-  typedef Curve_pair<Subcurve>                        Curve_pair;
+  typedef Curve_pair_<Subcurve>                       Curve_pair;
   typedef Curve_pair_hasher<Subcurve>                 Curve_pair_hasher;
   typedef Equal_curve_pair<Subcurve>                  Equal_curve_pair;
   typedef Open_hash<Curve_pair,

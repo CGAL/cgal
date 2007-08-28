@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
  * in the sweep-line algorithm.
  */
 template <class Traits_, class Event_>
-class Compare_events
+class Compare_events_
 {
 public:
 
@@ -62,7 +62,7 @@ private:
 public:
   
   /*! Cosntructor. */
-  Compare_events (Traits_2 *traits) :
+  Compare_events_ (Traits_2 *traits) :
     m_traits (traits)
   {}
   
