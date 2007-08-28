@@ -297,7 +297,7 @@ test_linear_traits()
     run_trapped_test test_traits data/linear/intersect linear_traits
     run_trapped_test test_traits data/linear/split linear_traits
     run_trapped_test test_traits data/linear/merge linear_traits
-    #run_trapped_test test_traits data/linear/errors linear_traits
+    run_trapped_test test_traits data/linear/errors linear_traits
   fi
   clean_tests
 }
