@@ -65,6 +65,9 @@
 #define CGAL_BEGIN_NAMESPACE namespace CGAL {
 #define CGAL_END_NAMESPACE }
 
+// TEMPORARY: define CGAL_LIB_STD for VisualC++ developers (until CGAL 3.4 Windows installer is out)
+#  define CGAL_CLIB_STD std
+
 #ifndef CGAL_CFG_NO_LONG_LONG
 #  define CGAL_USE_LONG_LONG
 #endif
@@ -81,6 +84,8 @@ namespace std {
 }
 #endif
 
+// TEMPORARY: define CGAL_WRAP for VisualC++ developers (until CGAL 3.4 Windows installer is out)
+#  define CGAL_WRAP(K) K
 
 #ifndef CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG
 #  define CGAL_TYPENAME_DEFAULT_ARG typename
