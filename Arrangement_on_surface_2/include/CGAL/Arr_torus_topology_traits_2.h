@@ -40,7 +40,6 @@
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 #include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_observed_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
@@ -168,16 +167,16 @@ protected:
     
     // TODO check Vertex_less
     struct Vertex_less {
-        bool operator() (Vertex v1, Vertex v2) {
-            return &v1 < &v2;
+        bool operator() (Vertex *v1, Vertex *v2) {
+            return &(*v1) < &(*v2);
         }
     };
 
-    typedef std::map< Vertex, typename Identification_NS::iterator, 
+    typedef std::map< Vertex*, typename Identification_NS::iterator, 
                       Vertex_less >
     Vertices_on_identification_NS;
     
-    typedef std::map< Vertex, typename Identification_WE::iterator, 
+    typedef std::map< Vertex*, typename Identification_WE::iterator, 
                       Vertex_less >
     Vertices_on_identification_WE;
 
@@ -591,6 +590,31 @@ public:
     }
     
     /*!
+     * Given two predecessor halfedges that belong to the same inner CCB of
+     * a face, determine what happens when we insert an edge connecting the
+     * target vertices of the two edges.
+     * \param prev1 The first predecessor halfedge.
+     * \param prev2 The second predecessor halfedge.
+     * \pre The two halfedges belong to the same inner CCB.
+     * \return A pair indicating whether the insertion will cause the face
+     *         to split (the first flag), and if so - whether the split face
+     *         will form a hole in the original face.
+     */
+    std::pair<bool, bool>
+    face_split_after_edge_insertion (const Halfedge *prev1,
+                                     const Halfedge *prev2) const;
+
+
+    /*!
+     * Determine whether the removal of the given edge will cause the creation
+     * of a hole.
+     *  \param he The halfedge to be removed.
+     * \pre Both he and its twin lie on an outer CCB of their incident faces.
+     * \return Whether a new hole will be created.
+     */
+    bool hole_creation_after_edge_removal (const Halfedge *he) const;
+
+    /*!
      * Given two halfedges, determine if the path from the source vertex of the
      * first halfedge to the source vertex of the second haldedge (i.e. we go
      * from the first halfedge until reaching the second) is perimetric.
@@ -598,7 +622,7 @@ public:
      * \param e2 The second halfedge.
      * \return Whether the path from e1 to e2 (not inclusive) is perimetric.
      */
-    bool is_perimetric_path (const Halfedge *e1,
+    bool _is_perimetric_path (const Halfedge *e1,
                              const Halfedge *e2) const;
     
     /*!
@@ -697,12 +721,14 @@ public:
     /*! Get top face (const version). */
     const Face* top_face () const
     {
+        CGAL_assertion(_m_f_top != NULL);
         return (_m_f_top);
     }
     
     /*! Get top face */
     Face* top_face ()
     {
+        CGAL_assertion(_m_f_top != NULL);
         return (_m_f_top);
     }
 
