@@ -100,7 +100,7 @@ public:
     /* A notification issued before the sweep process starts. */
     virtual void before_sweep()
     {
-        // Get the unbounded face.
+        // Get the bounded face.
         m_top_face = Face_handle(m_top_traits->top_face());
     }
     
@@ -112,25 +112,24 @@ public:
         const Boundary_type bound_x = event->boundary_in_x();
         const Boundary_type bound_y = event->boundary_in_y();
         
+        std::cout << "HELPER: event: " << event->point() << std::endl;
+
         if (bound_x != CGAL::NO_BOUNDARY) {
+            std::cout << "HELPER: before x " << bound_x << std::endl;
             CGAL_assertion(bound_x == CGAL::BEFORE_DISCONTINUITY ||
                            bound_x == CGAL::AFTER_DISCONTINUITY);
             CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
-
+            
             // TODO isolated point
             
             const X_monotone_curve_2 & xc =
-                (bound_y == CGAL::AFTER_DISCONTINUITY ? 
+                (bound_x == CGAL::AFTER_DISCONTINUITY ? 
                  // AFTER DISCONTINUITY
-                 (event->number_of_right_curves() > 0 ? 
-                  (*(event->right_curves_begin()))->last_curve() :
-                  (*(event->left_curves_rbegin()))->last_curve()) :
+                 (*(event->right_curves_begin()))->last_curve() :
                  // BEFORE_DISCONTINUITY
-                 (event->number_of_left_curves() > 0 ? 
-                  (*(event->left_curves_rbegin()))->last_curve() :
-                  (*(event->right_curves_begin()))->last_curve()) 
+                 (*(event->left_curves_rbegin()))->last_curve()
                 );
             
             CGAL::Curve_end ind = (bound_x == CGAL::AFTER_DISCONTINUITY ?
@@ -146,23 +145,29 @@ public:
             DVertex * v = m_top_traits->vertex_WE(key);
             
             Vertex_handle vh(v);
-            
+
             if (v == NULL) {
+                vh = m_arr_access.create_vertex(
+                        event->point(),
+                        bound_x, bound_y
+                );
                 
-                vh = m_arr_access.create_vertex(event->point(),
-                                                bound_x, bound_y);
                 // &(*vh) if vh is Vertex_handle
                 m_top_traits->notify_on_boundary_vertex_creation(
                         &(*vh), 
                         xc, ind,
                         bound_x, bound_y
                 );
-            } 
+            }
+            
             event->set_vertex_handle(vh);
+            
             return;
         }
-        
+
+   
         if (bound_y != CGAL::NO_BOUNDARY) {
+            std::cout << "HELPER: before y " << bound_y << std::endl;
             CGAL_assertion(bound_y == CGAL::BEFORE_DISCONTINUITY ||
                            bound_y == CGAL::AFTER_DISCONTINUITY);
             CGAL_assertion(bound_x == CGAL::NO_BOUNDARY);
@@ -201,30 +206,47 @@ public:
             DVertex * v = m_top_traits->vertex_NS(key);
             
             Vertex_handle vh(v);
-            
+
             if (v == NULL) {
-                
-                vh = m_arr_access.create_vertex(event->point(),
-                                                bound_x, bound_y);
+                std::cout << "HELPER: new y" << std::endl;
+                vh = m_arr_access.create_vertex(
+                        event->point(),
+                        bound_x, bound_y);
                 // &(*vh) if vh is Vertex_handle
                 m_top_traits->notify_on_boundary_vertex_creation(
                         &(*vh), 
                         xc, ind,
                         bound_x, bound_y
                 );
-            } 
+            }
+            
             event->set_vertex_handle(vh);
+            
+#if 0 // TODO check
+            if (bound_y == CGAL::BEFORE_DISCONTINUITY) {
+                // The list m_subcurves_at_rmf contains all subcurves 
+                // whose left endpoint lies between the curve of 
+                // identification in NS and the current curve incident 
+                // to the NS-identification. In case these subcurves 
+                // represent holes, these holes should stay in the 
+                // "face to the left" that contains the curve 
+                // of identification and we should not keep track of 
+                // them in order to later move them to another face.
+                m_subcurves_at_rmf.clear();
+            }
+#endif
             return;
         }
     }
     
     /*! A notification invoked when a new subcurve is created. */
     virtual void add_subcurve(Halfedge_handle he, Subcurve * sc) { 
+        std::cout << "HELPER: add_sc" << std::endl;
         
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
-        // TODO check twin
+        // TODO check bound_x
         if (he->target()->boundary_in_y() == CGAL::BEFORE_DISCONTINUITY) {
             he_on_top_face = he;
         } else if (he->source()->boundary_in_y() == 
@@ -251,12 +273,14 @@ public:
      */
     void add_subcurve_in_top_face(unsigned int index)
     {
+        std::cout << "HELPER: add_sc_tf" << std::endl;
         m_subcurves_at_rmf.push_back(index);
         return;
     }
     
     /*! A notification invoked before the given event it deallocated. */
     void before_deallocate_event(Event * event) { 
+        std::cout << "HELPER: before deall" << std::endl;
         return; 
     }
     //@} 
@@ -275,6 +299,7 @@ public:
      */
     bool swap_predecessors(Event * event) const
     {
+        std::cout << "HELPER: swap" << std::endl;
         // If we insert an edge whose right end has boundary condition
         // before the curve of discontinuity 
         // have to flip the order of predecessor halfegdes.
@@ -287,6 +312,7 @@ public:
     
     /*! Get the current top face. */
     Face_handle top_face() const { 
+        std::cout << "HELPER: top face" << std::endl;
         return m_top_face; 
     }
 };
