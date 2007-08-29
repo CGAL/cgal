@@ -95,7 +95,7 @@ struct Less_curve_pair
  * A hash functor for curve pairs.
  */
 template <class Subcurve_>
-struct Curve_pair_hasher
+struct Curve_pair_hasher_
 {
   typedef Subcurve_               Subcurve;
   typedef Curve_pair_<Subcurve>   Curve_pair;
@@ -114,7 +114,7 @@ struct Curve_pair_hasher
  * Equaility functor for curve pairs.
  */
 template <class Subcurve_>
-struct Equal_curve_pair
+struct Equal_curve_pair_
 {
   typedef Subcurve_               Subcurve;
   typedef Curve_pair_<Subcurve>   Curve_pair;
