@@ -78,6 +78,7 @@ protected:
   typedef typename Minimization_diagram_2::Face_iterator             Face_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
   typedef typename Minimization_diagram_2::Inner_ccb_iterator        Hole_iterator;
+
   typedef typename Minimization_diagram_2::Dcel::Face_data_iterator  Face_data_iterator;
 
   typedef std::pair<X_monotone_curve_2, Intersection_type>           Intersection_curve;
@@ -182,7 +183,7 @@ public:
     #endif
     
     // insert the curves
-    insert_curves(result, curves_col.begin(), curves_col.end());
+    insert(result, curves_col.begin(), curves_col.end());
     // insert the points
     typename std::list<Point_2>::iterator pit = points_col.begin();
     for(; pit != points_col.end(); ++pit)
