@@ -65,7 +65,7 @@ template <class GeomTraits, class Dcel_>
 void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign
     (const Self& other)
 {
-    //std::cout << "Arr_torus_topology_traits_2 assign"  << std::endl;
+    std::cout << "Arr_torus_topology_traits_2 assign"  << std::endl;
     // Assign the class.
     // Clear the current DCEL and duplicate the other DCEL.
     _m_dcel.delete_all();
@@ -89,6 +89,8 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign
     
     _m_f_top = other._m_f_top;
     
+    CGAL_assertion(_m_f_top != NULL);
+
 #if 0
     // Go over the DCEL vertices and locate all points with boundary condition
     typename Dcel::Vertex_iterator       vit;
@@ -135,6 +137,9 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign
 template <class GeomTraits, class Dcel_>
 void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 {
+    std::cout << "Arr_torus_topology_traits_2 init_dcel"  
+              << std::endl;
+
     // Clear the current DCEL.
     this->_m_dcel.delete_all();
 
@@ -177,6 +182,10 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
  const X_monotone_curve_2& cv, Curve_end ind,
  CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) const
 {
+
+    std::cout << "Arr_torus_topology_traits_2 are_equal"  
+              << std::endl;
+    
     CGAL_precondition(_valid(bound_x, bound_y));
     
     // In case the given boundary conditions do not match those of the given
@@ -261,6 +270,9 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
 {
     CGAL_precondition(_valid(bound_x, bound_y));
 
+    std::cout << "Arr_torus_topology_traits_2 locate_around_boundary_vertex"  
+              << std::endl;
+    
      // If the vertex is isolated, there is no predecssor halfedge.
     if (v->is_isolated()) {
         return NULL;
@@ -375,10 +387,10 @@ notify_on_boundary_vertex_creation
         // store iterator for vertex 
         // -> needed to delete vertex if becoming redundant
         typename Vertices_on_identification_WE::iterator vit = 
-            _m_vertices_on_identification_WE.find(*v);
+            _m_vertices_on_identification_WE.find(v);
         if (vit == _m_vertices_on_identification_WE.end()) {
             _m_vertices_on_identification_WE.insert(
-                    vit, std::make_pair(*v,it)
+                    vit, std::make_pair(v,it)
             );
             CGAL_assertion(
                     static_cast< int >(_m_vertices_on_identification_WE.size())
@@ -417,10 +429,10 @@ notify_on_boundary_vertex_creation
     //CGAL_assertion(_m_vertices_on_identification_NS.find(*v) ==
     //               _m_vertices_on_identification_NS.end());
     typename Vertices_on_identification_NS::iterator vit = 
-        _m_vertices_on_identification_NS.find(*v);
+        _m_vertices_on_identification_NS.find(v);
     if (vit == _m_vertices_on_identification_NS.end()) {
         _m_vertices_on_identification_NS.insert(
-                vit, std::make_pair(*v,it)
+                vit, std::make_pair(v,it)
         );
         CGAL_assertion(
                 static_cast< int >(_m_vertices_on_identification_NS.size())
@@ -436,7 +448,7 @@ notify_on_boundary_vertex_creation
 //
 template <class GeomTraits, class Dcel_>
 bool
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::is_perimetric_path
+Arr_torus_topology_traits_2<GeomTraits,Dcel_>::_is_perimetric_path
 (const Halfedge *e1,
  const Halfedge *e2) const
 {
@@ -525,8 +537,8 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::is_perimetric_path
     if (last_trg_bcy != first_src_bcy) {
         std::cout << "last_trg_bcy: " << last_trg_bcy << std::endl;
         std::cout << "first_src_bcy: " << first_src_bcy << std::endl;
-        CGAL_assertion(last_trg_bcy != CGAL::NO_BOUNDARY);
-        CGAL_assertion(first_src_bcy != CGAL::NO_BOUNDARY);
+        //CGAL_assertion(last_trg_bcy != CGAL::NO_BOUNDARY);
+        //CGAL_assertion(first_src_bcy != CGAL::NO_BOUNDARY);
         if (last_trg_bcy == BEFORE_DISCONTINUITY) {
             ++y_counter;
         } else {
@@ -554,6 +566,96 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::is_perimetric_path
 #endif
 }
 
+//-----------------------------------------------------------------------------
+// Given two predecessor halfedges that belong to the same inner CCB of
+// a face, determine what happens when we insert an edge connecting the
+// target vertices of the two edges.
+//
+template <class GeomTraits, class Dcel_>
+std::pair<bool, bool>
+Arr_torus_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
+    (const Halfedge *prev1,
+     const Halfedge *prev2) const
+{
+    std::cout << "Arr_torus_topology_traits_2 face_split"  << std::endl;
+
+
+    CGAL_precondition (prev1->is_on_inner_ccb());
+    CGAL_precondition (prev2->is_on_inner_ccb());
+    CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
+    
+    // TODO face_split for torus
+
+    // In case of a quadric topology, connecting two vertices on the same
+    // inner CCB always causes a face split. We need to check if at least one
+    // of the paths from prev1's target to prev2's target, or from prev2's to
+    // prev1's target is perimetric. If so, we split two adjacent faces.
+    // If both are not perimetric, then the split face becomes a hole in the
+    // original face.
+    bool    face_split = true;
+    bool    is_hole = (! _is_perimetric_path (prev1->next(), prev2->next()) &&
+                       ! _is_perimetric_path (prev2->next(), prev1->next()));
+
+    return (std::make_pair (face_split, is_hole));
+}
+
+//-----------------------------------------------------------------------------
+// Determine whether the removal of the given edge will cause the creation
+// of a hole.
+//
+template <class GeomTraits, class Dcel_>
+bool
+Arr_torus_topology_traits_2<GeomTraits,Dcel_>::hole_creation_after_edge_removal
+(const Halfedge *he) const
+{
+    std::cout << "Arr_torus_topology_traits_2 hole_creation"  << std::endl;
+
+    CGAL_precondition (! he->is_on_inner_ccb());
+    CGAL_precondition (! he->opposite()->is_on_inner_ccb());
+
+    // TODO hole_creation for torus
+
+    // Check whether the halfedge and its twin belong to the same outer CCB
+    // (and are therefore incident to the same face).
+    if (he->outer_ccb() == he->opposite()->outer_ccb())
+    {
+      // Check the two cycles that will be created once we remove he and its
+      // twin (from he->next() to he's twin, not inclusive, and from the
+      // successor of he's twin to he, not inclusive).
+      if (_is_perimetric_path (he->next(), he->opposite()) &&
+          _is_perimetric_path (he->opposite()->next(), he))
+      {
+        // Both paths are perimetric, so the two cycles become to separate
+        // outer CCBs of the same face, and no hole is created.
+        return (false);
+      }
+      else
+      {
+        // At least one cyclic path is non-perimetic. This cycle will become
+        // an inner CCB representing a hole in the face.
+        return (true);
+      }
+    }
+    else
+    {
+      // The edge to be removed separates two faces.
+      // Check the cyclic path from he and back, and from its twin and back.
+      if (_is_perimetric_path (he, he) &&
+          _is_perimetric_path (he->opposite(), he->opposite()))
+      {
+        // In this case we disconnect a perimetric cycle around the quadric,
+        // causing two perimetric faces to merge. The remainder of the cycle
+        // becomes an inner CCB (a hole) in the merged face.
+        return (true);
+      }
+      else
+      {
+        // In this case we are about to merge to incident faces, so their
+        // outer CCBs are merged and no new hole is created.
+        return (false);
+      }
+    }
+}
 
 //-----------------------------------------------------------------------------
 // checks whether halfedges are on a new perimetric face boundary
