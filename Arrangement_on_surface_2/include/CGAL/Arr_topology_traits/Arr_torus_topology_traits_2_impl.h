@@ -37,6 +37,7 @@ Arr_torus_topology_traits_2() :
     _m_own_traits (true), 
     _m_f_top(NULL)
 {
+    // status: correct
     _m_traits = new Traits_adaptor_2;
 
     _m_identification_WE = Identification_WE(Point_2_less_WE(_m_traits));
@@ -52,6 +53,7 @@ Arr_torus_topology_traits_2 (Geometry_traits_2 *tr) :
     _m_own_traits(false),  
     _m_f_top(NULL)
 {
+    // status: correct
     _m_traits = static_cast<Traits_adaptor_2*>(tr);
 
     _m_identification_WE = Identification_WE(Point_2_less_WE(_m_traits));
@@ -65,6 +67,7 @@ template <class GeomTraits, class Dcel_>
 void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign
     (const Self& other)
 {
+    // status: missing dcel-assign
     std::cout << "Arr_torus_topology_traits_2 assign"  << std::endl;
     // Assign the class.
     // Clear the current DCEL and duplicate the other DCEL.
@@ -137,6 +140,7 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign
 template <class GeomTraits, class Dcel_>
 void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 {
+    // status: correct
     std::cout << "Arr_torus_topology_traits_2 init_dcel"  
               << std::endl;
 
@@ -169,6 +173,10 @@ Comparison_result
 Arr_torus_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
 (const Point_2& p, const Halfedge* he) const
 {
+    // status: correct
+    //std::cout << "Arr_torus_topology_traits_2 compare_y_at_x"
+    //          << std::endl;
+    
     // all edges are valid, therefore just compare p to its associated curve.
     return (this->_m_traits->compare_y_at_x_2_object() (p, he->curve()));
 }
@@ -182,7 +190,7 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
  const X_monotone_curve_2& cv, Curve_end ind,
  CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) const
 {
-
+    // status: correct
     std::cout << "Arr_torus_topology_traits_2 are_equal"  
               << std::endl;
     
@@ -194,7 +202,6 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
         return false;
     }
     
-    // TODO check
     // check wether the two concrete points are equal
     return (this->_m_traits->compare_xy_2_object() (
                     v->point(),
@@ -217,6 +224,7 @@ Arr_torus_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
      const X_monotone_curve_2& cv, CGAL::Curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y)
 {
+    // status: correct
     std::cout << "Arr_torus_topology_traits_2 place_boundary_vertex"  
               << std::endl;
 
@@ -268,6 +276,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
      const X_monotone_curve_2& cv, Curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y) const
 {
+    // status: correct
     CGAL_precondition(_valid(bound_x, bound_y));
 
     std::cout << "Arr_torus_topology_traits_2 locate_around_boundary_vertex"  
@@ -345,6 +354,7 @@ notify_on_boundary_vertex_creation
  Boundary_type bound_x,
  Boundary_type bound_y) const
 {
+    // status: correct
     std::cout << "Arr_torus_topology_traits_2::" 
               << "notify_on_boundary_vertex_creation"
               << std::endl;       
@@ -452,6 +462,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::_is_perimetric_path
 (const Halfedge *e1,
  const Halfedge *e2) const
 {
+    // status: check implementation
     std::cout << "TODO: Arr_torus_topology_traits_2::is_perimetric_path" 
               << std::endl;
     
@@ -577,6 +588,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
     (const Halfedge *prev1,
      const Halfedge *prev2) const
 {
+    // status: check implementation
     std::cout << "Arr_torus_topology_traits_2 face_split"  << std::endl;
 
 
@@ -608,6 +620,7 @@ bool
 Arr_torus_topology_traits_2<GeomTraits,Dcel_>::hole_creation_after_edge_removal
 (const Halfedge *he) const
 {
+    // status: check implementation
     std::cout << "Arr_torus_topology_traits_2 hole_creation"  << std::endl;
 
     CGAL_precondition (! he->is_on_inner_ccb());
@@ -668,6 +681,7 @@ is_on_new_perimetric_face_boundary
  const Halfedge *prev2,
  const X_monotone_curve_2& cv) const
 {
+    // status: check implementation
     std::cout << "TODO: Arr_torus_topology_traits_2::" 
               << "is_on_new_perimetric_face_boundary"
               << std::endl;
@@ -713,6 +727,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::boundaries_of_same_face
 (const Halfedge *e1,
  const Halfedge *e2) const
 {
+    // status: check implementation
     std::cout << "TODO: Arr_torus_topology_traits_2::boundaries_of_same_face" 
               << std::endl;
     // This predicate is only used for case 3.3.2 of the insertion process
@@ -753,6 +768,7 @@ template <class GeomTraits, class Dcel_>
 bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_in_face
 (const Face *f, const Point_2& p, const Vertex *v) const
 {
+    // status: check implementation
     // TODO is_in_face NEEDED for incremental insertion
     std::cout << "TODO: Arr_torus_topology_traits_2::is_in_face" 
               << std::endl;
@@ -1047,6 +1063,7 @@ template <class GeomTraits, class Dcel_>
 bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_redundant
 (const Vertex *v) const
 {
+    // status: correct
     //std::cout << "Arr_torus_topology_traits_2 is_redundant"  << std::endl;
     CGAL_precondition(_valid(v->boundary_in_x(),v->boundary_in_y()));
     
@@ -1063,8 +1080,10 @@ typename Arr_torus_topology_traits_2<GeomTraits, Dcel_>::Halfedge*
 Arr_torus_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex
 (Vertex *v) 
 {
+    // status: correct
 
-    //std::cout << "Arr_torus_topology_traits_2 erase_redundant_vertex"  << std::endl;
+    // std::cout << "Arr_torus_topology_traits_2 erase_redundant_vertex"  
+    // << std::endl;
     CGAL_precondition(_valid(v->boundary_in_x(),v->boundary_in_y()));
     
     // no incident curve-end can give us the key
@@ -1094,6 +1113,8 @@ Arr_torus_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex
     return NULL;
 }
 
+
+// TODO required??!
 //-----------------------------------------------------------------------------
 // Number of crossing with the line of discontiniuty
 //
@@ -1104,7 +1125,8 @@ _crossings_with_identification_NS(
         const Halfedge* he1, const Halfedge* he2, 
         Identification_crossing& leftmost) const {
 
-    std::cout << "TODO: Arr_torus_topology_traits: _crossings_with_identification_NS" << std::endl;
+    std::cout << "TODO: Arr_torus_topology_traits: "
+              << "_crossings_with_identification_NS" << std::endl;
     
     CGAL::Boundary_type thistgt_by = CGAL::NO_BOUNDARY;
     CGAL::Boundary_type nextsrc_by = CGAL::NO_BOUNDARY;
