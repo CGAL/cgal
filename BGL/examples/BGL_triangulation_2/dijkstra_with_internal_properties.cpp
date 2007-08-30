@@ -67,11 +67,19 @@ main(int,char*[])
 
   // Dijkstra's shortest path needs property maps for the predecessor and distance
   std::vector<vertex_descriptor> predecessor(boost::num_vertices(ft));
-  boost::iterator_property_map<std::vector<vertex_descriptor>::iterator, VertexIdPropertyMap>
+  boost::iterator_property_map<std::vector<vertex_descriptor>::iterator, VertexIdPropertyMap
+#ifdef CGAL_CFG_SUNPRO_RWSTD
+      ,vertex_descriptor,vertex_descriptor&
+#endif
+      >
     predecessor_pmap(predecessor.begin(), vertex_index_pmap);
 
   std::vector<double> distance(boost::num_vertices(ft));
-  boost::iterator_property_map<std::vector<double>::iterator, VertexIdPropertyMap>
+  boost::iterator_property_map<std::vector<double>::iterator, VertexIdPropertyMap
+#ifdef CGAL_CFG_SUNPRO_RWSTD
+      ,double,double& 
+#endif
+      >
     distance_pmap(distance.begin(), vertex_index_pmap);
 
   vertex_descriptor source =  *boost::vertices(ft).first;
