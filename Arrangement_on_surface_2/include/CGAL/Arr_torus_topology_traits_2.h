@@ -125,7 +125,7 @@ protected:
         Point_2_less_NS(Traits_adaptor_2 * traits) : 
             _m_traits(traits) {
         }
-
+        
         Traits_adaptor_2 * _m_traits;
         
         bool operator()(const Point_2& p1, const Point_2& p2) const {
@@ -165,7 +165,7 @@ protected:
     typedef std::map< Point_2, Vertex*, Point_2_less_WE >  
     Identification_WE;
     
-    // TODO check Vertex_less
+    // check Vertex_less
     struct Vertex_less {
         bool operator() (Vertex *v1, Vertex *v2) {
             return &(*v1) < &(*v2);
@@ -206,10 +206,10 @@ protected:
     //! used to locate vertices on the NS-identification curve
     mutable Vertices_on_identification_NS _m_vertices_on_identification_NS;
 
-    // Copy constructor and assignment operator - not supported.
+    //! Copy constructor - not supported.
     Arr_torus_topology_traits_2 (const Self& );
 
-    // assign operator
+    //! assignment operator - not supported.
     Self& operator= (const Self& );
     
 public:
@@ -219,7 +219,6 @@ public:
     
     /*! Default constructor. */
     Arr_torus_topology_traits_2 ();
-    
     
     /*! Constructor with a geometry-traits class. */
     Arr_torus_topology_traits_2 (Geometry_traits_2 *tr);
@@ -277,16 +276,17 @@ public:
     {
         //std::cout << "Arr_torus_topological_traits_2::is_valid_vertex"
         //          << std::endl;
-        // all vertices are valid - even v_left/right lying at inf
+        // all vertices are valid
         return (true);
     }
     
     /*! Get the number of valid vertices. */
     Size number_of_valid_vertices () const
     {
-        //std::cout << "Arr_torus_topological_traits_2::number_of_valid_vertices"
+        //std::cout << "Arr_torus_topological_traits_2::"
+        //          << "number_of_valid_vertices"
         //          << std::endl;
-        // all vertices are valid - even v_left/right lying at inf
+        // all vertices are valid
         return (this->_m_dcel.size_of_vertices());
     }
     
@@ -307,8 +307,8 @@ public:
         //          << std::endl;
         // all halfedges are valid
         return (this->_m_dcel.size_of_halfedges());
-  }
-
+    }
+    
     /*! Check if the given face is valid. */
     bool is_valid_face (const Face *f) const
     {
@@ -326,6 +326,7 @@ public:
         // all faces are valid
         return (this->_m_dcel.size_of_faces());
     }
+
     //@}
 
 private:
@@ -338,37 +339,37 @@ private:
     typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve; 
     typedef Arr_construction_event<Geometry_traits_2,
                                  CSubcurve,
-                                 Arr>                          CEvent;
+                                 Arr>                            CEvent;
     typedef Arr_torus_construction_helper<Geometry_traits_2,
                                              Arr,
                                              CEvent,
-                                             CSubcurve>        CHelper;
+                                             CSubcurve>          CHelper;
     
     // Type definition for the basic insertion sweep-line visitor.
     typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr> BInsTraits;
     typedef Arr_construction_subcurve<BInsTraits>                BISubcurve; 
     typedef Arr_construction_event<BInsTraits,
                                  BISubcurve,
-                                 Arr>                          BIEvent;
+                                 Arr>                            BIEvent;
     typedef Arr_torus_insertion_helper<BInsTraits,
                                           Arr,
                                           BIEvent,
-                                          BISubcurve>          BIHelper;
+                                          BISubcurve>            BIHelper;
     
     // Type definition for the insertion sweep-line visitor.
     typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>       InsTraits;
     typedef Arr_construction_subcurve<InsTraits>                 ISubcurve; 
     typedef Arr_construction_event<InsTraits,
                                  ISubcurve,
-                                 Arr>                          IEvent;
+                                 Arr>                            IEvent;
     typedef Arr_torus_insertion_helper<InsTraits,
                                           Arr,
                                           IEvent,
-                                          ISubcurve>           IHelper;
+                                          ISubcurve>             IHelper;
     
     // Type definition for the batched point-location sweep-line visitor.
     typedef Arr_batched_point_location_traits_2<Arr>             BplTraits;
-    typedef Arr_torus_batched_pl_helper<BplTraits, Arr>     BplHelper;
+    typedef Arr_torus_batched_pl_helper<BplTraits, Arr>          BplHelper;
     
     // Type definition for the overlay sweep-line visitor.
     template <class ExGeomTraits_, class ArrangementA_, class ArrangementB_>
@@ -479,8 +480,9 @@ public:
     
 
     //! the point location strategy
+    // TODO choose better point location strategy
     typedef Arr_naive_point_location<Arr> Default_point_location_strategy;
-
+    
     //@}
     
     ///! \name Topology-traits methods.
@@ -516,7 +518,7 @@ public:
                     const X_monotone_curve_2& cv, Curve_end ind,
                     Boundary_type bound_x, Boundary_type bound_y) const;
 
-      /*!
+    /*!
      * Given a curve end with boundary conditions and a face that contains the
      * interior of the curve, find a place for a boundary vertex that will
      * represent the curve end along the face boundary.
@@ -585,6 +587,7 @@ public:
                                              Curve_end ind,
                                              Boundary_type bound_x,
                                              Boundary_type bound_y) {
+        // torus does not contain unbounded curves
         CGAL_assertion (false);
         return CGAL::Object();
     }
@@ -608,12 +611,13 @@ public:
     /*!
      * Determine whether the removal of the given edge will cause the creation
      * of a hole.
-     *  \param he The halfedge to be removed.
+     * \param he The halfedge to be removed.
      * \pre Both he and its twin lie on an outer CCB of their incident faces.
      * \return Whether a new hole will be created.
      */
     bool hole_creation_after_edge_removal (const Halfedge *he) const;
 
+private:
     /*!
      * Given two halfedges, determine if the path from the source vertex of the
      * first halfedge to the source vertex of the second haldedge (i.e. we go
@@ -623,8 +627,9 @@ public:
      * \return Whether the path from e1 to e2 (not inclusive) is perimetric.
      */
     bool _is_perimetric_path (const Halfedge *e1,
-                             const Halfedge *e2) const;
+                              const Halfedge *e2) const;
     
+public:
     /*!
      * Given two predecessor halfedges that will be used for inserting a
      * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
@@ -680,9 +685,9 @@ public:
      *         the split vertex v.
      */
     Halfedge* split_fictitious_edge (Halfedge *e, Vertex *v) {
-        // this topology never introduces fictious halfedges
         //std::cout << "Arr_torus_topology_traits_2::split_fictious_edge" 
         //          << std::endl;
+        // this topology never introduces fictious halfedges
         CGAL_assertion (false);
         return (0);
     }
@@ -693,6 +698,7 @@ public:
      * \return Whether f is unbounded.
      */
     bool is_unbounded (const Face *f) const {
+        // this topology does not introduce unbounded faces
         return false;
     }
     
@@ -731,7 +737,38 @@ public:
         CGAL_assertion(_m_f_top != NULL);
         return (_m_f_top);
     }
+    
+    /*! Get the geometry traits */
+    Geometry_traits_2* geometry_traits ()
+    {
+        return (_m_traits);
+    }
+    
+    //@}
+    
+    /// \name Auxiliary functions.
+    //@{
 
+protected:
+    /*!\brief
+     * checks whether boundary condition in x and y is valid
+     */
+    inline 
+    bool  _valid(CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) 
+        const {
+        return (                        
+                ((bound_x == CGAL::AFTER_DISCONTINUITY || 
+                  bound_x == CGAL::BEFORE_DISCONTINUITY) &&
+                 bound_y == CGAL::NO_BOUNDARY) 
+                ||
+                ((bound_y == CGAL::AFTER_DISCONTINUITY || 
+                  bound_y == CGAL::BEFORE_DISCONTINUITY) &&
+                 bound_x == CGAL::NO_BOUNDARY)
+        );
+    }       
+    
+public:
+    // TODO make protected
     /*! Get the vertex on line of identification associated with \c pt*/
     Vertex* vertex_NS(const Point_2& key) {
         typename Identification_NS::iterator it = 
@@ -753,7 +790,10 @@ public:
         // else
         return NULL;
     }
+
+protected:
     
+#if 0
     /*! Get the beginning of all pairs of curve-end and its vertices
      *  along the line of discontinuity
      */
@@ -817,21 +857,9 @@ public:
     curve_ends_and_vertices_on_identification_WE_end() const {
         return _m_identification_WE.end();
     }
-
-
-    /*! Get the geometry traits */
-    Geometry_traits_2* geometry_traits ()
-    {
-        return (_m_traits);
-    }
+#endif
     
-    //@}
-    
-protected:
-    
-    /// \name Auxiliary functions.
-    //@{
-    
+    // TODO remove?
     /*!
      * Computes the number of crossing of a path with the line of discontinuity
      * \param he1 Beginning of path
@@ -848,23 +876,6 @@ protected:
             const Halfedge* he1, const Halfedge* he2,
             Identification_crossing& leftmost) const;
 
-    /*!\brief
-     * checks whether boundary condition in x and y is valid
-     */
-    inline 
-    bool  _valid(CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) 
-        const {
-        return (                        
-                ((bound_x == CGAL::AFTER_DISCONTINUITY || 
-                  bound_x == CGAL::BEFORE_DISCONTINUITY) &&
-                 bound_y == CGAL::NO_BOUNDARY) 
-                ||
-                ((bound_y == CGAL::AFTER_DISCONTINUITY || 
-                  bound_y == CGAL::BEFORE_DISCONTINUITY) &&
-                 bound_x == CGAL::NO_BOUNDARY)
-        );
-    }       
-    
     //@}
 };
 
