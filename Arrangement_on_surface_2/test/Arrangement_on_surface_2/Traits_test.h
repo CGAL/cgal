@@ -223,8 +223,8 @@ private:
   unsigned int get_expected_enum(std::istringstream & str_stream);
   bool translate_boolean(std::string & str_value);
   unsigned int translate_enumerator(std::string & str_value);
-  std::pair<enum Enum_type,unsigned int> translate_int_or_text(std::string & str_value);//Enum_type
-  std::pair<enum Enum_type,unsigned int> get_next_input(std::istringstream & str_stream);//Enum_type
+  std::pair<Enum_type,unsigned int> translate_int_or_text(std::string & str_value);//Enum_type
+  std::pair<Enum_type,unsigned int> get_next_input(std::istringstream & str_stream);//Enum_type
 
   bool compare_points(const Point_2 & exp_answer, const Point_2 & real_answer,
                const char * str = "result")
