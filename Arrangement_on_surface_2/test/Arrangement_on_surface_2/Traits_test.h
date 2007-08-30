@@ -43,11 +43,13 @@ violation is unexpected  | fail, if !abort_on_error |   pass, continue
 ------------------------------------------------------------------------------
 */
 
-enum Exception_type {EXPECTED_CONTINUE, EXPECTED_ABORT, 
+enum Exception_type {EXPECTED_CONTINUE, EXPECTED_ABORT,
                       UNEXPECTED_CONTINUE, UNEXPECTED_ABORT};
-enum Violation_type {NON, PRECONDITION, POSTCONDITION, 
+enum Violation_type {NON, PRECONDITION, POSTCONDITION,
                       ASSERTION, WARNING};
 enum Read_object_type {POINT, CURVE, XCURVE};
+
+enum Enum_type {NUMBER, SIGN, CURVE_END};
 
 std::map<Violation_type,std::string> violation_map;
 
@@ -174,7 +176,6 @@ CGAL::Failure_function prev_warning_handler;
 template <class T_Traits>
 class Traits_test {
 private:
-  enum Enum_type {NUMBER, SIGN, CURVE_END};
   typedef T_Traits                                      Traits;
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
@@ -284,8 +285,8 @@ private:
   /*! Test Compare_x_2
    */
   bool compare_x_wrapper(std::istringstream & line);
-  bool compare_x_wrapper_impl(std::istringstream & line, CGAL::Tag_false);
-  bool compare_x_wrapper_impl(std::istringstream & line, CGAL::Tag_true);
+  bool compare_x_wrapper_imp(std::istringstream & line, CGAL::Tag_false);
+  bool compare_x_wrapper_imp(std::istringstream & line, CGAL::Tag_true);
 
   /*! Compare_xy_2
    */
@@ -634,7 +635,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
   char one_line[128];
   char buff[128];
   bool abort=false;
-  //int counter=0;
+  int counter=0;
   while (!(is.eof() || abort)) 
   {
     skip_comments(is, one_line);
@@ -671,9 +672,9 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
                 << " violation : ";
     }
     /*if (!test_result)
-    std::cout << "bug" << std::endl;
+    std::cout << "bug" << std::endl;*/
     counter++;
-    std::cout << "iter number : " << counter << std::endl;*/
+    std::cout << "iter number : " << counter << std::endl;
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
@@ -691,7 +692,8 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       }
       else
       {
-         bool display_all_violation_info=true;//change to true for more info
+         //true for more information, and false for less
+         bool display_all_violation_info=true;
          if (display_all_violation_info)
          {
             std::cout << "library " << e.library() << std::endl;
@@ -763,11 +765,9 @@ std::string Traits_test<T_Traits>::remove_blanks(char * str)
 {
   std::string result = "";
   bool flag = false;
-  //int tmp=0;
-  //only alphanumeric characters or underscores are allowed
+  //only alphanumeric characters and underscores are allowed
   for (; *str != '\0'; ++str)
   {
-    //tmp++;
     if ((*str >= '0' && *str <= '9') || //digits
         (*str >= 'A' && *str <= 'Z') || //upper case letters
         (*str >= 'a' && *str <= 'z') || //lower case letters
@@ -780,7 +780,6 @@ std::string Traits_test<T_Traits>::remove_blanks(char * str)
     if (*str == ' ' && flag)
       break;
   }
-  //std::cout << "tmp " << tmp << std::endl;
   return result;
 }
 
@@ -813,7 +812,7 @@ Traits_test<T_Traits>::translate_enumerator(std::string & str_value)
 /*!
  */
 template <class T_Traits>
-std::pair<enum Traits_test<T_Traits>::Enum_type , unsigned int>
+std::pair<Enum_type , unsigned int>
 Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
 {
   if (str_value == "MIN_END" ) {
@@ -862,7 +861,7 @@ Traits_test<T_Traits>::get_expected_enum(std::istringstream & str_stream)
 /*!
  */
 template <class T_Traits>
-std::pair<enum Traits_test<T_Traits>::Enum_type,unsigned int>
+std::pair<Enum_type,unsigned int>
 Traits_test<T_Traits>::get_next_input(std::istringstream & str_stream)
 {
   char buff[128];
@@ -881,11 +880,11 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
 {
   typedef typename T_Traits::Has_boundary_category       Has_boundary_category;
-  return compare_x_wrapper_impl(str_stream, Has_boundary_category());
+  return compare_x_wrapper_imp(str_stream, Has_boundary_category());
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::compare_x_wrapper_impl
+bool Traits_test<T_Traits>::compare_x_wrapper_imp
                             (std::istringstream & str_stream, CGAL::Tag_true)
 {
   unsigned int id1, id2;
@@ -937,7 +936,8 @@ bool Traits_test<T_Traits>::compare_x_wrapper_impl
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::compare_x_wrapper_impl(std::istringstream & str_stream, CGAL::Tag_false)
+bool Traits_test<T_Traits>::compare_x_wrapper_imp
+                            (std::istringstream & str_stream, CGAL::Tag_false)
 {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
