@@ -1,3 +1,4 @@
+#include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Arrangement_of_spheres_3/Rule_direction.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_curve.h>
 

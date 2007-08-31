@@ -1,11 +1,13 @@
 #ifndef CGAL_ARRANGEMENT_RULE_DIRECTION_H
 #define CGAL_ARRANGEMENT_RULE_DIRECTION_H
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
-#include <CGAL/Arrangement_of_spheres_3/Coordinate_index.h>
-#include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
+//#include <CGAL/Arrangement_of_spheres_3/Coordinate_index.h>
+//#include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 struct Combinatorial_curve;
+struct Coordinate_index;
+struct Sphere_key;
 
 struct Rule_direction {
   typedef Rule_direction This;

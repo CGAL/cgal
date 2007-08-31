@@ -62,6 +62,8 @@ public:
 	       CGAL_AOS3_TYPENAME Traits::Sphere_3_key b) const ;
 
 
+  void audit() const;
+
 };
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE

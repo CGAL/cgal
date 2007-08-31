@@ -3,9 +3,228 @@ int main(int, char *[]) {
 
   initialize_rational_points();
  
+ {
+    Summary sum;
+    std::cout << "\n\nTesting compare_point_to_circle_circle_c" << std::endl;
+    for (int j=0; j< 50; ++j) {
+      P pt= random_point();
+      std::cout << "Point is " << pt << " 1/10000 1" << std::endl;
+      SP t= random_sp(pt);
+      std::pair<S,S> rp=random_ss_point(pt);
+      std::cout << "Spheres are " << rp.first << ": " << rp.second << std::endl;
+      std::vector<S> spheres;
+      spheres.push_back(rp.first);
+      spheres.push_back(rp.second);
+      CGAL::Bbox_3 bb= rp.first.bbox()+rp.second.bbox();
+      Traits tr(spheres.begin(), spheres.end());
+      for (unsigned int i=0; i< 100; ++i) {
+	P qpt(pt.x(), random_coordinate(bb.ymin(), bb.ymax()), 
+	      random_coordinate(bb.zmin(), bb.zmax()));
+	SP qsp= random_sp(qpt);
+	CGAL::Comparison_result cr0= tr.compare_point_to_circle_circle_c(qsp,
+									 K(0), K(1),
+									 
+									 plane_coordinate(0));
+	CGAL::Comparison_result cr1= tr.compare_point_to_circle_circle_c(qsp,
+									 K(0), K(1),
+									 
+									 plane_coordinate(1));
+	sum(cr0);
+	sum(cr1);
+	CGAL::Comparison_result ccr0=CGAL::compare(qpt[plane_coordinate(0).index()], 
+						   pt[plane_coordinate(0).index()]);
+	CGAL::Comparison_result ccr1=CGAL::compare(qpt[plane_coordinate(1).index()], 
+						   pt[plane_coordinate(1).index()]);
+	if (cr0 != ccr0 || cr1 != ccr1) {
+	  std::cout << "Error: ";
+	  std::cout << cr0 << " " << cr1 << " " << ccr0 << " " << ccr1 << std::endl;
+	  std::cout << qpt << " 1/10000 1" << std::endl;
+	  std::cout << pt << " 1/10000 1" << std::endl;
+	  std::cout << spheres[0] << std::endl;
+	  std::cout << spheres[1] << std::endl;
+	  std::cout << "p " << tr.debug_separating_plane(K(0), K(1)) << std::endl;
+	  
+	  tr.compare_point_to_circle_circle_c(qsp,
+					      K(0), K(1),
+					      plane_coordinate(0));
+	  tr.compare_point_to_circle_circle_c(qsp,
+					      K(0), K(1),
+					      plane_coordinate(1));
+	}
+	CGAL_assertion(cr0==ccr0);
+	CGAL_assertion(cr1==ccr1);
+      }
+
+
+      for (unsigned int i=0; i< 10; ++i) {
+	SP sp= random_sp(pt);
+	CGAL::Comparison_result cr0= tr.compare_point_to_circle_circle_c(sp,
+									 K(0), K(1),
+									 plane_coordinate(0));
+	CGAL::Comparison_result cr1= tr.compare_point_to_circle_circle_c(sp,
+									 K(0), K(1),
+									 plane_coordinate(1));
+	sum(cr0);
+	sum(cr1);
+	CGAL_assertion(cr0 == CGAL::EQUAL);
+	CGAL_assertion(cr1==CGAL::EQUAL);
+      }
+    }
+    
+   
+  }
+
+  {
+    std::cout << "\n\nTesting compare_point_to_circle_extremum_c" << std::endl;
+    Summary sum;
+    for (int j=0; j< 50; ++j) {
+      P pt= random_point();
+      V2 v2= random_vector_on_unit_circle();
+      std::cout << "Point is " << pt << " 1/10000 1" << std::endl;
+
+      P c;
+      Rule_direction d;
+      switch (j%4) {
+      case 0:
+	c=P(pt.x()+v2.x(), pt.y()+v2.y(), pt.z());
+	d= Rule_direction(2);
+	break;
+      case 1:
+	c=P(pt.x()+v2.x(), pt.y()-v2.y(), pt.z());
+	d= Rule_direction(0);
+	break;
+      case 2:
+	c=P(pt.x()+v2.x(), pt.y(), pt.z()+v2.y());
+	d= Rule_direction(3);
+	break;
+      default:  
+	c=P(pt.x()+v2.x(), pt.y(), pt.z()-v2.y());
+	d= Rule_direction(1);
+	break;
+      }
+
+      std::vector<S> ss;
+      ss.push_back(S(c, 1));
+      CGAL::Bbox_3 bb= ss.front().bbox();
+      Traits tr(ss.begin(), ss.end());
+      for (int i=0; i< 10; ++i) {
+	{
+	  P rp= P(pt.x(), random_coordinate(bb.ymin(), bb.ymax()),
+			     random_coordinate(bb.zmin(), bb.zmax()));
+	  SP sp= random_sp(rp);
+	  CGAL::Comparison_result cr0= tr.compare_point_to_circle_extremum_c(sp, K(0),
+									     d,
+									     plane_x);
+	  CGAL::Comparison_result cr1= tr.compare_point_to_circle_extremum_c(sp, K(0),
+									     d, 
+									     plane_y);
+	  sum(cr0);
+	  sum(cr1);
+	  CGAL::Comparison_result ccr0= CGAL::compare(rp.y(), pt.y());
+	  CGAL::Comparison_result ccr1= CGAL::compare(rp.z(), pt.z());
+	  if (ccr0 != cr0 || ccr1 != cr1) {
+	    std::cout << cr0 << " " << cr1 << " " << ccr0 << " " << ccr1 << std::endl;
+	    std::cout << d << std::endl;
+	    std::cout << pt << " 1/10000 1" << std::endl;
+	    std::cout << ss[0] << std::endl;
+	    std::cout << rp << " 1/10000 1" << std::endl;
+	  }
+	  CGAL_assertion(ccr0== cr0);
+	  CGAL_assertion(ccr1== cr1);
+	}
+
+	{
+
+	  P rp;
+	  if (i%2==0) {
+	    rp=P(pt.x(), pt.y(), random_coordinate(bb.zmin(), bb.zmax()));
+	  } else {
+	    rp=P(pt.x(), random_coordinate(bb.ymin(), bb.ymax()), pt.z());
+	  }
+	  SP sp= random_sp(rp);
+	  CGAL::Comparison_result cr0= tr.compare_point_to_circle_extremum_c(sp, K(0),
+									     d,
+									     plane_x);
+	  CGAL::Comparison_result cr1= tr.compare_point_to_circle_extremum_c(sp, K(0),
+									     d, 
+									     plane_y);
+	  sum(cr0);
+	  sum(cr1);
+	  CGAL::Comparison_result ccr0= CGAL::compare(rp.y(), pt.y());
+	  CGAL::Comparison_result ccr1= CGAL::compare(rp.z(), pt.z());
+	  if (ccr0 != cr0 || ccr1 != cr1) {
+	    std::cout << cr0 << " " << cr1 << " " << ccr0 << " " << ccr1 << std::endl;
+	    std::cout << d << std::endl;
+	    std::cout << pt << " 1/10000 1" << std::endl;
+	    std::cout << ss[0] << std::endl;
+	    std::cout << rp << " 1/10000 1" << std::endl;
+	  }
+	  CGAL_assertion(ccr0== cr0);
+	  CGAL_assertion(ccr1== cr1);
+	}
+      }
+
+      
+
+    }
+  }
   
+  {
+    Summary sum;
+    std::cout << "\n\nTesting compare_point_separating_plane_c" << std::endl;
+    for (int j=0; j< 50; ++j) {
+      P pt= random_point();
+      std::cout << "Point is " << pt << " 1/10000 1" << std::endl;
+      SP t= random_sp(pt);
+      std::pair<S,S> rp=random_ss_point(pt);
+      std::cout << "Spheres are " << rp.first << ": " << rp.second << std::endl;
+      std::vector<S> spheres;
+      spheres.push_back(rp.first);
+      spheres.push_back(rp.second);
+      CGAL::Bbox_3 bb= rp.first.bbox()+rp.second.bbox();
+      Traits tr(spheres.begin(), spheres.end());
 
+      /*{
+	P pt= tr.equipower_point(K(0), K(1));
+	SP sp= random_sp(pt);
+	CGAL::Oriented_side os=tr.point_oriented_side_of_separating_plane(sp, K(0), K(1));
+	CGAL_assertion(os== CGAL::ON_ORIENTED_BOUNDARY);
 
+	sum(CGAL::EQUAL);
+	}*/
+
+      {
+	P cp= spheres[0].center();
+	SP sp= random_sp(cp);
+	CGAL::Oriented_side os=tr.point_oriented_side_of_separating_plane(sp, K(0), K(1));
+	CGAL_assertion(os== CGAL::ON_ORIENTED_BOUNDARY);
+
+	sum(CGAL::EQUAL);
+      }
+      {
+	P cp= spheres[1].center();
+	SP sp= random_sp(cp);
+	CGAL::Oriented_side os=tr.point_oriented_side_of_separating_plane(sp, K(0), K(1));
+	CGAL_assertion(os== CGAL::ON_ORIENTED_BOUNDARY);
+	sum(CGAL::EQUAL);
+      }
+      {
+	P cp= pt;
+	SP sp= random_sp(cp);
+
+	sum(CGAL::ON_POSITIVE_SIDE);
+      }
+      {
+	P cp= pt;
+	SP sp= random_sp(cp);
+	CGAL::Oriented_side os=tr.point_oriented_side_of_separating_plane(sp, K(1), K(0));
+	CGAL_assertion(os== CGAL::ON_NEGATIVE_SIDE);
+
+	sum(CGAL::ON_NEGATIVE_SIDE);
+      }
+    }
+   
+  }
 
 
 
@@ -235,7 +454,7 @@ int main(int, char *[]) {
 									   plane_x);
 	  CGAL::Comparison_result c1= tr.compare_point_to_equipower_line_c(pt,
 									   K(0),
-									 K(1),
+									   K(1),
 									   plane_y);
 	  sum(c0); sum(c1);
 	  CGAL::Comparison_result cc0= CGAL::compare(cp[1], eqp.x());
@@ -252,7 +471,7 @@ int main(int, char *[]) {
 	}
 	{
 	  P cp0(x, eqp.x(), 
-	       random_coordinate(bb.zmin(), bb.zmax()));
+		random_coordinate(bb.zmin(), bb.zmax()));
 	  SP pt0=random_sp(cp0);
 	  CGAL::Comparison_result c0= tr.compare_point_to_equipower_line_c(pt0,
 									   K(0),

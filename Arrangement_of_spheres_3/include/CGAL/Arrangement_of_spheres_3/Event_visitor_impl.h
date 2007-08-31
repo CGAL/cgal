@@ -10,7 +10,7 @@ CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::initialize() {
   sim_= new Simulator(has_start_time_? start_time_ : tr_.min_corner()[Sweep_coordinate::index()],
-		      tr_.max_corner()[Sweep_coordinate::index()]);
+		      tr_.max_corner()[Sweep_coordinate::index()]+10);
   
   for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it= tr_.sphere_3_keys_begin();
        it != tr_.sphere_3_keys_end(); ++it) {
@@ -194,13 +194,18 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	       && h->vertex()->point().is_sphere_sphere()) {
       // AAR
       // circle_cross_rule_events
-      Vertex_handle aav= h->vertex();
-      Vertex_handle arv= h->opposite()->vertex();
-      if (!aav->point().is_sphere_sphere()){
+      if (!h->vertex()->point().is_sphere_rule()) h=h->opposite();
+      Vertex_handle aav= h->opposite()->vertex();
+      Vertex_handle arv= h->vertex();
+      /*if (!aav->point().is_sphere_sphere()){
 	std::swap(aav, arv);
-      }
+	}*/
 
       do {
+	std::cout << "create AAR of " << aav->point().sphere_key(0) << " " 
+		  << aav->point().sphere_key(1) << " "
+		  << arv->point().rule_key() << " "
+		  << arv->point().rule_constant_coordinate() << std::endl;
 	CGAL_AOS3_TYPENAME Traits::Event_point_3 ep= tr_.circle_cross_rule_event(aav->point().sphere_key(0),
 										 aav->point().sphere_key(1),
 										 arv->point().rule_key(),
@@ -208,9 +213,16 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	if (ep.is_valid()) {
 	  if (ep== sim_->current_time()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
 	  if (ep > sim_->current_time()) {
+	    CGAL_assertion(tr_.point_oriented_side_of_separating_plane(ep, aav->point().sphere_key(0),
+								       aav->point().sphere_key(1)) != CGAL::NEGATIVE);
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::AAR_event(j_, h));
 	    break;
 	  } else {
+	    std::cout << "advance AAR of " << aav->point().sphere_key(0) << " " 
+		      << aav->point().sphere_key(1) << " "
+		      << arv->point().rule_key() << " "
+		      << arv->point().rule_constant_coordinate() << std::endl;
+
 	    tr_.advance_circle_cross_rule_event(aav->point().sphere_key(0),
 						aav->point().sphere_key(1),
 						arv->point().rule_key(),
@@ -250,12 +262,13 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	&& h->vertex()->point().is_rule_rule()) {
       // ARR
       // sphere_intersect_rule_rule_events
-      Vertex_handle arv= h->vertex();
-      Vertex_handle rrv= h->opposite()->vertex();
-      if (!rrv->point().is_rule_rule()){
+      if (h->vertex()->point().is_sphere_rule()) h=h->opposite();
+      Vertex_handle arv= h->opposite()->vertex();
+      Vertex_handle rrv= h->vertex();
+      /*if (!rrv->point().is_rule_rule()){
 	std::swap(rrv, arv);
 	h=h->opposite();
-      }
+	}*/
       Sphere_3_key rks[2];
       rks[0]= rrv->point().rule_key(plane_coordinate(0));
       rks[1]= rrv->point().rule_key(plane_coordinate(1));
@@ -269,7 +282,7 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::ARR_event(j_, h));
 	    break;
 	  } else {
-	    tr_.advance_sphere_intersect_rule_rule_event(h->vertex()->point().sphere_key(),
+	    tr_.advance_sphere_intersect_rule_rule_event(arv->point().sphere_key(),
 							  rks[0], rks[1]);
 	  }
 	} else {
@@ -356,32 +369,32 @@ void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a,
 
 CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::process_triple(Halfedge_handle h) {
-  if (!h->curve().is_arc() || !h->next()->curve().is_arc() || !h->next()->next()->curve().is_arc()) {
-    if (h->curve().is_arc()
-	&& h->next()->curve().is_arc()
-	&& h->next()->next()->curve().is_arc()) {
-      Sphere_3_key a= h->curve().key();
-      Sphere_3_key b= h->next()->curve().key();
-      Sphere_3_key c= h->next()->next()->curve().key();
-     
-      if (a !=b && b!= c && a != c 
-	  && a.is_input() && b.is_input() && c.is_input() 
-	  && triples_.find(Sphere_key_utriple(a,b,c)) == triples_.end()) {
-	triples_.insert(Sphere_key_utriple(a,b,c));
-	Event_pair ep= tr_.intersection_3_events(a,b,c);  
-	if (ep.first.is_valid()) {
-	  CGAL_assertion(ep.first <= ep.second);
-	  if (ep.first >= sim_->current_time()) {
-	    Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::I3_event(j_, a,b,c));
-	    if (k != Event_key() && k != sim_->null_event()) {
-	      free_events_.insert(k);
-	    }
+  std::cout << "Processing triple for " << h->opposite()->vertex()->point() 
+	    << "--" << h->curve() << "--" << h->vertex()->point() << std::endl;
+  if (h->curve().is_arc()
+      && h->next()->curve().is_arc()
+      && h->next()->next()->curve().is_arc()) {
+    Sphere_3_key a= h->curve().key();
+    Sphere_3_key b= h->next()->curve().key();
+    Sphere_3_key c= h->next()->next()->curve().key();
+    
+    if (a !=b && b!= c && a != c 
+	&& a.is_input() && b.is_input() && c.is_input() 
+	&& triples_.find(Sphere_key_utriple(a,b,c)) == triples_.end()) {
+      triples_.insert(Sphere_key_utriple(a,b,c));
+      Event_pair ep= tr_.intersection_3_events(a,b,c);  
+      if (ep.first.is_valid()) {
+	CGAL_assertion(ep.first <= ep.second);
+	if (ep.first >= sim_->current_time()) {
+	  Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::I3_event(j_, a,b,c));
+	  if (k != Event_key() && k != sim_->null_event()) {
+	    free_events_.insert(k);
 	  }
-	  if (ep.second >= sim_->current_time()) {
-	    Event_key k= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::U3_event(j_, a,b,c));
-	    if (k != Event_key() && k != sim_->null_event()) {
-	      free_events_.insert(k);
-	    }
+	}
+	if (ep.second >= sim_->current_time()) {
+	  Event_key k= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::U3_event(j_, a,b,c));
+	  if (k != Event_key() && k != sim_->null_event()) {
+	    free_events_.insert(k);
 	  }
 	}
       }

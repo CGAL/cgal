@@ -26,6 +26,7 @@ typedef Traits::Sphere_3_key K;
 typedef CGAL_AOS3_INTERNAL_NS::Coordinate_index CI;
 
 using CGAL_AOS3_INTERNAL_NS::plane_coordinate;
+using CGAL_AOS3_INTERNAL_NS::Rule_direction;
 using CGAL_AOS3_INTERNAL_NS::sweep_coordinate;
 using CGAL_AOS3_INTERNAL_NS::other_plane_coordinate;
 CI plane_x= plane_coordinate(0);
@@ -184,19 +185,26 @@ SP random_sp(S s) {
   return ret;
 }
 
-std::pair<S,S> random_sr_point(const P&pt, CI rule_c) {
-  FT sc[3]={random_coordinate(), 
-	    random_coordinate(),
-	    random_coordinate()};
-  sc[rule_c.index()]=pt[rule_c.index()];
-  S sr(P(sc[0], sc[1], sc[2]), random_radius());
+
+std::pair<S,S> random_sr_point(const P&pt, CI rule_c, bool smaller) {
+  S sr;
+  do {
+    FT r=random_radius();
+    FT sc[3]={random_coordinate(CGAL::to_interval(pt.x()-r).first,
+				CGAL::to_interval(pt.x()+r).second), 
+	      random_coordinate(),
+	      random_coordinate()};
+    sc[rule_c.index()]=pt[rule_c.index()];
+    sr=S(P(sc[0], sc[1], sc[2]), r);
+  } while (sr.bounded_side(pt) != CGAL::ON_UNBOUNDED_SIDE);
+
   S ss;
+  bool this_smaller;
   do {
     ss= random_sphere_through_point(pt);
-  } while (CGAL::compare(sr.center()[other_plane_coordinate(rule_c).index()],
-			 pt[other_plane_coordinate(rule_c).index()])
-	   == CGAL::compare(ss.center()[other_plane_coordinate(rule_c).index()],
-			    pt[other_plane_coordinate(rule_c).index()]));
+    this_smaller= (pt[other_plane_coordinate(rule_c).index()] 
+		   < ss.center()[other_plane_coordinate(rule_c).index()]);
+  } while (this_smaller != smaller);
   std::cout << "For SR point " << pt << " spheres are " << sr << " and " << ss << std::endl;
   return std::make_pair(sr, ss);
 }
@@ -204,19 +212,22 @@ std::pair<S,S> random_sr_point(const P&pt, CI rule_c) {
 
 std::pair<S,S> random_ss_point(const P&pt) {
   S sa, sb;
-  bool ok;
+  //bool ok;
+  Traits tr;
   do {
     sa= random_sphere_through_point(pt);
     sb= random_sphere_through_point(pt);
-    P2 sac2(sa.center()[plane_x.index()],
+    /*P2 sac2(sa.center()[plane_x.index()],
 	    sa.center()[plane_y.index()]);
     P2 sbc2(sb.center()[plane_x.index()],
 	    sb.center()[plane_y.index()]);
     P2 pt2(pt[plane_x.index()],
 	   pt[plane_y.index()]);
     L2 l(sac2, sbc2);
-    ok=l.has_on_negative_side(pt2);
-  } while(!ok);
+    ok=l.has_on_negative_side(pt2);*/
+    std::vector<S> ss; ss.push_back(sa); ss.push_back(sb);
+    tr= Traits(ss.begin(), ss.end());
+  } while(tr.debug_separating_plane(K(0), K(1)).oriented_side(pt) == CGAL::NEGATIVE);
   return std::make_pair(sa,sb);
 }
 

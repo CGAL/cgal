@@ -1,9 +1,9 @@
 /*#ifdef CGAL_CHECK_EXPENSIVE
-#undef CGAL_CHECK_EXPENSIVE
-#endif
-#ifdef CGAL_CHECK_EXPENSIVE
-#undef CGAL_CHECK_EXACTNESS
-#endif*/
+  #undef CGAL_CHECK_EXPENSIVE
+  #endif
+  #ifdef CGAL_CHECK_EXPENSIVE
+  #undef CGAL_CHECK_EXACTNESS
+  #endif*/
 
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 
@@ -66,7 +66,7 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
    
     /*if (C== 0) {
       vc[plane_coordinate(0).index()]= v;
-    } else {
+      } else {
       vc[plane_coordinate(1).index()]= v;
       }*/
     //NT pt[3]=unproject(s.center()); //{0,0,0};
@@ -100,7 +100,7 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
   bool is_on(const Point_2 &p) const {
     CGAL_precondition(p[C::Other_plane_coordinate::plane_index()] == constant_coordinate());// return false;
     SLI pc(unproject(p), start_.line());
-    CGAL_assertion(pc != SLI());
+    CGAL_assertion(pc.is_valid());
     return is_on(pc);
   }
 
@@ -125,8 +125,8 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
   }
 
   void clip(SLI o) {
-    std::cout << "Clipping " << f_ << " " << start_ << " to " << end_ 
-      << " against " << o << std::endl;
+    /*std::cout << "Clipping " << f_ << " " << start_ << " to " << end_ 
+      << " against " << o << std::endl;*/
     if (!o.is_valid()) return;
     if (is_on(o)) end_=o;
 
@@ -152,16 +152,36 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
   
   void clip(Rule<typename C::Other_plane_coordinate> ra) {
     /*std::cout << "Clipping " << f_ << " from " << start_ << " to " 
-	      << end_ << " against " << ra.f_ << " from " << ra.start_ 
-	      << " to " << ra.end_ << std::endl;*/
+      << end_ << " against " << ra.f_ << " from " << ra.start_ 
+      << " to " << ra.end_ << std::endl;*/
     //CGAL_precondition(CA!=CB);
     NT pc[3]={666,666, 666};
     pc[C::index()]= ra.constant_coordinate();
     pc[C::Other_plane_coordinate::index()]= constant_coordinate();
     Point_2 pi(pc[plane_coordinate(0).index()], pc[plane_coordinate(1).index()]);
     //if (CGAL::assign(pi, oi)){
-    SLI ib(unproject(pi), start_.line()); 
-    clip(ib);
+    //SLI ib(unproject(pi), start_.line()); 
+    //if (ib.is_valid()){
+    /*std::cout << "Clipping " << f_ << " " << start_ << " to " << end_ 
+      << " against " << pi << std::endl;*/
+    if (is_on(pi) && ra.is_on(pi)) end_=SLI(unproject(pi), start_.line());
+    //clip(ib);
+    //}
+  }
+
+  void clip(const std::vector<Circle_2> &circles,
+	    const std::vector<Rule<typename C::Other_plane_coordinate> > &rules,
+	    unsigned int id) {
+    for (unsigned int j=0; j < circles.size(); ++j){
+      if (j==id) continue;
+      //std::cout << "Clipping " << f_ << " against circle " << j << std::endl;
+      clip(circles[j]);
+    }
+    for (unsigned int j=0; j< rules.size(); ++j){
+      //std::cout << "Clipping " << f_ << " against rule " << rules[j].f_ << std::endl;
+      clip(rules[j]);
+    }
+ 
   }
 
   SLI start_, end_;
@@ -171,7 +191,7 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
 
 CGAL_AOS3_TEMPLATE
 void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vector<Circular_k::Circle_2> &circles, 
-					  const std::vector<int> &names){
+								 const std::vector<int> &names){
 
   Circular_k::Point_2 lb(-inf_, -inf_);
   Circular_k::Point_2 lt(-inf_, inf_);
@@ -193,37 +213,23 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
   std::vector<Rule<Plane_coordinate_1> > vertical_rules;
 
   //std::vector<std::vector<Line_3> > lines;
-  //std::cout << "Constructing circles..." << std::flush;
+  std::cout << "Constructing rules..." << std::flush;
   for (unsigned int i=0; i< circles.size(); ++i){
     horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i], 
-				       Curve(names[i], Curve::L_RULE), inf_));
+							Curve(names[i], Curve::L_RULE), inf_));
+    horizontal_rules.back().clip(circles, vertical_rules, i);
     horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i],
-				       Curve(names[i], Curve::R_RULE), inf_));
+							Curve(names[i], Curve::R_RULE), inf_));
+    horizontal_rules.back().clip(circles, vertical_rules, i);
     vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[i],
-				     Curve(names[i], Curve::B_RULE), inf_));
+						      Curve(names[i], Curve::B_RULE), inf_));
+    vertical_rules.back().clip(circles, horizontal_rules, i);
     vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[i], 
-				     Curve(names[i], Curve::T_RULE), inf_));
+						      Curve(names[i], Curve::T_RULE), inf_));
+    vertical_rules.back().clip(circles, horizontal_rules, i);
   }
   std::cout << "done." << std::endl;
-  std::cout << "Intersecting segments with circles..." << std::flush;
-  for (unsigned int j=0; j < circles.size(); ++j){
-    for (unsigned int i=0; i< horizontal_rules.size(); ++i){
-      horizontal_rules[i].clip(circles[j]);
-    }
-    for (unsigned int i=0; i< vertical_rules.size(); ++i){
-      vertical_rules[i].clip(circles[j]);
-    }
-  }
-  std::cout << "done." << std::endl;
-    
-  std::cout << "Intersecting segments with segments..." << std::flush;
-  for (unsigned int i=0; i< horizontal_rules.size(); ++i){
-    for (unsigned int j=0; j< i; ++j){
-      vertical_rules[i].clip(horizontal_rules[j]);
-      horizontal_rules[i].clip(vertical_rules[j]);
-    }
-  }
-  std::cout << "done." << std::endl;
+  
   
   std::cout << "Building arrangement (circles)." << std::flush;
    
@@ -344,18 +350,18 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
   //sds.reserve(arr.number_of_vertices(), arr.number_of_halfedges(), arr.number_of_faces()+1);
   //sds.set_building(true);
   /*std::cout << "Traversing the arrangement..." << std::flush;
-  int fi=0;
-  for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit){
+    int fi=0;
+    for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit){
     std::cout << fi << ": ";
     ++fi;
     for (unsigned int i=0; i< fit->size(); ++i){
-      std::cout << fit->at(i).first << " -- " << fit->at(i).second << "--";
+    std::cout << fit->at(i).first << " -- " << fit->at(i).second << "--";
     }
     std::cout << std::endl;
     //sds.new_face(fit->begin(), fit->end());
-  }
+    }
   
-  std::cout << "done." << std::endl;*/
+    std::cout << "done." << std::endl;*/
  
   //sds.set_building(false);
   
@@ -395,7 +401,7 @@ bool Cross_section_arrangement CGAL_AOS3_TARG::Line_arc_less::operator()(Circula
 
 CGAL_AOS3_TEMPLATE
 bool Cross_section_arrangement CGAL_AOS3_TARG::Circular_arc_less::operator()(Circular_k::Circular_arc_2 a, 
-						      Circular_k::Circular_arc_2 b) const {
+									     Circular_k::Circular_arc_2 b) const {
   if (a.source().x() < b.source().x()) return true;
   else if (a.source().x() > b.source().x()) return false;
   else if (a.source().y() < b.source().y()) return true;
@@ -544,8 +550,8 @@ Cross_section_arrangement CGAL_AOS3_TARG::point(CArr::Vertex_const_handle h) con
       Exact_NT va= l.a()*h->point().x();
       Exact_NT vb= l.b()*h->point().y()+l.c();
       /*std::cout << l << std::endl;
-      std::cout << "va is " << CGAL::to_double(va) << "(" << va << ")" << std::endl;
-      std::cout << "vb is " << CGAL::to_double(vb) << "(" << vb << ")" << std::endl;*/
+	std::cout << "va is " << CGAL::to_double(va) << "(" << va << ")" << std::endl;
+	std::cout << "vb is " << CGAL::to_double(vb) << "(" << vb << ")" << std::endl;*/
       if ((va <0 && vb <0) || (va<0 && CGAL::abs(va) > vb) || (vb<0 && CGAL::abs(vb) > va) || va==vb && fa.key() > fb.key()) {
 	std::swap(fa, fb);
       }
@@ -605,15 +611,15 @@ void Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator::increment() {
 
 CGAL_AOS3_TEMPLATE
 Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator::Face_iterator(CArr::Face_const_iterator c, 
-						CArr::Face_const_iterator e,
-						const Cross_section_arrangement *a): c_(c),
-									     e_(e),
-									     a_(a){
+								       CArr::Face_const_iterator e,
+								       const Cross_section_arrangement *a): c_(c),
+													    e_(e),
+													    a_(a){
   if (c_ != e_) {
     if (c_->is_unbounded()) increment();
     else fill_cache();
   }
-}
+													    }
 
 
 CGAL_AOS3_TEMPLATE
@@ -680,17 +686,17 @@ Cross_section_arrangement CGAL_AOS3_TARG::faces_end() const {
 }
 
 CGAL_AOS3_TEMPLATE
- struct Cross_section_arrangement CGAL_AOS3_TARG::Get_circle {
-    typedef Circle_2 result_type;
+struct Cross_section_arrangement CGAL_AOS3_TARG::Get_circle {
+  typedef Circle_2 result_type;
    
-    result_type operator()(Line_arc_2) const {
-      CGAL_assertion(0);
-      return result_type();
-    }
-    result_type operator()(Circular_arc_2 c) const {
-      return c.supporting_circle();
-    }
-  };
+  result_type operator()(Line_arc_2) const {
+    CGAL_assertion(0);
+    return result_type();
+  }
+  result_type operator()(Circular_arc_2 c) const {
+    return c.supporting_circle();
+  }
+};
  
 
 CGAL_AOS3_TEMPLATE
@@ -703,8 +709,8 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Get_segment {
   }
   result_type operator()(Line_arc_2 c) const {
     /*typename CK::Point_2 s(CGAL::to_double(c.source().x()), CGAL::to_double(c.source().y()));
-    typename CK::Point_2 t(CGAL::to_double(c.target().x()), CGAL::to_double(c.target().y()));
-    return result_type(s, t);*/
+      typename CK::Point_2 t(CGAL::to_double(c.target().x()), CGAL::to_double(c.target().y()));
+      return result_type(s, t);*/
     return c;
   }
 };
@@ -755,11 +761,11 @@ void Cross_section_arrangement CGAL_AOS3_TARG::draw(Qt_examiner_viewer_2 *qtv) c
       out << pt.sphere_key(0) << ":" << pt.sphere_key(1);
     }
     /*Curve::Key sa= pt.first().key();
-    Curve::Key sb= pt.second().key();
+      Curve::Key sb= pt.second().key();
    
-    if (sa != sb) {
+      if (sa != sb) {
       out << sa << ":" << sb;
-    } else {
+      } else {
       out << sa;
       }*/
     *qtv << CGAL::GRAY;

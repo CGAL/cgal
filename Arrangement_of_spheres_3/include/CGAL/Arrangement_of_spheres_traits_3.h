@@ -4,23 +4,16 @@
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 
 
-#include <CGAL/Root_of_traits.h>
+#include <CGAL/Arrangement_of_spheres_3/Event_point_3.h>
+#include <CGAL/Arrangement_of_spheres_3/Function_kernel.h>
+#include <CGAL/Arrangement_of_spheres_3/Rule_direction.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_3_table.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_line_intersection.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Arrangement_of_spheres_3/Event_point_3.h>
-#include <CGAL/Tools/Label.h>
-/*#include <CGAL/Arrangement_of_spheres_traits_3/Filtered_sphere_line_intersection.h>
-#include <CGAL/Arrangement_of_spheres_traits_3/Sphere_key.h>
-#include <CGAL/Arrangement_of_spheres_traits_3/template_types.h>*/
-
-#include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
 #include <CGAL/Kinetic/Default_simulator.h>
-#include <CGAL/Arrangement_of_spheres_3/Function_kernel.h>
-
-/*#include <CGAL/Arrangement_of_spheres_3/coordinates.h>
-  #include <CGAL/Kinetic/IO/Qt_widget_2.h>
-  #include <CGAL/Tools/Coordinate_index.h>*/
+#include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
+#include <CGAL/Root_of_traits.h>
+#include <CGAL/Tools/Label.h>
 
 CGAL_BEGIN_NAMESPACE
 #ifdef CGAL_AOS3_USE_TEMPLATES
@@ -62,6 +55,7 @@ struct Arrangement_of_spheres_traits_3 {
   typedef CGAL_AOS3_TYPENAME Geom_traits::Vector_2 Vector_2;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Circle_2 Circle_2;
   typedef CGAL_AOS3_TYPENAME Geom_traits::Segment_2 Segment_2;
+  typedef CGAL_AOS3_INTERNAL_NS::Rule_direction Rule_direction;
 
   
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Sphere_line_intersection<This> Sphere_point_3;
@@ -75,6 +69,16 @@ struct Arrangement_of_spheres_traits_3 {
 
   typedef CGAL_AOS3_TYPENAME CGAL_AOS3_INTERNAL_NS::Coordinate_index Coordinate_index;
 
+  struct Center_point_3 {
+    Center_point_3(Sphere_3_key k,
+		   const Sphere_point_3 &pt): k_(k), t_(pt){}
+    Sphere_3_key key() const {return k_;}
+    const Sphere_point_3 &coord() const {return t_;}
+  privated:
+    Sphere_3_key k_;
+    Sphere_point_3 t_;
+  };
+  
 
   Geom_traits geom_traits_object() const {
     return table_->geom_traits_object();
@@ -131,6 +135,10 @@ struct Arrangement_of_spheres_traits_3 {
 
   Plane_3 debug_equipower_plane(Sphere_3_key a, Sphere_3_key b) const {
     return table_->equipower_plane(a,b);
+  }
+
+  Plane_3 debug_rule_plane(Sphere_3_key a, Coordinate_index C) const{
+    return rule_plane(a,C);
   }
 
   /*
@@ -199,36 +207,65 @@ struct Arrangement_of_spheres_traits_3 {
 				  Coordinate_index C) const;*/
   
 
+  
+
   // 
-  CGAL::Comparison_result compare_point_to_circle_circle_c(const Sphere_point_3 &pt,
+  template <class T>
+  CGAL::Comparison_result compare_to_circle_circle_c(const T &pt,
 						     Sphere_3_key sphere0,
 						     Sphere_3_key sphere1,
-						     Coordinate_index C) const;
+						     Coordinate_index C) const {
+    Plane_3 eqp=table_->equipower_plane(sphere0, sphere1);
+    CGAL::Comparison_result cr= compare_point_to_equipower_line_c(pt, sphere0, sphere1, C);
+    //Oriented_side ossp= center_oriented_side_of_separating_plane_c(k, sphere0, sphere1, C);
+    Plane_3 sp= table_->separating_plane(sphere0, sphere1);
+    CGAL::Comparison_result epqc= compare(sp.orthogonal_vector()[C.index()],0);
+    if (cr != epqc ) {
+      return cr;
+    }
+    
+    CGAL_AOS3_CANONICAL_PREDICATE(eqp,
+				  const_c_plane(pt, C),
+				  table_->sphere(sphere0),
+				  pt,
+				  return CGAL::EQUAL,
+				  return Comparison_result(-cr),
+				  return cr,
+				  return cr,
+				  return cr);
+  }
   
   //
-  CGAL::Comparison_result compare_center_to_circle_circle_c(Sphere_3_key k,
-							    const Event_point_3 &t,
-							    Sphere_3_key sphere0,
-							    Sphere_3_key sphere1,
-							    Coordinate_index C) const;
+  CGAL::Comparison_result compare_to_circle_rule_c(const Sphere_point_3 &pt,
+						   Sphere_3_key sphere,
+						   Sphere_3_key rule,
+						   Coordinate_index rule_coordinate,
+						   bool smaller,
+						   Coordinate_index C) const;
   //
-  CGAL::Comparison_result compare_point_to_circle_rule_c(const Sphere_point_3 &pt,
-							 Sphere_3_key sphere,
-							 Sphere_3_key rule,
-							 Coordinate_index rule_coordinate,
-							 Coordinate_index C) const;
-  //
-  CGAL::Comparison_result compare_center_to_circle_rule_c(Sphere_3_key center,
-							  const Sphere_point_3 &pt,
-							  Sphere_3_key sphere,
-							  Sphere_3_key rule,
-							  Coordinate_index rule_coordinate,
+  CGAL::Comparison_result compare_to_circle_rule_c(const Center_point_3 &pt,
+						   Sphere_3_key sphere,
+						   Sphere_3_key rule,
+						   Coordinate_index rule_coordinate,
+						   bool smaller,
 							  Coordinate_index C) const;
   
+
+  
+  CGAL::Comparison_result compare_to_circle_extremum_c(const Sphere_point_3 &pt,
+						       Sphere_3_key sphere,
+						       Rule_direction d,
+						       Coordinate_index C) const;
+ 
+  CGAL::Comparison_result compare_to_circle_extremum_c(const Center_point_3 &pt,
+						       Sphere_3_key sphere,
+						       Rule_direction d,
+						       Coordinate_index C) const;
+  
   //
-  CGAL::Comparison_result compare_point_to_rule_c(const Sphere_point_3 &pt,
-						  Sphere_3_key rule,
-						  Coordinate_index rule_coordinate) const;
+  CGAL::Comparison_result compare_to_rule_c(const Sphere_point_3 &pt,
+					    Sphere_3_key rule,
+					    Coordinate_index rule_coordinate) const;
   
 
  
@@ -245,31 +282,34 @@ struct Arrangement_of_spheres_traits_3 {
 							      Sphere_3_key sphere1,
 							      Coordinate_index C) const;*/
   //
-  CGAL::Comparison_result compare_point_to_equipower_line_c(const Sphere_point_3& sp,
+  CGAL::Comparison_result compare_to_equipower_line_c(const Sphere_point_3& sp,
 							    Sphere_3_key sphere0,
 							    Sphere_3_key sphere1,
 							    Coordinate_index C) const;
   //
-  CGAL::Comparison_result compare_center_to_equipower_line_c(Sphere_3_key cen,
-							     const Event_point_3 &t,
-							     Sphere_3_key sphere0,
-							     Sphere_3_key sphere1,
-							     Coordinate_index C) const;
+  CGAL::Comparison_result compare_to_equipower_line_c(const Center_point_3 &pt,
+						      Sphere_3_key sphere0,
+						      Sphere_3_key sphere1,
+						      Coordinate_index C) const;
 
 
   //
-  CGAL::Comparison_result compare_points_c(const Sphere_point_3& a,
-					   const Sphere_point_3& b,
-					   Coordinate_index C) const;
-
-  //
-  CGAL::Bounded_side point_bounded_side_of_sphere(const Sphere_point_3 &pt,
-						  Sphere_3_key sphere) const;
+  CGAL::Comparison_result compare_c(const Sphere_point_3& a,
+				    const Sphere_point_3& b,
+				    Coordinate_index C) const;
   
   //
-  CGAL::Bounded_side center_bounded_side_of_sphere(const Event_point_3 &t,
-						   Sphere_3_key pt,
-						   Sphere_3_key sphere) const;
+  CGAL::Bounded_side bounded_side_of_sphere(const Sphere_point_3 &pt,
+					    Sphere_3_key sphere) const;
+  
+  //
+  CGAL::Bounded_side bounded_side_of_sphere(const Center_point_3 &pt,
+					    Sphere_3_key sphere) const;
+
+  /*CGAL::Bounded_side extremum_bounded_side_of_sphere(const Event_point_3 &t,
+						     Sphere_3_key pt,
+						     Rule_direction rd,
+						     Sphere_3_key sphere) const;*/
   
   //
   CGAL::Bounded_side rules_bounded_side_of_sphere(const Sphere_point_3 &t,
@@ -279,29 +319,27 @@ struct Arrangement_of_spheres_traits_3 {
 
 
   
-  CGAL::Bounded_side point_bounded_side_of_sphere_c(const Sphere_point_3 &pt,
-						    Sphere_3_key sphere,
-						    Coordinate_index C) const;
+  CGAL::Bounded_side bounded_side_of_sphere_c(const Sphere_point_3 &pt,
+					      Sphere_3_key sphere,
+					      Coordinate_index C) const;
   
-  CGAL::Bounded_side center_bounded_side_of_circle_c(Sphere_3_key k,
-						    const Event_point_3 &t,
-						    Sphere_3_key sphere,
-						    Coordinate_index C) const;
-
+  CGAL::Bounded_side bounded_side_of_circle_c(const Center_point_3 &t,
+					      Sphere_3_key sphere,
+					      Coordinate_index C) const;
+  
 
  
   
   CGAL::Comparison_result compare_sphere_centers_c(Sphere_3_key a, Sphere_3_key b, Coordinate_index C) const;
 
   
-  CGAL::Oriented_side point_oriented_side_of_separating_plane(const Sphere_point_3& sp,
+  CGAL::Oriented_side oriented_side_of_separating_plane(const Sphere_point_3& sp,
 							      Sphere_3_key sphere_0, 
 							      Sphere_3_key sphere_1) const ;
- 
-  CGAL::Oriented_side center_oriented_side_of_separating_plane(Sphere_3_key center,
-							       const Sphere_point_3& t,
-							       Sphere_3_key sphere_0, 
-							       Sphere_3_key sphere_1) const ;
+  
+  CGAL::Oriented_side oriented_side_of_separating_plane(const Center_point_3& t,
+							Sphere_3_key sphere_0, 
+							Sphere_3_key sphere_1) const ;
   
 
 protected:
@@ -370,10 +408,16 @@ protected:
 private:
   Event_pair sphere_intersect_rule_rule_events(Sphere_3_key s, Sphere_3_key rx, Sphere_3_key ry) const;
 
-  Event_pair circle_cross_rule_events(Sphere_3_key a, Sphere_3_key b,
-				      Sphere_3_key rs, Coordinate_index C) const;
+  Event_pair circle_cross_rule_event_internal(Sphere_3_key a, Sphere_3_key b,
+						Sphere_3_key rs, Coordinate_index C) const;
 
+  // plane with C constant
   Plane_3 rule_plane(Sphere_3_key a, Coordinate_index C) const;
+
+  Plane_3 const_c_plane(const Center_point_3 &pt, Coordinate_index C) const {
+    return rule_plane(pt.key());
+  }
+
 
   Plane_3 const_c_plane(const Sphere_point_3 &pt, Coordinate_index C) const;
  

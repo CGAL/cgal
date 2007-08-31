@@ -3,6 +3,76 @@
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
 CGAL_AOS3_TEMPLATE
+void
+Rational_cross_section CGAL_AOS3_TARG ::audit() const {
+  /*cs_.audit();
+  for (CGAL_AOS3_TYPENAME CCS::Vertex_iterator vit= cs_.vertices_begin();
+       vit != vs_.vertices_end(); ++vit) {
+    if (vit->point().is_sphere_extremum()) {
+
+    } else if (vit->
+    }*/
+  for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it= tr_.sphere_3_keys_begin();
+       it != tr_.sphere_3_keys_end(); ++it){
+    CGAL_AOS3_TYPENAME CCS::Halfedge_handle h= ccs_.a_halfedge(*it);
+    if (h != CGAL_AOS3_TYPENAME CCS::Halfedge_handle()) {
+      while (!h->vertex()->point().is_sphere_extremum() || h->vertex()->point().sphere_extremum_index() != Rule_direction(0)) {
+	h= ccs_.next_edge_on_circle(h);
+      }
+      std::vector<CGAL_AOS3_TYPENAME CCS::Vertex_handle> tr, tl, bl, br;
+      while (!h->vertex()->point().is_sphere_extremum() || h->vertex()->point().sphere_extremum_index() != Rule_direction(1)) {
+	tr.push_back(h->vertex());
+	h= ccs_.next_edge_on_circle(h);
+      }
+      while (!h->vertex()->point().is_sphere_extremum() || h->vertex()->point().sphere_extremum_index() != Rule_direction(2)) {
+	tl.push_back(h->vertex());
+	h= ccs_.next_edge_on_circle(h);
+      }
+      while (!h->vertex()->point().is_sphere_extremum() || h->vertex()->point().sphere_extremum_index() != Rule_direction(3)) {
+	bl.push_back(h->vertex());
+	h= ccs_.next_edge_on_circle(h);
+      }
+      while (!h->vertex()->point().is_sphere_extremum() || h->vertex()->point().sphere_extremum_index() != Rule_direction(0)) {
+	br.push_back(h->vertex());
+	h= ccs_.next_edge_on_circle(h);
+      }
+      std::vector<CGAL_AOS3_TYPENAME CCS::Vertex_handle> l[2][2];
+      l[0][0].push_back(bl.front());
+      l[0][0].insert(l[0][0].end(), tl.rbegin(), tl.rend());
+      l[0][0].insert(l[0][0].end(), tr.rbegin(), tr.rend());
+     
+      l[0][1].insert(l[0][1].end(), bl.begin(), bl.end());
+      l[0][1].insert(l[0][1].end(), br.begin(), br.end());
+      l[0][1].push_back(tr.front());
+
+      l[1][0].push_back(br.front());
+      l[1][0].insert(l[1][0].end(), bl.rbegin(), bl.rend());
+      l[1][0].insert(l[1][0].end(), tl.rbegin(), tl.rend());
+     
+      l[1][1].insert(l[1][1].end(), br.begin(), br.end());
+      l[1][1].insert(l[1][1].end(), tr.begin(), tr.end());
+      l[1][1].push_back(tl.front());
+
+      for (int i=0; i< 2; ++i) {
+	for (int j=0; j< 2; ++j) {
+	  for (unsigned int k=0; k< l[i][j].size(); ++k){
+	    std::cout << l[i][j][k]->point() << " ";
+	  }
+	  std::cout << std::endl;
+
+	  for (unsigned int k=1; k< l[i][j].size(); ++k){
+	    CGAL_assertion(tr_.compare_points_c(sphere_point(l[i][j][k-1]->point()),
+						sphere_point(l[i][j][k]->point()),
+						plane_coordinate(i)) != CGAL::LARGER);
+	  }
+	}
+      }
+    }
+  }
+}
+
+
+CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Rational_cross_section CGAL_AOS3_TARG ::Traits::Sphere_point_3 
 Rational_cross_section CGAL_AOS3_TARG ::sphere_point(CGAL_AOS3_TYPENAME CCS::Point pt) const {
   if (pt.is_rule_rule()){

@@ -105,6 +105,14 @@ struct Show_circles {
       L2 p2;
       if (intersect(planes_[i], z_, p2)) {
 	*qtv << p2;
+	V3 offset=(.0001 * planes_[i].orthogonal_vector());
+	P3 pt=planes_[i].point() +offset;
+	Pl3 np3(pt,
+	       planes_[i].orthogonal_vector());
+	intersect(np3, z_, p2);
+	*qtv << CGAL::GRAY;
+	*qtv << p2;
+	*qtv << CGAL::BLACK;
       } else {
 	std::cout << "Plane " << i << " missed" << std::endl;
       }

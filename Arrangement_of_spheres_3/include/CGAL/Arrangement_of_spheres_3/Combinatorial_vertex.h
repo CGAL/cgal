@@ -18,7 +18,7 @@ class Combinatorial_vertex{
   typedef Combinatorial_vertex This;
 public:
   typedef Combinatorial_curve::Key Key;
-  enum Type_bits {R_BIT=1, SMALLER_BIT=2, SS_BIT=4, RR_BIT=8, SR_BIT=16};
+  enum Type_bits {R_BIT=1, SMALLER_BIT=2, SS_BIT=4, RR_BIT=8, SR_BIT=16, RULE_SIGN=32};
   //enum Type {SS, SR, RR, SPECIAL};
   enum Type {SS=SS_BIT, RR= RR_BIT, RS=SR_BIT, 
 	     SR=SR_BIT | R_BIT, INVALID=0,
@@ -85,6 +85,30 @@ public:
     else return k_[0];
   }
 
+  /*bool rule_is_positive() const {
+    CGAL_precondition(is_sphere_rule());
+    return !(type__&SMALLER_BIT);
+    }*/
+
+  /*Rule_direction rule_direction() const {
+    CGAL_precondition(is_sphere_rule());
+    if (is_smaller() && rule_constant_coordinate() == plane_coordinate(0)) {
+      return Rule_direction(0);
+    } else if (!is_smaller() 
+	       && rule_constant_coordinate() == plane_coordinate(0)) {
+      return Rule_direction(2);
+    } else if (is_smaller() 
+	       && rule_constant_coordinate() == plane_coordinate(1)) {
+      return Rule_direction(1);
+    } else if (!is_smaller() 
+	       && rule_constant_coordinate() == plane_coordinate(1)) {
+      return Rule_direction(3);
+    } else {
+      CGAL_assertion(0);
+      return Rule_direction();
+    }
+    }*/
+
   Combinatorial_curve::Key key() const {
     CGAL_precondition(is_sphere_extremum());
     return k_[0];
@@ -139,7 +163,7 @@ public:
  CGAL_IS(smaller,  
 	  CGAL_precondition(is_sphere_rule());
 	  return type_&SMALLER_BIT);
- 
+
 
 protected:
 

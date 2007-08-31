@@ -77,14 +77,15 @@ Sphere_3_table<Traits_t>::squared_radius(Key a) const {
 template <class Traits_t>
 typename Sphere_3_table<Traits_t>::Plane_3 
 Sphere_3_table<Traits_t>::separating_plane(Key a, Key b) const {
-  Vector_3 d(center(b)-center(a));
-  FT nv[3];
-  nv[plane_coordinate(0).index()]=-d[plane_coordinate(1).index()];
-  nv[plane_coordinate(1).index()]= d[plane_coordinate(0).index()];
-  nv[sweep_coordinate().index()]=0;
-  Vector_3 n(-nv[0], -nv[1], -nv[2]);
-  Plane_3 plane(center(b), n);
-  std::cout << "The plane for " << a << " and " << b << " is " << plane << std::endl;
+  //Vector_3 d(center(b)-center(a));
+  //FT nv[3];
+  //nv[plane_coordinate(0).index()]=d[plane_coordinate(1).index()];
+  //nv[plane_coordinate(1).index()]=-d[plane_coordinate(0).index()];
+  //nv[sweep_coordinate().index()]=0;
+  //Vector_3 n(-nv[0], -nv[1], -nv[2]);
+  Plane_3 plane(center(a), center(b), center(a)-sweep_vector<Vector_3>());
+  std::cout << "The plane for " << a << " and " << b << " is " << plane 
+	    <<  "( " << plane.orthogonal_vector() << ")" << std::endl;
   return plane;
 }
 

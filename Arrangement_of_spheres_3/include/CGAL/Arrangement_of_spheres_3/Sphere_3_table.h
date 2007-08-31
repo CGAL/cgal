@@ -144,7 +144,7 @@ public:
   struct Triple_data {
     Event_pair_data srr_events_;
   };
-  struct UPair_data {
+  struct Pair_data {
     typedef typename Traits::Event_point_3 EP;
     struct KC_pair{
       typedef KC_pair This;
@@ -156,10 +156,15 @@ public:
     
     std::map<KC_pair, Event_pair_data> cxr_events_;
   };
+
   
 
-  UPair_data &upair_data(const Sphere_key_upair &t) {
+  /*UPair_data &upair_data(const Sphere_key_upair &t) {
     return upair_data_[t];
+    }*/
+
+  Pair_data &pair_data(const Sphere_key_pair &t) {
+    return pair_data_[t];
   }
 
   Triple_data &triple_data(const Sphere_key_triple &t) {
@@ -170,7 +175,8 @@ public:
 
 
   std::map< Sphere_key_triple, Triple_data> triple_data_;
-  std::map< Sphere_key_upair, UPair_data> upair_data_;
+  std::map< Sphere_key_pair, Pair_data> pair_data_;
+  //std::map< Sphere_key_upair, Pair_data> pair_data_;
 
   Spheres spheres_;
   bool has_temp_;

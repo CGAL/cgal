@@ -3,7 +3,8 @@
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
-#define CGAL_CATCH_DEGENERACY Degeneracy
+#define CGAL_CATCH_DEGENERACY int
+//Degeneracy
 
 CGAL_AOS3_TEMPLATE
 Event_processor CGAL_AOS3_TARG::Event_processor(CCS &cs, Traits &tr): cs_(cs), tr_(tr){
@@ -66,10 +67,11 @@ CGAL_AOS3_TEMPLATE
 void Event_processor CGAL_AOS3_TARG::remove(Sphere_3_key k) {
   cs_.audit();
   try {
+    // just try to process it anyway and see if I can
     check_degeneracy();
     ICSD icsr(tr_, cs_);
     icsr.remove_sphere(k);
-  } catch (Degeneracy) {
+  } catch (CGAL_CATCH_DEGENERACY) {
     std::cout << "Degeneracy" << std::endl;
     handle_degeneracy();
   }
@@ -113,47 +115,49 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
     std::cout << "Intersecting on face ";
     cs_.write(f, std::cout) << std::endl;
 
-    Halfedge_handle hk=f->halfedge();
-    do {
-      hk=hk->next();
-    } while (!hk->curve().is_arc() || hk->curve().key() != k);
-
+    Halfedge_handle hk, hl;
+    
     {
-      Halfedge_handle hkn=hk;
+      
+      std::vector<Halfedge_handle> hk_cand, hl_cand;
+      
+      Halfedge_handle hc=f->halfedge();
       do {
-	hkn=hkn->next();
-	if (hkn == f->halfedge()) break;
-	if (hkn->curve().is_arc() && hkn->curve().key() ==k) {
-	  Degeneracy d;
-	  d.new_edge(hkn);
-	  d.new_edge(hk);
-	  throw d;
+	if (hc->curve().is_arc()) {
+	  if (hc->curve().key() == k) {
+	    hk_cand.push_back(hc);
+	  } else if (hc->curve().key() == l) {
+	    hl_cand.push_back(hc);
+	  }
 	}
-      } while (true);
-    }
+	hc=hc->next();
+      } while (hc != f->halfedge());
 
-    Halfedge_handle hl=f->halfedge();
-    do {
-      hl=hl->next();
-    } while (!hl->curve().is_arc() || hl->curve().key() != l);
-
-    {
-      Halfedge_handle hln=hl;
-      do {
-	hln=hln->next();
-	if (hln == f->halfedge()) break;
-	if (hln->curve().is_arc() && hln->curve().key() == l) {
-	  Degeneracy d;
-	  d.new_edge(hln);
-	  d.new_edge(hl);
-	  throw d;
+      if (hk_cand.size() > 1 || hl_cand.size() >1) {
+	ICSR icsr(tr_, cs_);
+	for (int i=0; i< 2; ++i) {
+	  try {
+	    Halfedge_handle h= icsr.shoot_rule(cs_.visitor().simulator()->current_time(),
+					       f,
+					       Rule_direction(i*2));
+	    CGAL_assertion(h->curve().is_arc());
+	    if (h->curve.key()== k) {
+	      hk=h;
+	    } else {
+	      CGAL_assertion(h->curve().key() ==l);
+	      hl=h;
+	    }
+	  } catch (CGAL_AOS3_TYPENAME ICSR::On_vertex_exception) {
+	    throw Degeneracy_exception();
+	  }
 	}
-      } while (true);
+      }
     }
-
     std::cout << "Intersection edges are ";
     cs_.write(hk, std::cout) << " and ";
     cs_.write(hl, std::cout) << std::endl;
+
+    
 
     cs_.intersect_arcs(hl, hk);
   } catch (CGAL_CATCH_DEGENERACY) {
@@ -162,6 +166,12 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
   }
   cs_.audit();
 }
+
+
+
+
+
+
 
 CGAL_AOS3_TEMPLATE
 void Event_processor CGAL_AOS3_TARG::unintersect(Sphere_3_key k, Sphere_3_key l) {
@@ -191,6 +201,15 @@ void Event_processor CGAL_AOS3_TARG::unintersect(Sphere_3_key k, Sphere_3_key l)
     if (hl == Halfedge_handle() || hk== Halfedge_handle()) {
       throw Degeneracy();
     }
+
+    {
+      ICSL icsl(tr_, cs_);
+      CGAL_assertion(icsl.equal_points(hk->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(icsl.equal_points(hl->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(hk->vertex()== hl->opposite()->vertex());
+      CGAL_assertion(hl->vertex()== hk->opposite()->vertex());
+    }
+
     // find shared face, f, and edges hk and hl
     cs_.unintersect_arcs(hl, hk);
   } catch (Degeneracy) {
@@ -201,65 +220,112 @@ void Event_processor CGAL_AOS3_TARG::unintersect(Sphere_3_key k, Sphere_3_key l)
 }
 
 
+
+
+
+
+
+
 CGAL_AOS3_TEMPLATE
 void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, Sphere_3_key m) {
   cs_.audit();
+  ICSL icsl(tr_, cs_);
+
   try {
     check_degeneracy();
-    Halfedge_handle hl, hm, hk= cs_.a_halfedge(k)->opposite();
-    Halfedge_handle khs=hk;
-    do {
-      if (hk->next()->curve().key() == l 
-	  && hk->next()->next()->curve().key() == m
-	  && hk->next()->next()->next() == hk){
-	hl= hk->next();
-	hm= hk->next()->next();
-	break;
-      } else if (hk->next()->curve().key() == m 
-		 && hk->next()->next()->curve().key() == l
-		 && hk->next()->next()->next() == hk){
-	hl= hk->next()->next();
-	hm= hk->next();
-	break;
-      } else if (hk->opposite()->next()->curve().key() == l 
-		 && hk->opposite()->next()->next()->curve().key() == m
-		 && hk->opposite()->next()->next()->next() == hk){
-	hk=hk->opposite();
-	hl= hk->next();
-	hm= hk->next()->next();
-	break;
-      } else if (hk->opposite()->next()->curve().key() == m 
-		 && hk->opposite()->next()->next()->curve().key() == l
-		 && hk->opposite()->next()->next()->next() == hk){
-	hk=hk->opposite();
-	hl= hk->next()->next();
-	hm= hk->next();
-	break;
-      } 
-      hk= cs_.next_edge_on_circle(hk);
-    } while (hk != khs);
- 
-    if (hk == Halfedge_handle()) {
-      throw Degeneracy();
+    
+    std::vector<Halfedge_handle> cands;
+    {
+      Halfedge_handle hk=cs_.a_halfedge(k), khs=hk;
+      
+      do {
+	if (hk->next()->next()->next() == hk) {
+	  if ((hk->next()->curve().key() == l 
+	       || hk->next()->next()->curve().key() == l)
+	    && (hk->next()->curve().key() == m
+		|| hk->next()->next()->curve().key() == m)){
+	    cands.push_back(hk);
+	  }
+	} else if (hk->opposite()->next()->next()->next()->opposite()==hk){
+	  if ((hk->opposite()->next()->curve().key() == l 
+	       || hk->opposite()->next()->next()->curve().key() == l)
+	      && (hk->opposite()->next()->curve().key() == m
+		  || hk->opposite()->next()->next()->curve().key() == m)){
+	    cands.push_back(hk->opposite());
+	  }
+	} 
+	hk= cs_.next_edge_on_circle(hk);
+      } while (hk != khs);
+      
+      if (cands.empty()) {
+	throw Degeneracy();
+      }
     }
 
-    Halfedge_handle hn= cs_.next_edge_on_circle(hk)->opposite();
-    Halfedge_handle hp= cs_.next_edge_on_circle(hk);
+    Halfedge_handle hk;
+    if (cands.size() >1) {
+      for (unsigned int i=0; i< cands.size(); ++i){
+	if (icsl.equal_points(cands[i]->vertex(), cs_.visitor().simulator()->current_time())
+	    && icsl.equal_points(cands[i]->next()->vertex(), cs_.visitor().simulator()->current_time())
+	    &&  icsl.equal_points(cands[i]->next()->next()->vertex(), cs_.visitor().simulator()->current_time())){
+	  CGAL_assertion(hk== Halfedge_handle());
+	  hk= cands[i];
+#ifdef NDEBUG
+	  break;
+#endif
+	}
+      }
+    } else {
+      hk=cands.back();
+      cands.clear();
+    }
+
+    {
+      //ICSL icsl(tr_, cs_);
+      CGAL_assertion(icsl.equal_points(hk->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(icsl.equal_points(hk->next()->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(icsl.equal_points(hk->next()->next()->vertex(), cs_.visitor().simulator()->current_time()));
+      //CGAL_assertion(hk->vertex()== hl->opposite()->vertex());
+      //CGAL_assertion(hl->vertex()== hk->opposite()->vertex());
+      CGAL_assertion(hk->curve().key() ==k);
+      CGAL_assertion(hk->next()->curve().key() == l 
+		     || hk->next()->next()->curve().key() == l);
+      CGAL_assertion(hk->next()->curve().key() == m
+		     || hk->next()->next()->curve().key() == m);
+    }
+
+    std::cout << "Triple edges are \n";
+    cs_.write(hk, std::cout) << std::endl;
+    cs_.write(hk->next(), std::cout) << std::endl;
+    cs_.write(hk->next()->next(), std::cout) << std::endl;
+
+    Halfedge_handle hkn= cs_.next_edge_on_circle(hk)->opposite();
+    Halfedge_handle hkp= cs_.next_edge_on_circle(hk->opposite())->opposite();
   
-    Halfedge_handle hnt= hn->next()->next();
-    Halfedge_handle hpt= hp->prev()->prev();
+    cs_.write(hkn, std::cout) << " is hkn\n";
+    cs_.write(hkp, std::cout) << " is hkp\n";
+    
+    Halfedge_handle hknt= hkn->opposite()->prev()->prev();
+    Halfedge_handle hkpt= hkp->next()->next();
 
-    Vertex_handle nvhn= cs_.new_vertex(Point(hk->curve(), hnt->curve()));
-    Vertex_handle nvhp= cs_.new_vertex(Point(hk->curve(), hpt->curve()));
+    cs_.write(hknt, std::cout) << " is hknt\n";
+    cs_.write(hkpt, std::cout) << " is hkpt\n";
+  
+    Point pn= hkp->vertex()->point(), pp= hkn->vertex()->point();
+  
+    std::cout << "Points are " << pn << " and " << pp << std::endl;
+    Vertex_handle nvhn= cs_.new_vertex(pn);
+    Vertex_handle nvhp= cs_.new_vertex(pp);
 
-    cs_.insert_vertex(nvhn, hnt);
-    cs_.insert_vertex(nvhp, hpt);
-    cs_.move_target(hp, nvhp, true);
-    cs_.move_target(hn, nvhn, true);
+    cs_.insert_vertex(nvhn, hknt);
+    cs_.insert_vertex(nvhp, hkpt);
+    cs_.move_target(hkp, nvhp, true);
+    cs_.move_target(hkn, nvhn, true);
 
 
-    cs_.split_face(hk->curve(), hn->next()->opposite(), 
-		   hp->prev()->opposite()->prev());
+    cs_.split_face(hk->curve(),  
+		   hkp->next()->opposite(),
+		   hkn->next()->opposite());
     cs_.join_face(hk, true);
   } catch (CGAL_CATCH_DEGENERACY) {
     std::cout << "Degeneracy" << std::endl;
@@ -268,10 +334,21 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, S
   cs_.audit();
 }
 
+
+
+
+
+
+
 CGAL_AOS3_TEMPLATE
 void Event_processor CGAL_AOS3_TARG::unintersect(Sphere_3_key k, Sphere_3_key l, Sphere_3_key m) {
   intersect(k,l,m);
 }
+
+
+
+
+
 
 
 CGAL_AOS3_TEMPLATE
@@ -280,29 +357,50 @@ void Event_processor CGAL_AOS3_TARG::process_aar(Halfedge_handle h) {
   try {
     check_degeneracy();
     clear_event(h);
-    tr_.advance_circle_cross_rule_event(h->vertex()->point().sphere_key(0),
-					h->vertex()->point().sphere_key(1),
-					h->opposite()->vertex()->point().rule_key(),
-					h->opposite()->vertex()->point().rule_constant_coordinate());
-    CGAL_precondition(h->vertex()->point().is_sphere_rule());
-    Halfedge_handle rule= cs_.cross_edge(h);
+
+    CGAL_assertion(h->vertex()->point().is_sphere_rule());
+    CGAL_assertion(h->opposite()->vertex()->point().is_sphere_sphere());
+    tr_.advance_circle_cross_rule_event(h->opposite()->vertex()->point().sphere_key(0),
+					h->opposite()->vertex()->point().sphere_key(1),
+					h->vertex()->point().rule_key(),
+					h->vertex()->point().rule_constant_coordinate());
+    std::cout << "advance AAR of " << h->opposite()->vertex()->point().sphere_key(0) << " " 
+	      << h->opposite()->vertex()->point().sphere_key(1) << " "
+	      << h->vertex()->point().rule_key() << " "
+	      << h->vertex()->point().rule_constant_coordinate() << std::endl;
+
+    {
+      ICSL icsl(tr_, cs_);
+      CGAL_assertion(icsl.equal_points(h->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(icsl.equal_points(h->opposite()->vertex(), cs_.visitor().simulator()->current_time()));
+    }
+
+    Halfedge_handle rule= cs_.cross_edge(h)->opposite();
     CGAL_assertion(rule->vertex() ==h->vertex());
+    CGAL_assertion(rule->curve().is_rule());
     Halfedge_handle target;
     if (h->next() == rule->opposite()) {
       target= h->prev();
     } else {
       target=h->opposite()->next();
     }
-    Point pt= h->vertex()->point();
-    Vertex_handle nv= cs_.new_vertex(pt);
+    
+    Vertex_handle nv= cs_.new_vertex(Combinatorial_vertex(target->curve(),
+							  rule->curve()));
+    std::cout << "New vertex of " << nv->point() << std::endl;
     cs_.insert_vertex(nv, target);
+    std::cout << "Inserted" << std::endl;
     cs_.move_target(rule, nv, true);
+    cs_.audit();
   } catch (CGAL_CATCH_DEGENERACY) {
     std::cout << "Degeneracy" << std::endl;
     handle_degeneracy();
   }
-  cs_.audit();
 }
+
+
+
+
 
 
 
@@ -312,6 +410,13 @@ void Event_processor CGAL_AOS3_TARG::process_rar(Halfedge_handle h) {
   try {
     check_degeneracy();
     clear_event(h);
+
+    {
+      ICSL icsl(tr_, cs_);
+      CGAL_assertion(icsl.equal_points(h->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(icsl.equal_points(h->opposite()->vertex(), cs_.visitor().simulator()->current_time()));
+    }
+
     Sphere_3_key rks[2];
     rks[project(h->vertex()->point().rule_constant_coordinate())]= h->vertex()->point().rule_key();
     rks[project(h->opposite()->vertex()->point().rule_constant_coordinate())]
@@ -366,23 +471,33 @@ void Event_processor CGAL_AOS3_TARG::process_arr(Halfedge_handle h) {
   try {
     check_degeneracy();
     clear_event(h);
+    
+    {
+      CGAL_precondition(h->vertex()->point().is_rule_rule());
+      ICSL icsl(tr_, cs_);
+      CGAL_assertion(icsl.equal_points(h->vertex(), cs_.visitor().simulator()->current_time()));
+      CGAL_assertion(icsl.equal_points(h->opposite()->vertex(), cs_.visitor().simulator()->current_time()));
+    }
+    
+    
     Sphere_3_key rks[2];
-    rks[0]= h->opposite()->vertex()->point().rule_key(plane_coordinate(0));
-    rks[1]= h->opposite()->vertex()->point().rule_key(plane_coordinate(1));
+    rks[0]= h->vertex()->point().rule_key(plane_coordinate(0));
+    rks[1]= h->vertex()->point().rule_key(plane_coordinate(1));
    
-    tr_.advance_sphere_intersect_rule_rule_event(h->vertex()->point().sphere_key(),
+    tr_.advance_sphere_intersect_rule_rule_event(h->opposite()->vertex()->point().sphere_key(),
 						 rks[0], rks[1]);
 
 
-    if (!h->vertex()->point().is_rule_rule()) h= h->opposite();
-    CGAL_assertion(h->vertex()->point().is_rule_rule());
-    Halfedge_handle xr= cs_.cross_edge(h)->opposite(); // inward pointing
+    if (!h->opposite()->vertex()->point().is_rule_rule()) h= h->opposite();
+    CGAL_assertion(h->opposite()->vertex()->point().is_rule_rule());
+    Halfedge_handle xr= cs_.cross_edge(h->opposite())->opposite(); // inward pointing
     //CGAL_assertion(xr->vertex() == h->vertex());
     std::cout << "XR is ";
     cs_.write(xr, std::cout) << std::endl;
 
     ICSR ics(tr_, cs_);
     ics.roll_back_rule(cs_.visitor().simulator()->current_time(), xr);
+    ics.roll_back_rule(cs_.visitor().simulator()->current_time(), xr->opposite());
     Halfedge_handle nxr= cs_.next_edge_on_rule(xr);
     if (nxr != Halfedge_handle()) {
       if (cs_.is_redundant(xr)) {
@@ -398,14 +513,16 @@ void Event_processor CGAL_AOS3_TARG::process_arr(Halfedge_handle h) {
       }
     }
     if (cs_.is_redundant(xr)) {
+      std::cout << "Joining redundant faces on edge ";
+      cs_.write(xr, std::cout) << std::endl;
       cs_.join_face(xr, true);
     } else {
       do {
 	Halfedge_handle target_h;
-	if (h->face() == xr->face() || h->face() == xr->opposite()->face()) {
-	  target_h= h->prev();
+	if (h->opposite()->face() == xr->face() || h->opposite()->face() == xr->opposite()->face()) {
+	  target_h= h->opposite()->prev();
 	} else {
-	  target_h=h->opposite()->next();
+	  target_h=h->next();
 	}
 	std::cout << "target is ";
 	cs_.write(target_h, std::cout) << std::endl;
@@ -472,6 +589,9 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
       ICSR icsr(tr_, cs_);
       ICSL icsl(tr_, cs_);
       icsr.roll_back_rule(cs_.visitor().simulator()->current_time(), rule);
+      std::cout << "hk is now ";
+      cs_.write(hk, std::cout) << " and rule is ";
+      cs_.write(rule, std::cout) << std::endl;
 
       Halfedge_handle middle_edge; // in middle point to rule
       Face_handle new_face;
@@ -489,9 +609,12 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
 	}
 	middle_edge= hk;
       } else {
-	CGAL_assertion(icsl.equal_points(cs_.next_edge_on_circle(hk)->vertex(), 
-					cs_.visitor().simulator()->current_time()));
 	middle_edge=cs_.next_edge_on_circle(hk)->opposite();
+	std::cout << "Middle edge is ";
+	cs_.write(middle_edge, std::cout) << std::endl;
+	CGAL_assertion(icsl.equal_points(middle_edge->opposite()->vertex(), 
+					 cs_.visitor().simulator()->current_time()));
+	//middle_edge=cs_.next_edge_on_circle(hk)->opposite();
       }
       std::cout << "Middle is ";
       cs_.write(middle_edge, std::cout) << std::endl;
@@ -518,113 +641,13 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
 					       rule_curve);
       cs_.split_face(rule_curve, source_h, hd);
     }
-#if 0
-    // check if it ends on arc of l
-    if (rule->vertex()->point().is_sphere_rule() 
-	&& rule->vertex()->point().sphere_key() == l) {
-    
-      Halfedge_handle new_extremum; // inside arc
-      Curve base_curve, rule_curve=rule->curve();
-      Point pt= hk->vertex()->point();
-      if (rule->opposite()->prev()->prev() == hk->opposite()) {
-	base_curve= hk->next()->curve();
-	new_extremum=cs_.next_edge_on_circle(hk->opposite())->opposite();
-      } else {
-	if (rule->opposite()->prev()->prev() != hk->opposite()) {
-	  std::cout << "things are confused" << std::endl;
-	  cs_.write(rule->opposite()->prev()->prev(), std::cout) << std::endl;
-	  cs_.write(hk->opposite(), std::cout) << std::endl;
-	  throw Degeneracy();
-	}
-	new_extremum=cs_.next_edge_on_circle(cs_.next_edge_on_circle(hk));
-	base_curve= hk->curve();
-      }
-    
-      std::cout << "New extremum is ";
-      cs_.write(new_extremum, std::cout) << " and base curve is " << base_curve << std::endl;
 
-      CGAL_postcondition(new_extremum->curve().is_inside());
-      cs_.set_curve(hk, base_curve);
-      cs_.set_curve(cs_.next_edge_on_circle(hk), base_curve);
-    
-      cs_.join_face(rule, true);
-      //cs_.remove_vertex(v0, ->curve());
-      //cs_.remove_vertex(v1);
-      Vertex_handle nvh= cs_.new_vertex(pt);
-      Halfedge_handle nh=cs_.insert_vertex(nvh, new_extremum);
-      cs_.set_curve(nh->opposite(), cs_.next_edge_on_circle(nh->opposite())->curve());
-      cs_.set_curve(nh->next(), cs_.next_edge_on_circle(nh->next())->curve());
-    
-      ICS ics(tr_, cs_);
-      Face_handle f;
-      if (nh->curve().is_inside()) {
-	nh=nh->opposite()->prev();
-      }
-      f= nh->face();
-      Halfedge_handle hd= ics.find_rule_vertex(cs_.visitor().simulator()->current_time(),
-					       f,
-					       rule_curve);
-      cs_.split_face(rule_curve, nh, hd);
-    } else {
-      ICS ics(tr_, cs_);
-      ics.roll_back_rule(cs_.visitor().simulator()->current_time(), rule);
-
-      Halfedge_handle new_extremum, new_target; // inside arc
-      Curve base_curve, rule_curve=rule->curve();
-      Point pt= hk->vertex()->point();
-      if (rule->prev()->prev()->curve().is_arc()
-	  && rule->prev()->prev()->curve().key() == l) {
-	new_extremum=cs_.next_edge_on_circle(cs_.next_edge_on_circle(hk));
-	base_curve= hk->curve();
-	new_target= rule->prev()->prev()->opposite();
-      } else {
-	if (!rule->opposite()->next()->next()->curve().is_arc()
-	    || rule->opposite()->next()->next()->curve().key() != l) {
-	  std::cout << "Where is my arc" << std::endl;
-	  cs_.write(rule->opposite()->next()->next(), std::cout) << std::endl;
-	  throw Degeneracy();
-	}
-	base_curve= cs_.next_edge_on_circle(hk)->curve();
-	new_extremum=cs_.next_edge_on_circle(hk->opposite())->opposite();
-	new_target= rule->opposite()->next()->next()->opposite();
-      }
-
-      std::cout << "New extremum is ";
-      cs_.write(new_extremum, std::cout) << " and base curve is " << base_curve 
-					 << " and new target is ";
-      cs_.write(new_target, std::cout) << std::endl;
-
-    
-      CGAL_assertion(new_target->curve().key() ==l);
-      CGAL_postcondition(new_extremum->curve().is_inside());
-      cs_.set_curve(hk, base_curve);
-      cs_.set_curve(cs_.next_edge_on_circle(hk), base_curve);
-    
-      cs_.join_face(rule, true);
-      //cs_.remove_vertex(v0, ->curve());
-      //cs_.remove_vertex(v1);
-      Halfedge_handle nh, nth;
-      {
-	Vertex_handle nvh= cs_.new_vertex(pt);
-	nh=cs_.insert_vertex(nvh, new_extremum);
-	cs_.set_curve(nh->opposite(), cs_.next_edge_on_circle(nh->opposite())->curve());
-	cs_.set_curve(nh->next(), cs_.next_edge_on_circle(nh->next())->curve());
-	if (nh->curve().is_inside()) nh=nh->opposite();
-      }
-      {
-	Vertex_handle ntvh= cs_.new_vertex(Point(rule_curve, new_target->curve()));
-	nth=cs_.insert_vertex(ntvh, new_extremum);
-	if (nth->curve().is_inside()) nth=nth->opposite();
-      }
-      cs_.split_face(rule_curve, nh, nth);
-    }
-#endif
     // if so then remove, edge and both vertices, check edge label, add edge on other side, shoot rule
     // else roll back rule, remove rule/vertex, add rule on other side
+     cs_.audit();
   } catch (CGAL_CATCH_DEGENERACY) {
     std::cout << "Degeneracy" << std::endl;
     handle_degeneracy();
   }
-  cs_.audit();
 }
 CGAL_AOS3_END_INTERNAL_NAMESPACE

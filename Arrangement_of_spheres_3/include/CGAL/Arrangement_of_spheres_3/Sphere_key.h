@@ -52,14 +52,16 @@ struct Sphere_key{
     typedef Sphere_key_utriple This;
     Sphere_key_utriple(Sphere_key a,
 		       Sphere_key b,
-		       Sphere_key c): a_(std::min(a,std::min(b,c))), 
-				      b_(std::max(a,std::min(b,c))),
-				      c_(std::max(a,std::max(b,c))){
-      CGAL_assertion(a_!= b_ && b_ != c_ && c_ != a_);
+		       Sphere_key c){
+      a_[0]=a;
+      a_[1]=b;
+      a_[2]=c;
+      std::sort(a_, a_+3);
+      CGAL_assertion(a_[0] != a_[1] && a_[1] != a_[2] && a_[2] != a_[0]);
     }
-    CGAL_COMPARISONS3(a_, b_, c_);
+    CGAL_COMPARISONS3(a_[0], a_[1], a_[2]);
   
-    Sphere_key a_,b_,c_;
+    Sphere_key a_[3];
   };
 
   struct Sphere_key_pair{

@@ -2,6 +2,7 @@
 #define CGAL_AOS3_IRRATIONAL_CROSS_SECTION_REMOVAL_H
 #include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_rules.h>
+#include <CGAL/Arrangement_of_spheres_3/Irrational_cross_section_location.h>
 
 
 
@@ -12,6 +13,7 @@ class Irrational_cross_section_removal: public Irrational_cross_section_rules CG
   CGAL_AOS3_TRAITS;
   typedef Irrational_cross_section_removal CGAL_AOS3_TARG This;
   typedef Irrational_cross_section_rules CGAL_AOS3_TARG P;
+  typedef Irrational_cross_section_location CGAL_AOS3_TARG ICSL;
   typedef Combinatorial_cross_section CGAL_AOS3_TARG CS;
   // typedef Cross_section_events CGAL_AOS3_TARG CSE;
   // typedef CGAL_AOS3_TYPENAME CS::Halfedge_handle Halfedge_handle;
@@ -51,6 +53,12 @@ public:
     }
     // roll in each until I have a target in a face
     
+    for (int i=0; i< 4; ++i ){
+      ICSL icsl(P::tr_, P::cs_);
+      CGAL_assertion(icsl.equal_points(rules[i]->opposite()->vertex(),
+				       P::tr_.sphere_events(k).second));
+    }
+
    
     CGAL_AOS3_TYPENAME CS::Vertex_handle iv= rules[0]->opposite()->vertex();
     CGAL_AOS3_TYPENAME CS::Face_handle f= P::cs_.snip_out(rules, rules+4, false);
