@@ -333,7 +333,7 @@ degenerate cases may imply arcs with zero length.
 
 \subsection{Traits classes}
 The classes in this package are templated by a geometric traits class that
-specifies which kind of object is dealt with. Four traits classes are
+specifies which kind of object is dealt with. Five traits classes are
 provided:
 \begin{itemize}
 \item \ccc{Visibility_complex_2_point_traits<Kernel>}, defined in
@@ -347,6 +347,9 @@ oriented polygons
 \ccc{CGAL/Visibility_complex_2/Point_traits.h}, for circles with a
 rational radius (a subclass of \ccc{Circle_2<Kernel>} (convertible to and from
 \ccc{Circle_2<Kernel>}, generally with an approximation) is used).
+\item \ccc{Visibility_complex_2_ellipse_traits<Kernel>}, defined in file
+\ccc{CGAL/Visibility_complex_2/Ellipse_traits.h}, for ellipses of type
+\ccc{Conic_2<Kernel>}.
 \end{itemize}
 
 A traits class defines a type \ccc{Disk} (the type of the convex objects
@@ -477,7 +480,8 @@ compute the shortest path between two points in a scene.
 
 This class, \ccc{Shortest_path_2<VC2GeomTraits>}, is defined in file
 \ccc{CGAL/Shortest_path_2.h}. It is paramaterized by a geometric traits
-class. \ccc{Visibility_complex_2_circle_traits} does not provide the
+class. \ccc{Visibility_complex_2_circle_traits} and
+\ccc{Visibility_complex_2_ellipse_traits}  do not provide the
 distance functions required for shortest path computations, and, therefore
 cannot be used here, but the other traits classes (for points, segments and
 polygons) can. By default, they use type \ccc{double} to compute the
