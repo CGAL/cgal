@@ -134,9 +134,10 @@ int main(int argc,char ** argv) {
   int height=(int)(width*dy/dx);
 
   int ac=1;
-  char* av[1]={
-   "Shortest path" 
-  };
+  const char * ctitle="Display shortest path";
+  char title[22];
+  std::copy(ctitle,ctitle+22,title);
+  char * av[1]={title};
   QApplication app(ac,av);
   CGAL::Qt_widget* w;
   w = new CGAL::Qt_widget();

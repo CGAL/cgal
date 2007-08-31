@@ -32,6 +32,24 @@ struct Bitangent_type_wrapper {
   enum Type  {
     LL,LR,RL,RR
   };
+  static Type reverse(Type t) {
+    switch (t) {
+    case Bitangent_type_wrapper::LL: return Bitangent_type_wrapper::RR;
+    case Bitangent_type_wrapper::LR: return Bitangent_type_wrapper::LR;
+    case Bitangent_type_wrapper::RL: return Bitangent_type_wrapper::RL;
+    case Bitangent_type_wrapper::RR: return Bitangent_type_wrapper::LL;
+    default: CGAL_assertion(false); return Bitangent_type_wrapper::LL;
+    }
+  }
+  class Type_util {
+  public:
+    Type operator()(bool b1,bool b2) const {
+      if ( b1 &&  b2) return LL;
+      if (!b1 &&  b2) return RL;
+      if (!b1 && !b2) return RR;
+      return LR;
+    }
+  };
 };
 
 typedef Bitangent_type_wrapper::Type Bitangent_type;
@@ -65,16 +83,6 @@ operator>>(std::istream &is, Bitangent_type& t) {
   if (s=="") return is;
   CGAL_assertion(false);
   return is;
-}
-
-static Bitangent_type reverse(Bitangent_type t) {
-  switch (t) {
-  case Bitangent_type_wrapper::LL: return Bitangent_type_wrapper::RR;
-  case Bitangent_type_wrapper::LR: return Bitangent_type_wrapper::LR;
-  case Bitangent_type_wrapper::RL: return Bitangent_type_wrapper::RL;
-  case Bitangent_type_wrapper::RR: return Bitangent_type_wrapper::LL;
-  default: CGAL_assertion(false); return Bitangent_type_wrapper::LL;
-  }
 }
 
 class Constraint_input :public Bitangent_type_wrapper {
@@ -119,15 +127,6 @@ public:
     using Bitangent_type_wrapper::LR;
     using Bitangent_type_wrapper::RL;
     using Bitangent_type_wrapper::RR;
-    class Type_util {
-	public:
-	Type operator()(bool b1,bool b2) const {
-	    if ( b1 &&  b2) return LL;
-	    if (!b1 &&  b2) return RL;
-	    if (!b1 && !b2) return RR;
-	    return LR;
-	}
-    };
 public:
     // Constructeurs -----------------------------------------------------------
     Bitangent_base() 
@@ -136,7 +135,7 @@ public:
 	: type_(t)  , source_object_(o1) , target_object_(o2)   { }
     Bitangent_base(const Bitangent_base&sibling,bool reverse,Type t) {
       if (reverse) {
-        type_=Visibility_complex_2_details::reverse(t);
+        type_=Bitangent_type_wrapper::reverse(t);
         source_object_=sibling.target_object();
         target_object_=sibling.source_object();
       } else {

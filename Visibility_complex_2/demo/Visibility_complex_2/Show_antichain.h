@@ -29,7 +29,7 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Segment_2 Segment_2;
-  typedef Polygon_2<Kernel> Polygon_2;
+  typedef CGAL::Polygon_2<Kernel> Polygon_2;
 
   Show_antichain(Antichain* &antichain,
 		 Color c=CGAL::YELLOW,

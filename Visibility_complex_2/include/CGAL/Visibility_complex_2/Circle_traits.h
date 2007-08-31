@@ -425,7 +425,7 @@ public:
   }
   Bitangent_2(const Bitangent_2&sibling,bool reverse,Type t) {
     if (reverse) {
-      *this=Bitangent_2(Visibility_complex_2_details::reverse(t),
+      *this=Bitangent_2(Base::reverse(t),
                         sibling.target_object(),
                         sibling.source_object());
     } else {

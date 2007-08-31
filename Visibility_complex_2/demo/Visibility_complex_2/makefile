@@ -12,7 +12,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
-#-I../../include
+#
 
 CXXFLAGS = -I../../include/ \
            $(CGAL_CXXFLAGS) \
@@ -38,15 +38,19 @@ all:            \
                 arrangements$(EXE_EXT) \
                 point_display$(EXE_EXT) circle_display$(EXE_EXT) \
                 polygon_display$(EXE_EXT) segment_display$(EXE_EXT) \
+                ellipse_display$(EXE_EXT) \
                 point_input$(EXE_EXT) circle_input$(EXE_EXT) \
                 polygon_input$(EXE_EXT) segment_input$(EXE_EXT) \
+                ellipse_input$(EXE_EXT) \
                 point_compute_vc$(EXE_EXT) circle_compute_vc$(EXE_EXT) \
                 polygon_compute_vc$(EXE_EXT) \
-                segment_compute_vc$(EXE_EXT) \
+                segment_compute_vc$(EXE_EXT) ellipse_compute_vc$(EXE_EXT)\
                 point_compute_bit$(EXE_EXT) circle_compute_bit$(EXE_EXT) \
                 polygon_compute_bit$(EXE_EXT) segment_compute_bit$(EXE_EXT) \
+                segment_compute_bit$(EXE_EXT) \
                 point_compute_sp$(EXE_EXT) polygon_compute_sp$(EXE_EXT) \
-                segment_compute_sp$(EXE_EXT)
+                segment_compute_sp$(EXE_EXT) 
+
 
 Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
 	$(QT_MOC) -o Qt_widget_styled_layer.moc Qt_widget_styled_layer.h
@@ -103,10 +107,13 @@ arrangements$(EXE_EXT): arrangements$(OBJ_EXT) \
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangements arrangements$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Qt_widget_style_editor$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT) $(LDFLAGS)
 
 include/CGAL/scene_input.moc: include/CGAL/scene_input.cpp
-	moc -o include/CGAL/scene_input.moc include/CGAL/scene_input.cpp
+	$(QT_MOC) -o include/CGAL/scene_input.moc include/CGAL/scene_input.cpp
 
 point_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_POINT include/CGAL/scene_input.cpp $(LDFLAGS)
+
+ellipse_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_ELLIPSE include/CGAL/scene_input.cpp $(LDFLAGS)
 
 segment_input: include/CGAL/scene_input.cpp include/CGAL/scene_input.moc
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_INPUT_SEGMENT include/CGAL/scene_input.cpp $(LDFLAGS)
@@ -129,6 +136,9 @@ polygon_display: include/CGAL/scene_display.cpp
 circle_display: include/CGAL/scene_display.cpp 
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_CIRCLE include/CGAL/scene_display.cpp $(LDFLAGS)
 
+ellipse_display: include/CGAL/scene_display.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_DISPLAY_ELLIPSE include/CGAL/scene_display.cpp $(LDFLAGS)
+
 point_compute_vc: include/CGAL/compute_vc.cpp 
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_POINT include/CGAL/compute_vc.cpp $(LDFLAGS)
 
@@ -140,6 +150,9 @@ polygon_compute_vc: include/CGAL/compute_vc.cpp
 
 circle_compute_vc: include/CGAL/compute_vc.cpp 
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_CIRCLE include/CGAL/compute_vc.cpp $(LDFLAGS)
+
+ellipse_compute_vc: include/CGAL/compute_vc.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_VC_ELLIPSE include/CGAL/compute_vc.cpp $(LDFLAGS)
 
 point_compute_bit: include/CGAL/compute_bit.cpp 
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_POINT include/CGAL/compute_bit.cpp $(LDFLAGS)
@@ -153,6 +166,9 @@ polygon_compute_bit: include/CGAL/compute_bit.cpp
 circle_compute_bit: include/CGAL/compute_bit.cpp 
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_CIRCLE include/CGAL/compute_bit.cpp $(LDFLAGS)
 
+ellipse_compute_bit: include/CGAL/compute_bit.cpp 
+	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_BIT_ELLIPSE include/CGAL/compute_bit.cpp $(LDFLAGS)
+
 point_compute_sp: include/CGAL/compute_sp.cpp 
 	$(CGAL_CXX) -o $@  $(CXXFLAGS) -DVC_SCENE_COMPUTE_SP_POINT include/CGAL/compute_sp.cpp $(LDFLAGS)
 
@@ -165,20 +181,50 @@ polygon_compute_sp: include/CGAL/compute_sp.cpp
 
 
 clean:
-	rm *.o *.moc \
+	rm -f \
+                arrangements$(OBJ_EXT) \
+                point_display$(OBJ_EXT) circle_display$(OBJ_EXT) \
+                polygon_display$(OBJ_EXT) segment_display$(OBJ_EXT) \
+                ellipse_display$(OBJ_EXT) \
+                point_input$(OBJ_EXT) circle_input$(OBJ_EXT) \
+                polygon_input$(OBJ_EXT) segment_input$(OBJ_EXT) \
+                ellipse_input$(OBJ_EXT) \
+                point_compute_vc$(OBJ_EXT) circle_compute_vc$(OBJ_EXT) \
+                polygon_compute_vc$(OBJ_EXT) \
+                segment_compute_vc$(OBJ_EXT) ellipse_compute_vc$(OBJ_EXT)\
+                point_compute_bit$(OBJ_EXT) circle_compute_bit$(OBJ_EXT) \
+                polygon_compute_bit$(OBJ_EXT) segment_compute_bit$(OBJ_EXT) \
+                segment_compute_bit$(OBJ_EXT) \
+                point_compute_sp$(OBJ_EXT) polygon_compute_sp$(OBJ_EXT) \
+                segment_compute_sp$(OBJ_EXT) \
+		Show_points$(OBJ_EXT) \
+		Show_lines_base$(OBJ_EXT) \
+		Qt_widget_styled_layer$(OBJ_EXT) \
+		Qt_widget_style_editor$(OBJ_EXT) \
+		Show_pseudo_triangulation$(OBJ_EXT) \
                 arrangements$(EXE_EXT) \
                 point_display$(EXE_EXT) circle_display$(EXE_EXT) \
                 polygon_display$(EXE_EXT) segment_display$(EXE_EXT) \
+                ellipse_display$(EXE_EXT) \
                 point_input$(EXE_EXT) circle_input$(EXE_EXT) \
                 polygon_input$(EXE_EXT) segment_input$(EXE_EXT) \
+                ellipse_input$(EXE_EXT) \
                 point_compute_vc$(EXE_EXT) circle_compute_vc$(EXE_EXT) \
                 polygon_compute_vc$(EXE_EXT) \
-                segment_compute_vc$(EXE_EXT) \
+                segment_compute_vc$(EXE_EXT) ellipse_compute_vc$(EXE_EXT)\
                 point_compute_bit$(EXE_EXT) circle_compute_bit$(EXE_EXT) \
                 polygon_compute_bit$(EXE_EXT) segment_compute_bit$(EXE_EXT) \
+                segment_compute_bit$(EXE_EXT) \
                 point_compute_sp$(EXE_EXT) polygon_compute_sp$(EXE_EXT) \
-                segment_compute_sp$(EXE_EXT)
-
+                segment_compute_sp$(EXE_EXT) \
+                include/CGAL/scene_input.moc \
+                arrangements.moc \
+                Show_pseudo_triangulation.moc \
+                Show_lines_base.moc \
+                Show_points.moc \
+                Qt_widget_style_editor.cpp.moc \
+                Qt_widget_style_editor.moc \
+                Qt_widget_styled_layer.moc
 
 
 #---------------------------------------------------------------------#

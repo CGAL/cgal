@@ -78,6 +78,7 @@ public:
   using BT::LR;
   using BT::RL;
   using BT::RR;
+  using BT::reverse;
 
     // CONSTRUCTORS
     Vertex_base() 

@@ -135,7 +135,7 @@ private:
   typedef Bitangent_2<Gt> Self;
 public:
   typedef typename R::FT                          FT;
-  typedef Arc_2<Gt> Arc_2;
+  typedef typename Gt::Arc_2                      Arc_2;
   typedef typename Base::Disk_handle              Disk_handle;
   typedef typename Gt::Segment_2                  Segment_2;
   typedef typename Gt::Point_2                    Point_2;
@@ -351,7 +351,7 @@ public:
     if (sibling.type()==t) {
       if (reverse) {
         *this=Bitangent_2(sibling.target(),sibling.source(),
-                          Visibility_complex_2_details::reverse(t),
+                          Base::reverse(t),
                           sibling.target_object(),sibling.source_object());
       } else {
         *this=Bitangent_2(sibling.source(),sibling.target(),
@@ -360,7 +360,7 @@ public:
       }
     } else {
       if (reverse) {
-        *this=Bitangent_2(Visibility_complex_2_details::reverse(t),
+        *this=Bitangent_2(Base::reverse(t),
                           sibling.target_object(),
                           sibling.source_object());
       } else {

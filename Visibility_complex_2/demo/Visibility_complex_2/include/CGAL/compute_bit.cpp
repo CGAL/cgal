@@ -38,17 +38,14 @@ typedef CGAL::Cartesian<N> K;
 #include <CGAL/Point_2.h>
 typedef CGAL::Point_2<K> Point_2;
 
+template<class Disk> CGAL::Bbox_2 bbox(const Disk&d) {
+  return d.bbox();
+}
+
 #ifdef VC_SCENE_COMPUTE_BIT_CIRCLE
 
 #include<CGAL/Visibility_complex_2/Circle_traits.h>
 typedef CGAL::Visibility_complex_2_circle_traits<K> Gt;
-
-void bbox(Gt::Disk&d,N&xm,N&xM,N&ym,N&yM) {
-  xm=d.center().x()-d.radius();
-  xM=d.center().x()+d.radius();
-  ym=d.center().y()-d.radius();
-  yM=d.center().y()+d.radius();
-}
 
 #elif defined(VC_SCENE_COMPUTE_BIT_POLYGON)
 
@@ -58,35 +55,42 @@ typedef CGAL::Visibility_complex_2_polygon_traits<K> Gt;
 
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 
-void bbox(Gt::Disk&d,N&xm,N&xM,N&ym,N&yM) {
-  xm=d.left_vertex()->x();
-  xM=d.right_vertex()->x();
-  ym=d.bottom_vertex()->y();
-  yM=d.top_vertex()->y();
-}
-
 
 #elif defined(VC_SCENE_COMPUTE_BIT_SEGMENT)
 #include<CGAL/Visibility_complex_2/Segment_traits.h>
 typedef CGAL::Visibility_complex_2_segment_traits<K> Gt;
-
-void bbox(Gt::Disk&d,N&xm,N&xM,N&ym,N&yM) {
-  xm=std::min(d.source().x(),d.target().x());
-  xM=std::max(d.source().x(),d.target().x());
-  ym=std::min(d.source().y(),d.target().y());
-  yM=std::max(d.source().y(),d.target().y());
-}
 
 
 #elif defined(VC_SCENE_COMPUTE_BIT_POINT)
 #include<CGAL/Visibility_complex_2/Point_traits.h>
 typedef CGAL::Visibility_complex_2_point_traits<K> Gt;
 
-void bbox(Gt::Disk&d,N&xm,N&xM,N&ym,N&yM) {
-  xm=d.x();
-  xM=d.x();
-  ym=d.y();
-  yM=d.y();
+#elif defined(VC_SCENE_COMPUTE_BIT_ELLIPSE)
+#include<CGAL/Visibility_complex_2/Ellipse_traits.h>
+#include<CGAL/IO/Qt_widget_Conic_2.h>
+typedef CGAL::Visibility_complex_2_ellipse_traits<K> Gt;
+
+void compute_x_span(double r,double s,double t,double u,double v,double w,
+           double&xc,double&width) {
+  double a=-4*s*r+t*t;
+  double b=v*t-2*s*u;
+  double c=v*v-4*s*w;
+  xc=-b/a;
+  width=CGAL_NTS sqrt(b*b-a*c)/CGAL_NTS abs(a);
+}
+
+CGAL::Bbox_2 bbox(Gt::Disk&d) {
+  double r=CGAL_NTS to_double(d.r());
+  double s=CGAL_NTS to_double(d.s());
+  double t=CGAL_NTS to_double(d.t());
+  double u=CGAL_NTS to_double(d.u());
+  double v=CGAL_NTS to_double(d.v());
+  double w=CGAL_NTS to_double(d.w());
+
+  double xc,yc,width,height;
+  compute_x_span(r,s,t,u,v,w,xc,width);
+  compute_x_span(s,r,t,v,u,w,yc,height);
+  return CGAL::Bbox_2(xc-width,yc-height,xc+width,yc+height);
 }
 #endif
 
@@ -104,10 +108,6 @@ typedef VC::Constraint_input Constraint_input;
 typedef CGAL::Point_2<K> Point_2;
 typedef Gt::Segment_2 Segment_2;
 
-bool pausep;
-
-
-
 int main(int argc,char ** argv) {
   std::istream * di=&std::cin;
   if (argc>1) di=new std::ifstream(argv[1]);
@@ -124,28 +124,24 @@ int main(int argc,char ** argv) {
   std::vector<Bitangent_2> vb;
   VC()(disks.begin(),disks.end(),
        constraint_it,constraint_end,std::back_inserter(vb));
-  N xm=999999999,xM=-999999999,ym=999999999,yM=-999999999;
+  double xmin=999999999,xmax=-999999999,ymin=999999999,ymax=-999999999;
   for (std::vector<Gt::Disk>::iterator i=disks.begin();i!=disks.end();++i) {
-    N xmin,xmax,ymin,ymax;
-    bbox(*i,xmin,xmax,ymin,ymax);
-    xm=std::min(xmin,xm);
-    xM=std::max(xmax,xM);
-    ym=std::min(ymin,ym);
-    yM=std::max(ymax,yM);
+    CGAL::Bbox_2 box=bbox(*i);
+    xmin=std::min(box.xmin(),xmin);
+    xmax=std::max(box.xmax(),xmax);
+    ymin=std::min(box.ymin(),ymin);
+    ymax=std::max(box.ymax(),ymax);
   }
-  double xmin=CGAL_NTS to_double(xm);
-  double xmax=CGAL_NTS to_double(xM);
-  double ymin=CGAL_NTS to_double(ym);
-  double ymax=CGAL_NTS to_double(yM);
   double dx=xmax-xmin;
   double dy=ymax-ymin;
   int width=600;
   int height=(int)(width*dy/dx);
 
   int ac=1;
-  char* av[1]={
-   "Free bitangents" 
-  };
+  const char * ctitle="Display free bitangents";
+  char title[24];
+  std::copy(ctitle,ctitle+24,title);
+  char * av[1]={title};
   QApplication app(ac,av);
   CGAL::Qt_widget* w;
   w = new CGAL::Qt_widget();

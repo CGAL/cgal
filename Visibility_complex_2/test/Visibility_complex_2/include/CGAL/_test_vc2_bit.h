@@ -16,14 +16,20 @@ int main() {
   std::vector<VC::Bitangent_2> resultc;
 
   VC()(disks.begin(),disks.end(),std::back_inserter(result));
+  if (result.size()!=
+      static_cast<std::vector<VC::Bitangent_2>::size_type>(nbit)) {
+    std::cout<<"Wrong number of bitangent for unconstrained scene:"
+             <<result.size()<<"\n"<<std::flush;
+    return 1;
+  }
   VC()(disks.begin(),disks.end(),constraint_it,constraint_end,
        std::back_inserter(resultc));
  
-  if (result.size()!=
-      static_cast<std::vector<VC::Bitangent_2>::size_type>(nbit)) 
-    return 1;
   if (resultc.size()!=
-      static_cast<std::vector<VC::Bitangent_2>::size_type>(ncbit))
+      static_cast<std::vector<VC::Bitangent_2>::size_type>(ncbit)) {
+    std::cout<<"Wrong number of bitangent for constrained scene:"
+             <<resultc.size()<<"\n"<<std::flush;
     return 1;
+  }
   return 0;
 }

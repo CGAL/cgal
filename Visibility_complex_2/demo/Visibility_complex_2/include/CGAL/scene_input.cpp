@@ -28,7 +28,9 @@
 #include<CGAL/IO/Ostream_iterator.h>
 #include<CGAL/IO/Qt_widget.h>
 
+
 typedef CGAL::Gmpz N;
+
 typedef CGAL::Cartesian<N> K;
 typedef CGAL::Point_2<K> Point_2;
 
@@ -112,6 +114,25 @@ int find_disk(Point_2 p,std::vector<Gt::Disk>::iterator begin,
   }
   return j;
 }
+
+#elif defined(VC_SCENE_INPUT_ELLIPSE)
+
+#include <CGAL/Visibility_complex_2/Qt_widget_get_conic.h>
+#include<CGAL/Visibility_complex_2/Ellipse_traits.h>
+typedef CGAL::Visibility_complex_2_ellipse_traits<K> Gt;
+
+typedef CGAL::Conic_2<K> Cgal_disk;
+typedef CGAL::Visibility_complex_2_details::Qt_widget_get_conic<K> Get_disk;
+
+int find_disk(Point_2 p,std::vector<Gt::Disk>::iterator begin,
+              std::vector<Gt::Disk>::iterator end) {
+  for (std::vector<Gt::Disk>::iterator i=begin;i!=end;++i) {
+    if (i->has_on_convex_side(p))
+      return i-begin;
+  }
+  return -1;
+}
+
 #endif
 
 typedef Gt::Segment_2 Segment_2;
@@ -196,8 +217,8 @@ class Scene_input : public QMainWindow {
         }
         return;
       }
-      Constraint_input c(Bitangent_2::Type_util()(sourceL,targetL),
-                         source,target);
+      Bitangent_2::Type_util tu;
+      Constraint_input c(tu(sourceL,targetL),source,target);
       source=-1;
       target=-1;
       widget->setCursor(cursor_source);
@@ -239,7 +260,7 @@ public:
   std::vector<Constraint_input> constraints;
   char * filed;
   char * filec;
-  Scene_input(int x,int y,bool b,char * f1,char *f2) :
+  Scene_input(int x,int y,char * f1,char *f2) :
     scene(this), get_constraint(this) {
     stage=0;
     filed=f1;
@@ -329,11 +350,12 @@ public:
 
 int main(int argc,char ** argv) {
   int ac=1;
-  char* av[1]={
-   "Input Scene" 
-  };
+  const char * ctitle="Input scene";
+  char title[12];
+  std::copy(ctitle,ctitle+12,title);
+  char * av[1]={title};
   QApplication app(ac,av);
-  Scene_input * pouloum = new Scene_input (800,600,argc>1,(argc>1?argv[1]:0),
+  Scene_input * pouloum = new Scene_input (800,600,(argc>1?argv[1]:0),
                                (argc>2?argv[2]:0));
   app.setMainWidget(pouloum);
   pouloum->show();

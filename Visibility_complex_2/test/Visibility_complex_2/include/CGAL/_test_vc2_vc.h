@@ -16,9 +16,19 @@ int main() {
   std::istream_iterator<Constraint_input> constraint_it(ci),constraint_end;
 
   VC vc(disk_it,disk_end);
-  VC vcc(vc.disks_begin(),vc.disks_end(),constraint_it,constraint_end);
  
-  if (vc.size()!=2*nbit) return 1;
-  if (vcc.size()!=2*ncbit) return 1;
+  if (vc.size()!=2*nbit) {
+    std::cout<<"Wrong number of bitangent for unconstrained scene:"
+             <<vc.size()<<"\n"<<std::flush;
+    return 1; 
+  }
+
+  VC vcc(vc.disks_begin(),vc.disks_end(),constraint_it,constraint_end);
+
+  if (vcc.size()!=2*ncbit) {
+    std::cout<<"Wrong number of bitangent for constrained scene:"
+             <<vcc.size()<<"\n"<<std::flush;    
+    return 1; 
+  }
   return 0;
 }

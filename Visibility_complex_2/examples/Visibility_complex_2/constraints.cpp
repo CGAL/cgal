@@ -12,7 +12,7 @@ typedef CGAL::Visibility_complex_2_circle_traits<K> Gt;
 typedef CGAL::Visibility_complex_2<Gt>              VC;
 typedef VC::Constraint_input Constraint_input;
 
-int main(int argc, char** argv) {
+int main() {
   std::ifstream di("data/circle.d");
   std::istream_iterator<Gt::Disk> disk_it(di),disk_end;
   std::ifstream ci("data/circle.c");

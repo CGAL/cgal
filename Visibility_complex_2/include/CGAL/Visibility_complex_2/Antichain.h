@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Pierre Angelier, Michel Pocchiola
+// Author(s)     : Pierre Angelier, Michel Pocchiola, Luc Habert
 
 
 #ifndef CGAL_VISIBILITY_COMPLEX_2_ANTICHAIN_H
