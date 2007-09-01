@@ -61,9 +61,9 @@ Rational_cross_section CGAL_AOS3_TARG ::audit() const {
 	  std::cout << std::endl;
 
 	  for (unsigned int k=1; k< l[i][j].size(); ++k){
-	    CGAL_assertion(tr_.compare_points_c(sphere_point(l[i][j][k-1]->point()),
-						sphere_point(l[i][j][k]->point()),
-						plane_coordinate(i)) != CGAL::LARGER);
+	    CGAL_assertion(tr_.compare_c(sphere_point(l[i][j][k-1]->point()),
+					 sphere_point(l[i][j][k]->point()),
+					 plane_coordinate(i)) != CGAL::LARGER);
 	  }
 	}
       }
@@ -243,9 +243,9 @@ bool Rational_cross_section CGAL_AOS3_TARG ::intersects(CGAL_AOS3_TYPENAME Trait
   p[plane_coordinate(0).index()]=0;
   p[plane_coordinate(1).index()]=1;
   p[sweep_coordinate().index()]=z_;
-  return tr_.point_bounded_side_of_sphere_c(CGAL_AOS3_TYPENAME Traits::Sphere_point_3(CGAL_AOS3_TYPENAME Traits::Point_3(p[0], p[1], p[2])),
-					    a,
-					    sweep_coordinate()); 
+  return tr_.bounded_side_of_sphere_c(CGAL_AOS3_TYPENAME Traits::Sphere_point_3(CGAL_AOS3_TYPENAME Traits::Point_3(p[0], p[1], p[2])),
+				      a,
+				      sweep_coordinate()); 
 }
 
 

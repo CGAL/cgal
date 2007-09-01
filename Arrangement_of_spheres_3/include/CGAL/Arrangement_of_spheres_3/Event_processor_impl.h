@@ -141,14 +141,14 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
 					       f,
 					       Rule_direction(i*2));
 	    CGAL_assertion(h->curve().is_arc());
-	    if (h->curve.key()== k) {
+	    if (h->curve().key()== k) {
 	      hk=h;
 	    } else {
 	      CGAL_assertion(h->curve().key() ==l);
 	      hl=h;
 	    }
 	  } catch (CGAL_AOS3_TYPENAME ICSR::On_vertex_exception) {
-	    throw Degeneracy_exception();
+	    throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
 	  }
 	}
       }
@@ -551,7 +551,7 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
   try {
     check_degeneracy();
     int index=i+1;
-    bool larger=tr_.compare_point_to_rule_c(cs_.visitor().simulator()->current_time(), k,
+    bool larger=tr_.compare_to_rule_c(cs_.visitor().simulator()->current_time(), k,
 				      plane_coordinate(1-i))== CGAL::LARGER;
     if (!larger && i==0 || larger && i==1) {
       index=(index+2)%4;

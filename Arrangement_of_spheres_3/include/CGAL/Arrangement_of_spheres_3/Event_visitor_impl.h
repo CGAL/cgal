@@ -213,7 +213,7 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	if (ep.is_valid()) {
 	  if (ep== sim_->current_time()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
 	  if (ep > sim_->current_time()) {
-	    CGAL_assertion(tr_.point_oriented_side_of_separating_plane(ep, aav->point().sphere_key(0),
+	    CGAL_assertion(tr_.oriented_side_of_separating_plane(ep, aav->point().sphere_key(0),
 								       aav->point().sphere_key(1)) != CGAL::NEGATIVE);
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::AAR_event(j_, h));
 	    break;

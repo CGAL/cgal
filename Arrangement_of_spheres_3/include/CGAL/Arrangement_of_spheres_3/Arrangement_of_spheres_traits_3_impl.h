@@ -4,48 +4,7 @@
 #include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
 CGAL_BEGIN_NAMESPACE
 
-#define CGAL_AOS3_CANONICAL_PREDICATE_LINE(l, sphere, t, equal_value, inside_value, below_value, above_value, miss_value) \
-  std::cout << "Line is " << l << std::endl;				\
-  Sphere_point_3 sp0(sphere, l);					\
-  if (!sp0.is_valid()) {						\
-      std::cout << "Line misses" << std::endl;				\
-      miss_value;							\
-  } else {								\
-    Sphere_point_3 sp1(sphere, l.opposite());				\
-    Coordinate_index sc=CGAL_AOS3_INTERNAL_NS::sweep_coordinate();	\
-    Comparison_result c0= t.compare(sp0, sc);				\
-    Comparison_result c1= t.compare(sp1, sc);				\
-    if (c0 == CGAL::EQUAL || c1 == CGAL::EQUAL) {			\
-      std::cout << "Equal" << std::endl;				\
-      equal_value;							\
-    } else if (c0 != c1) {						\
-      std::cout << "Inside" << std::endl;				\
-      inside_value;							\
-    } else if (c0 == CGAL::SMALLER) {					\
-      std::cout << "smaller" << std::endl;				\
-      below_value;							\
-    } else {								\
-      std::cout << "larger" << std::endl;				\
-      above_value;							\
-    }									\
-  }									\
-  		
 							
-#define CGAL_AOS3_CANONICAL_PREDICATE(plane0, plane1, sphere, t, equal_value, inside_value, below_value, above_value, miss_value) \
-  Plane_3 p0= plane0;							\
-  std::cout << "Plane0 is " << p0 << std::endl;				\
-  Plane_3 p1= plane1;							\
-  std::cout << "Plane1 is " << p1 << std::endl;				\
-  Object o= table_->geom_traits_object().intersect_3_object()(p0, p1);	\
-  Line_3 l;								\
-  if (assign(l,o) ){							\
-    CGAL_AOS3_CANONICAL_PREDICATE_LINE(l, sphere, t, equal_value,	\
-				       inside_value, below_value,	\
-				       above_value, miss_value);	\
-  } else {								\
-    std::cout << "Planes miss" << std::endl;				\
-    miss_value;								\
-  }									
 
 // predicates -------------------------------------------------------------------------------
 
@@ -95,68 +54,23 @@ bool Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::intersects(Sphere_3_key a,
 
 
 
-
 CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_to_circle_circle_c(const Sphere_point_3 &pt,
-									   Sphere_3_key sphere0,
-									   Sphere_3_key sphere1,
-									   Coordinate_index C) const{
-  
-
-
-  Plane_3 eqp=table_->equipower_plane(sphere0, sphere1);
-  CGAL::Comparison_result cr= compare_point_to_equipower_line_c(pt, sphere0, sphere1, C);
-  //Oriented_side ossp= center_oriented_side_of_separating_plane_c(k, sphere0, sphere1, C);
-  Plane_3 sp= table_->separating_plane(sphere0, sphere1);
-  CGAL::Comparison_result epqc= compare(sp.orthogonal_vector()[C.index()],0);
-  if (cr != epqc ) {
-    return cr;
-  }
-  
-  CGAL_AOS3_CANONICAL_PREDICATE(eqp,
-				const_c_plane(pt, C),
-				table_->sphere(sphere0),
-				pt,
-				return CGAL::EQUAL,
-				return Comparison_result(-cr),
-				return cr,
-				return cr,
-				return cr);
+CGAL::Bounded_side 
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::rules_bounded_side_of_sphere(const Sphere_point_3 &t,
+                                                                             Sphere_3_key x,
+                                                                             Sphere_3_key y,
+                                                                             Sphere_3_key sphere) const {
+  CGAL_AOS3_CANONICAL_PREDICATE(rule_plane(x, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0)),
+                                rule_plane(y, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1)),
+                                table_->sphere(sphere),
+                                t,
+                                return ON_BOUNDARY,
+                                return ON_BOUNDED_SIDE,
+                                return ON_UNBOUNDED_SIDE,
+                                return ON_UNBOUNDED_SIDE,
+                                return ON_UNBOUNDED_SIDE);
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_to_circle_circle_c(const Center_point_3 &pt,
-									   Sphere_3_key sphere0,
-									   Sphere_3_key sphere1,
-									   Coordinate_index C) const{
-  //std::cout << "EQP is " << table_->equipower_point(sphere0, sphere1) << " 1/10000 1" << std::endl;
-
-  //std::cout << "EQPlane is " << table_->equipower_plane(sphere0, sphere1)<< std::endl;
-  //std::cout << "Sep plane is " << table_->separating_plane(sphere0, sphere1)<< std::endl;
- 
-  CGAL::Comparison_result cr= compare_to_equipower_line_c(pt, sphere0, sphere1, C);
-  //Oriented_side ossp= center_oriented_side_of_separating_plane_c(k, sphere0, sphere1, C);
-  Plane_3 sp= table_->separating_plane(sphere0, sphere1);
-  CGAL::Comparison_result epqc= compare(sp.orthogonal_vector()[C.index()],0);
-  std::cout << "comps are " << cr << " " << epqc << std::endl;
-  if (cr != epqc ) {
-    return cr;
-  }
-  Plane_3 eqp=table_->equipower_plane(sphere0, sphere1);
-
- 
-  CGAL_AOS3_CANONICAL_PREDICATE(eqp,
-				rule_plane(k, C),
-				table_->sphere(sphere0),
-				t,
-				return CGAL::EQUAL,
-				return Comparison_result(-cr),
-				return cr,
-				return cr, 
-				return cr);
-}
 
 
 /*CGAL_AOS3_TEMPLATE
@@ -202,231 +116,41 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::extremum_bounded_side_of_sphere(
 
 
 
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_point_to_circle_rule_c(const Sphere_point_3 &pt,
-									       Sphere_3_key sphere,
-									       Sphere_3_key rule,
-									       Coordinate_index rule_coordinate,
-									       bool smaller,
-									       Coordinate_index C) const{
-  if (C== rule_coordinate) return compare_point_to_rule_c(pt, rule, rule_coordinate);
-
-  Comparison_result crrs= smaller? SMALLER: LARGER; //compare_sphere_centers_c(rule, sphere, C);
-  Comparison_result crcs= compare_point_to_rule_c(pt, sphere, C);
-  std::cout << "CPCR " << crrs << " " << crcs << std::endl;
-  CGAL_assertion(crrs != CGAL::EQUAL);
-  if (crrs != crcs) return crcs;
-
-  //Comparison_result cr= compare_point_to_rule_c(pt, rule, C);
-
-  //Comparison_result cr= compare_point_to_rule_c(pt, sphere, C);
-  CGAL_AOS3_CANONICAL_PREDICATE(const_c_plane(pt, C),
-				rule_plane(rule, rule_coordinate),
-				table_->sphere(sphere),
-				pt,
-				return CGAL::EQUAL,
-				return Comparison_result(-crrs),
-				return crrs,
-				return crrs,
-				return crrs);
-}
   
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_center_to_circle_rule_c(Sphere_3_key center,
-										const Sphere_point_3 &t,
-										Sphere_3_key sphere,
-										Sphere_3_key rule,
-										Coordinate_index rule_coordinate,
-										bool smaller,
-										Coordinate_index C) const{
-  if (C== rule_coordinate) return CGAL::compare(table_->center(center)[rule_coordinate.index()],
-						table_->center(rule)[rule_coordinate.index()]);
-  Comparison_result crrs= smaller? SMALLER: LARGER; //compare_sphere_centers_c(rule, sphere, C);
-  Comparison_result crcs= compare_sphere_centers_c(center, sphere, C);
-  CGAL_assertion(crrs != CGAL::EQUAL);
-  if (crrs != crcs) return crcs;
-
-  //Comparison_result cr= compare_sphere_centers_c(center, rule, C);
-  //if (cr == crrs) return cr;
-
-  CGAL_AOS3_CANONICAL_PREDICATE(rule_plane(center, C),
-				rule_plane(rule, rule_coordinate),
-				table_->sphere(sphere), 
-				t,
-				return CGAL::EQUAL,
-					return Comparison_result(-crrs),
-				return crrs,
-				return crrs,
-				return crrs);
-}
   
 
 
 
 
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_point_to_circle_extremum_c(const Sphere_point_3 &pt,
-										   Sphere_3_key sphere,
-										   Rule_direction d,
-										   Coordinate_index C) const{
-  if (C== d.constant_coordinate()) return compare_point_to_rule_c(pt, sphere, C);
 
-  Comparison_result crrs= d.is_positive()? CGAL::LARGER : CGAL::SMALLER;
-  Comparison_result crcs= compare_point_to_rule_c(pt, sphere, C);
-  //CGAL_assertion(crrs != CGAL::EQUAL);
-  if (crrs != crcs) return crcs;
-
-  //Comparison_result cr= compare_point_to_rule_c(pt, rule, C);
-
-  Bounded_side bs= point_bounded_side_of_sphere_c(pt, sphere, C);
-  std::cout << "For " << pt << " and " << sphere << " with RD " << d 
-	    << " and direction " << C << " got bs of " << bs << std::endl;
-  if (bs== ON_BOUNDARY) return EQUAL;
-  if (bs== ON_BOUNDED_SIDE && d.is_positive()
-      || bs == ON_UNBOUNDED_SIDE && d.is_negative()) return SMALLER;
-  else return LARGER;
-  //Comparison_result cr= compare_point_to_rule_c(pt, sphere, C);
- 
-}
 
 
 
 
 CGAL_AOS3_TEMPLATE
 CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_center_to_circle_extremum_c(Sphere_3_key center,
-										    const Sphere_point_3 &t,
-										    Sphere_3_key sphere,
-										    Rule_direction d,
-										    Coordinate_index C) const{
-  if (C== d.constant_coordinate()) return compare_sphere_centers_c(center, sphere, C);
-
-  Comparison_result crrs= d.is_positive()? CGAL::LARGER : CGAL::SMALLER;
-  Comparison_result crcs= compare_sphere_centers_c(center, sphere, C);
-  //CGAL_assertion(crrs != CGAL::EQUAL);
-  if (crrs != crcs) return crcs;
-  Bounded_side bs= center_bounded_side_of_circle_c(center, t, sphere, C);
-  std::cout << "For " << center << " and " << sphere << " at " << t << " with RD " << d 
-	    << " and direction " << C << " got bs of " << bs << std::endl;
-
-  if (bs== ON_BOUNDARY) return EQUAL;
-  if (bs== ON_BOUNDED_SIDE && d.is_positive()
-      || bs == ON_UNBOUNDED_SIDE && d.is_negative()) return SMALLER;
-  else return LARGER;
-}
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_point_to_rule_c(const Sphere_point_3 &pt,
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_to_rule_c(const Sphere_point_3 &pt,
 									Sphere_3_key rule,
 									Coordinate_index C) const{
-  std::cout << "Comparing point " << pt << " to rule " << table_->center(rule) 
-	    << " on coordinate " << C << std::endl;
+  /*std::cout << "Comparing point " << pt << " to rule " << table_->center(rule) 
+    << " on coordinate " << C << std::endl;*/
   return pt.compare(table_->center(rule)[C.index()], C);
 }
 
 
 
 
-
 CGAL_AOS3_TEMPLATE
 CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_point_to_equipower_line_c(const Sphere_point_3 &sp,
-										   Sphere_3_key a, 
-										   Sphere_3_key b,
-										   Coordinate_index C) const{
-  // NOTE redo this with computing it directly
-  CGAL_assertion(C!=CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-  Line_3 l= table_->equipower_line(a,b);
-  const Line_3 &plt= sp.line();
-  Line_2 l2(Point_2(l.point()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()],
-		    l.point()[C.index()]),
-	    Vector_2(l.to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()],
-		     l.to_vector()[C.index()]));
-  Line_2 plt2(Point_2(plt.point()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()],
-		      plt.point()[C.index()]),
-	      Vector_2(plt.to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()],
-		       plt.to_vector()[C.index()]));
-  //std::cout << "l2 is " << l2 << std::endl;
-  //std::cout << "pl2 is " << plt2 << std::endl;
-  Object o= geom_traits_object().intersect_2_object()(l2, plt2);
-  Point_2 p;
-  FT cmp=0;
-  Comparison_result c0= compare(plt2.y_at_x(cmp), l2.y_at_x(cmp));
-  if (c0 == EQUAL) {
-    cmp=1;
-    c0=  compare(plt2.y_at_x(cmp), l2.y_at_x(cmp));
-    if (c0 == EQUAL) {
-      return EQUAL;
-    }
-  }
-  if (assign(p,o)) {
-
-    //std::cout << "Sign changes at " << p.x() << std::endl;
-    if (sp.compare(p.x(),CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == EQUAL) return EQUAL;
-    if (p.x()>0 && sp.compare(p.x(), CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == LARGER
-	|| p.x()<0 && sp.compare(p.x(), CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == SMALLER ){
-      return Comparison_result(-c0);
-    } else return c0;
-  } else {
-    return c0;
-  }
+Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_to_rule_c(const Center_point_3 &pt,
+								  Sphere_3_key rule,
+								  Coordinate_index C) const{
+  return compare_sphere_centers_c(pt.key(), rule, C);
 }
 
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_center_to_equipower_line_c(Sphere_3_key k,
-										   const Event_point_3 &t,
-										   Sphere_3_key a, 
-										   Sphere_3_key b,
-										   Coordinate_index C) const{
-  // NOTE redo this with computing it directly
-    // NOTE redo this with computing it directly
-  CGAL_assertion(C!=CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-  Line_3 l= table_->equipower_line(a,b);
-  //std::cout << "EQPlane is " << table_->equipower_plane(a,b)<< std::endl;
-  //std::cout << "EQLineis " << table_->equipower_line(a,b)<< std::endl;
-   
-  Line_2 l2(Point_2(l.point()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()],
-		    l.point()[C.index()]),
-	    Vector_2(l.to_vector()[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()],
-		     l.to_vector()[C.index()]));
-  Line_2 plt2(Point_2(0,
-		      table_->center(k)[C.index()]),
-	      Vector_2(1,0));
-  //std::cout << "l2 is " << l2 << std::endl;
-  //std::cout << "pl2 is " << plt2 << std::endl;
-  CGAL_assertion(plt2.y_at_x(0) == table_->center(k)[C.index()]);
 
-  Object o= geom_traits_object().intersect_2_object()(l2, plt2);
-  Point_2 p;
-  FT cmp=0;
-  Comparison_result c0= compare(table_->center(k)[C.index()], l2.y_at_x(cmp));
-  if (c0 == EQUAL) {
-    cmp=1;
-    //std::cout << "falling back" << std::endl;
-    c0=  compare(table_->center(k)[C.index()], l2.y_at_x(cmp));
-    if (c0 == EQUAL) {
-      return EQUAL;
-    }
-  }
-  if (assign(p,o)) {
 
-    //std::cout << "Sign changes at " << p.x() << std::endl;
-    if (t.compare(p.x(),CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == EQUAL) return EQUAL;
-    if (p.x()>cmp && t.compare(p.x(), CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == LARGER
-	|| p.x()<cmp  && t.compare(p.x(), CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == SMALLER ){
-      //std::cout << " between" << std::endl;
-      return Comparison_result(-c0);
-    } else return c0;
-  } else {
-    return c0;
-  }
-}
+
 
 
 
@@ -456,169 +180,10 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_center_to_equipower_poin
 
 
 
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_points_c(const Sphere_point_3 &a,
-								 const Sphere_point_3 &b,
-								 Coordinate_index C) const{
-  return a.compare(b, C);
-}
 										   
 
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::point_bounded_side_of_sphere(const Sphere_point_3 &pt,
-									     Sphere_3_key s
-									     ) const{
-  
-  // This is a bit silly but makes it uniform
-  CGAL_AOS3_CANONICAL_PREDICATE(const_c_plane(pt, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0)),
-				const_c_plane(pt, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1)),
-				table_->sphere(s),
-				pt,
-				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_BOUNDARY,
-				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_BOUNDED_SIDE,
-				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_UNBOUNDED_SIDE,
-				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_UNBOUNDED_SIDE,
-				CGAL_assertion(l== pt.line() || l.opposite() ==pt.line()); return ON_UNBOUNDED_SIDE);
-  /*
-  const Line_3 &l= pt.line();//(Point_3(p[0], p[1], p[2]), Vector_3(v[0],v[1],v[2]));
-    
-  Sphere_point_3 p0(table_->sphere(s), l);
-
-  if (!p0.is_valid()) {
-    return CGAL::ON_UNBOUNDED_SIDE;
-  } else {
-    Sphere_point_3 p1(table_->sphere(s), 
-		      l.opposite());
-    CGAL::Comparison_result c0= pt.compare(p0, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    CGAL::Comparison_result c1= pt.compare(p1, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    if (c0 == CGAL::EQUAL || c1== CGAL::EQUAL) {
-      //std::cout << "Equal" << std::endl;
-      return CGAL::ON_BOUNDARY;
-    }
-    //CGAL_assertion(p0 <= p1);
-    if (c0== CGAL::SMALLER && c1 == CGAL::LARGER){
-      return CGAL::ON_BOUNDED_SIDE;
-    } else {
-      return CGAL::ON_UNBOUNDED_SIDE;
-    }
-    }*/
-}
-
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::center_bounded_side_of_sphere(const Event_point_3 &t,
-									      Sphere_3_key k,
-									      Sphere_3_key s
-									      ) const{
-  
-  // This is a bit silly but makes it uniform
-  CGAL_AOS3_CANONICAL_PREDICATE(rule_plane(k, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0)),
-				rule_plane(k, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1)),
-				table_->sphere(s),
-				t,
-				return ON_BOUNDARY,
-				return ON_BOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE);
-  /*
-  const Line_3 &l= pt.line();//(Point_3(p[0], p[1], p[2]), Vector_3(v[0],v[1],v[2]));
-    
-  Sphere_point_3 p0(table_->sphere(s), l);
-
-  if (!p0.is_valid()) {
-    return CGAL::ON_UNBOUNDED_SIDE;
-  } else {
-    Sphere_point_3 p1(table_->sphere(s), 
-		      l.opposite());
-    CGAL::Comparison_result c0= pt.compare(p0, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    CGAL::Comparison_result c1= pt.compare(p1, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    if (c0 == CGAL::EQUAL || c1== CGAL::EQUAL) {
-      //std::cout << "Equal" << std::endl;
-      return CGAL::ON_BOUNDARY;
-    }
-    //CGAL_assertion(p0 <= p1);
-    if (c0== CGAL::SMALLER && c1 == CGAL::LARGER){
-      return CGAL::ON_BOUNDED_SIDE;
-    } else {
-      return CGAL::ON_UNBOUNDED_SIDE;
-    }
-    }*/
-}
 
 
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::center_bounded_side_of_circle_c(Sphere_3_key k,
-										const Event_point_3 &t,
-										Sphere_3_key s,
-										Coordinate_index C) const{
-  //Comparison_result cr= compare_sphere_centers_c(k,s, C);
-  CGAL_AOS3_CANONICAL_PREDICATE(rule_plane(s, other_plane_coordinate(C)),
-				rule_plane(k, C),
-				table_->sphere(s),
-				t,
-				return ON_BOUNDARY,
-				return ON_BOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE);
-}
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::point_bounded_side_of_sphere_c(const Sphere_point_3 &pt,
-									       Sphere_3_key s,
-									       Coordinate_index C) const{
- 
-  if (C== CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) {
-    // also silly but uniform
-
-    CGAL_AOS3_CANONICAL_PREDICATE(rule_plane(s, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0)),
-				  rule_plane(s, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1)),
-				  table_->sphere(s),
-				  pt,
-				  return ON_BOUNDARY,
-				  return ON_BOUNDED_SIDE,
-				  return ON_UNBOUNDED_SIDE,
-				  return ON_UNBOUNDED_SIDE,
-				  return ON_UNBOUNDED_SIDE);
-    /*Event_pair ep= sphere_events(s);
-    if (pt.compare(ep.first, C)==EQUAL || pt.compare(ep.second, C)==EQUAL) return CGAL::ON_BOUNDARY;
-    else if (pt.compare(ep.first, C) == LARGER && pt.compare(ep.second,C)==SMALLER) return CGAL::ON_BOUNDED_SIDE;
-    else return CGAL::ON_UNBOUNDED_SIDE;*/
-  } else {
-    CGAL_AOS3_CANONICAL_PREDICATE(const_c_plane(pt, C),
-				  rule_plane(s, CGAL_AOS3_INTERNAL_NS::other_plane_coordinate(C)),
-				  table_->sphere(s),
-				  pt,
-				  return ON_BOUNDARY,
-				  return ON_BOUNDED_SIDE,
-				  return ON_UNBOUNDED_SIDE,
-				  return ON_UNBOUNDED_SIDE,
-				  return ON_UNBOUNDED_SIDE);
-  }
-}
-
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::rules_bounded_side_of_sphere(const Sphere_point_3 &t,
-									     Sphere_3_key x,
-									     Sphere_3_key y,
-									     Sphere_3_key sphere) const {
-  CGAL_AOS3_CANONICAL_PREDICATE(rule_plane(x, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0)),
-				rule_plane(y, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1)),
-				table_->sphere(sphere),
-				t,
-				return ON_BOUNDARY,
-				return ON_BOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE,
-				return ON_UNBOUNDED_SIDE);
-}
 
 
 CGAL_AOS3_TEMPLATE
@@ -629,40 +194,6 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_sphere_centers_c(Sphere_
 }
 
 
-
-CGAL_AOS3_TEMPLATE
-CGAL::Oriented_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::point_oriented_side_of_separating_plane( const Sphere_point_3& ep,
-											 Sphere_3_key a,
-											 Sphere_3_key b ) const {
-  Plane_3 sp= table_->separating_plane(a,b);
-  return oriented_side(sp, ep);
-}
-
-CGAL_AOS3_TEMPLATE
-CGAL::Oriented_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::center_oriented_side_of_separating_plane(Sphere_3_key center,
-											 const Sphere_point_3& ep,
-											 Sphere_3_key a,
-											 Sphere_3_key b ) const {
-  CGAL::Object o= geom_traits_object().intersect_3_object()(table_->separating_plane(a,b),
-							    Line_3(table_->center(center),
-								   CGAL_AOS3_INTERNAL_NS::sweep_vector<Vector_3>()));
-  Oriented_side os= table_->separating_plane(a,b).oriented_side(table_->center(center));
-  Point_3 pt;
-  Line_3 l;
-  if (CGAL::assign(pt, o)){
-    Comparison_result cc= ep.compare(table_->center(center),CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    Comparison_result ic= ep.compare(pt,CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-    if (ic == CGAL::EQUAL) return CGAL::ON_ORIENTED_BOUNDARY;
-    else if (cc == ic) return os;
-    else return Oriented_side(-os);
-  } else if (CGAL::assign( l, o)){
-    return CGAL::ON_ORIENTED_BOUNDARY;
-  } else {
-    return os;
-  }
-}
 
 
 
@@ -672,24 +203,6 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::center_oriented_side_of_separati
 
 
 
-CGAL_AOS3_TEMPLATE
-CGAL::Oriented_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::oriented_side(const Plane_3 &p,
-							      const Sphere_point_3 &s) const{
-  CGAL::Object o= geom_traits_object().intersect_3_object()(p, s.line());
-  Point_3 pt;
-  Line_3 l;
-  if (CGAL::assign(pt, o)){
-    CGAL::Comparison_result c= s.compare_on_line(pt);
-    CGAL::Sign sn= CGAL::sign(p.orthogonal_vector() * s.line().to_vector());
-    if (sn ==CGAL::POSITIVE) return CGAL::enum_cast<CGAL::Oriented_side>(c);
-    else return CGAL::enum_cast<CGAL::Oriented_side>(-c);
-  } else if (CGAL::assign( l, o)){
-    return CGAL::ON_ORIENTED_BOUNDARY;
-  } else {
-    return p.oriented_side(s.line().point());
-  }
-}
 
 
 
@@ -711,333 +224,6 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::oriented_side(const Plane_3 &p,
 
 
 
-
-
-
-
-#if 0
-
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_sphere_center_c(Sphere_3_key a,
-									const Sphere_point_3& d,
-									Coordinate_index C) const {
-  return CGAL::Comparison_result(-d.compare(table_->center(a), C));
-}
-
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_sphere_center_c(Sphere_3_key a,
-									FT d,
-									Coordinate_index C) const {
-  return CGAL::compare(table_->center(a)[C.index()], d);
-}
-
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_sphere_centers_c(Sphere_3_key a, Sphere_3_key b,
-									 Coordinate_index C) const {
-  return CGAL::compare(table_->center(a)[C.index()], table_->center(b)[C.index()]);
-}
-
-
-
-CGAL_AOS3_TEMPLATE
-bool 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_intersects_sweep(Sphere_3_key sphere,
-									const Sphere_point_3& ep) const {
-  Event_pair be= sphere_events(sphere);
-  if (be.first.compare(ep, CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) != CGAL::LARGER 
-      && be.second.compare(ep, CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) != CGAL::SMALLER) return true;
-  else return false;
-}
-
-
-
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::bounded_side_of_sphere(Sphere_3_key s,
-								       Sphere_3_key x,
-								       Sphere_3_key y,
-								       const Sphere_point_3 &z) const {
-  FT p[3];
-  p[CGAL_AOS3_INTERNAL_NS::plane_coordinate(0).index()]= table_->center(x)[CGAL_AOS3_INTERNAL_NS::plane_coordinate(0).index()];
-  p[CGAL_AOS3_INTERNAL_NS::plane_coordinate(1).index()]= table_->center(y)[CGAL_AOS3_INTERNAL_NS::plane_coordinate(1).index()];
-  p[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()]=0;
-  FT v[3];
-  v[CGAL_AOS3_INTERNAL_NS::plane_coordinate(0).index()]=0;
-  v[CGAL_AOS3_INTERNAL_NS::plane_coordinate(1).index()]=0;
-  v[CGAL_AOS3_INTERNAL_NS::sweep_coordinate().index()]=1;
-  Line_3 l(Point_3(p[0], p[1], p[2]), Vector_3(v[0],v[1],v[2]));
-    
-  Sphere_point_3 p0(table_->sphere(s), l);
-
-  if (!p0.is_valid()) {
-    return CGAL::ON_UNBOUNDED_SIDE;
-  } else {
-    Sphere_point_3 p1(table_->sphere(s), 
-		      l.opposite());
-    CGAL::Comparison_result c0= compare_depths(p0, z);
-    CGAL::Comparison_result c1= compare_depths(p1, z);
-    if (c0 == CGAL::EQUAL || c1== CGAL::EQUAL) {
-      //std::cout << "Equal" << std::endl;
-      return CGAL::ON_BOUNDARY;
-    }
-    //CGAL_assertion(p0 <= p1);
-    if (c0== CGAL::SMALLER && c1 == CGAL::LARGER){
-      return CGAL::ON_BOUNDED_SIDE;
-    } else {
-      return CGAL::ON_UNBOUNDED_SIDE;
-    }
-  }
-}
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Oriented_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::oriented_side_of_separating_plane(Sphere_3_key a,
-										  Sphere_3_key b, 
-										  const Sphere_point_3& ep) const {
-  Plane_3 sp= table_->separating_plane(a,b);
-  return oriented_side(sp, ep);
-}
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_depths(const Sphere_point_3 &a, 
-							       const Sphere_point_3 &b) const{
-  return a.compare(b, CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-}
-
-
-
-
-
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Bounded_side 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG
-::bounded_side_of_sphere_projected(const Sphere_point_3 &t,
-				   Sphere_3_key sphere,
-				   Sphere_3_key oplane,
-				   const Sphere_point_3 &pt,
-				   Coordinate_index C) const{
-  FT rd[3]={0,0,0};
-  rd[other_plane_coordinate(C).index()]=1;
-  Plane_3 p(pt.line().point(),
-	    pt.line().point() + pt.line().to_vector(),
-	    pt.line().point() + Vector_3(rd[0], rd[1], rd[2]));
-  std::cout << "Rule plane is " << p << std::endl;
-  FT v[3]={0,0,0};
-  v[other_plane_coordinate(C).index()]=1;
-  Plane_3 rp(table_->center(oplane), Vector_3(v[0], v[1], v[2]));
-  std::cout << "Other rule plane is " << rp << std::endl;
-  Line_3 l;
-  CGAL::Object o= geom_traits_object().intersect_3_object()(rp, p);
-  if (!CGAL::assign(l,o)) {
-    CGAL_assertion(0);
-    return CGAL::ON_UNBOUNDED_SIDE;
-  } else {
-    std::cout << "Line is " << l << std::endl;
-    Sphere_point_3 p0(table_->sphere(sphere), l);
-    if (!p0.is_valid()) {
-      std::cout << "Line misses" << std::endl;
-      return CGAL::ON_UNBOUNDED_SIDE;
-    } else {
-      Sphere_point_3 p1(table_->sphere(sphere), l.opposite());
-      std::cout << "Points are " << p0 << " " << p1 << std::endl;
-      CGAL::Comparison_result c0= compare_depths(t, p0), c1= compare_depths(t, p1);
-      std::cout << "Depths are " << c0 << " " << c1 << std::endl;
-      if (c0==CGAL::EQUAL || c1 == CGAL::EQUAL) {
-	return CGAL::ON_BOUNDARY;
-      } else if (c0 != c1) {
-	return CGAL::ON_BOUNDED_SIDE;
-      } else {
-	return CGAL::ON_UNBOUNDED_SIDE;
-      }
-    }
-  }
-}
-
-
-
-
-
-
-
-CGAL_AOS3_TEMPLATE
-bool Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_intersects_rule(Sphere_3_key s, 
-									    Sphere_3_key rule, 
-									    Coordinate_index C) const {
-  FT d= table_->center(s)[C.index()]-table_->center(rule)[C.index()];
-  if (CGAL::square(d) <= table_->sphere(s).squared_radius()) return true;
-  else return false;
-}
-
-CGAL_AOS3_TEMPLATE
-bool Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_over_rule(Sphere_3_key s, 
-								      const Sphere_point_3 &sp,
-								      Coordinate_index C) const {
-  FT v[3]={0,0,0};
-  CGAL::Comparison_result cr=sp.compare(table_->center(s), C);
-  if (cr == CGAL::SMALLER) {
-    v[C.index()]=-1;
-  } else if (cr == CGAL::LARGER) {
-    v[C.index()]=1;
-  } else {
-    return true;
-  }
-  Sphere_point_3 ep(table_->sphere(s), Line_3(table_->center(s), 
-					      Vector_3(v[0], v[1], v[2])));
-  return ep.compare(sp, C) != cr;
-}
-
-
-
-
-CGAL_AOS3_TEMPLATE
-CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
-									       Sphere_3_key sphere0,
-									       Sphere_3_key sphere1,
-									       const Sphere_point_3 &pt,
-									       Coordinate_index C) const {
-  {
-    std::cout << "Compare SS at sweep " << t << " spheres " 
-	      <<  sphere0 << " " << sphere1 
-	      << " point " << pt << " line " << pt.line() << " coord " << C 
-	      << std::endl;
-
-    // total equality is actually quite easy
-    /*Sphere_point_3 pt0(table_->sphere(sphere0), pt.line());
-      if (pt0.compare(pt, C) == CGAL::EQUAL && ) {
-      Sphere_point_3 pt1(table_->sphere(sphere1), pt.line());
-      if (pt1.compare(pt, C) == CGAL::EQUAL) return CGAL::EQUAL;
-      }*/
-
-    // compare to the extrema of the two spheres to makes sure that the point overlaps them
-    bool i0= sphere_over_rule(sphere0, pt, C);
-     
-     
-    if (!i0) {
-      CGAL::Comparison_result sc0= compare_sphere_center_c(sphere0, pt, C);
-      std::cout << "Returning " << sc0 << " since sphere 0 misses" << std::endl;
-      return sc0;
-    }
-
-    bool i1= sphere_over_rule(sphere1, pt, C);
-
-    if (!i1) {
-      CGAL::Comparison_result sc1= compare_sphere_center_c(sphere1, pt, C);
-      std::cout << "Returning " << sc1 << " since sphere 0 misses" << std::endl;
-      return sc1;
-    }
-  }
-
-
-  Plane_3 eqp= table_->equipower_plane(sphere0, sphere1);
-  std::cout << "EQP is " << eqp << std::endl;
-   
-  FT v[3]={0,0,0};
-  v[CGAL_AOS3_INTERNAL_NS::other_plane_coordinate(C).index()]=1;
-   
-  Plane_3 rule_plane(pt.line().point(),
-		     pt.line().point()+ Vector_3(v[0], v[1], v[2]),
-		     pt.line().point()+ pt.line().to_vector());
-  if (rule_plane.orthogonal_vector()[C.index()] < 0) {
-    rule_plane=rule_plane.opposite();
-  }
-  std::cout << "rule_plane is " << rule_plane << std::endl;
-  CGAL_assertion(rule_plane != Plane_3());
-  Line_3 l;
-  CGAL::Object o= geom_traits_object().intersect_3_object()(eqp, rule_plane);
-  if (!CGAL::assign(l,o)) {
-    CGAL::Comparison_result cr= compare_equipower_point_c(sphere0, sphere1,
-							  pt, C);
-    std::cout << "Returning " << cr << " since sphere the planes miss" << std::endl;
-    return cr;
-  }
- 
-  std::cout << "The intersection line is " << l << std::endl;
-  
-
-   
-  Sphere_point_3 switch_point_0(table_->sphere(sphere0), l);
-   
-  if (!switch_point_0.is_valid()){
-     
-    CGAL::Comparison_result cr=  compare_equipower_point_c(sphere0,sphere1,
-							   pt, C);
-    std::cout << "Returning " << cr << " line misses" << std::endl;
-    return cr;
-  }
- 
-  //if (switch_point_0 > switch_point_1) {
-  //  std::swap(switch_point_0, switch_point_1);
-  //}
-  Plane_3 sepp= table_->separating_plane(sphere0, sphere1);
-  std::cout << "separating_plane is " << sepp << std::endl;
-   
-  Sphere_point_3 frontp= intersection_2_events(sphere0, sphere1).first;
-  std::cout << "The front point is " << frontp << std::endl;
-  CGAL::Oriented_side fpos= oriented_side(rule_plane, frontp);
-  bool flip=false;
-  if (fpos == CGAL::ON_ORIENTED_BOUNDARY) {
-    std::cout << "Front point is on boundary using normals ";
-    fpos = CGAL::Oriented_side(CGAL::sign(sepp.orthogonal_vector()
-					  * rule_plane.orthogonal_vector()));
-    std::cout << "got " << fpos << std::endl;
-  } 
-
-  std::cout << "Oriented_side is " << fpos << std::endl;
-  CGAL::Comparison_result spcr0= switch_point_0.compare(t, 
-							CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-   
-  Sphere_point_3 switch_point_1(table_->sphere(sphere0), l.opposite());
-  std::cout << "switch points are " << switch_point_0 
-	    << " and " << switch_point_1 << std::endl;
-  CGAL::Comparison_result spcr1= switch_point_1.compare(t, 
-							CGAL_AOS3_INTERNAL_NS::sweep_coordinate());
-  std::cout << "spcr is " << spcr0 << spcr1 << std::endl;
-   
-   
-  CGAL::Oriented_side os_0= oriented_side(sepp, switch_point_0);
-  CGAL::Oriented_side os_1= oriented_side(sepp, switch_point_1);
-  std::cout << "os are " << os_0 << os_1 << std::endl;
-
-
-  if (spcr0 == CGAL::EQUAL && os_0 == CGAL::ON_POSITIVE_SIDE
-      || spcr1 == CGAL::EQUAL && os_1 == CGAL::ON_POSITIVE_SIDE) {
-    std::cout << "Returning equal" << std::endl;
-    return CGAL::EQUAL;
-  }
-   
-  if (os_0 == CGAL::ON_POSITIVE_SIDE && os_1 == CGAL::ON_POSITIVE_SIDE) {
-    flip = (spcr0 != spcr1);
-  } else if (os_0 == CGAL::ON_POSITIVE_SIDE) {
-    flip = (spcr0 == CGAL::SMALLER);
-  } else if (os_1 == CGAL::ON_POSITIVE_SIDE) {
-    flip = (spcr1 == CGAL::LARGER);
-  }
-
-  if (!flip) {
-    return CGAL::Comparison_result(fpos);
-  } else {
-    return CGAL::Comparison_result(-fpos);
-  }
-}
-
-
-
-
-
-#endif
 
 
 // Constructions----------------------------------------------------------------------------------------
@@ -1256,15 +442,15 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::circle_cross_rule_event(Sphere_3
     ed.events_[0]=ep.first;
     ed.events_[1]=ep.second;
     CGAL_assertion(!ed.events_[0].is_valid()
-		   || point_oriented_side_of_separating_plane(ed.events_[0], a,b) == CGAL::ON_POSITIVE_SIDE);
+		   || oriented_side_of_separating_plane(ed.events_[0], a,b) == CGAL::ON_POSITIVE_SIDE);
     CGAL_assertion(!ed.events_[1].is_valid()
-		   || point_oriented_side_of_separating_plane(ed.events_[1], a,b) == CGAL::ON_POSITIVE_SIDE);
+		   || oriented_side_of_separating_plane(ed.events_[1], a,b) == CGAL::ON_POSITIVE_SIDE);
     ed.index_=0;
   }
   if (ed.index_ < 2) {
     std::cout << "Returning " << ed.index_ << " of AAR" << std::endl;
     CGAL_assertion(!ed.events_[ed.index_].is_valid()
-		   || point_oriented_side_of_separating_plane(ed.events_[ed.index_], a,b) == CGAL::ON_POSITIVE_SIDE);
+		   || oriented_side_of_separating_plane(ed.events_[ed.index_], a,b) == CGAL::ON_POSITIVE_SIDE);
     return ed.events_[ed.index_];
   }else return Event_point_3();
 }
@@ -1298,8 +484,8 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::circle_cross_rule_event_internal
       std::cout << "AAR events are " << nep << " and " << spp << std::endl;
       std::cout << "l is " << l << std::endl;
       Event_pair ep= (nep <spp)? std::make_pair(nep, spp) : std::make_pair(spp, nep);
-      Oriented_side os0=point_oriented_side_of_separating_plane(ep.first, a,b);
-      Oriented_side os1=point_oriented_side_of_separating_plane(ep.second, a,b);
+      Oriented_side os0=oriented_side_of_separating_plane(ep.first, a,b);
+      Oriented_side os1=oriented_side_of_separating_plane(ep.second, a,b);
       if (os0==ON_NEGATIVE_SIDE || a>b && os0==ON_ORIENTED_BOUNDARY){
 	ep.first=ep.second;
 	ep.second=Event_point_3();

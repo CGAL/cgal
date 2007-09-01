@@ -12,6 +12,7 @@ typedef CGAL::Arrangement_of_spheres_traits_3<K> Traits;
 typedef CGAL::Arrangement_of_spheres_traits_3 Traits;
 #endif
 typedef Traits::Sphere_point_3 SP;
+typedef Traits::Center_point_3 CP;
 typedef Traits::Event_point_3 EP;
 typedef Traits::Point_3 P;
 typedef Traits::Line_3 L;
