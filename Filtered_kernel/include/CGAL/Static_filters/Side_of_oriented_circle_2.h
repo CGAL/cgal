@@ -39,7 +39,7 @@ public:
   Oriented_side operator()(const Point_2 &p, const Point_2 &q,
 	                   const Point_2 &r, const Point_2 &t) const
   {
-      CGAL_PROFILER("In_circle_2 calls");
+      CGAL_PROFILER("Side_of_oriented_circle_2 calls");
 
       using std::fabs;
 
@@ -50,7 +50,7 @@ public:
           fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty))
       {
-          CGAL_PROFILER("In_circle_2 semi-static attempts");
+          CGAL_PROFILER("Side_of_oriented_circle_2 semi-static attempts");
 
           double qpx = qx-px;
           double qpy = qy-py;
@@ -93,13 +93,13 @@ public:
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
 
-          CGAL_PROFILER("In_circle_2 semi-static failures");
+          CGAL_PROFILER("Side_of_oriented_circle_2 semi-static failures");
       }
 
       return Base::operator()(p, q, r, t);
   }
 
-  // Computes the epsilon for In_circle_2.
+  // Computes the epsilon for Side_of_oriented_circle_2.
   static double compute_epsilon()
   {
     typedef CGAL::Static_filter_error F;
@@ -110,7 +110,7 @@ public:
     double err = det.error();
     err += err * 3 * F::ulp(); // Correction due to "eps * maxx * maxy...".
 
-    std::cerr << "*** epsilon for In_circle_2 = " << err << std::endl;
+    std::cerr << "*** epsilon for Side_of_oriented_circle_2 = " << err << std::endl;
     return err;
   }
 };
