@@ -859,23 +859,26 @@ protected:
     }
 #endif
     
-    // TODO remove?
     /*!
-     * Computes the number of crossing of a path with the line of discontinuity
+     * Computes the number of crossing of a path with the curves 
+     * of identification
      * \param he1 Beginning of path
      * \param he2 End of path
-     * \param leftmost OUTPUT: returns whether the leftmost intersection
-     *                         is AFTER_TO_BEFORE or BEFORE_TO_AFTER
-     * \param loop Indicates whether we should consider he1 as defining a 
-     *        ccb-loop
-     * \return a pair of values, crossings from AFTER_TO_BEFORE and 
-               BEFORE_TO_AFTER
+     * \param corssing OUTPUT: \c true if crosses the a curve of identification
+     * \param leftmost_NS OUTPUT: returns whether the leftmost intersection
+     *                            is AFTER_TO_BEFORE or BEFORE_TO_AFTER
+     * \param bottommost_WE OUTPUT: returns whether the leftmost intersection
+     *                              is AFTER_TO_BEFORE or BEFORE_TO_AFTER
+     * \return a pair of values indicating by -1,0,1 whether curves of
+     * identification are crossed an odd or even number of times.
      */
-    std::pair< unsigned int, unsigned int >
-    _crossings_with_identification_NS(
+    std::pair< int, int >
+    _crossings_with_identifications(
             const Halfedge* he1, const Halfedge* he2,
-            Identification_crossing& leftmost) const;
-
+            bool& crossing,
+            Identification_crossing& leftmost_NS,
+            Identification_crossing& bottommost_WE) const;
+    
     //@}
 };
 
