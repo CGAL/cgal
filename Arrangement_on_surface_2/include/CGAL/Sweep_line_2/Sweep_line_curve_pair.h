@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
  * A pair of subcurves.
  */
 template <class Subcurve_>
-class Curve_pair_
+class Curve_pair
 {
 public:
 
@@ -45,10 +45,10 @@ private:
 public:
 
   /*! Default constructor. */
-  Curve_pair_(){}
+  Curve_pair(){}
 
   /*! Constructor from two subcurves. */
-  Curve_pair_ (Subcurve *sc1, Subcurve *sc2)
+  Curve_pair (Subcurve *sc1, Subcurve *sc2)
   {
     // The smallest pointer will be the first. 
     if(sc1 < sc2)
@@ -77,7 +77,7 @@ template <class Subcurve_>
 struct Less_curve_pair
 {
   typedef Subcurve_               Subcurve;
-  typedef Curve_pair_<Subcurve>   Curve_pair;
+  typedef class Curve_pair<Subcurve>   Curve_pair;
 
   bool operator() (const Curve_pair& pair1, const Curve_pair& pair2) const
   {
@@ -95,10 +95,10 @@ struct Less_curve_pair
  * A hash functor for curve pairs.
  */
 template <class Subcurve_>
-struct Curve_pair_hasher_
+struct Curve_pair_hasher
 {
   typedef Subcurve_               Subcurve;
-  typedef Curve_pair_<Subcurve>   Curve_pair;
+  typedef class Curve_pair<Subcurve>   Curve_pair;
 
   size_t operator() (const Curve_pair& pair) const
   {
@@ -114,10 +114,10 @@ struct Curve_pair_hasher_
  * Equaility functor for curve pairs.
  */
 template <class Subcurve_>
-struct Equal_curve_pair_
+struct Equal_curve_pair
 {
   typedef Subcurve_               Subcurve;
-  typedef Curve_pair_<Subcurve>   Curve_pair;
+  typedef class Curve_pair<Subcurve>   Curve_pair;
 
   bool operator() (const Curve_pair& pair1, const Curve_pair& pair2) const
   {

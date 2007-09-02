@@ -96,7 +96,7 @@ public:
   typedef typename Traits_adaptor_2::Has_boundary_category 
                                                          Has_boundary_category;
 
-  typedef Compare_events_<Traits_adaptor_2, Event>     Compare_events;
+  typedef class Compare_events<Traits_adaptor_2, Event>     Compare_events;
   typedef Multiset<Event*, Compare_events, Allocator>  Event_queue; 
   typedef typename Event_queue::iterator               Event_queue_iterator;
 
@@ -106,7 +106,7 @@ public:
   typedef typename Base_event::Attribute               Attribute;
   
   typedef Sweep_line_subcurve<Traits_2>                Base_subcurve;
-  typedef Curve_comparer<Traits_2, Base_subcurve>      Compare_curves;
+  typedef class Curve_comparer<Traits_2, Base_subcurve>      Compare_curves;
   typedef Multiset<Base_subcurve*,
                    Compare_curves, 
                    Allocator>                          Status_line;
