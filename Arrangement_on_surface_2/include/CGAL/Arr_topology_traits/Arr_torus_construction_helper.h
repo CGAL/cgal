@@ -113,8 +113,9 @@ public:
         const Boundary_type bound_y = event->boundary_in_y();
         
         std::cout << "HELPER: event: " << event->point() << std::endl;
-
+        
         if (bound_x != CGAL::NO_BOUNDARY) {
+            // TODO something similar to spherical traits?
             std::cout << "HELPER: before x " << bound_x << std::endl;
             CGAL_assertion(bound_x == CGAL::BEFORE_DISCONTINUITY ||
                            bound_x == CGAL::AFTER_DISCONTINUITY);
@@ -273,14 +274,14 @@ public:
      */
     void add_subcurve_in_top_face(unsigned int index)
     {
-        std::cout << "HELPER: add_sc_tf" << std::endl;
+        //std::cout << "HELPER: add_sc_tf" << std::endl;
         m_subcurves_at_rmf.push_back(index);
         return;
     }
     
     /*! A notification invoked before the given event it deallocated. */
     void before_deallocate_event(Event * event) { 
-        std::cout << "HELPER: before deall" << std::endl;
+        //std::cout << "HELPER: before deall" << std::endl;
         return; 
     }
     //@} 
@@ -312,7 +313,7 @@ public:
     
     /*! Get the current top face. */
     Face_handle top_face() const { 
-        std::cout << "HELPER: top face" << std::endl;
+        //std::cout << "HELPER: top face" << std::endl;
         return m_top_face; 
     }
 };
