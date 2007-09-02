@@ -212,14 +212,21 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   GeomTraits * geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
 
-  /* If the type Construct_visitor::Traits_2 is the same as the type GeomTraits,
-   * use a reference to GeomTraits to avoid constructing a new one.
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Construct_visitor::Traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
    */
   typename boost::mpl::if_<boost::is_same<GeomTraits, Construct_traits>,
                            Construct_traits&, Construct_traits>::type
-    traits = *geom_traits;
+    traits(*geom_traits);
 
   // Define a sweep-line instance and perform the sweep:
   Sweep_line_2<typename Construct_visitor::Traits_2, Construct_visitor,
@@ -250,14 +257,21 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   GeomTraits * geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
 
-  /* If the type Construct_visitor::Traits_2 is the same as the type GeomTraits,
-   * use a reference to GeomTraits to avoid constructing a new one.
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Construct_visitor::Traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
    */
   typename boost::mpl::if_<boost::is_same<GeomTraits, Construct_traits>,
                            Construct_traits&, Construct_traits>::type
-    traits = *geom_traits;
+    traits(*geom_traits);
     
   // Define a sweep-line instance and perform the sweep.
   Sweep_line_2<typename Construct_visitor::Traits_2, Construct_visitor,
@@ -289,14 +303,21 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   GeomTraits * geom_traits = arr.geometry_traits();
   Insert_visitor visitor(&arr);
 
-  /* If the type Insert_visitor::Traits_2 is the same as the type GeomTraits,
-   * use a reference to GeomTraits to avoid constructing a new one.
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Construct_visitor::Traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
    */
   typename boost::mpl::if_<boost::is_same<GeomTraits, Insert_traits>,
                            Insert_traits&, Insert_traits>::type
-    traits = *geom_traits;
+    traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
   std::list<Ex_x_monotone_curve_2> ex_cvs;
@@ -733,14 +754,21 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
   GeomTraits * geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
 
-  /* If the type Construct_visitor::Traits_2 is the same as the type GeomTraits,
-   * use a reference to GeomTraits to avoid constructing a new one.
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Construct_visitor::Traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
    */
   typename boost::mpl::if_<boost::is_same<GeomTraits, Construct_traits>,
                            Construct_traits&, Construct_traits>::type
-    traits = *geom_traits;
+    traits(*geom_traits);
 
   // Define a basic sweep-line instance (which is not supposed to handle
   // insersections) and perform the sweep.
@@ -775,14 +803,21 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeomTraits,
   GeomTraits * geom_traits = arr.geometry_traits();
   Insert_visitor visitor(&arr);
 
-  /* If the type Construct_visitor::Traits_2 is the same as the type GeomTraits,
-   * use a reference to GeomTraits to avoid constructing a new one.
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Construct_visitor::Traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
    */
   typename boost::mpl::if_<boost::is_same<GeomTraits, Insert_traits>,
                            Insert_traits&, Insert_traits>::type
-    traits = *geom_traits;
+    traits(*geom_traits);
     
   // Create a set of existing as well as new curves and points.
   std::list<Ex_x_monotone_curve_2> ex_cvs;
