@@ -104,3 +104,47 @@
    construct an arrangement of n/2 curves then add the rest of the curves;
    construct two arrangement of n/2 curves each and overlay them. In all
    cases, the arrangement dimensions (V, E, F) must be the same ...
+
+- CORE related examples and test fail on the platforms below with a bus error
+  - Darwin-8.10_g++-4.0.1_debug
+  - powerpc_Darwin-8.10_g++-4.0.1 
+
+- Vertical decmposition of an arrangement induced by arcs of greate circles
+  fail in some cases.
+  Regarding the helper class for the spherical case, we currently return the
+  "north face" in case we "see" nothing above - which is OK - but we also
+  return the "north face" in case we see nothing from *below*. This is wrong:
+  we should really keep track of the "south face" and return it as the
+  "bottom" object. To conclude, this helper needs more work. It is not top
+  priority, but the quick-and-dirty helper that I wrote needs to become a bit
+  more complicated ...
+
+- Avoid copy construction:
+  - Sweep_line_bacthed_point_location_visitor:
+    line 93 in Arr_batched_point_location.h
+  - Sweep_line_vertical_decomposition_visitor:
+    line 98 in Arr_vertical_decomposition_2.h
+  - Sweep_line_overlay_visitor:
+    line 107 in Arr_overlay_2.h
+
+- Arrangement with history is defficient in 2 ways: 1. It restricted to
+  curves that do not result with (isolated) vertices, as the interface allows
+  a user to obtain the induced edges only. 2. The induced edges of an
+  x-monotone curve can be returned to the user in some predetermined order,
+  for example left to right, so that the user can exploit it and avoid
+  sorting these edges.
+
+  The first problem can be fixed by either adding another pair of begin/end
+  functions that can be used to obtain the range of points, or the current
+  pair of begin/end functions can be changed, so that they return a range of
+  objects that represent either edges or vertices.
+
+  The second problem can be fixed by introducing a heirarchy of 2 layers
+  to the arrangement with history. The top layer represent the split of
+  general curves into x-monotone curves, and the one below represents the
+  split at intersection points. As a response to a user request for the items
+  induced by a general curve, the range of either edges or points are
+  returned in arbitrary order. However, as a response to a user request for
+  the edges induced by an x-monote curve, the range of edges are returned in
+  order from left to right.
+  
