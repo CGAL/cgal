@@ -68,8 +68,6 @@
     get_x_coordinates()
     get_y()
 
-- Add CGAL_ to all defines to protect against collision 
-
 - Add the do_intersect and zone functions.
 
 - Change the interface of all insert_* to be insert.
