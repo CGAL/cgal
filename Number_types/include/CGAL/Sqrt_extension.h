@@ -58,6 +58,7 @@ factorization property.
 #include <CGAL/Sqrt_extension/Fraction_traits.h>
 #include <CGAL/Sqrt_extension/Coercion_traits.h>
 #include <CGAL/Sqrt_extension/Modular_traits.h>
+#include <CGAL/Sqrt_extension/Scalar_factor_traits.h>
 #include <CGAL/Sqrt_extension/io.h>
 
 #endif  // CGAL_SQRT_EXTENSION_H
