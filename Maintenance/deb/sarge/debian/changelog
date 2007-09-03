@@ -1,4 +1,24 @@
-cgal (3.3-0sarge1) oldstable; urgency=low
+cgal (3.3.1-0sarge1) oldstable; urgency=low
+
+  * New upstream release.
+  * Remove patch bugfix-fpu-rounding-mode-alpha.dpatch (included by
+    upstream).
+  * Fail build if FPU rounding mode test fails.
+  * Really drop support for atlas and lapack on arm and m68k.
+  * Fix cgal_create_makefile w.r.t. makefile vs. cgal.mk.
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Mon,  3 Sep 2007 18:57:36 +0200
+
+cgal (3.3-2) unstable; urgency=low
+
+  * Add patch bugfix-fpu-rounding-mode-alpha.dpatch (Closes: #431230).
+  * debian/control: Add versioned depends on libboost-program-options-dev,
+    drop build-dependency on libboost-graph-dev.
+  * Drop support for atlas on arm and m68k.
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Mon, 16 Jul 2007 15:32:35 +0200
+
+cgal (3.3-1) unstable; urgency=low
 
   * New upstream release.
 

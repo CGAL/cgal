@@ -1,6 +1,4 @@
 #!/usr/bin/make -f 
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
 # export DH_VERBOSE=1
@@ -8,18 +6,21 @@
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CXXFLAGS += -g
 endif
+
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
+
 ifndef CXX
 	CXX = g++
 endif
+
 ifeq ($(DEB_BUILD_ARCH), arm)
 	LAPACK_OPTION=
 else ifeq ($(DEB_BUILD_ARCH), m68k)
 	LAPACK_OPTION=
 else
-	LAPACK_OPTION=--with-LAPACK
+	LAPACK_OPTION="--with-BLASGCCATLAS --with-LAPACK"
 endif
 
 build: build-stamp
@@ -33,7 +34,7 @@ build-stamp: patch-stamp
 	  --with-X11 --with-OPENGL --with-QT3MT \
 	  --with-BLASGCCATLAS $(LAPACK_OPTION)
 	$(MAKE) -C $(CURDIR)/debian/tests rounding_modes
-	-LD_LIBRARY_PATH=$(CURDIR)/debian/tmp/usr/lib $(CURDIR)/debian/tests/rounding_modes
+	LD_LIBRARY_PATH=$(CURDIR)/debian/tmp/usr/lib $(CURDIR)/debian/tests/rounding_modes
 	$(MAKE) -C $(CURDIR)/debian/tests clean
 	touch build-stamp
 

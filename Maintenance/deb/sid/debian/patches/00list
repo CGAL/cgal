@@ -1,4 +1,3 @@
 build-library.dpatch
 cgal-create-makefile.dpatch
 boost-library-name.dpatch
-bugfix-fpu-rounding-mode-alpha.dpatch

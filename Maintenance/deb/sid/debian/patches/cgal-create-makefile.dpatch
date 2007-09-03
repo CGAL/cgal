@@ -13,7 +13,7 @@ diff -urNad cgal~/scripts/cgal_create_makefile cgal/scripts/cgal_create_makefile
    echo
    echo    "# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE"
 +  echo    "ifndef CGAL_MAKEFILE"
-+  echo    "CGAL_MAKEFILE = /usr/share/cgal/makefile"
++  echo    "CGAL_MAKEFILE = /usr/share/cgal/cgal.mk"
 +  echo    "endif"
    echo    "include \$(CGAL_MAKEFILE)"
  

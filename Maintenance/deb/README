@@ -5,8 +5,6 @@ backport for etch:
 - debian/changelog:
   * adjust version suffix from -X to -X~etch1
   * adjust suite from unstable to stable
-- debian/control:
-  * reverse versioned dependency on libboost-program-options-dev
 - debian/patches/boost-library-name.dpatch
   * remove
 - debian/patches/00list
@@ -21,20 +19,23 @@ backport for sarge:
   * adjust debhelper dependency from >= 5 to >= 4
   * adjust lapack3-dev dependency to lapack-dev
   * adjust atlas3-base-dev dependency to atlas2-base-dev
+  * adjust liblapack-3.so dependency to lapack2-dev
+  * adjust libblas-3.so dependency to blas2-dev
   * replace binary: by Source-
-  * reverse versioned dependency on libboost-program-options-dev
 - debian/compat:
   * adjust debhelper compatibility level from 5 to 4
+- debian/rules:
+  * replace "else ifeq" by a nested "ifeq ... endif"
 - debian/patches/boost-library-name.dpatch
   * remove
 - debian/patches/00list
   * adjust
 
 tagging:
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3-1
-svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3-1~etch1
-svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3-0sarge1
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3.1-1
+svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3.1-1~etch1
+svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3.1-0sarge1
 or:
-svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3-1
-svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3-1~etch1
-svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3-1sarge1
+svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3.1-1
+svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3.1-1~etch1
+svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3.1-0sarge1
