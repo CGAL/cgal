@@ -1,6 +1,26 @@
 
 \section{Questions and Remarks}
 
+\section{Notes}
+\begin{itemize}
+ \item CA\_2 and CPA\_2 require squarefree and coprime input! 
+ \item Events at infinity are only important for a single curve. Since
+   inf doesn't play a role in CPA\_2 we discuss it for the sake of
+   simplicity as a special case in CA\_2 only. 
+\item AlgebraicReal\_1 - refine: with relative precision is enough. \\
+      Moreover, you can use 'refine() until' for absolute prec.
+\item SquareFreeFactorization is not returning an additional constant 
+      factor. This prevents us from providing an extra interface for 
+      algebraic coefficients.
+ \item Is Derivative and XCriticalPoints/YCriticalPoints are not
+   redundant. We decided to keep them both because it is possible that
+   XCriticalPoints/YCriticalPoints use a different methodology, other
+   than residing to the Derivative functor. As Michael pointed out:
+   \emph{``I think we should keep it, since it is more abstract than
+     $solve(derivative(p),p)$.  This would again move the {\em
+       AlgebraicKernel} towards a more abstract layer.''}
+\end{itemize}
+
 \section{Questions}
 \begin{itemize}
 \item problem is due to \ccc{AK_1}$<double>$.\\
@@ -40,22 +60,3 @@
   this traits class concept a refinement of RealEmbeddableTraits.
 \end{itemize}
 
-\section{Notes}
-\begin{itemize}
- \item CA\_2 and CPA\_2 require squarefree and coprime input! 
- \item Events at infinity are only important for a single curve. Since
-   inf doesn't play a role in CPA\_2 we discuss it for the sake of
-   simplicity as a special case in CA\_2 only. 
-\item AlgebraicReal\_1 - refine: with relative precision is enough. \\
-      Moreover, you can use 'refine() until' for absolute prec.
-\item SquareFreeFactorization is not returning an additional constant 
-      factor. This prevents us from providing an extra interface for 
-      algebraic coefficients.
- \item Is Derivative and XCriticalPoints/YCriticalPoints are not
-   redundant. We decided to keep them both because it is possible that
-   XCriticalPoints/YCriticalPoints use a different methodology, other
-   than residing to the Derivative functor. As Michael pointed out:
-   \emph{``I think we should keep it, since it is more abstract than
-     $solve(derivative(p),p)$.  This would again move the {\em
-       AlgebraicKernel} towards a more abstract layer.''}
-\end{itemize}
