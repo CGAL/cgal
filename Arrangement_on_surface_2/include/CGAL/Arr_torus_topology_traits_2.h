@@ -627,7 +627,8 @@ private:
      * \return Whether the path from e1 to e2 (not inclusive) is perimetric.
      */
     bool _is_perimetric_path (const Halfedge *e1,
-                              const Halfedge *e2) const;
+                              const Halfedge *e2,
+                              bool& touching_pole) const;
     
 public:
     /*!
@@ -875,9 +876,42 @@ protected:
     std::pair< int, int >
     _crossings_with_identifications(
             const Halfedge* he1, const Halfedge* he2,
-            bool& crossing,
-            Identification_crossing& leftmost_NS,
-            Identification_crossing& bottommost_WE) const;
+            bool& touching, bool& crossing, 
+            const Vertex *leftmost, 
+            Identification_crossing& leftmost_crossing,
+            const Vertex *bottommost, 
+            Identification_crossing& bottommost_crossing) const;
+
+
+    /*!\brief
+     * checks whether a boundary vertex is part of a perimetric path
+     */
+    inline 
+    bool  _has_crossing_perimetric_path(Vertex *v) const {
+        if (v->is_isolated()) {
+            return false;
+        }
+        
+        bool has_perimetric_path = false;
+        
+        Halfedge *he = v->halfedge();
+        do {
+            bool tpole;
+            bool tmp = _is_perimetric_path(he, he, tpole);
+            if (!tpole) {
+                has_perimetric_path = tmp;
+            }
+            he = he->next()->opposite();
+        } while (!has_perimetric_path && he != v->halfedge());
+        
+        std::cout << "Arr_torus_topology_traits_2::" 
+                  << "_has_perimetric_path:"
+                  << has_perimetric_path
+                  << std::endl;
+        
+        return has_perimetric_path;
+    }       
+    
     
     //@}
 };
