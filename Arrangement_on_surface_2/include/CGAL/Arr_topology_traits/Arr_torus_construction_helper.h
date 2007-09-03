@@ -112,10 +112,9 @@ public:
         const Boundary_type bound_x = event->boundary_in_x();
         const Boundary_type bound_y = event->boundary_in_y();
         
-        std::cout << "HELPER: event: " << event->point() << std::endl;
+        //std::cout << "HELPER: event: " << event->point() << std::endl;
         
         if (bound_x != CGAL::NO_BOUNDARY) {
-            // TODO something similar to spherical traits?
             std::cout << "HELPER: before x " << bound_x << std::endl;
             CGAL_assertion(bound_x == CGAL::BEFORE_DISCONTINUITY ||
                            bound_x == CGAL::AFTER_DISCONTINUITY);
