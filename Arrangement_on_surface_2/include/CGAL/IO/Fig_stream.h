@@ -69,7 +69,7 @@ enum Fig_line_style
   FIG_DASH_TRIPLE_DOTTED = 5
 };
 
-#define FIG_DEFAULT_STYLE_VALUE   4.0
+#define CGAL_FIG_DEFAULT_STYLE_VALUE    4.0
     
 /*!
  * FIG fill styles.
