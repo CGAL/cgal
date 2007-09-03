@@ -45,7 +45,7 @@ private:
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
     double MOD_round (double a){
-#ifdef LiS_HAVE_LEDA 
+#ifdef CGAL_USE_LEDA 
         return ( (a + CST_CUT)  - CST_CUT); 
 #else
      // TODO: 
