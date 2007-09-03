@@ -18,8 +18,8 @@
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Ophir Setter <ophirset@post.tau.ac.il>
 
-#ifndef BOOST_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
-#define BOOST_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
+#ifndef CGAL_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
+#define CGAL_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 
 /*! \file
  * Definition of the specialized Dual<Arrangement_2> class,
