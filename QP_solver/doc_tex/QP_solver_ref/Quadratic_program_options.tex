@@ -47,9 +47,8 @@ purposes and have no effect if you compile with
 {sets the pricing strategy of the solver to the value \ccc{pricing_strategy}
 when \ccVar\ is passed to any of the four solution functions. The pricing
 strategy controls how the solver proceeds from any intermediate solution.
-The provided value must be \ccc{QP_FULL_EXACT} (the default), or 
-\ccc{QP_EXACT_BLAND}. The latter value guarantees that the solver does
-not internally cycle.}
+For the available strategies and their behavior, see the documentation of the 
+class \ccc{Quadratic_program_pricing_strategy}.}
 
 \ccMethod{Quadratic_program_pricing_strategy get_pricing_strategy() const;}
 {returns the pricing strategy of \ccVar.}
