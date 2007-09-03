@@ -460,20 +460,26 @@ template <class GeomTraits, class Dcel_>
 bool
 Arr_torus_topology_traits_2<GeomTraits,Dcel_>::_is_perimetric_path
 (const Halfedge *e1,
- const Halfedge *e2) const
+ const Halfedge *e2,
+ bool& touching_pole) const
 {
     // status: correct
-    std::cout << "TODO: Arr_torus_topology_traits_2::is_perimetric_path" 
+    std::cout << "Arr_torus_topology_traits_2::is_perimetric_path" 
               << std::endl;
     
-    Identification_crossing leftmost_NS;
-    Identification_crossing bottommost_WE;
+    Vertex *leftmost;
+    Vertex *bottommost;
     
+    Identification_crossing leftmost_crossing;
+    Identification_crossing bottommost_crossing;
+    
+    bool touching = false;
     bool crossing = false;
     
     std::pair< int, int > counters = 
-        _crossings_with_identifications(e1, e2, crossing,
-                                        leftmost_NS, bottommost_WE);
+        _crossings_with_identifications(e1, e2, touching, crossing,
+                                        leftmost, leftmost_crossing, 
+                                        bottommost, bottommost_crossing);
     
     if (!crossing) {
         return false;
@@ -484,12 +490,21 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::_is_perimetric_path
     int x_counter = counters.first;
     int y_counter = counters.second;
     
+    touching_pole = false;
+
     // it is perimetric if it crosses NS or WE an odd number of times
     // or both identification an even number of times ("% 2" includes 
     // "degenerate" crossing at pole)
-    return (x_counter % 2 != 0 && y_counter == 0 ||
-            x_counter == 0 && y_counter % 2 != 0 ||
-            x_counter == 0 && y_counter == 0);
+    if (x_counter % 2 != 0 && y_counter == 0 ||
+        x_counter == 0 && y_counter % 2 != 0) {
+        return true;
+    }
+    if (touching && x_counter == 0 && y_counter == 0) {
+        touching_pole = touching && !crossing;
+        return true;
+    }
+    // else 
+    return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -510,13 +525,20 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
     CGAL_precondition (prev2->is_on_inner_ccb());
     CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
     
-    bool perimetric = (_is_perimetric_path (prev1->next(), prev2->next()) ||
-                       _is_perimetric_path (prev2->next(), prev1->next()));
+    bool tpole1, tpole2;
+
+    bool perimetric = 
+        (_is_perimetric_path (prev1->next(), prev2->next(), tpole1) ||
+         _is_perimetric_path (prev2->next(), prev1->next(), tpole2));
     
     // on a torus except for one case, there is a face split
     if (perimetric) {
-        if (this->number_of_valid_faces() == 1) {
+        if (tpole1 || tpole2) {
+            std::cout << "face_split D true, true" << std::endl;
+            return std::make_pair(true, true);
+        } else if (this->number_of_valid_faces() == 1) {
             // must be topface
+            CGAL_assertion(prev1->inner_ccb()->face() == top_face());
             if (top_face()->number_of_outer_ccbs() == 0) {
                 // the special case is when the initial perimetric path is
                 // found, this juste creates two outer ccbs for the face
@@ -548,6 +570,8 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::hole_creation_after_edge_removal
     // status: check implementation
     std::cout << "Arr_torus_topology_traits_2 hole_creation"  << std::endl;
 
+    CGAL_assertion(false); // hole_creation not finally implemented for torus
+
     CGAL_precondition (! he->is_on_inner_ccb());
     CGAL_precondition (! he->opposite()->is_on_inner_ccb());
 
@@ -555,57 +579,52 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::hole_creation_after_edge_removal
     
     // Check whether the halfedge and its twin belong to the same outer CCB
     // (and are therefore incident to the same face).
-    if (he->outer_ccb() == he->opposite()->outer_ccb())
-    {
-        // precondition is: does not form an antenna, or simply to remove
+    if (he->outer_ccb() == he->opposite()->outer_ccb()) {
+        // precondition is: does not form an antenna, or a simply to remove
         // halfedge
         
-      // Check the two cycles that will be created once we remove he and its
-      // twin (from he->next() to he's twin, not inclusive, and from the
-      // successor of he's twin to he, not inclusive).
-      if (_is_perimetric_path (he->next(), he->opposite()) &&
-          _is_perimetric_path (he->opposite()->next(), he))
-      {
-        // Both paths are perimetric, so the two cycles become two separate
-        // outer CCBs of the same face, and no hole is created.
-        return (false);
-      }
-      else
-      {
-        // At least one cyclic path is non-perimetic. This cycle will become
-        // an inner CCB representing a hole in the face.
-        return (true);
-      }
-    }
-    else
-    {
-      // The edge to be removed separates two faces.
-      // Check the cyclic path from he and back, and from its twin and back.
-      if (_is_perimetric_path (he, he) &&
-          _is_perimetric_path (he->opposite(), he->opposite()))
-      {
-          if (dcel().number_of_faces() == 1) {
-              CGAL_assertion_code(
-                      Face *f = dcel()->faces_begin();
-                      CGAL_assertion(f->number_of_outer_ccbs() == 2);
-              );
-              // there is no face merge in this case ... but the remaining
-              // path consists of a hole in the interior
-              return (true);
-          } 
-          // else
-          // In this case we disconnect a perimetric cycle around the torus,
-          // causing two perimetric faces to merge. The remainder of the cycle
-          // becomes an inner CCB (a hole) in the merged face.
-          
-          return (true);
-      }
-      else
-      {
-        // In this case we are about to merge to incident faces, so their
-        // outer CCBs are merged and no new hole is created.
-        return (false);
-      }
+        bool tpole1, tpole2;
+        
+        // Check the two cycles that will be created once we remove he and its
+        // twin (from he->next() to he's twin, not inclusive, and from the
+        // successor of he's twin to he, not inclusive).
+        if (_is_perimetric_path (he->next(), he->opposite(), tpole1) &&
+            _is_perimetric_path (he->opposite()->next(), he, tpole2)) {
+            // Both paths are perimetric, so the two cycles become two separate
+            // outer CCBs of the same face, and no hole is created.
+            return (false);
+        } else {
+            // At least one cyclic path is non-perimetic. 
+            // This cycle will become
+            // an inner CCB representing a hole in the face.
+            return (true);
+        }
+    } else {
+        bool tpole1, tpole2;
+        // The edge to be removed separates two faces.
+        // Check the cyclic path from he and back, and from its twin and back.
+        if (_is_perimetric_path (he, he, tpole1) &&
+            _is_perimetric_path (he->opposite(), he->opposite(), tpole2)) {
+            if (dcel().number_of_faces() == 1) {
+                CGAL_assertion_code(
+                        Face *f = dcel()->faces_begin();
+                        CGAL_assertion(f->number_of_outer_ccbs() == 2);
+                );
+                // there is no face merge in this case ... but the remaining
+                // path consists of a hole in the interior
+                return (true);
+            } 
+            // else
+            // In this case we disconnect a perimetric cycle around the torus,
+            // causing two perimetric faces to merge. 
+            // The remainder of the cycle
+            // becomes an inner CCB (a hole) in the merged face.
+            return (true);
+        } else {
+            // In this case we are about to merge to incident faces, so their
+            // outer CCBs are merged and no new hole is created.
+            return (false);
+        }
     }
 }
 
@@ -621,43 +640,102 @@ is_on_new_perimetric_face_boundary
  const X_monotone_curve_2& cv) const
 {
     // status: check correctness of implementation
-    std::cout << "TODO: Arr_torus_topology_traits_2::" 
+    std::cout << "Arr_torus_topology_traits_2::" 
               << "is_on_new_perimetric_face_boundary"
               << std::endl;
 
-    Identification_crossing leftmost_NS;
-    Identification_crossing bottommost_WE;
-
-    CGAL_assertion(_is_perimetric_path(prev2, prev1));
+    CGAL_precondition (prev1->is_on_inner_ccb());
+    CGAL_precondition (prev2->is_on_inner_ccb());
+    CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
     
+    Identification_crossing leftmost_crossing;
+    Identification_crossing bottommost_crossing;
+
+    CGAL_assertion_code(bool tpole);
+    CGAL_assertion(_is_perimetric_path(prev2, prev1, tpole));
+    
+    
+    // maintain the invariant that the pole is always in the top_face,
+    // i.e, it is the face that contains everything and has now outer ccb
+    // If pole is part of a ccb itself, it incident face is the face that 
+    // contains everything.
+    
+    if (prev1->inner_ccb()->face() != top_face()) {
+        // actual answer does not matter, as a perimetric face not containing
+        // the pole of the torus is split into two perimetric faces
+        // it is not important whether prev1 or prev2 belongs to it
+        return false;
+    }
+    
+    bool touching = false;
     bool crossing = false;
+    
+    Vertex *leftmost;
+    Vertex *bottommost;
 
     std::pair< int, int > counters = 
-        _crossings_with_identifications(prev2, prev1, crossing,
-                                        leftmost_NS, bottommost_WE);
+        _crossings_with_identifications(prev2, prev1, touching, crossing,
+                                        leftmost, leftmost_crossing, 
+                                        bottommost, bottommost_crossing);
     
     CGAL_assertion(crossing);
     
     int x_counter = counters.first;
     int y_counter = counters.second;
     
-    // maintain the invariant that the pole is always in the top_face
     if (x_counter % 2 != 0) {
-        // TODO check condition!
-        return (bottommost_WE == AFTER_TO_BEFORE);
+
+        CGAL_assertion(bottommost != NULL);
+        
+        bool smallest_perimetric = true;
+        
+        typename Identification_WE::iterator it = 
+            this->_m_identification_WE.find(bottommost->point());
+        
+        while (smallest_perimetric && 
+               it != this->_m_identification_WE.begin()) {
+            it--;
+            Vertex *v = it->second;
+            smallest_perimetric = !_has_crossing_perimetric_path(v);
+        }
+        
+        if (smallest_perimetric) {
+            return (bottommost_crossing == BEFORE_TO_AFTER);
+        } else {
+            return (bottommost_crossing == AFTER_TO_BEFORE);
+        }
     } else if (y_counter % 2 != 0) {
-        // TODO check condition!
-        return (leftmost_NS == AFTER_TO_BEFORE);
+      
+        CGAL_assertion(leftmost != NULL);
+
+        bool smallest_perimetric = true;
+        
+        typename Identification_NS::iterator it = 
+            this->_m_identification_NS.find(leftmost->point());
+        
+        while (smallest_perimetric && 
+               it != this->_m_identification_NS.begin()) {
+            it--;
+            Vertex *v = it->second;
+            smallest_perimetric = !_has_crossing_perimetric_path(v);
+        }
+        
+        if (smallest_perimetric) {
+            return (leftmost_crossing == AFTER_TO_BEFORE);
+        } else {
+            return (leftmost_crossing == BEFORE_TO_AFTER);
+        }
     } 
     // else 
-    CGAL_assertion(x_counter == 0 && y_counter == 0);
-        
-    CGAL_assertion((leftmost_NS == AFTER_TO_BEFORE && 
-                    bottommost_WE == BEFORE_TO_AFTER) ||
-                   (leftmost_NS == BEFORE_TO_AFTER && 
-                    bottommost_WE == AFTER_TO_BEFORE));
-    // TODO check condition!
-    return (leftmost_NS == AFTER_TO_BEFORE);
+    CGAL_assertion(touching && x_counter == 0 && y_counter == 0);
+
+    if (crossing) {
+        return (bottommost_crossing == BEFORE_TO_AFTER);
+    }
+    
+    // TODO ensure that prev1 is outer ccb of loop
+    CGAL_assertion(false); // new_peri_face: touching pole case not implemented
+    return (prev2->direction() == CGAL::LEFT_TO_RIGHT);
 }
 
 //-----------------------------------------------------------------------------
@@ -670,60 +748,79 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::boundaries_of_same_face
  const Halfedge *e2) const
 {
     // status: check correctness of implementation
-    std::cout << "TODO: Arr_torus_topology_traits_2::boundaries_of_same_face" 
+    std::cout << " Arr_torus_topology_traits_2::boundaries_of_same_face" 
               << std::endl;
     // This predicate is only used for case 3.3.2 of the insertion process
     
-    Identification_crossing leftmost_NS1;
-    Identification_crossing bottommost_WE1;
+    Identification_crossing leftmost_crossing1;
+    Identification_crossing bottommost_crossing1;
     
+    bool touching1 = false;
     bool crossing1 = false;
 
-    std::pair< int, int > counters1 = 
-        _crossings_with_identifications(e1, e1, crossing1,
-                                        leftmost_NS1, bottommost_WE1);
-    
-    CGAL_assertion(crossing1);
+    Vertex *leftmost1;
+    Vertex *bottommost1;
 
+    std::pair< int, int > counters1 = 
+        _crossings_with_identifications(e1, e1, touching1, crossing1,
+                                        leftmost1, leftmost_crossing1, 
+                                        bottommost1, bottommost_crossing1);
+    
     int x_counter1 = counters1.first;
     int y_counter1 = counters1.second;
     
-    Identification_crossing leftmost_NS2;
-    Identification_crossing bottommost_WE2;
+    Identification_crossing leftmost_crossing2;
+    Identification_crossing bottommost_crossing2;
     
+    bool touching2 = false;
     bool crossing2 = false;
 
-    std::pair< int, int > counters2 = 
-        _crossings_with_identifications(e2, e2, crossing2,
-                                        leftmost_NS2, bottommost_WE2);
+    Vertex *leftmost2;
+    Vertex *bottommost2;
 
-    CGAL_assertion(crossing2);
+    std::pair< int, int > counters2 = 
+        _crossings_with_identifications(e2, e2, touching2, crossing2,
+                                        leftmost2, leftmost_crossing2, 
+                                        bottommost2, bottommost_crossing2);
     
     int x_counter2 = counters2.first;
     int y_counter2 = counters2.second;
     
     if (x_counter1 % 2 != 0) {
+        CGAL_assertion(crossing1);
+        CGAL_assertion(crossing2);
         CGAL_assertion(x_counter2 % 2 != 0);
-        return (bottommost_WE1 != bottommost_WE2);
+        return (bottommost_crossing1 != bottommost_crossing2);
     } else if (y_counter1 % 2 != 0) {
+        CGAL_assertion(crossing1);
+        CGAL_assertion(crossing2);
         CGAL_assertion(y_counter2 % 2 != 0);
-        return (leftmost_NS1 != leftmost_NS2);
+        return (leftmost_crossing1 != leftmost_crossing2);
     } 
     // else 
     
-    CGAL_assertion(x_counter1 == 0 && y_counter1 == 0 &&
-                   x_counter2 == 0 && y_counter2 == 0);
+    CGAL_assertion(touching1 && x_counter1 == 0 && y_counter1 == 0 &&
+                   touching2 && x_counter2 == 0 && y_counter2 == 0);
     
-    CGAL_assertion((leftmost_NS1 == AFTER_TO_BEFORE && 
-                    bottommost_WE1 == BEFORE_TO_AFTER) ||
-                   (leftmost_NS1 == BEFORE_TO_AFTER && 
-                    bottommost_WE1 == AFTER_TO_BEFORE));
-    CGAL_assertion((leftmost_NS2 == AFTER_TO_BEFORE && 
-                    bottommost_WE2 == BEFORE_TO_AFTER) ||
-                   (leftmost_NS2 == BEFORE_TO_AFTER && 
-                    bottommost_WE2 == AFTER_TO_BEFORE));
-    // TODO what is case the path crosses the pole?
-    return (leftmost_NS1 != leftmost_NS2);
+    if (crossing1) {
+        CGAL_assertion(crossing2);
+        CGAL_assertion((leftmost_crossing1 == AFTER_TO_BEFORE && 
+                        bottommost_crossing1 == BEFORE_TO_AFTER) ||
+                       (leftmost_crossing1 == BEFORE_TO_AFTER && 
+                        bottommost_crossing1 == AFTER_TO_BEFORE));
+        CGAL_assertion((leftmost_crossing2 == AFTER_TO_BEFORE && 
+                        bottommost_crossing2 == BEFORE_TO_AFTER) ||
+                       (leftmost_crossing2 == BEFORE_TO_AFTER && 
+                        bottommost_crossing2 == AFTER_TO_BEFORE));
+        
+        return (bottommost_crossing1 != bottommost_crossing2);
+    }
+    // else
+    // TODO touching?
+    // TODO what is case the path touches the pole
+    // -> do similar things as in is_on_new_perimetic_face
+    CGAL_assertion(false); // same_face: touching pole case not implemented
+    return (bottommost_crossing1 != bottommost_crossing2);
 }
 
 //-----------------------------------------------------------------------------
@@ -737,6 +834,8 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_in_face
     // TODO is_in_face NEEDED for incremental insertion
     std::cout << "TODO: Arr_torus_topology_traits_2::is_in_face" 
               << std::endl;
+
+    CGAL_assertion(false); // is_in_face not implemented for torus
 #if 0
     CGAL_precondition (v == NULL || ! v->has_null_point());
     CGAL_precondition (v == NULL || 
@@ -1087,19 +1186,24 @@ std::pair< int, int >
 Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
 _crossings_with_identifications(
         const Halfedge* he1, const Halfedge* he2, 
-        bool& crossing,
-        Identification_crossing& leftmost_NS,
-        Identification_crossing& bottommost_WE) const {
-
+        bool& touching, bool& crossing, 
+        const Vertex *leftmost_vertex, 
+        Identification_crossing& leftmost_crossing,
+        const Vertex *bottommost_vertex, 
+        Identification_crossing& bottommost_crossing) const {
+    
     // status: check implementation
     
     std::cout << "Arr_torus_topology_traits: "
               << "_crossings_with_identifications" << std::endl;
 
     crossing = false;
-    // TODO crossing = true if touches pole!   
-    const Vertex *leftmost_vertex = NULL;
-    const Vertex *bottommost_vertex = NULL;
+
+    leftmost_vertex = NULL;
+    bottommost_vertex = NULL;
+    
+    const Vertex *leftmost_tvertex = NULL;
+    const Vertex *bottommost_tvertex = NULL;
     
     Point_2_less_NS less_ns(_m_traits);
     Point_2_less_WE less_we(_m_traits);
@@ -1153,8 +1257,23 @@ _crossings_with_identifications(
             boundary_in_y(next->curve(), next_src_ind);
         Boundary_type next_trg_bcy = 
             boundary_in_y(next->curve(), next_trg_ind);
+        if (curr_trg_bcx != CGAL::NO_BOUNDARY) {
+            if (bottommost_tvertex == NULL || 
+                // TASK avoid real comparisons, ask _m_vertices_on_ident
+                less_we(curr->vertex()->point(),
+                        bottommost_tvertex->point())) {
+                bottommost_tvertex = curr->vertex();
+            }
+        }
+        if (curr_trg_bcy != CGAL::NO_BOUNDARY) {
+            if (leftmost_tvertex == NULL || 
+                // TASK avoid real comparisons, ask _m_vertices_on_ident
+                less_ns(curr->vertex()->point(),
+                        leftmost_tvertex->point())) {
+                leftmost_tvertex = curr->vertex();
+            }
+        }
         if (curr_trg_bcx != next_src_bcx) {
-            crossing = true;
             CGAL_assertion(curr_trg_bcx != CGAL::NO_BOUNDARY);
             CGAL_assertion(next_src_bcx != CGAL::NO_BOUNDARY);
             if (curr_trg_bcx == BEFORE_DISCONTINUITY) {
@@ -1163,7 +1282,7 @@ _crossings_with_identifications(
                     less_we(curr->vertex()->point(),
                             bottommost_vertex->point())) {
                     bottommost_vertex = curr->vertex();
-                    bottommost_WE = BEFORE_TO_AFTER;
+                    bottommost_crossing = BEFORE_TO_AFTER;
                 }
                 ++x_counter;
             } else {
@@ -1172,13 +1291,12 @@ _crossings_with_identifications(
                     less_we(curr->vertex()->point(),
                             bottommost_vertex->point())) {
                     bottommost_vertex = curr->vertex();
-                    bottommost_WE = AFTER_TO_BEFORE;
+                    bottommost_crossing = AFTER_TO_BEFORE;
                 }
                 --x_counter;
             }
         }
         if (curr_trg_bcy != next_src_bcy) {
-            crossing = true;
             CGAL_assertion(curr_trg_bcy != CGAL::NO_BOUNDARY);
             CGAL_assertion(next_src_bcy != CGAL::NO_BOUNDARY);
             if (curr_trg_bcy == BEFORE_DISCONTINUITY) {
@@ -1187,7 +1305,7 @@ _crossings_with_identifications(
                     less_ns(curr->vertex()->point(),
                             leftmost_vertex->point())) {
                     leftmost_vertex = curr->vertex();
-                    leftmost_NS = BEFORE_TO_AFTER;
+                    leftmost_crossing = BEFORE_TO_AFTER;
                 }
                 ++y_counter;
             } else {
@@ -1196,7 +1314,7 @@ _crossings_with_identifications(
                     less_ns(curr->vertex()->point(),
                             leftmost_vertex->point())) {
                     leftmost_vertex = curr->vertex();
-                    leftmost_NS = AFTER_TO_BEFORE;
+                    leftmost_crossing = AFTER_TO_BEFORE;
                 }
                 --y_counter;
             }
@@ -1208,8 +1326,23 @@ _crossings_with_identifications(
     if (he1 == he2) {
         Boundary_type last_trg_bcx = curr_trg_bcx;
         Boundary_type last_trg_bcy = curr_trg_bcy;
+        if (last_trg_bcx != CGAL::NO_BOUNDARY) {
+            if (bottommost_tvertex == NULL || 
+                // TASK avoid real comparisons, ask _m_vertices_on_ident
+                less_we(curr->vertex()->point(),
+                        bottommost_tvertex->point())) {
+                bottommost_tvertex = curr->vertex();
+            }
+        }
+        if (last_trg_bcy != CGAL::NO_BOUNDARY) {
+            if (leftmost_tvertex == NULL || 
+                // TASK avoid real comparisons, ask _m_vertices_on_ident
+                less_ns(curr->vertex()->point(),
+                        leftmost_tvertex->point())) {
+                leftmost_tvertex = curr->vertex();
+            }
+        }
         if (last_trg_bcx != first_src_bcx) {
-            crossing = true;
             //CGAL_assertion(last_trg_bcx != CGAL::NO_BOUNDARY);
             //CGAL_assertion(first_src_bcx != CGAL::NO_BOUNDARY);
             if (last_trg_bcx == BEFORE_DISCONTINUITY) {
@@ -1218,7 +1351,7 @@ _crossings_with_identifications(
                     less_we(curr->vertex()->point(),
                             bottommost_vertex->point())) {
                     bottommost_vertex = curr->vertex();
-                    bottommost_WE = BEFORE_TO_AFTER;
+                    bottommost_crossing = BEFORE_TO_AFTER;
                 }
                 ++x_counter;
             } else {
@@ -1227,13 +1360,12 @@ _crossings_with_identifications(
                     less_we(curr->vertex()->point(),
                             bottommost_vertex->point())) {
                     bottommost_vertex = curr->vertex();
-                    bottommost_WE = AFTER_TO_BEFORE;
+                    bottommost_crossing = AFTER_TO_BEFORE;
                 }
                 --x_counter;
             }
         }
         if (last_trg_bcy != first_src_bcy) {
-            crossing = true;
             //CGAL_assertion(last_trg_bcy != CGAL::NO_BOUNDARY);
             //CGAL_assertion(first_src_bcy != CGAL::NO_BOUNDARY);
             if (last_trg_bcy == BEFORE_DISCONTINUITY) {
@@ -1242,7 +1374,7 @@ _crossings_with_identifications(
                     less_ns(curr->vertex()->point(),
                             leftmost_vertex->point())) {
                     leftmost_vertex = curr->vertex();
-                    leftmost_NS = BEFORE_TO_AFTER;
+                    leftmost_crossing = BEFORE_TO_AFTER;
                 }
                 ++y_counter;
             } else {
@@ -1251,9 +1383,25 @@ _crossings_with_identifications(
                     less_ns(curr->vertex()->point(),
                             leftmost_vertex->point())) {
                     leftmost_vertex = curr->vertex();
-                    leftmost_NS = AFTER_TO_BEFORE;
+                    leftmost_crossing = AFTER_TO_BEFORE;
                 }
                 --y_counter;
+            }
+        }
+    }
+    
+    if (leftmost_vertex != NULL || bottommost_vertex != NULL) {
+        crossing = true;
+    }
+    
+    if (leftmost_tvertex != NULL || bottommost_tvertex != NULL) {
+        touching = true;
+        if (!crossing) {
+            if (leftmost_vertex == NULL) {
+                leftmost_vertex = leftmost_tvertex;
+            }
+            if (bottommost_vertex == NULL) {
+                bottommost_vertex = bottommost_tvertex;
             }
         }
     }
