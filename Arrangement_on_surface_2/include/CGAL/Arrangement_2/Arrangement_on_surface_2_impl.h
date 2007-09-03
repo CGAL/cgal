@@ -2844,10 +2844,10 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
 
         // Go over all other outer CCBs of f and check whether they should be
         // moved to be outer CCBs of the new face.
-        DOuter_ccb_iter  oc_it;
+        DOuter_ccb_iter  oc_it = f->outer_ccbs_begin();
+        DOuter_ccb_iter  oc_to_move;
 
-        for (oc_it = f->outer_ccbs_begin();
-             oc_it != f->outer_ccbs_end(); ++oc_it)
+        while (oc_it != f->outer_ccbs_end())
         {
           // Use the topology traits to determine whether the representative
           // of the current outer CCB should belong to the same face as he2
@@ -2855,7 +2855,16 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
           if (*oc_it != he1 &&
               top_traits.boundaries_of_same_face (*oc_it, he2))
           {
-            _move_outer_ccb (f, new_f, *oc_it);
+            // We increment the itrator before moving the outer CCB, because
+            // this operation invalidates the iterator.
+            oc_to_move = oc_it;
+            ++oc_it;
+
+            _move_outer_ccb (f, new_f, *oc_to_move);
+          }
+          else
+          {
+            ++oc_it;
           }
         }
       }
