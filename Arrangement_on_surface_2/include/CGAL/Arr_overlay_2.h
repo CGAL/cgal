@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_OVERLAY_2_H
 #define CGAL_ARR_OVERLAY_2_H
@@ -27,7 +28,10 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Object.h>
+
 #include <vector>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -104,14 +108,29 @@ void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
 
   // Obtain a extended traits-class object and define the sweep-line visitor.
   GeomTraits               *geom_traits = arr_res.geometry_traits();
-  Ovl_traits_2              ex_traits (*geom_traits);
+
+    /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Ovl_traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
+   * Otherwise, instantiate a local variable of the former and provide
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
+   */
+  typename boost::mpl::if_<boost::is_same<GeomTraits, Ovl_traits_2>,
+                           Ovl_traits_2&, Ovl_traits_2>::type
+    ex_traits(*geom_traits);
 
   Ovl_visitor               visitor (&arr1, &arr2, &arr_res, &ovl_tr);
   Sweep_line_2<typename Ovl_visitor::Traits_2,
                Ovl_visitor,
                typename Ovl_visitor::Subcurve,
-               typename Ovl_visitor::Event>     sweep_line (&ex_traits,
-                                                            &visitor);
+               typename Ovl_visitor::Event>
+    sweep_line (&ex_traits, &visitor);
 
   // In case both arrangement do not contain isolated vertices, go on and
   // overlay them.

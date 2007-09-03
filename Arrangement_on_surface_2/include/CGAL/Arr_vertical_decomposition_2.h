@@ -21,7 +21,10 @@
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Basic_sweep_line_2.h>
+
 #include <vector>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -93,17 +96,31 @@ OutputIterator decompose
   }
 
   // Obtain a extended traits-class object.
-  GeomTraits               *geom_traits =
-                              const_cast<GeomTraits*> (arr.geometry_traits());
-  Vd_traits_2               ex_traits (*geom_traits);
+  GeomTraits    *geom_traits = const_cast<GeomTraits*> (arr.geometry_traits());
+
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Vd_traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
+   * Otherwise, instantiate a local variable of the former and provide
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
+   */
+  typename boost::mpl::if_<boost::is_same<GeomTraits, Vd_traits_2>,
+                           Vd_traits_2&, Vd_traits_2>::type
+    ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.
-  Vd_visitor                                       visitor (&arr, &oi);
+  Vd_visitor    visitor (&arr, &oi);
   Basic_sweep_line_2<typename Vd_visitor::Traits_2,
                      Vd_visitor,
                      typename Vd_visitor::Subcurve,
-                     typename Vd_visitor::Event>   sweep_line (&ex_traits,
-                                                               &visitor);
+                     typename Vd_visitor::Event>
+    sweep_line (&ex_traits, &visitor);
 
   sweep_line.sweep (xcurves_vec.begin(), xcurves_vec.end(),  // Curves.
                     iso_pts_vec.begin(), iso_pts_vec.end()); // Action points.

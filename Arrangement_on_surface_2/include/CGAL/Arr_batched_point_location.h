@@ -16,13 +16,17 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BATCHED_POINT_LOCATION_H
 #define CGAL_ARR_BATCHED_POINT_LOCATION_H
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Basic_sweep_line_2.h>
+
 #include <vector>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -88,17 +92,31 @@ OutputIterator locate
   }
     
   // Obtain a extended traits-class object.
-  GeomTraits               *geom_traits =
-                              const_cast<GeomTraits*> (arr.geometry_traits());
-  Bpl_traits_2              ex_traits (*geom_traits);
+  GeomTraits    *geom_traits = const_cast<GeomTraits*> (arr.geometry_traits());
+
+  /* We would like to avoid copy construction of the geometry traits class.
+   * Copy construction is undesired, because it may results with data
+   * duplication or even data loss.
+   *
+   * If the type Bpl_traits_2 is the same as the type
+   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
+   * Otherwise, instantiate a local variable of the former and provide
+   * the later as a single parameter to the constructor.
+   * 
+   * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
+   * only an implicit constructor, (which takes *b as a parameter).
+   */
+  typename boost::mpl::if_<boost::is_same<GeomTraits, Bpl_traits_2>,
+                           Bpl_traits_2&, Bpl_traits_2>::type
+    ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.
-  Bpl_visitor                                      visitor (&arr, &oi);
+  Bpl_visitor   visitor (&arr, &oi);
   Basic_sweep_line_2<typename Bpl_visitor::Traits_2,
                      Bpl_visitor,
                      typename Bpl_visitor::Subcurve,
-                     typename Bpl_visitor::Event>  sweep_line (&ex_traits,
-                                                               &visitor);
+                     typename Bpl_visitor::Event>
+    sweep_line (&ex_traits, &visitor);
 
   sweep_line.sweep (xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                     iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
