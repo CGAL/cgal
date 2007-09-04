@@ -57,7 +57,7 @@ class Sweep_line_points_visitor :
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Point_2                   Point_2;
 
-  typedef Sweep_line_2<Traits_2, Self>                 Sweep_line_2;
+  typedef class Sweep_line_2<Traits_2, Self>           Sweep_line_2;
 
 protected:
 
@@ -137,7 +137,7 @@ class Sweep_line_subcurves_visitor :
   typedef typename Base::Subcurve                      Subcurve;
   typedef typename Base::Status_line_iterator          Status_line_iterator;
 
-  typedef Sweep_line_2<Traits_2, Self>                 Sweep_line_2;
+  typedef class Sweep_line_2<Traits_2, Self>           Sweep_line_2;
 
 protected:
 
@@ -221,7 +221,7 @@ class Sweep_line_do_curves_x_visitor :
   typedef typename Base::Subcurve                      Subcurve;
   typedef typename Base::Status_line_iterator          Status_line_iterator;
 
-  typedef Sweep_line_2<Traits_2, Self>                 Sweep_line_2;
+  typedef class Sweep_line_2<Traits_2, Self>           Sweep_line_2;
 
 protected:
 
