@@ -159,7 +159,7 @@ protected:
     friend class Point_2_less_WE;
     friend class Point_2_less_NS;
     
-    //! type of line of discontinuity
+    //! type of curve of identification
     typedef std::map< Point_2, Vertex*, Point_2_less_NS > 
     Identification_NS;
     typedef std::map< Point_2, Vertex*, Point_2_less_WE >  
@@ -770,7 +770,7 @@ protected:
     
 public:
     // TODO make protected
-    /*! Get the vertex on line of identification associated with \c pt*/
+    /*! Get the vertex on curve of identification associated with \c pt*/
     Vertex* vertex_NS(const Point_2& key) {
         typename Identification_NS::iterator it = 
             this->_m_identification_NS.find(key);
@@ -781,7 +781,7 @@ public:
         return NULL;
     }
     
-    /*! Get the vertex on line of identification associated with \c pt*/
+    /*! Get the vertex on curve of identification associated with \c pt*/
     Vertex* vertex_WE(const Point_2& key) {
         typename Identification_WE::iterator it = 
             this->_m_identification_WE.find(key);
@@ -793,72 +793,6 @@ public:
     }
 
 protected:
-    
-#if 0
-    /*! Get the beginning of all pairs of curve-end and its vertices
-     *  along the line of discontinuity
-     */
-    typename Identification_NS::iterator 
-    curve_ends_and_vertices_on_identification_NS_begin() {
-        return _m_identification_NS.begin();
-    }
-
-    /*! Get the past-the-end value of all pairs of curve-end and its vertices
-     *  along the line of discontinuity
-     */
-    typename Identification_NS::iterator 
-    curve_ends_and_vertices_on_identification_NS_end() {
-        return _m_identification_NS.end();
-    }
-
-    /*! Get the beginning of all pairs of curve-end and its vertices
-     *  along the line of discontinuity (const version)
-     */
-    typename Identification_NS::const_iterator 
-    curve_ends_and_vertices_on_identification_NS_begin() const {
-        return _m_identification_NS.begin();
-    }
-
-    /*! Get the past-the-end value of all pairs of curve-end and its vertices
-     *  along the line of discontinuity (const version)
-     */
-    typename Identification_NS::const_iterator 
-    curve_ends_and_vertices_on_identification_NS_end() const {
-        return _m_identification_NS.end();
-    }
-
-    /*! Get the beginning of all pairs of curve-end and its vertices
-     *  along the line of discontinuity
-     */
-    typename Identification_WE::iterator 
-    curve_ends_and_vertices_on_identification_WE_begin() {
-        return _m_identification_WE.begin();
-    }
-
-    /*! Get the past-the-end value of all pairs of curve-end and its vertices
-     *  along the line of discontinuity
-     */
-    typename Identification_WE::iterator 
-    curve_ends_and_vertices_on_identification_WE_end() {
-        return _m_identification_WE.end();
-    }
-
-    /*! Get the beginning of all pairs of curve-end and its vertices
-     *  along the line of discontinuity (const version)
-     */
-    typename Identification_WE::const_iterator 
-    curve_ends_and_vertices_on_identification_WE_begin() const {
-        return _m_identification_WE.begin();
-    }
-
-    /*! Get the past-the-end value of all pairs of curve-end and its vertices
-     *  along the line of discontinuity (const version)
-     */
-    typename Identification_WE::const_iterator 
-    curve_ends_and_vertices_on_identification_WE_end() const {
-        return _m_identification_WE.end();
-    }
-#endif
     
     /*!
      * Computes the number of crossing of a path with the curves 
