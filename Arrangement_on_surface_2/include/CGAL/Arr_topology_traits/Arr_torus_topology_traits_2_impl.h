@@ -771,9 +771,15 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::boundaries_of_same_face
     Identification_crossing leftmost_crossing2;
     Identification_crossing bottommost_crossing2;
     
+    bool tpole2;
+    // TODO make it more efficient
+    if (!_is_perimetric_path(e2, e2, tpole2)) {
+        return false;
+    }
+    
     bool touching2 = false;
     bool crossing2 = false;
-
+    
     Vertex *leftmost2;
     Vertex *bottommost2;
 
