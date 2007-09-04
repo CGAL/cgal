@@ -96,7 +96,7 @@ public:
   typedef typename Traits_adaptor_2::Has_boundary_category 
                                                          Has_boundary_category;
 
-  typedef class Compare_events<Traits_adaptor_2, Event>     Compare_events;
+  typedef CGAL::Compare_events<Traits_adaptor_2, Event>     Compare_events;
   typedef Multiset<Event*, Compare_events, Allocator>  Event_queue; 
   typedef typename Event_queue::iterator               Event_queue_iterator;
 

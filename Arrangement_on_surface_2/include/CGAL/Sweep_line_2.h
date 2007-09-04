@@ -113,9 +113,9 @@ public:
 
   typedef typename Base::Status_line_iterator         Status_line_iterator;
   
-  typedef class Curve_pair<Subcurve>                       Curve_pair;
-  typedef struct Curve_pair_hasher<Subcurve>                Curve_pair_hasher;
-  typedef struct Equal_curve_pair<Subcurve>                 Equal_curve_pair;
+  typedef CGAL::Curve_pair<Subcurve>                       Curve_pair;
+  typedef CGAL::Curve_pair_hasher<Subcurve>                Curve_pair_hasher;
+  typedef CGAL::Equal_curve_pair<Subcurve>                 Equal_curve_pair;
   typedef Open_hash<Curve_pair,
                     Curve_pair_hasher,
                     Equal_curve_pair>                 Curve_pair_set;
