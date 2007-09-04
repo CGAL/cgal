@@ -382,7 +382,7 @@ notify_on_boundary_vertex_creation
                 lod_size
         );
         
-        // update the local structure for points on the line of discontinuity
+        // update the local structure for points on the curve of identification
         typename Identification_WE::iterator it = 
             this->_m_identification_WE.find(key);
         // not existing so far
@@ -422,7 +422,7 @@ notify_on_boundary_vertex_creation
             lod_size
     );
     
-    // update the local structure for points on the line of discontinuity
+    // update the local structure for points on the curve of identification
     typename Identification_NS::iterator it = 
         this->_m_identification_NS.find(key);
     // not existing so far
@@ -498,9 +498,8 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::_is_perimetric_path
     if (x_counter % 2 != 0 && y_counter == 0 ||
         x_counter == 0 && y_counter % 2 != 0) {
         return true;
-    }
-    if (touching && x_counter == 0 && y_counter == 0) {
-        touching_pole = touching && !crossing;
+    } else if (touching && x_counter == 0 && y_counter == 0) {
+        touching_pole = (touching && !crossing);
         return true;
     }
     // else 
@@ -533,7 +532,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
     
     // on a torus except for one case, there is a face split
     if (perimetric) {
-        if (tpole1 || tpole2) {
+        if (tpole1 && tpole2) {
             std::cout << "face_split D true, true" << std::endl;
             return std::make_pair(true, true);
         } else if (this->number_of_valid_faces() == 1) {
@@ -926,8 +925,7 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_in_face
         
         // if no halfedge found
         if (closest == NULL) {
-            std::cout << "No halfedge found" << std::endl;
-            // search the line of discontinuity for right most point
+            // search the curve of identification for right most point
             // whose x is smaller than p's x
             typename Line_of_discontinuity::const_iterator
                 lower_bound,
@@ -1054,13 +1052,13 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_in_face
              curr_by == CGAL::BEFORE_DISCONTINUITY) ||
             (last_by == CGAL::BEFORE_DISCONTINUITY &&
              curr_by == CGAL::AFTER_DISCONTINUITY)) {
-            // "jumped over the line of discontinuity"
+            // "jumped over the curve of identification"
             std::swap(seg_smaller, seg_larger);
         }
 #endif
 #if 0
         if (curr->curve().get_level() != curr->next()->curve().get_level()) {
-            // "jumped over the line of discontinuity"
+            // "jumped over the curve of identification"
             std::swap(seg_smaller, seg_larger);
             std::cout << "swap: less=" << seg_smaller << ", greater=" << seg_larger << std::endl;
         }
@@ -1179,7 +1177,7 @@ Arr_torus_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex
 }
 
 //-----------------------------------------------------------------------------
-// Number of crossing with the line of discontiniuty
+// Number of crossing with the curve of identification
 //
 template <class GeomTraits, class Dcel_>
 std::pair< int, int >
@@ -1197,6 +1195,7 @@ _crossings_with_identifications(
     std::cout << "Arr_torus_topology_traits: "
               << "_crossings_with_identifications" << std::endl;
 
+    touching = false;
     crossing = false;
 
     leftmost_vertex = NULL;
@@ -1392,11 +1391,9 @@ _crossings_with_identifications(
     
     if (leftmost_vertex != NULL || bottommost_vertex != NULL) {
         crossing = true;
-    }
-    
-    if (leftmost_tvertex != NULL || bottommost_tvertex != NULL) {
-        touching = true;
-        if (!crossing) {
+    } else {
+        if (leftmost_tvertex != NULL || bottommost_tvertex != NULL) {
+            touching = true;
             if (leftmost_vertex == NULL) {
                 leftmost_vertex = leftmost_tvertex;
             }
@@ -1405,7 +1402,7 @@ _crossings_with_identifications(
             }
         }
     }
-    
+
     return (std::make_pair(x_counter, y_counter));
 }
 
