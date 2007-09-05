@@ -182,7 +182,7 @@ public:
     }
 
     // insert the curves
-    insert_x_monotone_curves(result, curves_col.begin(), curves_col.end());
+    insert(result, curves_col.begin(), curves_col.end());
     // insert the points
     typename std::list<Point_2>::iterator pit = points_col.begin();
     for(; pit != points_col.end(); ++pit)
