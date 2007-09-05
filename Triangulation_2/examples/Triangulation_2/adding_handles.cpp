@@ -2,7 +2,7 @@
 #include <CGAL/Triangulation_2.h>
 #include <cassert>
 
-/* A facet with an additionnal handle */
+/* A vertex class with an additionnal handle */
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
 class My_vertex_base
   : public  Vb
