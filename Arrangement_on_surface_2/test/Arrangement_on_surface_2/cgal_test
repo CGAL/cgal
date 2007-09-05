@@ -104,7 +104,7 @@ run_test()
     echo "   succesful execution of $5 $6" >> $ERRORFILE
   else
     echo "   ERROR: execution of $5 $6" >> $ERRORFILE
-    cat $OUTPUTFILE >> $ERROR_FULL_DESCRIPTION_FILE
+    cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
   fi
 }
 
@@ -167,7 +167,7 @@ compile_and_run()
       echo "   succesful execution   of $name" >> $ERRORFILE
     else
       echo "   ERROR:    execution   of $name" >> $ERRORFILE
-      cat $OUTPUTFILE >> $ERROR_FULL_DESCRIPTION_FILE
+      cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
     fi
   else
     echo   "   ERROR:    not executed   $name" >> $ERRORFILE
