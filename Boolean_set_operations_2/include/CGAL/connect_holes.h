@@ -134,7 +134,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   // Construct the arrangement of all segments.
   Arrangement_2         arr;
 
-  insert_x_monotone_curves (arr, segments.begin(), segments.end());
+  insert (arr, segments.begin(), segments.end());
 
   // The resulting arrangment contains a single holes in the unbounded face,
   // which comprises a face f, with several holes in its interior.
