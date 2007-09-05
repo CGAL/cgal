@@ -232,4 +232,14 @@ make_list(Iterator begin, Iterator end)
 #  define CGAL_make_list(begin, end) (begin, end)
 #endif
 
+#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#define CGAL_DEPRECATED  __attribute__((deprecated))
+#elif (defined _MSC_VER)
+#define CGAL_DEPRECATED __declspec(deprecated)
+#else
+#define CGAL_DEPRECATED
+#endif
+
+
+
 #endif // CGAL_CONFIG_H
