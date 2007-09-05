@@ -62,7 +62,7 @@ public:
   typedef GeomTraits_                                     Geometry_traits_2;
 
   typedef Dcel_                                           Dcel;
-  typedef Arrangement_on_surface_2<Geometry_traits_2,
+  typedef Arrangement_with_history_2<Geometry_traits_2,
                                    Dcel>                  Self;
 
   typedef typename Base::Point_2                          Point_2;
@@ -242,7 +242,7 @@ public:
                                    this->topology_traits()->initial_face(); 
 
     if (! un_face->is_fictitious())
-      return (Face_handle (un_face));
+      return (Face_const_handle (un_face));
 
     const typename Base::DHalfedge  *p_he = *(un_face->inner_ccbs_begin());
     const typename Base::DHalfedge  *p_opp = p_he->opposite();

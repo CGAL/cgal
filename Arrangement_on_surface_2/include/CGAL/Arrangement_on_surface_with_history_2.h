@@ -76,6 +76,7 @@ public:
   typedef typename Geometry_traits_2::Curve_2             Curve_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
+  typedef Arr_observer<Self>                              Observer;
 protected:
 
   friend class Arr_observer<Self>;
@@ -624,14 +625,14 @@ protected:
    * Register a new observer (so it starts receiving notifications).
    * \param p_obs A pointer to the observer object.
    */
-  void _register_observer (Arr_observer<Self> *p_obs);
+  void _register_observer (Observer *p_obs);
 
   /*!
    * Unregister an observer (so it stops receiving notifications).
    * \param p_obs A pointer to the observer object.
    * \return Whether the observer was successfully unregistered.
    */
-  bool _unregister_observer (Arr_observer<Self> *p_obs);
+  bool _unregister_observer (Observer *p_obs);
   //@}
 
   /// \name Curve insertion and deletion.
