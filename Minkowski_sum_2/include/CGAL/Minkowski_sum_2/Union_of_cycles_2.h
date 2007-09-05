@@ -84,7 +84,7 @@ protected:
     CGAL_precondition (arr.is_empty());
 
     // Construct the arrangement of the curves.
-    insert_x_monotone_curves (arr, begin, end);
+    insert (arr, begin, end);
 
     // Go over all faces and mark them as unvisited, by setting their inside
     // count to (-1).
