@@ -489,53 +489,60 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 
 // ----------------------------------------------------------------------------
 // backward compatibility functions.
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class PointLocation>
-void insert_x_monotone_curve
+CGAL_DEPRECATED void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  const typename GeomTraits::X_monotone_curve_2& c,
  const PointLocation& pl)
 {
   insert(arr, c, pl);
 }
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits>
-void insert_x_monotone_curve
+CGAL_DEPRECATED void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  const typename GeomTraits::X_monotone_curve_2& c)
 {
   insert(arr, c);
 }
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_x_monotone_curves 
+CGAL_DEPRECATED void insert_x_monotone_curves 
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  InputIterator begin, InputIterator end)
 {
   insert(arr, begin, end);
 }
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits>
-void insert_x_monotone_curve
+CGAL_DEPRECATED void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  const typename GeomTraits::X_monotone_curve_2& c,
  const Object& obj)
 {
   insert(arr, c, obj);
 }
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class PointLocation>
-void insert_curve
+CGAL_DEPRECATED void insert_curve
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  const typename GeomTraits::Curve_2& c,
  const PointLocation& pl)
 {
   insert(arr, c, pl);
 }
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits>
-void insert_curve
+CGAL_DEPRECATED void insert_curve
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  const typename GeomTraits::Curve_2& c)
 {
   insert(arr, c);
 }
+/* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert_curves 
+CGAL_DEPRECATED void insert_curves 
 (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  InputIterator begin, InputIterator end)
 {
