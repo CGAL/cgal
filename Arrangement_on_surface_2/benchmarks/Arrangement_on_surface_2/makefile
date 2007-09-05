@@ -381,7 +381,7 @@ LCPPINCS+= -I$(BASEDIR)/../../../../branches/experimental-packages/Arrangement_o
 else
 LCPPINCS+= -I$(BASEDIR)/../../include
 endif
-# LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
+LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 # LCPPINCS+= -I$(BASEDIR)/../../../Arrangement_2/include
 
 # ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))

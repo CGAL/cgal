@@ -39,7 +39,6 @@
 #include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
 #include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
@@ -194,7 +193,10 @@ public:
 
   /*! Initialize an empty DCEL structure. */
   void init_dcel();
-  
+
+  /*! Make the necessary updates after the DCEL structure have been updated. */
+  void dcel_updated ();
+
   /*! Determine whether the given vertex is concrete.
    * \param v the vertex.
    * \return true if v is mapped to a point on the discontinuity arc; false

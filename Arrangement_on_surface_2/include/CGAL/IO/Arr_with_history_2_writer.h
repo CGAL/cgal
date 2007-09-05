@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005-2007  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -49,8 +49,6 @@ protected:
                                                      Curve_const_iterator;
   typedef typename Arr_with_history_2::Curve_const_handle
                                                      Curve_const_handle;
-  typedef typename Arr_with_history_2::Halfedge_const_handle
-                                                     Halfedge_const_handle;
   typedef typename Arr_with_history_2::Induced_edge_iterator
                                                      Induced_edge_iterator;
 
@@ -111,7 +109,7 @@ protected:
     for (ieit = this->m_arr.induced_edges_begin(cv);
          ieit != this->m_arr.induced_edges_end(cv); ++ieit)
     {
-      formatter.write_halfedge_index (this->_get_index (*ieit));
+      formatter.write_halfedge_index (this->_get_index (&(**ieit)));
     }
     formatter.write_induced_edges_end();
     

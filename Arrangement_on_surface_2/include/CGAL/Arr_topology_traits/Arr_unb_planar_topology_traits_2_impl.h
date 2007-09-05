@@ -67,24 +67,39 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::assign
   // Assign the base class.
   Base::assign (other);
 
+  // Update the topology-traits properties after the DCEL have been updated.
+  dcel_updated();
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Make the necessary updates after the DCEL structure have been updated.
+//
+template <class GeomTraits, class Dcel_>
+void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
+{
   // Go over the DCEL vertices and locate the four fictitious ones.
   typename Dcel::Vertex_iterator       vit;
   Boundary_type                        bx, by;
   Halfedge                            *first_he, *next_he;
 
   v_bl = v_tl = v_br = v_tr = NULL;
-  for (vit = this->m_dcel.vertices_begin(); vit != 
-         this->m_dcel.vertices_end(); ++vit)
+  n_inf_verts = 0;
+  for (vit = this->m_dcel.vertices_begin();
+       vit != this->m_dcel.vertices_end(); ++vit)
   {
     if (! vit->has_null_point())
       continue;
+
+    n_inf_verts++;
 
     // The current vertex is not associated with a point - check if it has
     // only two incident halfedges. If so, it is one of the four fictitious
     // vertices.
     first_he = vit->halfedge();
     next_he = first_he->next()->opposite();
-      
+
     if (next_he->next()->opposite() == first_he)
     {
       bx = vit->boundary_in_x();
@@ -106,8 +121,6 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::assign
   CGAL_assertion (v_bl != NULL && v_tl != NULL &&
                   v_br != NULL && v_tr != NULL);
 
-  n_inf_verts = other.n_inf_verts;
-
   // Go over the DCEL faces and locate the fictitious face.
   typename Dcel::Face_iterator         fit;
   
@@ -117,12 +130,13 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::assign
   {
     if (fit->is_fictitious())
     {
+      CGAL_assertion (fict_face == NULL);
+
       fict_face = &(*fit);
-      break;
     }
   }
   CGAL_assertion (fict_face != NULL);
-  
+
   return;
 }
 
@@ -624,7 +638,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind = MIN_END;
+    Curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
@@ -659,7 +673,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind = MIN_END;
+    Curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
 
     CGAL_assertion (v_cv != NULL);
@@ -765,7 +779,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
   const Vertex      *v2 = he->vertex();
   Boundary_type      he_bound;
   Comparison_result  res1, res2;
-  Curve_end          v_ind = MIN_END;
+  Curve_end          v_ind;
 
   // Check if this is a "vertical" ficitious edge.
   if ((he_bound = v1->boundary_in_x()) != NO_BOUNDARY &&

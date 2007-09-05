@@ -106,6 +106,7 @@ public:
 
   /// \name Local operations and predicates for the arrangement.
   //@{
+
   /*!
    * Locate the arrangement feature that contains the given unbounded curve
    * end. 
@@ -302,6 +303,7 @@ public:
                                Boundary_type bound_y = NO_BOUNDARY)
   {
     DVertex* v = p_arr->_create_vertex (p, bound_x, bound_y);
+    
     CGAL_assertion (v != NULL);
     return (p_arr->_handle_for (v));
   }
@@ -787,6 +789,148 @@ public:
     return (p_arr->topology_traits()->number_of_valid_vertices());
   }
   //@}
+
+  /// \name Functions used by the arrangement reader and writer.
+  //@{
+  typedef typename Arrangement_2::Dcel                Dcel;
+  typedef typename Arrangement_2::DVertex_const_iter  Dcel_vertex_iterator;
+  typedef typename Arrangement_2::DEdge_const_iter    Dcel_edge_iterator;
+  typedef typename Arrangement_2::DFace_const_iter    Dcel_face_iterator;
+  typedef typename Arrangement_2::DOuter_ccb_const_iter
+                                                      Dcel_outer_ccb_iterator;
+  typedef typename Arrangement_2::DInner_ccb_const_iter
+                                                      Dcel_inner_ccb_iterator;
+  typedef typename Arrangement_2::DIso_vertex_const_iter
+                                                      Dcel_iso_vertex_iterator;
+
+  typedef DVertex                               Dcel_vertex;
+  typedef DHalfedge                             Dcel_halfedge;
+  typedef DFace                                 Dcel_face;
+  typedef DOuter_ccb                            Dcel_outer_ccb;
+  typedef DInner_ccb                            Dcel_inner_ccb;
+  typedef DIso_vertex                           Dcel_isolated_vertex;
+
+  /*!
+   * Get the arrangement DCEL.
+   */
+  const Dcel& dcel () const
+  {
+    return (p_arr->_dcel());
+  }
+
+  /*!
+   * Clear the entire arrangment.
+   */
+  void clear_all ()
+  {
+    p_arr->clear();
+    p_arr->_dcel().delete_all();
+    return;
+  }
+
+  /*!
+   * Create a new vertex.
+   * \param p A pointer to the point (may be NULL in case of a vertex at
+   *          infinity).
+   * \param bound_x The boundary condition at x.
+   * \param bound_y The boundary condition at y.
+   * \return A pointer to the created DCEL vertex.
+   */
+  Dcel_vertex* new_vertex (const Point_2 *p,
+                           Boundary_type bound_x, Boundary_type bound_y)
+  {
+    Dcel_vertex     *new_v = p_arr->_dcel().new_vertex();
+
+    if (p != NULL)
+    {
+      typename Dcel::Vertex::Point  *p_pt = p_arr->_new_point(*p);
+
+      new_v->set_point (p_pt);
+    }
+    else
+    {
+      CGAL_precondition (bound_x == MINUS_INFINITY ||
+                         bound_x == PLUS_INFINITY ||
+                         bound_y == MINUS_INFINITY ||
+                         bound_y == PLUS_INFINITY);
+
+      new_v->set_point (NULL);
+    }
+
+    new_v->set_boundary (bound_x, bound_y);
+    return (new_v);
+  }
+
+  /*!
+   * Create a new edge (halfedge pair), associated with the given curve.
+   * \param cv A pointer to the x-monotone curve (may be NULL in case of
+   *           a fictitious edge).
+   * \return A pointer to one of the created DCEL halfedge.
+   */
+  Dcel_halfedge* new_edge (const X_monotone_curve_2 *cv)
+  {
+    Dcel_halfedge       *new_he = p_arr->_dcel().new_edge();
+
+    if (cv != NULL)
+    {
+      typename Dcel::Halfedge::X_monotone_curve  *p_cv =
+                                                      p_arr->_new_curve(*cv);
+      new_he->set_curve (p_cv);
+    }
+    else
+    {
+      new_he->set_curve (NULL);
+    }
+
+    return (new_he);
+  }
+
+  /*!
+   * Create a new face.
+   * \return A pointer to the created DCEL face.
+   */
+  Dcel_face* new_face ()
+  {
+    return (p_arr->_dcel().new_face());
+  }
+
+  /*!
+   * Create a new outer CCB.
+   * \return A pointer to the created DCEL outer CCB.
+   */
+  Dcel_outer_ccb* new_outer_ccb ()
+  {
+    return (p_arr->_dcel().new_outer_ccb());
+  }
+
+  /*!
+   * Create a new inner CCB.
+   * \return A pointer to the created DCEL inner CCB.
+   */
+  Dcel_inner_ccb* new_inner_ccb ()
+  {
+    return (p_arr->_dcel().new_inner_ccb());
+  }
+
+  /*!
+   * Create a new isolated vertex.
+   * \return A pointer to the created DCEL isolated vertex.
+   */
+  Dcel_isolated_vertex* new_isolated_vertex ()
+  {
+    return (p_arr->_dcel().new_isolated_vertex());
+  }
+
+  /*!
+   * Update the topology traits after the DCEL has been updated.
+   */
+  void dcel_updated()
+  {
+    p_arr->topology_traits()->dcel_updated();
+    return;
+  }
+  //@}
+
 };
 
 CGAL_END_NAMESPACE

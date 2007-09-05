@@ -140,8 +140,8 @@ protected:
 
     // TODO check Vertex_less
     struct Vertex_less {
-        bool operator() (Vertex *v1, Vertex *v2) {
-            return &(*v1) < &(*v2);
+        bool operator() (Vertex v1, Vertex v2) {
+            return &v1 < &v2;
         }
     };
 
@@ -150,7 +150,7 @@ protected:
     //! type of line of discontinuity
     typedef std::map< Point_2, Vertex*, Point_2_less > Line_of_discontinuity;
 
-    typedef std::map< Vertex*, typename Line_of_discontinuity::iterator,
+    typedef std::map< Vertex, typename Line_of_discontinuity::iterator,
                       Vertex_less >
     Vertices_on_line_of_discontinuity;
     
@@ -269,7 +269,7 @@ private:
             }
         }
 #else
-        typedef QdX::Quadric_3_z_at_xy_isolator_traits< Quadric_3 > Traits;
+        typedef QdX::Quadric_z_at_xy_isolator_traits< Quadric_3 > Traits;
         typedef SoX::Create_restricted_cad_3< Traits > Creator;
         typename Creator::Restricted_cad_3 cad = Creator()(base);
         
@@ -277,7 +277,7 @@ private:
             // extreme points of projected silhouette match singular points
             
             CGAL_precondition(cad.number_of_vertices() == 2);
-            CGAL_precondition(cad.number_of_edges() == 2);
+            CGAL_precondition(cad.number_of_halfedges() == 4);
             CGAL_precondition(cad.number_of_faces() == 2);
             CGAL_precondition(cad.number_of_unbounded_faces() == 1);
             
@@ -290,7 +290,7 @@ private:
             // going to infinity
             
             CGAL_precondition(cad.number_of_vertices() == 0);
-            CGAL_precondition(cad.number_of_edges() == 2);
+            CGAL_precondition(cad.number_of_halfedges() == 4);
             CGAL_precondition(cad.number_of_faces() == 3);
             CGAL_precondition(cad.number_of_unbounded_faces() == 3);
             
@@ -300,55 +300,57 @@ private:
         if (base.is_elliptic_paraboloid()) {
             
             CGAL_precondition(cad.number_of_vertices() == 1);
-            CGAL_precondition(cad.number_of_edges() == 2);
+            CGAL_precondition(cad.number_of_halfedges() == 4);
             CGAL_precondition(cad.number_of_faces() == 2);
             CGAL_precondition(cad.number_of_unbounded_faces() == 2);
             
             int number_of_vertices_at_minus_inf = 0;
             int number_of_vertices_at_plus_inf = 0;
             
-            for (typename Creator::Restricted_cad_3::Edge_const_iterator
-                     eit = cad.edges_begin(); eit != cad.edges_end();
-                 eit++) {
+            for (typename Creator::Restricted_cad_3::Halfedge_iterator
+                     hit = cad.halfedges_begin(); hit != cad.halfedges_end();
+                 hit++) {
+                if (hit->direction() == CGAL::LEFT_TO_RIGHT) {
 #if 1 // TODO use traits instead
-                CGAL_precondition(
-                        eit->curve().get_boundary_in_y(CGAL::MIN_END)
-                        == CGAL::NO_BOUNDARY
-                ); 
-                if (eit->curve().get_boundary_in_x(CGAL::MIN_END)
-                    == CGAL::MINUS_INFINITY) {
-                    number_of_vertices_at_minus_inf++;
-                }
-                CGAL_precondition(
-                        eit->curve().get_boundary_in_y(CGAL::MAX_END)
-                        == CGAL::NO_BOUNDARY
-                ); 
-                if (eit->curve().get_boundary_in_x(CGAL::MAX_END)
-                    == CGAL::PLUS_INFINITY) {
-                    number_of_vertices_at_plus_inf++;
-                }                    
+                    CGAL_precondition(
+                            hit->curve().get_boundary_in_y(CGAL::MIN_END)
+                            == CGAL::NO_BOUNDARY
+                    ); 
+                    if (hit->curve().get_boundary_in_x(CGAL::MIN_END)
+                        == CGAL::MINUS_INFINITY) {
+                        number_of_vertices_at_minus_inf++;
+                    }
+                    CGAL_precondition(
+                            hit->curve().get_boundary_in_y(CGAL::MAX_END)
+                            == CGAL::NO_BOUNDARY
+                    ); 
+                    if (hit->curve().get_boundary_in_x(CGAL::MAX_END)
+                        == CGAL::PLUS_INFINITY) {
+                        number_of_vertices_at_plus_inf++;
+                    }                    
 #else
-                CGAL_precondition(
-                        m_traits->boundary_in_y_2_object()(
-                                eit->curve(), CGAL::MIN_END
-                        ) == CGAL::NO_BOUNDARY
-                ); 
-                if (m_traits->boundary_in_x_2_object()(
-                            eit->curve(), CGAL::MIN_END
-                    ) == CGAL::MINUS_INFINITY) {
-                    number_of_vertices_at_minus_inf++;
-                }
-                CGAL_precondition(
-                        m_traits->boundary_in_y_2_object()(
-                                eit->curve(), CGAL::MAX_END
-                        ) == CGAL::NO_BOUNDARY
-                ); 
-                if (m_traits->boundary_in_x_2_object()(
-                            eit->curve(), CGAL::MAX_END
-                    ) == CGAL::PLUS_INFINITY) {
-                    number_of_vertices_at_plus_inf++;
-                }
+                    CGAL_precondition(
+                            m_traits->boundary_in_y_2_object()(
+                                    hit->curve(), CGAL::MIN_END
+                            ) == CGAL::NO_BOUNDARY
+                    ); 
+                    if (m_traits->boundary_in_x_2_object()(
+                                hit->curve(), CGAL::MIN_END
+                        ) == CGAL::MINUS_INFINITY) {
+                        number_of_vertices_at_minus_inf++;
+                    }
+                    CGAL_precondition(
+                            m_traits->boundary_in_y_2_object()(
+                                    hit->curve(), CGAL::MAX_END
+                            ) == CGAL::NO_BOUNDARY
+                    ); 
+                    if (m_traits->boundary_in_x_2_object()(
+                                hit->curve(), CGAL::MAX_END
+                        ) == CGAL::PLUS_INFINITY) {
+                        number_of_vertices_at_plus_inf++;
+                    }
 #endif
+                }
             }
 
             CGAL_assertion(number_of_vertices_at_minus_inf + 
@@ -569,7 +571,7 @@ public:
     Sweep_line_non_intersecting_insertion_visitor;
     
     template <class OutputIterator_>
-    struct Sweep_line_batched_point_location_visitor :
+    struct Sweep_line_bacthed_point_location_visitor :
         public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
     {
         typedef OutputIterator_                               Output_iterator;
@@ -580,7 +582,7 @@ public:
         typedef typename Base::Event                          Event;
         typedef typename Base::Subcurve                       Subcurve;
         
-        Sweep_line_batched_point_location_visitor (const Arr *arr,
+        Sweep_line_bacthed_point_location_visitor (const Arr *arr,
                                                    Output_iterator *oi) :
             Base (arr, oi)
         {}
@@ -640,7 +642,12 @@ public:
      * Initialize an empty DCEL structure.
      */
     void init_dcel ();
-    
+
+    /*!
+     * Make the necessary updates after the DCEL structure have been updated.
+     */
+    void dcel_updated ();
+
 #if 0 // removed from concept
     /*!
      * Compare the x-coordinate of a given vertex 

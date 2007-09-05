@@ -73,7 +73,6 @@ template <class GeomTraits, class Dcel_>
 void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
     (const Self& other)
 {
-    std::cout << "Arr_qdx_topology_traits_2 assign"  << std::endl;
     // Assign the class.
     // Clear the current DCEL and duplicate the other DCEL.
     m_dcel.delete_all();
@@ -90,40 +89,73 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
         m_traits = other.m_traits;
     }
     m_own_traits = other.m_own_traits;
- 
-    m_left = other.m_left;
-    m_right = other.m_right;
-   
+
+    // Update the special properties of the topology traits.
+    dcel_updated();
+
+    CGAL_assertion (m_left != other.m_left);
+    CGAL_assertion (m_right != other.m_right);
+
+    return;
+}
+
+//-----------------------------------------------------------------------------
+// Make the necessary updates after the DCEL structure have been updated.
+//
+template <class GeomTraits, class Dcel_>
+void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
+{
     // Go over the DCEL vertices and locate all points with boundary condition
     typename Dcel::Vertex_iterator       vit;
-    //Boundary_type                        bx, by;
-    //Halfedge                            *first_he, *next_he;
+    Boundary_type                        bx, by;
+
     v_left = v_right = NULL;
-    for (vit = this->m_dcel.vertices_begin(); vit != 
-             this->m_dcel.vertices_end(); ++vit)
+    for (vit = this->m_dcel.vertices_begin();
+         vit != this->m_dcel.vertices_end(); ++vit)
     {
-        if (vit->boundary_in_x() != CGAL::NO_BOUNDARY) {
-            if (vit->boundary_in_x() == m_left) {
+        // First check whether the vertex has a boundary condition in x.
+        // If so, then a negative boundary condition indicates it is the left
+        // vertex, and a positive boundary condition indicates it is the right
+        // vertex.
+        bx = vit->boundary_in_x();
+        if (bx != CGAL::NO_BOUNDARY)
+        {
+            if (CGAL::sign (bx) == CGAL::NEGATIVE)
+            {
+                CGAL_assertion (bx == MINUS_INFINITY ||
+                                bx == AFTER_SINGULARITY);
+                m_left = bx;
                 v_left = &(*vit);
             }
-            if (vit->boundary_in_x() == m_right) {
+            else
+            {
+                CGAL_assertion (bx == PLUS_INFINITY ||
+                                bx == BEFORE_SINGULARITY);
+                m_right = bx;
                 v_right = &(*vit);
             }
-        } else {
-            if (vit->boundary_in_y() != CGAL::NO_BOUNDARY) {
-                // fill m_line_of_discontinuity
-                std::pair< typename Line_of_discontinuity::iterator, bool > p =
-                    m_line_of_discontinuity.insert(
-                            // each point on loc is concrete
-                            std::make_pair(vit->point(), &(*vit))
-                    );
-                CGAL_assertion(!p.second);
-                
-                // vertices on line of discontiuity
-                m_vertices_on_line_of_discontinuity[&(*vit)] = p.first;
-            }
         }
+
+        // In case the vertex lies on the line of dicontinuity, it is
+        // associated with a concrete point. Map this point to the vertex.
+        by = vit->boundary_in_y();
+        if (by == CGAL::NO_BOUNDARY)
+            continue;
+
+        std::pair< typename Line_of_discontinuity::iterator, bool > res =
+            m_line_of_discontinuity.insert (std::make_pair(vit->point(),
+                                                           &(*vit)));
+        CGAL_assertion(! res.second);
+                
+        m_vertices_on_line_of_discontinuity[(*vit)] = res.first;
     }
+    CGAL_assertion (v_left != NULL);
+    CGAL_assertion (v_right != NULL);
+
+    // RWRW: Is this correct? I think not ...
+    f_top = NULL;
+
+    return;
 }
 
 //-----------------------------------------------------------------------------
@@ -571,7 +603,7 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
     
     // store iterator for vertex 
     // -> needed to delete vertex if becoming redundant
-    m_vertices_on_line_of_discontinuity[v] = it; 
+    m_vertices_on_line_of_discontinuity[*v] = it; 
     CGAL_assertion(
             static_cast< int >(m_vertices_on_line_of_discontinuity.size()) ==
             lod_size + 1

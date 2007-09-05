@@ -366,6 +366,11 @@ public:
   void init_dcel ();
 
   /*!
+   * Make the necessary updates after the DCEL structure have been updated.
+   */
+  void dcel_updated ();
+
+  /*!
    * Check if the given vertex is associated with the given curve end.
    * \param v The vertex.
    * \param cv The x-monotone curve.

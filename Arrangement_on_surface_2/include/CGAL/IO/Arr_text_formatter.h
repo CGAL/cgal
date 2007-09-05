@@ -15,9 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Michal Meyerovitch <gorgymic@post.tau.ac.il>
-//                 Ron Wein           <wein@post.tau.ac.il>
-//                 (based on old version by Ester Ezra)
+// Author(s)     : Ron Wein           <wein@post.tau.ac.il>
+//                 (based on old version by Michal Meyerovitch and Ester Ezra)
 #ifndef CGAL_ARR_TEXT_FORMATTER_H
 #define CGAL_ARR_TEXT_FORMATTER_H
 
@@ -44,9 +43,8 @@ public:
   typedef Arrangement_                                   Arrangement_2;
   typedef typename Arrangement_2::Size                   Size;
   typedef typename Arrangement_2::Dcel                   Dcel;
-  typedef typename Arrangement_2::Traits_2               Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                     Point_2;
+  typedef typename Arrangement_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Arrangement_2::Point_2                Point_2;
 
   typedef typename Arrangement_2::Vertex_handle          Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle        Halfedge_handle;
@@ -255,16 +253,19 @@ public:
     _write_comment ("END FACE");
   }
 
-  void write_outer_ccb_begin ()
+  void write_outer_ccbs_begin ()
+  {
+    out() << std::endl;
+    return;
+  }
+
+  void write_outer_ccbs_end ()
   {}
 
-  void write_outer_ccb_end ()
+  void write_inner_ccbs_begin ()
   {}
 
-  void write_holes_begin ()
-  {}
-
-  void write_holes_end ()
+  void write_inner_ccbs_end ()
   {}
 
   virtual void write_face_data (Face_const_handle )
@@ -275,7 +276,7 @@ public:
   
   void write_ccb_halfedges_end()
   {
-    out() << std::endl;    
+    out() << std::endl;
   }
 
   void write_halfedge_index (int idx)
@@ -417,10 +418,10 @@ public:
     _skip_comments();
   }
 
-  void read_outer_ccb_begin ()
+  void read_outer_ccbs_begin ()
   {}
   
-  void read_outer_ccb_end ()
+  void read_outer_ccbs_end ()
   {}
 
   int read_halfedge_index ()
@@ -431,18 +432,10 @@ public:
     return (val);
   }
 
-  void read_holes_begin ()
+  void read_inner_ccbs_begin ()
   {}
   
-  void read_holes_end ()
-  {}
-
-  void read_inner_ccb_begin ()
-  {
-    _skip_comments();
-  }
-  
-  void read_inner_ccb_end ()
+  void read_inner_ccbs_end ()
   {}
 
   void read_ccb_halfedges_begin()
@@ -458,7 +451,7 @@ public:
   
   void read_isolated_vertices_end () 
   {
-    _skip_until_EOL();
+    _skip_until_EOL ();
   }
 
   virtual void read_face_data (Face_handle )
@@ -490,8 +483,29 @@ protected:
     CGAL_assertion (m_in != NULL);
 
     int     c;
-    while ((c = m_in->get()) != EOF && c == '#')
+
+    c = m_in->get();
+    if (c == ' ')
+    {
+      // Skip blanks until EOL.
+      while ((c = m_in->get()) != EOF && c == ' ');
+      if (c != '\n')
+      {
+        m_in->putback (c);
+        return;
+      }
+      else
+      {
+        c = m_in->get();
+      }
+    }
+
+    // Skip comment lines that begin with a '#' character.
+    while (c != EOF && c == '#')
+    {
       _skip_until_EOL();
+      c = m_in->get();
+    }
     m_in->putback (c);
 
     return;
@@ -511,22 +525,21 @@ class Arr_face_extended_text_formatter :
 
 public:
 
-  typedef Arrangement_                              Arrangement_2;
-  typedef Arr_text_formatter<Arrangement_2>         Base;
+  typedef Arrangement_                               Arrangement_2;
+  typedef Arr_text_formatter<Arrangement_2>          Base;
 
-  typedef typename Base::Size                       Size;
-  typedef typename Base::Dcel                       Dcel;
-  typedef typename Base::Traits_2                   Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                Point_2;
+  typedef typename Base::Size                        Size;
+  typedef typename Base::Dcel                        Dcel;
+  typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Arrangement_2::Point_2            Point_2;
 
-  typedef typename Base::Vertex_handle              Vertex_handle;
-  typedef typename Base::Halfedge_handle            Halfedge_handle;
-  typedef typename Base::Face_handle                Face_handle;
+  typedef typename Base::Vertex_handle               Vertex_handle;
+  typedef typename Base::Halfedge_handle             Halfedge_handle;
+  typedef typename Base::Face_handle                 Face_handle;
 
-  typedef typename Base::Vertex_const_handle        Vertex_const_handle;
-  typedef typename Base::Halfedge_const_handle      Halfedge_const_handle;
-  typedef typename Base::Face_const_handle          Face_const_handle;
+  typedef typename Base::Vertex_const_handle         Vertex_const_handle;
+  typedef typename Base::Halfedge_const_handle       Halfedge_const_handle;
+  typedef typename Base::Face_const_handle           Face_const_handle;
 
   /*! Default constructor.*/
   Arr_face_extended_text_formatter () :
@@ -568,22 +581,21 @@ class Arr_extended_dcel_text_formatter :
 {
 public:
 
-  typedef Arrangement_                              Arrangement_2;
-  typedef Arr_text_formatter<Arrangement_2>         Base;
+  typedef Arrangement_                               Arrangement_2;
+  typedef Arr_text_formatter<Arrangement_2>          Base;
 
-  typedef typename Base::Size                       Size;
-  typedef typename Base::Dcel                       Dcel;
-  typedef typename Base::Traits_2                   Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                Point_2;
+  typedef typename Base::Size                        Size;
+  typedef typename Base::Dcel                        Dcel;
+  typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Arrangement_2::Point_2            Point_2;
 
-  typedef typename Base::Vertex_handle              Vertex_handle;
-  typedef typename Base::Halfedge_handle            Halfedge_handle;
-  typedef typename Base::Face_handle                Face_handle;
+  typedef typename Base::Vertex_handle               Vertex_handle;
+  typedef typename Base::Halfedge_handle             Halfedge_handle;
+  typedef typename Base::Face_handle                 Face_handle;
 
-  typedef typename Base::Vertex_const_handle        Vertex_const_handle;
-  typedef typename Base::Halfedge_const_handle      Halfedge_const_handle;
-  typedef typename Base::Face_const_handle          Face_const_handle;
+  typedef typename Base::Vertex_const_handle         Vertex_const_handle;
+  typedef typename Base::Halfedge_const_handle       Halfedge_const_handle;
+  typedef typename Base::Face_const_handle           Face_const_handle;
 
   /*! Default constructor.*/
   Arr_extended_dcel_text_formatter () :

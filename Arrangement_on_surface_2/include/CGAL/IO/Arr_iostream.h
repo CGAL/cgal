@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005-2007 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,18 +15,18 @@
 // $Id$
 // 
 //
-// Author(s)     : Michal Meyerovitch <gorgymic@post.tau.ac.il>
-//                 Ron Wein           <wein@post.tau.ac.il>
-//                 (based on old version by Ester Ezra)
+// Author(s)     : Ron Wein           <wein@post.tau.ac.il>
+//                 (based on old version by Michal Meyerovitch and Ester Ezra)
 
 #ifndef CGAL_ARR_IOSTREAM_H
 #define CGAL_ARR_IOSTREAM_H
 
 /*! \file
- * Definition of the I/O operators for the Arrangement_2<Traits,Dcel> class.
+ * Definition of the I/O operators for the class-template
+ * Arrangement_on_surface_2<GeomTraits,TopTraits>.
  */
 
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/IO/Arr_text_formatter.h>
 #include <CGAL/IO/Arrangement_2_writer.h>
 #include <CGAL/IO/Arrangement_2_reader.h>
@@ -40,13 +40,14 @@ CGAL_BEGIN_NAMESPACE
  * \param os The output stream.
  * \param format The formatter.
  */
-template <class Traits, class Dcel, class Formatter>
-std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
-                     std::ostream& os, 
-                     Formatter& format)
+template <class GeomTraits, class TopTraits, class Formatter>
+std::ostream&
+    write (const Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
+           std::ostream& os, 
+           Formatter& format)
 {
-  typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
-  typedef Arrangement_2_writer<Arrangement_2>           Arr_writer;
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
+  typedef Arrangement_2_writer<Arrangement_2>             Arr_writer;
 
   Arr_writer      writer (arr);
 
@@ -60,13 +61,14 @@ std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
  * \param os The output stream.
  * \param arr The arrangement.
  */
-template <class Traits, class Dcel>
-std::ostream& operator<< (std::ostream& os, 
-                          const Arrangement_2<Traits,Dcel>& arr)
+template <class GeomTraits, class TopTraits>
+std::ostream&
+    operator<< (std::ostream& os, 
+                const Arrangement_on_surface_2<GeomTraits,TopTraits>& arr)
 {
-  typedef Arrangement_2<Traits,Dcel>             Arrangement_2;
-  typedef Arrangement_2_writer<Arrangement_2>    Arr_writer;
-  typedef Arr_text_formatter<Arrangement_2>      Text_formatter;
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
+  typedef Arrangement_2_writer<Arrangement_2>             Arr_writer;
+  typedef Arr_text_formatter<Arrangement_2>               Text_formatter;
 
   Text_formatter text_format (os);
   Arr_writer      writer (arr);
@@ -81,13 +83,14 @@ std::ostream& operator<< (std::ostream& os,
  * \param os The output stream.
  * \param format The formatter.
  */
-template <class Traits, class Dcel, class Formatter>
-std::istream& read (Arrangement_2<Traits,Dcel>& arr,
-                    std::istream& is, 
-                    Formatter& format)
+template <class GeomTraits, class TopTraits, class Formatter>
+std::istream&
+    read (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
+          std::istream& is, 
+          Formatter& format)
 {
-  typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
-  typedef Arrangement_2_reader<Arrangement_2>           Arr_reader;
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
+  typedef Arrangement_2_reader<Arrangement_2>             Arr_reader;
 
   Arr_reader      reader(arr);
 
@@ -101,13 +104,14 @@ std::istream& read (Arrangement_2<Traits,Dcel>& arr,
  * \param is The input stream.
  * \param arr The arrangement.
  */
-template <class Traits, class Dcel>
-std::istream& operator>> (std::istream& is, 
-                          Arrangement_2<Traits,Dcel>& arr)
+template <class GeomTraits, class TopTraits>
+std::istream&
+    operator>> (std::istream& is, 
+                Arrangement_on_surface_2<GeomTraits,TopTraits>& arr)
 {
-  typedef Arrangement_2<Traits,Dcel>             Arrangement_2;
-  typedef Arrangement_2_reader<Arrangement_2>    Arr_reader;
-  typedef Arr_text_formatter<Arrangement_2>      Text_formatter;
+  typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
+  typedef Arrangement_2_reader<Arrangement_2>             Arr_reader;
+  typedef Arr_text_formatter<Arrangement_2>               Text_formatter;
 
   Text_formatter text_format (is);
   Arr_reader      reader(arr);

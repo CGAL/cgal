@@ -15,6 +15,7 @@
 // $Id$
 // 
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
+//                 Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_IMPL_H
@@ -64,15 +65,87 @@ assign(const Self & other)
   m_dcel.assign(other.m_dcel);
 
   // Take care of the traits object.
-  if (m_own_traits && m_traits != NULL) delete m_traits;
-  m_traits = (other.m_own_traits) ? new Traits_adaptor_2 : other.m_traits;
-  m_own_traits = other.m_own_traits;
+  if (m_own_traits && m_traits != NULL)
+    delete m_traits;
+  
+  if (other.m_own_traits)
+  {
+    m_traits = new Traits_adaptor_2;
+    m_own_traits = true;
+  }
+  else
+  {
+    m_traits = other.m_traits;
+    m_own_traits = false;
+  }
 
-  //! \todo assign the vertices and face correctly!
-  m_boundary_vertices = other.m_boundary_vertices;
-  m_spherical_face = other.m_spherical_face;
-  m_north_pole = other.m_north_pole;
-  m_south_pole = other.m_south_pole;
+  // Update the rest of the properties.
+  dcel_updated();
+
+  return;
+}
+
+/*! \brief initializes an empty DCEL structure. */
+template <class GeomTraits, class Dcel>
+void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
+{
+  // Go over the DCEL vertices and locate the south and north pole (if any)
+  // and any other vertex on the line of discontinuity.
+  typename Dcel::Vertex_iterator       vit;
+  Boundary_type                        bx, by;
+  Halfedge                            *he;
+  Curve_end                            ind;
+
+  m_north_pole = NULL;
+  m_south_pole = NULL;
+  m_boundary_vertices.clear();
+
+  for (vit = this->m_dcel.vertices_begin();
+       vit != this->m_dcel.vertices_end(); ++vit)
+  {
+    bx = vit->boundary_in_x();
+    by = vit->boundary_in_y();
+
+    if (by == AFTER_SINGULARITY)
+    {
+      m_south_pole = &(*vit);
+    }
+    else if (by == BEFORE_SINGULARITY)
+    {
+      m_north_pole = &(*vit);
+    }
+    else if (bx != NO_BOUNDARY)
+    {
+      // The vertex on the line of discontinuity must have at least one
+      // incident halfedge. Use the curve associated with this edge to
+      // store the vertex.
+      he = vit->halfedge();
+      ind = (he->direction() == LEFT_TO_RIGHT) ? MAX_END : MIN_END;
+
+      Vertex_key  key (he->curve(), ind);
+      m_boundary_vertices.insert (Vertex_value (key, &(*vit)));
+    }
+  }
+
+  // Go over the DCEL faces and locate the spherical face, which is the only
+  // face with no outer CCB.
+  typename Dcel::Face_iterator         fit;
+  
+  m_spherical_face = NULL;
+  for (fit = this->m_dcel.faces_begin();
+       fit != this->m_dcel.faces_end(); ++fit)
+  {
+    if (fit->number_of_outer_ccbs() == 0)
+    {
+      CGAL_assertion (m_spherical_face == NULL);
+
+      m_spherical_face = &(*fit);
+      break;
+    }
+  }
+  CGAL_assertion (m_spherical_face != NULL);
+
+  return;
 }
 
 /*! \brief initializes an empty DCEL structure. */

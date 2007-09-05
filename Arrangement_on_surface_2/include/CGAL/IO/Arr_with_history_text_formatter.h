@@ -45,7 +45,6 @@ public:
   typedef typename Base::Arrangement_2                    Arr_with_history_2;
   typedef typename Arr_with_history_2::Size                             Size;
   typedef typename Arr_with_history_2::Dcel                             Dcel;
-  typedef typename Arr_with_history_2::Traits_2           Traits_2;
   typedef typename Arr_with_history_2::Curve_2            Curve_2;
   typedef typename Arr_with_history_2::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Arr_with_history_2::Point_2            Point_2;

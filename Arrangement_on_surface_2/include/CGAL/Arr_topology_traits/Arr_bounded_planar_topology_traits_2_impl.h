@@ -37,21 +37,9 @@ void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::assign
   // Assign the base class.
   Base::assign (other);
 
-  // Go over the DCEL faces and locate the unbounded face.
-  typename Dcel::Face_iterator         fit;
-  
-  unb_face = NULL;
-  for (fit = this->m_dcel.faces_begin();
-       fit != this->m_dcel.faces_end(); ++fit)
-  {
-    if (fit->is_unbounded())
-    {
-      unb_face = &(*fit);
-      break;
-    }
-  }
-  CGAL_assertion (unb_face != NULL);
-  
+  // Update the topology-traits properties after the DCEL have been updated.
+  dcel_updated();
+
   return;
 }
 
@@ -69,6 +57,30 @@ void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 
   unb_face->set_unbounded (true);
   unb_face->set_fictitious (false);
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Make the necessary updates after the DCEL structure have been updated.
+//
+template <class GeomTraits, class Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
+{
+  // Go over the DCEL faces and locate the unbounded face.
+  typename Dcel::Face_iterator         fit;
+  
+  unb_face = NULL;
+  for (fit = this->m_dcel.faces_begin();
+       fit != this->m_dcel.faces_end(); ++fit)
+  {
+    if (fit->is_unbounded())
+    {
+      unb_face = &(*fit);
+      break;
+    }
+  }
+  CGAL_assertion (unb_face != NULL);
 
   return;
 }
