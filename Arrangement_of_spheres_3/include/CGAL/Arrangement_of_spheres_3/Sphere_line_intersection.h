@@ -10,6 +10,7 @@
 #include <CGAL/Arrangement_of_spheres_3/Coordinate_index.h>
 #include <CGAL/tags.h>
 #include <CGAL/Point_3.h>
+#include <CGAL/Sqrt_extension.h>
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
 //#include <CGAL/Arrangement_of_spheres_traits_3.h>
@@ -40,8 +41,7 @@ private:
 public:
   typedef K T;
   typedef typename K::FT NT;
-  typedef typename CGAL::Root_of_traits<NT>::RootOf_2 Quadratic_NT;
-  //typedef typename CGAL::Root_of_2<NT> Quadratic_NT;
+  CGAL_AOS3_DEFINE_QUADRATIC;
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Line_3 Line_3;
@@ -95,14 +95,65 @@ public:
     }
   }
   
- 
+  // -b +- sqrt(b^2-4ac) / 2a
+  // a0= (-b/2a)
+  // a1= +-1/2a
+  // sqrt= b^2-4ac
 
+  
   bool has_exact() const {
     return has_exact_;
   }
 
+  typename CGAL::Root_of_traits<NT>::RootOf_2 
+  root_of_2(Coordinate_index ci) const {
+    Vector_3 lp= l_.point()-CGAL::ORIGIN;
+    Vector_3 vc= s_.center()-CGAL::ORIGIN;
+    Vector_3 lv= l_.to_vector(); 
+    NT a=lv*lv;
+    NT b=2*lv*(lp-vc); //-2*lv* vc + 2*lv*lp;
+    NT c=lp*lp + vc*vc-s_.squared_radius()-2*lp*vc;
+    
+    NT disc= b*b-4*a*c;
+    CGAL_assertion(disc >= 0);
+   
+    CGAL_precondition(a!=0);
+    
+    int coord =sweep_coordinate().index();
+    CGAL::Sign sn= CGAL::sign(lv[coord]);
+    bool first;
+    if (sn != CGAL::ZERO) {
+      first= sn == CGAL::POSITIVE;
+    } else {
+      coord =plane_coordinate(0).index();
+      sn = CGAL::sign(lv[coord]);
+      if (sn != CGAL::ZERO) {
+	first= sn == CGAL::POSITIVE;
+      } else {
+	coord =plane_coordinate(1).index();
+	sn = CGAL::sign(lv[coord]);
+	first = sn == CGAL::POSITIVE;
+      }
+    }
+    bool rt= first && CGAL::sign(lv[coord]) == CGAL::POSITIVE 
+      || !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE;
+    CGAL_assertion(first && CGAL::sign(lv[coord]) == CGAL::POSITIVE
+		   || !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE);
+    /*|| !first && CGAL::sign(lv[C]) == CGAL::NEGATIVE;*/
+    typename CGAL::Root_of_traits<NT>::RootOf_2 t=make_root_of_2(a,b,c,rt);
+    
+	
+	/*if (first) {
+	  CGAL_assertion(t*lv[C] <= lv[C] *CGAL::make_root_of_2(a,b,c, !rt));
+	  } else {
+	  CGAL_assertion(t*lv[C] >= lv[C] *CGAL::make_root_of_2(a,b,c, !rt)); 
+	  }*/
+    return lp[ci.index()] + lv[ci.index()] *t;
+  }
+  
+
   void set_has_exact(bool tf) const {
-    if (tf) {
+    if (tf && !has_exact_) {
       Vector_3 lp= l_.point()-CGAL::ORIGIN;
       Vector_3 vc= s_.center()-CGAL::ORIGIN;
       Vector_3 lv= l_.to_vector(); 
@@ -144,7 +195,7 @@ public:
 	CGAL_assertion(first && CGAL::sign(lv[coord]) == CGAL::POSITIVE
 		       || !first && CGAL::sign(lv[coord]) == CGAL::NEGATIVE);
 	/*|| !first && CGAL::sign(lv[C]) == CGAL::NEGATIVE;*/
-	Quadratic_NT t=CGAL::make_root_of_2(a,b,c,rt);
+	Quadratic_NT t=CGAL_AOS3_CONSTRUCT_QUADRATIC(a,b,c,rt);
 	
 	
 	/*if (first) {
@@ -152,9 +203,9 @@ public:
 	  } else {
 	  CGAL_assertion(t*lv[C] >= lv[C] *CGAL::make_root_of_2(a,b,c, !rt)); 
 	  }*/
-	exact_[0]= lp[0] + lv[0]*t;
-	exact_[1]= lp[1] + lv[1]*t;
-	exact_[2]= lp[2] + lv[2]*t;
+	for (int i=0; i< 3; ++i ) {
+	  exact_[i]= lp[i] + lv[i]*t;
+	}
 	has_exact_=true;
       }
     //}
@@ -221,18 +272,17 @@ public:
   CGAL::Comparison_result compare(const Point_3 &o, Coordinate_index i) const;
   CGAL::Comparison_result compare( NT o, Coordinate_index i) const;
 
-  Quadratic_NT exact_coordinate(Coordinate_index i) const {
-    if (has_simple_coordinate(i)) {
-      //std::cout << "Coordinate " << i << " is simple " << simple_coordinate(i) << std::endl;
-      return simple_coordinate(i);
-    }
-    else {
-      if (!has_exact_) {
-	set_has_exact(true);
-      } 
+  const Quadratic_NT& exact_coordinate(Coordinate_index i) const {
+    if (!has_exact_) {
+      /*if (has_simple_coordinate(i)) {
+	//std::cout << "Coordinate " << i << " is simple " << simple_coordinate(i) << std::endl;
+	exact_[i.index()]= Quadratic_NT(simple_coordinate(i));
+	} else {*/
+ 	set_has_exact(true);
+	//} 
       //std::cout << "Coordinate " << i << " is " << exact_[i.index()] << std::endl;
-      return exact_[i.index()];
     }
+    return exact_[i.index()];
   }
 
   bool has_simple_coordinate(Coordinate_index i) const {
@@ -240,10 +290,15 @@ public:
   }
 
 
-  NT simple_coordinate(Coordinate_index i) const {
+  const NT& simple_coordinate(Coordinate_index i) const {
     CGAL_assertion(has_simple_coordinate(i));
-    if (s_.squared_radius()==0) return s_.center()[i.index()];
-    else return l_.point()[i.index()];
+    if (s_.squared_radius()==0){
+      CGAL_assertion(root_of_2(i)==s_.center()[i.index()]);
+      return s_.center()[i.index()];
+    } else {
+      CGAL_assertion(root_of_2(i)==l_.point()[i.index()]);
+      return l_.point()[i.index()];
+    }
   }
 
   double approximate_coordinate(Coordinate_index i) const {
@@ -282,24 +337,46 @@ template <class K>
 inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K> &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   CGAL_assertion(o.is_valid());
-  Quadratic_NT mc= exact_coordinate(CC);
-  Quadratic_NT oc= o.exact_coordinate(CC);
+  write(std::cout) << std::endl;
+  o.write(std::cout) << std::endl;
   //double dmc= CGAL::to_double(mc);
   //double doc= CGAL::to_double(oc);
   //std::cout << "Performing exact comparison " << mc << " vs " << oc << std::endl;
-  if (mc < oc) return CGAL::SMALLER;
+  Comparison_result ans= CGAL::compare(exact_coordinate(CC), o.exact_coordinate(CC));
+#ifndef NDEBUG
+  write(std::cout) << std::endl;
+  o.write(std::cout) << std::endl;
+ 
+  Comparison_result check= CGAL::compare(root_of_2(CC),
+					 o.root_of_2(CC));
+  if (ans != check) {
+    std::cout << ans << " " << check << std::endl;
+    std::cout << exact_coordinate(CC) << ": " 
+	      << Interval_nt<true>(to_interval(exact_coordinate(CC))) << std::endl;
+    std::cout << o.exact_coordinate(CC)
+	      << Interval_nt<true>(to_interval(o.exact_coordinate(CC))) << std::endl;
+    std::cout << root_of_2(CC)
+	      << Interval_nt<true>(to_interval(root_of_2(CC))) << std::endl;
+    std::cout <<  o.root_of_2(CC)
+	      << Interval_nt<true>(to_interval(o.root_of_2(CC))) << std::endl;
+    CGAL_assertion(0);
+  }
+#endif
+  return ans;
+  /*if (mc < oc) return CGAL::SMALLER;
   else if (oc < mc) return CGAL::LARGER;
-  else return CGAL::EQUAL;
+  else return CGAL::EQUAL;*/
 }
 
 template <class K>
 inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K>::Point_3 &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
-  Quadratic_NT mc= exact_coordinate(CC);
+  //Quadratic_NT mc= exact_coordinate(CC);
   NT oc= o[CC.index()];
-  if (mc < oc) return CGAL::SMALLER;
-  else if (oc < mc) return CGAL::LARGER;
-  else return CGAL::EQUAL;
+  return compare(oc, CC);
+  //if (mc < oc) return CGAL::SMALLER;
+  //else if (oc < mc) return CGAL::LARGER;
+  //else return CGAL::EQUAL;
 }
 
 
@@ -307,9 +384,10 @@ template <class K>
 inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(NT o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   Quadratic_NT mc= exact_coordinate(CC);
-  if (mc - o <0) return CGAL::SMALLER;
+  return CGAL::compare(mc, o);
+  /*if (mc - o <0) return CGAL::SMALLER;
   else if (o < mc) return CGAL::LARGER;
-  else return CGAL::EQUAL;
+  else return CGAL::EQUAL;*/
 }
 CGAL_AOS3_END_INTERNAL_NAMESPACE
 

@@ -151,6 +151,11 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
 	    throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
 	  }
 	}
+      } else {
+	if (hk_cand.empty()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
+	else hk= hk_cand.back();
+	if (hl_cand.empty()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
+	else hl= hl_cand.back();
       }
     }
     std::cout << "Intersection edges are ";

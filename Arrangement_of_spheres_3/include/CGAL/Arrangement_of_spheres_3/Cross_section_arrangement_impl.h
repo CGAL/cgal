@@ -116,12 +116,13 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
     return line().point()[C::Other_plane_coordinate::plane_index()];
   }
 
-  typename SLI::Quadratic_NT source_coordinate() const {
-    return start_.exact_coordinate(C::object());
+  typename CGAL::Root_of_traits<NT>::RootOf_2
+    source_coordinate() const {
+    return (start_.root_of_2(C::object()));
   }
 
-  typename SLI::Quadratic_NT target_coordinate() const {
-    return end_.exact_coordinate(C::object());
+  typename CGAL::Root_of_traits<NT>::RootOf_2  target_coordinate() const {
+    return (end_.root_of_2(C::object()));
   }
 
   void clip(SLI o) {
@@ -287,9 +288,9 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
   
   std::vector<std::pair<Line_arc_2, Curve > > arcs;
   for (unsigned int i=0; i< horizontal_rules.size(); ++i){
-    CAP p0(RFC(horizontal_rules[i].source_coordinate(),
+    CAP p0(RFC((horizontal_rules[i].source_coordinate()),
 	       horizontal_rules[i].constant_coordinate()));
-    CAP p1(RFC(horizontal_rules[i].target_coordinate(),
+    CAP p1(RFC((horizontal_rules[i].target_coordinate()),
 	       horizontal_rules[i].constant_coordinate()));
     Circular_k::Line_2 l(Circular_k::Point_2(0, horizontal_rules[i].constant_coordinate()),
 			 Circular_k::Vector_2(1, 0));
@@ -305,9 +306,9 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
   }
   for (unsigned int i=0; i< vertical_rules.size(); ++i){
     CAP p0(RFC(vertical_rules[i].constant_coordinate(),
-	       vertical_rules[i].source_coordinate()));
+	       (vertical_rules[i].source_coordinate())));
     CAP p1(RFC(vertical_rules[i].constant_coordinate(),
-	       vertical_rules[i].target_coordinate()));
+	       (vertical_rules[i].target_coordinate())));
     /*Circular_k::Line_arc_2 l(0, 1, -vertical_rules_[i].constant_coordinate());*/
     Circular_k::Line_2 l(Circular_k::Point_2(vertical_rules[i].constant_coordinate(), 0),
 			 Circular_k::Vector_2(0,1));
