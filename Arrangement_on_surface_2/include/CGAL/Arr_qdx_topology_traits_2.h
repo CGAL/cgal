@@ -140,8 +140,8 @@ protected:
 
     // TODO check Vertex_less
     struct Vertex_less {
-        bool operator() (Vertex v1, Vertex v2) {
-            return &v1 < &v2;
+        bool operator() (Vertex *v1, Vertex *v2) {
+            return &(*v1) < &(*v2);
         }
     };
 
@@ -150,7 +150,7 @@ protected:
     //! type of line of discontinuity
     typedef std::map< Point_2, Vertex*, Point_2_less > Line_of_discontinuity;
 
-    typedef std::map< Vertex, typename Line_of_discontinuity::iterator,
+    typedef std::map< Vertex*, typename Line_of_discontinuity::iterator,
                       Vertex_less >
     Vertices_on_line_of_discontinuity;
     
