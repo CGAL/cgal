@@ -234,7 +234,7 @@ make_list(Iterator begin, Iterator end)
 
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #define CGAL_DEPRECATED  __attribute__((deprecated))
-#elif (defined _MSC_VER)
+#elif _MSC_VER > 1300
 #define CGAL_DEPRECATED __declspec(deprecated)
 #else
 #define CGAL_DEPRECATED
