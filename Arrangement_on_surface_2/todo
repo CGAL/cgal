@@ -18,59 +18,29 @@
 
 - Test all landmark sub-strategies
 
-- Fix the reader and writer
+- Re-implement vertical ray shooting in Naive point location
 
 - Get rid of the prefix 'get_' from all functions and methods:
-    get_all_inner_nodes()
-    get_all_leaves()
-    get_all_nodes()
-    get_arr_mask()
-    get_bbox()
-    get_boundary_in_x()
-    get_boundary_in_y()
-    get_bounding_box()
-    get_closest_landmark()
-    get_coefficient()
-    get_count()
-    get_curve_at_infinity()
-    get_curve()
-    get_data()
-    get_data_ptr()
-    get_data_structure()
-    get_depth_threshold()
-    get_distinct_nodes()
-    get_double()
-    get_index() 
-    get_intersections()
-    get_is_set()
-    get_lb()
-    get_level()
-    get_lt()
-    get_marked()
-    get_node()
-    get_originator()
-    get_parent()
-    get_point()
-    get_point_at_left_top_infinity(),
-    get_point_at_right_bottom_infinity(),
-    get_point_at_x()
-    get_point()
-    get_points_at_x()
-    get_points_at_y()
-    get_rb()
-    get_rt()
-    get_size_threshold()
-    get_t_at_x()
-    get_t_at_y()
-    get_traits()
-    get_vertex()
-    get_vertical_tangencies()
-    get_x_coordinates()
-    get_y()
+    get_bbox
+    get_coefficient
+    get_data
+    get_depth_threshold
+    get_index
+    get_lb
+    get_level
+    get_lt
+    get_node
+    get_parent
+    get_rb
+    get_rt
+    get_size_threshold
+    get_y
+    get_double
 
-- Add the do_intersect and zone functions.
-
-- Change the interface of all insert_* to be insert.
+- Add insert_* functions back for backward compatibility.
+  Keep the old interface for backward complatibility (at least for CGAL 3.4,
+  then we can remove it). The "old" functions can just call the "new"
+  functions, with a #warning in the code saying that they are deprecated.
 
 - Change the interface of Envelope_2 (and Envelope_3):
   to lower_envelope_2 and upper_envelope_2 (lower_envelope_3 and
@@ -81,7 +51,15 @@
   operation to perform (just like we do now in insert() ).
 
 - Spherical arcs
-  - Test the new vertical-decomposition helper for spherical arcs.
+  - Rewrite the spherical helper class for the vertical-decomposition sweep-
+    line visitor (current one is not good enough).
+    Regarding the helper class for the spherical case, we currently return the
+    "north face" in case we "see" nothing above - which is OK - but we also
+    return the "north face" in case we see nothing from *below*. This is wrong:
+    we should really keep track of the "south face" and return it as the
+    "bottom" object. To conclude, this helper needs more work. It is not top
+    priority, but the quick-and-dirty helper that I wrote needs to become a bit
+    more complicated ...
 
   - The insertion helper and the batched point-location helper seem to have
     been copied from the planar helpers with minor changes. That is, I
@@ -98,32 +76,16 @@
 
   - We can think of adding a test for the spherical topology, similar to the
     construction test developed by Baruch: Namely read n curves from a file,
-   construct their arrangement incrementally; construct it aggregately;
-   construct an arrangement of n/2 curves then add the rest of the curves;
-   construct two arrangement of n/2 curves each and overlay them. In all
-   cases, the arrangement dimensions (V, E, F) must be the same ...
+    construct their arrangement incrementally; construct it aggregately;
+    construct an arrangement of n/2 curves then add the rest of the curves;
+    construct two arrangement of n/2 curves each and overlay them. In all
+    cases, the arrangement dimensions (V, E, F) must be the same ...
 
+  - Add an example/test for I/O with arrangement of arcs of great circles.
+  
 - CORE related examples and test fail on the platforms below with a bus error
   - Darwin-8.10_g++-4.0.1_debug
   - powerpc_Darwin-8.10_g++-4.0.1 
-
-- Vertical decmposition of an arrangement induced by arcs of greate circles
-  fail in some cases.
-  Regarding the helper class for the spherical case, we currently return the
-  "north face" in case we "see" nothing above - which is OK - but we also
-  return the "north face" in case we see nothing from *below*. This is wrong:
-  we should really keep track of the "south face" and return it as the
-  "bottom" object. To conclude, this helper needs more work. It is not top
-  priority, but the quick-and-dirty helper that I wrote needs to become a bit
-  more complicated ...
-
-- Avoid copy construction:
-  - Sweep_line_bacthed_point_location_visitor:
-    line 93 in Arr_batched_point_location.h
-  - Sweep_line_vertical_decomposition_visitor:
-    line 98 in Arr_vertical_decomposition_2.h
-  - Sweep_line_overlay_visitor:
-    line 107 in Arr_overlay_2.h
 
 - Arrangement with history is defficient in 2 ways: 1. It restricted to
   curves that do not result with (isolated) vertices, as the interface allows
@@ -146,3 +108,5 @@
   the edges induced by an x-monote curve, the range of edges are returned in
   order from left to right.
   
+  In the meantime we could disallow the insertion of curves that contain
+  isolated points.
