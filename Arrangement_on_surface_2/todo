@@ -18,24 +18,50 @@
 
 - Test all landmark sub-strategies
 
-- Re-implement vertical ray shooting in Naive point location
-
 - Get rid of the prefix 'get_' from all functions and methods:
     get_bbox
+    	Bezier_point_2.h,
+	Bezier_x_monotone_2.h)
     get_coefficient
-    get_data
-    get_depth_threshold
+	Bezier_cache.h
+	Bezier_curve_2.h
+	Rational_arc_2.h
+	CORE_algebraic_number_traits.h
     get_index
-    get_lb
+	Arr_circle_segment_traits_2.h
+	Arr_conic_traits_2.h    
+    get_data
+    	Td_dag.h
     get_level
+	Arr_qdx_topology_traits_2_impl.h
+	Arr_torus_topology_traits_2_impl.h    
+    get_lb
+	Td_X_trapezoid.h
+	Trapezoidal_decomposition_2.h
     get_lt
+	Td_X_trapezoid.h
+	Trapezoidal_decomposition_2.h
     get_node
+	Td_X_trapezoid.h
+	Trapezoidal_decomposition_2.h    
     get_parent
+	Arr_trapezoid_ric_pl_impl.h
+	Trapezoidal_decomposition_2.h
+	Arr_trapezoid_ric_point_location.h
     get_rb
+	Td_X_trapezoid.h
+	Trapezoidal_decomposition_2.h    
     get_rt
+	Td_X_trapezoid.h
+	Trapezoidal_decomposition_2.h    
+    get_depth_threshold
+    	Trapezoidal_decomposition_2.h
     get_size_threshold
+    	Trapezoidal_decomposition_2.h
     get_y
     get_double
+	Arr_lm_random_generator.h
+	Arr_point_location/Arr_lm_random_generator.h    
 
 - Add insert_* functions back for backward compatibility.
   Keep the old interface for backward complatibility (at least for CGAL 3.4,
@@ -110,3 +136,13 @@
   
   In the meantime we could disallow the insertion of curves that contain
   isolated points.
+
+- Arrangement_on_surface_2 demo
+  Cannot change the background color
+
+- Boolean_set_operations_2 demo
+  Enter a red polygon.
+  Enter a blue polygon.
+  Perform a Boolean operation.
+  Now zoom in, and oops, you see the two input objects again.
+  I would expect to zoom into the intersection.
