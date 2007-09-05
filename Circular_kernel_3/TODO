@@ -1,3 +1,14 @@
+---- from Daniel
+
+- the arc point/plane orientation--I can't publicly get a  Root_for_spheres_2_3 back from a circular_arc_point so I can't  implement it myself either
+- a way of getting a line through a circular_arc_point. I think I  really need this, at least I use it extensively and don't see an  obvious way around it.
+
+
+- the ability to negate a particular coordinate of a arc point--this  is a bit idiosyncratic, perhaps the ability to apply some subclass of  affine transform
+- a way to check for the intersection of three spheres (I can do 2  using the linear kernel)--I can presumably work around this though
+- the output iterator based intersect is even more annoying than the  normal intersect. 
+============
+
 ----------
 nettoyer 
 Solve 
