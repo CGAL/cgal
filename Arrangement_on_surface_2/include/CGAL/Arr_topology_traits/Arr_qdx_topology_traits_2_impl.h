@@ -90,11 +90,11 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
     }
     m_own_traits = other.m_own_traits;
 
+    m_left = other.m_left;
+    m_left = other.m_right;
+
     // Update the special properties of the topology traits.
     dcel_updated();
-
-    CGAL_assertion (m_left != other.m_left);
-    CGAL_assertion (m_right != other.m_right);
 
     return;
 }
@@ -124,14 +124,12 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
             {
                 CGAL_assertion (bx == MINUS_INFINITY ||
                                 bx == AFTER_SINGULARITY);
-                m_left = bx;
                 v_left = &(*vit);
             }
             else
             {
                 CGAL_assertion (bx == PLUS_INFINITY ||
                                 bx == BEFORE_SINGULARITY);
-                m_right = bx;
                 v_right = &(*vit);
             }
         }
@@ -149,12 +147,27 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
                 
         m_vertices_on_line_of_discontinuity[(*vit)] = res.first;
     }
-    CGAL_assertion (v_left != NULL);
-    CGAL_assertion (v_right != NULL);
+    //CGAL_assertion (v_left != NULL);
+    //CGAL_assertion (v_right != NULL);
 
-    // RWRW: Is this correct? I think not ...
+    // Go over the DCEL faces and locate the top face, which is the only
+    // face with no outer CCB.
+    typename Dcel::Face_iterator         fit;
+    
     f_top = NULL;
-
+    for (fit = this->m_dcel.faces_begin();
+         fit != this->m_dcel.faces_end(); ++fit)
+    {
+        if (fit->number_of_outer_ccbs() == 0)
+        {
+            CGAL_assertion (f_top == NULL);
+            
+            f_top = &(*fit);
+            break;
+        }
+    }
+    CGAL_assertion (f_top != NULL);
+    
     return;
 }
 
