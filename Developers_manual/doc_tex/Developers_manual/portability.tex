@@ -372,6 +372,18 @@ done to avoid some \texttt{\#ifdef}s in our actual code.
  \index{cgal_big_endian macro@\texttt{CGAL\_BIG\_ENDIAN} macro}
   \ccIndexMainItem{big-endian}
   {\texttt{CGAL\_CFG\_NO\_BIG\_ENDIAN}} is not set.
+
+\item[\texttt{CGAL\_DEPRECATED}]
+ \index{cgal_deprecated macro@\texttt{CGAL\_DEPRECATED} macro}
+  \ccIndexMainItem{deprecated}
+  used to declare a function as deprecated --- just add it before the
+  function declaration:
+\begin{verbatim}
+CGAL_DEPRECATED void foo(int i)
+{
+ ...
+}
+\end{verbatim}
 \end{description}
 \ccIndexSubitemEnd{macros}{for workarounds}
 
