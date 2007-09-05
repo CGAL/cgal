@@ -1,0 +1,84 @@
+Subject: CGAL 3.3.1 Released, Computational Geometry Algorithms Library
+Body:
+
+The CGAL Open Source Project is pleased to announce the release 3.3.1 of
+CGAL, the Computational Geometry Algorithms Library.
+
+Version 3.3.1 is a bug-fix release for version 3.3. No new features have 
+been added in 3.3.1.    The following corrections have been made:
+
+General
+
+- Intel C++ 9 was wrongly recognized as unsupported by install_cgal.
+- Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
+- Fixed bug in Memory_sizer when using more than 4GB of memory (64bit).
+
+
+Number Types
+- Fixed bug in FPU rounding mode macros (affected only the alpha architecture).
+- Fixed bug in MP_Float constructor from double for some particular values.
+
+
+Kernel
+- Fixed forgotten derivation in Circular_kernel_2::Has_on_2
+
+
+Skin Surface Meshing
+- The new Skin Surface Meshing package had been forgotten in the list of
+  changes and the release announcement of CGAL 3.3:
+    This package allows to build a triangular mesh of a skin surface.
+    Skin surfaces are used for modeling large molecules in biological 
+    computing.
+
+
+Arrangements
+- Fixed a bug in the Arrangement_2 package in dual arrangement representation   
+  for Boost graphs when reporting all halfedges of a face.
+- Fixed a bug in the Arrangement sweep-line when using a specific polyline
+  configuration.
+- Fixed bug in Arrangement_2 in walk along a line point location for 
+  unbounded curves.
+- Fixed bug in aggregated insertion to Arrangement_2.
+- Fixed bug in Arrangment_2 class when inserting an unbounded curve from 
+  an existing vertex.
+- Fixed bug when dealing with a degenerate conic arc in Arr_conic_traits_2 
+  of the Arrangment package, meaning a line segment which is part of a 
+  degenerate parabola/hyperbola.
+- Fixed bug in the Bezier traits-class:
+    properly handle line segments.
+    properly handle comparison near a vertical tangency.
+
+
+2D Polygon 
+- Fixed bug in degenerate case of Polygon_2::is_convex() for equal points.
+
+
+2D Triangulations
+- Fixed bug in Regular_triangulation_2.
+
+
+Interpolation
+- Fixed bug in Interpolation 3D about the normalization coefficient 
+  initialization.
+
+
+3D Boolean Operations on Nef Polyhedra
+- Fixed bug in construction of Nef_polyhedron_3 from off-file. 
+  Now, always the inner volume is selected.
+- Fixed bug in conversion from Nef_polyhedron_3 to Polyhedron_3. 
+  Polyhedron_3 was not cleared at the beginning.
+- Fixed bug in Nef_polyhedron_3 in update of indexes for construction of 
+  external structure.
+
+
+Third Party Libraries Shipped with CGAL
+- TAUCS supports now 64 bits platforms.
+- CAUTION: Since version 3.3.1, CGAL is no longer compatible with the official
+           release of TAUCS (currently 2.2). Make sure to use the version
+           modified by the CGAL project and available from the download 
+           section of http://www.cgal.org.
+
+
+See http://www.cgal.org/releases.html for a complete list of changes.
+
+
