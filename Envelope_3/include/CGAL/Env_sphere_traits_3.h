@@ -547,8 +547,8 @@ public:
 
             Curve_2 inter_cv(R, S, T, U, V, W);
 
-            x_mid_n_y_points = inter_cv.get_points_at_x(x_mid_point,
-                                                        x_mid_y_points);
+            x_mid_n_y_points = inter_cv.points_at_x(x_mid_point,
+                                                    x_mid_y_points);
             
             CGAL_precondition(x_mid_n_y_points > 0);
 
@@ -606,8 +606,8 @@ public:
             int  y_mid_n_x_points;
 
             Curve_2 inter_cv(R, S, T, U, V, W);
-            y_mid_n_x_points = inter_cv.get_points_at_y(y_mid_point,
-                                                        y_mid_x_points);
+            y_mid_n_x_points = inter_cv.points_at_y(y_mid_point,
+                                                    y_mid_x_points);
 
             CGAL_precondition(y_mid_n_x_points > 0);
 
@@ -1123,7 +1123,7 @@ public:
     if (cv.is_vertical())
       return Point_2(mid_x);
 
-    return Point_2(cv.get_point_at_x(mid_x));
+    return Point_2(cv.point_at_x(mid_x));
   }
 
 
@@ -1218,7 +1218,7 @@ public:
       }
     }
     else
-      return cv.get_point_at_x(pt);
+      return cv.point_at_x(pt);
   }
 
   template <class OutputIterator>

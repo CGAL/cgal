@@ -78,7 +78,7 @@ void lower_envelope_3 (InputIterator begin, InputIterator end,
   typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
   typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
-  Envelope_algorithm   env_alg (min_diagram.get_traits(), LOWER);
+  Envelope_algorithm   env_alg (min_diagram.traits(), LOWER);
   env_alg.construct_lu_envelope (begin, end, min_diagram);
 
   return;
@@ -100,7 +100,7 @@ void upper_envelope_3 (InputIterator begin, InputIterator end,
   typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
 
-  Envelope_algorithm   env_alg (max_diagram.get_traits(), UPPER);
+  Envelope_algorithm   env_alg (max_diagram.traits(), UPPER);
   env_alg.construct_lu_envelope (begin, end, max_diagram);
 
   return;
@@ -121,7 +121,7 @@ void lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
   typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
   typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
-  Envelope_algorithm   env_alg (min_diagram.get_traits(), LOWER);
+  Envelope_algorithm   env_alg (min_diagram.traits(), LOWER);
   env_alg.construct_envelope_xy_monotone (begin, end, min_diagram);
 
   return;
@@ -143,7 +143,7 @@ void upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
   typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
 
-  Envelope_algorithm   env_alg (max_diagram.get_traits(), UPPER);
+  Envelope_algorithm   env_alg (max_diagram.traits(), UPPER);
   env_alg.construct_envelope_xy_monotone (begin, end, max_diagram);
 
   return;

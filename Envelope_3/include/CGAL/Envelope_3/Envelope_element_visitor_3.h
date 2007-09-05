@@ -142,7 +142,7 @@ public:
   Envelope_element_visitor_3(Envelope_type t = LOWER)
   {
     // Allocate the traits.
-    traits = new Traits;
+    m_traits = new Traits;
     own_traits = true;
     type  = t;
   }
@@ -150,7 +150,7 @@ public:
   Envelope_element_visitor_3(Traits* tr, Envelope_type t = LOWER)
   {
     // Set the traits.
-    traits = tr;
+    m_traits = tr;
     own_traits = false;
     type  = t;
   }
@@ -160,7 +160,7 @@ public:
   {
     // Free the traits object, if necessary.
     if (own_traits)
-      delete traits;
+      delete m_traits;
   }
 
   // get a face with 2 surfaces defined over it, and compute the arrangement of the
@@ -196,7 +196,7 @@ public:
     // we insert all projected intersections into a temporary arrangement,
     // with only the current face's curves, to find the arrangement of the lower envelope
     // of the 2 surfaces over the current face
-    Minimization_diagram_2 copied_face_arr(traits);
+    Minimization_diagram_2 copied_face_arr(m_traits);
 
     // here we maintain a mapping between edges in the copied arrangement and
     // their original generating edge from result
@@ -527,8 +527,8 @@ public:
         const Intersect_point_2  *ip;
         const X_monotone_curve_2 *icv;
         
-        traits->intersect_2_object()(x_curve, original_cv,
-                                      std::back_inserter(intersections_list));
+        m_traits->intersect_2_object()(x_curve, original_cv,
+                                       std::back_inserter(intersections_list));
 
         std::list<Object>::iterator inter_it = intersections_list.begin();
         for(; inter_it != intersections_list.end(); ++inter_it)
@@ -545,19 +545,19 @@ public:
 
             // we will add the *icv end points to the split_points, unless
             // but we should be carefull with infinite curves.
-            Arr_traits_adaptor_2<Traits> tr_adaptor(*traits);
+            Arr_traits_adaptor_2<Traits> tr_adaptor(*m_traits);
             if(tr_adaptor.boundary_in_y_2_object()(*icv, MIN_END) == NO_BOUNDARY &&
                 tr_adaptor.boundary_in_x_2_object()(*icv, MIN_END) == NO_BOUNDARY)
-                split_points.push_back(Point_2_with_info(
-                                        traits->construct_min_vertex_2_object()(*icv),
+                split_points.push_back(Point_2_with_info
+                                       (m_traits->construct_min_vertex_2_object()(*icv),
                                         true, false));
             else
               is_min_end_at_inf = true;
 
             if(tr_adaptor.boundary_in_y_2_object()(*icv, MAX_END) == NO_BOUNDARY &&
                 tr_adaptor.boundary_in_x_2_object()(*icv, MAX_END) == NO_BOUNDARY)
-                split_points.push_back(Point_2_with_info(
-                                        traits->construct_max_vertex_2_object()(*icv),
+                split_points.push_back(Point_2_with_info
+                                       (m_traits->construct_max_vertex_2_object()(*icv),
                                         false, true));
             else
               is_max_end_at_inf = true;
@@ -581,7 +581,7 @@ public:
     
     // sort the split points from left to right
     // and split the original edge in these points
-    Points_compare comp(*traits);
+    Points_compare comp(*m_traits);
     std::sort(split_points.begin(), split_points.end(), comp);
  
     // if overlaps > 0 it will indicate that we are inside an overlapping
@@ -593,8 +593,8 @@ public:
     bool source_is_special = false;
     CGAL_assertion(split_points.size() >= 1);
     if ((!original_src->is_at_infinity() && 
-         traits->equal_2_object()(split_points[0].first,
-                                  original_src->point())) ||
+         m_traits->equal_2_object()(split_points[0].first,
+                                    original_src->point())) ||
         (original_src->is_at_infinity() && is_min_end_at_inf))
     {
       overlaps++;
@@ -604,8 +604,8 @@ public:
     // check if target is a special vertex, by checking the last point in the list
     bool target_is_special = false;
     if ((!original_trg->is_at_infinity() && 
-         traits->equal_2_object()(split_points[split_points.size()-1].first, 
-                                  original_trg->point())) ||
+         m_traits->equal_2_object()(split_points[split_points.size()-1].first, 
+                                    original_trg->point())) ||
         (original_trg->is_at_infinity() && is_max_end_at_inf))
       target_is_special = true;
 
@@ -628,7 +628,7 @@ public:
 
       // are needed
       if (!original_trg->is_at_infinity() && 
-           traits->equal_2_object() (cur_p.first, original_trg->point()))
+          m_traits->equal_2_object() (cur_p.first, original_trg->point()))
         break;
         
       Vertex_handle cur_src_vertex = cur_part->source();
@@ -641,7 +641,7 @@ public:
         // split the edge in this point
         X_monotone_curve_2 a,b;
 
-        traits->split_2_object()(cur_part->curve(), cur_p.first, a, b);
+        m_traits->split_2_object()(cur_part->curve(), cur_p.first, a, b);
         // todo: can we use the internal split?
         Halfedge_handle split_he = result.split_edge(cur_part, a, b);
         // split always returns the halfedge with source = cur_part.source
@@ -746,15 +746,15 @@ public:
   }
 
   /*! Access the traits object (const version). */
-  const Traits* get_traits () const
+  const Traits* traits () const
   {
-    return (traits);
+    return (m_traits);
   }
 
   /*! Access the traits object (non-const version). */
-  Traits* get_traits ()
+  Traits* traits ()
   {
-    return (traits);
+    return (m_traits);
   }
 
 protected:
@@ -863,13 +863,13 @@ protected:
       // and with Aos_2.
       if (HE_COMP_RES(*he) == SMALLER)
       {
-        res = traits->compare_z_at_xy_above_3_object()(cv,surf1,surf2);
+        res = m_traits->compare_z_at_xy_above_3_object()(cv,surf1,surf2);
         if(type == UPPER)
           res = CGAL::opposite(res);
       }
       else
       {
-        res = traits->compare_z_at_xy_below_3_object()(cv,surf1,surf2);
+        res = m_traits->compare_z_at_xy_below_3_object()(cv,surf1,surf2);
         if(type == UPPER)
           res = CGAL::opposite(res);
 
@@ -909,7 +909,7 @@ protected:
                                              const Xy_monotone_surface_3& s2,
                                              OutputIterator o)
   {
-    return traits->construct_projected_intersections_2_object()(s1, s2, o);
+    return m_traits->construct_projected_intersections_2_object()(s1, s2, o);
   }
 
   // Geometry can be a Point_2 or a X_monotone_curve_2
@@ -918,7 +918,7 @@ protected:
                                                  const Xy_monotone_surface_3& s1,
                                                  const Xy_monotone_surface_3& s2)
   {
-    Comparison_result res = traits->compare_z_at_xy_3_object()(g, s1, s2);
+    Comparison_result res = m_traits->compare_z_at_xy_3_object()(g, s1, s2);
     return ((type == LOWER) ? res : CGAL::opposite(res));
   }
 
@@ -928,7 +928,7 @@ protected:
                                                  const Xy_monotone_surface_3& s2,
                                                  Tag_true)
   {
-    Comparison_result res = traits->compare_z_at_xy_3_object()(s1, s2);
+    Comparison_result res = m_traits->compare_z_at_xy_3_object()(s1, s2);
     return ((type == LOWER) ? res : CGAL::opposite(res));
   }
 
@@ -1819,9 +1819,9 @@ protected:
   // we use the traits adaptor since cv can be an infinite curve
   bool is_point_on_curve(const Point_2& p, const X_monotone_curve_2& cv)
   {
-    Arr_traits_adaptor_2<Traits> tr_adaptor(*traits);
+    Arr_traits_adaptor_2<Traits> tr_adaptor(*m_traits);
     return (tr_adaptor.is_in_x_range_2_object()(cv, p) && 
-            traits->compare_y_at_x_2_object()(p, cv) == EQUAL);
+            m_traits->compare_y_at_x_2_object()(p, cv) == EQUAL);
   }
   
   // this observer is used in the process of resolving a face
@@ -2748,7 +2748,7 @@ protected:
       // vertex associated with p.
       X_monotone_curve_2  sub_cv1, sub_cv2;
       Halfedge_handle     split_he;
-      copied_arr.get_traits()->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
+      copied_arr.traits()->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
       split_he = copied_arr.split_edge (he, sub_cv1, sub_cv2);
 
       // if the edge is a boundary edge, then the new vertex is a special vertex
@@ -2978,7 +2978,7 @@ protected:
 
   };
 
-  Traits             *traits;
+  Traits             *m_traits;
   bool                own_traits; // Should we eventually free the traits object.
   Envelope_type       type; // the type of envelope (LOWER or UPPER)
 };
