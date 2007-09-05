@@ -166,7 +166,7 @@ private:
     Point_2 t = construct_vertex(seg, 1);
     Comparison_result cx = m_gt.compare_x_2_object()(s, t);
     Comparison_result cy = m_gt.compare_y_2_object()(s, t);
-    if (cy == LARGER || cy == EQUAL && cx == LARGER) {
+    if (cy == LARGER || (cy == EQUAL && cx == LARGER)) {
       typedef typename Traits::Construct_segment_2  Construct_segment_2;
       Construct_segment_2 construct_seg = m_gt.construct_segment_2_object();
       seg = construct_seg(t, s);
