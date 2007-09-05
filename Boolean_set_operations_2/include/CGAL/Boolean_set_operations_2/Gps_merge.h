@@ -46,7 +46,7 @@ public:
     if(i==j)
       return;
 
-    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->get_traits();
+    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->traits();
     Arrangement_2              *res = new Arrangement_2(tr);
     std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
 
@@ -84,7 +84,7 @@ public:
     if(i==j)
       return;
 
-    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->get_traits();
+    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->traits();
     Arrangement_2              *res = new Arrangement_2 (tr);
     std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
 
@@ -125,7 +125,7 @@ public:
     if(i==j)
       return;
 
-    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->get_traits();
+    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->traits();
     Arrangement_2              *res = new Arrangement_2(tr);
     std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
 
