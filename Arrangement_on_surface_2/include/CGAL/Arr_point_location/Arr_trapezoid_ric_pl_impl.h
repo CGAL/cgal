@@ -185,8 +185,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     break;
 
  case TD::CURVE:
-    if ((shoot_up && h->direction() == SMALLER) ||
-        (!shoot_up && h->direction() == LARGER))
+    if ((shoot_up && h->direction() == LEFT_TO_RIGHT) ||
+        (!shoot_up && h->direction() == RIGHT_TO_LEFT))
       h=h->twin();
 
     return (CGAL::make_object(h));
