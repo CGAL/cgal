@@ -185,9 +185,8 @@ private :
     Disk_handle   source_object_ , target_object_;
 };
 
-//------------------------------------------------------------------------------
-//------------------ General definition of Bitangent_2 -------------------------
-//------------------------------------------------------------------------------
+// General definition of Bitangent_2.
+// Most traits classes define a partial specialisation.
 
 template< class Gtr_ >
 struct Bitangent_2 
@@ -219,7 +218,6 @@ struct Bitangent_2
     { return Base::operator!=(b); }
 };
 
-//------------------------------------------------------------------------------
 
 template < class D>
 std::ostream &
@@ -227,7 +225,6 @@ operator<<(std::ostream &os, const Bitangent_2<D> &b) {
   return b.print(os);
 }
 
-//------------------------------------------------------------------------------
 }
 CGAL_END_NAMESPACE
 

@@ -16,8 +16,8 @@
 //
 // Author(s)     : Luc Habert, adapted from Qt_widget_get_circle by Radu Ursu
 
-#ifndef CGAL_VISIBILITY_COMPLEX_2_QT_WIDGET_GET_CONIC_H
-#define CGAL_VISIBILITY_COMPLEX_2_QT_WIDGET_GET_CONIC_H
+#ifndef CGAL_IO_QT_WIDGET_GET_CONIC_H
+#define CGAL_IO_QT_WIDGET_GET_CONIC_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -31,8 +31,6 @@
 
 
 CGAL_BEGIN_NAMESPACE
-
-namespace Visibility_complex_2_details {
 
 template <class R>
 class Qt_widget_get_conic : public Qt_widget_layer
@@ -278,8 +276,6 @@ protected:
   QWidget::FocusPolicy	oldpolicy;
 };//end class 
 
-}
-
 CGAL_END_NAMESPACE
 
-#endif // CGAL_VISIBILITY_COMPLEX_2_QT_WIDGET_GET_CONIC_H
+#endif // CGAL_IO_QT_WIDGET_GET_CONIC_H

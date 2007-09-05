@@ -657,8 +657,8 @@ public:
   typedef Tag_false Supports_chi3;
 
   struct Orientation_infinite {
-    Orientation operator() (const Bitangent_2& a, 
-                            const Bitangent_2& b) const { 
+    Orientation operator() (const Bitangent_2&, 
+                            const Bitangent_2&) const { 
       CGAL_assertion(false);
       return COLLINEAR; }
   };

@@ -13,6 +13,13 @@
 
 
 #include<CGAL/basic.h>
+
+
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#else
 #include<CGAL/Point_2.h>
 #include<CGAL/Cartesian.h>
 #include <qapplication.h>
@@ -173,3 +180,4 @@ int main(int argc,char ** argv) {
   w->unlock();
   return app.exec();
 }
+#endif

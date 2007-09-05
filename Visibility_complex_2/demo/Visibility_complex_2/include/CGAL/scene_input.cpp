@@ -11,6 +11,13 @@
 // It is possible to pop the disks or constraints previously input
 // by pressing backspace.
 
+#include<CGAL/basic.h>
+
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#else
 
 #include<qapplication.h>
 #include<qmainwindow.h>
@@ -20,7 +27,6 @@
 #include<algorithm>
 
 
-#include<CGAL/basic.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/squared_distance_2.h>
 #include<CGAL/Gmpz.h>
@@ -117,12 +123,12 @@ int find_disk(Point_2 p,std::vector<Gt::Disk>::iterator begin,
 
 #elif defined(VC_SCENE_INPUT_ELLIPSE)
 
-#include <CGAL/Visibility_complex_2/Qt_widget_get_conic.h>
+#include <CGAL/IO/Qt_widget_get_conic.h>
 #include<CGAL/Visibility_complex_2/Ellipse_traits.h>
 typedef CGAL::Visibility_complex_2_ellipse_traits<K> Gt;
 
 typedef CGAL::Conic_2<K> Cgal_disk;
-typedef CGAL::Visibility_complex_2_details::Qt_widget_get_conic<K> Get_disk;
+typedef CGAL::Qt_widget_get_conic<K> Get_disk;
 
 int find_disk(Point_2 p,std::vector<Gt::Disk>::iterator begin,
               std::vector<Gt::Disk>::iterator end) {
@@ -361,3 +367,4 @@ int main(int argc,char ** argv) {
   pouloum->show();
   app.exec();
 }
+#endif

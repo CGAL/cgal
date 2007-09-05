@@ -22,17 +22,17 @@
 
 #include <CGAL/basic.h>
 #include<CGAL/CORE_Expr.h>
-#include<CGAL/CORE_BigInt.h>
+#include<CGAL/CORE_BigRat.h>
 #include<sstream>
 
 CGAL_BEGIN_NAMESPACE
 namespace Visibility_complex_2_details {
 
 template<class RT> class CORE_Root_of_traits {
-  static CORE::BigInt convert(const RT&x) {
+  static CORE::BigRat convert(const RT&x) {
     std::ostringstream os;
     os<<x;
-    return CORE::BigInt(os.str());
+    return CORE::BigRat(os.str());
   }
 public:
   class Root_of_4 {
@@ -41,13 +41,13 @@ public:
     Root_of_4 () {};
     Root_of_4 (const RT& c4, const RT& c3, const RT& c2, const RT& c1, 
                const RT& c0, int idx) {
-      CORE::BigInt ploum[5];
+      CORE::BigRat ploum[5];
       ploum[0]=convert(c0);
       ploum[1]=convert(c1);
       ploum[2]=convert(c2);
       ploum[3]=convert(c3);
       ploum[4]=convert(c4);
-      root=CORE::Expr(CORE::Polynomial<CORE::BigInt>(4,ploum),idx+1);
+      root=CORE::Expr(CORE::Polynomial<CORE::BigRat>(4,ploum),idx+1);
     };
     double to_double() const {
       return root.doubleValue();
@@ -59,12 +59,12 @@ public:
     Root_of_3 () {};
     Root_of_3 (const RT& c3, const RT& c2, const RT& c1, const RT& c0,
                int idx) {
-      CORE::BigInt ploum[4];
+      CORE::BigRat ploum[4];
       ploum[0]=convert(c0);
       ploum[1]=convert(c1);
       ploum[2]=convert(c2);
       ploum[3]=convert(c3);
-      root=CORE::Expr(CORE::Polynomial<CORE::BigInt>(3,ploum),idx+1);
+      root=CORE::Expr(CORE::Polynomial<CORE::BigRat>(3,ploum),idx+1);
     };
   };
   class Root_of_2 {
@@ -72,11 +72,11 @@ public:
     CORE::Expr root;
     Root_of_2 () {};
     Root_of_2 (const RT& c2, const RT& c1, const RT& c0, int idx) {
-      CORE::BigInt ploum[3];
+      CORE::BigRat ploum[3];
       ploum[0]=convert(c0);
       ploum[1]=convert(c1);
       ploum[2]=convert(c2);
-      root=CORE::Expr(CORE::Polynomial<CORE::BigInt>(2,ploum),idx+1);
+      root=CORE::Expr(CORE::Polynomial<CORE::BigRat>(2,ploum),idx+1);
     };
   };
   class Root_of_1 {
@@ -84,10 +84,10 @@ public:
     CORE::Expr root;
     Root_of_1 () {};
     Root_of_1 (const RT& c1, const RT& c0) {
-      CORE::BigInt ploum[2];
+      CORE::BigRat ploum[2];
       ploum[0]=convert(c0);
       ploum[1]=convert(c1);
-      root=CORE::Expr(CORE::Polynomial<CORE::BigInt>(1,ploum),1);
+      root=CORE::Expr(CORE::Polynomial<CORE::BigRat>(1,ploum),1);
     }
   };
   struct compare_object {
@@ -96,10 +96,10 @@ public:
       int ploum= a.root.cmp(b.root);
       if (ploum>0) return CGAL::LARGER; else 
         if (ploum==0) return CGAL::EQUAL; else return CGAL::SMALLER;
-    };
+    }
   };
   class Polynom_1 {
-    CORE::BigInt coeffs[2];
+    CORE::BigRat coeffs[2];
   public:
     Polynom_1() {}
     Polynom_1(const RT& c1,const RT& c0)  {
@@ -118,7 +118,7 @@ public:
     }
   };
   class Polynom_2 {
-    CORE::BigInt coeffs[3];
+    CORE::BigRat coeffs[3];
   public:
     Polynom_2() {};
     Polynom_2(const RT& c2,const RT& c1,const RT& c0)  {
