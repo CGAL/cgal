@@ -64,7 +64,7 @@ public:
   /*! Obtain the mask of the ids of the original arrangements that contributed
    * the halfedge while performing the minkowski sum
    */
-  unsigned int get_arr_mask() const { return m_arr_mask; }
+  unsigned int arr_mask() const { return m_arr_mask; }
 };
 
 /*! Extend the arrangement face */
@@ -89,10 +89,10 @@ public:
   }
 
   /*! Obtain the 3D point of the original polyhedron */
-  const Point_3 & get_point() const { return m_point; }
+  const Point_3 & point() const { return m_point; }
 
   /*! \brief returns true iff the point has been set already */
-  bool get_is_set() const { return m_is_set; }
+  bool is_set() const { return m_is_set; }
 
   /*! \brief resets the flag  */
   void set_is_set(bool flag) { m_is_set = flag; }

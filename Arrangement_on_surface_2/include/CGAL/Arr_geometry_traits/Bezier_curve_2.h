@@ -498,7 +498,7 @@ public:
    * \return A past-the-end iterator.
    */
   template <class OutputIterator>
-  OutputIterator get_t_at_x (const Rational& x0,
+  OutputIterator t_at_x (const Rational& x0,
                              OutputIterator oi) const
   {
     return (_solve_t_values (_rep().x_polynomial(), _rep().x_norm(), x0,
@@ -514,7 +514,7 @@ public:
    * \return A past-the-end iterator.
    */
   template <class OutputIterator>
-  OutputIterator get_t_at_y (const Rational& y0,
+  OutputIterator t_at_y (const Rational& y0,
                              OutputIterator oi) const
   {
     return (_solve_t_values (_rep().y_polynomial(), _rep.y_norm(), y0,
@@ -893,7 +893,7 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
     const Algebraic&                      y1 = nt_traits.convert (p1.y());
     bool                                  eq_y = false;
     
-    bc.get_t_at_x (p1.x(), std::back_inserter(t_vals));
+    bc.t_at_x (p1.x(), std::back_inserter(t_vals));
     
     for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
     {

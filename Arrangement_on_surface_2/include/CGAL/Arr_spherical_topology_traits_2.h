@@ -630,7 +630,7 @@ protected:
    * \pre v is a valid boundary.
    * \return The curve that induces v.
    */
-  const X_monotone_curve_2 & get_curve(const Vertex * v,
+  const X_monotone_curve_2 & curve(const Vertex * v,
                                        Curve_end & ind) const;
 
   /*! Return the halfedge, the target vertex of which is given, that is

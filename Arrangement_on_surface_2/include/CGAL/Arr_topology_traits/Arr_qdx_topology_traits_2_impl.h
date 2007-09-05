@@ -1570,7 +1570,7 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_x
     if (by != NO_BOUNDARY) {
         // select one of the incident curve-ends to v and compare p with it
         Curve_end ind;
-        const X_monotone_curve_2& cv = _get_curve (v, ind);
+        const X_monotone_curve_2& cv = _curve (v, ind);
         
         return (this->m_traits->compare_x_2_object() (p, cv, ind));
         
@@ -1615,7 +1615,7 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_xy
         
         // select one of the incident curve-ends to v and compare p with it
         Curve_end                 ind;
-        const X_monotone_curve_2& cv = _get_curve (v, ind);
+        const X_monotone_curve_2& cv = _curve (v, ind);
         Comparison_result         res =
             this->m_traits->compare_x_2_object() (p, cv, ind);
         
@@ -1697,11 +1697,11 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_xy
         Curve_end      ind1, ind2;
         
         // since v1 and v2 are not equal we can select an arbitry incident
-        // curve (_get_curve)
+        // curve (_curve)
         CGAL::Comparison_result result = 
             (this->m_traits->compare_y_at_x_2_object() (
-                    _get_curve (v1, ind1), 
-                    _get_curve (v2, ind2),
+                    _curve (v1, ind1), 
+                    _curve (v2, ind2),
                     ind1) // equal to ind2
             );
         //std::cout << "xy-result: " << result << std::endl;
@@ -1714,10 +1714,10 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_xy
     // and we again compare their x-coordinates first
     
     // since v1 and v2 are not equal we can select an arbitry incident
-    // curve (_get_curve)
+    // curve (_curve)
     Curve_end                 ind1, ind2;
-    const X_monotone_curve_2& cv1 = _get_curve (v1, ind1);
-    const X_monotone_curve_2& cv2 = _get_curve (v2, ind2);
+    const X_monotone_curve_2& cv1 = _curve (v1, ind1);
+    const X_monotone_curve_2& cv2 = _curve (v2, ind2);
     
     res = this->m_traits->compare_x_2_object()(cv1, ind1,
                                                cv2, ind2);
@@ -1753,11 +1753,11 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_xy
 template <class GeomTraits, class Dcel_>
 const typename
 Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::X_monotone_curve_2& 
-Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::_get_curve
+Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::_curve
     (const Vertex *v,
      Curve_end& ind) const
 {
-    //std::cout << "Arr_qdx_topology_traits_2 _get_curve"  << std::endl;
+    //std::cout << "Arr_qdx_topology_traits_2 _curve"  << std::endl;
 
     // take the halfedge adjacent to the vertex (point to it)
     const Halfedge         *he = v->halfedge();

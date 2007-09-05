@@ -46,7 +46,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::locate
 
   // Use the generator and to find the closest landmark to the query point.
   Object   lm_location_obj; 
-  Point_2  landmark_point = lm_gen->get_closest_landmark (p, 
+  Point_2  landmark_point = lm_gen->closest_landmark (p, 
                                                           lm_location_obj);
 
   // Walk from the nearest_vertex to the point p, using walk algorithm, 
@@ -90,7 +90,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::locate
     // However, we first have to check whether the query point coincides with
     // any of the isolated vertices contained inside this face.
     Isolated_vertex_const_iterator      iso_verts_it;
-    typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
+    typename Traits_adaptor_2::Equal_2  equal = m_traits->equal_2_object();
 
     for (iso_verts_it = (*fh)->isolated_vertices_begin();
          iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
@@ -121,7 +121,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
                       "_walk_from_vertex() from a vertex at infinity.");
 
   // Check if the qurey point p conincides with the vertex.
-  if (traits->equal_2_object() (vh->point(), p))
+  if (m_traits->equal_2_object() (vh->point(), p))
     return (CGAL::make_object (vh));
 
   // In case of an isolated vertex, walk to from the face that contains
@@ -189,9 +189,9 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
   // vertex vp and the query point p.
   const Point_2&      vp = vh->point();
   X_monotone_curve_2  seg =
-    traits->construct_x_monotone_curve_2_object()(vp, p);
+    m_traits->construct_x_monotone_curve_2_object()(vp, p);
   const bool          seg_dir_right =
-    (traits->compare_xy_2_object()(vp, p) == SMALLER);
+    (m_traits->compare_xy_2_object()(vp, p) == SMALLER);
 
   // Get the first incident halfedge around v and the next halfedge.
   Halfedge_around_vertex_const_circulator  first = vh->incident_halfedges();
@@ -208,16 +208,16 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
     if (seg_dir_right && curr->direction() == RIGHT_TO_LEFT)
     {
       // Both curves are defined to the right of vp:
-      equal_curr = (traits->compare_y_at_x_right_2_object() (curr->curve(),
-                                                             seg,
-                                                             vp) == EQUAL);
+      equal_curr = (m_traits->compare_y_at_x_right_2_object() (curr->curve(),
+                                                               seg,
+                                                               vp) == EQUAL);
     }
     else if (! seg_dir_right && curr->direction() == LEFT_TO_RIGHT)
     {
       // Both curves are defined to the left of vp:
-      equal_curr = (traits->compare_y_at_x_left_2_object() (curr->curve(),
-                                                            seg,
-                                                            vp) == EQUAL);
+      equal_curr = (m_traits->compare_y_at_x_left_2_object() (curr->curve(),
+                                                              seg,
+                                                              vp) == EQUAL);
     }
 
     // In case the curves are not equal, just return the incident face of
@@ -234,7 +234,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
     // Traverse the halfedges around v until we find the pair of adjacent
     // halfedges such as seg is located clockwise in between them.
     typename Traits_adaptor_2::Is_between_cw_2  is_between_cw =
-                                           traits->is_between_cw_2_object();
+      m_traits->is_between_cw_2_object();
     bool                                        eq_curr, eq_next;
 
     while (! is_between_cw (seg, seg_dir_right,
@@ -283,15 +283,15 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
   // If we reached here, seg overlaps the curve associated with curr next to
   // the vertex v. We first check if p equals the other end-vertex of this
   // halfedge.
-  if (traits->equal_2_object() (p, curr->source()->point())) 
+  if (m_traits->equal_2_object() (p, curr->source()->point())) 
   {
     // In this case p equals the source point of the edge.
     return (CGAL::make_object (curr->source()));
   }
 
   // Check whether p lies on the curve associated with the edge.
-  if (traits->is_in_x_range_2_object() (curr->curve(), p) && 
-      traits->compare_y_at_x_2_object() (p, curr->curve()) == EQUAL)
+  if (m_traits->is_in_x_range_2_object() (curr->curve(), p) && 
+      m_traits->compare_y_at_x_2_object() (p, curr->curve()) == EQUAL)
   {
     // p is located on the interior of the edge.
     Halfedge_const_handle   he = curr;
@@ -323,13 +323,13 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
   // If p equals one of the edge's endpoints, return the vertex
   // that represents this endpoint.
   if (! eh->source()->is_at_infinity() &&
-      traits->equal_2_object() (p, eh->source()->point()))
+      m_traits->equal_2_object() (p, eh->source()->point()))
   {
     Vertex_const_handle vh = eh->source();
     return (CGAL::make_object(vh));
   }
   if (! eh->target()->is_at_infinity() &&
-      traits->equal_2_object() (p, eh->target()->point()))
+      m_traits->equal_2_object() (p, eh->target()->point()))
   {
     Vertex_const_handle vh = eh->target();
     return (CGAL::make_object(vh));
@@ -341,12 +341,12 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
   crossed_edges.insert (eh->twin());
 
   // Check whether p is in the x-range of the edge.
-  if (traits->is_in_x_range_2_object()(cv, p))
+  if (m_traits->is_in_x_range_2_object()(cv, p))
   {
     // If p is in eh's x_range, then we need to check if it is above or below
     // it, so we can orient the halfedge eh accordingly, such that it will be
     // incident to the face that is most likely to contain p.
-    res =   traits->compare_y_at_x_2_object()(p, cv);
+    res = m_traits->compare_y_at_x_2_object()(p, cv);
 
     switch (res) { 
       case EQUAL:
@@ -379,7 +379,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
   }
   else if (! eh->target()->is_at_infinity())
   {
-    res = traits->compare_xy_2_object() (p, eh->source()->point());
+    res = m_traits->compare_xy_2_object() (p, eh->source()->point());
 
     if ((eh->direction() == LEFT_TO_RIGHT && res == LARGER) ||
         (eh->direction() == RIGHT_TO_LEFT && res == SMALLER))
@@ -403,9 +403,9 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
   // Construct an x-monotone curve connecting the nearest landmark point np
   // to the query point p and check which CCB intersects this segment.
   X_monotone_curve_2             seg = 
-    traits->construct_x_monotone_curve_2_object()(np, p);
+    m_traits->construct_x_monotone_curve_2_object()(np, p);
   const bool                     p_is_left =
-    (traits->compare_xy_2_object()(np, p) == LARGER);
+    (m_traits->compare_xy_2_object()(np, p) == LARGER);
 
   Inner_ccb_const_iterator       inner_ccb_iter;
   Outer_ccb_const_iterator       outer_ccb_iter;
@@ -518,7 +518,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
 
   // Go over the CCB.
   typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range = 
-                                      traits->is_in_x_range_2_object();
+    m_traits->is_in_x_range_2_object();
   Ccb_halfedge_const_circulator                 curr = circ;
   const Halfedge_const_handle                   invalid_he;
   Halfedge_const_handle                         he;
@@ -560,15 +560,14 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       {
         // Check if p equals one of the edge end-vertices.
         if (! he->target()->is_at_infinity() &&
-            traits->compare_xy_2_object() (he->target()->point(),
-                                           p) == EQUAL)
+            m_traits->compare_xy_2_object() (he->target()->point(), p) == EQUAL)
         {
           // p is the target of the current halfedge.
           is_target = true;
         }
         else if (! he->source()->is_at_infinity() &&
-                 traits->compare_xy_2_object() (he->source()->point(),
-                                                p) == EQUAL)
+                 m_traits->compare_xy_2_object() (he->source()->point(), p) ==
+                 EQUAL)
         {
           // Take the twin halfedge, so p equals its target.
           he = he->twin();
@@ -609,14 +608,14 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   p_on_curve = false;
 
   // Use the left and right endpoints of the segment.
-  const Point_2&  seg_left = traits->construct_min_vertex_2_object() (seg);
-  const Point_2&  seg_right = traits->construct_max_vertex_2_object() (seg);
+  const Point_2&  seg_left = m_traits->construct_min_vertex_2_object() (seg);
+  const Point_2&  seg_right = m_traits->construct_max_vertex_2_object() (seg);
 
   // Check the boundary conditions of the left and right curve ends of cv.
-  const Boundary_type  bx_l = traits->boundary_in_x_2_object() (cv, MIN_END);
-  const Boundary_type  by_l = traits->boundary_in_y_2_object() (cv, MIN_END);
-  const Boundary_type  bx_r = traits->boundary_in_x_2_object() (cv, MAX_END);
-  const Boundary_type  by_r = traits->boundary_in_y_2_object() (cv, MAX_END);
+  const Boundary_type  bx_l = m_traits->boundary_in_x_2_object() (cv, MIN_END);
+  const Boundary_type  by_l = m_traits->boundary_in_y_2_object() (cv, MIN_END);
+  const Boundary_type  bx_r = m_traits->boundary_in_x_2_object() (cv, MAX_END);
+  const Boundary_type  by_r = m_traits->boundary_in_y_2_object() (cv, MAX_END);
 
   // Check if the overlapping x-range of the two curves is trivial.
   // In this case, they cannot cross.
@@ -625,23 +624,23 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   {
     // Check if the left endpoint of cv has the same x-coordinate as the
     // right endpoint of seg.
-    if (traits->compare_x_2_object()
-        (traits->construct_min_vertex_2_object() (cv), seg_right) == EQUAL)
+    if (m_traits->compare_x_2_object()
+        (m_traits->construct_min_vertex_2_object() (cv), seg_right) == EQUAL)
     {
       if (! p_is_left &&
-          traits->compare_xy_2_object()
-          (traits->construct_min_vertex_2_object() (cv), seg_right) == EQUAL)
+          m_traits->compare_xy_2_object()
+          (m_traits->construct_min_vertex_2_object() (cv), seg_right) == EQUAL)
       {
         p_on_curve = true;
         return (true);
       }
-      else if (traits->is_vertical_2_object()(seg))
+      else if (m_traits->is_vertical_2_object()(seg))
       {
         // Special treatment for vertical segments.
         Comparison_result   res_l =
-          traits->compare_y_at_x_2_object() (seg_left, cv);
+          m_traits->compare_y_at_x_2_object() (seg_left, cv);
         Comparison_result   res_r =
-          traits->compare_y_at_x_2_object() (seg_right, cv);
+          m_traits->compare_y_at_x_2_object() (seg_right, cv);
 
         if ((p_is_left && res_l == EQUAL) ||
             (! p_is_left && res_r == EQUAL))
@@ -662,23 +661,23 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   {
     // Check if the right endpoint of cv has the same x-coordinate as the
     // left endpoint of seg.
-    if (traits->compare_x_2_object()
-        (traits->construct_max_vertex_2_object() (cv), seg_left) == EQUAL)
+    if (m_traits->compare_x_2_object()
+        (m_traits->construct_max_vertex_2_object() (cv), seg_left) == EQUAL)
     {
       if (p_is_left &&
-          traits->compare_xy_2_object()
-          (traits->construct_max_vertex_2_object() (cv), seg_left) == EQUAL)
+          m_traits->compare_xy_2_object()
+          (m_traits->construct_max_vertex_2_object() (cv), seg_left) == EQUAL)
       {
         p_on_curve = true;
         return (true);
       }
-      else if (traits->is_vertical_2_object()(seg))
+      else if (m_traits->is_vertical_2_object()(seg))
       {
         // Special treatment for vertical segments.
         Comparison_result   res_l =
-          traits->compare_y_at_x_2_object() (seg_left, cv);
+          m_traits->compare_y_at_x_2_object() (seg_left, cv);
         Comparison_result   res_r =
-          traits->compare_y_at_x_2_object() (seg_right, cv);
+          m_traits->compare_y_at_x_2_object() (seg_right, cv);
 
         if ((p_is_left && res_l == EQUAL) ||
             (! p_is_left && res_r == EQUAL))
@@ -701,7 +700,7 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   {
     // The left end of cv lies to the left of seg_left:
     // Compare this point to cv.
-    left_res = traits->compare_y_at_x_2_object() (seg_left, cv);
+    left_res = m_traits->compare_y_at_x_2_object() (seg_left, cv);
   }
   else if (CGAL::sign (bx_l) == CGAL::POSITIVE)
   {
@@ -709,8 +708,8 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
 
     // The left end of cv lies to the right of seg_left.
     // Compare the left endpoint of cv to seg.
-    left_res = traits->compare_y_at_x_2_object()
-        (traits->construct_min_vertex_2_object() (cv), seg);
+    left_res = m_traits->compare_y_at_x_2_object()
+        (m_traits->construct_min_vertex_2_object() (cv), seg);
     left_res = CGAL::opposite (left_res);
   }
   else
@@ -725,17 +724,17 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
     {
       // In this case cv has a valid left endpoint: Find the rightmost of
       // these two points and compare it to the other curve.
-      const Point_2&    cv_left = traits->construct_min_vertex_2_object()(cv);
-      Comparison_result res = traits->compare_xy_2_object() (cv_left,
-                                                             seg_left);
+      const Point_2&    cv_left = m_traits->construct_min_vertex_2_object()(cv);
+      Comparison_result res =
+        m_traits->compare_xy_2_object() (cv_left, seg_left);
 
       if (res != LARGER)
       {
-        left_res = traits->compare_y_at_x_2_object() (seg_left, cv);
+        left_res = m_traits->compare_y_at_x_2_object() (seg_left, cv);
       }
       else
       {
-        left_res = traits->compare_y_at_x_2_object() (cv_left, seg);
+        left_res = m_traits->compare_y_at_x_2_object() (cv_left, seg);
         left_res = CGAL::opposite (left_res);
       }
     }
@@ -752,8 +751,7 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
     }
 
     // Compare the two curves to the right of their common left endpoint.
-    left_res = traits->compare_y_at_x_right_2_object() (seg, cv,
-                                                        seg_left);
+    left_res = m_traits->compare_y_at_x_right_2_object() (seg, cv, seg_left);
 
     if (left_res == EQUAL)
     {
@@ -768,7 +766,7 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   {
     // The right end of cv lies to the right of seg_right:
     // Compare this point to cv.
-    right_res = traits->compare_y_at_x_2_object() (seg_right, cv);
+    right_res = m_traits->compare_y_at_x_2_object() (seg_right, cv);
   }
   else if (CGAL::sign (bx_r) == CGAL::NEGATIVE)
   {
@@ -776,8 +774,8 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
 
     // The right end of cv lies to the left of seg_right.
     // Compare the right endpoint of cv to seg.
-    right_res = traits->compare_y_at_x_2_object()
-        (traits->construct_max_vertex_2_object() (cv), seg);
+    right_res = m_traits->compare_y_at_x_2_object()
+        (m_traits->construct_max_vertex_2_object() (cv), seg);
     right_res = CGAL::opposite (right_res);
   }
   else
@@ -792,17 +790,17 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
     {
       // In this case cv has a valid right endpoint: Find the leftmost of
       // these two points and compare it to the other curve.
-      const Point_2&    cv_right = traits->construct_max_vertex_2_object()(cv);
-      Comparison_result res = traits->compare_xy_2_object() (cv_right,
-                                                             seg_right);
+      const Point_2& cv_right = m_traits->construct_max_vertex_2_object()(cv);
+      Comparison_result res =
+        m_traits->compare_xy_2_object() (cv_right, seg_right);
 
       if (res != SMALLER)
       {
-        right_res = traits->compare_y_at_x_2_object() (seg_right, cv);
+        right_res = m_traits->compare_y_at_x_2_object() (seg_right, cv);
       }
       else
       {
-        right_res = traits->compare_y_at_x_2_object() (cv_right, seg);
+        right_res = m_traits->compare_y_at_x_2_object() (cv_right, seg);
         right_res = CGAL::opposite (right_res);
       }
     }
@@ -819,8 +817,7 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
     }
 
     // Compare the two curves to the left of their common right endpoint.
-    right_res = traits->compare_y_at_x_left_2_object() (seg, cv,
-                                                        seg_right);
+    right_res = m_traits->compare_y_at_x_left_2_object() (seg, cv, seg_right);
 
     if (right_res == EQUAL)
     {

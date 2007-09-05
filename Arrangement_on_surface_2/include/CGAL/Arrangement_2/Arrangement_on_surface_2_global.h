@@ -1472,7 +1472,7 @@ bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   typedef Arr_traits_adaptor_2<GeomTraits>                   Traits_adaptor_2;
 
   Traits_adaptor_2   *traits =
-    static_cast<Traits_adaptor_2*> (arr.get_traits());
+    static_cast<Traits_adaptor_2*> (arr.traits());
 
   std::list<CGAL::Object>                        x_objects;
   std::list<CGAL::Object>::const_iterator        obj_iter;

@@ -474,7 +474,7 @@ public:
    * \pre The arc is not vertical and p is in the x-range of the arc.
    * \return A point on the arc with the same x-coordiante as p.
    */
-  Point_2 get_point_at_x (const Point_2& p) const
+  Point_2 point_at_x (const Point_2& p) const
   {
     // Make sure that p is in the x-range of the arc.
     CGAL_precondition ((this->_info & IS_VERTICAL_SEGMENT) == 0);

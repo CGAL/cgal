@@ -165,19 +165,19 @@ public:
       Arr_traits_basic_adaptor_2<typename Arrangement_2::Geometry_traits_2>
                                                              Traits_adaptor_2;
 
-    const Traits_adaptor_2  *traits = 
+    const Traits_adaptor_2  *m_traits = 
                    static_cast<Traits_adaptor_2*> (p_arr->geometry_traits());
 
-    const Boundary_type      bx = traits->boundary_in_x_2_object() (cv,
-                                                                    MAX_END);
-    const Boundary_type      by = traits->boundary_in_y_2_object() (cv,
-                                                                    MAX_END);
+    const Boundary_type      bx = m_traits->boundary_in_x_2_object() (cv,
+                                                                      MAX_END);
+    const Boundary_type      by = m_traits->boundary_in_y_2_object() (cv,
+                                                                      MAX_END);
     Curve_end                ind = MIN_END;
 
     if (bx != MINUS_INFINITY && bx != PLUS_INFINITY &&
         by != MINUS_INFINITY && by != PLUS_INFINITY &&
-        traits->equal_2_object() (vh->point(),
-                                  traits->construct_max_vertex_2_object()(cv)))
+        m_traits->equal_2_object() (vh->point(),
+                                    m_traits->construct_max_vertex_2_object()(cv)))
     {
       ind = MAX_END;
     }

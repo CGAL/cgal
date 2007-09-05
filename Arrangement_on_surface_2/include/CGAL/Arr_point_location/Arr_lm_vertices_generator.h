@@ -79,7 +79,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;  // Its associated traits object.
+  const Traits_adaptor_2  *m_traits;  // Its associated traits object.
   Nearest_neighbor	   nn;      // The associated nearest neighbor object.
   bool                     ignore_notifications;	
   bool                     updated;
@@ -105,7 +105,7 @@ public:
     num_landmarks(0)
   {
     CGAL_PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
     build_landmarks_set();
   }
   
@@ -163,9 +163,9 @@ public:
   /*!
    * get the nearest neighbor (landmark) to the given point
    */
-  Point_2 get_closest_landmark (Point_2 p, Object &obj)
+  Point_2 closest_landmark (Point_2 p, Object &obj)
   {
-    CGAL_PRINT_V_DEBUG("get_closest_landmark.");
+    CGAL_PRINT_V_DEBUG("closest_landmark.");
 
     CGAL_assertion(updated);
     return nn.find_nearest_neighbor(p, obj);
@@ -193,7 +193,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmarks_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
     ignore_notifications = false;
   }
   

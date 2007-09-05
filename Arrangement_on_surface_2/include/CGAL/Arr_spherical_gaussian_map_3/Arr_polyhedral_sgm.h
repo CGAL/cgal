@@ -451,8 +451,8 @@ private:
         Halfedge_list_iter first = hes.begin();
         if (v1 != invalid_vertex && v2 != invalid_vertex) {
 #if 0
-          const typename Kernel::Point_3 & pps = (*first)->face()->get_point();
-          const typename Kernel::Point_3 & ppt = (*first)->twin()->face()->get_point();
+          const typename Kernel::Point_3 & pps = (*first)->face()->point();
+          const typename Kernel::Point_3 & ppt = (*first)->twin()->face()->point();
           std::cout << "XX pps: "
                     << static_cast<float>(todouble(pps.x()))
                     << ","
@@ -494,11 +494,11 @@ private:
         if (m_visitor) {
           for (unsigned int i = 0; i < 3; ++i) {
             if (dual1.is_vertex_set(i)) {
-              Arr_vertex_handle & vh = dual1.get_vertex(i);
+              Arr_vertex_handle & vh = dual1.vertex(i);
               m_visitor->update_dual_face(hec->facet(), vh);
             }
             if (dual2.is_vertex_set(i)) {
-              Arr_vertex_handle & vh = dual2.get_vertex(i);
+              Arr_vertex_handle & vh = dual2.vertex(i);
               m_visitor->update_dual_face(next_hec->facet(), vh);
             }
           }
@@ -684,7 +684,7 @@ private:
     typename Base::Face_handle fi;
     for (fi = this->faces_begin(); fi != this->faces_end(); fi++) {
       vertices_num++;
-      const Point_3 & p = fi->get_point();
+      const Point_3 & p = fi->point();
       Vector_3 v = p - CGAL::ORIGIN;
       m_center = m_center + v;
     }

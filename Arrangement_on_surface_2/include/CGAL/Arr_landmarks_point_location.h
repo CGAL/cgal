@@ -95,7 +95,7 @@ protected:
 
   // Data members:
   const Arrangement_2     *p_arr;     // The associated arrangement.
-  const Traits_adaptor_2  *traits;    // Its associated traits object.
+  const Traits_adaptor_2  *m_traits;  // Its associated traits object.
   Generator               *lm_gen;    // The associated landmark generator.
   bool                     own_gen;   // Indicates whether the generator
                                       // has been locally allocated.
@@ -105,7 +105,7 @@ public:
   /*! Default constructor. */
   Arr_landmarks_point_location () : 
     p_arr (NULL),
-    traits (NULL),
+    m_traits (NULL),
     lm_gen(NULL),
     own_gen (false)
   {}
@@ -115,8 +115,7 @@ public:
     p_arr (&arr)
   {
     // Allocate the landmarks generator.
-    traits =
-      static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
     lm_gen = new Generator(arr);
     own_gen = true;
   }
@@ -128,8 +127,7 @@ public:
     lm_gen (gen),
     own_gen (false)
   {
-    traits =
-      static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
   }
 
   /*! Destructor. */
@@ -144,8 +142,7 @@ public:
   {
     // Keep a pointer to the associated arrangement.
     p_arr = &arr;
-    traits =
-      static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
 
     // Update the landmarks generator.
     if (gen != NULL)
@@ -174,7 +171,7 @@ public:
   void detach () 
   {
     p_arr = NULL;
-    traits = NULL;
+    m_traits = NULL;
 
     CGAL_assertion(lm_gen != NULL);
     if (lm_gen)

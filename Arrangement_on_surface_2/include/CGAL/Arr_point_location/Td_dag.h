@@ -130,14 +130,14 @@ public:
   {
     return get_data();
   }
-  pointer get_data_ptr() const
+  pointer data_ptr() const
   {
     CGAL_precondition(!operator!());
     return &operator*();
   }
   pointer operator->() const
   {
-    return get_data_ptr();
+    return data_ptr();
   }
   bool is_inner_node() const 
   {return !operator!() && ptr()->is_inner_node();}

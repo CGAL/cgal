@@ -271,7 +271,7 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
     // The curve end lies at x = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
     Curve_end                  v_ind;
-    const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
+    const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
       return (v->boundary_in_x() == bound_x &&
@@ -287,7 +287,7 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
     // The curve end lies at y = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
     Curve_end                  v_ind;
-    const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
+    const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
       return (v->boundary_in_x() == NO_BOUNDARY &&
@@ -639,7 +639,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
     Curve_end                  v_ind;
-    const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
+    const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
     return (this->traits->compare_x_2_object() (p, *v_cv, v_ind));
@@ -674,7 +674,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
     Curve_end                  v_ind;
-    const X_monotone_curve_2  *v_cv = _get_curve (v, v_ind);
+    const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     CGAL_assertion (v_cv != NULL);
 
@@ -732,7 +732,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
 template <class GeomTraits, class Dcel_>
 const typename
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::X_monotone_curve_2* 
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_get_curve
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_curve
     (const Vertex *v,
      Curve_end& ind) const
 {
@@ -807,7 +807,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
       const Curve_end  ind = (bound_x == MINUS_INFINITY) ? MIN_END : MAX_END;
 
       res1 = this->traits->compare_y_at_x_2_object() (cv,
-                                                      *_get_curve (v1, v_ind),
+                                                      *_curve (v1, v_ind),
                                                       ind);
       if (res1 == EQUAL)
       {
@@ -832,7 +832,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
       const Curve_end  ind = (bound_x == MINUS_INFINITY) ? MIN_END : MAX_END;
 
       res2 = this->traits->compare_y_at_x_2_object() (cv,
-                                                      *_get_curve (v2, v_ind),
+                                                      *_curve (v2, v_ind),
                                                       ind);
       
       if (res2 == EQUAL)
@@ -869,7 +869,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const X_monotone_curve_2  *v_cv1 = _get_curve (v1, v_ind);
+      const X_monotone_curve_2  *v_cv1 = _curve (v1, v_ind);
 
       CGAL_assertion (v_cv1 != NULL);
       res1 = this->traits->compare_x_2_object() (cv, ind, *v_cv1, v_ind);
@@ -894,7 +894,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const X_monotone_curve_2  *v_cv2 = _get_curve (v2, v_ind);
+      const X_monotone_curve_2  *v_cv2 = _curve (v2, v_ind);
 
       CGAL_assertion (v_cv2 != NULL);
       res2 = this->traits->compare_x_2_object() (cv, ind, *v_cv2, v_ind);

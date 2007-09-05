@@ -63,7 +63,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
       // we still have to check whether the query point coincides with
       // any of the isolated vertices contained inside this face.
       Isolated_vertex_const_iterator   iso_verts_it;
-      typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
+      typename Traits_adaptor_2::Equal_2  equal = m_traits->equal_2_object();
 
       for (iso_verts_it = face_found->isolated_vertices_begin();
           iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
@@ -200,7 +200,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
   // we still have to check whether the query point coincides with
   // any of the isolated vertices contained inside this face.
   Isolated_vertex_const_iterator   iso_verts_it;
-  typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
+  typename Traits_adaptor_2::Equal_2  equal = m_traits->equal_2_object();
 
   for (iso_verts_it = face_found->isolated_vertices_begin();
       iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
@@ -261,7 +261,7 @@ void Arr_triangulation_point_location<Arrangement_2>
     CDT_Point cdt_p2 = static_cast <CDT_Point> (pm_p2);
 
     //check if source point is equal to destination point
-    if (traits->equal_2_object()(pm_p1, pm_p2))
+    if (m_traits->equal_2_object()(pm_p1, pm_p2))
     {
       std::cerr << "WARNING: source point is equal to destination point!!! " 
         << pm_p1 << std::endl ;

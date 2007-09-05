@@ -571,10 +571,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   _is_vert (false)
 {
   // Get the originators of the point that correspond to the curve B.
-  Originator_iterator   ps_org = ps.get_originator(B);
+  Originator_iterator   ps_org = ps.originator(B);
   CGAL_precondition (ps_org != ps.originators_end()); 
   
-  Originator_iterator   pt_org = pt.get_originator(B);
+  Originator_iterator   pt_org = pt.originator(B);
   CGAL_precondition (pt_org != pt.originators_end());
   
   // Check if the subcurve is directed left or right.
@@ -634,10 +634,10 @@ template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::parameter_range () const
 {
   // First try to use the approximate representation of the endpoints.
-  Originator_iterator  s_org = _ps.get_originator (_curve);
+  Originator_iterator  s_org = _ps.originator (_curve);
   CGAL_assertion (s_org != _ps.originators_end());
 
-  Originator_iterator  t_org = _pt.get_originator (_curve);
+  Originator_iterator  t_org = _pt.originator (_curve);
   CGAL_assertion (t_org != _pt.originators_end());
 
   double  t_src = (CGAL::to_double (s_org->point_bound().t_min) +
@@ -702,14 +702,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   CGAL_precondition (res1 != res2);
   
   // Check for the case when curve is an originator of the point.
-  Originator_iterator   p_org = p.get_originator(_curve);
+  Originator_iterator   p_org = p.originator(_curve);
  
   if (p_org != p.originators_end())
   {
-    Originator_iterator      ps_org = _ps.get_originator(_curve);
+    Originator_iterator      ps_org = _ps.originator(_curve);
     CGAL_assertion (ps_org != _ps.originators_end());
   
-    Originator_iterator      pt_org = _pt.get_originator(_curve);
+    Originator_iterator      pt_org = _pt.originator(_curve);
     CGAL_assertion (pt_org != _pt.originators_end());
 
     // Check if the point is in the parameter range of this subcurve.
@@ -741,10 +741,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   std::copy (_curve.control_points_begin(), _curve.control_points_end(),
              std::back_inserter(cp));
 
-  Originator_iterator           ps_org = _ps.get_originator(_curve);
+  Originator_iterator           ps_org = _ps.originator(_curve);
   CGAL_assertion (ps_org != _ps.originators_end());
   
-  Originator_iterator           pt_org = _pt.get_originator(_curve);
+  Originator_iterator           pt_org = _pt.originator(_curve);
   CGAL_assertion (pt_org != _pt.originators_end());
   
   Comparison_result             res_bound = EQUAL;
@@ -859,14 +859,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   bool         do_ovlp;
   bool         swap_order = (_curve.id() > org.curve().id());
   const Intersect_list&  inter_list = (! swap_order ?
-    (cache.get_intersections (_curve.id(),
+    (cache.intersections (_curve.id(),
                               _curve.x_polynomial(), _curve.x_norm(),
                               _curve.y_polynomial(), _curve.y_norm(),
                               org.curve().id(),
                               org.curve().x_polynomial(), org.curve().x_norm(),
                               org.curve().y_polynomial(), org.curve().y_norm(),
                               do_ovlp)) :
-    (cache.get_intersections (org.curve().id(),
+    (cache.intersections (org.curve().id(),
                               org.curve().x_polynomial(), org.curve().x_norm(),
                               org.curve().y_polynomial(), org.curve().y_norm(),
                               _curve.id(),
@@ -944,8 +944,8 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
   // curves are originators of p.
   if (! p.equals (left(), cache) || ! p.equals (cv.left(), cache))
   {
-    CGAL_assertion (p.get_originator(_curve) != p.originators_end() &&
-                    p.get_originator(cv._curve) != p.originators_end());
+    CGAL_assertion (p.originator(_curve) != p.originators_end() &&
+                    p.originator(cv._curve) != p.originators_end());
   }
 
   // Check for vertical subcurves. A vertical segment is above any other
@@ -970,7 +970,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
   {
     // Get the originator, and make sure that p is a vertical tangency
     // point of this originator.
-    Originator_iterator  org = p.get_originator(_curve);
+    Originator_iterator  org = p.originator(_curve);
     
     CGAL_assertion (org != p.originators_end());    
     CGAL_assertion (_inc_to_right != cv._inc_to_right);
@@ -1067,8 +1067,8 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
   // curves are originators of p.
   if (! p.equals (right(), cache) || ! p.equals (cv.right(), cache))
   {
-    CGAL_assertion (p.get_originator(_curve) != p.originators_end() &&
-                    p.get_originator(cv._curve) != p.originators_end());
+    CGAL_assertion (p.originator(_curve) != p.originators_end() &&
+                    p.originator(cv._curve) != p.originators_end());
   }
   
   // Check for vertical subcurves. A vertical segment is below any other
@@ -1093,7 +1093,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
   {
     // Get the originator, and make sure that p is a vertical tangency
     // point of this originator.
-    Originator_iterator  org = p.get_originator(_curve);
+    Originator_iterator  org = p.originator(_curve);
     
     CGAL_assertion (org != p.originators_end());    
     CGAL_assertion (_inc_to_right != cv._inc_to_right);
@@ -1215,7 +1215,7 @@ void _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::split
         (const Point_2& p,
          Self& c1, Self& c2) const
 {
-  CGAL_precondition (p.get_originator(_curve) != p.originators_end());
+  CGAL_precondition (p.originator(_curve) != p.originators_end());
 
   // Duplicate the curve.
   c1 = c2 = *this;
@@ -1301,10 +1301,10 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
          Bezier_cache& cache) const
 {
   // First try to use the approximate representation of the endpoints.
-  Originator_iterator  s_org = _ps.get_originator (_curve);
+  Originator_iterator  s_org = _ps.originator (_curve);
   CGAL_assertion (s_org != _ps.originators_end());
 
-  Originator_iterator  t_org = _pt.get_originator (_curve);
+  Originator_iterator  t_org = _pt.originator (_curve);
   CGAL_assertion (t_org != _pt.originators_end());
 
   bool  p_lt_ps = (CGAL::compare (t,
@@ -1361,13 +1361,13 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
     return true;
 
   // Compare the parameter of p with the parameters of the endpoints.
-  Originator_iterator  p_org = p.get_originator (_curve);
+  Originator_iterator  p_org = p.originator (_curve);
   CGAL_assertion (p_org != p.originators_end());
   
-  Originator_iterator  s_org = _ps.get_originator (_curve);
+  Originator_iterator  s_org = _ps.originator (_curve);
   CGAL_assertion (s_org != _ps.originators_end());
   
-  Originator_iterator  t_org = _pt.get_originator (_curve);
+  Originator_iterator  t_org = _pt.originator (_curve);
   CGAL_assertion (t_org != _pt.originators_end());
   
   bool      can_refine_p = ! p.is_exact();
@@ -1430,7 +1430,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_get_y
   // curve equal x0.
   std::list<Algebraic>  t_vals;
   
-  _curve.get_t_at_x (x0, std::back_inserter(t_vals));
+  _curve.t_at_x (x0, std::back_inserter(t_vals));
   
   // Find a t-value that is in the range of the current curve.
   Nt_traits                                nt_traits;
@@ -1482,10 +1482,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
          const Point_2& p) const
 {
   // Get the originators of p.
-  Originator_iterator     org1 = p.get_originator (_curve);
+  Originator_iterator     org1 = p.originator (_curve);
   CGAL_assertion (org1 != p.originators_end());
 
-  Originator_iterator     org2 = p.get_originator (cv._curve);
+  Originator_iterator     org2 = p.originator (cv._curve);
   CGAL_assertion (org2 != p.originators_end());
   
   // If the point is only approximated, we can carry out a comparison using
@@ -1588,10 +1588,10 @@ std::pair<typename _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt,
 _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_t_range
         (Bezier_cache& cache) const
 {
-  Originator_iterator  ps_org = _ps.get_originator(_curve);
+  Originator_iterator  ps_org = _ps.originator(_curve);
   CGAL_assertion(ps_org != _ps.originators_end());
   
-  Originator_iterator  pt_org = _pt.get_originator(_curve);
+  Originator_iterator  pt_org = _pt.originator(_curve);
   CGAL_assertion(pt_org != _pt.originators_end());
   
   // Make sure that the two endpoints are exact.
@@ -1624,14 +1624,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
   bool                   do_ovlp;
   const Intersect_list&  inter_list =
     (no_swap_curves ?
-     (cache.get_intersections (_curve.id(),
+     (cache.intersections (_curve.id(),
                                _curve.x_polynomial(), _curve.x_norm(),
                                _curve.y_polynomial(), _curve.y_norm(),
                                cv._curve.id(),
                                cv._curve.x_polynomial(), cv._curve.x_norm(),
                                cv._curve.y_polynomial(), cv._curve.y_norm(),
                                do_ovlp)) :
-     (cache.get_intersections (cv._curve.id(),
+     (cache.intersections (cv._curve.id(),
                                cv._curve.x_polynomial(), cv._curve.x_norm(),
                                cv._curve.y_polynomial(), cv._curve.y_norm(),
                                _curve.id(),
@@ -1643,7 +1643,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
     return (EQUAL);
   
   // Get the parameter value for the point p.
-  Originator_iterator          org = p.get_originator(_curve);
+  Originator_iterator          org = p.originator(_curve);
   
   CGAL_assertion (org != p.originators_end());
   CGAL_assertion (org->has_parameter());
@@ -1857,7 +1857,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
         if (! pit->is_exact())
           pit->make_exact (cache);
         
-        Originator_iterator  p_org = pit->get_originator (_curve);
+        Originator_iterator  p_org = pit->originator (_curve);
         CGAL_assertion (p_org != pit->originators_end());
         
         in_range1 = _is_in_range (p_org->parameter(), cache);
@@ -1875,7 +1875,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
         if (! pit->is_exact())
           pit->make_exact (cache);
         
-        Originator_iterator  p_org = pit->get_originator (cv._curve);
+        Originator_iterator  p_org = pit->originator (cv._curve);
         CGAL_assertion (p_org != pit->originators_end());
         
         in_range2 = cv._is_in_range (p_org->parameter(), cache);
@@ -1897,7 +1897,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
   // We therefore resort to the exact procedure and exactly compute them.
   bool                   do_ovlp;
   const Intersect_list&  inter_list =
-    cache.get_intersections (_curve.id(),
+    cache.intersections (_curve.id(),
                              _curve.x_polynomial(), _curve.x_norm(),
                              _curve.y_polynomial(), _curve.y_norm(),
                              cv._curve.id(),
@@ -1953,10 +1953,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
 
   // Get a rational approximation of the parameter values at the endpoints.
   Nt_traits                nt_traits;
-  Originator_iterator      ps_org = _ps.get_originator(_curve);
+  Originator_iterator      ps_org = _ps.originator(_curve);
   CGAL_assertion (ps_org != _ps.originators_end());
   
-  Originator_iterator      pt_org = _pt.get_originator(_curve);
+  Originator_iterator      pt_org = _pt.originator(_curve);
   CGAL_assertion (pt_org != _pt.originators_end());
 
   Rational                 my_t_min;

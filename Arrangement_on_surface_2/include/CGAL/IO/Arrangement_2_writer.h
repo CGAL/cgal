@@ -195,8 +195,8 @@ protected:
 
     // Write the edge.
     formatter.write_edge_begin ();
-    formatter.write_vertex_index (_get_index(he_t->vertex()));
-    formatter.write_vertex_index (_get_index(he->vertex()));
+    formatter.write_vertex_index (_index(he_t->vertex()));
+    formatter.write_vertex_index (_index(he->vertex()));
     
     if (he->direction() == LEFT_TO_RIGHT)
       formatter.write_vertex_index (0);
@@ -284,7 +284,7 @@ protected:
     for (iso_vit = f->isolated_vertices_begin();
          iso_vit != f->isolated_vertices_end(); ++iso_vit)
     {
-      formatter.write_vertex_index (_get_index (&(*iso_vit)));
+      formatter.write_vertex_index (_index (&(*iso_vit)));
     }
     formatter.write_isolated_vertices_end();
 
@@ -307,7 +307,7 @@ protected:
     formatter.write_ccb_halfedges_begin();
     do
     {
-      formatter.write_halfedge_index (_get_index (curr));
+      formatter.write_halfedge_index (_index (curr));
       curr = curr->next();
     } while (curr != ccb);
     formatter.write_ccb_halfedges_end();
@@ -316,7 +316,7 @@ protected:
   }
   
   /*! Get the mapped index of a given vertex. */
-  int _get_index (const DVertex *v) const
+  int _index (const DVertex *v) const
   {
     typename Vertex_index_map::const_iterator   pos = m_v_index.find (v);
 
@@ -325,7 +325,7 @@ protected:
   }
 
   /*! Get the mapped index of a given halfegde. */
-  int _get_index (const DHalfedge *he) const
+  int _index (const DHalfedge *he) const
   {
     typename Halfedge_index_map::const_iterator  pos = m_he_index.find (he);
 

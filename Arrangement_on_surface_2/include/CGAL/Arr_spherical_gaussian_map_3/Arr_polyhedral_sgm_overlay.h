@@ -49,8 +49,8 @@ public:
   /*! 1 */
   void create_face(Face_const_handle f1, Face_const_handle f2, Face_handle f)
   {
-    const Point_3 & p1 = f1->get_point();
-    const Point_3 & p2 = f2->get_point();
+    const Point_3 & p1 = f1->point();
+    const Point_3 & p2 = f2->point();
     Vector_3 v1(ORIGIN, p1);
     Point_3 p = p2 + v1;
     f->set_point(p);

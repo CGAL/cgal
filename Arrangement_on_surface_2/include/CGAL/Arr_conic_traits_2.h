@@ -269,7 +269,7 @@ public:
 	{
 	  CGAL_precondition (x_res != LARGER);
 
-	  q = cv.get_point_at_x (p);
+	  q = cv.point_at_x (p);
 	}
       }
 

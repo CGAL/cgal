@@ -68,7 +68,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;
+  const Traits_adaptor_2  *m_traits;
   bool                     ignore_notifications;
   bool                     updated;
   unsigned int             num_landmarks;
@@ -98,7 +98,7 @@ public:
     updated (false),
     num_landmarks (n_landmarks)
   {
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     build_landmark_set();
   }
   
@@ -142,13 +142,13 @@ public:
    *                    arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
-  virtual const Point_2& get_closest_landmark (const Point_2& q, Object &obj)
+  virtual const Point_2& closest_landmark (const Point_2& q, Object &obj)
   {
     CGAL_assertion(updated);
 
     // Calculate the index of the nearest grid point point to q.
-    const ANT     qx = traits->approximate_2_object()(q, 0);
-    const ANT     qy = traits->approximate_2_object()(q, 1);
+    const ANT     qx = m_traits->approximate_2_object()(q, 0);
+    const ANT     qy = m_traits->approximate_2_object()(q, 1);
     unsigned int  i, j;
     unsigned int  index;
 
@@ -184,7 +184,7 @@ public:
   virtual void before_assign (const Arrangement_2& arr)
   {
     clear_landmark_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = true;
   }
 
@@ -205,7 +205,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmark_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = true;
   }
 
@@ -410,8 +410,8 @@ protected:
     // Locate the arrangement vertices with minimal and maximal x and
     // y-coordinates.
     Vertex_const_iterator    vit = arr->vertices_begin();
-    x_min = x_max = traits->approximate_2_object()(vit->point(), 0);
-    y_min = y_max = traits->approximate_2_object()(vit->point(), 1);
+    x_min = x_max = m_traits->approximate_2_object()(vit->point(), 0);
+    y_min = y_max = m_traits->approximate_2_object()(vit->point(), 1);
 
     if(arr->number_of_vertices() == 1)
     {
@@ -429,8 +429,8 @@ protected:
 
     for (++vit; vit != arr->vertices_end(); ++vit)
     {
-      x = traits->approximate_2_object()(vit->point(), 0);
-      y = traits->approximate_2_object()(vit->point(), 1);
+      x = m_traits->approximate_2_object()(vit->point(), 0);
+      y = m_traits->approximate_2_object()(vit->point(), 1);
 
       if (CGAL::compare (x, x_min) == SMALLER)
       {
@@ -468,10 +468,10 @@ protected:
     CGAL_assertion (sqrt_n > 1);
 
     // Calculate the step sizes for the grid.
-    ANT    delta_x = traits->approximate_2_object()(right->point(), 0) -
-                     traits->approximate_2_object()(left->point(), 0);
-    ANT    delta_y = traits->approximate_2_object()(top->point(), 1) -
-                     traits->approximate_2_object()(bottom->point(), 1);
+    ANT    delta_x = m_traits->approximate_2_object()(right->point(), 0) -
+                     m_traits->approximate_2_object()(left->point(), 0);
+    ANT    delta_y = m_traits->approximate_2_object()(top->point(), 1) -
+                     m_traits->approximate_2_object()(bottom->point(), 1);
 
     if (CGAL::sign (delta_x) == CGAL::ZERO)
       delta_x = delta_y;
@@ -487,9 +487,9 @@ protected:
 
     // Create the points on the grid.
     const double  x_min =
-      CGAL::to_double (traits->approximate_2_object()(left->point(), 0));
+      CGAL::to_double (m_traits->approximate_2_object()(left->point(), 0));
     const double  y_min =
-      CGAL::to_double (traits->approximate_2_object()(bottom->point(), 1));
+      CGAL::to_double (m_traits->approximate_2_object()(bottom->point(), 1));
     const double  sx = CGAL::to_double (step_x);
     const double  sy = CGAL::to_double (step_y);
     double        px, py;

@@ -591,8 +591,7 @@ protected:
    * \pre v is a valid (not fictitious) boundary.
    * \return The curve that induces v, or NULL if v has no incident curves yet.
    */
-  const X_monotone_curve_2* _get_curve (const Vertex *v,
-                                        Curve_end& ind) const;
+  const X_monotone_curve_2* _curve (const Vertex *v, Curve_end& ind) const;
 
   /*!
    * Check whether the given infinite curve end lies on the given fictitious

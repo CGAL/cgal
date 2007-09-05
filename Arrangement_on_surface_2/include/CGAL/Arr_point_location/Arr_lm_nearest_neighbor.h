@@ -70,9 +70,9 @@ public:
       m_point (p)
     {
       // Obtain the coordinate approximations,
-      Geometry_traits_2  traits;
-      m_vec[0] = traits.approximate_2_object()(p, 0);
-      m_vec[1] = traits.approximate_2_object()(p, 1);
+      Geometry_traits_2  m_traits;
+      m_vec[0] = m_traits.approximate_2_object()(p, 0);
+      m_vec[1] = m_traits.approximate_2_object()(p, 1);
     }
 
     /*! Constructor from a point and an its location in the arrangement. */
@@ -81,9 +81,9 @@ public:
       m_object (obj)
     { 
       // Obtain the coordinate approximations,
-      Geometry_traits_2  traits;
-      m_vec[0] = traits.approximate_2_object()(p, 0);
-      m_vec[1] = traits.approximate_2_object()(p, 1);
+      Geometry_traits_2  m_traits;
+      m_vec[0] = m_traits.approximate_2_object()(p, 0);
+      m_vec[1] = m_traits.approximate_2_object()(p, 1);
     }
 
     /* Get the point. */

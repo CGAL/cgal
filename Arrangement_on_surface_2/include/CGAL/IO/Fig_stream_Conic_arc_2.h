@@ -47,7 +47,7 @@ static void _write_x_monotone_conic_arc
     // In case of a circular arc:
     Algebraic    x_mid = (cv.source().x() + cv.target().x()) / 2;
     Alg_point_2  q = Alg_point_2(x_mid, 0);
-    Alg_point_2  p = cv.get_point_at_x (q);
+    Alg_point_2  p = cv.point_at_x (q);
 
     fs.write_circular_arc (cv.source(), p, cv.target());
   }
@@ -65,7 +65,7 @@ static void _write_x_monotone_conic_arc
       x = (cv.source().x()*(4 - i) + cv.target().x()*i) / 4;
       
       q = Alg_point_2(x, 0);
-      cps[i] = cv.get_point_at_x (q);      
+      cps[i] = cv.point_at_x (q);      
     }
     cps[4] = cv.target();
 

@@ -91,7 +91,7 @@ public:
   void set_marked(bool marked) { m_marked = marked; }
 
   /*! Obtain the "marked" flag */
-  bool get_marked() const { return m_marked; }
+  bool marked() const { return m_marked; }
 };
 
 /*! The extended Polyhedron halfedge type */
@@ -121,7 +121,7 @@ public:
   void set_marked(bool marked) { m_marked = marked; }
 
   /*! Obtain the "marked" flag */
-  bool get_marked() const { return m_marked; }
+  bool marked() const { return m_marked; }
 };
 
 /*! The extended Polyhedron face type */
@@ -162,7 +162,7 @@ public:
   void set_marked(bool marked) { m_marked = marked; }
 
   /*! Obtain the "marked" flag */
-  bool get_marked() const { return m_marked; }
+  bool marked() const { return m_marked; }
 };
 
 /*! The "items" type. A model of the PolyhedralSgmPolyhedronItems_3 concept,

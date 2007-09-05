@@ -182,9 +182,9 @@ public:
   
   
 public:
-  static const Point& get_point_at_left_top_infinity();
-  static const Point& get_point_at_right_bottom_infinity();
-  static const X_curve& get_curve_at_infinity();
+  static const Point& point_at_left_top_infinity();
+  static const Point& point_at_right_bottom_infinity();
+  static const X_curve& curve_at_infinity();
 private:
   static Point * POINT_AT_LEFT_TOP_INFINITY;
   static Point * POINT_AT_RIGHT_BOTTOM_INFINITY;

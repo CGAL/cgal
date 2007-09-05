@@ -177,12 +177,12 @@ public:
   //@{
 
   /*! Get the geometry-traits class (for backward compatibility). */
-  const Traits_2* get_traits () const
+  const Traits_2* traits () const
   {
     return (this->geometry_traits());
   }
 
-  Traits_2* get_traits ()
+  Traits_2* traits ()
   {
     return (this->geometry_traits());
   }

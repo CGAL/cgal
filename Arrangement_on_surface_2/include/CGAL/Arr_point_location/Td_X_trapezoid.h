@@ -155,10 +155,10 @@ class Td_X_trapezoid : public Handle
   
   Td_X_trapezoid()
     {
-      PTR = new Boundary_type(Traits::get_point_at_left_top_infinity(),
-			      Traits::get_point_at_right_bottom_infinity(),
-			      Traits::get_curve_at_infinity(),
-			      Traits::get_curve_at_infinity(),
+      PTR = new Boundary_type(Traits::point_at_left_top_infinity(),
+			      Traits::point_at_right_bottom_infinity(),
+			      Traits::curve_at_infinity(),
+			      Traits::curve_at_infinity(),
 			      CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOTALLY_UNBOUNDED,
 			      0, 0, 0, 0);
       node = 0;
@@ -182,10 +182,10 @@ class Td_X_trapezoid : public Handle
                   Data_structure *p = 0)
     {
       PTR = new Boundary_type
-	(l ? *l : Traits::get_point_at_left_top_infinity(),
-	 r ? *r : Traits::get_point_at_right_bottom_infinity(),
-	 b ? *b : Traits::get_curve_at_infinity(),
-	 t ? *t : Traits::get_curve_at_infinity(),
+	(l ? *l : Traits::point_at_left_top_infinity(),
+	 r ? *r : Traits::point_at_right_bottom_infinity(),
+	 b ? *b : Traits::curve_at_infinity(),
+	 t ? *t : Traits::curve_at_infinity(),
 	 ((l ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED) | 
 	  (r ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED) | 
 	  (b ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED) | 
@@ -241,7 +241,7 @@ class Td_X_trapezoid : public Handle
     CGAL_TD_INLINE const Point& left () const
     {
       return !is_left_unbounded() ? 
-	left_unsafe() : Traits::get_point_at_left_top_infinity();
+	left_unsafe() : Traits::point_at_left_top_infinity();
     }
   
     CGAL_TD_INLINE const Point& right_unsafe () const
@@ -252,7 +252,7 @@ class Td_X_trapezoid : public Handle
     CGAL_TD_INLINE const Point& right () const
     {
       return !is_right_unbounded() ? 
-	right_unsafe() : Traits::get_point_at_right_bottom_infinity();
+	right_unsafe() : Traits::point_at_right_bottom_infinity();
     }
   
     // filters out the infinite case where at returns predefined dummy values
@@ -265,7 +265,7 @@ class Td_X_trapezoid : public Handle
     CGAL_TD_INLINE const X_curve& bottom () const
     {
       return !is_bottom_unbounded() ?  
-	bottom_unsafe() : Traits::get_curve_at_infinity();
+	bottom_unsafe() : Traits::curve_at_infinity();
     }
   
     CGAL_TD_INLINE const X_curve& top_unsafe () const
@@ -276,7 +276,7 @@ class Td_X_trapezoid : public Handle
     CGAL_TD_INLINE const X_curve& top () const
     {
       return !is_top_unbounded() ?	
-	top_unsafe() : Traits::get_curve_at_infinity();
+	top_unsafe() : Traits::curve_at_infinity();
     }
   
     unsigned char boundedness() const {return ptr()->e4;}

@@ -313,18 +313,18 @@ private:
                 if (hit->direction() == CGAL::LEFT_TO_RIGHT) {
 #if 1 // TODO use traits instead
                     CGAL_precondition(
-                            hit->curve().get_boundary_in_y(CGAL::MIN_END)
+                            hit->curve().boundary_in_y(CGAL::MIN_END)
                             == CGAL::NO_BOUNDARY
                     ); 
-                    if (hit->curve().get_boundary_in_x(CGAL::MIN_END)
+                    if (hit->curve().boundary_in_x(CGAL::MIN_END)
                         == CGAL::MINUS_INFINITY) {
                         number_of_vertices_at_minus_inf++;
                     }
                     CGAL_precondition(
-                            hit->curve().get_boundary_in_y(CGAL::MAX_END)
+                            hit->curve().boundary_in_y(CGAL::MAX_END)
                             == CGAL::NO_BOUNDARY
                     ); 
-                    if (hit->curve().get_boundary_in_x(CGAL::MAX_END)
+                    if (hit->curve().boundary_in_x(CGAL::MAX_END)
                         == CGAL::PLUS_INFINITY) {
                         number_of_vertices_at_plus_inf++;
                     }                    
@@ -1044,7 +1044,7 @@ protected:
      * \pre v is a valid boundary vertex.
      * \return The curve that induces v.
      */
-    const X_monotone_curve_2& _get_curve (const Vertex *v,
+    const X_monotone_curve_2& _curve (const Vertex *v,
                                           Curve_end& ind) const;
 
     /*!

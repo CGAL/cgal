@@ -84,7 +84,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;  // The associated traits object.
+  const Traits_adaptor_2  *m_traits;  // The associated traits object.
   Nearest_neighbor         nn;      // The associated nearest neighbor object.
   bool                     ignore_notifications;    
   bool                     updated;
@@ -107,7 +107,7 @@ public:
     updated (false),
     num_small_not_updated_changes(0)
   {
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     // One needs to call build_landmark_set() in the constructor of any
     // inherited class.
   }
@@ -144,7 +144,7 @@ public:
   /*!
    * Get the nearest neighbor (landmark) to the given point.
    */
-  virtual Point_2 get_closest_landmark (Point_2 p, Object &obj)
+  virtual Point_2 closest_landmark (Point_2 p, Object &obj)
   {
     CGAL_assertion(updated);
     return (nn.find_nearest_neighbor(p, obj));
@@ -161,7 +161,7 @@ public:
   virtual void before_assign (const Arrangement_2& arr)
   {
     clear_landmark_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = true;
   }
 
@@ -182,7 +182,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmark_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = true;
   }
 

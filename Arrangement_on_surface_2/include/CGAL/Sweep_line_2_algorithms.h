@@ -131,13 +131,12 @@ OutputIterator compute_intersection_points (CurveInputIterator curves_begin,
 {
   typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
 
-  typename Default_arr_traits<Curve>::Traits   traits;
+  typename Default_arr_traits<Curve>::Traits   m_traits;
 
-  return (compute_intersection_points(curves_begin,
-                                      curves_end,
+  return (compute_intersection_points(curves_begin, curves_end,
                                       points,
                                       report_endpoints,
-                                      traits));
+                                      m_traits));
 }
 
 
@@ -183,12 +182,11 @@ OutputIterator compute_subcurves (CurveInputIterator curves_begin,
                                   bool mult_overlaps = false)
 {
   typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
-  typename Default_arr_traits<Curve>::Traits   traits;
-  return (compute_subcurves(curves_begin,
-                            curves_end,
+  typename Default_arr_traits<Curve>::Traits   m_traits;
+  return (compute_subcurves(curves_begin, curves_end,
                             subcurves,
                             mult_overlaps,
-                            traits));
+                            m_traits));
 }
 
 /*!
@@ -224,8 +222,8 @@ bool do_curves_intersect (CurveInputIterator curves_begin,
 {
   typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
 
-  typename Default_arr_traits<Curve>::Traits   traits;
-  return (do_curves_intersect(curves_begin, curves_end, traits));
+  typename Default_arr_traits<Curve>::Traits   m_traits;
+  return (do_curves_intersect(curves_begin, curves_end, m_traits));
 }
 
 CGAL_END_NAMESPACE

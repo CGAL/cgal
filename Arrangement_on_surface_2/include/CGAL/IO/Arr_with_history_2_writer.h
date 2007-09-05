@@ -109,7 +109,7 @@ protected:
     for (ieit = this->m_arr.induced_edges_begin(cv);
          ieit != this->m_arr.induced_edges_end(cv); ++ieit)
     {
-      formatter.write_halfedge_index (this->_get_index (&(**ieit)));
+      formatter.write_halfedge_index (this->_index (&(**ieit)));
     }
     formatter.write_induced_edges_end();
     

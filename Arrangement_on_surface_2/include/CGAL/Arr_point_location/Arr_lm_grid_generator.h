@@ -74,7 +74,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;    // Its associated traits object.
+  const Traits_adaptor_2  *m_traits;    // Its associated traits object.
   bool  ignore_notifications;	
   bool  updated;
   
@@ -107,7 +107,7 @@ public:
     CGAL_PRINT_DEBUG("Arr_grid_landmarks_generator constructor. "
                 <<"number_of_landmarks = "<< number_of_landmarks); 
     
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
     build_landmarks_set();
   }
   
@@ -155,7 +155,7 @@ public:
   /*!
    * get the nearest neighbor (landmark) to the given point
    */
-  virtual Point_2 get_closest_landmark (Point_2 p, Object &obj)
+  virtual Point_2 closest_landmark (Point_2 p, Object &obj)
   {
     CGAL_assertion(updated);
     CGAL_PRINT_DEBUG("step_x = "<<step_x << ", step_y = "<<step_y);
@@ -164,14 +164,14 @@ public:
     
     //approximate the steps
     Point_2 step_p (step_x, step_y);
-    ANT ant_step_x = traits->approximate_2_object()(step_p, 0);
-    ANT ant_step_y = traits->approximate_2_object()(step_p, 1);
+    ANT ant_step_x = m_traits->approximate_2_object()(step_p, 0);
+    ANT ant_step_y = m_traits->approximate_2_object()(step_p, 1);
     
     CGAL_PRINT_DEBUG("ant_step_x = "<<ant_step_x << ", ant_step_y = "<<ant_step_y);
     
     //calculate the index of the point 
-    ANT x = traits->approximate_2_object()(p, 0);
-    ANT y = traits->approximate_2_object()(p, 1);
+    ANT x = m_traits->approximate_2_object()(p, 0);
+    ANT y = m_traits->approximate_2_object()(p, 1);
     
     CGAL_PRINT_DEBUG("x = "<<x << ", y = "<<y);
     
@@ -225,15 +225,15 @@ protected:
     {
       //there is only one isolated vertex at the arrangement
       Vertex_const_iterator vit = arr->vertices_begin();
-      x_min = x_max = traits->approximate_2_object()(vit->point(), 0);
-      y_min = y_max = traits->approximate_2_object()(vit->point(), 1);
+      x_min = x_max = m_traits->approximate_2_object()(vit->point(), 0);
+      y_min = y_max = m_traits->approximate_2_object()(vit->point(), 1);
       sqrt_n = 1;
       points.push_back(Point_2(x_min, y_min)); 
       return;
     }
     Vertex_const_iterator vit = arr->vertices_begin();
-    x_min = x_max = traits->approximate_2_object()(vit->point(), 0);
-    y_min = y_max = traits->approximate_2_object()(vit->point(), 1);
+    x_min = x_max = m_traits->approximate_2_object()(vit->point(), 0);
+    y_min = y_max = m_traits->approximate_2_object()(vit->point(), 1);
 
     //find bounding box
     ANT x, y;
@@ -242,8 +242,8 @@ protected:
 
     for (vit=arr->vertices_begin(); vit != arr->vertices_end(); vit++)
     {
-      x = traits->approximate_2_object()(vit->point(), 0);
-      y = traits->approximate_2_object()(vit->point(), 1);
+      x = m_traits->approximate_2_object()(vit->point(), 0);
+      y = m_traits->approximate_2_object()(vit->point(), 1);
       if (x < x_min) { x_min = x; left = vit->point();}
       if (x > x_max) { x_max = x; right = vit->point();}
       if (y < y_min) { y_min = y; bottom = vit->point();}
@@ -305,7 +305,7 @@ public:
   virtual void before_assign (const Arrangement_2& arr)
   {
     clear_landmarks_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
     ignore_notifications = true;   
   }
   
@@ -327,7 +327,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmarks_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
     ignore_notifications = true;
   }
   

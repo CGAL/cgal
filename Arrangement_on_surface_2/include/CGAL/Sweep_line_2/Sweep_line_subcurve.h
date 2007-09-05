@@ -193,7 +193,7 @@ public:
 
   /*! Get all the leaf-nodes in the hierarchy of overlapping subcurves. */
   template <class OutputIterator>
-  OutputIterator get_all_leaves (OutputIterator oi)
+  OutputIterator all_leaves (OutputIterator oi)
   {
     if (m_orig_subcurve1 == NULL)
     {
@@ -202,14 +202,14 @@ public:
       return (oi);
     }
 
-    oi = m_orig_subcurve1->get_all_leaves (oi);
-    oi = m_orig_subcurve2->get_all_leaves (oi);
+    oi = m_orig_subcurve1->all_leaves (oi);
+    oi = m_orig_subcurve2->all_leaves (oi);
     return (oi);
   }
 
   /*! Get all the nodes in the hierarchy of overlapping subcurves. */
   template <class OutputIterator>
-  OutputIterator get_all_nodes (OutputIterator oi)
+  OutputIterator all_nodes (OutputIterator oi)
   {
     *oi = this;
     ++oi;
@@ -251,8 +251,8 @@ public:
     std::list<Self*>   my_leaves;
     std::list<Self*>   other_leaves;
     
-    this->get_all_leaves (std::back_inserter (my_leaves));
-    s->get_all_leaves (std::back_inserter (other_leaves));
+    this->all_leaves (std::back_inserter (my_leaves));
+    s->all_leaves (std::back_inserter (other_leaves));
 
     typename std::list<Self*>::iterator  iter;
 
@@ -279,8 +279,8 @@ public:
     std::list<Self*>   my_leaves;
     std::list<Self*>   other_leaves;
     
-    this->get_all_leaves (std::back_inserter (my_leaves));
-    s->get_all_leaves (std::back_inserter (other_leaves));
+    this->all_leaves (std::back_inserter (my_leaves));
+    s->all_leaves (std::back_inserter (other_leaves));
 
     typename std::list<Self*>::iterator  iter;
 
@@ -295,7 +295,7 @@ public:
 
   /*! Get all distinct nodes from the two hierarchies. */
   template <class OutputIterator>
-  OutputIterator get_distinct_nodes(Self *s, OutputIterator oi)
+  OutputIterator distinct_nodes(Self *s, OutputIterator oi)
   {
     if (m_orig_subcurve1 == NULL)
     {
@@ -314,7 +314,7 @@ public:
     }
     else
     {
-      oi = m_orig_subcurve1->get_distinct_nodes (s, oi);
+      oi = m_orig_subcurve1->distinct_nodes (s, oi);
     }
 
     if (! s->is_inner_node (m_orig_subcurve2))
@@ -324,7 +324,7 @@ public:
     }
     else
     {
-      oi = m_orig_subcurve2->get_distinct_nodes (s, oi);
+      oi = m_orig_subcurve2->distinct_nodes (s, oi);
     }
 
     return (oi);

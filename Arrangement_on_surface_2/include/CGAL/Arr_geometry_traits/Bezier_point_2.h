@@ -692,7 +692,7 @@ public:
   //       const_iterator, currently Originator_iterator is typedefed to a
   //       const_iterator.
   //       (TODO - Originator_const_iterator and Originator_iterator)
-  Originator_iterator get_originator(const Curve_2& B) const
+  Originator_iterator originator(const Curve_2& B) const
   {
     // Scan the list of originators and look for B.
     typename Bpt_rep::Orig_const_iter     it = _rep()._origs.begin();
@@ -1212,7 +1212,7 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
     // Compute (using the cache) the vertical tangency parameters of
     // the current curve.
     const typename Bezier_cache::Vertical_tangency_list&          vt_list =
-      cache.get_vertical_tangencies (org_it->curve().id(),
+      cache.vertical_tangencies (org_it->curve().id(),
                                      org_it->curve().x_polynomial(),
                                      org_it->curve().x_norm());
     typename Bezier_cache::Vertical_tangency_iter                 vt_it;
@@ -1279,7 +1279,7 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
   bool         do_ovlp;
 
   const typename Bezier_cache::Intersection_list&           intr_list =
-    cache.get_intersections (orig1.curve().id(),
+    cache.intersections (orig1.curve().id(),
                              orig1.curve().x_polynomial(),
                              orig1.curve().x_norm(),
                              orig1.curve().y_polynomial(),

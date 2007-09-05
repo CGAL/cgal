@@ -1691,7 +1691,7 @@ public:
     vector_container vtr;
     int sz;
     Td_active_trapezoid pr;
-    sz=X_trapezoid_filter(vtr, &td.get_data_structure());
+    sz=X_trapezoid_filter(vtr, &td.data_structure());
     //! \todo Reduce the 3 iterations to 1 (or 2) iterator.
     // First iteration: filter out the active trapezoids.
     typename vector_container::const_iterator it;
@@ -1810,7 +1810,7 @@ public:
 #endif
 #ifdef CGAL_TDBB_DEBUG
     std::cout << "\ninsert_in_face_interior(" << cv << ")" 
-              << "\nBbox " << traits->get_bounding_box();
+              << "\nBbox " << traits->bounding_box();
 #endif
 
 #ifdef CGAL_TD_DEBUG
@@ -3158,7 +3158,7 @@ public:
 #endif
     
     X_curve_container container;
-    unsigned long rep = X_curve_filter(container, &get_data_structure());
+    unsigned long rep = X_curve_filter(container, &data_structure());
     clear();
     
     // initialize container to point to curves in X_trapezoid Tree
@@ -3204,7 +3204,7 @@ public:
   
   template <class Container, class Predicate>
   void filter(Container& c, const Predicate& pr, 
-		      const Data_structure* ds=&get_data_structure()) const
+		      const Data_structure* ds=&data_structure()) const
   {
     CGAL_assertion(ds);
     ds->filter(c,pr);
@@ -3333,7 +3333,7 @@ public:
   }
   
   /* returns a reference to the internal data structure */
-  const Data_structure& get_data_structure() const {return *DS;}
+  const Data_structure& data_structure() const {return *DS;}
   
   /* returns a reference to the internal data structure */
   const_Traits_ref get_traits() const {return *traits;}

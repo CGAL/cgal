@@ -434,7 +434,7 @@ are_equal(const Vertex * v,
     return false;
 
   Curve_end v_ind;
-  const X_monotone_curve_2 & v_xc = get_curve(v, v_ind);
+  const X_monotone_curve_2 & v_xc = curve(v, v_ind);
   CGAL_assertion(bound_x != NO_BOUNDARY);
   /* Both vertices have the same x boundary conditions =>
    * comapare their y-position.
@@ -573,9 +573,9 @@ template <class GeomTraits, class Dcel>
 const typename
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::X_monotone_curve_2& 
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-get_curve(const Vertex * v, Curve_end & ind) const
+curve(const Vertex * v, Curve_end & ind) const
 {
-  // std::cout << "get_curve()" << std::endl;
+  // std::cout << "curve()" << std::endl;
   const Halfedge * he = v->halfedge();
   ind = (he->direction() == LEFT_TO_RIGHT) ? MAX_END : MIN_END;
   return he->curve();

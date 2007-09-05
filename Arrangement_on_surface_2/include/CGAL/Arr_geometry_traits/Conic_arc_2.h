@@ -1086,7 +1086,7 @@ public:
    * \pre The vector ps should be allocated at the size of 2.
    * \return The number of points found.
    */
-  int get_points_at_x (const Point_2& p,
+  int points_at_x (const Point_2& p,
                        Point_2 *ps) const
   {
     // Get the y coordinates of the points on the conic.
@@ -1118,7 +1118,7 @@ public:
    * \pre The vector ps should be allocated at the size of 2.
    * \return The number of points found.
    */
-  int get_points_at_y (const Point_2& p,
+  int points_at_y (const Point_2& p,
                        Point_2 *ps) const
   {
     // Get the y coordinates of the points on the conic.
@@ -1263,8 +1263,8 @@ private:
                                                                       _target);
           Point_2          ps[2];
 
-          bool  finite_at_x = (get_points_at_x(p_mid, ps) > 0);
-          bool  finite_at_y = (get_points_at_y(p_mid, ps) > 0);
+          bool  finite_at_x = (points_at_x(p_mid, ps) > 0);
+          bool  finite_at_y = (points_at_y(p_mid, ps) > 0);
       
           if (! finite_at_x && ! finite_at_y)
           {

@@ -63,7 +63,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
            iso_verts_it != ubf->isolated_vertices_end();
            ++iso_verts_it)
       {
-        if (traits->equal_2_object()(p, iso_verts_it->point()))
+        if (m_traits->equal_2_object()(p, iso_verts_it->point()))
         {
           Vertex_const_handle  vh = iso_verts_it;
           return (CGAL::make_object (vh));
@@ -79,12 +79,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   case TD::POINT:
     {
       CGAL_TRAP_PRINT_DEBUG("POINT");
-      if (traits->equal_2_object()(h->target()->point(), p))
+      if (m_traits->equal_2_object()(h->target()->point(), p))
       {
         Vertex_const_handle vh = h->target();
         return (CGAL::make_object (vh));
       }
-      if (traits->equal_2_object()(h->source()->point(), p))
+      if (m_traits->equal_2_object()(h->source()->point(), p))
       {
         Vertex_const_handle vh = h->source();
         return (CGAL::make_object (vh));
@@ -97,8 +97,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   case TD::CURVE:
     {
       CGAL_TRAP_PRINT_DEBUG("CURVE");
-      if ( traits->is_in_x_range_2_object()(cv,p) && 
-           traits->compare_y_at_x_2_object()(p,cv) == EQUAL)
+      if ( m_traits->is_in_x_range_2_object()(cv,p) && 
+           m_traits->compare_y_at_x_2_object()(p,cv) == EQUAL)
         return (CGAL::make_object(h));
       else
       {
@@ -112,9 +112,9 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   case TD::TRAPEZOID:
     {
       CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
-      if (!(((traits->is_in_x_range_2_object()(h->curve(),p)) &&
-        (traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
-        (traits->compare_x_2_object()(h->source()->point(),
+      if (!(((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
+        (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
+        (m_traits->compare_x_2_object()(h->source()->point(),
         h->target()->point()) == SMALLER)
         ))
         h = h->twin();
@@ -125,7 +125,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       for (iso_verts_it = fh->isolated_vertices_begin();
           iso_verts_it != fh->isolated_vertices_end(); ++iso_verts_it)
       {
-        if (traits->equal_2_object()(p, iso_verts_it->point()))
+        if (m_traits->equal_2_object()(p, iso_verts_it->point()))
         {
           Vertex_const_handle  vh = iso_verts_it;
           return (CGAL::make_object (vh));
@@ -170,12 +170,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   switch(td_lt)
   {
   case TD::POINT:
-    if (traits->equal_2_object()(h->target()->point(), p))
+    if (m_traits->equal_2_object()(h->target()->point(), p))
     {
       Vertex_const_handle vh = h->target();
       return (CGAL::make_object (vh));
     }
-    if (traits->equal_2_object()(h->source()->point(), p))
+    if (m_traits->equal_2_object()(h->source()->point(), p))
     {
       Vertex_const_handle vh = h->source();
       return (CGAL::make_object (vh));
@@ -192,9 +192,9 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     return (CGAL::make_object(h));
 
   case TD::TRAPEZOID:
-    if (!(((traits->is_in_x_range_2_object()(h->curve(),p)) &&
-          (traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
-          (traits->compare_x_2_object()(h->source()->point(),
+    if (!(((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
+          (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
+          (m_traits->compare_x_2_object()(h->source()->point(),
                                         h->target()->point()) == SMALLER)
         ))
         h = h->twin();
@@ -222,17 +222,17 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
 {
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   typename Traits_2::Compare_x_2          compare_x =
-                this->arrangement()->get_traits()->compare_x_2_object();
+    this->arrangement()->traits()->compare_x_2_object();
   typename Traits_2::Compare_xy_2         compare_xy =
-                this->arrangement()->get_traits()->compare_xy_2_object();
+    this->arrangement()->traits()->compare_xy_2_object();
   typename Traits_2::Compare_y_at_x_2     compare_y_at_x =
-                this->arrangement()->get_traits()->compare_y_at_x_2_object();
+    this->arrangement()->traits()->compare_y_at_x_2_object();
 
   Isolated_vertex_const_iterator   iso_verts_it;
-  Vertex_const_handle                closest_iso_v;
-  const Vertex_const_handle          invalid_v;
-  const Halfedge_const_handle        invalid_he;
-  Face_const_handle                  face;
+  Vertex_const_handle              closest_iso_v;
+  const Vertex_const_handle        invalid_v;
+  const Halfedge_const_handle      invalid_he;
+  Face_const_handle                face;
 
   // If the closest feature is a valid halfedge, take its incident face.
   // Otherwise, take the unbounded face.

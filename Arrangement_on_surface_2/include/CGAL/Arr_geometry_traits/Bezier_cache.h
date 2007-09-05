@@ -191,7 +191,7 @@ public:
    * \return A list of parameters 0 < t_1 < ...< t_k < 1 such that X'(t_i) = 0.
    */
   const Vertical_tangency_list&
-  get_vertical_tangencies (const Curve_id& id,
+  vertical_tangencies (const Curve_id& id,
                            const Polynomial& polyX, const Integer& normX);
 
   /*!
@@ -214,7 +214,7 @@ public:
    *         Each pair is also associated with the physical point coordinates.
    */
   const Intersection_list&
-  get_intersections (const Curve_id& id1,
+  intersections (const Curve_id& id1,
                      const Polynomial& polyX_1, const Integer& normX_1,
                      const Polynomial& polyY_1, const Integer& normY_1,
                      const Curve_id& id2,
@@ -264,7 +264,7 @@ private:
 //
 template<class NtTraits>
 const typename _Bezier_cache<NtTraits>::Vertical_tangency_list&
-_Bezier_cache<NtTraits>::get_vertical_tangencies
+_Bezier_cache<NtTraits>::vertical_tangencies
         (const Curve_id& id,
          const Polynomial& polyX, const Integer& normX)
 {
@@ -293,7 +293,7 @@ _Bezier_cache<NtTraits>::get_vertical_tangencies
 //
 template<class NtTraits>
 const typename _Bezier_cache<NtTraits>::Intersection_list&
-_Bezier_cache<NtTraits>::get_intersections
+_Bezier_cache<NtTraits>::intersections
         (const Curve_id& id1,
          const Polynomial& polyX_1, const Integer& normX_1,
          const Polynomial& polyY_1, const Integer& normY_1,

@@ -302,7 +302,7 @@ bool Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_add_curve_to_right
     if((curve)->has_common_leaf(*iter))
     {
       std::list<Base_subcurve*>  list_of_sc;
-      curve->get_distinct_nodes(*iter, std::back_inserter(list_of_sc));
+      curve->distinct_nodes(*iter, std::back_inserter(list_of_sc));
 
       typename std::list<Base_subcurve*>::iterator  sc_iter;
       for(sc_iter = list_of_sc.begin();

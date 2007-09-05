@@ -46,7 +46,7 @@ class Arrangement_2 :
      typename Default_planar_topology<GeomTraits_,
                                       Dcel_,
                                       typename GeomTraits_::
-                                       Has_boundary_category>::Traits>
+                                      Has_boundary_category>::Traits>
 {
 private:
 
@@ -169,12 +169,12 @@ public:
   //@{
 
   /*! Get the geometry-traits class (for backward compatibility). */
-  const Traits_2* get_traits () const
+  const Traits_2* traits () const
   {
     return (this->geometry_traits());
   }
 
-  Traits_2* get_traits ()
+  Traits_2* traits ()
   {
     return (this->geometry_traits());
   }

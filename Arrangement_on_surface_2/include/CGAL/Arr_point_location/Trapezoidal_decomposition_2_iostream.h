@@ -46,7 +46,7 @@ template < class Traits>
 std::ostream& operator<<(
 			 std::ostream &out,const Trapezoidal_decomposition_2<Traits>& td)
 {
-  return write(out,td.get_data_structure(),td.get_traits());
+  return write(out,td.data_structure(),td.get_traits());
 }
 
 template < class Traits>

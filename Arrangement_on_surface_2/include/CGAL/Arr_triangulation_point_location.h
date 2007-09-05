@@ -105,7 +105,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;     // Its associated traits object.
+  const Traits_adaptor_2  *m_traits;     // Its associated traits object.
   bool                    ignore_notifications;  
   CDT                     cdt;
   bool                    updated_cdt;
@@ -114,7 +114,7 @@ public:
 
   /*! Default constructor. */
   Arr_triangulation_point_location () : 
-    traits (NULL)
+    m_traits (NULL)
   {
   }
 
@@ -140,7 +140,7 @@ public:
     /*! Attach an arrangement object. */
     virtual void before_attach (const Arrangement_2& arr)
     {
-	    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+      m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
     }
 
     virtual void after_attach ()

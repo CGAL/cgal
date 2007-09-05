@@ -587,7 +587,7 @@ public:
       // points in an exact manner. We do this by considering all t-values
       // on B(t) = (X(t), Y(t)), such that X'(t) = 0.
       const typename Bezier_cache::Vertical_tangency_list&
-        vt_list = p_cache->get_vertical_tangencies (B.id(),
+        vt_list = p_cache->vertical_tangencies (B.id(),
                                                     B.x_polynomial(),
                                                     B.x_norm());
 

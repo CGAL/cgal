@@ -69,8 +69,8 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;  // Its associated traits object.
-  Nearest_neighbor         nn;      // The associated nearest neighbor object.
+  const Traits_adaptor_2  *m_traits;  // Its associated traits object.
+  Nearest_neighbor         nn;        // The associated nearest neighbor object.
   bool                     ignore_notifications;
   bool                     updated;
   int                      num_small_not_updated_changes;
@@ -94,7 +94,7 @@ public:
     num_small_not_updated_changes(0),
     num_landmarks(0)
   {
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     build_landmark_set();
   }
 
@@ -145,7 +145,7 @@ public:
    *                    arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
-  const Point_2& get_closest_landmark (const Point_2& q, Object &obj)
+  const Point_2& closest_landmark (const Point_2& q, Object &obj)
   {
     CGAL_assertion(updated);
     return (nn.find_nearest_neighbor (q, obj));
@@ -172,7 +172,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmark_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = false;
   }
   
