@@ -241,7 +241,7 @@ private:
   typedef typename Tab_traits::Halfedge                Halfedge;
   typedef typename Tab_traits::Face_iterator           Face_iterator;
   typedef typename Tab_traits::Trap_point_location     Trap_point_location;
-  typedef typename Tab_traits::Naive_point_location    Naive_point_location;
+  typedef typename Tab_traits::Simple_point_location   Simple_point_location;
   typedef typename Tab_traits::Walk_point_location     Walk_point_location;
   typedef typename Tab_traits::Lanmarks_point_location Lanmarks_point_location;
 
@@ -802,7 +802,7 @@ public:
       Coord_type x, y;
       x_real(e->x(), x);
       y_real(e->y(), y);
-      Coord_point p = get_point(x,y);
+      Coord_point p = point(x,y);
 
       lock();
       QColor old_color = color();
@@ -836,7 +836,7 @@ public:
       Coord_type x, y;
       x_real(e->x(), x);
       y_real(e->y(), y);
-      Coord_point p = get_point(x,y);
+      Coord_point p = point(x,y);
 
       lock();
       QColor old_color = color();
@@ -1140,7 +1140,7 @@ public:
       Coord_type x, y;
       x_real(e->x(), x);
       y_real(e->y(), y);
-      Coord_point p = get_point(x,y);
+      Coord_point p = point(x,y);
       RasterOp old_raster = rasterOp();//save the initial raster mode
       setRasterOp(XorROP);
       lock();
@@ -1178,12 +1178,12 @@ public:
     }
   }
 
-  /*! get_point
+  /*! point
    *\ params x,y - the mouse clicked point coordinates
    *\    return a point according to the current snap mode and
    *  recent points.
    */
-  Coord_point get_point(Coord_type x, Coord_type y)
+  Coord_point point(Coord_type x, Coord_type y)
   {
     int xmin = static_cast<int> (x_min());
     int xmax = static_cast<int> (x_max());
@@ -1344,9 +1344,9 @@ public:
     if (CGAL::assign(walk_pl, m_point_location))
       return walk_pl->locate(pt);
 
-    Naive_point_location* naive_pl;
-    if (CGAL::assign(naive_pl, m_point_location))
-      return naive_pl->locate(pt);
+    Simple_point_location* simple_pl;
+    if (CGAL::assign(simple_pl, m_point_location))
+      return simple_pl->locate(pt);
 
     Trap_point_location* trap_pl;
     if (CGAL::assign(trap_pl, m_point_location))
@@ -1367,9 +1367,9 @@ public:
     if (CGAL::assign(walk_pl, m_point_location))
       return walk_pl->ray_shoot_up(pt);
 
-    Naive_point_location* naive_pl;
-    if (CGAL::assign(naive_pl, m_point_location))
-      return naive_pl->ray_shoot_up(pt);
+    Simple_point_location* simple_pl;
+    if (CGAL::assign(simple_pl, m_point_location))
+      return simple_pl->ray_shoot_up(pt);
 
     Trap_point_location* trap_pl;
     if (CGAL::assign(trap_pl, m_point_location))
@@ -1394,9 +1394,9 @@ public:
     if (CGAL::assign(walk_pl, m_point_location))
       return walk_pl->ray_shoot_down(pt);
 
-    Naive_point_location* naive_pl;
-    if (CGAL::assign(naive_pl, m_point_location))
-      return naive_pl->ray_shoot_down(pt);
+    Simple_point_location* simple_pl;
+    if (CGAL::assign(simple_pl, m_point_location))
+      return simple_pl->ray_shoot_down(pt);
 
     Trap_point_location* trap_pl;
     if (CGAL::assign(trap_pl, m_point_location))
@@ -1420,8 +1420,8 @@ public:
     Walk_point_location* walk_pl = NULL;
     if (CGAL::assign(walk_pl, m_point_location)) delete walk_pl;
     else {
-      Naive_point_location* naive_pl = NULL;
-      if (CGAL::assign(naive_pl, m_point_location)) delete naive_pl;
+      Simple_point_location* simple_pl = NULL;
+      if (CGAL::assign(simple_pl, m_point_location)) delete simple_pl;
       else {
         Trap_point_location* trap_pl = NULL;
         if (CGAL::assign(trap_pl, m_point_location)) delete trap_pl;
@@ -1438,10 +1438,10 @@ public:
         CGAL::make_object(new Walk_point_location(*m_curves_arr));
       return;
     }
-    if (s == NAIVE)
+    if (s == SIMPLE)
     {
       m_point_location =
-        CGAL::make_object(new Naive_point_location(*m_curves_arr));
+        CGAL::make_object(new Simple_point_location(*m_curves_arr));
       return;
     }
     if (s == TRAP)
@@ -1568,7 +1568,7 @@ public:
 
   //point location
   typedef Seg_trap_point_location                   Trap_point_location;
-  typedef Seg_naive_point_location                  Naive_point_location;
+  typedef Seg_simple_point_location                 Simple_point_location;
   typedef Seg_walk_point_location                   Walk_point_location;
   typedef Seg_lanmarks_point_location               Lanmarks_point_location;
 
@@ -1882,10 +1882,10 @@ public:
   typedef  Pol_face_iterator                        Face_iterator;
 
   //point location
-  typedef Pol_trap_point_location                  Trap_point_location;
-  typedef Pol_naive_point_location                 Naive_point_location;
-  typedef Pol_walk_point_location                  Walk_point_location;
-  typedef Pol_lanmarks_point_location              Lanmarks_point_location;
+  typedef Pol_trap_point_location                   Trap_point_location;
+  typedef Pol_simple_point_location                 Simple_point_location;
+  typedef Pol_walk_point_location                   Walk_point_location;
+  typedef Pol_lanmarks_point_location               Lanmarks_point_location;
 
 
   /*! coordinate scale - used in conics*/
@@ -2323,7 +2323,7 @@ public:
 
   //point location
   typedef Conic_trap_point_location                 Trap_point_location;
-  typedef Conic_naive_point_location                Naive_point_location;
+  typedef Conic_simple_point_location               Simple_point_location;
   typedef Conic_walk_point_location                 Walk_point_location;
   typedef Conic_lanmarks_point_location             Lanmarks_point_location;
 
@@ -2410,7 +2410,7 @@ public:
                     ker.compare_x_2_object()(curr_p, c.right()) !=
                       CGAL::LARGER))
                 continue;
-              px = c.get_point_at_x (curr_p);
+              px = c.point_at_x (curr_p);
               curr_y = CGAL::to_double(px.y());
               pts.push_back(Coord_point(curr_x / COORD_SCALE,
                                         curr_y / COORD_SCALE));
@@ -2426,7 +2426,7 @@ public:
                     ker.compare_x_2_object() (curr_p, c.right()) !=
                       CGAL::LARGER))
                 continue;
-              px = c.get_point_at_x (Arr_conic_point_2(curr_x, 0));
+              px = c.point_at_x (Arr_conic_point_2(curr_x, 0));
               curr_y = CGAL::to_double(px.y());
               pts.push_back(Coord_point(curr_x / COORD_SCALE,
                                         curr_y / COORD_SCALE));
@@ -2893,7 +2893,7 @@ public:
                 ker.compare_x_2_object() (curr_p, c.right()) != CGAL::LARGER))
             continue;
 
-          px = c.get_point_at_x(Arr_conic_point_2(curr_x, 0));
+          px = c.point_at_x(Arr_conic_point_2(curr_x, 0));
           curr_y = CGAL::to_double(px.y());
 
           Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,

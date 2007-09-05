@@ -491,7 +491,7 @@ QDialog( parent, name, modal, f )
 
   arrComboBox1 = new QComboBox( FALSE, this );
 
-  arrComboBox1->insertItem( "Naive" );
+  arrComboBox1->insertItem( "Simple" );
   arrComboBox1->insertItem( "Land marks" );
   arrComboBox1->insertItem( "Trapezoiedal" );
   arrComboBox1->insertItem( "Walk" );

@@ -239,8 +239,8 @@ void MyWindow::pointLocationStrategy()
   if ( form.exec() )
   {
     QString type = form.arrComboBox1->currentText();
-    if(! strcmp(type,"Naive"))
-      w_demo_p -> change_strategy(NAIVE);
+    if(! strcmp(type,"Simple"))
+      w_demo_p -> change_strategy(SIMPLE);
     else
       if(!strcmp(type,"Trapezoiedal"))
         w_demo_p -> change_strategy(TRAP);

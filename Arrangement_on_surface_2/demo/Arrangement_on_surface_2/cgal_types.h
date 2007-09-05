@@ -40,7 +40,7 @@
 #include <CGAL/Bbox_2.h>
 
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
-#include <CGAL/Arr_naive_point_location.h>
+#include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
 
@@ -66,7 +66,7 @@ enum Mode       { MODE_INSERT, MODE_DELETE, MODE_POINT_LOCATION,
                   MODE_RAY_SHOOTING_UP, MODE_RAY_SHOOTING_DOWN, MODE_DRAG,
                   MODE_MERGE , MODE_SPLIT, MODE_FILLFACE};
 enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABOLA , HYPERBOLA};
-enum Strategy   { NAIVE , TRAP , WALK, LANDMARKS };
+enum Strategy   { SIMPLE , TRAP , WALK, LANDMARKS };
 
 // default background color
 const QColor def_bg_color(0,0,0);
@@ -163,8 +163,8 @@ typedef Arr_seg_list::iterator                          Arr_seg_iter;
 //point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Seg_arr>
   Seg_trap_point_location;
-typedef CGAL::Arr_naive_point_location<Seg_arr>
-  Seg_naive_point_location;
+typedef CGAL::Arr_simple_point_location<Seg_arr>
+  Seg_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Seg_arr>
   Seg_walk_point_location;
 typedef CGAL::Arr_landmarks_point_location<Seg_arr>
@@ -199,8 +199,8 @@ typedef Arr_pol_list::iterator                           Arr_pol_iter;
 //point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Pol_arr>
   Pol_trap_point_location;
-typedef CGAL::Arr_naive_point_location<Pol_arr>
-  Pol_naive_point_location;
+typedef CGAL::Arr_simple_point_location<Pol_arr>
+  Pol_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Pol_arr>
   Pol_walk_point_location;
 typedef CGAL::Arr_landmarks_point_location<Pol_arr>
@@ -251,8 +251,8 @@ typedef Arr_xconic_list::iterator                        Arr_xconic_iter;
 //point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Conic_arr>
   Conic_trap_point_location;
-typedef CGAL::Arr_naive_point_location<Conic_arr>
-  Conic_naive_point_location;
+typedef CGAL::Arr_simple_point_location<Conic_arr>
+  Conic_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Conic_arr>
   Conic_walk_point_location;
 typedef CGAL::Arr_landmarks_point_location<Conic_arr>
