@@ -519,6 +519,29 @@ void insert_x_monotone_curve
 {
   insert(arr, c, obj);
 }
+template <class GeomTraits, class TopTraits, class PointLocation>
+void insert_curve
+(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+ const typename GeomTraits::Curve_2& c,
+ const PointLocation& pl)
+{
+  insert(arr, c, pl);
+}
+template <class GeomTraits, class TopTraits>
+void insert_curve
+(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+ const typename GeomTraits::Curve_2& c)
+{
+  insert(arr, c);
+}
+template <class GeomTraits, class TopTraits, class InputIterator>
+void insert_curves 
+(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+ InputIterator begin, InputIterator end)
+{
+  insert(arr, begin, end);
+}
+
 
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
