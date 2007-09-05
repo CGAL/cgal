@@ -90,8 +90,9 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
     }
     m_own_traits = other.m_own_traits;
 
+    
     m_left = other.m_left;
-    m_left = other.m_right;
+    m_right = other.m_right;
 
     // Update the special properties of the topology traits.
     dcel_updated();
@@ -145,7 +146,7 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
                                                            &(*vit)));
         CGAL_assertion(! res.second);
                 
-        m_vertices_on_line_of_discontinuity[(*vit)] = res.first;
+        m_vertices_on_line_of_discontinuity[&(*vit)] = res.first;
     }
     //CGAL_assertion (v_left != NULL);
     //CGAL_assertion (v_right != NULL);
@@ -192,7 +193,6 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::init_dcel () // open
         this->m_right = CGAL::PLUS_INFINITY;
     } 
 #endif
-
     CGAL_precondition(this->m_left != CGAL::NO_BOUNDARY &&
                       this->m_right != CGAL::NO_BOUNDARY);
     CGAL_precondition(this->m_left < this->m_right);
@@ -616,7 +616,7 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
     
     // store iterator for vertex 
     // -> needed to delete vertex if becoming redundant
-    m_vertices_on_line_of_discontinuity[*v] = it; 
+    m_vertices_on_line_of_discontinuity[v] = it; 
     CGAL_assertion(
             static_cast< int >(m_vertices_on_line_of_discontinuity.size()) ==
             lod_size + 1
@@ -1242,7 +1242,7 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex // open
     // unfortnunately no incident curve-end can give us the key
     // -> but we stored something else useful: find iterator
     typename Line_of_discontinuity::iterator it =
-        m_vertices_on_line_of_discontinuity[*v];
+        m_vertices_on_line_of_discontinuity[v];
     // and delete this item
     m_line_of_discontinuity.erase(it);
 
