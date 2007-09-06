@@ -877,6 +877,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/compare_y_at_
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/constructor -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/constructor.cv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/constructor.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/errors -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/errors.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/errors.xcv -text
@@ -887,10 +888,12 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/make_x_monoto
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/make_x_monotone.cv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/make_x_monotone.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/merge -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/empty.zero -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x_left -text
