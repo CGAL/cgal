@@ -49,18 +49,17 @@
 CGAL_BEGIN_NAMESPACE
 
 // CK = eventually rebound construction kernel (gets Point_2 from).
-// EK = exact kernel called when needed by the filter.
-// FK = filtering kernel
+// Exact_kernel = exact kernel called when needed by the filter.
+// Approximate_kernel = filtering "interval" kernel
 template < typename CK >
 struct Filtered_kernel_base
   : public CK
 {
     typedef typename Exact_type_selecter<typename CK::RT>::Type  Exact_nt;
-    typedef Simple_cartesian<Exact_nt>               EK;
-    typedef Simple_cartesian<Interval_nt_advanced>   FK;
-    typedef Cartesian_converter<CK, EK>              C2E;
-    typedef Cartesian_converter<CK, FK>              C2F;
-    typedef FK  AK; // same as for Lazy_kernel
+    typedef Simple_cartesian<Exact_nt>                           Exact_kernel;
+    typedef Simple_cartesian<Interval_nt_advanced>               Approximate_kernel;
+    typedef Cartesian_converter<CK, Exact_kernel>                C2E;
+    typedef Cartesian_converter<CK, Approximate_kernel>          C2F;
 
     template < typename Kernel2 >
     struct Base {
@@ -70,7 +69,7 @@ struct Filtered_kernel_base
 
     // We change the predicates.
 #define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename EK::P, typename FK::P, C2E, C2F> P; \
+    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 
     // We don't touch the constructions.

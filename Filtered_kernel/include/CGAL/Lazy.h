@@ -1152,8 +1152,8 @@ template <typename LK, typename AC, typename EC>
 struct Lazy_construction_bbox
 {
   static const bool Protection = true;
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename AC::result_type result_type;
 
   AC ac;
@@ -1179,8 +1179,8 @@ struct Lazy_construction_nt {
 
   static const bool Protection = true;
 
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
@@ -1265,8 +1265,8 @@ template <typename LK>
 Object
 make_lazy(const Object& eto)
 {
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
 
   if (eto.is_empty())
@@ -1333,8 +1333,8 @@ struct Ith {
 template <typename LK, typename AC, typename EC>
 struct Lazy_cartesian_const_iterator_2
 {
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename LK::Cartesian_const_iterator_2 result_type;
 
   AC ac;
@@ -1362,8 +1362,8 @@ public:
 template <typename LK, typename AC, typename EC>
 struct Lazy_cartesian_const_iterator_3
 {
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename LK::Cartesian_const_iterator_3 result_type;
 
   AC ac;
@@ -1458,8 +1458,8 @@ struct Lazy_functor_2_2
   static const bool Protection = true;
 
   typedef void result_type;
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
 
@@ -1498,8 +1498,8 @@ template <typename LK, typename AC, typename EC>
 struct Lazy_intersect_with_iterators
 {
   static const bool Protection = true;
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
   typedef void result_type;
@@ -1577,8 +1577,8 @@ struct Lazy_construction_object
 {
   static const bool Protection = true;
 
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
@@ -1670,8 +1670,8 @@ struct Lazy_construction
 {
   static const bool Protection = true;
 
-  typedef typename LK::AK AK;
-  typedef typename LK::EK EK;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;

@@ -44,10 +44,6 @@ CGAL_BEGIN_NAMESPACE
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching should be done at the Point_2 level.
 
-#ifdef __VARIADIC_TEMPLATES
-# define CGAL_HAS_VARIADIC_TEMPLATES
-#endif
-
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate
@@ -86,7 +82,7 @@ public:
     : ep(c2e(o1), c2e(o2)), ap(c2a(o1), c2a(o2))
   {}
 
-#ifdef CGAL_HAS_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
   template <typename... Args>
   result_type
   operator()(const Args&... args) const;
@@ -149,7 +145,7 @@ public:
 #endif
 };
 
-#ifdef CGAL_HAS_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
 
 template <class EP, class AP, class C2E, class C2A, bool Protection>
   template <typename... Args>
