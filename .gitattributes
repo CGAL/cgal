@@ -810,6 +810,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/make
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/make_x_monotone.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/merge -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/merge.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/split.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circle_segments/split.xcv -text
@@ -821,6 +822,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/compar
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/constructor -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/constructor.cv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/constructor.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/intersect.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/intersect.xcv -text
@@ -829,11 +831,14 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/is_ver
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/make_x_monotone -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/make_x_monotone.cv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/make_x_monotone.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/split.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/split.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/vertex -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_arcs/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/compare_y_at_x -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/intersect.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/intersect.xcv -text
@@ -841,11 +846,13 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/i
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/make_x_monotone -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/make_x_monotone.cv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/make_x_monotone.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/split.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/split.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/vertex.pt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_line_arcs/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_lines/compare -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_lines/compare.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/circular_lines/compare_y_at_x -text
