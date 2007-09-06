@@ -197,6 +197,10 @@ compile_and_run_trapped_test()
 
 execute_commands_old_structure()
 {
+
+# the old structure is default, so this function executes all commands
+# except the commands that are given as arguments
+
   commands_indicator[COMPARE]=1
   commands_indicator[VERTEX]=1
   commands_indicator[IS_VERTICAL]=1
@@ -294,6 +298,10 @@ execute_commands_old_structure()
 
 execute_commands_new_structure()
 {
+
+# the new structure is not default, so this function executes only
+# commands that are given as arguments
+
   commands_indicator[COMPARE]=0
   commands_indicator[VERTEX]=0
   commands_indicator[IS_VERTICAL]=0
@@ -489,9 +497,8 @@ test_linear_traits()
     data/linear/rays/vertex.pt data/linear/rays/xcurves \
     data/empty.zero data/linear/rays/vertex linear_traits.rays
 
-    #execute_commands linear/lines linear_traits.lines \
-    #VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-    #COMPARE_Y_AT_X_RIGHT BOUNDARY_IN_X BOUNDARY_IN_Y CONSTRUCTOR
+    execute_commands_new_structure linear/lines linear_traits.lines \
+    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
   fi
   clean_tests
 }
@@ -638,9 +645,8 @@ test_bezier_traits()
     echo   "   ERROR:    not executed   test_traits bezier_traits" >> $ERRORFILE
   else
     execute_commands_old_structure bezier bezier_traits \
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT \
-    BOUNDARY_IN_X BOUNDARY_IN_Y CONSTRUCTOR \
-    SPLIT ERRORS
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT \
+    BOUNDARY_IN_X BOUNDARY_IN_Y CONSTRUCTOR ERRORS
     # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_left bezier_traits
     # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_right bezier_traits
     # !need to think! run_trapped_test test_traits data/bezier/split bezier_traits
