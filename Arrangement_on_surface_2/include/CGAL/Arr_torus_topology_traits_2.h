@@ -489,6 +489,11 @@ public:
     //@{
     
     /*!
+     * Make the necessary updates after the DCEL structure have been updated.
+     */
+    void dcel_updated ();
+    
+    /*!
      * Initialize an empty DCEL structure.
      */
     void init_dcel ();
@@ -630,6 +635,14 @@ private:
                               const Halfedge *e2,
                               bool& touching_pole) const;
     
+    /*!
+     * Checks whether given data indicates a perimetric path
+     */
+    bool _is_perimetric_data(
+            const std::pair< int, int >& counters, 
+            bool touching, bool crossing,
+            bool& touching_pole) const;
+
 public:
     /*!
      * Given two predecessor halfedges that will be used for inserting a
