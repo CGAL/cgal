@@ -277,7 +277,7 @@ bool  test_one_file (std::ifstream& in_file,
 
   for(i=0; i<n_edges; ++i)
   {
-    CGAL::insert_x_monotone_curve(arr, subcurves_from_file[i]);
+    CGAL::insert(arr, subcurves_from_file[i]);
   }
 
   for(i=0; i<iso_verts.size(); ++i)
@@ -301,7 +301,7 @@ bool  test_one_file (std::ifstream& in_file,
 
   /////////////////////////////////////////////////////////////////////
   // insert the disjoint subcurves aggregatley with  insert_x_monotone_curves
-  CGAL::insert_x_monotone_curves (arr,
+  CGAL::insert (arr,
                                   subcurves_from_file.begin(),
                                   subcurves_from_file.end());
   for(i=0; i<iso_verts.size(); ++i)
@@ -326,10 +326,10 @@ bool  test_one_file (std::ifstream& in_file,
   /////////////////////////////////////////////////////////////////////
   // insert half of the disjoint subcurves aggregatley and than insert the
   // rest aggregatley with insert_x_monotone_curves(test the addition visitor)
-  CGAL::insert_x_monotone_curves (arr,
+  CGAL::insert (arr,
                                   subcurves_from_file.begin(),
                                   subcurves_from_file.begin() + (n_edges/2));
-  CGAL::insert_x_monotone_curves (arr,
+  CGAL::insert (arr,
                                   subcurves_from_file.begin() + (n_edges/2),
                                   subcurves_from_file.end());
   for(i=0; i<iso_verts.size(); ++i)
