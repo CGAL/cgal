@@ -973,6 +973,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.pt 
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/compare_y_at_x_left -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/errors -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/errors.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/errors.xcv -text
@@ -985,11 +986,13 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/make_x_mono
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/make_x_monotone.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/merge -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/merge.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/split.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/split.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex.pt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.old -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.pt -text
