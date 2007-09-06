@@ -646,41 +646,6 @@ public:
      */
     void dcel_updated ();
 
-#if 0 // removed from concept
-    /*!
-     * Compare the x-coordinate of a given vertex 
-     * (which may has boundary condition)
-     * and the given point.
-     * \param p The point.
-     * \param v The vertex.
-     * \return The result of the comparison of the x-coordinates of p and v.
-     */
-    Comparison_result compare_x (const Point_2& p,
-                                 const Vertex* v) const;
-    
-    /*!
-     * Compare the given vertex 
-     * (which may have boundary condition) 
-     * and the given point.
-     * \param p The point.
-     * \param v The vertex.
-     * \return The result of the xy-lexicographic comparison of p and v.
-     */
-    Comparison_result compare_xy (const Point_2& p,
-                                  const Vertex* v) const;
-    
-    /*!
-     * Compare the two given vertices (which may not be assoicated with valid
-     * points).
-     * \param v1 The first vertex.
-     * \param v2 The second vertex.
-     * \return The result of the xy-lexicographic comparison of v1 and v2.
-     */
-    Comparison_result compare_xy (const Vertex* v1,
-                                  const Vertex* v2) const;
-    
-#endif
-
     /*!
      * Compare the relative y-position of the given point and the given edge
      * \param p The point.
