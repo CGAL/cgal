@@ -94,12 +94,12 @@ namespace CGAL {
 
       typedef typename LinearKernel::RT                       RT;
       typedef typename LinearKernel::FT                       FT;
-      typedef Algebraic_kernel AK;
-      typedef typename AK::Root_of_2                  Root_of_2;
-      typedef typename AK::Root_for_spheres_2_3       Root_for_spheres_2_3;
-      typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
-      typedef typename AK::Polynomial_1_3             Polynomial_1_3;
-      typedef typename AK::Polynomials_for_line_3     Polynomials_for_line_3;
+      //~ typedef Algebraic_kernel AK;
+      typedef typename Algebraic_kernel::Root_of_2                  Root_of_2;
+      typedef typename Algebraic_kernel::Root_for_spheres_2_3       Root_for_spheres_2_3;
+      typedef typename Algebraic_kernel::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
+      typedef typename Algebraic_kernel::Polynomial_1_3             Polynomial_1_3;
+      typedef typename Algebraic_kernel::Polynomials_for_line_3     Polynomials_for_line_3;
       typedef std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 >
                                                  Polynomials_for_circle_3;
 

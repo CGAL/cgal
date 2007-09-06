@@ -34,8 +34,8 @@ namespace CGAL {
     typename SK::Algebraic_kernel::Polynomials_for_line_3
     get_equation( const typename SK::Line_3 & l)
     {
-      typedef typename SK::Algebraic_kernel AK;
-      return AK().construct_polynomials_for_line_3_object()
+      typedef typename SK::Algebraic_kernel Algebraic_kernel;
+      return Algebraic_kernel().construct_polynomials_for_line_3_object()
 	  (l.to_vector().x(), l.point().x(), 
            l.to_vector().y(), l.point().y(),
            l.to_vector().z(), l.point().z());
@@ -45,8 +45,8 @@ namespace CGAL {
     typename SK::Polynomial_1_3
     get_equation( const typename SK::Plane_3 & s )
     {
-      typedef typename SK::Algebraic_kernel AK;
-      return AK().construct_polynomial_1_3_object()
+      typedef typename SK::Algebraic_kernel Algebraic_kernel;
+      return Algebraic_kernel().construct_polynomial_1_3_object()
 	  ( s.a(), s.b(), s.c(), s.d() );
     }
 
@@ -56,9 +56,9 @@ namespace CGAL {
     {
       typedef typename SK::RT RT;
       typedef typename SK::Point_3    Point_3;
-      typedef typename SK::Algebraic_kernel   AK;
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
       Point_3 center = s.center();
-      return AK().construct_polynomial_for_spheres_2_3_object()
+      return Algebraic_kernel().construct_polynomial_for_spheres_2_3_object()
 	  ( center.x(), center.y(), center.z(), s.squared_radius() );
     }
 
@@ -66,11 +66,11 @@ namespace CGAL {
     typename SK::Polynomials_for_circle_3
     get_equation( const typename SK::Circle_3 & c )
     {
-      typedef typename SK::Algebraic_kernel AK;
-      return std::make_pair ( AK().construct_polynomial_for_spheres_2_3_object()
+      typedef typename SK::Algebraic_kernel Algebraic_kernel;
+      return std::make_pair ( Algebraic_kernel().construct_polynomial_for_spheres_2_3_object()
                                (c.center().x(), c.center().y(), 
                                 c.center().z(), c.squared_radius()),
-                              AK().construct_polynomial_1_3_object()
+                              Algebraic_kernel().construct_polynomial_1_3_object()
                                (c.supporting_plane().a(),
                                 c.supporting_plane().b(),
                                 c.supporting_plane().c(),
@@ -91,10 +91,10 @@ namespace CGAL {
     typename SK::Linear_kernel::Bounded_side
     bounded_side(const typename SK::Sphere_3 &s,
                  const typename SK::Circular_arc_point_3 &p) {
-      typedef typename SK::AK AK;
+      typedef typename SK::Algebraic_kernel Algebraic_kernel;
       typedef typename SK::Polynomial_for_spheres_2_3 Equation;
       Equation equation = get_equation<SK>(s);
-      Sign sign = AK().sign_at_object()(equation,p.rep().coordinates());
+      Sign sign = Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates());
       if(sign == NEGATIVE) return ON_BOUNDED_SIDE;
       else if(sign == POSITIVE) return ON_UNBOUNDED_SIDE;
       else return ON_BOUNDARY;
@@ -105,11 +105,11 @@ namespace CGAL {
     typename SK::Linear_kernel::Bounded_side
     bounded_side(const typename SK::Circle_3 &c,
                  const typename SK::Circular_arc_point_3 &p) {
-      typedef typename SK::AK AK;
+      typedef typename SK::Algebraic_kernel Algebraic_kernel;
       typedef typename SK::Polynomial_for_spheres_2_3 Equation;
       CGAL_kernel_assertion(SK().has_on_3_object()(c.supporting_plane(),p));
       Equation equation = get_equation<SK>(c.diametral_sphere());
-      Sign sign = AK().sign_at_object()(equation,p.rep().coordinates());
+      Sign sign = Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates());
       if(sign == NEGATIVE) return ON_BOUNDED_SIDE;
       else if(sign == POSITIVE) return ON_UNBOUNDED_SIDE;
       else return ON_BOUNDARY;
@@ -231,7 +231,7 @@ namespace CGAL {
                const typename SK::Sphere_3 & s, 
 	       OutputIterator res) 
     { 
-      typedef typename SK::AK AK;
+      typedef typename SK::Algebraic_kernel Algebraic_kernel;
       typedef typename SK::Sphere_3 Sphere_3;
       typedef typename SK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
       typedef typename SK::Polynomial_1_3 Polynomial_1_3;
@@ -259,7 +259,7 @@ namespace CGAL {
         typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
         solutions_container;
         solutions_container solutions;
-        AK().solve_object()(e1, e1, e2, std::back_inserter(solutions)); 
+        Algebraic_kernel().solve_object()(e1, e1, e2, std::back_inserter(solutions)); 
         // only 1 solution
         typename solutions_container::iterator it = solutions.begin(); 
 	*res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -322,7 +322,7 @@ namespace CGAL {
                 const typename SK::Line_3 & l, 
 	        OutputIterator res)
     {
-      typedef typename SK::AK                          AK;
+      typedef typename SK::Algebraic_kernel                          Algebraic_kernel;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere; 
       typedef typename SK::Polynomials_for_line_3      Equation_line; 
       typedef typename SK::Root_for_spheres_2_3        Root_for_spheres_2_3;
@@ -334,7 +334,7 @@ namespace CGAL {
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
         solutions_container;
       solutions_container solutions;
-      AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
+      Algebraic_kernel().solve_object()(e1, e2, std::back_inserter(solutions)); 
       for ( typename solutions_container::iterator it = solutions.begin(); 
 	  it != solutions.end(); ++it ) {
         *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -354,7 +354,7 @@ namespace CGAL {
        typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
        typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
        typedef typename SK::Circle_3  Circle_3;
-       typedef typename SK::AK  AK;
+       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
        typedef std::vector< Object > solutions_container;
        CGAL_kernel_precondition(!s1.rep().is_degenerate());
        CGAL_kernel_precondition(!s2.rep().is_degenerate());
@@ -396,7 +396,7 @@ namespace CGAL {
        typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
          algebraic_solutions_container;
        algebraic_solutions_container solutions;
-       AK().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
+       Algebraic_kernel().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
        for ( typename algebraic_solutions_container::iterator it = 
              solutions.begin(); it != solutions.end(); ++it ) {
         *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -417,7 +417,7 @@ namespace CGAL {
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::Plane_3  Plane_3;
-      typedef typename SK::AK  AK;
+      typedef typename SK::Algebraic_kernel  Algebraic_kernel;
       CGAL_kernel_precondition(!p.rep().is_degenerate());
       CGAL_kernel_precondition(!s1.rep().is_degenerate());
       CGAL_kernel_precondition(!s2.rep().is_degenerate());
@@ -434,7 +434,7 @@ namespace CGAL {
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
-      AK().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
+      Algebraic_kernel().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
       for ( typename algebraic_solutions_container::iterator it = 
             solutions.begin(); it != solutions.end(); ++it ) {
        *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -454,7 +454,7 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
-      typedef typename SK::AK  AK;
+      typedef typename SK::Algebraic_kernel  Algebraic_kernel;
       CGAL_kernel_precondition(!p1.rep().is_degenerate());
       CGAL_kernel_precondition(!p2.rep().is_degenerate());
       CGAL_kernel_precondition(!s.rep().is_degenerate());
@@ -467,7 +467,7 @@ namespace CGAL {
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
-      AK().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
+      Algebraic_kernel().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
       for ( typename algebraic_solutions_container::iterator it = 
             solutions.begin(); it != solutions.end(); ++it ) {
        *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -504,7 +504,7 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
       typedef typename SK::Polynomials_for_circle_3  Equation_circle;
       typedef typename SK::Circle_3  Circle_3;
-      typedef typename SK::AK  AK;
+      typedef typename SK::Algebraic_kernel  Algebraic_kernel;
       if(non_oriented_equal<SK>(c1,c2)) {
          *res++ = make_object(c1);
          return res;
@@ -514,7 +514,7 @@ namespace CGAL {
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
-      AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
+      Algebraic_kernel().solve_object()(e1, e2, std::back_inserter(solutions)); 
       for ( typename algebraic_solutions_container::iterator it = 
             solutions.begin(); it != solutions.end(); ++it ) {
         *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -534,14 +534,14 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_circle_3  Equation_circle;
       typedef typename SK::Polynomials_for_line_3    Equation_line;
       typedef typename SK::Circle_3  Circle_3;
-      typedef typename SK::AK  AK;
+      typedef typename SK::Algebraic_kernel  Algebraic_kernel;
       CGAL_kernel_precondition(!l.rep().is_degenerate());
       Equation_circle e1 = get_equation<SK>(c);
       Equation_line e2 = get_equation<SK>(l);
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
-      AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
+      Algebraic_kernel().solve_object()(e1, e2, std::back_inserter(solutions)); 
       for ( typename algebraic_solutions_container::iterator it = 
             solutions.begin(); it != solutions.end(); ++it ) {
         *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
@@ -556,96 +556,96 @@ namespace CGAL {
     typename SK::Circular_arc_point_3
     x_extremal_point(const typename SK::Sphere_3 & c, bool i)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().x_critical_points_object()(typename SK::Get_equation()(c),i);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().x_critical_points_object()(typename SK::Get_equation()(c),i);
     }
 
     template <class SK,class OutputIterator>
     OutputIterator
     x_extremal_points(const typename SK::Sphere_3 & c, OutputIterator res)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().x_critical_points_object()(typename SK::Get_equation()(c),res);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().x_critical_points_object()(typename SK::Get_equation()(c),res);
     }
 
     template <class SK>
     typename SK::Circular_arc_point_3
     y_extremal_point(const typename SK::Sphere_3 & c, bool i)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().y_critical_points_object()(typename SK::Get_equation()(c),i);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().y_critical_points_object()(typename SK::Get_equation()(c),i);
     }
 
     template <class SK,class OutputIterator>
     OutputIterator
     y_extremal_points(const typename SK::Sphere_3 & c, OutputIterator res)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().y_critical_points_object()(typename SK::Get_equation()(c),res);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().y_critical_points_object()(typename SK::Get_equation()(c),res);
     }
 
     template <class SK>
     typename SK::Circular_arc_point_3
     z_extremal_point(const typename SK::Sphere_3 & c, bool i)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().z_critical_points_object()(typename SK::Get_equation()(c),i);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().z_critical_points_object()(typename SK::Get_equation()(c),i);
     }
 
     template <class SK,class OutputIterator>
     OutputIterator
     z_extremal_points(const typename SK::Sphere_3 & c, OutputIterator res)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().z_critical_points_object()(typename SK::Get_equation()(c),res);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().z_critical_points_object()(typename SK::Get_equation()(c),res);
     }
 
     template <class SK>
     typename SK::Circular_arc_point_3
     x_extremal_point(const typename SK::Circle_3 & c, bool i)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().x_critical_points_object()(typename SK::Get_equation()(c),i);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().x_critical_points_object()(typename SK::Get_equation()(c),i);
     }
 
     template <class SK,class OutputIterator>
     OutputIterator
     x_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().x_critical_points_object()(typename SK::Get_equation()(c),res);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().x_critical_points_object()(typename SK::Get_equation()(c),res);
     }
 
     template <class SK>
     typename SK::Circular_arc_point_3
     y_extremal_point(const typename SK::Circle_3 & c, bool i)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().y_critical_points_object()(typename SK::Get_equation()(c),i);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().y_critical_points_object()(typename SK::Get_equation()(c),i);
     }
 
     template <class SK,class OutputIterator>
     OutputIterator
     y_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().y_critical_points_object()(typename SK::Get_equation()(c),res);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().y_critical_points_object()(typename SK::Get_equation()(c),res);
     }
 
     template <class SK>
     typename SK::Circular_arc_point_3
     z_extremal_point(const typename SK::Circle_3 & c, bool i)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().z_critical_points_object()(typename SK::Get_equation()(c),i);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().z_critical_points_object()(typename SK::Get_equation()(c),i);
     }
 
     template <class SK,class OutputIterator>
     OutputIterator
     z_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
     {
-      typedef typename SK::Algebraic_kernel   AK;
-      return AK().z_critical_points_object()(typename SK::Get_equation()(c),res);
+      typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+      return Algebraic_kernel().z_critical_points_object()(typename SK::Get_equation()(c),res);
     }
 
   }//SphericalFunctors

@@ -37,8 +37,8 @@ namespace CGAL {
   compare_x(const typename SK::Circular_arc_point_3 &p0,
             const typename SK::Circular_arc_point_3 &p1)
   {
-    typedef typename SK::Algebraic_kernel   AK;
-    return AK().compare_x_object()(p0.coordinates(), p1.coordinates());
+    typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+    return Algebraic_kernel().compare_x_object()(p0.coordinates(), p1.coordinates());
   }
 
   template < class SK >
@@ -47,8 +47,8 @@ namespace CGAL {
   compare_y(const typename SK::Circular_arc_point_3 &p0,
             const typename SK::Circular_arc_point_3 &p1)
   {
-    typedef typename SK::Algebraic_kernel   AK;
-    return AK().compare_y_object()(p0.coordinates(), p1.coordinates());
+    typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+    return Algebraic_kernel().compare_y_object()(p0.coordinates(), p1.coordinates());
   }
 
   template < class SK >
@@ -57,8 +57,8 @@ namespace CGAL {
   compare_z(const typename SK::Circular_arc_point_3 &p0,
             const typename SK::Circular_arc_point_3 &p1)
   {
-    typedef typename SK::Algebraic_kernel   AK;
-    return AK().compare_z_object()(p0.coordinates(), p1.coordinates());
+    typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+    return Algebraic_kernel().compare_z_object()(p0.coordinates(), p1.coordinates());
   }
 
   template < class SK >
@@ -67,8 +67,8 @@ namespace CGAL {
   compare_xy(const typename SK::Circular_arc_point_3 &p0,
              const typename SK::Circular_arc_point_3 &p1)
   {
-    typedef typename SK::Algebraic_kernel   AK;
-    return AK().compare_xy_object()(p0.coordinates(), p1.coordinates());
+    typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+    return Algebraic_kernel().compare_xy_object()(p0.coordinates(), p1.coordinates());
   }
 
   template < class SK >
@@ -77,8 +77,8 @@ namespace CGAL {
   compare_xyz(const typename SK::Circular_arc_point_3 &p0,
               const typename SK::Circular_arc_point_3 &p1)
   {
-    typedef typename SK::Algebraic_kernel   AK;
-    return AK().compare_xyz_object()(p0.coordinates(), p1.coordinates());
+    typedef typename SK::Algebraic_kernel   Algebraic_kernel;
+    return Algebraic_kernel().compare_xyz_object()(p0.coordinates(), p1.coordinates());
   }
 
   }//SphericalFunctors
