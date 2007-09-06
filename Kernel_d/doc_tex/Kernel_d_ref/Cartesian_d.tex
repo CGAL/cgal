@@ -1,0 +1,23 @@
+\begin{ccRefClass}{Cartesian_d<FieldNumberType>}
+
+\ccInclude{CGAL/Cartesian_d.h}
+
+\ccDefinition
+A model for \ccc{Kernel_d} that uses \ccHtmlNoLinksFrom{Cartesian} coordinates to represent the
+geometric objects.  In order for \ccRefName\ to model Euclidean geometry
+in $E^d$ , for some mathematical field $E$ (\textit{e.g.},
+the rationals \Q\ or the reals \R), the template parameter \ccc{FieldNumberType} 
+must model the mathematical field $E$.  That is, the field operations on this
+number type must compute the mathematically correct results.  If the number 
+type provided as a model for \ccc{FieldNumberType} is only an approximation of a 
+field (such as the built-in type \ccc{double}), then the geometry provided by 
+the kernel is only an approximation of Euclidean geometry.  
+
+\ccIsModel
+\ccRefConceptPage{Kernel_d}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Homogeneous_d<RingNumberType>}
+
+
+\end{ccRefClass}
