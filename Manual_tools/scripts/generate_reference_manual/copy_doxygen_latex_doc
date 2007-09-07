@@ -77,7 +77,6 @@ sub latex_unmangle
     $buf =~ s/\\char`\\"\{\}/"/g;               # \char`\"{} -> "
     $buf =~ s/\\par\b//g;                       # remove \par (single word)
     $buf =~ s/\\hspace\{.*?\}//g;               # remove \hspace{...}
-    $buf =~ s/\{\\tt\s+\[.*?\]\}//g;            # remove {\tt [...]}
     #
     # loop to remove nested expressions
     for my $i (1..5) {
@@ -166,7 +165,8 @@ sub extended_formatting
     # Extract \ccIsModel, \ccRefines and \ccHeading{Design Pattern}
     # titles from \ccDefinition section
     $buf =~ s/Concept:\s*/\n\\ccIsModel\n\n/sm;
-    $buf =~ s/Sub[- ][Cc]oncept:\s*/\n\\ccRefines\n\n/sm;
+    $buf =~ s/Sub[- ][Cc]oncept( of)?:\s*/\n\\ccRefines\n\n/sm;
+    $buf =~ s/Refines:\s*/\n\\ccRefines\n\n/sm;
     $buf =~ s/Design [Pp]attern:\s*/\n\\ccHeading\{Design Pattern\}\n\n/;
 
     # Extract \ccHasModels title from \ccDefinition section.
@@ -198,8 +198,7 @@ sub extended_formatting
 
 
 # Wrap C++ names (types/functions/variables) by \ccc{}.
-# Mangle C++ code for latex (except in \ccNestedType, \ccEnum, \ccConstructor,
-# \ccMethod & \ccFunction first curly braces pair and in \ccc expressions).
+# Mangle C++ code for latex.
 # Param: the buffer to format
 # Return value: the formatted buffer
 sub latex_mangle
@@ -210,14 +209,14 @@ sub latex_mangle
     # Local variables when parsing buffer line by lines
     my ($line, @lines);
 
-    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod & \ccFunction
+    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
     # first curly braces pair must contain plain C++ code.
     # For the other lines, we wrap C++ types by \ccc{}.
     @lines = split(/\n/, $buf);
     $buf = "";
     foreach $line (@lines) {
         # if NOT first curly braces pair of a cgal_manual macro
-        unless ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccFunction)/) {
+        unless ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/) {
             # Wrap C++ types, including template params, by \ccc{}
             # We add carriage returns around \ccc{} for next line by line substitution
             $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\n\\ccc{$1\}\n/g;
@@ -225,7 +224,7 @@ sub latex_mangle
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
 
-    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod & \ccFunction
+    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
     # first curly braces pair and \ccc expressions must contain plain C++ code.
     # The other lines must contain regular latex text => we mangle back
     # _, ~, <, >, *, &, [] characters (see begining of script).
@@ -233,7 +232,7 @@ sub latex_mangle
     $buf = "";
     foreach $line (@lines) {
         # if first curly braces pair of a cgal_manual macro or \ccc: plain C++ code
-        if ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccFunction)/
+        if ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
          || $line =~ /\\ccc/)
         {
             # Remove extra spaces to please cgal_manual
@@ -343,6 +342,7 @@ sub format_doxygen_class_struct_doc
 
     # Rename \ccConstants title
     $buf =~ s/\\subsubsection\{Member Enumeration Documentation\}/\n\n\\ccConstants\n/;
+    $buf =~ s/\\subsubsection\{Member Data Documentation\}/\n\n\\ccConstants\n/;
 
     # Rename \ccCreation title
     unless ($buf =~ m/\\subsubsection\{Constructor & Destructor Documentation\}/) {
@@ -353,13 +353,17 @@ sub format_doxygen_class_struct_doc
     # Rename \ccOperations title
     $buf =~ s/\\subsubsection\{Member Function Documentation\}/\n\n\\ccOperations\n/;
 
-    # Rename \ccNestedType, \ccEnum, \ccConstructor and \ccMethod expressions
+    # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
     # and open a curly brace for the expression's comment
     $buf =~ s/\\paragraph\{typedef.* (\w+)\}/\\ccNestedType\{$1\}\n\{/g;
     $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
     $buf =~ s/\\item\[Enumerator/\\item\[Enumeration values/g;
     $buf =~ s/\\paragraph\{\Q$className\E\s+\((.*)\}/\\ccConstructor\{$className \($1;\}\n\{/g;
-    $buf =~ s/\\paragraph\{(.*)\}/\\ccMethod\{$1;\}\n\{/g;
+    $buf =~ s/\\paragraph\{([^\(\)]*?)\}/\\ccVariable\{$1;\}\n\{/g;
+    $buf =~ s/\\paragraph\{(.*\(.*\).*)\}/\\ccMethod\{$1;\}\n\{/g;
+    #
+    # Move [static], [virtual], [protected] comments at the beginning of the expression's comment
+    $buf =~ s/(\[.*?\]);\}\n\{/;\}\n\{\n$1 \\\\/g;
     #
     # Remove list brackets: replace \begin{xxx}...\end{xxx} by
     # \begin((xxx))...\end((xxx)) (restored below)
@@ -392,8 +396,7 @@ sub format_doxygen_class_struct_doc
     $buf = extended_formatting($buf);
 
     # Wrap C++ names (types/functions/variables) by \ccc{}.
-    # Mangle C++ code for latex (except in \ccNestedType, \ccEnum, \ccConstructor,
-    # \ccMethod & \ccFunction first curly braces pair and in \ccc expressions).
+    # Mangle C++ code for latex .
     $buf = latex_mangle($buf);
 
     # Construct a pattern that matches any section title
@@ -507,8 +510,7 @@ sub format_doxygen_function_doc
     $buf = extended_formatting($buf);
 
     # Wrap C++ names (types/functions/variables) by \ccc{}.
-    # Mangle C++ code for latex (except in \ccNestedType, \ccEnum, \ccConstructor,
-    # \ccMethod & \ccFunction first curly braces pair and in \ccc expressions).
+    # Mangle C++ code for latex.
     $buf = latex_mangle($buf);
 
     # Construct a pattern that matches any section title
@@ -661,7 +663,7 @@ sub merge_manuals
 sub usage
 {
 print <<"END_USAGE";
-copy_doxygen_latex_doc version 0.7.4.
+copy_doxygen_latex_doc version 0.7.5.
 
 Extract documentation from a doxygen-generated latex file and insert it in a CGAL Reference Manual's latex file.
 
@@ -679,7 +681,7 @@ Tips:
 * \"Words surrounded by double quotes\" will be emphasized.
 
 Known bugs:
-* This tool has been tested with doxygen 1.4.4. It is likely that it will *not* work with other versions of doxygen.
+* This tool has been tested with doxygen 1.4.4 to 1.4.6. It may *not* work with other versions of doxygen.
 * So far, this tool documents only concepts, classes, structs and functions.
 END_USAGE
 

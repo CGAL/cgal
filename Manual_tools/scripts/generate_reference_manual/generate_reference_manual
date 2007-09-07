@@ -41,7 +41,7 @@ Tips:
 * \"Words surrounded by double quotes\" will be emphasized.
 
 Known bugs:
-* This tool has been tested with doxygen 1.4.4. It is likely that it will *not* work with other versions of doxygen.
+* This tool has been tested with doxygen 1.4.4 to 1.4.6. It may *not* work with other versions of doxygen.
 * So far, this tool documents only concepts, classes, structs and functions.
 
 Contact:
@@ -55,7 +55,7 @@ exit 1
 #######
 
 # Version
-echo "generate_reference_manual version 0.7.4.";
+echo "generate_reference_manual version 0.7.5.";
 
 # Global variables
 ROOT_FOLDER="" 				    # Package's root folder
