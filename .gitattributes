@@ -908,7 +908,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/empty.zero -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x_left -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/curves -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/errors.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/is_vertical -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/make_x_monotone -text
