@@ -306,13 +306,15 @@ public:
     CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
     
     //! lexicographical comparison of two objects of type \c Xy_coordinate_2
+    //!
+    //! \c equal_x specifies that only y-coordinates need to be compared
     struct Compare_xy_2 :
           public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > 
     {
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
-                                          const Xy_coordinate_2& xy2) const {
-             return xy1.compare_xy(xy2);
+             const Xy_coordinate_2& xy2, bool equal_x = false) const {
+             return xy1.compare_xy(xy2, equal_x);
         }
     };
     CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
