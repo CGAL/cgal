@@ -32,10 +32,10 @@ class Skin_surface_filtered_traits_3
   : public Skin_surface_traits_base_3<K>
 {
   // Exact traits is based on the exact kernel.
-  typedef Skin_surface_traits_3<typename K::EK>
+  typedef Skin_surface_traits_3<typename K::Exact_kernel>
                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Skin_surface_traits_3<typename K::FK>
+  typedef Skin_surface_traits_3<typename K::Approximate_kernel>
                                                    Filtering_traits;
 
   typedef typename K::C2E C2E;
