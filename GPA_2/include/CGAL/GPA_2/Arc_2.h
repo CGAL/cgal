@@ -510,7 +510,7 @@ public:
     //!\brief compares a point \c pt with this arc's end \c end2 lying on the
     //! same arc, i.e., no arcno information is taken into account. 
     //!
-    //! this is a "proxy" method to protect the curve arc from being accessed
+    //! this is a "proxy" method to protect the curve ends from being accessed
     //! explicitly. \c equal_x specifies to compare only ys, 
     //! \c only_x - compare only xs
     CGAL::Comparison_result same_arc_compare_xy(const Point_2& pt,
