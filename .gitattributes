@@ -915,8 +915,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/make_x_
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/merge -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/split -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/vertex -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/rays/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/rays/compare_y_at_x_left -text
