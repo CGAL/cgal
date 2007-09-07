@@ -1005,7 +1005,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex -tex
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.old -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x -text
