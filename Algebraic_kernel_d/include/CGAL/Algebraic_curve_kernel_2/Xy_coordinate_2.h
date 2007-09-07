@@ -134,7 +134,6 @@ private:
      * Simplifies the representation of two points whose supporting curves
      * share a common part.
      */
-    inline 
     static bool _simplify(const Xy_coordinate_2& p, const Xy_coordinate_2& q) 
     {
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
@@ -251,8 +250,8 @@ public:
      * do we need this method or one should use Algebraic_curve_kernel_2
      * directly ?
      */
-    CGAL::Comparison_result compare_x(const Self& q) const 
-    {
+    CGAL::Comparison_result compare_x(const Self& q) const {
+    
         if(this->is_identical(q)) {
             return CGAL::EQUAL;
         }
@@ -264,21 +263,20 @@ public:
      * compares \c *this with \c q lexicographically
      */
     CGAL::Comparison_result compare_xy(const Self& q, 
-        bool equal_x = false) const 
-    {
-        if(this->is_identical(q)) {
+        bool equal_x = false) const {
+        
+        if(is_identical(q)) 
             return CGAL::EQUAL;
-        }
         if(!equal_x) {
-            CGAL::Comparison_result c = this->compare_x(q);
-            if (c != CGAL::EQUAL) {
+            CGAL::Comparison_result c = compare_x(q);
+            if(c != CGAL::EQUAL) {
                 CGAL_assertion(c == CGAL::SMALLER || c == CGAL::LARGER);
                 return c;
             } 
         }
-        return this->_compare_y_at_x(q);
+        return _compare_y_at_x(q);
     }
-
+    
     //! equality
     bool operator == (const Self& q) const {return q.compare_xy(*this)== 0;}
     
@@ -313,24 +311,18 @@ private:
     
         Curve_2 f = this->curve();
         Curve_2 g = q.curve();
-        if(!f.is_identical(g)) {  // common parts of curves?
-            if(this->_simplify(*this,q)) {
-                // ask for predicate again
-                // since this->curve() and this->curve() can be the 
-                // equal now
-                return this->_compare_y_at_x(q);
-            }
+        // may have common factor ?
+        if(!f.is_identical(g) && Self::_simplify(*this,q)) {
+            // restart because supporting curves might be equal now
+            return this->_compare_y_at_x(q);
         } 
-        
-        if (f.is_identical(g)) {
-            CGAL::Sign result = CGAL::sign(this->arcno() - q.arcno());
-            return result;
-        }
-        
-        Curve_pair_2 cp = Algebraic_curve_kernel_2::
-            get_curve_pair_cache()(std::make_pair(f, g));
+        if(f.is_identical(g)) 
+            return CGAL::sign(this->arcno() - q.arcno());
+            
+        Curve_pair_analysis_2 cpa_2(Algebraic_curve_kernel_2::
+            get_curve_pair_cache()(std::make_pair(f, g)));
         const Curve_pair_vertical_line_1& vline = 
-            Curve_pair_analysis_2(cp).vertical_line_for_x(x());
+            cpa_2.vertical_line_for_x(x());
         CGAL::Sign result = 
             CGAL::sign(vline.get_event_of_curve(0, this->arcno()) - 
                     vline.get_event_of_curve(1, q.arcno()));
@@ -354,7 +346,7 @@ public:
      *
      * \pre pair must be a decomposition of curve()
      */
-    void simplify_by(const Curve_pair_analysis_2& pair) const 
+    void simplify_by(const Curve_pair_analysis_2& cpa_2) const 
     { 
         typedef typename Algebraic_curve_kernel_2::Polynomial_2_CGAL Poly_2;
         typename Algebraic_curve_kernel_2::NiX2CGAL_converter cvt;
@@ -375,7 +367,7 @@ public:
             total_degree(cvt(curve().f())));
 
         const Curve_pair_vertical_line_1& cpv_line =
-                pair.vertical_line_for_x(x());
+                cpa_2.vertical_line_for_x(x());
         // # of arcs must match
         CGAL_precondition_code(
             const Curve_vertical_line_1& cv_line = 

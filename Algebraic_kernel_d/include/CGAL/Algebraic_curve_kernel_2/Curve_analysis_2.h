@@ -175,7 +175,6 @@ public:
         // # of arcs to the left and to the right is the same over an interval
         Event1_info ei(X_coordinate_1(this->ptr()->_m_curve.
               boundary_value_in_interval(i)), n_arcs, n_arcs);
-              
         // initialize n continuous arcs
         typename Event1_info::Arc_container dummy_arcs(n_arcs);
         ei.set_arcs(dummy_arcs);
