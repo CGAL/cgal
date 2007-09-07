@@ -180,10 +180,18 @@ private:
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Curve_2                      Curve_2;
-  //typedef typename Traits::Enumerator_type              Enum_type;
-  //typedef typename Traits::Enumerator_type              Enum_type;erator=0=1=2erator
-  /*! The input data file */
-  std::string m_filename;
+
+  /*! The input data file of points*/
+  std::string m_filename_points;
+
+  /*! The input data file of curves*/
+  std::string m_filename_curves;
+
+  /*! The input data file of xcurves*/
+  std::string m_filename_xcurves;
+
+  /*! The input data file of commands*/
+  std::string m_filename_commands;
 
   /*! The traits type */
   std::string m_traitstype;
@@ -208,9 +216,6 @@ private:
 
   /*! Collect the data depending on obj_t */
   bool read_input(std::ifstream & is , Read_object_type obj_t);
-
-  /*! Collect the data for the test */
-  bool collect_data(std::ifstream & is);
 
   /*! Perform the test */
   bool perform(std::ifstream & is);
@@ -421,19 +426,19 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
   violation_map[POSTCONDITION]=std::string("postcondition");
   violation_map[ASSERTION]=std::string("assertion");
   violation_map[WARNING]=std::string("warning");
-  if (argc < 2 || argc > 3) {
-    std::cout << "Usage: " << argv[0] << " test_data_file traits_type" << std::endl;
+  if (argc != 6) {
+    std::cout << "Usage: " << argv[0] <<
+      " points_file xcurves_file curves_file commands_file traits_type_name"
+      << std::endl;
     end_of_line_printed = true;
   }
   else
   {
-    m_traitstype = "";
-    m_filename = argv[1];
-    if (argc == 3 )
-    {
-      m_filename = argv[1];
-      m_traitstype = argv[2];
-    }
+    m_filename_points = argv[1];
+    m_filename_xcurves = argv[2];
+    m_filename_curves = argv[3];
+    m_filename_commands = argv[4];
+    m_traitstype = argv[5];
   }
   m_wrappers[std::string("compare_x")] =
     &Traits_test<Traits>::compare_x_wrapper;
@@ -478,7 +483,10 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
 template <class T_Traits>
 Traits_test<T_Traits>::~Traits_test()
 {
-  m_filename.clear();
+  m_filename_points.clear();
+  m_filename_xcurves.clear();
+  m_filename_curves.clear();
+  m_filename_commands.clear();
   m_points.clear();
   m_curves.clear();
   m_xcurves.clear();
@@ -490,18 +498,44 @@ Traits_test<T_Traits>::~Traits_test()
 template<class T_Traits>
 bool Traits_test<T_Traits>::start()
 {
-  std::ifstream is(m_filename.c_str());
-  if (!is.is_open()) {
-    std::cerr << "Error opening file " << m_filename.c_str() << std::endl;
+  std::ifstream in_pt(m_filename_points.c_str());
+  std::ifstream in_xcv(m_filename_xcurves.c_str());
+  std::ifstream in_cv(m_filename_curves.c_str());
+  std::ifstream in_com(m_filename_commands.c_str());
+  if (!in_pt.is_open()) {
+    std::cerr << "Error opening file " << m_filename_points.c_str() << std::endl;
     end_of_line_printed = true;
     return false;
   }
-    if (!collect_data(is)) {
-      is.close(); 
-      return false;
-    }
-  if (!perform(is)) {
-    is.close(); 
+  if (!in_xcv.is_open()) {
+    std::cerr << "Error opening file " << m_filename_xcurves.c_str() << std::endl;
+    end_of_line_printed = true;
+    return false;
+  }
+  if (!in_cv.is_open()) {
+    std::cerr << "Error opening file " << m_filename_curves.c_str() << std::endl;
+    end_of_line_printed = true;
+    return false;
+  }
+  if (!in_com.is_open()) {
+    std::cerr << "Error opening file " << m_filename_commands.c_str() << std::endl;
+    end_of_line_printed = true;
+    return false;
+  }
+  if (!read_input(in_pt,POINT)) {
+    in_pt.close(); 
+    return false;
+  }
+  if (!read_input(in_xcv,XCURVE)) {
+    in_xcv.close(); 
+    return false;
+  }
+  if (!read_input(in_cv,CURVE)) {
+    in_cv.close(); 
+    return false;
+  }
+  if (!perform(in_com)) {
+    in_com.close(); 
     return false;
   }
   return true;
@@ -522,13 +556,13 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
     {
       switch (obj_t)
       {
-       case POINT : 
+       case POINT :
         m_points.resize(num);
 	    break;
-       case CURVE : 
+       case CURVE :
         m_curves.resize(num);
 	    break;
-       case XCURVE : 
+       case XCURVE :
         m_xcurves.resize(num);
 	    break;
       }//switch
@@ -538,7 +572,7 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
         str_stream.str(one_line);
         switch (obj_t)
         {
-          case POINT : 
+          case POINT :
             if (!read_point(str_stream, m_points[i]))
             {
                std::cerr << "Error reading point!" << std::endl;
@@ -554,7 +588,7 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
                return false;
             }
             break;
-          case XCURVE : 
+          case XCURVE :
             if (!read_xcurve(str_stream, m_xcurves[i]))
             {
                std::cerr << "Error reading xcurves!" << std::endl;
@@ -606,22 +640,6 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
 }
 
 /*!
- * Collects data. Fills all_curves_vec and all_points_vec
- */
-template <class T_Traits>
-bool Traits_test<T_Traits>::collect_data(std::ifstream & is)
-{
-  bool res=true;
-  // Read points:
-  res&=read_input(is,POINT);
-  // Read x-monotone curves
-  res&=read_input(is,XCURVE);
-  // Read curves
-  res&=read_input(is,CURVE);
-  return res;
-}
-
-/*!
  * Command dispatcher. Retrieves a line from the input file and performes
  * some action. See comments for suitable function in order to know specific
  * command arguments. 
@@ -630,7 +648,10 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::perform(std::ifstream & is)
 {
   bool test_result = true;
-  std::cout << "Performing test : traits type is " << m_traitstype << ", input filename is " << m_filename << std::endl;
+  std::cout << "Performing test : traits type is " << m_traitstype <<
+    ", input files are " << m_filename_points << " " <<
+    m_filename_xcurves << " " << m_filename_curves << " " <<
+    m_filename_commands << std::endl;
   end_of_line_printed = true;
   char one_line[128];
   char buff[128];
@@ -707,8 +728,10 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
         case EXPECTED_CONTINUE :
           break;
         case EXPECTED_ABORT :
-          std::cout << "Test successfully aborted " <<
-            m_filename << std::endl;
+          std::cout << "Test successfully aborted" <<
+            ", input files are " << m_filename_points << " " <<
+            m_filename_xcurves << " " << m_filename_curves << " " <<
+            m_filename_commands << std::endl;
           abort=true;
           break;
         case UNEXPECTED_CONTINUE :
@@ -736,7 +759,9 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
                          violation_map[violation_tested] << 
                          " abort ... "; 
           }
-          std::cout <<  m_filename << std::endl;
+          std::cout << "input files are " << m_filename_points << " " <<
+            m_filename_xcurves << " " << m_filename_curves << " " <<
+            m_filename_commands << std::endl;
           abort=true;
           break;
       }
