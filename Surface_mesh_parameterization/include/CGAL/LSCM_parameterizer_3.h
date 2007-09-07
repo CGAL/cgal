@@ -153,8 +153,8 @@ public:
     /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize(Adaptor& mesh);
 
-// Protected operations
-protected:
+// Private operations
+private:
     /// Check parameterize() preconditions:
     /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
@@ -197,8 +197,8 @@ protected:
     bool  is_one_to_one_mapping(const Adaptor& mesh,
                                  const LeastSquaresSolver& solver);
 
-// Protected accessors
-protected:
+// Private accessors
+private:
     /// Get the object that maps the surface's border onto a 2D space.
     Border_param&   get_border_parameterizer()    { return m_borderParameterizer; }
 

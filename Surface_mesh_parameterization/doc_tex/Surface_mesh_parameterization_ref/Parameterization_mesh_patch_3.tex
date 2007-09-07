@@ -197,7 +197,7 @@ Clockwise circulator over the vertices incident to a vertex. Model of the Bidire
 {
 Create a Decorator for an existing \ccc{ParameterizationPatchableMesh_3} mesh. The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
 Preconditions:\begin{itemize}
-\item \ccc{first_seam_vertex} -$>$ \ccc{end_seam_vertex} defines the outer seam, i.e. \ccc{Parameterization_mesh_patch_3} will export the {\em right} of the seam.\item The {\em seam} is given as a container of \ccc{Adaptor::Vertex_handle} elements.\item The {\em seam} is implicitly a loop. The first vertex should $\ast$not$\ast$ be duplicated at the end. \end{itemize}
+\item \ccc{first_seam_vertex} -$>$ \ccc{end_seam_vertex} defines the outer seam, i.e. \ccc{Parameterization_mesh_patch_3} will export the {\em right} of the seam.\item The {\em seam} is given as a container of \ccc{Adaptor::Vertex_handle} elements.\item The {\em seam} is implicitely a loop. The first vertex should $\ast$not$\ast$ be duplicated at the end. \end{itemize}
 }
 \ccGlue
 

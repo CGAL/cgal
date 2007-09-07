@@ -108,11 +108,13 @@ Constructor.
 
 \ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
 {
+[protected, virtual] \\
 Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.
 }
 \ccGlue
-\ccMethod{virtual bool is_one_to_one_mapping(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}
+\ccMethod{virtual bool is_one_to_one_mapping(const Adaptor &, const Matrix &, const Vector &, const Vector &);}
 {
+[protected, virtual] \\
 Check if 3D -$>$ 2D mapping is one-to-one.
 Theorem: one-to-one mapping is guaranteed if all \ccc{w_ij} coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface border is mapped onto a 2D convex polygon. Floater formula above implies that \ccc{w_ij} $>$ 0 (for j vertex neighbor of i), thus mapping is guaranteed if the surface border is mapped onto a 2D convex polygon.
 }
