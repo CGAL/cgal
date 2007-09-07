@@ -1428,6 +1428,7 @@ Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
 GPA_2/include/CGAL/GPA_2.h -text
 GPA_2/include/CGAL/GPA_2/Arc_2.h -text
+GPA_2/include/CGAL/GPA_2/GPA_2_functors.h -text
 GPA_2/include/CGAL/GPA_2/Point_2.h -text
 GPA_2/maintainer -text
 Generator/demo/Generator/generator.vcproj eol=crlf

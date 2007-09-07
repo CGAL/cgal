@@ -58,21 +58,21 @@ class Point_2_rep
     // constructs a "finite" point on curve,
     // implies CGAL::NO_BOUNDARY in x/y
     Point_2_rep(const Xy_coordinate_2& xy) : 
-        _m_xy(xy), _m_x(xy.x()), _m_boundary_x(::CGAL::NO_BOUNDARY),
-            _m_boundary_y(::CGAL::NO_BOUNDARY) {  
+        _m_xy(xy), _m_x(xy.x()), _m_boundary_x(CGAL::NO_BOUNDARY),
+            _m_boundary_y(CGAL::NO_BOUNDARY) {  
     }
 
     // constructs a point on curve with x-/y-coordinate at infinity
-    Point_2_rep(const X_coordinate_1& x, ::CGAL::Curve_end inf_end,
+    Point_2_rep(const X_coordinate_1& x, CGAL::Curve_end inf_end,
         bool has_x_infty = true) {
         
-        ::CGAL::Boundary_type tmp = (inf_end == ::CGAL::MIN_END ?
-                ::CGAL::MINUS_INFINITY : ::CGAL::PLUS_INFINITY);
+        CGAL::Boundary_type tmp = (inf_end == CGAL::MIN_END ?
+                CGAL::MINUS_INFINITY : CGAL::PLUS_INFINITY);
         if(has_x_infty) {
             _m_boundary_x = tmp;
-            _m_boundary_y = ::CGAL::NO_BOUNDARY;
+            _m_boundary_y = CGAL::NO_BOUNDARY;
         } else {
-            _m_boundary_x = ::CGAL::NO_BOUNDARY;
+            _m_boundary_x = CGAL::NO_BOUNDARY;
             _m_boundary_y = tmp;
             _m_x = x;
         }
@@ -87,9 +87,9 @@ class Point_2_rep
     boost::optional<X_coordinate_1> _m_x; 
         
     // boundary condition in x
-    mutable ::CGAL::Boundary_type _m_boundary_x;
+    mutable CGAL::Boundary_type _m_boundary_x;
     // boundary condition in y
-    mutable ::CGAL::Boundary_type _m_boundary_y;
+    mutable CGAL::Boundary_type _m_boundary_y;
 
     // befriending the handle
     friend class Point_2<GPA_2, Self>;
@@ -105,7 +105,7 @@ class Point_2_rep
 template <class GPA_2, 
           class Rep_ = CGALi::Point_2_rep<GPA_2> >
 class Point_2
-      : public ::CGAL::Handle_with_policy< Rep_ > {
+      : public CGAL::Handle_with_policy< Rep_ > {
 public:
     //!@{
     //!\name typedefs
@@ -121,6 +121,9 @@ public:
     
     //! type of a finite point on curve
     typedef typename GPA_2::Xy_coordinate_2 Xy_coordinate_2;
+    
+    //! type of underlying curve analysis
+    typedef typename GPA_2::Curve_kernel_2 Curve_kernel_2;
 
     //!@}
 public:
@@ -162,7 +165,7 @@ private:
     //!\brief constructs a point with x-coordinate at infinity
     //! 
     //! \c inf_end defines whether the point lies at +/- infinity
-    Point_2(::CGAL::Curve_end inf_end) :
+    Point_2(CGAL::Curve_end inf_end) :
          Base(Rep(X_coordinate_1(), inf_end, true)) {  
     }
     
@@ -170,7 +173,7 @@ private:
     //! x-coordinate \c x
     //!
     //! \c inf_end defines whether the point lies at +/- infinity
-    Point_2(const X_coordinate_1& x, ::CGAL::Curve_end inf_end) :
+    Point_2(const X_coordinate_1& x, CGAL::Curve_end inf_end) :
          Base(Rep(x, inf_end, false)) {  
     }
     
@@ -198,73 +201,15 @@ public:
     }
     
     //! access to the boundary condition in x
-    ::CGAL::Boundary_type boundary_in_x() const
+    CGAL::Boundary_type get_boundary_in_x() const
     {
         return this->ptr()->_m_boundary_x;
     }
     
     //! access to the boundary condition in y
-    ::CGAL::Boundary_type boundary_in_y() const
+    CGAL::Boundary_type get_boundary_in_y() const
     {
         return this->ptr()->_m_boundary_y;
-    }
-    
-    //! compares x-coordinates of two points
-    ::CGAL::Comparison_result compare_x(const Self& q) const {
-        
-        if(this->is_identical(q)) 
-            return CGAL::EQUAL;
-        ::CGAL::Boundary_type bnd_p = this->boundary_in_x(),
-            bnd_q = q.boundary_in_x();
-        if(bnd_p == bnd_q) {
-            if(bnd_p == ::CGAL::NO_BOUNDARY)
-                return GPA_2().compare_x_2_object()(this->x(), q.x());
-            return ::CGAL::EQUAL;
-        }
-        if(bnd_q == ::CGAL::MINUS_INFINITY) 
-            return ::CGAL::GREATER;
-        if(bnd_p == ::CGAL::MINUS_INFINITY) 
-            return ::CGAL::LESS;
-        if(bnd_p == ::CGAL::PLUS_INFINITY) 
-            return ::CGAL::GREATER;
-        return ::CGAL::LESS; // bnd_p == NO_BOUNDARY; bnd_q = PLUS_INFINITY
-    }
-       
-    ::CGAL::Comparison_result compare_xy(const Self& q, 
-                                 bool equal_x = false) const {
-                                 
-        if(this->is_identical(q)) 
-            return CGAL::EQUAL;
-        if(!equal_x && this->compare_x(q) != CGAL::EQUAL) 
-            return res;
-        return this->_compare_y_at_x(q);
-    }
-    
-    //!@}
-private:
-    //!\name private methods
-    //!@{
-    
-    ::CGAL::Comparison_result _compare_y_at_x(const Self& q)
-    {
-        CGAL_precondition(this->compare_x(q) == ::CGAL::EQUAL);
-        ::CGAL::Boundary_type bnd_p = this->boundary_in_y(),
-            bnd_q = q.boundary_in_y();
-
-        if(bnd_p == bnd_q) {
-            if(bnd_p == ::CGAL::NO_BOUNDARY) 
-            // known that x's are equal (are we allowed to access comparison
-            // predicates directly ?
-                return this->xy().compare_xy(q.xy(), true); 
-            return ::CGAL::EQUAL;
-        }
-        if(bnd_q == ::CGAL::MINUS_INFINITY) 
-            return ::CGAL::GREATER;
-        if(bnd_p == ::CGAL::MINUS_INFINITY) 
-            return ::CGAL::LESS;
-        if(bnd_p == ::CGAL::PLUS_INFINITY) 
-            return ::CGAL::GREATER;
-        return ::CGAL::LESS; // bnd_p == NO_BOUNDARY; bnd_q = PLUS_INFINITY
     }
     
     //! befriending \c Arc_2 class
