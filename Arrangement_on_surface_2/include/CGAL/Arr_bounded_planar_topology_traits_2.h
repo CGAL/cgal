@@ -412,11 +412,11 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that contains the curve end.
    */
-  CGAL::Object place_boundary_vertex (Face *f,
-                                      const X_monotone_curve_2& cv,
-                                      Curve_end ind,
-                                      Boundary_type bound_x,
-                                      Boundary_type bound_y)
+  CGAL::Object place_boundary_vertex (Face *,
+                                      const X_monotone_curve_2&,
+                                      Curve_end,
+                                      Boundary_type,
+                                      Boundary_type)
   {
     // This function should never be called:
     CGAL_assertion (false);
@@ -435,11 +435,11 @@ public:
    *      incident to the vertex v.
    * \return An object that contains the curve end.
    */
-  Halfedge* locate_around_boundary_vertex (Vertex *v,
-                                           const X_monotone_curve_2& cv,
-                                           Curve_end ind,
-                                           Boundary_type bound_x,
-                                           Boundary_type bound_y) const
+  Halfedge* locate_around_boundary_vertex (Vertex *,
+                                           const X_monotone_curve_2&,
+                                           Curve_end,
+                                           Boundary_type,
+                                           Boundary_type ) const
   {
     CGAL_assertion (false);
     return (NULL);
@@ -454,10 +454,10 @@ public:
    * \pre The curve end is unbounded in either x or y.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_unbounded_curve_end (const X_monotone_curve_2& cv,
-                                           Curve_end ind,
-                                           Boundary_type bound_x,
-                                           Boundary_type bound_y)
+  CGAL::Object locate_unbounded_curve_end (const X_monotone_curve_2&,
+                                           Curve_end,
+                                           Boundary_type,
+                                           Boundary_type)
   {
     // This function should never be called:
     CGAL_assertion (false);
@@ -472,7 +472,7 @@ public:
    * \return A halfedge whose direction is the same as e's and whose target is
    *         the split vertex v.
    */
-  Halfedge* split_fictitious_edge (Halfedge *e, Vertex *v)
+  Halfedge* split_fictitious_edge (Halfedge *, Vertex *)
   {
     // This function should never be called:
     CGAL_assertion (false);
@@ -495,7 +495,7 @@ public:
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
    */
-  bool is_redundant (const Vertex *v) const
+  bool is_redundant (const Vertex *) const
   {
     // There are no redundant vertices.
     return (false);
@@ -508,7 +508,7 @@ public:
    * \pre v is a redundant vertex.
    * \return One of the pair of halfedges that form the merged edge.
    */
-  Halfedge* erase_redundant_vertex (Vertex *v)
+  Halfedge* erase_redundant_vertex (Vertex *)
   {
     // This function should never be called:
     CGAL_assertion (false);
