@@ -498,7 +498,7 @@ test_linear_traits()
     data/empty.zero data/linear/rays/vertex linear_traits.rays
 
     execute_commands_new_structure linear/lines linear_traits.lines \
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT
   fi
   clean_tests
 }
