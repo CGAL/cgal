@@ -266,7 +266,7 @@ template<class NtTraits>
 const typename _Bezier_cache<NtTraits>::Vertical_tangency_list&
 _Bezier_cache<NtTraits>::vertical_tangencies
         (const Curve_id& id,
-         const Polynomial& polyX, const Integer& normX)
+         const Polynomial& polyX, const Integer&)
 {
   // Try to find the curve ID in the map.
   Vert_tang_map_iterator    map_iter = vert_tang_map.find (id);

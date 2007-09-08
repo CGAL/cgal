@@ -128,7 +128,7 @@ public:
   }
 
   /*! Check if the given vertex is concrete (associated with a point). */
-  inline bool is_concrete_vertex (const Vertex *v) const
+  inline bool is_concrete_vertex (const Vertex *) const
   {
     return (true);
   }
@@ -141,7 +141,7 @@ public:
   }
 
   /*! Check if the given vertex is valid (not a fictitious one). */
-  inline bool is_valid_vertex (const Vertex *v) const
+  inline bool is_valid_vertex (const Vertex *) const
   {
     return (true);
   }
@@ -154,7 +154,7 @@ public:
   }
 
   /*! Check if the given halfedge is valid (not a fictitious one). */
-  inline bool is_valid_halfedge (const Halfedge *he) const
+  inline bool is_valid_halfedge (const Halfedge *) const
   {
     return (true);
   }
@@ -167,7 +167,7 @@ public:
   }
 
   /*! Check if the given face is valid (not a fictitious one). */
-  inline bool is_valid_face (const Face *f) const
+  inline bool is_valid_face (const Face *) const
   {
     return (true);
   }

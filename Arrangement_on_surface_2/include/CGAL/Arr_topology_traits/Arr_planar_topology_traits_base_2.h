@@ -148,11 +148,11 @@ public:
    * \param bound_x The boundary condition of the curve end in x.
    * \param bound_y The boundary condition of the curve end in y.
    */
-  void notify_on_boundary_vertex_creation (Vertex *v,
-                                           const X_monotone_curve_2& cv,
-                                           Curve_end ind,
-                                           Boundary_type bound_x,
-                                           Boundary_type bound_y)
+  void notify_on_boundary_vertex_creation (Vertex *,
+                                           const X_monotone_curve_2& ,
+                                           Curve_end,
+                                           Boundary_type,
+                                           Boundary_type)
   {
     // In the planar-topology traits this function should never be invoked:
     CGAL_assertion (false);
@@ -227,9 +227,9 @@ public:
    *         are about to create, false otherwise - in which case he2
    *         (and prev2) must be incident to this new face.
    */
-  bool is_on_new_perimetric_face_boundary (const Halfedge *prev1,
-                                           const Halfedge *prev2,
-                                           const X_monotone_curve_2& cv) const
+  bool is_on_new_perimetric_face_boundary (const Halfedge *,
+                                           const Halfedge *,
+                                           const X_monotone_curve_2&) const
   {
     // We can never have perimetric faces in a planar topology:
     CGAL_assertion (false);
@@ -244,8 +244,8 @@ public:
    * \return Whether the two halfedge belong to the outer boundary of the same
    *         face.
    */
-  bool boundaries_of_same_face (const Halfedge *e1,
-                                const Halfedge *e2) const
+  bool boundaries_of_same_face (const Halfedge *,
+                                const Halfedge *) const
   {
     // This predicate is only used for case 3.3.2 of the insertion process,
     // therefore it should never be invoked in the planar case.

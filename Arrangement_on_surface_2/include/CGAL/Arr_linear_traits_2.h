@@ -635,7 +635,7 @@ public:
      */
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv,
-                                  Curve_end ind) const
+                                  Curve_end) const
     {
       CGAL_precondition (! cv.is_degenerate());
       CGAL_precondition (cv.is_vertical());
