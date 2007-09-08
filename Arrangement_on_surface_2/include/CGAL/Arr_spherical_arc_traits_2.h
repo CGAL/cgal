@@ -424,7 +424,13 @@ public:
      * \pre p2 is not a singularity point.
      */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {      
+    {     
+      /*std::cout << "p1 = " << p1 << std::endl;
+      std::cout << "p2 = " << p2 << std::endl;
+      if (p1.is_min_boundary())
+        std::cout << "p1.is_min_boundary" << std::endl;
+      if (p1.is_max_boundary())
+        std::cout << "p1.is_max_boundary" << std::endl;*/
       CGAL_precondition(!p1.is_min_boundary() &&
                         !p1.is_max_boundary());
       CGAL_precondition(!p2.is_min_boundary() &&
@@ -1659,7 +1665,7 @@ protected:
   typedef typename Kernel::Ray_2                Ray_2;
   typedef typename Kernel::Point_2              Point_2;
 
-  typedef Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
+  typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
     
   Arr_extended_direction_3 m_source;    // The source point of the arc
   Arr_extended_direction_3 m_target;    // The target point of the arc
