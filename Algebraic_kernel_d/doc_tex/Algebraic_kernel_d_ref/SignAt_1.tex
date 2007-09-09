@@ -5,15 +5,19 @@
 \ccc{AlgebraicKernel_d_1::Polynomial_1} at a real value of type 
 \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
 
+\ccRefines 
+\ccc{AdaptableBinaryFunction}
+
 \ccTypes
 \ccNestedType{result_type} 
         { Type convertible to \ccc{CGAL::Sign}.}
 
 \ccGlue
-\ccNestedType{first_argument_type}
-        { Is \ccc{AlgebraicKernel_d_1::Polynomial_1}.}\ccGlue
-\ccNestedType{second_argument_type}
-        { Is \ccc{AlgebraicKernel_d_1::Algebraic_real_1}.}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1
+  first_argument_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1
+  second_argument_type;}{}\ccGlue
+
 
 \ccCreationVariable{fo}
 
@@ -24,8 +28,5 @@ operator()(const  first_argument_type & p,
 Computes sign of $p$ at $r$.
 } 
 
-\ccRefines 
-
-\ccc{AdaptableBinaryFunction} 
 
 \end{ccRefConcept}

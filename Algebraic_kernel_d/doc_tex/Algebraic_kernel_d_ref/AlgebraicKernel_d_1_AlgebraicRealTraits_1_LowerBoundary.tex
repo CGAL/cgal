@@ -4,6 +4,9 @@
 \ccc{AdaptableUnaryFunction} that returns the current lower boundary of an  
 \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.
 
+\ccRefines 
+\ccc{AdaptableUnaryFunction} 
+
 \ccTypes
 \ccTypedef{typedef AlgebraicKernel_d_1::AlgebraicRealTraits_1::Boundary  result_type;}{}
 \ccTypedef{typedef AlgebraicKernel_d_1::AlgebraicRealTraits_1::AlgebraicReal_1  argument_type;}{}
@@ -14,8 +17,5 @@
 result_type operator()(const argument_type & x);}{ 
    Computes current lower boundary of $x$.
 } 
- 
-\ccRefines 
-\ccc{AdaptableUnaryFunction} 
 
 \end{ccRefFunctionObjectConcept}
