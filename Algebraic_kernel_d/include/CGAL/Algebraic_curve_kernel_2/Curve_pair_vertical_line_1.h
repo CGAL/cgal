@@ -162,11 +162,17 @@ public:
     //! value).
     X_coordinate_1 x() const
     {
-        int id = this->ptr()->_m_event_slice.id();
+        int id = get_index();
         if(is_event())
             return this->ptr()->_m_event_slice.curve_pair().event_x(id);
         return X_coordinate_1(this->ptr()->_m_event_slice.curve_pair().
                 boundary_value_in_interval(id));
+    }
+    
+    //! returns this vertical line's index (event or interval index)
+    int get_index() const
+    {
+        return this->ptr()->_m_event_slice.id();
     }
         
     //! \brief returns number of distinct and finite intersections of a pair 
