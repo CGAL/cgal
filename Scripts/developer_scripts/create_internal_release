@@ -167,12 +167,13 @@ sub install_packages() {
     opendir packagename, "$tmp_package_name";
     @fichiers = readdir packagename;
     closedir packagename;
-    shift @fichiers; shift @fichiers;
+    #shift @fichiers; shift @fichiers;
     foreach $fichier (@fichiers){
+      if ($fichier ne '.' && $fichier ne '..'){
       system('cp', '-r', "$tmp_package_name/$fichier", "$RELEASEDIR/$VERSION");
+      }
     }
     system('rm', '-rf', "$tmp_package_name");
-
   }
   closedir ALLPACKAGESDIR;
   unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt';
