@@ -38,22 +38,17 @@ LDFLAGS = \
 
 all: \
   test_sls_traits$(EXE_EXT) \
-  test_sls_builder$(EXE_EXT) \
-  test_offset_builder$(EXE_EXT) 
+  test_sls$(EXE_EXT) 
 
 test_sls_traits$(EXE_EXT): test_sls_traits$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sls_traits test_sls_traits$(OBJ_EXT) $(LDFLAGS)
 
-test_sls_builder$(EXE_EXT): test_sls_builder$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sls_builder test_sls_builder$(OBJ_EXT) $(LDFLAGS)
-
-test_offset_builder$(EXE_EXT): test_offset_builder$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_offset_builder test_offset_builder$(OBJ_EXT) $(LDFLAGS)
+test_sls$(EXE_EXT): test_sls$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sls test_sls$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
         test_sls_traits.clean \
-        test_sls_builder.clean \
-        test_offset_builder.clean \
+        test_sls.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -194,26 +194,37 @@ void test( std::string file )
 
 int main( int argc, char const* argv[] )
 {
-  bool print_usage = false ;
+  bool print_usage = true ;
 
   int aidx = 1 ;
   while ( aidx < argc && argv[aidx][0] == '-' )
   {
     switch(argv[aidx][1])
     {
-      case 'h' : print_usage = true; break ;
       case 'e' : sDumpEPS = true ; break ;
       default: cerr << "Invalid option: " << argv[aidx] << endl ; break ;
     }
     ++aidx ;
   }
 
+  std::vector<std::string> cases ;
+  
   if ( aidx + 1 < argc ) 
   {
-    std::cout << "Testing Straight_skeleton_builder_2\n";
+    std::string folder(argv[aidx]);
+    for ( int i = aidx + 1 ; i < argc ; ++ i )
+      cases.push_back( folder + std::string(argv[i]) );
+  }
+      
+  
+  if ( cases.size() > 0  ) 
+  {
+    print_usage = false ;
+    
+    std::cout << "Testing straight skeleton\n";
 
-    failed_list = new std::ofstream("./sls_builder_failed_cases.txt");
-    ok_list     = new std::ofstream("./sls_builder_ok_cases.txt");
+    failed_list = new std::ofstream("./test_sls_failed_cases.txt");
+    ok_list     = new std::ofstream("./test_sls_ok_cases.txt");
 
     if ( !failed_list->good() )
       cerr << "Unable to open failed_cases.txt report file." << endl ;
@@ -224,7 +235,7 @@ int main( int argc, char const* argv[] )
     try
     {
       std::string folder(argv[aidx]);
-      for ( int i = aidx + 1 ; i < argc ; ++ i )
+      for ( std::vector<std:.stringint i = aidx + 1 ; i < argc ; ++ i )
         test(folder + std::string(argv[i]) );
     }
     catch( exception x )
@@ -236,7 +247,6 @@ int main( int argc, char const* argv[] )
     delete failed_list ;
     delete ok_list ;
   }
-  else print_usage = true ;
 
   if ( print_usage )
   {
