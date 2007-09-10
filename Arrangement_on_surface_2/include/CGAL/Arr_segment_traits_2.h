@@ -341,6 +341,7 @@ public:
   typedef typename Kernel::Point_2        Point_2;
   typedef Arr_segment_2<Kernel>           X_monotone_curve_2;
   typedef Arr_segment_2<Kernel>           Curve_2;
+  typedef unsigned int                    Multiplicity;
 
 public:
 
@@ -765,7 +766,7 @@ public:
           {
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
-            std::pair<Point_2, unsigned int>   ip_mult (*ip, 1);
+            std::pair<Point_2, Multiplicity>   ip_mult (*ip, 1);
             *oi = make_object (ip_mult);
             oi++;
           }
@@ -827,7 +828,7 @@ public:
         // The two segment have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
-        std::pair<Point_2, unsigned int>   ip_mult (p_r, 0);
+        std::pair<Point_2, Multiplicity>   ip_mult (p_r, 0);
         *oi = make_object (ip_mult);
         oi++;
       }

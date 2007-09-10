@@ -65,6 +65,8 @@ public:
   typedef _Polyline_2<Segment_traits_2>                 Curve_2;
   typedef _X_monotone_polyline_2<Segment_traits_2>      X_monotone_curve_2;
 
+  typedef typename Segment_traits_2::Multiplicity       Multiplicity;
+
   /*! Compare the x-coordinates of two points. */
   typedef typename Segment_traits_2::Compare_x_2        Compare_x_2;
 

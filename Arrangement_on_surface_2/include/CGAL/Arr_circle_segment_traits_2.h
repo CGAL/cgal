@@ -46,6 +46,7 @@ public:
   typedef typename Point_2::CoordNT                      CoordNT;
   typedef _Circle_segment_2<Kernel, Filter_>             Curve_2;
   typedef _X_monotone_circle_segment_2<Kernel, Filter_>  X_monotone_curve_2;
+  typedef unsigned int                                   Multiplicity;
   typedef Arr_circle_segment_traits_2<Kernel, Filter_>   Self;
 
   // Category tags:

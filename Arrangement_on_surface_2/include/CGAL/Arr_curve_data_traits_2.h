@@ -72,6 +72,8 @@ public:
   // Representation of an x-monotone curve with an addtional data field:
   typedef _Curve_data_ex<Base_x_monotone_curve_2,
                          X_monotone_curve_data>     X_monotone_curve_2;
+
+  typedef typename Base_traits_2::Multiplicity      Multiplicity;
   
 public:
   

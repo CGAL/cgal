@@ -62,6 +62,7 @@ public:
 
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Base::Multiplicity           Multiplicity;
 
   /*! Compare the x-coordinates of two points */
   typedef typename Base::Compare_x_2            Compare_x_2;

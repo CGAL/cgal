@@ -76,6 +76,7 @@ public:
   typedef _Conic_arc_2<Rat_kernel, Alg_kernel, Nt_traits> Curve_2;
   typedef _Conic_x_monotone_arc_2<Curve_2>                X_monotone_curve_2;
   typedef _Conic_point_2<Alg_kernel>                      Point_2;
+  typedef unsigned int                                    Multiplicity;
 
 private:
 

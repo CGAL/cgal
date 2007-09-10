@@ -92,6 +92,7 @@ public:
                           Alg_kernel,
                           Nt_traits,
                           Bounding_traits>             Point_2;
+  typedef unsigned int                                 Multiplicity;
 
   // Type definition for the vertical-tangnecy and intersection point cache.
   typedef _Bezier_cache<Nt_traits>                     Bezier_cache;

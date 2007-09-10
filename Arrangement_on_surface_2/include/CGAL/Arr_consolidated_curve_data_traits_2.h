@@ -70,6 +70,7 @@ public:
   typedef typename Base::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Base_traits_2::X_monotone_curve_2  Base_x_monotone_curve_2;
   typedef typename Base_traits_2::Point_2             Point_2;
+  typedef typename Base_traits_2::Multiplicity        Multiplicity;
 
   typedef typename Base_traits_2::Has_left_category      Has_left_category;
   typedef typename Base_traits_2::Has_boundary_category  Has_boundary_category;

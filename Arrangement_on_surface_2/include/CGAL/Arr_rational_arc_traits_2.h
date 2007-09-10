@@ -61,6 +61,7 @@ public:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>     Curve_2;
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>     X_monotone_curve_2;
   typedef typename Alg_kernel::Point_2               Point_2;
+  typedef unsigned int                               Multiplicity;
 
   typedef typename Curve_2::Rat_vector               Rat_vector;
 

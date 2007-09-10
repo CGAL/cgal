@@ -79,6 +79,7 @@ public:
   // Traits types:
   typedef typename Kernel::Point_2                 Point_2;
   typedef typename Kernel::Segment_2               X_monotone_curve_2;
+  typedef unsigned int                             Multiplicity;
 
   /*! Compare the x-coordinates of two points */
   typedef typename Kernel::Compare_x_2             Compare_x_2;
