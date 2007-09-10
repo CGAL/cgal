@@ -905,6 +905,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.pt -te
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/empty.zero -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_in_x -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_in_y -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x_left -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/curves -text
