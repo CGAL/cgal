@@ -256,8 +256,9 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
     Boundary_type bnd_pending = NO_BOUNDARY, bnd_last = NO_BOUNDARY,
       bnd_source, bnd_target = NO_BOUNDARY;
 
-    Boundary_type bnd_p = v->boundary_in_x();
-      
+    Boundary_type bnd_p = NO_BOUNDARY;
+    if (v != NULL) bnd_p = v->boundary_in_x();
+    
     do {
       /* Compare p to the target vertex of the current halfedge. If the
        * vertex v is on the boundary of the component, p is not in the interior
