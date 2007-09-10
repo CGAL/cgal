@@ -109,7 +109,9 @@ public:
     CGAL_GPA_cons(Intersect_2, intersect_2_object)
     CGAL_GPA_cons(Make_x_monotone_2, make_x_monotone_2_object)
     CGAL_GPA_pred(Are_mergeable_2, are_mergeable_2_object) +
-    CGAL_GPA_cons(Merge_2, merge_2_object)
+    CGAL_GPA_cons(Merge_2, merge_2_object) +
+    CGAL_GPA_pred(Do_overlap_2, do_overlap_2_object); +
+    CGAL_GPA_pred(Is_in_x_range_2, is_in_x_range_2_object); +
     
     /*CGAL_GPA_cons(Approximate_2, approximate_2_object)
     CGAL_GPA_cons(Construct_x_monotone_curve_2,
