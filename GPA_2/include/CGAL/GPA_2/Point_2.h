@@ -194,22 +194,23 @@ public:
     //! access to the point's x-coordinate (y-coordinate might be undefined)
     //!
     //! \pre the point's x must be finite (set by construction)
-    X_coordinate_1 x() const
-    {
+    X_coordinate_1 x() const {
         CGAL_precondition(this->ptr()->_m_x);
         return *(this->ptr()->_m_x);
     }
     
     //! access to the boundary condition in x
     CGAL::Boundary_type get_boundary_in_x() const
-    {
-        return this->ptr()->_m_boundary_x;
-    }
+    { return this->ptr()->_m_boundary_x; }
     
     //! access to the boundary condition in y
     CGAL::Boundary_type get_boundary_in_y() const
-    {
-        return this->ptr()->_m_boundary_y;
+    { return this->ptr()->_m_boundary_y; }
+    
+    //! checks whether this object represents a finite point
+    bool is_finite() const {
+        return (get_boundary_in_x() == CGAL::NO_BOUNDARY && 
+                get_boundary_in_y() == CGAL::NO_BOUNDARY);
     }
     
     //! befriending \c Arc_2 class

@@ -411,6 +411,47 @@ public:
     }
 };
 
+template < class GPA_2 >
+class Is_in_x_range_2
+{
+    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Arc_2 Arc_2;
+   
+public:
+    typedef bool result_type;
+    typedef Arity_tag<2>            Arity;
+    
+    /*!\brief
+     * Check whether a given point lies within the curve's x-range
+     * \param cv The curve.
+     * \param p the point
+     * \return (true) if p lies in arc's x-range; (false) otherwise.
+     */
+    bool operator()(Arc_2 cv, Point_2) {
+        return cv.is_in_x_range(p);
+    }
+};
+
+template < class GPA_2 >
+class Do_overlap_2
+{
+    typedef typename GPA_2::Arc_2 Arc_2;
+   
+public:
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+    
+    /*!\brief
+     * Check whether two given curves overlap, i.e., they have infinitely
+     * many intersection points
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \return (true) if the curves overlap; (false) otherwise.
+     */
+    bool operator()(Arc_2 cv1, Arc_2 cv2) {
+        return cv1.do_overlap(cv2);
+    }
+};
 
 template < class GPA_2 >
 class Are_mergeable_2 
@@ -497,9 +538,10 @@ public:
     typedef Arity_tag<3> Arity;    
     
     /*!
-     * Find the intersections of the two given curves and insert 
-     * them to the given output iterator. As two segments may 
-     * intersect only once, only a single will be contained in the iterator.
+     * Find all intersections of the two given curves and insert them to the 
+     * output iterator. If two arcs intersect only once, only a single will be
+     * placed to the iterator. Type of output iterator is CGAL::Object 
+     * containing either an Arc_2 object or Point_2 along with its multiplicity
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param oi The output iterator.
@@ -523,7 +565,7 @@ public:
                     gaps_.trim_2_object()
             );
             
-            typedef std::pair< Point_2, Point_2 >  Endpoint_pair;
+            typedef std::pair<Point_2, Point_2> Point_pair;
             
             // TODO use construct_min/max_vertex 
             
@@ -559,35 +601,13 @@ public:
             *oi++ = CGAL::make_object(s);
             
         } else {
-            typename GAPS::Intersect_2 intersect(
-                    gaps_.intersect_2_object()
-            );
-            typedef std::vector< typename GAPS::Point_2 > Container;
-            typedef typename Container::const_iterator Const_iterator;
-            typedef std::pair< typename GAPS::Point_2, unsigned int > 
-                Point_and_mult;
-            Container tmp;
-            intersect(cv1, cv2, std::back_inserter(tmp));
-            for (Const_iterator it = tmp.begin(); it != tmp.end(); it++) {
-        typename GAPS::Point_is_equal_2 point_is_equal(
-                        gaps_.point_is_equal_2_object()
-                ); 
-        if (point_is_equal(source(cv1),*it) ||
-                    point_is_equal(target(cv1),*it) ||
-                    point_is_equal(source(cv2),*it) ||
-                    point_is_equal(target(cv2),*it)) {
-                    *oi++ = CGAL::make_object(Point_and_mult(*it, 0));
-                } else {
-                    typename GAPS::Multiplicity_of_intersection_2 
-                        multiplicity_of_intersection(
-                                gaps_.multiplicity_of_intersection_2_object()
-                        );
-                    Point_and_mult pam(
-                            *it, multiplicity_of_intersection(cv1,cv2,*it)
-                    );
-                    *oi++ = CGAL::make_object(pam);
-                }
-            }
+            typedef std::pair<Point_2, int> Point_and_mult;
+            typedef std::vector<Point_and_mult> Point_vector;
+            typedef typename Point_vector::const_iterator Const_iterator;
+            Point_vector vec;
+            cv1.intersect(cv2, std::back_inserter(tmp));
+            for(Const_iterator it = vec.begin(); it != vec.end(); it++) 
+                *oi++ = CGAL::make_object(*it);
         }
         return oi;
     }
