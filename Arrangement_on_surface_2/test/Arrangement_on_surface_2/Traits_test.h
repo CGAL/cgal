@@ -49,7 +49,7 @@ enum Violation_type {NON, PRECONDITION, POSTCONDITION,
                       ASSERTION, WARNING};
 enum Read_object_type {POINT, CURVE, XCURVE};
 
-enum Enum_type {NUMBER, SIGN, CURVE_END};
+enum Enum_type {NUMBER, SIGN, CURVE_END, BOUNDARY};
 
 std::map<Violation_type,std::string> violation_map;
 
@@ -289,16 +289,28 @@ private:
 
   /*! Test Compare_x_2
    */
-  bool compare_x_wrapper(std::istringstream & line);
-  bool compare_x_wrapper_imp(std::istringstream & line, CGAL::Tag_false);
-  bool compare_x_wrapper_imp(std::istringstream & line, CGAL::Tag_true);
+  bool compare_x_wrapper(std::istringstream & );
+  bool compare_x_wrapper_imp(std::istringstream & , CGAL::Tag_false);
+  bool compare_x_wrapper_imp(std::istringstream & , CGAL::Tag_true);
+
+  /*! Test Boundary_in_x_2
+   */
+  bool boundary_in_x_wrapper(std::istringstream & );
+  bool boundary_in_x_wrapper_imp(std::istringstream & , CGAL::Tag_false);
+  bool boundary_in_x_wrapper_imp(std::istringstream & , CGAL::Tag_true);
+
+  /*! Test Boundary_in_y_2
+   */
+  bool boundary_in_y_wrapper(std::istringstream & );
+  bool boundary_in_y_wrapper_imp(std::istringstream & , CGAL::Tag_false);
+  bool boundary_in_y_wrapper_imp(std::istringstream & , CGAL::Tag_true);
 
   /*! Compare_xy_2
    */
-  bool compare_xy_wrapper(std::istringstream & line);  
-  
+  bool compare_xy_wrapper(std::istringstream & line);
+
   /*! Tests Construct_min_vertex_2.
-   * Degenerate case: vertical curve.
+   *  Degenerate case: vertical curve.
    */
   bool min_vertex_wrapper(std::istringstream & line);
 
@@ -306,7 +318,7 @@ private:
    * Degenerate case: vertical curve.
    */
   bool max_vertex_wrapper(std::istringstream & line);
-  
+
   bool is_vertical_wrapper(std::istringstream & line);
 
   /*! Tests Compare_y_at_x_2.
@@ -337,7 +349,7 @@ private:
    *                   One of the curves is vertical.
    */
   bool compare_y_at_x_right_wrapper(std::istringstream & line);
-  
+
   /*! Tests Equal_2::operator()(Point_2, Point_2).
    * Check whether two points are the same.
    */
@@ -347,7 +359,7 @@ private:
    * Check whether two x-monotone curves are the same.
    */
   bool equal_curves_wrapper(std::istringstream & line);
-  
+
   /*! Tests Make_x_monotone_2.
    * Cut the given curve into x-monotone subcurves and insert them into the
    * given output iterator.
@@ -443,7 +455,11 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
   m_wrappers[std::string("compare_x")] =
     &Traits_test<Traits>::compare_x_wrapper;
   m_wrappers[std::string("compare_xy")] =
-    &Traits_test<Traits>::compare_xy_wrapper;  
+    &Traits_test<Traits>::compare_xy_wrapper;
+  m_wrappers[std::string("boundary_in_x")] =
+    &Traits_test<Traits>::boundary_in_x_wrapper;
+  m_wrappers[std::string("boundary_in_y")] =
+    &Traits_test<Traits>::boundary_in_y_wrapper;
   m_wrappers[std::string("min_vertex")] =
     &Traits_test<Traits>::min_vertex_wrapper;
   m_wrappers[std::string("max_vertex")] =
@@ -853,8 +869,18 @@ Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
   } else if (str_value == "LARGER" ) {
     return std::pair<enum Enum_type,unsigned int>(SIGN,
                                     static_cast<unsigned int>(CGAL::LARGER));
+  } else if (str_value == "MINUS_INFINITY" ) {
+    return std::pair<enum Enum_type,unsigned int>
+      (BOUNDARY,static_cast<unsigned int>(CGAL::MINUS_INFINITY));
+  } else if (str_value == "NO_BOUNDARY" ) {
+    return std::pair<enum Enum_type,unsigned int>
+      (BOUNDARY,static_cast<unsigned int>(CGAL::NO_BOUNDARY));
+  } else if (str_value == "PLUS_INFINITY" ) {
+    return std::pair<enum Enum_type,unsigned int>
+      (BOUNDARY,static_cast<unsigned int>(CGAL::PLUS_INFINITY));
   }
-  return std::pair<enum Enum_type,unsigned int>(NUMBER,static_cast<unsigned int>(atoi(str_value.c_str())));
+  return std::pair<enum Enum_type,unsigned int>
+    (NUMBER,static_cast<unsigned int>(atoi(str_value.c_str())));
 }
 
 /*!
@@ -897,6 +923,92 @@ Traits_test<T_Traits>::get_next_input(std::istringstream & str_stream)
   buff[str_stream.gcount()] = '\0';
   std::string str_expres = remove_blanks(buff);
   return translate_int_or_text(str_expres);
+}
+
+/*! Test Boundary_in_x_2
+*/
+template <class T_Traits>
+bool Traits_test<T_Traits>::boundary_in_x_wrapper(std::istringstream & str_stream)
+{
+  typedef typename T_Traits::Has_boundary_category       Has_boundary_category;
+  return boundary_in_x_wrapper_imp(str_stream, Has_boundary_category());
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::boundary_in_x_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_false)
+{
+  CGAL_assertion(false);
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::boundary_in_x_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
+{
+  unsigned int id;
+  str_stream >> id;
+  std::pair<Enum_type,unsigned int> next_input = get_next_input(str_stream);
+  if (next_input.first==CURVE_END)
+  {
+    CGAL::Curve_end cv_end=static_cast<CGAL::Curve_end>(next_input.second);
+    next_input = get_next_input(str_stream);
+    if (next_input.first==BOUNDARY)
+    {
+      CGAL::Boundary_type exp_answer = static_cast<CGAL::Boundary_type>(next_input.second);
+      CGAL::Boundary_type real_answer = m_traits.boundary_in_x_2_object()(m_xcurves[id],cv_end);
+      did_violation_occur();
+      std::cout << "Test: boundary_in_x( " << m_xcurves[id] << " , "
+                << (cv_end==CGAL::MIN_END?"MIN_END":"MAX_END") << " ) ? "
+                << (exp_answer==CGAL::MINUS_INFINITY?"MINUS_INFINITY":
+                   (exp_answer==CGAL::PLUS_INFINITY?"PLUS_INFINITY":"NO_BOUNDARY")) << " ";
+      return compare_and_print(exp_answer, real_answer);
+    }
+  }
+  //should not get here
+  CGAL_assertion(false);
+  return false;
+}
+
+/*! Test Boundary_in_y_2
+*/
+template <class T_Traits>
+bool Traits_test<T_Traits>::boundary_in_y_wrapper(std::istringstream & str_stream)
+{
+  typedef typename T_Traits::Has_boundary_category       Has_boundary_category;
+  return boundary_in_y_wrapper_imp(str_stream, Has_boundary_category());
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::boundary_in_y_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_false)
+{
+  CGAL_assertion(false);
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::boundary_in_y_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
+{
+  unsigned int id;
+  str_stream >> id;
+  std::pair<Enum_type,unsigned int> next_input = get_next_input(str_stream);
+  if (next_input.first==CURVE_END)
+  {
+    CGAL::Curve_end cv_end=static_cast<CGAL::Curve_end>(next_input.second);
+    next_input = get_next_input(str_stream);
+    if (next_input.first==BOUNDARY)
+    {
+      CGAL::Boundary_type exp_answer = static_cast<CGAL::Boundary_type>(next_input.second);
+      CGAL::Boundary_type real_answer = m_traits.boundary_in_y_2_object()(m_xcurves[id],cv_end);
+      did_violation_occur();
+      std::cout << "Test: boundary_in_x( " << m_xcurves[id] << " , "
+                << (cv_end==CGAL::MIN_END?"MIN_END":"MAX_END") << " ) ? "
+                << (exp_answer==CGAL::MINUS_INFINITY?"MINUS_INFINITY":
+                   (exp_answer==CGAL::PLUS_INFINITY?"PLUS_INFINITY":"NO_BOUNDARY")) << " ";
+      return compare_and_print(exp_answer, real_answer);
+    }
+  }
+  //should not get here
+  CGAL_assertion(false);
+  return false;
 }
 
 /*! Test Compare_x_2
@@ -1088,6 +1200,7 @@ compare_y_at_x_left_wrapper_imp(std::istringstream & ,
                                 CGAL::Tag_false)
 {
 //  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
+  CGAL_assertion(false);
   return false;
 }
 
@@ -1162,7 +1275,6 @@ template <class T_Traits>
 bool
 Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream & str_stream)
 {
-  //std::cout << "equal_curves_wrapper_OK" << std::cout;
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = get_expected_boolean(str_stream);
@@ -1398,6 +1510,7 @@ Traits_test<T_Traits>::
 are_mergeable_wrapper_imp(std::istringstream & , CGAL::Tag_false)
 {
 //  std::istringstream dummy_stream = str_stream; //to avoid warnings of unused variable
+  CGAL_assertion(false);
   return false;
 }
 
@@ -1433,6 +1546,7 @@ bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & ,
                                               CGAL::Tag_false)
 {
 //  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
+  CGAL_assertion(false);
   return false;
 }
 

@@ -403,6 +403,7 @@ test_segment_traits()
     run_trapped_test test_traits \
     data/segments/vertex.pt data/segments/xcurves \
     data/empty.zero data/segments/vertex segment_traits
+
   fi
   clean_tests
 }
@@ -498,7 +499,8 @@ test_linear_traits()
     data/empty.zero data/linear/rays/vertex linear_traits.rays
 
     execute_commands_new_structure linear/lines linear_traits.lines \
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT SPLIT MERGE
+    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT SPLIT MERGE \
+    BOUNDARY_IN_X BOUNDARY_IN_Y
   fi
   clean_tests
 }
