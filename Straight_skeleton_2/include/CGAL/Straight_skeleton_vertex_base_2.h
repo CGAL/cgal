@@ -108,8 +108,7 @@ protected :
 
       value_type mHandle ;
   } ;
-
-
+  
 public:
 
   typedef Straight_skeleton_vertex_base_base_2<Refs, P, N>  Base ;
@@ -130,7 +129,7 @@ public:
   typedef typename Refs::Face_const_handle     Face_const_handle;
   typedef typename Refs::Halfedge              Halfedge;
   typedef typename Refs::Face                  Face;
-
+  
   typedef Halfedge_circulator_base< Halfedge_const_handle
                                    ,Halfedge_circulator_around_vertex_access_policy
                                   >
@@ -151,23 +150,29 @@ public:
                                   >
             Defining_contour_halfedges_circulator ;
 
+  typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
+  
 public:
 
-  Straight_skeleton_vertex_base_base_2() : mID(-1) {}
+  Straight_skeleton_vertex_base_base_2() : mID(-1), mTime(0.0), mIsSplit(false) {}
   
+  // Contour vertex
   Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP )
     :
-      mP(aP)
-    , mID(aID)
-    , mTime(0.0)
+      mID     (aID)
+    , mP      (aP)
+    , mTime   (0.0)
+    , mIsSplit(false)
   {
   }
 
-  Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP, FT aTime )
+  // Skeleton vertex, corresponding to a split or edge event.
+  Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit )
     :
-      mP(aP)
-    , mID(aID)
-    , mTime(aTime)
+      mID     (aID)
+    , mP      (aP)
+    , mTime   (aTime)
+    , mIsSplit(aIsSplit)
  {
  }
 
@@ -176,6 +181,8 @@ public:
   int id() const { return mID ; }
 
   FT time() const { return mTime ; }
+  
+  bool is_split() const { return mIsSplit ; }
 
   Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
 
@@ -201,24 +208,34 @@ public:
     return Defining_contour_halfedges_circulator(halfedge());
   }
 
+
   std::size_t degree() const { return CGAL::circulator_size(halfedge_around_vertex_begin()); }
   
   bool is_skeleton() const { return  halfedge()->is_bisector() ; }
   bool is_contour () const { return !halfedge()->is_bisector() ; }
   
-  const Point_2&        point() const    { return mP; }
+  const Point_2& point() const { return mP; }
   
   Halfedge_handle       halfedge()       { return mHE; }
   Halfedge_const_handle halfedge() const { return mHE; }
   
   void set_halfedge( Halfedge_handle aHE)  { mHE = aHE; }
     
+  // For skeleton nodes, the triedge whole coallision created this.  
+  Triedge const& event_triedge() const { return mEventTriedge ; }
+  
+  void set_event_triedge( Triedge const& aTriedge ) { mEventTriedge = aTriedge ; }
+  
+  void reset_id ( int aID ) { mID = aID ; }
+  
 private:
-
-  Halfedge_handle mHE;
-  Point_2         mP;
+  
   int             mID ;
+  Halfedge_handle mHE;
+  Triedge         mEventTriedge ;
+  Point_2         mP;
   FT              mTime ;
+  bool            mIsSplit ;
 };
 
 template < class Refs, class P, class N >
@@ -237,18 +254,23 @@ public:
   typedef typename Refs::Face_const_handle     Face_const_handle;
   typedef typename Refs::Halfedge              Halfedge;
   typedef typename Refs::Face                  Face;
-
+  
   typedef Straight_skeleton_vertex_base_base_2<Refs,P,N> Base ;
+  
+  typedef typename Base::Triedge Triedge ;
   
   Straight_skeleton_vertex_base_2() {}
   
   Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP ) : Base(aID,aP) {}
 
-  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime ) : Base(aID,aP,aTime) {}
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit ) : Base(aID,aP,aTime,aIsSplit) {}
   
 private:
     
-  void set_halfedge( Halfedge_handle aHE)  { Base::set_halfedge(aHE) ; }
+  void set_halfedge     ( Halfedge_handle aHE )     { Base::set_halfedge(aHE) ; }
+  void set_event_triedge( Triedge const& aTriedge ) { Base::set_event_triedge( aTriedge); }
+  void reset_id         ( int aID )                 { Base::reset_id(aID) ; }
+  
 } ;
 
 CGAL_END_NAMESPACE

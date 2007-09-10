@@ -46,9 +46,9 @@ public:
   
 protected:
 
-  Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1) {}
+  Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1), mSlope(ZERO) {}
   
-  Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID) {}
+  Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID), mSlope(ZERO) {}
 
 public:
 
@@ -78,6 +78,8 @@ public:
   Face_handle           face    ()       { return mF; }
   Face_const_handle     face    () const { return mF; }
   
+  Sign slope() const { return mSlope ; }
+
   bool is_border() const { return mF == Face_handle();}
 
   void set_opposite( Halfedge_handle h) { mOpp = h; }
@@ -85,7 +87,11 @@ public:
   void set_prev    ( Halfedge_handle h) { mPrv = h; }
   void set_vertex  ( Vertex_handle   w) { mV   = w; }
   void set_face    ( Face_handle     g) { mF   = g; }
-  
+ 
+  void set_slope( Sign aSlope ) { mSlope = aSlope ; }
+
+  void reset_id ( int aID ) { mID = aID ; }
+
 private:
 
   Halfedge_handle  mOpp;
@@ -93,8 +99,8 @@ private:
   Halfedge_handle  mPrv;
   Vertex_handle    mV;
   Face_handle      mF;
-  
-  int mID ;
+  int              mID ;
+  Sign             mSlope ;
 };
 
 template < class Refs, class S >
@@ -120,6 +126,8 @@ private:
   void set_prev    ( Halfedge_handle h )  { Base_base::set_prev(h)  ; }
   void set_vertex  ( Vertex_handle   w )  { Base_base::set_vertex(w); }
   void set_face    ( Face_handle     g )  { Base_base::set_face(g)  ; }
+  void set_slope   ( Sign            s )  { Base_base::set_slope(s) ; }
+  void reset_id    ( int             i )  { Base_base::reset_id(i) ; }
 
 } ;
 

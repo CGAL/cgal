@@ -39,23 +39,25 @@ public:
 
   typedef boost::intrusive_ptr<Self> SelfPtr ;
 
-  typedef typename Traits::Point_2             Point_2 ;
-  typedef typename Traits::FT                  FT ;
-  typedef typename Traits::Seeded_trisegment_2 Seeded_trisegment_2 ;
+  typedef typename Traits::Point_2          Point_2 ;
+  typedef typename Traits::FT               FT ;
+  typedef typename Traits::Trisegment_2_ptr Trisegment_2_ptr ;
   
-  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
-  typedef typename SSkel::Vertex_handle   Vertex_handle ;
-
+  typedef typename SSkel::Vertex                Vertex ;
+  typedef typename SSkel::Halfedge_handle       Halfedge_handle ;
+  typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
+  typedef typename SSkel::Vertex_handle         Vertex_handle ;
+  
   typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
   
   enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent } ;
 
 public:
 
-  Event_2 ( Triedge const& aTriedge, Seeded_trisegment_2 const& aSTrisegment )
+  Event_2 ( Triedge const& aTriedge, Trisegment_2_ptr const& aTrisegment )
     :
-     mTriedge    (aTriedge)
-    ,mSTrisegment(aSTrisegment)
+     mTriedge   (aTriedge)
+    ,mTrisegment(aTrisegment)
   {}
 
   virtual ~ Event_2() {}
@@ -65,10 +67,10 @@ public:
   virtual Vertex_handle seed0() const = 0 ;
   virtual Vertex_handle seed1() const = 0 ;
 
-  Triedge const&             triedge    () const { return mTriedge    ; }
-  Seeded_trisegment_2 const& strisegment() const { return mSTrisegment; }
-  Point_2 const&             point      () const { return mP          ; }
-  FT                         time       () const { return mTime       ; }
+  Triedge const&          triedge   () const { return mTriedge   ; }
+  Trisegment_2_ptr const& trisegment() const { return mTrisegment; }
+  Point_2 const&          point     () const { return mP         ; }
+  FT                      time      () const { return mTime      ; }
 
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
@@ -77,23 +79,20 @@ public:
     ss << "[" ;
     e.dump(ss);
     ss << " p=(" << e.point().x() << "," << e.point().y() << ") t=" << e.time() << "] " 
-       << trisegment_collinearity_to_string(e.strisegment().event().collinearity()) ;
+       << trisegment_collinearity_to_string(e.trisegment()->collinearity()) ;
     return ss ;
   }
 
 protected :
 
-  virtual void dump ( std::ostream& ss ) const
-  {
-    ss << mTriedge ;
-  } ;
+  virtual void dump ( std::ostream& ss ) const { ss << mTriedge ; } ;
 
 private :
 
-  Triedge             mTriedge ;
-  Seeded_trisegment_2 mSTrisegment ;
-  Point_2             mP ;
-  FT                  mTime ;
+  Triedge          mTriedge ;
+  Trisegment_2_ptr mTrisegment ;
+  Point_2          mP ;
+  FT               mTime ;
 } ;
 
 template<class SSkel_, class Traits_>
@@ -107,19 +106,19 @@ class Edge_event_2 : public Event_2<SSkel_,Traits_>
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
-  typedef typename Base::Type                Type ;
-  typedef typename Base::Triedge             Triedge ;
-  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
+  typedef typename Base::Type             Type ;
+  typedef typename Base::Triedge          Triedge ;
+  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
 public:
 
-  Edge_event_2 ( Triedge const&             aTriedge
-               , Seeded_trisegment_2 const& aSTrisegment 
-               , Vertex_handle              aLSeed
-               , Vertex_handle              aRSeed
+  Edge_event_2 ( Triedge const&          aTriedge
+               , Trisegment_2_ptr const& aTrisegment 
+               , Vertex_handle           aLSeed
+               , Vertex_handle           aRSeed
                )
     :
-      Base(aTriedge,aSTrisegment)
+      Base(aTriedge,aTrisegment)
     , mLSeed(aLSeed)
     , mRSeed(aRSeed)
   {}
@@ -154,18 +153,18 @@ class Split_event_2 : public Event_2<SSkel_,Traits_>
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
   
-  typedef typename Base::Type                Type ;
-  typedef typename Base::Triedge             Triedge ;
-  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
+  typedef typename Base::Type             Type ;
+  typedef typename Base::Triedge          Triedge ;
+  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
 public:
 
-  Split_event_2 ( Triedge const&             aTriedge
-                , Seeded_trisegment_2 const& aSTrisegment 
-                , Vertex_handle              aSeed
+  Split_event_2 ( Triedge const&          aTriedge
+                , Trisegment_2_ptr const& aTrisegment 
+                , Vertex_handle           aSeed
                 )
     :
-      Base(aTriedge,aSTrisegment)
+      Base(aTriedge,aTrisegment)
     , mSeed(aSeed)
   {}
 
@@ -203,40 +202,53 @@ class Pseudo_split_event_2 : public Event_2<SSkel_,Traits_>
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
-  typedef typename Base::Type                Type ;
-  typedef typename Base::Triedge             Triedge ;
-  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
+  typedef typename Base::Type             Type ;
+  typedef typename Base::Triedge          Triedge ;
+  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
 public:
 
-  Pseudo_split_event_2 ( Triedge const&             aTriedge
-                       , Seeded_trisegment_2 const& aSTrisegment 
-                       , Vertex_handle              aSeed
-                       , Vertex_handle              aOppositeNode
+  Pseudo_split_event_2 ( Triedge const&          aTriedge
+                       , Trisegment_2_ptr const& aTrisegment 
+                       , Vertex_handle           aSeed0
+                       , Vertex_handle           aSeed1
+                       , bool                    aOppositeIs0
                        )
     :
-      Base(aTriedge,aSTrisegment)
-    , mSeed(aSeed)
-    , mOppNode(aOppositeNode)
+      Base(aTriedge,aTrisegment)
+    , mSeed0(aSeed0)
+    , mSeed1(aSeed1)
+    , mOppositeIs0(aOppositeIs0)
   {}
 
   virtual Type type() const { return this->cPseudoSplitEvent ; }
 
-  virtual Vertex_handle seed0() const { return mSeed ; }
-  virtual Vertex_handle seed1() const { return mOppNode ; }
+  virtual Vertex_handle seed0() const { return mSeed0 ; }
+  virtual Vertex_handle seed1() const { return mSeed1 ; }
 
+  bool opposite_node_is_seed_0() const { return mOppositeIs0 ; }
+  
+  bool is_at_source_vertex() const { return opposite_node_is_seed_0() ; }
+  
+  Vertex_handle opposite_seed() const { return opposite_node_is_seed_0() ? seed0() : seed1() ; }
+  
 private :
 
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Seed=" << mSeed->id() << " OppNode=" << mOppNode->id() << ')' ;
+    
+    ss << " ("
+       << "Seed0=" << mSeed0->id() << (  mOppositeIs0 ? " {Opp} " : " " ) 
+       << "Seed1=" << mSeed1->id() << ( !mOppositeIs0 ? " {Opp}"  : "" ) 
+       << ")" ;
   }
 
 private :
 
-  Vertex_handle mSeed   ;
-  Vertex_handle mOppNode ;
+  Vertex_handle mSeed0  ;
+  Vertex_handle mSeed1 ;
+  bool          mOppositeIs0 ;
 } ;
 
 }

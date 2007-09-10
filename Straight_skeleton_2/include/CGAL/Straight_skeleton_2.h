@@ -22,21 +22,6 @@
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
-#  include<string>
-#  include<iostream>
-#  include<sstream>
-#  define CGAL_STSKEL_VALIDITY_TRACE(m) \
-     { \
-       std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
-       Straight_skeleton_external_trace(s); \
-     }
-#  define CGAL_STSKEL_VALIDITY_TRACE_IF(cond,m) if ( cond ) CGAL_STSKEL_VALIDITY_TRACE(m)
-#else
-#  define CGAL_STSKEL_VALIDITY_TRACE(m) 
-#  define CGAL_STSKEL_VALIDITY_TRACE_IF(cond,m)
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template<  class Traits_
@@ -237,6 +222,7 @@ public :
       // All vertices.
       Vertex_const_iterator vbegin = this->vertices_begin();
       Vertex_const_iterator vend   = this->vertices_end();
+      
       size_type v = 0;
       n = 0;
       for( ; valid && (vbegin != vend); ++vbegin) 
@@ -280,7 +266,7 @@ public :
           ++v;
       }
       
-      bool vvalid = ( v == this->size_of_vertices());
+      bool vvalid = (v == this->size_of_vertices());
       
       CGAL_STSKEL_VALIDITY_TRACE_IF(valid && !vvalid
                                    ,"ERROR: counted number of vertices:" << v 

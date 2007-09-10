@@ -51,40 +51,116 @@ public:
 
   template <class A1>
   result_type
-  operator()(const A1 &a1) const;
+  operator()(const A1 &a1) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1));
+  }
+#endif
 
   template <class A1, class A2>
   result_type
-  operator()(const A1 &a1, const A2 &a2) const;
+  operator()(const A1 &a1, const A2 &a2) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2));
+  }
+#endif
 
   template <class A1, class A2, class A3>
   result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const;
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3));
+  }
+#endif
 
   template <class A1, class A2, class A3, class A4>
   result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const;
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3,a4));
+  }
+#endif
 
   template <class A1, class A2, class A3, class A4, class A5>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const;
+	     const A5 &a5) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5));
+  }
+#endif
 
   template <class A1, class A2, class A3, class A4, class A5, class A6>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const;
+	     const A5 &a5, const A6 &a6) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6));
+  }
+#endif
 
   template <class A1, class A2, class A3, class A4, class A5, class A6,
             class A7>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7) const;
+	     const A5 &a5, const A6 &a6, const A7 &a7) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7));
+  }
+#endif
 
-  // Idem for more than 7 arguments.  Do it on demand.
+  template <class A1, class A2, class A3, class A4, class A5, class A6,
+            class A7, class A8>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7, a8));
+  }
+#endif
+
+  template <class A1, class A2, class A3, class A4, class A5, class A6,
+            class A7, class A8, class A9>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
+             const A9 &a9 ) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7, a8, a9));
+  }
+#endif
+
+  // Idem for more than 9 arguments.  Do it on demand.
 };
 
-
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 template <class CAP>
   template <class A1>
 typename Unfiltered_predicate_adaptor<CAP>::result_type
@@ -140,6 +216,38 @@ Unfiltered_predicate_adaptor<CAP>::
 {
   return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6));
 }
+
+template <class CAP>
+  template <class A1, class A2, class A3, class A4, class A5, class A6, class A7>
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+             const A5 &a5, const A6 &a6, const A7 &a7 ) const
+{
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7));
+}
+
+template <class CAP>
+  template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8>
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8 ) const
+{
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7, a8));
+}
+
+template <class CAP>
+  template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9>
+typename Unfiltered_predicate_adaptor<CAP>::result_type
+Unfiltered_predicate_adaptor<CAP>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8, 
+             const A9 &a9 ) const
+{
+  return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7, a8, a9));
+}
+#endif
 
 CGAL_END_NAMESPACE
 
