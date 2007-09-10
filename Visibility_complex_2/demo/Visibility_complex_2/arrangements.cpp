@@ -1,3 +1,6 @@
+#include<CGAL/basic.h>
+
+#ifdef CGAL_USE_QT
 #include <CGAL/basic.h>
 
 // STL headers
@@ -566,3 +569,8 @@ int main(int argc, char** argv)
 
   return app.exec();
 }
+#else
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#endif

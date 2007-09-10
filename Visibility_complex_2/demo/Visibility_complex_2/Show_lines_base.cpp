@@ -1,3 +1,6 @@
+#include<CGAL/basic.h>
+
+#ifdef CGAL_USE_QT
 #include "Show_lines_base.h"
 
 namespace CGAL {
@@ -35,3 +38,4 @@ namespace CGAL {
 
 // moc_source_file: Show_lines_base.h
 #include "Show_lines_base.moc"
+#endif
