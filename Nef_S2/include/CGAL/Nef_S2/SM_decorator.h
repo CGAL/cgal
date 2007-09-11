@@ -447,6 +447,44 @@ void delete_edge_pair(SHalfedge_handle e)
   delete_edge_pair_only(e);
 }
 
+SHalfedge_handle split_at(SHalfedge_handle e, Sphere_point sp)
+{
+  CGAL_assertion(sp != e->source()->point());
+  CGAL_assertion(sp != e->twin()->source()->point());
+  CGAL_assertion(Sphere_segment(e->source()->point(),
+  				e->twin()->source()->point(),
+  				e->circle()).has_on(sp));
+  SVertex_handle v_new = new_svertex(sp);
+  v_new->mark() = e->mark();
+  return split_at(e, v_new);
+}  
+
+SHalfedge_handle split_at(SHalfedge_handle e, SVertex_handle v)
+{
+  CGAL_assertion(v->point() != e->source()->point());
+  CGAL_assertion(v->point() != e->twin()->source()->point());
+  CGAL_assertion(Sphere_segment(e->source()->point(),
+  				e->twin()->source()->point(),
+  				e->circle()).has_on(v->point()));
+
+  SHalfedge_handle e_new = new_shalfedge_pair(v, e->twin());
+  e_new->mark() = e_new->twin()->mark() = e->mark();
+  e_new->circle() = e->circle();
+  e_new->twin()->circle() = e->twin()->circle();
+  if(e->twin()->source()->out_sedge() == e->twin())
+    e->twin()->source()->out_sedge() = e_new->twin();
+  e->twin()->source() = v;
+  e->snext()->sprev() = e_new;
+  e_new->snext() = e->snext();
+  e_new->sprev() = e;
+  e->snext() = e_new;
+  e_new->twin()->snext() = e->twin();
+  e->twin()->sprev() = e_new->twin();
+  e_new->incident_sface() = e->incident_sface();
+  e_new->twin()->incident_sface() = e->twin()->incident_sface();
+  return e_new;
+}
+
 void delete_vertex(SVertex_handle v)
 /*{\Mop deletes |v| and all outgoing edges |A(v)| as well as their twins. 
    Updates the adjacency at the targets of the edges in |A(v)|.}*/
