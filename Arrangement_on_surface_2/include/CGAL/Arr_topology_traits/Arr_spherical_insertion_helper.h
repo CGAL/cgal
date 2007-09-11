@@ -1,4 +1,4 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2006-2007  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,8 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_INSERTION_HELPER_H
@@ -69,10 +68,79 @@ public:
 
 public:
   /*! Constructor */
-  Arr_spherical_insertion_helper(Arrangement_2 * arr) :
-    Base(arr)
+  Arr_spherical_insertion_helper (Arrangement_2 *arr) :
+    Base (arr)
   {}
+
+  /*! Destructor. */
+  virtual ~Arr_spherical_insertion_helper ()
+  {}
+
+  /// \name Notification functions.
+  //@{
+
+  /*!
+   * A notification invoked before the sweep-line starts handling the given
+   * event.
+   */
+  virtual void before_handle_event (Event* event);
+  //@}
+
 };
+
+//-----------------------------------------------------------------------------
+// Memeber-function definitions:
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// A notification invoked before the sweep-line starts handling the given
+// event.
+//
+template <class Tr, class Arr, class Evnt, class Sbcv> 
+void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
+    (Event* event)
+{
+  // Ignore events that do not have boundary conditions.
+  const Boundary_type bound_x = event->boundary_in_x();
+  const Boundary_type bound_y = event->boundary_in_y();
+
+  if (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY)
+    return;
+
+  // The is exactly one curve incident to an event with boundary conditions.
+  // Obtain this curve and check whether it already exists in the arrangement.
+  CGAL_assertion(((event->number_of_left_curves() == 0) &&
+                  (event->number_of_right_curves() == 1)) ||
+                 ((event->number_of_left_curves() == 1) &&
+                  (event->number_of_right_curves() == 0)));
+
+  const Curve_end   ind = (event->number_of_left_curves() == 0 &&
+                           event->number_of_right_curves() == 1) ? MIN_END :
+                                                                   MAX_END;
+  const X_monotone_curve_2& xc = (ind == MIN_END) ?
+        (*(event->right_curves_begin()))->last_curve() :
+        (*(event->left_curves_begin()))->last_curve();
+
+  if (xc.halfedge_handle() == Halfedge_handle())
+  {
+    // The curve is not in the arrangement, use the base construction helper
+    // to handle the event:
+    Base::before_handle_event (event);
+    return;
+  }
+
+  // In case we encounter an existing curve incident to the north pole,
+  // we have to update the current top face (the spherical face).
+  if (bound_y != BEFORE_SINGULARITY)
+    return;
+
+  if (ind == MIN_END)
+    this->m_spherical_face = xc.halfedge_handle()->twin()->face();
+  else
+    this->m_spherical_face = xc.halfedge_handle()->face();
+
+  return;
+}
 
 CGAL_END_NAMESPACE
 
