@@ -284,7 +284,7 @@ public:
       else if (assign(curve, cur_obj))
       {
         zone_visitor.set_current_intersection_type(curve.second);
-        insert_x_monotone_curve(copied_face_arr, curve.first, pl, zone_visitor);
+        insert (copied_face_arr, curve.first, pl, zone_visitor);
       }
       else
         CGAL_assertion_msg(false, "wrong projected intersection type");
@@ -2443,8 +2443,10 @@ protected:
     // the zone visitor functions
 
     /*! Initialize the visitor with an arrangement object. */
-    void init (Minimization_diagram_2 *arr)
+    void init (typename Minimization_diagram_2::Base *base_arr)
     {
+      Minimization_diagram_2 *arr = 
+        dynamic_cast<Minimization_diagram_2*>(base_arr);
       CGAL_assertion(&copied_arr == arr);
       insert_visitor.init(arr);
     }
