@@ -193,6 +193,8 @@ public:
 
   typedef typename SM_decorator::SHalfedge_around_svertex_circulator 
                                  SHalfedge_around_svertex_circulator;
+  typedef typename SM_decorator::SHalfedge_around_sface_circulator 
+                                 SHalfedge_around_sface_circulator;
   typedef typename SM_const_decorator::SHalfedge_around_svertex_const_circulator 
                                        SHalfedge_around_svertex_const_circulator; 
   
@@ -723,8 +725,8 @@ public:
 					const Point_3& p,
 					const Selection& BOP, bool inv,
 					Association& ) {
-    
-    std::cerr << "edge_edge " << p << std::endl;
+
+    CGAL_NEF_TRACEN(std::endl << "edge_edge " << p );
 
     SM_const_decorator E(&*e1->source());
     if(E.is_isolated(e0)) {
@@ -745,121 +747,122 @@ public:
     sv[0] = sv[1] = v->svertices_begin();
     ++sv[1];
 
+    Vector_3 vec0 = sv[0]->point() - CGAL::ORIGIN;
+    Vector_3 vec1 = e1->source()->point() - CGAL::ORIGIN;
+    Plane_3 mid_plane(Point_3(0,0,0), cross_product(vec0, vec1));
+    Sphere_segment test_seg(sv[0]->point(),
+			    CGAL::ORIGIN + mid_plane.orthogonal_vector());
+    Oriented_side test_os = 
+      test_seg.sphere_circle().oriented_side(e1->point());
+    CGAL_assertion(test_os != ON_ORIENTED_BOUNDARY);
+    if(test_os == ON_NEGATIVE_SIDE) {
+      CGAL_NEF_TRACEN("change orientation of e1 " );
+      e1 = e1->twin();
+    }
+
     SM_point_locator PL(&*v);
     Object_handle o2 = PL.locate(e1->point());
     Object_handle o3 = PL.locate(e1->twin()->point());
     sv[2] = D.new_svertex(e1->point());
     sv[3] = D.new_svertex(e1->twin()->point());
     
-    Vector_3 vec0 = sv[0]->point() - CGAL::ORIGIN;
-    Vector_3 vec1 = sv[2]->point() - CGAL::ORIGIN;
-    Plane_3 mid_plane(Point_3(0,0,0), cross_product(vec0, vec1));
+    for(int i=0; i<4; ++i)
+      CGAL_NEF_TRACEN("sv[" << i << "]= " << sv[i]->point());
 
-    bool splitted[2];
-    splitted[0] = splitted[1] = false;
+    bool equator[4];
+    equator[0] = equator[1] = equator[2] = equator[3] = false;
     bool on_sface[2];
 
     SHalfedge_handle se0, se1;
+    SHalfedge_handle previous_first, previous_last;
     SFace_handle sf0, sf1;
     SHalfedge_around_svertex_circulator 
       seb[2], see[2];
     SHalfedge_around_svertex_const_circulator 
       scb[2], sce[2];
+    bool empty_e[2];
+    bool empty_c[2];
+    empty_e[0] = empty_e[1] = empty_c[0] = empty_c[1] = false;
 
     on_sface[0] = CGAL::assign(sf0, o2);
     on_sface[1] = CGAL::assign(sf1, o3);
 
     if(on_sface[0]) {
-      std::cerr << "found sf0 " << std::endl;
+      CGAL_NEF_TRACEN("found sf0 " );
       sv[2]->mark() = BOP(sf0->mark(), e1->mark(), inv);
       SFace_cycle_iterator sfci(sf0->sface_cycles_begin());
       CGAL_assertion_msg(sfci.is_shalfedge(), "not implemented, yet");
       SHalfedge_handle se_tmp(sfci);
-      see[0] = se_tmp;
-      if(see[0]->source() != sv[0]) see[0] = see[0]->snext();
-      seb[1] = see[0];
+      see[1] = se_tmp;
+      if(see[1]->source() != sv[0]) 
+	see[1] = see[1]->snext();
+      see[1] = see[1]->sprev()->twin();
+      seb[0] = see[1];
     } else {
       CGAL::assign(se0, o2);
       CGAL_assertion(CGAL::assign(se0, o2));
-      std::cerr << "found se0 " << se0->source()->point()
-		<< "->" << se0->twin()->source()->point() << std::endl;
-      std::cerr << "insert sv " << sv[2]->point() << std::endl;
+      CGAL_NEF_TRACEN("found se0 " << se0->source()->point()
+		<< "->" << se0->twin()->source()->point() );
+      CGAL_NEF_TRACEN("insert sv " << sv[2]->point() );
       if(se0->source() != sv[0]) se0 = se0->twin();
       CGAL_assertion(se0->source() == sv[0]);
       sv[2]->mark() = BOP(se0->mark(), e1->mark(), inv);
-      SHalfedge_handle se_new =
-	D.new_shalfedge_pair();
-      se_new->source() = sv[2];
-      se_new->twin()->source() = se0->twin()->source();
-      se0->twin()->source() = sv[2];
+      SHalfedge_handle se_new = D.split_at(se0, sv[2]);
+      se_new->mark() = se_new->twin()->mark() = 
+	BOP(se0->mark(), sv[2]->mark(), inv);
 
-      se_new->snext() = se0->snext();
-      se0->snext()->sprev() = se_new;
-      se_new->twin()->sprev() = se0->twin()->sprev();
-      se0->twin()->sprev()->snext() = se_new->twin();
-
-      se0->snext() = se_new;
-      se0->twin()->sprev() = se_new->twin();
-      se_new->sprev() = se0;
-      se_new->twin()->snext() = se0->twin();
-
-      se_new->mark() = se_new->twin()->mark() = se0->mark();
-      se_new->incident_sface() = se0->incident_sface();
-      se_new->twin()->incident_sface() = se0->twin()->incident_sface();
-      se_new->circle() = se0->circle();
-      se_new->twin()->circle() = se0->twin()->circle();
-
-      SM_io_parser<SM_decorator>::dump(D, std::cerr);
-
-      see[0] = seb[1]= se0;
-      ++seb[1];
-    } 
+      see[1] = seb[0]= se0;
+      ++seb[0];
+      equator[0] = equator[1] = true;
+    }       
 
     if(on_sface[1]) {
-      std::cerr << "found sf1 " << std::endl;
+      CGAL_NEF_TRACEN("found sf1 " );
       sv[3]->mark() = BOP(sf1->mark(), e1->mark(), inv);
       SFace_cycle_iterator sfci(sf1->sface_cycles_begin());
       CGAL_assertion_msg(sfci.is_shalfedge(), "not implemented, yet");
       SHalfedge_handle se_tmp(sfci);
-      see[1] = se_tmp;
-      if(see[1]->source() != sv[0]) see[1] = see[1]->snext();
-      seb[0] = see[1];
+      see[0] = se_tmp;
+      if(see[0]->source() != sv[0]) 
+	see[0] = see[0]->snext();
+      see[0] = see[0]->sprev()->twin();
+      seb[1] = see[0];
     } else {
       CGAL::assign(se1, o3);
       CGAL_assertion(CGAL::assign(se1, o3));
-      std::cerr << "found se1 " << se1->source()->point()
-		<< "->" << se1->twin()->source()->point() << std::endl;
-      std::cerr << "insert sv " << sv[3]->point() << std::endl;
+      CGAL_NEF_TRACEN("found se1 " << se1->source()->point()
+		<< "->" << se1->twin()->source()->point() );
+      CGAL_NEF_TRACEN("insert sv " << sv[3]->point() );
       if(se1->source() != sv[0]) se1 = se1->twin();
       CGAL_assertion(se1->source() == sv[0]);
       sv[3]->mark() = BOP(se1->mark(), e1->mark(), inv);
-      SHalfedge_handle se_new = 
-	D.new_shalfedge_pair();
-      se_new->source() = sv[3];
-      se_new->twin()->source() = se1->twin()->source();
-      se1->twin()->source() = sv[3];
+      SHalfedge_handle se_new = D.split_at(se1, sv[3]);
+      se_new->mark() = se_new->twin()->mark() = 
+	BOP(se1->mark(), sv[3]->mark(), inv);
 
-      se_new->snext() = se1->snext();
-      se1->snext()->sprev() = se_new;
-      se_new->twin()->sprev() = se1->twin()->sprev();
-      se1->twin()->sprev()->snext() = se_new->twin();
-
-      se1->snext() = se_new;
-      se1->twin()->sprev() = se_new->twin();
-      se_new->sprev() = se1;
-      se_new->twin()->snext() = se1->twin();
-
-      se_new->mark() = se_new->twin()->mark() = se1->mark();
-      se_new->incident_sface() = se1->incident_sface();
-      se_new->twin()->incident_sface() = se1->twin()->incident_sface();
-      se_new->circle() = se1->circle();
-      se_new->twin()->circle() = se1->twin()->circle();
-
-      SM_io_parser<SM_decorator>::dump(D, std::cerr);
-
-      see[1] = seb[0] = se1;
+      see[0] = seb[1] = se1;
       ++seb[1];
+      equator[2] = equator[3] = true;
     } 
+
+    CGAL_assertion(seb[0]->source() == sv[0]);
+
+    if(seb[0] == see[0] && seb[1] == see[1]) {
+      CGAL_NEF_TRACEN("both empty intervals");
+      if(seb[0]->circle().oriented_side(sv[3]->point()) != ON_POSITIVE_SIDE) {
+	CGAL_NEF_TRACEN("empty 0 " );
+	empty_e[0] = true;
+      } else 
+	empty_e[1] = true;
+    } else if(seb[0] == see[0]) {
+      
+      empty_e[0] = true;
+    } else if(seb[1] == see[1]) {
+      empty_e[1] = true;
+    }
+
+    CGAL_NEF_TRACEN("se[01] " << (std::distance(seb[0], see[0]))
+	      << ", " << (std::distance(seb[1], see[1])) );
 
     if(E.is_isolated(e1)) {
       CGAL_assertion_msg(false, "not implemented, yet");
@@ -881,85 +884,196 @@ public:
 	  ++svc != send) 
       os1 = svc->circle().oriented_side(sv[0]->point());
 
+    CGAL_NEF_TRACEN("osi " << os0 << ", " << os1 );
+    CGAL_assertion(os1 == svc->circle().oriented_side(sv[0]->point()) ||
+		   svc == send);
+
     if(os1 == ON_ORIENTED_BOUNDARY) {
 
       Sphere_segment seg(sv[2]->point(), sv[3]->point(),
 			 svc->circle());
       int sv_index =
 	seg.has_on(sv[0]->point()) ? 0 : 1;
+      equator[sv_index] = equator[sv_index+2] = true;
       
-      std::cerr << "sv " << sv[0]->point() << ", " << sv[1]->point() << std::endl;
+      CGAL_NEF_TRACEN("sv " << sv[0]->point() << ", " << sv[1]->point() );
+
+      // svc is the segment from sv[2] to sv[3] that has sv[sv_index] 
+      // in its interior
 
       if(on_sface[0]) {
+	CGAL_NEF_TRACEN("se[01] " << (std::distance(seb[0], see[0]))
+			<< ", " << (std::distance(seb[1], see[1])) );
+
+	// add shalfedge_pair between sv[2] and sv[sv_index]
 	SFace_cycle_iterator sfci = sf0->sface_cycles_begin();
 	CGAL_assertion(sfci.is_shalfedge());
 	SHalfedge_handle se_tgt(sfci);
-	while(se_tgt->source() != sv[sv_index])
+	while(se_tgt->source() != sv[sv_index]) {
 	  se_tgt = se_tgt->snext();
+	  CGAL_NEF_TRACEN(se_tgt->source()->point() << " " << sv[sv_index]->point() );
+	  CGAL_NEF_TRACEN(&(se_tgt->source()) << " " << &sv[sv_index] );
+	}
+
+
+	CGAL_NEF_TRACEN("sv[sv_index] " << sv[sv_index]->point());
+	CGAL_NEF_TRACEN("after " << se_tgt->source()->point() 
+		  << "->" << se_tgt->twin()->source()->point());
+
+	SHalfedge_around_svertex_circulator se_next(se_tgt); 
+	++se_next;
 	CGAL_assertion(se_tgt->source() == sv[sv_index]);
-	std::cerr << "new_shalfedge_pair" << std::endl;
+	CGAL_NEF_TRACEN("new_shalfedge_pair" );
 	SHalfedge_handle se_new = 
-	  D.new_shalfedge_pair(sv[2], se_tgt);
-	std::cerr << "done" << std::endl;
+	  D.new_shalfedge_pair(sv[2], se_tgt, 1);
+
 	se_new->mark() = se_new->twin()->mark() = 
 	  BOP(sf0->mark(), svc->mark(), inv);
-	splitted[0] = true;
+	se_new->circle() = normalized(Sphere_circle(se_new->source()->point(), 
+						    se_new->twin()->source()->point()));
+	se_new->twin()->circle() = se_new->circle().opposite();
+	se_new->incident_sface() = se_new->twin()->incident_sface() = sf0;
+
+	CGAL_NEF_TRACEN("seb[0] " << seb[0]->source()->point()
+		  << "->" << seb[0]->twin()->source()->point() );
+	CGAL_NEF_TRACEN("see[0] " << see[0]->source()->point()
+		  << "->" << see[0]->twin()->source()->point() );
+
+	CGAL_assertion(seb[0]->source() == sv[0]);
+
+	CGAL_NEF_TRACEN("se[01] " << (std::distance(seb[0], see[0]))
+			<< ", " << (std::distance(seb[1], see[1])) );
+
+	if(se_next == see[0] && !empty_e[0])
+	  --see[0];
+	else if(se_next == see[1] && !empty_e[1])
+	  --see[1];
       }
 
+    CGAL_NEF_TRACEN("se[01] " << (std::distance(seb[0], see[0]))
+	      << ", " << (std::distance(seb[1], see[1])) );
+   
+
       if(on_sface[1]) {
+	CGAL_NEF_TRACEN("sf1->mark() " << sf1->mark());
+
+	// add shalfedge_pair between sv[3] and sv[sv_index]
+	CGAL_NEF_TRACEN("seb[0] " << seb[0]->source()->point()
+		  << "->" << seb[0]->twin()->source()->point() );
+	CGAL_NEF_TRACEN("see[0] " << see[0]->source()->point()
+		  << "->" << see[0]->twin()->source()->point() );
+
 	SFace_cycle_iterator sfci = sf1->sface_cycles_begin();
 	CGAL_assertion(sfci.is_shalfedge());
 	SHalfedge_handle se_tgt(sfci);
 	while(se_tgt->source() != sv[sv_index]) {
 	  se_tgt = se_tgt->snext();
-	  std::cerr << se_tgt->source()->point() << " " << sv[sv_index]->point() << std::endl;
-	  std::cerr << &(se_tgt->source()) << " " << &sv[sv_index] << std::endl;
+	  CGAL_NEF_TRACEN(se_tgt->source()->point() << " " << sv[sv_index]->point() );
+	  CGAL_NEF_TRACEN(&(se_tgt->source()) << " " << &sv[sv_index] );
 	}
+
+	SHalfedge_around_svertex_circulator se_next(se_tgt); 
+	++se_next;
+	
+	CGAL_NEF_TRACEN("sv[sv_index] " << sv[sv_index]->point());
+	CGAL_NEF_TRACEN("after " << se_tgt->source()->point() 
+		  << "->" << se_tgt->twin()->source()->point());
+
 	CGAL_assertion(se_tgt->source() == sv[sv_index]);
-	std::cerr << "new_shalfedge_pair" << std::endl;
+	CGAL_NEF_TRACEN("new_shalfedge_pair" );
 	SHalfedge_handle se_new =
-	  D.new_shalfedge_pair(sv[3], se_tgt);
-	std::cerr << "done" << std::endl;
+	  D.new_shalfedge_pair(sv[3], se_tgt, 1);
+
+	//	CGAL_assertion(se_new->snext() == se_tgt);
+	CGAL_NEF_TRACEN("se_new " << se_new->source()->point() 
+		  << "->" << se_new->twin()->source()->point() );
 	se_new->mark() = se_new->twin()->mark() = 
 	  BOP(sf1->mark(), svc->mark(), inv);
-	splitted[1] = true;
+	se_new->circle() = normalized(Sphere_circle(se_new->source()->point(), 
+						    se_new->twin()->source()->point()));
+	se_new->twin()->circle() = se_new->circle().opposite();
+	se_new->incident_sface() = 
+	  se_new->twin()->incident_sface() = sf1;
+
+	CGAL_NEF_TRACEN("seb[0] " << seb[0]->source()->point()
+		  << "->" << seb[0]->twin()->source()->point() );
+	CGAL_NEF_TRACEN("see[0] " << see[0]->source()->point()
+		  << "->" << see[0]->twin()->source()->point() );
+
+	CGAL_NEF_TRACEN("se[01] " << (std::distance(seb[0], see[0]))
+		  << ", " << (std::distance(seb[1], see[1])) );
+
+	if(se_next == see[0] && !empty_e[0])
+	  --see[0];
+	else if(se_next == see[1] && !empty_e[1])
+	  --see[1];
+
+	CGAL_NEF_TRACEN("se[01] " << (std::distance(seb[0], see[0]))
+		  << ", " << (std::distance(seb[1], see[1])) );
       }
+
+      CGAL_NEF_TRACEN("see[0] " << see[0]->source()->point()
+		<< "->" << see[0]->twin()->source()->point() );
       
       ++svc;
       os1 = svc->circle().oriented_side(sv[0]->point());
+
+      CGAL_NEF_TRACEN("++os1 " << os1 );
+
       if(os1 == ON_ORIENTED_BOUNDARY) {
-	CGAL_assertion_msg(false, "not implemented, yet");
+	CGAL_assertion_msg(false, "not implemented, yet"); // don't forget empty_c
 	++svc;
 	scb[0] = scb[1] = sce[0] = sce[1] = svc;
 	if(svc != send) {
 	  os1 = svc->circle().oriented_side(sv[0]->point());
 	  i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
-	  --sce[1-i];
+	  --sce[i];
 	}
+	equator[1-sv_index] = equator[3-sv_index] = true;
 	done = true;
-      } else {
-	i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
-	scb[i] = svc;
+      } else {	
+	i = os1 == ON_POSITIVE_SIDE ? 1 : 0;
+	CGAL_NEF_TRACEN("second change found on side " << os1);
+	scb[1-i] = svc;
 	--svc;
-	sce[1-i] = svc;
+	sce[i] = svc;
 	--svc;
 	if(svc->circle().oriented_side(sv[0]->point()) == os1) {
-	  sce[i] = scb[1-i] = sce[1-i];
+	  // sedges are only on one side "
+	  sce[1-i] = scb[i] = sce[i];
+	  empty_c[i] = true;
 	  done = true;
 	}
       }
     } else if(svc == send) {
+      CGAL_NEF_TRACEN("svc == send");
+      Vector_3 
+	vec1(svc->source()->point() - CGAL::ORIGIN),
+	vec2(svc->circle().orthogonal_vector());
+      Sphere_point sp1(CGAL::ORIGIN + cross_product(vec2,vec1));
+      while(svc->sprev()->twin()->circle().oriented_side(sp1) 
+	    == ON_POSITIVE_SIDE) {
+	++svc;
+	vec1 = vec2;
+	vec2 = svc->circle().orthogonal_vector();
+	sp1 = CGAL::ORIGIN + cross_product(vec2,vec1);
+      }
       i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
-      CGAL_assertion_msg(false, "not implemented, yet");
+      //      ++svc;
+      scb[i] = sce[i] = svc;
+      empty_c[1-i] = true;
       done = true;
     } else {
+      CGAL_assertion_msg(false, "not implemented, yet");
       CGAL_assertion(os0 != os1);
       i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
       sce[1-i] = scb[i] = svc;
     }
-    CGAL_assertion(scb[i] == svc);
+    //    CGAL_assertion(scb[1-i] == svc);
 
     if(!done) {
+      CGAL_NEF_TRACEN("not done yet");
+      // both sides are not empty
       os0 = svc->circle().oriented_side(sv[0]->point());
       CGAL_assertion(os0 != ON_ORIENTED_BOUNDARY);
       do {
@@ -967,29 +1081,369 @@ public:
 	os1 = svc->circle().oriented_side(sv[0]->point());
       } while(os1 == os0);
 
-      sce[i] = scb[1-i] = svc;
+      sce[1-i] = scb[i] = svc;
       if(os1 == ON_ORIENTED_BOUNDARY) {
 	CGAL_assertion_msg(false, "degenerate case not handled");
-	++scb[1-i];
+	++scb[i];
+	CGAL_assertion(svc->circle().has_on(sv[0]->point()) == 1-i);
+	equator[1-i] = equator[3-i] == true;
       }
     }
 
-    for(; scb[0] != sce[0]; ++scb[0]) {
-      for(; seb[0] != see[0]; ++see[0]) {
-	Sphere_segment seg0(sv[0]->point(), sv[1]->point(), seb[0]->circle());
-	Sphere_segment seg1(sv[2]->point(), sv[3]->point(), scb[0]->circle());
-	Sphere_point sp = seg0.intersection(seg1);
-	std::cerr << "intersections oben " << sp << std::endl;
+    for(int i=0; i<4; ++i)
+      CGAL_NEF_TRACEN("equator[" << i << "]= " << equator[i]);
+
+    CGAL_NEF_TRACEN("svmark " << sv[0]->mark() << ", " << sv[1]->mark());
+
+    // TODO: marks if sv[0] and sv[1] lie on edge
+    sv[0]->mark() = 
+      BOP(sv[0]->mark(), scb[empty_c[0]]->twin()->incident_sface()->mark(), inv);
+    sv[1]->mark() = 
+      BOP(sv[1]->mark(), sce[empty_c[0]]->twin()->incident_sface()->mark(), inv);
+
+    CGAL_NEF_TRACEN("empty[0] " << empty_c[0] << ", " << empty_e[0] );
+
+    CGAL_assertion(seb[0]->source() == sv[0]);
+
+    CGAL_assertion_msg((empty_c[0] || !empty_e[0]), "not implemented, yet");
+    CGAL_assertion_msg((empty_c[1] || !empty_e[1]), "not implemented, yet");
+    CGAL_assertion_msg((empty_e[0] || !empty_c[0]), "not implemented, yet");
+    CGAL_assertion_msg((empty_e[1] || !empty_c[1]), "not implemented, yet");
+     
+
+    bool first_first = true;
+    bool first_last = true;
+    if(!empty_c[0] && !empty_e[0]) {
+
+      CGAL_NEF_TRACEN("sv[2] " << sv[2]->point());
+
+      if(equator[0] || equator[1]) {
+	first_first = false;
+	previous_first = sv[2]->out_sedge();
+	if(equator[0] && previous_first->twin()->source() != sv[0]) 
+	  previous_first = previous_first->twin()->snext();
+	CGAL_assertion(!equator[0] || previous_first->twin()->source() == sv[0]);
       }
+
+      if(equator[2] || equator[3]) {
+	first_last = false;
+	previous_last = sv[3]->out_sedge();
+	if(equator[2] && previous_last->twin()->source() != sv[0])
+	  previous_last = previous_last->twin()->snext();
+	CGAL_assertion(!equator[2] || previous_last->twin()->source() == sv[0]);
+      }
+
+      SHalfedge_around_svertex_const_circulator curr_outer(scb[0]);
+      CGAL_For_all(curr_outer, sce[0]) {
+	CGAL_NEF_TRACEN("outer " << curr_outer->incident_sface()->mark() );
+
+	SHalfedge_handle previous_inner;
+	Sphere_segment seg1(sv[2]->point(), sv[3]->point(), 
+			    curr_outer->circle());
+	SHalfedge_around_svertex_circulator curr_inner(seb[0]);
+
+	CGAL_For_all(curr_inner, see[0]) {
+	  CGAL_NEF_TRACEN("inner " << curr_inner->incident_sface()->mark() );
+	  CGAL_assertion(!curr_inner->circle().has_on(sv[2]->point()));
+	  CGAL_assertion(!curr_outer->circle().has_on(sv[0]->point()));
+	  Sphere_segment seg0(sv[0]->point(), sv[1]->point(), curr_inner->circle());
+	  Sphere_segment segX(curr_inner->source()->point(), 
+			      curr_inner->twin()->source()->point(), 
+			      curr_inner->circle());
+	  CGAL_assertion(!seg0.is_long());
+	  CGAL_assertion(!seg1.is_long());
+	  Sphere_point sp = normalized(seg0.intersection(seg1));
+	  CGAL_NEF_TRACEN("intersections oben " << sp );
+	  CGAL_assertion(sp != sv[0]->point());
+	  CGAL_assertion(sp != sv[1]->point());
+	  CGAL_assertion(sp != sv[2]->point());
+	  CGAL_assertion(sp != sv[3]->point());
+	  CGAL_assertion(segX.has_on(sp));
+	  CGAL_assertion(curr_inner == seb[0] || 
+			 Sphere_segment(sv[2]->point(), sp).has_on
+			 (previous_inner->twin()->source()->point()));
+	  CGAL_assertion(seg0.source() == sv[0]->point());
+	  CGAL_assertion(seg0.target() == sv[1]->point());
+	  CGAL_assertion(seg1.source() == sv[2]->point());
+	  CGAL_assertion(seg1.target() == sv[3]->point());
+	  CGAL_assertion(seg0.has_on(sp));
+	  CGAL_assertion(seg1.has_on(sp));
+	  CGAL_NEF_TRACEN("seg 0 " << seg0.source() << "->" << seg0.target());
+	  CGAL_NEF_TRACEN("seg 1 " << seg1.source() << "->" << seg1.target() << ":" << seg1.sphere_circle());
+	  
+	  SHalfedge_handle along = D.split_at(curr_inner, sp);
+	  along->source()->mark() = BOP(curr_inner->mark(), 
+					curr_outer->mark(), inv);
+	  
+	  CGAL_NEF_TRACEN("first_first " << first_first);
+
+	  SHalfedge_handle across;
+	  if(curr_inner == seb[0])
+	    across = first_first ?
+	      D.new_shalfedge_pair(sv[2], along, -1) :
+	      D.new_shalfedge_pair(previous_first, along, -1, -1);
+	  else
+	    across = 
+	      D.new_shalfedge_pair(previous_inner->twin(), 
+				   curr_inner->twin(), -1, 1);
+
+	  across->circle() = curr_outer->circle();
+	  across->twin()->circle() = curr_outer->twin()->circle();
+	  CGAL_NEF_TRACEN("across " << across->source()->point() 
+		    << "->" << across->twin()->source()->point() 
+		    << ":" << across->circle());
+	  CGAL_NEF_TRACEN("across " << normalized(across->circle())
+		    << ", " << normalized(Sphere_circle(across->source()->point(),
+							across->twin()->source()->point())));
+	  CGAL_assertion(normalized(across->circle()) ==
+			 normalized(Sphere_circle(across->source()->point(),
+						  across->twin()->source()->point())));
+	  across->mark() = across->twin()->mark() = 
+	    BOP(curr_inner->twin()->incident_sface()->mark(), curr_outer->mark(), inv);
+	  along->mark() = along->twin()->mark() = 
+	    BOP(curr_inner->mark(), curr_outer->twin()->incident_sface()->mark(), inv);
+	  
+	  CGAL_NEF_TRACEN("across " << across->source()->point() 
+		    << "->" << across->twin()->source()->point() 
+		    << ":" << across->circle() );
+
+	  if(curr_inner == seb[0])
+	    previous_first = across;
+	  
+	  if(!first_first) {
+	    SFace_handle sf_new = D.new_sface();
+	    D.link_as_face_cycle(across->twin(), sf_new);
+	    sf_new->mark() = BOP(curr_inner->twin()->incident_sface()->mark(), 
+				 curr_outer->twin()->incident_sface()->mark(), inv);
+	    CGAL_NEF_TRACEN("new sface " << sf_new->mark());
+	  }
+	  previous_inner = curr_inner;
+	  first_first = false;
+	}
+	
+	previous_last = first_last ?	
+	  D.new_shalfedge_pair(sv[3], previous_inner->twin(), -1) :
+	  D.new_shalfedge_pair(previous_last, previous_inner->twin(), 1, -1);
+	previous_last->circle() = curr_outer->twin()->circle();
+	previous_last->twin()->circle() = curr_outer->circle();
+	CGAL_assertion(previous_last->circle() == 
+		       normalized(Sphere_circle(previous_last->source()->point(), 
+						previous_last->twin()->source()->point())));
+	previous_last->mark() = previous_last->twin()->mark() =
+	  BOP(previous_inner->incident_sface()->mark(), curr_outer->mark(), inv);
+
+	if(!first_last) {
+	  SFace_handle sf_new = D.new_sface();
+	  D.link_as_face_cycle(previous_last, sf_new);
+	  sf_new->mark() = BOP(previous_inner->incident_sface()->mark(),
+			       curr_outer->twin()->incident_sface()->mark(), inv);
+	}
+	first_last = false;
+      }
+
+      CGAL_NEF_TRACEN("sce[0]->mark() " << sce[0]->incident_sface()->mark());
+      SHalfedge_around_svertex_circulator curr_inner(seb[0]);
+      CGAL_For_all(curr_inner, see[0]) {
+      CGAL_NEF_TRACEN("schleife oben " << curr_inner->source()->point()
+		<< "->" << curr_inner->twin()->source()->point());
+	curr_inner->mark() = curr_inner->twin()->mark() = 
+	  BOP(curr_inner->mark(), sce[0]->incident_sface()->mark(), inv);
+	if(!equator[0] && curr_inner == seb[0]) continue;
+	SFace_handle sf = curr_inner->twin()->incident_sface();
+	SHalfedge_around_sface_circulator hfc(curr_inner->twin()), hend(hfc);
+	CGAL_For_all(hfc,hend) hfc->incident_sface() = sf;
+	sf->mark() = BOP(curr_inner->twin()->incident_sface()->mark(),
+			 sce[0]->twin()->incident_sface()->mark(), inv);	
+      }
+      CGAL_assertion(curr_inner == see[0]);
+
+      CGAL_NEF_TRACEN("before equator[0] oben " << curr_inner->source()->point()
+		<< "->" << curr_inner->twin()->source()->point());
+
+      if(equator[2]) {
+	SFace_handle sf = curr_inner->twin()->incident_sface();
+	SHalfedge_around_sface_circulator hfc(curr_inner->twin()), hend(hfc);
+	CGAL_For_all(hfc,hend) hfc->incident_sface() = sf;
+	sf->mark() = BOP(curr_inner->twin()->incident_sface()->mark(),
+			 sce[0]->twin()->incident_sface()->mark(), inv);
+      } else
+	--curr_inner;
+
+      CGAL_NEF_TRACEN("final sface oben " << curr_inner->source()->point()
+		<< "->" << curr_inner->twin()->source()->point());
+
+      SFace_handle sf = curr_inner->incident_sface();
+      SHalfedge_around_sface_circulator hfc(curr_inner), hend(hfc);
+      CGAL_For_all(hfc,hend) hfc->incident_sface() = sf;     
+
     }
+
+    CGAL_NEF_TRACEN("empty[1] " << empty_c[1] << ", " << empty_e[1] );
+
+    CGAL_NEF_TRACEN("[1] " << (std::distance(scb[1], sce[1]))
+	      << ", " << (std::distance(seb[1], see[1])) );
     
-    for(; scb[1] != sce[1]; ++scb[1]) {
-      for(; seb[1] != see[1]; ++see[1]) {
-	Sphere_segment seg0(sv[0]->point(), sv[1]->point(), seb[1]->circle());
-	Sphere_segment seg1(sv[2]->point(), sv[3]->point(), scb[1]->circle());
-	Sphere_point sp = seg0.intersection(seg1);
-	std::cerr << "intersections unten " << sp << std::endl;
+    if(!empty_c[1] && !empty_e[1]) {
+      
+      if(first_first) { // nothing happend on the other half
+	if(equator[2] || equator[3]) {
+	  first_first = false;
+	  previous_first = sv[3]->out_sedge();
+	  if(equator[3] && previous_first->twin()->source() != sv[1]) 
+	    previous_first = previous_first->twin()->snext();
+	  CGAL_assertion(!equator[3] || previous_first->twin()->source() == sv[1]);
+	}
+
+	if(equator[0] || equator[1]) {
+	  first_last = false;
+	  previous_last = sv[2]->out_sedge();
+	  if(equator[1] && previous_last->twin()->source() != sv[1])
+	    previous_last = previous_last->sprev()->twin();
+	  CGAL_assertion(!equator[1] || previous_last->twin()->source() == sv[1]);
+	}
+      } else { // rotate over gap on unhandled half
+	std::swap(previous_last, previous_first);
+	previous_first = previous_first->twin()->snext();
+	if(equator[0])
+	  previous_first = previous_first->twin()->snext();
+	previous_last = previous_last->sprev()->twin();
+	if(equator[2])
+	  previous_last = previous_last->sprev()->twin();
       }
+
+      SHalfedge_around_svertex_const_circulator curr_outer(sce[1]);
+      do {
+	--curr_outer;
+	CGAL_NEF_TRACEN("outer " << curr_outer->incident_sface()->mark());
+	CGAL_assertion(curr_outer->source()->point() == sv[2]->point());
+	SHalfedge_handle previous_inner;
+	Sphere_segment seg1(sv[2]->point(), sv[3]->point(), 
+			    curr_outer->circle());
+	SHalfedge_around_svertex_circulator curr_inner(seb[1]);
+	CGAL_For_all(curr_inner, see[1]) {
+	  CGAL_NEF_TRACEN("inner " << curr_inner->incident_sface()->mark());
+
+	  CGAL_assertion(curr_inner->source() == sv[0]);
+	  Sphere_segment seg0(sv[0]->point(), sv[1]->point(), curr_inner->circle());
+	  Sphere_segment segX(curr_inner->source()->point(), 
+			      curr_inner->twin()->source()->point(),
+			      curr_inner->circle());
+	  CGAL_assertion(!seg0.is_long());
+	  CGAL_assertion(!segX.is_long());
+	  Sphere_point sp = normalized(seg0.intersection(seg1));
+	  CGAL_NEF_TRACEN("first_first " << first_first);
+	  CGAL_NEF_TRACEN("first_last " << first_last);
+	  CGAL_NEF_TRACEN("intersections unten " << sp );
+	  CGAL_assertion(segX.has_on(sp));
+	  CGAL_assertion(curr_inner == seb[1] || 
+			 Sphere_segment(sv[3]->point(), sp).has_on
+			 (previous_inner->twin()->source()->point()));
+	  CGAL_assertion(seg0.has_on(sp));
+	  CGAL_assertion(seg1.has_on(sp));
+	  CGAL_NEF_TRACEN("seg 0 " << seg0.source() << "->" << seg0.target());
+	  CGAL_NEF_TRACEN("seg 1 " << seg1.source() << "->" << seg1.target() << ":" << seg1.sphere_circle());
+	  
+	  SHalfedge_handle along = D.split_at(curr_inner, sp);
+	  along->source()->mark() = BOP(curr_inner->mark(), curr_outer->mark(), inv);
+	  
+	  SHalfedge_handle across;
+	  if(curr_inner == seb[1])
+	    across = first_first ?
+	      D.new_shalfedge_pair(sv[3], along, -1) :
+	      D.new_shalfedge_pair(previous_first, along, 1, -1);
+	  else
+	    across = 
+	      D.new_shalfedge_pair(previous_inner->twin(), curr_inner->twin(), -1, 1);
+
+	  across->circle() = curr_outer->twin()->circle();
+	  across->twin()->circle() = curr_outer->circle();
+	  CGAL_NEF_TRACEN("across " << across->source()->point() 
+		    << "->" << across->twin()->source()->point() 
+		    << ":" << across->circle());
+	  CGAL_NEF_TRACEN("across " << normalized(across->circle())
+		    << ", " << normalized(Sphere_circle(across->source()->point(),
+							across->twin()->source()->point())));
+	  CGAL_assertion(normalized(across->circle()) ==
+			 normalized(Sphere_circle(across->source()->point(),
+						  across->twin()->source()->point())));
+	  across->mark() = across->twin()->mark() = 
+	    BOP(curr_inner->twin()->incident_sface()->mark(), 
+		curr_outer->mark(), inv);
+	  along->mark() = along->twin()->mark() = 
+	    BOP(curr_inner->mark(), 
+		curr_outer->incident_sface()->mark(), inv);
+
+	  if(curr_inner == seb[1])
+	    previous_first = across;
+
+	  if(!first_first) {
+	    SFace_handle sf_new = D.new_sface();
+	    D.link_as_face_cycle(across->twin(), sf_new);
+	    sf_new->mark() = BOP(curr_inner->twin()->incident_sface()->mark(), 
+				 curr_outer->incident_sface()->mark(), inv);
+	    CGAL_NEF_TRACEN("new sface" << sf_new->mark() );
+	  }
+	  previous_inner = curr_inner;
+	  first_first = false;
+	}
+	
+	previous_last = first_last ?	
+	  D.new_shalfedge_pair(sv[2], previous_inner->twin(), -1) :
+	  D.new_shalfedge_pair(previous_last, previous_inner->twin(), -1, -1);
+	previous_last->circle() = curr_outer->circle();
+	previous_last->twin()->circle() = curr_outer->twin()->circle();
+	CGAL_assertion(normalized(previous_last->circle()) == 
+		       normalized(Sphere_circle(previous_last->source()->point(), 
+						previous_last->twin()->source()->point())));
+	previous_last->mark() = previous_last->twin()->mark() =
+	  BOP(previous_inner->incident_sface()->mark(), curr_outer->mark(), inv);
+
+
+	if(!first_last) {
+	  SFace_handle sf_new = D.new_sface();
+	  D.link_as_face_cycle(previous_last, sf_new);
+	  sf_new->mark() = BOP(previous_inner->incident_sface()->mark(),
+			       curr_outer->incident_sface()->mark(), inv);
+	  CGAL_NEF_TRACEN("new sface" << sf_new->mark() );
+	}
+
+	first_last = false;
+      } while(curr_outer != scb[1]);
+
+
+      SHalfedge_around_svertex_circulator curr_inner(seb[1]);
+      CGAL_For_all(curr_inner, see[1]) {
+	CGAL_NEF_TRACEN("schleife " << curr_inner->source()->point()
+		  << "->" << curr_inner->twin()->source()->point());
+	curr_inner->mark() = curr_inner->twin()->mark() = 
+	  BOP(curr_inner->mark(), scb[1]->twin()->incident_sface()->mark(), inv);
+	if(!equator[0] && curr_inner == seb[1]) continue;
+	SFace_handle sf = curr_inner->twin()->incident_sface();
+	SHalfedge_around_sface_circulator hfc(curr_inner->twin()), hend(hfc);
+	CGAL_For_all(hfc,hend) hfc->incident_sface() = sf;
+	sf->mark() = BOP(curr_inner->twin()->incident_sface()->mark(),
+			 scb[1]->twin()->incident_sface()->mark(), inv);	
+      }
+      CGAL_assertion(curr_inner == see[1]);
+
+      CGAL_NEF_TRACEN("before equator[2] " << curr_inner->source()->point()
+		<< "->" << curr_inner->twin()->source()->point());
+
+      if(equator[2]) {
+	SFace_handle sf = curr_inner->twin()->incident_sface();
+	SHalfedge_around_sface_circulator hfc(curr_inner->twin()), hend(hfc);
+	CGAL_For_all(hfc,hend) hfc->incident_sface() = sf;
+	sf->mark() = BOP(curr_inner->twin()->incident_sface()->mark(),
+			 scb[1]->twin()->incident_sface()->mark(), inv);
+      } else
+	--curr_inner;
+
+      CGAL_NEF_TRACEN("final sface " << curr_inner->source()->point()
+		<< "->" << curr_inner->twin()->source()->point());
+
+      SFace_handle sf = curr_inner->incident_sface();
+      SHalfedge_around_sface_circulator hfc(curr_inner), hend(hfc);
+      CGAL_For_all(hfc,hend) hfc->incident_sface() = sf;     
     }
 
     return D.sphere_map();
@@ -1434,23 +1888,21 @@ public:
       pi = points.begin();
       while(pi != points.end()) {
 	*pi = normalized(*pi);
-	//      std::cerr << src << "->" << trg << " has on " << *pi << src.x() << " : " << std::endl;
-	//      std::cerr << (src.x()-pi->x() <= 0) << "|" << (src.y()-pi->y() <= 0) << "|" << (src.z()-pi->z() <= 0) << std::endl;
-	//      std::cerr << (pi->x()-trg.x() <= 0) << "|" << (pi->y()-trg.y() <= 0) << "|" << (pi->z()-trg.z() <= 0) << std::endl;
+	CGAL_NEF_TRACEN(src << "->" << trg << " has on " << *pi << src.x() << " : " );
+	CGAL_NEF_TRACEN((src.x()-pi->x() <= 0) << "|" << (src.y()-pi->y() <= 0) << "|" << (src.z()-pi->z() <= 0) );
+	CGAL_NEF_TRACEN((pi->x()-trg.x() <= 0) << "|" << (pi->y()-trg.y() <= 0) << "|" << (pi->z()-trg.z() <= 0) );
 	if((src.x()-pi->x() <= 0 && pi->x()-trg.x() <= 0 || 
 	    src.x()-pi->x() >= 0 && pi->x()-trg.x() >= 0) &&
 	   (src.y()-pi->y() <= 0 && pi->y()-trg.y() <= 0 || 
 	    src.y()-pi->y() >= 0 && pi->y()-trg.y() >= 0) &&
 	   (src.z()-pi->z() <= 0 && pi->z()-trg.z() <= 0 ||
 	    src.z()-pi->z() >= 0 && pi->z()-trg.z() >= 0)) {
-	  //	std::cerr << "true" << std::endl;
 	  pprev = pi;
 	  ++pi;
 	  res.push_back(*pprev);
 	  points.erase(pprev);
 	}
 	else {
-	  //	std::cerr << "false" << std::endl;
 	  ++pi;
 	}
       }

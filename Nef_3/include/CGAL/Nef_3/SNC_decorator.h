@@ -698,12 +698,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_NEF_TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
     SM_overlayer O(&*v01);
     O.subdivide( &*v0, &*v1, A);
-    /*
-    SHalfedge_iterator sei2;
-    CGAL_forall_sedges(sei2, O) {
-      std::cerr << "front " << sei2->get_index() << std::endl;
-      std::cerr << "back  " << sei2->twin()->get_index() << std::endl;
-      } */
     O.select( BOP);
     O.simplify(A);
 
@@ -875,18 +869,19 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
       if( CGAL::assign( e, o1)) {
 	//	std::cerr << "inverse order " << inverse_order << std::endl;
+
+#ifdef CGAL_NEF_EXPERIMENTAL_CODE
+	SNC_constructor C(result);
+	Sphere_map* M0 = C.create_edge_edge_overlay(e0, e, p, bop, inverse_order, A);
+	SM_overlayer O(M0);
+	O.simplify(A);
+#else
 	Self D(result);
 	Vertex_handle v0, v1;
 	v0 = D.create_local_view_on( p, e0);
 	v1 = D.create_local_view_on( p, e);
 	if( inverse_order)
 	  std::swap( v0, v1);
-	SNC_constructor C(result);
-#ifdef CGAL_NEF_EXPERIMENTAL_CODE
-	Sphere_map* M0 = C.create_edge_edge_overlay(e0, e, p, bop, inverse_order, A);
-	//	SM_overlayer O(M0);
-	//	O.simplify(A);
-#else
 	D.binop_local_views( v0, v1, bop, result,A);
 	result.delete_vertex(v0);
 	result.delete_vertex(v1);

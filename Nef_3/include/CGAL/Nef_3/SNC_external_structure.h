@@ -617,7 +617,7 @@ public:
 	       cet->source()->twin() == ce->source() ) 
             break;
 
-      // DEBUG     
+#ifndef NDEBUG
       if( cet->circle() != ce->circle().opposite() )
 	CGAL_NEF_TRACEN("assertion failed!");
       
@@ -633,21 +633,21 @@ public:
 	CGAL_NEF_TRACEN("sseg@E addr="<<&*sc<<
 			" src="<< sc->source()->point()<<
 			" tgt="<< sc->target()->point()<<std::endl<<
-			" circle=" << sc->circle());
-
+			" circle=" << normalized(sc->circle()));
       CGAL_NEF_TRACEN("");
 
       CGAL_For_all(sct,cete)
       CGAL_NEF_TRACEN("sseg@ET addr="<<&*sct<<
 		      " src="<< sct->source()->point()<<
 		      " tgt="<<sct->target()->point()<<std::endl<<
-		      " circle=" << sct->circle());
+		      " circle=" << normalized(sct->circle()));
       CGAL_NEF_TRACEN("");
+#endif
 
       CGAL_assertion( normalized(cet->circle()) == normalized(ce->circle().opposite()) ); 
       CGAL_assertion( cet->source()->twin() == ce->source()); 
       CGAL_For_all(ce,cee) { 
-	CGAL_NEF_TRACEN("circles " << cet->circle() << "   " << ce->circle() << 
+	CGAL_NEF_TRACEN("circles " << normalized(cet->circle()) << "   " << normalized(ce->circle()) << 
 			" sources " << cet->target()->point() << 
 			"   " << ce->target()->point());
 	CGAL_assertion( normalized(cet->circle()) == normalized(ce->circle().opposite())); 
