@@ -62,6 +62,7 @@ public:
   typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
 
   typedef typename Arrangement_2::Face_handle           Face_handle;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
 
   typedef typename Base::Indices_list                   Indices_list;
   typedef typename Base::Halfedge_indices_map           Halfedge_indices_map;
