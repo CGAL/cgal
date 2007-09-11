@@ -101,7 +101,7 @@ void Cross_section_initializer CGAL_AOS3_TARG::operator()(CGAL_AOS3_TYPENAME Tra
 
   
 
-  cs_.write(std::cout);
+  CGAL_LOG_WRITE(Log::LOTS,cs_.write(LOG_STREAM));
   
   cs_.audit();
 
