@@ -27,7 +27,6 @@
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Envelope_3/Arrangement_2_incremental_insert.h>
 #include <CGAL/utility.h>
 #include <CGAL/functions_on_enums.h> 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
@@ -63,13 +62,17 @@ public:
   typedef typename Traits::Has_boundary_category       Has_boundary_category;
 
 protected:
+  class Copied_face_zone_visitor;
 
   typedef Envelope_element_visitor_3<Traits, Minimization_diagram_2> Self;
+  typedef typename Minimization_diagram_2::Halfedge_const_handle    Halfedge_const_handle;
   typedef typename Minimization_diagram_2::Halfedge_const_iterator  Halfedge_const_iterator;
   typedef typename Minimization_diagram_2::Halfedge_handle          Halfedge_handle;
   typedef typename Minimization_diagram_2::Halfedge_iterator        Halfedge_iterator;
+  typedef typename Minimization_diagram_2::Face_const_handle        Face_const_handle;
   typedef typename Minimization_diagram_2::Face_handle              Face_handle;
   typedef typename Minimization_diagram_2::Face_iterator            Face_iterator;
+  typedef typename Minimization_diagram_2::Vertex_const_handle      Vertex_const_handle;
   typedef typename Minimization_diagram_2::Vertex_handle            Vertex_handle;
   typedef typename Minimization_diagram_2::Vertex_iterator          Vertex_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
@@ -454,8 +457,6 @@ public:
 
   // get an edge with 2 surfaces defined over it, and split it to get the shape
   // of the envelope of these surfaces over the edge
-
-
   void resolve(Halfedge_handle edge, Minimization_diagram_2& result)
   {
     const Xy_monotone_surface_3& surf1 = get_aux_surface(edge, 0);
@@ -758,6 +759,44 @@ public:
   }
 
 protected:
+
+  // The function locate p in arr, and calls the appropriate function in
+  // visitor.
+  Vertex_handle insert_point (Minimization_diagram_2& arr, const Point_2& p,
+                     const Md_point_location& pl, 
+                     Copied_face_zone_visitor& visitor)
+  {
+    const Face_const_handle      *fh;
+    const Halfedge_const_handle  *hh;
+    const Vertex_const_handle    *vh;
+    Vertex_handle                 vh_for_p;
+
+    CGAL::Object obj = pl.locate (p);
+    visitor.init(&arr);
+  
+    if ((fh = object_cast<Face_const_handle>(&obj))
+        != NULL)
+    {
+      vh_for_p = visitor.found_point_in_face(p, arr.non_const_handle (*fh));
+    }
+    else if ((hh = object_cast<Halfedge_const_handle>(&obj)) != NULL)
+    {
+      vh_for_p = visitor.found_point_on_edge(p , arr.non_const_handle (*hh));
+    }
+    else
+    {
+      // In this case p lies on an existing vertex, so we just update this
+      // vertex.
+      vh = object_cast<Vertex_const_handle>(&obj);
+      CGAL_assertion (vh != NULL);
+      vh_for_p = visitor.found_point_on_vertex(p, arr.non_const_handle (*vh));
+    }
+
+    // Return a handle for the vertex associated with p.
+    return (vh_for_p);
+
+  }
+
 
   // compute Comparison_result of surfaces over the face, assuming they get 
   // the same answer for all points in face
@@ -2722,7 +2761,10 @@ protected:
       Vertex_handle vh_for_p;
       if (is_face_ok(face))
       {
+        Arr_accessor<Minimization_diagram_2> arr_access (copied_arr);
+        arr_access.notify_before_global_change();
         vh_for_p = copied_arr.insert_in_face_interior(p, face);
+        arr_access.notify_after_global_change();
 
       	// now should set the is_equal and has_equal flags
       	CGAL_assertion(map_vertices.is_defined(vh_for_p));
@@ -2751,7 +2793,11 @@ protected:
       X_monotone_curve_2  sub_cv1, sub_cv2;
       Halfedge_handle     split_he;
       copied_arr.traits()->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
+
+      Arr_accessor<Minimization_diagram_2> arr_access (copied_arr);
+      arr_access.notify_before_global_change();
       split_he = copied_arr.split_edge (he, sub_cv1, sub_cv2);
+      arr_access.notify_after_global_change();
 
       // if the edge is a boundary edge, then the new vertex is a special vertex
       // and this is taken care of in the after_split event
