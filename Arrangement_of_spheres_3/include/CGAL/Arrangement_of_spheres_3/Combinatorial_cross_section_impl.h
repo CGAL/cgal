@@ -1674,7 +1674,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::delete_component(Vertex_handle vh) {
     CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
     CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
     if (!chds.is_valid(false, num_components_==1? 3: 2)) {
-      chds.is_valid(true, num_components_==1? 3: 2)
+      chds.is_valid(true, (num_components_==1? 3: 2));
       CGAL_assertion(0);
       std::cerr << "Not valid." << std::endl;
     }
