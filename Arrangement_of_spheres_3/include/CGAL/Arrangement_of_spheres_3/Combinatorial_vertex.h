@@ -58,13 +58,13 @@ public:
 
  
   CGAL_IS(sphere_sphere,
-		  return type_&SS_BIT);
+	  return type_&SS_BIT);
   CGAL_IS(sphere_rule,
-		  return type_&SR_BIT);
+	  return type_&SR_BIT);
   CGAL_IS(rule_rule,
-		  return type_& RR_BIT);
+	  return type_& RR_BIT);
   CGAL_IS(sphere_extremum,
-		  return is_sphere_rule() && k_[0] == k_[1]);
+	  return is_sphere_rule() && k_[0] == k_[1]);
 
   bool is_special() const;
   
@@ -93,19 +93,19 @@ public:
   /*Rule_direction rule_direction() const {
     CGAL_precondition(is_sphere_rule());
     if (is_smaller() && rule_constant_coordinate() == plane_coordinate(0)) {
-      return Rule_direction(0);
+    return Rule_direction(0);
     } else if (!is_smaller() 
-	       && rule_constant_coordinate() == plane_coordinate(0)) {
-      return Rule_direction(2);
+    && rule_constant_coordinate() == plane_coordinate(0)) {
+    return Rule_direction(2);
     } else if (is_smaller() 
-	       && rule_constant_coordinate() == plane_coordinate(1)) {
-      return Rule_direction(1);
+    && rule_constant_coordinate() == plane_coordinate(1)) {
+    return Rule_direction(1);
     } else if (!is_smaller() 
-	       && rule_constant_coordinate() == plane_coordinate(1)) {
-      return Rule_direction(3);
+    && rule_constant_coordinate() == plane_coordinate(1)) {
+    return Rule_direction(3);
     } else {
-      CGAL_assertion(0);
-      return Rule_direction();
+    CGAL_assertion(0);
+    return Rule_direction();
     }
     }*/
 
@@ -160,25 +160,27 @@ public:
 
   // Return true if the line defining the rule which defines this point
   // points in the positive direction (and so it is the smaller of the two points)
- CGAL_IS(smaller,  
+  CGAL_IS(smaller,  
 	  CGAL_precondition(is_sphere_rule());
 	  return type_&SMALLER_BIT);
 
+  
+  void swap_key(Combinatorial_curve::Key a, Combinatorial_curve::Key b) {
+    if (k_[0]==a) k_[0]=b;
+    if (k_[1]==a) k_[1]=b;
+  }
 
 protected:
 
-void set_key(Combinatorial_curve::Key k) {
+  void set_key(Combinatorial_curve::Key k) {
     CGAL_precondition(is_sphere_extremum());
     k_[0]=k;
     k_[1]=k;
   }
 
- void swap_key(Combinatorial_curve::Key a, Combinatorial_curve::Key b) {
-    if (k_[0]==a) k_[0]=b;
-    if (k_[1]==a) k_[1]=b;
-  }
 
-    Coordinate_index other_curve_constant_coordinate(Combinatorial_curve a) const {
+
+  Coordinate_index other_curve_constant_coordinate(Combinatorial_curve a) const {
     CGAL_precondition(is_sphere_rule() || is_rule_rule());
     if (a.is_arc()) {
       return rule_constant_coordinate();
@@ -214,7 +216,7 @@ CGAL_AOS3_END_INTERNAL_NAMESPACE
 
 
 /*#ifdef CGAL_AOS3_USE_TEMPLATES
-#include <CGAL/Arrangement_of_spheres_3/Combinatorial_vertex_impl.h>
-#endif*/
+  #include <CGAL/Arrangement_of_spheres_3/Combinatorial_vertex_impl.h>
+  #endif*/
 
 #endif

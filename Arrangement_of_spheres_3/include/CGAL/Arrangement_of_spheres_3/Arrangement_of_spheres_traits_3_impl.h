@@ -260,8 +260,14 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::intersection_2_events(Sphere_3_k
     return Event_pair();
   }
   Plane_3 eqp= table_->equipower_plane(a,b);
-  Plane_3 sp= table_->separating_plane(a,b);
-  return event_pair(a, eqp, sp);
+  if (eqp.orthogonal_vector()[CGAL_AOS3_INTERNAL_NS::plane_coordinate(0).index()] == 0
+      && eqp.orthogonal_vector()[CGAL_AOS3_INTERNAL_NS::plane_coordinate(1).index()] == 0) {
+    return Event_pair(Event_point_3(table_->equipower_point(a,b)),
+		      Event_point_3());
+  } else {
+    Plane_3 sp= table_->separating_plane(a,b);
+    return event_pair(a, eqp, sp);
+  }
 }
  
 

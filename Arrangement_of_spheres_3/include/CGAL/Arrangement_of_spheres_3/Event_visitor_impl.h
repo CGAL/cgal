@@ -80,10 +80,12 @@ void Event_visitor CGAL_AOS3_TARG::on_change_edge(Halfedge_handle h) {
   
 CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::on_merge_faces(Halfedge_handle h) {
-  if (!h->curve().key().is_input()) return;
+  //if (!h->curve().key().is_input()) return;
   Halfedge_handle c=h;
   do {
-    handle_edge_face(c, h->opposite()->face());
+    if (c->curve().key().is_input()) {
+      handle_edge_face(c, h->opposite()->face());
+    }
     c=c->next();
   } while (c != h);
 } 
@@ -300,7 +302,9 @@ CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::handle_edge_face(Halfedge_handle h, Face_handle f) {
   Halfedge_handle c=f->halfedge();
   do {
-    process_pair(c->curve().key(), h->curve().key());
+    if (c->curve().key().is_input()) {
+      process_pair(c->curve().key(), h->curve().key());
+    }
     c=c->next();
   } while (c != f->halfedge());
 }
@@ -318,51 +322,59 @@ void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a,
 						Sphere_3_key b) {
   if ( a != b &&  a.is_input() && b.is_input() 
        && pairs_.find(Sphere_key_upair(a,b))== pairs_.end()) {
+    CGAL_LOG(Log::LOTS, "Processing pair " << a << " " << b << std::endl);
     pairs_.insert(Sphere_key_upair(a,b));
-    
-    Event_pair ep= tr_.intersection_2_events(a,b);  
-    if (ep.first.is_valid()) {
-      CGAL_assertion(ep.first <= ep.second);
-	
-      if (ep.first >= sim_->current_time()) {
-	Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::I2_event(j_, a,b));
-	if (k != Event_key() && k != sim_->null_event()) {
-	  free_events_.insert(k);
-	}
+    Event_pair ep= tr_.intersection_2_events(a,b);
+    if (ep.first.is_valid() && !ep.second.is_valid()) {
+      CGAL_LOG(Log::SOME, "Spheres " << a << " and " 
+	       << b << " intersect on vertical circle"<< std::endl);
+      Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::S2_event(j_, a,b));
+      if (k != Event_key() && k != sim_->null_event()) {
+	free_events_.insert(k);
       }
-      if (ep.second >= sim_->current_time()) {
-	Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::U2_event(j_, a,b));
-	if (k != Event_key() && k != sim_->null_event()) {
-	  free_events_.insert(k);
+    } else if (ep.first.is_valid()) {
+	CGAL_assertion(ep.first <= ep.second);
+	
+	if (ep.first >= sim_->current_time()) {
+	  Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::I2_event(j_, a,b));
+	  if (k != Event_key() && k != sim_->null_event()) {
+	    free_events_.insert(k);
+	  }
 	}
-      }
+	if (ep.second >= sim_->current_time()) {
+	  Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::U2_event(j_, a,b));
+	  if (k != Event_key() && k != sim_->null_event()) {
+	    free_events_.insert(k);
+	  }
+	}
 	
 	
-      // now handle the extremum intersections
-      for (unsigned int k=0; k< 2; ++k) {
-	for (unsigned int i=0; i< 2; ++i){
-	  Event_pair ep= tr_.sphere_intersect_extremum_events(a,
-							      plane_coordinate(i),
-							      b);  
-	  if (ep.first.is_valid()) {
-	    CGAL_assertion(ep.first <= ep.second);
-	    if (ep.first >= sim_->current_time()) {
-	      Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::AAE_event(j_, a,b, i));
-	      if (k != Event_key() && k != sim_->null_event()) {
-		free_events_.insert(k);
+	// now handle the extremum intersections
+	for (unsigned int k=0; k< 2; ++k) {
+	  for (unsigned int i=0; i< 2; ++i){
+	    Event_pair ep= tr_.sphere_intersect_extremum_events(a,
+								plane_coordinate(i),
+								b);  
+	    if (ep.first.is_valid()) {
+	      CGAL_assertion(ep.first <= ep.second);
+	      if (ep.first >= sim_->current_time()) {
+		Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::AAE_event(j_, a,b, i));
+		if (k != Event_key() && k != sim_->null_event()) {
+		  free_events_.insert(k);
+		}
 	      }
-	    }
-	    if (ep.second >= sim_->current_time()) {
-	      Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::AAE_event(j_, a,b, i));
-	      if (k != Event_key() && k != sim_->null_event()) {
-		free_events_.insert(k);
+	      if (ep.second >= sim_->current_time()) {
+		Event_key k =sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::AAE_event(j_, a,b, i));
+		if (k != Event_key() && k != sim_->null_event()) {
+		  free_events_.insert(k);
+		}
 	      }
 	    }
 	  }
+	  std::swap(a,b);
 	}
-	std::swap(a,b);
       }
-    }
+      
   }
 }
 

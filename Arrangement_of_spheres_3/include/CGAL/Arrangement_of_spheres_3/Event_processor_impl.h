@@ -180,7 +180,18 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
 
 
 
+CGAL_AOS3_TEMPLATE
+void Event_processor CGAL_AOS3_TARG::swap(Sphere_3_key k, Sphere_3_key l) {
+  cs_.audit();
+  try {
+    cs_.swap_labels(k,l);
 
+  } catch(CGAL_CATCH_DEGENERACY) {
+     std::cout << "Degeneracy" << std::endl;
+    handle_degeneracy();
+  }
+  cs_.audit();
+}
 
 
 CGAL_AOS3_TEMPLATE

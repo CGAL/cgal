@@ -608,10 +608,11 @@ public:
     return false;
   }
 
+  void swap_labels(Curve::Key k, Curve::Key l);
 
 private:
 
-  void swap_curves(Halfedge_handle ha, Halfedge_handle hb);
+  void swap_curves(Halfedge_handle k, Halfedge_handle l);
   
 
   void connect(Halfedge_handle a, Halfedge_handle b);

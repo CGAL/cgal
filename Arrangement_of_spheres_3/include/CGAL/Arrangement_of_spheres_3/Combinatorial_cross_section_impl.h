@@ -1083,6 +1083,8 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle h= it;
     CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle ho= it->opposite();
 
+    CGAL_assertion(h->opposite()->curve() == h->curve().opposite());
+
     if (it->next() == CGAL_AOS3_TYPENAME HDS::Halfedge_handle()) {
       std::cerr<< "Invalid next for ";
       write(it, std::cerr) << std::endl;
@@ -1715,7 +1717,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::halfedge(Vertex_handle v, Face_handl
 CGAL_AOS3_TEMPLATE
 void
 Combinatorial_cross_section CGAL_AOS3_TARG::swap_curves(Halfedge_handle ha, 
-									   Halfedge_handle hb) {
+							Halfedge_handle hb) {
  CGAL_precondition(is_valid(ha));
  CGAL_precondition(is_valid(hb));
   Curve t= ha->curve();
@@ -1725,6 +1727,82 @@ Combinatorial_cross_section CGAL_AOS3_TARG::swap_curves(Halfedge_handle ha,
   hb->set_curve(t);
   hb->opposite()->set_curve(to);
   
+}
+
+
+CGAL_AOS3_TEMPLATE
+void
+Combinatorial_cross_section CGAL_AOS3_TARG::swap_labels(Curve::Key k, 
+							Curve::Key l) {
+  std::vector<Halfedge_handle> kh, lh;
+  kh.push_back(a_halfedge(k));
+  lh.push_back(a_halfedge(l));
+  do {
+    kh.push_back(next_edge_on_circle(kh.back()));
+  } while (kh.back() != kh.front());
+  kh.pop_back();
+  do {
+    lh.push_back(next_edge_on_circle(lh.back()));
+  } while (lh.back() != lh.front());
+  lh.pop_back();
+  CGAL_assertion(kh.size() >=4);
+  CGAL_assertion(lh.size() >=4);
+  
+  for (unsigned int i=0; i< kh.size(); ++i) {
+    CGAL_LOG(Log::LOTS, "Changing " << kh[i]->curve() << std::endl);
+    kh[i]->curve().set_key(l);
+    kh[i]->opposite()->curve().set_key(l);
+    CGAL_LOG(Log::LOTS, "Changing " << kh[i]->vertex()->point() << std::endl);
+    kh[i]->vertex()->point().swap_key(k,l);
+    if (kh[i]->vertex()->point().is_sphere_extremum()) {
+      Halfedge_handle r= kh[i]->opposite()->prev()->opposite();
+      do {
+	CGAL_LOG(Log::LOTS, "Changingr " << r->curve() << std::endl);
+	r->curve().set_key(l);
+	r->opposite()->curve().set_key(l);
+	if (!r->vertex()->point().is_sphere_extremum()) {
+	  CGAL_LOG(Log::LOTS, "Changingr " << r->vertex()->point() << std::endl);
+	  r->vertex()->point().swap_key(k,l);
+	}
+	r= next_edge_on_rule(r);
+      } while (r != Halfedge_handle());
+    }
+  }
+  
+  for (unsigned int i=0; i< lh.size(); ++i) {
+    CGAL_LOG(Log::LOTS, "Changing " << lh[i]->curve() << std::endl);
+    lh[i]->curve().set_key(k);
+    lh[i]->opposite()->curve().set_key(k);
+    CGAL_LOG(Log::LOTS, "Changing " << lh[i]->vertex()->point() << std::endl);
+    lh[i]->vertex()->point().swap_key(l,k);
+    if (lh[i]->vertex()->point().is_sphere_extremum()) {
+      Halfedge_handle r= lh[i]->opposite()->prev()->opposite();
+      do {
+	CGAL_LOG(Log::LOTS, "Changingr " << r->curve() << std::endl);
+	r->curve().set_key(k);
+	r->opposite()->curve().set_key(k);
+	if (!r->vertex()->point().is_sphere_extremum()) {
+	  CGAL_LOG(Log::LOTS, "Changingr " << r->vertex()->point() << std::endl);
+	  r->vertex()->point().swap_key(l,k);
+	}
+	r= next_edge_on_rule(r);
+      } while (r != Halfedge_handle());
+    }
+  }
+
+  for (unsigned int i=0; i< kh.size(); ++i) {
+    v_.on_merge_faces(kh[i]);
+    CGAL_assertion(kh[i]->curve().key() == l);
+  }
+  for (unsigned int i=0; i< lh.size(); ++i) {
+    v_.on_merge_faces(lh[i]);
+    CGAL_assertion(lh[i]->curve().key() == k);
+  }
+  set_halfedge(lh.front());
+  set_halfedge(kh.front());
+  //  std::swap(halfedges_[k.input_index()], halfedges_[l.input_index()]);
+  CGAL_assertion(a_halfedge(k)->curve().key() ==k);
+  CGAL_assertion(a_halfedge(l)->curve().key() ==l);
 }
 
 
@@ -1815,6 +1893,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::unintersect_arcs(Halfedge_handle hl,
 
 
   join_face(jl, true);
+  v_.on_merge_faces(jk);
   Face_handle f= join_face(jk, true);
 
   audit();
