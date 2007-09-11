@@ -548,12 +548,9 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_in_face_interior
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
     Halfedge_handle l_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v1),
-                                                             cv.base(),
-                                                             MIN_END,
-                                                             bx, by)
-        );
+      Halfedge_handle
+      (this->m_top_traits->locate_around_boundary_vertex (&(*v1), cv.base(),
+                                                          MIN_END, bx, by));
     
     return (_insert_from_left_vertex (cv, l_prev, sc));
   }
@@ -579,12 +576,9 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_in_face_interior
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
     Halfedge_handle r_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v2),
-                                                             cv.base(),
-                                                             MAX_END,
-                                                             bx, by)
-        );
+      Halfedge_handle
+      (this->m_top_traits->locate_around_boundary_vertex (&(*v2), cv.base(),
+                                                          MAX_END, bx, by));
     
     return (this->insert_from_right_vertex (cv, r_prev, sc));
   }
@@ -631,12 +625,9 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_from_left_vertex
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
     Halfedge_handle r_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v),
-                                                             cv.base(),
-                                                             MAX_END,
-                                                             bx, by)
-        );
+      Halfedge_handle
+      (this->m_top_traits->locate_around_boundary_vertex (&(*v), cv.base(),
+                                                          MAX_END, bx, by));
     bool            dummy;
 
     return (_insert_at_vertices (cv, r_prev, prev, sc, dummy));
@@ -679,12 +670,9 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_from_right_vertex
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
     Halfedge_handle l_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v),
-                                                             cv.base(),
-                                                             MIN_END,
-                                                             bx, by)
-        );
+      Halfedge_handle
+      (this->m_top_traits->locate_around_boundary_vertex (&(*v), cv.base(),
+                                                          MIN_END, bx, by));
     bool            dummy;
 
     return (_insert_at_vertices (cv, prev, l_prev, sc, dummy));
