@@ -411,15 +411,7 @@ void Arr_construction_sl_visitor<Hlpr>::add_subcurve
   {
     // We do not have a handle from the previous insert.
     if (he_right != invalid_he)
-    { 
-#if 0
-        std::cout << "++++++++++++++++++++++++++++++++++++" << std::endl;
-        std::cout << "iilr: " << _curve(cv) << std::endl;
-        std::cout << "left: " << _curve(he_right->curve()) << std::endl;
-        std::cout << "dir: " << (he_right->direction() == LEFT_TO_RIGHT ?
-                                 "L2R" : "R2L") << std::endl;
-        std::cout << "++++++++++++++++++++++++++++++++++++" << std::endl;
-#endif
+    {
       // We have a handle from the current event, representing the right end
       // of the subcurve - use it to insert the subcurve.
       res = this->insert_from_right_vertex(cv, he_right, sc);
@@ -428,12 +420,7 @@ void Arr_construction_sl_visitor<Hlpr>::add_subcurve
     {
       // We do not have handles for any of the curve end, so we insert it in
       // the interior of a face.
-#if 0
-        std::cout << "####################################" << std::endl;
-        std::cout << "iifc: " << _curve(cv) << std::endl;
-        std::cout << "####################################" << std::endl;
-#endif
-        res = this->insert_in_face_interior(cv, sc);
+      res = this->insert_in_face_interior(cv, sc);
     }
   } 
   else 
@@ -447,17 +434,6 @@ void Arr_construction_sl_visitor<Hlpr>::add_subcurve
       
     if (he_right != invalid_he) 
     {
-#if 0
-        std::cout << "************************************" << std::endl;
-        std::cout << "ii@v: " << _curve(cv) << std::endl;
-        std::cout << "left: " << _curve(he_left->curve()) << std::endl;
-        std::cout << "dir: " << (he_left->direction() == LEFT_TO_RIGHT ?
-                                 "L2R" : "R2L") << std::endl;
-        std::cout << "right: " << _curve(he_right->curve()) << std::endl;
-        std::cout << "dir: " << (he_right->direction() == LEFT_TO_RIGHT ?
-                                 "L2R" : "R2L") << std::endl;
-        std::cout << "************************************" << std::endl;
-#endif        
       CGAL_assertion (he_left->face() == he_right->face());
       
       // We also have a handle for the current event, representing the right
@@ -469,14 +445,6 @@ void Arr_construction_sl_visitor<Hlpr>::add_subcurve
     }
     else
     {
-#if 0
-        std::cout << "====================================" << std::endl;
-        std::cout << "iilv: " << _curve(cv) << std::endl;
-        std::cout << "left: " << _curve(he_left->curve()) << std::endl;
-        std::cout << "dir: " << (he_left->direction() == LEFT_TO_RIGHT ?
-                                 "L2R" : "R2L") << std::endl;
-        std::cout << "====================================" << std::endl;
-#endif
       // We only have a handle for the predecessor halfedge of the left end
       // of the subcurve - use it to insert the subcurve.
       res = this->insert_from_left_vertex (cv, he_left, sc);
@@ -535,21 +503,21 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
 {
   // Check if the vertex to be associated with the left end of the curve has
   // already been created.
-  Vertex_handle    v1 = last_event_on_subcurve(sc)->vertex_handle();
+  Event         *last_event = last_event_on_subcurve(sc);
+  Vertex_handle  v1 = last_event->vertex_handle();
 
   if (v1 == m_invalid_vertex)
   {
     // Create the vertex to be associated with the left end of the curve.
-    v1 =
-      m_arr_access.create_vertex(_point(last_event_on_subcurve(sc)->point()));
+    v1 = m_arr_access.create_vertex (_point (last_event->point()));
   }
   else if (v1->degree() > 0)
   {
     // In this case the left vertex v1 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this left vertex.
-    Boundary_type   bx = last_event_on_subcurve(sc)->boundary_in_x();
-    Boundary_type   by = last_event_on_subcurve(sc)->boundary_in_y();
+    Boundary_type   bx = last_event->boundary_in_x();
+    Boundary_type   by = last_event->boundary_in_y();
 
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
@@ -566,20 +534,21 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
 
   // Check if the vertex to be associated with the right end of the curve has
   // already been created.
-  Vertex_handle    v2 = this->current_event()->vertex_handle();
+  Event         *curr_event = this->current_event();
+  Vertex_handle  v2 = curr_event->vertex_handle();
 
   if (v2 == m_invalid_vertex)
   {
     // Create the vertex to be associated with the right end of the curve.
-    v2 = m_arr_access.create_vertex(_point(this->current_event()->point()));
+    v2 = m_arr_access.create_vertex (_point (curr_event->point()));
   }
   else if (v2->degree() > 0)
   {
     // In this case the right vertex v2 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this right vertex.
-    Boundary_type   bx = this->current_event()->boundary_in_x();
-    Boundary_type   by = this->current_event()->boundary_in_y();
+    Boundary_type   bx = curr_event->boundary_in_x();
+    Boundary_type   by = curr_event->boundary_in_y();
 
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
@@ -701,21 +670,21 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_right_vertex
 {
   // Check if the vertex to be associated with the left end of the curve has
   // already been created.
-  Vertex_handle    v = last_event_on_subcurve(sc)->vertex_handle();
+  Event         *last_event = last_event_on_subcurve(sc);
+  Vertex_handle  v = last_event->vertex_handle();
 
   if (v == m_invalid_vertex)
   {
     // Create the vertex to be associated with the left end of the curve.
-    v =
-      m_arr_access.create_vertex(_point(last_event_on_subcurve(sc)->point()));
+    v = m_arr_access.create_vertex (_point (last_event->point()));
   }
   else if (v->degree() > 0)
   {
     // In this case the left vertex v is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve between two existing vertices.
-    Boundary_type   bx = last_event_on_subcurve(sc)->boundary_in_x();
-    Boundary_type   by = last_event_on_subcurve(sc)->boundary_in_y();
+    Boundary_type   bx = last_event->boundary_in_x();
+    Boundary_type   by = last_event->boundary_in_y();
 
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
@@ -767,20 +736,21 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_left_vertex
 {
   // Check if the vertex to be associated with the right end of the curve has
   // already been created.
-  Vertex_handle   v = this->current_event()->vertex_handle();
+  Event         *curr_event = this->current_event();
+  Vertex_handle  v = curr_event->vertex_handle();
 
   if (v == m_invalid_vertex)
   {
     // Create the vertex to be associated with the right end of the curve.
-    v = m_arr_access.create_vertex(_point(this->current_event()->point()));
+    v = m_arr_access.create_vertex (_point (curr_event->point()));
   }
   else if (v->degree() > 0)
   {
     // In this case the left vertex v is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this right vertex.
-    Boundary_type   bx = this->current_event()->boundary_in_x();
-    Boundary_type   by = this->current_event()->boundary_in_y();
+    Boundary_type   bx = curr_event->boundary_in_x();
+    Boundary_type   by = curr_event->boundary_in_y();
 
     CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
