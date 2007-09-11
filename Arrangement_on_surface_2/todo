@@ -137,6 +137,9 @@
   In the meantime we could disallow the insertion of curves that contain
   isolated points.
 
+- Change insert_point() to point() and keep the former deprecated. Reflect
+  the change in the documentation.
+
 - Arrangement_on_surface_2 demo
   Cannot change the background color
 
