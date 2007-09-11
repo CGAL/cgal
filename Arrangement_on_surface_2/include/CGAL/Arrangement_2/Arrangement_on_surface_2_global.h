@@ -60,20 +60,21 @@ CGAL_BEGIN_NAMESPACE
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, 
 // mpl_::bool_< true>)'
 //
-template <class GeomTraits, class TopTraits, class PointLocation>
+template <class GeomTraits, class TopTraits, class PointLocation, 
+  class ZoneVisitor>
 void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
              const typename GeomTraits::Curve_2& c,
-             const PointLocation& pl, boost::is_same<int, double>::type)
+             const PointLocation& pl, ZoneVisitor &visitor, 
+             boost::is_same<int, double>::type)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
-  typedef typename TopTraits::Zone_insertion_visitor       Zone_visitor;
+  typedef ZoneVisitor                                      Zone_visitor;
 
   // Obtain an arrangement accessor.
   Arr_accessor<Arr>                      arr_access (arr);
 
-  // Define a zone-computation object an a visitor that performs the
+  // Initialize a zone-computation object an a visitor that performs the
   // incremental insertion.
-  Zone_visitor                           visitor;
   Arrangement_zone_2<Arr, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Break the input curve into x-monotone subcurves and isolated points.
@@ -134,20 +135,21 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 // mpl_::bool_< true>)'
 //
 //
-template <class GeomTraits, class TopTraits, class PointLocation>
+template <class GeomTraits, class TopTraits, class PointLocation, 
+  class ZoneVisitor>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             const typename GeomTraits::X_monotone_curve_2& c,
-            const PointLocation& pl, boost::is_same<int, int>::type)
+            const PointLocation& pl, ZoneVisitor &visitor, 
+            boost::is_same<int, int>::type)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
-  typedef typename TopTraits::Zone_insertion_visitor       Zone_visitor;
+  typedef ZoneVisitor                                      Zone_visitor;
 
   // Obtain an arrangement accessor.
   Arr_accessor<Arr>                      arr_access (arr);
 
-  // Define a zone-computation object an a visitor that performs the
+  // Initialize a zone-computation object an a visitor that performs the
   // incremental insertion.
-  Zone_visitor                           visitor;
   Arrangement_zone_2<Arr, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Initialize the zone-computation object with the given curve.
@@ -167,16 +169,28 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 
 //-----------------------------------------------------------------------------
 // Common interface for the insert of the Curve_2 and X_monotone_curve_2
-template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
+template <class GeomTraits, class TopTraits, class Curve, class PointLocation, 
+  class ZoneVisitor>
 void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                   const Curve& c, const PointLocation& pl)
+             const Curve& c, const PointLocation& pl, ZoneVisitor &visitor)
 {
   typedef typename GeomTraits::X_monotone_curve_2       X_monotone_curve_2;
   
   typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
     Is_x_monotone;
   
-  return insert(arr, c, pl, Is_x_monotone());
+  return insert(arr, c, pl, visitor, Is_x_monotone());
+}
+
+template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
+void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+             const Curve& c, const PointLocation& pl)
+{
+  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
+  typedef typename TopTraits::Zone_insertion_visitor       Zone_visitor;
+  
+  Zone_visitor visitor;
+  insert (arr, c, pl, visitor);
 }
 
 //-----------------------------------------------------------------------------

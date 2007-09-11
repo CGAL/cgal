@@ -27,6 +27,7 @@
  */
 
 #include <CGAL/Arrangement_on_surface_2.h>
+#include <CGAL/Arrangement_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

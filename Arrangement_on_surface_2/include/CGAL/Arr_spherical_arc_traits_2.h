@@ -407,6 +407,7 @@ public:
   typedef Arr_extended_direction_3<Kernel>      Point_2;
   typedef Arr_spherical_arc_3<Kernel>           X_monotone_curve_2;
   typedef Arr_spherical_arc_3<Kernel>           Curve_2;
+  typedef unsigned int                          Multiplicity;
 
 public:
   /// \name Basic functor definitions

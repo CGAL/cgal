@@ -54,11 +54,10 @@ private:
   typedef Default_planar_topology<GeomTraits_,
                                   Dcel_,
                                   Has_boundary>           Default_topology;
+public:
   typedef Arrangement_on_surface_2<GeomTraits_,
                                    typename Default_topology::Traits>
                                                           Base;
-
-public:
 
   typedef GeomTraits_                                     Geometry_traits_2;
 
