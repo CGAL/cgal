@@ -591,6 +591,7 @@ public:
   typedef typename Kernel::Point_2              Point_2;
   typedef Arr_linear_object_2<Kernel>           X_monotone_curve_2;
   typedef Arr_linear_object_2<Kernel>           Curve_2;
+  typedef unsigned int                          Multiplicity;
 
 public:
 
