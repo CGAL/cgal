@@ -5,7 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
-template <class K, bool VERBOSE>
+template <class K>
 void read_spheres(std::istream &in, std::vector<typename K::Sphere_3> &out) {
   typedef CGAL::Simple_cartesian<double> DK;
   CGAL::Bbox_3 bbox(std::numeric_limits<double>::max(),
@@ -14,7 +14,7 @@ void read_spheres(std::istream &in, std::vector<typename K::Sphere_3> &out) {
 		    -std::numeric_limits<double>::max(),
 		    -std::numeric_limits<double>::max(),
 		    -std::numeric_limits<double>::max());
-		    
+  CGAL_LOG(Log::SOME, "Reading spheres..." << std::flush);
   while (true){
     char buf[1000];
     in.getline(buf, 1000);
@@ -42,9 +42,7 @@ void read_spheres(std::istream &in, std::vector<typename K::Sphere_3> &out) {
       }
     }
   }
-  if (VERBOSE) {
-    std::cout << "Bounding box is " << bbox << std::endl;
-  }
+  CGAL_LOG(Log::SOME, "bounding box is " << bbox << std::endl);
 }
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE

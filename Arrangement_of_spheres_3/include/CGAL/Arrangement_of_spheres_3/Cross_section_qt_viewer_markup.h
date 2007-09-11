@@ -35,6 +35,8 @@ public:
   void operator()(NT z, Qt_examiner_viewer_2 *qtv)  {
     rcs_.set_z(z);
     *qtv << layer_;
+    QMutexLocker lock(qtv->lock());
+    *qtv << Qt_examiner_viewer_2::Erase();
     *qtv << color_;
     qtv->set_updating_box(false);
     

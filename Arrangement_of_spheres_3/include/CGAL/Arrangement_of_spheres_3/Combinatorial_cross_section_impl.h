@@ -81,8 +81,8 @@ bool Combinatorial_cross_section CGAL_AOS3_TARG::is_redundant(Vertex_const_handl
 CGAL_AOS3_TEMPLATE
 bool Combinatorial_cross_section CGAL_AOS3_TARG::is_redundant(Halfedge_const_handle v) const {
   CGAL_precondition(is_valid(v));
-  std::cout << "Checking redundancy of ";
-  write(v, std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "Checking redundancy of ");
+  CGAL_LOG_WRITE(Log::LOTS, write(v, LOG_STREAM) << std::endl);
   if (v->curve().is_arc()) return false;
   else {
     bool e0= !v->vertex()->point().is_sphere_extremum() ;
@@ -91,7 +91,7 @@ bool Combinatorial_cross_section CGAL_AOS3_TARG::is_redundant(Halfedge_const_han
     bool d0= (degree(v->vertex()) == 4);
     bool n1= (next_edge_on_rule(v->opposite()) == Halfedge_handle());
     bool d1= (degree(v->opposite()->vertex()) ==4);
-    std::cout << e0 << e1 << n0 << n1 << d0 << d1 << std::endl;
+    CGAL_LOG(Log::LOTS, e0 << e1 << n0 << n1 << d0 << d1 << std::endl);
     return e0 && e1 && (n0 || d0) && (n1 || d1);
   }
 }
@@ -116,10 +116,10 @@ Combinatorial_cross_section CGAL_AOS3_TARG::split_face(Curve c,
   CGAL_precondition(is_valid(o));
   CGAL_precondition(is_valid(d));
   CGAL_precondition(o->face() == d->face());
-  std::cout << "Spliting face ";
-  write(o->face(), std::cout) << std::endl;
-  write(o, std::cout) << std::endl;
-  write(d, std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "Spliting face ");
+  CGAL_LOG_WRITE(Log::LOTS, write(o->face(), LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(o, LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(d, LOG_STREAM) << std::endl);
   v_.on_delete_edge(o->next());
   v_.on_delete_edge(o);
   v_.on_delete_edge(d->next());
@@ -136,9 +136,9 @@ Combinatorial_cross_section CGAL_AOS3_TARG::split_face(Curve c,
     v_.on_new_edge(h->opposite()->next());
     v_.on_new_edge(h->opposite()->prev());
   } 
-  std::cout << "Got ";
-  write(h->face(), std::cout) << " and ";
-  write(h->opposite()->face(), std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "Got ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h->face(), LOG_STREAM) << " and ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h->opposite()->face(), LOG_STREAM) << std::endl);
   return h;
 }
 
@@ -149,9 +149,9 @@ CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle
 Combinatorial_cross_section CGAL_AOS3_TARG::remove_vertex(Vertex_handle v) {
   CGAL_precondition(is_valid(v));
   Halfedge_handle h= v->halfedge();
-  std::cout << "Removing vertex " << h->vertex()->point() 
+  CGAL_LOG(Log::LOTS, "Removing vertex " << h->vertex()->point() 
 	    << " from edges " << h->curve()
-	    << " and " << h->opposite()->prev()->curve() << std::endl;
+	   << " and " << h->opposite()->prev()->curve() << std::endl);
   CGAL_assertion(is_redundant(v));
   //if (labels_ok) {
   if (h->curve().is_rule()) {
@@ -171,8 +171,8 @@ Combinatorial_cross_section CGAL_AOS3_TARG::remove_vertex(Vertex_handle v) {
   
   nh->opposite()->set_vertex(h->opposite()->vertex());
   nh->opposite()->vertex()->set_halfedge(nh->opposite());
-  write(nh, std::cout) << std::endl;
-  write(nh->opposite(), std::cout) << std::endl;
+  CGAL_LOG_WRITE(Log::LOTS, write(nh, LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(nh->opposite(), LOG_STREAM) << std::endl);
   if (nh->opposite()->vertex()->point().is_sphere_extremum() 
 	     && nh->curve().is_arc() && !nh->curve().is_inside()) {
     halfedges_[nh->curve().key().input_index()] =(nh->opposite());
@@ -194,20 +194,22 @@ Combinatorial_cross_section CGAL_AOS3_TARG::move_target(Halfedge_handle h, Verte
   CGAL_precondition(is_valid(h));
   CGAL_precondition(is_valid(v));
   v_.on_merge_faces(h); // extra work, but...
-  std::cout << "Moving edge ";
-  write(h, std::cout) << " to vertex ";
-  write(v, std::cout) << std::endl;
-  std::cout << "This face is " ;
-  write(h->face(), std::cout) << "\n and opposite face is " ;
-  write(h->opposite()->face(), std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "Moving edge ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h, LOG_STREAM) << " to vertex ");
+  CGAL_LOG_WRITE(Log::LOTS, write(v, LOG_STREAM) << std::endl);
+  CGAL_LOG(Log::LOTS, "This face is ") ;
+  CGAL_LOG_WRITE(Log::LOTS, write(h->face(), LOG_STREAM) 
+		 << "\n and opposite face is ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h->opposite()->face(), LOG_STREAM) 
+		 << std::endl);
 
   Halfedge_handle vh= v->halfedge();
   do {
     vh= vh->next()->opposite();
   } while (vh->face() != h->face() && vh->face() != h->opposite()->face());
 
-  std::cout << "The anchor edge is ";
-  write(vh, std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "The anchor edge is ");
+  CGAL_LOG_WRITE(Log::LOTS, write(vh, LOG_STREAM) << std::endl);
 
   connect(h->opposite()->prev(), h->next());
   h->vertex()->set_halfedge(h->opposite()->prev());
@@ -238,9 +240,9 @@ Combinatorial_cross_section CGAL_AOS3_TARG::move_target(Halfedge_handle h, Verte
   v_.on_change_edge(h->next());
   
   // have to update face pointers and visitor with face
-  std::cout << "Final faces are ";
-  write(h->face() , std::cout ) << std::endl;
-  write(h->opposite()->face() , std::cout ) << std::endl;
+  CGAL_LOG(Log::LOTS,  "Final faces are ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h->face() , LOG_STREAM ) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(h->opposite()->face() , LOG_STREAM ) << std::endl);
 }
   
 
@@ -251,10 +253,10 @@ CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Face_handle
 Combinatorial_cross_section CGAL_AOS3_TARG::join_face(Halfedge_handle h, bool clean_up) {
   CGAL_precondition(is_valid(h));
-  std::cout << "Merging faces ";
-  write(h->face(), std::cout) << " and ";
-  write(h->opposite()->face(), std::cout) << std::endl;
-  write(h, std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "Merging faces ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h->face(), LOG_STREAM) << " and ");
+  CGAL_LOG_WRITE(Log::LOTS, write(h->opposite()->face(), LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(h, LOG_STREAM) << std::endl);
 
   //CGAL_precondition(degree(h->vertex()) >=3);
   //CGAL_precondition(degree(h->opposite()->vertex()) >=3);
@@ -287,15 +289,16 @@ Combinatorial_cross_section CGAL_AOS3_TARG::join_face(Halfedge_handle h, bool cl
     v_.on_change_edge(th->next());
   }
 
-  std::cout << "Got face ";
-  write(f->halfedge()->face(), std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS, "Got face ");
+  CGAL_LOG_WRITE(Log::LOTS, write(f->halfedge()->face(), LOG_STREAM) 
+		 << std::endl);
   if (!clean_up) {
-    std::cout << "And edge ";
-    write(sh, std::cout);
-    std::cout << " and ";
-    write(th, std::cout);
+    CGAL_LOG(Log::LOTS,  "And edge ");
+    CGAL_LOG_WRITE(Log::LOTS, write(sh, LOG_STREAM));
+    CGAL_LOG(Log::LOTS, " and ");
+    CGAL_LOG_WRITE(Log::LOTS, write(th, LOG_STREAM));
   }
-  std::cout << std::endl;
+  CGAL_LOG(Log::LOTS,  std::endl);
   //turn std::make_pair(sh, th);
   return f;
 }
@@ -308,7 +311,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::merge_faces(Vertex_handle v) {
     std::cout << "Merging faces ";
     Halfedge_handle h=v->halfedge();
     do {
-      write(h->face(), std::cout) << std::endl;
+      write(h->face(), LOG_STREAM) << std::endl;
       h= h->opposite()->prev();
     } while (h != v->halfedge()); 
   }
@@ -321,8 +324,8 @@ Combinatorial_cross_section CGAL_AOS3_TARG::merge_faces(Vertex_handle v) {
 
   dec.erase_center_vertex(h);
   
-  std::cout << "Got face ";
-  write(f, std::cout) << std::endl;
+  LOG_STREAM << "Got face ";
+  write(f, LOG_STREAM) << std::endl;
   //turn std::make_pair(sh, th);
   return f;
   }*/
@@ -347,7 +350,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::find_halfedge(Vertex_handle v, Face_
 /*CGAL_AOS3_TEMPLATE
 void 
 Combinatorial_cross_section CGAL_AOS3_TARG::relabel_rule(Halfedge_handle h, Curve c) {
-  std::cout << "Relabeling from " << h->curve() << " to " << c << std::endl;
+  LOG_STREAM << "Relabeling from " << h->curve() << " to " << c << std::endl;
   //clean_edge(h);
   CGAL_precondition(h->curve().is_inside()==c.is_inside());
   CGAL_precondition(h->curve().is_vertical()==c.is_vertical());
@@ -368,10 +371,10 @@ Combinatorial_cross_section CGAL_AOS3_TARG::relabel_rule(Halfedge_handle h, Curv
     if (n->curve().is_same_part(c)) {
       relabel_rule(n, c);
     } else {
-      std::cout << "Next is other dir " << std::endl; 
+      LOG_STREAM << "Next is other dir " << std::endl; 
     }
   } else {
-    std::cout << "No next " << std::endl;
+    LOG_STREAM << "No next " << std::endl;
   }
 }
 */
@@ -452,14 +455,14 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_vertex(Vertex_handle v,
   if (k->curve().is_arc() && k->vertex()->point().is_sphere_extremum()
       && k->curve().is_inside()) {
     halfedges_[k->curve().key().input_index()]= k;
-    std::cout << "Updated sphere halfedge to ";
-    write(k, std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS, "Updated sphere halfedge to ");
+    CGAL_LOG_WRITE(Log::LOTS,  write(k, LOG_STREAM) << std::endl);
   }/* else {
-    std::cout << "Not updating sphere halfedge ";
-    write(h, std::cout) << std::endl;
-    write(i, std::cout) << std::endl;
-    write(j, std::cout) << std::endl;
-    write(k, std::cout) << std::endl;
+    LOG_STREAM << "Not updating sphere halfedge ";
+    write(h, LOG_STREAM) << std::endl;
+    write(i, LOG_STREAM) << std::endl;
+    write(j, LOG_STREAM) << std::endl;
+    write(k, LOG_STREAM) << std::endl;
     }*/
   //v_.on_change_edge(h);
 
@@ -484,13 +487,13 @@ Combinatorial_cross_section CGAL_AOS3_TARG::pinch_bl(Halfedge_handle a, Halfedge
   // now merge the two vertices.
   merge_vertices_bl(ha, hb);
 
-  std::cout << "Auditing const decorator..." << std::flush;
+  LOG_STREAM << "Auditing const decorator..." << std::flush;
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(true, 3)) {
     CGAL_assertion(0);
     std::cerr << "Not valid." << std::endl;
   }
-  std::cout << "done." << std::endl;
+  LOG_STREAM << "done." << std::endl;
 
   return std::make_pair(ha, hb);
 }
@@ -538,13 +541,13 @@ Combinatorial_cross_section CGAL_AOS3_TARG::unpinch_bl(Halfedge_handle a, Halfed
   dec.set_face_in_face_loop(a, a->face());
   hds_.faces_erase(df);
 
- std::cout << "Auditing const decorator..." << std::flush;
+ LOG_STREAM << "Auditing const decorator..." << std::flush;
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(true, 3)) {
     CGAL_assertion(0);
     std::cerr << "Not valid." << std::endl;
   }
-  std::cout << "done." << std::endl;
+  LOG_STREAM << "done." << std::endl;
 
   return nv;
 }
@@ -554,9 +557,9 @@ CGAL_AOS3_TEMPLATE
 void Combinatorial_cross_section CGAL_AOS3_TARG::connect(Halfedge_handle a, Halfedge_handle b) {
   CGAL_precondition(is_valid(a));
   CGAL_precondition(is_valid(b));
-  std::cout << "connecting ";
-  write(a, std::cout) << " to ";
-  write(b, std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS,  "connecting ");
+  CGAL_LOG_WRITE(Log::LOTS, write(a, LOG_STREAM) << " to ");
+  CGAL_LOG_WRITE(Log::LOTS, write(b, LOG_STREAM) << std::endl);
   a->set_next(b);
   b->set_prev(a);
 }
@@ -568,7 +571,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
 
   //audit(true);
   ++num_components_;
-  /*  std::cout << "Auditing const decorator..." << std::flush;
+  /*  LOG_STREAM << "Auditing const decorator..." << std::flush;
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(true, 3)) {
     std::cerr << "Not valid." << std::endl;
@@ -618,17 +621,17 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
     CGAL_assertion(vs[0]->prev()->prev()->prev()->prev() == vs[0]);
 
 
-    /*std::cout << "Auditing const decorator..." << std::flush;
+    /*LOG_STREAM << "Auditing const decorator..." << std::flush;
     CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
     if (!chds.is_valid(true, 3)) {
       std::cerr << "Not valid." << std::endl;
       CGAL_assertion(0);
     }
-    std::cout << "done." << std::endl;*/
-    std::cout << "Outside: ";
-    write(vs[0]->face(), std::cout) << std::endl;
-    std::cout << "Inside: ";
-    write(ivs[0]->face(), std::cout) << std::endl;
+    LOG_STREAM << "done." << std::endl;*/
+    CGAL_LOG(Log::LOTS,  "Outside: ");
+    CGAL_LOG_WRITE(Log::LOTS, write(vs[0]->face(), LOG_STREAM) << std::endl);
+    CGAL_LOG(Log::LOTS,  "Inside: ");
+    CGAL_LOG_WRITE(Log::LOTS, write(ivs[0]->face(), LOG_STREAM) << std::endl);
   }
   
 
@@ -685,19 +688,19 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_target(Curve::Key k,
 	dec.set_face_in_face_loop(c[i], ft[i]);
 	ft[i]->set_halfedge(c[i]);
       }
-      write(c[0]->face(), std::cout) << std::endl;
-      write(c[1]->face(), std::cout) << std::endl;
-      write(c[2]->face(), std::cout) << std::endl;
-      write(c[3]->face(), std::cout) << std::endl;
-      //write(c[3]->face(), std::cout) << std::endl;
+      CGAL_LOG_WRITE(Log::LOTS, write(c[0]->face(), LOG_STREAM) << std::endl);
+      CGAL_LOG_WRITE(Log::LOTS, write(c[1]->face(), LOG_STREAM) << std::endl);
+      CGAL_LOG_WRITE(Log::LOTS, write(c[2]->face(), LOG_STREAM) << std::endl);
+      CGAL_LOG_WRITE(Log::LOTS, write(c[3]->face(), LOG_STREAM) << std::endl);
+      //CGAL_LOG_WRITE(Log::LOTS, write(c[3]->face(), LOG_STREAM) << std::endl);
       
-      std::cout << "Auditing const decorator..." << std::flush;
+      CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
       CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
       if (!chds.is_valid(true, 3)) {
 	CGAL_assertion(0);
 	std::cerr << "Not valid." << std::endl;
       }
-      std::cout << "done." << std::endl;
+      CGAL_LOG(Log::LOTS,  "done." << std::endl);
     }
   } else {
     // recycle
@@ -737,12 +740,12 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_target(Curve::Key k,
   }
   Face_handle old_face= vs[0]->face();
   
-  std::cout << "Inserting into ";
-  write(vs[0]->face(), std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS,  "Inserting into ");
+  CGAL_LOG_WRITE(Log::LOTS, write(vs[0]->face(), LOG_STREAM) << std::endl);
 
   for (unsigned int i=0; i< 4; ++i){
-    std::cout << i << " is " << vs[i]->curve() << "--" << vs[i]->vertex()->point() 
-	      << "--" << vsn[i]->curve() << std::endl;
+    CGAL_LOG(Log::LOTS,  i << " is " << vs[i]->curve() << "--" << vs[i]->vertex()->point() 
+	      << "--" << vsn[i]->curve() << std::endl);
   }
 
   Vertex_handle tempv= ts[0]->vertex();
@@ -756,9 +759,9 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_target(Curve::Key k,
 
   hds_.vertices_erase(tempv);
   
-  std::cout << "Got:" << std::endl;
+  CGAL_LOG(Log::LOTS,  "Got:" << std::endl);
   for (unsigned int i=0; i< 4; ++i) {
-    write(vs[i]->face(), std::cout) << std::endl;
+    CGAL_LOG_WRITE(Log::LOTS, write(vs[i]->face(), LOG_STREAM) << std::endl);
   }
 
   CGAL::HalfedgeDS_items_decorator<HDS> dec;
@@ -778,9 +781,9 @@ Combinatorial_cross_section CGAL_AOS3_TARG::insert_target(Curve::Key k,
     set_extremum_halfedge( h);
   }
   
-  std::cout << "Auditing structure..." << std::flush;
+  CGAL_LOG(Log::LOTS,  "Auditing structure..." << std::flush);
   audit(); 
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
 }
 */
 
@@ -811,18 +814,18 @@ Combinatorial_cross_section CGAL_AOS3_TARG::relabel_target(Halfedge_handle ts[],
   // 8 edges, 4 vertices
   CGAL_precondition(k.is_target() || ts[0]->curve().key().is_target());
   for (unsigned int i=0; i< 4; ++i) {
-    //std::cout << "Relabeling " << ts[i]->curve() << " to " << k << std::endl;
+    //CGAL_LOG(Log::LOTS,  "Relabeling " << ts[i]->curve() << " to " << k << std::endl);
     ts[i]->curve().set_key(k);
-    //std::cout << "Got " << ts[i]->curve() << " with " << k << std::endl;
+    //CGAL_LOG(Log::LOTS,  "Got " << ts[i]->curve() << " with " << k << std::endl);
     CGAL_assertion(ts[i]->curve().key() == k );
 
-    //std::cout << "Relabeling " << ts[i]->opposite()->curve() << " to " << k << std::endl;
+    //CGAL_LOG(Log::LOTS,  "Relabeling " << ts[i]->opposite()->curve() << " to " << k << std::endl);
     ts[i]->opposite()->curve().set_key(k);
     ts[i]->opposite()->vertex()->point().set_key(k);
-    //std::cout << "Relabeling " << ts[i]->prev()->curve() << " to " << k << std::endl;
+    //CGAL_LOG(Log::LOTS,  "Relabeling " << ts[i]->prev()->curve() << " to " << k << std::endl);
     ts[i]->prev()->curve().set_key(k);
-    //std::cout << "Relabeling " << ts[i]->prev()->opposite()->curve() 
-    //	      << " to " << k << std::endl;
+    //CGAL_LOG(Log::LOTS,  "Relabeling " << ts[i]->prev()->opposite()->curve() 
+    //	      << " to " << k << std::endl);
     ts[i]->prev()->opposite()->curve().set_key(k);
 
     CGAL_assertion(ts[i]->curve().key() == k );
@@ -844,7 +847,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::remove_target(Halfedge_handle ts[4],
 
   Halfedge_handle out;
   for (unsigned int i=0; i< 4; ++i) {
-    std::cout << ts[i]->curve() << "--" << ts[i]->vertex()->point() << std::endl;
+    CGAL_LOG(Log::LOTS,  ts[i]->curve() << "--" << ts[i]->vertex()->point() << std::endl);
     connect(ts[i]->opposite()->prev(), ts[i]->next());
     out=ts[i]->next();
     ts[i]->vertex()->set_halfedge(ts[i]->opposite()->prev());
@@ -856,8 +859,8 @@ Combinatorial_cross_section CGAL_AOS3_TARG::remove_target(Halfedge_handle ts[4],
   f->set_halfedge(out);
   CGAL::HalfedgeDS_items_decorator<HDS> dec;
   dec.set_face_in_face_loop(out, f);
-  std::cout << "Got face ";
-  write(out->face(), std::cout) << std::endl;
+  CGAL_LOG(Log::LOTS,  "Got face ");
+  CGAL_LOG_WRITE(Log::LOTS, write(out->face(), LOG_STREAM) << std::endl);
 
   {
     Vertex_handle rv= new_vertex(Point::make_special(Curve::Key::target_key()));
@@ -929,7 +932,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit_vertex(Vertex_const_handl
       Special vertices are, for example, ones in targets that are not
       in use.
     */
-    std::cout << "Skipping special point." << std::endl;
+    CGAL_LOG(Log::LOTS,  "Skipping special point." << std::endl);
     return;
   }
   //  bool printed_point=false;
@@ -1026,18 +1029,18 @@ CGAL_AOS3_TEMPLATE
 void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) const {
   unsigned int num_set=num_components_; //; = 1+ targets_.size();
 
-  write(std::cout);
-  std::cout << "Auditing const decorator..." << std::flush;
+  CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
+  CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(false, num_components_==1? 3: 2)) {
     CGAL_assertion(0);
     std::cerr << "Not valid." << std::endl;
   }
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
 
 
   std::set<HE_key> reachable;
-  std::cout << "Auditing vertices..." << std::flush;
+  CGAL_LOG(Log::LOTS,  "Auditing vertices..." << std::flush);
   std::set<Point> unique_points;
   for (CGAL_AOS3_TYPENAME HDS::Vertex_const_iterator it= hds_.vertices_begin(); 
        it != hds_.vertices_end(); ++it){
@@ -1064,7 +1067,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
 	CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle nc= it->halfedge();
 	do {
 	  ++nct;
-	  std::cout << nc->curve() << std::endl;
+	  CGAL_LOG(Log::LOTS,  nc->curve() << std::endl);
 	  if (nct==10) break;
 	  nc= nc->next()->opposite();
 	} while (nc != it->halfedge());
@@ -1072,9 +1075,9 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
       }
     } while (c != it->halfedge());
   }
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
 
-  std::cout << "Auditing halfedges..." << std::flush;
+  CGAL_LOG(Log::LOTS,  "Auditing halfedges..." << std::flush);
   for (CGAL_AOS3_TYPENAME HDS::Halfedge_iterator it= hds_.halfedges_begin();
        it != hds_.halfedges_end(); ++it){
     CGAL_AOS3_TYPENAME HDS::Halfedge_const_handle h= it;
@@ -1145,19 +1148,19 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     if (!extra_vertices) v_.audit(it);
   }
 
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
   
-  std::cout << "Auditing faces..." << std::flush;
+  CGAL_LOG(Log::LOTS,  "Auditing faces..." << std::flush);
   for (CGAL_AOS3_TYPENAME HDS::Face_iterator it= hds_.faces_begin();
        it != hds_.faces_end(); ++it){
     Face_handle f=it;
     CGAL_assertion( f->halfedge() != Halfedge_handle());
   }
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
 
   /* The number of connected componenets is 1+ # of saved targets*/
 
-  std::cout << "Auditing connectivity..." << std::flush;
+  CGAL_LOG(Log::LOTS,  "Auditing connectivity..." << std::flush);
   CGAL::Union_find<Vertex_const_handle> uf;
   CGAL_AOS3_TYPENAME  std::map<Vertex_const_handle, 
     CGAL_AOS3_TYPENAME CGAL::Union_find<Vertex_const_handle>::handle,
@@ -1174,7 +1177,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     uf.unify_sets(handles[it->vertex()],
 		  handles[it->opposite()->vertex()]);
   }
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
 
  
   CGAL_assertion(uf.number_of_sets()==num_set);
@@ -1184,7 +1187,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
     nothing edges is.
   */
 
-  /*std::cout << "Auditing targets..." << std::flush;
+  /*CGAL_LOG(Log::LOTS,  "Auditing targets..." << std::flush);
   for (CGAL_AOS3_TYPENAME HDS::Halfedge_iterator it= hds_.halfedges_begin();
        it != hds_.halfedges_end(); ++it){
     if (it->curve().key().is_target()) {
@@ -1202,9 +1205,9 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
   /*for (unsigned int i=0; i< targets_.size(); ++i){
     CGAL_assertion(targets_[i]->point().is_special());
     }*/
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
   
-  std::cout << "Auditing halfedge map..." << std::flush;
+  CGAL_LOG(Log::LOTS,  "Auditing halfedge map..." << std::flush);
   //CGAL_assertion(halfedges_.size() == t_.number_of_spheres());
   for (unsigned int i=0; i< halfedges_.size(); ++i){
     if (halfedges_[i] != Halfedge_handle()) {
@@ -1217,7 +1220,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
 	std::cerr << "Error in sphere halfedge for " << i 
 		  << " have ";
 	write(halfedges_[i], std::cerr) << " not rule is ";
-	write(halfedges_[i]->opposite()->prev(), std::cerr)
+	 write(halfedges_[i]->opposite()->prev(), std::cerr)
 	  << std::endl;
 	CGAL_assertion(halfedges_[i]->opposite()->prev()->curve().is_rule());
       }
@@ -1236,7 +1239,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
      }
    }
 
-  std::cout << "done." << std::endl;
+  CGAL_LOG(Log::LOTS,  "done." << std::endl);
 }
 
 CGAL_AOS3_TEMPLATE
@@ -1319,13 +1322,13 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::set_has_boundary(bool tf) {
     CGAL_precondition(hds_.size_of_vertices() ==0);
     CGAL_precondition(hds_.size_of_halfedges() ==0);
     CGAL_precondition(hds_.size_of_faces() ==1);
-    std::cout << "Initializing boundary\n";
+    CGAL_LOG(Log::LOTS,  "Initializing boundary\n");
     //inf_= hds_.faces_push_back(CGAL_AOS3_TYPENAME HDS::Face());
     Face_handle in= hds_.faces_push_back(CGAL_AOS3_TYPENAME HDS::Face());
-    Curve tc(Point::Key(Point::Key::BL), Curve::T_RULE);
-    Curve rc(Point::Key(Point::Key::BL), Curve::R_RULE);
-    Curve bc(Point::Key(Point::Key::TR), Curve::B_RULE);
-    Curve lc(Point::Key(Point::Key::TR), Curve::L_RULE);
+    Curve tc(Point::Key(Point::Key::LB), Curve::T_RULE);
+    Curve rc(Point::Key(Point::Key::LB), Curve::R_RULE);
+    Curve bc(Point::Key(Point::Key::UB), Curve::B_RULE);
+    Curve lc(Point::Key(Point::Key::UB), Curve::L_RULE);
     Halfedge_handle lh= new_halfedge(lc);
     Halfedge_handle bh= new_halfedge(bc);
     Halfedge_handle th= new_halfedge(tc);
@@ -1399,7 +1402,7 @@ CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Vertex_handle 
 Combinatorial_cross_section CGAL_AOS3_TARG::new_vertex(Point p) {
   //CGAL_precondition(p.is_valid() || p.is_special());
-  //std::cout << "Creating point " << p << std::endl;
+  //CGAL_LOG(Log::LOTS,  "Creating point " << p << std::endl);
   Vertex_handle v= hds_.vertices_push_back(CGAL_AOS3_TYPENAME  HDS::Vertex());
   v->point()=p;
   return v;
@@ -1420,11 +1423,11 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_halfedge( Curve ff){
 /*void Combinatorial_cross_section CGAL_AOS3_TARG::exchange_vertices(Halfedge_handle h,
 					     Halfedge_handle p){
 
-  std::cout << "Exchanging vertices with ";
-  write(h, std::cout);
-  std::cout << " and ";
-  write(p, std::cout);
-  std::cout << " as input" << std::endl;
+  CGAL_LOG(Log::LOTS,  "Exchanging vertices with ");
+  write(h, LOG_STREAM);
+  CGAL_LOG(Log::LOTS,  " and ");
+  CGAL_LOG_WRITE(Log::LOTS, write(p, LOG_STREAM));
+  CGAL_LOG(Log::LOTS,  " as input" << std::endl);
   CGAL_precondition(!p->vertex()->point().is_sphere_extremum());
   if (p->vertex() == h->vertex()) {
     Halfedge_handle n= p->next();
@@ -1578,10 +1581,10 @@ Combinatorial_cross_section CGAL_AOS3_TARG::intersect(Halfedge_handle ha, Halfed
   set_curve(p1.first, p1.second->curve().other_side());
   set_curve(p1.first->next(),  p0.first->curve().other_side());
   CGAL_precondition(p1.first->curve().key() != p1.first->next()->curve().key());
-  write(p0.first, std::cout) << std::endl;
-  write(p0.second, std::cout) << std::endl;
-  write(p1.first, std::cout) << std::endl;
-  write(p1.second, std::cout) << std::endl;
+  CGAL_LOG_WRITE(Log::LOTS, write(p0.first, LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(p0.second, LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(p1.first, LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, write(p1.second, LOG_STREAM) << std::endl);
   return std::make_pair(p1.first->next(), p1.first);
 }
 
@@ -1620,8 +1623,8 @@ CGAL_AOS3_TEMPLATE
 void 
 Combinatorial_cross_section CGAL_AOS3_TARG::delete_component(Vertex_handle vh) {
   CGAL_precondition(is_valid(vh));
-    std::cout << "Deleting component from ";
-    write(vh, std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS,  "Deleting component from ");
+    CGAL_LOG_WRITE(Log::LOTS, write(vh, LOG_STREAM) << std::endl);
     --num_components_;
     std::vector<Vertex_handle> stack;
     std::set<Vertex_handle, Handle_compare> vertices;
@@ -1651,30 +1654,31 @@ Combinatorial_cross_section CGAL_AOS3_TARG::delete_component(Vertex_handle vh) {
       }
     } while (!stack.empty());
     // hds_.vertices_erase(_1)
-    std::cout << "Deleting: \n";
+    CGAL_LOG(Log::LOTS,  "Deleting: \n");
     BOOST_FOREACH(Face_handle f, faces){
-      write(f, std::cout) << std::endl;
+      CGAL_LOG_WRITE(Log::LOTS, write(f, LOG_STREAM) << std::endl);
       hds_.faces_erase(f);
     }
     BOOST_FOREACH(Halfedge_handle h, edges){
-      write(h, std::cout) << std::endl;
+      CGAL_LOG_WRITE(Log::LOTS, write(h, LOG_STREAM) << std::endl);
       v_.on_delete_edge(h);
       h->set_face(Face_handle());
       hds_.edges_erase(h);
     }
     BOOST_FOREACH(Vertex_handle v, vertices) {
-      std::cout << v->point() << std::endl;
+      CGAL_LOG(Log::LOTS,  v->point() << std::endl);
       v->set_halfedge(Halfedge_handle());
       hds_.vertices_erase(v);
     } 
-    write(std::cout);
-    std::cout << "Auditing const decorator..." << std::flush;
+    CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
+    CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
     CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
-    if (!chds.is_valid(true, num_components_==1? 3: 2)) {
+    if (!chds.is_valid(false, num_components_==1? 3: 2)) {
+      chds.is_valid(true, num_components_==1? 3: 2)
       CGAL_assertion(0);
       std::cerr << "Not valid." << std::endl;
     }
-    std::cout << "done." << std::endl;
+    CGAL_LOG(Log::LOTS,  "done." << std::endl);
     
   }
 
@@ -1753,7 +1757,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::intersect_arcs(Halfedge_handle hl,
   hl= insert_vertex(vkl2, hl);
   hl= insert_vertex(vlk2, hl);
 
-  write(std::cout);
+  CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
   Halfedge_handle hk0=hk, hk1= hk->next(), hk2=hk->next()->next();
   Halfedge_handle hl0=hl, hl1= hl->next(), hl2=hl->next()->next();
   
@@ -1763,7 +1767,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::intersect_arcs(Halfedge_handle hl,
 				 hk1, hl0);
   Halfedge_handle e1= split_face(Curve(),
 				 hk0, hl1);
-  write(std::cout);
+  CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
 
  
   CGAL::HalfedgeDS_decorator<HDS> chds(hds_);
@@ -1821,11 +1825,11 @@ Combinatorial_cross_section CGAL_AOS3_TARG::unintersect_arcs(Halfedge_handle hl,
 CGAL_AOS3_TEMPLATE
 void
 Combinatorial_cross_section CGAL_AOS3_TARG::handle_new_edges(std::vector<Halfedge_handle>& edges) {
-  std::cout << "Handling edges: ";
+  CGAL_LOG(Log::LOTS,  "Handling edges: ");
   for (unsigned int i= 0; i< edges.size(); ++i) {
-    write(edges[i], std::cout) << ", ";
+    CGAL_LOG_WRITE(Log::LOTS, write(edges[i], LOG_STREAM) << ", ");
   }
-  std::cout << std::endl;
+  CGAL_LOG(Log::LOTS,  std::endl);
 
   std::sort(edges.begin(), edges.end(), Handle_compare());
   edges.erase(std::unique(edges.begin(), edges.end(), Handle_equal()), edges.end());

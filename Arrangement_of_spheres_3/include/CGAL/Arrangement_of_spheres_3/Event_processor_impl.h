@@ -30,8 +30,13 @@ void Event_processor CGAL_AOS3_TARG::handle_degeneracy() {
 CGAL_AOS3_TEMPLATE
 void Event_processor CGAL_AOS3_TARG::check_degeneracy() {  
   if (cs_.visitor().simulator()->current_time() 
-      == cs_.visitor().simulator()->next_event_time()) {
+      == cs_.visitor().simulator()->next_event_time()
+      && cs_.visitor().simulator()->current_time().compare_c( cs_.visitor().simulator()->next_event_time(), plane_coordinate(0))== EQUAL 
+      && cs_.visitor().simulator()->current_time().compare_c( cs_.visitor().simulator()->next_event_time(), plane_coordinate(1))== EQUAL ) {
     std::cout << "Degeneracy at " << cs_.visitor().simulator()->current_time() << std::endl;
+    std::cout << "Event at " << cs_.visitor().simulator()->next_event_time() << std::endl;
+    std::cout << "Next event is " << cs_.visitor().simulator()->next_event() << std::endl;
+    std::cout << *cs_.visitor().simulator() <<std::endl;
     throw Degeneracy();
   } else {
     std::cout << "Current time is " << cs_.visitor().simulator()->current_time()  
@@ -112,8 +117,8 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
 
     // have problem with more than one vertex on face
 
-    std::cout << "Intersecting on face ";
-    cs_.write(f, std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS, "Intersecting on face ");
+    CGAL_LOG_WRITE(Log::LOTS,cs_.write(f, LOG_STREAM) << std::endl);
 
     Halfedge_handle hk, hl;
     
@@ -158,9 +163,9 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l) {
 	else hl= hl_cand.back();
       }
     }
-    std::cout << "Intersection edges are ";
-    cs_.write(hk, std::cout) << " and ";
-    cs_.write(hl, std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS, "Intersection edges are ");
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hk, LOG_STREAM) << " and ");
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hl, LOG_STREAM) << std::endl);
 
     
 
@@ -244,14 +249,20 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, S
       Halfedge_handle hk=cs_.a_halfedge(k), khs=hk;
       
       do {
-	if (hk->next()->next()->next() == hk) {
+	
+	if (hk->next()->next()->next() == hk 
+	    && hk->next()->curve().is_arc() 
+	    && hk->next()->next()->curve().is_arc()) {
 	  if ((hk->next()->curve().key() == l 
 	       || hk->next()->next()->curve().key() == l)
-	    && (hk->next()->curve().key() == m
-		|| hk->next()->next()->curve().key() == m)){
+	      && (hk->next()->curve().key() == m
+		  || hk->next()->next()->curve().key() == m)){
 	    cands.push_back(hk);
 	  }
-	} else if (hk->opposite()->next()->next()->next()->opposite()==hk){
+	} 
+	if (hk->opposite()->next()->next()->next()->opposite()==hk
+	    && hk->opposite()->next()->curve().is_arc() 
+	    && hk->opposite()->next()->next()->curve().is_arc()){
 	  if ((hk->opposite()->next()->curve().key() == l 
 	       || hk->opposite()->next()->next()->curve().key() == l)
 	      && (hk->opposite()->next()->curve().key() == m
@@ -267,6 +278,12 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, S
       }
     }
 
+    CGAL_LOG(Log::LOTS, "Cands for I3 are: ");
+    for (unsigned int i=0; i< cands.size(); ++i) {
+      CGAL_LOG_WRITE(Log::LOTS, cs_.write(cands[i], LOG_STREAM) << ": ");
+      CGAL_LOG_WRITE(Log::LOTS, cs_.write(cands[i]->face(), LOG_STREAM) << std::endl);
+    }
+
     Halfedge_handle hk;
     if (cands.size() >1) {
       for (unsigned int i=0; i< cands.size(); ++i){
@@ -274,7 +291,7 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, S
 	    && icsl.equal_points(cands[i]->next()->vertex(), cs_.visitor().simulator()->current_time())
 	    &&  icsl.equal_points(cands[i]->next()->next()->vertex(), cs_.visitor().simulator()->current_time())){
 	  CGAL_assertion(hk== Halfedge_handle());
-	  hk= cands[i];
+	  hk= cands[i]; //cands.clear();
 #ifdef NDEBUG
 	  break;
 #endif
@@ -282,7 +299,7 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, S
       }
     } else {
       hk=cands.back();
-      cands.clear();
+      //cands.clear();
     }
 
     {
@@ -299,26 +316,26 @@ void Event_processor CGAL_AOS3_TARG::intersect(Sphere_3_key k, Sphere_3_key l, S
 		     || hk->next()->next()->curve().key() == m);
     }
 
-    std::cout << "Triple edges are \n";
-    cs_.write(hk, std::cout) << std::endl;
-    cs_.write(hk->next(), std::cout) << std::endl;
-    cs_.write(hk->next()->next(), std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS, "Triple edges are \n");
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hk, LOG_STREAM) << std::endl);
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hk->next(), LOG_STREAM) << std::endl);
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hk->next()->next(), LOG_STREAM) << std::endl);
 
     Halfedge_handle hkn= cs_.next_edge_on_circle(hk)->opposite();
     Halfedge_handle hkp= cs_.next_edge_on_circle(hk->opposite())->opposite();
   
-    cs_.write(hkn, std::cout) << " is hkn\n";
-    cs_.write(hkp, std::cout) << " is hkp\n";
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hkn, LOG_STREAM) << " is hkn\n");
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hkp, LOG_STREAM) << " is hkp\n");
     
     Halfedge_handle hknt= hkn->opposite()->prev()->prev();
     Halfedge_handle hkpt= hkp->next()->next();
 
-    cs_.write(hknt, std::cout) << " is hknt\n";
-    cs_.write(hkpt, std::cout) << " is hkpt\n";
-  
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hknt, LOG_STREAM) << " is hknt\n");
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(hkpt, LOG_STREAM) << " is hkpt\n");
+    
     Point pn= hkp->vertex()->point(), pp= hkn->vertex()->point();
   
-    std::cout << "Points are " << pn << " and " << pp << std::endl;
+    CGAL_LOG(Log::LOTS, "Points are " << pn << " and " << pp << std::endl);
     Vertex_handle nvhn= cs_.new_vertex(pn);
     Vertex_handle nvhp= cs_.new_vertex(pp);
 
@@ -369,10 +386,10 @@ void Event_processor CGAL_AOS3_TARG::process_aar(Halfedge_handle h) {
 					h->opposite()->vertex()->point().sphere_key(1),
 					h->vertex()->point().rule_key(),
 					h->vertex()->point().rule_constant_coordinate());
-    std::cout << "advance AAR of " << h->opposite()->vertex()->point().sphere_key(0) << " " 
+    CGAL_LOG(Log::LOTS, "advance AAR of " << h->opposite()->vertex()->point().sphere_key(0) << " " 
 	      << h->opposite()->vertex()->point().sphere_key(1) << " "
 	      << h->vertex()->point().rule_key() << " "
-	      << h->vertex()->point().rule_constant_coordinate() << std::endl;
+	     << h->vertex()->point().rule_constant_coordinate() << std::endl);
 
     {
       ICSL icsl(tr_, cs_);
@@ -392,9 +409,9 @@ void Event_processor CGAL_AOS3_TARG::process_aar(Halfedge_handle h) {
     
     Vertex_handle nv= cs_.new_vertex(Combinatorial_vertex(target->curve(),
 							  rule->curve()));
-    std::cout << "New vertex of " << nv->point() << std::endl;
+    CGAL_LOG(Log::LOTS, "New vertex of " << nv->point() << std::endl);
     cs_.insert_vertex(nv, target);
-    std::cout << "Inserted" << std::endl;
+    CGAL_LOG(Log::LOTS, "Inserted" << std::endl);
     cs_.move_target(rule, nv, true);
     cs_.audit();
   } catch (CGAL_CATCH_DEGENERACY) {
@@ -437,22 +454,30 @@ void Event_processor CGAL_AOS3_TARG::process_rar(Halfedge_handle h) {
     // pick which to move, make sure don't move extremum
     Halfedge_handle move_rule= cs_.cross_edge(h->opposite())->opposite();
     CGAL_assertion(move_rule->vertex() == h->opposite()->vertex());
-    Halfedge_handle onto_edge= cs_.cross_edge(h);
-    if (onto_edge->face() != move_rule->face() 
+    Halfedge_handle onto_edge;
+    if (move_rule->next() != h && move_rule->next() != h->opposite()) {
+      onto_edge=move_rule->opposite()->prev()->prev();
+    } else {
+      onto_edge=move_rule->next()->next();
+    }
+
+    //cs_.cross_edge(h);
+    /*if (onto_edge->face() != move_rule->face() 
 	&& onto_edge->face() != move_rule->opposite()->face()){
       onto_edge= onto_edge->opposite();
-    }
+      }*/
     Halfedge_handle other_rule= cs_.cross_edge(h);
     // handle them not being on the same side
-    if (onto_edge->face() != move_rule->face() 
+    /* if (onto_edge->face() != move_rule->face() 
 	&& onto_edge->face() != move_rule->opposite()->face()){
       Vertex_handle ov= move_rule->vertex();
       cs_.move_target(move_rule, other_rule->vertex(), false);
       cs_.move_target(other_rule, ov, true);
-    } else {
-      Point npt(move_rule->curve(), other_rule->curve());
+      } else*/
+    {
+      Point npt(move_rule->curve(), onto_edge->curve());
       Vertex_handle nv= cs_.new_vertex(npt);
-      cs_.insert_vertex(nv, other_rule);
+      cs_.insert_vertex(nv, onto_edge);
       cs_.move_target(move_rule, nv, true);
     }
   } catch (CGAL_CATCH_DEGENERACY) {
@@ -497,8 +522,8 @@ void Event_processor CGAL_AOS3_TARG::process_arr(Halfedge_handle h) {
     CGAL_assertion(h->opposite()->vertex()->point().is_rule_rule());
     Halfedge_handle xr= cs_.cross_edge(h->opposite())->opposite(); // inward pointing
     //CGAL_assertion(xr->vertex() == h->vertex());
-    std::cout << "XR is ";
-    cs_.write(xr, std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS, "XR is ");
+    CGAL_LOG_WRITE(Log::LOTS, cs_.write(xr, LOG_STREAM) << std::endl);
 
     ICSR ics(tr_, cs_);
     ics.roll_back_rule(cs_.visitor().simulator()->current_time(), xr);
@@ -508,18 +533,18 @@ void Event_processor CGAL_AOS3_TARG::process_arr(Halfedge_handle h) {
       if (cs_.is_redundant(xr)) {
 	cs_.join_face(xr, true);
 	xr= nxr->opposite();
-	std::cout << "XR is ";
-	cs_.write(xr, std::cout) << std::endl;
+	CGAL_LOG(Log::LOTS, "XR is ");
+	CGAL_LOG_WRITE(Log::LOTS, cs_.write(xr, LOG_STREAM) << std::endl);
 	nxr=Halfedge_handle();
       } else {
 	nxr= nxr->opposite();
-	std::cout << "NXR is ";
-	cs_.write(nxr, std::cout) << std::endl;
+	CGAL_LOG(Log::LOTS, "NXR is ");
+	CGAL_LOG_WRITE(Log::LOTS, cs_.write(nxr, LOG_STREAM) << std::endl);
       }
     }
     if (cs_.is_redundant(xr)) {
-      std::cout << "Joining redundant faces on edge ";
-      cs_.write(xr, std::cout) << std::endl;
+      CGAL_LOG(Log::LOTS, "Joining redundant faces on edge ");
+      CGAL_LOG_WRITE(Log::LOTS, cs_.write(xr, LOG_STREAM) << std::endl);
       cs_.join_face(xr, true);
     } else {
       do {
@@ -529,8 +554,8 @@ void Event_processor CGAL_AOS3_TARG::process_arr(Halfedge_handle h) {
 	} else {
 	  target_h=h->next();
 	}
-	std::cout << "target is ";
-	cs_.write(target_h, std::cout) << std::endl;
+	CGAL_LOG(Log::LOTS, std::cout << "target is ");
+	CGAL_LOG_WRITE(Log::LOTS, cs_.write(target_h, LOG_STREAM) << std::endl);
 	
 	Point pt(xr->curve(), target_h->curve());
 	Vertex_handle nv= cs_.new_vertex(pt);
@@ -561,28 +586,27 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
     if (!larger && i==0 || larger && i==1) {
       index=(index+2)%4;
     }
-    std::cout << "Extremum event between " << k << " and " << l << " on rules ";
-    if (i==0) std::cout << "TB";
-    else std::cout << "LR";
-    std::cout << "   " << index << std::endl;
-
+    CGAL_LOG(Log::LOTS, "Extremum event between " << k << " and "
+	     << l << " on rules " << (i==0? "TB": "LR") << "   "
+	     << index << std::endl);
+    
     // find outwards pointing rule edge
     Halfedge_handle hk= cs_.a_halfedge(k);
     while (!hk->vertex()->point().is_sphere_extremum() 
 	   || hk->vertex()->point().is_sphere_extremum()  
 	   && hk->vertex()->point().sphere_extremum_index().index() != index) {
-      cs_.write(hk, std::cout) << " " << hk->vertex()->point().is_sphere_extremum() 
+      CGAL_LOG_WRITE(Log::LOTS,cs_.write(hk, LOG_STREAM) << " " << hk->vertex()->point().is_sphere_extremum() 
 			       << " " <<  (hk->vertex()->point().is_sphere_extremum()? 
 					   hk->vertex()->point().sphere_extremum_index().index()
-					   : -1) << std::endl;
+					   : -1) << std::endl);
       hk= cs_.next_edge_on_circle(hk);
     }
     Halfedge_handle rule= hk->opposite()->prev()->opposite(); // outward rule
  
 
-    std::cout << index << " hk is ";
-    cs_.write(hk, std::cout) << " and rule is ";
-    cs_.write(rule, std::cout) << std::endl;
+    CGAL_LOG(Log::LOTS, std::cout << index << " hk is ");
+    CGAL_LOG_WRITE(Log::LOTS,cs_.write(hk, LOG_STREAM) << " and rule is ");
+    CGAL_LOG_WRITE(Log::LOTS,cs_.write(rule, LOG_STREAM) << std::endl);
 
     if (tr_.compare_sphere_centers_c(k,l, plane_coordinate(i)) == CGAL::EQUAL) {
       std::cout << "Centers line up" << std::endl;
@@ -594,9 +618,9 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
       ICSR icsr(tr_, cs_);
       ICSL icsl(tr_, cs_);
       icsr.roll_back_rule(cs_.visitor().simulator()->current_time(), rule);
-      std::cout << "hk is now ";
-      cs_.write(hk, std::cout) << " and rule is ";
-      cs_.write(rule, std::cout) << std::endl;
+      CGAL_LOG(Log::LOTS, std::cout << "hk is now ");
+      CGAL_LOG_WRITE(Log::LOTS,cs_.write(hk, LOG_STREAM) << " and rule is ");
+      CGAL_LOG_WRITE(Log::LOTS,cs_.write(rule, LOG_STREAM) << std::endl);
 
       Halfedge_handle middle_edge; // in middle point to rule
       Face_handle new_face;
@@ -615,14 +639,14 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
 	middle_edge= hk;
       } else {
 	middle_edge=cs_.next_edge_on_circle(hk)->opposite();
-	std::cout << "Middle edge is ";
-	cs_.write(middle_edge, std::cout) << std::endl;
+	CGAL_LOG(Log::LOTS, "Middle edge is ");
+	CGAL_LOG_WRITE(Log::LOTS,cs_.write(middle_edge, LOG_STREAM) << std::endl);
 	CGAL_assertion(icsl.equal_points(middle_edge->opposite()->vertex(), 
 					 cs_.visitor().simulator()->current_time()));
 	//middle_edge=cs_.next_edge_on_circle(hk)->opposite();
       }
-      std::cout << "Middle is ";
-      cs_.write(middle_edge, std::cout) << std::endl;
+      CGAL_LOG(Log::LOTS, "Middle is ");
+      CGAL_LOG_WRITE(Log::LOTS,cs_.write(middle_edge, LOG_STREAM) << std::endl);
 
       
       Halfedge_handle new_extremum_location= cs_.next_edge_on_circle(middle_edge->opposite());
@@ -630,8 +654,8 @@ void Event_processor CGAL_AOS3_TARG::process_aae(Sphere_3_key k, Sphere_3_key l,
       if (new_extremum_location->curve().is_inside()) search_face= new_extremum_location->opposite()->face();
       else search_face=  new_extremum_location->face();
 
-      std::cout << "New extremum is ";
-      cs_.write(new_extremum_location, std::cout) << std::endl;
+      CGAL_LOG(Log::LOTS, "New extremum is ");
+      CGAL_LOG_WRITE(Log::LOTS,cs_.write(new_extremum_location, LOG_STREAM) << std::endl);
 
       cs_.set_curve(middle_edge, cs_.next_edge_on_circle(middle_edge)->curve());
       cs_.join_face(rule, true);

@@ -111,7 +111,7 @@ public:
      linear constructions----------------------------------------------------
   */
 
-  CGAL_GET(FT, inf, return center(Key(Key::TR))[1]);
+  CGAL_GET(FT, inf, return center(Key(Key::UB))[1]);
 
   // the point described by the vertex (a,b) should be on the positive side
   Plane_3 separating_plane(Key a, Key b) const ;

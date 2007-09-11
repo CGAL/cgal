@@ -53,6 +53,11 @@ public:
   Sphere_line_intersection(): l_(Point_3(0,0,0), Vector_3(0,0,0)),
 			      has_exact_(false){
     CGAL_assertion(l_.is_degenerate());
+    if (0) {
+      double d= approximate_coordinate(0);
+      d+= interval_coordinate(0).first;
+      std::cout << d << std::endl;
+    }
   }
 
   /*Sphere_line_intersection(NT n):  type_(false){
@@ -103,6 +108,15 @@ public:
   
   bool has_exact() const {
     return has_exact_;
+  }
+
+  Bbox_3 bbox() const {
+    return Bbox_3(interval_coordinate(Coordinate_index::X()).first,
+		  interval_coordinate(Coordinate_index::Y()).first,
+		  interval_coordinate(Coordinate_index::Z()).first,
+		  interval_coordinate(Coordinate_index::X()).second,
+		  interval_coordinate(Coordinate_index::Y()).second,
+		  interval_coordinate(Coordinate_index::Z()).second);
   }
 
   typename CGAL::Root_of_traits<NT>::RootOf_2 
@@ -164,7 +178,7 @@ public:
       NT disc= b*b-4*a*c;
       CGAL_assertion(disc >= 0);
       if (a==0) {
-	std::cout << l_ << std::endl << s_ << std::endl;
+	CGAL_LOG(Log::SOME,l_ << std::endl << s_ << std::endl);
       }
       /*if (a==0) { 
 	CGAL_assertion(s_.squared_radius() ==0);
@@ -268,9 +282,9 @@ public:
 
 
 
-  CGAL::Comparison_result compare(const Sphere_line_intersection &o, Coordinate_index i) const;
-  CGAL::Comparison_result compare(const Point_3 &o, Coordinate_index i) const;
-  CGAL::Comparison_result compare( NT o, Coordinate_index i) const;
+  CGAL::Comparison_result compare_c(const Sphere_line_intersection &o, Coordinate_index i) const;
+  CGAL::Comparison_result compare_c(const Point_3 &o, Coordinate_index i) const;
+  CGAL::Comparison_result compare_c( NT o, Coordinate_index i) const;
 
   const Quadratic_NT& exact_coordinate(Coordinate_index i) const {
     if (!has_exact_) {
@@ -306,9 +320,17 @@ public:
     return CGAL::to_double(exact_coordinate(i));
   }
 
-  std::pair<double, double> interval_coordinate(Coordinate_index i) const {
+  double approximate_coordinate(int i) const {
     // NOTE this sucks
+    return CGAL::to_double(exact_coordinate(Coordinate_index(i)));
+  }
+
+  std::pair<double, double> interval_coordinate(Coordinate_index i) const {
     return CGAL::to_interval(exact_coordinate(i));
+  }
+
+  std::pair<double, double> interval_coordinate(int i) const {
+     return CGAL::to_interval(exact_coordinate(Coordinate_index(i)));
   }
 
   void swap(Sphere_line_intersection &o) {
@@ -334,31 +356,31 @@ CGAL_OUTPUT1(Sphere_line_intersection);
 
 
 template <class K>
-inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K> &o, Coordinate_index CC) const {
+inline CGAL::Comparison_result Sphere_line_intersection<K>::compare_c(const Sphere_line_intersection<K> &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   CGAL_assertion(o.is_valid());
-  write(std::cout) << std::endl;
-  o.write(std::cout) << std::endl;
+  CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM) << std::endl);
+  CGAL_LOG_WRITE(Log::LOTS, o.write(LOG_STREAM) << std::endl);
   //double dmc= CGAL::to_double(mc);
   //double doc= CGAL::to_double(oc);
   //std::cout << "Performing exact comparison " << mc << " vs " << oc << std::endl;
   Comparison_result ans= CGAL::compare(exact_coordinate(CC), o.exact_coordinate(CC));
 #ifndef NDEBUG
-  write(std::cout) << std::endl;
-  o.write(std::cout) << std::endl;
+  /*write(std::cout) << std::endl;
+    o.write(std::cout) << std::endl;*/
  
   Comparison_result check= CGAL::compare(root_of_2(CC),
 					 o.root_of_2(CC));
   if (ans != check) {
-    std::cout << ans << " " << check << std::endl;
-    std::cout << exact_coordinate(CC) << ": " 
-	      << Interval_nt<true>(to_interval(exact_coordinate(CC))) << std::endl;
-    std::cout << o.exact_coordinate(CC)
-	      << Interval_nt<true>(to_interval(o.exact_coordinate(CC))) << std::endl;
-    std::cout << root_of_2(CC)
-	      << Interval_nt<true>(to_interval(root_of_2(CC))) << std::endl;
-    std::cout <<  o.root_of_2(CC)
-	      << Interval_nt<true>(to_interval(o.root_of_2(CC))) << std::endl;
+    CGAL_ERROR(ans << " " << check);
+    CGAL_ERROR(exact_coordinate(CC) << ": " 
+	       << Interval_nt<true>(to_interval(exact_coordinate(CC))));
+    CGAL_ERROR(o.exact_coordinate(CC)
+	       << Interval_nt<true>(to_interval(o.exact_coordinate(CC))));
+    CGAL_ERROR(root_of_2(CC)
+	       << Interval_nt<true>(to_interval(root_of_2(CC))));
+    CGAL_ERROR(o.root_of_2(CC)
+	       << Interval_nt<true>(to_interval(o.root_of_2(CC))));
     CGAL_assertion(0);
   }
 #endif
@@ -369,11 +391,11 @@ inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere
 }
 
 template <class K>
-inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K>::Point_3 &o, Coordinate_index CC) const {
+inline CGAL::Comparison_result Sphere_line_intersection<K>::compare_c(const Sphere_line_intersection<K>::Point_3 &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   //Quadratic_NT mc= exact_coordinate(CC);
   NT oc= o[CC.index()];
-  return compare(oc, CC);
+  return compare_c(oc, CC);
   //if (mc < oc) return CGAL::SMALLER;
   //else if (oc < mc) return CGAL::LARGER;
   //else return CGAL::EQUAL;
@@ -381,7 +403,7 @@ inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere
 
 
 template <class K>
-inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(NT o, Coordinate_index CC) const {
+inline CGAL::Comparison_result Sphere_line_intersection<K>::compare_c(NT o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   Quadratic_NT mc= exact_coordinate(CC);
   return CGAL::compare(mc, o);

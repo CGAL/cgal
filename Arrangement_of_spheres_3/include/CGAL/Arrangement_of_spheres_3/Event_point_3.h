@@ -1,33 +1,29 @@
 #ifndef CGAL_ARRANGEMENT_OF_SPHERES_EP_H
 #define CGAL_ARRANGEMENT_OF_SPHERES_EP_H
-#include <CGAL/Arrangement_of_spheres_3/Sphere_line_intersection.h>
+#include <CGAL/Arrangement_of_spheres_3_basic.h>
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Tools/utility_macros.h>
 
 CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE 
 
 template <class Tr>
-class Event_point_3: public Sphere_line_intersection<Tr> {
+class Event_point_3: public Tr::Sphere_point_3 {
   typedef Event_point_3 This;
-  typedef Sphere_line_intersection<Tr> P;
+  typedef typename Tr::Sphere_point_3 P;
 public:
   Event_point_3(){}
   Event_point_3(P sp3): P(sp3) {CGAL_assertion(sp3.is_valid());}
-  Event_point_3(typename P::NT t): P(typename P::Sphere_3(sweep_point<typename P::Point_3>(t), 0), 
-				     typename P::Line_3(typename P::Point_3(0,0,0), 
-							sweep_vector<typename P::Vector_3>())){
+  Event_point_3(typename P::NT t): P(sweep_point<typename P::Point_3>(t)){
 
     //std::cout << P::sphere() << std::endl;
     //std::cout << P::line() << std::endl;
   }
-  Event_point_3(const typename P::Sphere_3 &s,
-		const typename P::Line_3 &l): P(s,l){}
-
+  
   CGAL::Comparison_result compare(const This &o) const {
-    return P::compare(o, sweep_coordinate());
+    return P::compare_c(o, sweep_coordinate());
   }
   
-  using P::compare;
+  //using P::compare;
 
   CGAL_COMPARISONS;
   
@@ -38,11 +34,12 @@ public:
 
 
   std::pair<double, double> approximating_interval(double=0) const {
-    return P::interval_coordinate(sweep_coordinate());
+    CGAL_precondition(sweep_coordinate().index()==0);
+    return std::make_pair(P::bbox().xmin(), P::bbox().xmax());
   }
 
   double approximation(double =0) const {
-    return P::approximate_coordinate(sweep_coordinate());
+    return .5*(approximating_interval().first+approximating_interval().second);
   }
   
 };

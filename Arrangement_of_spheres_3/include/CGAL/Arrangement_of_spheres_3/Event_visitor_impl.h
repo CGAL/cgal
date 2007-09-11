@@ -46,8 +46,8 @@ void Event_visitor CGAL_AOS3_TARG::set_cross_section(Combinatorial_cross_section
 CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::on_new_edge(Halfedge_handle h){
   if (!h->curve().key().is_input()) return;
-  std::cout << "processing edge " << h->opposite()->vertex()->point()
-	    << "--" << h->curve() << "--" << h->vertex()->point() << std::endl;
+  CGAL_LOG(Log::LOTS, "processing edge " << h->opposite()->vertex()->point()
+	   << "--" << h->curve() << "--" << h->vertex()->point() << std::endl);
   
   CGAL_precondition(h->event() == Event_key());
   new_event(h);
@@ -177,12 +177,12 @@ CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
   if (!should_have_certificate(h)) {
     set_event(h, Event_key());
-    std::cout << "Skipping " << h->opposite()->vertex()->point() << "--" 
-	      << h->curve() << "--" << h->vertex()->point() << std::endl;
+    CGAL_LOG(Log::LOTS, "Skipping " << h->opposite()->vertex()->point() << "--" 
+	     << h->curve() << "--" << h->vertex()->point() << std::endl);
     return;
   } else {
-    std::cout << "Making event for " << h->opposite()->vertex()->point() << "--" 
-	      << h->curve() << "--" << h->vertex()->point() << std::endl;
+    CGAL_LOG(Log::LOTS, "Making event for " << h->opposite()->vertex()->point() << "--" 
+	     << h->curve() << "--" << h->vertex()->point() << std::endl);
   
   }
   Event_key ek=sim_->null_event();
@@ -202,10 +202,10 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	}*/
 
       do {
-	std::cout << "create AAR of " << aav->point().sphere_key(0) << " " 
+	CGAL_LOG(Log::LOTS, "create AAR of " << aav->point().sphere_key(0) << " " 
 		  << aav->point().sphere_key(1) << " "
 		  << arv->point().rule_key() << " "
-		  << arv->point().rule_constant_coordinate() << std::endl;
+		 << arv->point().rule_constant_coordinate() << std::endl);
 	CGAL_AOS3_TYPENAME Traits::Event_point_3 ep= tr_.circle_cross_rule_event(aav->point().sphere_key(0),
 										 aav->point().sphere_key(1),
 										 arv->point().rule_key(),
@@ -218,10 +218,10 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::AAR_event(j_, h));
 	    break;
 	  } else {
-	    std::cout << "advance AAR of " << aav->point().sphere_key(0) << " " 
+	    CGAL_LOG(Log::LOTS, "advance AAR of " << aav->point().sphere_key(0) << " " 
 		      << aav->point().sphere_key(1) << " "
 		      << arv->point().rule_key() << " "
-		      << arv->point().rule_constant_coordinate() << std::endl;
+		     << arv->point().rule_constant_coordinate() << std::endl);
 
 	    tr_.advance_circle_cross_rule_event(aav->point().sphere_key(0),
 						aav->point().sphere_key(1),
@@ -369,8 +369,8 @@ void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a,
 
 CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::process_triple(Halfedge_handle h) {
-  std::cout << "Processing triple for " << h->opposite()->vertex()->point() 
-	    << "--" << h->curve() << "--" << h->vertex()->point() << std::endl;
+  CGAL_LOG(Log::LOTS, "Processing triple for " << h->opposite()->vertex()->point() 
+	   << "--" << h->curve() << "--" << h->vertex()->point() << std::endl);
   if (h->curve().is_arc()
       && h->next()->curve().is_arc()
       && h->next()->next()->curve().is_arc()) {
@@ -385,6 +385,10 @@ void Event_visitor CGAL_AOS3_TARG::process_triple(Halfedge_handle h) {
       Event_pair ep= tr_.intersection_3_events(a,b,c);  
       if (ep.first.is_valid()) {
 	CGAL_assertion(ep.first <= ep.second);
+	if (a>b) std::swap(a,b);
+	if (b>c) std::swap(b,c);
+	if (a>b) std::swap(a,b);
+     
 	if (ep.first >= sim_->current_time()) {
 	  Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::I3_event(j_, a,b,c));
 	  if (k != Event_key() && k != sim_->null_event()) {

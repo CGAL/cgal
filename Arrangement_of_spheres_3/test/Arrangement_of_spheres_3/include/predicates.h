@@ -166,9 +166,9 @@ SP random_sp(const P &pt) {
   if ((sphere.center()-pt)*lv < 0) lv =-lv;
   L line(pt, lv);
   SP ret(sphere, line);
-  CGAL_assertion(ret.compare(pt, plane_x)==CGAL::EQUAL);
-  CGAL_assertion(ret.compare(pt, plane_y)==CGAL::EQUAL);
-  CGAL_assertion(ret.compare(pt, sweep)==CGAL::EQUAL);
+  CGAL_assertion(ret.compare_c(pt, plane_x)==CGAL::EQUAL);
+  CGAL_assertion(ret.compare_c(pt, plane_y)==CGAL::EQUAL);
+  CGAL_assertion(ret.compare_c(pt, sweep)==CGAL::EQUAL);
   return ret;
 }
 

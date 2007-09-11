@@ -201,13 +201,11 @@ public:
   template <class It, class Cit>
   void stitch_in(It ib, It ie, It fb, Cit cb) {
     CGAL_precondition(num_components_ > 1);
-    std::cout << "Stitching: " << std::endl;
+    CGAL_LOG(Log::LOTS, "Stitching: " << std::endl);
     Cit cc=cb;
     for (It ic= ib, fc= fb; ic != ie; ++ic, ++fc, ++cc) {
-      write(*ic, std::cout);
-      std::cout << " to ";
-      write(*fc, std::cout);
-      std::cout << " with " << *cc << std::endl;
+      CGAL_LOG_WRITE(Log::LOTS, write(*ic, LOG_STREAM) << " to ");
+      CGAL_LOG_WRITE(Log::LOTS, write(*fc, LOG_STREAM) << " with " << *cc << std::endl);
     }
 
     for (It ic= ib, fc= fb; ic != ie; ++ic, ++fc, ++cc) {
@@ -310,11 +308,11 @@ public:
     }
 #endif
     
-    std::cout << "Snipping out ";
+    CGAL_LOG(Log::LOTS, "Snipping out ");
     for (It c= b; c != e; ++c) {
-      write(*c, std::cout) << ", ";
+      CGAL_LOG_WRITE(Log::LOTS, write(*c, LOG_STREAM) << ", ");
     }
-    std::cout << std::endl;
+    CGAL_LOG(Log::LOTS, std::endl);
     ++num_components_;
     It c=b;
     ++c; ++c;
@@ -356,6 +354,7 @@ public:
 
     v_.on_delete_edge(h1);
     v_.on_delete_edge(h2);
+    v_.on_merge_faces(h1);
 
     Halfedge_handle inside, outside;
     Face_handle f= h1->face();
@@ -368,7 +367,7 @@ public:
     } else if (h2->prev() != h1->opposite()) {
       inside= h2->prev();
     } else {
-      std::cout << "Single vertex remaining" << std::endl;
+      CGAL_LOG(Log::LOTS, "Single vertex remaining" << std::endl);
       h1->opposite()->vertex()->set_halfedge(Halfedge_handle());
     }
     if (h1->next() != h2->opposite()) {

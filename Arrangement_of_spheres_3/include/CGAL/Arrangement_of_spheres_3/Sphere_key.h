@@ -5,7 +5,7 @@ CGAL_AOS3_BEGIN_INTERNAL_NAMESPACE
 
 struct Sphere_key{
   typedef Sphere_key This;
-  enum Labels {BL=-2, TR=-1, TEMP=-3, TARGET=-5, INVALID=-4};
+  enum Labels {LB=-2, UB=-1, TEMP=-3, TARGET=-5, INVALID=-4};
   Sphere_key(): id_(INVALID){}
   explicit Sphere_key(int i): id_(i){}
   CGAL_GETNR(int, index,return id_);
@@ -21,16 +21,16 @@ struct Sphere_key{
 
   std::ostream &write(std::ostream &out) const {
     if (id_==TARGET) out << "tar";
-    else if (id_ == TR) out << "tr";
-    else if (id_ == BL) out << "bl";
+    else if (id_ == UB) out << "tr";
+    else if (id_ == LB) out << "bl";
     else out << id_;
     return out;
   }
 
   static Sphere_key target_key() {return Sphere_key(TARGET);}
   static Sphere_key temp_key() {return Sphere_key(TEMP);}
-  static Sphere_key bl_key() {return Sphere_key(BL);}
-  static Sphere_key tr_key() {return Sphere_key(TR);}
+  static Sphere_key lb_key() {return Sphere_key(LB);}
+  static Sphere_key ub_key() {return Sphere_key(UB);}
 
  
 

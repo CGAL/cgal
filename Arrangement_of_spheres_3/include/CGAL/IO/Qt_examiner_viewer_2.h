@@ -37,6 +37,8 @@ public:
   typedef K::Segment_2 Segment;
   typedef Circular_k::Circular_arc_2 Circular_arc;
 
+  struct Erase{};
+
   Qt_examiner_viewer_2(NT scale=1): window_(new P(600,600)),
 				    scale_(scale)
   {
@@ -150,6 +152,14 @@ public:
 
   void set_is_dirty(bool tf);
 
+  QMutex *lock() {
+    return layers_[cur_layer_]->mutex();
+  }
+
+  void clear_layer() {
+    layers_[cur_layer_]->clear();
+  }
+
 private: // private data member
 
   /*void redraw() {
@@ -194,6 +204,8 @@ private: // private data member
       QMutexLocker lock(&mutex_);
     }
 
+    QMutex* mutex() {return &mutex_;}
+    
     CGAL::Bbox_2 bounding_box();
   
     void draw();
@@ -232,6 +244,13 @@ private: // private data member
 struct Qt_ev_layer_tag{};
 
 typedef CGAL::Label<Qt_ev_layer_tag> Layer;
+
+inline Qt_examiner_viewer_2 &operator<<(Qt_examiner_viewer_2& e,
+					const Qt_examiner_viewer_2::Erase ) {
+  e.clear_layer();
+  return e;
+}
+
 
 inline Qt_examiner_viewer_2 &operator<<(Qt_examiner_viewer_2& e,
 					const Layer &l) {

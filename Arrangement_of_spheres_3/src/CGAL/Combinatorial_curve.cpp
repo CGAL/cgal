@@ -84,7 +84,7 @@ inline bool Combinatorial_curve::is_compatible_location(int i) const {
       else return true;
     } else {
       if (!(i & lOUT_BIT)) return false;
-      if (!(i & pt_)) return false;
+      if (!(i & pt_ & (R_BIT | T_BIT | L_BIT| B_BIT))) return false;
       //CGAL_assertion(static_cast<int>(R_BIT) == static_cast<int>(R_BIT));
       //CGAL_assertion(static_cast<int>(L_BIT) == static_cast<int>(L_BIT));
       //CGAL_assertion(static_cast<int>(T_BIT) == static_cast<int>(T_BIT));

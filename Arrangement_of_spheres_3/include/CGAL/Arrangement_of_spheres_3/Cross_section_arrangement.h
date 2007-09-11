@@ -25,9 +25,12 @@ CGAL_AOS3_TEMPLATE
 class Cross_section_arrangement {
 #ifdef CGAL_AOS3_USE_TEMPLATES
   typedef Combinatorial_cross_section<Traits_t> CS;
+  typedef Traits_t Traits;
 #else
   typedef Combinatorial_cross_section CS;
+  typedef Arrangement_of_spheres_traits_3 Traits;
 #endif
+  
 public:
   typedef CGAL_AOS3_TYPENAME CS::Curve Curve;
   typedef CGAL_AOS3_TYPENAME CS::Point Point;
@@ -80,23 +83,48 @@ public:
     return c;
   }
 
+  
+  struct ISort {
+  
+    ISort(Traits tr) {
+      for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it= tr.sphere_3_keys_begin();
+	    it != tr.sphere_3_keys_end(); ++it){
+	sps_.push_back(tr.sphere_events(*it).first);
+      }
+    }
+    bool operator()(unsigned int a, unsigned int b) const {
+      CGAL_assertion(sps_.size() > a);
+      CGAL_assertion(sps_.size() > b);
+      return sps_[a] < sps_[b];
+    }
+    
+    std::vector<CGAL_AOS3_TYPENAME Traits::Event_point_3> sps_;
+  };
+
 public:
 
-  template <class It>
-  Cross_section_arrangement(It b, It e, NT z, NT inf): pl_(arr_),  inf_(inf){
-    std::vector<Circular_k::Circle_2> circles;
+  
+  Cross_section_arrangement(const Traits &tr, NT z, NT inf): pl_(arr_),  inf_(inf){
+    std::vector<CGAL_AOS3_TYPENAME Circular_k::Circle_2> circles;
     std::vector<int> names;
     int num=0;
-    nums_= std::distance(b,e);
-    for (; b != e; ++b){
-      if (has_overlap(*b, z)){
+    nums_= tr.number_of_sphere_3s();
+    std::vector<unsigned int> io;
+    for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it= tr.sphere_3_keys_begin();
+	   it != tr.sphere_3_keys_end(); ++it){
+      if (has_overlap(tr.sphere_3(*it), z)){
 	//std::cout << circles.size() << " is " << i << std::endl;
-	circles.push_back(intersect(*b, z));
+	io.push_back(circles.size());
+	circles.push_back(intersect(tr.sphere_3(*it), z));
 	names.push_back(num);
       }
       ++num;
     }
-    build_arrangement(circles, names);
+    
+   
+    
+    std::sort(io.begin(), io.end(), ISort(tr));
+    build_arrangement(circles, io, names);
   }
   
 
@@ -122,6 +150,7 @@ protected:
   template <class C> class Rule;
 
   void build_arrangement(const std::vector<Circular_k::Circle_2> &circles, 
+			 const std::vector<unsigned int> &io,
 			 const std::vector<int> &names);
   typedef CArr::Vertex_iterator Vertex_iterator;
   Vertex_iterator vertices_begin();

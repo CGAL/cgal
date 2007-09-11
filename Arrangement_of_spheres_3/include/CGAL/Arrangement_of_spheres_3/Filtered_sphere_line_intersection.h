@@ -286,7 +286,7 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
 	return compare_2(o, CC, sct+1);
       } else {
 	//++num_exact_tests_;
-	return P::compare(o, CC);
+	return P::compare_c(o, CC);
       }
     }
   }

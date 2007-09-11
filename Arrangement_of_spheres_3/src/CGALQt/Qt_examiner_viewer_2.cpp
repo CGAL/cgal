@@ -2,6 +2,12 @@
 #include <CGAL/IO/Qt_examiner_viewer_2.h>
 #include <CGAL/IO/Qt_widget_circular_arc_2.h>
 
+#define CGAL_QTEV_LOCK CGAL_precondition(mutex_.locked());
+
+
+/*std::auto_ptr<QMutexLocker> lockptr;					\
+  if (!mutex_.locked()) lockptr= std::auto_ptr<QMutexLocker>(new QMutexLocker(&mutex_));*/
+
 CGAL_BEGIN_NAMESPACE
 Qt_examiner_viewer_2 *qt_debug_examiner_viewer_2__=NULL;
 
@@ -93,6 +99,7 @@ Qt_examiner_viewer_2::QTEV_layer::QTEV_layer(NT scale): bbox_(std::numeric_limit
 }
 
 void Qt_examiner_viewer_2::QTEV_layer::clear() {
+  CGAL_QTEV_LOCK;
   circles_.clear();
   circle_colors_.clear();
   points_.clear();
@@ -151,21 +158,21 @@ void Qt_examiner_viewer_2::QTEV_layer::draw(){
 }
 
 void Qt_examiner_viewer_2::QTEV_layer::new_circle(const Circle &c) {
-  QMutexLocker lock(&mutex_);
+  CGAL_QTEV_LOCK;
   circles_.push_back(Circle(rescale(c.center()),
 			    scale_*scale_*NT(1.0)*c.squared_radius()));
   circle_colors_.push_back(cur_color_);
   if (ubb_) bbox_=bbox_+ circles_.back().bbox();
 }
 void Qt_examiner_viewer_2::QTEV_layer::new_point(const Point &c) {
-  QMutexLocker lock(&mutex_);
+  CGAL_QTEV_LOCK;
   points_.push_back(rescale(c));
   point_colors_.push_back(cur_color_);
   point_styles_.push_back(cur_point_style_);
   if (ubb_) bbox_=bbox_+ points_.back().bbox();
 }
 void Qt_examiner_viewer_2::QTEV_layer::new_segment(const Segment &c) {
-  QMutexLocker lock(&mutex_);
+  CGAL_QTEV_LOCK;
   segments_.push_back(Segment(rescale(c.source()),
 					    rescale(c.target())));
   segment_colors_.push_back(cur_color_);
@@ -175,7 +182,7 @@ void Qt_examiner_viewer_2::QTEV_layer::new_segment(const Segment &c) {
 void Qt_examiner_viewer_2::QTEV_layer::new_circular_arc(const Circle &c,
 							const Point &s,
 							const Point &t) {
-  QMutexLocker lock(&mutex_);
+  CGAL_QTEV_LOCK;
   Point rcc= rescale(c.center());
   Point rs= rescale(s);
   Point rt= rescale(t);
@@ -192,7 +199,7 @@ void Qt_examiner_viewer_2::QTEV_layer::new_circular_arc(const Circle &c,
 }
     
 void Qt_examiner_viewer_2::QTEV_layer::new_line(const Line &c) {
-  QMutexLocker lock(&mutex_);
+  CGAL_QTEV_LOCK;
   lines_.push_back(Line(rescale(c.point()),
 				      c.to_vector()));
   line_colors_.push_back(cur_color_);
@@ -200,7 +207,7 @@ void Qt_examiner_viewer_2::QTEV_layer::new_line(const Line &c) {
 }
 
 void Qt_examiner_viewer_2::QTEV_layer::new_label(const std::string str) {
-  QMutexLocker lock(&mutex_);
+  CGAL_QTEV_LOCK;
   CGAL_precondition(!points_.empty());
   typedef std::pair<int, std::string> SP;
   labels_.push_back(SP(points_.size()-1, str));
@@ -234,7 +241,7 @@ void  Qt_examiner_viewer_2::set_layer(unsigned int li) {
       new_layers.push_back(layers_.back());
     }
     cur_layer_=li;
-    layers_[cur_layer_]->clear();
+    //layers_[cur_layer_]->clear();
   } 
   // not really safe, things could go away here
   while (!new_layers.empty()) {
@@ -249,7 +256,7 @@ void Qt_examiner_viewer_2::set_is_dirty(bool tf) {
 
 void Qt_examiner_viewer_2::clear() {
   {
-    QMutexLocker lock(&mutex_);
+    QMutexLocker lock(&mutex_);;
     for(unsigned int i=0; i< layers_.size(); ++i){
       {
 	//QMutexLocker ilock(layers_[i]->mutex_);

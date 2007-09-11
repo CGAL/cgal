@@ -56,9 +56,9 @@ Rational_cross_section CGAL_AOS3_TARG ::audit() const {
       for (int i=0; i< 2; ++i) {
 	for (int j=0; j< 2; ++j) {
 	  for (unsigned int k=0; k< l[i][j].size(); ++k){
-	    std::cout << l[i][j][k]->point() << " ";
+	    CGAL_LOG(Log::LOTS,  l[i][j][k]->point() << " ");
 	  }
-	  std::cout << std::endl;
+	  CGAL_LOG(Log::LOTS, std::endl);
 
 	  for (unsigned int k=1; k< l[i][j].size(); ++k){
 	    CGAL_assertion(tr_.compare_c(sphere_point(l[i][j][k-1]->point()),

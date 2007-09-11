@@ -23,7 +23,9 @@ public:
     rcs_.set_z(z);
     //t_.set_temp_sphere(T::Sphere_3(T::Point_3(0,0,z), 0));
     *qtv << l_;
+    QMutexLocker lock(qtv->lock());
     *qtv << CGAL::RED;
+    *qtv << Qt_examiner_viewer_2::Erase();
     qtv->set_updating_box(true);
     //T::Intersect_with_sweep is=t_.sphere_intersects_rule(z);
     

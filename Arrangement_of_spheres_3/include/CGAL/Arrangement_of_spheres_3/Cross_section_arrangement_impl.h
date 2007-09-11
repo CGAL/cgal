@@ -190,8 +190,11 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
 };
 
 
+
+
 CGAL_AOS3_TEMPLATE
 void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vector<Circular_k::Circle_2> &circles, 
+								 const std::vector<unsigned int> &insertion_order,
 								 const std::vector<int> &names){
 
   Circular_k::Point_2 lb(-inf_, -inf_);
@@ -203,11 +206,10 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
   Circular_k::Line_2 b(lb, Circular_k::Vector_2(1,0));
   Circular_k::Line_2 t(rt, Circular_k::Vector_2(1,0));
   audit();
-  insert(Circular_k::Line_arc_2(l, lb, lt), Curve(Curve::Key::bl_key(), Curve::T_RULE));
-  insert(Circular_k::Line_arc_2(r, rb, rt), Curve(Curve::Key::tr_key(), Curve::B_RULE));
-  insert(Circular_k::Line_arc_2(b, lb, rb), Curve(Curve::Key::bl_key(), Curve::R_RULE));
-  insert(Circular_k::Line_arc_2(t, lt, rt), Curve(Curve::Key::tr_key(), Curve::L_RULE));
-
+  insert(Circular_k::Line_arc_2(l, lb, lt), Curve(Curve::Key::lb_key(), Curve::T_RULE));
+  insert(Circular_k::Line_arc_2(r, rb, rt), Curve(Curve::Key::ub_key(), Curve::B_RULE));
+  insert(Circular_k::Line_arc_2(b, lb, rb), Curve(Curve::Key::lb_key(), Curve::R_RULE));
+  insert(Circular_k::Line_arc_2(t, lt, rt), Curve(Curve::Key::ub_key(), Curve::L_RULE));
 
 
   std::vector<Rule<Plane_coordinate_0> > horizontal_rules;
@@ -215,7 +217,8 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
 
   //std::vector<std::vector<Line_3> > lines;
   std::cout << "Constructing rules..." << std::flush;
-  for (unsigned int i=0; i< circles.size(); ++i){
+  for (unsigned int j=0; j< circles.size(); ++j){
+    int i= insertion_order[j];
     horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i], 
 							Curve(names[i], Curve::L_RULE), inf_));
     horizontal_rules.back().clip(circles, vertical_rules, i);
@@ -237,7 +240,8 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
   typedef std::vector< Arc> ArcContainer;
     
     
-  for (unsigned int i=0; i< circles.size(); ++i){
+  for (unsigned int j=0; j< insertion_order.size(); ++j){
+    int i= insertion_order[j];
     Circular_k::Root_of_2 r= CGAL::make_root_of_2(NT(1),NT(0),
 						  -circles[i].squared_radius(),
 						  false);

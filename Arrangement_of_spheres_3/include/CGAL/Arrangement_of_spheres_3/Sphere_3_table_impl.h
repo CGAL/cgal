@@ -46,8 +46,8 @@ void Sphere_3_table<Traits_t>::initialize_2() {
 template <class Traits_t>
 std::ostream &Sphere_3_table<Traits_t>::write(std::ostream &out) const {
   out << "Spheres:\n";
-  out << Key(Key::BL) << ": " << operator[](Key(Key::BL)) << "\n";
-  out << Key(Key::TR) << ": " << operator[](Key(Key::TR)) << "\n";
+  out << Key(Key::LB) << ": " << operator[](Key(Key::LB)) << "\n";
+  out << Key(Key::UB) << ": " << operator[](Key(Key::UB)) << "\n";
   for (Sphere_key_const_iterator it= sphere_keys_begin(); it != sphere_keys_end(); ++it) {
     out << *it << ": " << operator[](*it) << "\n";
   }
@@ -84,8 +84,8 @@ Sphere_3_table<Traits_t>::separating_plane(Key a, Key b) const {
   //nv[sweep_coordinate().index()]=0;
   //Vector_3 n(-nv[0], -nv[1], -nv[2]);
   Plane_3 plane(center(a), center(b), center(a)-sweep_vector<Vector_3>());
-  std::cout << "The plane for " << a << " and " << b << " is " << plane 
-	    <<  "( " << plane.orthogonal_vector() << ")" << std::endl;
+  CGAL_LOG(Log::LOTS, "The plane for " << a << " and " << b << " is " << plane 
+	   <<  "( " << plane.orthogonal_vector() << ")" << std::endl);
   return plane;
 }
 
