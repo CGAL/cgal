@@ -919,6 +919,7 @@ protected:
   typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
   void convert_to_Polyhedron(Polyhedron& P) {
     CGAL_precondition(is_simple());
+    P.clear();
     Build_polyhedron<HalfedgeDS> bp(*this);    
     P.delegate(bp);
   }
