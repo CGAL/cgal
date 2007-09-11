@@ -127,10 +127,9 @@ template <> class Algebraic_structure_traits< float >
     class Kth_root
       : public Binary_function<int, Type, Type> {
       public:
-        Type operator()( int k,
-                                        const Type& x) const {
+        Type operator()( int k, const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
-          return std::pow(double(x), 1.0 / double(k));
+          return (Type) std::pow(double(x), 1.0 / double(k));
         };
     };
 
