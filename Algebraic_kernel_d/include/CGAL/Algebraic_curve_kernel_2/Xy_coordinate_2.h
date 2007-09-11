@@ -355,8 +355,8 @@ public:
         
         CGAL_precondition_code(
             typename Curve_2::Poly_d mult =
-                    pair.get_curve_analysis(0).get_polynomial_2().f() *
-                    pair.get_curve_analysis(1).get_polynomial_2().f();
+                    cpa_2.get_curve_analysis(0).get_polynomial_2().f() *
+                    cpa_2.get_curve_analysis(1).get_polynomial_2().f();
             Total_degree total_degree;
         );
         // common parts
@@ -378,7 +378,6 @@ public:
 
         int cid = 0;
         std::pair<int, int> p = cpv_line.get_curves_at_event(arcno());
-
         if(p.first != -1 && p.second != -1) {
             // both curves involved: choose simpler one
             // Remark: In this case, a vertical line in the curves can be
@@ -387,15 +386,15 @@ public:
             // line). Therefore, the old arc number is also valid in the curve
             // pair.
             Total_degree total_degree;
-            Poly_2 ff = cvt(pair.get_curve_analysis(0).get_polynomial_2().f()),
-                   gg = cvt(pair.get_curve_analysis(1).get_polynomial_2().f());
+            Poly_2 ff=cvt(cpa_2.get_curve_analysis(0).get_polynomial_2().f()),
+                   gg=cvt(cpa_2.get_curve_analysis(1).get_polynomial_2().f());
             if(total_degree(ff) > total_degree(gg)) 
                 cid = 1;
         } else 
             cid = (p.first == -1 ? 1 : 0);
         // overwrite data
         this->ptr()->_m_curve =
-            pair.get_curve_analysis(cid).get_polynomial_2();
+            cpa_2.get_curve_analysis(cid).get_polynomial_2();
         this->ptr()->_m_arcno = (cid == 0 ? p.first : p.second);
     }
     
