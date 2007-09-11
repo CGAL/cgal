@@ -1,4 +1,4 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2006-2007  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,8 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
