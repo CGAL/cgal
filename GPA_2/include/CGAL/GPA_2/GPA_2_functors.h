@@ -454,6 +454,27 @@ public:
 };
 
 template < class GPA_2 >
+class Trim_2
+{
+    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Arc_2 Arc_2;
+   
+public:
+    typedef bool result_type;
+    typedef Arity_tag<3> Arity;
+    
+    /*!\brief
+     * Returns a 
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \return (true) if the curves overlap; (false) otherwise.
+     */
+    bool operator()(Arc_2 cv, Point_2 p, Point_2 q) {
+        return cv.trim(p, q);
+    }
+};
+
+template < class GPA_2 >
 class Are_mergeable_2 
 {
     typedef typename GPA_2::Xy_coordinate_2 Point_2;
@@ -535,6 +556,7 @@ class Intersect_2
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
+    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
     typedef Arity_tag<3> Arity;    
     
     /*!
@@ -549,63 +571,18 @@ public:
      */
     template <class OutputIterator>
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
-                               OutputIterator oi) {
-        
-        if(GPA_2().do_overlap_2_object()(cv1, cv2)) {
-            typedef typename GAPS::Point_2 Point_2;
-            typedef typename GAPS::Segment_2 Segment_2;
-            
-            typename GAPS::Less_xy_2 less_xy(
-                    gaps_.less_xy_2_object()
-            );
-            typename GAPS::Is_vertical_2 is_vertical(
-                    gaps_.is_vertical_2_object()
-            );
-            typename GAPS::Trim_2 trim(
-                    gaps_.trim_2_object()
-            );
-            
-            typedef std::pair<Point_2, Point_2> Point_pair;
-            
-            // TODO use construct_min/max_vertex 
-            
-            // ordered endpoints have source is left (or bottom) 
-            // endpoint and target
-            // as the right (or top) endpoint
-            Endpoint_pair c1_endpoints;
-            c1_endpoints.first = source(cv1);
-            c1_endpoints.second = target(cv1);
-            if (!less_xy(c1_endpoints.first, c1_endpoints.second)) {
-                std::swap(c1_endpoints.first, c1_endpoints.second);
-            }
-            
-            Endpoint_pair c2_endpoints;
-            c2_endpoints.first = source(cv2);
-            c2_endpoints.second = target(cv2);
-            if (!less_xy(c2_endpoints.first, c2_endpoints.second)) {
-                std::swap(c2_endpoints.first, c2_endpoints.second);
-            }
-            
-            Point_2 greater_source, smaller_target;
-            
-            // determine greater source7
-            greater_source = std::max(c1_endpoints.first, 
-                                      c2_endpoints.first,
-                                      less_xy);
-            
-            // determine smaller target
-            smaller_target = std::min(c1_endpoints.second, 
-                                      c2_endpoints.second,
-                                      less_xy);
-            Segment_2 s = trim(cv2, greater_source, smaller_target);
-            *oi++ = CGAL::make_object(s);
-            
-        } else {
+                               OutputIterator oi) const {
+        Arc_2 common;
+        // if arcs overlap, just store their common part, otherwise compute
+        // point-wise intersections
+        if(cv1.trim_if_overlapped(cv2, common)) 
+            *oi++ = CGAL::make_object(common);
+        else {
             typedef std::pair<Point_2, int> Point_and_mult;
             typedef std::vector<Point_and_mult> Point_vector;
             typedef typename Point_vector::const_iterator Const_iterator;
             Point_vector vec;
-            cv1.intersect(cv2, std::back_inserter(tmp));
+            cv1.intersect(cv2, std::back_inserter(vec));
             for(Const_iterator it = vec.begin(); it != vec.end(); it++) 
                 *oi++ = CGAL::make_object(*it);
         }
