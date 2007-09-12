@@ -398,7 +398,12 @@ struct Arrangement_of_spheres_traits_3 {
     }
   }
  
-
+  bool equal(const Sphere_point_3& a,
+	     const Sphere_point_3& b) const {
+    return compare_c(a,b, Coordinate_index(0))== EQUAL
+      && compare_c(a,b, Coordinate_index(1))== EQUAL
+      && compare_c(a,b, Coordinate_index(2))== EQUAL;
+  }
 
   //
   CGAL::Comparison_result compare_c(const Sphere_point_3& a,

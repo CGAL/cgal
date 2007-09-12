@@ -213,8 +213,8 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 										 arv->point().rule_key(),
 										 arv->point().rule_constant_coordinate());
 	if (ep.is_valid()) {
-	  if (ep== sim_->current_time()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
-	  if (ep > sim_->current_time()) {
+	  //if (tr_.equal(ep, sim_->current_time())) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
+	  if (ep >= sim_->current_time()) {
 	    CGAL_assertion(tr_.oriented_side_of_separating_plane(ep, aav->point().sphere_key(0),
 								       aav->point().sphere_key(1)) != CGAL::NEGATIVE);
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::AAR_event(j_, h));
@@ -244,10 +244,10 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
       rks[project(h->opposite()->vertex()->point().rule_constant_coordinate())]= h->opposite()->vertex()->point().rule_key();
       do {
 	CGAL_AOS3_TYPENAME Traits::Event_point_3 ep= tr_.sphere_intersect_rule_rule_event(h->vertex()->point().sphere_key(),
-								rks[0], rks[1]);
+											  rks[0], rks[1]);
 	if (ep.is_valid()) {
-	  if (ep== sim_->current_time()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
-	  if (ep > sim_->current_time()) {
+	  //if (tr_.equal(ep, sim_->current_time())) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
+	  if (ep >= sim_->current_time()) {
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::RAR_event(j_, h));
 	    break;
 	  } else {
@@ -279,8 +279,8 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
 	CGAL_AOS3_TYPENAME Traits::Event_point_3 ep= tr_.sphere_intersect_rule_rule_event(arv->point().sphere_key(),
 											  rks[0], rks[1]);
 	if (ep.is_valid()) {
-	  if (ep== sim_->current_time()) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
-	  if (ep > sim_->current_time()) {
+	  //if (tr_.equal(ep, sim_->current_time())) throw CGAL_AOS3_TYPENAME Traits::Degeneracy_exception();
+	  if (ep >= sim_->current_time()) {
 	    ek= sim_->new_event(ep, CGAL_AOS3_TYPENAME EP::ARR_event(j_, h));
 	    break;
 	  } else {

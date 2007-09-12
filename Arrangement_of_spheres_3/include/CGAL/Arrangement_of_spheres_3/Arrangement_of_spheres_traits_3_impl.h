@@ -443,6 +443,8 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::advance_sphere_intersect_rule_ru
   CGAL_AOS3_TYPENAME Table::Event_pair_data &ed= table_->triple_data(k).srr_events_;
   CGAL_assertion(ed.index_ != -1);
   ++ed.index_;
+  CGAL_LOG(Log::LOTS, "Advancing SRR event for " << s << " " << x << " " 
+	   << y << std::endl);
 }
 
 CGAL_AOS3_TEMPLATE
@@ -458,6 +460,8 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_intersect_rule_rule_event
     ed.events_[1]=ep.second;
     ed.index_=0;
   }
+  CGAL_LOG(Log::LOTS, "Getting SRR event index " << ed.index_
+	   << " events are " << ed.events_[0] << " and " << ed.events_[1] << std::endl);
   if (ed.index_ < 2) return ed.events_[ed.index_];
   else return Event_point_3();
 }
@@ -476,7 +480,9 @@ Arrangement_of_spheres_traits_3 CGAL_AOS3_TARG::sphere_intersect_rule_rule_event
 
   Plane_3 x_plane= rule_plane(x, CGAL_AOS3_INTERNAL_NS::plane_coordinate(0));
   Plane_3 y_plane= rule_plane(y, CGAL_AOS3_INTERNAL_NS::plane_coordinate(1));
-  return event_pair(s, x_plane, y_plane);
+  Event_pair ep= event_pair(s, x_plane, y_plane);
+  CGAL_LOG(Log::LOTS, "Got " << ep.first << " and " << ep.second << std::endl);
+  return ep;
 }
 
 

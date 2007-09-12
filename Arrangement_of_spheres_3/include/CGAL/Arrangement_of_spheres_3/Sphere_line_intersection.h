@@ -359,8 +359,8 @@ template <class K>
 inline CGAL::Comparison_result Sphere_line_intersection<K>::compare_c(const Sphere_line_intersection<K> &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   CGAL_assertion(o.is_valid());
-  CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM) << std::endl);
-  CGAL_LOG_WRITE(Log::LOTS, o.write(LOG_STREAM) << std::endl);
+  //CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM) << std::endl);
+  //CGAL_LOG_WRITE(Log::LOTS, o.write(LOG_STREAM) << std::endl);
   //double dmc= CGAL::to_double(mc);
   //double doc= CGAL::to_double(oc);
   //std::cout << "Performing exact comparison " << mc << " vs " << oc << std::endl;
