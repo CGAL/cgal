@@ -111,6 +111,7 @@ public:
     CGAL_GPA_pred(Are_mergeable_2, are_mergeable_2_object) +
     CGAL_GPA_cons(Merge_2, merge_2_object) +
     CGAL_GPA_pred(Do_overlap_2, do_overlap_2_object); +
+    CGAL_GPA_cons(Trim_2, trim_2_object);
     CGAL_GPA_pred(Is_in_x_range_2, is_in_x_range_2_object); +
     
     /*CGAL_GPA_cons(Approximate_2, approximate_2_object)
