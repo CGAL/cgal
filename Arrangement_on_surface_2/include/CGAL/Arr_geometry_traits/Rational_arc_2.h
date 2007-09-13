@@ -32,7 +32,7 @@
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
- * Representation of an segment of a rational function, given as:
+ * Representation of a segment of a rational function, given as:
  *
  *        D(x)
  *   y = ------              x_l <= x <= x_r
@@ -176,8 +176,7 @@ public:
     }
 
     // Mark that the arc is continuous and valid.
-    _info = (_info | IS_CONTINUOUS);
-    _info = (_info | IS_VALID);
+    _info |= (IS_CONTINUOUS | IS_VALID);
   }
 
   /*!
@@ -262,8 +261,7 @@ public:
     }
 
     // Mark that the arc is continuous and valid.
-    _info = (_info | IS_CONTINUOUS);
-    _info = (_info | IS_VALID);
+    _info |= (IS_CONTINUOUS | IS_VALID);
   }
 
   /*!
@@ -274,7 +272,7 @@ public:
    * \pre The two x-coordinate must not be equal.
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs,
-		   const Algebraic& x_s, const Algebraic& x_t) :
+                   const Algebraic& x_s, const Algebraic& x_t) :
     _info (0)
   {
     // Compare the x-coordinates and determine the direction.
@@ -307,12 +305,11 @@ public:
     _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t));
 
     // Mark that the arc is continuous and valid.
-    _info = (_info | IS_CONTINUOUS);
-    _info = (_info | IS_VALID);
+    _info |= (IS_CONTINUOUS | IS_VALID);
   }    
 
   /*!
-   * Constructor of a polynomial function, defined by y = p(x)/q(x) for any x.
+   * Constructor of a rational function, defined by y = p(x)/q(x) for any x.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    */
@@ -362,9 +359,11 @@ public:
     else // if (inf_t == NO_BOUNDARY)
       _pt = Point_2 (0, y0);
 
-    // Mark that the arc is valid. As it may have poles, we do not mark it
-    // as continuous.
-    _info = (_info | IS_VALID);
+    // Mark that the arc is valid. As it may have poles, we mark it
+    // as continuous only the number of _denom roots is zero.
+    CORE::Sturm<Integer>       sturm (_denom);
+    _info = ( _info | ( sturm.numberOfRoots() == 0 ? 
+                      (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
 
   /*!
@@ -459,9 +458,21 @@ public:
         _pt = Point_2 (0, y0);
     }
 
-    // Mark that the arc is valid. As it may have poles, we do not mark it
-    // as continuous.
-    _info = (_info | IS_VALID);
+    // Mark that the arc is valid. As it may have poles, we mark it
+    // as continuous only the number of _denom roots above or below 
+    // x_s depending on dir_right is tmp_min.
+    CORE::Sturm<Integer>       sturm (_denom);
+    Algebraic   tmp_denom = nt_traits.evaluate_at (_denom, x_s);
+    int tmp_min=0;
+    if (tmp_denom==0)
+    {
+      //x_s is a root of _denom so the total number of roots is at least 1
+     tmp_min++;
+    }
+    _info=(_info |((dir_right ? 
+                    sturm.numberOfRootsAbove(x_s.BigFloatValue())==tmp_min : 
+                    sturm.numberOfRootsBelow(x_s.BigFloatValue())==tmp_min) ?
+                      (IS_CONTINUOUS | IS_VALID) : IS_VALID));
   }
   
   /*!
@@ -475,7 +486,7 @@ public:
    *      and q(x) != 0 for all x_min <= x <= x_max.
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
-		   const Algebraic& x_s, const Algebraic& x_t) :
+                   const Algebraic& x_s, const Algebraic& x_t) :
     _info (0)
   {
     // Compare the x-coordinates and determine the direction.
@@ -546,9 +557,25 @@ public:
         _info = (_info | TRG_AT_Y_PLUS_INFTY);
     }
 
-    // Mark that the arc is valid. As it may have poles, we do not mark it
-    // as continuous.
-    _info = (_info | IS_VALID);
+    // Mark that the arc is valid. As it may have poles, we mark it
+    // as continuous only the number of _denom roots between x_s 
+    // and x_t is tmp_min.
+    CORE::Sturm<Integer>       sturm (_denom);
+    Algebraic   tmp_denom = nt_traits.evaluate_at (_denom, x_s);
+    int tmp_min=0;
+    if (tmp_denom==0)
+    {
+      //x_s is a root of _denom so the total number of roots is at least 1
+      tmp_min++;
+    }
+    tmp_denom = nt_traits.evaluate_at (_denom, x_t);
+    if (tmp_denom==0)
+    {
+      //x_t is a root of _denom so the total number of roots is at least 1
+      tmp_min++;
+    }
+    _info|= ((sturm.numberOfRoots(x_s.BigFloatValue(),x_t.BigFloatValue()) == tmp_min) ?
+             (IS_CONTINUOUS | IS_VALID) : IS_VALID);
   }
 
   /*!
@@ -791,14 +818,14 @@ public:
   {
     // Make sure that p is in the x-range of the arc and check whether it
     // has the same x-coordinate as one of the endpoints.
-    CGAL_precondition (is_continuous());
     CGAL_precondition (_is_in_true_x_range (p.x()));
-
     // Evaluate the rational function at x(p), which lies at the interior
     // of the x-range.
     Nt_traits   nt_traits;
-    Algebraic   y = nt_traits.evaluate_at (_numer, p.x()) /
-                    nt_traits.evaluate_at (_denom, p.x());
+
+    Algebraic   tmp_denom = nt_traits.evaluate_at (_denom, p.x());
+    CGAL_precondition ( tmp_denom != 0 ); // to avoid devision by zero
+    Algebraic   y = nt_traits.evaluate_at (_numer, p.x())/tmp_denom ;
     
     // Compare the resulting y-coordinate with y(p):
     return (CGAL::compare (p.y(), y));
@@ -1290,8 +1317,8 @@ public:
   OutputIterator intersect (const Self& arc,
                             OutputIterator oi) const
   {
-    CGAL_precondition (is_valid() && is_continuous());
-    CGAL_precondition (arc.is_valid() && arc.is_continuous());
+    CGAL_precondition (is_continuous() && arc.is_continuous());
+    CGAL_precondition (is_valid() && arc.is_valid());
 
     if (_has_same_base (arc))
     {
@@ -1505,7 +1532,8 @@ public:
   void split (const Point_2& p,
               Self& c1, Self& c2) const
   {
-    CGAL_precondition (is_valid() && is_continuous());
+    CGAL_precondition (is_valid());
+    CGAL_precondition (is_continuous());
 
     // Make sure that p lies on the interior of the arc.
     CGAL_precondition_code (
