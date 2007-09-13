@@ -27,7 +27,7 @@ Each \ccc{Curve_2} object is associated with a single data field of type
 a single data field of type \ccc{XData}. When a curve is
 subdivided into $x$-monotone subcurves, its data field is converted using
 the conversion functor, which is specified by the \ccc{Cnv} template-parameter,
-and the resulting objects is copied to all \ccc{X_monotone_curve_2} objects
+and the resulting object is copied to all \ccc{X_monotone_curve_2} objects
 induced by this curve. The conversion functor should provide an operator with
 the following prototype: \\
 \indent \ccc{XData operator() (const CData& d) const;} \\
