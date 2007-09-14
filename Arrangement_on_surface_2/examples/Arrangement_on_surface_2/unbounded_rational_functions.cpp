@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_on_surface_2/unbounded_rational_functions.cpp
+//! \file examples/Arrangement_2/unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 #include <CGAL/basic.h>
 
@@ -24,18 +24,14 @@ typedef CGAL::Arr_rational_arc_traits_2<Alg_kernel,
                                         Nt_traits>    Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Rational_arc_2;
-typedef Traits_2::X_monotone_curve_2                  X_rational_arc_2;
 typedef Traits_2::Rat_vector                          Rat_vector;
+typedef std::list<Rational_arc_2>                     Rat_arcs_list;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 
 int main ()
 {
   std::list<Rational_arc_2>  arcs;
-  std::list<CGAL::Object>  obj_arcs;
-  std::list<CGAL::Object>::const_iterator  obj_arcs_iter;
 
-
-  Traits_2 traits_2;
   // Create the rational functions (y = 1 / x), and (y = -1 / x).
   Rat_vector        P1(1);
   P1[0] = 1;
@@ -43,28 +39,10 @@ int main ()
   Rat_vector        Q1(2);
   Q1[1] = 1; Q1[0] = 0;
 
-  Rational_arc_2 a1(P1, Q1);
-  
-  traits_2.make_x_monotone_2_object()(a1,std::back_inserter(obj_arcs));
-  for (obj_arcs_iter=obj_arcs.begin();obj_arcs_iter!=obj_arcs.end();obj_arcs_iter++)
-  {
-    X_rational_arc_2 x_cv;
-    (*obj_arcs_iter).assign(x_cv);
-    arcs.push_back(x_cv);
-  }
-  
-  obj_arcs.clear();
+  arcs.push_back (Rational_arc_2 (P1, Q1));
 
   P1[0] = -1;
-
-  Rational_arc_2 a2(P1, Q1);
-  traits_2.make_x_monotone_2_object()(a2,std::back_inserter(obj_arcs));
-  for (obj_arcs_iter=obj_arcs.begin();obj_arcs_iter!=obj_arcs.end();obj_arcs_iter++)
-  {
-    X_rational_arc_2 x_cv;
-    (*obj_arcs_iter).assign(x_cv);
-    arcs.push_back(x_cv);
-  }
+  arcs.push_back (Rational_arc_2 (P1, Q1));
 
   // Create a bounded segments of the parabolas (y = -4*x^2 + 3) and
   // (y = 4*x^2 - 3), defined over [-sqrt(3)/2, sqrt(3)/2].
@@ -93,7 +71,7 @@ int main ()
   // Construct the arrangement of the six arcs.
   Arrangement_2              arr;
 
-  insert (arr, arcs.begin(), arcs.end());
+  insert_curves (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
