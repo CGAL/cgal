@@ -66,6 +66,16 @@ public:
   Arr_plane_3(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {}
 
   /*! Constructor */
+  Arr_plane_3(typename Kernel::Plane_3 p)
+  {
+    CGAL_precondition_code(Kernel kernel;);
+    CGAL_precondition_code(typename Kernel::Point_3 orig = kernel.construct_point_3_object()(ORIGIN););
+    CGAL_precondition(kernel.has_on_3_object()(p, orig));
+
+    m_a = p.a(); m_b = p.b(); m_c = p.c() ;
+  }
+
+  /*! Constructor */
   Arr_plane_3(const Point_3 & p, const Point_3 & r)
   {
     FT rpx = p.x() - r.x();
