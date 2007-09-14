@@ -150,4 +150,3 @@
   Now zoom in, and oops, you see the two input objects again.
   I would expect to zoom into the intersection.
 
-- rational arc traits : insertion of curves containing singularities fails
