@@ -278,60 +278,59 @@ protected:
    *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
    *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
    *         LARGER  - x(p1) > x(p2).
-   * \pre d1 does not coincide with a pole.
-   * \pre d2 does not coincide with a pole.
-   * \pre d1 and d2 have the same x-coordinate
    */
   static inline Comparison_result compare_y(const Direction_3 & d1,
-                                            const Direction_3 & d2,
-                                            const Direction_2 & d1_xy)
+                                            const Direction_3 & d2)
+  {
+    typedef typename Kernel::FT                     FT;
+    
+    Kernel kernel;
+
+    Vector_3 v0 (0, 0, 1);
+    Vector_3 v1 = kernel.construct_vector_3_object() (d1);
+    Vector_3 v2 = kernel.construct_vector_3_object() (d2);
+
+    FT norm0 = 1;
+    FT norm1 = v1 * v1;
+    FT norm2 = v2 * v2;
+
+    FT dot_p1 = v1.z();
+    FT dot_p2 = v2.z();
+    
+    return CGAL::compare(dot_p1 * dot_p1 * norm2, dot_p2 * dot_p2 * norm1);
+  }
+
+  /*! Compare two endpoint directions by x.
+   * \param p1 the first enpoint direction.
+   * \param p2 the second endpoint direction.
+   * \param d1_xy the projection of the first endpoint onto the xy-plane.
+   * \return SMALLER - x(p1) < x(p2);
+   *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
+   *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
+   *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
+   *         LARGER  - x(p1) > x(p2).
+   * \pre d1 does not coincide with a pole.
+   * \pre d2 does not coincide with a pole.
+   * \pre d1 does not lie on the discontinuity arc.
+   * \pre d2 does not lie on the discontinuity arc.
+   */
+  static inline Comparison_result compare_x(const Direction_3 & d1,
+                                            const Direction_3 & d2)
   {
     Kernel kernel;
-    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object(); 
+    
+    // Compare the projections onto the xy plane:
+    Direction_2 d1_2 = project_xy(d1);
+    Direction_2 d2_2 = project_xy(d2);
+
+    if (kernel.equal_2_object() (d1_2, d2_2))
+      return EQUAL;
     
     const Direction_2 & nx = neg_x_2();
-    Orientation orient = orientation(nx, d1_xy);
-    if (orient == COLLINEAR) {
-      // The projections are collinear with the negative x direction -1,0,0 =>
-      // project onto the xz plane:
-      Direction_2 d1_2 = project_xz(d1);
-      Direction_2 d2_2 = project_xz(d2);
-      if (equal_2(d1_2, d2_2)) return EQUAL;
-
-      // Determin whether the (real) x-coordinate is strictly larger than 0:
-      const Direction_2 & ny = neg_y_2();
-      Orientation orient1 = orientation(ny, d1_2);
-      CGAL_assertion_code(Orientation orient2 = orientation(ny, d2_2););
-      CGAL_assertion(orient1 == orient2);
-      if (orient1 == LEFT_TURN) {
-        Orientation orient = orientation(d1_2, d2_2);
-        CGAL_assertion(orient != COLLINEAR);
-        return (orient == LEFT_TURN) ? SMALLER : LARGER;
-      }
-      
-      orient = orientation(d1_2, d2_2);
-      CGAL_assertion(orient != COLLINEAR);
-      return (orient == LEFT_TURN) ? LARGER : SMALLER;
-    }
-    // Project onto yz plane:
-    Direction_2 d1_2 = project_yz(d1);
-    Direction_2 d2_2 = project_yz(d2);
-    if (equal_2(d1_2, d2_2)) return EQUAL;
-
-    // Determin whether the (real) x-coordinate is strictly larger than 0:
-    const Direction_2 & ny = neg_y_2();
-    Orientation orient1 = orientation(ny, d1_2);
-    CGAL_assertion_code(Orientation orient2 = orientation(ny, d2_2););
-    CGAL_assertion(orient1 == orient2);
-    if (orient1 == LEFT_TURN) {
-      Orientation orient = orientation(d1_2, d2_2);
-      CGAL_assertion(orient != COLLINEAR);
-      return (orient == LEFT_TURN) ? SMALLER : LARGER;
-    }
-    orient = Arr_spherical_arc_traits_2<Kernel>::orientation(d1_2, d2_2);
-    CGAL_assertion(orient != COLLINEAR);
-    return (orient == LEFT_TURN) ? LARGER : SMALLER;
+    return (kernel.counterclockwise_in_between_2_object()(nx, d1_2, d2_2)) ?
+      LARGER : SMALLER;
   }
+
 
   /*! Compare two endpoint directions lexigoraphically: by x, then by y.
    * \param p1 the first enpoint direction.
@@ -347,18 +346,10 @@ protected:
   static inline Comparison_result compare_xy(const Direction_3 & d1,
                                              const Direction_3 & d2)
   {
-    Kernel kernel;
-    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-
-    Direction_2 d1_2 = project_xy(d1);
-    Direction_2 d2_2 = project_xy(d2);
-
-    if (equal_2(d1_2, d2_2)) return compare_y(d1, d2, d1_2);
-
-    // Compare the projections onto the xy plane:
-    const Direction_2 & nx = neg_x_2();
-    return (kernel.counterclockwise_in_between_2_object()(nx, d1_2, d2_2)) ?
-      LARGER : SMALLER;
+    Comparison_result res = compare_x(d1, d2);
+    if (res == EQUAL)
+      return compare_y(d1, d2);
+    return res;
   }
   
   /*! Determine whether a direction pierces an arc.
@@ -390,9 +381,9 @@ protected:
       if (!equal_2(dir_xy, p_xy)) return false;
 
       return
-        (((l.is_min_boundary()) || (compare_y(dir, l, dir_xy) != SMALLER))
+        (((l.is_min_boundary()) || (compare_y(dir, l) != SMALLER))
          &&
-         ((r.is_max_boundary()) || (compare_y(dir, r, dir_xy) != LARGER)));
+         ((r.is_max_boundary()) || (compare_y(dir, r) != LARGER)));
     }
     // arc is not vertical, compare the projections onto the xy-plane:
     Direction_2 r_xy = project_xy(r);
@@ -719,12 +710,12 @@ public:
         // Otherwise, return EQUAL:
         if (!xc.left().is_min_boundary()) {
           Comparison_result cr =
-            Arr_spherical_arc_traits_2<Kernel>::compare_y(p, xc.left(), p_2);
+            Arr_spherical_arc_traits_2<Kernel>::compare_y(p, xc.left());
           if (cr != LARGER) return cr;
         }
         if (xc.right().is_max_boundary()) return EQUAL;
         Comparison_result cr =
-          Arr_spherical_arc_traits_2<Kernel>::compare_y(p, xc.right(), p_2);
+          Arr_spherical_arc_traits_2<Kernel>::compare_y(p, xc.right());
         return (cr == LARGER) ? LARGER : EQUAL;
       }
 
@@ -817,7 +808,7 @@ public:
         // None of xc1 and xc2 endpoints coincide with a pole:
         Direction_2 l1_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(l1);
         Comparison_result cr =
-          Arr_spherical_arc_traits_2<Kernel>::compare_y(l1, l2, l1_xy);
+          Arr_spherical_arc_traits_2<Kernel>::compare_y(l1, l2);
         if (cr != EQUAL) return cr;
 
         // If Both arcs are vertical, they overlap:
@@ -827,7 +818,7 @@ public:
 
         // Compare to the right:
         Direction_2 p_l1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(l1);
-        cr = Arr_spherical_arc_traits_2<Kernel>::compare_y(l1, l2, p_l1);
+        cr = Arr_spherical_arc_traits_2<Kernel>::compare_y(l1, l2);
         if (cr != EQUAL) return cr;
       
         // Non of the arcs is verticel. Thus, non of the endpoints coincide with
@@ -862,7 +853,7 @@ public:
       // None of xc1 and xc2 endpoints coincide with a pole:
       Direction_2 r1_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(r1);
       Comparison_result cr =
-        Arr_spherical_arc_traits_2<Kernel>::compare_y(r1, r2, r1_xy);
+        Arr_spherical_arc_traits_2<Kernel>::compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
       // If Both arcs are vertical, they overlap:
@@ -872,7 +863,7 @@ public:
         
       // Compare to the left:
       Direction_2 p_r1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(r1);
-      cr = Arr_spherical_arc_traits_2<Kernel>::compare_y(r1, r2, p_r1);
+      cr = Arr_spherical_arc_traits_2<Kernel>::compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
       // Non of the arcs is verticel. Thus, non of the endpoints coincide with

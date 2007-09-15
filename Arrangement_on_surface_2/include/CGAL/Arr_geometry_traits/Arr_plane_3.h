@@ -112,6 +112,13 @@ public:
             (c() == plane.c()));
   }
 
+  /*! Convert to kernel's plane */
+  operator typename Kernel::Plane_3 () const
+  {
+    Kernel kernel;
+    return kernel.construct_plane_3_object() (m_a, m_b, m_c, 0);
+  }
+
   /*! Compute the image point of the projection of p under an affine
    * transformation, which maps the plane onto the xy-plane, with the
    * z-coordinate removed.
