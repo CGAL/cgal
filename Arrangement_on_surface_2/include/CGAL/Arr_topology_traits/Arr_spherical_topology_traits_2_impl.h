@@ -567,6 +567,7 @@ Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 erase_redundant_vertex(Vertex * v)
 {
   CGAL_assertion_msg(0, "Not implemented!");
+  return NULL;
 }
 
 /*! \brief obtains the curve associated with a boundary vertex */
