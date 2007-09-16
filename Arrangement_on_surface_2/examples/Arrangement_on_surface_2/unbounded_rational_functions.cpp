@@ -71,7 +71,7 @@ int main ()
   // Construct the arrangement of the six arcs.
   Arrangement_2              arr;
 
-  insert_curves (arr, arcs.begin(), arcs.end());
+  insert (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
