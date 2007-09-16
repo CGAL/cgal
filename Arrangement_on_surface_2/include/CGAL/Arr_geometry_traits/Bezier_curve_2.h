@@ -85,11 +85,14 @@ public:
 
 private:
 
-  typedef std::deque<Rat_point_2>                   Control_point_vec;
+  typedef std::deque<Rat_point_2>                 Control_point_vec;
 
-  Control_point_vec   _ctrl_pts;    // The control points (we prefer deque to
-                                    // a vector, as it enables push_front()).
-  Bbox_2              _bbox;        // A bounding box for the curve.
+  Control_point_vec   _ctrl_pts;      /*!< The control points (we prefer deque
+                                           to a vector, as it enables
+                                           push_front()). */
+  Bbox_2              _bbox;          /*!< A bounding box for the curve. */
+  bool                _no_self_inter; /*!< Whether the curve surely has  no
+                                           self intersections. */
 
   /// \name Lazily-evaluated values of the polynomials B(t) = (X(t), Y(t)).
   //@{
@@ -107,16 +110,18 @@ public:
 
   /*! Default constructor. */
   _Bezier_curve_2_rep () : 
+    _no_self_inter (true),
     p_polyX(NULL),
     p_normX(NULL),
     p_polyY(NULL),
-    p_normY(NULL) 
+    p_normY(NULL)
   {}
 
   /*! Copy constructor (isn't really used). */
   _Bezier_curve_2_rep (const _Bezier_curve_2_rep& other) :
     _ctrl_pts(other._ctrl_pts),
     _bbox(other._bbox),
+    _no_self_inter(other._no_self_inter),
     p_polyX(NULL),
     p_normX(NULL),
     p_polyY(NULL),
@@ -187,6 +192,12 @@ public:
 
     // Construct the bounding box.
     _bbox = Bbox_2 (x_min, y_min, x_max, y_max);
+
+    // Use the bounding traits to determine whether the curve surely has
+    // not self intersections.
+    Bounding_traits     bound_tr;
+
+    _no_self_inter = ! bound_tr.may_have_self_intersections (_ctrl_pts);
   }
 
   /*! Destructor. */
@@ -498,7 +509,7 @@ public:
    * \return A past-the-end iterator.
    */
   template <class OutputIterator>
-  OutputIterator t_at_x (const Rational& x0,
+  OutputIterator get_t_at_x (const Rational& x0,
                              OutputIterator oi) const
   {
     return (_solve_t_values (_rep().x_polynomial(), _rep().x_norm(), x0,
@@ -514,7 +525,7 @@ public:
    * \return A past-the-end iterator.
    */
   template <class OutputIterator>
-  OutputIterator t_at_y (const Rational& y0,
+  OutputIterator get_t_at_y (const Rational& y0,
                              OutputIterator oi) const
   {
     return (_solve_t_values (_rep().y_polynomial(), _rep.y_norm(), y0,
@@ -532,6 +543,16 @@ public:
   const Bbox_2& bbox () const
   {
     return (_rep()._bbox);
+  }
+
+  /*!
+   * Check if the curve contains not self intersections.
+   * Note that there may not be any self intersections even if the
+   * function returns true (but not vice versa).
+   */
+  bool has_no_self_intersections () const
+  {
+    return (_rep()._no_self_inter);
   }
 
 private:
@@ -570,7 +591,9 @@ private:
     int                   k;
 
     for (k = 1; k <= deg; k++)
+    {
       coeffs[k] = nt_traits.get_coefficient (poly, k) * denom;
+    }
     coeffs[0] = nt_traits.get_coefficient (poly, 0) * denom -
                 numer * norm;
 
@@ -727,8 +750,8 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
                                   *p_polyY, *p_normY);
   delete[] coeffsY;
 
-  CGAL_assertion (nt_traits.degree (*p_polyX) > 0);
-  CGAL_assertion (nt_traits.degree (*p_polyY) > 0);
+  CGAL_assertion (nt_traits.degree (*p_polyX) >= 0);
+  CGAL_assertion (nt_traits.degree (*p_polyY) >= 0);
 
   return;
 }
@@ -754,8 +777,8 @@ _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_choose (int n,
   
   for (i = 2; i <= k; i++)
     k_fact *= Integer (i);
-  
-  return (reduced_fact / (j_fact * k_fact));
+
+  return (CGAL::div (reduced_fact, (j_fact * k_fact)));
 }
 
 // ---------------------------------------------------------------------------
@@ -801,9 +824,9 @@ _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
   Nt_traits          nt_traits;
     
   x = nt_traits.evaluate_at (_rep().x_polynomial(), t) /
-    Rational (_rep().x_norm(), 1);
+      Rational (_rep().x_norm(), 1);
   y = nt_traits.evaluate_at (_rep().y_polynomial(), t) /
-    Rational (_rep().y_norm(), 1);
+      Rational (_rep().y_norm(), 1);
   
   // Return the point.
   return (Rat_point_2 (x, y));
@@ -844,11 +867,6 @@ _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
     return (Alg_point_2 (nt_traits.convert (p_n.x()),
                          nt_traits.convert (p_n.y())));
   }
-
-  // IDDO: Check if it is worth evaluating this using de Casteljau 
-  //       (since the parameter value is algebraic).
-  // IDDO: Check if there is a way to know that an Algebraic is a rational
-  //       number...
 
   // The t-value is between 0 and 1: Compute the x and y coordinates.
   const Algebraic    x = nt_traits.evaluate_at (_rep().x_polynomial(), t) /
@@ -893,11 +911,11 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
     const Algebraic&                      y1 = nt_traits.convert (p1.y());
     bool                                  eq_y = false;
     
-    bc.t_at_x (p1.x(), std::back_inserter(t_vals));
+    bc.get_t_at_x (p1.x(), std::back_inserter(t_vals));
     
     for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
     {
-      const Alg_point_2&  p2 = bc (*t_iter, false);
+      const Alg_point_2&  p2 = bc (*t_iter);
       
       if (CGAL::compare (y1, p2.y()) == CGAL::EQUAL)
       {

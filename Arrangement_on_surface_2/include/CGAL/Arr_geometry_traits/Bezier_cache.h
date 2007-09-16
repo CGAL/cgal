@@ -191,7 +191,7 @@ public:
    * \return A list of parameters 0 < t_1 < ...< t_k < 1 such that X'(t_i) = 0.
    */
   const Vertical_tangency_list&
-  vertical_tangencies (const Curve_id& id,
+  get_vertical_tangencies (const Curve_id& id,
                            const Polynomial& polyX, const Integer& normX);
 
   /*!
@@ -214,7 +214,7 @@ public:
    *         Each pair is also associated with the physical point coordinates.
    */
   const Intersection_list&
-  intersections (const Curve_id& id1,
+  get_intersections (const Curve_id& id1,
                      const Polynomial& polyX_1, const Integer& normX_1,
                      const Polynomial& polyY_1, const Integer& normY_1,
                      const Curve_id& id2,
@@ -222,10 +222,19 @@ public:
                      const Polynomial& polyY_2, const Integer& normY_2,
                      bool& do_ovlp);
 
+  /*!
+   * Mark two curves as overlapping.
+   * \param id1 The ID of the first curve.
+   * \param id2 The ID of the second curve.
+   */
+  void mark_as_overlapping (const Curve_id& id1,
+                            const Curve_id& id2);
+
 private:
 
   /*!
-   * Compute all parameter values of (X_1(s), Y_1(s)) with (X_2(t), Y_2(t)).
+   * Compute all s-parameter values such that the curve (X_1(s), Y_1(s))
+   * intersects with (X_2(t), Y_2(t)) for some t.
    * \param polyX_1 The coefficients of X_1.
    * \param normX_1 The normalizing factor of X_1.
    * \param polyY_1 The coefficients of Y_1.
@@ -247,6 +256,18 @@ private:
                              Parameter_list& s_vals) const;
 
   /*!
+   * Compute all s-parameter values of the self intersection of (X(s), Y(s))
+   * with (X(t), Y(t)) for some t.
+   * \param polyX The coefficients of X.
+   * \param polyY The coefficients of Y.
+   * \param s_vals Output: A list of s-values of the self-intersection points.
+   *                       Note that the values are not bounded to [0,1].
+   */
+  void _self_intersection_params (const Polynomial& polyX,
+                                  const Polynomial& polyY,
+                                  Parameter_list& s_vals) const;
+
+  /*!
    * Compute the resultant of two bivariate polynomials in x and y with
    * respect to y. The bivariate polynomials are given as vectors of
    * polynomials, where bp1[i] is a coefficient of y^i, which is in turn a
@@ -264,9 +285,9 @@ private:
 //
 template<class NtTraits>
 const typename _Bezier_cache<NtTraits>::Vertical_tangency_list&
-_Bezier_cache<NtTraits>::vertical_tangencies
+_Bezier_cache<NtTraits>::get_vertical_tangencies
         (const Curve_id& id,
-         const Polynomial& polyX, const Integer&)
+         const Polynomial& polyX, const Integer& /* normX */)
 {
   // Try to find the curve ID in the map.
   Vert_tang_map_iterator    map_iter = vert_tang_map.find (id);
@@ -293,7 +314,7 @@ _Bezier_cache<NtTraits>::vertical_tangencies
 //
 template<class NtTraits>
 const typename _Bezier_cache<NtTraits>::Intersection_list&
-_Bezier_cache<NtTraits>::intersections
+_Bezier_cache<NtTraits>::get_intersections
         (const Curve_id& id1,
          const Polynomial& polyX_1, const Integer& normX_1,
          const Polynomial& polyY_1, const Integer& normY_1,
@@ -302,7 +323,7 @@ _Bezier_cache<NtTraits>::intersections
          const Polynomial& polyY_2, const Integer& normY_2,
          bool& do_ovlp)
 {
-  CGAL_precondition (id1 < id2);
+  CGAL_precondition (id1 <= id2);
 
   // Construct the pair of curve IDs, and try to find it in the map.
   Curve_pair                curve_pair (id1, id2);
@@ -317,6 +338,57 @@ _Bezier_cache<NtTraits>::intersections
 
   // We need to compute the intersection-parameter pairs.
   Intersection_info&      info = intersect_map[curve_pair];
+
+  // Check if we have to compute a self intersection (a special case),
+  // or a regular intersection between two curves.
+  if (id1 == id2)
+  {
+    // Compute all parameter values that lead to a self intersection.
+    Parameter_list          s_vals;
+
+    _self_intersection_params (polyX_1, polyY_1,
+                               s_vals);
+
+    // Match pairs of parameter values that correspond to the same point.
+    // Note that we make sure that both parameter pairs are in the range [0, 1]
+    // (if not, the self-intersection point is imaginary).
+    typename Parameter_list::iterator  s_it;
+    typename Parameter_list::iterator  t_it;
+    const Algebraic                    one (1);
+    const Algebraic&                   denX = nt_traits.convert (normX_1);
+    const Algebraic&                   denY = nt_traits.convert (normY_1);
+    Point_list                         pts1;
+
+    for (s_it = s_vals.begin(); s_it != s_vals.end(); ++s_it)
+    {
+      if (CGAL::sign (*s_it) == NEGATIVE)
+        continue;
+
+      if (CGAL::compare (*s_it, one) == LARGER)
+        break;
+
+      const Algebraic&  x = nt_traits.evaluate_at (polyX_1, *s_it);
+      const Algebraic&  y = nt_traits.evaluate_at (polyY_1, *s_it);
+
+      for (t_it = s_it; t_it != s_vals.end(); ++t_it)
+      {
+        if (CGAL::compare (*t_it, one) == LARGER)
+          break;
+
+        if (CGAL::compare (nt_traits.evaluate_at (polyX_1, *t_it),
+                           x) == EQUAL &&
+            CGAL::compare (nt_traits.evaluate_at (polyY_1, *t_it),
+                           y) == EQUAL)
+        {
+          info.first.push_back (Intersection_point_2 (*s_it, *t_it,
+                                                      x / denX, y / denY));
+        }
+      }
+    }
+
+    info.second = false;
+    return (info.first);
+  }
 
   // Compute s-values and t-values such that (X_1(s), Y_1(s)) and
   // (X_2(t), Y_2(t)) are the intersection points.
@@ -462,11 +534,40 @@ _Bezier_cache<NtTraits>::intersections
     }
   }
 
+  info.second = false;
   return (info.first);
 }
 
 // ---------------------------------------------------------------------------
-// Compute all parameter values of (X_1(s), Y_1(s)) with (X_2(t), Y_2(t)).
+// Mark two curves as overlapping.
+//
+template<class NtTraits>
+void _Bezier_cache<NtTraits>::mark_as_overlapping (const Curve_id& id1,
+                                                   const Curve_id& id2)
+{
+  CGAL_precondition (id1 < id2);
+
+  // Construct the pair of curve IDs, and try to find it in the map.
+  Curve_pair                curve_pair (id1, id2);
+  Intersect_map_iterator    map_iter = intersect_map.find (curve_pair);
+
+  if (map_iter != intersect_map.end())
+  {
+    // Found in the map: Make sure the curves are marked as overlapping.
+    CGAL_assertion (map_iter->second.second);
+    return;
+  }
+
+  // Add a new entry and mark the curves as overlapping.
+  Intersection_info&      info = intersect_map[curve_pair];
+
+  info.second = true;
+  return;
+}
+
+// ---------------------------------------------------------------------------
+// Compute all s-parameter values of the intersection of (X_1(s), Y_1(s))
+// with (X_2(t), Y_2(t)) for some t.
 //
 template<class NtTraits>
 bool _Bezier_cache<NtTraits>::_intersection_params
@@ -528,6 +629,75 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   // not overlap.
   nt_traits.compute_polynomial_roots (res, std::back_inserter (s_vals));
   return (false);
+}
+
+// ---------------------------------------------------------------------------
+// Compute all s-parameter values of the self intersection of (X(s), Y(s))
+// with (X(t), Y(t)) for some t.
+//
+template<class NtTraits>
+void _Bezier_cache<NtTraits>::_self_intersection_params
+        (const Polynomial& polyX,
+         const Polynomial& polyY,
+         Parameter_list& s_vals) const
+{
+  // Clear the output parameter list.
+  if (! s_vals.empty())
+    s_vals.clear();
+
+  // We are looking for the solutions of the following system of bivariate
+  // polynomials in s and t:
+  //    I: X(t) - X(s) / (t - s) = 0
+  //   II: Y(t) - Y(s) / (t - s) = 0
+  //
+  Integer                 *coeffs;
+  int                      i, k;
+
+  // Consruct the bivariate polynomial that corresponds to Equation I.
+  // Note that we represent a bivariate polynomial as a vector of univariate
+  // polynomials, whose i'th entry corresponds to the coefficient of t^i,
+  // which is in turn a polynomial it s.
+  const int                degX = nt_traits.degree (polyX);
+  std::vector<Polynomial>  coeffsX_st (degX);
+
+  coeffs = new Integer [degX];
+
+  for (i = 0; i < degX; i++)
+  {
+    for (k = i + 1; k < degX; k++)
+      coeffs[k - i - 1] = nt_traits.get_coefficient (polyX, k);
+
+    coeffsX_st[i] = nt_traits.construct_polynomial (coeffs, degX - i - 1);
+  }
+
+  delete[] coeffs;
+
+  // Consruct the bivariate polynomial that corresponds to Equation II.
+  const int                degY = nt_traits.degree (polyY);
+  std::vector<Polynomial>  coeffsY_st (degY);
+    
+  coeffs = new Integer [degY];
+
+  for (i = 0; i < degY; i++)
+  {
+    for (k = i + 1; k < degY; k++)
+      coeffs[k - i - 1] = nt_traits.get_coefficient (polyY, k);
+
+    coeffsY_st[i] = nt_traits.construct_polynomial (coeffs, degY - i - 1);
+  }
+
+  delete[] coeffs;
+
+  // Compute the resultant of the two bivariate polynomials and obtain
+  // a polynomial in s.
+  Polynomial            res = _compute_resultant (coeffsX_st, coeffsY_st);
+
+  if (nt_traits.degree (res) < 0)
+      return;
+
+  // Compute the roots of the resultant polynomial.
+  nt_traits.compute_polynomial_roots (res, std::back_inserter (s_vals));
+  return;
 }
 
 // ---------------------------------------------------------------------------
@@ -698,4 +868,3 @@ _Bezier_cache<NtTraits>::_compute_resultant
 CGAL_END_NAMESPACE
 
 #endif
-
