@@ -23,8 +23,8 @@
  * Definition of the env_surface_data_traits_3<> class template.
  */
 
-#include<CGAL/Arr_traits_2/Curve_data_aux.h>
-#include<list>
+#include <CGAL/Arr_geometry_traits/Curve_data_aux.h>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
