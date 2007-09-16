@@ -297,7 +297,8 @@ protected:
     FT dot_p1 = v1.z();
     FT dot_p2 = v2.z();
     
-    return CGAL::compare(dot_p1 * dot_p1 * norm2, dot_p2 * dot_p2 * norm1);
+    return CGAL::compare(CGAL::sign(dot_p1) * dot_p1 * dot_p1 * norm2,
+                         CGAL::sign(dot_p2) * dot_p2 * dot_p2 * norm1);
   }
 
   /*! Compare two endpoint directions by x.
