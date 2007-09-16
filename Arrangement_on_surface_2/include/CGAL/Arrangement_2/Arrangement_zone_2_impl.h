@@ -51,12 +51,14 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::init_with_hint
   {
     // The left endpoint is valid.
     has_left_pt = true;
+    left_on_boundary = (bx1 != NO_BOUNDARY || by1 != NO_BOUNDARY);
     left_pt = geom_traits->construct_min_vertex_2_object() (cv);
   }
   else
   {
     // The left end of the curve lies at infinity.
     has_left_pt = false;
+    left_on_boundary = true;
   }
   
   const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(cv,
@@ -513,10 +515,10 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
       // Compare that current object with left_pt (if exists).
       ip = object_cast<Intersect_point_2> (&(inter_list.front()));
 
-      if (! has_left_pt)
+      if (left_on_boundary)
       {
-        // The left end is unbounded, so all intersections are valid, as
-        // they lie to its right.
+        // The left end lie on the left boundary, so all intersections are
+        // valid, as they lie to its right.
         valid_intersection = true;
       }
       else if (ip != NULL)
@@ -585,20 +587,20 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
     if (ip != NULL)
     {
       // We have a simple intersection point - if we don't have to skip it,
-      // make sure it lies to the right of left_pt (if left_pt does not
-      // exist, all points lie to it right).
+      // make sure it lies to the right of left_pt (if left_pt is on the left
+      // boundary, all points lie to it right).
       if (is_first && skip_first_point)
         valid_intersection = false;
-      else if (! has_left_pt)
+      else if (left_on_boundary)
         valid_intersection = true;
       else
         valid_intersection =
           (geom_traits->compare_xy_2_object() (ip->first, left_pt) == LARGER);
     }
-    else if (! has_left_pt)
+    else if (left_on_boundary)
     {
-      // The left end is unbounded, so all overlapping curves are valid, as
-      // they lie to its right.
+      // The left end is on the boundary, so all overlapping curves are valid,
+      // as they lie to its right.
       valid_intersection = true;
     }
     else
@@ -866,7 +868,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // Check whether the two curves overlap in their x-range (in order
       // to avoid unnecessary intersection computations).
       if (! left_equals_curr_endpoint &&
-          ((has_left_pt && _is_to_right (left_pt, he_curr)) ||
+          ((! left_on_boundary && _is_to_right (left_pt, he_curr)) ||
            ! is_in_x_range (cv, he_curr->curve())))
       {
         // In case there is no overlap, the two x-monotone curves obviously
@@ -1002,7 +1004,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // Check whether the two curves overlap in their x-range (in order
       // to avoid unnecessary intersection computations).
       if (! left_equals_curr_endpoint &&
-          ((has_left_pt && _is_to_right (left_pt, he_curr)) ||
+          ((! left_on_boundary && _is_to_right (left_pt, he_curr)) ||
            ! is_in_x_range (cv, he_curr->curve())))
       {
         // In case there is no overlap, the two x-monotone curves obviously
@@ -1172,6 +1174,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
 
     // Set cv to be the remaining portion.
     has_left_pt = true;
+    left_on_boundary = false;
     left_pt = intersect_p;
     cv = sub_cv2;
   }
@@ -1485,6 +1488,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   // Set cv to be the remaining portion.
   has_left_pt = true;
+  left_on_boundary = false;
   left_pt = cv_right_pt;
   cv = sub_cv2;
 

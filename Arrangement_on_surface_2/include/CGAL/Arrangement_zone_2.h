@@ -105,6 +105,7 @@ protected:
   CGAL::Object        obj;             // The location of the left endpoint.
   bool                has_left_pt;     // Is the left end of the curve
                                        // bounded.
+  bool                left_on_boundary;// Is the left point on the boundary.
   Point_2             left_pt;         // Its current left endpoint.
   bool                has_right_pt;    // Is the right end of the curve
                                        // bounded.
@@ -187,6 +188,7 @@ public:
     {
       // The curve has a finite left endpoint - locate it in the arrangement.
       has_left_pt = true;
+      left_on_boundary = (bx1 != NO_BOUNDARY || by1 != NO_BOUNDARY);
       left_pt = geom_traits->construct_min_vertex_2_object() (cv);
 
       obj = pl.locate (left_pt);
@@ -196,6 +198,7 @@ public:
       // The left end of the curve is unbounded - use the topology traits use
       // the arrangement accessor to locate it.
       has_left_pt = false;
+      left_on_boundary = true;
 
       obj = arr_access.locate_unbounded_curve_end (cv, MIN_END, bx1, by1);
     }
@@ -267,8 +270,8 @@ private:
    */
   Halfedge_handle _direct_intersecting_edge_to_right
                                             (const X_monotone_curve_2& cv_ins,
-					     const Point_2& cv_left_pt,
-					     Halfedge_handle query_he);
+                                             const Point_2& cv_left_pt,
+                                             Halfedge_handle query_he);
 
   /*!
    * Direct the halfedge for the location of the given subcurve around a split
@@ -284,7 +287,7 @@ private:
    */
   Halfedge_handle _direct_intersecting_edge_to_left
                                             (const X_monotone_curve_2& cv_ins,
-					     Halfedge_handle query_he);
+                                             Halfedge_handle query_he);
 
   /*!
    * Get the next intersection of cv with the given halfedge.
