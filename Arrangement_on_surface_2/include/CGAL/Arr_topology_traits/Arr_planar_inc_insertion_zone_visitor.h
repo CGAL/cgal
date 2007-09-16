@@ -203,7 +203,7 @@ Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_subcurve
   }
   else
   {
-    // Check if the left end of cv is bounded of not.    
+    // Check if the left end of cv is bounded of not.
     if (CGAL::sign(bx_l) == NEGATIVE || by_l != NO_BOUNDARY)
     {
       // Use the arrangement accessor and obtain a vertex associated with
@@ -369,10 +369,22 @@ Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_overlap
      Halfedge_handle he,
      Vertex_handle left_v, Vertex_handle right_v)
 {
+  // Get the boundary conditions of the curve ends.
+  const Boundary_type bx_l = geom_traits->boundary_in_x_2_object()(cv,
+                                                                   MIN_END);
+  const Boundary_type by_l = geom_traits->boundary_in_y_2_object()(cv,
+                                                                   MIN_END);
+
+  const Boundary_type bx_r = geom_traits->boundary_in_x_2_object()(cv,
+                                                                   MAX_END);
+  const Boundary_type by_r = geom_traits->boundary_in_y_2_object()(cv,
+                                                                   MAX_END);
+
   // Modify (perhaps split) the overlapping arrangement edge.
   Halfedge_handle   updated_he;
 
-  if (left_v == invalid_v)
+  if (left_v == invalid_v &&
+      ! (CGAL::sign(bx_l) == NEGATIVE || by_l != NO_BOUNDARY))
   {
     // Split the curve associated with he at the left endpoint of cv.
     geom_traits->split_2_object()
@@ -380,7 +392,8 @@ Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_overlap
        geom_traits->construct_min_vertex_2_object() (cv),
        sub_cv1, sub_cv2);
 
-    if (right_v == invalid_v)
+    if (right_v == invalid_v &&
+        ! (CGAL::sign(bx_r) == POSITIVE || by_r != NO_BOUNDARY))
     {
       // The overlapping curve is contained strictly in the interior of he:
       // Split he as an intermediate step.
@@ -411,7 +424,8 @@ Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_overlap
   }
   else
   {
-    if (right_v == invalid_v)
+    if (right_v == invalid_v &&
+        ! (CGAL::sign(bx_r) == POSITIVE || by_r != NO_BOUNDARY))
     {
       // Split the curve associated with he at the right endpoint of cv.
       geom_traits->split_2_object()
