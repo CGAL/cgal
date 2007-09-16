@@ -30,7 +30,7 @@
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_overlay_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_vert_decomp_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_planar_inc_insertion_zone_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -350,7 +350,7 @@ public:
     {}
   };
 
-  typedef Arr_planar_inc_insertion_zone_visitor<Arr>
+  typedef Arr_inc_insertion_zone_visitor<Arr>
                                               Zone_insertion_visitor;
   
   typedef Arr_walk_along_line_point_location<Arr>

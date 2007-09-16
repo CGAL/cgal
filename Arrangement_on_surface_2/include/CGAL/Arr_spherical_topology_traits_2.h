@@ -47,7 +47,7 @@
 #include <CGAL/Arr_topology_traits/Arr_spherical_overlay_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_vert_decomp_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_planar_inc_insertion_zone_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
 #include <map>
 
@@ -402,7 +402,7 @@ public:
     {}
   };
 
-  typedef Arr_planar_inc_insertion_zone_visitor<Arr>
+  typedef Arr_inc_insertion_zone_visitor<Arr>
                                         Zone_insertion_visitor;
 
   typedef Arr_naive_point_location<Arr>

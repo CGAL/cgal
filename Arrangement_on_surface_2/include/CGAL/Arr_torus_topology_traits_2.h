@@ -54,7 +54,7 @@
 #include <CGAL/Arr_topology_traits/Arr_torus_insertion_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_torus_overlay_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_torus_batched_pl_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_planar_inc_insertion_zone_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
 // TODO helpers
 
@@ -475,7 +475,7 @@ public:
         {}
     };
     
-    typedef Arr_planar_inc_insertion_zone_visitor<Arr>
+    typedef Arr_inc_insertion_zone_visitor<Arr>
     Zone_insertion_visitor;
     
 

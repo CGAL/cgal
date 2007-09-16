@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
  * being a planar topology-traits class.
  */
 template <class Arrangement_>
-class Arr_planar_inc_insertion_zone_visitor
+class Arr_inc_insertion_zone_visitor
 {
 public:
 
@@ -72,7 +72,7 @@ private:
 public:
 
   /*! Constructor. */
-  Arr_planar_inc_insertion_zone_visitor () :
+  Arr_inc_insertion_zone_visitor () :
     p_arr (NULL),
     geom_traits (NULL),
     invalid_v (),
@@ -144,8 +144,8 @@ private:
 // Handle the a subcurve located in the interior of a given face.
 //
 template <class Arrangement>
-typename Arr_planar_inc_insertion_zone_visitor<Arrangement>::Result
-Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_subcurve
+typename Arr_inc_insertion_zone_visitor<Arrangement>::Result
+Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
     (const X_monotone_curve_2& cv,
      Face_handle face,
      Vertex_handle left_v, Halfedge_handle left_he,
@@ -363,8 +363,8 @@ Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_subcurve
 // Handle the a subcurve located in the interior of a given face.
 //
 template <class Arrangement>
-typename Arr_planar_inc_insertion_zone_visitor<Arrangement>::Result
-Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_overlap
+typename Arr_inc_insertion_zone_visitor<Arrangement>::Result
+Arr_inc_insertion_zone_visitor<Arrangement>::found_overlap
     (const X_monotone_curve_2& cv,
      Halfedge_handle he,
      Vertex_handle left_v, Vertex_handle right_v)
@@ -458,7 +458,7 @@ Arr_planar_inc_insertion_zone_visitor<Arrangement>::found_overlap
 // Split an arrangement edge.
 //
 template <class Arrangement>
-void Arr_planar_inc_insertion_zone_visitor<Arrangement>::_split_edge
+void Arr_inc_insertion_zone_visitor<Arrangement>::_split_edge
     (Halfedge_handle he,
      const Point_2& p,
      Arr_accessor<Arrangement_2>& arr_access)
