@@ -1038,7 +1038,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
         }
 #endif
 #if 0
-        if (curr->curve().get_level() != curr->next()->curve().get_level()) {
+        if (curr->curve().level() != curr->next()->curve().level()) {
             // "jumped over the line of discontinuity"
             std::swap(seg_smaller, seg_larger);
             std::cout << "swap: less=" << seg_smaller << ", greater=" << seg_larger << std::endl;
