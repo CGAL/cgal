@@ -638,7 +638,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind;
+    Curve_end                  v_ind = MIN_END;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
@@ -779,7 +779,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
   const Vertex      *v2 = he->vertex();
   Boundary_type      he_bound;
   Comparison_result  res1, res2;
-  Curve_end          v_ind;
+  Curve_end          v_ind = MIN_END;
 
   // Check if this is a "vertical" ficitious edge.
   if ((he_bound = v1->boundary_in_x()) != NO_BOUNDARY &&
