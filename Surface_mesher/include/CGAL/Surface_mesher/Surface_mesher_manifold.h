@@ -56,7 +56,8 @@ namespace CGAL {
     // because of the caching, these two members have to be mutable,
     // because they are actually updated in the const method
     // 'no_longer_element_to_refine_impl()'
-    mutable std::set<Vertex_handle> bad_vertices;
+    typedef std::set<Vertex_handle> Bad_vertices;
+    mutable Bad_vertices bad_vertices;
     mutable bool bad_vertices_initialized;
 
     private:
@@ -70,9 +71,8 @@ namespace CGAL {
       void 
       before_insertion_handle_facet_on_boundary_of_conflict_zone(const Facet& f)
       {
-	const Facet f1 = canonical_facet(f);
-	const Cell_handle& c = f1.first;
-	const int i = f1.second;
+	const Cell_handle& c = f.first;
+	const int i = f.second;
 
        	// for each v of f
 	for (int j = 0; j < 4; j++)
@@ -88,8 +88,8 @@ namespace CGAL {
 	SMMBB::c2t3.incident_facets(sommet, std::back_inserter(facets));
 
 	typename std::list<Facet>::iterator it = facets.begin();
-	Facet first_facet = *it;
-	Facet biggest_facet = first_facet;
+	Facet biggest_facet = *it;
+	CGAL_assertion(it!=facets.end());
 
 	for (++it;
 	     it != facets.end();
@@ -179,9 +179,7 @@ namespace CGAL {
           for (typename Zone::Facets_iterator fit =
                  zone.boundary_facets.begin(); fit !=
                  zone.boundary_facets.end(); ++fit)
-            if (SMMBB::c2t3.is_in_complex(*fit)) {
-              before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit); 
-            }
+	    before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit); 
         }
 	SMMBB::before_insertion_impl(Facet(), s, zone);
       }
