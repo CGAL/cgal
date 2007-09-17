@@ -1304,6 +1304,12 @@ public:
         typename Kernel::Equal_2 equal = kernel.equal_2_object();
 
         if (xc1.is_vertical()) {
+          const Plane_3 & plane1 = xc1.plane();
+          const Plane_3 & plane2 = xc2.plane();
+          bool res = kernel.equal_3_object()(plane1, plane2);
+          if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
+              (res && (xc1.is_directed_right() != xc2.is_directed_right())))
+            return oi;
           CGAL_assertion_msg(0, "Not implemented yet!");
           return oi;
         }
@@ -1320,7 +1326,10 @@ public:
           *oi++ = make_object(xc);
           return oi;
         }
-        if (equal(l1, nx) || ccib(l1, nx, l2)) {
+        bool l1_eq_nx = equal(l1, nx);
+        bool l2_eq_nx = equal(l2, nx);
+        
+        if (l1_eq_nx || (!l2_eq_nx && ccib(l1, nx, l2))) {
           if (ccib(r1, l1, l2)) return oi;      // no intersection
           if (equal(r1, l2)) {
             *oi++ = make_object(Point_2_pair(xc1.right(), 1));
@@ -1331,17 +1340,16 @@ public:
           *oi++ = make_object(xc);
           return oi;
         }
-        if (equal(l2, nx) || ccib(l2, nx, l1)) {
-          if (ccib(r2, l2, l1)) return oi;      // no intersection
-          if (equal(r2, l1)) {
-            *oi++ = make_object(Point_2_pair(xc2.right(), 1));
-            return oi;
-          }
-          const Point_2 & trg = (ccib(r1, l2, r2)) ? xc1.right() : xc2.right();
-          X_monotone_curve_2 xc(xc1.left(), trg, plane, true, false, true);
-          *oi++ = make_object(xc);
+        CGAL_assertion(l2_eq_nx || ccib(l2, nx, l1));
+        if (ccib(r2, l2, l1)) return oi;      // no intersection
+        if (equal(r2, l1)) {
+          *oi++ = make_object(Point_2_pair(xc2.right(), 1));
           return oi;
         }
+        const Point_2 & trg = (ccib(r1, l2, r2)) ? xc1.right() : xc2.right();
+        X_monotone_curve_2 xc(xc1.left(), trg, plane, true, false, true);
+        *oi++ = make_object(xc);
+        return oi;
       }
       
       const Line_3 * line_ptr = object_cast<Line_3>(&obj);
@@ -1748,7 +1756,8 @@ public:
                       const Arr_extended_direction_3 & target) :
     m_source(source),
     m_target(target),
-    m_is_x_monotone(true)
+    m_is_x_monotone(true),
+    m_is_degenerate(false)
   {
     Kernel kernel;
     CGAL_precondition(!kernel.equal_3_object()(source, target));
