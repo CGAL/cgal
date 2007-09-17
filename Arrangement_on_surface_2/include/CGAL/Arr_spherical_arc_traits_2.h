@@ -1288,7 +1288,9 @@ public:
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
+      typedef std::pair<Point_2,unsigned int>         Point_2_pair;
       Kernel kernel;
+
 #if defined(CGAL_ARR_PLANE)
       CGAL::Object obj = intersect(xc1.plane(), xc2.plane());
 #else
@@ -1296,26 +1298,54 @@ public:
 #endif
       const Plane_3 * plane_ptr = object_cast<Plane_3>(&obj);
       if (plane_ptr != NULL) {
-        // The arcs may overlap:
-        X_monotone_curve_2 xc;
-        const Point_2 & s =
-          (Arr_spherical_arc_traits_2<Kernel>::is_in_between(xc1.left(), xc2)) ?
-          xc1.left() : xc2.left();
-        xc.set_source(s);
-        const Point_2 & t =
-          (Arr_spherical_arc_traits_2<Kernel>::is_in_between(xc1.right(), xc2)) ?
-          xc1.right() : xc2.right();
-        xc.set_target(t);
-        xc.set_is_degenerate(false);
-        xc.set_is_x_monotone(true);
-        xc.set_is_vertical(xc1.is_vertical());
-        xc.set_is_directed_right(true);
-        *oi++ = make_object(xc);
-        return oi;
+        Kernel kernel;
+        typename Kernel::Counterclockwise_in_between_2 ccib =
+          kernel.counterclockwise_in_between_2_object();
+        typename Kernel::Equal_2 equal = kernel.equal_2_object();
+
+        if (xc1.is_vertical()) {
+          CGAL_assertion_msg(0, "Not implemented yet!");
+          return oi;
+        }
+
+        const Direction_2 & nx = neg_x_2();
+        const Plane_3 & plane = xc1.plane();
+        Direction_2 l1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc1.left());
+        Direction_2 r1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc1.right());
+        Direction_2 l2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc2.left());
+        Direction_2 r2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc2.right());
+        if (equal(l1, l2)) {
+          const Point_2 & trg = (ccib(r1, l2, r2)) ? xc1.right() : xc2.right();
+          X_monotone_curve_2 xc(xc1.left(), trg, plane, true, false, true);
+          *oi++ = make_object(xc);
+          return oi;
+        }
+        if (equal(l1, nx) || ccib(l1, nx, l2)) {
+          if (ccib(r1, l1, l2)) return oi;      // no intersection
+          if (equal(r1, l2)) {
+            *oi++ = make_object(Point_2_pair(xc1.right(), 1));
+            return oi;
+          }
+          const Point_2 & trg = (ccib(r1, l2, r2)) ? xc1.right() : xc2.right();
+          X_monotone_curve_2 xc(xc2.left(), trg, plane, true, false, true);
+          *oi++ = make_object(xc);
+          return oi;
+        }
+        if (equal(l2, nx) || ccib(l2, nx, l1)) {
+          if (ccib(r2, l2, l1)) return oi;      // no intersection
+          if (equal(r2, l1)) {
+            *oi++ = make_object(Point_2_pair(xc2.right(), 1));
+            return oi;
+          }
+          const Point_2 & trg = (ccib(r1, l2, r2)) ? xc1.right() : xc2.right();
+          X_monotone_curve_2 xc(xc1.left(), trg, plane, true, false, true);
+          *oi++ = make_object(xc);
+          return oi;
+        }
       }
+      
       const Line_3 * line_ptr = object_cast<Line_3>(&obj);
       if (line_ptr != NULL) {
-        typedef std::pair<Point_2,unsigned int>         Point_2_pair;
         Point_3 p = line_ptr->point(1);
         Vector_3 v = kernel.construct_vector_3_object()(ORIGIN, p);
         Direction_3 d = kernel.construct_direction_3_object()(v);
@@ -1663,20 +1693,43 @@ protected:
   Arr_extended_direction_3 m_source;    // The source point of the arc
   Arr_extended_direction_3 m_target;    // The target point of the arc
   Plane_3 m_plane;                      // The plane that contains the arc
-  bool m_is_degenerate;                 // The arc is degenerate (single point)
   bool m_is_x_monotone;                 // The arc is x-monotone
   bool m_is_vertical;                   // The arc is vertical
   bool m_is_directed_right;   // Target (lexicographically) larger than source
+  bool m_is_degenerate;                 // The arc is degenerate (single point)
 
 public:    
   /*! Default constructor */
   Arr_spherical_arc_3() :
-    m_is_degenerate(true),
     m_is_x_monotone(true),
     m_is_vertical(false),
-    m_is_directed_right(false)
+    m_is_directed_right(false),
+    m_is_degenerate(true)
   {}
 
+  /*! Constructor
+   * \param src the source point of the arc
+   * \param trg the target point of the arc
+   * \param plane the plane that contains the arc
+   * \param is_degenerate is the arc degenerate (single point)?
+   * \param is_x_monotone is arc  x-monotone ?
+   * \param is_vertical is the arc vertical ?
+   & \param is_directed_right is the arc directed from left to right?
+   */
+  Arr_spherical_arc_3(const Arr_extended_direction_3 & src,
+                      const Arr_extended_direction_3 & trg,
+                      const Plane_3 & plane,
+                      bool is_x_monotone, bool is_vertical,
+                      bool is_directed_right, bool is_degenerate = false) :
+    m_source(src),
+    m_target(trg),
+    m_plane(plane),
+    m_is_x_monotone(is_x_monotone),
+    m_is_vertical(is_vertical),
+    m_is_directed_right(is_directed_right),
+    m_is_degenerate(is_degenerate)
+  {}
+  
   /*! Construct a spherical_arc from two endpoint directions. It is assumed
    * that the arc is the one with the smaller angle among the two.
    * 1. Find out whether the arc is x-monotone.
@@ -1695,7 +1748,6 @@ public:
                       const Arr_extended_direction_3 & target) :
     m_source(source),
     m_target(target),
-    m_is_degenerate(false),
     m_is_x_monotone(true)
   {
     Kernel kernel;
@@ -1707,8 +1759,8 @@ public:
       
     if (source.is_max_boundary()) {
       m_is_vertical = true;
-        m_is_directed_right = false;
-        return;
+      m_is_directed_right = false;
+      return;
     }
     if (source.is_min_boundary()) {
       m_is_vertical = true;
@@ -1730,6 +1782,7 @@ public:
     typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
     Direction_2 s_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(source);
     Direction_2 t_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(target);
+
     Orientation orient =
       Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
     if (orient == COLLINEAR) {
