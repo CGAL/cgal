@@ -436,10 +436,10 @@ public:
    *         In our case this object may either wrap an unbounded face,
    *         or an edge with an end-vertex at infinity (in case of an overlap).
    */
-  CGAL::Object locate_unbounded_curve_end (const X_monotone_curve_2& cv,
-                                           Curve_end ind,
-                                           Boundary_type bound_x,
-                                           Boundary_type bound_y);
+  CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
+                                 Curve_end ind,
+                                 Boundary_type bound_x,
+                                 Boundary_type bound_y);
 
   /*!
    * Split a fictitious edge using the given vertex.

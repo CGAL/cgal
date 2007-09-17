@@ -725,21 +725,21 @@ public:
                                              Boundary_type bound_y) const;
     
     /*!
-     * Locate a DCEL feature that contains the given unbounded curve end.
+     * Locate a DCEL feature that contains the given curve end.
      * \param cv The x-monotone curve.
      * \param ind The curve end.
      * \param bound_x The boundary condition of the curve end in x.
      * \param bound_y The boundary condition of the curve end in y.
-     * \pre The curve end is unbounded in either x or y.
+     * \pre The curve end is incident to the boundary.
      * \return An object that contains the curve end.
      *         In our case this object may either wrap an unbounded face,
      *         or an edge with an end-vertex at 
      *         infinity (in case of an overlap).
      */
-    CGAL::Object locate_unbounded_curve_end (const X_monotone_curve_2& cv,
-                                             Curve_end ind,
-                                             Boundary_type bound_x,
-                                             Boundary_type bound_y);
+    CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
+                                   Curve_end ind,
+                                   Boundary_type bound_x,
+                                   Boundary_type bound_y);
     
     /*!
      * Given two predecessor halfedges that belong to the same inner CCB of

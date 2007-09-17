@@ -446,18 +446,18 @@ public:
   }
 
   /*!
-   * Locate a DCEL feature that contains the given unbounded curve end.
+   * Locate a DCEL feature that contains the given curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
    * \param bound_x The boundary condition of the curve end in x.
    * \param bound_y The boundary condition of the curve end in y.
-   * \pre The curve end is unbounded in either x or y.
+   * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_unbounded_curve_end (const X_monotone_curve_2&,
-                                           Curve_end,
-                                           Boundary_type,
-                                           Boundary_type)
+  CGAL::Object locate_curve_end (const X_monotone_curve_2&,
+                                 Curve_end,
+                                 Boundary_type,
+                                 Boundary_type)
   {
     // This function should never be called:
     CGAL_assertion (false);

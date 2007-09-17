@@ -183,10 +183,10 @@ public:
     const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(cv,
                                                                      MIN_END);
 
-    if (bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY &&
-        by1 != MINUS_INFINITY && by1 != PLUS_INFINITY)
+    if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY)
     {
-      // The curve has a finite left endpoint - locate it in the arrangement.
+      // The curve has a finite left endpoint with no boundary conditions:
+      // locate it in the arrangement.
       has_left_pt = true;
       left_on_boundary = (bx1 != NO_BOUNDARY || by1 != NO_BOUNDARY);
       left_pt = geom_traits->construct_min_vertex_2_object() (cv);
@@ -195,12 +195,17 @@ public:
     }
     else
     {
-      // The left end of the curve is unbounded - use the topology traits use
-      // the arrangement accessor to locate it.
-      has_left_pt = false;
+      // The left end of the curve has boundary conditions: use the topology
+      // traits use the arrangement accessor to locate it.
+      // Note that if the curve-end is unbounded, left_pt does not exist.
+      has_left_pt = (bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY &&
+                     by1 != MINUS_INFINITY && by1 != PLUS_INFINITY);
       left_on_boundary = true;
 
-      obj = arr_access.locate_unbounded_curve_end (cv, MIN_END, bx1, by1);
+      if (has_left_pt)
+        left_pt = geom_traits->construct_min_vertex_2_object() (cv);
+
+      obj = arr_access.locate_curve_end (cv, MIN_END, bx1, by1);
     }
 
     // Check the boundary conditions of th right curve end.

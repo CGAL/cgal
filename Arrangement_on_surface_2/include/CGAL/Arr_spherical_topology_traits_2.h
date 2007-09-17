@@ -575,18 +575,18 @@ public:
                                            Boundary_type bound_x,
                                            Boundary_type bound_y) const;
 
-  /*! Locate a DCEL feature that contains the given unbounded curve end.
+  /*! Locate a DCEL feature that contains the given curve end.
    * \param xc The x-monotone curve.
    * \param ind The curve end.
    * \param bound_x The boundary condition of the curve end in x.
    * \param bound_y The boundary condition of the curve end in y.
-   * \pre The curve end is unbounded in either x or y.
+   * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_unbounded_curve_end(const X_monotone_curve_2 & xc,
-                                          Curve_end ind,
-                                          Boundary_type bound_x,
-                                          Boundary_type bound_y);
+  CGAL::Object locate_curve_end (const X_monotone_curve_2 & xc,
+                                 Curve_end ind,
+                                 Boundary_type bound_x,
+                                 Boundary_type bound_y);
 
   /*! Split a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
@@ -630,25 +630,31 @@ protected:
    * \pre v is a valid boundary.
    * \return The curve that induces v.
    */
-  const X_monotone_curve_2 & curve(const Vertex * v,
-                                       Curve_end & ind) const;
+  const X_monotone_curve_2 & _curve (const Vertex * v,
+                                     Curve_end & ind) const;
 
   /*! Return the halfedge, the target vertex of which is given, that is
    * the predecessor of a halfedge, the curve of which is given, that is about
    * to be inserted into the dcel.
    */
   Halfedge *
-  locate_around_vertex_on_discontinuity(Vertex * v,
-                                        const X_monotone_curve_2 & xc,
-                                        Curve_end ind) const;
+  _locate_around_vertex_on_discontinuity (Vertex * v,
+                                          const X_monotone_curve_2 & xc,
+                                          Curve_end ind) const;
 
   /*! Return the halfedge, the target vertex of which is a given pole,
    * that is the predecessor of a halfedge, the curve of which is given, that
    * is about to be inserted into the dcel.
    */
-  Halfedge * locate_around_pole(Vertex * v, const X_monotone_curve_2 & xc,
-                                Curve_end ind) const;
-  
+  Halfedge * _locate_around_pole (Vertex * v, const X_monotone_curve_2 & xc,
+                                  Curve_end ind) const;
+
+
+  /*! Return the face that lies below the given vertex, which lies
+   * on the line of discontinuity.
+   */
+  Face * _face_below_vertex_on_discontinuity (Vertex * v) const;
+
   //@}
 };
 

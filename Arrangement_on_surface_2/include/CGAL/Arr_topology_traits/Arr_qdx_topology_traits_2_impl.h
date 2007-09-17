@@ -618,13 +618,16 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
 }
 
 //-----------------------------------------------------------------------------
-// Locate a DCEL feature that contains the given unbounded curve end.
+// Locate a DCEL feature that contains the given curve end.
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Object Arr_qdx_topology_traits_2<GeomTraits, Dcel_>:: // open
-locate_unbounded_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
-                            Boundary_type bound_x, Boundary_type bound_y)
+locate_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
+                  Boundary_type bound_x, Boundary_type bound_y)
 {
+    // \todo RWRW: Add support for all boundary conditions, not just
+    //             for unbounded curve-ends!
+
     // NEEDED for incremental insertion
     std::cout << "Arr_qdx_topology_traits_2 locate_unb_curve_end"  
               << std::endl;
@@ -1038,7 +1041,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
         }
 #endif
 #if 0
-        if (curr->curve().level() != curr->next()->curve().level()) {
+        if (curr->curve().get_level() != curr->next()->curve().get_level()) {
             // "jumped over the line of discontinuity"
             std::swap(seg_smaller, seg_larger);
             std::cout << "swap: less=" << seg_smaller << ", greater=" << seg_larger << std::endl;

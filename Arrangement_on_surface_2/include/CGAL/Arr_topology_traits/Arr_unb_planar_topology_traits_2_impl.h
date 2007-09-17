@@ -352,8 +352,8 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Object Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
-locate_unbounded_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
-                            Boundary_type bound_x, Boundary_type bound_y)
+locate_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
+                  Boundary_type bound_x, Boundary_type bound_y)
 {
   // Make the given curve end lies at infinity.
   CGAL_precondition (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
@@ -638,7 +638,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind = MIN_END;
+    Curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
@@ -779,7 +779,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
   const Vertex      *v2 = he->vertex();
   Boundary_type      he_bound;
   Comparison_result  res1, res2;
-  Curve_end          v_ind = MIN_END;
+  Curve_end          v_ind;
 
   // Check if this is a "vertical" ficitious edge.
   if ((he_bound = v1->boundary_in_x()) != NO_BOUNDARY &&

@@ -108,30 +108,28 @@ public:
   //@{
 
   /*!
-   * Locate the arrangement feature that contains the given unbounded curve
-   * end. 
+   * Locate the arrangement feature that contains the given curve-end.
    * \param cv The curve.
    * \param ind MIN_END if we refer to cv's minimal end;
    *            MAX_END if we refer to its maximal end.
    * \param bound_x The boundary condition in x.
    * \param bound_y The boundary condition in y.
-   * \pre The relevant end of cv is unbounded in x or in y..
+   * \pre The relevant end of cv has boundary conditions in x or in y.
    * \return An object that contains the curve end.
    *         This object may wrap a Face_const_handle (the general case),
    *         or a Halfedge_const_handle (in case of an overlap).
    */
-  CGAL::Object locate_unbounded_curve_end (const X_monotone_curve_2& cv,
-                                           Curve_end ind,
-                                           Boundary_type bound_x,
-                                           Boundary_type bound_y) const
+  CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
+                                 Curve_end ind,
+                                 Boundary_type bound_x,
+                                 Boundary_type bound_y) const
   {
-    CGAL_precondition (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
-                       bound_y == MINUS_INFINITY || bound_y == PLUS_INFINITY);
+    CGAL_precondition (bound_x != NO_BOUNDARY || bound_y != NO_BOUNDARY);
 
     // Use the topology traits to locate the unbounded curve end.
     CGAL::Object  obj =
-      p_arr->topology_traits()->locate_unbounded_curve_end (cv, ind,
-                                                            bound_x, bound_y);
+      p_arr->topology_traits()->locate_curve_end (cv, ind,
+                                                  bound_x, bound_y);
 
     // Return a handle to the DCEL feature.
     DFace        *f;
@@ -143,6 +141,11 @@ public:
 
     if (CGAL::assign (he, obj))
       return (CGAL::make_object (p_arr->_const_handle_for (he)));
+
+    DVertex      *v;
+
+    if (CGAL::assign (v, obj))
+      return (CGAL::make_object (p_arr->_const_handle_for (v)));
 
     // We should never reach here:
     CGAL_assertion (false);
@@ -184,6 +187,39 @@ public:
 
     DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh),
                                                    cv, ind);
+
+    CGAL_assertion (he != NULL);
+    return (p_arr->_handle_for (he));
+  }
+
+  /*!
+   * Locate the place for the given curve-end around the given vertex,
+   * which lies on the boundary.
+   * \param vh A handle for the arrangement vertex.
+   * \param cv The curve.
+   * \param ind MIN_END if we refer to cv's minimal end;
+   *            MAX_END if we refer to its maximal end.
+   * \param bound_x The boundary condition in x.
+   * \param bound_y The boundary condition in y.
+   * \pre The relevant end of cv has boundary conditions in x or in y.
+   * \return A handle for a halfedge whose target is v, where cv should be
+   *         inserted between this halfedge and the next halfedge around this
+   *         vertex (in a clockwise order).
+   */
+  Halfedge_handle
+      locate_around_boundary_vertex (Vertex_handle vh,
+                                     const X_monotone_curve_2& cv,
+                                     Curve_end ind,
+                                     Boundary_type bound_x,
+                                     Boundary_type bound_y) const
+  {
+    CGAL_precondition (bound_x != NO_BOUNDARY || bound_y != NO_BOUNDARY);
+
+    // Use the topology traits to locate the unbounded curve end.
+    DHalfedge*  he = p_arr->topology_traits()->
+                         locate_around_boundary_vertex (p_arr->_vertex (vh),
+                                                        cv, ind,
+                                                        bound_x, bound_y);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));

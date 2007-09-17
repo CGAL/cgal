@@ -587,17 +587,17 @@ insert_non_intersecting_curve
     static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
   Arr_accessor<Arr>                 arr_access (arr);
 
-  // Check whether the left end of c lies at infinity, or whether it is a
-  // normal endpoint, and locate it in the arrangement accordingly.
+  // Check whether the left end has boundary conditions, and locate it in the
+  // arrangement accordingly.
   const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(c, MIN_END);
   const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(c, MIN_END);
   CGAL::Object                 obj1;
   const Vertex_const_handle   *vh1 = NULL;
 
-  if (bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY &&
-      by1 != MINUS_INFINITY && by1 != PLUS_INFINITY)
+  if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY)
   {
-    // We have a normal left endpoint.
+    // We have a normal left endpoint with no boundary conditions:
+    // use a point-location query.
     obj1 = pl.locate (geom_traits->construct_min_vertex_2_object() (c));
 
     // The endpoint must not lie on an existing edge, but may coincide with
@@ -610,30 +610,28 @@ insert_non_intersecting_curve
   }
   else
   {
-    // We have an unbounded left end. Use the accessor to locate the face that
-    // contains the left end (and make sure no overlap occurs with an existing
-    // halfedge).
-    obj1 = arr_access.locate_unbounded_curve_end (c, MIN_END,
-                                                  bx1, by1);
+    // We have a left end with boundary conditions. Use the accessor to locate
+    // the feature that contains it.
+    obj1 = arr_access.locate_curve_end (c, MIN_END, bx1, by1);
 
     CGAL_precondition_msg
       (object_cast<Halfedge_const_handle> (&obj1) == NULL,
        "The curve must not overlap an existing edge.");
 
-    vh1 = NULL;
+    vh1 = object_cast<Vertex_const_handle> (&obj1);
   }
 
-  // Check whether the right end of c lies at infinity, or whether it is a
-  // normal endpoint, and locate it in the arrangement accordingly.
+  // Check whether the right end has boundary conditions, and locate it in the
+  // arrangement accordingly.
   const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(c, MAX_END);
   const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(c, MAX_END);
   CGAL::Object                 obj2;
   const Vertex_const_handle   *vh2 = NULL;
 
-  if (bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY &&
-      by2 != MINUS_INFINITY && by2 != PLUS_INFINITY)
+  if (bx2 == NO_BOUNDARY && by2 == NO_BOUNDARY)
   {
-    // We have a normal right endpoint.
+    // We have a normal right endpoint with no boundary conditions:
+    // use a point-location query.
     obj2 = pl.locate (geom_traits->construct_max_vertex_2_object() (c));
 
     // The endpoint must not lie on an existing edge, but may coincide with
@@ -646,17 +644,15 @@ insert_non_intersecting_curve
   }
   else
   {
-    // We have an unbounded right end. Use the accessor to locate the face that
-    // contains the right end (and make sure no overlap occurs with an existing
-    // halfedge).
-    obj2 = arr_access.locate_unbounded_curve_end (c, MAX_END,
-                                                  bx2, by2);
+    // We have a right end with boundary conditions. Use the accessor to locate
+    // the feature that contains it.
+    obj2 = arr_access.locate_curve_end (c, MAX_END, bx2, by2);
 
     CGAL_precondition_msg
       (object_cast<Halfedge_const_handle> (&obj2) == NULL,
        "The curve must not overlap an existing edge.");
 
-    vh2 = NULL;
+    vh2 = object_cast<Vertex_const_handle> (&obj2);
   }
 
   // Notify the arrangement observers that a global operation is about to 
