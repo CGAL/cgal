@@ -536,16 +536,16 @@ protected:
                                  const X_monotone_curve_2& cv,
                                  Curve_end ind,
                                  bool is_new,
-                                 Tag_true tag)
+                                 Tag_true )
   {
     m_visitor->update_event (e, cv, ind, is_new);
   }
 
-  void _update_event_at_infinity(Event* e,
-                                 const X_monotone_curve_2& cv,
-                                 Curve_end ind,
-                                 bool is_new,
-                                 Tag_false tag)
+  void _update_event_at_infinity(Event* /* e */,
+                                 const X_monotone_curve_2& /* cv */,
+                                 Curve_end /* ind */,
+                                 bool /* is_new */,
+                                 Tag_false )
   {
     CGAL_assertion(false);
   }

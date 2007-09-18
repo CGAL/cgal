@@ -136,21 +136,23 @@ public:
    * A notification invoked before the sweep-line starts handling the given
    * event.
    */
-  void before_handle_event (Event* event)
+  void before_handle_event (Event* /* event */)
   {}
 
   /*!
    * A notification invoked after the sweep-line finishes handling the given
    * event.
    */
-  bool after_handle_event (Event* event,
-                           Status_line_iterator iter, bool flag)
+  bool after_handle_event (Event* /* event */,
+                           Status_line_iterator /* iter */,
+                           bool /* flag */)
   {
     return (true);
   }
 
   /*! A notification invoked when a new subcurve is created. */
-  void add_subcurve (X_monotone_curve_2 cv, Subcurve* sc)
+  void add_subcurve (X_monotone_curve_2 /* cv */,
+                     Subcurve* /* sc */)
   {}
 
   /*! A notification issued before the sweep process starts. */
@@ -162,38 +164,42 @@ public:
   {}
 
   /*! Update the event to be the given curve end. */
-  void update_event (Event* e,
-                     const Point_2& end_point,
-                     const X_monotone_curve_2& cv,
-                     Curve_end cv_end,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     const Point_2& /* end_point */,
+                     const X_monotone_curve_2& /* cv */,
+                     Curve_end /* cv_end */,
+                     bool /* is_new */)
   {}
 
   /*! Update the event to be the given infinite curve end. */
-  void update_event (Event* e,
-                     const X_monotone_curve_2& cv,
-                     Curve_end cv_end,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     const X_monotone_curve_2& /* cv */,
+                     Curve_end /* cv_end */,
+                     bool /* is_new */)
   {}
 
   /*! Update the event to be the intersection point of two subcurves. */
-  void update_event (Event* e,
-                     Subcurve* sc1,
-                     Subcurve* sc2,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     Subcurve* /* sc1 */,
+                     Subcurve* /* sc2 */,
+                     bool /* is_new */)
   {}
 
   /*! Update the event. */
-  void update_event (Event* e,
-                     Subcurve* sc1)
+  void update_event (Event* /* e */,
+                     Subcurve* /* sc1 */)
   {}
 
   /*! Update the event. */
-  void update_event (Event* e, const Point_2& pt, bool is_new)
+  void update_event (Event* /* e */,
+                     const Point_2& /* pt */,
+                     bool /* is_new */)
   {}
 
   /* Found overlap */
-  void found_overlap(Subcurve* sc1, Subcurve* sc2, Subcurve* ov_sc)
+  void found_overlap (Subcurve* /* sc1 */,
+                      Subcurve* /* sc2 */,
+                      Subcurve* /* ov_sc */)
   {}
 
   /*! Get the first subcurve in the status line. */

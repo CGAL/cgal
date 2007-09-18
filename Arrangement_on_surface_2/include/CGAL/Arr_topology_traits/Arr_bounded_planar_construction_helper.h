@@ -92,25 +92,25 @@ public:
    * A notification invoked before the sweep-line starts handling the given
    * event.
    */
-  virtual void before_handle_event (Event* event)
+  virtual void before_handle_event (Event* /* event */)
   {
     return;
   }
 
   /*! A notification invoked when a new subcurve is created. */
-  virtual void add_subcurve (Halfedge_handle he, Subcurve* sc)
+  virtual void add_subcurve (Halfedge_handle /* he */, Subcurve* /* sc */)
   {
     return;
   }
 
   /*! Collect a subcurve index that does not see any status-line from below. */
-  void add_subcurve_in_top_face (unsigned int index)
+  void add_subcurve_in_top_face (unsigned int /* index */)
   {
     return;
   }
 
   /*! A notification invoked before the given event it deallocated. */
-  void before_deallocate_event (Event* event)
+  void before_deallocate_event (Event* /* event */)
   {
     return;
   }
@@ -120,7 +120,7 @@ public:
    * Set the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
-  void set_halfedge_indices_map (Halfedge_indices_map& table)
+  void set_halfedge_indices_map (Halfedge_indices_map& /* table */)
   {
     return;
   }
@@ -129,7 +129,7 @@ public:
    * Determine if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
-  bool swap_predecessors (Event* event) const
+  bool swap_predecessors (Event* /* event */) const
   {
     // In the bounded case the order of the predecessor is always correct
     // and there is no need to swap them.

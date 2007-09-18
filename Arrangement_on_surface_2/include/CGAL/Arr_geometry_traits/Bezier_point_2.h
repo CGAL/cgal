@@ -1003,7 +1003,7 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
   // Note that this constructor also takes care of the Bez_bound
   // for the originator.
   Nt_traits           nt_traits;
-  Originator          org (B, nt_traits.convert (t0));
+  Originator          org (B, xid, nt_traits.convert (t0));
   Bez_point_bound     bound = org.point_bound();
 
   bound.type = Bez_point_bound::RATIONAL_PT;

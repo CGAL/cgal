@@ -175,7 +175,7 @@ public:
                                            Curve_end ind1,
                                            const X_monotone_curve_2& cv2,
                                            Curve_end ind2,
-                                           Tag_true) const
+                                           Tag_true ) const
     {
       return (m_base->compare_x_2_object() (cv1, ind1, cv2, ind2));
     }
@@ -184,10 +184,10 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
-                                           Curve_end,
+                                           Curve_end ,
                                            const X_monotone_curve_2& , 
-                                           Curve_end ind2,
-                                           Tag_false) const
+                                           Curve_end ,
+                                           Tag_false ) const
     {
       return (EQUAL);
     }

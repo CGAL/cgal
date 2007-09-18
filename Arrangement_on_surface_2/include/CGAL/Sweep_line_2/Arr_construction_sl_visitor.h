@@ -296,7 +296,7 @@ void Arr_construction_sl_visitor<Hlpr>::before_handle_event (Event* event)
 //
 template <class Hlpr> 
 bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
-    (Event* event, Status_line_iterator iter, bool flag)
+    (Event* event, Status_line_iterator iter, bool /* flag */)
 {
   // Check if the event represents an isolated vertex.
   if (!event->has_left_curves() && !event->has_right_curves())
@@ -505,11 +505,14 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
   // already been created.
   Event         *last_event = last_event_on_subcurve(sc);
   Vertex_handle  v1 = last_event->vertex_handle();
+  bool           create_v1 = false;
 
   if (v1 == m_invalid_vertex)
   {
-    // Create the vertex to be associated with the left end of the curve.
-    v1 = m_arr_access.create_vertex (_point (last_event->point()));
+    // Mark that we should create the vertex v1 later on (if we created it
+    // now, and ended up calling insert_from_right_vertex(), this vertex
+    // would be constructed twice!)
+    create_v1 = true;
   }
   else if (v1->degree() > 0)
   {
@@ -562,6 +565,11 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
     
     return (this->insert_from_right_vertex (cv, r_prev, sc));
   }
+
+  // If necessary, create the vertex to be associated with the left end
+  // of the curve.
+  if (create_v1)
+    v1 = m_arr_access.create_vertex (_point (last_event->point()));
 
   // Perform the insertion between the two (currently isolated) vertices in
   // the interior of the current top face, as given by the helper class.
@@ -797,7 +805,7 @@ template <class Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Vertex_handle
 Arr_construction_sl_visitor<Hlpr>::insert_isolated_vertex
     (const Point_2& pt,
-     Status_line_iterator iter)
+     Status_line_iterator /* iter */)
 {
   // Insert the isolated vertex in the interior of the current top face, as
   // given by the helper class.

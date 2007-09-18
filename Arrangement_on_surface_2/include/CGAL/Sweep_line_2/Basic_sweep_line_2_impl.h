@@ -582,7 +582,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_add_curve_to_right
     (Event* event, Subcurve* curve,
-     bool overlap_exist)
+     bool /* overlap_exist */)
 {
   std::pair<bool, Event_subcurve_iterator> pair_res = 
     event->add_curve_to_right(curve, m_traits);

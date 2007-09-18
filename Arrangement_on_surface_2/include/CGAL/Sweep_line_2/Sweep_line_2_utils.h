@@ -111,6 +111,8 @@ void make_x_monotone (CurveInputIter begin, CurveInputIter end,
  * \param iso_points Output: The extended isolated points 
  *                           (of type ExTraits::Point_2).
  * \param ex_tr An extended geometry-traits class.
+ *              This parameter is not actually in use, but is needed in order
+ *              to instantiate the template parameter ExTraits.
  */
 template <class Arrangement,
           class ExTraits,

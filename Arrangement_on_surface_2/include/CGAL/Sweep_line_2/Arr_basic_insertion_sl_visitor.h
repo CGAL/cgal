@@ -85,29 +85,32 @@ public:
   void update_event()
   {}
 
-  void update_event (Event* e,
-                     const Point_2& end_point,
-                     const X_monotone_curve_2& cv,
-                     Curve_end cv_end,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     const Point_2& /* end_point */,
+                     const X_monotone_curve_2& /* cv */,
+                     Curve_end /* cv_end */,
+                     bool /* is_new */)
+  {}
+
+  void update_event (Event* /* e */,
+                     const X_monotone_curve_2& /* cv */,
+                     Curve_end /* cv_end */,
+                     bool /* is_new */)
+  {}
+
+  void update_event(Event* /* e */,
+                    Subcurve* /* sc1 */,
+                    Subcurve* /* sc2 */,
+                    bool /* is_new */)
+  {}
+
+  void update_event (Event* /* e */,
+                     Subcurve* /* sc1 */)
   {}
 
   void update_event (Event* e,
-                     const X_monotone_curve_2& cv,
-                     Curve_end cv_end,
-                     bool is_new)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1,
-                    Subcurve* sc2,
-                    bool is_new)
-  {}
-
-  void update_event(Event* e, Subcurve* sc1)
-  {}
-
-  void update_event (Event* e, const Point_2& pt, bool is_new)
+                     const Point_2& pt,
+                     bool /* is_new */)
   {
     Vertex_handle  invalid_v;
     if(e->point().vertex_handle() == invalid_v)
@@ -531,11 +534,14 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_in_face_interior
   // already been created.
   Event         *last_event = this->last_event_on_subcurve(sc);
   Vertex_handle  v1 = last_event->vertex_handle();
+  bool           create_v1 = false;
 
   if (v1 == this->m_invalid_vertex)
   {
-    // Create the vertex to be associated with the left end of the curve.
-    v1 = this->m_arr_access.create_vertex (last_event->point().base());
+    // Mark that we should create the vertex v1 later on (if we created it
+    // now, and ended up calling _insert_from_right_vertex(), this vertex
+    // would be constructed twice!)
+    create_v1 = true;
   }
   else if (v1->degree() > 0)
   {
@@ -580,8 +586,13 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_in_face_interior
       (this->m_top_traits->locate_around_boundary_vertex (&(*v2), cv.base(),
                                                           MAX_END, bx, by));
     
-    return (this->insert_from_right_vertex (cv, r_prev, sc));
+    return (_insert_from_right_vertex (cv, r_prev, sc));
   }
+
+  // If necessary, create the vertex to be associated with the left end
+  // of the curve.
+  if (create_v1)
+    v1 = this->m_arr_access.create_vertex (last_event->point().base());
 
   // Look up and insert the edge in the interior of the incident face of the
   // halfedge we see.
