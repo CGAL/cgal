@@ -823,7 +823,9 @@ _face_below_vertex_on_discontinuity (Vertex * v) const
       }
     }
 
-    ++curr;
+    // Move to the next halfedge around the vertex.
+    curr = curr->next()->opposite();
+
   } while (curr != first);
 
   // The first halfedge we encounter is the lowest to the left, but if there
