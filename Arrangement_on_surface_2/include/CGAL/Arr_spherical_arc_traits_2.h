@@ -17,13 +17,14 @@
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 
-#ifndef CGAL_ARR_SPHERICAL_ARC_TRAITS_2_H
-#define CGAL_ARR_SPHERICAL_ARC_TRAITS_2_H
+#ifndef CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
+#define CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
 
 #define CGAL_ARR_PLANE
 
 /*! \file
- * The spherical_arc traits-class for the arrangement package.
+ * The great circular arc on a sphere traits-class for the arrangement on
+ * sphere package.
  */
 
 #include <CGAL/tags.h>
@@ -38,13 +39,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename T_Kernel> class Arr_spherical_arc_3;
+template <typename T_Kernel> class Arr_great_circular_arc_on_sphere_3;
 template <typename T_Kernel> class Arr_extended_direction_3;
 
 /*! A traits class for maintaining an arrangement of spherical arcs */
 template <typename T_Kernel>
-class Arr_spherical_arc_traits_2 : public T_Kernel {
-  friend class Arr_spherical_arc_3<T_Kernel>;
+class Arr_great_circular_arc_on_sphere_traits_2 : public T_Kernel {
+  friend class Arr_great_circular_arc_on_sphere_3<T_Kernel>;
   friend class Arr_extended_direction_3<T_Kernel>;
 
 public:
@@ -56,7 +57,7 @@ public:
   typedef Tag_true                              Has_boundary_category;
 
   /*! Default constructor */
-  Arr_spherical_arc_traits_2(){}
+  Arr_great_circular_arc_on_sphere_traits_2(){}
   
 protected:
   typedef typename Kernel::Direction_3          Direction_3;
@@ -360,7 +361,7 @@ protected:
    * \pre dir lies in the plane defined by arc.
    */
   static bool is_in_between(const Arr_extended_direction_3<Kernel> & dir,
-                            const Arr_spherical_arc_3<Kernel> & arc)
+                            const Arr_great_circular_arc_on_sphere_3<Kernel> & arc)
   {
     const Point_2 & l = arc.left();
     const Point_2 & r = arc.right();
@@ -396,10 +397,10 @@ protected:
 
 public:
   // Traits objects
-  typedef Arr_extended_direction_3<Kernel>      Point_2;
-  typedef Arr_spherical_arc_3<Kernel>           X_monotone_curve_2;
-  typedef Arr_spherical_arc_3<Kernel>           Curve_2;
-  typedef unsigned int                          Multiplicity;
+  typedef Arr_extended_direction_3<Kernel>              Point_2;
+  typedef Arr_great_circular_arc_on_sphere_3<Kernel>    X_monotone_curve_2;
+  typedef Arr_great_circular_arc_on_sphere_3<Kernel>    Curve_2;
+  typedef unsigned int                                  Multiplicity;
 
 public:
   /// \name Basic functor definitions
@@ -417,23 +418,17 @@ public:
      * \pre p2 is not a singularity point.
      */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {     
-      /*std::cout << "p1 = " << p1 << std::endl;
-      std::cout << "p2 = " << p2 << std::endl;
-      if (p1.is_min_boundary())
-        std::cout << "p1.is_min_boundary" << std::endl;
-      if (p1.is_max_boundary())
-        std::cout << "p1.is_max_boundary" << std::endl;*/
-      CGAL_precondition(!p1.is_min_boundary() &&
-                        !p1.is_max_boundary());
-      CGAL_precondition(!p2.is_min_boundary() &&
-                        !p2.is_max_boundary());
+    {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
+      CGAL_precondition(!p1.is_min_boundary() && !p1.is_max_boundary());
+      CGAL_precondition(!p2.is_min_boundary() && !p2.is_max_boundary());
 
       Kernel kernel;
-      Direction_2 d1_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(p1);
-      Direction_2 d2_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(p2);
+      Direction_2 d1_2 = _Traits::project_xy(p1);
+      Direction_2 d2_2 = _Traits::project_xy(p2);
       if (kernel.equal_2_object()(d1_2, d2_2)) return EQUAL;
-      const Direction_2 & nx = Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
+      const Direction_2 & nx = _Traits::neg_x_2();
       return (kernel.counterclockwise_in_between_2_object()(nx, d1_2, d2_2)) ?
         LARGER : SMALLER;
     }
@@ -458,6 +453,8 @@ public:
                                  const X_monotone_curve_2 & xc,
                                  Curve_end ind) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       CGAL_precondition(p.is_no_boundary());
       CGAL_precondition_code
         (const Point_2 & p2 = (ind == MIN_END) ? xc.left() : xc.right(););
@@ -470,11 +467,11 @@ public:
         // xc is vertical, but does not coincide with the discontinuity arc,
         // obtain the other endpoint:
         const Point_2 & q = (ind == MIN_END) ? xc.right() : xc.left();
-        Direction_2 p_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(p);
-        Direction_2 q_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(q);
+        Direction_2 p_2 = _Traits::project_xy(p);
+        Direction_2 q_2 = _Traits::project_xy(q);
         Kernel kernel;
         if (kernel.equal_2_object()(p_2, q_2)) return EQUAL;
-        const Direction_2 & nx = Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
+        const Direction_2 & nx = _Traits::neg_x_2();
         return (kernel.counterclockwise_in_between_2_object()(nx, p_2, q_2)) ?
           LARGER : SMALLER;
       }
@@ -502,6 +499,8 @@ public:
                                  const X_monotone_curve_2 & xc2,
                                  Curve_end ind2) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       CGAL_precondition_code
         (const Point_2 & p1 = (ind1 == MIN_END) ? xc1.left() : xc1.right(););
       CGAL_precondition(!p1.is_no_boundary());
@@ -510,8 +509,7 @@ public:
       CGAL_precondition(!p2.is_no_boundary());
 
       if (xc1.is_vertical() && xc2.is_vertical()) {
-        if (xc1.is_on_boundary() && xc2.is_on_boundary())
-          return EQUAL;
+        if (xc1.is_on_boundary() && xc2.is_on_boundary()) return EQUAL;
         if (xc1.is_on_boundary()) return SMALLER;
         if (xc2.is_on_boundary()) return LARGER;
         // Non of the arcs coincide with the discontinuity arc:
@@ -519,11 +517,11 @@ public:
         // x(xc2, ind) <= x(xc2, !ind)
         const Point_2 & p = (ind1 == MIN_END) ? xc1.right() : xc1.left();
         const Point_2 & q = (ind2 == MIN_END) ? xc2.right() : xc2.left();
-        Direction_2 p_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(p);
-        Direction_2 q_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(q);
+        Direction_2 p_2 = _Traits::project_xy(p);
+        Direction_2 q_2 = _Traits::project_xy(q);
         Kernel kernel;
         if (kernel.equal_2_object()(p_2, q_2)) return EQUAL;
-        const Direction_2 & nx = Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
+        const Direction_2 & nx = _Traits::neg_x_2();
         return (kernel.counterclockwise_in_between_2_object()(nx, p_2, q_2)) ?
           LARGER : SMALLER;
       }
@@ -560,10 +558,12 @@ public:
      */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       CGAL_precondition(p1.is_no_boundary());
       CGAL_precondition(p2.is_no_boundary());
       
-      return Arr_spherical_arc_traits_2<Kernel>::compare_xy(p1, p2);
+      return _Traits::compare_xy(p1, p2);
     }
   };
 
@@ -699,24 +699,24 @@ public:
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xc) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       CGAL_precondition(!xc.is_degenerate());
       CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
       CGAL_precondition(xc.is_in_x_range(p));
 
-      Direction_2 p_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(p);
+      Direction_2 p_2 = _Traits::project_xy(p);
       if (xc.is_vertical()) {
         // Compare the point with the left endpoint. If smaller, return SMALLER.
         // Otherwise, if EQUAL, return EQUAL.
         // Otherwise, compare with the right endpoint. If larger, return LARGER.
         // Otherwise, return EQUAL:
         if (!xc.left().is_min_boundary()) {
-          Comparison_result cr =
-            Arr_spherical_arc_traits_2<Kernel>::compare_y(p, xc.left());
+          Comparison_result cr = _Traits::compare_y(p, xc.left());
           if (cr != LARGER) return cr;
         }
         if (xc.right().is_max_boundary()) return EQUAL;
-        Comparison_result cr =
-          Arr_spherical_arc_traits_2<Kernel>::compare_y(p, xc.right());
+        Comparison_result cr = _Traits::compare_y(p, xc.right());
         return (cr == LARGER) ? LARGER : EQUAL;
       }
 
@@ -744,6 +744,8 @@ public:
                                  const X_monotone_curve_2 & xc2, 
                                  Curve_end ind2) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -754,8 +756,7 @@ public:
       
       Direction_2 p1_2 = project_xz(p1);
       Direction_2 p2_2 = project_xz(p2);
-      Orientation orient =
-        Arr_spherical_arc_traits_2<Kernel>::orientation(p1_2, p2_2);
+      Orientation orient = _Traits::orientation(p1_2, p2_2);
 
       return (orient == RIGHT_TURN) ? SMALLER :
         (orient == COLLINEAR) ? EQUAL : LARGER;
@@ -780,6 +781,8 @@ public:
                                  const X_monotone_curve_2 & xc2, 
                                  Curve_end ind) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -807,9 +810,9 @@ public:
         if (l2.is_min_boundary()) return LARGER;
 
         // None of xc1 and xc2 endpoints coincide with a pole:
-        Direction_2 l1_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(l1);
+        Direction_2 l1_xy = _Traits::project_xy(l1);
         Comparison_result cr =
-          Arr_spherical_arc_traits_2<Kernel>::compare_y(l1, l2);
+          Arr_great_circular_arc_on_sphere_traits_2<Kernel>::compare_y(l1, l2);
         if (cr != EQUAL) return cr;
 
         // If Both arcs are vertical, they overlap:
@@ -818,8 +821,8 @@ public:
         if (xc2.is_vertical()) return SMALLER;
 
         // Compare to the right:
-        Direction_2 p_l1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(l1);
-        cr = Arr_spherical_arc_traits_2<Kernel>::compare_y(l1, l2);
+        Direction_2 p_l1 = _Traits::project_xy(l1);
+        cr = _Traits::compare_y(l1, l2);
         if (cr != EQUAL) return cr;
       
         // Non of the arcs is verticel. Thus, non of the endpoints coincide with
@@ -852,9 +855,8 @@ public:
       if (r2.is_max_boundary()) return SMALLER;
 
       // None of xc1 and xc2 endpoints coincide with a pole:
-      Direction_2 r1_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(r1);
-      Comparison_result cr =
-        Arr_spherical_arc_traits_2<Kernel>::compare_y(r1, r2);
+      Direction_2 r1_xy = _Traits::project_xy(r1);
+      Comparison_result cr = _Traits::compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
       // If Both arcs are vertical, they overlap:
@@ -863,8 +865,8 @@ public:
       if (xc2.is_vertical()) return SMALLER;
         
       // Compare to the left:
-      Direction_2 p_r1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(r1);
-      cr = Arr_spherical_arc_traits_2<Kernel>::compare_y(r1, r2);
+      Direction_2 p_r1 = _Traits::project_xy(r1);
+      cr = _Traits::compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
       // Non of the arcs is verticel. Thus, non of the endpoints coincide with
@@ -1085,6 +1087,8 @@ public:
     template<typename OutputIterator>
     OutputIterator operator()(const Curve_2 & c, OutputIterator oi) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
       if (c.is_degenerate()) {
         // The spherical_arc is a degenerate point - wrap it with an object:
         *oi++ = make_object(c.right());
@@ -1114,43 +1118,36 @@ public:
       
       // None of the enpoints coincide with a pole:
       typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-      Direction_2 s_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(source);
-      Direction_2 t_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(target);
-      Orientation orient =
-        Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+      Direction_2 s_2 = _Traits::project_xy(source);
+      Direction_2 t_2 = _Traits::project_xy(target);
+      Orientation orient = _Traits::orientation(s_2, t_2);
       if (orient == COLLINEAR) {
         CGAL_assertion(!equal_2(s_2, t_2));
         // The spherical_arc contains a pole. This implies that both new
         // arcs are vertical.Find out which pole lies on c:
         xc1.set_is_vertical(true);
         xc2.set_is_vertical(true);
-        const Direction_2 & nx = Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
-        if (Arr_spherical_arc_traits_2<Kernel>::orientation(nx, s_2) ==
-            COLLINEAR)
-        {
+        const Direction_2 & nx = _Traits::neg_x_2();
+        if (_Traits::orientation(nx, s_2) == COLLINEAR) {
           // Project onto xz plane:
-          s_2 = Arr_spherical_arc_traits_2<Kernel>::project_xz(source);
-          t_2 = Arr_spherical_arc_traits_2<Kernel>::project_xz(target);
-          const Direction_2 & ny =
-            Arr_spherical_arc_traits_2<Kernel>::neg_y_2();
-          Orientation orient1 =
-            Arr_spherical_arc_traits_2<Kernel>::orientation(ny, s_2);
-          CGAL_assertion_code(Orientation orient2 = Arr_spherical_arc_traits_2<Kernel>::orientation(ny, t_2););
+          s_2 = _Traits::project_xz(source);
+          t_2 = _Traits::project_xz(target);
+          const Direction_2 & ny = _Traits::neg_y_2();
+          Orientation orient1 = _Traits::orientation(ny, s_2);
+          CGAL_assertion_code(Orientation orient2 = _Traits::orientation(ny, t_2););
           CGAL_assertion((orient1 == LEFT_TURN && orient2 == RIGHT_TURN) ||
                          (orient1 == RIGHT_TURN && orient2 == LEFT_TURN));
-          orient = Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+          orient = _Traits::orientation(s_2, t_2);
           if (orient1 == orient) {
             // Positive pole:
-            const Direction_3 & pp =
-              Arr_spherical_arc_traits_2<Kernel>::pos_pole();
+            const Direction_3 & pp = _Traits::pos_pole();
             xc1.set_target(pp);
             xc2.set_source(pp);
             xc1.set_is_directed_right(true);
             xc2.set_is_directed_right(false);
           } else {
             // Negative pole:
-            const Direction_3 & np =
-              Arr_spherical_arc_traits_2<Kernel>::neg_pole();
+            const Direction_3 & np = _Traits::neg_pole();
             xc1.set_target(np);
             xc2.set_source(np);
             xc1.set_is_directed_right(false);
@@ -1161,28 +1158,24 @@ public:
           return oi;
         }
         // Project onto yz plane:
-        s_2 = Arr_spherical_arc_traits_2<Kernel>::project_yz(source);
-        t_2 = Arr_spherical_arc_traits_2<Kernel>::project_yz(target);
-        const Direction_2 & ny =
-          Arr_spherical_arc_traits_2<Kernel>::neg_y_2();
-        Orientation orient1 =
-          Arr_spherical_arc_traits_2<Kernel>::orientation(ny, s_2);
-        CGAL_assertion_code(Orientation orient2 = Arr_spherical_arc_traits_2<Kernel>::orientation(ny, t_2););
+        s_2 = _Traits::project_yz(source);
+        t_2 = _Traits::project_yz(target);
+        const Direction_2 & ny = _Traits::neg_y_2();
+        Orientation orient1 = _Traits::orientation(ny, s_2);
+        CGAL_assertion_code(Orientation orient2 = _Traits::orientation(ny, t_2););
         CGAL_assertion((orient1 == LEFT_TURN && orient2 == RIGHT_TURN) ||
-                          (orient1 == RIGHT_TURN && orient2 == LEFT_TURN));
-        orient = Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+                       (orient1 == RIGHT_TURN && orient2 == LEFT_TURN));
+        orient = _Traits::orientation(s_2, t_2);
         if (orient1 == orient) {
           // positive pole:
-          const Direction_3 & pp =
-            Arr_spherical_arc_traits_2<Kernel>::pos_pole();
+          const Direction_3 & pp = _Traits::pos_pole();
           xc1.set_target(pp);
           xc2.set_source(pp);
           xc1.set_is_directed_right(true);
           xc2.set_is_directed_right(false);
         } else {
           // negative pole:
-          const Direction_3 & np =
-            Arr_spherical_arc_traits_2<Kernel>::neg_pole();
+          const Direction_3 & np = _Traits::neg_pole();
           xc1.set_target(np);
           xc2.set_source(np);
           xc1.set_is_directed_right(false);
@@ -1285,6 +1278,11 @@ public:
                               const X_monotone_curve_2 & xc2,
                               OutputIterator oi) const
     {
+      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+      typedef typename Kernel::Equal_2                          Equal_2;
+      typedef typename Kernel::Counterclockwise_in_between_2
+        Counterclockwise_in_between_2;
+        
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -1299,12 +1297,11 @@ public:
       const Plane_3 * plane_ptr = object_cast<Plane_3>(&obj);
       if (plane_ptr != NULL) {
         Kernel kernel;
-        typename Kernel::Counterclockwise_in_between_2 ccib =
+        Counterclockwise_in_between_2 ccib =
           kernel.counterclockwise_in_between_2_object();
-        typename Kernel::Equal_2 equal = kernel.equal_2_object();
+        Equal_2 equal = kernel.equal_2_object();
 
-        if (xc1.is_vertical()) 
-        {
+        if (xc1.is_vertical()) {
           const Plane_3 & plane1 = xc1.plane();
           const Plane_3 & plane2 = xc2.plane();
 #if defined(CGAL_ARR_PLANE)
@@ -1321,10 +1318,10 @@ public:
 
         const Direction_2 & nx = neg_x_2();
         const Plane_3 & plane = xc1.plane();
-        Direction_2 l1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc1.left());
-        Direction_2 r1 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc1.right());
-        Direction_2 l2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc2.left());
-        Direction_2 r2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(xc2.right());
+        Direction_2 l1 = _Traits::project_xy(xc1.left());
+        Direction_2 r1 = _Traits::project_xy(xc1.right());
+        Direction_2 l2 = _Traits::project_xy(xc2.left());
+        Direction_2 r2 = _Traits::project_xy(xc2.right());
         if (equal(l1, l2)) {
           const Point_2 & trg = (ccib(r1, l2, r2)) ? xc1.right() : xc2.right();
           X_monotone_curve_2 xc(xc1.left(), trg, plane, true, false, true);
@@ -1365,15 +1362,15 @@ public:
         Point_2 ed(d);
 
         // Determine which one of the two directions:
-        if (Arr_spherical_arc_traits_2<Kernel>::is_in_between(ed, xc1) &&
-            Arr_spherical_arc_traits_2<Kernel>::is_in_between(ed, xc2))
+        if (_Traits::is_in_between(ed, xc1) &&
+            _Traits::is_in_between(ed, xc2))
         {
           *oi++ = make_object(Point_2_pair(ed, 1));
           return oi;
         }
         Point_2 edo(kernel.construct_opposite_direction_3_object()(d));
-        if (Arr_spherical_arc_traits_2<Kernel>::is_in_between(edo, xc1) &&
-            Arr_spherical_arc_traits_2<Kernel>::is_in_between(edo, xc2))
+        if (_Traits::is_in_between(edo, xc1) &&
+            _Traits::is_in_between(edo, xc2))
         {
           *oi++ = make_object(Point_2_pair(edo, 1));
           return oi;
@@ -1604,7 +1601,11 @@ template <typename Kernel>
 class Arr_extended_direction_3 : public Kernel::Direction_3 {
 private:
   typedef typename Kernel::FT                           FT;
-
+  typedef typename Kernel::Equal_2                      Equal_2;
+  typedef typename Kernel::Direction_2                  Direction_2;
+  typedef typename Kernel::Equal_3                      Equal_3;
+  typedef typename Kernel::Direction_3                  Direction_3;
+  
   /*! Enumeration of discontinuity type */
   enum Location_type {
     NO_BOUNDARY_LOC,
@@ -1617,9 +1618,6 @@ private:
   Location_type m_location;
 
 public:
-  typedef typename Kernel::Direction_3        Direction_3;
-  typedef typename Kernel::Direction_2        Direction_2;
-
   /*! Default constructor */
   Arr_extended_direction_3() : 
     Direction_3(0, 0, 1),
@@ -1640,18 +1638,19 @@ public:
   /*! Constructor */
   Arr_extended_direction_3(const Direction_3 & dir) : Direction_3(dir)
   {
-    const Direction_3 & pp = Arr_spherical_arc_traits_2<Kernel>::pos_pole();
-    const Direction_3 & np = Arr_spherical_arc_traits_2<Kernel>::neg_pole();
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+    
+    const Direction_3 & pp = _Traits::pos_pole();
+    const Direction_3 & np = _Traits::neg_pole();
     Kernel kernel;
-    typename Kernel::Equal_3 equal_3 = kernel.equal_3_object();
+    Equal_3 equal_3 = kernel.equal_3_object();
     if (equal_3(dir, pp)) m_location = MAX_BOUNDARY_LOC;
     else if (equal_3(dir, np)) m_location = MIN_BOUNDARY_LOC;
     else {
-      Direction_2 dir_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(dir);
-      typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-      const Direction_2 & nx = Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
-      m_location =
-        equal_2(dir_xy, nx) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
+      Direction_2 dir_xy = _Traits::project_xy(dir);
+      Equal_2 equal_2 = kernel.equal_2_object();
+      const Direction_2 & nx = _Traits::neg_x_2();
+      m_location = equal_2(dir_xy, nx) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
     }
   }
 
@@ -1665,8 +1664,7 @@ public:
   /*! Assignment operator. */
   Arr_extended_direction_3 & operator=(const Arr_extended_direction_3 & ed)
   {
-    *(static_cast<Direction_3*>(this)) =
-      static_cast<const Direction_3&>(ed);
+    *(static_cast<Direction_3*>(this)) = static_cast<const Direction_3&>(ed);
     m_location = ed.discontinuity_type();
     return (*this);
   }
@@ -1675,21 +1673,17 @@ public:
   Location_type discontinuity_type() const
   { return m_location; }
   
-  bool is_no_boundary() const
-  { return (m_location == NO_BOUNDARY_LOC); }
+  bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
   
-  bool is_min_boundary() const
-  { return (m_location == MIN_BOUNDARY_LOC); }
+  bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
   
-  bool is_mid_boundary() const
-  { return (m_location == MID_BOUNDARY_LOC); }
+  bool is_mid_boundary() const { return (m_location == MID_BOUNDARY_LOC); }
   
-  bool is_max_boundary() const
-  { return (m_location == MAX_BOUNDARY_LOC); }
+  bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
 };
 
 /*! A Representation of a spherical arc, as used by the
- * Arr_spherical_arc_traits_2 traits-class
+ * Arr_great_circular_arc_on_sphere_traits_2 traits-class
  * A spherical arc cannot have an angle of 180 degrees.
  * It is always directed from its source to its target.
  * In addition, an x-monotone spherical arc cannot cross the closed
@@ -1697,26 +1691,28 @@ public:
  * in the zx-plane, and is contained in the open halfspace (x > 0).
  */
 template <typename T_Kernel>
-class Arr_spherical_arc_3 {
+class Arr_great_circular_arc_on_sphere_3 {
 protected:
-  typedef T_Kernel                              Kernel;
+  typedef T_Kernel                                  Kernel;
   
-  typedef typename Kernel::Direction_3          Direction_3;
-  typedef typename Kernel::Vector_3             Vector_3;
-  typedef typename Kernel::Ray_3                Ray_3;
+  typedef typename Kernel::Direction_3              Direction_3;
+  typedef typename Kernel::Vector_3                 Vector_3;
+  typedef typename Kernel::Ray_3                    Ray_3;
 #if defined(CGAL_ARR_PLANE)
-  typedef Arr_plane_3<Kernel>                   Plane_3;
+  typedef Arr_plane_3<Kernel>                       Plane_3;
 #else
-  typedef typename Kernel::Plane_3              Plane_3;
+  typedef typename Kernel::Plane_3                  Plane_3;
 #endif
 
-  typedef typename Kernel::Direction_2          Direction_2;
-  typedef typename Kernel::Vector_2             Vector_2;
-  typedef typename Kernel::Ray_2                Ray_2;
-  typedef typename Kernel::Point_2              Point_2;
+  typedef typename Kernel::Direction_2              Direction_2;
+  typedef typename Kernel::Vector_2                 Vector_2;
+  typedef typename Kernel::Ray_2                    Ray_2;
+  typedef typename Kernel::Point_2                  Point_2;
 
-  typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
-    
+  typedef typename Kernel::Equal_2                  Equal_2;
+  
+  typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
+  
   Arr_extended_direction_3 m_source;    // The source point of the arc
   Arr_extended_direction_3 m_target;    // The target point of the arc
   Plane_3 m_plane;                      // The plane that contains the arc
@@ -1727,7 +1723,7 @@ protected:
 
 public:    
   /*! Default constructor */
-  Arr_spherical_arc_3() :
+  Arr_great_circular_arc_on_sphere_3() :
     m_is_x_monotone(true),
     m_is_vertical(false),
     m_is_directed_right(false),
@@ -1743,7 +1739,7 @@ public:
    * \param is_vertical is the arc vertical ?
    & \param is_directed_right is the arc directed from left to right?
    */
-  Arr_spherical_arc_3(const Arr_extended_direction_3 & src,
+  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & src,
                       const Arr_extended_direction_3 & trg,
                       const Plane_3 & plane,
                       bool is_x_monotone, bool is_vertical,
@@ -1771,19 +1767,20 @@ public:
    * \pre the source and target cannot be equal.
    * \pre the source and target cannot be the opoosite of each other.
    */
-  Arr_spherical_arc_3(const Arr_extended_direction_3 & source,
-                      const Arr_extended_direction_3 & target) :
+  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
+                                     const Arr_extended_direction_3 & target) :
     m_source(source),
     m_target(target),
     m_is_x_monotone(true),
     m_is_degenerate(false)
   {
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
     Kernel kernel;
     CGAL_precondition(!kernel.equal_3_object()(source, target));
     CGAL_precondition(!kernel.equal_3_object()(kernel.construct_opposite_direction_3_object()(source), target));
 
-    m_plane =
-      Arr_spherical_arc_traits_2<Kernel>::construct_plane_3(source, target);
+    m_plane = _Traits::construct_plane_3(source, target);
       
     if (source.is_max_boundary()) {
       m_is_vertical = true;
@@ -1807,30 +1804,24 @@ public:
     }
 
     // None of the enpoints coincide with a pole:
-    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-    Direction_2 s_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(source);
-    Direction_2 t_2 = Arr_spherical_arc_traits_2<Kernel>::project_xy(target);
+    Equal_2 equal_2 = kernel.equal_2_object();
+    Direction_2 s_2 = _Traits::project_xy(source);
+    Direction_2 t_2 = _Traits::project_xy(target);
 
-    Orientation orient =
-      Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+    Orientation orient = _Traits::orientation(s_2, t_2);
     if (orient == COLLINEAR) {
       if (equal_2(s_2, t_2)) {
         m_is_vertical = true;
-        const Direction_2 & nx =
-          Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
-        if (Arr_spherical_arc_traits_2<Kernel>::orientation(nx, s_2) ==
-            COLLINEAR)
-        {
+        const Direction_2 & nx = _Traits::neg_x_2();
+        if (_Traits::orientation(nx, s_2) == COLLINEAR) {
           // Project onto xz plane:
-          s_2 = Arr_spherical_arc_traits_2<Kernel>::project_xz(source);
-          t_2 = Arr_spherical_arc_traits_2<Kernel>::project_xz(target);
-          const Direction_2 & ny =
-            Arr_spherical_arc_traits_2<Kernel>::neg_y_2();
-          Orientation orient1 =
-            Arr_spherical_arc_traits_2<Kernel>::orientation(ny, s_2);
-          CGAL_assertion_code(Orientation orient2 = Arr_spherical_arc_traits_2<Kernel>::orientation(ny, t_2););
+          s_2 = _Traits::project_xz(source);
+          t_2 = _Traits::project_xz(target);
+          const Direction_2 & ny = _Traits::neg_y_2();
+          Orientation orient1 = _Traits::orientation(ny, s_2);
+          CGAL_assertion_code(Orientation orient2 = _Traits::orientation(ny, t_2););
           CGAL_assertion(orient1 == orient2);
-          orient = Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+          orient = _Traits::orientation(s_2, t_2);
           CGAL_assertion(orient != COLLINEAR);
           if (orient1 == LEFT_TURN) {
             m_is_directed_right = (orient == LEFT_TURN);
@@ -1840,21 +1831,21 @@ public:
           return;
         }
         // Project onto yz plane:
-        s_2 = Arr_spherical_arc_traits_2<Kernel>::project_yz(source);
-        t_2 = Arr_spherical_arc_traits_2<Kernel>::project_yz(target);
+        s_2 = _Traits::project_yz(source);
+        t_2 = _Traits::project_yz(target);
         const Direction_2 & ny =
-          Arr_spherical_arc_traits_2<Kernel>::neg_y_2();
+          _Traits::neg_y_2();
         Orientation orient1 =
-          Arr_spherical_arc_traits_2<Kernel>::orientation(ny, s_2);
-        CGAL_assertion_code(Orientation orient2 = Arr_spherical_arc_traits_2<Kernel>::orientation(ny, t_2););
+          _Traits::orientation(ny, s_2);
+        CGAL_assertion_code(Orientation orient2 = _Traits::orientation(ny, t_2););
         CGAL_assertion(orient1 == orient2);
         if (orient1 == LEFT_TURN) {
-          orient = Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+          orient = _Traits::orientation(s_2, t_2);
           CGAL_assertion(orient != COLLINEAR);
           m_is_directed_right = (orient == LEFT_TURN);
           return;
         }
-        orient = Arr_spherical_arc_traits_2<Kernel>::orientation(s_2, t_2);
+        orient = _Traits::orientation(s_2, t_2);
         CGAL_assertion(orient != COLLINEAR);
         m_is_directed_right = (orient == RIGHT_TURN);
         return;
@@ -1865,7 +1856,7 @@ public:
 
     // The projections of the endpoints are not colinear:
     m_is_vertical = false;
-    const Direction_2 & nx = Arr_spherical_arc_traits_2<Kernel>::neg_x_2();
+    const Direction_2 & nx = _Traits::neg_x_2();
     if (orient == LEFT_TURN) {
       m_is_directed_right = true;
       if (kernel.counterclockwise_in_between_2_object()(nx, s_2, t_2))
@@ -1886,9 +1877,9 @@ public:
    * \param target the target-point direction.
    * \pre The two endpoints are not the same, and both lie on the given plane.
    */
-  Arr_spherical_arc_3(const Plane_3 & plane,
-                      const Arr_extended_direction_3 & source,
-                      const Arr_extended_direction_3 & target) :
+  Arr_great_circular_arc_on_sphere_3(const Plane_3 & plane,
+                                     const Arr_extended_direction_3 & source,
+                                     const Arr_extended_direction_3 & target) :
     m_plane(plane),
     m_source(source),
     m_target(target),
@@ -1953,10 +1944,7 @@ public:
 
   /*! Determine whether both endpoints are on the boundary */
   bool is_on_boundary() const
-  {
-    return ((!m_source.is_no_boundary()) &&
-            (!m_target.is_no_boundary()));
-  }
+  { return ((!m_source.is_no_boundary()) && (!m_target.is_no_boundary())); }
     
   /*! Determine whether the given point is in the x-range of the
    * spherical_arc.
@@ -1967,22 +1955,24 @@ public:
    */
   bool is_in_x_range(const Arr_extended_direction_3 & p) const
   {
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> _Traits;
+
     CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
     
-    Direction_2 dir_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(p);
+    Direction_2 dir_xy = _Traits::project_xy(p);
 
     Kernel kernel;
     if (is_vertical()) {
       const Arr_extended_direction_3 & p =
         (left().is_min_boundary()) ? right() : left();
-      Direction_2 p_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(p);
+      Direction_2 p_xy = _Traits::project_xy(p);
       return kernel.equal_2_object()(dir_xy, p_xy);
     }
       
     // The curve is not vertical:
-    Direction_2 r_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(right());
+    Direction_2 r_xy = _Traits::project_xy(right());
     if (kernel.equal_2_object()(dir_xy, r_xy)) return true;
-    Direction_2 l_xy = Arr_spherical_arc_traits_2<Kernel>::project_xy(left());
+    Direction_2 l_xy = _Traits::project_xy(left());
     if (kernel.equal_2_object()(dir_xy, l_xy)) return true;
     return kernel.counterclockwise_in_between_2_object()(dir_xy, l_xy, r_xy);
   }
@@ -1999,9 +1989,9 @@ public:
 #endif
   
   /*! Flip the spherical_arc (swap it source and target) */
-  Arr_spherical_arc_3 flip() const
+  Arr_great_circular_arc_on_sphere_3 flip() const
   {
-    Arr_spherical_arc_3 opp;
+    Arr_great_circular_arc_on_sphere_3 opp;
     opp.m_plane = this->m_plane;
     opp.m_sourse = this->m_target;
     opp.m_target = this->m_sourse;
@@ -2039,7 +2029,7 @@ OutputStream & operator<<(OutputStream & os,
 /*! Inserter for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename OutputStream>
 OutputStream & operator<<(OutputStream & os,
-                          const Arr_spherical_arc_3<Kernel> & arc)
+                          const Arr_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
 #if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
   os << "(";
@@ -2056,7 +2046,7 @@ OutputStream & operator<<(OutputStream & os,
 /*! Extractor for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename InputStream>
 InputStream & operator>>(InputStream & is,
-                         const Arr_spherical_arc_3<Kernel> & arc)
+                         const Arr_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
   std::cerr << "Not implemented yet!" << std::endl;
   return is;
