@@ -3126,6 +3126,11 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.eps -text svneo
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.png -text svneol=unset#image/png
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.pcs -text
+Straight_skeleton_2/include/CGAL/IO/Dxf_stream.h -text
+Straight_skeleton_2/include/CGAL/IO/Dxf_writer.h -text
+Straight_skeleton_2/include/CGAL/Straight_skeleton_2/assertions.h -text
+Straight_skeleton_2/include/CGAL/Straight_skeleton_2/debug.h -text
+Straight_skeleton_2/include/CGAL/Straight_skeleton_2/test.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example_Working.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/2_Example.poly -text
