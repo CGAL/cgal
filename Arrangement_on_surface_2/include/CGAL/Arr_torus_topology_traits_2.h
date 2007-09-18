@@ -584,9 +584,7 @@ public:
      * \param bound_y The boundary condition of the curve end in y.
      * \pre The curve end is incident to the boundary.
      * \return An object that contains the curve end.
-     *         In our case this object may either wrap an unbounded face,
-     *         or an edge with an end-vertex at 
-     *         infinity (in case of an overlap).
+     *         In our case this object wraps a end-vertex
      */
     CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                    Curve_end ind,
