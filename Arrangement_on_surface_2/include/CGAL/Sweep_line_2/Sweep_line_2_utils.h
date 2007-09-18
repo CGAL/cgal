@@ -123,7 +123,7 @@ void prepare_for_sweep (Arrangement& arr,
                         PointInputIter pts_begin, PointInputIter pts_end,
                         XCurveOutIter x_curves,
                         PointOutIter iso_points,
-                        ExTraits* ex_tr)
+                        ExTraits* /* ex_tr */)
 {
   typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
   typedef typename Arrangement::Point_2               Point_2;
