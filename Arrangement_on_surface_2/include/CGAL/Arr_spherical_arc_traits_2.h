@@ -1303,10 +1303,15 @@ public:
           kernel.counterclockwise_in_between_2_object();
         typename Kernel::Equal_2 equal = kernel.equal_2_object();
 
-        if (xc1.is_vertical()) {
+        if (xc1.is_vertical()) 
+        {
           const Plane_3 & plane1 = xc1.plane();
           const Plane_3 & plane2 = xc2.plane();
+#if defined(CGAL_ARR_PLANE)
+          bool res = plane1.equal(plane2);
+#else
           bool res = kernel.equal_3_object()(plane1, plane2);
+#endif
           if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
             return oi;
@@ -1435,25 +1440,39 @@ public:
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
-      CGAL_precondition_code(
-        Kernel kernel;
-        typename Kernel::Equal_3 equal = kernel.equal_3_object();
-      );
+      Kernel kernel;
+      typename Kernel::Equal_3 equal = kernel.equal_3_object();
+
       #if defined(CGAL_ARR_PLANE)
       CGAL_precondition((xc1.plane()).equal(xc2.plane()));
       #else
       CGAL_precondition(equal(xc1.plane(), xc2.plane()));
       #endif
-      CGAL_precondition(equal(xc1.right(), xc2.left()) &&
-                        xc2.left().is_no_boundary());
+      CGAL_precondition_code(Are_mergeable_2 are_merg;);
+      CGAL_precondition (are_merg(xc1, xc2) == true);
 
-      xc.set_source(xc1.left());
-      xc.set_target(xc2.right());
-      xc.set_plane(xc1.plane());
-      xc.set_is_degenerate(false);
-      xc.set_is_x_monotone(true);
-      xc.set_is_vertical(xc1.is_vertical());
-      xc.set_is_directed_right(true);
+      if (equal(xc1.right(), xc2.left()))
+      {
+        xc.set_source(xc1.left());
+        xc.set_target(xc2.right());
+        xc.set_plane(xc1.plane());
+        xc.set_is_degenerate(false);
+        xc.set_is_x_monotone(true);
+        xc.set_is_vertical(xc1.is_vertical());
+        xc.set_is_directed_right(true);
+      }
+      else
+      {
+        CGAL_assertion(equal(xc1.left(), xc2.right()));
+
+        xc.set_source(xc2.left());
+        xc.set_target(xc1.right());
+        xc.set_plane(xc2.plane());
+        xc.set_is_degenerate(false);
+        xc.set_is_x_monotone(true);
+        xc.set_is_vertical(xc2.is_vertical());
+        xc.set_is_directed_right(true);
+      }
     }
   };
 

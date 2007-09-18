@@ -5014,14 +5014,16 @@ _are_vertices_unique() const
   Vertex_const_iterator vit;
   unsigned int          i = 0;
   
-  for (vit = vertices_begin(); vit != vertices_end(); ++vit, ++i)
+  for (vit = vertices_begin(); vit != vertices_end(); ++vit)
   {
     if (vit->boundary_in_x() == NO_BOUNDARY &&
         vit->boundary_in_y() == NO_BOUNDARY)
     { 
       points_vec[i] = vit->point();
+      ++i;
     }
   }
+  points_vec.resize (i);
 
   // Sort the vector of points and make sure no two adjacent points in the
   // sorted vector are equal.
