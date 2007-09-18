@@ -28,8 +28,6 @@
 #include <CGAL/Sweep_line_empty_visitor.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <CGAL/Arr_spherical_arc_traits_2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \class Arr_spherical_construction_helper

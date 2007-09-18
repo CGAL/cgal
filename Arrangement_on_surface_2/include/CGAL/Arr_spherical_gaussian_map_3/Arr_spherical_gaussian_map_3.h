@@ -46,7 +46,7 @@
 #include <iostream>
 
 #include "CGAL/Arr_default_dcel.h"
-#include "CGAL/Arr_spherical_arc_traits_2.h"
+#include "CGAL/Arr_great_circular_arc_on_sphere_traits_2.h"
 #include "CGAL/Arr_spherical_topology_traits_2.h"
 
 #ifdef CGAL_ARR_TRACING_TRAITS
@@ -57,16 +57,6 @@
 #endif
 
 CGAL_BEGIN_NAMESPACE
-
-#if 0
-template <class T_Kernel, class OutputStream>
-OutputStream & operator<<(OutputStream & os,
-                          const Arr_spherical_arc_3<T_Kernel> & xc)
-{
-  os << xc.left() << "," << xc.right();
-  return os;
-}
-#endif
 
 // #define CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG 1
 
@@ -360,12 +350,12 @@ template <class T_Kernel,
 #endif
           class T_Dcel = Arr_default_dcel>
 class Arr_spherical_gaussian_map_3 :
-  public Arrangement_on_surface_2<Arr_tracing_traits_2<Arr_spherical_arc_traits_2<T_Kernel> >,
-    Arr_spherical_topology_traits_2<Arr_tracing_traits_2<Arr_spherical_arc_traits_2<T_Kernel> >,
+  public Arrangement_on_surface_2<Arr_tracing_traits_2<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel> >,
+    Arr_spherical_topology_traits_2<Arr_tracing_traits_2<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel> >,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-      T_Dcel<Arr_tracing_traits_2<Arr_spherical_arc_traits_2<T_Kernel> > >
+      T_Dcel<Arr_tracing_traits_2<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel> > >
 #else
-      typename T_Dcel::template Dcel<Arr_tracing_traits_2<Arr_spherical_arc_traits_2<T_Kernel> > >
+      typename T_Dcel::template Dcel<Arr_tracing_traits_2<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel> > >
 #endif
     >
   >
@@ -378,27 +368,27 @@ template <class T_Kernel,
 #endif
           class T_Dcel = Arr_default_dcel>
 class Arr_spherical_gaussian_map_3 :
-  public Arrangement_on_surface_2<Arr_spherical_arc_traits_2<T_Kernel>,
-    Arr_spherical_topology_traits_2<Arr_spherical_arc_traits_2<T_Kernel>,
+  public Arrangement_on_surface_2<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel>,
+    Arr_spherical_topology_traits_2<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel>,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-      T_Dcel<Arr_spherical_arc_traits_2<T_Kernel> >
+      T_Dcel<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel> >
 #else
-      typename T_Dcel::template Dcel<Arr_spherical_arc_traits_2<T_Kernel> >
+      typename T_Dcel::template Dcel<Arr_great_circular_arc_on_sphere_traits_2<T_Kernel> >
 #endif
     >
   >
 #endif
 {
 private:
-  typedef Arr_spherical_gaussian_map_3<T_Kernel, T_Dcel>  Self;
+  typedef Arr_spherical_gaussian_map_3<T_Kernel, T_Dcel>    Self;
   
 public:
-  typedef T_Kernel                                        Kernel;
+  typedef T_Kernel                                          Kernel;
 #ifdef CGAL_ARR_TRACING_TRAITS
-  typedef Arr_tracing_traits_2<Arr_spherical_arc_traits_2<Kernel> >
+  typedef Arr_tracing_traits_2<Arr_great_circular_arc_on_sphere_traits_2<Kernel> >
                                                           Geometry_traits_2;
 #else
-  typedef Arr_spherical_arc_traits_2<Kernel>              Geometry_traits_2;
+  typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Geometry_traits_2;
 #endif
   
   /*! Parameter-less Constructor */

@@ -51,7 +51,7 @@
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
 
 #elif TEST_TRAITS == SPHERICAL_ARC_TRAITS
-#include <CGAL/Arr_spherical_arc_traits_2.h>
+#include <CGAL/Arr_great_circular_arc_on_sphere_traits_2.h>
 
 #else
 #error No traits (TRAITS) specified!
@@ -151,7 +151,7 @@ typedef Traits::Bezier_cache                            Bezier_cache;
 #define TRAITS_TYPE "Bezier"
 
 #elif TEST_TRAITS == SPHERICAL_ARC_TRAITS
-typedef CGAL::Arr_spherical_arc_traits_2<Kernel>        Traits;
+typedef CGAL::Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 #define TRAITS_TYPE "Spherical Arc"
 
 #else
