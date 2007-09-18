@@ -39,13 +39,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename T_Kernel> class Arr_great_circular_arc_on_sphere_3;
-template <typename T_Kernel> class Arr_extended_direction_3;
+template <typename Kernel> class Arr_x_monotone_great_circular_arc_on_sphere_3;
+template <typename Kernel> class Arr_great_circular_arc_on_sphere_3;
+template <typename Kernel> class Arr_extended_direction_3;
 
 /*! A traits class for maintaining an arrangement of spherical arcs */
 template <typename T_Kernel>
 class Arr_great_circular_arc_on_sphere_traits_2 : public T_Kernel {
-  friend class Arr_great_circular_arc_on_sphere_3<T_Kernel>;
+  friend class Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel>;
   friend class Arr_extended_direction_3<T_Kernel>;
 
 public:
@@ -361,7 +362,7 @@ protected:
    * \pre dir lies in the plane defined by arc.
    */
   static bool is_in_between(const Arr_extended_direction_3<Kernel> & dir,
-                            const Arr_great_circular_arc_on_sphere_3<Kernel> & arc)
+                            const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
   {
     const Point_2 & l = arc.left();
     const Point_2 & r = arc.right();
@@ -398,7 +399,8 @@ protected:
 public:
   // Traits objects
   typedef Arr_extended_direction_3<Kernel>              Point_2;
-  typedef Arr_great_circular_arc_on_sphere_3<Kernel>    X_monotone_curve_2;
+  typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel>
+                                                        X_monotone_curve_2;
   typedef Arr_great_circular_arc_on_sphere_3<Kernel>    Curve_2;
   typedef unsigned int                                  Multiplicity;
 
@@ -1096,8 +1098,10 @@ public:
       }
 
       if (c.is_x_monotone()) {
-        // The spherical_arc is monotone - wrap it with an object:
-        *oi++ = make_object(c);
+        // The spherical arc is monotone - wrap it with an object:
+        // *oi++ = make_object(X_monotone_curve_2(c));
+        const X_monotone_curve_2 * xc = &c;
+        *oi++ = make_object(*xc);
         return oi;
       }
 
@@ -1682,16 +1686,16 @@ public:
   bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
 };
 
-/*! A Representation of a spherical arc, as used by the
- * Arr_great_circular_arc_on_sphere_traits_2 traits-class
- * A spherical arc cannot have an angle of 180 degrees.
- * It is always directed from its source to its target.
- * In addition, an x-monotone spherical arc cannot cross the closed
- * hemi-circle arc of discontinuity, defined as the longitude that lies
- * in the zx-plane, and is contained in the open halfspace (x > 0).
+/*! A Representation of an x-monotone great circular arc embedded on a sphere,
+ * as used by the Arr_great_circular_arc_on_sphere_traits_2 traits-class
+ * An x-monotone great circular arc cannot cross the closed hemi-circle arc of
+ * discontinuity, defined as the longitude that lies in the zx-plane, and is
+ * contained in the open halfspace (x > 0).
+ * \todo At this point such an arc cannot have an angle of 180 degrees.
+ * \todo It is always directed from its source to its target.
  */
 template <typename T_Kernel>
-class Arr_great_circular_arc_on_sphere_3 {
+class Arr_x_monotone_great_circular_arc_on_sphere_3 {
 protected:
   typedef T_Kernel                                  Kernel;
   
@@ -1723,7 +1727,7 @@ protected:
 
 public:    
   /*! Default constructor */
-  Arr_great_circular_arc_on_sphere_3() :
+  Arr_x_monotone_great_circular_arc_on_sphere_3() :
     m_is_x_monotone(true),
     m_is_vertical(false),
     m_is_directed_right(false),
@@ -1739,11 +1743,11 @@ public:
    * \param is_vertical is the arc vertical ?
    & \param is_directed_right is the arc directed from left to right?
    */
-  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & src,
-                      const Arr_extended_direction_3 & trg,
-                      const Plane_3 & plane,
-                      bool is_x_monotone, bool is_vertical,
-                      bool is_directed_right, bool is_degenerate = false) :
+  Arr_x_monotone_great_circular_arc_on_sphere_3
+  (const Arr_extended_direction_3 & src, const Arr_extended_direction_3 & trg,
+   const Plane_3 & plane,
+   bool is_x_monotone, bool is_vertical,
+   bool is_directed_right, bool is_degenerate = false) :
     m_source(src),
     m_target(trg),
     m_plane(plane),
@@ -1752,6 +1756,21 @@ public:
     m_is_directed_right(is_directed_right),
     m_is_degenerate(is_degenerate)
   {}
+
+  /*! Copy constructor
+   * \param other the other arc
+   */
+  Arr_x_monotone_great_circular_arc_on_sphere_3
+  (const Arr_x_monotone_great_circular_arc_on_sphere_3 & other)
+  {
+    m_source = other.m_source;
+    m_target = other.m_target;
+    m_plane = other.m_plane;
+    m_is_x_monotone = other.m_is_x_monotone;
+    m_is_vertical = other.m_is_vertical;
+    m_is_directed_right = other.m_is_directed_right;
+    m_is_degenerate = other.m_is_degenerate;
+  }
   
   /*! Construct a spherical_arc from two endpoint directions. It is assumed
    * that the arc is the one with the smaller angle among the two.
@@ -1767,8 +1786,9 @@ public:
    * \pre the source and target cannot be equal.
    * \pre the source and target cannot be the opoosite of each other.
    */
-  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
-                                     const Arr_extended_direction_3 & target) :
+  Arr_x_monotone_great_circular_arc_on_sphere_3
+  (const Arr_extended_direction_3 & source,
+   const Arr_extended_direction_3 & target) :
     m_source(source),
     m_target(target),
     m_is_x_monotone(true),
@@ -1877,12 +1897,13 @@ public:
    * \param target the target-point direction.
    * \pre The two endpoints are not the same, and both lie on the given plane.
    */
-  Arr_great_circular_arc_on_sphere_3(const Plane_3 & plane,
-                                     const Arr_extended_direction_3 & source,
-                                     const Arr_extended_direction_3 & target) :
-    m_plane(plane),
+  Arr_x_monotone_great_circular_arc_on_sphere_3
+  (const Arr_extended_direction_3 & source,
+   const Arr_extended_direction_3 & target,
+   const Plane_3 & plane) :
     m_source(source),
     m_target(target),
+    m_plane(plane),
     m_is_degenerate(false)
   {
     CGAL_precondition(has_on(plane, source));
@@ -1989,9 +2010,9 @@ public:
 #endif
   
   /*! Flip the spherical_arc (swap it source and target) */
-  Arr_great_circular_arc_on_sphere_3 flip() const
+  Arr_x_monotone_great_circular_arc_on_sphere_3 flip() const
   {
-    Arr_great_circular_arc_on_sphere_3 opp;
+    Arr_x_monotone_great_circular_arc_on_sphere_3 opp;
     opp.m_plane = this->m_plane;
     opp.m_sourse = this->m_target;
     opp.m_target = this->m_sourse;
@@ -2001,6 +2022,84 @@ public:
     opp.m_is_x_monotone = this->m_is_x_monotone;
     return opp;
   }
+};
+
+/*! A Representation of a general great circular arc embedded on a sphere,
+ * as used by the Arr_great_circular_arc_on_sphere_traits_2 traits-class
+ */
+template <typename T_Kernel>
+class Arr_great_circular_arc_on_sphere_3 :
+  public Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel> {
+protected:
+  typedef T_Kernel                                  Kernel;
+  typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> Base;
+  typedef Arr_extended_direction_3<Kernel>          Arr_extended_direction_3;
+#if defined(CGAL_ARR_PLANE)
+  typedef Arr_plane_3<Kernel>                       Plane_3;
+#else
+  typedef typename Kernel::Plane_3                  Plane_3;
+#endif
+
+public:
+  /*! Default constructor */
+  Arr_great_circular_arc_on_sphere_3() : Base() {}
+
+  /*! Copy constructor
+   * \param other the other arc
+   */
+  Arr_great_circular_arc_on_sphere_3
+  (const Arr_great_circular_arc_on_sphere_3 & other) : Base(other) {}
+  
+  /*! Constructor
+   * \param src the source point of the arc
+   * \param trg the target point of the arc
+   * \param plane the plane that contains the arc
+   * \param is_degenerate is the arc degenerate (single point)?
+   * \param is_x_monotone is arc  x-monotone ?
+   * \param is_vertical is the arc vertical ?
+   * \param is_directed_right is the arc directed from left to right?
+   */
+  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & src,
+                                     const Arr_extended_direction_3 & trg,
+                                     const Plane_3 & plane,
+                                     bool is_x_monotone, bool is_vertical,
+                                     bool is_directed_right,
+                                     bool is_degenerate = false) :
+    Base(src, trg, plane,
+         is_x_monotone, is_vertical, is_directed_right, is_degenerate)
+  {}
+
+  /*! Construct a spherical_arc from two endpoint directions. It is assumed
+   * that the arc is the one with the smaller angle among the two.
+   * 1. Find out whether the arc is x-monotone.
+   * 2. If it is x-monotone,
+   *    2.1 Find out whether it is vertical, and
+   *    2.2 whether the target is larger than the source (directed right).
+   * The arc is vertical, iff
+   * 1. one of its endpoint direction pierces a pole, or
+   * 2. the projections onto the xy-plane coincide.
+   * \param source the source point.
+   * \param target the target point.
+   * \pre the source and target cannot be equal.
+   * \pre the source and target cannot be the opoosite of each other.
+   */
+  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
+                                     const Arr_extended_direction_3 & target) :
+    Base(source, target)
+  {}
+
+  /*! Construct a spherical_arc from two endpoints directions contained
+   * in a plane.
+   * \param plane the containing plane.
+   * \param source the source-point direction.
+   * \param target the target-point direction.
+   * \pre The two endpoints are not the same, and both lie on the given plane.
+   */
+  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
+                                     const Arr_extended_direction_3 & target,
+                                     const Plane_3 & plane) :
+    Base(source, target, plane)
+  {}
 };
 
 /*! Inserter for the spherical_arc class used by the traits-class */
@@ -2029,7 +2128,7 @@ OutputStream & operator<<(OutputStream & os,
 /*! Inserter for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename OutputStream>
 OutputStream & operator<<(OutputStream & os,
-                          const Arr_great_circular_arc_on_sphere_3<Kernel> & arc)
+                          const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
 #if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
   os << "(";
@@ -2046,7 +2145,7 @@ OutputStream & operator<<(OutputStream & os,
 /*! Extractor for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename InputStream>
 InputStream & operator>>(InputStream & is,
-                         const Arr_great_circular_arc_on_sphere_3<Kernel> & arc)
+                         const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
   std::cerr << "Not implemented yet!" << std::endl;
   return is;
