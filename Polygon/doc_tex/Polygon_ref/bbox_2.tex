@@ -36,8 +36,8 @@ Returns the bounding box of the range \ccStyle{[first,last)}.
     \item \ccc{Traits} is a model of the concept 
 	  \ccc{PolygonTraits_2}\ccIndexMainItem[c]{PolygonTraits_2}.
 	  In fact, only the members \ccc{Construct_bbox_2} and
-	  \ccc{construct_bbox_2_object} are used.
-    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
+	  \ccc{construct_bbox_2_object()} are used.
+    \item The value type of \ccc{InputIterator} must be \ccc{Traits::Point_2},
 \end{enumerate}
 
 

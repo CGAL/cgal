@@ -18,8 +18,8 @@
 
 \ccDefinition
   
-The function \ccRefName\ computes if a polygon is simple, that is, does not
-self-intersect.
+The function \ccRefName\ computes if a polygon is simple, that is, if the edges 
+do not intersect, except consecutive edges in their common vertex.
 
 \ccInclude{CGAL/Polygon_2_algorithms.h}
 
@@ -29,9 +29,8 @@ inline bool is_simple_2(ForwardIterator first, ForwardIterator last,
                       Traits traits);
 }
 {
-A polygon is called simple if the edges do not intersect, except consecutive
-edge in their common vertex. This function checks if the polygon defined by the
-range \ccc{first} \ldots\ \ccc{last} is simple.
+Checks if the polygon defined by the
+iterator range \ccc{first} \ldots\ \ccc{last} is simple.
 }
 
 
@@ -45,10 +44,10 @@ range \ccc{first} \ldots\ \ccc{last} is simple.
             \item \ccc{Point_2}
             \item \ccc{Less_xy_2}
             \item \ccc{Orientation_2}
-            \item \ccc{less_xy_2}
-            \item \ccc{orientation_2}
+            \item \ccc{less_xy_2_object()}
+            \item \ccc{orientation_2_object()}
           \end{itemize}
-    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+    \item The value type of \ccc{ForwardIterator} must be \ccc{Traits::Point_2},
 \end{enumerate}
 
 \ccImplementation
