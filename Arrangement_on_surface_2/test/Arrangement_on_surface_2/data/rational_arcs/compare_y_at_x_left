@@ -1,0 +1,3 @@
+#compare_y_at_x_left 43 9 7 SMALLER
+#compare_y_at_x_left 51 9 16 LARGER
+#compare_y_at_x_left 10 10 18 EQUAL
