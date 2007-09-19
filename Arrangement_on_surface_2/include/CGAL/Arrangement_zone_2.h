@@ -109,6 +109,7 @@ protected:
   Point_2             left_pt;         // Its current left endpoint.
   bool                has_right_pt;    // Is the right end of the curve
                                        // bounded.
+  bool                right_on_boundary;// Is the right point on the boundary.
   Point_2             right_pt;        // Its right endpoint (if bounded).
 
   Vertex_handle       left_v;          // The arrangement vertex associated
@@ -219,12 +220,14 @@ public:
     {
       // The right endpoint is valid.
       has_right_pt = true;
+      right_on_boundary = (bx2 != NO_BOUNDARY || by2 != NO_BOUNDARY);
       right_pt = geom_traits->construct_max_vertex_2_object() (cv);
     }
     else
     {
       // The right end of the curve lies at infinity.
       has_right_pt = false;
+      right_on_boundary = true;
     }
 
     return;
@@ -298,13 +301,19 @@ private:
    * Get the next intersection of cv with the given halfedge.
    * \param he A handle to the halfedge.
    * \param skip_first_point Should we skip the first intersection point.
+   * \param intersect_on_right_boundary Output: If an intersetion point is
+   *                                            computed, marks whether this
+   *                                            point coincides with the right
+   *                                            curve-end, which lies on the
+   *                                            surface boundary.
    * \return An object representing the next intersection: Intersect_point_2
    *         in case of a simple intersection point, X_monotone_curve_2 in
    *         case of an overlap, and an empty object if there is no
    *         intersection.
    */
   CGAL::Object _compute_next_intersection (Halfedge_handle he,
-                                           bool skip_first_point);
+                                           bool skip_first_point,
+                                           bool& intersect_on_right_boundary);
 
   /*!
    * Remove the next intersection of cv with the given halfedge from the map.

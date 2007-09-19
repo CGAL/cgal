@@ -415,11 +415,11 @@ public:
    *      incident to the vertex v.
    * \return An object that contains the curve end.
    */
-  Halfedge* locate_around_boundary_vertex (Vertex *v,
-                                           const X_monotone_curve_2& cv,
-                                           Curve_end ind,
-                                           Boundary_type bound_x,
-                                           Boundary_type bound_y) const
+  Halfedge* locate_around_boundary_vertex (Vertex* /* v */,
+                                           const X_monotone_curve_2& /* cv */,
+                                           Curve_end /* ind */,
+                                           Boundary_type /* bound_x */,
+                                           Boundary_type /* bound_y */) const
   {
     CGAL_assertion (false);
     return (NULL);

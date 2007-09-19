@@ -158,7 +158,7 @@ public:
    * arrangement.
    * \param arr The arrangement to be copied.
    */
-  virtual void before_assign (const Arrangement_2& arr)
+  virtual void before_assign (const Arrangement_2& /* arr */)
   {}
 
   /*!

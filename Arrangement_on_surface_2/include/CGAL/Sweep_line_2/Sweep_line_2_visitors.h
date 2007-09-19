@@ -96,8 +96,8 @@ public:
   }
 
   bool after_handle_event (Event* event,
-                           Status_line_iterator iter,
-                           bool flag)
+                           Status_line_iterator /* iter */,
+                           bool /* flag */)
   {
     if ((m_includeEndPoints ||
          event->is_intersection() ||
@@ -256,32 +256,30 @@ public:
                points_vec.end());
   }
 
-  
-
-  void update_event (Event* e,
-                     Subcurve* sc1,
-                     Subcurve* sc2,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     Subcurve* /* sc1 */,
+                     Subcurve* /* sc2 */,
+                     bool /* is_new */)
   {
     m_found_x = true;
   }
 
-  void update_event (Event* e,
-                     Subcurve* sc1)
+  void update_event (Event* /* e */,
+                     Subcurve* /* sc1 */)
   {
     m_found_x = true;
   }
 
-  void update_event (Event* e,
-                     const Point_2& end_point,
-                     const X_monotone_curve_2& cv,
-                     Curve_end cv_end,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     const Point_2& /* end_point */,
+                     const X_monotone_curve_2& /* cv */,
+                     Curve_end /* cv_end */,
+                     bool /* is_new */)
   {}
 
-  
-
-  void update_event (Event* e, const Point_2& pt, bool is_new)
+  void update_event (Event* /* e */,
+                     const Point_2& /* pt */,
+                     bool /* is_new */)
   {}
 
   template <class XCurveIterator>
@@ -293,12 +291,16 @@ public:
     sl->sweep(begin, end);
   }
 
-  void found_overlap(Subcurve* sc1, Subcurve* sc2, Subcurve* ov_sc)
+  void found_overlap (Subcurve* /* sc1 */,
+                      Subcurve* /* sc2 */,
+                      Subcurve* /* ov_sc */)
   {
     m_found_x = true;
   }
 
-  bool after_handle_event(Event* event,Status_line_iterator iter, bool flag)
+  bool after_handle_event (Event* /* event */,
+                           Status_line_iterator /* iter */,
+                           bool /* flag */)
   {
     if(m_found_x)
     {
@@ -313,7 +315,6 @@ public:
     return (m_found_x);
   }
 };
-
 
 CGAL_END_NAMESPACE
 

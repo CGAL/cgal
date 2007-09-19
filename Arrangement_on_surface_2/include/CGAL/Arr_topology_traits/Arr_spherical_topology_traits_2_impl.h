@@ -450,7 +450,7 @@ Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 notify_on_boundary_vertex_creation(Vertex * v,
                                    const X_monotone_curve_2 & xc,
                                    Curve_end ind,
-                                   Boundary_type bound_x,
+                                   Boundary_type CGAL_assertion_code(bound_x),
                                    Boundary_type bound_y)
 {
   // std::cout << "notify_on_boundary_vertex_creation()" << std::endl;
@@ -462,6 +462,7 @@ notify_on_boundary_vertex_creation(Vertex * v,
     m_north_pole = v;
     return;
   }
+  CGAL_assertion (bound_x != NO_BOUNDARY);
   Vertex_key key(xc, ind);
   m_boundary_vertices.insert(Vertex_value(key, v));
 }
@@ -472,9 +473,9 @@ notify_on_boundary_vertex_creation(Vertex * v,
 template <class GeomTraits, class Dcel>
 CGAL::Object
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-place_boundary_vertex(Face * f,
-                      const X_monotone_curve_2 & xc, Curve_end ind,
-                      Boundary_type bound_x, Boundary_type bound_y)
+place_boundary_vertex (Face * /* f */,
+                       const X_monotone_curve_2 & xc, Curve_end ind,
+                       Boundary_type bound_x, Boundary_type bound_y)
 {
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (bound_y == AFTER_SINGULARITY) {
@@ -590,16 +591,6 @@ locate_curve_end (const X_monotone_curve_2 & xc, Curve_end ind,
 
   v = it->second;
   return CGAL::make_object(_face_below_vertex_on_discontinuity (v));
-}
-
-/*! \brief splits a fictitious edge using a given vertex */
-template <class GeomTraits, class Dcel>
-typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge *
-Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-split_fictitious_edge(Halfedge * e, Vertex * v)
-{
-  CGAL_assertion(0);
-  return NULL;
 }
 
 /*! \brief determines whether a given boundary vertex is redundant */
@@ -853,7 +844,7 @@ bool
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_on_new_perimetric_face_boundary(const Halfedge * prev1,
                                    const Halfedge * prev2,
-                                   const X_monotone_curve_2 & xc) const
+                                   const X_monotone_curve_2 & /* xc */) const
 {
   /*! We need to maintain the variant that the face that contains everything,
    * and has no outer CCB's, also contains the north pole. In the degenerate

@@ -790,9 +790,9 @@ public:
     }
 
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
-                                           Curve_end,
+                                           Curve_end ,
                                            const X_monotone_curve_2& , 
-                                           Curve_end ind2,
+                                           Curve_end ,
                                            Tag_false) const
     {
       return (EQUAL);
@@ -920,8 +920,8 @@ public:
       return (m_base->boundary_in_x_2_object() (cv.base(), ind));
     }
 
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& cv,
-                                      Curve_end ind, Tag_false) const
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& ,
+                                      Curve_end , Tag_false) const
     {
       return (NO_BOUNDARY);
     }
@@ -961,8 +961,8 @@ public:
       return (m_base->boundary_in_y_2_object() (cv.base(), ind));
     }
 
-    Boundary_type _boundary_in_y_imp(const X_monotone_curve_2& cv,
-                                     Curve_end ind, Tag_false) const
+    Boundary_type _boundary_in_y_imp(const X_monotone_curve_2& ,
+                                     Curve_end , Tag_false) const
     {
       return (NO_BOUNDARY);
     }

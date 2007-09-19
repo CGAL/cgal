@@ -150,17 +150,17 @@ public:
                      Curve_end cv_end,
                      bool is_new);
 
-   void update_event (Event* e,
-                      const X_monotone_curve_2& cv,
-                      Curve_end cv_end,
-                      bool is_new)
+   void update_event (Event* /* e */,
+                      const X_monotone_curve_2& /* cv */,
+                      Curve_end /* cv_end */,
+                      bool /* is_new */)
    {}
 
   /*! Update an event that corresponds to an intersection between curves. */
-  void update_event (Event* e,
-                     Subcurve* c1,
-                     Subcurve* c2,
-                     bool is_new)
+  void update_event (Event* /* e */,
+                     Subcurve* /* c1 */,
+                     Subcurve* /* c2 */,
+                     bool CGAL_assertion_code(is_new))
   {
     CGAL_assertion(is_new == true);
   }
@@ -379,9 +379,9 @@ template <class OvlHlpr, class OvlTr>
 void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
 update_event (Event *e,
               const Point_2& end_point,
-              const X_monotone_curve_2& cv,
-              Curve_end cv_end,
-              bool is_new)
+              const X_monotone_curve_2& /* cv */,
+              Curve_end /* cv_end */,
+              bool /* is_new */)
 {
   // Nothing to do in case of an event at infinity.
   CGAL_assertion(e->is_finite());
@@ -432,8 +432,9 @@ update_event (Event *e, Subcurve *sc)
 // Update an event.
 //
 template <class OvlHlpr, class OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
-update_event (Event *e, const Point_2& p, bool is_new)
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event (Event *e,
+                                                           const Point_2& p,
+                                                           bool /* is_new */)
 {
   // Update the red and blue objects associated with the point as necessary. 
   Point_2& pt = e->point();

@@ -114,7 +114,8 @@ public:
   virtual void before_handle_event (Event* event);
 
   /*! A notification invoked when a new subcurve is created. */
-  virtual void add_subcurve (Halfedge_handle he, Subcurve* sc)
+  virtual void add_subcurve (Halfedge_handle /* he */,
+                             Subcurve* /* sc */)
   {
     return;
   }
@@ -318,7 +319,6 @@ before_handle_event (Event* event)
 
   return;
 }
-
 
 CGAL_END_NAMESPACE
 

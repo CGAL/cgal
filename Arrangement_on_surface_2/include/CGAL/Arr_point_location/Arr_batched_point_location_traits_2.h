@@ -575,9 +575,9 @@ public:
     }
 
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
-                                           Curve_end,
+                                           Curve_end ,
                                            const X_monotone_curve_2& , 
-                                           Curve_end ind2,
+                                           Curve_end ,
                                            Tag_false) const
     {
       return (EQUAL);

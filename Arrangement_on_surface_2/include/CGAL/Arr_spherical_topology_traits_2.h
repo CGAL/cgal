@@ -182,15 +182,24 @@ public:
   //@{
 
   /*! Obtain the DCEL (const version). */
-  const Dcel & dcel() const { return (m_dcel); }
+  const Dcel & dcel() const
+  {
+    return (m_dcel);
+  }
 
   /*! Obtain the DCEL (non-const version). */
-  Dcel & dcel() { return m_dcel; }
-  
+  Dcel & dcel()
+  {
+    return (m_dcel);
+  }
+
   /*! Determine whether the DCEL reprsenets an empty structure.
    * \return true if the dcel reprsenets an empty structure; false otherwise.
    */
-  bool is_empty_dcel() const { return (m_dcel.size_of_vertices() == 0); }
+  bool is_empty_dcel() const
+  {
+    return (m_dcel.size_of_vertices() == 0);
+  }
 
   /*! Initialize an empty DCEL structure. */
   void init_dcel();
@@ -203,61 +212,107 @@ public:
    * \return true if v is mapped to a point on the discontinuity arc; false
    * otherwise.
    */
-  bool is_concrete_vertex(const Vertex * v) const { return true; }
+  bool is_concrete_vertex (const Vertex * /* v */) const
+  {
+    return (true);
+  }
 
   /*! Obtain the number of concrete vertices.
    * \return the number of concrete vertices.
    */
   Size number_of_concrete_vertices () const
-  { return m_dcel.size_of_vertices(); }
+  {
+    return (m_dcel.size_of_vertices());
+  }
 
   /*! Determine whether the given vertex is valid.
    * \param v the vertex.
    * \todo why is this needed, and where used?
    */
-  bool is_valid_vertex(const Vertex * v) const { return true; }
+  bool is_valid_vertex (const Vertex * /* v */) const
+  {
+    return (true);
+  }
 
   /*! Obtain the number of valid vertices. */
-  Size number_of_valid_vertices() const { return m_dcel.size_of_vertices(); }
+  Size number_of_valid_vertices() const
+  {
+    return (m_dcel.size_of_vertices());
+  }
 
   /*! Determine whether the given halfedge is valid. */
-  bool is_valid_halfedge(const Halfedge * he) const { return true; }
+  bool is_valid_halfedge (const Halfedge * /* he */) const
+  {
+    return (true);
+  }
 
   /*! Obtain the number of valid halfedges. */
-  Size number_of_valid_halfedges() const { return m_dcel.size_of_halfedges(); }
+  Size number_of_valid_halfedges() const
+  {
+    return (m_dcel.size_of_halfedges());
+  }
 
   /*! Determine whether the given face is valid. */
-  bool is_valid_face(const Face * f) const { return true; }
+  bool is_valid_face(const Face * /* f */) const
+  {
+    return (true);
+  }
   
   /*! Obtain the number of valid faces. */
-  Size number_of_valid_faces() const { return m_dcel.size_of_faces(); }
+  Size number_of_valid_faces() const
+  {
+    return (m_dcel.size_of_faces());
+  }
 
   /*! Obtain the spherical face (const version). */
-  const Face * spherical_face() const { return m_spherical_face; }
+  const Face * spherical_face() const
+  {
+    return (m_spherical_face);
+  }
 
   /*! Obtain the spherical face (non-const version). */
-  Face * spherical_face() { return m_spherical_face; }
+  Face * spherical_face()
+  {
+    return (m_spherical_face);
+  }
 
   /*! Obtain the south pole (const version). */
-  const Vertex * south_pole() const { return m_south_pole; }
+  const Vertex * south_pole() const
+  {
+    return (m_south_pole);
+  }
 
   /*! Obtain the south pole (non-const version). */
-  Vertex * south_pole() { return m_south_pole; }
+  Vertex * south_pole()
+  {
+    return (m_south_pole);
+  }
 
   /*! Obtain the north pole (const version). */
-  const Vertex * north_pole() const { return m_north_pole; }
+  const Vertex * north_pole() const
+  {
+    return (m_north_pole);
+  }
 
   /*! Obtain the north pole (non-const version). */
-  Vertex * north_pole() { return m_north_pole; }
-
-  /*! Obtain */ 
-  Vertex * discontinuity_vertex(const X_monotone_curve_2 xc, Curve_end ind)
+  Vertex * north_pole()
   {
-    Vertex_key key(xc, ind);
-    typename Vertex_map::iterator it = m_boundary_vertices.find(key);
-    if (it != m_boundary_vertices.end()) return it->second;
-    return NULL;
-  }                             
+    return (m_north_pole);
+  }
+
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given curve-end (or return NULL if no such vertex exists). */ 
+  Vertex * discontinuity_vertex (const X_monotone_curve_2 xc,
+                                 Curve_end ind)
+  {
+    Vertex_key                     key(xc, ind);
+    typename Vertex_map::iterator  it = m_boundary_vertices.find(key);
+
+    if (it != m_boundary_vertices.end())
+      return (it->second);
+    return (NULL);
+  }
+
   //@}
   
 private:
@@ -502,7 +557,8 @@ public:
    * \return Whether the two halfedge belong to the outer boundary of the same
    *         face.
    */
-  bool boundaries_of_same_face(const Halfedge * e1, const Halfedge * e2) const
+  bool boundaries_of_same_face (const Halfedge * /* e1 */,
+                                const Halfedge * /* e2 */) const
   {
     // This function is never called in case of an arrangement on a sphere:
     CGAL_assertion (false);
@@ -595,13 +651,22 @@ public:
    * \return A halfedge whose direction is the same as e's and whose target is
    *         the split vertex v.
    */
-  Halfedge * split_fictitious_edge(Halfedge * e, Vertex * v);
+  Halfedge * split_fictitious_edge (Halfedge * /* e */, Vertex * /* v */)
+  {
+    // There are no fictitious halfedges:
+    CGAL_assertion(false);
+    return (NULL);
+  }
 
   /*! Determine whether the given face is unbounded.
    * \param f The face.
    * \return true if f is unbounded; false otherwise.
    */
-  bool is_unbounded(const Face * f) const { return false; }
+  bool is_unbounded (const Face * /* f */) const
+  {
+    // All faces on a sphere are bounded:
+    return (false);
+  }
 
   /*! Determine whether the given boundary vertex is redundant.
    * \param v The vertex.

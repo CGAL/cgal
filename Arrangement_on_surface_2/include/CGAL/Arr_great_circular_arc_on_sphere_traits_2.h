@@ -1715,7 +1715,6 @@ protected:
 
   typedef typename Kernel::Equal_2                  Equal_2;
   
-  // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
   
   Arr_extended_direction_3 m_source;    // The source point of the arc
@@ -2034,7 +2033,6 @@ class Arr_great_circular_arc_on_sphere_3 :
 protected:
   typedef T_Kernel                                  Kernel;
   typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> Base;
-  // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
 #if defined(CGAL_ARR_PLANE)
   typedef Arr_plane_3<Kernel>                       Plane_3;

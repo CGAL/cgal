@@ -270,7 +270,7 @@ protected:
 
       // Read the current outer CCB.
       n = formatter.read_size ("halfedges_on_outer_ccb");
-      he = _read_ccb (formatter, new_f, n, new_occb, NULL);
+      he = _read_ccb (formatter, n, new_occb, NULL);
       new_f->add_outer_ccb (new_occb, he);
     }
     formatter.read_outer_ccbs_end();
@@ -289,7 +289,7 @@ protected:
 
       // Read the current inner CCB.
       n = formatter.read_size ("halfedges_on_inner_ccb");
-      he = _read_ccb (formatter, new_f, n, NULL, new_iccb);
+      he = _read_ccb (formatter, n, NULL, new_iccb);
       new_f->add_inner_ccb (new_iccb, he);
     }
     formatter.read_inner_ccbs_end();
@@ -329,7 +329,6 @@ protected:
   /*!
    * Read a circular boundary of a conncted component.
    * \param formatter The formatter.
-   * \param f The incident DCEL face.
    * \param boundary_size The number of halfedges along the boundary.
    * \param p_outer The outer CCB.
    * \param p_inner The inner CCB.
@@ -338,7 +337,6 @@ protected:
    */
   template <class Formatter>
   DHalfedge* _read_ccb (Formatter& formatter, 
-                        DFace *f,
                         Size boundary_size,
                         DOuter_ccb *p_outer,
                         DInner_ccb *p_inner)

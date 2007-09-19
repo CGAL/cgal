@@ -704,7 +704,7 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
     (const X_monotone_curve_2& cv,
      Halfedge_handle prev1,
      Halfedge_handle prev2,
-     Subcurve* sc,
+     Subcurve* ,
      bool &new_face_created)
 {
   bool        prev1_before_prev2 = true;

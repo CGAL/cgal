@@ -99,7 +99,7 @@ public:
    * A notification invoked before the sweep-line starts handling the given
    * event.
    */  
-  void before_handle_event (Event* e)
+  void before_handle_event (Event* /* e */)
   {
     return;
   }

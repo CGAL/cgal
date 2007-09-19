@@ -24,7 +24,11 @@
  * Helping file to include Arr_overlay_2 for backward compatibility.
  */
 
-#warning Arr_overlay.h is DEPRECATED, please include Arr_overlay_2.h instead
+#if (defined __GNUC__)
+  #warning Arr_overlay.h is DEPRECATED, please include Arr_overlay_2.h instead
+#elif (defined _MSC_VER)
+  #pragma message("Arr_overlay.h is DEPRECATED, please include Arr_overlay_2.h instead")
+#endif
 
 #include <CGAL/Arr_overlay_2.h>
 
