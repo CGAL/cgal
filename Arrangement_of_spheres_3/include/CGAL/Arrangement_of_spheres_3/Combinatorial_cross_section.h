@@ -193,6 +193,126 @@ public:
 			Halfedge_handle new_target); 
 
  
+  template <class Hit, class Cit>
+  Vertex_handle star_face(const Hit hb, Hit he, const Cit cb, Cit ce) {
+    CGAL_LOG(Log::SOME, "Star face called for face");
+    CGAL_LOG_WRITE(Log::SOME, write((*hb)->face(), LOG_STREAM) << std::endl);
+    CGAL_LOG(Log::SOME, "Handles are ");
+    {
+      Cit cc=cb;
+      for (Hit hc=hb; hc != he; ++hc, ++cc) {
+	CGAL_LOG_WRITE(Log::SOME, write(*hc, LOG_STREAM) 
+		       << ": " << *cc << std::endl);
+      }
+    }
+    CGAL_assertion(std::distance(hb,he) == std::distance(cb, ce));
+    Vertex_handle vh= new_vertex(Point());
+    Face_handle f= (*hb)->face();
+    for (Hit hc=hb; hc != he; ++hc) {
+      CGAL_assertion((*hc)->face() == f);
+    }
+    Hit hc=hb;
+    Cit cc=cb;
+    Halfedge_handle hf= new_halfedge(cc->opposite());
+    hf->set_face(f);
+    hf->opposite()->set_face(f);
+    hf->set_vertex(vh);
+    vh->set_halfedge(hf);
+    hf->opposite()->set_vertex((*hc)->vertex());
+    connect(hf->opposite(), (*hc)->next());
+    connect(*hc, hf);
+    connect(hf, hf->opposite());
+    ++hc; ++cc;
+
+    CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
+    //CGAL::HalfedgeDS_const_decorator<HDS> hdscd(hds_);
+    CGAL_LOG_WRITE(Log::SOME, write(hf->face(), LOG_STREAM) << " is the new face ");
+    //hdscd.is_valid(true, 3);
+    for (; hc != he; ++hc, ++cc) {
+      CGAL_assertion(hf->face() == (*hc) ->face());
+      CGAL_LOG(Log::SOME, "Connecting ");
+      CGAL_LOG_WRITE(Log::SOME, write(hf, LOG_STREAM) << " to ");
+      CGAL_LOG_WRITE(Log::SOME, write(*hc, LOG_STREAM) << std::endl);
+      Halfedge_handle hn=hdsd.split_face(hf, *hc);
+      set_curve(hn, *cc);
+    }
+    {
+      CGAL_LOG(Log::SOME, "Result is\n");
+      Halfedge_handle h= vh->halfedge();
+      do {
+	CGAL_LOG_WRITE(Log::SOME, write(h, LOG_STREAM) << std::endl);
+	h= h->next()->opposite();
+      } while (h != vh->halfedge());
+    }
+    return vh;
+  }
+
+
+  template <class Iit, class Oit>  
+  void expand_vertex(Iit ib, Iit ie,
+		     Oit ob, Oit oe) {
+    CGAL_assertion(std::distance(ib,ie) == std::distance(ob, oe));
+    CGAL_LOG(Log::SOME, "Explanding vertex with\n");
+    {
+      Oit oc=ob;
+      for (Iit ic=ib; ic != ie; ++ic, ++oc) {
+	CGAL_LOG_WRITE(Log::SOME, write(*ic, LOG_STREAM) << ": ");
+	CGAL_LOG_WRITE(Log::SOME, write(*oc, LOG_STREAM) << std::endl);
+      }
+    }
+    Vertex_handle vh= (*ob)->vertex();
+    Face_handle f=(*ib)->face();
+    CGAL_assertion(f != inf_);
+    {
+      Oit oc=ob;
+      for (Iit ic=ib; ic != ie; ++ic, ++oc) {
+	CGAL_LOG_WRITE(Log::SOME, write((*ic)->opposite(), LOG_STREAM) << ": ");
+	CGAL_LOG_WRITE(Log::SOME, write(*oc, LOG_STREAM) << std::endl);
+	CGAL_assertion((*ic)->opposite()->curve() == (*oc)->curve());
+	CGAL_assertion(degree((*ic)->vertex()) ==1);
+	CGAL_assertion((*oc)->vertex() ==vh);
+	CGAL_assertion((*ic)->face() ==f);
+      }
+    }
+    
+
+    CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
+    CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
+    if (!chds.is_valid(false, num_components_==1? 3: 2)) {
+      chds.is_valid(true, num_components_==1? 3: 2);
+      std::cerr << "Not valid." << std::endl;
+      CGAL_assertion(0);
+    }
+
+    {
+      Oit oc=ob;
+      for (Iit ic=ib; ic != ie; ++ic, ++oc) {
+	Halfedge_handle hi= (*ic)->opposite();
+	Halfedge_handle ho= *oc;
+	CGAL_assertion(hi->curve() == ho->curve());
+	connect(ho, hi->next());
+	connect(hi->opposite()->prev(), ho->opposite());
+	ho->set_vertex(hi->vertex());
+	ho->vertex()->set_halfedge(ho);
+      }
+    }
+    {
+      CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
+      Oit oc=ob;
+      for (Iit ic=ib; ic != ie; ++ic, ++oc) {
+	hdsd.set_face_in_face_loop(*oc, (*oc)->face());
+	hds_.vertices_erase((*ic)->vertex());
+	hds_.edges_erase(*ic);
+      }
+    }
+    hds_.vertices_erase(vh);
+    hds_.faces_erase(f);
+    --num_components_;
+    //std::set<Halfedge_handle, Handle_compare> visited;
+    for (Oit oc=ob; oc != oe; ++oc) {
+      v_.on_new_edge(*oc);
+    }
+  }
 
   //! stitch the the HDS together by attaching the vertices pointed to by ib:ie to those in fb,fe
   /*!
@@ -457,6 +577,36 @@ public:
     return f;
   }
 
+  void visit_component(Halfedge_handle h) {
+    std::set<Halfedge_handle, Handle_compare> visited;
+    std::vector<Halfedge_handle> front;
+    front.push_back(h); front.push_back(h->opposite());
+    do {
+      Halfedge_handle h= front.back();
+      front.pop_back();
+      Halfedge_handle c=h->opposite()->prev();
+      while (c != h) {
+	if (degree(h->opposite()->vertex()) != 1) {
+	  if (visited.find(h->opposite()) != visited.end()) {
+	    CGAL_assertion(visited.find(h) == visited.end());
+	    v_.on_new_edge(h);
+	    visited.insert(h);
+	  }
+	}
+	c= c->opposite()->prev();
+      };
+    } while (!front.empty());
+  }
+
+  Vertex_handle degen_join_vertex(Halfedge_handle h) {
+    CGAL::HalfedgeDS_decorator<HDS> hdsd(hds_);
+    v_.on_delete_edge(h);
+    Vertex_handle vh= h->vertex();
+    hdsd.join_vertex(h);
+    audit_vertex(vh, false);
+    return vh;
+  }
+
   void handle_new_edges(std::vector<Halfedge_handle> &edges);
 
   Face_handle intersect_arcs(Halfedge_handle ha, Halfedge_handle hb);
@@ -579,7 +729,7 @@ public:
     halfedges_.resize(i);
   }
 
-  void new_circle(CGAL_AOS3_TYPENAME Curve::Key k, Halfedge_handle c[]);
+  void new_target(CGAL_AOS3_TYPENAME Curve::Key k, Halfedge_handle c[]);
 
   Vertex_handle new_vertex(Point p);
   

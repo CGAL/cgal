@@ -75,13 +75,14 @@ public:
   struct Sphere_key_iterator_t{
     typedef Sphere_key_iterator_t This;
     typedef Key value_type;
-    typedef const Key &reference_type;
-    typedef const Key* pointer_type;
+    typedef const Key &reference;
+    typedef const Key* pointer;
     typedef size_t difference_type;
+    typedef std::random_access_iterator_tag iterator_category;
     Sphere_key_iterator_t(){}
     Sphere_key_iterator_t(int i): k_(i){}
     value_type operator*() const {return k_;}
-    pointer_type operator->() const {return &k_;}
+    pointer operator->() const {return &k_;}
     Sphere_key_iterator_t operator++() {
       k_= Key(k_.input_index()+1);
       return *this;
@@ -90,6 +91,12 @@ public:
       Sphere_key_iterator_t ret=*this;
       operator++();
       return ret;
+    }
+    difference_type operator-(Sphere_key_iterator_t o) const {
+      return k_.internal_index() - o.k_.internal_index();
+    }
+    void operator+=(int i) {
+      k_= Key(k_.input_index()+i);
     }
     CGAL_COMPARISONS1(k_);
   private:

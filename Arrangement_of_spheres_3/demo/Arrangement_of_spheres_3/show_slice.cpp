@@ -73,7 +73,7 @@ struct Show_circles {
     spheres_(ss), lines_(l), planes_(p), z_(z){}
 
   void operator()(CGAL::Qt_examiner_viewer_2 *qtv) {
-  
+    QMutexLocker lock(qtv->lock());
     for (unsigned int i=0; i< spheres_.size(); ++i) {
       C2 c;
       if (intersect(spheres_[i], z_,c )) {
@@ -118,7 +118,7 @@ struct Show_circles {
       }
     }
     
-
+    //qtv->unlock();
     qtv->show_everything();
   }
 

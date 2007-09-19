@@ -566,8 +566,8 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::connect(Halfedge_handle a, Half
 
 CGAL_AOS3_TEMPLATE
 void
-Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
-						       Halfedge_handle vs[4]) {
+Combinatorial_cross_section CGAL_AOS3_TARG::new_target(Curve::Key k,
+						       Halfedge_handle rs[4]) {
 
   //audit(true);
   ++num_components_;
@@ -578,11 +578,15 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
     CGAL_assertion(0);
     }*/
 
-
+  Halfedge_handle vs[4];
+  
   Face_handle f= hds_.faces_push_back(CGAL_AOS3_TYPENAME HDS::Face());
+  Face_handle of= hds_.faces_push_back(CGAL_AOS3_TYPENAME HDS::Face());
   Vertex_handle vhs[4];
+  Vertex_handle ovhs[4];
   for (unsigned int i=0; i< 4; ++i) {
     vhs[i]= new_vertex(Point::make_extremum(k, Rule_direction(i)));
+    ovhs[i]= new_vertex(Point());
   }
 
   vs[0]=new_halfedge(Curve(k, Curve::RT_ARC));
@@ -590,8 +594,14 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
   vs[2]=new_halfedge(Curve(k, Curve::LB_ARC));
   vs[3]=new_halfedge(Curve(k, Curve::RB_ARC));
   
-  
-  if (halfedges_.size() <=static_cast<unsigned int>(k.input_index())) halfedges_.resize(k.input_index()+1);
+  rs[0]=new_halfedge(Curve(k, Curve::R_RULE));
+  rs[1]=new_halfedge(Curve(k, Curve::Part(Curve::T_RULE | Curve::IN_BIT)));
+  rs[2]=new_halfedge(Curve(k, Curve::Part(Curve::L_RULE | Curve::IN_BIT)));
+  rs[3]=new_halfedge(Curve(k, Curve::B_RULE));
+
+  if (halfedges_.size() <=static_cast<unsigned int>(k.input_index())) {
+    halfedges_.resize(k.input_index()+1);
+  }
   halfedges_[k.input_index()]=vs[3]->opposite();
  
   Halfedge_handle ivs[4];
@@ -600,11 +610,16 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
     ivs[i]= vs[i]->opposite();
     ivs[i]->set_vertex(vhs[(i+1)%4]);
     vhs[(i+1)%4]->set_halfedge(ivs[i]);
+    
+    rs[i]->set_vertex(ovhs[i]);
+    ovhs[i]->set_halfedge(rs[i]);
+    rs[i]->opposite()->set_vertex(vhs[i]);
   }
 
   for (unsigned int i=0; i< 4; ++i) {
     connect(ivs[i], ivs[(i+1)%4]);
     ivs[i]->set_face(f);
+    connect(rs[i], rs[i]->opposite());
   }
 
   f->set_halfedge(ivs[0]);
@@ -613,12 +628,17 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
 
   {
     for (unsigned int i=0; i< 4; ++i) {
-      connect(vs[(i+1)%4], vs[i]);
-      vs[i]->set_face(inf_);
+      //connect(vs[(i+1)%4], vs[i]);
+      rs[i]->set_face(of);
+      rs[i]->opposite()->set_face(of);
+      vs[i]->set_face(of);
+      connect(vs[i], rs[i]);
+      connect(rs[i]->opposite(), vs[(i+3)%4]);
     }
+    of->set_halfedge(rs[0]);
     //fi->set_halfedge(vs[0]);
-    CGAL_assertion(vs[0]->next()->next()->next()->next() == vs[0]);
-    CGAL_assertion(vs[0]->prev()->prev()->prev()->prev() == vs[0]);
+    //CGAL_assertion(vs[0]->next()->next()->next()->next() == vs[0]);
+    //CGAL_assertion(vs[0]->prev()->prev()->prev()->prev() == vs[0]);
 
 
     /*LOG_STREAM << "Auditing const decorator..." << std::flush;
@@ -628,14 +648,14 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_circle(Curve::Key k,
       CGAL_assertion(0);
     }
     LOG_STREAM << "done." << std::endl;*/
-    CGAL_LOG(Log::LOTS,  "Outside: ");
+    CGAL_LOG(Log::SOME,  "Outside: ");
     CGAL_LOG_WRITE(Log::LOTS, write(vs[0]->face(), LOG_STREAM) << std::endl);
-    CGAL_LOG(Log::LOTS,  "Inside: ");
+    CGAL_LOG(Log::SOME,  "Inside: ");
     CGAL_LOG_WRITE(Log::LOTS, write(ivs[0]->face(), LOG_STREAM) << std::endl);
   }
   
 
-  // inefficient
+  
   v_.on_new_edge(vs[0]);
   v_.on_new_edge(vs[1]);
   v_.on_new_edge(vs[2]);
@@ -1033,8 +1053,9 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
   CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(false, num_components_==1? 3: 2)) {
-    CGAL_assertion(0);
+    chds.is_valid(true, num_components_==1? 3: 2);
     std::cerr << "Not valid." << std::endl;
+    CGAL_assertion(0);
   }
   CGAL_LOG(Log::LOTS,  "done." << std::endl);
 
@@ -1370,11 +1391,11 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::set_has_boundary(bool tf) {
     connect(lh, bh);
     
     CGAL::HalfedgeDS_items_decorator<HDS> dec;
-    dec.set_face_in_face_loop(lh, in);
-    in->set_halfedge(lh);
-    CGAL_assertion(lh->opposite()->face() == Face_handle());
-    dec.set_face_in_face_loop(lh->opposite(), inf_);
-    inf_->set_halfedge(lh->opposite());
+    dec.set_face_in_face_loop(lh->opposite(), in);
+    in->set_halfedge(lh->opposite());
+    CGAL_assertion(lh->face() == Face_handle());
+    dec.set_face_in_face_loop(lh, inf_);
+    inf_->set_halfedge(lh);
     num_components_=1;
     audit();
   }

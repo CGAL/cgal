@@ -61,7 +61,13 @@ public:
   typedef CGAL::Arrangement_with_history_2<Arr_traits>                     CArr;
   typedef CGAL::Arr_naive_point_location<CArr>             Point_location;
   
-  
+  typedef CGAL_AOS3_TYPENAME CArr::Halfedge_const_handle Halfedge_const_handle;
+  typedef CGAL_AOS3_TYPENAME CArr::Face_const_handle Face_const_handle;
+  typedef CGAL_AOS3_TYPENAME CArr::Vertex_const_handle Vertex_const_handle;
+  typedef CGAL_AOS3_TYPENAME CArr::Halfedge_handle Halfedge_handle;
+  typedef CGAL_AOS3_TYPENAME CArr::Face_handle Face_handle;
+
+
   template <class Point_3, class NT>
   inline  NT squared_depth(Point_3 p, const NT &z){
     return CGAL::square(NT(p[sweep_coordinate().index()])-z);
@@ -83,51 +89,67 @@ public:
     return c;
   }
 
+  typedef CGAL_AOS3_TYPENAME Traits::Sphere_3_key Sphere_3_key;
+
   
   struct ISort {
   
-    ISort(Traits tr) {
-      for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it= tr.sphere_3_keys_begin();
-	    it != tr.sphere_3_keys_end(); ++it){
-	sps_.push_back(tr.sphere_events(*it).first);
-      }
+    ISort(Traits tr): tr_(tr) {
     }
-    bool operator()(unsigned int a, unsigned int b) const {
-      CGAL_assertion(sps_.size() > a);
-      CGAL_assertion(sps_.size() > b);
-      return sps_[a] < sps_[b];
+    bool operator()(Sphere_3_key a, Sphere_3_key b) const {
+      return tr_.sphere_events(a).first < tr_.sphere_events(b).first;
     }
     
-    std::vector<CGAL_AOS3_TYPENAME Traits::Event_point_3> sps_;
+    Traits tr_;
   };
+
+  typedef std::pair<Sphere_3_key, Rule_direction> Extremum;
+
 
 public:
 
-  
-  Cross_section_arrangement(const Traits &tr, NT z, NT inf): pl_(arr_),  inf_(inf){
-    std::vector<CGAL_AOS3_TYPENAME Circular_k::Circle_2> circles;
-    std::vector<int> names;
-    int num=0;
-    nums_= tr.number_of_sphere_3s();
-    std::vector<unsigned int> io;
+  Cross_section_arrangement(const Traits &tr, NT z): tr_(tr),
+						     pl_(arr_){
+    std::vector<Sphere_3_key> keys;
     for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it= tr.sphere_3_keys_begin();
-	   it != tr.sphere_3_keys_end(); ++it){
+	 it != tr.sphere_3_keys_end(); ++it){
       if (has_overlap(tr.sphere_3(*it), z)){
-	//std::cout << circles.size() << " is " << i << std::endl;
-	io.push_back(circles.size());
-	circles.push_back(intersect(tr.sphere_3(*it), z));
-	names.push_back(num);
+	keys.push_back(*it);
       }
-      ++num;
     }
+    std::sort(keys.begin(), keys.end(), ISort(tr_));
     
-   
-    
-    std::sort(io.begin(), io.end(), ISort(tr));
-    build_arrangement(circles, io, names);
+    std::vector<Curve> curves(keys.size()*4);
+    for (unsigned int i=0; i< keys.size(); ++i) {
+      curves[4*i+0]= Curve(keys[i], Curve::RT_ARC);
+      curves[4*i+1]= Curve(keys[i], Curve::LT_ARC);
+      curves[4*i+2]= Curve(keys[i], Curve::LB_ARC);
+      curves[4*i+3]= Curve(keys[i], Curve::RB_ARC);
+    }
+
+    std::vector<Extremum> extremum(keys.size()*4);
+    for (unsigned int i=0; i< keys.size(); ++i) {
+      for (int j=0; j<4; ++j) {
+	extremum[4*i+j]= Extremum(keys[i], Rule_direction(j));
+      }
+    }
+
+    build_arrangement(curves, extremum,z);
   }
   
+  template <class CIt, class RIt> 
+  Cross_section_arrangement(const Traits &tr, NT z, 
+			    CIt cb, CIt ce,
+			    RIt rb, RIt re): tr_(tr),
+					     pl_(arr_){
+    
+    std::vector<Curve> curves(cb, ce);
 
+    std::vector<Extremum> extremum(rb, re);
+   
+    build_arrangement(curves, extremum,z);
+  }
+  
   
   std::size_t number_of_faces() const;
   std::size_t number_of_vertices() const;
@@ -138,10 +160,18 @@ public:
   Face_iterator faces_begin() const;
   Face_iterator faces_end() const;
 
- 
+  //typedef std::pair<Vertex_const_handle, Halfedge_const_handle> VP;
 
+  void outer_face(std::vector<Halfedge_const_handle > &points) const;
+
+  void outer_points(std::vector<Halfedge_const_handle > &points) const;
+
+  //VP vertex_pair(Halfedge_const_handle h) const;
   
   void draw(Qt_examiner_viewer_2 *qtv) const;
+
+  Point point(Vertex_const_handle h) const;
+  Curve curve(Halfedge_const_handle) const;
 
 protected:
   struct Get_segment;
@@ -149,9 +179,9 @@ protected:
 
   template <class C> class Rule;
 
-  void build_arrangement(const std::vector<Circular_k::Circle_2> &circles, 
-			 const std::vector<unsigned int> &io,
-			 const std::vector<int> &names);
+  void build_arrangement(const std::vector<Curve> &curves,
+			 const std::vector<Extremum> &extrema,
+			 NT z);
   typedef CArr::Vertex_iterator Vertex_iterator;
   Vertex_iterator vertices_begin();
   Vertex_iterator vertices_end();
@@ -159,10 +189,14 @@ protected:
   void insert(const Circular_k::Line_arc_2 &la, Curve f);
   void insert(const Circular_k::Circular_arc_2 &la, Curve f);
   void audit() const;
-  Curve curve(CArr::Halfedge_const_handle) const;
+ 
   friend class Face_iterator;
   //typedef Point Vertex;
-  Point point(CArr::Vertex_const_handle h) const;
+  
+
+  void face_points(Face_const_handle f,
+		   std::vector<Halfedge_const_handle > &pts) const;
+
   //typedef CArr::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   struct Line_arc_less {
     bool operator()(Circular_k::Line_arc_2 a, 
@@ -229,7 +263,7 @@ protected:
   private:
     VHandle(){}
   };
-  
+  Traits tr_;
   CArr arr_;
   Point_location pl_;
   //std::map<Circular_k::Line_arc_2, Curve, Line_arc_less> line_map_;
@@ -249,9 +283,9 @@ public:
 		CArr::Face_const_iterator e,
 		const Cross_section_arrangement *a);
   
-  typedef std::pair<Curve,  Point> FP;
+  //typedef Halfedge_const_handle FP;
   
-  typedef std::vector<std::pair<Curve,  Point> > value_type;
+  typedef std::vector<Halfedge_const_handle > value_type;
   typedef const value_type& reference_type;
   typedef const value_type* pointer_type;
   

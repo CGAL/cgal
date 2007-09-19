@@ -69,6 +69,16 @@ Rational_cross_section CGAL_AOS3_TARG ::audit() const {
       }
     }
   }
+
+  for (CGAL_AOS3_TYPENAME CCS::Halfedge_const_iterator hit = ccs_.halfedges_begin();
+       hit != ccs_.halfedges_end(); ++hit) {
+    if (hit->curve().is_rule() && (hit->curve().is_inside() && hit->curve().is_vertical()
+				   || !hit->curve().is_inside() && !hit->curve().is_vertical())) {
+      CGAL_assertion(tr_.compare_c(sphere_point(hit->opposite()->vertex()->point()),
+				   sphere_point(hit->vertex()->point()),
+				   other_plane_coordinate(hit->curve().constant_coordinate())) != CGAL::LARGER);
+    }
+  }
 }
 
 

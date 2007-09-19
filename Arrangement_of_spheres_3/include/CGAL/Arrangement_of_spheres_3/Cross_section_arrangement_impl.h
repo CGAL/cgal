@@ -170,14 +170,16 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
     //}
   }
 
-  void clip(const std::vector<Circle_2> &circles,
-	    const std::vector<Rule<typename C::Other_plane_coordinate> > &rules,
-	    unsigned int id) {
-    for (unsigned int j=0; j < circles.size(); ++j){
-      if (j==id) continue;
+  void clip(const std::vector<Sphere_3_key> &arcs
+	    ,const std::map<Sphere_3_key, Circular_k::Circle_2> &circles,
+	    Sphere_3_key me) {
+    for (unsigned int j=0; j < arcs.size(); ++j){
+      if (me==arcs[j]) continue;
       //std::cout << "Clipping " << f_ << " against circle " << j << std::endl;
-      clip(circles[j]);
+      clip(circles.find(arcs[j])->second);
     }
+  }
+  void clip(const std::vector<Rule<typename C::Other_plane_coordinate> > &rules) {
     for (unsigned int j=0; j< rules.size(); ++j){
       //std::cout << "Clipping " << f_ << " against rule " << rules[j].f_ << std::endl;
       clip(rules[j]);
@@ -190,47 +192,71 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Rule{
 };
 
 
-
-
 CGAL_AOS3_TEMPLATE
-void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vector<Circular_k::Circle_2> &circles, 
-								 const std::vector<unsigned int> &insertion_order,
-								 const std::vector<int> &names){
+void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vector<Curve> &curves,
+								 const std::vector<Extremum> &extrema,
+								 NT z){
+  std::vector<Sphere_3_key> active_arcs;
+  for (unsigned int i=0; i< curves.size(); ++i) {
+    active_arcs.push_back(curves[i].key());
+  }
+  std::sort(active_arcs.begin(), active_arcs.end());
+  active_arcs.erase(std::unique(active_arcs.begin(), active_arcs.end()), active_arcs.end());
+ 
+  
 
-  Circular_k::Point_2 lb(-inf_, -inf_);
-  Circular_k::Point_2 lt(-inf_, inf_);
-  Circular_k::Point_2 rt(inf_, inf_);
-  Circular_k::Point_2 rb(inf_, -inf_);
-  Circular_k::Line_2 l(lb, Circular_k::Vector_2(0,1));
-  Circular_k::Line_2 r(rt, Circular_k::Vector_2(0,1));
-  Circular_k::Line_2 b(lb, Circular_k::Vector_2(1,0));
-  Circular_k::Line_2 t(rt, Circular_k::Vector_2(1,0));
+  NT inf= tr_.max_coordinate()*2;
+  Circular_k::Point_2 lb(-inf, -inf);
+  Circular_k::Point_2 lt(-inf, inf);
+  Circular_k::Point_2 rt(inf, inf);
+  Circular_k::Point_2 rb(inf, -inf);
+  //Circular_k::Line_2 l(lb, Circular_k::Vector_2(0,1));
+  //Circular_k::Line_2 r(rt, Circular_k::Vector_2(0,1));
+  //Circular_k::Line_2 b(lb, Circular_k::Vector_2(1,0));
+  //Circular_k::Line_2 t(rt, Circular_k::Vector_2(1,0));
   audit();
-  insert(Circular_k::Line_arc_2(l, lb, lt), Curve(Curve::Key::lb_key(), Curve::T_RULE));
-  insert(Circular_k::Line_arc_2(r, rb, rt), Curve(Curve::Key::ub_key(), Curve::B_RULE));
-  insert(Circular_k::Line_arc_2(b, lb, rb), Curve(Curve::Key::lb_key(), Curve::R_RULE));
-  insert(Circular_k::Line_arc_2(t, lt, rt), Curve(Curve::Key::ub_key(), Curve::L_RULE));
+  //insert(Circular_k::Line_arc_2(l, lb, lt), Curve(Curve::Key::lb_key(), Curve::T_RULE));
+  //insert(Circular_k::Line_arc_2(r, rb, rt), Curve(Curve::Key::ub_key(), Curve::B_RULE));
+  //insert(Circular_k::Line_arc_2(b, lb, rb), Curve(Curve::Key::lb_key(), Curve::R_RULE));
+  //insert(Circular_k::Line_arc_2(t, lt, rt), Curve(Curve::Key::ub_key(), Curve::L_RULE));
 
+
+  std::map<Sphere_3_key, Circular_k::Circle_2> circles;
+  for (unsigned int i=0; i< curves.size(); ++i) {
+    circles[curves[i].key()]= intersect(tr_.sphere_3(curves[i].key()), z);
+  }
 
   std::vector<Rule<Plane_coordinate_0> > horizontal_rules;
   std::vector<Rule<Plane_coordinate_1> > vertical_rules;
 
   //std::vector<std::vector<Line_3> > lines;
   std::cout << "Constructing rules..." << std::flush;
-  for (unsigned int j=0; j< circles.size(); ++j){
-    int i= insertion_order[j];
-    horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i], 
-							Curve(names[i], Curve::L_RULE), inf_));
-    horizontal_rules.back().clip(circles, vertical_rules, i);
+  for (unsigned int j=0; j< extrema.size(); ++j){
+    if (!extrema[j].second.is_vertical()) {
+      horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[extrema[j].first], 
+							  Curve::make_rule(extrema[j].first,
+									   extrema[j].second),
+							  inf));
+      horizontal_rules.back().clip(active_arcs, circles, extrema[j].first);
+      horizontal_rules.back().clip(vertical_rules);
+    } else {
+      vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[extrema[j].first], 
+							Curve::make_rule(extrema[j].first,
+									 extrema[j].second),
+							inf));
+      vertical_rules.back().clip(active_arcs, circles, extrema[j].first);
+      vertical_rules.back().clip(horizontal_rules);
+    }
+    /*horizontal_rules.back().clip(circles, vertical_rules, i);
     horizontal_rules.push_back(Rule<Plane_coordinate_0>(circles[i],
-							Curve(names[i], Curve::R_RULE), inf_));
+							Curve(names[i], Curve::R_RULE), inf));
     horizontal_rules.back().clip(circles, vertical_rules, i);
     vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[i],
-						      Curve(names[i], Curve::B_RULE), inf_));
+						      Curve(names[i], Curve::B_RULE), inf));
     vertical_rules.back().clip(circles, horizontal_rules, i);
     vertical_rules.push_back(Rule<Plane_coordinate_1>(circles[i], 
-						      Curve(names[i], Curve::T_RULE), inf_));
-    vertical_rules.back().clip(circles, horizontal_rules, i);
+						      Curve(names[i], Curve::T_RULE), inf));
+						      vertical_rules.back().clip(circles, horizontal_rules, i);*/
   }
   std::cout << "done." << std::endl;
   
@@ -239,57 +265,51 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
    
   typedef std::vector< Arc> ArcContainer;
     
+  typedef Circular_k::Root_for_circles_2_2 RFC;
     
-  for (unsigned int j=0; j< insertion_order.size(); ++j){
-    int i= insertion_order[j];
+  for (unsigned int j=0; j< curves.size(); ++j){
+    Circular_k::Circle_2 c= intersect(tr_.sphere_3(curves[j].key()), z);
     Circular_k::Root_of_2 r= CGAL::make_root_of_2(NT(1),NT(0),
-						  -circles[i].squared_radius(),
+						  -c.squared_radius(),
 						  false);
     //std::cout << CGAL::to_double(r) << " " << circles_[i].squared_radius() << std::endl;
-    CGAL_assertion(CGAL::square(r) == Circular_k::Root_of_2(circles[i].squared_radius()));
+    CGAL_assertion(CGAL::square(r) == Circular_k::Root_of_2(c.squared_radius()));
     CGAL_assertion(r>0);
-    NT x(circles[i].center().x());
-    NT y(circles[i].center().y());
-    Circular_k::Root_of_2 xr(circles[i].center().x());
-    Circular_k::Root_of_2 yr(circles[i].center().y());
-    typedef Circular_k::Root_for_circles_2_2 RFC;
-    RFC tr(x, y+r);
-    Circular_k::Circular_arc_point_2 tp(tr);
-    Circular_k::Circular_arc_point_2 bp(RFC(x, circles[i].center().y()-r));
-    Circular_k::Circular_arc_point_2 lp(RFC(circles[i].center().x()-r, y));
-    Circular_k::Circular_arc_point_2 rp(RFC(circles[i].center().x()+r, y));
-    /*std::cout << circles_[i] << std::endl;
-      std::cout << tp << std::endl;
-      std::cout << bp << std::endl;
-      std::cout << lp << std::endl;
-      std::cout << rp << std::endl;*/
-    Circular_k::Circle_2 c(Point_2(circles[i].center().x(),
-				   circles[i].center().y()),
-			   circles[i].squared_radius());
-    /*Arr::Curve_handle chul=*/ 
+    NT x(c.center().x());
+    NT y(c.center().y());
+    //Circular_k::Root_of_2 xr(c.center().x());
+    //Circular_k::Root_of_2 yr(c.center().y());
+    
+    CGAL_LOG(Log::SOME, "r is " << r << "(" << to_double(r) 
+	     << ")" << std::endl);
 
-    int nm= names[i];
-    insert(Circular_k::Circular_arc_2(c, lp, bp), 
-	   Curve(nm, Curve::LB_ARC));
-    //circle_map[chul]=std::pair<int, Part>(i, UL);
-    /*Arr::Curve_handle chur=*/ 
-    insert(Circular_k::Circular_arc_2(c, bp, rp), 
-	   Curve(nm, Curve::RB_ARC));
-    //circle_map[chur]=std::pair<int, Part>(i, UR);
-    /*Arr::Curve_handle chll=*/ 
-    insert(Circular_k::Circular_arc_2(c, rp, tp),
-	   Curve(nm, Curve::RT_ARC));
-    //circle_map[chll]=std::pair<int, Part>(i, LL);
-    /*Arr::Curve_handle chlr=*/ 
-    insert(Circular_k::Circular_arc_2(c, tp, lp),
-	   Curve(nm, Curve::LT_ARC));
-    //circle_map[chlr]=std::pair<int, Part>(i, LR);
-    if (i%10 ==0) std::cout << "." << std::flush;
+    Circular_k::Circular_arc_point_2 pa, pb;
+    if (curves[j].is_top()) {
+      pa= Circular_k::Circular_arc_point_2(RFC(x,y+r));
+    } else {
+      pa= Circular_k::Circular_arc_point_2(RFC(x,y-r));
+    }
+    if (curves[j].is_right()) {
+      pb= Circular_k::Circular_arc_point_2(RFC(x+r,y));
+    } else {
+      pb= Circular_k::Circular_arc_point_2(RFC(x-r,y));
+    }
+ 
+    if (curves[j].is_right() && curves[j].is_top()
+	|| !curves[j].is_right() && !curves[j].is_top()) {
+      std::swap(pa,pb);
+    }
+
+    CGAL_LOG(Log::SOME, "Circle is " << c << " and points are " 
+	     << "(" << pa.x() << ", " << pa.y() << ")" << " and " 
+	     "(" << pb.x() << ", " << pb.y() << ")" << std::endl);
+    insert(Circular_k::Circular_arc_2(c, pa, pb), 
+	   curves[j]);
+    if (j%10 ==0) std::cout << "." << std::flush;
   }
   std::cout << "done. (segments)..." << std::flush;
   typedef Circular_k::Circular_arc_point_2 CAP;
-  typedef Circular_k::Root_for_circles_2_2 RFC;
-  
+    
   std::vector<std::pair<Line_arc_2, Curve > > arcs;
   for (unsigned int i=0; i< horizontal_rules.size(); ++i){
     CAP p0(RFC((horizontal_rules[i].source_coordinate()),
@@ -377,6 +397,8 @@ void Cross_section_arrangement CGAL_AOS3_TARG::build_arrangement(const std::vect
     << num_exact_tests_ << " had to be evaluated exactly." << std::endl;*/
   //if (overwrite) sds_=sds;
 }
+
+
 
 
 CGAL_AOS3_TEMPLATE
@@ -512,14 +534,130 @@ void Cross_section_arrangement CGAL_AOS3_TARG::write(std::ostream& out, const Ci
 
 CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Cross_section_arrangement CGAL_AOS3_TARG::Point
-Cross_section_arrangement CGAL_AOS3_TARG::point(CArr::Vertex_const_handle h) const{
+Cross_section_arrangement CGAL_AOS3_TARG::point(Vertex_const_handle h) const{
   //std::cout << "Looking for vertex (" << vmap_.size() << ", " << vset_.size() << ", " << map_.size() << ", " << this << ")..." << std::flush;
+  if (h->degree() == 1) return Point();
   if (vmap_.find(h) != vmap_.end()){
     //std::cout << "found." << std::endl;
     CGAL_assertion(vmap_.find(h)->second.is_valid());
     return vmap_.find(h)->second;
   } else {
+    std::vector<Curve> curves;
     CArr::Halfedge_around_vertex_const_circulator c= h->incident_halfedges();
+    do {
+      if (curve(c).is_inside())
+	curves.push_back(curve(c).opposite());
+      else {
+	curves.push_back(curve(c));
+      }
+      ++c;
+    } while (c != h->incident_halfedges());
+    
+    enum Type {UNKN, EXTR, AA, RA, RR};
+    Type type=UNKN;
+
+    CGAL_assertion(curves.size() <= 4);
+    for (unsigned int i=0; i< curves.size(); ++i) {
+      for (unsigned int j=i+1; j< curves.size(); ++j) {
+	if (curves[i].key() == curves[j].key() 
+	    && curves[i].is_arc() && curves[j].is_arc()
+	    && curves[i] != curves[j]) {
+	  type= EXTR;
+	  std::swap(curves[0], curves[i]);
+	  std::swap(curves[1], curves[j]);
+	} 
+      }
+    }
+    if (type==UNKN) {
+      type = RR;
+      for (unsigned int i=0; i< curves.size(); ++i) {
+	if (curves[i].is_arc()) {
+	  type=UNKN;
+	  break;
+	} else if (curves[i].key() != curves[0].key()) {
+	  std::swap(curves[i], curves[1]);
+	}
+      }
+    }
+
+    if (type == UNKN) {
+      type = AA;
+      for (unsigned int i=0; i< curves.size(); ++i) {
+	if (!curves[i].is_arc()) {
+	  type=UNKN;
+	  break;
+	} else if (curves[i].key() != curves[0].key()) {
+	  std::swap(curves[i], curves[1]);
+	}
+      }
+    }
+
+    if (type == UNKN) {
+      type = RA;
+      for (unsigned int i=0; i< curves.size(); ++i) {
+	if (curves[i].key() != curves[0].key()) {
+	  std::swap(curves[i], curves[1]);
+	}
+      }
+    }
+    Point pv;
+    switch (type) {
+    case EXTR: 
+      {
+	CGAL_assertion(curves[0].is_arc() && curves[1].is_arc());
+	CGAL_assertion(curves[0].key() == curves[1].key());
+	Rule_direction d;
+	if (curves[0].is_right() && curves[1].is_right()) {
+	  d= Rule_direction(0);
+	} else if (curves[0].is_top() && curves[1].is_top()) {
+	  d= Rule_direction(1);
+	} else if (curves[0].is_left() && curves[1].is_left()) {
+	  d= Rule_direction(2);
+	} else if (curves[0].is_bottom() && curves[1].is_bottom()) {
+	  d= Rule_direction(3);
+	} else {
+	  CGAL_assertion(0);
+	}
+	pv= Point::make_extremum(curves[0].key(), d);
+	break;
+      }
+    case AA:
+      {
+	Point_2 c0(tr_.sphere_3(curves[0].key()).center()[plane_coordinate(0).index()],
+		   tr_.sphere_3(curves[0].key()).center()[plane_coordinate(1).index()]);
+	Point_2 c1(tr_.sphere_3(curves[1].key()).center()[plane_coordinate(0).index()],
+		   tr_.sphere_3(curves[1].key()).center()[plane_coordinate(1).index()]);
+	/*Line_2 l(boost::apply_visitor(Center<Circular_k>(), curves[0]),
+	  boost::apply_visitor(Center<Circular_k>(), curves[1]));*/
+	Line_2 l(c0,c1);
+	/*Line_2 lo(boost::apply_visitor(Center<Circular_k>(), hb->curve()),
+	  boost::apply_visitor(Center<Circular_k>(), ha->curve()));*/
+	//CGAL_assertion(l.opposite()==lo);
+	/*std::cout << " with coordinates " << CGAL::to_double(h->point().x()) << " (" << h->point().x() << "), " 
+	  << CGAL::to_double(h->point().y()) << " (" << h->point().y() << ")" << std::endl;*/
+	Exact_NT va= l.a()*h->point().x();
+	Exact_NT vb= l.b()*h->point().y()+l.c();
+	/*std::cout << l << std::endl;
+	  std::cout << "va is " << CGAL::to_double(va) << "(" << va << ")" << std::endl;
+	std::cout << "vb is " << CGAL::to_double(vb) << "(" << vb << ")" << std::endl;*/
+	if ((va <0 && vb <0) || (va<0 && CGAL::abs(va) > vb) 
+	    || (vb<0 && CGAL::abs(vb) > va) || va==vb && curves[0].key() == curves[1].key()) {
+	  std::swap(curves[0], curves[1]);
+	}
+      }
+      // fall through
+    case RR:
+    case RA:
+      pv= Point(curves[0], curves[1]);
+      break;
+    default:
+      CGAL_assertion(0);
+    }
+
+    vmap_[h]=pv;
+    return pv;
+  }
+#if 0
     Curve fa= curve(c);
     CArr::Halfedge_const_handle ha=c, hb=c;
     CGAL_precondition(fa.is_valid());
@@ -577,21 +715,48 @@ Cross_section_arrangement CGAL_AOS3_TARG::point(CArr::Vertex_const_handle h) con
     //vset_.insert(pv);
     return pv;
   }
-
+#endif
   //return Vertex(std::min(fa,fb), std::max(fa,fb));
 }
 
 
 CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Cross_section_arrangement CGAL_AOS3_TARG::Curve
-Cross_section_arrangement CGAL_AOS3_TARG::curve(CArr::Halfedge_const_handle h) const {
+Cross_section_arrangement CGAL_AOS3_TARG::curve(Halfedge_const_handle h) const {
   CGAL_assertion(map_.find(arr_.originating_curves_begin(h)) != map_.end());
-  CGAL_AOS3_TYPENAME Cross_section_arrangement::Curve c= map_.find(arr_.originating_curves_begin(h))->second;
+  Curve f= map_.find(arr_.originating_curves_begin(h))->second;
   if (std::distance(arr_.originating_curves_begin(h),
 		    arr_.originating_curves_end(h))!=1) {
-    CGAL_assertion(c.is_rule());
+    CGAL_assertion(f.is_rule());
   }
-  return c;
+
+  CGAL::Comparison_result d= h->direction();
+  /*if (d != CGAL::LARGER && d != CGAL::SMALLER) {
+    std::cout << "They lied." << std::endl;
+    }*/
+  if (f.is_arc()) {
+    if (d== CGAL::LARGER && f.is_top()
+	|| d== CGAL::SMALLER && !f.is_top()){
+      f.set_is_inside(true);
+    }
+  } else if (f.is_rule()){
+    if (f.is_finite()) {
+      if (f.is_vertical()) {
+	f.set_is_inside( d== CGAL::SMALLER);
+      } else {
+	f.set_is_inside( d== CGAL::LARGER);
+      }
+    } else {
+      if (f.is_vertical()){
+	//CGAL_assertion((f.part()& Curve::L_BIT) || (f.part()& Curve::R_BIT));
+	f.set_is_inside( d== CGAL::SMALLER);
+      } else {
+	//CGAL_assertion((f.part()& Curve::T_BIT) || (f.part()& Curve::B_BIT));
+	f.set_is_inside( d== CGAL::LARGER);
+      }
+    }
+  }
+  return f;
   //return boost::apply_visitor(lookup_curve_data_, h->curve());
   
   /*if (Circular_k::Circular_arc_2& a=boost::get<Circular_k::Circular_arc_2>(h->curve())) {
@@ -607,7 +772,7 @@ CGAL_AOS3_TEMPLATE
 void Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator::increment() {
   ++c_;
   cache_.clear();
-  if (c_ != e_ && c_->is_unbounded()) ++c_;
+  //if (c_ != e_ && c_->is_unbounded()) ++c_;
   if (c_ != e_) {
     fill_cache();
   }
@@ -615,67 +780,23 @@ void Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator::increment() {
 
 
 CGAL_AOS3_TEMPLATE
-Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator::Face_iterator(CArr::Face_const_iterator c, 
-								       CArr::Face_const_iterator e,
-								       const Cross_section_arrangement *a): c_(c),
-													    e_(e),
-													    a_(a){
+Cross_section_arrangement CGAL_AOS3_TARG
+::Face_iterator::Face_iterator(CArr::Face_const_iterator c, 
+			       CArr::Face_const_iterator e,
+			       const Cross_section_arrangement *a): c_(c),
+								    e_(e),
+								    a_(a) 
+{
   if (c_ != e_) {
     if (c_->is_unbounded()) increment();
     else fill_cache();
   }
-													    }
+}
 
 
 CGAL_AOS3_TEMPLATE
 void Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator::fill_cache() {
-  CGAL_precondition(cache_.empty());
-  CArr::Ccb_halfedge_const_circulator cc= c_->outer_ccb();
-  /*if (!cc) {
-    std::cout << "Empty face?" << std::endl;
-    return;
-    }*/
-  do {
-    CArr::Vertex_const_handle t= cc->target();
-    Point v= a_->point(t);
-    Curve f= a_->curve(cc);
-    //std::cout << "Vertex: " << v.first << " " << v.second << std::endl;
-    //std::cout << "Curve: " << f << std::endl;
-    CGAL::Comparison_result d= cc->direction();
-    /*if (d != CGAL::LARGER && d != CGAL::SMALLER) {
-      std::cout << "They lied." << std::endl;
-      }*/
-    if (f.is_arc()) {
-      if (d== CGAL::LARGER && f.is_top()
-	  || d== CGAL::SMALLER && !f.is_top()){
-	f.set_is_inside(true);
-      }
-    } else if (f.is_rule()){
-      if (f.is_finite()) {
-	if (f.is_vertical()) {
-	  f.set_is_inside( d== CGAL::SMALLER);
-	} else {
-	  f.set_is_inside( d== CGAL::LARGER);
-	}
-      } else {
-	if (f.is_vertical()){
-	  //CGAL_assertion((f.part()& Curve::L_BIT) || (f.part()& Curve::R_BIT));
-	  f.set_is_inside( d== CGAL::SMALLER);
-	} else {
-	  //CGAL_assertion((f.part()& Curve::T_BIT) || (f.part()& Curve::B_BIT));
-	  f.set_is_inside( d== CGAL::LARGER);
-	}
-      }
-      /*if (d== CGAL::LARGER && !f.is_vertical()
-	|| d== CGAL::SMALLER && f.is_vertical()) {
-	f.set_is_inside(true);
-	}*/
-			       
-    }
-    //std::cout << "io: " << f.is_inside() << std::endl;
-    cache_.push_back(FP(f, v));
-    ++cc;
-  } while (cc != c_->outer_ccb());
+  a_->face_points(c_, cache_);
 }
 
 CGAL_AOS3_TEMPLATE
@@ -689,6 +810,92 @@ CGAL_AOS3_TYPENAME Cross_section_arrangement CGAL_AOS3_TARG::Face_iterator
 Cross_section_arrangement CGAL_AOS3_TARG::faces_end() const {
   return Face_iterator(arr_.faces_end(), arr_.faces_end(), this);
 }
+
+
+/*
+CGAL_AOS3_TEMPLATE
+std::pair<Cross_section_arrangement CGAL_AOS3_TARG::Point, 
+	  Cross_section_arrangement CGAL_AOS3_TARG::Curve>
+Cross_section_arrangement CGAL_AOS3_TARG::vertex_pair(CGAL_AOS3_TYPENAME CArr::Halfedge_const_handle h) const {
+  CArr::Vertex_const_handle t= h->target();
+  Point v= point(t);
+  Curve f= curve(h);
+  //std::cout << "Vertex: " << v.first << " " << v.second << std::endl;
+  //std::cout << "Curve: " << f << std::endl;
+ 
+  return std::make_pair(v,f);
+  }*/
+
+CGAL_AOS3_TEMPLATE
+void
+Cross_section_arrangement CGAL_AOS3_TARG::outer_face(std::vector< Halfedge_const_handle> &out) const {
+  CGAL_assertion(std::distance(arr_.unbounded_faces_begin(),
+			       arr_.unbounded_faces_end()) == 1);
+  Face_const_handle ch= arr_.unbounded_faces_begin();
+  //std::vector<VP > pts;
+  CGAL_assertion(std::distance(ch->holes_begin(), 
+			       ch->holes_end()) ==1);
+  CArr::Ccb_halfedge_const_circulator cc= *ch->holes_begin(), ce=cc;
+
+  do {
+    //if (cc->target()->degree() == 1) {
+    out.push_back(cc);
+    //}
+    ++cc;
+  } while (cc != ce);
+}
+
+
+
+CGAL_AOS3_TEMPLATE
+void
+Cross_section_arrangement CGAL_AOS3_TARG::outer_points(std::vector< Halfedge_const_handle> &out) const {
+  CGAL_assertion(std::distance(arr_.unbounded_faces_begin(),
+			       arr_.unbounded_faces_end()) == 1);
+  Face_const_handle ch= arr_.unbounded_faces_begin();
+  //std::vector<VP > pts;
+  if (std::distance(ch->holes_begin(), 
+		    ch->holes_end()) ==0) {
+
+  } else {
+    CGAL_assertion(std::distance(ch->holes_begin(), 
+				 ch->holes_end()) ==1);
+    CArr::Ccb_halfedge_const_circulator cc= *ch->holes_begin(), ce=cc;
+    
+    do {
+      if (cc->target()->degree() == 1) {
+	out.push_back(cc);
+      }
+      ++cc;
+    } while (cc != ce);
+  }
+}
+
+
+CGAL_AOS3_TEMPLATE
+void
+Cross_section_arrangement CGAL_AOS3_TARG::face_points(Face_const_handle fh,
+						      std::vector<Halfedge_const_handle > &pts) const {
+
+  CGAL_precondition(pts.empty());
+  CArr::Ccb_halfedge_const_circulator cc= fh->outer_ccb();
+  /*if (!cc) {
+    std::cout << "Empty face?" << std::endl;
+    return;
+    }*/
+  do {
+    
+    /*if (d== CGAL::LARGER && !f.is_vertical()
+      || d== CGAL::SMALLER && f.is_vertical()) {
+      f.set_is_inside(true);
+      }*/
+    
+    //std::cout << "io: " << f.is_inside() << std::endl;
+    pts.push_back(cc);
+    ++cc;
+  } while (cc != fh->outer_ccb());
+}
+
 
 CGAL_AOS3_TEMPLATE
 struct Cross_section_arrangement CGAL_AOS3_TARG::Get_circle {
@@ -725,6 +932,8 @@ CGAL_AOS3_TEMPLATE
 void Cross_section_arrangement CGAL_AOS3_TARG::draw(Qt_examiner_viewer_2 *qtv) const {
   typedef Qt_examiner_viewer_2 Q;
    
+  NT inf = tr_.max_coordinate()*2;
+
   std::vector<bool> drawn(nums_, false);
     
   for (CArr::Halfedge_const_iterator cit= arr_.halfedges_begin(); cit != arr_.halfedges_end(); ++cit){
@@ -747,7 +956,7 @@ void Cross_section_arrangement CGAL_AOS3_TARG::draw(Qt_examiner_viewer_2 *qtv) c
     
   for (CArr::Vertex_const_iterator vit= arr_.vertices_begin(); vit != arr_.vertices_end(); ++vit){
     //GK::Point_2 dp(CGAL::to_double(vit->point().x()), CGAL::to_double(vit->point().y()));
-    if (CGAL::abs(vit->point().x()) == inf_ || CGAL::abs(vit->point().y())==inf_) {
+    if (CGAL::abs(vit->point().x()) == inf || CGAL::abs(vit->point().y())==inf) {
       qtv->set_updating_box(false);
     } else {
       qtv->set_updating_box(true);

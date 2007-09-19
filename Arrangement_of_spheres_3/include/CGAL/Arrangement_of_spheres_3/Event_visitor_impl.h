@@ -28,6 +28,25 @@ void Event_visitor CGAL_AOS3_TARG::initialize() {
       free_events_.insert(k);
     }
   }
+
+  {
+ 
+    std::vector<Box> boxes;
+    for (CGAL_AOS3_TYPENAME Traits::Sphere_3_key_const_iterator it
+	   = tr_.sphere_3_keys_begin(); it != tr_.sphere_3_keys_end(); ++it) {
+      boxes.push_back(Box(tr_.sphere_3(*it).bbox(), std::make_pair(*it, *it)));
+    }
+
+    CGAL::box_self_intersection_d(boxes.begin(), boxes.end(), 
+				  Report_pairs(this));
+
+    //std::copy(intersections_.begin(), intersections_.end(), std::back_inserter(boxes));
+    CGAL::box_intersection_d(boxes.begin(), boxes.end(),
+			     intersections_.begin(), intersections_.end(),
+			     Report_triples(this));
+    intersections_.clear();
+  }
+
 }
 
 CGAL_AOS3_TEMPLATE
@@ -54,8 +73,8 @@ void Event_visitor CGAL_AOS3_TARG::on_new_edge(Halfedge_handle h){
   handle_edge_face(h, h->face());
   handle_edge_face(h, h->opposite()->face());
 
-  process_triple(h);
-  process_triple(h->opposite());
+  //process_triple(h);
+  //process_triple(h->opposite());
 }
   
 CGAL_AOS3_TEMPLATE
@@ -74,20 +93,20 @@ void Event_visitor CGAL_AOS3_TARG::on_change_edge(Halfedge_handle h) {
   if (!h->curve().key().is_input()) return;
   on_delete_edge(h);
   new_event(h);
-  process_triple(h);
-  process_triple(h->opposite());
+  //process_triple(h);
+  //process_triple(h->opposite());
 }
   
 CGAL_AOS3_TEMPLATE
-void Event_visitor CGAL_AOS3_TARG::on_merge_faces(Halfedge_handle h) {
+void Event_visitor CGAL_AOS3_TARG::on_merge_faces(Halfedge_handle ) {
   //if (!h->curve().key().is_input()) return;
-  Halfedge_handle c=h;
+  /*Halfedge_handle c=h;
   do {
     if (c->curve().key().is_input()) {
       handle_edge_face(c, h->opposite()->face());
     }
     c=c->next();
-  } while (c != h);
+    } while (c != h);*/
 } 
   
 
@@ -98,15 +117,16 @@ void Event_visitor CGAL_AOS3_TARG:: audit(Halfedge_const_handle h) const {
     if (!should_have_certificate(h)) {
       CGAL_assertion(h->event() == Event_key());
     } else {
-      CGAL_assertion(h->event() != Event_key());
+      /*CGAL_assertion(h->event() != Event_key());
       {
 	Halfedge_const_handle c=h;
 	do {
 	  CGAL_assertion(c->curve().key() == h->curve().key()
 			 || !c->curve().key().is_input()
 			 || !h->curve().key().is_input()
-			 || pairs_.find(Sphere_key_upair(c->curve().key(),
-							 h->curve().key())) != pairs_.end());
+			 || (!tr_.intersects(c->curve().key(),h->curve().key())
+			     || pairs_.find(Sphere_key_upair(c->curve().key(),
+							     h->curve().key())) != pairs_.end()));
 	  c=c->next();
 	} while (c != h);
       }
@@ -116,11 +136,12 @@ void Event_visitor CGAL_AOS3_TARG:: audit(Halfedge_const_handle h) const {
 	  CGAL_assertion(c->curve().key() == h->curve().key()
 			 || !c->curve().key().is_input()
 			 || !h->curve().key().is_input()
-			 || pairs_.find(Sphere_key_upair(c->curve().key(),
-							 h->curve().key())) != pairs_.end());
+			 || (!tr_.intersects(c->curve().key(),h->curve().key())
+			     || pairs_.find(Sphere_key_upair(c->curve().key(),
+							     h->curve().key())) != pairs_.end()));
 	  c=c->next();
 	} while (c != h->opposite());
-      }
+	}*/
     
       
       if (h->next()->next()->next() ==h
@@ -130,10 +151,10 @@ void Event_visitor CGAL_AOS3_TARG:: audit(Halfedge_const_handle h) const {
 	Sphere_3_key a= h->curve().key();
 	Sphere_3_key b= h->next()->curve().key();
 	Sphere_3_key c= h->next()->next()->curve().key();
-	if (a != b && b != c && a != c
+	/*if (a != b && b != c && a != c
 	    && a.is_input() && b.is_input() && c.is_input()) {
 	  CGAL_assertion(triples_.find(Sphere_key_utriple(a,b,c)) != triples_.end());
-	}
+	  }*/
       }
     }
   }
@@ -299,14 +320,14 @@ void Event_visitor CGAL_AOS3_TARG::new_event(Halfedge_handle h) {
     
   
 CGAL_AOS3_TEMPLATE
-void Event_visitor CGAL_AOS3_TARG::handle_edge_face(Halfedge_handle h, Face_handle f) {
-  Halfedge_handle c=f->halfedge();
+void Event_visitor CGAL_AOS3_TARG::handle_edge_face(Halfedge_handle , Face_handle ) {
+  /*Halfedge_handle c=f->halfedge();
   do {
     if (c->curve().key().is_input()) {
       process_pair(c->curve().key(), h->curve().key());
     }
     c=c->next();
-  } while (c != f->halfedge());
+    } while (c != f->halfedge());*/
 }
 
 
@@ -318,13 +339,30 @@ void Event_visitor CGAL_AOS3_TARG::set_event(Halfedge_handle h, Event_key k) {
 }
   
 CGAL_AOS3_TEMPLATE
+void Event_visitor CGAL_AOS3_TARG::process_pair(const Box & a, 
+						const Box & b) {
+  if (tr_.intersects(a.handle().first, b.handle().first)) {
+    Bbox_3 bb(std::max(a.min_coord(0), b.min_coord(0)),
+	      std::max(a.min_coord(1), b.min_coord(1)),
+	      std::max(a.min_coord(2), b.min_coord(2)),
+	      std::min(a.max_coord(0), b.max_coord(0)),
+	      std::min(a.max_coord(1), b.max_coord(1)),
+	      std::min(a.max_coord(2), b.max_coord(2)));
+    intersections_.push_back(Box(bb, std::make_pair(a.handle().first, b.handle().first)));
+    process_pair(a.handle().first, b.handle().first);
+  }
+}
+
+
+CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a, 
 						Sphere_3_key b) {
   if ( a != b &&  a.is_input() && b.is_input() 
-       && pairs_.find(Sphere_key_upair(a,b))== pairs_.end()) {
+       /*&& pairs_.find(Sphere_key_upair(a,b))== pairs_.end()*/) {
     CGAL_LOG(Log::LOTS, "Processing pair " << a << " " << b << std::endl);
-    pairs_.insert(Sphere_key_upair(a,b));
+    // pairs_.insert(Sphere_key_upair(a,b));
     Event_pair ep= tr_.intersection_2_events(a,b);
+   
     if (ep.first.is_valid() && !ep.second.is_valid()) {
       CGAL_LOG(Log::SOME, "Spheres " << a << " and " 
 	       << b << " intersect on vertical circle"<< std::endl);
@@ -380,6 +418,36 @@ void Event_visitor CGAL_AOS3_TARG::process_pair(Sphere_3_key a,
 
 
 CGAL_AOS3_TEMPLATE
+void Event_visitor CGAL_AOS3_TARG::process_triple(Sphere_3_key a, 
+						  Sphere_3_key b,
+						  Sphere_3_key c) {
+  if (a !=b && b!= c && a != c 
+      && a.is_input() && b.is_input() && c.is_input()) {
+    //triples_.insert(Sphere_key_utriple(a,b,c));
+    Event_pair ep= tr_.intersection_3_events(a,b,c);  
+    if (ep.first.is_valid()) {
+      CGAL_assertion(ep.first <= ep.second);
+      if (a>b) std::swap(a,b);
+      if (b>c) std::swap(b,c);
+      if (a>b) std::swap(a,b);
+      
+      if (ep.first >= sim_->current_time()) {
+	Event_key k= sim_->new_event(ep.first, CGAL_AOS3_TYPENAME EP::I3_event(j_, a,b,c));
+	if (k != Event_key() && k != sim_->null_event()) {
+	  free_events_.insert(k);
+	}
+      }
+      if (ep.second >= sim_->current_time()) {
+	Event_key k= sim_->new_event(ep.second, CGAL_AOS3_TYPENAME EP::U3_event(j_, a,b,c));
+	if (k != Event_key() && k != sim_->null_event()) {
+	  free_events_.insert(k);
+	}
+      }
+    }
+  }
+}
+
+/*CGAL_AOS3_TEMPLATE
 void Event_visitor CGAL_AOS3_TARG::process_triple(Halfedge_handle h) {
   CGAL_LOG(Log::LOTS, "Processing triple for " << h->opposite()->vertex()->point() 
 	   << "--" << h->curve() << "--" << h->vertex()->point() << std::endl);
@@ -416,6 +484,6 @@ void Event_visitor CGAL_AOS3_TARG::process_triple(Halfedge_handle h) {
       }
     }
   }
-}
+  }*/
 
 CGAL_AOS3_END_INTERNAL_NAMESPACE

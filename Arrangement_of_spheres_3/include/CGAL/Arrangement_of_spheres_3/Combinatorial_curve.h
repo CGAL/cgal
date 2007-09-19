@@ -44,6 +44,7 @@ struct Combinatorial_curve{
     //CGAL_precondition(is_finite());
   }
 
+
   /*explicit Combinatorial_curve(Part pt): pt_(pt){
     if (pt_== T_BIT || pt_ == R_BIT) {
     index_= Key(Key::TR);

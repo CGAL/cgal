@@ -13,17 +13,24 @@ Event_processor CGAL_AOS3_TARG::Event_processor(CCS &cs, Traits &tr): cs_(cs), t
 
 CGAL_AOS3_TEMPLATE
 void Event_processor CGAL_AOS3_TARG::handle_degeneracy() {  
-  CGAL_AOS3_TYPENAME Traits::Event_point_3 ep= cs_.visitor().simulator()->current_time();
-  std::cout << "Degeneracy at " << ep << std::endl;
-  std::vector<Vertex_handle> vertices;
-  ICSL ics(tr_, cs_);
-  for (CGAL_AOS3_TYPENAME CCS::Vertex_const_iterator it= cs_.vertices_begin();
-       it != cs_.vertices_end(); ++it) {
-    if (ics.equal_points(it, ep)) {
-      std::cout << it->point() << std::endl;
+  
+  std::vector<Event_point_3> event_locations;
+  event_locations.push_back(cs_.visitor().simulator()->current_time());
+  while (cs_.visitor().simulator()->next_event_time()
+	 == event_locations.front()) {
+    if (tr_.compare_c(cs_.visitor().simulator()->next_event_time(),
+		      event_locations.back(), \
+		      plane_coordinate(0)) !=EQUAL
+	|| tr_.compare_c(cs_.visitor().simulator()->next_event_time(),
+			 event_locations.back(),
+			 plane_coordinate(1)) != EQUAL) {
+      event_locations.push_back(cs_.visitor().simulator()->next_event_time());
     }
+    cs_.visitor().simulator()->delete_event(cs_.visitor().simulator()->next_event());
   }
-  //CGAL_assertion(0);
+
+  DCS dcs(cs_, tr_);
+  dcs(event_locations);
 }
 
 

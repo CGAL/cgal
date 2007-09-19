@@ -31,7 +31,17 @@ public:
   static Combinatorial_vertex make_extremum(Key k,
 					    Rule_direction dir) ;
 
+
+ 
   Combinatorial_vertex(Combinatorial_curve a, Combinatorial_curve b);
+
+  static Combinatorial_vertex make_rule_rule(Key a, Key b) {
+    Combinatorial_vertex ret;
+    ret.k_[0]=a;
+    ret.k_[1]=b;
+    ret.type_= RR;
+    return ret;
+  }
 
   void audit(unsigned int numvert) const;
 
