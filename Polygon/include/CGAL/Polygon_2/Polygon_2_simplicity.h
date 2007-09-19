@@ -477,6 +477,19 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
     typedef i_polygon::Vertex_data<ForwardIterator, PolygonTraits> Vertex_data;
     typedef std::set<i_polygon::Vertex_index,
                      i_polygon::Less_segments<Vertex_data> >       Tree;
+
+    // A temporary fix as the sweep in some cases doesn't discover vertices with degree > 2
+    // Todo: fix the sweep code
+    std::vector<typename PolygonTraits::Point_2> points(points_begin,points_end);
+    std::sort(points.begin(), points.end(), PolygonTraits::Less_xy_2());
+
+    std::vector<typename PolygonTraits::Point_2>::iterator succ = points.begin(), it(succ++);
+    for(;succ != points.end(); ++it,++succ){
+      if(*it == *succ){
+	return false;
+      }
+    }
+    // end of fix    
     Vertex_data   vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
     vertex_data.init(&tree);
