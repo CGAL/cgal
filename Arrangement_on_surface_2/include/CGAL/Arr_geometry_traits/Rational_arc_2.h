@@ -364,9 +364,10 @@ public:
     else // if (inf_t == NO_BOUNDARY)
       _pt = Point_2 (0, y0);
 
-    // Mark that the arc is valid. As it may have poles, we do not mark it
-    // as continuous.
-    _info = (_info | IS_VALID);
+    // Mark that the arc is valid. As it may have poles, we mark it
+    // as continuous only if the denominator has no roots.
+    _info = ( _info | ( this->_is_continuous() ?
+                      (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
 
   /*!
@@ -461,9 +462,10 @@ public:
         _pt = Point_2 (0, y0);
     }
 
-    // Mark that the arc is valid. As it may have poles, we do not mark it
-    // as continuous.
-    _info = (_info | IS_VALID);
+    // Mark that the arc is valid. As it may have poles, we mark it
+    // as continuous only if the denominator has no roots.
+    _info = ( _info | ( this->_is_continuous() ?
+                      (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
   
   /*!
@@ -547,9 +549,10 @@ public:
         _info = (_info | TRG_AT_Y_PLUS_INFTY);
     }
 
-    // Mark that the arc is valid. As it may have poles, we do not mark it
-    // as continuous.
-    _info = (_info | IS_VALID);
+    // Mark that the arc is valid. As it may have poles, we mark it
+    // as continuous only if the denominator has no roots.
+    _info = ( _info | ( this->_is_continuous() ?
+                      (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
   //@}
 
@@ -1812,7 +1815,7 @@ protected:
       if (res2 == EQUAL)
         eq_trg = true;
 
-      return (true);      
+      return (true);
     }
     
     // Compare to the left endpoint (the target in this case).
@@ -2057,6 +2060,20 @@ protected:
     return (oi);
   }
 
+  /*! Check whether the arc is continuous. */
+  bool _is_continuous ()
+  {
+    // Compute the roots of the denominator polynomial, and make sure
+    // there are none in the range of definition.
+    std::list<Algebraic>                 q_roots;
+    bool                                 root_at_ps, root_at_pt;
+
+    this->_denominator_roots (std::back_inserter (q_roots),
+                              root_at_ps, root_at_pt);
+
+    return (q_roots.empty());
+  }
+
   /*!
    * Determine the signs of the rational functions infinitisimally to the left
    * and to the right of the given pole.
@@ -2263,11 +2280,7 @@ public:
                               const Rat_vector& qcoeffs) :
     Base (pcoeffs, qcoeffs)
   {
-    if (_is_continuous())
-    {
-      this->set_continuous();
-    }
-    else
+    if (!this->_is_continuous())
     {
       // Invalid arc, as it is not continuous.
       this->set_invalid();
@@ -2291,11 +2304,7 @@ public:
                               const Algebraic& x_s, bool dir_right) :
     Base (pcoeffs, qcoeffs, x_s, dir_right)
   {
-    if (_is_continuous())
-    {
-      this->set_continuous();
-    }
-    else
+    if (!this->_is_continuous())
     {
       // Invalid arc, as it is not continuous.
       this->set_invalid();
@@ -2318,33 +2327,13 @@ public:
                               const Algebraic& x_s, const Algebraic& x_t) :
     Base (pcoeffs, qcoeffs, x_s, x_t)
   {
-    if (_is_continuous())
-    {
-      this->set_continuous();
-    }
-    else
+    if (!this->_is_continuous())
     {
       // Invalid arc, as it is not continuous.
       this->set_invalid();
     }
   }
   //@}
-
-protected:
-
-  /*! Check whether the arc is continuous. */
-  bool _is_continuous ()
-  {
-    // Compute the roots of the denominator polynomial, and make sure
-    // there are none in the range of definition.
-    std::list<Algebraic>                 q_roots;
-    bool                                 root_at_ps, root_at_pt;
-
-    this->_denominator_roots (std::back_inserter (q_roots),
-                              root_at_ps, root_at_pt);
-
-    return (q_roots.empty());
-  }
 };
 
 /*! \class Rational_arc_2
@@ -2503,14 +2492,7 @@ protected:
   /*! Check whether the arc is continuous. */
   bool _check_continuity ()
   {
-    // Compute the roots of the denominator polynomial.
-    std::list<Algebraic>                 q_roots;
-    bool                                 root_at_ps, root_at_pt;
-
-    this->_denominator_roots (std::back_inserter (q_roots),
-                              root_at_ps, root_at_pt);
-
-    if (q_roots.empty())
+    if (this->_is_continuous())
     {
       // The denominator polynomial does not contain any roots in the interior
       // of the arc: mark it as a continuous arc.
