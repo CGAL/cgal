@@ -935,7 +935,7 @@ bool Traits_test<T_Traits>::boundary_in_x_wrapper(std::istringstream & str_strea
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::boundary_in_x_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_false)
+bool Traits_test<T_Traits>::boundary_in_x_wrapper_imp(std::istringstream & , CGAL::Tag_false)
 {
   CGAL_assertion(false);
   return false;
@@ -978,7 +978,7 @@ bool Traits_test<T_Traits>::boundary_in_y_wrapper(std::istringstream & str_strea
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::boundary_in_y_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_false)
+bool Traits_test<T_Traits>::boundary_in_y_wrapper_imp(std::istringstream &, CGAL::Tag_false)
 {
   CGAL_assertion(false);
   return false;
