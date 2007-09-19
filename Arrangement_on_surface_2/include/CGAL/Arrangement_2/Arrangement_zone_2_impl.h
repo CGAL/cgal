@@ -71,12 +71,14 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::init_with_hint
   {
     // The right endpoint is valid.
     has_right_pt = true;
+    right_on_boundary = (bx2 != NO_BOUNDARY || by2 != NO_BOUNDARY);
     right_pt = geom_traits->construct_max_vertex_2_object() (cv);
   }
   else
   {
     // The right end of the curve lies at infinity.
     has_right_pt = false;
+    right_on_boundary = true;
   }
   
   // Set the object that represents the location of the left end of the curve
@@ -147,7 +149,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       {
         // In this case cv overlaps the curve associated with intersect_he.
         // Compute the overlapping subcurve.
-        obj = _compute_next_intersection (intersect_he, false);
+        bool    dummy;
+        obj = _compute_next_intersection (intersect_he, false, dummy);
         
         overlap_cv = object_cast<X_monotone_curve_2> (obj);
         
@@ -163,8 +166,9 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       // In case the unbounded left end conicides with an edge, then our curve
       // overlaps the curve associated with this edge.
       intersect_he = arr.non_const_handle (*hh);
-      
-      obj = _compute_next_intersection (intersect_he, false);
+
+      bool  dummy;
+      obj = _compute_next_intersection (intersect_he, false, dummy);
         
       overlap_cv = object_cast<X_monotone_curve_2> (obj);
         
@@ -235,16 +239,17 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       {
         // In this case cv overlaps the curve associated with intersect_he.
         // Compute the overlapping subcurve to the right of curr_v.
-        obj = _compute_next_intersection (intersect_he, false);
+        bool  dummy;
+        obj = _compute_next_intersection (intersect_he, false, dummy);
 
         overlap_cv = object_cast<X_monotone_curve_2> (obj);
 
-	// Remove the overlap from the map.
-	_remove_next_intersection (intersect_he);
+        // Remove the overlap from the map.
+        _remove_next_intersection (intersect_he);
 
-	// Compute the overlap zone and continue to the end of the loop.
+        // Compute the overlap zone and continue to the end of the loop.
         done = _zone_in_overlap ();
-	continue;
+        continue;
       }
     }
 
@@ -501,7 +506,8 @@ template<class Arrangement, class ZoneVisitor>
 CGAL::Object
 Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
     (Halfedge_handle he,
-     bool skip_first_point)
+     bool skip_first_point,
+     bool& intersection_on_right_boundary)
 {
   // Get a pointer to the curve associated with the halfedge.
   const X_monotone_curve_2  *p_curve = &(he->curve());
@@ -513,6 +519,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
   Boundary_type             bx, by;
   bool                      valid_intersection;
 
+  intersection_on_right_boundary = false;
   if (iter != inter_map.end())
   {
     // The intersections with the curve have already been computed.
@@ -537,16 +544,25 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
       }
       else if (ip != NULL)
       {
-        // We have a simple intersection point - make sure it lies to the
-        // right of left_pt.
-        valid_intersection =
-          (geom_traits->compare_xy_2_object() (ip->first, left_pt) == LARGER);
+        if (has_right_pt && right_on_boundary &&
+            geom_traits->equal_2_object() (ip->first, right_pt))
+        {
+          valid_intersection = true;
+          intersection_on_right_boundary = true;
+        }
+        else
+        {
+          // We have a simple intersection point - make sure it lies to the
+          // right of left_pt.
+          valid_intersection =
+            (geom_traits->compare_xy_2_object() (ip->first, left_pt) == LARGER);
+        }
       }
       else
       {
         // We have an overlapping subcurve.
-	icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
-	CGAL_assertion (icv != NULL);
+        icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
+        CGAL_assertion (icv != NULL);
 
         bx = geom_traits->boundary_in_x_2_object() (*icv, MIN_END);
         by = geom_traits->boundary_in_y_2_object() (*icv, MIN_END);
@@ -604,12 +620,24 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
       // make sure it lies to the right of left_pt (if left_pt is on the left
       // boundary, all points lie to it right).
       if (is_first && skip_first_point)
+      {
         valid_intersection = false;
+      }
       else if (left_on_boundary)
+      {
         valid_intersection = true;
+      }
+      else if (has_right_pt && right_on_boundary &&
+               geom_traits->equal_2_object() (ip->first, right_pt))
+      {
+        valid_intersection = true;
+        intersection_on_right_boundary = true;
+      }
       else
+      {
         valid_intersection =
           (geom_traits->compare_xy_2_object() (ip->first, left_pt) == LARGER);
+      }
     }
     else if (left_on_boundary)
     {
@@ -810,6 +838,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   const X_monotone_curve_2    *icv;
   Point_2                      ip;
   bool                         left_equals_curr_endpoint;
+  bool                         intersection_on_right_boundary;
+  bool                         leftmost_on_right_boundary = false;
 
   for (occb_it = face->outer_ccbs_begin();
        occb_it != face->outer_ccbs_end(); ++occb_it)
@@ -838,7 +868,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // If we already have an intersection point, compare it to the
       // endpoints of the curve associated with the current halfedge,
       // in order to filter unnecessary intersection computations.
-      if (found_intersect && _is_to_left (intersect_p, he_curr))
+      if (found_intersect && ! leftmost_on_right_boundary &&
+          _is_to_left (intersect_p, he_curr))
       {
         // The current x-monotone curve lies entirely to the right of
         // ip_left, so its intersection with cv (if any) cannot lie to
@@ -893,7 +924,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
       // Compute the next intersection of cv and the current halfedge.
       iobj = _compute_next_intersection (he_curr,
-                                         left_equals_curr_endpoint);
+                                         left_equals_curr_endpoint,
+                                         intersection_on_right_boundary);
 
       if (! iobj.is_empty())
       {
@@ -907,13 +939,16 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
           // Found a simple intersection point. Check if it is the leftmost
           // intersection point so far.
           if (! found_intersect ||
-              compare_xy (ip, intersect_p) == SMALLER)
+              (! intersection_on_right_boundary &&
+               (leftmost_on_right_boundary ||
+                compare_xy (ip, intersect_p) == SMALLER)))
           {
             // Store the leftmost intersection point and the halfedge handle.
             intersect_p = ip;
             ip_mult = int_p->second;
             intersect_he = he_curr;
             found_overlap = false;
+            leftmost_on_right_boundary = intersection_on_right_boundary;
           }
         }
         else
@@ -974,7 +1009,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // If we already have an intersection point, compare it to the
       // endpoints of the curve associated with the current halfedge,
       //  in order to filter unnecessary intersection computations.
-      if (found_intersect && _is_to_left (intersect_p, he_curr))
+      if (found_intersect && ! leftmost_on_right_boundary &&
+          _is_to_left (intersect_p, he_curr))
       {
         // The current x-monotone curve lies entirely to the right of
         // ip_left, so its intersection with cv (if any) cannot lie to
@@ -1029,7 +1065,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
       // Compute the next intersection of cv and the current halfedge.
       iobj = _compute_next_intersection (he_curr,
-                                         left_equals_curr_endpoint);
+                                         left_equals_curr_endpoint,
+                                         intersection_on_right_boundary);
 
       if (! iobj.is_empty())
       {
@@ -1043,7 +1080,9 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
           // Found a simple intersection point. Check if it is the leftmost
           // intersection point so far.
           if (! found_intersect ||
-              compare_xy (ip, intersect_p) == SMALLER)
+              (! intersection_on_right_boundary &&
+               (leftmost_on_right_boundary ||
+                compare_xy (ip, intersect_p) == SMALLER)))
           {
             // Store the leftmost intersection point and the halfedge
             // handle.
@@ -1051,6 +1090,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             ip_mult = int_p->second;
             intersect_he = he_curr;
             found_overlap = false;
+            leftmost_on_right_boundary = intersection_on_right_boundary;
           }
         }
         else
