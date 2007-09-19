@@ -51,7 +51,11 @@
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
 
 #elif TEST_TRAITS == SPHERICAL_ARC_TRAITS
-#include <CGAL/Arr_great_circular_arc_on_sphere_traits_2.h>
+#include <CGAL/Arr_spherical_arc_traits_2.h>
+
+#elif TEST_TRAITS == RATIONAL_ARC_TRAITS
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_rational_arc_traits_2.h>
 
 #else
 #error No traits (TRAITS) specified!
@@ -151,8 +155,17 @@ typedef Traits::Bezier_cache                            Bezier_cache;
 #define TRAITS_TYPE "Bezier"
 
 #elif TEST_TRAITS == SPHERICAL_ARC_TRAITS
-typedef CGAL::Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+typedef CGAL::Arr_spherical_arc_traits_2<Kernel>        Traits;
 #define TRAITS_TYPE "Spherical Arc"
+
+#elif TEST_TRAITS == RATIONAL_ARC_TRAITS
+typedef CGAL::CORE_algebraic_number_traits                 Nt_traits;
+typedef Nt_traits::Rational                                Rational;
+typedef Nt_traits::Algebraic                               Algebraic;
+typedef CGAL::Arr_rational_arc_traits_2<Kernel,Nt_traits>  Traits;
+typedef Traits::Rat_vector                                 Rat_vector;
+typedef Traits::Point_2                                    Point_2;
+#define TRAITS_TYPE "Rational Arc"
 
 #else
 #error No traits (TRAITS) specified!

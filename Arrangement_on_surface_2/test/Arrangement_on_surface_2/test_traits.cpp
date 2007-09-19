@@ -47,10 +47,12 @@ int main (int argc, char * argv[])
   return (rc) ? 0 : -1;
 }
 
-#if TEST_TRAITS == CORE_CONIC_TRAITS || TEST_TRAITS == BEZIER_TRAITS
+#if TEST_TRAITS == CORE_CONIC_TRAITS || \
+    TEST_TRAITS == BEZIER_TRAITS || \
+    TEST_TRAITS == RATIONAL_ARC_TRAITS
 
-// bezier traits and conic traits use same number type CORE:Expr
-// so this code can beshared by both traits types
+// bezier traits, conic traits and rational traits use same number 
+// type CORE:Expr so this code can be shared
 
 /*! Read a point */
 
@@ -117,15 +119,127 @@ Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 
 #endif
 
+#if TEST_TRAITS == RATIONAL_ARC_TRAITS
+
+/*! Read a xcurve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+{
+  Curve_2 tmp_cv;
+  if (!read_curve(is,tmp_cv))
+    return false;
+  xcv=X_monotone_curve_2(tmp_cv);
+  return true;
+}
+
+template <class stream>
+bool read_coefficients(stream & is,Rat_vector & coeffs)
+{
+  unsigned int num_coeffs;
+  Rational rat;
+  is >> num_coeffs;
+  coeffs.clear();
+  for (unsigned int j = 0; j < num_coeffs; j++) {
+    is >> rat;
+    coeffs.push_back(rat);
+  }
+  return true;
+}
+
+/*! Read a curve */
+template <>
+template <class stream>
+bool
+Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+{
+  // Get the arc type:
+  Rat_vector p_coeffs, q_coeffs;
+  Algebraic src, trg;
+  int dir;
+  char type;
+  is >> type;
+  if (type == 'a' || type == 'A') 
+  {
+    //Default constructor
+    cv = Curve_2();
+    return true;
+  }
+  else if (type == 'b' || type == 'B') 
+  {
+    //Constructor of a whole polynomial curve
+    if (read_coefficients(is,p_coeffs))
+      cv = Curve_2(p_coeffs);
+    else
+      return false;
+    return true;
+  }
+  else if (type == 'c' || type == 'C') 
+  {
+    //Constructor of a polynomial ray
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    is >> src >> dir;
+    cv = Curve_2(p_coeffs ,src ,(dir == 0 ? false : true));
+    return true;
+  }
+  else if (type == 'd' || type == 'D') 
+  {
+    //Constructor of a polynomial arc
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    is >> src >> trg;
+    cv = Curve_2(p_coeffs ,src ,trg);
+    return true;
+  }
+  else if (type == 'e' || type == 'E') 
+  {
+    //Constructor of a whole rational function
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    cv = Curve_2(p_coeffs ,q_coeffs);
+    return true;
+  }
+  else if (type == 'f' || type == 'F') 
+  {
+    //Constructor of a ray of a rational function
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    is >> src >> dir;
+    cv = Curve_2(p_coeffs ,q_coeffs ,src ,(dir == 0 ? false : true));
+    return true;
+  }
+  else if (type == 'g' || type == 'G') 
+  {
+    //Constructor of a bounded rational arc
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    is >> src >> trg;
+    cv = Curve_2(p_coeffs ,q_coeffs ,src ,trg);
+    return true;
+  }
+  // If we reached here, we have an unknown rational arc type:
+  std::cerr << "Illegal rational arc type specification: " << type << "." << std::endl;
+  return (false);
+}
+
+#endif
+
 #if TEST_TRAITS == POLYLINE_TRAITS || TEST_TRAITS == NON_CACHING_POLYLINE_TRAITS
 
 template <>
 template <class stream>
 bool
-Traits_test<CGAL::Arr_polyline_traits_2<Segment_traits> >::
+Traits_test<Traits >::
 read_xcurve(stream & is,
-            CGAL::
-            Arr_polyline_traits_2<Segment_traits>::X_monotone_curve_2 & xcv)
+            Traits::X_monotone_curve_2 & xcv)
 {
   unsigned int num_points;
   is >> num_points;
@@ -147,9 +261,9 @@ read_xcurve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<CGAL::Arr_polyline_traits_2<Segment_traits> >::
+Traits_test<Traits >::
 read_curve(stream & is,
-           CGAL::Arr_polyline_traits_2<Segment_traits>::Curve_2 & cv)
+           Traits::Curve_2 & cv)
 {
   unsigned int num_points;
   is >> num_points;

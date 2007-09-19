@@ -33,6 +33,7 @@ CIRCULAR_LINE_ARC_TRAITS=8
 CIRCLE_SEGMENT_TRAITS=9
 BEZIER_TRAITS=10
 SPHERICAL_ARC_TRAITS=11
+RATIONAL_ARC_TRAITS=12
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -682,6 +683,27 @@ test_spherical_arc_traits()
 }
 
 #---------------------------------------------------------------------#
+# rational arc traits
+#---------------------------------------------------------------------#
+test_rational_arc_traits()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $RATIONAL_ARC_TRAITS rational_arc_traits
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits \
+    data/compare.pt data/empty.zero \
+    data/empty.zero data/compare rational_arc_traits
+
+    execute_commands_new_structure rational_arcs rational_arc_traits \
+    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 #                    remove the previous error file
 #---------------------------------------------------------------------#
 
@@ -714,6 +736,8 @@ else
   test_bezier_traits
 
   test_spherical_arc_traits
+
+  test_rational_arc_traits
 
   compile_and_run test_insertion
   compile_and_run test_removal
