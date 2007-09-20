@@ -421,6 +421,34 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     CGAL_PRINT(" [Skipping common left endpoint...]\n";);
     ++vi;
   }
+  else
+  {
+    // In case both left curve-ends have boundary conditions and are not
+    // unbounded, check whether the left endpoints are the same. If they are,
+    // skip the first intersection point.
+    const Boundary_type   bx1 =
+        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), MIN_END);
+    const Boundary_type   by1 =
+        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), MIN_END);
+    const Boundary_type   bx2 =
+        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), MIN_END);
+    const Boundary_type   by2 =
+        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), MIN_END);
+
+    if (bx1 == bx2 &&
+        (bx1 != NO_BOUNDARY && bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY) &&
+        by1 == by2 &&
+        (bx2 != NO_BOUNDARY && bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY))
+    {
+      if (this->m_traits->equal_2_object()
+          (this->m_traits->construct_min_vertex_2_object() (c1->last_curve()),
+           this->m_traits->construct_min_vertex_2_object() (c2->last_curve())))
+      {
+        CGAL_PRINT(" [Skipping common left endpoint on boundary ...]\n";);
+        ++vi;
+      }
+    }
+  }
 
   // If the two subcurves have a common right-event, and the last intersection
   // object is a point, we can ignore last intersection (note that in case of
@@ -436,6 +464,40 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     {
       CGAL_PRINT(" [Skipping common right endpoint...]\n";);
       --vi_end;
+    }
+  }
+  else
+  {
+    // In case both right curve-ends have boundary conditions and are not
+    // unbounded, check whether the right endpoints are the same. If they are,
+    // skip the last intersection point.
+    const Boundary_type   bx1 =
+        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), MAX_END);
+    const Boundary_type   by1 =
+        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), MAX_END);
+    const Boundary_type   bx2 =
+        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), MAX_END);
+    const Boundary_type   by2 =
+        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), MAX_END);
+
+    if (bx1 == bx2 &&
+        (bx1 != NO_BOUNDARY && bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY) &&
+        by1 == by2 &&
+        (bx2 != NO_BOUNDARY && bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY))
+    {
+      if (this->m_traits->equal_2_object()
+          (this->m_traits->construct_max_vertex_2_object() (c1->last_curve()),
+           this->m_traits->construct_max_vertex_2_object() (c2->last_curve())))
+      {
+        vector_inserter                         vi_last = vi_end;
+
+        --vi_last;
+        if (object_cast<std::pair<Point_2,unsigned int> > (&(*vi_last)) != NULL)
+        {
+          CGAL_PRINT(" [Skipping common right endpoint on boundary...]\n";);
+          --vi_end;
+        }
+      }
     }
   }
 
