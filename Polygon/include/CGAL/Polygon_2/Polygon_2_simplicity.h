@@ -481,9 +481,10 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
     // A temporary fix as the sweep in some cases doesn't discover vertices with degree > 2
     // Todo: fix the sweep code
     std::vector<typename PolygonTraits::Point_2> points(points_begin,points_end);
-    std::sort(points.begin(), points.end(), PolygonTraits::Less_xy_2());
+    std::sort(points.begin(), points.end(),typename PolygonTraits::Less_xy_2());
 
-    std::vector<typename PolygonTraits::Point_2>::iterator succ = points.begin(), it(succ++);
+    typename std::vector<typename PolygonTraits::Point_2>::iterator 
+                                  succ(points.begin()) , it(succ++);
     for(;succ != points.end(); ++it,++succ){
       if(*it == *succ){
 	return false;
