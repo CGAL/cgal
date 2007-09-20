@@ -578,12 +578,13 @@ public:
     {
       Algebraic     alg_min (x_min), alg_max (x_max);
       Algebraic     buffer[2];
+      Algebraic    *start_buffer = buffer;
       Algebraic    *end_buffer =
         solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0), 
                                   poly.getCoeff(1),
                                   poly.getCoeff(0),
                                   buffer);
-      unsigned int  num_of_roots = std::distance(buffer, end_buffer);
+      unsigned int  num_of_roots = std::distance(start_buffer, end_buffer);
 
       for (i = 0; i < num_of_roots; ++i)
       {
