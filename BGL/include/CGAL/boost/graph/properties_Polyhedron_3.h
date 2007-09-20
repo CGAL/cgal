@@ -44,7 +44,7 @@ public:
   typedef boost::readable_property_map_tag                                category;
   typedef double                                                          value_type;
   typedef double                                                          reference;
-  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_weight_map( Polyhedron const& ) {}
 
@@ -66,7 +66,7 @@ public:
   typedef boost::readable_property_map_tag                                category;
   typedef bool                                                            value_type;
   typedef bool                                                            reference;
-  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_is_border_map( Polyhedron const& ) {}
 
@@ -85,7 +85,7 @@ public:
   typedef boost::readable_property_map_tag                                category;
   typedef std::size_t                                                     value_type;
   typedef std::size_t                                                     reference;
-  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_index_map_stored( Polyhedron const& ) {}
 
@@ -104,7 +104,7 @@ public:
   typedef boost::readable_property_map_tag                                category;
   typedef std::size_t                                                     value_type;
   typedef std::size_t                                                     reference;
-  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_index_map_external( Polyhedron const& p) 
     : map( p.halfedges_begin(),p.halfedges_end(),0,std::size_t(-1),p.size_of_halfedges() )
@@ -155,7 +155,7 @@ public:
   typedef boost::readable_property_map_tag                                  category;
   typedef Point_3                                                           value_type;
   typedef Point_3 const&                                                    reference;
-  typedef typename boost::graph_traits<Polyhedron const>::vertex_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
 
   Polyhedron_vertex_point_const_map( Polyhedron const& ) {}
 
@@ -174,7 +174,7 @@ public:
   typedef boost::readable_property_map_tag                                  category;
   typedef std::size_t                                                       value_type;
   typedef std::size_t                                                       reference;
-  typedef typename boost::graph_traits<Polyhedron const>::vertex_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
 
   Polyhedron_vertex_index_map_stored( Polyhedron const& ) {}
 
@@ -193,7 +193,7 @@ public:
   typedef boost::readable_property_map_tag                                  category;
   typedef std::size_t                                                       value_type;
   typedef std::size_t                                                       reference;
-  typedef typename boost::graph_traits<Polyhedron const>::vertex_descriptor key_type;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
 
   Polyhedron_vertex_index_map_external( Polyhedron const& p) 
     : map( p.vertices_begin(),p.vertices_end(),0,std::size_t(-1),p.size_of_vertices() )

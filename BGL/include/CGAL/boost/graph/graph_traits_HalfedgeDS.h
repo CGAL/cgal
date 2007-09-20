@@ -233,7 +233,7 @@ struct HDS_graph_traits
 public :
   
   struct HDS_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
-                                        public virtual boost::adjacency_graph_tag,
+					//                                        public virtual boost::adjacency_graph_tag,
                                         public virtual boost::vertex_list_graph_tag,
                                         public virtual boost::edge_list_graph_tag
   {};
@@ -267,45 +267,6 @@ public :
   typedef vertices_size_type      degree_size_type;
 };
 
-template <class HDS_>
-struct HDS_graph_traits<HDS_ const> 
-{
-public :
-  
-  struct HDS_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
-                                        public virtual boost::adjacency_graph_tag,
-                                        public virtual boost::vertex_list_graph_tag,
-                                        public virtual boost::edge_list_graph_tag
-  {};
-
-  typedef HDS_ HDS;
-  
-  typedef typename HDS::Vertex_const_handle   vertex_descriptor;
-  typedef typename HDS::Halfedge_const_handle edge_descriptor;
-  
-  typedef HDS_all_vertices_const_iterator<HDS>  vertex_iterator;
-  typedef HDS_all_halfedges_const_iterator<HDS> edge_iterator;
-  
-private:
-
-  typedef typename HDS::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator ;
-  
-  typedef HDS_out_halfedge_circulator<Halfedge_around_vertex_const_circulator,edge_descriptor> out_edge_const_circulator ;
-  typedef HDS_in_halfedge_circulator <Halfedge_around_vertex_const_circulator,edge_descriptor> in_edge_const_circulator ;
-  
-public :
-
-  typedef Counting_iterator<out_edge_const_circulator, edge_descriptor> out_edge_iterator;
-  typedef Counting_iterator<in_edge_const_circulator , edge_descriptor> in_edge_iterator;
-
-  typedef boost::directed_tag               directed_category;
-  typedef boost::disallow_parallel_edge_tag edge_parallel_category; 
-  typedef HDS_graph_traversal_category      traversal_category;
-  
-  typedef typename HDS::size_type vertices_size_type;
-  typedef vertices_size_type      edges_size_type;
-  typedef vertices_size_type      degree_size_type;
-};
 
 CGAL_END_NAMESPACE
 
