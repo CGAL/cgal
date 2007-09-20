@@ -855,6 +855,14 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
    * AFTER_DISCONTINUITY to BEFORE_DISCONTINUITY, and the number of times it
    * crosses the other way around.
    */
+#if 0
+  std::cout << "prev1: "
+            << prev1->opposite()->vertex()->point() << ", "
+            << prev1->vertex()->point() << std::endl;
+  std::cout << "prev2: "
+            << prev2->opposite()->vertex()->point() << ", "
+            << prev2->vertex()->point() << std::endl;
+#endif
   int counter = 0;
   typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
     m_traits->boundary_in_x_2_object();
@@ -896,7 +904,9 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
   Boundary_type last_trg_bc = curr_trg_bc;
   if (last_trg_bc != first_src_bc) {
     if (last_trg_bc == BEFORE_DISCONTINUITY) ++counter;
-    else --counter;
+    else if (last_trg_bc == AFTER_DISCONTINUITY) --counter;
+    else if (first_src_bc == AFTER_DISCONTINUITY) ++counter;
+    else if (first_src_bc == BEFORE_DISCONTINUITY) --counter;
   }
   // Path must be perimetric:
   CGAL_assertion(counter == -1 || counter == 1);
