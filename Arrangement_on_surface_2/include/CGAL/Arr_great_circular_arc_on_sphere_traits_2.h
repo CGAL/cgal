@@ -1332,7 +1332,7 @@ public:
           return oi;
         }
         const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l2_3, trg, plane, true, false, true);
+        X_monotone_curve_2 xc(l2_3, trg, plane, true, true, true);
         *oi++ = make_object(xc);
         return oi;
       }
@@ -1343,7 +1343,7 @@ public:
         return oi;
       }
       const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-      X_monotone_curve_2 xc(l1_3, trg, plane, true, false, true);
+      X_monotone_curve_2 xc(l1_3, trg, plane, true, true, true);
       *oi++ = make_object(xc);
       return oi;
     }
