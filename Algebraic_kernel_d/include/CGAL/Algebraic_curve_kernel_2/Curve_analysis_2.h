@@ -203,7 +203,8 @@ public:
                 return vertical_line_at_event(i);
             if(perturb == CGAL::POSITIVE)
                 i++;
-        }
+        } else
+            return *this;
         return vertical_line_of_interval(i);
     }
 

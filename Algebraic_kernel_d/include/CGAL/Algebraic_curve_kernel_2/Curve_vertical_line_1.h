@@ -271,7 +271,7 @@ public:
     {
         return this->ptr()->_m_event_info;
     }
-
+    
     //!@}
 }; // class Curve_vertical_line_1
 

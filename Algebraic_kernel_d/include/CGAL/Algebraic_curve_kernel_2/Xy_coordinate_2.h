@@ -184,25 +184,20 @@ public:
         Base(static_cast<const Base&>(p)) {  
     }
 
-    // from outside Curve_analysis_2 you must not directly use the methods
-    // of Curve_2 class - only through available Curve_analysis_2 interface
     /*!\brief
      * Point at \c x, on \c curve with \c arcno. Finite points on vertical arcs
      * are also constructed in this way
-     * 
-     * \pre y-coordinate of this point must be finite
      */
     Xy_coordinate_2(const X_coordinate_1& x, const Curve_2& curve, int arcno) :
             Base(Rep(x, curve, arcno)) {
             
         CGAL_precondition(arcno >= 0);
         CGAL_precondition_code(
-            int i = -1;
             Curve_analysis_2 ca(curve);
             typename Curve_analysis_2::Curve_vertical_line_1 v = 
                 ca.vertical_line_for_x(x);
         );
-        CGAL_precondition(arcno < v.number_of_events());
+        CGAL_precondition(arcno >= 0 && arcno < v.number_of_events());
     }
     
     /*!\brief
@@ -269,10 +264,8 @@ public:
             return CGAL::EQUAL;
         if(!equal_x) {
             CGAL::Comparison_result c = compare_x(q);
-            if(c != CGAL::EQUAL) {
-                CGAL_assertion(c == CGAL::SMALLER || c == CGAL::LARGER);
+            if(c != CGAL::EQUAL) 
                 return c;
-            } 
         }
         return _compare_y_at_x(q);
     }
