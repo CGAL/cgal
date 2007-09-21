@@ -12,12 +12,12 @@
 //
 // ============================================================================
 
+#ifndef CGAL_GPA_2_FUNCTORS_H
+#define CGAL_GPA_2_FUNCTORS_H
+
 /*! \file GPA_2/GPA_2_functors.h
  *  \brief defines GPA_2 function objects 
  */
-
-#ifndef CGAL_GPA_2_functors_H
-#define CGAL_GPA_2_functors_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -26,12 +26,19 @@ namespace GPA_2_Functors {
 template <class GPA_2>
 class Compare_x_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
-
+    
+public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<4>            Arity;
-
+    
+    //! standard constructor
+    Compare_x_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
+        
     /*!
      * Compare the x-coordinates of two points.
      * \param p1 The first point.
@@ -43,7 +50,7 @@ class Compare_x_2
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const
     { 
         typename GPA_2::Curve_kernel_2 kernel_2;
-        return kernel_2.compare_x_2_object()(p1, p2);
+        return _m_gpa->kernel().compare_x_2_object()(p1, p2);
     }
 
     /*!
@@ -61,7 +68,7 @@ class Compare_x_2
     result_type operator()(const Point_2& p, const Arc_2& cv, 
             ::CGAL::Curve_end end) const 
     {
-        return (cv.compare_end(end, p));
+        return (cv.compare_end_at_x(end, p));
     }
 
    /*!
@@ -81,19 +88,29 @@ class Compare_x_2
      */
     result_type operator()(const Arc_2& cv1, ::CGAL::Curve_end end1, 
              const Arc_2& cv2, ::CGAL::Curve_end end2) const {
-        return cv1.compare_ends(end1, cv2, end2);
+        return cv1.compare_ends_at_x(end1, cv2, end2);
     }
+    
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Compare_xy_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
+    
+    //! standard constructor
+    Compare_xy_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Compares two points lexigoraphically: by x, then by y.
@@ -107,20 +124,30 @@ public:
     result_type operator()(const Point_2& p1, const Point_2& p2) const
     {
         typename GPA_2::Curve_kernel_2 kernel_2;
-        return (kernel_2.compare_xy_2_object()(p1, p2));
+        return (_m_gpa->kernel().compare_xy_2_object()(p1, p2));
     }
+    
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 //!\brief Tests two objects, whether they are equal
 template < class GPA_2 >
 class Equal_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Equal_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
     
     /*!
      * Check if the two points are the same.
@@ -133,7 +160,7 @@ public:
         if(&p1 == &p2) 
             return true;
         typename GPA_2::Curve_kernel_2 kernel_2;
-        return (kernel_2.compare_xy_2_object()(p1, p2) == CGAL::EQUAL);
+        return (_m_gpa->kernel().compare_xy_2_object()(p1, p2) == CGAL::EQUAL);
     }
      
     /*!
@@ -148,6 +175,10 @@ public:
             return true; 
         return cv1.is_equal(cv2);
     }
+
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
@@ -158,6 +189,12 @@ class Is_vertical_2 {
 public:
     typedef bool result_type;
     typedef Arity_tag<1> Arity;
+    
+    //! standard constructor
+    Is_vertical_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Check whether the given x-monotone curve is a vertical segment.
@@ -168,17 +205,26 @@ public:
     result_type operator()(const Arc_2& cv) const {
         return cv.is_vertical();
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Construct_min_vertex_2 
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef Point_2 result_type;
     typedef Arity_tag<1> Arity;
+    
+    //! standard constructor
+    Construct_min_vertex_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Get the left end-point of the x-monotone curve
@@ -188,22 +234,29 @@ public:
      */
     result_type operator()(const Arc_2& cv) const {
     
-        CGAL_precondition(
-            cv.get_boundary_in_x(CGAL::MIN_END) == CGAL::NO_BOUNDARY &&
-            cv.get_boundary_in_y(CGAL::MIN_END) == CGAL::NO_BOUNDARY);
-        return cv.get_curve_end(CGAL::MIN_END);
+        CGAL_precondition(cv.is_finite(CGAL::MIN_END));
+        return cv.curve_end(CGAL::MIN_END);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Construct_max_vertex_2 
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef Point_2 result_type;
     typedef Arity_tag<1> Arity;
+    
+    //! standard constructor
+    Construct_max_vertex_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Get the right endpoint of the x-monotone curve (segment).
@@ -213,49 +266,12 @@ public:
      */
     result_type operator()(const Arc_2& cv) const {
     
-        CGAL_precondition(
-            cv.get_boundary_in_x(CGAL::MAX_END) == CGAL::NO_BOUNDARY &&
-            cv.get_boundary_in_y(CGAL::MAX_END) == CGAL::NO_BOUNDARY);
-        return cv.get_curve_end(CGAL::MAX_END);
+        CGAL_precondition(cv.is_finite(CGAL::MAX_END));
+        return cv.curve_end(CGAL::MAX_END);
     }
-};
-
-
-// TODO existing for backward compatability - will be removed in future
-// do we need this ?
-template < class GPA_2 >
-class Infinite_in_x_2 
-{
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
-    typedef typename GPA_2::Arc_2 Arc_2;
-   
-public:
-    typedef ::CGAL::Boundary_type result_type;
-    typedef Arity_tag<2> Arity;
-
-    result_type operator()(const Arc_2 & cv, 
-            ::CGAL::Curve_end end) const {
-        CGAL_error("The functor is considered deprecated ?!");
-        return CGAL::NO_BOUNDARY;
-    }
-};
-
-// TODO existing for backward compatability - will be removed in future
-// do we need this ?
-template < class GPA_2 >
-class Infinite_in_y_2 
-{
-    typedef typename GPA_2::Arc_2 Arc_2;
-   
-public:
-    typedef ::CGAL::Boundary_type result_type;
-    typedef Arity_tag<2> Arity;
-
-    result_type operator()(const Arc_2 & cv, 
-            ::CGAL::Curve_end end) const {
-        CGAL_error("The functor is considered deprecated ?!");
-        return CGAL::NO_BOUNDARY;
-    }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
@@ -266,6 +282,12 @@ class Boundary_in_x_2
 public:
     typedef ::CGAL::Boundary_type result_type;
     typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Boundary_in_x_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
@@ -279,8 +301,11 @@ public:
     result_type operator()(const Arc_2 & cv, 
             ::CGAL::Curve_end end) const {
             
-        return cv.get_boundary_in_x(end);
+        return cv.boundary_in_x(end);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
@@ -291,6 +316,12 @@ class Boundary_in_y_2
 public:
     typedef ::CGAL::Boundary_type result_type;
     typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Boundary_in_y_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
@@ -304,21 +335,29 @@ public:
     result_type operator()(const Arc_2 & cv, 
             ::CGAL::Curve_end end) const {
             
-        return cv.get_boundary_in_y(end);
+        return cv.boundary_in_y(end);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Compare_y_at_x_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
-public:
     /*!
      * Return the location of the given point with respect to the input curve.
      * \param cv The curve.
@@ -330,7 +369,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const
     {
-      return (cv.compare_y_at_x(p));
+      return (- cv.compare_y_at_x(p));
     }
 
     /*!
@@ -349,17 +388,26 @@ public:
     {
         return (cv1.compare_y_at_x(cv2, end));
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Compare_y_at_x_left_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_left_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!
      * Compares the y value of two x-monotone curves immediately to the left
@@ -379,17 +427,26 @@ public:
     {
         return (cv1.compare_y_at_x_left(cv2, p));
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Compare_y_at_x_right_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_right_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
      /*!
      * Compares the y value of two x-monotone curves immediately 
@@ -409,17 +466,26 @@ public:
     {
         return (cv1.compare_y_at_x_right(cv2, p));
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Is_in_x_range_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef bool result_type;
     typedef Arity_tag<2>            Arity;
+    
+    //! standard constructor
+    Is_in_x_range_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
     
     /*!\brief
      * Check whether a given point lies within the curve's x-range
@@ -430,6 +496,9 @@ public:
     bool operator()(Arc_2 cv, Point_2) {
         return cv.is_in_x_range(p);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
@@ -441,6 +510,12 @@ public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
     
+    //! standard constructor
+    Do_overlap_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
+    
     /*!\brief
      * Check whether two given curves overlap, i.e., they have infinitely
      * many intersection points
@@ -451,17 +526,26 @@ public:
     bool operator()(Arc_2 cv1, Arc_2 cv2) {
         return cv1.do_overlap(cv2);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Trim_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef bool result_type;
     typedef Arity_tag<3> Arity;
+    
+    //! standard constructor
+    Trim_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
     
     /*!\brief
      * Returns a 
@@ -472,17 +556,26 @@ public:
     bool operator()(Arc_2 cv, Point_2 p, Point_2 q) {
         return cv.trim(p, q);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Are_mergeable_2 
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;    
+    
+    //! standard constructor
+    Are_mergeable_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
     
     /*!\brief
      * Check whether two given curves (arcs) are mergeable
@@ -493,22 +586,28 @@ public:
      */
     bool operator()(const Arc_2& cv1, const Arc_2 & cv2) const {
     
-        typename GAPS::Are_mergeable_2 are_mergeable(
-                gaps_.are_mergeable_2_object()
-        );
-        return are_mergeable(cv1, cv2);
+        return cv1.are_mergeable(cv2);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Merge_2
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef void result_type;
     typedef Arity_tag<2> Arity;    
+    
+    //! standard constructor
+    Merge_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
 
     /*!\brief
      * Merge two given x-monotone curves into a single one
@@ -522,17 +621,26 @@ public:
     
         c = cv1.merge(cv2);
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Split_2 
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef void result_type;
     typedef Arity_tag<4> Arity;    
+    
+    //! standard constructor
+    Split_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
     
     /*!
      * Split a given x-monotone curve at a given point into two sub-curves.
@@ -547,17 +655,26 @@ public:
 
         cv.split(p, c1, c2);            
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2 >
 class Intersect_2  
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
     typedef Arity_tag<3> Arity;    
+    
+    //! standard constructor
+    Intersect_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    }
     
     /*!
      * Find all intersections of the two given curves and insert them to the 
@@ -572,33 +689,45 @@ public:
     template <class OutputIterator>
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                                OutputIterator oi) const {
-        Arc_2 common;
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
-        if(cv1.trim_if_overlapped(cv2, common)) 
-            *oi++ = CGAL::make_object(common);
-        else {
-            typedef std::pair<Point_2, int> Point_and_mult;
-            typedef std::vector<Point_and_mult> Point_vector;
-            typedef typename Point_vector::const_iterator Const_iterator;
-            Point_vector vec;
-            cv1.intersect(cv2, std::back_inserter(vec));
-            for(Const_iterator it = vec.begin(); it != vec.end(); it++) 
+        std::vector<Arc_2> common_arcs;
+        if(cv1.trim_if_overlapped(cv2, common_arcs)) {
+            typename std::vector<Arc_2>::const_iterator it;
+            for(it = common_arcs.begin(); it < common_arcs.end(); it++)
                 *oi++ = CGAL::make_object(*it);
+            return oi; 
         }
+        // process non-overlapping case        
+        typedef std::pair<Point_2, int> Point_and_mult;
+        typedef std::vector<Point_and_mult> Point_vector;
+        Point_vector vec;
+        typename Point_vector::const_iterator it;
+        cv1.intersect(cv2, std::back_inserter(vec));
+        for(it = vec.begin(); it != vec.end(); it++) 
+            *oi++ = CGAL::make_object(*it);
         return oi;
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 template < class GPA_2>
 class Make_x_monotone_2 
 {
-    typedef typename GPA_2::Xy_coordinate_2 Point_2;
+    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
     typedef void result_type;
-    typedef Arity_tag<2> Arity;    
+    typedef Arity_tag<2> Arity;   
+    
+    //! standard constructor
+    Make_x_monotone_2(GPA_2 *gpa) :
+        _m_gpa(gpa) {
+        CGAL_assertion(gpa != NULL);
+    } 
 
     /*!
      * decompose a given curve (or arc) into list of x-monotone pieces 
@@ -667,10 +796,13 @@ public:
         return oi;
         
     }
+private:
+    //! pointer to \c GPA_2 ?
+    GPA_2 *_m_gpa;
 };
 
 } // GPA_2_Functors
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_GPA_2_functors_H
+#endif // CGAL_GPA_2_FUNCTORS_H

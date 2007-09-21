@@ -12,14 +12,14 @@
 //
 // ============================================================================
 
+#ifndef CGAL_GPA_POINT_2_H
+#define CGAL_GPA_POINT_2_H
+
 /*! \file GPA_2/Point_2.h
  *  \brief defines class \c Point_2
  *  
  *  Point on a generic curve
  */
-
-#ifndef CGAL_GPA_POINT_2_H
-#define CGAL_GPA_POINT_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
@@ -122,6 +122,9 @@ public:
     //! type of a finite point on curve
     typedef typename GPA_2::Xy_coordinate_2 Xy_coordinate_2;
     
+    //! type of generic curve
+    typedef typename GPA_2::Curve_2 Curve_2;
+    
     //! type of underlying curve analysis
     typedef typename GPA_2::Curve_kernel_2 Curve_kernel_2;
 
@@ -145,9 +148,18 @@ public:
     }
 
     //!\brief standard constructor: constructs a finite point on curve
-    //! implies \c CGAL::NO_BOUNDARY in x/y
+    //!
+    //! implies no boundary conditions in x/y
     Point_2(const Xy_coordinate_2& p) : 
         Base(Rep(p)) {  
+    }
+    
+    //!\brief standard constructor: constructs a finite point with x-coordinate
+    //! \c x on curve \c c with arc number \c arcno
+    //!
+    //! implies no boundary conditions in x/y
+    Point_2(const X_coordinate_1& x, const Curve_2& c, int arcno) :
+            Base(Rep(Xy_coordinate_2(x, curve, arcno))) {
     }
     
     /*!\brief
@@ -182,41 +194,137 @@ public:
     //!\name access functions and predicates
     //!@{
 
-    //! access to \c Xy_coordinate_2 object
+    //! access to underlying \c Xy_coordinate_2 object
     //!
     //! \pre finite x/y coordinates must be set by construction
-    Xy_coordinate_2 xy() const
-    {
-        CGAL_precondition(this->ptr()->_m_xy);
+    Xy_coordinate_2 xy() const {
+        CGAL_precondition_msg(this->ptr()->_m_xy, 
+            "Denied access to the curve end lying at x/y-infinity");
         return *(this->ptr()->_m_xy);
     }
 
-    //! access to the point's x-coordinate (y-coordinate might be undefined)
+    //! access to the point's x-coordinate (y-coordinate can be undefined)
     //!
     //! \pre the point's x must be finite (set by construction)
     X_coordinate_1 x() const {
-        CGAL_precondition(this->ptr()->_m_x);
+        CGAL_precondition_msg(this->ptr()->_m_x,
+          "Denied access to the curve end's x-coordinate lying at x-infinity");
         return *(this->ptr()->_m_x);
     }
     
+    //! returns a supporting curve of underlying \c Xy_coordinate_2 object
+    //!
+    //! \pre this object must represent a finite point on curve
+    Curve_2 curve() const {
+        CGAL_precondition_msg(this->ptr()->_m_xy, 
+            "Denied access to the curve end lying at x/y-infinity");
+        return (*(this->ptr()->_m_xy)).curve();
+    }
+    
+    //! returns an arc number of underlying \c Xy_coordinate_2 object
+    //!
+    //! \pre this object must represent a finite point on curve
+    int arcno() const {
+        CGAL_precondition_msg(this->ptr()->_m_xy, 
+            "Denied access to the curve end lying at x/y-infinity");
+        return (*(this->ptr()->_m_xy)).arcno();
+    }
+    
     //! access to the boundary condition in x
-    CGAL::Boundary_type get_boundary_in_x() const
+    CGAL::Boundary_type boundary_in_x() const
     { return this->ptr()->_m_boundary_x; }
     
     //! access to the boundary condition in y
-    CGAL::Boundary_type get_boundary_in_y() const
+    CGAL::Boundary_type boundary_in_y() const
     { return this->ptr()->_m_boundary_y; }
     
     //! checks whether this object represents a finite point
     bool is_finite() const {
-        return (get_boundary_in_x() == CGAL::NO_BOUNDARY && 
-                get_boundary_in_y() == CGAL::NO_BOUNDARY);
+        return (boundary_in_x() == CGAL::NO_BOUNDARY && 
+                boundary_in_y() == CGAL::NO_BOUNDARY);
+    }
+    
+    //! checks whether this object represents a point "lying" at x-infinity
+    bool is_at_x_infinity() const {
+        return (boundary_in_x() == CGAL::MINUS_INFINITY || 
+                boundary_in_x() == CGAL::PLUS_INFINITY);
+    }
+    
+    //! checks whether this object represents a point "lying" at y-infinity
+    bool is_at_y_infinity() const {
+        return (boundary_in_y() == CGAL::MINUS_INFINITY || 
+                boundary_in_y() == CGAL::PLUS_INFINITY);
+    }
+        
+    //!\brief compares x-coordinates of two points 
+    //!
+    //!\pre compared points have finite x-coordinates
+    CGAL::Comparison_result compare_x(const Point_2& p) const {
+        Curve_kernel_2 kernel_2;
+        return kernel_2.compare_x_2_object()(x(), p.x());
+    }
+    
+    //!\brief compares two points lexicographical
+    //!
+    //!\pre compared points have finite x/y-coordinates
+    CGAL::Comparison_result compare_xy(const Point_2& p, 
+        bool equal_x = false) const {
+        Curve_kernel_2 kernel_2;
+        return kernel_2.compare_xy_2_object()(xy(), p.xy(), equal_x);
+    }
+    
+    //! comparison operators (only for finite points):
+    //! equality
+    bool operator == (const Self& q) const {return q.compare_xy(*this)== 0;}
+    
+    //! inequality
+    bool operator != (const Self& q) const {return q.compare_xy(*this)!= 0;}
+
+    //! less than in (x,y) lexicographic order
+    bool operator <  (const Self& q) const {return q.compare_xy(*this)> 0;}
+
+    //! less-equal in (x,y) lexicographic order
+    bool operator <= (const Self& q) const {return q.compare_xy(*this)>= 0;}
+
+    //! greater than in (x,y) lexicographic order
+    bool operator >  (const Self& q) const {return q.compare_xy(*this)< 0;}
+
+    //! greater-equal in (x,y) lexicographic order
+    bool operator >= (const Self& q) const {return q.compare_xy(*this)<= 0;}
+    
+    //!@}
+private:
+    //!\name private methods (provided for access from Arc_2 object)
+    //!@{
+    
+    //! \brief sets boundary condition in x
+    //!
+    //! \pre boundary conditions in x and y are mutually exclusive
+    void _set_boundary_in_x(CGAL::Boundary_type type) const {
+    
+        if(type != CGAL::NO_BOUNDARY && 
+                this->ptr()->_m_boundary_in_y != CGAL::NO_BOUNDARY) 
+            CGAL_error("Denied to set the boundary condition in x while the "
+             "boundary condition in y is set");
+        this->ptr()->_m_boundary_in_x = type;
+    }
+
+    //! \brief sets boundary condition in y
+    //!
+    //! \pre boundary conditions in x and y are mutually exclusive
+    void _set_boundary_in_y(CGAL::Boundary_type type) const {
+    
+        if(type != CGAL::NO_BOUNDARY && 
+                this->ptr()->_m_boundary_in_x != CGAL::NO_BOUNDARY) 
+            CGAL_error("Denied to set the boundary condition in y while the "
+             "boundary condition in x is set");
+        this->ptr()->_m_boundary_in_y = type;
     }
     
     //! befriending \c Arc_2 class
     friend class Arc_2<GPA_2>;
     
-    //!@}
+    //!@}        
 }; // class Point_2
 
 } // namespace CGALi
