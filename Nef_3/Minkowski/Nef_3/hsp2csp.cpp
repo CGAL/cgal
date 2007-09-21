@@ -106,8 +106,9 @@ int main(int argc, char* argv[]) {
       if(!test_convex_hull(result, *hi, false))
 	std::cerr << "convex hull incorrect" << std::endl;
     } else {
-      Nef_polyhedron_3 tmp = create_from_halfspaces(*hi, true);
-      if(!test_convex_hull(tmp, *hi, true))
+      Nef_polyhedron_3 tmp = create_from_halfspaces(*hi, false);
+      std::cerr << "size of obstacle " << tmp.number_of_vertices() << std::endl;
+      if(!test_convex_hull(tmp, *hi, false))
 	std::cerr << "convex hull incorrect" << std::endl;
       result = result - tmp;
     }
