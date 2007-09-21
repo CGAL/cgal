@@ -13,10 +13,11 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Nef_3/Bounding_box_3.h>
+#include <CGAL/Nef_3/Nary_union.h>
 #include <CGAL/Nef_3/volInt.h>
 
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Nef_3/convex_decomposition_3.h> 
+#include <CGAL/Nef_3/convex_decomposition_3.h>
 #include <CGAL/convexity_check_3.h>
 
 #include <fstream>
@@ -58,6 +59,7 @@ typedef Nef_polyhedron_3::SHalfedge_const_handle SHalfedge_const_handle;
 typedef Nef_polyhedron_3::SHalfloop_const_handle SHalfloop_const_handle;
 typedef Nef_polyhedron_3::SFace_const_handle SFace_const_handle;
 typedef CGAL::Bounding_box_3<CGAL::Tag_true, Kernel> BBox;
+typedef CGAL::Nary_union<Nef_polyhedron_3> Nary_union;
 
 class Volume_output {
   bool twin;
@@ -89,13 +91,22 @@ public:
   void dump() const {
     std::cout << planes.size() << std::endl;
     for(CI ci = planes.begin(); ci != planes.end(); ++ci) {
+      Plane_3 p = *ci;
+
 #ifdef CGAL_WITH_LAZY_KERNEL
-      std::cout << CGAL::to_double(ci->a().exact()) << " " 
-		<< CGAL::to_double(ci->b().exact()) << " "
-		<< CGAL::to_double(ci->c().exact()) << " "
-		<< CGAL::to_double(ci->d().exact()) << std::endl;
+      std::cout << CGAL::to_double(p.a().exact()) << " "
+                << CGAL::to_double(p.b().exact()) << " "
+                << CGAL::to_double(p.c().exact()) << " "
+                << CGAL::to_double(p.d().exact()) << std::endl;
 #else
-      std::cout << *ci << std::endl;
+#ifdef CGAL_CSP2HSP_EXACT_OUTPUT
+      std::cout << p << std::endl;
+#else
+      std::cout << CGAL::to_double(p.a()) << " "
+                << CGAL::to_double(p.b()) << " "
+                << CGAL::to_double(p.c()) << " "
+                << CGAL::to_double(p.d()) << std::endl;
+#endif
 #endif
     }
   }
@@ -246,6 +257,7 @@ void output_hsp(const Nef_polyhedron_3& DIFF,
   }
 }
 
+/*
 double bbox_size(const BBox& bbox) {
 
   FT size =
@@ -253,6 +265,14 @@ double bbox_size(const BBox& bbox) {
     (bbox.max_coord(1) - bbox.min_coord(1))*
     (bbox.max_coord(2) - bbox.min_coord(2));
   return CGAL::to_double(size);
+}
+*/
+
+template<typename Hash_map>
+Volume_const_handle find(Volume_const_handle c, Hash_map& hash) {
+  if(c != hash[c])
+    hash[c] = find(hash[c], hash);
+  return hash[c];
 }
 
 void simplify_and_output(const Nef_polyhedron_3& DIFF,
@@ -263,43 +283,36 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
   typedef CGAL::Union_find<Volume_const_handle> UF;
   typedef UF::handle UF_handle;
   typedef UF::iterator UF_iterator;
+  typedef UF::const_pointer UF_pointer;
   UF uf;
   
-  CGAL::Unique_hash_map<Volume_const_handle, UF_handle> c2uf;
+  CGAL::Unique_hash_map<Volume_const_handle, Volume_const_handle> c2c;
   CGAL::Unique_hash_map<Volume_const_handle, Nef_polyhedron_3> c2N;
   CGAL::Unique_hash_map<Volume_const_handle, double> real_volume;
 
   PVC pvc(DIFF);
 
+  int volumes = 0;
   Volume_const_iterator ci;
   CGAL_forall_volumes(ci, DIFF) {
     if(!ci->mark()) continue;
+    ++volumes;
+    c2c[ci] = ci;
     Convex_from_shell_points cfsp;
     DIFF.visit_shell_objects(ci->shells_begin(), cfsp);
-    c2uf[ci] = uf.make_set(ci);
-    UF_handle ufh_tmp = c2uf[ci];
     c2N[ci] = cfsp.get_polyhedron();
     real_volume[ci] = pvc.get_volume_of_closed_volume(ci);
   }
 
-  Nef_polyhedron_3 tmp(NCV);
-  CGAL_forall_volumes(ci, DIFF) {  
-    if(!ci->mark()) continue;
-    tmp = tmp - c2N[ci];
-  }
-  PVC pvct(tmp);
-  std::cerr << "tescht " << pvct.get_volume_of_polyhedron() << std::endl;
-
   Halffacet_const_iterator fi;
   CGAL_forall_halffacets(fi, DIFF) {
     if(fi->is_twin()) continue;
-    if(!fi->incident_volume()->mark() || 
-       !fi->twin()->incident_volume()->mark()) continue;
     Volume_const_handle c0 = fi->incident_volume();
     Volume_const_handle c1 = fi->twin()->incident_volume();
-    UF_handle ufh0(c2uf[c0]);
-    UF_handle ufh1(c2uf[c1]);
-    if(uf.same_set(ufh0, ufh1)) continue;
+    if(!c0->mark() || !c1->mark()) continue;
+    c0 = find(c0, c2c);
+    c1 = find(c1, c2c);
+    if(c0 == c1) continue;
 
     Nef_polyhedron_3 N0 = c2N[c0];
     Nef_polyhedron_3 N1 = c2N[c1];
@@ -310,79 +323,50 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
       points.push_back(vi->point());
     CGAL_forall_vertices(vi, N1)
       points.push_back(vi->point());
-
+    
     Polyhedron_3 cv;
     convex_hull_3(points.begin(), 
 		  points.end(), cv);
     Nef_polyhedron_3 ncv(cv);
 
-    //    Nef_polyhedron_3 N01 = N0+N1;
-    /*
-    std::ofstream outN0("N0.nef3");
-    std::ofstream outN1("N1.nef3");
-    std::ofstream outN01("N01.nef3");
-    std::ofstream outncv("ncv.nef3");
-    outN0 << N0;
-    outN1 << N1;
-    outN01 << N01;
-    outncv << ncv;
-    */
-    //    CGAL_assertion((N01 - ncv).is_empty());
-
     PVC pvct(ncv);
-
     double s0 = real_volume[c0];
     double s1 = real_volume[c1];
     double s01 = pvct.get_volume_of_polyhedron();
     CGAL_assertion(s0+s1 <= s01);
     if((s0+s1)*factor < s01) continue;
 
-    uf.unify_sets(ufh0, ufh1);
+    c2c[c1] = c0;
     c2N[c0] = ncv;
-    c2N[c1] = ncv;
     real_volume[c0] = s0+s1;
-    real_volume[c1] = s0+s1;
+    --volumes;
   }
-  
-  Nef_polyhedron_3 tmp2(NCV);
-  UF_iterator ufit;
-  for(ufit = uf.begin(); ufit != uf.end(); ++ufit) {
-    CGAL_forall_volumes(ci, DIFF) {
-      if(!ci->mark()) continue;
-      if(uf.find(c2uf[ci]) != ufit) continue;
-      tmp2 = tmp2 - c2N[ci];
-      break;
-    }
-  }
-  PVC pvc(tmp2);
-  std::cerr << "tescht2 " << pvc.get_volume_of_polyhedron() << std::endl; 
 
-  std::cout << uf.number_of_sets()+1 << std::endl;
+  Nary_union nu2;
+  CGAL_forall_volumes(ci, DIFF) {
+    if(find(ci, c2c) != ci) continue;
+    nu2.add_polyhedron(c2N[ci]);
+  }
+
+  Nef_polyhedron_3 rediff = nu2.get_union();
+  Nef_polyhedron_3 recv2 = NCV - rediff;  
+  PVC pvct2(recv2);
+  std::cerr << "volume of approximation " 
+	    << pvct2.get_volume_of_polyhedron() << std::endl;
+  CGAL_assertion((recv2-NCV).is_empty());
+
+  std::cout << volumes+1 << std::endl;
 
   Volume_output vout_ncv;
   NCV.visit_shell_objects(NCV.volumes_begin()->shells_begin(), vout_ncv);
   vout_ncv.dump();
 
-  UF_iterator ufi;
-  for(ufi = uf.begin(); ufi != uf.end(); ++ufi) {
-    Point_collector uvo;
-    CGAL_forall_volumes(ci, DIFF) {
-      if(!ci->mark()) continue;
-      if(uf.find(c2uf[ci]) != ufi) continue;
-      //      DIFF.visit_shell_objects(ci->shells_begin(), uvo);      
-    }
-
-    //    if(uvo.points_begin() == uvo.points_end()) continue;
-
-    //    Polyhedron_3 cv;
-    //    convex_hull_3(uvo.points_begin(), uvo.points_end(), cv);
-    //    Nef_polyhedron_3 ncv(cv);
+  CGAL_forall_volumes(ci, DIFF) {
+    if(find(ci, c2c) != ci) continue;
     Nef_polyhedron_3 ncv = c2N[ci];
-    
     Volume_output vout;
     ncv.visit_shell_objects(ncv.volumes_begin()->shells_begin(), vout);
     vout.dump();
-    break;
   }
 }
 
@@ -458,6 +442,9 @@ int main(int argc, char* argv[]) {
 	    << " = " << sncv-sdiff << std::endl;
   
   convex_decomposition_3<Nef_polyhedron_3>(DIFF);
+
+  std::ofstream outDiff("diff.nef3");
+  outDiff << DIFF;
 
   if(simplify)
     simplify_and_output(DIFF, NCV, factor);
