@@ -1293,7 +1293,17 @@ public:
   class Intersect_2 {
   private:
     
-    /*! Computes the intersection
+    /*! Computes the intersection between two arcs contained in the same plane
+     * \param l1_3
+     * \param r1_3
+     * \param l2_3
+     * \param r2_3
+     * \param plane      - the common plane
+     * \param vertical   - is the plane vertical
+     * \param start      - the start 2d vertex
+     * \param in_between - the in_between operator
+     * \param project    - the projection function
+     * \param oi         - the output iterator
      */
     template <typename In_between, typename OutputIterator>
     OutputIterator compute_intersection(const Point_2 & l1_3,
@@ -1301,6 +1311,7 @@ public:
                                         const Point_2 & l2_3,
                                         const Point_2 r2_3,
                                         const Plane_3 & plane,
+                                        bool vertical,
                                         const Direction_2 & start,
                                         const In_between & in_between,
                                         Project project,
@@ -1317,7 +1328,7 @@ public:
 
       if (equal(l1, l2)) {
         const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l1_3, trg, plane, true, false, true);
+        X_monotone_curve_2 xc(l1_3, trg, plane, true, vertical, true);
         *oi++ = make_object(xc);
         return oi;
       }
@@ -1332,7 +1343,7 @@ public:
           return oi;
         }
         const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l2_3, trg, plane, true, true, true);
+        X_monotone_curve_2 xc(l2_3, trg, plane, true, vertical, true);
         *oi++ = make_object(xc);
         return oi;
       }
@@ -1343,7 +1354,7 @@ public:
         return oi;
       }
       const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-      X_monotone_curve_2 xc(l1_3, trg, plane, true, true, true);
+      X_monotone_curve_2 xc(l1_3, trg, plane, true, vertical, true);
       *oi++ = make_object(xc);
       return oi;
     }
@@ -1425,50 +1436,43 @@ public:
             /*! All projected enpoints reside in one (closed) x half-space -
              * either in the negative x half space or the positive one.
              */
-            if ((p.dx() > 0) || (p.dx() > 0)) {
+            if (p.dx() > 0) {
               // The endpoints reside in the positive x-halfspace:
               return compute_intersection(xc1.left(), xc1.right(),
-                                          xc2.left(), xc2.right(), xc2.plane(),
-                                          Traits::neg_y_2(),
-                                          ccib, Traits::project_xz, 
-                                          oi);
+                                          xc2.left(), xc2.right(),
+                                          xc1.plane(), true, Traits::neg_y_2(),
+                                          ccib, Traits::project_xz, oi);
             }
             // The endpoints reside in the negative x-halfspace:
             return compute_intersection(xc1.left(), xc1.right(),
-                                        xc2.left(), xc2.right(), xc2.plane(),
-                                        Traits::neg_y_2(),
-                                        cib, Traits::project_xz, 
-                                        oi);
-            return oi;
+                                        xc2.left(), xc2.right(),
+                                        xc1.plane(), true, Traits::neg_y_2(),
+                                        cib, Traits::project_xz, oi);
           }
           // Project onto yz plane:    
 
           /*! All projected enpoints reside in one (closed) x half-space -
            * either in the negative x half space or the positive one.
            */
-          if ((p.dx() > 0) || (p.dx() > 0)) {
+          if (p.dy() > 0) {
             // The endpoints reside in the positive x-halfspace:
             return compute_intersection(xc1.left(), xc1.right(),
-                                        xc2.left(), xc2.right(), xc2.plane(),
-                                        Traits::neg_y_2(),
-                                        ccib, Traits::project_yz,
-                                        oi);
+                                        xc2.left(), xc2.right(),
+                                        xc1.plane(), true, Traits::neg_y_2(),
+                                        ccib, Traits::project_yz, oi);
           }
           // The endpoints reside in the negative x-halfspace:
           return compute_intersection(xc1.left(), xc1.right(),
-                                      xc2.left(), xc2.right(), xc2.plane(),
-                                      Traits::neg_y_2(),
-                                      cib, Traits::project_yz, 
-                                      oi);
-          return oi;
+                                      xc2.left(), xc2.right(),
+                                      xc1.plane(), true, Traits::neg_y_2(),
+                                      cib, Traits::project_yz, oi);
         }
 
         // The arcs are not vertical:
         return compute_intersection(xc1.left(), xc1.right(),
-                                    xc2.left(), xc2.right(), xc2.plane(),
-                                    Traits::neg_x_2(),
-                                    ccib, Traits::project_xy,
-                                    oi);
+                                    xc2.left(), xc2.right(),
+                                    xc1.plane(), false, Traits::neg_x_2(),
+                                    ccib, Traits::project_xy, oi);
       }
       
       const Line_3 * line_ptr = object_cast<Line_3>(&obj);
@@ -1479,15 +1483,12 @@ public:
         Point_2 ed(d);
 
         // Determine which one of the two directions:
-        if (Traits::is_in_between(ed, xc1) &&
-            Traits::is_in_between(ed, xc2))
-        {
+        if (Traits::is_in_between(ed, xc1) && Traits::is_in_between(ed, xc2)) {
           *oi++ = make_object(Point_2_pair(ed, 1));
           return oi;
         }
         Point_2 edo(kernel.construct_opposite_direction_3_object()(d));
-        if (Traits::is_in_between(edo, xc1) &&
-            Traits::is_in_between(edo, xc2))
+        if (Traits::is_in_between(edo, xc1) && Traits::is_in_between(edo, xc2))
         {
           *oi++ = make_object(Point_2_pair(edo, 1));
           return oi;
@@ -1677,6 +1678,7 @@ public:
   { return Construct_opposite_2(); }
   //@}
 
+#if 0
   /*! Inserter for the spherical_arc class used by the traits-class */
   template <typename OutputStream>
   friend OutputStream & operator<<(OutputStream & os, const Point_2 & p)
@@ -1696,11 +1698,10 @@ public:
     os << "(" << xc.left() << "), (" << xc.right() << ")";
     return os;
   }
-
+#endif
   /*! Extractor for the spherical_arc class used by the traits-class */
   template <typename InputStream>
-  friend InputStream & operator>>(InputStream & is,
-                                  X_monotone_curve_2 & arc)
+  friend InputStream & operator>>(InputStream & is, X_monotone_curve_2 & arc)
   {
     std::cerr << "Not implemented yet!" << std::endl;
     return is;
@@ -2222,13 +2223,13 @@ OutputStream & operator<<(OutputStream & os,
                           const Arr_extended_direction_3<Kernel> & ed)
 {
   CGAL::To_double<typename Kernel::FT> todouble;
-#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
   os << "(";
 #endif
   os << static_cast<float>(todouble(ed.dx())) << ", "
      << static_cast<float>(todouble(ed.dy())) << ", "
      << static_cast<float>(todouble(ed.dz()));
-#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
   os << ")"
      << ", "
      <<
@@ -2241,25 +2242,27 @@ OutputStream & operator<<(OutputStream & os,
 
 /*! Inserter for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename OutputStream>
-OutputStream & operator<<(OutputStream & os,
-                          const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
+OutputStream &
+operator<<(OutputStream & os,
+           const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
-#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
   os << "(";
 #endif
   os << "(" << arc.left() << "), (" << arc.right() << ")";
-#if defined(CGAL_ARR_SPHERICAL_ARC_TRAITS_DETAILS)
+#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
   os << "("
-     << ", " << (xc.is_vertical() ? " |" : "!|")
-     << ", " << (xc.is_directed_right() ? "=>" : "<=");
+     << ", " << (arc.is_vertical() ? " |" : "!|")
+     << ", " << (arc.is_directed_right() ? "=>" : "<=");
 #endif
   return os;
 }
 
 /*! Extractor for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename InputStream>
-InputStream & operator>>(InputStream & is,
-                         const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
+InputStream &
+operator>>(InputStream & is,
+           const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
   std::cerr << "Not implemented yet!" << std::endl;
   return is;
