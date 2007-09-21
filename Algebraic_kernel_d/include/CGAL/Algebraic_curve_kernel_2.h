@@ -38,16 +38,13 @@ CGAL_BEGIN_NAMESPACE
 template < class AlgebraicCurvePair_2, class AlgebraicKernel_1 >
 class Algebraic_curve_kernel_2 {
 
-// for each functor defines a member function returning an instance of this
-// functor
+// for each predicate functor defines a member function returning an instance
+// of this predicate
 #define CGAL_Algebraic_Kernel_pred(Y,Z) \
     Y Z() const { return Y(); }
-    
-// makes Y alias of functor X, Z is a member function returnining an insance
-// of this object
-#define CGAL_Algerbaic_Kernel_alias(X, Y, Z) \
-    typedef X Y; \
-    Y Z() const { return Y(); }
+
+// the same for construction functors
+#define CGAL_Algebraic_Kernel_cons(Y,Z) CGAL_Algebraic_Kernel_pred(Y,Z)
     
 private:
     //! \name wrapping types
@@ -266,7 +263,7 @@ public:
         //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
         //Self *_m_pkernel_2; 
     };
-    CGAL_Algebraic_Kernel_pred(Construct_curve_2, construct_curve_2_object);
+    CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
     
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
@@ -359,7 +356,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2, 
             has_finite_number_of_intersections_2_object);
     
-    //! a set of verious curve and curve pair decomposition functions
+    //! set of various curve and curve pair decomposition functions
     struct Decompose_2 {
     
         //! constructs an instance from ACK_2 pointer (required for caching)
@@ -377,7 +374,7 @@ public:
         }
         
         //! \brief computes a square-free factorization of a curve \c c, 
-        //! retunrs the number of pairwise coprime square-free factors
+        //! returns the number of pairwise coprime square-free factors
         //! 
         //! returns square-free pairwise coprime factors in \c fit and
         //! multiplicities in \c mit. Template argument type of \c fit is
@@ -401,11 +398,11 @@ public:
         }
         
         //! \brief computes for a given pair of curves \c c1 and \c c2 their 
-        //! common  part \c oib and coprime parts \c oi1 and \c oi2 
+        //! common part \c oib and coprime parts \c oi1 and \c oi2 
         //! respectively; returns \c true if the curves were decomposed
         //!
         //! returns true if \c c1 and \c c2 are coprime. Template argument
-        //! type of \c oi* is \c Curve_2
+        //! type of \c oi{1,2,b} is \c Curve_2
         template < class OutputIterator > 
         bool operator()(const Curve_2& c1, const Curve_2& c2,
             OutputIterator oi1, OutputIterator oi2, OutputIterator oib) {
@@ -414,8 +411,8 @@ public:
             Curves parts_f, parts_g;
             if(Curve_2::decompose(c1, c2, 
                 std::back_inserter(parts_f), std::back_inserter(parts_g))) {
-                // copy the common part returned through both iterators
-                // we need to move the common part from oi1/oi2 to oib
+                // move the common part returned through both iterators
+                // oi1/oi2 to oib
                 *oib++ = parts_f[0];
                 if(parts_f.size() > 1)
                     std::copy(parts_f.begin() + 1, parts_f.end(), oi1);
@@ -426,10 +423,10 @@ public:
             return false;
         }
     private:
-        //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
+        //! pointer to Algebraic_curve_kernel_2 (for caching issues)
         /*Self *_m_pkernel_2; */
     };
-    CGAL_Algebraic_Kernel_pred(Decompose_2, decompose_2_object);
+    CGAL_Algebraic_Kernel_cons(Decompose_2, decompose_2_object);
     
     //!@}
 public:
@@ -460,7 +457,7 @@ public:
             return derivate(p, 0);
         }
     };
-    CGAL_Algebraic_Kernel_pred(Derivative_x_2, derivative_x_2_object);
+    CGAL_Algebraic_Kernel_cons(Derivative_x_2, derivative_x_2_object);
 
     //! \brief computes the derivative w.r.t. the first (outermost) variable
     struct Derivative_y_2 :
@@ -472,7 +469,7 @@ public:
             return derivate(p, 1);
         }
     };
-    CGAL_Algebraic_Kernel_pred(Derivative_y_2, derivative_y_2_object);
+    CGAL_Algebraic_Kernel_cons(Derivative_y_2, derivative_y_2_object);
 
     struct X_critical_points_2 : 
         public Binary_function< Polynomial_2, 
@@ -516,7 +513,7 @@ public:
             return x_points[i];
         }
     };
-    CGAL_Algebraic_Kernel_pred(X_critical_points_2,
+    CGAL_Algebraic_Kernel_cons(X_critical_points_2,
         x_critical_points_2_object);
     
     struct Y_critical_points_2 :
@@ -552,7 +549,7 @@ public:
             return y_points[i];
         }
     };
-    CGAL_Algebraic_Kernel_pred(Y_critical_points_2,
+    CGAL_Algebraic_Kernel_cons(Y_critical_points_2,
         y_critical_points_2_object);
 
     struct Sign_at_2 : 
@@ -588,7 +585,10 @@ public:
     struct Solve_2 {
         // can be implemented using Curve_pair_analysis -> later
     };
-    CGAL_Algebraic_Kernel_pred(Solve_2, solve_2_object);
+    CGAL_Algebraic_Kernel_cons(Solve_2, solve_2_object);
+
+#undef CGAL_Algebraic_Kernel_pred    
+#undef CGAL_Algebraic_Kernel_cons 
     
     //!@}
 public:
