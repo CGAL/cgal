@@ -145,16 +145,6 @@ public:
       }
     }
     CGAL_NEF_TRACEN("  finally determined "<<PH(e_res) << e_res->circle());
-    /*
-    Sphere_direction d2 = direction(cyclic_adj_succ(e_res));
-    d2 = normalized(d2);
-    CGAL_NEF_TRACEN(d2 << " =?= " << d);
-    if (d2 == d ) {
-      e_res = cyclic_adj_succ(e_res);
-      collinear=true;
-    }
-    CGAL_NEF_TRACEN("  wedge = "<<PH(e_res)<<" "<<collinear);
-    */
     return e_res;
   }
 
@@ -191,7 +181,7 @@ public:
   face) of the underlying plane map |P| which contains the point |p =
   s.source()| in its relative interior. |s.target()| must be a point
   such that |s| intersects the $1$-skeleton of |P|.}*/
-  { CGAL_NEF_TRACEN("locate naivly "<<p);
+  { CGAL_NEF_TRACEN("locate naivly "<< normalized(p));
     SVertex_iterator v;
     CGAL_forall_svertices(v,*this) {
       if ( p == v->point() ) {
@@ -285,7 +275,20 @@ public:
       if ( visited[e] ) continue;
       Sphere_segment se = segment(e);
       Sphere_point p_res;
-      if ( do_intersect_internally(se,s,p_res) ) {
+      if(e->source() == e->twin()->source()) {
+	Sphere_point p_res = intersection(e->circle(), s.sphere_circle());
+	if(!s.has_in_relative_interior(p_res)) {
+	  p_res = p_res.antipode();
+	  if(!s.has_in_relative_interior(p_res))
+	    continue;
+	}
+        s = Sphere_segment(p,p_res,s.sphere_circle()); 
+        e_res = ( e->circle().has_on_positive_side(p) ? e : e->twin() );
+        visited[e] = visited[e->twin()] = true;
+	solution = is_edge_;
+        CGAL_NEF_TRACEN("  determined "<<PH(e_res)<<" "<< e_res->incident_sface()->mark());	
+      }
+      else if ( do_intersect_internally(se,s,p_res) ) {
           CGAL_NEF_TRACEN(" location via halfedge "<<se);
         s = Sphere_segment(p,p_res,s.sphere_circle()); 
         e_res = ( e->circle().has_on_positive_side(p) ? e : e->twin() );
