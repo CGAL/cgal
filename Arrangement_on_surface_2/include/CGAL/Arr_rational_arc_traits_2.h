@@ -269,7 +269,7 @@ public:
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv) const
+    bool operator() (const X_monotone_curve_2&) const
     {
       // A rational function can never be vertical:
       return (false);
