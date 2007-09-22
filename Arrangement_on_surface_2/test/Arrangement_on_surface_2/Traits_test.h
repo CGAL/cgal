@@ -1025,7 +1025,7 @@ bool Traits_test<T_Traits>::compare_x_wrapper_imp
                             (std::istringstream & str_stream, CGAL::Tag_true)
 {
   unsigned int id1, id2;
-  unsigned int real_answer, exp_answer;
+  unsigned int real_answer = 0, exp_answer = 0;
   str_stream >> id1;
   std::pair<Enum_type,unsigned int> exp_answer_1 = get_next_input(str_stream);
   if (exp_answer_1.first==NUMBER)
