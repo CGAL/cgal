@@ -20,7 +20,8 @@
 #ifndef CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
 
-#define CGAL_ARR_PLANE
+// #define CGAL_ARR_PLANE
+#define CGAL_GREAT_CIRCULAR_ARC_ON_SPHERE_LESS_THAN_180
 
 /*! \file
  * The great circular arc on a sphere traits-class for the arrangement on
@@ -1518,6 +1519,10 @@ public:
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
+#if defined(CGAL_GREAT_CIRCULAR_ARC_ON_SPHERE_LESS_THAN_180)
+      return false;
+#endif
+      
       Kernel kernel;
       typename Kernel::Equal_3 equal = kernel.equal_3_object();
 #if defined(CGAL_ARR_PLANE)
