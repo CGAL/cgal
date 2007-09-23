@@ -40,9 +40,11 @@ class Arr_spherical_vert_decomp_helper
 public:
 
   typedef Traits_                                      Traits_2;
+  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef Arrangement_                                 Arrangement_2;
 
   typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle  Vertex_const_handle;
 
   typedef Sweep_line_empty_visitor<Traits_2>           Base_visitor;
   typedef typename Base_visitor::Event                 Event;
@@ -52,8 +54,13 @@ protected:
 
   typedef typename Arrangement_2::Topology_traits      Topology_traits;
 
-  const Topology_traits  *m_top_traits;     // The topology traits.
-  Face_const_handle       m_north_face;     // Current north face.
+  const Topology_traits  *m_top_traits;        // The topology traits.
+  Vertex_const_handle     m_north_pole;        // The north pole.
+  bool                    m_valid_north_pole;  // Is this a valid vertex.
+  Face_const_handle       m_north_face;        // Current north face.
+  Vertex_const_handle     m_south_pole;        // The south pole.
+  bool                    m_valid_south_pole;  // Is this a valid vertex.
+  Face_const_handle       m_south_face;        // Current south face.
 
 public:
 
@@ -68,37 +75,106 @@ public:
   //@{
 
   /*! A notification issued before the sweep process starts. */
-  void before_sweep()
-  {
-    // Get the spherical face of the arrangement.
-    m_north_face = Face_const_handle(m_top_traits->spherical_face());
-    return;
-  }
+  void before_sweep();
 
   /*!
    * A notification invoked after the sweep-line finishes handling the given
    * event.
    */
-  void after_handle_event(Event * event)
-  {
-    return;
-  }
+  void after_handle_event(Event * event);
   //@}
 
   /*! Get the current top object. */
   CGAL::Object top_object () const
   {
-    // Wrap the north face with a CGAL object.
-    return (CGAL::make_object (m_north_face));
+    if (m_valid_north_pole)
+      return (CGAL::make_object (m_north_pole));
+    else
+      return (CGAL::make_object (m_north_face));
   }
 
   /*! Get the current bottom object. */
   CGAL::Object bottom_object () const
   {
-    // Wrap the north face with a CGAL object.
-    return (CGAL::make_object (m_north_face));
+    if (m_valid_south_pole)
+      return (CGAL::make_object (m_south_pole));
+    else
+      return (CGAL::make_object (m_south_face));
   }
 };
+
+//-----------------------------------------------------------------------------
+// Memeber-function definitions:
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// A notification issued before the sweep process starts.
+//
+template <class Tr, class Arr> 
+void Arr_spherical_vert_decomp_helper<Tr, Arr>::before_sweep()
+{
+  // Get the north pole and the face that intially contains it.
+  m_valid_north_pole = (m_top_traits->north_pole() != NULL);
+  if (m_valid_north_pole)
+    m_north_pole = Vertex_const_handle (m_top_traits->north_pole());
+
+  m_north_face = Face_const_handle (m_top_traits->spherical_face());
+
+  // Get the south pole and the face that intially contains it.
+  m_valid_south_pole = (m_top_traits->south_pole() != NULL);
+  if (m_valid_south_pole)
+    m_south_pole = Vertex_const_handle (m_top_traits->south_pole());
+
+  m_south_face = Face_const_handle (m_top_traits->south_face());
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// A notification invoked after the sweep-line finishes handling the given
+// event.
+///
+template <class Tr, class Arr>
+void
+Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
+{
+  // Ignore events that are not incident to the poles.
+  if (event->boundary_in_y() == NO_BOUNDARY)
+    return;
+
+  // The is exactly one curve incident to an event with boundary conditions.
+  // Obtain this curve and check whether it already exists in the arrangement.
+  CGAL_assertion(((event->number_of_left_curves() == 0) &&
+                  (event->number_of_right_curves() == 1)) ||
+                 ((event->number_of_left_curves() == 1) &&
+                  (event->number_of_right_curves() == 0)));
+
+  const Curve_end   ind = (event->number_of_left_curves() == 0 &&
+                           event->number_of_right_curves() == 1) ? MIN_END :
+                                                                   MAX_END;
+  const X_monotone_curve_2& xc = (ind == MIN_END) ?
+        (*(event->right_curves_begin()))->last_curve() :
+        (*(event->left_curves_begin()))->last_curve();
+
+  if (event->boundary_in_y() == BEFORE_SINGULARITY)
+  {
+    // The event is incident to the north pole: update the north face.
+    if (ind == MIN_END)
+      m_north_face = xc.halfedge_handle()->twin()->face();
+    else
+      m_north_face = xc.halfedge_handle()->face();
+  }
+  else if (event->boundary_in_y() == AFTER_SINGULARITY)
+  {
+    // The event is incident to the south pole: update the south face.
+    if (ind == MIN_END)
+      m_south_face = xc.halfedge_handle()->face();
+    else
+      m_south_face = xc.halfedge_handle()->twin()->face();
+  }
+
+  return;
+}
 
 CGAL_END_NAMESPACE
 
