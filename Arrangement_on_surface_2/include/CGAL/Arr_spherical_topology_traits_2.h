@@ -276,6 +276,28 @@ public:
     return (m_spherical_face);
   }
 
+  /*! Obtain the face containing the south pole (const version). */
+  const Face * south_face() const
+  {
+    typename Vertex_map::const_iterator  it = m_boundary_vertices.begin();
+
+    if (it == m_boundary_vertices.end())
+      return (m_spherical_face);
+    else
+      return (_face_below_vertex_on_discontinuity (it->second));
+  }
+
+  /*! Obtain the face containing the south pole (non-const version). */
+  Face * south_face()
+  {
+    typename Vertex_map::iterator  it = m_boundary_vertices.begin();
+
+    if (it == m_boundary_vertices.end())
+      return (m_spherical_face);
+    else
+      return (_face_below_vertex_on_discontinuity (it->second));
+  }
+
   /*! Obtain the south pole (const version). */
   const Vertex * south_pole() const
   {
