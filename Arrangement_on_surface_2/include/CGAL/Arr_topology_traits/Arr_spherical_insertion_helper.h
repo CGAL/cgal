@@ -140,7 +140,7 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
   // In case we encounter an existing curve incident to the curve of
   // discontinuity (and exteding to its right) or to the north pole,
   // we have to update the current top face (the spherical face).
-  if (bound_y != BEFORE_SINGULARITY)
+  if (bound_y == BEFORE_SINGULARITY)
   {
     if (ind == MIN_END)
       this->m_spherical_face = xc.halfedge_handle()->twin()->face();
