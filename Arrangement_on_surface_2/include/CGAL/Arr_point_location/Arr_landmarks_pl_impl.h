@@ -45,9 +45,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::locate
   }
 
   // Use the generator and to find the closest landmark to the query point.
-  Object   lm_location_obj; 
-  Point_2  landmark_point = lm_gen->closest_landmark (p, 
-                                                          lm_location_obj);
+  Object         lm_location_obj; 
+  const Point_2& landmark_point = lm_gen->closest_landmark (p, lm_location_obj);
 
   // Walk from the nearest_vertex to the point p, using walk algorithm, 
   // and find the location of the query point p. Note that the set fo edges
@@ -208,16 +207,16 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
     if (seg_dir_right && curr->direction() == RIGHT_TO_LEFT)
     {
       // Both curves are defined to the right of vp:
-      equal_curr = (m_traits->compare_y_at_x_right_2_object() (curr->curve(),
-                                                               seg,
-                                                               vp) == EQUAL);
+      equal_curr =
+        (m_traits->compare_y_at_x_right_2_object() (curr->curve(), seg, vp) ==
+         EQUAL);
     }
     else if (! seg_dir_right && curr->direction() == LEFT_TO_RIGHT)
     {
       // Both curves are defined to the left of vp:
-      equal_curr = (m_traits->compare_y_at_x_left_2_object() (curr->curve(),
-                                                              seg,
-                                                              vp) == EQUAL);
+      equal_curr =
+        (m_traits->compare_y_at_x_left_2_object() (curr->curve(), seg, vp) ==
+         EQUAL);
     }
 
     // In case the curves are not equal, just return the incident face of
@@ -237,13 +236,10 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
       m_traits->is_between_cw_2_object();
     bool                                        eq_curr, eq_next;
 
-    while (! is_between_cw (seg, seg_dir_right,
-                            curr->curve(),
+    while (! is_between_cw (seg, seg_dir_right, curr->curve(),
                             (curr->direction() == RIGHT_TO_LEFT),
-                            next->curve(),
-                            (next->direction() == RIGHT_TO_LEFT),
-                            vp,
-                            eq_curr, eq_next))
+                            next->curve(), (next->direction() == RIGHT_TO_LEFT),
+                            vp, eq_curr, eq_next))
     {
       // Break the loop if seg equals one of the halfegdes next to v.
       if (eq_curr)

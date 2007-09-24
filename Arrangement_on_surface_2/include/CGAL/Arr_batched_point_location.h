@@ -57,6 +57,8 @@ OutputIterator locate
   typedef typename Arr::Halfedge_const_handle          Halfedge_const_handle;
   typedef typename Arr::Vertex_const_iterator          Vertex_const_iterator;
   typedef typename Arr::Edge_const_iterator            Edge_const_iterator;
+  typedef typename Arr::Vertex_const_handle            Vertex_const_handle;
+  typedef typename Arr::Halfedge_const_handle          Halfedge_const_handle;
 
   typedef typename Bpl_visitor::Traits_2               Bpl_traits_2;
   typedef typename Bpl_traits_2::X_monotone_curve_2    Bpl_x_monotone_curve_2;
@@ -67,6 +69,7 @@ OutputIterator locate
   // left.
   std::vector<Bpl_x_monotone_curve_2>  xcurves_vec (arr.number_of_edges());
   Edge_const_iterator                  eit;
+  Halfedge_const_handle                he;
   unsigned int                         i = 0;
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit, ++i) 
@@ -74,21 +77,27 @@ OutputIterator locate
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
     if (eit->direction() == RIGHT_TO_LEFT)
-      xcurves_vec[i] = Bpl_x_monotone_curve_2 (eit->curve(), eit);
+      he = eit;
     else
-      xcurves_vec[i] = Bpl_x_monotone_curve_2 (eit->curve(), eit->twin());
+      he = eit->twin();
+
+    xcurves_vec[i] = Bpl_x_monotone_curve_2 (eit->curve(), he);
   }
 
   // Go over all isolated vertices and collect their points. To each point
   // we attach its vertex handle.
   std::vector<Bpl_point_2>    iso_pts_vec (arr.number_of_isolated_vertices());
   Vertex_const_iterator       vit;
+  Vertex_const_handle         iso_v;
 
   i = 0;
   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit, ++i)
   {
     if (vit->is_isolated())
-      iso_pts_vec[i] = Bpl_point_2 (vit->point(), vit);
+    {
+      iso_v = vit;
+      iso_pts_vec[i] = Bpl_point_2 (vit->point(), iso_v);
+    }
   }
     
   // Obtain a extended traits-class object.

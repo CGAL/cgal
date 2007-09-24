@@ -109,7 +109,7 @@ protected:
 public:
 
   typedef Data_top_traits                            Topology_traits;
-  typedef Base_arr_2                                 Arrangement_on_surface_2;
+  typedef Base_arr_2                                 Base_arrangement_2;
 
   // Types inherited from the base arrangement class:
   typedef typename Base_arr_2::Size                    Size;
@@ -799,10 +799,10 @@ public:
     // Perform overlay of the base arrnagements.
     typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
                                                   TopTraits1>  Arr_with_hist1;
-    typedef typename Arr_with_hist1::Arrangement_on_surface_2  T_base_arr1;
+    typedef typename Arr_with_hist1::Base_arr_2                T_base_arr1;
     typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
                                                   TopTraits2>  Arr_with_hist2;
-    typedef typename Arr_with_hist2::Arrangement_on_surface_2  T_base_arr2;
+    typedef typename Arr_with_hist2::Base_arr_2                T_base_arr2;
 
     const T_base_arr1&   base_arr1 = arr1;
     const T_base_arr2&   base_arr2 = arr2;

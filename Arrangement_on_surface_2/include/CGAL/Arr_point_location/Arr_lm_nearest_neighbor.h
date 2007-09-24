@@ -223,7 +223,7 @@ public:
    * \pre The search tree has been initialized and is not empty.
    * \return The nearest landmark point.
    */
-  const Point_2& find_nearest_neighbor (const Point_2& q, Object &obj) const
+  Point_2 find_nearest_neighbor (const Point_2& q, Object &obj) const
   {
     CGAL_precondition_msg (m_tree != NULL && ! m_is_empty,
                            "The search tree is not initialized.");
