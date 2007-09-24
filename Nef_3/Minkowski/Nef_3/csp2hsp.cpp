@@ -304,43 +304,52 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
     real_volume[ci] = pvc.get_volume_of_closed_volume(ci);
   }
 
-  Halffacet_const_iterator fi;
-  CGAL_forall_halffacets(fi, DIFF) {
-    if(fi->is_twin()) continue;
-    Volume_const_handle c0 = fi->incident_volume();
-    Volume_const_handle c1 = fi->twin()->incident_volume();
-    if(!c0->mark() || !c1->mark()) continue;
-    c0 = find(c0, c2c);
-    c1 = find(c1, c2c);
-    if(c0 == c1) continue;
+  bool simplified;
+  do{
+    simplified = false;
+    std::cerr << "next run " << std::endl;
 
-    Nef_polyhedron_3 N0 = c2N[c0];
-    Nef_polyhedron_3 N1 = c2N[c1];
+    Halffacet_const_iterator fi;
+    CGAL_forall_halffacets(fi, DIFF) {
+      if(fi->is_twin()) continue;
+      Volume_const_handle c0 = fi->incident_volume();
+      Volume_const_handle c1 = fi->twin()->incident_volume();
+      if(!c0->mark() || !c1->mark()) continue;
+      c0 = find(c0, c2c);
+      c1 = find(c1, c2c);
+      if(c0 == c1) continue;
+      
+      Nef_polyhedron_3 N0 = c2N[c0];
+      Nef_polyhedron_3 N1 = c2N[c1];
+      
+      std::list<Point_3> points;
+      Vertex_const_iterator vi;
+      CGAL_forall_vertices(vi, N0)
+	points.push_back(vi->point());
+      CGAL_forall_vertices(vi, N1)
+	points.push_back(vi->point());
+      
+      Polyhedron_3 cv;
+      convex_hull_3(points.begin(), 
+		    points.end(), cv);
+      Nef_polyhedron_3 ncv(cv);
+      
+      PVC pvct(ncv);
+      double s0 = real_volume[c0];
+      double s1 = real_volume[c1];
+      double s01 = pvct.get_volume_of_polyhedron();
+      CGAL_assertion(s0+s1 <= s01);
+      if((s0+s1)*factor < s01) continue;
+      
+      c2c[c1] = c0;
+      c2N[c0] = ncv;
+      real_volume[c0] = s0+s1;
+      --volumes;
+      simplified = true;
+    }
 
-    std::list<Point_3> points;
-    Vertex_const_iterator vi;
-    CGAL_forall_vertices(vi, N0)
-      points.push_back(vi->point());
-    CGAL_forall_vertices(vi, N1)
-      points.push_back(vi->point());
-    
-    Polyhedron_3 cv;
-    convex_hull_3(points.begin(), 
-		  points.end(), cv);
-    Nef_polyhedron_3 ncv(cv);
-
-    PVC pvct(ncv);
-    double s0 = real_volume[c0];
-    double s1 = real_volume[c1];
-    double s01 = pvct.get_volume_of_polyhedron();
-    CGAL_assertion(s0+s1 <= s01);
-    if((s0+s1)*factor < s01) continue;
-
-    c2c[c1] = c0;
-    c2N[c0] = ncv;
-    real_volume[c0] = s0+s1;
-    --volumes;
-  }
+    std::cerr << "volumes left " << volumes << std::endl;
+  } while(simplified);
 
   Nary_union nu2;
   CGAL_forall_volumes(ci, DIFF) {
