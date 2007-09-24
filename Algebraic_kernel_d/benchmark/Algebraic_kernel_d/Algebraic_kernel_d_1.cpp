@@ -78,6 +78,7 @@ struct Benchmark_result {
     int degree_of_polynomials;
     
     float solve_time;
+    float solve_time_no_mult;
     float sort_time;
     float to_double_time;
     float total_time;
@@ -126,9 +127,47 @@ class Bench_solve_1 {
             typename AK::Solve_1 solve_1;
                 
             for( typename Poly_vec::iterator it = polys_begin; it != polys_end; ++it ) {
-//                typename AK::Polynomial_1 poly = (*it);
-//                CGAL::remove_scalar_factor( poly );
-                solve_1( (*it), std::back_inserter( *pRoot_vec ), std::back_inserter( *pMult_vec ) );    
+	      typename AK::Polynomial_1 poly = (*it);
+	      CGAL::remove_scalar_factor( poly );
+	      solve_1( (*it), std::back_inserter( *pRoot_vec ), std::back_inserter( *pMult_vec ) );    
+            }            
+        }
+};
+
+template< class AlgebraicKernel >
+class Bench_solve_1_no_mult {
+    private:
+        typedef AlgebraicKernel AK;
+        typedef std::vector< typename AK::Polynomial_1 >     Poly_vec;
+        typedef std::vector< typename AK::Algebraic_real_1 > Root_vec;
+    
+        typename Poly_vec::iterator polys_begin;
+        typename Poly_vec::iterator polys_end;
+        Root_vec* pRoot_vec;
+          
+    public:
+        void prepare_op( typename Poly_vec::iterator polys_begin,
+                         typename Poly_vec::iterator polys_end,
+                         Root_vec* pRoot_vec ) {
+            this->polys_begin = polys_begin;
+            this->polys_end = polys_end;
+            this->pRoot_vec = pRoot_vec;
+        }
+        
+        int init() { return 0; }
+        void clean() {}
+        void sync() {}
+        void op() {
+           // Clear for the case of multiple op calls
+           pRoot_vec->clear();
+           
+           // Calculate roots and multiplicities of all polynomials
+            typename AK::Solve_1 solve_1;
+                
+            for( typename Poly_vec::iterator it = polys_begin; it != polys_end; ++it ) {
+	      typename AK::Polynomial_1 poly = (*it);
+	      CGAL::remove_scalar_factor( poly );
+	      solve_1( (*it), std::back_inserter( *pRoot_vec ) );    
             }            
         }
 };
@@ -198,9 +237,11 @@ Benchmark_result do_benchmark( std::string filename, int samples = 5 ) {
     Benchmark_result result;
     
     CGAL::benchmark::Benchmark< Bench_solve_1< AK > > bench_solve_1( filename, 0, true );
+    CGAL::benchmark::Benchmark< Bench_solve_1_no_mult< AK > > bench_solve_1_no_mult( filename, 0, true );
     CGAL::benchmark::Benchmark< Bench_sort< AK > > bench_sort( filename, 0, true );
     CGAL::benchmark::Benchmark< Bench_to_double< AK > > bench_to_double( filename, 0, true );
     bench_solve_1.set_samples( samples );
+    bench_solve_1_no_mult.set_samples( samples );
     bench_sort.set_samples( samples );
     bench_to_double.set_samples( samples );
     
@@ -237,6 +278,13 @@ Benchmark_result do_benchmark( std::string filename, int samples = 5 ) {
     result.solve_time = bench_solve_1.get_period() / samples;
     
     result.number_of_real_roots_found = roots.size();
+
+    // Bench Solve_1_no_mult
+    bench_solve_1_no_mult.get_benchable().prepare_op( polys.begin(), polys.end(), &roots );
+    bench_solve_1_no_mult();
+    result.solve_time_no_mult = bench_solve_1_no_mult.get_period() / samples;
+    
+    result.number_of_real_roots_found = roots.size();
     
     // Bench Sort
 #ifndef CGAL_TEST_ONLY_SOLVE    
@@ -253,7 +301,7 @@ Benchmark_result do_benchmark( std::string filename, int samples = 5 ) {
     result.to_double_time = 0;
 #endif
 
-    result.total_time = result.solve_time + result.sort_time + result.to_double_time;
+    result.total_time = result.solve_time + result.solve_time_no_mult + result.sort_time + result.to_double_time;
     
     return result;
 }
