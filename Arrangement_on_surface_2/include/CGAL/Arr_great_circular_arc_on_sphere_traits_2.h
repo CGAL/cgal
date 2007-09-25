@@ -1336,6 +1336,8 @@ public:
       bool l2_eq_start = equal(l2, start);
 
       if (l1_eq_start || (!l2_eq_start && in_between(l1, start, l2))) {
+        if (l1_eq_start && equal(r2, start))
+          *oi++ = make_object(Point_2_pair(r2_3, 1));
         if (in_between(r1, l1, l2)) return oi;      // no intersection
         if (equal(r1, l2)) {
           *oi++ = make_object(Point_2_pair(r1_3, 1));
@@ -1347,6 +1349,8 @@ public:
         return oi;
       }
       CGAL_assertion(l2_eq_start || in_between(l2, start, l1));
+      if (l2_eq_start && equal(r1, start))
+        *oi++ = make_object(Point_2_pair(r1_3, 1));
       if (in_between(r2, l2, l1)) return oi;      // no intersection
       if (equal(r2, l1)) {
         *oi++ = make_object(Point_2_pair(r2_3, 1));
@@ -1408,8 +1412,14 @@ public:
 #endif
           if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
+          {
+            if (xc1.left().is_min_boundary() && xc2.left().is_min_boundary())
+              *oi++ = make_object(Point_2_pair(xc1.left(), 1));
+            if (xc1.right().is_max_boundary() && xc2.right().is_max_boundary())
+              *oi++ = make_object(Point_2_pair(xc1.right(), 1));
             return oi;
-
+          }
+            
           /*! If the endpoints of one arc coinside with the 2 poles resp,
            * the other arc is completely overlapping.
            */
