@@ -168,8 +168,8 @@ public:
 template<class K>
 class Polygon_offset_builder_traits_2_impl<Tag_true,K> : public Polygon_offset_builder_traits_2_base<K>
 {
-  typedef typename K::EK EK ;
-  typedef typename K::FK FK ;
+  typedef typename K::Exact_kernel       EK ;
+  typedef typename K::Approximate_kernel FK ;
   
   typedef Polygon_offset_builder_traits_2_functors<EK> Exact ;
   typedef Polygon_offset_builder_traits_2_functors<FK> Filtering ;

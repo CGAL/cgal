@@ -372,8 +372,8 @@ public:
 template<class K>
 class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skeleton_builder_traits_2_base<K>
 {
-  typedef typename K::EK EK ;
-  typedef typename K::FK FK ;
+  typedef typename K::Exact_kernel       EK ;
+  typedef typename K::Approximate_kernel FK ;
 
   typedef Straight_skeleton_builder_traits_2_functors<EK> Exact ;
   typedef Straight_skeleton_builder_traits_2_functors<FK> Filtering ;
