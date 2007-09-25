@@ -1,21 +1,33 @@
 This \cgal\ package provides functions to compute global information
-on the shape of a set of 2D or 3D objects such as points. It provides the computation of axis-aligned bounding boxes for point sets, barycenters of weighted point sets and centroids as well as linear least squares fitting for sets of points, circles, rectangles, segments and triangles in 2D and in addition to these, cuboids, spheres and tetrahedrons in 3D. It also provides the computation of centroids and linear least squares fitting for all $n-1$ manifolds of these $n$ dimensional geometries ($n = 2$ or $3$). It assumes the set of kernel primitive elements to be stored into an iterator range of a container.\\
+on the shape of a set of 2D or 3D objects such as points. It provides
+the computation of axis-aligned bounding boxes for point sets,
+barycenters of weighted point sets and centroids as well as linear
+least squares fitting for sets of points, circles, rectangles,
+segments and triangles in 2D and in addition to these, cuboids,
+spheres and tetrahedrons in 3D. It also provides the computation of
+centroids and linear least squares fitting for all $n-1$ manifolds of
+these $n$ dimensional geometries ($n = 2$ or $3$). It assumes the set
+of kernel primitive elements to be stored into an iterator range of a
+container.\\
 
 \section{Definitions}
 
 A \emph{bounding box} for a set of objects is a cuboid that completely
-contains the set. An \emph{axis-aligned bounding box} is a bounding box
-aligned with the axes of the coordinate system.\\
+contains the set. An \emph{axis-aligned bounding box} is a bounding
+box aligned with the axes of the coordinate system.\\
 
-A \emph{centroid} is defined as average of position. A \emph{barycenter} of weighted point sets is defined as weighted average of position. When all weights are equal the barycenter coincides with the centroid.\\
+A \emph{centroid} is defined as average of position. A
+\emph{barycenter} of weighted point sets is defined as weighted
+average of position. When all weights are equal the barycenter
+coincides with the centroid.\\
 
-Given a point set, \emph{linear least squares fitting} amounts to
-find the linear sub-space which minimizes the sum of squared
-distances from the points to their projection onto this linear
-sub-space. This problem is equivalent to search for the linear
-sub-space which maximizes the variance of projected points, the latter
-being obtained by eigen decomposition of the covariance
-matrix of the point set. Eigenvectors corresponding to large eigenvalues are the
+Given a point set, \emph{linear least squares fitting} amounts to find
+the linear sub-space which minimizes the sum of squared distances from
+the points to their projection onto this linear sub-space. This
+problem is equivalent to search for the linear sub-space which
+maximizes the variance of projected points, the latter being obtained
+by eigen decomposition of the covariance matrix of the point
+set. Eigenvectors corresponding to large eigenvalues are the
 directions in which the data has strong component, or equivalently
 large variance. If eigenvalues are the same there is no preferable
 sub-space.\\
