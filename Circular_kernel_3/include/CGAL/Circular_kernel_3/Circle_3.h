@@ -33,10 +33,11 @@
 
 namespace CGAL {
   namespace CGALi{
-    template <class SK> class Circle_3 {
+    template <class SK,class Sphere= typename CGAL::Sphere_3<SK> > class Circle_3 {
 
       typedef typename SK::Plane_3      Plane_3;
-      typedef typename SK::Sphere_3     Sphere_3;
+      //~ typedef typename SK::Sphere_3     Sphere_3;
+      typedef Sphere                    Sphere_3;
       typedef typename SK::Point_3      Point_3;
       typedef typename SK::Vector_3     Vector_3;
       typedef typename SK::Direction_3  Direction_3;
@@ -72,7 +73,7 @@ namespace CGAL {
       Circle_3(const Point_3& center, const FT& squared_r, const Plane_3& p)
       {
         // the plane contains the center
-	CGAL_kernel_assertion((p.a() * center.x() +
+  CGAL_kernel_assertion((p.a() * center.x() +
                                p.b() * center.y() +
                                p.c() * center.z() +
                                p.d()) == ZERO);
@@ -179,23 +180,23 @@ namespace CGAL {
 
     };
 
-    template < class SK >
-    double Circle_3<SK>::pi = CGAL_PI;
-
-    template < class SK >
+    template < class SK, class Sphere >
+    double Circle_3<SK,Sphere>::pi = CGAL_PI;
+  //#PB : operateur for Circle_3 and Circle_on_sphere_3
+    template < class SK, class Sphere >
     CGAL_KERNEL_INLINE
     bool
-    Circle_3<SK>::operator==(const Circle_3<SK> &t) const
+    Circle_3<SK,Sphere>::operator==(const Circle_3<SK,Sphere> &t) const
     {
       if (CGAL::identical(base, t.base))
         return true;
       return CGAL::SphericalFunctors::non_oriented_equal<SK>(*this, t);
     } 
 
-    template < class SK >
+    template < class SK, class Sphere >
     CGAL_KERNEL_INLINE
     bool
-    Circle_3<SK>::operator!=(const Circle_3<SK> &t) const
+    Circle_3<SK,Sphere>::operator!=(const Circle_3<SK,Sphere> &t) const
     {
       return !(*this == t);
     }
