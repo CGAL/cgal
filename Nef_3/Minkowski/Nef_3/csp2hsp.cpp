@@ -61,19 +61,52 @@ typedef Nef_polyhedron_3::SFace_const_handle SFace_const_handle;
 typedef CGAL::Bounding_box_3<CGAL::Tag_true, Kernel> BBox;
 typedef CGAL::Nary_union<Nef_polyhedron_3> Nary_union;
 
+class Plane_visitor {
+  std::list<Plane_3> planes;
+
+public:
+  typedef std::list<Plane_3>::const_iterator plane_iterator;
+
+  Plane_visitor() {}
+  
+  plane_iterator planes_begin() const { return planes.begin(); }
+  plane_iterator planes_end() const { return planes.end(); }
+
+  void visit(Halffacet_const_handle f) {
+    Plane_3 p = f->plane();
+      planes.push_back(p);
+  }
+
+  void visit(SFace_const_handle s) {}
+  void visit(Halfedge_const_handle e) {}
+  void visit(Vertex_const_handle v) {}
+  void visit(SHalfedge_const_handle se) {}
+  void visit(SHalfloop_const_handle sl) {}
+};
+
 class Volume_output {
   bool twin;
   std::vector<Plane_3> planes;
 public:
 
   typedef std::vector<Plane_3>::const_iterator CI;
+  typedef std::vector<Plane_3>::iterator MI;
 
   Volume_output(bool twin_ = true) : twin(twin_){}
+
   bool is_in(const Plane_3 p) {
     for(CI ci = planes.begin(); ci != planes.end(); ++ci)
       if(*ci == p)
 	return true;
     return false;
+  }
+
+  void erase_plane(const Plane_3& p) {
+     for(MI ci = planes.begin(); ci != planes.end(); ++ci)
+       if(*ci == p) {
+	 planes.erase(ci);
+	 return;
+       }
   }
 
   void visit(Halffacet_const_handle f) {
@@ -387,6 +420,15 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
     Nef_polyhedron_3 ncv = c2N[ci];
     Volume_output vout;
     ncv.visit_shell_objects(ncv.volumes_begin()->shells_begin(), vout);
+    Volume_const_iterator c2;
+    CGAL_forall_volumes(c2, DIFF) {
+      if(find(c2, c2c) != ci) continue;
+      Plane_visitor pv;
+      NCV.visit_shell_objects(c2->shells_begin(), pv);
+      Plane_visitor::plane_iterator pi;
+      for(pi = pv.planes_begin(); pi != pv.planes_end(); ++pi)
+	vout.erase_plane(*pi);
+    }      
     vout.dump();
   }
 
