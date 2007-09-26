@@ -277,7 +277,7 @@ Volume_const_handle find(Volume_const_handle c, Hash_map& hash) {
 
 void simplify_and_output(const Nef_polyhedron_3& DIFF,
 			 const Nef_polyhedron_3& NCV,
-			 double factor) {
+			 int simplify, double factor, int simplifyBy, double minsize) {
   
   typedef CGAL::PolyhedralVolumeCalculator<Nef_polyhedron_3> PVC;
   typedef CGAL::Union_find<Volume_const_handle> UF;
@@ -339,7 +339,9 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
       double s1 = real_volume[c1];
       double s01 = pvct.get_volume_of_polyhedron();
       CGAL_assertion(s0+s1 <= s01);
-      if((s0+s1)*factor < s01) continue;
+      if(simplify < 1 || simplify > 3) continue;
+      if(((simplify & 1) == 0 || (s0+s1)*factor < s01) &&
+	 ((simplify & 2) == 0 || s0+s1+simplifyBy < s01)) continue;
       
       c2c[c1] = c0;
       c2N[c0] = ncv;
@@ -348,7 +350,7 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
       simplified = true;
     }
 
-    std::cerr << "volumes left " << volumes << std::endl;
+    std::cerr << "obstacles left " << volumes << std::endl;
   } while(simplified);
 
   Nary_union nu2;
@@ -364,6 +366,15 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 	    << pvct2.get_volume_of_polyhedron() << std::endl;
   CGAL_assertion((recv2-NCV).is_empty());
 
+  if(minsize > 0.0) {
+    std::cerr << "kickout obstacles smaller than " << minsize << "cmm" << std::endl;
+    CGAL_forall_volumes(ci, DIFF) {
+      if(find(ci, c2c) != ci) continue;
+      if(minsize<=0 || real_volume[ci] < minsize) --volumes; 
+    }
+    std::cerr << "obstacles left " << volumes << std::endl;
+  }
+
   std::cout << volumes+1 << std::endl;
 
   Volume_output vout_ncv;
@@ -372,21 +383,27 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 
   CGAL_forall_volumes(ci, DIFF) {
     if(find(ci, c2c) != ci) continue;
+    if(minsize>0 && real_volume[ci] < minsize) continue; 
     Nef_polyhedron_3 ncv = c2N[ci];
     Volume_output vout;
     ncv.visit_shell_objects(ncv.volumes_begin()->shells_begin(), vout);
     vout.dump();
   }
+
 }
 
 int main(int argc, char* argv[]) {
 
-  bool simplify = argc > 1 ? std::atoi(argv[1]) : false;
+  int simplify = argc > 1 ? std::atoi(argv[1]) : 0;
   int prozent = argc > 2 ? std::atoi(argv[2]) : 20;
-  double factor = (100.0+double(prozent))/100.0;
+  int simplifyBy = argc > 3 ? std::atoi(argv[3]) : 30000;
+  double minsize = argc > 4 ? std::atof(argv[4]) : 0.0;
     
-  if(simplify)
-    std::cerr << "simplify by " << factor << std::endl;
+  double factor = (100.0+double(prozent))/100.0;
+
+  if(simplify > 0)
+    std::cerr << "simplify " << simplify << ", " 
+	      << factor << ", " << simplifyBy << std::endl;
 
   Nef_polyhedron_3 CSP;
   std::cin >> CSP;
@@ -455,8 +472,8 @@ int main(int argc, char* argv[]) {
   std::ofstream outDiff("diff.nef3");
   outDiff << DIFF;
 
-  if(simplify)
-    simplify_and_output(DIFF, NCV, factor);
+  if(simplify > 0)
+    simplify_and_output(DIFF, NCV, simplify, factor, simplifyBy, minsize);
   else
     output_hsp(DIFF, NCV);
 }
