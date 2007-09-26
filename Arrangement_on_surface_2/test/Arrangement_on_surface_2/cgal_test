@@ -671,9 +671,12 @@ test_spherical_arc_traits()
     echo   "   ERROR:    not executed   test_traits spherical_arc_traits" >> $ERRORFILE
   else
     execute_commands_old_structure spherical_arcs spherical_arc_traits \
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT \
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
     BOUNDARY_IN_X BOUNDARY_IN_Y CONSTRUCTOR \
     COMPARE MAKE_X_MONOTONE SPLIT MERGE ERRORS
+
+    execute_commands_new_structure spherical_arcs spherical_arc_traits \
+    INTERSECT
 
     run_trapped_test test_traits \
     data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv \

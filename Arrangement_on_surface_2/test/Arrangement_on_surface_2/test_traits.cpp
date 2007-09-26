@@ -83,6 +83,7 @@ read_point(stream & is, Point_2 & p)
 {
   Basic_number_type x, y, z;
   is >> x >> y >> z;
+  //std::cout << "x " << x << " y " << y << " z " << z << std::endl;
   p = Point_2(x, y, z);
   return true;
 }
@@ -93,13 +94,13 @@ template <class stream>
 bool
 Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
-  Basic_number_type x1, y1, z1, x2, y2, z2;
-  is >> x1 >> y1 >> z1 >> x2 >> y2 >> z2;
-  Point_2 p1(x1, y1, z1);
-  Point_2 p2(x2, y2, z2);
-  CGAL_assertion(p1 != p2);
-  xcv = X_monotone_curve_2(p1, p2);
-  return true;
+  Curve_2 cv;
+  if (read_curve(is,cv))
+  {
+    xcv = X_monotone_curve_2(cv);
+    return true;
+  }
+  return false;
 }
 
 /*! Read a curve */
@@ -108,10 +109,9 @@ template <class stream>
 bool
 Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 {
-  Basic_number_type x1, y1, z1, x2, y2, z2;
-  is >> x1 >> y1 >> z1 >> x2 >> y2 >> z2;
-  Point_2 p1(x1, y1, z1);
-  Point_2 p2(x2, y2, z2);
+  Point_2 p1,p2;
+  read_point(is,p1);
+  read_point(is,p2);
   CGAL_assertion(p1 != p2);
   cv = Curve_2(p1, p2);
   return true;

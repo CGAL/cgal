@@ -560,32 +560,26 @@ bool Traits_test<T_Traits>::start()
 template <class T_Traits>
 bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_t)
 {
-  int  num=0; 
   char one_line[128];
   skip_comments(is, one_line);
   std::istringstream str_stream(one_line, std::istringstream::in);
-  str_stream >> num;
   str_stream.clear();
-  if (num > 0)
-  {
     try
     {
-      switch (obj_t)
+      for (int i = 0; !is.eof() ; ++i) 
       {
-       case POINT :
-        m_points.resize(num);
-	    break;
-       case CURVE :
-        m_curves.resize(num);
-	    break;
-       case XCURVE :
-        m_xcurves.resize(num);
-	    break;
-      }//switch
-      for (int i = 0; i < num; ++i) 
-      {
-        skip_comments(is, one_line);
-        str_stream.str(one_line);
+        switch (obj_t)
+        {
+         case POINT :
+          m_points.resize(m_points.size()+1);
+	      break;
+         case CURVE :
+          m_curves.resize(m_curves.size()+1);
+	      break;
+         case XCURVE :
+          m_xcurves.resize(m_xcurves.size()+1);
+	      break;
+        }//switch
         switch (obj_t)
         {
           case POINT :
@@ -614,6 +608,8 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
             break;
 	   }//switch
        str_stream.clear();
+       skip_comments(is, one_line);
+       str_stream.str(one_line);
      }//for
      /*for (int i = 0; i < num; ++i)
      { //for debug
@@ -651,7 +647,6 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
       is.close();
       return false;
     }//catch
-  } //if num>0
   return true;
 }
 
