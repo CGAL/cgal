@@ -86,7 +86,8 @@ struct Benchmark_result {
 
 std::ostream& operator<<( std::ostream& os, const Benchmark_result& br ) {
     os << br.number_of_polys << "\t" << br.bits << "\t" << br.number_of_real_roots_found 
-       << "\t" << br.degree_of_polynomials << "\t" << br.solve_time << "\t" << br.sort_time
+       << "\t" << br.degree_of_polynomials << "\t" << br.solve_time
+       << "\t" << br.solve_time_no_mult << "\t" << br.sort_time
        << "\t" << br.to_double_time << "\t" << br.total_time;
     return os;
 }
