@@ -84,7 +84,7 @@ namespace SphericalFunctors {
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>             Arity;
 
-    using SK::Linear_kernel::Compare_x_3::operator();
+    using SK::Linear_kernel::Compare_y_3::operator();
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
@@ -114,7 +114,7 @@ namespace SphericalFunctors {
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>             Arity;
 
-    using SK::Linear_kernel::Compare_x_3::operator();
+    using SK::Linear_kernel::Compare_z_3::operator();
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
