@@ -803,7 +803,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/compare_y_at_
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/compare_y_at_x.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/compare_y_at_x.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/errors -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/errors.org -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/errors.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/errors.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/intersect -text
@@ -817,7 +816,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/make_x_monoto
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/merge -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/merge.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/split -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/split.org -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/split.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/split.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/bezier/vertex -text
@@ -1048,8 +1046,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compa
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect.pt -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/is_vertical -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/is_vertical.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/vertex -text
