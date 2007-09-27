@@ -38,10 +38,11 @@ template < typename K_base, typename Kernel >
 struct Spherical_kernel_type_equality_wrapper
   : public Type_equality_wrapper<K_base, Kernel>
 {
-    typedef K_base                                  Kernel_base;
-    typedef CGAL::Circle_3<Kernel>                  Circle_3;
-    typedef CGAL::Circular_arc_point_3<Kernel>      Circular_arc_point_3;
-    typedef CGAL::Circular_arc_3<Kernel>            Circular_arc_3;
+    typedef K_base                                                                                Kernel_base;
+    typedef CGAL::Circle_3<Kernel>                                                      Circle_3;
+    typedef CGAL::Circular_arc_point_3<Kernel>                                   Circular_arc_point_3;
+    typedef CGAL::Circular_arc_3<Kernel>                                            Circular_arc_3;
+    typedef CGAL::Circular_arc_on_reference_sphere<Kernel>             Circular_arc_on_reference_sphere_3;
     typedef CGAL::Line_arc_3<Kernel>                Line_arc_3;
     typedef CGAL::Root_of_2<typename Kernel_base::FT>  Root_of_2;
 };

@@ -193,6 +193,52 @@ namespace SphericalFunctors {
 
   };
 
+  
+  //TAG_SEB
+  template <class SK>
+  class Compute_circular_theta_rep_3: Has_qrt{
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3   Circular_arc_point_on_reference_sphere_3;
+
+  public:
+
+    typedef  typename Theta_rep<SK> result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
+    { return (a.theta_rep()); }    
+  };
+  
+  template <class SK>
+  class Compute_circular_theta_3: Has_qrt{
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3   Circular_arc_point_on_reference_sphere_3;
+    typedef typename SK::Root_of_2                 Root_of_2;
+
+  public:
+
+    typedef  Root_of_2  result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
+    { return (a.theta_rep().ftheta()); }    
+  };
+
+  template <class SK>
+  class Compute_circular_hq_3: Has_qrt{
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3   Circular_arc_point_on_reference_sphere_3;
+
+  public:
+
+    typedef  HQ_NT result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
+    { return (a.theta_rep().hq()); }    
+  };
+  
+  
   template <class SK>
   class Compute_circular_x_3: Has_qrt
   {
@@ -476,6 +522,149 @@ namespace SphericalFunctors {
     result_type
     operator() ( const typename SK::Polynomials_for_line_3 &eq )
     { return construct_line_3<SK>(eq); }
+  };
+
+//TAG_SEB
+  template < class SK >
+  class Construct_circular_arc_point_on_reference_sphere_3
+  {
+    typedef typename SK::Point_3                            Point_3;
+    typedef typename SK::Plane_3                            Plane_3;
+    typedef typename SK::Line_3                             Line_3;
+    typedef typename SK::Circle_3                           Circle_3;
+    typedef typename SK::Sphere_3                           Sphere_3;
+    typedef typename SK::Circular_arc_point_3               Circular_arc_point_3;
+    typedef typename SK::Kernel_base::Circular_arc_point_on_reference_sphere_3  RCircular_arc_point_on_reference_sphere_3;
+    typedef typename SK::Root_of_2                          Root_of_2;
+    typedef typename SK::FT                                     FT;
+    typedef typename Circular_arc_point_on_reference_sphere_3::Rep              Rep;
+
+
+  public:
+    typedef  Circular_arc_point_on_reference_sphere_3 result_type;
+    typedef Arity_tag<1>             Arity;
+
+
+    result_type
+    operator()(void) 
+    { return Rep(); }
+    
+    result_type
+    operator(const FT& ftheta,const FT& xt,const FT& yt,const FT& zt,const HQ_NT& _hq)
+    { return Rep(ftheta,xt,yt,zt,hq);}
+    
+        
+    result_type
+    operator(const HQ_NT& _hq,const Root_of_2& ftheta,const Root_of_2& x_,const Root_of_2& y_,const Root_of_2& z_)
+    {Rep(_hq,ftheta,x_,y_,z_);}
+
+    result_type
+    operator(const HQ_NT& _hq,const Root_of_2& ftheta,const typename SK::AK::Root_for_spheres_2_3& rfs)
+    {return Rep(_hq,ftheta,rfs);}
+        
+    
+    
+    
+    //~ result_type
+      //~ operator()(const Root_of_2 & x,
+		 //~ const Root_of_2 & y,
+		 //~ const Root_of_2 & z
+		 //~ ) const
+    //~ { return Rep(x,y,z); }
+    
+    //~ result_type
+    //~ operator()(const Root_for_spheres_2_3 & np) const
+    //~ { return Rep(np); }
+
+    //~ result_type
+    //~ operator()(const Point_3 & p) const
+    //~ { return Rep(p); }
+
+    //~ result_type
+    //~ operator()(const Sphere_3 & s1,
+               //~ const Sphere_3 & s2,
+               //~ const Sphere_3 & s3,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(s1,s2,s3,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Plane_3 & p,
+               //~ const Sphere_3 & s1,
+               //~ const Sphere_3 & s2,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(p,s1,s2,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Sphere_3 & s1,
+               //~ const Plane_3 & p,
+               //~ const Sphere_3 & s2,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(p,s1,s2,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Sphere_3 & s1,
+               //~ const Sphere_3 & s2,
+               //~ const Plane_3 & p,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(p,s1,s2,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Plane_3 & p1,
+               //~ const Plane_3 & p2,
+               //~ const Sphere_3 & s,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(p1,p2,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Plane_3 & p1,
+               //~ const Sphere_3 & s,
+               //~ const Plane_3 & p2,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(p1,p2,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Sphere_3 & s,
+               //~ const Plane_3 & p1,
+               //~ const Plane_3 & p2,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(p1,p2,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Line_3 & l,
+               //~ const Sphere_3 & s,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(l,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Sphere_3 & s,
+               //~ const Line_3 & l,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(l,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Circle_3 & c,
+               //~ const Sphere_3 & s,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(c,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Sphere_3 & s,
+               //~ const Circle_3 & c,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(c,s,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Circle_3 & c,
+               //~ const Plane_3 & p,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(c,p,less_xyz); }
+
+    //~ result_type
+    //~ operator()(const Plane_3 & p,
+               //~ const Circle_3 & c,
+               //~ const bool less_xyz = true) const
+    //~ { return Rep(c,p,less_xyz); }
+
   };
 
   template < class SK >

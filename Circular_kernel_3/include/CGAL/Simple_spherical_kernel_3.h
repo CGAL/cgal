@@ -30,6 +30,10 @@
 #include <CGAL/Circular_kernel_3/Circular_arc_point_3.h>
 #include <CGAL/Circular_arc_point_3.h>
 
+#include <CGAL/Circular_kernel_3/Circular_arc_on_reference_sphere_3.h>
+#include <CGAL/Circular_arc_on_reference_sphere_3.h>
+
+
 #include <CGAL/Circular_kernel_3/Circle_3.h>
 #include <CGAL/Circle_3.h>
 
@@ -52,7 +56,8 @@ namespace CGAL {
       struct Spherical_kernel_base_no_ref_count: public LinearKernelBase
 				 // takes classes in internal sub-namespace
       {
-	typedef CGALi::Circular_arc_point_3<SphericalKernel>  Circular_arc_point_3;
+        typedef CGALi::Circular_arc_point_3<SphericalKernel>  Circular_arc_point_3;
+        typedef CGALi::Circular_arc_on_reference_sphere_3<SphericalKernel>  Circular_arc_on_reference_sphere_3;
         typedef CGALi::Circle_3<SphericalKernel>  Circle_3;
         typedef CGALi::Line_arc_3<SphericalKernel>  Line_arc_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
