@@ -226,6 +226,25 @@ struct Split_double<leda_integer>
   }
 };
 
+// Benchmark_rep specialization 
+template<>
+class Benchmark_rep< leda_integer > {
+    const leda_integer& t;
+public:
+    //! initialize with a const reference to \a t.
+    Benchmark_rep( const leda_integer& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const { 
+            out << t;
+            return out;
+    }
+    
+    static std::string get_benchmark_name() {
+        return "Integer";
+    }
+};
+
+
 CGAL_END_NAMESPACE
 
 // Unary + is missing for leda::integer
