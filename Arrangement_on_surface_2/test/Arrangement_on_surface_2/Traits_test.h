@@ -563,50 +563,41 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
   char one_line[128];
   skip_comments(is, one_line);
   std::istringstream str_stream(one_line, std::istringstream::in);
-  str_stream.clear();
     try
     {
       for (int i = 0; !is.eof() ; ++i) 
       {
-        switch (obj_t)
-        {
-         case POINT :
-          m_points.resize(m_points.size()+1);
-	      break;
-         case CURVE :
-          m_curves.resize(m_curves.size()+1);
-	      break;
-         case XCURVE :
-          m_xcurves.resize(m_xcurves.size()+1);
-	      break;
-        }//switch
-        switch (obj_t)
-        {
-          case POINT :
-            if (!read_point(str_stream, m_points[i]))
-            {
-               std::cerr << "Error reading point!" << std::endl;
-               end_of_line_printed = true;
-               return false;
-            }
-            break;
-          case CURVE :
-            if (!read_curve(str_stream, m_curves[i]))
-             {
-               std::cerr << "Error reading curves!" << std::endl;
-               end_of_line_printed = true;
-               return false;
-            }
-            break;
-          case XCURVE :
-            if (!read_xcurve(str_stream, m_xcurves[i]))
-            {
-               std::cerr << "Error reading xcurves!" << std::endl;
-               end_of_line_printed = true;
-               return false;
-            }
-            break;
-	   }//switch
+	  std::cout << " str_stream gcount = " << str_stream.gcount() << std::endl ;
+          switch (obj_t)
+          {
+            case POINT :
+	      m_points.resize(m_points.size()+1);
+              if (!read_point(str_stream, m_points[i]))
+              {
+                 std::cerr << "Error reading point!" << std::endl;
+                 end_of_line_printed = true;
+                 return false;
+               }
+              break;
+            case CURVE :
+	      m_curves.resize(m_curves.size()+1);
+              if (!read_curve(str_stream, m_curves[i]))
+               {
+                 std::cerr << "Error reading curves!" << std::endl;
+                 end_of_line_printed = true;
+                 return false;
+              }
+              break;
+            case XCURVE :
+	      m_xcurves.resize(m_xcurves.size()+1);
+              if (!read_xcurve(str_stream, m_xcurves[i]))
+              {
+                 std::cerr << "Error reading xcurves!" << std::endl;
+                 end_of_line_printed = true;
+                 return false;
+              }
+              break;
+	     }//switch
        str_stream.clear();
        skip_comments(is, one_line);
        str_stream.str(one_line);
