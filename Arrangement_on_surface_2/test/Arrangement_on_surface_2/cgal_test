@@ -404,7 +404,6 @@ test_segment_traits()
     run_trapped_test test_traits \
     data/segments/vertex.pt data/segments/xcurves \
     data/empty.zero data/segments/vertex segment_traits
-
   fi
   clean_tests
 }
@@ -428,7 +427,8 @@ test_non_caching_segment_traits()
 
     run_trapped_test test_traits \
     data/segments/vertex.pt data/segments/xcurves \
-    data/empty.zero data/segments/vertex segment_traits
+    data/empty.zero data/segments/vertex non_caching_segment_traits
+
   fi
   clean_tests
 }
