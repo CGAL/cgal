@@ -50,7 +50,18 @@ public:
         }
         return false; 
     }
+    
+    void output_benchmark( std::ostream& os ) const {
+        os << "( ";
+        for( unsigned i = 0; i < size(); ++i ) {
+            if( i != 0 )
+                os << ", ";
+            os << at(i); 
+        }
+        os << " )";
+    }
 };
+
 
 /*
 class Exponent_vector {
