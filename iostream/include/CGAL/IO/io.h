@@ -112,6 +112,11 @@ public:
     std::ostream& operator()( std::ostream& out) const {
         return out << t;
     }
+    
+    // static function to get the benchmark name
+    static std::string get_benchmark_name() {
+        return "";
+    }
 };
 
 template <class T, class F>
