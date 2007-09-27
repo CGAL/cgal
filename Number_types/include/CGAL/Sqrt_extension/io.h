@@ -92,6 +92,35 @@ output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT>& x){
     return;
 }
 
+template< class NT, class ROOT >
+void
+output_benchmark( std::ostream& os, const Sqrt_extension<NT,ROOT>& x ) {
+    os << "Sqrt_extension( " << bmformat( x.a0() ) << ", " << bmformat( x.a1() )
+        << ", " << bmformat( x.root()) << " )";
+}
+
+// Benchmark_rep specialization 
+template < class NT, class ROOT >
+class Benchmark_rep< CGAL::Sqrt_extension< NT, ROOT > > {
+    const CGAL::Sqrt_extension< NT, ROOT >& t;
+public:
+    //! initialize with a const reference to \a t.
+    Benchmark_rep( const CGAL::Sqrt_extension< NT, ROOT >& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const { 
+            output_benchmark( out, t );
+            return out;
+    }
+    
+    static std::string get_benchmark_name() {
+        std::stringstream ss;
+        ss << "Sqrt_extension< " << Benchmark_rep< NT >::get_benchmark_name() 
+            << ", " << Benchmark_rep< ROOT >::get_benchmark_name() << " >";
+        return ss.str();
+    }
+};
+
+
 template <class COEFF, class ROOT>
 class Needs_parens_as_product< Sqrt_extension<COEFF,ROOT> >{
 public:
