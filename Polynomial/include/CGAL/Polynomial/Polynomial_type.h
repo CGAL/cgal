@@ -1421,20 +1421,55 @@ void Polynomial<NT>::output_ascii(std::ostream &os) const {
 
 template <class NT>
 void Polynomial<NT>::output_benchmark(std::ostream &os) const {
-    const Polynomial<NT> &p = *this;
-    if (p.is_zero()) { 
-        os << "Polynomial_1(0)"; 
-        return; 
+    typedef typename Polynomial_traits_d< Polynomial<NT> >::Innermost_coefficient 
+        Innermost_coefficient;
+    typedef std::pair< Exponent_vector, Innermost_coefficient >
+        Exponents_coeff_pair;
+    typedef typename Polynomial_traits_d< Polynomial<NT> >::Get_monom_representation Gmr;
+    
+    std::vector< Exponents_coeff_pair > monom_rep;
+    Gmr gmr;
+    gmr( *this, std::back_inserter( monom_rep ) );
+    
+    os << Benchmark_rep< Polynomial< NT > >::get_benchmark_name() << "( ";
+    
+    for( typename std::vector< Exponents_coeff_pair >::iterator it = monom_rep.begin();
+         it != monom_rep.end(); ++it ) {
+        if( it != monom_rep.begin() )
+            os << ", ";
+        os << "( " << bmformat( it->second ) << ", ";
+        it->first.output_benchmark(os);
+        os << " )";        
     }
-    os << "Polynomial_1(";
-    for (int i = 0; i <= p.degree(); i++) {
-        os << CGAL::oformat(p[i]);
-        if (i != p.degree()) {
-            os << ",";
-        }
-    }
-    os << ")";
+    os << " )";
 }
+
+// Benchmark_rep specialization 
+template < class NT >
+class Benchmark_rep< CGAL::Polynomial< NT > > {
+    const CGAL::Polynomial< NT >& t;
+public:
+    //! initialize with a const reference to \a t.
+    Benchmark_rep( const CGAL::Polynomial< NT >& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const { 
+            t.output_benchmark( out );
+            return out;
+    }
+    
+    static std::string get_benchmark_name() {
+        std::stringstream ss;
+        ss << "Polynomial< " << Polynomial_traits_d< Polynomial< NT > >::d;
+        
+        std::string coeff_name = Benchmark_rep< NT >::get_benchmark_name();
+        
+        if( coeff_name != "" )
+            ss << ", " << coeff_name;
+        
+        ss << " >";
+        return ss.str();
+    }
+};
 
 // Moved to internal namespace because of name clashes
 // TODO: Is this OK?
