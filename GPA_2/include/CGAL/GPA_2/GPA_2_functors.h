@@ -713,11 +713,11 @@ private:
 template < class GPA_2>
 class Make_x_monotone_2 
 {
-    typedef typename GPA_2::Point_2 Point_2;
+    typedef typename GPA_2::Curve_2 Curve_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
-    typedef void result_type;
+    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
     typedef Arity_tag<2> Arity;   
     
     //! standard constructor
@@ -727,72 +727,38 @@ public:
     } 
 
     /*!
-     * decompose a given curve (or arc) into list of x-monotone pieces 
-     * (subcurves) and insert them to the output iterator
+     * decompose a given arc into list of x-monotone pieces 
+     * (subcurves) and insert them to the output iterator. Since \c Arc_2 
+     * is by definition x-monotone, an input arc is passed to the 
+     * output iterator directly. 
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. 
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (
-            const typename InputTraits_2::Input_object_2& cv, 
-            OutputIterator oi) {
-            
-        typename InputTraits_2::Make_sweepable_2 make_sweepable(
-                InputTraits_2().make_sweepable_2_object()
-        );
-        typedef std::vector< typename GAPS::Segment_2 > Container;
-        typedef typename Container::const_iterator Const_iterator;
-        Container tmp;
-        make_sweepable(cv, std::back_inserter(tmp));
-        for (Const_iterator it = tmp.begin(); it != tmp.end(); it++) {
-            typename GAPS::Is_degenerate_2 is_degenerate(
-                    gaps_.is_degenerate_2_object()
-            );
-            if (is_degenerate(*it)) {
-                typename GAPS::Source_2 source(
-                        gaps_.source_2_object()
-                );
-                // CGAL expects points instead of degenerate segments
-                *oi++ = CGAL::make_object(source(*it));
-            } else {
-                typename GAPS::Is_reversed_2 is_reversed(
-                        gaps_.is_reversed_2_object()
-                );
-                // Remark (Ron's mail):
-                // As we currently define it, an x-monotone curve does 
-                // not need to have a source and a target, because this 
-                // implies that it is directed. We view x-monotone curves 
-                // as continuous graphs of fucntions, which are undirected. 
-                // However, a curve has a "left" (minimal) vertex and a 
-                // "right" (maximal) vertex.
-                //
-                if (!is_reversed(*it)) {
-                    *oi++ = CGAL::make_object(*it);  
-                } else {
-                    // CGAL directed versus left-right
-                    typename GAPS::New_endpoints_opposite_2 
-                        new_endpoints_opposite(
-                                gaps_.new_endpoints_opposite_2_object()
-                        );
-                    typename GAPS::Source_2 source(
-                            gaps_.source_2_object()
-                    );
-                    typename GAPS::Target_2 target(
-                            gaps_.target_2_object()
-                    );
-                    typename GAPS::Segment_2 s = 
-                        new_endpoints_opposite(*it, source(*it), target(*it));
-                    *oi++ = CGAL::make_object(s);
-                }
-            }
-        }
-        // -> output contains points (instead of degenerated segments) and
-        //    from left to right oriented non-degenerated segments
+    OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const {
+    
+        *oi++ = CGAL::make_object(cv);
         return oi;
-        
     }
+    
+    /*!
+     * decompose a given curve into list of x-monotone pieces 
+     * (subcurves) and insert them to the output iterator. 
+     * \param cv The curve.
+     * \param oi The output iterator, whose value-type is Object. 
+     * The returned objects are all wrappers X_monotone_curve_2 objects.
+     * \return The past-the-end iterator.
+     */
+    // TODO: move this to separate file Arr_gpa_traits_2.h ?
+    template<class OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
+    
+        CGAL::CGALi::Make_x_monotone<GPA_2> make_x_monotone(_m_gpa);
+        return make_x_monotone(cv, oi);
+    }
+    
 private:
     //! pointer to \c GPA_2 ?
     GPA_2 *_m_gpa;
