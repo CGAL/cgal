@@ -80,12 +80,12 @@ public:
 
     //! default constructor
     GPA_2() :
-        _m_kernel(Curve_kernel_2()) {
+        _m_kernel(Curve_kernel_2()), _m_last_curve_id(-1) {
     }
 
     //! constructor uses specific \c Curve_kernel_2 instance (for controlling)
     GPA_2(const Curve_kernel_2& kernel) :
-        _m_kernel(kernel) {
+        _m_kernel(kernel), _m_last_curve_id(-1) {
     }
     //!@}
     //!\name embedded types and predicates for \c Arrangement_2 package
@@ -125,8 +125,20 @@ public:
     /*CGAL_GPA_cons(Approximate_2, approximate_2_object)
     CGAL_GPA_cons(Construct_x_monotone_curve_2,
         construct_x_monotone_curve_2_object)*/
-        
-     //! returns internal \c Curve_kernel_2 instance
+    
+    //!@}
+    //!\name public methods
+    //!@{
+    
+    //!\brief given arcno over an interval, this computes a corresponding
+    //! event arcno on vertical line \c cv_line lying on the given \c side
+    //! w.r.t. the interval
+    //!
+    //! \c side = 0: left side; \c side = 1: right side
+    int get_curve_interval_arcno(const Curve_vertical_line_1& cv_line, 
+        bool side, int interval_arcno);
+            
+    //! returns internal \c Curve_kernel_2 instance
     Curve_kernel_2 kernel() const {
         return _m_kernel;
     }
@@ -139,8 +151,31 @@ private:
     //!@{
     //!\name private members
     
+    //! an instance of \c Curve_kernel_2
     Curve_kernel_2 _m_kernel;
     
+    //! event arc number descriptor: stores an arc number along with curve's
+    //! end type (+/-oo or \c NO_BOUNDARY )
+    typedef std::pair<int, CGAL::Boundary_type> Arcno_desc;
+    //! a pair of vectors (right and left side of event-line respectively)
+    typedef std::pair<std::vector<Arcno_desc>, std::vector<Arcno_desc> >
+        Arcno_vector_pair;
+    //! maps from \c Curve_vertical_line_1 id to a container of interval ->
+    //! event arcnos 
+    // TODO: use hash instead ??
+    typedef std::map<int, Arcno_vector_pair> Interval_arcno_map;
+    //! maps from \c Curve_2 id to \c Interval_arcno_map
+    typedef std::map<int, Interval_arcno_map> Curve_to_interval_arcno_map;
+    
+    //! arcno mapping container instance
+    mutable Curve_to_interval_arcno_map _m_curve_arcno_map;
+    
+    //! an id of the last queried \c Curve_2 object
+    int _m_last_curve_id;
+    
+    //! stores an address of the last accessed map 
+    mutable Interval_arcno_map _m_last_interval_map;
+        
     //!@}
 }; // class GPA_2
 
