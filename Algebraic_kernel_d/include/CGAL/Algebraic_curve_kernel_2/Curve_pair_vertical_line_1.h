@@ -191,7 +191,7 @@ public:
     //! \pre 0 <= k < "number of arcs defined for curve[c] at x()"
     int get_event_of_curve(int k, bool c) const
     {
-        typename Event2_slice::Int_container ic = 
+        const typename Event2_slice::Int_container& ic = 
             this->ptr()->_m_event_slice.arcno_to_pos
                     ((c == 0 ? SoX::CURVE1 : SoX::CURVE2));
         CGAL_precondition(0 <= k && k < static_cast<int>(ic.size()));
