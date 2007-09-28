@@ -24,6 +24,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/GPA_2/Point_2.h>
 #include <CGAL/GPA_2/Arc_2.h>
+
+#include <CGAL/GPA_2/Make_x_monotone.h>
 #include <CGAL/GPA_2/GPA_2_functors.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -83,7 +85,7 @@ public:
         _m_kernel(Curve_kernel_2()), _m_last_curve_id(-1) {
     }
 
-    //! constructor uses specific \c Curve_kernel_2 instance (for controlling)
+    //! construct using specific \c Curve_kernel_2 instance (for controlling)
     GPA_2(const Curve_kernel_2& kernel) :
         _m_kernel(kernel), _m_last_curve_id(-1) {
     }
