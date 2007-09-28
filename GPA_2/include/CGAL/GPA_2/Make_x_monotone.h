@@ -23,6 +23,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+//#include <CGAL/GPA_2/Curve_interval_arcno_cache.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -42,7 +44,7 @@ namespace CGALi {
  * plus/minus infinity, as appropriate. Note that infinity here is
  * understood in an "infimaximal" sense: smaller/larger than any
  * event, modelling the behaviour for all sufficiently small/large
- * x-coordinates. The same for segments running up/down a vertical asymtote
+ * x-coordinates. The same for arcs running up/down a vertical asymtote
  * of the curve.
  */
 template <class GPA_2>
@@ -65,6 +67,10 @@ struct Make_x_monotone_2 :
     
     //! type of 1-curve analysis
     typedef typename GPA_2::Curve_analysis_2 Curve_analysis_2;
+    
+    //! type of vertical line
+    typedef typename Curve_analysis_2::Curve_vertical_line_1
+        Curve_vertical_line_1;
     
     //! type of point on curve
     typedef typename GPA_2::Point_2 Point_2;
@@ -90,8 +96,8 @@ struct Make_x_monotone_2 :
             return oi;
         
         Curve_analysis_2 ca_2(curve);
-        typename Curve_analysis_2::Curve_vertical_line_1 evt_line1,
-            evt_line2, int_line = ca_2.vertical_line_of_interval(0);
+        Curve_vertical_line_1 evt_line1, evt_line2, 
+            int_line = ca_2.vertical_line_of_interval(0);
         int total_events = ca_2.number_of_vertical_lines_with_event();
         // handle special case of a curve without any events
         if(total_events == 0) {
@@ -100,8 +106,10 @@ struct Make_x_monotone_2 :
             return oi;
         }
         _m_curve = curve;
+        const typename GPA_2::Curve_interval_arcno_cache& map_interval_arcno = 
+            _m_gpa->get_interval_arcno_cache();
         
-        Arcno_desc info1, info2;
+        std::pair<int, CGAL::Boundary_type> info1, info2;
         std::vector<Point_2> min_pts, max_pts;
         X_coordinate_1 min_x, max_x;
         int i, j, k, n;
@@ -114,13 +122,13 @@ struct Make_x_monotone_2 :
             max_pts.push_back(Point_2(max_x, curve, k));
                         
         for(k = 0; k < int_line.number_of_events(); k++) {
-            info1 = _m_gpa->map_interval_arcno(evt_line1, k, 1); 
+            info1 = map_interval_arcno()(evt_line1, k, 1); 
             if(info1.second != CGAL::NO_BOUNDARY) 
                 arc = Arc_2(CGAL::MIN_END, max_x, (info1.second < 0 ?
                     CGAL::MIN_END : CGAL::MAX_END), curve, k);
             else
                 arc = Arc_2(max_pts[info1.first], CGAL::MIN_END, curve, k,
-                    info1.first));
+                    info1.first);
             *oi++ = CGAL::make_object(arc);
         }
         min_pts = max_pts;
@@ -138,9 +146,10 @@ struct Make_x_monotone_2 :
             for(k = 0; k < n; k++) 
                 max_pts.push_back(Point_2(max_x, curve, k));
             
+            CGAL::Curve_end inf1_end, inf2_end;
             for(k = 0; k < n; k++) {
-                info1 = _m_gpa->map_interval_arcno(evt_line1, k, 0); 
-                info2 = _m_gpa->map_interval_arcno(evt_line2, k, 1); 
+                info1 = map_interval_arcno()(evt_line1, k, 0); 
+                info2 = map_interval_arcno()(evt_line2, k, 1); 
                 inf2_end = (info2.second < 0 ? CGAL::MIN_END : 
                     CGAL::MAX_END);
                 if(info1.second != CGAL::NO_BOUNDARY) {
@@ -171,13 +180,13 @@ struct Make_x_monotone_2 :
         
         n = ca_2.vertical_line_of_interval(total_events).number_of_events();
         for(k = 0; k < n; k++) {
-            info1 = _m_gpa->map_interval_arcno(evt_line2, k, 0); 
+            info1 = map_interval_arcno()(evt_line2, k, 0); 
             if(info1.second != CGAL::NO_BOUNDARY) 
                 arc = Arc_2(CGAL::MAX_END, min_x, (info1.second < 0 ?
                     CGAL::MIN_END : CGAL::MAX_END), curve, k);
             else
                 arc = Arc_2(min_pts[info1.first], CGAL::MAX_END, curve, k,
-                    info1.first));
+                    info1.first);
             *oi++ = CGAL::make_object(arc);
         }
         return oi;

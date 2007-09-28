@@ -127,6 +127,9 @@ public:
     
     //! type of underlying curve analysis
     typedef typename GPA_2::Curve_kernel_2 Curve_kernel_2;
+    
+    //! the handle superclass
+    typedef ::CGAL::Handle_with_policy< Rep > Base;
 
     //!@}
 public:
@@ -317,12 +320,12 @@ private:
         if(type != CGAL::NO_BOUNDARY && 
                 this->ptr()->_m_boundary_in_x != CGAL::NO_BOUNDARY) 
             CGAL_error("Denied to set the boundary condition in y while the "
-             "boundary condition in x is set");
+                "boundary condition in x is set");
         this->ptr()->_m_boundary_in_y = type;
     }
     
     //! befriending \c Arc_2 class
-    friend class Arc_2<GPA_2>;
+    //friend class Arc_2<GPA_2>;
     
     //!@}        
 }; // class Point_2
