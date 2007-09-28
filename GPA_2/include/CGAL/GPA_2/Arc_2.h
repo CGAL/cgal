@@ -78,12 +78,6 @@ public:
     // stores the index of an interval this arc belongs to
     mutable boost::optional<int> _m_interval_id;
     
-    typedef std::pair<std::vector<int>, std::vector<int> > Vector_pair;     
-    // mapping from interval arcnos to event arcnos on a vertical line
-    typedef std::map<int, Vector_pair> Interval_arcno_map;
-    // arcno mapping container    
-    Interval_arcno_map _m_arcno_map;
-    
     // befriending the handle
     friend class Arc_2<GPA_2, Self>;
 };
@@ -259,7 +253,7 @@ public:
      * \c arcno (branch III)
      *
      * \c inf_endx specifies whether the branch goes to +/- x-infinity,
-     * \c inf_endy specifies +/-oo an asymptotic end is approaching
+     * \c inf_endy specifies +/-oo the asymptotic end approaches
      */
     Arc_2(CGAL::Curve_end inf_endx, const X_coordinate_1& asympt_x,
         CGAL::Curve_end inf_endy, const Curve_2& c, int arcno) :
@@ -369,8 +363,10 @@ public:
     //!
     //! \pre accessed curve end has finite x/y-coordinates
     Point_2 curve_end(CGAL::Curve_end end) const {
-        CGAL_precondition(is_finite(end));
-        return (end == CGAL::MIN_END ? _minpoint() : _maxpoint()); 
+        const Point_2& pt = (end == CGAL::MIN_END ? _minpoint() : _maxpoint());
+        CGAL_precondition(pt.boundary_in_x() == CGAL::NO_BOUNDARY && 
+            pt.boundary_in_y() == CGAL::NO_BOUNDARY);
+        return pt;
     }
 
     //!\brief returns arc's curve end \c end x-coordinate 
@@ -468,63 +464,69 @@ public:
     }
     
     //!@}
+    //! \name Shortcuts provided for code readability
+    //!@{
+    
+    //! tests whether this boundary type represents +/-oo
+    bool is_infinite(CGAL::Boundary_type bnd) const {
+        return (bnd == CGAL::MINUS_INFINITY || bnd == CGAL::PLUS_INFINITY);
+    }
+    
+    //! tests whether this boundary type represents a singularity 
+    bool is_singular(CGAL::Boundary_type bnd) const {
+        return (bnd == CGAL::AFTER_SINGULARITY || 
+                bnd == CGAL::BEFORE_SINGULARITY);
+    }
+    
+    //! tests whether this boundary type represents lying on discontinuity
+    bool is_on_disc(CGAL::Boundary_type bnd) const {
+        return (bnd == CGAL::AFTER_DISCONTINUITY || 
+                bnd == CGAL::BEFORE_DISCONTINUITY);
+    }
+    
+    //!@}
     //! \name Predicates
     //!@{
     
-    //! checks whether this curve end is finite, i.e., it has no boundary 
-    //! conditions set (provided for code readability)
-    bool is_finite(CGAL::Curve_end end) const {
-        return (end == CGAL::MIN_END ? _minpoint().is_finite() ?
-            _maxpoint().is_finite());
-    }
-    
-    //! checks whether this curve end lies at +/-oo in x
-    bool is_at_x_infinity(CGAL::Curve_end end) const {
-        return (end == CGAL::MIN_END ? _minpoint().is_at_x_infinity() ?
-            _maxpoint().is_at_x_infinity());
-    }
-    
-    //! checks whether this curve end lies at +/-oo in y
-    bool is_at_y_infinity(CGAL::Curve_end end) const {
-        return (end == CGAL::MIN_END ? _minpoint().is_at_y_infinity() ?
-            _maxpoint().is_at_y_infinity());
-    }
-    
     /*!
-     * Compare the relative positions of a vertical curve and an unbounded 
-     * this curve's end
+     * Compare the relative positions of a vertical curve and unbounded 
+     * this arc's end
      * \param p A reference point; we refer to a vertical line incident to p.
      * \param end MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
      * \pre curve's relevant end is defined at y = +/- oo.
      * \return SMALLER if p lies to the left of cv;
-     *         LARGER  if p lies to the right cv;
+     *         LARGER  if p lies to the right of cv;
      *         EQUAL   in case of an overlap.
      */
     CGAL::Comparison_result compare_end_at_x(CGAL::Curve_end end,
         const Point_2& p) const 
     {
+        CGAL::Boundary_type bnd_y = boundary_in_y(end);
         // this curve end has boundary only in y
         CGAL_precondition(boundary_in_x(end) == CGAL::NO_BOUNDARY &&
-            is_at_y_infinity(end));
+             bnd_y != CGAL::NO_BOUNDARY);
+        if(is_singular(bnd_y)) // the curve end goes to singularity => x-order
+            return CGAL::EQUAL; // doesn't matter   
+                     
         Curve_kernel_2 kernel_2;
         CGAL::Comparison_result res = 
             kernel_2.compare_x_2_object()(curve_end_x(end), p.x());
         // for vertical arcs equality of x-coordinates means overlapping
-        if(res != CGAL::EQUAL || is_vertical())
+        // in case of discontinuity => x-comparison is enough
+        if(res != CGAL::EQUAL || is_vertical() || is_on_disc(bnd_y))
             return res;
-        // otherwise look at the side from which the vertical asymptote is 
-        // approached 
-        return (end == CGAL::MAX_END ? CGAL::LESS : CGAL::GREATER);
+        // look at the side from which the vertical asymptote is approached 
+        return (end == CGAL::MAX_END ? CGAL::SMALLER : CGAL::LARGER);
     }
     
     /*!
      * Compare the relative positions of the unbounded curve ends of \c this
      * and \c cv2
      * \param end1 MIN_END if we refer to this' minimal end,
-     *             MAX_END if we refer to its maximal end.
+     *             MAX_END if we refer to this' maximal end.
      * \param cv2 The second curve.
-     * \param end2 MIN_END if we refer to this' minimal end,
+     * \param end2 MIN_END if we refer to its minimal end,
      *             MAX_END if we refer to its maximal end.
      * \pre the curve ends have a bounded x-coord and unbounded y-coord,
           namely each of \c this and \c cv2 is vertical or asymptotic
@@ -539,29 +541,49 @@ public:
             cv2.boundary_in_x(end2) == CGAL::NO_BOUNDARY);
         CGAL::Boundary_type bnd1_y = boundary_in_y(end1),
             bnd2_y = cv2.boundary_in_y(end2);
-        CGAL_precondition(is_at_y_infinity(end1) && 
-            cv2.is_at_y_infinity(end2));
-        
+        CGAL_precondition(bnd1_y != CGAL::NO_BOUNDARY && 
+            bnd2_y != CGAL::NO_BOUNDARY);
+        // we assume that positive and negative boundaries are mutually 
+        // exclusive, i.e., AFTER_DISC, AFTER_SING or MINUS_INF
+        // as well as BEFORE_DISC, BEFORE_SING or PLUS_INF cannot appear
+        // together, sanity check:
+        CGAL_precondition(bnd1_y * bnd2_y < 0 || bnd1_y == bnd2_y);
+        if(is_singular(bnd1_y) != is_singular(bnd2_y)) {
+            // only one curve end lies at singularity (another at +/-oo)
+            CGAL_error("SINGULARITY + INF comparison is not yet implemented");
+        }
         Curve_kernel_2 kernel_2;
-        CGAL::Comparison_result res = 
-            kernel_2.compare_x_2_object()(curve_end_x(end1), 
+        if(is_singular(bnd1_y) && is_singular(bnd2_y)) {
+            if(bnd1_y < bnd2_y) 
+                return CGAL::SMALLER;
+            if(bnd1_y > bnd2_y)
+                return CGAL::GREATER;
+            // both ends lie at the same singularity => need special handling
+            // but x-order doesn't matter
+        } else { // establish x-order      
+            CGAL::Comparison_result res = 
+                kernel_2.compare_x_2_object()(curve_end_x(end1),
                     cv2.curve_end_x(end2));
-        // simple x-coordinate comparison is enough in this case
-        if(res != CGAL::EQUAL) 
-            return res;
-        // MIN_END > vertical > MAX_END
+            // x-coordinate comparison is enough for these cases
+            // we assume that either both curve ends lie on disc or neither of
+            // them
+            if(res != CGAL::EQUAL || (is_on_disc(bnd2_y)&&is_on_disc(bnd1_y)))
+                return res;
+        }    
+        // now we either +/-oo case: MIN_END > vertical > MAX_END
+        // or both ends lie at the same singularity: these cases can be 
+        // handled simultaneously  
         if(is_vertical()) {
-            if(!cv2.is_vertical())
-                return (end2 == CGAL::MIN_END ? CGAL::LESS : CGAL::GREATER);
+            if(!cv2.is_vertical()) 
+                return (end2 == CGAL::MIN_END ? CGAL::SMALLER : CGAL::LARGER);
             // both are vertical
             if(bnd1_y == bnd2_y) // both ends converge to the same infinity 
                 return CGAL::EQUAL;
-            return (bnd1_y == CGAL::MINUS_INFINITY ? CGAL::LESS :
-                CGAL::GREATER);
+            return (bnd1_y < CGAL::NO_BOUNDARY ? CGAL::SMALLER : CGAL::LARGER);
         } 
         if(cv2.is_vertical())
-            return (end1 == CGAL::MIN_END ? CGAL::GREATER : CGAL::LESS);
-        // otherwise: both ends have asymptotic behaviour
+            return (end1 == CGAL::MIN_END ? CGAL::LARGER : CGAL::SMALLER);
+        // otherwise: both ends have asymptotic behaviour or singularity
         if(end1 == end2) { // both ends approach asymptote from one side
             if(bnd1_y == bnd2_y) { // need special y-comparison
                 X_coordinate_1 x0(curve_end_x(end1));
@@ -570,11 +592,11 @@ public:
                 return kernel_2.compare_xy_2_object()(p1, p2, true);
             }
             // else: order can be determined without y-comparison
-            return (bnd1_y == CGAL::MINUS_INFINITY ? CGAL::LESS :
-                CGAL::GREATER);
+            return (bnd1_y < CGAL::NO_BOUNDARY ? CGAL::SMALLER : CGAL::LARGER);
         }
-        // curve ends approach vertical asymptote from different sides
-        return (end1 == CGAL::MIN_END ? CGAL::GREATER : CGAL::LESS);
+        // curve ends approach vertical asymptote (or singularity) from
+        // different sides => no comparisons required
+        return (end1 == CGAL::MIN_END ? CGAL::LARGER : CGAL::SMALLER);
     }   
       
     /*!
@@ -588,33 +610,82 @@ public:
      */
     CGAL::Comparison_result compare_y_at_x(const Point_2& p) const {
 
-        CGAL_precondition(is_in_x_range(p.x()));
-        // whether we need simplify here while it's already called from
-        // Curve_kernel_2 ?
+        CGAL::Boundary_type bndp_x = p.boundary_in_x(), 
+            bndp_y = p.boundary_in_y(), bnd1_x = boundary_in_x(CGAL::MIN_END), 
+            bnd2_x = boundary_in_x(CGAL::MAX_END), 
+            bnd1_y = boundary_in_y(CGAL::MIN_END),
+            bnd2_y = boundary_in_y(CGAL::MAX_END);
+        
+        CGAL_precondition(!(is_infinite(bndp_x) || is_infinite(bndp_y)));
+        // handle special case when a curve end coincides with p at singularity
+        if((bndp_x == CGAL::AFTER_SINGULARITY && bnd1_x == bndp_x) ||
+            (bndp_x == CGAL::BEFORE_SINGULARITY && bnd2_x == bndp_x) ||
+           (bndp_y == CGAL::AFTER_SINGULARITY && bnd1_y == bndp_y) ||
+            (bndp_y == CGAL::BEFORE_SINGULARITY && bnd2_y == bndp_y))
+            return CGAL::EQUAL;
+        CGAL_precondition_msg(!is_singular(bndp_x), "The target point is not "
+            "within the arc's x-range"); 
+                
+        if(is_singular(bndp_y)) {// singularity in y is always in x-range 
+             if(bndp_y < CGAL::NO_BOUNDARY)
+                 return CGAL::SMALLER;
+             return CGAL::LARGER; // bndp_y > 0
+        }
+        bool eq_min = false, eq_max = false, in_x_range = true;
+        if(is_on_disc(bndp_x)) {
+            eq_min = (bndp_x < CGAL::NO_BOUNDARY && bnd1_x == bndp_x);
+            eq_max = (bndp_x > CGAL::NO_BOUNDARY && bnd2_x == bndp_x);
+            // report x-range assert violation if the point lies on disc in
+            // x but neither of arc's ends do
+            if(!(eq_min || eq_max))
+                CGAL_error("The target point is not within the arc's x-range");
+        } else // we should be able to access x-coord when point is on disc
+            in_x_range = is_in_x_range(p.x(), &eq_min, &eq_max);
+        
+        CGAL_precondition(in_x_range); // check x-range
+        if(is_on_disc(bndp_y)) {
+            if((eq_min && bndp_y < CGAL::NO_BOUNDARY && bnd1_y == bndp_y) ||
+               (eq_max && bndp_y > CGAL::NO_BOUNDARY && bnd2_y == bndp_y))
+               return CGAL::EQUAL;
+             // otherwise handle by the boundary type
+             if(bndp_y < CGAL::NO_BOUNDARY) 
+                 return CGAL::SMALLER;
+             return CGAL::LARGER; // bndp_y > 0
+        }
         if(!curve().is_identical(p.curve())) {
             if(Self::simplify(*this, p)) 
                 return compare_y_at_x(p); // restart
         }
         Curve_kernel_2 kernel_2;
         if(is_vertical()) {
-            Curve_2 pt_curve;
-            int pt_arcno;
-            if(boundary_in_y(CGAL::MIN_END) == CGAL::NO_BOUNDARY) {
+            if(bnd1_y == CGAL::NO_BOUNDARY) {
             // for vertical arcs we can ask for .xy() member
-                if(kernel_2.compare_xy_2_object()(p, 
-                    _minpoint().xy(), true) == CGAL::SMALLER)
+                if(kernel_2.compare_xy_2_object()(p.xy(), _minpoint().xy(),
+                    true) == CGAL::SMALLER)
                 return CGAL::SMALLER;
             }
-            if(boundary_in_y(CGAL::MAX_END) == CGAL::NO_BOUNDARY) {
-                if(kernel_2.compare_xy_2_object()(p, 
-                    _maxpoint().xy(), true) == CGAL::LARGER)
+            if(bnd2_y == CGAL::NO_BOUNDARY) {
+                if(kernel_2.compare_xy_2_object()(p.xy(), _maxpoint().xy(),
+                    true) == CGAL::LARGER)
                 return CGAL::LARGER;
             }
             return CGAL::EQUAL; // p lies on a vertical arc
         }
+        if(eq_min && bnd1_y < CGAL::NO_BOUNDARY) 
+            return CGAL::GREATER; // finite pt always above negative boundary
+        if(eq_max && bnd2_y > CGAL::NO_BOUNDARY) 
+            return CGAL::SMALLER; // finite pt always below positive boundary
+        // what remains to be handled ?    
+        if(is_on_disc(bndp_x)) { 
+            // the point and a respective curve end lie on disc in x => need
+            // comparison at x-infinity; 
+            // reverse the sign since we compare the point w.r.t. this arc:
+            return (- _compare_y_at_infinity(p.curve(), p.arcno(),
+                (bnd1_x < CGAL::NO_BOUNDARY ? CGAL::MIN_END : CGAL::MAX_END)));
+        }
         // otherwise construct a point: ask for arcno as arc is not vertical
         Xy_coordinate_2 pt_on_curve(p.x(), curve(), arcno(p.x()));
-        return kernel_2.compare_xy_2_object()(p, pt_on_curve, true);
+        return kernel_2.compare_xy_2_object()(p.xy(), pt_on_curve, true);
     }
     
      /*!
@@ -627,39 +698,22 @@ public:
      *         LARGER if this arc lies above cv2;
      *         EQUAL in case of an overlap.
      */
+    // TODO: pass an additional curve end when handling DISCONTINUITY ?
     CGAL::Comparison_result compare_y_at_x(const Self& cv2, 
         CGAL::Curve_end end) const {
         
         CGAL::Boundary_type bnd1_x = boundary_in_x(end),
             bnd2_x =  cv2.boundary_in_x(end);
-        CGAL_precondition(is_at_x_infinity(end) &&
-             cv2.is_at_x_infinity(end) && bnd1_x == bnd2_x &&
+        CGAL_precondition(bnd1_x != CGAL::NO_BOUNDARY &&
+             bnd2_x != CGAL::NO_BOUNDARY && bnd1_x == bnd2_x &&
              boundary_in_y(end) == CGAL::NO_BOUNDARY &&
                 cv2.boundary_in_y(end) == CGAL::NO_BOUNDARY);
         // comparing ids is the same as calling is_identical() ??
-        if(this->id() == cv2.id()) 
+        if(id() == cv2.id()) 
             return CGAL::EQUAL;    
-            
-#if CGAL_ARRANGEMENT_ON_SURFACE
-        // singularity case ??
-#endif
-        Curve_2 f = curve(), g = cv2.curve();        
-        if(f.is_identical(g)) 
-            return CGAL::sign(arcno() - cv2.arcno());
-        if(Self::simplify(*this, cv2)) 
-            // restart since supporting curves might be equal now
-            return compare_y_at_x(cv2, end);
-         
-        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
-        Curve_pair_analysis_2 cpa_2(Curve_kernel_2::
-            get_curve_pair_cache()(std::make_pair(f, g)));
-        cpv_line = cpa_2.vertical_line_of_interval(
-            bnd1_x == CGAL::MINUS_INFINITY ? 0 :
-                cpa_2.number_of_vertical_lines_with_event());
-        CGAL::Sign result = 
-                CGAL::sign(cpv_line.get_event_of_curve(0, arcno()) - 
-                    cpv_line.get_event_of_curve(1, cv2.arcno()));
-        return result;        
+        // in this setting same handling as of +/-oo ?
+        return _compare_y_at_infinity(cv2.curve(), cv2.arcno(),
+            (bnd1_x < CGAL::NO_BOUNDARY ? CGAL::MIN_END : CGAL::MAX_END));
     }
     
     /*!
@@ -676,17 +730,24 @@ public:
      */
     CGAL::Comparison_result compare_y_at_x_left(const Self& cv2, 
         const Point_2 &p) const {
-        // ensure that p lies on both arcs 
-        CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL &&
-                      cv2.compare_y_at_x(p) == CGAL::EQUAL);
+        
+        CGAL::Boundary_type bnd1_x = boundary_in_x(CGAL::MAX_END),
+             bnd2_x = cv2.boundary_in_x(CGAL::MAX_END),
+             bndp_x = p.boundary_in_x(), bndp_y = p.boundary_in_y();
+        // ensure that p lies on both arcs and doesn't lie on the negative 
+        // boundary
+        CGAL_precondition(bndp_x >= CGAL::NO_BOUNDARY && 
+                 compare_y_at_x(p) == CGAL::EQUAL && 
+             cv2.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(!is_infinite(bnd1_x) && !is_infinite(bnd2_x) &&
+            !(is_infinite(bndp_x) || is_infinite(bndp_y)));
         // check whether both arcs indeed lie to the left of p
-        CGAL_precondition(is_finite(CGAL::MAX_END) && 
-            cv2.is_finite(CGAL::MAX_END));
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(
-            kernel_2.compare_xy_2_object()(p.xy(), _maxpoint().xy())
-                == CGAL::EQUAL && kernel_2.compare_xy_2_object()(p.xy(),
-                    cv2._maxpoint().xy()) == CGAL::EQUAL);
+        CGAL_precondition((is_vertical() && boundary_in_y(CGAL::MIN_END) < 0)||
+            _same_arc_compare_xy(_minpoint(), p) == CGAL::SMALLER);
+        CGAL_precondition((cv2.is_vertical() &&
+            cv2.boundary_in_y(CGAL::MIN_END) < 0) ||
+            _same_arc_compare_xy(cv2._minpoint(), p) == CGAL::SMALLER);
+        
         if(is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
             if(cv2.is_vertical()) 
@@ -695,8 +756,8 @@ public:
             // left
             return CGAL::SMALLER;
         } 
-        // a vertical arc is always smaller than a segment extending to
-        // the left; due to the order, we have to return the opposite
+        // a vertical arc is always smaller than the arc extending to the left;
+        // due to the order, we have to return the opposite
         if(cv2.is_vertical()) 
             return CGAL::LARGER;
         
@@ -705,16 +766,22 @@ public:
             return CGAL::sign(arcno() - cv2.arcno());
         if(Self::simplify(*this, cv2))  // restart after simplification
             return compare_y_at_x_left(cv2, p);
-                
+            
+        if(is_singular(bndp_y)) // singularity in y
+            CGAL_error("Handling singularity in y is not yet implemented");
         typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
         Curve_pair_analysis_2 cpa_2(Curve_kernel_2::
             get_curve_pair_cache()(std::make_pair(f, g)));
-        // vertical line immediately to the left of p
-        cpv_line = cpa_2.vertical_line_for_x(p.x(), CGAL::NEGATIVE);
-        CGAL::Sign result = 
-                CGAL::sign(cpv_line.get_event_of_curve(0, arcno()) - 
+        // vertical line immediately to the left of p: if p lies on boundary
+        // get the vertical line over the last interval; otherwise
+        // obtain the interval w.r.t. point's x-coordinate (this also valid
+        // for discontinuity in y)
+        cpv_line = (bndp_x == CGAL::BEFORE_SINGULARITY || 
+                    bndp_x == CGAL::BEFORE_DISCONTINUITY ?
+                        cpa_2.vertical_line_of_interval(0) :
+                        cpa_2.vertical_line_for_x(p.x(), CGAL::NEGATIVE);
+        return CGAL::sign(cpv_line.get_event_of_curve(0, arcno()) - 
                     cpv_line.get_event_of_curve(1, cv2.arcno()));
-        return result;
     }
     
     /*!
@@ -732,45 +799,58 @@ public:
      */
     CGAL::Comparison_result compare_y_at_x_right(const Self& cv2, 
         const Point_2 &p) const {
-        // ensure that p lies on both arcs 
-        CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL &&
-            cv2.compare_y_at_x(p) == CGAL::EQUAL);
-        // check whether both arcs indeed lie to the right of p
-        CGAL_precondition(is_finite(CGAL::MIN_END) && 
-            cv2.is_finite(CGAL::MIN_END));
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(
-            kernel_2.compare_xy_2_object()(p.xy(), _minpoint().xy())
-                == CGAL::EQUAL && kernel_2.compare_xy_2_object()(p.xy(),
-                cv2._minpoint().xy()) == CGAL::EQUAL);
+        
+          CGAL::Boundary_type bnd1_x = boundary_in_x(CGAL::MIN_END),
+             bnd2_x = cv2.boundary_in_x(CGAL::MIN_END),
+             bndp_x = p.boundary_in_x(), bndp_y = p.boundary_in_y();
+        // ensure that p lies on both arcs and doesn't lie on the positive
+        // boundary
+        CGAL_precondition(bndp_x <= 0 && compare_y_at_x(p) == CGAL::EQUAL &&
+                      cv2.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(!is_infinite(bnd1_x) && !is_infinite(bnd2_x) &&
+            !(is_infinite(bndp_x) || is_infinite(bndp_y)));
+        // check whether both arcs indeed lie to the left of p
+        CGAL_precondition((is_vertical() && boundary_in_y(CGAL::MAX_END) > 0)||
+            _same_arc_compare_xy(p, _maxpoint()) == CGAL::SMALLER);
+        CGAL_precondition((cv2.is_vertical() &&
+            cv2.boundary_in_y(CGAL::MAX_END) > 0) ||
+            _same_arc_compare_xy(p, cv2._maxpoint()) == CGAL::SMALLER);
+        
         if(is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
             if(cv2.is_vertical()) 
                 return CGAL::EQUAL;
-            // a vertical arc is always greater than arc extending to the
+            // a vertical arc is always LARGER than arc extending to the
             // right
             return CGAL::LARGER;
         } 
-        // a vertical arc is always greater than arc extending to
-        // the right; due to the order, we have to return the opposite
+        // a vertical arc is always LARGER than arc extending to the right; 
+        // due to the order, we have to return the opposite
         if(cv2.is_vertical()) 
             return CGAL::SMALLER;
-        
+                
         Curve_2 f = curve(), g = cv2.curve(); // none of the acrs is vertical
         if(f.is_identical(g)) 
             return CGAL::sign(arcno() - cv2.arcno());
         if(Self::simplify(*this, cv2))  // restart after simplification
-            return compare_y_at_x_right(cv2, p); 
-                
+            return compare_y_at_x_right(cv2, p);
+            
+        if(is_singular(bndp_y)) // singularity in y
+            CGAL_error("Handling singularity in y is not yet implemented");
         typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
         Curve_pair_analysis_2 cpa_2(Curve_kernel_2::
             get_curve_pair_cache()(std::make_pair(f, g)));
-        // vertical line immediately to the left of p
-        cpv_line = cpa_2.vertical_line_for_x(p.x(), CGAL::POSITIVE);
-        CGAL::Sign result = 
-                CGAL::sign(cpv_line.get_event_of_curve(0, arcno()) - 
+        // vertical line immediately to the left of p: if p lies on boundary
+        // get the vertical line over the last interval; otherwise
+        // obtain the interval w.r.t. point's x-coordinate (this also valid
+        // for discontinuity in y)
+        cpv_line = (bndp_x == CGAL::AFTER_SINGULARITY || 
+                    bndp_x == CGAL::AFTER_DISCONTINUITY ?
+                    cpa_2.vertical_line_of_interval(
+                        cpa_2.number_of_vertical_lines_with_event()) :
+                        cpa_2.vertical_line_for_x(p.x(), CGAL::POSITIVE);
+        return CGAL::sign(cpv_line.get_event_of_curve(0, arcno()) - 
                     cpv_line.get_event_of_curve(1, cv2.arcno()));
-        return result;
     }
         
     /*!
@@ -788,11 +868,10 @@ public:
         if(eq_min != NULL && eq_max != NULL)
             *eq_min = *eq_max = false;
         Curve_kernel_2 kernel_2;
-        if(boundary_in_x(CGAL::MIN_END) != CGAL::MINUS_INFINITY) {
+        if(boundary_in_x(CGAL::MIN_END) == CGAL::NO_BOUNDARY) {
             // compare x-coordinates    
-            res = kernel_2.compare_x_2_object()(x, 
-                curve_end_x(CGAL::MIN_END)); 
-            if(res == CGAL::SMALLER)
+            res = kernel_2.compare_x_2_object()(x, _minpoint().x());
+                if(res == CGAL::SMALLER)
                 return false;
             if(res == CGAL::EQUAL) {
                 if(eq_min != NULL)
@@ -801,9 +880,9 @@ public:
             }
         }
         // here x > MIN_END
-        if(boundary_in_x(CGAL::MAX_END) == CGAL::PLUS_INFINITY) 
+        if(boundary_in_x(CGAL::MAX_END) > CGAL::NO_BOUNDARY) 
              return true; // this is unbounded arc (branch)
-        res = kernel_2.compare_x_2_object()(x, curve_end_x(CGAL::MAX_END));
+        res = kernel_2.compare_x_2_object()(x, _maxpoint().x());
         if(res == CGAL::LARGER)
             return false;
         if(res == CGAL::EQUAL && eq_max != NULL)
@@ -930,10 +1009,10 @@ public:
     void split(const Point_2& p, Self& s1, Self& s2) const {
         CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL &&
             is_in_x_range_interior(p.x()));
-        s1 = _replace_endpoints(_minpoint(), Point_2(p), -1, 
-            (is_vertical() ? -1 : arcno()));
-        s2 = _replace_endpoints(Point_2(p), _maxpoint(),
-            (is_vertical() ? -1 : arcno()), -1);
+        s1 = _replace_endpoints(_minpoint(), p, -1, (is_vertical() ? -1 :
+             arcno()));
+        s2 = _replace_endpoints(p, _maxpoint(), (is_vertical() ? -1 : 
+             arcno()), -1);
     }
     
     //! \brief returns \c true if the two arcs \c *this and \c cv2 overlap, 
@@ -954,28 +1033,30 @@ public:
                 return false;
             if(!curve().is_identical(cv2.curve())) 
                 CGAL_error("Not yet implemented");
-            // greater source and smaller target
+            // LARGER source and smaller target
             Point_2 src = (_same_arc_compare_xy(_minpoint(), cv2._minpoint(),
-                 true) == CGAL::GREATER ? _minpoint() : cv2._minpoint()),
+                 true) == CGAL::LARGER ? _minpoint() : cv2._minpoint()),
                     tgt = (_same_arc_compare_xy(_maxpoint(), cv2._maxpoint(), 
                  true)  == CGAL::SMALLER ? _maxpoint() : cv2._maxpoint());
             // vertical arcs do not overlap     
-            if(_same_arc_compare_xy(src, tgt, true) == CGAL::GREATER)
+            if(_same_arc_compare_xy(src, tgt, true) == CGAL::LARGER)
                 return false;
             // construct a common part
             *oi++ = _replace_endpoints(src, tgt, -1, -1);
             return true;
         }
         // ask for joint x-range of two arcs 
-        // (greater source & smaller target curve ends)
+        // (LARGER source & smaller target curve ends)
         if(!_joint_x_range(cv2, low_x, high_x))
             return false;
         
         if(curve().is_identical(cv2.curve())) {
             if(arcno() != cv2.arcno()) // arcnos are not equal => no overlaps
                 return false;
-            int a_min = (src.is_at_x_infinity() ? -1 : arcno(src.x())),
-                a_max = (tgt.is_at_x_infinity() ? -1 : arcno(tgt.x()));
+            int a_min = (src.boundary_in_x() != CGAL::NO_BOUNDARY ? -1 :
+                    arcno(src.x())), 
+                a_max = (tgt.boundary_in_x() != CGAL::NO_BOUNDARY ? -1 :
+                    arcno(tgt.x()));
             // construct a common  part
             *oi++ = _replace_endpoints(src, tgt, a_min, a_max);
             return false;
@@ -994,8 +1075,8 @@ public:
             return false; // supporting curves are coprime => quit
                 
         X_coordinate_1 x0;
-        bool inf_x = (src.boundary_in_x() == CGAL::MINUS_INFINITY);
-        if(!inf_x) // choose a targeting x-coordinate from the joint x-range
+        bool yes=false, inf_x = (src.boundary_in_x() != CGAL::NO_BOUNDARY);
+        if(!inf_x) // choose a target x-coordinate from the joint x-range
             x0 = src.x(); 
         std::pair<int, int> ipair;
         Curve_pair_analysis_2 cpa_2;
@@ -1039,7 +1120,7 @@ public:
                 // lies on a common part and arcnos are the same: VUALA!!!
                 // here we need to "clip" [src.x(), tgt.x()] w.r.t. the
                 // defining x-range of a common part *it_found.. how ?
-                                   
+                yes = true; // we've got it!                   
                 // now construct a common arc    
                 Rep rep(*(this->ptr()));
                 rep._m_min = src;
@@ -1047,7 +1128,7 @@ public:
                 rep._m_support = it_found->first;
                 rep._m_arcno = it_found->second;
                 rep._m_arcno_min = rep._m_arcno_max = rep._m_arcno;
-                if(!src.is_at_x_infinity()) {
+                if(src.boundary_in_x() == CGAL::NO_BOUNDARY) {
                     int a = arcno(src.x());
                     if(a != arcno()) {
                         cpv_line = cpa_2.vertical_line_for_x(src.x());
@@ -1057,7 +1138,7 @@ public:
                         rep._m_arcno_min = ipair.first;
                     }
                 }
-                if(!tgt.is_at_x_infinity()) {
+                if(tgt.boundary_in_x() == CGAL::NO_BOUNDARY) {
                     int a = arcno(tgt.x());
                     if(a != arcno()) {
                         cpv_line = cpa_2.vertical_line_for_x(tgt.x());
@@ -1069,7 +1150,7 @@ public:
                 }
                 *oi++ = Self(rep);
             }        
-        return true;
+        return yes;
     }
     
     /*!\brief
@@ -1134,15 +1215,16 @@ public:
         if(!curve().is_identical(cv2.curve())) {
             if(Self::simplify(*this, cv2))// ==> replace simplify by smth else
                 return do_overlap(cv2);
-            return false;
+            CGAL_error("do_overlap() for non-coprime curves is not yet "
+                "implemented for ");
         }
         if(is_vertical() != cv2.is_vertical())
             return false; // only one arc is vertical => can't overlap
         if(is_vertical()) { // both arcs are vertical
             // check for x-coordinates equality
             Curve_kernel_2 kernel_2;    
-            if(kernel_2.compare_x_2_object()(curve_end_x(CGAL::MIN_END),
-                cv2.curve_end_x(CGAL::MIN_END)) != CGAL::EQUAL)
+            if(kernel_2.compare_x_2_object()(_minpoint().x(),
+                    cv2._minpoint().x()) != CGAL::EQUAL)
                 return false;
             // compare y-coordinates of min curve ends
             switch(_same_arc_compare_xy(_minpoint(), cv2._minpoint(), true)) {
@@ -1255,7 +1337,7 @@ private:
             _maxpoint());
         // curve ends cannot be identical
         CGAL_precondition(res != CGAL::EQUAL);
-        if(res == CGAL::GREATER) { // swap curve ends and corresponding arcnos
+        if(res == CGAL::LARGER) { // swap curve ends and corresponding arcnos
             std::swap(this->ptr()->_m_min, this->ptr()->_m_max);
             std::swap(this->ptr()->_m_arcno_min, this->ptr()->_m_arcno_max);
         }
@@ -1326,13 +1408,13 @@ private:
                             
         typename Curve_analysis_2::Curve_vertical_line_1 
             src_line, tgt_line, tmp;
-        bool inf_src = (boundary_in_x(CGAL::MIN_END) == CGAL::MINUS_INFINITY), 
-             inf_tgt = (boundary_in_x(CGAL::MAX_END) == CGAL::PLUS_INFINITY);
+        bool inf_src = (boundary_in_x(CGAL::MIN_END) < CGAL::NO_BOUNDARY), 
+             inf_tgt = (boundary_in_x(CGAL::MAX_END) > CGAL::NO_BOUNDARY);
         src_line = (inf_src ? ca_2.vertical_line_of_interval(0) :
-            ca_2.vertical_line_for_x(curve_end_x(CGAL::MIN_END));
+            ca_2.vertical_line_for_x(_minpoint().x()));
         tgt_line = (inf_tgt ? ca_2.vertical_line_of_interval(
             ca_2.number_of_vertical_lines_with_event()) :
-            ca_2.vertical_line_for_x(curve_end_x(CGAL::MAX_END));
+            ca_2.vertical_line_for_x(_maxpoint().x()));
             
         int src_idx = src_line.get_index(), tgt_idx = tgt_line.get_index(), 
             diff = tgt_idx - src_idx;
@@ -1340,11 +1422,11 @@ private:
         // it's supposed that arcs are not degenerate but lexicographic
         // order may not be established
         if(src_line.is_event()) 
-            no_events_between = (tgt_line.is_event() ?
-                (diff == 1) : (diff == 0)||(diff == 1));
+            no_events_between = (tgt_line.is_event() ? (diff == 1) : 
+                (diff == 0)||(diff == 1));
         else 
-            no_events_between = (tgt_line.is_event() ?
-                (diff == 0)||(diff == -1) : (diff == 0));
+            no_events_between = (tgt_line.is_event() ? (diff == 0)||
+                (diff ==-1) : (diff == 0));
         if(!no_events_between) {
             // iterate through all events between source and target
             // to check that all events points lie above our arc
@@ -1360,94 +1442,51 @@ private:
                     if(ipair.first != 1||ipair.second != 1)
                         break;
                 }
-                // there must be at least one event and arcno() is not greater
+                // there must be at least one event and arcno() is not LARGER
                 // than this event index
                 CGAL_precondition(j < tmp.number_of_events() && arcno() <= j);
             }
         }
         // check the validity of curve-end arcnos
+        ////////////////////////////////////////////////////////////////
+        /// this must be rewritten: we should somehow pass the GPA's
+        /// instance to Arc_2 object
+        GPA_2 gpa; 
+        ////////////////////////////////////////////////////////////////
         if(src_line.is_event()) 
-            CGAL_precondition(_map_interval_arcno(src_line, 0, arcno()) == 
-                this->ptr()->_m_arcno_min);
+            CGAL_precondition(gpa.map_interval_arcno(src_line, 0,
+                arcno()).first == this->ptr()->_m_arcno_min);
         else
             CGAL_precondition(arcno() == this->ptr()->_m_arcno_min);
         if(tgt_line.is_event()) 
-            CGAL_precondition(_map_interval_arcno(tgt_line, 1, arcno()) == 
-                this->ptr()->_m_arcno_max);
+            CGAL_precondition(gpa.map_interval_arcno(tgt_line, 1,
+                arcno()).first == this->ptr()->_m_arcno_max);
         else
             CGAL_precondition(arcno() == this->ptr()->_m_arcno_max);
+        );
     }
     
-    //!\brief given arcno over an interval, this computes a corresponding
-    //! event arcno on vertical line \c cv_line lying on the given \c side
-    //! w.r.t. the interval
+    //! \brief compares y-coordinates of two objects lying on the boundary 
+    //! (at singularity, on disc or at +/-oo)
     //!
-    //! \c side = 0: left side; \c side = 1: right side
-    int _map_interval_arcno(const Curve_vertical_line_1& cv_line, bool side, 
-            int interval_arcno) {
+    //! \c end specifies whether to compare at negative or positive boundary
+    CGAL::Comparison_result _compare_y_at_infinity(const Curve_2& g, 
+            int arcno_on_g, CGAL::Curve_end end) const {
         
-        CGAL_precondition(interval_arcno >= 0);
-        if(!cv_line.is_event()) // # of arcs over interval is constant
-            return interval_arcno; 
-        // cache vertical lines by id(); shall we use x-coordinate instead of
-        // id to ensure uniqueness ?
-        typename Rep::Interval_arcno_map::const_iterator it = 
-            this->ptr()->_m_arcno_map.find(cv_line.id());
-        if(it != this->ptr()->_m_arcno_map.end()) {
-            const typename Rep::Vector_pair& tmp = it->second;
-            // note: side index must be reversed 
-            CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
-                tmp.first.size() : tmp.second.size()));
-            return (side == 1 ? tmp.first[interval_arcno] :
-                tmp.second[interval_arcno]);
-        }
-        Curve_analysis_2 ca_2 = cv_line.get_curve_analysis_2();
-        int n_left = ca_2.vertical_line_of_interval(
-                cv_line.get_index()).number_of_events(), // # arcs to the left
-            n_right = ca_2.vertical_line_of_interval( // # arcs to the right
-                cv_line.get_index()+1).number_of_events(); 
-                        
-        std::pair<int, int> n_mininf, n_maxinf, ipair;
-        n_mininf = cv_line.get_number_of_branches_approaching_minus_infinity();
-        n_maxinf = cv_line.get_number_of_branches_approaching_plus_infinity();
-        
-        // we must also account for the number of asymptotic arcs approaching
-        // this vertical line
-        typename Rep::Vector_pair vpair;
-        vpair.first.resize(n_left + n_mininf.first + n_maxinf.first);
-        vpair.second.resize(n_right + n_mininf.second + n_maxinf.second);
-        
-        int i, _arcno, left_i, right_i;
-        // process arcs approaching -oo from left and right
-        for(left_i = 0; left_i < n_mininf.first; left_i++)
-            vpair.first[left_i] = left_i;
-        for(right_i = 0; right_i < n_mininf.second; right_i++)
-            vpair.second[right_i] = right_i;
-        // process all finite events over this vertical line
-        for(_arcno = 0; _arcno <= cv_line.number_of_events(); _arcno++) {
-            ipair = cv_line.get_number_of_incident_branches(_arcno);
-            for(i = 0; i < ipair.first; i++)
-                vpair.first[left_i++] = _arcno;
-            for(i = 0; i < ipair.second; i++)
-                vpair.second[right_i++] = _arcno;
-        }
-        // process arcs approaching +oo from left and right
-        // this is not clear.. why arcnos at +oo are mapped to the same
-        // interval arcnos ?
-        for(i = 0; i < n_maxinf.first; i++)
-            vpair.first[left_i] = left_i++; 
-        for(i = 0; i < n_maxinf.second; i++)
-            vpair.second[right_i] = right_i++;
-        CGAL_precondition(left_i == vpair.first.size() && 
-            right_i == vpair.second.size());
-        
-        this->ptr()->_m_arcno_map.insert(std::make_pair(cv_line.id(), vpair));
-        CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
-                vpair.first.size() : vpair.second.size()));
-        return (side == 1 ? vpair.first[interval_arcno] :
-                vpair.second[interval_arcno]);
+        Curve_2 f = curve();        
+        if(f.is_identical(g)) 
+            return CGAL::sign(arcno() - arcno_on_g);
+        // assume supporting curves are coprime
+        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
+        Curve_pair_analysis_2 cpa_2(Curve_kernel_2::
+            get_curve_pair_cache()(std::make_pair(f, g)));
+        // handle all special boundaries similarly:
+        cpv_line = cpa_2.vertical_line_of_interval(end == CGAL::MIN_END ? 0 :
+                cpa_2.number_of_vertical_lines_with_event());
+        return CGAL::sign(cpv_line.get_event_of_curve(0, arcno()) - 
+                    cpv_line.get_event_of_curve(1, arcno_on_g));
     }
-    
+        
     //!\brief internal comparison of two curve ends "lying" on the same arc
     //!
     //! since points are supposed to lie on the same arc, converging to the
@@ -1459,11 +1498,11 @@ private:
         if(p.is_identical(q)) 
             return CGAL::EQUAL;
         if(!equal_x || only_x) {
-            CGAL::Boundary_type bndx_p = p.boundary_in_x(),
-                bndx_q = q.boundary_in_x();
+            CGAL::Boundary_type bndp_x = p.boundary_in_x(),
+                bndq_x = q.boundary_in_x();
             CGAL::Comparison_result res;
-            if(bndx_p == bndx_q) {
-                if(bndx_p == CGAL::NO_BOUNDARY) {
+            if(bndp_x == bndq_x) {
+                if(bndp_x == CGAL::NO_BOUNDARY) {
                     Curve_kernel_2 kernel_2;
                     res = kernel_2.compare_x_2_object()(p.x(), q.x());
                     if(res != CGAL::EQUAL)
@@ -1471,35 +1510,26 @@ private:
                 }
                 goto Lcompare_y; // CGAL::EQUAL - need y-comparisons
             }
-            if(bndx_q == CGAL::MINUS_INFINITY) 
-                return CGAL::GREATER;
-            if(bndx_p == CGAL::MINUS_INFINITY) 
-                return CGAL::LESS;
-            if(bndx_p == CGAL::PLUS_INFINITY) 
-                return CGAL::GREATER;
-            return CGAL::LESS; // bnd_p == NO_BOUNDARY; bnd_q = PLUS_INFINITY
+            if(bndp_x < bndq_x)
+                return CGAL::SMALLER;
+            return CGAL::LARGER; // bndp_x > bndq_x
         }
     Lcompare_y:
         if(only_x)
             return CGAL::EQUAL;
-        CGAL::Boundary_type bndy_p = p.boundary_in_y(),
-            bndy_q = q.boundary_in_y();
-
-        if(bndy_p == bndy_q) {
-            if(bndy_p == CGAL::NO_BOUNDARY) {
+        CGAL::Boundary_type bndp_y = p.boundary_in_y(),
+            bndq_y = q.boundary_in_y();
+        if(bndp_y == bndq_y) {
+            if(bndp_y == CGAL::NO_BOUNDARY) {
                 Curve_kernel_2 kernel_2;
                 // compare only y-values
                 return kernel_2.compare_xy_2_object()(p.xy(), q.xy(), true);
             }
             return CGAL::EQUAL;
         }
-        if(bndy_q == CGAL::MINUS_INFINITY) 
-            return CGAL::GREATER;
-        if(bndy_p == CGAL::MINUS_INFINITY) 
-            return CGAL::LESS;
-        if(bndy_p == CGAL::PLUS_INFINITY) 
-            return CGAL::GREATER;
-        return CGAL::LESS; // bnd_p == NO_BOUNDARY; bnd_q = PLUS_INFINITY
+        if(bndp_y < bndq_y)
+            return CGAL::SMALLER;
+        return CGAL::LARGER;  // bndp_y > bndq_y
     }
     
     //! returns min end-point of this arc (provided for code readability)
@@ -1513,13 +1543,13 @@ private:
     //! computes this arc's interval index
     int _compute_interval_id() const {
         CGAL_precondition(!is_vertical());
-        // unbounded curve end at x = -oo lies in 0-th interval
-        if(boundary_in_x(CGAL::MIN_END) == CGAL::MINUS_INFINITY) 
+        // a curve end at negative boundary => 0th interval
+        if(boundary_in_x(CGAL::MIN_END) < CGAL::NO_BOUNDARY) 
             return 0;
         Curve_analysis_2 ca_2(curve());
+        // we are interested in interval "to the right"
         typename Curve_analysis_2::Curve_vertical_line_1 cv_line = 
-            ca_2.vertical_line_for_x(curve_end_x(CGAL::MIN_END),
-               CGAL::POSITIVE); // we are interested in interval "to the right"
+            ca_2.vertical_line_for_x(_minpoint().x(), CGAL::POSITIVE); 
         return cv_line.get_index();
     }
     
@@ -1542,7 +1572,7 @@ private:
             if(arcno_t >= 0) 
                 rep._m_arcno_max = arcno_max;
         }
-        if(_same_arc_compare_xy(src, tgt) == CGAL::GREATER) {
+        if(_same_arc_compare_xy(src, tgt) == CGAL::LARGER) {
             std::swap(rep._m_min, rep._m_max);
             std::swap(rep._m_arcno_min, rep._m_arcno_max);
         }
@@ -1594,7 +1624,7 @@ private:
         typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
         std::pair<int, int> ipair;
         Curve_2 orig_curve(curve()); // preserve original supporting curve
-        bool inf1_x = (boundary_in_x(CGAL::MIN_END) == CGAL::MINUS_INFINITY);
+        bool inf1_x = (boundary_in_x(CGAL::MIN_END) < CGAL::NO_BOUNDARY);
         int curve_idx;  
         if(!inf1_x) {
             x0 = curve_end_x(CGAL::MIN_END); 
@@ -1693,26 +1723,67 @@ protected:
          * in the interior, the only remaining candidates for intersections are
          * their finite endpoints (if any), for vertical arcs as well.
          */
-        bool f2_min = cv2.is_finite(CGAL::MIN_END),
-             f2_max = cv2.is_finite(CGAL::MAX_END);
+        CGAL::Boundary_type bnd_x, bnd_y, 
+            bnd1_x = cv2.boundary_in_x(CGAL::MIN_END),
+            bnd1_y = cv2.boundary_in_y(CGAL::MIN_END),
+            bnd2_x = cv2.boundary_in_x(CGAL::MAX_END),
+            bnd2_y = cv2.boundary_in_y(CGAL::MAX_END);
+                
+        bool f2_min = !(is_infinite(bnd1_x) || is_infinite(bnd1_y));
+             f2_max = !(is_infinite(bnd2_x) || is_infinite(bnd2_y));
         if(!(f2_min || f2_max)) // neither of curve ends is finite => 
             return oi;          // no intersections
         Curve_kernel_2 kernel_2;
         CGAL::Curve_end end = CGAL::MIN_END;
         while(1) {
-            if(is_finite(end)) {
-                Point_2 xy = curve_end(end);
-                // selection is exclusive since arcs cannot intersect twice at 
-                // the same end-point
-                if((f2_min && kernel_2.compare_xy_2_object()(xy, 
+            bnd_x = boundary_in_x(end), bnd_y = boundary_in_y(end);
+            if(is_infinite(bnd2_x) || is_infinite(bnd2_y)) 
+                goto Lendloop:
+            Point_2 pt = curve_end(end);
+            // easy case: intersection at singularity doesn't require to
+            // compare x/y-coordinates
+            if(is_singular(bnd_x)) { 
+                if(bnd1_x == bnd_x || bnd2_x == bnd_x) 
+                    *oi++ = std::make_pair(pt, 0); 
+            } else if(is_singular(bnd_y)) { 
+                if(bnd1_y == bnd_y || bnd2_y == bnd_y) 
+                    *oi++ = std::make_pair(pt, 0); 
+            } else if(is_on_disc(bnd_x)) {
+    // CONFUSION: if bndx != bnd1_x should we compare ys at -oo
+    // or at +oo ? or is this true for discontinuity:
+    // 0th interval == the last interval ? (i.e. intervals are mirrored ?)
+    // what if both conditions are satisfied at a time ? duplicates ?
+                if(bnd1_x == CGAL::AFTER_DISCONTINUITY &&
+                    _compare_y_at_infinity(cv2.curve(), cv2.arcno(),
+                        CGAL::MIN_END) == CGAL::EQUAL)
+                    *oi++ = std::make_pair(pt, 0); 
+                if(bnd2_x == CGAL::BEFORE_DISCONTINUITY &&
+                    _compare_y_at_infinity(cv2.curve(), cv2.arcno(),
+                        CGAL::MAX_END) == CGAL::EQUAL)
+                    *oi++ = std::make_pair(pt, 0); 
+            } else if(is_on_disc(bnd_y)) {
+                  // disc in y: compare only x-coordinates !
+    // what if both conditions are satisfied at a time ? duplicates ?
+                if(bnd1_y == CGAL::AFTER_DISCONTINUITY &&
+                    kernel.compare_x_2_object(pt.x(), _minpoint().x()) ==
+                        CGAL::EQUAL)
+                    *oi++ = std::make_pair(pt, 0);
+                if(bnd2_y == CGAL::BEFORE_DISCONTINUITY &&
+                    kernel.compare_x_2_object(pt.x(), _maxpoint().x()) ==
+                        CGAL::EQUAL)
+                    *oi++ = std::make_pair(pt, 0);    
+              // ordinar normal case:      
+              // selection is exclusive since arcs cannot intersect twice
+              // at the same finite end-point
+            } else if((f2_min && kernel_2.compare_xy_2_object()(pt.xy(), 
                         cv2._minpoint.xy()) == CGAL::EQUAL) ||
-                   (f2_max && kernel_2.compare_xy_2_object()(xy, 
+                      (f2_max && kernel_2.compare_xy_2_object()(pt.xy(), 
                         cv2._maxpoint.xy()) == CGAL::EQUAL))
-                    *oi++ = std::make_pair(xy, 0); // intersect at end-point ?
-            }
+                *oi++ = std::make_pair(pt, 0); 
+        Lendloop:
             if(end == CGAL::MAX_END)
                 break;
-            end = CGAL::MAX_END; // use goto instead ??
+            end = CGAL::MAX_END; 
         }
         return oi;
     }
@@ -1723,32 +1794,29 @@ protected:
     //! \pre both arcs are not vertical
     bool _joint_x_range(const Self& cv2, Point_2& pt_low, 
         Point_2& pt_high) const {
-        CGAL_precondition(!is_vertical() && !cv2.is_vertical());
-       
-        Curve_kernel_2 kernel_2;
-        Point_2 low, high;
-        // find intersection x-range: it's supposed that curve ends are
-        // sorted lexicographical, that's why MIN_END cannot lie at +oo
-        if(boundary_in_x(CGAL::MIN_END) != CGAL::MINUS_INFINITY) {
-             if(cv2.boundary_in_x(CGAL::MIN_END) != CGAL::MINUS_INFINITY)
-                low_x = (kernel_2.compare_x_2_object()(curve_end_x(
-                    CGAL::MIN_END), cv2.curve_end_x(CGAL::MIN_END)) == 
-                        CGAL::LARGER ? _minpoint() : cv2._minpoint());
-             else 
-                low = _minpoint();
-        } else
-            low = cv2._minpoint();
-        if(boundary_in_x(CGAL::MAX_END) != CGAL::PLUS_INFINITY) {
-            if(cv2.boundary_in_x(CGAL::MAX_END) != CGAL::PLUS_INFINITY)
-                high_x = (kernel_2.compare_x_2_object()(curve_end_x(
-                    CGAL::MAX_END), cv2.curve_end_x(CGAL::MAX_END)) == 
-                        CGAL::SMALLER ? _maxpoint() : cv2._maxpoint());
-            else
-                high = _maxpoint();
-        } else
-            high = cv2._maxpoint();
         
-        if(!low.is_at_x_infinity() && !high.is_at_x_infinity()) &&
+        CGAL_precondition(!is_vertical() && !cv2.is_vertical());
+        Curve_kernel_2 kernel_2;
+        Point_2 pt1 = _minpoint(), pt2 = cv2._minpoint();
+        Point_2 low = pt2, high;
+        // find intersection x-range: larger source & smaller target
+        if(pt1.boundary_in_x() == CGAL::NO_BOUNDARY) {
+             if(pt2.boundary_in_x() == CGAL::NO_BOUNDARY)
+                low = (kernel_2.compare_x_2_object()(pt1.x(), pt2.x()) == 
+                    CGAL::LARGER ? pt1 : pt2);
+             else 
+                low = pt1;
+        } 
+        pt1 = _maxpoint(), pt2 = cv2._maxpoint(), high = pt2;
+        if(pt1.boundary_in_x() == CGAL::NO_BOUNDARY) {
+            if(pt2.boundary_in_x() == CGAL::NO_BOUNDARY)
+                high = (kernel_2.compare_x_2_object()(pt1.x(), pt2.x()) == 
+                    CGAL::SMALLER ? pt1 : pt2);
+            else
+                high = pt1;
+        } 
+        if(low.boundary_in_x() == CGAL::NO_BOUNDARY &&
+           high.boundary_in_x() == CGAL::NO_BOUNDARY &&
             kernel_2.compare_x_2_object()(low_x.x(), high_x.x()) == 
                 CGAL::LARGER) // disjoint x-ranges 
             return false;
@@ -1760,7 +1828,7 @@ protected:
     /*!\brief
      * computes intersection of two arcs having coprime supporting curves;
      * intersection points are inserted to the output iterator \c oi as objects
-     * of type \c std::pair<Point_2, int> (intersection point + 
+     * of type \c std::pair<Point_2,int> (intersection point + 
      * multiplicity)
      */
     template <class OutputIterator>
@@ -1791,9 +1859,8 @@ protected:
         // x-ranges are disjoint => nothing to do
         if(!_joint_x_range(cv2, low_x, high_x))
             return oi;
-        
-        bool inf_low = (low_x.boundary_in_x() == CGAL::MINUS_INFINITY),
-             inf_high = (high_x.boundary_in_x() == CGAL::PLUS_INFINITY),
+        bool inf_low = (low_x.boundary_in_x() != CGAL::NO_BOUNDARY),
+             inf_high = (high_x.boundary_in_x() != CGAL::NO_BOUNDARY),
         Curve_2 f = curve(), g = cv2.curve();
         Curve_pair_analysis_2 cpa_2(Curve_kernel_2::
             get_curve_pair_cache()(std::make_pair(f, g)));
@@ -1839,8 +1906,7 @@ protected:
                 *oi++ = std::make_pair(Point_2(x0, curve(), arcno1),
                     mult);
              else
-                *oi++ = std::make_pair(Point_2(x0, cv2.curve(), 
-                    arcno2), mult);
+                *oi++ = std::make_pair(Point_2(x0, cv2.curve(), arcno2), mult);
         }
         return oi;
     }

@@ -49,8 +49,7 @@ public:
      */
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const
     { 
-        typename GPA_2::Curve_kernel_2 kernel_2;
-        return _m_gpa->kernel().compare_x_2_object()(p1, p2);
+        return _m_gpa->kernel().compare_x_2_object()(p1.x(), p2.x());
     }
 
     /*!
@@ -123,8 +122,7 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const
     {
-        typename GPA_2::Curve_kernel_2 kernel_2;
-        return (_m_gpa->kernel().compare_xy_2_object()(p1, p2));
+        return (_m_gpa->kernel().compare_xy_2_object()(p1.xy(), p2.xy()));
     }
     
 private:
@@ -159,8 +157,8 @@ public:
     
         if(&p1 == &p2) 
             return true;
-        typename GPA_2::Curve_kernel_2 kernel_2;
-        return (_m_gpa->kernel().compare_xy_2_object()(p1, p2) == CGAL::EQUAL);
+        return (_m_gpa->kernel().compare_xy_2_object()(p1.xy(), p2.xy()) ==
+            CGAL::EQUAL);
     }
      
     /*!
@@ -369,7 +367,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const
     {
-      return (- cv.compare_y_at_x(p));
+      return cv.compare_y_at_x(p);
     }
 
     /*!
@@ -564,7 +562,6 @@ private:
 template < class GPA_2 >
 class Are_mergeable_2 
 {
-    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
@@ -596,7 +593,6 @@ private:
 template < class GPA_2 >
 class Merge_2
 {
-    typedef typename GPA_2::Point_2 Point_2;
     typedef typename GPA_2::Arc_2 Arc_2;
    
 public:
@@ -679,8 +675,9 @@ public:
     /*!
      * Find all intersections of the two given curves and insert them to the 
      * output iterator. If two arcs intersect only once, only a single will be
-     * placed to the iterator. Type of output iterator is CGAL::Object 
-     * containing either an Arc_2 object or Point_2 along with its multiplicity
+     * placed to the iterator. Type of output iterator is \c CGAL::Object 
+     * containing either an \c Arc_2 object (overlap) or a \c Point_2 object
+     * with multiplicity (point-wise intersections)
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param oi The output iterator.
@@ -800,6 +797,96 @@ private:
     //! pointer to \c GPA_2 ?
     GPA_2 *_m_gpa;
 };
+
+//!\brief given arcno over an interval, this computes a corresponding event
+//! arcno on vertical line \c cv_line lying on the given \c side w.r.t. the
+//! interval
+//!
+//! \c side = 0: left side; \c side = 1: right side
+//TODO: make a functor out of it ?    
+template <class CurveKernel_2>
+Arcno_desc GPA_2<CurveKernel_2>::map_interval_arcno(
+    const Curve_vertical_line_1& cv_line, bool side, int interval_arcno) {
+
+    
+    CGAL_precondition(interval_arcno >= 0);
+    if(!cv_line.is_event()) // # of arcs over interval is constant
+        return interval_arcno; 
+        
+    Curve_analysis_2 ca_2 = cv_line.get_curve_analysis_2();
+    int curve_id = ca_2.get_curve_2().id();
+    if(_m_last_curve_id != curve_id) {
+        typename Curve_to_interval_arcno_map::const_iterator it;
+        if(_m_last_curve_id != -1) { 
+        // commit the last changes to the global curve arcno map
+             it = _m_curve_arcno_map.find(_m_last_curve_id);
+             CGAL_precondition(it != _m_curve_arcno_map.end());
+             it->second = _m_last_interval_map; 
+        }        
+        // modify _m_last_interval_map to be pointing to the Interval_arcno_map
+        // corresponding to the given curve_id
+        it = _m_curve_arcno_map.insert(std::make_pair(curve_id,
+                Interval_arcno_map())).first;
+        _m_last_interval_map = it->second;
+        _m_last_curve_id = curve_id;
+    }
+    // cache vertical lines by id(); shall we use x-coordinate instead of
+    // id to ensure uniqueness ?
+    typename Interval_arcno_map::const_iterator it = 
+        _m_last_interval_map.find(cv_line.id());
+    if(it != _m_last_interval_map.end()) {
+        const Arcno_vector_pair& tmp = it->second;
+        // note: side index must be reversed 
+        CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
+            tmp.first.size() : tmp.second.size()));
+        return (side == 1 ? tmp.first[interval_arcno] :
+            tmp.second[interval_arcno]);
+    }
+        
+    int n_left = ca_2.vertical_line_of_interval(
+            cv_line.get_index()).number_of_events(), // # arcs to the left
+        n_right = ca_2.vertical_line_of_interval( // # arcs to the right
+            cv_line.get_index()+1).number_of_events(); 
+    std::pair<int, int> n_mininf, n_maxinf, ipair;
+    n_mininf = cv_line.get_number_of_branches_approaching_minus_infinity();
+    n_maxinf = cv_line.get_number_of_branches_approaching_plus_infinity();
+    // we must also account for the number of asymptotic arcs approaching
+    // this vertical line
+    Arcno_vector_pair vpair;
+    vpair.first.resize(n_left + n_mininf.first + n_maxinf.first);
+    vpair.second.resize(n_right + n_mininf.second + n_maxinf.second);
+        
+    int i, _arcno, left_i, right_i;
+    // process arcs approaching -oo from left and right
+    for(left_i = 0; left_i < n_mininf.first; left_i++)
+        vpair.first[left_i] = std::make_pair(left_i, CGAL::MINUS_INFINITY);
+    for(right_i = 0; right_i < n_mininf.second; right_i++)
+        vpair.second[right_i] = std::make_pair(right_i, CGAL::PLUS_INFINITY);
+    // process all finite events over this vertical line
+    for(_arcno = 0; _arcno <= cv_line.number_of_events(); _arcno++) {
+        ipair = cv_line.get_number_of_incident_branches(_arcno);
+        for(i = 0; i < ipair.first; i++)
+            vpair.first[left_i++] = std::make_pair(_arcno, CGAL::NO_BOUNDARY);
+        for(i = 0; i < ipair.second; i++)
+            vpair.second[right_i++] = std::make_pair(_arcno,
+                CGAL::NO_BOUNDARY);
+    }
+    // process arcs approaching +oo from left and right
+    // this is not clear.. why arcnos at +oo are mapped to the same
+    // interval arcnos ?
+    for(i = 0; i < n_maxinf.first; i++)
+        vpair.first[left_i] = std::make_pair(left_i++, CGAL::PLUS_INFINITY); 
+    for(i = 0; i < n_maxinf.second; i++)
+        vpair.second[right_i] = std::make_pair(right_i++, CGAL::PLUS_INFINITY);
+    CGAL_precondition(left_i == vpair.first.size() && 
+        right_i == vpair.second.size());
+    
+    _m_last_interval_map.insert(std::make_pair(cv_line.id(), vpair));
+    CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
+            vpair.first.size() : vpair.second.size()));
+    return (side == 1 ? vpair.first[interval_arcno] :
+               vpair.second[interval_arcno]);
+}
 
 } // GPA_2_Functors
 
