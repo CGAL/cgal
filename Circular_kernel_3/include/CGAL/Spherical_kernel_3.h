@@ -57,11 +57,12 @@ namespace CGAL {
       struct Spherical_kernel_base_ref_count: public LinearKernelBase
 				 // takes classes in internal sub-namespace
       {
-	typedef CGALi::Circular_arc_point_3<SphericalKernel>  Circular_arc_point_3;
+        typedef CGALi::Circular_arc_point_3<SphericalKernel>  Circular_arc_point_3;
         typedef CGALi::Circle_3<SphericalKernel>  Circle_3;
         typedef CGALi::Line_arc_3<SphericalKernel>  Line_arc_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
-        typedef CGALi::Circular_arc_on_reference_sphere_3<SphericalKernel>  Circular_arc_on_reference_sphere_3;
+        typedef CGALi::Circular_arc_point_on_reference_sphere_3<SphericalKernel>  Circular_arc_point_on_reference_sphere_3;
+        typedef float HQ_NT;//type to represent the index of one hquadrant
 
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >

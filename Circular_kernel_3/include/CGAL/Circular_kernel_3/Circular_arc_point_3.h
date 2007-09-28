@@ -55,8 +55,8 @@ class Circular_arc_point_3
   typedef typename SK::Circle_3                   Circle_3;
   typedef typename SK::Root_for_spheres_2_3       Root_for_spheres_2_3;
 
-  typedef Root_for_spheres_2_3  Rep;
-  typedef typename SK::template Handle<Rep>::type  Base;
+  typedef Root_for_spheres_2_3  Rep__;
+  typedef typename SK::template Handle<Rep__>::type  Base;
 
   Base base;
 

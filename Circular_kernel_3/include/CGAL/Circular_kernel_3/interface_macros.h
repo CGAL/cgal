@@ -34,6 +34,12 @@
 // macros CGAL_Kernel_pred and CGAL_Kernel_cons.
 // And they are #undefed at the end of this file.
 
+  //TAG_SEB
+  CGAL_Spherical_Kernel_cons(Construct_circular_arc_point_on_reference_sphere_3, construct_circular_arc_point_on_reference_sphere_3)
+  CGAL_Spherical_Kernel_cons(Compute_circular_theta_rep_3,compute_circular_theta_rep_3)
+  CGAL_Spherical_Kernel_cons(Compute_circular_theta_3,compute_circular_theta_3)
+  CGAL_Spherical_Kernel_cons(Compute_circular_hq_3,compute_circular_hq_3)
+
   CGAL_Spherical_Kernel_cons(Get_equation, get_equation_object) 
   CGAL_Spherical_Kernel_cons(Construct_circular_arc_point_3, construct_circular_arc_point_3_object)
   CGAL_Spherical_Kernel_cons(Construct_sphere_3, construct_sphere_3_object)

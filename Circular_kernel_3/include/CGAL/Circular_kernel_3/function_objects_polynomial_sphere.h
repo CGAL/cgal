@@ -201,7 +201,7 @@ namespace SphericalFunctors {
 
   public:
 
-    typedef  typename Theta_rep<SK> result_type;
+    typedef  typename CGAL::CGALi::Theta_rep<SK> result_type;
     typedef const result_type &        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
@@ -230,7 +230,7 @@ namespace SphericalFunctors {
 
   public:
 
-    typedef  HQ_NT result_type;
+    typedef typename SK::HQ_NT result_type;
     typedef const result_type &        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
@@ -533,11 +533,12 @@ namespace SphericalFunctors {
     typedef typename SK::Line_3                             Line_3;
     typedef typename SK::Circle_3                           Circle_3;
     typedef typename SK::Sphere_3                           Sphere_3;
-    typedef typename SK::Circular_arc_point_3               Circular_arc_point_3;
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3               Circular_arc_point_on_reference_sphere_3;
     typedef typename SK::Kernel_base::Circular_arc_point_on_reference_sphere_3  RCircular_arc_point_on_reference_sphere_3;
     typedef typename SK::Root_of_2                          Root_of_2;
     typedef typename SK::FT                                     FT;
-    typedef typename Circular_arc_point_on_reference_sphere_3::Rep              Rep;
+    typedef typename Circular_arc_point_on_reference_sphere_3::Repd              Rep;
+    typedef typename SK::HQ_NT HQ_NT;
 
 
   public:
@@ -549,19 +550,24 @@ namespace SphericalFunctors {
     operator()(void) 
     { return Rep(); }
     
+   
     result_type
-    operator(const FT& ftheta,const FT& xt,const FT& yt,const FT& zt,const HQ_NT& _hq)
+    operator()(const FT& ftheta, const FT& xt, const FT& yt, const FT& zt, const HQ_NT& hq)
     { return Rep(ftheta,xt,yt,zt,hq);}
     
         
     result_type
-    operator(const HQ_NT& _hq,const Root_of_2& ftheta,const Root_of_2& x_,const Root_of_2& y_,const Root_of_2& z_)
+    operator()(const HQ_NT& _hq,const Root_of_2& ftheta,const Root_of_2& x_,const Root_of_2& y_,const Root_of_2& z_)
     {Rep(_hq,ftheta,x_,y_,z_);}
 
     result_type
-    operator(const HQ_NT& _hq,const Root_of_2& ftheta,const typename SK::AK::Root_for_spheres_2_3& rfs)
+    operator()(const HQ_NT& _hq,const Root_of_2& ftheta,const typename SK::Algebraic_kernel::Root_for_spheres_2_3& rfs)
     {return Rep(_hq,ftheta,rfs);}
-        
+
+    result_type
+    operator()(const HQ_NT& hq,const typename SK::Algebraic_kernel::Root_for_spheres_2_3& R)
+    {return Rep(hq,R);}
+    
     
     
     

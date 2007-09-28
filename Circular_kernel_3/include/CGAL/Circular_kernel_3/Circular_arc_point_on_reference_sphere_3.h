@@ -6,46 +6,71 @@
 
 #include <CGAL/Circular_arc_point_3.h>
 
+
+//~ enum Fct_type{TAN, COT, FIXED, TAG_M2};
+
+//~ inline Fct_type auto_ftype(const float& hquad){//SHOULD BE HQ_NT
+//~ if (hquad >7 || hquad<2 || (hquad>3 && hquad<6))
+  //~ return TAN;
+//~ return COT;
+//~ };
+
+
 namespace CGAL {
   namespace CGALi {
   
-  typedef float HQ_NT;
   
     
   template <class SK>
-	class Theta_rep{
-    typedef typename SK::AK::RO_t RO_t;
+  class Theta_rep{
+    typedef typename SK::Algebraic_kernel::Root_of_2 Root_of_2;
+    typedef typename SK::HQ_NT HQ_NT;
     typedef typename SK::FT FT;    
-		typedef std::pair<HQ_NT,RO_t> Rep;
-		typename CGAL_SK::template Handle<Rep>::type base;
-		public:
-		Theta_rep(const HQ_NT& hq,const RO_t& r):base(std::pair<HQ_NT,RO_t>(hq,r)){}
+    typedef std::pair<HQ_NT,Root_of_2> Rep;
+    
+    //
+    typename SK::template Handle<Rep>::type  base;
+    public:
+    Theta_rep(const HQ_NT& hq,const Root_of_2& r):base(std::pair<HQ_NT,Root_of_2>(hq,r)){}
     Theta_rep(){}
-    const HQ_NT& hq() const {return CGAL::get(base).first;}
-    const typename SK::AK::RO_t& ftheta() const {return CGAL::get(base).second;}
-	};    
+    const HQ_NT& hq() const {return get(base).first;}
+    const Root_of_2& ftheta() const {return CGAL::get(base).second;}
+  };    
     
   template<class SK>
   class Circular_arc_point_on_reference_sphere_3:public Circular_arc_point_3<SK>{
-    typedef typename SK::AK::RO_t RO_t;
+    typedef typename SK::Algebraic_kernel::Root_of_2 Root_of_2;
     typedef typename SK::FT FT;
-    typedef typename CGAL_SK::Circular_arc_point_3 Circular_arc_point_3;
+    typedef typename SK::Algebraic_kernel AK;
+    typedef Circular_arc_point_3<SK> T_Circular_arc_point_3;
+    typedef typename SK::HQ_NT HQ_NT;
     //---------------
     Theta_rep<SK> Trep;
     public:
     Circular_arc_point_on_reference_sphere_3(const FT& ftheta,const FT& xt,const FT& yt,const FT& zt,const HQ_NT& _hq)
-      :Circular_arc_point_3(typename CGAL_SK::Point_3(xt,yt,zt)),Trep(_hq,ftheta){};//critical point of non normal circles
+      :T_Circular_arc_point_3(typename SK::Point_3(xt,yt,zt)),Trep(_hq,ftheta){};//critical point of non normal circles
         
-    Circular_arc_point_on_reference_sphere_3(const HQ_NT& _hq,const RO_t& ftheta,const RO_t& x_,const RO_t& y_,const RO_t& z_)
-      :Circular_arc_point_3(x_,y_,z_),Trep(_hq,ftheta){};
+    Circular_arc_point_on_reference_sphere_3(const HQ_NT& _hq,const Root_of_2& ftheta,const Root_of_2& x_,const Root_of_2& y_,const Root_of_2& z_)
+      :T_Circular_arc_point_3(x_,y_,z_),Trep(_hq,ftheta){};
 
-    Circular_arc_point_on_reference_sphere_3(const HQ_NT& _hq,const RO_t& ftheta,const typename SK::AK::Root_for_spheres_2_3& rfs)
-      :Circular_arc_point_3(rfs),Trep(_hq,ftheta){};
+    Circular_arc_point_on_reference_sphere_3(const HQ_NT& _hq,const Root_of_2& ftheta,const typename SK::Algebraic_kernel::Root_for_spheres_2_3& rfs)
+      :T_Circular_arc_point_3(rfs),Trep(_hq,ftheta){};
         
-    Circular_arc_point_on_reference_sphere_3():Circular_arc_point_3(){};
-			
+    Circular_arc_point_on_reference_sphere_3():T_Circular_arc_point_3(FT(0),FT(0),FT(0),FT(0)),Trep(-1,FT(0)){};
+      
+    Circular_arc_point_on_reference_sphere_3(const HQ_NT& hq,const typename AK::Root_for_spheres_2_3& R):T_Circular_arc_point_3(R),Trep(hq,auto_ftype(hq)==TAN?(R.y()/R.x()):(R.x()/R.y())){};            
+      
+    //~ static inline Circular_arc_point_on_reference_sphere_3 VirtualPt_to_point_on_sphere(){
+      //~ return Circular_arc_point_on_reference_sphere_3(FT(0),FT(0),FT(0),FT(0),HQ_NT(-1));
+    //~ };
+
+    //~ static inline Circular_arc_point_on_reference_sphere_3 Root_for_sphere_to_point_on_sphere(const HQ_NT& hq,const typename AK::Root_for_spheres_2_3& R){
+      //~ return Circular_arc_point_on_reference_sphere_3(hq,auto_ftype(hq)==TAN?(R.y()/R.x()):(R.x()/R.y()),R);
+    //~ };      
+      
+      
     const Theta_rep<SK>& theta_rep() const {return Trep;};
-    const RO_t& get_f_of_theta() const {return theta_rep().ftheta();};  
+    const Root_of_2& get_f_of_theta() const {return theta_rep().ftheta();};  
     const HQ_NT& get_hq() const {return theta_rep().hq();}
 
     double get_theta_approx() const{
@@ -58,13 +83,6 @@ namespace CGAL {
       return CGAL::Cartesian<double>::Point_3(CGAL::to_double(this->x()),CGAL::to_double(this->y()),CGAL::to_double(this->z()));
     }
     
-    static inline Circular_arc_point_on_reference_sphere_3 VirtualPt_to_point_on_sphere(){
-      return Circular_arc_point_on_reference_sphere_3(FT(0),FT(0),FT(0),FT(0),HQ_NT(-1));
-    };
-
-    static inline Circular_arc_point_on_reference_sphere_3 Root_for_sphere_to_point_on_sphere(const HQ_NT& hq,const typename AK::Root_for_spheres_2_3& R){
-      return Circular_arc_point_on_reference_sphere_3(hq,auto_ftype(hq)==TAN?(R.y()/R.x()):(R.x()/R.y()),R);
-    };
     
     
   };    

@@ -61,6 +61,7 @@ namespace CGAL {
         typedef CGALi::Circle_3<SphericalKernel>  Circle_3;
         typedef CGALi::Line_arc_3<SphericalKernel>  Line_arc_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
+        typedef float HQ_NT;//type to represent the index of one hquadrant
 
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >
