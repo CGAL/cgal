@@ -196,17 +196,46 @@ namespace SphericalFunctors {
   
   //TAG_SEB
   template <class SK>
+  class Compute_theta_hq_3: Has_qrt{
+    typedef typename SK::Theta_rep   Theta_rep;
+
+  public:
+
+    typedef typename SK::HQ_NT result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Theta_rep & a) const
+    { return (a.rep().hq()); }    
+  };
+
+  template <class SK>
+  class Compute_theta_ftheta_3: Has_qrt{
+    typedef typename SK::Theta_rep   Theta_rep;
+    typedef typename SK::Root_of_2  Root_of_2;
+  public:
+
+    typedef  Root_of_2  result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Theta_rep & a) const
+    { return (a.rep().ftheta()); }    
+  };
+  
+  
+  template <class SK>
   class Compute_circular_theta_rep_3: Has_qrt{
     typedef typename SK::Circular_arc_point_on_reference_sphere_3   Circular_arc_point_on_reference_sphere_3;
 
   public:
 
-    typedef  typename CGAL::CGALi::Theta_rep<SK> result_type;
+    typedef  typename  SK::Theta_rep result_type;
     typedef const result_type &        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
-    { return (a.theta_rep()); }    
+    { return (a.rep().theta_rep()); }
   };
   
   template <class SK>
@@ -221,7 +250,7 @@ namespace SphericalFunctors {
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
-    { return (a.theta_rep().ftheta()); }    
+    { return (a.rep().theta_rep().ftheta()); }    
   };
 
   template <class SK>
@@ -235,7 +264,7 @@ namespace SphericalFunctors {
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
-    { return (a.theta_rep().hq()); }    
+    { return (a.rep().theta_rep().hq()); }    
   };
   
   
@@ -525,6 +554,30 @@ namespace SphericalFunctors {
   };
 
 //TAG_SEB
+  template < class SK >
+  class Construct_theta_rep
+  {
+    typedef typename SK::Theta_rep                           Theta_rep;
+    typedef typename SK::Kernel_base::Theta_rep      RTheta_rep;
+    typedef typename SK::Root_of_2                            Root_of_2;
+    typedef typename Theta_rep::Rep                         Rep;
+    typedef typename SK::HQ_NT                                 HQ_NT;
+
+
+  public:
+    typedef  Theta_rep result_type;
+    typedef Arity_tag<1>             Arity;
+
+
+    result_type
+    operator()(void) 
+    { return Rep(); }
+    
+    result_type
+    operator()(const HQ_NT& hq,const Root_of_2& r)
+    { return Rep(hq,r);}
+  };    
+  
   template < class SK >
   class Construct_circular_arc_point_on_reference_sphere_3
   {

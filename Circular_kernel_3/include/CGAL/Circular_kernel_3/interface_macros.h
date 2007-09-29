@@ -39,6 +39,9 @@
   CGAL_Spherical_Kernel_cons(Compute_circular_theta_rep_3,compute_circular_theta_rep_3)
   CGAL_Spherical_Kernel_cons(Compute_circular_theta_3,compute_circular_theta_3)
   CGAL_Spherical_Kernel_cons(Compute_circular_hq_3,compute_circular_hq_3)
+  CGAL_Spherical_Kernel_cons(Construct_theta_rep,construct_theta_rep)
+  CGAL_Spherical_Kernel_cons(Compute_theta_hq_3,compute_theta_hq_3)
+  CGAL_Spherical_Kernel_cons(Compute_theta_ftheta_3,compute_theta_ftheta_3)
 
   CGAL_Spherical_Kernel_cons(Get_equation, get_equation_object) 
   CGAL_Spherical_Kernel_cons(Construct_circular_arc_point_3, construct_circular_arc_point_3_object)

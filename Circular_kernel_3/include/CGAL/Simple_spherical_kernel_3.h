@@ -37,6 +37,9 @@
 #include <CGAL/Circular_kernel_3/Circle_3.h>
 #include <CGAL/Circle_3.h>
 
+#include <CGAL/Circular_kernel_3/Theta_rep.h>
+#include <CGAL/Theta_rep.h>
+
 #include <CGAL/Circular_kernel_3/Line_arc_3.h>
 #include <CGAL/Line_arc_3.h>
 
@@ -60,6 +63,7 @@ namespace CGAL {
         typedef CGALi::Circular_arc_on_reference_sphere_3<SphericalKernel>  Circular_arc_on_reference_sphere_3;
         typedef CGALi::Circle_3<SphericalKernel>  Circle_3;
         typedef CGALi::Line_arc_3<SphericalKernel>  Line_arc_3;
+        typedef CGALi::Theta_rep<SphericalKernel>  Theta_rep;
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
         typedef float HQ_NT;//type to represent the index of one hquadrant
 

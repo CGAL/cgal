@@ -19,23 +19,6 @@
 namespace CGAL {
   namespace CGALi {
   
-  
-    
-  template <class SK>
-  class Theta_rep{
-    typedef typename SK::Algebraic_kernel::Root_of_2 Root_of_2;
-    typedef typename SK::HQ_NT HQ_NT;
-    typedef typename SK::FT FT;    
-    typedef std::pair<HQ_NT,Root_of_2> Rep;
-    
-    //
-    typename SK::template Handle<Rep>::type  base;
-    public:
-    Theta_rep(const HQ_NT& hq,const Root_of_2& r):base(std::pair<HQ_NT,Root_of_2>(hq,r)){}
-    Theta_rep(){}
-    const HQ_NT& hq() const {return get(base).first;}
-    const Root_of_2& ftheta() const {return CGAL::get(base).second;}
-  };    
     
   template<class SK>
   class Circular_arc_point_on_reference_sphere_3:public Circular_arc_point_3<SK>{
@@ -44,8 +27,9 @@ namespace CGAL {
     typedef typename SK::Algebraic_kernel AK;
     typedef Circular_arc_point_3<SK> T_Circular_arc_point_3;
     typedef typename SK::HQ_NT HQ_NT;
+    typedef typename SK::Theta_rep Theta_rep;
     //---------------
-    Theta_rep<SK> Trep;
+    Theta_rep Trep;
     public:
     Circular_arc_point_on_reference_sphere_3(const FT& ftheta,const FT& xt,const FT& yt,const FT& zt,const HQ_NT& _hq)
       :T_Circular_arc_point_3(typename SK::Point_3(xt,yt,zt)),Trep(_hq,ftheta){};//critical point of non normal circles
@@ -56,7 +40,7 @@ namespace CGAL {
     Circular_arc_point_on_reference_sphere_3(const HQ_NT& _hq,const Root_of_2& ftheta,const typename SK::Algebraic_kernel::Root_for_spheres_2_3& rfs)
       :T_Circular_arc_point_3(rfs),Trep(_hq,ftheta){};
         
-    Circular_arc_point_on_reference_sphere_3():T_Circular_arc_point_3(FT(0),FT(0),FT(0),FT(0)),Trep(-1,FT(0)){};
+    Circular_arc_point_on_reference_sphere_3():T_Circular_arc_point_3(FT(0),FT(0),FT(0)),Trep(-1,FT(0)){};
       
     Circular_arc_point_on_reference_sphere_3(const HQ_NT& hq,const typename AK::Root_for_spheres_2_3& R):T_Circular_arc_point_3(R),Trep(hq,auto_ftype(hq)==TAN?(R.y()/R.x()):(R.x()/R.y())){};            
       
@@ -69,7 +53,7 @@ namespace CGAL {
     //~ };      
       
       
-    const Theta_rep<SK>& theta_rep() const {return Trep;};
+    const Theta_rep& theta_rep() const {return Trep;};
     const Root_of_2& get_f_of_theta() const {return theta_rep().ftheta();};  
     const HQ_NT& get_hq() const {return theta_rep().hq();}
 
