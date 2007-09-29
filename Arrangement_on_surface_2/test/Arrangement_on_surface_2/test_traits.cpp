@@ -94,13 +94,12 @@ template <class stream>
 bool
 Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
-  Curve_2 cv;
-  if (read_curve(is,cv))
-  {
-    xcv = X_monotone_curve_2(cv);
-    return true;
-  }
-  return false;
+  Point_2 p1,p2;
+  read_point(is, p1);
+  read_point(is, p2);
+  CGAL_assertion(p1 != p2);
+  xcv = X_monotone_curve_2(p1, p2);
+  return true;
 }
 
 /*! Read a curve */
