@@ -78,12 +78,12 @@ public:
   /*! Constructor */
   Arr_plane_3(const Point_3 & p, const Point_3 & r)
   {
-    FT rpx = p.x() - r.x();
-    FT rpy = p.y() - r.y();
-    FT rpz = p.z() - r.z();
-    m_a = r.y() * rpz - rpy * r.z();
-    m_b = r.z() * rpx - rpz * r.x();
-    m_c = r.x() * rpy - rpx * r.y();
+    FT prx = r.x() - p.x();
+    FT pry = r.y() - p.y();
+    FT prz = r.z() - p.z();
+    m_a = r.y() * prz - pry * r.z();
+    m_b = r.z() * prx - prz * r.x();
+    m_c = r.x() * pry - prx * r.y();
   }
 
   /*! Obtain the x coefficient */
