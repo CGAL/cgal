@@ -567,7 +567,6 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
     {
       for (int i = 0; !is.eof() ; ++i) 
       {
-	  std::cout << " str_stream gcount = " << str_stream.gcount() << std::endl ;
           switch (obj_t)
           {
             case POINT :
