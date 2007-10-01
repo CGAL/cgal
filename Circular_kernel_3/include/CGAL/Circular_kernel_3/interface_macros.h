@@ -53,6 +53,7 @@
   CGAL_Spherical_Kernel_cons(Construct_circle_3, construct_circle_3_object)
   CGAL_Spherical_Kernel_cons(Construct_diametral_sphere_3, construct_diametral_sphere_3_object)
   CGAL_Spherical_Kernel_cons(Construct_supporting_plane_3, construct_supporting_plane_3_object)
+  CGAL_Spherical_Kernel_cons(Construct_supporting_sphere_3, construct_supporting_sphere_3_object)
   CGAL_Spherical_Kernel_cons(Compute_circular_x_3, compute_circular_x_3_object)
   CGAL_Spherical_Kernel_cons(Compute_circular_y_3, compute_circular_y_3_object)
   CGAL_Spherical_Kernel_cons(Compute_circular_z_3, compute_circular_z_3_object)

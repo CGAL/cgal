@@ -66,7 +66,7 @@ namespace CGAL {
         typedef CGALi::Theta_rep<SphericalKernel>  Theta_rep;
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
         typedef float HQ_NT;//type to represent the index of one hquadrant
-
+        
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >
         struct Handle { typedef T    type; };

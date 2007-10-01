@@ -800,6 +800,22 @@ namespace SphericalFunctors {
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().supporting_plane(); }
   };
+  
+  template <class SK>
+  class Construct_supporting_sphere_3//: Has_qrt
+  {
+    typedef typename SK::Sphere_3 Sphere_3;
+    typedef typename SK::Circle_3 Circle_3;
+  public:
+
+    typedef Sphere_3        result_type;
+    typedef const result_type& qualified_result_type;
+    typedef Arity_tag<1>   Arity;
+    
+    qualified_result_type operator() (const Circle_3 & c) const
+    { return c.rep().supporting_sphere(); }
+
+  };  
 
   template <class SK>
   class Construct_diametral_sphere_3//: Has_qrt

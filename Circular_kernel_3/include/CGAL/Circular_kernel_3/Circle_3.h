@@ -30,29 +30,84 @@
 #define CGAL_SPHERICAL_KERNEL_CIRCLE_3_H
 
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
   namespace CGALi{
-    template <class SK,class Sphere= typename CGAL::Sphere_3<SK> > class Circle_3 {
-
+    
+    //default implementation suppose we have two arbitrary spheres
+    template <class T1,class T2,class SK>
+    class Circle_representation_3{};
+      
+    template <class SK>
+    class Circle_representation_3<CGAL::Sphere_3<SK>,CGAL::Sphere_3<SK>,SK>{
       typedef typename SK::Plane_3      Plane_3;
-      //~ typedef typename SK::Sphere_3     Sphere_3;
-      typedef Sphere                    Sphere_3;
       typedef typename SK::Point_3      Point_3;
       typedef typename SK::Vector_3     Vector_3;
       typedef typename SK::Direction_3  Direction_3;
-      typedef typename SK::FT           FT;
-
-    private:
-      typedef std::pair<Sphere_3, Plane_3>  Rep;
+      typedef typename SK::FT           FT;  
+      typedef typename CGAL::Sphere_3<SK> Sphere_3;
+      
+      typedef std::pair<Sphere_3,Sphere_3> Rep;
       typedef typename SK::template Handle<Rep>::type  Base;
 
-      Base base;
+      Base base;  
+      public:
+      Circle_representation_3() {}
+      Circle_representation_3(const Sphere_3& S1,const Sphere_3& S2):base(S1,S2){CGAL_precondition(false);}
+      
+      Circle_representation_3(const Point_3& center, const FT& squared_r, const Direction_3& d){CGAL_precondition(false);}//use enable_if or trick like this to invalidate them
+      Circle_representation_3(const Point_3& center, const FT& squared_r, const Vector_3& normal){CGAL_precondition(false);}
+      Circle_representation_3(const Point_3& center, const FT& squared_r, const Plane_3& p){CGAL_precondition(false);}
+      Circle_representation_3(const Plane_3 &p,const Sphere_3 &s){CGAL_precondition(false);}        
+        
+      const Plane_3& supporting_plane() const {
+        return SK().construct_radical_plane_3_object(get(base).first,get(base).second);
+      }
 
-    public:
-      Circle_3() {}
+      const Sphere_3& supporting_sphere() const {
+        return get(base).first;
+      }
+      
+      const Sphere_3& reference_sphere() const {
+        return get(base).second;
+      }      
+      
+      Point_3 center() const {
+        Plane_3 p=supporting_plane();
+        return p.projection(get(base).first.center());
+      }
 
-      Circle_3(const Point_3& center, const FT& squared_r, const Direction_3& d) 
+      FT squared_radius() const {
+        Point_3 c=center();
+        Point_3 p=get(base).first();
+        return get(base).first.squared_radius()-CGAL::squared_distance(p,c);
+      }
+
+      Sphere_3 diametral_sphere() const {
+        return Sphere_3(center(),squared_radius());
+      }  
+    };
+      
+    //specialization using one plane and one diametral sphere
+    template <class SK>
+    class Circle_representation_3<typename CGAL::Sphere_3<SK>,typename CGAL::Plane_3<SK>,SK >{
+      typedef typename SK::Plane_3      Plane_3;
+      typedef typename SK::Point_3      Point_3;
+      typedef typename SK::Vector_3     Vector_3;
+      typedef typename SK::Direction_3  Direction_3;
+      typedef typename SK::FT           FT;  
+      typedef typename CGAL::Sphere_3<SK> Sphere_3;
+      
+      typedef std::pair<Sphere_3,typename SK::Plane_3> Rep;
+      typedef typename SK::template Handle<Rep>::type  Base;
+
+      Base base;  
+      public:
+
+      Circle_representation_3() {}
+        
+      Circle_representation_3(const Point_3& center, const FT& squared_r, const Direction_3& d) 
       {
         // It is not allowed non-positive radius 
         // Should we keep this pre-condition?
@@ -61,29 +116,28 @@ namespace CGAL {
                    plane_from_point_direction(center, d));
       }
 
-      Circle_3(const Point_3& center, const FT& squared_r, const Vector_3& normal) 
+      Circle_representation_3(const Point_3& center, const FT& squared_r, const Vector_3& normal) 
       {
         // It is not allowed non-positive radius 
         // Should we keep this pre-condition?
         CGAL_kernel_assertion(squared_r > 0);
-        base = Rep(Sphere_3(center,squared_r), 
-                   plane_from_point_direction(center, normal.direction()));
+        base = Rep(Sphere_3(center,squared_r),plane_from_point_direction(center, normal.direction()));
       }
 
-      Circle_3(const Point_3& center, const FT& squared_r, const Plane_3& p)
+      Circle_representation_3(const Point_3& center, const FT& squared_r, const Plane_3& p)
       {
         // the plane contains the center
-  CGAL_kernel_assertion((p.a() * center.x() +
+        CGAL_kernel_assertion((p.a() * center.x() +
                                p.b() * center.y() +
                                p.c() * center.z() +
-                               p.d()) == ZERO);
+                               p.d()) == CGAL::ZERO);
         // It is not allowed non-positive radius 
         // Should we keep this pre-condition?
         CGAL_kernel_assertion(squared_r > 0);
         base = Rep(Sphere_3(center,squared_r), p);
       }
 
-      Circle_3(const Sphere_3 &s1, 
+      Circle_representation_3(const Sphere_3 &s1, 
                const Sphere_3 &s2) {
          std::vector<Object> sols;
          SK().intersect_3_object()(s1, s2, std::back_inserter(sols));
@@ -93,10 +147,11 @@ namespace CGAL {
          // the intersection must be a circle (no point allowed)
          CGAL_kernel_precondition(assign(circle,sols[0]));
          assign(circle,sols[0]);
-         *this = circle.rep();
+         base=Rep(circle.diametral_sphere(),circle.supporting_plane());
+         //~ *this = circle.rep();
       }
 
-      Circle_3(const Plane_3 &p, 
+      Circle_representation_3(const Plane_3 &p, 
                const Sphere_3 &s) {
          std::vector<Object> sols;
          SK().intersect_3_object()(p, s, std::back_inserter(sols));
@@ -106,13 +161,17 @@ namespace CGAL {
          // the intersection must be a circle (no point allowed)
          CGAL_kernel_precondition(assign(circle,sols[0]));
          assign(circle,sols[0]);
-         *this = circle.rep();
+         base=Rep(circle.diametral_sphere(),circle.supporting_plane());
       }
-
+        
       const Plane_3& supporting_plane() const {
         return get(base).second;
       }
-
+      
+      const Sphere_3& supporting_sphere() const {
+        return diametral_sphere();
+      }
+      
       Point_3 center() const {
         return diametral_sphere().center();
       }
@@ -124,6 +183,44 @@ namespace CGAL {
       const Sphere_3& diametral_sphere() const {
         return get(base).first;
       }
+    };
+
+    //~ template <class SK,class Sphere= typename CGAL::Sphere_3<SK> > class Circle_3 {
+    template <class SK,class Container=Circle_representation_3<typename CGAL::Sphere_3<SK>,typename CGAL::Plane_3<SK>,SK > >
+    //~ template <class SK,class Container=Circle_representation_3<typename SK::Sphere_3,typename CGAL::Plane_3<SK>,SK > >
+    class Circle_3 {    
+
+      typedef typename SK::Plane_3      Plane_3;
+      typedef typename CGAL::Sphere_3<SK>         Sphere_3;
+      typedef typename SK::Point_3      Point_3;
+      typedef typename SK::Vector_3     Vector_3;
+      typedef typename SK::Direction_3  Direction_3;
+      typedef typename SK::FT           FT;
+
+    private:
+      //~ typedef std::pair<Sphere_3, Plane_3>  Rep;
+      //~ typedef typename SK::template Handle<Rep>::type  Base;
+
+      //~ Base base;
+      Container base;
+    
+    public:
+      
+ 
+    
+      Circle_3() {}
+      Circle_3(const Point_3& center, const FT& squared_r, const Direction_3& d):base(center,squared_r,d){}
+      Circle_3(const Point_3& center, const FT& squared_r, const Vector_3& normal):base(center,squared_r,normal){}
+      Circle_3(const Point_3& center, const FT& squared_r, const Plane_3& p):base(center,squared_r,p){}
+      Circle_3(const Plane_3 &p,const Sphere_3 &s):base(p,s){}
+      Circle_3(const Sphere_3 &s1, const Sphere_3 &s2):base(s1,s2){}
+
+
+      const Plane_3& supporting_plane() const { return base.supporting_plane(); }
+      const Sphere_3& supporting_sphere() const { return base.supporting_plane(); }
+      Point_3 center() const { return base.center(); }
+      FT squared_radius() const { return base.squared_radius(); }
+      const Sphere_3& diametral_sphere() const { return base.diametral_sphere(); }
 
       FT area_divided_by_pi() const {
         return squared_radius();
