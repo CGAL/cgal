@@ -827,7 +827,7 @@ set_compiler_flags()
     CGAL_LIBS_OPTFLAGS="-O2"
     CGAL_LIB_CXXFLAGS=""
     CGAL_LIB_LDFLAGS=""
-    CGAL_STATIC_LIB_CREATE="ar cr ''"
+    CGAL_STATIC_LIB_CREATE="${CGAL_STATIC_LIB_CREATE:-ar cr ''}"
     CGAL_OBJ_PREFIX=""
     CGAL_SHARED_LIB_CXXFLAGS="-fPIC"
     CGAL_SHARED_LIB_LDFLAGS=
@@ -860,7 +860,7 @@ set_compiler_flags()
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
-    RANLIB="${_cat} >/dev/null"
+    RANLIB="${RANLIB:-${_cat} >/dev/null}"
 
     case ${CGAL_OS_COMPILER} in
 	*bcc32.exe*|*BCC32*)
