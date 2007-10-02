@@ -558,49 +558,44 @@ bool Traits_test<T_Traits>::start()
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_t)
+bool Traits_test<T_Traits>::read_input(std::ifstream & is,
+                                       Read_object_type obj_t)
 {
   char one_line[128];
   skip_comments(is, one_line);
   std::istringstream str_stream(one_line, std::istringstream::in);
-    try
-    {
-      for (int i = 0; !is.eof() ; ++i) 
-      {
-          switch (obj_t)
-          {
-            case POINT :
-	      m_points.resize(m_points.size()+1);
-              if (!read_point(str_stream, m_points[i]))
-              {
-                 std::cerr << "Error reading point!" << std::endl;
-                 end_of_line_printed = true;
-                 return false;
-               }
-              break;
-            case CURVE :
-	      m_curves.resize(m_curves.size()+1);
-              if (!read_curve(str_stream, m_curves[i]))
-               {
-                 std::cerr << "Error reading curves!" << std::endl;
-                 end_of_line_printed = true;
-                 return false;
-              }
-              break;
-            case XCURVE :
-	      m_xcurves.resize(m_xcurves.size()+1);
-              if (!read_xcurve(str_stream, m_xcurves[i]))
-              {
-                 std::cerr << "Error reading xcurves!" << std::endl;
-                 end_of_line_printed = true;
-                 return false;
-              }
-              break;
-	     }//switch
-       str_stream.clear();
-       skip_comments(is, one_line);
-       str_stream.str(one_line);
-     }//for
+  try {
+    for (int i = 0; !is.eof() ; ++i) {
+      switch (obj_t) {
+       case POINT :
+        m_points.resize(m_points.size()+1);
+        if (!read_point(str_stream, m_points[i])) {
+          std::cerr << "Error reading point!" << std::endl;
+          end_of_line_printed = true;
+          return false;
+        }
+        break;
+       case CURVE :
+        m_curves.resize(m_curves.size()+1);
+        if (!read_curve(str_stream, m_curves[i])) {
+          std::cerr << "Error reading curves!" << std::endl;
+          end_of_line_printed = true;
+          return false;
+        }
+        break;
+       case XCURVE :
+        m_xcurves.resize(m_xcurves.size()+1);
+        if (!read_xcurve(str_stream, m_xcurves[i])) {
+          std::cerr << "Error reading xcurves!" << std::endl;
+          end_of_line_printed = true;
+          return false;
+        }
+        break;
+      }//switch
+      str_stream.clear();
+      skip_comments(is, one_line);
+      str_stream.str(one_line);
+    }//for
      /*for (int i = 0; i < num; ++i)
      { //for debug
         switch (obj_t)
@@ -616,27 +611,26 @@ bool Traits_test<T_Traits>::read_input(std::ifstream & is ,Read_object_type obj_
             break;
         } //switch
      } */ //for
-   }//try
-   catch (std::exception e)
-   {
-      switch (obj_t)
-      {
-         case POINT :
-           std::cout << "Abort Test, a violation during reading point!" 
-                     << std::endl;
-           break;
-         case CURVE :
-           std::cout << "Abort Test, a violation during reading curve!" 
-                     << std::endl;
-           break;
-         case XCURVE :
-           std::cout << "Abort Test, a violation during reading xcurve!" 
-                     << std::endl;
-           break;
-      }//switch
-      is.close();
-      return false;
-    }//catch
+  }//try
+  catch (std::exception e)
+  {
+    switch (obj_t) {
+     case POINT :
+      std::cout << "Abort Test, a violation during reading point!" 
+                << std::endl;
+      break;
+     case CURVE :
+      std::cout << "Abort Test, a violation during reading curve!" 
+                << std::endl;
+      break;
+     case XCURVE :
+      std::cout << "Abort Test, a violation during reading xcurve!" 
+                << std::endl;
+      break;
+    }//switch
+    is.close();
+    return false;
+  }//catch
   return true;
 }
 
@@ -696,7 +690,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     /*if (!test_result)
     std::cout << "bug" << std::endl;*/
     counter++;
-    std::cout << "iter number : " << counter << std::endl;
+    // std::cout << "iter number : " << counter << std::endl;
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
@@ -712,7 +706,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       {
         test_result=false;
       }
-      else
+      // else
       {
          //true for more information, and false for less
          bool display_all_violation_info=true;
@@ -1152,13 +1146,13 @@ Traits_test<T_Traits>::compare_y_at_x_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = get_expected_enum(str_stream);
-  unsigned int real_answer =
-    m_traits.compare_y_at_x_2_object()(m_points[id1], m_xcurves[id2]);
-  did_violation_occur();
   std::cout << "Test: compare_y_at_x( " << m_points[id1] << ","
             << m_xcurves[id2]
             << " ) ? ";
   std::cout << exp_answer << " ";
+  unsigned int real_answer =
+    m_traits.compare_y_at_x_2_object()(m_points[id1], m_xcurves[id2]);
+  did_violation_occur();
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -1198,12 +1192,12 @@ compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = get_expected_enum(str_stream);
-  unsigned int real_answer = m_traits.compare_y_at_x_left_2_object()
-                               (m_xcurves[id1],m_xcurves[id2],m_points[id3]);
-  did_violation_occur();
   std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
             << m_xcurves[id2] << ", " << m_points[id3]
             << " ) ? "; 
+  unsigned int real_answer = m_traits.compare_y_at_x_left_2_object()
+                               (m_xcurves[id1],m_xcurves[id2],m_points[id3]);
+  did_violation_occur();
   std::cout << exp_answer << " ";
 
   return compare_and_print(exp_answer, real_answer);
@@ -1224,13 +1218,13 @@ compare_y_at_x_right_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = get_expected_enum(str_stream);
+  std::cout << "Test: compare_y_at_x_right( " << m_xcurves[id1] << ","
+            << m_xcurves[id2] << ", " << m_points[id3]
+            << " ) ? ";
   unsigned int real_answer =
     m_traits.compare_y_at_x_right_2_object()
       (m_xcurves[id1], m_xcurves[id2], m_points[id3]);
   did_violation_occur();
-  std::cout << "Test: compare_y_at_x_right( " << m_xcurves[id1] << ","
-            << m_xcurves[id2] << ", " << m_points[id3]
-            << " ) ? ";
   std::cout << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
 }
@@ -1290,12 +1284,12 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
   
   unsigned int id;
   str_stream >> id;
+  std::cout << "Test: make_x_monotone( " << m_curves[id]
+            << " ) ? ";
   std::vector<CGAL::Object> object_vec;
   m_traits.make_x_monotone_2_object()(m_curves[id],
                                       std::back_inserter(object_vec));
   did_violation_occur();
-  std::cout << "Test: make_x_monotone( " << m_curves[id]
-            << " ) ? ";
   unsigned int num;
   str_stream >> num;
   if (!compare(num, (unsigned int)object_vec.size(), "size")) {
