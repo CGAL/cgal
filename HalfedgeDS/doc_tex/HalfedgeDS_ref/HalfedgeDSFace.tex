@@ -24,9 +24,66 @@ type in the \ccc{HalfedgeDS} concept. It is also required in
 the \ccc{Face_wrapper<Refs,Traits>} member class template of an
 items class, see the \ccc{HalfedgeDSItems} concept.
 
-A face optionally stores a reference to an incident halfedge that
-points to the face.  A type tag indicates whether the related member
-functions are supported. 
+\input{HalfedgeDS_ref/Extension_intro.tex}
+
+\input{HalfedgeDS_ref/Ccb_intro.tex}
+
+{\bf\ttfamily
+If ccbs are used, a face optionally stores begin and end iterators for the outer and inner ccb sequences
+as well. It also optionally stores iterators for the sequence of ccbs corresponding to isolated vertices.
+If, alternatively, direct mutual reference is used, a face optionally stores a reference 
+to an incident halfedge that points to the face.
+A type tag indicates whether the related member functions are supported. 
+}
+
+{\bf\ttfamily
+
+The choice between using ccbs or direct mutual reference
+(to define the incidence relation between faces and halfedges) is selected 
+via a combination of type tags:
+
+For direct mutual reference (the only method available in \cgal\ 3.3.1) use
+
+\ccc{Supports_face_halfedge} $\equiv$  \ccc{CGAL::Tag_true}
+and
+\ccc{Supports_face_ccb} $\equiv$  \ccc{CGAL::Tag_false}
+
+For ccb items use:
+
+\ccc{Supports_face_halfedge} $\equiv$  \ccc{CGAL::Tag_false}
+and
+\ccc{Supports_face_ccb} $\equiv$  \ccc{CGAL::Tag_true}
+ 
+}
+
+\begin{ccAdvanced}
+{\bf\ttfamily
+The storage for \ccc{ccb} items is controlled by the \ccc{HDS} itself. Therefore, 
+there is a \ccc{Ccb_iterator} type local to \ccc{HalfedgeDS} corresponding to a 
+container whose elements are of type \ccc{HalfedgeDSCcb}.
+
+Faces maintain their own local sequences of ccbs. These sequences are
+containers of \ccc{Ccb_handle} elements, not of \ccc{Ccb} elements (like the
+container in the HDS). Thus, a Face defines a local \ccc{Ccb_handle_iterator} type.
+
+While a \ccc{Ccb_iterator} is implicitly convertible to a \ccc{Ccb_handle},
+a \ccc{Ccb_handle_iterator} is {\em dereferenceable} as a \ccc{Ccb_handle} 
+(i.e. you need to apply the \ccc{operator*} to access the handle)
+}
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+{\bf\ttfamily
+As faces can have more than one outer boundary, an upper level data structure could use a single
+face to represent disjoint regions each bounded by a distinct outer ccb. However,
+it is highly recommended to restrict faces to correspond to singly connected regions, and
+to use multiple outer ccbs to represent disjoint boundary components around the same 
+connected region. For example, the surface of a cross section of a cylinder is a single
+connected region with two disjoint outer boundaries. This would be given by 1 face with
+2 outer ccbs.
+}
+\end{ccAdvanced}
+
 Figure~\ccTexHtml{\ref{figureHalfedgeDSOptionalMethods} 
 on page \pageref{figureHalfedgeDSOptionalMethods}}{}\begin{ccHtmlOnly}
   <A HREF="Concept_HalfedgeDS.html#figureHalfedgeDSOptionalMethods"><IMG 
@@ -44,12 +101,14 @@ can be bypassed by the user, but not by accident.)
 
 \ccTypes
 
-\ccThree{Halfedge_const_handle}{v.set_halfedge( Halfedge_handle h);}{}
+\ccThree{Ccb_const_handle_const_iterator}{v.set_halfedge( Halfedge_handle h);}{}
 \ccThreeToTwo
 %\ccTwo{HalfedgeDSFace:: Halfedge_const_handleXX}{}
 
 \ccNestedType{HalfedgeDS}
     {instantiated \ccc{HalfedgeDS} ( $\equiv$ \ccc{Refs}).}
+\ccGlue
+\ccNestedType{size_type}{size type.}
 \ccGlue
 \ccNestedType{Base}{base class that allows modifications.}
 \ccGlue
@@ -57,9 +116,13 @@ can be bypassed by the user, but not by accident.)
 \ccGlue
 \ccNestedType{Halfedge}{model of \ccc{HalfedgeDSHalfedge}.}
 \ccGlue
+\ccNestedType{\bf\ttfamily Ccb}{\bf\ttfamily model of \ccc{HalfedgeDSCcb}.}
+\ccGlue
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
 \ccNestedType{Halfedge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Ccb_handle}{\bf\ttfamily handle to ccb.}
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
 \ccGlue
@@ -69,8 +132,17 @@ can be bypassed by the user, but not by accident.)
 \ccGlue
 \ccNestedType{Face_const_handle}{}
 \ccGlue
-\ccNestedType{Supports_face_halfedge}{\ccc{CGAL::Tag_true} or 
-  \ccc{CGAL::Tag_false}.}
+\ccNestedType{\bf\ttfamily Ccb_const_handle}{}
+
+
+\ccNestedType{\bf\ttfamily Ccb_const_handle_const_iterator}
+\ccGlue
+\ccNestedType{\bf\ttfamily Ccb_handle_iterator}{\bf\ttfamily iterator to the local sequence of \ccc{Ccb_handles}.}
+
+\ccNestedType{Supports_face_halfedge}{\ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Supports_face_ccb}{\bf\ttfamily \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
+
 
 \ccCreation
 \ccCreationVariable{f}
@@ -79,14 +151,85 @@ can be bypassed by the user, but not by accident.)
 
 \ccTagFullDeclarations
 
-\ccHeading{Operations available if \ccc{Supports_face_halfedge} $\equiv$ 
-           \ccc{CGAL::Tag_true}}
+\ccHeading{Operations available if \ccc{Supports_face_ccb} $\equiv$ \ccc{CGAL::Tag_true}}
+
+\ccMethod{\bf\ttfamily size_type size_of_isolated_vertices() const;}{\bf\ttfamily number of isolated  vertices of \ccVar}
+
+\ccMethod{\bf\ttfamily size_type size_of_outer_ccbs() const;}
+\ccGlue
+\ccMethod{\bf\ttfamily size_type size_of_inner_ccbs() const;}{\bf\ttfamily number of outer/inner ccbs of \ccVar}
+
+
+
+\ccMethod{\bf\ttfamily Ccb_handle_iterator isolated_vertices_begin();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_const_handle_const_iterator  isolated_vertices_begin() const;}
+         {\bf\ttfamily the begin iterator for the sequence of isolated vertices of \ccVar.}
+
+\ccMethod{\bf\ttfamily Ccb_handle_iterator outer_ccbs_begin();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_const_handle_const_iterator  outer_ccbs_begin() const;}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_handle_iterator inner_ccbs_begin();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_const_handle_const_iterator  inner_ccbs_begin() const;}
+         {\bf\ttfamily the begin iterator for the sequence of outer/inner ccbs of \ccVar.}
+
+
+\ccMethod{\bf\ttfamily Ccb_handle_iterator isolated_vertices_end();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_const_handle_const_iterator isolated_vertices_end() const;}
+         {\bf\ttfamily the past-the-end iterator for the sequence of isolated vertices of \ccVar.}
+
+
+\ccMethod{\bf\ttfamily Ccb_handle_iterator outer_ccbs_end();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_const_handle_const_iterator outer_ccbs_end() const;}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_handle_iterator inner_ccbs_end();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_const_handle_const_iterator inner_ccbs_end() const;}
+         {\bf\ttfamily the past-the-end iterator for the sequence of outer/inner ccbs of \ccVar.}
+
+
+\ccMethod{\bf\ttfamily void isolated_vertex_push_back( Ccb_handle v );}
+         {\bf\ttfamily appends $v$ to the isolated vertices sequence}
+
+\ccMethod{\bf\ttfamily void outer_ccb_push_back( Ccb_handle b );}
+\ccGlue
+\ccMethod{\bf\ttfamily void inner_ccb_push_back( Ccb_handle b );}
+         {\bf\ttfamily appends $b$ to the outer/inner ccbs sequence}
+
+\ccMethod{\bf\ttfamily Ccb_handle_iterator isolated_vertex_insert( Ccb_handle_iterator pos, Ccb_handle v );}
+         {\bf\ttfamily inserts $v$ before $pos$ in the isolated vertices sequence}
+
+\ccMethod{\bf\ttfamily Ccb_handle_iterator outer_ccb_insert( Ccb_handle_iterator pos, Ccb_handle b );}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_handle_iterator inner_ccb_insert( Ccb_handle_iterator pos, Ccb_handle b );}
+         {\bf\ttfamily inserts $b$ before $pos$ in the outer/inner ccbs sequence}
+
+\ccMethod{\bf\ttfamily void isolated_vertex_erase( Ccb_handle_iterator it );}
+         {\bf\ttfamily removes the \ccc{Ccb_handle} pointed to be $it$ in the isolated vertices sequence}
+
+\ccMethod{\bf\ttfamily void outer_ccb_erase( Ccb_handle_iterator it );}
+\ccGlue
+\ccMethod{\bf\ttfamily void inner_ccb_erase( Ccb_handle_iterator it );}
+         {\bf\ttfamily removes the \ccc{Ccb_handle} pointed to be $it$ in the outer/inner ccbs sequence}
+
+\ccMethod{\bf\ttfamily void isolated_vertices_clear();}{\bf\ttfamily removes all isolated vertices. }
+
+\ccMethod{\bf\ttfamily void outer_ccbs_clear();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily void inner_ccbs_clear();}{\bf\ttfamily removes all outer/inner ccbs. }
+
+
+\ccHeading{Operations available if \ccc{Supports_face_halfedge} $\equiv$ \ccc{CGAL::Tag_true}}
 
 \ccMethod{Halfedge_handle       halfedge();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle halfedge() const;}{
     incident halfedge that points to \ccVar.}
-\ccGlue
+
 \ccMethod{void set_halfedge( Halfedge_handle h);}{
     sets incident halfedge to $h$.}
 
@@ -101,7 +244,8 @@ can be bypassed by the user, but not by accident.)
 \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
 \ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefConceptPage{HalfedgeDSVertex}\\
-\ccRefConceptPage{HalfedgeDSHalfedge}
+\ccRefConceptPage{HalfedgeDSHalfedge}\\
+\ccRefConceptPage{HalfedgeDSCcb}
 
 \ccTagDefaults
 \end{ccRefConcept}

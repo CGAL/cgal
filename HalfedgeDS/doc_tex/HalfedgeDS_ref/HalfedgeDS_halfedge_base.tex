@@ -26,7 +26,8 @@ The full declaration states four template parameters:
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
               \> \>\ccc{class Tag_prev   } \=\ccc{= CGAL::Tag_true,}\\
               \> \>\ccc{class Tag_vertex } \>\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_face   } \>\ccc{= CGAL::Tag_true>}\\
+              \> \>\ccc{class Tag_face   } \>\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_ccb} \>\ccc{= CGAL::Tag_false}\\
      \> \ccc{class HalfedgeDS_halfedge_base;}
 \end{tabbing}
 
@@ -38,6 +39,20 @@ supported.
 
 If \ccc{Tag_face} $\equiv$ \ccc{CGAL::Tag_true} an incident face is
 supported.
+
+{\bf\ttfamily If \ccc{Tag_ccb} $\equiv$ \ccc{CGAL::Tag_true} a host ccb is
+supported.}
+
+{\bf\ttfamily
+The incidence relation between a halfedge and a face can be stored in a halfedge in 
+one of two mutually exclusive ways: directly storing the incident face or
+storing the ccb common to the halfedge and the face.
+
+Since multiple ccbs were introduced in \cgal\ version 3.4, to keep backward compatibility,
+the choice between those methods is selected by the combination 
+of the two type tags \ccc{Tag_face} and \ccc{Tag_ccb}.
+These are mutually exclusive and only one can be \ccc{CGAL::Tag_true}.
+}
 
 In all cases, a reference to the next halfedge and to the opposite
 halfedge is supported.
@@ -61,6 +76,7 @@ halfedge is supported.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}
 
 \end{ccRefClass}

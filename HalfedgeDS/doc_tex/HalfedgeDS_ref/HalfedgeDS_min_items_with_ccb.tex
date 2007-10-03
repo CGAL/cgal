@@ -4,8 +4,8 @@
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
 % | 
-\RCSdef{\RCSHalfedgeDSminitemsRev}{$Id$}
-\RCSdefDate{\RCSHalfedgeDSminitemsDate}{$Date$}
+\RCSdef{\RCSHalfedgeDSminitemsRev}{$Id: HalfedgeDS_min_items.tex 28489 2006-02-14 10:08:15Z lsaboret $}
+\RCSdefDate{\RCSHalfedgeDSminitemsDate}{$Date: 2006-02-14 07:08:15 -0300 (Tue, 14 Feb 2006) $}
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
@@ -14,14 +14,14 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_min_items}
-\label{pageHalfedgeDSminitemsRef}
+\begin{ccRefClass}{HalfedgeDS_min_items_with_ccb}
+\label{pageHalfedgeDSminitemswithccbRef}
 
 \ccDefinition
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems}
-concept.  It defines types for vertices, halfedges and faces 
-hat declare the minimal required incidences for a \ccc{HalfedgeDS}, 
+concept.  It defines types for vertices, halfedges, faces 
+and ccbs that declare the minimal required incidences for a \ccc{HalfedgeDS}, 
 which are the \ccc{next()} and the \ccc{opposite()} member function for
 halfedges.
 
@@ -34,6 +34,7 @@ halfedges.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_with_ccb_2}\\
 \ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
 \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
 \ccRefConceptPage{PolyhedronItems_3}\\
@@ -45,7 +46,7 @@ halfedges.
 \ccExample
 
 The following example shows the canonical implementation of the
-\ccc{CGAL::HalfedgeDS_min_items} class. It uses the base classes for the
+\ccc{CGAL::HalfedgeDS_min_items_with_ccb} class. It uses the base classes for the
 item types that are provided in the library.
 
 \begin{ccExampleCode}
@@ -60,7 +61,7 @@ struct HalfedgeDS_min_items {
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
+        typedef CGAL::HalfedgeDS_face_base< Refs, Tag_false, Tag_false, Tag_false> Face;
     };
     template < class Refs, class Traits>
     struct Ccb_wrapper {

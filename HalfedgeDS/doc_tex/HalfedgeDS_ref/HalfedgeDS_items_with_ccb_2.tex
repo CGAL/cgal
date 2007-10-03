@@ -4,8 +4,8 @@
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
 % | 
-\RCSdef{\RCSHalfedgeDSitemsRev}{$Id$}
-\RCSdefDate{\RCSHalfedgeDSitemsDate}{$Date$}
+\RCSdef{\RCSHalfedgeDSitemsRev}{$Id: HalfedgeDS_items_2.tex 28489 2006-02-14 10:08:15Z lsaboret $}
+\RCSdefDate{\RCSHalfedgeDSitemsDate}{$Date: 2006-02-14 07:08:15 -0300 (Tue, 14 Feb 2006) $}
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
@@ -14,18 +14,16 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_items_2}
-\label{pageHalfedgeDSitemsRef}
+\begin{ccRefClass}{HalfedgeDS_items_with_ccb_2}
+\label{pageHalfedgeDSitemsWithCcbRef}
 
 \ccDefinition
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems} concept.
-It uses the default types for vertices, halfedges, and faces that
-declare all incidences supported by a \ccc{HalfedgeDS}.
-{\bf\ttfamily Ccbs are not supported (thus faces and halfedges reference each other
-directly)}. 
-The vertex also contains a point of type \ccc{Traits::Point_2}, 
-where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS}.
+It uses the default types for vertices, halfedges, faces and ccbs that
+declare all incidences supported by a \ccc{HalfedgeDS}.  The vertex
+also contains a point of type \ccc{Traits::Point_2}, where \ccc{Traits} 
+is the template argument of the corresponding \ccc{HalfedgeDS}.
 
 \ccInclude{CGAL/HalfedgeDS_items_2.h}
 
@@ -35,7 +33,7 @@ where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_items_with_ccb_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_min_items_with_ccb}\\
 \ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
@@ -51,6 +49,8 @@ where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS
 The following example shows the canonical implementation of the
 \ccRefName\ class. It uses the base classes for the item types that
 are provided in the library.
+Notice the type tags for the halfedge and face wrapper which
+select ccbs.
 
 \begin{ccExampleCode}
 struct HalfedgeDS_items_2 {
@@ -61,44 +61,19 @@ struct HalfedgeDS_items_2 {
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper {
-        typedef CGAL::HalfedgeDS_halfedge_base< Refs> Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_false, Tag_true> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef CGAL::HalfedgeDS_face_base< Refs> Face;
+        typedef CGAL::HalfedgeDS_face_base< Refs, Tag_false, Tag_false, Tag_true> Face;
     };
-
-    // Ccbs are not supported by default, hence a dumy type is used.
     template < class Refs, class Traits>
     struct Ccb_wrapper {
-        typedef int Ccb;
+        typedef CGAL::HalfedgeDS_ccb_base< Refs> Ccb;
     };
 };
 \end{ccExampleCode}
 
-The following example shows a class definition for a new items class
-derived from the \ccRefName\ class. It replaces the \ccc{Face_wrapper}
-with a new definition of a face that contains a member variable for
-color. The new face makes use of the face base class provided in the
-library.
-
-\begin{ccExampleCode}
-// A face type with a color member variable.
-template <class Refs>
-struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-    CGAL::Color color;
-    My_face() {}
-    My_face( CGAL::Color c) : color(c) {}
-};
-
-// An items type using my face.
-struct My_items : public CGAL::HalfedgeDS_items_2 {
-    template <class Refs, class Traits>
-    struct Face_wrapper {
-        typedef My_face<Refs> Face;
-    };
-};
-\end{ccExampleCode}
 
 \end{ccRefClass}
 

@@ -24,6 +24,11 @@
 % +-----------------------------------+
 \ccHeading{Release Note}
 
+\input{HalfedgeDS_ref/Extension_intro.tex}
+
+% +-----------------------------------+
+\ccHeading{Release Note}
+
 Beginning with \cgal\ R2.3, this package has a new design.  The old
 design is still available for backwards compatibility and to support
 older compiler, such as MSVC++6.0. However its use is deprecated and
@@ -39,7 +44,7 @@ The concept of a halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
 capable of maintaining incidence information of vertices, edges, and
 faces, for example for planar maps or polyhedral surfaces. It is a
 combinatorial data structure, geometric interpretation is added by
-classes built on top of the halfedge data structure.
+classes built on top of the halfedge data structure. 
 
 The data structure defined here is known as the
 FE-structure~\cite{w-ebdss-85}, as
@@ -54,12 +59,19 @@ of these different data structures together with a thorough
 description of the design implemented here can be found
 in~\cite{k-ugpdd-99}.
 
-Each edge is represented by two halfedges with opposite orientations.
-Each halfedge can store a reference to an incident face and an
-incident vertex.  For each face and each vertex an incident halfedge
-is stored.  Reduced variants of the halfedge data structure can omit
-some of these incidences, for example the reference to halfedges in
-vertices or the storage of vertices at all. See 
+{\bf\ttfamily
+Each edge is decomposed into two halfedges with opposite orientations
+and each cycle of connected halfedges is associated with a single object 
+named \ccc{ccb} (Connected Component of the Boundary).
+One incident vertex is stored in each halfedge and one incident halfedge
+is stored in each vertex.
+Incidence information between halfedges and faces can be stored via
+two mutually exclusive mechanisms: directly storing an incident halfedge in a face
+and vice versa, or via a \ccc{ccb} object common to incident faces and halfedges.
+}
+Reduced variants of the halfedge data structure can omit some of these
+information, for example the halfedge pointers in faces or the
+storage of faces at all. See 
 Figure~\ccTexHtml{\ref{figureOptionalMethods}}{}\begin{ccHtmlOnly}
   <A HREF="Concept_HalfedgeDS.html#figureOptionalMethods"><IMG 
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
@@ -79,7 +91,7 @@ possible for vertices, halfedges, and faces.
           \protect\ccc{Halfedge}, and 
           \protect\ccc{Face} of the halfedge data structure. Member
           functions with shaded background are mandatory. The others
-          are optionally supported.}
+          are optionally supported. [NEEDS TO BE UPDATED TO INCORPORATE CCBS]}
         \label{figureOptionalMethods}
     \end{figure}
 \end{ccTexOnly}
@@ -94,9 +106,12 @@ possible for vertices, halfedges, and faces.
     The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
           <I>Face</I> of the halfedge data structure. Member
           functions with shaded background are mandatory. The others
-          are optionally supported.
+          are optionally supported [NEEDS TO BE UPDATED TO INCORPORATE CCBS].
     </CENTER>
 \end{ccHtmlOnly}
+
+
+\input{HalfedgeDS_ref/Ccb_intro.tex}
 
 A \ccRefName\ organizes the internal storage of its items.  Examples
 are a list-based or a vector-based storage. The \ccRefName\ exhibits
@@ -109,6 +124,13 @@ dangling handles), it must be called explicitly in advance for a
 \ccRefName\ before inserting new items beyond the current capacity.
 Classes built on top of a \ccRefName\ are advised to call the
 \ccc{reserve()} member function before creating new items.
+
+{\bf\ttfamily
+While the storage of \ccc{ccb} items is organized by the \ccRefName\ , faces contain 
+local sequences of \ccc{Ccb_handle} elements, not of \ccc{Ccb} elements. Thus,
+a \ccRefName\ defines a \ccc{Ccb_iterator} while a face defines a
+\ccc{Ccb_handle_iterator}.
+}
 
 % +-----------------------------------+
 \ccParameters
@@ -154,6 +176,8 @@ allocator.
 \ccNestedType{Halfedge}{model of \ccc{HalfedgeDSHalfedge} concept.}
 \ccGlue
 \ccNestedType{Face}{model of \ccc{HalfedgeDSFace} concept.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Ccb}{\bf\ttfamily model of \ccc{HalfedgeDSCcb} concept.}
 
 The following handles and iterators have appropriate non-mutable
 counterparts, i.e., \ccc{const_handle} and \ccc{const_iterator}. The
@@ -169,12 +193,16 @@ value. It will be used in analogy to \ccc{NULL} for pointers.
 \ccNestedType{Halfedge_handle}{handle to halfedge.}
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Ccb_handle}{\bf\ttfamily handle to ccb.}
 
 \ccNestedType{Vertex_iterator}{iterator over all vertices.}
 \ccGlue
 \ccNestedType{Halfedge_iterator}{iterator over all halfedges.}
 \ccGlue
 \ccNestedType{Face_iterator}{iterator over all faces.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Ccb_iterator}{\bf\ttfamily iterator over all ccbs.}
 
 % +-----------------------------------+
 \begin{ccAdvanced}
@@ -195,7 +223,13 @@ supported or not.
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{\ccc{Halfedge::face()}.}
 \ccGlue
+\ccNestedType{\bf\ttfamily Supports_halfedge_ccb}{\bf\ttfamily \ccc{Halfedge::ccb()}.}
+\ccGlue
 \ccNestedType{Supports_face_halfedge}{\ccc{Face::halfedge()}.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Supports_face_ccb}{\bf\ttfamily \ccc{Face::outer_ccb()}.}
+\ccGlue
+\ccNestedType{\bf\ttfamily Supports_ccb_face}{\bf\ttfamily \ccc{Ccb::face()}.}
 \ccGlue
 \ccNestedType{Supports_removal}{removal of individual elements.}
 
@@ -203,10 +237,22 @@ The following dependencies among these options must be regarded:
 
 Vertices are supported $\Longleftrightarrow$
 \ccc{Supports_halfedge_vertex} $\equiv$ \ccc{CGAL::Tag_true}.
-\\
-Faces are supported $\Longleftrightarrow$
-\ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true}.
-\\
+
+\textbf{Faces are supported $\Longleftrightarrow$
+Supports\_halfedge\_face $\equiv$ CGAL::Tag\_true
+or
+( Supports\_halfedge\_ccb $\equiv$ CGAL::Tag\_true
+and Supports\_ccb\_face $\equiv$ CGAL::Tag\_true )
+}
+
+\textbf{Ccbs are supported $\Longleftrightarrow$
+Supports\_halfedge\_ccb $\equiv$ 
+CGAL::Tag\_true
+and
+Supports\_face\_ccb
+$\equiv$ CGAL::Tag\_true
+}
+
 \ccc{Supports_vertex_halfedge} $\equiv$ \ccc{CGAL::Tag_true} $\Longrightarrow$
 \ccc{Supports_halfedge_vertex} $\equiv$ \ccc{CGAL::Tag_true}.
 \\
@@ -215,6 +261,9 @@ Faces are supported $\Longleftrightarrow$
 \\
 \ccc{Supports_face_halfedge} $\equiv$ \ccc{CGAL::Tag_true} $\Longrightarrow$
 \ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true}.
+
+\textbf{Supports\_face\_ccb $\equiv$ CGAL::Tag\_true $\Longrightarrow$
+Supports\_ccb\_face $\equiv$ CGAL::Tag\_true}.
 
 
 \end{ccAdvanced}
@@ -267,7 +316,11 @@ arises.
   HalfedgeDS::face_handle( Face_base* f);}{}
 \ccGlue
 \ccFunction{static Face_const_handle 
-  HalfedgeDS::face_handle( const Face_items* f);}{}
+  HalfedgeDS::face_handle( const Face_base* f);}{}
+
+\ccFunction{\bf\ttfamily static Ccb_handle HalfedgeDS::ccb_handle( Ccb_base* f);}{}
+\ccGlue
+\ccFunction{\bf\ttfamily static Ccb_const_handle HalfedgeDS::ccb_handle( const Ccb_base* f);}{}
 
 \end{ccAdvanced}
 
@@ -279,8 +332,8 @@ arises.
 
 \ccConstructor{HalfedgeDS();}{empty halfedge data structure.}
 
-\ccConstructor{HalfedgeDS( size_type v, size_type h, size_type f);}
-    {storage reserved for $v$ vertices, $h$ halfedges, and $f$ faces.}
+\ccConstructor{HalfedgeDS( size_type v, size_type h, size_type f, size_type b = 16 );}
+    {storage reserved for $v$ vertices, $h$ halfedges, $f$ faces, and $b$ ccbs.}
 
 \ccTagDefaults
 \ccConstructor{HalfedgeDS( const HalfedgeDS<Traits,Items,Alloc>& hds2);}
@@ -290,8 +343,8 @@ arises.
           operator=( const HalfedgeDS<Traits,Items,Alloc>& hds2);}
     {assignment operator. \ccPrecond \ccc{hds2} contains no dangling handles.}
 
-\ccMethod{void reserve( size_type v, size_type h, size_type f);}
-    {reserves storage for $v$ vertices, $h$ halfedges, and $f$ faces.
+\ccMethod{void reserve( size_type v, size_type h, size_type f, size_type b = 16 );}
+    {reserves storage for $v$ vertices, $h$ halfedges, $f$ faces, and $b$ ccbs.
      If all capacities are already greater or equal than the requested sizes
      nothing happens. Otherwise, \ccVar\ will be resized and all handles, 
      iterators and circulators invalidate. \ccPrecond If resizing is
@@ -308,11 +361,15 @@ arises.
 \ccGlue
 \ccMethod{Size size_of_faces() const;}{number of faces.}
 \ccGlue
+\ccMethod{\bf\ttfamily Size size_of_ccbs() const;}{\bf\ttfamily number of ccbs.}
+\ccGlue
 \ccMethod{Size capacity_of_vertices() const;}{space reserved for vertices.}
 \ccGlue
 \ccMethod{Size capacity_of_halfedges() const;}{space reserved for halfedges.}
 \ccGlue
 \ccMethod{Size capacity_of_faces() const;}{space reserved for faces.}
+\ccGlue
+\ccMethod{\bf\ttfamily Size capacity_of_ccbs() const;}{\bf\ttfamily space reserved for ccbs.}
 \ccGlue
 \ccMethod{size_t bytes() const;}{bytes used for \ccVar.}
 \ccGlue
@@ -323,25 +380,29 @@ arises.
 The following member functions return the non-mutable iterator if
 \ccVar\ is declared const.
 
-\ccMethod{Vertex_iterator    vertices_begin();}{iterator over all vertices.}
+\ccMethod{Vertex_iterator   vertices_begin();}{iterator over all vertices.}
 \ccGlue
-\ccMethod{Vertex_iterator    vertices_end();}{}
+\ccMethod{Vertex_iterator   vertices_end();}{}
 \ccGlue
-\ccMethod{Halfedge_iterator  halfedges_begin();}{iterator over all halfedges}
+\ccMethod{Halfedge_iterator halfedges_begin();}{iterator over all halfedges}
 \ccGlue
-\ccMethod{Halfedge_iterator  halfedges_end();}{}
+\ccMethod{Halfedge_iterator halfedges_end();}{}
 \ccGlue
 \ccMethod{Face_iterator     faces_begin();}{iterator over all faces.}
 \ccGlue
 \ccMethod{Face_iterator     faces_end();}{}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_iterator      ccbs_begin();}{\bf\ttfamily iterator over all ccbs.}
+\ccGlue
+\ccMethod{\bf\ttfamily Ccb_iterator      ccbs_end();}{}
 
 % +-----------------------------------+
 \ccHeading{Insertion}
 \ccTagFullDeclarations
 
-Note that the vertex-related and the face-related member functions may
-not be provided for a \ccRefName\ that does not support vertices or
-faces respectively.
+Note that the vertex-related, face-related and ccb-related member functions may
+not be provided for a \ccRefName\ that does not support vertices,
+faces or ccbs respectively.
 
 \ccMethod{Vertex_handle vertices_push_back( const Vertex& v);}
     {appends a copy of $v$ to \ccc{hds}. Returns a handle of the new vertex.}
@@ -358,6 +419,9 @@ faces respectively.
 
 \ccMethod{Face_handle faces_push_back( const Face& f);}
     {appends a copy of $f$ to \ccc{hds}. Returns a handle of the new face.}
+
+\ccMethod{\bf\ttfamily Ccb_handle ccbs_push_back( const Ccb& b);}
+    {\bf\ttfamily appends a copy of $b$ to \ccc{hds}. Returns a handle of the new ccb.}
 
 
 % +-----------------------------------+
@@ -415,11 +479,28 @@ functions must be provided as null operations.
     removes the range of faces $[\ccc{first},\ccc{last})$ if faces are 
     supported and \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
+\ccMethod{\bf\ttfamily void ccbs_pop_front();}{\bf\ttfamily 
+    removes the first ccb if ccbs are supported and
+    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+
+\ccMethod{\bf\ttfamily void ccbs_pop_back();}{\bf\ttfamily 
+    removes the last ccb.}
+
+\ccMethod{\bf\ttfamily void ccbs_erase( Ccb_handle b);}{\bf\ttfamily 
+    removes the ccb $b$ if ccbs are supported and
+    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+
+\ccMethod{\bf\ttfamily void ccbs_erase( Ccb_handle first, Ccb_handle last);}{\bf\ttfamily 
+    removes the range of ccbs $[\ccc{first},\ccc{last})$ if ccbs are 
+    supported and \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+
 \ccMethod{void vertices_clear();}{removes all vertices.}
 \ccGlue
 \ccMethod{void edges_clear();}{removes all halfedges.}
 \ccGlue
 \ccMethod{void faces_clear();}{removes all faces.}
+\ccGlue
+\ccMethod{\bf\ttfamily void ccbs_clear();}{\bf\ttfamily removes all ccbs.}
 
 \ccMethod{void clear();}{removes all elements.}
 
@@ -504,6 +585,7 @@ a halfedge. There is no automatic update required.
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
