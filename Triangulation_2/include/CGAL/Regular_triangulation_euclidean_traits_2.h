@@ -424,6 +424,11 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+// This declaration is needed to break the cyclic dependency.
+template < typename K >
+class Regular_triangulation_filtered_traits_2;
+
+
 template < typename CK >
 class Regular_triangulation_euclidean_traits_2 < Filtered_kernel<CK> >
   : public Regular_triangulation_filtered_traits_2 < Filtered_kernel<CK> >
