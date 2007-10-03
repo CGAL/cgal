@@ -196,6 +196,20 @@ namespace SphericalFunctors {
   
   //TAG_SEB
   template <class SK>
+  class Construct_radius_sphere_with_radius_3: Has_qrt{
+    typedef typename SK::Sphere_with_radius_3   Sphere_with_radius_3;
+
+  public:
+
+    typedef typename SK::FT result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Sphere_with_radius_3 & a) const
+    { return (a.rep().radius()); }    
+  };
+    
+  template <class SK>
   class Compute_theta_hq_3: Has_qrt{
     typedef typename SK::Theta_rep   Theta_rep;
 
@@ -554,6 +568,28 @@ namespace SphericalFunctors {
   };
 
 //TAG_SEB
+  template < class SK >
+  class Construct_sphere_with_radius_3
+  {
+    typedef typename SK::Sphere_with_radius_3                           Sphere_with_radius_3;
+    typedef typename SK::Kernel_base::Sphere_with_radius_3              RSphere_with_radius_3;
+    typedef typename Sphere_with_radius_3::Repd                         Rep;
+
+  public:
+    typedef  Sphere_with_radius_3 result_type;
+    typedef Arity_tag<1>             Arity;
+
+
+    result_type
+    operator()(void) 
+    { return Rep(); }
+    
+    result_type
+    operator()(const typename SK::FT& _r,const typename SK::Point_3& _c)
+    { return Rep(_r,_c);}
+  };
+
+      
   template < class SK >
   class Construct_theta_rep
   {

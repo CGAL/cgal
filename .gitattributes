@@ -1317,7 +1317,9 @@ Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text svneol=unset
 Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text svneol=unset#image/gif
 Circular_kernel_3/include/CGAL/Circular_arc_point_on_reference_sphere_3.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/Circular_arc_point_on_reference_sphere_3.h -text
+Circular_kernel_3/include/CGAL/Circular_kernel_3/Sphere_with_radius_3.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/Theta_rep.h -text
+Circular_kernel_3/include/CGAL/Sphere_with_radius_3.h -text
 Circular_kernel_3/include/CGAL/Theta_rep.h -text
 Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj eol=crlf
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html

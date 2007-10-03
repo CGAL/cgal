@@ -41,6 +41,9 @@
 #include <CGAL/Circular_kernel_3/Theta_rep.h>
 #include <CGAL/Theta_rep.h>
 
+#include <CGAL/Circular_kernel_3/Sphere_with_radius_3.h>
+#include <CGAL/Sphere_with_radius_3.h>
+
 #include <CGAL/Circular_kernel_3/Line_arc_3.h>
 #include <CGAL/Line_arc_3.h>
 
@@ -66,6 +69,7 @@ namespace CGAL {
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
         typedef CGALi::Circular_arc_point_on_reference_sphere_3<SphericalKernel>  Circular_arc_point_on_reference_sphere_3;
         typedef CGALi::Theta_rep<SphericalKernel>  Theta_rep;
+        typedef CGALi::Sphere_with_radius_3<SphericalKernel>  Sphere_with_radius_3;
         typedef float HQ_NT;//type to represent the index of one hquadrant
 
         // The mecanism that allows to specify reference-counting or not.

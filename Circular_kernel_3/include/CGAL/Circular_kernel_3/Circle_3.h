@@ -30,6 +30,7 @@
 #define CGAL_SPHERICAL_KERNEL_CIRCLE_3_H
 
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
+#include <CGAL/Sphere_with_radius_3.h>
 #include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
@@ -40,13 +41,15 @@ namespace CGAL {
     class Circle_representation_3{};
       
     template <class SK>
-    class Circle_representation_3<CGAL::Sphere_3<SK>,CGAL::Sphere_3<SK>,SK>{
+    class Circle_representation_3<CGAL::Sphere_with_radius_3<SK>,CGAL::Sphere_with_radius_3<SK>,SK>{
+      public:
+      typedef typename CGAL::Sphere_with_radius_3<SK> Sphere_3;
+      private:
       typedef typename SK::Plane_3      Plane_3;
       typedef typename SK::Point_3      Point_3;
       typedef typename SK::Vector_3     Vector_3;
       typedef typename SK::Direction_3  Direction_3;
       typedef typename SK::FT           FT;  
-      typedef typename CGAL::Sphere_3<SK> Sphere_3;
       
       typedef std::pair<Sphere_3,Sphere_3> Rep;
       typedef typename SK::template Handle<Rep>::type  Base;
@@ -54,15 +57,15 @@ namespace CGAL {
       Base base;  
       public:
       Circle_representation_3() {}
-      Circle_representation_3(const Sphere_3& S1,const Sphere_3& S2):base(S1,S2){CGAL_precondition(false);}
+      Circle_representation_3(const Sphere_3& S1,const Sphere_3& S2):base(S1,S2){}
       
       Circle_representation_3(const Point_3& center, const FT& squared_r, const Direction_3& d){CGAL_precondition(false);}//use enable_if or trick like this to invalidate them
       Circle_representation_3(const Point_3& center, const FT& squared_r, const Vector_3& normal){CGAL_precondition(false);}
       Circle_representation_3(const Point_3& center, const FT& squared_r, const Plane_3& p){CGAL_precondition(false);}
       Circle_representation_3(const Plane_3 &p,const Sphere_3 &s){CGAL_precondition(false);}        
         
-      const Plane_3& supporting_plane() const {
-        return SK().construct_radical_plane_3_object(get(base).first,get(base).second);
+      Plane_3 supporting_plane() const {
+        return SK().construct_radical_plane_3_object()(get(base).first,get(base).second);
       }
 
       const Sphere_3& supporting_sphere() const {
@@ -73,15 +76,27 @@ namespace CGAL {
         return get(base).second;
       }      
       
-      Point_3 center() const {
-        Plane_3 p=supporting_plane();
-        return p.projection(get(base).first.center());
+      //~ Point_3 center() const {
+        //~ Plane_3 p=supporting_plane();
+        //~ return p.projection(get(base).first.center());
+      //~ }
+      
+      FT get_circle_center_coeff(const Point_3& scenter,const FT& r2) const{
+        //~ return (((FT) 0.5) +  (reference_sphere().squared_radius() - r2)/(FT)(2* (my_pow(scenter.x(),2) 
+        //~ + my_pow(scenter.y(),2) + my_pow(scenter.z(),2) )) );    
+        return ((FT) 0.5) +  (reference_sphere().squared_radius() - r2)/(2* (scenter-CGAL::ORIGIN).squared_length());    
       }
-
+ 
+      Point_3 center() const {
+        FT coeff=get_circle_center_coeff(supporting_sphere().center(),supporting_sphere().squared_radius());
+        return CGAL::ORIGIN+(supporting_sphere().center()-CGAL::ORIGIN)*coeff;    
+      };
+      
       FT squared_radius() const {
-        Point_3 c=center();
-        Point_3 p=get(base).first();
-        return get(base).first.squared_radius()-CGAL::squared_distance(p,c);
+        const Point_3& c=center();
+        //~ Point_3 p=get(base).first.center();
+        //~ return get(base).first.squared_radius()-CGAL::squared_distance(p,c);
+        return reference_sphere().squared_radius()-(c-CGAL::ORIGIN).squared_length();
       }
 
       Sphere_3 diametral_sphere() const {
@@ -92,12 +107,15 @@ namespace CGAL {
     //specialization using one plane and one diametral sphere
     template <class SK>
     class Circle_representation_3<typename CGAL::Sphere_3<SK>,typename CGAL::Plane_3<SK>,SK >{
+      public:
+      typedef typename CGAL::Sphere_3<SK> Sphere_3;
+      private:
       typedef typename SK::Plane_3      Plane_3;
       typedef typename SK::Point_3      Point_3;
       typedef typename SK::Vector_3     Vector_3;
       typedef typename SK::Direction_3  Direction_3;
       typedef typename SK::FT           FT;  
-      typedef typename CGAL::Sphere_3<SK> Sphere_3;
+
       
       typedef std::pair<Sphere_3,typename SK::Plane_3> Rep;
       typedef typename SK::template Handle<Rep>::type  Base;
@@ -191,7 +209,7 @@ namespace CGAL {
     class Circle_3 {    
 
       typedef typename SK::Plane_3      Plane_3;
-      typedef typename CGAL::Sphere_3<SK>         Sphere_3;
+      typedef typename Container::Sphere_3         Sphere_3;
       typedef typename SK::Point_3      Point_3;
       typedef typename SK::Vector_3     Vector_3;
       typedef typename SK::Direction_3  Direction_3;
@@ -217,7 +235,7 @@ namespace CGAL {
 
 
       const Plane_3& supporting_plane() const { return base.supporting_plane(); }
-      const Sphere_3& supporting_sphere() const { return base.supporting_plane(); }
+      const Sphere_3& supporting_sphere() const { return base.supporting_sphere(); }
       Point_3 center() const { return base.center(); }
       FT squared_radius() const { return base.squared_radius(); }
       const Sphere_3& diametral_sphere() const { return base.diametral_sphere(); }
