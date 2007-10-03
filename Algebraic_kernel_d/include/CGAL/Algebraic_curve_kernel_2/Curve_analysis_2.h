@@ -119,7 +119,9 @@ public:
     }
 
     //! \brief constructs a curve analysis from a given \c Curve_2 object
-    Curve_analysis_2(const Curve_2& c) : 
+    //!
+    //! for safety purposes implicit conversion from \c Curve_2 is disabled
+    explicit Curve_analysis_2(const Curve_2& c) : 
         Base(Rep(c)) {  
     }
            
@@ -203,8 +205,7 @@ public:
                 return vertical_line_at_event(i);
             if(perturb == CGAL::POSITIVE)
                 i++;
-        } else
-            return *this;
+        } 
         return vertical_line_of_interval(i);
     }
 

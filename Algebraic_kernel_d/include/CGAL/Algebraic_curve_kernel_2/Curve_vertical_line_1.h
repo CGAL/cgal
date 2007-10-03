@@ -148,7 +148,7 @@ public:
      * \c index encodes the index of event or interval depending on whether
      * this vertical line is an event-line or lies in the interval
      */
-    Curve_vertical_line_1(const Event1_info& info,
+    explicit Curve_vertical_line_1(const Event1_info& info,
             const Curve_analysis_2& ca_2, int index) : 
         Base(Rep(info, ca_2, index)) {   
         

@@ -58,13 +58,19 @@ public:
     {   }
     
     // standard constructor
-    Curve_pair_vertical_line_1_rep(const Event2_slice& event_slice) : 
-        _m_event_slice(event_slice)
-    {   }
+    Curve_pair_vertical_line_1_rep(const Event2_slice& event_slice, 
+        bool is_swapped) : 
+        _m_event_slice(event_slice), _m_is_swapped(is_swapped) {   
+    }
     
     // data
     // underlying Event2_slice object (temporary)
     mutable Event2_slice _m_event_slice;
+    
+    // indicates that the curves in targeting curve pair analysis were swapped
+    // during precaching (this happens when a defining polynomial of the first
+    // curve has higher degree than the second one)
+    bool _m_is_swapped;
 
     // befriending the handle
     friend class Curve_pair_vertical_line_1<Curve_pair_analysis_2, Self>;
@@ -131,11 +137,15 @@ public:
             Base(static_cast<const Base&>(p)) {  
     }
 
-    /*!\brief
-     * Constructs a new instance from \c Event2_slice object
-     */
-    Curve_pair_vertical_line_1(const Event2_slice& slice) : 
-        Base(Rep(slice)) {   
+    //!\brief Constructs a new instance from \c Event2_slice object
+    //!
+    //! for safety purposes implicit conversion from \c Event2_slice is
+    //! disabled. 
+    //! \c is_swapped defines that the curves in targeting curve pair analysis
+    //! were swapped during precaching 
+    explicit Curve_pair_vertical_line_1(const Event2_slice& slice, 
+            bool is_swapped = false) : 
+        Base(Rep(slice, is_swapped)) {   
     }
         
     /*!\brief
@@ -191,9 +201,18 @@ public:
     //! \pre 0 <= k < "number of arcs defined for curve[c] at x()"
     int get_event_of_curve(int k, bool c) const
     {
+        if(this->ptr()->_m_is_swapped) // reverse the curve order since 
+            c ^= 1;                    // polynomials are 
         const typename Event2_slice::Int_container& ic = 
             this->ptr()->_m_event_slice.arcno_to_pos
                     ((c == 0 ? SoX::CURVE1 : SoX::CURVE2));
+                    
+        if(!(0 <= k && k < static_cast<int>(ic.size()))) {
+            std::cout << "k = " << k << "; c = " << c << 
+                "; curve = " << (c == 0? get_slice().curve1().f() : 
+                    get_slice().curve2().f()) << "\n";
+        }            
+                    
         CGAL_precondition(0 <= k && k < static_cast<int>(ic.size()));
         return (ic[k]);
     }
@@ -231,6 +250,9 @@ public:
         idx[((*it).first == SoX::CURVE1 ? 0 : 1)] = (*it).second;
         if(++it != end) 
             idx[((*it).first == SoX::CURVE1 ? 0 : 1)] = (*it).second;
+            
+        if(this->ptr()->_m_is_swapped) // the contents of curve pair analysis
+            std::swap(idx[0], idx[1]); // are swapped
         return std::make_pair(idx[0], idx[1]);
     }
 

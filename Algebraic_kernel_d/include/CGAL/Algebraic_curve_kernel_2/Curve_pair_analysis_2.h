@@ -58,12 +58,19 @@ public:
     {  
         _m_curve_pair = Algebraic_curve_kernel_2::get_curve_pair_cache()
             (std::make_pair(ca1.get_polynomial_2(), ca2.get_polynomial_2()));
+        _m_is_swapped = (_m_curve_pair.curve1() != ca1.get_polynomial_2());
+      //  if(_m_is_swapped)
+        //    std::cout << "the content was swapped\n";
     }
 
     // data
     mutable Curve_analysis_2 _m_ca1, _m_ca2;
     // temporarily this implementation is based on Curve_pair_2 from GAPS
     mutable Curve_pair_2 _m_curve_pair;
+    // indicates that the curves in a curve pair were swapped after precaching
+    // (this happens when the first curve is defined by a polynomial of higher
+    // degree than the second one)
+    bool _m_is_swapped;
     
     // befriending the handle
     friend class Curve_pair_analysis_2<Algebraic_curve_kernel_2, Self>;
@@ -144,11 +151,12 @@ public:
             Base(Rep(ca1, ca2)) {  
     }
 
+    // SOLUTION: do not rest upon this constructor - it is temporary !!!
     // temporary constructor to construct directly from curve pair
-    Curve_pair_analysis_2(const Curve_pair_2& curve_pair) : 
+    /*Curve_pair_analysis_2(const Curve_pair_2& curve_pair) : 
             Base(Rep(curve_pair)) {  
     }
-           
+    */       
     /*!\brief
      * constructs a curve pair analysis from a given represenation
      */
@@ -164,6 +172,8 @@ public:
     //! \brief returns curve analysis for c-"th" curve (0 or 1)
     Curve_analysis_2 get_curve_analysis(bool c) const
     { 
+        if(this->ptr()->_m_is_swapped)
+            c ^= 1;
         if(c == 0)
             return this->ptr()->_m_ca1;
         return this->ptr()->_m_ca2;
@@ -185,6 +195,8 @@ public:
         CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
         SoX::Index_triple triple = 
             this->ptr()->_m_curve_pair.event_indices(i);
+        if(this->ptr()->_m_is_swapped)
+            c ^= 1;
         return (c == 0 ? triple.ffy : triple.ggy);
     }
 
@@ -195,7 +207,9 @@ public:
     Curve_pair_vertical_line_1 vertical_line_at_event(int i) const
     {
         CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
-        return  this->ptr()->_m_curve_pair.slice_at_event(i);
+        return Curve_pair_vertical_line_1(
+            this->ptr()->_m_curve_pair.slice_at_event(i),
+                this->ptr()->_m_is_swapped);
     }
 
     //! \brief returns an instance of CurvePairVerticalLine_1 of the i-th 
@@ -205,7 +219,9 @@ public:
     Curve_pair_vertical_line_1 vertical_line_of_interval(int i) const
     {
         CGAL_precondition(i >= 0&&i <= number_of_vertical_lines_with_event());
-        return  this->ptr()->_m_curve_pair.slice_at_interval(i); 
+        return Curve_pair_vertical_line_1(
+            this->ptr()->_m_curve_pair.slice_at_interval(i), 
+                this->ptr()->_m_is_swapped); 
     }
 
     //! \brief returns vertical_line_at_event(i), if x hits i-th event, 

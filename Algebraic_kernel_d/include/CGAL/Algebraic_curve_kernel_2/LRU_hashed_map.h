@@ -131,16 +131,12 @@ public:
         Canonicalizer canonicalize;
         Key_type key = canonicalize(key_);
         std::pair<Hashed_iterator, bool> p = find(key);
-                       
         if(!p.second) {
-            std::cout << "not found\n";
             Creator create;
-            Value_type val = create(key);
-            std::cout << "result: " << 
-                insert(Data_type(key, val)).second << "\n";
+            Value_type val = create(key_);
+            insert(Data_type(key, val));
             return val;
-        } else 
-            std::cout << "instance found\n";
+        } 
         return (p.first)->second;
     }
     

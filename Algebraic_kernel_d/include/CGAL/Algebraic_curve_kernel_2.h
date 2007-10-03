@@ -147,7 +147,6 @@ private:
                 scalar_div(p,g);
             if(p.lcoeff().lcoeff() < 0) 
                 scalar_div(p,Scalar(-1));
-            std::cout << "my poly: " << p << "\n";
             return p;        
         }
            
@@ -414,6 +413,7 @@ public:
                 // move the common part returned through both iterators
                 // oi1/oi2 to oib
                 *oib++ = parts_f[0];
+                CGAL_precondition(parts_f[0] == parts_g[0]);
                 if(parts_f.size() > 1)
                     std::copy(parts_f.begin() + 1, parts_f.end(), oi1);
                 if(parts_g.size() > 1)
@@ -562,10 +562,13 @@ public:
             // Algebraic_surface_3_z_at_xy_isolator_traits_base.h
             if(p.id() == r.curve().id()) // point lies on the same curve
                 return CGAL::ZERO;
+//             Curve_pair_2 cp = Self::get_curve_pair_cache()
+//                 (std::make_pair(p, r.curve()));
+//             typename Self::Curve_pair_analysis_2 cpa_2(cp);    
+            // this is to keep compiler happy ))
+            typename Self::Curve_pair_analysis_2 cpa_2(
+                (Curve_analysis_2(p)),(Curve_analysis_2(r.curve())));
             
-            Curve_pair_2 cp = Self::get_curve_pair_cache()
-                (std::make_pair(p, r.curve()));
-            typename Self::Curve_pair_analysis_2 cpa_2(cp);    
             typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
                 cpv_line = cpa_2.vertical_line_at_exact_x(r.x());
         // check only if there is an intersection of both curve along this line

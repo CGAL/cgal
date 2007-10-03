@@ -144,18 +144,15 @@ private:
                 std::back_inserter(common))) {
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
-                        
             if(parts_of_f.size() == 1) {
-                Curve_pair_2 cp = Algebraic_curve_kernel_2::
-                    get_curve_pair_cache()(std::make_pair(parts_of_f[0],
-                        common[0]));
-                p.simplify_by(Curve_pair_analysis_2(cp));
+                p.simplify_by(Curve_pair_analysis_2(
+                    (Curve_analysis_2(parts_of_f[0])),
+                        (Curve_analysis_2(common[0]))));
             } 
             if(parts_of_g.size() == 1) {
-                Curve_pair_2 cp = Algebraic_curve_kernel_2::
-                    get_curve_pair_cache()(std::make_pair(parts_of_g[0],
-                        common[0]));
-                q.simplify_by(Curve_pair_analysis_2(cp));
+                q.simplify_by(Curve_pair_analysis_2(
+                    (Curve_analysis_2(parts_of_g[0])),
+                        (Curve_analysis_2(common[0]))));
             } 
             return true;
         }
@@ -300,7 +297,7 @@ private:
      */
     CGAL::Comparison_result _compare_y_at_x(const Self& q) const 
     {
-        CGAL_precondition(q.compare_x(*this) == CGAL::EQUAL);
+        CGAL_precondition(this->compare_x(q) == CGAL::EQUAL);
     
         Curve_2 f = this->curve();
         Curve_2 g = q.curve();
@@ -311,15 +308,14 @@ private:
         } 
         if(f.is_identical(g)) 
             return CGAL::sign(this->arcno() - q.arcno());
-            
-        Curve_pair_analysis_2 cpa_2(Algebraic_curve_kernel_2::
-            get_curve_pair_cache()(std::make_pair(f, g)));
+        // this is to keep compiler happy ))
+        Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
+             (Curve_analysis_2(g)));
         const Curve_pair_vertical_line_1& vline = 
             cpa_2.vertical_line_for_x(x());
-        CGAL::Sign result = 
-            CGAL::sign(vline.get_event_of_curve(0, this->arcno()) - 
-                    vline.get_event_of_curve(1, q.arcno()));
-        return result;
+            
+        return CGAL::sign(vline.get_event_of_curve(this->arcno(), 0) - 
+                    vline.get_event_of_curve(q.arcno(), 1));
     }
     
     //!@}
@@ -384,7 +380,7 @@ public:
             if(total_degree(ff) > total_degree(gg)) 
                 cid = 1;
         } else 
-            cid = (p.first == -1 ? 1 : 0);
+            cid = (p.first != -1 ? 0 : 1);
         // overwrite data
         this->ptr()->_m_curve =
             cpa_2.get_curve_analysis(cid).get_polynomial_2();
