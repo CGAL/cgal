@@ -36,8 +36,11 @@ class Point_2;
 template < class GPA_2, class Rep_ > 
 class Arc_2;
 
+template <class GPA_2>
+class Arc_2_rep;
+
 template < class GPA_2, class Rep_ > 
-std::ostream& operator<< (std::ostream&, const Point_2<GPA_2, Rep>&);
+std::ostream& operator<< (std::ostream&, const Point_2<GPA_2, Rep_>&);
 
 template <class GPA_2>
 class Point_2_rep 
@@ -153,7 +156,7 @@ public:
     //!\brief standard constructor: constructs a finite point on curve
     //!
     //! implies no boundary conditions in x/y
-    Point_2(const Xy_coordinate_2& p) : 
+    explicit Point_2(const Xy_coordinate_2& p) : 
         Base(Rep(p)) {  
     }
     
@@ -162,7 +165,7 @@ public:
     //!
     //! implies no boundary conditions in x/y
     Point_2(const X_coordinate_1& x, const Curve_2& c, int arcno) :
-            Base(Rep(Xy_coordinate_2(x, curve, arcno))) {
+            Base(Rep(Xy_coordinate_2(x, c, arcno))) {
     }
     
     /*!\brief
@@ -180,7 +183,7 @@ private:
     //!\brief constructs a point with x-coordinate at infinity
     //! 
     //! \c inf_end defines whether the point lies at +/- infinity
-    Point_2(CGAL::Curve_end inf_end) :
+    explicit Point_2(CGAL::Curve_end inf_end) :
          Base(Rep(X_coordinate_1(), inf_end, true)) {  
     }
     
@@ -188,7 +191,7 @@ private:
     //! x-coordinate \c x
     //!
     //! \c inf_end defines whether the point lies at +/- infinity
-    Point_2(const X_coordinate_1& x, CGAL::Curve_end inf_end) :
+    explicit Point_2(const X_coordinate_1& x, CGAL::Curve_end inf_end) :
          Base(Rep(x, inf_end, false)) {  
     }
     
@@ -324,11 +327,76 @@ private:
         this->ptr()->_m_boundary_in_y = type;
     }
     
+    //! \brief dumps boundary type (for debugging)
+    void _dump_boundary_type(std::ostream& os, CGAL::Boundary_type bnd) const {
+        switch(bnd) {
+        case CGAL::AFTER_SINGULARITY:
+            os << "after_sing";
+            break;
+        case CGAL::BEFORE_SINGULARITY:
+            os << "before_sing";
+            break;
+        case CGAL::AFTER_DISCONTINUITY:
+            os << "after_disc";
+            break;
+        case CGAL::BEFORE_DISCONTINUITY:
+            os << "before_disc";
+            break;
+        case CGAL::MINUS_INFINITY:
+            os << "-inf";
+            break;
+        case CGAL::PLUS_INFINITY:
+            os << "+inf";
+            break;
+        case CGAL::NO_BOUNDARY:
+            break;
+        default:
+            os << "bogus boundary type";
+        }
+    }
+    
     //! befriending \c Arc_2 class
-    //friend class Arc_2<GPA_2>;
+    friend class Arc_2<GPA_2, Arc_2_rep<GPA_2> >;
+    //! befriending output operator
+    friend std::ostream& operator << <>(std::ostream&, const Self&);
     
     //!@}        
 }; // class Point_2
+
+/*!\relates Point_2
+ * \brief 
+ * output operator
+ */
+template <class GPA_2, class Rep_>
+std::ostream& operator <<(std::ostream& os, const Point_2<GPA_2, Rep_>& pt) {
+
+/*    switch(::CGAL::get_mode(os)) {
+    case ::CGAL::IO::PRETTY:*/
+        os << "point(";
+        if(pt.is_finite())
+            os << "sup@" << pt.curve().id();
+        os << " X=";
+        pt._dump_boundary_type(os, pt.boundary_in_x());
+        if(pt.boundary_in_x() == CGAL::NO_BOUNDARY)
+            os << NiX::to_double(pt.x());       
+        os << "; Y=";
+        pt._dump_boundary_type(os, pt.boundary_in_y());
+        if(pt.boundary_in_y() == CGAL::NO_BOUNDARY)
+            os << "finite";       
+        os << "; ";
+        if(pt.is_finite())
+            os << "ARCNO=" << pt.arcno();    
+        os << ")";
+/*        break;
+    case ::CGAL::IO::BINARY:
+        std::cerr << "BINARY format not yet implemented" << std::endl;
+        break;
+    default:
+        // ASCII 
+        std::cerr << "BINARY format not yet implemented" << std::endl;
+    }*/
+    return os;
+}
 
 } // namespace CGALi
 

@@ -61,7 +61,7 @@ public:
      *            MAX_END if we refer to its maximal end.
      * \pre cv's relevant end is defined at y = +/- oo.
      * \return SMALLER if p lies to the left of cv;
-     *         LARGER if p lies to the right cv;
+     *         LARGER if p lies to the right of cv;
      *         EQUAL in case of an overlap.
      */
     result_type operator()(const Point_2& p, const Arc_2& cv, 
@@ -232,7 +232,6 @@ public:
      */
     result_type operator()(const Arc_2& cv) const {
     
-        CGAL_precondition(cv.is_finite(CGAL::MIN_END));
         return cv.curve_end(CGAL::MIN_END);
     }
 private:
@@ -264,7 +263,6 @@ public:
      */
     result_type operator()(const Arc_2& cv) const {
     
-        CGAL_precondition(cv.is_finite(CGAL::MAX_END));
         return cv.curve_end(CGAL::MAX_END);
     }
 private:
@@ -459,7 +457,7 @@ public:
      * \return The relative position of cv1 with respect to 
      * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
      */
-    result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
              const Point_2& p) const 
     {
         return (cv1.compare_y_at_x_right(cv2, p));
@@ -692,14 +690,14 @@ public:
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
         std::vector<Arc_2> common_arcs;
-        if(cv1.trim_if_overlapped(cv2, common_arcs)) {
+        if(cv1.trim_if_overlapped(cv2, std::back_inserter(common_arcs))) {
             typename std::vector<Arc_2>::const_iterator it;
             for(it = common_arcs.begin(); it < common_arcs.end(); it++)
                 *oi++ = CGAL::make_object(*it);
             return oi; 
         }
         // process non-overlapping case        
-        typedef std::pair<Point_2, int> Point_and_mult;
+        typedef std::pair<Point_2, unsigned int> Point_and_mult;
         typedef std::vector<Point_and_mult> Point_vector;
         Point_vector vec;
         typename Point_vector::const_iterator it;
