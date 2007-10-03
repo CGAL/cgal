@@ -27,7 +27,7 @@ int main( )
     if (CGAL::assign(s,o)) {++ns;}
     if (CGAL::assign(r,o)) {++nr;}
   }
-  std::cout << "The voronoi diagram as " << ns << " finite edges "
+  std::cout << "The Voronoi diagram has " << ns << " finite edges "
 	    << " and " << nr << " rays" << std::endl;
   return 0;
 }
