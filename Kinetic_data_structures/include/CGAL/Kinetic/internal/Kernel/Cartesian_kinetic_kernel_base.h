@@ -180,6 +180,10 @@ public:
   typedef Certificate_generator<This, Null_generator<Point_3> > Compare_xyz_3;
   Compare_xyz_3 compare_xyz_3_object() const {return Compare_xyz_3();}
 
+  typedef Certificate_generator<This, Cartesian_equal_3<This> > Equal_3;
+  Equal_3 equal_3_object() const {return Equal_3();}
+
+
   typedef Certificate_generator<This, Null_generator<Point_3> > Coplanar_orientation_3;
   Coplanar_orientation_3 coplanar_orientation_3_object() const {return Coplanar_orientation_3();}
 
@@ -218,6 +222,8 @@ public:
   //! Compare the z coordinate of two points
   typedef Certificate_generator<This, Cartesian_less_z_3<This> > Compare_z_3;
   Compare_z_3 compare_z_3_object() const {return Compare_z_3(k_);}
+
+
 
   //! computes the lifted coordinate under the lifting map
   typedef Delaunay_lifting<This> Delaunay_lifting_3;

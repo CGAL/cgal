@@ -112,7 +112,7 @@ public:
     }
   }
 
-  CGAL_KINETIC_LISTENER(CURRENT_TIME);
+  CGAL_KINETIC_LISTENER1(CURRENT_TIME);
 public:
   //! get the simulator
   typename Simulator::Handle& simulator() {

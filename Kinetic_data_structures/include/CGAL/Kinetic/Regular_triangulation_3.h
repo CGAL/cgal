@@ -457,7 +457,7 @@ public:
     return kdel_.triangulation();
   }
 
-  CGAL_KINETIC_LISTENER(TRIANGULATION)
+  CGAL_KINETIC_LISTENER1(TRIANGULATION)
   public:
 
   void audit_move(Event_key k, Point_key pk, Cell_handle h, int) const {

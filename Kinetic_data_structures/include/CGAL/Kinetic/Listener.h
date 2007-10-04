@@ -136,7 +136,7 @@ protected:
   typename Notifier::Handle h_;
 };
 
-
+/*
 #define CGAL_KINETIC_LISTENER(...) private:			\
   struct Listener_core{						\
     typedef This Notifier;					\
@@ -167,9 +167,68 @@ private:							\
  }								\
  Listener* listener() {return listener_.get();}			\
  Listener::Handle listener_;
+*/
+#define CGAL_KINETIC_LISTENER1(A) private:			\
+  struct Listener_core{						\
+    typedef This Notifier;					\
+    typedef enum {A} Notification_type;				\
+  };								\
+  public:							\
+  typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
+  friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
+private:							\
+  void set_listener(Listener *sk) {				\
+    listener_=sk;						\
+  }								\
+  Listener* listener() {return listener_.get();}		\
+  typename Listener::Handle listener_;
 
 
+#define CGAL_KINETIC_LISTENERNT1(A) private:			\
+  struct Listener_core{						\
+    typedef This Notifier;					\
+    typedef enum {A} Notification_type;				\
+  };								\
+public:								\
+ typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
+ friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
+private:							\
+ void set_listener(Listener *sk) {				\
+   listener_=sk;						\
+ }								\
+ Listener* listener() {return listener_.get();}			\
+ Listener::Handle listener_;
 
+#define CGAL_KINETIC_LISTENER2(A,B) private:			\
+  struct Listener_core{						\
+    typedef This Notifier;					\
+    typedef enum {A,B} Notification_type;			\
+  };								\
+  public:							\
+  typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
+  friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
+private:							\
+  void set_listener(Listener *sk) {				\
+    listener_=sk;						\
+  }								\
+  Listener* listener() {return listener_.get();}		\
+  typename Listener::Handle listener_;
+
+
+#define CGAL_KINETIC_LISTENERNT2(A,B) private:			\
+  struct Listener_core{						\
+    typedef This Notifier;					\
+    typedef enum {A,B} Notification_type;			\
+  };								\
+public:								\
+ typedef CGAL::Kinetic::Listener_base<Listener_core> Listener;	\
+ friend class CGAL::Kinetic::Listener_base<Listener_core>;	\
+private:							\
+ void set_listener(Listener *sk) {				\
+   listener_=sk;						\
+ }								\
+ Listener* listener() {return listener_.get();}			\
+ Listener::Handle listener_;
 
 #define CGAL_KINETIC_NOTIFY(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
 

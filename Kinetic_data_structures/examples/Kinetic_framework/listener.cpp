@@ -9,7 +9,7 @@ public:
   Notifier(): data_(0){}
 
   typedef CGAL::Kinetic::Ref_counted<Notifier> Base;
-  CGAL_KINETIC_LISTENER(DATA_CHANGED);
+  CGAL_KINETIC_LISTENER1(DATA_CHANGED);
 public:
 
   int data() const {return data_;}

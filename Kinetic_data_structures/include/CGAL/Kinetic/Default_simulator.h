@@ -281,7 +281,7 @@ public:
   CGAL_GETNR(Time, next_event_time, return queue_.empty()?
 		  end_time(): Time(queue_.front_priority()));
 
-  CGAL_GETNR(Event_key, next_event, queue_.empty()?
+  CGAL_GETNR(Event_key, next_event, return queue_.empty()?
 		  Event_key(): queue_.front());
 
   //! The last time of interest
@@ -327,7 +327,7 @@ public:
     CGAL_exactness_precondition(CGAL::compare(t, current_time()) != CGAL::SMALLER);
 
     CGAL_LOG(Log::SOME, "Created event " << key << std::endl);
-    CGAL_LOG(Log::SOME, *this << std::endl);
+    //CGAL_LOG(Log::SOME, *this << std::endl);
     //if (log()->is_output(Log::LOTS)) write(log()->stream(Log::LOTS));
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
@@ -532,9 +532,14 @@ protected:
     if (queue_.empty()) {
       if (cur_time_ != end_time()) {
 	std::pair<double,double> ei= CGAL::to_interval(end_time());
-	CGAL_precondition(ei.first==ei.second); // I should figure out how to deal in the other case
-	audit_time_ = ei.first;
-	return true;
+	if (cur_time_ > Time(ei.first)) {
+	  return false;
+	}
+	else {
+	  audit_time_=ei.first;
+	  return true;
+	}
+
       } else {
 	// bad form to just return like that
 	audit_time_= NT(CGAL::to_interval(current_time()).first-10.0);
@@ -632,7 +637,7 @@ protected:
     typedef enum {}
       Notification_type;
       };*/
-  CGAL_KINETIC_MULTILISTENER(HAS_AUDIT_TIME, DIRECTION_OF_TIME);
+  CGAL_KINETIC_MULTILISTENER2(HAS_AUDIT_TIME, DIRECTION_OF_TIME);
 
 protected:
   Queue queue_;

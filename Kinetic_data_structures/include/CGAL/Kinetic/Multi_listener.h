@@ -79,7 +79,7 @@ protected:
   typename Interface::Notifier_handle h_;
 };
 
-
+/*
 #define CGAL_KINETIC_MULTILISTENER(...) private:		\
   struct Listener_core{						\
     typedef typename This::Handle Notifier_handle;		\
@@ -108,6 +108,105 @@ private:							\
   struct Listener_core{						\
     typedef This::Handle Notifier_handle;			\
     typedef enum {__VA_ARGS__} Notification_type;		\
+  };								\
+public:								\
+ typedef Multi_listener_base<Listener_core> Listener;		\
+ friend class Multi_listener_base<Listener_core>;		\
+private:							\
+ void new_listener(Listener *sk) {				\
+   listeners_.push_back(sk);					\
+ }								\
+ void delete_listener(Listener *kds) {				\
+   for (unsigned int i=0; i< listeners_.size(); ++i){		\
+     if (listeners_[i] == kds) {				\
+       std::swap(listeners_[i], listeners_.back());		\
+       listeners_.pop_back();					\
+       return;							\
+     }								\
+   }								\
+ }								\
+ std::vector<Listener*> listeners_;
+*/
+
+
+
+#define CGAL_KINETIC_MULTILISTENER1(A) private:			\
+  struct Listener_core{						\
+    typedef typename This::Handle Notifier_handle;		\
+    typedef enum {A} Notification_type;				\
+  };								\
+public:								\
+ typedef Multi_listener_base<Listener_core> Listener;		\
+ friend class Multi_listener_base<Listener_core>;		\
+private:							\
+ void new_listener(Listener *sk) {				\
+   listeners_.push_back(sk);					\
+ }								\
+ void delete_listener(Listener *kds) {				\
+   for (unsigned int i=0; i< listeners_.size(); ++i){		\
+     if (listeners_[i] == kds) {				\
+       std::swap(listeners_[i], listeners_.back());		\
+       listeners_.pop_back();					\
+       return;							\
+     }								\
+   }								\
+ }								\
+ std::vector<Listener*> listeners_;
+
+
+#define CGAL_KINETIC_MULTILISTENERNT1(A) private:		\
+  struct Listener_core{						\
+    typedef This::Handle Notifier_handle;			\
+    typedef enum {A} Notification_type;				\
+  };								\
+public:								\
+ typedef Multi_listener_base<Listener_core> Listener;		\
+ friend class Multi_listener_base<Listener_core>;		\
+private:							\
+ void new_listener(Listener *sk) {				\
+   listeners_.push_back(sk);					\
+ }								\
+ void delete_listener(Listener *kds) {				\
+   for (unsigned int i=0; i< listeners_.size(); ++i){		\
+     if (listeners_[i] == kds) {				\
+       std::swap(listeners_[i], listeners_.back());		\
+       listeners_.pop_back();					\
+       return;							\
+     }								\
+   }								\
+ }								\
+ std::vector<Listener*> listeners_;
+
+
+
+#define CGAL_KINETIC_MULTILISTENER2(A,B) private:			\
+  struct Listener_core{						\
+    typedef typename This::Handle Notifier_handle;		\
+    typedef enum {A,B} Notification_type;			\
+  };								\
+public:								\
+ typedef Multi_listener_base<Listener_core> Listener;		\
+ friend class Multi_listener_base<Listener_core>;		\
+private:							\
+ void new_listener(Listener *sk) {				\
+   listeners_.push_back(sk);					\
+ }								\
+ void delete_listener(Listener *kds) {				\
+   for (unsigned int i=0; i< listeners_.size(); ++i){		\
+     if (listeners_[i] == kds) {				\
+       std::swap(listeners_[i], listeners_.back());		\
+       listeners_.pop_back();					\
+       return;							\
+     }								\
+   }								\
+ }								\
+ std::vector<Listener*> listeners_;
+
+
+#define CGAL_KINETIC_MULTILISTENERNT2(A,B) private:		\
+  struct Listener_core{						\
+    typedef This::Handle Notifier_handle;			\
+    typedef enum {A,B} Notification_type;			\
   };								\
 public:								\
  typedef Multi_listener_base<Listener_core> Listener;		\

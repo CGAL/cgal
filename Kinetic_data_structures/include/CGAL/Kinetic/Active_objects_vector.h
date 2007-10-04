@@ -68,7 +68,7 @@ protected:
   typedef Active_objects_vector<Value_t> This;
   typedef std::pair<Key, Value_t> Storage_item;
   typedef std::vector<Storage_item > Storage;
-  CGAL_KINETIC_MULTILISTENER(IS_EDITING);
+  CGAL_KINETIC_MULTILISTENER1(IS_EDITING);
   
 public:
 

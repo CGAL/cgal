@@ -113,12 +113,10 @@ private:
 #define CGAL_SET_LOG_LEVEL(level) CGAL::Log::set_level(level);
 
 template <class T>
-inline const T& CGAL_assertion_strip_unsigned(const T&t) {
-  return t;
-}
-inline int CGAL_assertion_strip_unsigned(unsigned int t) {
+inline int CGAL_assertion_strip_unsigned(const T&t) {
   return static_cast<int>(t);
 }
+
 
 /*inline int CGAL_assertion_strip_unsigned(size_t t) {
   return static_cast<int>(t);

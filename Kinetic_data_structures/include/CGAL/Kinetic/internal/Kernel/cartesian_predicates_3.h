@@ -491,6 +491,27 @@ struct Cartesian_less_z_3
 
 };
 
+
+template <class KK>
+struct Cartesian_equal_3
+{
+  Cartesian_equal_3(){}
+  typedef typename KK::Certificate_function result_type;
+
+  typedef typename KK::Point_3 first_argument_type;
+  typedef typename KK::Point_3 second_argument_type;
+  template <class AT>
+  result_type operator()(const AT &a,
+			 const AT &b) const
+  {
+    if (a==b) return result_type(1);
+    else return result_type(-1);
+  }
+ 
+
+ 
+};
+
 /*PREDICATE_2_BEGIN(Point_sphere_orientation_3){
   return ;
   }

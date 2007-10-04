@@ -33,7 +33,7 @@ namespace CGAL
       class Qt_timer: public QObject, public Non_ref_counted<Qt_timer>
       {
 	Q_OBJECT
-    	CGAL_KINETIC_LISTENERNT(TICKS);
+    	CGAL_KINETIC_LISTENERNT1(TICKS);
      
       public:
 	Qt_timer();

@@ -33,6 +33,9 @@
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
+template <class Priority>
+class Heap_pointer_event_queue_item_handle;
+
 // The interface for an item stored in the ::Heap_pointer_event_queue
 template <class Priority>
 class Heap_pointer_event_queue_item: public Ref_counted<Heap_pointer_event_queue_item<Priority> >
@@ -47,7 +50,7 @@ public:
       return this->get() != NULL;
     }
     };*/
-  typedef typename P::Handle Key;
+  typedef Heap_pointer_event_queue_item_handle<Priority>  Key;
 
   Heap_pointer_event_queue_item():bin_(-1), time_(infinity_or_max<Priority>(Priority(0))){}
   Heap_pointer_event_queue_item(int bin, const Priority &t): bin_(bin), time_(t){}
@@ -67,13 +70,24 @@ private:
   Priority time_;
 };
 
-template <class Priority>
-inline std::ostream& operator<<(std::ostream &out, const Heap_pointer_event_queue_item<Priority> &i)
-{
-  i.write(out);
-  return i;
-}
+CGAL_OUTPUT1(Heap_pointer_event_queue_item);
 
+
+template <class Priority>
+class Heap_pointer_event_queue_item_handle: public Ref_counted<Heap_pointer_event_queue_item<Priority> >::Handle
+{
+  typedef typename Ref_counted<Heap_pointer_event_queue_item<Priority> >::Handle P;
+public:
+  std::ostream &write(std::ostream &out) const {
+    return P::operator*().write(out);
+  }
+  template <class T>
+  Heap_pointer_event_queue_item_handle(T* t): P(t){}
+  Heap_pointer_event_queue_item_handle(){}
+  Heap_pointer_event_queue_item_handle(const P&p): P(p){}
+};
+
+CGAL_OUTPUT1(Heap_pointer_event_queue_item_handle);
 
 // The how a dummy item is stored in the ::Heap_pointer_event_queue
 /*
@@ -418,7 +432,7 @@ public:
     pop_front();
     //std::pop_heap(queue_.begin(), queue_.end());
     ih->process();
-    CGAL_expensive_postcondition(is_valid());
+    //CGAL_expensive_postcondition(is_valid());
     /*}
       else {
       clear();
@@ -503,7 +517,7 @@ public:
 
 
   Key front() const {
-    return queue_.front();
+    return Key(queue_.front());
   }
 
 
