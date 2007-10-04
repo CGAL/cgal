@@ -43,155 +43,50 @@
 namespace CGAL {
 namespace SphericalFunctors {
 
-  template < class SK >
-  class Compare_x_3
-    : public SK::Linear_kernel::Compare_x_3
-  {
-    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-    typedef typename SK::Point_3 Point_3;
+#define CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(V)\
+template < class SK > \
+  class Compare_ ##V## _3: public SK::Linear_kernel::Compare_ ##V## _3{\
+    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;\
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;\
+    typedef typename SK::Point_3 Point_3;\
+  public:\
+    typedef CGAL::Comparison_result result_type;\
+    typedef Arity_tag<2>             Arity;\
+    using SK::Linear_kernel::Compare_ ##V## _3::operator();\
+    result_type\
+    operator() (const Circular_arc_point_3 &p0,\
+                const Circular_arc_point_3 &p1) const\
+    { return compare_ ##V <SK>(p0, p1); }\
+    result_type\
+    operator() (const Circular_arc_point_3 &p0,\
+                const Point_3 &p1) const\
+    { return compare_ ##V <SK>(p0, p1); }\
+    result_type\
+    operator() (const Point_3 &p0,\
+                const Circular_arc_point_3 &p1) const\
+    { return compare_ ##V <SK>(p0, p1); }\
+    result_type\
+    operator() (const Circular_arc_point_on_reference_sphere_3 &p0,\
+                const Circular_arc_point_on_reference_sphere_3 &p1) const\
+    { return (*this)(static_cast<Circular_arc_point_3>(p0), static_cast<Circular_arc_point_3>(p1)); }\
+    result_type\
+    operator() (const Circular_arc_point_on_reference_sphere_3 &p0,\
+                const Point_3 &p1) const\
+    { return   (*this)(static_cast<Circular_arc_point_3>(p0),p1);}\
+    result_type\
+    operator() (const Point_3 &p0,\
+                const Circular_arc_point_on_reference_sphere_3 &p1) const\
+    { return (*this)(p0, static_cast<Circular_arc_point_3>(p1));}\
+  };\
+  
+  CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(x)
+  CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(y)
+  CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(z)
+  CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(xy)
+  CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(xyz)
 
-  public:
-    typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
 
-    using SK::Linear_kernel::Compare_x_3::operator();
 
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_x<SK>(p0, p1); }
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Point_3 &p1) const
-    { return compare_x<SK>(p0, p1); }
-
-    result_type
-    operator() (const Point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_x<SK>(p0, p1); }
-
-  };
-
-  template < class SK >
-  class Compare_y_3
-    : public SK::Linear_kernel::Compare_y_3
-  {
-    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-    typedef typename SK::Point_3 Point_3;
-
-  public:
-    typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
-
-    using SK::Linear_kernel::Compare_y_3::operator();
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_y<SK>(p0, p1); }
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Point_3 &p1) const
-    { return compare_y<SK>(p0, p1); }
-
-    result_type
-    operator() (const Point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_y<SK>(p0, p1); }
-
-  };
-
-  template < class SK >
-  class Compare_z_3
-    : public SK::Linear_kernel::Compare_z_3
-  {
-    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-    typedef typename SK::Point_3 Point_3;
-
-  public:
-    typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
-
-    using SK::Linear_kernel::Compare_z_3::operator();
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_z<SK>(p0, p1); }
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Point_3 &p1) const
-    { return compare_z<SK>(p0, p1); }
-
-    result_type
-    operator() (const Point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_z<SK>(p0, p1); }
-
-  };
-
-  template < class SK >
-  class Compare_xy_3
-    : public SK::Linear_kernel::Compare_xy_3
-  {
-    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-    typedef typename SK::Point_3 Point_3;
-
-  public:
-    typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
-
-    using SK::Linear_kernel::Compare_xy_3::operator();
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_xy<SK>(p0, p1); }
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Point_3 &p1) const
-    { return compare_xy<SK>(p0, p1); }
-
-    result_type
-    operator() (const Point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_xy<SK>(p0, p1); }
-
-  };
-
-  template < class SK >
-  class Compare_xyz_3
-    : public SK::Linear_kernel::Compare_xyz_3
-  {
-    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-    typedef typename SK::Point_3 Point_3;
-
-  public:
-    typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
-
-    using SK::Linear_kernel::Compare_xyz_3::operator();
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_xyz<SK>(p0, p1); }
-
-    result_type
-    operator() (const Circular_arc_point_3 &p0,
-                const Point_3 &p1) const
-    { return compare_xyz<SK>(p0, p1); }
-
-    result_type
-    operator() (const Point_3 &p0,
-                const Circular_arc_point_3 &p1) const
-    { return compare_xyz<SK>(p0, p1); }
-
-  };
 
   
   //TAG_SEB

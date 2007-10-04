@@ -88,6 +88,7 @@ namespace CGAL {
       }
  
       Point_3 center() const {
+        #warning : THIS SUPPPOSE THAT THE SPHERE IS CENTERED AT THE ORIGIN
         FT coeff=get_circle_center_coeff(supporting_sphere().center(),supporting_sphere().squared_radius());
         return CGAL::ORIGIN+(supporting_sphere().center()-CGAL::ORIGIN)*coeff;    
       };
