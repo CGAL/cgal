@@ -50,7 +50,7 @@ template < class SK > \
     typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;\
     typedef typename SK::Point_3 Point_3;\
   public:\
-    typedef CGAL::Comparison_result result_type;\
+    typedef  typename SK::Linear_kernel::Compare_ ##V## _3::result_type result_type;\
     typedef Arity_tag<2>             Arity;\
     using SK::Linear_kernel::Compare_ ##V## _3::operator();\
     result_type\
@@ -68,15 +68,15 @@ template < class SK > \
     result_type\
     operator() (const Circular_arc_point_on_reference_sphere_3 &p0,\
                 const Circular_arc_point_on_reference_sphere_3 &p1) const\
-    { return (*this)(static_cast<Circular_arc_point_3>(p0), static_cast<Circular_arc_point_3>(p1)); }\
+    { return (*this)(static_cast<const Circular_arc_point_3&>(p0), static_cast<const Circular_arc_point_3&>(p1)); }\
     result_type\
     operator() (const Circular_arc_point_on_reference_sphere_3 &p0,\
                 const Point_3 &p1) const\
-    { return   (*this)(static_cast<Circular_arc_point_3>(p0),p1);}\
+    { return   (*this)(static_cast<const Circular_arc_point_3&>(p0),p1);}\
     result_type\
     operator() (const Point_3 &p0,\
                 const Circular_arc_point_on_reference_sphere_3 &p1) const\
-    { return (*this)(p0, static_cast<Circular_arc_point_3>(p1));}\
+    { return (*this)(p0, static_cast<const Circular_arc_point_3&>(p1));}\
   };\
   
   CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(x)
