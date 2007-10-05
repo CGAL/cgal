@@ -86,9 +86,10 @@ namespace CGAL {
       return Sphere_3(Point_3(eq.a(),eq.b(),eq.c()),eq.r_sq());
     }
 
+   
     template < class SK >
     inline
-    typename SK::Linear_kernel::Bounded_side
+    typename SK::Linear_kernel::Bounded_side_3::result_type
     bounded_side(const typename SK::Sphere_3 &s,
                  const typename SK::Circular_arc_point_3 &p) {
       typedef typename SK::Algebraic_kernel Algebraic_kernel;
@@ -242,8 +243,10 @@ namespace CGAL {
       typedef typename SK::Root_for_spheres_2_3 Root_for_spheres_2_3;
       typedef typename SK::FT FT;
 
-      CGAL_kernel_precondition(!p.rep().is_degenerate());
-      CGAL_kernel_precondition(!s.rep().is_degenerate());
+      //~ CGAL_kernel_precondition(!p.rep().is_degenerate());
+      //~ CGAL_kernel_precondition(!s.rep().is_degenerate());
+      CGAL_kernel_precondition(!p.is_degenerate());
+      CGAL_kernel_precondition(!s.is_degenerate());
 
       const FT d2 = CGAL::square(p.a()*s.center().x() + 
                                  p.b()*s.center().y() + 
@@ -305,8 +308,10 @@ namespace CGAL {
     { 
       typedef typename SK::Plane_3 Plane_3;
       typedef typename SK::Sphere_3 Sphere_3;
-      CGAL_kernel_precondition(!s1.rep().is_degenerate());
-      CGAL_kernel_precondition(!s2.rep().is_degenerate());
+      //~ CGAL_kernel_precondition(!s1.rep().is_degenerate());
+      //~ CGAL_kernel_precondition(!s2.rep().is_degenerate());
+      CGAL_kernel_precondition(!s1.is_degenerate());
+      CGAL_kernel_precondition(!s2.is_degenerate());
       if(non_oriented_equal<SK>(s1,s2)) {
         *res++ = make_object(s1);
         return res;
@@ -356,9 +361,12 @@ namespace CGAL {
        typedef typename SK::Circle_3  Circle_3;
        typedef typename SK::Algebraic_kernel  Algebraic_kernel;
        typedef std::vector< Object > solutions_container;
-       CGAL_kernel_precondition(!s1.rep().is_degenerate());
-       CGAL_kernel_precondition(!s2.rep().is_degenerate());
-       CGAL_kernel_precondition(!s3.rep().is_degenerate());
+       //~ CGAL_kernel_precondition(!s1.rep().is_degenerate());
+       //~ CGAL_kernel_precondition(!s2.rep().is_degenerate());
+       //~ CGAL_kernel_precondition(!s3.rep().is_degenerate());
+       CGAL_kernel_precondition(!s1.is_degenerate());
+       CGAL_kernel_precondition(!s2.is_degenerate());
+       CGAL_kernel_precondition(!s3.is_degenerate());      
        if(non_oriented_equal<SK>(s1,s2) && non_oriented_equal<SK>(s2,s3)) {
          *res++ = make_object(s1);
          return res;

@@ -43,7 +43,8 @@ namespace CGAL {
     Circular_arc_point_on_reference_sphere_3():T_Circular_arc_point_3(FT(0),FT(0),FT(0)),Trep(-1,FT(0)){};
       
     Circular_arc_point_on_reference_sphere_3(const HQ_NT& hq,const typename AK::Root_for_spheres_2_3& R):T_Circular_arc_point_3(R),Trep(hq,auto_ftype(hq)==TAN?(R.y()/R.x()):(R.x()/R.y())){};            
-      
+    
+    Circular_arc_point_on_reference_sphere_3(const HQ_NT& hq,const T_Circular_arc_point_3& R):T_Circular_arc_point_3(R),Trep(hq,auto_ftype(hq)==TAN?(R.y()/R.x()):(R.x()/R.y())){};            
     //~ static inline Circular_arc_point_on_reference_sphere_3 VirtualPt_to_point_on_sphere(){
       //~ return Circular_arc_point_on_reference_sphere_3(FT(0),FT(0),FT(0),FT(0),HQ_NT(-1));
     //~ };

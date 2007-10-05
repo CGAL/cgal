@@ -551,7 +551,10 @@ template < class SK > \
     result_type
     operator()(const HQ_NT& hq,const typename SK::Algebraic_kernel::Root_for_spheres_2_3& R)
     {return Rep(hq,R);}
-    
+
+    result_type
+    operator()(const HQ_NT& hq,const typename SK::Circular_arc_point_3& R)
+    {return Rep(hq,R);}    
     
     
     
@@ -1055,10 +1058,12 @@ template < class SK > \
   {
     typedef typename SK::Point_3                 Point_3;
     typedef typename SK::Sphere_3                Sphere_3;
+    typedef typename SK::Sphere_with_radius_3                Sphere_with_radius_3;
     typedef typename SK::Plane_3                 Plane_3;
     typedef typename SK::Line_3                  Line_3;
     typedef typename SK::Line_arc_3              Line_arc_3;
     typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;
     typedef typename SK::Circular_arc_3          Circular_arc_3;
     typedef typename SK::Circle_3                Circle_3;
     
@@ -1082,6 +1087,10 @@ template < class SK > \
     result_type
     operator()(const Sphere_3 &a, const Circular_arc_point_3 &p) const
     { return has_on<SK>(a, p); }
+    
+    result_type
+    operator()(const Sphere_with_radius_3 &a, const Circular_arc_point_on_reference_sphere_3 &p) const
+    { return (*this)(static_cast<const Sphere_3&>(a),static_cast<const Circular_arc_point_3&>(p)); }    
 
     result_type
     operator()(const Circular_arc_point_3 &p, const Sphere_3 &a) const
@@ -1717,7 +1726,8 @@ template < class SK > \
     typedef typename SK::Point_3               Point_3;
 
   public:
-    typedef typename SK::Linear_kernel::Bounded_side    result_type;
+    //~ typedef typename SK::Linear_kernel::Bounded_side    result_type;
+    typedef typename SK::Linear_kernel::Bounded_side_3::result_type    result_type;
     typedef Arity_tag< 2 >              Arity;
 
     using SK::Linear_kernel::Bounded_side_3::operator();

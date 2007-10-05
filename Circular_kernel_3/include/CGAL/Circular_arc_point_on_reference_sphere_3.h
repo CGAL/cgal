@@ -57,6 +57,10 @@ public:
   Circular_arc_point_on_reference_sphere_3(const HQ_NT& hq,const typename AK::Root_for_spheres_2_3& R)
   : RCircular_arc_point_on_reference_sphere_3(hq,R)
   {}
+    
+  Circular_arc_point_on_reference_sphere_3(const HQ_NT& hq,const typename SphericalKernel::Circular_arc_point_3& R)
+  : RCircular_arc_point_on_reference_sphere_3(hq,R)
+  {}    
 
   Circular_arc_point_on_reference_sphere_3(const HQ_NT& _hq,const Root_of_2& ftheta,const typename AK::Root_for_spheres_2_3& rfs)
   : RCircular_arc_point_on_reference_sphere_3(

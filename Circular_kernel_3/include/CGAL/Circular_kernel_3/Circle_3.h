@@ -120,7 +120,6 @@ namespace CGAL {
       
       typedef std::pair<Sphere_3,typename SK::Plane_3> Rep;
       typedef typename SK::template Handle<Rep>::type  Base;
-
       Base base;  
       public:
 
@@ -216,7 +215,7 @@ namespace CGAL {
       typedef typename SK::Direction_3  Direction_3;
       typedef typename SK::FT           FT;
 
-    private:
+    protected:
       //~ typedef std::pair<Sphere_3, Plane_3>  Rep;
       //~ typedef typename SK::template Handle<Rep>::type  Base;
 
