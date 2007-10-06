@@ -23,7 +23,8 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
 \ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
-for vertices, halfedges, faces {\bf\ttfamily and ccbs} of a halfedge data structure
+for vertices, halfedges, {\XHDS \ccc{halfedge_cycles}}, and faces 
+of a halfedge data structure
 without knowing the containing halfedge data structure. The class
 \ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
 data structure and provides functions that modify the halfedge data
@@ -56,7 +57,7 @@ all halfedge data structures and will not appear here again.
 \ccGlue
 \ccNestedType{Face}{face type of \ccc{HalfedgeDS}.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb}{\bf\ttfamily ccb type of \ccc{HalfedgeDS}.}
+\ccNestedType{\XHDS Halfedge_cycle}{\XHDS \ccc{halfedge_cycle} type of \ccc{HalfedgeDS}.}
 
 \ccNestedType{Vertex_handle}{}
 \ccGlue
@@ -64,7 +65,7 @@ all halfedge data structures and will not appear here again.
 \ccGlue
 \ccNestedType{Face_handle}{}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb_handle}{}
+\ccNestedType{\XHDS Halfedge_cycle_handle}{}
 \ccGlue
 \ccNestedType{Vertex_iterator}{}
 \ccGlue
@@ -72,7 +73,7 @@ all halfedge data structures and will not appear here again.
 \ccGlue
 \ccNestedType{Face_iterator}{}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb_iterator}{}
+\ccNestedType{\XHDS Halfedge_cycle_iterator}{}
 
 The respective \ccc{const_handle}'s and \ccc{const_iterator}'s are
 available as well.
@@ -91,13 +92,13 @@ available as well.
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{}
 \ccGlue
-\ccNestedType{\bf\ttfamily Supports_halfedge_ccb}{}
+\ccNestedType{\XHDS Supports_halfedge_halfedge_cycle}{}
 \ccGlue
 \ccNestedType{Supports_face_halfedge}{}
 \ccGlue
-\ccNestedType{\bf\ttfamily Supports_face_ccb}{}
+\ccNestedType{\XHDS Supports_face_halfedge_cycle}{}
 \ccGlue
-\ccNestedType{\bf\ttfamily Supports_ccb_face}{}
+\ccNestedType{\XHDS Supports_halfedge_cycle_face}{}
 \ccGlue
 \ccNestedType{Supports_removal}{}
 
@@ -134,17 +135,17 @@ available as well.
     {returns the incident face of $h$ if supported, 
     \ccc{Face_handle()} otherwise.}
 \ccGlue
-\ccMethod{\bf\ttfamily Face_handle get_face(Ccb_handle b);}
-    {\bf\ttfamily returns the bounded face of $b$ if supported, 
+\ccMethod{\XHDS Face_handle get_face(Halfedge_cycle_handle c);}
+    {\XHDS returns the face of $c$ if supported, 
     \ccc{Face_handle()} otherwise.}
 \ccGlue
-\ccMethod{\bf\ttfamily Ccb_handle get_ccb(Halfedge_handle h);}
-    {\bf\ttfamily returns the host ccb of $h$ if supported, 
-    \ccc{Ccb_handle()} otherwise.}
+\ccMethod{\XHDS Halfedge_cycle_handle get_halfedge_cycle(Halfedge_handle h);}
+    {\XHDS returns the \ccc{halfedge_cycle} of $h$ if supported, 
+    \ccc{Halfedge_cycle_handle()} otherwise.}
 \ccGlue
-\ccMethod{\bf\ttfamily Ccb_handle get_ccb(Face_handle f);}
-    {\bf\ttfamily returns the bounding ccb of $f$ if supported, 
-    \ccc{Ccb_handle()} otherwise.}
+\ccMethod{\XHDS Halfedge_cycle_handle get_halfedge_cycle(Face_handle f);}
+    {\XHDS returns the \ccc{halfedge_cycle} of $f$ if supported, 
+    \ccc{Halfedge_cycle_handle()} otherwise.}
 \ccGlue
 \ccMethod{Halfedge_handle get_face_halfedge( Face_handle f);}
     {returns the incident halfedge of $f$ if supported, 
@@ -221,8 +222,8 @@ Corresponding member functions for \ccc{const_handle}'s are provided as well.
 \ccMethod{void set_face( Halfedge_handle h, Face_handle f) const;}
     {sets the incident face of $h$ to $f$.}
 \ccGlue
-\ccMethod{\bf\ttfamily void set_face( Ccb_handle b, Face_handle f) const;}
-    {\bf\ttfamily sets $f$ as the face bounded by $b$.}
+\ccMethod{\XHDS void set_face( Halfedge_cycle_handle b, Face_handle f) const;}
+    {\XHDS sets $f$ as the face bounded by $b$.}
 \ccGlue
 \ccMethod{void set_face_halfedge( Face_handle f, Halfedge_handle g) const;}
     {sets the incident halfedge of $f$ to $g$.}
@@ -230,25 +231,25 @@ Corresponding member functions for \ccc{const_handle}'s are provided as well.
 \ccMethod{void set_face_halfedge( Halfedge_handle h) const;}
     {sets the incident halfedge of the face incident to $h$ to $h$.}
 \ccGlue
-\ccMethod{\bf\ttfamily void set_halfedge_ccb( Halfedge_handle h, Ccb_handle b) const;}
-    {\bf\ttfamily sets the host ccb of $h$ to $b$.}
+\ccMethod{\XHDS void set_halfedge_cycle( Halfedge_handle h, Halfedge_cycle_handle c) const;}
+    {\XHDS sets the \ccc{halfedge_cycle} of $h$ to $c$.}
 \ccGlue
-\ccMethod{\bf\ttfamily void insert_outer_ccb_to_face( Face_handle f, Ccb_handle b, Ccb_handle_iterator pos) const;}
-    {\bf\ttfamily inserts $b$ to sequence of outer ccbs of $f$ before $pos$.}
+\ccMethod{\XHDS void insert_outer_halfedge_cycle_to_face( Face_handle f, Halfedge_cycle_handle c, Halfedge_cycle_handle_iterator pos) const;}
+    {\XHDS inserts $c$ to sequence of outer cycles of $f$ before $pos$.}
 \ccGlue
-\ccMethod{\bf\ttfamily void insert_inner_ccb_to_face( Face_handle f, Ccb_handle b, Ccb_handle_iterator pos) const;}
-    {\bf\ttfamily inserts $b$ to sequence of inner ccbs of $f$ before $pos$.}
+\ccMethod{\XHDS void insert_inner_halfedge_cycle_to_face( Face_handle f, Halfedge_cycle_handle c, Halfedge_cycle_handle_iterator pos) const;}
+    {\XHDS inserts $c$ to sequence of inner cycles of $f$ before $pos$.}
 \ccGlue
-\ccMethod{\bf\ttfamily void insert_isolated_vertex_to_face( Face_handle f, Ccb_handle v, Ccb_handle_iterator pos) const;}
-    {\bf\ttfamily inserts $v$ to sequence of isolated vertices of $f$ before $pos$.}
+\ccMethod{\XHDS void insert_isolated_vertex_to_face( Face_handle f, Halfedge_cycle_handle v, Halfedge_cycle_handle_iterator pos) const;}
+    {\XHDS inserts $v$ to sequence of isolated vertices of $f$ before $pos$.}
 \ccGlue
-\ccMethod{\bf\ttfamily void remove_outer_ccb_of_face( Face_handle f, Ccb_handle_iterator it) const;}
-    {\bf\ttfamily removes the entry $it$ in the sequence of outer ccbs of $f$}
+\ccMethod{\XHDS void remove_outer_halfedge_cycle_of_face( Face_handle f, Halfedge_cycle_handle_iterator it) const;}
+    {\XHDS removes the entry $it$ in the sequence of outer cycles of $f$}
 \ccGlue
-\ccMethod{\bf\ttfamily void remove_inner_ccb_of_face( Face_handle f, Ccb_handle_iterator it) const;}
-    {\bf\ttfamily removes the entry $it$ in the sequence of inner ccbs of $f$}
+\ccMethod{\XHDS void remove_inner_halfedge_cycle_of_face( Face_handle f, Halfedge_cycle_handle_iterator it) const;}
+    {\XHDS removes the entry $it$ in the sequence of inner cycles of $f$}
 \ccGlue
-\ccMethod{\bf\ttfamily void remove_isolated_vertex_of_face( Face_handle f, Ccb_handle_iterator it) const;}        {\bf\ttfamily removes the entry $it$ in the sequence of isolated vertices of $f$}
+\ccMethod{\XHDS void remove_isolated_vertex_of_face( Face_handle f, Halfedge_cycle_handle_iterator it) const;}        {\XHDS removes the entry $it$ in the sequence of isolated vertices of $f$}
 
 
 \ccSeeAlso

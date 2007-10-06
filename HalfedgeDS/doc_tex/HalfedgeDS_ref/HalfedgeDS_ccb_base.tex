@@ -4,8 +4,8 @@
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
 % | 
-\RCSdef{\RCSHalfedgeDSccbbaseRev}{$Id: HalfedgeDS_halfedge_base.tex 28489 2006-02-14 10:08:15Z lsaboret $}
-\RCSdefDate{\RCSHalfedgeDSccbbaseDate}{$Date: 2006-02-14 07:08:15 -0300 (Tue, 14 Feb 2006) $}
+\RCSdef{\RCSHalfedgeDShalfedgeCyclebaseRev}{$Id: HalfedgeDS_halfedge_base.tex 28489 2006-02-14 10:08:15Z lsaboret $}
+\RCSdefDate{\RCSHalfedgeDShalfedgeCyclebaseDate}{$Date: 2006-02-14 07:08:15 -0300 (Tue, 14 Feb 2006) $}
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
@@ -14,35 +14,32 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_ccb_base<Refs>}
+\begin{ccRefClass}{HalfedgeDS_halfedge_cycle_base<Refs>}
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the \ccc{HalfedgeDSCcb}
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSHalfedgeCycle}
 concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}. 
 The full declaration states four template parameters:
 
 \begin{tabbing}
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
-              \> \>\ccc{class Tag_face} \=\ccc{= CGAL::Tag_true>}\\
-     \> \ccc{class HalfedgeDS_ccb_base;}
+     \> \ccc{class HalfedgeDS_halfedge_cycle_base;}
 \end{tabbing}
 
-If \ccc{Tag_face} $\equiv$ \ccc{CGAL::Tag_true} a bounded face is
-supported.
 
-In all cases, a reference to the primary halfedge is supported.
+In all cases, a reference to the halfedge and face is supported.
 
-%\ccInclude{CGAL/HalfedgeDS_ccb_base.h}
+%\ccInclude{CGAL/HalfedgeDS_halfedge_cycle_base.h}
 
 \ccIsModel
 
-\ccRefConceptPage{HalfedgeDSCcb}
+\ccRefConceptPage{HalfedgeDSHalfedgeCycle}
 
 \ccCreation
 \ccCreationVariable{b}
 
-\ccConstructor{HalfedgeDS_ccb_base();}{default constructor.}
+\ccConstructor{HalfedgeDS_halfedge_cycle_base();}{default constructor.}
 
 \ccSeeAlso
 
@@ -51,8 +48,7 @@ In all cases, a reference to the primary halfedge is supported.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_min_base<Refs>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
 
 \end{ccRefClass}
 

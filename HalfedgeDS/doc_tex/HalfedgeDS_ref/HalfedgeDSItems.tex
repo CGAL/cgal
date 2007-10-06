@@ -19,22 +19,22 @@
 \ccDefinition
   
 The concept \ccRefName\ wraps the four item types -- vertex,
-halfedge, face {\bf\ttfamily and ccb}-- for a halfedge data structure.
+halfedge, {\XHDS \ccc{halfedge_cycle}}, and face-- for a halfedge data structure.
 A \ccRefName\ contains four member class templates named \ccc{Vertex_wrapper},
-\ccc{Halfedge_wrapper}, \ccc{Face_wrapper}, {\bf\ttfamily and \ccc{Ccb_wrapper}}
-, each with two template parameters, \ccc{Refs} and \ccc{Traits}.
+\ccc{Halfedge_wrapper}, {\XHDS \ccc{Halfedge_cycle_wrapper}},
+and \ccc{Face_wrapper}, each with two template parameters, \ccc{Refs} and \ccc{Traits}.
 \ccc{Refs} requires an
 instantiated halfedge data structure \ccc{HalfedgeDS} as argument,
 \ccc{Traits} is a geometric traits class supplied by the class that
 uses the halfedge data structure as internal representation. \ccc{Traits}
 is not used by the halfedge data structure itself. These four member 
 class templates provide a local type named \ccc{Vertex}, \ccc{Halfedge},
-, \ccc{Face} {\bf\ttfamily and \ccc{Ccb}} respectively.
+{\XHDS \ccc{Halfedge_cycle}}, and \ccc{Face} respectively.
 The requirements on these
 types are described on page~\pageref{pageHalfedgeDSItemsVertexRef},
 page~\pageref{pageHalfedgeDSItemsHalfedgeRef}, 
-page~\pageref{pageHalfedgeDSItemsFaceRef},
-and page~\pageref{pageHalfedgeDSItemsCcbRef} respectively.
+page~\pageref{pageHalfedgeDSItemsHalfedgeCycleRef}, 
+and page~\pageref{pageHalfedgeDSItemsFaceRef} respectively.
 
 \ccTypes
 \ccTwo{HalfedgeDSItems:: Halfedge_wrapper<Refs,Traits>::HalfedgeM}{}
@@ -48,8 +48,8 @@ and page~\pageref{pageHalfedgeDSItemsCcbRef} respectively.
 \ccNestedType{Face_wrapper<Refs,Traits>::Face}
     {model of \ccc{HalfedgeDSFace}.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb_wrapper<Refs,Traits>::Ccb}
-    {\bf\ttfamily model of \ccc{HalfedgeDSCcb}.}
+\ccNestedType{\XHDS Halfedge_cycle_wrapper<Refs,Traits>::Halfedge_cycle}
+    {\XHDS model of \ccc{HalfedgeDSHalfedgeCycle}.}
 
 \ccHasModels
 
@@ -63,12 +63,12 @@ and page~\pageref{pageHalfedgeDSItemsCcbRef} respectively.
 \ccRefConceptPage{HalfedgeDSVertex}\\
 \ccRefConceptPage{HalfedgeDSHalfedge}\\
 \ccRefConceptPage{HalfedgeDSFace}\\
-\ccRefConceptPage{HalfedgeDSCcb}\\
+\ccRefConceptPage{HalfedgeDSHalfedgeCycle}\\
 \ccRefConceptPage{PolyhedronItems_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}
 
 \ccExample
 
@@ -91,8 +91,8 @@ struct HalfedgeDS_min_items {
         typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
     };
     template < class Refs, class Traits>
-    struct Ccb_wrapper {
-        typedef CGAL::HalfedgeDS_ccb_min_base< Refs>     Ccb;
+    struct Halfedge_cycle_wrapper {
+        typedef int Halfedge_cycle;
     };
 };
 \end{ccExampleCode}

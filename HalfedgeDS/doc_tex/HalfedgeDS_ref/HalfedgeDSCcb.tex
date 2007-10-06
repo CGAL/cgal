@@ -4,8 +4,8 @@
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
 % | 
-\RCSdef{\RCSCcbRev}{$Id: HalfedgeDSFace.tex 29618 2006-03-19 22:54:59Z ameyer $}
-\RCSdefDate{\RCSCcbDate}{$Date: 2006-03-19 19:54:59 -0300 (Sun, 19 Mar 2006) $}
+\RCSdef{\RCSHalfedgeCycleRev}{$Id: HalfedgeDSFace.tex 29618 2006-03-19 22:54:59Z ameyer $}
+\RCSdefDate{\RCSHalfedgeCycleDate}{$Date: 2006-03-19 19:54:59 -0300 (Sun, 19 Mar 2006) $}
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
@@ -14,37 +14,32 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{HalfedgeDSCcb}
-\label{pageHalfedgeDSItemsCcbRef}
+\begin{ccRefConcept}{HalfedgeDSHalfedgeCycle}
+\label{pageHalfedgeDSItemsHalfedgeCycleRef}
 
-This has been introduced in  \cgal\ version 3.4.
 
 \ccDefinition
   
-The concept \ccRefName\ defines the requirements for the local \ccc{Ccb} 
+The concept \ccRefName\ defines the requirements for the local \ccc{Halfedge_cycle} 
 type in the \ccc{HalfedgeDS} concept. It is also required in 
-the \ccc{Ccb_wrapper<Refs,Traits>} member class template of an
+the \ccc{Halfedge_cycle_wrapper<Refs,Traits>} member class template of an
 items class, see the \ccc{HalfedgeDSItems} concept.
 
 All the halfedges incident to the same face are collectively represented
-by this \ccc{ccb} \ccc{HDS} item which centralizes all their common properties.
+by this \ccRefName\ \ccc{HDS} item which centralizes all their common properties.
 
-All the halfedges in a ccb must form a cycle, not just a path, and they all must be incident
-to the same face (or no face at all for a border ccb).
+A \ccRefName\ stores a reference to one of the halfedges in the cycle (which one is unspecified).
+It optionally stores a reference to the face it belongs to. A type tag indicates whether 
+the related member functions are supported. 
 
-While the halfedges that belong to the same ccb are required to form a cycle, 
-two halfedges are allowed to be in the same cycle even if they are opposite to each other. 
-This allows ccbs to represent open curves, antennas and empty alleys by simply arranging 
+All the halfedges connected to the one referenced in a \ccRefName\ must form a cycle, not just a path, and they all must be incident to the same face (or no face at all for a border cycle).
+
+Two halfedges are allowed to be in the same cycle even if they are opposite to each other. 
+This allows models of \ccRefName\ to represent open curves, antennas and empty alleys by simply arranging 
 the cycle of halfedges to stitch over itself. 
 
-Furthermore, a ccb can also represent an isolated vertex hosting just one halfedge,
-incident to just one vertex, provided the halfedge forms a self-loop 
-(fulfilling the circular requirement). 
-
-A ccb stores a reference to one of the halfedges in the cycle,
-referred to as the {\em primary} halfedge. It optionally stores 
-a reference to the face it bounds. A type tag indicates whether 
-the related member functions are supported. 
+Furthermore, a \ccRefName\ can also represent an isolated vertex composed of just one halfedge
+connected to itself and to a single vertex (forming a self-loop).
 
 For the protection of the integrity of the data structure classes such as
 \ccc{CGAL::Polyhedron_3} are allowed to redefine the modifying member 
@@ -52,6 +47,10 @@ functions to be private. In order to make them accessible for the
 halfedge data structure they must be derived from a base class \ccc{Base}
 where the modifying member functions are still public. (The protection
 can be bypassed by the user, but not by accident.)
+
+\ccHeading{Release Notes}
+
+This has been introduced in  \cgal\ version 3.4.
 
 \ccTypes
 
@@ -83,35 +82,20 @@ can be bypassed by the user, but not by accident.)
 \ccNestedType{Face_const_handle}{}
 
 
-\ccNestedType{Supports_ccb_face}{\ccc{CGAL::Tag_true} or 
-  \ccc{CGAL::Tag_false}.}
-
 \ccCreation
 \ccCreationVariable{b}
 
-\ccConstructor{Ccb();}{default constructor.}
+\ccConstructor{Halfedge_cycle();}{default constructor.}
 
 \ccTagFullDeclarations
 
 \ccMethod{Halfedge_handle       halfedge();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle halfedge() const;}{
-    primary halfedge of \ccVar.}
+    halfedge of \ccVar.}
 \ccGlue
 \ccMethod{void set_halfedge( Halfedge_handle h);}{
-    sets the primary halfedge to $h$.}
-
-\ccMethod{bool is_border() const;}
-    {is true if \ccVar\ is a border ccb.
-     \ccPostcond: \ccc{Ccb::is_border()} returns the same as \ccc{Halfedge::is_border()}
-     for all halfedges in the cycle.
-    }
-
-\ccMethod{bool is_isolated_vertex() const;}
-    {is true if \ccVar\ is a self-loop of one single halfedge incident on one single vertex}
-
-\ccHeading{Operations available if \ccc{Supports_ccb_face} $\equiv$ 
-           \ccc{CGAL::Tag_true}}
+    sets the halfedge to $h$.}
 
 \ccMethod{Face_handle       face();}{}
 \ccGlue
@@ -121,10 +105,19 @@ can be bypassed by the user, but not by accident.)
 \ccMethod{void set_face( Face_handle f);}{
     sets bounded face to $h$.}
 
+
+\ccMethod{bool is_border() const;}
+    {is true if \ccVar\ is a border \ccc{halfedge_cycle}.
+     \ccPostcond: \ccc{Halfedge_cycle::is_border()} returns the same as \ccc{Halfedge::is_border()}
+     for all halfedges in the cycle.
+    }
+
+\ccMethod{bool is_isolated_vertex() const;}
+    {is true if \ccVar\ is a self-loop of one single halfedge incident on one single vertex}
+
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_min_base<Refs>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}
 
 \ccSeeAlso
 

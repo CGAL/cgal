@@ -40,7 +40,6 @@ halfedges.
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_min_base<Refs>}
 
 \ccExample
 
@@ -62,9 +61,11 @@ struct HalfedgeDS_min_items {
     struct Face_wrapper {
         typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
     };
+
+    // Halfedge_cycles are not supported if minimum items are used.
     template < class Refs, class Traits>
-    struct Ccb_wrapper {
-        typedef CGAL::HalfedgeDS_ccb_min_base< Refs>  Ccb;
+    struct Halfedge_cycle_wrapper {
+        typedef int Halfedge_cycle;
     };
 };
 \end{ccExampleCode}

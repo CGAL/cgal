@@ -20,16 +20,16 @@
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSFace}
 concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}.  The
-template declaration of \ccRefName\ has {\bf\ttfamily four} parameters with some
+template declaration of \ccRefName\ has {\XHDS four} parameters with some
 defaults that allow to select various flavors of faces. 
 
-{\bf\ttfamily
+{\XHDS
 
 \begin{tabbing}
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
-              \> \>\ccc{class Tag_halfedge} \=\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_plane   } \>\ccc{= CGAL::Tag_false,}\\
-              \> \>\ccc{class Tag_ccb     } \>\ccc{= CGAL::Tag_true}\\
+              \> \>\ccc{class Tag_halfedge      } \=\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_plane         } \>\ccc{= CGAL::Tag_false,}\\
+              \> \>\ccc{class Tag_halfedge_cycle} \>\ccc{= CGAL::Tag_true}\\
      \> \ccc{class HalfedgeDS_face_base;}
 \end{tabbing}
 
@@ -37,24 +37,25 @@ If \ccc{Tag_halfedge} $\equiv$ \ccc{CGAL::Tag_true} a reference to the incident 
 
 If \ccc{Tag_plane} $\neq$ \ccc{CGAL::Tag_false} a plane object is supported (and the type \ccc{Tag_plane} corresponds to the type of the plane object).
 
-If \ccc{Tag_ccb} $\equiv$ \ccc{CGAL::Tag_true} ccb sequences are supported.
+If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} \ccc{halfedge_cycle} sequences are supported.
 
 
-Faces may be bounded by one or multiple halfedge cycles (ccbs) and a face object can optionally store the bounding halfedges in one of two mutually exclusive ways: 
+Faces may be bounded by one or multiple halfedge cycles and a face object can optionally store the bounding cycle in one of two mutually exclusive ways: 
 
-Directly storing the incident halfedge (when faces support only one outer ccb), configuration selected
+Directly storing the incident halfedge (when faces support only one outer halfedge cycle), configuration selected
 with \ccc{Tag_halfedge} $\equiv$ \ccc{CGAL::Tag_true}
 
 or
 
-Storing iterator pairs defining the sequences of outer and inner ccbs that bound the face.
-With \ccc{Tag_ccb} $\equiv$ \ccc{CGAL::Tag_true}
+Storing iterator pairs defining the sequences of outer and inner \ccc{halfedge_cycles} that bound the face.
+With \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
 
 
+\ccHeading{Release Notes}
 
-Since multiple ccbs were introduced in \cgal\ version 3.4, to keep backward compatibility,
-the choice between storing just one halfedge or ccb sequences is selected by the combination 
-of the two type tags \ccc{Tag_halfedge} and \ccc{Tag_ccb}. These are mutually
+Since multiple halfedge cycles were introduced in \cgal\ version 3.4, to keep backward compatibility,
+the choice between storing just one halfedge or \ccc{halfedge_cycle} sequences is selected by the combination 
+of the two type tags \ccc{Tag_halfedge} and \ccc{Tag_halfedge_cycle}. These are mutually
 exclusive and only one can be \ccc{CGAL::Tag_true}.
 
 }
@@ -112,7 +113,7 @@ exclusive and only one can be \ccc{CGAL::Tag_true}.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
 
 \end{ccRefClass}

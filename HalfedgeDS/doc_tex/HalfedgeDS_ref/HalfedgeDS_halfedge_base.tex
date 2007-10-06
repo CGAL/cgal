@@ -24,10 +24,10 @@ The full declaration states four template parameters:
 
 \begin{tabbing}
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
-              \> \>\ccc{class Tag_prev   } \=\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_vertex } \>\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_face   } \>\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_ccb} \>\ccc{= CGAL::Tag_false}\\
+              \> \>\ccc{class Tag_prev          } \=\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_vertex        } \>\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_face          } \>\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_halfedge_cycle} \>\ccc{= CGAL::Tag_false}\\
      \> \ccc{class HalfedgeDS_halfedge_base;}
 \end{tabbing}
 
@@ -40,22 +40,24 @@ supported.
 If \ccc{Tag_face} $\equiv$ \ccc{CGAL::Tag_true} an incident face is
 supported.
 
-{\bf\ttfamily If \ccc{Tag_ccb} $\equiv$ \ccc{CGAL::Tag_true} a host ccb is
+{\XHDS If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} a host \ccc{halfedge_cycle} is
 supported.}
 
-{\bf\ttfamily
+{\XHDS
 The incidence relation between a halfedge and a face can be stored in a halfedge in 
 one of two mutually exclusive ways: directly storing the incident face or
-storing the ccb common to the halfedge and the face.
-
-Since multiple ccbs were introduced in \cgal\ version 3.4, to keep backward compatibility,
-the choice between those methods is selected by the combination 
-of the two type tags \ccc{Tag_face} and \ccc{Tag_ccb}.
-These are mutually exclusive and only one can be \ccc{CGAL::Tag_true}.
+storing the \ccc{halfedge_cycle} common to the halfedge and face.
 }
 
 In all cases, a reference to the next halfedge and to the opposite
 halfedge is supported.
+
+\ccHeading{Release Notes}
+
+Multiple halfedge cycles were introduced in \cgal\ version 3.4.
+To keep backward compatibility, the choice between those methods is selected by the combination 
+of the two type tags \ccc{Tag_face} and \ccc{Tag_halfedge_cycle}.
+These are mutually exclusive and only one can be \ccc{CGAL::Tag_true}.
 
 \ccInclude{CGAL/HalfedgeDS_halfedge_base.h}
 
@@ -76,7 +78,7 @@ halfedge is supported.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}
 
 \end{ccRefClass}

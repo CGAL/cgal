@@ -23,8 +23,9 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
 \ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
-for vertices, halfedges, faces {\bf\ttfamily and ccbs} of a halfedge data structure
-without knowing the containing halfedge data structure. The class
+for vertices, halfedges, \ccc{\XHDS halfedge_cycles}, and faces 
+of a halfedge data structure without knowing the containing 
+halfedge data structure. The class
 \ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
 data structure and provides functions that modify the halfedge data
 structure, for example Euler-operators. The class
@@ -67,28 +68,28 @@ all halfedge data structures and will not appear here again.
     appends a copy of $f$ to \ccc{hds} if faces are supported.
     Returns a handle of the new face, or \ccc{Face_handle()} otherwise.}
 \ccGlue
-\ccMethod{\bf\ttfamily Ccb_handle ccbs_push_back( const Ccb& b);}{\bf\ttfamily 
-    appends a copy of $b$ to \ccc{hds} if ccbs are supported.
-    Returns a handle of the new ccb, or \ccc{Ccb_handle()} otherwise.}
+\ccMethod{\XHDS Halfedge_cycle_handle halfedge_cycles_push_back( const Halfedge_cycle& c);}{\XHDS 
+    appends a copy of $c$ to \ccc{hds} if \ccc{halfedge_cycles} are supported.
+    Returns a handle of the new \ccc{halfedge_cycle}, or \ccc{Halfedge_cycle_handle()} otherwise.}
 
 % -----------------------------------------
 \ccHeading{Creation of New Composed Items}
 
 \ccMethod{Halfedge_handle create_loop();}{
     returns handle of a halfedge from a newly created loop in \ccc{hds}
-    consisting of a single closed edge, one vertex, two faces 
-    {\bf\ttfamily and two outer ccbs}
+    consisting of a single closed edge, one vertex and two faces 
+    {\XHDS each with one outer \ccc{halfedge_cycle}}
     (if supported respectively).}
 \ccGlue
 \ccMethod{Halfedge_handle create_segment();}{
     returns a halfedge from a newly created segment in \ccc{hds}
     consisting of a single open edge, two vertices, one face
-    {\bf\ttfamily and one outer ccbs}
+    {\XHDS and one outer \ccc{halfedge_cycle}}
     (if supported respectively).}
 \ccGlue
-\ccMethod{\bf\ttfamily Halfedge_handle create_isolated_vertex();}{\bf\ttfamily
+\ccMethod{\XHDS Halfedge_handle create_isolated_vertex();}{\XHDS
     returns handle of a halfedge from a newly created loop in \ccc{hds}
-    consisting of a single closed edge belonging to one ccb if supported
+    consisting of a single closed edge belonging to one \ccc{halfedge_cycle} (if supported)
     and one single vertex.
     Unlike \ccc{create_loop} this method doesn't create two faces.
     }
@@ -137,29 +138,28 @@ incidence relations except if mentioned otherwise.
     supported. \ccCommentHeading{Requirement} \ccc{Supports_removal}
     $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\bf\ttfamily void ccbs_pop_front();}{\bf\ttfamily 
-    removes the first ccb if ccbs are supported.
+\ccMethod{\XHDS void halfedge_cycles_pop_front();}{\XHDS 
+    removes the first \ccc{halfedge_cycle} if \ccc{halfedge_cycles} are supported.
     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
     \ccc{CGAL::Tag_true}.}
 \ccGlue
-\ccMethod{\bf\ttfamily void ccbs_pop_back();}{\bf\ttfamily 
-    removes the last ccb if faces are supported.}
+\ccMethod{\XHDS void halfedge_cycles_pop_back();}{\XHDS 
+    removes the last \ccc{halfedge_cycle} if faces are supported.}
 \ccGlue
-\ccMethod{\bf\ttfamily void ccbs_erase( Ccb_handle b);}{\bf\ttfamily 
-    removes the ccb $b$ if ccbs are supported.
+\ccMethod{\XHDS void halfedge_cycles_erase( Halfedge_cycle_handle b);}{\XHDS 
+    removes the \ccc{halfedge_cycle} $b$ if \ccc{halfedge_cycles} are supported.
     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 \ccGlue
-\ccMethod{\bf\ttfamily void ccbs_erase( Ccb_handle first, Ccb_handle last);}{\bf\ttfamily 
-    removes the range $[\ccc{first},\ccc{last})$ if ccbs are 
+\ccMethod{\XHDS void halfedge_cycles_erase( Halfedge_cycle_handle first, Halfedge_cycle_handle last);}{\XHDS 
+    removes the range $[\ccc{first},\ccc{last})$ if \ccc{halfedge_cycles} are 
     supported. \ccCommentHeading{Requirement} \ccc{Supports_removal}
     $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_face( Halfedge_handle h);} {removes the
    face incident to \ccc{h} from \ccc{hds} and changes all halfedges
    incident to the face into border edges or removes them from the
-   halfedge data structure
-   {\bf\ttfamily along with the \ccc{ccb} containing them}
+   \ccc{hds}, {\XHDS along with the \ccc{halfedge_cycles} containing them},
    if they were already border edges.
    If this creates isolated vertices they get removed as well. See
    \ccc{make_hole(h)} for a more specialized variant.  
@@ -168,7 +168,7 @@ incidence relations except if mentioned otherwise.
    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
-    {removes the vertices, halfedges, faces {\bf\ttfamily and ccbs}
+    {removes the vertices, halfedges, halfedge\_cycles {\XHDS and faces}
     that belong to the connected component of $h$. 
     \ccPrecond For all halfedges $g$ in the 
      connected component \ccc{g.next() != Halfedge_handle()}.
@@ -186,28 +186,28 @@ incidence relations except if mentioned otherwise.
     \ccCommentHeading{Requirement} If faces are supported,  
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.
     
-    {\bf\ttfamily \ccCommentHeading{Note} \ccc{h->ccb()} {\em is not} removed from \ccc{hds}}.
+    {\XHDS \ccCommentHeading{Note} \ccc{h->halfedge_cycle()} {\em is not} removed from \ccc{hds}}.
    }
 
-\ccMethod{\bf\ttfamily Ccb_handle host_halfedge( Halfedge_handle h);}
-   {\bf\ttfamily Associates \ccc{h} with \ccc{b}, a new \ccc{ccb} item created from \ccc{hds}.
-    Returns \ccc{b}.
-    \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->ccb() == Ccb_handle()}.}
+\ccMethod{\XHDS Halfedge_cycle_handle host_halfedge( Halfedge_handle h);}
+   {\XHDS Associates $h$ with $c$, a new \ccc{halfedge_cycle} created from \ccc{hds}.
+    Returns \ccc{c}.
+    \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->halfedge_cycle() == Halfedge_cycle_handle()}.}
 
-\ccMethod{\bf\ttfamily Ccb_handle host_halfedge( Halfedge_handle h, const Ccb& b );}
-   {\bf\ttfamily Associates \ccc{h} with a copy of $b$.
-    Returns the handle to the copy of $b$.
-    \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->ccb() == Ccb_handle()}.}
+\ccMethod{\XHDS Halfedge_cycle_handle host_halfedge( Halfedge_handle h, const Halfedge_cycle& c );}
+   {\XHDS Associates $h$ with a copy of $c$.
+  Returns the handle to the copy of $c$.
+    \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->halfedge_cycle() == Halfedge_cycle_handle()}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h);}
    {fills the hole incident to \ccc{h} with a new face from \ccc{hds}.
-   {\bf\ttfamily adds \ccc{h->ccb()} to the outer sequence of ccbs of the new face.}.
+   {\XHDS adds \ccc{h->halfedge_cycle()} to the sequence of outer cycles of the new face.}.
     Returns \ccc{h}.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->is_border()}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h, const Face& f);}
    {fills the hole incident to \ccc{h} with a copy of face $f$.
-   {\bf\ttfamily adds \ccc{h->ccb()} to the outer sequence of ccbs of the copy of $f$}.
+   {\XHDS adds \ccc{h->halfedge_cycle()} to the sequence of outer cycles of the copy of $f$}.
     Returns \ccc{h}.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->is_border()}.}
 
@@ -218,7 +218,7 @@ incidence relations except if mentioned otherwise.
     denoted by $g$ with the vertex denoted by $h$ and fills this separated 
     part of the hole with a new face, such that the new face is incident 
     to $g$. 
-    {\bf\ttfamily adds \ccc{h->ccb()} to the outer sequence of ccbs of the new face.}.
+    {\XHDS adds \ccc{h->halfedge_cycle()} to the sequence of outer cycles of the new face.}.
     Returns the new halfedge that is incident to the new face.
     \ccPrecond \ccc{h != Halfedge_handle()}, \ccc{g != Halfedge_handle()},
     \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached 
@@ -231,7 +231,7 @@ incidence relations except if mentioned otherwise.
     incident to $h$ and $g$. It creates a new edge connecting the tip of
     $g$ with the tip of $h$ and fills this separated part of the hole with a
     copy of face $f$, such that the new face is incident to $g$.
-    {\bf\ttfamily adds \ccc{h->ccb()} to the outer sequence of ccbs of the copy of $f$.}.
+    {\XHDS adds \ccc{h->halfedge_cycle()} to the sequence of outer cycles of the copy of $f$.}.
     Returns the new halfedge that is incident to the new face.
     \ccPrecond \ccc{h != Halfedge_handle()}, \ccc{g != Halfedge_handle()},
     \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached 
@@ -274,24 +274,25 @@ the halfedge \ccc{h->next} with a new face in-between.
 \ccMethod{Halfedge_handle split_face( Halfedge_handle h, Halfedge_handle g);}
     {splits the face incident to \ccc{h} and \ccc{g} into two faces
      with a new diagonal between the two vertices denoted by \ccc{h} and
-     \ccc{g} respectively. \ccc{h} and \ccc{g} must belong to the same \ccc{ccb}.
-     The second (new) face {\bf\ttfamily and \ccc{ccb}}
-     obtained from \ccc{hds} are a copy of the first face {\bf\ttfamily and \ccc{ccb}}.
+     \ccc{g} respectively. \ccc{h} and \ccc{g} must belong to the same \ccc{halfedge_cycle}.
+     The second (new) face {\XHDS and \ccc{halfedge_cycle}}
+     obtained from \ccc{hds} are a copy of the first face {\XHDS and \ccc{halfedge_cycle}}.
      Returns \ccc{h->next()} after the operation, i.e., the new diagonal.
      The new face is to the right of the new diagonal
-     {\bf\ttfamily (thus the new \ccc{ccb} contains \ccc{g})}
+     {\XHDS (thus the new \ccc{halfedge_cycle} contains \ccc{g})}
      , the old face is to the left 
-     {\bf\ttfamily (and the old \ccc{ccb} contains \ccc{h})}.
+     {\XHDS (and the old \ccc{halfedge_cycle} contains \ccc{h})}.
      The time is proportional 
      to the distance from \ccc{h} to \ccc{g} around the face.
-     {\bf\ttfamily If \ccc{h->face()} contains any other ccbs besides \ccc{h->ccb()},
-     they are kept in \ccc{h->face()}. It is the responsability of the upper level 
-     data struct to migrate other ccbs to the second face if applicable.}
+     {\XHDS If \ccc{h->face()} contains any other \ccc{halfedge_cycles}
+     besides \ccc{h->halfedge_cycle()},
+     they are kept in \ccc{h->face()}. It is the responsibility of the upper level 
+     data struct to migrate other cycles to the second face if applicable.}
     } 
 
 \ccMethod{Halfedge_handle join_face( Halfedge_handle h);}
     {joins the two faces incident to $h$. The face incident to
-     \ccc{h->opposite()} {\bf\ttfamily and its hosting \ccc{ccb}}
+     \ccc{h->opposite()} {\XHDS and the \ccc{halfedge_cycle} it belongs to}
      get removed from \ccc{hds}.
     Both faces might be holes. Returns the predecessor of $h$ around the face. The invariant
     \ccc{join_face( split_face( h, g))} returns $h$ and keeps
@@ -346,23 +347,24 @@ the halfedge \ccc{h->next} with a new face in-between.
     {barycentric triangulation of \ccc{h->face()}. Creates a new vertex,
      a copy of \ccc{h->vertex()}, and connects it to each vertex incident 
      to \ccc{h->face()} splitting \ccc{h->face()} 
-     {\bf\ttfamily and \ccc{h->ccb()}} into triangles. 
-     \ccc{h} remains incident to the original face {\bf\ttfamily
-     and belonging to the original ccb}, all other triangles 
-     are copies of this face {\bf\ttfamily and ccb}. 
+     {\XHDS and \ccc{h->halfedge_cycle()}} into triangles. 
+     \ccc{h} remains incident to the original face {\XHDS
+     and belonging to the original \ccc{halfedge_cycle}}, all other triangles 
+     are copies of this face {\XHDS and \ccc{halfedge_cycle}}. 
      Returns the halfedge \ccc{h->next()}
      after the operation, i.e., a halfedge pointing to the new vertex. 
      The time is proportional to the size of the face.
-     {\bf\ttfamily If \ccc{h->face()} contains any other ccbs besides \ccc{h->ccb()},
-     they are kept in \ccc{h->face()}. It is the responsability of the upper level
-     data struct to migrate other ccbs to the other faces if applicable.}
+     {\XHDS If \ccc{h->face()} contains any other \ccc{halfedge_cycles}
+      besides \ccc{h->halfedge_cycle()},
+     they are kept in \ccc{h->face()}. It is the responsibility of the upper level
+     data struct to migrate other cycles to the other faces if applicable.}
      \ccPrecond \ccc{h} is not a border halfedge.}
 
 \ccMethod{Halfedge_handle erase_center_vertex( Halfedge_handle g);}
     {reverses \ccc{create_center_vertex}. Erases the
      vertex pointed to by \ccc{g} and all incident halfedges thereby
      merging all incident faces. Only \ccc{g->face()} 
-     {\bf\ttfamily and \ccc{g->ccb()}} remains. 
+     {\XHDS and \ccc{g->halfedge_cycle()}} remains. 
      The neighborhood of \ccc{g->vertex()} may not be triangulated,
      it can have larger faces. Returns the halfedge \ccc{g->prev()}.
      Thus, the invariant \ccc{h == erase_center_vertex( 

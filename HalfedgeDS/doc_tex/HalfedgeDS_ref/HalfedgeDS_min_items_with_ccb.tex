@@ -14,14 +14,14 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_min_items_with_ccb}
-\label{pageHalfedgeDSminitemswithccbRef}
+\begin{ccRefClass}{HalfedgeDS_min_items_with_halfedge_cycle}
+\label{pageHalfedgeDSminitemswithhalfedge_cycleRef}
 
 \ccDefinition
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems}
 concept.  It defines types for vertices, halfedges, faces 
-and ccbs that declare the minimal required incidences for a \ccc{HalfedgeDS}, 
+and \ccc{halfedge_cycles} that declare the minimal required incidences for a \ccc{HalfedgeDS}, 
 which are the \ccc{next()} and the \ccc{opposite()} member function for
 halfedges.
 
@@ -34,19 +34,18 @@ halfedges.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_items_with_ccb_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_with_halfedge_cycle_2}\\
 \ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
 \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
 \ccRefConceptPage{PolyhedronItems_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_min_base<Refs>}
 
 \ccExample
 
 The following example shows the canonical implementation of the
-\ccc{CGAL::HalfedgeDS_min_items_with_ccb} class. It uses the base classes for the
+\ccc{CGAL::HalfedgeDS_min_items_with_halfedge_cycle} class. It uses the base classes for the
 item types that are provided in the library.
 
 \begin{ccExampleCode}
@@ -64,8 +63,8 @@ struct HalfedgeDS_min_items {
         typedef CGAL::HalfedgeDS_face_base< Refs, Tag_false, Tag_false, Tag_false> Face;
     };
     template < class Refs, class Traits>
-    struct Ccb_wrapper {
-        typedef CGAL::HalfedgeDS_ccb_min_base< Refs>  Ccb;
+    struct Halfedge_cycle_wrapper {
+        typedef CGAL::HalfedgeDS_halfedge_cycle_base< Refs>  Halfedge_cycle;
     };
 };
 \end{ccExampleCode}

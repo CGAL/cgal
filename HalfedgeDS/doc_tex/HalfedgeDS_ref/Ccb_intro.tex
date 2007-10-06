@@ -8,62 +8,63 @@
 \RCSdefDate{\RCSHalfedgeDSDate}{$Date: 2007-04-17 13:31:42 -0300 (Tue, 17 Apr 2007) $}
 % +------------------------------------------------------------------------+
 
-\section{Faces with several boundaries}
-
-{\bf\ttfamily
+{\XHDS
 In some geometric structures, such as a \ccc{Polyhedron_3} or a \ccc{Straight_skeleton_2},
 faces are bounded by a single connected component. That is, just one cycle of halfedges bounds
 any face. But in other structures, like an arrangement of curves in a surface, faces
 might have holes or even multiple outer connected components of the boundary. 
 In these later cases, a face can be bounded by more than just one cycle of halfedges. 
 
-Therefore, the current \ccc{HDS} design supports faces
+Therefore, this design supports faces
 whose boundaries are composed of multiple outer and inner halfedge cycles. Furthermore, faces can contain isolated vertices in its interior.
 
 \input{HalfedgeDS_ref/Ccb_or_dmr.tex}
 
 \ccHeading{Direct Mutual Reference:}
 
-Prior designs of the \ccc{HDS} only supported faces bounded by
-a single cycle of halfedges.
-This is still possible in the current design, not only for backward compatibility 
-but to optimize the structure if multiple boundary components are not needed:
-as in \cgal\ version 3.3.1, a type tag is used to allow a face to directly store 
+If multiple boundary components are not needed a type tag is used to allow a face to directly store 
 a reference to a halfedge (implicitly representing the cycle) and vice versa. In this case, \ccc{Face::halfedge()}, \ccc{Face::set_halfedge()}, \ccc{Halfedge::face()} 
 and \ccc{Halfedge::set_face()} are defined
 
-\ccHeading{Ccbs items:}
+\ccHeading{\ccc{Halfedge_cycle} Items:}
 
 Using this method a cycle of halfedges is collectively represented 
-by a fourth first-class \ccc{HDS} item named \ccc{ccb} (for Connected Component of the Boundary) 
+by a fourth first-class \ccc{HDS} item named \ccc{halfedge_cycle} 
 
-A face stores sequences of outer and inner ccb handles, while each ccb in turn stores
-a reference to a halfedge\footnote{In other hole-supporting HDS designs, faces stores a sequence of halfedges (not ccbs), each for a different cycle. In our design a cycle is given by a fourth HDS item instead of a halfedge to allow the centralization of cycle-related information}. 
-A face also stores another sequence of ccb handles for isolated vertices where each such vertex is represented by a ccb composed of a single-halfedge single-vertex self-loop.
+A face stores sequences of outer and inner \ccc{halfedge_cycle} handles, while each 
+\ccc{halfedge_cycle} in turn stores a reference to a halfedge\footnote{In other
+hole-supporting HDS designs, faces stores a sequence of halfedges (each for a different cycle).
+In our design a cycle is given by a \ccc{halfedge_cycle} instead of a \ccc{halfedge} to allow 
+the centralization of cycle-related information}. 
+A face also stores another sequence of \ccc{halfedge_cycle} handles for isolated vertices where
+each such vertex is represented by a cycle composed of a single-halfedge single-vertex self-loop.
 
-When using ccb items, incident faces and halfedges are not directly cross referenced. Instead,
-they are indirectly related via a common ccb object: faces store ccb handles and each halfedge in the ccb  stores the handle to its hosting ccb.
+When using \ccc{halfedge_cycles}, incident faces and halfedges are not directly cross referenced. Instead,
+they are indirectly related via a common \ccc{halfedge_cycle} object: faces store 
+\ccc{halfedge_cycle} handles and each halfedge in the cycle stores the handle to the 
+\ccc{halfedge_cycle} it belongs to.
 
-\ccc{Face::halfedge()} {\em is not} defined if ccbs are used because a face can have many halfedge cycles, not just one, or it could have no outer ccb but inner ccbs.
+\ccc{Face::halfedge()} {\em is not} defined if \ccc{halfedge_cycles} are used because a face
+can have many cycles, not just one; or it could have only inner cycles (holes).
 
-\ccc{Halfedge::face()} on the other hand is well defined as a shortcut for \ccc{Halfedge::ccb()->face()}
-since every halfedge belongs to a ccb.
+\ccc{Halfedge::face()} on the other hand is well defined as a shortcut for \ccc{Halfedge::halfedge_cycle()->face()}
+since every halfedge belongs to a \ccc{halfedge_cycle}.
 
-A \ccc{ccb} is a first-class \ccc{HDS} item, just like vertices, halfedges and faces.
-However, a ccb does not contribute {\em by itself} to the incidence information 
+A \ccc{halfedge_cycle} is a first-class \ccc{HDS} item, just like vertices, halfedges and faces.
+However, a \ccc{halfedge_cycle} does not contribute {\em by itself} to the incidence information 
 maintained by the \ccc{HDS}. That is, the incidence is betwen vertices, edges and faces,
 which are all well defined mathematical concepts belonging to the field of algebraic topology.
-This new design does not introduce a new topological concept but a new
+This design does not introduce a new topological concept but a new
 auxiliary object in a similar way halfedges are auxiliary objects that 
 relate to the topological concept of {\em edge} only when considered in pairs.
 
-A \ccc{ccb} item allows upper level structures to centralize boundary-related information
+A \ccc{halfedge_cycle} allows upper level structures to centralize boundary-related information
 (combinatorial or geometric) in a single object. This is the reason why 
 connected components of the boundary are represented by this first-class \ccc{HDS} item 
 and not just by a halfedge implicitly representing the cycle (as in other designs).
 
-For instance, a derived \ccc{ccb} can store the iterator that identifies the position of the ccb 
-in the face for fast hole migration across different faces, or cache curve-level geometric
+For instance, a derived \ccc{halfedge_cycle} can store the iterator that identifies the position of
+cycle in the face for fast hole migration across different faces, or cache curve-level geometric
 information such as orientation even if not supported by the curve type itself.
 }
 

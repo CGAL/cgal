@@ -22,21 +22,6 @@
 \ccTagFullDeclarations
 
 % +-----------------------------------+
-\ccHeading{Release Note}
-
-\input{HalfedgeDS_ref/Extension_intro.tex}
-
-% +-----------------------------------+
-\ccHeading{Release Note}
-
-Beginning with \cgal\ R2.3, this package has a new design.  The old
-design is still available for backwards compatibility and to support
-older compiler, such as MSVC++6.0. However its use is deprecated and
-the manual pages are not converted into this new manual
-format. Instead, see its old documentation in the manual of 
-deprecated packages.  The two designs are not interchangeable.
-
-% +-----------------------------------+
 \ccDefinition
   
 The concept of a halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
@@ -59,15 +44,15 @@ of these different data structures together with a thorough
 description of the design implemented here can be found
 in~\cite{k-ugpdd-99}.
 
-{\bf\ttfamily
+{\XHDS
 Each edge is decomposed into two halfedges with opposite orientations
 and each cycle of connected halfedges is associated with a single object 
-named \ccc{ccb} (Connected Component of the Boundary).
+named \ccc{halfedge_cycle}.
 One incident vertex is stored in each halfedge and one incident halfedge
 is stored in each vertex.
 Incidence information between halfedges and faces can be stored via
 two mutually exclusive mechanisms: directly storing an incident halfedge in a face
-and vice versa, or via a \ccc{ccb} object common to incident faces and halfedges.
+and vice versa, or via a \ccc{halfedge_cycle} object common to incident faces and halfedges.
 }
 Reduced variants of the halfedge data structure can omit some of these
 information, for example the halfedge pointers in faces or the
@@ -111,6 +96,9 @@ possible for vertices, halfedges, and faces.
 \end{ccHtmlOnly}
 
 
+\ccHeading{Faces with Several Boundaries}
+\label{pageHalfedgeDSHalfedgeCycleIntro}
+
 \input{HalfedgeDS_ref/Ccb_intro.tex}
 
 A \ccRefName\ organizes the internal storage of its items.  Examples
@@ -125,11 +113,11 @@ dangling handles), it must be called explicitly in advance for a
 Classes built on top of a \ccRefName\ are advised to call the
 \ccc{reserve()} member function before creating new items.
 
-{\bf\ttfamily
-While the storage of \ccc{ccb} items is organized by the \ccRefName\ , faces contain 
-local sequences of \ccc{Ccb_handle} elements, not of \ccc{Ccb} elements. Thus,
-a \ccRefName\ defines a \ccc{Ccb_iterator} while a face defines a
-\ccc{Ccb_handle_iterator}.
+{\XHDS
+While the storage of \ccc{halfedge_cycle} items is organized by the \ccRefName\ , faces contain 
+local sequences of \ccc{Halfedge_cycle_handle} elements, not of \ccc{Halfedge_cycle} elements. Thus,
+a \ccRefName\ defines a \ccc{Halfedge_cycle_iterator} while a face defines a
+\ccc{Halfedge_cycle_handle_iterator}.
 }
 
 % +-----------------------------------+
@@ -152,6 +140,19 @@ allocators internally. A default argument is mandatory for
 \ccc{Alloc}, for example, the macro \ccc{CGAL_ALLOCATOR(int)}
 from the \ccc{<CGAL/memory.h>} header file can be used as default
 allocator.
+
+% +-----------------------------------+
+\ccHeading{Release Notes}
+
+\input{HalfedgeDS_ref/Extension_intro.tex}
+
+Beginning with \cgal\ R2.3, this package has a new design.  The old
+design is still available for backwards compatibility and to support
+older compiler, such as MSVC++6.0. However its use is deprecated and
+the manual pages are not converted into this new manual
+format. Instead, see its old documentation in the manual of 
+deprecated packages.  The two designs are not interchangeable.
+
 
 % +-----------------------------------+
 \ccTypes
@@ -177,7 +178,7 @@ allocator.
 \ccGlue
 \ccNestedType{Face}{model of \ccc{HalfedgeDSFace} concept.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb}{\bf\ttfamily model of \ccc{HalfedgeDSCcb} concept.}
+\ccNestedType{\XHDS Halfedge_cycle}{\XHDS model of \ccc{HalfedgeDSHalfedgeCycle} concept.}
 
 The following handles and iterators have appropriate non-mutable
 counterparts, i.e., \ccc{const_handle} and \ccc{const_iterator}. The
@@ -194,7 +195,7 @@ value. It will be used in analogy to \ccc{NULL} for pointers.
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb_handle}{\bf\ttfamily handle to ccb.}
+\ccNestedType{\XHDS Halfedge_cycle_handle}{\XHDS handle to \ccc{halfedge_cycle}.}
 
 \ccNestedType{Vertex_iterator}{iterator over all vertices.}
 \ccGlue
@@ -202,7 +203,7 @@ value. It will be used in analogy to \ccc{NULL} for pointers.
 \ccGlue
 \ccNestedType{Face_iterator}{iterator over all faces.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Ccb_iterator}{\bf\ttfamily iterator over all ccbs.}
+\ccNestedType{\XHDS Halfedge_cycle_iterator}{\XHDS iterator over all \ccc{halfedge_cycles}.}
 
 % +-----------------------------------+
 \begin{ccAdvanced}
@@ -223,13 +224,13 @@ supported or not.
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{\ccc{Halfedge::face()}.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Supports_halfedge_ccb}{\bf\ttfamily \ccc{Halfedge::ccb()}.}
+\ccNestedType{\XHDS Supports_halfedge_halfedge_cycle}{\XHDS \ccc{Halfedge::halfedge_cycle()}.}
 \ccGlue
 \ccNestedType{Supports_face_halfedge}{\ccc{Face::halfedge()}.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Supports_face_ccb}{\bf\ttfamily \ccc{Face::outer_ccb()}.}
+\ccNestedType{\XHDS Supports_face_halfedge_cycle}{\XHDS \ccc{Face::outer_halfedge_cycle()}.}
 \ccGlue
-\ccNestedType{\bf\ttfamily Supports_ccb_face}{\bf\ttfamily \ccc{Ccb::face()}.}
+\ccNestedType{\XHDS Supports_halfedge_cycle_face}{\XHDS \ccc{Halfedge_cycle::face()}.}
 \ccGlue
 \ccNestedType{Supports_removal}{removal of individual elements.}
 
@@ -241,15 +242,15 @@ Vertices are supported $\Longleftrightarrow$
 \textbf{Faces are supported $\Longleftrightarrow$
 Supports\_halfedge\_face $\equiv$ CGAL::Tag\_true
 or
-( Supports\_halfedge\_ccb $\equiv$ CGAL::Tag\_true
-and Supports\_ccb\_face $\equiv$ CGAL::Tag\_true )
+( Supports\_halfedge\_halfedge\_cycle $\equiv$ CGAL::Tag\_true
+and Supports\_halfedge\_cycle\_face $\equiv$ CGAL::Tag\_true )
 }
 
-\textbf{Ccbs are supported $\Longleftrightarrow$
-Supports\_halfedge\_ccb $\equiv$ 
+\textbf{Halfedge\_cycles are supported $\Longleftrightarrow$
+Supports\_halfedge\_halfedge\_cycle $\equiv$ 
 CGAL::Tag\_true
 and
-Supports\_face\_ccb
+Supports\_face\_halfedge\_cycle
 $\equiv$ CGAL::Tag\_true
 }
 
@@ -262,8 +263,8 @@ $\equiv$ CGAL::Tag\_true
 \ccc{Supports_face_halfedge} $\equiv$ \ccc{CGAL::Tag_true} $\Longrightarrow$
 \ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true}.
 
-\textbf{Supports\_face\_ccb $\equiv$ CGAL::Tag\_true $\Longrightarrow$
-Supports\_ccb\_face $\equiv$ CGAL::Tag\_true}.
+\textbf{Supports\_face\_halfedge\_cycle $\equiv$ CGAL::Tag\_true $\Longrightarrow$
+Supports\_halfedge\_cycle\_face $\equiv$ CGAL::Tag\_true}.
 
 
 \end{ccAdvanced}
@@ -281,10 +282,10 @@ from a pointer. This conversion encapsulates possible adjustments for
 hidden data members in the true item type, such as linked-list
 pointers. Note that the user provides item types with the
 \ccc{Items} template argument, which may differ from the \ccc{Vertex},
-\ccc{Halfedge}, and \ccc{Face} types defined in \ccRefName. If they 
+\ccc{Halfedge}, \ccc{Halfedge_cycle}, and \ccc{Face} types defined in \ccRefName. If they 
 differ, they are derived from the user provided item types. We denote the
-user item types with \ccc{Vertex_base}, \ccc{Halfedge_base}, and
-\ccc{Face_base} in the following. The fully qualified name for 
+user item types with \ccc{Vertex_base}, \ccc{Halfedge_base}, 
+\ccc{Halfedge_cycle_base}, and \ccc{Face_base} in the following. The fully qualified name for 
 \ccc{Vertex_base} would be for example -- assuming that the type \ccc{Self}
 refers to the instantiated \ccc{HalfedgeDS} --
 
@@ -318,9 +319,9 @@ arises.
 \ccFunction{static Face_const_handle 
   HalfedgeDS::face_handle( const Face_base* f);}{}
 
-\ccFunction{\bf\ttfamily static Ccb_handle HalfedgeDS::ccb_handle( Ccb_base* f);}{}
+\ccFunction{\XHDS static Halfedge_cycle_handle HalfedgeDS::halfedge_cycle_handle( Halfedge_cycle_base* f);}{}
 \ccGlue
-\ccFunction{\bf\ttfamily static Ccb_const_handle HalfedgeDS::ccb_handle( const Ccb_base* f);}{}
+\ccFunction{\XHDS static Halfedge_cycle_const_handle HalfedgeDS::halfedge_cycle_handle( const Halfedge_cycle_base* f);}{}
 
 \end{ccAdvanced}
 
@@ -332,8 +333,10 @@ arises.
 
 \ccConstructor{HalfedgeDS();}{empty halfedge data structure.}
 
-\ccConstructor{HalfedgeDS( size_type v, size_type h, size_type f, size_type b = 16 );}
-    {storage reserved for $v$ vertices, $h$ halfedges, $f$ faces, and $b$ ccbs.}
+\ccConstructor{HalfedgeDS( size_type v, size_type h, size_type f );}
+\ccGlue
+\ccConstructor{HalfedgeDS( size_type v, size_type h, size_type f, size_type c );}
+    {storage reserved for $v$ vertices, $h$ halfedges, $f$ faces, and $c$ halfedge cycles (if provided).}
 
 \ccTagDefaults
 \ccConstructor{HalfedgeDS( const HalfedgeDS<Traits,Items,Alloc>& hds2);}
@@ -343,8 +346,10 @@ arises.
           operator=( const HalfedgeDS<Traits,Items,Alloc>& hds2);}
     {assignment operator. \ccPrecond \ccc{hds2} contains no dangling handles.}
 
-\ccMethod{void reserve( size_type v, size_type h, size_type f, size_type b = 16 );}
-    {reserves storage for $v$ vertices, $h$ halfedges, $f$ faces, and $b$ ccbs.
+\ccMethod{void reserve( size_type v, size_type h, size_type f );}
+\ccGlue
+\ccMethod{void reserve( size_type v, size_type h, size_type f, size_type c );}
+    {reserves storage for $v$ vertices, $h$ halfedges, $f$ faces and $c$ halfedge cycles (if provided).
      If all capacities are already greater or equal than the requested sizes
      nothing happens. Otherwise, \ccVar\ will be resized and all handles, 
      iterators and circulators invalidate. \ccPrecond If resizing is
@@ -361,7 +366,7 @@ arises.
 \ccGlue
 \ccMethod{Size size_of_faces() const;}{number of faces.}
 \ccGlue
-\ccMethod{\bf\ttfamily Size size_of_ccbs() const;}{\bf\ttfamily number of ccbs.}
+\ccMethod{\XHDS Size size_of_halfedge_cycles() const;}{\XHDS number of \ccc{halfedge_cycles}.}
 \ccGlue
 \ccMethod{Size capacity_of_vertices() const;}{space reserved for vertices.}
 \ccGlue
@@ -369,7 +374,7 @@ arises.
 \ccGlue
 \ccMethod{Size capacity_of_faces() const;}{space reserved for faces.}
 \ccGlue
-\ccMethod{\bf\ttfamily Size capacity_of_ccbs() const;}{\bf\ttfamily space reserved for ccbs.}
+\ccMethod{\XHDS Size capacity_of_halfedge_cycles() const;}{\XHDS space reserved for \ccc{halfedge_cycles}.}
 \ccGlue
 \ccMethod{size_t bytes() const;}{bytes used for \ccVar.}
 \ccGlue
@@ -392,17 +397,17 @@ The following member functions return the non-mutable iterator if
 \ccGlue
 \ccMethod{Face_iterator     faces_end();}{}
 \ccGlue
-\ccMethod{\bf\ttfamily Ccb_iterator      ccbs_begin();}{\bf\ttfamily iterator over all ccbs.}
+\ccMethod{\XHDS Halfedge_cycle_iterator      halfedge_cycles_begin();}{\XHDS iterator over all \ccc{halfedge_cycles}.}
 \ccGlue
-\ccMethod{\bf\ttfamily Ccb_iterator      ccbs_end();}{}
+\ccMethod{\XHDS Halfedge_cycle_iterator      halfedge_cycles_end();}{}
 
 % +-----------------------------------+
 \ccHeading{Insertion}
 \ccTagFullDeclarations
 
-Note that the vertex-related, face-related and ccb-related member functions may
+Note that the vertex-related, face-related and halfedge\_cycle-related member functions may
 not be provided for a \ccRefName\ that does not support vertices,
-faces or ccbs respectively.
+faces or halfedge\_cycles respectively.
 
 \ccMethod{Vertex_handle vertices_push_back( const Vertex& v);}
     {appends a copy of $v$ to \ccc{hds}. Returns a handle of the new vertex.}
@@ -420,8 +425,8 @@ faces or ccbs respectively.
 \ccMethod{Face_handle faces_push_back( const Face& f);}
     {appends a copy of $f$ to \ccc{hds}. Returns a handle of the new face.}
 
-\ccMethod{\bf\ttfamily Ccb_handle ccbs_push_back( const Ccb& b);}
-    {\bf\ttfamily appends a copy of $b$ to \ccc{hds}. Returns a handle of the new ccb.}
+\ccMethod{\XHDS Halfedge_cycle_handle halfedge_cycles_push_back( const Halfedge_cycle& c);}
+    {\XHDS appends a copy of $c$ to \ccc{hds}. Returns a handle of the new cycle.}
 
 
 % +-----------------------------------+
@@ -479,19 +484,20 @@ functions must be provided as null operations.
     removes the range of faces $[\ccc{first},\ccc{last})$ if faces are 
     supported and \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\bf\ttfamily void ccbs_pop_front();}{\bf\ttfamily 
-    removes the first ccb if ccbs are supported and
+\ccMethod{\XHDS void halfedge_cycles_pop_front();}{\XHDS 
+    removes the first \ccc{halfedge_cycle} if supported and
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\bf\ttfamily void ccbs_pop_back();}{\bf\ttfamily 
-    removes the last ccb.}
-
-\ccMethod{\bf\ttfamily void ccbs_erase( Ccb_handle b);}{\bf\ttfamily 
-    removes the ccb $b$ if ccbs are supported and
+\ccMethod{\XHDS void halfedge_cycles_pop_back();}{\XHDS 
+    removes the last \ccc{halfedge_cycle}  if supported and
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\bf\ttfamily void ccbs_erase( Ccb_handle first, Ccb_handle last);}{\bf\ttfamily 
-    removes the range of ccbs $[\ccc{first},\ccc{last})$ if ccbs are 
+\ccMethod{\XHDS void halfedge_cycles_erase( Halfedge_cycle_handle c);}{\XHDS 
+    removes the \ccc{halfedge_cycle} $c$ if halfedge\_cycles are supported and
+    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+
+\ccMethod{\XHDS void halfedge_cycles_erase( Halfedge_cycle_handle first, Halfedge_cycle_handle last);}{\XHDS 
+    removes the range of \ccc{halfedge_cycles} $[\ccc{first},\ccc{last})$ if are 
     supported and \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void vertices_clear();}{removes all vertices.}
@@ -500,7 +506,7 @@ functions must be provided as null operations.
 \ccGlue
 \ccMethod{void faces_clear();}{removes all faces.}
 \ccGlue
-\ccMethod{\bf\ttfamily void ccbs_clear();}{\bf\ttfamily removes all ccbs.}
+\ccMethod{\XHDS void halfedge_cycles_clear();}{\XHDS removes all \ccc{halfedge_cycles}.}
 
 \ccMethod{void clear();}{removes all elements.}
 
@@ -585,44 +591,11 @@ a halfedge. There is no automatic update required.
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_ccb_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
 
-% +-----------------------------------+
-\ccImplementation
-
-Classes parameterized with a halfedge data structure, such as
-\ccc{CGAL::Polyhedron_3}, need to declare a class template as one of its
-template parameters for the \ccRefName. For compilers not supporting
-this (i.e.~the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM} is set), the
-following workaround is required, which defines a \ccRefName\ as a
-normal class that contains a member class template named \ccc{HDS},
-which is the actual halfedge data structure as defined here. The
-following program fragment illustrates this workaround:
-
-\begin{ccExampleCode}
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    template <class Traits, class Items, class Alloc> 
-    class HalfedgeDS {
-    public:
-        typedef HalfedgeDS<Traits,Items,Alloc> Self;
-        HalfedgeDS_vector(); // constructors
-#else
-    struct HalfedgeDS {
-    template <class Traits, class Items, class Alloc> 
-    class HDS {
-    public:
-        typedef HDS<Traits,Items,Alloc> Self;
-        HDS(); // constructors
-#endif
-        // ... further member functions. Self denotes the HalfedgeDS.
-    };
-#ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    };
-#endif
-\end{ccExampleCode}
 
 \ccTagDefaults
 
