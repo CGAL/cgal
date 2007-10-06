@@ -2088,35 +2088,36 @@ public:
     if (source.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
-      set_if_full(false);
+      set_is_full(false);
       return;
     }
     if (source.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
-      set_if_full(false);
+      set_is_full(false);
       return;
     }
     if (target.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
-      set_if_full(false);
+      set_is_full(false);
       return;
     }
     if (target.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
-      set_if_full(false);
+      set_is_full(false);
       return;
     }
 
     Direction_3 normal = plane.orthogonal_direction();
     if (z_sign(normal) == ZERO) {
       set_is_vertical(true);
-      set_if_full(false);
+      set_is_full(false);
 
       bool xz_plane = x_sign(normal) == ZERO;
-      Project project = (xz_plane) ? Traits::project_xz : Traits::project_yz;
+      typename Traits::Project project =
+        (xz_plane) ? Traits::project_xz : Traits::project_yz;
       Direction_2 s = project(source);
       Direction_2 t = project(target);
       bool s_x_is_positive = Traits::is_x_positive(s);
@@ -2309,7 +2310,7 @@ public:
     Base(src, trg, plane,
          is_vertical, is_directed_right, is_full, is_degenerate)
   {
-    set_is_x_monotone(is_x_monotone);
+    this->set_is_x_monotone(is_x_monotone);
   }
 
   /*! Construct a spherical_arc from two endpoint directions. It is assumed
@@ -2329,9 +2330,9 @@ public:
   Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
                                      const Arr_extended_direction_3 & target)
   {
-    set_source(source);
-    set_target(target);
-    set_is_degenerate(false);
+    this->set_source(source);
+    this->set_target(target);
+    this->set_is_degenerate(false);
 
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -2340,91 +2341,91 @@ public:
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
                        target));
-    m_plane = Traits::construct_plane_3(source, target);
+    this->m_plane = Traits::construct_plane_3(source, target);
       
     if (source.is_max_boundary()) {
-      set_is_vertical(true);
-      set_is_directed_right(false);
+      this->set_is_vertical(true);
+      this->set_is_directed_right(false);
       return;
     }
     if (source.is_min_boundary()) {
-      set_is_vertical(true);
-      set_is_directed_right(true);
+      this->set_is_vertical(true);
+      this->set_is_directed_right(true);
       return;
     }
     if (target.is_max_boundary()) {
-      set_is_vertical(true);
-      set_is_directed_right(true);
+      this->set_is_vertical(true);
+      this->set_is_directed_right(true);
       return;
     }
     if (target.is_min_boundary()) {
-      set_is_vertical(true);
-      set_is_directed_right(false);
+      this->set_is_vertical(true);
+      this->set_is_directed_right(false);
       return;
     }
 
     // None of the enpoints coincide with a pole:
     typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-    Direction_2 s = Traits::project_xy(source);
-    Direction_2 t = Traits::project_xy(target);
+    typename Kernel::Direction_2 s = Traits::project_xy(source);
+    typename Kernel::Direction_2 t = Traits::project_xy(target);
 
     Orientation orient = Traits::orientation(s, t);
     if (orient == COLLINEAR) {
-      set_is_vertical(true);
+      this->set_is_vertical(true);
       if (equal_2(s, t)) {
-        const Direction_2 & nx = Traits::neg_x_2();
+        const typename Kernel::Direction_2 & nx = Traits::neg_x_2();
         if (Traits::orientation(nx, s) == COLLINEAR) {
           // Project onto xz plane:
           s = Traits::project_xz(source);
           t = Traits::project_xz(target);
-          const Direction_2 & ny = Traits::neg_y_2();
+          const typename Kernel::Direction_2 & ny = Traits::neg_y_2();
           Orientation orient1 = Traits::orientation(ny, s);
           CGAL_assertion_code(Orientation orient2 = Traits::orientation(ny, t));
           CGAL_assertion(orient1 == orient2);
           orient = Traits::orientation(s, t);
           CGAL_assertion(orient != COLLINEAR);
           if (orient1 == LEFT_TURN) {
-            set_is_directed_right(orient == LEFT_TURN);
+            this->set_is_directed_right(orient == LEFT_TURN);
             return;
           }
-          set_is_directed_right(orient == RIGHT_TURN);
+          this->set_is_directed_right(orient == RIGHT_TURN);
           return;
         }
         // Project onto yz plane:
         s = Traits::project_yz(source);
         t = Traits::project_yz(target);
-        const Direction_2 & ny = Traits::neg_y_2();
+        const typename Kernel::Direction_2 & ny = Traits::neg_y_2();
         Orientation orient1 = Traits::orientation(ny, s);
         CGAL_assertion_code(Orientation orient2 = Traits::orientation(ny, t));
         CGAL_assertion(orient1 == orient2);
         if (orient1 == LEFT_TURN) {
           orient = Traits::orientation(s, t);
           CGAL_assertion(orient != COLLINEAR);
-          set_is_directed_right(orient == LEFT_TURN);
+          this->set_is_directed_right(orient == LEFT_TURN);
           return;
         }
         orient = Traits::orientation(s, t);
         CGAL_assertion(orient != COLLINEAR);
-        set_is_directed_right(orient == RIGHT_TURN);
+        this->set_is_directed_right(orient == RIGHT_TURN);
         return;
       }
-      set_is_x_monotone(false);
+      this->set_is_x_monotone(false);
       return;
     }
     
     // The arc is not vertical!
-    set_is_vertical(false);
-    const Direction_2 & nx = Traits::neg_x_2();
+    this->set_is_vertical(false);
+    const typename Kernel::Direction_2 & nx = Traits::neg_x_2();
     if (orient == LEFT_TURN) {
-      set_is_directed_right(true);
+      this->set_is_directed_right(true);
       if (kernel.counterclockwise_in_between_2_object()(nx, s, t))
-        set_is_x_monotone(false);
+        this->set_is_x_monotone(false);
       return;
     }        
     // (orient == RIGHT_TURN)
-    set_is_directed_right(false);
+    this->set_is_directed_right(false);
     if (kernel.counterclockwise_in_between_2_object()(nx, t, s))
-      set_is_x_monotone(false);
+      this->set_is_x_monotone(false);
     return;
   }
 
@@ -2448,15 +2449,15 @@ public:
    * \param target the target-point direction.
    * \pre The two endpoints are not the same, and both lie on the given plane.
    */
-  Arr_great_circular_arc_on_sphere_3(const Plane_3 & plane) :
+  Arr_great_circular_arc_on_sphere_3(const Plane_3 & plane)
   {
-    m_plane = plane;
-    m_is_x_monotone = false;
-    Direction_3 normal = plane.orthogonal_direction();
-    m_is_vertical = (CGAL::sign(normal.dz()) == ZERO);
-    m_is_directed_right = true;
-    m_is_full = true;
-    m_is_degenerate = false;
+    this->set_plane(plane);
+    this->set_is_x_monotone(false);
+    typename Kernel::Direction_3 normal = plane.orthogonal_direction();
+    this->set_is_vertical(CGAL::sign(normal.dz()) == ZERO);
+    this->set_is_directed_right(true);
+    this->set_is_full(true);
+    this->set_is_degenerate(false);
   }
 };
 
