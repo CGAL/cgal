@@ -40,22 +40,19 @@ supported.
 If \ccc{Tag_face} $\equiv$ \ccc{CGAL::Tag_true} an incident face is
 supported.
 
-{\XHDS If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} a host \ccc{halfedge_cycle} is
+{\XHDS If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} a host halfedge cycle  is
 supported.}
 
 {\XHDS
 The incidence relation between a halfedge and a face can be stored in a halfedge in 
 one of two mutually exclusive ways: directly storing the incident face or
-storing the \ccc{halfedge_cycle} common to the halfedge and face.
+storing the halfedge cycle common to the halfedge and face.
 }
 
 In all cases, a reference to the next halfedge and to the opposite
 halfedge is supported.
 
-\ccHeading{Release Notes}
-
-Multiple halfedge cycles were introduced in \cgal\ version 3.4.
-To keep backward compatibility, the choice between those methods is selected by the combination 
+The choice between those methods is selected by the combination 
 of the two type tags \ccc{Tag_face} and \ccc{Tag_halfedge_cycle}.
 These are mutually exclusive and only one can be \ccc{CGAL::Tag_true}.
 

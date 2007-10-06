@@ -141,17 +141,6 @@ allocators internally. A default argument is mandatory for
 from the \ccc{<CGAL/memory.h>} header file can be used as default
 allocator.
 
-% +-----------------------------------+
-\ccHeading{Release Notes}
-
-\input{HalfedgeDS_ref/Extension_intro.tex}
-
-Beginning with \cgal\ R2.3, this package has a new design.  The old
-design is still available for backwards compatibility and to support
-older compiler, such as MSVC++6.0. However its use is deprecated and
-the manual pages are not converted into this new manual
-format. Instead, see its old documentation in the manual of 
-deprecated packages.  The two designs are not interchangeable.
 
 
 % +-----------------------------------+
@@ -214,7 +203,7 @@ value. It will be used in analogy to \ccc{NULL} for pointers.
 The following types are equal to either \ccStyle{CGAL::Tag_true} or
 \ccStyle{CGAL::Tag_false}, depending on whether the named feature is
 supported or not.
-\newpage
+
 
 \ccNestedType{Supports_vertex_halfedge}{\ccc{Vertex::halfedge()}.}
 \ccGlue
@@ -325,7 +314,6 @@ arises.
 
 \end{ccAdvanced}
 
-\newpage
 % +-----------------------------------+
 \ccCreation
 \ccThree{HalfedgeDS<Traits,Items,Alloc>& }{functionfoo}{}

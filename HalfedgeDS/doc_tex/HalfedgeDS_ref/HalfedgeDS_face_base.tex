@@ -27,7 +27,7 @@ defaults that allow to select various flavors of faces.
 
 \begin{tabbing}
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
-              \> \>\ccc{class Tag_halfedge      } \=\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_halfedge      } \mbox{}~~~ \=\ccc{= CGAL::Tag_true,}\\
               \> \>\ccc{class Tag_plane         } \>\ccc{= CGAL::Tag_false,}\\
               \> \>\ccc{class Tag_halfedge_cycle} \>\ccc{= CGAL::Tag_true}\\
      \> \ccc{class HalfedgeDS_face_base;}
@@ -37,7 +37,7 @@ If \ccc{Tag_halfedge} $\equiv$ \ccc{CGAL::Tag_true} a reference to the incident 
 
 If \ccc{Tag_plane} $\neq$ \ccc{CGAL::Tag_false} a plane object is supported (and the type \ccc{Tag_plane} corresponds to the type of the plane object).
 
-If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} \ccc{halfedge_cycle} sequences are supported.
+If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} halfedge cycles are supported.
 
 
 Faces may be bounded by one or multiple halfedge cycles and a face object can optionally store the bounding cycle in one of two mutually exclusive ways: 
@@ -47,14 +47,12 @@ with \ccc{Tag_halfedge} $\equiv$ \ccc{CGAL::Tag_true}
 
 or
 
-Storing iterator pairs defining the sequences of outer and inner \ccc{halfedge_cycles} that bound the face.
+Storing iterator pairs defining the sequences of outer and inner halfedge cycles that bound the face.
 With \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
 
 
-\ccHeading{Release Notes}
 
-Since multiple halfedge cycles were introduced in \cgal\ version 3.4, to keep backward compatibility,
-the choice between storing just one halfedge or \ccc{halfedge_cycle} sequences is selected by the combination 
+The choice between storing just one halfedge or \ccc{halfedge_cycle} sequences is made by the combination 
 of the two type tags \ccc{Tag_halfedge} and \ccc{Tag_halfedge_cycle}. These are mutually
 exclusive and only one can be \ccc{CGAL::Tag_true}.
 

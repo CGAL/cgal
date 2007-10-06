@@ -24,10 +24,12 @@ type in the \ccc{HalfedgeDS} concept. It is also required in
 the \ccc{Face_wrapper<Refs,Traits>} member class template of an
 items class, see the \ccc{HalfedgeDSItems} concept.
 
-See page~\ref{pageHalfedgeDSHalfedgeCycleIntro} for an introduction to Faces with Several Boundaries.
+See page~\ref{pageHalfedgeDSHalfedgeCycleIntro} for an introduction to faces with several boundaries.
 
 {\XHDS
-If \ccc{halfedge_cycles} are used, a face optionally stores begin and end iterators for the outer and inner \ccc{halfedge_cycle} sequences. It also optionally stores iterators for the sequence of \ccc{halfedge_cycles} corresponding to isolated vertices.
+If halfedge cycles are used, a face optionally stores begin and end iterators for the  sequences
+of outer and inner halfedge cycles. It also optionally stores iterators for the sequence of halfedge cycles 
+corresponding to isolated vertices.
 If, alternatively, direct mutual reference is used, a face optionally stores a reference 
 to an incident halfedge that points to the face.
 A type tag indicates whether the related member functions are supported. 
@@ -35,9 +37,8 @@ A type tag indicates whether the related member functions are supported.
 
 {\XHDS
 
-The choice between using \ccc{halfedge_cycles} or direct mutual reference
-(to define the incidence relation between faces and halfedges) is selected 
-via a combination of type tags:
+The choice between using halfedge cycles or direct mutual reference
+is made via a combination of type tags:
 
 For direct mutual reference use
 
@@ -45,7 +46,7 @@ For direct mutual reference use
 and
 \ccc{Supports_face_halfedge_cycle} $\equiv$  \ccc{CGAL::Tag_false}
 
-For halfedge\_cycle items use:
+For halfedge cycle items use:
 
 \ccc{Supports_face_halfedge} $\equiv$  \ccc{CGAL::Tag_false}
 and
@@ -55,13 +56,13 @@ and
 
 \begin{ccAdvanced}
 {\XHDS
-The storage for \ccc{halfedge_cycle} items is controlled by the \ccc{HDS} itself. Therefore, 
+The storage for halfedge cycle items is controlled by the \ccc{HDS} itself. Therefore, 
 there is a \ccc{Halfedge_cycle_iterator} type local to \ccc{HalfedgeDS} corresponding to a 
 container whose elements are models of \ccc{HalfedgeDSHalfedgeCycle}.
 
-Faces maintain their own local sequences of \ccc{halfedge_cycles}. These sequences are
+Faces maintain their own local sequences of halfedge cycles. These sequences are
 containers of \ccc{Halfedge_cycle_handle} elements, not of \ccc{Halfedge_cycle} elements (like the
-container in the HDS). Thus, a Face defines a local \ccc{Halfedge_cycle_handle_iterator} type.
+container in the HDS). Thus, a face defines a local \ccc{Halfedge_cycle_handle_iterator} type.
 
 While a \ccc{Halfedge_cycle_iterator} is implicitly convertible to a \ccc{Halfedge_cycle_handle},
 a \ccc{Halfedge_cycle_handle_iterator} is {\em dereferenceable} as a \ccc{Halfedge_cycle_handle} 
@@ -72,7 +73,7 @@ a \ccc{Halfedge_cycle_handle_iterator} is {\em dereferenceable} as a \ccc{Halfed
 \begin{ccAdvanced}
 {\XHDS
 As faces can have more than one outer boundary, an upper level data structure could use a single
-face to represent disjoint regions each bounded by a distinct outer \ccc{halfedge_cycle}. However,
+face to represent disjoint regions each bounded by a distinct outer halfedge cycle. However,
 it is highly recommended to restrict faces to correspond to singly connected regions, and
 to use multiple outer cycles to represent disjoint boundary components around the same 
 connected region. For example, the surface of a cross section of a cylinder is a single
@@ -96,9 +97,6 @@ halfedge data structure they must be derived from a base class \ccc{Base}
 where the modifying member functions are still public. (The protection
 can be bypassed by the user, but not by accident.)
 
-\ccHeading{Release Notes}
-
-\input{HalfedgeDS_ref/Extension_intro.tex}
 
 \ccTypes
 

@@ -22,8 +22,7 @@
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems} concept.
 It uses the default types for vertices, halfedges, and faces that
 declare all incidences supported by a \ccc{HalfedgeDS}.
-{\XHDS \ccc{halfedge_cycles} are not supported 
-(thus faces and halfedges reference each other directly)}. 
+{\XHDS Halfedge cycles are not supported. 
 The vertex also contains a point of type \ccc{Traits::Point_2}, 
 where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS}.
 
@@ -42,7 +41,7 @@ where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS
 \ccRefConceptPage{PolyhedronItems_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}
 
 \ccExample
@@ -67,7 +66,7 @@ struct HalfedgeDS_items_2 {
         typedef CGAL::HalfedgeDS_face_base< Refs> Face;
     };
 
-    // Halfedge_cycles are not supported by default, hence a dumy type is used.
+    // Halfedge_cycles are not supported by default, hence a dummy type is used.
     template < class Refs, class Traits>
     struct Halfedge_cycle_wrapper {
         typedef int Halfedge_cycle;

@@ -23,7 +23,7 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
 \ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
-for vertices, halfedges, {\XHDS \ccc{halfedge_cycles}}, and faces 
+for vertices, halfedges, {\XHDS halfedge cycles}, and faces 
 of a halfedge data structure
 without knowing the containing halfedge data structure. The class
 \ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
@@ -57,7 +57,7 @@ all halfedge data structures and will not appear here again.
 \ccGlue
 \ccNestedType{Face}{face type of \ccc{HalfedgeDS}.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle}{\XHDS \ccc{halfedge_cycle} type of \ccc{HalfedgeDS}.}
+\ccNestedType{\XHDS Halfedge_cycle}{\XHDS halfedge cycle type of \ccc{HalfedgeDS}.}
 
 \ccNestedType{Vertex_handle}{}
 \ccGlue
@@ -140,11 +140,11 @@ available as well.
     \ccc{Face_handle()} otherwise.}
 \ccGlue
 \ccMethod{\XHDS Halfedge_cycle_handle get_halfedge_cycle(Halfedge_handle h);}
-    {\XHDS returns the \ccc{halfedge_cycle} of $h$ if supported, 
+    {\XHDS returns the halfedge cycle of $h$ if supported, 
     \ccc{Halfedge_cycle_handle()} otherwise.}
 \ccGlue
 \ccMethod{\XHDS Halfedge_cycle_handle get_halfedge_cycle(Face_handle f);}
-    {\XHDS returns the \ccc{halfedge_cycle} of $f$ if supported, 
+    {\XHDS returns the halfedge cycle of $f$ if supported, 
     \ccc{Halfedge_cycle_handle()} otherwise.}
 \ccGlue
 \ccMethod{Halfedge_handle get_face_halfedge( Face_handle f);}
@@ -232,7 +232,7 @@ Corresponding member functions for \ccc{const_handle}'s are provided as well.
     {sets the incident halfedge of the face incident to $h$ to $h$.}
 \ccGlue
 \ccMethod{\XHDS void set_halfedge_cycle( Halfedge_handle h, Halfedge_cycle_handle c) const;}
-    {\XHDS sets the \ccc{halfedge_cycle} of $h$ to $c$.}
+    {\XHDS sets the halfedge cycle of $h$ to $c$.}
 \ccGlue
 \ccMethod{\XHDS void insert_outer_halfedge_cycle_to_face( Face_handle f, Halfedge_cycle_handle c, Halfedge_cycle_handle_iterator pos) const;}
     {\XHDS inserts $c$ to sequence of outer cycles of $f$ before $pos$.}

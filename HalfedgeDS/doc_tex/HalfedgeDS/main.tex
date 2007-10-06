@@ -46,9 +46,8 @@ Reduced variants of the halfedge data structure can omit some of these
 information, for example the halfedge pointers in faces or the
 storage of faces at all.}
 
-In order to also support faces with
-holes things can be slightly more complicated, that will be explained
-in the next section.
+In order to also support faces with holes things are slightly more
+complicated, which will be explained in the next section.
 
 % \begin{ccTexOnly}
 %     \vspace{-4mm}
@@ -130,15 +129,15 @@ layer.
 The items provide the space for the information that is
 actually stored, i.e., with member variables and access member
 functions in \ccc{Vertex}, \ccc{Halfedge}, \ccc{Halfedge_cycle} and
-\ccc{Face} respectively. Halfedges are required to provide a reference to the
-next halfedge and to the opposite halfedge. \ccc{Halfedge_cycles}
+\ccc{Face}, respectively. Halfedges are required to provide a reference to the
+next halfedge and to the opposite halfedge. Halfedge cycles
 are required to provide a reference to one of the halfedges of the cycle
 they represent.
-Vertices, \ccc{Halfedge_cycles} and faces may be empty.
+Vertices, halfedge cycles, and faces may be empty.
 Vertices may provide a reference to the incident halfedge.
-\ccc{Halfedge_cycles} may provide a reference to the face.
-Faces may provide iterator ranges over the outer and inner \ccc{halfedge_cycles}, or, 
-alternatively, a reference to the incident halfedge if \ccc{halfedge_cycles} are not supported.
+Halfedge cycles may provide a reference to the face.
+Faces may provide iterator ranges over the outer and inner halfedge cycles, or, 
+alternatively, a reference to the incident halfedge if halfedge cycles are not supported.
 }
 
 The options mentioned are supported in the halfedge data structure and the
@@ -148,9 +147,9 @@ extended with arbitrary attributes and member functions, which will be
 promoted by inheritance to the actual classes used for the polyhedron.
 
 
-Vertices, halfedges, {\XHDS halfedge\_cycles}, and faces are passed as local types of the
+Vertices, halfedges, halfedge cycles, and faces are passed as local types of the
 \ccc{Items} class to the halfedge data structure and polyhedron.
-Implementations for vertices, halfedges, {\XHDS halfedge\_cycles}, and faces are provided that
+Implementations for vertices, halfedges, halfedge cycles, and faces are provided that
 fulfill the mandatory part of the requirements. They can be used as
 base classes for extensions by the user. Richer implementations are
 also provided to serve as defaults; for polyhedra they provide all
@@ -226,7 +225,7 @@ type for vertices are defined. The trivial traits class provides the
 type used for the point. The program creates a loop, consisting
 of two halfedges, one vertex, and two faces, and checks its validity.
 {\XHDS for backward compatibility with 3.3.1, the default items class
-\ccc{HalfedgeDS_items_2} does not support \ccc{halfedge_cycles}.}
+\ccc{HalfedgeDS_items_2} does not support halfedge cycles.}
 
 \begin{ccTexOnly}
     \vspace{-4mm}
@@ -248,12 +247,12 @@ of two halfedges, one vertex, and two faces, and checks its validity.
 
 
 % +-------------------------------------------------------------+
-\subsection{The Default Halfedge Data Structure with halfedge\_cycles support}
+\subsection{The Default Halfedge Data Structure with Halfedge Cycles Support}
 
 {\XHDS
 The following example program uses the default halfedge data structure
 with \ccc{HalfedgeDS_items_with_halfedge_cycle_2}, enabling support for
-\ccc{halfedge_cycles} and disabling direct mutual references between faces and halfedges
+halfedge cycles and disabling direct mutual references between faces and halfedges
 }
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_default_with_ccb.cpp}
@@ -268,7 +267,7 @@ maintaining only halfedges with next and opposite pointers.  No
 vertices or faces are stored. The data structure represents an {\em
   undirected graph}.
 {\XHDS for backward compatibility, 
-\ccc{CGAL::HalfedgeDS_min_items} does not support \ccc{halfedge_cycles}.}
+\ccc{CGAL::HalfedgeDS_min_items} does not support halfedge cycles.}
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_graph.cpp}
 

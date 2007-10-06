@@ -33,8 +33,8 @@ along the open region.
 
 A halfedge optionally stores a reference to the
 previous halfedge along the face, a reference to an incident vertex,
-{\XHDS a reference to the \ccc{halfedge_cycle} containing it},
-and a reference to the incident face,
+{\XHDS a reference to the halfedge cycle containing it},
+and a reference to the incident face.
 Type tags indicate whether the related member functions are supported.
 
 {\XHDS
@@ -49,7 +49,7 @@ For direct mutual reference use
 and
 \ccc{Supports_halfedge_halfedge_cycle} $\equiv$  \ccc{CGAL::Tag_false}
 
-For \ccc{halfedge_cycle} items use:
+For halfedge cycle items use:
 
 \ccc{Supports_halfedge_face} $\equiv$  \ccc{CGAL::Tag_false}
 and
