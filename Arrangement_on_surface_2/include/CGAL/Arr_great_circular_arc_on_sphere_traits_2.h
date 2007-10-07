@@ -1592,9 +1592,9 @@ public:
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \param xc Output: the merged curve.
-     * \pre the two curves are mergeable, that is they are supported by the
-     *      same plane and share a common endpoint that is not on the
-     *      discontinuity arc.
+     * \pre the two curves are mergeable. That is, they are supported by the
+     *      same plane or oposite planes and share a common endpoint that is
+     *      not on the discontinuity arc.
      */
     void operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2,
@@ -1606,20 +1606,37 @@ public:
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
-#if defined(CGAL_ARR_PLANE)
-      CGAL_precondition((xc1.plane()).equal(xc2.plane()));
-#else
-      CGAL_precondition(equal(xc1.plane(), xc2.plane()));
-#endif
       CGAL_precondition_code(Are_mergeable_2 are_merg;);
       CGAL_precondition (are_merg(xc1, xc2) == true);
 
-      xc.set_plane(xc1.is_directed_right() ? xc1.plane() :
-                   xc2.is_directed_right() ? xc2.plane() :
-                   xc1.plane().opposite());
-      xc.set_is_vertical(xc1.is_vertical());
-      xc.set_is_directed_right(true);
       xc.set_is_degenerate(false);
+      xc.set_is_vertical(xc1.is_vertical());
+
+      if (xc1.is_directed_right() || xc2.is_directed_right()) {
+        xc.set_plane(xc1.is_directed_right() ? xc1.plane() : xc2.plane());
+        xc.set_is_directed_right(true);
+
+        if (equal(xc1.right(), xc2.left())) {
+          xc.set_source(xc1.left());
+          xc.set_target(xc2.right());
+        } else {
+          CGAL_assertion(equal(xc1.left(), xc2.right()));
+          xc.set_source(xc2.left());
+          xc.set_target(xc1.right());
+        }
+      } else {
+        xc.set_plane(xc1.plane());
+        xc.set_is_directed_right(false);
+
+        if (equal(xc1.right(), xc2.left())) {
+          xc.set_source(xc2.right());
+          xc.set_target(xc1.left());
+        } else {
+          CGAL_assertion(equal(xc1.left(), xc2.right()));
+          xc.set_source(xc1.right());
+          xc.set_target(xc2.left());
+        }
+      }
 
       /* The arc is full if:
        * 1. the source lies on the open discontinuity arc, and
@@ -1629,17 +1646,7 @@ public:
       xc.set_is_full(!xc.is_vertical() &&
                      xc.source().is_mid_boundary() &&
                      xc.target().is_mid_boundary());
-      
-      if (equal(xc1.right(), xc2.left())) {
-        xc.set_source(xc1.left());
-        xc.set_target(xc2.right());
-        return;
-      }
-
-      CGAL_assertion(equal(xc1.left(), xc2.right()));
-      xc.set_source(xc2.left());
-      xc.set_target(xc1.right());
-    }
+    }      
   };
 
   /*! Obtain a Merge_2 function object */
@@ -2358,6 +2365,8 @@ protected:
   typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> Base;
 
   typedef typename Base::Plane_3                                Plane_3;
+  typedef typename Base::Direction_3                            Direction_3;
+  typedef typename Base::Direction_2                            Direction_2;
   
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
@@ -2592,26 +2601,29 @@ public:
        */
       const Direction_2 & ny = Traits::neg_y_2();
       Kernel kernel;
-      typedef typename Kernel::Counterclockwise_in_between_2 ccib =
+      typename Kernel::Counterclockwise_in_between_2 ccib =
         kernel.counterclockwise_in_between_2_object();
       set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) ||
-                        (!plane_is_positive && && !ccib(ny, t, s)));
+                        (!plane_is_positive && !ccib(ny, t, s)));
 
       bool ccw = ((plane_is_positive && s_x_is_positive) ||
                   (!plane_is_positive && !s_x_is_positive));
-      set_is_directed_right(ccw);
+      this->set_is_directed_right(ccw);
       return;
     }
       
     // The arc is not vertical!
-    set_is_vertical(false);
-    set_is_directed_right(z_sign(normal) == POSITIVE);
+    this->set_is_vertical(false);
+    this->set_is_directed_right(z_sign(normal) == POSITIVE);
     const Direction_2 & nx = Traits::neg_x_2();
+    Direction_2 s = Traits::project_xy(source);
+    Direction_2 t = Traits::project_xy(target);    
     Kernel kernel;
-    typedef typename Kernel::Counterclockwise_in_between_2 ccib =
+    typename Kernel::Counterclockwise_in_between_2 ccib =
       kernel.counterclockwise_in_between_2_object();
+    bool plane_is_positive = (z_sign(normal) == POSITIVE);
     set_is_x_monotone((plane_is_positive && !ccib(nx, s, t)) ||
-                      (!plane_is_positive && && !ccib(nx, t, s)));
+                      (!plane_is_positive && !ccib(nx, t, s)));
   }
 
   /*! Construct a spherical_arc from two endpoints directions contained
