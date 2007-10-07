@@ -57,6 +57,7 @@
 
 namespace CGAL {
   namespace CGALi {
+    
 
     template < class SphericalKernel, class LinearKernelBase >
       struct Spherical_kernel_base_no_ref_count: public LinearKernelBase
@@ -69,7 +70,6 @@ namespace CGAL {
         typedef CGALi::Theta_rep<SphericalKernel>  Theta_rep;
         typedef CGALi::Theta_rep<SphericalKernel>  Sphere_with_radius_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
-        typedef float HQ_NT;//type to represent the index of one hquadrant
         
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >

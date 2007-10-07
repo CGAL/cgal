@@ -7,7 +7,6 @@ namespace CGAL {
 template <class SK>
 class Theta_rep{
   typedef typename SK::Algebraic_kernel::Root_of_2 Root_of_2;
-  typedef typename SK::HQ_NT HQ_NT;
   typedef typename SK::FT FT;    
   typedef std::pair<HQ_NT,Root_of_2> Rep;
   

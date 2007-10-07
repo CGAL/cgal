@@ -13,7 +13,6 @@ class Theta_rep
   typedef typename SphericalKernel::Root_of_2             Root_of_2;
   typedef typename SphericalKernel::FT                    FT;
   typedef typename SphericalKernel::Algebraic_kernel      AK;
-  typedef typename SphericalKernel::HQ_NT                 HQ_NT;
   typedef typename SphericalKernel::Root_for_spheres_2_3  Root_for_spheres_2_3;  
 
 public:

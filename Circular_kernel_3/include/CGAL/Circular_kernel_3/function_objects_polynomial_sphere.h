@@ -110,7 +110,7 @@ template < class SK > \
 
   public:
 
-    typedef typename SK::HQ_NT result_type;
+    typedef CGAL::HQ_NT result_type;
     typedef const result_type &        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
@@ -168,7 +168,7 @@ template < class SK > \
 
   public:
 
-    typedef typename SK::HQ_NT result_type;
+    typedef CGAL::HQ_NT result_type;
     typedef const result_type &        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
@@ -492,7 +492,6 @@ template < class SK > \
     typedef typename SK::Kernel_base::Theta_rep      RTheta_rep;
     typedef typename SK::Root_of_2                            Root_of_2;
     typedef typename Theta_rep::Rep                         Rep;
-    typedef typename SK::HQ_NT                                 HQ_NT;
 
 
   public:
@@ -522,7 +521,7 @@ template < class SK > \
     typedef typename SK::Root_of_2                          Root_of_2;
     typedef typename SK::FT                                     FT;
     typedef typename Circular_arc_point_on_reference_sphere_3::Repd              Rep;
-    typedef typename SK::HQ_NT HQ_NT;
+
 
 
   public:

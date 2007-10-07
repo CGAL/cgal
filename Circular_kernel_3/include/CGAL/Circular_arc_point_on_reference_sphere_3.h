@@ -18,7 +18,7 @@ class Circular_arc_point_on_reference_sphere_3
   typedef typename SphericalKernel::Sphere_3              Sphere_3;
   typedef typename SphericalKernel::FT                    FT;
   typedef typename SphericalKernel::Algebraic_kernel      AK;
-  typedef typename SphericalKernel::HQ_NT                 HQ_NT;
+
 
 public:
   typedef typename SphericalKernel::Root_for_spheres_2_3 
