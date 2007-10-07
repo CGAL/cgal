@@ -2016,7 +2016,6 @@ protected:
         map_halfedges(map_h),
         map_vertices(map_v),
         map_faces(map_f)
-
     {
     }
     
@@ -2024,6 +2023,7 @@ protected:
 
     virtual void before_create_vertex (const Point_2& /* p */)
     {}
+
     virtual void after_create_vertex (Vertex_handle v)
     {      
       // should create a new vertex with v->point() inside
@@ -2034,15 +2034,24 @@ protected:
       // and is also no isolated)
       new_vertices.push_back(v);
     }
-    void before_create_vertex_at_infinity(Boundary_type /* inf_x */,
-                                          Boundary_type /* inf_y */ )
-    {}
 
-    void after_create_vertex_at_infinity(Vertex_handle v)
+    void before_create_boundary_vertex (const X_monotone_curve_2& cv,
+                                        Curve_end ind,
+                                        Boundary_type /* bx */,
+                                        Boundary_type /* by */)
+    {
+      boundary_vertex_cv = cv;
+      boundary_vertex_ind = ind;
+    }
+
+    void after_create_boundary_vertex (Vertex_handle v)
     {
       Vertex_handle new_v = 
-        big_arr_accessor.create_vertex_at_infinity(v->boundary_in_x(),
-                                                   v->boundary_in_y());
+        big_arr_accessor.create_boundary_vertex (boundary_vertex_cv,
+                                                 boundary_vertex_ind,
+                                                 v->boundary_in_x(),
+                                                 v->boundary_in_y(),
+                                                 false);
       map_vertices[v] = new_v;
     }
 
@@ -2383,6 +2392,8 @@ protected:
     std::deque<Vertex_handle> new_vertices;
     
     // state for actions
+    X_monotone_curve_2  boundary_vertex_cv;
+    Curve_end           boundary_vertex_ind;
     Vertex_handle create_edge_v1;
     Vertex_handle create_edge_v2;
     Vertex_handle split_v, split_fict_v;
