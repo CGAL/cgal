@@ -2135,22 +2135,43 @@ public:
   Arr_x_monotone_great_circular_arc_on_sphere_3(const Plane_3 & plane) :
     m_plane(plane),
     m_is_vertical(false),
-    m_is_directed_right(true),
+    m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
     m_is_full(true),
     m_is_degenerate(false)
   {
-    //! \todo precondition
+    CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
+
     Direction_3 d(-1, 0, plane.a() / plane.c());
     m_source = m_target =
       Arr_extended_direction_3(d, Arr_extended_direction_3::MID_BOUNDARY_LOC);
   }
 
+  /*! Construct a full spherical_arc from a common endpoint and a plane
+   * \param plane the containing plane.
+   * \pre the point lies on the plane
+   * \pre the point lies on the open discontinuity arc
+   */
+  Arr_x_monotone_great_circular_arc_on_sphere_3
+  (const Arr_extended_direction_3 & point, const Plane_3 & plane) :
+    m_source(point),
+    m_target(point),
+    m_plane(plane),
+    m_is_vertical(false),
+    m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
+    m_is_full(true),
+    m_is_degenerate(false)
+  {
+    CGAL_precondition(Traits::has_on(plane, point));
+    CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
+  }
+  
   /*! Construct a spherical_arc from two endpoints directions contained
    * in a plane.
    * \param plane the containing plane.
    * \param source the source-point direction.
    * \param target the target-point direction.
-   * \pre The two endpoints are not the same, and both lie on the given plane.
+   * \pre Both endpoint lie on the given plane.
+   * \pre Both endpoint lie on the given plane.
    */
   Arr_x_monotone_great_circular_arc_on_sphere_3
   (const Arr_extended_direction_3 & source,
@@ -2159,6 +2180,7 @@ public:
     m_source(source),
     m_target(target),
     m_plane(plane),
+    m_is_full(false),
     m_is_degenerate(false)
   {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -2170,40 +2192,35 @@ public:
     if (source.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
-      set_is_full(false);
       return;
     }
     if (source.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
-      set_is_full(false);
       return;
     }
     if (target.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
-      set_is_full(false);
       return;
     }
     if (target.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
-      set_is_full(false);
       return;
     }
 
     Direction_3 normal = plane.orthogonal_direction();
     if (z_sign(normal) == ZERO) {
       set_is_vertical(true);
-      set_is_full(false);
 
       bool xz_plane = x_sign(normal) == ZERO;
       typename Traits::Project project =
         (xz_plane) ? Traits::project_xz : Traits::project_yz;
       Direction_2 s = project(source);
       Direction_2 t = project(target);
-      bool s_x_is_positive = Traits::is_x_positive(s);
-      bool t_x_is_positive = Traits::is_x_positive(t);
+      bool s_x_is_positive = is_x_positive(s);
+      bool t_x_is_positive = is_x_positive(t);
       bool plane_is_positive = (xz_plane) ?
         (y_sign(normal) == NEGATIVE) : (x_sign(normal) == POSITIVE);
       bool ccw = ((plane_is_positive && s_x_is_positive) ||
@@ -2362,13 +2379,16 @@ protected:
   
 public:
   /*! Default constructor */
-  Arr_great_circular_arc_on_sphere_3() : Base() {}
+  Arr_great_circular_arc_on_sphere_3() : Base(), m_is_x_monotone(false) {}
 
   /*! Copy constructor
    * \param other the other arc
    */
   Arr_great_circular_arc_on_sphere_3
-  (const Arr_great_circular_arc_on_sphere_3 & other) : Base(other) {}
+  (const Arr_great_circular_arc_on_sphere_3 & other) : Base(other)
+  {
+    m_is_x_monotone = other.m_is_x_monotone;
+  }
   
   /*! Constructor
    * \param src the source point of the arc
@@ -2494,18 +2514,117 @@ public:
     return;
   }
 
-  /*! Construct a spherical_arc from two endpoints directions contained
+  /*! Construct a spherical_arc from two endpoint directions contained
    * in a plane.
    * \param plane the containing plane.
    * \param source the source-point direction.
    * \param target the target-point direction.
-   * \pre The two endpoints are not the same, and both lie on the given plane.
+   * \pre Both endpoints lie on the given plane.
    */
   Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
                                      const Arr_extended_direction_3 & target,
-                                     const Plane_3 & plane) :
-    Base(source, target, plane)
-  {}
+                                     const Plane_3 & plane)
+  {
+    this->set_source(source);
+    this->set_target(target);
+    this->set_plane(plane);
+    this->set_is_degenerate(false);
+
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    CGAL_precondition(Traits::has_on(plane, source));
+    CGAL_precondition(Traits::has_on(plane, target));
+
+    Direction_3 normal = plane.orthogonal_direction();
+    if (z_sign(normal) == ZERO) {
+      this->set_is_vertical(true);
+    
+      // Check whether both endpoint coincide with the poles:
+      if (source.is_min_boundary() && target.is_max_boundary()) {
+        // Both endpoints coincide with the 2 poles respectively.
+        this->set_is_directed_right(true);
+        this->set_is_full(false);
+        set_is_x_monotone(true);
+        return;
+      }
+      
+      if (source.is_max_boundary() && target.is_min_boundary()) {
+        // Both endpoints coincide with the 2 poles respectively.
+        this->set_is_directed_right(false);
+        this->set_is_full(false);
+        set_is_x_monotone(true);
+        return;
+      }
+
+      bool xz_plane = x_sign(normal) == ZERO;
+      typename Traits::Project project =
+        (xz_plane) ? Traits::project_xz : Traits::project_yz;
+      Direction_2 s = project(source);
+      Direction_2 t = project(target);
+      bool s_x_is_positive = Traits::is_x_positive(s);
+      bool t_x_is_positive = Traits::is_x_positive(t);
+      bool plane_is_positive = (xz_plane) ?
+        (y_sign(normal) == NEGATIVE) : (x_sign(normal) == POSITIVE);
+
+      // Optimization:
+      if (source.is_min_boundary()) {
+        this->set_is_directed_right(true);
+        set_is_x_monotone((plane_is_positive && t_x_is_positive) ||
+                          (!plane_is_positive && !t_x_is_positive));
+        return;
+      }
+      if (source.is_max_boundary()) {
+        this->set_is_directed_right(false);
+        set_is_x_monotone((plane_is_positive && !t_x_is_positive) ||
+                          (!plane_is_positive && t_x_is_positive));
+        return;
+      }
+      if (target.is_min_boundary()) {
+        this->set_is_directed_right(false);
+        set_is_x_monotone((plane_is_positive && !s_x_is_positive) ||
+                          (!plane_is_positive && s_x_is_positive));
+        return;
+      }
+      if (target.is_max_boundary()) {
+        this->set_is_directed_right(true);
+        set_is_x_monotone((plane_is_positive && s_x_is_positive) ||
+                          (!plane_is_positive && !s_x_is_positive));
+        return;
+      }
+      if (s_x_is_positive != t_x_is_positive) {
+        set_is_x_monotone(false);
+        return;
+      }
+
+      /* Non of the endpoints coincide with a pole.
+       * The projections of both endpoints lie on the same hemi-circle.
+       * Thus, either the arc is x-monotone, or it includes both poles.
+       * This means that it is sufficient to check whether one pole lies
+       * on the arc in order to determine x-monotonicity
+       */
+      const Direction_2 & ny = Traits::neg_y_2();
+      Kernel kernel;
+      typedef typename Kernel::Counterclockwise_in_between_2 ccib =
+        kernel.counterclockwise_in_between_2_object();
+      set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) ||
+                        (!plane_is_positive && && !ccib(ny, t, s)));
+
+      bool ccw = ((plane_is_positive && s_x_is_positive) ||
+                  (!plane_is_positive && !s_x_is_positive));
+      set_is_directed_right(ccw);
+      return;
+    }
+      
+    // The arc is not vertical!
+    set_is_vertical(false);
+    set_is_directed_right(z_sign(normal) == POSITIVE);
+    const Direction_2 & nx = Traits::neg_x_2();
+    Kernel kernel;
+    typedef typename Kernel::Counterclockwise_in_between_2 ccib =
+      kernel.counterclockwise_in_between_2_object();
+    set_is_x_monotone((plane_is_positive && !ccib(nx, s, t)) ||
+                      (!plane_is_positive && && !ccib(nx, t, s)));
+  }
 
   /*! Construct a spherical_arc from two endpoints directions contained
    * in a plane.
