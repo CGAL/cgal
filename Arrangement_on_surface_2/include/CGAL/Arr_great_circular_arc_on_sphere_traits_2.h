@@ -189,20 +189,8 @@ protected:
    */
   inline static Direction_2 project_xy(const Direction_3 & d)
   {
-    Kernel kernel;
-    Ray_3 r_3 = kernel.construct_ray_3_object()(ORIGIN, d);
-    Vector_3 v_3 = kernel.construct_vector_3_object()(r_3);
-    Point_3 p_3 = kernel.construct_translated_point_3_object()(ORIGIN, v_3);
-
-#if defined(CGAL_ARR_PLANE)
-    typename Kernel::Point_2 p =
-      construct_projected_xy_point(xy_plane(), p_3);
-#else
-    typename Kernel::Point_2 p =
-      kernel.construct_projected_xy_point_2_object()(xy_plane(), p_3);
-#endif
-    Vector_2 v = kernel.construct_vector_2_object()(ORIGIN, p);
-    return kernel.construct_direction_2_object()(v);
+    Direction_2 dir(d.dx(), d.dy());
+    return dir;
   }
   
   /*! Project a 3D direction onto the yz-plane
@@ -212,20 +200,8 @@ protected:
    */
   inline static Direction_2 project_yz(const Direction_3 & d)
   {
-    Kernel kernel;
-    Ray_3 r_3 = kernel.construct_ray_3_object()(ORIGIN, d);
-    Vector_3 v_3 = kernel.construct_vector_3_object()(r_3);
-    Point_3 p_3 = kernel.construct_translated_point_3_object()(ORIGIN, v_3);
-
-#if defined(CGAL_ARR_PLANE)
-    typename Kernel::Point_2 p =
-      construct_projected_xy_point(yz_plane(), p_3);
-#else
-    typename Kernel::Point_2 p =
-      kernel.construct_projected_xy_point_2_object()(yz_plane(), p_3);
-#endif
-    Vector_2 v = kernel.construct_vector_2_object()(ORIGIN, p);
-    return kernel.construct_direction_2_object()(v);
+    Direction_2 dir(d.dy(), d.dz());
+    return dir;
   }
   
   /*! Project a 3D direction onto the zx-plane
@@ -235,61 +211,8 @@ protected:
    */
   inline static Direction_2 project_xz(const Direction_3 & d)
   {
-    Kernel kernel;
-    Ray_3 r_3 = kernel.construct_ray_3_object()(ORIGIN, d);
-    Vector_3 v_3 = kernel.construct_vector_3_object()(r_3);
-    Point_3 p_3 = kernel.construct_translated_point_3_object()(ORIGIN, v_3);
-
-#if defined(CGAL_ARR_PLANE)
-    typename Kernel::Point_2 p =
-      construct_projected_xy_point(xz_plane(), p_3);
-#else
-    typename Kernel::Point_2 p =
-      kernel.construct_projected_xy_point_2_object()(xz_plane(), p_3);
-#endif
-    Vector_2 v = kernel.construct_vector_2_object()(ORIGIN, p);
-    return kernel.construct_direction_2_object()(v);
-  }
-
-  /*! Determined whether a direction is contained in a plane
-   * \param plane the 3D plane.
-   * \param dir the 3D direction.
-   * \return true if dir is contained in plane; false otherwise.
-   * \pre the plane contains the origin.
-   */
-  inline static bool has_on(const Plane_3 & plane, const Direction_3 & dir)
-  {
-    Kernel kernel;
-    Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
-    Vector_3 vec = kernel.construct_vector_3_object()(ray);
-    Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
-    return kernel.has_on_3_object()(plane, point);
-  }
-
-  /*! Constructs a plane that contains two directions.
-   * \todo Introduce in Kernel::ConstructPlane_3::operator()(Direction_3, Dir..)
-   * \param d1 the first direction.
-   * \param d2 the second direction.
-   */
-  inline static Plane_3 construct_plane_3(const Direction_3 & d1,
-                                          const Direction_3 & d2)
-  {
-    Kernel kernel;
-
-    Ray_3 r1 = kernel.construct_ray_3_object()(ORIGIN, d1);
-    Vector_3 v1 = kernel.construct_vector_3_object()(r1);
-    Point_3 p1 = kernel.construct_translated_point_3_object()(ORIGIN, v1);
-
-    Ray_3 r2 = kernel.construct_ray_3_object()(ORIGIN, d2);
-    Vector_3 v2 = kernel.construct_vector_3_object()(r2);
-    Point_3 p2 = kernel.construct_translated_point_3_object()(ORIGIN, v2);
-
-#if defined(CGAL_ARR_PLANE)
-    Plane_3 plane(p1, p2);
-#else
-    Plane_3 plane = kernel.construct_plane_3_object()(ORIGIN, p1, p2);
-#endif
-    return plane;
+    Direction_2 dir(d.dx(), d.dz());
+    return dir;
   }
 
   /*! Compare the relative position of a direction and a plane.
@@ -299,11 +222,10 @@ protected:
   inline Oriented_side oriented_side(const Plane_3 & plane,
                                      const Direction_3 dir) const
   {
-    Kernel kernel;
-    Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
-    Vector_3 vec = kernel.construct_vector_3_object()(ray);
-    Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
-
+    const Kernel * kernel = this;
+    Ray_3 ray = kernel->construct_ray_3_object()(ORIGIN, dir);
+    Vector_3 vec = kernel->construct_vector_3_object()(ray);
+    Point_3 point = kernel->construct_translated_point_3_object()(ORIGIN, vec);
     return plane.oriented_side(point);
   }
   
@@ -873,8 +795,7 @@ public:
       // ind == MAX_END
       
       // Handle the north pole. It has the largest y coords:
-      if (r1.is_max_boundary())
-        return (r2.is_max_boundary()) ? EQUAL : LARGER;
+      if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;
       if (r2.is_max_boundary()) return SMALLER;
 
       // None of xc1 and xc2 endpoints coincide with a pole:
@@ -1653,6 +1574,19 @@ public:
   Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(); }
 
   class Merge_2 {
+  protected:
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    
   public:
     /*! Merge two given x-monotone curves into a single curve (spherical_arc).
      * \param xc1 the first curve.
@@ -1669,8 +1603,8 @@ public:
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
-      Kernel kernel;
-      typename Kernel::Equal_3 equal = kernel.equal_3_object();
+      const Kernel * kernel = m_traits;
+      typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
 #if defined(CGAL_ARR_PLANE)
       CGAL_precondition((xc1.plane()).equal(xc2.plane()));
@@ -1680,26 +1614,36 @@ public:
       CGAL_precondition_code(Are_mergeable_2 are_merg;);
       CGAL_precondition (are_merg(xc1, xc2) == true);
 
-      xc.set_plane(xc1.plane());
+      xc.set_plane(xc1.is_directed_right() ? xc1.plane() :
+                   xc2.is_directed_right() ? xc2.plane() :
+                   xc1.plane().opposite());
       xc.set_is_vertical(xc1.is_vertical());
       xc.set_is_directed_right(true);
       xc.set_is_degenerate(false);
 
+      /* The arc is full if:
+       * 1. the source lies on the open discontinuity arc, and
+       * 2. the target lies on the open discontinuity arc, and
+       * 3. the arc is not vertical
+       */
+      xc.set_is_full(!xc.is_vertical() &&
+                     xc.source().is_mid_boundary() &&
+                     xc.target().is_mid_boundary());
+      
       if (equal(xc1.right(), xc2.left())) {
         xc.set_source(xc1.left());
         xc.set_target(xc2.right());
-      } else {
-        CGAL_assertion(equal(xc1.left(), xc2.right()));
-        xc.set_source(xc2.left());
-        xc.set_target(xc1.right());
+        return;
       }
-      typename Kernel::Equal_3 equal_3 = kernel.equal_3_object();
-      xc.set_is_full(equal_3(xc.source(), xc.target()));
+
+      CGAL_assertion(equal(xc1.left(), xc2.right()));
+      xc.set_source(xc2.left());
+      xc.set_target(xc1.right());
     }
   };
 
   /*! Obtain a Merge_2 function object */
-  Merge_2 merge_2_object() const { return Merge_2(); }
+  Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.
@@ -1933,6 +1877,9 @@ protected:
 #else
   typedef typename Kernel::Plane_3                              Plane_3;
 #endif
+  typedef typename Kernel::Point_3                              Point_3;
+  typedef typename Kernel::Ray_3                                Ray_3;
+  typedef typename Kernel::Vector_3                             Vector_3;
 
   typedef typename Kernel::Direction_2                          Direction_2;
 
@@ -1975,6 +1922,47 @@ protected:
   inline Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }  
 
   inline Sign z_sign(Direction_3 d) { return CGAL::sign(d.dz()); }
+
+  /*! Determined whether a direction is contained in a plane
+   * \param plane the 3D plane.
+   * \param dir the 3D direction.
+   * \return true if dir is contained in plane; false otherwise.
+   * \pre the plane contains the origin.
+   */
+  inline bool has_on(const Plane_3 & plane, const Direction_3 & dir) const
+  {
+    Kernel kernel;
+    Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
+    Vector_3 vec = kernel.construct_vector_3_object()(ray);
+    Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
+    return kernel.has_on_3_object()(plane, point);
+  }
+  
+  /*! Constructs a plane that contains two directions.
+   * \todo Introduce in Kernel::ConstructPlane_3::operator()(Direction_3, Dir..)
+   * \param d1 the first direction.
+   * \param d2 the second direction.
+   */
+  inline Plane_3 construct_plane_3(const Direction_3 & d1,
+                                   const Direction_3 & d2) const
+  {
+    Kernel kernel;
+
+    Ray_3 r1 = kernel.construct_ray_3_object()(ORIGIN, d1);
+    Vector_3 v1 = kernel.construct_vector_3_object()(r1);
+    Point_3 p1 = kernel.construct_translated_point_3_object()(ORIGIN, v1);
+
+    Ray_3 r2 = kernel.construct_ray_3_object()(ORIGIN, d2);
+    Vector_3 v2 = kernel.construct_vector_3_object()(r2);
+    Point_3 p2 = kernel.construct_translated_point_3_object()(ORIGIN, v2);
+
+#if defined(CGAL_ARR_PLANE)
+    Plane_3 plane(p1, p2);
+#else
+    Plane_3 plane = kernel.construct_plane_3_object()(ORIGIN, p1, p2);
+#endif
+    return plane;
+  }
 
 public:
   /*! Default constructor */
@@ -2053,7 +2041,7 @@ public:
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
                        target));
-    m_plane = Traits::construct_plane_3(source, target);
+    m_plane = construct_plane_3(source, target);
       
     // Check whether any one of the endpoint coincide with a pole:
     if (source.is_max_boundary()) {
@@ -2161,7 +2149,7 @@ public:
     m_is_full(true),
     m_is_degenerate(false)
   {
-    CGAL_precondition(Traits::has_on(plane, point));
+    CGAL_precondition(has_on(plane, point));
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
   }
   
@@ -2185,8 +2173,8 @@ public:
   {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition(Traits::has_on(plane, source));
-    CGAL_precondition(Traits::has_on(plane, target));
+    CGAL_precondition(has_on(plane, source));
+    CGAL_precondition(has_on(plane, target));
 
     // Check whether any one of the endpoint coincide with a pole:
     if (source.is_max_boundary()) {
@@ -2444,7 +2432,7 @@ public:
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
                        target));
-    this->m_plane = Traits::construct_plane_3(source, target);
+    this->m_plane = this->construct_plane_3(source, target);
 
     // Check whether one of the endpoints coincides with a pole: */
     if (source.is_max_boundary()) {
@@ -2532,8 +2520,8 @@ public:
 
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition(Traits::has_on(plane, source));
-    CGAL_precondition(Traits::has_on(plane, target));
+    CGAL_precondition(this->has_on(plane, source));
+    CGAL_precondition(this->has_on(plane, target));
 
     Direction_3 normal = plane.orthogonal_direction();
     if (z_sign(normal) == ZERO) {
