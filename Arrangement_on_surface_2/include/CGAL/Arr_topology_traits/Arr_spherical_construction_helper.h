@@ -128,10 +128,8 @@ public:
       // If not, we create one.
       if (m_top_traits->south_pole() == NULL)
       {
-        Vertex_handle v = m_arr_access.create_vertex(event->point(),
-                                                     bound_x, bound_y);
-        m_top_traits->notify_on_boundary_vertex_creation(&(*v), xc, ind,
-                                                         bound_x, bound_y);
+        Vertex_handle v =
+            m_arr_access.create_boundary_vertex (xc, ind, bound_x, bound_y);
         event->set_vertex_handle(v);
       }
       else
@@ -160,10 +158,8 @@ public:
       // If not, we create one.
       if (m_top_traits->north_pole() == NULL)
       {
-        Vertex_handle v = m_arr_access.create_vertex(event->point(),
-                                                     bound_x, bound_y);
-        m_top_traits->notify_on_boundary_vertex_creation(&(*v), xc, ind,
-                                                         bound_x, bound_y);
+        Vertex_handle v = 
+            m_arr_access.create_boundary_vertex (xc, ind, bound_x, bound_y);
         event->set_vertex_handle(v);
 
         // Since this is the first event corresponding to the north pole,
@@ -220,10 +216,9 @@ public:
       // of discontinuity. If not, create one now.
       if (v == NULL)
       {
-        Vertex_handle vh =  m_arr_access.create_vertex(event->point(),
-                                                       bound_x, bound_y);
-        m_top_traits->notify_on_boundary_vertex_creation(&(*vh), xc, MIN_END,
-                                                         bound_x, bound_y);
+        Vertex_handle vh =  
+            m_arr_access.create_boundary_vertex (xc, MIN_END,
+                                                 bound_x, bound_y);
         event->set_vertex_handle(vh);
       }
       else
@@ -246,10 +241,9 @@ public:
       // of discontinuity. If not, create one now.
       if (v == NULL)
       {
-        Vertex_handle vh = m_arr_access.create_vertex(event->point(),
-                                                      bound_x, bound_y);
-        m_top_traits->notify_on_boundary_vertex_creation(&(*vh), xc, MAX_END,
-                                                         bound_x, bound_y);
+        Vertex_handle vh = 
+            m_arr_access.create_boundary_vertex (xc, MAX_END,
+                                                 bound_x, bound_y);
         event->set_vertex_handle(vh);
       }
       else

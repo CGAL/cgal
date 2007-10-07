@@ -279,9 +279,16 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
     // now.
     if (left_v == invalid_v)
     {
-      left_v = arr_access.create_vertex 
-        (geom_traits->construct_min_vertex_2_object() (cv),
-         bx_l, by_l);
+      if (bx_l == NO_BOUNDARY && by_l == NO_BOUNDARY)
+      {
+        left_v = arr_access.create_vertex 
+            (geom_traits->construct_min_vertex_2_object() (cv));
+      }
+      else
+      {
+        left_v = arr_access.create_boundary_vertex (cv, MIN_END,
+                                                    bx_l, by_l);
+      }
     }
 
     if (prev_he_right == invalid_he)
@@ -291,9 +298,16 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // vertex now.
       if (right_v == invalid_v)
       {
-        right_v = arr_access.create_vertex 
-          (geom_traits->construct_max_vertex_2_object() (cv),
-           bx_r, by_r);
+        if (bx_r == NO_BOUNDARY && by_r == NO_BOUNDARY)
+        {
+          right_v = arr_access.create_vertex 
+              (geom_traits->construct_max_vertex_2_object() (cv));
+        }
+        else
+        {
+          right_v = arr_access.create_boundary_vertex (cv, MAX_END,
+                                                       bx_r, by_r);
+        }
       }
      
       // We should insert the curve in the interior of the face.
@@ -328,9 +342,16 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // vertex now.
       if (right_v == invalid_v)
       {
-        right_v = arr_access.create_vertex 
-          (geom_traits->construct_max_vertex_2_object() (cv),
-           bx_r, by_r);
+        if (bx_r == NO_BOUNDARY && by_r == NO_BOUNDARY)
+        {
+          right_v = arr_access.create_vertex 
+              (geom_traits->construct_max_vertex_2_object() (cv));
+        }
+        else
+        {
+          right_v = arr_access.create_boundary_vertex (cv, MAX_END,
+                                                       bx_r, by_r);
+        }
       }
      
       // Use the left predecessor for the insertion.

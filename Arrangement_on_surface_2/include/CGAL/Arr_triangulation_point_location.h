@@ -168,7 +168,7 @@ public:
     * Notification after the arrangement is cleared.
     * \param u A handle to the unbounded face.
     */
-    virtual void after_clear (Face_handle /* u */)
+    virtual void after_clear ()
     { 
       clear_triangulation();
       build_triangulation();

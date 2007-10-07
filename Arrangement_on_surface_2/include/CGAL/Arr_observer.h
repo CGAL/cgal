@@ -223,12 +223,9 @@ public:
   /*!
    * Notification before the creation of a new vertex.
    * \param p The point to be associated with the vertex.
-   * \param bound_x The boundary condition of the point in its x-coordinate.
-   * \param bound_y The boundary condition of the point in its y-coordinate.
+   *          This point cannot lies on the surface boundaries.
    */
-  virtual void before_create_vertex (const Point_2& /* p */,
-                                     Boundary_type /* bound_x */,
-                                     Boundary_type /* bound_y */)
+  virtual void before_create_vertex (const Point_2& /* p */)
   {}
 
   /*!
@@ -239,23 +236,23 @@ public:
   {}
 
   /*!
-   * Notification before the creation of a new vertex at infinity.
-   * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
-   *              PLUS_INFINITY if this vertex lies at x = +oo;
-   *              NO_BOUNDARY or any other boundary condition otherwise.
-   * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
-   *              PLUS_INFINITY if this vertex lies at y = +oo;
-   *              NO_BOUNDARY or any other boundary condition otherwise.
+   * Notification before the creation of a new boundary vertex.
+   * \param cv The curve incident to the surface boundary.
+   * \param ind The relevant curve-end.
+   * \param bound_x The boundary condition of the vertex in x.
+   * \param bound_y The boundary condition of the vertex in y.
    */
-  virtual void before_create_vertex_at_infinity (Boundary_type /* inf_x */,
-                                                 Boundary_type /* inf_y */)
+  virtual void before_create_boundary_vertex (const X_monotone_curve_2& /*cv*/,
+                                              Curve_end /* ind */,
+                                              Boundary_type /* bound_x */,
+                                              Boundary_type /* bound_y */)
   {}
 
   /*!
    * Notification after the creation of a new vertex at infinity.
    * \param v A handle to the created vertex.
    */
-  virtual void after_create_vertex_at_infinity (Vertex_handle /* v */)
+  virtual void after_create_boundary_vertex (Vertex_handle /* v */)
   {}
 
   /*!

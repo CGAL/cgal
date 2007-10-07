@@ -330,36 +330,47 @@ public:
   /*!
    * Create a new vertex and associate it with the given point.
    * \param p The point.
-   * \param bound_x The boundary condition in x.
-   * \param bound_y The boundary condition in y.
-   * \return A handle to the newly created vertex.
+   * \return A handle for the newly created vertex.
    */
-  Vertex_handle create_vertex (const Point_2& p,
-                               Boundary_type bound_x = NO_BOUNDARY,
-                               Boundary_type bound_y = NO_BOUNDARY)
+  Vertex_handle create_vertex (const Point_2& p)
   {
-    DVertex* v = p_arr->_create_vertex (p, bound_x, bound_y);
+    DVertex* v = p_arr->_create_vertex (p);
     
     CGAL_assertion (v != NULL);
     return (p_arr->_handle_for (v));
   }
   
   /*!
-   * Create a new vertex at infinity.
-   * \param bound_x MINUS_INFINITY if this vertex lies at x = -oo;
-   *                PLUS_INFINITY if this vertex lies at x = +oo;
-   *                any other boundary condition otherwise.
-   * \param bound_y MINUS_INFINITY if this vertex lies at y = -oo;
-   *                PLUS_INFINITY if this vertex lies at y = +oo;
-   *                any other boundary condition otherwise.
-   * \return A pointer to the newly created vertex.
+   * Create a new boundary vertex.
+   * \param cv The curve incident to the boundary.
+   * \param ind The relevant curve-end.
+   * \param bx The boundary condition in x.
+   * \param by The boundary condition in y.
+   * \param notify Should we send a notification to the topology traits
+   *               on the creation of the vertex (true by default).
+   * \pre Either bx or by does not equal NO_BOUNDARY.
+   * \return A handle for the newly created vertex.
    */
-  Vertex_handle create_vertex_at_infinity (Boundary_type bound_x,
-                                           Boundary_type bound_y)
+  Vertex_handle create_boundary_vertex (const X_monotone_curve_2& cv,
+                                        Curve_end ind,
+                                        Boundary_type bound_x,
+                                        Boundary_type bound_y,
+                                        bool notify = true)
   {
-    DVertex   *v = p_arr->_create_vertex_at_infinity (bound_x, bound_y);
+    DVertex   *v = p_arr->_create_boundary_vertex (cv, ind,
+                                                   bound_x, bound_y);
 
     CGAL_assertion (v != NULL);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    if (notify)
+    {
+      p_arr->topology_traits()->notify_on_boundary_vertex_creation (v,
+                                                                    cv, ind,
+                                                                    bound_x,
+                                                                    bound_y);
+    }
+
     return (p_arr->_handle_for (v));
   }
 

@@ -217,7 +217,7 @@ public:
    * Notification after the arrangement is cleared.
    * \param u A handle to the unbounded face.
    */
-  virtual void after_clear (Face_handle /* u */)
+  virtual void after_clear ()
   { 
     clear_landmarks_set();
     build_landmarks_set();

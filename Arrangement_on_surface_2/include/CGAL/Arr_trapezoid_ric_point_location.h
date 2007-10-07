@@ -232,7 +232,7 @@ public:
     clear_trapezoid_ric ();
   }
 
-  virtual void after_clear (Face_handle /* u */)
+  virtual void after_clear ()
   {
     build_trapezoid_ric();
   }

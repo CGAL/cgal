@@ -136,7 +136,7 @@ public:
   /*!
    * Update the mapping after the arrangement is cleared.
    */
-  virtual void after_clear (typename Arrangement_2::Face_handle /* u */)
+  virtual void after_clear ()
   {
     _init();
   }
@@ -163,6 +163,24 @@ public:
    * \param v A handle to the created vertex.
    */
   virtual void after_create_vertex (Vertex_handle v)
+  {
+    // Update the number of vertices.
+    n_vertices++;
+
+    // If necessary, allocate memory for the reverse mapping.
+    if (rev_map.size() > n_vertices)
+      rev_map.resize (2 * n_vertices);
+
+    // Update the mapping of the newly created vertex.
+    index_map[v] = n_vertices - 1;
+    rev_map[n_vertices - 1] = v;
+  }
+
+  /*!
+   * Update the mapping after the creation of a new boundary vertex.
+   * \param v A handle to the created vertex.
+   */
+  virtual void after_create_boundary_vertex (Vertex_handle v)
   {
     // Update the number of vertices.
     n_vertices++;

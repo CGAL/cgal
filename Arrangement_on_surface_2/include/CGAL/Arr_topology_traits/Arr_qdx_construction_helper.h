@@ -121,22 +121,12 @@ public:
             const X_monotone_curve_2 & xc =
                 (*(event->left_curves_begin()))->last_curve();
             
-            if (m_top_traits->leftmost_vertex() == NULL) {
-                
-                Vertex_handle v;
-                if (bound_x == CGAL::MINUS_INFINITY) {
-                    v = m_arr_access.create_vertex_at_infinity(
-                            bound_x, bound_y
-                    );
-                } else {
-                    v = m_arr_access.create_vertex(event->point(),
-                                                   bound_x, bound_y);
-                }
-                m_top_traits->notify_on_boundary_vertex_creation(
-                        &(*v), xc, CGAL::MIN_END, bound_x, bound_y
-                );
-                
-            } 
+            if (m_top_traits->leftmost_vertex() == NULL)
+            {
+                m_arr_access.create_boundary_vertex (xc, CGAL::MIN_END,
+                                                     bound_x, bound_y);
+            }
+
             event->set_vertex_handle(
                     Vertex_handle(m_top_traits->leftmost_vertex())
             );
@@ -152,22 +142,12 @@ public:
             const X_monotone_curve_2 & xc =
                 (*(event->right_curves_begin()))->last_curve();
             
-            if (m_top_traits->rightmost_vertex() == NULL) {
-                
-                Vertex_handle v;
-                if (bound_x == CGAL::PLUS_INFINITY) {
-                    v = m_arr_access.create_vertex_at_infinity(
-                            bound_x, bound_y
-                    );
-                } else {
-                    v = m_arr_access.create_vertex(event->point(),
-                                                   bound_x, bound_y);
-                }
-                m_top_traits->notify_on_boundary_vertex_creation(
-                        &(*v), xc, CGAL::MAX_END, bound_x, bound_y
-                );
-                
+            if (m_top_traits->rightmost_vertex() == NULL)
+            {
+                m_arr_access.create_boundary_vertex (xc, CGAL::MAX_END,
+                                                     bound_x, bound_y);
             } 
+
             event->set_vertex_handle(
                     Vertex_handle(m_top_traits->rightmost_vertex())
             );  

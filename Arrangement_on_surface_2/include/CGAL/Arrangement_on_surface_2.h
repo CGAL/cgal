@@ -1705,23 +1705,23 @@ protected:
   /*!
    * Create a new vertex and associate it with the given point.
    * \param p The point.
-   * \param bx The boundary condition at the x-coordinate.
-   * \param by The boundary condition at the y-coordinate.
    * \return A pointer to the newly created vertex.
    */
-  DVertex* _create_vertex (const Point_2& p,
-                           Boundary_type bx,
-                           Boundary_type by);
+  DVertex* _create_vertex (const Point_2& p);
 
   /*!
-   * Create a new vertex at infinity (not associated with a valid point).
-   * \param bx The boundary condition at the x-coordinate.
-   * \param by The boundary condition at the y-coordinate.
-   * \pre Either bx or by equals MINUS_INFINITY or PLUS_INFINITY.
+   * Create a new boundary vertex.
+   * \param cv The curve incident to the boundary.
+   * \param ind The relevant curve-end.
+   * \param bx The boundary condition in x.
+   * \param by The boundary condition in y.
+   * \pre Either bx or by does not equal NO_BOUNDARY.
    * \return A pointer to the newly created vertex.
    */
-  DVertex* _create_vertex_at_infinity (Boundary_type bx,
-                                       Boundary_type by);
+  DVertex* _create_boundary_vertex (const X_monotone_curve_2& cv,
+                                    Curve_end ind,
+                                    Boundary_type bx,
+                                    Boundary_type by);
 
   /*!
    * Locate the DCEL features that will be used for inserting the given curve
@@ -2047,15 +2047,14 @@ protected:
   }
 
   /* Notify the observers on local changes in the arrangement: */
-  
-  void _notify_before_create_vertex (const Point_2& p,
-                                     Boundary_type bx, Boundary_type by)
+
+  void _notify_before_create_vertex (const Point_2& p)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_create_vertex (p, bx, by);
+      (*iter)->before_create_vertex (p);
   }
 
   void _notify_after_create_vertex (Vertex_handle v)
@@ -2067,23 +2066,25 @@ protected:
       (*iter)->after_create_vertex (v);
   }
 
-  void _notify_before_create_vertex_at_infinity (Boundary_type inf_x,
-                                                 Boundary_type inf_y)
+  void _notify_before_create_boundary_vertex (const X_monotone_curve_2& cv,
+                                              Curve_end ind,
+                                              Boundary_type bx,
+                                              Boundary_type by)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_create_vertex_at_infinity (inf_x, inf_y);
+      (*iter)->before_create_boundary_vertex (cv, ind, bx, by);
   }
 
-  void _notify_after_create_vertex_at_infinity (Vertex_handle v)
+  void _notify_after_create_boundary_vertex (Vertex_handle v)
   {
     Observers_rev_iterator   iter;
     Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_create_vertex_at_infinity (v);
+      (*iter)->after_create_boundary_vertex (v);
   }
 
   void _notify_before_create_edge (const X_monotone_curve_2& c,

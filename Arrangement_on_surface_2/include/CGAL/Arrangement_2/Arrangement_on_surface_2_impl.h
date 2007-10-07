@@ -258,7 +258,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_in_face_interior
 
   // Create a new vertex associated with the given point.
   // We assume the point has no boundary conditions.
-  DVertex         *v = _create_vertex (p, NO_BOUNDARY, NO_BOUNDARY);
+  DVertex         *v = _create_vertex (p);
   Vertex_handle   vh (v);
 
   // Insert v as an isolated vertex inside the given face.
@@ -293,8 +293,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_in_face_interior
   {
     // The curve has a valid left endpoint: Create a new vertex associated
     // with the curve's left endpoint.
-    v1 = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv),
-                         bx1, by1);
+    v1 = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv));
   }
   else
   {
@@ -317,8 +316,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_in_face_interior
   {
     // The curve has a valid right endpoint: Create a new vertex associated
     // with the curve's right endpoint.
-    v2 = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv),
-                         bx2, by2);
+    v2 = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv));
   }
   else
   {    
@@ -416,8 +414,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_from_left_vertex
   {
     // The curve has a valid right endpoint: Create a new vertex associated
     // with the curve's right endpoint.
-    v2 = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv),
-                         bx2, by2);
+    v2 = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv));
   }
 
   // Check if the given vertex, corresponding to the left curve end, has no
@@ -583,8 +580,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_from_left_vertex
   {
     // The curve has a valid right endpoint: Create a new vertex associated
     // with the curve's right endpoint.
-    v2 = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv),
-                         bx2, by2);
+    v2 = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv));
   }
   else
   {    
@@ -665,8 +661,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_from_right_vertex
   {
     // The curve has a valid left endpoint: Create a new vertex associated
     // with the curve's left endpoint.
-    v1 = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv),
-                         bx1, by1);
+    v1 = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv));
   }
 
   // Check if the given vertex, corresponding to the right curve end, has no
@@ -831,8 +826,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_from_right_vertex
   {
     // The curve has a valid left endpoint: Create a new vertex associated
     // with the curve's left endpoint.
-    v1 = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv),
-                         bx1, by1);
+    v1 = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv));
   }
   else
   {
@@ -2226,19 +2220,18 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::_move_isolated_vertex
 template<class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::_create_vertex
-    (const Point_2& p,
-     Boundary_type bx, Boundary_type by)
+    (const Point_2& p)
 {
   // Notify the observers that we are about to create a new vertex.
   Point_2  *p_p = _new_point (p);
 
-  _notify_before_create_vertex (*p_p, bx, by);
+  _notify_before_create_vertex (*p_p);
 
   // Create a new vertex and associate it with the given point.
   DVertex         *v = _dcel().new_vertex();
 
   v->set_point (p_p);
-  v->set_boundary (bx, by);
+  v->set_boundary (NO_BOUNDARY, NO_BOUNDARY);
 
   // Notify the observers that we have just created a new vertex.
   Vertex_handle   vh (v);
@@ -2252,24 +2245,44 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_create_vertex
 //
 template<class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
-Arrangement_on_surface_2<GeomTraits, TopTraits>::_create_vertex_at_infinity
-    (Boundary_type bx, Boundary_type by)
+Arrangement_on_surface_2<GeomTraits, TopTraits>::_create_boundary_vertex
+    (const X_monotone_curve_2& cv, Curve_end ind,
+     Boundary_type bx, Boundary_type by)
 {
-  CGAL_precondition (bx == MINUS_INFINITY || bx == PLUS_INFINITY ||
-                     by == MINUS_INFINITY || by == PLUS_INFINITY);
+  CGAL_precondition (bx != NO_BOUNDARY || by != NO_BOUNDARY);
 
-  // Notify the observers that we are about to create a new vertex at infinity.
-  _notify_before_create_vertex_at_infinity (bx, by);
+  // Notify the observers that we are about to create a new boundary vertex.
+  _notify_before_create_boundary_vertex (cv, ind, bx, by);
 
-  // Create a new vertex and associate it with the given point.
+  // Create a new vertex and set its boundary conditions.
   DVertex         *v = _dcel().new_vertex();
 
-  v->set_point (NULL);
   v->set_boundary (bx, by);
 
-  // Notify the observers that we have just created a new vertex at infinity.
+  // Act according to the boundary type.
+  if (bx == MINUS_INFINITY || bx == PLUS_INFINITY ||
+      by == MINUS_INFINITY || by == PLUS_INFINITY)
+  {
+    // The curve-end lies at infinity, so the vertex is not associated with
+    // a valid point.
+    v->set_point (NULL);
+  }
+  else
+  {
+    // Create a boundary vertex associated with a valid point.
+    Point_2  *p_p = NULL;
+
+    if (ind == MIN_END)
+      p_p = _new_point (geom_traits->construct_min_vertex_2_object()(cv));
+    else
+      p_p = _new_point (geom_traits->construct_max_vertex_2_object()(cv));
+
+    v->set_point (p_p);
+  }
+
+  // Notify the observers that we have just created a new boundary vertex.
   Vertex_handle   vh (v);
-  _notify_after_create_vertex_at_infinity (vh);
+  _notify_after_create_boundary_vertex (vh);
 
   return (v);
 }
@@ -2299,27 +2312,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_place_and_set_curve_end
   {
     // The curve end is located on a fictitious edge. We first create a new
     // vertex that corresponds to the curve end.
-    if (bx == MINUS_INFINITY || bx == PLUS_INFINITY ||
-        by == MINUS_INFINITY || by == PLUS_INFINITY)
-    {
-      // Create a vertex at infinity, which is not associated with a valid
-      // point.
-      v = _create_vertex_at_infinity (bx, by);
-    }
-    else
-    {
-      // Create a boundary vertex associated with a valid point.
-      if (ind == MIN_END)
-      {
-        v = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv),
-                            bx, by);
-      }
-      else
-      {
-        v = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv),
-                            bx, by);
-      }
-    }
+    v = _create_boundary_vertex (cv, ind, bx, by);
 
     // Split the fictitious halfedge at the newly created vertex.
     // The returned halfedge is the predecessor for the insertion of the curve
@@ -2347,27 +2340,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_place_and_set_curve_end
 
     // In this case we have to create a new vertex that reprsents the given
     // curve end.
-    if (bx == MINUS_INFINITY || bx == PLUS_INFINITY ||
-        by == MINUS_INFINITY || by == PLUS_INFINITY)
-    {
-      // Create a vertex at infinity, which is not associated with a valid
-      // point.
-      v = _create_vertex_at_infinity (bx, by);
-    }
-    else
-    {
-      // Create a boundary vertex associated with a valid point.
-      if (ind == MIN_END)
-      {
-        v = _create_vertex (geom_traits->construct_min_vertex_2_object()(cv),
-                            bx, by);
-      }
-      else
-      {
-        v = _create_vertex (geom_traits->construct_max_vertex_2_object()(cv),
-                            bx, by);
-      }
-    }
+    v = _create_boundary_vertex (cv, ind, bx, by);
 
     // Notify the topology traits on the creation of the boundary vertex.
     top_traits.notify_on_boundary_vertex_creation (v,
@@ -3174,8 +3147,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_split_edge
 {
   // Allocate a new vertex and associate it with the split point.
   // Note that this point must not have any boundary conditions.
-  DVertex         *v = _create_vertex (p,
-                                       NO_BOUNDARY, NO_BOUNDARY);
+  DVertex         *v = _create_vertex (p);
 
   // Split the edge from the given vertex.
   return (_split_edge (e, v, cv1, cv2));

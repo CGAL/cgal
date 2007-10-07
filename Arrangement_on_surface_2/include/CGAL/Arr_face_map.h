@@ -134,7 +134,7 @@ public:
   /*!
    * Update the mapping after the arrangement is cleared.
    */
-  virtual void after_clear (Face_handle /* u */)
+  virtual void after_clear ()
   {
     _init();
   }

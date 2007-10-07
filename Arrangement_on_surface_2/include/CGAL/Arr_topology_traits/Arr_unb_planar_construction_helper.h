@@ -238,13 +238,28 @@ before_handle_event (Event* event)
 {
   if (event->is_finite())
     return;
- 
-  // If it is an event at infinity, split the corresponding fictitious edge.
-  const Boundary_type bound_x = event->boundary_in_x();
-  const Boundary_type bound_y = event->boundary_in_y();
 
-  Vertex_handle v_at_inf = m_arr_access.create_vertex_at_infinity (bound_x,
-                                                                   bound_y);
+  // As the event lieas at infinity, it must have only one (right or left)
+  // incident curve.
+  CGAL_assertion(((event->number_of_left_curves() == 0) &&
+                  (event->number_of_right_curves() == 1)) ||
+                 ((event->number_of_left_curves() == 1) &&
+                  (event->number_of_right_curves() == 0)));
+  Curve_end                  ind = (event->number_of_left_curves() == 0 &&
+                                    event->number_of_right_curves() == 1) ?
+    MIN_END : MAX_END;
+  const X_monotone_curve_2&  xc = (ind == MIN_END) ?
+    (*(event->right_curves_begin()))->last_curve() :
+    (*(event->left_curves_begin()))->last_curve();
+
+  const Boundary_type        bound_x = event->boundary_in_x();
+  const Boundary_type        bound_y = event->boundary_in_y();
+
+  // Create a vertex at infinity and split the corresponding fictitious edge.
+  Vertex_handle v_at_inf = m_arr_access.create_boundary_vertex (xc, ind,
+                                                                bound_x,
+                                                                bound_y,
+                                                                false);
 
   switch (bound_x)
   {
