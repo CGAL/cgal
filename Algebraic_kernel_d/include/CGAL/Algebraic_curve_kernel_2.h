@@ -341,7 +341,7 @@ public:
     struct Has_finite_number_of_intersections_2 :
             public Binary_function< Curve_2, Curve_2, bool > { 
                
-        bool operator()(const Curve_2& c1, const Curve_2& c2) {
+        bool operator()(const Curve_2& c1, const Curve_2& c2) const {
             // if curve ids are the same - non-decomposable
             if(c1.id() == c2.id()) 
                 return true;
@@ -552,6 +552,12 @@ public:
     CGAL_Algebraic_Kernel_cons(Y_critical_points_2,
         y_critical_points_2_object);
 
+    /*!\brief 
+     * computes the sign of a bivariate polynomial \c p evaluated at the root 
+     * \c r of a system of two bivariate polynomial equations
+     *
+     * return the value convertible into \c CGAL::Sign
+     */
     struct Sign_at_2 : 
         public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
         
@@ -585,8 +591,73 @@ public:
     };
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
+    /*!\brief
+     * copies in the output iterator \c roots the common roots of polynomials
+     * \c p1 and \c p2 and copies in the output iterator \c mults their 
+     * respective multiplicity as intergers, in the same order
+     *
+     * template argument type of \c roots is \c Xy_coordinate_2 , returns the
+     * pair of respective past-the-end iterators
+     *
+     * \pre p1 and p2 are square-free and the set of solutions of the system
+     * is 0-dimensional
+     */  
     struct Solve_2 {
-        // can be implemented using Curve_pair_analysis -> later
+    
+        typedef Polynomial_2 first_argument_type;
+        typedef Polynomial_2 second_argument_type;
+        typedef std::iterator<output_iterator_tag, Xy_coordinate_2>
+            third_argument_type;
+        typedef std::iterator<output_iterator_tag, int>
+            fourth_argument_type;
+        typedef std::pair<third_argument_type, fourth_argument_type>
+            result_type;
+     
+        template <class OutputIteratorRoots, OutputIteratorMult>
+        std::pair<OutputIteratorRoots, OutputIteratorMult>
+            operator()(const Polynomial_2& p1, const Polynomial_2& p2,
+                OutputIteratorRoots roots, OutputIteratorMult mults) const
+        {
+            // these tests are quite expensive... do we really need them ??
+            CGAL_precondition_code (
+                typename Self::Has_finite_number_of_self_intersections_2 
+                    not_self_overlapped;
+                typename Self::Has_finite_number_of_intersections_2 
+                    do_not_overlap;
+                CGAL_precondition(not_self_overlapped(p1) &&
+                    not_self_overlapped(p2));
+                CGAL_precondition(do_not_overlap(p1, p2));
+            );
+            typename Self::Curve_pair_analysis_2 cpa_2(
+                (Curve_analysis_2(p1)),(Curve_analysis_2(p2)));
+            typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                cpv_line;
+            // do we need to check which supporting curve is simpler ?    
+            typename Polynomial_traits_2::Total_degree total_degree;
+            NiX2CGAL_converter cvt;
+            Polynomial_2_CGAL f1 = cvt(p1.f()), f2 = cvt(p2.f());
+            bool first_curve = (total_degree(f1) < total_degree(f2));
+            
+            int i, j, n = cpa_2.number_of_vertical_lines_with_event();
+            std::pair<int, int> ipair;
+            for(i = 0; i < n; i++) {
+                cpv_line = cpa_2.vertical_line_at_event(i);
+                if(!cpv_line.is_intersection())
+                    continue;
+                // store x-coord for future use
+                X_coordinate_1 x = cpv_line.x(); 
+                for(j = 0; j < cpv_line.number_of_events(); j++) {
+                    ipair = cpv_line.get_curves_at_event(j);
+                    if(ipair.first == -1 || ipair.second == -1) 
+                        continue;
+                    // VOILA!! we've got it !!!
+                    *roots++ = Xy_coordinate_2(x, (first_curve ? p1 : p2), 
+                            (first_curve ? ipair.first: ipair.second));
+                    *mults++ = cpv_line.get_multiplicity_of_intersection(j);
+                }
+            }
+            return std::make_pair(roots, mults);
+        }
     };
     CGAL_Algebraic_Kernel_cons(Solve_2, solve_2_object);
 
@@ -598,10 +669,17 @@ public:
     //! \name types and functors for \c GPA_2< both >
     //!@{
     
+    //////////////////////////////////////////////////////////////
+    ///////// TODO: introduce additional template parameters for all
+    ///////// dynamic life-time objects, i.e. 
+    ////////        HandlePolicy = Handle_policy_union
+    /////////       Allocator = ::boost::object_pool<Rep>
+    ///////////////////////////////////////////////////////////////
+   
     //! type of 1-curve analysis
     typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
 
-    //! type of a curve pair analysis
+    //! type of 2-curve analysis
     typedef CGALi::Curve_pair_analysis_2<Self> Curve_pair_analysis_2; 
     
     //!@}
