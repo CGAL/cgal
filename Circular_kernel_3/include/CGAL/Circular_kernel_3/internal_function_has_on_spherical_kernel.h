@@ -36,7 +36,8 @@ namespace CGAL {
     has_on(const typename SK::Sphere_3 &a, 
            const typename SK::Point_3 &p)
     { 
-      return a.rep().has_on_boundary(p);
+      //~ return a.rep().has_on_boundary(p);
+      return a.has_on_boundary(p);
     }
 
     template <class SK>
@@ -50,16 +51,17 @@ namespace CGAL {
       Equation equation = get_equation<SK>(a);
       return (Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
     }
-
+/*
     template <class SK>
     inline
     bool
     has_on(const typename SK::Plane_3 &a, 
            const typename SK::Point_3 &p)
     { 
-      return a.rep().has_on(p);
+      //~ return a.rep().has_on(p);
+      return a.has_on(p);
     }
-
+*/
     template <class SK>
     inline
     bool
@@ -71,16 +73,17 @@ namespace CGAL {
       Equation equation = get_equation<SK>(a);
       return (Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
     }
-
+/*
     template <class SK>
     inline
     bool
     has_on(const typename SK::Line_3 &a,
            const typename SK::Point_3 &p)
     { 
-      return a.rep().has_on(p);
+      //~ return a.rep().has_on(p);
+      return a.has_on(p);
     }
-
+*/
     template <class SK>
     inline
     bool
@@ -135,7 +138,8 @@ namespace CGAL {
     has_on(const typename SK::Plane_3 &a, 
            const typename SK::Line_3 &p)
     { 
-      return a.rep().has_on(p);
+      //~ return a.rep().has_on(p);
+      return a.has_on(p);
     }
 
     template <class SK>

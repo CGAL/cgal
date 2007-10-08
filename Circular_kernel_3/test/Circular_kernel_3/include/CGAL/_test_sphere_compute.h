@@ -98,17 +98,17 @@ void _test_spherical_kernel_compute(SK sk)
         r = theRandom.get_int(random_min,random_max);
       } while(r <= 0);
       if(a != 0) {
-        x = FT(-(b*u + c*v + d),a);
+        x = FT_Q(-(b*u + c*v + d),a);
         y = FT(u);
         z = FT(v);
       } else if(b != 0) {
         x = FT(u);
-        y = FT(-(a*u + c*v + d),b);
+        y = FT_Q(-(a*u + c*v + d),b);
         z = FT(v);
       } else {
         x = FT(u);
         y = FT(v);
-        z = FT(-(a*u + b*v + d),c);
+        z = FT_Q(-(a*u + b*v + d),c);
       } 
       const Plane_3 plane = Plane_3(a,b,c,d);
       const FT sqr = FT(r*r);
@@ -145,13 +145,13 @@ void _test_spherical_kernel_compute(SK sk)
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
-  rt[7] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
 
   Circular_arc_point_3 cp[8]; 
   for(int i=0; i<8; i++) {
@@ -190,8 +190,8 @@ void _test_spherical_kernel_compute(SK sk)
       const double diffv1 = ((vv1 > 0) ? (vv1) : (-vv1));
       const double diffv2 = ((vv2 > 0) ? (vv2) : (-vv2));
       // we suppose at least a precision of 10e-8, but it is not necessarily true
-      assert(diffv1 < 10e-8);
-      assert(diffv2 < 10e-8);
+      CGAL_warning(diffv1 < 10e-8);
+      CGAL_warning(diffv2 < 10e-8);
     }
   }
 

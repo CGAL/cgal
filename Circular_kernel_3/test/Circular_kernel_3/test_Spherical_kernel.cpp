@@ -24,17 +24,23 @@
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //             Pedro Machado    <tashimir@gmail.com>
 
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Gmpq.h>
+typedef CGAL::Quotient< CGAL::MP_Float >                    FT_Q;
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
 #include <CGAL/Polynomials_1_3.h>
 #include <CGAL/Polynomials_2_3.h>
 #include <CGAL/Polynomials_for_line_3.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+int pipo(int r){return r;}
 
 int main()
 {

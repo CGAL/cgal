@@ -277,6 +277,16 @@ template < class SK > \
     operator() (const Circular_arc_point_3 &c0,
                 const Circular_arc_point_3 &c1) const
     { return equal<SK>(c0, c1); }
+    
+    result_type
+    operator() (const Circular_arc_point_3 &c0,
+                const Point_3 &c1) const
+    { return equal<SK>(c0, Circular_arc_point_3(c1)); }
+
+    result_type
+    operator() (const Point_3 &c0,
+                const Circular_arc_point_3 &c1) const
+    { return equal<SK>(Circular_arc_point_3(c0), c1); }    
 
     // Our Line_arc_3 dont have orientation
     result_type
@@ -289,7 +299,7 @@ template < class SK > \
     operator() (const Circular_arc_3 &c0,
                 const Circular_arc_3 &c1) const
     { return equal<SK>(c0, c1); }
-
+    
   };
 
   template < class SK >

@@ -55,9 +55,9 @@ void _test_circular_arc_point_construct(SK sk) {
   int random_min = -127; 
 
   // test the constructor with 3 root_of_2
-  Root_of_2 r1 = Root_of_2(3,-1,2);
-  Root_of_2 r2 = Root_of_2(4,1,2);
-  Root_of_2 r3 = Root_of_2(10,2,2);
+  Root_of_2 r1 = CGAL::make_root_of_2(FT(3),FT(-1),FT(2));
+  Root_of_2 r2 = CGAL::make_root_of_2(FT(4),FT(1),FT(2));
+  Root_of_2 r3 = CGAL::make_root_of_2(FT(10),FT(2),FT(2));
   Root_for_spheres_2_3 rs = Root_for_spheres_2_3(r1,r2,r3);
   Circular_arc_point_3 circ_a_point_test_1 = 
     theConstruct_circular_arc_point_3(r1,r2,r3);
@@ -291,17 +291,17 @@ void _test_circle_construct(SK sk) {
       r = theRandom.get_int(random_min,random_max);
     } while(r <= 0);
     if(a != 0) {
-      x = FT(-(b*u + c*v + d),a);
+      x = FT_Q(-(b*u + c*v + d),a);
       y = FT(u);
       z = FT(v);
     } else if(b != 0) {
       x = FT(u);
-      y = FT(-(a*u + c*v + d),b);
+      y = FT_Q(-(a*u + c*v + d),b);
       z = FT(v);
     } else {
       x = FT(u);
       y = FT(v);
-      z = FT(-(a*u + b*v + d),c);
+      z = FT_Q(-(a*u + b*v + d),c);
     } 
     const Plane_3 plane = Plane_3(a,b,c,d);
     const Plane_3 plane2 = Plane_3(2*a,2*b,2*c,2*d);
@@ -456,17 +456,17 @@ void _test_circular_arc_construct(SK sk) {
       r = theRandom.get_int(random_min,random_max);
     } while(r <= 0);
     if(a != 0) {
-      x = FT(-(b*u + c*v + d),a);
+      x = FT_Q(-(b*u + c*v + d),a);
       y = FT(u);
       z = FT(v);
     } else if(b != 0) {
       x = FT(u);
-      y = FT(-(a*u + c*v + d),b);
+      y = FT_Q(-(a*u + c*v + d),b);
       z = FT(v);
     } else {
       x = FT(u);
       y = FT(v);
-      z = FT(-(a*u + b*v + d),c);
+      z = FT_Q(-(a*u + b*v + d),c);
     } 
     const Plane_3 plane = Plane_3(a,b,c,d);
     const Plane_3 plane2 = Plane_3(2*a,2*b,2*c,2*d);
@@ -551,7 +551,7 @@ void _test_intersection_construct(SK sk) {
           const FT x = FT(vx);
           const FT y = FT(vy);
           const FT z = FT(vz);
-          const FT r = FT(vr,2);
+          const FT r = FT_Q(vr,2);
           Sphere_3 sl_1 = theConstruct_sphere_3(
             Polynomial_for_spheres_2_3(x,y,z,r*r));
           Sphere_3 sl_2 = theConstruct_sphere_3(
@@ -613,7 +613,7 @@ void _test_intersection_construct(SK sk) {
           const FT x = FT(vx);
           const FT y = FT(vy);
           const FT z = FT(vz);
-          const FT sq_r = FT(vr,3);
+          const FT sq_r = FT_Q(vr,3);
           Sphere_3 sl = theConstruct_sphere_3(
             Polynomial_for_spheres_2_3(x,y,z,sq_r));
           const FT d2 = ((x+y+z-1)*(x+y+z-1) / 3);
@@ -654,7 +654,7 @@ void _test_intersection_construct(SK sk) {
         const FT y = FT(vy);
         const FT z = FT(vz);
         Line_3 l1 = theConstruct_line_3(Point_3(-1,0,0), Point_3(x,y,z));
-        Line_3 l2 = theConstruct_line_3(Point_3(-1-FT(1,1000000),0,0), Point_3(x,y,z));
+        Line_3 l2 = theConstruct_line_3(Point_3(FT(-1)-FT(FT_Q(1,1000000)),FT(0),FT(0)), Point_3(x,y,z));
         std::vector< CGAL::Object > intersection_1, intersection_2;
         theIntersect_3(s, l1, std::back_inserter(intersection_1));
         theIntersect_3(s, l2, std::back_inserter(intersection_2));
@@ -710,7 +710,7 @@ void _test_intersection_construct(SK sk) {
           const FT x = 4*FT(vx);
           const FT y = 4*FT(vy);
           const FT z = 4*FT(vz);
-          const FT r = 4*FT(vr,2);
+          const FT r = 4*FT_Q(vr,2);
           Sphere_3 sl = theConstruct_sphere_3(
             Polynomial_for_spheres_2_3(x,y,z,r*r));
           std::vector< CGAL::Object > intersection_1;
@@ -784,7 +784,7 @@ void _test_intersection_construct(SK sk) {
           const FT a = FT(va);
           const FT b = FT(vb);
           const FT c = FT(vc);
-          const FT d = -FT(vd,2);
+          const FT d = -FT_Q(vd,2);
           if(a == 0 && b == 0 && c == 0) continue;
           Plane_3 pl = theConstruct_plane_3(
             Polynomial_1_3(a,b,c,d));
@@ -858,7 +858,7 @@ void _test_intersection_construct(SK sk) {
           const FT a = FT(va);
           const FT b = FT(vb);
           const FT c = FT(vc);
-          const FT d = -FT(vd,2);
+          const FT d = -FT_Q(vd,2);
           if(a == 0 && b == 0 && c == 0) continue;
           Plane_3 pl = theConstruct_plane_3(
             Polynomial_1_3(a,b,c,d));
@@ -932,7 +932,7 @@ void _test_intersection_construct(SK sk) {
   Polynomial_for_spheres_2_3 es2 = Polynomial_for_spheres_2_3(1,0,0,1);
   Polynomial_for_spheres_2_3 es3 = Polynomial_for_spheres_2_3(2,0,0,1);
   for(int va=-5;va<6;va++) {
-    const FT a = -FT(va,10);
+    const FT a = -FT_Q(va,10);
     const FT b = 1;
     const FT c = 0;
     const FT d = 0;
@@ -974,7 +974,7 @@ void _test_intersection_construct(SK sk) {
     for(int vb=-5;vb<6;vb++) {
       const FT al = 1;
       const FT bl = 0;
-      const FT cl = -FT(vb,10);
+      const FT cl = -FT_Q(vb,10);
       const FT dl = 0;
       Polynomial_1_3 pol2 = Polynomial_1_3(al,bl,cl,dl);
       Circle_3 c4 = theConstruct_circle_3(std::make_pair(es1, pol2));
@@ -989,10 +989,10 @@ void _test_intersection_construct(SK sk) {
       assert(theHas_on_3(c4,cap2.first));
     }
 
-    const FT a_c = FT(va,10);
+    const FT a_c = FT_Q(va,10);
     const FT b_c = 1;
     const FT c_c = 0;
-    const FT d_c = -FT(va,10);
+    const FT d_c = -FT_Q(va,10);
     Polynomial_1_3 pol2 = Polynomial_1_3(a_c,b_c,c_c,d_c);
     Circle_3 c5 = theConstruct_circle_3(std::make_pair(es2, pol2));
     std::vector< CGAL::Object > intersection_5;
@@ -1019,9 +1019,9 @@ void _test_intersection_construct(SK sk) {
         Line_3 l1 = theConstruct_line_3(Point_3(-1,0,0), Point_3(x,y,z));
         Plane_3 pl1 = theConstruct_plane_3(Point_3(-1,0,0), Point_3(x,y,z), 
                                            Point_3(3,4,5));
-        Line_3 l2 = theConstruct_line_3(Point_3(-1-FT(1,1000000),0,0), 
+        Line_3 l2 = theConstruct_line_3(Point_3(-FT(1)-FT(FT_Q(1,1000000)),FT(0),FT(0)), 
                                         Point_3(x,y,z));
-        Plane_3 pl2 = theConstruct_plane_3(Point_3(-1-FT(1,1000000),0,0), 
+        Plane_3 pl2 = theConstruct_plane_3(Point_3(-FT(1)-FT(FT_Q(1,1000000)),FT(0),FT(0)), 
                                            Point_3(x,y,z), Point_3(3,4,5));
         Polynomial_1_3 pol_pl1 = theGet_equation(pl1);
         Polynomial_1_3 pol_pl2 = theGet_equation(pl2);
@@ -1251,13 +1251,13 @@ void _test_intersection_construct(SK sk) {
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
-  rt[7] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
 
   Circular_arc_point_3 cp[8]; 
   for(int i=0; i<8; i++) {
@@ -1488,10 +1488,10 @@ void _test_bbox(const typename SK::Circle_3 &c)
   assert(z1 <= z2);
 
   if(b.xmin() != b.xmax()) { 
-    Plane_3 pt_xneg_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1-FT(1,100000)) ));
-    Plane_3 pt_xneg_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1+FT(1,100000)) ));
-    Plane_3 pt_xpos_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2-FT(1,100000)) ));
-    Plane_3 pt_xpos_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2+FT(1,100000)) ));
+    Plane_3 pt_xneg_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1-FT(FT_Q(1,100000))) ));
+    Plane_3 pt_xneg_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1+FT(FT_Q(1,100000))) ));
+    Plane_3 pt_xpos_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2-FT(FT_Q(1,100000))) ));
+    Plane_3 pt_xpos_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2+FT(FT_Q(1,100000))) ));
   
     std::vector< CGAL::Object > intersection_test_x_1;
     std::vector< CGAL::Object > intersection_test_x_2;
@@ -1509,10 +1509,10 @@ void _test_bbox(const typename SK::Circle_3 &c)
   }
 
   if(b.ymin() != b.ymax()) { 
-    Plane_3 pt_yneg_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1-FT(1,100000)) ));
-    Plane_3 pt_yneg_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1+FT(1,100000)) ));
-    Plane_3 pt_ypos_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2-FT(1,100000)) ));
-    Plane_3 pt_ypos_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2+FT(1,100000)) ));
+    Plane_3 pt_yneg_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1-FT(FT_Q(1,100000))) ));
+    Plane_3 pt_yneg_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1+FT(FT_Q(1,100000))) ));
+    Plane_3 pt_ypos_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2-FT(FT_Q(1,100000))) ));
+    Plane_3 pt_ypos_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2+FT(FT_Q(1,100000))) ));
   
     std::vector< CGAL::Object > intersection_test_y_1;
     std::vector< CGAL::Object > intersection_test_y_2;
@@ -1530,10 +1530,10 @@ void _test_bbox(const typename SK::Circle_3 &c)
   }
 
   if(b.zmin() != b.zmax()) { 
-    Plane_3 pt_zneg_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1-FT(1,100000)) ));
-    Plane_3 pt_zneg_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1+FT(1,100000)) ));
-    Plane_3 pt_zpos_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2-FT(1,100000)) ));
-    Plane_3 pt_zpos_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2+FT(1,100000)) ));
+    Plane_3 pt_zneg_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1-FT(FT_Q(1,100000))) ));
+    Plane_3 pt_zneg_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1+FT(FT_Q(1,100000))) ));
+    Plane_3 pt_zpos_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2-FT(FT_Q(1,100000))) ));
+    Plane_3 pt_zpos_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2+FT(FT_Q(1,100000))) ));
   
     std::vector< CGAL::Object > intersection_test_z_1;
     std::vector< CGAL::Object > intersection_test_z_2;
@@ -1599,7 +1599,7 @@ void _test_bounding_box_construct(SK sk)
   Polynomial_for_spheres_2_3 es2 = Polynomial_for_spheres_2_3(1,0,0,1);
   Polynomial_for_spheres_2_3 es3 = Polynomial_for_spheres_2_3(2,0,0,1);
   for(int va=-5;va<6;va++) {
-    const FT a = -FT(va,10);
+    const FT a = -FT_Q(va,10);
     const FT b = 1;
     const FT c = 0;
     const FT d = 0;
@@ -1618,7 +1618,7 @@ void _test_bounding_box_construct(SK sk)
     for(int vb=-5;vb<6;vb++) {
       const FT al = 1;
       const FT bl = 0;
-      const FT cl = -FT(vb,10);
+      const FT cl = -FT_Q(vb,10);
       const FT dl = 0;
       Polynomial_1_3 pol2 = Polynomial_1_3(al,bl,cl,dl);
       Circle_3 c4 = theConstruct_circle_3(std::make_pair(es1, pol2));
@@ -1630,10 +1630,10 @@ void _test_bounding_box_construct(SK sk)
       _test_bbox<SK>(cap2.first);
     }
 
-    const FT a_c = FT(va,10);
+    const FT a_c = FT_Q(va,10);
     const FT b_c = 1;
     const FT c_c = 0;
-    const FT d_c = -FT(va,10);
+    const FT d_c = -FT_Q(va,10);
     Polynomial_1_3 pol2 = Polynomial_1_3(a_c,b_c,c_c,d_c);
     Circle_3 c5 = theConstruct_circle_3(std::make_pair(es2, pol2));
     std::vector< CGAL::Object > intersection_5;
@@ -1655,7 +1655,7 @@ void _test_bounding_box_construct(SK sk)
           const FT x = FT(vx);
           const FT y = FT(vy);
           const FT z = FT(vz);
-          const FT r = FT(vr,2);
+          const FT r = FT_Q(vr,2);
           Sphere_3 sl_1 = theConstruct_sphere_3(
             Polynomial_for_spheres_2_3(x,y,z,r*r));
           Sphere_3 sl_2 = theConstruct_sphere_3(
@@ -1800,13 +1800,13 @@ void _test_split_construct(SK sk) {
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
-  rt[7] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
 
   Circular_arc_point_3 cp[8]; 
   for(int i=0; i<8; i++) {
@@ -1899,7 +1899,7 @@ void _test_construct_radical_plane(SK sk) {
           const FT x = FT(vx);
           const FT y = FT(vy);
           const FT z = FT(vz);
-          const FT r = FT(vr,2);
+          const FT r = FT_Q(vr,2);
           if(x == 0 && y == 0 && z == 0) continue;
           Sphere_3 sl_1 = theConstruct_sphere_3(
             Polynomial_for_spheres_2_3(x,y,z,r*r));

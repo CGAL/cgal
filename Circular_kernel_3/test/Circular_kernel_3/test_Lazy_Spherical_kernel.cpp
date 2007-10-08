@@ -17,33 +17,40 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/trunk/Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel.cpp $
+// $Id: test_Spherical_kernel.cpp 36659 2007-02-28 11:37:19Z afabri $
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //             Pedro Machado    <tashimir@gmail.com>
+
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Exact_spherical_kernel_3.h>
-typedef CGAL::Exact_spherical_kernel_3::FT FT_Q;
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpq FT_Q;
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
 #include <CGAL/Polynomials_1_3.h>
 #include <CGAL/Polynomials_2_3.h>
 #include <CGAL/Polynomials_for_line_3.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+int pipo(int r){return r;}
 
 int main()
-{ 
-  CGAL::Exact_spherical_kernel_3  sk1;
+{
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Linear_k1;
+  typedef Linear_k1::FT FT;
+  typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
+  typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
+  SK1 sk1;
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
   return 0;
 }
-
