@@ -2,9 +2,9 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 
 struct Traits { typedef int Point_2; };
-typedef CGAL_HALFEDGEDS_DEFAULT<Traits> HDS;
-typedef CGAL::HalfedgeDS_decorator<HDS> Decorator;
-typedef HDS::Halfedge_iterator          Iterator;
+typedef CGAL::HalfedgeDS_default<Traits> HDS;
+typedef CGAL::HalfedgeDS_decorator<HDS>  Decorator;
+typedef HDS::Halfedge_iterator           Iterator;
 
 int main() {
     HDS hds;

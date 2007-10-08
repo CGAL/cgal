@@ -73,26 +73,27 @@ and page~\pageref{pageHalfedgeDSItemsFaceRef} respectively.
 \ccExample
 
 The following example shows the canonical implementation of the
-\ccc{CGAL::HalfedgeDS_min_items} class. It uses the base classes for the
+\ccc{CGAL::HalfedgeDS_items_with_halfedge_cycle_2} class. It uses the base classes for the
 item types that are provided in the library.
 
 \begin{ccExampleCode}
-struct HalfedgeDS_min_items {
+struct HalfedgeDS_items_with_halfedge_cycles_2 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
-        typedef CGAL::HalfedgeDS_vertex_min_base< Refs>   Vertex;
+        typedef typename Traits::Point_2 Point;
+        typedef CGAL::HalfedgeDS_vertex_base< Refs, Tag_true, Point> Vertex;
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper {
-        typedef CGAL::HalfedgeDS_halfedge_min_base< Refs> Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_false, Tag_true> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
+        typedef CGAL::HalfedgeDS_face_base< Refs, Tag_false, Tag_false, Tag_true> Face;
     };
     template < class Refs, class Traits>
     struct Halfedge_cycle_wrapper {
-        typedef int Halfedge_cycle;
+        typedef CGAL::HalfedgeDS_halfedge_cycle_base< Refs> Halfedge_cycle;
     };
 };
 \end{ccExampleCode}

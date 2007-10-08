@@ -32,7 +32,7 @@ A \ccRefName\ stores a reference to one of the halfedges in the cycle (which one
 It optionally stores a reference to the face it belongs to. A type tag indicates whether 
 the related member functions are supported. 
 
-All the halfedges connected to the one referenced in a \ccRefName\ must form a cycle, not just a path, and they all must be incident to the same face (or no face at all for a border cycle).
+All the halfedges connected to the one referenced in a \ccRefName\ must form a cycle, not just a path.
 
 Two halfedges are allowed to be in the same cycle even if they are opposite to each other. 
 This allows models of \ccRefName\ to represent open curves, antennas and empty alleys by simply arranging 

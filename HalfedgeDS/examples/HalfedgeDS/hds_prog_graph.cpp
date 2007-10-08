@@ -3,7 +3,7 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 
 // no traits needed, argument can be arbitrary dummy.
-typedef CGAL_HALFEDGEDS_DEFAULT<int, CGAL::HalfedgeDS_min_items> HDS;
+typedef CGAL::HalfedgeDS_default<int, CGAL::HalfedgeDS_min_items> HDS;
 typedef CGAL::HalfedgeDS_decorator<HDS>  Decorator;
 
 int main() {

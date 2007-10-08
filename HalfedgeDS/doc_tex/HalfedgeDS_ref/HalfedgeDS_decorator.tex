@@ -77,15 +77,14 @@ all halfedge data structures and will not appear here again.
 
 \ccMethod{Halfedge_handle create_loop();}{
     returns the handle of a halfedge from a newly created loop in \ccc{hds}
-    consisting of a single closed edge, one vertex and two faces 
-    {\XHDS each with one outer halfedge cycle}
-    (if supported respectively).}
+    consisting of a single closed edge, one vertex and two faces (if supported), 
+    {\XHDS each with one outer halfedge cycle (if supported).}}
 \ccGlue
 \ccMethod{Halfedge_handle create_segment();}{
     returns a halfedge from a newly created segment in \ccc{hds}
     consisting of a single open edge, two vertices, one face
     {\XHDS and one outer halfedge cycle}
-    (if supported respectively).}
+    (if supported).}
 \ccGlue
 \ccMethod{\XHDS Halfedge_handle create_isolated_vertex();}{\XHDS
     returns handle of a halfedge from a newly created loop in \ccc{hds}

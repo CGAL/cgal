@@ -20,15 +20,15 @@
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSHalfedgeCycle}
 concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}. 
-The full declaration states four template parameters:
+The full declaration states one template parameters:
 
 \begin{tabbing}
-\mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
+\mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs >}  \\
      \> \ccc{class HalfedgeDS_halfedge_cycle_base;}
 \end{tabbing}
 
 
-In all cases, a reference to the halfedge and face is supported.
+A reference to the halfedge and face is supported.
 
 %\ccInclude{CGAL/HalfedgeDS_halfedge_cycle_base.h}
 

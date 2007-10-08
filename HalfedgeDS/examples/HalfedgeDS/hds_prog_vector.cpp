@@ -3,11 +3,7 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 
 struct Traits { typedef int Point_2; };
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-typedef CGAL::HalfedgeDS_vector     < Traits, CGAL::HalfedgeDS_items_2> HDS;
-#else
-typedef CGAL::HalfedgeDS_vector::HDS< Traits, CGAL::HalfedgeDS_items_2> HDS;
-#endif
+typedef CGAL::HalfedgeDS_vector< Traits, CGAL::HalfedgeDS_items_2> HDS;
 typedef CGAL::HalfedgeDS_decorator<HDS>  Decorator;
 
 int main() {

@@ -37,7 +37,7 @@ halfedge cycle in turn stores a reference to a halfedge\footnote{In other
 hole-supporting HDS designs, faces stores a sequence of halfedges (each for a different cycle).
 In our design a cycle is given by a \ccc{halfedge_cycle} instead of a \ccc{halfedge} to allow 
 the centralization of cycle-related information}. 
-A face also stores another sequence of references to halfedge_cycles for isolated vertices, where
+A face also stores another sequence of references to halfedge\_cycles for isolated vertices, where
 each such vertex is represented by a cycle composed of a single-halfedge single-vertex self-loop.
 A halfedge in the cycle stores the handle to the halfedge cycle it belongs to.
 
@@ -45,9 +45,9 @@ A halfedge in the cycle stores the handle to the halfedge cycle it belongs to.
 can have many cycles, not just one; or oven no outer boudary but only inner cycles (holes).
 
 \ccc{Halfedge::face()} on the other hand is well defined as a shortcut for \ccc{Halfedge::halfedge_cycle()->face()}
-since every halfedge belongs to a halfedge_cycle.
+since every halfedge belongs to a halfedge\_cycle.
 
-THe type \ccc{Halfedge_cycle} is a first-class \ccc{HDS} item, just like vertices, halfedges and faces.
+The type \ccc{Halfedge_cycle} is a first-class \ccc{HDS} item, just like vertices, halfedges and faces.
 However, the halfedge cycles do not contribute  by themself to the incidence information 
 maintained by the \ccc{HDS}. That is, the incidence is betwen vertices, edges and faces,
 which are all well defined mathematical concepts belonging to the field of algebraic topology.

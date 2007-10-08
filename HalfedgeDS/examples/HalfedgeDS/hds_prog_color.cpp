@@ -22,7 +22,7 @@ struct My_traits { // arbitrary point type, not used here.
     typedef int  Point_2;
 };
 
-typedef CGAL_HALFEDGEDS_DEFAULT <My_traits, My_items> HDS;
+typedef CGAL::HalfedgeDS_default<My_traits, My_items> HDS;
 typedef HDS::Face                                     Face;
 typedef HDS::Face_handle                              Face_handle;
 

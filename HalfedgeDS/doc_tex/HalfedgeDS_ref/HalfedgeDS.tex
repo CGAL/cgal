@@ -47,12 +47,12 @@ in~\cite{k-ugpdd-99}.
 {\XHDS
 Each edge is decomposed into two halfedges with opposite orientations
 and each cycle of connected halfedges is associated with a single object 
-named \ccc{halfedge_cycle}.
+named halfedge\_cycle.
 One incident vertex is stored in each halfedge and one incident halfedge
 is stored in each vertex.
 Incidence information between halfedges and faces can be stored via
 two mutually exclusive mechanisms: directly storing an incident halfedge in a face
-and vice versa, or via a \ccc{halfedge_cycle} object common to incident faces and halfedges.
+and vice versa, or via a halfedge\_cycle object common to incident faces and halfedges.
 }
 Reduced variants of the halfedge data structure can omit some of these
 information, for example the halfedge pointers in faces or the
@@ -76,7 +76,7 @@ possible for vertices, halfedges, and faces.
           \protect\ccc{Halfedge}, and 
           \protect\ccc{Face} of the halfedge data structure. Member
           functions with shaded background are mandatory. The others
-          are optionally supported. [NEEDS TO BE UPDATED TO INCORPORATE CCBS]}
+          are optionally supported. [NEEDS TO BE UPDATED TO INCORPORATE HALFEDGE-CYCLES]}
         \label{figureOptionalMethods}
     \end{figure}
 \end{ccTexOnly}
@@ -91,7 +91,7 @@ possible for vertices, halfedges, and faces.
     The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
           <I>Face</I> of the halfedge data structure. Member
           functions with shaded background are mandatory. The others
-          are optionally supported [NEEDS TO BE UPDATED TO INCORPORATE CCBS].
+          are optionally supported [NEEDS TO BE UPDATED TO INCORPORATE HALFEDGE-CYCLES].
     </CENTER>
 \end{ccHtmlOnly}
 
@@ -228,20 +228,14 @@ The following dependencies among these options must be regarded:
 Vertices are supported $\Longleftrightarrow$
 \ccc{Supports_halfedge_vertex} $\equiv$ \ccc{CGAL::Tag_true}.
 
-\textbf{Faces are supported $\Longleftrightarrow$
-Supports\_halfedge\_face $\equiv$ CGAL::Tag\_true
-or
-( Supports\_halfedge\_halfedge\_cycle $\equiv$ CGAL::Tag\_true
-and Supports\_halfedge\_cycle\_face $\equiv$ CGAL::Tag\_true )
-}
+Faces are supported $\Longleftrightarrow$
+\ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true}
+or \ccc{Supports_halfedge_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
 
-\textbf{Halfedge\_cycles are supported $\Longleftrightarrow$
-Supports\_halfedge\_halfedge\_cycle $\equiv$ 
-CGAL::Tag\_true
-and
-Supports\_face\_halfedge\_cycle
-$\equiv$ CGAL::Tag\_true
-}
+Halfedge\_cycles are supported $\Longleftrightarrow$
+\ccc{Supports_halfedge_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
+and \ccc{Supports_face_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
+
 
 \ccc{Supports_vertex_halfedge} $\equiv$ \ccc{CGAL::Tag_true} $\Longrightarrow$
 \ccc{Supports_halfedge_vertex} $\equiv$ \ccc{CGAL::Tag_true}.
@@ -251,9 +245,6 @@ $\equiv$ CGAL::Tag\_true
 \\
 \ccc{Supports_face_halfedge} $\equiv$ \ccc{CGAL::Tag_true} $\Longrightarrow$
 \ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true}.
-
-\textbf{Supports\_face\_halfedge\_cycle $\equiv$ CGAL::Tag\_true $\Longrightarrow$
-Supports\_halfedge\_cycle\_face $\equiv$ CGAL::Tag\_true}.
 
 
 \end{ccAdvanced}
