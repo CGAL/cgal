@@ -228,6 +228,8 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> polygon;
+    CGAL::Bbox_2 bb = polygon.bbox();
+    widget->set_window(bb.xmin(), bb.xmax(), bb.ymin(), bb.ymax());
     something_changed();
   }
 
