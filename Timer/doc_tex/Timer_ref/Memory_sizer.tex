@@ -17,8 +17,6 @@ yet paged-in).
 \ccTypes
 \ccThreeToTwo
 
-The memory sizes are given in bytes.
-
 \ccTypedef{typedef std::size_t   size_type;}{}
 
 \ccCreation
@@ -31,9 +29,9 @@ The memory sizes are given in bytes.
 
 \ccOperations
 
-\ccMethod{size_type virtual_size() const;}{Returns the virtual memory size.}
+\ccMethod{size_type virtual_size() const;}{Returns the virtual memory size in bytes.}
 \ccGlue
-\ccMethod{size_type resident_size() const;}{Returns the resident memory size.}
+\ccMethod{size_type resident_size() const;}{Returns the resident memory size in bytes.}
 
 
 \ccImplementation
