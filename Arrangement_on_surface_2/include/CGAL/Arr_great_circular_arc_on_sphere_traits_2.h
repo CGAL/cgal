@@ -23,8 +23,8 @@
 // #define CGAL_ARR_PLANE
 
 /*! \file
- * The traits-class that handles great circular arc on a spheres for the
- * arrangement on surface package.
+ * A class that handles great circular arcs embedded on a spheres suitable
+ * as a geometry traits class for the arrangement on surface package.
  */
 
 #include <CGAL/tags.h>
@@ -66,6 +66,7 @@ protected:
   typedef typename Kernel::Vector_3             Vector_3;
   typedef typename Kernel::Ray_3                Ray_3;
   typedef typename Kernel::Line_3               Line_3;
+      
 #if defined(CGAL_ARR_PLANE)
   typedef Arr_plane_3<Kernel>                   Plane_3;
 #else
@@ -245,6 +246,20 @@ protected:
     return kernel.orientation_2_object()(v1, v2);
   }
 
+  /*! Determined whether a direction is contained in a plane
+   * \param plane the 3D plane.
+   * \param dir the 3D direction.
+   * \return true if dir is contained in plane; false otherwise.
+   * \pre the plane contains the origin.
+   */
+  inline bool has_on(const Plane_3 & plane, const Direction_3 & dir) const
+  {
+    Ray_3 ray = Kernel::construct_ray_3_object()(ORIGIN, dir);
+    Vector_3 vec = Kernel::construct_vector_3_object()(ray);
+    Point_3 point = Kernel::construct_translated_point_3_object()(ORIGIN, vec);
+    return Kernel::has_on_3_object()(plane, point);
+  }
+  
   /*! Compare two endpoint directions by y.
    * \param p1 the first enpoint direction.
    * \param p2 the second endpoint direction.
@@ -255,13 +270,12 @@ protected:
    *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
    *         LARGER  - x(p1) > x(p2).
    */
-  static inline Comparison_result compare_y(const Direction_3 & d1,
-                                            const Direction_3 & d2)
+  inline Comparison_result compare_y(const Direction_3 & d1,
+                                     const Direction_3 & d2) const
   {
     typedef typename Kernel::FT                     FT;
     typedef typename Kernel::Construct_vector_3     Construct_vector_3;
-    Kernel kernel;
-    Construct_vector_3 construct_vec_3 = kernel.construct_vector_3_object();
+    Construct_vector_3 construct_vec_3 = Kernel::construct_vector_3_object();
     Vector_3 v1 = construct_vec_3(d1);
     Vector_3 v2 = construct_vec_3(d2);
 
@@ -503,8 +517,6 @@ public:
      */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
       CGAL_precondition(p1.is_no_boundary());
       CGAL_precondition(p2.is_no_boundary());
       
@@ -652,8 +664,6 @@ public:
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xc) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
       CGAL_precondition(!xc.is_degenerate());
       CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
       CGAL_precondition(xc.is_in_x_range(p));
@@ -696,8 +706,6 @@ public:
                                  const X_monotone_curve_2 & xc2, 
                                  Curve_end ind2) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -705,13 +713,7 @@ public:
       const Point_2 & p2 = (ind2 == MIN_END) ? xc2.left() : xc2.right();
       CGAL_precondition(!p1.is_no_boundary());
       CGAL_precondition(!p2.is_no_boundary());
-      
-      Direction_2 p1_2 = project_xz(p1);
-      Direction_2 p2_2 = project_xz(p2);
-      Orientation orient = m_traits->orientation(p1_2, p2_2);
-
-      return (orient == RIGHT_TURN) ? SMALLER :
-        (orient == COLLINEAR) ? EQUAL : LARGER;
+      return m_traits->compare_y(p1, p2);
     }
 
     /*! Compare the relative y-positions of two curves at an x-boundary.
@@ -733,8 +735,6 @@ public:
                                  const X_monotone_curve_2 & xc2, 
                                  Curve_end ind) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -1087,8 +1087,6 @@ public:
     template<typename OutputIterator>
     OutputIterator operator()(const Curve_2 & c, OutputIterator oi) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
       if (c.is_degenerate()) {
         // The spherical_arc is a degenerate point - wrap it with an object:
         *oi++ = make_object(c.right());
@@ -1202,6 +1200,19 @@ public:
   { return Make_x_monotone_2(this); }
 
   class Split_2 {
+  protected:
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Split_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    
   public:
     /*! Split a given x-monotone curve at a given point into two sub-curves.
      * \param xc the curve to split
@@ -1218,9 +1229,9 @@ public:
       CGAL_precondition(!xc.is_degenerate());
       const Point_2 & source = xc.source();
       const Point_2 & target = xc.target();
-      CGAL_precondition_code(Kernel kernel);
+      CGAL_precondition_code(const Kernel * kernel = m_traits);
       CGAL_precondition_code
-        (typename Kernel::Equal_3 equal_3 = kernel.equal_3_object());
+        (typename Kernel::Equal_3 equal_3 = kernel->equal_3_object());
       CGAL_precondition(!equal_3(p, source));
       CGAL_precondition(!equal_3(p, target));
 
@@ -1251,26 +1262,34 @@ public:
   };
 
   /*! Obtain a Split_2 function object */
-  Split_2 split_2_object() const { return Split_2(); }
+  Split_2 split_2_object() const { return Split_2(this); }
 
   /*! The clockwise-in-between function object */
   class Clockwise_in_between_2 {
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Clockwise_in_between_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+
   public:
     bool operator()(const Direction_2 & d,
                     const Direction_2 & d1, const Direction_2 & d2) const
     {
-      typedef typename Kernel::Counterclockwise_in_between_2
-        Counterclockwise_in_between_2;
-      Kernel kernel;
-      Counterclockwise_in_between_2 ccib =
-        kernel.counterclockwise_in_between_2_object();
-      return ccib(d, d2, d1);
+      const Kernel * kernel = m_traits;
+      return kernel->counterclockwise_in_between_2_object()(d, d2, d1);
     }
   };
 
   /*! Obtain a Clockwise_in_between function object */
   Clockwise_in_between_2 clockwise_in_between_2_object() const
-  { return Clockwise_in_between_2(); }
+  { return Clockwise_in_between_2(this); }
   
   /*! The intersection computation functor */
   class Intersect_2 {
@@ -1301,8 +1320,8 @@ public:
                                         OutputIterator oi) const
     {
       typedef std::pair<Point_2,unsigned int>                   Point_2_pair;
-      Kernel kernel;
-      typename Kernel::Equal_2 equal = kernel.equal_2_object();
+      const Kernel * kernel = m_traits;
+      typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
       Direction_2 l1 = project(l1_3);
       Direction_2 r1 = project(r1_3);
@@ -1347,48 +1366,71 @@ public:
     }
     
     /*! Determine whether a direction pierces an arc.
-     * \param dir the direction.
-     * \param arc the arc.
-     * \return true iff dir pierces arc.
-     * \pre dir lies in the plane defined by arc.
+     * \param p the direction.
+     * \param xc the arc.
+     * \return true iff p pierces xc.
+     * \pre p lies in the plane defined by xc.
      */
-    bool is_in_between
-    (const Arr_extended_direction_3<Kernel> & dir,
-     const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc) const
+    bool is_in_between(const Point_2 & p,
+                       const X_monotone_curve_2 & xc) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
-      const Point_2 & l = arc.left();
-      const Point_2 & r = arc.right();
+      const Kernel * kernel = m_traits;
+      CGAL_precondition(kernel->has_on(plane, point));
+      
+      const Point_2 & left = xc.left();
+      const Point_2 & right = xc.right();
 
       // Handle the poles:
-      if (dir.is_max_boundary()) return (r.is_max_boundary());
-      if (dir.is_min_boundary()) return (l.is_min_boundary());
+      if (p.is_max_boundary()) return (right.is_max_boundary());
+      if (p.is_min_boundary()) return (left.is_min_boundary());
 
-      // dir does not coincide with a pole:
-      Direction_2 dir_xy = project_xy(dir);
+      if (xc.is_vertical()) {
+        // Compare the x coordinates. If they are not equal, return false:
+        Direction_3 normal = xc.plane().orthogonal_direction();
+        bool xz_plane = m_traits->x_sign(normal) == ZERO;
+        bool plane_is_positive = (xz_plane) ?
+          (m_traits->y_sign(normal) == NEGATIVE) :
+          (m_traits->x_sign(normal) == POSITIVE);
+        bool positive = ((plane_is_positive && xc.is_directed_right()) ||
+                         (!plane_is_positive && !xc.is_directed_right()));
 
-      Kernel kernel;
-      typename Kernel::Equal_2 equal_2 = kernel.equal_2_object(); 
+        Project project =
+          (xz_plane) ? m_traits->project_xz : m_traits->project_yz;
+        Direction_2 p_2 = project(p);
+        bool p_x_is_positive = m_traits->is_x_positive(p_2);
+        if ((positive && !p_x_is_positive) || (!positive && p_x_is_positive))
+          return false;
 
-      if (arc.is_vertical()) {
-        // Compare the y-coords.
-        const Point_2 & p = (l.is_min_boundary()) ? r : l;
-        Direction_2 p_xy = project_xy(p);
-        if (!equal_2(dir_xy, p_xy)) return false;
-
-        return
-          (((l.is_min_boundary()) || (Traits::compare_y(dir, l) != SMALLER)) &&
-           ((r.is_max_boundary()) || (Traits::compare_y(dir, r) != LARGER)));
+        // Compare the y-coords:
+        return (((left.is_min_boundary()) ||
+                 (m_traits->compare_y(p, left) != SMALLER)) &&
+                ((right.is_max_boundary()) ||
+                 (m_traits->compare_y(p, right) != LARGER)));
       }
-      // arc is not vertical, compare the projections onto the xy-plane:
-      Direction_2 r_xy = project_xy(r);
-      if (equal_2(dir_xy, r_xy)) return true;
-      Direction_2 l_xy = project_xy(l);
-      if (equal_2(dir_xy, l_xy)) return true;
-      return kernel.counterclockwise_in_between_2_object()(dir_xy, l_xy, r_xy);
+
+      // The arc is not vertical. Compare the projections onto the xy-plane:
+      typename Kernel::Equal_2 equal_2 = kernel->equal_2_object(); 
+      Direction_2 p_2 = project_xy(p);
+      Direction_2 r = project_xy(right);
+      if (equal_2(p_2, r)) return true;
+      Direction_2 l = project_xy(left);
+      if (equal_2(p_2, l)) return true;
+      return kernel->counterclockwise_in_between_2_object()(p_2, l, r);
     }
 
+  protected:
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Intersect_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    
   public:
     /*! Find the intersections of the two given curves and insert them into the
      * given output iterator. As two spherical_arcs may itersect only once,
@@ -1414,20 +1456,19 @@ public:
       CGAL_precondition(!xc2.is_degenerate());
 
       typedef std::pair<Point_2,unsigned int>         Point_2_pair;
-      Kernel kernel;
+      const Kernel * kernel = m_traits;
 
 #if defined(CGAL_ARR_PLANE)
       CGAL::Object obj = intersect(xc1.plane(), xc2.plane());
 #else
-      CGAL::Object obj = kernel.intersect_3_object()(xc1.plane(), xc2.plane());
+      CGAL::Object obj = kernel->intersect_3_object()(xc1.plane(), xc2.plane());
 #endif
       const Plane_3 * plane_ptr = object_cast<Plane_3>(&obj);
       if (plane_ptr != NULL) {
-        Kernel kernel;
-        Equal_2 equal = kernel.equal_2_object();
+        Equal_2 equal = kernel->equal_2_object();
         Counterclockwise_in_between_2 ccib =
-          kernel.counterclockwise_in_between_2_object();
-        Clockwise_in_between_2 cib;
+          kernel->counterclockwise_in_between_2_object();
+        Clockwise_in_between_2 cib(m_traits);
 
         if (xc1.is_vertical()) {
           const Plane_3 & plane1 = xc1.plane();
@@ -1435,7 +1476,7 @@ public:
 #if defined(CGAL_ARR_PLANE)
           bool res = plane1.equal(plane2);
 #else
-          bool res = kernel.equal_3_object()(plane1, plane2);
+          bool res = kernel->equal_3_object()(plane1, plane2);
 #endif
           if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
@@ -1510,36 +1551,44 @@ public:
                                     xc1.plane(), false, Traits::neg_x_2(),
                                     ccib, Traits::project_xy, oi);
       }
-      
-      const Line_3 * line_ptr = object_cast<Line_3>(&obj);
-      if (line_ptr != NULL) {
-        Point_3 p = line_ptr->point(1);
-        Vector_3 v = kernel.construct_vector_3_object()(ORIGIN, p);
-        Direction_3 d = kernel.construct_direction_3_object()(v);
-        Point_2 ed(d);
 
-        // Determine which one of the two directions:
-        if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
-          *oi++ = make_object(Point_2_pair(ed, 1));
-          return oi;
-        }
-        Point_2 edo(kernel.construct_opposite_direction_3_object()(d));
-        if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
-          *oi++ = make_object(Point_2_pair(edo, 1));
-          return oi;
-        }
+      const Line_3 * line_ptr = object_cast<Line_3>(&obj);
+      CGAL_assertion(line_ptr != NULL);
+      Point_3 p = line_ptr->point(1);
+      Vector_3 v = kernel->construct_vector_3_object()(ORIGIN, p);
+      Direction_3 d = kernel->construct_direction_3_object()(v);
+      Point_2 ed(d);
+
+      // Determine which one of the two directions:
+      if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
+        *oi++ = make_object(Point_2_pair(ed, 1));
         return oi;
       }
-      // Should not reach here!
-      CGAL_assertion(0);
+      Point_2 edo(kernel->construct_opposite_direction_3_object()(d));
+      if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
+        *oi++ = make_object(Point_2_pair(edo, 1));
+        return oi;
+      }
       return oi;
     }
   };
 
   /*! Obtain an Intersect_2 function object */
-  Intersect_2 intersect_2_object() const { return Intersect_2(); }
+  Intersect_2 intersect_2_object() const { return Intersect_2(this); }
 
   class Are_mergeable_2 {
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Are_mergeable_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+
   public:
     /*! Check whether it is possible to merge two given x-monotone curves.
      * \param xc1 the first curve.
@@ -1555,8 +1604,8 @@ public:
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
-      Kernel kernel;
-      typename Kernel::Equal_3 equal = kernel.equal_3_object();
+      const Kernel * kernel = m_traits;
+      typename Kernel::Equal_3 equal = kernel->equal_3_object();
 #if defined(CGAL_ARR_PLANE)
       if (!(xc1.plane()).equal(xc2.plane())) return false;
 #else
@@ -1571,7 +1620,8 @@ public:
   };
 
   /*! Obtain an Are_mergeable_2 function object */
-  Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(); }
+  Are_mergeable_2 are_mergeable_2_object() const
+  { return Are_mergeable_2(this); }
 
   class Merge_2 {
   protected:
@@ -1939,12 +1989,13 @@ protected:
   inline bool has_on(const Plane_3 & plane, const Direction_3 & dir) const
   {
     Kernel kernel;
+
     Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
     Vector_3 vec = kernel.construct_vector_3_object()(ray);
     Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
     return kernel.has_on_3_object()(plane, point);
   }
-  
+
   /*! Constructs a plane that contains two directions.
    * \todo Introduce in Kernel::ConstructPlane_3::operator()(Direction_3, Dir..)
    * \param d1 the first direction.
