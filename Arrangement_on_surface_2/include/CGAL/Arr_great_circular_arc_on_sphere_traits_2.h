@@ -144,15 +144,6 @@ protected:
     return d;
   }
 
-  /*! Obtain the 2D direction directed along the positive y axis
-   * \return the direction directed at y = +infinity
-   */
-  inline static const Direction_2 & pos_y_2()
-  {
-    static const Direction_2 d(0, 1);
-    return d;
-  }
-
   /*! Obtain the 2D direction directed along the negative y axis
    * \return the direction directed at y = -infinity
    */
@@ -161,22 +152,6 @@ protected:
     static const Direction_2 d(0, -1);
     return d;
   }
-
-  /*! Is a given direction colinear with the x-axis?
-   * \param d the direction
-   * \return true iff d is directed towards the positive or negative x axis
-   */
-  inline static bool is_colinear_x(Direction_2 d)
-  { return (CGAL::sign(d.dy()) == ZERO); }
-
-  inline static bool is_x_positive(Direction_2 d)
-  { return (CGAL::sign(d.dx()) == POSITIVE); }
-
-  inline static bool is_x_negative(Direction_2 d)
-  { return (CGAL::sign(d.dx()) == NEGATIVE); }
-
-  inline static bool is_y_positive(Direction_2 d)
-  { return (CGAL::sign(d.dy()) == POSITIVE); }
 
   inline static Sign x_sign(Direction_3 d) { return CGAL::sign(d.dx()); }
 
@@ -413,11 +388,30 @@ public:
         // If xc coincides with the discontinuity arc, all its points are
         // assumed to be smaller than non-boundary points:
         if (xc.is_on_boundary()) return LARGER;
-        // xc is vertical, but does not coincide with the discontinuity arc,
-        // obtain the other endpoint:
-        const Point_2 & q = (ind == MIN_END) ? xc.right() : xc.left();
+        
+        // xc is vertical, but does not coincide with the discontinuity arc.
+        const Point_2 & left = xc.left();
+        const Point_2 & right = xc.right();
+
+        // Handle the case where both xc endpoints coincide with the poles
+        // resp.:
+        Direction_2 q_2;
+        if (left.is_min_boundary() && right.is_max_boundary()) {
+          Direction_3 normal = xc.plane().orthogonal_direction();
+          bool plane_is_positive = (Traits::x_sign(normal) == ZERO) ?
+            (Traits::y_sign(normal) == NEGATIVE) :
+            (Traits::x_sign(normal) == POSITIVE);
+          bool xc_is_positive =
+            ((plane_is_positive && xc.is_directed_right()) ||
+             (!plane_is_positive && !xc.is_directed_right()));
+          q_2 = Direction_2((xc_is_positive) ? 1 : -1, 0);
+        } else {
+          // Obtain the other endpoint:
+          const Point_2 & q = (ind == MIN_END) ? right : left;
+          q_2 = Traits::project_xy(q);
+        }
+        
         Direction_2 p_2 = Traits::project_xy(p);
-        Direction_2 q_2 = Traits::project_xy(q);
         const Kernel * kernel = m_traits;
         if (kernel->equal_2_object()(p_2, q_2)) return EQUAL;
         const Direction_2 & nx = Traits::neg_x_2();
@@ -549,8 +543,7 @@ public:
      *   BEFORE_DISCONTINUITY - the curve end is on the open discontinuity arc
      *                          and it is the right endpoint
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
     {
       if (xc.is_vertical()) {
         if (xc.is_on_boundary()) return AFTER_DISCONTINUITY;
@@ -582,8 +575,7 @@ public:
      *   the curve end is on the boundary and
      *     is the left endpoint                     => BEFORE_SINGULARITY.
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
     {
       return (ind == MIN_END) ?
         ((xc.left().is_min_boundary()) ? AFTER_SINGULARITY : NO_BOUNDARY) :
@@ -802,7 +794,7 @@ public:
       if (r2.is_max_boundary()) return SMALLER;
 
       // None of xc1 and xc2 endpoints coincide with a pole:
-      Direction_2 r1_xy = m_traits->project_xy(r1);
+      Direction_2 r1_xy = Traits::project_xy(r1);
       Comparison_result cr = m_traits->compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
@@ -812,7 +804,7 @@ public:
       if (xc2.is_vertical()) return SMALLER;
         
       // Compare to the left:
-      Direction_2 p_r1 = m_traits->project_xy(r1);
+      Direction_2 p_r1 = Traits::project_xy(r1);
       cr = m_traits->compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
@@ -1036,12 +1028,13 @@ public:
 
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal_3 = kernel->equal_3_object();
-      return ((equal_3(xc1.left(), xc2.left()) &&
-               equal_3(xc1.right(), xc2.right()) &&
-               equal_3(xc1.plane(), xc2.plane())) ||
-              (equal_3(xc1.left(), xc2.right()) &&
-               equal_3(xc1.right(), xc2.left()) &&
-               equal_3(xc1.plane(), xc2.plane().opposite())));
+      if (xc1.is_full() || xc2.is_full()) {
+        return (xc1.is_full() && xc2.is_full() &&
+                equal_3(xc1.left(), xc2.left()));
+      }
+      
+      return (equal_3(xc1.left(), xc2.left()) &&
+              equal_3(xc1.right(), xc2.right()));
     }
 
     /*! Determines whether the two points are the same.
@@ -1151,14 +1144,14 @@ public:
         // None of the enpoints coincide with a pole.
         Direction_3 normal = plane.orthogonal_direction();
         bool s_is_positive, t_is_positive, plane_is_positive;
-        if (m_traits->x_sign(normal) == ZERO) {
-          s_is_positive = m_traits->x_sign(source) == POSITIVE;
-          t_is_positive = m_traits->x_sign(target) == POSITIVE;
-          plane_is_positive = m_traits->y_sign(normal) == NEGATIVE;
+        if (Traits::x_sign(normal) == ZERO) {
+          s_is_positive = Traits::x_sign(source) == POSITIVE;
+          t_is_positive = Traits::x_sign(target) == POSITIVE;
+          plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
         } else {
-          s_is_positive = m_traits->y_sign(source) == POSITIVE;
-          t_is_positive = m_traits->y_sign(target) == POSITIVE;
-          plane_is_positive = m_traits->x_sign(normal) == POSITIVE;
+          s_is_positive = Traits::y_sign(source) == POSITIVE;
+          t_is_positive = Traits::y_sign(target) == POSITIVE;
+          plane_is_positive = Traits::x_sign(normal) == POSITIVE;
         }
         bool ccw = ((plane_is_positive && s_is_positive) ||
                     (!plane_is_positive && !s_is_positive));
@@ -1183,8 +1176,8 @@ public:
       // The curve is not vertical, (none of the enpoints coincide with a pole)
       Point_2 p(-1, 0, plane.a() / plane.c());
 
-      Direction_2 s = project_xy(source);
-      Direction_2 t = project_xy(target);
+      Direction_2 s = Traits::project_xy(source);
+      Direction_2 t = Traits::project_xy(target);
       const Direction_2 & nx = Traits::neg_x_2();
       const Kernel * kernel = m_traits;
       bool directed_right =
@@ -1391,18 +1384,19 @@ public:
         // Compare the x coordinates. If they are not equal, return false:
         Direction_3 normal = xc.plane().orthogonal_direction();
         bool plane_is_positive, p_is_positive;
-        if (m_traits->x_sign(normal) == ZERO) {
-          plane_is_positive = m_traits->y_sign(normal) == NEGATIVE;
-          p_is_positive = m_traits->x_sign(point) == POSITIVE;
+        if (Traits::x_sign(normal) == ZERO) {
+          plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
+          p_is_positive = Traits::x_sign(point) == POSITIVE;
         } else {
-          plane_is_positive = m_traits->x_sign(normal) == POSITIVE;
-          p_is_positive = m_traits->y_sign(point) == POSITIVE;
+          plane_is_positive = Traits::x_sign(normal) == POSITIVE;
+          p_is_positive = Traits::y_sign(point) == POSITIVE;
         }
         
-        bool positive = ((plane_is_positive && xc.is_directed_right()) ||
-                         (!plane_is_positive && !xc.is_directed_right()));
+        bool xc_is_positive = ((plane_is_positive && xc.is_directed_right()) ||
+                               (!plane_is_positive && !xc.is_directed_right()));
 
-        if ((positive && !p_is_positive) || (!positive && p_is_positive))
+        if ((xc_is_positive && !p_is_positive) ||
+            (!xc_is_positive && p_is_positive))
           return false;
 
         // Compare the y-coords:
@@ -1414,10 +1408,10 @@ public:
 
       // The arc is not vertical. Compare the projections onto the xy-plane:
       typename Kernel::Equal_2 equal_2 = kernel->equal_2_object(); 
-      Direction_2 p = project_xy(point);
-      Direction_2 r = project_xy(right);
+      Direction_2 p = Traits::project_xy(point);
+      Direction_2 r = Traits::project_xy(right);
       if (equal_2(p, r)) return true;
-      Direction_2 l = project_xy(left);
+      Direction_2 l = Traits::project_xy(left);
       if (equal_2(p, l)) return true;
       return kernel->counterclockwise_in_between_2_object()(p, l, r);
     }
@@ -1512,18 +1506,16 @@ public:
           const Point_2 & point =
             xc1.left().is_min_boundary() ? xc1.right() : xc1.left();
 
-          Direction_3 normal1 = xc1.plane().orthogonal_direction();
-          bool xz_plane = m_traits->x_sign(normal1) == ZERO;
-          Project project =
-            (xz_plane) ? m_traits->project_xz : m_traits->project_yz;
-          bool p_x_is_positive = m_traits->x_sign(point) == POSITIVE;
-          bool p_y_is_positive = m_traits->y_sign(point) == POSITIVE;
-
           Direction_3 normal = xc1.plane().orthogonal_direction();
+          bool xz_plane = Traits::x_sign(normal) == ZERO;
+          Project project =
+            (xz_plane) ? Traits::project_xz : Traits::project_yz;
+          bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
+          bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
 
           if ((xz_plane && p_x_is_positive) || (!xz_plane && p_y_is_positive)) {
             // The endpoints reside in the positive x-halfspace:
-            bool plane_is_positive = (m_traits->x_sign(normal) == POSITIVE);
+            bool plane_is_positive = (Traits::x_sign(normal) == POSITIVE);
             Plane_3 plane =
               (plane_is_positive)? xc1.plane() : xc1.plane().opposite();
             return compute_intersection(xc1.left(), xc1.right(),
@@ -1532,7 +1524,7 @@ public:
                                         ccib, project, oi);
           }
           // The endpoints reside in the negative x-halfspace:
-          bool plane_is_positive = (m_traits->y_sign(normal) == NEGATIVE);
+          bool plane_is_positive = (Traits::y_sign(normal) == NEGATIVE);
           Plane_3 plane =
             (plane_is_positive)? xc1.plane().opposite() : xc1.plane();
           return compute_intersection(xc1.left(), xc1.right(),
@@ -1543,13 +1535,13 @@ public:
 
         // The arcs are not vertical:
         Direction_3 normal = xc1.plane().orthogonal_direction();
-        bool plane_is_positive = (m_traits->z_sign(normal) == POSITIVE);
+        bool plane_is_positive = (Traits::z_sign(normal) == POSITIVE);
         Plane_3 plane =
-          (plane_is_positive)? xc1.plane() : xc1.plane().opposite();
+          (plane_is_positive) ? xc1.plane() : xc1.plane().opposite();
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
                                     plane, false, Traits::neg_x_2(),
-                                    ccib, m_traits->project_xy, oi);
+                                    ccib, Traits::project_xy, oi);
       }
 
       const Line_3 * line_ptr = object_cast<Line_3>(&obj);
@@ -1949,35 +1941,27 @@ protected:
 
   typedef typename Arr_extended_direction_3::Direction_3        Direction_3;
 
-  Arr_extended_direction_3 m_source;    // The source point of the arc
-  Arr_extended_direction_3 m_target;    // The target point of the arc
-  Plane_3 m_plane;                      // The plane that contains the arc
-  bool m_is_vertical;                   // The arc is vertical
-  bool m_is_directed_right;   // Target (lexicographically) larger than source
-  bool m_is_full;                       // The arc is a full circle
-  bool m_is_degenerate;                 // The arc is degenerate (single point)
+  /*! The source point of the arc */
+  Arr_extended_direction_3 m_source;
 
-  /*! Is a given direction colinear with the x-axis?
-   * \param d the direction
-   * \return true iff d is directed towards the positive or negative x axis
-   */
-  inline bool is_colinear_x(Direction_2 d)
-  { return (CGAL::sign(d.dy()) == ZERO); }
+  /*! The target point of the arc */
+  Arr_extended_direction_3 m_target;
 
-  /*! Is the x-coordinate of a given direction positive
-   * \param d the direction
-   * \return true if the x-coordinate of d is possitive and false otherwise
-   */
-  inline bool is_x_positive(Direction_2 d)
-  { return (CGAL::sign(d.dx()) == POSITIVE); }
+  /*! The plane that contains the arc */
+  Plane_3 m_plane;
 
-  /*! Is the x-coordinate of a given direction negive
-   * \param d the direction
-   * \return true if the x-coordinate of d is negative and false otherwise
-   */
-  inline bool is_x_negative(Direction_2 d)
-  { return (CGAL::sign(d.dx()) == NEGATIVE); }
-  
+  /*! The arc is vertical */
+  bool m_is_vertical;
+
+  /*! Target (lexicographically) larger than source */
+  bool m_is_directed_right;
+
+  /*! The arc is a full circle */
+  bool m_is_full;
+
+  /* The arc is degenerate (single point) */
+  bool m_is_degenerate;
+
   inline Sign x_sign(Direction_3 d) { return CGAL::sign(d.dx()); }
 
   inline Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }  
@@ -2606,41 +2590,43 @@ public:
       }
 
       bool xz_plane = x_sign(normal) == ZERO;
-      typename Traits::Project project =
-        (xz_plane) ? Traits::project_xz : Traits::project_yz;
-      Direction_2 s = project(source);
-      Direction_2 t = project(target);
-      bool s_x_is_positive = Traits::is_x_positive(s);
-      bool t_x_is_positive = Traits::is_x_positive(t);
-      bool plane_is_positive = (xz_plane) ?
-        (y_sign(normal) == NEGATIVE) : (x_sign(normal) == POSITIVE);
+      bool s_is_positive, t_is_positive, plane_is_positive;
+      if (xz_plane) {
+        s_is_positive = x_sign(source) == POSITIVE;
+        t_is_positive = x_sign(target) == POSITIVE;
+        plane_is_positive = y_sign(normal) == NEGATIVE;
+      } else {
+        s_is_positive = y_sign(source) == POSITIVE;
+        t_is_positive = y_sign(target) == POSITIVE;
+        plane_is_positive = x_sign(normal) == POSITIVE;
+      }
 
-      // Optimization:
+      // Process degenerate cases:
       if (source.is_min_boundary()) {
         this->set_is_directed_right(true);
-        set_is_x_monotone((plane_is_positive && t_x_is_positive) ||
-                          (!plane_is_positive && !t_x_is_positive));
+        set_is_x_monotone((plane_is_positive && t_is_positive) ||
+                          (!plane_is_positive && !t_is_positive));
         return;
       }
       if (source.is_max_boundary()) {
         this->set_is_directed_right(false);
-        set_is_x_monotone((plane_is_positive && !t_x_is_positive) ||
-                          (!plane_is_positive && t_x_is_positive));
+        set_is_x_monotone((plane_is_positive && !t_is_positive) ||
+                          (!plane_is_positive && t_is_positive));
         return;
       }
       if (target.is_min_boundary()) {
         this->set_is_directed_right(false);
-        set_is_x_monotone((plane_is_positive && !s_x_is_positive) ||
-                          (!plane_is_positive && s_x_is_positive));
+        set_is_x_monotone((plane_is_positive && !s_is_positive) ||
+                          (!plane_is_positive && s_is_positive));
         return;
       }
       if (target.is_max_boundary()) {
         this->set_is_directed_right(true);
-        set_is_x_monotone((plane_is_positive && s_x_is_positive) ||
-                          (!plane_is_positive && !s_x_is_positive));
+        set_is_x_monotone((plane_is_positive && s_is_positive) ||
+                          (!plane_is_positive && !s_is_positive));
         return;
       }
-      if (s_x_is_positive != t_x_is_positive) {
+      if (s_is_positive != t_is_positive) {
         set_is_x_monotone(false);
         return;
       }
@@ -2651,6 +2637,11 @@ public:
        * This means that it is sufficient to check whether one pole lies
        * on the arc in order to determine x-monotonicity
        */
+      
+      typename Traits::Project project =
+        (xz_plane) ? Traits::project_xz : Traits::project_yz;
+      Direction_2 s = project(source);
+      Direction_2 t = project(target);
       const Direction_2 & ny = Traits::neg_y_2();
       Kernel kernel;
       typename Kernel::Counterclockwise_in_between_2 ccib =
@@ -2658,8 +2649,8 @@ public:
       set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) ||
                         (!plane_is_positive && !ccib(ny, t, s)));
 
-      bool ccw = ((plane_is_positive && s_x_is_positive) ||
-                  (!plane_is_positive && !s_x_is_positive));
+      bool ccw = ((plane_is_positive && s_is_positive) ||
+                  (!plane_is_positive && !s_is_positive));
       this->set_is_directed_right(ccw);
       return;
     }
