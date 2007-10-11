@@ -23,7 +23,7 @@
 // #define CGAL_ARR_PLANE
 
 /*! \file
- * A class that handles great circular arcs embedded on a spheres suitable
+ * A class that handles great circular arcs embedded on spheres suitable
  * as a geometry traits class for the arrangement on surface package.
  */
 
@@ -43,7 +43,10 @@ template <typename Kernel> class Arr_x_monotone_great_circular_arc_on_sphere_3;
 template <typename Kernel> class Arr_great_circular_arc_on_sphere_3;
 template <typename Kernel> class Arr_extended_direction_3;
 
-/*! A traits class for maintaining an arrangement of spherical arcs */
+/*! A traits class-template for constructing and maintaining arcs of great
+ * circles embedded on spheres. It is parameterized from a (linear) geometry
+ * kernel, which it also derives from
+ */
 template <typename T_Kernel>
 class Arr_great_circular_arc_on_sphere_traits_2 : public T_Kernel {
   friend class Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel>;
@@ -153,10 +156,22 @@ protected:
     return d;
   }
 
+  /*! Obtain the sign of the x-coordinate of a direction in space
+   * \param d the direction in space
+   * \return the sign of the x-coordinate of d
+   */
   inline static Sign x_sign(Direction_3 d) { return CGAL::sign(d.dx()); }
 
+  /*! Obtain the sign of the y-coordinate of a direction in space
+   * \param d the direction in space
+   * \return the sign of the y-coordinate of d
+   */
   inline static Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }  
 
+  /*! Obtain the sign of the z-coordinate of a direction in space
+   * \param d the direction in space
+   * \return the sign of the z-coordinate of d
+   */
   inline static Sign z_sign(Direction_3 d) { return CGAL::sign(d.dz()); }
   
   typedef Direction_2 (*Project)(const Direction_3 & d) ;
@@ -363,23 +378,23 @@ public:
      * and considered to have the smallest x-coordinate. Thus, if the given
      * sphercial arc does coincide with the discontinuity arc, the point is
      * larger.
-     * \param p the endpoint direction.
+     * \param point the endpoint direction.
      * \param xc the curve, the endpoint of which is compared.
      * \param ind MIN_END - the minimal end of xc or
      *            MAX_END - the maximal end of xc.
      * \return SMALLER - x(p) < x(xc, ind);
      *         EQUAL   - x(p) = x(xc, ind);
      *         LARGER  - x(p) > x(xc, ind).
-     * \pre p is not on the closed discontinuity arc.
+     * \pre point is not on the closed discontinuity arc.
      * \pre the endpoint indicated by xv and ind is on the discontinuity arc.
      */
-    Comparison_result operator()(const Point_2 & p,
+    Comparison_result operator()(const Point_2 & point,
                                  const X_monotone_curve_2 & xc,
                                  Curve_end ind) const
     {
       typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-      CGAL_precondition(p.is_no_boundary());
+      CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
         (const Point_2 & p2 = (ind == MIN_END) ? xc.left() : xc.right(););
       CGAL_precondition(!p2.is_no_boundary());
@@ -390,32 +405,17 @@ public:
         if (xc.is_on_boundary()) return LARGER;
         
         // xc is vertical, but does not coincide with the discontinuity arc.
-        const Point_2 & left = xc.left();
-        const Point_2 & right = xc.right();
-
-        // Handle the case where both xc endpoints coincide with the poles
-        // resp.:
-        Direction_2 q_2;
-        if (left.is_min_boundary() && right.is_max_boundary()) {
-          Direction_3 normal = xc.plane().orthogonal_direction();
-          bool plane_is_positive = (Traits::x_sign(normal) == ZERO) ?
-            (Traits::y_sign(normal) == NEGATIVE) :
-            (Traits::x_sign(normal) == POSITIVE);
-          bool xc_is_positive =
-            ((plane_is_positive && xc.is_directed_right()) ||
-             (!plane_is_positive && !xc.is_directed_right()));
-          q_2 = Direction_2((xc_is_positive) ? 1 : -1, 0);
-        } else {
-          // Obtain the other endpoint:
-          const Point_2 & q = (ind == MIN_END) ? right : left;
-          q_2 = Traits::project_xy(q);
-        }
-        
-        Direction_2 p_2 = Traits::project_xy(p);
+        // Obtain the direction contained in the underlying plane, which is
+        // also on the xy-plane:
+        Direction_3 normal = xc.plane().orthogonal_direction();
+        Direction_2 q = (xc.is_directed_right()) ?
+          Direction_2(-(normal.dy()), normal.dx()) :
+          Direction_2(normal.dy(), -(normal.dx()));
+        Direction_2 p = Traits::project_xy(point);
         const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p_2, q_2)) return EQUAL;
+        if (kernel->equal_2_object()(p, q)) return EQUAL;
         const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p_2, q_2)) ?
+        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
           LARGER : SMALLER;
       }
 
@@ -455,17 +455,23 @@ public:
         if (xc1.is_on_boundary() && xc2.is_on_boundary()) return EQUAL;
         if (xc1.is_on_boundary()) return SMALLER;
         if (xc2.is_on_boundary()) return LARGER;
+
         // Non of the arcs coincide with the discontinuity arc:
-        // x(xc1, ind) <= x(xc1, !ind)
-        // x(xc2, ind) <= x(xc2, !ind)
-        const Point_2 & p = (ind1 == MIN_END) ? xc1.right() : xc1.left();
-        const Point_2 & q = (ind2 == MIN_END) ? xc2.right() : xc2.left();
-        Direction_2 p_2 = Traits::project_xy(p);
-        Direction_2 q_2 = Traits::project_xy(q);
+        // Obtain the directions contained in the underlying planes, which are
+        // also on the xy-plane:
+        Direction_3 normal1 = xc1.plane().orthogonal_direction();
+        Direction_2 p = (xc1.is_directed_right()) ?
+          Direction_2(-(normal1.dy()), normal1.dx()) :
+          Direction_2(normal1.dy(), -(normal1.dx()));
+        Direction_3 normal2 = xc2.plane().orthogonal_direction();
+        Direction_2 q = (xc2.is_directed_right()) ?
+          Direction_2(-(normal2.dy()), normal2.dx()) :
+          Direction_2(normal2.dy(), -(normal2.dx()));
+
         const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p_2, q_2)) return EQUAL;
+        if (kernel->equal_2_object()(p, q)) return EQUAL;
         const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p_2, q_2)) ?
+        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
           LARGER : SMALLER;
       }
       if (xc1.is_vertical()) {
@@ -2323,41 +2329,35 @@ public:
     
   /*! Determine whether the given point is in the x-range of the
    * spherical_arc.
-   * \param p the query point direction.
-   * \return true if p is in the x-range of the (closed) spherical_arc and
+   * \param point the query point direction.
+   * \return true if point is in the x-range of the (closed) spherical_arc and
    * false otherwise.
-   * \pre p does not coincide with one of the poles
+   * \pre point does not coincide with one of the poles
    */
-  bool is_in_x_range(const Arr_extended_direction_3 & p) const
+  bool is_in_x_range(const Arr_extended_direction_3 & point) const
   {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
+    CGAL_precondition(!point.is_min_boundary());
+    CGAL_precondition(!point.is_max_boundary());
     
+    Direction_2 p = Traits::project_xy(point);
     if (is_vertical()) {
-      if (left().is_min_boundary() && right().is_max_boundary()) {
-        // Both endpoints coincide with the poles resp.
-        CGAL_assertion_msg(0, "Not implemented yet!");
-      }
-      // At least one endpoint does not coincide with a pole.
-      // Obtain the endpoint that does not coincide with a pole:
-      const Arr_extended_direction_3 & q =
-        (left().is_min_boundary()) ? right() : left();
-
-      Direction_2 p_2 = Traits::project_xy(p);
-      Direction_2 q_2 = Traits::project_xy(q);
+      Direction_3 normal = plane.orthogonal_direction();
+      Direction_2 q = (is_directed_right()) ?
+        Direction_2(-(normal.dy()), normal.dx()) :
+        Direction_2(normal.dy(), -(normal.dx()));
       Kernel kernel;
-      return kernel.equal_2_object()(p_2, q_2);
+      return kernel.equal_2_object()(p, q);
     }
 
     // The curve is not vertical:
-    Direction_2 p_2 = Traits::project_xy(p);
     Direction_2 r = Traits::project_xy(right());
     Kernel kernel;
-    if (kernel.equal_2_object()(p_2, r)) return true;
+    if (kernel.equal_2_object()(p, r)) return true;
     Direction_2 l = Traits::project_xy(left());
-    if (kernel.equal_2_object()(p_2, l)) return true;
-    return kernel.counterclockwise_in_between_2_object()(p_2, l, r);
+    if (kernel.equal_2_object()(p, l)) return true;
+    return kernel.counterclockwise_in_between_2_object()(p, l, r);
   }
 
 #if 0
