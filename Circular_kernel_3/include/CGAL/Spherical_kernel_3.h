@@ -51,6 +51,7 @@
 #include <CGAL/Circular_arc_3.h>
 
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_sphere.h>
+#include <CGAL/Circular_kernel_3/function_objects_polynomial_reference_sphere.h>
 
 #include <CGAL/Circular_kernel_3/get_equation_object_on_curved_kernel_3.h>
 
