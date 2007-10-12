@@ -36,11 +36,11 @@ namespace CGAL {
       {}
 
     typename Qualified_result_of
-    <typename R::Construct_radius_sphere_with_radius_3, Sphere_with_radius_3>::type
+    <typename R::Compute_radius_sphere_with_radius_3, Sphere_with_radius_3>::type
     //const Sphere_3 &
     radius() const
     {
-      return typename R::Construct_radius_sphere_with_radius_3()(*this);
+      return typename R::Compute_radius_sphere_with_radius_3()(*this);
     }
   };
 }

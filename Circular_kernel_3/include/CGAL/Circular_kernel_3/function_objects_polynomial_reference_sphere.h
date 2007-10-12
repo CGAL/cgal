@@ -16,10 +16,114 @@
 
 namespace CGAL {
 namespace SphericalFunctors {
-  
+
   //ACCESS FUNCTIONS
   template <class SK>
-  class Construct_radius_sphere_with_radius_3: Has_qrt{
+  class Compute_circle_center_coefficient_3: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::FT result_type;
+    //~ typedef const result_type &        qualified_result_type;
+    typedef result_type               qualified_result_type;
+    typedef Arity_tag<1>              Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().circle_center_coefficient()); }
+  };
+  
+  template <class SK>
+  class Compute_extremal_point_z: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::FT result_type;
+    //~ typedef const result_type &        qualified_result_type;
+    typedef result_type               qualified_result_type;
+    typedef Arity_tag<1>              Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().extremal_point_z()); }
+  };
+  
+  
+  template <class SK>
+  class Compute_type_of_circle_on_reference_sphere_3: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename CGAL::Circle_type result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().type_of_circle_on_reference_sphere()); }    
+  };
+  
+  template <class SK>
+  class Compute_supporting_sphere_radius_3: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::FT result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().supporting_sphere_radius()); }    
+  };
+  
+  template <class SK>
+  class Compute_supporting_sphere_squared_radius_3: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::FT result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().supporting_sphere_squared_radius()); }    
+  };  
+  
+  template <class SK>
+  class Compute_supporting_sphere_center_3: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::Point_3 result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().supporting_sphere_center()); }
+  };
+  
+  template <class SK>
+  class Compute_reference_sphere_3: Has_qrt{
+    typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::Sphere_with_radius_3 result_type;
+    typedef const result_type &        qualified_result_type;
+    typedef Arity_tag<1>             Arity;
+
+    qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().reference_sphere()); }    
+  };  
+  
+  
+  
+  
+  template <class SK>
+  class Compute_radius_sphere_with_radius_3: Has_qrt{
     typedef typename SK::Sphere_with_radius_3   Sphere_with_radius_3;
 
   public:
@@ -105,7 +209,28 @@ namespace SphericalFunctors {
   };  
   
   //CONSTRUCTIONS
-//TAG_SEB
+
+  template < class SK >
+  class Construct_circle_on_reference_sphere_3
+  {
+    typedef typename SK::Circle_on_reference_sphere_3                           Circle_on_reference_sphere_3;
+    typedef typename SK::Kernel_base::Circle_on_reference_sphere_3              RCircle_on_reference_sphere_3;
+    typedef typename Circle_on_reference_sphere_3::Repd                         Rep;
+
+  public:
+    typedef  Circle_on_reference_sphere_3 result_type;
+    typedef Arity_tag<1>             Arity;
+
+
+    result_type
+    operator()(const typename SK::FT& _r,const typename SK::Point_3& _c,const typename SK::Sphere_with_radius_3& S)
+    { return Rep(_r,_c,S);}
+    
+    result_type
+    operator()(const typename SK::FT& _r,const typename SK::Point_3& _c,CGAL::Circle_type nat,const typename SK::Sphere_with_radius_3& S)
+    { return Rep(_r,_c,nat,S);}    
+  };
+    
   template < class SK >
   class Construct_sphere_with_radius_3
   {
