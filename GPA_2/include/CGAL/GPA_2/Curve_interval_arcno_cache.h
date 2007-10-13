@@ -136,12 +136,12 @@ struct Curve_interval_arcno_cache {
         vpair.first.resize(n_left); //+ n_mininf.first + n_maxinf.first);
         vpair.second.resize(n_right); //+ n_mininf.second + n_maxinf.second);
         
-        int i, _arcno, left_i, right_i;
+        int i, _arcno, left_i = 0, right_i = 0;
         // process arcs approaching -oo from left and right
-        for(left_i = 0; left_i < n_mininf.first; left_i++)
+        for(; left_i < n_mininf.first; left_i++)
             vpair.first[left_i] = std::make_pair(left_i, CGAL::MINUS_INFINITY);
             
-        for(right_i = 0; right_i < n_mininf.second; right_i++)
+        for(; right_i < n_mininf.second; right_i++)
             vpair.second[right_i] = std::make_pair(right_i,
                 CGAL::MINUS_INFINITY);
                 
@@ -159,17 +159,12 @@ struct Curve_interval_arcno_cache {
         // process arcs approaching +oo from left and right
         // this is not clear.. why arcnos at +oo are mapped to the same
         // interval arcnos ?
-        for(i = 0; i < n_maxinf.first; i++)
-            vpair.first[left_i] = std::make_pair(left_i++,
-                CGAL::PLUS_INFINITY); 
+        for(i = 0; i < n_maxinf.first; i++, left_i++)
+            vpair.first[left_i] = std::make_pair(left_i, CGAL::PLUS_INFINITY); 
                 
-        for(i = 0; i < n_maxinf.second; i++)
-            vpair.second[right_i] = std::make_pair(right_i++,
+        for(i = 0; i < n_maxinf.second; i++, right_i++)
+            vpair.second[right_i] = std::make_pair(right_i,
                 CGAL::PLUS_INFINITY);
-                
-        std::cout << "left_i: " << left_i << "; first.size: " <<
-            vpair.first.size() << "; right_i: " << right_i << 
-            "; second.size: " << vpair.second.size() << "\n";
         
         CGAL_precondition(left_i == static_cast<int>(vpair.first.size()) && 
             right_i == static_cast<int>(vpair.second.size()));

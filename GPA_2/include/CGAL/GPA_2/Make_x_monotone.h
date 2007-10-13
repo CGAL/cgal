@@ -95,8 +95,6 @@ struct Make_x_monotone_2 :
         if(NiX::total_degree(curve.f()) < 1) // use CGAL::Total_degree ? 
             return oi;
         
-        std::cout << "processing curve: " << curve.f() << "\n";    
-            
         Curve_analysis_2 ca_2(curve);
         Curve_vertical_line_1 evt_line1, evt_line2, 
             int_line = ca_2.vertical_line_of_interval(0);
@@ -123,13 +121,10 @@ struct Make_x_monotone_2 :
         for(k = 0; k < evt_line1.number_of_events(); k++) 
             max_pts.push_back(Point_2(max_x, curve, k));
                         
-        std::cout << "handling events over the 1st interval\n";    
+        //std::cout << "handling events over the 1st interval\n";    
         for(k = 0; k < int_line.number_of_events(); k++) {
             
             info1 = map_interval_arcno(evt_line1, 1, k); 
-            std::cout << "k = " << k << "; evt arcno: " <<
-                info1.first << "; tendency: " << info1.second << "\n";
-            
             if(info1.second != CGAL::NO_BOUNDARY) 
                 arc = Arc_2(CGAL::MIN_END, max_x, (info1.second < 0 ?
                     CGAL::MIN_END : CGAL::MAX_END), curve, k);
@@ -147,9 +142,6 @@ struct Make_x_monotone_2 :
             evt_line1 = ca_2.vertical_line_at_event(i);
             evt_line2 = ca_2.vertical_line_at_event(i+1);
             max_x = evt_line2.x();
-            
-            std::cout << "is_fixed flag: " << evt_line1.get_info().is_fixed()
-                 << "\n";
             oi = _handle_vertical_and_isolated(evt_line1, min_x, min_pts, oi);
                                 
             n = evt_line2.number_of_events();
@@ -159,9 +151,8 @@ struct Make_x_monotone_2 :
             n = ca_2.vertical_line_of_interval(i+1).number_of_events();
             CGAL::Curve_end inf1_end, inf2_end;
             for(k = 0; k < n; k++) {
-                std::cout << "getting first event arcno: k = " << k << "\n";
+                
                 info1 = map_interval_arcno(evt_line1, 0, k); 
-                std::cout << "getting second event arcno: k = " << k << "\n";
                 info2 = map_interval_arcno(evt_line2, 1, k); 
                 inf2_end = (info2.second < 0 ? CGAL::MIN_END : 
                     CGAL::MAX_END);
@@ -191,16 +182,12 @@ struct Make_x_monotone_2 :
         // vertical line or isolated points at last event?
         evt_line2 = ca_2.vertical_line_at_event(total_events-1);
         min_x = evt_line2.x();
-                
         oi = _handle_vertical_and_isolated(evt_line2, min_x, min_pts, oi);
         
-        std::cout << "handling events over the last interval\n";
         n = ca_2.vertical_line_of_interval(total_events).number_of_events();
         for(k = 0; k < n; k++) {
         
             info1 = map_interval_arcno(evt_line2, 0, k); 
-            std::cout << "k = " << k << "; evt arcno: " <<
-                info1.first << "; tendency: " << info1.second << "\n";
             if(info1.second != CGAL::NO_BOUNDARY) 
                 arc = Arc_2(CGAL::MAX_END, min_x, (info1.second < 0 ?
                     CGAL::MIN_END : CGAL::MAX_END), curve, k);
@@ -242,9 +229,6 @@ private:
         std::pair<int, int> ipair;
         for(j = 0; j < n; j++) {
             ipair = cv_line.get_number_of_incident_branches(j);
-        ///////////////////////////////////////////////////////////
-        /// ATTENTION: isolated points lying on regular arcs are not handled!!
-        ///////////////////////////////////////////////////////////
             if(ipair.first == 0&&ipair.second == 0) 
                 *oi++ = CGAL::make_object(Point_2(x, _m_curve, j));
         }
