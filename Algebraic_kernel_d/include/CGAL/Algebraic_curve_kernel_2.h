@@ -190,6 +190,16 @@ private:
             return Curve_pair_2(p.first, p.second);
         }
     };
+    
+    struct Curve_pair_equal_to :
+         public Unary_function<Pair_of_curves_2, bool>  {
+     
+         bool operator()(const Pair_of_curves_2& p1, 
+            const Pair_of_curves_2& p2) const {
+            return (p1.first.id() == p2.first.id() &&
+                 p1.second.id() == p2.second.id());
+         }
+    };
 
     //typedef CGAL::Pair_lexicographical_less_than<Internal_polynomial_2,
       //  Internal_polynomial_2> Poly_pair_compare;
@@ -203,7 +213,7 @@ private:
     typedef CGALi::LRU_hashed_map<Pair_of_curves_2, Curve_pair_2,
         Curve_pair_canonicalizer, 
         CGALi::Curve_pair_hasher_2<Curve_2>, 
-        Curve_pair_creator > Curve_pair_cache;
+        Curve_pair_creator, Curve_pair_equal_to> Curve_pair_cache;
       
     //!@}
 public:
@@ -249,13 +259,13 @@ public:
             
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
-            return Self::get_curve_cache()(f);;
+            //return Self::get_curve_cache()(f);;
+            return Curve_2(f);
         }
         Curve_2 operator()(const Polynomial_2_CGAL& f) const
         {
             CGAL2NiX_converter cvt;
             return Self::get_curve_cache()(cvt(f));
-                //_m_pkernel_2->get_curve_cache()(cvt(f));
         }
         
     private:
@@ -413,7 +423,7 @@ public:
                 // move the common part returned through both iterators
                 // oi1/oi2 to oib
                 *oib++ = parts_f[0];
-                CGAL_precondition(parts_f[0] == parts_g[0]);
+                CGAL_precondition(parts_f[0].f() == parts_g[0].f());
                 if(parts_f.size() > 1)
                     std::copy(parts_f.begin() + 1, parts_f.end(), oi1);
                 if(parts_g.size() > 1)
@@ -478,30 +488,50 @@ public:
        
         //! \brief copies in the output iterator the x-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
+        //!
+        //! all points (x, y) with f(x,y) = fx(x,y) = 0 are x-critical points
+        //! (i.e, singularities are also counted)
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_2& p, 
-            OutputIterator res) const
-        {
+                OutputIterator oi) const {
+                
+            typename Self::Derivative_x_2 der_x;
+            typename Self::Construct_curve_2 curve_2;
+            NiX2CGAL_converter cvt;
+            // construct curve analysis of a derivative in y
+            typename Self::Curve_analysis_2 ca_2(p),
+                    ca_2x(curve_2(der_x(cvt(p.f()))));
+            typename Self::Curve_pair_analysis_2 cpa_2(ca_2, ca_2x);
+            typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                cpv_line;
             typename Self::Curve_analysis_2::Curve_vertical_line_1 cv_line;
-            std::pair<int, int> int_pair;
-            // p is of type Curve_2 here
-            typename Self::Curve_analysis_2 ca_2(p); 
-            int i, n_events = ca_2.number_of_vertical_lines_with_event();
+            
+            int i, j, k, n_arcs, n_events =
+                cpa_2.number_of_vertical_lines_with_event();
+            std::pair<int,int> ipair;
+            bool vline_constructed = false;
+            
             for(i = 0; i < n_events; i++) {
-                cv_line = ca_2.vertical_line_at_event(i);
-                int j, n_arcs = cv_line.number_of_events();
+                cpv_line = cpa_2.vertical_line_at_event(i);
+                // no 2-curve intersections over this vertical line
+                if(!cpv_line.is_intersection())
+                    continue;
+                n_arcs = cpv_line.number_of_events();
                 for(j = 0; j < n_arcs; j++) {
-                    int_pair = cv_line.get_number_of_incident_branches(j);
-                    // count only points with the number of incident branches
-                    // different from 1
-                    // TODO be carefull .. there can be an "isolated point"
-                    // on a branch
-                 // hmm.. what to do if there is vertical asymptote at this x ?
-                    if(int_pair.first != 1||int_pair.second != 1) 
-                        *res++ = cv_line.get_algebraic_real_2(j);   
+                    ipair = cpv_line.get_curves_at_event(j);
+                    if(ipair.first == -1||ipair.second == -1) 
+                        continue;
+                    if(!vline_constructed) {
+                        cv_line = ca_2.vertical_line_at_exact_x(cpv_line.x());
+                        vline_constructed = true;
+                    }
+                    // ipair.first is an arcno over vertical line of the 
+                    // curve p
+                    *oi++ = cv_line.get_algebraic_real_2(ipair.first);
                 }
+                vline_constructed = false;
             }
-            return res;
+            return oi;
         }
         
         //! \brief computes the ith x-critical point of polynomial \c p
@@ -523,21 +553,61 @@ public:
     
         //! \brief copies in the output iterator the y-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
-        //! 
-        //! attention: x and y variables are interchanged in the result
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_2& p, 
-            OutputIterator res) const
+            OutputIterator oi) const
         {
-            NiX2CGAL_converter cvt;
-            CGAL2NiX_converter cvt_back;
-            Polynomial_2_CGAL tmp = cvt(p.f());
-            typename Polynomial_traits_2::Swap swap;
+            typedef typename Self::Curve_analysis_2 Curve_analysis_2;
+            typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
             
-            tmp = swap(tmp, 0, 1); // interchange x and y variables
-            Polynomial_2 swapped(cvt_back(tmp));
-            // TODO ok .. but costly!
-            return X_critical_points_2()(swapped, res);
+            typename Curve_analysis_2::Curve_vertical_line_1 cv_line;
+            std::pair<int,int> ipair;
+            // p is of type Curve_2 here
+            Curve_analysis_2 ca_2(p); 
+            int i, j, k, n_arcs, n_events =
+                ca_2.number_of_vertical_lines_with_event();
+            
+            bool cpa_constructed = false, vline_constructed = false; 
+            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                cpv_line;
+            Curve_pair_analysis_2 cpa_2;
+            
+            for(i = 0; i < n_events; i++) {
+                cv_line = ca_2.vertical_line_at_event(i);
+                n_arcs = cv_line.number_of_events();
+                for(j = 0; j < n_arcs; j++) {
+                    ipair = cv_line.get_number_of_incident_branches(j);
+                    // general case: no special tests required
+                    if(!(ipair.first == 1&&ipair.second == 1)) {
+                        *oi++ = cv_line.get_algebraic_real_2(j);
+                        continue;
+                    }
+                    if(!cpa_constructed) {
+                        typename Self::Derivative_y_2 der_y;
+                        typename Self::Construct_curve_2 curve_2;
+                        NiX2CGAL_converter cvt;
+                        // construct curve analysis of a derivative in x
+                        Curve_analysis_2 ca_2y(curve_2(der_y(cvt(p.f()))));
+                        cpa_2 = Curve_pair_analysis_2(ca_2, ca_2y);
+                        cpa_constructed = true;
+                    }
+                    if(!vline_constructed) {
+                        cpv_line = cpa_2.vertical_line_for_x(cv_line.x());
+                        vline_constructed = true;
+                    }
+                    if(!cpv_line.is_intersection())
+                        continue;
+                    // obtain the y-position of j-th event of curve p
+                    k = cpv_line.get_event_of_curve(j, 0);
+                    ipair = cpv_line.get_curves_at_event(k);
+                    
+                    // pick up only event comprised of both curve and its der
+                    if(ipair.first != -1&&ipair.second != -1)
+                        *oi++ = cv_line.get_algebraic_real_2(j);
+                }
+                vline_constructed = false;
+            }
+            return oi;
         }
         
         //! \brief computes the ith y-critical point of polynomial \c p
@@ -613,13 +683,13 @@ public:
         typedef std::pair<third_argument_type, fourth_argument_type>
             result_type;
      
-        template <class OutputIteratorRoots, OutputIteratorMult>
+        template <class OutputIteratorRoots, class OutputIteratorMult>
         std::pair<OutputIteratorRoots, OutputIteratorMult>
             operator()(const Polynomial_2& p1, const Polynomial_2& p2,
                 OutputIteratorRoots roots, OutputIteratorMult mults) const
         {
             // these tests are quite expensive... do we really need them ??
-            CGAL_precondition_code (
+            /*CGAL_precondition_code (
                 typename Self::Has_finite_number_of_self_intersections_2 
                     not_self_overlapped;
                 typename Self::Has_finite_number_of_intersections_2 
@@ -627,7 +697,7 @@ public:
                 CGAL_precondition(not_self_overlapped(p1) &&
                     not_self_overlapped(p2));
                 CGAL_precondition(do_not_overlap(p1, p2));
-            );
+            );*/
             typename Self::Curve_pair_analysis_2 cpa_2(
                 (Curve_analysis_2(p1)),(Curve_analysis_2(p2)));
             typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
@@ -668,13 +738,6 @@ public:
 public:
     //! \name types and functors for \c GPA_2< both >
     //!@{
-    
-    //////////////////////////////////////////////////////////////
-    ///////// TODO: introduce additional template parameters for all
-    ///////// dynamic life-time objects, i.e. 
-    ////////        HandlePolicy = Handle_policy_union
-    /////////       Allocator = ::boost::object_pool<Rep>
-    ///////////////////////////////////////////////////////////////
    
     //! type of 1-curve analysis
     typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
