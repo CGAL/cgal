@@ -16,17 +16,24 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_XY_COORDINATE_2_H
 
 #include <CGAL/basic.h>
+#include <boost/pool/pool_alloc.hpp>
 
 CGAL_BEGIN_NAMESPACE
-
+//::boost::fast_pool_allocator<Rep_> >
 namespace CGALi {
 
-template < class AlgebraicCurveKernel_2, class Rep_ > 
+template < class AlgebraicCurveKernel_2, class Rep_, 
+      class HandlePolicy_ = CGAL::Handle_policy_no_union,
+      class Allocator_ = CGAL_ALLOCATOR(Rep_) >
+      
+      //::boost::fast_pool_allocator<Rep_> >
 class Xy_coordinate_2;
 
-template < class AlgebraicCurveKernel_2, class Rep > 
+template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
+           class Allocator > 
 std::ostream& operator<< (std::ostream&, 
-    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>&);
+    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep, HandlePolicy,
+        Allocator>&);
 
 template < class AlgebraicCurveKernel_2 >
 class Xy_coordinate_2_rep {
@@ -77,8 +84,10 @@ public:
 //! a supporting curve and an arcno and is valid only for finite solutions,
 //! i.e., it cannot represent points at infinity 
 template <class AlgebraicCurveKernel_2, 
-          class Rep_ = CGALi::Xy_coordinate_2_rep<AlgebraicCurveKernel_2> >
-class Xy_coordinate_2 : public ::CGAL::Handle_with_policy< Rep_ > 
+          class Rep_ = CGALi::Xy_coordinate_2_rep<AlgebraicCurveKernel_2>,
+          class HandlePolicy_, class Allocator_>
+class Xy_coordinate_2 : 
+    public ::CGAL::Handle_with_policy<Rep_, HandlePolicy_, Allocator_> 
 {
 public:
     //! \name public typedefs
@@ -89,16 +98,19 @@ public:
 
     //! this instance's second template parameter
     typedef Rep_ Rep;
+    
+    //! this instance's third template parameter
+    typedef HandlePolicy_ Handle_policy;
+    
+    //! this instance's fourth template parameter
+    typedef Allocator_ Allocator;
 
     //! this instance itself
-    typedef Xy_coordinate_2<Algebraic_curve_kernel_2, Rep> Self;
+    typedef Xy_coordinate_2<Algebraic_curve_kernel_2, Rep, Handle_policy,
+        Allocator> Self;
     
     //! type of a curve pair 
     typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-
-    //! type of a curve analysis (replacement to CCPA_2)
-    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
-        Curve_analysis_2;
 
     //! type of an algabraic curve
     typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
@@ -123,7 +135,7 @@ public:
                 Curve_vertical_line_1;
     
     //! the handle superclass
-    typedef ::CGAL::Handle_with_policy< Rep > Base;
+    typedef ::CGAL::Handle_with_policy<Rep, Handle_policy, Allocator> Base;
     
     //!@}
 private:
@@ -393,16 +405,19 @@ public:
     //!@}
 }; // class Xy_coordinate_2
 
-template < class AlgebraicCurveKernel_2, class Rep > 
+template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
+           class Allocator > 
 std::ostream& operator<< (std::ostream& os, 
-    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>& pt) 
+    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep, HandlePolicy,
+        Allocator>& pt)
 {
     if(::CGAL::get_mode(os) == ::CGAL::IO::PRETTY) {
-        os << "[x-coord: " << pt.x() << "; curve: " << pt.curve().f() << 
-            ";arcno: " << pt.arcno() << "]\n";
+        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+            pt.curve().f() << 
+            "; arcno: " << pt.arcno() << "]\n";
     } else { // ASCII output
         os << pt.x() << std::endl;
-        os << pt.curve() << std::endl;
+        os << pt.curve().f() << std::endl;
         os << pt.arcno() << std::endl;
     }
     return os;    

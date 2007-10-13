@@ -58,7 +58,10 @@ public:
     {  
         _m_curve_pair = Algebraic_curve_kernel_2::get_curve_pair_cache()
             (std::make_pair(ca1.get_polynomial_2(), ca2.get_polynomial_2()));
-        _m_is_swapped = (_m_curve_pair.curve1() != ca1.get_polynomial_2());
+        //! attention: is it enough to compare ids only ? or for safety
+        //! its better to compare polynomials ?
+        _m_is_swapped = (_m_curve_pair.curve1().id() !=
+             ca1.get_polynomial_2().id());
       //  if(_m_is_swapped)
         //    std::cout << "the content was swapped\n";
     }
@@ -150,13 +153,7 @@ public:
         const Curve_analysis_2& ca2) : 
             Base(Rep(ca1, ca2)) {  
     }
-
-    // SOLUTION: do not rest upon this constructor - it is temporary !!!
-    // temporary constructor to construct directly from curve pair
-    /*Curve_pair_analysis_2(const Curve_pair_2& curve_pair) : 
-            Base(Rep(curve_pair)) {  
-    }
-    */       
+ 
     /*!\brief
      * constructs a curve pair analysis from a given represenation
      */
@@ -208,7 +205,7 @@ public:
     {
         CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
         return Curve_pair_vertical_line_1(
-            this->ptr()->_m_curve_pair.slice_at_event(i),
+            this->ptr()->_m_curve_pair.slice_at_event(i), i,
                 this->ptr()->_m_is_swapped);
     }
 
@@ -219,8 +216,12 @@ public:
     Curve_pair_vertical_line_1 vertical_line_of_interval(int i) const
     {
         CGAL_precondition(i >= 0&&i <= number_of_vertical_lines_with_event());
+        
+//         std::cout << "interval id: " << 
+//             this->ptr()->_m_curve_pair.slice_at_interval(i).id() << "\n";
+//         
         return Curve_pair_vertical_line_1(
-            this->ptr()->_m_curve_pair.slice_at_interval(i), 
+            this->ptr()->_m_curve_pair.slice_at_interval(i), i,
                 this->ptr()->_m_is_swapped); 
     }
 

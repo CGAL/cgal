@@ -58,9 +58,10 @@ public:
     {   }
     
     // standard constructor
-    Curve_pair_vertical_line_1_rep(const Event2_slice& event_slice, 
+    Curve_pair_vertical_line_1_rep(const Event2_slice& event_slice, int index,
         bool is_swapped) : 
-        _m_event_slice(event_slice), _m_is_swapped(is_swapped) {   
+        _m_event_slice(event_slice), _m_is_swapped(is_swapped),
+            _m_index(index) {   
     }
     
     // data
@@ -71,6 +72,11 @@ public:
     // during precaching (this happens when a defining polynomial of the first
     // curve has higher degree than the second one)
     bool _m_is_swapped;
+    
+    // stores interval or event id of vertical line (required since 
+    // Event2_slice is not guarenteed to set id properly if vertical line
+    // lies over an interval)
+    int _m_index;
 
     // befriending the handle
     friend class Curve_pair_vertical_line_1<Curve_pair_analysis_2, Self>;
@@ -141,11 +147,12 @@ public:
     //!
     //! for safety purposes implicit conversion from \c Event2_slice is
     //! disabled. 
+    //! \c index specifies interval or event index of this vertical line
     //! \c is_swapped defines that the curves in targeting curve pair analysis
     //! were swapped during precaching 
     explicit Curve_pair_vertical_line_1(const Event2_slice& slice, 
-            bool is_swapped = false) : 
-        Base(Rep(slice, is_swapped)) {   
+            int index, bool is_swapped = false) : 
+        Base(Rep(slice, index, is_swapped)) {   
     }
         
     /*!\brief
@@ -182,7 +189,8 @@ public:
     //! returns this vertical line's index (event or interval index)
     int get_index() const
     {
-        return this->ptr()->_m_event_slice.id();
+        return this->ptr()->_m_index;
+        //return this->ptr()->_m_event_slice.id();
     }
         
     //! \brief returns number of distinct and finite intersections of a pair 
@@ -206,13 +214,6 @@ public:
         const typename Event2_slice::Int_container& ic = 
             this->ptr()->_m_event_slice.arcno_to_pos
                     ((c == 0 ? SoX::CURVE1 : SoX::CURVE2));
-                    
-        if(!(0 <= k && k < static_cast<int>(ic.size()))) {
-            std::cout << "k = " << k << "; c = " << c << 
-                "; curve = " << (c == 0? get_slice().curve1().f() : 
-                    get_slice().curve2().f()) << "\n";
-        }            
-                    
         CGAL_precondition(0 <= k && k < static_cast<int>(ic.size()));
         return (ic[k]);
     }

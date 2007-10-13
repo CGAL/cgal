@@ -213,7 +213,7 @@ struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
     
     size_t operator()(const Poly_2& p) const
     {
-        int n_count = 12;  
+        /*int n_count = 12;  
         NT res(1), sum;
         typename Poly_2::const_iterator it_2 = p.begin();
         while(it_2 != p.end() && n_count > 0) {
@@ -230,10 +230,9 @@ struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
                 res *= sum;
             it_2++;   
         }
-        /*typename Algebraic_structure_traits<NT>::Mod mod;
-        NT x = mod(res, 32); */
         // this is only way to truncate the result back to built-in NT
-        return static_cast<size_t>(CGALi::floor_log2_abs<NT>(res));
+        return static_cast<size_t>(CGALi::floor_log2_abs<NT>(res));*/
+        return static_cast<size_t>(p.id());
     }
 };
     
