@@ -1377,7 +1377,7 @@ public:
                        const X_monotone_curve_2 & xc) const
     {
       const Kernel * kernel = m_traits;
-      CGAL_precondition(kernel->has_on(xc.plane(), point));
+      CGAL_precondition(m_traits->has_on(xc.plane(), point));
       
       const Point_2 & left = xc.left();
       const Point_2 & right = xc.right();
@@ -1658,7 +1658,7 @@ public:
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
-      CGAL_precondition_code(Are_mergeable_2 are_merg;);
+      CGAL_precondition_code(Are_mergeable_2 are_merg(m_traits););
       CGAL_precondition (are_merg(xc1, xc2) == true);
 
       xc.set_is_degenerate(false);
@@ -2343,7 +2343,7 @@ public:
     
     Direction_2 p = Traits::project_xy(point);
     if (is_vertical()) {
-      Direction_3 normal = plane.orthogonal_direction();
+      Direction_3 normal = m_plane.orthogonal_direction();
       Direction_2 q = (is_directed_right()) ?
         Direction_2(-(normal.dy()), normal.dx()) :
         Direction_2(normal.dy(), -(normal.dx()));
