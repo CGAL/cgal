@@ -19,7 +19,7 @@ namespace SphericalFunctors {
 
   //ACCESS FUNCTIONS
   template <class SK>
-  class Compute_circle_center_coefficient_3: Has_qrt{
+  class Compute_circle_center_coefficient_3/*: Has_qrt*/{
     typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
 
   public:
@@ -34,7 +34,7 @@ namespace SphericalFunctors {
   };
   
   template <class SK>
-  class Compute_extremal_point_z: Has_qrt{
+  class Compute_extremal_point_z/*: Has_qrt*/{
     typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
 
   public:
@@ -77,28 +77,32 @@ namespace SphericalFunctors {
     { return (a.rep().supporting_sphere_radius()); }    
   };
   
+  //BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD 
   template <class SK>
-  class Compute_supporting_sphere_squared_radius_3: Has_qrt{
+  class Compute_supporting_sphere_squared_radius_3/*: Has_qrt*/{
     typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
 
   public:
 
     typedef typename SK::FT result_type;
-    typedef const result_type &        qualified_result_type;
+    //~ typedef const result_type &        qualified_result_type;
+    typedef result_type        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().supporting_sphere_squared_radius()); }    
   };  
   
+  //BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD 
   template <class SK>
-  class Compute_supporting_sphere_center_3: Has_qrt{
+  class Compute_supporting_sphere_center_3/*: Has_qrt*/{
     typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
 
   public:
 
     typedef typename SK::Point_3 result_type;
-    typedef const result_type &        qualified_result_type;
+    //~ typedef const result_type &        qualified_result_type;
+    typedef result_type        qualified_result_type;
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const

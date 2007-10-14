@@ -456,7 +456,7 @@ template < class SK > \
   };
   
   template <class SK>
-  class Construct_supporting_sphere_3//: Has_qrt
+  class Construct_supporting_sphere_3: Has_qrt
   {
     typedef typename SK::Sphere_3 Sphere_3;
     typedef typename SK::Circle_3 Circle_3;

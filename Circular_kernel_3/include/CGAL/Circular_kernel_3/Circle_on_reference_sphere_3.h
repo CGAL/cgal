@@ -25,7 +25,7 @@ namespace CGAL {
     public:
       
       Circle_on_reference_sphere_3(const FT& _r,const Point_3& _c,const Sphere_3& ref):Circle_3(Sphere_3(_r,_c),ref){
-        _nature=SK::classify_one_circle(*this);
+        _nature=CGAL::classify_one_circle<SK>(*this);
         #warning TRY WITH FLAG ONLY_SK_ALGEBRA
       }
       
@@ -33,8 +33,13 @@ namespace CGAL {
         
       const Circle_type& type_of_circle_on_reference_sphere() const {  return _nature;}
       const FT& supporting_sphere_radius() const {  return this->supporting_sphere().radius();}
-      const FT& supporting_sphere_squared_radius() const {  return this->supporting_sphere().squared_radius();}
-      const Point_3& supporting_sphere_center() const {  return this->supporting_sphere().center();}    
+      //BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD 
+      //~ const FT& supporting_sphere_squared_radius() const {  return this->supporting_sphere().squared_radius();}
+      FT supporting_sphere_squared_radius() const {  return this->supporting_sphere().squared_radius();}
+      
+      //BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD 
+      //~ const Point_3& supporting_sphere_center() const { return this->supporting_sphere().center();}
+      Point_3 supporting_sphere_center() const { return this->supporting_sphere().center();}
       const Sphere_3& reference_sphere() const{return this->base.reference_sphere();}
       
       
