@@ -1268,6 +1268,7 @@ public:
 
   /*! The clockwise-in-between function object */
   class Clockwise_in_between_2 {
+  protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
@@ -1473,7 +1474,8 @@ public:
         Equal_2 equal = kernel->equal_2_object();
         Counterclockwise_in_between_2 ccib =
           kernel->counterclockwise_in_between_2_object();
-        Clockwise_in_between_2 cib(m_traits);
+        Traits::Clockwise_in_between_2 cib =
+          m_traits->clockwise_in_between_2_object();
 
         if (xc1.is_vertical()) {
           // Both arcs are vertical
@@ -1599,11 +1601,18 @@ public:
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
+      if (xc1.is_full() && xc2.is_full()) return false;
 
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
+
+      if (xc1.is_degenerate() && xc2.is_degenerate())
+        return equal(xc1.left(), xc2.left());
+      if (xc1.is_full() && xc2.is_degenerate())
+        return xc1.has_on(xc2.left());
+      if (xc2.is_full() && xc1.is_degenerate())
+        return xc2.has_on(xc1.left());
+
 #if defined(CGAL_ARR_PLANE)
       if (!(xc1.plane()).equal(xc2.plane()) &&
           !(xc1.plane()).equal(xc2.plane().opposite()))
@@ -1658,8 +1667,7 @@ public:
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
-      CGAL_precondition_code(Are_mergeable_2 are_merg(m_traits););
-      CGAL_precondition (are_merg(xc1, xc2) == true);
+      CGAL_precondition (m_traits->are_mergeable_2_object()(xc1, xc2) == true);
 
       xc.set_is_degenerate(false);
       xc.set_is_vertical(xc1.is_vertical());
@@ -1974,22 +1982,6 @@ protected:
 
   inline Sign z_sign(Direction_3 d) { return CGAL::sign(d.dz()); }
 
-  /*! Determined whether a direction is contained in a plane
-   * \param plane the 3D plane.
-   * \param dir the 3D direction.
-   * \return true if dir is contained in plane; false otherwise.
-   * \pre the plane contains the origin.
-   */
-  inline bool has_on(const Plane_3 & plane, const Direction_3 & dir) const
-  {
-    Kernel kernel;
-
-    Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
-    Vector_3 vec = kernel.construct_vector_3_object()(ray);
-    Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
-    return kernel.has_on_3_object()(plane, point);
-  }
-
   /*! Constructs a plane that contains two directions.
    * \todo Introduce in Kernel::ConstructPlane_3::operator()(Direction_3, Dir..)
    * \param d1 the first direction.
@@ -2201,7 +2193,7 @@ public:
     m_is_full(true),
     m_is_degenerate(false)
   {
-    CGAL_precondition(has_on(plane, point));
+    CGAL_precondition(has_on(point));
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
   }
   
@@ -2225,8 +2217,8 @@ public:
   {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition(has_on(plane, source));
-    CGAL_precondition(has_on(plane, target));
+    CGAL_precondition(has_on(source));
+    CGAL_precondition(has_on(target));
 
     // Check whether any one of the endpoint coincide with a pole:
     if (source.is_max_boundary()) {
@@ -2384,6 +2376,22 @@ public:
     opp.m_is_degenerate = this->is_degenerate();
     return opp;
   }
+
+  /*! Determined whether a direction is contained in a plane
+   * \param plane the 3D plane.
+   * \param dir the 3D direction.
+   * \return true if dir is contained in plane; false otherwise.
+   * \pre the plane contains the origin.
+   */
+  inline bool has_on(const Direction_3 & dir) const
+  {
+    Kernel kernel;
+
+    Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
+    Vector_3 vec = kernel.construct_vector_3_object()(ray);
+    Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
+    return kernel.has_on_3_object()(m_plane, point);
+  }
 };
 
 /*! A representation of a general great circular arc embedded on a sphere,
@@ -2433,6 +2441,9 @@ public:
    * \param is_directed_right is the arc directed from left to right?
    * \param is_full is the arc a full (great) circle?
    * \param is_degenerate is the arc degenerate (single point)?
+   * \pre plane contains the origin
+   * \pre plane contains src
+   * \pre plane contains trg
    */
   Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & src,
                                      const Arr_extended_direction_3 & trg,
@@ -2442,9 +2453,14 @@ public:
                                      bool is_full = false,
                                      bool is_degenerate = false) :
     Base(src, trg, plane,
-         is_vertical, is_directed_right, is_full, is_degenerate)
+         is_vertical, is_directed_right, is_full, is_degenerate),
+    m_is_x_monotone(is_x_monotone)
   {
-    set_is_x_monotone(is_x_monotone);
+    CGAL_precondition_code(Kernel kernel);
+    CGAL_precondition_code(Point_3 point = ORIGIN);
+    CGAL_precondition(kernel.has_on_3_object()(plane, point));
+    CGAL_precondition(this->has_on(src));
+    CGAL_precondition(this->has_on(trg));
   }
 
   /*! Construct a spherical_arc from two endpoint directions. It is assumed
@@ -2552,6 +2568,7 @@ public:
    * \param plane the containing plane.
    * \param source the source-point direction.
    * \param target the target-point direction.
+   * \pre plane contain the origin
    * \pre Both endpoints lie on the given plane.
    */
   Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
@@ -2565,8 +2582,11 @@ public:
 
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition(this->has_on(plane, source));
-    CGAL_precondition(this->has_on(plane, target));
+    CGAL_precondition_code(Kernel kernel);
+    CGAL_precondition_code(Point_3 point = ORIGIN);
+    CGAL_precondition(kernel.has_on_3_object()(plane, point));
+    CGAL_precondition(this->has_on(source));
+    CGAL_precondition(this->has_on(target));
 
     Direction_3 normal = plane.orthogonal_direction();
     if (z_sign(normal) == ZERO) {
