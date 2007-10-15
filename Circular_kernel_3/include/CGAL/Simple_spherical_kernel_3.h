@@ -68,11 +68,10 @@ namespace CGAL {
 				 // takes classes in internal sub-namespace
       {
         typedef CGALi::Circular_arc_point_3<SphericalKernel>                  Circular_arc_point_3;
-        typedef CGALi::Circular_arc_on_reference_sphere_3<SphericalKernel>    Circular_arc_on_reference_sphere_3;
         typedef CGALi::Circle_3<SphericalKernel>                              Circle_3;
         typedef CGALi::Line_arc_3<SphericalKernel>                            Line_arc_3;
         typedef CGALi::Theta_rep<SphericalKernel>                             Theta_rep;
-        typedef CGALi::Theta_rep<SphericalKernel>                             Sphere_with_radius_3;
+        typedef CGALi::Sphere_with_radius_3<SphericalKernel>                  Sphere_with_radius_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>                        Circular_arc_3;
         typedef CGALi::Circle_on_reference_sphere_3<SphericalKernel>          Circle_on_reference_sphere_3;
         

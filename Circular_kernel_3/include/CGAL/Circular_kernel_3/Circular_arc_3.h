@@ -31,16 +31,20 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
+#include <boost/utility/enable_if.hpp>
+
 
 namespace CGAL {
   namespace CGALi{
-    template <class SK> class Circular_arc_3 {
-
+    template <class SK,class Circle=CGAL::Circle_3<SK>, class Circular_arc_point=CGAL::Circular_arc_point_3<SK> >
+    class Circular_arc_3 {
       typedef typename SK::Plane_3              Plane_3;
-      typedef typename SK::Circle_3             Circle_3;
+      //~ typedef typename SK::Circle_3             Circle_3;
+      typedef Circle                            Circle_3;
       typedef typename SK::Sphere_3             Sphere_3;
       typedef typename SK::Point_3              Point_3;
-      typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
+      //~ typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
+      typedef Circular_arc_point                Circular_arc_point_3;
       typedef typename SK::Line_3               Line_3;
       typedef typename SK::FT                   FT;
 
@@ -58,6 +62,12 @@ namespace CGAL {
 
     public:
 
+      template <class T>
+      Sphere_3 reference_sphere(typename boost::enable_if< boost::is_same<T, typename SK::Circle_on_reference_sphere_3 > >::type* = 0){};
+
+      //~ template <>
+      //~ Sphere_3 reference_sphere<Circle_3>(typename boost::enable_if< boost::is_same<Circle_3, typename SK::Circle_on_reference_sphere_3 > >::type* = 0){}
+        
       Circular_arc_3()
       {}
 
@@ -268,23 +278,23 @@ namespace CGAL {
 
     };
 
-    template < class SK >
-    double Circular_arc_3<SK>::pi = CGAL_PI;
+    template < class SK ,class Circle, class Circular_arc_point>
+    double Circular_arc_3<SK,Circle,Circular_arc_point>::pi = CGAL_PI;
 
-    template < class SK >
+    template < class SK ,class Circle, class Circular_arc_point>
     CGAL_KERNEL_INLINE
     bool
-    Circular_arc_3<SK>::operator==(const Circular_arc_3<SK> &t) const
+    Circular_arc_3<SK,Circle,Circular_arc_point>::operator==(const Circular_arc_3<SK,Circle,Circular_arc_point> &t) const
     {
       if (CGAL::identical(base, t.base))
         return true;		
       return CGAL::SphericalFunctors::non_oriented_equal<SK>(*this, t);
     }
 
-    template < class SK >
+    template < class SK ,class Circle, class Circular_arc_point>
     CGAL_KERNEL_INLINE
     bool
-    Circular_arc_3<SK>::operator!=(const Circular_arc_3<SK> &t) const
+    Circular_arc_3<SK,Circle,Circular_arc_point>::operator!=(const Circular_arc_3<SK,Circle,Circular_arc_point> &t) const
     {
       return !(*this == t);
     }
