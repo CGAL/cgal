@@ -119,7 +119,7 @@ public:
                            (event->number_of_right_curves() == 1));
             
             const X_monotone_curve_2 & xc =
-                (*(event->left_curves_begin()))->last_curve();
+                (*(event->right_curves_begin()))->last_curve();
             
             if (m_top_traits->leftmost_vertex() == NULL)
             {
@@ -140,7 +140,7 @@ public:
                            (event->number_of_right_curves() == 0));
             
             const X_monotone_curve_2 & xc =
-                (*(event->right_curves_begin()))->last_curve();
+                (*(event->left_curves_begin()))->last_curve();
             
             if (m_top_traits->rightmost_vertex() == NULL)
             {
@@ -186,16 +186,10 @@ public:
             Vertex_handle vh(v);
             
             if (v == NULL) {
-                
-                vh = m_arr_access.create_vertex(event->point(),
-                                                bound_x, bound_y);
-                // &(*vh) if vh is Vertex_handle
-                m_top_traits->notify_on_boundary_vertex_creation(
-                        &(*vh), 
-                        xc, ind,
-                        bound_x, bound_y
-                );
+                m_arr_access.create_boundary_vertex (xc, ind,
+                                                     bound_x, bound_y);
             } 
+            
             event->set_vertex_handle(vh);
             return;
         }
