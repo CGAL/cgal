@@ -14,11 +14,12 @@ namespace CGAL {
     protected:
     typedef typename SK::Point_3 Point_3;
     typedef typename SK::FT FT;
-    typedef typename SK::Sphere_with_radius_3 Sphere_3;            
+    //~ typedef typename SK::Sphere_with_radius_3 Sphere_3;            
     public:
       typedef CGAL::CGALi::Circle_3<SK,CGAL::CGALi::Circle_representation_3<
           typename CGAL::Sphere_with_radius_3<SK>,
           typename CGAL::Sphere_with_radius_3<SK>,SK > > Circle_3;
+      typedef typename SK::Sphere_with_radius_3 Sphere_3;            
     protected:
       Circle_type _nature;//NORMAL,THREADED,POLAR,BIPOLAR
 

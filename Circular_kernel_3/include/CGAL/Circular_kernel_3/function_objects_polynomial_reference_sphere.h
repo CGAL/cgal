@@ -120,6 +120,9 @@ namespace SphericalFunctors {
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
+    { return (a.rep().reference_sphere()); }
+    
+    qualified_result_type operator() (const Circular_arc_on_reference_sphere_3 & a) const
     { return (a.rep().reference_sphere()); }    
   };  
   

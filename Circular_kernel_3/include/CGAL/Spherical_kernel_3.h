@@ -35,6 +35,8 @@
 #include <CGAL/Circular_kernel_3/Circular_arc_point_on_reference_sphere_3.h>
 #include <CGAL/Circular_arc_point_on_reference_sphere_3.h>
 
+#include <CGAL/Circular_arc_on_reference_sphere_3.h>
+
 #include <CGAL/Circular_kernel_3/Circle_3.h>
 #include <CGAL/Circle_3.h>
 
@@ -73,6 +75,7 @@ namespace CGAL {
         typedef CGALi::Line_arc_3<SphericalKernel>                                  Line_arc_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
         typedef CGALi::Circular_arc_point_on_reference_sphere_3<SphericalKernel>    Circular_arc_point_on_reference_sphere_3;
+        typedef CGALi::Circular_arc_3<SphericalKernel,Circle_3,Circular_arc_point_on_reference_sphere_3>    Circular_arc_on_reference_sphere_3;
         typedef CGALi::Theta_rep<SphericalKernel>                                   Theta_rep;
         typedef CGALi::Sphere_with_radius_3<SphericalKernel>                        Sphere_with_radius_3;
         typedef CGALi::Circle_on_reference_sphere_3<SphericalKernel>                Circle_on_reference_sphere_3;

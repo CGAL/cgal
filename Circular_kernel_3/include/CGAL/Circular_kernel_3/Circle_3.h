@@ -207,13 +207,14 @@ namespace CGAL {
     template <class SK,class Container=Circle_representation_3<typename CGAL::Sphere_3<SK>,typename CGAL::Plane_3<SK>,SK > >
     //~ template <class SK,class Container=Circle_representation_3<typename SK::Sphere_3,typename CGAL::Plane_3<SK>,SK > >
     class Circle_3 {    
-
-      typedef typename SK::Plane_3      Plane_3;
-      typedef typename Container::Sphere_3         Sphere_3;
-      typedef typename SK::Point_3      Point_3;
-      typedef typename SK::Vector_3     Vector_3;
-      typedef typename SK::Direction_3  Direction_3;
-      typedef typename SK::FT           FT;
+      public:
+        typedef typename Container::Sphere_3         Sphere_3;
+      private:
+        typedef typename SK::Plane_3      Plane_3;
+        typedef typename SK::Point_3      Point_3;
+        typedef typename SK::Vector_3     Vector_3;
+        typedef typename SK::Direction_3  Direction_3;
+        typedef typename SK::FT           FT;
 
     protected:
       //~ typedef std::pair<Sphere_3, Plane_3>  Rep;

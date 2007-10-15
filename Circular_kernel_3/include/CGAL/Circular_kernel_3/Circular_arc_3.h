@@ -41,7 +41,8 @@ namespace CGAL {
       typedef typename SK::Plane_3              Plane_3;
       //~ typedef typename SK::Circle_3             Circle_3;
       typedef Circle                            Circle_3;
-      typedef typename SK::Sphere_3             Sphere_3;
+      //~ typedef typename SK::Sphere_3             Sphere_3;
+      typedef typename Circle_3::Sphere_3             Sphere_3;
       typedef typename SK::Point_3              Point_3;
       //~ typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef Circular_arc_point                Circular_arc_point_3;
@@ -49,10 +50,18 @@ namespace CGAL {
       typedef typename SK::FT                   FT;
 
     private:
+      
+      const Sphere_3& get_ref_sphere(const typename SK::Circle_on_reference_sphere_3& C){return C.reference_sphere();}
+      Sphere_3 get_ref_sphere(const typename SK::Circle_3& C){return Sphere_3();}
+
       typedef Triple<Circle_3, Circular_arc_point_3, 
                                Circular_arc_point_3> Rep;
       typedef typename SK::template Handle<Rep>::type Base;
 
+    
+    
+      
+    
       Base base;
       mutable unsigned char _full;
       // It is the sign of the cross product 
@@ -62,11 +71,11 @@ namespace CGAL {
 
     public:
 
-      template <class T>
-      Sphere_3 reference_sphere(typename boost::enable_if< boost::is_same<T, typename SK::Circle_on_reference_sphere_3 > >::type* = 0){};
+      const Sphere_3& reference_sphere(){
+        #warning put a compiling warning so that no Circular_arc_3 instantiates this function
+        return get_ref_sphere(get(base).first);
+      };
 
-      //~ template <>
-      //~ Sphere_3 reference_sphere<Circle_3>(typename boost::enable_if< boost::is_same<Circle_3, typename SK::Circle_on_reference_sphere_3 > >::type* = 0){}
         
       Circular_arc_3()
       {}

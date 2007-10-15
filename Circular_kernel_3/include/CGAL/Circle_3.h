@@ -34,12 +34,13 @@ namespace CGAL {
     class Circle_3
     : public SK::Kernel_base::Circle_3
   {
-    
+    public:
+    typedef typename SK::Sphere_3              Sphere_3;
+    private:
     typedef typename SK::RT                    RT;
     typedef typename SK::FT                    FT;
     typedef typename SK::Point_3               Point_3;
     typedef typename SK::Plane_3               Plane_3;
-    typedef typename SK::Sphere_3              Sphere_3;
     typedef typename SK::Vector_3              Vector_3;
     typedef typename SK::Direction_3           Direction_3;
     typedef typename SK::Kernel_base::Circle_3 RCircle_3; 
