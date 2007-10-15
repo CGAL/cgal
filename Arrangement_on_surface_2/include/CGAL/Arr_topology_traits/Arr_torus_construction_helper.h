@@ -147,14 +147,7 @@ public:
             Vertex_handle vh(v);
 
             if (v == NULL) {
-                vh = m_arr_access.create_vertex(
-                        event->point(),
-                        bound_x, bound_y
-                );
-                
-                // &(*vh) if vh is Vertex_handle
-                m_top_traits->notify_on_boundary_vertex_creation(
-                        &(*vh), 
+                vh = m_arr_access.create_boundary_vertex(
                         xc, ind,
                         bound_x, bound_y
                 );
@@ -209,15 +202,9 @@ public:
 
             if (v == NULL) {
                 std::cout << "HELPER: new y" << std::endl;
-                vh = m_arr_access.create_vertex(
-                        event->point(),
-                        bound_x, bound_y);
-                // &(*vh) if vh is Vertex_handle
-                m_top_traits->notify_on_boundary_vertex_creation(
-                        &(*vh), 
+                vh = m_arr_access.create_boundary_vertex(
                         xc, ind,
-                        bound_x, bound_y
-                );
+                        bound_x, bound_y);
             }
             
             event->set_vertex_handle(vh);
