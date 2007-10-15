@@ -108,9 +108,9 @@ template <class stream>
 bool
 Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 {
-  Point_2 p1,p2;
-  read_point(is,p1);
-  read_point(is,p2);
+  Point_2 p1, p2;
+  read_point(is, p1);
+  read_point(is, p2);
   CGAL_assertion(p1 != p2);
   cv = Curve_2(p1, p2);
   return true;
