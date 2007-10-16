@@ -20,7 +20,8 @@
 #ifndef CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
 
-// #define CGAL_ARR_PLANE
+// #define CGAL_ARR_PLANE                                             1
+// #define CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED    1
 
 /*! \file
  * A class that handles great circular arcs embedded on spheres suitable
@@ -1117,9 +1118,25 @@ public:
           *oi++ = make_object(xc2);
           return oi;
         }
+#if defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
         // The arc is not vertical => break it at the discontinuity arc:
         const X_monotone_curve_2 xc(c.plane());
         *oi++ = make_object(xc);
+#else
+        // Full x-monotone arcs are not supported!
+        // Split the arc at the intersection point with the complement of the
+        // discontinuity arc:
+        const Plane_3 & plane = c.plane();
+        Direction_3 normal = plane.orthogonal_direction();
+        bool directed_right = Traits::x_sign(normal) == POSITIVE;
+        typename Kernel::FT z = plane.a() / plane.c();
+        Direction_3 d1(-1, 0, z);
+        Direction_3 d2(1, 0, -z);
+        X_monotone_curve_2 xc1(d1, d2, plane, false, directed_right);
+        X_monotone_curve_2 xc2(d2, d1, plane, false, directed_right);
+        *oi++ = make_object(xc1);
+        *oi++ = make_object(xc2);
+#endif
         return oi;
       }
       
@@ -1628,10 +1645,18 @@ public:
           !equal(xc1.plane(), xc2.plane().opposite()))
         return false;
 #endif
-      if (equal(xc1.right(), xc2.left()) && xc2.left().is_no_boundary())
-        return true;
-      if (equal(xc1.left(), xc2.right()) && xc1.left().is_no_boundary())
-        return true;
+
+      bool eq1 = equal(xc1.right(), xc2.left());
+      bool eq2 = equal(xc1.left(), xc2.right());
+
+#if defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+      if (eq1 && eq2) return true;
+#else
+      if (eq1 && eq2) return false;
+#endif
+
+      if (eq1 && xc2.left().is_no_boundary()) return true;
+      if (eq2 && xc1.left().is_no_boundary()) return true;
       return false;
     }
   };
@@ -1685,12 +1710,26 @@ public:
       xc.set_is_degenerate(false);
       xc.set_is_empty(false);
       xc.set_is_vertical(xc1.is_vertical());
+      
+      bool eq1 = equal(xc1.right(), xc2.left());
 
+#if defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+      bool eq2 = equal(xc1.left(), xc2.right());
+      if (eq1 && eq2) {
+        const Point_2 & p =
+          xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
+        xc.set_source(p);
+        xc.set_target(p);
+        xc.set_plane(xc1.plane());
+        xc.set_is_full(true);
+      }
+#endif
+      
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
         xc.set_plane(xc1.is_directed_right() ? xc1.plane() : xc2.plane());
         xc.set_is_directed_right(true);
 
-        if (equal(xc1.right(), xc2.left())) {
+        if (eq1) {
           xc.set_source(xc1.left());
           xc.set_target(xc2.right());
         } else {
@@ -1702,7 +1741,7 @@ public:
         xc.set_plane(xc1.plane());
         xc.set_is_directed_right(false);
 
-        if (equal(xc1.right(), xc2.left())) {
+        if (eq1) {
           xc.set_source(xc2.right());
           xc.set_target(xc1.left());
         } else {
@@ -1711,15 +1750,6 @@ public:
           xc.set_target(xc2.left());
         }
       }
-
-      /* The arc is full if:
-       * 1. the source lies on the open discontinuity arc, and
-       * 2. the target lies on the open discontinuity arc, and
-       * 3. the arc is not vertical
-       */
-      xc.set_is_full(!xc.is_vertical() &&
-                     xc.source().is_mid_boundary() &&
-                     xc.target().is_mid_boundary());
     }      
   };
 
@@ -2026,7 +2056,7 @@ protected:
   }
 
 public:
-  /*! Default constructor */
+  /*! Default constructor - constructs an empty arc */
   Arr_x_monotone_great_circular_arc_on_sphere_3() :
     m_is_vertical(false),
     m_is_directed_right(false),
@@ -2035,18 +2065,6 @@ public:
     m_is_empty(true)
   {}
   
-  /*! Constructor of a degenerate arc */
-  Arr_x_monotone_great_circular_arc_on_sphere_3
-  (const Arr_extended_direction_3 & p) :
-    m_source(p),
-    m_target(p),
-    m_is_vertical(false),
-    m_is_directed_right(false),
-    m_is_full(false),
-    m_is_degenerate(true),
-    m_is_empty(false)
-  {}
-
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc
@@ -2245,6 +2263,9 @@ public:
   {
     CGAL_precondition(has_on(point));
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
+#if !defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+    CGAL_assertion_msg(0, "Full x-monotone arcs are not supported!");
+#endif
   }
   
   /*! Construct a spherical_arc from two endpoints directions contained
@@ -2476,13 +2497,9 @@ protected:
   bool m_is_x_monotone;
   
 public:
-  /*! Default constructor */
+  /*! Default constructor - constructs an empty arc */
   Arr_great_circular_arc_on_sphere_3() : Base(), m_is_x_monotone(true) {}
   
-  /*! Constructor of a degenerate arc */
-  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & p) :
-    Base(p), m_is_x_monotone(true) {}
-
   /*! Copy constructor
    * \param other the other arc
    */
