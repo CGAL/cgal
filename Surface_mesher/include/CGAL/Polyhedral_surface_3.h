@@ -336,13 +336,13 @@ public:
     bounding_box = bounding_box + subsegments_octree.bbox();
     bounding_box_sq_radius = bounding_box.xmax()-bounding_box.xmin();
     bounding_box_sq_radius =
-      std::max BOOST_PREVENT_MACRO_SUBSTITUTION 
+      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION 
       (bounding_box_sq_radius,
-       bounding_box.ymax()-bounding_box.ymin());
+       FT(bounding_box.ymax()-bounding_box.ymin()));
     bounding_box_sq_radius =
-      std::max BOOST_PREVENT_MACRO_SUBSTITUTION
+      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
       (bounding_box_sq_radius,
-       bounding_box.zmax()-bounding_box.zmin());
+       FT(bounding_box.zmax()-bounding_box.zmin()));
     bounding_box_sq_radius /= 2;
     bounding_box_sq_radius *= bounding_box_sq_radius;
   } // end of Polyhedral_surface_3 constructor
