@@ -19,12 +19,12 @@
 
 #ifndef CGAL_MESHES_OUTPUT_STREAM_H
 
-#ifndef CGAL_MESHES_OUTPUT_ON_CERR
-#  define CGAL_MESHES_OUTPUT_STREAM std::cout
-#else
-#  ifdef CGAL_MESHES_NO_OUTPUT
-#    include <CGAL/IO/Verbose_ostream.h>
+#ifdef CGAL_MESHES_NO_OUTPUT
+#  include <CGAL/IO/Verbose_ostream.h>
 #  define CGAL_MESHES_OUTPUT_STREAM CGAL::Verbose_ostream()
+#else
+#  ifndef CGAL_MESHES_OUTPUT_ON_CERR
+#    define CGAL_MESHES_OUTPUT_STREAM std::cout
 #  else
 #    define CGAL_MESHES_OUTPUT_STREAM std::cerr
 #  endif
