@@ -22,7 +22,7 @@
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
-#include <CGAL/Mesh_3/Simple_map_container.h>
+#include <CGAL/Surface_mesher/Simple_map_container.h>
 #include <CGAL/iterator.h> // for CGAL::inserter
 #include <CGAL/circulator.h> // for CGAL::Circulator_from_container<C>
 #include <sstream>
