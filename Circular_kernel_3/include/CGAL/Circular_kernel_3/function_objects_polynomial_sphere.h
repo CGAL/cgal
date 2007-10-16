@@ -588,17 +588,17 @@ template < class SK > \
   {
 
     typedef typename SK::Line_3                        Line_3;
-    typedef typename SK::Circle_3                      Circle_3;
     typedef typename SK::Point_3                       Point_3;
     typedef typename SK::Segment_3                     Segment_3;
     typedef typename SK::Sphere_3                      Sphere_3;
     typedef typename SK::Plane_3                       Plane_3;
-    typedef typename SK::Circular_arc_point_3          Circular_arc_point_3;
     typedef typename SK::Line_arc_3                    Line_arc_3;
+    
+    typedef typename SK::Circular_arc_point_3          Circular_arc_point_3;
+    typedef typename SK::Circle_3                      Circle_3;
     typedef typename SK::Circular_arc_3                Circular_arc_3;
     typedef typename SK::Kernel_base::Circular_arc_3   RCircular_arc_3;
     typedef typename Circular_arc_3::Rep               Rep;
-
   public:
     typedef Circular_arc_3   result_type;
     typedef Arity_tag<3> Arity; // It is not true that each constructor has
@@ -659,7 +659,7 @@ template < class SK > \
                const Plane_3 &p2, bool less_xyz_p2,
                const Circle_3 &c) const
     { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }
-
+   
   };
 
   template <class SK>
@@ -786,6 +786,7 @@ template < class SK > \
     typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;
     typedef typename SK::Circular_arc_3          Circular_arc_3;
     typedef typename SK::Circle_3                Circle_3;
+    typedef typename SK::Circle_on_reference_sphere_3                Circle_on_reference_sphere_3;
     
 
   public:
@@ -801,13 +802,21 @@ template < class SK > \
     { return has_on<SK>(a, p); }
 
     result_type
+    operator()(const Sphere_with_radius_3 &a, const Point_3 &p) const
+    { return has_on<SK>(static_cast<const Sphere_3&>(a), p); }
+    
+    result_type
     operator()(const Point_3 &p, const Sphere_3 &a) const
     { return false; }
-
+    
+    result_type
+    operator()(const Point_3 &p, const Sphere_with_radius_3 &a) const
+    { return false; }
+    
     result_type
     operator()(const Sphere_3 &a, const Circular_arc_point_3 &p) const
     { return has_on<SK>(a, p); }
-    
+
     result_type
     operator()(const Sphere_with_radius_3 &a, const Circular_arc_point_on_reference_sphere_3 &p) const
     { return (*this)(static_cast<const Sphere_3&>(a),static_cast<const Circular_arc_point_3&>(p)); }    
@@ -815,6 +824,11 @@ template < class SK > \
     result_type
     operator()(const Circular_arc_point_3 &p, const Sphere_3 &a) const
     { return false; }
+    
+    result_type
+    operator()(const Circular_arc_point_3 &p, const Sphere_with_radius_3 &a) const
+    { return false; }    
+    
 
     result_type
     operator()(const Plane_3 &a, const Point_3 &p) const
@@ -851,6 +865,10 @@ template < class SK > \
     result_type
     operator()(const Circle_3 &a, const Point_3 &p) const
     { return has_on<SK>(a, p); }
+    
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &a, const Point_3 &p) const
+    { return has_on<SK>(a, p); }    
 
     result_type
     operator()(const Point_3 &p, const Circle_3 &a) const
@@ -859,6 +877,10 @@ template < class SK > \
     result_type
     operator()(const Circle_3 &a, const Circular_arc_point_3 &p) const
     { return has_on<SK>(a, p); }
+    
+    result_type
+    operator()(const Circle_on_reference_sphere_3& a, const Circular_arc_point_on_reference_sphere_3 &p) const
+    { return has_on<SK>(a, p); }    
 
     result_type
     operator()(const Circular_arc_point_3 &p, const Circle_3 &a) const
@@ -868,6 +890,10 @@ template < class SK > \
     operator()(const Sphere_3 &a, const Circle_3 &p) const
     { return has_on<SK>(a, p); }
 
+    result_type
+    operator()(const Sphere_with_radius_3 &a, const Circle_3 &p) const
+    { return has_on<SK>(static_cast<const Sphere_3&>(a), p); }
+    
     result_type
     operator()(const Circle_3 &p, const Sphere_3 &a) const
     { return false; }

@@ -34,6 +34,10 @@ namespace CGAL {
     Sphere_with_radius_3(const FT& _r,const Point_3& _c)
       : RSphere_with_radius_3(typename R::Construct_sphere_with_radius_3()(_r,_c))
       {}
+        
+    Sphere_with_radius_3(const CGAL::Sphere_3<SK>& S)
+      : RSphere_with_radius_3(typename R::Construct_sphere_with_radius_3()(S))
+      {}        
 
     typename Qualified_result_of
     <typename R::Compute_radius_sphere_with_radius_3, Sphere_with_radius_3>::type

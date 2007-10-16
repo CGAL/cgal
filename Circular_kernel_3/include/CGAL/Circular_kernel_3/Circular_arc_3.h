@@ -31,7 +31,6 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
-#include <boost/utility/enable_if.hpp>
 
 
 namespace CGAL {
@@ -52,7 +51,7 @@ namespace CGAL {
     private:
       
       const Sphere_3& get_ref_sphere(const typename SK::Circle_on_reference_sphere_3& C){return C.reference_sphere();}
-      Sphere_3 get_ref_sphere(const typename SK::Circle_3& C){return Sphere_3();}
+      Sphere_3 get_ref_sphere(const typename SK::Circle_3& C){CGAL_assertion(false);}
 
       typedef Triple<Circle_3, Circular_arc_point_3, 
                                Circular_arc_point_3> Rep;
@@ -72,7 +71,6 @@ namespace CGAL {
     public:
 
       const Sphere_3& reference_sphere(){
-        #warning put a compiling warning so that no Circular_arc_3 instantiates this function
         return get_ref_sphere(get(base).first);
       };
 

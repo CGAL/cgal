@@ -43,6 +43,16 @@ namespace CGAL {
     template <class SK>
     inline
     bool
+    has_on(const typename SK::Sphere_with_radius_3 &a, 
+           const typename SK::Point_3 &p)
+    { 
+      //~ return a.rep().has_on_boundary(p);
+      return a.has_on_boundary(p);
+    }   
+    
+    template <class SK>
+    inline
+    bool
     has_on(const typename SK::Sphere_3 &a, 
            const typename SK::Circular_arc_point_3 &p)
     { 
@@ -50,6 +60,14 @@ namespace CGAL {
       typedef typename SK::Polynomial_for_spheres_2_3 Equation;
       Equation equation = get_equation<SK>(a);
       return (Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
+    }
+    
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Sphere_with_radius_3 &a, 
+           const typename SK::Circular_arc_point_on_reference_sphere_3 &p){
+      return has_on<SK>(static_cast<const typename SK::Sphere_3&>(a),static_cast<const typename SK::Circular_arc_point_3&>(p));
     }
 /*
     template <class SK>
@@ -116,6 +134,27 @@ namespace CGAL {
              has_on<SK>(a.supporting_plane(),p);
     }
 
+    //duplicated code
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Circle_on_reference_sphere_3 &a, 
+           const typename SK::Point_3 &p)
+    { 
+      return has_on<SK>(a.diametral_sphere(),p) &&
+             has_on<SK>(a.supporting_plane(),p);
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Circle_on_reference_sphere_3 &a, 
+           const typename SK::Circular_arc_point_on_reference_sphere_3 &p)
+    { 
+      return has_on<SK>(a.diametral_sphere(),p) &&
+             has_on<SK>(a.supporting_plane(),p);
+    }    
+    
     template <class SK>
     inline
     bool

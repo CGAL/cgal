@@ -112,7 +112,7 @@ namespace SphericalFunctors {
   template <class SK>
   class Compute_reference_sphere_3: Has_qrt{
     typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
-
+    typedef typename SK::Circular_arc_on_reference_sphere_3 Circular_arc_on_reference_sphere_3;
   public:
 
     typedef typename SK::Sphere_with_radius_3 result_type;
@@ -217,6 +217,87 @@ namespace SphericalFunctors {
   
   //CONSTRUCTIONS
 
+ template < class SK >
+  class Construct_circular_arc_on_reference_sphere_3
+  {
+
+    typedef typename SK::Line_3                                             Line_3;
+    typedef typename SK::Point_3                                            Point_3;
+    typedef typename SK::Segment_3                                          Segment_3;
+    typedef typename SK::Sphere_3                                           Sphere_3;
+    typedef typename SK::Plane_3                                            Plane_3;
+    typedef typename SK::Line_arc_3                                         Line_arc_3;
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3           Circular_arc_point_on_reference_sphere_3;
+    typedef typename SK::Circle_on_reference_sphere_3                       Circle_on_reference_sphere_3;
+    typedef typename SK::Sphere_with_radius_3                               Sphere_with_radius_3;
+    typedef typename SK::Circular_arc_on_reference_sphere_3                 Circular_arc_on_reference_sphere_3;
+    typedef typename SK::Kernel_base::Circular_arc_on_reference_sphere_3    RCircular_arc_on_reference_sphere_3;
+    typedef typename Circular_arc_on_reference_sphere_3::Rep                Rep;    
+    
+  public:
+    typedef Circular_arc_on_reference_sphere_3   result_type;
+    typedef Arity_tag<3> Arity; // It is not true that each constructor has
+                                // 3 operands, maybe we should remove this
+
+    result_type
+    operator()(void) const
+    { return Rep(); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &c) const
+    { return Rep(c); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &l,
+	       const Circular_arc_point_on_reference_sphere_3 &s,
+	       const Circular_arc_point_on_reference_sphere_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &l,
+	       const Point_3 &s,
+	       const Circular_arc_point_on_reference_sphere_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &l,
+	       const Circular_arc_point_on_reference_sphere_3 &s,
+	       const Point_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &l,
+	       const Point_3 &s,
+	       const Point_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &c, 
+               const Sphere_with_radius_3 &s1, bool less_xyz_s1,
+               const Sphere_with_radius_3 &s2, bool less_xyz_s2) const
+    { return Rep(c,s1,less_xyz_s1,s2,less_xyz_s2); }
+
+    result_type
+    operator()(const Sphere_with_radius_3 &s1, bool less_xyz_s1,
+               const Sphere_with_radius_3 &s2, bool less_xyz_s2,
+               const Circle_on_reference_sphere_3 &c) const
+    { return Rep(c,s1,less_xyz_s1,s2,less_xyz_s2); }
+
+    result_type
+    operator()(const Circle_on_reference_sphere_3 &c, 
+               const Plane_3 &p1, bool less_xyz_p1,
+               const Plane_3 &p2, bool less_xyz_p2) const
+    { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }
+
+    result_type
+    operator()(const Plane_3 &p1, bool less_xyz_p1,
+               const Plane_3 &p2, bool less_xyz_p2,
+               const Circle_on_reference_sphere_3 &c) const
+    { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }    
+  };
+  
+  
+  
   template < class SK >
   class Construct_circle_on_reference_sphere_3
   {
@@ -228,7 +309,10 @@ namespace SphericalFunctors {
     typedef  Circle_on_reference_sphere_3 result_type;
     typedef Arity_tag<1>             Arity;
 
-
+    result_type
+    operator()()
+    { return Rep();}
+  
     result_type
     operator()(const typename SK::FT& _r,const typename SK::Point_3& _c,const typename SK::Sphere_with_radius_3& S)
     { return Rep(_r,_c,S);}
@@ -257,6 +341,10 @@ namespace SphericalFunctors {
     result_type
     operator()(const typename SK::FT& _r,const typename SK::Point_3& _c)
     { return Rep(_r,_c);}
+    
+    result_type
+    operator()(const CGAL::Sphere_3<SK>& S)
+    { return Rep(S);}    
   };
 
       

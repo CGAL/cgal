@@ -19,7 +19,8 @@ namespace CGAL {
     typedef typename SK::Point_3 Point_3;
     Sphere_with_radius_3():Sphere_3(){};
     Sphere_with_radius_3(const FT& _r,const Point_3& _c):Sphere_3(_c,_r*_r),hrad(_r){};
-    const FT& radius() const {return CGAL::get(hrad);}
+    Sphere_with_radius_3(const Sphere_3& S):Sphere_3(S),hrad(-1){}
+    const FT& radius() const {CGAL_precondition(CGAL::get(hrad)!=-1); return CGAL::get(hrad);}
   };
     
   } // namespace CGALi

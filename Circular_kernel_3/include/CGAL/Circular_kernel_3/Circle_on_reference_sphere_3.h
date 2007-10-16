@@ -25,6 +25,8 @@ namespace CGAL {
 
     public:
       
+      Circle_on_reference_sphere_3():Circle_3(){}
+      
       Circle_on_reference_sphere_3(const FT& _r,const Point_3& _c,const Sphere_3& ref):Circle_3(Sphere_3(_r,_c),ref){
         _nature=CGAL::classify_one_circle<SK>(*this);
         #warning TRY WITH FLAG ONLY_SK_ALGEBRA

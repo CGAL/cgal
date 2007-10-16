@@ -56,6 +56,9 @@ namespace CGAL {
 
       Base base;  
       public:
+      typedef Sphere_3 Diametral_sphere;
+      typedef Plane_3 Supporting_plane;        
+      
       Circle_representation_3() {}
       Circle_representation_3(const Sphere_3& S1,const Sphere_3& S2):base(S1,S2){}
       
@@ -101,7 +104,8 @@ namespace CGAL {
       }
 
       Sphere_3 diametral_sphere() const {
-        return Sphere_3(center(),squared_radius());
+        //~ return Sphere_3(center(),squared_radius());
+        return Sphere_3(CGAL::Sphere_3<SK>(center(),squared_radius()));
       }  
     };
       
@@ -122,6 +126,8 @@ namespace CGAL {
       typedef typename SK::template Handle<Rep>::type  Base;
       Base base;  
       public:
+      typedef const Sphere_3& Diametral_sphere;
+      typedef const Plane_3& Supporting_plane;              
 
       Circle_representation_3() {}
         
@@ -235,11 +241,13 @@ namespace CGAL {
       Circle_3(const Sphere_3 &s1, const Sphere_3 &s2):base(s1,s2){}
 
 
-      const Plane_3& supporting_plane() const { return base.supporting_plane(); }
+      //~ const Plane_3& supporting_plane() const { return base.supporting_plane(); }
+      typename Container::Supporting_plane supporting_plane() const { return base.supporting_plane(); }
       const Sphere_3& supporting_sphere() const { return base.supporting_sphere(); }
       Point_3 center() const { return base.center(); }
       FT squared_radius() const { return base.squared_radius(); }
-      const Sphere_3& diametral_sphere() const { return base.diametral_sphere(); }
+      //~ const Sphere_3& diametral_sphere() const { return base.diametral_sphere(); }
+      typename Container::Diametral_sphere diametral_sphere() const { return base.diametral_sphere(); }
 
       FT area_divided_by_pi() const {
         return squared_radius();

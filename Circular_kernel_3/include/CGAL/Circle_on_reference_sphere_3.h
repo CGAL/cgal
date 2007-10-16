@@ -29,6 +29,9 @@ public:
     return *this;
   }
 
+  Circle_on_reference_sphere_3()
+  :RCircle_on_reference_sphere_3(){}
+  
   Circle_on_reference_sphere_3(const RCircle_on_reference_sphere_3& p)
   :RCircle_on_reference_sphere_3(p){}
 
