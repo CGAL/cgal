@@ -253,6 +253,7 @@ protected:
     return Kernel::has_on_3_object()(plane, point);
   }
   
+public:
   /*! Compare two endpoint directions by y.
    * \param p1 the first enpoint direction.
    * \param p2 the second endpoint direction.
@@ -1474,7 +1475,7 @@ public:
         Equal_2 equal = kernel->equal_2_object();
         Counterclockwise_in_between_2 ccib =
           kernel->counterclockwise_in_between_2_object();
-        Traits::Clockwise_in_between_2 cib =
+        typename Traits::Clockwise_in_between_2 cib =
           m_traits->clockwise_in_between_2_object();
 
         if (xc1.is_vertical()) {
@@ -2457,7 +2458,7 @@ public:
     m_is_x_monotone(is_x_monotone)
   {
     CGAL_precondition_code(Kernel kernel);
-    CGAL_precondition_code(Point_3 point = ORIGIN);
+    CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
     CGAL_precondition(kernel.has_on_3_object()(plane, point));
     CGAL_precondition(this->has_on(src));
     CGAL_precondition(this->has_on(trg));
@@ -2575,6 +2576,8 @@ public:
                                      const Arr_extended_direction_3 & target,
                                      const Plane_3 & plane)
   {
+    Kernel kernel;
+
     this->set_source(source);
     this->set_target(target);
     this->set_plane(plane);
@@ -2582,8 +2585,7 @@ public:
 
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition_code(Kernel kernel);
-    CGAL_precondition_code(Point_3 point = ORIGIN);
+    CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
     CGAL_precondition(kernel.has_on_3_object()(plane, point));
     CGAL_precondition(this->has_on(source));
     CGAL_precondition(this->has_on(target));
@@ -2663,7 +2665,6 @@ public:
       Direction_2 s = project(source);
       Direction_2 t = project(target);
       const Direction_2 & ny = Traits::neg_y_2();
-      Kernel kernel;
       typename Kernel::Counterclockwise_in_between_2 ccib =
         kernel.counterclockwise_in_between_2_object();
       set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) ||
@@ -2681,7 +2682,6 @@ public:
     const Direction_2 & nx = Traits::neg_x_2();
     Direction_2 s = Traits::project_xy(source);
     Direction_2 t = Traits::project_xy(target);    
-    Kernel kernel;
     typename Kernel::Counterclockwise_in_between_2 ccib =
       kernel.counterclockwise_in_between_2_object();
     bool plane_is_positive = (z_sign(normal) == POSITIVE);
