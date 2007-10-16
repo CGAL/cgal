@@ -1616,6 +1616,8 @@ public:
             _info = (_info | TRG_AT_Y_MINUS_INFTY);
           else if (arc.right_infinite_in_y() == PLUS_INFINITY)
             _info = (_info | TRG_AT_Y_PLUS_INFTY);
+
+          _pt = (arc._info & IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
         }
       }
       else
@@ -1636,6 +1638,8 @@ public:
             _info = (_info | SRC_AT_Y_MINUS_INFTY);
           else if (arc.right_infinite_in_y() == PLUS_INFINITY)
             _info = (_info | SRC_AT_Y_PLUS_INFTY);
+
+          _ps = (arc._info & IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
         }
       }
     }
@@ -1666,6 +1670,8 @@ public:
             _info = (_info | SRC_AT_Y_MINUS_INFTY);
           else if (arc.left_infinite_in_y() == PLUS_INFINITY)
             _info = (_info | SRC_AT_Y_PLUS_INFTY);
+
+          _ps = (arc._info & IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
         }
       }
       else
@@ -1686,6 +1692,8 @@ public:
             _info = (_info | TRG_AT_Y_MINUS_INFTY);
           else if (arc.left_infinite_in_y() == PLUS_INFINITY)
             _info = (_info | TRG_AT_Y_PLUS_INFTY);
+
+          _pt = (arc._info & IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
         }
       }
     }
