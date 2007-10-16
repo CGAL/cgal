@@ -628,6 +628,7 @@ public:
     /*! Check whether the given x-monotone curve is a vertical spherical_arc.
      * \param xc the curve.
      * \return true if the curve is a vertical spherical_arc; false otherwise.
+     * \pre the arc is not degenerate (consists of a single point)
      */
     bool operator()(const X_monotone_curve_2 & xc) const
     {
@@ -666,7 +667,6 @@ public:
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xc) const
     {
-      CGAL_precondition(!xc.is_degenerate());
       CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
       CGAL_precondition(xc.is_in_x_range(p));
 
@@ -702,6 +702,7 @@ public:
      *         LARGER  - xc1 lies above xc2;
      * \pre the endpoint indicated by xv1 and ind1 is on the discontinuity arc.
      * \pre the endpoint indicated by xv2 and ind2 is on the discontinuity arc.
+     * \pre the arcs are not degenerate
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  Curve_end ind1,
@@ -732,6 +733,7 @@ public:
      * \pre If xc2 is vertical, xc2 coincides with the discontinuity arc.
      * Otherwise, the endpoint indicated by xc2 and ind is on the discontinuity
      * open arc.
+     * \pre the arcs are not degenerate
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2, 
@@ -866,6 +868,7 @@ public:
      *         the left of p: SMALLER, EQUAL, or LARGER.
      * \pre the point p lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
+     * \pre the arcs are not degenerate
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2,
@@ -948,6 +951,7 @@ public:
      *         the right of p: SMALLER, EQUAL, or LARGER.
      * \pre the point p lies on both curves, and both of them must also be
      *      defined to its right (lexicographically).
+     * \pre the arcs are not degenerate
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2,
@@ -1030,9 +1034,6 @@ public:
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
-
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal_3 = kernel->equal_3_object();
       if (xc1.is_full() || xc2.is_full()) {
@@ -1225,6 +1226,7 @@ public:
      * \param xc2 (output) the right resulting subcurve. p is its left
      * endpoint.
      * \pre p lies on xc but is not one of its endpoints.
+     * \pre xc is not degenerate
      */
     void operator()(const X_monotone_curve_2 & xc, const Point_2 & p,
                     X_monotone_curve_2 & xc1, X_monotone_curve_2 & xc2) const
@@ -1241,10 +1243,11 @@ public:
       xc1.set_plane(xc.plane());
       xc1.set_is_vertical(xc.is_vertical());
       xc1.set_is_degenerate(false);
+      xc1.set_is_empty(false);
 
       xc2.set_plane(xc.plane());
       xc2.set_is_vertical(xc.is_vertical());
-      xc2.set_is_degenerate(false);
+      xc2.set_is_empty(false);
       
       if (xc.is_directed_right()) {
         xc1.set_source(source);
@@ -1445,12 +1448,16 @@ public:
      * \param xc2 the second curve.
      * \param oi the output iterator.
      * \return the past-the-end iterator.
+     * \pre xc1 and xc2 are not degenerate
      */
     template<typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xc1,
                               const X_monotone_curve_2 & xc2,
                               OutputIterator oi) const
     {
+      CGAL_precondition(!xc1.is_degenerate());
+      CGAL_precondition(!xc2.is_degenerate());
+
       typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
       typedef typename Kernel::Equal_2                          Equal_2;
       typedef typename Kernel::Counterclockwise_in_between_2
@@ -1458,9 +1465,6 @@ public:
       typedef typename Traits::Clockwise_in_between_2
         Clockwise_in_between_2;
         
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
-
       typedef std::pair<Point_2,unsigned int>         Point_2_pair;
       const Kernel * kernel = m_traits;
 
@@ -1602,6 +1606,7 @@ public:
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
+      if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
 
       const Kernel * kernel = m_traits;
@@ -1662,15 +1667,23 @@ public:
                     const X_monotone_curve_2 & xc2,
                     X_monotone_curve_2 & xc) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
+      CGAL_precondition (m_traits->are_mergeable_2_object()(xc1, xc2) == true);
 
+      if (xc1.is_degenerate() || xc1.is_empty()) {
+        xc = xc2;
+        return;
+      }
+
+      if (xc2.is_degenerate() || xc2.is_empty()) {
+        xc = xc1;
+        return;
+      }
+      
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
-      CGAL_precondition (m_traits->are_mergeable_2_object()(xc1, xc2) == true);
-
       xc.set_is_degenerate(false);
+      xc.set_is_empty(false);
       xc.set_is_vertical(xc1.is_vertical());
 
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
@@ -1906,7 +1919,7 @@ public:
     m_location = ed.discontinuity_type();
   }
 
-  /*! Assignment operator. */
+  /*! Assignment operator */
   Arr_extended_direction_3 & operator=(const Arr_extended_direction_3 & ed)
   {
     *(static_cast<Direction_3*>(this)) = static_cast<const Direction_3&>(ed);
@@ -1974,9 +1987,12 @@ protected:
   /*! The arc is a full circle */
   bool m_is_full;
 
-  /* The arc is degenerate (single point) */
+  /* The arc is degenerate - it consists of a single point */
   bool m_is_degenerate;
 
+  /*! The arc is empty */
+  bool m_is_empty;
+  
   inline Sign x_sign(Direction_3 d) { return CGAL::sign(d.dx()); }
 
   inline Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }  
@@ -2015,7 +2031,20 @@ public:
     m_is_vertical(false),
     m_is_directed_right(false),
     m_is_full(false),
-    m_is_degenerate(true)
+    m_is_degenerate(false),
+    m_is_empty(true)
+  {}
+  
+  /*! Constructor of a degenerate arc */
+  Arr_x_monotone_great_circular_arc_on_sphere_3
+  (const Arr_extended_direction_3 & p) :
+    m_source(p),
+    m_target(p),
+    m_is_vertical(false),
+    m_is_directed_right(false),
+    m_is_full(false),
+    m_is_degenerate(true),
+    m_is_empty(false)
   {}
 
   /*! Constructor
@@ -2032,14 +2061,15 @@ public:
    const Arr_extended_direction_3 & trg,
    const Plane_3 & plane,
    bool is_vertical, bool is_directed_right,
-   bool is_full = false, bool is_degenerate = false) :
+   bool is_full = false, bool is_degenerate = false, bool is_empty = false) :
     m_source(src),
     m_target(trg),
     m_plane(plane),
     m_is_vertical(is_vertical),
     m_is_directed_right(is_directed_right),
     m_is_full(is_full),
-    m_is_degenerate(is_degenerate)
+    m_is_degenerate(is_degenerate),
+    m_is_empty(is_empty)
   {}
 
   /*! Copy constructor
@@ -2055,6 +2085,22 @@ public:
     m_is_directed_right = other.m_is_directed_right;
     m_is_full = other.m_is_full;
     m_is_degenerate = other.m_is_degenerate;
+    m_is_empty = other.m_is_empty;
+  }
+
+  /*! Assignment operator */
+  Arr_x_monotone_great_circular_arc_on_sphere_3 & operator=
+  (const Arr_x_monotone_great_circular_arc_on_sphere_3 & other)
+  {
+    m_source = other.m_source;
+    m_target = other.m_target;
+    m_plane = other.m_plane;
+    m_is_vertical = other.m_is_vertical;
+    m_is_directed_right = other.m_is_directed_right;
+    m_is_full = other.m_is_full;
+    m_is_degenerate = other.m_is_degenerate;
+    m_is_empty = other.m_is_empty;
+    return (*this);
   }
   
   /*! Construct a spherical_arc from two endpoint directions. It is assumed
@@ -2077,7 +2123,8 @@ public:
     m_source(source),
     m_target(target),
     m_is_full(false),
-    m_is_degenerate(false)
+    m_is_degenerate(false),
+    m_is_empty(false)
   {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -2170,7 +2217,8 @@ public:
     m_is_vertical(false),
     m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
     m_is_full(true),
-    m_is_degenerate(false)
+    m_is_degenerate(false),
+    m_is_empty(false)
   {
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
 
@@ -2192,7 +2240,8 @@ public:
     m_is_vertical(false),
     m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
     m_is_full(true),
-    m_is_degenerate(false)
+    m_is_degenerate(false),
+    m_is_empty(false)
   {
     CGAL_precondition(has_on(point));
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
@@ -2214,7 +2263,8 @@ public:
     m_target(target),
     m_plane(plane),
     m_is_full(false),
-    m_is_degenerate(false)
+    m_is_degenerate(false),
+    m_is_empty(false)
   {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -2284,6 +2334,7 @@ public:
   void set_is_directed_right(bool flag) { m_is_directed_right = flag; }
   void set_is_full(bool flag) { m_is_full = flag; }
   void set_is_degenerate(bool flag) { m_is_degenerate = flag; }
+  void set_is_empty(bool flag) { m_is_empty = flag; }
 
   /*! Obtain the source */
   const Arr_extended_direction_3 & source() const { return m_source; }
@@ -2316,6 +2367,9 @@ public:
   /*! Determines whether the curve is degenerate */
   bool is_degenerate() const { return m_is_degenerate; }
 
+  /*! Determines whether the curve is degenerate */
+  bool is_empty() const { return m_is_empty; }
+  
   /*! Determine whether both endpoints are on the boundary */
   bool is_on_boundary() const
   { return ((!m_source.is_no_boundary()) && (!m_target.is_no_boundary())); }
@@ -2375,6 +2429,7 @@ public:
     opp.m_is_vertical = this->is_vertical();
     opp.m_is_full = this->is_full();
     opp.m_is_degenerate = this->is_degenerate();
+    opp.m_is_empty = this->is_empty();
     return opp;
   }
 
@@ -2422,7 +2477,11 @@ protected:
   
 public:
   /*! Default constructor */
-  Arr_great_circular_arc_on_sphere_3() : Base(), m_is_x_monotone(false) {}
+  Arr_great_circular_arc_on_sphere_3() : Base(), m_is_x_monotone(true) {}
+  
+  /*! Constructor of a degenerate arc */
+  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & p) :
+    Base(p), m_is_x_monotone(true) {}
 
   /*! Copy constructor
    * \param other the other arc
@@ -2452,9 +2511,10 @@ public:
                                      bool is_x_monotone, bool is_vertical,
                                      bool is_directed_right,
                                      bool is_full = false,
-                                     bool is_degenerate = false) :
+                                     bool is_degenerate = false,
+                                     bool is_empty = false) :
     Base(src, trg, plane,
-         is_vertical, is_directed_right, is_full, is_degenerate),
+         is_vertical, is_directed_right, is_full, is_degenerate, is_empty),
     m_is_x_monotone(is_x_monotone)
   {
     CGAL_precondition_code(Kernel kernel);
@@ -2485,6 +2545,7 @@ public:
     this->set_target(target);
     this->set_is_full(false);
     this->set_is_degenerate(false);
+    this->set_is_empty(false);
 
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel>   Traits;
     typedef typename Kernel::Direction_2                        Direction_2;
@@ -2582,6 +2643,7 @@ public:
     this->set_target(target);
     this->set_plane(plane);
     this->set_is_degenerate(false);
+    this->set_is_empty(false);
 
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -2704,6 +2766,7 @@ public:
     this->set_is_directed_right(true);
     this->set_is_full(true);
     this->set_is_degenerate(false);
+    this->set_is_empty(false);
     set_is_x_monotone(false);
   }
 
@@ -2754,7 +2817,8 @@ operator<<(OutputStream & os,
 #if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
   os << "("
      << ", " << (arc.is_vertical() ? " |" : "!|")
-     << ", " << (arc.is_directed_right() ? "=>" : "<=");
+     << ", " << (arc.is_directed_right() ? "=>" : "<=")
+     << ", " << (arc.is_full() ? "o" : "/");
 #endif
   return os;
 }
