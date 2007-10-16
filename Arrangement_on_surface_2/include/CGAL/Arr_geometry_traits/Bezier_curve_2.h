@@ -142,6 +142,7 @@ public:
    * \param pts_begin An iterator pointing to the first point in the range.
    * \param pts_end A past-the-end iterator for the range.
    * \pre The value-type of the input iterator must be Rat_kernel::Point_2.
+   *      It is forbidden to specify two identical consecutive control points.
    */
   template <class InputIterator>
   _Bezier_curve_2_rep (InputIterator pts_begin, InputIterator pts_end) :
@@ -150,6 +151,11 @@ public:
     p_polyY(NULL),
     p_normY(NULL)
   {
+    CGAL_precondition_code (
+        Rat_kernel                    ker;
+        typename Rat_kernel::Equal_2  equal = ker.equal_2_object();
+    );
+
     // Copy the control points and compute their bounding box.
     const int   pts_size = std::distance (pts_begin, pts_end);
     double      x, y;
@@ -164,6 +170,12 @@ public:
     
     for (k = 0; pts_begin != pts_end; ++pts_begin, k++)
     {
+      // Make sure that we do not have two identical consecutive control
+      // points.
+      CGAL_precondition_msg
+          (k == 0 || ! equal (*pts_begin, _ctrl_pts[k - 1]),
+           "Two consecutive control points must not be identical.");
+
       // Copy the current control point.
       _ctrl_pts[k] = *pts_begin;
 
@@ -337,6 +349,7 @@ public:
    * \param pts_begin An iterator pointing to the first point in the range.
    * \param pts_end A past-the-end iterator for the range.
    * \pre The value-type of the input iterator must be Rat_kernel::Point_2.
+   *      It is forbidden to specify two identical consecutive control points.
    */
   template <class InputIterator>
   _Bezier_curve_2 (InputIterator pts_begin, InputIterator pts_end) :

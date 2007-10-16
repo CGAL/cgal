@@ -330,7 +330,7 @@ public:
    * \param x The exact x-coordinate.
    * \param y The exact y-coordinate.
    */
-  _Bezier_point_2_rep (const Algebraic& x, const Algebraic& y) : 
+  _Bezier_point_2_rep (const Algebraic& x, const Algebraic& y, bool) : 
     p_rat_x (NULL),
     p_rat_y (NULL)
   {
@@ -348,6 +348,29 @@ public:
     _bbox.max_x = x_bnd.second;
     _bbox.min_y = y_bnd.first;
     _bbox.max_y = y_bnd.second;
+  }
+
+  /*!
+   * Constructor with rational coordinates.
+   * \param x The exact x-coordinate.
+   * \param y The exact y-coordinate.
+   */
+  _Bezier_point_2_rep (const Rational& x, const Rational& y)
+  {
+    p_rat_x = new Rational (x);
+    p_rat_y = new Rational (y);
+
+    // Convert the rational coordinates to algebraic values.
+    Nt_traits                         nt_traits;
+
+    p_alg_x = new Algebraic (nt_traits.convert (x));
+    p_alg_y = new Algebraic (nt_traits.convert (y));
+
+    // Initialize the bounding box.
+    _bbox.min_x = x;
+    _bbox.max_x = x;
+    _bbox.min_y = y;
+    _bbox.max_y = y;
   }
 
   /*!
@@ -544,9 +567,16 @@ public:
   {}
 
   /*!
-   * Constructor with coordinates.
+   * Constructor with algebraic coordinates (only for private use).
    */
-  _Bezier_point_2 (const Algebraic& x, const Algebraic& y) :
+  _Bezier_point_2 (const Algebraic& x, const Algebraic& y, bool dummy) :
+    Bpt_handle (Bpt_rep (x, y, dummy))
+  {}
+
+  /*!
+   * Constructor with rational coordinates.
+   */
+  _Bezier_point_2 (const Rational& x, const Rational& y) :
     Bpt_handle (Bpt_rep (x, y))
   {}
 
@@ -978,17 +1008,11 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
   p_rat_y = new Rational (p.y());
   p_alg_y = new Algebraic (nt_traits.convert (*p_rat_y));
 
-  // Also set the bounding box for this point, by converting x, y
-  // to two ranges of doubles.
-  const std::pair<double, double>&  x_bnd = 
-                                        nt_traits.double_interval (*p_alg_x);
-  const std::pair<double, double>&  y_bnd = 
-                                        nt_traits.double_interval (*p_alg_y);
-
-  _bbox.min_x = x_bnd.first;
-  _bbox.max_x = x_bnd.second;
-  _bbox.min_y = y_bnd.first;
-  _bbox.max_y = y_bnd.second;
+  // Set the bounding box for this point.
+  _bbox.min_x = *p_rat_x;
+  _bbox.max_x = *p_rat_x;
+  _bbox.min_y = *p_rat_y;
+  _bbox.max_y = *p_rat_y;
 }
 
 // ---------------------------------------------------------------------------
@@ -1018,17 +1042,11 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
   p_rat_y = new Rational (p.y());
   p_alg_y = new Algebraic (nt_traits.convert (*p_rat_y));
 
-  // Also set the bounding box for this point, by converting x, y
-  // to two ranges of doubles.
-  const std::pair<double, double>&  x_bnd = 
-                                        nt_traits.double_interval (*p_alg_x);
-  const std::pair<double, double>&  y_bnd = 
-                                        nt_traits.double_interval (*p_alg_y);
-
-  _bbox.min_x = x_bnd.first;
-  _bbox.max_x = x_bnd.second;
-  _bbox.min_y = y_bnd.first;
-  _bbox.max_y = y_bnd.second;
+  // Set the bounding box for this point.
+  _bbox.min_x = *p_rat_x;
+  _bbox.max_x = *p_rat_x;
+  _bbox.min_y = *p_rat_y;
+  _bbox.max_y = *p_rat_y;
 }
 
 // ---------------------------------------------------------------------------
@@ -1051,8 +1069,8 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
   p_alg_x = new Algebraic (p.x());
   p_alg_y = new Algebraic (p.y());
   
-  // Also set the bounding box for this point, by converting x, y
-  // to two ranges of doubles.
+  // Set the bounding box for this point, by converting x, y to two ranges
+  // of doubles.
   Nt_traits                         nt_traits;
   const std::pair<double, double>&  x_bnd = 
                                         nt_traits.double_interval (*p_alg_x);
@@ -1086,8 +1104,8 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
   p_alg_x = new Algebraic (p.x());
   p_alg_y = new Algebraic (p.y());
   
-  // Also set the bounding box for this point, by converting x, y
-  // to two ranges of doubles.
+  // Set the bounding box for this point, by converting x, y  to two ranges
+  // of doubles.
   Nt_traits                         nt_traits;
   const std::pair<double, double>&  x_bnd = 
                                         nt_traits.double_interval (*p_alg_x);

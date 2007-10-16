@@ -2501,7 +2501,8 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
         cv._is_in_range (iit->t, cache))
     {
       // Construct an intersection point with unknown multiplicity.
-      Point_2                 pt (iit->x, iit->y);
+      Point_2                 pt (iit->x, iit->y,
+                                  true);        // Dummy parameter.
 
       pt.add_originator (Originator (_curve, _xid, iit->s));
       pt.add_originator (Originator (cv._curve, cv._xid, iit->t));
