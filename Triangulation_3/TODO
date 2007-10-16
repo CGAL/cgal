@@ -1,3 +1,5 @@
+- incident_edges(vertex)
+
 - documenter le 2eme tableau de Triangulation_utils
 
 - operator->() dans it/circ de facettes/edges (idem T2, a coordonner)
