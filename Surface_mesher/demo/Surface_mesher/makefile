@@ -19,7 +19,6 @@ default-rule: all
 CXXFLAGS = \
            -I../../include \
 	   -I../../../Mesh_2/include \
-	   -I../../../Mesh_3/include \
            -I../../../Data_structure_for_queries_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

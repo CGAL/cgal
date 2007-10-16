@@ -284,7 +284,7 @@ Surface_mesher/demo/Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/dump.ff
 Surface_mesher/demo/Surface_mesher/implicit_surface_mesher
 Surface_mesher/demo/Surface_mesher/my_makefile
-Surface_mesher/demo/Surface_mesher/out.off
+Surface_mesher/demo/Surface_mesher/out*.off
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher_with_edges
 Surface_mesher/doc_html
