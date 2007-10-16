@@ -14,7 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I ../../../Mesh_2/include \
-           -I ../../../Mesh_3/include \
            -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
@@ -44,7 +43,6 @@ all:            \
                 implicit_surface_mesher_test$(EXE_EXT) \
                 internal-test-surface-mesher$(EXE_EXT) \
                 test_c2t3_iterators$(EXE_EXT) \
-                test_canonical_edge$(EXE_EXT) \
                 test_robust_circumcenter$(EXE_EXT) 
 
 combined_spheres$(EXE_EXT): combined_spheres$(OBJ_EXT)
@@ -59,9 +57,6 @@ internal-test-surface-mesher$(EXE_EXT): internal-test-surface-mesher$(OBJ_EXT)
 test_c2t3_iterators$(EXE_EXT): test_c2t3_iterators$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_c2t3_iterators test_c2t3_iterators$(OBJ_EXT) $(LDFLAGS)
 
-test_canonical_edge$(EXE_EXT): test_canonical_edge$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_canonical_edge test_canonical_edge$(OBJ_EXT) $(LDFLAGS)
-
 test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
 
@@ -69,14 +64,12 @@ run-test: all
 	./implicit_surface_mesher_test$(EXE_EXT)
 	./test_robust_circumcenter$(EXE_EXT)
 	./test_c2t3_iterators$(EXE_EXT)
-	./test_canonical_edge$(EXE_EXT)
 
 clean: \
                    combined_spheres.clean \
                    implicit_surface_mesher_test.clean \
                    internal-test-surface-mesher.clean \
                    test_c2t3_iterators.clean \
-                   test_canonical_edge.clean \
                    test_robust_circumcenter.clean 
 
 #---------------------------------------------------------------------#
