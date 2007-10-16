@@ -291,7 +291,8 @@ public:
 
   typedef typename details::Refine_edges_base_types<Tr>::Constrained_edge
                                Constrained_edge;
-
+  template <class Faces_level>
+  friend class Refine_edges_visitor;
 protected:
   /* --- protected datas --- */
 
@@ -311,6 +312,12 @@ protected:
   Vertex_handle va, vb;
 
   bool imperatively;
+
+  /** Object used by the class Refine_edges_visitor */
+  //@{
+  Vertex_handle visitor_va, visitor_vb;
+  bool visitor_mark_at_left, visitor_mark_at_right;
+  //@}
 
 public:
   /** \name CONSTRUCTORS */

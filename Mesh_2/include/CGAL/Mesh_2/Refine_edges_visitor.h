@@ -28,13 +28,13 @@ namespace Mesh_2 {
 /**
  * This class is the visitor needed when Refine_edges<Tr> if called from 
  * Refine_faces<Tr>.
- * \param Faces_base should be instanciated with Refine_face_base<Tr>.
+ * \param Faces_mesher should be instanciated with Refine_face_base<Tr>.
  */
-template <typename Mesher_base>
+template <typename Faces_mesher>
 class Refine_edges_visitor : public ::CGAL::Null_mesh_visitor
 {
 public:
-  typedef typename Mesher_base::Triangulation Tr;
+  typedef typename Faces_mesher::Triangulation Tr;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
@@ -43,16 +43,25 @@ public:
 
   typedef typename details::Refine_edges_base_types<Tr>::Constrained_edge
                                Constrained_edge;
+
+  typedef typename Faces_mesher::Previous_level Edges_mesher;
 private:
-  Mesher_base& mesher_base;
-  Vertex_handle va, vb;
-  bool mark_at_right, mark_at_left;
+  Faces_mesher& faces_mesher;
+  Edges_mesher& edges_mesher;
+  Vertex_handle &va, &vb;
+  bool &mark_at_left, &mark_at_right;
   Null_mesh_visitor& null_mesh_visitor;
 
 public:
-  Refine_edges_visitor(Mesher_base& mesher_base_,
+  Refine_edges_visitor(Faces_mesher& faces_mesher_,
+		       Edges_mesher& edges_mesher_,
                        Null_mesh_visitor& null)
-    : mesher_base(mesher_base_),
+    : faces_mesher(faces_mesher_),
+      edges_mesher(edges_mesher_),
+      va(edges_mesher.visitor_va),
+      vb(edges_mesher.visitor_vb),
+      mark_at_left(edges_mesher.visitor_mark_at_left),
+      mark_at_right(edges_mesher.visitor_mark_at_right),
       null_mesh_visitor(null)
   {
   }
@@ -76,13 +85,13 @@ public:
 
   void before_insertion(const Edge&, const Point& p, Zone& z)
   {
-    mesher_base.before_insertion_impl(Face_handle(), p, z);
+    faces_mesher.before_insertion_impl(Face_handle(), p, z);
   }
 
   /** Restore markers in the star of \c v. */
   void after_insertion(const Vertex_handle& v)
   {
-    Tr& tr = mesher_base.triangulation_ref_impl();
+    Tr& tr = faces_mesher.triangulation_ref_impl();
 
     int dummy;
     // if we put edge_index instead of dummy, Intel C++ does not find
@@ -108,9 +117,9 @@ public:
     } while ( fc != fcbegin );
 
     // then let's update bad faces
-    mesher_base.compute_new_bad_faces(v);
+    faces_mesher.compute_new_bad_faces(v);
 
-    CGAL_expensive_assertion(mesher_base.check_bad_faces());
+    CGAL_expensive_assertion(faces_mesher.check_bad_faces());
   }
 
   template <typename E, typename P, typename Z>
@@ -120,20 +129,22 @@ public:
 /**
  * This class is the visitor for Refine_faces<Tr>.
  */
-template <typename Mesher_base>
+template <typename Faces_mesher>
 class Refine_edges_visitor_from_faces
 {
 public:
-  typedef Refine_edges_visitor<Mesher_base> Previous_level;
+  typedef Refine_edges_visitor<Faces_mesher> Previous_level;
+  typedef typename Faces_mesher::Previous_level Edges_mesher;
 
 private:
   Previous_level previous;
 
 public:
 
-  Refine_edges_visitor_from_faces(Mesher_base& mesher_base,
+  Refine_edges_visitor_from_faces(Faces_mesher& faces_mesher,
+				  Edges_mesher& edges_mesher,
                                   Null_mesh_visitor& null)
-    : previous(mesher_base, null)
+    : previous(faces_mesher, edges_mesher, null)
   {
   }
 

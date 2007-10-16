@@ -78,7 +78,7 @@ public:
       clusters_(tr),
       edges_level(tr, clusters_, null_level),
       faces_level(tr, criteria, edges_level),
-      visitor(faces_level, null_visitor),
+      visitor(faces_level, edges_level, null_visitor),
       initialized(false)
   {
   }
