@@ -23,6 +23,7 @@
 #include <CGAL/Range_segment_tree_traits.h>
 #include <CGAL/Bbox_3.h>
 
+#include <boost/format.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -54,11 +55,11 @@ public:
   template <class T>
   Pure_interval make_pure_interval(const T& t) const
   {
-    const Bbox_3& b = t.bbox() + epsilon_bbox;
+    const Bbox_3& b = t.bbox();
     return std::make_pair(DPoint_3(b.xmin(), b.ymin(), b.zmin()),
-			  DPoint_3(b.xmax(),
-				   b.ymax(),
-				   b.zmax()));
+			  DPoint_3(b.xmax()+epsilon,
+				   b.ymax()+epsilon,
+				   b.zmax()+epsilon));
   }
 
   Interval make_interval(const Type& t) const
@@ -121,7 +122,7 @@ private:
   Segment_tree tree;
   Bbox_3 bounding_box;
   double max_width;
-  Bbox_3 epsilon_bbox;
+  double epsilon;
   GT gt;
 
 public:
@@ -134,7 +135,7 @@ public:
       bounding_box(0., 0., 0.,
 		   0., 0., 0.),
       max_width(),
-      epsilon_bbox(),
+      epsilon(),
       gt(gt)
   {
   }
@@ -149,6 +150,13 @@ public:
   {
     using boost::bind;
     using boost::make_transform_iterator;
+
+    max_width = CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
+      (bounding_box.xmax()-bounding_box.xmin(),
+       CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
+       (bounding_box.ymax()-bounding_box.ymin(),
+	bounding_box.zmax()-bounding_box.zmin()));
+    epsilon = max_width * std::numeric_limits<double>::epsilon();
 
     std::vector<Interval> intervals;
     for(typename Elements::const_iterator it = elements.begin(), 
@@ -165,14 +173,6 @@ public:
 // 					   bind(&make_interval,_1)));
     nb_of_elements = elements.size();
     elements.clear();
-    max_width = CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
-      (bounding_box.xmax()-bounding_box.xmin(),
-       CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
-       (bounding_box.ymax()-bounding_box.ymin(),
-	bounding_box.zmax()-bounding_box.zmin()));
-    const double e = max_width * std::numeric_limits<double>::epsilon();
-    epsilon_bbox = Bbox_3(0., 0., 0.,
-			  e, e, e);
   }
 
   const Bbox_3& bbox() const 
@@ -207,6 +207,12 @@ public:
 
     tree.window_query(std::make_pair(make_pure_interval(e), Type()),
 		      std::back_inserter(intervals));
+#ifdef CGAL_SURFACE_MESHER_DEBUG_INTERSECTION_DATA_STRUCTURE    
+    std::cerr << boost::format("intersection percentage: %1$.1f%% query=(%2%, %3%)\n")
+      % ( 100. * intervals.size() / number_of_elements() )
+      % make_pure_interval(e).first
+      % make_pure_interval(e).second;
+#endif
     for(typename std::vector<Interval>::const_iterator it = intervals.begin(),
 	  end = intervals.end(); it != end; ++it) 
     {
@@ -226,6 +232,12 @@ public:
 
     tree.window_query(std::make_pair(make_pure_interval(e), Type()),
 				     std::back_inserter(intervals));
+#ifdef CGAL_SURFACE_MESHER_DEBUG_INTERSECTION_DATA_STRUCTURE    
+    std::cerr << boost::format("number_of_intersections percentage: %1$.1f%% query=(%2%, %3%)\n")
+      % ( 100. * intervals.size() / number_of_elements() )
+      % make_pure_interval(e).first
+      % make_pure_interval(e).second;
+#endif
     for(typename std::vector<Interval>::const_iterator it = intervals.begin(),
 	  end = intervals.end(); it != end; ++it) 
     {
