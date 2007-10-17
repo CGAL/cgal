@@ -104,23 +104,23 @@ public:
     Object operator()(Surface_3 surface, const Segment_3& s) const
     {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-      return self.intersect_segment_surface(*surface.subfacets_tree_ptr.get(), s);
+      return self.intersect_segment_surface(*surface.subfacets_tree_ptr, s);
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
-      return surface.subfacets_tree_ptr.get()->intersection(s);
+      return surface.subfacets_tree_ptr->intersection(s);
 #endif
     }
     
     Object operator()(const Surface_3& surface, const Ray_3& r) const {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-      return self.intersect_ray_surface(*surface.subfacets_tree_ptr.get(), r);
+      return self.intersect_ray_surface(*surface.subfacets_tree_ptr, r);
 #endif
       return Object();
     }
       
     Object operator()(const Surface_3& surface, const Line_3& l) const {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-      return self.intersect_line_surface(*surface.subfacets_tree_ptr.get(), l);
+      return self.intersect_line_surface(*surface.subfacets_tree_ptr, l);
 #endif
       return Object();
     }
@@ -149,8 +149,8 @@ public:
                                      int n = 20) const // WARNING: why 20?    
     {
       for (typename std::vector<Point>::const_iterator vit =
-             surface.corner_points.begin();
-           vit != surface.corner_points.end();
+             surface.corner_points->begin();
+           vit != surface.corner_points->end();
            ++vit)
       {
         Point p = *vit;
@@ -158,8 +158,8 @@ public:
         *out++= p;
       }
       for (typename std::vector<Point>::const_iterator vit =
-             surface.edges_points.begin();
-           vit != surface.edges_points.end() && n > 0;
+             surface.edges_points->begin();
+           vit != surface.edges_points->end() && n > 0;
            ++vit, --n)
       {
         Point p = *vit;
@@ -167,8 +167,8 @@ public:
         *out++= p;
       }
       for (typename std::set<Point>::const_iterator vit =
-             surface.input_points.begin();
-           vit != surface.input_points.end() && n > 0;
+             surface.input_points->begin();
+           vit != surface.input_points->end() && n > 0;
            ++vit, --n)
       {
         Point p = *vit;
@@ -199,7 +199,7 @@ public:
     typename Geom_traits::Construct_scaled_vector_3 scale = 
       Geom_traits().construct_scaled_vector_3_object();
 
-    const typename GT::Iso_cuboid_3& cuboid = surface.subfacets_tree_ptr.get()->iso_cuboid();
+    const typename GT::Iso_cuboid_3& cuboid = surface.subfacets_tree_ptr->iso_cuboid();
 
     if( bounded_side(cuboid,
 		     p) == ON_UNBOUNDED_SIDE )
@@ -211,10 +211,10 @@ public:
     std::pair<bool, int> result = std::make_pair(false, 0);
 
     // upper bound of the diameter of the bounding box
-    const FT& diameter = 2*FT(surface.subfacets_tree_ptr.get()->max_lenght());
+    const FT& diameter = 2*FT(surface.subfacets_tree_ptr->max_lenght());
     while(! result.first)
     {
-      result = surface.subfacets_tree_ptr.get()->
+      result = surface.subfacets_tree_ptr->
         number_of_intersections(segment(p, 
 					translate(p, 
 						  scale(vector(ORIGIN,
@@ -230,7 +230,7 @@ public:
     if(! surface.has_edges())
       return Object();
 
-    Object o = surface.subsegments_tree_ptr.get()->intersection(t);
+    Object o = surface.subsegments_tree_ptr->intersection(t);
     Kernel_point kp;
     if( assign(kp, o) )
     {
