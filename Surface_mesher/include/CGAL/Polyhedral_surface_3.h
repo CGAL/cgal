@@ -23,11 +23,21 @@
 #  define CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 #endif
 
+#ifndef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+#  define CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE 1
+#endif
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <boost/shared_ptr.hpp>
 
 #include <CGAL/make_surface_mesh.h>
-#include <CGAL/Data_structure_using_octree_3.h>
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+#  include <CGAL/Data_structure_using_octree_3.h>
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+#  include <CGAL/Surface_mesher/Intersection_data_structure_3.h>
+#endif
 #include <CGAL/Surface_mesher/Polyhedral_oracle.h>
 #include <CGAL/Surface_mesher/Has_edges.h>
 #include <iostream>
@@ -65,8 +75,23 @@ public:
     Kernel_traits<typename Geom_traits::Point_3>::Kernel::Point_3 Point_3;
   };
 
-  typedef Data_structure_using_octree_3<Normalized_geom_traits> Subfacets_octree;
-  typedef Data_structure_using_octree_3<Normalized_geom_traits> Subsegments_octree;
+  typedef typename Geom_traits::Segment_3 Segment_3;
+  typedef typename Geom_traits::Triangle_3 Triangle_3;
+
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+  typedef Data_structure_using_octree_3<Normalized_geom_traits> Subfacets_tree;
+  typedef Data_structure_using_octree_3<Normalized_geom_traits> Subsegments_tree;
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+  typedef Intersection_data_structure_3<Normalized_geom_traits, 
+					Triangle_3> Subfacets_tree;
+  typedef Intersection_data_structure_3<Normalized_geom_traits,
+					Segment_3> Subsegments_tree;
+#endif
+  typedef boost::shared_ptr<Subfacets_tree> Subfacets_tree_ptr;
+  typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
+  typedef typename Subfacets_tree::Bbox Bbox;
+
   typedef typename GT::Point_3 Point_3;
   typedef typename GT::Vector_3 Vector_3;
   typedef typename GT::FT FT;
@@ -83,12 +108,16 @@ public:
 
   typedef Surface_mesher::Polyhedral_oracle<Self> Surface_mesher_traits_3;
 
-  typedef typename Subfacets_octree::Bbox Bbox;
-
   Polyhedral_surface_3(std::istream& input_file,
-		       const FT cosine_bound = FT(1)/FT(2))
-    : subfacets_octree(), subsegments_octree(false, true, false),
-      input_points()
+		       const FT cosine_bound = FT(1)/FT(2)) :
+    subfacets_tree_ptr(new Subfacets_tree()),
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+    subsegments_tree_ptr(new Subsegments_tree(false, true, false)),
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+    subsegments_tree_ptr(new Subsegments_tree()),
+#endif
+    input_points()
   {
     GT gt = GT();
     typename GT::Construct_orthogonal_vector_3 orthogonal_vector = 
@@ -150,7 +179,9 @@ public:
         vit != polyhedron.vertices_end();
         ++vit)
     {
-      subfacets_octree.add_constrained_vertex(vit->point());
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+      subfacets_tree_ptr.get()->add_constrained_vertex(vit->point());
+#endif
       input_points.insert(vit->point());
     }
 
@@ -168,29 +199,43 @@ public:
       const Point_3& p2 = edges_circ++->vertex()->point();
       const Point_3& p3 = edges_circ++->vertex()->point();
 
-      subfacets_octree.add_constrained_facet(p1, p2, p3);
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+      subfacets_tree_ptr.get()->add_constrained_facet(p1, p2, p3);
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+      subfacets_tree_ptr.get()->add_element(Triangle_3(p1, p2, p3));
+#endif     
 #ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	std::cerr << ::boost::format("new facet in subfacets_octree: #%4% (%1%, %2%, %3%)\n")
+	std::cerr << ::boost::format("new facet: #%4% (%1%, %2%, %3%)\n")
 	  % p1 %  p2 % p3 % facet_index;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
     }
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-    std::cerr << "Creating subfacets_octree... ";
+    std::cerr << "Creating subfacets_tree... ";
     timer.reset();
     timer.start();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-    subfacets_octree.create_data_structure();
+    subfacets_tree_ptr.get()->create_data_structure();
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     timer.stop();
+# ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
     std::cerr <<
       ::boost::format("done (%1%s)\n"
 		      "  number of facets:      %3%\n"
-		      "  number of constraints: %4% (in subfacets_octree)\n")
+		      "  number of constraints: %4% (in subfacets_tree)\n")
       % timer.time()
-      % subfacets_octree.number_of_vertices()
-      % subfacets_octree.number_of_facets()
-      % subfacets_octree.number_of_constraints();
+      % subfacets_tree_ptr.get()->number_of_vertices()
+      % subfacets_tree_ptr.get()->number_of_facets()
+      % subfacets_tree_ptr.get()->number_of_constraints();
+# endif
+# ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+    std::cerr <<
+      ::boost::format("done (%1%s)\n"
+		      "  number of facets:      %2%\n")
+      % timer.time()
+      % subfacets_tree_ptr.get()->number_of_elements();
+# endif
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     if( this->has_edges() ) {
 
@@ -231,10 +276,14 @@ public:
 	  const Point_3 pb = opposite->vertex()->point();
 	  ++edges_vertex_counter[pa];
 	  ++edges_vertex_counter[pb];
-	  subsegments_octree.add_constrained_edge(pa, pb);
-#ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+	  subsegments_tree_ptr.get()->add_constrained_edge(pa, pb);
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+	  subsegments_tree_ptr.get()->add_element(Segment_3(pa,  pb));
+# ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
 	  std::cerr << 
-	    ::boost::format("new edge in subsegments_octree: (%1%, %2%)")
+	    ::boost::format("new edge: (%1%, %2%)")
 	    % pa %  pb;
 	  if(eit->is_border_edge())
 	    std:: cerr << " (on border)\n";
@@ -259,7 +308,8 @@ public:
 	      % Triangle()(*(eit->facet()))
 	      % Triangle()(*(eit->opposite()->facet()));
 	  }
-#endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
+# endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
 	}
       }
 
@@ -286,14 +336,14 @@ public:
 	  edges_points.push_back(it->first);
 	}
       }
-      if(!corner_points.empty() && edges_points.empty())
-      {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-	std::cerr << "Incorrect input data. "
-		  << "Swap corner vertices and edges vertices...\n";
-#endif
-	std::swap(corner_points, edges_points);
-      }
+//       if(!corner_points.empty() && edges_points.empty())
+//       {
+// #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+// 	std::cerr << "Incorrect input data. "
+// 		  << "Swap corner vertices and edges vertices...\n";
+// #endif
+// 	std::swap(corner_points, edges_points);
+//       }
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr << "Shuffle edges vertices... ";
@@ -309,31 +359,42 @@ public:
 			"number of edges vertices:  %2%\n")
 	% corner_points.size()
 	% edges_points.size();
+#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
-      std::cerr << "Creating subsegments_octree... ";
+#ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+      std::cerr << "Creating subsegments_tree... ";
       timer.reset();
       timer.start();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
-      subsegments_octree.create_data_structure();
+      subsegments_tree_ptr.get()->create_data_structure();
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       timer.stop();
 
-    std::cerr <<
-      ::boost::format("done (%1%s)\n"
-		      "  number of edges:       %3%\n"
-		      "  number of constraints: %4% (in subsegments_octree)\n")
-      % timer.time()
-      % subsegments_octree.number_of_vertices()
-      % subsegments_octree.number_of_edges()
-      % subsegments_octree.number_of_constraints();
+# ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+      std::cerr <<
+	::boost::format("done (%1%s)\n"
+			"  number of edges:       %3%\n"
+			"  number of constraints: %4% (in subsegments_tree)\n")
+	% timer.time()
+	% subsegments_tree_ptr.get()->number_of_vertices()
+	% subsegments_tree_ptr.get()->number_of_edges()
+	% subsegments_tree_ptr.get()->number_of_constraints();
+# endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+# ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+      std::cerr <<
+	::boost::format("done (%1%s)\n"
+			"  number of edges:       %2%\n")
+	% timer.time()
+	% subsegments_tree_ptr.get()->number_of_elements();
+# endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     } // end "if(this->has_edges())"
     
-//     subfacets_octree.input(input_file,
+//     subfacets_tree_ptr.get()->input(input_file,
 //                            std::back_inserter(input_points));
-    bounding_box = subfacets_octree.bbox();
-    bounding_box = bounding_box + subsegments_octree.bbox();
+    bounding_box = subfacets_tree_ptr.get()->bbox();
+    bounding_box = bounding_box + subsegments_tree_ptr.get()->bbox();
     bounding_box_sq_radius = bounding_box.xmax()-bounding_box.xmin();
     bounding_box_sq_radius =
       CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION 
@@ -345,6 +406,7 @@ public:
        FT(bounding_box.zmax()-bounding_box.zmin()));
     bounding_box_sq_radius /= 2;
     bounding_box_sq_radius *= bounding_box_sq_radius;
+    bounding_box_sq_radius *= 3;
   } // end of Polyhedral_surface_3 constructor
 
   const Bbox& bbox() const
@@ -358,8 +420,8 @@ public:
   }
 
 public:
-  Subfacets_octree subfacets_octree;
-  Subsegments_octree subsegments_octree;
+  Subfacets_tree_ptr subfacets_tree_ptr;
+  Subsegments_tree_ptr subsegments_tree_ptr;
   std::set<Point_3> input_points;
   std::vector<Point_3> corner_points;
   std::vector<Point_3> edges_points;

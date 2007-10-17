@@ -54,7 +54,9 @@ public:
 
   typedef Surface Surface_3;
 
-  typedef typename Surface::Subfacets_octree Subfacets_octree;
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+  typedef typename Surface::Subfacets_tree Subfacets_tree;
+#endif
 
   // Private members
 
@@ -99,17 +101,28 @@ public:
     {
     }
 
-    Object operator()(const Surface_3& surface, const Segment_3& s) const
+    Object operator()(Surface_3 surface, const Segment_3& s) const
     {
-      return self.intersect_segment_surface(surface.subfacets_octree, s);
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+      return self.intersect_segment_surface(*surface.subfacets_tree_ptr.get(), s);
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+      return surface.subfacets_tree_ptr.get()->intersection(s);
+#endif
     }
     
     Object operator()(const Surface_3& surface, const Ray_3& r) const {
-      return self.intersect_ray_surface(surface.subfacets_octree, r);
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+      return self.intersect_ray_surface(*surface.subfacets_tree_ptr.get(), r);
+#endif
+      return Object();
     }
       
     Object operator()(const Surface_3& surface, const Line_3& l) const {
-      return self.intersect_line_surface(surface.subfacets_octree, l);
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+      return self.intersect_line_surface(*surface.subfacets_tree_ptr.get(), l);
+#endif
+      return Object();
     }
   };
 
@@ -171,38 +184,50 @@ public:
     return Construct_initial_points(*this);
   }
 
-  bool is_in_volume(const Surface_3& surface, const Point& p)
+  bool is_in_volume(Surface_3& surface, const Point& p)
   {
     typename CGAL::Random_points_on_sphere_3<Point,
       Point_creator> random_point(FT(1));
     typename Geom_traits::Construct_vector_3 vector =
       Geom_traits().construct_vector_3_object();
-    typename Geom_traits::Construct_ray_3 ray =
-      Geom_traits().construct_ray_3_object();
+    typename Geom_traits::Construct_segment_3 segment =
+      Geom_traits().construct_segment_3_object();
+    typename Geom_traits::Construct_translated_point_3 translate =
+      Geom_traits().construct_translated_point_3_object();
     typename Geom_traits::Bounded_side_3 bounded_side =
       Geom_traits().bounded_side_3_object();
+    typename Geom_traits::Construct_scaled_vector_3 scale = 
+      Geom_traits().construct_scaled_vector_3_object();
 
-    if( bounded_side(surface.subfacets_octree.iso_cuboid(),
+    const typename GT::Iso_cuboid_3& cuboid = surface.subfacets_tree_ptr.get()->iso_cuboid();
+
+    if( bounded_side(cuboid,
 		     p) == ON_UNBOUNDED_SIDE )
       return false;
 
     std::pair<bool, int> result = std::make_pair(false, 0);
+
+    // upper bound of the diameter of the bounding box
+    const FT& diameter = 2*FT(surface.subfacets_tree_ptr.get()->max_lenght());
     while(! result.first)
     {
-      result = surface.subfacets_octree.
-        number_of_intersections(ray(p, vector(CGAL::ORIGIN,
-                                              *random_point++)));
+      result = surface.subfacets_tree_ptr.get()->
+        number_of_intersections(segment(p, 
+					translate(p, 
+						  scale(vector(ORIGIN,
+							       *random_point++),
+							diameter))));
     }
     return (result.second % 2) == 1;
   }
 
-  Object intersect_curves_with_triangle(const Surface_3& surface,
+  Object intersect_curves_with_triangle(Surface_3 surface,
 					const Triangle_3& t) const
   {
     if(! surface.has_edges())
       return Object();
 
-    Object o = surface.subsegments_octree.intersection(t);
+    Object o = surface.subsegments_tree_ptr.get()->intersection(t);
     Kernel_point kp;
     if( assign(kp, o) )
     {
@@ -216,7 +241,7 @@ public:
 //   // Basic intersection function for segments/rays/lines with the polyhedron
 //   template <class Elt>
 //   CGAL::Object intersect_with_surface (Octree data_struct, Elt e) {
-//     typedef CGAL::Data_structure_using_octree_3<Geom_traits> Octree;
+//     typedef CGAL::Data_structure_using_tree_3<Geom_traits> Octree;
 //     for ( typename Octree::Constraint_map_iterator cit = data_struct.c_m.begin();
 // 	  cit != data_struct.c_m.end(); ++cit ) {
 //       if (cit->second->does_intersect (e))
@@ -226,7 +251,8 @@ public:
 //     return CGAL::Object();
 //   }
 
-  CGAL::Object intersect_segment_surface(const Subfacets_octree& data_struct,
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+  CGAL::Object intersect_segment_surface(const Subfacets_tree& data_struct,
                                          const Segment_3& s) const
     {
       typename Geom_traits::Is_degenerate_3  is_degenerate;
@@ -267,7 +293,7 @@ public:
 /*       return data_struct.intersection (s.vertex(0), s.vertex(1));  // Marie */
     }
 
-  CGAL::Object intersect_ray_surface(const Subfacets_octree& data_struct,
+  CGAL::Object intersect_ray_surface(const Subfacets_tree& data_struct,
                                      const Ray_3 &r) const
     {
       typename Geom_traits::Is_degenerate_3  is_degenerate;
@@ -310,12 +336,13 @@ public:
     }
 
 
-  CGAL::Object intersect_line_surface(const Subfacets_octree&,
+  CGAL::Object intersect_line_surface(const Subfacets_tree&,
                                       const Line_3 &) const
     {
       CGAL_assertion(false);
       return CGAL::Object();
     }
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
 private:
 
 
