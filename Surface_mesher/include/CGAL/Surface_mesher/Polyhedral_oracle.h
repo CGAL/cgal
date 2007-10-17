@@ -149,8 +149,8 @@ public:
                                      int n = 20) const // WARNING: why 20?    
     {
       for (typename std::vector<Point>::const_iterator vit =
-             surface.corner_points->begin();
-           vit != surface.corner_points->end();
+             surface.corner_points_ptr->begin();
+           vit != surface.corner_points_ptr->end();
            ++vit)
       {
         Point p = *vit;
@@ -158,8 +158,8 @@ public:
         *out++= p;
       }
       for (typename std::vector<Point>::const_iterator vit =
-             surface.edges_points->begin();
-           vit != surface.edges_points->end() && n > 0;
+             surface.edges_points_ptr->begin();
+           vit != surface.edges_points_ptr->end() && n > 0;
            ++vit, --n)
       {
         Point p = *vit;
@@ -167,8 +167,8 @@ public:
         *out++= p;
       }
       for (typename std::set<Point>::const_iterator vit =
-             surface.input_points->begin();
-           vit != surface.input_points->end() && n > 0;
+             surface.input_points_ptr->begin();
+           vit != surface.input_points_ptr->end() && n > 0;
            ++vit, --n)
       {
         Point p = *vit;

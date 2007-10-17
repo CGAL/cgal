@@ -121,9 +121,9 @@ public:
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
     subsegments_tree_ptr(new Subsegments_tree()),
 #endif
-    input_points(new Input_points()),
-    corner_points(new Corner_points()),
-    edges_points(new Edges_points())
+    input_points_ptr(new Input_points()),
+    corner_points_ptr(new Corner_points()),
+    edges_points_ptr(new Edges_points())
   {
     GT gt = GT();
     typename GT::Construct_orthogonal_vector_3 orthogonal_vector = 
@@ -188,7 +188,7 @@ public:
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       subfacets_tree_ptr->add_constrained_vertex(vit->point());
 #endif
-      input_points->insert(vit->point());
+      input_points_ptr->insert(vit->point());
     }
 
     typename Polyhedron_3::size_type facet_index = 0;
@@ -324,14 +324,14 @@ public:
 	  it != edges_vertex_counter.end();
 	  ++it)
       {
-	input_points->erase(it->first);
+	input_points_ptr->erase(it->first);
 	if(it->second != 2)
 	{
 #ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
 	  std::cerr << ::boost::format("corner point: (%1%)\n")
 	    % it->first;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  corner_points->push_back(it->first);
+	  corner_points_ptr->push_back(it->first);
 	}
 	else
 	{
@@ -339,10 +339,10 @@ public:
 	  std::cerr << ::boost::format("edge point: (%1%)\n")
 	    % it->first;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  edges_points->push_back(it->first);
+	  edges_points_ptr->push_back(it->first);
 	}
       }
-//       if(!corner_points->empty() && edges_points->empty())
+//       if(!corner_points_ptr->empty() && edges_points_ptr->empty())
 //       {
 // #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 // 	std::cerr << "Incorrect input data. "
@@ -354,7 +354,7 @@ public:
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr << "Shuffle edges vertices... ";
 #endif
-      std::random_shuffle(edges_points->begin(), edges_points->end());
+      std::random_shuffle(edges_points_ptr->begin(), edges_points_ptr->end());
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr << "done\n";
 #endif
@@ -363,8 +363,8 @@ public:
       std::cerr <<
 	::boost::format("number of corner vertices: %1%\n"
 			"number of edges vertices:  %2%\n")
-	% corner_points->size()
-	% edges_points->size();
+	% corner_points_ptr->size()
+	% edges_points_ptr->size();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
@@ -429,11 +429,14 @@ public:
   Subfacets_tree_ptr subfacets_tree_ptr;
   Subsegments_tree_ptr subsegments_tree_ptr;
   typedef std::set<Point_3> Input_points;
-  boost::shared_ptr<Input_points> input_points;
+  boost::shared_ptr<Input_points> input_points_ptr;
   typedef std::vector<Point_3> Corner_points;
-  boost::shared_ptr<Corner_points> corner_points;
+  boost::shared_ptr<Corner_points> corner_points_ptr;
   typedef std::vector<Point_3> Edges_points;
-  boost::shared_ptr<Edges_points> edges_points;
+  boost::shared_ptr<Edges_points> edges_points_ptr;
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+  boost::shared_ptr<PointInPolyhedron> pinpolyhedron_ptr;
+#endif
 
   Bbox bounding_box;
   FT bounding_box_sq_radius;
