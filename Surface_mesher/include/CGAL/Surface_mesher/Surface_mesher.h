@@ -741,8 +741,9 @@ namespace CGAL {
 	  << boost::format("\r             \r"
 			   "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
 	  % tr.number_of_vertices()
-	  % (++nbsteps) % this->debug_info()
+	  % nbsteps % this->debug_info()
 	  % (nbsteps / timer.time());
+	++nbsteps;
 	timer.start();
 	while (!is_algorithm_done()) {
 	  one_step (visitor);
@@ -750,8 +751,9 @@ namespace CGAL {
 	    << boost::format("\r             \r"
 			     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
 	    % tr.number_of_vertices()
-	    % (++nbsteps) % this->debug_info()
+	    % nbsteps % this->debug_info()
 	    % (nbsteps / timer.time());
+	  ++nbsteps;
 	}
 	std::cerr << "\ndone.\n";
       }
