@@ -205,6 +205,9 @@ public:
 		     p) == ON_UNBOUNDED_SIDE )
       return false;
 
+#ifdef CGAL_SURFACE_MESHER_DEBUG_INTERSECTION_DATA_STRUCTURE
+    std::cerr << "(in volume) ";
+#endif
     std::pair<bool, int> result = std::make_pair(false, 0);
 
     // upper bound of the diameter of the bounding box
