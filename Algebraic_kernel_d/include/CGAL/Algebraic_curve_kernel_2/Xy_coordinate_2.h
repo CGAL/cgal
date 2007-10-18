@@ -183,7 +183,7 @@ public:
      * having \c curve().degree() return \c -1. 
      */
     Xy_coordinate_2() : 
-        Base(Rep()) {  
+        Base(Rep()) { 
     }
 
     /*!\brief

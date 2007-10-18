@@ -58,8 +58,8 @@ public:
     Curve_vertical_line_1_rep(const Event1_info& info,
             const Curve_analysis_2& ca_2, int index) : 
         _m_event_info(info), _m_ca_2(ca_2), _m_index(index),
-            _m_xy_coords(_m_event_info.num_arcs())
-    {   }
+            _m_xy_coords(_m_event_info.num_arcs()) { 
+    }
     
     // data
     // temporary added underlying Event1_info object
@@ -73,6 +73,8 @@ public:
             
     // container storing the vector of events on a vertical line
     mutable std::vector<boost::optional< Xy_coordinate_2 > >_m_xy_coords;
+    
+    //mutable std::vector<Xy_coordinate_2 >_m_xy_coords;
         
     // befriending the handle
     friend class Curve_vertical_line_1<Curve_analysis_2, Self>;
@@ -203,12 +205,13 @@ public:
         return (this->ptr()->_m_event_info.num_arcs());
     }
 
-    //!\brief  returns an object of type \c Xy_coordinate_2 for the j-th event
+    //!\brief  returns \c Xy_coordinate_2 for j-th event over this vert line
     //!
     //! \pre 0 <= j < num_of_events()
     Xy_coordinate_2 get_algebraic_real_2(int j) const
     {
         CGAL_precondition(0 <= j&&j < number_of_events());
+        
         if(!this->ptr()->_m_xy_coords[j])
             this->ptr()->_m_xy_coords[j] = Xy_coordinate_2(x(), 
                 this->ptr()->_m_ca_2.get_polynomial_2(), j);
@@ -216,7 +219,7 @@ public:
     }
     
     //!\brief alias to \c get_algebraic_real_2() method
-    Xy_coordinate_2 get_xy_coordinate(int j) const
+    Xy_coordinate_2 get_xy_coordinate_2(int j) const
     {
         return get_algebraic_real_2(j);
     }

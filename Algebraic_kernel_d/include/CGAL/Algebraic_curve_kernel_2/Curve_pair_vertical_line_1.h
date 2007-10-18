@@ -210,7 +210,7 @@ public:
     int get_event_of_curve(int k, bool c) const
     {
         if(this->ptr()->_m_is_swapped) // reverse the curve order since 
-            c ^= 1;                    // polynomials are 
+            c ^= 1;                    // polynomials are swapped in curve pair
         const typename Event2_slice::Int_container& ic = 
             this->ptr()->_m_event_slice.arcno_to_pos
                     ((c == 0 ? SoX::CURVE1 : SoX::CURVE2));
@@ -251,9 +251,10 @@ public:
         idx[((*it).first == SoX::CURVE1 ? 0 : 1)] = (*it).second;
         if(++it != end) 
             idx[((*it).first == SoX::CURVE1 ? 0 : 1)] = (*it).second;
-            
-        if(this->ptr()->_m_is_swapped) // the contents of curve pair analysis
-            std::swap(idx[0], idx[1]); // are swapped
+        
+        // the contents of curve pair analysis are swapped
+        if(this->ptr()->_m_is_swapped) 
+            return std::make_pair(idx[1], idx[0]);
         return std::make_pair(idx[0], idx[1]);
     }
 
