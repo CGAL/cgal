@@ -1344,12 +1344,6 @@ Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
 Core/src/CGALCore/Core_71.vcproj -text
 Core/src/CGALCore/Core_80.vcproj -text
 Core/src/CGALCore/all_files.cpp -text
-Curved_kernel_via_analysis_2/include/CGAL/GPA_2.h -text
-Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Arc_2.h -text
-Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Curve_interval_arcno_cache.h -text
-Curved_kernel_via_analysis_2/include/CGAL/GPA_2/GPA_2_functors.h -text
-Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Make_x_monotone.h -text
-Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Point_2.h -text
 Curved_kernel_via_analysis_2/maintainer -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
