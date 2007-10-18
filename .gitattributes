@@ -1344,6 +1344,13 @@ Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
 Core/src/CGALCore/Core_71.vcproj -text
 Core/src/CGALCore/Core_80.vcproj -text
 Core/src/CGALCore/all_files.cpp -text
+Curved_kernel_via_analysis_2/include/CGAL/GPA_2.h -text
+Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Arc_2.h -text
+Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Curve_interval_arcno_cache.h -text
+Curved_kernel_via_analysis_2/include/CGAL/GPA_2/GPA_2_functors.h -text
+Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Make_x_monotone.h -text
+Curved_kernel_via_analysis_2/include/CGAL/GPA_2/Point_2.h -text
+Curved_kernel_via_analysis_2/maintainer -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text svneol=unset#application/postscript
@@ -1481,13 +1488,6 @@ Envelope_3/test/Envelope_3/data/triangles/test_w_vertical.cin -text
 Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
-GPA_2/include/CGAL/GPA_2.h -text
-GPA_2/include/CGAL/GPA_2/Arc_2.h -text
-GPA_2/include/CGAL/GPA_2/Curve_interval_arcno_cache.h -text
-GPA_2/include/CGAL/GPA_2/GPA_2_functors.h -text
-GPA_2/include/CGAL/GPA_2/Make_x_monotone.h -text
-GPA_2/include/CGAL/GPA_2/Point_2.h -text
-GPA_2/maintainer -text
 Generator/demo/Generator/generator.vcproj eol=crlf
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
