@@ -30,6 +30,8 @@
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
+
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
 #include <algorithm>
 
@@ -276,6 +278,10 @@ public:
     
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
+    
+    //! type of algebraic real traits
+    typedef CGALi::Algebraic_real_traits<Xy_coordinate_2, 
+        Internal_curve_pair_2> Algebraic_real_traits;
     
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
@@ -638,25 +644,84 @@ public:
             // Algebraic_surface_3_z_at_xy_isolator_traits_base.h
             if(p.id() == r.curve().id()) // point lies on the same curve
                 return CGAL::ZERO;
-//             Curve_pair_2 cp = Self::get_curve_pair_cache()
-//                 (std::make_pair(p, r.curve()));
-//             typename Self::Curve_pair_analysis_2 cpa_2(cp);    
-            // this is to keep compiler happy ))
-            typename Self::Curve_pair_analysis_2 cpa_2(
-                (Curve_analysis_2(p)),(Curve_analysis_2(r.curve())));
             
-            typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
-                cpv_line = cpa_2.vertical_line_at_exact_x(r.x());
-        // check only if there is an intersection of both curve along this line
-            if(cpv_line.is_event() && cpv_line.is_intersection()) {
-                // get an y-position of the point r
-                int idx = cpv_line.get_event_of_curve(r.arcno(), 1);  
-                std::pair<int, int> ipair = cpv_line.get_curves_at_event(idx);
-                if(ipair.first != -1&&ipair.second != -1)
-                    return CGAL::ZERO; // intersection of both curves
+            typedef typename Self::Curve_analysis_2 Curve_analysis_2;
+            typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
+            
+            Curve_analysis_2 ca_2(p), ca_2r(r.curve());
+            Curve_pair_analysis_2 cpa_2(ca_2, ca_2r);
+            typename Curve_analysis_2::Curve_vertical_line_1 cv_line = 
+                ca_2.vertical_line_for_x(r.x());
+            
+            // fast check for the presence of vertical line at r.x()
+            if(cv_line.covers_line())    
+                return CGAL::ZERO;
+                
+            // in case there is no event at this x-coordinate, vertical
+            // line at some rational x over an interval is returned
+            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                cpv_line = cpa_2.vertical_line_for_x(r.x());
+                        
+            // get an y-position of the point r
+            int idx = cpv_line.get_event_of_curve(r.arcno(), 1);  
+            std::pair<int, int> ipair;
+            if(cpv_line.is_event()) {
+                if(cpv_line.is_intersection()) {
+                    ipair = cpv_line.get_curves_at_event(idx);
+                    // easy case: there is a 2-curve intersection at this x
+                    if(ipair.first != -1&&ipair.second != -1)
+                        return CGAL::ZERO; // intersection of both curves
+                }
+                // check if there is an event of curve p at r.x()
+                if(cv_line.is_event()) {
+                    CGAL_error("this is not an easy case..))");
+                }
+                // this is an event of r.curve() -> therefore cpv_line.x()
+                // is given as algebraic real (not rational) and r.arcno() is
+                // an event arcno
             }
-            // otherwise compute the sign..   
-            return CGAL::SMALLER;
+            // there is no event at r.x() of curve p hence we're free to
+            // pick up any rational boundary over an interval to compute the
+            // sign at 
+            
+            int arcno_low = -1, arcno_high = -1;
+            
+            typedef typename Self::Algebraic_real_traits Traits;
+            typedef typename Traits::Boundary Boundary;
+            Boundary boundary_y;
+            Xy_coordinate_2 xy1, xy2;
+            
+            // idx-1 and idx+1 are consecutive event indices over r.x()
+            if(idx > 0) {
+                ipair = cpv_line.get_curves_at_event(idx-1);
+                arcno_low = ipair.first;
+                xy1 = cv_line.get_algebraic_real_2(arcno_low);
+            } 
+            if(idx < cv_line.number_of_events() - 1) {    
+                ipair = cpv_line.get_curves_at_event(idx+1);
+                arcno_high = ipair.first;
+                xy2 = cv_line.get_algebraic_real_2(arcno_high);
+            }
+                        
+            if(arcno_low != -1) {
+                boundary_y = (arcno_high != -1 ? 
+                     typename Traits::Boundary_between()(xy1, xy2) :
+                     typename Traits::Upper_boundary()(xy1));
+            } else {
+                // if arcno_high == -1 pick up arbitrary rational since the
+                // curve p does not cross vertical line at r.x()
+                boundary_y = (arcno_high != -1 ? 
+                     typename Traits::Lower_boundary()(xy2) : Boundary(0)); 
+            }
+            
+            X_coordinate_1 boundary_x = cv_line.x();    
+            if(boundary_x.low() != boundary_x.high())
+                std::cout << "oops very bizarre error occurred..\n";
+            
+            NiX::Polynomial<Boundary> poly = 
+                NiX::substitute_x(p.f(), boundary_x.low());
+                            
+            return poly.sign_at(boundary_y);
         }
     };
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
@@ -689,7 +754,7 @@ public:
                 OutputIteratorRoots roots, OutputIteratorMult mults) const
         {
             // these tests are quite expensive... do we really need them ??
-            /*CGAL_precondition_code (
+            CGAL_precondition_code (
                 typename Self::Has_finite_number_of_self_intersections_2 
                     not_self_overlapped;
                 typename Self::Has_finite_number_of_intersections_2 
@@ -697,7 +762,7 @@ public:
                 CGAL_precondition(not_self_overlapped(p1) &&
                     not_self_overlapped(p2));
                 CGAL_precondition(do_not_overlap(p1, p2));
-            );*/
+            );
             typename Self::Curve_pair_analysis_2 cpa_2(
                 (Curve_analysis_2(p1)),(Curve_analysis_2(p2)));
             typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
