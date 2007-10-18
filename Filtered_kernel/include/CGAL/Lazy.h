@@ -1095,7 +1095,13 @@ public :
 */
 
   Lazy()
+#if 0 // Optimization disabled for improved thread safety.
     : Handle(zero()) {}
+#else
+  {
+    PTR = new Lazy_rep_0<AT, ET, E2A>();
+  }
+#endif
 
   Lazy(Self_rep *r)
   {
