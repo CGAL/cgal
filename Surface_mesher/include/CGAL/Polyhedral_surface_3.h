@@ -29,6 +29,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Inverse_index.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <CGAL/make_surface_mesh.h>
@@ -178,8 +180,20 @@ public:
       % polyhedron.size_of_vertices()
       % ( polyhedron.size_of_halfedges() / 2 )
       % polyhedron.size_of_facets();
-#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
+    typedef typename Polyhedron_3::Vertex_const_iterator Vertex_const_it;
+
+#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+    double (*vertices_array)[3] =
+      (double (*)[3])new double [3*polyhedron.size_of_vertices()];
+//       static_cast<double(*)[3]>(new double [3*polyhedron.size_of_vertices()]);
+    int (*facets_array)[3] = 
+      (int (*)[3])new int [3*polyhedron.size_of_facets()];
+    int i = 0;
+    typedef Inverse_index<Vertex_const_it> Index;
+    Index index( polyhedron.vertices_begin(), polyhedron.vertices_end());
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
     for(typename Polyhedron_3::Vertex_const_iterator vit = 
           polyhedron.vertices_begin();
         vit != polyhedron.vertices_end();
@@ -189,6 +203,12 @@ public:
       subfacets_tree_ptr->add_constrained_vertex(vit->point());
 #endif
       input_points_ptr->insert(vit->point());
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+      vertices_array[i][0] = vit->point().x();
+      vertices_array[i][1] = vit->point().y();
+      vertices_array[i][2] = vit->point().z();
+      ++i;
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
     }
 
     typename Polyhedron_3::size_type facet_index = 0;
@@ -205,6 +225,14 @@ public:
       const Point_3& p2 = edges_circ++->vertex()->point();
       const Point_3& p3 = edges_circ++->vertex()->point();
 
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+      edges_circ = fit->facet_begin();
+      facets_array[facet_index][0] = index[edges_circ++->vertex()];
+      facets_array[facet_index][1] = index[edges_circ++->vertex()];
+      facets_array[facet_index][2] = index[edges_circ++->vertex()];
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+
+
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       subfacets_tree_ptr->add_constrained_facet(p1, p2, p3);
 #endif
@@ -217,6 +245,24 @@ public:
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
     }
 
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+# ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    std::cerr << "Creating the PointInPolyhedron data structure... ";
+    timer.reset();
+    timer.start();
+# endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    pinpolyhedron_ptr = 
+      PointInPolyhedron_ptr(new PointInPolyhedron(vertices_array,
+						  polyhedron.size_of_vertices(),
+						  facets_array,
+						  polyhedron.size_of_facets()));
+    delete [] vertices_array;
+    delete [] facets_array;
+# ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    timer.stop();
+    std::cerr << ::boost::format("done (%1%s)\n") % timer.time();
+# endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     std::cerr << "Creating subfacets_tree... ";
     timer.reset();
@@ -234,14 +280,14 @@ public:
       % subfacets_tree_ptr->number_of_vertices()
       % subfacets_tree_ptr->number_of_facets()
       % subfacets_tree_ptr->number_of_constraints();
-# endif
+# endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
 # ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
     std::cerr <<
       ::boost::format("done (%1%s)\n"
 		      "  number of facets:      %2%\n")
       % timer.time()
       % subfacets_tree_ptr->number_of_elements();
-# endif
+# endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     if( this->has_edges() ) {
 
@@ -435,7 +481,8 @@ public:
   typedef std::vector<Point_3> Edges_points;
   boost::shared_ptr<Edges_points> edges_points_ptr;
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
-  boost::shared_ptr<PointInPolyhedron> pinpolyhedron_ptr;
+  typedef boost::shared_ptr<PointInPolyhedron> PointInPolyhedron_ptr;
+  PointInPolyhedron_ptr pinpolyhedron_ptr;
 #endif
 
   Bbox bounding_box;

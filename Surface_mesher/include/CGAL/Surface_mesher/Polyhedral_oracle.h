@@ -103,6 +103,18 @@ public:
 
     Object operator()(Surface_3 surface, const Segment_3& s) const
     {
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+      double pa[3], pb[3];
+      pa[0] = s[0].x();
+      pa[1] = s[0].y();
+      pa[2] = s[0].z();
+      pb[0] = s[1].x();
+      pb[1] = s[1].y();
+      pb[2] = s[1].z();
+      if(surface.pinpolyhedron_ptr->isPinPolyhedron(pa) == 
+	 surface.pinpolyhedron_ptr->isPinPolyhedron(pb))
+	return Object();
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       return self.intersect_segment_surface(*surface.subfacets_tree_ptr, s);
 #endif
@@ -186,6 +198,13 @@ public:
 
   bool is_in_volume(Surface_3& surface, const Point& p)
   {
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
+    double point[3];
+    point[0] = p.x();
+    point[1] = p.y();
+    point[2] = p.z();
+    return surface.pinpolyhedron_ptr->isPinPolyhedron(point);
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
     typename CGAL::Random_points_on_sphere_3<Point,
       Point_creator> random_point(FT(1));
     typename Geom_traits::Construct_vector_3 vector =
