@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 template < class CurveKernel_2 >
 class Curved_kernel_via_analysis_2 {
 
-// declares GPA functors, for each functor defines a member function
+// declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_Curved_kernel_pred(Y, Z) \
     typedef Curved_kernel_2_Functors::Y<Self> Y; \
