@@ -232,14 +232,24 @@ make_list(Iterator begin, Iterator end)
 #  define CGAL_make_list(begin, end) (begin, end)
 #endif
 
-#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#define CGAL_DEPRECATED  __attribute__((deprecated))
-#elif _MSC_VER > 1300
-#define CGAL_DEPRECATED __declspec(deprecated)
+
+// Macro to trigger deprecation warnings
+#if defined (__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#  define CGAL_DEPRECATED __attribute__((deprecated))
+#elif defined (_MSC_VER) && (_MSC_VER > 1300)
+#  define CGAL_DEPRECATED __declspec(deprecated)
 #else
-#define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED
 #endif
 
+
+// If CGAL_HAS_THREADS is not defined, then CGAL code assumes
+// it can do any thread-unsafe things (like using static variables).
+#if !defined CGAL_HAS_THREADS && !defined CGAL_HAS_NO_THREADS
+  #if defined BOOST_HAS_THREADS || defined _OPENMP
+  #  define CGAL_HAS_THREADS
+  #endif
+#endif
 
 
 #endif // CGAL_CONFIG_H

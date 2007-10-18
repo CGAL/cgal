@@ -154,5 +154,22 @@ Every release of \cgal\ defines the following preprocessor macros:
 \end{description}
  
 
+\section{Thread safety}
+
+\cgal\ is progressively being made thread-safe.  The guidelines which are followed
+are:
+\begin{itemize}
+\item it should be possible to use different objects in different threads at
+the same time (of the same type or not),
+\item it is not safe to access the same object from different threads
+at the same time.
+\end{itemize}
+
+If the macro \ccc{CGAL_HAS_THREADS} is not defined, then \cgal\ assumes it can use
+any thread-unsafe code (such as static variables).  By default, this macro is not
+defined, unless \ccc{BOOST_HAS_THREADS} or \ccc{_OPENMP} is defined.  It is possible
+to force its definition on the command line, and it is possible to prevent its default
+definition by setting \ccc{CGAL_HAS_NO_THREADS} from the command line.
+
 
 \input{Introduction_ref/checks} % extra chapter
