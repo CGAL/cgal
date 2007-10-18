@@ -1095,7 +1095,7 @@ public :
 */
 
   Lazy()
-#if 0 // Optimization disabled for improved thread safety.
+#ifndef CGAL_HAS_THREADS
     : Handle(zero()) {}
 #else
   {
