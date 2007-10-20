@@ -204,9 +204,26 @@ public:
   const_reverse_iterator
   rend()   const { return const_reverse_iterator(begin()); }
 
+  // Special insert methods that construct the objects in place
+  // (just forward the arguments to the constructor, to optimize a copy).
+#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
+  template < typename... Args >
+  iterator
+  emplace(const Args&... args) const
+  {
+    if (free_list == NULL)
+      allocate_new_block();
 
+    pointer ret = free_list;
+    free_list = clean_pointee(ret);
+    new (ret) value_type(args);
+    CGAL_assertion(type(ret) == USED);
+    ++size_;
+    return iterator(ret, 0);
+  }
+#else
   // inserts a default constructed item.
-  iterator construct_insert()
+  iterator emplace()
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -219,10 +236,9 @@ public:
     return iterator(ret, 0);
   }
 
-  // Special insert methods that construct the objects in place
-  // (just forward the arguments to the constructor, to optimize a copy).
   template < typename T1 >
-  iterator construct_insert(const T1 &t1)
+  iterator
+  emplace(const T1 &t1)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -237,7 +253,7 @@ public:
 
   template < typename T1, typename T2 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2)
+  emplace(const T1 &t1, const T2 &t2)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -252,7 +268,7 @@ public:
 
   template < typename T1, typename T2, typename T3 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3)
+  emplace(const T1 &t1, const T2 &t2, const T3 &t3)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -267,7 +283,7 @@ public:
 
   template < typename T1, typename T2, typename T3, typename T4 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
+  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -282,8 +298,8 @@ public:
 
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-	           const T5 &t5)
+  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+	  const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -299,8 +315,8 @@ public:
   template < typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                   const T5 &t5, const T6 &t6)
+  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+          const T5 &t5, const T6 &t6)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -316,8 +332,8 @@ public:
   template < typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                   const T5 &t5, const T6 &t6, const T7 &t7)
+  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+          const T5 &t5, const T6 &t6, const T7 &t7)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -333,8 +349,8 @@ public:
   template < typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7, typename T8 >
   iterator
-  construct_insert(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                   const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
+  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+          const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -346,6 +362,7 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
+#endif // CGAL_HAS_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {

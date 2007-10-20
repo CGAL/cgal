@@ -1247,10 +1247,10 @@ create_face(Face_handle f1, int i1,
 	    Face_handle f2, int i2, 
 	    Face_handle f3, int i3)
 {
-  Face_handle newf = face_container().construct_insert(f1->vertex(cw(i1)),
-						       f2->vertex(cw(i2)),
-						       f3->vertex(cw(i3)),
-						       f2, f3, f1);
+  Face_handle newf = face_container().emplace(f1->vertex(cw(i1)),
+					      f2->vertex(cw(i2)),
+					      f3->vertex(cw(i3)),
+					      f2, f3, f1);
   f1->set_neighbor(i1,newf);
   f2->set_neighbor(i2,newf);
   f3->set_neighbor(i3,newf);
@@ -1262,10 +1262,10 @@ typename Triangulation_data_structure_2<Vb,Fb>::Face_handle
 Triangulation_data_structure_2<Vb,Fb>::
 create_face(Face_handle f1, int i1, Face_handle f2, int i2)
 {
-  Face_handle newf = face_container().construct_insert(f1->vertex(cw(i1)),
-						       f2->vertex(cw(i2)),
-						       f2->vertex(ccw(i2)),
-						       f2, Face_handle(), f1);
+  Face_handle newf = face_container().emplace(f1->vertex(cw(i1)),
+					      f2->vertex(cw(i2)),
+					      f2->vertex(ccw(i2)),
+					      f2, Face_handle(), f1);
   f1->set_neighbor(i1,newf);
   f2->set_neighbor(i2,newf);
   return newf;
@@ -1289,7 +1289,7 @@ typename Triangulation_data_structure_2<Vb,Fb>::Face_handle
 Triangulation_data_structure_2<Vb,Fb>::
 create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
 {
-  Face_handle newf = face_container().construct_insert(v1, v2, v3);
+  Face_handle newf = face_container().emplace(v1, v2, v3);
   return newf;
 }
 
@@ -1299,7 +1299,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 	    Face_handle f1, Face_handle f2, Face_handle f3)
 {
-  Face_handle newf = face_container().construct_insert(v1, v2, v3, f1, f2, f3);
+  Face_handle newf = face_container().emplace(v1, v2, v3, f1, f2, f3);
 
   return(newf);
 }

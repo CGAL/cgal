@@ -236,7 +236,7 @@ public:
 
   Vertex_handle create_vertex()
   {
-      return vertex_container().construct_insert();
+      return vertex_container().emplace();
   }
 
   Vertex_handle create_vertex(const Vertex_handle& v)
@@ -251,7 +251,7 @@ public:
 
   Cell_handle create_cell() 
     { 
-      return cell_container().construct_insert();
+      return cell_container().emplace();
     }
 
   Cell_handle create_cell(const Cell_handle& c)
@@ -262,7 +262,7 @@ public:
   Cell_handle create_cell(const Vertex_handle& v0, const Vertex_handle& v1,
 	                  const Vertex_handle& v2, const Vertex_handle& v3)
     {
-      return cell_container().construct_insert(v0, v1, v2, v3);
+      return cell_container().emplace(v0, v1, v2, v3);
     }
 
   Cell_handle create_cell(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -270,7 +270,7 @@ public:
 		          const Cell_handle& n0, const Cell_handle& n1,
 			  const Cell_handle& n2, const Cell_handle& n3)
     {
-      return cell_container().construct_insert(v0, v1, v2, v3, n0, n1, n2, n3);
+      return cell_container().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
     }
 
   Cell_handle create_face()
@@ -283,7 +283,7 @@ public:
 	                  const Vertex_handle& v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
-      return cell_container().construct_insert(v0, v1, v2, Vertex_handle());
+      return cell_container().emplace(v0, v1, v2, Vertex_handle());
     }
 
   // The following functions come from TDS_2.

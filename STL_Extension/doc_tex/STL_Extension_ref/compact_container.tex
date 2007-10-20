@@ -258,11 +258,11 @@
   {erases all the elements of \ccVar, then inserts the range
    [\ccStyle{first, last}) in \ccVar.}
 
-  \ccMethod{template < typename T1 >
-            iterator construct_insert(T1 t1);}
+  \ccMethod{template < class... Args >
+            iterator emplace(const Args&... args);}
   {constructs an object of type \ccc{T} with the constructor that takes
-   \ccc{t1} as argument, inserts it in \ccVar, and returns the iterator pointing
-   to it. The same constructor exists for up to nine arguments.}
+   \ccc{args} as argument(s), inserts it in \ccVar, and returns the iterator pointing
+   to it.}
 
   %% +-----------------------------------+
   \ccHeading{Removal}
