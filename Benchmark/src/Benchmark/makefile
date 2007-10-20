@@ -42,6 +42,10 @@ SOVERSION=
 SOMAJOR=
 LIB_NAME_BASE = CGALBenchmark
 
+# The following is needed for some linkers (e.g., Darwin)
+SHARED_LIB_ADDITIONAL_LDFLAGS = \
+            $(BOOST_PROGRAM_OPTIONS_LIBPATHFLAGS) $(BOOST_PROGRAM_OPTIONS_LDFLAGS)
+
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
 #---------------------------------------------------------------------#
