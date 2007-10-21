@@ -7,6 +7,8 @@
 #include <list>
 #include <iostream>
 
+#include <cstdlib>
+
 typedef CGAL::Double_map<int, int> Map;
 typedef Map::size_type size_type;
 
@@ -16,9 +18,9 @@ int main(int argc, char** argv)
   int number_of_loops = 10;
 
   if(argc > 1)
-    number_of_elements = atoi(argv[1]);
+    number_of_elements = std::atoi(argv[1]);
   if(argc > 2)
-    number_of_loops = atoi(argv[2]);
+    number_of_loops = std::atoi(argv[2]);
 
   Map f;
   CGAL::Timer time_insert;
