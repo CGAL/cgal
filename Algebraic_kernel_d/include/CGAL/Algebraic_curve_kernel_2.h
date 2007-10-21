@@ -632,7 +632,7 @@ public:
      * computes the sign of a bivariate polynomial \c p evaluated at the root 
      * \c r of a system of two bivariate polynomial equations
      *
-     * return the value convertible into \c CGAL::Sign
+     * returns a value convertible to \c CGAL::Sign
      */
     struct Sign_at_2 : 
         public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
@@ -650,8 +650,9 @@ public:
             
             Curve_analysis_2 ca_2(p), ca_2r(r.curve());
             Curve_pair_analysis_2 cpa_2(ca_2, ca_2r);
-            typename Curve_analysis_2::Curve_vertical_line_1 cv_line = 
-                ca_2.vertical_line_for_x(r.x());
+            typename Curve_analysis_2::Curve_vertical_line_1
+                cv_line = ca_2.vertical_line_for_x(r.x()),
+                cv_line_r = ca_2r.vertical_line_for_x(r.x());
             
             // fast check for the presence of vertical line at r.x()
             if(cv_line.covers_line())    
@@ -665,6 +666,8 @@ public:
             // get an y-position of the point r
             int idx = cpv_line.get_event_of_curve(r.arcno(), 1);  
             std::pair<int, int> ipair;
+            X_coordinate_1 boundary_x;
+            
             if(cpv_line.is_event()) {
                 if(cpv_line.is_intersection()) {
                     ipair = cpv_line.get_curves_at_event(idx);
@@ -674,34 +677,76 @@ public:
                 }
                 // check if there is an event of curve p at r.x()
                 if(cv_line.is_event()) {
-                    CGAL_error("this is not an easy case..))");
-                }
+                    if(cv_line_r.is_event())
+                        CGAL_error("you're lucky )) this is not an easy \
+                            case..");
+                    //std::cout << "sign at event of curve p\n";
+                    // this is an event of curve p but not of r.curve() ->
+                    // shift to the left of r.x() otherwise we would find
+                    // arc-numbers of p at event point (r.arcno() is valid
+                    // over curve-pair interval)
+                    cpv_line = cpa_2.vertical_line_of_interval(
+                        cpv_line.get_index());
+                    // recompute vertical line of p and y-position of r
+                    // (however y-position of r.arcno() should not change
+                    // since it can only happen at 2-curve event or at event
+                    // of g)
+                    idx = cpv_line.get_event_of_curve(r.arcno(), 1);
+                    //  need cv-line over interval ?
+                    cv_line = ca_2.vertical_line_of_interval(
+                        cv_line.get_index());
+                    boundary_x = cpv_line.x();
+                    
+                } else if(cv_line_r.is_event()) {
+                
+                   // std::cout << "sign at event of curve r: cpv_line x: "
+                     //   << cpv_line.x() << "\n";
                 // this is an event of r.curve() -> therefore cpv_line.x()
                 // is given as algebraic real (not rational) and r.arcno() is
-                // an event arcno
-            }
+                // an event arcno 
+                    // need to recompute boundary_x (but leave cpv_line
+                    // unchanged otherwise r.arcno() is not valid)
+                    boundary_x = cpa_2.vertical_line_of_interval(
+                        cpv_line.get_index()).x();
+                }
+            } else {
             // there is no event at r.x() of curve p hence we're free to
             // pick up any rational boundary over an interval to compute the
             // sign at 
+                boundary_x = cpv_line.x();
+               // std::cout << "sign over curve pair interval\n";
+            }
+            // obtain vertical line at exact rational x
+            cv_line = ca_2.vertical_line_at_exact_x(
+                X_coordinate_1(boundary_x.low()));
             
-            int arcno_low = -1, arcno_high = -1;
-            
+            int arcno_low = -1, arcno_high = -1, i = idx;
             typedef typename Self::Algebraic_real_traits Traits;
             typedef typename Traits::Boundary Boundary;
             Boundary boundary_y;
             Xy_coordinate_2 xy1, xy2;
             
-            // idx-1 and idx+1 are consecutive event indices over r.x()
-            if(idx > 0) {
-                ipair = cpv_line.get_curves_at_event(idx-1);
-                arcno_low = ipair.first;
-                xy1 = cv_line.get_algebraic_real_2(arcno_low);
-            } 
-            if(idx < cv_line.number_of_events() - 1) {    
-                ipair = cpv_line.get_curves_at_event(idx+1);
-                arcno_high = ipair.first;
-                xy2 = cv_line.get_algebraic_real_2(arcno_high);
+            // arcno_low and arcno_high are consecutive event indices of
+            // curve p at r.x()
+            while(i-- > 0) {
+                ipair = cpv_line.get_curves_at_event(i);
+                if(ipair.first != -1) {
+                    arcno_low = ipair.first;
+                    xy1 = cv_line.get_algebraic_real_2(arcno_low);
+                    break;
+                }
             }
+            i = idx;
+            while(i++ < cpv_line.number_of_events() - 1) {
+                ipair = cpv_line.get_curves_at_event(i);
+                if(ipair.first != -1) {
+                    arcno_high = ipair.first;
+                    xy2 = cv_line.get_algebraic_real_2(arcno_high);
+                    break;
+                }
+            }
+//             std::cout << "arcno_low : " << arcno_low << "; arcno_high: " <<
+//                 arcno_high << "\n";
                         
             if(arcno_low != -1) {
                 boundary_y = (arcno_high != -1 ? 
@@ -713,11 +758,17 @@ public:
                 boundary_y = (arcno_high != -1 ? 
                      typename Traits::Lower_boundary()(xy2) : Boundary(0)); 
             }
-            
-            X_coordinate_1 boundary_x = cv_line.x();    
+//             if(arcno_low != -1&& arcno_high!=-1) {
+//                std::cout << xy1 << "; " << xy2 << "\n";
+//             }
+//             
             if(boundary_x.low() != boundary_x.high())
                 std::cout << "oops very bizarre error occurred..\n";
-            
+
+//             std::cout << "target pt: " <<
+//                 NiX::to_double(boundary_x.low()) << "; " <<
+//                     NiX::to_double(boundary_y) << "\n";
+                    
             NiX::Polynomial<Boundary> poly = 
                 NiX::substitute_x(p.f(), boundary_x.low());
                             
