@@ -56,7 +56,9 @@
 #include <CGAL/Arr_topology_traits/Arr_qdx_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
+#if QdX_USE_AcX
 #include <SoX/GAPS/Restricted_cad_3.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
