@@ -11,3 +11,4 @@ internal-test-surface-mesher.cpp
 makefile.dependencies
 find_debug_macros
 find_non_debug_macros
+polyhedron_remesher.cpp
