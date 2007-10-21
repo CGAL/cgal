@@ -90,13 +90,13 @@ struct Algebraic_real_traits<AlgebraicReal_2,
             
             Boundary res;
             Event_line vline = r1.curve().event_info_at_x(r1.x());
-            if(r1.arcno() < r2.arcno()) 
+            if(r1.arcno() < r2.arcno()) {
                 res = (vline.upper_boundary(r1.arcno()) +
-                    vline.lower_boundary(r2.arcno()) / Boundary(2));
-            else
+                    vline.lower_boundary(r2.arcno())) / Boundary(2);
+            } else {
                 res = (vline.lower_boundary(r1.arcno()) +
-                    vline.upper_boundary(r2.arcno()) / Boundary(2));
-            
+                    vline.upper_boundary(r2.arcno())) / Boundary(2);
+            }
             CGAL::simplify(res);
             return res;
         }

@@ -416,9 +416,9 @@ std::ostream& operator<< (std::ostream& os,
             pt.curve().f() << 
             "; arcno: " << pt.arcno() << "]\n";
     } else { // ASCII output
-        os << pt.x() << std::endl;
-        os << pt.curve().f() << std::endl;
-        os << pt.arcno() << std::endl;
+        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+            pt.curve().f() << 
+            "; arcno: " << pt.arcno() << "]\n";
     }
     return os;    
 }
