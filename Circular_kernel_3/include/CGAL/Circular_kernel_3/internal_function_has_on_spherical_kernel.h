@@ -399,6 +399,8 @@ namespace CGAL {
        if(!non_oriented_equal<SK>(c,ca.supporting_circle())) return false;
        return ca.rep().is_full();
     }
+   
+    
 
   }//SphericalFunctors
 }//CGAL

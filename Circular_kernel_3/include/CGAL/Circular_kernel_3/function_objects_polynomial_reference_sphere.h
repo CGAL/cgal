@@ -418,6 +418,52 @@ namespace SphericalFunctors {
     operator()(const HQ_NT& hq,const typename SK::Circular_arc_point_3& R)
     {return Rep(hq,R);}    
   };  
+
+  //FUNCTORS
+  template<class SK>
+  class Theta_extremal_point_3{
+    
+    template <class OutputIterator>
+    void normal_solve(const typename SK::Circle_on_reference_sphere_3& C,OutputIterator Rpts) const{
+      std::vector<CGAL::Object> cont;
+      typename SK::Construct_plane_3 theConstruct_plane_3 = SK().construct_plane_3_object();
+      //~ typename SK::Plane_3 p=theConstruct_plane_3(typename SK::Algebraic_kernel::Polynomial_1_3(0,0,1,-C.extremal_point_z()));
+      typename SK::Plane_3 p=theConstruct_plane_3(typename SK::Algebraic_kernel().construct_polynomial_1_3_object()(0,0,1,-C.extremal_point_z()));
+      typename SK::Intersect_3()(C.supporting_sphere(),C.reference_sphere(),p,std::back_inserter(cont));
+      CGAL_precondition(cont.size()==2);
+      for (int i=0;i<2;++i)
+        CGAL::assign(Rpts[i],cont[i]);
+    }
+    
+    public:
+    
+    typedef void result_type;
+    typedef Arity_tag< 3 >      Arity;
+    
+    void set_CA(const typename SK::Circle_on_reference_sphere_3& C,Inter_alg_info& CA) const{
+      typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
+      normal_solve(C,Rpts);
+      set_IA<SK>(CA,Rpts,false);
+    }
+    
+    template <class OutputIterator>
+    void operator()(const typename SK::Circle_on_reference_sphere_3& C,OutputIterator it) const{  
+      Inter_alg_info CA;
+      typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
+      normal_solve(C,Rpts);
+      set_IA(CA,it,false);
+      *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
+      *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+    }
+    
+    template <class OutputIterator>
+    void operator()(const typename SK::Circle_on_reference_sphere_3& C,OutputIterator it,Inter_alg_info& CA) const{
+      typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
+      normal_solve(C,Rpts);
+      *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
+      *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+    }
+  };
   
 }
 }
