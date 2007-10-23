@@ -837,7 +837,7 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face
       curr_he = curr_he->next();
       continue;
     }
-
+    
     // Get the indices list associated with the current halfedges, representing
     // the halfedges and isolated vertices that "see" it from above.
     const Indices_list& indices_list = const_he_indices_table[curr_he];
@@ -845,8 +845,16 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face
 
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr)
     {
-      CGAL_assertion(*itr != 0 && *itr < m_sc_he_table.size());
+      CGAL_assertion(*itr != 0);
       
+      // In case the current subcurve index does not match a valid entry in 
+      // m_sc_he_table, we know that this subcurve matches a halfedge that is
+      // not yet mapped. This can happen only if this halfedge is he itself.
+      // As we know that he lies on the outer CCB of the new face, it is
+      // definately not a hole in the face, therefore we can ignore it.
+      if (*itr >= m_sc_he_table.size())
+         continue;
+     
       Halfedge_handle he_on_face = m_sc_he_table[*itr];
           
       if(he_on_face == invalid_he)
