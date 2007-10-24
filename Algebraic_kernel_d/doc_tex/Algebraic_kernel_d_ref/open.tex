@@ -29,13 +29,6 @@
     field, while it is obviously not (no operation is associative
     due to rounding errors). So, the density problem is not worse
     than usual problems for double.)
-\item Names of CurveVerticalLine\_1 and CurvePairVerticalLine\_1?
-\item Use "int" at all places, or stick to distinction of \texttt{unsigned
-   int} + \texttt{int}?
-   (Menelaos: if the semantics of \texttt{unsigned int} is to enumerate
-   objects in a sequence, then a new nested type \texttt{size\_type}
-   can be introduced and used as the \texttt{return\_type} or
-   \texttt{argument\_type}).
 \item AlgebraicReal\_2 - Do we provide .x() and .y() method?\\
      (Monique: I think yes, we should)
 \end{itemize}
@@ -58,5 +51,11 @@
 \item added \ccc{AlgebraicKernel_1::SignAt_1} 
 \item Move methods from AlgebraicReal\_1 to a traits class and make
   this traits class concept a refinement of RealEmbeddableTraits.
+\item Use "int" at all places, or stick to distinction of \texttt{unsigned
+   int} + \texttt{int}?
+   (Menelaos: if the semantics of \texttt{unsigned int} is to enumerate
+   objects in a sequence, then a new nested type \texttt{size\_type}
+   can be introduced and used as the \texttt{return\_type} or
+   \texttt{argument\_type}).
 \end{itemize}
 
