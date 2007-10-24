@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -W
+#!/usr/bin/env perl
 
 use Cwd;
 use strict;
