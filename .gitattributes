@@ -3591,6 +3591,10 @@ Surface_mesher/demo/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#ap
 Surface_mesher/demo/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/triceratops.off -text svneol=unset#application/octet-stream
+Surface_mesher/demo/Surface_mesher/qt4-demo/fileopen.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/qt4-demo/mainwindow.ui -text
+Surface_mesher/demo/Surface_mesher/qt4-demo/qt4-demo.pro -text
+Surface_mesher/demo/Surface_mesher/qt4-demo/surface_mesher.qrc -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.sln eol=crlf
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.vcproj eol=crlf

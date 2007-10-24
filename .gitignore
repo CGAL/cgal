@@ -287,6 +287,8 @@ Surface_mesher/demo/Surface_mesher/my_makefile
 Surface_mesher/demo/Surface_mesher/out*.off
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher_with_edges
+Surface_mesher/demo/Surface_mesher/qt4-demo/.qglviewer.xml
+Surface_mesher/demo/Surface_mesher/qt4-demo/input_dump.off
 Surface_mesher/doc_html
 Surface_mesher/doc_pdf
 Surface_mesher/doc_ps
