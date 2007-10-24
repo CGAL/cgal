@@ -1,24 +1,33 @@
-\begin{ccRefConcept}{CurveAnalysis_2::CurveVerticalLine_1}
+\begin{ccRefConcept}{CurveAnalysis_2::StatusLine_1}
 
 \ccDefinition
 
-The \ccc{CurveVerticalLine_1} concept is meant to provide information
+The \ccc{StatusLine_1} concept is meant to provide information
 about the intersections of a curve with a vertical line at a given 
 finite $x$-coordinate. Note that a curve can have a vertical line component 
 at this coordinate and non-vertical components may intersect 
-the vertical line respectively. 
+the status line respectively. 
 With the help of the concept's methods one is able
-to compute the local topology of the curve at the given vertical line.
-Note that vertical lines at $x = \pm\infty$ are not allowed, since different 
-events (curve ends going to infinity with different non-horizontal asymptotes)
-would have equal $y$-coordinate ($\pm\infty$), which confuses more than it
-helps. Note in addition that curve ends approaching the vertical asymptote 
+to compute the local topology of the curve 
+at the given vertical line $x = x_0$ for some finite $x_0$.
+A status line an $x_0$ smaller than any $x$-coordinate of a curve's 
+status lines captures the topology of the curve when approaching $x = -\infty$.
+An analogue arguments holds for $x_0$ larger than any $x$-coordinate
+of a curve's status lines and $x = +\infty$.
+%at the given vertical line.
+%Note that vertical lines at $x = \pm\infty$ are not allowed, since different 
+%events (curve ends going to infinity with different non-horizontal asymptotes)
+%would have equal $y$-coordinate ($\pm\infty$), which confuses more than it
+%helps. 
+Note in addition that curve ends approaching the vertical asymptote 
 introduce an event (depending on whether approaching $+\infty$ or $-\infty$ -
 but the event with coordinates $(x,-\infty)$, resp. $(x,+\infty)$, occur
 only once, if they occur, and they imply not to be associated with
-a instance of \ccc{Algebraic_real_2}.
+an instance of \ccc{Algebraic_real_2}.
 
 \ccTypes
+
+\ccNestedType{size_type}{A instance of a size type, e.g., \ccc{int}}
 
 \ccNestedType{Algebraic_real_1}{A model of the concept
   \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
@@ -38,48 +47,52 @@ a instance of \ccc{Algebraic_real_2}.
   a component
 }
 
-\ccMethod{unsigned int number_of_events();}{
+\ccMethod{size_type number_of_events();}{
   returns number of distinct and finite intersections of a curve with a 
-  (intended) vertical line ignoring a real vertical line component 
-  of the curve at the given $x$-coordinate.
+  the vertical line $x = x_0$ ignoring a real vertical line component 
+  of the curve at $x_0$.
 }
 
-\ccMethod{Algebraic_real_2 get_algebraic_real_2(int j);}{
+\ccMethod{Algebraic_real_2 algebraic_real_2(size_type j);}{
   returns an object of type \ccc{Algebraic_real_2} for the $j$-th event
   \ccPrecond{$0 \leq j < \mbox{num\_events()}$}.
 }
 
-\ccMethod{std::pair< unsigned int, unsigned int > 
-  get_number_of_incident_branches(int j);}{
+\ccMethod{std::pair< size_type, size_type > 
+  number_of_incident_branches(size_type j);}{
   returns the number of branches of the curve connected to $j$-th event
   immediately to the left,
-  to the right, respectively, as a pair of \ccc{unsigned int} ignoring 
+  to the right, respectively, as a pair of \ccc{size_type} ignoring 
   vertical curve components at the given $x$-coordinate.
   \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
 }
 
-\ccMethod{std::pair< unsigned int, unsigned int > 
-  get_number_of_branches_approaching_minus_infinity();}{
+\ccMethod{std::pair< size_type, size_type > 
+  number_of_branches_approaching_minus_infinity();}{
   returns the number of vertical asymptotes at $x$ 
   of the curve approaching $y=-\infty$
   from left and right. A vertical line being component of the curve is ignored.
 }
 
-\ccMethod{std::pair< unsigned int, unsigned int > 
-  get_number_of_branches_approaching_plus_infinity();}{
+\ccMethod{std::pair< size_type, size_type > 
+  number_of_branches_approaching_plus_infinity();}{
   returns the number of vertical asymptotes at $x$ 
   of the curve approaching $y=+\infty$
   from left and right. A vertical line being component of the curve is ignored.
 }
 
+\ccMethod{bool has_f_fy_intersection();}{
+  returns \ccc{true} if the curve $f$ has an intersection with $f_y$ at $x$
+}
+
 \ccMethod{bool is_event();}{
-  returns \ccc{true} if curve has vertical line component or
-  curve $f$ has intersection with $f_y$ at $x$
+  returns \ccc{true} if one of \ccc{has_f_fy_intersection()} or 
+  \ccc{covers_line()} evaluates to \ccc{true}.
 }
 
 \end{ccRefConcept}
 
-\begin{ccRefConcept}{AlgebraicKernel_d_2::CurveAnalysis_2}
+\begin{ccRefConcept}{AlgebraicKernelWithAnalysis_d_2::CurveAnalysis_2}
 \footnote{There is no need
 for curves to be algebraic, hence the generic name. Only the number
 of events must be finite.}
@@ -91,9 +104,9 @@ concept is meant to provide tools to analyse a single
 curve. An analysis is meant to describe the curve's interesting points and how 
 they are connected. The analysis searches for {\it events}. Events only
 occur at a finite number of $x$-coordinates. Each such coordinate defines
-a \ccc{CurveVerticalLine_1} of an event. These coordinates also define open 
+a \ccc{StatusLine_1} of an event. These coordinates also define open 
 {\it intervals} on the $x$-axis. Different 
-\ccc{CurveVerticalLine_1} at values within one 
+\ccc{StatusLine_1} at values within one 
 such interval only differ in the values of the \ccc{Algebraic_real_2} entries. 
 Topological information are equal for all $x$-coordinate inside such an
 open interval. 
@@ -103,6 +116,8 @@ open interval.
 }
 
 \ccTypes
+
+\ccNestedType{size_type}{A instance of a size type, e.g., \ccc{int}}
 
 \ccNestedType{Algebraic_real_1}{A model of the concept
   \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
@@ -114,7 +129,7 @@ open interval.
   \ccc{AlgebraicKernel_d_2::Polynomial_2}.}
 
 \ccNestedType{Curve_vertical_line_1}{A model of the concept
-\ccc{CurveAnalysis_2::CurveVerticalLine_1}.}
+\ccc{CurveAnalysis_2::StatusLine_1}.}
 
 \ccCreation
 \ccCreationVariable{fo}
@@ -139,48 +154,48 @@ open interval.
 
 \ccAccessFunctions
 
-\ccMethod{Polynomial_2 get_polynomial_2();}{
+\ccMethod{Polynomial_2 polynomial_2();}{
   returns the defining polynomial of the analysis
 }
 
-\ccMethod{unsigned int number_of_vertical_lines_with_event();}{
+\ccMethod{size_type number_of_status_lines_with_event();}{
   returns number of vertical lines that encode an event
 }
 
-\ccMethod{Curve_vertical_line_1 vertical_line_at_event(int i);}{
-  returns an instance of \ccc{CurveVerticalLine_1} at the $i$-th event
+\ccMethod{Status_line_1 status_line_at_event(size_type i);}{
+  returns an instance of \ccc{StatusLine_1} at the $i$-th event
 }
 
-\ccMethod{Curve_vertical_line_1 vertical_line_of_interval(int i);}{
-  returns an instance of \ccc{CurveVerticalLine_1} of the $i$-th interval
+\ccMethod{Status_line_1 status_line_of_interval(size_type i);}{
+  returns an instance of \ccc{StatusLine_1} of the $i$-th interval
   between $x$-events.
 }
 
-\ccMethod{Curve_vertical_line_1 vertical_line_for_x(Algebraic_real_1 x, 
+\ccMethod{Status_line_1 status_line_for_x(Algebraic_real_1 x, 
   CGAL::Sign perturb = CGAL::ZERO);}{
- returns vertical\_line\_at\_event(i), if $x$ hits $i$-th event, otherwise
- returns vertical\_line\_of\_interval(i), where $i$ is the id of the interval
+ returns status\_line\_at\_event(i), if $x$ hits $i$-th event, otherwise
+ returns status\_line\_of\_interval(i), where $i$ is the id of the interval
   $x$ lies in. If $pertub$ is CGAL::NEGATIVE (CGAL::POSITIVE) and $x$ states
-  an event, then vertical\_line\_of\_interval(i) 
-  (vertical\_line\_of\_interval(i+1)) is returned.
+  an event, then status\_line\_of\_interval(i) 
+  (status\_line\_of\_interval(i+1)) is returned.
   \ccPrecond{$x$ is finite}
 }
 
-\ccMethod{Curve_vertical_line_1 vertical_line_at_exact_x(Algebraic_real_1 x);}{
-  returns an instance of \ccc{CurveVerticalLine_1} at the given $x$.
+\ccMethod{Status_line_1 status_line_at_exact_x(Algebraic_real_1 x);}{
+  returns an instance of \ccc{StatusLine_1} at the given $x$.
   \ccPrecond{$x$ is finite}
 }
 
-Note that the access methods to vertical lines are not redundant! The ones
+Note that the access methods to status lines are not redundant! The ones
 using an id-value are efficient for speed-ups (caching, avoids to search for
-some $x$, or the unique representative vertical line for an interval). 
-The others enable a user to compute vertical lines for given $x$, 
+some $x$, or the unique representative status line for an interval). 
+The others enable a user to compute status lines for given $x$, 
 i.e., also to access $y$-coordinates at given $x$.
 
 %\begin{ccAdvanced}
 %
-%\ccMethod{int find(Algebraic_real_2 s);}{
-%  returns the index of the event at the vertical line defined by 
+%\ccMethod{size_type find(Algebraic_real_2 s);}{
+%  returns the index of the event at the status line defined by 
 %  $s$'s $x$-coordinate, or -1 if $s$ is does not lie on the curve.
 %}
 %
