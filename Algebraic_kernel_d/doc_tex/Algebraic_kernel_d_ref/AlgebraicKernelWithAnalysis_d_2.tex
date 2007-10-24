@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{AlgebraicKernelWithAnalysis_d_2} 
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelWithAnalysis_d_2} concept refines
+the \ccc{AlgebraicKernel_d_2} concept by interpreting bivariate polynomials
+as algebraic curves and provides analysis of single curves and pairs of them.
+By an $y$-per-$x$-view 
+these analysis provide easy access to the topology of curves and pairs of
+curves. If not stated otherwise, a model is required to 
+provide the analysis for algebraic curves of general degree $d$ in $\R^2$.
+
+\ccRefines
+\ccc{AlgebraicKernel_d_2}
+
+\ccTypes
+
+A model of \ccc{AlgebraicKernelWithAnalysis_d_2} is supposed to provide
+
+\ccNestedType{CurveAnalysis_2}{A model of concept
+\ccc{AlgebraicKernelWithAnalysis_d_2::CurveAnalysis_2}.}
+\ccGlue
+\ccNestedType{CurvePairAnalysis_2}{A model of concept
+\ccc{AlgebraicKernelWithAnalysis_d_2::CurvePairAnalysis_2}.}
+
+\ccHasModels
+
+%Algebraic_curve_kernel_2
+
+\ccSeeAlso
+
+
+
+\end{ccRefConcept}
