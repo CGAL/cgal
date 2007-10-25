@@ -1,4 +1,8 @@
-
+- deprectate the following function 
+Classification_type   	  A.classify ( Cell_handle f, int i, FT alpha = get_alpha())
+because it is ambiguous with
+Classification_type   	  A.classify ( Cell_handle f, FT alpha = get_alpha())
+when alpha is given as an int.
 
 - Get rid of the derivation from Triangulation_3
   add a Triangulation_3 as a data member 
