@@ -374,7 +374,7 @@ public:
     //! set of various curve and curve pair decomposition functions
     struct Decompose_2 {
     
-        //! constructs an instance from ACK_2 pointer (required for caching)
+        //! default constructor
         Decompose_2(/*Self *pkernel_2*/)  
         {  }
 
@@ -404,7 +404,6 @@ public:
             std::vector<Polynomial_2_CGAL> factors;
             int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
                     mit); 
-            // Construct_curve_2_object must be used !!
             Construct_curve_2 cc_2;
             for(int i = 0; i < (int)factors.size(); i++) {
                 *fit++ = cc_2(factors[i]);
@@ -634,7 +633,116 @@ public:
      *
      * returns a value convertible to \c CGAL::Sign
      */
-    struct Sign_at_2 : 
+    struct Sign_at_2 :
+        public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
+
+        typedef typename Self::Algebraic_real_traits Traits_2;
+        typedef typename Traits_2::Boundary Boundary;
+        
+        typedef boost::numeric::interval<Boundary> Interval;
+        
+        typedef CGAL::Polynomial<Boundary> Poly_rat_1;
+        typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
+        
+        Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
+        {
+            if(p.id() == r.curve().id()) // point lies on the same curve
+                return CGAL::ZERO;
+        
+            NiX2CGAL_converter cvt;
+            typedef typename Algebraic_kernel_1::Algebraic_real_traits
+                Traits_1;
+            // convert poly to rational rep
+            typedef CGAL::Fraction_traits<Poly_rat_2> FTraits;
+            // divide by maximal coefficient ?
+            typename FTraits::Denominator_type det(1);
+            Poly_rat_2 rat_p = typename FTraits::Compose()(cvt(p.f()), det);
+            
+            typename Traits_2::Lower_boundary lower_2;
+            typename Traits_2::Upper_boundary upper_2;
+            typename Traits_2::Refine refine_2;
+            
+            X_coordinate_1 x = r.x();
+            CGAL::Sign s_lower;
+            bool zero_tested = false;
+            Boundary eps = Boundary(1)/Boundary(10000);
+            
+            while(1) {
+                Interval iv, ix(x.low(), x.high()), iy(lower_2(r), upper_2(r));
+                iv = _evaluate_2(rat_p, ix, iy);
+                s_lower = CGAL::sign(iv.lower());
+                if(s_lower == sign(iv.upper()))
+                    return s_lower;
+
+                Boundary x_len = ix.upper() - ix.lower(),
+                         y_len = iy.upper() - iy.lower();
+
+                if(!zero_tested) {
+                    if(x_len < eps||y_len < eps) {
+                        if(_test_exact_zero(p, r))
+                            return CGAL::ZERO;
+                        zero_tested = true;
+                    }
+                }
+                // keep x/y-intervals comparable in size
+                (x_len > y_len) ? x.refine() : refine_2(r);
+            }
+        }
+        
+    private:
+
+        bool _test_exact_zero(const Polynomial_2& p,
+            const Xy_coordinate_2& r) const {
+
+            typedef typename Self::Curve_analysis_2 Curve_analysis_2;
+            typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
+            
+            Curve_analysis_2 ca_2(p);
+            typename Curve_analysis_2::Curve_vertical_line_1
+                cv_line = ca_2.vertical_line_for_x(r.x());
+            // fast check for the presence of vertical line at r.x()
+            if(cv_line.covers_line())    
+                return true;
+
+            Curve_pair_analysis_2 cpa_2(ca_2, Curve_analysis_2(r.curve()));
+            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                cpv_line = cpa_2.vertical_line_for_x(r.x());
+            
+            if(cpv_line.is_event() && cpv_line.is_intersection()) {
+                // get an y-position of the point r
+                int idx = cpv_line.get_event_of_curve(r.arcno(), 1);
+                std::pair<int, int> ipair =
+                      cpv_line.get_curves_at_event(idx);
+                if(ipair.first != -1&&ipair.second != -1)
+                    return true;
+            }
+            return false;
+        }
+    
+        Interval _evaluate_2(const Poly_rat_2& p, const Interval& ix,
+            const Interval& iy) const {
+
+            // CGAL::Polynomial does not provide Coercion_traits for number
+            // types => therefore evaluate manually
+            typename Poly_rat_2::const_iterator it = p.end() - 1;
+            Interval res(_evaluate_1(*it, ix));
+
+            while((it--) != p.begin()) 
+                res = res * iy + (_evaluate_1(*it, ix));
+            return res;
+        }
+
+        Interval _evaluate_1(const Poly_rat_1& p, const Interval& ix) const {
+
+            typename Poly_rat_1::const_iterator it = p.end() - 1;
+            Interval res(*it);
+            while((it--) != p.begin()) 
+                res = res * ix + *it;
+            return res;
+        }
+    };
+
+    struct Sign_at_2_buggy :
         public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
         
         Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
