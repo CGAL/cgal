@@ -1,28 +1,21 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::Compare_1}
 
-\ccc{AdaptableBinaryFunction} compares two 
-\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
+\ccDefinition
+Compares two \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
  
 \ccRefines 
-
 \ccc{AdaptableBinaryFunction} 
-
-\ccTypes
-\ccNestedType{result_type} 
-        { Type convertible to \ccc{CGAL::Comparison_result}.}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1
-  first_argument_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1
-  second_argument_type;}{}\ccGlue
-
 
 \ccOperations
 \ccCreationVariable{fo}
 \ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 
-\ccMethod{result_type operator()(first_argument_type   x,
-                                 second_argument_type  y);}
-        { compares $x$ with respect to $y$. }
+A model \ccVar\ of this type must provide:
+
+\ccMethod{CGAL::Comparison_result 
+	operator()(AlgebraicKernel_d_1::Algebraic_real_1 x,
+                   AlgebraicKernel_d_1::Algebraic_real_1 y);}
+{Compares $x$ and $y$.}
 
 
 %\ccHasModels

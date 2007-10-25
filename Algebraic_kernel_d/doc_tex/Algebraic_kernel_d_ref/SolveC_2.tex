@@ -6,15 +6,14 @@
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{template < class OutputIteratorRoots, class OutputIteratorMult >
-    std::pair< OutputIteratorRoots, OutputIteratorMult >
+\ccMethod{template < class OutputIterator >
+    OutputIterator
     operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1,
 	     const AlgebraicKernel_d_2::Polynomial_2 & p2,
-	     OutputIteratorRoots roots, OutputIteratorMult mult);}
-{Copies in the output iterator \ccc{roots} the common roots of $p_1$ 
-and $p_2$ as \ccc{AlgebraicKernel_d_2::Algebraic_real_2}s and copies 
-in the output iterator \ccc{mult}  their respective multiplicity as 
-\ccc{int}s, in the same order.
+	     OutputIterator res);}
+{Copies in the output iterator the common roots of $p_1$ 
+and $p_2$ with their multiplicity, as objects of type
+\ccc{std::pair< AlgebraicKernel_d_2::Algebraic_real_2, int >}.
 \ccPrecond{$p_1$ and $p_2$ are square-free and the set of solutions of 
 the system is 0-dimensional.}}
 

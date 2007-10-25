@@ -1,20 +1,17 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::MakeCoprime_1}
 
 \ccDefinition
+Computes for a given pair of univariate polynomials $p_1$, $p_2$ their
+common part $g$ and coprime parts $q_1$, $q_2$ respectively.
 
-\ccc{AdaptableFunction} that computes for a given pair of 
-univariate polynomials $p_1$, $p_2$ their common part $g$ and 
-coprime parts $q_1$, $q_2$ respectively.
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
 
-
-
-\ccNestedType{result_type} 
-        { Type convertible to \ccc{bool}.}
- 
 \ccCreationVariable{fo}
-
 \ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
-\ccMethod{result_type
+A model \ccVar\ of this type must provide:
+
+\ccMethod{bool
     operator()(const AlgebraicKernel_d_1::Polynomial_1 & p1, 
                const AlgebraicKernel_d_1::Polynomial_1 & p2, 
                AlgebraicKernel_d_1::Polynomial_1 & g,  

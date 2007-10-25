@@ -1,15 +1,34 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_2::SquareFreeFactorization_2}
 
+\ccDefinition
+Computes a square-free factorization of an
+\ccc{AlgebraicKernel_d_2::Polynomial_2}.
+
+A polynomial $p$ is factored into square-free and pairwise 
+coprime non-constant factors $g_i$ with multiplicities $m_i$ 
+and a constant factor $a$, such that 
+$p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
+
+The provided operator returns the number of factors $n$.
+The factors $g_i$ and multiplicities $m_i$ are written through the 
+output iterator. 
+The constant factor $a$ is not computed. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccOperations
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{template < class OutputIterator1, class OutputIterator2 >
-    void
-    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1, 
-               OutputIterator oi1
-               OutputIterator oi2);}
-{oi1 returns factors, oi2 returns multiplicities}
+\ccMethod{template < class OutputIterator >
+    int
+    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p, 
+               OutputIterator res);}
+{Copies in the output iterator the factors of a square-free 
+factorization of \ccc{p}, with their multiplicity, as objects of type 
+\ccc{std::pair< AlgebraicKernel_d_2::Polynomial_2, int>}.}
 
 \ccSeeAlso
 

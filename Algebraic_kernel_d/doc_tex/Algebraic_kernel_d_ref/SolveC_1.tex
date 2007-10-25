@@ -1,10 +1,11 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::Solve_1}
 
 \ccDefinition
-
-\ccc{AdaptableFunction} that computes the real roots of a univariate 
-polynomial. 
+Computes the real roots of a univariate polynomial.
  
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
 \ccCreationVariable{fo}
 
 A model of this type must provide:
@@ -18,13 +19,12 @@ A model of this type must provide:
 whether \ccc{p} is known to be square free or if this information is 
 not known.} 
 
-\ccMethod{template < class OutputIteratorRoots, class OutputIteratorMult >
-    std::pair< OutputIteratorRoots, OutputIteratorMult >
-    operator()(const AlgebraicKernel_d_1::Polynomial_1 &p,
-	     OutputIteratorRoots roots, OutputIteratorMult mult);}
-{Copies in the output iterator \ccc{roots} the roots of \ccc{p} as 
-\ccc{AlgebraicKernel_d_1::Algebraic_real_1}s and copies in the output 
-iterator \ccc{mult}  their respective multiplicity as \ccc{int}s, in 
-the same order.}
+\ccMethod{template < class OutputIterator >
+	OutputIterator
+        operator()(const AlgebraicKernel_d_1::Polynomial_1 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the roots of \ccc{p} with their 
+multiplicity, as objects of type 
+\ccc{std::pair< AlgebraicKernel_d_1::Algebraic_real_1, int >}.}
 
 \end{ccRefConcept}

@@ -1,25 +1,20 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::IsCoprime_1}
 
 \ccDefinition
-
-\ccc{AdaptableBinaryFunction} computes whether the given pair of univariate polynomials is coprime. 
+Computes whether the given pair of univariate polynomials is coprime. 
  
 \ccRefines 
-
 \ccc{AdaptableBinaryFunction} 
-
-\ccTypes
-\ccNestedType{result_type} 
-        { Type convertible to \ccc{bool}.}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type;}{}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 second_argument_type;}{}
-
 
 \ccOperations
 \ccCreationVariable{fo}
 \ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 
-\ccMethod{result_type operator()(first_argument_type   p1,
-                                 second_argument_type  p2);}{}
+A model \ccVar\ of this type must provide:
+
+\ccMethod{bool 
+	operator()(AlgebraicKernel_d_1::Polynomial_1   p1,
+        	   AlgebraicKernel_d_1::Polynomial_1  p2);}
+{}
 
 \end{ccRefConcept}

@@ -1,9 +1,8 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::SquareFreeFactorization_1}
 
 \ccDefinition
-
-This \ccc{AdaptableFunctor} computes a square-free factorization 
-of a \ccc{AlgebraicKernel_d_1::Polynomial_1}. 
+Computes a square-free factorization of an
+\ccc{AlgebraicKernel_d_1::Polynomial_1}.
 
 A polynomial $p$ is factored into square-free and pairwise 
 coprime non-constant factors $g_i$ with multiplicities $m_i$ 
@@ -16,29 +15,20 @@ respective output iterators.
 The constant factor $a$ is not computed. 
 
 \ccRefines 
-
-\ccTypes
-\ccNestedType{result_type}{ Type convertible to \ccc{int}.}
+\ccc{AdaptableBinaryFunction} 
 
 \ccOperations
-
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccCreationVariable{fo}
 
-\ccMethod{template<class OutputIterator_1, class OutputIterator_2>
-int operator()(PolynomialTraits_d::Polynomial_d p,
-               OutputIterator_1                 it_1,
-               OutputIterator_2                 it_2);}{
-computes square-free factorization of $p$.\\
-          \ccPrecond \ccc{OutputIterator_1} must allow the value type 
-          \ccc{PolynomialTraits_d::Polynomial_d}. 
-          \ccPrecond \ccc{OutputIterator_2} must allow the value type int.}
+\ccMethod{template < class OutputIterator >
+	int 
+	operator()(AlgebraicKernel_d_1::Polynomial_1,
+               OutputIterator res);}
+{Copies in the output iterator the factors of a square-free 
+factorization of \ccc{p}, with their multiplicity, as objects of type 
+\ccc{std::pair< AlgebraicKernel_d_1::Polynomial_1, int>}.}
 
 \ccSeeAlso
-
-\ccRefIdfierPage{Polynomial_d}\\
-\ccRefIdfierPage{PolynomialTraits_d}\\
-\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizationUpToConstantFactor}\\
-\ccRefIdfierPage{PolynomialTraits_d::MakeSquareFree}\\
 
 \end{ccRefConcept}

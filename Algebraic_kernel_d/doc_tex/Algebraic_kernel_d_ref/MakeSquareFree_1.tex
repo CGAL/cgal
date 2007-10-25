@@ -1,22 +1,20 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::MakeSquareFree_1}
 
 \ccDefinition
-
-\ccc{AdaptableUnaryFunction} returns a square free part of a univariate polynomial.  
+Returns a square free part of a univariate polynomial.
  
 \ccRefines 
-
 \ccc{AdaptableUnaryFunction}  
-
-\ccTypes
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 result_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
 \ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 
-\ccMethod{result_type operator()(argument_type p);}{}
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernel_d_1::Polynomial_1 
+	operator()(AlgebraicKernel_d_1::Polynomial_1 p);}
+{}
 
 %\ccHasModels
 %\ccSeeAlso

@@ -1,13 +1,18 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_2::MakeSquareFree_2}
 
+\ccDefinition
+Returns a square free part of a bivariate polynomial.
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction}  
+
+\ccOperations
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{template < class OutputIterator >
-    void
-    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p, 
-               OutputIterator oi);}
+\ccMethod{AlgebraicKernel_d_2::Polynomial_2
+    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p);}
 {}
 
 \ccSeeAlso

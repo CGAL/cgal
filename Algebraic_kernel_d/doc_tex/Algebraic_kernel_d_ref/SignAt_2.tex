@@ -1,22 +1,28 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_2::SignAt_2}
 
 \ccDefinition
+Computes the sign of a bivariate polynomial 
+\ccc{AlgebraicKernel_d_2::Polynomial_2} at a value of type 
+\ccc{AlgebraicKernel_d_2::Algebraic_real_2}. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}
 
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{result_type
+\ccMethod{bool
     operator()(const AlgebraicKernel_d_2::Polynomial_2 & p,
 	     const AlgebraicKernel_d_2::Algebraic_real_2 & r);}
 {Computes the sign of a bivariate polynomial \ccc{p} evaluated at the root 
-\ccc{r} of a system of two bivariate polynomials.
-\ccc{result_type} must be convertible into \ccc{CGAL::Sign}.} 
-\footnote{We want to allow \ccc{UNDECIDED} as \ccc{result_type}}
+\ccc{r} of a system of two bivariate polynomials.} 
+
+\footnote{We want to allow \ccc{UNDECIDED} as result ype,
+but this is this is done the same way in the Kernel}
 
 \footnote{what about coefficients? (like in univariate case). We can have 
 a constructor of \ccc{Algebraic_real_2} from 2 \ccc{Coefficient} and it 
 will solve the question.}
 
 \end{ccRefConcept}
-

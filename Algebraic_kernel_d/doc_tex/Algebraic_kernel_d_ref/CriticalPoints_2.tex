@@ -1,7 +1,5 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_2::XCriticalPoints_2}
 
-\footnote{TO BE REMOVED?}
-
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
@@ -11,9 +9,9 @@ A model \ccVar\ of this type must provide:
     operator()(const AlgebraicKernel_d_2::Polynomial_2 &p,
 	     OutputIterator res);}
 {Copies in the output iterator the \ccc{x}-critical points of polynomial 
-\ccc{p}, as objects of type \ccc{}.} 
+\ccc{p}, as objects of type \ccc{AlgebraicKernel_d_2::Algebraic_real_2}.} 
 
-\ccMethod{template < class OutputIterator >
+\ccMethod{
     AlgebraicKernel_d_2::Algebraic_real_2
     operator()(const AlgebraicKernel_d_2::Polynomial_2 &p,
 	     unsigned int i);}
@@ -21,8 +19,6 @@ A model \ccVar\ of this type must provide:
 
 \end{ccRefConcept}
 \begin{ccRefConcept}{AlgebraicKernel_d_2::YCriticalPoints_2}
-
-\footnote{TO BE REMOVED?}
 
 \ccCreationVariable{fo}
 
@@ -33,9 +29,9 @@ A model \ccVar\ of this type must provide:
     operator()(const AlgebraicKernel_d_2::Polynomial_2 &p,
 	     OutputIterator res);}
 {Copies in the output iterator the \ccc{y}-critical points of polynomial 
-\ccc{p}, as objects of type \ccc{}.} 
+\ccc{p}, as objects of type \ccc{AlgebraicKernel_d_2::Algebraic_real_2}.} 
 
-\ccMethod{template < class OutputIterator >
+\ccMethod{
     AlgebraicKernel_d_2::Algebraic_real_2
     operator()(const AlgebraicKernel_d_2::Polynomial_2 &p,
 	     unsigned int i);}

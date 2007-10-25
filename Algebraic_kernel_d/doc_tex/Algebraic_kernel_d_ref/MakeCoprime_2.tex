@@ -1,20 +1,17 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_2::MakeCoprime_2}
 
 \ccDefinition
+Computes for a given pair of bivariate polynomials $p_1$, $p_2$ their
+common part $g$ and coprime parts $q_1$, $q_2$ respectively.
 
-\ccc{AdaptableFunction} that computes for a given pair of 
-bivariate polynomials $p_1$, $p_2$ their common part $g$ and 
-coprime parts $q_1$, $q_2$ respectively.
-
-
-\ccNestedType{result_type} 
-        { Type convertible to \ccc{bool}.}
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
 
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{result_type
+\ccMethod{bool
     operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1, 
                const AlgebraicKernel_d_2::Polynomial_2 & p2, 
                AlgebraicKernel_d_2::Polynomial_2 & g, 
