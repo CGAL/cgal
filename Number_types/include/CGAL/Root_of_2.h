@@ -310,7 +310,7 @@ public:
 
 // COERCION_TRAITS BEGIN
 
-CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Root_of_2<RT>,class RT);
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Root_of_2<RT>,class RT)
 
 template <class RT>
 struct Coercion_traits< RT , Root_of_2<RT> >{

@@ -49,43 +49,43 @@ CGAL_BEGIN_NAMESPACE
 
 //LEDA internal coercions:
 
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::bigfloat);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::real);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::bigfloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::real)
 
 // CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::rational); see below
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::real);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::real)
 
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::rational,::leda::real);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::rational,::leda::real)
 
 // The following definitions reflect the interaction of the LEDA number types
 // with the built in types,
 // leda integer:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::leda::integer);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,::leda::integer);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,::leda::integer);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::leda::integer)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,::leda::integer)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,::leda::integer)
 
 // leda rational:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::rational);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::rational);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::rational)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::rational)
 
 // leda bigfloat:      :
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::bigfloat);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::bigfloat);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::bigfloat);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::bigfloat);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::bigfloat);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::bigfloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::bigfloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::bigfloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::bigfloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::bigfloat)
 
 // leda real:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::real);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::real);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::real);
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::real);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::real)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::real)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::real)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::real)
 
 //not provided by LEDA
 //Note that this is not symmetric to CORE

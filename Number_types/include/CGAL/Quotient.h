@@ -710,7 +710,7 @@ Quotient<NT> >{};
 
 
 // self coercion
-CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM( Quotient<NT>, class NT);
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM( Quotient<NT>, class NT)
 
 // from int to Quotient
 template <class NT>
@@ -755,7 +755,7 @@ Quotient<NT> >
 {};
 
 // from NT to Quotient
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM ( NT, Quotient<NT>, class NT);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM ( NT, Quotient<NT>, class NT)
 
 /*! \ingroup NiX_Fraction_traits_spec
  *  \brief Specialization of Fraction_traits for Quotient<NT>
