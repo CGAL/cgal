@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/icons" >
+        <file>bbox.png</file>
+        <file>cgal_logo.xpm</file>
         <file>fileopen.png</file>
+        <file>flip.png</file>
+        <file>surface.png</file>
     </qresource>
 </RCC>
