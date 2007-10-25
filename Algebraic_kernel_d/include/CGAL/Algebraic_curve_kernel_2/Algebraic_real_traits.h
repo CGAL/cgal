@@ -73,7 +73,7 @@ struct Algebraic_real_traits<AlgebraicReal_2,
     CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
     
     //! type of curve vertical line
-    typedef typename Curve_2::Event_line Event_line;
+    typedef typename Curve_2::Curve_vertical_line Event_line;
 
     //! computes boundary in between y-coordinates of two algebraic reals
     //! defined over the same vertical line
