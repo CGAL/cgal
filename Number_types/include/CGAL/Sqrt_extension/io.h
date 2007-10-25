@@ -22,7 +22,10 @@
 #ifndef CGAL_SQRT_EXTENSION_IO_H
 #define CGAL_SQRT_EXTENSION_IO_H
 
+#include <sstream>
+
 #include <CGAL/basic.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
