@@ -2049,9 +2049,10 @@ std::ostream& operator<<(std::ostream& os,
         os << "); min: " << arc._minpoint() << "; max: " << 
             arc._maxpoint() << "]";
         break;
-    case LiS::IO::BENCHMARK:
+    /*case LiS::IO::BENCHMARK:
         std::cerr << "BENCHMARK format not yet implemented" << std::endl;
         break;
+    */
     case ::CGAL::IO::BINARY:
         std::cerr << "BINARY format not yet implemented" << std::endl;
         break;

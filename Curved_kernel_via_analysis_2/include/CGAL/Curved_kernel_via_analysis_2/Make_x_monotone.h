@@ -48,7 +48,7 @@ namespace CGALi {
  */
 template <class CurvedKernelViaAnalysis_2>
 struct Make_x_monotone_2 :
-    public Binary_function< typename CurvedKernel_2::Curve_2,
+    public Binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
             std::iterator<output_iterator_tag, CGAL::Object>,
             std::iterator<output_iterator_tag, CGAL::Object> > {
             
