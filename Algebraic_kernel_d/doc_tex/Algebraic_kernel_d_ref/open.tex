@@ -12,13 +12,16 @@
 \item SquareFreeFactorization is not returning an additional constant 
       factor. This prevents us from providing an extra interface for 
       algebraic coefficients.
- \item Is Derivative and XCriticalPoints/YCriticalPoints are not
+\item Is Derivative and XCriticalPoints/YCriticalPoints are not
    redundant. We decided to keep them both because it is possible that
    XCriticalPoints/YCriticalPoints use a different methodology, other
    than residing to the Derivative functor. As Michael pointed out:
    \emph{``I think we should keep it, since it is more abstract than
      $solve(derivative(p),p)$.  This would again move the {\em
        AlgebraicKernel} towards a more abstract layer.''}
+\item MakeCoprime: changed return type to bool\\
+      because IsCoprime is almost as costly as computing the coprime
+      parts iff the polynomials are not coprime. This avoids caching.  
 \end{itemize}
 
 \section{Questions}
@@ -31,31 +34,22 @@
     than usual problems for double.)
 \item AlgebraicReal\_2 - Do we provide .x() and .y() method?\\
      (Monique: I think yes, we should)
-\end{itemize}
-
-\section{Todo}
-\begin{itemize}
-\item Missing Doc for IsSquareFree\_2, IsCoprime\_2, MakeSquareFree\_2
-\item Move methods from AlgebraicReal\_2 to a traits class (?)
-\item AlgebraicReal\_2 - Add GetX() and GetY() functors.
-\end{itemize}
-
-\paragraph{done} 
-\begin{itemize}
-\item MakeCoprime: changed return type to bool\\
-      because IsCoprime is almost as costly as computing the coprime
-      parts iff the polynomials are not coprime. This avoids caching.  
-\item all functors for \ccc{PolynomialTraits\_d} \ccc{PolynomialToolBox\_d}
-      are documented.
-\item added \ccc{SquareFreeFactorization_1}
-\item added \ccc{AlgebraicKernel_1::SignAt_1} 
-\item Move methods from AlgebraicReal\_1 to a traits class and make
-  this traits class concept a refinement of RealEmbeddableTraits.
 \item Use "int" at all places, or stick to distinction of \texttt{unsigned
    int} + \texttt{int}?
    (Menelaos: if the semantics of \texttt{unsigned int} is to enumerate
    objects in a sequence, then a new nested type \texttt{size\_type}
    can be introduced and used as the \texttt{return\_type} or
    \texttt{argument\_type}).
+\end{itemize}
+
+\begin{itemize}
+\item Move methods from AlgebraicReal\_2 to a traits class (?)
+\item AlgebraicReal\_2 - Add GetX() and GetY() functors ?
+\end{itemize}
+
+\section{done} 
+\begin{itemize}
+\item all functors for \ccc{PolynomialTraits\_d} \ccc{PolynomialToolBox\_d}
+      are documented. (Monique: where?)
 \end{itemize}
 
