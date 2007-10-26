@@ -1,11 +1,7 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
-- New NT requirement about greatest common divisor.
-
 - Why Ray_3 and Line_3 don't have the same internal representation ???
-
-- Mariette would like Circle intersection.
 
 - Triangle-Triangle instersection (and predicate) :
     Tomas Möller. A fast triangle-triangle intersection test. Journal of
@@ -46,7 +42,6 @@ Backward
 ------------------------
 
 - Tests :
-  - GCOV
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
   - Advanced kernel, Cd.
 
