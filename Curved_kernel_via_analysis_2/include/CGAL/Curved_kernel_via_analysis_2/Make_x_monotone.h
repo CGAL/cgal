@@ -118,7 +118,7 @@ struct Make_x_monotone_2 :
         std::pair<int, CGAL::Boundary_type> info1, info2;
         std::vector<Point_2> min_pts, max_pts;
         X_coordinate_1 min_x, max_x;
-        int i, j, k, n;
+        int i, k, n;
         Arc_2 arc;
         // first handle segments before first event
         evt_line1 = ca_2.vertical_line_at_event(0);

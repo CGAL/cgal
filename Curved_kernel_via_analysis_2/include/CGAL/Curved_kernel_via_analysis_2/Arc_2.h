@@ -770,6 +770,9 @@ public:
         CGAL::Boundary_type bnd1_x = boundary_in_x(CGAL::MAX_END),
              bnd2_x = cv2.boundary_in_x(CGAL::MAX_END),
              bndp_x = p.boundary_in_x(), bndp_y = p.boundary_in_y();
+        // Prevent compiler warning
+        (void)bnd1_x;
+        (void)bnd2_x;
         // ensure that p lies on both arcs and doesn't lie on the negative 
         // boundary
         CGAL_precondition(bndp_x >= CGAL::NO_BOUNDARY && 
@@ -834,6 +837,9 @@ public:
         CGAL::Boundary_type bnd1_x = boundary_in_x(CGAL::MIN_END),
              bnd2_x = cv2.boundary_in_x(CGAL::MIN_END),
              bndp_x = p.boundary_in_x(), bndp_y = p.boundary_in_y();
+        // Prevent compiler warning
+        (void)bnd1_x;
+        (void)bnd2_x;
         // ensure that p lies on both arcs and doesn't lie on the positive
         // boundary
         CGAL_precondition(bndp_x <= 0 && compare_y_at_x(p) == CGAL::EQUAL &&
