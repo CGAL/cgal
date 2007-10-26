@@ -135,21 +135,23 @@ open interval.
 \ccCreationVariable{fo}
         
 \ccConstructor{CurveAnalysis_2(Polynomial_2 p);}
-    {constructs an analysis for the curve defined by p. The polynomial must
-      be square free.}
+    {constructs an analysis for the curve defined by p. 
+\ccPrecond{The polynomial must be square free.}
+}
 
 \begin{ccAdvanced}
+
 \ccConstructor{template < class InputIterator >
   CurveAnalysis_2(Polynomial_2 p, InputIterator begin, InputIterator end);}{
-  constructs an analysis for the curve defined by p. The polynomial must
-  be squarefree. The iterator range [begin,end) contains factors of 
-  $\mbox{resultant}(p,p_y,y)$ 
+  constructs an analysis for the curve defined by p. The iterator range 
+  [begin,end) contains factors of $\mbox{resultant}(p,p_y,y)$ 
   i.e., their roots define $x$-coordinates of events, 
   which allows to simplify the real root isolation within this layer.
   The \ccc{value_type} of InputIterator is \ccc{Polynomial_1}. 
-  This constructor has been introduced to enable an upper layer (CK) to 
-  propagate additional knowledge on the problem.
+\ccPrecond{The polynomial must be square free.}
 }
+  This constructor has been introduced to enable an upper layer 
+(geometric curved kernel) to propagate additional knowledge on the problem.
 \end{ccAdvanced}
 
 \ccAccessFunctions

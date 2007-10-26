@@ -1,7 +1,7 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::IsCoprime_1}
 
 \ccDefinition
-Computes whether the given pair of univariate polynomials is coprime. 
+Computes whether a given pair of univariate polynomials is coprime. 
  
 \ccRefines 
 \ccc{AdaptableBinaryFunction} 
@@ -13,8 +13,8 @@ Computes whether the given pair of univariate polynomials is coprime.
 A model \ccVar\ of this type must provide:
 
 \ccMethod{bool 
-	operator()(AlgebraicKernel_d_1::Polynomial_1   p1,
-        	   AlgebraicKernel_d_1::Polynomial_1  p2);}
+	operator()(const AlgebraicKernel_d_1::Polynomial_1 & p1,
+        	   const AlgebraicKernel_d_1::Polynomial_1 & p2);}
 {}
 
 \end{ccRefConcept}

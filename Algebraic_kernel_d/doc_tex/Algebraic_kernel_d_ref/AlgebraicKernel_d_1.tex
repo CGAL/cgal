@@ -6,7 +6,7 @@ The \ccc{AlgebraicKernel_d_1} concept is meant to provide the
 algebraic functionalities on univariate polynomials of general degree
 $d$ necessary as a basis for the curved kernel.
 
-A model of \ccc{AlgebraicKernel_d_1} is supposed to provide:
+A model of \ccc{AlgebraicKernel_d_1} must provide:
 
 \ccTypes
 
@@ -31,34 +31,33 @@ is \ccc{Coefficient}
 
 \ccHeading{Functors}
 
+% do we keep this for due to \ccc{AK_2::Compare_2}?
+\ccNestedType{Compare_1}{A model of the concept 
+\ccc{AlgebraicKernel_d_1::Compare_1}.}
+
 \ccNestedType{Solve_1}{A model of the concept
 \ccc{AlgebraicKernel_d_1::Solve_1}.} 
 
 \ccNestedType{Sign_at_1}{A model of the concept
 \ccc{AlgebraicKernel_d_1::SignAt_1}.}
 
+\ccNestedType{Is_coprime_1}{A model of the concept 
+\ccc{AlgebraicKernel_d_1::IsCoprime_1}.}
+\ccGlue
 \ccNestedType{Is_square_free_1}{A model of the concept 
 \ccc{AlgebraicKernel_d_1::IsSquareFree_1}.}
-\ccGlue
 
 \ccNestedType{Make_square_free_1}{A model of the concept 
 \ccc{AlgebraicKernel_d_1::MakeSquareFree_1}.}
 \ccGlue
-
-\ccNestedType{Is_coprime_1}{A model of the concept 
-\ccc{AlgebraicKernel_d_1::IsCoprime_1}.}
-\ccGlue
-
 \ccNestedType{Make_coprime_1}{A model of the concept 
 \ccc{AlgebraicKernel_d_1::MakeCoprime_1}.}
+\ccGlue
+\ccNestedType{Square_free_factorize_1}{A model of the concept 
+\ccc{AlgebraicKernel_d_1::SquareFreeFactorize_1}.}
 
-% do we keep this for due to \ccc{AK_2::Compare_2}?
-\ccNestedType{Compare_1}{A model of the concept 
-\ccc{AlgebraicKernel_d_1::Compare_1}.}
 
-%\ccGlue
-%\ccNestedType{Square_free_factorization_1}{A model of the concept 
-%\ccc{AlgebraicKernel_d_1::SquareFreeFactorization_1}.}
+
 
 %\ccHasModels
 

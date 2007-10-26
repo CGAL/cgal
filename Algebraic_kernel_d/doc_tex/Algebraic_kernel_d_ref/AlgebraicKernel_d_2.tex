@@ -12,7 +12,7 @@ $d$ in $\R^2$.
 
 \ccTypes
 
-A model of \ccc{AlgebraicKernel_d_2} is supposed to provide
+A model of \ccc{AlgebraicKernel_d_2} must provide
 
 \ccNestedType{Coefficient}{A model of \ccc{IntegralDomain}. }
 
@@ -32,17 +32,26 @@ that constructs a polynomial from a range of coefficients of type
 }
 \footnote{to be added: sparse polynomials}
 
+\ccNestedType{Compare_x_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::CompareY_2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::CompareXY_2}.}
+
 \ccNestedType{Solve_2}{A model of the concept
 \ccc{AlgebraicKernel_d_2::Solve_2}.} 
 
 \ccNestedType{Sign_at_2}{A model of the concept
 \ccc{AlgebraicKernel_d_2::SignAt_2}.}
 
-\ccNestedType{Derivative_x_2}{A model of the concept
-\ccc{AlgebraicKernel_d_2::DerivativeX_2}.} 
+\ccNestedType{Derive_in_x_2}{A model of the concept
+\ccc{AlgebraicKernel_d_2::DeriveInX_2}.} 
 
-\ccNestedType{Derivative_y_2}{A model of the concept
-\ccc{AlgebraicKernel_d_2::DerivativeY_2}.} 
+\ccNestedType{Derive_in_y_2}{A model of the concept
+\ccc{AlgebraicKernel_d_2::DeriveInY_2}.} 
 
 \ccNestedType{Has_critical_points}{\ccc{CGAL::Tag_true} or 
 \ccc{CGAL::Tag_false}, 
@@ -54,29 +63,20 @@ indicating whether the following two optional types are provided or not:}
 \ccNestedType{Y_critical_points_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::YCriticalPoints_2} (optional).}
 
-\ccNestedType{Compare_x_2}{A model of the concept 
-\ccc{AlgebraicKernel_d_2::CompareX_2}.}
-\ccGlue
-\ccNestedType{Compare_y_2}{A model of the concept 
-\ccc{AlgebraicKernel_d_2::CompareY_2}.}
-\ccGlue
-\ccNestedType{Compare_xy_2}{A model of the concept 
-\ccc{AlgebraicKernel_d_2::CompareXY_2}.}
-
-\ccNestedType{IsCoprime_2}{A model of the concept 
+\ccNestedType{Is_coprime_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::IsCoprime_2}.}
 \ccGlue
-\ccNestedType{IsSquareFree_2}{A model of the concept 
+\ccNestedType{Is_square_free_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::IsSquareFree_2}.}
 
-\ccNestedType{MakeSquareFree_2}{A model of the concept 
+\ccNestedType{Make_square_free_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::MakeSquareFree_2}.}
 \ccGlue
-\ccNestedType{MakeCoprime_2}{A model of the concept 
+\ccNestedType{Make_coprime_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::MakeCoprime_2}.}
 \ccGlue
-\ccNestedType{SquareFreeFactorization_2}{A model of the concept 
-\ccc{AlgebraicKernel_d_2::SquareFreeFactorization_2}.}
+\ccNestedType{Square_free_factorize_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::SquareFreeFactorize_2}.}
 
 \ccHasModels
 

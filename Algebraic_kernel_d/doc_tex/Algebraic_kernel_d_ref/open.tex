@@ -3,7 +3,6 @@
 
 \section{Notes}
 \begin{itemize}
- \item CA\_2 and CPA\_2 require squarefree and coprime input! 
  \item Events at infinity are only important for a single curve. Since
    inf doesn't play a role in CPA\_2 we discuss it for the sake of
    simplicity as a special case in CA\_2 only. 
@@ -15,41 +14,44 @@
 \item Is Derivative and XCriticalPoints/YCriticalPoints are not
    redundant. We decided to keep them both because it is possible that
    XCriticalPoints/YCriticalPoints use a different methodology, other
-   than residing to the Derivative functor. As Michael pointed out:
+   than residing to the Derivative functor.\\ As Michael pointed out:
    \emph{``I think we should keep it, since it is more abstract than
      $solve(derivative(p),p)$.  This would again move the {\em
-       AlgebraicKernel} towards a more abstract layer.''}
+       AlgebraicKernel} towards a more abstract layer.''}\\
+\texttt{(Monique: I am not convinced any more about this now... the 
+definition of x-crit point is when the derivative vanishes or is not
+defined. for polynomials it is identical. so, we could remove
+derivatives and keep only the (maybe) more abstract crit points)}
 \item MakeCoprime: changed return type to bool\\
       because IsCoprime is almost as costly as computing the coprime
-      parts iff the polynomials are not coprime. This avoids caching.  
+      parts iff the polynomials are not coprime. This avoids caching.
 \end{itemize}
 
 \section{Questions}
 \begin{itemize}
+\item AlgebraicReal\_2 - Replace .x() and .y() methods by GetX() and 
+	GetY() functors? (or just add the functors?)
 \item problem is due to \ccc{AK_1}$<double>$.\\
     The Boundary type is documented as dense in R, which is not true
     for double.\\ (Monique: But well, double is also documented as a
     field, while it is obviously not (no operation is associative
     due to rounding errors). So, the density problem is not worse
     than usual problems for double.)
-\item AlgebraicReal\_2 - Do we provide .x() and .y() method?\\
-     (Monique: I think yes, we should)
 \item Use "int" at all places, or stick to distinction of \texttt{unsigned
-   int} + \texttt{int}?
-   (Menelaos: if the semantics of \texttt{unsigned int} is to enumerate
+   int} + \texttt{int}?\\
+   \texttt{(Menelaos: if the semantics of \texttt{unsigned int} is to enumerate
    objects in a sequence, then a new nested type \texttt{size\_type}
    can be introduced and used as the \texttt{return\_type} or
-   \texttt{argument\_type}).
+   \texttt{argument\_type}).}
 \end{itemize}
 
 \begin{itemize}
 \item Move methods from AlgebraicReal\_2 to a traits class (?)
-\item AlgebraicReal\_2 - Add GetX() and GetY() functors ?
 \end{itemize}
 
 \section{done} 
 \begin{itemize}
 \item all functors for \ccc{PolynomialTraits\_d} \ccc{PolynomialToolBox\_d}
-      are documented. (Monique: where?)
+      are documented. \\ \texttt{(Monique asks: where...?)}
 \end{itemize}
 
