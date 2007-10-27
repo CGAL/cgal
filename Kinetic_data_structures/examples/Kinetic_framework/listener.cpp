@@ -27,7 +27,7 @@ public:
 template <class Data>
 class Receiver: public CGAL::Kinetic::Ref_counted<Receiver<Data> > {
   typedef Receiver<Data> This;
-  typedef Notifier<Data> Notifier;
+  typedef ::Notifier<Data> Notifier;
   CGAL_KINETIC_LISTEN1(Notifier, DATA_CHANGED, ping());
 public:
   Receiver( Notifier* p){
