@@ -179,7 +179,7 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
     Is_x_monotone;
   
-  return insert(arr, c, pl, visitor, Is_x_monotone());
+  insert(arr, c, pl, visitor, Is_x_monotone());
 }
 
 template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
