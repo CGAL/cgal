@@ -625,38 +625,111 @@ CGAL::Object Arr_qdx_topology_traits_2<GeomTraits, Dcel_>:: // open
 locate_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
                   Boundary_type bound_x, Boundary_type bound_y)
 {
-    // \todo RWRW: Add support for all boundary conditions, not just
-    //             for unbounded curve-ends!
-
     // NEEDED for incremental insertion
-    std::cout << "Arr_qdx_topology_traits_2 locate_unb_curve_end"  
+    std::cout << "Arr_qdx_topology_traits_2 locate_curve_end"  
               << std::endl;
-    CGAL_precondition(bound_x == CGAL::MINUS_INFINITY ||
-                      bound_x == CGAL::PLUS_INFINITY);
-
-    Vertex *v = (bound_x == CGAL::MINUS_INFINITY ? v_left : v_right);
-    if (v == NULL) {
-        // return the "initial" unbounded face
-        // TODO locate correct face when perimetric paths exists
-        CGAL_assertion(this->f_top->is_unbounded());
-        return CGAL::make_object(this->f_top);
-    } 
-
-    // otherwise 
-    // search for face that contains the curve-end
-    bool overlaps;
-    Halfedge *pred = 
-        _locate_around_vertex_with_boundary_at_x(v, cv, ind, overlaps, true);
+    CGAL_precondition(bound_x != CGAL::NO_BOUNDARY || 
+                      bound_y != CGAL::NO_BOUNDARY);
     
-    if (overlaps) {
-        // or the half-edge overlapping with this curve-end
-        return CGAL::make_object(pred);
-    } 
+    Vertex* v = NULL;
+    typename Line_of_discontinuity::iterator  it;
+    bool locate = false;
+
+    CGAL_assertion_code(
+            bool search_face = false;
+    );
+
+    if (bound_x != CGAL::NO_BOUNDARY) {
+        bool contraction = false;
+        switch (bound_x) {
+        case AFTER_SINGULARITY:
+            contraction = true;
+        case MINUS_INFINITY: {
+            v = v_left;
+            if (v != NULL) {
+                if (contraction) {
+                    return CGAL::make_object(v);
+                } else {
+                    locate = true;
+                }
+            } else {
+                // search for face
+                CGAL_assertion_code(search_face = true);
+                it = m_line_of_discontinuity.begin();
+            }
+            break;
+        }
+        case BEFORE_SINGULARITY:
+            contraction = true;
+        case PLUS_INFINITY: {
+            v = v_right;
+            if (v != NULL) {
+                if (contraction) {
+                    return CGAL::make_object(v);
+                } else {
+                    locate = true;
+                }
+            } else {
+                return CGAL::make_object(f_top);
+            }
+            break;
+        }
+        default:
+            CGAL_assertion(false); // cannot happen
+            break;
+        }
+    }
+
+    if (bound_y != CGAL::NO_BOUNDARY) {
+        Point_2 key = (ind == CGAL::MIN_END ?
+                       this->m_traits->construct_min_vertex_2_object()(cv) :
+                       this->m_traits->construct_max_vertex_2_object()(cv)); 
+        
+        it = m_line_of_discontinuity.find (key);
+        if (it != m_line_of_discontinuity.end()) {
+            v = it->second;
+            return CGAL::make_object(v);
+        }
+        // else
+        CGAL_assertion_code(search_face = true;);
+        it = m_line_of_discontinuity.lower_bound (key);
+    }
+    
+    if (locate) {
+        // search for face that contains the curve-end
+        bool overlaps;
+        Halfedge *pred = 
+            _locate_around_vertex_with_boundary_at_x(
+                    v, cv, ind, overlaps, true
+            );
+        
+        if (overlaps) {
+            // or the half-edge overlapping with this curve-end
+            return CGAL::make_object(pred);
+        } 
+        
+        // else
+        // return correct incident face
+        if (pred->is_on_inner_ccb()) {
+            return CGAL::make_object(pred->inner_ccb()->face());
+        } else {
+            return CGAL::make_object(pred->outer_ccb()->face());
+        }
+    }
 
     // else
-    // retusrn correct incident face
-    // TODO check wether outer_ccb or inner_ccb must be returned
-    return CGAL::make_object(pred->outer_ccb()->face());
+    CGAL_assertion(search_face);
+    
+    // At this point, the iterator it points to a vertex on the line of
+    // discontinuity that is strictly after the curve end. If there is none,
+    // we know the curve end is contained in the top face. Otherwise,
+    // we return the face that lies below the vertex v.
+    if (it == m_line_of_discontinuity.end()) {
+        return CGAL::make_object(f_top);
+    }
+    v = it->second;
+    return CGAL::make_object(_face_before_vertex_on_discontinuity(v));
+    
 }
 
 //-----------------------------------------------------------------------------
