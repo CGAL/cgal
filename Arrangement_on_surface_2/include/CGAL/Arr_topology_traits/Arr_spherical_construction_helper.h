@@ -163,7 +163,7 @@ public:
         event->set_vertex_handle(v);
 
         // Since this is the first event corresponding to the north pole,
-        // the list m_subcurves_at_nf contains all subcurves whole left
+        // the list m_subcurves_at_nf contains all subcurves whose minimal
         // endpoint lies between the curve of discontinuity and the current
         // curve incident to the north pole. In case these subcurves represent
         // holes, these holes should stay in the "north face" that contains the
