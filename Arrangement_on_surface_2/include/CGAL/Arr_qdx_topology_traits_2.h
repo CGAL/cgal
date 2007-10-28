@@ -140,7 +140,6 @@ protected:
         }
     };
 
-    // TODO check Vertex_less
     struct Vertex_less {
         bool operator() (Vertex *v1, Vertex *v2) {
             return &(*v1) < &(*v2);
@@ -183,7 +182,7 @@ protected:
 
     //! the top face
     mutable  Face *f_top;
-    
+
     //! used to locate curve-ends on the line of discontinuity
     mutable Line_of_discontinuity m_line_of_discontinuity;
 
@@ -909,6 +908,30 @@ public:
         return (f_top);
     }
 
+    /*! Get bottom face (const version). */
+    const Face* bottom_face () const
+    {
+        typename Line_of_discontinuity::const_iterator  it = 
+            m_line_of_discontinuity.begin();
+        if (it == m_line_of_discontinuity.end()) {
+            return (f_top);
+        } else {
+            return (_face_before_vertex_on_discontinuity (it->second));
+        }
+    }
+
+    /*! Get bottom face */
+    Face* bottom_face ()
+    {
+        typename Line_of_discontinuity::const_iterator  it = 
+            m_line_of_discontinuity.begin();
+        if (it == m_line_of_discontinuity.end()) {
+            return (f_top);
+        } else {
+            return (_face_before_vertex_on_discontinuity (it->second));
+        }
+    }
+    
     /*! Get the vertex on line of discontinuity associated with \c pt*/
     Vertex* discontinuity_vertex(const Point_2& pt) {
         typename Line_of_discontinuity::iterator it = 
@@ -1046,6 +1069,12 @@ protected:
             bool& overlaps) const;
 
 #endif
+
+    /*! Return the face that lies before the given vertex, which lies
+     * on the line of discontinuity.
+     */
+    Face * _face_before_vertex_on_discontinuity (Vertex * v) const;
+    
     
     /*!
      * Computes the number of crossing of a path with the line of discontinuity

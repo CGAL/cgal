@@ -1248,6 +1248,111 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex // open
     return NULL;
 }
 
+/*! \brief Return the face that lies before the given vertex, which lies
+ * on the line of discontinuity.
+ */
+template <class GeomTraits, class Dcel>
+typename Arr_qdx_topology_traits_2<GeomTraits, Dcel>::Face *
+Arr_qdx_topology_traits_2<GeomTraits, Dcel>::
+_face_before_vertex_on_discontinuity (Vertex * v) const {
+    
+    // If the vertex is isolated, just return the face that contains it.
+    if (v->is_isolated()) {
+        return (v->isolated_vertex()->face());
+    }
+    
+    // Get the first incident halfedge around v and the next halfedge.
+    Halfedge  *first = v->halfedge();
+    Halfedge  *curr = first;
+    CGAL_assertion(curr != NULL);
+    Halfedge  *next = curr->next()->opposite();
+    
+    // If there is only one halfedge incident to v, return its incident
+    // face.
+    if (curr == next) {
+        if (curr->is_on_inner_ccb()) {
+            return (curr->inner_ccb()->face());
+        } else {
+            return (curr->outer_ccb()->face());
+        }
+    }
+    
+    // Otherwise, we traverse the halfedges around v and locate the first
+    // halfedge we encounter if we go from "3 o'clock" clockwise.
+    // First locate the lower left and the top right halfedges around v.
+    typename Traits_adaptor_2::Compare_x_2 compare_x =
+        m_traits->compare_x_2_object();
+    
+    CGAL::Curve_end leftmost_top_end = CGAL::MIN_END;
+    Halfedge  *leftmost_top = NULL;
+    CGAL::Curve_end rightmost_bottom_end = CGAL::MIN_END;
+    Halfedge  *rightmost_bottom = NULL;
+    
+    do {
+        typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
+        m_traits->boundary_in_x_2_object();
+        typename Traits_adaptor_2::Boundary_in_y_2 boundary_in_y =
+        m_traits->boundary_in_y_2_object();
+
+        CGAL::Curve_end ind = CGAL::MIN_END;
+        
+        CGAL::Boundary_type bd_x = boundary_in_x(curr->curve(), CGAL::MAX_END);
+        CGAL::Boundary_type bd_y = boundary_in_y(curr->curve(), CGAL::MAX_END);
+        if (are_equal(v, curr->curve(), CGAL::MAX_END, bd_x, bd_y)) {
+            ind = CGAL::MAX_END;
+        }
+        
+        if (boundary_in_y(curr->curve(),ind) < 0) {
+            // TOP-side
+            if ((leftmost_top == NULL) || 
+                (leftmost_top->direction() == CGAL::LEFT_TO_RIGHT &&
+                 leftmost_top->direction() != curr->direction()) ||
+                (leftmost_top->direction() == curr->direction() &&
+                 compare_x(curr->curve(), ind, 
+                           leftmost_top->curve(), leftmost_top_end) == 
+                 CGAL::SMALLER)) {
+                leftmost_top_end = ind;
+                leftmost_top = curr;
+            } 
+        } else {
+            // same for BOTTOM-side
+            
+            if ((rightmost_bottom == NULL) || 
+                (rightmost_bottom->direction() == CGAL::RIGHT_TO_LEFT &&
+                 rightmost_bottom->direction() != curr->direction()) ||
+                (rightmost_bottom->direction() == curr->direction() &&
+                 compare_x(curr->curve(), ind, 
+                           rightmost_bottom->curve(), rightmost_bottom_end) 
+                 == CGAL::LARGER)) {
+                rightmost_bottom_end = ind;
+                rightmost_bottom = curr;
+            } 
+        }
+        
+        // Move to the next halfedge around the vertex.
+        curr = curr->next()->opposite();
+        
+    } while (curr != first);
+    
+    // The first halfedge we encounter is the leftmost to top, but if there
+    // is no edge to the left, we first encounter the righmost halfedge to the 
+    // bottom. Note that as the halfedge we located has v as its target, we now
+    // have to return its twin.
+    if (leftmost_top != NULL) {
+        first = leftmost_top->opposite();
+    } else {
+        first = rightmost_bottom->opposite();
+    }
+    
+    // Return the incident face.
+    if (first->is_on_inner_ccb()) {
+        return (first->inner_ccb()->face());
+    } else {
+        return (first->outer_ccb()->face());
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 // Number of crossing with the line of discontiniuty
 //
