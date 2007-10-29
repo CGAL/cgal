@@ -12,7 +12,7 @@ namespace CGAL {
     CGAL::Hcircle_type pos;
     public:
     const typename SK::Circle_on_reference_sphere_3& supporting_circle() const {return C;}
-    CGAL::Hcircle_type get_position() const {return pos;}
+    const CGAL::Hcircle_type& get_position() const {return pos;}
     Half_circle_on_reference_sphere_3(const typename SK::Circle_on_reference_sphere_3& C,CGAL::Hcircle_type pos):C(C),pos(pos){}
   };
     
