@@ -19,6 +19,35 @@ namespace SphericalFunctors {
 
   //ACCESS FUNCTIONS
   template <class SK>
+  class Compute_supporting_circle_on_reference_sphere_3: Has_qrt{
+    typedef typename SK::Half_circle_on_reference_sphere_3   Half_circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename SK::Circle_on_reference_sphere_3   result_type;
+    typedef const result_type &                         qualified_result_type;
+    typedef Arity_tag<1>                                Arity;
+
+    qualified_result_type operator() (const Half_circle_on_reference_sphere_3 & a) const
+    { return (a.rep().supporting_circle()); }
+  };
+
+  template <class SK>
+  class Compute_half_circle_position_3: Has_qrt{
+    typedef typename SK::Half_circle_on_reference_sphere_3   Half_circle_on_reference_sphere_3;
+
+  public:
+
+    typedef typename CGAL::Hcircle_type                 result_type;
+    typedef const result_type &                         qualified_result_type;
+    typedef Arity_tag<1>                                Arity;
+
+    qualified_result_type operator() (const Half_circle_on_reference_sphere_3 & a) const
+    { return (a.rep().get_position()); }
+  };
+  
+  
+  template <class SK>
   class Compute_circle_center_coefficient_3/*: Has_qrt*/{
     typedef typename SK::Circle_on_reference_sphere_3   Circle_on_reference_sphere_3;
 
@@ -296,7 +325,23 @@ namespace SphericalFunctors {
     { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }    
   };
   
+  template < class SK >
+  class Construct_half_circle_on_reference_sphere_3{
+    typedef typename SK::Half_circle_on_reference_sphere_3              Half_circle_on_reference_sphere_3;
+    typedef typename Half_circle_on_reference_sphere_3::Rep                  Rep;
+  public:
+    typedef Half_circle_on_reference_sphere_3                           result_type;
+    typedef Arity_tag<1>                                                Arity;
+
+    //~ result_type
+    //~ operator()()
+    //~ { return Rep();}
   
+    result_type
+    operator()(const typename SK::Circle_on_reference_sphere_3& C,CGAL::Hcircle_type pos)
+    { return Rep(C,pos);}
+    
+  };
   
   template < class SK >
   class Construct_circle_on_reference_sphere_3
@@ -462,6 +507,48 @@ namespace SphericalFunctors {
       normal_solve(C,Rpts);
       *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
       *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+    }
+  };
+  
+  template <class SK>
+  struct Compare_theta_3{
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag< 2 >          Arity;
+    
+    result_type operator()(const typename SK::Theta_rep& T1,const typename SK::Theta_rep& T2) const {
+      CGAL::HQ_NT res=T1.hq()-T2.hq();
+      if (res == 0.){//same quadrant 
+        int m=(CGAL::auto_ftype(T1.hq())==CGAL::TAN)?(1):(-1);
+        if (truncf(T1.hq())!=T1.hq())//for hquadrant boundary
+          res=0;
+        else
+          res= m*CGAL::compare(T1.ftheta(),T2.ftheta());
+      }
+      if (res < 0) return (CGAL::SMALLER);
+      if (res >0 ) return (CGAL::LARGER);  
+      return CGAL::EQUAL;
+    }
+
+    result_type operator()(const typename SK::Circular_arc_point_on_reference_sphere_3& p1,
+                                       const typename SK::Circular_arc_point_on_reference_sphere_3& p2) const{
+      return (*this)(p1.theta_rep(),p2.theta_rep());
+    }    
+    
+  };
+
+  template <class SK>
+  struct Compare_theta_z_3{
+    typedef CGAL::Comparison_result   result_type;
+    typedef Arity_tag< 2 >            Arity;
+    
+    result_type operator()(const typename CGAL::Circular_arc_point_on_reference_sphere_3<SK>& p1,
+                           const typename CGAL::Circular_arc_point_on_reference_sphere_3<SK>& p2,
+                           bool decreasing_z=false) const{
+      SK sk;
+      CGAL::Comparison_result res=sk.compare_theta_3_object()(p1,p2);
+      if (res==CGAL::EQUAL)
+        res=decreasing_z?(CGAL::opposite(sk.compare_z_3_object()(p1,p2))):(sk.compare_z_3_object()(p1,p2));
+      return res;
     }
   };
   

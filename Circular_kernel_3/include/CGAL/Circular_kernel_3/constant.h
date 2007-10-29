@@ -5,6 +5,7 @@ namespace CGAL{
   typedef float HQ_NT;//type to represent the index of one hquadrant
   enum Fct_type{TAN, COT, FIXED, TAG_M2};
   enum Circle_type{NORMAL,THREADED,POLAR,BIPOLAR};
+  enum Hcircle_type{UPPER, LOWER, SENT_NPOLE=3, SENT_SPOLE,UNDEF};
   
   inline Fct_type auto_ftype(const HQ_NT& hquad){
   if (hquad >7 || hquad<2 || (hquad>3 && hquad<6))

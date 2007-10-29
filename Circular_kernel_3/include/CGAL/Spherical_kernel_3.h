@@ -55,6 +55,9 @@
 #include <CGAL/Circular_kernel_3/Circle_on_reference_sphere_3.h>
 #include <CGAL/Circle_on_reference_sphere_3.h>
 
+#include <CGAL/Circular_kernel_3/Half_circle_on_reference_sphere_3.h>
+#include <CGAL/Half_circle_on_reference_sphere_3.h>
+
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_sphere.h>
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_reference_sphere.h>
 
@@ -76,7 +79,7 @@ namespace CGAL {
         typedef CGALi::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
         typedef CGALi::Circular_arc_point_on_reference_sphere_3<SphericalKernel>    Circular_arc_point_on_reference_sphere_3;
         typedef CGALi::Circle_on_reference_sphere_3<SphericalKernel>                Circle_on_reference_sphere_3;
-        //~ typedef CGALi::Circular_arc_3<SphericalKernel,Circle_on_reference_sphere_3,Circular_arc_point_on_reference_sphere_3>    Circular_arc_on_reference_sphere_3;
+        typedef CGALi::Half_circle_on_reference_sphere_3<SphericalKernel>                Half_circle_on_reference_sphere_3;
         typedef CGALi::Circular_arc_3<SphericalKernel,CGAL::Circle_on_reference_sphere_3<SphericalKernel>,CGAL::Circular_arc_point_on_reference_sphere_3<SphericalKernel> >    Circular_arc_on_reference_sphere_3;
         typedef CGALi::Theta_rep<SphericalKernel>                                   Theta_rep;
         typedef CGALi::Sphere_with_radius_3<SphericalKernel>                        Sphere_with_radius_3;
