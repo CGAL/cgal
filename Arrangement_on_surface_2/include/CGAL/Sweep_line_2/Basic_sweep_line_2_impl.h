@@ -154,10 +154,10 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep ()
   
   CGAL_SL_DEBUG(
   {
+      CGAL_PRINT("Ordered sequence of initial events:\n");
       Event_queue_iterator eventIter1 = m_queue->begin();
       while (eventIter1 != m_queue->end()) {
           
-          CGAL_PRINT("Ordered sequence of initial events:\n");
           CGAL_PRINT("* ");
           CGAL_SL_DEBUG(PrintEvent(*eventIter1););
           CGAL_PRINT ( "\n");
