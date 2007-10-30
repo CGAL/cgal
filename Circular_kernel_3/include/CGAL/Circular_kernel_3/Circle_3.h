@@ -68,7 +68,7 @@ namespace CGAL {
       Circle_representation_3(const Plane_3 &p,const Sphere_3 &s){CGAL_precondition(false);}        
         
       Plane_3 supporting_plane() const {
-        return SK().construct_radical_plane_3_object()(get(base).first,get(base).second);
+        return SK().construct_radical_plane_3_object()(reference_sphere(),supporting_sphere());
       }
 
       const Sphere_3& supporting_sphere() const {

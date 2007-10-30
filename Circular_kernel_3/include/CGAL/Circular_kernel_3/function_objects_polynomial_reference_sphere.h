@@ -552,6 +552,135 @@ namespace SphericalFunctors {
     }
   };
   
+  template <class SK>
+  class Compare_z_at_theta_3{
+    
+    typedef typename SK::Half_circle_on_reference_sphere_3 Half_circle_on_reference_sphere_3;
+    typedef typename SK::Circle_on_reference_sphere_3 Circle_on_reference_sphere_3;
+    typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;
+    typedef typename SK::FT FT;
+    
+    public:
+    typedef CGAL::Comparison_result   result_type;
+    typedef Arity_tag< 2 >            Arity;
+    
+    //At theta=0
+    //Compare the intersection point of an half circle with M_theta for theta=0 with the critical points of a circle on reference sphere
+    result_type operator() (const Half_circle_on_reference_sphere_3& H,const Circle_on_reference_sphere_3& S){
+      std::vector<CGAL::Object> cont;
+      SK sk;
+      typename SK::Plane_3 p=sk.construct_plane_3_object()(typename SK::Algebraic_kernel::Polynomial_1_3(0,1,0,0));
+      typename SK::Circular_arc_point_3 Pt;
+      sk.intersect_3_object()(H.supporting_circle().reference_sphere(),H.supporting_circle().supporting_sphere(),p,std::back_inserter(cont));
+      select_inter_pt(H.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::THREADED?CGAL::UNDEF:H.get_position(),cont,Pt,0.5);      
+      return sk.compare_z_3_object()(Pt,typename SK::Point_3(0,0,S.extremal_point_z()));
+    }
+    //theta=0
+    
+    //Compare the z coordinates of the intersection points with the meridian at theta=0 of two half_circles
+    result_type operator() (const Half_circle_on_reference_sphere_3 & H1, const Half_circle_on_reference_sphere_3& H2){
+      return (*this)(H1,H2,0.5,0);
+    }
+    
+    //Compare the z coordinates of the intersection points with the meridian defined by hq and A (A=f(theta) compliant with hq) of two half circles.
+    result_type operator() (const Half_circle_on_reference_sphere_3& H1, const Half_circle_on_reference_sphere_3 & H2,const typename CGAL::HQ_NT& hq, const FT& A){
+      std::vector<CGAL::Object> cont;
+      FT a,b;
+      if (truncf(hq)!=hq){//for hquadrant boundary
+        if (hq==1.5 || hq==5.5){a=1;b=-1;}
+        else if (hq==3.5 || hq==7.5){a=1;b=1;}
+        else if (hq==0.5 || hq==4.5 || hq==8.5){a=0;b=1;}
+        else if (hq==2.5 || hq==6.5){a=1;b=0;}
+      }
+      else
+        if (CGAL::auto_ftype(hq)==CGAL::TAN){a=A;b=-1;}
+        else{a=-1;b=A;}
+      
+      SK sk;
+      typename SK::Plane_3 p=sk.construct_plane_3_object()(typename SK::Algebraic_kernel::Polynomial_1_3(a,b,0,0));
+      typename SK::Circular_arc_point_3 Pt1,Pt2;
+      sk.intersect_3_object()(H1.supporting_circle().reference_sphere(),H1.supporting_circle().supporting_sphere(),p,std::back_inserter(cont));
+      select_inter_pt(H1.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::THREADED?CGAL::UNDEF:H1.get_position(),cont,Pt1,hq);
+      cont.clear();
+      sk.intersect_3_object()(H2.supporting_circle().reference_sphere(),H2.supporting_circle().supporting_sphere(),p,std::back_inserter(cont));
+      select_inter_pt(H2.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::THREADED?CGAL::UNDEF:H2.get_position(),cont,Pt2,hq);
+      return sk.compare_z_3_object()(Pt1,Pt2);
+    }
+
+    //compare a normal start point vs a theta-monotonic circle arc.
+    result_type operator() (const Circular_arc_point_on_reference_sphere_3& Pt,const Half_circle_on_reference_sphere_3& H){
+      CGAL::Hcircle_type pos=H.get_position();
+      if ( (pos==CGAL::SENT_SPOLE) || (pos==CGAL::SENT_NPOLE) )
+      {
+        return (pos==CGAL::SENT_SPOLE)?(CGAL::LARGER):(CGAL::SMALLER);
+      }
+      if (H.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::NORMAL)
+      {
+        int center_pos=0;//will contain Pt.z-start_pt(H).z
+        int res = point_VS_supporting_plane(Pt,H.supporting_circle(),center_pos);
+        if (res > 0)
+          return (pos==CGAL::UPPER)?(CGAL::SMALLER):(CGAL::LARGER);
+        if (res < 0 )
+          return (center_pos>0)?(CGAL::LARGER):(CGAL::SMALLER);
+        //case res=0
+        if (pos==CGAL::UPPER)
+          return (center_pos>0)?(CGAL::EQUAL):(CGAL::SMALLER);
+        return (center_pos<0)?(CGAL::EQUAL):(CGAL::LARGER);
+      }
+      int center_pos=-1;
+      int res = point_VS_supporting_plane(Pt,H.supporting_circle(),center_pos);
+      if (res==0)
+        return (CGAL::EQUAL);
+      res*=signof(H.supporting_circle().supporting_sphere_center().z());//normal vector always to the top
+      return (res<0)?(CGAL::SMALLER):(CGAL::LARGER);//threaded or polar circle
+    }
+
+    private:
+    //Select the intersection point of meridian with Half  circle
+    void select_inter_pt(CGAL::Hcircle_type T,const std::vector<CGAL::Object>& cont,typename SK::Circular_arc_point_3& Pt,const typename CGAL::HQ_NT& hq){
+      std::pair<typename SK::Circular_arc_point_3,unsigned> p1,p2;
+      CGAL::assign(p1,cont[0]);
+      CGAL::assign(p2,cont[1]);
+      SK sk;
+      if (T==CGAL::UNDEF){
+        if (hq<2 || hq>7){
+          Pt=(sk.compare_x_3_object()(p1.first,p2.first)==CGAL::SMALLER?p2.first:p1.first);
+          return;
+        }
+        if (hq>=2 && hq <=3){
+          Pt=(sk.compare_y_3_object()(p1.first,p2.first)==CGAL::SMALLER?p2.first:p1.first);
+          return;
+        }
+        if (hq>3 && hq<6){
+          Pt=(sk.compare_x_3_object()(p1.first,p2.first)==CGAL::SMALLER?p1.first:p2.first );
+          return;
+        }
+        if (hq>=6 || hq <=7){
+          Pt=(sk.compare_y_3_object()(p1.first,p2.first)==CGAL::SMALLER?p1.first:p2.first);
+          return;
+        }        
+      }
+      else{
+        if (sk.compare_z_3_object()(p1.first,p2.first)==CGAL::SMALLER)
+          Pt=(T==CGAL::LOWER?p1.first:p2.first);
+        else
+          Pt=(T==CGAL::LOWER?p2.first:p1.first);
+      }
+    }
+
+    //return 1,0,-1  if up to ,on ,under to the plane (else for threaded circle X sign_of(z) to have the same result)
+     int point_VS_supporting_plane(const Circular_arc_point_on_reference_sphere_3& pt,const Circle_on_reference_sphere_3& C,int& center_pos){
+      typename SK::Plane_3 plane=C.supporting_plane();
+      int i=typename SK::Algebraic_kernel().sign_at_object()(SK().get_equation_object()(plane),pt.coordinates());
+      if (center_pos==0)//compute the position of the SP wrt circle center only for normal circles
+      {
+        center_pos=CGAL::sign(pt.z()-C.extremal_point_z());
+        i*=signof(C.circle_center_coefficient());//signof(...) handle IVM         //OPTI : one variable for S->get_.....
+      }
+      return i;
+    }
+  };  
+  
 }
 }
 

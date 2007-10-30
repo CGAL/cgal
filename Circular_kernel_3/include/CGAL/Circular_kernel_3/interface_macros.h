@@ -60,7 +60,7 @@
   CGAL_Spherical_Kernel_cons(Theta_extremal_point_3,theta_extremal_point_3_object)
   CGAL_Spherical_Kernel_cons(Compare_theta_3,compare_theta_3_object)
   CGAL_Spherical_Kernel_cons(Compare_theta_z_3,compare_theta_z_3_object)
-  
+  CGAL_Spherical_Kernel_cons(Compare_z_at_theta_3,compare_z_at_theta_3_object)
   
 
   CGAL_Spherical_Kernel_cons(Get_equation, get_equation_object) 
