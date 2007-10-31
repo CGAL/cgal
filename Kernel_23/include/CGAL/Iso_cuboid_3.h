@@ -36,6 +36,7 @@ class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
 {
   typedef typename R_::RT                 RT;
   typedef typename R_::Point_3            Point_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Iso_cuboid_3                    Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Iso_cuboid_3>::value));
@@ -222,6 +223,12 @@ public:
   bbox() const
   {
     return R().construct_bbox_3_object()(*this);
+  }
+
+  Iso_cuboid_3
+  transform(const Aff_transformation_3 &t) const
+  {
+    return Iso_cuboid_3(t.transform((this->min)()), t.transform((this->max)()));
   }
 
 };
