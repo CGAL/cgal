@@ -281,7 +281,8 @@ public:
     
     //! type of algebraic real traits
     
-    typedef typename Algebraic_kernel_1::Algebraic_real_traits X_real_traits_1;
+    typedef CGALi::Algebraic_real_traits<typename Curve_2::X_coordinate>
+    X_real_traits_1;
 
     typedef CGALi::Algebraic_real_traits<Xy_coordinate_2, 
         Internal_curve_pair_2> Y_real_traits_1;
