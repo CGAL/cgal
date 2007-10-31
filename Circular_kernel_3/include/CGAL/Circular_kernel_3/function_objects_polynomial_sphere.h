@@ -37,6 +37,7 @@
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
+#include <CGAL/Circular_kernel_3/internal_functions_on_reference_sphere_3.h>
 #include <CGAL/Object.h>
 
 
@@ -880,7 +881,7 @@ template < class SK > \
     
     result_type
     operator()(const Circle_on_reference_sphere_3& a, const Circular_arc_point_on_reference_sphere_3 &p) const
-    { return has_on<SK>(a, p); }    
+    { return has_on<SK>(a.supporting_sphere(), p) && has_on<SK>(a.reference_sphere(), p); }    
 
     result_type
     operator()(const Circular_arc_point_3 &p, const Circle_3 &a) const
@@ -1018,7 +1019,14 @@ template < class SK > \
     result_type
     operator()(const Circular_arc_3 &p, const Circle_3 &a) const
     { return has_on<SK>(p, a); }
-
+    
+    result_type
+    operator() (const typename SK::Half_circle_on_reference_sphere_3& H,
+                          const typename SK::Circular_arc_point_on_reference_sphere_3& P,
+                          bool point_is_on_circle=false) const{
+      return has_on_ref_sphere<SK>(H,P,point_is_on_circle);
+    }
+    
   };
 
   template < class SK >
@@ -1272,6 +1280,58 @@ template < class SK > \
 	       OutputIterator res) const
     { return intersect_3<SK> (ca,la,res); }
 
+    //On reference sphere
+    //NOTE THAT THIS IMPLEMENTATION PROVIDE ONLY INTERSECTION POINT THAT ARE NOT A POLE
+    template < class OutputIterator > 
+    OutputIterator 
+    operator()( const typename SK::Circle_on_reference_sphere_3& C1,
+                          const typename SK::Circle_on_reference_sphere_3& C2,
+                          CGAL::Inter_alg_info& IA,
+                          OutputIterator out) const
+    {
+      return intersect_3<SK>(C1,C2,IA,out);
+    }
+      
+    template < class OutputIterator >
+    OutputIterator 
+    operator()(const typename SK::Circle_on_reference_sphere_3& C1,
+                         const typename SK::Circle_on_reference_sphere_3& C2,
+                         OutputIterator out) const
+    {
+      return intersect_3<SK>(C1,C2,out);
+    }
+      
+    template <class OutputIterator>
+    OutputIterator 
+    operator()(const typename SK::Circle_on_reference_sphere_3& C1,
+                         const typename SK::Circle_on_reference_sphere_3& C2,CGAL::Inter_alg_info &IA,
+                         OutputIterator out, CGAL::EvtPt_num num) const
+    {
+      return intersect_3<SK>(C1,C2,IA,out,num);
+    }
+    
+    template <class OutputIterator>
+    OutputIterator operator()(const typename SK::Half_circle_on_reference_sphere_3& H,
+                                              const typename SK::Circle_on_reference_sphere_3&        C,
+                                              OutputIterator out) const{
+      return intersect_3<SK>(C,H,out);
+    }
+
+    template <class OutputIterator>
+    OutputIterator operator()(const typename SK::Circle_on_reference_sphere_3&        C,
+                                              const typename SK::Half_circle_on_reference_sphere_3& H,
+                                              OutputIterator out) const{
+      return intersect_3<SK>(C,H,out);
+    }
+    
+    template <class OutputIterator>
+    OutputIterator operator()(const typename SK::Half_circle_on_reference_sphere_3& H1,
+                                              const typename SK::Half_circle_on_reference_sphere_3& H2,
+                                              OutputIterator out) const{
+      return intersect_3<SK>(H1,H2,out);
+    }
+    
+    
   };
 
 // If 2 line_arc have the same supporting line

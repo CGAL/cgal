@@ -7,6 +7,7 @@ namespace CGAL{
   enum Circle_type{NORMAL,THREADED,POLAR,BIPOLAR};
   enum Hcircle_type{UPPER, LOWER, SENT_NPOLE=3, SENT_SPOLE,UNDEF};
   enum Pole_type{NOTAPOLE=-1,NPOLE=3,SPOLE=4};
+  enum EvtPt_num{TANGENCY_PT,FIRST_PT,SECOND_PT,NONE,ALL,START_PT=1,END_PT,NORTH,SOUTH,UNKNOW,EVTPT_INI=-1};
   
   inline Fct_type auto_ftype(const HQ_NT& hquad){
   if (hquad >7 || hquad<2 || (hquad>3 && hquad<6))
@@ -198,6 +199,21 @@ namespace CGAL{
     }
   }
 
+  template <class SK>
+  CGAL::Pole_type pole_of_polar_circle(const typename SK::Circle_on_reference_sphere_3& C){
+    CGAL_precondition(C.type_of_circle_on_reference_sphere()==CGAL::POLAR);
+    typename SK::Point_3 center=C.supporting_sphere().center();
+    return (CGAL::Sign_power_of_pole<SK>(C,CGAL::NPOLE)==0)?(CGAL::NPOLE):(CGAL::SPOLE);
+  }    
+  
+    //indicate the direction of the tangent to a polar or bipolar circle according to a Start or end tag
+  template <class SK>
+  CGAL::Point_3<SK> get_polar_coordinate(const typename SK::Circle_on_reference_sphere_3& C, CGAL::EvtPt_num num){
+    CGAL_precondition(C.type_of_circle_on_reference_sphere()==CGAL::POLAR || C.type_of_circle_on_reference_sphere()==CGAL::BIPOLAR);
+    typename SK::FT x=((num==CGAL::START_PT)?(1):(-1))*C.supporting_sphere_center().y();
+    typename SK::FT y=((num==CGAL::END_PT)?(1):(-1))*C.supporting_sphere_center().x();
+    return typename SK::Point_3(x,y,typename SK::FT(0));
+  }
   
   //version with the radius known
   //~ template<class SK>

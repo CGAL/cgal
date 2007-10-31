@@ -12,6 +12,7 @@
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_left_spherical_kernel.h>
+#include <CGAL/Circular_kernel_3/internal_functions_on_reference_sphere_3.h>
 #include <CGAL/Object.h>
 
 
@@ -470,7 +471,8 @@ namespace SphericalFunctors {
   class Theta_extremal_point_3{
     
     template <class OutputIterator>
-    void normal_solve(const typename SK::Circle_on_reference_sphere_3& C,OutputIterator Rpts) const{
+    void normal_solve(const typename SK::Circle_on_reference_sphere_3& C,
+                                  OutputIterator Rpts) const{
       std::vector<CGAL::Object> cont;
       typename SK::Construct_plane_3 theConstruct_plane_3 = SK().construct_plane_3_object();
       //~ typename SK::Plane_3 p=theConstruct_plane_3(typename SK::Algebraic_kernel::Polynomial_1_3(0,0,1,-C.extremal_point_z()));
@@ -486,14 +488,16 @@ namespace SphericalFunctors {
     typedef void result_type;
     typedef Arity_tag< 3 >      Arity;
     
-    void set_CA(const typename SK::Circle_on_reference_sphere_3& C,Inter_alg_info& CA) const{
+    void set_CA(const typename SK::Circle_on_reference_sphere_3& C,
+                        Inter_alg_info& CA) const{
       typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
       normal_solve(C,Rpts);
       set_IA<SK>(CA,Rpts,false);
     }
     
     template <class OutputIterator>
-    void operator()(const typename SK::Circle_on_reference_sphere_3& C,OutputIterator it) const{  
+    void operator()(const typename SK::Circle_on_reference_sphere_3& C,
+                                  OutputIterator it) const{  
       Inter_alg_info CA;
       typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
       normal_solve(C,Rpts);
@@ -503,7 +507,9 @@ namespace SphericalFunctors {
     }
     
     template <class OutputIterator>
-    void operator()(const typename SK::Circle_on_reference_sphere_3& C,OutputIterator it,Inter_alg_info& CA) const{
+    void operator()(const typename SK::Circle_on_reference_sphere_3& C,
+                                  OutputIterator it,
+                                  Inter_alg_info& CA) const{
       typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
       normal_solve(C,Rpts);
       *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
@@ -567,7 +573,8 @@ namespace SphericalFunctors {
     
     //At theta=0
     //Compare the intersection point of an half circle with M_theta for theta=0 with the critical points of a circle on reference sphere
-    result_type operator() (const Half_circle_on_reference_sphere_3& H,const Circle_on_reference_sphere_3& S){
+    result_type operator() (const Half_circle_on_reference_sphere_3& H,
+                                            const Circle_on_reference_sphere_3& S) const{
       std::vector<CGAL::Object> cont;
       SK sk;
       typename SK::Plane_3 p=sk.construct_plane_3_object()(typename SK::Algebraic_kernel::Polynomial_1_3(0,1,0,0));
@@ -579,12 +586,15 @@ namespace SphericalFunctors {
     //theta=0
     
     //Compare the z coordinates of the intersection points with the meridian at theta=0 of two half_circles
-    result_type operator() (const Half_circle_on_reference_sphere_3 & H1, const Half_circle_on_reference_sphere_3& H2){
+    result_type operator() (const Half_circle_on_reference_sphere_3 & H1,
+                                            const Half_circle_on_reference_sphere_3& H2) const{
       return (*this)(H1,H2,0.5,0);
     }
     
     //Compare the z coordinates of the intersection points with the meridian defined by hq and A (A=f(theta) compliant with hq) of two half circles.
-    result_type operator() (const Half_circle_on_reference_sphere_3& H1, const Half_circle_on_reference_sphere_3 & H2,const typename CGAL::HQ_NT& hq, const FT& A){
+    result_type operator() ( const Half_circle_on_reference_sphere_3& H1,
+                                            const Half_circle_on_reference_sphere_3 & H2,
+                                            const typename CGAL::HQ_NT& hq, const FT& A) const {
       std::vector<CGAL::Object> cont;
       FT a,b;
       if (truncf(hq)!=hq){//for hquadrant boundary
@@ -609,7 +619,8 @@ namespace SphericalFunctors {
     }
 
     //compare a normal start point vs a theta-monotonic circle arc.
-    result_type operator() (const Circular_arc_point_on_reference_sphere_3& Pt,const Half_circle_on_reference_sphere_3& H){
+    result_type operator() (const Circular_arc_point_on_reference_sphere_3& Pt,
+                                            const Half_circle_on_reference_sphere_3& H) const{
       CGAL::Hcircle_type pos=H.get_position();
       if ( (pos==CGAL::SENT_SPOLE) || (pos==CGAL::SENT_NPOLE) )
       {
@@ -638,7 +649,10 @@ namespace SphericalFunctors {
 
     private:
     //Select the intersection point of meridian with Half  circle
-    void select_inter_pt(CGAL::Hcircle_type T,const std::vector<CGAL::Object>& cont,typename SK::Circular_arc_point_3& Pt,const typename CGAL::HQ_NT& hq){
+    void select_inter_pt(CGAL::Hcircle_type T,
+                                    const std::vector<CGAL::Object>& cont,
+                                    typename SK::Circular_arc_point_3& Pt,
+                                    const typename CGAL::HQ_NT& hq) const{
       std::pair<typename SK::Circular_arc_point_3,unsigned> p1,p2;
       CGAL::assign(p1,cont[0]);
       CGAL::assign(p2,cont[1]);
@@ -670,13 +684,15 @@ namespace SphericalFunctors {
     }
 
     //return 1,0,-1  if up to ,on ,under to the plane (else for threaded circle X sign_of(z) to have the same result)
-     int point_VS_supporting_plane(const Circular_arc_point_on_reference_sphere_3& pt,const Circle_on_reference_sphere_3& C,int& center_pos){
+     int point_VS_supporting_plane(const Circular_arc_point_on_reference_sphere_3& pt,
+                                                     const Circle_on_reference_sphere_3& C,
+                                                     int& center_pos) const{
       typename SK::Plane_3 plane=C.supporting_plane();
       int i=typename SK::Algebraic_kernel().sign_at_object()(SK().get_equation_object()(plane),pt.coordinates());
       if (center_pos==0)//compute the position of the SP wrt circle center only for normal circles
       {
         center_pos=CGAL::sign(pt.z()-C.extremal_point_z());
-        i*=signof(C.circle_center_coefficient());//signof(...) handle IVM         //OPTI : one variable for S->get_.....
+        i*=signof(C.circle_center_coefficient());//signof(...) handle IVM
       }
       return i;
     }
@@ -684,12 +700,19 @@ namespace SphericalFunctors {
   
   template <class SK>
   struct Compare_z_to_left_3{
+    typedef CGAL::Comparison_result      result_type;
+    typedef Arity_tag< 2 >                      Arity;
     //theta=0
-    CGAL::Comparison_result operator()(const typename SK::Half_circle_on_reference_sphere_3& H1,const typename SK::Half_circle_on_reference_sphere_3& H2){
+    result_type 
+    operator()( const typename SK::Half_circle_on_reference_sphere_3& H1,
+                          const typename SK::Half_circle_on_reference_sphere_3& H2) const {
       return CGAL::SphericalFunctors::compare_to_hcircle_to_left<SK,CGAL::SphericalFunctors::trait_for_cmp_tgt_theta_0<SK> >()(H1,H2);
     }
     
-    CGAL::Comparison_result operator()(const typename SK::Half_circle_on_reference_sphere_3& H1,const typename SK::Half_circle_on_reference_sphere_3& H2,const typename SK::Circular_arc_point_on_reference_sphere_3& p){
+    result_type 
+    operator()( const typename SK::Half_circle_on_reference_sphere_3& H1,
+                          const typename SK::Half_circle_on_reference_sphere_3& H2,
+                          const typename SK::Circular_arc_point_on_reference_sphere_3& p) const{
       CGAL::SphericalFunctors::compare_to_hcircle_to_left<SK,CGAL::SphericalFunctors::trait_for_cmp_tgt<SK> > cmp(p.coordinates());
       return cmp(H1,H2);
     }
