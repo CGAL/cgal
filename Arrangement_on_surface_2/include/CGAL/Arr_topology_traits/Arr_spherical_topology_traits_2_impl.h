@@ -199,6 +199,8 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
   
   typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
     m_traits->boundary_in_x_2_object();
+  typename Traits_adaptor_2::Boundary_in_y_2 boundary_in_y =
+    m_traits->boundary_in_y_2_object();
   typename Traits_adaptor_2::Compare_x_2 compare_x =
     m_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
@@ -268,6 +270,18 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
 
       // Ignore vertical curves:
       if (curr->curve().is_vertical()) {
+        /* If this outer ccb chain contains the north pole, and our point 
+         * lies horizontaly between the two vertical curves that meet at
+         * the north pole, increase the intersection counter
+         */
+        Boundary_type bnd1 = boundary_in_y(curr->curve(), MAX_END);
+        Boundary_type bnd2 = boundary_in_y(curr->next()->curve(), MAX_END);
+        if ((bnd1 == BEFORE_SINGULARITY) && (bnd2 == BEFORE_SINGULARITY)) {
+          // Compare the x-coordinates:
+          Comparison_result rc1 = compare_x(p, curr->curve(), MAX_END);
+          Comparison_result rc2 = compare_x(p, curr->next()->curve(), MAX_END);
+          if (rc1 == opposite(rc2)) ++num_intersections;
+        }
         curr = curr->next();
         continue;
       }
