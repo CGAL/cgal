@@ -6,6 +6,7 @@ namespace CGAL{
   enum Fct_type{TAN, COT, FIXED, TAG_M2};
   enum Circle_type{NORMAL,THREADED,POLAR,BIPOLAR};
   enum Hcircle_type{UPPER, LOWER, SENT_NPOLE=3, SENT_SPOLE,UNDEF};
+  enum Pole_type{NOTAPOLE=-1,NPOLE=3,SPOLE=4};
   
   inline Fct_type auto_ftype(const HQ_NT& hquad){
   if (hquad >7 || hquad<2 || (hquad>3 && hquad<6))
@@ -174,7 +175,37 @@ namespace CGAL{
     }
     return CGAL::NORMAL;
   }  
+
+  template <class SK>
+  static int Sign_power_of_pole(const typename SK::Circle_on_reference_sphere_3& C,CGAL::Pole_type P){
+    typename SK::Point_3 center=C.supporting_sphere().center();
+    return CGAL::sign(
+      CGAL::square(CGAL::square(center.x())+CGAL::square(center.y())+CGAL::square(center.z())+C.reference_sphere().squared_radius()-C.supporting_sphere_squared_radius())
+      +CGAL::sign( (P==CGAL::NPOLE?-1:1)*center.z() )*4*CGAL::square(center.z())*C.reference_sphere().squared_radius()
+    );
+  }  
   
+  template <class SK>
+  static CGAL::Pole_type pole_covered_by_supporting_sphere(const typename SK::Circle_on_reference_sphere_3& C){
+    CGAL_precondition(C.type_of_circle_on_reference_sphere()==CGAL::THREADED);
+    typename SK::FT NP=CGAL::Sign_power_of_pole<SK>(C,CGAL::NPOLE);
+    if (NP < 0)
+      return CGAL::NPOLE;
+    else{
+      if(CGAL::Sign_power_of_pole<SK>(C,CGAL::SPOLE) < 0 )
+        return CGAL::SPOLE;
+      return (NP==0)?(CGAL::NPOLE):(CGAL::SPOLE);
+    }
+  }
+
+  
+  //version with the radius known
+  //~ template<class SK>
+  //~ static int Sign_power_of_pole(const typename SK::Circle_on_reference_sphere_3& C,CGAL::Pole_type P){
+    //~ typename SK::Point_3 center=C.supporting_sphere().center();
+    //~ return CGAL::sign(my_pow(center.x(),2)+my_pow(center.y(),2)+my_pow(center.z()+ (P==CGAL::NPOLE?-1:1)*get_S_0_radius<P_NT>(),2)
+                                    //~ -C.supporting_sphere_squared_radius());
+  //~ }  
   
 }
 

@@ -11,6 +11,7 @@
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
+#include <CGAL/Circular_kernel_3/internal_function_compare_to_left_spherical_kernel.h>
 #include <CGAL/Object.h>
 
 
@@ -680,6 +681,20 @@ namespace SphericalFunctors {
       return i;
     }
   };  
+  
+  template <class SK>
+  struct Compare_z_to_left_3{
+    //theta=0
+    CGAL::Comparison_result operator()(const typename SK::Half_circle_on_reference_sphere_3& H1,const typename SK::Half_circle_on_reference_sphere_3& H2){
+      return CGAL::SphericalFunctors::compare_to_hcircle_to_left<SK,CGAL::SphericalFunctors::trait_for_cmp_tgt_theta_0<SK> >()(H1,H2);
+    }
+    
+    CGAL::Comparison_result operator()(const typename SK::Half_circle_on_reference_sphere_3& H1,const typename SK::Half_circle_on_reference_sphere_3& H2,const typename SK::Circular_arc_point_on_reference_sphere_3& p){
+      CGAL::SphericalFunctors::compare_to_hcircle_to_left<SK,CGAL::SphericalFunctors::trait_for_cmp_tgt<SK> > cmp(p.coordinates());
+      return cmp(H1,H2);
+    }
+  };  
+  
   
 }
 }

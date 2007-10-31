@@ -1330,6 +1330,7 @@ Circular_kernel_3/include/CGAL/Circular_kernel_3/Sphere_with_radius_3.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/Theta_rep.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/constant.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/function_objects_polynomial_reference_sphere.h -text
+Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_compare_to_left_spherical_kernel.h -text
 Circular_kernel_3/include/CGAL/Half_circle_on_reference_sphere_3.h -text
 Circular_kernel_3/include/CGAL/Sphere_with_radius_3.h -text
 Circular_kernel_3/include/CGAL/Theta_rep.h -text
