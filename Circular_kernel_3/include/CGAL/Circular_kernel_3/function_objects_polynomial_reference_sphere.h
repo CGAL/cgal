@@ -495,25 +495,39 @@ namespace SphericalFunctors {
       set_IA<SK>(CA,Rpts,false);
     }
     
+    template<class container>
+    void set_CA(Inter_alg_info& CA,const container& Pts) const{
+      set_IA<SK>(CA,Pts,false);
+    }    
+    
     template <class OutputIterator>
-    void operator()(const typename SK::Circle_on_reference_sphere_3& C,
-                                  OutputIterator it) const{  
+    OutputIterator operator()(const typename SK::Circle_on_reference_sphere_3& C,
+                                               OutputIterator it) const{  
       Inter_alg_info CA;
       typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
       normal_solve(C,Rpts);
-      set_IA(CA,it,false);
-      *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
-      *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+      set_CA(CA,Rpts);
+      *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
+      *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+       return it;
     }
     
     template <class OutputIterator>
-    void operator()(const typename SK::Circle_on_reference_sphere_3& C,
-                                  OutputIterator it,
-                                  Inter_alg_info& CA) const{
+    OutputIterator operator()(const typename SK::Circle_on_reference_sphere_3& C,
+                                               OutputIterator it,
+                                               const Inter_alg_info& CA,
+                                               CGAL::EvtPt_num num=CGAL::ALL) const{
       typename std::pair<typename SK::Circular_arc_point_3,unsigned> Rpts[2];
       normal_solve(C,Rpts);
-      *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
-      *it= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+      if (num!=END_PT)
+        *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qF,Rpts[CA.F_index].first);
+      else{
+        *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+        return it;
+      }
+      if (num==ALL)
+        *it++= typename SK::Circular_arc_point_on_reference_sphere_3(CA.qS,Rpts[CA.S_index].first);
+      return it;
     }
   };
   
