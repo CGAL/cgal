@@ -187,6 +187,8 @@ template<class AlgebraicCurveKernel_2>
 Benchmark_result do_benchmark(std::string filename, int n_samples = 5) 
 {
     typedef AlgebraicCurveKernel_2 AK_2;
+
+    typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
     
     typedef typename AK_2::Curve_2 Curve_2;
     typedef typename Curve_2::Poly_d Internal_polynomial_2;
@@ -260,8 +262,27 @@ Benchmark_result do_benchmark(std::string filename, int n_samples = 5)
     typename Mult_vector::const_iterator mit;
     for(rit = roots.begin(), mit = mults.begin(); rit != roots.end(); 
             rit++, mit++) {
-        std::cout << i++ << ": " << *rit << "; multiplicity: " << *mit <<
-            "\n\n";
+        typedef typename Xy_coordinate_2::Boundary Boundary;
+        typedef typename Xy_coordinate_2::Boundary_interval Boundary_interval;
+        Boundary_interval x_iv = rit->get_approximation_x(),
+            y_iv = rit->get_approximation_y();
+        while(x_iv.upper() - x_iv.lower() > Boundary(1,10000)) {
+            rit->refine_x();
+            x_iv = rit->get_approximation_x();
+        }
+        while(y_iv.upper() - y_iv.lower() > Boundary(1,10000)) {
+            rit->refine_y();
+            y_iv = rit->get_approximation_y();
+        }
+        std::cout << i++ << ": " << std::flush;
+        std::cout << " ( " << std::flush;
+        std::cout << NiX::to_double((x_iv.upper() + x_iv.lower())/2) 
+                  << std::flush;
+        std::cout << ", " << std::flush;
+        std::cout << NiX::to_double((y_iv.upper() + y_iv.lower())/2) 
+                  << std::flush;
+        std::cout << " ) " << std::flush;
+        std::cout << "; multiplicity: " << *mit << std::endl << std::endl;
     }
     
     result.total_time = result.solve_time + result.sort_time;
@@ -275,14 +296,13 @@ int main( int argc, char** argv ) {
         CGAL_assertion(argc >= 2);
         int n_samples = (argc >= 3) ? std::atoi(argv[2]) : 5;
 
+#ifdef LiS_HAVE_CORE
+        typedef NiX::CORE_arithmetic_traits AT;
+#else
 #ifdef CGAL_USE_LEDA
         typedef NiX::LEDA_arithmetic_traits AT;
 #endif
-                
-#ifdef LiS_HAVE_CORE
-        typedef NiX::CORE_arithmetic_traits AT;
 #endif
-
         typedef AT::Integer Coefficient;
         
         typedef AcX::Algebraic_curve_2<AT> Curve_2;

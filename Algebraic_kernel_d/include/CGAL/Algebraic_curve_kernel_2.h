@@ -24,13 +24,13 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
+
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
-
-#include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
 #include <algorithm>
@@ -280,9 +280,14 @@ public:
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
     
     //! type of algebraic real traits
-    typedef CGALi::Algebraic_real_traits<Xy_coordinate_2, 
-        Internal_curve_pair_2> Algebraic_real_traits;
     
+    typedef typename Algebraic_kernel_1::Algebraic_real_traits X_real_traits_1;
+
+    typedef CGALi::Algebraic_real_traits<Xy_coordinate_2, 
+        Internal_curve_pair_2> Y_real_traits_1;
+    
+    
+
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
          public Binary_function<X_coordinate_1, X_coordinate_1, 
@@ -636,8 +641,8 @@ public:
     struct Sign_at_2 :
         public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
 
-        typedef typename Self::Algebraic_real_traits Traits_2;
-        typedef typename Traits_2::Boundary Boundary;
+        typedef typename Self::Y_real_traits_1 Y_real_traits_1;
+        typedef typename Y_real_traits_1::Boundary Boundary;
         
         typedef boost::numeric::interval<Boundary> Interval;
         
@@ -651,16 +656,16 @@ public:
         
             NiX2CGAL_converter cvt;
             typedef typename Algebraic_kernel_1::Algebraic_real_traits
-                Traits_1;
+                X_real_traits_1;
             // convert poly to rational rep
             typedef CGAL::Fraction_traits<Poly_rat_2> FTraits;
             // divide by maximal coefficient ?
             typename FTraits::Denominator_type det(1);
             Poly_rat_2 rat_p = typename FTraits::Compose()(cvt(p.f()), det);
             
-            typename Traits_2::Lower_boundary lower_2;
-            typename Traits_2::Upper_boundary upper_2;
-            typename Traits_2::Refine refine_2;
+            typename Y_real_traits_1::Lower_boundary lower_2;
+            typename Y_real_traits_1::Upper_boundary upper_2;
+            typename Y_real_traits_1::Refine refine_2;
             
             X_coordinate_1 x = r.x();
             CGAL::Sign s_lower;
@@ -913,6 +918,7 @@ public:
                 OutputIteratorRoots roots, OutputIteratorMult mults) const
         {
             // these tests are quite expensive... do we really need them ??
+            /*
             CGAL_precondition_code (
                 typename Self::Has_finite_number_of_self_intersections_2 
                     not_self_overlapped;
@@ -922,6 +928,7 @@ public:
                     not_self_overlapped(p2));
                 CGAL_precondition(do_not_overlap(p1, p2));
             );
+            */
             typename Self::Curve_pair_analysis_2 cpa_2(
                 (Curve_analysis_2(p1)),(Curve_analysis_2(p2)));
             typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1

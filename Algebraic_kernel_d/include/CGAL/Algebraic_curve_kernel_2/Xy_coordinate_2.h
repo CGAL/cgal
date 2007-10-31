@@ -136,7 +136,20 @@ public:
     
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep, Handle_policy, Allocator> Base;
+
+    typedef typename Algebraic_curve_kernel_2::X_real_traits_1 X_real_traits_1;
+
+    //! Algebraic_real_traits for this type
+    typedef typename Algebraic_curve_kernel_2::Y_real_traits_1 Y_real_traits_1;
+
+    //! type for approximation boundaries
+    typedef typename X_real_traits_1::Boundary Boundary;
+
+    //! type for boundary intervals
+    typedef boost::numeric::interval<Boundary> Boundary_interval;
     
+
+
     //!@}
 private:
     //! \name private methods
@@ -225,6 +238,16 @@ public:
      * x-coordinate of the point
      */
     X_coordinate_1 x() const { 
+        return this->ptr()->_m_x; 
+    }
+
+    /*!
+     * \brief y-coordinate of this point
+     *
+     * TODO: Loos-algorithm
+     */
+    X_coordinate_1 y() const {
+        CGAL_error("Not yet implemented");
         return this->ptr()->_m_x; 
     }
     
@@ -403,6 +426,56 @@ public:
     friend std::ostream& operator << <>(std::ostream& os, const Self& pt);
 
     //!@}
+
+    public:
+    //!\name Approximating functions
+    //!@{
+
+    /*!
+     * \brief gets approximation of x
+     *
+     * TODO: give a interval width as argument?
+     */
+    Boundary_interval get_approximation_x() const {
+        
+        typename X_real_traits_1::Lower_boundary lower;
+        typename X_real_traits_1::Upper_boundary upper;
+
+        return Boundary_interval(lower(this->ptr()->_m_x), 
+                                 upper(this->ptr()->_m_x));
+        
+    }
+
+    /*!
+     * \brief gets approximation of y
+     *
+     * TODO: give a interval width as argument?
+     */
+    Boundary_interval get_approximation_y() const {
+        typename Y_real_traits_1::Lower_boundary lower;
+        typename Y_real_traits_1::Upper_boundary upper;
+        return Boundary_interval(lower(*this), upper(*this));
+    }
+    
+    /*!
+     * \brief Refines the x-xoordinate
+     */
+    void refine_x() const {
+        typename X_real_traits_1::Refine refine;
+        refine(this->ptr()->_m_x);
+    }
+
+    /*!
+     * \brief Refines the x-xoordinate
+     */
+    void refine_y() const {
+        typename Y_real_traits_1::Refine refine;
+        refine(*this);
+    }
+    
+
+    //!@}
+
 }; // class Xy_coordinate_2
 
 template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
