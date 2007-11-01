@@ -286,15 +286,13 @@ public:
      */
     bool swap_predecessors(Event * event) const
     {
-        std::cout << "HELPER: swap" << std::endl;
-        // If we insert an edge whose right end has boundary condition
-        // before the curve of discontinuity 
-        // have to flip the order of predecessor halfegdes.
-        return (event->boundary_in_x() == CGAL::NO_BOUNDARY &&
-                event->boundary_in_y() == CGAL::BEFORE_DISCONTINUITY ||
-                event->boundary_in_x() == CGAL::BEFORE_DISCONTINUITY &&
-                event->boundary_in_y() == CGAL::NO_BOUNDARY
-        );
+#if 0
+        return false;
+#else
+        return 
+            (event->boundary_in_x() == NO_BOUNDARY &&
+             event->boundary_in_y() == BEFORE_DISCONTINUITY);
+#endif
     }
     
     /*! Get the current top face. */
