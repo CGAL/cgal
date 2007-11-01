@@ -508,6 +508,7 @@ public:
    * target vertices of the two edges.
    * \param prev1 The first predecessor halfedge.
    * \param prev2 The second predecessor halfedge.
+   * \param cv The curve to be inserted
    * \pre The two halfedges belong to the same inner CCB.
    * \return A pair indicating whether the insertion will cause the face
    *         to split (the first flag), and if so - whether the split face
@@ -515,7 +516,8 @@ public:
    */
   std::pair<bool, bool>
   face_split_after_edge_insertion (const Halfedge *prev1,
-                                   const Halfedge *prev2) const
+                                   const Halfedge *prev2,
+                                   const X_monotone_curve_2& cv) const
   {
     CGAL_precondition (prev1->is_on_inner_ccb());
     CGAL_precondition (prev2->is_on_inner_ccb());

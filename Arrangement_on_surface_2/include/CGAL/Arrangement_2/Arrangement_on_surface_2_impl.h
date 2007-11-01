@@ -2536,7 +2536,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
   if (ic1 != NULL && ic1 == ic2)
   {
     std::pair<bool, bool>   res = 
-        top_traits.face_split_after_edge_insertion (prev1, prev2);
+        top_traits.face_split_after_edge_insertion (prev1, prev2, cv);
 
     split_new_face = res.first;
     is_split_face_contained = res.second;
