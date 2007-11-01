@@ -193,7 +193,7 @@ protected:
 
     //! the top face
     mutable  Face *_m_f_top;
-    
+
     //! used to locate curve-ends on the WE-identification curve
     mutable Identification_WE _m_identification_WE;
     
@@ -612,7 +612,8 @@ public:
      */
     std::pair<bool, bool>
     face_split_after_edge_insertion (const Halfedge *prev1,
-                                     const Halfedge *prev2) const;
+                                     const Halfedge *prev2,
+                                     const X_monotone_curve_2& cv) const;
 
 
     /*!
@@ -624,7 +625,8 @@ public:
      */
     bool hole_creation_after_edge_removal (const Halfedge *he) const;
 
-private:
+public:
+// TODO make private
     /*!
      * Given two halfedges, determine if the path from the source vertex of the
      * first halfedge to the source vertex of the second haldedge (i.e. we go
@@ -633,18 +635,14 @@ private:
      * \param e2 The second halfedge.
      * \return Whether the path from e1 to e2 (not inclusive) is perimetric.
      */
+    bool _is_perimetric_path (const Halfedge *he1, const Halfedge *he2) const;
+
     bool _is_perimetric_path (const Halfedge *e1,
                               const Halfedge *e2,
-                              bool& touching_pole) const;
+                              const X_monotone_curve_2& cv) const;
     
-    /*!
-     * Checks whether given data indicates a perimetric path
-     */
-    bool _is_perimetric_data(
-            const std::pair< int, int >& counters, 
-            bool touching, bool crossing,
-            bool& touching_pole) const;
 
+    bool _is_perimetric_data (const std::pair< int, int >&) const;
 public:
     /*!
      * Given two predecessor halfedges that will be used for inserting a
@@ -675,8 +673,8 @@ public:
      * \return Whether the two halfedge belong to the outer boundary of the 
      *         same face.
      */
-    bool boundaries_of_same_face (const Halfedge *e1,
-                                  const Halfedge *e2) const;
+    bool boundaries_of_same_face (const Halfedge *he1,
+                                  const Halfedge *he2) const;
     
     
     /*!
@@ -823,13 +821,13 @@ protected:
      * identification are crossed an odd or even number of times.
      */
     std::pair< int, int >
+    _crossings_with_identifications(const Halfedge* he1, const Halfedge* he2) 
+        const;
+
+    std::pair< int, int >
     _crossings_with_identifications(
             const Halfedge* he1, const Halfedge* he2,
-            bool& touching, bool& crossing, 
-            const Vertex *leftmost, 
-            Identification_crossing& leftmost_crossing,
-            const Vertex *bottommost, 
-            Identification_crossing& bottommost_crossing) const;
+            const X_monotone_curve_2& cv) const;
 
 
     /*!\brief
