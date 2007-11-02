@@ -258,11 +258,15 @@
   {erases all the elements of \ccVar, then inserts the range
    [\ccStyle{first, last}) in \ccVar.}
 
-  \ccMethod{template < class... Args >
-            iterator emplace(const Args&... args);}
+% Variadic template syntax non supported by the manual tools:
+%  \ccMethod{template < class... Args >
+%            iterator emplace(const Args&... args);}
+  \ccMethod{template < class T1 >
+            iterator emplace(const T1& t1);}
   {constructs an object of type \ccc{T} with the constructor that takes
-   \ccc{args} as argument(s), inserts it in \ccVar, and returns the iterator pointing
-   to it.}
+   \ccc{t1} as argument, inserts it in \ccVar, and returns the iterator pointing
+   to it.  Overloads of this member function are defined that take additional
+   arguments, up to 9.}
 
   %% +-----------------------------------+
   \ccHeading{Removal}
