@@ -25,6 +25,7 @@
 #define CGAL_COMPACT_CONTAINER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Default_argument.h>
 
 #include <iterator>
 #include <algorithm>
@@ -112,15 +113,11 @@ namespace CGALi {
   class CC_iterator;
 }
 
-struct Default_allocator; // Used to reduce error messages length.
-
-template < class T, class Allocator_ = Default_allocator >
+template < class T, class Allocator_ = Default_argument >
 class Compact_container
 {
   typedef Allocator_                                Al;
-  typedef typename boost::mpl::if_< boost::is_same<Al, Default_allocator>,
-                                    CGAL_ALLOCATOR(T), Al>::type
-                                                    Allocator;
+  typedef typename If_default_argument<Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Compact_container <T, Al>                 Self;
   typedef Compact_container_traits <T>              Traits;
 public:
