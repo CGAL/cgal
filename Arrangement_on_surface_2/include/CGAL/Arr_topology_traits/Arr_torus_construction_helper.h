@@ -286,13 +286,9 @@ public:
      */
     bool swap_predecessors(Event * event) const
     {
-#if 0
-        return false;
-#else
         return 
             (event->boundary_in_x() == NO_BOUNDARY &&
              event->boundary_in_y() == BEFORE_DISCONTINUITY);
-#endif
     }
     
     /*! Get the current top face. */
