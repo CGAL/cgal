@@ -27,11 +27,15 @@
 #  define CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE 1
 #endif
 
-#include <CGAL/Polyhedron_3.h>
+//#include <CGAL/Polyhedron_3.h>
+#include <CGAL/enriched_polyhedron.h>
+#include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Inverse_index.h>
+#include <CGAL/circulator.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include <CGAL/make_surface_mesh.h>
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
@@ -48,7 +52,9 @@
 #include <CGAL/Surface_mesher/Has_edges.h>
 #include <iostream>
 #include <vector>
-#include <algorithm> // random_shuffle
+#include <set>
+#include <queue>
+#include <algorithm> // random_shuffle, distance
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 #include <boost/format.hpp>
@@ -65,14 +71,178 @@ namespace CGAL {
       class Tag
       >
     class Polyhedral_oracle;
+    
   } // end namespace Surface_mesher
+  
+  template <class Polyhedron>
+  struct Polyhedral_surface_3_type_helper {
+    typedef typename Polyhedron::Vertex_handle Vertex_handle;
+    typedef typename Polyhedron::Facet_handle Facet_handle;
+    typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+    typedef Halfedge_handle Edge_handle;
 
-template <class GT, class Has_edges_tag_ = Surface_mesher::Has_no_edges >
-class Polyhedral_surface_3 : public Has_edges_tag_
+    typedef typename Polyhedron::Traits::Point_3 Point_3;
+
+    struct Vertex_node {
+      typedef std::set<int> Incident_edges; // set of edge id
+      Incident_edges incident_edges;
+    };
+    
+    struct Edge_node {
+      typedef std::vector<Edge_handle> Sub_edges;
+      typedef std::set<int> Incident_facets; // set of facet id
+      Sub_edges sub_edges;
+      Incident_facets incident_facets;
+    };
+    
+    struct Facet_node {
+      typedef std::vector<Facet_handle> Sub_facets;
+      Sub_facets sub_facets;
+    };
+
+    struct Incidence_graph {
+      typedef std::vector<Vertex_node> Vertices_nodes;
+      typedef std::vector<Edge_node> Edges_nodes;
+      typedef std::vector<Facet_node> Facet_nodes;
+      typedef typename Vertices_nodes::iterator Vertex_iterator;
+      typedef typename Edges_nodes::iterator Edge_iterator;
+      typedef typename Facet_nodes::iterator Facet_iterator;
+      Vertices_nodes vertices;
+      Edges_nodes edges;
+      Facet_nodes facets;
+
+      void clear()
+      {
+        vertices.clear();
+        edges.clear();
+        facets.clear();
+      }
+
+      int vertex_id(Vertex_iterator vit)
+      {
+        return std::distance(vertices.begin(), vit);
+      }
+
+      int edge_id(Edge_iterator eit)
+      {
+        return std::distance(edges.begin(), eit);
+      }
+
+      int facet_id(Facet_iterator fit)
+      {
+        return std::distance(facets.begin(), fit);
+      }
+
+      void gl_draw_edge(const int edge_index)
+      {
+        ::glBegin(GL_LINES);
+        typedef typename Edge_node::Sub_edges Sub_edges;
+        for(typename Sub_edges::iterator 
+              eit = edges[edge_index].sub_edges.begin(),
+              end = edges[edge_index].sub_edges.end();
+            eit != end;
+            ++eit)
+        {
+          const Point_3& p1 = (*eit)->opposite()->vertex()->point();
+          const Point_3& p2 = (*eit)->vertex()->point();
+          ::glVertex3f(p1[0],p1[1],p1[2]);
+          ::glVertex3f(p2[0],p2[1],p2[2]);       
+        }
+        ::glEnd();
+      } // end gl_draw_edge(...)
+
+      void gl_draw_facet(const int facet_index,
+                         bool smooth_shading,
+                         bool use_normals,
+                         bool inverse_normals = false)
+      {
+        // draw triangles
+        ::glBegin(GL_TRIANGLES);
+        typedef typename Facet_node::Sub_facets Sub_facets;
+        for(typename Sub_facets::iterator 
+              fit = facets[facet_index].sub_facets.begin(),
+              end_fit = facets[facet_index].sub_facets.end();
+            fit != end_fit;
+            ++fit)
+        {
+          // one normal per face
+          if(use_normals && !smooth_shading)
+          {
+            typedef typename Polyhedron::Facet Facet;
+            const typename Facet::Normal_3& normal = (*fit)->normal();
+            if(inverse_normals)
+              ::glNormal3f(-normal[0],-normal[1],-normal[2]);
+            else
+              ::glNormal3f(normal[0],normal[1],normal[2]);
+          }
+          typename Polyhedron::Halfedge_around_facet_circulator 
+            he = (*fit)->facet_begin(),
+            end_he = he;
+          do
+          {
+            // one normal per vertex
+            if(use_normals && smooth_shading)
+            {
+              const typename Polyhedron::Facet::Normal_3& normal = he->vertex()->normal();
+              if(inverse_normals)
+                ::glNormal3f(-normal[0],-normal[1],-normal[2]);
+              else      
+                ::glNormal3f(normal[0],normal[1],normal[2]);
+            }
+            // polygon assembly is performed per vertex
+            const Point_3& point  = he->vertex()->point();
+            ::glVertex3d(point[0],point[1],point[2]);
+          }
+          while(++he != end_he);
+        }
+        ::glEnd(); // end polygon assembly
+      } // end gl_draw_facet(...)
+
+    }; // end Incidence_graph
+  }; // end Polyhedral_surface_3_type_helper
+
+template <class GT,
+          class Has_edges_tag_ = Surface_mesher::Has_no_edges,
+          class Polyhedron_3 = Enriched_polyhedron<GT,
+                                                   Enriched_items,
+                                                   CGAL::HalfedgeDS_list > >
+class Polyhedral_surface_3 : 
+  public Has_edges_tag_,
+  public Polyhedron_3
 {
 public:
   typedef GT Geom_traits;
   typedef Has_edges_tag_ Has_edges_tag;
+  typedef Polyhedron_3 Polyhedron;
+
+  typedef Polyhedral_surface_3<Geom_traits,
+                               Has_edges_tag,
+                               Polyhedron> Self;
+
+  typedef typename Polyhedron::Vertex_handle Vertex_handle;
+  typedef typename Polyhedron::Facet_handle Facet_handle;
+  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef Halfedge_handle Edge_handle;
+  typedef typename Polyhedron::Halfedge_around_vertex_circulator
+                                  Halfedge_around_vertex_circulator;
+  typedef typename Polyhedron::Halfedge_around_facet_circulator
+                                  Halfedge_around_facet_circulator;
+  typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
+  typedef typename Polyhedron::Facet_iterator Facet_iterator;
+
+  using Polyhedron::halfedges_begin;
+  using Polyhedron::halfedges_end;
+  using Polyhedron::edges_begin;
+  using Polyhedron::edges_end;
+  using Polyhedron::facets_begin;
+  using Polyhedron::facets_end;
+  
+
+  typedef Polyhedral_surface_3_type_helper<Polyhedron> Type_helper;
+  typedef typename Type_helper::Vertex_node Graph_vertex_node;
+  typedef typename Type_helper::Edge_node Graph_edge_node;
+  typedef typename Type_helper::Facet_node Graph_facet_node;
+  typedef typename Type_helper::Incidence_graph Incidence_graph;
 
   class Normalized_geom_traits : public Geom_traits 
   {
@@ -81,8 +251,12 @@ public:
     Kernel_traits<typename Geom_traits::Point_3>::Kernel::Point_3 Point_3;
   };
 
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Geom_traits::Segment_3 Segment_3;
   typedef typename Geom_traits::Triangle_3 Triangle_3;
+  typedef typename Geom_traits::Vector_3 Vector_3;
+
 
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
   typedef Data_structure_using_octree_3<Normalized_geom_traits> Subfacets_tree;
@@ -98,12 +272,6 @@ public:
   typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
   typedef typename Subfacets_tree::Bbox Bbox;
 
-  typedef typename GT::Point_3 Point_3;
-  typedef typename GT::Vector_3 Vector_3;
-  typedef typename GT::FT FT;
-
-  typedef Polyhedral_surface_3<GT, Has_edges_tag> Self;
-
   template <
     class Surface,
     class Point_creator,
@@ -114,8 +282,10 @@ public:
 
   typedef Surface_mesher::Polyhedral_oracle<Self> Surface_mesher_traits_3;
 
-  Polyhedral_surface_3(std::istream& input_file,
-		       const FT cosine_bound = FT(1)/FT(2)) :
+  Polyhedral_surface_3(const double sharp_edges_angle_lower_bound = 60.,
+		       const double sharp_edges_angle_upper_bound = 180.,
+                       const double sharp_vertices_angle_lower_bound = 30.,
+                       const double sharp_vertices_angle_upper_bound = 180.) :
     subfacets_tree_ptr(new Subfacets_tree()),
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
     subsegments_tree_ptr(new Subsegments_tree(false, true, false)),
@@ -125,7 +295,58 @@ public:
 #endif
     input_points_ptr(new Input_points()),
     corner_points_ptr(new Corner_points()),
-    edges_points_ptr(new Edges_points())
+    edges_points_ptr(new Edges_points()),
+    sharp_edges_angle_lower_bound(sharp_edges_angle_lower_bound),
+    sharp_edges_angle_upper_bound(sharp_edges_angle_upper_bound),
+    sharp_vertices_angle_lower_bound(sharp_vertices_angle_lower_bound),
+    sharp_vertices_angle_upper_bound(sharp_vertices_angle_upper_bound)
+  {
+  }
+
+  Polyhedral_surface_3(std::istream& input_file,
+		       const double sharp_edges_angle_lower_bound = 60.,
+		       const double sharp_edges_angle_upper_bound = 180.,
+                       bool auto_construct_octree = true) :
+    subfacets_tree_ptr(new Subfacets_tree()),
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+    subsegments_tree_ptr(new Subsegments_tree(false, true, false)),
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+    subsegments_tree_ptr(new Subsegments_tree()),
+#endif
+    input_points_ptr(new Input_points()),
+    corner_points_ptr(new Corner_points()),
+    edges_points_ptr(new Edges_points()),
+    sharp_edges_angle_lower_bound(sharp_edges_angle_lower_bound),
+    sharp_edges_angle_upper_bound(sharp_edges_angle_upper_bound)
+  {
+
+#ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    CGAL::Timer timer;
+    std::cerr << "Creating polyhedron... ";
+    timer.start();
+#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    CGAL::scan_OFF(input_file, *this, true);
+    CGAL_assertion(input_file);
+    this->compute_bounding_box();
+    this->compute_normals();
+#ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    timer.stop();
+    std::cerr << 
+      ::boost::format("done (%1%s)\n"
+		      "  number of vertices: %2%\n"
+		      "  number of edges:    %3%\n"
+		      "  number of facets:   %4%\n")
+      % timer.time()
+      % this->size_of_vertices()
+      % ( this->size_of_halfedges() / 2 )
+      % this->size_of_facets();
+#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
+    if(auto_construct_octree)
+      construct_octree();
+  } // end of Polyhedral_surface_3 constructor
+
+  void construct_octree()
   {
     GT gt = GT();
     typename GT::Construct_orthogonal_vector_3 orthogonal_vector = 
@@ -135,7 +356,8 @@ public:
     typename GT::Compute_scalar_product_3 scalar_product = 
       gt.compute_scalar_product_3_object();
 
-    typedef CGAL::Polyhedron_3<GT> Polyhedron_3;
+//    typedef CGAL::Polyhedron_3<GT> Polyhedron_3;
+//    typedef Enriched_polyhedron<GT,Enriched_items> Polyhedron_3;
 
     class Facet_ortho_vector {
       GT gt;
@@ -154,49 +376,26 @@ public:
     };
     Facet_ortho_vector facet_ortho_vector(gt);
 
+    const double cosine_bound = 
+      std::cos(CGAL_PI * sharp_edges_angle_lower_bound / 360. );
+    
     const FT cosine_squared_bound = cosine_bound * cosine_bound;
-
-    Polyhedron_3 polyhedron;
-
-#ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-    CGAL::Timer timer;
-    std::cerr << "Creating polyhedron... ";
-    timer.start();
-#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-    CGAL::scan_OFF(input_file, polyhedron, true);
-    CGAL_assertion(input_file);
-#ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-    {
-      std::ofstream dump("input_dump.off");
-      dump << polyhedron;
-    }
-    timer.stop();
-    std::cerr << 
-      ::boost::format("done (%1%s)\n"
-		      "  number of vertices: %2%\n"
-		      "  number of edges:    %3%\n"
-		      "  number of facets:   %4%\n")
-      % timer.time()
-      % polyhedron.size_of_vertices()
-      % ( polyhedron.size_of_halfedges() / 2 )
-      % polyhedron.size_of_facets();
 
     typedef typename Polyhedron_3::Vertex_const_iterator Vertex_const_it;
 
-#endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
     double (*vertices_array)[3] =
-      (double (*)[3])new double [3*polyhedron.size_of_vertices()];
-//       static_cast<double(*)[3]>(new double [3*polyhedron.size_of_vertices()]);
+      (double (*)[3])new double [3*this->size_of_vertices()];
+//       static_cast<double(*)[3]>(new double [3*this->size_of_vertices()]);
     int (*facets_array)[3] = 
-      (int (*)[3])new int [3*polyhedron.size_of_facets()];
+      (int (*)[3])new int [3*this->size_of_facets()];
     int i = 0;
     typedef Inverse_index<Vertex_const_it> Index;
-    Index index( polyhedron.vertices_begin(), polyhedron.vertices_end());
+    Index index( this->vertices_begin(), this->vertices_end());
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
     for(typename Polyhedron_3::Vertex_const_iterator vit = 
-          polyhedron.vertices_begin();
-        vit != polyhedron.vertices_end();
+          this->vertices_begin();
+        vit != this->vertices_end();
         ++vit)
     {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
@@ -213,8 +412,8 @@ public:
 
     typename Polyhedron_3::size_type facet_index = 0;
     for(typename Polyhedron_3::Facet_const_iterator fit = 
-          polyhedron.facets_begin();
-        fit != polyhedron.facets_end();
+          this->facets_begin();
+        fit != this->facets_end();
         ++fit, ++facet_index)
     {
       CGAL_assertion(fit->is_triangle());
@@ -253,9 +452,9 @@ public:
 # endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     pinpolyhedron_ptr = 
       PointInPolyhedron_ptr(new PointInPolyhedron(vertices_array,
-						  polyhedron.size_of_vertices(),
+						  this->size_of_vertices(),
 						  facets_array,
-						  polyhedron.size_of_facets()));
+						  this->size_of_facets()));
     delete [] vertices_array;
     delete [] facets_array;
 # ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
@@ -265,7 +464,7 @@ public:
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     std::cerr << "Creating subfacets_tree... ";
-    timer.reset();
+    CGAL::Timer timer;
     timer.start();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     subfacets_tree_ptr->create_data_structure();
@@ -295,8 +494,8 @@ public:
       Edges_vertex_counter edges_vertex_counter;
 
       for(typename Polyhedron_3::Edge_const_iterator eit = 
-	    polyhedron.edges_begin();
-	  eit != polyhedron.edges_end();
+	    this->edges_begin();
+	  eit != this->edges_end();
 	  ++eit)
       {
 	typename Polyhedron_3::Halfedge_const_handle opposite = eit->opposite();
@@ -459,8 +658,27 @@ public:
     bounding_box_sq_radius /= 2;
     bounding_box_sq_radius *= bounding_box_sq_radius;
     bounding_box_sq_radius *= 3;
-  } // end of Polyhedral_surface_3 constructor
+  } // end construct_octree()
 
+  void set_sharp_edges_angle_bounds(double lower_bound,
+                                    double upper_bound) {
+    sharp_edges_angle_lower_bound = lower_bound;
+    sharp_edges_angle_upper_bound = upper_bound;
+  }
+
+  void set_sharp_vertices_angle_bounds(double lower_bound,
+                                       double upper_bound) {
+    sharp_vertices_angle_lower_bound = lower_bound;
+    sharp_vertices_angle_upper_bound = upper_bound;
+  }
+
+  void compute_sharp_edges_incidence_graph()
+  {
+    this->tag_sharp_edges(sharp_edges_angle_lower_bound);
+    construct_incidence_graph();
+  }
+
+#if 0
   const Bbox& bbox() const
   {
     return bounding_box;
@@ -469,6 +687,294 @@ public:
   const FT& bounding_sphere_squared_radius() const
   {
     return bounding_box_sq_radius;
+  }
+#endif
+
+  static void new_sub_edge(Graph_edge_node& edge_node,
+                           const int edge_index,
+                           Halfedge_handle& he)
+  {
+    he->tag(edge_index);
+    he->opposite()->tag(edge_index);
+    edge_node.sub_edges.push_back(he);
+  };
+
+  static void new_sub_facet(Graph_facet_node& facet_node,
+                            const int facet_index,
+                            Facet_handle& fh)
+  {
+    fh->tag(facet_index);
+    facet_node.sub_facets.push_back(fh);
+  }
+
+  Vertex_handle follow_the_edge(Graph_edge_node& edge_node,
+                                const int edge_index,
+                                Halfedge_handle he) const
+  {
+    using boost::tie;
+
+    bool can_continue;
+    Halfedge_handle next_he;
+    tie(can_continue, next_he) = can_follow_sharp_edges(he);
+    while(can_continue && next_he->tag() < 0)
+    {
+      new_sub_edge(edge_node, edge_index, next_he);
+      he = next_he;
+      tie(can_continue, next_he) = Self::can_follow_sharp_edges(he);
+    }
+    if(can_continue)
+      return Vertex_handle();
+    else
+      return he->vertex();
+  }
+
+  void setup_incident_vertex_to_an_edge(const int edge_index,
+                                        const Vertex_handle& v)
+  {
+    if(v->tag() < 0)
+    {
+      Graph_vertex_node vertex_node;
+      vertex_node.incident_edges.insert(edge_index);
+      v->tag(incidence_graph.vertices.size());
+      incidence_graph.vertices.push_back(vertex_node);
+    }
+    else
+      incidence_graph.vertices[v->tag()].incident_edges.insert(edge_index);
+  }
+
+  void construct_incidence_graph()
+  {
+    incidence_graph.clear();
+    this->tag_vertices(-1);
+    this->tag_halfedges(-1);
+    this->tag_facets(-1);
+    for(Halfedge_iterator he = halfedges_begin();
+        he != halfedges_end();
+        he++)
+    {
+      if(he->sharp() && he->tag() < 0)
+      {
+        const int edge_index = incidence_graph.edges.size();
+        Graph_edge_node edge_node;
+
+        new_sub_edge(edge_node, edge_index, he);
+        const Vertex_handle& v1 = follow_the_edge(edge_node,
+                                                  edge_index,
+                                                  he);
+        if(v1 != Vertex_handle())
+          setup_incident_vertex_to_an_edge(edge_index, v1);
+        const Vertex_handle& v2 = follow_the_edge(edge_node,
+                                                  edge_index,
+                                                  he->opposite());
+        if(v2 != Vertex_handle())
+          setup_incident_vertex_to_an_edge(edge_index, v2);
+        incidence_graph.edges.push_back(edge_node);
+      } // end "if halfedge he is sharp and not tagged"
+    } // end "for all halfedges"
+
+    for(Facet_iterator fit = facets_begin(), end = facets_end();
+        fit != end;
+        ++fit)
+    {
+      if(fit->tag() < 0)
+      {
+        const int facet_index = incidence_graph.facets.size();
+        Graph_facet_node facet_node;
+        construct_graph_facet(fit,
+                              facet_index,
+                              facet_node,
+                              incidence_graph);
+        incidence_graph.facets.push_back(facet_node);
+      }
+    }
+
+    std::cerr << "INCIDENCE GRAPH SUMMARY\n";
+    std::cerr << "Number of vertices: " << incidence_graph.vertices.size()
+              << "\nNumber of edges: " << incidence_graph.edges.size()
+              << "\nNumber of facets: " << incidence_graph.facets.size()
+              << std::endl;
+    std::cerr << "VERTICES\n";
+    for(int i = 0, end_i = incidence_graph.vertices.size(); i < end_i; ++i)
+    {
+      std::cerr << boost::format("Vertex #%1% incident edges: ") % i;
+      for(typename Graph_vertex_node::Incident_edges::iterator
+            sub_edge_id_it = incidence_graph.vertices[i].incident_edges.begin(),
+            end = incidence_graph.vertices[i].incident_edges.end();
+          sub_edge_id_it != end; ++sub_edge_id_it)
+      {
+        std::cerr << 
+          boost::format("%1% ") % *sub_edge_id_it;
+      }
+      std::cerr << std::endl;      
+    }
+    std::cerr << "EDGES\n";
+    for(int i = 0, end_i = incidence_graph.edges.size(); i < end_i; ++i)
+    {
+      std::cerr << 
+        boost::format("Edge #%1% number of sub-edges: %2%\n")
+        % i % incidence_graph.edges[i].sub_edges.size();
+      std::cerr << 
+        boost::format("Edge #%1% incident_facets: ") % i;
+      for(typename Graph_edge_node::Incident_facets::iterator
+            facet_id_it = incidence_graph.edges[i].incident_facets.begin(),
+            end = incidence_graph.edges[i].incident_facets.end();
+          facet_id_it != end; ++facet_id_it)
+      {
+        std::cerr << 
+          boost::format("%1% ") % *facet_id_it;
+      }
+      std::cerr << std::endl;      
+    }
+    std::cerr << "FACETS\n";
+    for(int i = 0, end_i = incidence_graph.facets.size(); i < end_i; ++i)
+    {
+      std::cerr << 
+        boost::format("Facet #%1% number of sub-facets: %2%\n")
+        % i % incidence_graph.facets[i].sub_facets.size();
+    }    
+  }
+
+  void construct_graph_facet(Facet_handle seed_facet,
+                             const int facet_index,
+                             Graph_facet_node& facet_node,
+                             Incidence_graph& graph)
+  {
+    typedef std::queue<Facet_handle> Facets_queue;
+    Facets_queue facets_queue;
+    
+    facets_queue.push(seed_facet);
+
+    while(!facets_queue.empty())
+    {
+      Facet_handle fh = facets_queue.front();
+      facets_queue.pop();
+      if(fh->tag() < 0)
+      {
+        fh->tag(facet_index);
+        facet_node.sub_facets.push_back(fh);
+          
+        Halfedge_around_facet_circulator fit = fh->facet_begin();
+        Halfedge_around_facet_circulator end = fit;
+        CGAL_For_all(fit,end)
+        {
+          const int edge_index = fit->tag();
+          const Halfedge_handle& neighbor_facet_he = fit->opposite();
+        
+          if(edge_index < 0) // if not yet handled...
+          {
+            facets_queue.push(neighbor_facet_he->facet());
+          }
+          else
+          {
+            graph.edges[edge_index].incident_facets.insert(facet_index);
+          }
+        } // end for all halfedge around the facet fh
+      } // end if fh not yet handled
+    }
+  } // end of construct_graph_facet(...)
+
+  std::pair<bool, Halfedge_handle>
+  can_follow_sharp_edges(const Halfedge_handle& he) const
+  {
+    typename Geom_traits::Construct_vector_3 vector
+      = Geom_traits().construct_vector_3_object();
+
+    const Vertex_handle& v = he->vertex();
+
+    Halfedge_handle result = Halfedge_handle();
+    unsigned int nb_sharp_edges = 0;
+
+    Halfedge_around_vertex_circulator other_he = v->vertex_begin();
+    Halfedge_around_vertex_circulator end = other_he;
+    CGAL_For_all(other_he,end)
+    {
+      if(other_he->sharp())
+      {
+        ++nb_sharp_edges;
+        if(he != other_he) 
+          result = other_he;
+      }
+    }
+    CGAL_assertion(this->nb_sharp_edges(v)==nb_sharp_edges);
+
+    if(nb_sharp_edges == 2)
+    {
+      CGAL_assertion(result->vertex() == he ->vertex());
+      const Vector_3 vector_he = vector(he->opposite()->vertex()->point(),
+                                        he->vertex()->point());
+      const Vector_3 vector_result_opposite =
+        vector(result->vertex()->point(),
+               result->opposite()->vertex()->point());
+      return std::make_pair(true, result->opposite());
+    }
+    else 
+      return std::make_pair(false, Halfedge_handle());
+  }
+
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+  void gl_draw_facet_octree()
+  {
+    subfacets_tree_ptr->gl_draw_nodes();
+  }
+#endif
+
+  // draw edges
+  void gl_draw_sharp_edges_with_names(const float line_width,
+                                      unsigned char r,
+                                      unsigned char g,
+                                      unsigned char b)
+  {
+    ::glLineWidth(line_width);
+    ::glColor3ub(r,g,b);
+
+    for(Halfedge_iterator he = edges_begin();
+        he != edges_end();
+        he++)
+    {
+      if(he->sharp())
+      {
+        const Point_3& a =  he->opposite()->vertex()->point();
+        const Point_3& b =  he->vertex()->point();
+        ::glPushName(he->tag()+incidence_graph.vertices.size());
+        ::glBegin(GL_LINES);
+        ::glVertex3d(a[0],a[1],a[2]);
+        ::glVertex3d(b[0],b[1],b[2]);
+        ::glEnd();
+        ::glPopName();
+      }
+    }
+  }
+
+  void gl_draw_direct_triangles_with_name(bool smooth_shading,
+                                          bool use_normals,
+                                          bool inverse_normals = false)
+  {
+    // draw triangles
+    Facet_iterator pFacet = facets_begin();
+    for(;pFacet != facets_end();pFacet++)
+    {
+      ::glPushName(pFacet->tag()
+                   + incidence_graph.vertices.size()
+                   + incidence_graph.edges.size());
+      ::glBegin(GL_TRIANGLES);
+      gl_draw_facet(pFacet,smooth_shading,use_normals,inverse_normals);
+      ::glEnd(); // end polygon assembly
+      ::glPopName();
+    }
+  }
+
+  void gl_draw_almost_all_triangles(int facet_index_not_drawed,
+                                    bool smooth_shading,
+                                    bool use_normals,
+                                    bool inverse_normals = false)
+  {
+    // draw triangles
+    ::glBegin(GL_TRIANGLES);
+    Facet_iterator pFacet = facets_begin();
+    for(;pFacet != facets_end();pFacet++)
+      if(pFacet->tag() != facet_index_not_drawed)
+        gl_draw_facet(pFacet,smooth_shading,use_normals,inverse_normals);
+    ::glEnd(); // end polygon assembly
   }
 
 public:
@@ -487,6 +993,11 @@ public:
 
   Bbox bounding_box;
   FT bounding_box_sq_radius;
+  double sharp_edges_angle_lower_bound;
+  double sharp_edges_angle_upper_bound;
+  double sharp_vertices_angle_lower_bound;
+  double sharp_vertices_angle_upper_bound;
+  Incidence_graph incidence_graph;
 };
 
 } // end namespace CGAL

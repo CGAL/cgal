@@ -8,7 +8,10 @@ DEPENDPATH += ../../../include/CGAL \
               ../../../include/CGAL/IO \
               ../../../include/CGAL/Surface_mesher \
               ../../../../Data_structure_for_queries_3/include/CGAL/Octree
-INCLUDEPATH += . ../../../include ../../../../Data_structure_for_queries_3/include
+INCLUDEPATH += . \
+               ../../../include \
+               ../../../../Data_structure_for_queries_3/include \
+               ../../../../Circulator
 
 LIBS += -lCGAL -lCGALimageIO -lQGLViewer
 CONFIG += qt

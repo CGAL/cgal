@@ -5,7 +5,7 @@
 #include <QString>
 #include <QGLWidget>
 
-class Viewer;
+#include "viewer.h"
 
 class Surface : public QObject
 {
@@ -13,9 +13,10 @@ class Surface : public QObject
 protected:
   Surface(QObject* parent) : m_inverse_normals(false) 
   {
-    QGLWidget* widget = qFindChild<QGLWidget*>(parent, "viewer");
-    if(widget)
-      connect(this, SIGNAL(changed()), widget, SLOT(updateGL()));
+    viewer = qFindChild<Viewer*>(parent, "viewer");
+    if(viewer)
+      connect(this, SIGNAL(changed()), viewer, SLOT(updateGL()));
+    viewer->set_surface(this);
   }
 public slots:
   virtual void open(const QString& filename) = 0;
@@ -23,6 +24,8 @@ public slots:
   virtual void draw() = 0;
   virtual void get_bbox(float&, float&, float&,
 			float&, float&, float&) = 0;
+  virtual void drawWithNames() {};
+  virtual void postSelection(const QPoint&) {};
 signals:
   void changed();
 
@@ -39,6 +42,7 @@ public:
 
 protected:
   bool m_inverse_normals;
+  Viewer* viewer;
 };
 
 #endif // _SURFACE_H

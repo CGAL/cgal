@@ -31,8 +31,6 @@ MainWindow::MainWindow() :
   surface = get_polyhedral_surface(this,
 				   sharp_edges_angle_lower_bound,
 				   sharp_edges_angle_upper_bound);
-
-  connect(viewer_ptr, SIGNAL(drawNeeded()), surface, SLOT(draw()));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -65,7 +63,7 @@ void MainWindow::surface_open(const QString& filename)
   const float radius = std::max(std::max(xdelta, ydelta), zdelta) * std::sqrt(3.)/ 2.;
   std::cerr << boost::format("Bounding box: xmin=%1%, ymin=%2%, zmin=%3%\n"
                              "              xmax=%4%, ymax=%5%, zmax=%6%\n"
-                             "              center=(%7%, %8%, %9%)")
+                             "              center=(%7%, %8%, %9%)\n")
     % xmin % ymin % zmin % xmax % ymax % zmax
     % xcenter % ycenter % zcenter;
   viewer_ptr->camera()->setSceneCenter(qglviewer::Vec(xcenter, ycenter, zcenter));
