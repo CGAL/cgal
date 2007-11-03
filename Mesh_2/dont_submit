@@ -1,9 +1,7 @@
 examples/Mesh_2/makefile
 GNUmakefile
-TODO
 README
 bench
-Doxyfile
 stylesheet.css
 utils
 implementation.tex

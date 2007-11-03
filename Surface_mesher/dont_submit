@@ -1,6 +1,4 @@
 GNUmakefile
-Doxyfile
-TODO
 demo
 Complex_2_in_triangulation_3
 Complex_2_in_triangulation_3_ref
