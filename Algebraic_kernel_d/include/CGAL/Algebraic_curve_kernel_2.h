@@ -24,9 +24,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
-
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
+#include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_vertical_line_1.h>
@@ -269,26 +268,19 @@ public:
             CGAL2NiX_converter cvt;
             return Self::get_curve_cache()(cvt(f));
         }
-        
-    private:
-        //! \c pointer to Algebraic_curve_kernel_2 (for caching issues)
-        //Self *_m_pkernel_2; 
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
     
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
     
-    //! type of algebraic real traits
-    
+    //! traits class for \c X_coordinate
     typedef CGALi::Algebraic_real_traits<typename Curve_2::X_coordinate>
-    X_real_traits_1;
+        X_real_traits_1;
 
-    typedef CGALi::Algebraic_real_traits<Xy_coordinate_2, 
-        Internal_curve_pair_2> Y_real_traits_1;
+    //! traits class for \c Xy_coorinate_2
+    typedef CGALi::Algebraic_real_traits<Xy_coordinate_2> Y_real_traits_1;
     
-    
-
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
          public Binary_function<X_coordinate_1, X_coordinate_1, 
@@ -296,7 +288,6 @@ public:
 
         Comparison_result operator()(const X_coordinate_1& x1, 
                                          const X_coordinate_1& x2) const {
-            // TODO should ACK_2 derive from AK_1?
         // not yet implemented in Algebraic_kernel_1 (will it be ?)
         //   Algebraic_kernel_1 ak;
         //   return (ak.compare_x_2_object()(x1, x2));
@@ -403,11 +394,13 @@ public:
         template< class OutputIterator1, class OutputIterator2 >
         int operator()( const Curve_2& c, OutputIterator1 fit, 
                         OutputIterator2 mit ) const {
+                        
             typename Polynomial_traits_2::
                 Square_free_factorization_up_to_constant_factor factorize;
             NiX2CGAL_converter cvt;
             CGAL2NiX_converter cvt_back;
             std::vector<Polynomial_2_CGAL> factors;
+            
             int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
                     mit); 
             Construct_curve_2 cc_2;
