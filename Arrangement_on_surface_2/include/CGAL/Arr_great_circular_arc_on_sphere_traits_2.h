@@ -1169,14 +1169,15 @@ public:
         // None of the enpoints coincide with a pole.
         Direction_3 normal = plane.orthogonal_direction();
         bool s_is_positive, t_is_positive, plane_is_positive;
-        if (Traits::x_sign(normal) == ZERO) {
+        CGAL::Sign xsign = Traits::x_sign(normal);
+        if (xsign == ZERO) {
           s_is_positive = Traits::x_sign(source) == POSITIVE;
           t_is_positive = Traits::x_sign(target) == POSITIVE;
           plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
         } else {
           s_is_positive = Traits::y_sign(source) == POSITIVE;
           t_is_positive = Traits::y_sign(target) == POSITIVE;
-          plane_is_positive = Traits::x_sign(normal) == POSITIVE;
+          plane_is_positive = xsign == POSITIVE;
         }
         bool ccw = ((plane_is_positive && s_is_positive) ||
                     (!plane_is_positive && !s_is_positive));
@@ -1363,6 +1364,7 @@ public:
       bool l2_eq_start = equal(l2, start);
 
       if (l1_eq_start || (!l2_eq_start && in_between(l1, start, l2))) {
+        // The following applies only to full circles:
         if (l1_eq_start && equal(r2, start))
           *oi++ = make_object(Point_2_pair(r2_3, 1));
         if (in_between(r1, l1, l2)) return oi;      // no intersection
@@ -1376,6 +1378,7 @@ public:
         return oi;
       }
       CGAL_assertion(l2_eq_start || in_between(l2, start, l1));
+      // The following applies only to full circles:
       if (l2_eq_start && equal(r1, start))
         *oi++ = make_object(Point_2_pair(r1_3, 1));
       if (in_between(r2, l2, l1)) return oi;      // no intersection
@@ -1412,11 +1415,12 @@ public:
         // Compare the x coordinates. If they are not equal, return false:
         Direction_3 normal = xc.plane().orthogonal_direction();
         bool plane_is_positive, p_is_positive;
-        if (Traits::x_sign(normal) == ZERO) {
+        CGAL::Sign xsign = Traits::x_sign(normal);
+        if (xsign == ZERO) {
           plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
           p_is_positive = Traits::x_sign(point) == POSITIVE;
         } else {
-          plane_is_positive = Traits::x_sign(normal) == POSITIVE;
+          plane_is_positive = xsign == POSITIVE;
           p_is_positive = Traits::y_sign(point) == POSITIVE;
         }
         
@@ -1537,26 +1541,27 @@ public:
             xc1.left().is_min_boundary() ? xc1.right() : xc1.left();
 
           Direction_3 normal = xc1.plane().orthogonal_direction();
-          bool xz_plane = Traits::x_sign(normal) == ZERO;
+          CGAL::Sign xsign = Traits::x_sign(normal);
+          CGAL::Sign ysign = Traits::y_sign(normal);
+          bool xz_plane = xsign == ZERO;
           Project project =
             (xz_plane) ? Traits::project_xz : Traits::project_yz;
+
+          Plane_3 plane = (xz_plane) ?
+            ((xsign == POSITIVE) ? xc1.plane() : xc1.plane().opposite()) :
+            ((ysign == NEGATIVE) ? xc1.plane() : xc1.plane().opposite());
+          
           bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
 
           if ((xz_plane && p_x_is_positive) || (!xz_plane && p_y_is_positive)) {
             // The endpoints reside in the positive x-halfspace:
-            bool plane_is_positive = (Traits::x_sign(normal) == POSITIVE);
-            Plane_3 plane =
-              (plane_is_positive)? xc1.plane() : xc1.plane().opposite();
             return compute_intersection(xc1.left(), xc1.right(),
                                         xc2.left(), xc2.right(),
                                         plane, true, Traits::neg_y_2(),
                                         ccib, project, oi);
           }
           // The endpoints reside in the negative x-halfspace:
-          bool plane_is_positive = (Traits::y_sign(normal) == NEGATIVE);
-          Plane_3 plane =
-            (plane_is_positive)? xc1.plane().opposite() : xc1.plane();
           return compute_intersection(xc1.left(), xc1.right(),
                                       xc2.left(), xc2.right(),
                                       plane, true, Traits::neg_y_2(),
@@ -2318,12 +2323,13 @@ public:
     if (z_sign(normal) == ZERO) {
       set_is_vertical(true);
       bool s_is_positive, plane_is_positive;
-      if (x_sign(normal) == ZERO) {
+      CGAL::Sign xsign = x_sign(normal);
+      if (xsign == ZERO) {
         s_is_positive = x_sign(source) == POSITIVE;
         plane_is_positive = y_sign(normal) == NEGATIVE;
       } else {
         s_is_positive = y_sign(source) == POSITIVE;
-        plane_is_positive = x_sign(normal) == POSITIVE;
+        plane_is_positive = xsign == POSITIVE;
       }
       bool ccw = ((plane_is_positive && s_is_positive) ||
                   (!plane_is_positive && !s_is_positive));
@@ -2607,14 +2613,15 @@ public:
       // The arc is vertical
       this->set_is_vertical(true);
       bool s_is_positive, t_is_positive, plane_is_positive;
-      if (x_sign(normal) == ZERO) {
+      CGAL::Sign xsign = x_sign(normal);
+      if (xsign == ZERO) {
         s_is_positive = x_sign(source) == POSITIVE;
         t_is_positive = x_sign(target) == POSITIVE;
         plane_is_positive = y_sign(normal) == NEGATIVE;
       } else {
         s_is_positive = y_sign(source) == POSITIVE;
         t_is_positive = y_sign(target) == POSITIVE;
-        plane_is_positive = x_sign(normal) == POSITIVE;
+        plane_is_positive = xsign == POSITIVE;
       }
       set_is_x_monotone(s_is_positive == t_is_positive);
       bool ccw = ((plane_is_positive && s_is_positive) ||
@@ -2690,7 +2697,8 @@ public:
         return;
       }
 
-      bool xz_plane = x_sign(normal) == ZERO;
+      CGAL::Sign xsign = x_sign(normal);
+      bool xz_plane = xsign == ZERO;
       bool s_is_positive, t_is_positive, plane_is_positive;
       if (xz_plane) {
         s_is_positive = x_sign(source) == POSITIVE;
@@ -2699,7 +2707,7 @@ public:
       } else {
         s_is_positive = y_sign(source) == POSITIVE;
         t_is_positive = y_sign(target) == POSITIVE;
-        plane_is_positive = x_sign(normal) == POSITIVE;
+        plane_is_positive = xsign == POSITIVE;
       }
 
       // Process degenerate cases:
