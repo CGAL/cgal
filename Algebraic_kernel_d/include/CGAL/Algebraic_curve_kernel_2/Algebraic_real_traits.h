@@ -29,7 +29,6 @@
 
 #define CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS \
     typedef typename Algebraic_curve_pair_2::Algebraic_curve_2 Curve_2; \
-    typedef typename Algebraic_real_2::X_coordinate_1 X_coordinate_1; \
     typedef Algebraic_real_2 Type; \
     typedef typename Curve_2::Boundary Boundary;
 
@@ -37,35 +36,45 @@ CGAL_BEGIN_NAMESPACE
     
 namespace CGALi {
 
-// one needs AlgebraicReal_2 and AlgebraicCurvePair_2 in order to
-// instantiate Algebraic_real_traits
-
 //! algebraic real traits template
 template <class AlgebraicReal_2, class AlgebraicCurvePair_2>
-struct Algebraic_real_traits {
+struct Algebraic_real_traits_for_y {
     
     //! this instance's first template argument
-    typedef AlgebraicReal_2 Algebraic_real_2;  
-    
+    typedef AlgebraicReal_2 Algebraic_real_2;
     //! this instance's second template argument
-    typedef AlgebraicCurvePair_2 Algebraic_curve_pair_2; 
-
+    typedef AlgebraicCurvePair_2 Algebraic_curve_pair_2;
+    
     CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
     
-    // instance of algebraic curve kernel
     typedef Null_functor Boundary_between;
     typedef Null_functor Lower_boundary;
     typedef Null_functor Upper_boundary;
     typedef Null_functor Refine;
 };
 
-//! specialization for AlciX     
-template <class AlgebraicReal_2, class Curve_>
-struct Algebraic_real_traits<AlgebraicReal_2, 
-    AcX::Algebraic_curve_pair_2<Curve_> > {
+//! algebraic real traits template
+template <class AlgebraicReal>
+struct Algebraic_real_traits {
     
     //! this instance's first template argument
-    typedef AlgebraicReal_2 Algebraic_real_2;  
+    typedef AlgebraicReal Algebraic_real;
+    
+    //CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
+    
+    typedef Null_functor Boundary_between;
+    typedef Null_functor Lower_boundary;
+    typedef Null_functor Upper_boundary;
+    typedef Null_functor Refine;
+};
+
+
+template <class AlgebraicCurveKernel_2, class Curve_>
+struct Algebraic_real_traits_for_y<Xy_coordinate_2<
+    AlgebraicCurveKernel_2>, AcX::Algebraic_curve_pair_2<Curve_> > {
+    
+     //! this instance's first template argument
+    typedef Xy_coordinate_2<AlgebraicCurveKernel_2> Algebraic_real_2;
     
     //! this instance's second template argument
     typedef AcX::Algebraic_curve_pair_2<Curve_> Algebraic_curve_pair_2; 
@@ -75,7 +84,7 @@ struct Algebraic_real_traits<AlgebraicReal_2,
     //! type of curve vertical line
     typedef typename Curve_2::Curve_vertical_line Event_line;
 
-    //! computes boundary in between y-coordinates of two algebraic reals
+    //! computes boundary between y-coordinates of two algebraic reals
     //! defined over the same vertical line
     //!
     //! \pre r1.arcno() != r2.arcno() 
@@ -86,7 +95,8 @@ struct Algebraic_real_traits<AlgebraicReal_2,
         Boundary operator()(const Type& r1, const Type& r2) const {
             
             CGAL_precondition(r1.arcno() != r2.arcno());
-            CGAL_precondition(r1.x() == r2.x() && r1.curve() == r2.curve());
+            CGAL_precondition(r1.x() == r2.x() &&
+                r1.curve().id() == r2.curve().id());
             
             Boundary res;
             Event_line vline = r1.curve().event_info_at_x(r1.x());
@@ -139,7 +149,7 @@ struct Algebraic_real_traits<AlgebraicReal_2,
         //! \brief refines isolating interval of an y-coorinate of algebraic 
         //! real w.r.t. the given relative precision
         //!
-        //! the resulting interval is: 
+        //! resulting interval is:
         //! <tt>|lower - upper|/|r.y()| <= 2^(-rel_prec)</tt> 
         void operator()(Type& r, int rel_prec) const {
             
@@ -149,8 +159,89 @@ struct Algebraic_real_traits<AlgebraicReal_2,
                 
             vline.refine_to(r.arcno(), prec);
         }
-    };                
-}; // class Algebraic_real_traits<AcX>
+    };
+};
+    
+template <class Kernel_2>
+struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :
+    public Algebraic_real_traits_for_y< Xy_coordinate_2<Kernel_2>,
+        typename Kernel_2::Curve_pair_2 > {
+};
+  
+template <class Coefficient_, class FieldWithSqrt, class Rational_,
+          class HandlePolicy, class AlgebraicRealRep >
+struct Algebraic_real_traits<NiX::Algebraic_real<Coefficient_, FieldWithSqrt,
+    Rational_, HandlePolicy, AlgebraicRealRep> > {
+
+    //! this instances first template argument
+    typedef NiX::Algebraic_real<Coefficient_, FieldWithSqrt, Rational_,
+        HandlePolicy, AlgebraicRealRep> Algebraic_real_1;
+
+    //! just a Type ?
+    typedef Algebraic_real_1 Type;
+
+    //! boundary type
+    typedef typename Algebraic_real_1::Rational Boundary;
+
+    //! computes rational boundary between two algebraic reals
+    struct Boundary_between 
+        : public Binary_function< Type, Type, Boundary > {
+        
+        Boundary operator()(const Type& t1, const Type& t2 ) const {
+            return t1.rational_between(t2);
+        }
+    };
+
+    //! returns current lower boundary of an algebraic real
+    struct Lower_boundary
+        : public Unary_function< Type, Boundary > {
+                    
+        Boundary operator()(const Type& t) const {
+            return t.low();
+        }
+    };
+
+    //! returns current upper boundary of an algebraic real
+    struct Upper_boundary
+        : public Unary_function< Type, Boundary > {
+        
+        Boundary operator()(const Type& t) const {
+            return t.high();
+        }
+    };
+
+    struct Refine
+        : public Unary_function< Type, void > {
+
+        //! \brief refines isolating interval defining algebraic real to make
+        //! it at least half of the original interval
+        //!
+        //! note that an interval may also degenerate to a single point
+        void operator()(const Type& t) const {
+            t.refine();
+        }
+
+        //! \brief refines isolating interval of an algebraic real w.r.t. the
+        //! given relative precision
+        //!
+        //! resulting interval is:
+        //! <tt>|lower - upper|/|t| <= 2^(-rel_prec)</tt>
+        void operator()(Type& t, int rel_prec) const {
+
+            if(CGAL::is_zero(t)) {
+                t = Type(0);
+                return;
+            } 
+                          
+            Boundary len = t.high() - t.low(), prec = len /
+                    CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
+            while(len > prec) {
+                t.refine();
+                len = t.high() - t.low();
+            }
+        }
+    };
+};
 
 } // namespace CGALi 
             
