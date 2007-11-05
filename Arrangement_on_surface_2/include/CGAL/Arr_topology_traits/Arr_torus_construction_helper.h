@@ -76,8 +76,8 @@ protected:
     //! The bounded arrangement face
     Face_handle m_top_face;
     
-    //! Indices of the curves that "see" the rightmost face
-    Indices_list m_subcurves_at_rmf;
+    //! Indices of the curves that "see" the top face
+    Indices_list m_subcurves_at_tf;
     
     //! A pointer to a map of halfedges to indices lists
     // (stored in the visitor class)
@@ -115,7 +115,7 @@ public:
         //std::cout << "HELPER: event: " << event->point() << std::endl;
         
         if (bound_x != CGAL::NO_BOUNDARY) {
-            std::cout << "HELPER: before x " << bound_x << std::endl;
+            //std::cout << "HELPER: before x " << bound_x << std::endl;
             CGAL_assertion(bound_x == CGAL::BEFORE_DISCONTINUITY ||
                            bound_x == CGAL::AFTER_DISCONTINUITY);
             CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
@@ -160,7 +160,7 @@ public:
 
    
         if (bound_y != CGAL::NO_BOUNDARY) {
-            std::cout << "HELPER: before y " << bound_y << std::endl;
+            //std::cout << "HELPER: before y " << bound_y << std::endl;
             CGAL_assertion(bound_y == CGAL::BEFORE_DISCONTINUITY ||
                            bound_y == CGAL::AFTER_DISCONTINUITY);
             CGAL_assertion(bound_x == CGAL::NO_BOUNDARY);
@@ -201,35 +201,36 @@ public:
             Vertex_handle vh(v);
 
             if (v == NULL) {
-                std::cout << "HELPER: new y" << std::endl;
+                //std::cout << "HELPER: new y" << std::endl;
                 vh = m_arr_access.create_boundary_vertex(
                         xc, ind,
                         bound_x, bound_y);
+#if 0 // TODO check
+                if (bound_y == CGAL::BEFORE_DISCONTINUITY) {
+                    // The list m_subcurves_at_tf contains all subcurves 
+                    // whose left endpoint lies between the curve of 
+                    // identification in NS and the current curve incident 
+                    // to the NS-identification. In case these subcurves 
+                    // represent holes, these holes should stay in the 
+                    // "face to the left" that contains the curve 
+                    // of identification and we should not keep track of 
+                    // them in order to later move them to another face.
+                    //std::cout << "delete sc in tf" << std::endl;
+                    m_subcurves_at_tf.clear();
+                }
+#endif
             }
             
             event->set_vertex_handle(vh);
             
-#if 0 // TODO check
-            if (bound_y == CGAL::BEFORE_DISCONTINUITY) {
-                // The list m_subcurves_at_rmf contains all subcurves 
-                // whose left endpoint lies between the curve of 
-                // identification in NS and the current curve incident 
-                // to the NS-identification. In case these subcurves 
-                // represent holes, these holes should stay in the 
-                // "face to the left" that contains the curve 
-                // of identification and we should not keep track of 
-                // them in order to later move them to another face.
-                m_subcurves_at_rmf.clear();
-            }
-#endif
             return;
         }
     }
     
     /*! A notification invoked when a new subcurve is created. */
     virtual void add_subcurve(Halfedge_handle he, Subcurve * sc) { 
-        std::cout << "HELPER: add_sc" << std::endl;
-        
+        //std::cout << "HELPER: add_sc" << std::endl;
+        //std::cout << "add sc he: " << &(*he) << std::endl;
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
@@ -247,11 +248,23 @@ public:
         // top face with a halfedge that see this halfedge.
         if (m_he_ind_map_p != NULL) {
             Indices_list& list_ref = (*m_he_ind_map_p)[he_on_top_face];
-            list_ref.splice (list_ref.end(), m_subcurves_at_rmf);
+            typename Indices_list::const_iterator itr;
+#if 0
+            for (itr = list_ref.begin(); itr != list_ref.end(); ++itr)
+            {
+                std::cout << "move sc " << *itr << " from tf to " 
+                          << he_on_top_face->curve()
+                          << (he_on_top_face->direction() == 
+                              CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                          << std::endl;
+            }
+#endif
+            list_ref.splice (list_ref.end(), m_subcurves_at_tf);
         } else {
-            m_subcurves_at_rmf.clear();
+            //std::cout << "m_sc_tf.clear()" << std::endl;
+            m_subcurves_at_tf.clear();
         }
-        CGAL_assertion (m_subcurves_at_rmf.empty());
+        CGAL_assertion (m_subcurves_at_tf.empty());
         
         return;
     }
@@ -261,7 +274,7 @@ public:
     void add_subcurve_in_top_face(unsigned int index)
     {
         //std::cout << "HELPER: add_sc_tf" << std::endl;
-        m_subcurves_at_rmf.push_back(index);
+        m_subcurves_at_tf.push_back(index);
         return;
     }
     
