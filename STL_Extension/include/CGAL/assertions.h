@@ -38,18 +38,13 @@ enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,
 // =====================
 // failure functions
 // -----------------
-void assertion_fail      ( const char*, const char*, int, const char*);
-void precondition_fail   ( const char*, const char*, int, const char*);
-void postcondition_fail  ( const char*, const char*, int, const char*);
-
-void assertion_fail      ( const char*, const char*, int);
-void precondition_fail   ( const char*, const char*, int);
-void postcondition_fail  ( const char*, const char*, int);
+void assertion_fail      ( const char*, const char*, int, const char* = "");
+void precondition_fail   ( const char*, const char*, int, const char* = "");
+void postcondition_fail  ( const char*, const char*, int, const char* = "");
 
 // warning function
 // ----------------
-void warning_fail( const char*, const char*, int, const char*);
-void warning_fail( const char*, const char*, int);
+void warning_fail( const char*, const char*, int, const char* = "");
 
 
 // macro definitions

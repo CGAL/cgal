@@ -21,7 +21,6 @@
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schönherr
 
-
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 #include <CGAL/exceptions.h>
@@ -97,9 +96,9 @@ _warning_handler = _standard_warning_handler;
 // -----------------
 void
 assertion_fail( const char* expr,
-                     const char* file,
-                     int         line,
-                     const char* msg )
+                const char* file,
+                int         line,
+                const char* msg)
 {
     (*_error_handler)("assertion", expr, file, line, msg);
     switch (_error_behaviour) {
@@ -115,16 +114,12 @@ assertion_fail( const char* expr,
         ;
     }
 }
-void assertion_fail( const char* expr, const char* file, int line )
-{
-  assertion_fail(expr,file,line,"");
-}
 
 void
 precondition_fail( const char* expr,
-                        const char* file,
-                        int         line,
-                        const char* msg )
+                   const char* file,
+                   int         line,
+                   const char* msg)
 {
     (*_error_handler)("precondition", expr, file, line, msg);
     switch (_error_behaviour) {
@@ -140,16 +135,12 @@ precondition_fail( const char* expr,
         ;
     }
 }
-void precondition_fail( const char* expr, const char* file, int line )
-{
-  precondition_fail(expr,file,line,"");
-}
 
 void
 postcondition_fail(const char* expr,
-                         const char* file,
-                         int         line,
-                         const char* msg )
+                   const char* file,
+                   int         line,
+                   const char* msg)
 {
     (*_error_handler)("postcondition", expr, file, line, msg);
     switch (_error_behaviour) {
@@ -165,19 +156,15 @@ postcondition_fail(const char* expr,
         ;
     }
 }
-void postcondition_fail( const char* expr, const char* file, int line )
-{
-  postcondition_fail(expr,file,line,"");
-}
 
 
 // warning function
 // ----------------
 void
 warning_fail( const char* expr,
-                   const char* file,
-                   int         line,
-                   const char* msg )
+              const char* file,
+              int         line,
+              const char* msg)
 {
     (*_warning_handler)("warning", expr, file, line, msg);
     switch (_warning_behaviour) {
@@ -193,10 +180,6 @@ warning_fail( const char* expr,
         ;
     }
 }
-void warning_fail( const char* expr, const char* file, int line )
-{
-  warning_fail(expr,file,line,"");
-}
 
 
 // error handler set functions
@@ -206,7 +189,7 @@ set_error_handler( Failure_function handler)
 {
     Failure_function result = _error_handler;
     _error_handler = handler;
-    return( result);
+    return result;
 }
 
 Failure_function
@@ -214,7 +197,7 @@ set_warning_handler( Failure_function handler)
 {
     Failure_function result = _warning_handler;
     _warning_handler = handler;
-    return( result);
+    return result;
 }
 
 Failure_behaviour
