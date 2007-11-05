@@ -667,19 +667,19 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
                 // the special case is when the initial perimetric path is
                 // found, this juste creates two outer ccbs for the face
                 // that contained a "perimetric" hole before
-                //std::cout << "face_split A false, false" << std::endl;
+                //std::cout << "face_split false, false" << std::endl;
                 return std::make_pair(false, false);
             }
         }
         
         // else
         // there is a face split, but no hole is created
-        //std::cout << "face_split A true, false" << std::endl;
+        //std::cout << "face_split true, false" << std::endl;
         return std::make_pair(true, false);
     }
     // else
     // face is splitted and it forms a new hole in the old
-    //std::cout << "face_split A true,";
+    //std::cout << "face_split true, true";
     return std::make_pair(true, true);
 }
 
@@ -947,11 +947,12 @@ _crossings_with_identifications(
         bcv2x != NO_BOUNDARY || bcv2y != NO_BOUNDARY) {
         
         // counters can change!
-
-        if (this->_m_traits->compare_xy_2_object()(
+        CGAL::Comparison_result cmp = 
+            (this->_m_traits->compare_xy_2_object()(
                     prev1->vertex()->point(),
-                    this->_m_traits->construct_min_vertex_2_object()(cv))
-            != CGAL::EQUAL) {
+                    this->_m_traits->construct_min_vertex_2_object()(cv)));
+
+        if (cmp != CGAL::EQUAL) {
             std::swap(bcv1x, bcv2x);
             std::swap(bcv1y, bcv2y);
         }
