@@ -115,66 +115,11 @@ template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 {
 #if 0
-    // Obtain the four fictitious vertices that form the "corners" of the
-    // fictitious face in the DCEL.
-    Vertex_handle   v_bl = 
-        Vertex_handle (this->m_top_traits->bottom_left_vertex());
-    Vertex_handle   v_tl = 
-        Vertex_handle (this->m_top_traits->top_left_vertex());
-    Vertex_handle   v_br = 
-        Vertex_handle (this->m_top_traits->bottom_right_vertex());
-    
-    // Get the fictitous halfedges incident to these vertices, and lying on
-    // the left, right, top and bottom edges of the fictitious face.
-    //
-    //            m_th
-    //  v_tl (.)<---x      (.) v_tr
-    //                      ^
-    //        x             | m_rh
-    //   m_lh |             x
-    //        v              
-    //  v_bl (.)----->x    (.) v_br
-    //              m_bh
-    //
-    this->m_lh = v_bl->incident_halfedges();
-    
-    if (this->m_lh->source()->boundary_in_x() != MINUS_INFINITY)
-        this->m_lh = this->m_lh->next()->twin();
-    
-    this->m_bh = this->m_lh->next();
-    
-    this->m_th = v_tl->incident_halfedges();
-    if (this->m_th->source()->boundary_in_x() == MINUS_INFINITY)
-        this->m_th = this->m_th->next()->twin();
-    
-    this->m_rh = v_br->incident_halfedges();
-    if (this->m_rh->source()->boundary_in_x() == PLUS_INFINITY)
-        this->m_rh = this->m_rh->twin();
-    else
-        this->m_rh = this->m_rh->next();
-    
-    CGAL_assertion_code (
-            Face_handle  fict_face = Face_handle (this->m_top_traits->fictitious_face());
-    );
-    CGAL_assertion (this->m_lh->direction() == RIGHT_TO_LEFT);
-    CGAL_assertion (this->m_lh->face() != fict_face);
-    CGAL_assertion (this->m_lh->target() == v_bl);
-    
-    CGAL_assertion (this->m_bh->direction() == LEFT_TO_RIGHT);
-    CGAL_assertion (this->m_bh->face() != fict_face);
-    CGAL_assertion (this->m_bh->source() == v_bl);
-    
-    CGAL_assertion (this->m_rh->direction() == LEFT_TO_RIGHT);
-    CGAL_assertion (this->m_rh->face() != fict_face);
-    CGAL_assertion (this->m_rh->source() == v_br);
-    
-    CGAL_assertion (this->m_th->direction() == RIGHT_TO_LEFT);
-    CGAL_assertion (this->m_th->face() != fict_face);
-    CGAL_assertion (this->m_th->target() == v_tl);
+    this->m_top_face = Face_handle(this->m_top_traits->bottom_face());
+#else
+    std::cout << "Arr_torus_top_traits: Implement bottom_face" << std::endl;
+    CGAL_assertion(false);
 #endif
-    std::cout << "Arr_torus_insertion_helper::before_sweep not yet implemenet" 
-              << std::endl;
-    assert(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -185,58 +130,52 @@ template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     (Event* event)
 {
-#if 0
-    if (event->is_finite())
-        return;
+    // Ignore events that do not have boundary conditions.
+    const Boundary_type bound_x = event->boundary_in_x();
+    const Boundary_type bound_y = event->boundary_in_y();
     
-    // In case the event lies at inifinity, check whether its incident curve
-    // is already in the arrangement.
-    if (event->unbounded_curve().halfedge_handle() == Halfedge_handle())
+    if (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY) {
+        return;
+    }
+    
+    // The is exactly one curve incident to an event with boundary conditions.
+    // Obtain this curve and check whether it 
+    // already exists in the arrangement.
+    CGAL_assertion(((event->number_of_left_curves() == 0) &&
+                    (event->number_of_right_curves() == 1)) ||
+                   ((event->number_of_left_curves() == 1) &&
+                    (event->number_of_right_curves() == 0)));
+    
+    const Curve_end ind = ((event->number_of_left_curves() == 0 &&
+                            event->number_of_right_curves() == 1) ? 
+                           MIN_END :  MAX_END);
+    const X_monotone_curve_2& xc = (ind == MIN_END) ?
+        (*(event->right_curves_begin()))->last_curve() :
+        (*(event->left_curves_begin()))->last_curve();
+    
+    if (xc.halfedge_handle() == Halfedge_handle())
     {
-        // The curve is not in the arrangement, use the base construction helper
+        // The curve is not in the arrangement, 
+        // use the base construction helper
         // to handle the event:
         Base::before_handle_event (event);
         return;
     }
     
-    // The curve is already in the arrangement, but has an infinite end,
-    // so we have to update the fictitious halfedges.
-    const Boundary_type x_inf = event->boundary_in_x();
-    
-    if (x_inf == MINUS_INFINITY)
-    {
-        // The event lies on the left fictitious halfedge.
-        this->m_lh = this->m_lh->twin()->next()->twin();
-        this->m_prev_minus_inf_x_event = NULL;
-    }
-    else if (x_inf == PLUS_INFINITY)
-    {
-        // The event lies on the right fictitious halfedge.
-        this->m_rh = this->m_rh->twin()->prev()->twin();
-    }
-    else
-    {
-        const Boundary_type y_inf = event->boundary_in_y();
-        
-        if (y_inf == MINUS_INFINITY)
-        {
-            // The event lies on the bottom fictitious halfedge.
-            this->m_bh = this->m_bh->twin()->prev()->twin();
-        }
-        else
-        {
-            // The event lies on the top fictitious halfedge.
-            CGAL_assertion (y_inf == PLUS_INFINITY);
-            this->m_th = this->m_th->twin()->next()->twin();
-            this->m_prev_plus_inf_y_event = NULL;
+    // In case we encounter an existing curve incident to the left or 
+    // top face, we have to update the current top face
+    if (bound_x == AFTER_DISCONTINUITY) {
+        // left side
+        CGAL_assertion (ind == MIN_END);
+        this->m_top_face = xc.halfedge_handle()->twin()->face();
+    } else if (bound_y == BEFORE_DISCONTINUITY) {
+        // top side
+        if (xc.halfedge_handle()->direction() == CGAL::RIGHT_TO_LEFT) {
+            this->m_top_face = xc.halfedge_handle()->twin()->face();
+        } else {
+            this->m_top_face = xc.halfedge_handle()->face();
         }
     }
-    
-    return;
-#endif
-    std::cout << "Arr_torus_insertion_helper::before_handle_event not yet implemenet" 
-              << std::endl;
-    assert(false);
     return;
 }
 
