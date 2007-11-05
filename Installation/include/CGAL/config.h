@@ -235,11 +235,19 @@ make_list(Iterator begin, Iterator end)
 
 // Macro to trigger deprecation warnings
 #if defined (__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#  define CGAL_DEPRECATED __attribute__((deprecated))
+#  define CGAL_DEPRECATED __attribute__((__deprecated__))
 #elif defined (_MSC_VER) && (_MSC_VER > 1300)
 #  define CGAL_DEPRECATED __declspec(deprecated)
 #else
 #  define CGAL_DEPRECATED
+#endif
+
+
+// Macro to specify a noreturn attribute.
+#ifdef __GNUG__
+#  define CGAL_NORETURN  __attribute__ ((__noreturn__))
+#else
+#  define CGAL_NORETURN
 #endif
 
 
