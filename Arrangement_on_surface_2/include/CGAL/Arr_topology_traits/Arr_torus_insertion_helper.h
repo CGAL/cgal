@@ -114,12 +114,7 @@ public:
 template <class Tr, class Arr, class Evnt, class Sbcv> 
 void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 {
-#if 0
     this->m_top_face = Face_handle(this->m_top_traits->bottom_face());
-#else
-    std::cout << "Arr_torus_top_traits: Implement bottom_face" << std::endl;
-    CGAL_assertion(false);
-#endif
 }
 
 //-----------------------------------------------------------------------------
