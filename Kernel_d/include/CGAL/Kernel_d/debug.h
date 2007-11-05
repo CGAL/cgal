@@ -85,11 +85,11 @@ namespace {
 #else
 #define CGAL_KD_ASSERT(cond,fstr)   \
   if (!(cond)) {       \
-    std::cerr << "   ASSERT:   " << #fstr << endl; \
-    std::cerr << "   COND:     " << #cond << endl; \
+    std::cerr << "   ASSERT:   " << #fstr << std::endl; \
+    std::cerr << "   COND:     " << #cond << std::endl; \
     std::cerr << "   POSITION: " << __FILE__ << " at line "<< __LINE__ \
-              <<std::endl; \
-    abort();           \
+              << std::endl; \
+    CGAL_assertion(false); \
   }
 #endif
 

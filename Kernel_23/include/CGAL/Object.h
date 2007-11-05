@@ -95,8 +95,7 @@ class Object
 #ifdef _MSC_VER
       }
       catch (...) {
-          std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
-          abort();
+          CGAL_assertion_msg(false, "ERROR : YOUR COMPILER MUST SUPPORT RTTI");
       }
 #endif
       return true;
