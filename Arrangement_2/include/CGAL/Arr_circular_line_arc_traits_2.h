@@ -338,7 +338,7 @@ namespace CGAL {
 	  return object_to_object_variant<CircularKernel, Arc1, Arc2>
                                          (container, res);
 	}
-	std::abort();
+	CGAL_assertion(false);
 	return res;//for no warning
       }
     
