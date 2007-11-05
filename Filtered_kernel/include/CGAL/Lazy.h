@@ -190,7 +190,7 @@ struct Depth_base {
 template <typename AT_, typename ET, typename E2A>
 class Lazy_rep : public Rep, public Depth_base
 {
-  Lazy_rep (const Lazy_rep&) { std::abort(); } // cannot be copied.
+  Lazy_rep (const Lazy_rep&); // cannot be copied.
 
 public:
 
@@ -1330,8 +1330,7 @@ struct Ith {
     else if(const Pair_type_2 *p2 = object_cast<Pair_type_2>(&v[i]))
         return p2->first;
 
-    std::cout<<" Unexpected encapsulated type "<<std::endl;
-    std::abort();    	
+    CGAL_assertion_msg(false, " Unexpected encapsulated type ");
   }
 };
 
