@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Eric Berberich <erric@mpi-inf.mpg.de>
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_TORUS_OVERLAY_HELPER_H
@@ -77,12 +77,12 @@ protected:
     const typename Arrangement_red_2::Topology_traits   *m_red_top_traits;
     const typename Arrangement_blue_2::Topology_traits  *m_blue_top_traits;
     
-    Halfedge_handle_red        m_red_th;    // Red top fictitious halfedge.
-    Halfedge_handle_blue       m_blue_th;   // Blue top fictitious halfedge.
-    
-    Vertex_handle_red          v_red_tl;    // Red top-left fictitious vertex. 
-    Vertex_handle_blue         v_blue_tl;   // Blue top-left fictitious vertex.
-    
+    //! Red quadric face
+    Face_handle_red m_red_tf;
+
+    //! Blue quadric face
+    Face_handle_blue m_blue_tf;
+
 public:
     
     /*! Constructor, given the input red and blue arrangements. */
@@ -96,133 +96,85 @@ public:
     //@{
     
     /* A notification issued before the sweep process starts. */
-    void before_sweep ();
+    void before_sweep () {
+        m_red_tf = Face_handle_red(m_red_top_traits->top_face());
+        m_blue_tf = Face_handle_blue(m_blue_top_traits->top_face());
+    }
     
     /*!
      * A notification invoked before the sweep-line starts handling the given
      * event.
      */  
-    void before_handle_event (Event* e);
+    void before_handle_event (Event* e) {
+        const Subcurve  *sc = 
+            (e->number_of_right_curves() == 0 ?
+             (*(e->left_curves_begin())) :
+             (*(e->right_curves_rbegin())));
+        
+        
+        if (e->boundary_in_x() == AFTER_DISCONTINUITY) {
+            // left side
+            switch (sc->color()) {
+            case Traits_2::RED :
+                m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                break;
+                
+            case Traits_2::BLUE :
+                m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                break;
+                
+            case Traits_2::RB_OVERLAP :
+                m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                break;
+            }
+        } else if (e->boundary_in_y() == BEFORE_DISCONTINUITY) {
+            // top side
+            switch (sc->color()) {
+            case Traits_2::RED :
+                if (sc->red_halfedge_handle()->direction() 
+                    == CGAL::RIGHT_TO_LEFT) {
+                    m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                } else {
+                    m_red_tf = sc->red_halfedge_handle()->face();
+                }
+                break;
+            case Traits_2::BLUE :
+                if (sc->blue_halfedge_handle()->direction() 
+                    == CGAL::RIGHT_TO_LEFT) {
+                    m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                } else {
+                    m_blue_tf = sc->blue_halfedge_handle()->face();
+                }
+                break;
+            case Traits_2::RB_OVERLAP :
+                if (sc->red_halfedge_handle()->direction() 
+                    == CGAL::RIGHT_TO_LEFT) {
+                    m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                    m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                } else {
+                    m_red_tf = sc->red_halfedge_handle()->face();
+                    m_blue_tf = sc->blue_halfedge_handle()->face();
+                }
+                break;
+            }
+        } 
+    }
+    
     //@}
     
     /*! Get the current red top face. */
     Face_handle_red red_top_face () const
     {
-        return (m_red_th->face());
+        return (m_red_tf);
     }
     
     /*! Get the current blue top face. */
     Face_handle_blue blue_top_face () const
     {
-        return (m_blue_th->face());
+        return (m_blue_tf);
     }
 };
-
-//-----------------------------------------------------------------------------
-// Memeber-function definitions:
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// A notification issued before the sweep process starts.
-//
-template <class Tr, class ArrR, class ArrB, class Arr, class Evnt, class Sbcv>
-void Arr_torus_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::before_sweep ()
-{
-#if 0
-    // Get the top-left fictitious vertices in both arrangements.
-    v_red_tl = Vertex_handle_red (m_red_top_traits->top_left_vertex());
-    v_blue_tl = Vertex_handle_blue (m_blue_top_traits->top_left_vertex());
-    
-    // Get the fictitious halfedges incident to the bottom-left fictitious
-    // vertices in both red and blue arrangements. If there are no vertices
-    // at x = -oo, we take the halfedge incident to the top-left vertex that
-    // lies on the top edge of the fictitious face.
-    Vertex_handle_red   v_red_bl = 
-        Vertex_handle_red (m_red_top_traits->bottom_left_vertex());
-    
-    m_red_th = v_red_bl->incident_halfedges();
-    
-    if (m_red_th->source()->boundary_in_x() != MINUS_INFINITY)
-        m_red_th = m_red_th->next()->twin();
-    
-    if (m_red_th->source() == v_red_tl)
-        m_red_th = m_red_th->prev();
-    
-    Vertex_handle_blue  v_blue_bl = 
-        Vertex_handle_blue (m_blue_top_traits->bottom_left_vertex());
-    
-    m_blue_th = v_blue_bl->incident_halfedges();
-    if (m_blue_th->source()->boundary_in_x() != MINUS_INFINITY)
-        m_blue_th = m_blue_th->next()->twin();
-    
-    if (m_blue_th->source() == v_blue_tl)
-        m_blue_th = m_blue_th->prev();
-    
-    return;
-#endif
-    std::cout << "Arr_torus_overlay_helper::before_sweep not yet implemenet" 
-              << std::endl;
-    assert(false);
-    return;
-}
-
-//-----------------------------------------------------------------------------
-// A notification invoked before the sweep-line starts handling the given
-// event.
-//
-template <class Tr, class ArrR, class ArrB, class Arr, class Evnt, class Sbcv>
-void Arr_torus_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::
-before_handle_event (Event* e)
-{
-#if 0
-    // Nothing to do in case the event represents a finite point.
-    if (e->is_finite())
-        return;
-    
-    // In case the event occurs on the left edge of the fictitious face (x = -oo)
-    // or on its top edge (finite x and y = +oo), update the fictitious top
-    // halfedges.
-    if (e->boundary_in_x() == MINUS_INFINITY ||
-        (e->boundary_in_x() == NO_BOUNDARY && 
-         e->boundary_in_y() == PLUS_INFINITY))
-    {
-        switch (e->unbounded_curve().color())
-        {
-        case (Traits_2::RED) :
-            // Update the red top fictitious halfedge.
-            m_red_th = m_red_th->twin()->next()->twin();
-            if (m_red_th->source() == v_red_tl)
-                m_red_th = m_red_th->prev();
-            break;
-            
-        case (Traits_2::BLUE) :
-            // Update the blue top fictitious halfedge.
-            m_blue_th = m_blue_th->twin()->next()->twin();
-            if (m_blue_th->source() == v_blue_tl)
-                m_blue_th = m_blue_th->prev();
-            break;
-            
-        case Traits_2::RB_OVERLAP :
-            // Update both red and blue top fictitious halfedges.
-            m_red_th = m_red_th->twin()->next()->twin();
-            if (m_red_th->source() == v_red_tl) 
-                m_red_th = m_red_th->prev();
-            
-            m_blue_th = m_blue_th->twin()->next()->twin();
-            if (m_blue_th->source() == v_blue_tl)
-                m_blue_th = m_blue_th->prev();
-            
-            break;
-        }
-    }
-    
-    return;
-#endif
-    std::cout << "Arr_torus_overlay_helper::before_handle_event not yet implemenet" 
-              << std::endl;
-    assert(false);
-    return;
-}
 
 CGAL_END_NAMESPACE
 
