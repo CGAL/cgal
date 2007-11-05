@@ -23,7 +23,6 @@
 
 #include <CGAL/basic.h>
 #include <list>
-#include <cassert>
 #include <iostream>
 #include <CGAL/Random.h>
 
@@ -1171,7 +1170,7 @@ template <class Interval>
 	}     
       }
     }
-    assert(*res == I);
+    CGAL_assertion(*res == I);
     return res;
   }
 
