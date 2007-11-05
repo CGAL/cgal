@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Eric Berberich <erric@mpi-inf.mpg.de>
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_QdX_OVERLAY_HELPER_H
@@ -78,10 +78,10 @@ protected:
     const typename Arrangement_blue_2::Topology_traits  *m_blue_top_traits;
 
     //! Red quadric face
-    Face_handle_red m_red_nf;
+    Face_handle_red m_red_tf;
 
     //! Blue quadric face
-    Face_handle_blue m_blue_nf;
+    Face_handle_blue m_blue_tf;
     
 public:
     
@@ -99,8 +99,8 @@ public:
     void before_sweep() {
         // Get the faces in both arrangements.
         // TODO set top_face in QdX_TOP_TRAITS
-        m_red_nf = Face_handle_red(m_red_top_traits->top_face());
-        m_blue_nf = Face_handle_blue(m_blue_top_traits->top_face());
+        m_red_tf = Face_handle_red(m_red_top_traits->top_face());
+        m_blue_tf = Face_handle_blue(m_blue_top_traits->top_face());
     }
     
     /*!
@@ -114,65 +114,67 @@ public:
              (*(event->left_curves_begin())) :
              (*(event->right_curves_rbegin())));
         
-        
-        if (event->boundary_in_y() == BEFORE_DISCONTINUITY) {
+        if (event->boundary_in_x() < 0) {
+            // left side
+            switch (sc->color()) {
+            case Traits_2::RED :
+                m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                break;
+                
+            case Traits_2::BLUE :
+                m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                break;
+                
+            case Traits_2::RB_OVERLAP :
+                m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                break;
+            }
+        } else if (event->boundary_in_y() == BEFORE_DISCONTINUITY) {
+            // top side
             switch (sc->color()) {
             case Traits_2::RED :
                 if (sc->red_halfedge_handle()->direction() 
                     == CGAL::RIGHT_TO_LEFT) {
-                    m_red_nf = sc->red_halfedge_handle()->twin()->face();
+                    m_red_tf = sc->red_halfedge_handle()->twin()->face();
                 } else {
-                    m_red_nf = sc->red_halfedge_handle()->face();
+                    m_red_tf = sc->red_halfedge_handle()->face();
                 }
                 break;
             case Traits_2::BLUE :
                 if (sc->blue_halfedge_handle()->direction() 
                     == CGAL::RIGHT_TO_LEFT) {
-                    m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
+                    m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
                 } else {
-                    m_blue_nf = sc->blue_halfedge_handle()->face();
+                    m_blue_tf = sc->blue_halfedge_handle()->face();
                 }
                 break;
             case Traits_2::RB_OVERLAP :
                 if (sc->red_halfedge_handle()->direction() 
                     == CGAL::RIGHT_TO_LEFT) {
-                    m_red_nf = sc->red_halfedge_handle()->twin()->face();
-                    m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
+                    m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                    m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
                 } else {
-                    m_red_nf = sc->red_halfedge_handle()->face();
-                    m_blue_nf = sc->blue_halfedge_handle()->face();
+                    m_red_tf = sc->red_halfedge_handle()->face();
+                    m_blue_tf = sc->blue_halfedge_handle()->face();
                 }
-                break;
-            }
-        } else if (event->boundary_in_x() < 0) {
-            switch (sc->color()) {
-            case Traits_2::RED :
-                m_red_nf = sc->red_halfedge_handle()->twin()->face();
-                break;
-                
-            case Traits_2::BLUE :
-                m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-                break;
-                
-            case Traits_2::RB_OVERLAP :
-                m_red_nf = sc->red_halfedge_handle()->twin()->face();
-                m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
                 break;
             }
         }
     }
+    
     //@}
     
     /*! Get the current red top face. */
     Face_handle_red red_top_face () const
     {
-        return (m_red_nf);
+        return (m_red_tf);
     }
     
     /*! Get the current blue top face. */
     Face_handle_blue blue_top_face () const
     {
-        return (m_blue_nf);
+        return (m_blue_tf);
     }
 };
 
