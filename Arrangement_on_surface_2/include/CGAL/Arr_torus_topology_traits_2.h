@@ -507,7 +507,6 @@ public:
      */
     Comparison_result compare_y_at_x (const Point_2& p,
                                       const Halfedge* he) const;
-    
 
     /*!
      * Check if the given vertex is associated with the given curve end.
@@ -589,15 +588,7 @@ public:
     CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                    Curve_end ind,
                                    Boundary_type bound_x,
-                                   Boundary_type bound_y)
-    {
-        // \todo RWRW: Add support for all boundary conditions,
-        //             not just unbounded curve-ends.
-
-        // torus does not contain unbounded curves
-        CGAL_assertion (false);
-        return CGAL::Object();
-    }
+                                   Boundary_type bound_y) const;
     
     /*!
      * Given two predecessor halfedges that belong to the same inner CCB of
@@ -615,7 +606,6 @@ public:
                                      const Halfedge *prev2,
                                      const X_monotone_curve_2& cv) const;
 
-
     /*!
      * Determine whether the removal of the given edge will cause the creation
      * of a hole.
@@ -625,25 +615,6 @@ public:
      */
     bool hole_creation_after_edge_removal (const Halfedge *he) const;
 
-public:
-// TODO make private
-    /*!
-     * Given two halfedges, determine if the path from the source vertex of the
-     * first halfedge to the source vertex of the second haldedge (i.e. we go
-     * from the first halfedge until reaching the second) is perimetric.
-     * \param e1 The first halfedge.
-     * \param e2 The second halfedge.
-     * \return Whether the path from e1 to e2 (not inclusive) is perimetric.
-     */
-    bool _is_perimetric_path (const Halfedge *he1, const Halfedge *he2) const;
-
-    bool _is_perimetric_path (const Halfedge *e1,
-                              const Halfedge *e2,
-                              const X_monotone_curve_2& cv) const;
-    
-
-    bool _is_perimetric_data (const std::pair< int, int >&) const;
-public:
     /*!
      * Given two predecessor halfedges that will be used for inserting a
      * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
@@ -676,7 +647,6 @@ public:
     bool boundaries_of_same_face (const Halfedge *he1,
                                   const Halfedge *he2) const;
     
-    
     /*!
      * Determine whether the given point lies in the interior of the given 
      * face.
@@ -687,7 +657,6 @@ public:
      * \return Whether p is contained in f's interior.
      */
     bool is_in_face (const Face *f, const Point_2& p, const Vertex *v) const;
-    
     
     /*!
      * Split a fictitious edge using the given vertex.
@@ -723,7 +692,6 @@ public:
      */
     bool is_redundant (const Vertex *v) const;
         
-    
     /*!
      * Erase the given redundant vertex by merging a fictitious edge.
      * The function does not free the vertex v itself.
@@ -799,24 +767,6 @@ public:
     /// \name Auxiliary functions.
     //@{
 
-protected:
-    /*!\brief
-     * checks whether boundary condition in x and y is valid
-     */
-    inline 
-    bool  _valid(CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) 
-        const {
-        return (                        
-                ((bound_x == CGAL::AFTER_DISCONTINUITY || 
-                  bound_x == CGAL::BEFORE_DISCONTINUITY) &&
-                 bound_y == CGAL::NO_BOUNDARY) 
-                ||
-                ((bound_y == CGAL::AFTER_DISCONTINUITY || 
-                  bound_y == CGAL::BEFORE_DISCONTINUITY) &&
-                 bound_x == CGAL::NO_BOUNDARY)
-        );
-    }       
-    
 public:
     // TODO make protected
     /*! Get the vertex on curve of identification associated with \c pt*/
@@ -842,59 +792,45 @@ public:
     }
 
 protected:
+    /*!\brief
+     * checks whether boundary condition in x and y is valid
+     */
+    inline 
+    bool  _valid(CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) 
+        const {
+        return (                        
+                ((bound_x == CGAL::AFTER_DISCONTINUITY || 
+                  bound_x == CGAL::BEFORE_DISCONTINUITY) &&
+                 bound_y == CGAL::NO_BOUNDARY) 
+                ||
+                ((bound_y == CGAL::AFTER_DISCONTINUITY || 
+                  bound_y == CGAL::BEFORE_DISCONTINUITY) &&
+                 bound_x == CGAL::NO_BOUNDARY)
+        );
+    }       
     
     /*!
      * Computes the number of crossing of a path with the curves 
      * of identification
      * \param he1 Beginning of path
      * \param he2 End of path
-     * \param corssing OUTPUT: \c true if crosses the a curve of identification
-     * \param leftmost_NS OUTPUT: returns whether the leftmost intersection
-     *                            is AFTER_TO_BEFORE or BEFORE_TO_AFTER
-     * \param bottommost_WE OUTPUT: returns whether the leftmost intersection
-     *                              is AFTER_TO_BEFORE or BEFORE_TO_AFTER
-     * \return a pair of values indicating by -1,0,1 whether curves of
-     * identification are crossed an odd or even number of times.
+     * \return the perimeticity of a path as CGAL::Sign
      */
-    std::pair< int, int >
-    _crossings_with_identifications(const Halfedge* he1, const Halfedge* he2) 
+    CGAL::Sign _sign_of_path(const Halfedge* he1, const Halfedge* he2) 
         const;
 
-    std::pair< int, int >
-    _crossings_with_identifications(
+     /*!
+     * Computes the number of crossing of a path with the curves 
+     * of identification
+     * \param he1 Beginning of path
+     * \param he2 End of path
+     * \param cv Curves in between
+     * \return the perimeticity of a path as CGAL::Sign
+     */
+    CGAL::Sign _sign_of_path(
             const Halfedge* he1, const Halfedge* he2,
             const X_monotone_curve_2& cv) const;
 
-
-    /*!\brief
-     * checks whether a boundary vertex is part of a perimetric path
-     */
-    inline 
-    bool  _has_crossing_perimetric_path(Vertex *v) const {
-        if (v->is_isolated()) {
-            return false;
-        }
-        
-        bool has_perimetric_path = false;
-        
-        Halfedge *he = v->halfedge();
-        do {
-            bool tpole;
-            bool tmp = _is_perimetric_path(he, he, tpole);
-            if (!tpole) {
-                has_perimetric_path = tmp;
-            }
-            he = he->next()->opposite();
-        } while (!has_perimetric_path && he != v->halfedge());
-        
-        std::cout << "Arr_torus_topology_traits_2::" 
-                  << "_has_perimetric_path:"
-                  << has_perimetric_path
-                  << std::endl;
-        
-        return has_perimetric_path;
-    }       
-    
 
     /*! Return the face that lies before the given vertex, which lies
      * on the line on an identification
