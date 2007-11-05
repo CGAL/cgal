@@ -752,6 +752,42 @@ public:
         return (_m_f_top);
     }
     
+    /*! Get bottom face (const version). */
+    const Face* bottom_face () const
+    {
+        typename Identification_WE::const_iterator  we_it = 
+            _m_identification_WE.begin();
+        if (we_it == _m_identification_WE.end()) {
+            typename Identification_NS::const_iterator ns_it = 
+                _m_identification_NS.begin();
+            if (ns_it == _m_identification_NS.end()) {
+                return (_m_f_top);
+            } else {
+                return (_face_before_vertex_on_identifications(ns_it->second));
+            }
+        } else {
+            return (_face_before_vertex_on_identifications(we_it->second));
+        }
+    }
+    
+    /*! Get bottom face */
+    Face* bottom_face () 
+    {
+        typename Identification_WE::const_iterator  we_it = 
+            _m_identification_WE.begin();
+        if (we_it == _m_identification_WE.end()) {
+            typename Identification_NS::const_iterator ns_it = 
+                _m_identification_NS.begin();
+            if (ns_it == _m_identification_NS.end()) {
+                return (_m_f_top);
+            } else {
+                return (_face_before_vertex_on_identifications(ns_it->second));
+            }
+        } else {
+            return (_face_before_vertex_on_identifications(we_it->second));
+        }
+    }
+    
     /*! Get the geometry traits */
     Geometry_traits_2* geometry_traits ()
     {
@@ -859,6 +895,11 @@ protected:
         return has_perimetric_path;
     }       
     
+
+    /*! Return the face that lies before the given vertex, which lies
+     * on the line on an identification
+     */
+    Face * _face_before_vertex_on_identifications(Vertex * v) const;
     
     //@}
 };

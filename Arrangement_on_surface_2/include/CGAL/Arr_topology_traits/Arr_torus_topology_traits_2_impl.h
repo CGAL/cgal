@@ -96,12 +96,13 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign
 template <class GeomTraits, class Dcel_>
 void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 {
+#if 0// TODO
     // Go over the DCEL vertices and locate all points with boundary condition
     typename Dcel::Vertex_iterator       vit;
     Boundary_type                        bx, by;
 
-    for (vit = this->m_dcel.vertices_begin();
-         vit != this->m_dcel.vertices_end(); ++vit) {
+    for (vit = this->_m_dcel.vertices_begin();
+         vit != this->_m_dcel.vertices_end(); ++vit) {
         // First check whether the vertex has a boundary condition in x.
         bx = vit->boundary_in_x();
         if (bx != CGAL::NO_BOUNDARY) {
@@ -128,6 +129,7 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
         }
     }
     
+#endif
     // Go over the DCEL faces and locate the top face, which is the only
     // face with no outer CCB.
     typename Dcel::Face_iterator         fit;
@@ -1138,6 +1140,43 @@ _crossings_with_identifications(
     
     return (std::make_pair(x_counter, y_counter));
 }
+
+/*! \brief Return the face that lies before the given vertex, which lies
+ * on the line of discontinuity.
+ */
+template <class GeomTraits, class Dcel>
+typename Arr_torus_topology_traits_2<GeomTraits, Dcel>::Face *
+Arr_torus_topology_traits_2<GeomTraits, Dcel>::
+_face_before_vertex_on_identifications (Vertex * v) const {
+    
+    // If the vertex is isolated, just return the face that contains it.
+    if (v->is_isolated()) {
+        return (v->isolated_vertex()->face());
+    }
+    
+    // Get the first incident halfedge around v and the next halfedge.
+    Halfedge  *first = v->halfedge();
+    Halfedge  *curr = first;
+    CGAL_assertion(curr != NULL);
+    Halfedge  *next = curr->next()->opposite();
+    
+    // If there is only one halfedge incident to v, return its incident
+    // face.
+    if (curr == next) {
+        if (curr->is_on_inner_ccb()) {
+            return (curr->inner_ccb()->face());
+        } else {
+            return (curr->outer_ccb()->face());
+        }
+    }
+    
+    // else TODO
+    CGAL_assertion(false);
+    return new Face();
+    
+
+}
+
 
 CGAL_END_NAMESPACE
 
