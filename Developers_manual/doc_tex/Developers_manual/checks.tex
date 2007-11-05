@@ -30,6 +30,10 @@ checks (Section~\ref{sec:checks_controlling}). Finally, a statement
 about exception handling is given
 (Section~\ref{sec:exception_handling}).
 
+The default behavior of these checks is to throw exceptions for reporting
+failures.  It is also forbidden to call \ccc{std::abort}, \ccc{std::exit}
+or \ccc{assert} directly from \cgal, as these do not allow the user code to
+react after the error (application processes are killed).
 
 % -----------------------------------------------------------------------------
 \section{Categories of checks\label{sec:checks_categories}}
@@ -234,9 +238,10 @@ package you can find a sentence similar to the following.
 \section{Exception handling\label{sec:exception_handling}}
 \ccIndexMainItem{exception handling}
 
-Some parts of the library, \eg,~the interval-arithmetic package, use
+Some parts of the library, \eg,~the interval arithmetic package, use
 exceptions, but there is no general policy concerning exception
-handling in \cgal.
+handling in \cgal.  It is nevertheless good to target exception
+safety, as much as possible.
 
 \InternalOnly{
 
@@ -250,16 +255,11 @@ Requirements:
    \item Use the \cgal\ preprocessor macros (Sections~\ref{sec:checks_using} 
          and~\ref{sec:checks_controlling})
          exclusively throughout your code (instead of,
-         for example, the \ccc{assert} macro) for all checks 
+         for example, the \ccc{assert} macro or the \ccc{std::abort} or
+         \ccc{std::exit} functions) for all checks 
          to assure that all \cgal\ invariant tests can be handled in a uniform 
          way.
 \end{itemize}
-
-%\noindent
-%Recommendations:
-%\begin{itemize}
-%   \item 
-%\end{itemize}
 
 }
 
