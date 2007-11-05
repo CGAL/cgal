@@ -25,6 +25,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QStatusBar>
+#include <QApplication>
 
 class Polyhedral_surface : public Surface
 {
@@ -49,7 +50,8 @@ public:
       parent(parent),
       display_octree(false),
       display_surface(true),
-      display_all_edges(false),
+      display_all_edges(true),
+      display_control_edges(false),
       sharp_edges_angle_lower_bound(sharp_edges_angle_lower_bound),
       sharp_edges_angle_upper_bound(sharp_edges_angle_upper_bound),
       is_octree_initialized(false),
@@ -70,6 +72,11 @@ public:
     if(action)
       connect(action, SIGNAL(toggled(bool)),
               this, SLOT(toggle_display_all_edges(bool)));
+
+    action = parent->findChild<QAction*>("actionDisplay_control_edges");
+    if(action)
+      connect(action, SIGNAL(toggled(bool)),
+              this, SLOT(toggle_display_control_edges(bool)));
 
     action = parent->findChild<QAction*>("actionInverse_normals");
     if(action)
@@ -98,21 +105,63 @@ public slots:
     }
   }
 
+  void busy() const 
+  {
+    QMainWindow* mw = qobject_cast<QMainWindow *>(parent);
+    if(mw)
+    {
+      mw->statusBar()->showMessage(QString("Constructing octree..."));
+    }
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  }
+
+  void not_busy() const 
+  {
+    QApplication::restoreOverrideCursor();
+    QMainWindow* mw = qobject_cast<QMainWindow *>(parent);
+    if(mw)
+    {
+      mw->statusBar()->clearMessage();
+    }
+  }
+
   void set_sharp_edges_angle_bounds(const double lower_bound,
                                     const double upper_bound)
   {
     sharp_edges_angle_lower_bound = lower_bound;
     sharp_edges_angle_upper_bound = upper_bound;
-    surface_ptr->set_sharp_edges_angle_bounds(lower_bound, upper_bound);
-    surface_ptr->set_sharp_vertices_angle_bounds(lower_bound, upper_bound);
+    if(surface_ptr) {
+      surface_ptr->set_sharp_edges_angle_bounds(lower_bound, upper_bound);
+      surface_ptr->set_sharp_vertices_angle_bounds(lower_bound, upper_bound);
+      update_data_structures();
+      emit changed();
+    }
+  }
+
+  void update_data_structures() 
+  {
     surface_ptr->compute_sharp_edges_incidence_graph();
-    emit changed();
+    if(display_octree) {
+      construct_octree();
+      is_octree_initialized = true;
+    }
+    else
+      is_octree_initialized = false;
+  }
+
+  void construct_octree() 
+  {
+    busy();
+    surface_ptr->construct_octree();
+    not_busy();
   }
 
   void toggle_display_octree(bool b)
   {
-    if(surface_ptr && b && !is_octree_initialized)
-      surface_ptr->construct_octree();
+    if(surface_ptr && b && !is_octree_initialized) {
+      is_octree_initialized = true;
+      construct_octree();
+    }
     display_octree = b;
     emit changed();
   }
@@ -129,6 +178,12 @@ public slots:
     emit changed();
   }
 
+  void toggle_display_control_edges(bool b)
+  {
+    display_control_edges = b;
+    emit changed();
+  }
+
   void make_one_subdivision_step()
   {
     if(surface_ptr)
@@ -140,6 +195,7 @@ public slots:
       static_cast<Polyhedron&>(*surface_ptr) = output;
       surface_ptr->compute_normals();
       surface_ptr->compute_type();
+      update_data_structures();
       emit changed();
     }
   }
@@ -234,13 +290,16 @@ public:
         {
           // superimpose ordinary edges
           ::glColor3d(0.,0.,.8);
-          surface_ptr->superimpose_edges(false,true);
+          surface_ptr->superimpose_edges(false,display_control_edges);
         }
         // superimpose control edges
-        ::glDisable(GL_LIGHTING);
-        ::glColor3d(.5, .5, .5);
-        ::glLineWidth(1.0f);
-        surface_ptr->superimpose_edges(true,false);
+        if(display_control_edges)
+        {
+          ::glDisable(GL_LIGHTING);
+          ::glColor3d(.0, .0, .0);
+          ::glLineWidth(1.0f);
+          surface_ptr->superimpose_edges(true,false);
+        }
 
         // draw sharp edges
         ::glColor3ub(128,128,128);
@@ -295,6 +354,7 @@ private:
   bool display_octree;
   bool display_surface;
   bool display_all_edges;
+  bool display_control_edges;
   double sharp_edges_angle_lower_bound;
   double sharp_edges_angle_upper_bound;
   bool is_octree_initialized;

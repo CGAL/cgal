@@ -182,6 +182,9 @@
    <property name="text" >
     <string>Display &amp;control edges</string>
    </property>
+   <property name="shortcut" >
+    <string>Ctrl+C</string>
+   </property>
   </action>
  </widget>
  <customwidgets>

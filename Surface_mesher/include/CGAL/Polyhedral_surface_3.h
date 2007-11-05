@@ -348,6 +348,7 @@ public:
 
   void construct_octree()
   {
+#if 0
     GT gt = GT();
     typename GT::Construct_orthogonal_vector_3 orthogonal_vector = 
       gt.construct_orthogonal_vector_3_object();
@@ -380,7 +381,7 @@ public:
       std::cos(CGAL_PI * sharp_edges_angle_lower_bound / 360. );
     
     const FT cosine_squared_bound = cosine_bound * cosine_bound;
-
+#endif // if 0
     typedef typename Polyhedron_3::Vertex_const_iterator Vertex_const_it;
 
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
@@ -433,7 +434,8 @@ public:
 
 
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-      subfacets_tree_ptr->add_constrained_facet(p1, p2, p3);
+      CGAL_assertion(fit->tag() >= 0);
+      subfacets_tree_ptr->add_constrained_facet(p1, p2, p3, fit->tag());
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
       subfacets_tree_ptr->add_element(Triangle_3(p1, p2, p3));
@@ -490,6 +492,8 @@ public:
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     if( this->has_edges() ) {
 
+#if 0
+
       typedef std::map<Point_3, int> Edges_vertex_counter;
       Edges_vertex_counter edges_vertex_counter;
 
@@ -523,6 +527,10 @@ public:
 	}
 	if(insert_that_edge)
 	{ 
+
+
+fsaldljfjhasdfkh ICI !
+
 	  const Point_3 pa = eit->vertex()->point();
 	  const Point_3 pb = opposite->vertex()->point();
 	  ++edges_vertex_counter[pa];

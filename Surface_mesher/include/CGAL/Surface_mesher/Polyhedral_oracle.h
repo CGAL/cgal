@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -44,7 +44,9 @@ public:
   typedef typename GT::FT FT;
 
   typedef typename Geom_traits::Point_3 Point;
-  typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
+  typedef typename Surface::Subfacets_tree Subfacets_tree;
+  typedef typename Surface::Subsegments_tree Subsegments_tree;
+  typedef typename Subsegments_tree::Point_with_index Point_with_index;
   typedef typename Geom_traits::Segment_3 Segment_3;
   typedef typename Geom_traits::Ray_3 Ray_3;
   typedef typename Geom_traits::Line_3 Line_3;
@@ -53,10 +55,6 @@ public:
   typedef Polyhedral_oracle<Surface, Point_creator, Visitor> Self;
 
   typedef Surface Surface_3;
-
-#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-  typedef typename Surface::Subfacets_tree Subfacets_tree;
-#endif
 
   // Private members
 
@@ -250,10 +248,10 @@ public:
       return Object();
 
     Object o = surface.subsegments_tree_ptr->intersection(t);
-    Kernel_point kp;
-    if( assign(kp, o) )
+    Point_with_index pi;
+    if( assign(pi, o) )
     {
-      Point p = kp;
+      Point p = pi;
       visitor.new_point(p);
       return make_object(p);
     }
@@ -301,10 +299,10 @@ public:
 // 		  << std::endl;
 
       Object o = data_struct.intersection(s.vertex(0), s.vertex(1));
-      Kernel_point kp;
-      if( assign(kp, o) )
+      Point_with_index pi;
+      if( assign(pi, o) )
       {
-        Point p = kp;
+        Point p = pi;
         visitor.new_point(p);
         return make_object(p);
       }
@@ -342,10 +340,10 @@ public:
 //       return odeux;
 
       Object o = data_struct.intersection (r);
-      Kernel_point kp;
-      if( assign(kp, o) )
+      Point_with_index pi;
+      if( assign(pi, o) )
       {
-        Point p = kp;
+        Point p = pi;
         visitor.new_point(p);
         return make_object(p);
       }
