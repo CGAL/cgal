@@ -531,7 +531,7 @@ class Width_3 {
 		<<std::endl
 		<<d<<std::endl<<k); 
       CGAL_assertion(a!=0);
-      std::abort();
+      CGAL_assertion(false);
     } else {
 #ifdef GCD_COMPUTATION
       DEBUGENDL(SOLVE_4X4,"Unique Solution of 4x4 (before GCD computation):\n",
@@ -1140,7 +1140,7 @@ class Width_3 {
     }
     //There must be a new EE-pair. If not, an error occurs
     std::cerr<<"No new EE-pair found!"<<std::endl;
-    std::abort();
+    CGAL_assertion(false);
   }  
   
   
