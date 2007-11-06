@@ -574,12 +574,58 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_curve_end(
         CGAL::Boundary_type bound_y) const 
 {
     // status: to implement
-    // \todo RWRW: Add support for all boundary conditions,
-    //             not just unbounded curve-ends.
-    
+    //std::cout << "Arr_torus_topology_traits_2 locate_curve_end"  
+    //          << std::endl;
+    CGAL_precondition(_valid(bound_x, bound_y));
+
     // torus does not contain unbounded curves
-    CGAL_assertion (false);
-    return CGAL::Object();
+    
+    Vertex* v = NULL;
+    typename Identification_NS::iterator ns_it;
+    typename Identification_WE::iterator we_it;
+
+    Point_2 key = (ind == CGAL::MIN_END ?
+                   this->m_traits->construct_min_vertex_2_object()(cv) :
+                   this->m_traits->construct_max_vertex_2_object()(cv)); 
+
+    if (bound_x != CGAL::NO_BOUNDARY) {
+        
+        we_it = _m_identification_WE.find (key);
+        if (we_it != _m_identification_WE.end()) {
+            v = we_it->second;
+            return CGAL::make_object(v);
+        }
+        // else
+        we_it = _m_identification_WE.lower_bound(key);
+        
+        if (we_it != _m_identification_WE.end()) {
+            v = we_it->second;
+        }
+        // TODO return top face?
+        
+    } else if (v == NULL || bound_y != CGAL::NO_BOUNDARY) {
+        
+        if (bound_x == CGAL::NO_BOUNDARY) {
+            ns_it = _m_identification_NS.find (key);
+            if (ns_it != _m_identification_NS.end()) {
+                v = ns_it->second;
+                return CGAL::make_object(v);
+            }
+            // else
+            ns_it = _m_identification_NS.lower_bound(key);
+        } else {
+            ns_it = _m_identification_NS.begin();
+        }
+        
+        if (ns_it == _m_identification_NS.end()) {
+            return CGAL::make_object(_m_f_top);
+        }
+        // else 
+        v = ns_it->second;
+    }
+    CGAL_assertion(v != NULL);
+    
+    return CGAL::make_object(_face_before_vertex_on_discontinuity(v));
 }
 
 //-----------------------------------------------------------------------------
@@ -729,7 +775,7 @@ is_on_new_perimetric_face_boundary
     // If pole is part of a ccb itself, it incident face is the face that 
     // contains everything.
     
-    CGAL::Sign sign = _sign_of_paths(prev2, prev1, cv);
+    CGAL::Sign sign = _sign_of_path(prev2, prev1, cv);
     CGAL_assertion(sign != CGAL::ZERO);
     
     return (sign == CGAL::POSITIVE);
@@ -1084,7 +1130,7 @@ typename Arr_torus_topology_traits_2<GeomTraits, Dcel>::Face *
 Arr_torus_topology_traits_2<GeomTraits, Dcel>::
 _face_before_vertex_on_identifications (Vertex * v) const {
     
-    // status: implement if > 1 incident face
+    // status: correct
 
     // If the vertex is isolated, just return the face that contains it.
     if (v->is_isolated()) {
@@ -1106,12 +1152,140 @@ _face_before_vertex_on_identifications (Vertex * v) const {
             return (curr->outer_ccb()->face());
         }
     }
-    
-    // else TODO
-    CGAL_assertion(false);
-    return new Face();
-}
 
+    if (v->boundary_in_x() != CGAL::NO_BOUNDARY) {
+
+        // Otherwise, we traverse the halfedges around v and locate the first
+        // halfedge we encounter if we go from "6 o'clock" clockwise.
+        // First locate the lower left and the top right halfedges around v.
+        typename Traits_adaptor_2::Compare_y_at_x_right_2 
+            compare_y_at_x_right =
+            _m_traits->compare_y_at_x_right_2_object();
+        typename Traits_adaptor_2::Compare_y_at_x_left_2 compare_y_at_x_left =
+            _m_traits->compare_y_at_x_left_2_object();
+        
+        Halfedge  *lowest_left = NULL;
+        Halfedge  *top_right = NULL;
+        
+        do {
+            // Check whether the current halfedge is defined 
+            // to the left or to the right of the given vertex.
+            if (curr->direction() == LEFT_TO_RIGHT) {
+                // The curve associated with the current halfedge 
+                // is defined to the left of v.
+                if (lowest_left == NULL ||
+                    compare_y_at_x_left (curr->curve(),
+                                         lowest_left->curve(), 
+                                         v->point()) == SMALLER) {
+                    lowest_left = curr;
+                }
+            } else {
+                // The curve associated with the current halfedge 
+                // is defined to the right of v.
+                if (top_right == NULL ||
+                    compare_y_at_x_right (curr->curve(),
+                                          top_right->curve(), 
+                                          v->point()) == LARGER) {
+                    top_right = curr;
+                }
+            }
+            
+            // Move to the next halfedge around the vertex.
+            curr = curr->next()->opposite();
+            
+        } while (curr != first);
+        
+        // The first halfedge we encounter is the lowest to the left, 
+        // but if there is no edge to the left, we first encounter the 
+        // topmost halfedge to the right. Note that as the halfedge we 
+        // located has v as its target, we now have to return its twin.
+        if (lowest_left != NULL) {
+            first = lowest_left->opposite();
+        } else {
+            first = top_right->opposite();
+        }
+        
+    } else {
+        CGAL_assertion(v->boundary_in_y() != CGAL::NO_BOUNDARY);
+        
+        // Otherwise, we traverse the halfedges around v and locate the first
+        // halfedge we encounter if we go from "3 o'clock" clockwise.
+        // First locate the lower left and the top right halfedges around v.
+        typename Traits_adaptor_2::Compare_x_2 compare_x =
+            _m_traits->compare_x_2_object();
+        
+        CGAL::Curve_end leftmost_top_end = CGAL::MIN_END;
+        Halfedge  *leftmost_top = NULL;
+        CGAL::Curve_end rightmost_bottom_end = CGAL::MIN_END;
+        Halfedge  *rightmost_bottom = NULL;
+        
+        do {
+            typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
+                _m_traits->boundary_in_x_2_object();
+            typename Traits_adaptor_2::Boundary_in_y_2 boundary_in_y =
+                _m_traits->boundary_in_y_2_object();
+            
+            CGAL::Curve_end ind = CGAL::MIN_END;
+            
+            CGAL::Boundary_type bd_x = 
+                boundary_in_x(curr->curve(), CGAL::MAX_END);
+            CGAL::Boundary_type bd_y = 
+                boundary_in_y(curr->curve(), CGAL::MAX_END);
+            if (are_equal(v, curr->curve(), CGAL::MAX_END, bd_x, bd_y)) {
+                ind = CGAL::MAX_END;
+            }
+            
+            if (boundary_in_y(curr->curve(),ind) < 0) {
+                // TOP-side
+                if ((leftmost_top == NULL) || 
+                    (leftmost_top->direction() == CGAL::LEFT_TO_RIGHT &&
+                     leftmost_top->direction() != curr->direction()) ||
+                    (leftmost_top->direction() == curr->direction() &&
+                     compare_x(curr->curve(), ind, 
+                               leftmost_top->curve(), leftmost_top_end) == 
+                     CGAL::SMALLER)) {
+                    leftmost_top_end = ind;
+                    leftmost_top = curr;
+                } 
+            } else {
+                // same for BOTTOM-side
+                
+                if ((rightmost_bottom == NULL) || 
+                    (rightmost_bottom->direction() == CGAL::RIGHT_TO_LEFT &&
+                     rightmost_bottom->direction() != curr->direction()) ||
+                    (rightmost_bottom->direction() == curr->direction() &&
+                     compare_x(curr->curve(), ind, 
+                               rightmost_bottom->curve(), 
+                               rightmost_bottom_end) 
+                     == CGAL::LARGER)) {
+                    rightmost_bottom_end = ind;
+                    rightmost_bottom = curr;
+                } 
+            }
+            
+            // Move to the next halfedge around the vertex.
+            curr = curr->next()->opposite();
+            
+        } while (curr != first);
+        
+        // The first halfedge we encounter is the leftmost to top, but if there
+        // is no edge to the left, we first encounter the righmost halfedge 
+        // to the bottom. Note that as the halfedge we located has v as 
+        // its target, we now have to return its twin.
+        if (leftmost_top != NULL) {
+            first = leftmost_top->opposite();
+        } else {
+            first = rightmost_bottom->opposite();
+        }
+    }
+
+    // Return the incident face.
+    if (first->is_on_inner_ccb()) {
+        return (first->inner_ccb()->face());
+    } else {
+        return (first->outer_ccb()->face());
+    }
+}
 
 CGAL_END_NAMESPACE
 
