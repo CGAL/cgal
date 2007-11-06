@@ -48,18 +48,19 @@ TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
 /*
 #ifdef CGAL_USE_GMP
   typedef CGAL::Gmpq                                           NT1;
 #else
 */
-  typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
+  typedef Quotient<MP_Float>                       NT1;
 /*
 #endif
 */
-  typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
-  typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
+  typedef Cartesian<NT1>                                 Linear_k1;
+  typedef Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
+  typedef Circular_kernel_2<Linear_k1, Algebraic_k1>     CK1;
 
 //   typedef CGAL::Interval_nt_advanced                           NT2;
 //   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
@@ -68,7 +69,10 @@ CGAL_BEGIN_NAMESPACE
 
 //  typedef CGAL::Lazy_circular_kernel_2<CK1,CK2>
 //  Exact_circular_kernel_2;
-  typedef CGAL::Filtered_bbox_circular_kernel_2<CK1> Exact_circular_kernel_2;
+
+} // namespace CGALi
+
+typedef Filtered_bbox_circular_kernel_2<CGALi::CK1>   Exact_circular_kernel_2;
 
 CGAL_END_NAMESPACE
 
