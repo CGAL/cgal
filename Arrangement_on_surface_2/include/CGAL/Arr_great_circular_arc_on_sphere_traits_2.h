@@ -532,6 +532,69 @@ public:
   /*! Obtain a Compare_xy_2 function object */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(this); }
 
+  /*! A functor that compares the x-coordinates on the vertical identification
+   * arc
+   */
+  class Compare_x_on_identification_2 {
+  public:
+    /*! Compare the x-coordinates of 2 given points that lie on the vertical
+     * identification arc 
+     * \param point1 the first point
+     * \param point2 the second point
+     * \pre point1 and point2 lie on the vertical identification arc
+     */
+    Comparison_result operator()(const Point_2 & point1,
+                                 const Point_2 & point2) const
+    {
+      CGAL_assertion_msg(0, "There is no vertical identification arc!");
+      return SMALLER;
+    }
+  };
+
+  /*! Obtain a Compare_x_on_identification_2 function object */
+  Compare_x_on_identification_2 compare_x_on_identification_2_object() const
+  { return Compare_x_on_identification_2(); }
+
+  /*! A functor that compares the y-coordinates on the horizontal identification
+   * arc
+   */
+  class Compare_y_on_identification_2 {
+  protected:
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Compare_y_on_identification_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    
+  public:
+    /*! Compare the y-coordinates of 2 given points that lie on the horizontal
+     * identification arc 
+     * \param point1 the first point
+     * \param point2 the second point
+     * \return SMALLER - p1 is lexicographically smaller than p2;
+     *         EQUAL   - p1 and p2 coincides;
+     *         LARGER  - p1 is lexicographically larger than p2;
+     * \pre point1 and point2 lie on the horizontal identification arc
+     */
+    Comparison_result operator()(const Point_2 & point1,
+                                 const Point_2 & point2) const
+    {
+      CGAL_precondition(!point1.is_no_boundary());
+      CGAL_precondition(!point2.is_no_boundary());
+      return m_traits->compare_y(point1, point2);
+    }
+  };
+
+  /*! Obtain a Compare_y_on_identification_2 function object */
+  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
+  { return Compare_y_on_identification_2(this); }
+   
   class Boundary_in_x_2 {
   public:
     /*! Determine whether an endpoint of an x-monotone curve lies on an
@@ -691,33 +754,6 @@ public:
         (xc.is_directed_right()) ?
         ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
         ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
-    }
-
-    /*! Compare the relative y-positions of two curves at an x-boundary.
-     * \param xc1 the first curve.
-     * \param xc2 the second curve.
-     * \param ind MIN_END - the minimal end of xc or
-     *            MAX_END - the maximal end of xc.
-     * \return SMALLER - xc1 lies below xc2;
-     *         EQUAL   - xc1 and xc2 overlap;
-     *         LARGER  - xc1 lies above xc2;
-     * \pre the endpoint indicated by xv1 and ind1 is on the discontinuity arc.
-     * \pre the endpoint indicated by xv2 and ind2 is on the discontinuity arc.
-     * \pre the arcs are not degenerate
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Curve_end ind1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Curve_end ind2) const
-    {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
-
-      const Point_2 & p1 = (ind1 == MIN_END) ? xc1.left() : xc1.right();
-      const Point_2 & p2 = (ind2 == MIN_END) ? xc2.left() : xc2.right();
-      CGAL_precondition(!p1.is_no_boundary());
-      CGAL_precondition(!p2.is_no_boundary());
-      return m_traits->compare_y(p1, p2);
     }
 
     /*! Compare the relative y-positions of two curves at an x-boundary.

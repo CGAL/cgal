@@ -100,16 +100,6 @@ public:
 private:
 
   //! A container of boundary vertices.
-  struct Vertex_key {
-    //! \todo This will work only if the provided curve is permanent
-    // const X_monotone_curve_2 & m_xcurve;
-    X_monotone_curve_2 m_xcurve;
-    Curve_end m_ind;
-    Vertex_key(const X_monotone_curve_2 & xc, Curve_end ind) :
-      m_xcurve(xc), m_ind(ind)
-    {}
-  };
-
   struct Vertex_key_comparer {
     /*! Construct default */
     Vertex_key_comparer() : m_traits(NULL) {}
@@ -117,21 +107,16 @@ private:
     /*! Construct */    
     Vertex_key_comparer(Traits_adaptor_2 * traits) : m_traits(traits) {}
     Traits_adaptor_2 * m_traits;
-    bool operator()(const Vertex_key & k1, const Vertex_key & k2) const
+    bool operator()(const Point_2 & p1, const Point_2 & p2) const
     {
-      const X_monotone_curve_2 & xc1 = k1.m_xcurve;
-      Curve_end ind1 = k1.m_ind;
-
-      const X_monotone_curve_2 & xc2 = k2.m_xcurve;
-      Curve_end ind2 = k2.m_ind;
-
-      return (m_traits->compare_y_at_x_2_object()(xc1, ind1, xc2, ind2) ==
+      return (m_traits->compare_y_on_identification_2_object()(p1, p2) ==
               SMALLER);
     }
   };
-  
-  typedef std::map<Vertex_key,Vertex*,Vertex_key_comparer>  Vertex_map;
-  typedef std::pair<Vertex_key,Vertex*>                     Vertex_value;
+
+  //! \todo define the key to be 'const Point_2*'.
+  typedef std::map<Point_2,Vertex*,Vertex_key_comparer>  Vertex_map;
+  typedef std::pair<Point_2,Vertex*>                     Vertex_value;
 
 protected:
   // Data members:
@@ -190,7 +175,7 @@ public:
   /*! Obtain the DCEL (non-const version). */
   Dcel & dcel()
   {
-    return (m_dcel);
+    return m_dcel;
   }
 
   /*! Determine whether the DCEL reprsenets an empty structure.
@@ -205,22 +190,22 @@ public:
   void init_dcel();
 
   /*! Make the necessary updates after the DCEL structure have been updated. */
-  void dcel_updated ();
+  void dcel_updated();
 
   /*! Determine whether the given vertex is concrete.
    * \param v the vertex.
    * \return true if v is mapped to a point on the discontinuity arc; false
    * otherwise.
    */
-  bool is_concrete_vertex (const Vertex * /* v */) const
+  bool is_concrete_vertex(const Vertex * /* v */) const
   {
-    return (true);
+    return true;
   }
 
   /*! Obtain the number of concrete vertices.
    * \return the number of concrete vertices.
    */
-  Size number_of_concrete_vertices () const
+  Size number_of_concrete_vertices() const
   {
     return (m_dcel.size_of_vertices());
   }
@@ -231,7 +216,7 @@ public:
    */
   bool is_valid_vertex (const Vertex * /* v */) const
   {
-    return (true);
+    return true;
   }
 
   /*! Obtain the number of valid vertices. */
@@ -243,7 +228,7 @@ public:
   /*! Determine whether the given halfedge is valid. */
   bool is_valid_halfedge (const Halfedge * /* he */) const
   {
-    return (true);
+    return true;
   }
 
   /*! Obtain the number of valid halfedges. */
@@ -255,84 +240,74 @@ public:
   /*! Determine whether the given face is valid. */
   bool is_valid_face(const Face * /* f */) const
   {
-    return (true);
+    return true;
   }
   
   /*! Obtain the number of valid faces. */
   Size number_of_valid_faces() const
   {
-    return (m_dcel.size_of_faces());
+    return m_dcel.size_of_faces();
   }
 
   /*! Obtain the spherical face (const version). */
   const Face * spherical_face() const
   {
-    return (m_spherical_face);
+    return m_spherical_face;
   }
 
   /*! Obtain the spherical face (non-const version). */
   Face * spherical_face()
   {
-    return (m_spherical_face);
+    return m_spherical_face;
   }
 
   /*! Obtain the face containing the south pole (const version). */
   const Face * south_face() const
   {
-    typename Vertex_map::const_iterator  it = m_boundary_vertices.begin();
-
-    if (it == m_boundary_vertices.end())
-      return (m_spherical_face);
-    else
-      return (_face_below_vertex_on_discontinuity (it->second));
+    if (m_boundary_vertices.empty()) return m_spherical_face;
+    typename Vertex_map::const_iterator it = m_boundary_vertices.begin();
+    return _face_below_vertex_on_discontinuity(it->second);
   }
 
   /*! Obtain the face containing the south pole (non-const version). */
   Face * south_face()
   {
-    typename Vertex_map::iterator  it = m_boundary_vertices.begin();
-
-    if (it == m_boundary_vertices.end())
-      return (m_spherical_face);
-    else
-      return (_face_below_vertex_on_discontinuity (it->second));
+    if (m_boundary_vertices.empty()) return m_spherical_face;
+    typename Vertex_map::iterator it = m_boundary_vertices.begin();
+    return _face_below_vertex_on_discontinuity(it->second);
   }
 
   /*! Obtain the south pole (const version). */
   const Vertex * south_pole() const
   {
-    return (m_south_pole);
+    return m_south_pole;
   }
 
   /*! Obtain the south pole (non-const version). */
   Vertex * south_pole()
   {
-    return (m_south_pole);
+    return m_south_pole;
   }
 
   /*! Obtain the north pole (const version). */
   const Vertex * north_pole() const
   {
-    return (m_north_pole);
+    return m_north_pole;
   }
 
   /*! Obtain the north pole (non-const version). */
   Vertex * north_pole()
   {
-    return (m_north_pole);
+    return m_north_pole;
   }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists). */ 
-  Vertex * discontinuity_vertex (const X_monotone_curve_2 xc,
-                                 Curve_end ind)
+  Vertex * discontinuity_vertex (const X_monotone_curve_2 xc, Curve_end ind)
   {
-    Vertex_key                     key(xc, ind);
+    const Point_2 & key = (ind == MIN_END) ? xc.left() : xc.right();
     typename Vertex_map::iterator  it = m_boundary_vertices.find(key);
-
-    if (it != m_boundary_vertices.end())
-      return (it->second);
-    return (NULL);
+    return (it != m_boundary_vertices.end()) ? it->second : NULL;
   }
 
   //@}
@@ -393,7 +368,7 @@ private:
     typedef typename Base::Construction_helper          Construction_helper;
 
     _Overlay_helper(const ArrangementA_ * arrA, const ArrangementB_ * arrB) :
-      Base (arrA, arrB) {}
+      Base(arrA, arrB) {}
   };
   //@}
 
@@ -441,8 +416,8 @@ public:
     typedef typename Base::Event                        Event;
     typedef typename Base::Subcurve                     Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor (const Arr * arr,
-                                               Output_iterator * oi) :
+    Sweep_line_vertical_decomposition_visitor(const Arr * arr,
+                                              Output_iterator * oi) :
       Base(arr, oi)
     {}
   };
@@ -515,17 +490,17 @@ public:
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion (const Halfedge *prev1,
-                                   const Halfedge *prev2,
-                                   const X_monotone_curve_2& cv) const
+  face_split_after_edge_insertion(const Halfedge * prev1,
+                                  const Halfedge * prev2,
+                                  const X_monotone_curve_2 & cv) const
   {
-    CGAL_precondition (prev1->is_on_inner_ccb());
-    CGAL_precondition (prev2->is_on_inner_ccb());
-    CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
+    CGAL_precondition(prev1->is_on_inner_ccb());
+    CGAL_precondition(prev2->is_on_inner_ccb());
+    CGAL_precondition(prev1->inner_ccb() == prev2->inner_ccb());
 
     // In case of a planar topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
-    return (std::make_pair (true, true));
+    return (std::make_pair(true, true));
   }
 
   /*! Determine whether the removal of the given edge will cause the creation
@@ -534,25 +509,19 @@ public:
    * \pre Both he and its twin lie on an outer CCB of their incident faces.
    * \return Whether a new hole will be created.
    */
-  bool hole_creation_after_edge_removal (const Halfedge *he) const
+  bool hole_creation_after_edge_removal(const Halfedge * he) const
   {
-    CGAL_precondition (! he->is_on_inner_ccb());
-    CGAL_precondition (! he->opposite()->is_on_inner_ccb());
+    CGAL_precondition(!he->is_on_inner_ccb());
+    CGAL_precondition(!he->opposite()->is_on_inner_ccb());
 
-    // Check whether the halfedge and its twin belong to the same outer CCB
-    // (and are therefore incident to the same face).
-    if (he->outer_ccb() == he->opposite()->outer_ccb())
-    {
-      // In this case we cut an antenna, therefore we seperate a new hole
-      // from the outer CCB of the face.
-      return (true);
-    }
-    else
-    {
-      // The edge separates two faces. When we remove it, these two faces will
-      // be merged, but no new hole will be created.
-      return (false);
-    }
+    /* Check whether the halfedge and its twin belong to the same outer CCB
+     * (and are therefore incident to the same face).
+     * If they do, cut an antenna. That is, seperate a new hole from the outer
+     * CCB of the face (return true).
+     * Otherwise, the edge separates two faces. When removed, these two faces
+     * will be merged, but no new hole will be created (return false).
+     */
+    return (he->outer_ccb() == he->opposite()->outer_ccb());
   }
 
   /*! Given two predecessor halfedges that will be used for inserting a
@@ -581,12 +550,12 @@ public:
    * \return Whether the two halfedge belong to the outer boundary of the same
    *         face.
    */
-  bool boundaries_of_same_face (const Halfedge * /* e1 */,
-                                const Halfedge * /* e2 */) const
+  bool boundaries_of_same_face(const Halfedge * /* e1 */,
+                               const Halfedge * /* e2 */) const
   {
     // This function is never called in case of an arrangement on a sphere:
-    CGAL_assertion (false);
-    return (false);
+    CGAL_assertion(false);
+    return false;
   }
 
   /*! Determine whether a given point lies in the interior of a given face.
@@ -649,8 +618,8 @@ public:
    *      incident to the vertex v.
    * \return An object that contains the curve end.
    */
-  Halfedge* locate_around_boundary_vertex (Vertex *v,
-                                           const X_monotone_curve_2& cv,
+  Halfedge * locate_around_boundary_vertex(Vertex * v,
+                                           const X_monotone_curve_2 & cv,
                                            Curve_end ind,
                                            Boundary_type bound_x,
                                            Boundary_type bound_y) const;
@@ -663,10 +632,8 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_curve_end (const X_monotone_curve_2 & xc,
-                                 Curve_end ind,
-                                 Boundary_type bound_x,
-                                 Boundary_type bound_y);
+  CGAL::Object locate_curve_end(const X_monotone_curve_2 & xc, Curve_end ind,
+                                Boundary_type bound_x, Boundary_type bound_y);
 
   /*! Split a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
@@ -675,21 +642,21 @@ public:
    * \return A halfedge whose direction is the same as e's and whose target is
    *         the split vertex v.
    */
-  Halfedge * split_fictitious_edge (Halfedge * /* e */, Vertex * /* v */)
+  Halfedge * split_fictitious_edge(Halfedge * /* e */, Vertex * /* v */)
   {
     // There are no fictitious halfedges:
     CGAL_assertion(false);
-    return (NULL);
+    return NULL;
   }
 
   /*! Determine whether the given face is unbounded.
    * \param f The face.
    * \return true if f is unbounded; false otherwise.
    */
-  bool is_unbounded (const Face * /* f */) const
+  bool is_unbounded(const Face * /* f */) const
   {
     // All faces on a sphere are bounded:
-    return (false);
+    return false;
   }
 
   /*! Determine whether the given boundary vertex is redundant.
@@ -719,30 +686,29 @@ protected:
    * \pre v is a valid boundary.
    * \return The curve that induces v.
    */
-  const X_monotone_curve_2 & _curve (const Vertex * v,
-                                     Curve_end & ind) const;
+  const X_monotone_curve_2 & _curve(const Vertex * v, Curve_end & ind) const;
 
   /*! Return the halfedge, the target vertex of which is given, that is
    * the predecessor of a halfedge, the curve of which is given, that is about
    * to be inserted into the dcel.
    */
   Halfedge *
-  _locate_around_vertex_on_discontinuity (Vertex * v,
-                                          const X_monotone_curve_2 & xc,
-                                          Curve_end ind) const;
+  _locate_around_vertex_on_discontinuity(Vertex * v,
+                                         const X_monotone_curve_2 & xc,
+                                         Curve_end ind) const;
 
   /*! Return the halfedge, the target vertex of which is a given pole,
    * that is the predecessor of a halfedge, the curve of which is given, that
    * is about to be inserted into the dcel.
    */
-  Halfedge * _locate_around_pole (Vertex * v, const X_monotone_curve_2 & xc,
-                                  Curve_end ind) const;
+  Halfedge * _locate_around_pole(Vertex * v, const X_monotone_curve_2 & xc,
+                                 Curve_end ind) const;
 
 
   /*! Return the face that lies below the given vertex, which lies
    * on the line of discontinuity.
    */
-  Face * _face_below_vertex_on_discontinuity (Vertex * v) const;
+  Face * _face_below_vertex_on_discontinuity(Vertex * v) const;
 
   //@}
 };
