@@ -2511,6 +2511,18 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
   DVertex     *v1 = prev1->vertex();
   DVertex     *v2 = prev2->vertex();
 
+#if 0
+  std::cout << "cv: " << cv << std::endl;
+  std::cout << "p1: " << prev1->curve() << std::endl;
+  std::cout << "dir1: " 
+            << (prev1->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+            << std::endl;
+  std::cout << "p2: " << prev2->curve() << std::endl;
+  std::cout << "dir2: " 
+            << (prev2->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+            << std::endl;
+#endif
+
   // Get the components containing the two previous halfedges and the incident
   // face (which should be the same for the two components).
   DInner_ccb  *ic1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
@@ -2521,6 +2533,16 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
 
   CGAL_precondition_code
     (DFace       *f2 = (ic2 != NULL) ? ic2->face() : oc2->face(););
+
+#if 0
+  std::cout << "ic1: " << ic1 << std::endl;
+  std::cout << "ic2: " << ic2 << std::endl;
+  std::cout << "oc1: " << oc1 << std::endl;
+  std::cout << "oc2: " << oc2 << std::endl;
+
+  std::cout << "f1: " << &(*f) << std::endl;
+  std::cout << "f2: " << &(*f2) << std::endl;
+#endif
 
   CGAL_precondition_msg
     (f == f2,
@@ -2956,7 +2978,7 @@ _relocate_inner_ccbs_in_new_face (DHalfedge *new_he)
   // ones into the new face.
   DInner_ccb_iter    ic_it = old_face->inner_ccbs_begin();
   DInner_ccb_iter    ic_to_move;
-  
+
   while (ic_it != old_face->inner_ccbs_end())
   {
     // In case the new edge represents the current component in the old face
