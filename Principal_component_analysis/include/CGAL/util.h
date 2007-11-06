@@ -29,18 +29,21 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 // Initialize a matrix in n dimension by an array or numbers
-template<typename K>
+template <typename K>
 typename CGAL::Linear_algebraCd<typename K::FT>::Matrix
-init_Matrix(int n, typename K::FT entries[]) {
-  CGAL_assertion(n>1); // the dimension > 1
+init_matrix(const int n,
+						typename K::FT entries[])
+{
+  CGAL_assertion(n > 1); // dimension > 1
   typedef typename CGAL::Linear_algebraCd<typename K::FT>::Matrix Matrix;
-  Matrix ret(n);
-  for(int i=0;i<n;i++) {
-    for(int j=0;j<n;j++) {
-      ret[i][j]=entries[i*n+j];
-    }
-  }
-  return ret;
+
+	Matrix m(n);
+	int i,j;
+  for(i = 0; i < n; i++) 
+    for(j = 0; j < n; j++)
+			m[i][j] = entries[i*n+j];
+
+  return m;
 } // end initialization of matrix
 
 // assemble covariance matrix from a point set 
@@ -53,7 +56,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Point_3*,   // used for indirection
-			     const CGAL::PCA_dimension_0_tag& tag)
+			                       const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -90,7 +93,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Triangle_3*,// used for indirection
-			     const CGAL::PCA_dimension_2_tag& tag)
+			                       const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -252,7 +255,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-			     const CGAL::PCA_dimension_2_tag& tag)
+			                       const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -292,7 +295,15 @@ assemble_covariance_matrix_3(InputIterator first,
 		   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation = init_Matrix<K>(3,delta);
-    FT area = pow(delta[0]*delta[0] + delta[3]*delta[3] + delta[6]*delta[6],1/3.0)*pow(delta[1]*delta[1] + delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 + pow(delta[0]*delta[0] + delta[3]*delta[3] + delta[6]*delta[6],1/3.0)*pow(delta[2]*delta[2] + delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2 + pow(delta[1]*delta[1] + delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*pow(delta[2]*delta[2] + delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2;
+    FT area = pow(delta[0]*delta[0] + delta[3]*delta[3] +
+			            delta[6]*delta[6],1/3.0)*pow(delta[1]*delta[1] +
+									delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 +
+									pow(delta[0]*delta[0] + delta[3]*delta[3] +
+									delta[6]*delta[6],1/3.0)*pow(delta[2]*delta[2] +
+									delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2 +
+									pow(delta[1]*delta[1] + delta[4]*delta[4] +
+									delta[7]*delta[7],1/3.0)*pow(delta[2]*delta[2] +
+									delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2;
     CGAL_assertion(area != 0.0);
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
@@ -655,71 +666,7 @@ assemble_covariance_matrix_3(InputIterator first,
 
 }
 
-/*
-// assemble covariance matrix from a triangle set 
-template < typename InputIterator,
-           typename K >
-void
-assemble_covariance_matrix_3_pierre(InputIterator first,
-                             InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
-                             const typename K::Point_3& c, // centroid
-                             const K& ,                    // kernel
-                             const typename K::Triangle_3*)// used for indirection
-{
-  typedef typename K::FT       FT;
-  typedef typename K::Point_3  Point;
-  typedef typename K::Vector_3 Vector;
-  typedef typename K::Triangle_3 Triangle;
 
-  // Matrix numbering:
-  // 0          
-  // 1 2
-  // 3 4 5          
-  covariance[0] = covariance[1] = covariance[2] = 
-  covariance[3] = covariance[4] = covariance[5] = (FT)0.0;
-  FT sum_areas = 0.0;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& triangle = *it;
-    FT area = std::sqrt(triangle.squared_area());
-    Point c_t = K().construct_centroid_3_object()(triangle[0],triangle[1],triangle[2]);
-    sum_areas += area;
-
-    // e1 = ab, e2 = ac
-    Vector e1 = Vector(triangle[0],triangle[1]);
-    Vector e2 = Vector(triangle[0],triangle[2]);
-
-    FT c1 = (FT)(2.0 * area * 10.0 / 72.0);
-    FT c2 = (FT)(2.0 * area *  7.0 / 72.0);
-        
-    covariance[0] += c1*(e1[0]*e1[0] + e2[0]*e2[0]) + (FT)2.0*c2*e1[0]*e2[0];
-    covariance[1] += c1*(e1[1]*e1[0] + e2[1]*e2[0]) + c2*(e1[1]*e2[0] + e1[0]*e2[1]);
-    covariance[2] += c1*(e1[1]*e1[1] + e2[1]*e2[1]) + (FT)2.0*c2*e1[1]*e2[1];
-    covariance[3] += c1*(e1[2]*e1[0] + e2[2]*e2[0]) + c2*(e1[2]*e2[0] + e1[0]*e2[2]);
-    covariance[4] += c1*(e1[2]*e1[1] + e2[2]*e2[1]) + c2*(e1[2]*e2[1] + e1[1]*e2[2]);
-    covariance[5] += c1*(e1[2]*e1[2] + e2[2]*e2[2]) + (FT)2.0*c2*e1[2]*e2[2];
-    
-    // add area(t) c(t) * transpose(c(t))
-    covariance[0] += area * c_t.x() * c_t.x();
-    covariance[1] += area * c_t.y() * c_t.x();
-    covariance[2] += area * c_t.y() * c_t.y();
-    covariance[3] += area * c_t.z() * c_t.x();
-    covariance[4] += area * c_t.z() * c_t.y();
-    covariance[5] += area * c_t.z() * c_t.z();
-  }
-
-  // remove sum(area) * (c * transpose(c))
-  covariance[0] -= sum_areas * c.x() * c.x();
-  covariance[1] -= sum_areas * c.y() * c.x();
-  covariance[2] -= sum_areas * c.y() * c.y();
-  covariance[3] -= sum_areas * c.z() * c.x();
-  covariance[4] -= sum_areas * c.z() * c.y();
-  covariance[5] -= sum_areas * c.z() * c.z();
-}
-*/
 // compute the eigen values and vectors of the covariance 
 // matrix and deduces the best linear fitting plane.
 // returns fitting quality

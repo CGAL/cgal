@@ -79,7 +79,7 @@ linear_least_squares_fitting_2(InputIterator first,
   FT temp[4] = {1/12.0, 1/24.0,
 		1/24.0, 1/12.0};
 
-  Matrix moment = init_Matrix<K>(2,temp);
+  Matrix moment = init_matrix<K>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -95,7 +95,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT delta[4] = {t[1].x() - x0, t[2].x() - x0,
 		   t[1].y() - y0, t[2].y() - y0};
 
-    Matrix transformation = init_Matrix<K>(2,delta);
+    Matrix transformation = init_matrix<K>(2,delta);
     FT area = 0.5 * std::abs(LA::determinant(transformation));
     CGAL_assertion(area!=0);
 
@@ -129,7 +129,6 @@ linear_least_squares_fitting_2(InputIterator first,
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  //  CGALi::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
   FT eigen_vectors1[4];
   FT eigen_values1[2];
   eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
@@ -139,13 +138,11 @@ linear_least_squares_fitting_2(InputIterator first,
   if(eigen_values.first != eigen_values.second)
   {
     // regular case
-    //    std::cout<<"AnIsotropic!! "<<eigen_values.second<<" "<<eigen_values.first<<" "<<std::sqrt((double)covariance[0]/(double)covariance[2])<<std::endl;
     line = Line(c, eigen_vectors.first);
     return (FT)1.0 - eigen_values.second / eigen_values.first;
   } 
   else
   {
-    //    std::cout<<"Isotropic!!"<<std::endl;
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through 
     // the centroid and with a default horizontal vector.
@@ -162,10 +159,9 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Triangle_2*,// used for indirection
-			       const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   // types
-
   typedef typename K::Triangle_2 Triangle;
   typedef typename K::Segment_2  Segment_2;
 
@@ -195,7 +191,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Triangle_2*,// used for indirection
-			       const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   // types
 

@@ -43,7 +43,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,     // centroid
                                const K& k,                 // kernel
                                const typename K::Point_3*, // used for indirection
-			       const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
