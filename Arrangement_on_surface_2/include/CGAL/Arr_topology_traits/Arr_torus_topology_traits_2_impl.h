@@ -304,21 +304,17 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
     
     CGAL_precondition(_valid(bound_x, bound_y));
     
-    // In case the given boundary conditions do not match those of the given
-    // vertex, v cannot represent the curve end.
-    if (bound_x != v->boundary_in_x() || bound_y != v->boundary_in_y()) {
-        return false;
-    }
-    
     // TODO use compare_on_identification!
     // check wether the two concrete points are equal
-    return (this->_m_traits->compare_xy_2_object() (
-                    v->point(),
-                    (ind == CGAL::MIN_END ?
-                     this->_m_traits->construct_min_vertex_2_object()(cv) :
-                     this->_m_traits->construct_max_vertex_2_object()(cv))) 
-            == CGAL::EQUAL
-    );
+    bool res = 
+        (this->_m_traits->compare_xy_2_object() (
+                v->point(),
+                (ind == CGAL::MIN_END ?
+                 this->_m_traits->construct_min_vertex_2_object()(cv) :
+                 this->_m_traits->construct_max_vertex_2_object()(cv))) 
+         == CGAL::EQUAL
+        );
+    return res;
 }
 
 //-----------------------------------------------------------------------------
