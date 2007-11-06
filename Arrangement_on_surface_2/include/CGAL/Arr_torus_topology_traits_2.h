@@ -798,17 +798,23 @@ protected:
     inline 
     bool  _valid(CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) 
         const {
-        return (                        
-                ((bound_x == CGAL::AFTER_DISCONTINUITY || 
-                  bound_x == CGAL::BEFORE_DISCONTINUITY) &&
-                 bound_y == CGAL::NO_BOUNDARY) 
-                ||
-                ((bound_y == CGAL::AFTER_DISCONTINUITY || 
-                  bound_y == CGAL::BEFORE_DISCONTINUITY) &&
-                 bound_x == CGAL::NO_BOUNDARY)
-        );
+        bool res = 
+            ((bound_x == CGAL::AFTER_DISCONTINUITY || 
+              bound_x == CGAL::BEFORE_DISCONTINUITY) &&
+             bound_y == CGAL::NO_BOUNDARY)
+            ||
+            ((bound_y == CGAL::AFTER_DISCONTINUITY || 
+              bound_y == CGAL::BEFORE_DISCONTINUITY) &&
+             bound_x == CGAL::NO_BOUNDARY);
+#if !NDEBUG
+        if (!res) {
+            std::cerr << "Not valid: bd_x = " << bound_x 
+                      << " bd_y = " << bound_y << std::endl;
+        }
+#endif
+        return res;
     }       
-    
+
     /*!
      * Computes the number of crossing of a path with the curves 
      * of identification
