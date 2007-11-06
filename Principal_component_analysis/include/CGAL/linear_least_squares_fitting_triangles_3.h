@@ -23,7 +23,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen.h>
-#include <CGAL/util.h>
+#include <CGAL/PCA_util.h>
 
 #include <iterator>
 

@@ -25,7 +25,7 @@
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
-#include <CGAL/util.h>
+#include <CGAL/PCA_util.h>
 
 #include <iterator>
 #include <vector>
