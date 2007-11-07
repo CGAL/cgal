@@ -6,6 +6,8 @@
 #include <list>
 #include <iostream>
 
+#include <cstdlib>
+
 typedef CGAL::Double_map<int, int> Map;
 
 int main(int argc, char** argv)
@@ -17,7 +19,7 @@ int main(int argc, char** argv)
 #endif
 
   if(argc > 1)
-    number_of_elements = atoi(argv[1]);
+    number_of_elements = std::atoi(argv[1]);
 
   /* FOR VISUAL DEBUGGING */
   std::cerr << "Creating empty maps f and f2...\n";
