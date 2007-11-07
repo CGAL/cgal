@@ -41,7 +41,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Tetrahedron_3*,  // used for indirection
-			                         const CGAL::PCA_dimension_3_tag& tag)
+			                         const CGAL::PCA_dimension_3_tag& tag = CGAL::PCA_dimension_3_tag())
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
@@ -72,7 +72,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Tetrahedron_3*,  // used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
@@ -182,7 +182,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Tetrahedron_3*,  // used for indirection
-			       const CGAL::PCA_dimension_3_tag& tag)
+			                         const CGAL::PCA_dimension_3_tag& tag = CGAL::PCA_dimension_3_tag())
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;

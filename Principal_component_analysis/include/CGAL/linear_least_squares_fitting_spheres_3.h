@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-// fits a plane to a 3D sphere set
+// fits a plane to a set of 3D balls (3D)
 template < typename InputIterator, 
            typename K >
 typename K::FT
@@ -41,7 +41,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Sphere_3*,  // used for indirection
-			       const CGAL::PCA_dimension_3_tag& tag)
+			                         const CGAL::PCA_dimension_3_tag& tag = CGAL::PCA_dimension_3_tag())
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3    Sphere;
@@ -71,7 +71,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Sphere_3*,  // used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3    Sphere;
@@ -91,7 +91,8 @@ linear_least_squares_fitting_3(InputIterator first,
 
 } // end linear_least_squares_fitting_spheres_3
 
-// fits a line to a 3D sphere set
+
+// fits a line to a 3D ball set
 template < typename InputIterator, 
            typename K >
 typename K::FT
@@ -101,7 +102,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Sphere_3*,  // used for indirection
-			       const CGAL::PCA_dimension_3_tag& tag)
+			                         const CGAL::PCA_dimension_3_tag& tag = CGAL::PCA_dimension_3_tag())
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -132,7 +133,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Sphere_3*,  // used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;

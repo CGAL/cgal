@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Segment_2*,// used for indirection
-			       const CGAL::PCA_dimension_1_tag& tag)   
+			                         const CGAL::PCA_dimension_1_tag& tag = CGAL::PCA_dimension_1_tag())   
 {
   // types
   typedef typename K::FT       FT;
@@ -73,8 +73,7 @@ linear_least_squares_fitting_2(InputIterator first,
   FT covariance[3] = {0.0,0.0,0.0};
 
   // assemble 2nd order moment about the origin.  
-  FT temp[4] = {1.0, 0.5,
-		0.5, 1.0};
+  FT temp[4] = {1.0, 0.5, 0.5, 1.0};
   Matrix moment = (1.0/3.0) * init_matrix<K>(2,temp);
 
   for(InputIterator it = first;
@@ -148,7 +147,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K& k,                   // kernel
                                const typename K::Segment_2*,// used for indirection
-			       const CGAL::PCA_dimension_0_tag& tag)   
+			                         const CGAL::PCA_dimension_0_tag& tag)   
 {
   // types
   typedef typename K::Point_2  Point;

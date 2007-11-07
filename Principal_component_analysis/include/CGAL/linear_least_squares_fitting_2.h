@@ -43,10 +43,9 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Line_2& line,
                                typename K::Point_2& centroid,
                                const K& k,
-			       const tag& t)
+			                         const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,
                                                centroid, k, (Value_type*) NULL, t);
 }
@@ -59,7 +58,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,
                                const K& k,
-			       const tag& t)
+			                         const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
@@ -71,37 +70,39 @@ linear_least_squares_fitting_2(InputIterator first,
 // deduces the kernel from the points in container.
 template < typename InputIterator, 
            typename Line,
-	   typename tag>
+	         typename tag>
 inline
 typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                Line& line,
                                typename Kernel_traits<Line>::Kernel::Point_2& centroid,
-			       const tag& t)
+			                         const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
   typedef typename Kernel_traits<Value_type>::Kernel K;
   return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,K(), t);
 }
 
 // does not return the centroid and deduces the kernel as well.
 template < typename InputIterator, 
-           typename Line, typename tag >
+           typename Line,
+           typename tag >
 inline
 typename Kernel_traits<Line>::Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                Line& line,
-			       const tag& t)
+			                         const tag& t)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
   return CGAL::linear_least_squares_fitting_2(first,beyond,line,K(), t);
 }
 
 CGAL_END_NAMESPACE
+
+  //  BOOST_STATIC_ASSERT((boost::is_same<typename CGAL::Algebraic_structure_traits<Value_type>::Algebraic_category,CGAL::Field_with_sqrt_tag>::value));
+
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H

@@ -41,7 +41,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::PCA_dimension_2_tag& tag = CGAL::PCA_dimension_2_tag())
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -71,7 +71,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
-			       const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -106,7 +106,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
-			       const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -141,7 +141,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::PCA_dimension_2_tag& tag = CGAL::PCA_dimension_2_tag())
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -171,7 +171,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
-			       const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -206,7 +206,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const K& k,                   // kernel
                                const typename K::Triangle_3*,  // used for indirection
-			       const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;

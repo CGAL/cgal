@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Iso_rectangle_2*,// used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::PCA_dimension_2_tag& tag = CGAL::PCA_dimension_2_tag())
 {
   // types
   typedef typename K::FT       FT;
@@ -124,20 +124,17 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[1] += mass * (-1.0 * c.x() * c.y());
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
-  // to remove later
-  //  std::cout<<covariance[0]<<" "<<covariance[1]<<" "<<covariance[2]<<std::endl;
-
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  //  CGALi::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
   FT eigen_vectors1[4];
   FT eigen_values1[2];
   eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
   eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
   eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
+
   // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
   {
@@ -163,7 +160,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Iso_rectangle_2*,// used for indirection
-			       const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
@@ -189,7 +186,9 @@ linear_least_squares_fitting_2(InputIterator first,
 
 } // end linear_least_squares_fitting_2 for rectangle set with 1D tag
 
-template < typename InputIterator, typename K >
+
+template < typename InputIterator,
+           typename K >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -197,7 +196,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const K&,                   // kernel
                                const typename K::Iso_rectangle_2*,// used for indirection
-			       const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
