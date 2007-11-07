@@ -27,6 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifdef __BORLANDC__
+namespace {
 // Borland doesn't initialize the FPU exception mask correctly
 // => FP exceptions.
 struct Borland_workaround
@@ -34,7 +35,8 @@ struct Borland_workaround
     Borland_workaround() { FPU_set_cw(CGAL_FE_TONEAREST); }
 };
 
-static Borland_workaround Borland_workaround_object;
+Borland_workaround Borland_workaround_object;
+} // namespace
 #endif // __BORLANDC__
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
@@ -58,8 +60,8 @@ double minimin = init_min_double();
 }
 #endif
 
-namespace CGALi {
+namespace {
 int dummy_symbol_for_stopping_VC_linker_warning;
-} // namespace CGALi
+} // namespace
 
 CGAL_END_NAMESPACE
