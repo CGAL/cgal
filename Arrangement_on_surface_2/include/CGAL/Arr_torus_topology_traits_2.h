@@ -129,7 +129,7 @@ protected:
         Traits_adaptor_2 * _m_traits;
         
         bool operator()(const Point_2& p1, const Point_2& p2) const {
-            return (_m_traits->compare_xy_2_object()(
+            return (_m_traits->compare_x_on_identification_2_object()(
                             p1, p2
                     ) == CGAL::SMALLER);
         }
@@ -150,7 +150,7 @@ protected:
         Traits_adaptor_2 * _m_traits;
 
         bool operator()(const Point_2& p1, const Point_2& p2) const {
-            return (_m_traits->compare_xy_2_object()(
+            return (_m_traits->compare_y_on_identification_2_object()(
                             p1, p2
                     ) == CGAL::SMALLER);
         }
