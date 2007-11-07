@@ -579,7 +579,8 @@ locate_curve_end(const X_monotone_curve_2 & xc, Curve_end ind,
   // discontinuity that is strictly above the curve end. If there is none,
   // we know the curve end is contained in the spherical face. Otherwise,
   // we return the face that lies below the vertex v.
-  if (m_boundary_vertices.empty()) return CGAL::make_object(m_spherical_face);
+  if (it == m_boundary_vertices.end())
+    return CGAL::make_object(m_spherical_face);
 
   v = it->second;
   return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
