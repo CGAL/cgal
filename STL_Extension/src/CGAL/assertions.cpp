@@ -39,15 +39,17 @@ not_implemented()
     assert( false);
 }
 
-// static behaviour variables
-// --------------------------
 
-static Failure_behaviour _error_behaviour   = THROW_EXCEPTION;
-static Failure_behaviour _warning_behaviour = CONTINUE;
+namespace {
+
+// behaviour variables
+// -------------------
+
+Failure_behaviour _error_behaviour   = THROW_EXCEPTION;
+Failure_behaviour _warning_behaviour = CONTINUE;
 
 // standard error handlers
 // -----------------------
-static
 void
 _standard_error_handler(
         const char* what,
@@ -69,7 +71,6 @@ _standard_error_handler(
 
 // standard warning handler
 // ------------------------
-static
 void
 _standard_warning_handler( const char *,
                           const char* expr,
@@ -87,11 +88,10 @@ _standard_warning_handler( const char *,
 
 // default handler settings
 // ------------------------
-static Failure_function
-_error_handler = _standard_error_handler;
+Failure_function _error_handler   = _standard_error_handler;
+Failure_function _warning_handler = _standard_warning_handler;
 
-static Failure_function
-_warning_handler = _standard_warning_handler;
+} // anonymous namespace
 
 // failure functions
 // -----------------
