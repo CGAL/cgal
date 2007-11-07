@@ -62,6 +62,8 @@ _standard_error_handler(
          << "Line: " << line << std::endl;
     if ( msg != 0)
         std::cerr << "Explanation:" << msg << std::endl;
+    std::cerr << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
+	      << std::endl;
 }
 
 
@@ -81,7 +83,6 @@ _standard_warning_handler( const char *,
          << "Line: " << line << std::endl;
     if ( msg != 0)
         std::cerr << "Explanation:" << msg << std::endl;
-
 }
 
 // default handler settings
