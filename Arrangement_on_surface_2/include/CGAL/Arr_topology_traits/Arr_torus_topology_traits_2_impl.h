@@ -306,8 +306,28 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
     
     // TODO use compare_on_identification!
     // check wether the two concrete points are equal
+    if (v->boundary_in_x() != CGAL::NO_BOUNDARY) {
+        if (bound_x == CGAL::NO_BOUNDARY) {
+            return false;
+        }
+        // else
+        bool res = 
+            (this->_m_traits->compare_y_on_identification_2_object() (
+                    v->point(),
+                    (ind == CGAL::MIN_END ?
+                     this->_m_traits->construct_min_vertex_2_object()(cv) :
+                     this->_m_traits->construct_max_vertex_2_object()(cv))) 
+             == CGAL::EQUAL
+            );
+        return res;
+    }
+    CGAL_assertion(v->boundary_in_y() != CGAL::NO_BOUNDARY);
+    if (bound_y == CGAL::NO_BOUNDARY) {
+        return false;
+    }
+    // else 
     bool res = 
-        (this->_m_traits->compare_xy_2_object() (
+        (this->_m_traits->compare_x_on_identification_2_object() (
                 v->point(),
                 (ind == CGAL::MIN_END ?
                  this->_m_traits->construct_min_vertex_2_object()(cv) :
@@ -1034,14 +1054,27 @@ _sign_of_path(
     
     if (bcv1x != NO_BOUNDARY || bcv1y != NO_BOUNDARY || 
         bcv2x != NO_BOUNDARY || bcv2y != NO_BOUNDARY) {
-        
-        // counters can change!
-        CGAL::Comparison_result cmp = 
-            (this->_m_traits->compare_xy_2_object()(
-                    prev1->vertex()->point(),
-                    this->_m_traits->construct_min_vertex_2_object()(cv)));
+        // sign can change!
 
-        if (cmp != CGAL::EQUAL) {
+        
+        bool equal = false;
+
+        Point_2 minp = this->_m_traits->construct_min_vertex_2_object()(cv);
+        CGAL::Boundary_type bound_x = 
+            this->_m_traits->boundary_in_x_2_object()(cv, CGAL::MIN_END);
+        CGAL::Boundary_type bound_y = 
+            this->_m_traits->boundary_in_y_2_object()(cv, CGAL::MIN_END);
+        
+        if (bcv1x != NO_BOUNDARY || bcv1y != NO_BOUNDARY) {
+            equal = this->are_equal(prev1->vertex(), cv, CGAL::MIN_END, 
+                                    bound_x, bound_y);
+        } else {
+            equal = (this->_m_traits->compare_xy_2_object()(
+                             prev1->vertex()->point(), minp
+                     ) == CGAL::EQUAL);
+        }
+        
+        if (!equal) {
             std::swap(bcv1x, bcv2x);
             std::swap(bcv1y, bcv2y);
         }
