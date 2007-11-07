@@ -591,8 +591,7 @@ bool
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_redundant(const Vertex * v) const
 {
-  CGAL_assertion_msg(0, "Not implemented!");
-  return false;
+  return (v->halfedge() == NULL);
 }
 
 /* \brief erases a given redundant vertex */
@@ -601,7 +600,18 @@ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge *
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 erase_redundant_vertex(Vertex * v)
 {
-  CGAL_assertion_msg(0, "Not implemented!");
+  const Boundary_type bound_y = v->boundary_in_y();
+  if (bound_y == AFTER_SINGULARITY) {
+    m_south_pole = NULL;
+    return NULL;
+  }
+  if (bound_y == BEFORE_SINGULARITY) {
+    m_north_pole = NULL;
+    return NULL;
+  }
+  CGAL_assertion_code(const Boundary_type bound_x = v->boundary_in_x(););
+  CGAL_assertion(bound_x != NO_BOUNDARY);
+  m_boundary_vertices.erase(v->point());
   return NULL;
 }
 

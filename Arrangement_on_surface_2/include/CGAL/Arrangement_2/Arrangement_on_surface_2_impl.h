@@ -3941,6 +3941,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_remove_edge
         if (he1->vertex()->boundary_in_x() != NO_BOUNDARY || 
             he1->vertex()->boundary_in_y() != NO_BOUNDARY)
         {
+          he1->vertex()->set_halfedge(NULL);    // disconnect the end vertex
           _remove_vertex_if_redundant (he1->vertex(), f1);
         }
         else
@@ -3966,6 +3967,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_remove_edge
         if (he2->vertex()->boundary_in_x() != NO_BOUNDARY || 
             he2->vertex()->boundary_in_y() != NO_BOUNDARY)
         {
+          he2->vertex()->set_halfedge(NULL);    // disconnect the end vertex
           _remove_vertex_if_redundant (he2->vertex(), f1);
         }
         else
@@ -4049,6 +4051,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_remove_edge
         if (he1->vertex()->boundary_in_x() != NO_BOUNDARY || 
             he1->vertex()->boundary_in_y() != NO_BOUNDARY)
         {
+          he1->vertex()->set_halfedge(NULL);    // disconnect the end vertex
           _remove_vertex_if_redundant (he1->vertex(), f1);
         }
         else
