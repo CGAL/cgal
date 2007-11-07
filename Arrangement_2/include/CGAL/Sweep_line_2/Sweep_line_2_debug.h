@@ -142,7 +142,7 @@ PrintInfinityType(Boundary_type x, Boundary_type y)
    case AFTER_DISCONTINUITY:
    case BEFORE_SINGULARITY:
    case AFTER_SINGULARITY:
-    CGAL_assertion(false);
+    CGAL_error();
   }
 }
 

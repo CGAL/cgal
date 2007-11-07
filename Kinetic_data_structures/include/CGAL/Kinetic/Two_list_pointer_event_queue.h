@@ -752,7 +752,7 @@ protected:
     int count=0;
     Iterator it= source.begin();
     while (it != source.end()) {
-      // assert(it->time() >= a);
+      // CGAL_assertion(it->time() >= a);
     
       if (leq_ub(it->time())) {
 	Item *i= &*it;
@@ -908,7 +908,7 @@ protected:
   void grow_front() {
     //++growth__;
     //std::cout << "Growing front from " << ub_ << std::endl;
-    //assert(is_valid());
+    //CGAL_assertion(is_valid());
     CGAL_precondition(!back_.empty());
     CGAL_precondition(front_.empty());
     CGAL_assertion_code(unsigned int sz= front_.size()+back_.size()+ inf_.size());

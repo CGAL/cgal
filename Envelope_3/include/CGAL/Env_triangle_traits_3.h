@@ -1281,7 +1281,7 @@ public:
         points_on_plane[n_points_on_plane++] = i;
     }
 
-    assert (n_points_on_plane + 
+    CGAL_assertion(n_points_on_plane + 
             n_points_on_positive + n_points_on_negative == 3);
 
     // if all vertices of tri lie on the same size (positive/negative) of pl,
@@ -1330,10 +1330,10 @@ public:
 
     }
 
-    assert( n_points_on_plane == 0 );
-    assert( n_points_on_positive + n_points_on_negative == 3 );
-    assert( n_points_on_positive != 0 );
-    assert( n_points_on_negative != 0 );
+    CGAL_assertion( n_points_on_plane == 0 );
+    CGAL_assertion( n_points_on_positive + n_points_on_negative == 3 );
+    CGAL_assertion( n_points_on_positive != 0 );
+    CGAL_assertion( n_points_on_negative != 0 );
 
     // now it known that there is an intersection between 2 segments of tri
     // and pl, it is also known which segments are those.
@@ -1352,7 +1352,7 @@ public:
         inter_points[n_inter_points++] = inter_point;
       }
 
-    assert( n_inter_points == 2 );
+    CGAL_assertion( n_inter_points == 2 );
     return make_object(Segment_3(inter_points[0], inter_points[1]));
   }
 

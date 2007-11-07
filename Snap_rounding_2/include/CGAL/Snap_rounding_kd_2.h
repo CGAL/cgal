@@ -13,14 +13,14 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
 #ifndef CGAL_SNAP_ROUNDING_KD_2_H
 #define CGAL_SNAP_ROUNDING_KD_2_H
 
 #include <list>
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <CGAL/kdtree_d.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <iostream>
@@ -61,7 +61,7 @@ private:
   typedef CGAL::Kdtree_interface_2d<My_point_saved>     Kd_interface;
   typedef CGAL::Kdtree_d<Kd_interface>                  Kd_tree;
   typedef typename Kd_tree::Box                         Box;
-  typedef std::list<My_point_saved>                     Points_List; 
+  typedef std::list<My_point_saved>                     Points_List;
   typedef std::pair<Direction_2, NT>                    Direction_nt_pair;
   typedef std::pair<Kd_tree *,Direction_nt_pair>        Kd_triple;
   typedef std::pair<Kd_tree *, Direction_nt_pair>       Kd_direction_nt_pair;
@@ -70,7 +70,7 @@ private:
   typedef std::pair<Point_2, SAVED_OBJECT>              Point_saved_pair;
   typedef std::list<Point_saved_pair>                   Point_saved_pair_list;
   typedef typename Point_saved_pair_list::iterator      Point_saved_pair_iter;
-  
+
   typedef typename std::list<My_point_saved>            My_point_saved_list;
   typedef typename My_point_saved_list::iterator        My_point_saved_iter;
 
@@ -79,10 +79,10 @@ private:
 
   typedef std::list<Segment_2>                          Segment_list;
   typedef typename Segment_list::const_iterator         Segment_const_iter;
-  
+
   typedef std::list<Direction_2>                        Direction_list;
   typedef typename Direction_list::const_iterator       Direction_const_iter;
-  
+
 private:
   Traits m_gt;
   const double pi, half_pi;
@@ -98,7 +98,7 @@ private:
 
     typename Traits::To_double to_dbl;
     int tranc_angle = int(to_dbl(angle) * rad_to_deg);
-    
+
     NT cosine_val = angle_to_sines_appr[90 - tranc_angle],
        sine_val = angle_to_sines_appr[tranc_angle];
 
@@ -126,7 +126,7 @@ private:
 
     //checking validity
     if (!tree->is_valid()) tree->dump();
-    assert(tree->is_valid());
+    CGAL_assertion(tree->is_valid());
 
     typename Traits::To_double to_dbl;
     double buffer_angle(to_dbl(angle) - half_pi / (2 * number_of_trees));
@@ -149,10 +149,10 @@ private:
   inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x, NT y) {return((x < y) ? y : x);}
 
   inline NT min BOOST_PREVENT_MACRO_SUBSTITUTION  (NT x1, NT x2, NT x3, NT x4, NT x5,
-                NT x6) 
+                NT x6)
   {return(min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), min BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),min BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
 
-  inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x1, NT x2, NT x3, NT x4, NT x5, NT x6) 
+  inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x1, NT x2, NT x3, NT x4, NT x5, NT x6)
   {return(max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), max BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),max BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
 
   /*! */
@@ -160,7 +160,7 @@ private:
   {
     typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
     Construct_vertex_2 construct_vertex = m_gt.construct_vertex_2_object();
-    
+
     // force the segment slope to [0-180)
     Point_2 s = construct_vertex(seg, 0);
     Point_2 t = construct_vertex(seg, 1);
@@ -179,7 +179,7 @@ private:
       v = v.perpendicular(RIGHT_TURN);
 
     Direction_2 d(v.direction());
- 
+
     return(d);
   }
 
@@ -321,17 +321,14 @@ public:
   /*! */
   Multiple_kd_tree(const Point_saved_pair_list & inp_points_list,
                    int inp_number_of_trees,
-                   const Segment_list & seg_list) : 
+                   const Segment_list & seg_list) :
     pi(3.1415), half_pi(1.57075),
     number_of_trees(inp_number_of_trees), input_points_list(inp_points_list)
   {
     Kd_triple kd;
 
     // check that there are at least two trees
-    if (number_of_trees < 1) {
-      std::cerr << "There must be at least one kd-tree\n";
-      std::exit(1);
-    }
+    CGAL_precondition_msg(number_of_trees >= 1, "There must be at least one kd-tree" );
 
     init_angle_to_sines_table();
 
@@ -387,7 +384,7 @@ public:
     }
 
 #ifdef CGAL_SR_DEBUG
-    std::cout << "Actual number of kd-trees created : " << 
+    std::cout << "Actual number of kd-trees created : " <<
       number_of_actual_kd_trees << std::endl;
 #endif
 
@@ -471,11 +468,11 @@ public:
     Point_2 p1 = rec.vertex(0);
     Point_2 p2 = rec.vertex(2);
 
-    My_point_saved point1(p1); 
+    My_point_saved point1(p1);
     My_point_saved point2(p2);
 
     Box b(point1, point2, 2);
- 
+
     // the kd-tree query
     My_point_saved_list res;
     iter->first->search(std::back_inserter(res), b);

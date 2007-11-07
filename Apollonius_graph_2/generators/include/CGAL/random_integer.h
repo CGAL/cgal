@@ -3,7 +3,6 @@
 
 #include <CGAL/basic.h>
 #include <cstdlib>
-#include <cassert>
 #include <CGAL/Gmpz.h>
 
 // type "man {rand, random, drand48}" for C functions that produce
@@ -18,11 +17,11 @@ CGAL_BEGIN_NAMESPACE
 // powers of 2 from 2^0 to 2^53
 double
 P2[54]={1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0,
-	512.0, 1024.0, 2048.0, 4096.0, 8192.0, 16384.0, 32768.0, 
+	512.0, 1024.0, 2048.0, 4096.0, 8192.0, 16384.0, 32768.0,
 	65536.0, 131072.0, 262144.0, 524288.0, 1048576.0,
 	2097152.0, 4194304.0, 8388608.0, 16777216.0, 33554432.0,
 	67108864.0, 134217728.0, 268435456.0, 536870912.0,
-	1073741824.0, 2147483648.0, 4294967296.0, 8589934592.0, 
+	1073741824.0, 2147483648.0, 4294967296.0, 8589934592.0,
 	17179869184.0, 34359738368.0, 68719476736.0,
 	137438953472.0, 274877906944.0, 549755813888.0,
 	1099511627776.0, 2199023255552.0, 4398046511104.0,
@@ -85,7 +84,7 @@ double random_even_integer(Random& r, unsigned int b,
   // b is required to be at least 1 and at most 52
   // and if allow_negative is true then the range includes negative
   // numbers as well and becomes: [-2^b + 1, 2^b - 1).
-  assert( b >= 0 && b <= 52 );
+  CGAL_precondition( b >= 0 && b <= 52 );
 
   if ( b == 0 ) { return 0; }
 

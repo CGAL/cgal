@@ -336,7 +336,7 @@ void single_benchmark( std::string filename, std::string isolator, int samples =
         single_benchmark< Coeff, Boundary, Rep_class,
             CGAL::CGALi::Bitstream_descartes< typename CGAL::Polynomial< Coeff >, Boundary > >( filename, samples );
     else
-        CGAL_error( "Unknown isolator class" );
+        CGAL_error_msg( "Unknown isolator class" );
 }
 
 template< class Coeff_ >
@@ -352,7 +352,7 @@ void single_benchmark( std::string filename, std::string rep_class, std::string 
         single_benchmark< Coeff, Boundary,
              CGAL::CGALi::Algebraic_real_rep_bfi< Coeff, Boundary > >( filename, isolator, samples );
     else
-         CGAL_error( "Unknown rep class" );
+         CGAL_error_msg( "Unknown rep class" );
 }
 
 int main( int argc, char** argv ) {
@@ -368,7 +368,7 @@ int main( int argc, char** argv ) {
 //            single_benchmark< CGAL::Sqrt_extension< leda_integer, leda_integer > >( argv[4], argv[2], argv[3], samples );
             single_benchmark< CGAL::Sqrt_extension< CORE::BigInt, CORE::BigInt > >( argv[4], argv[2], argv[3], samples );
         else
-            CGAL_error( "Unknown coefficient type" );
+            CGAL_error_msg( "Unknown coefficient type" );
     
     } else {
         std::cerr << "No parameters found" << std::endl;    

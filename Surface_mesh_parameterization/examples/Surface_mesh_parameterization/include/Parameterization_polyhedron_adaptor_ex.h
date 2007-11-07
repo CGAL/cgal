@@ -29,7 +29,6 @@
 #include "Polyhedron_ex.h"
 
 #include <list>
-#include <cassert>
 
 
 // Class Parameterization_polyhedron_adaptor_ex
@@ -186,8 +185,8 @@ public:
     Halfedge_const_handle get_halfedge(
         Vertex_const_handle source, Vertex_const_handle target) const
     {
-        assert(source != NULL);
-        assert(target != NULL);
+        CGAL_surface_mesh_parameterization_precondition(source != NULL);
+        CGAL_surface_mesh_parameterization_precondition(target != NULL);
 
         Halfedge_around_vertex_const_circulator cir     = target->vertex_begin(),
                                                 cir_end = cir;
@@ -195,7 +194,7 @@ public:
             if (cir->opposite()->vertex() == source)
                 return cir;
 
-        assert(false);              // error if we reach this point
+        CGAL_error();
         return NULL;
     }
     Halfedge_handle get_halfedge(Vertex_handle source, Vertex_handle target)
@@ -526,8 +525,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get (u,v) pair from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
@@ -551,8 +550,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
             Halfedge_around_vertex_circulator cir(
@@ -585,8 +584,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get "is parameterized" field from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
@@ -610,8 +609,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
             Halfedge_around_vertex_circulator cir(
@@ -644,8 +643,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get index from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
@@ -669,8 +668,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
             Halfedge_around_vertex_circulator cir(
@@ -703,8 +702,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get tag from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
@@ -728,8 +727,8 @@ public:
         }
         else // if seam vertex
         {
-            assert(prev_vertex != NULL);
-            assert(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
             Halfedge_around_vertex_circulator cir(

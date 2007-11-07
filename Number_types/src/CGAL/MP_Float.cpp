@@ -277,7 +277,7 @@ INTERN_MP_FLOAT::square(const MP_Float &a)
       if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
       {
         // If my calculations are correct, this case should never happen.
-	CGAL_assertion(false);
+	CGAL_error();
       }
       else if (tmp < 0 && tmp0 > 0 && tmp1 > 0)
         carry2 = 1;

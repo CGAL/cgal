@@ -38,7 +38,7 @@ public Box_intersection_d::Box_d< double, 3> {
 
 public:
   Bounding_box_3() : Base(false) {
-    CGAL_assertion_msg(false, "code not stable");
+    CGAL_error_msg( "code not stable");
   }
 
   Bounding_box_3(double q[3]) : Base(q,q) {}

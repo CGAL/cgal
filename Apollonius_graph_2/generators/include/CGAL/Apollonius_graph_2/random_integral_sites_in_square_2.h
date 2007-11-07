@@ -38,7 +38,7 @@ public:
     double x = random_integer(r_, b_, true);
     double y = random_integer(r_, b_, true);
     double w = random_integer(r_, B_, false);
-    assert( w >= 0 );
+    CGAL_assertion( w >= 0 );
 
     typename Site_2::Point_2 p(x, y);
     return Site_2(p, w);

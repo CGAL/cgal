@@ -296,7 +296,8 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #endif // CGAL_KERNEL_NO_WARNINGS
 
 // CGAL error
-#define CGAL_error(MSG) ::CGAL::assertion_fail( "", __FILE__, __LINE__, MSG )
+#define CGAL_error_msg(MSG) ::CGAL::assertion_fail( "", __FILE__, __LINE__, MSG )
+#define CGAL_error()        ::CGAL::assertion_fail( "", __FILE__, __LINE__ )
 
 // failure handler declarations
 // ==========================

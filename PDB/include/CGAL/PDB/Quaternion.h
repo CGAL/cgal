@@ -48,8 +48,8 @@ public:
     q_[1]= sf*axis[0]/n;
     q_[2]= sf*axis[1]/n;
     q_[3]= sf*axis[2]/n;
-    assert(q_[0]*q_[0]+ q_[1]*q_[1] + q_[2]*q_[2] + q_[3]*q_[3] < 1.1);
-    assert(q_[0]*q_[0]+ q_[1]*q_[1] + q_[2]*q_[2] + q_[3]*q_[3] > 0.9);
+    CGAL_assertion(q_[0]*q_[0]+ q_[1]*q_[1] + q_[2]*q_[2] + q_[3]*q_[3] < 1.1);
+    CGAL_assertion(q_[0]*q_[0]+ q_[1]*q_[1] + q_[2]*q_[2] + q_[3]*q_[3] > 0.9);
   }
 
   template <class Arr>
@@ -63,12 +63,12 @@ public:
   Quaternion(Transform t);
 
   NT& operator[](unsigned int i) {
-    assert(i<4);
+    CGAL_assertion(i<4);
     return q_[i];
   }
 
   NT operator[](unsigned int i) const {
-    assert(i<4);
+    CGAL_assertion(i<4);
     return q_[i];
   }
 

@@ -81,7 +81,7 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     if(!compute_halfsphere[2][0])
       return Plane_3(Point_3(0,0,room_min.hz(),room_min.hw()),Vector_3(0,0,-1));
 
-    CGAL_assertion_msg(false,"wrong sphere map");
+    CGAL_error_msg("wrong sphere map");
     return Plane_3();
   }
 

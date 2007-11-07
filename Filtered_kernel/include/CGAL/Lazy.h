@@ -1330,7 +1330,7 @@ struct Ith {
     else if(const Pair_type_2 *p2 = object_cast<Pair_type_2>(&v[i]))
         return p2->first;
 
-    CGAL_assertion_msg(false, " Unexpected encapsulated type ");
+    CGAL_error_msg( " Unexpected encapsulated type ");
   }
 };
 

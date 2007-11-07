@@ -369,7 +369,7 @@ and |s2|.}*/
   CGAL::Object result =
     _intersect(l1, l2);
   if ( !CGAL::assign(p, result) )
-  CGAL_assertion_msg(false,"intersection: no intersection.");
+  CGAL_error_msg("intersection: no intersection.");
   return p;
 }
 

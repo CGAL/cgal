@@ -132,7 +132,7 @@ public:
 
     // Create a square matrix initialized with zeros
     SparseMatrix(unsigned int dim) {
-        assert(dim > 0);
+        CGAL_assertion(dim > 0);
         dimension_ = dim ;
         row_ = new Row[dimension_] ;
     }
@@ -140,8 +140,8 @@ public:
     // (added for SparseLinearAlgebraTraits_d::Matrix concept)
     // WARNING: this class supports square matrices only
     SparseMatrix (unsigned int rows, unsigned int columns ) {
-        assert(rows == columns);
-        assert(columns > 0);
+        CGAL_assertion(rows == columns);
+        CGAL_assertion(columns > 0);
         dimension_ = columns ;
         row_ = new Row[dimension_] ;
     }
@@ -163,12 +163,12 @@ public:
     unsigned int column_dimension() const { return dimension(); }
 
     Row& row(unsigned int i) {
-        assert(i < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
         return row_[i] ;
     }
 
     const Row& row(unsigned int i) const {
-        assert(i < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
         return row_[i] ;
     }
 
@@ -179,8 +179,8 @@ public:
     // * 0 <= i < row_dimension()
     // * 0 <= j < column_dimension()
     NT  get_coef (unsigned int i, unsigned int j) const {
-        assert(i < dimension_) ;
-        assert(j < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
+        CGAL_assertion(j < dimension_) ;
         return row(i).get_coef(j) ;
     }
 
@@ -190,8 +190,8 @@ public:
     // * 0 <= i < row_dimension()
     // * 0 <= j < column_dimension()
     void add_coef(unsigned int i, unsigned int j, T val) {
-        assert(i < dimension_) ;
-        assert(j < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
+        CGAL_assertion(j < dimension_) ;
         row(i).add_coef(j, val) ;
     }
 
@@ -202,8 +202,8 @@ public:
     // * 0 <= i < row_dimension()
     // * 0 <= j < column_dimension()
     void set_coef(unsigned int i, unsigned int j, NT  val) {
-        assert(i < dimension_) ;
-        assert(j < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
+        CGAL_assertion(j < dimension_) ;
         row(i).set_coef(j, val) ;
     }
 
@@ -229,8 +229,8 @@ private:
 
 template <class T> void mult(const SparseMatrix<T>& M, const FullVector<T>& x, FullVector<T>& y) {
     unsigned int N = M.dimension() ;
-    assert(x.dimension() == N) ;
-    assert(y.dimension() == N) ;
+    CGAL_assertion(x.dimension() == N) ;
+    CGAL_assertion(y.dimension() == N) ;
     for(unsigned int i=0; i<N; i++) {
         y[i] = 0 ;
         const typename SparseMatrix<T>::Row& R = M.row(i) ;

@@ -675,7 +675,7 @@ locate_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
             break;
         }
         default:
-            CGAL_assertion(false); // cannot happen
+            CGAL_error(); // cannot happen
             break;
         }
     }
@@ -1242,7 +1242,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
         }
         
         /* NOT REACHED */
-        CGAL_assertion(false);
+        CGAL_error();
         return false;
     }
     case 2:
@@ -1251,11 +1251,11 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
         return false;
     default:
         //std::cout << "More than two outer_ccbs! Not nice!" << std::endl;
-        CGAL_assertion(false);
+        CGAL_error();
     }
     
     /* should not be reached */
-    CGAL_assertion(false);
+    CGAL_error();
     return (false);
 }
 

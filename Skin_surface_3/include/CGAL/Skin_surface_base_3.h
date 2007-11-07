@@ -455,7 +455,7 @@ intersect_with_transversal_segment(
                                    tet_pts[sortedV[3]]),
                              Line(p1, p));
     if ( !assign(p2, obj) ) {
-      CGAL_assertion_msg(false,"intersection: no intersection.");
+      CGAL_error_msg("intersection: no intersection.");
     }
   } else if (nIn==2) {
     obj = CGAL::intersection(Plane(tet_pts[sortedV[2]],
@@ -464,7 +464,7 @@ intersect_with_transversal_segment(
                              Line(tet_pts[sortedV[0]],
                                   tet_pts[sortedV[1]]));
     if ( !assign(p1, obj) ) {
-      CGAL_assertion_msg(false,"intersection: no intersection.");
+      CGAL_error_msg("intersection: no intersection.");
     }
     obj = CGAL::intersection(Plane(tet_pts[sortedV[0]],
                                    tet_pts[sortedV[1]],
@@ -472,7 +472,7 @@ intersect_with_transversal_segment(
                              Line(tet_pts[sortedV[2]],
                                   tet_pts[sortedV[3]]));
     if ( !assign(p2, obj) ) {
-      CGAL_assertion_msg(false,"intersection: no intersection.");
+      CGAL_error_msg("intersection: no intersection.");
     }
   } else if (nIn==3) {
     p2 = tet_pts[sortedV[3]];
@@ -481,10 +481,10 @@ intersect_with_transversal_segment(
                                    tet_pts[sortedV[2]]),
                              Line(p2, p));
     if ( !assign(p1, obj) ) {
-      CGAL_assertion_msg(false,"intersection: no intersection.");
+      CGAL_error_msg("intersection: no intersection.");
     }
   } else {
-    CGAL_assertion(false);
+    CGAL_error();
   }
 
   // Find the intersection:
@@ -604,7 +604,7 @@ construct_surface(const Simplex &sim, const Traits &) const {
       return Quadratic_surface(p0,p1,p2,p3, shrink_factor());
     }
   }
-  CGAL_assertion(false);
+  CGAL_error();
   return Quadratic_surface();
 }
 
@@ -792,7 +792,7 @@ get_weighted_circumcenter(const Simplex &s, Gt2 &traits) {
     }
   default:
     {
-      CGAL_assertion(false);
+      CGAL_error();
     }
   }
   return result;

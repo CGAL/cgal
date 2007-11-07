@@ -60,7 +60,7 @@ struct Line_to_epoint {
                ordinate_distance(l) > FT(0))) {
       return TOPFRAME;
     }
-    CGAL_assertion_msg(false," determine_type: degenerate line.");
+    CGAL_error_msg(" determine_type: degenerate line.");
     return (Point_type)-1; // never come here
   }
 

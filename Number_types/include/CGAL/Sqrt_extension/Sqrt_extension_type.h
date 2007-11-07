@@ -162,7 +162,7 @@ public:
     static void check_roots(const Self& a, const Self b ) {
         if(a.is_extended() && b.is_extended()){
             if (a.root() != b.root()){
-                //CGAL_error("Interoperation of incompatible algebraic extensions");
+                //CGAL_error_msg("Interoperation of incompatible algebraic extensions");
                 throw std::range_error("Interoperation of incompatible algebraic extensions");
             }
         }

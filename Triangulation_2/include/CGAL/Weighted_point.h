@@ -37,7 +37,7 @@ public:
   Weighted_point (const Point &p)
       : Point(p), _weight(0)
   {
-    // CGAL_assertion_msg(false, "Warning : truncated weight !!!");
+    // CGAL_error_msg( "Warning : truncated weight !!!");
   }
 
   Weighted_point (const Point &p, const Weight &w)

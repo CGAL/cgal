@@ -561,7 +561,7 @@ namespace CGAL {
 	std::cerr << "In is_facet_on_surface(const Facet& f, Point& center)\n"
 		  << "file " << __FILE__ << ", line " << __LINE__ << "\n";
 	std::cerr << "Incorrect object type: " << dual.type().name() << "\n";
-        CGAL_assertion(false);
+        CGAL_error();
       }
 
       return assign(center,intersection);

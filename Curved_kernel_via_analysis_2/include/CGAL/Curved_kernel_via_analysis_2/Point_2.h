@@ -322,7 +322,7 @@ private:
     
         if(type != CGAL::NO_BOUNDARY && 
                 this->ptr()->_m_boundary_in_y != CGAL::NO_BOUNDARY) 
-            CGAL_error("Denied to set the boundary condition in x while the "
+            CGAL_error_msg("Denied to set the boundary condition in x while the "
              "boundary condition in y is set");
         this->ptr()->_m_boundary_in_x = type;
     }
@@ -334,7 +334,7 @@ private:
     
         if(type != CGAL::NO_BOUNDARY && 
                 this->ptr()->_m_boundary_in_x != CGAL::NO_BOUNDARY) 
-            CGAL_error("Denied to set the boundary condition in y while the "
+            CGAL_error_msg("Denied to set the boundary condition in y while the "
                 "boundary condition in x is set");
         this->ptr()->_m_boundary_in_y = type;
     }

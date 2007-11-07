@@ -750,7 +750,7 @@ private:
         return (*it).N;
       ++it;
     }
-    CGAL_assertion(false);
+    CGAL_error();
     return Nef_polyhedron(); // kill warning.
   }
 

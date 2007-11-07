@@ -440,7 +440,7 @@ operator >> (std::istream& is,
         break;
     }
     default:{
-        CGAL_error("ALGEBRAIC_TYPE unexpected!" );
+        CGAL_error_msg("ALGEBRAIC_TYPE unexpected!" );
     }
     }
     return is;

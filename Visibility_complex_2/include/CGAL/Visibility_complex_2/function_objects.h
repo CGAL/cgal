@@ -221,7 +221,7 @@ struct Less_bitangent {
         Orientation op=chi3(a,upa,b);
         if (op == RIGHT_TURN)     return false;
         else if (op == LEFT_TURN) return true;
-        CGAL_assertion(false);
+        CGAL_error();
         return true;
     }
 };

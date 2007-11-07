@@ -135,7 +135,7 @@ protected:
           return true;
         if (res == LARGER)
           return false;
-        CGAL_assertion(false);
+        CGAL_error();
         return (p1.second == true || p2.third == true);
       }
   };
@@ -290,7 +290,7 @@ public:
         insert (copied_face_arr, curve.first, pl, zone_visitor);
       }
       else
-        CGAL_assertion_msg(false, "wrong projected intersection type");
+        CGAL_error_msg( "wrong projected intersection type");
     }
 
     zone_visitor.finish();
@@ -567,7 +567,7 @@ public:
       }
      
       else
-        CGAL_assertion_msg(false, "wrong projected intersection type");
+        CGAL_error_msg( "wrong projected intersection type");
     }
     
     // if there aren't any split points, we can finish
@@ -976,7 +976,7 @@ protected:
                                                  const Xy_monotone_surface_3&,
                                                  Tag_false)
   {
-    CGAL_assertion(false); // doesnt' suppose to reach here at all!!!
+    CGAL_error(); // doesnt' suppose to reach here at all!!!
     return SMALLER;
   }
 

@@ -569,7 +569,7 @@ public:
     struct Orientation_infinite {
 	Orientation operator() (const Bitangent_2&, 
 				const Bitangent_2&) const { 
-          CGAL_assertion(false);
+          CGAL_error();
           return COLLINEAR;
         }
     };

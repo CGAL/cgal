@@ -629,7 +629,7 @@ Print()
      case BEFORE_DISCONTINUITY:
      case AFTER_DISCONTINUITY:
      case BEFORE_SINGULARITY:
-     case AFTER_SINGULARITY: CGAL_assertion(false); break;
+     case AFTER_SINGULARITY: CGAL_error(); break;
       
      case MINUS_INFINITY: std::cout<<" X = -00 "; break;
      case PLUS_INFINITY:  std::cout<<" X = +00 "; break;
@@ -639,12 +639,12 @@ Print()
         case BEFORE_DISCONTINUITY:
         case AFTER_DISCONTINUITY:
         case BEFORE_SINGULARITY:
-        case AFTER_SINGULARITY: CGAL_assertion(false); break;
+        case AFTER_SINGULARITY: CGAL_error(); break;
 
         case MINUS_INFINITY: std::cout<<" Y = -00 "; break;
         case PLUS_INFINITY:  std::cout<<" Y = +00 "; break;
         case NO_BOUNDARY:
-         CGAL_assertion(false);
+         CGAL_error();
        }
       }
     }

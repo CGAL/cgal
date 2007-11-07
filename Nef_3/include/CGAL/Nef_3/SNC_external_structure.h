@@ -1221,7 +1221,7 @@ public:
       else if(CGAL::assign(l, o))
 	h = l->circle().opposite().plane_through(l->incident_sface()->center_vertex()->point());
       else
-	CGAL_assertion_msg(false, "wrong handle");
+	CGAL_error_msg( "wrong handle");
 
       D.create_facet_objects(h,it->second.begin(),it->second.end());
     }

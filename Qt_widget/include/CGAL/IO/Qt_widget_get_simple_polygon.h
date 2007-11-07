@@ -52,7 +52,7 @@ protected:
         if(!this->poly.is_simple()) return;
         if(this->poly.is_clockwise_oriented())
           this->poly.reverse_orientation ();
-        assert( ! this->poly.is_clockwise_oriented());
+        CGAL_assertion( ! this->poly.is_clockwise_oriented());
       }
     }
     Get_polygon::mousePressEvent(e);

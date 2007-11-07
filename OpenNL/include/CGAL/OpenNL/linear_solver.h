@@ -1,11 +1,11 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License version 2.1 as published by the Free Software Foundation
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -45,7 +45,6 @@
 
 #include <vector>
 #include <iostream>
-#include <cassert>
 #include <cstdlib>
 
 namespace OpenNL {
@@ -72,11 +71,11 @@ public:
     typedef COEFFTYPE                       NT;
     typedef MATRIX                          Matrix ;
     typedef VECTOR                          Vector ;
-    
+
 // Private types
 private:
     typedef Jacobi_Preconditioner<NT>       Preconditioner ;
-    typedef Solver_preconditioned_BICGSTAB<Matrix, Preconditioner, Vector>  
+    typedef Solver_preconditioned_BICGSTAB<Matrix, Preconditioner, Vector>
                                             Preconditioned_solver ;
     typedef Solver_BICGSTAB<Matrix, Vector> Solver ;
 
@@ -93,12 +92,12 @@ public:
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;              // OpenNL does not support homogeneous coordinates
-        
+
         // Solve using BICGSTAB solver with preconditioner
         Preconditioned_solver preconditioned_solver ;
         NT omega = 1.5;
         Preconditioner C(A, omega);
-        X = B;  
+        X = B;
         if (preconditioned_solver.solve(A, C, B, X))
             return true;
 
@@ -108,7 +107,7 @@ public:
                   << "Trying BICGSTAB." << std::endl;
 #endif
         Solver solver ;
-        X = B;  
+        X = B;
         return solver.solve(A, B, X) ;
     }
 } ;
@@ -133,11 +132,11 @@ public:
     typedef COEFFTYPE                       NT;
     typedef MATRIX                          Matrix ;
     typedef VECTOR                          Vector ;
-    
+
 // Private types
 private:
     typedef Jacobi_Preconditioner<NT>       Preconditioner ;
-    typedef Solver_preconditioned_CG<Matrix, Preconditioner, Vector>  
+    typedef Solver_preconditioned_CG<Matrix, Preconditioner, Vector>
                                             Preconditioned_solver ;
     typedef Solver_CG<Matrix, Vector>       Solver ;
 
@@ -154,12 +153,12 @@ public:
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;              // OpenNL does not support homogeneous coordinates
-        
+
         // Solve using Conjugate Gradient solver with preconditioner
         Preconditioned_solver preconditioned_solver ;
         NT omega = 1.5;
         Preconditioner C(A, omega);
-        X = B;  
+        X = B;
         if (preconditioned_solver.solve(A, C, B, X))
             return true;
 
@@ -169,7 +168,7 @@ public:
                   << "Trying Conjugate Gradient." << std::endl;
 #endif
         Solver solver ;
-        X = B;  
+        X = B;
         return solver.solve(A, B, X) ;
     }
 };
@@ -203,7 +202,7 @@ public:
         void unlock() { locked_ = false ; }
         bool is_locked() const { return locked_ ; }
         unsigned int index() const {
-            assert(index_ != -1) ;
+            CGAL_assertion(index_ != -1) ;
             return (unsigned int)(index_) ;
         }
         void set_index(unsigned int index_in) {
@@ -242,12 +241,12 @@ public:
     int nb_variables() const { return nb_variables_ ; }
 
     Variable& variable(unsigned int idx) {
-        assert(idx < nb_variables_) ;
+        CGAL_assertion(idx < nb_variables_) ;
         return variable_[idx] ;
     }
 
     const Variable& variable(unsigned int idx) const {
-        assert(idx < nb_variables_) ;
+        CGAL_assertion(idx < nb_variables_) ;
         return variable_[idx] ;
     }
 
@@ -314,7 +313,7 @@ public:
             norm += al_[i] * al_[i] ;
         }
         norm = sqrt(norm) ;
-        assert( fabs(norm)>1e-40 );
+        CGAL_assertion( fabs(norm)>1e-40 );
         scale_row(weight / norm) ;
     }
 
@@ -379,7 +378,7 @@ public:
         Traits solver_traits;
         CoeffType D;
         bool success = solver_traits.linear_solver(*A_, *b_, *x_, D) ;
-        assert(D == 1.0);   // WARNING: this library does not support homogeneous coordinates!
+        CGAL_assertion(D == 1.0);   // WARNING: this library does not support homogeneous coordinates!
 
         vector_to_variables() ;
 
@@ -430,7 +429,7 @@ protected:
                 return "solved" ;
             }
             // Should not go there.
-            assert(false) ;
+            CGAL_error();
             return "undefined" ;
     }
 
@@ -443,7 +442,7 @@ protected:
                      << std::endl ;
                 std::cerr << "exiting ..." << std::endl ;
             }
-            assert(state_ == s) ;
+            CGAL_assertion(state_ == s) ;
     }
 
     void transition(State from, State to) {

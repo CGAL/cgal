@@ -1492,7 +1492,7 @@ template < class CK, class OutputIterator >
     }
 
     // We need to split
-    //assert(!A.is_x_monotone());
+    //CGAL_assertion(!A.is_x_monotone());
     if (cmp_begin_y > 0) {
     
       *res++ = S_pair
@@ -1562,7 +1562,7 @@ template < class CK, class OutputIterator >
     }
     else { // cmp_begin_y == 0
       if ( compare(A.source().x(),A.supporting_circle().center().x())< 0) {
-        assert (cmp_end_y >= 0);
+        CGAL_assertion(cmp_end_y >= 0);
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
 				       A.source(),
@@ -1578,8 +1578,8 @@ template < class CK, class OutputIterator >
 	   true);
       }
       else {
-        assert( compare(A.source().x(),A.supporting_circle().center().x())< 0);
-        assert (cmp_end_y != LARGER);
+        CGAL_assertion( compare(A.source().x(),A.supporting_circle().center().x())< 0);
+        CGAL_assertion(cmp_end_y != LARGER);
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
 				       A.source(),

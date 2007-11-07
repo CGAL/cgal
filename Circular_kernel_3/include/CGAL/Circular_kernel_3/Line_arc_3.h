@@ -166,8 +166,8 @@ namespace CGAL {
          CGAL_kernel_precondition(!SK().has_on_3_object()(p2,l));
          typename SK::Point_3 point1, point2;
          // l must intersect p1 and p2
-         assert(assign(point1,SK().intersect_3_object()(l, p1)));
-         assert(assign(point2,SK().intersect_3_object()(l, p2)));
+         CGAL_assertion(assign(point1,SK().intersect_3_object()(l, p1)));
+         CGAL_assertion(assign(point2,SK().intersect_3_object()(l, p2)));
          assign(point1,SK().intersect_3_object()(l, p1));
          assign(point2,SK().intersect_3_object()(l, p2));
          // the source and target must be different

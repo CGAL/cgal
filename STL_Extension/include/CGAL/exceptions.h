@@ -57,7 +57,7 @@ CGAL_BEGIN_NAMESPACE
     should not cost too much runtime overhead, maybe 10%.
 
     \see \c CGAL_test for checks that cannot be disabled and 
-         \c CGAL_error for an unconditional error message that cannot 
+         \c CGAL_error_msg for an unconditional error message that cannot 
          be disabled with macros.
 */
 //@{
@@ -112,7 +112,7 @@ public:
     std::string      message() const { return m_msg; }
 };
 
-//! Exception thrown for \c CGAL_error.
+//! Exception thrown for \c CGAL_error_msg.
 class Error_exception : public Failure_exception {
 public:
     Error_exception( std::string lib,

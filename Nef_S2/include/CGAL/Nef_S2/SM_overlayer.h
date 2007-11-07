@@ -176,7 +176,7 @@ void trivial_segment(Vertex_handle v, IT it) const
     CGAL_assertion(sv->point() == v->point());
     G.supp_object(v,si._from) = si._o;
   } else
-    CGAL_assertion_msg(false, "wrong handle");
+    CGAL_error_msg( "wrong handle");
   
   CGAL_NEF_TRACEN("trivial_segment " << si._from << ":" << v->point()); 
   //  debug();
@@ -201,7 +201,7 @@ void starting_segment(Vertex_handle v, IT it) const
   } else if(CGAL::assign(sl, si._o)) {
     G.supp_object(v,si._from) = si._o;
   } else
-    CGAL_assertion_msg(false, "wrong object");
+    CGAL_error_msg( "wrong object");
   //  debug();
 }
 
@@ -226,7 +226,7 @@ void ending_segment(Vertex_handle v, IT it) const
   } else if(CGAL::assign(sl, si._o)) {
     G.supp_object(v,si._from) = si._o;
   } else
-    CGAL_assertion_msg(false, "wrong object");
+    CGAL_error_msg( "wrong object");
   //  debug();
 }
 
@@ -1681,7 +1681,7 @@ transfer_data(Association& A) {
       else if(CGAL::assign(sl1, o1))
 	A.handle_support(sv, se0, sl1);
       else
-	CGAL_assertion_msg(false, "wrong handle");
+	CGAL_error_msg( "wrong handle");
     } else if(CGAL::assign(sv0, o0)) {
       if(o1 == NULL)
 	A.handle_support(sv, sv0);
@@ -1692,7 +1692,7 @@ transfer_data(Association& A) {
       else if(CGAL::assign(sl1, o1))
 	A.handle_support(sv, sv0, sl1);
       else
-	CGAL_assertion_msg(false, "wrong handle");
+	CGAL_error_msg( "wrong handle");
     } else if(CGAL::assign(sl0, o0)) {
       if(o1 == NULL)
 	continue;
@@ -1703,7 +1703,7 @@ transfer_data(Association& A) {
       else if(CGAL::assign(sl1, o1))
 	A.handle_support(sv, sl0, sl1);
     } else 
-      CGAL_assertion_msg(false, "wrong handle");
+      CGAL_error_msg( "wrong handle");
   }
 
   CGAL_forall_sedges(se, *this) {
@@ -1715,7 +1715,7 @@ transfer_data(Association& A) {
       else if(assign(sl1, o1))
 	A.handle_support(se, sl1);
       else
-	continue; // CGAL_assertion_msg(false, "wrong handle");
+	continue; // CGAL_error_msg( "wrong handle");
     } else if(assign(se0, o0)) {
       if(o1 == NULL)
 	A.handle_support(se, se0);
@@ -1724,7 +1724,7 @@ transfer_data(Association& A) {
       else if(assign(sl1, o1))
 	A.handle_support(se, se0, sl1);
       else
-	CGAL_assertion_msg(false, "wrong handle");    
+	CGAL_error_msg( "wrong handle");    
     } else if(assign(sl0, o0)) {
       if(o1 == NULL)
 	A.handle_support(se, sl0);
@@ -1733,9 +1733,9 @@ transfer_data(Association& A) {
       else if(assign(sl1, o1))
 	A.handle_support(se, sl0, sl1);
       else
-	CGAL_assertion_msg(false, "wrong handle");
+	CGAL_error_msg( "wrong handle");
     } else
-      CGAL_assertion_msg(false, "wrong handle");	      
+      CGAL_error_msg( "wrong handle");	      
   }
 }
 

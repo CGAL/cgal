@@ -89,7 +89,7 @@ public:
     // Return true on success
     bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
     {
-        assert(A.dimension() > 0);
+        CGAL_assertion(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
         unsigned int max_iter = max_iter_ ;                     // Max number of iterations
@@ -205,7 +205,7 @@ public:
     // Return true on success
     bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x) 
     {
-        assert (A.dimension() > 0);
+        CGAL_assertion(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
         unsigned int max_iter = max_iter_ ;                     // Max number of iterations
@@ -231,7 +231,7 @@ public:
         CoeffType rr=BLAS<Vector>::dot(r,r);                    // Current error rr = (r|r)
         while ( rr>err && its < max_iter) {
             mult(A,d,Ad);
-            assert( ! IsZero( BLAS<Vector>::dot(d,Ad) ) );
+            CGAL_assertion( ! IsZero( BLAS<Vector>::dot(d,Ad) ) );
             alpha=rh/BLAS<Vector>::dot(d,Ad);
             BLAS<Vector>::axpy(-alpha,d,x);
             BLAS<Vector>::axpy(-alpha,Ad,r);

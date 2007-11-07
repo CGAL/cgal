@@ -110,7 +110,7 @@ public:
 
   std::pair<Vector_2,FT> get_field(const Point_2 & p) const
     {
-      assert(is_in_domain(p));
+      CGAL_assertion(is_in_domain(p));
       Vector_2 v = get_vector_field(p);
       FT density = get_density_field(p);
       return std::make_pair(v, density);
@@ -160,7 +160,7 @@ Triangular_field_2<StreamLinesTraits_2>::get_vector_field(const
   const
 {
   Face_handle m_Face_handle = m_D_Ttr.locate(p);
-  assert(is_in_domain(p));
+  CGAL_assertion(is_in_domain(p));
   Vertex_handle v0 = m_Face_handle->vertex(0);
   Vertex_handle v1 = m_Face_handle->vertex(1);
   Vertex_handle v2 = m_Face_handle->vertex(2);

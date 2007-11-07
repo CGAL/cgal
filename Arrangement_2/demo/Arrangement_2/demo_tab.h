@@ -1357,7 +1357,7 @@ public:
       return lm_pl->locate(pt);
 
     // doesnt suppose to reach there
-    CGAL_assertion(false);
+    CGAL_error();
     return CGAL::Object();
   }
 
@@ -1384,7 +1384,7 @@ public:
     }
 
     // doesnt suppose to reach there
-    CGAL_assertion(false);
+    CGAL_error();
     return CGAL::Object();
   }
 
@@ -1411,7 +1411,7 @@ public:
     }
 
     // doesnt suppose to reach there
-    CGAL_assertion(false);
+    CGAL_error();
     return CGAL::Object();
   }
 

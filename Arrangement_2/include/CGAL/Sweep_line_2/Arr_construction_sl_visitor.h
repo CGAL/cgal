@@ -511,7 +511,7 @@ public:
       case NO_BOUNDARY:
       default:
         // doesn't suppose to reach here at all.
-        CGAL_assertion(false);
+        CGAL_error();
     }
   }
   

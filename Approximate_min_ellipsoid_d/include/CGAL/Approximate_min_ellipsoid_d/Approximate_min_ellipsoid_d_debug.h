@@ -214,7 +214,7 @@ namespace CGAL {
         // fetch current usage:
         rusage now;
         int status = getrusage(RUSAGE_SELF,&now);
-        assert(status == 0);
+        CGAL_assertion(status == 0);
         
         // save it:
         timers[std::string(timer_name)] = now.ru_utime;
@@ -223,12 +223,12 @@ namespace CGAL {
       float lapse(const char *name)
       {
         // assert that start(name) has been called before:
-        assert(timers.find(std::string(name)) != timers.end());
+        CGAL_assertion(timers.find(std::string(name)) != timers.end());
         
         // get current usage:
         rusage now;
         int status = getrusage(RUSAGE_SELF,&now);
-        assert(status == 0);
+        CGAL_assertion(status == 0);
         
         // compute elapsed usage:
         now.ru_utime -= (*timers.find(std::string(name))).second;

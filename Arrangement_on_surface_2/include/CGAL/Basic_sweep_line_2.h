@@ -547,7 +547,7 @@ protected:
                                  bool /* is_new */,
                                  Tag_false )
   {
-    CGAL_assertion(false);
+    CGAL_error();
   }
 
 #ifdef VERBOSE

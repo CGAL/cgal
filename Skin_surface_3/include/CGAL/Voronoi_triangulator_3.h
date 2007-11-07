@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -66,11 +66,11 @@ public:
   typedef typename Mesh_K::RT                   Mesh_RT;
   typedef typename Mesh_K::Point_3              Mesh_Point;
   typedef Weighted_point<Mesh_Point,Mesh_RT>    Mesh_Weighted_point;
-  
+
   typedef typename Skin_traits_3::R2P_converter R2P_converter;
   typedef typename Skin_traits_3::T2P_converter T2P_converter;
 
-  Voronoi_triangulator_visitor_default() 
+  Voronoi_triangulator_visitor_default()
   : r2p_converter(SkinSurfaceTraits_3().r2p_converter_object())
   {
   }
@@ -82,7 +82,7 @@ public:
     vh->sVor = sVor;
   }
 
-  void after_cell_insertion(Rt_Simplex &s, TVD_Cell_handle &ch) 
+  void after_cell_insertion(Rt_Simplex &s, TVD_Cell_handle &ch)
   {
     CGAL_assertion(s.dimension() == 0);
     Rt_Vertex_handle vh = s;
@@ -96,13 +96,13 @@ public:
 
   Rt_Vertex_handle vh_old;
   QuadrSurface *surf;
-  
+
   R2P_converter r2p_converter;
 };
 
-template < 
+template <
   class SkinSurfaceTraits_3,
-  class VoronoiTriangulatorVisitor_ = 
+  class VoronoiTriangulatorVisitor_ =
     Voronoi_triangulator_visitor_default<SkinSurfaceTraits_3> >
 class Voronoi_triangulator_3 {
 public:
@@ -117,13 +117,13 @@ private:
   typedef typename Regular::Edge                     Rt_Edge;
   typedef typename Regular::Facet                    Rt_Facet;
   typedef typename Regular::Cell_handle              Rt_Cell_handle;
-	
+
   typedef typename Regular::Finite_vertices_iterator Rt_Finite_vertices_iterator;
   typedef typename Regular::Finite_edges_iterator    Rt_Finite_edges_iterator;
   typedef typename Regular::Finite_facets_iterator   Rt_Finite_facets_iterator;
   typedef typename Regular::All_cells_iterator       Rt_All_cells_iterator;
   typedef typename Regular::Finite_cells_iterator    Rt_Finite_cells_iterator;
-	
+
   typedef typename Regular::Cell_circulator          Rt_Cell_circulator;
 
   typedef Simplex_3<Regular>                    Rt_Simplex;
@@ -143,7 +143,7 @@ private:
   typedef typename Simplicial::All_cells_iterator       TVD_All_cells_iterator;
   typedef typename Simplicial::Finite_cells_iterator    TVD_Finite_cells_iterator;
   typedef typename Simplicial::Cell_circulator          TVD_Cell_circulator;
-	
+
   typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel          TVD_Geom_traits;
   typedef typename TVD_Geom_traits::Point_3              TVD_Point;
   typedef typename TVD_Geom_traits::RT                   TVD_RT;
@@ -160,7 +160,7 @@ private:
 public:
 
   Voronoi_triangulator_3(Regular &T, Simplicial &sc)
-    : T(T), sc(sc), triangulation_incr_builder(sc), 
+    : T(T), sc(sc), triangulation_incr_builder(sc),
       visitor(), compute_anchor_obj(T) {
     edge_index[0][0] = -1; edge_index[0][1] =  0;
     edge_index[0][2] =  1; edge_index[0][3] =  2;
@@ -175,7 +175,7 @@ public:
   }
 
   Voronoi_triangulator_3(Regular &T, Simplicial &sc, Visitor &visitor)
-    : T(T), sc(sc), triangulation_incr_builder(sc), 
+    : T(T), sc(sc), triangulation_incr_builder(sc),
       visitor(visitor), compute_anchor_obj(T) {
     edge_index[0][0] = -1; edge_index[0][1] =  0;
     edge_index[0][2] =  1; edge_index[0][3] =  2;
@@ -185,7 +185,7 @@ public:
     edge_index[2][2] = -1; edge_index[2][3] =  5;
     edge_index[3][0] =  2; edge_index[3][1] =  4;
     edge_index[3][2] =  5; edge_index[3][3] = -1;
-	  
+
     build();
   }
 
@@ -201,9 +201,9 @@ private:
     triangulation_incr_builder.end_triangulation();
   }
 
-  TVD_Vertex_handle add_vertex(Rt_Simplex &sVor); 
+  TVD_Vertex_handle add_vertex(Rt_Simplex &sVor);
   TVD_Cell_handle add_cell(TVD_Vertex_handle vh[], int orient, Rt_Simplex s);
-	
+
   TVD_Vertex_handle get_vertex(Rt_Simplex &sVor);
 
 
@@ -219,7 +219,7 @@ private:
 
   // Reference back to the regular triangulation
 //  std::map<TVD_Cell_handle, Rt_Simplex> backRef;
-	
+
 private:
   Regular &T;
   Simplicial &sc;
@@ -297,7 +297,7 @@ construct_vertices() {
       index_2[nb].V[nb->index(fit->first)] = vh;
     }
   }
-	
+
   // dimVor=1
   for (eit=T.finite_edges_begin(); eit!=T.finite_edges_end(); eit++) {
     sVor = compute_anchor_obj.anchor_vor(*eit);
@@ -312,9 +312,9 @@ construct_vertices() {
     v2 = eit->first->vertex(eit->third);
     if (v2 < v1) std::swap(v1,v2);
     index_1[v1].V[v2] = vh;
-    assert(vh == get_vertex(sVor));
+    CGAL_assertion(vh == get_vertex(sVor));
   }
-	
+
   // dimVor=0
   for (vit=T.finite_vertices_begin(); vit!=T.finite_vertices_end(); vit++) {
     sVor = compute_anchor_obj.anchor_vor(vit);
@@ -325,7 +325,7 @@ construct_vertices() {
       debug_vh = vh;
     }
     index_0[vit] = vh;
-    assert(vh == get_vertex(sVor));
+    CGAL_assertion(vh == get_vertex(sVor));
   }
 
 }
@@ -367,11 +367,11 @@ construct_cells() {
 	    if (j!=i) {
 	      sVor = compute_anchor_obj.anchor_vor(Rt_Edge(*adj_cell,index,(index+j)&3));
 	      vh[1] = get_vertex(sVor);
-		  
+
 	      if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
-		
+
 		TVD_Cell_handle ch;
-								
+
 		ch = add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
 		inserted_cells.push_back(ch);
 	      }
@@ -391,7 +391,7 @@ add_vertex (Rt_Simplex &sVor)
 {
   TVD_Vertex_handle vh = triangulation_incr_builder.add_vertex();
   vh->point() = get_anchor(sVor);
-  visitor.after_vertex_insertion(sVor,sVor,vh); 
+  visitor.after_vertex_insertion(sVor,sVor,vh);
 
   return vh;
 }
@@ -429,9 +429,9 @@ Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_vertex (
       ch=sVor;
       return index_3[ch];
     default:
-      assert(false);
+      ;
   }
-  assert(false);
+  CGAL_error();
   return TVD_Vertex_handle();
 }
 
@@ -440,11 +440,17 @@ template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
 typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::TVD_Cell_handle
 Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 add_cell(TVD_Vertex_handle vh[], int orient, Rt_Simplex s) {
-  assert((orient==0) || (orient==1));
-  assert(vh[0] != TVD_Vertex_handle()); assert(vh[1] != TVD_Vertex_handle());
-  assert(vh[2] != TVD_Vertex_handle()); assert(vh[3] != TVD_Vertex_handle());
-  assert(vh[1] != vh[2]); assert(vh[1] != vh[3]); assert(vh[1] != vh[4]);
-  assert(vh[2] != vh[3]); assert(vh[2] != vh[4]); assert(vh[3] != vh[4]);
+  CGAL_assertion((orient==0) || (orient==1));
+  CGAL_assertion(vh[0] != TVD_Vertex_handle());
+  CGAL_assertion(vh[1] != TVD_Vertex_handle());
+  CGAL_assertion(vh[2] != TVD_Vertex_handle());
+  CGAL_assertion(vh[3] != TVD_Vertex_handle());
+  CGAL_assertion(vh[1] != vh[2]);
+  CGAL_assertion(vh[1] != vh[3]);
+  CGAL_assertion(vh[1] != vh[4]);
+  CGAL_assertion(vh[2] != vh[3]);
+  CGAL_assertion(vh[2] != vh[4]);
+  CGAL_assertion(vh[3] != vh[4]);
   TVD_Cell_handle ch;
 
 // NGHK: DEBUG:
@@ -507,7 +513,7 @@ Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_anchor(R
   Rt_Edge           e;
   Rt_Facet          f;
   Rt_Cell_handle   ch;
-	
+
   TVD_Point vfoc, dfoc;
   switch (sVor.dimension()) {
     case 0:
@@ -536,7 +542,7 @@ Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_anchor(R
 	r2s_converter(ch->vertex(3)->point()));
       break;
   }
-	
+
   return vfoc;
 }
 

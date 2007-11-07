@@ -95,7 +95,7 @@ class Object
 #ifdef _MSC_VER
       }
       catch (...) {
-          CGAL_assertion_msg(false, "ERROR : YOUR COMPILER MUST SUPPORT RTTI");
+          CGAL_error_msg( "Your compiler must support  RTTI");
       }
 #endif
       return true;

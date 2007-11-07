@@ -51,7 +51,7 @@ namespace CGAL {
     private:
       
       const Sphere_3& get_ref_sphere(const typename SK::Circle_on_reference_sphere_3& C){return C.reference_sphere();}
-      Sphere_3 get_ref_sphere(const typename SK::Circle_3& C){CGAL_assertion(false);}
+      Sphere_3 get_ref_sphere(const typename SK::Circle_3& C){CGAL_error();}
 
       typedef Triple<Circle_3, Circular_arc_point_3, 
                                Circular_arc_point_3> Rep;

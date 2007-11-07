@@ -620,7 +620,7 @@ protected:
       shoot_target = (env.non_const_handle(shoot_vh))->point();
     }
     else
-      CGAL_assertion(false); // it cannot be the unbounded face
+      CGAL_error(); // it cannot be the unbounded face
     
     Point_2 res_point = traits.construct_middle_point(shoot_source, shoot_target);
 

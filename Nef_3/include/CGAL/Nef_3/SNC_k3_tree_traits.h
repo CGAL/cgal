@@ -50,7 +50,7 @@ class ComparePoints {
     case 2: 
       CGAL_NEF_TRACEN("compare_z " << p1 << ", " << p2 << "=" << (int) CGAL::compare_z(p1, p2));
       return CGAL::compare_z(p1, p2);
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return CGAL::EQUAL;
   }
@@ -94,7 +94,7 @@ class ComparePoints<CGAL::Lazy_kernel<EK>, Coordinate> {
 	      CGAL::to_interval(p1.z()).first)
 	return CGAL::LARGER;
       return CGAL::EQUAL;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return CGAL::EQUAL;
   }
@@ -397,7 +397,7 @@ Side_of_plane<SNC_decorator>::operator()
         OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
                          cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
         break;
-      default: CGAL_assertion_msg(false, "wrong value");
+      default: CGAL_error_msg( "wrong value");
       }
     return OnSideMapRC[&(v->point().hw())];
   } else {
@@ -412,7 +412,7 @@ Side_of_plane<SNC_decorator>::operator()
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   }
 #endif
-  CGAL_assertion_msg(false, "should not be reached");
+  CGAL_error_msg( "should not be reached");
 }
 
 /* 
@@ -448,7 +448,7 @@ Side_of_plane<SNC_decorator>::operator()
       OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
                        cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
       break;
-    default: CGAL_assertion_msg(false, "wrong value");
+    default: CGAL_error_msg( "wrong value");
     }
   if(!OnSideMap.is_defined(vt))
     switch(depth%3) {
@@ -467,7 +467,7 @@ Side_of_plane<SNC_decorator>::operator()
       OnSideMap[vt] = cr == LARGER ? ON_POSITIVE_SIDE :
                        cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
       break;
-    default: CGAL_assertion_msg(false, "wrong value");
+    default: CGAL_error_msg( "wrong value");
     }
   Oriented_side src_side = OnSideMap[v];
   Oriented_side tgt_side = OnSideMap[vt];
@@ -515,7 +515,7 @@ Side_of_plane<SNC_decorator>::operator()
         side = cr == LARGER ? ON_POSITIVE_SIDE :
                  cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
         break;
-      default: CGAL_assertion_msg(false, "wrong value");
+      default: CGAL_error_msg( "wrong value");
       }
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
       if(reference_counted) 
@@ -558,7 +558,7 @@ template <typename Depth>
 Oriented_side
 Side_of_plane<SNC_decorator>::operator()
   (const Point_3& pop, Partial_facet& pf, Depth depth) {
-  CGAL_assertion_msg(false, "not implemented yet");
+  CGAL_error_msg( "not implemented yet");
   
   return ON_ORIENTED_BOUNDARY;
 }
@@ -591,7 +591,7 @@ Side_of_plane<SNC_decorator>::operator()
       if(f->b.max_coord(2) < pop.z())
 	return ON_NEGATIVE_SIDE;
       break;
-    default: CGAL_assertion_msg(false, "wrong value");
+    default: CGAL_error_msg( "wrong value");
     }    
     return ON_ORIENTED_BOUNDARY;
 #else  

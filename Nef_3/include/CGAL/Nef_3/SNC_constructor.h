@@ -108,7 +108,7 @@ struct circle_lt {
       if(x[0] > zero) return (y[0]>y[1]);
       else return  (y[0]<y[1]);
     }
-    CGAL_assertion_msg(false, "control should not reach this line");
+    CGAL_error_msg( "control should not reach this line");
     return false;
   }
 };
@@ -515,7 +515,7 @@ public:
       c1 = (p.hx() < RT(0)) ? Sphere_circle(-1,0,0) : Sphere_circle(1,0,0);
       c2 = (p.hy() < RT(0)) ? Sphere_circle(0,-1,0) : Sphere_circle(0,1,0);
     } else
-      CGAL_assertion_msg(false, "line of code shall not be reached");
+      CGAL_error_msg( "line of code shall not be reached");
     
     Vertex_handle v = this->sncp()->new_vertex( p, true);
     SM_decorator D(&*v);
@@ -731,7 +731,7 @@ public:
     SM_const_decorator E(&*e1->source());
     if(E.is_isolated(e0)) {
       if(E.is_isolated(e1)) {
-	CGAL_assertion_msg(false, "not implemented, yet");
+	CGAL_error_msg( "not implemented, yet");
 
       } else {
 	std::swap(e0, e1);
@@ -865,7 +865,7 @@ public:
 	      << ", " << (std::distance(seb[1], see[1])) );
 
     if(E.is_isolated(e1)) {
-      CGAL_assertion_msg(false, "not implemented, yet");
+      CGAL_error_msg( "not implemented, yet");
       return D.sphere_map();
     }
 
@@ -1021,7 +1021,7 @@ public:
       CGAL_NEF_TRACEN("++os1 " << os1 );
 
       if(os1 == ON_ORIENTED_BOUNDARY) {
-	CGAL_assertion_msg(false, "not implemented, yet"); // don't forget empty_c
+	CGAL_error_msg( "not implemented, yet"); // don't forget empty_c
 	++svc;
 	scb[0] = scb[1] = sce[0] = sce[1] = svc;
 	if(svc != send) {
@@ -1064,7 +1064,7 @@ public:
       empty_c[1-i] = true;
       done = true;
     } else {
-      CGAL_assertion_msg(false, "not implemented, yet");
+      CGAL_error_msg( "not implemented, yet");
       CGAL_assertion(os0 != os1);
       i = os1 == ON_POSITIVE_SIDE ? 0 : 1;
       sce[1-i] = scb[i] = svc;
@@ -1083,7 +1083,7 @@ public:
 
       sce[1-i] = scb[i] = svc;
       if(os1 == ON_ORIENTED_BOUNDARY) {
-	CGAL_assertion_msg(false, "degenerate case not handled");
+	CGAL_error_msg( "degenerate case not handled");
 	++scb[i];
 	CGAL_assertion(svc->circle().has_on(sv[0]->point()) == 1-i);
 	equator[1-i] = equator[3-i] == true;

@@ -60,7 +60,7 @@ CGAL_BEGIN_NAMESPACE
     class Test_to_double<Type, CGAL::Null_tag> {
     public:
         void operator() (CGAL::Null_functor) {
-            CGAL_error("To_double functor not implemented");
+            CGAL_error_msg("To_double functor not implemented");
         }
     };
     
@@ -110,7 +110,7 @@ CGAL_BEGIN_NAMESPACE
     class Test_to_interval< Type, CGAL::Null_tag> {
       public:
         void operator() (CGAL::Null_functor) {
-            CGAL_assertion_msg(false, "To_Interval not implemented");
+            CGAL_error_msg( "To_Interval not implemented");
             // ok, nothing to test
         }
     };

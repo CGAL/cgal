@@ -432,7 +432,7 @@ on the extended geometric objects.}*/
     CGAL::Object result =
       _intersect(_line(s1),_line(s2));
     if ( !CGAL::assign(p, result) )
-    CGAL_assertion_msg(false,"intersection: no intersection.");
+    CGAL_error_msg("intersection: no intersection.");
     simplify(p);
     return p;
   }

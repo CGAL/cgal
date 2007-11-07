@@ -96,11 +96,11 @@ public:
     // Preconditions:
     // * 0 <= i < dimension()
     const T& operator[](unsigned int i) const {
-        assert(i < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
         return coeff_[i] ;
     }
     T& operator[](unsigned int i) {
-        assert(i < dimension_) ;
+        CGAL_assertion(i < dimension_) ;
         return coeff_[i] ;
     }
 
@@ -116,7 +116,7 @@ public:
 
     /** y <- y + a*x  */
     static void axpy(CoeffType a, const VectorType& x, VectorType& y) {
-        assert(x.dimension() == y.dimension()) ;
+        CGAL_assertion(x.dimension() == y.dimension()) ;
         for(unsigned int i=0; i<x.dimension(); i++) {
             y[i] += a * x[i] ;
         }
@@ -131,7 +131,7 @@ public:
 
     /** y <- x */
     static void copy(const VectorType& x, VectorType& y) {
-        assert(x.dimension() == y.dimension()) ;
+        CGAL_assertion(x.dimension() == y.dimension()) ;
         for(unsigned int i=0; i<x.dimension(); i++) {
             y[i] = x[i] ;
         }
@@ -140,7 +140,7 @@ public:
     /** returns x^t * y */
     static CoeffType dot(const VectorType& x, const VectorType& y) {
         CoeffType result = 0 ;
-        assert(x.dimension() == y.dimension()) ;
+        CGAL_assertion(x.dimension() == y.dimension()) ;
         for(unsigned int i=0; i<x.dimension(); i++) {
             result += y[i] * x[i] ;
         }

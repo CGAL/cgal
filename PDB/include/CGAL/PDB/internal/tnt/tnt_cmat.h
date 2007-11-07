@@ -76,9 +76,9 @@ class Matrix
         row_ = new T*[M];
         rowm1_ = new T*[M];
 
-        assert(v_  != NULL);
-        assert(row_  != NULL);
-        assert(rowm1_ != NULL);
+        CGAL_assertion(v_  != NULL);
+        CGAL_assertion(row_  != NULL);
+        CGAL_assertion(rowm1_ != NULL);
 
         T* p = v_;              
         vm1_ = v_ - 1;
@@ -260,8 +260,8 @@ class Matrix
     Subscript dim(Subscript d) const 
     {
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert( d >= 1);
-        assert( d <= 2);
+        CGAL_assertion( d >= 1);
+        CGAL_assertion( d <= 2);
 #endif
         return (d==1) ? m_ : ((d==2) ? n_ : 0); 
     }
@@ -275,8 +275,8 @@ class Matrix
     inline T* operator[](Subscript i)
     {
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert(0<=i);
-        assert(i < m_) ;
+        CGAL_assertion(0<=i);
+        CGAL_assertion(i < m_) ;
 #endif
         return row_[i];
     }
@@ -284,8 +284,8 @@ class Matrix
     inline const T* operator[](Subscript i) const
     {
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert(0<=i);
-        assert(i < m_) ;
+        CGAL_assertion(0<=i);
+        CGAL_assertion(i < m_) ;
 #endif
         return row_[i];
     }
@@ -293,8 +293,8 @@ class Matrix
     inline reference operator()(Subscript i)
     { 
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert(1<=i);
-        assert(i <= mn_) ;
+        CGAL_assertion(1<=i);
+        CGAL_assertion(i <= mn_) ;
 #endif
         return vm1_[i]; 
     }
@@ -302,8 +302,8 @@ class Matrix
     inline const_reference operator()(Subscript i) const
     { 
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert(1<=i);
-        assert(i <= mn_) ;
+        CGAL_assertion(1<=i);
+        CGAL_assertion(i <= mn_) ;
 #endif
         return vm1_[i]; 
     }
@@ -313,10 +313,10 @@ class Matrix
     inline reference operator()(Subscript i, Subscript j)
     { 
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert(1<=i);
-        assert(i <= m_) ;
-        assert(1<=j);
-        assert(j <= n_);
+        CGAL_assertion(1<=i);
+        CGAL_assertion(i <= m_) ;
+        CGAL_assertion(1<=j);
+        CGAL_assertion(j <= n_);
 #endif
         return  rowm1_[i][j]; 
     }
@@ -326,10 +326,10 @@ class Matrix
     inline const_reference operator() (Subscript i, Subscript j) const
     {
 #ifdef CGAL_TNT_BOUNDS_CHECK
-        assert(1<=i);
-        assert(i <= m_) ;
-        assert(1<=j);
-        assert(j <= n_);
+        CGAL_assertion(1<=i);
+        CGAL_assertion(i <= m_) ;
+        CGAL_assertion(1<=j);
+        CGAL_assertion(j <= n_);
 #endif
         return rowm1_[i][j]; 
     }
@@ -397,8 +397,8 @@ Matrix<T> operator+(const Matrix<T> &A,
     Subscript M = A.num_rows();
     Subscript N = A.num_cols();
 
-    assert(M==B.num_rows());
-    assert(N==B.num_cols());
+    CGAL_assertion(M==B.num_rows());
+    CGAL_assertion(N==B.num_cols());
 
     Matrix<T> tmp(M,N);
     Subscript i,j;
@@ -417,8 +417,8 @@ Matrix<T> operator-(const Matrix<T> &A,
     Subscript M = A.num_rows();
     Subscript N = A.num_cols();
 
-    assert(M==B.num_rows());
-    assert(N==B.num_cols());
+    CGAL_assertion(M==B.num_rows());
+    CGAL_assertion(N==B.num_cols());
 
     Matrix<T> tmp(M,N);
     Subscript i,j;
@@ -437,8 +437,8 @@ Matrix<T> mult_element(const Matrix<T> &A,
     Subscript M = A.num_rows();
     Subscript N = A.num_cols();
 
-    assert(M==B.num_rows());
-    assert(N==B.num_cols());
+    CGAL_assertion(M==B.num_rows());
+    CGAL_assertion(N==B.num_cols());
 
     Matrix<T> tmp(M,N);
     Subscript i,j;
@@ -475,7 +475,7 @@ inline Matrix<T> matmult(const Matrix<T>  &A,
 {
 
 #ifdef TNT_BOUNDS_CHECK
-    assert(A.num_cols() == B.num_rows());
+    CGAL_assertion(A.num_cols() == B.num_rows());
 #endif
 
     Subscript M = A.num_rows();
@@ -510,7 +510,7 @@ inline int matmult(Matrix<T>& C, const Matrix<T>  &A,
     const Matrix<T> &B)
 {
 
-    assert(A.num_cols() == B.num_rows());
+    CGAL_assertion(A.num_cols() == B.num_rows());
 
     Subscript M = A.num_rows();
     Subscript N = A.num_cols();
@@ -547,7 +547,7 @@ Vector<T> matmult(const Matrix<T>  &A, const Vector<T> &x)
 {
 
 #ifdef TNT_BOUNDS_CHECK
-    assert(A.num_cols() == x.dim());
+    CGAL_assertion(A.num_cols() == x.dim());
 #endif
 
     Subscript M = A.num_rows();

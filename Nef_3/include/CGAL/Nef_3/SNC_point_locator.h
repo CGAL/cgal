@@ -365,7 +365,7 @@ public:
 	    CGAL_NEF_TRACEN("add triangle " << tr);
 	  }
 	} else
-	  CGAL_assertion_msg(false, "wrong value");
+	  CGAL_error_msg( "wrong value");
       } else {
         CGAL_NEF_TRACEN("add facet " << f->plane());
         objects.push_back(Object_handle(Halffacet_handle(f)));
@@ -747,7 +747,7 @@ public:
         }
 #endif
       } 
-      else CGAL_assertion_msg(false, "wrong handle type");
+      else CGAL_error_msg( "wrong handle type");
     }
 
     if( CGAL::assign( v, result)) {
@@ -759,7 +759,7 @@ public:
         return sf->volume();
       std::cerr << "Abbruch " << std::endl;
       return Object_handle();
-      CGAL_assertion_msg(false, "wrong handle type");
+      CGAL_error_msg( "wrong handle type");
 /*
       SHalfedge_handle se;
       CGAL_assertion(CGAL::assign(se,so));
@@ -788,7 +788,7 @@ public:
       return Object_handle(f->incident_volume());
 #ifdef CGAL_NEF3_FACET_WITH_BOX
     } else if( CGAL::assign(pf, *o)) {
-      CGAL_assertion_msg(false, "should not be executed");
+      CGAL_error_msg( "should not be executed");
       Halffacet_handle f = pf.f;
       if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
 	f = f->twin();
@@ -808,7 +808,7 @@ public:
         return Object_handle(e->incident_sface()->volume());	
       return get_visible_facet(e,Ray_3(s.source(),s.to_vector()))->incident_volume();
     }
-    CGAL_assertion_msg(false, "wrong handle type");
+    CGAL_error_msg( "wrong handle type");
     return Object_handle();
   }
   }
@@ -870,7 +870,7 @@ public:
       }
 #ifdef CGAL_NEF3_FACET_WITH_BOX
 	else if( CGAL::assign(pf, *o)) {
-	  CGAL_assertion_msg(false, "not implemented yet");
+	  CGAL_error_msg( "not implemented yet");
 	}
 #endif
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
@@ -938,7 +938,7 @@ public:
       }
 #ifdef CGAL_NEF3_FACET_WITH_BOX
 	else if( CGAL::assign(pf, *o)) {
-	  CGAL_assertion_msg(false, "not implemented yet");
+	  CGAL_error_msg( "not implemented yet");
 	}
 #endif
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
@@ -995,7 +995,7 @@ public:
       }
 #ifdef CGAL_NEF3_FACET_WITH_BOX
       else if( CGAL::assign(pf, *o)) {
-	CGAL_assertion_msg(false, "not implemented yet");
+	CGAL_error_msg( "not implemented yet");
       }
 #endif
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS

@@ -89,7 +89,7 @@ namespace {
     std::cerr << "   COND:     " << #cond << std::endl; \
     std::cerr << "   POSITION: " << __FILE__ << " at line "<< __LINE__ \
               << std::endl; \
-    CGAL_assertion(false); \
+    CGAL_error(); \
   }
 #endif
 

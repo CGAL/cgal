@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -91,7 +91,7 @@ public:
     /// => The caller must NOT modify 'mesh' during the
     /// Parameterization_mesh_feature_extractor life cycle.
     Parameterization_mesh_feature_extractor(Adaptor& mesh)
-        // Store reference to adapted mesh 
+        // Store reference to adapted mesh
       : m_mesh_adaptor(mesh)
     {
         // m_mesh_adaptor features are not yet computed
@@ -157,7 +157,7 @@ private:
     /// Result is in m_nb_borders and m_skeleton.
     void extract_borders()
     {
-        assert(m_skeleton.size() == 0);
+        CGAL_surface_mesh_parameterization_precondition(m_skeleton.size() == 0);
 
         // Tag all vertices as unprocessed
         const int tag_free = 0;
@@ -320,7 +320,8 @@ private:
                        const int tag_free,
                        const int tag_done)
     {
-        assert(m_mesh_adaptor.get_vertex_tag(pSeedVertex) == tag_free);
+        CGAL_surface_mesh_parameterization_precondition(
+             m_mesh_adaptor.get_vertex_tag(pSeedVertex) == tag_free);
 
         std::list<Vertex_handle> vertices;
         vertices.push_front(pSeedVertex);

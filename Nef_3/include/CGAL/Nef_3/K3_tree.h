@@ -100,7 +100,7 @@ public:
     case 0: return CGAL::compare_x(v1->point(), v2->point()) == SMALLER;
     case 1: return CGAL::compare_y(v1->point(), v2->point()) == SMALLER;
     case 2: return CGAL::compare_z(v1->point(), v2->point()) == SMALLER;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return false;
   }
@@ -113,7 +113,7 @@ public:
     case 0: return CGAL::compare_x(v1->point(), v2->point()) == SMALLER;
     case 1: return CGAL::compare_y(v1->point(), v2->point()) == SMALLER;
     case 2: return CGAL::compare_z(v1->point(), v2->point()) == SMALLER;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return false;
   }
@@ -138,7 +138,7 @@ public:
 			   CGAL::to_interval(v2->point().y()).first;
     case 2: return CGAL::to_interval(v1->point().z()).second <
 			   CGAL::to_interval(v2->point().z()).first;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return false;
   }
@@ -154,7 +154,7 @@ public:
 			   CGAL::to_interval(v2->point().y()).first;
     case 2: return CGAL::to_interval(v1->point().z()).second <
 			   CGAL::to_interval(v2->point().z()).first;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return false;
   }
@@ -721,7 +721,7 @@ public:
           objects.push_back(Object_handle(th));
         }
       } else 
-      	CGAL_assertion_msg(false, "wrong value");
+      	CGAL_error_msg( "wrong value");
       } else
         objects.push_back(Object_handle(Halffacet_handle(f)));
 #else
@@ -806,7 +806,7 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 #endif
 #ifdef CGAL_NEF3_FACET_WITH_BOX
 	else if(CGAL::assign(pf, *o)) {
-	  CGAL_assertion_msg(false, "wrong type");
+	  CGAL_error_msg( "wrong type");
 	}
 #endif
 	else

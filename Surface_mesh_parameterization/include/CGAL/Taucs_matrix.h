@@ -21,9 +21,9 @@
 #ifndef CGAL_TAUCS_MATRIX
 #define CGAL_TAUCS_MATRIX
 
+#include <CGAL/basic.h>
 #include <CGAL/Taucs_fix.h>
 
-#include <cassert>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -142,7 +142,7 @@ public:
     Taucs_matrix(int  dim,                  ///< Matrix dimension.
                  bool is_symmetric = false) ///< Symmetric/hermitian?
     {
-        assert(dim > 0);
+        CGAL_precondition(dim > 0);
 
         m_row_dimension     = dim;
         m_column_dimension  = dim;
@@ -156,10 +156,10 @@ public:
                  int  columns,
                  bool is_symmetric = false) ///< Symmetric/hermitian?
     {
-        assert(rows > 0);
-        assert(columns > 0);
+        CGAL_precondition(rows > 0);
+        CGAL_precondition(columns > 0);
         if (m_is_symmetric) {
-            assert(rows == columns);
+            CGAL_precondition(rows == columns);
         }
 
         m_row_dimension     = rows;
@@ -200,8 +200,8 @@ public:
         if (m_is_symmetric && (j > i))
             std::swap(i, j);
 
-        assert(i < m_row_dimension);
-        assert(j < m_column_dimension);
+        CGAL_precondition(i < m_row_dimension);
+        CGAL_precondition(j < m_column_dimension);
         return m_columns[j].get_coef(i);
     }
 
@@ -219,8 +219,8 @@ public:
         if (m_is_symmetric && (j > i))
             return;
 
-        assert(i < m_row_dimension);
-        assert(j < m_column_dimension);
+        CGAL_precondition(i < m_row_dimension);
+        CGAL_precondition(j < m_column_dimension);
         m_columns[j].set_coef(i, val);
     }
 
@@ -238,8 +238,8 @@ public:
         if (m_is_symmetric && (j > i))
             return;
 
-        assert(i < m_row_dimension);
-        assert(j < m_column_dimension);
+        CGAL_precondition(i < m_row_dimension);
+        CGAL_precondition(j < m_column_dimension);
         m_columns[j].add_coef(i, val);
     }
 

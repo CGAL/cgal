@@ -154,7 +154,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 			       "->" << sh1->twin()->source()->point() );
 	      return false;
 	    }
-	  CGAL_assertion_msg(false, "should not happen on one side only");
+	  CGAL_error_msg( "should not happen on one side only");
 	}
     }
 

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -21,6 +21,7 @@
 #ifndef CGAL_PARAM_MESH_PATCH_VERTEX_H
 #define CGAL_PARAM_MESH_PATCH_VERTEX_H
 
+#include <CGAL/basic.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
 #include <list>
@@ -146,7 +147,7 @@ private:
 }; // Param_mesh_patch_vertex
 
 
-/// Param_mesh_patch_vertex_handle represents a handle to a 
+/// Param_mesh_patch_vertex_handle represents a handle to a
 /// Param_mesh_patch_vertex object, thus has the same behavior
 /// as Param_mesh_patch_vertex* pointer type.
 ///
@@ -200,7 +201,7 @@ public:
             m_ptr = &m_vertex;
         }
 
-        assert(m_ptr == NULL || m_ptr == &m_vertex);
+        CGAL_surface_mesh_parameterization_assertion(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
     /// Extra constructor that will create the Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>::Vertex on the fly
@@ -232,7 +233,7 @@ public:
             m_ptr = &m_vertex;
         }
 
-        assert(m_ptr == NULL || m_ptr == &m_vertex);
+        CGAL_surface_mesh_parameterization_assertion(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
     /// operator =()
@@ -249,7 +250,7 @@ public:
             m_ptr = &m_vertex;
         }
 
-        assert(m_ptr == NULL || m_ptr == &m_vertex);
+        CGAL_surface_mesh_parameterization_assertion(m_ptr == NULL || m_ptr == &m_vertex);
 
         return *this;
     }
@@ -290,7 +291,7 @@ private:
 }; // Param_mesh_patch_vertex_handle
 
 
-/// Param_mesh_patch_vertex_const_handle represents a handle to a 
+/// Param_mesh_patch_vertex_const_handle represents a handle to a
 /// Param_mesh_patch_vertex object, thus has the same behavior
 /// as const Param_mesh_patch_vertex* pointer type.
 ///
@@ -344,7 +345,7 @@ public:
             m_ptr = &m_vertex;
         }
 
-        assert(m_ptr == NULL || m_ptr == &m_vertex);
+        CGAL_surface_mesh_parameterization_assertion(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
     /// Extra constructor that will create the Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>::Vertex on the fly
@@ -378,7 +379,7 @@ public:
             m_ptr = &m_vertex;
         }
 
-        assert(m_ptr == NULL || m_ptr == &m_vertex);
+        CGAL_surface_mesh_parameterization_assertion(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
     /// operator =()
@@ -395,7 +396,7 @@ public:
             m_ptr = &m_vertex;
         }
 
-        assert(m_ptr == NULL || m_ptr == &m_vertex);
+        CGAL_surface_mesh_parameterization_assertion(m_ptr == NULL || m_ptr == &m_vertex);
 
         return *this;
     }

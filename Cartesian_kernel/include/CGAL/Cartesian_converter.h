@@ -114,7 +114,7 @@ public:
 	}
 	return make_object(res);
       }
-      CGAL_assertion_msg(false,"Cartesian_converter is unable to determine what is wrapped in the Object");
+      CGAL_error_msg("Cartesian_converter is unable to determine what is wrapped in the Object");
       return Object();
 	
     }

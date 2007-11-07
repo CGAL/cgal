@@ -20,7 +20,7 @@ operator<<(std::ostream& os, const Red_blue& rb)
   else if ( rb == PURPLE ) { os << "Purple"; }
   else {
     std::cerr << "INFO: " << static_cast<int>(rb) << std::endl;
-    CGAL_assertion(false);
+    CGAL_error();
   }
   return os;
 }

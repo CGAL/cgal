@@ -517,7 +517,7 @@ public:
 	  SHalfloop_handle l(fc);
 	  isolated_vertices.push_back(l->incident_sface()->center_vertex()->point());
 	} else
-	  CGAL_assertion_msg(false, "wrong value");
+	  CGAL_error_msg( "wrong value");
       }
     }
 

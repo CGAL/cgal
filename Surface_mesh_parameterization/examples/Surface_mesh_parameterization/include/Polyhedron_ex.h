@@ -380,12 +380,12 @@ public:
 #else
     #define FORMAT_EPS_COORD(x) (x)
 #endif
-            
+
     // Dump parameterized mesh to an eps file
     bool write_file_eps(const char *pFilename,
                         double scale = 500.0)
     {
-        assert(pFilename != NULL);
+        CGAL_assertion(pFilename != NULL);
 
         std::ofstream out(pFilename);
         if(!out)
@@ -449,12 +449,12 @@ public:
             double y1 = scale * pHalfedge->prev()->v();
             double x2 = scale * pHalfedge->u();
             double y2 = scale * pHalfedge->v();
-            out << FORMAT_EPS_COORD(x1) << " " 
-                << FORMAT_EPS_COORD(y1) << " " 
-                << FORMAT_EPS_COORD(x2) << " " 
+            out << FORMAT_EPS_COORD(x1) << " "
+                << FORMAT_EPS_COORD(y1) << " "
+                << FORMAT_EPS_COORD(x2) << " "
                 << FORMAT_EPS_COORD(y2) << " E" << std::endl;
         }
-            
+
         /* Emit EPS trailer. */
         out << "grestore" << std::endl;
         out << std::endl;
@@ -469,7 +469,7 @@ public:
 #else
     #define FORMAT_UV(x) (x)
 #endif
-            
+
     // Dump parameterized mesh to a Wavefront OBJ file
     // v x y z
     // f 1 2 3 4 (1-based)
@@ -477,7 +477,7 @@ public:
     // Implementation note: the UV is meaningless for a NON parameterized halfedge
     bool write_file_obj(const char *pFilename)
     {
-        assert(pFilename != NULL);
+        CGAL_assertion(pFilename != NULL);
 
         std::ofstream out(pFilename);
         if(!out)
@@ -510,7 +510,7 @@ public:
             else
                 out << "vt " << 0.0 << " " << 0.0 << std::endl;
         }
-            
+
         // Write facets using the unique material # 1
         out << "# facets" << std::endl;
         out << "usemtl Mat_1" << std::endl;

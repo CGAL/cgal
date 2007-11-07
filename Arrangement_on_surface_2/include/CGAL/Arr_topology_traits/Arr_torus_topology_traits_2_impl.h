@@ -707,7 +707,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::hole_creation_after_edge_removal
     // status: to implement
     std::cout << "Arr_torus_topology_traits_2 hole_creation"  << std::endl;
 
-    CGAL_assertion(false); // hole_creation not finally implemented for torus
+    CGAL_error(); // hole_creation not finally implemented for torus
 
     CGAL_precondition (! he->is_on_inner_ccb());
     CGAL_precondition (! he->opposite()->is_on_inner_ccb());
@@ -844,7 +844,7 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_in_face
     std::cout << "TODO: Arr_torus_topology_traits_2::is_in_face" 
               << std::endl;
 
-    CGAL_assertion(false); // is_in_face not implemented for torus
+    CGAL_error(); // is_in_face not implemented for torus
     // TODO is_in_face NEEDED for incremental insertion
     
     return false;

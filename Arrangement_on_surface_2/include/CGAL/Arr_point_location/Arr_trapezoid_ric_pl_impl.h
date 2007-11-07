@@ -90,7 +90,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
         return (CGAL::make_object (vh));
       }
       else
-        CGAL_assertion(false);
+        CGAL_error();
       break;
     }
 
@@ -104,7 +104,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       {
         //ixx
         std::cerr << "curve is: "<<cv<<" point is: "<<p <<std::endl; 
-        CGAL_assertion(false);
+        CGAL_error();
       }
       break;
     }
@@ -136,7 +136,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     }
   default:
     CGAL_TRAP_PRINT_DEBUG("DEFAULT");
-    CGAL_assertion(false);
+    CGAL_error();
     break;
   }
 
@@ -181,7 +181,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
       return (CGAL::make_object (vh));
     }
     else
-      CGAL_assertion(false);
+      CGAL_error();
     break;
 
  case TD::CURVE:
@@ -202,7 +202,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     return (_check_isolated_for_vertical_ray_shoot(h, p, shoot_up));
 
   default:
-    CGAL_assertion(false);
+    CGAL_error();
     break;
   }
 

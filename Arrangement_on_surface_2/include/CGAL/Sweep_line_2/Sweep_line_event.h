@@ -582,7 +582,7 @@ public:
             break;
           case NO_BOUNDARY:
           default:
-            CGAL_assertion(false);
+            CGAL_error();
           }
         } 
       }

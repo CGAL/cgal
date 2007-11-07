@@ -49,18 +49,17 @@ swallow(is, 'T');
 swallow(is, '[');
 is >> iformat(a0);
 do c = is.get(); while (isspace(c));
-// TODO: Replace CGAL_assertion_msg( false, ... ) with CGAL_error
-if (c != ',') CGAL_error( "input error: , expected" );
+if (c != ',') CGAL_error_msg( "input error: , expected" );
 
 is >> iformat(a1);
 do c = is.get(); while (isspace(c));
-if (c != ',') CGAL_error( "input error: , expected" );
+if (c != ',') CGAL_error_msg( "input error: , expected" );
 
 is >> iformat(root);
 do c = is.get(); while (isspace(c));
-if (c != ']') CGAL_error( "input error: ] expected" );
+if (c != ']') CGAL_error_msg( "input error: ] expected" );
 
-if ( root  < ROOT(0)) CGAL_error("input error: non-negative root expected");
+if ( root  < ROOT(0)) CGAL_error_msg("input error: non-negative root expected");
 
 if ( root == ROOT(0)) 
     result =  EXT(a0);

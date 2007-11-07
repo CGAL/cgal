@@ -113,7 +113,7 @@ swallow(std::istream &is, char d) {
     if (c != d) {
       std::stringstream msg;
       msg << "input error: expected '" << d << "' but got '" << c << "'";
-      CGAL_error( msg.str().c_str() );
+      CGAL_error_msg( msg.str().c_str() );
     }
 }
 
@@ -124,7 +124,7 @@ swallow(std::istream &is, const std::string& s ) {
     if (s != t) {
       std::stringstream msg;
       msg << "input error: expected '" << s << "' but got '" << t << "'";
-      CGAL_error( msg.str().c_str() );
+      CGAL_error_msg( msg.str().c_str() );
     }
 }
 

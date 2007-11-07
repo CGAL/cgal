@@ -350,7 +350,7 @@ public:
 
       } // if (sit != nil)
 
-    assert(sit_pred);
+    CGAL_assertion(sit_pred);
     GO.halfedge_below(v,Edge_of[sit_pred]);
     if ( Isos_of[event] != 0 ) {
       const IsoList& IL = *(Isos_of[event]);
@@ -375,13 +375,13 @@ public:
         sit = YS.insert_at(s_sit, next_seg, s_sit);
       else 
         sit = YS.insert_at(s_sit, next_seg, CGAL_LEDA_SCOPE::seq_item(nil));
-      assert(YS.succ(sit)==s_sit);
+      CGAL_assertion(YS.succ(sit)==s_sit);
 
       if ( YS.min_item() != p_sit &&
            orientation(p_sit, source(next_seg) ) == 0 &&
            orientation(p_sit, target(next_seg) ) == 0 )
         YS.change_inf(p_sit, sit);
-      assert(YS.succ(p_sit)==sit);
+      CGAL_assertion(YS.succ(p_sit)==sit);
                  
       XS.insert(target(next_seg), sit);
       GO.starting_segment(v,original(next_seg));
@@ -404,7 +404,7 @@ public:
     sit_first = YS.succ(sit_pred);
 
 
-    assert(sit_pred); assert(sit_pred_succ);
+    CGAL_assertion(sit_pred); CGAL_assertion(sit_pred_succ);
     CGAL_LEDA_SCOPE::seq_item xit = YS.inf(sit_pred);
     if ( xit ) { 
       ISegment s1 = YS.key(sit_pred);
@@ -757,7 +757,7 @@ public:
       } // if (sit != ss_iterator() )
 
 
-      assert( sit_pred != YS.end() );
+      CGAL_assertion( sit_pred != YS.end() );
       GO.halfedge_below(v,sit_pred->second);
       if ( event->second != 0 ) {
         const IsoList& IL = *(event->second);

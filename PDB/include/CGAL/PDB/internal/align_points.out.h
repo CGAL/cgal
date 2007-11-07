@@ -16,8 +16,8 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 
   template <class T>
   T det(const CGAL_TNT_NS::Array2D<T>& m) {
-    assert(m.dim1() == 3);
-    assert(m.dim2() == 3);
+    CGAL_assertion(m.dim1() == 3);
+    CGAL_assertion(m.dim2() == 3);
 
     return (m[0][0]*(m[1][1]*m[2][2] - m[1][2]*m[2][1]) -
             m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0]) +
@@ -62,7 +62,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
     }
     center_q = center_q/num_q;
       
-    assert(num_p == num_q);
+    CGAL_assertion(num_p == num_q);
       
     std::vector<Point> p_shifted, q_shifted;
     p_shifted.reserve(num_p);
@@ -190,7 +190,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 	    best_j=0;
 	  } else if (v_i >= v_j){
 	    dp_matrix[i][j] = DpP(ss+v_i, best_i[j-1]);
-	    assert(v_i > v_d);
+	    CGAL_assertion(v_i > v_d);
 	    if (v_d >= v_j) best_j=0;
 	  } else {
 	    dp_matrix[i][j] = DpP(ss+v_j, -best_j);
@@ -200,16 +200,16 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 	  const double eps=.00001;
 	  
 	  for (unsigned int k=0; k< i; ++k){
-	    assert(dp_matrix[i-k-1][j-1].first -gap_cost*k +ss <= dp_matrix[i][j].first + eps);
+	    CGAL_assertion(dp_matrix[i-k-1][j-1].first -gap_cost*k +ss <= dp_matrix[i][j].first + eps);
 	    if (dp_matrix[i][j].second == static_cast<int>(k)) {
-	      assert(std::abs(dp_matrix[i-k-1][j-1].first - gap_cost*k + ss - dp_matrix[i][j].first) < eps);
+	      CGAL_assertion(std::abs(dp_matrix[i-k-1][j-1].first - gap_cost*k + ss - dp_matrix[i][j].first) < eps);
 	    }
 	  }
 
 	  for (unsigned int k=0; k< j; ++k){
-	    assert(dp_matrix[i-1][j-k-1].first -gap_cost*k + ss <= dp_matrix[i][j].first + eps);
+	    CGAL_assertion(dp_matrix[i-1][j-k-1].first -gap_cost*k + ss <= dp_matrix[i][j].first + eps);
 	    if (dp_matrix[i][j].second == -static_cast<int>(k)) {
-	      assert( std::abs(ss - gap_cost*k + dp_matrix[i-1][j-k-1].first - dp_matrix[i][j].first) < eps);
+	      CGAL_assertion( std::abs(ss - gap_cost*k + dp_matrix[i-1][j-k-1].first - dp_matrix[i][j].first) < eps);
 	    }
 	  }
 
@@ -244,10 +244,10 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 	--j;
 
 	if (i==0 || j==0) break;
-	assert(c_m != b_m);
+	CGAL_assertion(c_m != b_m);
 	--c_m;
-	assert(j < d_1+1);
-	assert(i < d_0+1);
+	CGAL_assertion(j < d_1+1);
+	CGAL_assertion(i < d_0+1);
 	*c_m=j-1;
 	//std::cout << i << " " << j << std::endl;
       }

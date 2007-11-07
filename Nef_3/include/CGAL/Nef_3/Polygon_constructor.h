@@ -77,7 +77,7 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
 	  return Sphere_circle(Sphere_point(ORIGIN+(*pprev-*pcur)),
 			       Sphere_point(ORIGIN+(*pnext-*pcur)));
       }
-      CGAL_assertion_msg(false, "all points lie on a common line");
+      CGAL_error_msg( "all points lie on a common line");
       return Sphere_circle();
     }
 

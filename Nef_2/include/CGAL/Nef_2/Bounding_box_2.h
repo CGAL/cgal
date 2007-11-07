@@ -37,11 +37,11 @@ class Bounding_box_2 {
  public:
   template<typename Vertex_iterator>
     Bounding_box_2(Vertex_iterator , Vertex_iterator ) {
-    CGAL_assertion_msg(false, "dummy interface");
+    CGAL_error_msg( "dummy interface");
   }
   
   Point intersection_ray_bbox(const SPoint& , const SDirection& ) {
-    CGAL_assertion_msg(false, "dummy interface");
+    CGAL_error_msg( "dummy interface");
     return Point();
   }
 };
@@ -104,7 +104,7 @@ class Bounding_box_2<Tag_false,Kernel>
       Kernel K;
       return K.construct_point(minmax);
     }
-    CGAL_assertion_msg(false, "code not robust - l2 must be constructed to"
+    CGAL_error_msg( "code not robust - l2 must be constructed to"
 		       " be non-collinear with l1");
     return Point();
   }

@@ -554,7 +554,7 @@ public:
                                const Halfedge * /* e2 */) const
   {
     // This function is never called in case of an arrangement on a sphere:
-    CGAL_assertion(false);
+    CGAL_error();
     return false;
   }
 
@@ -645,7 +645,7 @@ public:
   Halfedge * split_fictitious_edge(Halfedge * /* e */, Vertex * /* v */)
   {
     // There are no fictitious halfedges:
-    CGAL_assertion(false);
+    CGAL_error();
     return NULL;
   }
 

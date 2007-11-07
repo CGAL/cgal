@@ -143,7 +143,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
       return v;
     }
 
-    CGAL_assertion_msg(false, "ray should hit vertex, edge, or facet");
+    CGAL_error_msg( "ray should hit vertex, edge, or facet");
     return Vertex_handle();
   }
 

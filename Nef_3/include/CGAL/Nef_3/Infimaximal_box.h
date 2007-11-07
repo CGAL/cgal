@@ -476,7 +476,7 @@ class Infimaximal_box<Tag_true, Kernel> {
 		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()(1),-p.hy()(1)*p.hw()[0]),
 		       RT(0,-p.hz()[1]*p.hw()[0]),
 		       RT(p.hw()[0]*p.hz()[1]));
-    default: CGAL_assertion_msg(false, "wrong value");
+    default: CGAL_error_msg( "wrong value");
     }
     return Point_3();
   }
@@ -514,10 +514,10 @@ class Infimaximal_box<Tag_true, Kernel> {
 	if(-s1->hz()(1) != s1->hw()) continue; 
 	if(-t1->hz()(1) != t1->hw()) continue; 
 	return s1;
-      default: CGAL_assertion_msg(false, "wrong value");
+      default: CGAL_error_msg( "wrong value");
       }
     }
-    CGAL_assertion_msg(false, "this line of shall not be reached");
+    CGAL_error_msg( "this line of shall not be reached");
     return s1;
   }
 

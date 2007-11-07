@@ -85,15 +85,15 @@ template <class T>
 Preconditioner<T>::Preconditioner(
     const SparseMatrix<T>& A, CoeffType omega
 ) : A_(A), omega_(omega) {
-    //assert(A.is_square()) ;
+    //CGAL_assertion(A.is_square()) ;
 }
 
 template <class T> 
 void Preconditioner<T>::mult_lower_inverse(
     const FullVector<T>& x, FullVector<T>& y
 ) const {
-    //assert(A_.has_symmetric_storage()) ;
-    //assert(A_.rows_are_stored()) ;
+    //CGAL_assertion(A_.has_symmetric_storage()) ;
+    //CGAL_assertion(A_.rows_are_stored()) ;
     int n = A_.dimension() ;
     for(int i=0; i<n; i++) {
         double S = 0 ;
@@ -110,8 +110,8 @@ template <class T>
 void Preconditioner<T>::mult_upper_inverse(
     const FullVector<T>& x, FullVector<T>& y
 ) const {
-    //assert(A_.has_symmetric_storage()) ;
-    //assert(A_.columns_are_stored()) ;
+    //CGAL_assertion(A_.has_symmetric_storage()) ;
+    //CGAL_assertion(A_.columns_are_stored()) ;
     int n = A_.dimension() ;
     for(int i=n-1; i>=0; i--) {
         double S = 0 ;

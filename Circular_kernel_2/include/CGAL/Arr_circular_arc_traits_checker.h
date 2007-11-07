@@ -69,7 +69,7 @@ struct Predicate_checker {
 		  << a1.first << std::endl;
 	std::cerr << " Arguments for P2 are : "
 		  << a1.second << std::endl;
-	CGAL_assertion(false); // message... a1, a2
+	CGAL_error(); // message... a1, a2
       }
 
       return r1;
@@ -98,7 +98,7 @@ struct Predicate_checker {
 	std::cerr << " Arguments for P2 are : "
 		  << a1.second << std::endl
 		  << a2.second << std::endl;
-	CGAL_assertion(false); // message... a1, a2
+	CGAL_error(); // message... a1, a2
       }
 
       return r1;
@@ -131,7 +131,7 @@ struct Predicate_checker {
 		  << a1.second << std::endl
 		  << a2.second << std::endl
 		  << a3.second << std::endl;
-	CGAL_assertion(false); // message... a1, a2
+	CGAL_error(); // message... a1, a2
       }
 
       return r1;
@@ -407,7 +407,7 @@ public:
 	    vp1.push_back(*pp1);
 	  }
 	  else
-	    CGAL_assertion(false);
+	    CGAL_error();
 	}
 
 	for(unsigned i=0; i<v2.size(); ++i) {
@@ -421,7 +421,7 @@ public:
 	    vp2.push_back(*pp2);
 	  }
 	  else
-	    CGAL_assertion(false);
+	    CGAL_error();
 	}
 
 

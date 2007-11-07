@@ -387,7 +387,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
   Vertex_circulator vc = rt.incident_vertices(vh),
     done(vc);
   do{
-    assert(!rt.is_infinite(vc));
+    CGAL_assertion(!rt.is_infinite(vc));
     t2.insert(vc->point());
   }
   while(++vc!=done);

@@ -562,7 +562,7 @@ public:
         CGAL_precondition(bnd1_y * bnd2_y < 0 || bnd1_y == bnd2_y);
         if(is_singular(bnd1_y) != is_singular(bnd2_y)) {
             // only one curve end lies at singularity (another at +/-oo)
-            CGAL_error("SINGULARITY + INF comparison is not yet implemented");
+            CGAL_error_msg("SINGULARITY + INF comparison is not yet implemented");
         }
         Curve_kernel_2 kernel_2;
         if(is_singular(bnd1_y) && is_singular(bnd2_y)) {
@@ -668,7 +668,7 @@ public:
             // report x-range assert violation if the point lies on disc in
             // x but neither of arc's ends do
             if(!(eq_min || eq_max))
-                CGAL_error("Target point is not within the arc's x-range");
+                CGAL_error_msg("Target point is not within the arc's x-range");
         } else // we should be able to access x-coord when point is on disc
             in_x_range = is_in_x_range(p.x(), &eq_min, &eq_max);
 
@@ -801,7 +801,7 @@ public:
             return CGAL::LARGER;
             
         if(is_singular(bndp_y)) // singularity in y
-            CGAL_error("Handling singularity in y is not yet implemented");
+            CGAL_error_msg("Handling singularity in y is not yet implemented");
         
         // vertical line immediately to the left of p: if p lies on boundary
         // get the vertical line over the last interval; otherwise
@@ -867,7 +867,7 @@ public:
             return CGAL::SMALLER;
         
         if(is_singular(bndp_y)) // singularity in y
-            CGAL_error("Handling singularity in y is not yet implemented");    
+            CGAL_error_msg("Handling singularity in y is not yet implemented");    
             
         // vertical line immediately to the right of p: if p lies on boundary
         // get the vertical line over the first interval; otherwise
@@ -1069,7 +1069,7 @@ public:
                 return false;
                 
             if(!curve().is_identical(cv2.curve())) 
-                CGAL_error("Not yet implemented");
+                CGAL_error_msg("Not yet implemented");
                 
             // LARGER source and smaller target
             Point_2 src = (_same_arc_compare_xy(_minpoint(), cv2._minpoint(),
@@ -1267,7 +1267,7 @@ public:
             return true;
         if(!curve().is_identical(cv2.curve())) {
             
-            CGAL_error("do_overlap() for non-coprime curves is not yet "
+            CGAL_error_msg("do_overlap() for non-coprime curves is not yet "
                 "implemented for ");
         }
         if(is_vertical() != cv2.is_vertical())
@@ -1311,7 +1311,7 @@ public:
             return (_same_arc_compare_xy(_minpoint(), cv2._maxpoint(), false, 
                 true) == CGAL::SMALLER);
         }
-        CGAL_error("bogus comparison result");
+        CGAL_error_msg("bogus comparison result");
         return false;
     }
                

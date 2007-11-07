@@ -731,7 +731,7 @@ class SNC_simplify<SNC_indexed_items, SNC_structure>
 	  SHalfloop_handle sl(fci);
 	  sl->set_index(index);
 	} else
-	  CGAL_assertion_msg(false, "wrong handle");
+	  CGAL_error_msg( "wrong handle");
       }
     }
     

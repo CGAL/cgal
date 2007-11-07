@@ -101,7 +101,7 @@ class SNC_walls : public SNC_decorator<SNC_> {
       SM_walls SW(new_vertex(ip),fh->mark());
       SW.extend_vertex_by_inner_walls(vh, vi, Sphere_point(CGAL::ORIGIN-vec)); 
       break;
-    default : CGAL_assertion_msg(false, "not implemented yet");
+    default : CGAL_error_msg( "not implemented yet");
     }
     return Vertex_handle();
   }

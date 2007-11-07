@@ -1049,7 +1049,7 @@ public:
       return SMALLER;
     }
     else
-      CGAL_assertion(false);
+      CGAL_error();
 
     return EQUAL;
   }

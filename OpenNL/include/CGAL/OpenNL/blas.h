@@ -1,11 +1,11 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License version 2.1 as published by the Free Software Foundation
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -28,12 +28,14 @@
  *
  *  Laurent Saboret 01/2005: Change for CGAL:
  *      - Added OpenNL namespace
- */
+ *  Andreas Meyer 2007 changes for CGAL:
+ *      - replaced assert with CGAL_assertion/CGAL_error etc.
+*/
 
 #ifndef __OPENNL_BLAS__
 #define __OPENNL_BLAS__
 
-#include <cassert>
+#include <CGAL/basic.h>
 
 namespace OpenNL {
 
@@ -43,25 +45,25 @@ template <class VECTOR> class BLAS {
 public:
     typedef VECTOR VectorType ;
     typedef typename VECTOR::CoeffType CoeffType ;
-    
+
     /** y <- y + a*x  */
     static void axpy(CoeffType a, const VectorType& x, VectorType& y) {
-        assert(false) ;
+        CGAL_error();
     }
 
     /** x <- a*x */
     static void scal(CoeffType a, VectorType& x) {
-        assert(false) ;
+        CGAL_error();
     }
 
     /** y = x */
     static void copy(const VectorType& x, VectorType& y) {
-        assert(false) ;
+        CGAL_error();
     }
 
     /** returns x^t * y */
     static CoeffType dot(const VectorType& x, const VectorType& y) {
-        assert(false) ;
+        CGAL_error();
     }
 } ;
 

@@ -140,7 +140,7 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
     this->et = new ET(e);
   }
 
-  void update_exact()  { CGAL_assertion(false); }
+  void update_exact()  { CGAL_error(); }
 };
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).

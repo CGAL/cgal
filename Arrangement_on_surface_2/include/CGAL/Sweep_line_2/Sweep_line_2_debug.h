@@ -109,7 +109,7 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintInfinityType
     return;
   case NO_BOUNDARY:
   default:
-    CGAL_assertion(false);
+    CGAL_error();
   }
 }
 

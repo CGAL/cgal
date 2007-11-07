@@ -107,7 +107,7 @@ public:
   Point_2 epoint(const Standard_FT& m1, const Standard_FT& n1, 
 		 const Standard_FT& m2, const Standard_FT& n2) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::epoint(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::epoint(..) should not be called");
     return Point_2(); 
   }
 
@@ -122,7 +122,7 @@ public:
   Point_2 
   construct_point(const Standard_line_2& , Point_type& ) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Line,Point_type) should not be called");
+    CGAL_error_msg( "Bounded_kernel::construct_point(Line,Point_type) should not be called");
     return Point_2();
   }
 
@@ -131,14 +131,14 @@ public:
 		  const Standard_point_2& , 
 		  Point_type& t) const
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Point,Point) should not be called");
+    CGAL_error_msg( "Bounded_kernel::construct_point(Point,Point) should not be called");
     return Point_2();
   }
 
   Point_2 
   construct_point(const Standard_line_2& ) const
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Line) should not be called");
+    CGAL_error_msg( "Bounded_kernel::construct_point(Line) should not be called");
     return Point_2();
   }
 
@@ -146,21 +146,21 @@ public:
   construct_point(const Standard_point_2& , 
 		  const Standard_point_2& ) const
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Point,Point) should not be called");
+    CGAL_error_msg( "Bounded_kernel::construct_point(Point,Point) should not be called");
     return Point_2();
    }
 
   Point_2 construct_point(const Standard_point_2& , 
 			  const Standard_direction_2& ) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Point,Direction) should not be called");
+    CGAL_error_msg( "Bounded_kernel::construct_point(Point,Direction) should not be called");
     return Point_2();
   }
 
   Point_2 
   construct_opposite_point(const Standard_line_2& l) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_opposite_point(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::construct_opposite_point(..) should not be called");
     return Point_2();
   }
 
@@ -186,21 +186,21 @@ public:
   Standard_line_2 
   standard_line(const Point_2& p) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::standard_line(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::standard_line(..) should not be called");
     return Standard_line_2();
   }
 
   Standard_ray_2
   standard_ray(const Point_2& p) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::standard_ray(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::standard_ray(..) should not be called");
     return Standard_ray_2();
   }
 
   Point_2 
   NE() const 
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::NE(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::NE(..) should not be called");
     return Point_2(); 
   }
 
@@ -208,7 +208,7 @@ public:
   Point_2 
   SE() const 
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::SE(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::SE(..) should not be called");
     return Point_2(); 
   }
 
@@ -216,7 +216,7 @@ public:
   Point_2 
   NW() const 
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::NW(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::NW(..) should not be called");
     return Point_2(); 
   }
 
@@ -224,7 +224,7 @@ public:
   Point_2 
   SW() const 
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::SW(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::SW(..) should not be called");
     return Point_2(); 
   }
 
@@ -232,7 +232,7 @@ public:
   Line_2 
   upper() const 
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::upper(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::upper(..) should not be called");
     return Line_2();
   }
 
@@ -240,7 +240,7 @@ public:
   Line_2 
   lower() const 
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::lower(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::lower(..) should not be called");
     return Line_2();
   }
 
@@ -248,7 +248,7 @@ public:
   Line_2 
   left()  const 
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::left(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::left(..) should not be called");
     return Line_2();
   }
 
@@ -257,7 +257,7 @@ public:
   Line_2 
   right() const 
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::right(..) should not be called");
+    CGAL_error_msg( "Bounded_kernel::right(..) should not be called");
     return Line_2();
   }
 
@@ -367,7 +367,7 @@ public:
     CGAL::Object result =
       _intersect(l1, l2);
     if ( !CGAL::assign(p, result) )
-      CGAL_assertion_msg(false,"intersection: no intersection.");
+      CGAL_error_msg("intersection: no intersection.");
     return p;
   }
 

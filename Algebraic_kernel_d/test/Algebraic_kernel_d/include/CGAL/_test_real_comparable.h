@@ -53,7 +53,7 @@ namespace CGALi {
     class Test_to_double<NT, ::CGAL::Null_functor> {
     public:
         void operator() (::CGAL::Null_functor) {
-            CGAL_error("To_double functor not implemented");
+            CGAL_error_msg("To_double functor not implemented");
         }
     };
     
@@ -90,7 +90,7 @@ namespace CGALi {
     class Test_to_Interval<NT, ::CGAL::Null_functor> {
     public:
         void operator() (::CGAL::Null_functor) {
-            CGAL_error("To_Interval not implemented");
+            CGAL_error_msg("To_Interval not implemented");
             // ok, nothing to test
         }
     };

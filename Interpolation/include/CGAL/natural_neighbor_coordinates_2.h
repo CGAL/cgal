@@ -295,7 +295,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
   Vertex_circulator vc = dt.incident_vertices(vh),
     done(vc);
   do{
-    assert(!dt.is_infinite(vc));
+    CGAL_assertion(!dt.is_infinite(vc));
     t2.insert(vc->point());
   }
   while(++vc!=done);

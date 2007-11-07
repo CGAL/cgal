@@ -137,8 +137,8 @@ CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
 	
 				
       // For these  and the is_on_ booleans it is required to use a lazy nt
-      assert(a->is_x_monotone());
-      assert(a->is_y_monotone());
+      CGAL_assertion(a->is_x_monotone());
+      CGAL_assertion(a->is_y_monotone());
 
 		
       CGAL::Bbox_2 left_bb(a->left().bbox()),

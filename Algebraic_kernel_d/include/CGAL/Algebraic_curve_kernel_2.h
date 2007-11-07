@@ -308,7 +308,7 @@ public:
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2) const {
             
-            CGAL_error("Compare_y_2 functor not yet implemented");
+            CGAL_error_msg("Compare_y_2 functor not yet implemented");
             return CGAL::EQUAL;
         }
     };
@@ -785,7 +785,7 @@ public:
                 // check if there is an event of curve p at r.x()
                 if(cv_line.is_event()) {
                     if(cv_line_r.is_event())
-                        CGAL_error("you're lucky )) this is not an easy \
+                        CGAL_error_msg("you're lucky )) this is not an easy \
                             case..");
                     //std::cout << "sign at event of curve p\n";
                     // this is an event of curve p but not of r.curve() ->

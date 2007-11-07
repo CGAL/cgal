@@ -615,7 +615,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
    //   piercing point of the |ray| on the local (virtual) view  of |e|
    //   \precondition |ray| target belongs to |e|. } 
 
-    CGAL_assertion(false);
+    CGAL_error();
 
     SM_decorator SD;
     if( SD.is_isolated(e))

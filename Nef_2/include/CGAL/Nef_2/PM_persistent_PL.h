@@ -82,7 +82,7 @@ struct PM_persistent_PL_traits
     if ( cmpX > 0 ) return EndingNonVertical;
 
     int cmpY = pK->compare_y(p_u, p_v); 
-    assert(cmpY != 0);
+    CGAL_assertion(cmpY != 0);
     if ( cmpY < 0 ) return StartingVertical;
     return EndingVertical;
   }    
@@ -173,14 +173,14 @@ struct PM_persistent_PL_traits
   { /* we only get an L_plus (non-nil) if L is ABOVE a vertex
        in which case we want to extract the face from the edge
        below (p+epsilon) available via L_plus. */
-    if (!L_plus.is_nil()) { assert(L_plus.is_edge());
+    if (!L_plus.is_nil()) { CGAL_assertion(L_plus.is_edge());
       return Object_handle(Edge(L_plus));
     } else { 
       if ( L.is_edge() ) {
         return Object_handle(Edge(L));
       }
       if ( L.is_node() ) {
-        Node v(L); assert( v != Node() );
+        Node v(L); CGAL_assertion( v != Node() );
         return Object_handle(v);
       }
       return Object_handle();

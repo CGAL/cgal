@@ -190,7 +190,7 @@ public:
                  object_cast<typename C1::Line_arc_2>(&obj)) {
         return make_object(operator()(*ptr));
       }
-      CGAL_assertion_msg(false,"CircularK_converter is unable to determine what is wrapped in the Object");
+      CGAL_error_msg("CircularK_converter is unable to determine what is wrapped in the Object");
       return Object();
 	
     }

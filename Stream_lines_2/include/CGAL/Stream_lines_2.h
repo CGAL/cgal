@@ -771,7 +771,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
   bool b0,b;
   Pq_element m_Pq_element;
   do{
-    assert(!pq.empty());
+    CGAL_assertion(!pq.empty());
     m_Pq_element = pq.top();
     v0 = m_Pq_element.first;
     v1 = m_Pq_element.second;

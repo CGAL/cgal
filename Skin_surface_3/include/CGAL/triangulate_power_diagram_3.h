@@ -386,7 +386,7 @@ construct_vertices() {
     if (anchors.find(sVor) == anchors.end()) {
       vh = add_vertex(sVor);
       anchors[sVor] = vh;
-      assert(vh == get_vertex(sVor));
+      CGAL_assertion(vh == get_vertex(sVor));
     }
   }
 	
@@ -397,7 +397,7 @@ construct_vertices() {
     if (anchors.find(sVor) == anchors.end()) {
       vh = add_vertex(sVor);
       anchors[sVor] = vh;
-      assert(vh == get_vertex(sVor));
+      CGAL_assertion(vh == get_vertex(sVor));
     }
   }
 	
@@ -408,7 +408,7 @@ construct_vertices() {
     if (anchors.find(sVor) == anchors.end()) {
       vh = add_vertex(sVor);
       anchors[sVor] = vh;
-      assert(vh == get_vertex(sVor));
+      CGAL_assertion(vh == get_vertex(sVor));
     }
   }
 }
@@ -530,11 +530,11 @@ Power_diagram_triangulator_3<
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
 add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s) {
-  assert((orient==0) || (orient==1));
-  assert(vh[0] != Tmc_Vertex_handle()); assert(vh[1] != Tmc_Vertex_handle());
-  assert(vh[2] != Tmc_Vertex_handle()); assert(vh[3] != Tmc_Vertex_handle());
-  assert(vh[1] != vh[2]); assert(vh[1] != vh[3]); assert(vh[1] != vh[4]);
-  assert(vh[2] != vh[3]); assert(vh[2] != vh[4]); assert(vh[3] != vh[4]);
+  CGAL_assertion((orient==0) || (orient==1));
+  CGAL_assertion(vh[0] != Tmc_Vertex_handle()); CGAL_assertion(vh[1] != Tmc_Vertex_handle());
+  CGAL_assertion(vh[2] != Tmc_Vertex_handle()); CGAL_assertion(vh[3] != Tmc_Vertex_handle());
+  CGAL_assertion(vh[1] != vh[2]); CGAL_assertion(vh[1] != vh[3]); CGAL_assertion(vh[1] != vh[4]);
+  CGAL_assertion(vh[2] != vh[3]); CGAL_assertion(vh[2] != vh[4]); CGAL_assertion(vh[3] != vh[4]);
 
   Tmc_Cell_handle ch;
 

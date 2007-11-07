@@ -138,8 +138,8 @@ template <class T>
 inline T* Array2D<T>::operator[](int i) 
 { 
 #ifdef CGAL_TNT_BOUNDS_CHECK
-	assert(i >= 0);
-	assert(i < m_);
+	CGAL_assertion(i >= 0);
+	CGAL_assertion(i < m_);
 #endif
 
 return v_[i]; 
@@ -151,8 +151,8 @@ template <class T>
 inline const T* Array2D<T>::operator[](int i) const
 { 
 #ifdef CGAL_TNT_BOUNDS_CHECK
-	assert(i >= 0);
-	assert(i < m_);
+	CGAL_assertion(i >= 0);
+	CGAL_assertion(i < m_);
 #endif
 
 return v_[i]; 

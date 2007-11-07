@@ -139,17 +139,17 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
   }
 
   Halffacet_handle get_halffacet() {
-    assert( type == FACET );
+    CGAL_assertion( type == FACET );
     return f;
   }
   
   Halfedge_handle get_halfedge() {
-    assert( type == EDGE );
+    CGAL_assertion( type == EDGE );
     return e;
   }
 
   Vertex_handle get_vertex() {
-    assert (type == VERTEX);
+    CGAL_assertion(type == VERTEX);
     return v;
   }
 };

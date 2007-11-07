@@ -478,7 +478,7 @@ private:
         return cmp_y > 0;
       
       // There remains the case :
-      assert(cmp_begin == 0 && cmp_end == 0);
+      CGAL_assertion(cmp_begin == 0 && cmp_end == 0);
 
       return cmp_y != 0; // full circle or half circle.
     }

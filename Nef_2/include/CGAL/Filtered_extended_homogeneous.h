@@ -1039,7 +1039,7 @@ Point_type determine_type(const Standard_line_2& l) const
              abscissa_distance(l) > Standard_FT(0))) {
     return TOPFRAME;
   }
-  CGAL_assertion_msg(false," determine_type: degenerate line.");
+  CGAL_error_msg(" determine_type: degenerate line.");
   return (Point_type)-1; // never come here
 }
 

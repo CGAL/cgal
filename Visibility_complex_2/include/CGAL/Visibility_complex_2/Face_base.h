@@ -212,7 +212,7 @@ private:
               return Border_iterator(super,
                                      v->pi()->ccw_source_edge());            
           }
-          CGAL_assertion(false);
+          CGAL_error();
         }
         return Border_iterator();
       }
@@ -234,7 +234,7 @@ private:
               return ++Border_iterator(super,
                                        v->cw_source_edge()); 
           }
-          CGAL_assertion(false);
+          CGAL_error();
         } 
         return Border_iterator(super,0);
       }
@@ -257,7 +257,7 @@ private:
               return Border_iterator(super,
                                      v->pi()->ccw_source_edge());            
           }
-          CGAL_assertion(false);
+          CGAL_error();
         } 
         return Border_iterator();
       }
@@ -279,7 +279,7 @@ private:
               return ++Border_iterator(super,
                                        v->cw_source_edge());            
           }
-          CGAL_assertion(false);
+          CGAL_error();
         } 
         return Border_iterator(super,0);
       }

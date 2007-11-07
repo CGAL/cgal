@@ -1059,7 +1059,7 @@ public slots:
             emit( insertedInput() );
           }
         else // obj should be a polygon or a point!
-          CGAL_assertion(false);
+          CGAL_error();
       updatePointCounter();
       widget->redraw();
     }

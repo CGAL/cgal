@@ -535,7 +535,7 @@ construct_vertices() {
 	if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
 	  vh = add_vertex(Symb_anchor(sDel,sVor));
 	  anchors[Symb_anchor(sDel,sVor)] = vh;
-	  assert(vh == get_vertex(sDel, sVor));
+	  CGAL_assertion(vh == get_vertex(sDel, sVor));
 	}
       }
     }
@@ -554,7 +554,7 @@ construct_vertices() {
       if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
 	vh = add_vertex(Symb_anchor(sDel,sVor));
 	anchors[Symb_anchor(sDel,sVor)] = vh;
-	assert(vh == get_vertex(sDel, sVor));
+	CGAL_assertion(vh == get_vertex(sDel, sVor));
       }
     }
     if (!regular.is_infinite(c2)) {
@@ -562,7 +562,7 @@ construct_vertices() {
       if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
 	vh = add_vertex(Symb_anchor(sDel,sVor));
 	anchors[Symb_anchor(sDel,sVor)] = vh;
-	assert(vh == get_vertex(sDel, sVor));
+	CGAL_assertion(vh == get_vertex(sDel, sVor));
       }
     }
     // anchor dimDel=0, dimVor=2
@@ -572,7 +572,7 @@ construct_vertices() {
       if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
 	vh = add_vertex(Symb_anchor(sDel,sVor));
 	anchors[Symb_anchor(sDel,sVor)] = vh;
-	assert(vh == get_vertex(sDel, sVor));
+	CGAL_assertion(vh == get_vertex(sDel, sVor));
       } else {
         vh = get_vertex(sDel, sVor);
       }
@@ -590,14 +590,14 @@ construct_vertices() {
     if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
       vh = add_vertex(Symb_anchor(sDel,sVor));
       anchors[Symb_anchor(sDel,sVor)] = vh;
-      assert(vh == get_vertex(sDel, sVor));
+      CGAL_assertion(vh == get_vertex(sDel, sVor));
     }
 			
     sDel = get_anchor_del(v2);
     if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
       vh = add_vertex(Symb_anchor(sDel,sVor));
       anchors[Symb_anchor(sDel,sVor)] = vh;
-      assert(vh == get_vertex(sDel, sVor));
+      CGAL_assertion(vh == get_vertex(sDel, sVor));
     }
   }
 	
@@ -609,7 +609,7 @@ construct_vertices() {
     if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
       vh = add_vertex(Symb_anchor(sDel,sVor));
       anchors[Symb_anchor(sDel,sVor)] = vh;
-      assert(vh == get_vertex(sDel, sVor));
+      CGAL_assertion(vh == get_vertex(sDel, sVor));
     }
   }
 
@@ -622,7 +622,7 @@ construct_vertices() {
     if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
       vh = add_vertex(Symb_anchor(sDel,sVor));
       anchors[Symb_anchor(sDel,sVor)] = vh;
-      assert(vh == get_vertex(sDel, sVor));
+      CGAL_assertion(vh == get_vertex(sDel, sVor));
     }
   }
 	
@@ -642,7 +642,7 @@ construct_vertices() {
 	if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
 	  vh = add_vertex(Symb_anchor(sDel,sVor));
 	  anchors[Symb_anchor(sDel,sVor)] = vh;
-	  assert(vh == get_vertex(sDel, sVor));
+	  CGAL_assertion(vh == get_vertex(sDel, sVor));
 	}
       }
     }
@@ -659,7 +659,7 @@ construct_vertices() {
     if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
       vh = add_vertex(Symb_anchor(sDel,sVor));
       anchors[Symb_anchor(sDel,sVor)] = vh;
-      assert(vh == get_vertex(sDel, sVor));
+      CGAL_assertion(vh == get_vertex(sDel, sVor));
     }
   }
 	
@@ -675,7 +675,7 @@ construct_vertices() {
     if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
       vh = add_vertex(Symb_anchor(sDel,sVor));
       anchors[Symb_anchor(sDel,sVor)] = vh;
-      assert(vh == get_vertex(sDel, sVor));
+      CGAL_assertion(vh == get_vertex(sDel, sVor));
     }
   }
 }
@@ -1078,7 +1078,7 @@ get_weighted_circumcenter(Rt_Simplex const &s) {
            r2t_converter_object(ch->vertex(3)->point()));
     break;
   default:
-    CGAL_assertion(false);
+    CGAL_error();
   }
   return result;
 }

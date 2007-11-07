@@ -589,7 +589,7 @@ protected:
 	    Triangulation_handler2<XY> th(f);
 	    th.handle_triangles(B, VI);
 	  } else
-	    CGAL_assertion_msg(false, "wrong value");
+	    CGAL_error_msg( "wrong value");
 
 	} else {
 
@@ -688,7 +688,7 @@ protected:
 	    omit_vertex[sl->incident_sface()->center_vertex()];
 	    --nov;
 	  } else
-	    CGAL_assertion_msg(false, "wrong handle type");
+	    CGAL_error_msg( "wrong handle type");
 	}
       }
 
@@ -1569,7 +1569,7 @@ protected:
 	    if(li2 != corner_list.end())
 	      delete_list.push_back(*li2);
 	    break;
-	  default: CGAL_assertion_msg(false, "wrong value");
+	  default: CGAL_error_msg( "wrong value");
 	  }
 	  Vertex_handle v = snc().new_vertex(v1->point(), (*li)->mark());
 	  SM_overlayer O(&*v);

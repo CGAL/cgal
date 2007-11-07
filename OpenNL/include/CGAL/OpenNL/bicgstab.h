@@ -88,7 +88,7 @@ public:
     // Solve the sparse linear system "A*x = b". Return true on success.
     bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
     {
-        assert (A.dimension() > 0);
+        CGAL_assertion(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
         unsigned int max_iter = max_iter_ ;                     // Max number of iterations
@@ -112,7 +112,7 @@ public:
         BLAS<Vector>::copy(r,d);
         BLAS<Vector>::copy(d,h);
         BLAS<Vector>::copy(h,rT);
-        //assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
+        //CGAL_assertion( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
         rTh=BLAS<Vector>::dot(rT,h);                            // rTh = (rT|h)
         rTr=BLAS<Vector>::dot(r,r);                             // Current error rTr = (r|r)
 
@@ -215,7 +215,7 @@ public:
     // Solve the sparse linear system "A*x = b". Return true on success.
     bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x) 
     {
-        assert(A.dimension() > 0);
+        CGAL_assertion(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
         unsigned int max_iter = max_iter_ ;                     // Max number of iterations
@@ -240,7 +240,7 @@ public:
         mult(C,r,d);
         BLAS<Vector>::copy(d,h);
         BLAS<Vector>::copy(h,rT);
-        //assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
+        //CGAL_assertion( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
         rTh=BLAS<Vector>::dot(rT,h);                            // rTh = (rT|h)
         rTr=BLAS<Vector>::dot(r,r);                             // Current error rTr = (r|r)
 

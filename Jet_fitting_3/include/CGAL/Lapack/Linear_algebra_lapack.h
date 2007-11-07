@@ -136,7 +136,7 @@ public:
 
   LAPACK::dgelss(&m, &n, &nrhs, M.matrix(), &lda, B.vector(), &ldb, sing_values, 
 	  &rcond, &rank, work, &lwork, &info);
-  assert(info==0);
+  CGAL_assertion(info==0);
 
   FT cond_nb = sing_values[0]/sing_values[n-1];
   

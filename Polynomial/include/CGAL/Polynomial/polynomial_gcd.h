@@ -570,7 +570,7 @@ Polynomial<NT> gcdex_(
 
     // handle trivial cases
     if (x.is_zero()) {
-        if (y.is_zero()) CGAL_error("gcdex(0,0) is undefined");
+        if (y.is_zero()) CGAL_error_msg("gcdex(0,0) is undefined");
         xf = NT(0); yf = idiv(NT(1), y.unit_part());
         return yf * y;
     }
@@ -749,7 +749,7 @@ Polynomial<NT> pseudo_gcdex(
 
     // handle trivial cases
     if (x.is_zero()) {
-        if (y.is_zero()) CGAL_error("gcdex(0,0) is undefined");
+        if (y.is_zero()) CGAL_error_msg("gcdex(0,0) is undefined");
         xf = NT(0); yf = NT(1); vf = y.unit_part();
         return y / vf;
     }

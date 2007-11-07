@@ -21,6 +21,7 @@
 #ifndef CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 #define CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 
+#include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Convertible_iterator_project.h>
@@ -357,7 +358,7 @@ public:
                  it != mesh_main_border_vertices_end();
                  it++)
             {
-                assert(is_vertex_on_main_border(it));
+                CGAL_surface_mesh_parameterization_assertion(is_vertex_on_main_border(it));
                 border.push_back(it);
             }
         }
@@ -372,7 +373,7 @@ public:
                  it != adaptor_border.end();
                  it++)
             {
-                assert(is_vertex_on_border( Vertex_handle(*it) ));
+                CGAL_surface_mesh_parameterization_assertion(is_vertex_on_border( Vertex_handle(*it) ));
                 border.push_back( Vertex_handle(*it) );
             }
         }
@@ -862,7 +863,8 @@ private:
                 typename Adaptor::Vertex_const_handle adaptor_neighbor) const
     {
         // We need at least an inner neighbor as input
-        assert(m_mesh_adaptor.get_halfedge_seaming(adaptor_vertex,
+        CGAL_surface_mesh_parameterization_assertion(
+               m_mesh_adaptor.get_halfedge_seaming(adaptor_vertex,
                                                    adaptor_neighbor) != BORDER
             || m_mesh_adaptor.get_halfedge_seaming(adaptor_neighbor,
                                                    adaptor_vertex) != BORDER);
@@ -925,15 +927,18 @@ private:
                 typename Adaptor::Vertex_const_handle last_cw_neighbor,
                 typename Adaptor::Vertex_const_handle first_cw_neighbor) const
     {
-        assert(adaptor_vertex != NULL);
-        assert(last_cw_neighbor != NULL || first_cw_neighbor != NULL);
+        CGAL_surface_mesh_parameterization_assertion(adaptor_vertex != NULL);
+        CGAL_surface_mesh_parameterization_assertion(
+                      last_cw_neighbor != NULL || first_cw_neighbor != NULL);
 
-        assert(last_cw_neighbor == NULL
+        CGAL_surface_mesh_parameterization_assertion(
+               last_cw_neighbor == NULL
             || m_mesh_adaptor.get_halfedge_seaming(adaptor_vertex,
                                                    last_cw_neighbor) == BORDER
             || m_mesh_adaptor.get_halfedge_seaming(last_cw_neighbor,
                                                    adaptor_vertex) == BORDER);
-        assert(first_cw_neighbor == NULL
+        CGAL_surface_mesh_parameterization_assertion(
+               first_cw_neighbor == NULL
             || m_mesh_adaptor.get_halfedge_seaming(adaptor_vertex,
                                                    first_cw_neighbor) == BORDER
             || m_mesh_adaptor.get_halfedge_seaming(first_cw_neighbor,
@@ -963,7 +968,7 @@ private:
             }
 
             // we should not get here
-            assert(false);
+            CGAL_error();
             return NULL;
         }
     }

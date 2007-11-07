@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -54,7 +54,7 @@ namespace OGL {
 // Drawable double types:
 // ----------------------------------------------------------------------------
 
-  typedef CGAL::Simple_cartesian<double> DKernel;  
+  typedef CGAL::Simple_cartesian<double> DKernel;
   typedef DKernel::Point_3               Double_point;
   typedef DKernel::Vector_3              Double_vector;
   typedef DKernel::Segment_3             Double_segment;
@@ -92,7 +92,7 @@ namespace OGL {
     typedef const double* const_double_ptr;
     double coords_[3];
   public:
-    Double_triple() 
+    Double_triple()
     { coords_[0]=coords_[1]=coords_[2]=0.0; }
     Double_triple(double x, double y, double z)
     { coords_[0]=x; coords_[1]=y; coords_[2]=z; }
@@ -106,9 +106,9 @@ namespace OGL {
       coords_[1]=t.coords_[1];
       coords_[2]=t.coords_[2];
       return *this; }
-    operator double_ptr() const 
+    operator double_ptr() const
     { return const_cast<Double_triple&>(*this).coords_; }
-    double operator[](unsigned i) 
+    double operator[](unsigned i)
     { CGAL_assertion(i<3); return coords_[i]; }
   }; // Double_triple
 
@@ -138,19 +138,19 @@ namespace OGL {
     void push_back_vertex(double x, double y, double z)
     { coords_.push_back(Double_triple(x,y,z)); }
 
-    DFacet(const DFacet& f) 
+    DFacet(const DFacet& f)
     { coords_  = f.coords_;
       fc_ends_ = f.fc_ends_;
       normal_  = f.normal_;
       mark_    = f.mark_;
     }
 
-    DFacet& operator=(const DFacet& f) 
+    DFacet& operator=(const DFacet& f)
     { coords_ =  f.coords_;
       fc_ends_ = f.fc_ends_;
       normal_ =  f.normal_;
       mark_    = f.mark_;
-      return *this; 
+      return *this;
     }
 
     ~DFacet()
@@ -158,7 +158,7 @@ namespace OGL {
 
     void push_back_vertex(const Double_point& p)
     { push_back_vertex(p.x(),p.y(),p.z()); }
-   
+
     void set_normal(double x, double y, double z, bool m)
     { double l = sqrt(x*x + y*y + z*z);
       normal_ = Double_triple(x/l,y/l,z/l); mark_ = m; }
@@ -167,21 +167,21 @@ namespace OGL {
     double dy() const { return normal_[1]; }
     double dz() const { return normal_[2]; }
     bool mark() const { return mark_; }
-    double* normal() const 
+    double* normal() const
     { return static_cast<double*>(normal_); }
 
     void new_facet_cycle()
     { fc_ends_.push_back(coords_.size()); }
-    
+
     unsigned number_of_facet_cycles() const
     { return fc_ends_.size(); }
 
-    Coord_iterator facet_cycle_begin(unsigned i) 
+    Coord_iterator facet_cycle_begin(unsigned i)
     { CGAL_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
       else return coords_.begin()+fc_ends_[i]; }
 
-    Coord_iterator facet_cycle_end(unsigned i) 
+    Coord_iterator facet_cycle_end(unsigned i)
     { CGAL_assertion(i<number_of_facet_cycles());
       if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i+1];
       else return coords_.end(); }
@@ -207,7 +207,7 @@ namespace OGL {
 	os << std::endl;
       }
     }
-    
+
   }; // DFacet
 
 
@@ -224,8 +224,7 @@ namespace OGL {
   inline void errorCallback(GLenum errorCode)
   { const GLubyte *estring;
     estring = gluErrorString(errorCode);
-    fprintf(stderr, "Tessellation Error: %s\n", estring);
-    exit (0);
+    CGAL_error_msg( "Tessellation Error:" + std::string( estring ) );
   }
 
   inline void vertexCallback(GLvoid* vertex,
@@ -235,7 +234,7 @@ namespace OGL {
     CGAL_NEF_TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
     CGAL_NEF_TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
     glNormal3dv(pu);
-    glVertex3dv(pc); 
+    glVertex3dv(pc);
   }
 
   class Polyhedron {
@@ -264,17 +263,17 @@ namespace OGL {
     Polyhedron& operator=(const Polyhedron& p)
     { return *this; }
 
-    ~Polyhedron() 
+    ~Polyhedron()
     { if (object_list_) glDeleteLists(object_list_, 4); }
 
     void push_back(const Double_point& p, bool m) {
         vertices_.push_back(DPoint(p,m));
     }
-    void push_back(const Double_segment& s, bool m) 
+    void push_back(const Double_segment& s, bool m)
     { edges_.push_back(DSegment(s,m)); }
-    void push_back(const DFacet& f) 
+    void push_back(const DFacet& f)
     { halffacets_.push_back(f); }
- 
+
     void toggle_axes() { axes_ = !axes_; }
     void skeleton_on() { surface_ = false; }
     void boundary_on() { surface_ = true; }
@@ -285,20 +284,20 @@ namespace OGL {
 
     void draw(Vertex_iterator v) const
     { CGAL_NEF_TRACEN("drawing vertex "<<*v);
-      CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR), 
+      CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR),
 	ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
       CGAL::Color c = v->mark() ? ct : cf;
       glPointSize(10);
       glColor3ub(c.red(), c.green(), c.blue());
       glBegin(GL_POINTS);
       glVertex3d(v->x(),v->y(),v->z());
-      glEnd();           
+      glEnd();
     }
 
     void draw(Edge_iterator e) const
     { CGAL_NEF_TRACEN("drawing edge "<<*e);
       Double_point p = e->source(), q = e->target();
-      CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR), 
+      CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR),
 	ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
       CGAL::Color c = e->mark() ? ct : cf;
       glLineWidth(5);
@@ -337,7 +336,7 @@ namespace OGL {
         gluTessBeginContour(tess_);
 	CGAL_NEF_TRACEN("  Begin Contour");
 	// put all vertices in facet cycle into contour:
-	for(cit = f->facet_cycle_begin(i); 
+	for(cit = f->facet_cycle_begin(i);
 	    cit != f->facet_cycle_end(i); ++cit) {
 	  gluTessVertex(tess_, *cit, *cit);
 	  CGAL_NEF_TRACEN("    add Vertex");
@@ -351,7 +350,7 @@ namespace OGL {
     }
 
     void construct_axes() const
-    { 
+    {
       glLineWidth(2.0);
       // red x-axis
       glColor3f(1.0,0.0,0.0);
@@ -359,7 +358,7 @@ namespace OGL {
       glVertex3f(0.0,0.0,0.0);
       glVertex3f(5.0,0.0,0.0);
       glEnd();
-       // green y-axis 
+       // green y-axis
       glColor3f(0.0,1.0,0.0);
       glBegin(GL_LINES);
       glVertex3f(0.0,0.0,0.0);
@@ -389,12 +388,12 @@ namespace OGL {
       glNewList(object_list_, GL_COMPILE);
       Vertex_iterator v;
       CGAL_forall_iterators(v,vertices_) draw(v);
-      glEndList();     
+      glEndList();
 
       glNewList(object_list_+1, GL_COMPILE);
       Edge_iterator e;
       CGAL_forall_iterators(e,edges_) draw(e);
-      glEndList();     
+      glEndList();
 
       glNewList(object_list_+2, GL_COMPILE);
       Halffacet_iterator f;
@@ -407,17 +406,17 @@ namespace OGL {
 
     }
 
-    void initialize() 
+    void initialize()
     { if (init_) return;
       init_ = true;
-      axes_ = false; 
-      object_list_ = glGenLists(4); CGAL_assertion(object_list_); 
+      axes_ = false;
+      object_list_ = glGenLists(4); CGAL_assertion(object_list_);
       fill_display_lists();
     }
 
 
     void draw( GLdouble z_vec[3]) const
-    { 
+    {
       if (!is_initialized()) const_cast<Polyhedron&>(*this).initialize();
       double l = (std::max)( (std::max)( bbox().xmax() - bbox().xmin(),
                                      bbox().ymax() - bbox().ymin()),
@@ -429,11 +428,11 @@ namespace OGL {
                     -(bbox().ymax() + bbox().ymin()) / 2.0,
                     -(bbox().zmax() + bbox().zmin()) / 2.0);
       if ( surface_ ) {
-	//glEnable(GL_LIGHTING); 
+	//glEnable(GL_LIGHTING);
 	glCallList(object_list_+2); // facets
 	//glDisable(GL_LIGHTING);
       }
-      // move edges and vertices a bit towards the view-point, 
+      // move edges and vertices a bit towards the view-point,
       // i.e., 1/100th of the unit vector in camera space
       double f = l / 4.0 / 100.0;
       glTranslated( z_vec[0] * f, z_vec[1] * f, z_vec[2] * f);
@@ -447,11 +446,11 @@ namespace OGL {
       os << "OGL::Polyhedron" << std::endl;
       os << "Vertices:" << std::endl;
       Vertex_iterator v;
-      CGAL_forall_iterators(v,vertices_) 
+      CGAL_forall_iterators(v,vertices_)
 	os << "  "<<*v<<", mark="<<v->mark()<<std::endl;
       os << "Edges:" << std::endl;
       Edge_iterator e;
-      CGAL_forall_iterators(e,edges_) 
+      CGAL_forall_iterators(e,edges_)
 	os << "  "<<*e<<", mark="<<e->mark()<<std::endl;
       os << "Facets:" << std::endl;
       Halffacet_iterator f;
@@ -465,7 +464,7 @@ namespace OGL {
 // Viewer configuration:
 // ----------------------------------------------------------------------------
 
-  enum MenuEntries { ROTATE, SCALE, TRANSLATE, TRANS_Z, RESET_CONTROL, 
+  enum MenuEntries { ROTATE, SCALE, TRANSLATE, TRANS_Z, RESET_CONTROL,
 		     AXES, BOUNDARY, SKELETON, PERSP, FULLSCREEN, QUIT };
 
   const double znear = 4.0;
@@ -488,15 +487,15 @@ namespace OGL {
   double dz = 0;                     // Translation in Z
   double s  = 0.4;                   // Skalierung
   Affine_3    rotation( IDENTITY);   // Rotation
-                       
+
   long double factor_s;              // Umrechnungsfaktor fuer Skalierung
 
   // our draw object:
   static std::vector<Polyhedron>  polyhedra_;
   static std::vector<std::string> titles_;
 
-static Polyhedron& add_polyhedron() 
-{ polyhedra_.push_back(Polyhedron()); 
+static Polyhedron& add_polyhedron()
+{ polyhedra_.push_back(Polyhedron());
   return polyhedra_.back(); }
 
 static void show (int mode)
@@ -538,8 +537,8 @@ static void show (int mode)
     case FULLSCREEN:
       glutFullScreen();
       break;
-    case QUIT: 
-      exit(0);
+    case QUIT:
+      std::exit(0);
   }
 }
 
@@ -565,16 +564,16 @@ static void mouse (int button, int state, int x, int y)
 }
 
 
-static Affine_3 virtual_sphere_transformation( double old_x, double old_y, 
+static Affine_3 virtual_sphere_transformation( double old_x, double old_y,
                                                double new_x, double new_y) {
     if ( old_x == new_x && old_y == new_y)// zero rotation.
 	return Affine_3( IDENTITY);
     // Determine the projected vectors on the `sphere'.
     double dd = old_x * old_x + old_y * old_y;
-    Double_vector v_old( old_x, old_y, 
+    Double_vector v_old( old_x, old_y,
                          ((dd < 0.5) ? std::sqrt(1-dd) : 0.5 / std::sqrt(dd)));
     dd = new_x * new_x + new_y * new_y;
-    Double_vector v_new( new_x, new_y, 
+    Double_vector v_new( new_x, new_y,
                          ((dd < 0.5) ? std::sqrt(1-dd) : 0.5 / std::sqrt(dd)));
     Double_vector axis  = cross_product( v_old, v_new);
     double angle = 0.0;
@@ -647,7 +646,7 @@ static void initialize_olg()
   glLoadIdentity();
   /*
   GLfloat light_ambient[4] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat light_diffuse[] =  { 1.0, 1.0, 1.0, 1.0 };    // white diffuse light 
+  GLfloat light_diffuse[] =  { 1.0, 1.0, 1.0, 1.0 };    // white diffuse light
   GLfloat light_position[] = { 2.0, 3.0, -4.0, 0.0 }; // infinite location
   //GLfloat light_position[] = { 3.0, 5.0, 4.5, 1.0};
 
@@ -664,7 +663,7 @@ static void initialize_olg()
   //GLfloat mat_specular[4] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat mat_specular[4] = { 0.3, 0.3, 0.3, 1.0 };
   GLfloat mat_shininess[] = { 100.0 };
-  
+
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient );
   //glMaterialfv(GL_BACK,  GL_AMBIENT, mat_back_ambient );
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
@@ -693,7 +692,7 @@ static void draw()
     double w = double( window_width) / double( window_height);
     if ( perspective) {
         double s = (eye - znear) / eye;
-        glFrustum( -wsize*w*s, wsize*w*s, -wsize*s, wsize*s, 
+        glFrustum( -wsize*w*s, wsize*w*s, -wsize*s, wsize*s,
                    eye-znear, eye+zfar);
         glTranslated( 0.0, 0.0, -eye);
     } else {
@@ -703,7 +702,7 @@ static void draw()
     double h = double( window_height) / double( window_width);
     if ( perspective) {
         double s = (eye - znear) / eye;
-        glFrustum( -wsize*s, wsize*s, -wsize*h*s, wsize*h*s, 
+        glFrustum( -wsize*s, wsize*s, -wsize*h*s, wsize*h*s,
                    eye-znear, eye+zfar);
         glTranslated( 0.0, 0.0, -eye);
     } else {
@@ -717,7 +716,7 @@ static void draw()
                      rotation.m(0,2), rotation.m(1,2), rotation.m(2,2), 0.0,
                      rotation.m(0,3), rotation.m(1,3), rotation.m(2,3), 1.0};
   glMultMatrixd( M);
-  
+
   glScaled(s,s,s);
 
   GLdouble z_vec[3] = { rotation.m(2,0) / s,
@@ -746,7 +745,7 @@ static void reshape(int width, int height)
 
 
 static void start_viewer()
-{ 
+{
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(window_width, window_height);
   glutInitWindowPosition(0,0);
@@ -797,7 +796,7 @@ static void start_viewer()
 // ----------------------------------------------------------------------------
 
 template<typename Nef_polyhedron>
-class Visualizor_OpenGL_3 { 
+class Visualizor_OpenGL_3 {
   typedef typename Nef_polyhedron::SNC_structure           SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>               Base;
   typedef CGAL::SNC_FM_decorator<SNC_structure>            FM_decorator;
@@ -805,17 +804,17 @@ class Visualizor_OpenGL_3 {
   CGAL::OGL::Polyhedron* ppoly_;
 
 public:
-  typedef typename SNC_structure::Vertex_const_iterator Vertex_const_iterator; 
-  typedef typename SNC_structure::Halfedge_const_iterator Halfedge_const_iterator; 
-  typedef typename SNC_structure::Halffacet_const_iterator Halffacet_const_iterator; 
+  typedef typename SNC_structure::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename SNC_structure::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename SNC_structure::Halffacet_const_iterator Halffacet_const_iterator;
   typedef typename SNC_structure::Halffacet_cycle_const_iterator Halffacet_cycle_const_iterator;
 
   typedef typename SNC_structure::Object_const_handle Object_const_handle;
-  typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle; 
-  typedef typename SNC_structure::SHalfloop_const_handle SHalfloop_const_handle; 
+  typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef typename SNC_structure::SHalfloop_const_handle SHalfloop_const_handle;
 
-  typedef typename SNC_structure::Vertex_const_handle Vertex_const_handle; 
-  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle; 
+  typedef typename SNC_structure::Vertex_const_handle Vertex_const_handle;
+  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
 
   typedef typename SNC_structure::Point_3 Point_3;
@@ -823,16 +822,16 @@ public:
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
   typedef typename SNC_structure::Mark Mark;
-  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator 
+  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator
                                   SHalfedge_around_facet_const_circulator;
-   
+
 
   Nef_polyhedron N;
 
-  Visualizor_OpenGL_3(const Nef_polyhedron& Nef) : N(Nef) { 
-    ppoly_ = & CGAL::OGL::add_polyhedron(); 
+  Visualizor_OpenGL_3(const Nef_polyhedron& Nef) : N(Nef) {
+    ppoly_ = & CGAL::OGL::add_polyhedron();
   }
-  
+
   OGL::Double_point double_point(const Point_3& p) const
   { return OGL::Double_point(CGAL::to_double(p.x()),
 			     CGAL::to_double(p.y()),
@@ -843,19 +842,19 @@ public:
 			       double_point(s.target())); }
 
   void draw(Vertex_const_handle v) const
-  { 
+  {
     Point_3 bp = v->point();
     CGAL_NEF_TRACEN("vertex " << bp);
-    ppoly_->push_back(double_point(bp), v->mark()); 
+    ppoly_->push_back(double_point(bp), v->mark());
   }
 
   void draw(Halfedge_const_handle e) const
-  { 
+  {
     Vertex_const_handle s = e->source();
     Vertex_const_handle t = e->twin()->source();
     Segment_3 seg(s->point(), t->point());
     CGAL_NEF_TRACEN("edge " << seg);
-    ppoly_->push_back(double_segment(seg), e->mark()); 
+    ppoly_->push_back(double_segment(seg), e->mark());
   }
 
   void draw(Halffacet_const_handle f) const
@@ -873,9 +872,9 @@ public:
 	}
       }
     Vector_3 v = f->plane().orthogonal_vector();
-    g.set_normal(CGAL::to_double(v.x()), 
-		 CGAL::to_double(v.y()), 
-		 CGAL::to_double(v.z()), 
+    g.set_normal(CGAL::to_double(v.x()),
+		 CGAL::to_double(v.y()),
+		 CGAL::to_double(v.z()),
 		 f->mark());
     ppoly_->push_back(g);
   }
@@ -904,8 +903,8 @@ public:
       }
     }
     return bbox;
-  }  
-  
+  }
+
   void set_R(const Bbox_3 bbox) const {
     if(N.is_standard_kernel()) return;
     double size = abs(bbox.xmin());
@@ -918,7 +917,7 @@ public:
     CGAL_NEF_TRACEN("set infi box size to " << size);
   }
 
-  void draw() const { 
+  void draw() const {
     Bbox_3 bbox(bounded_bbox());
     ppoly_->bbox() = bbox;
     set_R(bbox);

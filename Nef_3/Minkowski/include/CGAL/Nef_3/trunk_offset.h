@@ -33,7 +33,7 @@ public:
     case 0: return CGAL::compare_x(v1, v2) == SMALLER;
     case 1: return CGAL::compare_y(v1, v2) == SMALLER;
     case 2: return CGAL::compare_z(v1, v2) == SMALLER;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return false;
   }
@@ -57,7 +57,7 @@ public:
 			   CGAL::to_interval(v2.y()).first;
     case 2: return CGAL::to_interval(v1.z()).second <
 			   CGAL::to_interval(v2.z()).first;
-    default: CGAL_assertion(false);
+    default: CGAL_error();
     }
     return false;
   }

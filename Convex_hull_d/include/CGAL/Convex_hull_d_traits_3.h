@@ -250,7 +250,7 @@ template <class R_> struct Convex_hull_d_traits_3
 	  if(s == e){
 	    pl = Hyperplane_d( A[0], A[1], A[2] );
 	  } else {
-	    CGAL_assertion(false);
+	    CGAL_error();
 	  }
 	}
       }

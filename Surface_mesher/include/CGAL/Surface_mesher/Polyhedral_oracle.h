@@ -359,7 +359,7 @@ public:
   CGAL::Object intersect_line_surface(const Subfacets_tree&,
                                       const Line_3 &) const
     {
-      CGAL_assertion(false);
+      CGAL_error();
       return CGAL::Object();
     }
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE

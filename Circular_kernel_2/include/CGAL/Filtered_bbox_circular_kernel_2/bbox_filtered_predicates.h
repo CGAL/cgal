@@ -666,7 +666,7 @@ class Do_overlap_2
 	{
 	  const Rcirc_arc_2 *tmp_arc;
 	  tmp_arc=object_cast<Rcirc_arc_2>(&vec.at(i));
-	  assert(tmp_arc!=NULL);
+	  CGAL_assertion(tmp_arc!=NULL);
 	  *res++ = make_object( Circular_arc_2(*tmp_arc) );
 	}
 
@@ -746,7 +746,7 @@ class Do_overlap_2
 	    {
               const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
               tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i));
-              assert(tmp_point!=NULL);
+              CGAL_assertion(tmp_point!=NULL);
               *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));   
 	    }
 
@@ -781,7 +781,7 @@ class Do_overlap_2
             {
               const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
               tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i));
-              assert(tmp_point!=NULL);
+              CGAL_assertion(tmp_point!=NULL);
 	      *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
             }
 	}
@@ -815,7 +815,7 @@ class Do_overlap_2
 	    {
               const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
               tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i));
-              assert(tmp_point!=NULL);
+              CGAL_assertion(tmp_point!=NULL);
               *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
             }
 

@@ -329,7 +329,7 @@ before_handle_event (Event* event)
   case NO_BOUNDARY:
   default:
     // We are not supposed to reach here at all.
-    CGAL_assertion(false);
+    CGAL_error();
   }
 
   return;

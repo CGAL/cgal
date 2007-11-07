@@ -508,7 +508,7 @@ class Do_overlap_2
 
 	  tmp_arc=object_cast<Rcirc_arc_2>(&vec.at(i));
 		
-	  assert(tmp_arc!=NULL);
+	  CGAL_assertion(tmp_arc!=NULL);
 		
 	  *res++ = make_object( Circular_arc_2(*tmp_arc) );
 	}

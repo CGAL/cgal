@@ -66,7 +66,7 @@ void Polynomial_visitor::end_polynomial() {
         if( assign( coeff, it->coefficient ) )                                   \
           polygon_rep.push_back( std::make_pair( it->exponent_vector, coeff ) ); \
         else                                                                     \
-          CGAL_error("cannot happen");                                           \
+          CGAL_error_msg("cannot happen");                                           \
       }                                                                          \
       object_container.push_back(                                                \
         make_object(                                                             \
@@ -78,7 +78,7 @@ void Polynomial_visitor::end_polynomial() {
     CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( int, Integer )
     CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( CGAL_Sqrt_extension, Sqrt_ext_int_int )
     default:
-      CGAL_error("if you can read this, something went wrong");
+      CGAL_error_msg("if you can read this, something went wrong");
   }
 #undef CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE
   coefficient_numbertype = Not_supported;
@@ -104,7 +104,7 @@ Polynomial_visitor::begin_monom( std::string coefficient )
     CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( int, Integer )
     CGAL_BENCHMARK_POLYNOMIAL_VISITOR_CHECK_TYPE( CGAL_Sqrt_extension, Sqrt_ext_int_int )
     default:
-      CGAL_error("if you can read this, something went wrong");
+      CGAL_error_msg("if you can read this, something went wrong");
   }
 
   inside_monom = true;

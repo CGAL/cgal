@@ -641,7 +641,7 @@ get_boundary_of_polygon(Face_const_iterator f) const
     ++ccb_circ;
   }
   while(ccb_circ != ccb_end);
-  CGAL_assertion(false);
+  CGAL_error();
   return Ccb_halfedge_const_circulator();
   
 }

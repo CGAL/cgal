@@ -1146,7 +1146,7 @@ class Gausian_map :
 	return Object_handle(SVertex_const_handle(sfc->source()));      
       }
     }
-    CGAL_assertion_msg(false,"line should not be executed");
+    CGAL_error_msg("line should not be executed");
     return Object_handle();
   }
   
@@ -1189,7 +1189,7 @@ class Gausian_map :
 	  return Object_handle(SVertex_const_handle(sfc->source()));      
 	}
     }
-    CGAL_assertion_msg(false,"line should not be executed");
+    CGAL_error_msg("line should not be executed");
     return Object_handle();
   }
   

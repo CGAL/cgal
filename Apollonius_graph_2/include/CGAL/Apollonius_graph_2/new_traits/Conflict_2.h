@@ -79,7 +79,7 @@ protected:
             case (2) : return radical_side(p1, p3, p2, 3);
             case (3) : return radical_side(p1, p2, p3, 3);
             default :
-                CGAL_assertion_msg(false, "Case should not hapen");
+                CGAL_error_msg( "Case should not hapen");
                 return ZERO;
         }
     }	
@@ -153,7 +153,7 @@ protected:
         } else if (i == 3) {
             ool = ordered_on_line(p1, p3, p2); 
         } else 	{		
-            CGAL_assertion_msg(false, "this does not happen.");
+            CGAL_error_msg( "this does not happen.");
             ool = false;
         }
 

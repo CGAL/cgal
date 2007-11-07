@@ -193,7 +193,7 @@ public:
 		
 		void construct_hexagons() const
 		{
-		  assert(has_no_hexagons());	
+		  CGAL_assertion(has_no_hexagons());	
 
         typedef typename boost::mpl::if_<boost::is_same<typename CK::Definition_tag, typename CK::Circular_tag>, \
                                          Hexagon_construction_with_interval_2<CK,Hexagon>, \

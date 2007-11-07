@@ -67,7 +67,7 @@ Transform transform_taking_first_to_second(ItA pBegin,
   }
   center_q = center_q/num_q;
       
-  assert(num_p == num_q);
+  CGAL_assertion(num_p == num_q);
       
   std::vector<Point> p_shifted, q_shifted;
   p_shifted.reserve(num_p);

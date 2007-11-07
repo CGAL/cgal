@@ -204,13 +204,13 @@ public:
       CGAL_assertion(boundary_in_y == PLUS_INFINITY);
       return LARGER;
      default:
-        CGAL_assertion(false); 
+        CGAL_error(); 
 	break;
 
     }
 
     //doesnt suppose to reach here (all options have been handles by now)
-    CGAL_assertion(false);
+    CGAL_error();
     return SMALLER;
   }
 

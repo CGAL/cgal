@@ -106,7 +106,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   void handle_new_edge(Halfedge_handle e) { 
     if(normalized(e->point()) == dir || 
        normalized(e->twin()->point()) == dir) {
-      CGAL_assertion_msg(false, "should not happen");
+      CGAL_error_msg( "should not happen");
       return;
     }
 

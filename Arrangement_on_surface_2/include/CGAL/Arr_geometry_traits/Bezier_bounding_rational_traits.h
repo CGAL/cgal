@@ -1263,28 +1263,28 @@ private:
         res = f_intersect (skew1a, skew2a);
         if (! assign (p, res))
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 
         res = f_intersect (skew1a, skew2b);
         if (! assign(p, res)) 
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 
         res = f_intersect (skew1b, skew2a);
         if (! assign(p, res))
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 
         res = f_intersect (skew1b, skew2b);
         if (!assign(p, res)) 
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 

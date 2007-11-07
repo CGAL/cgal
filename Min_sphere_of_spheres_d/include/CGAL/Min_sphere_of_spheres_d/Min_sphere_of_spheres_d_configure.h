@@ -66,7 +66,7 @@
 
 // Define some assertion macros used in the code.
 #ifdef CGAL_MINIBALL_DEBUG
-  #define CGAL_MINIBALL_ASSERT(expr) assert(expr)
+  #define CGAL_MINIBALL_ASSERT(expr) CGAL_assertion(expr)
   #define CGAL_MINIBALL_DO_DEBUG(expr) expr
 #else
   #define CGAL_MINIBALL_ASSERT(expr) ;

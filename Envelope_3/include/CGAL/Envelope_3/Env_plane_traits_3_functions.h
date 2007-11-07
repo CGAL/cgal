@@ -79,7 +79,7 @@ Object half_plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
   if(assign(ray, obj))
     return ray_under_linear_constraint(ray, l1, k);
 
-  CGAL_assertion(false); // doesnt suppose to reach here
+  CGAL_error(); // doesnt suppose to reach here
   return Object();
 }
 

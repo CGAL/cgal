@@ -825,7 +825,7 @@ Traits_test<T_Traits>::translate_enumerator(std::string & str_value)
   } else if (str_value == "EQUAL" ) {
     return static_cast<unsigned int>(CGAL::EQUAL);
   }
-  CGAL_assertion(false);
+  CGAL_error();
   return static_cast<unsigned int>(-220776); // My birthday :-)
 }
 
@@ -916,7 +916,7 @@ bool Traits_test<T_Traits>::boundary_in_x_wrapper(std::istringstream & str_strea
 template <class T_Traits>
 bool Traits_test<T_Traits>::boundary_in_x_wrapper_imp(std::istringstream & , CGAL::Tag_false)
 {
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 
@@ -943,7 +943,7 @@ bool Traits_test<T_Traits>::boundary_in_x_wrapper_imp(std::istringstream & str_s
     }
   }
   //should not get here
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 
@@ -959,7 +959,7 @@ bool Traits_test<T_Traits>::boundary_in_y_wrapper(std::istringstream & str_strea
 template <class T_Traits>
 bool Traits_test<T_Traits>::boundary_in_y_wrapper_imp(std::istringstream &, CGAL::Tag_false)
 {
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 
@@ -986,7 +986,7 @@ bool Traits_test<T_Traits>::boundary_in_y_wrapper_imp(std::istringstream & str_s
     }
   }
   //should not get here
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 
@@ -1179,7 +1179,7 @@ compare_y_at_x_left_wrapper_imp(std::istringstream & ,
                                 CGAL::Tag_false)
 {
 //  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 
@@ -1489,7 +1489,7 @@ Traits_test<T_Traits>::
 are_mergeable_wrapper_imp(std::istringstream & , CGAL::Tag_false)
 {
 //  std::istringstream dummy_stream = str_stream; //to avoid warnings of unused variable
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 
@@ -1525,7 +1525,7 @@ bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & ,
                                               CGAL::Tag_false)
 {
 //  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
-  CGAL_assertion(false);
+  CGAL_error();
   return false;
 }
 

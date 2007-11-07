@@ -141,8 +141,8 @@ template <class T>
 inline T& Array1D<T>::operator[](int i) 
 { 
 #ifdef TNT_BOUNDS_CHECK
-	assert(i>= 0);
-	assert(i < n_);
+	CGAL_assertion(i>= 0);
+	CGAL_assertion(i < n_);
 #endif
 	return data_[i]; 
 }
@@ -151,8 +151,8 @@ template <class T>
 inline const T& Array1D<T>::operator[](int i) const 
 { 
 #ifdef TNT_BOUNDS_CHECK
-	assert(i>= 0);
-	assert(i < n_);
+	CGAL_assertion(i>= 0);
+	CGAL_assertion(i < n_);
 #endif
 	return data_[i]; 
 }

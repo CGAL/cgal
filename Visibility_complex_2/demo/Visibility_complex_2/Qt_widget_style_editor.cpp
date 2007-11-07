@@ -181,7 +181,7 @@ Qt_widget_style_editor::Qt_widget_style_editor(Style* style,
 		this, SLOT(pointstyle(int)));
 	break;
       default:
-	CGAL_assertion(false);
+	CGAL_error();
 	break;
       }
       

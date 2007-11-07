@@ -97,7 +97,7 @@ public:
         case ET::Right: return ET::Left;
         case ET::Above: return ET::Below;
         default:
-          CGAL_assertion(false);
+          CGAL_error();
           return ET::Above;
         }
       }
@@ -117,7 +117,7 @@ public:
         case ET::Right: return ET::Left;
         case ET::Above: return ET::Below;
         default:
-          CGAL_assertion(false);
+          CGAL_error();
           return ET::Above;
         }
       }
@@ -132,7 +132,7 @@ public:
       case ET::Right: return ET::Upwards;
       case ET::Above: return ET::Leftwards;
       default:
-        CGAL_assertion(false);
+        CGAL_error();
         return ET::Downwards;
       }
     case RL: case RR:
@@ -142,11 +142,11 @@ public:
       case ET::Right: return ET::Downwards;
       case ET::Above: return ET::Rightwards;
       default:
-        CGAL_assertion(false);
+        CGAL_error();
         return ET::Downwards;
       }
     default:
-      CGAL_assertion(false);
+      CGAL_error();
       return ET::Downwards;
     }
   }
@@ -569,7 +569,7 @@ public:
           };
         }
       default:
-        CGAL_assertion(false);
+        CGAL_error();
         return COLLINEAR;
       }
     }
@@ -618,7 +618,7 @@ public:
       };
       case LARGER: return LARGER;
       default:
-        CGAL_assertion(false);
+        CGAL_error();
         return EQUAL;
       }
     }
@@ -635,7 +635,7 @@ public:
         case SMALLER: case EQUAL: return false;
         case LARGER: return true;
         default:
-          CGAL_assertion(false);
+          CGAL_error();
           return false;
         }
       case Upwards: return true;
@@ -644,11 +644,11 @@ public:
         case SMALLER: case EQUAL: return true;
         case LARGER: return false;
         default:
-          CGAL_assertion(false);
+          CGAL_error();
           return false;
         }
       default:
-        CGAL_assertion(false);
+        CGAL_error();
         return false;
       }
     }
@@ -659,7 +659,7 @@ public:
   struct Orientation_infinite {
     Orientation operator() (const Bitangent_2&, 
                             const Bitangent_2&) const { 
-      CGAL_assertion(false);
+      CGAL_error();
       return COLLINEAR; }
   };
   struct Equal_as_segments {

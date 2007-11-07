@@ -229,7 +229,7 @@ public:
   {
     // we triangulate the interior of the whole chain between
     // target(e_upper) and target(e_lower)
-    assert(e_upper->source()==e_lower->source());
+    CGAL_assertion(e_upper->source()==e_lower->source());
     CGAL_NEF_TRACE("triangulate_between\n   "<<segment(e_upper));
     CGAL_NEF_TRACEN("\n   "<<segment(e_lower));
     SHalfedge_handle e_end = e_lower->twin();

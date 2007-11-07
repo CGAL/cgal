@@ -121,7 +121,7 @@ public:
 	} else{
 	       std::cout << "UNEXPECTED CONSTRUCT_INTERSECTIONS_2 PRODUCT" << std::endl;
 	       std::cout << lv.approx()[i].type().name() << std::endl;
-	       CGAL_assertion(false);
+	       CGAL_error();
 	}
       }
       
@@ -189,7 +189,7 @@ public:
 	  ++it;
 	} 
 	else {
-	  CGAL_assertion_msg(false, "UNEXPECTED MAKE_X_MONOTONE PRODUCT");
+	  CGAL_error_msg( "UNEXPECTED MAKE_X_MONOTONE PRODUCT");
 	}
       }
       
@@ -258,7 +258,7 @@ public:
 	  ++it;
 	} 
 	else{
-	  CGAL_assertion_msg(false, "UNEXPECTED ADVANCED_MAKE_X_MONOTONE PRODUCT");
+	  CGAL_error_msg( "UNEXPECTED ADVANCED_MAKE_X_MONOTONE PRODUCT");
 	}
       }
       
@@ -271,7 +271,7 @@ public:
       for (std::vector<Object>::iterator oit = exact_objects.begin();
 	   oit != exact_objects.end();
 	   ++oit){
-        CGAL_assertion_msg(false, "Unfinished code !!!");
+        CGAL_error_msg( "Unfinished code !!!");
 	//*it = std::make_pair(make_lazy_CK<LK>((*oit).first),(*oit).second);
 	++it;
       }

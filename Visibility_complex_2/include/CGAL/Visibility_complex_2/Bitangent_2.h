@@ -38,7 +38,7 @@ struct Bitangent_type_wrapper {
     case Bitangent_type_wrapper::LR: return Bitangent_type_wrapper::LR;
     case Bitangent_type_wrapper::RL: return Bitangent_type_wrapper::RL;
     case Bitangent_type_wrapper::RR: return Bitangent_type_wrapper::LL;
-    default: CGAL_assertion(false); return Bitangent_type_wrapper::LL;
+    default: CGAL_error(); return Bitangent_type_wrapper::LL;
     }
   }
   class Type_util {
@@ -81,7 +81,7 @@ operator>>(std::istream &is, Bitangent_type& t) {
     t=Bitangent_type_wrapper::RR; return is; 
   }
   if (s=="") return is;
-  CGAL_assertion(false);
+  CGAL_error();
   return is;
 }
 

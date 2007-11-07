@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -21,7 +21,7 @@
 #ifndef CGAL_TAUCS_VECTOR
 #define CGAL_TAUCS_VECTOR
 
-#include <cassert>
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -92,11 +92,11 @@ public:
     /// Preconditions:
     /// 0 <= i < dimension().
     T operator[](int i) const {
-        assert(i < m_dimension);
+        CGAL_precondition(i < m_dimension);
         return m_element[i];
     }
     T& operator[](int i) {
-        assert(i < m_dimension);
+        CGAL_precondition(i < m_dimension);
         return m_element[i];
     }
 

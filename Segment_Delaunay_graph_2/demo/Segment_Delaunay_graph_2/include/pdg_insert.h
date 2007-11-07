@@ -27,7 +27,7 @@ int get_new_id()
   static int gen = 0;
   gen++;
 
-  assert( gen != 0 ); // guards against unwanted phenomena due to
+  CGAL_assertion( gen != 0 ); // guards against unwanted phenomena due to
                       // overflow
   return gen;
 }

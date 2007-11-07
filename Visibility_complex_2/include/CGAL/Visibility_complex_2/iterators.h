@@ -230,7 +230,7 @@ public:
       case TARGET_CUSP: return Base::operator->()->target_cusp_edge();
       }
       std::cerr<<"which="<<which<<"\n";
-      CGAL_assertion(false);
+      CGAL_error();
       return 0;
     }
 private:
@@ -325,7 +325,7 @@ public:
       case INF: return Base::operator->()->inf();
       case SOURCE_CUSP: return Base::operator->()->source_cusp_face();
       case TARGET_CUSP: return Base::operator->()->target_cusp_face();
-      default: CGAL_assertion(false);
+      default: CGAL_error();
       }
       return 0;
     }

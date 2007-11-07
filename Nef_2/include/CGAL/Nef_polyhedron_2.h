@@ -869,7 +869,7 @@ public:
   void init_locator() const 
   { const_cast<Self*>(this)->ptr()->init_locator(); }
   const Locator& locator() const 
-  { assert(ptr()->pl_); return *(ptr()->pl_); }
+  { CGAL_assertion(ptr()->pl_); return *(ptr()->pl_); }
 
 
   bool contains(Object_handle h) const

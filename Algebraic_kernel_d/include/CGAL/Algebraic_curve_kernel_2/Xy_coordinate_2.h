@@ -247,7 +247,7 @@ public:
      * TODO: Loos-algorithm
      */
     X_coordinate_1 y() const {
-        CGAL_error("Not yet implemented");
+        CGAL_error_msg("Not yet implemented");
         return this->ptr()->_m_x; 
     }
     

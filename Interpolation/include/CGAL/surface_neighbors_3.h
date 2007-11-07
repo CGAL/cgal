@@ -76,7 +76,7 @@ surface_neighbors_3(InputIterator first, InputIterator beyond,
     done(vc);
   do{
     *out++= vc->point();
-    assert(! it.is_infinite(vc));
+    CGAL_assertion(! it.is_infinite(vc));
   }
   while(vc++!=done);
 

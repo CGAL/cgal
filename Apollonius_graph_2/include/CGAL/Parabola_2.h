@@ -136,7 +136,7 @@ protected:
 
   std::vector< Point_2 > compute_points(const FT &d) const
   {
-    assert(d >= 0);
+    CGAL_assertion(d >= 0);
     FT d1 = distance(o, c) + d;
     FT d2 = distance(o, l) + d;
     d2 = d1;

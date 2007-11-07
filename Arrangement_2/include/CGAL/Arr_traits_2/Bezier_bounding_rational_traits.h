@@ -363,7 +363,7 @@ public:
     bool can_refine_pt = can_refine(cp, left, right);
     if (!can_refine)
     {
-      CGAL_assertion(false); 
+      CGAL_error(); 
     }
     */
 
@@ -1023,28 +1023,28 @@ private:
         res = intersection (skew1a, skew2a);
         if (!assign(p, res)) 
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 
         res = intersection (skew1a, skew2b);
         if (!assign(p, res)) 
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 
         res = intersection (skew1b, skew2a);
         if (!assign(p, res)) 
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 
         res = intersection (skew1b, skew2b);
         if (!assign(p, res)) 
         {
-          CGAL_assertion(false);
+          CGAL_error();
         }
         aux_vec.push_back(p);
 

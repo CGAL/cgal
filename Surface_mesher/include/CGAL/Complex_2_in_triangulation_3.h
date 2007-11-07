@@ -585,7 +585,7 @@ public:
       case 2:
         break;
       default:
-        CGAL_assertion(false);
+        CGAL_error();
       }
 
       const int dimension_plus_1 = tr.dimension() + 1;

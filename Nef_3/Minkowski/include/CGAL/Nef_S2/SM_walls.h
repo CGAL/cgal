@@ -90,7 +90,7 @@ class SM_walls : SM_decorator<SMap> {
       if(seg.has_on(c.orthogonal_vector()))
 	return sh;
     }
-    CGAL_assertion_msg(false, "should not be executed");
+    CGAL_error_msg( "should not be executed");
     return SHalfedge_handle();
   }
 
@@ -197,11 +197,11 @@ class SM_walls : SM_decorator<SMap> {
 
     SHalfloop_handle sl;
     if(assign(sl, o))
-      CGAL_assertion_msg(false, "not implemented yet");
+      CGAL_error_msg( "not implemented yet");
 
     SFace_handle sf;
     if(assign(sf, o))
-      CGAL_assertion_msg(false, "wrong handle");
+      CGAL_error_msg( "wrong handle");
 
     CGAL_NEF_TRACEN("did not find anything");
 
@@ -237,10 +237,10 @@ class SM_walls : SM_decorator<SMap> {
 
     /*    
     if(assign(se,o))
-      CGAL_assertion_msg(false,"wrong handle");
+      CGAL_error_msg("wrong handle");
 
     if(assign(sl,o))
-      CGAL_assertion_msg(false,"wrong handle");
+      CGAL_error_msg("wrong handle");
     */
     //    CGAL_NEF_SETDTHREAD(1);
     return true;
@@ -273,9 +273,9 @@ class SM_walls : SM_decorator<SMap> {
     
     SHalfloop_handle sl;
     if(assign(sl, o))
-      CGAL_assertion_msg(false, "not implemented yet");	
+      CGAL_error_msg( "not implemented yet");	
     
-    CGAL_assertion_msg(false, "wrong handle");
+    CGAL_error_msg( "wrong handle");
     return false;
   }
   
@@ -331,7 +331,7 @@ class SM_walls : SM_decorator<SMap> {
       return sv;
     }
 
-    CGAL_assertion_msg(false, "wrong handle");
+    CGAL_error_msg( "wrong handle");
     return SVertex_handle();
   }
 
@@ -409,7 +409,7 @@ class SM_walls : SM_decorator<SMap> {
       return sv;
     }
     
-    CGAL_assertion_msg(false, "wrong handle");
+    CGAL_error_msg( "wrong handle");
     return SVertex_handle();
   }
 

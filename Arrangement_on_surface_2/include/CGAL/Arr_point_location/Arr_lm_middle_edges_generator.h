@@ -143,7 +143,7 @@ protected:
   virtual void _create_points_set (Points_set & /* points */)
   {
     std::cerr << "should not reach here!"<< std::endl;
-    CGAL_assertion(false);
+    CGAL_error();
   }
 };
 
