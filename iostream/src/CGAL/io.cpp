@@ -21,19 +21,12 @@
 //
 // Author(s)     : Andreas Fabri
 
-
-#ifndef CGAL_IO_C
-#define CGAL_IO_C
-
 #include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/assertions.h>
 
 #include <sstream>
-
-extern "C" {
-  #include <ctype.h>
-}
+#include <string>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -129,5 +122,3 @@ swallow(std::istream &is, const std::string& s ) {
 }
 
 CGAL_END_NAMESPACE
-
-#endif // CGAL_IO_C
