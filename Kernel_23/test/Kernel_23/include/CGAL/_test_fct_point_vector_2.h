@@ -54,15 +54,15 @@ _test_fct_point_vector_2(const R& )
 
  CGAL::Vector_2<R>  v5(p1, p2);
 
- assert( CGAL::ORIGIN + v2 == CGAL::Point_2<R>( n5, n6, n8) );
- assert( CGAL::ORIGIN - v2 == CGAL::Point_2<R>( -n5, -n6, n8) );
- assert( p1 - p1 == v0 );
- assert( p1 - p0 == p1 - CGAL::ORIGIN);
- assert( p1 - p2 == v4 );
- assert( p2 + v4 == p1 );
- assert( p3 - v1 == p2 );
- assert( p3 - p1 == v2 );
- assert( p2 - p1 == v5 );
+ CGAL_test_assert( CGAL::ORIGIN + v2 == CGAL::Point_2<R>( n5, n6, n8) );
+ CGAL_test_assert( CGAL::ORIGIN - v2 == CGAL::Point_2<R>( -n5, -n6, n8) );
+ CGAL_test_assert( p1 - p1 == v0 );
+ CGAL_test_assert( p1 - p0 == p1 - CGAL::ORIGIN);
+ CGAL_test_assert( p1 - p2 == v4 );
+ CGAL_test_assert( p2 + v4 == p1 );
+ CGAL_test_assert( p3 - v1 == p2 );
+ CGAL_test_assert( p3 - p1 == v2 );
+ CGAL_test_assert( p2 - p1 == v5 );
 
  std::cout << "..";
  std::cout << "done" << std::endl;

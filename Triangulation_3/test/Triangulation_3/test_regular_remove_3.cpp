@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 //#include <cstdlib>
 #include <set>
 
@@ -236,7 +236,7 @@ void insert (Cls &T, point_set &points, int number)
         std::cout << "\r number of inserted points: " << i << std::flush;
     }
     std::cout << std::endl;
-    assert (T.is_valid());
+    CGAL_test_assert(T.is_valid());
     std::cout << " number of vertices: " << T.number_of_vertices()
         << std::endl;
     
@@ -251,20 +251,20 @@ void remove (Cls &T, point_set &points, int number)
     for (int i = 1; !points.empty(); ++i)
     {
         number--;
-        assert (T.number_of_vertices() != 0);
+        CGAL_test_assert(T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
         set_iterator pos = points.find (v->point());
-        assert (pos != points.end());
+        CGAL_test_assert(pos != points.end());
         T.remove (v);
         points.erase (pos);
         std::cout << "\r number of removed points:  " << i << std::flush;
     }
     std::cout << std::endl;
     
-    assert (number >= 0);
-    assert (T.number_of_vertices() == 0);
-    assert (T.is_valid());
-    assert (points.empty());
+    CGAL_test_assert(number >= 0);
+    CGAL_test_assert(T.number_of_vertices() == 0);
+    CGAL_test_assert(T.is_valid());
+    CGAL_test_assert(points.empty());
     std::cout << " number of degeneracies: " << degeneracy_counter << std::endl;
     degeneracy_counter = 0;
 }
@@ -273,16 +273,16 @@ void remove (Cls &T, point_set &points, int number)
 // then removes it.
 void dim_jump (Cls &T, const Point &p, int dim)
 {
-    assert (T.dimension() == dim);
+    CGAL_test_assert(T.dimension() == dim);
 
     Vertex_handle v = T.insert (Weighted_point (p, 0));
-    assert (T.is_valid());
-    assert (v != Vertex_handle());
-    assert (T.dimension() == dim + 1);
+    CGAL_test_assert(T.is_valid());
+    CGAL_test_assert(v != Vertex_handle());
+    CGAL_test_assert(T.dimension() == dim + 1);
     
     T.remove (v);
-    assert (T.is_valid());
-    assert (T.dimension() == dim);
+    CGAL_test_assert(T.is_valid());
+    CGAL_test_assert(T.dimension() == dim);
 }
 
 
@@ -300,18 +300,18 @@ bool test_case (std::istream &is)
         points.insert (*pi);
         T.insert (*pi);
     } while (++pi != pend);
-    assert (T.is_valid());
+    CGAL_test_assert(T.is_valid());
     
     for (int i = 0; !points.empty(); ++i) {
-        assert (T.number_of_vertices() != 0);
+        CGAL_test_assert(T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
         set_iterator pos = points.find (v->point());
-        assert (pos != points.end());
+        CGAL_test_assert(pos != points.end());
         T.remove (v);
         points.erase(pos);
     }
-    assert (T.number_of_vertices() == 0);
-    assert (points.empty());
+    CGAL_test_assert(T.number_of_vertices() == 0);
+    CGAL_test_assert(points.empty());
     
     return true;
 }
@@ -331,7 +331,7 @@ int main(int argc, char **argv)
     // ...
     {
         std::ifstream fin ("data/regular_remove_3");
-        assert (fin);
+        CGAL_test_assert(fin);
         std:: cout << " test `data/regular_remove_3'" << std::endl;
         while (test_case (fin)) 
             // semicolon
@@ -377,7 +377,7 @@ int main(int argc, char **argv)
     randgen.seed(seed3);
 
     insert<point_iterator_3> (T, points, 500);
-    assert (T.dimension() == 3);
+    CGAL_test_assert(T.dimension() == 3);
     remove (T, points, 500);
 
     std::cout << " quit" << std::endl;

@@ -18,6 +18,7 @@
 // Author(s)     : Julia Floetotto
 
 #include <iostream>
+#include <CGAL/Testsuite/assert.h>
 #include <fstream>
 #include <utility>
 
@@ -125,7 +126,7 @@ test_neighbors(const Triangul& T, const  typename
 						    T.points_end(),p,n,
 						    out,
 						    T.geom_traits());
-    assert(result_pair.second);
+    CGAL_test_assert(result_pair.second);
     out =result_pair.first; break;}
   case 1: {
      //certified call with instantiated traits::
@@ -133,7 +134,7 @@ test_neighbors(const Triangul& T, const  typename
       result_pair = CGAL::surface_neighbors_certified_3(T.points_begin(),
 							T.points_end(),p,
 							out,I_traits(p,n));
-    assert(result_pair.second);
+    CGAL_test_assert(result_pair.second);
     out =result_pair.first; break;}
   //both versions with locate:
   case 2:{
@@ -205,26 +206,26 @@ test_coords(const Triangul& T, const  typename
   case 0:{
     Result_triple result
       = CGAL::surface_neighbor_coordinates_3(T, p,n,out);
-    assert(result.third);
+    CGAL_test_assert(result.third);
     norm =  result.second;
     break;}
   case 1: {
     Result_triple result  =
       CGAL::surface_neighbor_coordinates_3(T, p,out,I_traits(p,n));
-    assert(result.third);
+    CGAL_test_assert(result.third);
     norm =  result.second; break;}
   //both versions with locate:
   case 2:{
     start = T.locate(p);
     Result_triple result  = CGAL::surface_neighbor_coordinates_3(T, p,n,
 							       out, start);
-    assert(result.third);
+    CGAL_test_assert(result.third);
     norm =  result.second; break;}
   case 3: {
     start = T.locate(p);
     Result_triple result  =
       CGAL::surface_neighbor_coordinates_3(T, p,out, I_traits(p,n),start);
-    assert(result.third);
+    CGAL_test_assert(result.third);
     norm =  result.second; break;}
   //taking all points:
   case 4: {
@@ -233,14 +234,14 @@ test_coords(const Triangul& T, const  typename
 					     T.points_end(),p,n,
 					     out,
 					     T.geom_traits());
-    assert(result.third);
+    CGAL_test_assert(result.third);
     norm =  result.second; break;}
   case 5: {
     Result_triple result
       = CGAL::surface_neighbor_coordinates_3(T.points_begin(),
 					     T.points_end(),p,
 					     out ,I_traits(p,n));
-    assert(result.third);
+    CGAL_test_assert(result.third);
     norm =  result.second; break;}
   //the last two with certification:
   case 6: {
@@ -248,14 +249,14 @@ test_coords(const Triangul& T, const  typename
       result = CGAL::surface_neighbor_coordinates_certified_3
       (T.points_begin(), T.points_end(),p,n,
        out, T.geom_traits());
-    assert(result.third && result.fourth);
+    CGAL_test_assert(result.third && result.fourth);
     norm =  result.second; break;
   }
   case 7: {
     Result_quadruple
       result = CGAL::surface_neighbor_coordinates_certified_3
       (T.points_begin(), T.points_end(),p, out ,I_traits(p,n));
-    assert(result.third && result.fourth);
+    CGAL_test_assert(result.third && result.fourth);
     norm =  result.second;
     break;
   }
@@ -263,7 +264,7 @@ test_coords(const Triangul& T, const  typename
     std::cout << "Switch function calls: Nothing is tested. " <<
       std::endl;
   }
-  assert(norm>0);
+  CGAL_test_assert(norm>0);
 
   return std::make_pair(out,norm);
 }
@@ -283,14 +284,14 @@ test_coords_and_neighbors( const Triangul& T, const  typename
   std::vector<Point_coord_pair  >  coords;
   typename Triangul::Geom_traits::FT  norm;
   norm = test_coords(T, p, n,version, std::back_inserter(coords)).second;
-  assert(test_norm( coords.begin(), coords.end(),norm));
-  assert(test_barycenter(coords.begin(), coords.end(),norm,p,
+  CGAL_test_assert(test_norm( coords.begin(), coords.end(),norm));
+  CGAL_test_assert(test_barycenter(coords.begin(), coords.end(),norm,p,
 			 tolerance));
   //All function testing surface neighbors are
   // grouped together:
   std::vector< typename Triangul::Geom_traits::Point_3 >  neighbors;
   test_neighbors(T, p, n,version, std::back_inserter(neighbors));
-  assert(compare_neighbors(coords.begin(),
+  CGAL_test_assert(compare_neighbors(coords.begin(),
 			   coords.end(),neighbors.begin(),
 			   neighbors.end(), T.geom_traits()));
   //done

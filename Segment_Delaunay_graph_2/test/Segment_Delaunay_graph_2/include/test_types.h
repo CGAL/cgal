@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cctype>
 #include <algorithm>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
@@ -363,7 +363,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       sdg.clear();
 
       std::ifstream ifs( ifname_full );
-      assert( ifs );
+      CGAL_test_assert( ifs );
       Site_2 t;
       while ( ifs >> t ) {
 	sdg.insert(t);
@@ -525,7 +525,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     size_type nv1 = sdg.number_of_vertices();
 
     std::ofstream ofs(ofname);
-    assert( ofs );
+    CGAL_test_assert( ofs );
     sdg.file_output(ofs);
     CGAL_assertion( sdg.is_valid() );
     ofs.close();
@@ -533,7 +533,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.clear();
 
     std::ifstream ifs(ofname);
-    assert( ifs );
+    CGAL_test_assert( ifs );
     sdg.file_input(ifs);
     CGAL_assertion( sdg.is_valid() );
     ifs.close();

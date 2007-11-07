@@ -10,6 +10,7 @@
 
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/_test_real_embeddable.h>
 #include <CGAL/Arithmetic_kernel.h>
 

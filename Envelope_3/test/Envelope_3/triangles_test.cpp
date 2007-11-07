@@ -8,7 +8,7 @@
 #include "Envelope_triangles_test_3.h"
 
 #include <iostream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <list>
 #include <set>
 #include <vector>

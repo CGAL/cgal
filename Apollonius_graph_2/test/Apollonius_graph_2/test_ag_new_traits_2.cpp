@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <fstream>
 
 #include <CGAL/MP_Float.h>
@@ -39,7 +39,7 @@ public:
         {
             result_type r1 = Predicate::operator() (t1);
             result_type r2 = newp (t1);
-            assert (r1 == r2);
+            CGAL_test_assert(r1 == r2);
             return r1;
         }
         template <class T1, class T2>
@@ -47,7 +47,7 @@ public:
         {
             result_type r1 = Predicate::operator() (t1, t2);
             result_type r2 = newp (t1, t2);
-            assert (r1 == r2);
+            CGAL_test_assert(r1 == r2);
             return r1;
         }
         template <class T1, class T2, class T3>
@@ -55,7 +55,7 @@ public:
         {
             result_type r1 = Predicate::operator() (t1, t2, t3);
             result_type r2 = newp (t1, t2, t3);
-            assert (r1 == r2);
+            CGAL_test_assert(r1 == r2);
             return r1;
         }
         template <class T1, class T2, class T3, class T4>
@@ -63,7 +63,7 @@ public:
         {
             result_type r1 = Predicate::operator() (t1, t2, t3, t4);
             result_type r2 = newp (t1, t2, t3, t4);
-            assert (r1 == r2);
+            CGAL_test_assert(r1 == r2);
             return r1;
         }
         template <class T1, class T2, class T3, class T4, class T5>
@@ -71,7 +71,7 @@ public:
         {
             result_type r1 = Predicate::operator() (t1, t2, t3, t4, t5);
             result_type r2 = newp (t1, t2, t3, t4, t5);
-            assert (r1 == r2);
+            CGAL_test_assert(r1 == r2);
             return r1;
         }
         template <class T1, class T2, class T3, class T4, class T5, class T6>
@@ -79,7 +79,7 @@ public:
         {
             result_type r1 = Predicate::operator() (t1, t2, t3, t4, t5, t6);
             result_type r2 = newp (t1, t2, t3, t4, t5, t6);
-            assert (r1 == r2);
+            CGAL_test_assert(r1 == r2);
             return r1;
         }
     };
@@ -153,7 +153,7 @@ void test_orientation (const AG &ag,
         Sign o1 = orientation1 (s0, s1, s2, s0, v->site());
         Sign o2 = orientation2 (s0, s1, s2,     v->site().point());
 
-        assert (o1 == o2);
+        CGAL_test_assert(o1 == o2);
     }
 }
 
@@ -161,14 +161,14 @@ void test_file (const char *filename)
 {
     std::ifstream is (filename);
 
-    assert (is);
+    CGAL_test_assert(is);
 
     std::cout << "File " << filename << ": construction... " << std::flush;
     AG ag;
     Site s; while (is >> s) ag.insert (s);
 
     std::cout << "validation... " << std::flush;
-    assert (ag.is_valid());
+    CGAL_test_assert(ag.is_valid());
 
     std::cout << "OK" << std::endl;
 

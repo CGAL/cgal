@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/_test_algebraic_structure.h>

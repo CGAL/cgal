@@ -61,8 +61,8 @@ _test_fct_direction_2(const R& )
 
  std::cout << '.';
 
- assert( d[0] >= d[0] );
- assert( d[0] <= d[0] );
+ CGAL_test_assert( d[0] >= d[0] );
+ CGAL_test_assert( d[0] <= d[0] );
 
  std::cout << '.';
 
@@ -74,16 +74,16 @@ _test_fct_direction_2(const R& )
  {
     for ( j = 0; j+i < 8; j++)
     {
-        assert( d[j] <= d[j+i] );
-        assert( d[j] <  d[j+i] );
+        CGAL_test_assert( d[j] <= d[j+i] );
+        CGAL_test_assert( d[j] <  d[j+i] );
     }
     for (      ; j < 8; j++)
     {
-        assert( d[j] >= d[(j+i)%8] );
-        assert( d[j] >  d[(j+i)%8] );
+        CGAL_test_assert( d[j] >= d[(j+i)%8] );
+        CGAL_test_assert( d[j] >  d[(j+i)%8] );
     }
-    assert( d[i] >= d[i] );
-    assert( d[i] <= d[i] );
+    CGAL_test_assert( d[i] >= d[i] );
+    CGAL_test_assert( d[i] <= d[i] );
  }
 
  std::cout << '.';
@@ -94,9 +94,9 @@ _test_fct_direction_2(const R& )
          {
              // std::cout << i << ' ' << j << ' ' << k << std::endl;
              if ( ccw(i,j,k) || ((j == k)&&( i != j)) )
-                assert( d[i].counterclockwise_in_between(d[j],d[k]));
+                CGAL_test_assert( d[i].counterclockwise_in_between(d[j],d[k]));
              else
-                assert(!d[i].counterclockwise_in_between(d[j],d[k]));
+                CGAL_test_assert(!d[i].counterclockwise_in_between(d[j],d[k]));
              // true  if j --- i --- k along CCW rotation
              // false if i -=- j -=- k
          }

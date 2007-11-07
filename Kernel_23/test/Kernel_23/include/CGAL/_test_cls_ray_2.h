@@ -65,64 +65,64 @@ _test_cls_ray_2(const R& )
  CGAL::Ray_2<R> r8v( p2, v24);
  r0 = r3;
 
- assert(   CGAL::parallel(r1, r2) );
- assert(   CGAL::parallel(r1, r3) );
- assert(   CGAL::parallel(r4, r5) );
- assert( ! CGAL::parallel(r1, r6) );
+ CGAL_test_assert(   CGAL::parallel(r1, r2) );
+ CGAL_test_assert(   CGAL::parallel(r1, r3) );
+ CGAL_test_assert(   CGAL::parallel(r4, r5) );
+ CGAL_test_assert( ! CGAL::parallel(r1, r6) );
 
  std::cout << '.';
 
- assert( r1 == r1 );
- assert( r2 == r1 );
- assert( r4 == r5 );
- assert( r0 == r3 );
- assert( r6 != r1 );
- assert( r1 != r3 );
- assert( r1 != r5 );
+ CGAL_test_assert( r1 == r1 );
+ CGAL_test_assert( r2 == r1 );
+ CGAL_test_assert( r4 == r5 );
+ CGAL_test_assert( r0 == r3 );
+ CGAL_test_assert( r6 != r1 );
+ CGAL_test_assert( r1 != r3 );
+ CGAL_test_assert( r1 != r5 );
 
- assert( r2.source() == p1 );
- assert( r0.source() == p3 );
- assert( r4.source() == r4.point(0) );
+ CGAL_test_assert( r2.source() == p1 );
+ CGAL_test_assert( r0.source() == p3 );
+ CGAL_test_assert( r4.source() == r4.point(0) );
 
- assert( r1.direction() == d12 );
- assert( r2.direction() == d12 );
- assert( r3.direction() == r1.direction() );
- assert( r3.to_vector().direction() == r1.to_vector().direction() );
-
- std::cout << '.';
-
- assert( r3.supporting_line() == r1.supporting_line() );
- assert( r5.supporting_line() == CGAL::Line_2<R>( p2, p4 ) );
-
- assert( r4.opposite() == CGAL::Ray_2<R>( p2, -d24 ) );
- assert( r1.opposite() == CGAL::Ray_2<R>( p1, -d12 ) );
- assert( r2.opposite().opposite() == r2 );
- assert( r2 == r7 );
- assert( r4 == r8 );
- assert( r2 == r7v );
- assert( r4 == r8v );
-
- assert( r6.is_horizontal() );
- assert( ! r0.is_horizontal() );
- assert( r5.is_vertical() );
- assert( ! r5.is_horizontal() );
-
- assert( r1.has_on( p1 ) );
- assert( r1.has_on( p2 ) );
- assert( r1.has_on( p3 ) );
- assert( r3.opposite().has_on( p1 ) );
- assert( ! r1.has_on( p4 ) );
- assert( ! r0.has_on( CGAL::Point_2<R>( n8, n5, n8 )) );
- assert( r4.has_on( r4.point(7)) );
- assert( r3.collinear_has_on( r3.point(7)) );
- assert( r1.collinear_has_on( p3) );
- assert( ! r3.collinear_has_on( p1 ) );
+ CGAL_test_assert( r1.direction() == d12 );
+ CGAL_test_assert( r2.direction() == d12 );
+ CGAL_test_assert( r3.direction() == r1.direction() );
+ CGAL_test_assert( r3.to_vector().direction() == r1.to_vector().direction() );
 
  std::cout << '.';
 
- assert( CGAL::Ray_2<R>( p1, p1).is_degenerate() );
- assert( ! r0.is_degenerate() );
- assert( CGAL::parallel(r0, r0) );
+ CGAL_test_assert( r3.supporting_line() == r1.supporting_line() );
+ CGAL_test_assert( r5.supporting_line() == CGAL::Line_2<R>( p2, p4 ) );
+
+ CGAL_test_assert( r4.opposite() == CGAL::Ray_2<R>( p2, -d24 ) );
+ CGAL_test_assert( r1.opposite() == CGAL::Ray_2<R>( p1, -d12 ) );
+ CGAL_test_assert( r2.opposite().opposite() == r2 );
+ CGAL_test_assert( r2 == r7 );
+ CGAL_test_assert( r4 == r8 );
+ CGAL_test_assert( r2 == r7v );
+ CGAL_test_assert( r4 == r8v );
+
+ CGAL_test_assert( r6.is_horizontal() );
+ CGAL_test_assert( ! r0.is_horizontal() );
+ CGAL_test_assert( r5.is_vertical() );
+ CGAL_test_assert( ! r5.is_horizontal() );
+
+ CGAL_test_assert( r1.has_on( p1 ) );
+ CGAL_test_assert( r1.has_on( p2 ) );
+ CGAL_test_assert( r1.has_on( p3 ) );
+ CGAL_test_assert( r3.opposite().has_on( p1 ) );
+ CGAL_test_assert( ! r1.has_on( p4 ) );
+ CGAL_test_assert( ! r0.has_on( CGAL::Point_2<R>( n8, n5, n8 )) );
+ CGAL_test_assert( r4.has_on( r4.point(7)) );
+ CGAL_test_assert( r3.collinear_has_on( r3.point(7)) );
+ CGAL_test_assert( r1.collinear_has_on( p3) );
+ CGAL_test_assert( ! r3.collinear_has_on( p1 ) );
+
+ std::cout << '.';
+
+ CGAL_test_assert( CGAL::Ray_2<R>( p1, p1).is_degenerate() );
+ CGAL_test_assert( ! r0.is_degenerate() );
+ CGAL_test_assert( CGAL::parallel(r0, r0) );
 
  std::cout << "done" << std::endl;
  return true;

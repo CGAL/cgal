@@ -2,7 +2,7 @@
 
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
@@ -24,16 +24,16 @@ template <class Q>
 void test_it()
 {
   Q q = CGAL::simplest_rational_in_interval<Q>(-0.1, 0.1);
-  assert(CGAL_NTS is_zero(q));
+  CGAL_test_assert(CGAL_NTS is_zero(q));
 
   double l = 3.1415, h = 3.1416;
   q = CGAL::simplest_rational_in_interval<Q>(l, h);
-  assert(l <= CGAL_NTS to_double(q));
-  assert(CGAL_NTS to_double(q) <= h);
+  CGAL_test_assert(l <= CGAL_NTS to_double(q));
+  CGAL_test_assert(CGAL_NTS to_double(q) <= h);
   
   double d = 1234.56789;
   q = CGAL:: to_rational<Q>(d);
-  assert(CGAL_NTS to_double(q) == d);
+  CGAL_test_assert(CGAL_NTS to_double(q) == d);
 }
 
 int main() {

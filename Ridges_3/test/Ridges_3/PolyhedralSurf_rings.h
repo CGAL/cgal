@@ -116,7 +116,7 @@ collect_i_rings(const Vertex_const_handle v,
 {
   std::vector<Vertex_const_handle> current_ring, next_ring; 
   std::vector<Vertex_const_handle> *p_current_ring, *p_next_ring;
-  assert(ring_i >= 1);
+  CGAL_test_assert(ring_i >= 1);
   //initialize
   p_current_ring = &current_ring;
   p_next_ring = &next_ring;

@@ -112,34 +112,34 @@ _test_fct_points_implicit_sphere(const R&)
   CGAL_kernel_assertion( CGAL::squared_distance(   s, org ) == FT1 );
   
   
-  assert( CGAL::side_of_oriented_sphere(p,q,r,s,p) \
+  CGAL_test_assert( CGAL::side_of_oriented_sphere(p,q,r,s,p) \
           == CGAL::ON_ORIENTED_BOUNDARY);
-  assert( CGAL::orientation(p,r,q,s) == CGAL::POSITIVE );
-  assert( CGAL::side_of_oriented_sphere(p,r,q,s,org) \
+  CGAL_test_assert( CGAL::orientation(p,r,q,s) == CGAL::POSITIVE );
+  CGAL_test_assert( CGAL::side_of_oriented_sphere(p,r,q,s,org) \
           == CGAL::ON_POSITIVE_SIDE);
-  assert( CGAL::side_of_oriented_sphere(p,q,r,s,org) \
+  CGAL_test_assert( CGAL::side_of_oriented_sphere(p,q,r,s,org) \
           == CGAL::ON_NEGATIVE_SIDE);
-  assert( CGAL::side_of_bounded_sphere(p,q,r,s,org) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p,q,r,s,org) \
           == CGAL::ON_BOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(p,r,q,s,org) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p,r,q,s,org) \
           == CGAL::ON_BOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(p,q,r,s,q) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p,q,r,s,q) \
           == CGAL::ON_BOUNDARY);
-  assert( CGAL::side_of_bounded_sphere(p,q,r,s,out) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p,q,r,s,out) \
           == CGAL::ON_UNBOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(p,r,q,s,out) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p,r,q,s,out) \
           == CGAL::ON_UNBOUNDED_SIDE);
   
   CGAL::Point_3<R> ex( RT1, RT0, RT0);
   CGAL::Point_3<R> ey( RT0, RT1, RT0);
   CGAL::Point_3<R> ez( RT0, RT0, RT1);
   CGAL::Point_3<R> oz( RT0, RT0, -RT1);
-  assert( CGAL::circumcenter(ex, ey, ez, oz) == org );
-  assert( CGAL::circumcenter(p,q,r,s) == org );
-  assert( CGAL::circumcenter(p,r,q,s) == org );
-  assert( CGAL::circumcenter(Tetrahedron(ex, ey, ez, oz)) == org );
-  assert( CGAL::circumcenter(Tetrahedron(p,q,r,s)) == org );
-  assert( CGAL::circumcenter(Tetrahedron(p,r,q,s)) == org );
+  CGAL_test_assert( CGAL::circumcenter(ex, ey, ez, oz) == org );
+  CGAL_test_assert( CGAL::circumcenter(p,q,r,s) == org );
+  CGAL_test_assert( CGAL::circumcenter(p,r,q,s) == org );
+  CGAL_test_assert( CGAL::circumcenter(Tetrahedron(ex, ey, ez, oz)) == org );
+  CGAL_test_assert( CGAL::circumcenter(Tetrahedron(p,q,r,s)) == org );
+  CGAL_test_assert( CGAL::circumcenter(Tetrahedron(p,r,q,s)) == org );
   
   CGAL::Vector_3<R>  v( RT(12), RT(4), RT(-4), RT(2) );
   CGAL::Point_3<R>   pt = p + v;
@@ -149,28 +149,28 @@ _test_fct_points_implicit_sphere(const R&)
   CGAL::Point_3<R>   c = org + v;
   CGAL::Point_3<R>   ot= out + v;
   
-  assert( CGAL::side_of_oriented_sphere(pt,qt,rt,st,pt) \
+  CGAL_test_assert( CGAL::side_of_oriented_sphere(pt,qt,rt,st,pt) \
           == CGAL::ON_ORIENTED_BOUNDARY);
-  assert( CGAL::orientation(pt,rt,qt,st) == CGAL::POSITIVE );
-  assert( CGAL::side_of_oriented_sphere(pt,rt,qt,st,c) \
+  CGAL_test_assert( CGAL::orientation(pt,rt,qt,st) == CGAL::POSITIVE );
+  CGAL_test_assert( CGAL::side_of_oriented_sphere(pt,rt,qt,st,c) \
           == CGAL::ON_POSITIVE_SIDE);
-  assert( CGAL::side_of_oriented_sphere(pt,qt,rt,st,c) \
+  CGAL_test_assert( CGAL::side_of_oriented_sphere(pt,qt,rt,st,c) \
           == CGAL::ON_NEGATIVE_SIDE);
-  assert( CGAL::side_of_bounded_sphere(pt,qt,rt,st,c) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(pt,qt,rt,st,c) \
           == CGAL::ON_BOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(pt,rt,qt,st,c) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(pt,rt,qt,st,c) \
           == CGAL::ON_BOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(pt,qt,rt,st,qt) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(pt,qt,rt,st,qt) \
           == CGAL::ON_BOUNDARY);
-  assert( CGAL::side_of_bounded_sphere(pt,qt,rt,st,ot) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(pt,qt,rt,st,ot) \
           == CGAL::ON_UNBOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(pt,rt,qt,st,ot) \
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(pt,rt,qt,st,ot) \
           == CGAL::ON_UNBOUNDED_SIDE);
 
-  assert( CGAL::circumcenter(pt,qt,rt,st) == c );
-  assert( CGAL::circumcenter(pt,rt,qt,st) == c );
-  assert( CGAL::circumcenter(Tetrahedron(pt,qt,rt,st)) == c );
-  assert( CGAL::circumcenter(Tetrahedron(pt,rt,qt,st)) == c );
+  CGAL_test_assert( CGAL::circumcenter(pt,qt,rt,st) == c );
+  CGAL_test_assert( CGAL::circumcenter(pt,rt,qt,st) == c );
+  CGAL_test_assert( CGAL::circumcenter(Tetrahedron(pt,qt,rt,st)) == c );
+  CGAL_test_assert( CGAL::circumcenter(Tetrahedron(pt,rt,qt,st)) == c );
 
   // Now test side_of_bounded_sphere(p, q, t).
 
@@ -181,16 +181,16 @@ _test_fct_points_implicit_sphere(const R&)
   CGAL::Point_3<R> pt2 (RT(-100),RT(-100),RT(100),RT(10));
   CGAL::Point_3<R> pt3 (RT(-100),RT(100),RT(100),RT(10));
 
-  assert( CGAL::side_of_bounded_sphere(p1, p2, pt1) == CGAL::ON_BOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(p1, p2, pt2) == CGAL::ON_BOUNDARY);
-  assert( CGAL::side_of_bounded_sphere(p1, p2, p3, pt1) == CGAL::ON_BOUNDED_SIDE);
-  assert( CGAL::side_of_bounded_sphere(p1, p2, pt2, pt3) == CGAL::ON_BOUNDARY);
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p1, p2, pt1) == CGAL::ON_BOUNDED_SIDE);
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p1, p2, pt2) == CGAL::ON_BOUNDARY);
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p1, p2, p3, pt1) == CGAL::ON_BOUNDED_SIDE);
+  CGAL_test_assert( CGAL::side_of_bounded_sphere(p1, p2, pt2, pt3) == CGAL::ON_BOUNDARY);
   
   // Now test squared_radius().
 
-  assert( CGAL::squared_radius(p1, p2, pt2, pt3) == FT(300));
-  assert( CGAL::squared_radius(p1, p2, pt2) == FT(300));
-  assert( CGAL::squared_radius(p1, p2) == FT(300));
+  CGAL_test_assert( CGAL::squared_radius(p1, p2, pt2, pt3) == FT(300));
+  CGAL_test_assert( CGAL::squared_radius(p1, p2, pt2) == FT(300));
+  CGAL_test_assert( CGAL::squared_radius(p1, p2) == FT(300));
 
   return true;
 }

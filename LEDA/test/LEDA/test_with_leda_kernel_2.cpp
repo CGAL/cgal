@@ -22,7 +22,7 @@
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/rat_leda.h>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <CGAL/predicates_on_points_rat_leda_2.h>

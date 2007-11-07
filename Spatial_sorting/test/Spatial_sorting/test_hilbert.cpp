@@ -1,4 +1,5 @@
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/hilbert_sort.h>
 
@@ -52,7 +53,7 @@ int main ()
 
         std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
         std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
-        assert (v == v2);
+        CGAL_test_assert(v == v2);
 
         std::cout << "OK." << std::endl;
     }
@@ -82,7 +83,7 @@ int main ()
 
         std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
         std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert (v == v2);
+        CGAL_test_assert(v == v2);
 
         std::cout << "OK." << std::endl;
     }

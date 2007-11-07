@@ -26,7 +26,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #include "CGAL/Precise_numbers.h"
 

@@ -7,7 +7,7 @@
 #include <CGAL/point_generators_2.h>
 
 #include <vector>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <stdlib.h>
 
 // types

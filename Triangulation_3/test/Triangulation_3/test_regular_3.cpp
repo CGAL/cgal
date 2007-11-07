@@ -22,7 +22,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <iostream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <list>
 
 #include <CGAL/_test_types.h>
@@ -67,9 +67,9 @@ int main()
   T0.insert(Weighted_point( Point (0,0,0), 0) );
   T0.insert(Weighted_point( Point (0,0,0), 1) );
   T0.insert(Weighted_point( Point (0,0,0), -1) );
-  assert(T0.dimension() == 0);
-  assert(T0.number_of_vertices() == 1);
-  assert(T0.finite_vertices_begin()->point().weight() == 1);
+  CGAL_test_assert(T0.dimension() == 0);
+  CGAL_test_assert(T0.number_of_vertices() == 1);
+  CGAL_test_assert(T0.finite_vertices_begin()->point().weight() == 1);
 
   std::cout << " test dimension 1 " << std::endl;
   Cls T1;
@@ -91,7 +91,7 @@ int main()
 	std::cout << count << '\b' << '\b' << '\b' ;
     std::cout.flush();
   }
-  assert( T1.is_valid() );
+  CGAL_test_assert( T1.is_valid() );
   std::cout << std::endl << " number of vertices : " 
 	    << T1.number_of_vertices() << std::endl;
 
@@ -113,7 +113,7 @@ int main()
 	std::cout << count << '\b' << '\b' << '\b' ;
     std::cout.flush();  
   }
-  assert( T1.is_valid() );
+  CGAL_test_assert( T1.is_valid() );
   std::cout << std::endl << " number of vertices : " 
 	    << T1.number_of_vertices() << std::endl;
 
@@ -135,10 +135,10 @@ int main()
 	std::cout << count << '\b' << '\b' << '\b' ;
     std::cout.flush();  
   }
-  assert( T1.is_valid() );
+  CGAL_test_assert( T1.is_valid() );
   std::cout << std::endl << " number of vertices : " 
 	    << T1.number_of_vertices() << std::endl;
-  assert( T1.dimension()==1 );
+  CGAL_test_assert( T1.dimension()==1 );
 
   // The following is distilled from a bug report by Wulue Zhao
   // (zhao.88@osu.edu), a student of Tamal Dey.
@@ -160,7 +160,7 @@ int main()
   T11.insert(wp5);
   T11.insert(wp6);
 
-  assert(T11.is_valid());
+  CGAL_test_assert(T11.is_valid());
 
   // And another distilled bug report from the same guy.
  {
@@ -207,7 +207,7 @@ int main()
   T111.insert(wp11);
   T111.insert(wp12);
 
-  assert(T111.is_valid());
+  CGAL_test_assert(T111.is_valid());
  }
 
   std::cout << " test dimension 2 " << std::endl;
@@ -277,8 +277,8 @@ int main()
  
   std::cout << std::endl << " number of vertices : " 
 	    << T2.number_of_vertices() << std::endl;
-  assert( T2.dimension()==2 );
-  assert( T2.is_valid() );
+  CGAL_test_assert( T2.dimension()==2 );
+  CGAL_test_assert( T2.is_valid() );
 
  // dimension 3
   std::cout << " test dimension 3" << std::endl;
@@ -317,8 +317,8 @@ int main()
 
   std::cout << " number of vertices : " 
 	    << T.number_of_vertices() << std::endl;
-  assert(T.is_valid());
-  assert(T.dimension()==3);
+  CGAL_test_assert(T.is_valid());
+  CGAL_test_assert(T.dimension()==3);
 
   T.clear();
   std::cout << " test iterator range insert" << std::endl;
@@ -326,8 +326,8 @@ int main()
 
   std::cout << " number of vertices : " 
 	    << T.number_of_vertices() << std::endl;
-  assert(T.is_valid());
-  assert(T.dimension()==3);
+  CGAL_test_assert(T.is_valid());
+  CGAL_test_assert(T.dimension()==3);
 
 
     //test nearest_power_vertex
@@ -354,11 +354,11 @@ int main()
 
   T3.insert(wpp1);
   Vertex_handle v2 = T3.insert(wpp2);
-  assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v2);
+  CGAL_test_assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v2);
   
   T3.insert(wpp3);
   Vertex_handle v4 = T3.insert(wpp4);
-  assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v4);
+  CGAL_test_assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v4);
 
   T3.insert(wpp5);
   T3.insert(wpp6);
@@ -368,9 +368,9 @@ int main()
   // T3.insert(wpp8);
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
-  assert(T3.nearest_power_vertex(query) == v8);
-  assert(T3.nearest_power_vertex(Weighted_point(query,1.0)) == v8 );
-  assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
+  CGAL_test_assert(T3.nearest_power_vertex(query) == v8);
+  CGAL_test_assert(T3.nearest_power_vertex(Weighted_point(query,1.0)) == v8 );
+  CGAL_test_assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
   
   // test dual
   std::cout << " test dual member functions" << std::endl;
@@ -378,7 +378,7 @@ int main()
   for( ; fcit != T3.finite_cells_end(); ++fcit) {
     Point cc = T3.dual(fcit);
     Vertex_handle ncc = T3.nearest_power_vertex(cc);
-    assert(fcit->has_vertex(ncc));
+    CGAL_test_assert(fcit->has_vertex(ncc));
   }
 
   // test Gabriel
@@ -401,25 +401,25 @@ int main()
   Vertex_handle v3 = T4.insert(wq3);
   Cell_handle c;
   int i,j,k,l;
-  assert(T4.is_facet(v0,v1,v2,c,j,k,l));
+  CGAL_test_assert(T4.is_facet(v0,v1,v2,c,j,k,l));
   i = 6 - (j+k+l);
   Facet f = std::make_pair(c,i);
-  assert(T4.is_Gabriel(c,i));
-  assert(T4.is_Gabriel(f));
-  assert(T4.is_facet(v1,v2,v3,c,j,k,l));
+  CGAL_test_assert(T4.is_Gabriel(c,i));
+  CGAL_test_assert(T4.is_Gabriel(f));
+  CGAL_test_assert(T4.is_facet(v1,v2,v3,c,j,k,l));
   i = 6 - (j+k+l);
-  assert(!T4.is_Gabriel(c,i));
-  assert(T4.is_edge(v0,v1,c,i,j));
-  assert(T4.is_Gabriel(c,i,j));
+  CGAL_test_assert(!T4.is_Gabriel(c,i));
+  CGAL_test_assert(T4.is_edge(v0,v1,c,i,j));
+  CGAL_test_assert(T4.is_Gabriel(c,i,j));
   Edge e = make_triple(c,i,j);
-  assert(T4.is_Gabriel(e));
-  assert(T4.is_edge(v2,v3,c,i,j));
-  assert(T4.is_Gabriel(c,i,j));
+  CGAL_test_assert(T4.is_Gabriel(e));
+  CGAL_test_assert(T4.is_edge(v2,v3,c,i,j));
+  CGAL_test_assert(T4.is_Gabriel(c,i,j));
   
   Vertex_handle v01 = T4.insert(wq01);
   (void) v01; // kill warning
-  assert(T4.is_edge(v2,v3,c,i,j));
-  assert(!T4.is_Gabriel(c,i,j));
+  CGAL_test_assert(T4.is_edge(v2,v3,c,i,j));
+  CGAL_test_assert(!T4.is_Gabriel(c,i,j));
 
   Weighted_point wwq0(q0,0.);
   Weighted_point wwq1(q1,0.);
@@ -430,10 +430,10 @@ int main()
   v1 = T5.insert(wwq1);
   v2 = T5.insert(wwq2);
   v3 = T5.insert(wwq3);
-  assert(T5.nearest_power_vertex(v3->point().point()) == v3);
-  assert(T5.nearest_power_vertex(v0->point().point()) == v3);
-  assert(T5.is_Gabriel(v3));
-  assert(!T5.is_Gabriel(v0));
+  CGAL_test_assert(T5.nearest_power_vertex(v3->point().point()) == v3);
+  CGAL_test_assert(T5.nearest_power_vertex(v0->point().point()) == v3);
+  CGAL_test_assert(T5.is_Gabriel(v3));
+  CGAL_test_assert(!T5.is_Gabriel(v0));
 
   std::cout << " quit " << std::endl;
   return 0;

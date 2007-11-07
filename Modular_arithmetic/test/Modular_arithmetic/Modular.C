@@ -5,6 +5,7 @@
 */
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Modular.h>
 
 #include <CGAL/_test_algebraic_structure.h>

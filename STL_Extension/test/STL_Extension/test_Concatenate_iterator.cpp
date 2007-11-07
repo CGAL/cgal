@@ -3,7 +3,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/Concatenate_iterator.h>
 
@@ -98,7 +98,7 @@ bool test_creation(C c, AB ab)
   It_ab it_ab;
   for (it_c = c.begin(), it_ab = ab.begin(); it_ab != ab.end();
        it_c++, it_ab++) {
-    assert( *it_c == *it_ab );
+    CGAL_test_assert( *it_c == *it_ab );
   }
 
   return true;
@@ -127,20 +127,20 @@ int test(A a, B b)
   AB_container ab(a, b);
 
   ::copy(c, a, b);
-  assert( test_creation(c, ab) );
-  assert( ab.size() == ab.lazy_size() && ab.size() == c.size() );
+  CGAL_test_assert( test_creation(c, ab) );
+  CGAL_test_assert( ab.size() == ab.lazy_size() && ab.size() == c.size() );
 
   AA_container aa(a, a);
 
   ::copy(c, a, a);
-  assert( test_creation(c, aa) );
-  assert( aa.size() == aa.lazy_size() && aa.size() == c.size() );
+  CGAL_test_assert( test_creation(c, aa) );
+  CGAL_test_assert( aa.size() == aa.lazy_size() && aa.size() == c.size() );
 
   BA_container ba(b, a);
 
   ::copy(c, b, a);
-  assert( test_creation(c, ba) );
-  assert( ba.size() == ba.lazy_size() && ba.size() == c.size() );
+  CGAL_test_assert( test_creation(c, ba) );
+  CGAL_test_assert( ba.size() == ba.lazy_size() && ba.size() == c.size() );
 
 
   std::cout << "==========================================="
@@ -202,10 +202,10 @@ int main()
 
     std::cout << "testing generic cases..." << std::endl;
 
-    assert( test(v1, l1) );
-    assert( test(l1, v1) );
-    assert( test(v1, v2) );
-    assert( test(v1, v1) );
+    CGAL_test_assert( test(v1, l1) );
+    CGAL_test_assert( test(l1, v1) );
+    CGAL_test_assert( test(v1, v2) );
+    CGAL_test_assert( test(v1, v1) );
   }
 
   // one is empty
@@ -216,10 +216,10 @@ int main()
     std::cout << "testing cases where at least one container "
 	      << "is empty..." << std::endl;
 
-    assert( test(v1, l1) );
-    assert( test(l1, v1) );
-    assert( test(v1, v2) );
-    assert( test(v2, v2) );
+    CGAL_test_assert( test(v1, l1) );
+    CGAL_test_assert( test(l1, v1) );
+    CGAL_test_assert( test(v1, v2) );
+    CGAL_test_assert( test(v2, v2) );
   }
 
   //------------------------------------------------------------------

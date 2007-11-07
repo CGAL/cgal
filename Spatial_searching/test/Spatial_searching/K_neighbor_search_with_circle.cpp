@@ -1,5 +1,6 @@
 // file: K_neighbor_search_with_circle.C
 #include <CGAL/Cartesian.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Euclidean_distance_sphere_point.h>
@@ -46,7 +47,7 @@ int main() {
        it++){ 
     result.push_back(it->first);
   }
-  assert(result.size() == K);
+  CGAL_test_assert(result.size() == K);
   std::sort(points.begin(), points.end());
   std::sort(result.begin(), result.end());
   
@@ -55,13 +56,13 @@ int main() {
 		      result.begin(), result.end(),
 		      std::back_inserter(diff));
 
-  assert(diff.size() == N-K);
+  CGAL_test_assert(diff.size() == N-K);
   for(std::vector<Point>::iterator it = diff.begin();
       it != diff.end();
       it++){
     double eps = std::sqrt(CGAL::squared_distance(center,*it)) - (0.2 + std::sqrt(dist.transformed_distance(query,*it)));
     if(eps > 0.00000001 || eps < -0.00000000001) std::cout << "eps = " << eps << std::endl;
-    //    assert (eps < 0.00000001 && eps > -0.00000000001);
+    //    CGAL_test_assert(eps < 0.00000001 && eps > -0.00000000001);
   }
   
   std::cout << "done" << std::endl;

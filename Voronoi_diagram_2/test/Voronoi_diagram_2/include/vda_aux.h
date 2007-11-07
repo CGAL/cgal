@@ -21,6 +21,7 @@
 #define VDA_AUX_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <iostream>
 #include <CGAL/Triangulation_utils_2.h>
 
@@ -87,7 +88,7 @@ struct Project_ag_dual
     if ( CGAL::assign(s, o) ) {
       return s.point();
     } else{
-      assert( false );
+      CGAL_test_assert( false );
       return Point_2();
     }
   }

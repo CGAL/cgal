@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #ifdef CGAL_USE_CORE
 
 #include <CGAL/CORE_BigInt.h>

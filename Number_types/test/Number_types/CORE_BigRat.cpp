@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #ifdef CGAL_USE_CORE
 
 #include <CGAL/CORE_BigRat.h>

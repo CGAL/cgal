@@ -43,32 +43,32 @@ _test_further_fct_point_2(const R& )
 
 #if 0
  // This function is not documented, not used in CGAL, and has no functor.
- assert( CGAL::compare_deltax_deltay( p1, p4, p5, p6) == CGAL::SMALLER);
- assert( CGAL::compare_deltax_deltay( p5, p6, p2, p1) == CGAL::LARGER);
- assert( CGAL::compare_deltax_deltay( p6, p5, p2, p1) == CGAL::LARGER);
- assert( CGAL::compare_deltax_deltay( p1, p2, p5, p6) == CGAL::SMALLER);
- assert( CGAL::compare_deltax_deltay( p4, p3, p3, p7) == CGAL::EQUAL);
- assert( CGAL::compare_deltax_deltay( p2, p3, p3, p6) == CGAL::EQUAL);
+ CGAL_test_assert( CGAL::compare_deltax_deltay( p1, p4, p5, p6) == CGAL::SMALLER);
+ CGAL_test_assert( CGAL::compare_deltax_deltay( p5, p6, p2, p1) == CGAL::LARGER);
+ CGAL_test_assert( CGAL::compare_deltax_deltay( p6, p5, p2, p1) == CGAL::LARGER);
+ CGAL_test_assert( CGAL::compare_deltax_deltay( p1, p2, p5, p6) == CGAL::SMALLER);
+ CGAL_test_assert( CGAL::compare_deltax_deltay( p4, p3, p3, p7) == CGAL::EQUAL);
+ CGAL_test_assert( CGAL::compare_deltax_deltay( p2, p3, p3, p6) == CGAL::EQUAL);
 #endif
 
  std::cout << '.';
 
- assert( CGAL::x_equal(p1,p1) );
- assert( CGAL::x_equal(p2,p3) );
- assert( !CGAL::x_equal(p2,p4) );
+ CGAL_test_assert( CGAL::x_equal(p1,p1) );
+ CGAL_test_assert( CGAL::x_equal(p2,p3) );
+ CGAL_test_assert( !CGAL::x_equal(p2,p4) );
 
- assert( CGAL::y_equal(p3,p6) );
- assert( !CGAL::y_equal(p1,p3) );
+ CGAL_test_assert( CGAL::y_equal(p3,p6) );
+ CGAL_test_assert( !CGAL::y_equal(p1,p3) );
 
- assert( CGAL::compare_x( p1, p2 ) == CGAL::EQUAL );
- assert( CGAL::compare_x( p1, p4 ) == CGAL::SMALLER );
- assert( CGAL::compare_x( p4, p1 ) == CGAL::LARGER );
- assert( CGAL::compare_x( p6, p5 ) == CGAL::LARGER );
+ CGAL_test_assert( CGAL::compare_x( p1, p2 ) == CGAL::EQUAL );
+ CGAL_test_assert( CGAL::compare_x( p1, p4 ) == CGAL::SMALLER );
+ CGAL_test_assert( CGAL::compare_x( p4, p1 ) == CGAL::LARGER );
+ CGAL_test_assert( CGAL::compare_x( p6, p5 ) == CGAL::LARGER );
 
- assert( CGAL::compare_y( p3, p6 ) == CGAL::EQUAL );
- assert( CGAL::compare_y( p5, p7 ) == CGAL::SMALLER );
- assert( CGAL::compare_y( p3, p4 ) == CGAL::SMALLER );
- assert( CGAL::compare_y( p2, p1 ) == CGAL::LARGER );
+ CGAL_test_assert( CGAL::compare_y( p3, p6 ) == CGAL::EQUAL );
+ CGAL_test_assert( CGAL::compare_y( p5, p7 ) == CGAL::SMALLER );
+ CGAL_test_assert( CGAL::compare_y( p3, p4 ) == CGAL::SMALLER );
+ CGAL_test_assert( CGAL::compare_y( p2, p1 ) == CGAL::LARGER );
 
  std::cout <<'.';
 
@@ -94,40 +94,40 @@ _test_further_fct_point_2(const R& )
  p5 = p0.transform(rotate5);
 
 
- assert( (p5 - CGAL::ORIGIN).direction() == dir5 );
+ CGAL_test_assert( (p5 - CGAL::ORIGIN).direction() == dir5 );
 
- assert( CGAL::side_of_bounded_circle(p1, p2, p3, CGAL::Point_2<R>(CGAL::ORIGIN))\
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p1, p2, p3, CGAL::Point_2<R>(CGAL::ORIGIN))\
                                       == CGAL::ON_BOUNDED_SIDE );
- assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN + v) \
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN + v) \
                                       == CGAL::ON_BOUNDED_SIDE );
- assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN - v) \
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN - v) \
                                       == CGAL::ON_UNBOUNDED_SIDE );
- assert( CGAL::side_of_bounded_circle(p1, p2, p3, p4) \
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p1, p2, p3, p4) \
                                       == CGAL::ON_BOUNDARY );
- assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, p4+v) \
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, p4+v) \
                                       == CGAL::ON_BOUNDARY );
- assert( CGAL::side_of_bounded_circle(p1+v, p3+v, p4+v, p2+v) \
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p1+v, p3+v, p4+v, p2+v) \
                                       == CGAL::ON_BOUNDARY );
- assert( CGAL::side_of_bounded_circle(p2+v, p4+v, p1+v, p3+v) \
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p2+v, p4+v, p1+v, p3+v) \
                                       == CGAL::ON_BOUNDARY );
 
- assert( CGAL::orientation( p1, p2, p3 ) == CGAL::POSITIVE );
+ CGAL_test_assert( CGAL::orientation( p1, p2, p3 ) == CGAL::POSITIVE );
 
- assert( CGAL::side_of_oriented_circle(p1,p2,p3,CGAL::Point_2<R>(CGAL::ORIGIN))\
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1,p2,p3,CGAL::Point_2<R>(CGAL::ORIGIN))\
                                       == CGAL::ON_POSITIVE_SIDE );
- assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN + v) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN + v) \
                                       == CGAL::ON_POSITIVE_SIDE );
- assert( CGAL::side_of_oriented_circle(p1+v, p3+v, p2+v, CGAL::ORIGIN + v) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1+v, p3+v, p2+v, CGAL::ORIGIN + v) \
                                       == CGAL::ON_NEGATIVE_SIDE );
- assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN - v) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN - v) \
                                       == CGAL::ON_NEGATIVE_SIDE );
- assert( CGAL::side_of_oriented_circle(p2+v, p1+v, p3+v, CGAL::ORIGIN - v) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p2+v, p1+v, p3+v, CGAL::ORIGIN - v) \
                                       == CGAL::ON_POSITIVE_SIDE );
- assert( CGAL::side_of_oriented_circle(p1, p2, p3, p4) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1, p2, p3, p4) \
                                       == CGAL::ON_ORIENTED_BOUNDARY );
- assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, p4+v) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, p4+v) \
                                       == CGAL::ON_ORIENTED_BOUNDARY );
- assert( CGAL::side_of_oriented_circle(p1+v, p3+v, p4+v, p2+v) \
+ CGAL_test_assert( CGAL::side_of_oriented_circle(p1+v, p3+v, p4+v, p2+v) \
                                       == CGAL::ON_ORIENTED_BOUNDARY );
 
  CGAL::Point_2<R> p10( RT(100), RT(100), RT(10) );
@@ -136,14 +136,14 @@ _test_further_fct_point_2(const R& )
  CGAL::Point_2<R> pt2( CGAL::ORIGIN );
  CGAL::Point_2<R> pt3( RT(1000), RT(1000), RT(1) );
 
- assert( CGAL::side_of_bounded_circle(p10, p11, pt1) == CGAL::ON_BOUNDARY);
- assert( CGAL::side_of_bounded_circle(p10, p11, pt2) == CGAL::ON_BOUNDED_SIDE);
- assert( CGAL::side_of_bounded_circle(p10, p11, pt3) == CGAL::ON_UNBOUNDED_SIDE);
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p10, p11, pt1) == CGAL::ON_BOUNDARY);
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p10, p11, pt2) == CGAL::ON_BOUNDED_SIDE);
+ CGAL_test_assert( CGAL::side_of_bounded_circle(p10, p11, pt3) == CGAL::ON_UNBOUNDED_SIDE);
 
  // Now test squared_radius().
 
- assert( CGAL::squared_radius(p10, p11, pt1) == FT(200));
- assert( CGAL::squared_radius(p10, p11) == FT(200));
+ CGAL_test_assert( CGAL::squared_radius(p10, p11, pt1) == FT(200));
+ CGAL_test_assert( CGAL::squared_radius(p10, p11) == FT(200));
 
  std::cout << '.';
 

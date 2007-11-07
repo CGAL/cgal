@@ -2,7 +2,7 @@
 // Sylvain Pion.
 
 #include <vector>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/bounding_box.h>
@@ -25,7 +25,7 @@ void test_2()
   pts.push_back(p0);
   pts.push_back(p1);
 
-  assert( CGAL::bounding_box(pts.begin(), pts.end())
+  CGAL_test_assert( CGAL::bounding_box(pts.begin(), pts.end())
           == K::Iso_rectangle_2(p0, p1));
 
 #if 0 // Does not work yet
@@ -38,7 +38,7 @@ void test_2()
   segs.push_back(s0);
   segs.push_back(s1);
 
-  assert( CGAL::bounding_box(segs.begin(), segs.end())
+  CGAL_test_assert( CGAL::bounding_box(segs.begin(), segs.end())
           == K::Iso_rectangle_2(p0, p1));
 #endif
 }
@@ -54,7 +54,7 @@ void test_3()
   pts.push_back(p1);
   pts.push_back(p1);
 
-  assert( CGAL::bounding_box(pts.begin(), pts.end())
+  CGAL_test_assert( CGAL::bounding_box(pts.begin(), pts.end())
           == K::Iso_cuboid_3(p0, p1));
 
 #if 0 // Does not work yet
@@ -67,7 +67,7 @@ void test_3()
   trs.push_back(t0);
   trs.push_back(t1);
 
-  assert( CGAL::bounding_box(trs.begin(), trs.end())
+  CGAL_test_assert( CGAL::bounding_box(trs.begin(), trs.end())
           == K::Iso_cuboid_3(p0, p1));
 #endif
 }

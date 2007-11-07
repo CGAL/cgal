@@ -9,11 +9,11 @@ int main()
 
   print_separator();
   b = test_info(sdg, "data/sitesx.cin");
-  assert( b );
+  CGAL_test_assert( b );
 
   print_separator();
   b = test_info(sdg, "data/sitesxx.cin");
-  assert( b );
+  CGAL_test_assert( b );
 
   print_separator();
 

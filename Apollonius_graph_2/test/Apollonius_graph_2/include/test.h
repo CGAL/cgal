@@ -2,6 +2,7 @@
 #define CGAL_APOLLONIUS_GRAPH_2_TEST_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/enum.h>
 
 #include <CGAL/Vector_2.h> // this is done in order to avoid error
@@ -823,27 +824,27 @@ bool test_algo_generic(InputStream& is)
   //--------------------------------------------------------------------
   {
     std::ofstream ofs("ag_testsuite.tmp");
-    assert( ofs );
+    CGAL_test_assert( ofs );
     ag.file_output(ofs);
     ofs.close();
 
     std::ifstream ifs("ag_testsuite.tmp");
-    assert( ifs );
+    CGAL_test_assert( ifs );
     ag.file_input(ifs);
     ifs.close();
-    assert( ag.is_valid() );
+    CGAL_test_assert( ag.is_valid() );
   }
   {
     std::ofstream ofs("ag_testsuite.tmp");
-    assert( ofs );
+    CGAL_test_assert( ofs );
     ofs << ag;
     ofs.close();
 
     std::ifstream ifs("ag_testsuite.tmp");
-    assert( ifs );
+    CGAL_test_assert( ifs );
     ifs >> ag;
     ifs.close();
-    assert( ag.is_valid() );
+    CGAL_test_assert( ag.is_valid() );
   }
   return true;
 }

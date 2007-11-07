@@ -49,41 +49,41 @@ _test_cls_vector_2(const R& )
 
  std::cout << '.';
 
- assert( v3 == CGAL::Vector_2<R>(FT(n1), FT(n2)) );
- assert( v3 == CGAL::Vector_2<R>(12, -4) );
+ CGAL_test_assert( v3 == CGAL::Vector_2<R>(FT(n1), FT(n2)) );
+ CGAL_test_assert( v3 == CGAL::Vector_2<R>(12, -4) );
 
- assert( v5 == v7 );
- assert( v4 == v5 );
- assert( v5 == v6 );
- assert( v4 == v6 );
- assert( v1 == v6 );
- assert( v0 == CGAL::NULL_VECTOR);
+ CGAL_test_assert( v5 == v7 );
+ CGAL_test_assert( v4 == v5 );
+ CGAL_test_assert( v5 == v6 );
+ CGAL_test_assert( v4 == v6 );
+ CGAL_test_assert( v1 == v6 );
+ CGAL_test_assert( v0 == CGAL::NULL_VECTOR);
 
- assert( v3 != v4 );
- assert( v0 != v1 );
- assert( v1 != CGAL::NULL_VECTOR);
+ CGAL_test_assert( v3 != v4 );
+ CGAL_test_assert( v0 != v1 );
+ CGAL_test_assert( v1 != CGAL::NULL_VECTOR);
 
- assert( v3.hx() == n1 );   // don't replace v3
- assert( v3.hy() == n2 );
+ CGAL_test_assert( v3.hx() == n1 );   // don't replace v3
+ CGAL_test_assert( v3.hy() == n2 );
 
- assert( FT( v5.hx()) / FT(v5.hw()) == FT( n1) / FT( n4) );
- assert( FT( v5.hy()) / FT(v5.hw()) == FT( n2) / FT( n4) );
+ CGAL_test_assert( FT( v5.hx()) / FT(v5.hw()) == FT( n1) / FT( n4) );
+ CGAL_test_assert( FT( v5.hy()) / FT(v5.hw()) == FT( n2) / FT( n4) );
 
- assert( v5.x() == FT( n1) / FT( n4) );
- assert( v5.y() == FT( n2) / FT( n4) );
-
- std::cout << '.';
-
- assert( v3.homogeneous(0) == v3.hx() );  // don't replace v3
- assert( v3.homogeneous(1) == v3.hy() );
- assert( v3.homogeneous(2) == v3.hw() );
- assert( v6.cartesian(0) == v6.x() );
- assert( v6.cartesian(1) == v6.y() );
+ CGAL_test_assert( v5.x() == FT( n1) / FT( n4) );
+ CGAL_test_assert( v5.y() == FT( n2) / FT( n4) );
 
  std::cout << '.';
 
- assert( v0.dimension() == 2 );
- assert( v4.homogeneous( v4.dimension() ) == v4.hw() );
+ CGAL_test_assert( v3.homogeneous(0) == v3.hx() );  // don't replace v3
+ CGAL_test_assert( v3.homogeneous(1) == v3.hy() );
+ CGAL_test_assert( v3.homogeneous(2) == v3.hw() );
+ CGAL_test_assert( v6.cartesian(0) == v6.x() );
+ CGAL_test_assert( v6.cartesian(1) == v6.y() );
+
+ std::cout << '.';
+
+ CGAL_test_assert( v0.dimension() == 2 );
+ CGAL_test_assert( v4.homogeneous( v4.dimension() ) == v4.hw() );
 
  CGAL::Point_2<R> p0(4,2,1);
  CGAL::Point_2<R> p1(2,4,1);
@@ -95,10 +95,10 @@ _test_cls_vector_2(const R& )
  CGAL::Vector_2<R> v10(r1);
  CGAL::Vector_2<R> v11(l1);
 
- assert( v8 == (p1-p0) );
- assert( v8 == v9 );
- assert( v10.direction() == v8.direction() );
- assert( v11.direction() == v8.direction() );
+ CGAL_test_assert( v8 == (p1-p0) );
+ CGAL_test_assert( v8 == v9 );
+ CGAL_test_assert( v10.direction() == v8.direction() );
+ CGAL_test_assert( v11.direction() == v8.direction() );
 
  std::cout << "done" << std::endl;
  return true;

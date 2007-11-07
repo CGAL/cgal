@@ -34,7 +34,7 @@
 #include <CGAL/basic.h>
 
 // only do something if LEDA available
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include<CGAL/Random.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
@@ -111,8 +111,8 @@ int main ()
         PH[i] = Point_3<H>(coordH[0], coordH[1], coordH[2], coordH[3]);
     }
 
-    Min_sphereC     msC (PC, PC+n, tC); assert (msC.is_valid(verbose));
-    Min_sphereH     msH (PH, PH+n, tH); assert (msH.is_valid(verbose));
+    Min_sphereC     msC (PC, PC+n, tC); CGAL_test_assert(msC.is_valid(verbose));
+    Min_sphereH     msH (PH, PH+n, tH); CGAL_test_assert(msH.is_valid(verbose));
 
     PointC                  centerC (msC.center());
     PointH                  centerH (msH.center());
@@ -120,8 +120,8 @@ int main ()
     FT                      radiusC (msC.squared_radius());
     Quotient<RT>    radiusH (msH.squared_radius());
 
-    assert (equals (centerC, centerH));
-    assert (equals (radiusC, radiusH));
+    CGAL_test_assert(equals (centerC, centerH));
+    CGAL_test_assert(equals (radiusC, radiusH));
 
     return 0;
 }

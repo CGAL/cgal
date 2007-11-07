@@ -1,4 +1,5 @@
 #include <iostream>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/_test_algebraic_structure.h>
 #include <CGAL/_test_real_embeddable.h>

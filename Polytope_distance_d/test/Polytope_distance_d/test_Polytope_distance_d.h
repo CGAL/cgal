@@ -29,7 +29,7 @@
 
 // includes
 #  include <CGAL/IO/Verbose_ostream.h>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,20 +61,20 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     // constructors
     COVER( "default constructor",
         Poly_dist  pd( traits);
-        assert( pd.is_valid( is_valid_verbose));
-        assert( ! pd.is_finite());
+        CGAL_test_assert( pd.is_valid( is_valid_verbose));
+        CGAL_test_assert( ! pd.is_finite());
     )
 
     COVER( "point set constructor",
         Poly_dist  pd( p_first, p_last, q_first, q_last,
                        traits);
-        assert( pd.is_valid( is_valid_verbose));
+        CGAL_test_assert( pd.is_valid( is_valid_verbose));
     )
 
     Poly_dist  poly_dist( p_first, p_last, q_first, q_last);
     COVER( "ambient dimension",
         Poly_dist  pd;
-        assert( pd.ambient_dimension() == -1);
+        CGAL_test_assert( pd.ambient_dimension() == -1);
         verrX << poly_dist.ambient_dimension() << endl;
     )
 
@@ -92,12 +92,12 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
         for ( ; point_q_it != poly_dist.points_q_end(); ++point_q_it) {
             verrX << *point_q_it << endl;
         }
-        assert( ( poly_dist.number_of_points_p()
+        CGAL_test_assert( ( poly_dist.number_of_points_p()
                   + poly_dist.number_of_points_q())
                 == poly_dist.number_of_points());
-        assert( ( poly_dist.points_p_end() - poly_dist.points_p_begin())
+        CGAL_test_assert( ( poly_dist.points_p_end() - poly_dist.points_p_begin())
                 == poly_dist.number_of_points_p());
-        assert( ( poly_dist.points_q_end() - poly_dist.points_q_begin())
+        CGAL_test_assert( ( poly_dist.points_q_end() - poly_dist.points_q_begin())
                 == poly_dist.number_of_points_q());
     )
 
@@ -111,7 +111,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
         for ( ; point_p_it != poly_dist.support_points_p_end();
               ++point_p_it, ++point_p_index) {
             verrX << *point_p_it << endl;
-	    assert (*point_p_it == p_first [*point_p_index]); 
+	    CGAL_test_assert(*point_p_it == p_first [*point_p_index]); 
         }
         verrX << endl << poly_dist.number_of_support_points_q() << endl;
 	typename Poly_dist::Support_point_index_iterator 
@@ -121,15 +121,15 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
         for ( ; point_q_it != poly_dist.support_points_q_end();
               ++point_q_it,++point_q_index ) {
             verrX << *point_q_it << endl;
-	    assert (*point_q_it == q_first [*point_q_index]); 
+	    CGAL_test_assert(*point_q_it == q_first [*point_q_index]); 
         }
-        assert( ( poly_dist.number_of_support_points_p()
+        CGAL_test_assert( ( poly_dist.number_of_support_points_p()
                   + poly_dist.number_of_support_points_q())
                 == poly_dist.number_of_support_points());
-        assert( ( poly_dist.support_points_p_end()
+        CGAL_test_assert( ( poly_dist.support_points_p_end()
                   - poly_dist.support_points_p_begin())
                 == poly_dist.number_of_support_points_p());
-        assert( ( poly_dist.support_points_q_end()
+        CGAL_test_assert( ( poly_dist.support_points_q_end()
                   - poly_dist.support_points_q_begin())
                 == poly_dist.number_of_support_points_q());
 	   
@@ -162,22 +162,22 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
         poly_dist.clear();
         verrX << "poly_dist is" << ( poly_dist.is_finite() ? "" : " not")
               << " finite." << endl;
-        assert( ! poly_dist.is_finite());
+        CGAL_test_assert( ! poly_dist.is_finite());
     )
 
     COVER( "insert (single point)",
         poly_dist.insert_p( *p_first);
         poly_dist.insert_q( *q_first);
-        assert( poly_dist.is_valid( is_valid_verbose));
+        CGAL_test_assert( poly_dist.is_valid( is_valid_verbose));
     )
 
     COVER( "insert (point set)",
         poly_dist.insert( q_first, q_last, p_first, p_last);
-        assert( poly_dist.is_valid( is_valid_verbose));
+        CGAL_test_assert( poly_dist.is_valid( is_valid_verbose));
         poly_dist.clear();
         poly_dist.insert_p( p_first, p_last);
         poly_dist.insert_q( q_first, q_last);
-        assert( poly_dist.is_valid( is_valid_verbose));
+        CGAL_test_assert( poly_dist.is_valid( is_valid_verbose));
     )
 
     COVER( "traits class access",

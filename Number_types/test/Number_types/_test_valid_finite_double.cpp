@@ -20,7 +20,7 @@
  
 
 #include <CGAL/basic.h>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <cmath>
 #include <CGAL/IEEE_754_unions.h>
 
@@ -34,23 +34,23 @@ _test_valid_finite( const double& )
   //  d0 = 0.0;
   //  d1 = 1.0;
   
-  assert( CGAL::is_valid( d0) );
-  assert( CGAL::is_valid( d1) );
+  CGAL_test_assert( CGAL::is_valid( d0) );
+  CGAL_test_assert( CGAL::is_valid( d1) );
   
-  assert( CGAL_NTS is_finite( d0) );
-  assert( CGAL_NTS is_finite( d1) );
+  CGAL_test_assert( CGAL_NTS is_finite( d0) );
+  CGAL_test_assert( CGAL_NTS is_finite( d1) );
   
   if ( CGAL::is_valid( d1/d0 - d1/d0 ))
   { d2 = d1/d0 - d1/d0; show( reinterpret_cast<IEEE_754_double*>(&d2)); }
   if ( CGAL_NTS is_finite( d1/d0 ))
   { d2 = d1/d0; show( reinterpret_cast<IEEE_754_double*>(&d2)); }
   
-  assert( CGAL::is_valid( d1/d0 ));
-  assert( !CGAL::is_valid( d1/d0 - d1/d0 ));
-  assert( !CGAL_NTS is_finite( d1/d0 ));
+  CGAL_test_assert( CGAL::is_valid( d1/d0 ));
+  CGAL_test_assert( !CGAL::is_valid( d1/d0 - d1/d0 ));
+  CGAL_test_assert( !CGAL_NTS is_finite( d1/d0 ));
   
-  assert(  CGAL::is_valid( std::sqrt(  d1)) );
-  assert( !CGAL::is_valid( std::sqrt( -d1)) );
+  CGAL_test_assert(  CGAL::is_valid( std::sqrt(  d1)) );
+  CGAL_test_assert( !CGAL::is_valid( std::sqrt( -d1)) );
 
   return true;
 }

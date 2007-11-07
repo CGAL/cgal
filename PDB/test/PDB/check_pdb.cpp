@@ -20,7 +20,7 @@
 
 #include <CGAL/PDB/PDB.h>
 #include <fstream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <sstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

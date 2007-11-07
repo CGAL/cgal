@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 // choose number type
 #ifdef CGAL_USE_GMP

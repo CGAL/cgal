@@ -1,4 +1,5 @@
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/assert.h>
 
 //#define typename 
 template <class CK>
@@ -68,7 +69,7 @@ void _test_circle_construct(CK ck)
 //  Circle_2 theConstruct_circle_2 = theConstruct_circle(theResult_equation);
 //  std::cout << "the circle made with the equation :" <<
 //    theConstruct_circle_2 << std::endl;
-//  assert(circ_equation == theConstruct_circle_2);
+//  CGAL_test_assert(circ_equation == theConstruct_circle_2);
 
 
   //not declare 29/06/2005
@@ -101,14 +102,14 @@ void _test_circle_construct(CK ck)
 			   std::back_inserter(vector_for_intersection_1));
   // there are 2 intersection's points
   std::pair<Circular_arc_point_2, unsigned > the_pair;
-  assert(assign(the_pair, vector_for_intersection_1[0]));
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_1[0]));
   Circular_arc_point_2 first = the_pair.first;
   std::cout << first << std::endl;
-  assert(assign(the_pair, vector_for_intersection_1[1]));
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_1[1]));
   Circular_arc_point_2 second = the_pair.first;
   std::cout << second << std::endl;
   Compare_xy_2 theCompare_xy_2 = ck.compare_xy_2_object();
-  assert(theCompare_xy_2(first, second) == CGAL::SMALLER);
+  CGAL_test_assert(theCompare_xy_2(first, second) == CGAL::SMALLER);
 
   //Constuct_intersections_2 with 1 intersection's point
   Point_2 center_circ_intersections_2_3(center_circ_intersection_2_1_x 
@@ -130,10 +131,10 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_intersections_2_1, 
 			   circ_intersections_2_3,
 			   std::back_inserter(vector_for_intersection_2));
-  assert(vector_for_intersection_2.size() == 1);
+  CGAL_test_assert(vector_for_intersection_2.size() == 1);
   assign(the_pair, vector_for_intersection_2[0]);
-  assert(the_pair.first == the_intersection_point_1);
-  assert(the_pair.first == the_intersection_point_2);
+  CGAL_test_assert(the_pair.first == the_intersection_point_1);
+  CGAL_test_assert(the_pair.first == the_intersection_point_2);
   
   Point_2 center_circ_intersections_2_3_bis(center_circ_intersection_2_1_x 
 					    + circ_intersection_2_1_r,
@@ -146,9 +147,9 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_intersections_2_1, 
 			   circ_intersections_2_3_bis,
 			   std::back_inserter(vector_for_intersection_2_bis));
-  assert(vector_for_intersection_2_bis.size() == 1);
+  CGAL_test_assert(vector_for_intersection_2_bis.size() == 1);
   assign(the_pair, vector_for_intersection_2_bis[0]);
-  assert(the_pair.second == 2u);
+  CGAL_test_assert(the_pair.second == 2u);
   
 
   //With circular arc
@@ -185,15 +186,15 @@ void _test_circle_construct(CK ck)
 			   circ_arc_2_1_low_part_high,
 			   std::back_inserter(vector_for_intersection_3));
   /////////////std::cout << "The size: " << vector_for_intersection_3.size() << std::endl;			   
-  assert(vector_for_intersection_3.size() == 2);
+  CGAL_test_assert(vector_for_intersection_3.size() == 2);
   assign(the_pair, vector_for_intersection_3[0]);
-  assert(the_pair.second == 1u);
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1, 
+  CGAL_test_assert(the_pair.second == 1u);
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1, 
 						      circ_intersections_2_1_low, 
 						      true));
   assign(the_pair, vector_for_intersection_3[1]);
-  assert(the_pair.second == 1u);
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1, 
+  CGAL_test_assert(the_pair.second == 1u);
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1, 
 						      circ_intersections_2_1_low, 
 						      false));
   
@@ -237,7 +238,7 @@ void _test_circle_construct(CK ck)
   Circular_arc_2 circ_arc_overlap_lower_part(circ_intersections_2_1,
 				    line_arc_overlap_horizontal, true,
 				    line_arc_overlap_horizontal, false);
-  assert(circ_arc_overlap_1.is_x_monotone() 
+  CGAL_test_assert(circ_arc_overlap_1.is_x_monotone() 
 	 && circ_arc_overlap_2.is_x_monotone()
 	 && circ_arc_overlap_3.is_x_monotone()
 	 && circ_arc_overlap_upper_part.is_x_monotone()
@@ -250,11 +251,11 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_overlap_1, 
  			   circ_arc_overlap_1,
  			   std::back_inserter(vector_for_intersection_the_same_arc));
-  assert(vector_for_intersection_the_same_arc.size() == 1);
+  CGAL_test_assert(vector_for_intersection_the_same_arc.size() == 1);
   Circular_arc_2 res_same;
-  assert(assign(res_same, vector_for_intersection_the_same_arc[0]));
-  assert(res_same.source() == circ_arc_overlap_1.source());
-  assert(res_same.target() == circ_arc_overlap_1.target());
+  CGAL_test_assert(assign(res_same, vector_for_intersection_the_same_arc[0]));
+  CGAL_test_assert(res_same.source() == circ_arc_overlap_1.source());
+  CGAL_test_assert(res_same.target() == circ_arc_overlap_1.target());
 
   std::cout << "Intersection : overlap on a circular arc" << std::endl;
   Circular_arc_2 circ_arc_in_overlap;
@@ -267,19 +268,19 @@ void _test_circle_construct(CK ck)
   Circular_arc_2 circ_arc_overlap_result(circ_intersections_2_1,
 				    line_arc_overlap_low_left, true,
 				    line_arc_overlap_low_right, false);
-  assert(vector_for_intersection_overlap_1_1.size() == 1);
+  CGAL_test_assert(vector_for_intersection_overlap_1_1.size() == 1);
   assign(circ_arc_in_overlap, vector_for_intersection_overlap_1_1[0]);
-  assert(circ_arc_in_overlap.source() == circ_arc_overlap_result.source());
-  assert(circ_arc_in_overlap.target() == circ_arc_overlap_result.target());
+  CGAL_test_assert(circ_arc_in_overlap.source() == circ_arc_overlap_result.source());
+  CGAL_test_assert(circ_arc_in_overlap.target() == circ_arc_overlap_result.target());
   std::vector< CGAL::Object > 
     vector_for_intersection_overlap_1_2;
   theConstruct_intersect_2(circ_arc_overlap_2, 
  			   circ_arc_overlap_1,
  			   std::back_inserter(vector_for_intersection_overlap_1_2));
-  assert(vector_for_intersection_overlap_1_2.size() == 1);
+  CGAL_test_assert(vector_for_intersection_overlap_1_2.size() == 1);
   assign(circ_arc_in_overlap, vector_for_intersection_overlap_1_2[0]);
-  assert(circ_arc_in_overlap.source() == circ_arc_overlap_result.source());
-  assert(circ_arc_in_overlap.target() == circ_arc_overlap_result.target());
+  CGAL_test_assert(circ_arc_in_overlap.source() == circ_arc_overlap_result.source());
+  CGAL_test_assert(circ_arc_in_overlap.target() == circ_arc_overlap_result.target());
   
   
   std::cout << "Intersection : overlap in one point" << std::endl;
@@ -288,24 +289,24 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_overlap_1, 
 			   circ_arc_overlap_3,
 			   std::back_inserter(vector_for_intersection_overlap_2_1));
-  assert(vector_for_intersection_overlap_2_1.size() == 1);
+  CGAL_test_assert(vector_for_intersection_overlap_2_1.size() == 1);
   assign(the_pair, vector_for_intersection_overlap_2_1[0]);
   std::cout << "x = " << the_pair.first.x() << " the result must be = " <<
     center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2 
 	    << std::endl;
   
-  assert(the_pair.first.x() * 
+  CGAL_test_assert(the_pair.first.x() * 
 	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2) >= 0);
 
-  assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
+  CGAL_test_assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
     center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2 
 	    << std::endl;
 
-  assert(the_pair.first.y() * 
+  CGAL_test_assert(the_pair.first.y() * 
 	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2) >= 0);
-  assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
+  CGAL_test_assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
   std::vector< CGAL::Object > 
@@ -313,21 +314,21 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_overlap_3, 
 			   circ_arc_overlap_1,
 			   std::back_inserter(vector_for_intersection_overlap_2_2));
-  assert(vector_for_intersection_overlap_2_2.size() == 1);
+  CGAL_test_assert(vector_for_intersection_overlap_2_2.size() == 1);
   assign(the_pair, vector_for_intersection_overlap_2_2[0]);
   std::cout << "x = " << the_pair.first.x() << " the result must be = " <<
     center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2 << std::endl;
   
-  assert(the_pair.first.x() * 
+  CGAL_test_assert(the_pair.first.x() * 
 	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2) >= 0);
-  assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
+  CGAL_test_assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
     center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2 << std::endl;
   
-  assert(the_pair.first.y() * 
+  CGAL_test_assert(the_pair.first.y() * 
 	 (center_circ_intersection_2_1_y - circ_intersection_2_1_r * sqrt2) >= 0);
-  assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
+  CGAL_test_assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
   std::cout << "Intersection : overlap in two points: " <<
@@ -338,7 +339,7 @@ void _test_circle_construct(CK ck)
 			   circ_arc_overlap_lower_part,
 			   std::back_inserter(vector_for_intersection_overlap_3_1));
   
-  assert(vector_for_intersection_overlap_3_1.size() == 2);
+  CGAL_test_assert(vector_for_intersection_overlap_3_1.size() == 2);
 
   assign(the_pair, vector_for_intersection_overlap_3_1[0]); // apagar depois
   std::cout << "res1 = (" << 
@@ -350,24 +351,24 @@ void _test_circle_construct(CK ck)
   to_double(the_pair.first.y()) << ")"  << std::endl;
 
   assign(the_pair, vector_for_intersection_overlap_3_1[0]); 
-  assert(the_pair.first == circ_arc_overlap_lower_part.source());
-  //assert(the_pair.first.is_left());
+  CGAL_test_assert(the_pair.first == circ_arc_overlap_lower_part.source());
+  //CGAL_test_assert(the_pair.first.is_left());
   assign(the_pair, vector_for_intersection_overlap_3_1[1]); 
-  assert(the_pair.first == circ_arc_overlap_lower_part.target());
-  //assert(!the_pair.first.is_left());
+  CGAL_test_assert(the_pair.first == circ_arc_overlap_lower_part.target());
+  //CGAL_test_assert(!the_pair.first.is_left());
   std::vector< CGAL::Object > 
     vector_for_intersection_overlap_3_2;
   theConstruct_intersect_2(circ_arc_overlap_lower_part, 
 			   circ_arc_overlap_upper_part,
 			   std::back_inserter(vector_for_intersection_overlap_3_2));
   
-  assert(vector_for_intersection_overlap_3_2.size() == 2);
+  CGAL_test_assert(vector_for_intersection_overlap_3_2.size() == 2);
   assign(the_pair, vector_for_intersection_overlap_3_2[0]);
-  assert(the_pair.first == circ_arc_overlap_lower_part.source());
-  //assert(the_pair.first.is_left());
+  CGAL_test_assert(the_pair.first == circ_arc_overlap_lower_part.source());
+  //CGAL_test_assert(the_pair.first.is_left());
   assign(the_pair, vector_for_intersection_overlap_3_2[1]);
-  assert(the_pair.first == circ_arc_overlap_lower_part.target());
-  //assert(!the_pair.first.is_left());
+  CGAL_test_assert(the_pair.first == circ_arc_overlap_lower_part.target());
+  //CGAL_test_assert(!the_pair.first.is_left());
 
   //Intersection with 2 Circular_arc no x_monotone
   std::cout << "Intersection on two points of 2 Circular_arc no x_monotone" 
@@ -387,19 +388,19 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_intersections_2_4,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_1_1));
-  assert(vector_for_intersection_no_x_monotone_1_1.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_1[0]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_1_1.size() == 2);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_1[0]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_4,
 						      true));
-  assert(the_pair.second == 1u);
-  //assert(the_pair.first.is_left());
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_1[1]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(the_pair.second == 1u);
+  //CGAL_test_assert(the_pair.first.is_left());
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_1[1]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_4,
 						      false));
-  assert(the_pair.second == 1u);
-  //assert(!the_pair.first.is_left());
+  CGAL_test_assert(the_pair.second == 1u);
+  //CGAL_test_assert(!the_pair.first.is_left());
 
   std::cout << "Intersection on one points no tangent of 2 Circular_arc no x_monotone" 
 	    << std::endl;
@@ -414,13 +415,13 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_intersections_2_5,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_1_2));
-  assert(vector_for_intersection_no_x_monotone_1_2.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_2[0]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_1_2.size() == 1);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_2[0]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_5,
 						      true));
-  assert(the_pair.second == 1u);
-  //assert(the_pair.first.is_left());
+  CGAL_test_assert(the_pair.second == 1u);
+  //CGAL_test_assert(the_pair.first.is_left());
 
 
   std::cout << "Intersection on one points tangent of 2 Circular_arc no x_monotone" 
@@ -436,12 +437,12 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_intersections_2_6,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_1_3));
-  assert(vector_for_intersection_no_x_monotone_1_3.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_3[0]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_1_3.size() == 1);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_3[0]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_6,
 						      true));
-  assert(the_pair.second == 2u);
+  CGAL_test_assert(the_pair.second == 2u);
     
 
 
@@ -456,12 +457,12 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_intersections_2_7,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_1_4));
-  assert(vector_for_intersection_no_x_monotone_1_4.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_4[0]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_1_4.size() == 1);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_4[0]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_7,
 						      true));
-  assert(the_pair.second == 2u);
+  CGAL_test_assert(the_pair.second == 2u);
   
 
   Point_2 center_circ_intersections_2_8(center_circ_intersection_2_1_x
@@ -475,12 +476,12 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_intersections_2_8,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_1_5));
-  assert(vector_for_intersection_no_x_monotone_1_5.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_5[0]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_1_5.size() == 1);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_5[0]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_8,
 						      true));
-  assert(the_pair.second == 2u);
+  CGAL_test_assert(the_pair.second == 2u);
 
 
   Point_2 center_circ_intersections_2_9(center_circ_intersection_2_1_x,
@@ -494,12 +495,12 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_intersections_2_9,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_1_6));
-  assert(vector_for_intersection_no_x_monotone_1_6.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_6[0]));
-  assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_1_6.size() == 1);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_1_6[0]));
+  CGAL_test_assert(the_pair.first == CGAL::circle_intersect<CK>(circ_intersections_2_1,
 						      circ_intersections_2_9,
 						      true));
-  assert(the_pair.second == 2u);
+  CGAL_test_assert(the_pair.second == 2u);
   
   
   std::cout << "Intersection of 2 Circular_arc no x_monotone" 
@@ -513,11 +514,11 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_arc_no_x_monotone_2,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_2_1));
-  assert(vector_for_intersection_no_x_monotone_2_1.size() == 1);
-  assert(assign(circ_arc_in_overlap, vector_for_intersection_no_x_monotone_2_1[0]));
-  assert(circ_arc_in_overlap.is_x_monotone());
-  assert(circ_arc_in_overlap.source() == circ_arc_overlap_result.source());
-  assert(circ_arc_in_overlap.target() == circ_arc_overlap_result.target());
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_2_1.size() == 1);
+  CGAL_test_assert(assign(circ_arc_in_overlap, vector_for_intersection_no_x_monotone_2_1[0]));
+  CGAL_test_assert(circ_arc_in_overlap.is_x_monotone());
+  CGAL_test_assert(circ_arc_in_overlap.source() == circ_arc_overlap_result.source());
+  CGAL_test_assert(circ_arc_in_overlap.target() == circ_arc_overlap_result.target());
   
   
   std::cout << "Intersection of 2 Circular_arc no x_monotone" 
@@ -533,10 +534,10 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(circ_arc_no_x_monotone_1, 
  			   circ_arc_no_x_monotone_3,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_2_2));
-  assert(vector_for_intersection_no_x_monotone_2_2.size() == 1);
-  assert(assign(circ_arc_in_overlap, vector_for_intersection_no_x_monotone_2_2[0]));
-  assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_1.source());
-  assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_3.target());
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_2_2.size() == 1);
+  CGAL_test_assert(assign(circ_arc_in_overlap, vector_for_intersection_no_x_monotone_2_2[0]));
+  CGAL_test_assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_1.source());
+  CGAL_test_assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_3.target());
   
   
   std::cout << "Intersection of 2 Circular_arc no x_monotone" 
@@ -555,18 +556,18 @@ void _test_circle_construct(CK ck)
 
   std::cout << vector_for_intersection_no_x_monotone_2_3.size() << std::endl;
 
-  assert(vector_for_intersection_no_x_monotone_2_3.size() == 2);
-  assert(assign(circ_arc_in_overlap,
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_2_3.size() == 2);
+  CGAL_test_assert(assign(circ_arc_in_overlap,
 		vector_for_intersection_no_x_monotone_2_3[0]));
-  assert(assign(the_pair, 
+  CGAL_test_assert(assign(the_pair, 
 		vector_for_intersection_no_x_monotone_2_3[1]));
-  assert(circ_arc_in_overlap.is_x_monotone());
-  assert(circ_arc_in_overlap.source() 
+  CGAL_test_assert(circ_arc_in_overlap.is_x_monotone());
+  CGAL_test_assert(circ_arc_in_overlap.source() 
 	 == circ_arc_overlap_result.source());
-  assert(circ_arc_in_overlap.target() 
+  CGAL_test_assert(circ_arc_in_overlap.target() 
 	 == circ_arc_overlap_result.target());
-  assert(the_pair.first == circ_arc_no_x_monotone_4.target());
-  assert(the_pair.second == 1u);
+  CGAL_test_assert(the_pair.first == circ_arc_no_x_monotone_4.target());
+  CGAL_test_assert(the_pair.second == 1u);
   
 
   std::cout << "Intersection of 2 Circular_arc no x_monotone"
@@ -581,13 +582,13 @@ void _test_circle_construct(CK ck)
 			   circ_arc_no_x_monotone_5,
 			    std::back_inserter(vector_for_intersection_no_x_monotone_2_4));
   std::cout << vector_for_intersection_no_x_monotone_2_4.size() << std::endl;
-  assert(vector_for_intersection_no_x_monotone_2_4.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_2_4[0]));
-  assert(the_pair.first == circ_arc_no_x_monotone_5.target());
-  assert(the_pair.second == 1u);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_2_4[1]));
-  assert(the_pair.first == circ_arc_no_x_monotone_5.source());
-  assert(the_pair.second == 1u);
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_2_4.size() == 2);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_2_4[0]));
+  CGAL_test_assert(the_pair.first == circ_arc_no_x_monotone_5.target());
+  CGAL_test_assert(the_pair.second == 1u);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_2_4[1]));
+  CGAL_test_assert(the_pair.first == circ_arc_no_x_monotone_5.source());
+  CGAL_test_assert(the_pair.second == 1u);
 
 
   std::cout << "Intersection of 2 Circular_arc no x_monotone"
@@ -601,10 +602,10 @@ void _test_circle_construct(CK ck)
 			   circ_arc_no_x_monotone_5,
 			    std::back_inserter(vector_for_intersection_no_x_monotone_2_5));
   std::cout << vector_for_intersection_no_x_monotone_2_5.size() << std::endl;
-  assert(vector_for_intersection_no_x_monotone_2_5.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_no_x_monotone_2_5[0]));
-  assert(the_pair.first == circ_arc_no_x_monotone_5.source());
-  assert(the_pair.second == 1u);
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_2_5.size() == 1);
+  CGAL_test_assert(assign(the_pair, vector_for_intersection_no_x_monotone_2_5[0]));
+  CGAL_test_assert(the_pair.first == circ_arc_no_x_monotone_5.source());
+  CGAL_test_assert(the_pair.second == 1u);
 
   
   std::cout << "Intersection of 2 Circular_arc no x_monotone" 
@@ -618,10 +619,10 @@ void _test_circle_construct(CK ck)
 			   circ_arc_no_x_monotone_4,
 			    std::back_inserter(vector_for_intersection_no_x_monotone_2_6));
   std::cout << vector_for_intersection_no_x_monotone_2_6.size() << std::endl;
-  assert(vector_for_intersection_no_x_monotone_2_6.size() == 2);
+  CGAL_test_assert(vector_for_intersection_no_x_monotone_2_6.size() == 2);
   assign(circ_arc_in_overlap,vector_for_intersection_no_x_monotone_2_6[0]);
   assign(circ_arc_in_overlap_2,vector_for_intersection_no_x_monotone_2_6[1]);
-  assert((circ_arc_in_overlap.source() == circ_arc_no_x_monotone_7.source() &&
+  CGAL_test_assert((circ_arc_in_overlap.source() == circ_arc_no_x_monotone_7.source() &&
           circ_arc_in_overlap.target() == circ_arc_no_x_monotone_4.target()) ||
          (circ_arc_in_overlap_2.source() == circ_arc_no_x_monotone_7.source() &&
           circ_arc_in_overlap_2.target() == circ_arc_no_x_monotone_4.target()));
@@ -637,18 +638,18 @@ void _test_circle_construct(CK ck)
 	    << circ_arc_in_overlap.source() << std::endl 
 	    << "res target : " << std::endl
 	    << circ_arc_in_overlap.target() << std::endl;
-  assert(circ_arc_in_overlap.is_x_monotone());
+  CGAL_test_assert(circ_arc_in_overlap.is_x_monotone());
   std::cout << "res source : " << std::endl
 	    << circ_arc_in_overlap.source() << std::endl 
 	    << "res target : " << std::endl
 	    << circ_arc_in_overlap.target() << std::endl;
   if(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_7.source() &&
           circ_arc_in_overlap.target() == circ_arc_no_x_monotone_4.target()) {
-    assert(circ_arc_in_overlap_2.source() == circ_arc_no_x_monotone_4.source());
-    assert(circ_arc_in_overlap_2.target() == circ_arc_no_x_monotone_7.target());
+    CGAL_test_assert(circ_arc_in_overlap_2.source() == circ_arc_no_x_monotone_4.source());
+    CGAL_test_assert(circ_arc_in_overlap_2.target() == circ_arc_no_x_monotone_7.target());
   } else {
-    assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_4.source());
-    assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_7.target());
+    CGAL_test_assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_4.source());
+    CGAL_test_assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_7.target());
   }
   
   //Make_x_monotone_2 with a full circle
@@ -674,7 +675,7 @@ void _test_circle_construct(CK ck)
 	      << circular_arc_2_full.source() << std::endl;
     std::cout << "Circular_arc_2_" << i << "target : " 
 	      << circular_arc_2_full.target() << std::endl;
-    assert(circular_arc_2_full.is_x_monotone());
+    CGAL_test_assert(circular_arc_2_full.is_x_monotone());
   }
   
   //Make_x_monotone_2 with a three quarter of last circle
@@ -698,7 +699,7 @@ void _test_circle_construct(CK ck)
     assign(circular_arc_2_quarter,  vector_of_object_1[i]);
     std::cout << "Circular_arc_2_" << i << " : " 
 	      << circular_arc_2_quarter << std::endl;
-    assert(circular_arc_2_quarter.is_x_monotone());
+    CGAL_test_assert(circular_arc_2_quarter.is_x_monotone());
   }
   //Make_x_monotone_2 with half circle
   Circular_arc_2 theCircular_arc_2_half(circ_monotone,
@@ -709,11 +710,11 @@ void _test_circle_construct(CK ck)
 		     std::back_inserter(vector_of_object_1_half));
   std::cout << std::endl;
   std::cout << "x_monotone a half circle" << std::endl;
-  assert(vector_of_object_1_half.size() == 1);
+  CGAL_test_assert(vector_of_object_1_half.size() == 1);
   assign(circular_arc_2_quarter,  vector_of_object_1_half[0]);
-  assert(circular_arc_2_quarter.is_x_monotone());
-  assert(circular_arc_2_quarter.source() == theCircular_arc_2_half.source());
-  assert(circular_arc_2_quarter.target() == theCircular_arc_2_half.target());					    
+  CGAL_test_assert(circular_arc_2_quarter.is_x_monotone());
+  CGAL_test_assert(circular_arc_2_quarter.source() == theCircular_arc_2_half.source());
+  CGAL_test_assert(circular_arc_2_quarter.target() == theCircular_arc_2_half.target());					    
 
 
   //Make_x_monotone_2 with a random circular arc
@@ -751,7 +752,7 @@ void _test_circle_construct(CK ck)
     assign(circular_arc_2_random,  vector_of_object_2[i]);
     std::cout << "Circular_arc_2_" << i << " : "
 	      << circular_arc_2_random << std::endl;
-    assert(circular_arc_2_random.is_x_monotone());
+    CGAL_test_assert(circular_arc_2_random.is_x_monotone());
   }
 
 
@@ -780,20 +781,20 @@ void _test_circle_construct(CK ck)
   Circular_arc_2 circ_arc_split_2;
   theSplit_2(circ1_arc_low, circ1_arc_end_p1,
 	     circ_arc_split_1, circ_arc_split_2);
-  assert(circ_arc_split_1.target() == circ1_arc_end_p1);
-  assert(circ1_arc_low.source() == circ_arc_split_1.source());
-  assert(circ_arc_split_1.target() == circ_arc_split_2.source());
-  assert(circ1_arc_low.target() == circ_arc_split_2.target());
+  CGAL_test_assert(circ_arc_split_1.target() == circ1_arc_end_p1);
+  CGAL_test_assert(circ1_arc_low.source() == circ_arc_split_1.source());
+  CGAL_test_assert(circ_arc_split_1.target() == circ_arc_split_2.source());
+  CGAL_test_assert(circ1_arc_low.target() == circ_arc_split_2.target());
 
   //We used a point created without the support circle
   Circular_arc_point_2 circ1_arc_end_p2 =
              CGAL::circle_intersect<CK>(circ1_low_left, circ1_low_right, true);
   theSplit_2(circ1_arc_low, circ1_arc_end_p2,
 	     circ_arc_split_1, circ_arc_split_2);
-  assert(circ_arc_split_1.target() == circ1_arc_end_p2);
-  assert(circ1_arc_low.source() == circ_arc_split_1.source());
-  assert(circ_arc_split_1.target() == circ_arc_split_2.source());
-  assert(circ1_arc_low.target() == circ_arc_split_2.target());
+  CGAL_test_assert(circ_arc_split_1.target() == circ1_arc_end_p2);
+  CGAL_test_assert(circ1_arc_low.source() == circ_arc_split_1.source());
+  CGAL_test_assert(circ_arc_split_1.target() == circ_arc_split_2.source());
+  CGAL_test_assert(circ1_arc_low.target() == circ_arc_split_2.target());
   
   //The commented code in bottom must create an error
   ////We used a point which is not on the arc

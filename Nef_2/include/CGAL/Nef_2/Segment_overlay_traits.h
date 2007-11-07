@@ -19,7 +19,6 @@
 #ifndef CGAL_SEGMENT_OVERLAY_TRAITS_H
 #define CGAL_SEGMENT_OVERLAY_TRAITS_H
 
-#include <assert.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 23
 #include <CGAL/Nef_2/debug.h>

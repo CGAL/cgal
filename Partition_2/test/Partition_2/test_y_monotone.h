@@ -9,9 +9,9 @@ void test_y_monotone()
                                 polygon.vertices_end(),
                                 std::back_inserter(partition_polys));
 
-   assert (partition_polys.size() == 1 && 
+   CGAL_test_assert(partition_polys.size() == 1 && 
            partition_polys.front().size() == polygon.size());
-   assert(CGAL::is_y_monotone_2(partition_polys.front().vertices_begin(), 
+   CGAL_test_assert(CGAL::is_y_monotone_2(partition_polys.front().vertices_begin(), 
                                 partition_polys.front().vertices_end()));
 
    partition_polys.clear();

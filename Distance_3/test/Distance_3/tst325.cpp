@@ -1,5 +1,4 @@
 #include "numrep1.h"
-#include <assert.h>
 /*
  * Squared distance between two segments.
  */

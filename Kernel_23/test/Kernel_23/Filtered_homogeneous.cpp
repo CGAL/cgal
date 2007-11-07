@@ -24,7 +24,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #include "CGAL/Precise_numbers.h"
 

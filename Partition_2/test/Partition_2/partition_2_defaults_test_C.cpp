@@ -30,7 +30,7 @@
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 typedef CGAL::Cartesian<double>       K;
 typedef CGAL::Partition_traits_2<K>   Traits;

@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include "helper_functions.h"
 
 //==========================================================================
@@ -506,12 +506,12 @@ void test_vda(const VDA& vda)
 #ifndef VDA_TEST_RT
   // testing file I/O
   std::ofstream ofs("tmp.vd.cgal");
-  assert( ofs );
+  CGAL_test_assert( ofs );
   ofs << vda;
   ofs.close();
 
   std::ifstream ifs("tmp.vd.cgal");
-  assert( ifs );
+  CGAL_test_assert( ifs );
   ifs >> vda_copy;
   ifs.close();
 

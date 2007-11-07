@@ -66,65 +66,65 @@ _test_cls_segment_new_2(const R& )
  s0 = s2;
 
  Vector_2 v1 = s1.to_vector();
- assert( v1 == construct_vector(p1, p2) );
+ CGAL_test_assert( v1 == construct_vector(p1, p2) );
 
- assert( s5 == s5 );
- assert( s6 == s3 );
- assert( s2 == s0 );
- assert( s0 == s2 );
- assert( s1 != s5 );
- assert( s1 != s2 );
- assert( s3 != s2 );
-
- std::cout << '.';
-
- assert( s1.source() == p1 );
- assert( s2.source() == p2 );
- assert( s6.source() == p2 );
- assert( s4.target() == p4 );
- assert( s5.target() == p1 );
-
- assert( (s1.min)() == p1 );
- assert( (s3.min)() == p3 );
- assert( (s4.min)() == p2 );
- assert( (s4.max)() == p4 );
- assert( (s5.max)() == p4 );
-
- assert( s3.vertex(0) == p2 );
- assert( s3.vertex(1) == p3 );
- assert( s3.vertex(2) == p2 );
- assert( s4.point(8) == s4.vertex(8) );
- assert( s1.point(3) == s1.vertex(3) );
- assert( s5[0] == s5.vertex(0) );
- assert( s6[1] == s6.vertex(1) );
+ CGAL_test_assert( s5 == s5 );
+ CGAL_test_assert( s6 == s3 );
+ CGAL_test_assert( s2 == s0 );
+ CGAL_test_assert( s0 == s2 );
+ CGAL_test_assert( s1 != s5 );
+ CGAL_test_assert( s1 != s2 );
+ CGAL_test_assert( s3 != s2 );
 
  std::cout << '.';
 
- assert( s1.squared_length() == FT( 20 ) );
- assert( s5.squared_length() == FT( 16 ) );
- assert( s4.direction() == Direction_2(construct_vector( p2, p4 )) );
- assert( s2.opposite() == s1 );
- assert( s1.opposite() == s2 );
- assert( s1.supporting_line() == Line_2( p1, p2 ) );
- assert( s3.supporting_line() == Line_2( p2, p3 ) );
- assert( ! s1.is_horizontal() );
- assert( ! s1.is_vertical() );
- assert( s5.is_horizontal() );
- assert( s4.is_vertical() );
+ CGAL_test_assert( s1.source() == p1 );
+ CGAL_test_assert( s2.source() == p2 );
+ CGAL_test_assert( s6.source() == p2 );
+ CGAL_test_assert( s4.target() == p4 );
+ CGAL_test_assert( s5.target() == p1 );
+
+ CGAL_test_assert( (s1.min)() == p1 );
+ CGAL_test_assert( (s3.min)() == p3 );
+ CGAL_test_assert( (s4.min)() == p2 );
+ CGAL_test_assert( (s4.max)() == p4 );
+ CGAL_test_assert( (s5.max)() == p4 );
+
+ CGAL_test_assert( s3.vertex(0) == p2 );
+ CGAL_test_assert( s3.vertex(1) == p3 );
+ CGAL_test_assert( s3.vertex(2) == p2 );
+ CGAL_test_assert( s4.point(8) == s4.vertex(8) );
+ CGAL_test_assert( s1.point(3) == s1.vertex(3) );
+ CGAL_test_assert( s5[0] == s5.vertex(0) );
+ CGAL_test_assert( s6[1] == s6.vertex(1) );
 
  std::cout << '.';
 
- assert( s1.has_on( p1 ) );
- assert( s1.has_on( p2 ) );
- assert( s1.has_on( p3 ) );
- assert( s2.has_on( p3 ) );
- assert( ! s4.has_on( p3 ) );
- assert( s1.collinear_has_on( p3 ) );
- assert( s2.collinear_has_on( p1 ) );
- assert( ! s3.collinear_has_on( p1 ) );
- assert( s3.collinear_has_on( construct_point( n8, n5, n2)) );
+ CGAL_test_assert( s1.squared_length() == FT( 20 ) );
+ CGAL_test_assert( s5.squared_length() == FT( 16 ) );
+ CGAL_test_assert( s4.direction() == Direction_2(construct_vector( p2, p4 )) );
+ CGAL_test_assert( s2.opposite() == s1 );
+ CGAL_test_assert( s1.opposite() == s2 );
+ CGAL_test_assert( s1.supporting_line() == Line_2( p1, p2 ) );
+ CGAL_test_assert( s3.supporting_line() == Line_2( p2, p3 ) );
+ CGAL_test_assert( ! s1.is_horizontal() );
+ CGAL_test_assert( ! s1.is_vertical() );
+ CGAL_test_assert( s5.is_horizontal() );
+ CGAL_test_assert( s4.is_vertical() );
 
- assert( Segment_2( p3, p3).is_degenerate() );
+ std::cout << '.';
+
+ CGAL_test_assert( s1.has_on( p1 ) );
+ CGAL_test_assert( s1.has_on( p2 ) );
+ CGAL_test_assert( s1.has_on( p3 ) );
+ CGAL_test_assert( s2.has_on( p3 ) );
+ CGAL_test_assert( ! s4.has_on( p3 ) );
+ CGAL_test_assert( s1.collinear_has_on( p3 ) );
+ CGAL_test_assert( s2.collinear_has_on( p1 ) );
+ CGAL_test_assert( ! s3.collinear_has_on( p1 ) );
+ CGAL_test_assert( s3.collinear_has_on( construct_point( n8, n5, n2)) );
+
+ CGAL_test_assert( Segment_2( p3, p3).is_degenerate() );
 
  
  std::cout << "done" << std::endl;

@@ -2,6 +2,7 @@
 #define CGAL_TEST_INFO_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Random.h>
 #include "IO/io_aux.h"
 
@@ -13,7 +14,7 @@ bool test_info(SDG& sdg, const char* fname)
   CGAL::Random r(static_cast<int>(0));
 
   std::ifstream ifs(fname);
-  assert( ifs );
+  CGAL_test_assert( ifs );
 
   sdg.clear();
   typename SDG::Site_2  site;

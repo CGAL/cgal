@@ -13,6 +13,7 @@
 // within this file FT ^= Fraction_traits<T>
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/to_rational.h>
 
 #ifndef CGAL_TEST_FRACTION_TRAITS_H

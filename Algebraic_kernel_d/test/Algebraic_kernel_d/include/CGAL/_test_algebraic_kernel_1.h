@@ -13,6 +13,7 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
 #include <CGAL/_test_basic.h>

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <CGAL/Testsuite/assert.h>
 #include <cstdlib>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Polynomial/Numeric_root_stack.h>
@@ -164,7 +165,7 @@ namespace std {
 
 int main(int argc, char* argv[])
 {
-  //assert(std::numeric_limits<double>::has_infinity());
+  //CGAL_test_assert(std::numeric_limits<double>::has_infinity());
     if ( argc > 1 ) {
         int is_verbose = std::atoi(argv[1]);
         if ( is_verbose == 0 ) {

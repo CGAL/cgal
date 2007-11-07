@@ -20,7 +20,7 @@
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Gmpz.h>

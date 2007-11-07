@@ -68,7 +68,7 @@ namespace Polynomial \
 
 #define POLYNOMIAL_NS Polynomial
 
-#include <assert.h>
+#include <cassert>
 
 #define CGAL_Polynomial_assertion(x) assert(x)
 // This does not work

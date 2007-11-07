@@ -2,7 +2,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <iostream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <cstdlib>
 
 #include <CGAL/Random.h>
@@ -42,7 +42,7 @@ void predicates()
   Point C(NT(3.0)/NT(3),NT(4.0)/NT(3));
   Point D(NT(4.0)/NT(3),NT(3.0)/NT(3));
 #ifdef CGAL_PROFILE
-  assert(A.x().depth() == 1);
+  CGAL_test_assert(A.x().depth() == 1);
 #endif
   std::cout << "A : " << A << std::endl;
   std::cout << "B : " << B << std::endl;
@@ -100,7 +100,7 @@ void test_to_double()
   double prec = 1.0/(1<<30)/(1<<10);
   std::cout << "Setting it to : " << prec << std::endl;
   NT::set_relative_precision_of_to_double(prec);
-  assert(NT::get_relative_precision_of_to_double() == prec);
+  CGAL_test_assert(NT::get_relative_precision_of_to_double() == prec);
 
   // First compute an approximated value for 1.
   NT one = 1;
@@ -119,7 +119,7 @@ void test_to_double()
     std::cout << "interval approximation is : " << tmp.approx() << std::endl;
     //std::cout << "numerator   = " << tmp.exact().numerator() << std::endl;
     //std::cout << "denominator = " << tmp.exact().denominator() << std::endl;
-    assert(d > 0.999 && d < 1.001);
+    CGAL_test_assert(d > 0.999 && d < 1.001);
   }
 }
 
@@ -160,23 +160,23 @@ int main ()
   CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > eins(1), zwei;
   zwei = eins + eins;
   CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > deux(two);
-  assert(zwei == deux);
+  CGAL_test_assert(zwei == deux);
 #ifdef CGAL_PROFILE
-  assert(zwei.depth() == 1);
+  CGAL_test_assert(zwei.depth() == 1);
 #endif
 
   test_to_double();
 
   // Test % and gcd.
   CGAL::Lazy_exact_nt<int> tmp35(35), tmp7(7), tmp9(9);
-  assert((tmp35 % tmp7) == 0);
-  assert((tmp35 % 7) == 0);
-  assert(CGAL_NTS gcd(tmp35, tmp7) == 7);
+  CGAL_test_assert((tmp35 % tmp7) == 0);
+  CGAL_test_assert((tmp35 % 7) == 0);
+  CGAL_test_assert(CGAL_NTS gcd(tmp35, tmp7) == 7);
   tmp9 %= tmp7;
-  assert(tmp9 == 2);
+  CGAL_test_assert(tmp9 == 2);
   tmp9 = 9;
   tmp9 %= 7;
-  assert(tmp9 == 2);
+  CGAL_test_assert(tmp9 == 2);
 
   // Test if all operators are defined.
   int r = 1;

@@ -1,4 +1,5 @@
 #include <CGAL/Cartesian.h>
+#include <CGAL/Testsuite/assert.h>
 #ifndef CGAL_USE_LAPACK
 int main()
 {
@@ -130,7 +131,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
       {std::cerr << "Too few points to perform the fitting" << std::endl; exit(1);}
 
     //For Ridges we need at least 3rd order info
-    assert( d_monge >= 3);
+    CGAL_test_assert( d_monge >= 3);
     // run the main fct : perform the fitting
      monge_form = monge_fit(in_points.begin(), in_points.end(),
 			   d_fitting, d_monge);
@@ -233,7 +234,7 @@ int main()
   umb_size=3.5;
   std::cout << "compute umbilics u=3.5" << std::endl;
  
-  assert(umbilics.size() == 4);
+  CGAL_test_assert(umbilics.size() == 4);
   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
    iter_umb_end = umbilics.end();
   // output

@@ -21,7 +21,7 @@ MA 02110-1301, USA. */
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/iterator.h>
 #include <fstream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <iterator>
 #include <CGAL/Tools/Log.h>
 

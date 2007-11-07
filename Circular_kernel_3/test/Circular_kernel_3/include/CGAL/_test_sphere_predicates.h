@@ -25,6 +25,7 @@
 //             Pedro Machado    <tashimir@gmail.com>
 
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/assert.h>
 
 template <class SK>
 void _test_circular_arc_point_equal(SK sk) {
@@ -63,7 +64,7 @@ void _test_circular_arc_point_equal(SK sk) {
       theConstruct_circular_arc_point_3(a,b,c);
     Circular_arc_point_3 circ_a_point_test_3 = 
       theConstruct_circular_arc_point_3(Point_3(a,b,c));
-    assert(theEqual_3(circ_a_point_test_2, circ_a_point_test_3));
+    CGAL_test_assert(theEqual_3(circ_a_point_test_2, circ_a_point_test_3));
   }
 }
 
@@ -146,8 +147,8 @@ void _test_circle_equal(SK sk) {
     Circle_3 circle3 = theConstruct_circle_3(pfc);
     Circle_3 circle = theConstruct_circle_3(p,sqr,plane);
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
-    assert(theEqual_3(circle,circle2));
-    assert(theEqual_3(circle,circle3));
+    CGAL_test_assert(theEqual_3(circle,circle2));
+    CGAL_test_assert(theEqual_3(circle,circle3));
   }
 }
 
@@ -220,7 +221,7 @@ void _test_line_arc_equal(SK sk) {
     line_arc[5] = theConstruct_line_arc_3(line, pa, cpb);
     for(int t1=0;t1<6;t1++) {
       for(int t2=0;t2<6;t2++) {
-        assert(theEqual_3(line_arc[t1],line_arc[t2]));
+        CGAL_test_assert(theEqual_3(line_arc[t1],line_arc[t2]));
       }
     }
   }
@@ -303,11 +304,11 @@ void _test_circular_arc_equal(SK sk) {
     Circular_arc_3 circle_arc = theConstruct_circular_arc_3(circle);
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
     Circular_arc_3 circle_arc2 = theConstruct_circular_arc_3(circle2);
-    assert(theEqual_3(circle_arc,circle_arc2));
-    assert(theEqual_3(circle_arc,circle_arc3));
+    CGAL_test_assert(theEqual_3(circle_arc,circle_arc2));
+    CGAL_test_assert(theEqual_3(circle_arc,circle_arc3));
     Circular_arc_3 cother = circle_arc2;
-    assert(theEqual_3(circle_arc,cother));
-    assert(cother.rep().is_full());
+    CGAL_test_assert(theEqual_3(circle_arc,cother));
+    CGAL_test_assert(cother.rep().is_full());
     // When the !if_full(), we use the compare of circular_arc_point, already tested
   }
 }
@@ -355,10 +356,10 @@ void _test_has_on_predicate(SK sk) {
   Point_3 p_2_s_1 = Point_3(0,1,0);
   Point_3 p_3_s_1 = Point_3(0,0,1);
   Point_3 p_4_s_1 = Point_3(1,0,1);
-  assert(theHas_on_3(s_1,p_1_s_1));
-  assert(theHas_on_3(s_1,p_2_s_1));
-  assert(theHas_on_3(s_1,p_3_s_1));
-  assert(!theHas_on_3(s_1,p_4_s_1));
+  CGAL_test_assert(theHas_on_3(s_1,p_1_s_1));
+  CGAL_test_assert(theHas_on_3(s_1,p_2_s_1));
+  CGAL_test_assert(theHas_on_3(s_1,p_3_s_1));
+  CGAL_test_assert(!theHas_on_3(s_1,p_4_s_1));
   std::cout << "Testing has_on(Sphere,Circular_arc_point)..." << std::endl;
   Root_of_2 sqrt_1_div_3 = make_root_of_2(FT(0),FT(1),FT(FT_Q(1,3)));
   Root_of_2 sqrt_1_div_2 = make_root_of_2(FT(0),FT(1),FT(FT_Q(1,2)));
@@ -370,10 +371,10 @@ void _test_has_on_predicate(SK sk) {
   Circular_arc_point_3 cp_2_s_1 = Circular_arc_point_3(r_2_s_1);
   Circular_arc_point_3 cp_3_s_1 = Circular_arc_point_3(r_3_s_1);
   Circular_arc_point_3 cp_4_s_1 = Circular_arc_point_3(r_4_s_1);
-  assert(theHas_on_3(s_1,cp_1_s_1));
-  assert(theHas_on_3(s_1,cp_2_s_1));
-  assert(theHas_on_3(s_1,cp_3_s_1));
-  assert(!theHas_on_3(s_1,cp_4_s_1));
+  CGAL_test_assert(theHas_on_3(s_1,cp_1_s_1));
+  CGAL_test_assert(theHas_on_3(s_1,cp_2_s_1));
+  CGAL_test_assert(theHas_on_3(s_1,cp_3_s_1));
+  CGAL_test_assert(!theHas_on_3(s_1,cp_4_s_1));
 
   Plane_3 p_1 = theConstruct_plane_3(Polynomial_1_3(1,2,3,10));
   std::cout << "Testing has_on(Plane,Point)..." << std::endl;
@@ -381,10 +382,10 @@ void _test_has_on_predicate(SK sk) {
   Point_3 p_2_p_1 = Point_3(-FT(FT_Q(5,3)),-FT(FT_Q(5,3)),-FT(FT_Q(5,3)));
   Point_3 p_3_p_1 = Point_3(-10,0,0);
   Point_3 p_4_p_1 = Point_3(-2,-2,-1);
-  assert(theHas_on_3(p_1,p_1_p_1));
-  assert(theHas_on_3(p_1,p_2_p_1));
-  assert(theHas_on_3(p_1,p_3_p_1));
-  assert(!theHas_on_3(p_1,p_4_p_1));
+  CGAL_test_assert(theHas_on_3(p_1,p_1_p_1));
+  CGAL_test_assert(theHas_on_3(p_1,p_2_p_1));
+  CGAL_test_assert(theHas_on_3(p_1,p_3_p_1));
+  CGAL_test_assert(!theHas_on_3(p_1,p_4_p_1));
   std::cout << "Testing has_on(Plane,Circular_arc_point)..." << std::endl;
   Root_of_2 r_1_1_p_1 = make_root_of_2(FT(0),FT(4),FT(2));
   Root_of_2 r_1_2_p_1 = make_root_of_2(FT(-5),FT(-5),FT(2));
@@ -393,7 +394,7 @@ void _test_has_on_predicate(SK sk) {
   Root_for_spheres_2_3 r_2_p_1 = Root_for_spheres_2_3(r_1_2_p_1,r_1_2_p_1,r_1_3_p_1);
   Circular_arc_point_3 cp_1_p_1 = Circular_arc_point_3(r_1_p_1);
   Circular_arc_point_3 cp_2_p_1 = Circular_arc_point_3(r_2_p_1);
-  assert(!theHas_on_3(p_1,cp_2_p_1));
+  CGAL_test_assert(!theHas_on_3(p_1,cp_2_p_1));
   
   Line_3 l_1 = theConstruct_line_3(Polynomials_for_line_3(1,1,-1,3,1,0));
   std::cout << "Testing has_on(Line,Point)..." << std::endl;
@@ -401,10 +402,10 @@ void _test_has_on_predicate(SK sk) {
   Point_3 p_2_l_1 = Point_3(0,4,-1);
   Point_3 p_3_l_1 = Point_3(2,2,1);
   Point_3 p_4_l_1 = Point_3(1,1,1);
-  assert(theHas_on_3(l_1,p_1_l_1));
-  assert(theHas_on_3(l_1,p_2_l_1));
-  assert(theHas_on_3(l_1,p_3_l_1));
-  assert(!theHas_on_3(l_1,p_4_l_1));
+  CGAL_test_assert(theHas_on_3(l_1,p_1_l_1));
+  CGAL_test_assert(theHas_on_3(l_1,p_2_l_1));
+  CGAL_test_assert(theHas_on_3(l_1,p_3_l_1));
+  CGAL_test_assert(!theHas_on_3(l_1,p_4_l_1));
   std::cout << "Testing has_on(Line,Circular_arc_point)..." << std::endl;
   Root_of_2 r_1_1_l_1 = make_root_of_2(FT(1),FT(1),FT(5));
   Root_of_2 r_1_2_l_1 = make_root_of_2(FT(3),FT(-1),FT(5));
@@ -413,7 +414,7 @@ void _test_has_on_predicate(SK sk) {
   Root_for_spheres_2_3 r_2_l_1 = Root_for_spheres_2_3(r_1_1_l_1,r_1_1_l_1,r_1_1_l_1);
   Circular_arc_point_3 cp_1_l_1 = Circular_arc_point_3(r_1_l_1);
   Circular_arc_point_3 cp_2_l_1 = Circular_arc_point_3(r_2_l_1);
-  assert(!theHas_on_3(l_1,cp_2_l_1));
+  CGAL_test_assert(!theHas_on_3(l_1,cp_2_l_1));
 
   const Polynomials_for_circle_3 pc1 = 
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
@@ -423,9 +424,9 @@ void _test_has_on_predicate(SK sk) {
   Point_3 p_1_c_1 = Point_3(0,0,1);
   Point_3 p_2_c_1 = Point_3(0,1,0);
   Point_3 p_3_c_1 = Point_3(1,0,0);
-  assert(theHas_on_3(c_1,p_1_c_1));
-  assert(theHas_on_3(c_1,p_2_c_1));
-  assert(!theHas_on_3(c_1,p_3_c_1));
+  CGAL_test_assert(theHas_on_3(c_1,p_1_c_1));
+  CGAL_test_assert(theHas_on_3(c_1,p_2_c_1));
+  CGAL_test_assert(!theHas_on_3(c_1,p_3_c_1));
   std::cout << "Testing has_on(Circle,Circular_arc_point)..." << std::endl;
   const Polynomials_for_circle_3 pc2 = 
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
@@ -438,31 +439,31 @@ void _test_has_on_predicate(SK sk) {
   Root_for_spheres_2_3 r_2_c_2 = Root_for_spheres_2_3(r_1_2_c_2,r_1_2_c_2,r_1_2_c_2);
   Circular_arc_point_3 cp_1_c_2 = Circular_arc_point_3(r_1_c_2);
   Circular_arc_point_3 cp_2_c_2 = Circular_arc_point_3(r_2_c_2);
-  assert(theHas_on_3(c_2,cp_1_c_2));
-  assert(!theHas_on_3(c_2,cp_2_c_2));
+  CGAL_test_assert(theHas_on_3(c_2,cp_1_c_2));
+  CGAL_test_assert(!theHas_on_3(c_2,cp_2_c_2));
 
   // Don't need to test has_on(Plane,Line). It is internal on Cartesian
 
   std::cout << "Testing has_on(Sphere,Circle)..." << std::endl;
-  assert(theHas_on_3(s_1,c_1));
-  assert(theHas_on_3(s_1,c_2));
+  CGAL_test_assert(theHas_on_3(s_1,c_1));
+  CGAL_test_assert(theHas_on_3(s_1,c_2));
   Sphere_3 s_2 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,2));
-  assert(!theHas_on_3(s_2,c_1));
-  assert(!theHas_on_3(s_2,c_2));
+  CGAL_test_assert(!theHas_on_3(s_2,c_1));
+  CGAL_test_assert(!theHas_on_3(s_2,c_2));
   Sphere_3 s_3 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(5,0,0,26));
-  assert(theHas_on_3(s_3,c_1));
-  assert(!theHas_on_3(s_3,c_2));
+  CGAL_test_assert(theHas_on_3(s_3,c_1));
+  CGAL_test_assert(!theHas_on_3(s_3,c_2));
 
   std::cout << "Testing has_on(Plane,Circle)..." << std::endl;
   Plane_3 p_2 = theConstruct_plane_3(Polynomial_1_3(1,1,1,0));
   Plane_3 p_3 = theConstruct_plane_3(Polynomial_1_3(3,3,3,0));
   Plane_3 p_4 = theConstruct_plane_3(Polynomial_1_3(1,0,0,0));
-  assert(theHas_on_3(p_2,c_2));
-  assert(theHas_on_3(p_3,c_2));
-  assert(!theHas_on_3(p_4,c_2));
-  assert(!theHas_on_3(p_2,c_1));
-  assert(!theHas_on_3(p_3,c_1));
-  assert(theHas_on_3(p_4,c_1));
+  CGAL_test_assert(theHas_on_3(p_2,c_2));
+  CGAL_test_assert(theHas_on_3(p_3,c_2));
+  CGAL_test_assert(!theHas_on_3(p_4,c_2));
+  CGAL_test_assert(!theHas_on_3(p_2,c_1));
+  CGAL_test_assert(!theHas_on_3(p_3,c_1));
+  CGAL_test_assert(theHas_on_3(p_4,c_1));
 
   std::cout << "Testing has_on(Line_arc,Circular_arc_point)..." << std::endl;
   for(int vx=0;vx<3;vx++) {
@@ -482,9 +483,9 @@ void _test_has_on_predicate(SK sk) {
             for(int t3 = (t1-1); t3 <= (t2+1); t3++) {
               Point_3 pp = Point_3(a*t3,b*t3,c*t3);
               if((t3 < t1) || (t3 > t2)) {
-                assert(!theHas_on_3(la,pp));
+                CGAL_test_assert(!theHas_on_3(la,pp));
               } else {
-                assert(theHas_on_3(la,pp));
+                CGAL_test_assert(theHas_on_3(la,pp));
               }
             }
           }
@@ -551,14 +552,14 @@ void _test_has_on_predicate(SK sk) {
       Circular_arc_3 cb = theConstruct_circular_arc_3(cc,cp[j],cp[i]);
       for(int t=0;t<8;t++) {
         if((i <= t) && (t <= j)) {
-          assert(theHas_on_3(ca,cp[t]));
+          CGAL_test_assert(theHas_on_3(ca,cp[t]));
           if(!(t == i || t == j)) {
-            assert(!theHas_on_3(cb,cp[t]));
+            CGAL_test_assert(!theHas_on_3(cb,cp[t]));
           }
         }
         else {
-          assert(!theHas_on_3(ca,cp[t]));
-          assert(theHas_on_3(cb,cp[t]));
+          CGAL_test_assert(!theHas_on_3(ca,cp[t]));
+          CGAL_test_assert(theHas_on_3(cb,cp[t]));
         }
       }
     }
@@ -589,14 +590,14 @@ void _test_has_on_predicate(SK sk) {
       Circular_arc_3 cb = theConstruct_circular_arc_3(cc2,cp[j],cp[i]);
       for(int t=0;t<8;t++) {
         if((i <= t) && (t <= j)) {
-          assert(theHas_on_3(ca,cp[t]));
+          CGAL_test_assert(theHas_on_3(ca,cp[t]));
           if(!(t == i || t == j)) {
-            assert(!theHas_on_3(cb,cp[t]));
+            CGAL_test_assert(!theHas_on_3(cb,cp[t]));
           }
         }
         else {
-          assert(!theHas_on_3(ca,cp[t]));
-          assert(theHas_on_3(cb,cp[t]));
+          CGAL_test_assert(!theHas_on_3(ca,cp[t]));
+          CGAL_test_assert(theHas_on_3(cb,cp[t]));
         }
       }
     }
@@ -674,15 +675,15 @@ void _test_do_overlap_predicate(SK sk) {
                 Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
                 Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
                 if((t1 == t3) || (t2 == t3)) {
-                  assert(theDo_overlap_3(la,lb));
+                  CGAL_test_assert(theDo_overlap_3(la,lb));
                 } else if((t1 == t4) || (t2 == t4)) {
-                  assert(theDo_overlap_3(la,lb));
+                  CGAL_test_assert(theDo_overlap_3(la,lb));
                 } else if((t1 < t3) && (t3 < t2 )) {
-                  assert(theDo_overlap_3(la,lb));
+                  CGAL_test_assert(theDo_overlap_3(la,lb));
                 } else if((t3 < t1) && (t1 < t4)) {
-                  assert(theDo_overlap_3(la,lb));
+                  CGAL_test_assert(theDo_overlap_3(la,lb));
                 } else {
-                  assert(!theDo_overlap_3(la,lb));
+                  CGAL_test_assert(!theDo_overlap_3(la,lb));
                 } 
               }
             } 
@@ -722,13 +723,13 @@ void _test_do_overlap_predicate(SK sk) {
           if(t1 == t2) continue;
           Circular_arc_3 cb = theConstruct_circular_arc_3(cc,cp[t1],cp[t2]);
           if((t1 == i) || (t2 == i) || (t1 == j) || (t2 == j)) {
-            assert(theDo_overlap_3(ca,cb));
+            CGAL_test_assert(theDo_overlap_3(ca,cb));
           } else if(simulate_has_on(i,j,t1) ||
                     simulate_has_on(i,j,t2) ||
                     simulate_has_on(t1,t2,i)) {
-            assert(theDo_overlap_3(ca,cb));
+            CGAL_test_assert(theDo_overlap_3(ca,cb));
           } else {
-            assert(!theDo_overlap_3(ca,cb));
+            CGAL_test_assert(!theDo_overlap_3(ca,cb));
           }
         }
       }
@@ -769,10 +770,10 @@ void _test_bounded_side(SK sk) {
         Circular_arc_point_3 cp = theConstruct_circular_arc_point_3(x,y,z);
         CGAL::Bounded_side b = theBounded_side_3(s,cp);
         if((x*x + y*y + z*z) < 25) {
-          assert(b == CGAL::ON_BOUNDED_SIDE);
+          CGAL_test_assert(b == CGAL::ON_BOUNDED_SIDE);
         } else if((x*x + y*y + z*z) > 25) {
-          assert(b == CGAL::ON_UNBOUNDED_SIDE);
-        } else assert(b == CGAL::ON_BOUNDARY);
+          CGAL_test_assert(b == CGAL::ON_UNBOUNDED_SIDE);
+        } else CGAL_test_assert(b == CGAL::ON_BOUNDARY);
       }
     }
   }

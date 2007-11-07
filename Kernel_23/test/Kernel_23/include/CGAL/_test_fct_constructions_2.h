@@ -44,22 +44,22 @@ _test_fct_constructions_2(const R&)
   Point psw = p + Vector(-RT1,-RT1 );
 
   // midpoint
-  assert( CGAL::midpoint( pne, psw) == p);
-  assert( CGAL::midpoint( pnw, pse) == p);
+  CGAL_test_assert( CGAL::midpoint( pne, psw) == p);
+  CGAL_test_assert( CGAL::midpoint( pnw, pse) == p);
 
   // circumcenter
-  assert( CGAL::circumcenter( pne, pne ) == pne);
-  assert( CGAL::circumcenter( pne, pse ) == CGAL::midpoint(pne, pse) );
-  assert( CGAL::circumcenter( pne, pse, pnw) == p);
-  assert( CGAL::circumcenter( psw, pse, pnw) == p);
-  assert( CGAL::circumcenter( Triangle(pne, pse, pnw)) == p);
-  assert( CGAL::circumcenter( Triangle(psw, pse, pnw)) == p);
+  CGAL_test_assert( CGAL::circumcenter( pne, pne ) == pne);
+  CGAL_test_assert( CGAL::circumcenter( pne, pse ) == CGAL::midpoint(pne, pse) );
+  CGAL_test_assert( CGAL::circumcenter( pne, pse, pnw) == p);
+  CGAL_test_assert( CGAL::circumcenter( psw, pse, pnw) == p);
+  CGAL_test_assert( CGAL::circumcenter( Triangle(pne, pse, pnw)) == p);
+  CGAL_test_assert( CGAL::circumcenter( Triangle(psw, pse, pnw)) == p);
 
   // centroid
   Point pe = p + Vector(RT1, RT0);
-  assert( CGAL::centroid( pne, pse, pe) == pe);
-  assert( CGAL::centroid( pne, psw, pse, pnw) == p);
-  assert( CGAL::centroid( Triangle(pne, pse, pe)) == pe);
+  CGAL_test_assert( CGAL::centroid( pne, pse, pe) == pe);
+  CGAL_test_assert( CGAL::centroid( pne, psw, pse, pnw) == p);
+  CGAL_test_assert( CGAL::centroid( Triangle(pne, pse, pe)) == pe);
 
   // general position intersection point
 

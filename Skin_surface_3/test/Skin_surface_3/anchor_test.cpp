@@ -4,6 +4,7 @@
 // Regular triangulation
 // *********************
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -186,8 +187,8 @@ int main(int, char **) {
 //     regular.insert(Weighted_point(Point(0,0,zExtr[0]-boxSize),-1));
 //     regular.insert(Weighted_point(Point(0,0,zExtr[1]+boxSize),-1));
 		
-//     assert( regular.is_valid() );
-//     assert( regular.dimension() == 3 );
+//     CGAL_test_assert( regular.is_valid() );
+//     CGAL_test_assert( regular.dimension() == 3 );
 //   }
 
 //   // Regular triangulation read and bounding box created
@@ -195,7 +196,7 @@ int main(int, char **) {
 //   Simplicial simplicial;
 //   Mixed_complex_builder mixed_builder(regular, simplicial, shrink);
 
-//   assert(simplicial.is_valid(true));
+//   CGAL_test_assert(simplicial.is_valid(true));
 
   // 	// NGHK: function
   // 	Mesh mesh;

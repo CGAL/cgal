@@ -25,6 +25,7 @@
 //             Pedro Machado    <tashimir@gmail.com>
 
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/assert.h>
 
 template <class SK>
 void _test_circular_arc_point_construct(SK sk) {
@@ -64,14 +65,14 @@ void _test_circular_arc_point_construct(SK sk) {
   Circular_arc_point_3 circ_a_point_test_4 = 
     theConstruct_circular_arc_point_3(rs);
   std::cout << "Testing Construct_circular_arc_point_3 with 3 Root_of_2..." << std::endl;
-  assert(circ_a_point_test_1.x() == r1);
-  assert(circ_a_point_test_1.y() == r2);
-  assert(circ_a_point_test_1.z() == r3);
+  CGAL_test_assert(circ_a_point_test_1.x() == r1);
+  CGAL_test_assert(circ_a_point_test_1.y() == r2);
+  CGAL_test_assert(circ_a_point_test_1.z() == r3);
 
   std::cout << "Testing Construct_circular_arc_point_3 with a Root_for_spheres_2_3..." << std::endl;
-  assert(circ_a_point_test_4.x() == r1);
-  assert(circ_a_point_test_4.y() == r2);
-  assert(circ_a_point_test_4.z() == r3);
+  CGAL_test_assert(circ_a_point_test_4.x() == r1);
+  CGAL_test_assert(circ_a_point_test_4.y() == r2);
+  CGAL_test_assert(circ_a_point_test_4.z() == r3);
 
   std::cout << "Testing many random cases of Construct_circular_arc_point_3..." << std::endl;
   for(int i=0; i<100; i++) {
@@ -82,13 +83,13 @@ void _test_circular_arc_point_construct(SK sk) {
       theConstruct_circular_arc_point_3(a,b,c);
     Circular_arc_point_3 circ_a_point_test_3 = 
       theConstruct_circular_arc_point_3(Point_3(a,b,c));
-    assert(circ_a_point_test_2.x() == a);
-    assert(circ_a_point_test_2.y() == b);
-    assert(circ_a_point_test_2.z() == c);
-    assert(circ_a_point_test_3.x() == a);
-    assert(circ_a_point_test_3.y() == b);
-    assert(circ_a_point_test_3.z() == c);
-    assert(theEqual_3(circ_a_point_test_2, circ_a_point_test_3));
+    CGAL_test_assert(circ_a_point_test_2.x() == a);
+    CGAL_test_assert(circ_a_point_test_2.y() == b);
+    CGAL_test_assert(circ_a_point_test_2.z() == c);
+    CGAL_test_assert(circ_a_point_test_3.x() == a);
+    CGAL_test_assert(circ_a_point_test_3.y() == b);
+    CGAL_test_assert(circ_a_point_test_3.z() == c);
+    CGAL_test_assert(theEqual_3(circ_a_point_test_2, circ_a_point_test_3));
   }
 
   // No need to test the constructors based on intersection
@@ -131,15 +132,15 @@ void _test_sphere_construct(SK sk) {
       r = theRandom.get_int(random_min,random_max);
     } while(r <= 0);
     Polynomial_for_spheres_2_3 p = theGet_equation(Sphere_3(Point_3(a,b,c),r));
-    assert(p.a() == a);
-    assert(p.b() == b);
-    assert(p.c() == c);
-    assert(p.r_sq() == r);
+    CGAL_test_assert(p.a() == a);
+    CGAL_test_assert(p.b() == b);
+    CGAL_test_assert(p.c() == c);
+    CGAL_test_assert(p.r_sq() == r);
     Sphere_3 s = theConstruct_sphere_3(p);
-    assert(s.center().x() == a);
-    assert(s.center().y() == b);
-    assert(s.center().z() == c);
-    assert(s.squared_radius() == r);
+    CGAL_test_assert(s.center().x() == a);
+    CGAL_test_assert(s.center().y() == b);
+    CGAL_test_assert(s.center().z() == c);
+    CGAL_test_assert(s.squared_radius() == r);
   }
 
 }
@@ -179,15 +180,15 @@ void _test_plane_construct(SK sk) {
       d = theRandom.get_int(random_min,random_max);
     } while((a == 0) && (b == 0) && (c == 0));
     Polynomial_1_3 p = theGet_equation(Plane_3(a,b,c,d));
-    assert(p.a() == a);
-    assert(p.b() == b);
-    assert(p.c() == c);
-    assert(p.d() == d);
+    CGAL_test_assert(p.a() == a);
+    CGAL_test_assert(p.b() == b);
+    CGAL_test_assert(p.c() == c);
+    CGAL_test_assert(p.d() == d);
     Plane_3 plane = theConstruct_plane_3(p);
-    assert(plane.a() == a);
-    assert(plane.b() == b);
-    assert(plane.c() == c);
-    assert(plane.d() == d);
+    CGAL_test_assert(plane.a() == a);
+    CGAL_test_assert(plane.b() == b);
+    CGAL_test_assert(plane.c() == c);
+    CGAL_test_assert(plane.d() == d);
   }
 
 }
@@ -233,12 +234,12 @@ void _test_line_construct(SK sk) {
     Polynomials_for_line_3 p = theGet_equation(Line_3(pa,pb));
     Root_for_spheres_2_3 r1 = Root_for_spheres_2_3(pb.x(),pb.y(),pb.z());
     Root_for_spheres_2_3 r2 = Root_for_spheres_2_3(pa.x(),pa.y(),pa.z());
-    assert(r1.is_on_line(p));
-    assert(r2.is_on_line(p));
+    CGAL_test_assert(r1.is_on_line(p));
+    CGAL_test_assert(r2.is_on_line(p));
     Line_3 line = theConstruct_line_3(p);
-    assert(line.to_vector().x() == (d-a));
-    assert(line.to_vector().y() == (e-b));
-    assert(line.to_vector().z() == (f-c)); 
+    CGAL_test_assert(line.to_vector().x() == (d-a));
+    CGAL_test_assert(line.to_vector().y() == (e-b));
+    CGAL_test_assert(line.to_vector().z() == (f-c)); 
   }
 
 }
@@ -312,26 +313,26 @@ void _test_circle_construct(SK sk) {
                      Polynomial_1_3(a,b,c,d));
     Circle_3 circle3 = theConstruct_circle_3(pfc);
     Circle_3 circle = theConstruct_circle_3(p,sqr,plane);
-    assert(circle.supporting_plane().a() == a);
-    assert(circle.supporting_plane().b() == b);
-    assert(circle.supporting_plane().c() == c);
-    assert(circle.supporting_plane().d() == d);
-    assert(circle.center().x() == x);
-    assert(circle.center().y() == y);
-    assert(circle.center().z() == z);
-    assert(circle.squared_radius() == sqr);
+    CGAL_test_assert(circle.supporting_plane().a() == a);
+    CGAL_test_assert(circle.supporting_plane().b() == b);
+    CGAL_test_assert(circle.supporting_plane().c() == c);
+    CGAL_test_assert(circle.supporting_plane().d() == d);
+    CGAL_test_assert(circle.center().x() == x);
+    CGAL_test_assert(circle.center().y() == y);
+    CGAL_test_assert(circle.center().z() == z);
+    CGAL_test_assert(circle.squared_radius() == sqr);
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
-    assert(theEqual_3(circle,circle2));
-    assert(theEqual_3(circle,circle3));
+    CGAL_test_assert(theEqual_3(circle,circle2));
+    CGAL_test_assert(theEqual_3(circle,circle3));
     Polynomials_for_circle_3 pcircle = theGet_equation(circle);
-    assert(pcircle.second.a() == a);
-    assert(pcircle.second.b() == b);
-    assert(pcircle.second.c() == c);
-    assert(pcircle.second.d() == d);
-    assert(pcircle.first.a() == x);
-    assert(pcircle.first.b() == y);
-    assert(pcircle.first.c() == z);
-    assert(pcircle.first.r_sq() == sqr);
+    CGAL_test_assert(pcircle.second.a() == a);
+    CGAL_test_assert(pcircle.second.b() == b);
+    CGAL_test_assert(pcircle.second.c() == c);
+    CGAL_test_assert(pcircle.second.d() == d);
+    CGAL_test_assert(pcircle.first.a() == x);
+    CGAL_test_assert(pcircle.first.b() == y);
+    CGAL_test_assert(pcircle.first.c() == z);
+    CGAL_test_assert(pcircle.first.r_sq() == sqr);
   }
 
   // No need to test the constructors based on intersection
@@ -397,7 +398,7 @@ void _test_line_arc_construct(SK sk) {
     line_arc[5] = theConstruct_line_arc_3(line, pa, cpb);
     for(int t1=0;t1<6;t1++) {
       for(int t2=0;t2<6;t2++) {
-        assert(theEqual_3(line_arc[t1],line_arc[t2]));
+        CGAL_test_assert(theEqual_3(line_arc[t1],line_arc[t2]));
       }
     }
   }
@@ -479,19 +480,19 @@ void _test_circular_arc_construct(SK sk) {
     Circle_3 circle = theConstruct_circle_3(p,sqr,plane);
     Circular_arc_3 circle_arc3 = theConstruct_circular_arc_3(circle3);
     Circular_arc_3 circle_arc = theConstruct_circular_arc_3(circle);
-    assert(circle_arc.supporting_plane().a() == a);
-    assert(circle_arc.supporting_plane().b() == b);
-    assert(circle_arc.supporting_plane().c() == c);
-    assert(circle_arc.supporting_plane().d() == d);
-    assert(circle_arc.center().x() == x);
-    assert(circle_arc.center().y() == y);
-    assert(circle_arc.center().z() == z);
-    assert(circle_arc.squared_radius() == sqr);
-    assert(theEqual_3(circle_arc.source(),circle_arc.target()));
+    CGAL_test_assert(circle_arc.supporting_plane().a() == a);
+    CGAL_test_assert(circle_arc.supporting_plane().b() == b);
+    CGAL_test_assert(circle_arc.supporting_plane().c() == c);
+    CGAL_test_assert(circle_arc.supporting_plane().d() == d);
+    CGAL_test_assert(circle_arc.center().x() == x);
+    CGAL_test_assert(circle_arc.center().y() == y);
+    CGAL_test_assert(circle_arc.center().z() == z);
+    CGAL_test_assert(circle_arc.squared_radius() == sqr);
+    CGAL_test_assert(theEqual_3(circle_arc.source(),circle_arc.target()));
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
     Circular_arc_3 circle_arc2 = theConstruct_circular_arc_3(circle2);
-    assert(theEqual_3(circle_arc,circle_arc2));
-    assert(theEqual_3(circle_arc,circle_arc3));
+    CGAL_test_assert(theEqual_3(circle_arc,circle_arc2));
+    CGAL_test_assert(theEqual_3(circle_arc,circle_arc3));
   }
 
   // No need to test the constructors based on intersection
@@ -563,41 +564,41 @@ void _test_intersection_construct(SK sk) {
           theIntersect_3(s_t10, sl_2, std::back_inserter(intersection_2));
           // No intersection
           if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) {
-            assert(intersection_1.size() == 0);
-            assert(intersection_2.size() == 0);
+            CGAL_test_assert(intersection_1.size() == 0);
+            CGAL_test_assert(intersection_2.size() == 0);
           } 
           // All the sphere intersect
           else if(x == 0 && y == 0 && z == 0 && r == 1) {
-            assert(intersection_1.size() == 1);
-            assert(intersection_2.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_2.size() == 1);
             Sphere_3 sphere1, sphere2;
-            assert(assign(sphere1, intersection_1[0]));
-            assert(assign(sphere2, intersection_2[0]));
+            CGAL_test_assert(assign(sphere1, intersection_1[0]));
+            CGAL_test_assert(assign(sphere2, intersection_2[0]));
           } 
           // Tangent, 1 Intersection
           else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
-            assert(intersection_1.size() == 1);
-            assert(intersection_2.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_2.size() == 1);
             std::pair<Circular_arc_point_3, unsigned > the_pair1;
-            assert(assign(the_pair1, intersection_1[0]));
+            CGAL_test_assert(assign(the_pair1, intersection_1[0]));
             std::pair<Circular_arc_point_3, unsigned > the_pair2;
-            assert(assign(the_pair2, intersection_2[0]));
-            assert(theHas_on_3(s,the_pair1.first));
-            assert(theHas_on_3(sl_1,the_pair1.first));
-            assert(theHas_on_3(s_t10,the_pair2.first));
-            assert(theHas_on_3(sl_2,the_pair2.first));
+            CGAL_test_assert(assign(the_pair2, intersection_2[0]));
+            CGAL_test_assert(theHas_on_3(s,the_pair1.first));
+            CGAL_test_assert(theHas_on_3(sl_1,the_pair1.first));
+            CGAL_test_assert(theHas_on_3(s_t10,the_pair2.first));
+            CGAL_test_assert(theHas_on_3(sl_2,the_pair2.first));
           }
           // 1 Intersection Circle
           else {
-            assert(intersection_1.size() == 1);
-            assert(intersection_2.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_2.size() == 1);
             Circle_3 circle1, circle2;
-            assert(assign(circle1, intersection_1[0]));
-            assert(assign(circle2, intersection_2[0]));
-            assert(theHas_on_3(s,circle1));
-            assert(theHas_on_3(sl_1,circle1));
-            assert(theHas_on_3(s_t10,circle2));
-            assert(theHas_on_3(sl_2,circle2));
+            CGAL_test_assert(assign(circle1, intersection_1[0]));
+            CGAL_test_assert(assign(circle2, intersection_2[0]));
+            CGAL_test_assert(theHas_on_3(s,circle1));
+            CGAL_test_assert(theHas_on_3(sl_1,circle1));
+            CGAL_test_assert(theHas_on_3(s_t10,circle2));
+            CGAL_test_assert(theHas_on_3(sl_2,circle2));
           }
         }
       }
@@ -622,23 +623,23 @@ void _test_intersection_construct(SK sk) {
 
           // No intersection
           if(d2 > sq_r) {
-            assert(intersection_1.size() == 0);
+            CGAL_test_assert(intersection_1.size() == 0);
           } 
           // Tangent, 1 Intersection
           else if(d2 == sq_r) {
-            assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
             std::pair<Circular_arc_point_3, unsigned > the_pair1;
-            assert(assign(the_pair1, intersection_1[0]));
-            assert(theHas_on_3(sl,the_pair1.first));
-            assert(theHas_on_3(p,the_pair1.first));
+            CGAL_test_assert(assign(the_pair1, intersection_1[0]));
+            CGAL_test_assert(theHas_on_3(sl,the_pair1.first));
+            CGAL_test_assert(theHas_on_3(p,the_pair1.first));
           }
           // 1 Intersection Circle
           else {
-            assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
             Circle_3 circle1;
-            assert(assign(circle1, intersection_1[0]));
-            assert(theHas_on_3(sl,circle1));
-            assert(theHas_on_3(p,circle1));
+            CGAL_test_assert(assign(circle1, intersection_1[0]));
+            CGAL_test_assert(theHas_on_3(sl,circle1));
+            CGAL_test_assert(theHas_on_3(p,circle1));
           }
         }
       }
@@ -662,37 +663,37 @@ void _test_intersection_construct(SK sk) {
         // tangent case for line 1
         // non-intersection for line 2
         if(vx == -1) {
-          assert(intersection_1.size() == 1);
+          CGAL_test_assert(intersection_1.size() == 1);
           std::pair<Circular_arc_point_3, unsigned > the_pair1;
-          assert(assign(the_pair1, intersection_1[0]));
-          assert(theHas_on_3(s,the_pair1.first));
-          assert(theHas_on_3(l1,the_pair1.first));
+          CGAL_test_assert(assign(the_pair1, intersection_1[0]));
+          CGAL_test_assert(theHas_on_3(s,the_pair1.first));
+          CGAL_test_assert(theHas_on_3(l1,the_pair1.first));
 
-          assert(intersection_2.size() == 0);
+          CGAL_test_assert(intersection_2.size() == 0);
         }
 
         // 2 intersections for line 1
         // 2 intersections for line 2
         else {
-          assert(intersection_1.size() == 2);
+          CGAL_test_assert(intersection_1.size() == 2);
           std::pair<Circular_arc_point_3, unsigned > the_pair1;
           std::pair<Circular_arc_point_3, unsigned > the_pair2;
-          assert(assign(the_pair1, intersection_1[0]));
-          assert(assign(the_pair2, intersection_1[1]));
-          assert(theHas_on_3(s,the_pair1.first));
-          assert(theHas_on_3(l1,the_pair1.first));
-          assert(theHas_on_3(s,the_pair2.first));
-          assert(theHas_on_3(l1,the_pair2.first));
+          CGAL_test_assert(assign(the_pair1, intersection_1[0]));
+          CGAL_test_assert(assign(the_pair2, intersection_1[1]));
+          CGAL_test_assert(theHas_on_3(s,the_pair1.first));
+          CGAL_test_assert(theHas_on_3(l1,the_pair1.first));
+          CGAL_test_assert(theHas_on_3(s,the_pair2.first));
+          CGAL_test_assert(theHas_on_3(l1,the_pair2.first));
 
-          assert(intersection_2.size() == 2);
+          CGAL_test_assert(intersection_2.size() == 2);
           std::pair<Circular_arc_point_3, unsigned > the_pair3;
           std::pair<Circular_arc_point_3, unsigned > the_pair4;
-          assert(assign(the_pair3, intersection_2[0]));
-          assert(assign(the_pair4, intersection_2[1]));
-          assert(theHas_on_3(s,the_pair3.first));
-          assert(theHas_on_3(l2,the_pair3.first));
-          assert(theHas_on_3(s,the_pair4.first));
-          assert(theHas_on_3(l2,the_pair4.first));
+          CGAL_test_assert(assign(the_pair3, intersection_2[0]));
+          CGAL_test_assert(assign(the_pair4, intersection_2[1]));
+          CGAL_test_assert(theHas_on_3(s,the_pair3.first));
+          CGAL_test_assert(theHas_on_3(l2,the_pair3.first));
+          CGAL_test_assert(theHas_on_3(s,the_pair4.first));
+          CGAL_test_assert(theHas_on_3(l2,the_pair4.first));
         }
 
       }
@@ -721,27 +722,27 @@ void _test_intersection_construct(SK sk) {
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_1[0])) {
-              assert(theHas_on_3(s1,circle));
-              assert(theHas_on_3(s2,circle));
-              assert(theHas_on_3(sl,circle));
+              CGAL_test_assert(theHas_on_3(s1,circle));
+              CGAL_test_assert(theHas_on_3(s2,circle));
+              CGAL_test_assert(theHas_on_3(sl,circle));
             }
             if(assign(cap,intersection_1[0])) {
               // This case must never happen
-              assert(theHas_on_3(s1,cap.first));
-              assert(theHas_on_3(s2,cap.first));
-              assert(theHas_on_3(sl,cap.first));
+              CGAL_test_assert(theHas_on_3(s1,cap.first));
+              CGAL_test_assert(theHas_on_3(s2,cap.first));
+              CGAL_test_assert(theHas_on_3(sl,cap.first));
             }
           }
           if(intersection_1.size() == 2) {
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-            assert(assign(cap1,intersection_1[0]));
-            assert(assign(cap2,intersection_1[1]));
-            assert(theHas_on_3(s1,cap1.first));
-            assert(theHas_on_3(s2,cap1.first));
-            assert(theHas_on_3(sl,cap1.first));
-            assert(theHas_on_3(s1,cap2.first));
-            assert(theHas_on_3(s2,cap2.first));
-            assert(theHas_on_3(sl,cap2.first));
+            CGAL_test_assert(assign(cap1,intersection_1[0]));
+            CGAL_test_assert(assign(cap2,intersection_1[1]));
+            CGAL_test_assert(theHas_on_3(s1,cap1.first));
+            CGAL_test_assert(theHas_on_3(s2,cap1.first));
+            CGAL_test_assert(theHas_on_3(sl,cap1.first));
+            CGAL_test_assert(theHas_on_3(s1,cap2.first));
+            CGAL_test_assert(theHas_on_3(s2,cap2.first));
+            CGAL_test_assert(theHas_on_3(sl,cap2.first));
           }
 
           if(intersection_2.size() == 1) {
@@ -749,27 +750,27 @@ void _test_intersection_construct(SK sk) {
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_2[0])) {
               // This case must never happen
-              assert(theHas_on_3(s1,circle));
-              assert(theHas_on_3(s3,circle));
-              assert(theHas_on_3(sl,circle));
+              CGAL_test_assert(theHas_on_3(s1,circle));
+              CGAL_test_assert(theHas_on_3(s3,circle));
+              CGAL_test_assert(theHas_on_3(sl,circle));
             }
             if(assign(cap,intersection_2[0])) {
-              assert(theHas_on_3(s1,cap.first));
-              assert(theHas_on_3(s3,cap.first));
-              assert(theHas_on_3(sl,cap.first));
+              CGAL_test_assert(theHas_on_3(s1,cap.first));
+              CGAL_test_assert(theHas_on_3(s3,cap.first));
+              CGAL_test_assert(theHas_on_3(sl,cap.first));
             }
           }
           if(intersection_2.size() == 2) {
             // This case must never happen
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-            assert(assign(cap1,intersection_2[0]));
-            assert(assign(cap2,intersection_2[1]));
-            assert(theHas_on_3(s1,cap1.first));
-            assert(theHas_on_3(s3,cap1.first));
-            assert(theHas_on_3(sl,cap1.first));
-            assert(theHas_on_3(s1,cap2.first));
-            assert(theHas_on_3(s3,cap2.first));
-            assert(theHas_on_3(sl,cap2.first));
+            CGAL_test_assert(assign(cap1,intersection_2[0]));
+            CGAL_test_assert(assign(cap2,intersection_2[1]));
+            CGAL_test_assert(theHas_on_3(s1,cap1.first));
+            CGAL_test_assert(theHas_on_3(s3,cap1.first));
+            CGAL_test_assert(theHas_on_3(sl,cap1.first));
+            CGAL_test_assert(theHas_on_3(s1,cap2.first));
+            CGAL_test_assert(theHas_on_3(s3,cap2.first));
+            CGAL_test_assert(theHas_on_3(sl,cap2.first));
           }
         }
       }
@@ -796,51 +797,51 @@ void _test_intersection_construct(SK sk) {
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_1[0])) {
-              assert(theHas_on_3(s1,circle));
-              assert(theHas_on_3(s2,circle));
-              assert(theHas_on_3(pl,circle));
+              CGAL_test_assert(theHas_on_3(s1,circle));
+              CGAL_test_assert(theHas_on_3(s2,circle));
+              CGAL_test_assert(theHas_on_3(pl,circle));
             }
             if(assign(cap,intersection_1[0])) {
-              assert(theHas_on_3(s1,cap.first));
-              assert(theHas_on_3(s2,cap.first));
-              assert(theHas_on_3(pl,cap.first));
+              CGAL_test_assert(theHas_on_3(s1,cap.first));
+              CGAL_test_assert(theHas_on_3(s2,cap.first));
+              CGAL_test_assert(theHas_on_3(pl,cap.first));
             }
           }
           if(intersection_1.size() == 2) {
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-            assert(assign(cap1,intersection_1[0]));
-            assert(assign(cap2,intersection_1[1]));
-            assert(theHas_on_3(s1,cap1.first));
-            assert(theHas_on_3(s2,cap1.first));
-            assert(theHas_on_3(pl,cap1.first));
-            assert(theHas_on_3(s1,cap2.first));
-            assert(theHas_on_3(s2,cap2.first));
-            assert(theHas_on_3(pl,cap2.first));
+            CGAL_test_assert(assign(cap1,intersection_1[0]));
+            CGAL_test_assert(assign(cap2,intersection_1[1]));
+            CGAL_test_assert(theHas_on_3(s1,cap1.first));
+            CGAL_test_assert(theHas_on_3(s2,cap1.first));
+            CGAL_test_assert(theHas_on_3(pl,cap1.first));
+            CGAL_test_assert(theHas_on_3(s1,cap2.first));
+            CGAL_test_assert(theHas_on_3(s2,cap2.first));
+            CGAL_test_assert(theHas_on_3(pl,cap2.first));
           }
           if(intersection_2.size() == 1) {
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_2[0])) {
-              assert(theHas_on_3(s1,circle));
-              assert(theHas_on_3(s3,circle));
-              assert(theHas_on_3(pl,circle));
+              CGAL_test_assert(theHas_on_3(s1,circle));
+              CGAL_test_assert(theHas_on_3(s3,circle));
+              CGAL_test_assert(theHas_on_3(pl,circle));
             }
             if(assign(cap,intersection_2[0])) {
-              assert(theHas_on_3(s1,cap.first));
-              assert(theHas_on_3(s3,cap.first));
-              assert(theHas_on_3(pl,cap.first));
+              CGAL_test_assert(theHas_on_3(s1,cap.first));
+              CGAL_test_assert(theHas_on_3(s3,cap.first));
+              CGAL_test_assert(theHas_on_3(pl,cap.first));
             }
           }
           if(intersection_2.size() == 2) {
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-            assert(assign(cap1,intersection_2[0]));
-            assert(assign(cap2,intersection_2[1]));
-            assert(theHas_on_3(s1,cap1.first));
-            assert(theHas_on_3(s3,cap1.first));
-            assert(theHas_on_3(pl,cap1.first));
-            assert(theHas_on_3(s1,cap2.first));
-            assert(theHas_on_3(s3,cap2.first));
-            assert(theHas_on_3(pl,cap2.first));
+            CGAL_test_assert(assign(cap1,intersection_2[0]));
+            CGAL_test_assert(assign(cap2,intersection_2[1]));
+            CGAL_test_assert(theHas_on_3(s1,cap1.first));
+            CGAL_test_assert(theHas_on_3(s3,cap1.first));
+            CGAL_test_assert(theHas_on_3(pl,cap1.first));
+            CGAL_test_assert(theHas_on_3(s1,cap2.first));
+            CGAL_test_assert(theHas_on_3(s3,cap2.first));
+            CGAL_test_assert(theHas_on_3(pl,cap2.first));
           }
         }
       }
@@ -870,51 +871,51 @@ void _test_intersection_construct(SK sk) {
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_1[0])) {
-              assert(theHas_on_3(s1,circle));
-              assert(theHas_on_3(p1,circle)); 
-              assert(theHas_on_3(pl,circle));
+              CGAL_test_assert(theHas_on_3(s1,circle));
+              CGAL_test_assert(theHas_on_3(p1,circle)); 
+              CGAL_test_assert(theHas_on_3(pl,circle));
             }
             if(assign(cap,intersection_1[0])) {
-              assert(theHas_on_3(s1,cap.first));
-              assert(theHas_on_3(p1,cap.first));
-              assert(theHas_on_3(pl,cap.first));
+              CGAL_test_assert(theHas_on_3(s1,cap.first));
+              CGAL_test_assert(theHas_on_3(p1,cap.first));
+              CGAL_test_assert(theHas_on_3(pl,cap.first));
             }
           }
           if(intersection_1.size() == 2) {
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-            assert(assign(cap1,intersection_1[0]));
-            assert(assign(cap2,intersection_1[1]));
-            assert(theHas_on_3(s1,cap1.first));
-            assert(theHas_on_3(p1,cap1.first));
-            assert(theHas_on_3(pl,cap1.first));
-            assert(theHas_on_3(s1,cap2.first));
-            assert(theHas_on_3(p1,cap2.first));
-            assert(theHas_on_3(pl,cap2.first));
+            CGAL_test_assert(assign(cap1,intersection_1[0]));
+            CGAL_test_assert(assign(cap2,intersection_1[1]));
+            CGAL_test_assert(theHas_on_3(s1,cap1.first));
+            CGAL_test_assert(theHas_on_3(p1,cap1.first));
+            CGAL_test_assert(theHas_on_3(pl,cap1.first));
+            CGAL_test_assert(theHas_on_3(s1,cap2.first));
+            CGAL_test_assert(theHas_on_3(p1,cap2.first));
+            CGAL_test_assert(theHas_on_3(pl,cap2.first));
           }
           if(intersection_2.size() == 1) {
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_2[0])) {
-              assert(theHas_on_3(s1,circle));
-              assert(theHas_on_3(p2,circle));
-              assert(theHas_on_3(pl,circle));
+              CGAL_test_assert(theHas_on_3(s1,circle));
+              CGAL_test_assert(theHas_on_3(p2,circle));
+              CGAL_test_assert(theHas_on_3(pl,circle));
             }
             if(assign(cap,intersection_2[0])) {
-              assert(theHas_on_3(s1,cap.first));
-              assert(theHas_on_3(p2,cap.first));
-              assert(theHas_on_3(pl,cap.first));
+              CGAL_test_assert(theHas_on_3(s1,cap.first));
+              CGAL_test_assert(theHas_on_3(p2,cap.first));
+              CGAL_test_assert(theHas_on_3(pl,cap.first));
             }
           }
           if(intersection_2.size() == 2) {
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-            assert(assign(cap1,intersection_2[0]));
-            assert(assign(cap2,intersection_2[1]));
-            assert(theHas_on_3(s1,cap1.first));
-            assert(theHas_on_3(p2,cap1.first));
-            assert(theHas_on_3(pl,cap1.first));
-            assert(theHas_on_3(s1,cap2.first));
-            assert(theHas_on_3(p2,cap2.first));
-            assert(theHas_on_3(pl,cap2.first));
+            CGAL_test_assert(assign(cap1,intersection_2[0]));
+            CGAL_test_assert(assign(cap2,intersection_2[1]));
+            CGAL_test_assert(theHas_on_3(s1,cap1.first));
+            CGAL_test_assert(theHas_on_3(p2,cap1.first));
+            CGAL_test_assert(theHas_on_3(pl,cap1.first));
+            CGAL_test_assert(theHas_on_3(s1,cap2.first));
+            CGAL_test_assert(theHas_on_3(p2,cap2.first));
+            CGAL_test_assert(theHas_on_3(pl,cap2.first));
           }
         }
       }
@@ -943,32 +944,32 @@ void _test_intersection_construct(SK sk) {
 
     std::vector< CGAL::Object > intersection_1;
     theIntersect_3(c1, c1, std::back_inserter(intersection_1));
-    assert(intersection_1.size() == 1);
+    CGAL_test_assert(intersection_1.size() == 1);
     Circle_3 circle;
-    assert(assign(circle,intersection_1[0]));
-    assert(circle == c1);
+    CGAL_test_assert(assign(circle,intersection_1[0]));
+    CGAL_test_assert(circle == c1);
 
     std::vector< CGAL::Object > intersection_2;
     theIntersect_3(c1, c2, std::back_inserter(intersection_2));
-    assert(intersection_2.size() == 2);
+    CGAL_test_assert(intersection_2.size() == 2);
     std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
-    assert(assign(cap1,intersection_2[0]));
-    assert(assign(cap2,intersection_2[1]));
-    assert(theHas_on_3(c1,cap1.first));
-    assert(theHas_on_3(c2,cap1.first));
-    assert(theHas_on_3(c1,cap2.first));
-    assert(theHas_on_3(c2,cap2.first));
+    CGAL_test_assert(assign(cap1,intersection_2[0]));
+    CGAL_test_assert(assign(cap2,intersection_2[1]));
+    CGAL_test_assert(theHas_on_3(c1,cap1.first));
+    CGAL_test_assert(theHas_on_3(c2,cap1.first));
+    CGAL_test_assert(theHas_on_3(c1,cap2.first));
+    CGAL_test_assert(theHas_on_3(c2,cap2.first));
 
     std::vector< CGAL::Object > intersection_3;
     theIntersect_3(c1, c3, std::back_inserter(intersection_3));
     if(a != 0) {
-      assert(intersection_3.size() == 0);
+      CGAL_test_assert(intersection_3.size() == 0);
     } else {
-      assert(intersection_3.size() == 1);
+      CGAL_test_assert(intersection_3.size() == 1);
       std::pair<Circular_arc_point_3, unsigned> cap;
-      assert(assign(cap,intersection_3[0]));
-      assert(theHas_on_3(c1,cap.first));
-      assert(theHas_on_3(c3,cap.first)); 
+      CGAL_test_assert(assign(cap,intersection_3[0]));
+      CGAL_test_assert(theHas_on_3(c1,cap.first));
+      CGAL_test_assert(theHas_on_3(c3,cap.first)); 
     }
 
     for(int vb=-5;vb<6;vb++) {
@@ -980,13 +981,13 @@ void _test_intersection_construct(SK sk) {
       Circle_3 c4 = theConstruct_circle_3(std::make_pair(es1, pol2));
       std::vector< CGAL::Object > intersection_4;
       theIntersect_3(c1, c4, std::back_inserter(intersection_4));
-      assert(intersection_4.size() == 2);
-      assert(assign(cap1,intersection_4[0]));
-      assert(assign(cap2,intersection_4[1]));
-      assert(theHas_on_3(c1,cap1.first));
-      assert(theHas_on_3(c4,cap1.first));
-      assert(theHas_on_3(c1,cap2.first));
-      assert(theHas_on_3(c4,cap2.first));
+      CGAL_test_assert(intersection_4.size() == 2);
+      CGAL_test_assert(assign(cap1,intersection_4[0]));
+      CGAL_test_assert(assign(cap2,intersection_4[1]));
+      CGAL_test_assert(theHas_on_3(c1,cap1.first));
+      CGAL_test_assert(theHas_on_3(c4,cap1.first));
+      CGAL_test_assert(theHas_on_3(c1,cap2.first));
+      CGAL_test_assert(theHas_on_3(c4,cap2.first));
     }
 
     const FT a_c = FT_Q(va,10);
@@ -997,13 +998,13 @@ void _test_intersection_construct(SK sk) {
     Circle_3 c5 = theConstruct_circle_3(std::make_pair(es2, pol2));
     std::vector< CGAL::Object > intersection_5;
     theIntersect_3(c1, c5, std::back_inserter(intersection_5));
-    assert(intersection_5.size() == 2);
-    assert(assign(cap1,intersection_5[0]));
-    assert(assign(cap2,intersection_5[1]));
-    assert(theHas_on_3(c1,cap1.first));
-    assert(theHas_on_3(c5,cap1.first));
-    assert(theHas_on_3(c1,cap2.first));
-    assert(theHas_on_3(c5,cap2.first));
+    CGAL_test_assert(intersection_5.size() == 2);
+    CGAL_test_assert(assign(cap1,intersection_5[0]));
+    CGAL_test_assert(assign(cap2,intersection_5[1]));
+    CGAL_test_assert(theHas_on_3(c1,cap1.first));
+    CGAL_test_assert(theHas_on_3(c5,cap1.first));
+    CGAL_test_assert(theHas_on_3(c1,cap2.first));
+    CGAL_test_assert(theHas_on_3(c5,cap2.first));
 
   }
 
@@ -1035,37 +1036,37 @@ void _test_intersection_construct(SK sk) {
         // tangent case for line 1
         // non-intersection for line 2
         if(vx == -1) {
-          assert(intersection_1.size() == 1);
+          CGAL_test_assert(intersection_1.size() == 1);
           std::pair<Circular_arc_point_3, unsigned > the_pair1;
-          assert(assign(the_pair1, intersection_1[0]));
-          assert(theHas_on_3(c1,the_pair1.first));
-          assert(theHas_on_3(l1,the_pair1.first));
+          CGAL_test_assert(assign(the_pair1, intersection_1[0]));
+          CGAL_test_assert(theHas_on_3(c1,the_pair1.first));
+          CGAL_test_assert(theHas_on_3(l1,the_pair1.first));
 
-          assert(intersection_2.size() == 0);
+          CGAL_test_assert(intersection_2.size() == 0);
         }
 
         // 2 intersections for line 1
         // 2 intersections for line 2
         else {
-          assert(intersection_1.size() == 2);
+          CGAL_test_assert(intersection_1.size() == 2);
           std::pair<Circular_arc_point_3, unsigned > the_pair1;
           std::pair<Circular_arc_point_3, unsigned > the_pair2;
-          assert(assign(the_pair1, intersection_1[0]));
-          assert(assign(the_pair2, intersection_1[1]));
-          assert(theHas_on_3(c1,the_pair1.first));
-          assert(theHas_on_3(l1,the_pair1.first));
-          assert(theHas_on_3(c1,the_pair2.first));
-          assert(theHas_on_3(l1,the_pair2.first));
+          CGAL_test_assert(assign(the_pair1, intersection_1[0]));
+          CGAL_test_assert(assign(the_pair2, intersection_1[1]));
+          CGAL_test_assert(theHas_on_3(c1,the_pair1.first));
+          CGAL_test_assert(theHas_on_3(l1,the_pair1.first));
+          CGAL_test_assert(theHas_on_3(c1,the_pair2.first));
+          CGAL_test_assert(theHas_on_3(l1,the_pair2.first));
 
-          assert(intersection_2.size() == 2);
+          CGAL_test_assert(intersection_2.size() == 2);
           std::pair<Circular_arc_point_3, unsigned > the_pair3;
           std::pair<Circular_arc_point_3, unsigned > the_pair4;
-          assert(assign(the_pair3, intersection_2[0]));
-          assert(assign(the_pair4, intersection_2[1]));
-          assert(theHas_on_3(c2,the_pair3.first));
-          assert(theHas_on_3(l2,the_pair3.first));
-          assert(theHas_on_3(c2,the_pair4.first));
-          assert(theHas_on_3(l2,the_pair4.first));
+          CGAL_test_assert(assign(the_pair3, intersection_2[0]));
+          CGAL_test_assert(assign(the_pair4, intersection_2[1]));
+          CGAL_test_assert(theHas_on_3(c2,the_pair3.first));
+          CGAL_test_assert(theHas_on_3(l2,the_pair3.first));
+          CGAL_test_assert(theHas_on_3(c2,the_pair4.first));
+          CGAL_test_assert(theHas_on_3(l2,the_pair4.first));
         }
       }
     }
@@ -1095,53 +1096,53 @@ void _test_intersection_construct(SK sk) {
                 theIntersect_3(la, lb, std::back_inserter(intersection_1));
                 if(t1 == t3) {
                   Line_arc_3 line_a;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
+                  CGAL_test_assert(intersection_1.size() == 1);
+                  CGAL_test_assert(assign(line_a, intersection_1[0]));
                   if(t2 <= t4) {
-                    assert(theEqual_3(line_a, la));
+                    CGAL_test_assert(theEqual_3(line_a, la));
                   } else {
-                    assert(theEqual_3(line_a, lb));
+                    CGAL_test_assert(theEqual_3(line_a, lb));
                   } 
                 } else if(t2 == t4) {
                   Line_arc_3 line_a;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
+                  CGAL_test_assert(intersection_1.size() == 1);
+                  CGAL_test_assert(assign(line_a, intersection_1[0]));
                   if(t1 > t3) {
-                    assert(theEqual_3(line_a, la));
+                    CGAL_test_assert(theEqual_3(line_a, la));
                   } else {
-                    assert(theEqual_3(line_a, lb));
+                    CGAL_test_assert(theEqual_3(line_a, lb));
                   }
                 }
                 else if((t1 == t4) || (t2 == t3)) {
                   std::pair<Circular_arc_point_3, unsigned> pair;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(pair, intersection_1[0]));
-                  if(t2 == t3) assert(theEqual_3(pair.first,target)); 
-                  if(t1 == t4) assert(theEqual_3(pair.first,source));
+                  CGAL_test_assert(intersection_1.size() == 1);
+                  CGAL_test_assert(assign(pair, intersection_1[0]));
+                  if(t2 == t3) CGAL_test_assert(theEqual_3(pair.first,target)); 
+                  if(t1 == t4) CGAL_test_assert(theEqual_3(pair.first,source));
                 } else if((t1 < t3) && (t3 < t2 )) {
                   Line_arc_3 line_a;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
+                  CGAL_test_assert(intersection_1.size() == 1);
+                  CGAL_test_assert(assign(line_a, intersection_1[0]));
                   if(t2 < t4) { 
                     Line_arc_3 line_b;
                     line_b = theConstruct_line_arc_3(l,sourcel,target);
-                    assert(theEqual_3(line_a, line_b));
+                    CGAL_test_assert(theEqual_3(line_a, line_b));
                   } else {
-                    assert(theEqual_3(line_a, lb));
+                    CGAL_test_assert(theEqual_3(line_a, lb));
                   } 
                 } else if((t3 < t1) && (t1 < t4)) {
                   Line_arc_3 line_a;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
+                  CGAL_test_assert(intersection_1.size() == 1);
+                  CGAL_test_assert(assign(line_a, intersection_1[0]));
                   if(t4 < t2) {
                     Line_arc_3 line_b;
                     line_b = theConstruct_line_arc_3(l,source,targetl);
-                    assert(theEqual_3(line_a, line_b));
+                    CGAL_test_assert(theEqual_3(line_a, line_b));
                   } else {
-                      assert(theEqual_3(line_a, la));
+                      CGAL_test_assert(theEqual_3(line_a, la));
                   }
                 } else {
-                  assert(intersection_1.size() == 0);
+                  CGAL_test_assert(intersection_1.size() == 0);
                 } 
               }
             } 
@@ -1207,29 +1208,29 @@ void _test_intersection_construct(SK sk) {
                       if(i == j) continue;
                       std::vector< CGAL::Object > intersection_1;
                       theIntersect_3(l[i], l[j], std::back_inserter(intersection_1));
-                      assert((intersection_1.size() == 0) || 
+                      CGAL_test_assert((intersection_1.size() == 0) || 
                              (intersection_1.size() == 1));
                       if(intersection_1.size() == 1) {
                         n_of_intersection++;
                         std::pair<Circular_arc_point_3, unsigned> pair;
-                        assert(assign(pair, intersection_1[0]));
-                        assert(theHas_on_3(l[i],pair.first));
-                        assert(theHas_on_3(l[j],pair.first));
+                        CGAL_test_assert(assign(pair, intersection_1[0]));
+                        CGAL_test_assert(theHas_on_3(l[i],pair.first));
+                        CGAL_test_assert(theHas_on_3(l[j],pair.first));
                         int n_of_edges = 2;
                         for(int k=0; k<6; k++) {
                           if(k == i) continue;
                           if(k == j) continue;
                           if(theHas_on_3(l[k],pair.first)) n_of_edges++;
                         }
-                        assert((n_of_edges == 2) || (n_of_edges == 3));
+                        CGAL_test_assert((n_of_edges == 2) || (n_of_edges == 3));
                       } 
                     }
-                    assert((n_of_intersection == 4) ||
+                    CGAL_test_assert((n_of_intersection == 4) ||
                            (n_of_intersection == 5));
                     if(n_of_intersection == 5) n_of_diagonals++;
                   }
                   // Non-Convex || Convex Polygon
-                  assert((n_of_diagonals == 0) || (n_of_diagonals == 2)); 
+                  CGAL_test_assert((n_of_diagonals == 0) || (n_of_diagonals == 2)); 
                 }
               }
             }
@@ -1282,120 +1283,120 @@ void _test_intersection_construct(SK sk) {
           std::pair< Circular_arc_point_3, unsigned > cp1, cp2;
           if(t1 == i) {
             if(t2 == j) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(ca,cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(ca,cres));
             } else if(simulate_has_on(i,j,t2)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(cb, cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(cb, cres));
             } else {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(ca, cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(ca, cres));
             } 
           } else if(t2 == j) {
             if(simulate_has_on(i,j,t1)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(cb, cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(cb, cres));
             } else {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(ca, cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(ca, cres));
             }
           } else if(t1 == j) {
             if(t2 == i) {
-              assert(intersection_1.size() == 2);
-              assert(assign(cp1,intersection_1[0]));
-              assert(assign(cp2,intersection_1[1]));
-              assert(theEqual_3(cp1.first, cp[i]) || 
+              CGAL_test_assert(intersection_1.size() == 2);
+              CGAL_test_assert(assign(cp1,intersection_1[0]));
+              CGAL_test_assert(assign(cp2,intersection_1[1]));
+              CGAL_test_assert(theEqual_3(cp1.first, cp[i]) || 
                      theEqual_3(cp1.first, cp[j]));
-              assert(theEqual_3(cp2.first, cp[i]) || 
+              CGAL_test_assert(theEqual_3(cp2.first, cp[i]) || 
                      theEqual_3(cp2.first, cp[j]));
-              assert(!theEqual_3(cp1.first, cp2.first));
+              CGAL_test_assert(!theEqual_3(cp1.first, cp2.first));
             } else if(simulate_has_on(t1,i,t2)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cp1,intersection_1[0]));
-              assert(theEqual_3(cp1.first, cp[t1]));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cp1,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(cp1.first, cp[t1]));
             } else {
-              assert(intersection_1.size() == 2);
+              CGAL_test_assert(intersection_1.size() == 2);
               if(assign(cp1,intersection_1[0]) && assign(cres,intersection_1[1]));
               else if(assign(cres,intersection_1[0]) && assign(cp1,intersection_1[1]));
-              else assert(false);
+              else CGAL_test_assert(false);
               Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
-              assert(theEqual_3(conf, cres));
-              assert(theEqual_3(cp1.first, cp[t1]));
+              CGAL_test_assert(theEqual_3(conf, cres));
+              CGAL_test_assert(theEqual_3(cp1.first, cp[t1]));
             } 
           } else if(t2 == i) {
             if(t1 == j) {
-              assert(intersection_1.size() == 2);
-              assert(assign(cp1,intersection_1[0]));
-              assert(assign(cp2,intersection_1[1]));
-              assert(theEqual_3(cp1.first, cp[i]) || 
+              CGAL_test_assert(intersection_1.size() == 2);
+              CGAL_test_assert(assign(cp1,intersection_1[0]));
+              CGAL_test_assert(assign(cp2,intersection_1[1]));
+              CGAL_test_assert(theEqual_3(cp1.first, cp[i]) || 
                      theEqual_3(cp1.first, cp[j]));
-              assert(theEqual_3(cp2.first, cp[i]) || 
+              CGAL_test_assert(theEqual_3(cp2.first, cp[i]) || 
                      theEqual_3(cp2.first, cp[j]));
-              assert(!theEqual_3(cp1.first, cp2.first));
+              CGAL_test_assert(!theEqual_3(cp1.first, cp2.first));
             } else if(simulate_has_on(j,i,t1)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cp1,intersection_1[0]));
-              assert(theEqual_3(cp1.first, cp[i]));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cp1,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(cp1.first, cp[i]));
             } else {
-              assert(intersection_1.size() == 2);
+              CGAL_test_assert(intersection_1.size() == 2);
               if(assign(cp1,intersection_1[0]) && assign(cres,intersection_1[1]));
               else if(assign(cres,intersection_1[0]) && assign(cp1,intersection_1[1]));
-              else assert(false);
+              else CGAL_test_assert(false);
               Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
-              assert(theEqual_3(conf, cres));
-              assert(theEqual_3(cp1.first, cp[i]));
+              CGAL_test_assert(theEqual_3(conf, cres));
+              CGAL_test_assert(theEqual_3(cp1.first, cp[i]));
             }
           } else if(simulate_has_on(i,j,t1)) {
             if(simulate_has_on(t1,j,t2)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(cb, cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(cb, cres));
             } else if(simulate_has_on(t2,j,i)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
               Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
-              assert(theEqual_3(cres, conf));
+              CGAL_test_assert(theEqual_3(cres, conf));
             } else {
-              assert(intersection_1.size() == 2);
-              assert(assign(cres,intersection_1[0]));
-              assert(assign(cres2,intersection_1[1]));
+              CGAL_test_assert(intersection_1.size() == 2);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(assign(cres2,intersection_1[1]));
               Circular_arc_3 conf1 = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
               Circular_arc_3 conf2 = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
-              assert((theEqual_3(cres, conf1) && theEqual_3(cres2, conf2)) ||
+              CGAL_test_assert((theEqual_3(cres, conf1) && theEqual_3(cres2, conf2)) ||
                      (theEqual_3(cres2, conf1) && theEqual_3(cres, conf2)));
             }
           } else if(simulate_has_on(i,j,t2)) {
             if(simulate_has_on(i,t2,t1)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
-              assert(theEqual_3(cb, cres));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(theEqual_3(cb, cres));
             } else if(simulate_has_on(j,i,t1)) {
-              assert(intersection_1.size() == 1);
-              assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(intersection_1.size() == 1);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
               Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
-              assert(theEqual_3(cres, conf));
+              CGAL_test_assert(theEqual_3(cres, conf));
             } else {
               // This case sould never happen, because it already happen before
-              assert(intersection_1.size() == 2);
-              assert(assign(cres,intersection_1[0]));
-              assert(assign(cres2,intersection_1[1]));
+              CGAL_test_assert(intersection_1.size() == 2);
+              CGAL_test_assert(assign(cres,intersection_1[0]));
+              CGAL_test_assert(assign(cres2,intersection_1[1]));
               Circular_arc_3 conf1 = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
               Circular_arc_3 conf2 = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
-              assert((theEqual_3(cres, conf1) && theEqual_3(cres2, conf2)) ||
+              CGAL_test_assert((theEqual_3(cres, conf1) && theEqual_3(cres2, conf2)) ||
                      (theEqual_3(cres2, conf1) && theEqual_3(cres, conf2)));
             }
           } else if(simulate_has_on(t1,t2,i)) {
             // the case whether (i,j) contains (t1,t2) is handled before
-            assert(intersection_1.size() == 1);
-            assert(assign(cres,intersection_1[0]));
-            assert(theEqual_3(ca, cres));
+            CGAL_test_assert(intersection_1.size() == 1);
+            CGAL_test_assert(assign(cres,intersection_1[0]));
+            CGAL_test_assert(theEqual_3(ca, cres));
           } else {
-            assert(intersection_1.size() == 0);
+            CGAL_test_assert(intersection_1.size() == 0);
           }
         }
       }
@@ -1424,12 +1425,12 @@ void _test_bbox(const typename SK::Circular_arc_point_3 &p)
   typedef CGAL::Bbox_3                                  Bbox_3;
   Construct_bbox_3 theConstruct_bbox_3 = SK().construct_bbox_3_object();
   Bbox_3 b = theConstruct_bbox_3(p);
-  assert(FT(b.xmin()) <= p.x());
-  assert(p.x() <= FT(b.xmax()));
-  assert(FT(b.ymin()) <= p.y());
-  assert(p.y() <= FT(b.ymax()));
-  assert(FT(b.zmin()) <= p.z());
-  assert(p.z() <= FT(b.zmax()));
+  CGAL_test_assert(FT(b.xmin()) <= p.x());
+  CGAL_test_assert(p.x() <= FT(b.xmax()));
+  CGAL_test_assert(FT(b.ymin()) <= p.y());
+  CGAL_test_assert(p.y() <= FT(b.ymax()));
+  CGAL_test_assert(FT(b.zmin()) <= p.z());
+  CGAL_test_assert(p.z() <= FT(b.zmax()));
 }
 
 // FOR THE TEST_BBOX OF A CIRCLE WE ASSUME THAT THE BOUNDING BOX
@@ -1483,9 +1484,9 @@ void _test_bbox(const typename SK::Circle_3 &c)
   const FT z1 = FT(b.zmin());
   const FT z2 = FT(b.zmax());
 
-  assert(x1 <= x2);
-  assert(y1 <= y2);
-  assert(z1 <= z2);
+  CGAL_test_assert(x1 <= x2);
+  CGAL_test_assert(y1 <= y2);
+  CGAL_test_assert(z1 <= z2);
 
   if(b.xmin() != b.xmax()) { 
     Plane_3 pt_xneg_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1-FT(FT_Q(1,100000))) ));
@@ -1502,10 +1503,10 @@ void _test_bbox(const typename SK::Circle_3 &c)
     theIntersect_3(c, pt_xpos_min, std::back_inserter(intersection_test_x_3));
     theIntersect_3(c, pt_xpos_max, std::back_inserter(intersection_test_x_4));
 
-    assert(intersection_test_x_1.size() == 0);
-    assert(intersection_test_x_2.size() > 0);
-    assert(intersection_test_x_3.size() > 0);
-    assert(intersection_test_x_4.size() == 0);
+    CGAL_test_assert(intersection_test_x_1.size() == 0);
+    CGAL_test_assert(intersection_test_x_2.size() > 0);
+    CGAL_test_assert(intersection_test_x_3.size() > 0);
+    CGAL_test_assert(intersection_test_x_4.size() == 0);
   }
 
   if(b.ymin() != b.ymax()) { 
@@ -1523,10 +1524,10 @@ void _test_bbox(const typename SK::Circle_3 &c)
     theIntersect_3(c, pt_ypos_min, std::back_inserter(intersection_test_y_3));
     theIntersect_3(c, pt_ypos_max, std::back_inserter(intersection_test_y_4));
 
-    assert(intersection_test_y_1.size() == 0);
-    assert(intersection_test_y_2.size() > 0);
-    assert(intersection_test_y_3.size() > 0);
-    assert(intersection_test_y_4.size() == 0);
+    CGAL_test_assert(intersection_test_y_1.size() == 0);
+    CGAL_test_assert(intersection_test_y_2.size() > 0);
+    CGAL_test_assert(intersection_test_y_3.size() > 0);
+    CGAL_test_assert(intersection_test_y_4.size() == 0);
   }
 
   if(b.zmin() != b.zmax()) { 
@@ -1544,10 +1545,10 @@ void _test_bbox(const typename SK::Circle_3 &c)
     theIntersect_3(c, pt_zpos_min, std::back_inserter(intersection_test_z_3));
     theIntersect_3(c, pt_zpos_max, std::back_inserter(intersection_test_z_4));
 
-    assert(intersection_test_z_1.size() == 0);
-    assert(intersection_test_z_2.size() > 0);
-    assert(intersection_test_z_3.size() > 0);
-    assert(intersection_test_z_4.size() == 0);
+    CGAL_test_assert(intersection_test_z_1.size() == 0);
+    CGAL_test_assert(intersection_test_z_2.size() > 0);
+    CGAL_test_assert(intersection_test_z_3.size() > 0);
+    CGAL_test_assert(intersection_test_z_4.size() == 0);
   }
 
 }
@@ -1695,22 +1696,22 @@ void _test_bounding_box_construct(SK sk)
             Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
             Bbox_3 b = theConstruct_bbox_3(la);
             if(vx != 0) {
-              assert(FT(b.xmin()) > (t1-1)*vx);
-              assert(FT(b.xmin()) <= t1*vx);
-              assert(FT(b.xmax()) >= t2*vx);
-              assert(FT(b.xmax()) < (t2+1)*vx);
+              CGAL_test_assert(FT(b.xmin()) > (t1-1)*vx);
+              CGAL_test_assert(FT(b.xmin()) <= t1*vx);
+              CGAL_test_assert(FT(b.xmax()) >= t2*vx);
+              CGAL_test_assert(FT(b.xmax()) < (t2+1)*vx);
             }
             if(vy != 0) {
-              assert(FT(b.ymin()) > (t1-1)*vy);
-              assert(FT(b.ymin()) <= t1*vy);
-              assert(FT(b.ymax()) >= t2*vy);
-              assert(FT(b.ymax()) < (t2+1)*vy);
+              CGAL_test_assert(FT(b.ymin()) > (t1-1)*vy);
+              CGAL_test_assert(FT(b.ymin()) <= t1*vy);
+              CGAL_test_assert(FT(b.ymax()) >= t2*vy);
+              CGAL_test_assert(FT(b.ymax()) < (t2+1)*vy);
             }
             if(vz != 0) {
-              assert(FT(b.zmin()) > (t1-1)*vz);
-              assert(FT(b.zmin()) <= t1*vz);
-              assert(FT(b.zmax()) >= t2*vz);
-              assert(FT(b.zmax()) < (t2+1)*vz);
+              CGAL_test_assert(FT(b.zmin()) > (t1-1)*vz);
+              CGAL_test_assert(FT(b.zmin()) <= t1*vz);
+              CGAL_test_assert(FT(b.zmax()) >= t2*vz);
+              CGAL_test_assert(FT(b.zmax()) < (t2+1)*vz);
             }
           }
         }
@@ -1786,10 +1787,10 @@ void _test_split_construct(SK sk) {
             Point_3 mdl = Point_3(a*tm,b*tm,c*tm);
             Line_arc_3 l1, l2;
             theSplit_3(la, mdl, l1, l2);
-            assert(theEqual_3(l1.source(), la.source()));
-            assert(theEqual_3(l1.target(), mdl));
-            assert(theEqual_3(l2.source(), mdl));
-            assert(theEqual_3(l2.target(), la.target()));
+            CGAL_test_assert(theEqual_3(l1.source(), la.source()));
+            CGAL_test_assert(theEqual_3(l1.target(), mdl));
+            CGAL_test_assert(theEqual_3(l2.source(), mdl));
+            CGAL_test_assert(theEqual_3(l2.target(), la.target()));
           }
         }
       }
@@ -1827,15 +1828,15 @@ void _test_split_construct(SK sk) {
           Circular_arc_3 c1, c2;
           theSplit_3(ca, cp[t], c1, c2);
           if(SK().compare_xyz_3_object()(ca.source(), cp[t]) == CGAL::NEGATIVE) {
-            assert(theEqual_3(c1.source(), ca.source()));
-            assert(theEqual_3(c1.target(), cp[t]));
-            assert(theEqual_3(c2.source(), cp[t]));
-            assert(theEqual_3(c2.target(), ca.target()));
+            CGAL_test_assert(theEqual_3(c1.source(), ca.source()));
+            CGAL_test_assert(theEqual_3(c1.target(), cp[t]));
+            CGAL_test_assert(theEqual_3(c2.source(), cp[t]));
+            CGAL_test_assert(theEqual_3(c2.target(), ca.target()));
           } else {
-            assert(theEqual_3(c1.source(), cp[t]));
-            assert(theEqual_3(c1.target(), ca.target()));
-            assert(theEqual_3(c2.source(), ca.source()));
-            assert(theEqual_3(c2.target(), cp[t]));
+            CGAL_test_assert(theEqual_3(c1.source(), cp[t]));
+            CGAL_test_assert(theEqual_3(c1.target(), ca.target()));
+            CGAL_test_assert(theEqual_3(c2.source(), ca.source()));
+            CGAL_test_assert(theEqual_3(c2.target(), cp[t]));
           }
         }
       }
@@ -1909,26 +1910,26 @@ void _test_construct_radical_plane(SK sk) {
           Plane_3 p = theConstruct_radical_plane_3(s, sl_1);
           // No intersection
           if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) {
-            assert(intersection_1.size() == 0);
+            CGAL_test_assert(intersection_1.size() == 0);
             std::vector< CGAL::Object > intersection_21, intersection_22;
             theIntersect_3(p, sl_1, std::back_inserter(intersection_21));
             theIntersect_3(p, s, std::back_inserter(intersection_22));
-            assert(intersection_21.size() == 0);
-            assert(intersection_22.size() == 0);
+            CGAL_test_assert(intersection_21.size() == 0);
+            CGAL_test_assert(intersection_22.size() == 0);
           } 
           // Tangent, 1 Intersection
           else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
-            assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
             std::pair<Circular_arc_point_3, unsigned > the_pair1;
-            assert(assign(the_pair1, intersection_1[0]));
-            assert(theHas_on_3(p,the_pair1.first));
+            CGAL_test_assert(assign(the_pair1, intersection_1[0]));
+            CGAL_test_assert(theHas_on_3(p,the_pair1.first));
           }
           // 1 Intersection Circle
           else {
-            assert(intersection_1.size() == 1);
+            CGAL_test_assert(intersection_1.size() == 1);
             Circle_3 circle1;
-            assert(assign(circle1, intersection_1[0]));
-            assert(theHas_on_3(p,circle1));
+            CGAL_test_assert(assign(circle1, intersection_1[0]));
+            CGAL_test_assert(theHas_on_3(p,circle1));
           }
         }
       }

@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include<cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
@@ -117,18 +117,18 @@ int main() {
     
     // solve it
     Solution s = CGAL::solve_quadratic_program (p, ET(), options);
-    assert (s.is_valid());
+    CGAL_test_assert(s.is_valid());
     statistics (s, qp_optimal, qp_infeasible, qp_unbounded);
 
     // also solve it as nqp, lp, nlp
     s = CGAL::solve_nonnegative_quadratic_program (p, ET(), options); 
-    assert (s.is_valid());
+    CGAL_test_assert(s.is_valid());
     statistics (s, nqp_optimal, nqp_infeasible, nqp_unbounded);
     s = CGAL::solve_linear_program (p, ET(), options);    
-    assert (s.is_valid()); 
+    CGAL_test_assert(s.is_valid()); 
     statistics (s, lp_optimal, lp_infeasible, lp_unbounded);
     s = CGAL::solve_nonnegative_linear_program (p, ET(), options);   
-    assert (s.is_valid());  
+    CGAL_test_assert(s.is_valid());  
     statistics (s, nlp_optimal, nlp_infeasible, nlp_unbounded);
   }
   

@@ -30,7 +30,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 typedef double                        NT;
 typedef CGAL::Cartesian<NT>           K;

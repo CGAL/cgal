@@ -1,5 +1,4 @@
 #include "numrep1.h"
-#include <assert.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Ray_3.h>
 #include <CGAL/Plane_3.h>

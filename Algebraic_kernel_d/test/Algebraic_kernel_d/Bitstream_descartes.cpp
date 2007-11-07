@@ -20,6 +20,7 @@
 */
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 
 // include these traits here by 'hand', since not in release 3.3
 #include <CGAL/Algebraic_extension_traits.h>

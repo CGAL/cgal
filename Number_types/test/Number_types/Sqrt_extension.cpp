@@ -1,5 +1,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>

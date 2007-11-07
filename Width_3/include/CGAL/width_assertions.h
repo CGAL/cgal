@@ -112,7 +112,7 @@
 // #define NDEBUG // discard assertions. Changed since it violates std: L.K.
 #endif
 
-#include <assert.h>
+#include <cassert>
 
 #endif //#WIDTH_DEBUG_H
 

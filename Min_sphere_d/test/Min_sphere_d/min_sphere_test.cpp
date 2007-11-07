@@ -37,7 +37,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <sstream>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Min_sphere_annulus_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Gmpq.h>
@@ -120,20 +120,20 @@ int main ()
     // default
     #ifdef __BORLANDC__
     // problems with default traits argument in constructor calls
-    Min_sphereC         msC_empty(tC); assert (msC_empty.is_valid(verbose));
-    Min_sphereH         msH_empty(tH); assert (msH_empty.is_valid(verbose));
+    Min_sphereC         msC_empty(tC); CGAL_test_assert(msC_empty.is_valid(verbose));
+    Min_sphereH         msH_empty(tH); CGAL_test_assert(msH_empty.is_valid(verbose));
     #else
-    Min_sphereC         msC_empty; assert (msC_empty.is_valid(verbose));
-    Min_sphereH         msH_empty; assert (msH_empty.is_valid(verbose));
+    Min_sphereC         msC_empty; CGAL_test_assert(msC_empty.is_valid(verbose));
+    Min_sphereH         msH_empty; CGAL_test_assert(msH_empty.is_valid(verbose));
     #endif
     
     // from range
-    Min_sphereC         msC (PC, PC+n, tC); assert (msC.is_valid(verbose));
-    Min_sphereH         msH (PH, PH+n, tH); assert (msH.is_valid(verbose));
+    Min_sphereC         msC (PC, PC+n, tC); CGAL_test_assert(msC.is_valid(verbose));
+    Min_sphereH         msH (PH, PH+n, tH); CGAL_test_assert(msH.is_valid(verbose));
     
     // copy
-    Min_sphereC         msC1 (msC); assert (msC1.is_valid(verbose));
-    Min_sphereH         msH1 (msH); assert (msH1.is_valid(verbose));
+    Min_sphereC         msC1 (msC); CGAL_test_assert(msC1.is_valid(verbose));
+    Min_sphereH         msH1 (msH); CGAL_test_assert(msH1.is_valid(verbose));
     
     PointC              centerC (msC.center()), centerC1 (msC1.center());
     PointH              centerH (msH.center()), centerH1 (msH1.center());
@@ -143,73 +143,73 @@ int main ()
     Quotient<RT>        radiusH (msH.squared_radius()),
                         radiusH1 (msH1.squared_radius());
     
-    assert (equals (centerC, centerH));
-    assert (centerC == centerC1); assert(centerH == centerH1);
-    assert (equals (radiusC, radiusH));
-    assert (radiusC == radiusC1); assert(radiusH == radiusH1);
+    CGAL_test_assert(equals (centerC, centerH));
+    CGAL_test_assert(centerC == centerC1); CGAL_test_assert(centerH == centerH1);
+    CGAL_test_assert(equals (radiusC, radiusH));
+    CGAL_test_assert(radiusC == radiusC1); CGAL_test_assert(radiusH == radiusH1);
     
     // assignment
     msC1 = msC; msH1 = msH;
-    assert (centerC == centerC1); assert(centerH == centerH1);
-    assert (radiusC == radiusC1); assert(radiusH == radiusH1);
+    CGAL_test_assert(centerC == centerC1); CGAL_test_assert(centerH == centerH1);
+    CGAL_test_assert(radiusC == radiusC1); CGAL_test_assert(radiusH == radiusH1);
     
     
     // test set method
-    msC.set (PC, PC+n); assert (msC.is_valid(verbose));
-    msH.set (PH, PH+n); assert (msH.is_valid(verbose));
-    assert (centerC == msC.center());
-    assert (centerH == msH.center());
-    assert (radiusC == msC.squared_radius());
-    assert (radiusH == msH.squared_radius());
+    msC.set (PC, PC+n); CGAL_test_assert(msC.is_valid(verbose));
+    msH.set (PH, PH+n); CGAL_test_assert(msH.is_valid(verbose));
+    CGAL_test_assert(centerC == msC.center());
+    CGAL_test_assert(centerH == msH.center());
+    CGAL_test_assert(radiusC == msC.squared_radius());
+    CGAL_test_assert(radiusH == msH.squared_radius());
     
     // test clear and insert methods
-    msC.clear(); assert (msC.is_valid(verbose));
-    msH.clear(); assert (msH.is_valid(verbose));
-    msC.insert (PC, PC+n); assert (msC.is_valid(verbose));
-    msH.insert (PH, PH+n); assert (msH.is_valid(verbose));
-    assert (centerC == msC.center());
-    assert (centerH == msH.center());
-    assert (radiusC == msC.squared_radius());
-    assert (radiusH == msH.squared_radius());
+    msC.clear(); CGAL_test_assert(msC.is_valid(verbose));
+    msH.clear(); CGAL_test_assert(msH.is_valid(verbose));
+    msC.insert (PC, PC+n); CGAL_test_assert(msC.is_valid(verbose));
+    msH.insert (PH, PH+n); CGAL_test_assert(msH.is_valid(verbose));
+    CGAL_test_assert(centerC == msC.center());
+    CGAL_test_assert(centerH == msH.center());
+    CGAL_test_assert(radiusC == msC.squared_radius());
+    CGAL_test_assert(radiusH == msH.squared_radius());
     
     // combined set and insert
     msC.set (PC, PC+n/2); msC.insert (PC+n/2, PC+n);
-    assert (msC.is_valid(verbose));
+    CGAL_test_assert(msC.is_valid(verbose));
     msH.set (PH, PH+n/2); msH.insert (PH+n/2, PH+n);
-    assert (msH.is_valid(verbose));
-    assert (centerC == msC.center());
-    assert (centerH == msH.center());
-    assert (radiusC == msC.squared_radius());
-    assert (radiusH == msH.squared_radius());
+    CGAL_test_assert(msH.is_valid(verbose));
+    CGAL_test_assert(centerC == msC.center());
+    CGAL_test_assert(centerH == msH.center());
+    CGAL_test_assert(radiusC == msC.squared_radius());
+    CGAL_test_assert(radiusH == msH.squared_radius());
     
     
     // test access functions
     
     // number_of_points
-    assert (msC.number_of_points() == n);
-    assert (msH.number_of_points() == n);
+    CGAL_test_assert(msC.number_of_points() == n);
+    CGAL_test_assert(msH.number_of_points() == n);
     
     // number_of_support_points
-    assert (msC.number_of_support_points() == msH.number_of_support_points());
+    CGAL_test_assert(msC.number_of_support_points() == msH.number_of_support_points());
     
     // points_begin, points_end
     int m;
     m = std::distance (msC.points_begin(), msC.points_end());
-    assert (m == n);
+    CGAL_test_assert(m == n);
     m = std::distance (msH.points_begin(), msH.points_end());
-    assert (m == n);
+    CGAL_test_assert(m == n);
     
     // support_points_begin, support_points_end
     m =
     std::distance (msC.support_points_begin(), msC.support_points_end());
-    assert (m == msC.number_of_support_points());
+    CGAL_test_assert(m == msC.number_of_support_points());
     m =
     std::distance (msH.support_points_begin(), msH.support_points_end());
-    assert (m == msH.number_of_support_points());
+    CGAL_test_assert(m == msH.number_of_support_points());
     
     // ambient dim
-    assert (msC.ambient_dimension() == D);
-    assert (msH.ambient_dimension() == D);
+    CGAL_test_assert(msC.ambient_dimension() == D);
+    CGAL_test_assert(msH.ambient_dimension() == D);
     
     // center and squared radius already tested
     
@@ -217,23 +217,23 @@ int main ()
     // test predicates
     
     // bounded_side
-    assert (msC.bounded_side (centerC) == ON_BOUNDED_SIDE);
-    assert (msH.bounded_side (centerH) == ON_BOUNDED_SIDE);
+    CGAL_test_assert(msC.bounded_side (centerC) == ON_BOUNDED_SIDE);
+    CGAL_test_assert(msH.bounded_side (centerH) == ON_BOUNDED_SIDE);
     
     // has_on_bounded_side
-    assert (msC.has_on_bounded_side (centerC));
-    assert (msH.has_on_bounded_side (centerH));
+    CGAL_test_assert(msC.has_on_bounded_side (centerC));
+    CGAL_test_assert(msH.has_on_bounded_side (centerH));
     
     // has_on_boundary already tested in is_valid method
     // has_on_unbounded_side already tested in is_valid method
     
     // is_empty
-    assert (!msC.is_empty());
-    assert (!msH.is_empty());
+    CGAL_test_assert(!msC.is_empty());
+    CGAL_test_assert(!msH.is_empty());
     
     // is_degenerate
-    assert (!msC.is_degenerate());
-    assert (!msH.is_degenerate());
+    CGAL_test_assert(!msC.is_degenerate());
+    CGAL_test_assert(!msH.is_degenerate());
     
     
     std::ostringstream ost;           // output string
@@ -244,10 +244,10 @@ int main ()
     set_ascii_mode (ist);
     ist >> msC >> msH;              // read spheres
     
-    assert (centerC == msC.center());
-    assert (centerH == msH.center());
-    assert (radiusC == msC.squared_radius());
-    assert (radiusH == msH.squared_radius());
+    CGAL_test_assert(centerC == msC.center());
+    CGAL_test_assert(centerH == msH.center());
+    CGAL_test_assert(radiusC == msC.squared_radius());
+    CGAL_test_assert(radiusH == msH.squared_radius());
     
     return 0;
 }

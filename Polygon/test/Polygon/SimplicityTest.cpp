@@ -16,7 +16,7 @@ typedef CGAL::Quotient<CGAL::MP_Float> NT;
 #include <vector>
 #include <fstream>
 #include <cstdlib>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 
 using std::cout;
 using std::endl;
@@ -65,10 +65,10 @@ void TestDegenerateCases()
   std::vector<Point> polygon;
 
   polygon.push_back(Point(1,1));
-  assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
+  CGAL_test_assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
 
   polygon.push_back(Point(1,2));
-  assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
+  CGAL_test_assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
 }
 
 int main()

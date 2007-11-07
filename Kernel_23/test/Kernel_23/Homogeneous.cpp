@@ -20,7 +20,7 @@
 
 
 #include <CGAL/Homogeneous.h>
-#include <cassert>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/intersection_3.h>
 
 #include "CGAL/Precise_numbers.h"
@@ -59,11 +59,11 @@ test_basic()
   Plane pl( ep1, ep2, ep3);
   CGAL::Object o = CGAL::intersection( pl, Line( p, pl.orthogonal_direction()));
   Point ip;
-  assert( CGAL::assign(ip,o) );
-  assert( pl.has_on(ip) );
+  CGAL_test_assert( CGAL::assign(ip,o) );
+  CGAL_test_assert( pl.has_on(ip) );
   Point pp = CGAL::_projection(p, pl);
-  assert( pl.has_on(pp) );
-  assert( pp == ip );
+  CGAL_test_assert( pl.has_on(pp) );
+  CGAL_test_assert( pp == ip );
 }
  
 

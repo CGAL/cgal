@@ -57,69 +57,69 @@ _test_fct_vector_3(const R& )
  CGAL::Vector_3<R>  v11(-n6, n11,-n12, n8);// ( 6, 8, -18)
  CGAL::Vector_3<R>  v12(n1, n2, -n3, n4);  // ( 6,-2, -3)
 
- assert( orientation(v0, v0, v0) == CGAL::COPLANAR );
- assert( orientation(v1, v1, v1) == CGAL::COPLANAR );
- assert( orientation(v1, v1, v2) == CGAL::COPLANAR );
- assert( orientation(v1, v2, v1) == CGAL::COPLANAR );
- assert( orientation(v2, v1, v1) == CGAL::COPLANAR );
- assert( orientation(v1, v2, v3) == CGAL::COPLANAR );
- assert( orientation(v1, v2, v12) == CGAL::POSITIVE );
- assert( orientation(v1, v12, v2) == CGAL::NEGATIVE );
+ CGAL_test_assert( orientation(v0, v0, v0) == CGAL::COPLANAR );
+ CGAL_test_assert( orientation(v1, v1, v1) == CGAL::COPLANAR );
+ CGAL_test_assert( orientation(v1, v1, v2) == CGAL::COPLANAR );
+ CGAL_test_assert( orientation(v1, v2, v1) == CGAL::COPLANAR );
+ CGAL_test_assert( orientation(v2, v1, v1) == CGAL::COPLANAR );
+ CGAL_test_assert( orientation(v1, v2, v3) == CGAL::COPLANAR );
+ CGAL_test_assert( orientation(v1, v2, v12) == CGAL::POSITIVE );
+ CGAL_test_assert( orientation(v1, v12, v2) == CGAL::NEGATIVE );
 
- assert( determinant(v0, v0, v0) == 0 );
- assert( determinant(v1, v1, v1) == 0 );
- assert( determinant(v1, v1, v2) == 0 );
- assert( determinant(v1, v2, v1) == 0 );
- assert( determinant(v2, v1, v1) == 0 );
- assert( determinant(v1, v2, v3) == 0 );
- assert( determinant(v1, v2, v12) == 180 );
- assert( determinant(v1, v12, v2) == -180 );
+ CGAL_test_assert( determinant(v0, v0, v0) == 0 );
+ CGAL_test_assert( determinant(v1, v1, v1) == 0 );
+ CGAL_test_assert( determinant(v1, v1, v2) == 0 );
+ CGAL_test_assert( determinant(v1, v2, v1) == 0 );
+ CGAL_test_assert( determinant(v2, v1, v1) == 0 );
+ CGAL_test_assert( determinant(v1, v2, v3) == 0 );
+ CGAL_test_assert( determinant(v1, v2, v12) == 180 );
+ CGAL_test_assert( determinant(v1, v12, v2) == -180 );
 
- assert( v1 + v2 == v3 );
- assert( v1 - v2 == v4 );
- assert( v3 - v1 == v2 );
- assert( v3 - v2 == v1 );
- assert( v4 + v2 == v1 );
- assert( v4 + v2 == v3 - v2);
-
- std::cout << '.';
-
- assert( (-(- v1)) == v1 );
- assert( -v4 == mv4);
- assert( mv4 == v2 - v1);
- assert( -( v1 - v2) == mv4);
- assert( v1 + v0 == v1 );
- assert( v0 - v4 == mv4 );
- assert( v0 + v4 == v4 );
- assert( v2 - v0 == v2 );
+ CGAL_test_assert( v1 + v2 == v3 );
+ CGAL_test_assert( v1 - v2 == v4 );
+ CGAL_test_assert( v3 - v1 == v2 );
+ CGAL_test_assert( v3 - v2 == v1 );
+ CGAL_test_assert( v4 + v2 == v1 );
+ CGAL_test_assert( v4 + v2 == v3 - v2);
 
  std::cout << '.';
 
- assert( v1.squared_length() == FT(49) );
- assert( v1 * v2 == FT(66) );
- assert( v1 * v0 == FT(0) );
- assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * RT(2));
- assert( CGAL::Vector_3<R>( n5, n6, n7) == v2 * RT(3));
- assert( CGAL::Vector_3<R>( n1, n2, n3) == RT(2) * v1);
- assert( CGAL::Vector_3<R>( n5, n6, n7) == RT(3) * v2);
- assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * FT(2));
- assert( CGAL::Vector_3<R>( n5, n6, n7) == v2 * FT(3));
- assert( CGAL::Vector_3<R>( n1, n2, n3) == FT(2) * v1);
- assert( CGAL::Vector_3<R>( n5, n6, n7) == FT(3) * v2);
- assert( v2 / RT(3) == CGAL::Vector_3<R>( RT(1), -n4, -n2) );
- assert( (v2 * RT(3)) / RT(3) == v2 );
- assert( (v2 / RT(3)) * RT(3) == v2 );
-
- assert( (v4 / (FT(n1)/FT(n3))) == v10 );
- assert( (v4 * (FT(n1)/FT(n3))) == v11 );
- assert( (v4 / (FT(n3)/FT(n1))) == v11 );
- assert( (v4 * (FT(n3)/FT(n1))) == v10 );
+ CGAL_test_assert( (-(- v1)) == v1 );
+ CGAL_test_assert( -v4 == mv4);
+ CGAL_test_assert( mv4 == v2 - v1);
+ CGAL_test_assert( -( v1 - v2) == mv4);
+ CGAL_test_assert( v1 + v0 == v1 );
+ CGAL_test_assert( v0 - v4 == mv4 );
+ CGAL_test_assert( v0 + v4 == v4 );
+ CGAL_test_assert( v2 - v0 == v2 );
 
  std::cout << '.';
 
- assert( v2.cartesian(0) == v2[0] );
- assert( v2.cartesian(1) == v2[1] );
- assert( v2.cartesian(2) == v2[2] );
+ CGAL_test_assert( v1.squared_length() == FT(49) );
+ CGAL_test_assert( v1 * v2 == FT(66) );
+ CGAL_test_assert( v1 * v0 == FT(0) );
+ CGAL_test_assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * RT(2));
+ CGAL_test_assert( CGAL::Vector_3<R>( n5, n6, n7) == v2 * RT(3));
+ CGAL_test_assert( CGAL::Vector_3<R>( n1, n2, n3) == RT(2) * v1);
+ CGAL_test_assert( CGAL::Vector_3<R>( n5, n6, n7) == RT(3) * v2);
+ CGAL_test_assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * FT(2));
+ CGAL_test_assert( CGAL::Vector_3<R>( n5, n6, n7) == v2 * FT(3));
+ CGAL_test_assert( CGAL::Vector_3<R>( n1, n2, n3) == FT(2) * v1);
+ CGAL_test_assert( CGAL::Vector_3<R>( n5, n6, n7) == FT(3) * v2);
+ CGAL_test_assert( v2 / RT(3) == CGAL::Vector_3<R>( RT(1), -n4, -n2) );
+ CGAL_test_assert( (v2 * RT(3)) / RT(3) == v2 );
+ CGAL_test_assert( (v2 / RT(3)) * RT(3) == v2 );
+
+ CGAL_test_assert( (v4 / (FT(n1)/FT(n3))) == v10 );
+ CGAL_test_assert( (v4 * (FT(n1)/FT(n3))) == v11 );
+ CGAL_test_assert( (v4 / (FT(n3)/FT(n1))) == v11 );
+ CGAL_test_assert( (v4 * (FT(n3)/FT(n1))) == v10 );
+
+ std::cout << '.';
+
+ CGAL_test_assert( v2.cartesian(0) == v2[0] );
+ CGAL_test_assert( v2.cartesian(1) == v2[1] );
+ CGAL_test_assert( v2.cartesian(2) == v2[2] );
 
 
  CGAL::Point_3<R> p0(CGAL::ORIGIN);
@@ -127,32 +127,32 @@ _test_fct_vector_3(const R& )
  CGAL::Point_3<R> p2 = CGAL::ORIGIN + v2;
  CGAL::Point_3<R> p3 = CGAL::ORIGIN + v3;
 
- assert( CGAL::ORIGIN + v2 == CGAL::Point_3<R>( n5, n6, n7, n8) );
- assert( CGAL::ORIGIN - v2 == CGAL::Point_3<R>( -n5, -n6, -n7, n8) );
- assert( p1 - p1 == v0 );
- assert( p1 - p0 == p1 - CGAL::ORIGIN);
- assert( p0 - p1 == CGAL::ORIGIN - p1);
- assert( p1 - p2 == v4 );
- assert( p2 + v4 == p1 );
- assert( p3 - v1 == p2 );
- assert( p3 - p1 == v2 );
+ CGAL_test_assert( CGAL::ORIGIN + v2 == CGAL::Point_3<R>( n5, n6, n7, n8) );
+ CGAL_test_assert( CGAL::ORIGIN - v2 == CGAL::Point_3<R>( -n5, -n6, -n7, n8) );
+ CGAL_test_assert( p1 - p1 == v0 );
+ CGAL_test_assert( p1 - p0 == p1 - CGAL::ORIGIN);
+ CGAL_test_assert( p0 - p1 == CGAL::ORIGIN - p1);
+ CGAL_test_assert( p1 - p2 == v4 );
+ CGAL_test_assert( p2 + v4 == p1 );
+ CGAL_test_assert( p3 - v1 == p2 );
+ CGAL_test_assert( p3 - p1 == v2 );
 
  std::cout << '.';
 
  CGAL::Vector_3<R> evx( n5, n0, n0, n5);
  CGAL::Vector_3<R> evy( n0, n5, n0, n5);
  CGAL::Vector_3<R> evz( n0, n0, n5, n5);
- assert( CGAL::cross_product(evx,evy) == evz );
- assert( CGAL::cross_product(evy,evx) == - evz );
+ CGAL_test_assert( CGAL::cross_product(evx,evy) == evz );
+ CGAL_test_assert( CGAL::cross_product(evy,evx) == - evz );
  RT ns1(90);
  RT ns2(189);
  RT ns3(60);
  RT ns4(126);
  CGAL::Vector_3<R> vs1(-n6,ns2,ns1,-n8);   // (-6,-63,-30)
- assert( CGAL::cross_product(v1,v2) == vs1 );
+ CGAL_test_assert( CGAL::cross_product(v1,v2) == vs1 );
  CGAL::Vector_3<R> vs2(n1,ns4,ns3,n4);     // (6,63,30)
- assert( CGAL::cross_product(v1,v4) == vs2 );
- assert( CGAL::cross_product(v1,mv4) == - vs2 );
+ CGAL_test_assert( CGAL::cross_product(v1,v4) == vs2 );
+ CGAL_test_assert( CGAL::cross_product(v1,mv4) == - vs2 );
 
  {
   CGAL::Point_3<R> p0(4,2,1,1);
@@ -165,10 +165,10 @@ _test_fct_vector_3(const R& )
   CGAL::Vector_3<R> v10(r1);
   CGAL::Vector_3<R> v11(l1);
 
-  assert( v8 == (p1-p0) );
-  assert( v8 == v9 );
-  assert( v10.direction() == v8.direction() );
-  assert( v11.direction() == v8.direction() );
+  CGAL_test_assert( v8 == (p1-p0) );
+  CGAL_test_assert( v8 == v9 );
+  CGAL_test_assert( v10.direction() == v8.direction() );
+  CGAL_test_assert( v11.direction() == v8.direction() );
  }
 
  std::cout << "done" << std::endl;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/_test_algebraic_structure.h>
 #include <CGAL/_test_real_embeddable.h>
 #include <CGAL/Uncertain.h>

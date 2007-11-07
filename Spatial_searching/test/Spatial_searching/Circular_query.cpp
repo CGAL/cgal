@@ -6,6 +6,7 @@
 // 3) check if no remaining points should have been reported
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Testsuite/assert.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/point_generators_2.h>
@@ -45,7 +46,7 @@ int main() {
   std::list<Point> copy_all_points(all_points);
   std::list<Point>::iterator pt;
   for (pt=result.begin(); (pt != result.end()); ++pt) {
-    assert(CGAL::squared_distance(center,*pt)<=0.04);
+    CGAL_test_assert(CGAL::squared_distance(center,*pt)<=0.04);
     copy_all_points.remove(*pt);
   }
   
@@ -53,7 +54,7 @@ int main() {
     if(CGAL::squared_distance(center,*pt)<=0.04){
       std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
     }
-    assert(CGAL::squared_distance(center,*pt)>0.04);
+    CGAL_test_assert(CGAL::squared_distance(center,*pt)>0.04);
   }
 
 
@@ -65,7 +66,7 @@ int main() {
   // test the results of the approximate query
   for (pt=result.begin(); (pt != result.end()); ++pt) {
     // a point we found may be slighlty outside the circle
-    assert(CGAL::squared_distance(center,*pt)<=0.09);
+    CGAL_test_assert(CGAL::squared_distance(center,*pt)<=0.09);
     all_points.remove(*pt);
   }
   
@@ -73,7 +74,7 @@ int main() {
     if(CGAL::squared_distance(center,*pt)<=0.01){
       std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
     }
-    assert(CGAL::squared_distance(center,*pt)> 0.01);
+    CGAL_test_assert(CGAL::squared_distance(center,*pt)> 0.01);
   }
   std::cout << "done" << std::endl;
   return 0;

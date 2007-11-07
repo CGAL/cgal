@@ -56,9 +56,9 @@ _test_fct_plane_sqrt_3(const R&, CGAL::Tag_true)
  Plane_3 ql5 (q1, q0, q5);
  Plane_3 bl3 = CGAL::bisector(ql1, ql2);
 
- assert( bl3 == ql3 );
- assert( CGAL::bisector(ql4, ql2) == ql3 );
- assert( CGAL::bisector(ql1, ql5) == ql1 );
+ CGAL_test_assert( bl3 == ql3 );
+ CGAL_test_assert( CGAL::bisector(ql4, ql2) == ql3 );
+ CGAL_test_assert( CGAL::bisector(ql1, ql5) == ql1 );
 
  return true;
 }
@@ -93,13 +93,13 @@ _test_fct_plane_3(const R& )
  Plane_3 h2 = CGAL::bisector(p3, p2);
  Plane_3 h3 (p12, p1, p13);
  Plane_3 h4 (p1, p12, p13);
- assert(h1 == h3);
- assert(h2 == h4);
- assert(h1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
+ CGAL_test_assert(h1 == h3);
+ CGAL_test_assert(h2 == h4);
+ CGAL_test_assert(h1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
 
  Plane_3 h5 (p7, p8, p9);
- assert(   CGAL::parallel(h1, h2) );
- assert( ! CGAL::parallel(h1, h5) );
+ CGAL_test_assert(   CGAL::parallel(h1, h2) );
+ CGAL_test_assert( ! CGAL::parallel(h1, h5) );
 
  // More tests, that require sqrt().
  typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
