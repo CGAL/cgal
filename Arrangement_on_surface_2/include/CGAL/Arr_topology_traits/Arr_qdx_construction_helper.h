@@ -77,7 +77,7 @@ protected:
     Face_handle m_top_face;
     
     //! Indices of the curves that "see" the rightmost face
-    Indices_list m_subcurves_at_rmf;
+    Indices_list m_subcurves_at_tf;
     
     //! A pointer to a map of halfedges to indices lists
     // (stored in the visitor class)
@@ -222,11 +222,11 @@ public:
         // top face with a halfedge that see this halfedge.
         if (m_he_ind_map_p != NULL) {
             Indices_list& list_ref = (*m_he_ind_map_p)[he_on_top_face];
-            list_ref.splice (list_ref.end(), m_subcurves_at_rmf);
+            list_ref.splice (list_ref.end(), m_subcurves_at_tf);
         } else {
-            m_subcurves_at_rmf.clear();
+            m_subcurves_at_tf.clear();
         }
-        CGAL_assertion (m_subcurves_at_rmf.empty());
+        CGAL_assertion (m_subcurves_at_tf.empty());
         
         return;
     }
@@ -235,7 +235,7 @@ public:
      */
     void add_subcurve_in_top_face(unsigned int index)
     {
-        m_subcurves_at_rmf.push_back(index);
+        m_subcurves_at_tf.push_back(index);
         return;
     }
     
