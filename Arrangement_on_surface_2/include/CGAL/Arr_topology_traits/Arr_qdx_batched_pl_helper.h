@@ -91,7 +91,7 @@ public:
 #if 0
         return (m_top_fict->face());
 #endif
-        CGAL_error( "Arr_qdx_batched_pl_helper::top_face not yet implemented" );
+        CGAL_error_msg( "Arr_qdx_batched_pl_helper::top_face not yet implemented" );
         return;
     }
 };
@@ -127,7 +127,7 @@ void Arr_qdx_batched_pl_helper<Tr, Arr>::before_sweep ()
 
     return;
 #endif
-    CGAL_error("Arr_qdx_batched_pl_helper::before_sweep not yet implemented" );
+    CGAL_error_msg("Arr_qdx_batched_pl_helper::before_sweep not yet implemented" );
     return;
 }
 
@@ -154,7 +154,7 @@ void Arr_qdx_batched_pl_helper<Tr, Arr>::after_handle_event
 
     return;
 #endif
-    CGAL_error( "Arr_qdx_batched_pl_helper::after_handle_event not yet implemented" );
+    CGAL_error_msg( "Arr_qdx_batched_pl_helper::after_handle_event not yet implemented" );
     return;
 }
 
