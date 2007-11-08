@@ -409,13 +409,13 @@ public:
   /*! Clear the internal representation and auxiliary data structures */
   void clear()
   {
-    CGAL_error( "Not implemented yet!");
+    CGAL_error_msg( "Not implemented yet!");
   }
   
   /*! returns true if the representation is empty */
   bool is_empty() const
   {
-    CGAL_error( "Not implemented yet!");
+    CGAL_error_msg( "Not implemented yet!");
     return true;
   }
 
@@ -425,7 +425,7 @@ public:
    */
   unsigned int degree(Vertex_const_handle vh) const
   {
-    CGAL_error( "Not implemented yet!");
+    CGAL_error_msg( "Not implemented yet!");
     return vh->degree();
   }
 #endif
