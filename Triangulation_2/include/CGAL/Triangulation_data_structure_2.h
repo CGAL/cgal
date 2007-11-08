@@ -30,9 +30,9 @@
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
 
-#if (!defined _MSC_VER || defined __INTEL_COMPILER) && !defined __sgi
+//#if (!defined _MSC_VER || defined __INTEL_COMPILER) && !defined __sgi
 #  define CGAL_T2_USE_ITERATOR_AS_HANDLE
-#endif
+//#endif
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
