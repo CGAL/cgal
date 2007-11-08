@@ -2507,6 +2507,9 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
      Comparison_result res,
      bool& new_face)
 {
+  CGAL_precondition(prev1 != NULL);
+  CGAL_precondition(prev2 != NULL);
+
   // Get the vertices that match cv's endpoints.
   DVertex     *v1 = prev1->vertex();
   DVertex     *v2 = prev2->vertex();
