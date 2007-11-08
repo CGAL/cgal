@@ -201,12 +201,19 @@ public:
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
-        // TODO check twin
-        if (he->target()->boundary_in_y() == CGAL::BEFORE_DISCONTINUITY) {
-            he_on_top_face = he;
-        } else if (he->source()->boundary_in_y() == 
-                   CGAL::BEFORE_DISCONTINUITY) {
-            he_on_top_face = he->twin();
+        CGAL::Boundary_type bnd_y_min = 
+            this->m_top_traits->geometry_traits()->
+            boundary_in_y_2_object()(he->curve(), CGAL::MIN_END);
+        CGAL::Boundary_type bnd_y_max = 
+            this->m_top_traits->geometry_traits()->
+            boundary_in_y_2_object()(he->curve(), CGAL::MAX_END);
+        
+        if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
+            he_on_top_face = 
+                (he->direction() == CGAL::RIGHT_TO_LEFT ? he : he->twin());
+        } else if (bnd_y_max == CGAL::BEFORE_DISCONTINUITY) {
+            he_on_top_face = 
+                (he->direction() == CGAL::LEFT_TO_RIGHT ? he : he->twin());
         } else {
             return;
         }
