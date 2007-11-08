@@ -123,6 +123,21 @@ public:
                            event->number_of_right_curves() >= 1);
             
             // TODO isolated point
+
+            // added for hole-location
+            if (bound_x == CGAL::AFTER_DISCONTINUITY && 
+                m_top_traits->is_identification_WE_empty()) {
+                // The list m_subcurves_at_tf contains all subcurves 
+                // whose left endpoint lies between the curve of 
+                // identification in WE and the current curve incident 
+                // to the WE-identification. In case these subcurves 
+                // represent holes, these holes should stay in the 
+                // "face to the left" that contains the curve 
+                // of identification and we should not keep track of 
+                // them in order to later move them to another face.
+                //std::cout << "delete sc in tf" << std::endl;
+                m_subcurves_at_tf.clear();
+            }
             
             const X_monotone_curve_2 & xc =
                 (bound_x == CGAL::AFTER_DISCONTINUITY ? 
@@ -168,6 +183,21 @@ public:
             
             // TODO isolated point
             
+            // added for hole-location
+            if (bound_y == CGAL::BEFORE_DISCONTINUITY && 
+                m_top_traits->is_identification_NS_empty()) {
+                // The list m_subcurves_at_tf contains all subcurves 
+                // whose left endpoint lies between the curve of 
+                // identification in NS and the current curve incident 
+                // to the NS-identification. In case these subcurves 
+                // represent holes, these holes should stay in the 
+                // "face to the left" that contains the curve 
+                // of identification and we should not keep track of 
+                // them in order to later move them to another face.
+                //std::cout << "delete sc in tf" << std::endl;
+                m_subcurves_at_tf.clear();
+            }
+
             const X_monotone_curve_2 & xc =
                 (bound_y == CGAL::AFTER_DISCONTINUITY ? 
                  // AFTER DISCONTINUITY
@@ -198,28 +228,14 @@ public:
             DVertex * v = m_top_traits->vertex_NS(key);
             
             Vertex_handle vh(v);
-
+            
             if (v == NULL) {
                 //std::cout << "HELPER: new y" << std::endl;
                 vh = m_arr_access.create_boundary_vertex(
                         xc, ind,
                         bound_x, bound_y);
-#if 0 // TODO check
-                if (bound_y == CGAL::BEFORE_DISCONTINUITY) {
-                    // The list m_subcurves_at_tf contains all subcurves 
-                    // whose left endpoint lies between the curve of 
-                    // identification in NS and the current curve incident 
-                    // to the NS-identification. In case these subcurves 
-                    // represent holes, these holes should stay in the 
-                    // "face to the left" that contains the curve 
-                    // of identification and we should not keep track of 
-                    // them in order to later move them to another face.
-                    //std::cout << "delete sc in tf" << std::endl;
-                    m_subcurves_at_tf.clear();
-                }
-#endif
             }
-            
+
             event->set_vertex_handle(vh);
             
             return;
