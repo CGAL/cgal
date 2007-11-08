@@ -768,6 +768,17 @@ public:
         return (_m_traits);
     }
     
+    /*! indication whether vertices on ns-identification exist */
+    bool is_identification_NS_empty() const {
+        return _m_identification_NS.empty();
+    }
+
+    /*! indication whether vertices on ns-identification exist */
+    bool is_identification_WE_empty() const {
+        return _m_identification_WE.empty();
+    }
+
+
     //@}
     
     /// \name Auxiliary functions.
