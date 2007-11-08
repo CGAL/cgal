@@ -149,7 +149,9 @@ void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
     
-    if (xc.halfedge_handle() == Halfedge_handle())
+    Halfedge_handle he = xc.halfedge_handle();
+
+    if (he == Halfedge_handle())
     {
         // The curve is not in the arrangement, 
         // use the base construction helper
@@ -163,13 +165,18 @@ void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     if (bound_x < 0) {
         // left side
         CGAL_assertion (ind == MIN_END);
-        this->m_top_face = xc.halfedge_handle()->twin()->face();
+        this->m_top_face = he->twin()->face();
     } else if (bound_y == BEFORE_DISCONTINUITY) {
-        // top side
-        if (xc.halfedge_handle()->direction() == CGAL::RIGHT_TO_LEFT) {
-            this->m_top_face = xc.halfedge_handle()->twin()->face();
+        // top side (taken from torus)
+
+        if (ind == CGAL::MIN_END) {
+            this->m_top_face = 
+                (he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                 he->twin() : he)->face();
         } else {
-            this->m_top_face = xc.halfedge_handle()->face();
+            this->m_top_face = 
+                (he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                 he->twin() : he)->face();
         }
     }
     return;
