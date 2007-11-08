@@ -761,6 +761,12 @@ public:
     {
         return (_m_traits);
     }
+
+    /*! Get the geometry traits */
+    const Geometry_traits_2* geometry_traits () const
+    {
+        return (_m_traits);
+    }
     
     //@}
     
