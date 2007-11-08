@@ -208,7 +208,7 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
 	}
       } else {
 	// this line should never have been reached
-	CGAL_assertion( false );
+	CGAL_error();
       }
     }
   }
@@ -750,7 +750,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	// this should never be reached; the only possible values for
 	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
 	// and TOUCH_12_INTERIOR_1
-	CGAL_assertion( false );
+	CGAL_error();
       }
     } else {
       CGAL_assertion( vv->is_point() );
@@ -766,7 +766,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	} else {
 	  // this should never be reached; the only possible values for
 	  // at_res are DISJOINT and INTERIOR
-	  CGAL_assertion( false );
+	  CGAL_error();
 	}
       }
     }
@@ -835,7 +835,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       } else {
 	// this should never be reached; the only possible values for
 	// vcross.third are CROSSING, INTERIOR and DISJOINT
-	CGAL_assertion( false );
+	CGAL_error();
       }
     }
   }
@@ -2755,7 +2755,7 @@ first_endpoint_of_segment(const Vertex_handle& v) const
   } while ( vc != vc_start );
 
   // we should never reach this point
-  CGAL_assertion( false );
+  CGAL_error();
   return Vertex_handle();
 }
 
@@ -2779,7 +2779,7 @@ second_endpoint_of_segment(const Vertex_handle& v) const
   } while ( vc != vc_start );
 
   // we should never reach this point
-  CGAL_assertion( false );
+  CGAL_error();
   return Vertex_handle();
 }
 

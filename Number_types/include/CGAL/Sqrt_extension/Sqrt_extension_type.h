@@ -466,7 +466,7 @@ compare(const Self& y, bool in_same_extension = false ) const
       break;
     default:
       // We should never reach here.
-      CGAL_assertion (false);
+      CGAL_error();
     }
   }
   else

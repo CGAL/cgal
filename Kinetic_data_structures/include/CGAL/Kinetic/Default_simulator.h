@@ -238,7 +238,7 @@ public:
 	} else {
 	  std::cerr << "You cannot currently call this function at the end of time if the end time is not"
 	    "exactly representable as a double. Sorry. This is fixable, so complain to me--Daniel" << std::endl;
-	  CGAL_assertion(0);
+	  CGAL_error();
 	  return NT(ti.first);
 	}
       } else {

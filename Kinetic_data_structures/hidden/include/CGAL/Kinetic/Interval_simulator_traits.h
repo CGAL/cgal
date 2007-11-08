@@ -141,7 +141,7 @@ public:
   }
 
   This operator-() const {
-    CGAL_assertion(0);
+    CGAL_error();
     //return This(-iv_.first, -iv_.second, data_->negate);
     return This();
   }

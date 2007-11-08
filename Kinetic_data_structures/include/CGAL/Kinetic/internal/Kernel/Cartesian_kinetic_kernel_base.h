@@ -154,24 +154,24 @@ public:
     
     template <class AT>
     result_type operator()(const AT &) const {
-      CGAL_assertion(0);
+      CGAL_error();
       return result_type(0);
     }
     template <class AT0, class AT1>
     result_type operator()(const AT0 &, const AT1 &) const {
-      CGAL_assertion(0);
+      CGAL_error();
       return result_type(0);
     }
     template <class AT0, class AT1, class AT2>
     result_type operator()(const AT0 &, const AT1 &,
 			   const AT2 &) const {
-      CGAL_assertion(0);
+      CGAL_error();
       return result_type(0);
     }
     template <class AT0, class AT1, class AT2, class AT3>
     result_type operator()(const AT0 &, const AT1 &,
 			   const AT2 &, const AT3 &) const {
-      CGAL_assertion(0);
+      CGAL_error();
       return result_type(0);
     }
 

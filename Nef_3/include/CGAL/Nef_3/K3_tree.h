@@ -810,7 +810,7 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 	}
 #endif
 	else
-	  CGAL_assertion_msg( 0, "wrong handle");
+	  CGAL_error( "wrong handle");
       }
     }
     return O;
@@ -929,7 +929,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
     }
 #endif
     else 
-      CGAL_assertion_msg( 0, "wrong handle");
+      CGAL_error( "wrong handle");
   }
   os << v_count << "v " << e_count << "e " << f_count << "f ";
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
@@ -980,7 +980,7 @@ bool update( Node* node,
           updated = true;
         }
       }
-      else CGAL_assertion_msg( 0, "wrong handle");
+      else CGAL_error( "wrong handle");
       o = onext;
     }
     return updated;
@@ -1139,7 +1139,7 @@ Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
   case 2: return Plane_3( v->point(), Vector_3( 0, 0, 1)); break;
   }
 
-  CGAL_assertion_msg( 0, "never reached");
+  CGAL_error( "never reached");
   return Plane_3();
 }
 

@@ -168,7 +168,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
   } while (new_vertex);
 
   // We should never reach here:
-  CGAL_assertion (false);
+  CGAL_error();
   return Object();
 }
 
@@ -491,7 +491,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
   } while (true);
 
   // We should never reach here:
-  CGAL_assertion (false);
+  CGAL_error();
   return Object();
 }
 

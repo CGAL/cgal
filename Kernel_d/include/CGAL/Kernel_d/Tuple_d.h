@@ -291,7 +291,7 @@ void Tuple_d<NT,LA>::read(std::istream& is)
       CGAL::read(is, d); v = Vector(d);
       while (i < d) { CGAL::read(is, v[i]); ++i; } break;
     default:
-    CGAL_assertion_msg(0,"\nStream must be in ascii or binary mode\n"); 
+    CGAL_error("\nStream must be in ascii or binary mode\n"); 
   }
 }
 
@@ -305,7 +305,7 @@ void tuple_dim_check(ForwardIterator first, ForwardIterator last,
       std::ostringstream os;
       os << "Tuple Dimension Error " << 
             "File " << file << "Line " << line << "Operation " << op << '\0';
-      CGAL_assertion_msg(0,os.str().c_str()); 
+      CGAL_error(os.str().c_str()); 
     }
 }
 

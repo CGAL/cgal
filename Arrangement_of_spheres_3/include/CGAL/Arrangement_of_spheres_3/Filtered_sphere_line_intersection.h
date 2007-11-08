@@ -199,7 +199,7 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   }
 
   This operator-() const {
-    CGAL_assertion(0);
+    CGAL_error();
     return This();
   }
 

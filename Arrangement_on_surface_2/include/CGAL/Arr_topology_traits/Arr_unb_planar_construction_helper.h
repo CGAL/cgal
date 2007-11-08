@@ -286,7 +286,7 @@ before_handle_event (Event* event)
     break;
 
   default:
-    CGAL_assertion (false);
+    CGAL_error();
   }
 
   switch (bound_y)

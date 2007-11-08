@@ -115,7 +115,7 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
         v_tr = &(*vit);
       else
         // We should never reach here:
-        CGAL_assertion (false);
+        CGAL_error();
     }
   }
   CGAL_assertion (v_bl != NULL && v_tl != NULL &&
@@ -343,7 +343,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
 
   // If we reached here, we did not find a suitable halfegde, which should
   // never happen.
-  CGAL_assertion (false);
+  CGAL_error();
   return CGAL::Object();
 }
 
@@ -410,7 +410,7 @@ locate_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
   } while (curr != first);
 
   // We should never reach here.
-  CGAL_assertion (false);
+  CGAL_error();
   return Object();
 }
 

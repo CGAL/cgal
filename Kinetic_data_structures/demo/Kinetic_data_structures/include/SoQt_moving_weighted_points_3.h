@@ -94,10 +94,10 @@ protected:
 
 private:
   //! This cannot be trivially copied with out ill effects
-  SoQt_moving_weighted_points_3(const This &){ CGAL_assertion(0);}
+  SoQt_moving_weighted_points_3(const This &){ CGAL_error();}
   const This operator=(const This &o) const
   {
-    CGAL_assertion(0);
+    CGAL_error();
   }
 
 public:

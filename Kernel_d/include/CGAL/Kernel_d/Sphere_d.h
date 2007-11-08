@@ -170,7 +170,7 @@ of |\Mvar| is non-zero. }*/
       Point_d po = A[0];
       for (int i = 1; i < int(A.size()); ++i) 
         if (A[i] != po)
-          CGAL_assertion_msg(0,"Sphere_d::center(): points are illegal.");
+          CGAL_error("Sphere_d::center(): points are illegal.");
       const_cast<Self&>(*this).ptr()->cp = new Point_d(A[0]);
       return *(ptr()->cp);
     }

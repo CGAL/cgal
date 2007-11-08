@@ -664,7 +664,7 @@ public:
     }
 
     // I should never have reached this line;
-    CGAL_assertion( false );
+    CGAL_error();
     return Locate_result();
   }
 

@@ -1631,7 +1631,7 @@ private:
     }
 
     // \todo Handle higher-order derivatives as well.
-    CGAL_assertion (false);
+    CGAL_error();
     return;
   }
 
@@ -1760,7 +1760,7 @@ private:
     }
 
     // \todo Handle higher-order derivatives as well.
-    CGAL_assertion (false);
+    CGAL_error();
     return;
   }
 

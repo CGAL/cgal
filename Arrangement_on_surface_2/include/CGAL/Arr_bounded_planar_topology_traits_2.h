@@ -419,7 +419,7 @@ public:
                                       Boundary_type)
   {
     // This function should never be called:
-    CGAL_assertion (false);
+    CGAL_error();
     return Object();
   }
 
@@ -441,7 +441,7 @@ public:
                                            Boundary_type,
                                            Boundary_type ) const
   {
-    CGAL_assertion (false);
+    CGAL_error();
     return (NULL);
   }
 
@@ -460,7 +460,7 @@ public:
                                  Boundary_type)
   {
     // This function should never be called:
-    CGAL_assertion (false);
+    CGAL_error();
     return Object();
   }
 
@@ -475,7 +475,7 @@ public:
   Halfedge* split_fictitious_edge (Halfedge *, Vertex *)
   {
     // This function should never be called:
-    CGAL_assertion (false);
+    CGAL_error();
     return (NULL);
   }
 
@@ -511,7 +511,7 @@ public:
   Halfedge* erase_redundant_vertex (Vertex *)
   {
     // This function should never be called:
-    CGAL_assertion (false);
+    CGAL_error();
     return (NULL);
   }
 

@@ -2072,7 +2072,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_halfedge_distance
     // If we have returned to e1, e2 is not reachable from e1.
     if (curr == e1)
     {
-      CGAL_assertion (false);
+      CGAL_error();
       return (0);
     }
 

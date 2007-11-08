@@ -1575,8 +1575,7 @@ public:
                      Tag_false) const
     {
       // This function should never be called!
-      CGAL_assertion_msg (false,
-                          "Merging curves is not supported.");
+      CGAL_error_msg( "Merging curves is not supported.");
       return;
     }
   };

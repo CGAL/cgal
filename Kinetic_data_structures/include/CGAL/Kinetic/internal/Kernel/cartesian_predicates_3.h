@@ -138,20 +138,20 @@ struct Cartesian_power_test_3
 			const third_argument_type &,
 			const fourth_argument_type &)const
   {
-    CGAL_assertion(0);
+    CGAL_error();
     return result_type();
   }
   result_type operator()(const first_argument_type &,
 			 const second_argument_type &,
 			 const third_argument_type &)const
   {
-    CGAL_assertion(0);
+    CGAL_error();
     return result_type();
   }
   result_type operator()(const first_argument_type &,
 			 const second_argument_type &)const
   {
-    CGAL_assertion(0);
+    CGAL_error();
     return result_type();
   }
 };

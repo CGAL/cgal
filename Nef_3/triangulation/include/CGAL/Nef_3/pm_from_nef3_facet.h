@@ -120,7 +120,7 @@ add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci,
     CGAL_warning_msg( 0, "isolated points are not supported on planar maps");
   }
   else
-    CGAL_assertion_msg( 0, "wrong handle");
+    CGAL_error( "wrong handle");
   return hole;
 }
 

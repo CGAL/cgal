@@ -134,7 +134,7 @@ public:
     if (!time_is_nt()) {
         std::cerr << "You can only compute static objects when the IK current\n";
         std::cerr << "time is an FT, rather than a root.\n";
-	CGAL_assertion(0);
+	CGAL_error();
     }
   }
 

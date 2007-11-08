@@ -868,7 +868,7 @@ protected:
     if (get_undirected_edge_label(e) != Event_key()) {
       CGAL_DELAUNAY_2_DEBUG(std::cout << "Already has event " << std::endl);
       // can't do this since I create all edges around vertex of degree 4 at once
-      // CGAL_assertion(0);
+      // CGAL_error();
     } else if (ov->neighbors() ==3 
 	       || dv->neighbors() ==3) {
       CGAL_DELAUNAY_2_DEBUG(std::cout << "One end has 3 " << std::endl);

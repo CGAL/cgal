@@ -279,7 +279,7 @@ public:
         if (CGAL::sign (C) == ZERO)
         {
           // Here we have to handle overlaps!
-          //CGAL_assertion (false);
+          //CGAL_error();
         }
 
         return (oi);

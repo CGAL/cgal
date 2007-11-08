@@ -425,7 +425,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	// this should never be reached; the only possible values for
 	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
 	// and TOUCH_12_INTERIOR_1
-	CGAL_assertion( false );
+	CGAL_error();
       }
     } else {
       CGAL_assertion( vv->is_point() );
@@ -435,7 +435,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	  return insert_segment_on_point(ss, vv, level, 2);
 	} else {
 	  // MK::ERROR:: not ready yet
-	  CGAL_assertion( false );
+	  CGAL_error();
 	}
       }
     }
@@ -496,7 +496,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       } else {
 	// this should never be reached; the only possible values for
 	// vcross.third are CROSSING, INTERIOR and DISJOINT
-	CGAL_assertion( false );
+	CGAL_error();
       }
     }
   }

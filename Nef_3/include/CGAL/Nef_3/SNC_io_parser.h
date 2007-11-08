@@ -288,10 +288,10 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
     SHalfloop_handle sl1, sl2;
 
     if(!CGAL::assign(se1,o1) && !CGAL::assign(sl1,o1) && !CGAL::assign(sv1,o1))
-      CGAL_assertion_msg(0,"wrong handle");
+      CGAL_error("wrong handle");
     
     if(!CGAL::assign(se2,o2) && !CGAL::assign(sl2,o2) && !CGAL::assign(sv2,o2))
-      CGAL_assertion_msg(0,"wrong handle");    
+      CGAL_error("wrong handle");    
     
     if(se1 != SHalfedge_handle() && se2 == SHalfedge_handle())
       return true;
@@ -494,10 +494,10 @@ class sort_facet_cycle_entries : public T {
     SHalfloop_handle sl1, sl2;
     
     if(!CGAL::assign(se1,o1) && !CGAL::assign(sl1,o1))
-      CGAL_assertion_msg(0,"wrong handle");
+      CGAL_error("wrong handle");
     
     if(!CGAL::assign(se2,o2) && !CGAL::assign(sl2,o2))
-      CGAL_assertion_msg(0,"wrong handle");    
+      CGAL_error("wrong handle");    
     
     if(se1 != SHalfedge_handle() && se2 != SHalfedge_handle()) {
       sort_vertices<SNC_structure> SORT(*this->sncp());
@@ -1274,24 +1274,24 @@ template <typename EW>
 void SNC_io_parser<EW>::read()
 { 
   if ( !check_sep("Selective Nef Complex") )  
-    CGAL_assertion_msg(0,"SNC_io_parser::read: no SNC header.");
+    CGAL_error("SNC_io_parser::read: no SNC header.");
   std::string kernel_type;
   in >> kernel_type;
   CGAL_assertion(kernel_type == "standard" || kernel_type == "extended");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong vertex line.");
+    CGAL_error("SNC_io_parser::read: wrong vertex line.");
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong edge line.");
+    CGAL_error("SNC_io_parser::read: wrong edge line.");
   if ( !(check_sep("facets") && (in >> fn) && (fn%2==0)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong facet line.");
+    CGAL_error("SNC_io_parser::read: wrong facet line.");
   if ( !(check_sep("volumes") && (in >> cn)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong volume line.");
+    CGAL_error("SNC_io_parser::read: wrong volume line.");
   if ( !(check_sep("shalfedges") && (in >> sen)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sedge line.");
+    CGAL_error("SNC_io_parser::read: wrong sedge line.");
   if ( !(check_sep("shalfloops") && (in >> sln)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sloop line.");
+    CGAL_error("SNC_io_parser::read: wrong sloop line.");
   if ( !(check_sep("sfaces") && (in >> sfn)) )
-    CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sface line.");
+    CGAL_error("SNC_io_parser::read: wrong sface line.");
 
   addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
@@ -1318,38 +1318,38 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   typename std::vector<Vertex_iterator>::iterator vi;
   for(vi=Vertex_of.begin(); vi!=Vertex_of.end(); ++vi) {
     if (!read_vertex<K>(*vi))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in node line");
+      CGAL_error("SNC_io_parser::read: error in node line");
   }
 
   typename std::vector<Halfedge_iterator>::iterator ei;
   for(ei=Edge_of.begin(); ei!=Edge_of.end(); ++ei) {
     if (!read_edge<K>(*ei))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in edge line");
+      CGAL_error("SNC_io_parser::read: error in edge line");
   }
   typename std::vector<Halffacet_iterator>::iterator fi;
   for(fi=Halffacet_of.begin(); fi!=Halffacet_of.end(); ++fi) {
     if (!read_facet<K>(*fi))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in facet line");
+      CGAL_error("SNC_io_parser::read: error in facet line");
   }
   typename std::vector<Volume_iterator>::iterator ci;
   for(ci=Volume_of.begin()+plus01; ci!=Volume_of.end(); ++ci) {
     if (!read_volume(*ci))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in volume line");
+      CGAL_error("SNC_io_parser::read: error in volume line");
   }
   typename std::vector<SHalfedge_iterator>::iterator sei;
   for(sei=SEdge_of.begin(); sei!=SEdge_of.end(); ++sei) {
     if (!read_sedge<K>(*sei))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sedge line");
+      CGAL_error("SNC_io_parser::read: error in sedge line");
   }
   typename std::vector<SHalfloop_iterator>::iterator sli;
   for(sli=SLoop_of.begin(); sli!=SLoop_of.end(); ++sli) {
     if (!read_sloop<K>(*sli))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sloop line");
+      CGAL_error("SNC_io_parser::read: error in sloop line");
   }
   typename std::vector<SFace_iterator>::iterator sfi;
   for(sfi=SFace_of.begin(); sfi!=SFace_of.end(); ++sfi) {
     if (!read_sface(*sfi))
-      CGAL_assertion_msg(0,"SNC_io_parser::read: error in sface line");
+      CGAL_error("SNC_io_parser::read: error in sface line");
   }
 
   SNC_constructor C(*this->sncp());

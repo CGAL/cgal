@@ -292,7 +292,7 @@ int main(int, char *[]) {
 	  //CGAL_assertion(mbs0== CGAL::ON_BOUNDARY);
 	  //CGAL_assertion(mbs1== CGAL::ON_BOUNDARY);
 	} else {
-	  CGAL_assertion(0);
+	  CGAL_error();
 	}
 	
       }
@@ -471,7 +471,7 @@ int main(int, char *[]) {
 	    std::cout << ss[1] << std::endl; //1
 	    std::cout << x << " " << eqp << " 1/10000 1" << std::endl; //2
 	    std::cout << cp << " 1/10000 1" << std::endl;
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  }
 	}
 	{
@@ -499,7 +499,7 @@ int main(int, char *[]) {
 	    std::cout << x << " " << eqp << " 1/10000 1" << std::endl; //2
 	    std::cout << cp0 << " 1/10000 1" << std::endl;
 	    std::cout << cp1 << " 1/10000 1" << std::endl;
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  }
 
 	}
@@ -573,7 +573,7 @@ int main(int, char *[]) {
 	    std::cout << ss[i] << std::endl; //3
 	    std::cout << x << " " << ss[i].center().y() << " "
 		      << ss[i].center().z() << " 1/10000 1" << std::endl; //4
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  }
 	}
 	if (i%2==1) {
@@ -606,7 +606,7 @@ int main(int, char *[]) {
 	    std::cout << ss[i] << std::endl; //3
 	    std::cout << x << " " << ss[i].center().y() << " "
 		      << ss[i].center().z() << " 1/10000 1" << std::endl; //4
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  }
 	}
       }

@@ -740,7 +740,7 @@ order-preserving).}*/
     for (int i=0; i<n; ++i)
       set_adjacency_at_source_between(A[(i+1)%n],A[i],A[(i-1)%n]);
   }
-  CGAL_assertion_msg(0,"test this");
+  CGAL_error("test this");
 }
 
 /*{\Mtext \headerline{Associated Information}\restoreopdims}*/

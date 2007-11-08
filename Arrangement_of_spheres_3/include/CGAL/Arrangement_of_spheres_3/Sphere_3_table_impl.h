@@ -126,7 +126,7 @@ Sphere_3_table<Traits_t>::equipower_line(Key a, Key b) const {
   if (assign(l,o)) {
     return l;
   } else {
-    CGAL_assertion(0);
+    CGAL_error();
     return l;
   }
 }

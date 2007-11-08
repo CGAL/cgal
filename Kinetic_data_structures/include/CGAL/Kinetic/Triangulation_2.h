@@ -347,7 +347,7 @@ public:
   }
 
   void erase(Point_key k) {
-    CGAL_assertion(0);
+    CGAL_error();
 #if 0    
     // erase all incident certificates
     Vertex_handle vh= vertex_handle(k);
@@ -663,7 +663,7 @@ protected:
     if (e->event() != Event_key()) {
       CGAL_TRIANGULATION_2_DEBUG(std::cout << "Already has event " << std::endl);
       // can't do this since I create all edges around vertex of degree 4 at once
-      // CGAL_assertion(0);
+      // CGAL_error();
     } else {
       //CGAL_TRIANGULATION_2_DEBUG(std::cout << "New certificate" << std::endl);
       new_certificate(e);

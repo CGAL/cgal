@@ -639,7 +639,7 @@ public:
     }
     CGAL_assertion(!check_tag(typename Is_extended_kernel<Geometry>::value_type()));
     return Face_const_handle(faces_begin());
-    //    CGAL_assertion(0); return h; // compiler warning
+    //    CGAL_error(); return h; // compiler warning
   }
 
   bool ray_shoot_from_outer_facet(Segment& , object_kind& ,

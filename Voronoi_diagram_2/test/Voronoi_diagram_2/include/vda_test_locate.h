@@ -151,7 +151,7 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
       }
     } else {
       os << " *** NOT READY YET *** ";
-      CGAL_assertion( false );
+      CGAL_error();
     }
     std::cout << std::endl;
   }

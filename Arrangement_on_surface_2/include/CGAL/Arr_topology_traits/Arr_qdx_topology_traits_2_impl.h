@@ -456,7 +456,7 @@ _locate_around_vertex_with_boundary_at_x
     } while (curr != first);
 
     // We sould never reach here:
-    CGAL_assertion(0);
+    CGAL_error();
     return NULL;
 }
 

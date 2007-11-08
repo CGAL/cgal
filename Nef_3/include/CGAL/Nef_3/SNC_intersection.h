@@ -152,7 +152,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 	while( c != cend);
       }
       else 
-	CGAL_assertion_msg(0, "Damn wrong handle.");
+	CGAL_error( "Damn wrong handle.");
     }
     return false;
   }
@@ -381,7 +381,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);
     } 
     else 
-      CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
+      CGAL_error( "is facet first cycle a SHalfloop?");
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
       return outer_bound_pos;
     /* The point p is not in the relative interior of the outer face cycle
@@ -410,7 +410,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 					  p, h.opposite());
       } 
       else 
-	CGAL_assertion_msg(0, "Damn wrong handle.");
+	CGAL_error( "Damn wrong handle.");
       if( inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )
 	return opposite(inner_bound_pos);
       /* At this point the point p belongs to relative interior of the facet's

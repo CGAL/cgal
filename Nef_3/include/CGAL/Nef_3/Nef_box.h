@@ -109,7 +109,7 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
 	  extend( p, typename Is_extended_kernel<Kernel>::value_type());
 	}
       } else
-	CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
+	CGAL_error( "is facet first cycle a SHalfloop?");
 #endif
     }
   }

@@ -84,7 +84,7 @@ Irrational_cross_section CGAL_AOS3_TARG ::locate_point_check_face_vertices(const
       if (tr_.oriented_side_of_separating_plane(npt.sphere_key(0),
 						npt.sphere_key(1),
 						k) == CGAL::ON_NEGATIVE_SIDE) {
-	//CGAL_assertion(0);
+	//CGAL_error();
 	std::cout << "Face nixed by vertex " << npt << std::endl;
 	return false;
       }
@@ -469,7 +469,7 @@ Irrational_cross_section CGAL_AOS3_TARG ::rule_shoot_edge_vertex(const CGAL_AOS3
 	return rule_shoot_compare_SR(t, pt, rd, hp, p.rule_key(),p, arc_top);
       } else {
 	// compare rational should have picked this up
-	CGAL_assertion(0);
+	CGAL_error();
       }
     }
   } else {
@@ -488,7 +488,7 @@ Irrational_cross_section CGAL_AOS3_TARG ::rule_shoot_edge_vertex(const CGAL_AOS3
     }
   }
 
-  CGAL_assertion(0);
+  CGAL_error();
   return CGAL::SMALLER;
 }
 
@@ -547,7 +547,7 @@ Irrational_cross_section CGAL_AOS3_TARG ::shoot_rule(const CGAL_AOS3_TYPENAME Tr
     h= h->next();
   } while (h != end);
 
-  CGAL_assertion(0);
+  CGAL_error();
   return CGAL_AOS3_TYPENAME CS::Halfedge_handle();
 }
 
@@ -695,7 +695,7 @@ CGAL_AOS3_TEMPLATE
 	  }
 	  
 	  } else {
-	  CGAL_assertion(0);
+	  CGAL_error();
 	  }*/
 	CGAL_AOS3_TYPENAME CS::Halfedge_handle vh= v->halfedge();
 	do {

@@ -171,7 +171,7 @@ public:
       }
     }
   
-    CGAL_assertion(0);
+    CGAL_error();
     return CGAL_AOS3_TYPENAME CS::Face_handle();
   }
 

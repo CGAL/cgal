@@ -400,7 +400,7 @@ public:
     c=*this;
     break;
     default:
-    CGAL_assertion(0);
+    CGAL_error();
     }
     CGAL_postcondition(a.ub()==b.lb());
     CGAL_postcondition(b.ub()==c.lb());

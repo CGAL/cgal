@@ -825,7 +825,7 @@ public:
         // this topology never introduces fictious halfedges
         //std::cout << "Arr_qdx_topology_traits_2::split_fictious_edge" 
         //          << std::endl;
-        CGAL_assertion (false);
+        CGAL_error();
         return (0);
     }
 

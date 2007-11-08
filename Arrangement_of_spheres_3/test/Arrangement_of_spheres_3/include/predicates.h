@@ -276,7 +276,7 @@ P2 equipower_point(C2 a, C2 b) {
     return pt;
   } else {
     std::cout << a << std::endl << b << std::endl;
-    CGAL_assertion(0);
+    CGAL_error();
     return P2();
   }
 }

@@ -542,7 +542,7 @@ public:
         }
 #endif
         else if((mask&15) == 15)
-          CGAL_assertion_msg( 0, "wrong handle");
+          CGAL_error( "wrong handle");
       }
       if(!hit)
         ++objects_iterator;
@@ -891,7 +891,7 @@ public:
       }
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
       else
-        CGAL_assertion_msg( 0, "wrong handle");
+        CGAL_error( "wrong handle");
     }
     CGAL_NEF_TIMER(it_t.stop());
   }
@@ -947,7 +947,7 @@ public:
       }
 #endif
       else
-        CGAL_assertion_msg( 0, "wrong handle");
+        CGAL_error( "wrong handle");
     }
     CGAL_NEF_TIMER(it_t.stop());
   }
@@ -1015,7 +1015,7 @@ public:
       }
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
       else
-        CGAL_assertion_msg( 0, "wrong handle");
+        CGAL_error( "wrong handle");
     }
     CGAL_NEF_TIMER(it_t.stop());
   }

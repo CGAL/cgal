@@ -12,7 +12,7 @@ inline Rule_direction::Rule_direction(int d): dir_(2){
   else if (d==1) CGAL_assertion(dir_==  Combinatorial_curve::T_BIT);
   else if (d==2) CGAL_assertion(dir_== Combinatorial_curve::L_BIT);
   else if (d==3) CGAL_assertion(dir_==  Combinatorial_curve::B_BIT);
-  else CGAL_assertion(0);
+  else CGAL_error();
 }
 
 
@@ -76,7 +76,7 @@ inline int Rule_direction::index() const {
   case(Combinatorial_curve::L_BIT): return 2;
   case(Combinatorial_curve::R_BIT): return 0;
   default: 
-    CGAL_assertion(0);
+    CGAL_error();
     return -1;
   }
 }
@@ -126,7 +126,7 @@ inline Rule_direction Rule_direction::opposite() const {
   case(Combinatorial_curve::R_BIT): 
     return make_from_part(Combinatorial_curve::L_BIT);
   default: 
-    CGAL_assertion(0);
+    CGAL_error();
     return Rule_direction();
   }
 }

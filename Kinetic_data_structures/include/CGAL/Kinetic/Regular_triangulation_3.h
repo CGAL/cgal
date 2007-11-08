@@ -639,7 +639,7 @@ public:
     Otherwise, pass it along.
   */
   void erase(Point_key ) {
-    CGAL_assertion(0);
+    CGAL_error();
     on_geometry_changed();
   }
 
@@ -745,7 +745,7 @@ public:
     for (unsigned int i=0; i< ics.size(); ++i) {
       if (try_handle_redundant(k, ics[i])) return;
     }
-    CGAL_assertion(0);
+    CGAL_error();
   }
 
 public:
@@ -810,7 +810,7 @@ protected:
 	   it != redundant_cells_.end(); ++it){
 	if (it->second == k) return it->first;
       }
-      CGAL_assertion(0);
+      CGAL_error();
       return Cell_handle();
     } else {
       return kdel_.simulator()->template event<Non_vertex_event>(redundant_points_.find(k)->second).cell_handle();
@@ -1181,10 +1181,10 @@ protected:
       if (cur->second == k) {
 	CGAL_assertion_code(Cell_handle ch= cur->first);
 	CGAL_assertion(ch==h);
-	CGAL_assertion(0);
+	CGAL_error();
       }
     }
-    CGAL_assertion(0);
+    CGAL_error();
   }
 
  

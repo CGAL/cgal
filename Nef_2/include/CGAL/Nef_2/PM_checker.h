@@ -146,7 +146,7 @@ check_order_preserving_embedding(Vertex_const_handle v) const
 				       direction(ef));
     if ( !(ccw1 && ccw2) ) {
       error_status << "ccw order violate!" << std::endl << '\0';
-      CGAL_assertion_msg(0,error_status.str().c_str());
+      CGAL_error(error_status.str().c_str());
     }
     e = en;
   }

@@ -141,7 +141,7 @@ class of all the rays underlying the oriented line |l|.
       res = epoint( l.b()/l.a(), -l.c()/l.a(), -1, 0); break; 
     case TOPFRAME: 
       res = epoint(-l.b()/l.a(), -l.c()/l.a(),  1, 0); break; 
-    default: CGAL_assertion_msg(0,"EPoint type not correct!");
+    default: CGAL_error("EPoint type not correct!");
   }
   return res;
 }

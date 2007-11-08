@@ -340,7 +340,7 @@ public:
 
   Sphere_line_intersection flip_on(Coordinate_index i) const {
     Sphere_line_intersection r;
-    CGAL_assertion(0);
+    CGAL_error();
     return r;
   }
 
@@ -381,7 +381,7 @@ inline CGAL::Comparison_result Sphere_line_intersection<K>::compare_c(const Sphe
 	       << Interval_nt<true>(to_interval(root_of_2(CC))));
     CGAL_ERROR(o.root_of_2(CC)
 	       << Interval_nt<true>(to_interval(o.root_of_2(CC))));
-    CGAL_assertion(0);
+    CGAL_error();
   }
 #endif
   return ans;

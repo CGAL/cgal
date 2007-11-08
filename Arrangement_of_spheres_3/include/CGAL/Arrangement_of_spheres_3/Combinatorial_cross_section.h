@@ -281,7 +281,7 @@ public:
     if (!chds.is_valid(false, num_components_==1? 3: 2)) {
       chds.is_valid(true, num_components_==1? 3: 2);
       std::cerr << "Not valid." << std::endl;
-      CGAL_assertion(0);
+      CGAL_error();
     }
 
     {
@@ -569,7 +569,7 @@ public:
     /* std::cout << "Auditing const decorator..." << std::flush;
        CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
        if (!chds.is_valid(true, num_components_==1? 3: 2)) {
-       CGAL_assertion(0);
+       CGAL_error();
        std::cerr << "Not valid." << std::endl;
        }
        std::cout << "done." << std::endl;*/
@@ -662,7 +662,7 @@ public:
       r=r->opposite()->next();
       CGAL_assertion(r!= h->opposite());
     } while (true);
-    CGAL_assertion(0);
+    CGAL_error();
     return HH();
   }
 

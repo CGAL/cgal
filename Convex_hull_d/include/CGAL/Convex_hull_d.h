@@ -1328,7 +1328,7 @@ Bounded_side Convex_hull_d<R>::bounded_side(const Point_d& x)
     case  0: return ON_BOUNDARY;
     case  1: return ON_UNBOUNDED_SIDE;
   }
-  CGAL_assertion(0); return ON_BOUNDARY; // never come here
+  CGAL_error(); return ON_BOUNDARY; // never come here
 }
 
 

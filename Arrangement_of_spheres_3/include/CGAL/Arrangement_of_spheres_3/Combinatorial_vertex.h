@@ -114,7 +114,7 @@ public:
     && rule_constant_coordinate() == plane_coordinate(1)) {
     return Rule_direction(3);
     } else {
-    CGAL_assertion(0);
+    CGAL_error();
     return Rule_direction();
     }
     }*/

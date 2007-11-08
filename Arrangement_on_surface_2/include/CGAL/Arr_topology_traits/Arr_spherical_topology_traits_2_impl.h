@@ -58,7 +58,7 @@ template <class GeomTraits, class Dcel>
 void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 assign(const Self & other)
 {
-  CGAL_assertion_msg(0, "Not implemented!");
+  CGAL_error( "Not implemented!");
 
   // Clear the current DCEL and duplicate the other DCEL.
   m_dcel.delete_all();
@@ -743,7 +743,7 @@ _locate_around_pole(Vertex * v,
   } while (curr != first);
 
   // We sould never reach here:
-  CGAL_assertion(0);
+  CGAL_error();
   return NULL;
 }
 

@@ -443,7 +443,7 @@ private:
             this->insert(normal1, normal2, v2, std::back_inserter(hes));
             Halfedge_list_iter first = hes.begin();
             hec->facet()->set_vertex((*first)->source());
-          } else CGAL_assertion(0);
+          } else CGAL_error();
         }
 #endif
         next_hec->set_processed(true);
@@ -707,7 +707,7 @@ public:
   Arr_polyhedral_sgm(const Arr_polyhedral_sgm & sgm)
   {
     // Not implemented yet!
-    CGAL_assertion(0);
+    CGAL_error();
   }
   
   /*! Destructor */

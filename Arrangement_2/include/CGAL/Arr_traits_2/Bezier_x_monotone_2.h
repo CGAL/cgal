@@ -1490,7 +1490,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_get_y
   }
   
   // If we reached here, x0 is not in the x-range of our subcurve.
-  CGAL_assertion (false);
+  CGAL_error();
   return (0);
 }
 
@@ -1930,7 +1930,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
   if (do_ovlp)
   {
     // Ron: TODO -- Handle overlapping curves ...
-    CGAL_assertion (false);
+    CGAL_error();
     return (true);
   }
 

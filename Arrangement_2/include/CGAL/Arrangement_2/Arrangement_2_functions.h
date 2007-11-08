@@ -153,7 +153,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
           v_tr = p_v;
         else
           // We should never reach here:
-          CGAL_assertion (false);
+          CGAL_error();
       }
     }
   }
@@ -2339,7 +2339,7 @@ Arrangement_2<Traits,Dcel>::_halfedge_distance (const DHalfedge *e1,
     // If we have returned to e1, e2 is not reachable from e1.
     if (curr == e1)
     {
-      CGAL_assertion (false);
+      CGAL_error();
       return (0);
     }
 

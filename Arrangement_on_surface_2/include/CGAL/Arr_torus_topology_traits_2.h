@@ -671,7 +671,7 @@ public:
         //std::cout << "Arr_torus_topology_traits_2::split_fictious_edge" 
         //          << std::endl;
         // this topology never introduces fictious halfedges
-        CGAL_assertion (false);
+        CGAL_error();
         return (0);
     }
     

@@ -155,7 +155,7 @@ public:
                                            Boundary_type)
   {
     // In the planar-topology traits this function should never be invoked:
-    CGAL_assertion (false);
+    CGAL_error();
     return;
   }
 
@@ -234,7 +234,7 @@ public:
                                            const X_monotone_curve_2&) const
   {
     // We can never have perimetric faces in a planar topology:
-    CGAL_assertion (false);
+    CGAL_error();
     return (false);
   }
 
@@ -251,7 +251,7 @@ public:
   {
     // This predicate is only used for case 3.3.2 of the insertion process,
     // therefore it should never be invoked in the planar case.
-    CGAL_assertion (false);
+    CGAL_error();
     return (false);
   }
 

@@ -546,7 +546,7 @@ public:
     Comparison_result operator()(const Point_2 & point1,
                                  const Point_2 & point2) const
     {
-      CGAL_assertion_msg(0, "There is no vertical identification arc!");
+      CGAL_error( "There is no vertical identification arc!");
       return SMALLER;
     }
   };
@@ -2305,7 +2305,7 @@ public:
     CGAL_precondition(has_on(point));
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
 #if !defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
-    CGAL_assertion_msg(0, "Full x-monotone arcs are not supported!");
+    CGAL_error( "Full x-monotone arcs are not supported!");
 #endif
   }
   

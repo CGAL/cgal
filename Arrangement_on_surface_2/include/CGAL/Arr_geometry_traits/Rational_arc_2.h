@@ -1156,7 +1156,7 @@ public:
       else if (inf_y1 == PLUS_INFINITY || inf_y2 == MINUS_INFINITY)
         return (LARGER);
       else
-        CGAL_assertion (false);
+        CGAL_error();
     }
 
     // First compare the signs of the two denominator polynomials at x = -oo.
@@ -1212,7 +1212,7 @@ public:
       else if (inf_y1 == PLUS_INFINITY || inf_y2 == MINUS_INFINITY)
         return (LARGER);
       else
-        CGAL_assertion (false);
+        CGAL_error();
     }
 
     // First compare the signs of the two denominator polynomials at x = +oo.

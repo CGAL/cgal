@@ -1599,7 +1599,7 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
     }
 
     // We should never reach here:
-    CGAL_assertion (false);
+    CGAL_error();
   }
 
   // In this case the point is an intersection between two originating
@@ -1676,7 +1676,7 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
   }
 
   // We should never reach here:
-  CGAL_assertion (false);
+  CGAL_error();
 }
 
 CGAL_END_NAMESPACE

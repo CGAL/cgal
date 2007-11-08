@@ -224,7 +224,7 @@ public:
 	  if (cr == CGAL::SMALLER) return true;
 	  else if (cr == CGAL::LARGER) return false;
 	  else {
-	    //CGAL_assertion(0);
+	    //CGAL_error();
 	    return false;
 	  }
 	}

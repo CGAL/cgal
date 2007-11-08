@@ -20,14 +20,14 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 
   void Error_logger::new_fatal_error(const char *err) {
     CGAL_ERROR("DSRPDB fatal error: " << err);
-    CGAL_assertion(0);
+    CGAL_error();
     //exit(EXIT_FAILURE);
   }
 
   void Error_logger::new_internal_error(const char* err) {
     CGAL_ERROR( "DSRPDB internal error: " << err);
     CGAL_ERROR( "Please report this to the author (and provide a PDB).");
-    CGAL_assertion(0);
+    CGAL_error();
     //exit(EXIT_FAILURE);
   }
 

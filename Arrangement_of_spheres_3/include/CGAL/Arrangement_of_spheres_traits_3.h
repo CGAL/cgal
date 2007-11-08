@@ -618,7 +618,7 @@ protected:
 	else if (csl != csp) return Oriented_side(-os);
 	else return os;
       }
-      CGAL_assertion(0);
+      CGAL_error();
       return ON_ORIENTED_BOUNDARY;
     } else if (CGAL::assign( l, o)){
       return CGAL::ON_ORIENTED_BOUNDARY;

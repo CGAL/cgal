@@ -531,7 +531,7 @@ public:
                             break;
                         default:
                             // We should never reach here.
-                            CGAL_assertion (false);
+                            CGAL_error();
                         }
                 }
             else

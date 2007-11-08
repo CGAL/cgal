@@ -162,7 +162,7 @@ std::istream& operator>>(std::istream& is, SPolynomial<RT>& p)
     case CGAL::IO::BINARY :
       CGAL::read(is,m);CGAL::read(is,n);break;
     default:
-    CGAL_assertion_msg(0,"\nStream must be in ascii or binary mode\n");
+    CGAL_error("\nStream must be in ascii or binary mode\n");
       break;  
   }
   return is; 
@@ -331,7 +331,7 @@ std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
     case CGAL::IO::BINARY :
       CGAL::read(is,x);CGAL::read(is,y);CGAL::read(is,w); break;
     default:
-    CGAL_assertion_msg(0,"\nStream must be in ascii or binary mode\n");
+    CGAL_error("\nStream must be in ascii or binary mode\n");
       break;  
   }
   p = Extended_point<RT>(x,y,w); 
@@ -1071,7 +1071,7 @@ Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
                      break; 
     case TOPFRAME: res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); 
                      break; 
-    default: CGAL_assertion_msg(0,"EPoint type not correct!");
+    default: CGAL_error("EPoint type not correct!");
   }
   return res;
 }

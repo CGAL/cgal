@@ -148,7 +148,7 @@ public:
       return (CGAL::make_object (p_arr->_const_handle_for (v)));
 
     // We should never reach here:
-    CGAL_assertion (false);
+    CGAL_error();
     return Object();
   }
 

@@ -150,7 +150,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
   int dim = LA::homogeneous_linear_solver(A,spanning_vecs); 
 
   if (dim == 0)
-    CGAL_assertion_msg(0,"HyperplaneHd::constructor: \
+    CGAL_error("HyperplaneHd::constructor: \
     set P is full dimensional."); 
 
   if (side == ON_ORIENTED_BOUNDARY) { 
@@ -167,7 +167,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
   }
 
   if (j == dim)  
-    CGAL_assertion_msg(0,"HyperplaneHd::constructor: \
+    CGAL_error("HyperplaneHd::constructor: \
     cannot use o to determine side.");
 
   ptr()->v = spanning_vecs.column(j);

@@ -141,7 +141,7 @@ protected:
 	case 3:
 	  return NEGATIVE;
 	default:
-	  CGAL_assertion_msg (false, "this should not happen.");
+	  CGAL_error_msg( "this should not happen.");
         }
 
         // perturbation

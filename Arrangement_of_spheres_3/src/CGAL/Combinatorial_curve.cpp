@@ -20,7 +20,7 @@ inline bool Combinatorial_curve::can_intersect(int t) const {
     if (t&L_BIT) return (is_right() && !is_inside() || !is_right() && is_inside());
     if (t&T_BIT) return (is_top() && is_inside() || !is_top() && !is_inside());
     if (t&B_BIT) return (is_top() && is_inside() || !is_top() && !is_inside());
-    CGAL_assertion(0);
+    CGAL_error();
     return false;
   }
 }
@@ -57,7 +57,7 @@ inline Rule_direction Combinatorial_curve::rule_direction(const Combinatorial_cu
     case B_BIT:
     return 3;
     default:
-    CGAL_assertion(0);
+    CGAL_error();
     return -1;
     }*/
   return Rule_direction::make_from_part(a.pt_ & b.pt_ 
@@ -151,7 +151,7 @@ inline const char *Combinatorial_curve::to_string(int pt){
       return "Bi_inf";*/
   default:
     std::cerr << "Oops, I forgot: " << pt <<std::endl; 
-    //CGAL_assertion(0);
+    //CGAL_error();
     return "Missing";
   }
 }
@@ -221,7 +221,7 @@ inline int Combinatorial_curve::arc_index() const {
   else if ((pt_& LB_ARC) == LB_ARC) return 2;
   else if ((pt_& RB_ARC) == RB_ARC) return 3;
   else {
-    CGAL_assertion(0);
+    CGAL_error();
     return -1;
   }
 }
@@ -301,7 +301,7 @@ inline void Combinatorial_curve::audit(unsigned int numv) const {
 
 
 inline bool Combinatorial_curve::is_outward_rule() const {
-  CGAL_assertion(0);
+  CGAL_error();
   /*CGAL_precondition(is_rule());
   switch (rule_direction().is_outwards()) {
     return !is_inside();

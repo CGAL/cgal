@@ -493,7 +493,7 @@ public:
       else
 	return create_from_plane(Plane_3(0,0,-1,1), p, 1, 1, 0);
     }
-    CGAL_assertion_msg(0, "something is wrong");
+    CGAL_error( "something is wrong");
     return Vertex_handle();
   }
  
@@ -710,7 +710,7 @@ public:
 	  D.store_sm_boundary_object(EM[SHalfedge_const_handle(sfc)], FM[sf]);
 	else if(sfc.is_shalfloop())
 	  D.store_sm_boundary_object(LM[SHalfloop_const_handle(sfc)], FM[sf]);
-	else CGAL_assertion_msg(0,"damn wrong handle.");
+	else CGAL_error("damn wrong handle.");
       }
     }
     
@@ -2030,7 +2030,7 @@ public:
     case 0: SP[2] = Sphere_point(1,0,0); break;
     case 1: SP[2] = Sphere_point(0,1,0); break;
     case 2: SP[2] = Sphere_point(0,0,1); break;
-    default: CGAL_assertion_msg(0,"wrong value");
+    default: CGAL_error("wrong value");
     }
     
     SP[1]=sp1;
@@ -2093,7 +2093,7 @@ public:
       SP[2]= Sphere_point(0,vp[1],0); 
       SP[4] = Sphere_point(0,0,vp[2]); 
       break;
-    default: CGAL_assertion_msg(0,"wrong value");
+    default: CGAL_error("wrong value");
     }
     
     if (spherical_orientation(SP[3],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
@@ -2148,13 +2148,13 @@ public:
     switch(max) { 
     case 0: SP[2] = Sphere_point(vp[0],0,0); break; // plane(x,x,0), plane(x,0,x)
     case 1: SP[2] = Sphere_point(0,vp[1],0); break; // plane(0,x,x)
-    default: CGAL_assertion_msg(0,"wrong value \"max\"");
+    default: CGAL_error("wrong value \"max\"");
     }
     
     switch(min+max) {
     case 1: SP[3] = Sphere_point(0,0,vp[2]); break; // plane(0,x,x), plane(x,0,x)
     case 2: SP[3] = Sphere_point(0,vp[1],0); break; // plane(x,x,0)
-    default: CGAL_assertion_msg(0,"wrong value \"min+max\"");
+    default: CGAL_error("wrong value \"min+max\"");
     }
     
     if (spherical_orientation(SP[2],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
@@ -2477,7 +2477,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 	  D.store_sm_boundary_object(EM[SHalfedge_const_handle(sfc)], FM[sf]);
 	else if(sfc.is_shalfloop())
 	  D.store_sm_boundary_object(LM[SHalfloop_const_handle(sfc)], FM[sf]);
-	else CGAL_assertion_msg(0,"damn wrong handle.");
+	else CGAL_error("damn wrong handle.");
       }
     }
     

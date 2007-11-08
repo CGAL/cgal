@@ -1625,7 +1625,7 @@ finite_edge_conflict_type_degenerated(const Site_2& p1,
   } else {
     // this should never be reached; the degenerated incircle never
     // returns ZERO
-    CGAL_assertion( false );
+    CGAL_error();
   }
 
   // to satisfy compiler

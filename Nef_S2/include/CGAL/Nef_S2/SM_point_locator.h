@@ -305,7 +305,7 @@ public:
         return Object_handle(SFace_handle(l_res->incident_sface()));
       case is_vertex_:
         return Object_handle(SFace_handle(v_res->incident_sface()));
-      default: CGAL_assertion_msg(0,"missing solution.");
+      default: CGAL_error("missing solution.");
     }
     return Object_handle(); // never reached!
   }
@@ -392,7 +392,7 @@ public:
       }
     }
 #endif
-    CGAL_assertion_msg(0,"not yet correct");
+    CGAL_error("not yet correct");
     return h;
   }
 

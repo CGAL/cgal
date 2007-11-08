@@ -563,7 +563,7 @@ void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
     kill_warning(v);
   } else {
     // we should have reached this line
-    CGAL_assertion( false );
+    CGAL_error();
   }
 
   result_type qr1 = ns(dg, p);

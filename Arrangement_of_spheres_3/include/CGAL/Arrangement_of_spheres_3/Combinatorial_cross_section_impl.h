@@ -341,7 +341,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::find_halfedge(Vertex_handle v, Face_
     if (h->face()==f) return h;
     h= h->opposite()->prev();
   } while (h != e);
-  CGAL_assertion(0);
+  CGAL_error();
   return Halfedge_handle();
 }
 
@@ -476,7 +476,7 @@ CGAL_AOS3_TYPENAME std::pair<CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL
 Combinatorial_cross_section CGAL_AOS3_TARG::pinch_bl(Halfedge_handle a, Halfedge_handle b, Point p) {
   // make more efficient later
 
-  CGAL_assertion(0);
+  CGAL_error();
   Vertex_handle v= new_vertex(p);
   Halfedge_handle ha= insert_vertex(a,v);
   Halfedge_handle hb= insert_vertex(b,v);
@@ -490,7 +490,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::pinch_bl(Halfedge_handle a, Halfedge
   LOG_STREAM << "Auditing const decorator..." << std::flush;
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(true, 3)) {
-    CGAL_assertion(0);
+    CGAL_error();
     std::cerr << "Not valid." << std::endl;
   }
   LOG_STREAM << "done." << std::endl;
@@ -502,7 +502,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::pinch_bl(Halfedge_handle a, Halfedge
 CGAL_AOS3_TEMPLATE
 void Combinatorial_cross_section CGAL_AOS3_TARG::merge_vertices_bl(Halfedge_handle a,
 					     Halfedge_handle b) {
-  CGAL_assertion(0);
+  CGAL_error();
   CGAL_precondition(a->face() == b->face());
   CGAL_precondition(a->vertex()->point() == b->vertex()->point());
   Vertex_handle v= a->vertex();
@@ -524,7 +524,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::merge_vertices_bl(Halfedge_hand
 CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Vertex_handle
 Combinatorial_cross_section CGAL_AOS3_TARG::unpinch_bl(Halfedge_handle a, Halfedge_handle b) {  
-  CGAL_assertion(0);
+  CGAL_error();
   CGAL_precondition(a->vertex()== b->vertex());
   CGAL_precondition(degree(a->vertex()) == 4);
   a->vertex()->set_halfedge(a);
@@ -544,7 +544,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::unpinch_bl(Halfedge_handle a, Halfed
  LOG_STREAM << "Auditing const decorator..." << std::flush;
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(true, 3)) {
-    CGAL_assertion(0);
+    CGAL_error();
     std::cerr << "Not valid." << std::endl;
   }
   LOG_STREAM << "done." << std::endl;
@@ -575,7 +575,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_target(Curve::Key k,
   CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
   if (!chds.is_valid(true, 3)) {
     std::cerr << "Not valid." << std::endl;
-    CGAL_assertion(0);
+    CGAL_error();
     }*/
 
   Halfedge_handle vs[4];
@@ -645,7 +645,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_target(Curve::Key k,
     CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
     if (!chds.is_valid(true, 3)) {
       std::cerr << "Not valid." << std::endl;
-      CGAL_assertion(0);
+      CGAL_error();
     }
     LOG_STREAM << "done." << std::endl;*/
     CGAL_LOG(Log::SOME,  "Outside: ");
@@ -717,7 +717,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::new_target(Curve::Key k,
       CGAL_LOG(Log::LOTS,  "Auditing const decorator..." << std::flush);
       CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
       if (!chds.is_valid(true, 3)) {
-	CGAL_assertion(0);
+	CGAL_error();
 	std::cerr << "Not valid." << std::endl;
       }
       CGAL_LOG(Log::LOTS,  "done." << std::endl);
@@ -1055,7 +1055,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
   if (!chds.is_valid(false, num_components_==1? 3: 2)) {
     chds.is_valid(true, num_components_==1? 3: 2);
     std::cerr << "Not valid." << std::endl;
-    CGAL_assertion(0);
+    CGAL_error();
   }
   CGAL_LOG(Log::LOTS,  "done." << std::endl);
 
@@ -1068,7 +1068,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
 
     if (unique_points.find(it->point()) != unique_points.end()) {
       std::cerr << "Duplicate " << it->point() << std::endl;
-      CGAL_assertion(0);
+      CGAL_error();
     }
     unique_points.insert(it->point());
 
@@ -1092,7 +1092,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
 	  if (nct==10) break;
 	  nc= nc->next()->opposite();
 	} while (nc != it->halfedge());
-	CGAL_assertion(0);
+	CGAL_error();
       }
     } while (c != it->halfedge());
   }
@@ -1151,7 +1151,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::audit(bool extra_vertices) cons
 	  CGAL_assertion(hin->curve().is_top() && hin->curve().is_right());
 
 	} else {
-	  CGAL_assertion(0);
+	  CGAL_error();
 	}
       } else {
 	CGAL_assertion(hi->curve() == hin->curve());
@@ -1561,7 +1561,7 @@ void Combinatorial_cross_section CGAL_AOS3_TARG::delete_edge(Halfedge_handle h) 
 void
 Combinatorial_cross_section CGAL_AOS3_TARG::move_edge_target(Halfedge_handle edge, 
 				       Halfedge_handle tv) {
-  CGAL_assertion(0);
+  CGAL_error();
   Halfedge_handle ot= edge->opposite()->prev();
   tv->face()->set_halfedge(tv);
   tv->next()->face()->set_halfedge(tv->next());
@@ -1591,7 +1591,7 @@ CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME std::pair<CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle,
 	  CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle>
 Combinatorial_cross_section CGAL_AOS3_TARG::intersect(Halfedge_handle ha, Halfedge_handle hb) {
-  CGAL_assertion(0);
+  CGAL_error();
   Curve ca= ha->curve();
   Curve cb= hb->curve();
   std::pair<Halfedge_handle, Halfedge_handle> p0= pinch_bl(ha, hb,
@@ -1618,7 +1618,7 @@ CGAL_AOS3_TEMPLATE
 CGAL_AOS3_TYPENAME std::pair<CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle,
 	  CGAL_AOS3_TYPENAME Combinatorial_cross_section CGAL_AOS3_TARG::Halfedge_handle>
 Combinatorial_cross_section CGAL_AOS3_TARG::unintersect(Face_handle fn) {
-  CGAL_assertion(0);
+  CGAL_error();
   Halfedge_handle ha= fn->halfedge();
   Halfedge_handle hb= ha->next();
   CGAL_precondition(hb->next() == ha);
@@ -1698,7 +1698,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::delete_component(Vertex_handle vh) {
     CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
     if (!chds.is_valid(false, num_components_==1? 3: 2)) {
       chds.is_valid(true, (num_components_==1? 3: 2));
-      CGAL_assertion(0);
+      CGAL_error();
       std::cerr << "Not valid." << std::endl;
     }
     CGAL_LOG(Log::LOTS,  "done." << std::endl);
@@ -1729,7 +1729,7 @@ Combinatorial_cross_section CGAL_AOS3_TARG::halfedge(Vertex_handle v, Face_handl
       if (h->face() == f) return h;
       h= h->next()->opposite();
     } while(h != v->halfedge());
-    CGAL_assertion(0);
+    CGAL_error();
     return Halfedge_handle();
   }
 

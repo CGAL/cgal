@@ -24,7 +24,7 @@ struct Center: public boost::static_visitor<> {
     return k.supporting_circle().center();
   }
   result_type operator()(const typename K::Line_arc_2 &k) const {
-    CGAL_assertion(0);
+    CGAL_error();
     return k.supporting_line().point();
   }
 };
@@ -616,7 +616,7 @@ Cross_section_arrangement CGAL_AOS3_TARG::point(Vertex_const_handle h) const{
 	} else if (curves[0].is_bottom() && curves[1].is_bottom()) {
 	  d= Rule_direction(3);
 	} else {
-	  CGAL_assertion(0);
+	  CGAL_error();
 	}
 	pv= Point::make_extremum(curves[0].key(), d);
 	break;
@@ -651,7 +651,7 @@ Cross_section_arrangement CGAL_AOS3_TARG::point(Vertex_const_handle h) const{
       pv= Point(curves[0], curves[1]);
       break;
     default:
-      CGAL_assertion(0);
+      CGAL_error();
     }
 
     vmap_[h]=pv;
@@ -902,7 +902,7 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Get_circle {
   typedef Circle_2 result_type;
    
   result_type operator()(Line_arc_2) const {
-    CGAL_assertion(0);
+    CGAL_error();
     return result_type();
   }
   result_type operator()(Circular_arc_2 c) const {
@@ -916,7 +916,7 @@ struct Cross_section_arrangement CGAL_AOS3_TARG::Get_segment {
   typedef Line_arc_2 result_type;
   
   result_type operator()(Circular_arc_2) const {
-    CGAL_assertion(0);
+    CGAL_error();
     return result_type();
   }
   result_type operator()(Line_arc_2 c) const {

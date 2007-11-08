@@ -421,7 +421,7 @@ public:
                                            Boundary_type /* bound_x */,
                                            Boundary_type /* bound_y */) const
   {
-    CGAL_assertion (false);
+    CGAL_error();
     return (NULL);
   }
 

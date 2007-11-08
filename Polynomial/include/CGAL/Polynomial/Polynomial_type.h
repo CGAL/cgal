@@ -1478,7 +1478,7 @@ namespace POLYNOMIAL {
   inline static void swallow(std::istream &is, char d) {
       char c;
       do c = is.get(); while (isspace(c));
-      if (c != d) CGAL_assertion_msg( false, "input error: unexpected character in polynomial");
+      if (c != d) CGAL_error_msg( "input error: unexpected character in polynomial");
   }
 } // namespace POLYNOMIAL
 
@@ -1491,17 +1491,17 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
     POLYNOMIAL::swallow(is, '[');
     is >> CGAL::iformat(degr);
     if (degr < 0) {
-        CGAL_assertion_msg( false, "input error: negative degree of polynomial specified");
+        CGAL_error_msg( "input error: negative degree of polynomial specified");
     }
     POLYNOMIAL::Creation_tag TAG;
     Polynomial<NT> p(TAG, degr+1);
 
     do c = is.get(); while (isspace(c));
     do {
-        if (c != '(') CGAL_assertion_msg( false, "input error: ( expected");
+        if (c != '(') CGAL_error_msg( "input error: ( expected");
         is >> CGAL::iformat(i);
         if (!(i >= 0 && i <= degr && p[i] == NT(0))) {
-            CGAL_assertion_msg( false, "input error: invalid exponent in polynomial");
+            CGAL_error_msg( "input error: invalid exponent in polynomial");
         };
         POLYNOMIAL::swallow(is, ',');
         is >> CGAL::iformat(p.coeff(i));

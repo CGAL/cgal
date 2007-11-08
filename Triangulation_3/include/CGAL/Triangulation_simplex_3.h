@@ -238,7 +238,7 @@ operator<(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
   case (3): // Cell
     return (&(*s0.ch) < &(*s1.ch));
   }
-  CGAL_assertion(0);
+  CGAL_error();
   return false;
 }
 

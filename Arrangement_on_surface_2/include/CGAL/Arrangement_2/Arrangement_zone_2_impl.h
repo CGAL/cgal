@@ -371,7 +371,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
   } while (he_curr != he_first);
 
   // We should never reach here:
-  CGAL_assertion (false);
+  CGAL_error();
   return (false);
 }
 

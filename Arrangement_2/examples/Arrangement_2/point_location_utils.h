@@ -40,7 +40,7 @@ void point_location_query
   }
   else
   {
-    CGAL_assertion_msg (false, "Invalid object.");
+    CGAL_error_msg( "Invalid object.");
   }
 
   return;
@@ -87,7 +87,7 @@ void vertical_ray_shooting_query
   }
   else
   {
-    CGAL_assertion_msg (false, "Invalid object.");
+    CGAL_error_msg( "Invalid object.");
   }
 
   return;

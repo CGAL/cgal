@@ -377,7 +377,7 @@ public:
   }
 
   void delete_vertex(Point_key) {
-    CGAL_assertion(0);
+    CGAL_error();
   }
 
 
@@ -1197,14 +1197,14 @@ protected:
 	    triangulation_.write_labeled_edge(*eit, std::cerr);
 	    std::cerr << std::endl;
 	    simulator()->audit_event(triangulation_.label(*eit));
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  }
 	} else if ( isd3) {
 	  if (!has_event(*eit)) {
 	    std::cerr << "Edge should have certificate ";
 	    triangulation_.write_labeled_edge(*eit, std::cerr);
 	    std::cerr << std::endl;
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  } else {
 	    simulator()->audit_event(triangulation_.label(*eit));
 	  }
@@ -1221,14 +1221,14 @@ protected:
 	    triangulation_.write_labeled_facet(*eit, std::cerr);
 	    std::cerr << std::endl;
 	    simulator()->audit_event(triangulation_.label(*eit));
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  }
 	} else {
 	  if (!has_event(*eit)) {
 	    std::cerr << "Facet should have certificate ";
 	    triangulation_.write_labeled_facet(*eit, std::cerr);
 	    std::cerr << std::endl;
-	    CGAL_assertion(0);
+	    CGAL_error();
 	  } else {
 	    simulator()->audit_event(triangulation_.label(*eit));
 	  }

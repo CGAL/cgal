@@ -75,7 +75,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   if (lm_location_obj.is_empty())
   {
     CGAL_PRINT_ERROR( "lm_location_obj is empty" );
-    CGAL_assertion (false);
+    CGAL_error();
     return out_obj;
   }
   else if ((vh = object_cast<Vertex_const_handle>(&lm_location_obj)) != NULL)
@@ -96,7 +96,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   else 
   {
     CGAL_PRINT_ERROR( "unknown object");
-    CGAL_assertion (false);
+    CGAL_error();
     return out_obj;
   }
   
@@ -106,7 +106,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   if (out_obj.is_empty())
   {
     CGAL_PRINT_ERROR( "object is empty" );
-    CGAL_assertion (false);
+    CGAL_error();
   }
   else if ((hh = object_cast<Halfedge_const_handle>(&out_obj)) != NULL)
   {
@@ -196,7 +196,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     else if (obj.is_empty())
     {
       CGAL_PRINT_ERROR( "object is empty" );
-      CGAL_assertion (false);
+      CGAL_error();
       return obj;
     }
     else if (object_cast<Halfedge_const_handle>(&obj) != NULL)
@@ -220,7 +220,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   } while (new_vertex);  
   
   // We should never reach here:
-  CGAL_assertion (false);
+  CGAL_error();
   return Object();
 }
 
@@ -835,7 +835,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
         //don't count cv. continue
         break;
       default: //should not be equal
-        CGAL_assertion (false);
+        CGAL_error();
       }
     }
 

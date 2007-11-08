@@ -93,12 +93,12 @@ public:
       s =   orientation(e2,p);
     else if ( p == e2->source()->point() ) 
       s = - orientation(e1,p);
-    else CGAL_assertion_msg(0,"compare error in sweep.");
+    else CGAL_error("compare error in sweep.");
     if ( s || e1->source() == e1->twin()->source() || 
 	 e2->source() == e2->twin()->source()) 
       return ( s < 0 );
     s = orientation(e2,e1->twin()->source()->point());
-    if (s==0) CGAL_assertion_msg(0,"parallel edges not allowed.");
+    if (s==0) CGAL_error("parallel edges not allowed.");
     return ( s < 0 );
   }
 

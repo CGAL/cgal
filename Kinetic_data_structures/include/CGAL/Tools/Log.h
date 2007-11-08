@@ -123,7 +123,7 @@ inline int CGAL_assertion_strip_unsigned(const T&t) {
   }*/
 
 #define CGAL_assert_equal(a,b) do {if (a != b) { CGAL_ERROR("" #a " = " << a); CGAL_ERROR("" #b " = " << b); CGAL_assertion(a ==b);} } while (0)
-#define CGAL_check_bounds(a,b,e) do {if (CGAL::CGAL_assertion_strip_unsigned(a) < CGAL::CGAL_assertion_strip_unsigned(b) || CGAL::CGAL_assertion_strip_unsigned(a) >=CGAL::CGAL_assertion_strip_unsigned(e)){ CGAL_ERROR("" #a " = " << a); CGAL_ERROR("[" #b "..." #e ") = [" << b << "..." << e << ")"); CGAL_assertion(0);} } while (0)
+#define CGAL_check_bounds(a,b,e) do {if (CGAL::CGAL_assertion_strip_unsigned(a) < CGAL::CGAL_assertion_strip_unsigned(b) || CGAL::CGAL_assertion_strip_unsigned(a) >=CGAL::CGAL_assertion_strip_unsigned(e)){ CGAL_ERROR("" #a " = " << a); CGAL_ERROR("[" #b "..." #e ") = [" << b << "..." << e << ")"); CGAL_error();} } while (0)
 
 #else
 #define CGAL_LOG(l,e)

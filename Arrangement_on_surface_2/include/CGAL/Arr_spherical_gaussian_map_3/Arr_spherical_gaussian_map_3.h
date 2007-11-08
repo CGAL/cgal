@@ -399,7 +399,7 @@ public:
   (const Arr_spherical_gaussian_map_3 & gaussian_map)
   {
     // Not implemented yet!
-    CGAL_assertion(0);
+    CGAL_error();
   }
 
   /*! Destructor */
@@ -409,13 +409,13 @@ public:
   /*! Clear the internal representation and auxiliary data structures */
   void clear()
   {
-    CGAL_assertion_msg(0, "Not implemented yet!");
+    CGAL_error( "Not implemented yet!");
   }
   
   /*! returns true if the representation is empty */
   bool is_empty() const
   {
-    CGAL_assertion_msg(0, "Not implemented yet!");
+    CGAL_error( "Not implemented yet!");
     return true;
   }
 
@@ -425,7 +425,7 @@ public:
    */
   unsigned int degree(Vertex_const_handle vh) const
   {
-    CGAL_assertion_msg(0, "Not implemented yet!");
+    CGAL_error( "Not implemented yet!");
     return vh->degree();
   }
 #endif

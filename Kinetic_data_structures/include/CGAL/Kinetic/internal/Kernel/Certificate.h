@@ -46,7 +46,7 @@ public:
   const Time &failure_time() const {
     if (rs_.empty()) {
       std::cerr << "You now must check if the certificate will fail before calling top.\n";
-      CGAL_assertion(0);
+      CGAL_error();
       static Time t(1000000);
       return t;
     }

@@ -74,7 +74,7 @@ protected:
 			const Point_handle&,
 			const Point_handle&,
 			const Point_handle&, const Tag_false&) const {
-    CGAL_assertion( false );
+    CGAL_error();
     return Storage_site_2();
   }
 
@@ -85,7 +85,7 @@ protected:
 			const Point_handle&,
 			const Point_handle&,
 			const Point_handle&, const Tag_false&) const {
-    CGAL_assertion( false );
+    CGAL_error();
     return Storage_site_2();
   }
 
@@ -95,7 +95,7 @@ protected:
 			const Point_handle&,
 			const Point_handle&,
 			bool /* is_first_exact */, const Tag_false&) const {
-    CGAL_assertion( false );
+    CGAL_error();
     return Storage_site_2();
   }
 
@@ -317,7 +317,7 @@ public:
 			     const Storage_site_2&,
 			     const Tag_false&) const
   {
-    CGAL_assertion( false );
+    CGAL_error();
     return Storage_site_2();
   }
 
@@ -326,7 +326,7 @@ public:
 			      const Storage_site_2&,
 			      const Tag_false&) const
   {
-    CGAL_assertion( false );
+    CGAL_error();
     return Storage_site_2();
   }
 

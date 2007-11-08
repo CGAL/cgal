@@ -247,8 +247,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     else
     {
       // We should never reach here.
-      CGAL_assertion_msg (false,
-                          "top vertex is located in an unbounded face.");
+      CGAL_error_msg("top vertex is located in an unbounded face.");
     }
   }
 

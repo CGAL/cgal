@@ -158,15 +158,15 @@ public:
     return out;
   }
   virtual void process() {
-    CGAL_assertion(0);
+    CGAL_error();
     CGAL_ERROR("Writing dummy queue element.");
   }
   virtual CGAL::Comparison_result compare_concurrent(Key , Key ) const {
-    CGAL_assertion(0);
+    CGAL_error();
     return CGAL::EQUAL;
   };
   virtual bool merge_concurrent(Key , Key ) {
-    CGAL_assertion(0);
+    CGAL_error();
     return false;
   }
   virtual void *kds() const{return NULL;}
@@ -198,7 +198,7 @@ public:
     Two_list_event_queue_item<Priority>(){}
   virtual void process() {
     std::cerr << "Trying to process a NULL event.\n";
-    CGAL_assertion(0);
+    CGAL_error();
   }
   virtual CGAL::Comparison_result compare_concurrent(typename P::Key , typename P::Key ) const{return CGAL::EQUAL;}
   virtual bool merge_concurrent(typename P::Key, typename P::Key){

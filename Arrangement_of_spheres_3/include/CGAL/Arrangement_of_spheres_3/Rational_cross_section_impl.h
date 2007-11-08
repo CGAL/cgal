@@ -112,7 +112,7 @@ Rational_cross_section CGAL_AOS3_TARG ::sphere_point(CGAL_AOS3_TYPENAME CCS::Poi
       throw l.projection(s.center());
     } else return sp;
   } else if (pt.sphere_key(0) == pt.sphere_key(1)) {
-    CGAL_assertion(0);
+    CGAL_error();
     /*int ipt=static_cast<int>(pt.sphere(0).part() & pt.sphere(1).part()) 
       & (~Sds::Curve::ARC_BIT);
       Sds::Curve::Part cpt= static_cast<Sds::Curve::Part>(ipt);

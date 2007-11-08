@@ -176,7 +176,7 @@ Aff_transformationCd<RT,LA> inverse() const
 { Aff_transformationCd<RT,LA> Inv; RT D; 
   Vector dummy;
   if ( !LA::inverse(matrix(),Inv.ptr()->M_,D,dummy) ) 
-  CGAL_assertion_msg(0,"Aff_transformationCd::inverse: not invertible."); 
+  CGAL_error("Aff_transformationCd::inverse: not invertible."); 
   if ( D < FT(0) ) Inv.ptr()->M_ = -Inv.ptr()->M_;
   return Inv;
 }

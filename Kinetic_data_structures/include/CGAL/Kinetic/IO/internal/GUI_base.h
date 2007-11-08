@@ -108,7 +108,7 @@ public:
       break;
     default:
       std::cerr << "Invalid case: " << this->mode() << std::endl;
-      CGAL_assertion(0);
+      CGAL_error();
     }
   }
 

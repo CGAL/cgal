@@ -242,7 +242,7 @@ public:
       if( CGAL::assign( t, o))
 	return operator()(t);
       else
-	CGAL_assertion_msg( 0, "wrong handle");
+	CGAL_error( "wrong handle");
     }
     return Bounding_box_3(); // never reached
   }
@@ -367,7 +367,7 @@ Side_of_plane<SNC_decorator>::operator()
     return (*this)(pop, t, depth);
 #endif
   else
-    CGAL_assertion_msg( 0, "wrong handle");
+    CGAL_error( "wrong handle");
   
   return Oriented_side(); // never reached
 }

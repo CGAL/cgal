@@ -93,7 +93,7 @@ std::vector<double> &roots)
 #ifdef CGAL_HAVE_TNT
 	  jama_compute_roots<false>(begin, end, lb, ub, roots);
 #else
-	  CGAL_assertion(0);
+	  CGAL_error();
 #endif
 	  //jama_compute_roots<false>(begin, end, lb, ub, roots);
     }
@@ -119,7 +119,7 @@ std::vector<double> &roots)
 #ifdef CGAL_HAVE_TNT
 	  jama_compute_roots<true>(begin, end, lb, ub, roots);
 #else
-	  CGAL_assertion(0);
+	  CGAL_error();
 #endif
     }
 }

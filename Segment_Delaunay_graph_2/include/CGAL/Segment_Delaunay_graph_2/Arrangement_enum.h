@@ -185,7 +185,7 @@ namespace Internal {
     } else if ( at == AT::TOUCH_INTERIOR_22 ) {
       os << "TOUCH_INTERIOR_22";
     } else {
-      CGAL_assertion( false );
+      CGAL_error();
     }
 
     return os;

@@ -492,7 +492,7 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
       break;
     default:
       // We should never reach here.
-      CGAL_assertion (false);
+      CGAL_error();
     }
   }
   else
