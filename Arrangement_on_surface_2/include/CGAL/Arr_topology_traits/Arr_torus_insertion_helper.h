@@ -167,19 +167,12 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
         this->m_top_face = he->twin()->face();
     } else if (bound_y == BEFORE_DISCONTINUITY) {
         // top side
-        CGAL::Boundary_type bnd_y_min = 
-            this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(xc.base(), CGAL::MIN_END);
-        CGAL::Boundary_type bnd_y_max = 
-            this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(xc.base(), CGAL::MAX_END);
-        
-        if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
+
+        if (ind == CGAL::MIN_END) {
             this->m_top_face = 
                 (he->direction() == CGAL::RIGHT_TO_LEFT ? 
                  he->twin() : he)->face();
         } else {
-            CGAL_assertion(bnd_y_max == CGAL::BEFORE_DISCONTINUITY);
             this->m_top_face = 
                 (he->direction() == CGAL::LEFT_TO_RIGHT ? 
                  he->twin() : he)->face();

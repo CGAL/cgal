@@ -106,59 +106,94 @@ public:
      * event.
      */  
     void before_handle_event (Event* e) {
-        const Subcurve  *sc = 
-            (e->number_of_right_curves() == 0 ?
-             (*(e->left_curves_begin())) :
-             (*(e->right_curves_rbegin())));
+
+        Curve_end ind = (e->number_of_left_curves() == 0 &&
+                         e->number_of_right_curves() != 0) ?
+            CGAL::MIN_END : CGAL::MAX_END;
         
+        const Subcurve  *xc = (ind == MIN_END) ?
+            (*(e->right_curves_begin())) :
+            (*(e->left_curves_begin()));
         
         if (e->boundary_in_x() == AFTER_DISCONTINUITY) {
             // left side
-            switch (sc->color()) {
+            switch (xc->color()) {
             case Traits_2::RED :
-                m_red_tf = sc->red_halfedge_handle()->twin()->face();
+                m_red_tf = xc->red_halfedge_handle()->twin()->face();
                 break;
                 
             case Traits_2::BLUE :
-                m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                m_blue_tf = xc->blue_halfedge_handle()->twin()->face();
                 break;
                 
             case Traits_2::RB_OVERLAP :
-                m_red_tf = sc->red_halfedge_handle()->twin()->face();
-                m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
+                m_red_tf = xc->red_halfedge_handle()->twin()->face();
+                m_blue_tf = xc->blue_halfedge_handle()->twin()->face();
                 break;
             }
-        } else if (e->boundary_in_y() == BEFORE_DISCONTINUITY) {
-            // top side
-            switch (sc->color()) {
-            case Traits_2::RED :
-                if (sc->red_halfedge_handle()->direction() 
-                    == CGAL::RIGHT_TO_LEFT) {
-                    m_red_tf = sc->red_halfedge_handle()->twin()->face();
-                } else {
-                    m_red_tf = sc->red_halfedge_handle()->face();
+        } else { 
+            
+            if (e->boundary_in_y() == BEFORE_DISCONTINUITY) {
+                
+                Halfedge_handle_red red_he = xc->red_halfedge_handle();
+                Halfedge_handle_blue blue_he = xc->blue_halfedge_handle();
+                
+                // top side
+                switch (xc->color()) {
+                case Traits_2::RED :
+                    
+                    CGAL_assertion(red_he != Halfedge_handle_red());
+                    
+                    if (ind == CGAL::MIN_END) {
+                        this->m_red_tf = 
+                            (red_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                             red_he->twin() : red_he)->face();
+                    } else {
+                        this->m_red_tf = 
+                            (red_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                             red_he->twin() : red_he)->face();
+                    }
+                    
+                    break;
+                case Traits_2::BLUE :
+                    
+                    CGAL_assertion(blue_he != Halfedge_handle_blue());
+                    
+                    if (ind == CGAL::MIN_END) {
+                        this->m_blue_tf = 
+                            (blue_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                             blue_he->twin() : blue_he)->face();
+                    } else {
+                        this->m_blue_tf = 
+                            (blue_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                             blue_he->twin() : blue_he)->face();
+                    }
+                    
+                    break;
+                case Traits_2::RB_OVERLAP :
+                    
+                    CGAL_assertion(red_he != Halfedge_handle_red());
+                    CGAL_assertion(blue_he != Halfedge_handle_blue());
+
+                    if (ind == CGAL::MIN_END) {
+                        this->m_red_tf = 
+                            (red_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                             red_he->twin() : blue_he)->face();
+                        this->m_blue_tf = 
+                            (blue_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                             blue_he->twin() : blue_he)->face();
+                    } else {
+                        this->m_red_tf = 
+                            (red_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                             red_he->twin() : red_he)->face();
+                        this->m_blue_tf = 
+                            (blue_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                             blue_he->twin() : blue_he)->face();
+                    }
+                    break;
                 }
-                break;
-            case Traits_2::BLUE :
-                if (sc->blue_halfedge_handle()->direction() 
-                    == CGAL::RIGHT_TO_LEFT) {
-                    m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
-                } else {
-                    m_blue_tf = sc->blue_halfedge_handle()->face();
-                }
-                break;
-            case Traits_2::RB_OVERLAP :
-                if (sc->red_halfedge_handle()->direction() 
-                    == CGAL::RIGHT_TO_LEFT) {
-                    m_red_tf = sc->red_halfedge_handle()->twin()->face();
-                    m_blue_tf = sc->blue_halfedge_handle()->twin()->face();
-                } else {
-                    m_red_tf = sc->red_halfedge_handle()->face();
-                    m_blue_tf = sc->blue_halfedge_handle()->face();
-                }
-                break;
-            }
-        } 
+            } 
+        }
     }
     
     //@}
