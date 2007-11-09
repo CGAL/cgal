@@ -143,7 +143,7 @@ public:
       return sface(se->twin());
     } 
     else 
-      CGAL_error( "Facet outer cycle entry point"
+      CGAL_error_msg( "Facet outer cycle entry point"
 			     "is not an SHalfedge? ");
     return SFace_const_handle(); // never reached
   }
@@ -288,7 +288,7 @@ public:
       SVertex_const_handle sv;
       if(CGAL::assign(sv,o))
 	std::cerr << "on svertex " << sv->point() << std::endl; 
-      CGAL_error( "it is not possible to decide which one is a visible facet (if any)");
+      CGAL_error_msg( "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_const_handle();
     }
 
@@ -327,7 +327,7 @@ public:
 	f_visible = Halffacet_const_handle();
       }
       else
-	CGAL_error("Damn wrong handle");
+	CGAL_error_msg("Damn wrong handle");
     }
     return f_visible;
   }
@@ -479,7 +479,7 @@ public:
 	f_visible = Halffacet_const_handle();
       }
       else
-	CGAL_error("Damn wrong handle");
+	CGAL_error_msg("Damn wrong handle");
     }
     return f_visible;
   }
@@ -585,7 +585,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
           if ( DoneSF[ll->incident_sface()] ) continue;
           SFaceCandidates.push_back(ll->incident_sface());
           DoneSF[ll->incident_sface()] = true;
-        } else CGAL_error("Damn wrong handle.");
+        } else CGAL_error_msg("Damn wrong handle.");
       }
     }
     if ( !SFaceCandidates.empty() ) {
@@ -644,7 +644,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
           Halffacet_const_handle f = l->twin()->facet();
           if ( DoneF[f] ) continue;
           FacetCandidates.push_back(f);  DoneF[f] = true;
-        } else CGAL_error("Damn wrong handle.");
+        } else CGAL_error_msg("Damn wrong handle.");
       }
     }
   }

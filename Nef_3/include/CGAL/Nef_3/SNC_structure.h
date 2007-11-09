@@ -326,7 +326,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-      { CGAL_error("not impl."); return Object_handle();}
+      { CGAL_error_msg("not impl."); return Object_handle();}
   };
 
   class Halffacet_cycle_const_iterator : public Object_const_iterator 
@@ -353,7 +353,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_error("not impl."); return Object_handle();}
+    { CGAL_error_msg("not impl."); return Object_handle();}
   };
 
   class SFace_cycle_iterator : public Object_iterator 
@@ -1428,7 +1428,7 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 	sl = SHalfloop_handle(ftc);
 	*ftc = Object_handle(SLM[sl]); 
 	store_boundary_item(sl,ftc); 
-      } else CGAL_error("damn wrong boundary item in facet.");
+      } else CGAL_error_msg("damn wrong boundary item in facet.");
     }
   }
 
@@ -1484,7 +1484,7 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 	sl = SHalfloop_handle(sfc);
 	*sfc = Object_handle(SLM[sl]);
 	store_sm_boundary_item(sl,sfc);
-      } else CGAL_error("damn wrong boundary item in sface.");
+      } else CGAL_error_msg("damn wrong boundary item in sface.");
     }
   }
 }

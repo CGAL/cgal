@@ -232,7 +232,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       return se->twin()->incident_sface();
     } 
     else 
-      CGAL_error( "Facet outer cycle entry point"
+      CGAL_error_msg( "Facet outer cycle entry point"
 			     "is not an SHalfedge? ");
     return SFace_handle(); // never reached
   }
@@ -408,7 +408,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     SFace_handle sf;
     if(!CGAL::assign(sf,o)) {
-      CGAL_error( "it is not possible to decide which one is a visible facet (if any)");
+      CGAL_error_msg( "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_handle();
     }
     
@@ -446,7 +446,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	f_visible = Halffacet_handle();
       }
       else
-	CGAL_error("Damn wrong handle");
+	CGAL_error_msg("Damn wrong handle");
     }
     return f_visible;
   }
@@ -601,7 +601,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	f_visible = Halffacet_handle();
       }
       else
-	CGAL_error("Damn wrong handle");
+	CGAL_error_msg("Damn wrong handle");
     }
     return f_visible;
   }
@@ -800,7 +800,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       CGAL_NEF_TRACEN("<-> volume local view of "<<p<<" on "<<&*c);
       return D.create_local_view_on( p, c);
     }
-    else CGAL_error( "Where is the point then?");
+    else CGAL_error_msg( "Where is the point then?");
     return Vertex_handle(); // never reached
   }
   */
@@ -816,7 +816,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     else if( CGAL::assign( f, o))
       return create_local_view_on( p, f);
     else 
-      CGAL_error( "wrong handle");
+      CGAL_error_msg( "wrong handle");
     return Vertex_handle(); // never reached
   }
       */
@@ -860,7 +860,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	CGAL_NEF_TRACEN("face 1 has plane equation " << f->plane());
       }
       else 
-      	CGAL_error( "wrong handle");
+      	CGAL_error_msg( "wrong handle");
 #endif      
 
 #if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
@@ -906,7 +906,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif // CGAL_NEF3_OVERLAY_BY_HAND_OFF
       }
       else 
-	CGAL_error( "wrong handle");
+	CGAL_error_msg( "wrong handle");
 
 #if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
       timer_overlay.stop();
@@ -1070,7 +1070,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 		 "  mark of volume: " << c->mark()); 
 	}
       }
-      else CGAL_error( "wrong handle");
+      else CGAL_error_msg( "wrong handle");
 
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
       timer_overlay.stop();
@@ -1140,7 +1140,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 		 "  mark of volume: " << c->mark()); 
 	}
       }
-      else CGAL_error( "wrong handle");
+      else CGAL_error_msg( "wrong handle");
 
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
       timer_overlay.stop();
@@ -1627,7 +1627,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           if ( Done[l->incident_sface()] ) continue;
           SFaceCandidates.push_back(l->incident_sface());
           Done[l->incident_sface()] = true;
-        } else CGAL_error("Damn wrong handle.");
+        } else CGAL_error_msg("Damn wrong handle.");
       }
     }
     if ( !SFaceCandidates.empty() ) {
@@ -1688,7 +1688,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           Halffacet_handle f = l->twin()->facet();
           if ( Done[f] ) continue;
           FacetCandidates.push_back(f);  Done[f] = true;
-        } else CGAL_error("Damn wrong handle.");
+        } else CGAL_error_msg("Damn wrong handle.");
       }
     }
   }

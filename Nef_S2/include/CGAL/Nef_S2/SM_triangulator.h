@@ -626,7 +626,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
       else { v->mark() = es->mark(); }
     }
     else if ( CGAL::assign(ls,o) ) { v->mark() = ls->mark(); }
-    else CGAL_error("damn wrong support.");
+    else CGAL_error_msg("damn wrong support.");
     CGAL_NEF_TRACEN(" face mark at "<<v->mark());
 
     if ( is_isolated(v) ) continue;

@@ -280,7 +280,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_error("not impl."); }
+    { CGAL_error_msg("not impl."); }
   };
 
   class Halffacet_cycle_const_iterator : public Object_const_iterator 
@@ -305,7 +305,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_error("not impl."); }
+    { CGAL_error_msg("not impl."); }
   };
 
   class Shell_entry_iterator : public Object_iterator 
@@ -714,7 +714,7 @@ pointer_update(const SNC_list<Kernel,Items>& D)
       { *ftc = Object_handle(SEM[se]); store_boundary_item(se,ftc); }
       else if ( assign( sl, ftc) ) 
       { *ftc = Object_handle(SLM[sl]); store_boundary_item(sl,ftc); }
-      else CGAL_error("damn wrong boundary item in facet.");
+      else CGAL_error_msg("damn wrong boundary item in facet.");
     }
   }
 
@@ -762,7 +762,7 @@ pointer_update(const SNC_list<Kernel,Items>& D)
       { *sfc = Object_handle(SEM[se]); store_sm_boundary_item(se,sfc); }
       else if ( assign(sl,sfc) ) 
       { *sfc = Object_handle(SLM[sl]); store_sm_boundary_item(sl,sfc); }
-      else CGAL_error("damn wrong boundary item in sface.");
+      else CGAL_error_msg("damn wrong boundary item in sface.");
     }
   }
 }

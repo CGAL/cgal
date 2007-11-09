@@ -1640,7 +1640,7 @@ protected:
 		fi->b.extend(q);
 	    }
 	  } else
-	    CGAL_error( "is facet first cycle a SHalfloop?"); 
+	    CGAL_error_msg( "is facet first cycle a SHalfloop?"); 
 #endif
 	}
       }    
@@ -1705,7 +1705,7 @@ protected:
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
     // { SNC_point_locator PL(snc()); return PL.mark(h);} 
-    { CGAL_error( "not implemented."); return false;}
+    { CGAL_error_msg( "not implemented."); return false;}
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $2$-skeleton

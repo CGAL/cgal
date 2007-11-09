@@ -167,7 +167,7 @@ on the extended geometric objects.}*/
         res = epoint( l.b(), -l.c(), -l.a(), 0, l.a()); break; 
       case TOPFRAME:
         res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); break; 
-      default: CGAL_error("EPoint type not correct!");
+      default: CGAL_error_msg("EPoint type not correct!");
     }
     return res;
   }

@@ -311,13 +311,13 @@ template <typename PMDEC>
 void PM_io_parser<PMDEC>::read() 
 {
   if ( !check_sep("Plane_map_2") )  
-    CGAL_error("PM_io_parser::read: no embedded_PM header.");
+    CGAL_error_msg("PM_io_parser::read: no embedded_PM header.");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
-    CGAL_error("PM_io_parser::read: wrong node line.");
+    CGAL_error_msg("PM_io_parser::read: wrong node line.");
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_error("PM_io_parser::read: wrong edge line.");
+    CGAL_error_msg("PM_io_parser::read: wrong edge line.");
   if ( !(check_sep("faces") && (in >> fn)) )
-    CGAL_error("PM_io_parser::read: wrong face line.");
+    CGAL_error_msg("PM_io_parser::read: wrong face line.");
 
   Vertex_of.resize(vn);
   Halfedge_of.resize(en);
@@ -331,16 +331,16 @@ void PM_io_parser<PMDEC>::read()
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(Vertex_of[i]))
-      CGAL_error("PM_io_parser::read: error in node line");
+      CGAL_error_msg("PM_io_parser::read: error in node line");
   }
   for(i=0; i<en; i++) {
     if (!read_hedge(Halfedge_of[i]))
-      CGAL_error("PM_io_parser::read: error in halfedge\
+      CGAL_error_msg("PM_io_parser::read: error in halfedge\
       line");
   }
   for(i=0; i<fn; i++) {
     if (!read_face(Face_of[i]))
-      CGAL_error("PM_io_parser::read: error in face line");
+      CGAL_error_msg("PM_io_parser::read: error in face line");
   }
 }
 

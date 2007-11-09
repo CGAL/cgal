@@ -97,7 +97,7 @@ static Matrix  inverse(const Matrix& M, RT& D)
   Matrix result; 
   Vector c;
   if (!inverse(M,result,D,c)) 
-    CGAL_error("inverse(): matrix is singular."); 
+    CGAL_error_msg("inverse(): matrix is singular."); 
   return result;
 }
 

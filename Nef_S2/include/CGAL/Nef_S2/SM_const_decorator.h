@@ -335,7 +335,7 @@ check_integrity_and_topological_planarity(bool faces) const
       } else if( fci.is_shalfloop() ) {
         CGAL_assertion( SHalfloop_const_handle(fci)->incident_sface() == f );
 	++fc_num;
-      } else CGAL_error("damn generic handle.");
+      } else CGAL_error_msg("damn generic handle.");
     }
   }
 

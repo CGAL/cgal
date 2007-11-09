@@ -1232,7 +1232,7 @@ subdivide(const Map* M0, const Map* M1,
     partition_to_halfsphere(L.begin(), L.end(), L_neg, From, 
 			    Sphere_circle(0,0,-1), Sphere_circle(1,0,0), true);
     break;
-  default: CGAL_error( "wrong value");
+  default: CGAL_error_msg( "wrong value");
   }
 
   cs = cs==-1 ? 2 : cs/2;
@@ -1472,7 +1472,7 @@ subdivide(const Map* M0, const Map* M1,
     partition_to_halfsphere(L.begin(), L.end(), L_neg, From, 
 			    Sphere_circle(0,0,-1), Sphere_circle(1,0,0), true);
     break;
-  default: CGAL_error( "wrong value");
+  default: CGAL_error_msg( "wrong value");
   }
 
   cs = cs==-1 ? 2 : cs/2;
@@ -1991,7 +1991,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       if ( CGAL::assign(ls,o) ) { 
 	mark(v,i) = ls->mark(); 
 	CGAL_NEF_TRACEN("loop " << ls->circle()); continue; }
-      CGAL_error("wrong handle");
+      CGAL_error_msg("wrong handle");
     } CGAL_NEF_TRACEN(" vertex marks "<<mark(v,0)<<" "<<mark(v,1));
 
     if ( is_isolated(v) ) continue;
@@ -2043,7 +2043,7 @@ void SM_overlayer<Map>::complete_sface_marks() const {
     assoc_info(f);
     SFace_cycle_iterator boundary_object(f->sface_cycles_begin());
     if (!boundary_object.is_shalfedge() ) 
-      CGAL_error("Outer face cycle should be first.");
+      CGAL_error_msg("Outer face cycle should be first.");
     SHalfedge_handle e(boundary_object);
     for (int i=0; i<2; ++i) mark(f,i) = incident_mark(e,i);
   }

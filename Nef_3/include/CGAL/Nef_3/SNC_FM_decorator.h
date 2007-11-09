@@ -482,7 +482,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     } else if ( CGAL::assign(l,*start) ) {
       SHalfloops.push_back(l); 
     } else 
-      CGAL_error("Damn wrong handle.");
+      CGAL_error_msg("Damn wrong handle.");
   }
 
   /* We iterate all shalfedges and assign a number for each facet

@@ -902,7 +902,7 @@ public:
 			 PL.point(PL.vertices_begin()));
       return PL.locate(s); 
     }
-    CGAL_error("location mode not implemented.");
+    CGAL_error_msg("location mode not implemented.");
     return Object_handle();
   }
 
@@ -946,7 +946,7 @@ public:
       Slocator PL(pm(),EK);
       return PL.ray_shoot(EK.construct_segment(ep,eq),INSET(PL));
     }
-    CGAL_error("location mode not implemented.");
+    CGAL_error_msg("location mode not implemented.");
     return Object_handle();
   }
 
@@ -986,7 +986,7 @@ public:
       Slocator PL(pm(),EK);
       return PL.ray_shoot(EK.construct_segment(ep,eq),INSKEL());
     }
-    CGAL_error("location mode not implemented.");
+    CGAL_error_msg("location mode not implemented.");
     return Object_handle();
   }
 

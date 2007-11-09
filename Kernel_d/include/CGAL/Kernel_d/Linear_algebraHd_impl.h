@@ -182,8 +182,7 @@ RT_ Linear_algebraHd<RT_,AL_>::
 determinant(const Matrix& A)
 { 
   if (A.row_dimension() != A.column_dimension())
-    CGAL_error(
-      "determinant(): only square matrices are legal inputs."); 
+    CGAL_error_msg(      "determinant(): only square matrices are legal inputs."); 
   Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
@@ -297,8 +296,7 @@ determinant(const Matrix& A,
             std::vector<int>& q, Vector& c) 
 { 
   if (A.row_dimension() != A.column_dimension())
-    CGAL_error(
-      "determinant(): only square matrices are legal inputs."); 
+    CGAL_error_msg(      "determinant(): only square matrices are legal inputs."); 
   Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
@@ -424,8 +422,7 @@ verify_determinant(const Matrix& A, RT_ D,
                    const std::vector<int>& q, Vector& c) 
 { 
   if ((int)q.size() != A.column_dimension())
-    CGAL_error(
-    "verify_determinant: q should be a permutation array \
+    CGAL_error_msg(    "verify_determinant: q should be a permutation array \
     with index range [0,A.column_dimension() - 1]."); 
   int n = A.row_dimension(); 
   int i,j; 
@@ -470,7 +467,7 @@ verify_determinant(const Matrix& A, RT_ D,
 
     for (i = 0; i < n; i++) 
       if (! already_considered[i])
-        CGAL_error("verify_determinant:q is not a permutation."); 
+        CGAL_error_msg("verify_determinant:q is not a permutation."); 
       else 
         already_considered[i] = false; 
 
@@ -718,7 +715,7 @@ inverse(const Matrix& A, Matrix& inverse,
         RT_& D, Vector& c)
 { 
   if (A.row_dimension() != A.column_dimension())
-    CGAL_error("inverse: only square matrices are legal inputs."); 
+    CGAL_error_msg("inverse: only square matrices are legal inputs."); 
   Vector b(A.row_dimension()); // zero - vector
   int i,j,k; // indices to step through the matrix
   int rows = A.row_dimension(); 
@@ -838,7 +835,7 @@ inverse(const Matrix& A, Matrix& inverse,
 
   #ifdef CGAL_LA_SELFTEST
   if (A*inverse != Matrix(rows,Matrix::RT_val(1))*D)
-    CGAL_error("inverse(): matrix inverse computed incorrectly."); 
+    CGAL_error_msg("inverse(): matrix inverse computed incorrectly."); 
   #endif      
 
   return true; 

@@ -129,7 +129,7 @@ check_order_preserving_embedding(Vertex_const_handle v) const
            !K.strictly_ordered_ccw(direction(e),direction(en),
                                    direction(ef)) ) {
         error_status << "ccw order violate!" << endl << '\0';
-        CGAL_error(error_status.str());
+        CGAL_error_msg(error_status.str());
       }
       e = en;
     }

@@ -169,7 +169,7 @@ class Infimaximal_box {
 
   static Point_3 create_extended_point(NT, NT, NT) {
     std::cerr << "function should not be called" << std::endl;
-    CGAL_error("function should not be called");
+    CGAL_error_msg("function should not be called");
     return Point_3(0,0,0);
   }
 

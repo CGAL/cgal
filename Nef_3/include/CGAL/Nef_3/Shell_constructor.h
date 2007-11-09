@@ -107,7 +107,7 @@ class Shell_constructor : public Modifier_base<typename Nef3::SNC_structure> {
     
     void operator()(SNC_structure& snc) {
       if (!check_sep("OFF"))  
-	CGAL_error("OFF header is missing!");
+	CGAL_error_msg("OFF header is missing!");
       int nv, nf, x;
       in >> nv;
       in >> nf;
