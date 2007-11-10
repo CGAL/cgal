@@ -42,11 +42,16 @@ struct PCA_dimension_1_tag {};
 // For the vertices of objects.
 struct PCA_dimension_0_tag {};
 
+
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
 // Struct to denote dimension compile time decisions
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-template <class Value_type /* type of fitted objects */,
+/*
+
+Advice by L. Saboret
+
+template <class Value_type, // type of fitted objects
           class K>
 struct PCA_default_dimension{};
 
@@ -65,6 +70,7 @@ struct PCA_default_dimension<typename K::Triangle_3> {
   typedef CGAL::PCA_dimension_2_tag Tag;
 };
 
+*/
 
 CGAL_END_NAMESPACE
 
