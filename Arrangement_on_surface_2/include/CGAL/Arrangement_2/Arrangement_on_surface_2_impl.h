@@ -49,6 +49,17 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
   // Allocate the traits.
   geom_traits = new Traits_adaptor_2;
   own_traits = true;
+
+#if 0
+  _boundary_types[ARR_LEFT_BOUNDARY] =
+    top_traits.boundary_type(ARR_LEFT_BOUNDARY);
+  _boundary_types[ARR_BOTTOM_BOUNDARY] =
+    top_traits.boundary_type(ARR_BOTTOM_BOUNDARY);
+  _boundary_types[ARR_TOP_BOUNDARY] =
+    top_traits.boundary_type(ARR_TOP_BOUNDARY);
+  _boundary_types[ARR_RIGHT_BOUNDARY] =
+    top_traits.boundary_type(ARR_RIGHT_BOUNDARY);
+#endif
 }
 
 //-----------------------------------------------------------------------------

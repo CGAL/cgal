@@ -929,6 +929,8 @@ protected:
   bool                own_traits;   // Inidicate whether we should evetually
                                     // free the traits object.
 
+  Arr_boundary_type   _boundary_types[4];   
+
 public:
 
   /// \name Constructors.

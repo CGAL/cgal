@@ -72,6 +72,46 @@ inline CGAL::Sign sign (Boundary_type bt)
   return (CGAL::ZERO);
 }
 
+/*! \enum
+ * 
+ */
+enum Arr_halfedge_direction {
+  ARR_LEFT_TO_RIGHT = -1,
+  ARR_RIGHT_TO_LEFT = 1
+};
+
+/*! \enum
+ * 
+ */
+enum Arr_curve_end {
+  ARR_MIN_END,
+  ARR_MAX_END
+};
+
+/*! \enum The various surface boundary types
+ * For example
+ * - The plain has unbounded boundaries.
+ * - The sphere has 2 contraction points and one identification curve.
+ */
+enum Arr_boundary_type {
+  ARR_UNBOUNDED = 0,
+  ARR_BOUNDED,
+  ARR_CONTRACTION,
+  ARR_IDENTIFICATION,
+  ARR_NUM_BOUNDARY_TYPES
+};
+
+/*! \enum The various surface parameter space options categorizing the
+ * surface range according to the parameter domain.
+ */
+enum Arr_parameter_space {
+  ARR_LEFT_BOUNDARY = 0,
+  ARR_RIGHT_BOUNDARY,
+  ARR_BOTTOM_BOUNDARY,
+  ARR_TOP_BOUNDARY,
+  ARR_INTERIOR
+};
+
 CGAL_END_NAMESPACE
 
 #endif
