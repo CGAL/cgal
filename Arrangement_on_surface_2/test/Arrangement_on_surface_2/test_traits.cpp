@@ -48,8 +48,8 @@ int main (int argc, char * argv[])
 }
 
 #if TEST_TRAITS == CORE_CONIC_TRAITS || \
-    TEST_TRAITS == BEZIER_TRAITS || \
     TEST_TRAITS == RATIONAL_ARC_TRAITS
+/*    TEST_TRAITS == BEZIER_TRAITS || \ */
 
 // bezier traits, conic traits and rational traits use same number 
 // type CORE:Expr so this code can be shared
@@ -766,6 +766,19 @@ read_curve(stream & is,Curve_2 & cv)
 
 #elif TEST_TRAITS == BEZIER_TRAITS
 
+template <>
+template <class stream>
+bool
+Traits_test<Traits >::
+read_point(stream & is, Point_2 & p)
+{
+  Rational rat_x,rat_y;
+  is >> rat_x >> rat_y;
+  //Basic_number_type x(rat_x), y(rat_y);
+  p = Point_2(rat_x, rat_y);
+  return true;
+}
+
 /*! Read an x-monotone bezier curve */
 
 template <>
@@ -777,10 +790,10 @@ Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
   std::list<CGAL::Object>::const_iterator  xoit;
   Curve_2 tmp_cv;
   is >> tmp_cv;
-  Algebraic B_psx = Algebraic(tmp_cv.control_point(0).x());
-  Algebraic B_psy = Algebraic(tmp_cv.control_point(0).y());
-  Algebraic B_ptx = Algebraic(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).x());
-  Algebraic B_pty = Algebraic(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
+  Rational B_psx = Rational(tmp_cv.control_point(0).x());
+  Rational B_psy = Rational(tmp_cv.control_point(0).y());
+  Rational B_ptx = Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).x());
+  Rational B_pty = Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
   Point_2 B_ps(B_psx, B_psy);
   Point_2 B_pt(B_ptx, B_pty);
   Traits::Make_x_monotone_2 make_x_monotone = this->m_traits.make_x_monotone_2_object();
