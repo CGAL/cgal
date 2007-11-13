@@ -350,10 +350,10 @@ public:
 
   typedef Arr_inc_insertion_zone_visitor<Arr>
                                               Zone_insertion_visitor;
-  
-  //typedef Arr_walk_along_line_point_location<Arr> Default_point_location_strategy;
-  typedef Arr_simple_point_location<Arr> Default_point_location_strategy;
-                                     
+
+  typedef Arr_walk_along_line_point_location<Arr>
+                                              Default_point_location_strategy;
+
   //@}
 
   ///! \name Topology-traits methods.
