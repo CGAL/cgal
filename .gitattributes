@@ -17,7 +17,6 @@ Algebraic_foundations/examples/Algebraic_foundations/interoperable.cpp -text
 Algebraic_foundations/maintainer -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_kernel_d_1.cpp -text
-Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Curve_kernel_2_data/.nix -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Curve_kernel_2_data/projected_arr_2_2_8_2.nix -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Curve_kernel_2_data/projected_arr_2_2_8_3.nix -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Curve_kernel_2_data/projected_arr_2_2_8_4.nix -text
