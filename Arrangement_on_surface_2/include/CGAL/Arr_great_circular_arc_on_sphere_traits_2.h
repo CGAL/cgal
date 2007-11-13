@@ -2499,11 +2499,11 @@ protected:
   /*! The arc is empty */
   bool m_is_empty;
   
-  inline Sign x_sign(Direction_3 d) { return CGAL::sign(d.dx()); }
+  inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
 
-  inline Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }  
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }  
 
-  inline Sign z_sign(Direction_3 d) { return CGAL::sign(d.dz()); }
+  inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
 
   /*! Constructs a plane that contains two directions.
    * \todo Introduce in Kernel::ConstructPlane_3::operator()(Direction_3, Dir..)
@@ -2870,7 +2870,16 @@ public:
   
   /*! Determine whether both endpoints are on the boundary */
   bool is_on_boundary() const
-  { return ((!m_source.is_no_boundary()) && (!m_target.is_no_boundary())); }
+  {
+    if (m_source.is_no_boundary() || m_target.is_no_boundary() ||
+        !is_vertical())
+      return false;
+
+    Direction_3 normal = m_plane.orthogonal_direction();    
+    return ((x_sign(normal) == ZERO) &&
+            (((y_sign(normal) == NEGATIVE) && !is_directed_right()) ||
+             ((y_sign(normal) == POSITIVE) && is_directed_right())));
+  }
     
   /*! Determine whether the given point is in the x-range of the
    * spherical_arc.
@@ -3247,12 +3256,8 @@ public:
                       (!plane_is_positive && !ccib(nx, t, s)));
   }
 
-  /*! Construct a spherical_arc from two endpoints directions contained
-   * in a plane.
+  /*! Construct a full spherical_arc from a plane.
    * \param plane the containing plane.
-   * \param source the source-point direction.
-   * \param target the target-point direction.
-   * \pre The two endpoints are not the same, and both lie on the given plane.
    */
   Arr_great_circular_arc_on_sphere_3(const Plane_3 & plane)
   {
