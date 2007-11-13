@@ -26,6 +26,7 @@
 
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_default_dcel.h>
+#include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
