@@ -54,6 +54,7 @@ public:
   // Tags.
   typedef typename Base::Has_left_category      Has_left_category;
   typedef typename Base::Has_boundary_category  Has_boundary_category;
+  typedef typename Base::Boundary_category      Boundary_category;
 
   /// \name Construction.
   //@{

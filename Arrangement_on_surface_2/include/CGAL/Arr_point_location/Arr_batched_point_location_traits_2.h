@@ -25,6 +25,8 @@
  * Definition of the Arr_batched_point_location_traits_2<Arrangement> class.
  */
 
+#include <CGAL/Arr_tags.h>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -58,7 +60,10 @@ public:
 
   typedef typename Base_traits_2::Has_boundary_category
                                                    Base_has_boundary_category;
+  typedef typename Base_traits_2::Boundary_category
+                                                   Base_boundary_category;
   typedef Tag_true                                 Has_boundary_category;
+  typedef Arr_bounded_boundary_tag                 Boundary_category;
   typedef Tag_false                                Has_left_category;
 
 protected:

@@ -62,7 +62,7 @@ public:
   typedef typename CircularKernel::Circular_arc_point_2      Point_2;
 
   typedef CGAL::Tag_false                        Has_left_category;
-  typedef CGAL::Tag_false 			 Has_merge_category;
+  typedef CGAL::Tag_false 			             Has_merge_category;
   typedef CGAL::Tag_false                        Has_boundary_category;
   typedef Arr_no_boundary_tag                    Boundary_category;
 

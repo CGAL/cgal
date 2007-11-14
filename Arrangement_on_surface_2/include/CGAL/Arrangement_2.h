@@ -51,6 +51,7 @@ class Arrangement_2 :
 private:
 
   typedef typename GeomTraits_::Has_boundary_category     Has_boundary;
+  typedef typename GeomTraits_::Boundary_category         Boundary_category;
   typedef Default_planar_topology<GeomTraits_,
                                   Dcel_,
                                   Has_boundary>           Default_topology;

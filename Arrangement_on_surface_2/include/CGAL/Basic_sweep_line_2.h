@@ -84,39 +84,41 @@ class Basic_sweep_line_2
 {
 public:
 
-  typedef Traits_                                        Traits_2;
-  typedef Visitor_                                       Visitor;
-  typedef Event_                                         Event;
-  typedef Subcurve_                                      Subcurve;
-  typedef Allocator_                                     Allocator;
+  typedef Traits_                                       Traits_2;
+  typedef Visitor_                                      Visitor;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
+  typedef Allocator_                                    Allocator;
 
-  typedef Arr_traits_basic_adaptor_2<Traits_2>           Traits_adaptor_2;
-  typedef typename Traits_adaptor_2::Point_2             Point_2;
-  typedef typename Traits_adaptor_2::X_monotone_curve_2  X_monotone_curve_2;
+  typedef Arr_traits_basic_adaptor_2<Traits_2>          Traits_adaptor_2;
+  typedef typename Traits_adaptor_2::Point_2            Point_2;
+  typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits_adaptor_2::Has_boundary_category 
-                                                         Has_boundary_category;
+                                                        Has_boundary_category;
+  typedef typename Traits_adaptor_2::Boundary_category  Boundary_category;
 
-  typedef CGAL::Compare_events<Traits_adaptor_2, Event>     Compare_events;
-  typedef Multiset<Event*, Compare_events, Allocator>  Event_queue; 
-  typedef typename Event_queue::iterator               Event_queue_iterator;
+  typedef CGAL::Compare_events<Traits_adaptor_2, Event> Compare_events;
+  typedef Multiset<Event*, Compare_events, Allocator>   Event_queue; 
+  typedef typename Event_queue::iterator                Event_queue_iterator;
 
-  typedef typename Event::Subcurve_iterator            Event_subcurve_iterator;
+  typedef typename Event::Subcurve_iterator
+    Event_subcurve_iterator;
 
-  typedef Sweep_line_event<Traits_2, Subcurve>         Base_event;
-  typedef typename Base_event::Attribute               Attribute;
+  typedef Sweep_line_event<Traits_2, Subcurve>          Base_event;
+  typedef typename Base_event::Attribute                Attribute;
   
-  typedef Sweep_line_subcurve<Traits_2>                Base_subcurve;
-  typedef class Curve_comparer<Traits_2, Base_subcurve>      Compare_curves;
+  typedef Sweep_line_subcurve<Traits_2>                 Base_subcurve;
+  typedef class Curve_comparer<Traits_2, Base_subcurve> Compare_curves;
   typedef Multiset<Base_subcurve*,
                    Compare_curves, 
-                   Allocator>                          Status_line;
-  typedef typename Status_line::iterator               Status_line_iterator;
+                   Allocator>                           Status_line;
+  typedef typename Status_line::iterator                Status_line_iterator;
 
-  typedef typename Allocator::template rebind<Event>   Event_alloc_rebind;
-  typedef typename Event_alloc_rebind::other           Event_alloc;
+  typedef typename Allocator::template rebind<Event>    Event_alloc_rebind;
+  typedef typename Event_alloc_rebind::other            Event_alloc;
 
-  typedef typename Allocator::template rebind<Subcurve>  Subcurve_alloc_rebind;
-  typedef typename Subcurve_alloc_rebind::other          Subcurve_alloc;
+  typedef typename Allocator::template rebind<Subcurve> Subcurve_alloc_rebind;
+  typedef typename Subcurve_alloc_rebind::other         Subcurve_alloc;
 
 
 protected:

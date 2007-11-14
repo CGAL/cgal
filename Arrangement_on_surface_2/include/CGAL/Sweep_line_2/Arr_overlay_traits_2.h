@@ -26,6 +26,7 @@
  */
 
 #include <CGAL/Object.h>
+#include <CGAL/Arr_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,10 +77,12 @@ public:
   typedef typename Traits_2::Compare_x_2           Base_compare_x_2;
   typedef typename Traits_2::Equal_2               Base_equal_2;
   typedef typename Traits_2::Has_boundary_category Base_has_boundary_category;
+  typedef typename Traits_2::Boundary_category     Base_boundary_category;
   
-  typedef Tag_true                                    Has_boundary_category;
-  typedef Tag_false                                   Has_left_category;
-  typedef Tag_false                                   Has_merge_category;
+  typedef Tag_true                                 Has_boundary_category;
+  typedef Arr_bounded_boundary_tag                 Boundary_category;
+  typedef Tag_false                                Has_left_category;
+  typedef Tag_false                                Has_merge_category;
 
   // The color of a feature.
   enum Color
