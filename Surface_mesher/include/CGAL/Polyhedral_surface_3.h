@@ -205,8 +205,7 @@ namespace CGAL {
 template <class GT,
           class Has_edges_tag_ = Surface_mesher::Has_no_edges,
           class Polyhedron_3 = Enriched_polyhedron<GT,
-                                                   Enriched_items,
-                                                   CGAL::HalfedgeDS_list > >
+                                                   Enriched_items> >
 class Polyhedral_surface_3 : 
   public Has_edges_tag_,
   public Polyhedron_3
