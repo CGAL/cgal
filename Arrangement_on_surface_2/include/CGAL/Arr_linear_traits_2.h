@@ -26,8 +26,8 @@
  */
 
 #include <CGAL/tags.h>
-#include <CGAL/representation_tags.h>
 #include <CGAL/intersections.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include <fstream>
@@ -57,6 +57,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_true                        Has_boundary_category;
+  typedef Arr_has_boundary_tag            Boundary_category;
 
   typedef typename Kernel::Line_2         Line_2;
   typedef typename Kernel::Ray_2          Ray_2;
@@ -234,11 +235,26 @@ public:
     }
 
     /*!
-     * Check if the x-coordinate of the left point is infinite.
+     * Check whether the x-coordinate of the left point is infinite.
      * \return MINUS_INFINITY if the left point is at x = -oo;
      *         NO_BOUNDARY if the x-coordinate is finite.
      */
-    Boundary_type left_infinite_in_x () const
+    Arr_parameter_space left_infinite_in_x () const
+    {
+      if (is_vert || is_degen)
+        return (ARR_INTERIOR);
+
+      return (is_right) ?
+        (has_source ? ARR_INTERIOR : ARR_LEFT_BOUNDARY) :
+        (has_target ? ARR_INTERIOR : ARR_LEFT_BOUNDARY);
+    }
+
+    /*!
+     * Check whether the x-coordinate of the left point is infinite.
+     * \return MINUS_INFINITY if the left point is at x = -oo;
+     *         NO_BOUNDARY if the x-coordinate is finite.
+     */
+    Boundary_type left_infinite_in_x_depricated () const
     {
       if (is_vert || is_degen)
         return (NO_BOUNDARY);
@@ -250,12 +266,35 @@ public:
     }
 
     /*!
-     * Check if the y-coordinate of the left point is infinite.
+     * Check whether the y-coordinate of the left point is infinite.
+     * \return ARR_BOTTOM_BOUNDARY if the left point is at y = -oo;
+     *         ARR_INTERIOR if the y-coordinate is finite.
+     *         ARR_TOP_BOUNDARY if the left point is at y = +oo;
+     */
+    Boundary_type left_infinite_in_y () const
+    {
+      if (is_horiz || is_degen)
+        return ARR_INTERIOR;
+
+      if (is_vert) {
+        return (is_right) ?
+          (has_source ? ARR_INTERIOR : ARR_BOTTOM_BOUNDARY) :
+          (has_target ? ARR_INTERIOR : ARR_BOTTOM_BOUNDARY);
+      }
+
+      if ((is_right && has_source) || (! is_right && has_target))
+          return ARR_INTERIOR;
+
+      return (has_pos_slope ? ARR_BOTTOM_BOUNDARY : ARR_TOP_BOUNDARY);
+    }
+
+    /*!
+     * Check whether the y-coordinate of the left point is infinite.
      * \return MINUS_INFINITY if the left point is at y = -oo;
      *         PLUS_INFINITY if the left point is at y = +oo;
      *         NO_BOUNDARY if the y-coordinate is finite.
      */
-    Boundary_type left_infinite_in_y () const
+    Boundary_type left_infinite_in_y_depricated () const
     {
       if (is_horiz || is_degen)
         return (NO_BOUNDARY);
@@ -275,7 +314,7 @@ public:
     }
 
     /*!
-     * Check if the left point is finite.
+     * Check whether the left point is finite.
      */
     bool has_left () const
     {
@@ -339,11 +378,26 @@ public:
     }
 
     /*!
-     * Check if the x-coordinate of the right point is infinite.
+     * Check whether the x-coordinate of the right point is infinite.
      * \return PLUS_INFINITY if the left point is at x = +oo;
      *         NO_BOUNDARY if the x-coordinate is finite.
      */
     Boundary_type right_infinite_in_x () const
+    {
+      if (is_vert || is_degen)
+        return ARR_INTERIOR;
+
+      return (is_right) ?
+        (has_target ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY) :
+        (has_source ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY);
+    }
+
+    /*!
+     * Check whether the x-coordinate of the right point is infinite.
+     * \return PLUS_INFINITY if the left point is at x = +oo;
+     *         NO_BOUNDARY if the x-coordinate is finite.
+     */
+    Boundary_type right_infinite_in_x_depricated () const
     {
       if (is_vert || is_degen)
         return (NO_BOUNDARY);
@@ -355,12 +409,12 @@ public:
     }
 
     /*!
-     * Check if the y-coordinate of the right point is infinite.
+     * Check whether the y-coordinate of the right point is infinite.
      * \return MINUS_INFINITY if the right point is at y = -oo;
      *         PLUS_INFINITY if the right point is at y = +oo;
      *         NO_BOUNDARY if the y-coordinate is finite.
      */
-    Boundary_type right_infinite_in_y () const
+    Boundary_type right_infinite_in_y_depricated () const
     {
       if (is_horiz || is_degen)
         return (NO_BOUNDARY);
@@ -380,7 +434,30 @@ public:
     }
 
     /*!
-     * Check if the right point is finite.
+     * Check whether the y-coordinate of the right point is infinite.
+     * \return ARR_BOTTOM_BOUNDARY if the right point is at y = -oo;
+     *         ARR_INTERIOR if the y-coordinate is finite.
+     *         ARR_TOP_BOUNDARY if the right point is at y = +oo;
+     */
+    Boundary_type right_infinite_in_y () const
+    {
+      if (is_horiz || is_degen)
+        return ARR_INTERIOR;
+
+      if (is_vert) {
+        return (is_right) ?
+          (has_target ? ARR_INTERIOR : ARR_TOP_BOUNDARY) :
+          (has_source ? ARR_INTERIOR : ARR_TOP_BOUNDARY);
+      }
+
+      if ((is_right && has_target) || (! is_right && has_source))
+          return ARR_INTERIOR;
+
+      return (has_pos_slope ? ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY);
+    }
+
+    /*!
+     * Check whether the right point is finite.
      */
     bool has_right () const
     {
@@ -452,7 +529,7 @@ public:
     }
 
     /*!
-     * Check if the curve is vertical.
+     * Check whether the curve is vertical.
      */
     bool is_vertical () const
     {
@@ -461,7 +538,7 @@ public:
     }
 
     /*!
-     * Check if the curve is degenerate.
+     * Check whether the curve is degenerate.
      */
     bool is_degenerate () const
     {
@@ -469,7 +546,7 @@ public:
     }
 
     /*!
-     * Check if the curve is directed lexicographic from left to right
+     * Check whether the curve is directed lexicographic from left to right
      */
     bool is_directed_right () const
     {
@@ -477,7 +554,7 @@ public:
     }
 
     /*!
-     * Check if the given point is in the x-range of the object.
+     * Check whether the given point is in the x-range of the object.
      * \param p The query point.
      * \return (true) is in the x-range of the segment; (false) if it is not.
      */
@@ -487,9 +564,9 @@ public:
       typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
       Comparison_result               res1;
 
-      if (left_infinite_in_x() == NO_BOUNDARY)
+      if (left_infinite_in_x_depricated() == NO_BOUNDARY)
       {
-        if (left_infinite_in_y() != NO_BOUNDARY)
+        if (left_infinite_in_y_depricated() != NO_BOUNDARY)
           // Compare with some point on the curve.
           res1 = compare_x (p, ps);
         else
@@ -508,9 +585,9 @@ public:
 
       Comparison_result               res2;
 
-      if (right_infinite_in_x() == NO_BOUNDARY)
+      if (right_infinite_in_x_depricated() == NO_BOUNDARY)
       {
-        if (right_infinite_in_y() != NO_BOUNDARY)
+        if (right_infinite_in_y_depricated() != NO_BOUNDARY)
           // Compare with some point on the curve.
           res2 = compare_x (p, ps);
         else
@@ -526,7 +603,7 @@ public:
     }
 
     /*!
-     * Check if the given point is in the y-range of the object.
+     * Check whether the given point is in the y-range of the object.
      * \param p The query point.
      * \pre The object is vertical.
      * \return (true) is in the y-range of the segment; (false) if it is not.
@@ -537,7 +614,7 @@ public:
 
       Kernel                          kernel;
       typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
-      Boundary_type                   inf = left_infinite_in_y();
+      Boundary_type                   inf = left_infinite_in_y_depricated();
       Comparison_result               res1;
 
       CGAL_assertion (inf != PLUS_INFINITY);
@@ -553,7 +630,7 @@ public:
 
       Comparison_result               res2;
 
-      inf = right_infinite_in_y();
+      inf = right_infinite_in_y_depricated();
       CGAL_assertion (inf != MINUS_INFINITY);
       if (inf == NO_BOUNDARY)
         res2 = compare_y (p, right());
@@ -710,7 +787,7 @@ public:
   {
   public:
     /*!
-     * Check if an end of a given x-monotone curve is infinite at x.
+     * Check whether an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
@@ -724,9 +801,9 @@ public:
       CGAL_precondition (! cv.is_degenerate());
 
       if (ind == MIN_END)
-        return (cv.left_infinite_in_x());
+        return (cv.left_infinite_in_x_depricated());
       else
-        return (cv.right_infinite_in_x());
+        return (cv.right_infinite_in_x_depricated());
     }
   };
 
@@ -740,7 +817,7 @@ public:
   {
   public:
     /*!
-     * Check if an end of a given x-monotone curve is infinite at y.
+     * Check whether an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
@@ -754,9 +831,9 @@ public:
       CGAL_precondition (! cv.is_degenerate());
 
       if (ind == MIN_END)
-        return (cv.left_infinite_in_y());
+        return (cv.left_infinite_in_y_depricated());
       else
-        return (cv.right_infinite_in_y());
+        return (cv.right_infinite_in_y_depricated());
     }
   };
 
@@ -895,11 +972,11 @@ public:
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());
       CGAL_precondition ((ind == MIN_END &&
-                          cv1.left_infinite_in_x() == MINUS_INFINITY &&
-                          cv2.left_infinite_in_x() == MINUS_INFINITY) ||
+                          cv1.left_infinite_in_x_depricated() == MINUS_INFINITY &&
+                          cv2.left_infinite_in_x_depricated() == MINUS_INFINITY) ||
                          (ind == MAX_END &&
-                          cv1.right_infinite_in_x() == PLUS_INFINITY &&
-                          cv2.right_infinite_in_x() == PLUS_INFINITY));
+                          cv1.right_infinite_in_x_depricated() == PLUS_INFINITY &&
+                          cv2.right_infinite_in_x_depricated() == PLUS_INFINITY));
 
       // Compare the slopes of the two supporting lines.
       Kernel                    kernel;
@@ -1049,7 +1126,7 @@ public:
   {
   public:
     /*!
-     * Check if the two x-monotone curves are the same (have the same graph).
+     * Check whether the two x-monotone curves are the same (have the same graph).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
@@ -1087,7 +1164,7 @@ public:
     }
 
     /*!
-     * Check if the two points are the same.
+     * Check whether the two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
@@ -1106,6 +1183,221 @@ public:
   }
   //@}
 
+  /// \name Functor definitions to handle boundaries
+  //@{
+
+  /*! A function object that obtains the parameter space of a geometric
+   * entity along the x-axis
+   */
+  class Parameter_space_in_x_2 {
+  public:
+    /*! Obtains the parameter space at the end of a line along the x-axis.
+     * \param xcv the line
+     * \param ce the line end indicator:
+     *     ARR_MIN_END - the minimal end of xc or
+     *     ARR_MAX_END - the maximal end of xc
+     * \return the parameter space at the ce end of the line xcv.
+     *   ARR_LEFT_BOUNDARY  - the line approaches the identification arc from
+     *                        the right at the line left end.
+     *   ARR_INTERIOR       - the line does not approache the identification arc.
+     *   ARR_RIGHT_BOUNDARY - the line approaches the identification arc from
+     *                        the left at the line right end.
+     */
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
+                                   Arr_curve_end ce) const
+    {
+      CGAL_precondition (! xcv.is_degenerate());
+      return (ce == ARR_MIN_END) ?
+        xcv.left_infinite_in_x() : xcv.right_infinite_in_x();
+    }
+
+    /*! Obtains the parameter space at a point along the x-axis.
+     * \param p the point.
+     * \return the parameter space at p.
+     */
+    Arr_parameter_space operator()(const Point_2 p) const
+    {
+      return ARR_INTERIOR;
+    }
+  };
+
+  /*! Obtain a Parameter_space_in_x_2 function object */
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
+  { return Parameter_space_in_x_2(); }
+  
+  /*! A function object that obtains the parameter space of a geometric
+   * entity along the y-axis
+   */
+  class Parameter_space_in_y_2 {
+  public:
+    /*! Obtains the parameter space at the end of a line along the y-axis .
+     * Note that if the line end coincides with a pole, then unless the line
+     * coincides with the identification arc, the line end is considered to
+     * be approaching the boundary, but not on the boundary.
+     * If the line coincides with the identification arc, it is assumed to
+     * be smaller than any other object.
+     * \param xcv the line
+     * \param ce the line end indicator:
+     *     ARR_MIN_END - the minimal end of xc or
+     *     ARR_MAX_END - the maximal end of xc
+     * \return the parameter space at the ce end of the line xcv.
+     *   ARR_BOTTOM_BOUNDARY  - the line approaches the south pole at the line
+     *                          left end.
+     *   ARR_INTERIOR         - the line does not approache a contraction point.
+     *   ARR_TOP_BOUNDARY     - the line approaches the north pole at the line
+     *                          right end.
+     */
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
+                                   Arr_curve_end ce) const
+    {
+      CGAL_precondition (! xcv.is_degenerate());
+
+      return (ce == ARR_MIN_END) ?
+        xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
+    }
+
+    /*! Obtains the parameter space at a point along the y-axis.
+     * \param p the point.
+     * \return the parameter space at p.
+     */
+    Arr_parameter_space operator()(const Point_2 p) const
+    {
+      return ARR_INTERIOR;
+    }
+  };
+
+  /*! Obtain a Parameter_space_in_y_2 function object */
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
+  { return Parameter_space_in_y_2(); }
+
+  /*! A function object that compares the x-coordinates of arc ends near the
+   * boundary of the parameter space
+   */
+  class Compare_x_near_boundary_2 {
+  public:
+    /*! Compare the x-coordinate of a point with the x-coordinate of
+     * a line end near the boundary at y = +/- oo.
+     * \param p the point direction.
+     * \param xcv the line, the endpoint of which is compared.
+     * \param ce the line-end indicator -
+     *            ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
+     * \return the comparison result:
+     *         SMALLER - x(p) < x(xc, ce);
+     *         EQUAL   - x(p) = x(xc, ce);
+     *         LARGER  - x(p) > x(xc, ce).     
+     * \pre p lies in the interior of the parameter space.
+     * \pre the ce end of the line xcv lies on a boundary.
+     */
+    Comparison_result operator()(const Point_2 & p,
+                                 const X_monotone_curve_2 & xcv,
+                                 Arr_curve_end ce) const
+    {
+      CGAL_precondition (! xcv.is_degenerate());
+      CGAL_precondition (xcv.is_vertical());
+
+      Kernel                    kernel;
+      return (kernel.compare_x_at_y_2_object() (p, xcv.supp_line()));
+    }
+
+    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
+     * parameter space at y = +/- oo.
+     * \param xcv1 the first arc.
+     * \param ce1 the first arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv1 or
+     *            ARR_MAX_END - the maximal end of xcv1.
+     * \param xcv2 the second arc.
+     * \param ce2 the second arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv2 or
+     *            ARR_MAX_END - the maximal end of xcv2.
+     * \return the second comparison result:
+     *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
+     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
+     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+     * \pre the ce1 end of the line xcv1 lies on a boundary.
+     * \pre the ce2 end of the line xcv2 lies on a boundary.
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 Arr_curve_end /* ce1 */,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end /*! ce2 */) const
+    {
+      CGAL_precondition (! xcv1.is_degenerate());
+      CGAL_precondition (! xcv2.is_degenerate());
+      CGAL_precondition (xcv1.is_vertical());
+      CGAL_precondition (xcv2.is_vertical());
+
+      Kernel                    kernel;
+      typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
+      return (kernel.compare_x_at_y_2_object() (p,
+                                                xcv1.supp_line(),
+                                                xcv2.supp_line()));
+    }
+  };
+
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(); }
+    
+
+  /*! A function object that compares the y-coordinates of arc ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+  public:
+    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
+     * of the parameter space at x = +/- oo.
+     * \param xcv1 the first arc.
+     * \param xcv2 the second arc.
+     * \param ce the line end indicator.
+     * \return the second comparison result.
+     * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
+     * boundary or on the right boundary of the parameter space.
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce) const
+    {
+      // Make sure both curves are defined at x = -oo (or at x = +oo).
+      CGAL_precondition (! xcv1.is_degenerate());
+      CGAL_precondition (! xcv2.is_degenerate());
+      CGAL_precondition ((ce == ARR_MIN_END &&
+                          xcv1.left_infinite_in_x() == ARR_LEFT_BOUNDARY &&
+                          xcv2.left_infinite_in_x() == ARR_LEFT_BOUNDARY) ||
+                         (ce == ARR_MAX_END &&
+                          xcv1.right_infinite_in_x() == ARR_RIGHT_BOUNDARY &&
+                          xcv2.right_infinite_in_x() == ARR_RIGHT_BOUNDARY));
+
+      // Compare the slopes of the two supporting lines.
+      Kernel                    kernel;
+      const Comparison_result   res_slopes =
+        kernel.compare_slope_2_object() (xcv1.supp_line(), xcv2.supp_line());
+
+      if (res_slopes == EQUAL) {
+        // In case the two supporting line are parallel, compare their
+        // relative position at x = 0, which is the same as their position
+        // at infinity.
+        typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
+        return (kernel.compare_y_at_x_2_object() (p,
+                                                  xcv1.supp_line(),
+                                                  xcv2.supp_line()));
+      }
+
+      if (ce == ARR_MIN_END)
+        // Flip the slope result if we compare at x = -oo:
+        return ((res_slopes == LARGER) ? SMALLER : LARGER);
+
+      // If we compare at x = +oo, the slope result is what we need:
+      return (res_slopes);
+    }
+  };
+
+  /*! Obtain a Compare_y_near_boundary_2 function object */
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
+  { return Compare_y_near_boundary_2(); }
+  
+  //@}
+  
   /// \name Functor definitions for supporting intersections.
   //@{
 
@@ -1216,12 +1508,12 @@ public:
         return (oi);
       }
 
-      // Check if we have a single intersection point.
+      // Check whether we have a single intersection point.
       const Point_2  *ip = object_cast<Point_2> (&obj);
       
       if (ip != NULL)
       {
-        // Check if the intersection point ip lies on both segments.
+        // Check whether the intersection point ip lies on both segments.
         const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :
                                                       cv1.is_in_x_range(*ip);
 
@@ -1329,13 +1621,13 @@ public:
       Kernel                    kernel;
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
-      // Check if the two curves have the same supporting line.
+      // Check whether the two curves have the same supporting line.
       if (! equal (cv1.supp_line(), cv2.supp_line()) && 
           ! equal (cv1.supp_line(), 
                    kernel.construct_opposite_line_2_object()(cv2.supp_line())))
         return (false);
 
-      // Check if the left endpoint of one curve is the right endpoint of the
+      // Check whether the left endpoint of one curve is the right endpoint of the
       // other.
       return ((cv1.has_right() && cv2.has_left() &&
                equal (cv1.right(), cv2.left())) ||
@@ -1545,7 +1837,7 @@ public:
   {}
 
   /*!
-   * Check if the object is actually a segment.
+   * Check whether the object is actually a segment.
    */
   bool is_segment () const
   {
@@ -1566,7 +1858,7 @@ public:
   }
 
   /*!
-   * Check if the object is actually a ray.
+   * Check whether the object is actually a ray.
    */
   bool is_ray () const
   {
@@ -1596,7 +1888,7 @@ public:
   }
 
   /*!
-   * Check if the object is actually a line.
+   * Check whether the object is actually a line.
    */
   bool is_line () const
   {

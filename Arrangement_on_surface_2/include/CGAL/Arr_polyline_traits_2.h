@@ -28,6 +28,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Polyline_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -41,6 +42,7 @@ public:
   typedef Tag_true                                   Has_left_category;
   typedef Tag_true                                   Has_merge_category;
   typedef Tag_false                                  Has_boundary_category;
+  typedef Arr_no_boundary_tag                        Boundary_category;
 
   private:
   typedef Arr_polyline_traits_2<Segment_traits_2>    Self;

@@ -30,6 +30,8 @@
  * functors required by the concept it models.
  */
 
+#include <CGAL/tags.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 #include <CGAL/intersections.h>
 
@@ -59,6 +61,7 @@ public:
   // Traits types:
   typedef typename Base::Has_left_category      Has_left_category;
   typedef typename Base::Has_boundary_category  Has_boundary_category;
+  typedef typename Base::Boundary_category      Boundary_category;
 
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;

@@ -29,11 +29,11 @@
  */
 
 #include <CGAL/tags.h>
-#include <CGAL/representation_tags.h>
 #include <CGAL/intersections.h>
 #if defined(CGAL_ARR_PLANE)
 #include <CGAL/Arr_geometry_traits/Arr_plane_3.h>
 #endif
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 
 #include <fstream>
@@ -61,6 +61,7 @@ public:
   typedef Tag_true                              Has_left_category;
   typedef Tag_true                              Has_merge_category;
   typedef Tag_true                              Has_boundary_category;
+  typedef Arr_bounded_boundary_tag              Boundary_category;
 
   /*! Default constructor */
   Arr_great_circular_arc_on_sphere_traits_2(){}
@@ -2099,6 +2100,9 @@ public:
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
+      // Temporary:
+      return false;
+
       if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
 

@@ -25,6 +25,7 @@
  */
 
 #include <CGAL/tags.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Rational_arc_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -56,6 +57,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_true                        Has_boundary_category;
+  typedef Arr_has_boundary_tag            Boundary_category;
 
   // Traits objects:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>     Curve_2;

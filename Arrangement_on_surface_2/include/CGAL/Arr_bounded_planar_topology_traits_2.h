@@ -358,7 +358,7 @@ public:
 
   ///! \name Topology-traits methods.
   //@{
-  
+
   /*!
    * Initialize an empty DCEL structure.
    */

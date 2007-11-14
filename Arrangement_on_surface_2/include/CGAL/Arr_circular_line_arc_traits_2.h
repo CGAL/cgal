@@ -35,6 +35,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 #include <boost/variant.hpp>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
   namespace VariantFunctors{
@@ -526,6 +527,7 @@ namespace CGAL {
     typedef CGAL::Tag_false 			   Has_merge_category;
     typedef CGAL::Tag_false                        Has_infinite_category;
     typedef CGAL::Tag_false                        Has_boundary_category;
+    typedef Arr_no_boundary_tag                    Boundary_category;
   
     typedef boost::variant< Arc1, Arc2 > Curve_2;
     typedef boost::variant< Arc1, Arc2 > X_monotone_curve_2;

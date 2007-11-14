@@ -35,7 +35,7 @@
  */
 
 #include <CGAL/tags.h>
-#include <CGAL/representation_tags.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 
@@ -68,6 +68,7 @@ public:
   // Categories:
   typedef Tag_true                              Has_left_category;
   typedef Tag_false                             Has_boundary_category;
+  typedef Arr_no_boundary_tag                   Boundary_category;
     
   /*! Default Constructor */
   Arr_non_caching_segment_basic_traits_2()
