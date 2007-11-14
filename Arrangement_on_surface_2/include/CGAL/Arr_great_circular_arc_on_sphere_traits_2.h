@@ -1230,10 +1230,10 @@ public:
                                  Arr_curve_end ce2) const
     {
       CGAL_precondition_code
-        (const Point_2 & p1 = (ce1 == MIN_END) ? xcv1.left() : xcv1.right(););
+        (const Point_2 & p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
       CGAL_precondition(!p1.is_no_boundary());
       CGAL_precondition_code
-        (const Point_2 & p2 = (ce2 == MIN_END) ? xcv2.left() : xcv2.right(););
+        (const Point_2 & p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
       CGAL_precondition(!p2.is_no_boundary());
 
       if (xcv1.is_vertical() && xcv2.is_vertical()) {
