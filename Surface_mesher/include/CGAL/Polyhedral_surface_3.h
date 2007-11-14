@@ -68,7 +68,8 @@ namespace CGAL {
       class Surface,
       class Point_creator,
       class Visitor,
-      class Tag
+      class Tag,
+      bool
       >
     class Polyhedral_oracle;
     
@@ -256,6 +257,7 @@ public:
   typedef typename Geom_traits::Segment_3 Segment_3;
   typedef typename Geom_traits::Triangle_3 Triangle_3;
   typedef typename Geom_traits::Vector_3 Vector_3;
+  typedef Bbox_3 Bbox;
 
 
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
@@ -270,7 +272,7 @@ public:
 #endif
   typedef boost::shared_ptr<Subfacets_tree> Subfacets_tree_ptr;
   typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
-  typedef typename Subfacets_tree::Bbox Bbox;
+  typedef typename Subsegments_tree::Point_with_index Intersection_point;
 
   template <
     class Surface,
@@ -330,6 +332,27 @@ public:
     CGAL_assertion(input_file);
     this->compute_bounding_box();
     this->compute_normals();
+
+    bounding_box = Bbox(this->xmin(),
+                        this->ymin(),
+                        this->zmin(),
+                        this->xmax(),
+                        this->ymax(),
+                        this->zmax());
+
+    bounding_box_sq_radius = bounding_box.xmax()-bounding_box.xmin();
+    bounding_box_sq_radius =
+      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION 
+      (bounding_box_sq_radius,
+       FT(bounding_box.ymax()-bounding_box.ymin()));
+    bounding_box_sq_radius =
+      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
+      (bounding_box_sq_radius,
+       FT(bounding_box.zmax()-bounding_box.zmin()));
+    bounding_box_sq_radius /= 2;
+    bounding_box_sq_radius *= bounding_box_sq_radius;
+    bounding_box_sq_radius *= 3;
+
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     timer.stop();
     std::cerr << 
@@ -343,7 +366,10 @@ public:
       % this->size_of_facets();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     if(auto_construct_octree)
+    {
+      compute_sharp_edges_incidence_graph();
       construct_octree();
+    }
   } // end of Polyhedral_surface_3 constructor
 
   void construct_octree()
@@ -492,8 +518,52 @@ public:
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     if( this->has_edges() ) {
 
-#if 0
+      for(typename Polyhedron_3::Edge_const_iterator eit = 
+	    this->edges_begin();
+	  eit != this->edges_end();
+	  ++eit)
+      {
+        if(eit->tag() >= 0)
+        {
+	  const Point_3 pa = eit->vertex()->point();
+	  const Point_3 pb = eit->opposite()->vertex()->point();
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+	  subsegments_tree_ptr->add_constrained_edge(pa, pb);
+#endif
+#ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
+	  subsegments_tree_ptr->add_element(Segment_3(pa,  pb));
+# ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
+	  std::cerr << 
+	    ::boost::format("new edge: (%1%, %2%)")
+	    % pa %  pb;
+	  if(eit->is_border_edge())
+	    std:: cerr << " (on border)\n";
+	  else
+	  {
+	    struct Triangle {
+	      typename GT::Triangle_3 operator()(typename Polyhedron_3::Facet facet) {
+		CGAL_assertion(facet.is_triangle());
+		typename Polyhedron_3::Halfedge_around_facet_const_circulator 
+		  edges_circ = facet.facet_begin();
+		const Point_3& p1 = edges_circ++->vertex()->point();
+		const Point_3& p2 = edges_circ++->vertex()->point();
+		const Point_3& p3 = edges_circ++->vertex()->point();
+		return typename GT::Triangle_3(p1, p2, p3);
+	      }
+	    };
+	    std:: cerr << " (not on border) ";
+	    std::cerr << 
+	      ::boost::format("facets=(%1%, %2%)")
+	      % Triangle()(*(eit->facet()))
+	      % Triangle()(*(eit->opposite()->facet()));
+	  }
+# endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
+          
+        }
+      }
 
+#if 0
       typedef std::map<Point_3, int> Edges_vertex_counter;
       Edges_vertex_counter edges_vertex_counter;
 
@@ -528,8 +598,6 @@ public:
 	if(insert_that_edge)
 	{ 
 
-
-fsaldljfjhasdfkh ICI !
 
 	  const Point_3 pa = eit->vertex()->point();
 	  const Point_3 pb = opposite->vertex()->point();
@@ -620,6 +688,9 @@ fsaldljfjhasdfkh ICI !
 	% edges_points_ptr->size();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
+
+#endif // if 0
+
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr << "Creating subsegments_tree... ";
       timer.reset();
@@ -649,23 +720,8 @@ fsaldljfjhasdfkh ICI !
 # endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     } // end "if(this->has_edges())"
-    
 //     subfacets_tree_ptr->input(input_file,
 //                            std::back_inserter(input_points));
-    bounding_box = subfacets_tree_ptr->bbox();
-    bounding_box = bounding_box + subsegments_tree_ptr->bbox();
-    bounding_box_sq_radius = bounding_box.xmax()-bounding_box.xmin();
-    bounding_box_sq_radius =
-      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION 
-      (bounding_box_sq_radius,
-       FT(bounding_box.ymax()-bounding_box.ymin()));
-    bounding_box_sq_radius =
-      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
-      (bounding_box_sq_radius,
-       FT(bounding_box.zmax()-bounding_box.zmin()));
-    bounding_box_sq_radius /= 2;
-    bounding_box_sq_radius *= bounding_box_sq_radius;
-    bounding_box_sq_radius *= 3;
   } // end construct_octree()
 
   void set_sharp_edges_angle_bounds(double lower_bound,
@@ -680,13 +736,30 @@ fsaldljfjhasdfkh ICI !
     sharp_vertices_angle_upper_bound = upper_bound;
   }
 
+  unsigned int tag_border_edges()
+  {
+    unsigned int nb = 0;
+    for(Halfedge_iterator he = edges_begin();
+        he != edges_end();
+        he++)
+    {
+      const bool tag = ( he->sharp() ||
+                         he->is_border() ||
+                         he->opposite()->is_border() );
+      he->sharp() = tag;
+      he->opposite()->sharp() = tag;
+      nb += tag ? 1 : 0;
+    }
+    return nb;
+  }
+
   void compute_sharp_edges_incidence_graph()
   {
     this->tag_sharp_edges(sharp_edges_angle_lower_bound);
+    this->tag_border_edges();
     construct_incidence_graph();
   }
 
-#if 0
   const Bbox& bbox() const
   {
     return bounding_box;
@@ -696,7 +769,6 @@ fsaldljfjhasdfkh ICI !
   {
     return bounding_box_sq_radius;
   }
-#endif
 
   static void new_sub_edge(Graph_edge_node& edge_node,
                            const int edge_index,
@@ -867,14 +939,16 @@ fsaldljfjhasdfkh ICI !
         {
           const int edge_index = fit->tag();
           const Halfedge_handle& neighbor_facet_he = fit->opposite();
-        
-          if(edge_index < 0) // if not yet handled...
+          if(!neighbor_facet_he->is_border())
           {
-            facets_queue.push(neighbor_facet_he->facet());
-          }
-          else
-          {
-            graph.edges[edge_index].incident_facets.insert(facet_index);
+            if(edge_index < 0) // if not yet handled...
+            {
+              facets_queue.push(neighbor_facet_he->facet());
+            }
+            else
+            {
+              graph.edges[edge_index].incident_facets.insert(facet_index);
+            }
           }
         } // end for all halfedge around the facet fh
       } // end if fh not yet handled
@@ -923,6 +997,11 @@ fsaldljfjhasdfkh ICI !
   void gl_draw_facet_octree()
   {
     subfacets_tree_ptr->gl_draw_nodes();
+  }
+
+  void gl_draw_edges_octree()
+  {
+    subsegments_tree_ptr->gl_draw_nodes();
   }
 #endif
 
