@@ -40,6 +40,7 @@ public:
   // tag
   const int& tag() const { return m_tag; }
   int& tag() { return m_tag; }
+	void tag(const int& i) { m_tag = i; }
 
   // normal
   typedef Norm Normal_3;
