@@ -112,7 +112,7 @@ public:
                                   const X_monotone_curve_2& cv,
                                   Curve_end ind) const
     {
-      return (cv.compare_end (p, ind));
+      return (cv.compare_end_depricated (p, ind));
     }
 
     /*!
@@ -183,9 +183,9 @@ public:
                               Curve_end ind) const
     {
       if (ind == MIN_END)
-        return (cv.left_infinite_in_x());
+        return (cv.left_infinite_in_x_depricated());
       else
-        return (cv.right_infinite_in_x());
+        return (cv.right_infinite_in_x_depricated());
     }
   };
 
@@ -211,9 +211,9 @@ public:
                               Curve_end ind) const
     {
       if (ind == MIN_END)
-        return (cv.left_infinite_in_y());
+        return (cv.left_infinite_in_y_depricated());
       else
-        return (cv.right_infinite_in_y());
+        return (cv.right_infinite_in_y_depricated());
     }
   };
 
@@ -356,12 +356,12 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition ((cv1.left_infinite_in_x() != NO_BOUNDARY ||
-                          cv1.left_infinite_in_y() != NO_BOUNDARY ||
+      CGAL_precondition ((cv1.left_infinite_in_x_depricated() != NO_BOUNDARY ||
+                          cv1.left_infinite_in_y_depricated() != NO_BOUNDARY ||
                           ker.compare_xy_2_object() (p, 
                                                      cv1.left()) == LARGER) &&
-                         (cv2.left_infinite_in_x() != NO_BOUNDARY ||
-                          cv2.left_infinite_in_y() != NO_BOUNDARY ||
+                         (cv2.left_infinite_in_x_depricated() != NO_BOUNDARY ||
+                          cv2.left_infinite_in_y_depricated() != NO_BOUNDARY ||
                           ker.compare_xy_2_object() (p,
                                                      cv2.left()) == LARGER));
 
@@ -417,12 +417,12 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition((cv1.right_infinite_in_x() != NO_BOUNDARY ||
-                         cv1.right_infinite_in_y() != NO_BOUNDARY ||
+      CGAL_precondition((cv1.right_infinite_in_x_depricated() != NO_BOUNDARY ||
+                         cv1.right_infinite_in_y_depricated() != NO_BOUNDARY ||
                          ker.compare_xy_2_object() (p, 
                                                     cv1.right()) == SMALLER) &&
-                        (cv2.right_infinite_in_x() != NO_BOUNDARY ||
-                         cv2.right_infinite_in_y() != NO_BOUNDARY ||
+                        (cv2.right_infinite_in_x_depricated() != NO_BOUNDARY ||
+                         cv2.right_infinite_in_y_depricated() != NO_BOUNDARY ||
                          ker.compare_xy_2_object() (p,
                                                     cv2.right()) == SMALLER));
 
@@ -625,6 +625,177 @@ public:
 
   //@}
 
+  /// \name Functor definitions to handle boundaries
+  //@{
+
+  /*! A function object that obtains the parameter space of a geometric
+   * entity along the x-axis
+   */
+  class Parameter_space_in_x_2 {
+  public:
+    /*! Obtains the parameter space at the end of a line along the x-axis.
+     * \param xcv the line
+     * \param ce the line end indicator:
+     *     ARR_MIN_END - the minimal end of xc or
+     *     ARR_MAX_END - the maximal end of xc
+     * \return the parameter space at the ce end of the line xcv.
+     *   ARR_LEFT_BOUNDARY  - the line approaches the identification arc from
+     *                        the right at the line left end.
+     *   ARR_INTERIOR       - the line does not approache the identification arc.
+     *   ARR_RIGHT_BOUNDARY - the line approaches the identification arc from
+     *                        the left at the line right end.
+     */
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
+                                   Arr_curve_end ce) const
+    {
+      return (ce == ARR_MIN_END) ?
+        xcv.left_infinite_in_x() : xcv.right_infinite_in_x();
+    }
+
+    /*! Obtains the parameter space at a point along the x-axis.
+     * \param p the point.
+     * \return the parameter space at p.
+     */
+    Arr_parameter_space operator()(const Point_2 p) const
+    {
+      return ARR_INTERIOR;
+    }
+  };
+
+  /*! Obtain a Parameter_space_in_x_2 function object */
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
+  { return Parameter_space_in_x_2(); }
+  
+  /*! A function object that obtains the parameter space of a geometric
+   * entity along the y-axis
+   */
+  class Parameter_space_in_y_2 {
+  public:
+    /*! Obtains the parameter space at the end of a line along the y-axis .
+     * Note that if the line end coincides with a pole, then unless the line
+     * coincides with the identification arc, the line end is considered to
+     * be approaching the boundary, but not on the boundary.
+     * If the line coincides with the identification arc, it is assumed to
+     * be smaller than any other object.
+     * \param xcv the line
+     * \param ce the line end indicator:
+     *     ARR_MIN_END - the minimal end of xc or
+     *     ARR_MAX_END - the maximal end of xc
+     * \return the parameter space at the ce end of the line xcv.
+     *   ARR_BOTTOM_BOUNDARY  - the line approaches the south pole at the line
+     *                          left end.
+     *   ARR_INTERIOR         - the line does not approache a contraction point.
+     *   ARR_TOP_BOUNDARY     - the line approaches the north pole at the line
+     *                          right end.
+     */
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
+                                   Arr_curve_end ce) const
+    {
+      return (ce == ARR_MIN_END) ?
+        xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
+    }
+
+    /*! Obtains the parameter space at a point along the y-axis.
+     * \param p the point.
+     * \return the parameter space at p.
+     */
+    Arr_parameter_space operator()(const Point_2 p) const
+    {
+      return ARR_INTERIOR;
+    }
+  };
+
+  /*! Obtain a Parameter_space_in_y_2 function object */
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
+  { return Parameter_space_in_y_2(); }
+
+  /*! A function object that compares the x-coordinates of arc ends near the
+   * boundary of the parameter space
+   */
+  class Compare_x_near_boundary_2 {
+  public:
+    /*! Compare the x-coordinate of a point with the x-coordinate of
+     * a line end near the boundary at y = +/- oo.
+     * \param p the point direction.
+     * \param xcv the line, the endpoint of which is compared.
+     * \param ce the line-end indicator -
+     *            ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
+     * \return the comparison result:
+     *         SMALLER - x(p) < x(xc, ce);
+     *         EQUAL   - x(p) = x(xc, ce);
+     *         LARGER  - x(p) > x(xc, ce).     
+     * \pre p lies in the interior of the parameter space.
+     * \pre the ce end of the line xcv lies on a boundary.
+     */
+    Comparison_result operator()(const Point_2 & p,
+                                 const X_monotone_curve_2 & xcv,
+                                 Arr_curve_end ce) const
+    {
+      return (xcv.compare_end (p, ce));
+    }
+
+    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
+     * parameter space at y = +/- oo.
+     * \param xcv1 the first arc.
+     * \param ce1 the first arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv1 or
+     *            ARR_MAX_END - the maximal end of xcv1.
+     * \param xcv2 the second arc.
+     * \param ce2 the second arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv2 or
+     *            ARR_MAX_END - the maximal end of xcv2.
+     * \return the second comparison result:
+     *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
+     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
+     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+     * \pre the ce1 end of the line xcv1 lies on a boundary.
+     * \pre the ce2 end of the line xcv2 lies on a boundary.
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce2) const
+    {
+      return xcv1.compare_ends (ce1, xcv2, ce2);
+    }
+  };
+
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(); }
+    
+
+  /*! A function object that compares the y-coordinates of arc ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+  public:
+    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
+     * of the parameter space at x = +/- oo.
+     * \param xcv1 the first arc.
+     * \param xcv2 the second arc.
+     * \param ce the line end indicator.
+     * \return the second comparison result.
+     * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
+     * boundary or on the right boundary of the parameter space.
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce) const
+    {
+      return (ce == ARR_MIN_END) ?
+        xcv1.compare_at_minus_infinity (xcv2) :
+        xcv1.compare_at_plus_infinity (xcv2);
+    }
+  };
+
+  /*! Obtain a Compare_y_near_boundary_2 function object */
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
+  { return Compare_y_near_boundary_2(); }
+
+  //@}
+  
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
  

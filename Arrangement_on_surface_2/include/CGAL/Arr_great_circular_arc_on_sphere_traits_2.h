@@ -1180,7 +1180,7 @@ public:
 
       CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
-        (const Point_2 & p2 = (ce == MIN_END) ? xcv.left() : xcv.right(););
+        (const Point_2 & p2 = (ce == ARR_MIN_END) ? xcv.left() : xcv.right(););
       CGAL_precondition(!p2.is_no_boundary());
 
       if (xcv.is_vertical()) {
