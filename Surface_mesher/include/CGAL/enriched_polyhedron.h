@@ -12,6 +12,7 @@
 // CGAL stuff
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_default.h>
 #include <list>
 
 #include <GL/gl.h>
@@ -210,15 +211,20 @@ struct Vertex_normal // (functor)
 };
 
 //*********************************************************
-template <class kernel, class items>
-class Enriched_polyhedron : public CGAL::Polyhedron_3<kernel,items>
+template <class kernel,
+          class items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template < class T, class I, class A>
+#endif
+          class HDS = CGAL::HalfedgeDS_default >
+class Enriched_polyhedron : public CGAL::Polyhedron_3<kernel,items,HDS>
 {
 public :
   typedef typename kernel::FT FT;
   typedef typename kernel::Point_3 Point;
   typedef typename kernel::Vector_3 Vector;
   typedef typename kernel::Iso_cuboid_3 Iso_cuboid;
-  typedef CGAL::Polyhedron_3<kernel,items> Base;
+  typedef CGAL::Polyhedron_3<kernel,items,HDS> Base;
   
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Vertex_iterator Vertex_iterator;
@@ -381,6 +387,16 @@ public :
     return NULL;
   }
 
+  // tag all vertices
+  void tag_vertices(const int tag)
+  {
+    for(Vertex_iterator vit = vertices_begin(),
+                        end = vertices_end();
+        vit != end;
+        ++vit)
+      vit->tag(tag);
+  }
+
   // tag all halfedges
   void tag_halfedges(const int tag)
   {
@@ -459,19 +475,21 @@ public :
 
 
   void gl_draw_direct_triangles(bool smooth_shading,
-                                bool use_normals)
+                                bool use_normals,
+                                bool inverse_normals = false)
   {
     // draw triangles
     ::glBegin(GL_TRIANGLES);
     Facet_iterator pFacet = facets_begin();
     for(;pFacet != facets_end();pFacet++)
-      gl_draw_facet(pFacet,smooth_shading,use_normals);
+      gl_draw_facet(pFacet,smooth_shading,use_normals,inverse_normals);
     ::glEnd(); // end polygon assembly
   }
 
 
   void gl_draw_direct(bool smooth_shading,
-                      bool use_normals)
+                      bool use_normals,
+                      bool inverse_normals = false)
   {
     // draw polygons
     Facet_iterator pFacet = facets_begin();
@@ -479,20 +497,24 @@ public :
     {
       // begin polygon assembly
       ::glBegin(GL_POLYGON);
-        gl_draw_facet(pFacet,smooth_shading,use_normals);
+        gl_draw_facet(pFacet,smooth_shading,use_normals,inverse_normals);
       ::glEnd(); // end polygon assembly
     }
   }
 
   void gl_draw_facet(Facet_handle pFacet,
                       bool smooth_shading,
-                      bool use_normals)
+                      bool use_normals,
+                      bool inverse_normals = false)
   {
     // one normal per face
     if(use_normals && !smooth_shading)
     {
       const typename Facet::Normal_3& normal = pFacet->normal();
-      ::glNormal3f(normal[0],normal[1],normal[2]);
+      if(inverse_normals)
+        ::glNormal3f(-normal[0],-normal[1],-normal[2]);
+      else
+        ::glNormal3f(normal[0],normal[1],normal[2]);
     }
 
     // revolve around current face to get vertices
@@ -503,8 +525,10 @@ public :
       if(use_normals && smooth_shading)
       {
         const typename Facet::Normal_3& normal = pHalfedge->vertex()->normal();
-        ::glNormal3f(normal[0],normal[1],normal[2]);
-      }
+        if(inverse_normals)
+          ::glNormal3f(-normal[0],-normal[1],-normal[2]);
+        else      
+          ::glNormal3f(normal[0],normal[1],normal[2]);      }
 
       // polygon assembly is performed per vertex
       const Point& point  = pHalfedge->vertex()->point();
@@ -547,7 +571,7 @@ public :
   {
     Facet_handle f1 = he->facet();
     Facet_handle f2 = he->opposite()->facet();
-    if(f1 == NULL || f2 == NULL)
+    if(f1 == Facet_handle() || f2 == Facet_handle() )
       return false;
     const Vector& n1 = f1->normal();
     const Vector& n2 = f2->normal();
@@ -633,7 +657,7 @@ public :
   }
 
   // return nb of sharp edges incident to v
-  unsigned int nb_sharp_edges(Vertex_handle v)
+  unsigned int nb_sharp_edges(Vertex_handle v) const
   {
     Halfedge_around_vertex_circulator he = v->vertex_begin();
     Halfedge_around_vertex_circulator end = he;
