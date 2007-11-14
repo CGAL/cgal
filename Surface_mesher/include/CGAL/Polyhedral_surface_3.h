@@ -271,7 +271,9 @@ public:
 #endif
   typedef boost::shared_ptr<Subfacets_tree> Subfacets_tree_ptr;
   typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
-  typedef typename Subsegments_tree::Point_with_index Intersection_point;
+//   typedef typename Subsegments_tree::Point_with_index
+//   Intersection_point;
+  typedef Point_3 Intersection_point;
 
   template <
     class Surface,
