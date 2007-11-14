@@ -97,6 +97,9 @@ namespace Surface_mesher {
     typedef typename GT::Line_3 Line_3;
     typedef typename GT::Vector_3 Vector_3;
     typedef typename GT::FT FT;
+    typedef typename Surface_mesh_traits::Surface_3 Surface_3;
+    typedef typename Surface_3::Intersection_point Intersection_point;
+
     typename GT::Construct_midpoint_3 midpoint = 
       tr.geom_traits().construct_midpoint_3_object();
     typename GT::Construct_circumcenter_3 circumcenter = 
@@ -298,10 +301,11 @@ namespace Surface_mesher {
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
       CGAL_assertion_code(
       std::cerr << boost::format("  triangle test (%1%, %2%, %3%) = %4%\n")
-	% current % next % first % !o.is_empty();
+      % current % next % first % !o.is_empty();
       )
+        std::cerr << boost::format("intersecion type: %1%\n") % o.type().name();
 #endif // CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
-      Point_3 point;
+      Intersection_point point;
       if(assign(point, o))
       {
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
@@ -310,7 +314,7 @@ namespace Surface_mesher {
           % point;
 			    )
 #endif
-	return o;
+        return make_object(static_cast<Point_3>(point));
       }
     }
 
@@ -325,15 +329,15 @@ namespace Surface_mesher {
 		  const Surface_mesh_traits& meshtraits,
 		  const typename Tr::Edge& e)
   {
-    typename Tr::Point result;
+    typename Surface_mesh_traits::Surface_3::Intersection_point point;
     CGAL_assertion_code(bool is_a_point = )
-      assign(result,
+      assign(point,
 	     compute_edge_intersection_curve(tr,
 					     surf,
 					     meshtraits,
 					     e));
     CGAL_assertion(is_a_point);
-    return result;
+    return static_cast<typename Tr::Point>(point);
   }
 
   namespace details {
@@ -724,10 +728,17 @@ namespace Surface_mesher {
     bool is_edge_in_restricted_triangulation(const Edge& e,
 					     Point_3& p) const
     {
-      return assign(p, compute_edge_intersection_curve(tr,
+      typename Surface::Intersection_point point;
+      if(assign(point, compute_edge_intersection_curve(tr,
 						       surf,
 						       meshtraits,
-						       e));
+						       e)))
+      {
+        p = static_cast<Point_3>(point);
+        return true;
+      }
+      else
+        return false;
     }
 
     void new_edge(const Edge e)

@@ -63,6 +63,7 @@ namespace CGAL {
     typedef typename C2T3::Triangulation Tr;
 
     typedef typename Tr::Point Point;
+    typedef typename Surface::Intersection_point Intersection_point;
 
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Edge Edge;
@@ -201,7 +202,7 @@ namespace CGAL {
     // NB: it is useless here, since the update of the restricted
     // Delaunay triangulation automatically deletes the next element
     void pop_next_element_impl() {
-      facets_to_refine.pop_front();
+//       facets_to_refine.pop_front();
     }
 
     // From the element to refine, gets the point to insert
@@ -564,7 +565,13 @@ namespace CGAL {
         CGAL_error();
       }
 
-      return assign(center,intersection);
+      Intersection_point p;
+      if(assign(p,intersection))
+      {
+        center = static_cast<Point>(p);
+        return true;
+      }
+      return false;
     }
 
   protected:
