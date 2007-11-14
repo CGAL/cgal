@@ -34,7 +34,8 @@ template <
   class Point_creator = Creator_uniform_3<typename Surface::Geom_traits::FT,
     typename Surface::Geom_traits::Point_3>,
   class Visitor = Null_oracle_visitor,
-  typename Has_edges_tag_ = typename Surface::Has_edges_tag
+  typename Has_edges_tag_ = typename Surface::Has_edges_tag,
+  bool mesh_the_whole_bounding_box = false
   >
 class Polyhedral_oracle
 {
@@ -52,7 +53,11 @@ public:
   typedef typename Geom_traits::Line_3 Line_3;
   typedef typename Geom_traits::Triangle_3 Triangle_3;
 
-  typedef Polyhedral_oracle<Surface, Point_creator, Visitor> Self;
+  typedef Polyhedral_oracle<Surface, 
+                            Point_creator, 
+                            Visitor,
+                            Has_edges_tag_,
+                            mesh_the_whole_bounding_box> Self;
 
   typedef Surface Surface_3;
 
@@ -164,6 +169,8 @@ public:
            ++vit)
       {
         Point p = *vit;
+//         CGAL_assertion(vit->tag() >= 0);
+//         p.set_on_vertex(vit->tag());
         self.visitor.new_point(p);
         *out++= p;
       }
@@ -173,6 +180,8 @@ public:
            ++vit, --n)
       {
         Point p = *vit;
+//         CGAL_assertion(vit->tag() >= 0);
+//         p.set_on_curve(vit->tag());
         self.visitor.new_point(p);
         *out++= p;
       }
@@ -182,6 +191,8 @@ public:
            ++vit, --n)
       {
         Point p = *vit;
+//         CGAL_assertion(vit->tag() >= 0);
+//         p.set_on_surface(vit->tag());
         self.visitor.new_point(p);
         *out++= p;
       }
@@ -196,6 +207,8 @@ public:
 
   bool is_in_volume(Surface_3& surface, const Point& p)
   {
+    if(mesh_the_whole_bounding_box)
+      return CGAL::do_overlap(surface.bbox(),p.bbox());
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
     double point[3];
     point[0] = p.x();
@@ -252,6 +265,7 @@ public:
     if( assign(pi, o) )
     {
       Point p = pi;
+//       p.set_on_curve(pi.surface_index());
       visitor.new_point(p);
       return make_object(p);
     }
@@ -303,6 +317,7 @@ public:
       if( assign(pi, o) )
       {
         Point p = pi;
+//         p.set_on_surface(pi.surface_index());
         visitor.new_point(p);
         return make_object(p);
       }
@@ -344,6 +359,7 @@ public:
       if( assign(pi, o) )
       {
         Point p = pi;
+//         p.set_on_surface(pi.surface_index());
         visitor.new_point(p);
         return make_object(p);
       }
