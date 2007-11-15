@@ -371,8 +371,20 @@ public:
   {
     FT x=static_cast<FT>(widget->x_real(e->x()));
     FT y=static_cast<FT>(widget->y_real(e->y()));
+    const Point_2 current_point = Point_2(x, y);
+    widget->new_object(CGAL::make_object(current_point));
+    previous_point = current_point;
+    just_entered = false;
+  }
 
-    widget->new_object(CGAL::make_object(Point_2(x, y)));
+  void enterEvent(QEvent*)
+  {
+    just_entered = true;
+  }
+
+  void leaveEvent(QEvent*)
+  {
+    just_entered = false;
   }
 
   void activating()
@@ -385,6 +397,9 @@ public:
   {
     widget->setCursor(oldcursor);
   };
+
+  Point_2 previous_point;
+  bool just_entered;
 };
 
 class Preferences : public QWidget
@@ -1018,25 +1033,65 @@ public slots:
           {
             typedef Tr::Face_handle Face_handle;
             Face_handle fh = cdt.locate(p);
-            if( (fh!=NULL) && (!cdt.is_infinite(fh)) && fh->is_in_domain() )
+            std::vector<Face_handle> faces_to_check;
+
+            if(cdt.is_infinite(fh) && !follow_mouse->just_entered)
+            { // make the line walk in opposite direction, if p is outside
+              // the triangulation
+              fh = cdt.locate(follow_mouse->previous_point);
+              std::swap(follow_mouse->previous_point, p);
+            }
+
+            if(cdt.is_infinite(fh)) return;
+            Segment_2 segment;
+            if(follow_mouse->just_entered)
+            {
+              faces_to_check.push_back(fh);
+              segment = Segment_2(p, p);
+            }
+            else
+            {
+              const Point_2& previous_point = follow_mouse->previous_point;
+              Tr::Line_face_circulator 
+                fc = cdt.line_walk(p,
+                                   previous_point,
+                                   fh),
+                end(fc);
+              do
               {
-                criteria.set_local_size(true);
-                criteria.set_point(p);
+                faces_to_check.push_back(fc);
+                ++fc;
+              } while(!cdt.is_infinite(fc) &&
+                      cdt.triangle(fc).has_on_unbounded_side(previous_point));
 
-                std::list<Face_handle> l;
+              segment = Segment_2(p, follow_mouse->previous_point);
+            }
 
+            criteria.set_local_size(true);
+            criteria.set_segment(segment);
+
+            std::vector<Face_handle> bad_faces;
+
+            for(std::vector<Face_handle>::const_iterator 
+                  fh_it = faces_to_check.begin(),
+                  end = faces_to_check.end();
+                fh_it != end; ++fh_it)
+            {
+              if( (*fh_it != NULL) && (!cdt.is_infinite(*fh_it)) && (*fh_it)->is_in_domain() )
+              {
                 Criteria::Quality q;
-                if(criteria.is_bad_object().operator()(fh, q) !=
-		   CGAL::Mesh_2::NOT_BAD)
-                  l.push_back(fh);
-
-                if( mesher!=0 )
-                {
-                  mesher->set_criteria(criteria, false);
-                  mesher->set_bad_faces(l.begin(), l.end());
-                  while( mesher->step_by_step_refine_mesh() );
-                }
+                if(criteria.is_bad_object().operator()(*fh_it, q) !=
+                   CGAL::Mesh_2::NOT_BAD)
+                  bad_faces.push_back(*fh_it);
               }
+            }
+
+            if( mesher!=0 )
+            {
+              mesher->set_criteria(criteria, false);
+              mesher->set_bad_faces(bad_faces.begin(), bad_faces.end());
+              while( mesher->step_by_step_refine_mesh() );
+            }
           }
         else
           if(get_seed->is_active())

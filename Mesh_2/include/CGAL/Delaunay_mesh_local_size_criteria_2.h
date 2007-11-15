@@ -34,25 +34,26 @@ public:
   typedef typename CDT::Geom_traits Geom_traits;
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_2 Point;
+  typedef typename Geom_traits::Segment_2 Segment;
 
   typedef typename CDT::Face_handle Face_handle;
 
 private:
   bool local;
-  Point _p;
+  Segment _s;
 
 public:
   Delaunay_mesh_local_size_criteria_2(const double aspect_bound = 0.125, 
                                       const double size_bound = 0,
                                       const bool is_local_size = false,
-                                      const Point p = Point())
-    : Base(aspect_bound, size_bound), local(is_local_size), _p(p) {};
+                                      const Segment s = Segment())
+    : Base(aspect_bound, size_bound), local(is_local_size), _s(s) {};
 
   inline
-  Point point() const { return _p; };
+  Segment segment() const { return _s; };
 
   inline 
-  void set_point(const Point p) { _p = p; };
+  void set_segment(const Segment s) { _s = s; };
 
   inline
   bool is_local_size() const { return local; };
@@ -65,6 +66,8 @@ public:
   public:
     typedef typename Base::Is_bad Baseclass;
     typedef typename Baseclass::Point_2 Point_2;
+    typedef typename CDT::Geom_traits::Segment_2 Segment_2;
+    typedef typename CDT::Geom_traits::Triangle_2 Triangle_2;
     typedef typename Base::Base PreviousBase;
     typedef typename PreviousBase::Is_bad PreviousBaseclass;
     typedef Geom_traits Traits;
@@ -73,14 +76,14 @@ public:
 
   private:
     const bool local;
-    const Point_2 p;
+    const Segment_2 s;
 
   public:
     Is_bad(const double aspect_bound,
 	   const double size_bound,
 	   const bool l,
-	   const Point_2 _p)
-      : Base::Is_bad(aspect_bound, size_bound), local(l), p(_p) {};
+	   const Segment_2 _s)
+      : Base::Is_bad(aspect_bound, size_bound), local(l), s(_s) {};
 
     Mesh_2::Face_badness operator()(Quality q) const
     {
@@ -94,8 +97,8 @@ public:
 	return Baseclass::operator()(fh,q);
       else
 	{
-	  typename Geom_traits::Orientation_2 orient = 
-	    Geom_traits().orientation_2_object();
+	  typename Geom_traits::Do_intersect_2 do_intersect = 
+	    Geom_traits().do_intersect_2_object();
 	  
 	  Mesh_2::Face_badness is_non_locally_bad = 
 	    Baseclass::operator()(fh,q);
@@ -104,12 +107,7 @@ public:
           const Point_2& b = fh->vertex(1)->point();
           const Point_2& c = fh->vertex(2)->point();
 
-	  Orientation 
-	    o1 = orient(a,b,p),
-	    o2 = orient(b,c,p),
-	    o3 = orient(c,a,p);
-	  
-	  if((o1==o2) && (o2==o3))
+	  if(do_intersect(Triangle_2(a,b,c), s))
 	    return is_non_locally_bad;
 	  else
 	    if( q.sine() < this->B )
@@ -121,7 +119,7 @@ public:
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(this->bound(), this->size_bound(), local, point()); };
+  { return Is_bad(this->bound(), this->size_bound(), local, segment()); };
 };
 
 }; //end namespace
