@@ -386,7 +386,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
       if(number_of_points > 30)
   bEnd = bEnd || ((distance(stl.front(), stl.back()))<vector_field_2.get_integration_step());
       FT dist_ = distance(ex_old_point,new_point);
-      bEnd = bEnd || dist_ <= vector_field_2.get_integration_step();
+      bEnd = bEnd || dist_ < 0.9*vector_field_2.get_integration_step();
       if (!bEnd)
   {
     if(sampling != sampling_step)
@@ -512,7 +512,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
       new_point = integrator(old_point,vector_field_2,false);
       bEnd = !vector_field_2.is_in_domain(new_point);
       FT dist_ = distance(ex_old_point,new_point);
-      bEnd = bEnd || dist_ <= vector_field_2.get_integration_step() || (new_point == old_point);/* to review */ 
+      bEnd = bEnd || dist_ < 0.9*vector_field_2.get_integration_step() || (new_point == old_point);/* to review */ 
       if(number_of_points > 30)
   bEnd = bEnd || ((distance(stl.front(), stl.back()))<vector_field_2.get_integration_step());
       //    bEnd = bEnd || (number_of_points > 3000);
