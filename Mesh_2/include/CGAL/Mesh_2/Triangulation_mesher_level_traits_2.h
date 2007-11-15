@@ -52,6 +52,9 @@ struct Triangulation_mesher_level_traits_2 :
     typename Tr::Locate_type locate_type;
     Face_handle fh;
     int i;
+    Face_handle parent_face; // When the refinement point is the
+                             // circumcenter of a face, that member stores
+                             // the face.
     Faces faces;
     Edges boundary_edges;
   };
