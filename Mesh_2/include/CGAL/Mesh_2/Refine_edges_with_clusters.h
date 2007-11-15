@@ -159,6 +159,9 @@ public:
 
     Tr& tr = triangulation_ref_impl();
 
+    // p is the circumcener of zone.parent_face.
+    const FT& sq_r_of_p_parent = shortest_edge_squared_length(z.parent_face);
+
     for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
       {
@@ -196,7 +199,7 @@ public:
 // of T. If rmin >= rg, then split the edge.
 
               if( this->imperatively || !ca.is_reduced() ||
-                  ca.rmin >= shortest_edge_squared_length(fh) )
+                  ca.rmin >=  sq_r_of_p_parent)
 		add_constrained_edge_to_be_conformed(v1,v2);
 	      else
 		status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;

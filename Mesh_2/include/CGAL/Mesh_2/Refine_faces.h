@@ -120,6 +120,8 @@ public:
 
     zone.fh = triangulation_ref_impl().locate(p, zone.locate_type, zone.i, fh);
 
+    zone.parent_face = fh;
+
     triangulation_ref_impl().
       get_conflicts_and_boundary(p,
                                  std::back_inserter(zone.faces),
