@@ -38,7 +38,7 @@
 #include <CGAL/IO/Qt_widget_Conic_arc_2.h>
 #include <CGAL/IO/Qt_widget_Linear_object_2.h>
 #include <CGAL/Arr_overlay_2.h>
-#include <CGAL/Arr_overlay_2/Arr_overlay_traits.h>
+#include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
 
 #include <qpainter.h>
 
