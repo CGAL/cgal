@@ -130,6 +130,7 @@ class Gps_agg_meta_traits :
   typedef typename Base::Point_2                  Point_2;
   typedef typename Traits::Has_left_category      Has_left_category;
   typedef typename Traits::Has_boundary_category  Has_boundary_category;
+  typedef typename Traits::Boundary_category      Boundary_category;
   typedef typename Traits::Has_merge_category     Has_merge_category;
 
   typedef typename Base::Curve_data               Curve_data;
