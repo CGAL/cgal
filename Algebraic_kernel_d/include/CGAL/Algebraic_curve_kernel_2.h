@@ -327,20 +327,25 @@ public:
         }
     };
     CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
-    
-    //! \brief checks whether curve has only finitely many self-intersection 
+
+    //! \brief checks whether curve has only finitely many self-intersection
     //! points, i.e., it has no self-overlapped continuous parts
     //!
     //! for algerbaic curves this means that supporting polynomial is 
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
-            public Unary_function< Curve_2, bool > {
-        
-        bool operator()(const Curve_2& c) const {
-            typename Polynomial_traits_2::Is_square_free is_square_free;
+            public Unary_function< Polynomial_2_CGAL, bool > {
+
+        bool operator()(const Polynomial_2_CGAL& p) const {
+
+            //typename Polynomial_traits_2::Is_square_free is_square_free;
+            CGAL_error_msg("is_square_free is not yet supported\n");
+            return true; //is_square_free(p);
+        }
+
+        bool operator()(const Internal_polynomial_2& p) const {
             NiX2CGAL_converter cvt;
-            Polynomial_2_CGAL res = cvt(c.f());
-            return is_square_free(res);
+            return (*this)(cvt(p));
         }
     };
     CGAL_Algebraic_Kernel_pred(Has_finite_number_of_self_intersections_2, 
@@ -379,10 +384,16 @@ public:
         //!
         //! in case of algebraic curves computes square-free part of supporting
         //! polynomial
-        Curve_2 operator()(const Curve_2& c) {
-            typename Polynomial_traits_2::Make_square_free make_square_free;
+        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) {
+            typename Polynomial_traits_2::Make_square_free msf;
+            return msf(p);
+        }
+        
+        //! temporary version for \c NiX::Polynomial
+        Internal_polynomial_2 operator()(const Internal_polynomial_2& p) {
             NiX2CGAL_converter cvt;
-            return Construct_curve_2()(make_square_free(cvt(c.f())));
+            CGAL2NiX_converter cvt_back;
+            return cvt_back((*this)(cvt(p)));
         }
         
         //! \brief computes a square-free factorization of a curve \c c, 
@@ -398,7 +409,6 @@ public:
             typename Polynomial_traits_2::
                 Square_free_factorization_up_to_constant_factor factorize;
             NiX2CGAL_converter cvt;
-            CGAL2NiX_converter cvt_back;
             std::vector<Polynomial_2_CGAL> factors;
             
             int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
@@ -434,6 +444,9 @@ public:
                     std::copy(parts_g.begin() + 1, parts_g.end(), oi2);
                 return true;
             }
+            // copy original curves to the output iterator:
+            *oi1++ = c1;
+            *oi2++ = c2;
             return false;
         }
     private:
@@ -510,7 +523,7 @@ public:
                 cpv_line;
             typename Self::Curve_analysis_2::Curve_vertical_line_1 cv_line;
             
-            int i, j, k, n_arcs, n_events =
+            int i, j, n_arcs, n_events =
                 cpa_2.number_of_vertical_lines_with_event();
             std::pair<int,int> ipair;
             bool vline_constructed = false;
