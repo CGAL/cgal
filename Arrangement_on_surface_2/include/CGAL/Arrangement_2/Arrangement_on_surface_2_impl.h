@@ -2527,11 +2527,19 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::_insert_at_vertices
 
 #if 0
   std::cout << "cv: " << cv << std::endl;
-  std::cout << "p1: " << prev1->curve() << std::endl;
+  if (!prev1->has_null_curve()) {
+      std::cout << "p1: " << prev1->curve() << std::endl;
+  } else {
+      std::cout << "p1: fictitious" << std::endl;
+  }
   std::cout << "dir1: " 
             << (prev1->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
             << std::endl;
-  std::cout << "p2: " << prev2->curve() << std::endl;
+  if (!prev2->has_null_curve()) {
+      std::cout << "p2: " << prev2->curve() << std::endl;
+  } else {
+      std::cout << "p2: fictitious" << std::endl;
+  }
   std::cout << "dir2: " 
             << (prev2->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
             << std::endl;
