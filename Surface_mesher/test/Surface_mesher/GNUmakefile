@@ -38,6 +38,8 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
+.PHONY: all run-test run-implicit_surface_mesher_test run-test_c2t3_iterators run-test_c2t3_iterators
+
 all:            \
                 combined_spheres$(EXE_EXT) \
                 implicit_surface_mesher_test$(EXE_EXT) \
@@ -60,9 +62,15 @@ test_c2t3_iterators$(EXE_EXT): test_c2t3_iterators$(OBJ_EXT)
 test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
 
-run-test: all
+run-test: run-implicit_surface_mesher_test run-test_c2t3_iterators run-test_robust_circumcenter
+
+run-implicit_surface_mesher_test: implicit_surface_mesher_test$(EXE_EXT)
 	./implicit_surface_mesher_test$(EXE_EXT)
+
+run-test_robust_circumcenter: test_robust_circumcenter$(EXE_EXT)
 	./test_robust_circumcenter$(EXE_EXT)
+
+run-test_c2t3_iterators: test_c2t3_iterators$(EXE_EXT)
 	./test_c2t3_iterators$(EXE_EXT)
 
 clean: \
