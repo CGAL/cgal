@@ -11,6 +11,7 @@ Maintenance/rpm/my_makefile
 Mesh_2/.*.deps
 Mesh_2/bench/.*.deps
 Mesh_2/bench/bench
+Mesh_2/bench/my_makefile
 Mesh_2/bench/semantic.cache
 Mesh_2/demo/Mesh_2/*.core
 Mesh_2/demo/Mesh_2/*.moc
