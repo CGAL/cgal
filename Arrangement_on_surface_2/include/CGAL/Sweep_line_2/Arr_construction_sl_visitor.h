@@ -852,9 +852,9 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face
       // not yet mapped. This can happen only if this halfedge is he itself.
       // As we know that he lies on the outer CCB of the new face, it is
       // definately not a hole in the face, therefore we can ignore it.
-      if (*itr > m_sc_counter)
-        continue;
-     
+      if (*itr > m_sc_counter || *itr >= m_sc_he_table.size())
+        continue; 
+      
       Halfedge_handle he_on_face = m_sc_he_table[*itr];
           
       if(he_on_face == invalid_he)
