@@ -808,6 +808,57 @@ public:
         return NULL;
     }
 
+    void print() const {
+        std::cout << "TORUSTOPTRAITS: " << std::endl;
+        std::cout << "#identNS: " << _m_identification_NS.size() << std::endl;
+        for (typename Identification_NS::iterator it = 
+                 this->_m_identification_NS.begin();
+             it != this->_m_identification_NS.end(); it++) {
+            std::cout << "ns-item: " << it->first << std::endl;
+            Halfedge *he = it->second->halfedge();
+            if (he != NULL) {
+                if (he == he->next()) {
+                    std::cout << "He: " << he->curve() << std::endl;
+                    std::cout << "dir2: " 
+                              << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                              << std::endl;
+                } else {
+                    while (he != it->second->halfedge()) {
+                        std::cout << "He: " << he->curve() << std::endl;
+                        std::cout << "dir2: " 
+                                  << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                                  << std::endl;
+                        he = he->next();
+                    }
+                }
+            }
+        }
+        std::cout << "#identWE: " << _m_identification_WE.size() << std::endl;
+        for (typename Identification_WE::iterator it = 
+                 this->_m_identification_WE.begin();
+             it != this->_m_identification_WE.end(); it++) {
+            std::cout << "we-item: " << it->first << std::endl;
+            Halfedge *he = it->second->halfedge();
+            if (he != NULL) {
+                if (he == he->next()) {
+                    std::cout << "He: " << he->curve() << std::endl;
+                    std::cout << "dir2: " 
+                              << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                              << std::endl;
+                } else {
+                    while (he != it->second->halfedge()) {
+                        std::cout << "He: " << he->curve() << std::endl;
+                        std::cout << "dir2: " 
+                                  << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                                  << std::endl;
+                        he = he->next();
+                    }
+                }
+            }
+        }
+        
+    }
+
 protected:
     /*!\brief
      * checks whether boundary condition in x and y is valid
