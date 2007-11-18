@@ -42,7 +42,6 @@ namespace CGAL {
     typedef Sphere_oracle_3<GT, Point_creator, Visitor> Self;
     
     typedef typename GT::Point_3 Point;
-
     typedef typename GT::FT FT;
     typedef typename GT::Sphere_3 Sphere_3;
 
@@ -57,6 +56,7 @@ namespace CGAL {
 
     typedef Sphere_3 Surface_3;
 
+    typedef Point Intersection_point;
   private:
     // Private members
     Visitor visitor; // a visitor that can modify a point, before returning it.

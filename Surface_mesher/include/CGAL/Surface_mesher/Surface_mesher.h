@@ -63,7 +63,7 @@ namespace CGAL {
     typedef typename C2T3::Triangulation Tr;
 
     typedef typename Tr::Point Point;
-    typedef typename Surface::Intersection_point Intersection_point;
+    typedef typename Surface_mesh_traits::Intersection_point Intersection_point;
 
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Edge Edge;
@@ -340,7 +340,9 @@ namespace CGAL {
     ///////////////////////////////////////////////////////////////////////////
     // Deletes old facets from the restricted Delaunay triangulation
 
-    void before_insertion_impl(const Facet&, const Point& s, Zone& zone) {
+    void before_insertion_impl(const Facet&,
+                               const Point& CGAL_assertion_code(s),
+                               Zone& zone) {
 
       CGAL_assertion_code(Vertex_handle v);
       CGAL_assertion (!tr.is_vertex(s,v));
@@ -527,35 +529,31 @@ namespace CGAL {
     bool is_facet_on_surface(const Facet& f, Point& center) {
       typedef typename Surface_mesh_traits::Intersect_3 Intersect_3;
       Intersect_3 intersect = meshtraits.intersect_3_object();
-
+      typename GT::Is_degenerate_3 is_degenerate;
+        
       Object dual = tr.dual(f);
-
-      //      typename GT::Segment_3 segment;
-      typename GT::Segment_3 segment;
-      typename GT::Ray_3 ray;
-      typename GT::Line_3 line;
 
       Object intersection;
       // If the dual is a segment
-      if (assign(segment, dual)) {
-	intersection = intersect(surf, segment);
+      if (const typename GT::Segment_3* segment_ptr=object_cast<typename GT::Segment_3>(&dual)) {
+	if(is_degenerate(*segment_ptr)) return false;
+        intersection = intersect(surf, *segment_ptr);
       }
       // If the dual is a ray
-      else if(assign(ray, dual)) {
+      else if(const typename GT::Ray_3* ray_ptr=object_cast<typename GT::Ray_3>(&dual)) {
         // If a facet is on the convex hull, and if its finite incident
         // cell has a very bid Delaunay ball, then the dual of the facet is
         // a ray constructed with a point with very big coordinates, and a
         // vector with small coordinates. Its can happen than the
         // constructed ray is degenerate (the point(1) of the ray is
         // point(0) plus a vector whose coordinates are espilon).
-        typename GT::Is_degenerate_3 is_degenerate;
-        if(is_degenerate(ray)) return false;
+        if(is_degenerate(*ray_ptr)) return false;
 
-	intersection = intersect(surf, ray);
+	intersection = intersect(surf, *ray_ptr);
       }
       // If the dual is a line
-      else if(assign(line, dual)) {
-	intersection = intersect(surf, line);
+      else if(const typename GT::Line_3* line_ptr = object_cast<typename GT::Line_3>(&dual)) {
+	intersection = intersect(surf, *line_ptr);
       }
       // Else there is a problem with the dual
       else {
@@ -565,10 +563,9 @@ namespace CGAL {
         CGAL_error();
       }
 
-      Intersection_point p;
-      if(assign(p,intersection))
+      if(const Intersection_point* point_ptr = object_cast<Intersection_point>(&intersection))
       {
-        center = static_cast<Point>(p);
+        center = static_cast<Point>(*point_ptr);
         return true;
       }
       return false;

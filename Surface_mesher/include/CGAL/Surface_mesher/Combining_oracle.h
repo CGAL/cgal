@@ -26,6 +26,9 @@
 
 #include <CGAL/Multi_surface_3.h>
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -47,6 +50,13 @@ namespace CGAL {
     typedef typename Oracle_a::Segment_3 Segment_3;
     typedef typename Oracle_a::Ray_3 Ray_3;
     typedef typename Oracle_a::Line_3 Line_3;
+
+    typedef typename Oracle_a::Intersection_point Intersection_point;
+
+    BOOST_STATIC_ASSERT((::boost::is_same<
+                         Intersection_point,
+                         typename Oracle_b::Intersection_point>::value));
+                        
 
     typedef ::CGAL::Multi_surface_3<typename Oracle_a::Surface_3,
       typename Oracle_b::Surface_3> Surface_3;
