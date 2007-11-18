@@ -96,8 +96,6 @@ protected:
                                           // subcurves that emarge from event
                                           // points with only right curves). 
 
-  Halfedge_handle          m_last_he;     // the last halfedge at the top
-
   std::vector<Halfedge_handle>
                            m_sc_he_table; // A table that maps a subcurve
                                           // index to its halfedge handle,
@@ -288,7 +286,7 @@ void Arr_construction_sl_visitor<Hlpr>::before_handle_event (Event* event)
 {
   // We just have to notify the helper class on the event.
   m_helper.before_handle_event (event);
-  m_last_he = Halfedge_handle();
+
   return;
 }
 
@@ -337,39 +335,22 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
 
     // In case of a finite event that has no incident left curves, it is
     // associated with a point that may be the leftmost one in a hole.
-    // The last inserted halfedge belongs to this event. We have to check
-    // whether it really can pose a hole, i.e., whether the inserted halfedge
-    // is on an inner ccb.
+    // We give index to the topmost subcurve from the right, and add this
+    // vertex indices list of the curve the event "sees" from below.
+    m_sc_counter++;
+    (*(event->right_curves_rbegin()))->set_index (m_sc_counter);
 
-    std::cout << "m_sc_counter++: " << (m_sc_counter + 1) << std::endl;
-
-    const Halfedge_handle invalid_he;
-    //CGAL_assertion(m_last_he->direction() == CGAL::RIGHT_TO_LEFT);
-    if (m_last_he != invalid_he && m_last_he->is_on_inner_ccb()) 
+    if (iter != this->status_line_end())
     {
-      // We give index to the topmost subcurve from the right, and add this
-      // vertex indices list of the curve the event "sees" from below.
-      m_sc_counter++;
-      (*(event->right_curves_rbegin()))->set_index (m_sc_counter);
-      
-      if (iter != this->status_line_end())
-      {
-        // The vertex "sees" the subcurve of the given position from below.
-        Subcurve *sc_above = *iter;
-        sc_above->add_halfedge_index(m_sc_counter);
-      }
-      else
-      {
-        // The vertex is not located below any valid curve, 
-        // so we use the helper class to mark that this index 
-        // should belong to the current top face.
-        m_helper.add_subcurve_in_top_face (m_sc_counter);
-      }
-    } else {
-        if (m_last_he != invalid_he) {
-            std::cout << "Valid, but not inner: " 
-                      << m_last_he->curve() << std::endl;
-        }
+      // The vertex "sees" the subcurve of the given position from below.
+      Subcurve *sc_above = *iter;
+      sc_above->add_halfedge_index(m_sc_counter);
+    }
+    else
+    {
+      // The vertex is not located below any valid curve, so we use the helper
+      // class to mark that this index should belong to the current top face.
+      m_helper.add_subcurve_in_top_face (m_sc_counter);
     }
   }
   
@@ -416,8 +397,6 @@ template <class Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::add_subcurve
     (const X_monotone_curve_2& cv, Subcurve* sc)
 {
-    std::cout << "Add subcurve: " << cv << std::endl;
-
   // Obtain all information to perform the insertion of the subcurve into
   // the arrangement.
   Event           *last_event = last_event_on_subcurve(sc);
@@ -477,31 +456,14 @@ void Arr_construction_sl_visitor<Hlpr>::add_subcurve
   if (res->direction() != LEFT_TO_RIGHT)
     res = res->twin();
 
-  std::cout << "resI: " << res->is_on_inner_ccb() << std::endl;
-  std::cout << "resTI: " << res->twin()->is_on_inner_ccb() << std::endl;
-
-  if (res->is_on_inner_ccb()) {
-      std::cout << "resF: " << &(*res->inner_ccb()->face()) << std::endl;
-  } else {
-      std::cout << "resF: " << &(*res->outer_ccb()->face()) << std::endl;
-  }
-
-  if (res->twin()->is_on_inner_ccb()) {
-      std::cout << "res->twinF: " << &(*res->twin()->inner_ccb()->face()) << std::endl;
-  } else {
-      std::cout << "res->twinF: " << &(*res->twin()->outer_ccb()->face()) << std::endl;
-  }
-
-  m_last_he = res;
-  
   // Update the last event with the inserted halfegde (if necessary)
   // and check if we have to update the auxiliary information on the location 
   // of holes.
   if (last_event->number_of_left_curves() == 0 &&  
       last_event->is_curve_largest((Subcurve*)sc))
   {
-    if (last_event->vertex_handle() == m_invalid_vertex)
-        last_event->set_halfedge_handle(res->twin());
+      if (last_event->vertex_handle() == m_invalid_vertex)
+          last_event->set_halfedge_handle(res->twin());
     
     // If sc has valid index, insert its index to m_sc_he_table.
     if(sc->has_valid_index())
@@ -894,7 +856,7 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face
         continue;
      
       Halfedge_handle he_on_face = m_sc_he_table[*itr];
-
+          
       if(he_on_face == invalid_he)
       {
         // If the halfedge handle is invalis, then we have an index for an
@@ -942,8 +904,6 @@ void Arr_construction_sl_visitor<Hlpr>::_map_new_halfedge
     (unsigned int i, Halfedge_handle he)
 {
   CGAL_assertion (i != 0);
-
-  std::cout << "Assign " << i << " to " << he->curve() << std::endl;
   
   if(i >= m_sc_he_table.size())
     // Resize the index table if we reached it capacity.
