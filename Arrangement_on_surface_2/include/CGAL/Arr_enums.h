@@ -26,6 +26,12 @@
 
 #include <CGAL/enum.h>
 
+
+// TODO will be remove after switched to new interface
+#ifndef CGAL_NEW_GEO_INTERFACE
+#define CGAL_NEW_GEO_INTERFACE 1
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \enum
