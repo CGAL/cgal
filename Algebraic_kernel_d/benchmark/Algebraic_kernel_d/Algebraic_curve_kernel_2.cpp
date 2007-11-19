@@ -18,6 +18,14 @@
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
+#ifndef NiX_USE_QUADRATIC_REFINEMENT
+#define NiX_USE_QUADRATIC_REFINEMENT 1
+#endif
+
+#ifndef NiX_USE_INTERNAL_MODULAR_GCD
+#define NiX_USE_INTERNAL_MODULAR_GCD 1
+#endif
+
 #include <NiX/Arithmetic_traits.h>
 #include <NiX/NT_traits.h>
 #include <AcX/Algebraic_curve_2.h>
