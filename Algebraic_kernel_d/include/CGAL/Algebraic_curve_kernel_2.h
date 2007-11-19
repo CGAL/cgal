@@ -669,6 +669,9 @@ public:
             // divide by maximal coefficient ?
             typename FTraits::Denominator_type det(1);
             Poly_rat_2 rat_p = typename FTraits::Compose()(cvt(p.f()), det);
+
+            /*typename FTraits::Numerator_type num;
+             typename FTraits::Decompose()(rat_p, num, det);*/
             
             typename Y_real_traits_1::Lower_boundary lower_2;
             typename Y_real_traits_1::Upper_boundary upper_2;
