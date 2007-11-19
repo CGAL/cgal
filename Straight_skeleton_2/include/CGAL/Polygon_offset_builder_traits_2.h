@@ -21,10 +21,27 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include "boost/type_traits/is_same.hpp"
+#include "boost/mpl/if.hpp"
+#include "boost/mpl/or.hpp"
 
 CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
+
+template<class K> struct Has_inexact_constructions
+{ 
+  typedef typename K::FT FT ;
+  
+  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
+                                                   , boost::is_same<FT,Interval_nt_advanced>
+                                                   > 
+                                  , Tag_true
+                                  , Tag_false
+                                  >::type type ; 
+} ;
 
 template<class K>
 struct Compare_offset_against_event_time_2 : Functor_base_2<K>
@@ -38,7 +55,7 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( FT aT, Trisegment_2_ptr const& aE ) const
+  Uncertain<Comparison_result> operator() ( FT const& aT, Trisegment_2_ptr const& aE ) const
   {
     return compare_offset_against_isec_timeC2(aT,aE) ;
   }
@@ -65,7 +82,41 @@ struct Construct_offset_point_2 : Functor_base_2<K>
                          , Trisegment_2_ptr const& aNode
                          ) const
   {
+    typename Has_inexact_constructions<K>::type has_inexact_constructions ;
+    
+    return calc(aT, aE0, aE1, aNode, has_inexact_constructions);
+  }
+  
+  result_type calc ( FT               const& aT
+                   , Segment_2        const& aE0
+                   , Segment_2        const& aE1 
+                   , Trisegment_2_ptr const& aNode
+                   , Tag_false        // kernel already has exact constructions
+                   ) const
+  {
     result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode);
+    
+    CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
+    
+    return p ;
+  }
+  
+  result_type calc ( FT               const& aT
+                   , Segment_2        const& aE0
+                   , Segment_2        const& aE1 
+                   , Trisegment_2_ptr const& aNode
+                   , Tag_true         // kernel does not provides exact constructions
+                   ) const
+  {
+    typedef Exact_predicates_exact_constructions_kernel EK ;
+    
+    typedef Cartesian_converter<K,EK> BaseC2E;
+    typedef Cartesian_converter<EK,K> BaseE2C;
+    
+    SS_converter<BaseC2E> C2E ;  
+    SS_converter<BaseE2C> E2C ;  
+    
+    result_type p = E2C(construct_offset_pointC2(C2E(aT),C2E(aE0),C2E(aE1),C2E(aNode)));
     
     CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
     

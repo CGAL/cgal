@@ -1,0 +1,138 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StraightSkeletonBuilder_2_Visitor}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements of the visitor class required by the algorithm class \ccc{Straight_skeleton_builder_2<Gt,Ss,Visitor>} in its third template parameter.
+
+\ccTypes
+  \ccNestedType{Halfedge_const_handle}{A constant handle to a straight skeleton halfedge.}{}
+  \ccGlue
+  \ccNestedType{Vertex_const_handle}{A constant handle to a straight skeleton vertex.}{}
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{void on_contour_edge_entered( Halfedge_const_handle const& ) const;}
+         {Called for each contour halfedge added to the skeleton).}
+\ccGlue
+\ccMethod{void on_initialization_started( std::size_t number_of_vertices ) const;}
+         {Called before the initialization stage (when initial events are discovered) is started.}
+\ccGlue
+\ccMethod{void on_contour_vertex_processed( Vertex_const_handle const& v
+                                          , bool is_reflex
+                                          , bool is_degenerate 
+                                          )  const;}
+         {Called after the events for contour vertex $v$ have been discovered. \ccc{is_reflex} is true 
+          if this vertex has an internal angle $>PI$, or \ccc{is_degenerate} is true
+          if the internal angle is $=PI$.}
+\ccGlue
+\ccMethod{void on_edge_event_created( Vertex_const_handle const& node0
+                                    , Vertex_const_handle const& node1 ) const ;}
+         {Called after an edge event for nodes $node0$ and $node1$ has been discovered 
+          and put on the queue for later processing.}
+\ccGlue
+\ccMethod{void on_split_event_created( Vertex_const_handle const& node )  const ;}
+         {Called after a slipt event for node $node$ has been discovered 
+          and put on the queue for later processing.}
+\ccGlue
+\ccMethod{void on_pseudo_split_event_created( Vertex_const_handle const& node0
+                                            , Vertex_const_handle const& node1 ) const ;}
+         {Called after a pseudo slipt event for nodes $node0$ and $node1$ has been discovered 
+          and put on the queue for later processing.}
+\ccGlue
+\ccMethod{void on_initialization_finished() const;}
+         {Called after all initial events have been discovered.}
+\ccGlue
+\ccMethod{void on_propagation_started() const;}
+         {Called before the propagation stage (when events are poped off the queue and processed) 
+          is started.}
+\ccGlue
+\ccMethod{void on_anihiliation_event_processed ( Vertex_const_handle const& node0 
+                                               , Vertex_const_handle const& node1 
+                                               )  const;}
+         {Called after an anhiliation event for nodes $node0$ and $node1$ has been processed. 
+          A new skeleton edge between these nodes has been added.}
+\ccGlue
+\ccMethod{void on_edge_event_processed( Vertex_const_handle const& seed0 
+                                      , Vertex_const_handle const& seed1 
+                                      , Vertex_const_handle const& newnode 
+                                      )  const;} 
+         {Called after an edge for nodes $seed0$ and $seed1$ has been processed.
+          Skeleton vertex $newnode$ and edges from $node0$ to $newnode$ and $node1$ to $newnode$
+          has been added.}
+\ccGlue
+\ccMethod{void on_split_event_processed( Vertex_const_handle const& seed 
+                                       , Vertex_const_handle const& newnode0 
+                                       , Vertex_const_handle const& newnode1 
+                                       )  const;}
+         {Called after a split event for node $seed$ has been processed.
+          Skeleton vertices  $newnode0$ and $newnode1$ have been added. 
+          An skeleton edge from $seed$ to $newnode0$ has been added.
+          In the final skeleton, $newnode1$ is removed and only $newnode0$ remains.}
+\ccGlue
+\ccMethod{void on_pseudo_split_event_processed( Vertex_const_handle const& seed0 
+                                              , Vertex_const_handle const& seed1 
+                                              , Vertex_const_handle const& newnode0 
+                                              , Vertex_const_handle const& newnode1 
+                                              )  const;}
+         {Called after a pseudo split event for nodes $seed0$ and $seed1$ has been processed.
+          Skeleton vertices  $newnode0$ and $newnode1$ have been added. 
+          Skeleton edges from $seed0$ to $newnode0$ and $seed1$ to $newnode1$ has been added.}
+\ccGlue
+\ccMethod{void on_vertex_processed( Vertex_const_handle const& v ) const;}
+         {Called after vertex $v$ has been marked as already processed.}
+\ccGlue
+\ccMethod{void on_propagation_finished() const;}
+         {Called after all events have been processed.}
+\ccGlue
+\ccMethod{void on_cleanup_started() const;}
+         {Called when the skeleton clean up (when multiple nodes are merged) is started.}
+\ccGlue
+\ccMethod{void on_cleanup_finished() const;}
+         {Called when clean up finished.}
+\ccGlue
+\ccMethod{void on_algorithm_finished ( bool finished_ok ) const;}
+         {Called when the algorithm terminated.
+         \ccc{finished_ok} is false if it terminated before completion or the resulting skeleton 
+         was found to be invalid.}
+\ccGlue
+\ccMethod{void on_error( char const* msg ) const;}
+         {Called whenever an error was detected.
+          $msg$ is whatever error message accompanies the error. This pointer can be $null$.}
+
+\ccHasModels
+
+\ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<Ss>}.
+
+\ccSeeAlso
+
+\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ss>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

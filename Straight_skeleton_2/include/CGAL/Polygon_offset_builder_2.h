@@ -195,6 +195,7 @@ private:
     Vertex_const_handle lNodeS = aBisector->opposite()->vertex();
     Vertex_const_handle lNodeT = aBisector->vertex();
     
+    
     // If aBisector is not a border bisector the offset point construction needs to get to seed event
     Trisegment_2_ptr lSeedEvent ;
     if ( aBisector->is_inner_bisector() )
@@ -239,7 +240,7 @@ private:
   Visitor const&             mVisitor ;
   Halfedge_vector            mBorders ;
   std::vector<Bisector_data> mBisectorData;
-
+  OptionalPoint_2            mLastPoint ; 
   CGAL_POLYOFFSET_DEBUG_CODE( int mStepID ; )
 };
 

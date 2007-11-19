@@ -38,13 +38,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-	Straight_skeleton_2$(EXE_EXT)
+	Straight_skeleton_2$(EXE_EXT) \
+	Straight_skeleton_2_converter$(EXE_EXT)
 
 Straight_skeleton_2$(EXE_EXT): Straight_skeleton_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Straight_skeleton_2$(EXE_EXT) Straight_skeleton_2$(OBJ_EXT) $(LDFLAGS)
+	
+Straight_skeleton_2_converter$(EXE_EXT): Straight_skeleton_2_converter$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Straight_skeleton_2_converter$(EXE_EXT) Straight_skeleton_2_converter$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-	Straight_skeleton_2.clean
+	Straight_skeleton_2.clean \
+	Straight_skeleton_2_converter.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

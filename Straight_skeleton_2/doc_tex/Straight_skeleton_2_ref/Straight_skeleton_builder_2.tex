@@ -15,10 +15,10 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_builder_2<Gt,Ss>}
+\begin{ccRefClass}{Straight_skeleton_builder_2<Gt,Ss,Visitor>}
 
 \ccDefinition
-The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, \ccc{Gt}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, and its second template parameter, \ccc{Ss}, must be a model of the \ccc{StraightSkeleton_2} concept.
+The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, \ccc{Gt}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, its second template parameter, \ccc{Ss}, must be a model of the \ccc{StraightSkeleton_2} concept, and its third template paramter, \ccc{Visitor}, must be a model of the \ccc{StraightSkeletonBuilder_2_Visitor} concept. If this last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>} is used.
 
 \ccInclude{CGAL/Straight_skeleton_builder_2.h}
  
