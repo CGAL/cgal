@@ -95,6 +95,8 @@ protected:
   Arr_accessor<Arrangement_2>
                            m_arr_access;  // An arrangement accessor.
 
+  Halfedge_handle          m_last_he;     // the last added halfedge
+
   unsigned int             m_sc_counter;  // Counter for subcurves that may
                                           // represent a hole (the upper
                                           // subcurves that emarge from event
@@ -290,6 +292,7 @@ void Arr_torus_construction_sl_visitor<Hlpr>::before_handle_event (Event* event)
 {
   // We just have to notify the helper class on the event.
   m_helper.before_handle_event (event);
+  m_last_he = Halfedge_handle();
 
   return;
 }
@@ -339,22 +342,31 @@ bool Arr_torus_construction_sl_visitor<Hlpr>::after_handle_event
 
     // In case of a finite event that has no incident left curves, it is
     // associated with a point that may be the leftmost one in a hole.
-    // We give index to the topmost subcurve from the right, and add this
-    // vertex indices list of the curve the event "sees" from below.
-    m_sc_counter++;
-    (*(event->right_curves_rbegin()))->set_index (m_sc_counter);
-
-    if (iter != this->status_line_end())
+    // The last inserted halfedge belongs to this event. We have to check
+    // whether it really can pose a hole, i.e., whether the inserted halfedge
+    // is on an inner ccb.
+    const Halfedge_handle invalid_he;
+    //CGAL_assertion(m_last_he->direction() == CGAL::RIGHT_TO_LEFT);
+    if (m_last_he != invalid_he && m_last_he->is_on_inner_ccb()) 
     {
-      // The vertex "sees" the subcurve of the given position from below.
-      Subcurve *sc_above = *iter;
-      sc_above->add_halfedge_index(m_sc_counter);
-    }
-    else
-    {
-      // The vertex is not located below any valid curve, so we use the helper
-      // class to mark that this index should belong to the current top face.
-      m_helper.add_subcurve_in_top_face (m_sc_counter);
+      // We give index to the topmost subcurve from the right, and add this
+      // vertex indices list of the curve the event "sees" from below.
+      m_sc_counter++;
+      (*(event->right_curves_rbegin()))->set_index (m_sc_counter);
+      
+      if (iter != this->status_line_end())
+      {
+        // The vertex "sees" the subcurve of the given position from below.
+        Subcurve *sc_above = *iter;
+        sc_above->add_halfedge_index(m_sc_counter);
+      }
+      else
+      {
+        // The vertex is not located below any valid curve, 
+        // so we use the helper class to mark that this index 
+        // should belong to the current top face.
+        m_helper.add_subcurve_in_top_face (m_sc_counter);
+      }
     }
   }
   
@@ -459,6 +471,8 @@ void Arr_torus_construction_sl_visitor<Hlpr>::add_subcurve
   // right (thus its twin is directed from right to left).
   if (res->direction() != LEFT_TO_RIGHT)
     res = res->twin();
+
+  m_last_he = res;
 
   // Update the last event with the inserted halfegde (if necessary)
   // and check if we have to update the auxiliary information on the location 
