@@ -97,23 +97,23 @@ private :
     
     void normalize_border() { Base::normalize_border(); }
     
-    int id ( Vertex_const_handle h ) const
+public :
+
+    static int id ( Vertex_const_handle h )
     {
       Vertex_const_handle null ;
       return h != null ? h->id() : -1 ; 
     }
-    int id ( Halfedge_const_handle h ) const
+    static int id ( Halfedge_const_handle h )
     {
       Halfedge_const_handle null ;
       return h != null ? h->id() : -1 ; 
     }
-    int id ( Face_const_handle h ) const
+    static int id ( Face_const_handle h )
     {
       Face_const_handle null ;
       return h != null ? 0 : -1 ; 
     }
-
-public :
 
     bool is_valid() const
     {

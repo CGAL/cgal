@@ -221,7 +221,6 @@ public:
   
   void set_halfedge( Halfedge_handle aHE)  { mHE = aHE; }
     
-  // For skeleton nodes, the triedge whole coallision created this.  
   Triedge const& event_triedge() const { return mEventTriedge ; }
   
   void set_event_triedge( Triedge const& aTriedge ) { mEventTriedge = aTriedge ; }

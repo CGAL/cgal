@@ -25,6 +25,8 @@
 #include<sstream>
 #include<iomanip>
 
+#include<boost/tokenizer.hpp>
+
 bool sTestInner            = true  ;
 bool sTestOuter            = true  ;
 bool sTestOffsets          = true  ;
@@ -37,13 +39,15 @@ bool sLogFailures          = false ;
 bool sAbortOnError         = false ;
 bool sAcceptNonSimpleInput = false ;
 bool sValidateGeometry     = false ; 
-
+bool sDumpOffsetPolygons   = false ;
+ 
 int sMaxShift       = 1 ;
 int sMaxVertexCount = 0 ;
 
-bool   sOffsetAtNodes = true ; 
-size_t sOffsetCount   = 2 ;
-double sOffset        = 0.0 ;
+double           sOffset        = 0.0 ;
+bool             sOffsetAtNodes = true ; 
+size_t           sOffsetCount   = 2 ;
+std::vector<int> sOffsetAtEntry ;
 
 double sDX    = 0.0 ;
 double sDY    = 0.0 ;
@@ -51,10 +55,10 @@ double sScale = 1.0 ;
 
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
 
-#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 4
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 4
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE    
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE 
-//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 4
+//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 3
 
 bool lAppToLog = false ;
 void Straight_skeleton_external_trace ( std::string m )
@@ -89,14 +93,13 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 
 #include <CGAL/IO/Dxf_stream.h>
 
-typedef CGAL::Dxf_stream<K> DxfStream ;
+typedef CGAL::Dxf_stream<IK> DxfStream ;
 
 using namespace std ;
 using namespace CGAL ;
 
 inline string to_string( double n ) { ostringstream ss ; ss << n ; return ss.str(); }
 inline bool   is_even ( int n ) { return n % 2 == 0 ; }
-
 
 struct Zone
 {
@@ -106,10 +109,10 @@ struct Zone
     ,ContouringTime(0.0)
   {}
     
-  RegionPtr Input ;
+  IRegionPtr Input ;
   
-  SlsPtr  Skeleton ;
-  Region  Contours ;
+  ISlsPtr Skeleton ;
+  ORegion Contours ;
   double  SkeletonTime ;
   double  ContouringTime ;
 } ;
@@ -153,9 +156,9 @@ const char* LoadExitCodeNM[] = {  "??         "
                                
 const char* load_exit_code_to_str( int aCode ) { return LoadExitCodeStr[aCode] ; }
 
-RegionPtr load_region( string file, int aShift, int& rExitCode )
+IRegionPtr load_region( string file, int aShift, int& rExitCode )
 {
-  RegionPtr rRegion ;
+  IRegionPtr rRegion ;
 
   try
   {
@@ -164,13 +167,13 @@ RegionPtr load_region( string file, int aShift, int& rExitCode )
     {
       CGAL::set_ascii_mode(in);
   
-      rRegion = RegionPtr( new Region() ) ; 
+      rRegion = IRegionPtr( new IRegion() ) ; 
   
       int ccb_count = 0 ;
       in >> ccb_count ;
       for ( int i = 0 ; i < ccb_count && in ; ++ i )
       {
-        PolygonPtr lPoly( new Polygon() );
+        IPolygonPtr lPoly( new IPolygon() );
   
         int v_count = 0 ;
         in >> v_count ;
@@ -187,19 +190,19 @@ RegionPtr load_region( string file, int aShift, int& rExitCode )
               x *= sScale ;
               y *= sScale ;
               
-              lPoly->push_back( Point(x,y) ) ;
+              lPoly->push_back( IPoint(x,y) ) ;
             }  
           }
           
           if ( lPoly->size() >= 3 )
           {
-            bool lIsSimple = is_simple_2(lPoly->begin(),lPoly->end(),K());
+            bool lIsSimple = is_simple_2(lPoly->begin(),lPoly->end(),IK());
               
             if ( sAcceptNonSimpleInput || ( !sAcceptNonSimpleInput && lIsSimple ) )
             {
               Orientation expected = ( i == 0 ? COUNTERCLOCKWISE : CLOCKWISE ) ;
       
-              double area = to_double(polygon_area_2(lPoly->begin(),lPoly->end(),K()));
+              double area = to_double(polygon_area_2(lPoly->begin(),lPoly->end(),IK()));
       
               Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
       
@@ -208,7 +211,7 @@ RegionPtr load_region( string file, int aShift, int& rExitCode )
                 
               if ( orientation == expected )
                    rRegion->push_back(lPoly);
-              else rRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
+              else rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
             }
             else
             {
@@ -218,7 +221,7 @@ RegionPtr load_region( string file, int aShift, int& rExitCode )
           else 
           {
             rExitCode = cDegenerateInput ;
-            rRegion = RegionPtr();
+            rRegion = IRegionPtr();
             break;
           }  
         }
@@ -246,19 +249,19 @@ RegionPtr load_region( string file, int aShift, int& rExitCode )
   
   if ( rRegion && rRegion->size() == 0 )
   {
-    rRegion = RegionPtr();
+    rRegion = IRegionPtr();
   }
   
   return rRegion ;
 }
 
-void update_bbox ( RegionPtr const& aRegion, boost::optional<Bbox_2>& rBBox )
+void update_bbox ( IRegionPtr const& aRegion, boost::optional<Bbox_2>& rBBox )
 {
   if ( aRegion )
   {
-    for ( Region::const_iterator bit = aRegion->begin() ; bit != aRegion->end() ; ++ bit )
+    for ( IRegion::const_iterator bit = aRegion->begin() ; bit != aRegion->end() ; ++ bit )
     {
-      for( Polygon::const_iterator vit = (*bit)->begin(); vit != (*bit)->end(); ++vit)
+      for( IPolygon::const_iterator vit = (*bit)->begin(); vit != (*bit)->end(); ++vit)
       {
         Bbox_2 lVBBox = vit->bbox() ;
         
@@ -270,18 +273,23 @@ void update_bbox ( RegionPtr const& aRegion, boost::optional<Bbox_2>& rBBox )
   }
 }
  
-
+template<class Region>
 void dump_region_to_eps( Region const& aRegion, const char* aType, double aScale, ostream& rOut )
 {
-  for ( Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
-  {
-    Polygon::const_iterator beg  = (*bit)->begin(); 
-    Polygon::const_iterator end  = (*bit)->end  (); 
-    Polygon::const_iterator last = end - 1 ;
+  typedef typename Region::value_type PolygonPtr ;
+  typedef typename PolygonPtr::element_type Polygon ;
+  typedef typename Region::const_iterator boundary_const_iterator ;
+  typedef typename Polygon::const_iterator vertex_const_iterator ;
     
-    for( Polygon::const_iterator curr = beg ; curr != end ; ++ curr )
+  for ( boundary_const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
+  {
+    vertex_const_iterator beg  = (*bit)->begin(); 
+    vertex_const_iterator end  = (*bit)->end  (); 
+    vertex_const_iterator last = end - 1 ;
+    
+    for( vertex_const_iterator curr = beg ; curr != end ; ++ curr )
     {
-      Polygon::const_iterator next = curr == last ? beg : curr + 1 ;
+      vertex_const_iterator next = curr == last ? beg : curr + 1 ;
       
       rOut << aType << endl
            << aScale * curr->x() 
@@ -297,7 +305,7 @@ void dump_region_to_eps( Region const& aRegion, const char* aType, double aScale
   }
 }
 
-void dump_skeleton_to_eps( Sls const& aSkeleton, double aScale, ostream& rOut )
+void dump_skeleton_to_eps( ISls const& aSkeleton, double aScale, ostream& rOut )
 {
   for(Halfedge_const_iterator hit = aSkeleton.halfedges_begin(); hit != aSkeleton.halfedges_end(); ++hit)
   {
@@ -390,7 +398,7 @@ void dump_to_eps ( TestCase const& aCase )
   }
   
 }
-
+template<class Polygon>
 void dump_polygon_to_dxf( Polygon const& aPolygon, Color aColor, string aLayer, DxfStream& rDXF )
 {
   rDXF << aColor << Dxf_layer(aLayer) ;
@@ -399,10 +407,11 @@ void dump_polygon_to_dxf( Polygon const& aPolygon, Color aColor, string aLayer, 
 }
 
 
+template<class Region>
 void dump_region_to_dxf( Region const& aRegion, Color aColor, string aBaseLayer, DxfStream& rDXF )
 {
   int lN = 0 ;
-  for ( Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
+  for ( typename Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
   {
     ostringstream ss ; ss << aBaseLayer << "_" << lN ;
     string lLayer = ss.str();
@@ -411,7 +420,7 @@ void dump_region_to_dxf( Region const& aRegion, Color aColor, string aBaseLayer,
   }  
 }
 
-void dump_skeleton_to_dxf( Sls const& aSkeleton
+void dump_skeleton_to_dxf( ISls const& aSkeleton
                          , Color      aContourBisectorColor
                          , Color      aSkeletonBisectorColor
                          , Color      aPeakBisectorColor
@@ -439,7 +448,7 @@ void dump_skeleton_to_dxf( Sls const& aSkeleton
           else rDXF << aSkeletonBisectorColor ;
         }
         else rDXF << aContourBisectorColor ;
-        rDXF << Segment( h->vertex()->point(), h->opposite()->vertex()->point() ) ;
+        rDXF << ISegment( h->vertex()->point(), h->opposite()->vertex()->point() ) ;
       }  
     }   
   }
@@ -484,9 +493,9 @@ void dump_to_dxf ( TestCase const& aCase )
   
 }
 
-PolygonPtr create_outer_frame ( Polygon const& aOuter )
+IPolygonPtr create_outer_frame ( IPolygon const& aOuter )
 {
-  PolygonPtr rFrame  ;
+  IPolygonPtr rFrame  ;
   
   try
   {
@@ -496,9 +505,9 @@ PolygonPtr create_outer_frame ( Polygon const& aOuter )
     double h = lBbox.ymax() - lBbox.ymin();
     double s = std::sqrt(w*w+h*h);
     
-    FT lOffset = s * 0.3 ;
+    IFT lOffset = s * 0.3 ;
     
-    boost::optional<FT> lOptMargin = compute_outer_frame_margin(aOuter.begin(),aOuter.end(),lOffset) ;
+    boost::optional<IFT> lOptMargin = compute_outer_frame_margin(aOuter.begin(),aOuter.end(),lOffset) ;
     
     if ( lOptMargin )
     {
@@ -509,12 +518,12 @@ PolygonPtr create_outer_frame ( Polygon const& aOuter )
       double fly = lBbox.ymin() - lMargin ;
       double fhy = lBbox.ymax() + lMargin ;
       
-      rFrame = PolygonPtr( new Polygon() ) ;
+      rFrame = IPolygonPtr( new IPolygon() ) ;
       
-      rFrame->push_back( Point(flx,fly) );
-      rFrame->push_back( Point(fhx,fly) );
-      rFrame->push_back( Point(fhx,fhy) );
-      rFrame->push_back( Point(flx,fhy) );
+      rFrame->push_back( IPoint(IFT(flx),IFT(fly)) );
+      rFrame->push_back( IPoint(IFT(fhx),IFT(fly)) );
+      rFrame->push_back( IPoint(IFT(fhx),IFT(fhy)) );
+      rFrame->push_back( IPoint(IFT(flx),IFT(fhy)) );
     }
     else 
     {
@@ -537,11 +546,15 @@ PolygonPtr create_outer_frame ( Polygon const& aOuter )
   return rFrame ;
 }
 
+template<class Region, class Point>
 bool is_point_inside_region( Region const& aRegion, Point const& aP )
 {
   bool rR = true ;
   
-  for ( Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() && rR ; ++ bit )
+  typedef typename Region::value_type PolygonPtr ;
+  typedef typename PolygonPtr::element_type Polygon ;
+  
+  for ( typename Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() && rR ; ++ bit )
   {
     Polygon const& lPoly = **bit ;
     if ( oriented_side_2(lPoly.begin(),lPoly.end(),aP) == ON_NEGATIVE_SIDE )
@@ -551,7 +564,7 @@ bool is_point_inside_region( Region const& aRegion, Point const& aP )
   return rR ;
 }
 
-bool is_skeleton_valid( Region const& aRegion, Sls const& aSkeleton )
+bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
 {
   bool rValid = aSkeleton.is_valid() ;
   if ( !rValid )
@@ -594,8 +607,8 @@ bool test_zone ( Zone& rZone )
     if ( sVerbose )
       cout << "    Building straight skeleton." << endl ; 
     
-    SlsBuilder builder ;
-    for( Region::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
+    ISlsBuilder builder ;
+    for( IRegion::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
       builder.enter_contour((*bit)->begin(),(*bit)->end());
     rZone.Skeleton = builder.construct_skeleton(false) ;
   }
@@ -644,9 +657,25 @@ bool test_zone ( Zone& rZone )
       
       if ( sOffsetAtNodes )
       {
-        unsigned lOffsetCount = std::min(lTimes.size(),sOffsetCount);
-        set<double>::const_iterator lTimesEnd = lTimes.begin(); advance(lTimesEnd,lOffsetCount);
-        copy(lTimes.begin(),lTimesEnd, back_inserter(lOffsets) ) ;
+        if ( sOffsetAtEntry.size() > 0 )
+        {
+          int lSize = std::distance(lTimes.begin(),lTimes.end());
+          
+          for ( std::vector<int>::const_iterator oi = sOffsetAtEntry.begin() ; oi != sOffsetAtEntry.end() ; ++ oi )
+          {
+            int lEntry = *oi ;
+            if ( lEntry < lSize )
+            {
+              set<double>::const_iterator it = lTimes.begin();
+              std::advance(it,lEntry);
+              lOffsets.push_back(*it);
+            }
+          }
+        }
+        else
+        {
+          copy(lTimes.begin(),lTimes.end(), back_inserter(lOffsets) ) ;
+        } 
       }
       else if ( sOffset > 0.0 )
       {
@@ -663,32 +692,29 @@ bool test_zone ( Zone& rZone )
         double lAccTime = 0.0 ;
         int    lNumContours = 0 ;
         
-        OffsetBuilder lOffsetBuilder(*rZone.Skeleton);
+        SlsConverter CvtSls ;
+        
+        OSlsPtr lOSkeleton = CvtSls(*rZone.Skeleton) ;
+        
+        CGAL_assertion( lOSkeleton->is_valid() ) ;
+             
+        OffsetBuilder lOffsetBuilder(*lOSkeleton);
         
         for ( vector<double>::const_iterator oit = lOffsets.begin() ; oit != lOffsets.end() ; ++ oit )
         {
           double lOffset = *oit ;
           if ( lOffset > 0.01 )
           {
+            if ( sVerbose )
+              cout << "    Building offset contours at " << lOffset << endl ; 
+              
+            ORegion lContours ;
+            
+            t.start();
+            
             try
             {  
-              if ( sVerbose )
-                cout << "    Building offset contours at " << lOffset << endl ; 
-                
-              Region lContours ;
-                
-              t.start();
-              lOffsetBuilder.construct_offset_contours(FT(lOffset), std::back_inserter(lContours) );
-              t.stop();
-              
-              if ( sVerbose )
-              {
-                cout << "      " << lContours.size() << " contours built." << endl ;
-                for ( Region::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
-                  cout << "        " << (*bit)->size() << " vertices." << endl ;
-              } 
-              
-              copy(lContours.begin(),lContours.end(),std::back_inserter(rZone.Contours));
+              lOffsetBuilder.construct_offset_contours(OFT(lOffset), std::back_inserter(lContours) );
             }
             catch ( exception const& x ) 
             { 
@@ -702,6 +728,55 @@ bool test_zone ( Zone& rZone )
               if ( sVerbose )
                 cout << "      Failed: Unhandled exception." << endl ;
             }
+            
+            t.stop();
+            
+            if ( sVerbose )
+            {
+              cout << "      " << lContours.size() << " contours built." << endl ;
+              for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+              {
+                OPolygonPtr lBdry = *bit ;
+                
+                cout << "        " << lBdry->size() << " vertices." << endl ;
+                
+                if ( sDumpOffsetPolygons )
+                {
+                  cout << "          " ;
+                  for ( OPolygon::const_iterator vit = lBdry->begin() ; vit != lBdry->end() ; ++ vit )
+                    cout << "(" << vit->x() << "," << vit->y() << ") " ;
+                  cout << endl ;
+                }
+              }  
+            } 
+            
+            if ( sDumpOffsetPolygons)
+            {
+              for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+              {
+                OPolygonPtr lBdry = *bit ;
+                cout << "          " ;
+                for ( OPolygon::const_iterator vit = lBdry->begin() ; vit != lBdry->end() ; ++ vit )
+                  cout << "(" << vit->x() << "," << vit->y() << ") " ;
+                cout << endl ;
+              }  
+            } 
+            
+            for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+            {
+              if ( !is_simple_2((*bit)->begin(),(*bit)->end(),OK()) )
+              {
+                cout << "      Failed: Non-simple offset polygon # "
+                      << ( bit - lContours.begin()) 
+                      << " generated at offset: " 
+                      << lOffset 
+                      << " (#" << ( oit - lOffsets.begin() ) << ")"
+                      << endl ;
+              }
+            }
+            
+            
+            copy(lContours.begin(),lContours.end(),std::back_inserter(rZone.Contours));
             lAccTime += t.time();
             ++ lNumContours ;
           }
@@ -731,7 +806,7 @@ int test( TestCase& rCase, int aShift )
   
   int lLoadExitCode = 0 ;
   
-  RegionPtr lInnerRegion = load_region(rCase.Filename,aShift,lLoadExitCode);
+  IRegionPtr lInnerRegion = load_region(rCase.Filename,aShift,lLoadExitCode);
   
   if ( lLoadExitCode != cOK && sVerbose )
   {
@@ -759,13 +834,13 @@ int test( TestCase& rCase, int aShift )
         if ( sVerbose )
           cout << "  Testing outer zone" << endl ;
           
-        PolygonPtr lOuterPoly = lInnerRegion->front();
-        PolygonPtr lFrame = create_outer_frame(*lOuterPoly);
+        IPolygonPtr lOuterPoly = lInnerRegion->front();
+        IPolygonPtr lFrame = create_outer_frame(*lOuterPoly);
         if ( lFrame )
         {
-          rCase.Outer.Input = RegionPtr ( new Region ) ;
+          rCase.Outer.Input = IRegionPtr ( new IRegion ) ;
           rCase.Outer.Input->push_back(lFrame);
-          rCase.Outer.Input->push_back( PolygonPtr( new Polygon(lOuterPoly->rbegin(),lOuterPoly->rend()) ) ) ;
+          rCase.Outer.Input->push_back( IPolygonPtr( new IPolygon(lOuterPoly->rbegin(),lOuterPoly->rend()) ) ) ;
           
           if ( test_zone( rCase.Outer ) )
                rR = rR == 0 ? 1 : rR ;
@@ -886,6 +961,7 @@ int main( int argc, char const* argv[] )
           case 'e' : sDumpEPS     = true ; break ;
           case 'd' : sDumpDXF     = true ; break ;
           case 'v' : sVerbose     = true ; break ;
+          case 'l' : sDumpOffsetPolygons = true ; break ;
           case 'a' : sAbortOnError = true ; break ;
           case 'p' : sAcceptNonSimpleInput = true ; break ;
           case 'c' : lContinueOnErrorAssertionFailed = true; break ;
@@ -939,12 +1015,19 @@ int main( int argc, char const* argv[] )
                   sOffsetAtNodes = true ;
                   if ( sopt.length() > 1 )
                   {
-                    sOffsetCount = atoi(&sopt[1]) ; 
-                    cout << "Offsseting at nodes set. " << sOffsetCount << " times." << endl ;
+                    cout << "Offsseting at nodes set. Using entries " ;
+                    boost::tokenizer<> tok(sopt);
+                    for( boost::tokenizer<>::iterator beg=tok.begin(); beg!=tok.end();++beg)
+                    {
+                      int lEntry = atoi(beg->c_str());
+                      sOffsetAtEntry.push_back(lEntry)  ; 
+                      cout << lEntry << " " ;
+                    }
+                    cout << endl ;
                   }
                   else
                   {
-                    sOffsetCount = -1 ;
+                    sOffsetAtEntry.clear() ;
                     cout << "Offsseting at nodes set until full depth" << endl ;
                   }
                 }
@@ -1088,7 +1171,7 @@ int main( int argc, char const* argv[] )
          << "     -o<offset-choice>" << endl
          << "         !   Disabled" << endl 
          << "         #   At every node." << endl 
-         << "         #N  At the first N nodes." << endl 
+         << "         #N  At the offset number N in a set of all node offsets." << endl 
          << "         D   Just one offset at distance 'D'" << endl 
          << "         DxS 'S' evenly space offsets separated distance 'D'" << endl 
          << "         Dx* Evenly spaced offsets separated distance 'D'" << endl 
@@ -1099,6 +1182,7 @@ int main( int argc, char const* argv[] )
          << "     -e      Dumps result into an .eps file." << endl
          << "     -d      Dumps result into an .dxf file." << endl
          << "     -v      Verbose log." << endl 
+         << "     -l      Dump offset polygons." << endl 
          << "     -n      No-op mode. Doesn't create skeletons." << endl 
          << "     -g      Validate skeleton edges are disjoint." << endl
          << "     -fPATH  Append PATH to each filename" << endl 
@@ -1117,4 +1201,5 @@ int main( int argc, char const* argv[] )
 
   return lExitCode ;
 }
+
 

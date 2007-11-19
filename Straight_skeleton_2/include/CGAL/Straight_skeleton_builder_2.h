@@ -681,6 +681,7 @@ private:
 
   int mVertexID ;
   int mEdgeID   ;
+  int mFaceID   ;
   int mEventID  ;
   int mStepID   ;
 
@@ -719,7 +720,7 @@ private :
       CGAL_STSKEL_BUILDER_TRACE(1,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
       InitVertexData(lVertex);
 
-      Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
+      Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face(mFaceID++) ) ;
 
       ++ c ;
 

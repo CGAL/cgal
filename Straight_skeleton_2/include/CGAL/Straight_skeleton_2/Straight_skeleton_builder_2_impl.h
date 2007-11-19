@@ -41,6 +41,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( Traits const
  ,mEventCompare(this)
  ,mVertexID(0)
  ,mEdgeID(0)
+ ,mFaceID(0)
  ,mEventID(0)
  ,mStepID(0)
  ,mPQ(mEventCompare)

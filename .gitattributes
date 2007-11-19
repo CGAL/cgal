@@ -3297,6 +3297,8 @@ Straight_skeleton_2/include/CGAL/IO/Dxf_writer.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_2/assertions.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_2/debug.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_2/test.h -text
+Straight_skeleton_2/include/CGAL/Straight_skeleton_2_converter.h -text
+Straight_skeleton_2/include/CGAL/Straight_skeleton_face_base_2.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example_Working.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/2_Example.poly -text

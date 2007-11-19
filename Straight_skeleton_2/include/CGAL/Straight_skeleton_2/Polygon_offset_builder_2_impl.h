@@ -230,7 +230,16 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
   CGAL_POLYOFFSET_TRACE(1,"Found offset point p=" << p2str(*lP) << " at offset " << aTime << " along bisector " << e2str(*aHook) << " reaching " << v2str(*aHook->vertex()) ) ;
   
   mVisitor.on_offset_point(*lP);
-  aPoly->push_back(*lP);
+  
+  if ( lP != mLastPoint )
+  {
+    aPoly->push_back(*lP);
+    mLastPoint = lP ;
+  }
+  else
+  {
+    CGAL_POLYOFFSET_TRACE(1,"Duplicate point. Ignored");
+  }
 
   CGAL_POLYOFFSET_DEBUG_CODE( ++ mStepID ) ;
 }
@@ -298,6 +307,8 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::construct_offset_co
   CGAL_POLYOFFSET_DEBUG_CODE( mStepID = 0 ) ;
 
   mVisitor.on_construction_started(aTime);
+  
+  mLastPoint = boost::none ;
   
   ResetBisectorData();
 

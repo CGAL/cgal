@@ -26,6 +26,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Straight_skeleton_builder_2.h>
+#include <CGAL/Straight_skeleton_2_converter.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
@@ -33,40 +34,64 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
-//typedef CGAL::Simple_cartesian<double> K ;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   IK;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel     IK;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt IK;
 
-typedef K::FT                         FT ;
-typedef K::Point_2                    Point;
-typedef CGAL::Aff_transformation_2<K> Transformation;
-typedef std::vector<Point>            Polygon;
-typedef boost::shared_ptr<Polygon>    PolygonPtr;
-typedef CGAL::Segment_2<K>            Segment;
-typedef std::vector<PolygonPtr>       Region ;
-typedef boost::shared_ptr<Region>     RegionPtr ;
-typedef std::vector<RegionPtr>        Regions ;
+
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel   OK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel     OK;
+
+
+typedef IK::FT                         IFT ;
+typedef OK::FT                         OFT ;
+
+typedef IK::Point_2                    IPoint;
+typedef OK::Point_2                    OPoint;
+
+typedef CGAL::Aff_transformation_2<IK> ITransformation;
+
 typedef std::vector<double>           Doubles ;
 
-typedef CGAL::Straight_skeleton_2<K>                            Sls;
-typedef CGAL::Straight_skeleton_builder_traits_2<K>             SlsBuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<SlsBuilderTraits,Sls> SlsBuilder;
+typedef CGAL::Segment_2<IK>           ISegment;
+typedef std::vector<IPoint>           IPolygon;
+typedef boost::shared_ptr<IPolygon>   IPolygonPtr;
+typedef std::vector<IPolygonPtr>      IRegion ;
+typedef boost::shared_ptr<IRegion>    IRegionPtr ;
+typedef std::vector<IRegionPtr>       IRegions ;
 
-typedef CGAL::Polygon_offset_builder_traits_2<K>                        OffsetBuilderTraits;
-typedef CGAL::Polygon_offset_builder_2<Sls,OffsetBuilderTraits,Polygon> OffsetBuilder;
+typedef CGAL::Segment_2<OK>           OSegment;
+typedef std::vector<OPoint>           OPolygon;
+typedef boost::shared_ptr<OPolygon>   OPolygonPtr;
+typedef std::vector<OPolygonPtr>      ORegion ;
+typedef boost::shared_ptr<ORegion>    ORegionPtr ;
+typedef std::vector<ORegionPtr>       ORegions ;
 
-typedef Sls::Halfedge_iterator       Halfedge_iterator;
-typedef Sls::Vertex_handle           Vertex_handle;
-typedef Sls::Face_const_iterator     Face_const_iterator;
-typedef Sls::Halfedge_const_handle   Halfedge_const_handle ;
-typedef Sls::Halfedge_const_iterator Halfedge_const_iterator ;
-typedef Sls::Vertex_const_handle     Vertex_const_handle ;
-typedef Sls::Vertex_const_iterator   Vertex_const_iterator ;
+typedef CGAL::Straight_skeleton_2<IK>                             ISls;
+typedef CGAL::Straight_skeleton_builder_traits_2<IK>              ISlsBuilderTraits;
+typedef CGAL::Straight_skeleton_builder_2<ISlsBuilderTraits,ISls> ISlsBuilder;
 
-typedef CGAL::HalfedgeDS_const_decorator<Sls> Sls_const_decorator ;
+typedef CGAL::Straight_skeleton_2<OK>                                     OSls;
+typedef CGAL::Polygon_offset_builder_traits_2<OK>                         OffsetBuilderTraits;
+typedef CGAL::Polygon_offset_builder_2<OSls,OffsetBuilderTraits,OPolygon> OffsetBuilder;
 
-typedef boost::shared_ptr<Sls> SlsPtr ;
+typedef ISls::Halfedge_iterator       Halfedge_iterator;
+typedef ISls::Vertex_handle           Vertex_handle;
+typedef ISls::Face_const_iterator     Face_const_iterator;
+typedef ISls::Halfedge_const_handle   Halfedge_const_handle ;
+typedef ISls::Halfedge_const_iterator Halfedge_const_iterator ;
+typedef ISls::Vertex_const_handle     Vertex_const_handle ;
+typedef ISls::Vertex_const_iterator   Vertex_const_iterator ;
+
+typedef CGAL::HalfedgeDS_const_decorator<ISls> Sls_const_decorator ;
+
+typedef boost::shared_ptr<ISls> ISlsPtr ;
+typedef boost::shared_ptr<OSls> OSlsPtr ;
+
+typedef CGAL::Straight_skeleton_2_items_converter<OSls,ISls> SlsItemsConverter ;
+
+typedef CGAL::Straight_skeleton_2_converter<OSls,ISls,SlsItemsConverter> SlsConverter ;
+
 
 #endif
 

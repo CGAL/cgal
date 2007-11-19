@@ -33,6 +33,11 @@
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 
+
+#ifdef CGAL_USE_CORE
+#  include <CGAL/CORE_BigFloat.h>  
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {

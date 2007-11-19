@@ -20,7 +20,7 @@
 
 #include <CGAL/Straight_skeleton_vertex_base_2.h>
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
-#include <CGAL/HalfedgeDS_face_base.h>
+#include <CGAL/Straight_skeleton_face_base_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,7 +46,7 @@ public:
   template<class Refs, class Traits> 
   struct Face_wrapper 
   {
-    typedef HalfedgeDS_face_base< Refs > Face;
+    typedef Straight_skeleton_face_base_2 < Refs > Face; 
   } ;
 };
 

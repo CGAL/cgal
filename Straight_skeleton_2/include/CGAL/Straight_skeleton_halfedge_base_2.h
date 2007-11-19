@@ -49,6 +49,8 @@ protected:
   Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1), mSlope(ZERO) {}
   
   Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID), mSlope(ZERO) {}
+  
+  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope ) : mF(Face_handle()), mID(aID), mSlope(aSlope) {}
 
 public:
 
@@ -119,6 +121,8 @@ public:
   
   Straight_skeleton_halfedge_base_2( int aID ) : Base_base(aID) {}
 
+  Straight_skeleton_halfedge_base_2( int aID, Sign aSlope ) : Base_base(aID,aSlope) {}
+  
 private:
 
   void set_opposite( Halfedge_handle h )  { Base_base::opposite(h)  ; }

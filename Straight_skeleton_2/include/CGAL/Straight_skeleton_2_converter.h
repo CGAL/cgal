@@ -1,0 +1,239 @@
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Straight_skeleton_2/include/CGAL/Straight_skeleton_2.h $
+// $Id: Straight_skeleton_2.h 40295 2007-09-10 14:07:00Z fcacciola $
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
+
+#ifndef CGAL_STRAIGHT_SKELETON_2_CONVERTER_H
+#define CGAL_STRAIGHT_SKELETON_2_CONVERTER_H 1
+
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/Straight_skeleton_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template<class Target_skeleton_, class Source_skeleton_>
+struct Straight_skeleton_2_items_converter: Cartesian_converter< typename Source_skeleton_::Traits
+                                                               , typename Target_skeleton_::Traits
+                                                               >
+{
+  typedef Source_skeleton_ Source_skeleton ;
+  typedef Target_skeleton_ Target_skeleton ;
+  
+  typedef typename Source_skeleton::Traits Source_traits ;
+  typedef typename Target_skeleton::Traits Target_traits ;
+  
+  typedef Cartesian_converter<Source_traits,Target_traits> Base ;
+  
+  typedef typename Source_skeleton::Vertex_const_handle   Source_vertex_const_handle ;
+  typedef typename Source_skeleton::Halfedge_const_handle Source_halfedge_const_handle ;
+  typedef typename Source_skeleton::Face_const_handle     Source_face_const_handle  ;
+  
+  typedef typename Target_skeleton::Vertex    Target_vertex ;
+  typedef typename Target_skeleton::Halfedge  Target_halfedge ;
+  typedef typename Target_skeleton::Face      Target_face ;
+  
+  Target_vertex operator() ( Source_vertex_const_handle aV ) const 
+  {
+    return Target_vertex( aV->id()
+                        , this->Base::operator()(aV->point())
+                        , this->Base::operator()(aV->time ())
+                        , aV->is_split()
+                        ) ;
+  }
+  
+  Target_halfedge operator() ( Source_halfedge_const_handle aH ) const 
+  {
+    return Target_halfedge( aH->id(), aH->slope() ) ;
+  }
+  
+  Target_face operator() ( Source_face_const_handle aF ) const 
+  {
+    return Target_face( aF->id() );
+  }
+} ;
+
+template<class Target_skeleton_, class Source_skeleton_, class Items_converter_>
+struct Straight_skeleton_2_converter
+{
+  typedef Source_skeleton_ Source_skeleton ;
+  typedef Target_skeleton_ Target_skeleton ;
+  typedef Items_converter_ Items_converter ;
+  
+  typedef typename Source_skeleton::Traits Source_traits ;
+  typedef typename Target_skeleton::Traits Target_traits ;
+  
+  typedef boost::shared_ptr<Target_skeleton> Target_skeleton_ptr ;
+  
+  typedef typename Source_skeleton::Vertex_const_iterator   Source_vertex_const_iterator ;
+  typedef typename Source_skeleton::Halfedge_const_iterator Source_halfedge_const_iterator ;
+  typedef typename Source_skeleton::Face_const_iterator     Source_face_const_iterator  ;
+  
+  typedef typename Source_skeleton::Halfedge_handle Source_halfedge_handle ;
+  
+  typedef typename Target_skeleton::Vertex   Target_vertex ;
+  typedef typename Target_skeleton::Halfedge Target_halfedge ;
+  typedef typename Target_skeleton::Face     Target_face ;
+  
+  typedef typename Target_skeleton::Vertex_handle   Target_vertex_handle ;
+  typedef typename Target_skeleton::Halfedge_handle Target_halfedge_handle ;
+  typedef typename Target_skeleton::Face_handle     Target_face_handle  ;
+  
+  typedef typename Target_skeleton::Vertex_iterator   Target_vertex_iterator ;
+  typedef typename Target_skeleton::Halfedge_iterator Target_halfedge_iterator ;
+  typedef typename Target_skeleton::Face_iterator     Target_face_iterator  ;
+
+  typedef typename Target_skeleton::Base      SlsBase ;
+  typedef typename Target_halfedge::Base_base HBase_base ;
+  typedef typename Target_halfedge::Base      HBase ;
+  typedef typename Target_vertex::Base        VBase ;
+  typedef typename Target_face::Base          FBase ;
+  
+  typedef CGAL_SS_i::Triedge<Source_halfedge_handle> Source_triedge ;
+  typedef CGAL_SS_i::Triedge<Target_halfedge_handle> Target_triedge ;
+  
+  Target_skeleton_ptr operator() ( Source_skeleton const& aSkeleton )
+  { 
+    Target_skeleton_ptr rResult = create_unconnected_copy(aSkeleton);
+    connect_items(aSkeleton,*rResult);
+    return rResult ;
+  }
+  
+private :
+  
+  Target_skeleton_ptr create_unconnected_copy ( Source_skeleton const& aSource ) 
+  {
+    Target_skeleton_ptr rCopy ( new Target_skeleton ) ;
+    
+    int lMaxVID =-1, lMaxHID = -1, lMaxFID = -1 ;
+    
+    for ( Source_vertex_const_iterator vit = aSource.vertices_begin(); vit != aSource.vertices_end(); ++ vit )
+      if ( vit->id() > lMaxVID )
+        lMaxVID = vit->id();
+        
+    for ( Source_halfedge_const_iterator hit = aSource.halfedges_begin(); hit != aSource.halfedges_end(); ++ hit )
+      if ( hit->id() > lMaxHID )
+        lMaxHID = hit->id();
+        
+    for ( Source_face_const_iterator fit = aSource.faces_begin(); fit != aSource.faces_end(); ++ fit )
+      if ( fit->id() > lMaxFID )
+        lMaxFID = fit->id();
+    
+    Target_vertices .clear();
+    Target_halfedges.clear();
+    Target_faces    .clear();
+    Target_vertices .resize(lMaxVID+1);
+    Target_halfedges.resize(lMaxHID+1);
+    Target_faces    .resize(lMaxFID+1);
+    
+    for ( Source_vertex_const_iterator vit = aSource.vertices_begin(); vit != aSource.vertices_end(); ++ vit )
+    {
+      Target_vertex_handle tv = rCopy->SlsBase::vertices_push_back( cvt(vit) ) ; 
+       
+      Target_vertices.at(tv->id()) = tv ;
+    }  
+      
+    for ( Source_halfedge_const_iterator hit = aSource.halfedges_begin(); hit != aSource.halfedges_end(); ++ hit )
+    {
+      Target_halfedge_handle    th = rCopy->SlsBase::edges_push_back( cvt(hit), cvt(hit->opposite()) ) ; 
+      Target_halfedge_handle oppth = th->opposite();
+      
+      Target_halfedges.at(   th->id()) = th ;
+      Target_halfedges.at(oppth->id()) = oppth ;
+      
+      ++ hit ;
+    } 
+    
+    for ( Source_face_const_iterator fit = aSource.faces_begin(); fit != aSource.faces_end(); ++ fit )
+    {
+      Target_face_handle tf = rCopy->SlsBase::faces_push_back( cvt(fit) ) ; 
+      
+      Target_faces.at(tf->id()) = tf ;
+    }  
+    
+    return rCopy ;
+  }
+  
+  void connect_items ( Source_skeleton const& aSource, Target_skeleton& aTarget )
+  {
+    Target_vertex_iterator tvit = aTarget.vertices_begin();
+    for ( Source_vertex_const_iterator svit = aSource.vertices_begin(); svit != aSource.vertices_end(); ++ svit, ++ tvit )
+    {
+      Target_halfedge_handle tgt_halfedge = Target_halfedges.at(svit->halfedge()->id());
+          
+      tvit->VBase::set_halfedge(tgt_halfedge);
+      
+      Target_halfedge_handle tgt_striedge_e0, tgt_striedge_e1, tgt_striedge_e2 ;
+      
+      Source_triedge const& stri = svit->event_triedge() ;
+      
+      if ( handle_assigned(stri.e0()) )
+        tgt_striedge_e0 = Target_halfedges.at(stri.e0()->id());
+        
+      if ( handle_assigned(stri.e1()) )
+        tgt_striedge_e1 = Target_halfedges.at(stri.e1()->id());
+      
+      if ( handle_assigned(stri.e2()) )
+        tgt_striedge_e2 = Target_halfedges.at(stri.e2()->id());
+        
+      tvit->VBase::set_event_triedge( Target_triedge(tgt_striedge_e0, tgt_striedge_e1, tgt_striedge_e2) ) ;
+    }
+    
+    Target_halfedge_iterator thit = aTarget.halfedges_begin();
+    for ( Source_halfedge_const_iterator shit = aSource.halfedges_begin(); shit != aSource.halfedges_end(); ++ shit, ++ thit )
+    {
+      Target_halfedge_handle tgt_opposite = Target_halfedges.at(shit->opposite()->id());
+      Target_halfedge_handle tgt_next     = Target_halfedges.at(shit->next    ()->id());
+      Target_halfedge_handle tgt_prev     = Target_halfedges.at(shit->prev    ()->id());
+      Target_vertex_handle   tgt_vertex   = Target_vertices .at(shit->vertex  ()->id());
+      
+      Target_face_handle tgt_face ;
+      
+      if ( handle_assigned(shit->face()) )
+         tgt_face = Target_faces.at(shit->face()->id());
+          
+      thit->HBase_base::set_opposite (tgt_opposite);
+      thit->HBase_base::set_next     (tgt_next);
+      thit->HBase_base::set_prev     (tgt_prev);
+      thit->HBase_base::set_vertex   (tgt_vertex);
+      
+      if ( handle_assigned(tgt_face) )
+        thit->HBase_base::set_face(tgt_face);
+     }  
+    
+    Target_face_iterator tfit = aTarget.faces_begin();
+    for ( Source_face_const_iterator sfit = aSource.faces_begin(); sfit != aSource.faces_end(); ++ sfit, ++ tfit )
+    {
+      Target_halfedge_handle tgt_halfedge = Target_halfedges.at(sfit->halfedge()->id());
+          
+      tfit->FBase::set_halfedge(tgt_halfedge);
+    }  
+  }
+  
+  Items_converter cvt ;
+  
+  std::vector<Target_vertex_handle>   Target_vertices ;
+  std::vector<Target_halfedge_handle> Target_halfedges;
+  std::vector<Target_face_handle>     Target_faces    ;
+  
+} ;
+
+
+CGAL_END_NAMESPACE
+
+
+#endif // CGAL_STRAIGHT_SKELETON_2_CONVERTER_H //
+// EOF //
+
