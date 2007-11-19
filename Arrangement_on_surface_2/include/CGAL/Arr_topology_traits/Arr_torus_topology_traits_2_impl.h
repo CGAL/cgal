@@ -304,13 +304,17 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
     
     CGAL_precondition(_valid(bound_x, bound_y));
     
-    // TODO use compare_on_identification!
+    if (bound_x == CGAL::NO_BOUNDARY ||
+        bound_y == CGAL::NO_BOUNDARY) {
+        return false; // as v is on boundary
+    }
+    
     // check wether the two concrete points are equal
     if (v->boundary_in_x() != CGAL::NO_BOUNDARY) {
         if (bound_x == CGAL::NO_BOUNDARY) {
             return false;
         }
-        // else
+        // else curve-end lies on NS
         bool res = 
             (this->_m_traits->compare_y_on_identification_2_object() (
                     v->point(),
@@ -325,7 +329,7 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
     if (bound_y == CGAL::NO_BOUNDARY) {
         return false;
     }
-    // else 
+    // else curve-end lies on WE
     bool res = 
         (this->_m_traits->compare_x_on_identification_2_object() (
                 v->point(),
@@ -1065,13 +1069,22 @@ _sign_of_path(
         CGAL::Boundary_type bound_y = 
             this->_m_traits->boundary_in_y_2_object()(cv, CGAL::MIN_END);
         
-        if (bcv1x != NO_BOUNDARY || bcv1y != NO_BOUNDARY) {
-            equal = this->are_equal(prev1->vertex(), cv, CGAL::MIN_END, 
-                                    bound_x, bound_y);
-        } else {
-            equal = (this->_m_traits->compare_xy_2_object()(
-                             prev1->vertex()->point(), minp
-                     ) == CGAL::EQUAL);
+        bool v1_on_boundary = 
+            (prev1->vertex()->boundary_in_x() != NO_BOUNDARY ||
+             prev1->vertex()->boundary_in_y() != NO_BOUNDARY);
+        bool min_on_boundary = 
+            (bound_x != NO_BOUNDARY || bound_y != NO_BOUNDARY);
+        
+        if (v1_on_boundary == min_on_boundary) {
+            if (v1_on_boundary) {
+                // compare at boundary
+                equal = this->are_equal(prev1->vertex(), cv, CGAL::MIN_END, 
+                                        bound_x, bound_y);
+            } else {
+                equal = (this->_m_traits->compare_xy_2_object()(
+                                 prev1->vertex()->point(), minp
+                         ) == CGAL::EQUAL);
+            }
         }
         
         if (!equal) {
