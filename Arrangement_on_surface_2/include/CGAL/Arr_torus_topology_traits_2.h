@@ -39,7 +39,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 #include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Arr_topology_traits/Arr_torus_construction_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
@@ -407,7 +407,7 @@ public:
     ///! \name Visitor types.
     //@{
     
-    typedef Arr_construction_sl_visitor<CHelper>
+    typedef Arr_torus_construction_sl_visitor<CHelper>
     Sweep_line_construction_visitor;
     
     typedef Arr_insertion_sl_visitor<IHelper>
