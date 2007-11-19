@@ -428,6 +428,78 @@ public:
     //!@}
 
     public:
+    
+    //! Returns whether the x-coordinate equals zero
+    bool is_x_zero() const {
+        return this->ptr()->_m_x.is_zero();
+    }
+
+    //! Returns whether the y-coordinate equals zero
+    bool is_y_zero() const {
+        Boundary_interval y_iv = get_approximation_y();
+        if( y_iv.lower() > 0 || y_iv.upper() < 0 ) {
+            return false;
+        }
+        CGAL_assertion(this->ptr()->_m_curve.f().degree()>=0);
+        typename Curve_2::Polynomial_2::NT constant_pol 
+            = this->ptr()->_m_curve.f()[0];
+        bool zero_is_root_of_local_pol 
+            = this->ptr()->_m_x.is_root_of(constant_pol);
+        // Since we know that y_iv is an _isolating_ interval,
+        // we can immediately return
+        return zero_is_root_of_local_pol;
+        
+    }
+    
+    // returns a double approximation of the point
+    std::pair<double, double> to_double() const {
+
+        typedef typename Get_arithmetic_kernel<Boundary>::Arithmetic_kernel AT;
+        typedef typename AT::Bigfloat BF;
+        typedef typename AT::Bigfloat_interval BFI; 
+
+        long old_prec = get_precision(BF());
+        
+        set_precision (BF(), 53);
+
+        double double_x = this->ptr()->_m_x.to_double();
+        double double_y;
+
+        typename Y_real_traits_1::Lower_boundary lower;
+        typename Y_real_traits_1::Upper_boundary upper;
+        typename Y_real_traits_1::Refine refine;
+
+        if (lower(*this)==upper(*this)) {
+            double_y = CGAL::to_double(convert_to_bfi(lower(*this)));
+        } else if(is_y_zero()) {
+            double_y = 0.;
+        } else {
+            while(CGAL::sign(lower(*this)) != 
+                  CGAL::sign(upper(*this)) ) {
+                refine(*this);
+            }
+            long final_prec = set_precision(BF(),get_precision(BF())+4);
+            
+            BFI bfi = CGALi::hull(convert_to_bfi(lower(*this)), 
+                                  convert_to_bfi(upper(*this)));
+            
+            while( !singleton(bfi) &&  
+                   get_significant_bits(bfi) < final_prec  ){
+                refine(*this);
+                bfi = CGALi::hull(
+                        convert_to_bfi(lower(*this)), 
+                        convert_to_bfi(upper(*this)));
+            }
+            double_y 
+                = CGAL::to_double((CGALi::lower(bfi)+ CGALi::upper(bfi)) / 2);
+        }
+        set_precision(BF(),old_prec);
+        return std::make_pair(double_x, double_y); 
+
+    }
+
+
+    public:
     //!\name Approximating functions
     //!@{
 
