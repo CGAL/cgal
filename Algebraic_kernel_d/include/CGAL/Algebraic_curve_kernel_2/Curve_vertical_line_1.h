@@ -155,8 +155,8 @@ public:
         Base(Rep(info, ca_2, index)) {   
         
         CGAL_precondition(id >= 0 && index <
-             this->ptr()->_m_ca_2.
-             number_of_vertical_lines_with_event() + (is_event()? 0: 1));
+                this->ptr()->_m_ca_2.number_of_vertical_lines_with_event()
+                    + (is_event()? 0: 1));
     }
         
     /*!\brief

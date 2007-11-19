@@ -30,7 +30,8 @@
 #define CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS \
     typedef typename Algebraic_curve_pair_2::Algebraic_curve_2 Curve_2; \
     typedef Algebraic_real_2 Type; \
-    typedef typename Curve_2::Boundary Boundary;
+    typedef typename Curve_2::Boundary Boundary; \
+    typedef typename Curve_2::Coefficient Coefficient;
 
 CGAL_BEGIN_NAMESPACE
     
@@ -80,6 +81,10 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     typedef AcX::Algebraic_curve_pair_2<Curve_> Algebraic_curve_pair_2; 
 
     CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
+
+    //! myself
+    typedef Algebraic_real_traits_for_y<Algebraic_real_2,
+        Algebraic_curve_pair_2> Self;
     
     //! type of curve vertical line
     typedef typename Curve_2::Curve_vertical_line Event_line;
@@ -151,13 +156,81 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         //!
         //! resulting interval is:
         //! <tt>|lower - upper|/|r.y()| <= 2^(-rel_prec)</tt> 
-        void operator()(Type& r, int rel_prec) const {
+        void operator()(const Type& r, int rel_prec) const {
             
             Event_line vline = r.curve().event_info_at_x(r.x());
-            Boundary prec = (vline.interval_length(r.arcno())) / 
+            int arcno = r.arcno();
+            Boundary prec = (vline.interval_length(arcno)) /
                 CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
-                
-            vline.refine_to(r.arcno(), prec);
+
+            /////////// attention!! need to test for exact zero !!
+               
+            // Refine until both boundaries have the same sign
+            while(CGAL::sign(vline.lower_boundary(arcno)) !=
+                    CGAL::sign(vline.upper_boundary(arcno))) {
+                vline.refine(arcno);
+            }
+            
+            CGAL_assertion(
+                CGAL::sign(vline.lower_boundary(arcno)) != CGAL::ZERO &&
+                CGAL::sign(vline.upper_boundary(arcno)) != CGAL::ZERO);
+
+            // Refine until precision is reached
+            while((vline.upper_boundary(arcno) - vline.lower_boundary(arcno)) /
+                   CGAL::max(CGAL::abs(vline.upper_boundary(arcno)),
+                        CGAL::abs(vline.lower_boundary(arcno))) > prec ) {
+                vline.refine(arcno);
+            }
+        }
+    };
+
+    //! returns double interval approximation of an y-coordinate of an
+    //! algebraic real with guaranteed first 53 bits of the result
+    struct To_interval
+        : public Unary_function<Type, std::pair<double, double> > {
+
+        typedef std::pair<double, double> result_type;
+        
+        result_type operator()(const Type& r) const {
+
+            Event_line vline = r.curve().event_info_at_x(r.x());
+            int arcno = r.arcno();
+
+            /////////// attention!! need to test for exact zero !!
+               
+            // Refine until both boundaries have the same sign
+            while(CGAL::sign(vline.lower_boundary(arcno)) !=
+                    CGAL::sign(vline.upper_boundary(arcno))) {
+                vline.refine(arcno);
+            }
+            
+            CGAL_assertion(
+                CGAL::sign(vline.lower_boundary(arcno)) != CGAL::ZERO &&
+                CGAL::sign(vline.upper_boundary(arcno)) != CGAL::ZERO);
+
+            typedef typename Get_arithmetic_kernel<Coefficient>::
+                Arithmetic_kernel AT;
+            typedef typename AT::Bigfloat BF;
+            typedef typename AT::Bigfloat_interval BFI;
+
+            long old_precision = get_precision( BF() );
+            set_precision(BF(), 53);
+            long final_prec = set_precision(BF(), get_precision(BF())+4);
+  
+            BFI bfi = CGALi::hull(convert_to_bfi(vline.lower_boundary(arcno)),
+                convert_to_bfi(vline.upper_boundary(arcno)));
+    
+            while(!singleton(bfi) && get_significant_bits(bfi) < final_prec) {
+                vline.refine(arcno);
+                bfi = CGALi::hull(
+                    convert_to_bfi(vline.lower_boundary(arcno)),
+                    convert_to_bfi(vline.upper_boundary(arcno)));
+            }
+            
+            set_precision(BF(),final_prec);
+            result_type res = CGAL::to_interval(bfi);
+            set_precision(BF(), old_precision);
+            return res;
         }
     };
 };
