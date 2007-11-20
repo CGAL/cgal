@@ -741,7 +741,7 @@ else
 
   test_spherical_arc_traits
 
-  test_rational_arc_traits
+#  test_rational_arc_traits
 
   compile_and_run test_insertion
   compile_and_run test_removal
