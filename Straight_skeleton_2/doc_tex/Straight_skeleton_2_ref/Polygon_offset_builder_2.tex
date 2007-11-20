@@ -43,7 +43,7 @@ The class \ccRefName\  encapsulates the construction of inward offset contours o
 \ccMethod{template<class OutputIterator>  OutputIterator construct_offset_contours( FT t, OutputIterator out );}
 {Given the straight skeleton passed in the constructor which corresponds to the interior of a non-degenerate strictly-simple polygon with holes \textit{P}, returns \textit{all} the offset contours of \textit{P} at the Euclidean distance \ccc{t}.
 
-Such offset contours are simple polygons in the interior of P.
+Such offset contours are polygons in the interior of P. Provided exact constructions are used, these polygons are simple.
 
 For any offset distance \ccc{t} there are 0, 1 or more offset contours.
 
