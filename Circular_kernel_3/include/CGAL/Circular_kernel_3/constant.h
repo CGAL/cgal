@@ -178,13 +178,17 @@ namespace CGAL{
   }  
 
   template <class SK>
-  static int Sign_power_of_pole(const typename SK::Circle_on_reference_sphere_3& C,CGAL::Pole_type P){
+  int Sign_power_of_pole(const typename SK::Circle_on_reference_sphere_3& C,CGAL::Pole_type P){
     typename SK::Point_3 center=C.supporting_sphere().center();
-    return CGAL::sign(
-      CGAL::square(CGAL::square(center.x())+CGAL::square(center.y())+CGAL::square(center.z())+C.reference_sphere().squared_radius()-C.supporting_sphere_squared_radius())
-      +CGAL::sign( (P==CGAL::NPOLE?-1:1)*center.z() )*4*CGAL::square(center.z())*C.reference_sphere().squared_radius()
-    );
-  }  
+    typename SK::FT Part1=CGAL::squared_distance(typename SK::Point_3(0.,0.,0.),center)+C.reference_sphere().squared_radius()-C.supporting_sphere_squared_radius();
+    typename SK::FT Part2=2*(P==CGAL::NPOLE?-1:1)*center.z();
+    
+    if (Part1<0 && Part2<0)
+      return -1;
+    if (Part1>0 && Part2>0)
+      return 1;
+    return (CGAL::sign(Part2)>0?-1:1)*CGAL::sign(CGAL::square(Part1)-CGAL::square(Part2)*C.reference_sphere().squared_radius());
+  }    
   
   template <class SK>
   static CGAL::Pole_type pole_covered_by_supporting_sphere(const typename SK::Circle_on_reference_sphere_3& C){
@@ -202,7 +206,6 @@ namespace CGAL{
   template <class SK>
   CGAL::Pole_type pole_of_polar_circle(const typename SK::Circle_on_reference_sphere_3& C){
     CGAL_precondition(C.type_of_circle_on_reference_sphere()==CGAL::POLAR);
-    typename SK::Point_3 center=C.supporting_sphere().center();
     return (CGAL::Sign_power_of_pole<SK>(C,CGAL::NPOLE)==0)?(CGAL::NPOLE):(CGAL::SPOLE);
   }    
   
@@ -210,8 +213,9 @@ namespace CGAL{
   template <class SK>
   CGAL::Point_3<SK> get_polar_coordinate(const typename SK::Circle_on_reference_sphere_3& C, CGAL::EvtPt_num num){
     CGAL_precondition(C.type_of_circle_on_reference_sphere()==CGAL::POLAR || C.type_of_circle_on_reference_sphere()==CGAL::BIPOLAR);
-    typename SK::FT x=((num==CGAL::START_PT)?(1):(-1))*C.supporting_sphere_center().y();
-    typename SK::FT y=((num==CGAL::END_PT)?(1):(-1))*C.supporting_sphere_center().x();
+    typename SK::FT s= ( C.circle_center_coefficient() <0 )?-1:1;
+    typename SK::FT x=((num==CGAL::START_PT)?(1):(-1))*s*C.supporting_sphere_center().y();
+    typename SK::FT y=((num==CGAL::END_PT)?(1):(-1))*s*C.supporting_sphere_center().x();
     return typename SK::Point_3(x,y,typename SK::FT(0));
   }
   
