@@ -1,0 +1,72 @@
+##vertical lines
+boundary_near_x 1 MIN_END 1 MIN_END EQUAL
+boundary_near_x 5 MIN_END 5 MIN_END EQUAL
+boundary_near_x 7 MIN_END 7 MIN_END EQUAL
+boundary_near_x 5 MIN_END 1 MIN_END SMALLER
+boundary_near_x 5 MIN_END 7 MIN_END SMALLER
+boundary_near_x 1 MIN_END 7 MIN_END SMALLER
+boundary_near_x 1 MIN_END 5 MIN_END LARGER
+boundary_near_x 7 MIN_END 5 MIN_END LARGER
+boundary_near_x 7 MIN_END 1 MIN_END LARGER
+#
+boundary_near_x 1 MAX_END 1 MAX_END EQUAL
+boundary_near_x 5 MAX_END 5 MAX_END EQUAL
+boundary_near_x 7 MAX_END 7 MAX_END EQUAL
+boundary_near_x 5 MAX_END 1 MAX_END SMALLER
+boundary_near_x 5 MAX_END 7 MAX_END SMALLER
+boundary_near_x 1 MAX_END 7 MAX_END SMALLER
+boundary_near_x 1 MAX_END 5 MAX_END LARGER
+boundary_near_x 7 MAX_END 5 MAX_END LARGER
+boundary_near_x 7 MAX_END 1 MAX_END LARGER
+#
+boundary_near_x 1 MAX_END 1 MIN_END EQUAL
+boundary_near_x 5 MAX_END 5 MIN_END EQUAL
+boundary_near_x 7 MAX_END 7 MIN_END EQUAL
+boundary_near_x 5 MAX_END 1 MIN_END SMALLER
+boundary_near_x 5 MAX_END 7 MIN_END SMALLER
+boundary_near_x 1 MAX_END 7 MIN_END SMALLER
+boundary_near_x 1 MAX_END 5 MIN_END LARGER
+boundary_near_x 7 MAX_END 5 MIN_END LARGER
+boundary_near_x 7 MAX_END 1 MIN_END LARGER
+#
+boundary_near_x 1 MIN_END 1 MAX_END EQUAL
+boundary_near_x 5 MIN_END 5 MAX_END EQUAL
+boundary_near_x 7 MIN_END 7 MAX_END EQUAL
+boundary_near_x 5 MIN_END 1 MAX_END SMALLER
+boundary_near_x 5 MIN_END 7 MAX_END SMALLER
+boundary_near_x 1 MIN_END 7 MAX_END SMALLER
+boundary_near_x 1 MIN_END 5 MAX_END LARGER
+boundary_near_x 7 MIN_END 5 MAX_END LARGER
+boundary_near_x 7 MIN_END 1 MAX_END LARGER
+#
+boundary_near_x 1 MIN_END 1 MAX_END EQUAL
+boundary_near_x 5 MIN_END 5 MAX_END EQUAL
+boundary_near_x 7 MIN_END 7 MAX_END EQUAL
+boundary_near_x 5 MIN_END 1 MAX_END SMALLER
+boundary_near_x 5 MIN_END 7 MAX_END SMALLER
+boundary_near_x 1 MIN_END 7 MAX_END SMALLER
+boundary_near_x 1 MIN_END 5 MAX_END LARGER
+boundary_near_x 7 MIN_END 5 MAX_END LARGER
+boundary_near_x 7 MIN_END 1 MAX_END LARGER
+#
+boundary_near_x 1 MAX_END 1 MIN_END EQUAL
+boundary_near_x 5 MAX_END 5 MIN_END EQUAL
+boundary_near_x 7 MAX_END 7 MIN_END EQUAL
+boundary_near_x 5 MAX_END 1 MIN_END SMALLER
+boundary_near_x 5 MAX_END 7 MIN_END SMALLER
+boundary_near_x 1 MAX_END 7 MIN_END SMALLER
+boundary_near_x 1 MAX_END 5 MIN_END LARGER
+boundary_near_x 7 MAX_END 5 MIN_END LARGER
+boundary_near_x 7 MAX_END 1 MIN_END LARGER
+#
+boundary_near_x 4 1 MIN_END EQUAL
+boundary_near_x 1 5 MIN_END EQUAL
+boundary_near_x 7 7 MIN_END EQUAL
+boundary_near_x 4 1 MAX_END EQUAL
+boundary_near_x 1 5 MAX_END EQUAL
+boundary_near_x 7 7 MAX_END EQUAL
+#
+boundary_near_x 7 5 MIN_END LARGER
+boundary_near_x 1 7 MIN_END SMALLER
+boundary_near_x 7 5 MAX_END LARGER
+boundary_near_x 1 7 MAX_END SMALLER
