@@ -236,8 +236,8 @@ public:
 
     /*!
      * Check whether the x-coordinate of the left point is infinite.
-     * \return MINUS_INFINITY if the left point is at x = -oo;
-     *         NO_BOUNDARY if the x-coordinate is finite.
+     * \return ARR_LEFT_BOUNDARY if the left point is near the boundary;
+     *         ARR_INTERIOR if the x-coordinate is finite.
      */
     Arr_parameter_space left_infinite_in_x () const
     {
@@ -379,10 +379,10 @@ public:
 
     /*!
      * Check whether the x-coordinate of the right point is infinite.
-     * \return PLUS_INFINITY if the left point is at x = +oo;
-     *         NO_BOUNDARY if the x-coordinate is finite.
+     * \return ARR_RIGHT_BOUNDARY if the right point is near the boundary;
+     *         ARR_INTERIOR if the x-coordinate is finite.
      */
-    Boundary_type right_infinite_in_x () const
+    Arr_parameter_space right_infinite_in_x () const
     {
       if (is_vert || is_degen)
         return ARR_INTERIOR;
