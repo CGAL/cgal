@@ -1169,52 +1169,6 @@ inline Filter_output_iterator< I, P >
 filter_output_iterator(I e, const P& p)
 { return Filter_output_iterator< I, P >(e, p); }
 
-
-// Transforming output iterator : applies a functor to each assigned object.
-// (not documented for now...)
-
-template < typename OutIt, typename F >
-class Transform_output_iterator
-    : public std::iterator<std::output_iterator_tag, void, void, void, void>
-{
-protected:
-
-  OutIt *_o;
-  F     _f;
-
-public:
-
-  typedef OutIt  iterator_type;
-
-  Transform_output_iterator(OutIt *o, const F & f = F()) : _o(o), _f(f) {}
-
-  template <typename T>
-  Transform_output_iterator&
-  operator=(const T& t)
-  {
-    *(*_o)++ = _f(t);
-    return *this;
-  }
-
-  Transform_output_iterator&
-  operator*()
-  { return *this; }
-
-  Transform_output_iterator&
-  operator++()
-  { return *this; }
-
-  Transform_output_iterator
-  operator++(int)
-  { return *this; }
-};
-
-template < typename OutIt, typename F >
-inline
-Transform_output_iterator<OutIt, F>
-make_transform_output_iterator(OutIt *o, const F&f)
-{ return Transform_output_iterator<OutIt, F>(o, f); }
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ITERATOR_H
