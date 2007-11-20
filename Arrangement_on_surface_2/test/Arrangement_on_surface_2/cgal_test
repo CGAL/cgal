@@ -739,7 +739,7 @@ else
   test_circle_segments_traits
   test_bezier_traits
 
-   test_spherical_arc_traits
+  test_spherical_arc_traits
 
   test_rational_arc_traits
 
