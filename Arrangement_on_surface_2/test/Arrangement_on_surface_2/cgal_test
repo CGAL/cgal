@@ -701,8 +701,7 @@ test_rational_arc_traits()
     data/empty.zero data/compare rational_arc_traits
 
     execute_commands_new_structure rational_arcs rational_arc_traits \
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-
+    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE
   fi
   clean_tests
 }
@@ -741,7 +740,7 @@ else
 
   test_spherical_arc_traits
 
-#  test_rational_arc_traits
+  test_rational_arc_traits
 
   compile_and_run test_insertion
   compile_and_run test_removal
