@@ -1358,20 +1358,41 @@ public:
       return (false);
 
     // Check that the arc endpoints are the same.
-    Boundary_type inf1 = left_infinite_in_x_depricated ();
-    Boundary_type inf2 = arc.left_infinite_in_x_depricated ();
+    Boundary_type inf1 = left_infinite_in_x_depricated();
+    Boundary_type inf2 = arc.left_infinite_in_x_depricated();
 
     if (inf1 != inf2)
       return (false);
 
-    if (inf1 == NO_BOUNDARY && CGAL::compare(left().x(), arc.left().x()) != EQUAL)
-      return (false);
+    if (inf1 == NO_BOUNDARY)
+    {
+        inf1 = left_infinite_in_y_depricated();
+        inf2 = arc.left_infinite_in_y_depricated();
 
-    inf1 = right_infinite_in_x_depricated ();
-    inf2 = arc.right_infinite_in_x_depricated ();
+        if (inf1 != inf2)
+          return (false);
+    }
+
+    if (inf1 == NO_BOUNDARY &&
+        CGAL::compare(left().x(), arc.left().x()) != EQUAL)
+    {
+      return (false);
+    }
+
+    inf1 = right_infinite_in_x_depricated();
+    inf2 = arc.right_infinite_in_x_depricated();
 
     if (inf1 != inf2)
       return (false);
+
+    if (inf1 == NO_BOUNDARY)
+    {
+        inf1 = right_infinite_in_y_depricated();
+        inf2 = arc.right_infinite_in_y_depricated();
+
+        if (inf1 != inf2)
+          return (false);
+    }
 
     if (inf1 == NO_BOUNDARY && CGAL::compare(right().x(), arc.right().x()) != EQUAL)
       return (false);
