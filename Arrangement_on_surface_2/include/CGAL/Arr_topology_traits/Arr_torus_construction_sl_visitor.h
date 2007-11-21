@@ -346,7 +346,7 @@ bool Arr_torus_construction_sl_visitor<Hlpr>::after_handle_event
     // whether it really can pose a hole, i.e., whether the inserted halfedge
     // is on an inner ccb.
     const Halfedge_handle invalid_he;
-    //CGAL_assertion(m_last_he->direction() == CGAL::RIGHT_TO_LEFT);
+    //CGAL_assertion(m_last_he->direction() == CGAL::ARR_RIGHT_TO_LEFT);
     if (m_last_he != invalid_he && m_last_he->is_on_inner_ccb()) 
     {
       // We give index to the topmost subcurve from the right, and add this
@@ -469,7 +469,7 @@ void Arr_torus_construction_sl_visitor<Hlpr>::add_subcurve
 
   // Make sure that res is a halfedge that is always directed from left to
   // right (thus its twin is directed from right to left).
-  if (res->direction() != LEFT_TO_RIGHT)
+  if (res->direction() != ARR_LEFT_TO_RIGHT)
     res = res->twin();
 
   m_last_he = res;
@@ -486,7 +486,7 @@ void Arr_torus_construction_sl_visitor<Hlpr>::add_subcurve
     // If sc has valid index, insert its index to m_sc_he_table.
     if(sc->has_valid_index())
     {
-      CGAL_assertion(res->twin()->direction() == RIGHT_TO_LEFT);
+      CGAL_assertion(res->twin()->direction() == ARR_RIGHT_TO_LEFT);
       _map_new_halfedge (sc->index(), res->twin());
     }
   }
@@ -546,7 +546,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_in_face_interior
         Halfedge_handle(
                 m_top_traits->locate_around_boundary_vertex (&(*v1),
                                                              _curve(cv),
-                                                             MIN_END,
+                                                             ARR_MIN_END,
                                                              bx, by)
         );
     
@@ -577,7 +577,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_in_face_interior
         Halfedge_handle(
                 m_top_traits->locate_around_boundary_vertex (&(*v2),
                                                              _curve(cv),
-                                                             MAX_END,
+                                                             ARR_MAX_END,
                                                              bx, by)
         );
     
@@ -602,7 +602,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_in_face_interior
   // below it.
   if (sc->has_halfedge_indices())
   {
-    CGAL_assertion(res->twin()->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion(res->twin()->direction() == ARR_RIGHT_TO_LEFT);
     Indices_list& list_ref = m_he_indices_table[res->twin()];
     list_ref.clear();
     list_ref.splice(list_ref.end(), sc->halfedge_indices_list());
@@ -658,7 +658,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_at_vertices
     
     if (swap_preds)
       he = he->twin();
-    CGAL_assertion(he->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion(he->direction() == ARR_RIGHT_TO_LEFT);
 
     Indices_list& list_ref = m_he_indices_table[he];
     list_ref.clear();
@@ -718,7 +718,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_from_right_vertex
         Halfedge_handle(
                 m_top_traits->locate_around_boundary_vertex (&(*v),
                                                              _curve(cv),
-                                                             MIN_END,
+                                                             ARR_MIN_END,
                                                              bx, by)
         );
     bool            dummy;
@@ -738,7 +738,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_from_right_vertex
   // below it.
   if (sc->has_halfedge_indices())
   {
-    CGAL_assertion(res->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion(res->direction() == ARR_RIGHT_TO_LEFT);
     Indices_list& list_ref = m_he_indices_table[res];
     list_ref.clear();
     list_ref.splice(list_ref.end(), sc->halfedge_indices_list());
@@ -784,7 +784,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_from_left_vertex
         Halfedge_handle(
                 m_top_traits->locate_around_boundary_vertex (&(*v),
                                                              _curve(cv),
-                                                             MAX_END,
+                                                             ARR_MAX_END,
                                                              bx, by)
         );
     bool            dummy;
@@ -804,7 +804,7 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_from_left_vertex
   // below it.
   if (sc->has_halfedge_indices())
   {
-    CGAL_assertion(res->twin()->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion(res->twin()->direction() == ARR_RIGHT_TO_LEFT);
     Indices_list& list_ref = m_he_indices_table[res->twin()];
     list_ref.clear();
     list_ref.splice(list_ref.end(), sc->halfedge_indices_list());
@@ -850,7 +850,7 @@ void Arr_torus_construction_sl_visitor<Hlpr>::relocate_in_new_face
   do
   {
     // We are intreseted only in halfedges directed from right to left.
-    if (curr_he->direction() == LEFT_TO_RIGHT)
+    if (curr_he->direction() == ARR_LEFT_TO_RIGHT)
     {
       curr_he = curr_he->next();
       continue;

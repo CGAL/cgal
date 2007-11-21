@@ -204,14 +204,14 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
   {
     // The vertex has a single incident edge. Check if its associated
     // curve equals seg next to vp.
-    if (seg_dir_right && curr->direction() == RIGHT_TO_LEFT)
+    if (seg_dir_right && curr->direction() == ARR_RIGHT_TO_LEFT)
     {
       // Both curves are defined to the right of vp:
       equal_curr =
         (m_traits->compare_y_at_x_right_2_object() (curr->curve(), seg, vp) ==
          EQUAL);
     }
-    else if (! seg_dir_right && curr->direction() == LEFT_TO_RIGHT)
+    else if (! seg_dir_right && curr->direction() == ARR_LEFT_TO_RIGHT)
     {
       // Both curves are defined to the left of vp:
       equal_curr =
@@ -237,8 +237,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
     bool                                        eq_curr, eq_next;
 
     while (! is_between_cw (seg, seg_dir_right, curr->curve(),
-                            (curr->direction() == RIGHT_TO_LEFT),
-                            next->curve(), (next->direction() == RIGHT_TO_LEFT),
+                            (curr->direction() == ARR_RIGHT_TO_LEFT),
+                            next->curve(), (next->direction() == ARR_RIGHT_TO_LEFT),
                             vp, eq_curr, eq_next))
     {
       // Break the loop if seg equals one of the halfegdes next to v.
@@ -350,12 +350,12 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
         return (CGAL::make_object (eh));
       case LARGER:
         // p is above cv: the edge must be oriented from left to right.
-        if (eh->direction() == RIGHT_TO_LEFT)
+        if (eh->direction() == ARR_RIGHT_TO_LEFT)
           eh = eh->twin();
         break;
       case SMALLER:
         // p is below cv: the edge must be oriented from right to left.
-        if (eh->direction() == LEFT_TO_RIGHT)
+        if (eh->direction() == ARR_LEFT_TO_RIGHT)
           eh = eh->twin();
         break;
     }
@@ -377,8 +377,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
   {
     res = m_traits->compare_xy_2_object() (p, eh->source()->point());
 
-    if ((eh->direction() == LEFT_TO_RIGHT && res == LARGER) ||
-        (eh->direction() == RIGHT_TO_LEFT && res == SMALLER))
+    if ((eh->direction() == ARR_LEFT_TO_RIGHT && res == LARGER) ||
+        (eh->direction() == ARR_RIGHT_TO_LEFT && res == SMALLER))
       vh = eh->target();
   }
 
@@ -608,10 +608,10 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   const Point_2&  seg_right = m_traits->construct_max_vertex_2_object() (seg);
 
   // Check the boundary conditions of the left and right curve ends of cv.
-  const Boundary_type  bx_l = m_traits->boundary_in_x_2_object() (cv, MIN_END);
-  const Boundary_type  by_l = m_traits->boundary_in_y_2_object() (cv, MIN_END);
-  const Boundary_type  bx_r = m_traits->boundary_in_x_2_object() (cv, MAX_END);
-  const Boundary_type  by_r = m_traits->boundary_in_y_2_object() (cv, MAX_END);
+  const Boundary_type  bx_l = m_traits->boundary_in_x_2_object() (cv, ARR_MIN_END);
+  const Boundary_type  by_l = m_traits->boundary_in_y_2_object() (cv, ARR_MIN_END);
+  const Boundary_type  bx_r = m_traits->boundary_in_x_2_object() (cv, ARR_MAX_END);
+  const Boundary_type  by_r = m_traits->boundary_in_y_2_object() (cv, ARR_MAX_END);
 
   // Check if the overlapping x-range of the two curves is trivial.
   // In this case, they cannot cross.

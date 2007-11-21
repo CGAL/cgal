@@ -202,7 +202,7 @@ public:
      * \return the comparison result
      */
     Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xc, Curve_end ind)
+                                 const X_monotone_curve_2 & xc, Arr_curve_end ind)
       const
     {
       if (!m_enabled) return m_object(p, xc, ind);
@@ -222,9 +222,9 @@ public:
      * \return the comparison result
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Curve_end ind1,
+                                 Arr_curve_end ind1,
                                  const X_monotone_curve_2 & xc2,
-                                 Curve_end ind2) const
+                                 Arr_curve_end ind2) const
     {
       if (!m_enabled) return m_object(xc1, ind1, xc2, ind2);
       std::cout << "compare_x 2" << std::endl
@@ -284,7 +284,7 @@ public:
      * \return the boundary type
      */
     Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Curve_end ind) const
+                             Arr_curve_end ind) const
     {
       if (!m_enabled) return m_object(xc, ind);
       std::cout << "boundary_in_x" << std::endl
@@ -313,7 +313,7 @@ public:
      * \param ind the curve-end index
      * \return the boundary type
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc, Arr_curve_end ind) const
     {
       if (!m_enabled) return m_object(xc, ind);
         std::cout << "boundary_in_y" << std::endl
@@ -440,7 +440,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2, 
-                                 Curve_end ind) const
+                                 Arr_curve_end ind) const
     {
       if (!m_enabled) return m_object(xc1, xc2, ind);
       std::cout << "compare_y_at_x 2" << std::endl
@@ -460,9 +460,9 @@ public:
      * \return the comparison result
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Curve_end ind1,
+                                 Arr_curve_end ind1,
                                  const X_monotone_curve_2 & xc2, 
-                                 Curve_end ind2) const
+                                 Arr_curve_end ind2) const
     {
       if (!m_enabled) return m_object(xc1, ind1, xc2, ind2);
       std::cout << "compare_y_at_x 3" << std::endl

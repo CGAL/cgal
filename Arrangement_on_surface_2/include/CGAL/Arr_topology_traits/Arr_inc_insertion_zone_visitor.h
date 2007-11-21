@@ -151,19 +151,23 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
      Vertex_handle left_v, Halfedge_handle left_he,
      Vertex_handle right_v, Halfedge_handle right_he)
 {
+  std::cout << std::endl;
+  std::cout << "Arr_inc_insertion_zone_visitor" << std::endl;
+  std::cout << "cv: " << cv << std::endl;
+  
   // Create an arrangement accessor.
   Arr_accessor<Arrangement_2>    arr_access (*p_arr);
   
   // Get the boundary conditions of the curve ends.
   const Boundary_type bx_l = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   MIN_END);
+                                                                   ARR_MIN_END);
   const Boundary_type by_l = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   MIN_END);
+                                                                   ARR_MIN_END);
 
   const Boundary_type bx_r = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   MAX_END);
+                                                                   ARR_MAX_END);
   const Boundary_type by_r = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   MAX_END);
+                                                                   ARR_MAX_END);
 
   // Check if the left and the right endpoints of cv should be associated
   // with arrangement vertices.
@@ -197,7 +201,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // and if this halfedge is directed from left to right.
       // If so, right_he's target is now the new vertex, and we have to
       // proceed to the next halfedge (which is going to be split).
-      if (right_he == left_he && left_he->direction() == LEFT_TO_RIGHT)
+      if (right_he == left_he && left_he->direction() == ARR_LEFT_TO_RIGHT)
         right_he = right_he->next();
     }
   }
@@ -210,7 +214,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // the unbounded left end (possibly with a predecessor halfedge).
       std::pair<Vertex_handle, Halfedge_handle>  pos =
         arr_access.place_and_set_curve_end (face,
-                                            cv, MIN_END,
+                                            cv, ARR_MIN_END,
                                             bx_l, by_l);
 
       if (pos.second != invalid_he)
@@ -257,7 +261,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // the unbounded right end (possibly with a predecessor halfedge).
       std::pair<Vertex_handle, Halfedge_handle>  pos =
         arr_access.place_and_set_curve_end (face,
-                                            cv, MAX_END,
+                                            cv, ARR_MAX_END,
                                             bx_r, by_r);
 
       if (pos.second != invalid_he)
@@ -286,7 +290,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       }
       else
       {
-        left_v = arr_access.create_boundary_vertex (cv, MIN_END,
+        left_v = arr_access.create_boundary_vertex (cv, ARR_MIN_END,
                                                     bx_l, by_l);
       }
     }
@@ -305,7 +309,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
         }
         else
         {
-          right_v = arr_access.create_boundary_vertex (cv, MAX_END,
+          right_v = arr_access.create_boundary_vertex (cv, ARR_MAX_END,
                                                        bx_r, by_r);
         }
       }
@@ -349,7 +353,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
         }
         else
         {
-          right_v = arr_access.create_boundary_vertex (cv, MAX_END,
+          right_v = arr_access.create_boundary_vertex (cv, ARR_MAX_END,
                                                        bx_r, by_r);
         }
       }
@@ -392,14 +396,14 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_overlap
 {
   // Get the boundary conditions of the curve ends.
   const Boundary_type bx_l = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   MIN_END);
+                                                                   ARR_MIN_END);
   const Boundary_type by_l = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   MIN_END);
+                                                                   ARR_MIN_END);
 
   const Boundary_type bx_r = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   MAX_END);
+                                                                   ARR_MAX_END);
   const Boundary_type by_r = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   MAX_END);
+                                                                   ARR_MAX_END);
 
   // Modify (perhaps split) the overlapping arrangement edge.
   Halfedge_handle   updated_he;
@@ -493,7 +497,7 @@ void Arr_inc_insertion_zone_visitor<Arrangement>::_split_edge
   // its right. Thus, if the split edge is directed from left to right then
   // left end of sub_cv1 equals he's source, and if the edge is directed from
   // right to left, we have to reverse the subcurve order.
-  if (he->direction() == LEFT_TO_RIGHT)
+  if (he->direction() == ARR_LEFT_TO_RIGHT)
   {
     arr_access.split_edge_ex (he,
                               p,

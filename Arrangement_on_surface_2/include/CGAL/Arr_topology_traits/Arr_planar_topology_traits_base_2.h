@@ -150,7 +150,7 @@ public:
    */
   void notify_on_boundary_vertex_creation (Vertex *,
                                            const X_monotone_curve_2& ,
-                                           Curve_end,
+                                           Arr_curve_end,
                                            Boundary_type,
                                            Boundary_type)
   {

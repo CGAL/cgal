@@ -167,14 +167,14 @@ public:
   void update_event (Event* /* e */,
                      const Point_2& /* end_point */,
                      const X_monotone_curve_2& /* cv */,
-                     Curve_end /* cv_end */,
+                     Arr_curve_end /* cv_end */,
                      bool /* is_new */)
   {}
 
   /*! Update the event to be the given infinite curve end. */
   void update_event (Event* /* e */,
                      const X_monotone_curve_2& /* cv */,
-                     Curve_end /* cv_end */,
+                     Arr_curve_end /* cv_end */,
                      bool /* is_new */)
   {}
 

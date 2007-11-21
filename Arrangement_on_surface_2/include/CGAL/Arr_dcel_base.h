@@ -448,21 +448,21 @@ public:
   }
 
   /*! Get the direction of the halfedge. */
-  Halfedge_direction direction () const
+  Arr_halfedge_direction direction () const
   {
     // Note that we use the LSB of the p_v pointer as a Boolean flag.
     if (_is_lsb_set (this->p_v))
-      return (LEFT_TO_RIGHT);
+      return (ARR_LEFT_TO_RIGHT);
     else
-      return (RIGHT_TO_LEFT);
+      return (ARR_RIGHT_TO_LEFT);
   }
 
   /*! Set the direction of the edge (and of its opposite halfedge). */
-  void set_direction (Halfedge_direction dir)
+  void set_direction (Arr_halfedge_direction dir)
   {
     Halfedge*   opp = reinterpret_cast<Halfedge*> (this->p_opp);
 
-    if (dir == LEFT_TO_RIGHT)
+    if (dir == ARR_LEFT_TO_RIGHT)
     {
       this->p_v = _set_lsb (this->p_v);
       opp->p_v = _clean_pointer (opp->p_v);

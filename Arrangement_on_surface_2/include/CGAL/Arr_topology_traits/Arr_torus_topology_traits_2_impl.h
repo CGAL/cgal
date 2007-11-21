@@ -295,7 +295,7 @@ Arr_torus_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
 template <class GeomTraits, class Dcel_>
 bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
 (const Vertex *v,
- const X_monotone_curve_2& cv, Curve_end ind,
+ const X_monotone_curve_2& cv, Arr_curve_end ind,
  CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) const
 {
     // status: correct
@@ -318,7 +318,7 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
         bool res = 
             (this->_m_traits->compare_y_on_identification_2_object() (
                     v->point(),
-                    (ind == CGAL::MIN_END ?
+                    (ind == CGAL::ARR_MIN_END ?
                      this->_m_traits->construct_min_vertex_2_object()(cv) :
                      this->_m_traits->construct_max_vertex_2_object()(cv))) 
              == CGAL::EQUAL
@@ -333,7 +333,7 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::are_equal
     bool res = 
         (this->_m_traits->compare_x_on_identification_2_object() (
                 v->point(),
-                (ind == CGAL::MIN_END ?
+                (ind == CGAL::ARR_MIN_END ?
                  this->_m_traits->construct_min_vertex_2_object()(cv) :
                  this->_m_traits->construct_max_vertex_2_object()(cv))) 
          == CGAL::EQUAL
@@ -350,7 +350,7 @@ template <class GeomTraits, class Dcel_>
 CGAL::Object
 Arr_torus_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
     (Face *f,
-     const X_monotone_curve_2& cv, CGAL::Curve_end ind,
+     const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y)
 {
     // status: correct
@@ -365,7 +365,7 @@ Arr_torus_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
     Vertex *v = NULL;
     
     const Point_2& key = 
-        (ind == CGAL::MIN_END ?
+        (ind == CGAL::ARR_MIN_END ?
          this->_m_traits->construct_min_vertex_2_object()(cv) :
          this->_m_traits->construct_max_vertex_2_object()(cv));
     
@@ -402,7 +402,7 @@ template <class GeomTraits, class Dcel_>
 typename Arr_torus_topology_traits_2<GeomTraits,Dcel_>::Halfedge* 
 Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
     (Vertex *v,
-     const X_monotone_curve_2& cv, Curve_end ind,
+     const X_monotone_curve_2& cv, Arr_curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y) const
 {
     // status: correct
@@ -440,20 +440,20 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
     std::cout << "search: " << std::endl;
 
     std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << (curr->direction() == LEFT_TO_RIGHT ?
+    std::cout << "dir: " << (curr->direction() == ARR_LEFT_TO_RIGHT ?
                              "L2R" : "R2L") << std::endl;
     std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << (next->direction() == LEFT_TO_RIGHT ?
+    std::cout << "dir: " << (next->direction() == ARR_LEFT_TO_RIGHT ?
                              "L2R" : "R2L") << std::endl;
     
     std::cout << "******************************************" << std::endl;
 #endif
     
-    while (!is_between_cw(cv, (ind == MIN_END),
+    while (!is_between_cw(cv, (ind == ARR_MIN_END),
                           curr->curve(), 
-                          (curr->direction() == RIGHT_TO_LEFT),
+                          (curr->direction() == ARR_RIGHT_TO_LEFT),
                           next->curve(), 
-                          (next->direction() == RIGHT_TO_LEFT),
+                          (next->direction() == ARR_RIGHT_TO_LEFT),
                           v->point(), eq_curr, eq_next))
     {
         // The curve must not be equal to one of the curves 
@@ -480,7 +480,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
 notify_on_boundary_vertex_creation
 (Vertex *v,
  const X_monotone_curve_2& cv,
- Curve_end ind,
+ Arr_curve_end ind,
  Boundary_type bound_x,
  Boundary_type bound_y) const
 {
@@ -497,7 +497,7 @@ notify_on_boundary_vertex_creation
     CGAL_assertion(!v->has_null_point());
 
     const Point_2& key = 
-        (ind == CGAL::MIN_END ?
+        (ind == CGAL::ARR_MIN_END ?
          this->_m_traits->construct_min_vertex_2_object()(cv) :
          this->_m_traits->construct_max_vertex_2_object()(cv));
     
@@ -589,7 +589,7 @@ template <class GeomTraits, class Dcel_>
 CGAL::Object 
 Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_curve_end(
         const X_monotone_curve_2& cv,
-        Curve_end ind,
+        Arr_curve_end ind,
         CGAL::Boundary_type bound_x,
         CGAL::Boundary_type bound_y) const 
 {
@@ -604,7 +604,7 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::locate_curve_end(
     typename Identification_NS::iterator ns_it;
     typename Identification_WE::iterator we_it;
 
-    Point_2 key = (ind == CGAL::MIN_END ?
+    Point_2 key = (ind == CGAL::ARR_MIN_END ?
                    this->m_traits->construct_min_vertex_2_object()(cv) :
                    this->m_traits->construct_max_vertex_2_object()(cv)); 
 
@@ -818,12 +818,12 @@ Arr_torus_topology_traits_2<GeomTraits,Dcel_>::boundaries_of_same_face
 #if 0    
     std::cout << "e1: " << e1->curve() << std::endl;
     std::cout << "dir1: " 
-            << (e1->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+            << (e1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
               << std::endl;
     std::cout << "e1->occbf: " << &(*e1->outer_ccb()->face()) << std::endl;
     std::cout << "e2: " << e2->curve() << std::endl;
     std::cout << "dir2: " 
-            << (e2->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+            << (e2->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
               << std::endl;
     std::cout << "e2->occbf: " << &(*e2->outer_ccb()->face()) << std::endl;
 #endif
@@ -942,14 +942,14 @@ _sign_of_path(
     // Start with the next of prev1:
     const Halfedge * curr = he1->next();
     // Save its src condition
-    Curve_end curr_src_ind;
-    Curve_end curr_trg_ind;
-    if (curr->direction() == LEFT_TO_RIGHT) {
-        curr_src_ind = MIN_END;
-        curr_trg_ind = MAX_END;
+    Arr_curve_end curr_src_ind;
+    Arr_curve_end curr_trg_ind;
+    if (curr->direction() == ARR_LEFT_TO_RIGHT) {
+        curr_src_ind = ARR_MIN_END;
+        curr_trg_ind = ARR_MAX_END;
     } else {
-        curr_src_ind = MAX_END;
-        curr_trg_ind = MIN_END;
+        curr_src_ind = ARR_MAX_END;
+        curr_trg_ind = ARR_MIN_END;
     }
     CGAL_assertion(!curr->has_null_curve());
     Boundary_type first_src_bcx = boundary_in_x(curr->curve(), curr_src_ind);
@@ -959,14 +959,14 @@ _sign_of_path(
     while (curr != he2) {
         const Halfedge * next = curr->next();
         
-        Curve_end next_src_ind;
-        Curve_end next_trg_ind;
-        if (next->direction() == LEFT_TO_RIGHT) {
-            next_src_ind = MIN_END;
-            next_trg_ind = MAX_END;
+        Arr_curve_end next_src_ind;
+        Arr_curve_end next_trg_ind;
+        if (next->direction() == ARR_LEFT_TO_RIGHT) {
+            next_src_ind = ARR_MIN_END;
+            next_trg_ind = ARR_MAX_END;
         } else {
-            next_src_ind = MAX_END;
-            next_trg_ind = MIN_END;
+            next_src_ind = ARR_MAX_END;
+            next_trg_ind = ARR_MIN_END;
         }
         Boundary_type next_src_bcx = 
             boundary_in_x(next->curve(), next_src_ind);
@@ -1050,11 +1050,11 @@ _sign_of_path(
     
     // check whether cv can influence the counters
 
-    CGAL::Boundary_type bcv1x = boundary_in_x(cv, MIN_END);
-    CGAL::Boundary_type bcv1y = boundary_in_y(cv, MIN_END);
+    CGAL::Boundary_type bcv1x = boundary_in_x(cv, ARR_MIN_END);
+    CGAL::Boundary_type bcv1y = boundary_in_y(cv, ARR_MIN_END);
 
-    CGAL::Boundary_type bcv2x = boundary_in_x(cv, MAX_END);  
-    CGAL::Boundary_type bcv2y = boundary_in_y(cv, MAX_END);  
+    CGAL::Boundary_type bcv2x = boundary_in_x(cv, ARR_MAX_END);  
+    CGAL::Boundary_type bcv2y = boundary_in_y(cv, ARR_MAX_END);  
     
     if (bcv1x != NO_BOUNDARY || bcv1y != NO_BOUNDARY || 
         bcv2x != NO_BOUNDARY || bcv2y != NO_BOUNDARY) {
@@ -1065,9 +1065,9 @@ _sign_of_path(
 
         Point_2 minp = this->_m_traits->construct_min_vertex_2_object()(cv);
         CGAL::Boundary_type bound_x = 
-            this->_m_traits->boundary_in_x_2_object()(cv, CGAL::MIN_END);
+            this->_m_traits->boundary_in_x_2_object()(cv, CGAL::ARR_MIN_END);
         CGAL::Boundary_type bound_y = 
-            this->_m_traits->boundary_in_y_2_object()(cv, CGAL::MIN_END);
+            this->_m_traits->boundary_in_y_2_object()(cv, CGAL::ARR_MIN_END);
         
         bool v1_on_boundary = 
             (prev1->vertex()->boundary_in_x() != NO_BOUNDARY ||
@@ -1078,7 +1078,7 @@ _sign_of_path(
         if (v1_on_boundary == min_on_boundary) {
             if (v1_on_boundary) {
                 // compare at boundary
-                equal = this->are_equal(prev1->vertex(), cv, CGAL::MIN_END, 
+                equal = this->are_equal(prev1->vertex(), cv, CGAL::ARR_MIN_END, 
                                         bound_x, bound_y);
             } else {
                 equal = (this->_m_traits->compare_xy_2_object()(
@@ -1097,11 +1097,11 @@ _sign_of_path(
         if (bcv1x != NO_BOUNDARY || bcv1y != NO_BOUNDARY) {
             // the counter can change at prev1
             
-            Curve_end prev1_trg_ind;
-            if (prev1->direction() == LEFT_TO_RIGHT) {
-                prev1_trg_ind = MAX_END;
+            Arr_curve_end prev1_trg_ind;
+            if (prev1->direction() == ARR_LEFT_TO_RIGHT) {
+                prev1_trg_ind = ARR_MAX_END;
             } else {
-                prev1_trg_ind = MIN_END;
+                prev1_trg_ind = ARR_MIN_END;
             }
             
             CGAL_assertion(!prev1->has_null_curve());
@@ -1130,11 +1130,11 @@ _sign_of_path(
         if (bcv2x != NO_BOUNDARY || bcv2y != NO_BOUNDARY) {
             // the counter can change at prev2
             
-            Curve_end prev2_trg_ind;
-            if (prev2->direction() == LEFT_TO_RIGHT) {
-                prev2_trg_ind = MAX_END;
+            Arr_curve_end prev2_trg_ind;
+            if (prev2->direction() == ARR_LEFT_TO_RIGHT) {
+                prev2_trg_ind = ARR_MAX_END;
             } else {
-                prev2_trg_ind = MIN_END;
+                prev2_trg_ind = ARR_MIN_END;
             }
             
             CGAL_assertion(!prev2->has_null_curve());
@@ -1212,7 +1212,7 @@ _face_before_vertex_on_identifications (Vertex * v) const {
         do {
             // Check whether the current halfedge is defined 
             // to the left or to the right of the given vertex.
-            if (curr->direction() == LEFT_TO_RIGHT) {
+            if (curr->direction() == ARR_LEFT_TO_RIGHT) {
                 // The curve associated with the current halfedge 
                 // is defined to the left of v.
                 if (lowest_left == NULL ||
@@ -1256,9 +1256,9 @@ _face_before_vertex_on_identifications (Vertex * v) const {
         typename Traits_adaptor_2::Compare_x_2 compare_x =
             _m_traits->compare_x_2_object();
         
-        CGAL::Curve_end leftmost_top_end = CGAL::MIN_END;
+        CGAL::Arr_curve_end leftmost_top_end = CGAL::ARR_MIN_END;
         Halfedge  *leftmost_top = NULL;
-        CGAL::Curve_end rightmost_bottom_end = CGAL::MIN_END;
+        CGAL::Arr_curve_end rightmost_bottom_end = CGAL::ARR_MIN_END;
         Halfedge  *rightmost_bottom = NULL;
         
         do {
@@ -1267,20 +1267,20 @@ _face_before_vertex_on_identifications (Vertex * v) const {
             typename Traits_adaptor_2::Boundary_in_y_2 boundary_in_y =
                 _m_traits->boundary_in_y_2_object();
             
-            CGAL::Curve_end ind = CGAL::MIN_END;
+            CGAL::Arr_curve_end ind = CGAL::ARR_MIN_END;
             
             CGAL::Boundary_type bd_x = 
-                boundary_in_x(curr->curve(), CGAL::MAX_END);
+                boundary_in_x(curr->curve(), CGAL::ARR_MAX_END);
             CGAL::Boundary_type bd_y = 
-                boundary_in_y(curr->curve(), CGAL::MAX_END);
-            if (are_equal(v, curr->curve(), CGAL::MAX_END, bd_x, bd_y)) {
-                ind = CGAL::MAX_END;
+                boundary_in_y(curr->curve(), CGAL::ARR_MAX_END);
+            if (are_equal(v, curr->curve(), CGAL::ARR_MAX_END, bd_x, bd_y)) {
+                ind = CGAL::ARR_MAX_END;
             }
             
             if (boundary_in_y(curr->curve(),ind) < 0) {
                 // TOP-side
                 if ((leftmost_top == NULL) || 
-                    (leftmost_top->direction() == CGAL::LEFT_TO_RIGHT &&
+                    (leftmost_top->direction() == CGAL::ARR_LEFT_TO_RIGHT &&
                      leftmost_top->direction() != curr->direction()) ||
                     (leftmost_top->direction() == curr->direction() &&
                      compare_x(curr->curve(), ind, 
@@ -1293,7 +1293,7 @@ _face_before_vertex_on_identifications (Vertex * v) const {
                 // same for BOTTOM-side
                 
                 if ((rightmost_bottom == NULL) || 
-                    (rightmost_bottom->direction() == CGAL::RIGHT_TO_LEFT &&
+                    (rightmost_bottom->direction() == CGAL::ARR_RIGHT_TO_LEFT &&
                      rightmost_bottom->direction() != curr->direction()) ||
                     (rightmost_bottom->direction() == curr->direction() &&
                      compare_x(curr->curve(), ind, 

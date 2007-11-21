@@ -153,6 +153,25 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   Arrangement_zone_2<Arr, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Initialize the zone-computation object with the given curve.
+
+  {
+    std::cout << std::endl;
+    std::cout << "xxxxxxxxxxxx" << std::endl;
+    std::cout << "c: " << c << std::endl;
+    std::cout << std::endl;
+    typename Arr::Vertex_const_iterator  vit;
+    std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+    {
+      std::cout << "(" << vit->point() << ")";
+      if (vit->is_isolated())
+        std::cout << " - Isolated." << std::endl;
+      else
+        std::cout << " - degree " << vit->degree() << std::endl;
+    }
+    std::cout << std::endl;
+    std::cout << "xxxxxxxxxxxx" << std::endl;
+  }  
   arr_zone.init (c, pl);
 
   // Notify the arrangement observers that a global operation is about to 
@@ -589,8 +608,8 @@ insert_non_intersecting_curve
 
   // Check whether the left end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(c, MIN_END);
-  const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(c, MIN_END);
+  const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(c, ARR_MIN_END);
+  const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(c, ARR_MIN_END);
   CGAL::Object                 obj1;
   const Vertex_const_handle   *vh1 = NULL;
 
@@ -612,7 +631,7 @@ insert_non_intersecting_curve
   {
     // We have a left end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
-    obj1 = arr_access.locate_curve_end (c, MIN_END, bx1, by1);
+    obj1 = arr_access.locate_curve_end (c, ARR_MIN_END, bx1, by1);
 
     CGAL_precondition_msg
       (object_cast<Halfedge_const_handle> (&obj1) == NULL,
@@ -623,8 +642,8 @@ insert_non_intersecting_curve
 
   // Check whether the right end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(c, MAX_END);
-  const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(c, MAX_END);
+  const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(c, ARR_MAX_END);
+  const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(c, ARR_MAX_END);
   CGAL::Object                 obj2;
   const Vertex_const_handle   *vh2 = NULL;
 
@@ -646,7 +665,7 @@ insert_non_intersecting_curve
   {
     // We have a right end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
-    obj2 = arr_access.locate_curve_end (c, MAX_END, bx2, by2);
+    obj2 = arr_access.locate_curve_end (c, ARR_MAX_END, bx2, by2);
 
     CGAL_precondition_msg
       (object_cast<Halfedge_const_handle> (&obj2) == NULL,
@@ -1278,7 +1297,7 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
     {
       // Hit an edge - take the incident face of the halfedge directed to the
       // right.
-      if (he_below->direction() == RIGHT_TO_LEFT)
+      if (he_below->direction() == ARR_RIGHT_TO_LEFT)
         he_below = he_below->twin();
       
       in_face = he_below->face();
@@ -1300,7 +1319,7 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 
         do
         {
-          if (circ->direction() == LEFT_TO_RIGHT)
+          if (circ->direction() == ARR_LEFT_TO_RIGHT)
           {
             he_left = circ;
           }
@@ -1318,11 +1337,11 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 
         if (he_left != invalid_he && he_right != invalid_he)
         {
-          while (he_left->direction() == LEFT_TO_RIGHT)
+          while (he_left->direction() == ARR_LEFT_TO_RIGHT)
             he_left = he_left->next()->twin();
           
           he_left = he_left->twin()->prev();
-          CGAL_assertion (he_left->direction() == LEFT_TO_RIGHT);
+          CGAL_assertion (he_left->direction() == ARR_LEFT_TO_RIGHT);
           in_face = he_left->face();
         }
         else if (he_left != invalid_he)

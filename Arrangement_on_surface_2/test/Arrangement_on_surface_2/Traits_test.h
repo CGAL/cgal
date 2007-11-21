@@ -835,10 +835,10 @@ template <class T_Traits>
 std::pair<Enum_type , unsigned int>
 Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
 {
-  if (str_value == "MIN_END" ) {
-    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::MIN_END);
-  } else if (str_value == "MAX_END" ) {
-    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::MAX_END);
+  if (str_value == "ARR_MIN_END" ) {
+    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::ARR_MIN_END);
+  } else if (str_value == "ARR_MAX_END" ) {
+    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::ARR_MAX_END);
   } else if (str_value == "SMALLER" ) {
     return std::pair<enum Enum_type,unsigned int>(SIGN,
                                     static_cast<unsigned int>(CGAL::SMALLER));
@@ -943,7 +943,7 @@ bool Traits_test<T_Traits>::boundary_near_x_wrapper_imp
                                        (m_points[id1],m_xcurves[id2],cv_end1);
     std::cout << "Test: boundary_near_x( " << m_points[id1] << " , "
               << m_xcurves[id2]<< " , "
-              << (cv_end1==CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+              << (cv_end1==CGAL::ARR_MIN_END?"ARR_MIN_END":"ARR_MAX_END") << " ) ? ";
   }
   else if (next_input.first==CURVE_END)
   {
@@ -957,9 +957,9 @@ bool Traits_test<T_Traits>::boundary_near_x_wrapper_imp
     real_answer = m_traits.compare_x_near_boundary_2_object()
                               (m_xcurves[id1],cv_end1,m_xcurves[id2],cv_end2);
     std::cout << "Test: boundary_near_x( " << m_xcurves[id1] << " , "
-              << (cv_end1==CGAL::ARR_MIN_END?"MIN_END , ":"MAX_END , ")
+              << (cv_end1==CGAL::ARR_MIN_END?"ARR_MIN_END , ":"ARR_MAX_END , ")
               << m_xcurves[id2]<< " , "
-              << (cv_end2==CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+              << (cv_end2==CGAL::ARR_MIN_END?"ARR_MIN_END":"ARR_MAX_END") << " ) ? ";
   }
   else
   {
@@ -1004,7 +1004,7 @@ bool Traits_test<T_Traits>::boundary_near_y_wrapper_imp
                               (m_xcurves[id1],m_xcurves[id2],cv_end);
   std::cout << "Test: boundary_near_y( " << m_xcurves[id1] << " , "
             << m_xcurves[id2]<< " , "
-            << (cv_end==CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+            << (cv_end==CGAL::ARR_MIN_END?"ARR_MIN_END":"ARR_MAX_END") << " ) ? ";
   next_input = get_next_input(str_stream);
   CGAL_assertion(next_input.first==SIGN);
   exp_answer = static_cast<CGAL::Comparison_result>(next_input.second);
@@ -1044,12 +1044,12 @@ bool Traits_test<T_Traits>::compare_x_wrapper_imp
     }
     if (exp_answer_2.first==CURVE_END)
     {
-      CGAL::Curve_end cv_end_1 = static_cast<CGAL::Curve_end>
+      CGAL::Arr_curve_end cv_end_1 = static_cast<CGAL::Arr_curve_end>
                                             (exp_answer_2.second);
       exp_answer = get_expected_enum(str_stream);
       std::cout << "Test: compare_x( " << m_points[id1]
                 << ", " << m_xcurves[id2] << ", "
-                << (exp_answer_2.second==CGAL::MIN_END?" MIN_END ":" MAX_END ")
+                << (exp_answer_2.second==CGAL::ARR_MIN_END?" ARR_MIN_END ":" ARR_MAX_END ")
                 << " ) ? " << exp_answer << " ";
         real_answer = m_traits.compare_x_2_object()
                                (m_points[id1], m_xcurves[id2],cv_end_1);
@@ -1057,16 +1057,16 @@ bool Traits_test<T_Traits>::compare_x_wrapper_imp
   }
   else if (exp_answer_1.first==CURVE_END)
   {
-    CGAL::Curve_end cv_end_1=static_cast<CGAL::Curve_end>(exp_answer_1.second);
+    CGAL::Arr_curve_end cv_end_1=static_cast<CGAL::Arr_curve_end>(exp_answer_1.second);
     str_stream >> id2;
     std::pair<Enum_type,unsigned int> exp_answer_2 =get_next_input(str_stream);
     CGAL_assertion(exp_answer_2.first==CURVE_END);
-    CGAL::Curve_end cv_end_2=static_cast<CGAL::Curve_end>(exp_answer_2.second);
+    CGAL::Arr_curve_end cv_end_2=static_cast<CGAL::Arr_curve_end>(exp_answer_2.second);
     exp_answer = get_expected_enum(str_stream);
     std::cout << "Test: compare_x( " << m_xcurves[id1] << ", "
-              << (exp_answer_1.second==CGAL::MIN_END ?" MIN_END ":" MAX_END ")
+              << (exp_answer_1.second==CGAL::ARR_MIN_END ?" ARR_MIN_END ":" ARR_MAX_END ")
               << ", " << m_xcurves[id2] << ", "
-              << (exp_answer_2.second==CGAL::MIN_END ?" MIN_END ":" MAX_END ")
+              << (exp_answer_2.second==CGAL::ARR_MIN_END ?" ARR_MIN_END ":" ARR_MAX_END ")
               << " ) ? " << exp_answer << " ";
       real_answer = m_traits.compare_x_2_object()(m_xcurves[id1], cv_end_1,
                                                   m_xcurves[id2], cv_end_2);

@@ -87,7 +87,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
   for (eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, i++)
   {
     he1 = eit1;
-    if (he1->direction() != RIGHT_TO_LEFT)
+    if (he1->direction() != ARR_RIGHT_TO_LEFT)
       he1 = he1->twin();
 
     xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit1->curve(),
@@ -98,7 +98,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
   for (eit2 = arr2.edges_begin(); eit2 != arr2.edges_end(); ++eit2, i++)
   {
     he2 = eit2;
-    if (he2->direction() != RIGHT_TO_LEFT)
+    if (he2->direction() != ARR_RIGHT_TO_LEFT)
       he2 = he2->twin();
 
     xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit2->curve(),

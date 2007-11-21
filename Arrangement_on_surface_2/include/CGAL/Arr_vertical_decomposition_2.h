@@ -74,7 +74,7 @@ OutputIterator decompose
   {
     // Associate each x-monotone curve with the halfedge that represents it
     // and is directed from right to left.
-    if (eit->direction() == RIGHT_TO_LEFT)
+    if (eit->direction() == ARR_RIGHT_TO_LEFT)
       he = eit;
     else
       he = eit->twin();

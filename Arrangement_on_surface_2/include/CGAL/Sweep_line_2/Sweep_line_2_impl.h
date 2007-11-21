@@ -427,13 +427,13 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     // unbounded, check whether the left endpoints are the same. If they are,
     // skip the first intersection point.
     const Boundary_type   bx1 =
-        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), MIN_END);
+        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), ARR_MIN_END);
     const Boundary_type   by1 =
-        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), MIN_END);
+        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
     const Boundary_type   bx2 =
-        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), MIN_END);
+        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), ARR_MIN_END);
     const Boundary_type   by2 =
-        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), MIN_END);
+        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), ARR_MIN_END);
 
     if (bx1 == bx2 &&
         (bx1 != NO_BOUNDARY && bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY) &&
@@ -472,13 +472,13 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     // unbounded, check whether the right endpoints are the same. If they are,
     // skip the last intersection point.
     const Boundary_type   bx1 =
-        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), MAX_END);
+        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), ARR_MAX_END);
     const Boundary_type   by1 =
-        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), MAX_END);
+        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), ARR_MAX_END);
     const Boundary_type   bx2 =
-        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), MAX_END);
+        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), ARR_MAX_END);
     const Boundary_type   by2 =
-        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), MAX_END);
+        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), ARR_MAX_END);
 
     if (bx1 == bx2 &&
         (bx1 != NO_BOUNDARY && bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY) &&
@@ -726,9 +726,9 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
   // Get the right end of overlap_cv (if it is bounded from the right).
   Event         *right_end;
   Boundary_type  bx_r = this->m_traits->boundary_in_x_2_object()(overlap_cv,
-                                                                 MAX_END);
+                                                                 ARR_MAX_END);
   Boundary_type  by_r = this->m_traits->boundary_in_y_2_object()(overlap_cv,
-                                                                 MAX_END);
+                                                                 ARR_MAX_END);
 
   CGAL_assertion (CGAL::sign (bx_r) != CGAL::NEGATIVE);
   if (bx_r != NO_BOUNDARY || by_r != NO_BOUNDARY)
@@ -757,9 +757,9 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
 
   // Get the left end of overlap_cv (if it is bounded from the left).
   Boundary_type  bx_l = this->m_traits->boundary_in_x_2_object()(overlap_cv,
-                                                                 MIN_END);
+                                                                 ARR_MIN_END);
   Boundary_type  by_l = this->m_traits->boundary_in_y_2_object()(overlap_cv,
-                                                                 MIN_END);
+                                                                 ARR_MIN_END);
   
   CGAL_assertion (CGAL::sign (bx_l) != CGAL::POSITIVE);
   if (bx_l == NO_BOUNDARY && by_l == NO_BOUNDARY)

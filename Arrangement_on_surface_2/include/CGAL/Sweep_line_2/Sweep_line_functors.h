@@ -58,7 +58,7 @@ private:
   
   Boundary_type    m_bound_in_x;         // Storing curve information when
   Boundary_type    m_bound_in_y;         // comparing a curve end with
-  Curve_end        m_index;              // boundary conditions.
+  Arr_curve_end        m_index;              // boundary conditions.
 
 public:
   
@@ -144,7 +144,7 @@ public:
        
     // Get the curve end that e2 represents, and compare the x-position of the
     // given point and this curve end.
-    Curve_end         ind = _curve_end(e2);
+    Arr_curve_end         ind = _curve_end(e2);
     Comparison_result res = m_traits->compare_x_2_object()(pt,
                                                            e2->curve(), ind);
 
@@ -193,7 +193,7 @@ public:
     m_bound_in_y = by;
   }
 
-  void set_index (Curve_end ind)
+  void set_index (Arr_curve_end ind)
   {
     m_index = ind;
   }
@@ -212,7 +212,7 @@ private:
    */
   Comparison_result 
   _compare_curve_end_with_event (const X_monotone_curve_2& cv,
-                                 Curve_end ind,
+                                 Arr_curve_end ind,
                                  Boundary_type bound_x,
                                  Boundary_type bound_y,
                                  const Event* e2) const
@@ -227,7 +227,7 @@ private:
       if (sgn_bx2 == CGAL::NEGATIVE)
       {
         // Both defined on the left boundary - compare them there.
-        CGAL_assertion (ind == MIN_END);
+        CGAL_assertion (ind == ARR_MIN_END);
 
         return (m_traits->compare_y_at_x_2_object() (cv,
                                                      e2->curve(),
@@ -243,7 +243,7 @@ private:
       if (sgn_bx2 == CGAL::POSITIVE)
       {
         // Both defined on the right boundary - compare them there.
-        CGAL_assertion (ind == MAX_END);
+        CGAL_assertion (ind == ARR_MAX_END);
 
         return (m_traits->compare_y_at_x_2_object() (cv,
                                                      e2->curve(),
@@ -326,13 +326,13 @@ private:
   }
 
   /*! Detemine if the given event represents a left or a right curve end. */
-  inline Curve_end _curve_end (const Event* e) const
+  inline Arr_curve_end _curve_end (const Event* e) const
   {
       if (e->has_left_curves()) {
-          return ((e->is_right_end()) ? MAX_END : MIN_END);
+          return ((e->is_right_end()) ? ARR_MAX_END : ARR_MIN_END);
       }
       // else
-      return ((e->is_left_end()) ? MIN_END : MAX_END);
+      return ((e->is_left_end()) ? ARR_MIN_END : ARR_MAX_END);
   }
 };
 
@@ -394,10 +394,10 @@ public:
 
     const CGAL::Sign  sgn_bx1 = 
       CGAL::sign(m_traits->boundary_in_x_2_object() (c1->last_curve(),
-                                                     MIN_END));
+                                                     ARR_MIN_END));
     const CGAL::Sign  sgn_by1 = 
       CGAL::sign(m_traits->boundary_in_y_2_object() (c1->last_curve(),
-                                                     MIN_END));
+                                                     ARR_MIN_END));
 
     if (sgn_bx1 == CGAL::ZERO && sgn_by1 == CGAL::ZERO)
     {

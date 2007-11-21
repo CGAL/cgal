@@ -42,9 +42,9 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::init_with_hint
   cv = _cv;
   
   const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   MIN_END);
+                                                                   ARR_MIN_END);
   const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   MIN_END);
+                                                                   ARR_MIN_END);
   
   if (bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY &&
       by1 != MINUS_INFINITY && by1 != PLUS_INFINITY)
@@ -62,9 +62,9 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::init_with_hint
   }
   
   const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   MAX_END);
+                                                                   ARR_MAX_END);
   const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   MAX_END);
+                                                                   ARR_MAX_END);
   
   if (bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY &&
       by2 != MINUS_INFINITY && by2 != PLUS_INFINITY)
@@ -125,12 +125,12 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       // Use the accessor to locate the predecessor edge, in case the left
       // endpoint has boundary conditions.
       const Boundary_type  bx = geom_traits->boundary_in_x_2_object()(cv,
-                                                                      MIN_END);
+                                                                      ARR_MIN_END);
       const Boundary_type  by = geom_traits->boundary_in_y_2_object()(cv,
-                                                                      MIN_END);
+                                                                      ARR_MIN_END);
 
       left_he = arr_access.locate_around_boundary_vertex (left_v,
-                                                          cv, MIN_END,
+                                                          cv, ARR_MIN_END,
                                                           bx, by);
     }
   }
@@ -313,7 +313,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     // Note that cv extends to the right of v. In case the single
     // halfedge also extends to the right of v (its source is to
     // the right), check if an overlap occurs.
-    if (he->direction() == RIGHT_TO_LEFT &&
+    if (he->direction() == ARR_RIGHT_TO_LEFT &&
         (geom_traits->compare_y_at_x_right_2_object() (he->curve(), cv,
                                                        v->point()) == EQUAL))
     {
@@ -336,9 +336,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     // and the next curve, going in a clockwise direction around v.
     is_between = is_between_cw (cv, true,
                                 he_curr->curve(), 
-                                (he_curr->direction() == RIGHT_TO_LEFT),  
+                                (he_curr->direction() == ARR_RIGHT_TO_LEFT),  
                                 he_next->curve(),
-                                (he_next->direction() == RIGHT_TO_LEFT),
+                                (he_next->direction() == ARR_RIGHT_TO_LEFT),
                                 v->point(),
                                 cv_equals_curr, cv_equals_next);
 
@@ -393,7 +393,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_right
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right = 
-                                   (query_he->direction() == LEFT_TO_RIGHT);
+                                   (query_he->direction() == ARR_LEFT_TO_RIGHT);
 
   // Check whether the curve lies above of below the edge immediately to
   // the right of its left endpoint.
@@ -447,7 +447,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right =
-                                   (query_he->direction() == LEFT_TO_RIGHT);
+                                   (query_he->direction() == ARR_LEFT_TO_RIGHT);
 
   // Check whether the curve lies above of below the edge (we use the curve
   // position predicate, as we know they cruves do not overlap and intersect
@@ -564,8 +564,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
         icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
         CGAL_assertion (icv != NULL);
 
-        bx = geom_traits->boundary_in_x_2_object() (*icv, MIN_END);
-        by = geom_traits->boundary_in_y_2_object() (*icv, MIN_END);
+        bx = geom_traits->boundary_in_x_2_object() (*icv, ARR_MIN_END);
+        by = geom_traits->boundary_in_y_2_object() (*icv, ARR_MIN_END);
 
         if (bx != MINUS_INFINITY && bx != PLUS_INFINITY &&
             by != MINUS_INFINITY && by != PLUS_INFINITY)
@@ -651,8 +651,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
       icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
       CGAL_assertion (icv != NULL);
 
-      bx = geom_traits->boundary_in_x_2_object() (*icv, MIN_END);
-      by = geom_traits->boundary_in_y_2_object() (*icv, MIN_END);
+      bx = geom_traits->boundary_in_x_2_object() (*icv, ARR_MIN_END);
+      by = geom_traits->boundary_in_y_2_object() (*icv, ARR_MIN_END);
 
       if (bx != MINUS_INFINITY && bx != PLUS_INFINITY &&
           by != MINUS_INFINITY && by != PLUS_INFINITY)
@@ -723,7 +723,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_left_impl
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
   const Boundary_type   bx =
-    geom_traits->boundary_in_x_2_object() (he->curve(), MIN_END);
+    geom_traits->boundary_in_x_2_object() (he->curve(), ARR_MIN_END);
 
   if (CGAL::sign (bx) == CGAL::NEGATIVE)
   {
@@ -732,13 +732,13 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_left_impl
   }
 
   const Boundary_type   by =
-    geom_traits->boundary_in_y_2_object() (he->curve(), MIN_END);
+    geom_traits->boundary_in_y_2_object() (he->curve(), ARR_MIN_END);
 
   if (by != NO_BOUNDARY)
   {
     // Check if p is to the left of the minimal curve-end:
     const Comparison_result   res =
-      geom_traits->compare_x_2_object() (p, he->curve(), MIN_END);
+      geom_traits->compare_x_2_object() (p, he->curve(), ARR_MIN_END);
 
     if ((res == SMALLER) ||
         (res == EQUAL && CGAL::sign (by) == CGAL::POSITIVE))
@@ -750,7 +750,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_left_impl
   // In case the minimal curve-end does not have boundary conditions, simply
   // compare p with the left endpoint of the curve.
   Vertex_const_handle   v_left = 
-    (he->direction() == LEFT_TO_RIGHT) ? he->source() : he->target();
+    (he->direction() == ARR_LEFT_TO_RIGHT) ? he->source() : he->target();
 
   return (geom_traits->compare_xy_2_object() (p,
                                               v_left->point()) == SMALLER);
@@ -768,7 +768,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_right_impl
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
   const Boundary_type   bx =
-    geom_traits->boundary_in_x_2_object() (he->curve(), MAX_END);
+    geom_traits->boundary_in_x_2_object() (he->curve(), ARR_MAX_END);
 
   if (CGAL::sign (bx) == CGAL::POSITIVE)
   {
@@ -777,13 +777,13 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_right_impl
   }
 
   const Boundary_type   by =
-    geom_traits->boundary_in_y_2_object() (he->curve(), MAX_END);
+    geom_traits->boundary_in_y_2_object() (he->curve(), ARR_MAX_END);
 
   if (by != NO_BOUNDARY)
   {
     // Check if p is to the right of the maximal curve-end:
       const Comparison_result   res =
-      geom_traits->compare_x_2_object() (p, he->curve(), MAX_END);
+      geom_traits->compare_x_2_object() (p, he->curve(), ARR_MAX_END);
 
     if ((res == LARGER) ||
         (res == EQUAL && CGAL::sign (by) == CGAL::NEGATIVE))
@@ -795,7 +795,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_right_impl
   // In case the maximal curve-end does not have boundary conditions, simply
   // compare p with the right endpoint of the curve.
   Vertex_const_handle   v_right = 
-    (he->direction() == LEFT_TO_RIGHT) ? he->target() : he->source();
+    (he->direction() == ARR_LEFT_TO_RIGHT) ? he->target() : he->source();
 
   return (geom_traits->compare_xy_2_object() (p,
                                               v_right->point()) == LARGER);
@@ -892,7 +892,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           left_equals_curr_endpoint = true;
           
-          if (he_curr->direction() == LEFT_TO_RIGHT)
+          if (he_curr->direction() == ARR_LEFT_TO_RIGHT)
           {
             ++he_curr;
             continue;
@@ -902,7 +902,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           left_equals_curr_endpoint = true;
           
-          if (he_curr->direction() == RIGHT_TO_LEFT)
+          if (he_curr->direction() == ARR_RIGHT_TO_LEFT)
           {
             ++he_curr;
             continue;
@@ -1033,7 +1033,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           left_equals_curr_endpoint = true;
 
-          if (he_curr->direction() == LEFT_TO_RIGHT)
+          if (he_curr->direction() == ARR_LEFT_TO_RIGHT)
           {
             ++he_curr;
             continue;
@@ -1043,7 +1043,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           left_equals_curr_endpoint = true;
 
-          if (he_curr->direction() == RIGHT_TO_LEFT)
+          if (he_curr->direction() == ARR_RIGHT_TO_LEFT)
           {
             ++he_curr;
             continue;
@@ -1310,7 +1310,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
       const X_monotone_curve_2  *p_left_subcurve = NULL;
       const X_monotone_curve_2  *p_right_subcurve = NULL;
 
-      if (inserted_he->next()->direction() == LEFT_TO_RIGHT)
+      if (inserted_he->next()->direction() == ARR_LEFT_TO_RIGHT)
       {
         // The next halfedge extends to the right of the split point:
         p_left_subcurve = &(inserted_he->twin()->prev()->curve());
@@ -1343,7 +1343,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
       // to the wrong halfedge. the overlapping edge is either the successor
       // of the inserted halfedge or the predecessor of its twin, depending
       // on which one of these halfedges lies to the right of the split point.
-      if (inserted_he->next()->direction() == LEFT_TO_RIGHT)
+      if (inserted_he->next()->direction() == ARR_LEFT_TO_RIGHT)
       {
         // The successor is directed to the right:
         intersect_he = inserted_he->next();
@@ -1352,7 +1352,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
       {
         // The predecessor is directed to the left:
         CGAL_assertion (inserted_he->twin()->prev()->direction() ==
-                        RIGHT_TO_LEFT);
+                        ARR_RIGHT_TO_LEFT);
 
         intersect_he = inserted_he->twin()->prev();
       }
@@ -1388,7 +1388,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
         // We have a tangency point. If right_he is directed from left to
         // right, we take the inserted halfedge to be left_he, otherwise
         // right_he itself becomes left_he:
-        if (right_he->direction() == LEFT_TO_RIGHT)
+        if (right_he->direction() == ARR_LEFT_TO_RIGHT)
           left_he = inserted_he;
         else
           left_he = right_he;
@@ -1450,9 +1450,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   // Check if the right end of overlap_cv is bounded. If so, compute its
   // right endpoint.
   const Boundary_type  cv_bx = 
-    geom_traits->boundary_in_x_2_object() (overlap_cv, MAX_END);
+    geom_traits->boundary_in_x_2_object() (overlap_cv, ARR_MAX_END);
   const Boundary_type  cv_by =
-    geom_traits->boundary_in_y_2_object() (overlap_cv, MAX_END);
+    geom_traits->boundary_in_y_2_object() (overlap_cv, ARR_MAX_END);
   const bool           cv_has_right_pt = (cv_bx != MINUS_INFINITY &&
                                           cv_bx != PLUS_INFINITY && 
                                           cv_by != MINUS_INFINITY &&
@@ -1466,7 +1466,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   // sure that the overlapping halfedge is always directed to the right.
   Vertex_handle   he_right_v;
 
-  if (intersect_he->direction() == LEFT_TO_RIGHT)
+  if (intersect_he->direction() == ARR_LEFT_TO_RIGHT)
   {
     he_right_v = intersect_he->target();
   }

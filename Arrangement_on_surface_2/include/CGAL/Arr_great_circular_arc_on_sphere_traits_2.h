@@ -393,13 +393,13 @@ public:
      */
     Comparison_result operator()(const Point_2 & point,
                                  const X_monotone_curve_2 & xc,
-                                 Curve_end ind) const
+                                 Arr_curve_end ind) const
     {
       typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
       CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
-        (const Point_2 & p2 = (ind == MIN_END) ? xc.left() : xc.right(););
+        (const Point_2 & p2 = (ind == ARR_MIN_END) ? xc.left() : xc.right(););
       CGAL_precondition(!p2.is_no_boundary());
 
       if (xc.is_vertical()) {
@@ -423,17 +423,17 @@ public:
       }
 
       // xc is not a vertical sphercial_arc:
-      return (ind == MIN_END) ? LARGER : SMALLER;
+      return (ind == ARR_MIN_END) ? LARGER : SMALLER;
     }
 
     /*! Compare the x-coordinates of two endpoint directions.
      * \param p the endpoint direction.
      * \param xc1 the first curve, the endpoint of which is compared.
-     * \param ind1 MIN_END - the minimal end of xc1 or
-     *             MAX_END - the maximal end of xc1.
+     * \param ind1 ARR_MIN_END - the minimal end of xc1 or
+     *             ARR_MAX_END - the maximal end of xc1.
      * \param xc2 the second curve, the endpoint of which is compared.
-     * \param ind2 MIN_END - the minimal end of xc2 or
-     *             MAX_END - the maximal end of xc2.
+     * \param ind2 ARR_MIN_END - the minimal end of xc2 or
+     *             ARR_MAX_END - the maximal end of xc2.
      * \return SMALLER - x(xc1, ind1) < x(xc2, ind2);
      *         EQUAL   - x(xc1, ind1) = x(xc2, ind2);
      *         LARGER  - x(xc1, ind1) > x(xc2, ind2).
@@ -441,17 +441,17 @@ public:
      * \pre the endpoint indicated by xv2 and ind2 is on the discontinuity arc.
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Curve_end ind1,
+                                 Arr_curve_end ind1,
                                  const X_monotone_curve_2 & xc2,
-                                 Curve_end ind2) const
+                                 Arr_curve_end ind2) const
     {
       typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
       CGAL_precondition_code
-        (const Point_2 & p1 = (ind1 == MIN_END) ? xc1.left() : xc1.right(););
+        (const Point_2 & p1 = (ind1 == ARR_MIN_END) ? xc1.left() : xc1.right(););
       CGAL_precondition(!p1.is_no_boundary());
       CGAL_precondition_code
-        (const Point_2 & p2 = (ind2 == MIN_END) ? xc2.left() : xc2.right(););
+        (const Point_2 & p2 = (ind2 == ARR_MIN_END) ? xc2.left() : xc2.right(););
       CGAL_precondition(!p2.is_no_boundary());
 
       if (xc1.is_vertical() && xc2.is_vertical()) {
@@ -479,15 +479,15 @@ public:
       }
       if (xc1.is_vertical()) {
         if (xc1.is_on_boundary()) return SMALLER;
-        return (ind2 == MAX_END) ? SMALLER : LARGER;
+        return (ind2 == ARR_MAX_END) ? SMALLER : LARGER;
       }
       if (xc2.is_vertical()) {
         if (xc2.is_on_boundary()) return LARGER;
-        return (ind1 == MAX_END) ? LARGER : SMALLER;
+        return (ind1 == ARR_MAX_END) ? LARGER : SMALLER;
       }
       // Non of the arcs are vertical:
       if (ind1 == ind2) return EQUAL;
-      if (ind1 == MIN_END) return SMALLER;
+      if (ind1 == ARR_MIN_END) return SMALLER;
       return LARGER;
     }
   };
@@ -542,8 +542,8 @@ public:
      * on a boundary. If the curve coincides with discontinuity arc, it is
      * assumed to be smaller than any other object.
      * \param xc the curve.
-     * \param ind MIN_END - the minimal end of xc or
-     *            MAX_END - the maximal end of xc.
+     * \param ind ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
      * \return
      *   AFTER_DISCONTINUITY  - the curve end is on the open discontinuity arc 
      *                          and it is the left endpoint
@@ -552,18 +552,18 @@ public:
      *   BEFORE_DISCONTINUITY - the curve end is on the open discontinuity arc
      *                          and it is the right endpoint
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc, Arr_curve_end ind) const
     {
       if (xc.is_vertical()) {
         if (xc.is_on_boundary()) return AFTER_DISCONTINUITY;
         return NO_BOUNDARY;
       }
 
-      return (ind == MIN_END) ?
+      return (ind == ARR_MIN_END) ?
         // Process left:
         ((xc.left().is_no_boundary()) ? NO_BOUNDARY : AFTER_DISCONTINUITY) :
 
-        // ind == MAX_END => process left():
+        // ind == ARR_MAX_END => process left():
         ((xc.right().is_no_boundary()) ? NO_BOUNDARY : BEFORE_DISCONTINUITY);
     }
   };
@@ -575,8 +575,8 @@ public:
   public:
     /*! Determine whether an end of an x-monotone curve lies on a y-boundary.
      * \param xc the curve.
-     * \param ind MIN_END - the minimal end of xc or
-     *            MAX_END - the maximal end of xc.
+     * \param ind ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
      * \return
      *   the curve end is on the boundary and
      *     is the right endpoint                    => AFTER_SINGULARITY, else
@@ -584,12 +584,12 @@ public:
      *   the curve end is on the boundary and
      *     is the left endpoint                     => BEFORE_SINGULARITY.
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc, Arr_curve_end ind) const
     {
-      return (ind == MIN_END) ?
+      return (ind == ARR_MIN_END) ?
         ((xc.left().is_min_boundary()) ? AFTER_SINGULARITY : NO_BOUNDARY) :
 
-        // ind == MAX_END
+        // ind == ARR_MAX_END
         ((xc.right().is_max_boundary()) ? BEFORE_SINGULARITY : NO_BOUNDARY);
     }
   };
@@ -697,8 +697,8 @@ public:
     /*! Compare the relative y-positions of two curves at an x-boundary.
      * \param xc1 the first curve.
      * \param xc2 the second curve.
-     * \param ind MIN_END - the minimal end of xc or
-     *            MAX_END - the maximal end of xc.
+     * \param ind ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
      * \return SMALLER - xc1 lies below xc2;
      *         EQUAL   - xc1 and xc2 overlap;
      *         LARGER  - xc1 lies above xc2;
@@ -712,7 +712,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2, 
-                                 Curve_end ind) const
+                                 Arr_curve_end ind) const
     {
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
@@ -734,7 +734,7 @@ public:
         CGAL_precondition(!r2.is_no_boundary());
       }
 
-      if (ind == MIN_END) {
+      if (ind == ARR_MIN_END) {
         // Handle the south pole. It has the smallest y coords:
         if (l1.is_min_boundary())
           return (l2.is_min_boundary()) ? EQUAL : SMALLER;
@@ -771,7 +771,7 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
 
-      // ind == MAX_END
+      // ind == ARR_MAX_END
       
       // Handle the north pole. It has the largest y coords:
       if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;

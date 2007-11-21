@@ -314,39 +314,39 @@ private:
                  eit++) {
 #if 1 // TODO use traits instead
                 CGAL_precondition(
-                        eit->curve().get_boundary_in_y(CGAL::MIN_END)
+                        eit->curve().get_boundary_in_y(CGAL::ARR_MIN_END)
                         == CGAL::NO_BOUNDARY
                 ); 
-                if (eit->curve().get_boundary_in_x(CGAL::MIN_END)
+                if (eit->curve().get_boundary_in_x(CGAL::ARR_MIN_END)
                     == CGAL::MINUS_INFINITY) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
-                        eit->curve().get_boundary_in_y(CGAL::MAX_END)
+                        eit->curve().get_boundary_in_y(CGAL::ARR_MAX_END)
                         == CGAL::NO_BOUNDARY
                 ); 
-                if (eit->curve().get_boundary_in_x(CGAL::MAX_END)
+                if (eit->curve().get_boundary_in_x(CGAL::ARR_MAX_END)
                     == CGAL::PLUS_INFINITY) {
                     number_of_vertices_at_plus_inf++;
                 }                    
 #else
                 CGAL_precondition(
                         m_traits->boundary_in_y_2_object()(
-                                eit->curve(), CGAL::MIN_END
+                                eit->curve(), CGAL::ARR_MIN_END
                         ) == CGAL::NO_BOUNDARY
                 ); 
                 if (m_traits->boundary_in_x_2_object()(
-                            eit->curve(), CGAL::MIN_END
+                            eit->curve(), CGAL::ARR_MIN_END
                     ) == CGAL::MINUS_INFINITY) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
                         m_traits->boundary_in_y_2_object()(
-                                eit->curve(), CGAL::MAX_END
+                                eit->curve(), CGAL::ARR_MAX_END
                         ) == CGAL::NO_BOUNDARY
                 ); 
                 if (m_traits->boundary_in_x_2_object()(
-                            eit->curve(), CGAL::MAX_END
+                            eit->curve(), CGAL::ARR_MAX_END
                     ) == CGAL::PLUS_INFINITY) {
                     number_of_vertices_at_plus_inf++;
                 }
@@ -670,7 +670,7 @@ public:
      * \return Whether v represents the given curve end.
      */
     bool are_equal (const Vertex *v,
-                    const X_monotone_curve_2& cv, Curve_end ind,
+                    const X_monotone_curve_2& cv, Arr_curve_end ind,
                     Boundary_type bound_x, Boundary_type bound_y) const;
 
       /*!
@@ -689,7 +689,7 @@ public:
      */
     CGAL::Object place_boundary_vertex (Face *f,
                                         const X_monotone_curve_2& cv,
-                                        Curve_end ind,
+                                        Arr_curve_end ind,
                                         Boundary_type bound_x,
                                         Boundary_type bound_y);
 
@@ -707,7 +707,7 @@ public:
       */
     Halfedge* locate_around_boundary_vertex (Vertex *v,
                                              const X_monotone_curve_2& cv,
-                                             Curve_end ind,
+                                             Arr_curve_end ind,
                                              Boundary_type bound_x,
                                              Boundary_type bound_y) const;
     
@@ -722,7 +722,7 @@ public:
      */
     void notify_on_boundary_vertex_creation (Vertex *v,
                                              const X_monotone_curve_2& cv,
-                                             Curve_end ind,
+                                             Arr_curve_end ind,
                                              Boundary_type bound_x,
                                              Boundary_type bound_y) const;
     
@@ -739,7 +739,7 @@ public:
      *         infinity (in case of an overlap).
      */
     CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
-                                   Curve_end ind,
+                                   Arr_curve_end ind,
                                    Boundary_type bound_x,
                                    Boundary_type bound_y);
     
@@ -996,8 +996,8 @@ protected:
      * or right end.
      * \param v The boundary vertex 
      * \param cv The curve
-     * \param ind MIN_END if the vertex is induced by the minimal end;
-     *            MAX_END if it is induced by the curve's maximal end.
+     * \param ind ARR_MIN_END if the vertex is induced by the minimal end;
+     *            ARR_MAX_END if it is induced by the curve's maximal end.
      * \param equal will be set to true if equal curve found
      * \param allow_equal if set to true also checks for equal curve
      * \return The predecessing halfedge of the curve-end (cv, ind) 
@@ -1006,7 +1006,7 @@ protected:
      */
     Halfedge* _locate_around_vertex_with_boundary_at_x(
             Vertex* v,
-            const X_monotone_curve_2& cv, Curve_end ind,
+            const X_monotone_curve_2& cv, Arr_curve_end ind,
             bool& equal,
             bool allow_equal) const;
     
@@ -1015,8 +1015,8 @@ protected:
      * discontinuity.
      * \param v The boundary vertex 
      * \param cv The curve
-     * \param ind MIN_END if the vertex is induced by the minimal end;
-     *            MAX_END if it is induced by the curve's maximal end.
+     * \param ind ARR_MIN_END if the vertex is induced by the minimal end;
+     *            ARR_MAX_END if it is induced by the curve's maximal end.
      * \return The predecessing halfedge of the curve-end (cv, ind) 
      *         in the circular of incident halfedges around 
      *         the boundary vertex.
@@ -1024,19 +1024,19 @@ protected:
     Halfedge* _locate_around_vertex_on_discontinuity(
             Vertex* v,
             const X_monotone_curve_2 & cv,
-            Curve_end ind) const;
+            Arr_curve_end ind) const;
     
 #if 0
     /*!
      * Get the curve associated with a boundary vertex.
      * \param v The boundary vertex.
-     * \param ind Output: MIN_END if the vertex is induced by the minimal end;
-     *                    MAX_END if it is induced by the curve's maximal end.
+     * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
+     *                    ARR_MAX_END if it is induced by the curve's maximal end.
      * \pre v is a valid boundary vertex.
      * \return The curve that induces v.
      */
     const X_monotone_curve_2& _curve (const Vertex *v,
-                                          Curve_end& ind) const;
+                                          Arr_curve_end& ind) const;
 
     /*!
      * Compares two curve-ends around a point on the line of discontinuity
@@ -1048,16 +1048,16 @@ protected:
      */
     CGAL::Comparison_result _cw_order_at_boundary_vertex (
             const X_monotone_curve_2& cv1,
-            const CGAL::Curve_end& ind1,
+            const CGAL::Arr_curve_end& ind1,
             const X_monotone_curve_2& cv2,
-            const CGAL::Curve_end& ind2) const;
+            const CGAL::Arr_curve_end& ind2) const;
 
      /*!
      * Get the predecessing halfedge of a curve-end at a boundary vertex.
      * \param v The boundary vertex 
      * \param cv The curve
-     * \param ind MIN_END if the vertex is induced by the minimal end;
-     *            MAX_END if it is induced by the curve's maximal end.
+     * \param ind ARR_MIN_END if the vertex is induced by the minimal end;
+     *            ARR_MAX_END if it is induced by the curve's maximal end.
      * \param overlaps OUTPUT: is true in case (cv,ind) overlaps with an 
      *                         existing halfedge which is then returned
      * \pre v is a valid boundary vertex.
@@ -1068,7 +1068,7 @@ protected:
     Halfedge* _find_predecessor_at_boundary_vertex(
             Vertex *v,
             const X_monotone_curve_2& cv,
-            CGAL::Curve_end ind,
+            CGAL::Arr_curve_end ind,
             bool& overlaps) const;
 
 #endif

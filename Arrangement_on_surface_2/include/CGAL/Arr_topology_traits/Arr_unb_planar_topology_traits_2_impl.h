@@ -226,10 +226,10 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
   v_br->set_halfedge (he4_t);
 
   // Set the direction of the halfedges:
-  he1->set_direction (LEFT_TO_RIGHT);
-  he2->set_direction (LEFT_TO_RIGHT);
-  he3->set_direction (RIGHT_TO_LEFT);
-  he4->set_direction (RIGHT_TO_LEFT);
+  he1->set_direction (ARR_LEFT_TO_RIGHT);
+  he2->set_direction (ARR_LEFT_TO_RIGHT);
+  he3->set_direction (ARR_RIGHT_TO_LEFT);
+  he4->set_direction (ARR_RIGHT_TO_LEFT);
 
   // Set the inner component of the fictitious face.
   fict_face->add_inner_ccb (ic, he1);
@@ -251,7 +251,7 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 template <class GeomTraits, class Dcel_>
 bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
     (const Vertex *v,
-     const X_monotone_curve_2& cv, Curve_end ind,
+     const X_monotone_curve_2& cv, Arr_curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y) const
 {
   // Make the given curve end lies at infinity.
@@ -270,7 +270,7 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
   {
     // The curve end lies at x = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
-    Curve_end                  v_ind;
+    Arr_curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
@@ -286,7 +286,7 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
 
     // The curve end lies at y = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
-    Curve_end                  v_ind;
+    Arr_curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
@@ -309,7 +309,7 @@ template <class GeomTraits, class Dcel_>
 CGAL::Object
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
     (Face *f,
-     const X_monotone_curve_2& cv, Curve_end ind,
+     const X_monotone_curve_2& cv, Arr_curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y)
 {
   // Make the given curve end lies at infinity (the only boundary type
@@ -352,7 +352,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Object Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
-locate_curve_end (const X_monotone_curve_2& cv, Curve_end ind,
+locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Boundary_type bound_x, Boundary_type bound_y)
 {
   // Make the given curve end lies at infinity.
@@ -638,7 +638,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind = MIN_END;
+    Arr_curve_end                  v_ind = ARR_MIN_END;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
@@ -673,7 +673,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Curve_end                  v_ind = MIN_END;
+    Arr_curve_end                  v_ind = ARR_MIN_END;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     CGAL_assertion (v_cv != NULL);
@@ -734,7 +734,7 @@ const typename
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::X_monotone_curve_2* 
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_curve
     (const Vertex *v,
-     Curve_end& ind) const
+     Arr_curve_end& ind) const
 {
   // Go over the incident halfedges of v until encountering the halfedge
   // associated with a valid curve (v should have three incident halfedges,
@@ -753,7 +753,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_curve
   // The halfedge he is directed toward v, so if it is directed from left to
   // right, v represents the maximal end of cv, otherwise it represents its
   // minimal end.
-  ind = (he->direction() == LEFT_TO_RIGHT) ? MAX_END : MIN_END;
+  ind = (he->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
   
   // Return the x-monotone curve.
   return &(he->curve());
@@ -766,7 +766,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_curve
 template <class GeomTraits, class Dcel_>
 bool 
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
-    (const X_monotone_curve_2& cv, Curve_end ind,
+    (const X_monotone_curve_2& cv, Arr_curve_end ind,
      Boundary_type bound_x, Boundary_type bound_y,
      const Halfedge *he,
      bool& eq_source, bool& eq_target)
@@ -779,7 +779,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
   const Vertex      *v2 = he->vertex();
   Boundary_type      he_bound;
   Comparison_result  res1, res2;
-  Curve_end          v_ind = MIN_END;
+  Arr_curve_end          v_ind = ARR_MIN_END;
 
   // Check if this is a "vertical" ficitious edge.
   if ((he_bound = v1->boundary_in_x()) != NO_BOUNDARY &&
@@ -804,7 +804,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const Curve_end  ind = (bound_x == MINUS_INFINITY) ? MIN_END : MAX_END;
+      const Arr_curve_end  ind = (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
 
       res1 = this->traits->compare_y_at_x_2_object() (cv,
                                                       *_curve (v1, v_ind),
@@ -829,7 +829,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const Curve_end  ind = (bound_x == MINUS_INFINITY) ? MIN_END : MAX_END;
+      const Arr_curve_end  ind = (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
 
       res2 = this->traits->compare_y_at_x_2_object() (cv,
                                                       *_curve (v2, v_ind),

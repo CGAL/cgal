@@ -147,12 +147,12 @@ public:
   void update_event (Event* e,
                      const Point_2& end_point,
                      const X_monotone_curve_2& cv,
-                     Curve_end cv_end,
+                     Arr_curve_end cv_end,
                      bool is_new);
 
    void update_event (Event* /* e */,
                       const X_monotone_curve_2& /* cv */,
-                      Curve_end /* cv_end */,
+                      Arr_curve_end /* cv_end */,
                       bool /* is_new */)
    {}
 
@@ -380,7 +380,7 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
 update_event (Event *e,
               const Point_2& end_point,
               const X_monotone_curve_2& /* cv */,
-              Curve_end /* cv_end */,
+              Arr_curve_end /* cv_end */,
               bool /* is_new */)
 {
   // Nothing to do in case of an event at infinity.
@@ -483,14 +483,14 @@ insert_in_face_interior (const X_monotone_curve_2& cv,
   // resulting halfedge is directed from left to right.
   Halfedge_handle   new_he = Base::insert_in_face_interior(cv,sc);
   
-  if (new_he->direction() == LEFT_TO_RIGHT)
+  if (new_he->direction() == ARR_LEFT_TO_RIGHT)
     new_he = new_he->twin();
   _map_halfedge_and_twin (new_he,
                           cv.red_halfedge_handle(), cv.blue_halfedge_handle());
 
   // Update the newly created left vertex using the overlay traits.
   Vertex_handle     new_v_left = 
-      (new_he->direction() == LEFT_TO_RIGHT ?
+      (new_he->direction() == ARR_LEFT_TO_RIGHT ?
        new_he->source() :
        new_he->target());
 
@@ -498,7 +498,7 @@ insert_in_face_interior (const X_monotone_curve_2& cv,
 
   // Update the newly created right vertex using the overlay traits.
   Vertex_handle     new_v_right = 
-      (new_he->direction() == LEFT_TO_RIGHT ?
+      (new_he->direction() == ARR_LEFT_TO_RIGHT ?
        new_he->target() :
        new_he->source());
 
@@ -525,7 +525,7 @@ insert_from_left_vertex (const X_monotone_curve_2& cv,
   // resulting halfedge is directed from left to right.
   Halfedge_handle   new_he = Base::insert_from_left_vertex (cv, prev, sc);
   
-  if (new_he->direction() == LEFT_TO_RIGHT)
+  if (new_he->direction() == ARR_LEFT_TO_RIGHT)
     new_he = new_he->twin();
   _map_halfedge_and_twin (new_he,
                           cv.red_halfedge_handle(), cv.blue_halfedge_handle());
@@ -533,7 +533,7 @@ insert_from_left_vertex (const X_monotone_curve_2& cv,
   // Update the newly created right vertex (the newly created one) using the
   // overlay traits.
   Vertex_handle     new_v_right = 
-      (new_he->direction() == LEFT_TO_RIGHT ?
+      (new_he->direction() == ARR_LEFT_TO_RIGHT ?
        new_he->target() :
        new_he->source());
 
@@ -560,7 +560,7 @@ insert_from_right_vertex (const X_monotone_curve_2& cv,
   // resulting halfedge is directed from right to left.
   Halfedge_handle   new_he = Base::insert_from_right_vertex (cv, prev, sc);
 
-  if (new_he->direction() == LEFT_TO_RIGHT)
+  if (new_he->direction() == ARR_LEFT_TO_RIGHT)
     new_he = new_he->twin();
   _map_halfedge_and_twin (new_he, 
                           cv.red_halfedge_handle(), cv.blue_halfedge_handle());
@@ -568,7 +568,7 @@ insert_from_right_vertex (const X_monotone_curve_2& cv,
   // Update the newly created left vertex (the newly created one) using the
   // overlay traits.
   Vertex_handle     new_v_left = 
-      (new_he->direction() == LEFT_TO_RIGHT ?
+      (new_he->direction() == ARR_LEFT_TO_RIGHT ?
        new_he->source() :
        new_he->target());
 
@@ -599,7 +599,7 @@ insert_at_vertices (const X_monotone_curve_2& cv,
                                                        new_face_created);
   bool              flipped_he = false;
 
-  if (new_he->direction() == LEFT_TO_RIGHT)
+  if (new_he->direction() == ARR_LEFT_TO_RIGHT)
   {
     new_he = new_he->twin();
     flipped_he = true;
@@ -1000,7 +1000,7 @@ _create_edge (Subcurve *sc, Halfedge_handle new_he)
   // Note that the "red" and "blue" halfedges are always directed from right
   // to left, so we make sure the overlaid halfedge is also directed from
   // right to left.
-  if (new_he->direction() != RIGHT_TO_LEFT)
+  if (new_he->direction() != ARR_RIGHT_TO_LEFT)
     new_he = new_he->twin();
 
   // Examine the various cases for the creation of a new edge.

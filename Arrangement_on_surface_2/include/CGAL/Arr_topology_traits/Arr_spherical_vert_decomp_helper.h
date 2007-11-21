@@ -149,17 +149,17 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
 
-  const Curve_end   ind = (event->number_of_left_curves() == 0 &&
-                           event->number_of_right_curves() == 1) ? MIN_END :
-                                                                   MAX_END;
-  const X_monotone_curve_2& xc = (ind == MIN_END) ?
+  const Arr_curve_end   ind = (event->number_of_left_curves() == 0 &&
+                           event->number_of_right_curves() == 1) ? ARR_MIN_END :
+                                                                   ARR_MAX_END;
+  const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
 
   if (event->boundary_in_y() == BEFORE_SINGULARITY)
   {
     // The event is incident to the north pole: update the north face.
-    if (ind == MIN_END)
+    if (ind == ARR_MIN_END)
       m_north_face = xc.halfedge_handle()->twin()->face();
     else
       m_north_face = xc.halfedge_handle()->face();
@@ -167,7 +167,7 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
   else if (event->boundary_in_y() == AFTER_SINGULARITY)
   {
     // The event is incident to the south pole: update the south face.
-    if (ind == MIN_END)
+    if (ind == ARR_MIN_END)
       m_south_face = xc.halfedge_handle()->face();
     else
       m_south_face = xc.halfedge_handle()->twin()->face();

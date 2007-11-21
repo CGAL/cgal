@@ -211,19 +211,19 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
   CGAL_assertion_code (
     Face_handle  fict_face = Face_handle (m_top_traits->fictitious_face());
   );
-  CGAL_assertion (m_lh->direction() == RIGHT_TO_LEFT);
+  CGAL_assertion (m_lh->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion (m_lh->face() != fict_face);
   CGAL_assertion (m_lh->source() == v_tl && m_lh->target() == v_bl);
   
-  CGAL_assertion (m_bh->direction() == LEFT_TO_RIGHT);
+  CGAL_assertion (m_bh->direction() == ARR_LEFT_TO_RIGHT);
   CGAL_assertion (m_bh->face() != fict_face);
   CGAL_assertion (m_bh->source() == v_bl && m_bh->target() == v_br);
   
-  CGAL_assertion (m_rh->direction() == LEFT_TO_RIGHT);
+  CGAL_assertion (m_rh->direction() == ARR_LEFT_TO_RIGHT);
   CGAL_assertion (m_rh->face() != fict_face);
   CGAL_assertion (m_rh->source() == v_br && m_rh->target() == v_tr);
   
-  CGAL_assertion (m_th->direction() == RIGHT_TO_LEFT);
+  CGAL_assertion (m_th->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion (m_th->face() != fict_face);
   CGAL_assertion (m_th->source() == v_tr && m_th->target() == v_tl);
 }
@@ -245,10 +245,10 @@ before_handle_event (Event* event)
                   (event->number_of_right_curves() == 1)) ||
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
-  Curve_end                  ind = (event->number_of_left_curves() == 0 &&
+  Arr_curve_end                  ind = (event->number_of_left_curves() == 0 &&
                                     event->number_of_right_curves() == 1) ?
-    MIN_END : MAX_END;
-  const X_monotone_curve_2&  xc = (ind == MIN_END) ?
+    ARR_MIN_END : ARR_MAX_END;
+  const X_monotone_curve_2&  xc = (ind == ARR_MIN_END) ?
     (*(event->right_curves_begin()))->last_curve() :
     (*(event->left_curves_begin()))->last_curve();
 

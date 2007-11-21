@@ -162,7 +162,7 @@ void prepare_for_sweep (Arrangement& arr,
   
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) 
   {
-    if (eit->direction() == LEFT_TO_RIGHT)
+    if (eit->direction() == ARR_LEFT_TO_RIGHT)
       he = eit->twin();
     else
       he = eit;

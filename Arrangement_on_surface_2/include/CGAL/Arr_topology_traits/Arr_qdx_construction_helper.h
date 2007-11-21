@@ -123,7 +123,7 @@ public:
             
             if (m_top_traits->leftmost_vertex() == NULL)
             {
-                m_arr_access.create_boundary_vertex (xc, CGAL::MIN_END,
+                m_arr_access.create_boundary_vertex (xc, CGAL::ARR_MIN_END,
                                                      bound_x, bound_y);
             }
 
@@ -144,7 +144,7 @@ public:
             
             if (m_top_traits->rightmost_vertex() == NULL)
             {
-                m_arr_access.create_boundary_vertex (xc, CGAL::MAX_END,
+                m_arr_access.create_boundary_vertex (xc, CGAL::ARR_MAX_END,
                                                      bound_x, bound_y);
             } 
 
@@ -173,12 +173,12 @@ public:
                   (*(event->right_curves_begin()))->last_curve()) 
                 );
             
-            CGAL::Curve_end ind =  
+            CGAL::Arr_curve_end ind =  
                 (bound_y == CGAL::AFTER_DISCONTINUITY ? 
                  (event->number_of_right_curves() > 0 ? 
-                  CGAL::MIN_END : CGAL::MAX_END) : 
+                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) : 
                  (event->number_of_left_curves() > 0 ? 
-                  CGAL::MAX_END : CGAL::MIN_END)
+                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
                 );
             
             DVertex * v = m_top_traits->discontinuity_vertex(event->point());
@@ -203,17 +203,17 @@ public:
         
         CGAL::Boundary_type bnd_y_min = 
             this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(he->curve(), CGAL::MIN_END);
+            boundary_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
         CGAL::Boundary_type bnd_y_max = 
             this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(he->curve(), CGAL::MAX_END);
+            boundary_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
         
         if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
             he_on_top_face = 
-                (he->direction() == CGAL::RIGHT_TO_LEFT ? he : he->twin());
+                (he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? he : he->twin());
         } else if (bnd_y_max == CGAL::BEFORE_DISCONTINUITY) {
             he_on_top_face = 
-                (he->direction() == CGAL::LEFT_TO_RIGHT ? he : he->twin());
+                (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? he : he->twin());
         } else {
             return;
         }

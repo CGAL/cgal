@@ -110,8 +110,8 @@ public:
   /*!
    * Locate the arrangement feature that contains the given curve-end.
    * \param cv The curve.
-   * \param ind MIN_END if we refer to cv's minimal end;
-   *            MAX_END if we refer to its maximal end.
+   * \param ind ARR_MIN_END if we refer to cv's minimal end;
+   *            ARR_MAX_END if we refer to its maximal end.
    * \param bound_x The boundary condition in x.
    * \param bound_y The boundary condition in y.
    * \pre The relevant end of cv has boundary conditions in x or in y.
@@ -120,7 +120,7 @@ public:
    *         or a Halfedge_const_handle (in case of an overlap).
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
-                                 Curve_end ind,
+                                 Arr_curve_end ind,
                                  Boundary_type bound_x,
                                  Boundary_type bound_y) const
   {
@@ -172,17 +172,17 @@ public:
                    static_cast<Traits_adaptor_2*> (p_arr->geometry_traits());
 
     const Boundary_type      bx = m_traits->boundary_in_x_2_object() (cv,
-                                                                      MAX_END);
+                                                                      ARR_MAX_END);
     const Boundary_type      by = m_traits->boundary_in_y_2_object() (cv,
-                                                                      MAX_END);
-    Curve_end                ind = MIN_END;
+                                                                      ARR_MAX_END);
+    Arr_curve_end                ind = ARR_MIN_END;
 
     if (bx != MINUS_INFINITY && bx != PLUS_INFINITY &&
         by != MINUS_INFINITY && by != PLUS_INFINITY &&
         m_traits->equal_2_object() (vh->point(),
                                     m_traits->construct_max_vertex_2_object()(cv)))
     {
-      ind = MAX_END;
+      ind = ARR_MAX_END;
     }
 
     DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh),
@@ -197,8 +197,8 @@ public:
    * which lies on the boundary.
    * \param vh A handle for the arrangement vertex.
    * \param cv The curve.
-   * \param ind MIN_END if we refer to cv's minimal end;
-   *            MAX_END if we refer to its maximal end.
+   * \param ind ARR_MIN_END if we refer to cv's minimal end;
+   *            ARR_MAX_END if we refer to its maximal end.
    * \param bound_x The boundary condition in x.
    * \param bound_y The boundary condition in y.
    * \pre The relevant end of cv has boundary conditions in x or in y.
@@ -209,7 +209,7 @@ public:
   Halfedge_handle
       locate_around_boundary_vertex (Vertex_handle vh,
                                      const X_monotone_curve_2& cv,
-                                     Curve_end ind,
+                                     Arr_curve_end ind,
                                      Boundary_type bound_x,
                                      Boundary_type bound_y) const
   {
@@ -284,14 +284,14 @@ public:
    * Check if the given vertex represents one of the ends of a given curve.
    * \param v The vertex.
    * \param cv The curve.
-   * \param ind MIN_END if we refer to cv's minimal end;
-   *            MAX_END if we refer to its maximal end.
+   * \param ind ARR_MIN_END if we refer to cv's minimal end;
+   *            ARR_MAX_END if we refer to its maximal end.
    * \param bound_x The boundary condition of the curve end in x.
    * \param bound_y The boundary condition of the curve end in y.
    * \return Whether v represents the left (or right) end of cv.
    */
   bool are_equal (Vertex_const_handle v,
-                  const X_monotone_curve_2& cv, Curve_end ind,
+                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Boundary_type bound_x, Boundary_type bound_y) const
   {
     return (p_arr->topology_traits()->are_equal (p_arr->_vertex (v),
@@ -352,7 +352,7 @@ public:
    * \return A handle for the newly created vertex.
    */
   Vertex_handle create_boundary_vertex (const X_monotone_curve_2& cv,
-                                        Curve_end ind,
+                                        Arr_curve_end ind,
                                         Boundary_type bound_x,
                                         Boundary_type bound_y,
                                         bool notify = true)
@@ -389,7 +389,7 @@ public:
    */
   std::pair<Vertex_handle, Halfedge_handle>
   place_and_set_curve_end (Face_handle f,
-                           const X_monotone_curve_2& cv, Curve_end ind,
+                           const X_monotone_curve_2& cv, Arr_curve_end ind,
                            Boundary_type bound_x, Boundary_type bound_y)
   {
     DHalfedge  *pred;

@@ -220,12 +220,12 @@ protected:
     // Set the direction of the halfedges.
     if (direction == 0)
     {
-      new_he->set_direction (LEFT_TO_RIGHT);
+      new_he->set_direction (ARR_LEFT_TO_RIGHT);
     }
     else
     {
       CGAL_assertion (direction == 1);
-      new_he->set_direction (RIGHT_TO_LEFT);
+      new_he->set_direction (ARR_RIGHT_TO_LEFT);
     }
 
     // Read any auxiliary data associated with the halfedges.

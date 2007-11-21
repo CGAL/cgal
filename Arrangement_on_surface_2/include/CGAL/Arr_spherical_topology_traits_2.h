@@ -323,9 +323,9 @@ public:
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists). */ 
-  Vertex * discontinuity_vertex (const X_monotone_curve_2 xc, Curve_end ind)
+  Vertex * discontinuity_vertex (const X_monotone_curve_2 xc, Arr_curve_end ind)
   {
-    const Point_2 & key = (ind == MIN_END) ? xc.left() : xc.right();
+    const Point_2 & key = (ind == ARR_MIN_END) ? xc.left() : xc.right();
     typename Vertex_map::iterator  it = m_boundary_vertices.find(key);
     return (it != m_boundary_vertices.end()) ? it->second : NULL;
   }
@@ -494,7 +494,7 @@ public:
    */
   void notify_on_boundary_vertex_creation(Vertex * v,
                                           const X_monotone_curve_2 & xc,
-                                          Curve_end ind,
+                                          Arr_curve_end ind,
                                           Boundary_type bound_x,
                                           Boundary_type bound_y);
 
@@ -606,7 +606,7 @@ public:
    * \return Whether v represents the given curve end.
    */
   bool are_equal(const Vertex * v,
-                 const X_monotone_curve_2 & xc, Curve_end ind,
+                 const X_monotone_curve_2 & xc, Arr_curve_end ind,
                  Boundary_type bound_x, Boundary_type bound_y) const;
 
   /*! Given a curve end with boundary conditions and a face that contains the
@@ -622,7 +622,7 @@ public:
    */
   CGAL::Object place_boundary_vertex(Face * f,
                                      const X_monotone_curve_2 & xc,
-                                     Curve_end ind,
+                                     Arr_curve_end ind,
                                      Boundary_type bound_x,
                                      Boundary_type bound_y);
 
@@ -640,7 +640,7 @@ public:
    */
   Halfedge * locate_around_boundary_vertex(Vertex * v,
                                            const X_monotone_curve_2 & cv,
-                                           Curve_end ind,
+                                           Arr_curve_end ind,
                                            Boundary_type bound_x,
                                            Boundary_type bound_y) const;
 
@@ -652,7 +652,7 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_curve_end(const X_monotone_curve_2 & xc, Curve_end ind,
+  CGAL::Object locate_curve_end(const X_monotone_curve_2 & xc, Arr_curve_end ind,
                                 Boundary_type bound_x, Boundary_type bound_y);
 
   /*! Split a fictitious edge using the given vertex.
@@ -701,12 +701,12 @@ protected:
   
   /*! Obtain the curve associated with a boundary vertex.
    * \param v The boundary vertex.
-   * \param ind Output: MIN_END if the vertex is induced by the minimal end;
-   *                    MAX_END if it is induced by the curve's maximal end.
+   * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
+   *                    ARR_MAX_END if it is induced by the curve's maximal end.
    * \pre v is a valid boundary.
    * \return The curve that induces v.
    */
-  const X_monotone_curve_2 & _curve(const Vertex * v, Curve_end & ind) const;
+  const X_monotone_curve_2 & _curve(const Vertex * v, Arr_curve_end & ind) const;
 
   /*! Return the halfedge, the target vertex of which is given, that is
    * the predecessor of a halfedge, the curve of which is given, that is about
@@ -715,14 +715,14 @@ protected:
   Halfedge *
   _locate_around_vertex_on_discontinuity(Vertex * v,
                                          const X_monotone_curve_2 & xc,
-                                         Curve_end ind) const;
+                                         Arr_curve_end ind) const;
 
   /*! Return the halfedge, the target vertex of which is a given pole,
    * that is the predecessor of a halfedge, the curve of which is given, that
    * is about to be inserted into the dcel.
    */
   Halfedge * _locate_around_pole(Vertex * v, const X_monotone_curve_2 & xc,
-                                 Curve_end ind) const;
+                                 Arr_curve_end ind) const;
 
 
   /*! Return the face that lies below the given vertex, which lies

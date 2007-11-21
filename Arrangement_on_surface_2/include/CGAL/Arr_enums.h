@@ -37,10 +37,10 @@ CGAL_BEGIN_NAMESPACE
 /*! \enum
  * Selection of a curve end.
  */
-enum Curve_end
+enum Arr_curve_end
 {
-  MIN_END,
-  MAX_END
+  ARR_MIN_END,
+  ARR_MAX_END
 };
 
 /*! \enum
@@ -48,10 +48,10 @@ enum Curve_end
  * xy-lexicographically smaller vertex to the larger one), or from right to
  * left.
  */
-enum Halfedge_direction
+enum Arr_halfedge_direction
 {
-  LEFT_TO_RIGHT = -1,
-  RIGHT_TO_LEFT = 1
+  ARR_LEFT_TO_RIGHT = -1,
+  ARR_RIGHT_TO_LEFT = 1
 };
 
 /*! \enum
@@ -78,24 +78,8 @@ inline CGAL::Sign sign (Boundary_type bt)
   return (CGAL::ZERO);
 }
 
-/*! \enum
- * 
- */
-enum Arr_halfedge_direction {
-  ARR_LEFT_TO_RIGHT = -1,
-  ARR_RIGHT_TO_LEFT = 1
-};
-
-/*! \enum
- * 
- */
-enum Arr_curve_end {
-  ARR_MIN_END,
-  ARR_MAX_END
-};
-
-/*! \enum The various surface boundary types
- * For example
+/*! \enum The various surface boundary types.
+ * For example:
  * - The plain has unbounded boundaries.
  * - The sphere has 2 contraction points and one identification curve.
  */

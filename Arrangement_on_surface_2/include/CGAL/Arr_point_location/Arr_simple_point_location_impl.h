@@ -87,7 +87,7 @@ Object Arr_simple_point_location<Arrangement>::locate (const Point_2& p) const
     // Make sure that the edge is directed from right to left, so that p
     // (which lies below it) is contained in its incident face. If necessary,
     // we take the twin halfedge.
-    if ((*p_hh)->direction() == LEFT_TO_RIGHT)
+    if ((*p_hh)->direction() == ARR_LEFT_TO_RIGHT)
       hh = (*p_hh)->twin();
     else
       hh = *p_hh;
@@ -164,8 +164,8 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
 
     if (res_s == EQUAL)
       in_x_range = true;
-    else if ((res_s == SMALLER && he->direction() == LEFT_TO_RIGHT) ||
-             (res_s == LARGER && he->direction() == RIGHT_TO_LEFT))
+    else if ((res_s == SMALLER && he->direction() == ARR_LEFT_TO_RIGHT) ||
+             (res_s == LARGER && he->direction() == ARR_RIGHT_TO_LEFT))
       in_x_range = false;
     else
       in_x_range = (res_s != top_traits->compare_x (p, vt));
@@ -196,7 +196,7 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
         {
           CGAL_assertion (! cl_vs->has_null_point());
 
-          if (closest_he->direction() == LEFT_TO_RIGHT)
+          if (closest_he->direction() == ARR_LEFT_TO_RIGHT)
           {
             // Both curves extend to the right from a common point.
             y_res = compare_y_at_x_right (closest_he->curve(),
@@ -218,7 +218,7 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
         {
           CGAL_assertion (! cl_vt->has_null_point());
 
-          if (closest_he->direction() == LEFT_TO_RIGHT)
+          if (closest_he->direction() == ARR_LEFT_TO_RIGHT)
           {
             // Both curves extend to the left from a common point.
             y_res = compare_y_at_x_left (closest_he->curve(),
@@ -316,8 +316,8 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
     CGAL_assertion (res1 == res2);
     CGAL_assertion (res1 = point_above_under);
 
-    if ((shoot_up && closest_he->direction() == LEFT_TO_RIGHT) ||
-        (! shoot_up && closest_he->direction() == RIGHT_TO_LEFT))
+    if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
+        (! shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT))
       return (CGAL::make_object (Vertex_const_handle (cl_vs)));
     else
       return (CGAL::make_object (Vertex_const_handle (cl_vt)));
@@ -428,8 +428,8 @@ Object Arr_simple_point_location<Arrangement>::_vertical_ray_shoot
   
   // If we found a fictitious edge, we have to return a handle to its
   // incident unbounded face.
-  if ((shoot_up && closest_he->direction() == LEFT_TO_RIGHT) ||
-      (!shoot_up && closest_he->direction() == RIGHT_TO_LEFT))
+  if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
+      (!shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT))
   {
     closest_he = closest_he->twin();
   }
@@ -466,7 +466,7 @@ Arr_simple_point_location<Arrangement>::_first_around_vertex
   {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
-    if (curr->direction() == LEFT_TO_RIGHT)
+    if (curr->direction() == ARR_LEFT_TO_RIGHT)
     {
       // The curve associated with the current halfedge is defined to the left
       // of v.

@@ -153,19 +153,19 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
   CGAL_assertion_code (
     Face_handle  fict_face = Face_handle (this->m_top_traits->fictitious_face());
   );
-  CGAL_assertion (this->m_lh->direction() == RIGHT_TO_LEFT);
+  CGAL_assertion (this->m_lh->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion (this->m_lh->face() != fict_face);
   CGAL_assertion (this->m_lh->target() == v_bl);
 
-  CGAL_assertion (this->m_bh->direction() == LEFT_TO_RIGHT);
+  CGAL_assertion (this->m_bh->direction() == ARR_LEFT_TO_RIGHT);
   CGAL_assertion (this->m_bh->face() != fict_face);
   CGAL_assertion (this->m_bh->source() == v_bl);
 
-  CGAL_assertion (this->m_rh->direction() == LEFT_TO_RIGHT);
+  CGAL_assertion (this->m_rh->direction() == ARR_LEFT_TO_RIGHT);
   CGAL_assertion (this->m_rh->face() != fict_face);
   CGAL_assertion (this->m_rh->source() == v_br);
 
-  CGAL_assertion (this->m_th->direction() == RIGHT_TO_LEFT);
+  CGAL_assertion (this->m_th->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion (this->m_th->face() != fict_face);
   CGAL_assertion (this->m_th->target() == v_tl);
 }

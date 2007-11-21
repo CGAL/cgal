@@ -171,15 +171,15 @@ public:
 
     /*! Operate */
     Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xc, Curve_end ind)
+                                 const X_monotone_curve_2 & xc, Arr_curve_end ind)
       const
     { ++m_counter; return m_object(p, xc, ind); }
 
     /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Curve_end ind1,
+                                 Arr_curve_end ind1,
                                  const X_monotone_curve_2 & xc2,
-                                 Curve_end ind2)
+                                 Arr_curve_end ind2)
       const
     { ++m_counter; return m_object(xc1, ind1, xc2, ind2); }
   };
@@ -215,7 +215,7 @@ public:
 
     /*! Operate */
     Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Curve_end ind) const
+                             Arr_curve_end ind) const
     { ++m_counter; return m_object(xc, ind); }
   };
 
@@ -234,7 +234,7 @@ public:
 
     /*! Operate */
     Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Curve_end ind) const
+                             Arr_curve_end ind) const
     { ++m_counter; return m_object(xc, ind); }
   };
   
@@ -307,14 +307,14 @@ public:
     /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
                                  const X_monotone_curve_2 & xc2, 
-                                 Curve_end ind) const
+                                 Arr_curve_end ind) const
     { ++m_counter; return m_object(xc1, xc2, ind); }
 
     /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Curve_end ind1,
+                                 Arr_curve_end ind1,
                                  const X_monotone_curve_2 & xc2, 
-                                 Curve_end ind2) const
+                                 Arr_curve_end ind2) const
     { ++m_counter; return m_object(xc1, ind1, xc2, ind2); }
   };
   

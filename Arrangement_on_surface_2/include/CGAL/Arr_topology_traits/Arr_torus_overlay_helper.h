@@ -107,11 +107,11 @@ public:
      */  
     void before_handle_event (Event* e) {
 
-        Curve_end ind = (e->number_of_left_curves() == 0 &&
+        Arr_curve_end ind = (e->number_of_left_curves() == 0 &&
                          e->number_of_right_curves() != 0) ?
-            CGAL::MIN_END : CGAL::MAX_END;
+            CGAL::ARR_MIN_END : CGAL::ARR_MAX_END;
         
-        const Subcurve  *xc = (ind == MIN_END) ?
+        const Subcurve  *xc = (ind == ARR_MIN_END) ?
             (*(e->right_curves_begin())) :
             (*(e->left_curves_begin()));
         
@@ -144,13 +144,13 @@ public:
                     
                     CGAL_assertion(red_he != Halfedge_handle_red());
                     
-                    if (ind == CGAL::MIN_END) {
+                    if (ind == CGAL::ARR_MIN_END) {
                         this->m_red_tf = 
-                            (red_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                            (red_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
                              red_he->twin() : red_he)->face();
                     } else {
                         this->m_red_tf = 
-                            (red_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                            (red_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                              red_he->twin() : red_he)->face();
                     }
                     
@@ -159,13 +159,13 @@ public:
                     
                     CGAL_assertion(blue_he != Halfedge_handle_blue());
                     
-                    if (ind == CGAL::MIN_END) {
+                    if (ind == CGAL::ARR_MIN_END) {
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                            (blue_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
                              blue_he->twin() : blue_he)->face();
                     } else {
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                            (blue_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                              blue_he->twin() : blue_he)->face();
                     }
                     
@@ -175,19 +175,19 @@ public:
                     CGAL_assertion(red_he != Halfedge_handle_red());
                     CGAL_assertion(blue_he != Halfedge_handle_blue());
 
-                    if (ind == CGAL::MIN_END) {
+                    if (ind == CGAL::ARR_MIN_END) {
                         this->m_red_tf = 
-                            (red_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                            (red_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
                              red_he->twin() : blue_he)->face();
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                            (blue_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
                              blue_he->twin() : blue_he)->face();
                     } else {
                         this->m_red_tf = 
-                            (red_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                            (red_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                              red_he->twin() : red_he)->face();
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                            (blue_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                              blue_he->twin() : blue_he)->face();
                     }
                     break;

@@ -117,10 +117,10 @@ public:
                       (event->number_of_right_curves() == 1)) ||
                      ((event->number_of_left_curves() == 1) &&
                       (event->number_of_right_curves() == 0)));
-      Curve_end ind = (event->number_of_left_curves() == 0 &&
+      Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
                        event->number_of_right_curves() == 1) ?
-        MIN_END : MAX_END;
-      const X_monotone_curve_2 & xc = (ind == MIN_END) ?
+        ARR_MIN_END : ARR_MAX_END;
+      const X_monotone_curve_2 & xc = (ind == ARR_MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
 
@@ -146,11 +146,11 @@ public:
                       (event->number_of_right_curves() == 1)) ||
                      ((event->number_of_left_curves() == 1) &&
                       (event->number_of_right_curves() == 0)));
-      Curve_end ind = (event->number_of_left_curves() == 0 &&
+      Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
                        event->number_of_right_curves() == 1) ?
-        MIN_END : MAX_END;
+        ARR_MIN_END : ARR_MAX_END;
 
-      const X_monotone_curve_2 & xc = (ind == MIN_END) ?
+      const X_monotone_curve_2 & xc = (ind == ARR_MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
 
@@ -210,14 +210,14 @@ public:
                      event->number_of_right_curves() == 1);
       const X_monotone_curve_2 & xc =
         (*(event->right_curves_begin()))->last_curve();
-      DVertex * v = m_top_traits->discontinuity_vertex(xc, MIN_END);
+      DVertex * v = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
 
       // Check whether a corresponding vertex already exists on the line
       // of discontinuity. If not, create one now.
       if (v == NULL)
       {
         Vertex_handle vh =  
-            m_arr_access.create_boundary_vertex (xc, MIN_END,
+            m_arr_access.create_boundary_vertex (xc, ARR_MIN_END,
                                                  bound_x, bound_y);
         event->set_vertex_handle(vh);
       }
@@ -235,14 +235,14 @@ public:
                      event->number_of_right_curves() == 0);
       const X_monotone_curve_2 & xc =
         (*(event->left_curves_begin()))->last_curve();
-      DVertex * v = m_top_traits->discontinuity_vertex(xc, MAX_END);
+      DVertex * v = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
 
       // Check whether a corresponding vertex already exists on the line
       // of discontinuity. If not, create one now.
       if (v == NULL)
       {
         Vertex_handle vh = 
-            m_arr_access.create_boundary_vertex (xc, MAX_END,
+            m_arr_access.create_boundary_vertex (xc, ARR_MAX_END,
                                                  bound_x, bound_y);
         event->set_vertex_handle(vh);
       }

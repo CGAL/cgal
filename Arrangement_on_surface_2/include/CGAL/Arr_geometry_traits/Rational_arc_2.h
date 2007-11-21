@@ -705,7 +705,7 @@ public:
   Arr_parameter_space left_infinite_in_x () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      source_infinite_in_x() : target_infinite_in_x_depricated();
+      source_infinite_in_x() : target_infinite_in_x();
   }
 
   /*! Check if the x-coordinate of the left point is infinite. */
@@ -721,7 +721,7 @@ public:
   Arr_parameter_space left_infinite_in_y () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      source_infinite_in_y() : target_infinite_in_y_depricated();
+      source_infinite_in_y() : target_infinite_in_y();
   }
 
   /*! Check if the y-coordinate of the left point is infinite. */
@@ -737,7 +737,7 @@ public:
   Arr_parameter_space right_infinite_in_x () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      target_infinite_in_x_depricated() : source_infinite_in_x();
+      target_infinite_in_x() : source_infinite_in_x();
   }
 
   /*! Check if the x-coordinate of the right point is infinite. */
@@ -946,11 +946,11 @@ public:
    * ends) and the given point.
    */
   Comparison_result compare_end_depricated (const Point_2& p,
-                                            Curve_end ind) const
+                                            Arr_curve_end ind) const
   {
     Algebraic                x0;
 
-    if (ind == MIN_END)
+    if (ind == ARR_MIN_END)
     {
       CGAL_assertion (left_infinite_in_x_depricated() == NO_BOUNDARY &&
                       left_infinite_in_y_depricated() != NO_BOUNDARY);
@@ -975,19 +975,19 @@ public:
     if (res != EQUAL)
       return (res);
 
-    return ((ind == MIN_END) ? SMALLER : LARGER);
+    return ((ind == ARR_MIN_END) ? SMALLER : LARGER);
   }
 
   /*!
    * Compare the x-coordinate of a vertical asymptotes of the two arcs.
    */
-  Comparison_result compare_ends (Curve_end ind1,
-                                  const Self& arc, Curve_end ind2) const
+  Comparison_result compare_ends (Arr_curve_end ind1,
+                                  const Self& arc, Arr_curve_end ind2) const
   {
     // Get the x-coordinates of the first vertical asymptote.
     Algebraic                x1;
 
-    if (ind1 == MIN_END)
+    if (ind1 == ARR_MIN_END)
     {
       CGAL_assertion (left_infinite_in_x_depricated() == NO_BOUNDARY &&
                       left_infinite_in_y_depricated() != NO_BOUNDARY);
@@ -1009,7 +1009,7 @@ public:
     // Get the x-coordinates of the second vertical asymptote.
     Algebraic                x2;
 
-    if (ind2 == MIN_END)
+    if (ind2 == ARR_MIN_END)
     {
       CGAL_assertion (arc.left_infinite_in_x_depricated() == NO_BOUNDARY &&
                       arc.left_infinite_in_y_depricated() != NO_BOUNDARY);
@@ -1037,9 +1037,9 @@ public:
     // If the x-coordinates of the asymptote are equal, but one arc is
     // defined to the left of the vertical asymptote and the other to its
     // right, we can easily determine the comparison result.
-    if (ind1 == MAX_END && ind2 == MIN_END)
+    if (ind1 == ARR_MAX_END && ind2 == ARR_MIN_END)
       return (SMALLER);
-    else if (ind1 == MIN_END && ind2 == MAX_END)
+    else if (ind1 == ARR_MIN_END && ind2 == ARR_MAX_END)
       return (LARGER);
 
     // Determine the multiplicities of the pole for the two arcs.
@@ -1064,7 +1064,7 @@ public:
 
     if (mult1 != mult2)
     {
-      if (ind1 == MIN_END)
+      if (ind1 == ARR_MIN_END)
       {
         // In case we compare to the right of the pole, the curve with larger
         // multiplicity is to the left.
@@ -1106,7 +1106,7 @@ public:
     
     if (val_res != EQUAL)
     {
-      if (ind1 == MIN_END)
+      if (ind1 == ARR_MIN_END)
         // Swap the comparison result.
         val_res = (val_res == LARGER ? SMALLER : LARGER);
 
@@ -1117,9 +1117,9 @@ public:
     // asymptote. If one is defined at y = -oo and the other at y = +oo, we
     // preform a "lexicographic" comparison.
     const Boundary_type  inf_y1 = 
-      (ind1 == MIN_END ? left_infinite_in_y_depricated() : right_infinite_in_y_depricated());
+      (ind1 == ARR_MIN_END ? left_infinite_in_y_depricated() : right_infinite_in_y_depricated());
     const Boundary_type  inf_y2 = 
-      (ind2 == MIN_END ? arc.left_infinite_in_y_depricated() : arc.right_infinite_in_y_depricated());
+      (ind2 == ARR_MIN_END ? arc.left_infinite_in_y_depricated() : arc.right_infinite_in_y_depricated());
 
     if (inf_y1 == MINUS_INFINITY && inf_y2 == PLUS_INFINITY)
       return (SMALLER);
@@ -1140,7 +1140,7 @@ public:
       return (EQUAL);
     }
 
-    if (ind1 == MAX_END)
+    if (ind1 == ARR_MAX_END)
       // Swap the comparison result.
       val_res = (val_res == LARGER ? SMALLER : LARGER);
 

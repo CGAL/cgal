@@ -198,7 +198,7 @@ protected:
     formatter.write_vertex_index (_index(he_t->vertex()));
     formatter.write_vertex_index (_index(he->vertex()));
     
-    if (he->direction() == LEFT_TO_RIGHT)
+    if (he->direction() == ARR_LEFT_TO_RIGHT)
       formatter.write_vertex_index (0);
     else
       formatter.write_vertex_index (1);

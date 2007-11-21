@@ -106,8 +106,8 @@ public:
      * curve end.
      * \param p A reference point; we refer to a vertical line incident to p.
      * \param cv The compared curve.
-     * \param ind MIN_END if we refer to cv's minimal end; 
-     *            MAX_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end; 
+     *            ARR_MAX_END if we refer to its maximal end.
      * \pre cv's relevant end has a boundary condition in y.
      * \return SMALLER if p lies to the left of cv;
      *         LARGER if p lies to the right cv;
@@ -115,7 +115,7 @@ public:
      */
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv,
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
       return (_compare_point_curve_imp (p, cv, ind,
                                         Has_boundary_category()));
@@ -124,20 +124,20 @@ public:
     /*!
      * Compare the relative x-positions of two curve ends.
      * \param cv1 The first curve.
-     * \param ind1 MIN_END if we refer to cv1's minimal end; 
-     *             MAX_END if we refer to its maximal end.
+     * \param ind1 ARR_MIN_END if we refer to cv1's minimal end; 
+     *             ARR_MAX_END if we refer to its maximal end.
      * \param cv2 The second curve.
-     * \param ind2 MIN_END if we refer to cv2's minimal end; 
-     *             MAX_END if we refer to its maximal end.
+     * \param ind2 ARR_MIN_END if we refer to cv2's minimal end; 
+     *             ARR_MAX_END if we refer to its maximal end.
      * \pre Both curve ends have a boundary condition in y.
      * \return SMALLER if cv1 lies to the left of cv2;
      *         LARGER if cv1 lies to the right cv2;
      *         EQUAL in case of an overlap.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Curve_end ind1,
+                                  Arr_curve_end ind1,
                                   const X_monotone_curve_2& cv2,
-                                  Curve_end ind2) const
+                                  Arr_curve_end ind2) const
     {
       return (_compare_curves_imp (cv1, ind1, cv2, ind2,
                                    Has_boundary_category()));
@@ -152,7 +152,7 @@ public:
      */
     Comparison_result _compare_point_curve_imp (const Point_2& p,
                                                 const X_monotone_curve_2& cv,
-                                                Curve_end ind,
+                                                Arr_curve_end ind,
                                                 Tag_true) const
     {
       return (m_base->compare_x_2_object() (p, cv, ind));
@@ -163,7 +163,7 @@ public:
      */
     Comparison_result _compare_point_curve_imp (const Point_2& ,
                                                 const X_monotone_curve_2& ,
-                                                Curve_end ,
+                                                Arr_curve_end ,
                                                 Tag_false) const
     {
       return (EQUAL);
@@ -173,9 +173,9 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& cv1, 
-                                           Curve_end ind1,
+                                           Arr_curve_end ind1,
                                            const X_monotone_curve_2& cv2,
-                                           Curve_end ind2,
+                                           Arr_curve_end ind2,
                                            Tag_true ) const
     {
       return (m_base->compare_x_2_object() (cv1, ind1, cv2, ind2));
@@ -185,9 +185,9 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
-                                           Curve_end ,
+                                           Arr_curve_end ,
                                            const X_monotone_curve_2& , 
-                                           Curve_end ,
+                                           Arr_curve_end ,
                                            Tag_false ) const
     {
       return (EQUAL);
@@ -236,9 +236,9 @@ public:
      *         EQUAL in case of an overlap.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Curve_end ind1,
+                                  Arr_curve_end ind1,
                                   const X_monotone_curve_2& cv2, 
-                                  Curve_end ind2) const
+                                  Arr_curve_end ind2) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support unbounded curves, we just
@@ -259,7 +259,7 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2, 
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support unbounded curves, we just
@@ -278,7 +278,7 @@ public:
      */
     Comparison_result _comp_y_at_infinity_imp (const X_monotone_curve_2& cv1,
                                                const X_monotone_curve_2& cv2, 
-                                               Curve_end ind,
+                                               Arr_curve_end ind,
                                                Tag_true) const
     {
       return (m_base->compare_y_at_x_2_object() (cv1, cv2, ind));
@@ -288,9 +288,9 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
     Comparison_result _comp_y_at_infinity_imp (const X_monotone_curve_2& cv1,
-                                               Curve_end ind1,
+                                               Arr_curve_end ind1,
                                                const X_monotone_curve_2& cv2, 
-                                               Curve_end ind2,
+                                               Arr_curve_end ind2,
                                                Tag_true) const
     {
       return (m_base->compare_y_at_x_2_object() (cv1, ind1, cv2, ind2));
@@ -300,9 +300,9 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
     Comparison_result _comp_y_at_infinity_imp (const X_monotone_curve_2& ,
-                                               Curve_end ,
+                                               Arr_curve_end ,
                                                const X_monotone_curve_2& , 
-                                               Curve_end ,
+                                               Arr_curve_end ,
                                                Tag_false) const
     {
       return (EQUAL);
@@ -313,7 +313,7 @@ public:
      */
     Comparison_result _comp_y_at_infinity_imp (const X_monotone_curve_2& ,
                                                const X_monotone_curve_2& , 
-                                               Curve_end ,
+                                               Arr_curve_end ,
                                                Tag_false) const
     {
       return (EQUAL);
@@ -392,15 +392,15 @@ public:
       Equal_2                 equal = m_self->equal_2_object();
 
       // Check if the left ends of the curves are bounded endpoints.
-      const Boundary_type  bx1 = boundary_x (cv1, MIN_END);
+      const Boundary_type  bx1 = boundary_x (cv1, ARR_MIN_END);
       const Boundary_type  by1 = (bx1 != NO_BOUNDARY ? 
-                                  NO_BOUNDARY : boundary_y (cv1, MIN_END));
+                                  NO_BOUNDARY : boundary_y (cv1, ARR_MIN_END));
       const bool           has_left1 = (bx1 == NO_BOUNDARY &&
                                         by1 == NO_BOUNDARY);
 
-      const Boundary_type  bx2 = boundary_x (cv2, MIN_END);
+      const Boundary_type  bx2 = boundary_x (cv2, ARR_MIN_END);
       const Boundary_type  by2 = (bx2 != NO_BOUNDARY ? 
-                                  NO_BOUNDARY : boundary_y (cv2, MIN_END));
+                                  NO_BOUNDARY : boundary_y (cv2, ARR_MIN_END));
       const bool           has_left2 = (bx2 == NO_BOUNDARY &&
                                         by2 == NO_BOUNDARY);
 
@@ -484,12 +484,12 @@ public:
     /*!
      * Get the boundary condition of the given curve end in x.
      * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \return The boundary condition of the curve end.
      */
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support boundary conditions, we just
@@ -505,7 +505,7 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
     Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& cv,
-                                      Curve_end ind,
+                                      Arr_curve_end ind,
                                       Tag_true) const
     {
       return (m_base->boundary_in_x_2_object() (cv, ind));
@@ -514,7 +514,7 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Arr_curve_end ,
                                       Tag_false) const
     {
       return (NO_BOUNDARY);
@@ -544,12 +544,12 @@ public:
     /*!
      * Get the boundary condition of the given curve end in y.
      * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \return The boundary condition of the curve end.
      */
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support boundary conditions, we just
@@ -565,7 +565,7 @@ public:
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
     Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& cv,
-                                      Curve_end ind,
+                                      Arr_curve_end ind,
                                       Tag_true) const
     {
       return (m_base->boundary_in_y_2_object() (cv, ind));
@@ -574,7 +574,7 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Arr_curve_end ,
                                       Tag_false) const
     {
       return (NO_BOUNDARY);
@@ -622,11 +622,11 @@ public:
       Boundary_type       bx, by;
       Comparison_result   res;
 
-      bx = boundary_x (cv, MIN_END);
+      bx = boundary_x (cv, ARR_MIN_END);
 
       if (bx == NO_BOUNDARY)
       {
-        by = boundary_y (cv, MIN_END);
+        by = boundary_y (cv, ARR_MIN_END);
 
         if (by == NO_BOUNDARY)
         {
@@ -636,7 +636,7 @@ public:
         else
         {
           // The left end of cv lies at y boundary.
-          res = compare_x (p, cv, MIN_END);
+          res = compare_x (p, cv, ARR_MIN_END);
         }
 
         if (res == SMALLER)
@@ -647,12 +647,12 @@ public:
 
       // If necessary, compare p to the right end of the curve.
       // Note that if this end lies at x boundary, p is obviously to its left.
-      bx = boundary_x (cv, MAX_END);
+      bx = boundary_x (cv, ARR_MAX_END);
 
       if (bx != NO_BOUNDARY)
         return (true);
       
-      by = boundary_y (cv, MAX_END);
+      by = boundary_y (cv, ARR_MAX_END);
 
       if (by == NO_BOUNDARY)
       {
@@ -662,7 +662,7 @@ public:
       else
       {
         // The right end of cv lies at y boundary:
-        res = compare_x (p, cv, MAX_END);
+        res = compare_x (p, cv, ARR_MAX_END);
       }
 
       return (res != LARGER);
@@ -694,8 +694,8 @@ public:
       Boundary_type             by_left;
       Comparison_result         res;
 
-      bx1 = boundary_x (cv1, MIN_END);
-      bx2 = boundary_x (cv2, MIN_END);
+      bx1 = boundary_x (cv1, ARR_MIN_END);
+      bx2 = boundary_x (cv2, ARR_MIN_END);
 
       if (bx1 != NO_BOUNDARY)
       {
@@ -707,21 +707,21 @@ public:
         // As cv2 is not defined at x boundary, take its left end as the
         // rightmost of the two left curve ends.
         cv_left = &cv2;
-        by_left = boundary_y (cv2, MIN_END);
+        by_left = boundary_y (cv2, ARR_MIN_END);
       }
       else if (bx2 != NO_BOUNDARY)
       {
         // As cv1 is not defined at x boundary, take its left end as the
         // rightmost of the two left curve ends.
         cv_left = &cv1;
-        by_left = boundary_y (cv1, MIN_END);
+        by_left = boundary_y (cv1, ARR_MIN_END);
       }
       else
       {
         // Compare the (finite) x-coordinates of the two left ends.
         // We take special care of the case of boundaries in y.
-        by1 = boundary_y (cv1, MIN_END);
-        by2 = boundary_y (cv2, MIN_END);
+        by1 = boundary_y (cv1, ARR_MIN_END);
+        by2 = boundary_y (cv2, ARR_MIN_END);
 
         if (by1 == NO_BOUNDARY)
         {
@@ -731,20 +731,20 @@ public:
           }
           else
           {
-            res = compare_x (min_vertex (cv1), cv2, MIN_END);
+            res = compare_x (min_vertex (cv1), cv2, ARR_MIN_END);
           }
         }
         else
         {
           if (by2 == NO_BOUNDARY)
           {
-            res = compare_x (min_vertex (cv2), cv1, MIN_END);
+            res = compare_x (min_vertex (cv2), cv1, ARR_MIN_END);
             if (res != EQUAL)
               res = (res == SMALLER) ? LARGER : SMALLER;
           }
           else
           {
-            res = compare_x (cv1, MIN_END, cv2, MIN_END);
+            res = compare_x (cv1, ARR_MIN_END, cv2, ARR_MIN_END);
           }
         }
 
@@ -765,8 +765,8 @@ public:
       const X_monotone_curve_2 *cv_right;
       Boundary_type             by_right;
 
-      bx1 = boundary_x (cv1, MAX_END);
-      bx2 = boundary_x (cv2, MAX_END);
+      bx1 = boundary_x (cv1, ARR_MAX_END);
+      bx2 = boundary_x (cv2, ARR_MAX_END);
 
       if (bx1 != NO_BOUNDARY)
       {
@@ -778,21 +778,21 @@ public:
         // As cv2 is not defined at x boundary, take its right end as the
         // leftmost of the two right curve ends.
         cv_right = &cv2;
-        by_right = boundary_y (cv2, MAX_END);
+        by_right = boundary_y (cv2, ARR_MAX_END);
       }
       else if (bx2 != NO_BOUNDARY)
       {
         // As cv1 is not defined at x boundary, take its right end as the
         // leftmost of the two right curve ends.
         cv_right = &cv1;
-        by_right = boundary_y (cv1, MAX_END);
+        by_right = boundary_y (cv1, ARR_MAX_END);
       }
       else
       {
         // Compare the (finite) x-coordinates of the two right ends.
         // We take special care of the case of boundaries in y.
-        by1 = boundary_y (cv1, MAX_END);
-        by2 = boundary_y (cv2, MAX_END);
+        by1 = boundary_y (cv1, ARR_MAX_END);
+        by2 = boundary_y (cv2, ARR_MAX_END);
 
         if (by1 == NO_BOUNDARY)
         {
@@ -802,20 +802,20 @@ public:
           }
           else
           {
-            res = compare_x (max_vertex (cv1), cv2, MAX_END);
+            res = compare_x (max_vertex (cv1), cv2, ARR_MAX_END);
            }
         }
         else
         {
           if (by2 == NO_BOUNDARY)
           {
-            res = compare_x (max_vertex (cv2), cv1, MAX_END);
+            res = compare_x (max_vertex (cv2), cv1, ARR_MAX_END);
             if (res != EQUAL)
               res = (res == SMALLER) ? LARGER : SMALLER;
           }
           else
           {
-            res = compare_x (cv1, MAX_END, cv2, MAX_END);
+            res = compare_x (cv1, ARR_MAX_END, cv2, ARR_MAX_END);
           }
         }
 
@@ -841,20 +841,20 @@ public:
         }
         else
         {
-          res = compare_x (min_vertex (*cv_left), *cv_right, MAX_END);
+          res = compare_x (min_vertex (*cv_left), *cv_right, ARR_MAX_END);
         }
       }
       else
       {
         if (by_right == NO_BOUNDARY)
         {
-          res = compare_x (max_vertex (*cv_right), *cv_left, MIN_END);
+          res = compare_x (max_vertex (*cv_right), *cv_left, ARR_MIN_END);
           if (res != EQUAL)
             res = (res == SMALLER) ? LARGER : SMALLER;
         }
         else
         {
-          res = compare_x (*cv_left, MIN_END, *cv_right, MAX_END);
+          res = compare_x (*cv_left, ARR_MIN_END, *cv_right, ARR_MAX_END);
         }
       }
 
@@ -914,8 +914,8 @@ public:
                                     m_self->construct_min_vertex_2_object();
  
       // First check whether any of the curves is defined at x boundary.
-      const Boundary_type     bx1 = boundary_x (cv1, MIN_END);
-      const Boundary_type     bx2 = boundary_x (cv2, MIN_END);
+      const Boundary_type     bx1 = boundary_x (cv1, ARR_MIN_END);
+      const Boundary_type     bx2 = boundary_x (cv2, ARR_MIN_END);
       Comparison_result       res;
 
       CGAL_assertion (CGAL::sign (bx1) != POSITIVE &&
@@ -926,11 +926,11 @@ public:
         if (bx2 != NO_BOUNDARY)
         {
           // Compare the relative position of the curves at x boundary.
-          return (compare_y_at_x (cv1, cv2, MIN_END));
+          return (compare_y_at_x (cv1, cv2, ARR_MIN_END));
         }
         
         // Check if the left end of cv2 lies at y boundary.
-        const Boundary_type    by2 = boundary_y (cv2, MIN_END);
+        const Boundary_type    by2 = boundary_y (cv2, ARR_MIN_END);
         const CGAL::Sign       sign_by2 = CGAL::sign (by2);
 
         if (sign_by2 == NEGATIVE)
@@ -951,7 +951,7 @@ public:
       else if (bx2 != NO_BOUNDARY)
       {
         // Check if the left end of cv1 lies at y boundary.
-        const Boundary_type    by1 = boundary_y (cv1, MIN_END);
+        const Boundary_type    by1 = boundary_y (cv1, ARR_MIN_END);
         const CGAL::Sign       sign_by1 = CGAL::sign (by1);
 
         if (sign_by1 == NEGATIVE)
@@ -967,9 +967,9 @@ public:
       }
       
       // Check if the left curve end lies at y = +/- oo.
-      const Boundary_type     by1 = boundary_y (cv1, MIN_END);
+      const Boundary_type     by1 = boundary_y (cv1, ARR_MIN_END);
       const CGAL::Sign        sign_by1 = CGAL::sign (by1);
-      const Boundary_type     by2 = boundary_y (cv2, MIN_END);
+      const Boundary_type     by2 = boundary_y (cv2, ARR_MIN_END);
       const CGAL::Sign        sign_by2 = CGAL::sign (by2);
       Comparison_result       l_res;
 
@@ -988,8 +988,8 @@ public:
           // Both curves have vertical asymptotes with the same sign in y.
           // Check which asymptote is the rightmost. Note that in this case
           // the vertical asymptotes cannot be equal.
-          l_res = m_self->compare_x_2_object() (cv1, MIN_END,
-                                                cv2, MIN_END);
+          l_res = m_self->compare_x_2_object() (cv1, ARR_MIN_END,
+                                                cv2, ARR_MIN_END);
           CGAL_assertion (l_res != EQUAL);
 
           if (sign_by1 == POSITIVE)
@@ -1002,7 +1002,7 @@ public:
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left2 = min_vertex(cv2);
         
-        l_res = m_self->compare_x_2_object() (left2, cv1, MIN_END);
+        l_res = m_self->compare_x_2_object() (left2, cv1, ARR_MIN_END);
 
         if (l_res == LARGER)
         {
@@ -1029,7 +1029,7 @@ public:
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left1 = min_vertex(cv1);
         
-        l_res = m_self->compare_x_2_object() (left1, cv2, MIN_END);
+        l_res = m_self->compare_x_2_object() (left1, cv2, ARR_MIN_END);
 
         if (l_res == LARGER)
         {

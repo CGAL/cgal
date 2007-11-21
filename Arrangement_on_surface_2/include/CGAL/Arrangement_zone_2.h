@@ -180,9 +180,9 @@ public:
     cv = _cv;
 
     const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(cv,
-                                                                     MIN_END);
+                                                                     ARR_MIN_END);
     const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(cv,
-                                                                     MIN_END);
+                                                                     ARR_MIN_END);
 
     if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY)
     {
@@ -206,14 +206,14 @@ public:
       if (has_left_pt)
         left_pt = geom_traits->construct_min_vertex_2_object() (cv);
 
-      obj = arr_access.locate_curve_end (cv, MIN_END, bx1, by1);
+      obj = arr_access.locate_curve_end (cv, ARR_MIN_END, bx1, by1);
     }
 
     // Check the boundary conditions of th right curve end.
     const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(cv,
-                                                                     MAX_END);
+                                                                     ARR_MAX_END);
     const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(cv,
-                                                                     MAX_END);
+                                                                     ARR_MAX_END);
 
     if (bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY &&
         by2 != MINUS_INFINITY && by2 != PLUS_INFINITY)
@@ -342,10 +342,10 @@ private:
                          Halfedge_const_handle he,
                          Tag_false ) const
   {
-    return ((he->direction() == LEFT_TO_RIGHT &&
+    return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
                  (p, he->source()->point()) == SMALLER) ||
-            (he->direction() == RIGHT_TO_LEFT &&
+            (he->direction() == ARR_RIGHT_TO_LEFT &&
              geom_traits->compare_xy_2_object() 
                  (p, he->target()->point()) == SMALLER));
   }
@@ -373,10 +373,10 @@ private:
                           Halfedge_const_handle he,
                           Tag_false ) const
   {
-    return ((he->direction() == LEFT_TO_RIGHT &&
+    return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
                  (p, he->target()->point()) == LARGER) ||
-            (he->direction() == RIGHT_TO_LEFT &&
+            (he->direction() == ARR_RIGHT_TO_LEFT &&
              geom_traits->compare_xy_2_object() 
                  (p, he->source()->point()) == LARGER));
   }

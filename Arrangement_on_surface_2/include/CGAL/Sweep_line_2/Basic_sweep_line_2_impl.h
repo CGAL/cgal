@@ -272,8 +272,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve
   (m_subCurves + index)->init(curve);
   
   // Create two events associated with the curve ends.
-  _init_curve_end (curve, MAX_END, m_subCurves + index);
-  _init_curve_end (curve, MIN_END, m_subCurves + index);
+  _init_curve_end (curve, ARR_MAX_END, m_subCurves + index);
+  _init_curve_end (curve, ARR_MIN_END, m_subCurves + index);
   
   return;
 }
@@ -283,11 +283,11 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve_end
-    (const X_monotone_curve_2& cv, Curve_end ind,
+    (const X_monotone_curve_2& cv, Arr_curve_end ind,
      Subcurve* sc)
 {
   // Get the boundary conditions of the curve end.
-  const Attribute  end_attr = (ind == MIN_END) ? Base_event::LEFT_END :
+  const Attribute  end_attr = (ind == ARR_MIN_END) ? Base_event::LEFT_END :
                                                  Base_event::RIGHT_END;
 
   Boundary_type    bound_x = m_traits->boundary_in_x_2_object()(cv, ind);
@@ -303,7 +303,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve_end
   {
     // The curve end has no boundary conditions, so it is associated with a
     // valid endpoint.
-    const Point_2&  pt = (ind == MIN_END) ?
+    const Point_2&  pt = (ind == ARR_MIN_END) ?
       m_traits->construct_min_vertex_2_object()(cv) :
       m_traits->construct_max_vertex_2_object()(cv);
     
@@ -743,7 +743,7 @@ template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
-    (const X_monotone_curve_2& cv, Curve_end ind,
+    (const X_monotone_curve_2& cv, Arr_curve_end ind,
      Attribute type,
      Boundary_type bound_x,
      Boundary_type bound_y,
@@ -772,7 +772,7 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
     {
       // The curve end is not unbounded, so it is associated with a valid
       // point.
-      const Point_2&  pt = (ind == MIN_END) ? 
+      const Point_2&  pt = (ind == ARR_MIN_END) ? 
         m_traits->construct_min_vertex_2_object()(cv) :
         m_traits->construct_max_vertex_2_object()(cv);
 

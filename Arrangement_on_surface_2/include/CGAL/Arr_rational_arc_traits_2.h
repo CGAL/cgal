@@ -101,8 +101,8 @@ public:
      * curves at y = +/- oo.
      * \param p A reference point; we refer to a vertical line incident to p.
      * \param cv The compared curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \pre cv's relevant end is defined at y = +/- oo.
      * \return SMALLER if p lies to the left of cv;
      *         LARGER if p lies to the right cv;
@@ -110,7 +110,7 @@ public:
      */
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv,
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
       return (cv.compare_end_depricated (p, ind));
     }
@@ -118,20 +118,20 @@ public:
     /*!
      * Compare the relative positions of two curves at y = +/- oo.
      * \param cv1 The first curve.
-     * \param ind1 MIN_END if we refer to cv1's minimal end,
-     *             MIN_END if we refer to its maximal end.
+     * \param ind1 ARR_MIN_END if we refer to cv1's minimal end,
+     *             ARR_MAX_END if we refer to its maximal end.
      * \param cv2 The second curve.
-     * \param ind2 MIN_END if we refer to cv2's minimal end,
-     *             MIN_END if we refer to its maximal end.
+     * \param ind2 ARR_MIN_END if we refer to cv2's minimal end,
+     *             ARR_MAX_END if we refer to its maximal end.
      * \pre The curves are defined at y = +/- oo.
      * \return SMALLER if cv1 lies to the left of cv2;
      *         LARGER if cv1 lies to the right cv2;
      *         EQUAL in case of an overlap.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Curve_end ind1,
+                                  Arr_curve_end ind1,
                                   const X_monotone_curve_2& cv2,
-                                  Curve_end ind2) const
+                                  Arr_curve_end ind2) const
     {
       return (cv1.compare_ends (ind1, cv2, ind2));
     }
@@ -173,16 +173,16 @@ public:
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
      *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
-      if (ind == MIN_END)
+      if (ind == ARR_MIN_END)
         return (cv.left_infinite_in_x_depricated());
       else
         return (cv.right_infinite_in_x_depricated());
@@ -201,16 +201,16 @@ public:
     /*!
      * Check if an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
      *         NO_BOUNDARY if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
      */
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
-      if (ind == MIN_END)
+      if (ind == ARR_MIN_END)
         return (cv.left_infinite_in_y_depricated());
       else
         return (cv.right_infinite_in_y_depricated());
@@ -306,8 +306,8 @@ public:
      * Compare the relative y-positions of two curves at x = +/- oo.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \param ind MIN_END if we compare at x = -oo;
-     *            MAX_END if we compare at x = +oo.
+     * \param ind ARR_MIN_END if we compare at x = -oo;
+     *            ARR_MAX_END if we compare at x = +oo.
      * \pre The curves are defined at x = +/- oo.
      * \return SMALLER if cv1 lies below cv2;
      *         LARGER if cv1 lies above cv2;
@@ -315,9 +315,9 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2, 
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
-      if (ind == MIN_END)
+      if (ind == ARR_MIN_END)
         return (cv1.compare_at_minus_infinity (cv2));
       else
         return (cv1.compare_at_plus_infinity (cv2));

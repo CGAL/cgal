@@ -519,7 +519,7 @@ public:
      * \return Whether v represents the given curve end.
      */
     bool are_equal (const Vertex *v,
-                    const X_monotone_curve_2& cv, Curve_end ind,
+                    const X_monotone_curve_2& cv, Arr_curve_end ind,
                     Boundary_type bound_x, Boundary_type bound_y) const;
 
     /*!
@@ -538,7 +538,7 @@ public:
      */
     CGAL::Object place_boundary_vertex (Face *f,
                                         const X_monotone_curve_2& cv,
-                                        Curve_end ind,
+                                        Arr_curve_end ind,
                                         Boundary_type bound_x,
                                         Boundary_type bound_y);
 
@@ -556,7 +556,7 @@ public:
       */
     Halfedge* locate_around_boundary_vertex (Vertex *v,
                                              const X_monotone_curve_2& cv,
-                                             Curve_end ind,
+                                             Arr_curve_end ind,
                                              Boundary_type bound_x,
                                              Boundary_type bound_y) const;
     
@@ -571,7 +571,7 @@ public:
      */
     void notify_on_boundary_vertex_creation (Vertex *v,
                                              const X_monotone_curve_2& cv,
-                                             Curve_end ind,
+                                             Arr_curve_end ind,
                                              Boundary_type bound_x,
                                              Boundary_type bound_y) const;
     
@@ -586,7 +586,7 @@ public:
      *         In our case this object wraps a end-vertex
      */
     CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
-                                   Curve_end ind,
+                                   Arr_curve_end ind,
                                    Boundary_type bound_x,
                                    Boundary_type bound_y) const;
     
@@ -820,13 +820,13 @@ public:
                 if (he == he->next()) {
                     std::cout << "He: " << he->curve() << std::endl;
                     std::cout << "dir2: " 
-                              << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                              << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                               << std::endl;
                 } else {
                     while (he != it->second->halfedge()) {
                         std::cout << "He: " << he->curve() << std::endl;
                         std::cout << "dir2: " 
-                                  << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                                  << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                                   << std::endl;
                         he = he->next();
                     }
@@ -843,13 +843,13 @@ public:
                 if (he == he->next()) {
                     std::cout << "He: " << he->curve() << std::endl;
                     std::cout << "dir2: " 
-                              << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                              << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                               << std::endl;
                 } else {
                     while (he != it->second->halfedge()) {
                         std::cout << "He: " << he->curve() << std::endl;
                         std::cout << "dir2: " 
-                                  << (he->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                                  << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                                   << std::endl;
                         he = he->next();
                     }

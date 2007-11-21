@@ -114,7 +114,7 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep ()
     Vertex_const_handle (m_top_traits->top_left_vertex());
 
   m_top_fict = v_tl->incident_halfedges();
-  if (m_top_fict->direction() == LEFT_TO_RIGHT)
+  if (m_top_fict->direction() == ARR_LEFT_TO_RIGHT)
     m_top_fict = m_top_fict->next()->twin();
   
   CGAL_assertion_code (

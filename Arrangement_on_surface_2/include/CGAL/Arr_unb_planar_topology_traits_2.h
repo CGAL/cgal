@@ -401,7 +401,7 @@ public:
    * \return Whether v represents the given curve end.
    */
   bool are_equal (const Vertex *v,
-                  const X_monotone_curve_2& cv, Curve_end ind,
+                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Boundary_type bound_x, Boundary_type bound_y) const;
 
   /*!
@@ -419,7 +419,7 @@ public:
    */
   CGAL::Object place_boundary_vertex (Face *f,
                                       const X_monotone_curve_2& cv,
-                                      Curve_end ind,
+                                      Arr_curve_end ind,
                                       Boundary_type bound_x,
                                       Boundary_type bound_y);
 
@@ -437,7 +437,7 @@ public:
    */
   Halfedge* locate_around_boundary_vertex (Vertex* /* v */,
                                            const X_monotone_curve_2& /* cv */,
-                                           Curve_end /* ind */,
+                                           Arr_curve_end /* ind */,
                                            Boundary_type /* bound_x */,
                                            Boundary_type /* bound_y */) const
   {
@@ -457,7 +457,7 @@ public:
    *         or an edge with an end-vertex at infinity (in case of an overlap).
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
-                                 Curve_end ind,
+                                 Arr_curve_end ind,
                                  Boundary_type bound_x,
                                  Boundary_type bound_y);
 
@@ -606,12 +606,12 @@ protected:
   /*!
    * Get the curve associated with a boundary vertex.
    * \param v The vertex as infinity.
-   * \param ind Output: MIN_END if the vertex is induced by the minimal end;
-   *                    MAX_END if it is induced by the curve's maximal end.
+   * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
+   *                    ARR_MAX_END if it is induced by the curve's maximal end.
    * \pre v is a valid (not fictitious) boundary.
    * \return The curve that induces v, or NULL if v has no incident curves yet.
    */
-  const X_monotone_curve_2* _curve (const Vertex *v, Curve_end& ind) const;
+  const X_monotone_curve_2* _curve (const Vertex *v, Arr_curve_end& ind) const;
 
   /*!
    * Check whether the given infinite curve end lies on the given fictitious
@@ -625,7 +625,7 @@ protected:
    * \param eq_target Output: Whether the curve coincides with he's target.
    * \return Whether the curve end lies on the fictitious halfedge.
    */
-  bool _is_on_fictitious_edge (const X_monotone_curve_2& cv, Curve_end ind,
+  bool _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
                                Boundary_type bound_x, Boundary_type bound_y,
                                const Halfedge *he,
                                bool& eq_source, bool& eq_target);

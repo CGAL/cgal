@@ -380,12 +380,12 @@ public:
    * \return Whether v represents the given curve end.
    */
   bool are_equal (const Vertex *v,
-                  const X_monotone_curve_2& cv, Curve_end ind,
+                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Boundary_type bound_x, Boundary_type bound_y) const
   {
     CGAL_assertion (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY);
 
-    if (ind == MIN_END)
+    if (ind == ARR_MIN_END)
     {
       // Compare v with the left endpoint of cv.
       return (this->traits->equal_2_object()
@@ -415,7 +415,7 @@ public:
    */
   CGAL::Object place_boundary_vertex (Face *,
                                       const X_monotone_curve_2&,
-                                      Curve_end,
+                                      Arr_curve_end,
                                       Boundary_type,
                                       Boundary_type)
   {
@@ -438,7 +438,7 @@ public:
    */
   Halfedge* locate_around_boundary_vertex (Vertex *,
                                            const X_monotone_curve_2&,
-                                           Curve_end,
+                                           Arr_curve_end,
                                            Boundary_type,
                                            Boundary_type ) const
   {
@@ -456,7 +456,7 @@ public:
    * \return An object that contains the curve end.
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2&,
-                                 Curve_end,
+                                 Arr_curve_end,
                                  Boundary_type,
                                  Boundary_type)
   {

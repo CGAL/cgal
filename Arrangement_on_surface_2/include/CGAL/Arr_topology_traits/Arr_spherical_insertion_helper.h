@@ -122,10 +122,10 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
 
-  const Curve_end   ind = (event->number_of_left_curves() == 0 &&
-                           event->number_of_right_curves() == 1) ? MIN_END :
-                                                                   MAX_END;
-  const X_monotone_curve_2& xc = (ind == MIN_END) ?
+  const Arr_curve_end   ind = (event->number_of_left_curves() == 0 &&
+                           event->number_of_right_curves() == 1) ? ARR_MIN_END :
+                                                                   ARR_MAX_END;
+  const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
 
@@ -142,14 +142,14 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
   // we have to update the current top face (the spherical face).
   if (bound_y == BEFORE_SINGULARITY)
   {
-    if (ind == MIN_END)
+    if (ind == ARR_MIN_END)
       this->m_spherical_face = xc.halfedge_handle()->twin()->face();
     else
       this->m_spherical_face = xc.halfedge_handle()->face();
   }
   else if (bound_x == AFTER_DISCONTINUITY)
   {
-    CGAL_assertion (ind == MIN_END);
+    CGAL_assertion (ind == ARR_MIN_END);
     this->m_spherical_face = xc.halfedge_handle()->twin()->face();
   }
 

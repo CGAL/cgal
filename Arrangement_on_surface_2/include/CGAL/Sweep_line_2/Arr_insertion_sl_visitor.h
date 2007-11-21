@@ -126,7 +126,7 @@ Arr_insertion_sl_visitor<Hlpr>::split_edge
   // Make sure that the halfedge associated with sc is the directed from
   // right to left, since we always "look" above , and the incident face 
   //is on the left of the  halfedge
-  CGAL_assertion (he->direction() == RIGHT_TO_LEFT);
+  CGAL_assertion (he->direction() == ARR_RIGHT_TO_LEFT);
     
   this->traits()->split_2_object() (he->curve(), pt, 
                                     sub_cv2, sub_cv1);

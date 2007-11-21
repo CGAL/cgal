@@ -271,7 +271,7 @@ public:
      *         ARR_INTERIOR if the y-coordinate is finite.
      *         ARR_TOP_BOUNDARY if the left point is at y = +oo;
      */
-    Boundary_type left_infinite_in_y () const
+    Arr_parameter_space left_infinite_in_y () const
     {
       if (is_horiz || is_degen)
         return ARR_INTERIOR;
@@ -439,7 +439,7 @@ public:
      *         ARR_INTERIOR if the y-coordinate is finite.
      *         ARR_TOP_BOUNDARY if the right point is at y = +oo;
      */
-    Boundary_type right_infinite_in_y () const
+    Arr_parameter_space right_infinite_in_y () const
     {
       if (is_horiz || is_degen)
         return ARR_INTERIOR;
@@ -704,8 +704,8 @@ public:
      * curves at y = +/- oo.
      * \param p A reference point; we refer to a vertical line incident to p.
      * \param cv The compared curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MIN_END if we refer to its maximal end.
      * \pre cv's relevant end is defined at y = +/- oo.
      * \return SMALLER if p lies to the left of cv;
      *         LARGER if p lies to the right cv;
@@ -713,7 +713,7 @@ public:
      */
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv,
-                                  Curve_end) const
+                                  Arr_curve_end) const
     {
       CGAL_precondition (! cv.is_degenerate());
       CGAL_precondition (cv.is_vertical());
@@ -725,20 +725,20 @@ public:
     /*!
      * Compare the relative positions of two curves at y = +/- oo.
      * \param cv1 The first curve.
-     * \param ind1 MIN_END if we refer to cv1's minimal end,
-     *             MIN_END if we refer to its maximal end.
+     * \param ind1 ARR_MIN_END if we refer to cv1's minimal end,
+     *             ARR_MIN_END if we refer to its maximal end.
      * \param cv2 The second curve.
-     * \param ind2 MIN_END if we refer to cv2's minimal end,
-     *             MIN_END if we refer to its maximal end.
+     * \param ind2 ARR_MIN_END if we refer to cv2's minimal end,
+     *             ARR_MIN_END if we refer to its maximal end.
      * \pre The curves are defined at y = +/- oo.
      * \return SMALLER if cv1 lies to the left of cv2;
      *         LARGER if cv1 lies to the right cv2;
      *         EQUAL in case of an overlap.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Curve_end /* ind1 */,
+                                  Arr_curve_end /* ind1 */,
                                   const X_monotone_curve_2& cv2,
-                                  Curve_end /* ind2 */) const
+                                  Arr_curve_end /* ind2 */) const
     {
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());
@@ -789,18 +789,18 @@ public:
     /*!
      * Check whether an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
      *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
       CGAL_precondition (! cv.is_degenerate());
 
-      if (ind == MIN_END)
+      if (ind == ARR_MIN_END)
         return (cv.left_infinite_in_x_depricated());
       else
         return (cv.right_infinite_in_x_depricated());
@@ -819,18 +819,18 @@ public:
     /*!
      * Check whether an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
+     * \param ind ARR_MIN_END if we refer to cv's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
      *         NO_BOUNDARY if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
      */
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
       CGAL_precondition (! cv.is_degenerate());
 
-      if (ind == MIN_END)
+      if (ind == ARR_MIN_END)
         return (cv.left_infinite_in_y_depricated());
       else
         return (cv.right_infinite_in_y_depricated());
@@ -957,8 +957,8 @@ public:
      * Compare the relative y-positions of two curves at x = +/- oo.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \param ind MIN_END if we compare at x = -oo;
-     *            MAX_END if we compare at x = +oo.
+     * \param ind ARR_MIN_END if we compare at x = -oo;
+     *            ARR_MAX_END if we compare at x = +oo.
      * \pre The curves are defined at x = +/- oo.
      * \return SMALLER if cv1 lies below cv2;
      *         LARGER if cv1 lies above cv2;
@@ -966,15 +966,15 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2, 
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
       // Make sure both curves are defined at x = -oo (or at x = +oo).
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());
-      CGAL_precondition ((ind == MIN_END &&
+      CGAL_precondition ((ind == ARR_MIN_END &&
                           cv1.left_infinite_in_x_depricated() == MINUS_INFINITY &&
                           cv2.left_infinite_in_x_depricated() == MINUS_INFINITY) ||
-                         (ind == MAX_END &&
+                         (ind == ARR_MAX_END &&
                           cv1.right_infinite_in_x_depricated() == PLUS_INFINITY &&
                           cv2.right_infinite_in_x_depricated() == PLUS_INFINITY));
 
@@ -995,7 +995,7 @@ public:
                                                   cv2.supp_line()));
       }
 
-      if (ind == MIN_END)
+      if (ind == ARR_MIN_END)
         // Flip the slope result if we compare at x = -oo:
         return ((res_slopes == LARGER) ? SMALLER : LARGER);
 

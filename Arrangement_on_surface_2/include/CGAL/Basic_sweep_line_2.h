@@ -425,11 +425,11 @@ protected:
   /*!
    * Initialize an event associated with an x-monotone curve end.
    * \param cv The given x-monotone curve.
-   * \param ind Its end (MIN_END or MAX_END).
+   * \param ind Its end (ARR_MIN_END or ARR_MAX_END).
    * \param sc The subcurve corresponding to cv.
    */
   void _init_curve_end (const X_monotone_curve_2& cv,
-                        Curve_end ind,
+                        Arr_curve_end ind,
                         Subcurve* sc);
   
   /*!
@@ -520,7 +520,7 @@ protected:
    *         was in the queue and we just updated it).
    */
   std::pair<Event*, bool> _push_event (const X_monotone_curve_2& cv,
-                                       Curve_end ind,
+                                       Arr_curve_end ind,
                                        Attribute type,
                                        Boundary_type bound_x,
                                        Boundary_type bound_y,
@@ -528,7 +528,7 @@ protected:
 
   void _update_event_at_infinity(Event* e,
                                  const X_monotone_curve_2& cv,
-                                 Curve_end ind,
+                                 Arr_curve_end ind,
                                  bool is_new)
   {
     _update_event_at_infinity(e, cv, ind, is_new, Has_boundary_category());
@@ -536,7 +536,7 @@ protected:
 
   void _update_event_at_infinity(Event* e,
                                  const X_monotone_curve_2& cv,
-                                 Curve_end ind,
+                                 Arr_curve_end ind,
                                  bool is_new,
                                  Tag_true )
   {
@@ -545,7 +545,7 @@ protected:
 
   void _update_event_at_infinity(Event* /* e */,
                                  const X_monotone_curve_2& /* cv */,
-                                 Curve_end /* ind */,
+                                 Arr_curve_end /* ind */,
                                  bool /* is_new */,
                                  Tag_false )
   {

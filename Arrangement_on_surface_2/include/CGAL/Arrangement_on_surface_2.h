@@ -728,7 +728,7 @@ public:
     const DHalfedge* opposite () const;
     DHalfedge* opposite ();
     void set_opposite (DHalfedge* );
-    void set_direction (Halfedge_direction );
+    void set_direction (Arr_halfedge_direction );
     void set_prev (DHalfedge* );
     void set_next (DHalfedge* );
     const DVertex* vertex () const ;
@@ -1569,7 +1569,7 @@ protected:
    */
   DHalfedge* _locate_around_vertex (DVertex *v,
                                     const X_monotone_curve_2& cv,
-                                    Curve_end ind) const;
+                                    Arr_curve_end ind) const;
 
   /*!
    * Compute the distance (in halfedges) between two halfedges.
@@ -1721,7 +1721,7 @@ protected:
    * \return A pointer to the newly created vertex.
    */
   DVertex* _create_boundary_vertex (const X_monotone_curve_2& cv,
-                                    Curve_end ind,
+                                    Arr_curve_end ind,
                                     Boundary_type bx,
                                     Boundary_type by);
 
@@ -1739,7 +1739,7 @@ protected:
    */
   DVertex* _place_and_set_curve_end (DFace *f,
                                      const X_monotone_curve_2& cv,
-                                     Curve_end ind,
+                                     Arr_curve_end ind,
                                      Boundary_type bx,
                                      Boundary_type by,
                                      DHalfedge **p_pred);
@@ -1853,7 +1853,7 @@ protected:
    * \return Whether v represents the left (or right) end of cv.
    */
   bool _are_equal (const DVertex *v,
-                   const X_monotone_curve_2& cv, Curve_end ind) const;
+                   const X_monotone_curve_2& cv, Arr_curve_end ind) const;
 
   /*!
    * Split a given edge into two at a given point, and associate the given
@@ -2069,7 +2069,7 @@ protected:
   }
 
   void _notify_before_create_boundary_vertex (const X_monotone_curve_2& cv,
-                                              Curve_end ind,
+                                              Arr_curve_end ind,
                                               Boundary_type bx,
                                               Boundary_type by)
   {

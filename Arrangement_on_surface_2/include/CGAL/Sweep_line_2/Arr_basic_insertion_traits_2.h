@@ -116,7 +116,7 @@ public:
       m_overlap(false)
     {
       CGAL_precondition (he == Halfedge_handle() ||
-                         he->direction() == RIGHT_TO_LEFT);
+                         he->direction() == ARR_RIGHT_TO_LEFT);
     }
 
     const Base& base() const
@@ -149,7 +149,7 @@ public:
     void set_halfedge_handle(Halfedge_handle he)
     {
       CGAL_precondition (he == Halfedge_handle() ||
-                         he->direction() == RIGHT_TO_LEFT);
+                         he->direction() == ARR_RIGHT_TO_LEFT);
       m_he_handle = he;
     }
 
@@ -257,7 +257,7 @@ public:
     {}
 
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
       return _boundary_in_x_imp (cv, ind, Base_has_boundary_category());
     }
@@ -265,13 +265,13 @@ public:
   private:
 
     Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& cv,
-                                      Curve_end ind,
+                                      Arr_curve_end ind,
                                       Tag_true) const
     {
       return (m_base->boundary_in_x_2_object() (cv.base(), ind));
     }
 
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Arr_curve_end ,
                                       Tag_false) const
     {
       return (NO_BOUNDARY);
@@ -299,7 +299,7 @@ public:
     {}
 
     Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Curve_end ind) const
+                              Arr_curve_end ind) const
     {
       return _boundary_in_y_imp (cv, ind, Base_has_boundary_category());
     }
@@ -307,13 +307,13 @@ public:
   private:
 
     Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& cv,
-                                      Curve_end ind,
+                                      Arr_curve_end ind,
                                       Tag_true) const
     {
       return (m_base->boundary_in_y_2_object() (cv.base(), ind));
     }
 
-    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Arr_curve_end ,
                                       Tag_false) const
     {
       return (NO_BOUNDARY);
@@ -483,7 +483,7 @@ public:
 
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2, 
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support unbounded curves, we just
@@ -496,7 +496,7 @@ public:
 
     Comparison_result _comp_y_at_boundary_imp (const X_monotone_curve_2& cv1,
                                                const X_monotone_curve_2& cv2, 
-                                               Curve_end ind,
+                                               Arr_curve_end ind,
                                                Tag_true) const
     {
       return (m_base_cmp_y_at_x (cv1.base(), cv2.base(), ind));
@@ -504,7 +504,7 @@ public:
 
     Comparison_result _comp_y_at_boundary_imp (const X_monotone_curve_2& ,
                                                const X_monotone_curve_2& , 
-                                               Curve_end ,
+                                               Arr_curve_end ,
                                                Tag_false) const
     {
       return (EQUAL);
@@ -598,16 +598,16 @@ public:
 
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv,
-                                  Curve_end ind) const
+                                  Arr_curve_end ind) const
     {
       return (_compare_point_curve_imp (p, cv, ind,
                                         Base_has_boundary_category()));
     }
 
     Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Curve_end ind1,
+                                  Arr_curve_end ind1,
                                   const X_monotone_curve_2& cv2,
-                                  Curve_end ind2) const
+                                  Arr_curve_end ind2) const
     {
       return (_compare_curves_imp (cv1, ind1, cv2, ind2,
                                    Base_has_boundary_category()));
@@ -617,7 +617,7 @@ public:
 
     Comparison_result _compare_point_curve_imp (const Point_2& p,
                                                 const X_monotone_curve_2& cv,
-                                                Curve_end ind,
+                                                Arr_curve_end ind,
                                                 Tag_true) const
     {
       return (m_base_cmp_x (p.base(), cv.base(), ind));
@@ -625,25 +625,25 @@ public:
 
     Comparison_result _compare_point_curve_imp (const Point_2& ,
                                                 const X_monotone_curve_2& ,
-                                                Curve_end ,
+                                                Arr_curve_end ,
                                                 Tag_false) const
     {
       return (EQUAL);
     }
 
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& cv1, 
-                                           Curve_end ind1,
+                                           Arr_curve_end ind1,
                                            const X_monotone_curve_2& cv2,
-                                           Curve_end ind2,
+                                           Arr_curve_end ind2,
                                            Tag_true ) const
     {
       return (m_base_cmp_x (cv1.base(), ind1, cv2.base(), ind2));
     }
 
     Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
-                                           Curve_end ,
+                                           Arr_curve_end ,
                                            const X_monotone_curve_2& , 
-                                           Curve_end ,
+                                           Arr_curve_end ,
                                            Tag_false ) const
     {
       return (EQUAL);

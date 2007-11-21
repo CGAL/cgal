@@ -108,11 +108,11 @@ public:
         event->boundary_in_x() != AFTER_DISCONTINUITY)
       return;
 
-    Curve_end ind = (event->number_of_left_curves() == 0 &&
+    Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
                      event->number_of_right_curves() != 0) ?
-      MIN_END : MAX_END;
+      ARR_MIN_END : ARR_MAX_END;
 
-    const Subcurve  *sc = (ind == MIN_END) ?
+    const Subcurve  *sc = (ind == ARR_MIN_END) ?
       (*(event->right_curves_begin())) :
       (*(event->left_curves_begin()));
 
@@ -121,21 +121,21 @@ public:
       // The curve is incident to the north pole.
       switch (sc->color()) {
        case Traits_2::RED :
-        if (ind == MIN_END)
+        if (ind == ARR_MIN_END)
           m_red_nf = sc->red_halfedge_handle()->twin()->face();
         else
           m_red_nf = sc->red_halfedge_handle()->face();
         break;
           
        case Traits_2::BLUE :
-        if (ind == MIN_END)
+        if (ind == ARR_MIN_END)
           m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
         else
           m_blue_nf = sc->blue_halfedge_handle()->face();
         break;
 
        case Traits_2::RB_OVERLAP :
-        if (ind == MIN_END)
+        if (ind == ARR_MIN_END)
         {
           m_red_nf = sc->red_halfedge_handle()->twin()->face();
           m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
@@ -151,7 +151,7 @@ public:
     else
     {
       // The curve extends to the right from the curve of discontinuity.
-      CGAL_assertion (ind == MIN_END);
+      CGAL_assertion (ind == ARR_MIN_END);
       switch (sc->color()) {
        case Traits_2::RED :
         m_red_nf = sc->red_halfedge_handle()->twin()->face();

@@ -141,10 +141,10 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
                    ((event->number_of_left_curves() == 1) &&
                     (event->number_of_right_curves() == 0)));
     
-    const Curve_end ind = ((event->number_of_left_curves() == 0 &&
+    const Arr_curve_end ind = ((event->number_of_left_curves() == 0 &&
                             event->number_of_right_curves() == 1) ? 
-                           MIN_END :  MAX_END);
-    const X_monotone_curve_2& xc = (ind == MIN_END) ?
+                           ARR_MIN_END :  ARR_MAX_END);
+    const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
     
@@ -163,18 +163,18 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     // top face, we have to update the current top face
     if (bound_x == AFTER_DISCONTINUITY) {
         // left side
-        CGAL_assertion (ind == MIN_END);
+        CGAL_assertion (ind == ARR_MIN_END);
         this->m_top_face = he->twin()->face();
     } else if (bound_y == BEFORE_DISCONTINUITY) {
         // top side
 
-        if (ind == CGAL::MIN_END) {
+        if (ind == CGAL::ARR_MIN_END) {
             this->m_top_face = 
-                (he->direction() == CGAL::RIGHT_TO_LEFT ? 
+                (he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
                  he->twin() : he)->face();
         } else {
             this->m_top_face = 
-                (he->direction() == CGAL::LEFT_TO_RIGHT ? 
+                (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  he->twin() : he)->face();
         }
     }

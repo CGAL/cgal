@@ -404,8 +404,8 @@ _vertical_ray_shoot (const Point_2& p,
   {
     // If we have a fictitious edge, the ray we shoot is completely contained
     // in an unbounded face. This face is incident to closest_he:
-    if ((shoot_up && closest_he->direction() == LEFT_TO_RIGHT) ||
-        (!shoot_up && closest_he->direction() == RIGHT_TO_LEFT))
+    if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
+        (!shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT))
       closest_he = closest_he->twin();
 
     Face_const_handle  uf = closest_he->face();
@@ -436,7 +436,7 @@ _vertical_ray_shoot (const Point_2& p,
   {
     // The entire vertical segment is above (below) the query point: Return the
     // endpoint closest to it.
-    const bool    is_directed_up = (closest_he->direction() == LEFT_TO_RIGHT);
+    const bool    is_directed_up = (closest_he->direction() == ARR_LEFT_TO_RIGHT);
 
     if ((shoot_up && is_directed_up) ||
         (! shoot_up && ! is_directed_up))
@@ -580,8 +580,8 @@ _is_in_connected_component (const Point_2& p,
           {
             closest_he = first;
             closest_to_target =
-              ((shoot_up && first->direction() == RIGHT_TO_LEFT) ||
-               (! shoot_up && first->direction() == LEFT_TO_RIGHT));
+              ((shoot_up && first->direction() == ARR_RIGHT_TO_LEFT) ||
+               (! shoot_up && first->direction() == ARR_LEFT_TO_RIGHT));
           }
         }
       }
@@ -695,7 +695,7 @@ _is_in_connected_component (const Point_2& p,
                (closest_he->source() == curr->target() &&
                 closest_he->direction() != curr->direction())))
           {
-            if (closest_he->direction() == LEFT_TO_RIGHT)
+            if (closest_he->direction() == ARR_LEFT_TO_RIGHT)
             {
               // Both curves extend to the right from a common point.
               y_res = compare_y_at_x_right (closest_he->curve(),
@@ -716,7 +716,7 @@ _is_in_connected_component (const Point_2& p,
                     (closest_he->target() == curr->target() &&
                      closest_he->direction() == curr->direction())))
           {
-            if (closest_he->direction() == LEFT_TO_RIGHT)
+            if (closest_he->direction() == ARR_LEFT_TO_RIGHT)
             {
               // Both curves extend to the left from a common point.
               y_res = compare_y_at_x_left (closest_he->curve(),
@@ -829,8 +829,8 @@ _is_in_connected_component (const Point_2& p,
         closest_he = curr;
         closest_in_ccb = true;
         closest_to_target = 
-              ((shoot_up && curr->direction() == RIGHT_TO_LEFT) ||
-               (! shoot_up && curr->direction() == LEFT_TO_RIGHT));
+              ((shoot_up && curr->direction() == ARR_RIGHT_TO_LEFT) ||
+               (! shoot_up && curr->direction() == ARR_LEFT_TO_RIGHT));
       }
     }
 
@@ -875,7 +875,7 @@ _first_around_vertex (Vertex_const_handle v,
   {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
-    if (curr->direction() == LEFT_TO_RIGHT)
+    if (curr->direction() == ARR_LEFT_TO_RIGHT)
     {
       // The curve associated with the current halfedge is defined to the left
       // of v.
