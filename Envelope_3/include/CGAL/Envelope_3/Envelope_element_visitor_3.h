@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 
 // Return the comparison result of the halfedge's source and target vertices.
 #ifndef HE_COMP_RES
-#define HE_COMP_RES(he) (((he)->direction() == LEFT_TO_RIGHT) ? SMALLER : LARGER)
+#define HE_COMP_RES(he) (((he)->direction() == ARR_LEFT_TO_RIGHT) ? SMALLER : LARGER)
 #endif
 
 // this class does the resolving of edge and face in the divide & conquer algorithm
@@ -547,16 +547,16 @@ public:
             // we will add the *icv end points to the split_points, unless
             // but we should be carefull with infinite curves.
             Arr_traits_adaptor_2<Traits> tr_adaptor(*m_traits);
-            if(tr_adaptor.boundary_in_y_2_object()(*icv, MIN_END) == NO_BOUNDARY &&
-                tr_adaptor.boundary_in_x_2_object()(*icv, MIN_END) == NO_BOUNDARY)
+            if(tr_adaptor.boundary_in_y_2_object()(*icv, ARR_MIN_END) == NO_BOUNDARY &&
+                tr_adaptor.boundary_in_x_2_object()(*icv, ARR_MIN_END) == NO_BOUNDARY)
                 split_points.push_back(Point_2_with_info
                                        (m_traits->construct_min_vertex_2_object()(*icv),
                                         true, false));
             else
               is_min_end_at_inf = true;
 
-            if(tr_adaptor.boundary_in_y_2_object()(*icv, MAX_END) == NO_BOUNDARY &&
-                tr_adaptor.boundary_in_x_2_object()(*icv, MAX_END) == NO_BOUNDARY)
+            if(tr_adaptor.boundary_in_y_2_object()(*icv, ARR_MAX_END) == NO_BOUNDARY &&
+                tr_adaptor.boundary_in_x_2_object()(*icv, ARR_MAX_END) == NO_BOUNDARY)
                 split_points.push_back(Point_2_with_info
                                        (m_traits->construct_max_vertex_2_object()(*icv),
                                         false, true));
@@ -2036,7 +2036,7 @@ protected:
     }
 
     void before_create_boundary_vertex (const X_monotone_curve_2& cv,
-                                        Curve_end ind,
+                                        Arr_curve_end ind,
                                         Boundary_type /* bx */,
                                         Boundary_type /* by */)
     {
@@ -2393,7 +2393,7 @@ protected:
     
     // state for actions
     X_monotone_curve_2  boundary_vertex_cv;
-    Curve_end           boundary_vertex_ind;
+    Arr_curve_end           boundary_vertex_ind;
     Vertex_handle create_edge_v1;
     Vertex_handle create_edge_v2;
     Vertex_handle split_v, split_fict_v;
