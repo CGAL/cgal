@@ -1236,6 +1236,12 @@ public:
         (const Point_2 & p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
       CGAL_precondition(!p2.is_no_boundary());
 
+      if (xcv1.is_vertical())
+        CGAL_precondition(!xcv1.is_on_boundary());
+
+      if (xcv2.is_vertical())
+        CGAL_precondition(!xcv2.is_on_boundary());
+
       if (xcv1.is_vertical() && xcv2.is_vertical()) {
         if (xcv1.is_on_boundary() && xcv2.is_on_boundary()) return EQUAL;
         if (xcv1.is_on_boundary()) return SMALLER;
