@@ -52,7 +52,7 @@ struct Dummy_straight_skeleton_builder_2_visitor
                                
   void on_initialization_started( std::size_t /* size_of_vertices */ ) const {}
   
-  void on_contour_vertex_processed( Vertex_const_handle const& , bool /* is_reflex */, bool /*is_degenerate*/ )  const  {}
+  void on_initial_events_collected( Vertex_const_handle const& , bool /* is_reflex */, bool /*is_degenerate*/ )  const  {}
   
   void on_edge_event_created( Vertex_const_handle const& /* lnode */
 			    , Vertex_const_handle const& /* rnode */

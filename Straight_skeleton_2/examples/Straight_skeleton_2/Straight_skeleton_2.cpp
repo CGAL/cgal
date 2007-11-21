@@ -14,6 +14,8 @@
 #include<CGAL/Polygon_offset_builder_2.h>
 #include<CGAL/compute_outer_frame_margin.h>
 
+#include "print.h"
+
 //
 // This example illustrates how to use the CGAL Straight Skeleton package
 // to construct an offset contour on the outside of a polygon
@@ -102,6 +104,8 @@ int main()
     // Proceed only if the skeleton was correctly constructed.
     if ( ss )
     {
+      print_straight_skeleton(*ss);
+      
       // Instantiate the container of offset contours
       ContourSequence offset_contours ;
 
@@ -128,34 +132,8 @@ int main()
 
       // Remove the offset contour that corresponds to the frame.
       offset_contours.erase(f);
-
-
-      // Print out the skeleton
-      Halfedge_handle null_halfedge ;
-      Vertex_handle   null_vertex ;
-
-      // Dump the edges of the skeleton
-      for ( Halfedge_iterator i = ss->halfedges_begin(); i != ss->halfedges_end(); ++i )
-      {
-        std::string edge_type = (i->is_bisector())? "bisector" : "contour";
-        Vertex_handle s = i->opposite()->vertex();
-        Vertex_handle t = i->vertex();
-        std::cout << "(" << s->point() << ")->(" << t->point() << ") " << edge_type << std::endl;
-      }
-
-      // Dump the generated offset polygons
-
-      std::cout << offset_contours.size() << " offset contours obtained\n" ;
-
-      for (ContourSequence::const_iterator i = offset_contours.begin(); i != offset_contours.end(); ++ i )
-      {
-        // Each element in the offset_contours sequence is a shared pointer to a Polygon_2 instance.
-
-        std::cout << (*i)->size() << " vertices in offset contour\n" ;
-
-        for (Contour::Vertex_const_iterator j = (*i)->vertices_begin(); j != (*i)->vertices_end(); ++ j )
-           std::cout << "(" << j->x() << "," << j->y() << ")" << std::endl ;
-      }
+      
+      print_polygons(offset_contours);
     }
   }
 

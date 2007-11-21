@@ -440,7 +440,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateInitialEvents()
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
     UpdatePQ(v);
-    mVisitor.on_contour_vertex_processed(v,IsReflex(v),IsDegenerate(v)) ;
+    mVisitor.on_initial_events_collected(v,IsReflex(v),IsDegenerate(v)) ;
   }
 }
 
