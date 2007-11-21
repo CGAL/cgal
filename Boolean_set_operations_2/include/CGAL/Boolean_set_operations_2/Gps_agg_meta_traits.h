@@ -308,7 +308,7 @@ class Gps_agg_meta_traits :
       if(cv.data().halfedge() == Halfedge_handle())
         return (Point_2 (m_base(cv.base())));
 
-      CGAL_assertion((Halfedge_direction)cv.data().halfedge()->direction() == LEFT_TO_RIGHT);
+      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() == ARR_LEFT_TO_RIGHT);
       return Point_2 (m_base(cv.base()), cv.data().halfedge()->source());
     }
   };
@@ -341,7 +341,7 @@ class Gps_agg_meta_traits :
       if(cv.data().halfedge() == Halfedge_handle())
         return (Point_2 (m_base(cv.base())));
 
-      CGAL_assertion((Halfedge_direction)cv.data().halfedge()->direction() == LEFT_TO_RIGHT);
+      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() == ARR_LEFT_TO_RIGHT);
       return Point_2 (m_base(cv.base()), cv.data().halfedge()->target());
     }
   };

@@ -15,7 +15,8 @@ include $(CGAL_MAKEFILE)
 
 BSO_CXXFLAGS =
 CXXFLAGS = \
-           -I ../../../../branches/experimental-packages/Arrangement_on_surface_2/include \
+           -I ../../../Arrangement_on_surface_2/include \
+           -I ../../../Installation/include \
 	   -I ../../../Minkowski_sum_2/include \
            -I../../include \
            $(BSO_CXXFLAGS) \

@@ -132,7 +132,7 @@ public:
         Halfedge_iterator he = itr;
         if(he->face()->contained() == he->twin()->face()->contained())
           continue;
-        if ((Halfedge_direction)he->direction() == RIGHT_TO_LEFT)
+        if ((Arr_halfedge_direction)he->direction() == ARR_RIGHT_TO_LEFT)
           he = he->twin();
 
         Curve_data cv_data(arr, he, 1, 0);

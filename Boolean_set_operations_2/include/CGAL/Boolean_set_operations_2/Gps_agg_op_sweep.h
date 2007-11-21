@@ -227,7 +227,7 @@ public:
       CGAL_assertion (vert_map.is_defined (he->source()));
       CGAL_assertion (vert_map.is_defined (he->target()));
 
-      if ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT)
+      if ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT)
       {
         e_left = vert_map[he->source()];
         e_right = vert_map[he->target()];
@@ -275,7 +275,7 @@ private:
       // containment flags (otherwise we will simply not keep it).
       if (circ->face()->contained() != circ->twin()->face()->contained())
       {
-        if ((Halfedge_direction)circ->direction() == LEFT_TO_RIGHT)
+        if ((Arr_halfedge_direction)circ->direction() == ARR_LEFT_TO_RIGHT)
           return (Base_event::RIGHT_END);
         else
           return (Base_event::LEFT_END);

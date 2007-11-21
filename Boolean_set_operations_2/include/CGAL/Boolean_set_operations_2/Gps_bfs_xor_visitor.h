@@ -79,7 +79,7 @@ public:
       Halfedge_iterator         he = eit;
       const X_monotone_curve_2& cv = he->curve();
       const bool                is_cont = he->face()->contained();
-      const Comparison_result   he_res = ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT) ?
+      const Comparison_result   he_res = ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ?
                                          SMALLER : LARGER;
       const bool has_same_dir = (cmp_endpoints(cv) == he_res);
       

@@ -116,7 +116,7 @@ private:
   void insert_edge_to_hash(Halfedge_handle he, const X_monotone_curve_2& cv)
   {
     const Comparison_result he_dir = 
-      ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT) ? SMALLER : LARGER;
+      ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ? SMALLER : LARGER;
 
     const Comparison_result cv_dir =
       this->m_arr_access.arrangement().traits()->
@@ -219,7 +219,7 @@ public:
     Event *curr_event = reinterpret_cast<Event*>(this->current_event());
     Event *last_event = reinterpret_cast<Event*>((sc)->last_event());
 
-    CGAL_assertion ((Halfedge_direction)res_he->direction() == LEFT_TO_RIGHT);
+    CGAL_assertion ((Arr_halfedge_direction)res_he->direction() == ARR_LEFT_TO_RIGHT);
     _insert_vertex (curr_event, res_he->target());
     _insert_vertex (last_event, res_he->source());
 
@@ -236,7 +236,7 @@ public:
     // We now have a halfedge whose target vertex is associated with the
     // last event (we have already dealt with its source vertex).
     Event *last_event = reinterpret_cast<Event*>((sc)->last_event());
-    CGAL_assertion ((Halfedge_direction)res_he->direction() == RIGHT_TO_LEFT);
+    CGAL_assertion ((Arr_halfedge_direction)res_he->direction() == ARR_RIGHT_TO_LEFT);
     _insert_vertex (last_event, res_he->target());
 
     return (res_he);
@@ -253,7 +253,7 @@ public:
     // current event (we have already dealt with its source vertex).
     Event *curr_event = reinterpret_cast<Event*>(this->current_event());
 
-    CGAL_assertion ((Halfedge_direction)res_he->direction() == LEFT_TO_RIGHT);
+    CGAL_assertion ((Arr_halfedge_direction)res_he->direction() == ARR_LEFT_TO_RIGHT);
     _insert_vertex (curr_event, res_he->target());
 
     return (res_he);
