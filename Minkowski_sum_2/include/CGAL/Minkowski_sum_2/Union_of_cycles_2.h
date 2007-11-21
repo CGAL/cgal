@@ -180,7 +180,7 @@ private:
    */
   int _boundary_count (Halfedge_handle he) const
   {
-    if ((Halfedge_direction)he->direction() == LEFT_TO_RIGHT)
+    if ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT)
     {
       // Halfedge is directed from left to right:
       return (he->curve().label().right_count() - 
