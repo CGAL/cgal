@@ -58,14 +58,18 @@ _standard_error_handler(
         int         line,
         const char* msg )
 {
+#ifdef __GNUG__
+    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+    if (_error_behaviour == THROW_EXCEPTION)
+        return;
+#endif
     std::cerr << "CGAL error: " << what << " violation!" << std::endl
-         << "Expr: " << expr << std::endl
-         << "File: " << file << std::endl
-         << "Line: " << line << std::endl;
-    if ( msg != 0)
-        std::cerr << "Explanation:" << msg << std::endl;
-    std::cerr << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
-	      << std::endl;
+         << "Expression : " << expr << std::endl
+         << "File       : " << file << std::endl
+         << "Line       : " << line << std::endl
+         << "Explanation: " << msg << std::endl
+         << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
+	 << std::endl;
 }
 
 
@@ -78,12 +82,18 @@ _standard_warning_handler( const char *,
                           int         line,
                           const char* msg )
 {
+#ifdef __GNUG__
+    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+    if (_warning_behaviour == THROW_EXCEPTION)
+        return;
+#endif
     std::cerr << "CGAL warning: check violation!" << std::endl
-         << "Expr: " << expr << std::endl
-         << "File: " << file << std::endl
-         << "Line: " << line << std::endl;
-    if ( msg != 0)
-        std::cerr << "Explanation:" << msg << std::endl;
+         << "Expression : " << expr << std::endl
+         << "File       : " << file << std::endl
+         << "Line       : " << line << std::endl
+         << "Explanation: " << msg << std::endl
+         << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
+	 << std::endl;
 }
 
 // default handler settings
