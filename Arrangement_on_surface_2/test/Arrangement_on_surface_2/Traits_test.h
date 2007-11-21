@@ -835,9 +835,9 @@ template <class T_Traits>
 std::pair<Enum_type , unsigned int>
 Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
 {
-  if (str_value == "ARR_MIN_END" ) {
+  if (str_value == "MIN_END" ) {
     return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::ARR_MIN_END);
-  } else if (str_value == "ARR_MAX_END" ) {
+  } else if (str_value == "MAX_END" ) {
     return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::ARR_MAX_END);
   } else if (str_value == "SMALLER" ) {
     return std::pair<enum Enum_type,unsigned int>(SIGN,
