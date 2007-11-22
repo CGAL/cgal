@@ -1,0 +1,66 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::RefineY_2}
+
+\ccDefinition
+Refines the first coordinate of a given \ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef void result_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_2  argument_type;}{}
+
+\ccOperations
+\ccCreationVariable{fo}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{
+result_type operator()(const argument_type &a);}{ 
+  This operator at least half's the current interval of the first coordinate of $a$. \\
+  Note that an interval may also be degenerated to a single point.
+} 
+
+\ccMethod{
+result_type operator()(const argument_type & a, int rel_prec);}{ 
+  This operator refines the current interval of the first coordinate of $a$ with respect to the given relative precision. \\
+  That is: $|lower - upper| / |x| \leq 2^{-rel\_prec}$\\
+  In case $x$ equals zero the interval degenerates to the zero interval. 
+} 
+  
+\end{ccRefFunctionObjectConcept}
+
+
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::RefineX_2}
+
+\ccDefinition
+Refines the second coordinate of a given \ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef void result_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_2  argument_type;}{}
+
+\ccOperations
+\ccCreationVariable{fo}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{
+result_type operator()(const argument_type &a);}{ 
+  This operator at least half's the current interval of the second coordinate of $a$. \\
+  Note that an interval may also be degenerated to a single point.
+} 
+
+\ccMethod{
+result_type operator()(const argument_type & a, int rel_prec);}{ 
+  This operator refines the current interval of the second coordinate of $a$ with respect to the given relative precision. \\
+  That is: $|lower - upper| / |x| \leq 2^{-rel\_prec}$\\
+  In case $x$ equals zero the interval degenerates to the zero interval. 
+} 
+  
+\end{ccRefFunctionObjectConcept}
