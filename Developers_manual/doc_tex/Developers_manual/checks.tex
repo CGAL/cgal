@@ -259,10 +259,13 @@ package you can find a sentence similar to the following.
 \section{Exception handling\label{sec:exception_handling}}
 \ccIndexMainItem{exception handling}
 
-Some parts of the library, \eg,~the interval arithmetic package, use
-exceptions, but there is no general policy concerning exception
-handling in \cgal.  It is nevertheless good to target exception
-safety, as much as possible.
+Some parts of the library use exceptions, but there is no general specific
+policy concerning exception handling in \cgal.  It is nevertheless good to
+target exception safety, as much as possible.  Good references on exception
+safety are: Appendix E of~\cite{cgal:s-cpl-97} (also available at
+\path|http://www.research.att.com/~bs/3rd_safe0.html|),
+and~\cite{cgal:a-esgc-98} (also available at
+\path|http://www.boost.org/more/generic_exception_safety.html|).
 
 \InternalOnly{
 
