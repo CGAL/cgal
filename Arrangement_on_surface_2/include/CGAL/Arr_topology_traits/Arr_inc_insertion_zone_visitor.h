@@ -151,10 +151,6 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
      Vertex_handle left_v, Halfedge_handle left_he,
      Vertex_handle right_v, Halfedge_handle right_he)
 {
-  std::cout << std::endl;
-  std::cout << "Arr_inc_insertion_zone_visitor" << std::endl;
-  std::cout << "cv: " << cv << std::endl;
-  
   // Create an arrangement accessor.
   Arr_accessor<Arrangement_2>    arr_access (*p_arr);
   
