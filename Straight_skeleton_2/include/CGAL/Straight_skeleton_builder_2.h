@@ -692,8 +692,8 @@ private:
 
 private :  
 
-  template<class InputPointIterator>
-  void enter_valid_contour ( InputPointIterator aBegin, InputPointIterator aEnd )
+  template<class InputPointIterator, class Converter>
+  void enter_valid_contour ( InputPointIterator aBegin, InputPointIterator aEnd, Converter const& cvt )
   {
     CGAL_STSKEL_BUILDER_TRACE(0,"Inserting Connected Component of the Boundary....");
 
@@ -716,7 +716,7 @@ private :
 
       mContourHalfedges.push_back(lCCWBorder);
 
-      Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
+      Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,cvt(*lCurr)) ) ;
       CGAL_STSKEL_BUILDER_TRACE(1,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
       InitVertexData(lVertex);
 
@@ -796,22 +796,29 @@ public:
   // This compares INPUT vertices so there is no need to filter it.
   struct AreVerticesEqual
   {
-    bool operator() ( Point_2 const&x, Point_2 const& y ) const
+    template<class P>
+    bool operator() ( P const&x, P const& y ) const
     {
       return CGAL::compare_xy(x,y) == EQUAL ;
     }
   } ; 
   
-  template<class InputPointIterator>
-  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd, bool aCheckValidity = true )
+  template<class InputPointIterator, class Converter>
+  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
+                                             , InputPointIterator aEnd
+                                             , Converter const&   cvt        
+                                             , bool               aCheckValidity = true 
+                                             )
   {
     if ( aCheckValidity )
     {
-      typedef std::vector<Point_2> Point_vector ;
-      typedef typename Point_vector::iterator Point_iterator ;
+      typedef typename std::iterator_traits<InputPointIterator>::value_type Input_point;
+      
+      typedef std::vector<Input_point> Input_point_vector ;
+      typedef typename Input_point_vector::iterator Input_point_iterator ;
      
       // Remove coincident consecutive vertices
-      Point_vector lList;
+      Input_point_vector lList;
       std::unique_copy(aBegin,aEnd,std::back_inserter(lList),AreVerticesEqual());
 
       while ( lList.size() > 0 && CGAL::compare_xy(lList.front(),lList.back()) == EQUAL ) 
@@ -819,7 +826,7 @@ public:
       
       if ( lList.size() >= 3 )
       {
-        enter_valid_contour(lList.begin(),lList.end());
+        enter_valid_contour(lList.begin(),lList.end(),cvt);
       }
       else
       {
@@ -828,11 +835,20 @@ public:
     }
     else
     {
-      enter_valid_contour(aBegin,aEnd);
+      enter_valid_contour(aBegin,aEnd,cvt);
     } 
 
     return *this ;
   }
+  
+  template<class InputPointIterator>
+  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
+                                             , InputPointIterator aEnd
+                                             , bool               aCheckValidity = true 
+                                             )
+  {
+    return enter_contour(aBegin, aEnd, Cartesian_converter<K,K>(), aCheckValidity);
+  }                                             
 
 } ;
 

@@ -24,29 +24,36 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Kernel, class Container>
-boost::shared_ptr< Straight_skeleton_2<Kernel> >
-create_interior_straight_skeleton_2 ( Polygon_with_holes_2<Kernel, Container> const&  aPolyWithHoles )
+template<class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+inline
+create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K> const& aPolyWithHoles )
 {
-  return create_interior_straight_skeleton_2<Kernel>(aPolyWithHoles.outer_boundary()
-                                                    ,aPolyWithHoles.holes_begin   ()
-                                                    ,aPolyWithHoles.holes_end     ()
-                                                    );
+  return create_interior_straight_skeleton_2(aPolyWithHoles.outer_boundary().vertices_begin()
+                                            ,aPolyWithHoles.outer_boundary().vertices_end  ()
+                                            ,aPolyWithHoles.holes_begin   ()
+                                            ,aPolyWithHoles.holes_end     ()
+                                            ,K()
+                                            );
 }
 
-template<class Kernel, class Container>
-boost::shared_ptr< Straight_skeleton_2<Kernel> >
-create_exterior_straight_skeleton_2 ( typename Kernel::FT                             aMaxOffset
-                                    , Polygon_with_holes_2<Kernel, Container> const&  aPolyWithHoles 
-                                    , bool                                            aDontReverseOrientation = false
+
+template<class FT, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+inline
+create_exterior_straight_skeleton_2 ( FT                             aMaxOffset
+                                    , Polygon_with_holes_2<K> const& aPolyWithHoles 
+                                    , bool                           aDontReverseOrientation = false
                                     )
 {
-  return create_exterior_straight_skeleton_2<Kernel>(aMaxOffset
-                                                    ,aPolyWithHoles.outer_boundary()
-                                                    ,aPolyWithHoles.holes_begin   ()
-                                                    ,aPolyWithHoles.holes_end     ()
-                                                    ,aDontReverseOrientation
-                                                    );
+  return create_exterior_straight_skeleton_2(aMaxOffset
+                                            ,aPolyWithHoles.outer_boundary().vertices_begin()
+                                            ,aPolyWithHoles.outer_boundary().vertices_end  ()
+                                            ,aPolyWithHoles.holes_begin   ()
+                                            ,aPolyWithHoles.holes_end     ()
+                                            ,K()
+                                            ,aDontReverseOrientation
+                                            );
 }
 
 CGAL_END_NAMESPACE

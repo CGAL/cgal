@@ -6,14 +6,15 @@
 
 #include<boost/shared_ptr.hpp>
 
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include<CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include<CGAL/Polygon_2.h>
 #include<CGAL/Create_offset_polygons_2.h>
 
 #include "print.h"
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
+typedef CGAL::Exact_predicates_exact_constructions_kernel K ;
 
+typedef K::FT                        FT ;
 typedef K::Point_2                   Point ;
 typedef CGAL::Polygon_2<K>           Polygon ;
 typedef CGAL::Straight_skeleton_2<K> Ss ;
@@ -22,6 +23,7 @@ typedef boost::shared_ptr<Polygon> PolygonPtr ;
 typedef boost::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
+
 
 int main()
 {
@@ -36,7 +38,10 @@ int main()
   poly.push_back( Point(-1,1) ) ;
   poly.push_back( Point(-12,0) ) ;
   
-  double lOffset = 1 ;
+  FT lOffset = 1 ;
+  
+  // While the input and output polygons are defined over a kernel with exact constructions,
+  // the straight skeleton is constructed using inexact constructions, which is much faster.
   
   PolygonPtrVector inner_offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
   PolygonPtrVector outer_offset_polygons = CGAL::create_exterior_skeleton_and_offset_polygons_2(lOffset,poly);

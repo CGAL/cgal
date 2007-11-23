@@ -26,7 +26,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include <CGAL/Straight_skeleton_2_converter.h>
+#include <CGAL/Straight_skeleton_converter_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
@@ -88,9 +88,9 @@ typedef CGAL::HalfedgeDS_const_decorator<ISls> Sls_const_decorator ;
 typedef boost::shared_ptr<ISls> ISlsPtr ;
 typedef boost::shared_ptr<OSls> OSlsPtr ;
 
-typedef CGAL::Straight_skeleton_2_items_converter<OSls,ISls> SlsItemsConverter ;
+typedef CGAL::Straight_skeleton_items_converter_2<ISls,OSls> SlsItemsConverter ;
 
-typedef CGAL::Straight_skeleton_2_converter<OSls,ISls,SlsItemsConverter> SlsConverter ;
+typedef CGAL::Straight_skeleton_converter_2<ISls,OSls,SlsItemsConverter> SlsConverter ;
 
 
 #endif

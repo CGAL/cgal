@@ -21,103 +21,323 @@
 
 #include <CGAL/Create_straight_skeleton_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
+#include <CGAL/Straight_skeleton_converter_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Kernel, class OutPolygon>
+namespace CGAL_SS_i
+{
+
+template<class U, class V> struct Is_same_type { typedef Tag_false type ; } ;
+
+template<class U> struct Is_same_type<U,U> { typedef Tag_true type ; } ;
+
+
+//
+// Kernel != Skeleton::kernel. The skeleton is converted to Straight_skeleton_2<Kernel>
+//
+template<class OutPolygon, class FT, class Skeleton, class K>
 std::vector< boost::shared_ptr<OutPolygon> > 
-create_offset_polygons_2 ( typename Kernel::FT aOffset , boost::shared_ptr< Straight_skeleton_2<Kernel> > aSs )
+create_offset_polygons_2 ( FT aOffset, Skeleton const& aSs, K const& k, Tag_false )
 {
   typedef boost::shared_ptr<OutPolygon> OutPolygonPtr ; 
   typedef std::vector<OutPolygonPtr>    OutPolygonPtrVector ;
    
-  typedef Straight_skeleton_2<Kernel>                                 Ss ; 
-  typedef Polygon_offset_builder_traits_2<Kernel>                     OffsetBuilderTraits;
-  typedef Polygon_offset_builder_2<Ss,OffsetBuilderTraits,OutPolygon> OffsetBuilder;
+  typedef Straight_skeleton_2<K> OfSkeleton ;
+   
+  typedef Polygon_offset_builder_traits_2<K>                                  OffsetBuilderTraits;
+  typedef Polygon_offset_builder_2<OfSkeleton,OffsetBuilderTraits,OutPolygon> OffsetBuilder;
   
   OutPolygonPtrVector rR ;
   
-  CGAL_precondition(aSs);
-  
-  if ( aSs )
-  {
-    OffsetBuilder ob(*aSs);
-    ob.construct_offset_contours(aOffset, std::back_inserter(rR) ) ;
-  }
+  boost::shared_ptr<OfSkeleton> lConvertedSs = convert_straight_skeleton<K>(aSs);
+  OffsetBuilder ob( *lConvertedSs );
+  ob.construct_offset_contours(aOffset, std::back_inserter(rR) ) ;
     
   return rR ;
 }
 
-template<class Kernel>
-std::vector< boost::shared_ptr< Polygon_2<Kernel> > > 
-create_offset_polygons_2 ( typename Kernel::FT aOffset , boost::shared_ptr< Straight_skeleton_2<Kernel> > aSs )
+//
+// Kernel == Skeleton::kernel, no convertion
+//
+template<class OutPolygon, class FT, class Skeleton, class K>
+std::vector< boost::shared_ptr<OutPolygon> > 
+create_offset_polygons_2 ( FT aOffset, Skeleton const& aSs, K const& k, Tag_true )
 {
-  return create_offset_polygons_2<Kernel, Polygon_2<Kernel> >(aOffset,aSs);
+  typedef boost::shared_ptr<OutPolygon> OutPolygonPtr ; 
+  typedef std::vector<OutPolygonPtr>    OutPolygonPtrVector ;
+   
+  typedef Polygon_offset_builder_traits_2<K>                                OffsetBuilderTraits;
+  typedef Polygon_offset_builder_2<Skeleton,OffsetBuilderTraits,OutPolygon> OffsetBuilder;
+  
+  OutPolygonPtrVector rR ;
+  
+  OffsetBuilder ob(aSs);
+  ob.construct_offset_contours(aOffset, std::back_inserter(rR) ) ;
+    
+  return rR ;
 }
 
-template<class Kernel, class Polygon, class HoleIterator>
+// Allow failure due to invalid straight skeletons to go through the users
+template<class Skeleton>
+Skeleton const& dereference ( boost::shared_ptr<Skeleton> const& ss )
+{
+  if ( !ss )
+    CGAL_error_msg("Failed to construct straight skeleton  for polygon offseting");
+    
+  return *ss;
+}
+
+}
+
+template<class Polygon, class FT, class Skeleton, class K>
+std::vector< boost::shared_ptr<Polygon> > 
+inline
+create_offset_polygons_2 ( FT aOffset, Skeleton const& aSs, K const& k )
+{
+  typedef typename Skeleton::Traits SsKernel ;
+  
+  typename CGAL_SS_i::Is_same_type<K,SsKernel>::type same_kernel ;
+  
+  return CGAL_SS_i::create_offset_polygons_2<Polygon>(aOffset,aSs,k,same_kernel);
+}
+
+template<class Polygon, class FT, class Skeleton>
+std::vector< boost::shared_ptr<Polygon> > 
+inline
+create_offset_polygons_2 ( FT aOffset, Skeleton const& aSs )
+{
+  return create_offset_polygons_2(aOffset, aSs, typename Polygon::Traits() ) ;
+}
+
+template<class FT, class Skeleton>
+std::vector< boost::shared_ptr< Polygon_2< typename Skeleton::Traits::Kernel > > > 
+inline
+create_offset_polygons_2 ( FT aOffset, Skeleton const& aSs )
+{
+  typedef typename Skeleton::Traits::Kernel K ;
+  
+  typedef Polygon_2<K> Polygon ;
+  
+  return create_offset_polygons_2<Polygon>(aOffset, aSs, K() ) ;
+}
+
+template<class FT, class Polygon, class HoleIterator, class OfK, class SsK>
 std::vector< boost::shared_ptr<Polygon> >
-create_interior_skeleton_and_offset_polygons_2 ( typename Kernel::FT aOffset
-                                               , Polygon const&      aOuterBoundary
-                                               , HoleIterator        aHolesBegin
-                                               , HoleIterator        aHolesEnd
+inline
+create_interior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , HoleIterator   aHolesBegin
+                                               , HoleIterator   aHolesEnd
+                                               , OfK const&     ofk
+                                               , SsK const&     ssk
                                                )
 {
-  return create_offset_polygons_2<Kernel,Polygon>(aOffset
-                                                 ,create_interior_straight_skeleton_2<Kernel>(aOuterBoundary, aHolesBegin, aHolesEnd )
-                                                 );
+  return create_offset_polygons_2<Polygon>(aOffset
+                                          ,CGAL_SS_i::dereference( create_interior_straight_skeleton_2(vertices_begin(aOuterBoundary)
+                                                                                                      ,vertices_end  (aOuterBoundary)
+                                                                                                      ,aHolesBegin
+                                                                                                      ,aHolesEnd
+                                                                                                      ,ssk
+                                                                                                      ) 
+                                                                 )
+                                          ,ofk
+                                          );
     
 }
 
-template<class Kernel, class Polygon, class HoleIterator>
+template<class FT, class Polygon, class HoleIterator, class OfK>
 std::vector< boost::shared_ptr<Polygon> >
-create_exterior_skeleton_and_offset_polygons_2 ( typename Kernel::FT aOffset
-                                               , Polygon const&      aOuterBoundary
-                                               , HoleIterator        aHolesBegin
-                                               , HoleIterator        aHolesEnd
-                                               , bool                aDontReverseOrientation = false
+inline
+create_interior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , HoleIterator   aHolesBegin
+                                               , HoleIterator   aHolesEnd
+                                               , OfK const&     ofk
                                                )
 {
-  return create_offset_polygons_2<Kernel,Polygon>(aOffset
-                                                 ,create_exterior_straight_skeleton_2<Kernel>(aOffset
-                                                                                             ,aOuterBoundary
-                                                                                             ,aHolesBegin
-                                                                                             ,aHolesEnd
-                                                                                             ,aDontReverseOrientation 
-                                                                                             )
-                                                 );
+  return create_interior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,aHolesBegin
+                                                       ,aHolesEnd
+                                                       ,ofk
+                                                       ,Exact_predicates_inexact_constructions_kernel()
+                                                       );
 }
 
-template<class Kernel>
-std::vector< boost::shared_ptr< Polygon_2<Kernel> > >
-create_interior_skeleton_and_offset_polygons_2 ( typename Kernel::FT      aOffset
-                                               , Polygon_2<Kernel> const& aOuterBoundary
+template<class FT, class Polygon, class HoleIterator, class OfK, class SsK>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , HoleIterator   aHolesBegin
+                                               , HoleIterator   aHolesEnd
+                                               , OfK const&     ofk
+                                               , SsK const&     ssk
+                                               , bool           aDontReverseOrientation = false
                                                )
 {
-  std::vector< Polygon_2<Kernel> > no_holes ;
-  return create_interior_skeleton_and_offset_polygons_2<Kernel>(aOffset
-                                                               ,aOuterBoundary
-                                                               ,no_holes.begin()
-                                                               ,no_holes.end()
-                                                               );
+  return create_offset_polygons_2<Polygon>(aOffset
+                                          ,CGAL_SS_i::dereference(create_exterior_straight_skeleton_2(aOffset
+                                                                                                     ,vertices_begin(aOuterBoundary)
+                                                                                                     ,vertices_end  (aOuterBoundary)
+                                                                                                     ,aHolesBegin
+                                                                                                     ,aHolesEnd
+                                                                                                     ,ssk
+                                                                                                     ,aDontReverseOrientation 
+                                                                                                    )
+                                                                  )
+                                          ,ofk                                    
+                                          );
 }
 
-template<class Kernel>
-std::vector< boost::shared_ptr< Polygon_2<Kernel> > >
-create_exterior_skeleton_and_offset_polygons_2 ( typename Kernel::FT      aOffset
-                                               , Polygon_2<Kernel> const& aOuterBoundary
+template<class FT, class Polygon, class HoleIterator, class OfK>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , HoleIterator   aHolesBegin
+                                               , HoleIterator   aHolesEnd
+                                               , OfK const&     ofk
+                                               , bool           aDontReverseOrientation = false
                                                )
 {
-  std::vector< Polygon_2<Kernel> > no_holes ;
-  return create_exterior_skeleton_and_offset_polygons_2<Kernel>(aOffset
-                                                               ,aOuterBoundary
-                                                               ,no_holes.begin()
-                                                               ,no_holes.end()
-                                                               );
+  return create_exterior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,aHolesBegin
+                                                       ,aHolesEnd
+                                                       ,ofk
+                                                       ,Exact_predicates_inexact_constructions_kernel()
+                                                       ,aDontReverseOrientation
+                                                       );
+                                               
 }
 
+template<class FT, class Polygon, class HoleIterator>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , HoleIterator   aHolesBegin
+                                               , HoleIterator   aHolesEnd
+                                               , bool           aDontReverseOrientation = false
+                                               )
+{
+  return create_exterior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,aHolesBegin
+                                                       ,aHolesEnd
+                                                       ,typename Polygon::Traits()
+                                                       ,aDontReverseOrientation
+                                                       );
+                                               
+}
+
+template<class FT, class Polygon, class OfK, class SsK>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_interior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , OfK const&     ofk
+                                               , SsK const&     ssk
+                                               )
+{
+  std::vector<Polygon> no_holes ;
+  return create_interior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,no_holes.begin()
+                                                       ,no_holes.end()
+                                                       ,ofk
+                                                       ,ssk
+                                                       );
+}
+
+template<class FT, class Polygon, class OfK>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_interior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , OfK const&     ofk
+                                               )
+{
+  std::vector<Polygon> no_holes ;
+  return create_interior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,no_holes.begin()
+                                                       ,no_holes.end()
+                                                       ,ofk
+                                                       ,Exact_predicates_inexact_constructions_kernel()
+                                                       );
+}
+
+template<class FT, class Polygon>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_interior_skeleton_and_offset_polygons_2 ( FT aOffset, Polygon const& aOuterBoundary )
+{
+  return create_interior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,typename Polygon::Traits()
+                                                       );
+}
+
+template<class FT, class Polygon, class OfK, class SsK>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , OfK const&     ofk
+                                               , SsK const&     ssk
+                                               , bool           aDontReverseOrientation = false
+                                               )
+{
+  std::vector<Polygon> no_holes ;
+  return create_exterior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,no_holes.begin()
+                                                       ,no_holes.end()
+                                                       ,ofk
+                                                       ,ssk
+                                                       ,aDontReverseOrientation
+                                                       );
+}
+
+template<class FT, class Polygon, class OfK>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , OfK const&     ofk
+                                               , bool           aDontReverseOrientation = false
+                                               )
+{
+  std::vector<Polygon> no_holes ;
+  return create_exterior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,no_holes.begin()
+                                                       ,no_holes.end()
+                                                       ,ofk
+                                                       ,Exact_predicates_inexact_constructions_kernel()
+                                                       ,aDontReverseOrientation
+                                                       );
+}
+
+template<class FT, class Polygon>
+std::vector< boost::shared_ptr<Polygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2 ( FT             aOffset
+                                               , Polygon const& aOuterBoundary
+                                               , bool           aDontReverseOrientation = false
+                                               )
+{
+  return create_exterior_skeleton_and_offset_polygons_2(aOffset
+                                                       ,aOuterBoundary
+                                                       ,typename Polygon::Traits()
+                                                       ,aDontReverseOrientation
+                                                       );
+}
 
 CGAL_END_NAMESPACE
 

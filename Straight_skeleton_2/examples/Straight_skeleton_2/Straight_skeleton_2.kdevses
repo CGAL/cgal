@@ -2,8 +2,8 @@
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="1" >
-  <Doc0 NumberOfViews="1" URL="file:/home/fcacciola/Programming/CGAL_SVN/Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_offset_builder_types.h" >
-   <View0 line="28" Type="Source" />
+  <Doc0 NumberOfViews="1" URL="file:///home/fcacciola/work/CGAL/SVN/trunk/Straight_skeleton_2/examples/Straight_skeleton_2/makefile" >
+   <View0 line="62" Type="Source" />
   </Doc0>
  </DocsAndViews>
  <pluginList>
@@ -13,10 +13,6 @@
   <kdevbookmarks>
    <bookmarks/>
   </kdevbookmarks>
-  <kdevrbdebugger>
-   <breakpointList/>
-   <watchExpressions/>
-  </kdevrbdebugger>
   <kdevvalgrind>
    <executable path="" params="" />
    <valgrind path="" params="" />

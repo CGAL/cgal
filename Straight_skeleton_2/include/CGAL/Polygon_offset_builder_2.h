@@ -30,15 +30,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class SSkel_>
+template<class Traits_, class SSkel_>
 struct Default_polygon_offset_builder_2_visitor
 {
-  typedef SSkel_ SSkel ;
+  typedef Traits_ Traits ;
+  typedef SSkel_  SSkel ;
 
   typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
   typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
-
-  typedef typename SSkel::Traits Traits ;
   
   typedef typename Traits::FT      FT ;
   typedef typename Traits::Point_2 Point_2 ;
@@ -62,7 +61,7 @@ struct Default_polygon_offset_builder_2_visitor
   void on_error( char const* ) const {}
 } ;
 
-template<class Ss_, class Traits_, class Container_, class Visitor_ = Default_polygon_offset_builder_2_visitor<Ss_> >
+template<class Ss_, class Traits_, class Container_, class Visitor_ = Default_polygon_offset_builder_2_visitor<Traits_,Ss_> >
 class Polygon_offset_builder_2
 {
 public :

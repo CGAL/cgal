@@ -23,6 +23,37 @@ CGAL_BEGIN_NAMESPACE
 namespace CGAL_SS_i
 {
 
+#ifdef CGAL_USE_CORE  
+inline CORE::BigFloat MP_Float_to_BigFloat( MP_Float const& b )
+{
+  if (b.is_zero())
+    return CORE::BigFloat::getZero();
+    
+  typedef MP_Float::exponent_type exponent_type;
+
+  const int                    log_limb         = 8 * sizeof(MP_Float::limb);
+  const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
+    
+  exponent_type exp = b.max_exp();
+  int steps = (std::min)(limbs_per_double, b.v.size());
+  
+  CORE::BigFloat d_exp_1 = CORE::BigFloat::exp2(-log_limb);
+  
+  CORE::BigFloat d_exp   = CORE::BigFloat::getOne() ;
+  
+  CORE::BigFloat d       = CORE::BigFloat::getZero();
+
+  for ( exponent_type i = exp - 1; i > exp - 1 - steps; i--) 
+  {
+    d_exp *= d_exp_1;
+    d += d_exp * CORE::BigFloat(b.of_exp(i));
+  }
+
+  // The cast is necessary for SunPro.
+  return d * CORE::BigFloat::exp2(static_cast<int>(exp * log_limb));
+}
+#endif
+
 template<class NT>
 inline NT inexact_sqrt( NT const& n )
 {
@@ -33,6 +64,14 @@ inline MP_Float inexact_sqrt( MP_Float const& n )
 {
   CGAL_precondition(n > 0);
   
+#ifdef CGAL_USE_CORE  
+
+  CORE::BigFloat nn = MP_Float_to_BigFloat(n);
+  CORE::BigFloat s  = CORE::sqrt(nn);
+  return s.doubleValue();
+  
+#else
+
   double nn = CGAL_NTS to_double(n);
   
   if ( !CGAL_NTS is_valid(nn) || ! CGAL_NTS is_finite(nn) )
@@ -41,6 +80,8 @@ inline MP_Float inexact_sqrt( MP_Float const& n )
   CGAL_precondition(nn > 0);
   
   return CGAL_NTS sqrt(nn);
+#endif
+  
 }
 
 inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
@@ -51,9 +92,25 @@ inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
 
 inline Lazy_exact_nt<Gmpq> inexact_sqrt( Lazy_exact_nt<Gmpq> const& n )
 {
-  CORE::BigFloat nn( CGAL::to_double(n) ) ;
-  CORE::BigFloat s = CORE::sqrt(nn);
+#ifdef CGAL_USE_CORE  
+
+  CORE::BigFloat nn = CGAL::to_double(n) ;
+  CORE::BigFloat s  = CORE::sqrt(nn);
   return Lazy_exact_nt<Gmpq>(s.doubleValue());
+  
+#else
+
+  double nn = CGAL::to_double(n) ;
+  
+  if ( !CGAL_NTS is_valid(nn) || ! CGAL_NTS is_finite(nn) )
+    nn = std::numeric_limits<double>::max BOOST_PREVENT_MACRO_SUBSTITUTION () ;
+    
+  CGAL_precondition(nn > 0);
+  
+  double s = CGAL_NTS sqrt(nn);
+  
+  return Lazy_exact_nt<Gmpq>(s);
+#endif
 }
 
 

@@ -43,7 +43,8 @@ all:            \
 	Create_offset_polygons_2$(EXE_EXT) \
 	Create_skeleton_and_offset_polygons_2$(EXE_EXT) \
 	Create_skeleton_and_offset_polygons_from_polygon_with_holes_2$(EXE_EXT) \
-	Straight_skeleton_2$(EXE_EXT) 
+	Create_skeleton_and_offset_polygons_with_holes_2$(EXE_EXT) \
+	Low_level_API$(EXE_EXT) 
 
 Create_straight_skeleton_2$(EXE_EXT): Create_straight_skeleton_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Create_straight_skeleton_2$(EXE_EXT) Create_straight_skeleton_2$(OBJ_EXT) $(LDFLAGS)
@@ -60,9 +61,11 @@ Create_skeleton_and_offset_polygons_2$(EXE_EXT): Create_skeleton_and_offset_poly
 Create_skeleton_and_offset_polygons_from_polygon_with_holes_2$(EXE_EXT): Create_skeleton_and_offset_polygons_from_polygon_with_holes_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Create_skeleton_and_offset_polygons_from_polygon_with_holes_2$(EXE_EXT) Create_skeleton_and_offset_polygons_from_polygon_with_holes_2$(OBJ_EXT) $(LDFLAGS)
 	
-Straight_skeleton_2$(EXE_EXT): Straight_skeleton_2$(OBJ_EXT)
-
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Straight_skeleton_2$(EXE_EXT) Straight_skeleton_2$(OBJ_EXT) $(LDFLAGS)
+Create_skeleton_and_offset_polygons_with_holes_2$(EXE_EXT): Create_skeleton_and_offset_polygons_with_holes_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Create_skeleton_and_offset_polygons_with_holes_2$(EXE_EXT) Create_skeleton_and_offset_polygons_with_holes_2$(OBJ_EXT) $(LDFLAGS)
+	
+Low_level_API$(EXE_EXT): Low_level_API$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Low_level_API$(EXE_EXT) Low_level_API$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
 	Create_straight_skeleton_2.clean \
@@ -70,7 +73,8 @@ clean: \
 	Create_offset_polygons_2.clean \
 	Create_skeleton_and_offset_polygons_2.clean \
 	Create_skeleton_and_offset_polygons_from_polygon_with_holes_2.clean \
-	Straight_skeleton_2.clean 
+	Create_skeleton_and_offset_polygons_with_holes_2.clean \
+	Low_level_API.clean 
 	
 #---------------------------------------------------------------------#
 #                    suffix rules

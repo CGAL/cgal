@@ -15,8 +15,8 @@
 // 
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 
-#ifndef CGAL_STRAIGHT_SKELETON_2_CONVERTER_H
-#define CGAL_STRAIGHT_SKELETON_2_CONVERTER_H 1
+#ifndef CGAL_STRAIGHT_SKELETON_CONVERTER_2_H
+#define CGAL_STRAIGHT_SKELETON_CONVERTER_2_H 1
 
 #include <boost/shared_ptr.hpp>
 
@@ -24,9 +24,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Target_skeleton_, class Source_skeleton_>
-struct Straight_skeleton_2_items_converter: Cartesian_converter< typename Source_skeleton_::Traits
+template<class Source_skeleton_
+        ,class Target_skeleton_
+        ,class NT_converter = typename CGALi::Default_converter<typename Source_skeleton_::Traits
+                                                               ,typename Target_skeleton_::Traits
+                                                               >::Type 
+        >
+struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source_skeleton_::Traits
                                                                , typename Target_skeleton_::Traits
+                                                               , NT_converter
                                                                >
 {
   typedef Source_skeleton_ Source_skeleton ;
@@ -47,6 +53,8 @@ struct Straight_skeleton_2_items_converter: Cartesian_converter< typename Source
   
   Target_vertex operator() ( Source_vertex_const_handle aV ) const 
   {
+    CGAL_assertion( handle_assigned(aV) ) ;
+    
     return Target_vertex( aV->id()
                         , this->Base::operator()(aV->point())
                         , this->Base::operator()(aV->time ())
@@ -56,17 +64,21 @@ struct Straight_skeleton_2_items_converter: Cartesian_converter< typename Source
   
   Target_halfedge operator() ( Source_halfedge_const_handle aH ) const 
   {
+    CGAL_assertion( handle_assigned(aH) ) ;
+    
     return Target_halfedge( aH->id(), aH->slope() ) ;
   }
   
   Target_face operator() ( Source_face_const_handle aF ) const 
   {
+    CGAL_assertion( handle_assigned(aF) ) ;
+    
     return Target_face( aF->id() );
   }
 } ;
 
-template<class Target_skeleton_, class Source_skeleton_, class Items_converter_>
-struct Straight_skeleton_2_converter
+template<class Source_skeleton_, class Target_skeleton_, class Items_converter_>
+struct Straight_skeleton_converter_2
 {
   typedef Source_skeleton_ Source_skeleton ;
   typedef Target_skeleton_ Target_skeleton ;
@@ -105,9 +117,11 @@ struct Straight_skeleton_2_converter
   typedef CGAL_SS_i::Triedge<Target_halfedge_handle> Target_triedge ;
   
   Target_skeleton_ptr operator() ( Source_skeleton const& aSkeleton )
-  { 
+  {
+    CGAL_assertion(aSkeleton.is_valid());
     Target_skeleton_ptr rResult = create_unconnected_copy(aSkeleton);
     connect_items(aSkeleton,*rResult);
+    CGAL_assertion(rResult->is_valid());
     return rResult ;
   }
   
@@ -171,8 +185,12 @@ private :
     Target_vertex_iterator tvit = aTarget.vertices_begin();
     for ( Source_vertex_const_iterator svit = aSource.vertices_begin(); svit != aSource.vertices_end(); ++ svit, ++ tvit )
     {
+      CGAL_assertion( handle_assigned(svit) ) ;
+      CGAL_assertion( handle_assigned(svit->halfedge()) ) ;
+      
       Target_halfedge_handle tgt_halfedge = Target_halfedges.at(svit->halfedge()->id());
           
+      CGAL_assertion( handle_assigned(tgt_halfedge) ) ;
       tvit->VBase::set_halfedge(tgt_halfedge);
       
       Target_halfedge_handle tgt_striedge_e0, tgt_striedge_e1, tgt_striedge_e2 ;
@@ -194,30 +212,43 @@ private :
     Target_halfedge_iterator thit = aTarget.halfedges_begin();
     for ( Source_halfedge_const_iterator shit = aSource.halfedges_begin(); shit != aSource.halfedges_end(); ++ shit, ++ thit )
     {
+      CGAL_assertion( handle_assigned(shit->opposite()) ) ;
+      CGAL_assertion( handle_assigned(shit->next    ()) ) ;
+      CGAL_assertion( handle_assigned(shit->prev    ()) ) ;
+      CGAL_assertion( handle_assigned(shit->vertex  ()) ) ;
+      
       Target_halfedge_handle tgt_opposite = Target_halfedges.at(shit->opposite()->id());
       Target_halfedge_handle tgt_next     = Target_halfedges.at(shit->next    ()->id());
       Target_halfedge_handle tgt_prev     = Target_halfedges.at(shit->prev    ()->id());
       Target_vertex_handle   tgt_vertex   = Target_vertices .at(shit->vertex  ()->id());
       
-      Target_face_handle tgt_face ;
+      CGAL_assertion( handle_assigned(tgt_opposite) ) ;
+      CGAL_assertion( handle_assigned(tgt_next)     ) ;
+      CGAL_assertion( handle_assigned(tgt_prev)     ) ;
+      CGAL_assertion( handle_assigned(tgt_vertex)   ) ;
       
-      if ( handle_assigned(shit->face()) )
-         tgt_face = Target_faces.at(shit->face()->id());
-          
       thit->HBase_base::set_opposite (tgt_opposite);
       thit->HBase_base::set_next     (tgt_next);
       thit->HBase_base::set_prev     (tgt_prev);
       thit->HBase_base::set_vertex   (tgt_vertex);
       
-      if ( handle_assigned(tgt_face) )
+      if ( handle_assigned(shit->face()) )
+      {
+        Target_face_handle tgt_face = Target_faces.at(shit->face()->id());
+        CGAL_assertion( handle_assigned(tgt_face) ) ;
         thit->HBase_base::set_face(tgt_face);
+      }
      }  
     
     Target_face_iterator tfit = aTarget.faces_begin();
     for ( Source_face_const_iterator sfit = aSource.faces_begin(); sfit != aSource.faces_end(); ++ sfit, ++ tfit )
     {
+      CGAL_assertion( handle_assigned(sfit->halfedge()) ) ;
+      
       Target_halfedge_handle tgt_halfedge = Target_halfedges.at(sfit->halfedge()->id());
           
+      CGAL_assertion( handle_assigned(tgt_halfedge) ) ;
+      
       tfit->FBase::set_halfedge(tgt_halfedge);
     }  
   }
@@ -230,6 +261,22 @@ private :
   
 } ;
 
+template<class TgtKernel, class SrcKernel>
+boost::shared_ptr< Straight_skeleton_2<TgtKernel> > 
+convert_straight_skeleton ( Straight_skeleton_2<SrcKernel> const& aSrc )
+{
+  typedef Straight_skeleton_2<SrcKernel> Source_skeleton ;
+  typedef Straight_skeleton_2<TgtKernel> Target_skeleton ;
+  
+  typedef Straight_skeleton_items_converter_2<Source_skeleton,Target_skeleton> Items_converter ;
+  
+  typedef Straight_skeleton_converter_2<Source_skeleton,Target_skeleton,Items_converter> Skeleton_converter ;
+  
+  Skeleton_converter c ;
+  
+  return c(aSrc);
+    
+}
 
 CGAL_END_NAMESPACE
 
