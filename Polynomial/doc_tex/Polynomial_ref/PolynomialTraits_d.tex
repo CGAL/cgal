@@ -96,64 +96,10 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
         A model of \ccc{PolynomialTraits_d::Compare}. 
         In case \ccc{Innermost_coefficient} is not \ccc{LessThanComparable} this 
         is \ccc{CGAL::Null_functor}.}
-
-
-\ccIgnore{
-\ccHeading{For \ccc{PolynomialToolBox}: }
-
-\ccNestedType{Univariate_content}{ 
-        In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
-        \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
-        a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
-\begin{ccAdvanced}
-\ccNestedType{Multivariate_content}{ 
-        In case \ccc{PolynomialTraits_d::Innermost_coefficient} is {\bf not} 
-        a model of \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, 
-        otherwise this is a model of 
-        \ccc{PolynomialTraits_d::MultivariateContent}.}
-\end{ccAdvanced}
-
-%Manipulation
-\ccNestedType{Shift}{ A model of \ccc{PolynomialTraits_d::Shift}.}
-\ccNestedType{Negate}{ A model of \ccc{PolynomialTraits_d::Negate}.}
-\ccNestedType{Invert}{ A model of \ccc{PolynomialTraits_d::Invert}.}
-
-\ccNestedType{Translate}{ A model of \ccc{PolynomialTraits_d::Translate}.}
-\ccNestedType{Translate_homogeneous}{ A model of \ccc{PolynomialTraits_d::TranslateHomogeneous}.}
-
-\ccNestedType{Scale}{ A model of \ccc{PolynomialTraits_d::Scale}.}
-\ccNestedType{Scale_homogeneous}{ A model of \ccc{PolynomialTraits_d::ScaleHomogeneous}.}
-\begin{ccAdvanced}
-//\ccNestedType{Scale_up}{ A model of \ccc{PolynomialTraits_d::ScaleUp, return $p(a*x)$}.}
-//\ccNestedType{Scale_down}{ A model of \ccc{PolynomialTraits_d::ScaleDown, return $b^{degree}*p(x/b)$}.}
-\end{ccAdvanced}
-
-%unary operations
-\ccNestedType{Make_square_free}{ A model of \ccc{PolynomialTraits_d::MakeSquareFree}.}
-
-\ccNestedType{Square_free_factorization}{ In case \ccc{PolynomialTraits::Polynomial_d} 
-        is not a model of \ccc{UFDomain}, this is of type \ccc{CGAL::Null_type},
-        otherwise this is a model of \ccc{PolynomialTraits_d::SquareFreeFactorize}.}
-
-
-%pseudo division
-\ccNestedType{Pseudo_division          }{ A model of \ccc{PolynomialTraits_d::Pseudo_division}.}
-\ccNestedType{Pseudo_division_remainder}{ A model of \ccc{PolynomialTraits_d::Pseudo_division_remainder}.}
-\ccNestedType{Pseudo_division_quotient }{ A model of \ccc{PolynomialTraits_d::Pseudo_division_quotient}.}
-
-%utcf
-\ccNestedType{Gcd_up_to_constant_factor}{ A model of \ccc{PolynomialTraits_d::GcdUpToConstantFactor}.}
-\ccNestedType{Integral_division_up_to_constant_factor}{ A model of \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}.}
-\ccNestedType{Content_up_to_constant_factor}{ A model of \ccc{PolynomialTraits_d::ContentUpToConstantFactor}.}
-\ccNestedType{Square_free_factorization_up_to_constant_factor}{ A model of \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}.}
-
-%resultant
-\ccNestedType{Resultant}{ A model of \ccc{PolynomialTraits_d::Resultant}.}
-} % end ccIgnore
  
 \ccSeeAlso 
 
-\ccRefIdfierPage{AlgebraicStructureTraits}\\
 \ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialToolBox_d}\\
 
 \end{ccRefConcept}
