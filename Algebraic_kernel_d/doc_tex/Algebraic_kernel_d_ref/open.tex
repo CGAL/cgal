@@ -1,42 +1,66 @@
 
 \section{Questions and Remarks}
 
-\section{Notes}
+\subsection{Design issues}
+
 \begin{itemize}
- \item Events at infinity are only important for a single curve. Since
-   inf doesn't play a role in CPA\_2 we discuss it for the sake of
-   simplicity as a special case in CA\_2 only. 
-\item AlgebraicReal\_1 - refine: with relative precision is enough. \\
-      Moreover, you can use 'refine() until' for absolute prec.
-\item SquareFreeFactorization is not returning an additional constant 
-      factor. This prevents us from providing an extra interface for 
-      algebraic coefficients.
-\item Is Derivative and XCriticalPoints/YCriticalPoints are not
-   redundant. We decided to keep them both because it is possible that
-   XCriticalPoints/YCriticalPoints use a different methodology, other
-   than residing to the Derivative functor.\\ As Michael pointed out:
-   \emph{``I think we should keep it, since it is more abstract than
-     $solve(derivative(p),p)$.  This would again move the {\em
-       AlgebraicKernel} towards a more abstract layer.''}\\
-\texttt{(Monique: I am not convinced any more about this now... the 
-definition of x-crit point is when the derivative vanishes or is not
-defined. for polynomials it is identical. so, we could remove
-derivatives and keep only the (maybe) more abstract crit points)}
-\item MakeCoprime: changed return type to bool\\
-      because IsCoprime is almost as costly as computing the coprime
-      parts iff the polynomials are not coprime. This avoids caching.
+\item 
+Removed \ccc{AlgebraicRealTraits_?} from Kernel:\\
+This flat design is consistent with the flat design of the linear kernel. 
+(Michael)
+\item 
+Removed C'tor for Polynomials from Algebraic Kernels. 
+This is provided by \ccc{Polynomial_traits_d}.
+(Michael)
+\item 
+Functors DeriveX* removed from the Kernel since covered by 
+\ccc{Polynomial_traits_d}.
+(Michael)\\
+It is recommended to use XCriticalPoints instead of \ccc{solve(Derive_x_2(p),p)} 
+anyway, since this is more abstract. (all)\\
+removed \ccc{Has_critical_points,} that is, 
+\ccc{X_critical_points} and \ccc{Y_critical_points} are not optional.
+(Michael)
+\item
+Other Functors such as SquareFree* are part of the Kernel since they are not 
+identical to those provided in the \ccc{Polynomial_tool_box_d}, that is, 
+the functors in the 
+kernel don't care about constant factors, which is intended. In this way we 
+don't have to care about the algebraic category of the coefficient type. 
+(Michael)
+\item 
+MakeCoprime: changed return type to bool\\
+because IsCoprime is almost as costly as computing the coprime
+parts iff the polynomials are not coprime. This avoids caching. 
+%\item 
+%\ccc{AlgebraicReal\_1} - refine: with relative precision is enough. \\
+%Moreover, you can use 'refine() until' for absolute prec.
+%(Michael)
+\item
+We keep \ccc{Compare_1}, for consistency with \ccc{AlgebraicKernel_2}.
+(Michael)
+\item 
+\ccc{AlgebraicReal_2}: removed .x() .y(), replaced by GetX() and 
+GetY() functors.
+(Michael)
+\item \ccc{AlgebraicReal_2}: Added \ccc{LessThanComparable} with respect 
+to lex-order. This improves consistency with \ccc{AlgebraicReal\_1}. 
+(Michael)
+\item
+The Boundary type is documented as dense in R, which is not true
+for \ccc{AK_1<double>}.\\ 
+This is ok, since double is also documented as a
+field, while it is obviously not (no operation is associative
+due to rounding errors). Hence, the density problem is not worse
+than usual problems for double. (Monique)
+\item 
+Events at infinity are only important for a single curve. Since
+inf doesn't play a role in CPA\_2 we discuss it for the sake of
+simplicity as a special case in CA\_2 only. 
 \end{itemize}
 
-\section{Questions}
+\subsection{Questions}
 \begin{itemize}
-\item AlgebraicReal\_2 - Replace .x() and .y() methods by GetX() and 
-	GetY() functors? (or just add the functors?)
-\item problem is due to \ccc{AK_1}$<double>$.\\
-    The Boundary type is documented as dense in R, which is not true
-    for double.\\ (Monique: But well, double is also documented as a
-    field, while it is obviously not (no operation is associative
-    due to rounding errors). So, the density problem is not worse
-    than usual problems for double.)
 \item Use "int" at all places, or stick to distinction of \texttt{unsigned
    int} + \texttt{int}?\\
    \texttt{(Menelaos: if the semantics of \texttt{unsigned int} is to enumerate
@@ -45,22 +69,22 @@ derivatives and keep only the (maybe) more abstract crit points)}
    \texttt{argument\_type}).}
 \end{itemize}
 
-\section{done} 
+\subsection{todo} 
 \begin{itemize}
 \item 
-All functors for \ccc{PolynomialTraits\_d} are documented in a separat
- package:\\
-{\tt CGAL/trunk/Polynomial/} (Michael)
-\item 
-Removed AlgberaicRealTraits from kernel. \\
-This flat design is consistent to the linear kernel. (Michael)
-\end{itemize}
-
-\section{todo} 
-\begin{itemize}
+Rename Functors in Polynomial package according to Ron's 
+suggestions. (Michael)
 \item {} answer questions above...
-\item {} finish check and improve consistency between AK1 and AK2 
-(list of available functionality, order of functors, etc)
-\item {} order manual pages in main.tex and list of functors in intro.tex in a more systematic way
+\item {} finish check 
 \end{itemize} 
 
+\subsection{done} 
+\begin{itemize}
+\item 
+improved consistency between AK1 and AK2 (Michael)
+\item 
+order manual pages in main.tex and list of functors in intro.tex 
+in a more systematic way (Michael)
+
+\end{itemize}
+\footnote{to be added: sparse polynomials}
