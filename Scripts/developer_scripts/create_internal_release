@@ -157,7 +157,7 @@ sub install_packages() {
     chdir "$ALLPACKAGESDIR" or die;
     if(-f $dont_submit){
       system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=long_description.txt', '--exclude=changes.txt', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
-    } els {
+    } else {
       system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=long_description.txt', '--exclude=changes.txt', '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
     }
     system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
