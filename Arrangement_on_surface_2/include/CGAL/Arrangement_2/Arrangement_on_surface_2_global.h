@@ -154,7 +154,8 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 
   // Initialize the zone-computation object with the given curve.
 
-  {
+/*  Needs to be deleted!!!
+    {
     std::cout << std::endl;
     std::cout << "xxxxxxxxxxxx" << std::endl;
     std::cout << "c: " << c << std::endl;
@@ -172,6 +173,7 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     std::cout << std::endl;
     std::cout << "xxxxxxxxxxxx" << std::endl;
   }  
+*/
   arr_zone.init (c, pl);
 
   // Notify the arrangement observers that a global operation is about to 
