@@ -1941,11 +1941,11 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::remove_edge
       // (and only of the paths may go to infinity), then it is obvious that
       // the other path becomes a hole in an unbounded face.
       if (at_infinity2 ||
-          (v_min1.first > v_min2.first) ||
-          (v_min1.first == v_min2.first &&
-           geom_traits->compare_xy_2_object() 
-               (v_min1.second->point(),
-                v_min2.second->point()) == LARGER))
+          (!at_infinity1 && (v_min1.first > v_min2.first ||
+                             (v_min1.first == v_min2.first &&
+                              geom_traits->compare_xy_2_object()
+                              (v_min1.second->point(),
+                               v_min2.second->point()) == LARGER))))
       {
         // he1 is directed to the new hole to be created.
         f = _remove_edge (he1, remove_source, remove_target);
