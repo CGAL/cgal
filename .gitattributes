@@ -1129,6 +1129,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/curves 
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/is_vertical -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/merge -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/parameter_space_x -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/parameter_space_y -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/xcurves -text
