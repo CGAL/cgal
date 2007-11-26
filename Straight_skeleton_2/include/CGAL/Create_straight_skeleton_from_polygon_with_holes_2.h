@@ -37,25 +37,6 @@ create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K> const& aPolyWithHo
                                             );
 }
 
-
-template<class FT, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-inline
-create_exterior_straight_skeleton_2 ( FT                             aMaxOffset
-                                    , Polygon_with_holes_2<K> const& aPolyWithHoles 
-                                    , bool                           aDontReverseOrientation = false
-                                    )
-{
-  return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,aPolyWithHoles.outer_boundary().vertices_begin()
-                                            ,aPolyWithHoles.outer_boundary().vertices_end  ()
-                                            ,aPolyWithHoles.holes_begin   ()
-                                            ,aPolyWithHoles.holes_end     ()
-                                            ,K()
-                                            ,aDontReverseOrientation
-                                            );
-}
-
 CGAL_END_NAMESPACE
 
 

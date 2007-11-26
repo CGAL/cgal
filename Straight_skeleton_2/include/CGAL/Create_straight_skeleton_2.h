@@ -25,6 +25,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGAL_SS_i
+{
 
 template<class Poly>
 inline typename Poly::const_iterator vertices_begin ( Poly const& aPoly ) { return aPoly.begin() ; }
@@ -50,6 +52,8 @@ inline Polygon_2<K> reverse_polygon( Polygon_2<K> const& aPoly )
   Polygon_2<K> r ( aPoly ) ;
   r.reverse_orientation();
   return r ;  
+}
+
 }
 
 template<class PointIterator, class HoleIterator, class K>
@@ -78,7 +82,7 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
   ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, Point_converter ) ;
   
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-    ssb.enter_contour( vertices_begin(*hi), vertices_end(*hi), Point_converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
@@ -135,7 +139,10 @@ boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( Polygon const& aOutContour, K const& k )
 {
-  return create_interior_straight_skeleton_2(vertices_begin(aOutContour), vertices_end(aOutContour), k );
+  return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
+                                            ,CGAL_SS_i::vertices_end(aOutContour)
+                                            ,k 
+                                            );
 }
 
 template<class Polygon>
@@ -146,15 +153,12 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
   return create_interior_straight_skeleton_2(aOutContour, Exact_predicates_inexact_constructions_kernel() );
 }
 
-template<class FT, class PointIterator, class HoleIterator, class K>
+template<class FT, class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_exterior_straight_skeleton_2 ( FT             aMaxOffset
-                                    , PointIterator  aOuterContour_VerticesBegin
-                                    , PointIterator  aOuterContour_VerticesEnd
-                                    , HoleIterator   aHolesBegin
-                                    , HoleIterator   aHolesEnd
+                                    , PointIterator  aVerticesBegin
+                                    , PointIterator  aVerticesEnd
                                     , K const&       k
-                                    , bool           aDontReverseOrientation = false
                                     )
 {
   typedef typename std::iterator_traits<PointIterator>::value_type Point_2 ;
@@ -164,12 +168,15 @@ create_exterior_straight_skeleton_2 ( FT             aMaxOffset
   
   SsPtr rSkeleton ;
   
-  boost::optional<FT> margin = compute_outer_frame_margin( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aMaxOffset );
+  boost::optional<FT> margin = compute_outer_frame_margin( aVerticesBegin
+                                                         , aVerticesEnd
+                                                         , aMaxOffset 
+                                                         );
 
   if ( margin )
   {
     
-    Bbox_2 bbox = bbox_2( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd);
+    Bbox_2 bbox = bbox_2( aVerticesBegin, aVerticesEnd);
 
     FT fxmin = bbox.xmin() - *margin ;
     FT fxmax = bbox.xmax() + *margin ;
@@ -187,77 +194,31 @@ create_exterior_straight_skeleton_2 ( FT             aMaxOffset
     
     std::vector<Hole> holes ;
     
-    Hole lOuterContour(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd);
+    Hole lOuterContour(aVerticesBegin, aVerticesEnd);
     
-    holes.push_back( aDontReverseOrientation ? lOuterContour : reverse_polygon(lOuterContour) ) ;
+    holes.push_back( reverse_polygon(lOuterContour) ) ;
         
-    for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-      holes.push_back( aDontReverseOrientation ? *hi : reverse_polygon(*hi) ) ;
-      
     rSkeleton = create_interior_straight_skeleton_2(frame, frame+4, holes.begin(), holes.end(), k ) ;  
   }
   
   return rSkeleton ;
 }
 
-template<class FT, class PointIterator, class HoleIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-inline
-create_exterior_straight_skeleton_2 ( FT             aMaxOffset
-                                    , PointIterator  aOuterContour_VerticesBegin
-                                    , PointIterator  aOuterContour_VerticesEnd
-                                    , HoleIterator   aHolesBegin
-                                    , HoleIterator   aHolesEnd
-                                    , bool           aDontReverseOrientation = false
-                                    )
-{
-  return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,aOuterContour_VerticesBegin
-                                            ,aOuterContour_VerticesEnd
-                                            ,aHolesBegin
-                                            ,aHolesEnd
-                                            ,Exact_predicates_inexact_constructions_kernel()
-                                            ,aDontReverseOrientation
-                                            );
-}
-
-template<class FT, class PointIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-inline
-create_exterior_straight_skeleton_2 ( FT            aMaxOffset
-                                    , PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , K const&      k
-                                    , bool          aDontReverseOrientation = false
-                                    )
-{
-  std::vector< Polygon_2<K> > no_holes ;
-  return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,aOuterContour_VerticesBegin
-                                            ,aOuterContour_VerticesEnd
-                                            ,no_holes.begin()
-                                            ,no_holes.end() 
-                                            ,k
-                                            ,aDontReverseOrientation
-                                            );
-}
-
 template<class FT, class PointIterator>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
-create_exterior_straight_skeleton_2 ( FT            aMaxOffset
-                                    , PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , bool          aDontReverseOrientation = false
+create_exterior_straight_skeleton_2 ( FT             aMaxOffset
+                                    , PointIterator  aVerticesBegin
+                                    , PointIterator  aVerticesEnd
                                     )
 {
   return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,aOuterContour_VerticesBegin
-                                            ,aOuterContour_VerticesEnd
+                                            ,aVerticesBegin
+                                            ,aVerticesEnd
                                             ,Exact_predicates_inexact_constructions_kernel()
-                                            ,aDontReverseOrientation
                                             );
 }
+
 
 template<class FT, class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
@@ -265,14 +226,12 @@ inline
 create_exterior_straight_skeleton_2 ( FT             aMaxOffset
                                     , Polygon const& aOutContour
                                     , K const&       k
-                                    , bool           aDontReverseOrientation = false
                                     )
 {
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,vertices_begin(aOutContour)
                                             ,vertices_end  (aOutContour)
                                             ,k
-                                            ,aDontReverseOrientation
                                             );
 }
 
@@ -281,13 +240,11 @@ boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_ke
 inline
 create_exterior_straight_skeleton_2 ( FT             aMaxOffset
                                     , Polygon const& aOutContour
-                                    , bool           aDontReverseOrientation = false
                                     )
 {
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,aOutContour
                                             ,Exact_predicates_inexact_constructions_kernel()
-                                            ,aDontReverseOrientation
                                             );
 }
 

@@ -3294,6 +3294,13 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.png -text svneol=
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.png -text svneol=unset#image/png
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Arrange_offset_polygons_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Convert_straight_skeleton_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_exterior_skeleton_and_offset_polygons_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_exterior_straight_skeleton_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_interior_skeleton_and_offset_polygons_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_interior_straight_skeleton_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_offset_polygons_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Dummy_straight_skeleton_builder_2_visitor.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/StraightSkeletonBuilder_2_Visitor.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/StraightSkeletonFace_2.tex -text
@@ -3320,7 +3327,6 @@ Straight_skeleton_2/include/CGAL/IO/Dxf_writer.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_2/assertions.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_2/debug.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_2/test.h -text
-Straight_skeleton_2/include/CGAL/Straight_skeleton_2_converter.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_converter_2.h -text
 Straight_skeleton_2/include/CGAL/Straight_skeleton_face_base_2.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example.poly -text

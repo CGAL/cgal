@@ -472,7 +472,7 @@ If you use this function to place the outer frame you are guaranteed to obtain a
 
 \subsection{Example}
 
-\ccIncludeExampleCode{Straight_skeleton_2/Straight_skeleton_2.cpp}
+\ccIncludeExampleCode{Straight_skeleton_2/Low_level_API.cpp}
 
 The offset polygon builder outputs only simple polygons provided exact constructions are used. However, if inexact constructions are used there is no guarantee that offset polygons will be simple. You can use \ccc{Exact_predicates_exact_constructions_kernel} to instantiate \ccc{Polygon_offset_builder_2<Ss,Gt,Container>}, but this kernel is significantly slower compared to
 \ccc{Exact_predicates_inexact_constructions_kernel}.
@@ -480,7 +480,7 @@ To improve the overall running time, you can use inexact constructions to create
 
 The following example illustrates how to do that:
 
-\ccIncludeExampleCode{Straight_skeleton_2/Straight_skeleton_converter_2.cpp}
+%%\ccIncludeExampleCode{Straight_skeleton_2/Straight_skeleton_converter_2.cpp}
 
 \section{Straight Skeletons, Medial Axis and Voronoi Diagrams}  
 

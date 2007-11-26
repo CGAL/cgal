@@ -116,7 +116,12 @@ struct Straight_skeleton_converter_2
   typedef CGAL_SS_i::Triedge<Source_halfedge_handle> Source_triedge ;
   typedef CGAL_SS_i::Triedge<Target_halfedge_handle> Target_triedge ;
   
-  Target_skeleton_ptr operator() ( Source_skeleton const& aSkeleton )
+  Straight_skeleton_converter_2 ( Items_converter const& aCvt = Items_converter() )
+    :
+    cvt(aCvt)
+  {}
+  
+  Target_skeleton_ptr operator() ( Source_skeleton const& aSkeleton ) const
   {
     CGAL_assertion(aSkeleton.is_valid());
     Target_skeleton_ptr rResult = create_unconnected_copy(aSkeleton);
@@ -253,21 +258,30 @@ private :
     }  
   }
   
-  Items_converter cvt ;
+  Items_converter const& cvt ;
   
-  std::vector<Target_vertex_handle>   Target_vertices ;
-  std::vector<Target_halfedge_handle> Target_halfedges;
-  std::vector<Target_face_handle>     Target_faces    ;
+  mutable std::vector<Target_vertex_handle>   Target_vertices ;
+  mutable std::vector<Target_halfedge_handle> Target_halfedges;
+  mutable std::vector<Target_face_handle>     Target_faces    ;
   
 } ;
 
-template<class TgtKernel, class SrcKernel>
-boost::shared_ptr< Straight_skeleton_2<TgtKernel> > 
-convert_straight_skeleton ( Straight_skeleton_2<SrcKernel> const& aSrc )
+template<class Target_skeleton, class Source_skeleton, class Items_converter>
+boost::shared_ptr<Target_skeleton> 
+convert_straight_skeleton_2 ( Source_skeleton const& aSrc, Items_converter const& ic )
 {
-  typedef Straight_skeleton_2<SrcKernel> Source_skeleton ;
-  typedef Straight_skeleton_2<TgtKernel> Target_skeleton ;
+  typedef Straight_skeleton_converter_2<Source_skeleton,Target_skeleton,Items_converter> Skeleton_converter ;
   
+  Skeleton_converter c(ic) ;
+  
+  return c(aSrc);
+    
+}
+
+template<class Target_skeleton, class Source_skeleton>
+boost::shared_ptr<Target_skeleton> 
+convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
+{
   typedef Straight_skeleton_items_converter_2<Source_skeleton,Target_skeleton> Items_converter ;
   
   typedef Straight_skeleton_converter_2<Source_skeleton,Target_skeleton,Items_converter> Skeleton_converter ;

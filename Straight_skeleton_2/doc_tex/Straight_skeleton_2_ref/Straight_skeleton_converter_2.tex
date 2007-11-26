@@ -15,13 +15,12 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsConverter>}
+\begin{ccRefClass}{Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>}
 
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{conv}
 \ccDefinition
 
 The class \ccRefName\ converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits.
@@ -43,8 +42,16 @@ skeleton itself.
 \ccGlue
 \ccTypedef{TgtSs Target_skeleton;}
   {The \ccc{TgtSs} template parameter corresponding to the target straight skeleton.}
+\ccGlue
+\ccTypedef{ItemsCvt Items_converter;}
+  {The \ccc{ItemsCvt} template parameter corresponding to the items converter.}
 
 \ccInclude{CGAL/Straight_skeleton_converter_2.h}
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Straight_skeleton_converter_2( Items_converter const& c );}{Default constructor}
 
 \ccOperations
 
@@ -55,6 +62,7 @@ skeleton itself.
 \ccSeeAlso
 \ccc{StraightSkeletonItemsConverter_2}\\
 \ccc{Straight_skeleton_items_converter_2<SrcSs,TgtSs,NTConverter>}\\
+\ccc{convert_straight_skeleton_2<SrcSs,TgtSs,NTConverter>}\\
 
 \end{ccRefClass}
 
