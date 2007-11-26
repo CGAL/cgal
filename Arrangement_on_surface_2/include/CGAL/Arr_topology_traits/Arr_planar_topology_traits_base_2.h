@@ -155,7 +155,6 @@ public:
                                            Boundary_type)
   {
     // In the planar-topology traits this function should never be invoked:
-    CGAL_error();
     return;
   }
 

@@ -842,7 +842,8 @@ bool
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_on_new_perimetric_face_boundary(const Halfedge * prev1,
                                    const Halfedge * prev2,
-                                   const X_monotone_curve_2 & /* xc */) const
+                                   const X_monotone_curve_2 & xc, 
+                                   bool try_other_way) const
 {
   /*! We need to maintain the variant that the face that contains everything,
    * and has no outer CCB's, also contains the north pole. In the degenerate
@@ -907,6 +908,13 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
     else if (first_src_bc == AFTER_DISCONTINUITY) ++counter;
     else if (first_src_bc == BEFORE_DISCONTINUITY) --counter;
   }
+
+  // a temporary fix in case that if we traverse from prev1 to prev2 then
+  // we get a perimetric curve but from prev2 to prev1 we don't get a perimetric
+  // curve. We try the other way if we don't get a perimetric curve.
+  if (try_other_way && (counter != -1 && counter != 1))
+    return is_on_new_perimetric_face_boundary(prev2, prev1, xc, false);
+
   // Path must be perimetric:
   CGAL_assertion(counter == -1 || counter == 1);
   return (counter == 1);

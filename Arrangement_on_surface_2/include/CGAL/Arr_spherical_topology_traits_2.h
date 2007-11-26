@@ -554,6 +554,11 @@ public:
    * \param prev2 The second predecessor halfedge.
    * \param xc The x-monotone curve we use to connect prev1's target and
    *           prev2's target vertex.
+   * \param try_other_way Used to temporarily solve a bug in case that if 
+   *                      we go from prev1 to prev2 we get a perimetric face
+   *                      but from prev2 to prev1 we don't get a perimetric 
+   *                      face. The flag is used to try the other direction.
+   *                      
    * \pre prev1 and prev2 belong to the same inner connected component.
    * \return true if he1 (and prev1) lies in the interior of the face we
    *         are about to create, false otherwise - in which case he2
@@ -561,7 +566,8 @@ public:
    */
   bool is_on_new_perimetric_face_boundary(const Halfedge * prev1,
                                           const Halfedge * prev2,
-                                          const X_monotone_curve_2 & xc) const;
+                                          const X_monotone_curve_2 & xc,
+                                          bool try_other_way = true) const;
 
   /*! Determine whether the two halfedges, belonging to different outer CCBs,
    * belong to the outer boundary of the same face.
