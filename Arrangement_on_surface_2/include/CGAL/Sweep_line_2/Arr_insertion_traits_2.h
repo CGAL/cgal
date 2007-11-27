@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
  * curve, and a vertex handle with each point. This information is used to
  * speed up the aggregated insertion process.
  */
-template <class Traits_, class Arrangement_>
+template <typename Traits_, typename Arrangement_>
 class Arr_insertion_traits_2 : 
   public Arr_basic_insertion_traits_2<Traits_, Arrangement_>
 {
@@ -81,7 +81,7 @@ public:
       invalid_he()
     {}
 
-    template<class OutputIterator>
+    template<typename OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi)
