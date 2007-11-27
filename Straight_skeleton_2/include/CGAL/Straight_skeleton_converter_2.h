@@ -132,7 +132,7 @@ struct Straight_skeleton_converter_2
   
 private :
   
-  Target_skeleton_ptr create_unconnected_copy ( Source_skeleton const& aSource ) 
+  Target_skeleton_ptr create_unconnected_copy ( Source_skeleton const& aSource ) const
   {
     Target_skeleton_ptr rCopy ( new Target_skeleton ) ;
     
@@ -185,7 +185,7 @@ private :
     return rCopy ;
   }
   
-  void connect_items ( Source_skeleton const& aSource, Target_skeleton& aTarget )
+  void connect_items ( Source_skeleton const& aSource, Target_skeleton& aTarget ) const
   {
     Target_vertex_iterator tvit = aTarget.vertices_begin();
     for ( Source_vertex_const_iterator svit = aSource.vertices_begin(); svit != aSource.vertices_end(); ++ svit, ++ tvit )

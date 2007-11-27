@@ -1,9 +1,3 @@
-#include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
-
 #include<boost/shared_ptr.hpp>
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -33,15 +27,16 @@ int main()
   poly.push_back( Point(-1,1) ) ;
   poly.push_back( Point(-12,0) ) ;
      
-  // You can pass the polygon via a pointer-iterator pair, or directly, as below
+  // You can pass the polygon via a pointer-iterator pair
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
 
-  print_straight_skeleton(*iss);
+  // Or you can pass the polygon directly, as below.
   
-  // To create an exterior straight skeleton you need to specify a maximum offset
+  // To create an exterior straight skeleton you need to specify a maximum offset.
   double lMaxOffset = 5 ; 
-  SsPtr oss = CGAL::create_exterior_straight_skeleton_2(lMaxOffset,poly );
+  SsPtr oss = CGAL::create_exterior_straight_skeleton_2(lMaxOffset, poly);
   
+  print_straight_skeleton(*iss);
   print_straight_skeleton(*oss);
   
   return 0;

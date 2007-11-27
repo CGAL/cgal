@@ -1,9 +1,3 @@
-#include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
-
 #include<boost/shared_ptr.hpp>
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -47,6 +41,8 @@ int main()
   poly.add_hole( hole ) ;
      
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly);
-
+  
+  print_straight_skeleton(*iss);
+  
   return 0;
 }

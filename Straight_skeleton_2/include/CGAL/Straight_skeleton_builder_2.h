@@ -102,7 +102,6 @@ struct Dummy_straight_skeleton_builder_2_visitor
   void on_error( char const* ) const {}
 } ;
 
-
 template<class Traits_, class SSkel_, class Visitor_ = Dummy_straight_skeleton_builder_2_visitor<SSkel_> >
 class Straight_skeleton_builder_2
 {

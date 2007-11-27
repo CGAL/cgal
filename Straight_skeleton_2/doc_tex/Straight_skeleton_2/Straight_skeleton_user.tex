@@ -361,6 +361,18 @@ Contour vertices have time zero.
 
 The straight skeleton data structure is defined by the \ccc{StraightSkeleton_2} concept and modeled in the \ccc{Straight_skeleton_2<Traits,Items,Alloc>} class.
 
+The simplest way to construct a straight skeleton is via the free functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_exterior_straight_skeleton_2}, as shown in the following example:
+
+\ccIncludeExampleCode{Straight_skeleton_2/Create_straight_skeleton_2.cpp}
+
+The input to these functions is the polygon, which can be given as an iterator pair or directly as a \ccc{Polygon_2} object. In the case of the exterior skeleton, a maximum offset must be specfied as well (see the ref manual details on this max offset parameter).
+
+If \ccc{Polygon_with_holes_2} is used, you can pass an instance of that directly to the function creating the interior skeleton, as shown below. Notice that a different header must be included in this case. 
+
+\ccIncludeExampleCode{Straight_skeleton_2/Create_straight_skeleton_2.cpp}
+
+\subsection{Low level API}
+
 The straight skeleton construction algorithm is encapsulated in the
 class \ccc{Straight_skeleton_builder_2<Gt,Ss>} which is
 parameterized on a geometric traits (class

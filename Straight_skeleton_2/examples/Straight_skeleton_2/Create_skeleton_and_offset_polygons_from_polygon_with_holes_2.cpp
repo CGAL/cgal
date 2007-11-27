@@ -49,13 +49,11 @@ int main()
   
   poly.add_hole( hole ) ;
      
-  double lOffset = 1 ;
+  double lOffset = 0.2 ;
      
-  PolygonPtrVector inner_offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
-  PolygonPtrVector outer_offset_polygons = CGAL::create_exterior_skeleton_and_offset_polygons_2(lOffset,poly);
+  PolygonPtrVector offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
   
-  print_polygons(inner_offset_polygons);
-  print_polygons(outer_offset_polygons);
+  print_polygons(offset_polygons);
 
   return 0;
 }
