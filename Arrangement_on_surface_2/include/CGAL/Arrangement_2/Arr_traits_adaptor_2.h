@@ -108,7 +108,7 @@ public:
       return _compare_y_at_x_left_imp (xcv1, xcv2, p, Has_left_category());
     }
 
-  private:
+  protected:
     //! The base traits.
     const Self    *m_self;
 
@@ -243,7 +243,7 @@ public:
       return _boundary_in_x_imp (xcv, ind, Has_boundary_category());
     }
 
-  private:
+  protected:
     //! The base traits.
     const Base * m_base;
 
@@ -306,7 +306,7 @@ public:
       return _boundary_in_y_imp (xcv, ind, Has_boundary_category());
     }
 
-  private:
+  protected:
     //! The base traits.
     const Base * m_base;
 
@@ -353,7 +353,7 @@ public:
    * boundary of the parameter space
    */
   class Compare_x_near_boundary_2 {
-  private:
+  protected:
     //! The base traits.
     const Base * m_base;
 
@@ -467,7 +467,7 @@ public:
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
-  private:
+  protected:
     //! The base traits.
     const Base * m_base;
 
@@ -538,7 +538,7 @@ public:
    * that lie on the horizontal identification arc.
    */
   class Compare_x_on_identification_2 {
-  private:
+  protected:
     //! The base traits.
     const Base * m_base;
 
@@ -577,7 +577,7 @@ public:
    * that lie on the vertical identification arc.
    */
   class Compare_y_on_identification_2 {
-  private:
+  protected:
     //! The base traits.
     const Base * m_base;
 
@@ -845,7 +845,7 @@ public:
       return (res != LARGER);
     }
 
-  private:
+  protected:
     //! The base traits.
     const Self    *m_self;
 
@@ -1075,7 +1075,7 @@ public:
       }
     }
 
-  private:
+  protected:
     //! The base traits.
     const Self    *m_self;
 
@@ -1301,7 +1301,7 @@ public:
       }
     }
     
-  private:
+  protected:
     //! The base traits.
     const Self    *m_self;
 
@@ -1378,7 +1378,7 @@ public:
       return (from_top ? SMALLER : LARGER);
     }
 
-  private:
+  protected:
     //! The base traits.
     const Self    *m_self;
 
@@ -1474,7 +1474,7 @@ public:
       return (_are_mergeable_imp (xcv1, xcv2, Has_merge_category()));
     }
 
-  private:
+  protected:
     //! The base traits.
     const Base    *m_base;
 
@@ -1538,7 +1538,7 @@ public:
       _merge_imp (xcv1, xcv2, c, Has_merge_category());
     }
 
-  private:
+  protected:
     //! The base traits.
     const Base    *m_base;
 

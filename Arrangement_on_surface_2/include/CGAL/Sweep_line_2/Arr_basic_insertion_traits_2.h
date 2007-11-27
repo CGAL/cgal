@@ -242,7 +242,7 @@ public:
 
   /*! A functor that obtains the left endpoint of an x-monotone curve. */
   class Construct_min_vertex_2 {
-  private:
+  protected:
     Base_construct_min_vertex_2  m_base_min_v;
     Base_equal_2                 m_base_equal;
     Halfedge_handle              invalid_he;
@@ -301,7 +301,7 @@ public:
 
   /*! A functor that obtains the right endpoint of an x-monotone curve. */
   class Construct_max_vertex_2 {
-  private:
+  protected:
     Base_construct_max_vertex_2  m_base_max_v;
     Base_equal_2                 m_base_equal;
     Halfedge_handle              invalid_he;
@@ -361,7 +361,7 @@ public:
 
   /*! A functor that compares two points lexigoraphically: by x, then by y. */
   class Compare_xy_2 {
-  private:
+  protected:
     Base_compare_xy_2 m_base_cmp_xy;
 
     /*! Constructor.
@@ -395,7 +395,7 @@ public:
    * x-monotone curve at the point x-coordinate.
    */
   class Compare_y_at_x_2 {
-  private:
+  protected:
     Base_compare_y_at_x_2 m_base_cmp_y_at_x;
 
     /*! Constructor.
@@ -428,7 +428,7 @@ public:
    * curves immediately to the right of their intersection point.
    */
   class Compare_y_at_x_right_2 {
-  private:
+  protected:
     Base_compare_y_at_x_right_2 m_base_cmp_y_at_x_right;
 
     /*! Constructor.
@@ -465,7 +465,7 @@ public:
    * identical.
    */
   class Equal_2 {
-  private:
+  protected:
     Base_equal_2 m_base_eq;
 
     /*! Constructor.
@@ -501,7 +501,7 @@ public:
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {
-  private:
+  protected:
     Base_compare_x_2 m_base_cmp_x;
 
     /*! Constructor.
@@ -529,7 +529,7 @@ public:
 
   /*! A functor that checks whether a given x-monotone curve is vertical. */
   class Is_vertical_2 {
-  private:
+  protected:
     Base_is_vertical_2 m_base_is_vert;
 
     /*! Constructor.
@@ -559,7 +559,7 @@ public:
    * on a boundary of the parameter space along the x axis.
    */
   class Boundary_in_x_2 {
-  private:
+  protected:
     //! The base traits.
     const Traits_2 * m_base;
 
@@ -609,7 +609,7 @@ public:
    * on a boundary of the parameter space along the y axis.
    */
   class Boundary_in_y_2 {
-  private:
+  protected:
     //! The base traits.
     const Traits_2 * m_base;
 
@@ -659,7 +659,7 @@ public:
    * boundary of the parameter space.
    */
   class Compare_x_near_boundary_2 {
-  private:
+  protected:
     //! The base traits.
     const Traits_2 * m_base;
 
@@ -751,7 +751,7 @@ public:
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
-  private:
+  protected:
     //! The base traits.
     const Traits_2 * m_base;
 
