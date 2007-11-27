@@ -33,11 +33,12 @@ template < class CurvedKernelViaAnalysis_2, class Rep_ >
 class Arc_2;
 
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
-std::ostream& operator<< (std::ostream&, const Arc_2<CurvedKernelViaAnalysis_2, Rep_>&);
+std::ostream& operator<< (std::ostream&,
+    const Arc_2<CurvedKernelViaAnalysis_2, Rep_>&);
 
 #ifndef CERR
-#define Gfx_DEBUG_PRINT_CERR
-#ifdef Gfx_DEBUG_PRINT_CERR
+//#define CKvA_DEBUG_PRINT_CERR
+#ifdef CKvA_DEBUG_PRINT_CERR
 #define CERR(x) std::cout << x
 #else
 #define CERR(x) static_cast<void>(0)
@@ -96,6 +97,8 @@ public:
 };
 
 // Boundary_type defined in Arr_enums.h
+
+
 
 //! \brief class defines a point on a generic curve
 template <class CurvedKernelViaAnalysis_2, 
@@ -562,7 +565,8 @@ public:
         CGAL_precondition(bnd1_y * bnd2_y < 0 || bnd1_y == bnd2_y);
         if(is_singular(bnd1_y) != is_singular(bnd2_y)) {
             // only one curve end lies at singularity (another at +/-oo)
-            CGAL_error_msg("SINGULARITY + INF comparison is not yet implemented");
+            CGAL_error_msg("SINGULARITY + INF comparison is not yet \
+                implemented");
         }
         Curve_kernel_2 kernel_2;
         if(is_singular(bnd1_y) && is_singular(bnd2_y)) {
@@ -653,7 +657,7 @@ public:
            (bndp_y == CGAL::AFTER_SINGULARITY && bnd1_y == bndp_y) ||
             (bndp_y == CGAL::BEFORE_SINGULARITY && bnd2_y == bndp_y))
             return CGAL::EQUAL;
-        CGAL_precondition_msg(!is_singular(bndp_x), "The target point is not "
+        CGAL_precondition_msg(!is_singular(bndp_x), "Target point is not "
             "within the arc's x-range"); 
                 
         if(is_singular(bndp_y)) {// singularity in y is always in x-range 
@@ -733,10 +737,12 @@ public:
         CGAL::Curve_end end) const {
         
         CERR("compare_y_at_x(cv2); this: " << *this << "; cv2: " <<
-            cv2.curve() << "; end: " << end << "\n");
-        
+            cv2 << "; end: " << end << "\n");
+
         CGAL::Boundary_type bnd1_x = boundary_in_x(end),
             bnd2_x =  cv2.boundary_in_x(end);
+            
+        (void)bnd2_x;
         CGAL_precondition(bnd1_x != CGAL::NO_BOUNDARY &&
              bnd2_x != CGAL::NO_BOUNDARY && bnd1_x == bnd2_x &&
              boundary_in_y(end) == CGAL::NO_BOUNDARY &&
@@ -867,7 +873,8 @@ public:
             return CGAL::SMALLER;
         
         if(is_singular(bndp_y)) // singularity in y
-            CGAL_error_msg("Handling singularity in y is not yet implemented");    
+            CGAL_error_msg("Handling singularity in y is not yet \
+                implemented");
             
         // vertical line immediately to the right of p: if p lies on boundary
         // get the vertical line over the first interval; otherwise
@@ -1025,6 +1032,54 @@ public:
                 return true;
             }
         return false;
+    }
+
+    /*!\brief 
+     * multiplicity of intersection
+     * 
+     * The intersection multiplicity of \c *this and \c cv2 at point \c p is
+     * returned.
+     *
+     * \pre \c p must be an intersection point.
+     */
+    int multiplicity_of_intersection(const Self& cv2, const Point_2& p) const {
+
+        // intersection point must lie in the interior of both arcs
+        CGAL_precondition_code( // because of macro stupidity one needs 
+            bool eq_min1;       // to omit commas in declaration
+            bool eq_max1;
+            bool eq_min2;
+            bool eq_max2;
+        );    
+        CGAL_precondition(is_in_x_range(p.x(), &eq_min1, &eq_max1) &&
+            cv2.is_in_x_range(p.x(), &eq_min2, &eq_max2));
+        CGAL_precondition(is_vertical() || (!eq_min1 && !eq_max1));
+        CGAL_precondition(cv2.is_vertical() || (!eq_min2 && !eq_max2));
+
+        // there must be an intersection at this point (in_x_range is checked
+        // internally by compare_y_at_x() ?
+        CGAL_expensive_precondition(compare_y_at_x(p) == CGAL::EQUAL &&
+            cv2.compare_y_at_x(p) == CGAL::EQUAL);
+        
+        CGAL_precondition(!curve().is_identical(cv2.curve()));
+        if(is_vertical() || cv2.is_vertical()) 
+            CGAL_assertion(!(is_vertical() && cv2.is_vertical()));
+            return 1;
+        /*if (simplify(*this, s)) {  // not yet implemented
+            return multiplicity_of_intersection(s,p);
+        } */ 
+
+        Curve_pair_analysis_2 cpa_2((Curve_analysis_2(curve())),
+            (Curve_analysis_2(cv2.curve())));
+        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line =
+                cpa_2.vertical_line_for_x(p.x());
+
+        CGAL_precondition(cpv_line.is_intersection());
+        int j = cpv_line.get_event_of_curve(arcno(p.x()), 0),
+            mult = cpv_line.get_multiplicity_of_intersection(j);
+            
+        CGAL_postcondition(mult > 0);
+        return mult;
     }
 
     /*!
@@ -1215,7 +1270,7 @@ public:
     
         CERR("trim\n");
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(kernel_2.compare_xy_2_object()(p, q) !=
+        CGAL_precondition(kernel_2.compare_xy_2_object()(p.xy(), q.xy()) !=
             CGAL::EQUAL);
         CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL &&
                           compare_y_at_x(q) == CGAL::EQUAL);  
@@ -1266,9 +1321,9 @@ public:
         if(is_identical(cv2)) 
             return true;
         if(!curve().is_identical(cv2.curve())) {
-            
-            CGAL_error_msg("do_overlap() for non-coprime curves is not yet "
-                "implemented for ");
+            return false;
+            //CGAL_error_msg("do_overlap() for non-coprime curves is not yet "
+              //  "implemented for ");
         }
         if(is_vertical() != cv2.is_vertical())
             return false; // only one arc is vertical => can't overlap
@@ -1442,8 +1497,9 @@ private:
     //! using \c _fix_curve_ends_order()
     void _check_arc_interior() const {
     
-#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS))
-                
+#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
+        || defined(NDEBUG))
+
         Curve_analysis_2 ca_2(curve());
         if(is_vertical()) {
             X_coordinate_1 x0 = _minpoint().x();
@@ -1998,6 +2054,7 @@ protected:
         // grabbing all 2-curve events
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
+        // TODO: remove NiX !
         bool which_curve = (NiX::total_degree(f) < NiX::total_degree(g));
         
         for(int i = low_idx; i <= high_idx; i++) {

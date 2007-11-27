@@ -386,7 +386,7 @@ std::ostream& operator <<(std::ostream& os,
 
     switch(::CGAL::get_mode(os)) {
     case ::CGAL::IO::PRETTY:
-        os << "point(";
+        os << "point@" << pt.id() << "(";
         if(pt.is_finite())
             os << "sup@" << pt.curve().id();
         os << " X=";

@@ -1,0 +1,262 @@
+// TODO: Add licence
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:$
+// $Id: $
+// 
+//
+// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
+//
+//
+// ============================================================================
+
+#ifndef CGAL_CURVED_KERNEL_GENERIC_ARC_2_H
+#define CGAL_CURVED_KERNEL_GENERIC_ARC_2_H
+
+/*! \file Curved_kernel_via_analysis_2/Generic_arc_2.h
+ *  \brief defines class \c Generic_arc_2
+ *  
+ *  adds support for isolated points to native CKvA_2 object
+ */
+
+#include <CGAL/basic.h>
+#include <CGAL/Handle_with_policy.h>
+
+CGAL_BEGIN_NAMESPACE
+
+namespace CGALi {
+
+//! forward class declaration
+template < class SweepCurvesAdaptor_2, class Rep_ >
+class Generic_arc_2;
+
+template < class SweepCurvesAdaptor_2, class Rep_ >
+std::ostream& operator<< (std::ostream&,
+    const Generic_arc_2<SweepCurvesAdaptor_2, Rep_>&);
+
+template <class SweepCurvesAdaptor_2>
+class Generic_arc_2_rep
+{ 
+public:
+
+    // this instance's template parameter
+    typedef SweepCurvesAdaptor_2 Sweep_curves_adaptor_2;
+    
+    // myself
+    typedef Generic_arc_2_rep<Sweep_curves_adaptor_2> Self;
+    
+    // type of generic point object provided by CKvA_2
+    typedef typename Sweep_curves_adaptor_2::Native_point_2 Point_2;
+
+    // type of a native arc object provided by CKvA_2
+    typedef typename Sweep_curves_adaptor_2::Native_arc_2 Arc_2;
+
+    // type of a generic point (which may lie at infinity)
+    typedef typename Sweep_curves_adaptor_2::Generic_point_2 Generic_point_2;
+    
+public:    
+    // default constructor
+    Generic_arc_2_rep() :
+        _m_arc(Arc_2()), _m_is_degenerate(false) {
+    }
+
+    // standard constructor : normal arc
+    Generic_arc_2_rep(const Arc_2& c) :
+        _m_arc(c), _m_is_degenerate(false) {
+    }
+        
+    // standard constructor : degenerate arc
+    Generic_arc_2_rep(const Generic_point_2& p) :
+        _m_point(p), _m_is_degenerate(true) {
+    }
+
+    mutable boost::optional<Arc_2> _m_arc;
+       
+    mutable boost::optional<Generic_point_2> _m_point;
+    // whether an arc is degenerate
+    mutable bool _m_is_degenerate; 
+
+    // befriending the handle
+    friend class Generic_arc_2<Sweep_curves_adaptor_2, Self>;
+};
+
+// Boundary_type defined in Arr_enums.h
+
+//! \brief class defines a point on a generic curve
+template <class SweepCurvesAdaptor_2, 
+          class Rep_ = CGALi::Generic_arc_2_rep<SweepCurvesAdaptor_2> >
+class Generic_arc_2
+      : public CGAL::Handle_with_policy< Rep_ > {
+public:
+    //!@{
+    //!\name publuic typedefs
+
+    //! this instance's first template parameter
+    typedef SweepCurvesAdaptor_2 Sweep_curves_adaptor_2;
+
+    //! this instance's second template parameter
+    typedef Rep_ Rep;
+
+    //! this instance itself
+    typedef Generic_arc_2<Sweep_curves_adaptor_2, Rep> Self;
+    
+    //! type of generic point object provided by CKvA_2
+    typedef typename Sweep_curves_adaptor_2::Native_point_2 Point_2;
+
+    //! type of a native arc object provided by CKvA_2
+    typedef typename Sweep_curves_adaptor_2::Native_arc_2 Arc_2;
+
+    //! type of a generic point (which may lie at infinity)
+    typedef typename Sweep_curves_adaptor_2::Generic_point_2 Generic_point_2;
+    
+    //! the handle superclass
+    typedef ::CGAL::Handle_with_policy< Rep > Base;
+        
+    //!@}
+public:
+    //!\name basic constructors
+    //!@{
+
+    /*!\brief
+     * Default constructor
+     */
+    Generic_arc_2() : 
+        Base(Rep()) {   
+    }
+
+    /*!\brief
+     * copy constructor
+     */
+    Generic_arc_2(const Self& p) :
+            Base(static_cast<const Base&>(p)) {  
+    }
+    
+    /*!\brief
+     * constructs an arc from a given represenation
+     */
+    Generic_arc_2(Rep rep) :
+        Base(rep) { 
+    }
+    
+    //!@}
+    //!\name standard constructors
+    //!@{
+    
+    //! \brief 
+    //! constructs normal (non-degenerate) arc
+    explicit Generic_arc_2(const Arc_2& c) : 
+            Base(Rep(c)) {
+    }
+  
+    /*!\brief
+     * constructs degenerate arc from a point
+     */
+    explicit Generic_arc_2(const Generic_point_2& pt) :
+        Base(Rep(pt)) {
+    }
+    
+    //!@}
+public:
+    //!\name access functions
+    //!@{
+
+    //! checks whether this arc is degenerate
+    bool is_degenerate() const {
+        return this->ptr()->_m_is_degenerate;
+    }
+
+    //! returns embedded arc object for non-degenerate case
+    //!
+    //! \pre !is_degenerate
+    Arc_2 arc() const {
+        CGAL_precondition(!is_degenerate());
+        return *(this->ptr()->_m_arc);
+    }
+
+    //! returns embedded point object (degenerate case)
+    //!
+    //! \pre is_degenerate
+    Generic_point_2 point() const {
+        CGAL_precondition(is_degenerate());
+        return *(this->ptr()->_m_point);
+    }
+
+    //!@}
+    //!\name methods
+    //!@{
+
+    /*!\brief
+     * computes intersection points of \c *this and \c cv2, writes the result
+     * to the output iterator \c oi
+     */
+    template < class OutputIterator >
+    OutputIterator intersect(const Self& cv2, OutputIterator oi) const {
+        Point_2 pt;
+        Arc_2 a;
+        if(!is_degenerate()) {
+            if(!cv2.is_degenerate()) {
+                typedef std::vector<std::pair<Point_2, int> > Point_container;
+                Point_container tmp;
+                arc().intersect(cv2.arc(), back_inserter(tmp));
+                // leave only intersection point (without multiplicity)
+                for(typename Point_container::const_iterator it = tmp.begin();
+                        it != tmp.end(); it++) 
+                    *oi++ = Generic_point_2(it->first);
+                return oi;
+            }
+            if(!cv2.point().is_finite()) 
+                return oi; // no intersections with degenerate arc at inf
+            a = arc();
+            pt = cv2.point().point();
+            
+        } else if(!cv2.is_degenerate()) {
+            a = cv2.arc();
+            if(!point().is_finite())
+                return oi; // no intersections with degenerate arc at inf
+            pt = point().point();
+
+        } else { // just two points
+            if(!cv2.point().is_finite() || !point().is_finite())
+                return oi;
+            if(point().point() == cv2.point().point())
+                *oi++ = point();
+            return oi;
+        }
+        if(a.is_in_x_range(pt.x()) && a.compare_y_at_x(pt) == CGAL::EQUAL)
+            *oi++ = Generic_point_2(pt);
+        return oi;
+    }
+
+    //! befriending output operator
+    // friend std::ostream& operator << <>(std::ostream&, const Self&);
+    
+    //!@}    
+}; // class Generic_arc_2
+
+template <class SweepCurvesAdaptor_2, class Rep_>
+std::ostream& operator << (std::ostream& os,
+    const Generic_arc_2<SweepCurvesAdaptor_2, Rep_>& arc) {
+
+    os << arc.id() << "@";
+    if(arc.is_degenerate())
+        os << "degenerate: " << arc.point();
+    else
+        os << arc.arc();
+    return os;
+}
+
+template <class SweepCurvesAdaptor_2, class Rep_>
+std::istream& operator >> (std::istream& is,
+    Generic_arc_2<SweepCurvesAdaptor_2, Rep_>& arc) {
+
+    std::cerr << "bogus >> call for generic_arc\n";
+    return is;
+}
+
+} // namespace CGALi
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_CURVED_KERNEL_GENERIC_ARC_2_H

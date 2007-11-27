@@ -47,8 +47,7 @@ public:
      *         SMALLER if x(p1) \< x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    result_type operator()(const Point_2 &p1, const Point_2 &p2) const
-    { 
+    result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
         return _m_curved_kernel_2->kernel().compare_x_2_object()
             (p1.x(), p2.x());
     }
@@ -66,8 +65,7 @@ public:
      *         EQUAL in case of an overlap.
      */
     result_type operator()(const Point_2& p, const Arc_2& cv, 
-            ::CGAL::Curve_end end) const 
-    {
+            CGAL::Curve_end end) const {
         return (cv.compare_end_at_x(end, p));
     }
 
@@ -86,8 +84,8 @@ public:
      *         LARGER if cv1 lies to the right cv2;
      *         EQUAL in case of an overlap.
      */
-    result_type operator()(const Arc_2& cv1, ::CGAL::Curve_end end1, 
-             const Arc_2& cv2, ::CGAL::Curve_end end2) const {
+    result_type operator()(const Arc_2& cv1, CGAL::Curve_end end1,
+             const Arc_2& cv2, CGAL::Curve_end end2) const {
         return cv1.compare_ends_at_x(end1, cv2, end2);
     }
     
@@ -156,9 +154,6 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-    
-        if(&p1 == &p2) 
-            return true;
         return (_m_curved_kernel_2->kernel().compare_xy_2_object()
             (p1.xy(), p2.xy()) == CGAL::EQUAL);
     }
@@ -170,9 +165,6 @@ public:
      * \return (true) if the two curves are the same; (false) otherwise.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
-    
-        if(&cv1 == &cv2)
-            return true; 
         return cv1.is_equal(cv2);
     }
 
