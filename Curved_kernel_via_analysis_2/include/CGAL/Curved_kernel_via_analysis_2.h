@@ -22,6 +22,7 @@
  */
 
 #include <CGAL/basic.h>
+#include <CGAL/Arr_enums.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
