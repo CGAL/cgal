@@ -41,8 +41,7 @@ template <class Kernel_> class Arr_linear_object_2;
  * rays and segments), aoviding cascading of computations as much as possible.
  */
 template <class Kernel_>
-class Arr_linear_traits_2
-{
+class Arr_linear_traits_2 : public Kernel_ {
   friend class Arr_linear_object_2<Kernel_>;
 
 public:
@@ -681,8 +680,25 @@ public:
   /// \name Basic functor definitions.
   //@{
 
-  class Compare_x_2
-  {
+  /*! A functor that compares the x-coordinates of two points */
+  class Compare_x_2 {
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_x_2(const Traits * traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+    
   public:
     /*!
      * Compare the x-coordinates of two points.
@@ -694,73 +710,19 @@ public:
      */
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
-      Kernel    kernel;
-
-      return (kernel.compare_x_2_object()(p1, p2));
-    }
-
-    /*!
-     * Compare the relative positions of a vertical curve and another given
-     * curves at y = +/- oo.
-     * \param p A reference point; we refer to a vertical line incident to p.
-     * \param cv The compared curve.
-     * \param ind ARR_MIN_END if we refer to cv's minimal end,
-     *            ARR_MIN_END if we refer to its maximal end.
-     * \pre cv's relevant end is defined at y = +/- oo.
-     * \return SMALLER if p lies to the left of cv;
-     *         LARGER if p lies to the right cv;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const Point_2& p,
-                                  const X_monotone_curve_2& cv,
-                                  Arr_curve_end) const
-    {
-      CGAL_precondition (! cv.is_degenerate());
-      CGAL_precondition (cv.is_vertical());
-
-      Kernel                    kernel;
-      return (kernel.compare_x_at_y_2_object() (p, cv.supp_line()));
-    }
-
-    /*!
-     * Compare the relative positions of two curves at y = +/- oo.
-     * \param cv1 The first curve.
-     * \param ind1 ARR_MIN_END if we refer to cv1's minimal end,
-     *             ARR_MIN_END if we refer to its maximal end.
-     * \param cv2 The second curve.
-     * \param ind2 ARR_MIN_END if we refer to cv2's minimal end,
-     *             ARR_MIN_END if we refer to its maximal end.
-     * \pre The curves are defined at y = +/- oo.
-     * \return SMALLER if cv1 lies to the left of cv2;
-     *         LARGER if cv1 lies to the right cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Arr_curve_end /* ind1 */,
-                                  const X_monotone_curve_2& cv2,
-                                  Arr_curve_end /* ind2 */) const
-    {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
-      CGAL_precondition (cv1.is_vertical());
-      CGAL_precondition (cv2.is_vertical());
-
-      Kernel                    kernel;
-      typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
-      return (kernel.compare_x_at_y_2_object() (p,
-                                                cv1.supp_line(),
-                                                cv2.supp_line()));
+      const Kernel * kernel = m_traits;
+      return (kernel->compare_x_2_object()(p1, p2));
     }
   };
 
-  /*! Get a Compare_x_2 functor object. */
+  /*! Obtain a Compare_x_2 functor. */
   Compare_x_2 compare_x_2_object () const
   {
-    return Compare_x_2();
+    return Compare_x_2(this);
   }
 
-  class Compare_xy_2
-  {
+  /*! A functor that compares the x-coordinates of two points */
+  class Compare_xy_2 {
   public:
     /*!
      * Compare two points lexigoraphically: by x, then by y.
@@ -912,8 +874,27 @@ public:
     return Is_vertical_2();
   }
 
-  class Compare_y_at_x_2
-  {
+  /*! A functor that compares the y-coordinates of a point and a line at
+   * the point x-coordinate
+   */
+  class Compare_y_at_x_2 {
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_y_at_x_2(const Traits * traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+    
   public:
     /*!
      * Return the location of the given point with respect to the input curve.
@@ -930,84 +911,26 @@ public:
       CGAL_precondition (! cv.is_degenerate());
       CGAL_precondition (cv.is_in_x_range (p));
 
-      Kernel    kernel;
-
+      const Kernel * kernel = m_traits;
       if (! cv.is_vertical())
-      {
         // Compare p with the segment's supporting line.
-        return (kernel.compare_y_at_x_2_object()(p, cv.supp_line()));
-      }
-      else
-      {
-        // Compare with the vertical segment's end-points.
-        typename Kernel::Compare_y_2  compare_y = kernel.compare_y_2_object();
-        const Comparison_result res1 =
-          cv.has_left() ? compare_y (p, cv.left()) : LARGER;
-        const Comparison_result res2 = 
-          cv.has_right() ? compare_y (p, cv.right()) : SMALLER;
+        return (kernel->compare_y_at_x_2_object()(p, cv.supp_line()));
 
-        if (res1 == res2)
-          return (res1);
-        else
-          return (EQUAL);
-      }
-    }
+      // Compare with the vertical segment's end-points.
+      typename Kernel::Compare_y_2  compare_y = kernel->compare_y_2_object();
+      const Comparison_result res1 =
+        cv.has_left() ? compare_y (p, cv.left()) : LARGER;
+      const Comparison_result res2 = 
+        cv.has_right() ? compare_y (p, cv.right()) : SMALLER;
 
-    /*!
-     * Compare the relative y-positions of two curves at x = +/- oo.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param ind ARR_MIN_END if we compare at x = -oo;
-     *            ARR_MAX_END if we compare at x = +oo.
-     * \pre The curves are defined at x = +/- oo.
-     * \return SMALLER if cv1 lies below cv2;
-     *         LARGER if cv1 lies above cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2, 
-                                  Arr_curve_end ind) const
-    {
-      // Make sure both curves are defined at x = -oo (or at x = +oo).
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
-      CGAL_precondition ((ind == ARR_MIN_END &&
-                          cv1.left_infinite_in_x_depricated() == MINUS_INFINITY &&
-                          cv2.left_infinite_in_x_depricated() == MINUS_INFINITY) ||
-                         (ind == ARR_MAX_END &&
-                          cv1.right_infinite_in_x_depricated() == PLUS_INFINITY &&
-                          cv2.right_infinite_in_x_depricated() == PLUS_INFINITY));
-
-      // Compare the slopes of the two supporting lines.
-      Kernel                    kernel;
-      const Comparison_result   res_slopes =
-        kernel.compare_slope_2_object() (cv1.supp_line(),
-                                         cv2.supp_line());
-
-      if (res_slopes == EQUAL)
-      {
-        // In case the two supporting line are parallel, compare their
-        // relative position at x = 0, which is the same as their position
-        // at infinity.
-        typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
-        return (kernel.compare_y_at_x_2_object() (p,
-                                                  cv1.supp_line(),
-                                                  cv2.supp_line()));
-      }
-
-      if (ind == ARR_MIN_END)
-        // Flip the slope result if we compare at x = -oo:
-        return ((res_slopes == LARGER) ? SMALLER : LARGER);
-
-      // If we compare at x = +oo, the slope result is what we need:
-      return (res_slopes);
+      return (res1 == res2) ? res1 : EQUAL;
     }
   };
 
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
-    return Compare_y_at_x_2();
+    return Compare_y_at_x_2(this);
   }
 
   class Compare_y_at_x_left_2

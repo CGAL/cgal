@@ -45,8 +45,6 @@ public:
     COMPARE_XY_OP,
     CONSTRUCT_MIN_VERTEX_OP,
     CONSTRUCT_MAX_VERTEX_OP,
-    BOUNDARY_IN_X_OP,
-    BOUNDARY_IN_Y_OP,
     IS_VERTICAL_OP,
     COMPARE_Y_AT_X_OP,
     EQUAL_POINTS_OP,
@@ -60,6 +58,12 @@ public:
     MERGE_OP,
     CONSTRUCT_OPPOSITE_OP,
     COMPARE_ENDPOINTS_XY_OP,
+    BOUNDARY_IN_X_OP,
+    BOUNDARY_IN_Y_OP,
+    COMPARE_X_NEAR_BOUNDARY_OP,
+    COMPARE_Y_NEAR_BOUNDARY_OP,
+    COMPARE_X_ON_IDENTIFICATION_OP,
+    COMPARE_Y_ON_IDENTIFICATION_OP,
     NUMBER_OF_OPERATIONS
   };
 
@@ -96,12 +100,6 @@ public:
   unsigned int count_construct_max_vertex() const
   { return m_counters[CONSTRUCT_MAX_VERTEX_OP]; }
 
-  unsigned int count_boundary_in_x() const
-  { return m_counters[BOUNDARY_IN_X_OP]; }
-  
-  unsigned int count_boundary_in_y() const
-  { return m_counters[BOUNDARY_IN_Y_OP]; }
-  
   unsigned int count_is_vertical() const
   { return m_counters[IS_VERTICAL_OP]; }
   
@@ -141,6 +139,24 @@ public:
   unsigned int count_compare_endpoints_xy() const
   { return m_counters[COMPARE_ENDPOINTS_XY_OP]; }
   
+  unsigned int count_boundary_in_x() const
+  { return m_counters[BOUNDARY_IN_X_OP]; }
+  
+  unsigned int count_boundary_in_y() const
+  { return m_counters[BOUNDARY_IN_Y_OP]; }
+
+  unsigned int count_compare_x_near_boundary() const
+  { return m_counters[COMPARE_X_NEAR_BOUNDARY_OP]; }
+
+  unsigned int count_compare_y_near_boundary() const
+  { return m_counters[COMPARE_Y_NEAR_BOUNDARY_OP]; }
+
+  unsigned int count_compare_x_on_identification() const
+  { return m_counters[COMPARE_X_ON_IDENTIFICATION_OP]; }
+
+  unsigned int count_compare_y_on_identification() const
+  { return m_counters[COMPARE_Y_ON_IDENTIFICATION_OP]; }
+  
   /// \name Types and functors inherited from the base
   //@{
 
@@ -154,7 +170,7 @@ public:
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Curve_2                Curve_2;
 
-  /*! Compare the x-coordinates of two points */
+  /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {
   private:
     typename Base::Compare_x_2 m_object;
@@ -168,23 +184,9 @@ public:
     /*! Operate */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     { ++m_counter; return m_object(p1, p2); }
-
-    /*! Operate */
-    Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xc, Arr_curve_end ind)
-      const
-    { ++m_counter; return m_object(p, xc, ind); }
-
-    /*! Operate */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Arr_curve_end ind1,
-                                 const X_monotone_curve_2 & xc2,
-                                 Arr_curve_end ind2)
-      const
-    { ++m_counter; return m_object(xc1, ind1, xc2, ind2); }
   };
 
-  /*! Compare two points lexigoraphically; by x, then by y */
+  /*! A functor that compares two points lexigoraphically: by x, then by y. */
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
@@ -200,45 +202,7 @@ public:
     { ++m_counter; return m_object(p1, p2); }
   };
 
-  /*! Determine whether an endpoint of an x-monotone curve lies on an
-   * x-boundary.
-   */
-  class Boundary_in_x_2 {
-  private:
-    typename Base::Boundary_in_x_2 m_object;
-    mutable unsigned int & m_counter;
-
-  public:
-    /*! Construct */
-    Boundary_in_x_2(const Base * base, unsigned int & counter) :
-      m_object(base->boundary_in_x_2_object()), m_counter(counter) {}
-
-    /*! Operate */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Arr_curve_end ind) const
-    { ++m_counter; return m_object(xc, ind); }
-  };
-
-  /*! Determine whether an endpoint of an x-monotone curve lies on an
-   * y-boundary.
-   */
-  class Boundary_in_y_2 {
-  private:
-    typename Base::Boundary_in_y_2 m_object;
-    mutable unsigned int & m_counter;
-
-  public:
-    /*! Construct */
-    Boundary_in_y_2(const Base * base, unsigned int & counter) :
-      m_object(base->boundary_in_y_2_object()), m_counter(counter) {}
-
-    /*! Operate */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Arr_curve_end ind) const
-    { ++m_counter; return m_object(xc, ind); }
-  };
-  
-  /*! Obtain the left endpoint of a given x-monotone curve */
+  /*! A functor that obtains the left endpoint of an x-monotone curve. */
   class Construct_min_vertex_2 {
   private:
     typename Base::Construct_min_vertex_2 m_object;
@@ -254,7 +218,7 @@ public:
     { ++m_counter; return m_object(xc); }
   };
 
-  /*! Obtain the right endpoint of a given x-monotone curve */
+  /*! A functor that obtains the right endpoint of an x-monotone curve. */
   class Construct_max_vertex_2 {
   private:
     typename Base::Construct_max_vertex_2 m_object;
@@ -270,7 +234,7 @@ public:
     { ++m_counter; return m_object(xc); }
   };
   
-  /*! Check whether a given x-monotone curve is vertical */
+  /*! A functor that checks whether a given x-monotone curve is vertical. */
   class Is_vertical_2 {
   private:
     typename Base::Is_vertical_2 m_object;
@@ -286,8 +250,8 @@ public:
     { ++m_counter; return m_object(xc); }
   };
   
-  /*! Return the location of a given point with respect to a given x-monotone
-   * curve
+  /*! A functor that compares the y-coordinates of a point and an
+   * x-monotone curve at the point x-coordinate.
    */
   class Compare_y_at_x_2 {
   private:
@@ -303,22 +267,11 @@ public:
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xc) const
     { ++m_counter; return m_object(p, xc); }
-
-    /*! Operate */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Arr_curve_end ind) const
-    { ++m_counter; return m_object(xc1, xc2, ind); }
-
-    /*! Operate */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Arr_curve_end ind1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Arr_curve_end ind2) const
-    { ++m_counter; return m_object(xc1, ind1, xc2, ind2); }
   };
   
-  /*! Check if two x-monotone curves or if two points are identical */
+  /*! A functor that checks whether two points and two x-monotone curves are
+   * identical.
+   */
   class Equal_2 {
   private:
     typename Base::Equal_2 m_object;
@@ -343,8 +296,8 @@ public:
     { ++m_counter2; return m_object(p1, p2); }    
   };
 
-  /*! Compare the y value of two x-monotone curves immediately to the left of
-   * their intersection point
+  /*! A functor that compares compares the y-coordinates of two x-monotone
+   * curves immediately to the left of their intersection point.
    */
   class Compare_y_at_x_left_2 {
   private:
@@ -363,8 +316,8 @@ public:
     { ++m_counter; return m_object(xc1, xc2, p); }
   };
 
-  /*! Compare the y value of two x-monotone curves immediately to the right of
-   * their intersection point
+  /*! A functor that compares compares the y-coordinates of two x-monotone
+   * curves immediately to the right of their intersection point.
    */
   class Compare_y_at_x_right_2 {
   private:
@@ -383,7 +336,7 @@ public:
     { ++m_counter; return m_object(xc1, xc2, p); }
   };
   
-  /*! Split a curve into x-monotone pieces */
+  /*! A functor that divides a curve into x-monotone curves. */
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -400,7 +353,7 @@ public:
     { ++m_counter; return m_object(cv, oi); }
   };
 
-  /*! Split an x-monotone curve into two */
+  /*! A functor that splits an arc at a point. */
   class Split_2 {
   private:
     typename Base::Split_2 m_object;
@@ -417,7 +370,7 @@ public:
     { ++m_counter; m_object(xc, p, xc1, xc2); }
   };
 
-  /*! compute intersections */
+  /*! A functor that computes intersections between x-monotone curves. */
   class Intersect_2 {
   private:
     typename Base::Intersect_2 m_object;
@@ -436,7 +389,7 @@ public:
     { ++m_counter; return m_object(xc1, xc2, oi); }
   };
 
-  /*! Test whether two x-monotone curves are mergeable */
+  /*! A functor that tests whether two x-monotone curves can be merged. */
   class Are_mergeable_2 {
   private:
     typename Base::Are_mergeable_2 m_object;
@@ -453,7 +406,7 @@ public:
     { ++m_counter; return m_object(xc1, xc2); }
   };
 
-  /*! Merge two x-monotone curves into one */
+  /*! A functor that merges two x-monotone curves into one. */
   class Merge_2 {
   private:
     typename Base::Merge_2 m_object;
@@ -471,7 +424,7 @@ public:
     { ++m_counter; m_object(xc1, xc2, xc); }
   };
 
-  /*! Construct an opposite x-monotone curve */
+  /*! A fnuctor that constructs an opposite x-monotone curve. */
   class Construct_opposite_2 {
   private:
     typename Base::Construct_opposite_2 m_object;
@@ -487,7 +440,9 @@ public:
     { ++m_counter; return m_object(xc); }
   };
 
-  /*! Compare the two endpoints of a given curve lexigoraphically */
+  /*! A functor that compares the two endpoints of an x-monotone curve
+   * lexigoraphically.
+   */
   class Compare_endpoints_xy_2 {
   private:
     typename Base::Compare_endpoints_xy_2 m_object;
@@ -503,6 +458,132 @@ public:
     { ++m_counter; return m_object(xc); }
   };
 
+  /*! A functor that determines whether an endpoint of an x-monotone curve lies
+   * on a boundary of the parameter space along the x axis.
+   */
+  class Boundary_in_x_2 {
+  private:
+    typename Base::Boundary_in_x_2 m_object;
+    mutable unsigned int & m_counter;
+
+  public:
+    /*! Construct */
+    Boundary_in_x_2(const Base * base, unsigned int & counter) :
+      m_object(base->boundary_in_x_2_object()), m_counter(counter) {}
+
+    /*! Operate */
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Arr_curve_end ce) const
+    { ++m_counter; return m_object(xc, ce); }
+  };
+
+  /*! A functor that determines whether an endpoint of an x-monotone arc lies
+   * on a boundary of the parameter space along the y axis.
+   */
+  class Boundary_in_y_2 {
+  private:
+    typename Base::Boundary_in_y_2 m_object;
+    mutable unsigned int & m_counter;
+
+  public:
+    /*! Construct */
+    Boundary_in_y_2(const Base * base, unsigned int & counter) :
+      m_object(base->boundary_in_y_2_object()), m_counter(counter) {}
+
+    /*! Operate */
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Arr_curve_end ce) const
+    { ++m_counter; return m_object(xc, ce); }
+  };
+
+  /*! A functor that compares the x-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_boundary_2 {
+  private:
+    typename Base::Compare_x_near_boundary_2 m_object;
+    unsigned int & m_counter;
+
+  public:
+    /*! Construct */
+    Compare_x_near_boundary_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_x_near_boundary_2_object()), m_counter(counter) {}
+
+    /*! Operate */
+    Comparison_result operator()(const Point_2 & p,
+                                 const X_monotone_curve_2 & xc,
+                                 Arr_curve_end ce) const
+    { ++m_counter; return m_object(p, xc, ce); }
+
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xc1,
+                                 Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xc2,
+                                 Arr_curve_end ce2) const
+    { ++m_counter; return m_object(xc1, ce1, xc2, ce2); }
+  };
+
+  /*! A functor that compares the y-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+  private:
+    typename Base::Compare_y_near_boundary_2 m_object;
+    unsigned int & m_counter;
+
+  public:
+    /*! Construct */
+    Compare_y_near_boundary_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_y_near_boundary_2_object()), m_counter(counter) {}
+
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xc1,
+                                 const X_monotone_curve_2 & xc2, 
+                                 Arr_curve_end ce) const
+    { ++m_counter; return m_object(xc1, xc2, ce); }
+  };
+
+  /*! A functor that compares the x-coordinate of two given points
+   * that lie on the horizontal identification curve.
+   */
+  class Compare_x_on_identification_2 {
+  private:
+    typename Base::Compare_x_on_identification_2 m_object;
+    unsigned int & m_counter;
+
+  public:
+    /*! Construct */
+    Compare_x_on_identification_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_x_on_identification_2_object()),
+      m_counter(counter)
+    {}
+
+    /*! Operate */
+    Comparison_result operator()(const Point_2 & p1,
+                                 const Point_2 & p2) const
+    { ++m_counter; return m_object(p1, p2); }
+  };
+
+  /*! A functor that compares the y-coordinate of two given points
+   * that lie on the vertical identification curve.
+   */
+  class Compare_y_on_identification_2 {
+  private:
+    typename Base::Compare_y_on_identification_2 m_object;
+    unsigned int & m_counter;
+
+  public:
+    /*! Construct */
+    Compare_y_on_identification_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_y_on_identification_2_object()),
+      m_counter(counter)
+    {}
+
+    /*! Operate */
+    Comparison_result operator()(const Point_2 & p1,
+                                 const Point_2 & p2) const
+    { ++m_counter; return m_object(p1, p2); }
+  };
   //@}
 
   /// \name Obtain the appropriate functor
@@ -532,7 +613,10 @@ public:
   { return Compare_y_at_x_2(this, m_counters[COMPARE_Y_AT_X_OP]); }
   
   Equal_2 equal_2_object() const
-  { return Equal_2(this, m_counters[EQUAL_POINTS_OP], m_counters[EQUAL_CURVES_OP]); }
+  {
+    return Equal_2(this, m_counters[EQUAL_POINTS_OP],
+                   m_counters[EQUAL_CURVES_OP]);
+  }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(this, m_counters[COMPARE_Y_AT_X_LEFT_OP]); }
@@ -601,10 +685,6 @@ Out_stream & operator<<(Out_stream & os,
      << traits.count_construct_min_vertex() << std::endl
      << "# of CONSTRUCT_MAX_VERTEX operation = "
      << traits.count_construct_max_vertex() << std::endl
-     << "# of BOUNDARY_IN_X operation = "
-     << traits.count_boundary_in_x() << std::endl
-     << "# of BOUNDARY_IN_Y operation = "
-     << traits.count_boundary_in_y() << std::endl
      << "# of IS_VERTICAL operation = "
      << traits.count_is_vertical() << std::endl
      << "# of COMPARE_Y_AT_X operation = "
@@ -631,6 +711,18 @@ Out_stream & operator<<(Out_stream & os,
      << traits.count_construct_opposite() << std::endl
      << "# of COMPARE_ENDPOINTS_XY operation = "
      << traits.count_compare_endpoints_xy() << std::endl
+     << "# of BOUNDARY_IN_X operation = "
+     << traits.count_boundary_in_x() << std::endl
+     << "# of BOUNDARY_IN_Y operation = "
+     << traits.count_boundary_in_y() << std::endl
+     << "# of COMPARE_X_NEAR_BOUNDARY operation = "
+     << traits.count_compare_x_near_boundary() << std::endl
+     << "# of COMPARE_Y_NEAR_BOUNDARY operation = "
+     << traits.count_compare_y_near_boundary() << std::endl
+     << "# of COMPARE_X_ON_IDENTIFICATION operation = "
+     << traits.count_compare_x_on_identification() << std::endl
+     << "# of COMPARE_Y_ON_IDENTIFICATION operation = "
+     << traits.count_compare_y_on_identification() << std::endl
      << "total # = " << sum << std::endl
      << "# of traits constructed = " << Traits::increment(false)
      << std::endl;

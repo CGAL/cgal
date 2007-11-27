@@ -45,12 +45,10 @@ public:
     COMPARE_XY_OP,
     CONSTRUCT_MIN_VERTEX_OP,
     CONSTRUCT_MAX_VERTEX_OP,
-    BOUNDARY_IN_X_OP,
-    BOUNDARY_IN_Y_OP,
     IS_VERTICAL_OP,
     COMPARE_Y_AT_X_OP,
-    EQUAL_POINT_OP,
-    EQUAL_CURVE_OP,
+    EQUAL_POINTS_OP,
+    EQUAL_CURVES_OP,
     COMPARE_Y_AT_X_LEFT_OP,
     COMPARE_Y_AT_X_RIGHT_OP,
     MAKE_X_MONOTONE_OP,
@@ -60,6 +58,12 @@ public:
     MERGE_OP,
     CONSTRUCT_OPPOSITE_OP,
     COMPARE_ENDPOINTS_XY_OP,
+    BOUNDARY_IN_X_OP,
+    BOUNDARY_IN_Y_OP,
+    COMPARE_X_NEAR_BOUNDARY_OP,
+    COMPARE_Y_NEAR_BOUNDARY_OP,
+    COMPARE_X_ON_IDENTIFICATION_OP,
+    COMPARE_Y_ON_IDENTIFICATION_OP,
     NUMBER_OF_OPERATIONS
   };
 
@@ -82,23 +86,17 @@ private:
   bool construct_max_vertex_op() const
   { return m_flags & (0x1 << CONSTRUCT_MAX_VERTEX_OP); }
   
-  bool boundary_in_x_op() const
-  { return m_flags & (0x1 << BOUNDARY_IN_X_OP); }
-  
-  bool boundary_in_y_op() const
-  { return m_flags & (0x1 << BOUNDARY_IN_Y_OP); }
-  
   bool is_vertical_op() const
   { return m_flags & (0x1 << IS_VERTICAL_OP); }
   
   bool compare_y_at_x_op() const
   { return m_flags & (0x1 << COMPARE_Y_AT_X_OP); }
   
-  bool equal_point_op() const
-  { return m_flags & (0x1 << EQUAL_POINT_OP); }
+  bool equal_points_op() const
+  { return m_flags & (0x1 << EQUAL_POINTS_OP); }
   
-  bool equal_curve_op() const
-  { return m_flags & (0x1 << EQUAL_CURVE_OP); }
+  bool equal_curves_op() const
+  { return m_flags & (0x1 << EQUAL_CURVES_OP); }
   
   bool compare_y_at_x_left_op() const
   { return m_flags & (0x1 << COMPARE_Y_AT_X_LEFT_OP); }
@@ -126,6 +124,24 @@ private:
   
   bool compare_endpoints_xy_op() const
   { return m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP); }
+
+  bool boundary_in_x_op() const
+  { return m_flags & (0x1 << BOUNDARY_IN_X_OP); }
+  
+  bool boundary_in_y_op() const
+  { return m_flags & (0x1 << BOUNDARY_IN_Y_OP); }
+  
+  bool compare_x_near_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
+
+  bool compare_y_near_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP); }
+
+  bool compare_x_on_identification_op() const
+  { return m_flags & (0x1 << COMPARE_X_ON_IDENTIFICATION_OP); }  
+
+  bool compare_y_on_identification_op() const
+  { return m_flags & (0x1 << COMPARE_Y_ON_IDENTIFICATION_OP); }  
   
 public:
   /*! Default constructor */
@@ -168,7 +184,7 @@ public:
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Curve_2                Curve_2;
 
-  /*! Compare the x-coordinates of two points */
+  /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {
   private:
     typename Base::Compare_x_2 m_object;
@@ -187,56 +203,16 @@ public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_x 1" << std::endl
+      std::cout << "compare_x" << std::endl
                 << "  p1: " << p1 << std::endl
                 << "  p2: " << p2 << std::endl;
       Comparison_result cr = m_object(p1, p2);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
-
-    /*! Operate
-     * \param p the first point 
-     * \param xc the curve the end of which is to be compared
-     * \param ind the curve-end index
-     * \return the comparison result
-     */
-    Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xc, Arr_curve_end ind)
-      const
-    {
-      if (!m_enabled) return m_object(p, xc, ind);
-      std::cout << "compare_x 2" << std::endl
-                << "  p: " << p << std::endl
-                << "  ind: " << ind << ", xc: " << xc << std::endl;
-      Comparison_result cr = m_object(p, xc, ind);
-      std::cout << "  result: " << std::endl;
-      return cr;
-    }
-
-    /*! Operate
-     * \param xc1 the first curve the end of which is to be compared
-     * \param ind1 the index of the end of the first curve
-     * \param xc2 the second curve the end of which is to be compared
-     * \param ind2 the index of the end of the second curve
-     * \return the comparison result
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Arr_curve_end ind1,
-                                 const X_monotone_curve_2 & xc2,
-                                 Arr_curve_end ind2) const
-    {
-      if (!m_enabled) return m_object(xc1, ind1, xc2, ind2);
-      std::cout << "compare_x 2" << std::endl
-                << "  ind1: " << ind1 << ", xc1: " << xc1 << std::endl
-                << "  ind2: " << ind2 << ", xc2: " << xc2 << std::endl;
-      Comparison_result cr = m_object(xc1, ind1, xc2, ind2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
   };
 
-  /*! Compare two points lexigoraphically; by x, then by y */
+  /*! A functor that compares two points lexigoraphically: by x, then by y. */
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
@@ -264,67 +240,7 @@ public:
     }
   };
 
-  /*! Determine whether an endpoint of an x-monotone curve lies on an
-   * x-boundary.
-   */
-  class Boundary_in_x_2 {
-  private:
-    typename Base::Boundary_in_x_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! Construct */
-    Boundary_in_x_2(const Base * base, bool enabled = true) :
-      m_object(base->boundary_in_x_2_object()), m_enabled(enabled)
-    {}
-    
-    /*! Operate
-     * \param xc the curve the end of which is tested
-     * \param ind the curve-end index
-     * \return the boundary type
-     */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Arr_curve_end ind) const
-    {
-      if (!m_enabled) return m_object(xc, ind);
-      std::cout << "boundary_in_x" << std::endl
-                << "  ind: " << ind << ", xc: " << xc << std::endl;
-      Boundary_type bt = m_object(xc, ind);
-      std::cout << "  result: " << bt << std::endl;
-      return bt;
-    }
-  };
-
-  /*! Determine whether an endpoint of an x-monotone curve lies on a
-   * y-boundary.
-   */
-  class Boundary_in_y_2 {
-  private:
-    typename Base::Boundary_in_y_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! Construct */
-    Boundary_in_y_2(const Base * base, bool enabled = true) :
-      m_object(base->boundary_in_y_2_object()), m_enabled(enabled) {}
-    
-    /*! Operate
-     * \param xc the curve the end of which is tested
-     * \param ind the curve-end index
-     * \return the boundary type
-     */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Arr_curve_end ind) const
-    {
-      if (!m_enabled) return m_object(xc, ind);
-        std::cout << "boundary_in_y" << std::endl
-                  << "  ind: " << ind << ", xc: " << xc << std::endl;
-      Boundary_type bt = m_object(xc, ind);
-      std::cout << "  result: " << bt << std::endl;
-      return bt;
-    }
-  };
-  
-  /*! Obtain the left endpoint of a given x-monotone curve */
+  /*! A functor that obtains the left endpoint of an x-monotone curve. */
   class Construct_min_vertex_2 {
   private:
     typename Base::Construct_min_vertex_2 m_object;
@@ -336,21 +252,21 @@ public:
       m_object(base->construct_min_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc the curev the left endpoint of which is obtained
+     * \param xcv the curev the left endpoint of which is obtained
      * \return the left endpoint
      */
-    const Point_2 operator()(const X_monotone_curve_2 & xc) const
+    const Point_2 operator()(const X_monotone_curve_2 & xcv) const
     {
-      if (!m_enabled) return m_object(xc);
+      if (!m_enabled) return m_object(xcv);
       std::cout << "construct_min_vertex" << std::endl
-                << "  xc: " << xc << std::endl;
-      Point_2 p = m_object(xc);
+                << "  xcv: " << xcv << std::endl;
+      Point_2 p = m_object(xcv);
       std::cout << "  result: " << p << std::endl;
       return p;
     }
   };
 
-  /*! Obtain the right endpoint of a given x-monotone curve */
+  /*! A functor that obtains the right endpoint of an x-monotone curve. */
   class Construct_max_vertex_2 {
   private:
     typename Base::Construct_max_vertex_2 m_object;
@@ -362,21 +278,21 @@ public:
       m_object(base->construct_max_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc the curev the right endpoint of which is obtained
+     * \param xcv the curev the right endpoint of which is obtained
      * \return the right endpoint
      */
-    const Point_2 operator()(const X_monotone_curve_2 & xc) const
+    const Point_2 operator()(const X_monotone_curve_2 & xcv) const
     {
-      if (!m_enabled) return m_object(xc);
+      if (!m_enabled) return m_object(xcv);
       std::cout << "construct_max_vertex" << std::endl
-                << "  xc: " << xc << std::endl;
-      Point_2 p = m_object(xc);
+                << "  xcv: " << xcv << std::endl;
+      Point_2 p = m_object(xcv);
       std::cout << "  result: " << p << std::endl;      
       return p;
     }
   };
   
-  /*! Check whether a given x-monotone curve is vertical */
+  /*! A functor that checks whether a given x-monotone curve is vertical. */
   class Is_vertical_2 {
   private:
     typename Base::Is_vertical_2 m_object;
@@ -388,22 +304,22 @@ public:
       m_object(base->is_vertical_2_object()), m_enabled(enabled) {}
     
     /*! Operate
-     * \param xc the curve
+     * \param xcv the curve
      * \return a Boolean that indicates whether the curve is vertical or not
      */
-    bool operator()(const X_monotone_curve_2 & xc) const
+    bool operator()(const X_monotone_curve_2 & xcv) const
     {
-      if (!m_enabled) return m_object(xc);
+      if (!m_enabled) return m_object(xcv);
       std::cout << "is_vertical" << std::endl
-                << "  xc: " << xc << std::endl;
-      bool is_vertical = m_object(xc);
+                << "  xcv: " << xcv << std::endl;
+      bool is_vertical = m_object(xcv);
       std::cout << "  result: " << is_vertical << std::endl;
       return is_vertical;
     }
   };
   
-  /*! Return the location of a given point with respect to a given x-monotone
-   * curve
+  /*! A functor that compares the y-coordinates of a point and an
+   * x-monotone curve at the point x-coordinate.
    */
   class Compare_y_at_x_2 {
   private:
@@ -417,64 +333,25 @@ public:
 
     /*! Operate
      * \param p the point
-     * \param xc the curve
+     * \param xcv the curve
      * \return the comparison result
      */
     Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xc) const
+                                 const X_monotone_curve_2 & xcv) const
     {
-      if (!m_enabled) return m_object(p, xc);
-      std::cout << "compare_y_at_x 1" << std::endl
+      if (!m_enabled) return m_object(p, xcv);
+      std::cout << "compare_y_at_x" << std::endl
                 << "  p: " << p << std::endl
-                << "  xc: " << xc << std::endl;
-      Comparison_result cr = m_object(p, xc);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! Operate
-     * \param xc1 the first curve the end point of which is tested
-     * \param xc2 the second curve the end point of which is tested
-     * \param ind the curve-end index
-     * \return the comparison result
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Arr_curve_end ind) const
-    {
-      if (!m_enabled) return m_object(xc1, xc2, ind);
-      std::cout << "compare_y_at_x 2" << std::endl
-                << "  ind: " << ind << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;
-      Comparison_result cr = m_object(xc1, xc2, ind);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! Operate
-     * \param xc1 the first curve
-     * \param ind1 the index of the end of the first curve
-     * \param xc2 the second curve
-     * \param ind2 the index of the end of the second curve
-     * \return the comparison result
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Arr_curve_end ind1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Arr_curve_end ind2) const
-    {
-      if (!m_enabled) return m_object(xc1, ind1, xc2, ind2);
-      std::cout << "compare_y_at_x 3" << std::endl
-                << "  ind1: " << ind1 << ", xc1: " << xc1 << std::endl
-                << "  ind2: " << ind2 << ", xc2: " << xc2 << std::endl;
-      Comparison_result cr = m_object(xc1, ind1, xc2, ind2);
+                << "  xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(p, xcv);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
   };
   
-  /*! Check if two x-monotone curves or if two points are identical */
+  /*! A functor that checks whether two points and two x-monotone curves are
+   * identical.
+   */
   class Equal_2 {
   private:
     typename Base::Equal_2 m_object;
@@ -491,18 +368,18 @@ public:
     {}
 
     /*! Operate
-     * \param xc1 the first curve
-     * \param xc2 the second curve
+     * \param xcv1 the first curve
+     * \param xcv2 the second curve
      * \return true if the x-monotone curves are equal and false otherwise
      */
-    bool operator()(const X_monotone_curve_2 & xc1,
-                    const X_monotone_curve_2 & xc2) const
+    bool operator()(const X_monotone_curve_2 & xcv1,
+                    const X_monotone_curve_2 & xcv2) const
     {
-      if (!m_enabled_curve) return m_object(xc1, xc2);
+      if (!m_enabled_curve) return m_object(xcv1, xcv2);
       std::cout << "equal 1" << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc1: " << xc1 << std::endl;
-      bool equal = m_object(xc1, xc2);
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv1: " << xcv1 << std::endl;
+      bool equal = m_object(xcv1, xcv2);
       std::cout << "  result: " << equal << std::endl;
       return equal;
     }
@@ -524,8 +401,8 @@ public:
     }    
   };
 
-  /*! Compare the y value of two x-monotone curves immediately to the left of
-   * their intersection point
+  /*! A functor that compares compares the y-coordinates of two x-monotone
+   * curves immediately to the left of their intersection point.
    */
   class Compare_y_at_x_left_2 {
   private:
@@ -538,28 +415,28 @@ public:
       m_object(base->compare_y_at_x_left_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc1 the first curve
-     * \param xc2 the second curve 
+     * \param xcv1 the first curve
+     * \param xcv2 the second curve 
      * \param p the reference point
      * \return the comparison result
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 const X_monotone_curve_2 & xc2,
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
                                  const Point_2 & p) const
     {
-      if (!m_enabled) return m_object(xc1, xc2, p);
+      if (!m_enabled) return m_object(xcv1, xcv2, p);
       std::cout << "compare_y_at_x_left" << std::endl
                 << "  p: " << p << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;
-      Comparison_result cr = m_object(xc1, xc2, p);
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, xcv2, p);
       std::cout << "  result:" << cr << std::endl;
       return cr;
     }
   };
 
-  /*! Compare the y value of two x-monotone curves immediately to the right of
-   * their intersection point
+  /*! A functor that compares compares the y-coordinates of two x-monotone
+   * curves immediately to the right of their intersection point.
    */
   class Compare_y_at_x_right_2 {
   private:
@@ -572,27 +449,27 @@ public:
       m_object(base->compare_y_at_x_right_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc1 the first curve
-     * \param xc2 the second curve
+     * \param xcv1 the first curve
+     * \param xcv2 the second curve
      * \param p the reference point
      * \return the comparison result
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 const X_monotone_curve_2 & xc2,
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
                                  const Point_2 & p) const
     {
-      if (!m_enabled) return m_object(xc1, xc2, p);
+      if (!m_enabled) return m_object(xcv1, xcv2, p);
       std::cout << "compare_y_at_x_right" << std::endl
                 << "  p: " << p << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;
-      Comparison_result cr = m_object(xc1, xc2, p);
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, xcv2, p);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
   };
   
-  /*! Split a curve into x-monotone pieces */
+  /*! A functor that divides a curve into x-monotone curves. */
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -622,9 +499,9 @@ public:
       std::list<CGAL::Object>::iterator it;
       unsigned int i = 0;
       for (it = container.begin(); it != container.end(); ++it) {
-        X_monotone_curve_2 xc;
-        if (assign (xc, *it)) {
-          std::cout << "  result[" << i++ << "]: xc: " << xc << std::endl;
+        X_monotone_curve_2 xcv;
+        if (assign (xcv, *it)) {
+          std::cout << "  result[" << i++ << "]: xcv: " << xcv << std::endl;
           continue;
         }
 
@@ -641,7 +518,7 @@ public:
     }
   };
 
-  /*! Split an x-monotone curve into two */
+  /*! A functor that splits an arc at a point. */
   class Split_2 {
   private:
     typename Base::Split_2 m_object;
@@ -653,28 +530,28 @@ public:
       m_object(base->split_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc
+     * \param xcv
      * \param p
-     * \param xc1
-     * \param xc2
+     * \param xcv1
+     * \param xcv2
      */
-    void operator()(const X_monotone_curve_2 & xc, const Point_2 & p,
-                    X_monotone_curve_2 & xc1, X_monotone_curve_2 & xc2)
+    void operator()(const X_monotone_curve_2 & xcv, const Point_2 & p,
+                    X_monotone_curve_2 & xcv1, X_monotone_curve_2 & xcv2)
     {
       if (!m_enabled) {
-        m_object(xc, p, xc1, xc2);
+        m_object(xcv, p, xcv1, xcv2);
         return;
       }
       std::cout << "split: " << std::endl
-                << "  xc: " << xc << std::endl
+                << "  xcv: " << xcv << std::endl
                 << "  p: " << p << std::endl;
-      m_object(xc, p, xc1, xc2);
-      std::cout << "  result xc1: " << xc1 << std::endl
-                << "         xc2: " << xc2 << std::endl;
+      m_object(xcv, p, xcv1, xcv2);
+      std::cout << "  result xcv1: " << xcv1 << std::endl
+                << "         xcv2: " << xcv2 << std::endl;
     }
   };
 
-  /*! compute intersections */
+  /*! A functor that computes intersections between x-monotone curves. */
   class Intersect_2 {
   private:
     typename Base::Intersect_2 m_object;
@@ -686,8 +563,8 @@ public:
       m_object(base->intersect_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc1 the first curve
-     * \param xc2 the ssecond curve
+     * \param xcv1 the first curve
+     * \param xcv2 the ssecond curve
      * \param oi an output iterator that contains the result. It's value
      * type is CGAL::Object, which wraps either an x-monotone overlapping
      * curve or pair that consists of an intersection point and its
@@ -695,24 +572,24 @@ public:
      * \return the output iterator
      */
     template<typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2 & xc1,
-                              const X_monotone_curve_2 & xc2,
+    OutputIterator operator()(const X_monotone_curve_2 & xcv1,
+                              const X_monotone_curve_2 & xcv2,
                               OutputIterator oi)
     {
-      if (!m_enabled) return m_object(xc1, xc2, oi);
+      if (!m_enabled) return m_object(xcv1, xcv2, oi);
       std::cout << "intersect" << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
       std::list<CGAL::Object> container;
-      m_object(xc1, xc2, std::back_inserter(container));
+      m_object(xcv1, xcv2, std::back_inserter(container));
       if (container.empty()) return oi;
 
       std::list<CGAL::Object>::iterator it;
       unsigned int i = 0;
       for (it = container.begin(); it != container.end(); ++it) {
-        X_monotone_curve_2 xc;
-        if (assign (xc, *it)) {
-          std::cout << "  result[" << i++ << "]: xc: " << xc << std::endl;
+        X_monotone_curve_2 xcv;
+        if (assign (xcv, *it)) {
+          std::cout << "  result[" << i++ << "]: xcv: " << xcv << std::endl;
           continue;
         }
 
@@ -730,7 +607,7 @@ public:
     }
   };
 
-  /*! Test whether two x-monotone curves are mergeable */
+  /*! A functor that tests whether two x-monotone curves can be merged. */
   class Are_mergeable_2 {
   private:
     typename Base::Are_mergeable_2 m_object;
@@ -742,26 +619,26 @@ public:
       m_object(base->are_mergeable_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc1 the first curve
-     * \param xc2 the second curve
+     * \param xcv1 the first curve
+     * \param xcv2 the second curve
      * \return true if the the two curve are mergeable and false otherwise.
      * Two curves are mergeable if they have the same underlying theoretical
      * curve
      */
-    bool operator()(const X_monotone_curve_2 & xc1,
-                    const X_monotone_curve_2 & xc2) const
+    bool operator()(const X_monotone_curve_2 & xcv1,
+                    const X_monotone_curve_2 & xcv2) const
     {
-      if (!m_enabled) return m_object(xc1, xc2);
+      if (!m_enabled) return m_object(xcv1, xcv2);
       std::cout << "are_mergeable" << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;
-      bool are_mergeable = m_object(xc1, xc2);
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      bool are_mergeable = m_object(xcv1, xcv2);
       std::cout << "  result: " << are_mergeable << std::endl;
       return are_mergeable;
     }
   };
 
-  /*! Merge two x-monotone curves into one */
+  /*! A functor that merges two x-monotone curves into one. */
   class Merge_2 {
   private:
     typename Base::Merge_2 m_object;
@@ -773,23 +650,23 @@ public:
       m_object(base->merge_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc1 the first curve
-     * \param xc2 the second curve
-     * \param xc the merged curve
+     * \param xcv1 the first curve
+     * \param xcv2 the second curve
+     * \param xcv the merged curve
      */
-    void operator()(const X_monotone_curve_2 & xc1,
-                    const X_monotone_curve_2 & xc2,
-                    X_monotone_curve_2 & xc)
+    void operator()(const X_monotone_curve_2 & xcv1,
+                    const X_monotone_curve_2 & xcv2,
+                    X_monotone_curve_2 & xcv)
     {
       std::cout << "merge" << std::endl
-                << "  xc1: " << xc1 << std::endl
-                << "  xc2: " << xc2 << std::endl;
-      return m_object(xc1, xc2, xc);
-      std::cout << "  result: " << xc << std::endl;
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      return m_object(xcv1, xcv2, xcv);
+      std::cout << "  result: " << xcv << std::endl;
     }
   };
 
-  /*! Construct an opposite x-monotone curve */
+  /*! A fnuctor that constructs an opposite x-monotone curve. */
   class Construct_opposite_2 {
   private:
     typename Base::Construct_opposite_2 m_object;
@@ -801,21 +678,23 @@ public:
       m_object(base->construct_opposite_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc the curve
+     * \param xcv the curve
      * \return the opposite curve
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2 & xc)
+    X_monotone_curve_2 operator()(const X_monotone_curve_2 & xcv)
     {
-      if (!m_enabled) return m_object(xc);
+      if (!m_enabled) return m_object(xcv);
       std::cout << "construct_opposite" << std::endl
-                << "  xc: " << xc << std::endl;
-      X_monotone_curve_2 xc_out = m_object(xc);
-      std::cout << "  result: " << xc_out << std::endl;
-      return xc;
+                << "  xcv: " << xcv << std::endl;
+      X_monotone_curve_2 xcv_out = m_object(xcv);
+      std::cout << "  result: " << xcv_out << std::endl;
+      return xcv;
     }
   };
 
-  /*! Compare the two endpoints of a given curve lexigoraphically */
+  /*! A functor that compares the two endpoints of an x-monotone curve
+   * lexigoraphically.
+   */
   class Compare_endpoints_xy_2 {
   private:
     typename Base::Compare_endpoints_xy_2 m_object;
@@ -827,20 +706,227 @@ public:
       m_object(base->compare_endpoints_xy_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xc the curve
+     * \param xcv the curve
      * \return the comparison result
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xc)
+    Comparison_result operator()(const X_monotone_curve_2 & xcv)
     {
-      if (!m_enabled) return m_object(xc);
+      if (!m_enabled) return m_object(xcv);
       std::cout << "compare_endpoints_xy" << std::endl
-                << "  xc: " << xc << std::endl;
-      Comparison_result cr = m_object(xc);
+                << "  xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(xcv);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
   };
 
+  /*! A functor that determines whether an endpoint of an x-monotone curve lies
+   * on a boundary of the parameter space along the x axis.
+   */
+  class Boundary_in_x_2 {
+  private:
+    typename Base::Boundary_in_x_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! Construct */
+    Boundary_in_x_2(const Base * base, bool enabled = true) :
+      m_object(base->boundary_in_x_2_object()), m_enabled(enabled)
+    {}
+    
+    /*! Operate
+     * \param xcv the curve the end of which is tested
+     * \param ce the curve-end identifier
+     * \return the boundary type
+     */
+    Boundary_type operator()(const X_monotone_curve_2 & xcv,
+                             Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(xcv, ce);
+      std::cout << "boundary_in_x" << std::endl
+                << "  ce: " << ce << ", xcv: " << xcv << std::endl;
+      Boundary_type bt = m_object(xcv, ce);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+  };
+
+  /*! A functor that determines whether an endpoint of an x-monotone arc lies
+   * on a boundary of the parameter space along the y axis.
+   */
+  class Boundary_in_y_2 {
+  private:
+    typename Base::Boundary_in_y_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! Construct */
+    Boundary_in_y_2(const Base * base, bool enabled = true) :
+      m_object(base->boundary_in_y_2_object()), m_enabled(enabled) {}
+    
+    /*! Operate
+     * \param xcv the curve the end of which is tested
+     * \param ce the curve-end identifier
+     * \return the boundary type
+     */
+    Boundary_type operator()(const X_monotone_curve_2 & xcv,
+                             Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(xcv, ce);
+        std::cout << "boundary_in_y" << std::endl
+                  << "  ce: " << ce << ", xcv: " << xcv << std::endl;
+      Boundary_type bt = m_object(xcv, ce);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+  };  
+
+  /*! A functor that compares the x-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_boundary_2 {
+  private:
+    typename Base::Compare_x_near_boundary_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_x_near_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_near_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! Operate
+     * \param p the first point 
+     * \param xcv the curve the end of which is to be compared
+     * \param ce the curve-end identifier
+     * \return the comparison result
+     */
+    Comparison_result operator()(const Point_2 & p,
+                                 const X_monotone_curve_2 & xcv,
+                                 Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(p, xcv, ce);
+      std::cout << "compare_x_near_boundary 1" << std::endl
+                << "  p: " << p << std::endl
+                << "  ce: " << ce << ", xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(p, xcv, ce);
+      std::cout << "  result: " << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the first curve the end of which is to be compared
+     * \param ce1 the identifier of the end of the first curve
+     * \param xcv2 the second curve the end of which is to be compared
+     * \param ce2 the identifier of the end of the second curve
+     * \return the comparison result
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce2) const
+    {
+      if (!m_enabled) return m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "compare_x_near_boundary 2" << std::endl
+                << "  ce1: " << ce1 << ", xcv1: " << xcv1 << std::endl
+                << "  ce2: " << ce2 << ", xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  /*! A functor that compares the y-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+  private:
+    typename Base::Compare_y_near_boundary_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_y_near_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_y_near_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! Operate
+     * \param xcv1 the first curve the end point of which is tested
+     * \param xcv2 the second curve the end point of which is tested
+     * \param ce the curve-end identifier
+     * \return the comparison result
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2, 
+                                 Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(xcv1, xcv2, ce);
+      std::cout << "compare_y_near_boundary" << std::endl
+                << "  ce: " << ce << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, xcv2, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  /*! A functor that compares the x-coordinate of two given points
+   * that lie on the horizontal identification curve.
+   */
+  class Compare_x_on_identification_2 {
+  private:
+    typename Base::Compare_x_on_identification_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_x_on_identification_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_on_identification_object()), m_enabled(enabled) {}
+    /*! Operate
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      if (!m_enabled) return m_object(p1, p2);
+      std::cout << "compare_x_on_identification" << std::endl
+                << "  p1: " << p1 << std::endl
+                << "  p2: " << p2 << std::endl;
+      Comparison_result cr = m_object(p1, p2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+  
+  /*! A functor that compares the y-coordinate of two given points
+   * that lie on the vertical identification curve.
+   */
+  class Compare_y_on_identification_2 {
+  private:
+    typename Base::Compare_y_on_identification_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_y_on_identification_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_y_on_identification_2_object()),
+      m_enabled(enabled)
+    {}
+
+    /*! Operate
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      if (!m_enabled) return m_object(p1, p2);
+      std::cout << "compare_y_on_identification" << std::endl
+                << "  p1: " << p1 << std::endl
+                << "  p2: " << p2 << std::endl;
+      Comparison_result cr = m_object(p1, p2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
   //@}
 
   /// \name Obtain the appropriate functor
@@ -857,12 +943,6 @@ public:
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(this, construct_max_vertex_op()); }
 
-  Boundary_in_x_2 boundary_in_x_2_object() const
-  { return Boundary_in_x_2(this, boundary_in_x_op()); }
-
-  Boundary_in_y_2 boundary_in_y_2_object() const
-  { return Boundary_in_y_2(this, boundary_in_y_op()); }
-  
   Is_vertical_2 is_vertical_2_object() const
   { return Is_vertical_2(this, is_vertical_op()); }
   
@@ -870,7 +950,7 @@ public:
   { return Compare_y_at_x_2(this, compare_y_at_x_op()); }
   
   Equal_2 equal_2_object() const
-  { return Equal_2(this, equal_point_op(), equal_curve_op()); }
+  { return Equal_2(this, equal_points_op(), equal_curves_op()); }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(this, compare_y_at_x_left_op()); }
@@ -899,6 +979,29 @@ public:
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(this, compare_endpoints_xy_op()); }
 
+  Boundary_in_x_2 boundary_in_x_2_object() const
+  { return Boundary_in_x_2(this, boundary_in_x_op()); }
+
+  Boundary_in_y_2 boundary_in_y_2_object() const
+  { return Boundary_in_y_2(this, boundary_in_y_op()); }
+  
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(this, compare_x_near_boundary_op()); }
+
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
+  { return Compare_y_near_boundary_2(this, compare_y_near_boundary_op()); }
+
+  Compare_x_on_identification_2 compare_x_on_identification_2_object() const
+  {
+    return Compare_x_on_identification_2(this,
+                                         compare_x_on_identification_op());
+  }
+
+  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
+  {
+    return Compare_y_on_identification_2(this,
+                                         compare_y_on_identification_op());
+  }
   //@}
 };
 

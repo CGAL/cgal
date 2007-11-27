@@ -95,46 +95,6 @@ public:
       Alg_kernel   ker;
       return (ker.compare_x_2_object() (p1, p2));
     }
-
-    /*!
-     * Compare the relative positions of a vertical curve and another given
-     * curves at y = +/- oo.
-     * \param p A reference point; we refer to a vertical line incident to p.
-     * \param cv The compared curve.
-     * \param ind ARR_MIN_END if we refer to cv's minimal end,
-     *            ARR_MAX_END if we refer to its maximal end.
-     * \pre cv's relevant end is defined at y = +/- oo.
-     * \return SMALLER if p lies to the left of cv;
-     *         LARGER if p lies to the right cv;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const Point_2& p,
-                                  const X_monotone_curve_2& cv,
-                                  Arr_curve_end ind) const
-    {
-      return (cv.compare_end_depricated (p, ind));
-    }
-
-    /*!
-     * Compare the relative positions of two curves at y = +/- oo.
-     * \param cv1 The first curve.
-     * \param ind1 ARR_MIN_END if we refer to cv1's minimal end,
-     *             ARR_MAX_END if we refer to its maximal end.
-     * \param cv2 The second curve.
-     * \param ind2 ARR_MIN_END if we refer to cv2's minimal end,
-     *             ARR_MAX_END if we refer to its maximal end.
-     * \pre The curves are defined at y = +/- oo.
-     * \return SMALLER if cv1 lies to the left of cv2;
-     *         LARGER if cv1 lies to the right cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Arr_curve_end ind1,
-                                  const X_monotone_curve_2& cv2,
-                                  Arr_curve_end ind2) const
-    {
-      return (cv1.compare_ends (ind1, cv2, ind2));
-    }
   };
 
   /*! Get a Compare_x_2 functor object. */
@@ -300,27 +260,6 @@ public:
                                   const X_monotone_curve_2& cv) const
     {
       return (cv.point_position (p));
-    }
-
-    /*!
-     * Compare the relative y-positions of two curves at x = +/- oo.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param ind ARR_MIN_END if we compare at x = -oo;
-     *            ARR_MAX_END if we compare at x = +oo.
-     * \pre The curves are defined at x = +/- oo.
-     * \return SMALLER if cv1 lies below cv2;
-     *         LARGER if cv1 lies above cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2, 
-                                  Arr_curve_end ind) const
-    {
-      if (ind == ARR_MIN_END)
-        return (cv1.compare_at_minus_infinity (cv2));
-      else
-        return (cv1.compare_at_plus_infinity (cv2));
     }
   };
 

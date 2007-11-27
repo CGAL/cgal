@@ -343,6 +343,7 @@ public:
   /// \name Basic functor definitions
   //@{
 
+  /*! A functor that compares the x-coordinates of two directional points */
   class Compare_x_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -358,9 +359,9 @@ public:
     friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
     
   public:    
-    /*! Compare the x-coordinates of two endpoint directions.
-     * \param p1 the first endpoint direction.
-     * \param p2 the second endpoint direction.
+    /*! Compare the x-coordinates of two directional points.
+     * \param p1 the first directional point.
+     * \param p2 the second directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);
      *         LARGER  - x(p1) > x(p2).
@@ -374,127 +375,14 @@ public:
 
       return m_traits->compare_x(p1, p2);
     }
-
-    /*! Compare the x-coordinates of a point direction and an endpoint
-     * of a spherical arc.
-     * A spherical arc that coincides with the discontinuity arc is vertical,
-     * and considered to have the smallest x-coordinate. Thus, if the given
-     * sphercial arc does coincide with the discontinuity arc, the point is
-     * larger.
-     * \param point the endpoint direction.
-     * \param xc the curve, the endpoint of which is compared.
-     * \param ind ARR_MIN_END - the minimal end of xc or
-     *            ARR_MAX_END - the maximal end of xc.
-     * \return SMALLER - x(p) < x(xc, ind);
-     *         EQUAL   - x(p) = x(xc, ind);
-     *         LARGER  - x(p) > x(xc, ind).
-     * \pre point is not on the closed discontinuity arc.
-     * \pre the endpoint indicated by xv and ind is on the discontinuity arc.
-     */
-    Comparison_result operator()(const Point_2 & point,
-                                 const X_monotone_curve_2 & xc,
-                                 Arr_curve_end ind) const
-    {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
-      CGAL_precondition(point.is_no_boundary());
-      CGAL_precondition_code
-        (const Point_2 & p2 = (ind == ARR_MIN_END) ? xc.left() : xc.right(););
-      CGAL_precondition(!p2.is_no_boundary());
-
-      if (xc.is_vertical()) {
-        // If xc coincides with the discontinuity arc, all its points are
-        // assumed to be smaller than non-boundary points:
-        if (xc.is_on_boundary()) return LARGER;
-        
-        // xc is vertical, but does not coincide with the discontinuity arc.
-        // Obtain the direction contained in the underlying plane, which is
-        // also on the xy-plane:
-        Direction_3 normal = xc.plane().orthogonal_direction();
-        Direction_2 q = (xc.is_directed_right()) ?
-          Direction_2(-(normal.dy()), normal.dx()) :
-          Direction_2(normal.dy(), -(normal.dx()));
-        Direction_2 p = Traits::project_xy(point);
-        const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
-          LARGER : SMALLER;
-      }
-
-      // xc is not a vertical sphercial_arc:
-      return (ind == ARR_MIN_END) ? LARGER : SMALLER;
-    }
-
-    /*! Compare the x-coordinates of two endpoint directions.
-     * \param p the endpoint direction.
-     * \param xc1 the first curve, the endpoint of which is compared.
-     * \param ind1 ARR_MIN_END - the minimal end of xc1 or
-     *             ARR_MAX_END - the maximal end of xc1.
-     * \param xc2 the second curve, the endpoint of which is compared.
-     * \param ind2 ARR_MIN_END - the minimal end of xc2 or
-     *             ARR_MAX_END - the maximal end of xc2.
-     * \return SMALLER - x(xc1, ind1) < x(xc2, ind2);
-     *         EQUAL   - x(xc1, ind1) = x(xc2, ind2);
-     *         LARGER  - x(xc1, ind1) > x(xc2, ind2).
-     * \pre the endpoint indicated by xv1 and ind1 is on the discontinuity arc.
-     * \pre the endpoint indicated by xv2 and ind2 is on the discontinuity arc.
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 Arr_curve_end ind1,
-                                 const X_monotone_curve_2 & xc2,
-                                 Arr_curve_end ind2) const
-    {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
-      CGAL_precondition_code
-        (const Point_2 & p1 = (ind1 == ARR_MIN_END) ? xc1.left() : xc1.right(););
-      CGAL_precondition(!p1.is_no_boundary());
-      CGAL_precondition_code
-        (const Point_2 & p2 = (ind2 == ARR_MIN_END) ? xc2.left() : xc2.right(););
-      CGAL_precondition(!p2.is_no_boundary());
-
-      if (xc1.is_vertical() && xc2.is_vertical()) {
-        if (xc1.is_on_boundary() && xc2.is_on_boundary()) return EQUAL;
-        if (xc1.is_on_boundary()) return SMALLER;
-        if (xc2.is_on_boundary()) return LARGER;
-
-        // Non of the arcs coincide with the discontinuity arc:
-        // Obtain the directions contained in the underlying planes, which are
-        // also on the xy-plane:
-        Direction_3 normal1 = xc1.plane().orthogonal_direction();
-        Direction_2 p = (xc1.is_directed_right()) ?
-          Direction_2(-(normal1.dy()), normal1.dx()) :
-          Direction_2(normal1.dy(), -(normal1.dx()));
-        Direction_3 normal2 = xc2.plane().orthogonal_direction();
-        Direction_2 q = (xc2.is_directed_right()) ?
-          Direction_2(-(normal2.dy()), normal2.dx()) :
-          Direction_2(normal2.dy(), -(normal2.dx()));
-
-        const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
-          LARGER : SMALLER;
-      }
-      if (xc1.is_vertical()) {
-        if (xc1.is_on_boundary()) return SMALLER;
-        return (ind2 == ARR_MAX_END) ? SMALLER : LARGER;
-      }
-      if (xc2.is_vertical()) {
-        if (xc2.is_on_boundary()) return LARGER;
-        return (ind1 == ARR_MAX_END) ? LARGER : SMALLER;
-      }
-      // Non of the arcs are vertical:
-      if (ind1 == ind2) return EQUAL;
-      if (ind1 == ARR_MIN_END) return SMALLER;
-      return LARGER;
-    }
   };
 
   /*! Obtain a Compare_x_2 function object */
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(this); }
 
+  /*! A functor that compares two directional points lexigoraphically:
+   * by x, then by y.
+   */
   class Compare_xy_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -510,9 +398,9 @@ public:
     friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
     
   public:
-    /*! Compare two endpoint directions lexigoraphically: by x, then by y.
-     * \param p1 the first enpoint direction.
-     * \param p2 the second endpoint direction.
+    /*! Compare two directional points lexigoraphically: by x, then by y.
+     * \param p1 the first enpoint directional point.
+     * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
      *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
@@ -533,6 +421,9 @@ public:
   /*! Obtain a Compare_xy_2 function object */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(this); }
 
+  /*! A functor that determines whether an endpoint of an x-monotone arc lies
+   * on a boundary of the parameter space along the x axis.
+   */
   class Boundary_in_x_2 {
   public:
     /*! Determine whether an endpoint of an x-monotone curve lies on an
@@ -552,7 +443,8 @@ public:
      *   BEFORE_DISCONTINUITY - the curve end is on the open discontinuity arc
      *                          and it is the right endpoint
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Arr_curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Arr_curve_end ind) const
     {
       if (xc.is_vertical()) {
         if (xc.is_on_boundary()) return AFTER_DISCONTINUITY;
@@ -571,6 +463,9 @@ public:
   /*! Obtain an Boundary_in_x_2 functor object. */
   Boundary_in_x_2 boundary_in_x_2_object() const { return Boundary_in_x_2(); }
 
+  /*! A functor that determines whether an endpoint of an x-monotone arc lies
+   * on a boundary of the parameter space along the y axis.
+   */
   class Boundary_in_y_2 {
   public:
     /*! Determine whether an end of an x-monotone curve lies on a y-boundary.
@@ -597,10 +492,11 @@ public:
   /*! Obtain an Boundary_in_x_2 functor object. */
   Boundary_in_y_2 boundary_in_y_2_object() const { return Boundary_in_y_2(); }
     
+  /*! A functor that obtain the left endpoint of an x-monotone arc */
   class Construct_min_vertex_2 {
   public:
-    /*! Get the left endpoint of the x-monotone curve (spherical_arc).
-     * \param xc the curve.
+    /*! Obtain the left endpoint of and arc.
+     * \param xc the arc.
      * \return the left endpoint.
      */
     const Point_2 & operator()(const X_monotone_curve_2 & xc) const
@@ -611,10 +507,11 @@ public:
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return Construct_min_vertex_2(); }
 
+  /*! A functor that obtain the right endpoint of an x-monotone arc */
   class Construct_max_vertex_2 {
   public:
-    /*! Get the right endpoint of the x-monotone curve(spherical_arc).
-     * \param xc the curve.
+    /*! Obtain the right endpoint of an arc.
+     * \param xc the arc.
      * \return the right endpoint.
      */
     const Point_2 & operator()(const X_monotone_curve_2 & xc) const
@@ -625,9 +522,10 @@ public:
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(); }
 
+  /*! A functor that checks whether an x-monotone arc is a vertical */
   class Is_vertical_2 {
   public:
-    /*! Check whether the given x-monotone curve is a vertical spherical_arc.
+    /*! Check whether a given arc is a vertical.
      * \param xc the curve.
      * \return true if the curve is a vertical spherical_arc; false otherwise.
      * \pre the arc is not degenerate (consists of a single point)
@@ -642,6 +540,9 @@ public:
   /*! Obtain an Is_vertical_2 function object */
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
+  /*! A functor that compares the y-coordinates of a directional point and
+   * an x-monotone arc at the point x-coordinate
+   */
   class Compare_y_at_x_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -657,7 +558,7 @@ public:
     friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
     
   public:
-    /*! Return the location of the given point with respect to the input curve.
+    /*! Return the location of the given point with respect to the input arc.
      * \param xc the curve.
      * \param p the point.
      * \return SMALLER - y(p) < xc(x(p)), i.e. the point is below the curve;
@@ -693,132 +594,15 @@ public:
         ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
         ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
     }
-
-    /*! Compare the relative y-positions of two curves at an x-boundary.
-     * \param xc1 the first curve.
-     * \param xc2 the second curve.
-     * \param ind ARR_MIN_END - the minimal end of xc or
-     *            ARR_MAX_END - the maximal end of xc.
-     * \return SMALLER - xc1 lies below xc2;
-     *         EQUAL   - xc1 and xc2 overlap;
-     *         LARGER  - xc1 lies above xc2;
-     * \pre If xc1 is vertical, xc1 coincides with the discontinuity arc.
-     * Otherwise, the endpoint indicated by xc1 and ind is on the discontinuity
-     * open arc.
-     * \pre If xc2 is vertical, xc2 coincides with the discontinuity arc.
-     * Otherwise, the endpoint indicated by xc2 and ind is on the discontinuity
-     * open arc.
-     * \pre the arcs are not degenerate
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Arr_curve_end ind) const
-    {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
-
-      const Point_2 & l1 = xc1.left();
-      const Point_2 & r1 = xc1.right();
-      const Point_2 & l2 = xc2.left();
-      const Point_2 & r2 = xc2.right();
-
-      // If xc1 is vertical, xc1 coincides with the discontinuity arc:
-      if (xc1.is_vertical()) {
-        CGAL_precondition(!l1.is_no_boundary());
-        CGAL_precondition(!r1.is_no_boundary());
-      }
-
-      // If xc2 is vertical, xc2 coincides with the discontinuity arc:
-      if (xc2.is_vertical()) {
-        CGAL_precondition(!l2.is_no_boundary());
-        CGAL_precondition(!r2.is_no_boundary());
-      }
-
-      if (ind == ARR_MIN_END) {
-        // Handle the south pole. It has the smallest y coords:
-        if (l1.is_min_boundary())
-          return (l2.is_min_boundary()) ? EQUAL : SMALLER;
-        if (l2.is_min_boundary()) return LARGER;
-
-        // None of xc1 and xc2 endpoints coincide with a pole:
-        Comparison_result cr = m_traits->compare_y(l1, l2);
-        if (cr != EQUAL) return cr;
-
-        // If Both arcs are vertical, they overlap:
-        if (xc1.is_vertical() && xc2.is_vertical()) return EQUAL;
-        if (xc1.is_vertical()) return LARGER;
-        if (xc2.is_vertical()) return SMALLER;
-
-        // Non of the arcs is verticel. Thus, non of the endpoints coincide
-        // with a pole.
-        // Compare the y-coord. at the x-coord of the most left right-endpoint.
-        CGAL_assertion(r1.is_no_boundary());
-        CGAL_assertion(r2.is_no_boundary());
-        
-        if (m_traits->compare_xy(r1, r2) == LARGER) {
-          // use r2 and xc1:
-          Oriented_side os = m_traits->oriented_side(xc1.plane(), r2);
-          return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-            (xc1.is_directed_right()) ?
-            ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
-            ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
-        }
-        // use r1 and xc2: 
-        Oriented_side os = m_traits->oriented_side(xc2.plane(), r1);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xc2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
-      }
-
-      // ind == ARR_MAX_END
-      
-      // Handle the north pole. It has the largest y coords:
-      if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;
-      if (r2.is_max_boundary()) return SMALLER;
-
-      // None of xc1 and xc2 endpoints coincide with a pole:
-      Direction_2 r1_xy = Traits::project_xy(r1);
-      Comparison_result cr = m_traits->compare_y(r1, r2);
-      if (cr != EQUAL) return cr;
-
-      // If Both arcs are vertical, they overlap:
-      if (xc1.is_vertical() && xc2.is_vertical()) return EQUAL;
-      if (xc1.is_vertical()) return LARGER;
-      if (xc2.is_vertical()) return SMALLER;
-        
-      // Compare to the left:
-      Direction_2 p_r1 = Traits::project_xy(r1);
-      cr = m_traits->compare_y(r1, r2);
-      if (cr != EQUAL) return cr;
-
-      // Non of the arcs is verticel. Thus, non of the endpoints coincide with
-      // a pole.
-      // Compare the y-coord. at the x-coord of the most right left-endpoint.
-      CGAL_assertion(l1.is_no_boundary());
-      CGAL_assertion(l2.is_no_boundary());
-
-      if (m_traits->compare_xy(l1, l2) == SMALLER) {
-        // use l2 and xc1:
-        Oriented_side os = m_traits->oriented_side(xc1.plane(), l2);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xc1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
-      }
-      // use l1 and xc2: 
-      Oriented_side os = m_traits->oriented_side(xc2.plane(), l1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xc2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
-    }
   };
 
   /*! Obtain a Compare_y_at_x_2 function object */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(this); }
 
+  /*! A functor that compares the y-coordinates of two x-monotone arcs
+   * immediately to the left of their intersection directional point.
+   */
   class Compare_y_at_x_left_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -902,6 +686,9 @@ public:
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(this); }
   
+  /*! A functor that compares the y-coordinates of two x-monotone arcs
+   * immediately to the right of their intersection directional point.
+   */
   class Compare_y_at_x_right_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -985,6 +772,9 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(this); }
 
+  /*! A functor that checks whether two directional points and two x-monotone
+   * arcs are identical.
+   */
   class Equal_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -1139,8 +929,8 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
-  /*! A function object that compares the x-coordinates of arc ends near the
-   * boundary of the parameter space
+  /*! A functor that compares the x-coordinates of arc ends near the
+   * boundary of the parameter space.
    */
   class Compare_x_near_boundary_2 {
   protected:
@@ -1157,8 +947,8 @@ public:
     friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
     
   public:
-    /*! Compare the x-coordinate of a point direction with the x-coordinate of
-     * an arc end near the boundary.
+    /*! Compare the x-coordinate of a direction with the x-coordinate of an
+     * arc end near the boundary.
      * \param p the point direction.
      * \param xcv the arc, the endpoint of which is compared.
      * \param ce the arc-end indicator -
@@ -1176,8 +966,6 @@ public:
                                  const X_monotone_curve_2 & xcv,
                                  Arr_curve_end ce) const
     {
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
-
       CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
         (const Point_2 & p2 = (ce == ARR_MIN_END) ? xcv.left() : xcv.right(););
@@ -1185,6 +973,12 @@ public:
 
       if (xcv.is_vertical()) {
         CGAL_precondition(!xcv.is_on_boundary());
+
+        /* The following is replaced by the precondition above.
+         * If xc coincides with the discontinuity arc, all its points are
+         * assumed to be smaller than non-boundary points:
+         * if (xcv.is_on_boundary()) return LARGER;
+         */
         
         // xcv is vertical, but does not coincide with the discontinuity arc.
         // Obtain the direction contained in the underlying plane, which is
@@ -1205,7 +999,7 @@ public:
       return (ce == ARR_MIN_END) ? LARGER : SMALLER;
     }
 
-    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
+    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
      * parameter space.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
@@ -1236,17 +1030,16 @@ public:
         (const Point_2 & p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
       CGAL_precondition(!p2.is_no_boundary());
 
-      if (xcv1.is_vertical())
+      if (xcv1.is_vertical() && xcv2.is_vertical()) {
         CGAL_precondition(!xcv1.is_on_boundary());
-
-      if (xcv2.is_vertical())
         CGAL_precondition(!xcv2.is_on_boundary());
 
-      if (xcv1.is_vertical() && xcv2.is_vertical()) {
-        if (xcv1.is_on_boundary() && xcv2.is_on_boundary()) return EQUAL;
-        if (xcv1.is_on_boundary()) return SMALLER;
-        if (xcv2.is_on_boundary()) return LARGER;
-
+        /* The following is replaced by the code above
+         * if (xcv1.is_on_boundary() && xcv2.is_on_boundary()) return EQUAL;
+         * if (xcv1.is_on_boundary()) return SMALLER;
+         * if (xcv2.is_on_boundary()) return LARGER;
+         */
+        
         // Non of the arcs coincide with the discontinuity arc:
         // Obtain the directions contained in the underlying planes, which are
         // also on the xy-plane:
@@ -1266,11 +1059,17 @@ public:
           LARGER : SMALLER;
       }
       if (xcv1.is_vertical()) {
-        if (xcv1.is_on_boundary()) return SMALLER;
+        CGAL_precondition(!xcv1.is_on_boundary());
+        /* The following is replaced by the code above
+         * if (xcv1.is_on_boundary()) return SMALLER;
+         */
         return (ce2 == ARR_MAX_END) ? SMALLER : LARGER;
       }
       if (xcv2.is_vertical()) {
-        if (xcv2.is_on_boundary()) return LARGER;
+        CGAL_precondition(!xcv2.is_on_boundary());
+        /* The following is replaced by the code above
+         * if (xcv2.is_on_boundary()) return LARGER;
+         */
         return (ce1 == ARR_MAX_END) ? LARGER : SMALLER;
       }
       // Non of the arcs are vertical:
@@ -1285,7 +1084,7 @@ public:
   { return Compare_x_near_boundary_2(this); }
     
 
-  /*! A function object that compares the y-coordinates of arc ends near the
+  /*! A functor that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
@@ -1422,7 +1221,7 @@ public:
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this); }
   
-  /*! A function object that indicates whether a geometric object lies on the
+  /*! A functor that indicates whether a geometric object lies on the
    * horizontal identification arc. Since there is no such thing in the
    * parameter space, the operators immediately return false. 
    */
@@ -1444,7 +1243,7 @@ public:
     bool operator()(const X_monotone_curve_2 & xcv) const { return false; }
   };
 
-  /*! A function object that indicates whether a geometric object lies on the
+  /*! A functor that indicates whether a geometric object lies on the
    * vertical identification arc.
    */
   class Is_on_y_identification_2 {
@@ -1477,7 +1276,7 @@ public:
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(); }
   
-  /*! A function object that compares the x-coordinate of two given points
+  /*! A functor that compares the x-coordinate of two given points
    * that lie on the horizontal identification arc.
    */
   class Compare_x_on_identification_2 {
@@ -1499,7 +1298,7 @@ public:
   Compare_x_on_identification_2 compare_x_on_identification_2_object() const
   { return Compare_x_on_identification_2(); }
 
-  /*! A function object that compares the y-coordinate of two given points
+  /*! A functor that compares the y-coordinate of two given points
    * that lie on the vertical identification arc.
    */
   class Compare_y_on_identification_2 {
@@ -1543,6 +1342,9 @@ public:
   /// \name Functor definitions for supporting intersections.
   //@{
 
+  /*! A functor that divides an arc into x-monotone arcs. That are, arcs that
+   * do not cross the identification arc.
+   */
   class Make_x_monotone_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -1699,6 +1501,7 @@ public:
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(this); }
 
+  /*! A functor that splits an x-monotone arc at a directional point. */
   class Split_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -1794,7 +1597,7 @@ public:
   Clockwise_in_between_2 clockwise_in_between_2_object() const
   { return Clockwise_in_between_2(this); }
   
-  /*! The intersection computation functor */
+  /*! A functor that computes intersections between x-monotone arcs. */
   class Intersect_2 {
   private:
     
@@ -2081,6 +1884,7 @@ public:
   /*! Obtain an Intersect_2 function object */
   Intersect_2 intersect_2_object() const { return Intersect_2(this); }
 
+  /*! A functor that tests whether two x-monotone arcs can be merged. */
   class Are_mergeable_2 {
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -2101,14 +1905,11 @@ public:
      * \return true if the two arcs are mergeable; false otherwise.
      * Two arcs are mergeable if:
      * 1. they are supported by the same plane, and
-     * 2. share a common endpoint that is not on the discontinuity arc
+     * 2. share a common endpoint that is not on the identification arc
      */
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
-      // Temporary:
-      return false;
-
       if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
 
@@ -2151,6 +1952,7 @@ public:
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(this); }
 
+  /*! A functor that merges two x-monotone arcs into one */
   class Merge_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
@@ -2890,7 +2692,7 @@ public:
             (((y_sign(normal) == NEGATIVE) && !is_directed_right()) ||
              ((y_sign(normal) == POSITIVE) && is_directed_right())));
   }
-    
+  
   /*! Determine whether the given point is in the x-range of the
    * spherical_arc.
    * \param point the query point direction.

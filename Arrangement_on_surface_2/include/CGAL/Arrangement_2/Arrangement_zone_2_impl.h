@@ -726,25 +726,20 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_left_impl
     geom_traits->boundary_in_x_2_object() (he->curve(), ARR_MIN_END);
 
   if (CGAL::sign (bx) == CGAL::NEGATIVE)
-  {
     // The minimal end of the curve is to the left of any other point:
     return (false);
-  }
 
   const Boundary_type   by =
     geom_traits->boundary_in_y_2_object() (he->curve(), ARR_MIN_END);
 
-  if (by != NO_BOUNDARY)
-  {
+  if (by != NO_BOUNDARY) {
     // Check if p is to the left of the minimal curve-end:
     const Comparison_result   res =
-      geom_traits->compare_x_2_object() (p, he->curve(), ARR_MIN_END);
+      geom_traits->compare_x_near_boundary_2_object() (p, he->curve(),
+                                                       ARR_MIN_END);
 
-    if ((res == SMALLER) ||
-        (res == EQUAL && CGAL::sign (by) == CGAL::POSITIVE))
-      return (true);
-    else
-      return (false);
+    return
+      ((res == SMALLER) || (res == EQUAL && CGAL::sign (by) == CGAL::POSITIVE));
   }
 
   // In case the minimal curve-end does not have boundary conditions, simply
@@ -752,8 +747,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_left_impl
   Vertex_const_handle   v_left = 
     (he->direction() == ARR_LEFT_TO_RIGHT) ? he->source() : he->target();
 
-  return (geom_traits->compare_xy_2_object() (p,
-                                              v_left->point()) == SMALLER);
+  return (geom_traits->compare_xy_2_object() (p, v_left->point()) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
@@ -771,25 +765,20 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_right_impl
     geom_traits->boundary_in_x_2_object() (he->curve(), ARR_MAX_END);
 
   if (CGAL::sign (bx) == CGAL::POSITIVE)
-  {
     // The maximal end of the curve is to the right of any other point:
     return (false);
-  }
 
   const Boundary_type   by =
     geom_traits->boundary_in_y_2_object() (he->curve(), ARR_MAX_END);
 
-  if (by != NO_BOUNDARY)
-  {
+  if (by != NO_BOUNDARY) {
     // Check if p is to the right of the maximal curve-end:
-      const Comparison_result   res =
-      geom_traits->compare_x_2_object() (p, he->curve(), ARR_MAX_END);
+    const Comparison_result   res =
+      geom_traits->compare_x_near_boundary_2_object() (p, he->curve(),
+                                                       ARR_MAX_END);
 
-    if ((res == LARGER) ||
-        (res == EQUAL && CGAL::sign (by) == CGAL::NEGATIVE))
-      return (true);
-    else
-      return (false);
+    return
+      ((res == LARGER) || (res == EQUAL && CGAL::sign (by) == CGAL::NEGATIVE));
   }
 
   // In case the maximal curve-end does not have boundary conditions, simply
@@ -797,8 +786,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_right_impl
   Vertex_const_handle   v_right = 
     (he->direction() == ARR_LEFT_TO_RIGHT) ? he->target() : he->source();
 
-  return (geom_traits->compare_xy_2_object() (p,
-                                              v_right->point()) == LARGER);
+  return (geom_traits->compare_xy_2_object() (p, v_right->point()) == LARGER);
 }
 
 //-----------------------------------------------------------------------------

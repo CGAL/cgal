@@ -3883,8 +3883,8 @@ bool Arrangement_on_surface_2<GeomTraits, TopTraits>::_is_inside_new_face
     // Compare the horizontal position of the two curve-ends at the point
     // of singularity.
     const Comparison_result   x_res =
-      geom_traits->compare_x_2_object() (*p_cv_curr, ind_curr,
-                                         *p_cv_next, ind_next);
+      geom_traits->compare_x_near_boundary_2_object() (*p_cv_curr, ind_curr,
+                                                       *p_cv_next, ind_next);
 
     CGAL_assertion (x_res != EQUAL);
 

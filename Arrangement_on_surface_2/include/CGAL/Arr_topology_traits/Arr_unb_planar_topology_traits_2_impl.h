@@ -249,10 +249,10 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 // Check if the given vertex is associated with the given curve end.
 //
 template <class GeomTraits, class Dcel_>
-bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
-    (const Vertex *v,
-     const X_monotone_curve_2& cv, Arr_curve_end ind,
-     Boundary_type bound_x, Boundary_type bound_y) const
+bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+are_equal(const Vertex *v,
+          const X_monotone_curve_2& cv, Arr_curve_end ind,
+          Boundary_type bound_x, Boundary_type bound_y) const
 {
   // Make the given curve end lies at infinity.
   CGAL_precondition (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
@@ -274,11 +274,10 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
-      return (v->boundary_in_x() == bound_x &&
-              v->boundary_in_y() == bound_y);
+      return (v->boundary_in_x() == bound_x && v->boundary_in_y() == bound_y);
 
     CGAL_assertion (v_ind == ind);
-    res = this->traits->compare_y_at_x_2_object() (cv, *v_cv, v_ind);
+    res = this->traits->compare_y_near_boundary_2_object() (cv, *v_cv, v_ind);
   }
   else 
   {
@@ -293,8 +292,8 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
       return (v->boundary_in_x() == NO_BOUNDARY &&
               v->boundary_in_y() == bound_y);
 
-    res = this->traits->compare_x_2_object() (cv, ind,
-                                              *v_cv, v_ind);
+    res =
+      this->traits->compare_x_near_boundary_2_object() (cv, ind, *v_cv, v_ind);
   }
 
   return (res == EQUAL);
@@ -307,10 +306,10 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::are_equal
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Object
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
-    (Face *f,
-     const X_monotone_curve_2& cv, Arr_curve_end ind,
-     Boundary_type bound_x, Boundary_type bound_y)
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+place_boundary_vertex(Face *f,
+                      const X_monotone_curve_2& cv, Arr_curve_end ind,
+                      Boundary_type bound_x, Boundary_type bound_y)
 {
   // Make the given curve end lies at infinity (the only boundary type
   // allowed for planar topology).
@@ -327,9 +326,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex
     // Note we consider only fictitious halfedges and check whether they
     // contain the relevant curve end.
     if (curr->has_null_curve() &&
-        _is_on_fictitious_edge (cv, ind,
-                                bound_x, bound_y,
-                                curr,
+        _is_on_fictitious_edge (cv, ind, bound_x, bound_y, curr,
                                 eq_source, eq_target))
     {
       CGAL_assertion (! eq_source && ! eq_target);
@@ -642,7 +639,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
-    return (this->traits->compare_x_2_object() (p, *v_cv, v_ind));
+    return (this->traits->compare_x_near_boundary_2_object() (p, *v_cv, v_ind));
   }
 
   // In this case v represents a normal point, and we compare it with p.
@@ -679,16 +676,13 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
     CGAL_assertion (v_cv != NULL);
 
     Comparison_result          res =
-      this->traits->compare_x_2_object() (p, *v_cv, v_ind);
+      this->traits->compare_x_near_boundary_2_object() (p, *v_cv, v_ind);
 
     if (res != EQUAL)
       return (res);
 
     // In case of equality, consider whether v lies at y = -oo or at y = +oo.
-    if (inf_y == MINUS_INFINITY)
-      return (LARGER);
-    else
-      return (SMALLER);
+    return (inf_y == MINUS_INFINITY) ? LARGER : SMALLER;
   }
 
   // In this case v represents a normal point, and we compare it with p.
@@ -804,11 +798,13 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const Arr_curve_end  ind = (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
+      const Arr_curve_end  ind =
+        (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
 
-      res1 = this->traits->compare_y_at_x_2_object() (cv,
-                                                      *_curve (v1, v_ind),
-                                                      ind);
+      res1 =
+        this->traits->compare_y_near_boundary_2_object() (cv,
+                                                          *_curve (v1, v_ind),
+                                                          ind);
       if (res1 == EQUAL)
       {
         eq_source = true;
@@ -829,11 +825,13 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const Arr_curve_end  ind = (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
+      const Arr_curve_end
+        ind = (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
 
-      res2 = this->traits->compare_y_at_x_2_object() (cv,
-                                                      *_curve (v2, v_ind),
-                                                      ind);
+      res2 =
+        this->traits->compare_y_near_boundary_2_object() (cv,
+                                                          *_curve (v2, v_ind),
+                                                          ind);
       
       if (res2 == EQUAL)
       {
@@ -872,7 +870,8 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
       const X_monotone_curve_2  *v_cv1 = _curve (v1, v_ind);
 
       CGAL_assertion (v_cv1 != NULL);
-      res1 = this->traits->compare_x_2_object() (cv, ind, *v_cv1, v_ind);
+      res1 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
+                                                               *v_cv1, v_ind);
       
       if (res1 == EQUAL)
       {
@@ -897,7 +896,8 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
       const X_monotone_curve_2  *v_cv2 = _curve (v2, v_ind);
 
       CGAL_assertion (v_cv2 != NULL);
-      res2 = this->traits->compare_x_2_object() (cv, ind, *v_cv2, v_ind);
+      res2 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
+                                                               *v_cv2, v_ind);
 
       if (res2 == EQUAL)
       {

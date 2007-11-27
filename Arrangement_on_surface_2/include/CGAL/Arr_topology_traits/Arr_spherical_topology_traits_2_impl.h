@@ -192,6 +192,8 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
     m_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
     m_traits->compare_y_at_x_2_object();
+  typename Traits_adaptor_2::Compare_x_near_boundary_2 compare_x_near_bnd =
+    m_traits->compare_x_near_boundary_2_object();
   
   /* Maintain a counter of the number of x-monotone curves that intersect an
    * upward vertical ray emanating from p. Handle degenerate cases as
@@ -265,8 +267,10 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         Boundary_type bnd2 = boundary_in_y(curr->next()->curve(), ARR_MAX_END);
         if ((bnd1 == BEFORE_SINGULARITY) && (bnd2 == BEFORE_SINGULARITY)) {
           // Compare the x-coordinates:
-          Comparison_result rc1 = compare_x(p, curr->curve(), ARR_MAX_END);
-          Comparison_result rc2 = compare_x(p, curr->next()->curve(), ARR_MAX_END);
+          Comparison_result rc1 =
+            compare_x_near_bnd(p, curr->curve(), ARR_MAX_END);
+          Comparison_result rc2 =
+            compare_x_near_bnd(p, curr->next()->curve(), ARR_MAX_END);
           if (rc1 == opposite(rc2)) ++num_intersections;
         }
         curr = curr->next();
@@ -332,11 +336,11 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       
       res_source = (bnd_source == NO_BOUNDARY) ?
         compare_x(p, curr->opposite()->vertex()->point()) :
-        compare_x(p, curr->curve(), ind_source);
+        compare_x_near_bnd(p, curr->curve(), ind_source);
       
       res_target = (bnd_target == NO_BOUNDARY) ?
         compare_x(p, curr->vertex()->point()) :
-        compare_x(p, curr->curve(), ind_target);
+        compare_x_near_bnd(p, curr->curve(), ind_target);
 
       /* If a vertical ray is shot from p upward, the x-monotone curve
        * associated with curr is hit once.
@@ -713,15 +717,18 @@ _locate_around_pole(Vertex * v,
   
   // Traverse all other halfedges, and compare their x-positions next to the
   // pole with the query curve xc.
-  typename Traits_adaptor_2::Compare_x_2 cmp_x = m_traits->compare_x_2_object();
+  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x =
+    m_traits->compare_x_near_boundary_2_object();
   Arr_curve_end curr_end, next_end;
   Comparison_result curr_res, next_res;
   Comparison_result curr_next_res;
   
-  curr_end = (curr->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
+  curr_end =
+    (curr->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
   curr_res = cmp_x(xc, ind, curr->curve(), curr_end);
   do {
-    next_end = (next->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
+    next_end =
+      (next->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
     next_res = cmp_x(xc, ind, next->curve(), next_end);
     curr_next_res = cmp_x(curr->curve(), curr_end, next->curve(), next_end);
     if (curr_next_res == cross_res) {
