@@ -1172,34 +1172,6 @@ bool Traits_test<T_Traits>::compare_x_wrapper_imp
                 << ", " << m_points[id2] << " ) ? " << exp_answer << " ";
       real_answer =m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
     }
-    if (exp_answer_2.first==CURVE_END)
-    {
-      CGAL::Arr_curve_end cv_end_1 = static_cast<CGAL::Arr_curve_end>
-                                            (exp_answer_2.second);
-      exp_answer = get_expected_enum(str_stream);
-      std::cout << "Test: compare_x( " << m_points[id1]
-                << ", " << m_xcurves[id2] << ", "
-                << (exp_answer_2.second==CGAL::ARR_MIN_END?" ARR_MIN_END ":" ARR_MAX_END ")
-                << " ) ? " << exp_answer << " ";
-      real_answer = m_traits.compare_x_2_object()
-                               (m_points[id1], m_xcurves[id2],cv_end_1);
-    }
-  }
-  else if (exp_answer_1.first==CURVE_END)
-  {
-    CGAL::Arr_curve_end cv_end_1=static_cast<CGAL::Arr_curve_end>(exp_answer_1.second);
-    str_stream >> id2;
-    std::pair<Enum_type,unsigned int> exp_answer_2 =get_next_input(str_stream);
-    CGAL_assertion(exp_answer_2.first==CURVE_END);
-    CGAL::Arr_curve_end cv_end_2=static_cast<CGAL::Arr_curve_end>(exp_answer_2.second);
-    exp_answer = get_expected_enum(str_stream);
-    std::cout << "Test: compare_x( " << m_xcurves[id1] << ", "
-              << (exp_answer_1.second==CGAL::ARR_MIN_END ?" ARR_MIN_END ":" ARR_MAX_END ")
-              << ", " << m_xcurves[id2] << ", "
-              << (exp_answer_2.second==CGAL::ARR_MIN_END ?" ARR_MIN_END ":" ARR_MAX_END ")
-              << " ) ? " << exp_answer << " ";
-    real_answer = m_traits.compare_x_2_object()(m_xcurves[id1], cv_end_1,
-                                                m_xcurves[id2], cv_end_2);
   }
   did_violation_occur();
   return compare_and_print(exp_answer, real_answer);
