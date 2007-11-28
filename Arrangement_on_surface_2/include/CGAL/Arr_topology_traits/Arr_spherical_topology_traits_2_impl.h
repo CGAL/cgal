@@ -176,7 +176,7 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
 #endif
   if (f->number_of_outer_ccbs() == 0) return true;
   if (((v != NULL) && (v->boundary_in_y() == BEFORE_SINGULARITY)) ||
-      (p.is_max_boundary()))
+      (m_traits->boundary_in_y_2_object()(p) == BEFORE_SINGULARITY))
     return false;
 
   /*! \todo a temporary test

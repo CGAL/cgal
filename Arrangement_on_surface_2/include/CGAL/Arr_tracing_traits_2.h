@@ -779,7 +779,21 @@ public:
       std::cout << "  result: " << bt << std::endl;
       return bt;
     }
-  };  
+
+    /*! Operate
+     * \param p the point
+     * \return the boundary type
+     */
+    Boundary_type operator()(const Point_2 & p) const
+    {
+      if (!m_enabled) return m_object(p);
+        std::cout << "boundary_in_y" << std::endl
+                  << "  point: " << p << std::endl;
+      Boundary_type bt = m_object(p);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+  };
 
   /*! A functor that compares the x-coordinates of curve ends near the
    * boundary of the parameter space.

@@ -479,13 +479,35 @@ public:
      *   the curve end is on the boundary and
      *     is the left endpoint                     => BEFORE_SINGULARITY.
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xc, Arr_curve_end ind) const
+    Boundary_type operator()(const X_monotone_curve_2 & xc,
+                             Arr_curve_end ind) const
     {
       return (ind == ARR_MIN_END) ?
         ((xc.left().is_min_boundary()) ? AFTER_SINGULARITY : NO_BOUNDARY) :
 
         // ind == ARR_MAX_END
         ((xc.right().is_max_boundary()) ? BEFORE_SINGULARITY : NO_BOUNDARY);
+    }
+
+    /*! Determine whether a point lies on a y-boundary.
+     * \param p the point.
+     * \return
+     *   the point is on the bottom boundary and => AFTER_SINGULARITY, else
+     *   the point is on the top boundary        => BEFORE_SINGULARITY.
+     *   otherwise                               => NO_BOUNDARY, 
+     */
+    Boundary_type operator()(const Point_2 & p) const
+    {
+      switch (p.discontinuity_type()) {
+       case Point_2::MIN_BOUNDARY_LOC: return AFTER_SINGULARITY;
+       case Point_2::MAX_BOUNDARY_LOC: return BEFORE_SINGULARITY;
+
+       case Point_2::NO_BOUNDARY_LOC:
+       case Point_2::MID_BOUNDARY_LOC:
+       default: return NO_BOUNDARY;
+      }
+      CGAL_error();
+      return NO_BOUNDARY;
     }
   };
 

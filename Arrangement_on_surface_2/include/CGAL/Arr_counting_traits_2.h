@@ -494,6 +494,10 @@ public:
     Boundary_type operator()(const X_monotone_curve_2 & xc,
                              Arr_curve_end ce) const
     { ++m_counter; return m_object(xc, ce); }
+
+    /*! Operate */
+    Boundary_type operator()(const Point_2 & p) const
+    { ++m_counter; return m_object(p); }
   };
 
   /*! A functor that compares the x-coordinates of curve ends near the

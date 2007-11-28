@@ -303,9 +303,21 @@ public:
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support boundary conditions, we just
       // return NO_BOUNDARY.
-      return _boundary_in_y_imp (xcv, ind, Has_boundary_category());
+      return boundary_in_y(xcv, ind, Has_boundary_category());
     }
 
+    /*! Determine whether a point lies on a y-boundary.
+     * \param p the point.
+     * \return
+     *   the point is on the bottom boundary and => AFTER_SINGULARITY, else
+     *   the point is on the top boundary        => BEFORE_SINGULARITY.
+     *   otherwise                               => NO_BOUNDARY, 
+     */
+    Boundary_type operator()(const Point_2 & p) const
+    {
+      return boundary_in_y(p, Has_boundary_category());
+    }
+      
   protected:
     //! The base traits.
     const Base * m_base;
@@ -325,9 +337,9 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& xcv,
-                                      Arr_curve_end ind,
-                                      Tag_true) const
+    Boundary_type boundary_in_y(const X_monotone_curve_2& xcv,
+                                Arr_curve_end ind,
+                                Tag_true) const
     {
       return (m_base->boundary_in_y_2_object() (xcv, ind));
     }
@@ -335,16 +347,32 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2 &,
-                                      Arr_curve_end,
-                                      Tag_false) const
+    Boundary_type boundary_in_y(const X_monotone_curve_2 &,
+                                 Arr_curve_end,
+                                 Tag_false) const
+    {
+      return NO_BOUNDARY;
+    }
+
+    /*!
+     * Implementation of the operator() in case the Has_boundary tag is true.
+     */
+    Boundary_type boundary_in_y(const Point_2 & p, Tag_true) const
+    {
+      return m_base->boundary_in_y_2_object()(p);
+    }
+
+    /*!
+     * Implementation of the operator() in case the Has_boundary tag is false.
+     */
+    Boundary_type boundary_in_y(const Point_2 &, Tag_false) const
     {
       return NO_BOUNDARY;
     }
   };
 
-  /*! Obtain an Boundary_in_y_2 functor object. */
-  Boundary_in_y_2 boundary_in_y_2_object () const
+  /*! Obtain an Boundary_in_y_2 function object. */
+  Boundary_in_y_2 boundary_in_y_2_object() const
   {
     return Boundary_in_y_2(this);
   }
