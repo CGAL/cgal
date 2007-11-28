@@ -179,10 +179,11 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       (p.is_max_boundary()))
     return false;
 
-  //! \todo a temporary test
-  if (((v != NULL) && (v->boundary_in_y() == AFTER_SINGULARITY)) ||
-      (p.is_min_boundary()))
-    return false;  
+  /*! \todo a temporary test
+   * if (((v != NULL) && (v->boundary_in_y() == AFTER_SINGULARITY)) ||
+   *   (p.is_min_boundary()))
+   * return false;  
+   */
   
   typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
     m_traits->boundary_in_x_2_object();
