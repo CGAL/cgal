@@ -48,6 +48,13 @@ Object Arr_landmarks_point_location<Arr, Gen>::locate
   Object         lm_location_obj; 
   const Point_2& landmark_point = lm_gen->closest_landmark (p, lm_location_obj);
 
+  if (landmark_point==p)
+  {
+    //the easy case, the query point and the landmark point
+    //are the same so return the landmark location
+    return lm_location_obj;
+  }
+
   // Walk from the nearest_vertex to the point p, using walk algorithm, 
   // and find the location of the query point p. Note that the set fo edges
   // we have crossed so far is initially empty.
