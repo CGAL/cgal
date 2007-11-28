@@ -34,7 +34,7 @@ create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
                                     , PointIterator outer_contour_vertices_end
                                     , HoleIterator  holes_begin
                                     , HoleIterator  holes_end
-                                    , K const&      k = CGAL::Exact_predicates_inexact_constructions_kernel
+                                    , K const&      k = Exact_predicates_inexact_constructions_kernel
                                     ) ;
 }
 {returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon with holes whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}
@@ -46,7 +46,7 @@ and its holes given by \ccc{[holes_begin,holes_end]}.
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
                                     , PointIterator outer_contour_vertices_end
-                                    , K const&      k = CGAL::Exact_predicates_inexact_constructions_kernel
+                                    , K const&      k = Exact_predicates_inexact_constructions_kernel
                                     ) ;
 }
 {returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}.
@@ -56,7 +56,7 @@ create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
 {template<class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_interior_straight_skeleton_2 ( Polygon const& outer_contour
-                                    , K const&       k = CGAL::Exact_predicates_inexact_constructions_kernel
+                                    , K const&       k = Exact_predicates_inexact_constructions_kernel
                                     ) ;
 }
 {returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon \ccc{outer_contour}.}
@@ -66,7 +66,7 @@ create_interior_straight_skeleton_2 ( Polygon const& outer_contour
    \item    \ccc{K} is any CGAL kernel.
    \item    \ccc{PointIterator::value_type} is equivalent to \ccc{K2::Point_2}.
             A cartesian converter is used to convert from \ccc{K2::Point_2} to \ccc{K::Point_2}
-   \item    \ccc{HoleIterator::value_type} and \ccc{Polygon} are \ccc{CGAL::Polygon_2<K>}
+   \item    \ccc{HoleIterator::value_type} and \ccc{Polygon} are \ccc{Polygon_2<K>}
             or a standard container of \ccc{K2::Point_2} elements 
 \end{enumerate}
 
@@ -75,16 +75,16 @@ create_interior_straight_skeleton_2 ( Polygon const& outer_contour
 \ccFunction
 {template<class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_interior_straight_skeleton_2 ( CGAL::Polygon_with_holes<K> poly_with_holes
-                                    , K const&  k = CGAL::Exact_predicates_inexact_constructions_kernel
+create_interior_straight_skeleton_2 ( Polygon_with_holes<K> poly_with_holes
+                                    , K const&  k = Exact_predicates_inexact_constructions_kernel
                                     ) ;
 }
 {returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon with holes \ccc{poly_with_holes}.}
 
 
 \ccSeeAlso
-\ccc{CGAL::create_exterior_straight_skeleton_2}\\
-\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ss>} \\
+\ccc{create_exterior_straight_skeleton_2}\\
+\ccc{Straight_skeleton_builder_2<Gt,Ss>} \\
 
 \end{ccRefFunction}
 

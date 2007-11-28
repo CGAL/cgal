@@ -25,16 +25,17 @@
 
 The function \ccRefName\ creates a straight skeleton in the exterior of a 2D polygon with holes.
 
-%%\ccInclude{CGAL/Create_straight_skeleton_2.h}
+\ccInclude{CGAL/Create_straight_skeleton_2.h}
 
 \ccFunction
 {template<class FT, class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2 ( FT            max_offset
-                                    , PointIterator vertices_begin
-                                    , PointIterator vertices_eEnd
-                                    , K const&      k = CGAL::Exact_predicates_inexact_constructions_kernel
-                                    ) ;
+create_exterior_straight_skeleton_2 
+  ( FT            max_offset
+  , PointIterator vertices_begin
+  , PointIterator vertices_end
+  , K const&      k = Exact_predicates_inexact_constructions_kernel
+  ) ;
 }
 {returns a new \ccc{Straight_skeleton_2<K>} in the {\em limited exterior} of the 2D polygon $P$ given by the point sequence \ccc{[vertices_begin,vertices_end]}.
 The skeleton in the {\em limited exterior} of $P$ is the skeleton in the interior of a polygon $Q$ with $P$ as its hole and a rectangular frame $F$ as outer boundary.
@@ -47,7 +48,7 @@ $d$ is a margin sufficiently large to allow an outer offset at dinstance \ccc{ma
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_exterior_straight_skeleton_2 ( FT       max_offset
                                     , Polygon  P
-                                    , K const& k = CGAL::Exact_predicates_inexact_constructions_kernel
+                                    , K const& k = Exact_predicates_inexact_constructions_kernel
                                     ) ;
 }
 {returns a new \ccc{Straight_skeleton_2<K>} in the {\em limited exterior} of the 2D polygon $P$ .
@@ -57,17 +58,18 @@ $d$ is a margin sufficiently large to allow an outer offset at dinstance \ccc{ma
 }
 
 \ccHeading{Requirements}
+
 \begin{enumerate}  
    \item    \ccc{K} is any CGAL kernel.
    \item    \ccc{PointIterator::value_type} is equivalent to \ccc{K2::Point_2}.
             A cartesian converter is used to convert from \ccc{K2::Point_2} to \ccc{K::Point_2}
-   \item    \ccc{Polygon} is \ccc{CGAL::Polygon_2<K>} or a standard container of \ccc{K2::Point_2} elements 
+   \item    \ccc{Polygon} is \ccc{Polygon_2<K>} or a standard container of \ccc{K2::Point_2} elements 
 \end{enumerate}
 
 
 \ccSeeAlso
-\ccc{CGAL::create_interior_straight_skeleton_2}\\
-\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ss>} \\
+\ccc{create_interior_straight_skeleton_2}\\
+\ccc{Straight_skeleton_builder_2<Gt,Ss,Visitor>} \\
 
 \end{ccRefFunction}
 
