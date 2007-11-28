@@ -322,7 +322,8 @@ public:
   }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
-   *  the given curve-end (or return NULL if no such vertex exists). */ 
+   *  the given curve-end (or return NULL if no such vertex exists).
+   */ 
   Vertex * discontinuity_vertex (const X_monotone_curve_2 xc, Arr_curve_end ind)
   {
     const Point_2 & key = (ind == ARR_MIN_END) ? xc.left() : xc.right();
