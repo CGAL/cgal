@@ -70,9 +70,10 @@ public:
     }
 
     mutable boost::optional<Arc_2> _m_arc; // supporting arc for points at inf
+
     CGAL::Curve_end _m_end; // stores respective curve end if this is a point
                             // at infinity
-    
+
     mutable boost::optional<Point_2> _m_point; // stores a finite point
 
     // befriending the handle

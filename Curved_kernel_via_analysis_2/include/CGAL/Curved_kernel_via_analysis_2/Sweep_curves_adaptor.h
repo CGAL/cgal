@@ -38,8 +38,6 @@
 #endif
 #endif
 
-// NDEBUG is defined in LiS/config.h
-
 CGAL_BEGIN_NAMESPACE
 
 // defines a set of functors required by CurveSweepTraits_2 concept
@@ -203,16 +201,16 @@ public:
         typename SweepCurvesAdaptor_2::Native_point_2::X_coordinate_1 x;
         if(cv.is_degenerate()) {
 
-            if(!cv.point().is_finite()) { // degenerate arc at inf
+            if(!cv.source().is_finite()) { // degenerate arc at inf
                 CGAL_precondition(!p.is_finite()); // p must also lie at inf
-                return (_m_adaptor->compare_xy_2_object()(p, cv.point()));
+                return (_m_adaptor->compare_xy_2_object()(p, cv.source()));
             }
-            pt = cv.point().point();
+            pt = cv.source().point();
             CGAL_precondition_code(
               x = (p.is_finite() ? p.point().x() :
                 p.arc().curve_end_x(p.curve_end()));
             );
-            // cv.point().x() must be accessible here
+            // cv.source().x() must be accessible here
             CGAL_precondition(x == pt.x());
             if(p.is_finite())
                 return (_m_adaptor->kernel().compare_xy_2_object()
@@ -392,10 +390,7 @@ public:
      * returns a minimal end of a curve arc
      */
     result_type operator()(const Arc_2& cv) const {
-
-        if(cv.is_degenerate())
-            return cv.point();
-        return (_m_adaptor->_get_arc_endpoints(cv)).first;
+        return cv.source();
     }
 
 private:
@@ -423,10 +418,7 @@ public:
      * returns a maximal end of a curve arc
      */
     result_type operator()(const Arc_2& cv) const {
-
-        if(cv.is_degenerate())
-            return cv.point();
-        return (_m_adaptor->_get_arc_endpoints(cv)).second;
+        return cv.target();
     }
     
 private:
@@ -454,9 +446,6 @@ public:
     result_type operator()(const Point_2& p) const {
 
         SCA_CERR("Construct_segment_2; pt: " << p << std::endl);
-        if(!p.is_finite()) {
-            SCA_CERR("WARNING: degenerate arc at infinity\n");
-        }
         return Arc_2(p);
     }
 };
@@ -532,10 +521,16 @@ public:
 
         SCA_CERR("New_endpoints_2: cv: " << cv << "\n p: " <<
             p << "\n q: " << q << std::endl);
+
+        CGAL_precondition(
+          _m_adaptor->compare_xy_2_object()(cv.source(), p) == CGAL::EQUAL &&
+           _m_adaptor->compare_xy_2_object()(cv.target(), q) == CGAL::EQUAL);
+            
         if(cv.is_degenerate())
             return Arc_2(p);
-            // TODO: maybe require temporary object here:
-        _m_adaptor->_set_arc_endpoints(cv, p, q);
+        
+        //_m_adaptor->_set_arc_endpoints(cv, p, q);
+        cv.new_endpoints(p, q);
         return cv;
     }
     
@@ -565,9 +560,8 @@ public:
      */
     result_type operator()(const Arc_2& cv, const Point_2& p,
                                           const Point_2& q) const {
-        SCA_CERR("\n\nWARNING!! New_endpoints_opposite_2: cv: " << cv << "\n p: " <<
-            p << "\n q: " << q << std::endl);
-                                          
+        SCA_CERR("\n\nWARNING!! New_endpoints_opposite_2: cv: " << cv <<
+            "\n p: " << p << "\n q: " << q << std::endl);
         //CGAL_precondition(p.is_finite() && q.is_finite());
         //return cv.new_endpoints(p.point(), q.point());
         return cv;
@@ -815,12 +809,6 @@ public:
         return _m_kernel;
     }
 
-    // these are our friends:
-    friend class Sweep_curves_functors::Source_2<Self>;
-    friend class Sweep_curves_functors::Target_2<Self>;
-    friend class Sweep_curves_functors::New_endpoints_2<Self>;
-    
-
     //!@}
 private:
     //!\name private members
@@ -828,72 +816,10 @@ private:
 
     //! reference to CKvA_2 object
     CKvA_2 _m_kernel;
-    //! a pair of end-points
-    typedef std::pair<Generic_point_2, Generic_point_2> End_points;
-    //! maps from arc's id to its end-points
-    typedef std::map<int, End_points> Arc_endpoints_map;
-    
-    mutable Arc_endpoints_map _m_arc_endpoints_map;
-
-    /*void dump_endpoints_map() const {
-        std::cerr << "\n dumping endpoints map:\n ";
-        for(typename Arc_endpoints_map::const_iterator ait =
-            _m_arc_endpoints_map.begin(); ait != _m_arc_endpoints_map.end();
-                ait++) {
-            std::cerr << "arc : " << ait->first << "; endpts: [" <<
-                ait->second.first.id() << "; " << ait->second.second.id() <<
-                    "]\n";
-        }
-    }*/
-
-    //! updates arcs' end-points map (to associate an arc with valid
-    //! end-points ids
-    void _set_arc_endpoints(const Generic_arc_2& cv,
-        const Generic_point_2& p, const Generic_point_2& q) const {
-
-        typename Arc_endpoints_map::iterator ait =
-            _m_arc_endpoints_map.find(cv.id());
-            
-        if(ait == _m_arc_endpoints_map.end()) {
-            _m_arc_endpoints_map.insert(std::make_pair(cv.id(),
-                End_points(p, q)));
-            SCA_CERR("added new endpoints for: " << cv.id() << "\n");
-        } else {
-            ait->second = End_points(p, q);
-            SCA_CERR("endpoints entry modified for: " << cv.id() << "\n");
-        }
-    }
-
-    //! returns end-points of an arc
-    End_points _get_arc_endpoints(const Generic_arc_2& cv) const {
-        
-        typename Arc_endpoints_map::const_iterator ait =
-            _m_arc_endpoints_map.find(cv.id());
-        if(ait != _m_arc_endpoints_map.end()) 
-            return ait->second;
-        
-        CGAL_precondition(!cv.is_degenerate());
-        
-        Point_2 src = (cv.arc().boundary_in_x(CGAL::MIN_END) !=
-             CGAL::NO_BOUNDARY ||
-                cv.arc().boundary_in_y(CGAL::MIN_END) != CGAL::NO_BOUNDARY ?
-                    Point_2(cv.arc(), CGAL::MIN_END) :
-                    Point_2(cv.arc().curve_end(CGAL::MIN_END)));
-
-        Point_2 tgt = (cv.arc().boundary_in_x(CGAL::MAX_END) !=
-             CGAL::NO_BOUNDARY ||
-                cv.arc().boundary_in_y(CGAL::MAX_END) != CGAL::NO_BOUNDARY ?
-                    Point_2(cv.arc(), CGAL::MAX_END) :
-                    Point_2(cv.arc().curve_end(CGAL::MAX_END)));
-
-        ait = _m_arc_endpoints_map.insert(std::make_pair(cv.id(),
-                End_points(src, tgt))).first;
-        return ait->second;
-    }
-    
+     
     //!@}
 }; // class Sweep_curves_adaptor
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CURVED_KERNEL_POINT_2_H
+#endif // CGAL_SWEEP_CURVES_ADAPTOR_H

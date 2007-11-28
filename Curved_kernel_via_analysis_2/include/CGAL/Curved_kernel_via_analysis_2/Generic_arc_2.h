@@ -59,24 +59,39 @@ public:
 public:    
     // default constructor
     Generic_arc_2_rep() :
-        _m_arc(Arc_2()), _m_is_degenerate(false) {
+        _m_min(), _m_max(Generic_point_2()), _m_arc(Arc_2()) {
     }
 
     // standard constructor : normal arc
-    Generic_arc_2_rep(const Arc_2& c) :
-        _m_arc(c), _m_is_degenerate(false) {
+    Generic_arc_2_rep(const Arc_2& c) {
+        
+        if(c.boundary_in_x(CGAL::MIN_END) != CGAL::NO_BOUNDARY ||
+           c.boundary_in_y(CGAL::MIN_END) != CGAL::NO_BOUNDARY) 
+            _m_min = Generic_point_2(c, CGAL::MIN_END); 
+        else {
+            _m_min = Generic_point_2(c.curve_end(CGAL::MIN_END));
+            _m_arc = c;
+        }
+        _m_max = (c.boundary_in_x(CGAL::MAX_END) != CGAL::NO_BOUNDARY ||
+                  c.boundary_in_y(CGAL::MAX_END) != CGAL::NO_BOUNDARY ?
+                    Generic_point_2(c, CGAL::MAX_END) :
+                    Generic_point_2(c.curve_end(CGAL::MAX_END)));
     }
         
     // standard constructor : degenerate arc
     Generic_arc_2_rep(const Generic_point_2& p) :
-        _m_point(p), _m_is_degenerate(true) {
+        _m_min(p) {
     }
 
-    mutable boost::optional<Arc_2> _m_arc;
-       
-    mutable boost::optional<Generic_point_2> _m_point;
+    // end-points (in degenerate case both point to the same object)
+    mutable Generic_point_2 _m_min;
+
+    mutable boost::optional<Generic_point_2> _m_max;
+    // stores native arc object (only for non-degenerate case)
+    mutable boost::optional<Arc_2> _m_arc; 
+    
     // whether an arc is degenerate
-    mutable bool _m_is_degenerate; 
+    //bool _m_is_degenerate;
 
     // befriending the handle
     friend class Generic_arc_2<Sweep_curves_adaptor_2, Self>;
@@ -162,30 +177,47 @@ public:
     //!\name access functions
     //!@{
 
-    //! checks whether this arc is degenerate
+    //! checks whether this arc is degenerate (only minimal point is available)
     bool is_degenerate() const {
-        return this->ptr()->_m_is_degenerate;
+        return !(this->ptr()->_m_max);
+        //this->ptr()->_m_is_degenerate;
     }
 
     //! returns embedded arc object for non-degenerate case
     //!
     //! \pre !is_degenerate
     Arc_2 arc() const {
+
         CGAL_precondition(!is_degenerate());
-        return *(this->ptr()->_m_arc);
+        if(this->ptr()->_m_arc)
+            return *(this->ptr()->_m_arc);
+        return this->ptr()->_m_min.arc();
     }
 
-    //! returns embedded point object (degenerate case)
-    //!
-    //! \pre is_degenerate
-    Generic_point_2 point() const {
-        CGAL_precondition(is_degenerate());
-        return *(this->ptr()->_m_point);
+    //! returns minimal end-point of an arc
+    Generic_point_2 source() const {
+        return this->ptr()->_m_min;
+    }
+
+    //! returns maximal end-point of an arc
+    Generic_point_2 target() const {
+        if(is_degenerate())
+            return this->ptr()->_m_min;
+        return *(this->ptr()->_m_max);
     }
 
     //!@}
     //!\name methods
     //!@{
+
+    //! replaces arc's endpoints with new ones
+    void new_endpoints(const Generic_point_2& p,
+            const Generic_point_2& q) const {
+
+        this->ptr()->_m_min = p;
+        if(!is_degenerate())
+            this->ptr()->_m_max = q;    
+    } 
 
     /*!\brief
      * computes intersection points of \c *this and \c cv2, writes the result
@@ -206,22 +238,22 @@ public:
                     *oi++ = Generic_point_2(it->first);
                 return oi;
             }
-            if(!cv2.point().is_finite()) 
+            if(!cv2.source().is_finite())
                 return oi; // no intersections with degenerate arc at inf
             a = arc();
-            pt = cv2.point().point();
+            pt = cv2.source().point();
             
         } else if(!cv2.is_degenerate()) {
             a = cv2.arc();
-            if(!point().is_finite())
+            if(!source().is_finite())
                 return oi; // no intersections with degenerate arc at inf
-            pt = point().point();
+            pt = source().point();
 
         } else { // just two points
-            if(!cv2.point().is_finite() || !point().is_finite())
+            if(!cv2.source().is_finite() || !source().is_finite())
                 return oi;
-            if(point().point() == cv2.point().point())
-                *oi++ = point();
+            if(source().point() == cv2.source().point())
+                *oi++ = source();
             return oi;
         }
         if(a.is_in_x_range(pt.x()) && a.compare_y_at_x(pt) == CGAL::EQUAL)
@@ -241,7 +273,7 @@ std::ostream& operator << (std::ostream& os,
 
     os << arc.id() << "@";
     if(arc.is_degenerate())
-        os << "degenerate: " << arc.point();
+        os << "degenerate: " << arc.source();
     else
         os << arc.arc();
     return os;

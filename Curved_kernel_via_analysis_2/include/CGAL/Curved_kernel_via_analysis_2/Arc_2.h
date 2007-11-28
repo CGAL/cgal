@@ -838,7 +838,7 @@ public:
         const Point_2 &p) const {
         
         CERR("compare_y_at_x_right(cv2); this: " << *this << "; cv2: " <<
-            cv2.curve() << "; p: " << p << "\n");
+            cv2 << "; p: " << p << "\n");
         
         CGAL::Boundary_type bnd1_x = boundary_in_x(CGAL::MIN_END),
              bnd2_x = cv2.boundary_in_x(CGAL::MIN_END),
