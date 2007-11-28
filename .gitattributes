@@ -1249,7 +1249,10 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/verte
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/vertex.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/xcurves -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_observer/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
 Arrangement_on_surface_2/test/Sweep_line_2/CompareCurveList.h eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/DATA/conics/con01.txt eol=lf

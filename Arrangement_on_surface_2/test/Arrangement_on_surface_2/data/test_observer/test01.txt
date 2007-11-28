@@ -1,0 +1,39 @@
+s -1 0 0 1
+before_global_change
+before_create_vertex
+after_create_vertex
+before_create_vertex
+after_create_vertex
+before_create_edge
+after_create_edge
+before_add_inner_ccb
+after_add_inner_ccb
+after_global_change
+s 0 1 1 0
+before_global_change
+before_create_vertex
+after_create_vertex
+before_create_edge
+after_create_edge
+after_global_change
+s 1 0 0 -1
+before_global_change
+before_create_vertex
+after_create_vertex
+before_create_edge
+after_create_edge
+after_global_change
+s 0 -1 -1 0
+before_global_change
+before_create_edge
+before_split_face
+after_split_face
+after_create_edge
+after_global_change
+p 0 0
+before_global_change
+before_create_vertex
+after_create_vertex
+before_add_isolated_vertex
+after_add_isolated_vertex
+after_global_change
