@@ -17,6 +17,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_OVERLAY_TRAITS_2_H
 #define CGAL_ARR_OVERLAY_TRAITS_2_H
@@ -355,14 +356,14 @@ public:
   class Intersect_2 {
   protected:
     //! The base traits.
-    Traits_2 * m_base_tr;
+    Arr_overlay_traits_2 * m_traits;
 
     /*! Constructor.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Intersect_2 (Traits_2 *base) : m_base_tr (base) {}
+    Intersect_2(Arr_overlay_traits_2 * traits) : m_traits(traits) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_overlay_traits_2<Traits_2,
@@ -371,8 +372,8 @@ public:
     
   public:
     template<class OutputIterator>
-    OutputIterator operator() (const X_monotone_curve_2& xcv1,
-                               const X_monotone_curve_2& xcv2,
+    OutputIterator operator() (const X_monotone_curve_2 & xcv1,
+                               const X_monotone_curve_2 & xcv2,
                                OutputIterator oi)
     {
       // In case the curves originate from the same arrangement, they are
@@ -408,17 +409,20 @@ public:
       //
       // Note that we do not bother with curves whose left ends are unbounded,
       // since such curved did not intersect before.
+
       const std::pair<Base_point_2, unsigned int>   *base_ipt;
       const Base_x_monotone_curve_2                 *overlap_xcv;
       bool                                           send_xcv1_first = true;
       OutputIterator                                 oi_end;
 
-      Boundary_in_x_2      inf_in_x (m_base_tr);
-      Boundary_in_y_2      inf_in_y (m_base_tr);
+      Boundary_in_x_2      inf_in_x = m_traits->boundary_in_x_2_object();
+      Boundary_in_y_2      inf_in_y = m_traits->boundary_in_y_2_object();
       const Boundary_type  bx1 = inf_in_x (xcv1, ARR_MIN_END);
       const Boundary_type  by1 = inf_in_y (xcv1, ARR_MIN_END);
       const Boundary_type  bx2 = inf_in_x (xcv2, ARR_MIN_END);
       const Boundary_type  by2 = inf_in_y (xcv2, ARR_MIN_END);
+
+      Traits_2 * m_base_tr = m_traits;
 
       if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY &&
           bx2 == NO_BOUNDARY && by2 == NO_BOUNDARY)
@@ -429,12 +433,9 @@ public:
             m_base_tr->construct_min_vertex_2_object()(xcv2.base())) == LARGER);
       }
 
-      if (send_xcv1_first)
-        oi_end = m_base_tr->intersect_2_object()(xcv1.base(),
-                                                 xcv2.base(), oi);
-      else
-        oi_end = m_base_tr->intersect_2_object()(xcv2.base(),
-                                                 xcv1.base(), oi);
+      oi_end = (send_xcv1_first) ?
+        m_base_tr->intersect_2_object()(xcv1.base(), xcv2.base(), oi) :
+        m_base_tr->intersect_2_object()(xcv2.base(), xcv1.base(), oi);
 
       // Convert objects that are associated with Base_x_monotone_curve_2 to
       // the exteneded X_monotone_curve_2. 
@@ -506,9 +507,9 @@ public:
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
+  Intersect_2 intersect_2_object ()
   {
-    return Intersect_2(m_base_traits); 
+    return Intersect_2(this); 
   }
 
   /*! A functor that splits an arc at a point. */
