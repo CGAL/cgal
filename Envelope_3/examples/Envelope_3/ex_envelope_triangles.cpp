@@ -79,7 +79,6 @@ int main ()
   // Construct the input triangles, makred A and B.
   std::list<Data_triangle_3>   triangles;
 
-#if 0
   triangles.push_back (Data_triangle_3 (Triangle_3 (Point_3 (0, 0, 0),
                                                     Point_3 (0, 6, 0),
                                                     Point_3 (5, 3, 4)),
@@ -88,20 +87,6 @@ int main ()
                                                     Point_3 (6, 6, 0),
                                                     Point_3 (1, 3, 4)),
                                         'B'));
-#else
-#if 0
-0.00384349 3.70239 1.41855 7.67082
-5.23777e-006 0.00523777 5.18191e-006 0.00523784
-5.18841e-006 0.00523732 7.02755e-005 5.23784e-007
-0.976158 0.00550122 1.19696 5.50177e-007
-0.976136 0.00552676 0.982361 0.255399
-0.982406 0.255423 1.42607 0.244364
-#endif
-
-  Point_3 p1(0.00384349, 3.70239, 1.41855, 7.67082
-  triangles.push_back (Data_triangle_3 (Triangle_3 (p1, p2, p3), 'A'));
-
-#endif
   
   // Compute and print the minimization diagram.
   Envelope_diagram_2      min_diag;
