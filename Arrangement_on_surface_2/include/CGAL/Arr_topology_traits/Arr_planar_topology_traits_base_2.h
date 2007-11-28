@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
 #define CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
@@ -171,9 +172,11 @@ public:
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion (const Halfedge *prev1,
-                                   const Halfedge *prev2,
-                                   const X_monotone_curve_2& cv) const
+  face_split_after_edge_insertion(const Halfedge *
+                                    CGAL_precondition_code(prev1),
+                                  const Halfedge *
+                                    CGAL_precondition_code(prev2),
+                                  const X_monotone_curve_2 & /* cv */) const
   {
     CGAL_precondition (prev1->is_on_inner_ccb());
     CGAL_precondition (prev2->is_on_inner_ccb());
