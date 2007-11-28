@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_INSERTION_TRAITS_2_H
 #define CGAL_ARR_INSERTION_TRAITS_2_H
@@ -63,24 +64,29 @@ public:
     Base (tr)
   {}
 
-  /*! \class
-   * The Intersect_2 functor.
+  /*! A functor that compares compares the y-coordinates of two x-monotone
+   * curves immediately to the right of their intersection point.
    */
-  class Intersect_2
-  {
-  private:
-
+  class Intersect_2 {
+  protected:
+    //! The base operators.
     Base_intersect_2      m_base_intersect;
     Halfedge_handle       invalid_he;
 
-  public:
-   
-    /*! Constructor. */
+    /*! Constructor.
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
     Intersect_2 (const Base_intersect_2& base) :
       m_base_intersect (base),
       invalid_he()
     {}
 
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_insertion_traits_2<Traits_2, Arrangement_>;
+    
+  public:
     template<typename OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
@@ -136,39 +142,39 @@ public:
     }
   };
 
+  /*! Obtain a Intersect_2 function object */
   Intersect_2 intersect_2_object () const
   {
     return (Intersect_2 (this->m_base_traits->intersect_2_object())); 
   }
 
-
-   /*! \class
-   * The Split_2 functor.
-   */
-  class Split_2
-  {
-  private:
+  /*! A functor that splits an arc at a point. */
+  class Split_2 {
+  protected:
+    //! The base operator.
     Base_split_2    m_base_split;
 
+    /*! Constructor.
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Split_2(const Base_split_2& base) : m_base_split (base) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_insertion_traits_2<Traits_2, Arrangement_>;
+    
   public:
-
-    /*! Constructor. */
-    Split_2 (const Base_split_2& base) :
-        m_base_split (base)
-    {}
-
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2)
     {
-      m_base_split(cv.base(),
-                   p.base(),
-                   c1.base(),
-                   c2.base());
+      m_base_split(cv.base(), p.base(), c1.base(), c2.base());
       c1.set_halfedge_handle(cv.halfedge_handle());
       c2.set_halfedge_handle(cv.halfedge_handle());
     }
   };
 
+  /*! Obtain a plit_2 function object */
   Split_2 split_2_object () const
   {
     return (Split_2 (this->m_base_traits->split_2_object()));
