@@ -27,7 +27,7 @@ int main()
   poly.push_back( Point(-1,1) ) ;
   poly.push_back( Point(-12,0) ) ;
      
-  // You can pass the polygon via a pointer-iterator pair
+  // You can pass the polygon via an iterator pair
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
 
   // Or you can pass the polygon directly, as below.

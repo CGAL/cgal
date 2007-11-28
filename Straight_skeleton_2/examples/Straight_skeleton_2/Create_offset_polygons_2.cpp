@@ -1,8 +1,4 @@
 #include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
 
 #include<boost/shared_ptr.hpp>
 

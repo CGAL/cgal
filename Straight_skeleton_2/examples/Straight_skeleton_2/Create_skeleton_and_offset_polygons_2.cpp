@@ -1,8 +1,4 @@
 #include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
 
 #include<boost/shared_ptr.hpp>
 
@@ -39,9 +35,6 @@ int main()
   poly.push_back( Point(-12,0) ) ;
   
   FT lOffset = 1 ;
-  
-  // While the input and output polygons are defined over a kernel with exact constructions,
-  // the straight skeleton is constructed using inexact constructions, which is much faster.
   
   PolygonPtrVector inner_offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
   PolygonPtrVector outer_offset_polygons = CGAL::create_exterior_skeleton_and_offset_polygons_2(lOffset,poly);
