@@ -1,6 +1,8 @@
 #ifndef CGAL_NEF_BIPARTITE_NARY_UNION_SORTED_COMBINED_H
 #define CGAL_NEF_BIPARTITE_NARY_UNION_SORTED_COMBINED_H
 
+#include <CGAL/Nef_S2/Gaussian_map.h>
+#include <CGAL/Nef_S2/gaussian_map_to_nef_3.h>
 #ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
 #include <CGAL/Nef_3/Nary_union_by_summup.h>
 #elif defined CGAL_NEF3_NARY_UNION_VIA_PQ
@@ -47,7 +49,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   typedef typename Nef_polyhedron::Volume_const_handle  Volume_const_handle;
   typedef typename Nef_polyhedron::SFace_const_handle  SFace_const_handle;
 
-  typedef CGAL::Gausian_map<Kernel> Gausian_map;
+  typedef CGAL::Gaussian_map<Kernel> Gaussian_map;
 
 #ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
  CGAL::Nary_union_by_summup<Nef_polyhedron>
@@ -68,7 +70,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
 
   CGAL::Timer t1, t2, t3, t4;
 
-  typedef typename std::list<Gausian_map> GM_list;
+  typedef typename std::list<Gaussian_map> GM_list;
   typedef typename GM_list::const_iterator GM_iterator;
   typedef typename std::pair<GM_iterator, GM_iterator> GM_pair;
 #ifdef NARY_SORT
@@ -86,7 +88,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     if(!c0->mark()) continue;
     std::cerr << "noch " << --shells << " shells" << std::endl;
     t2.start();
-    GM0.push_back(Gausian_map(N0, c0));
+    GM0.push_back(Gaussian_map(N0, c0));
     t2.stop();
   }
 
@@ -100,7 +102,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     if(!c1->mark()) continue;
     std::cerr << "noch " << --shells << " shells" << std::endl;
     t2.start();
-    GM1.push_back(Gausian_map(N1, c1));
+    GM1.push_back(Gaussian_map(N1, c1));
     t2.stop();
   }
   
@@ -131,14 +133,14 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     PQ_iterator pqi(pq.begin());
 
     t1.start();
-    Gausian_map GcG;
+    Gaussian_map GcG;
     GcG.minkowski_sum(*pqi->second.first, 
 		      *pqi->second.second);
     t1.stop();
     pq.erase(pqi);
     Nef_polyhedron Ntmp(empty);
     t3.start();
-    CGAL::gausian_map_to_nef_3<Nef_polyhedron> Converter(GcG);
+    CGAL::gaussian_map_to_nef_3<Nef_polyhedron> Converter(GcG);
     Ntmp.delegate(Converter, true);
     t3.stop();
     CGAL_assertion(Ntmp.is_valid());
