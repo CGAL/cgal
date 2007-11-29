@@ -330,29 +330,24 @@ private:
    * \pre he is not a fictitious edge.
    * \return Whether p lies entirely to the left of the edge.
    */
-  bool _is_to_left (const Point_2& p,
-                    Halfedge_const_handle he) const
+  bool _is_to_left (const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_left_impl
-            (p, he,
-             typename Geometry_traits_2::Has_boundary_category()));
+    return (_is_to_left_impl(p, he,
+                             typename
+                             Geometry_traits_2::Has_boundary_category()));
   }
 
-  bool _is_to_left_impl (const Point_2& p,
-                         Halfedge_const_handle he,
-                         Tag_false ) const
+  bool _is_to_left_impl(const Point_2& p, Halfedge_handle he, Tag_false) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
-                 (p, he->source()->point()) == SMALLER) ||
+             (p, he->source()->point()) == SMALLER) ||
             (he->direction() == ARR_RIGHT_TO_LEFT &&
              geom_traits->compare_xy_2_object() 
-                 (p, he->target()->point()) == SMALLER));
+             (p, he->target()->point()) == SMALLER));
   }
 
-  bool _is_to_left_impl (const Point_2& p,
-                         Halfedge_const_handle he,
-                         Tag_true ) const;
+  bool _is_to_left_impl(const Point_2& p, Halfedge_handle he, Tag_true) const;
 
   /*!
    * Check if the given point lies completely to the right of the given egde.
