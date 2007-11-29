@@ -818,6 +818,64 @@ public:
   {
     return Compare_y_near_boundary_2(m_base_traits);
   }
+
+
+/*! A functor that compares the y-coordinates of two points on the 
+ * identification curve.
+ */
+  class Compare_y_on_identification_2 
+  {
+  protected:
+    //! The base traits.
+    const Traits_2 * m_base;
+    
+    Comparison_result comp_y_on_idnt(const Point_2 & p1,
+                                     const Point_2 & p2,
+                                     Tag_true) const
+    {
+      return m_base->compare_y_on_identification_2_object()(p1.base(),
+                                                            p2.base());
+    }
+
+    /*! This function should never be invoiced
+     */
+    Comparison_result comp_y_on_idnt(const Point_2 & p1,
+                                     const Point_2 & p2,
+                                     Tag_false) const
+    {
+      CGAL_error();
+      return EQUAL;
+    }
+
+    /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_y_on_identification_2(const Traits_2 * base) : m_base(base) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+
+  public:
+    /*! Use tag dispatching to avoid compilation errors in case the functor
+     * is not defined
+     */
+    Comparison_result operator()(const Point_2 & p1,
+                                 const Point_2 & p2) const
+    {
+      return comp_y_on_idnt(p1, p2, Base_has_boundary_category());
+    }
+  };
+
+  /*! Obtain a Compare_y_on_identification_2 object
+   */ 
+  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
+  {
+    return Compare_y_on_identification_2(m_base_traits);
+  }
 };
 
 CGAL_END_NAMESPACE

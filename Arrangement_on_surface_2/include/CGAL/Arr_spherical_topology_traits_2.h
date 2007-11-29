@@ -326,7 +326,12 @@ public:
    */ 
   Vertex * discontinuity_vertex (const X_monotone_curve_2 xc, Arr_curve_end ind)
   {
-    const Point_2 & key = (ind == ARR_MIN_END) ? xc.left() : xc.right();
+    Point_2 key;
+    if (ind == ARR_MIN_END)
+      key = m_traits->construct_min_vertex_2_object() (xc);
+    else
+      key = m_traits->construct_max_vertex_2_object() (xc);
+
     typename Vertex_map::iterator  it = m_boundary_vertices.find(key);
     return (it != m_boundary_vertices.end()) ? it->second : NULL;
   }

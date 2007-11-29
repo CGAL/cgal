@@ -259,7 +259,9 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       if (curr->vertex() == v) return false;
 
       // Ignore vertical curves:
-      if (curr->curve().is_vertical()) {
+      bool is_vertical = m_traits->is_vertical_2_object() (curr->curve());
+      if (is_vertical) 
+      {
         /* If this outer ccb chain contains the north pole, and our point 
          * lies horizontaly between the two vertical curves that meet at
          * the north pole, increase the intersection counter
