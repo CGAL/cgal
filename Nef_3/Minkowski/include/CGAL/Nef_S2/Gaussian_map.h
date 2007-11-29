@@ -1,5 +1,5 @@
-#ifndef CGAL_NEF_GAUSIAN_MAP
-#define CGAL_NEF_GAUSIAN_MAP
+#ifndef CGAL_NEF_GAUSSIAN_MAP
+#define CGAL_NEF_GAUSSIAN_MAP
 
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
@@ -20,7 +20,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template <class K, class Mark_ = PointMark<K> >
-class Gausian_map :
+class Gaussian_map :
   public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geometry<K>, 
 					     CGAL::SM_items, Mark_> > {
 
@@ -769,10 +769,10 @@ class Gausian_map :
   }
 
  public:
-  Gausian_map() : Base(new Sphere_map) {}
+  Gaussian_map() : Base(new Sphere_map) {}
 
   template<typename NK, typename Items> 
-  Gausian_map(const CGAL::Nef_polyhedron_3<NK, Items>& N3,
+  Gaussian_map(const CGAL::Nef_polyhedron_3<NK, Items>& N3,
 	      typename CGAL::Nef_polyhedron_3<NK, Items>::Volume_const_iterator c) : Base(new Sphere_map) {
 
     typedef CGAL::Nef_polyhedron_3<NK, Items> Nef_polyhedron_3;
@@ -829,7 +829,7 @@ class Gausian_map :
   }
 
   template<typename NK> 
-    Gausian_map(const CGAL::Nef_polyhedron_3<NK>& N3) : Base(new Sphere_map) {
+    Gaussian_map(const CGAL::Nef_polyhedron_3<NK>& N3) : Base(new Sphere_map) {
 
     typedef CGAL::Nef_polyhedron_3<NK> Nef_polyhedron_3;
     typedef typename Nef_polyhedron_3::Vertex_const_iterator 
@@ -899,7 +899,7 @@ class Gausian_map :
   }
   
   template<typename PK> 
-  Gausian_map(const CGAL::Polyhedron_3<PK>& P, bool closed = true) 
+  Gaussian_map(const CGAL::Polyhedron_3<PK>& P, bool closed = true) 
     : Base(new Sphere_map) {
     
     typedef CGAL::Polyhedron_3<PK> Polyhedron_3;
@@ -953,7 +953,7 @@ class Gausian_map :
   }
 
   /*
-  Gausian_map(Halffacet_const_handle f) {
+  Gaussian_map(Halffacet_const_handle f) {
     SVertex_handle 
       sv1(new_svertex(CGAL::ORIGIN + 
 		      f->plane()->orthogonal_vector())),
@@ -993,7 +993,7 @@ class Gausian_map :
     }
   }
 
-  Gausian_map(Halfedge_const_handle e) {
+  Gaussian_map(Halfedge_const_handle e) {
     SHalfloop_handle sl = new_shalfloop_pair();
     Point_3 p = e->source()->point();
     sl->circle() = Sphere_circle(p.hx(), p.hy(), p.hz());
@@ -1009,7 +1009,7 @@ class Gausian_map :
     link_as_loop(sl->twin, sf2);
   }
 
-  Gausian_map(Vertex_const_handle v) {
+  Gaussian_map(Vertex_const_handle v) {
     SFace_handle sf = new_sface();
     sf->mark() = Mark(v->point(), v->mark());
   }
@@ -1083,7 +1083,7 @@ class Gausian_map :
     }
   }    
   
-  void minkowski_sum(const Gausian_map& G1, const Gausian_map& G2) {
+  void minkowski_sum(const Gaussian_map& G1, const Gaussian_map& G2) {
     //      CGAL_NEF_SETDTHREAD(131);
     SM_overlayer O(this->sphere_map());
 #ifdef CGAL_NEF3_TIMER_OVERLAY
@@ -1215,11 +1215,11 @@ class Gausian_map :
 };
 
 template<typename Kernel>
-std::ostream& operator<<(std::ostream& out, const CGAL::Gausian_map<Kernel>& G) {
+std::ostream& operator<<(std::ostream& out, const CGAL::Gaussian_map<Kernel>& G) {
   out << "OFF" << std::endl;
   out << G.number_of_sfaces() << " " << G.number_of_svertices() << " 0" << std::endl;
   
-  typedef typename CGAL::Gausian_map<Kernel>::SFace_const_iterator SFace_const_iterator;
+  typedef typename CGAL::Gaussian_map<Kernel>::SFace_const_iterator SFace_const_iterator;
   CGAL::Unique_hash_map<SFace_const_iterator, int> SFace2int;
   
   int i=0;
@@ -1231,9 +1231,9 @@ std::ostream& operator<<(std::ostream& out, const CGAL::Gausian_map<Kernel>& G) 
 	<< CGAL::to_double(sf->mark().z()) << std::endl;
   }
 
-  typename CGAL::Gausian_map<Kernel>::SVertex_const_iterator sv;
+  typename CGAL::Gaussian_map<Kernel>::SVertex_const_iterator sv;
   CGAL_forall_svertices(sv,G) {
-    typename CGAL::Gausian_map<Kernel>::SHalfedge_around_svertex_const_circulator 
+    typename CGAL::Gaussian_map<Kernel>::SHalfedge_around_svertex_const_circulator 
       svc(G.first_out_edge(sv)),
       svc1(svc),
       svend(svc);
@@ -1247,4 +1247,4 @@ std::ostream& operator<<(std::ostream& out, const CGAL::Gausian_map<Kernel>& G) 
 }
 
 CGAL_END_NAMESPACE
-#endif // CGAL_NEF_GAUSIAN_MAP
+#endif // CGAL_NEF_GAUSSIAN_MAP

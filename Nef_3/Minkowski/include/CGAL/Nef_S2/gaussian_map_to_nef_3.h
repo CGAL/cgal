@@ -2,27 +2,27 @@
 #define CGAL_MINKOWSKI_GAUSSIAN_MAP_TO_NEF3_H
 
 #include <CGAL/Nef_S2/SM_decorator.h>
-#include <CGAL/Nef_S2/Gausian_map.h>
+#include <CGAL/Nef_S2/Gaussian_map.h>
 #include <CGAL/Modifier_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<typename Nef3>
-  class gausian_map_to_nef_3 : public Modifier_base<typename Nef3::SNC_structure > {
+  class gaussian_map_to_nef_3 : public Modifier_base<typename Nef3::SNC_structure > {
     
   typedef typename Nef3::Kernel                   Kernel;
   typedef typename Nef3::SNC_structure            SNC_structure;
   typedef typename SNC_structure::Sphere_map      Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>          SM_decorator;
-  typedef CGAL::Gausian_map<Kernel>               Gausian_map;
+  typedef CGAL::Gaussian_map<Kernel>               Gaussian_map;
 
-  typedef typename Gausian_map::SFace_const_iterator       SFace_const_iterator;
-  typedef typename Gausian_map::SFace_const_handle         SFace_const_handle;
-  typedef typename Gausian_map::SHalfedge_const_iterator   SHalfedge_const_iterator;
-  typedef typename Gausian_map::SHalfedge_const_handle     SHalfedge_const_handle;
-  typedef typename Gausian_map::SVertex_const_iterator     SVertex_const_iterator;
-  typedef typename Gausian_map::SVertex_const_handle       SVertex_const_handle;
-  typedef typename Gausian_map::SHalfedge_around_sface_const_circulator
+  typedef typename Gaussian_map::SFace_const_iterator       SFace_const_iterator;
+  typedef typename Gaussian_map::SFace_const_handle         SFace_const_handle;
+  typedef typename Gaussian_map::SHalfedge_const_iterator   SHalfedge_const_iterator;
+  typedef typename Gaussian_map::SHalfedge_const_handle     SHalfedge_const_handle;
+  typedef typename Gaussian_map::SVertex_const_iterator     SVertex_const_iterator;
+  typedef typename Gaussian_map::SVertex_const_handle       SVertex_const_handle;
+  typedef typename Gaussian_map::SHalfedge_around_sface_const_circulator
     SHalfedge_around_sface_const_circulator;
 
   typedef typename SNC_structure::Vertex_handle            Vertex_handle;
@@ -33,10 +33,10 @@ template<typename Nef3>
   typedef typename SNC_structure::Sphere_circle            Sphere_circle;
   typedef typename SNC_structure::Sphere_point             Sphere_point;
 
-  const Gausian_map& G;
+  const Gaussian_map& G;
 
  public:
-  gausian_map_to_nef_3(const Gausian_map& Gin) : G(Gin) {}
+  gaussian_map_to_nef_3(const Gaussian_map& Gin) : G(Gin) {}
     
   void operator()(SNC_structure& snc) {
 
@@ -140,7 +140,6 @@ template<typename Nef3>
       SFace_handle sf1 = SM.new_sface();
       sf0->mark() = false;
       sf1->mark() = true;
-
       SM.link_as_face_cycle(se,sf0);
       SM.link_as_face_cycle(se->twin(),sf1);
     }
