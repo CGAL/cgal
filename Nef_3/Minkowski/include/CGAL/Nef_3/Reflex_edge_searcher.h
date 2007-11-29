@@ -79,10 +79,12 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
 			<< ": " << isrse);
 	if((isrse&1)==1) pos.push_back(sei->source()->twin());
 	if((isrse&2)==2) neg.push_back(sei->source());
+	/*
 	if((isrse&2)==2) {
           sei->source()->mark()=false;
           sei->source()->twin()->mark()=false;
 	}
+	*/
       }
     }
   }
