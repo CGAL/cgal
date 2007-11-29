@@ -445,7 +445,9 @@ are_equal(const Vertex * v,
    * comapare their y-position.
    */
   const Point_2 & p1 = v->point();
-  const Point_2 & p2 = (ind == ARR_MIN_END) ? xc.left() : xc.right();
+  const Point_2 & p2 = (ind == ARR_MIN_END) ?
+    m_traits->construct_min_vertex_2_object()(xc) :
+    m_traits->construct_max_vertex_2_object()(xc);
   return (m_traits->compare_y_on_identification_2_object()(p1, p2) == EQUAL);
 }
 
@@ -469,7 +471,9 @@ notify_on_boundary_vertex_creation(Vertex * v,
     return;
   }
   CGAL_assertion(bound_x != NO_BOUNDARY);
-  const Point_2 & key = (ind == ARR_MIN_END) ? xc.left() : xc.right();
+  const Point_2 & key = (ind == ARR_MIN_END) ?
+    m_traits->construct_min_vertex_2_object()(xc) :
+    m_traits->construct_max_vertex_2_object()(xc);
   m_boundary_vertices.insert(Vertex_value(key, v));
 }
 
@@ -497,7 +501,9 @@ place_boundary_vertex(Face * /* f */,
   CGAL_assertion((bound_x == AFTER_DISCONTINUITY) ||
                  (bound_x == BEFORE_DISCONTINUITY));
 
-  const Point_2 & key = (ind == ARR_MIN_END) ? xc.left() : xc.right();
+  const Point_2 & key = (ind == ARR_MIN_END) ?
+    m_traits->construct_min_vertex_2_object()(xc) :
+    m_traits->construct_max_vertex_2_object()(xc);
   typename Vertex_map::iterator it = m_boundary_vertices.find(key);
 
   if (it != m_boundary_vertices.end()) {
@@ -569,8 +575,9 @@ locate_curve_end(const X_monotone_curve_2 & xc, Arr_curve_end ind,
     // Check if the given curve end is incident to a vertex on the line of
     // discontinuity. If so, return this vertex. Otherwise, locate the first
     // vertex above it.
-    const Point_2 & key = (ind == ARR_MIN_END) ? xc.left() : xc.right();
-
+    const Point_2 & key = (ind == ARR_MIN_END) ?
+      m_traits->construct_min_vertex_2_object()(xc) :
+      m_traits->construct_max_vertex_2_object()(xc);
     it = m_boundary_vertices.find(key);
     if (it != m_boundary_vertices.end()) {
       v = it->second;
