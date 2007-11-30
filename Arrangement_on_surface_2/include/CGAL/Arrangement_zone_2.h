@@ -54,21 +54,25 @@ class Arrangement_zone_2
 {
 public:
 
-  typedef Arrangement_                               Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2  Geometry_traits_2;
-  typedef typename Arrangement_2::Topology_traits    Topology_traits;
+  typedef Arrangement_                                   Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2      Geometry_traits_2;
+  typedef typename Arrangement_2::Topology_traits        Topology_traits;
 
-  typedef ZoneVisitor_                               Visitor;
+  typedef ZoneVisitor_                                   Visitor;
 
-  typedef typename Arrangement_2::Vertex_handle      Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle        Face_handle;
+  typedef typename Arrangement_2::Vertex_handle          Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle        Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle            Face_handle;
 
-  typedef std::pair<Halfedge_handle, bool>           Visitor_result;
+  typedef std::pair<Halfedge_handle, bool>               Visitor_result;
 
-  typedef typename Geometry_traits_2::Point_2             Point_2;
-  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
-                   
+  typedef typename Geometry_traits_2::Point_2            Point_2;
+  typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename  Geometry_traits_2::Has_boundary_category
+    Has_boundary_category;
+  typedef typename  Geometry_traits_2::Boundary_category
+    Boundary_category;
+  
 protected:
 
   typedef Arr_traits_adaptor_2<Geometry_traits_2>        Traits_adaptor_2;
@@ -179,10 +183,10 @@ public:
     // Set the curve and check whether its left end has boundary conditions.
     cv = _cv;
 
-    const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(cv,
-                                                                     ARR_MIN_END);
-    const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(cv,
-                                                                     ARR_MIN_END);
+    const Boundary_type  bx1 =
+      geom_traits->boundary_in_x_2_object()(cv, ARR_MIN_END);
+    const Boundary_type  by1 =
+      geom_traits->boundary_in_y_2_object()(cv, ARR_MIN_END);
 
     if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY)
     {
@@ -210,10 +214,10 @@ public:
     }
 
     // Check the boundary conditions of th right curve end.
-    const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(cv,
-                                                                     ARR_MAX_END);
-    const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(cv,
-                                                                     ARR_MAX_END);
+    const Boundary_type  bx2 =
+      geom_traits->boundary_in_x_2_object()(cv, ARR_MAX_END);
+    const Boundary_type  by2 =
+      geom_traits->boundary_in_y_2_object()(cv, ARR_MAX_END);
 
     if (bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY &&
         by2 != MINUS_INFINITY && by2 != PLUS_INFINITY)
@@ -330,11 +334,9 @@ private:
    * \pre he is not a fictitious edge.
    * \return Whether p lies entirely to the left of the edge.
    */
-  bool _is_to_left (const Point_2& p, Halfedge_handle he) const
+  bool _is_to_left(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_left_impl(p, he,
-                             typename
-                             Geometry_traits_2::Has_boundary_category()));
+    return (_is_to_left_impl(p, he, Has_boundary_category()));
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he, Tag_false) const
@@ -356,17 +358,12 @@ private:
    * \pre he is not a fictitious edge.
    * \return Whether p lies entirely to the right of the edge.
    */
-  bool _is_to_right (const Point_2& p,
-                     Halfedge_const_handle he) const
+  bool _is_to_right(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_right_impl
-            (p, he,
-             typename Geometry_traits_2::Has_boundary_category()));
+    return (_is_to_right_impl(p, he, Has_boundary_category()));
   }
 
-  bool _is_to_right_impl (const Point_2& p,
-                          Halfedge_const_handle he,
-                          Tag_false ) const
+  bool _is_to_right_impl(const Point_2& p, Halfedge_handle he, Tag_false) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -376,9 +373,7 @@ private:
                  (p, he->source()->point()) == LARGER));
   }
 
-  bool _is_to_right_impl (const Point_2& p,
-                          Halfedge_const_handle he,
-                          Tag_true ) const;
+  bool _is_to_right_impl(const Point_2& p, Halfedge_handle he, Tag_true) const;
 
   /*!
    * Compute the (lexicographically) leftmost intersection of the query

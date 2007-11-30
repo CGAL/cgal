@@ -752,10 +752,8 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he, Tag_true) const
 // Check if the given point lies completely to the right of the given egde.
 //
 template<class Arrangement, class ZoneVisitor>
-bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_is_to_right_impl
-    (const Point_2& p,
-     Halfedge_const_handle he,
-     Tag_true ) const
+bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
+_is_to_right_impl(const Point_2& p, Halfedge_handle he, Tag_true) const
 {
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
