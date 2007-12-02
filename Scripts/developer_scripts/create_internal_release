@@ -87,48 +87,6 @@ sub unlock()
     $SIG{TERM} = 'DEFAULT';
 }
 
-sub create_packages_dir(){
-  print "Creating $VERSION/Packages directory ...\n";
-  chdir $RELEASEDIR or die;
-  if (! -f $packages_file){
-    print STDERR "$packages_file file does not exist\n";
-    unlock;
-    die "\n";
-  }
-  open PACKAGES_TO_INCLUDE, "$packages_file" or die;
-  while (<PACKAGES_TO_INCLUDE>){
-    chomp;
-    s/\s*//g;
-    next if /^$/;
-    $is_permitted_package{$_}=1;
-  }
-  close PACKAGES_TO_INCLUDE;
-
-  opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
-  while (defined($package_name = readdir(ALLPACKAGESDIR))) {
-    next unless $is_permitted_package{$package_name};
-    chdir "$RELEASEDIR/$VERSION" or die;
-    mkdir('Packages', 0775);
-    chdir 'Packages';
-    mkdir($package_name, 0775);
-    if (-f "$ALLPACKAGESDIR/$package_name/maintainer"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/maintainer", "$RELEASEDIR/$VERSION/Packages/$package_name");
-    }
-    if (-f "$ALLPACKAGESDIR/$package_name/changes.txt"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/changes.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
-    }
-    if (-f "$ALLPACKAGESDIR/$package_name/description.txt"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/description.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
-    }
-    if (-f "$ALLPACKAGESDIR/$package_name/long_description.txt"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/long_description.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
-    }
-
-  }
-  closedir ALLPACKAGESDIR;
-}
-
-
 sub install_packages() {
   my ($filename, $direc, %is_permited_package, $package_name, $tmp_package_name);
   print "Installing packages ...\n";
@@ -138,7 +96,6 @@ sub install_packages() {
     unlock;
     die "\n";
   }
-
 
   open PACKAGES_TO_INCLUDE, "$packages_file" or die;
   while (<PACKAGES_TO_INCLUDE>){
@@ -156,9 +113,9 @@ sub install_packages() {
     $exclude_command="--exclude-from=$dont_submit";
     chdir "$ALLPACKAGESDIR" or die;
     if(-f $dont_submit){
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=long_description.txt', '--exclude=changes.txt', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
     } else {
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=long_description.txt', '--exclude=changes.txt', '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
     }
     system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
     
@@ -179,7 +136,7 @@ sub install_packages() {
     system('rm', '-rf', "$tmp_package_name");
   }
   closedir ALLPACKAGESDIR;
-  unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt';
+  unlink 'temppack.tar';
 }
 
 
@@ -561,7 +518,6 @@ if ($::opt_l){
   }
 lock;
 
-create_packages_dir();
 install_packages();
 CreateDemoTestDirs();
 CreateExampleTestDirs();

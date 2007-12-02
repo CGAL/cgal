@@ -29,9 +29,11 @@ are obligatory.
 Submissions should not contain files in other places than described here.
 Packages may be rejected if they do, and the contents won't go into releases.
 
-The directory structure of a submission should be as follows: 
+The directory structure of a package named Package should be as follows: 
 
 \begin{verbatim}
+      +--- dont_submit
+      |
       +--- include/CGAL/
       |
       +--- src/{CGAL|CGALQt|...}/
@@ -50,15 +52,15 @@ The directory structure of a submission should be as follows:
       |
       +--- developer_scripts/
       |
-      |- changes.txt
-      |
-      |- description.txt
-      |
-      |- dont_submit
-      |
-      |- long_description.txt
-      |
-      |- maintainer
+      +--- package_info/Package/
+                               |
+                               +- changes.txt
+                               |
+                               +- description.txt
+                               |
+                               +- long_description.txt
+                               |
+                               +- maintainer
 \end{verbatim}
 
 
@@ -129,7 +131,7 @@ The directory structure of a submission should be as follows:
     \end{verse}
   \item[{\tt long\_description.txt}]%
        \ccIndexMainItem[c]{\tt long_description.txt}
-       may be added with more detailed information about the submission. 
+       may be added with more detailed information about the package. 
   \item[\ccAnchor{maintainer}{{\tt maintainer}}]%
        \index{maintainer file@{\tt maintainer} file}
        should be used to name the maintainers of the package. The file should
