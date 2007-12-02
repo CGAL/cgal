@@ -14,7 +14,7 @@ Algebraic_foundations/examples/Algebraic_foundations/fraction_traits.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/implicit_interoperable_dispatch.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/integralize.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/interoperable.cpp -text
-Algebraic_foundations/maintainer -text
+Algebraic_foundations/package_info/Algebraic_foundations/maintainer -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_kernel_d_1.cpp -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Curve_kernel_2_data/projected_arr_2_2_8_2.nix -text
@@ -274,7 +274,7 @@ Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/construct_binary.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/interval_support.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/leda_interval_support.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/refine_zero_against.h -text
-Algebraic_kernel_d/maintainer -text
+Algebraic_kernel_d/package_info/Algebraic_kernel_d/maintainer -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Algebraic_kernel_1.cpp -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Algebraic_real_pure.cpp -text
@@ -1550,7 +1550,7 @@ Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Generic_p
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Make_x_monotone.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Point_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adaptor.h -text
-Curved_kernel_via_analysis_2/maintainer -text
+Curved_kernel_via_analysis_2/package_info/Curved_kernel_via_analysis_2/maintainer -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text svneol=unset#application/postscript
@@ -2767,7 +2767,7 @@ PDB/include/CGAL/PDB/internal/tnt/tnt_subscript.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_vec.h -text
 PDB/include/CGAL/PDB/iterator.h -text
 PDB/include/CGAL/PDB/small_map.h -text
-PDB/maintainer -text
+PDB/package_info/PDB/maintainer -text
 PDB/src/CGALPDB/Atom.cpp -text
 PDB/src/CGALPDB/CGALPDB_71.vcproj eol=crlf
 PDB/src/CGALPDB/CGALPDB_80.vcproj eol=crlf
@@ -3083,7 +3083,7 @@ QP_solver/examples/QP_solver/solve_convex_hull_containment_lp3.h -text
 QP_solver/examples/QP_solver/unboundedness_certificate.cpp -text
 QP_solver/include/CGAL/QP_options.h -text
 QP_solver/include/CGAL/QP_solver/QP_solution_impl.h -text
-QP_solver/maintainer -text
+QP_solver/package_info/QP_solver/maintainer -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
