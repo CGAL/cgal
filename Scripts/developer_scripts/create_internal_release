@@ -388,73 +388,6 @@ sub make_testscripts()
     chdir $BASEDIR;
 }
 
-#----------------------------------------------------------------#
-#                     check_and_update_file                      #
-#----------------------------------------------------------------#
-
-sub check_and_update_file($$)
-{
-    my ($filename, $filename_with_dir) = @_;
-    my $header_type = 0;
-    my $lines_exceeding_length = 0;
-    my $has_line_directives = 0;
-    unlink $TEMPFILE;
-    open SOURCE_FILE, "<$filename" || die "Error opening $filename_with_dir: $!\n";
-    open TEMPFILE, ">$TEMPFILE" || die;
-    while ( <SOURCE_FILE> ) {
-	$header_type = 1
-	    if m|^Copyright \(c\) \d{4](,\s?\d{4})* The CGAL Consortium|;
-	$header_type = 2
-	    if m|^// Copyright \(c\) \d{4}(,\s?\d{4})* The CGAL Consortium|;
-	$lines_exceeding_length +=1 if length $_ > 80;
-	$has_line_directives = 1 if m|^\s*#\s*line\s|;
-	print TEMPFILE $_;
-    }
-    close SOURCE_FILE || die "Error closing $filename_with_dir: $!";
-    close TEMPFILE || die "Error closing temporary file: $!\n";
-    rename($TEMPFILE, $filename )
-    || system('mv', "$TEMPFILE", "$filename")
-    || warn "Could not update file $filename_with_dir\n";
-    if ($header_type == 0) {
-	print FILE_CHECKS "$filename_with_dir has unrecognised header.\n";
-    } elsif ($header_type == 1) {
-	print FILE_CHECKS "$filename_with_dir has old style header.\n";
-    }
-    if ($lines_exceeding_length) {
-	print FILE_CHECKS "$filename_with_dir has $lines_exceeding_length",
-	    " lines over 80 characters.\n";
-    }
-    if ($has_line_directives) {
-	print FILE_CHECKS "$filename_with_dir has line directives.\n";
-    }
-}
-
-#----------------------------------------------------------------#
-#                     set_file_headers                           #
-#----------------------------------------------------------------#
-
-sub set_file_headers()
-{
-    print "Setting file headers...\n";
-    chdir "$RELEASEDIR/$VERSION";
-    open(FILE_CHECKS,">$PARENT_DIR/code_check_$VERSION");
-    find(\&file_header_setting, 'include', 'src', 'examples', 'config/testfiles');
-    close FILE_CHECKS;
-    chdir $MAIN_DIR;
-}
-
-sub file_header_setting
-{
-    my ($filename,$dev,$ino,$mode,$nlink,$uid,$gid,$filetype);
-    $filename = $_;
-    if ( ! /\.[h|C]$/ ||
-	! (($dev,$ino,$mode,$nlink,$uid,$gid) = lstat($filename)) ||
-	! -f _ ) {
-	return;
-    }
-    check_and_update_file($filename, $File::Find::name);
-}
-
 
 #----------------------------------------------------#
 #                Main entry point                    #
@@ -524,7 +457,6 @@ CreateExampleTestDirs();
 create_version_file();
 create_version_tex_file();
 make_testscripts();
-set_file_headers();
 
 unlock;
 }
