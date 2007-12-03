@@ -407,13 +407,33 @@ test_segment_traits_adaptor()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits segment_traits" >> $ERRORFILE
   else
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/compare_y_at_x_left segment_traits_adaptor
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/is_in_x_range segment_traits_adaptor
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/compare_y_position segment_traits_adaptor
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/is_between_cw segment_traits_adaptor
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/compare_cw_around_point segment_traits_adaptor
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/are_mergeable segment_traits_adaptor
-    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/merge segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/compare_y_at_x_left segment_traits_adaptor
+ 
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/is_in_x_range segment_traits_adaptor
+
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/compare_y_position segment_traits_adaptor
+
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/is_between_cw segment_traits_adaptor
+
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/compare_cw_around_point segment_traits_adaptor
+
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/are_mergeable segment_traits_adaptor
+
+    run_trapped_test test_traits_adaptor data/test_adaptor/points \
+    data/test_adaptor/xcurves data/test_adaptor/curves \
+    data/test_adaptor/merge segment_traits_adaptor
   fi
   clean_tests
 }

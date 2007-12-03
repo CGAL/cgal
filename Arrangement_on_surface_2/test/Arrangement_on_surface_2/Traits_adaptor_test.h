@@ -289,6 +289,11 @@ private:
   //@{
 
   bool ta_compare_y_at_x_left_wrapper(std::istringstream & );
+  bool ta_compare_y_at_x_left_wrapper_imp(std::istringstream & ,
+                                       CGAL::Tag_false);
+  bool ta_compare_y_at_x_left_wrapper_imp(std::istringstream & ,
+                                       CGAL::Tag_true);
+
   bool ta_is_in_x_range_wrapper(std::istringstream & );
   bool ta_compare_y_position_wrapper(std::istringstream & );
   bool ta_is_between_cw_wrapper(std::istringstream & );
@@ -340,19 +345,19 @@ Traits_adaptor_test<T_Traits>::Traits_adaptor_test(int argc, char * argv[])
     m_traitstype = argv[5];
   }
 
-  m_wrappers[std::string("ta_compare_y_at_x_left")] =
+  m_wrappers[std::string("compare_y_at_x_left")] =
     &Traits_adaptor_test<Traits>::ta_compare_y_at_x_left_wrapper;
-  m_wrappers[std::string("ta_is_in_x_range")] =
+  m_wrappers[std::string("is_in_x_range")] =
     &Traits_adaptor_test<Traits>::ta_is_in_x_range_wrapper;
-  m_wrappers[std::string("ta_compare_y_position")] =
+  m_wrappers[std::string("compare_y_position")] =
     &Traits_adaptor_test<Traits>::ta_compare_y_position_wrapper;
-  m_wrappers[std::string("ta_is_between_cw")] =
+  m_wrappers[std::string("is_between_cw")] =
     &Traits_adaptor_test<Traits>::ta_is_between_cw_wrapper;
-  m_wrappers[std::string("ta_compare_cw_around_point")] =
+  m_wrappers[std::string("compare_cw_around_point")] =
     &Traits_adaptor_test<Traits>::ta_compare_cw_around_point_wrapper;
-  m_wrappers[std::string("ta_are_mergeable")] =
+  m_wrappers[std::string("are_mergeable")] =
     &Traits_adaptor_test<Traits>::ta_are_mergeable_wrapper;
-  m_wrappers[std::string("ta_merge")] =
+  m_wrappers[std::string("merge")] =
     &Traits_adaptor_test<Traits>::ta_merge_wrapper;
 }
 
@@ -787,7 +792,38 @@ template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_compare_y_at_x_left_wrapper
                                              (std::istringstream & str_stream)
 {
-  return true;
+  typedef typename T_Traits::Has_left_category          Has_left_category;
+  return ta_compare_y_at_x_left_wrapper_imp(str_stream, Has_left_category());
+}
+
+template <class T_Traits>
+bool
+Traits_adaptor_test<T_Traits>::
+ta_compare_y_at_x_left_wrapper_imp(std::istringstream & ,
+                                CGAL::Tag_false)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool
+Traits_adaptor_test<T_Traits>::
+ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
+                                CGAL::Tag_true)
+{
+  unsigned int id1, id2, id3;
+  str_stream >> id1 >> id2 >> id3;
+  unsigned int exp_answer = get_expected_enum(str_stream);
+  std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
+            << m_xcurves[id2] << ", " << m_points[id3]
+            << " ) ? "; 
+  unsigned int real_answer = m_traits.compare_y_at_x_left_2_object()
+                               (m_xcurves[id1],m_xcurves[id2],m_points[id3]);
+  did_violation_occur();
+  std::cout << exp_answer << " ";
+
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>
