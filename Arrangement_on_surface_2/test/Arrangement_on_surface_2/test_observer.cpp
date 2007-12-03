@@ -12,10 +12,10 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 int ok;
 std::ifstream global_input_file;
-//std::string global_str;
 char one_line[128];
 char buff[128];
 
@@ -712,6 +712,11 @@ int main (int argc, char * argv[])
     global_input_file.open(argv[1]);
     CGAL_assertion(global_input_file.is_open());
     My_observer    obs (arr);
+    Point_2 p;
+    Segment_2 s;
+    int i_vh,i_heh;
+    std::vector<Arrangement_2::Halfedge_handle> heh_vec;
+    std::vector<Arrangement_2::Vertex_handle> vh_vec;
     while (!global_input_file.eof())
     {
       skip_comments(global_input_file, one_line);
@@ -720,25 +725,49 @@ int main (int argc, char * argv[])
       str_stream >> c;
       if (!global_input_file.gcount())
         break;
-      Point_2 p;
-      Segment_2 s;
       if (c=='s')
       {
+        str_stream >> c;
         //read segment
-        str_stream >> s ;
-        insert(arr,s);
-        std::cout << "segment insert" << std::endl;
+        str_stream >> s;
+        if (c=='i')
+        {
+          //insert intersecting segment
+          insert(arr,s);
+          std::cout << "intersecting segment insert " << s << std::endl;
+        }
+        else if (c=='n')
+        {
+          //insert non intersecting segment
+          heh_vec.push_back(insert_non_intersecting_curve (arr, s));
+          std::cout << "non intersecting segment insert " << s << std::endl;
+        }
       }
       else if (c=='p')
       {
         //read point
         str_stream >> p ;
-        insert_point(arr,p);
-        std::cout << "point insert" << std::endl;
+        std::cout << "point insert " << p << " index " << vh_vec.size() << std::endl;
+        vh_vec.push_back(insert_point(arr,p));
+      }
+      else if (c=='e')
+      {
+        //read edge index
+        str_stream >> i_heh ;
+        std::cout << "remove edge " << heh_vec[i_heh]->curve() << std::endl;
+        remove_edge(arr,heh_vec[i_heh]);
+      }
+      else if (c=='v')
+      {
+        //read point index
+        str_stream >> i_vh ;
+        std::cout << "remove point " << vh_vec[i_vh]->point() << std::endl;
+        remove_vertex(arr,vh_vec[i_vh]);
       }
       else
       {
         //error
+        std::cout << "error, unknowen command" << std::endl;
         return -1;
       }
     }
