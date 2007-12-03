@@ -398,6 +398,27 @@ execute_commands_new_structure()
 }
 
 #---------------------------------------------------------------------#
+# traits adaptor (segment)
+#---------------------------------------------------------------------#
+test_segment_traits_adaptor()
+{
+# function     executable  number type   kernel            traits
+  compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS segment_traits_adaptor
+  if [ ${res} -eq 0 ] ; then
+    echo   "   ERROR:    not executed   test_traits segment_traits" >> $ERRORFILE
+  else
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/compare_y_at_x_left segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/is_in_x_range segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/compare_y_position segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/is_between_cw segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/compare_cw_around_point segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/are_mergeable segment_traits_adaptor
+    run_trapped_test test_traits_adaptor data/test_adaptor/points data/test_adaptor/xcurves data/test_adaptor/curves data/test_adaptor/merge segment_traits_adaptor
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 # segment traits
 #---------------------------------------------------------------------#
 test_segment_traits()
@@ -772,6 +793,8 @@ else
   compile_and_run test_zone
 
   compile_and_run test_observer
+
+  test_segment_traits_adaptor
 fi
 
 #if any error occured then appened the the full error description file to error file
