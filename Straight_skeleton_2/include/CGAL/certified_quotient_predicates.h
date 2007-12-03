@@ -30,7 +30,7 @@ inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x)
   Uncertain<Sign> signum = CGAL_NTS certified_sign(x.num) ;
   Uncertain<Sign> sigden = CGAL_NTS certified_sign(x.den) ;
   Uncertain<Sign> zero(ZERO);
-  return signum != zero & signum == sigden ;
+  return ( signum != zero ) & ( signum == sigden );
 }
 
 template <class NT> 
@@ -40,7 +40,7 @@ inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
   Uncertain<Sign> sigden = CGAL_NTS certified_sign(x.den) ;
   Uncertain<Sign> zero(ZERO);
 
-  return signum != zero & signum != sigden ;
+  return ( signum != zero ) & ( signum != sigden );
 }
 
 template <class NT>

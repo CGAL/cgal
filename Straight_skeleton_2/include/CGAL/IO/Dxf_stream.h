@@ -55,15 +55,15 @@ public:
   typedef Kernel_                                Kernel;
   
   // Define the kernel objects.
-  typedef typename Kernel::FT                    NT;
-  typedef typename Kernel::Point_2               Point_2;
-  typedef typename Kernel::Segment_2             Segment_2;
-  typedef typename Kernel::Ray_2                 Ray_2;
-  typedef typename Kernel::Line_2                Line_2;
-  typedef typename Kernel::Triangle_2            Triangle_2;
-  typedef typename Kernel::Iso_rectangle_2       Iso_rectangle_2;
-  typedef Polygon_2<Kernel>                      Polygon_2;
-  typedef typename Kernel::Circle_2              Circle_2;
+  typedef typename Kernel::FT              NT;
+  typedef typename Kernel::Point_2         Point;
+  typedef typename Kernel::Segment_2       Segment;
+  typedef typename Kernel::Ray_2           Ray;
+  typedef typename Kernel::Line_2          Line;
+  typedef typename Kernel::Triangle_2      Triangle;
+  typedef typename Kernel::Iso_rectangle_2 Iso_rectangle;
+  typedef typename Kernel::Circle_2        Circle;
+  typedef CGAL::Polygon_2<Kernel>          Polygon;
 
 protected:
 
@@ -196,7 +196,7 @@ public:
   /*!
    * Write a 2D segment.
    */
-  void write_segment_2 (const Segment_2& seg)
+  void write_segment_2 (const Segment& seg)
   {
     mWriter.add_segment_2( seg.source(), seg.target(), mLayer, mDxfColor ) ;
   }
@@ -249,7 +249,7 @@ public:
   /*!
    * Write a 2D (closed) polygon.
    */
-  void write_polygon (const Polygon_2& pgn)
+  void write_polygon (const Polygon& pgn)
   {
     mWriter.add_polyline_2( pgn.begin(), pgn.end(), true, mLayer, mDxfColor ) ;
   }
@@ -283,7 +283,7 @@ public:
   /*!
    * Write a line segment.
    */
-  Dxf_stream& operator<< (const Segment_2& seg)
+  Dxf_stream& operator<< (const Segment& seg)
   {
     write_segment_2 (seg);
     return (*this);
@@ -292,7 +292,7 @@ public:
   /*!
    * Write a polygon.
    */
-  Dxf_stream& operator<< (const Polygon_2& pgn)
+  Dxf_stream& operator<< (const Polygon& pgn)
   {
     write_polygon_2 (pgn);
     return (*this);
