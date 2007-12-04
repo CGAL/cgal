@@ -1211,6 +1211,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/points
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/split -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/xcurves -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/are_mergeable -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/compare_y_at_x_left -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/curves -text
