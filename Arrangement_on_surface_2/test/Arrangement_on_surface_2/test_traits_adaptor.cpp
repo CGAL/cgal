@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "test_traits.h"
+#include "test_traits_adaptor.h"
 #include "Traits_adaptor_test.h"
 
 

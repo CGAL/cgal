@@ -830,7 +830,24 @@ template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_is_in_x_range_wrapper
                                              (std::istringstream & str_stream)
 {
-  return true;
+  unsigned int id1, id2;
+  char c;
+  str_stream >> c >> id1 >> id2 ;
+  bool exp_answer = get_expected_boolean(str_stream);
+  std::cout << "Test: is_in_x_range( " << m_xcurves[id1] << "," ;
+  if (c == 'p')
+    std::cout << m_points[id2] ;
+  else
+    std::cout << m_xcurves[id2] ;
+  std::cout << " ) ? " ;
+  bool real_answer;
+  if (c == 'p')
+    real_answer = m_traits.is_in_x_range_2_object() ( m_xcurves[id1] ,m_points[id2] );
+  else
+    real_answer = m_traits.is_in_x_range_2_object() ( m_xcurves[id1] ,m_xcurves[id2] );
+  did_violation_occur();
+  std::cout << exp_answer << " ";
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>

@@ -1265,6 +1265,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -te
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
 Arrangement_on_surface_2/test/Sweep_line_2/CompareCurveList.h eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/DATA/conics/con01.txt eol=lf
