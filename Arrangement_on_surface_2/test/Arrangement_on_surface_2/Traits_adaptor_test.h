@@ -837,14 +837,18 @@ bool Traits_adaptor_test<T_Traits>::ta_is_in_x_range_wrapper
   std::cout << "Test: is_in_x_range( " << m_xcurves[id1] << "," ;
   if (c == 'p')
     std::cout << m_points[id2] ;
-  else
+  else if (c == 'x')
     std::cout << m_xcurves[id2] ;
+  else
+    CGAL_error();
   std::cout << " ) ? " ;
   bool real_answer;
   if (c == 'p')
     real_answer = m_traits.is_in_x_range_2_object() ( m_xcurves[id1] ,m_points[id2] );
-  else
+  else if (c == 'x')
     real_answer = m_traits.is_in_x_range_2_object() ( m_xcurves[id1] ,m_xcurves[id2] );
+  else
+    CGAL_error();
   did_violation_occur();
   std::cout << exp_answer << " ";
   return compare_and_print(exp_answer, real_answer);
@@ -854,7 +858,16 @@ template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_compare_y_position_wrapper
                                              (std::istringstream & str_stream)
 {
-  return true;
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2 ;
+  unsigned int exp_answer = get_expected_enum(str_stream);
+  std::cout << "Test: is_in_x_range( " << m_xcurves[id1] 
+            << "," << m_xcurves[id2] << " ) ? " ;
+  unsigned int real_answer = m_traits.compare_y_position_2_object() 
+                             ( m_xcurves[id1] ,m_xcurves[id2] );
+  did_violation_occur();
+  std::cout << exp_answer << " " ;
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>
