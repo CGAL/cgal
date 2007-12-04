@@ -300,7 +300,16 @@ private:
   bool ta_compare_cw_around_point_wrapper(std::istringstream & );
 
   bool ta_are_mergeable_wrapper(std::istringstream & );
+  bool ta_are_mergeable_wrapper_imp(std::istringstream & ,
+                                       CGAL::Tag_false);
+  bool ta_are_mergeable_wrapper_imp(std::istringstream & ,
+                                       CGAL::Tag_true);
+
   bool ta_merge_wrapper(std::istringstream & );
+  bool ta_merge_wrapper_imp(std::istringstream & ,
+                                       CGAL::Tag_false);
+  bool ta_merge_wrapper_imp(std::istringstream & ,
+                                       CGAL::Tag_true);
 
   //@}
 
@@ -861,7 +870,7 @@ bool Traits_adaptor_test<T_Traits>::ta_compare_y_position_wrapper
   unsigned int id1, id2;
   str_stream >> id1 >> id2 ;
   unsigned int exp_answer = get_expected_enum(str_stream);
-  std::cout << "Test: is_in_x_range( " << m_xcurves[id1] 
+  std::cout << "Test: compare_y_position( " << m_xcurves[id1] 
             << "," << m_xcurves[id2] << " ) ? " ;
   unsigned int real_answer = m_traits.compare_y_position_2_object() 
                              ( m_xcurves[id1] ,m_xcurves[id2] );
@@ -874,27 +883,124 @@ template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_is_between_cw_wrapper
                                              (std::istringstream & str_stream)
 {
-  return true;
+  unsigned int xcv , b , xcv1 , b1 , xcv2 , b2 , p;
+  bool b_ref1,b_ref2;
+  str_stream >> xcv >> b >> xcv1 >> b1 >> xcv2 >> b2 >> p;
+  bool exp_answer = get_expected_boolean(str_stream) ;
+  std::cout << "Test: is_between_cw( " << m_xcurves[xcv] << " , " 
+            << (b==0?"false":"true") << " , " << m_xcurves[xcv1] 
+            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2]
+            << (b2==0?"false":"true") << " , " << m_points[p] << " ) ? " ;
+  bool real_answer = m_traits.is_between_cw_2_object()
+                     ( m_xcurves[xcv] , (b==0?false:true), 
+                       m_xcurves[xcv1] , (b1==0?false:true), 
+                       m_xcurves[xcv2] , (b2==0?false:true),
+                       m_points[p] , b_ref1 , b_ref2 );
+  did_violation_occur();
+  std::cout << exp_answer << " " ;
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_compare_cw_around_point_wrapper
                                              (std::istringstream & str_stream)
 {
-  return true;
+  unsigned int xcv1 , b1 , xcv2 , b2 , p , b3;
+  str_stream >> xcv1 >> b1 >> xcv2 >> b2 >> p >> b3;
+  unsigned int exp_answer = get_expected_enum(str_stream) ;
+  std::cout << "Test: compare_cw_around_point( " << m_xcurves[xcv1] 
+            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2]
+            << (b2==0?"false":"true") << " , " << m_points[p] 
+            << (b3==0?"false":"true") << " ) ? " ;
+  unsigned int real_answer = m_traits.compare_cw_around_point_2_object()
+                     ( m_xcurves[xcv1] , (b1==0?false:true),
+                       m_xcurves[xcv2] , (b2==0?false:true),
+                       m_points[p] , b3 );
+  did_violation_occur();
+  std::cout << exp_answer << " " ;
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_are_mergeable_wrapper
                                              (std::istringstream & str_stream)
 {
-  return true;
+  typedef typename T_Traits::Has_merge_category          Has_merge_category;
+  return ta_are_mergeable_wrapper_imp(str_stream, Has_merge_category());
+}
+
+template <class T_Traits>
+bool
+Traits_adaptor_test<T_Traits>::
+ta_are_mergeable_wrapper_imp(std::istringstream & ,
+                                CGAL::Tag_false)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool
+Traits_adaptor_test<T_Traits>::
+ta_are_mergeable_wrapper_imp(std::istringstream & str_stream,
+                                CGAL::Tag_true)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  bool exp_answer = get_expected_boolean(str_stream);
+  bool real_answer = m_traits.are_mergeable_2_object()(m_xcurves[id1],
+                                                       m_xcurves[id2]);
+  did_violation_occur();
+  std::cout << "Test: are_mergeable( " << m_xcurves[id1] << ", "
+            << m_xcurves[id2] << " ) ? ";
+  std::cout << exp_answer << " ";
+  return compare_and_print(exp_answer, real_answer);
 }
 
 template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_merge_wrapper
                                              (std::istringstream & str_stream)
 {
+  typedef typename T_Traits::Has_merge_category          Has_merge_category;
+  return ta_are_mergeable_wrapper_imp(str_stream, Has_merge_category());
+}
+
+template <class T_Traits>
+bool
+Traits_adaptor_test<T_Traits>::
+ta_merge_wrapper_imp(std::istringstream & ,
+                                CGAL::Tag_false)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool
+Traits_adaptor_test<T_Traits>::
+ta_merge_wrapper_imp(std::istringstream & str_stream,
+                                CGAL::Tag_true)
+{
+  typedef T_Traits                              Traits;
+  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef typename Traits::Equal_2              Equal_2;
+
+  unsigned int id1, id2, id;
+  str_stream >> id1 >> id2 >> id;
+  X_monotone_curve_2 cv;
+  m_traits.merge_2_object()(m_xcurves[id1], m_xcurves[id2], cv);
+  did_violation_occur();
+  std::cout << "Test: merge( " << m_xcurves[id1] << ", "
+            << m_xcurves[id2] << " ) ? " << m_xcurves[id] << " ";
+  Equal_2 equal = m_traits.equal_2_object();
+  if (!equal(m_xcurves[id], cv)) {
+    std::cerr << "Expected x-monotone curve: " << m_xcurves[id] << std::endl
+              << "Obtained x-monotone curve: " << cv << std::endl;
+    end_of_line_printed = true;
+    print_result(false);
+    return false;
+  }
+  print_result(true);
   return true;
 }
 
