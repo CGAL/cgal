@@ -1,0 +1,17 @@
+is_between_cw 3 0 3 0 3 0 18 FALSE
+is_between_cw 10 0 10 0 10 0 18 FALSE
+is_between_cw 16 0 16 0 16 0 18 FALSE
+is_between_cw 21 0 21 0 21 0 18 FALSE
+is_between_cw 26 1 26 1 26 1 18 FALSE
+is_between_cw 27 1 27 1 27 1 18 FALSE
+is_between_cw 28 1 28 1 28 1 18 FALSE
+is_between_cw 29 1 29 1 29 1 18 FALSE
+###
+is_between_cw 10 0 3 0 3 0 18 TRUE
+is_between_cw 16 0 10 0 10 0 18 TRUE
+is_between_cw 21 0 16 0 16 0 18 TRUE
+is_between_cw 26 1 21 0 21 0 18 TRUE
+is_between_cw 27 1 26 1 26 1 18 TRUE
+is_between_cw 28 1 27 1 27 1 18 TRUE
+is_between_cw 29 1 28 1 28 1 18 TRUE
+is_between_cw 3 0 29 1 29 1 18 TRUE
