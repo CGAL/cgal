@@ -1071,12 +1071,12 @@ public:
 
         Curve_pair_analysis_2 cpa_2((Curve_analysis_2(curve())),
             (Curve_analysis_2(cv2.curve())));
-        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line =
-                cpa_2.vertical_line_for_x(p.x());
+        typename Curve_pair_analysis_2::Status_line_1 cpv_line =
+                cpa_2.status_line_for_x(p.x());
 
         CGAL_precondition(cpv_line.is_intersection());
-        int j = cpv_line.get_event_of_curve(arcno(p.x()), 0),
-            mult = cpv_line.get_multiplicity_of_intersection(j);
+        int j = cpv_line.event_of_curve(arcno(p.x()), 0),
+            mult = cpv_line.multiplicity_of_intersection(j);
             
         CGAL_postcondition(mult > 0);
         return mult;
@@ -1178,7 +1178,7 @@ public:
         
         CERR("trim_if_overlapped: non-coprime supporting curves\n");
         
-        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
+        typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         // iterate to find all overlapping parts
         typename Curve_container::const_iterator it_parts, it_com;
         for(it_com = common.begin(); it_com != common.end(); it_com++)
@@ -1189,12 +1189,12 @@ public:
                 */
                 cpa_2 = Curve_pair_analysis_2(
                    (Curve_analysis_2(*it_com)),(Curve_analysis_2(*it_parts)));
-                cpv_line = (inf_x ? cpa_2.vertical_line_of_interval(0) :
-                    cpa_2.vertical_line_for_x(x0, CGAL::POSITIVE)); 
+                cpv_line = (inf_x ? cpa_2.status_line_of_interval(0) :
+                    cpa_2.status_line_for_x(x0, CGAL::POSITIVE));
                 // no intersections at this curve pair => skip it
                 if(arcno() >= cpv_line.number_of_events())
                     continue; 
-                ipair = cpv_line.get_curves_at_event(arcno());
+                ipair = cpv_line.curves_at_event(arcno());
                 // this must be 1-curve event: is this true ???
                 CGAL_assertion(!(ipair.first != -1&&ipair.second != -1));
                 if(ipair.first != -1) // lies on a common part
@@ -1212,12 +1212,12 @@ public:
                 cpa_2 = Curve_pair_analysis_2((Curve_analysis_2(
                     it_found->first)), (Curve_analysis_2(*it_parts)));
                     
-                cpv_line = (inf_x ? cpa_2.vertical_line_of_interval(0) :
-                    cpa_2.vertical_line_for_x(x0, CGAL::POSITIVE)); 
+                cpv_line = (inf_x ? cpa_2.status_line_of_interval(0) :
+                    cpa_2.status_line_for_x(x0, CGAL::POSITIVE));
                 // no intersections at this curve pair => skip it
                 if(cv2.arcno() >= cpv_line.number_of_events())
                     continue; 
-                ipair = cpv_line.get_curves_at_event(cv2.arcno());
+                ipair = cpv_line.curves_at_event(cv2.arcno());
                 // this must be 1-curve event: is this true ???
                 CGAL_assertion(!(ipair.first != -1&&ipair.second != -1));
                 if(ipair.first == -1 || ipair.first == it_found->second) 
@@ -1236,8 +1236,8 @@ public:
                 if(src.boundary_in_x() == CGAL::NO_BOUNDARY) {
                     int a = arcno(src.x());
                     if(a != arcno()) {
-                        cpv_line = cpa_2.vertical_line_for_x(src.x());
-                        ipair = cpv_line.get_curves_at_event(a);    
+                        cpv_line = cpa_2.status_line_for_x(src.x());
+                        ipair = cpv_line.curves_at_event(a);
                         // should ultimately lie on the common curve ?
                         CGAL_assertion(ipair.first != -1);
                         rep._m_arcno_min = ipair.first;
@@ -1246,8 +1246,8 @@ public:
                 if(tgt.boundary_in_x() == CGAL::NO_BOUNDARY) {
                     int a = arcno(tgt.x());
                     if(a != arcno()) {
-                        cpv_line = cpa_2.vertical_line_for_x(tgt.x());
-                        ipair = cpv_line.get_curves_at_event(a);    
+                        cpv_line = cpa_2.status_line_for_x(tgt.x());
+                        ipair = cpv_line.curves_at_event(a);
                         // should ultimately lie on the common curve ?
                         CGAL_assertion(ipair.first != -1);
                         rep._m_arcno_max = ipair.first;
@@ -1413,10 +1413,10 @@ public:
             // check that there are no other non-vertical branches coming 
             // through this point
             Curve_analysis_2 ca_2(curve());
-            typename Curve_analysis_2::Curve_vertical_line_1 cv_line = 
-                ca_2.vertical_line_for_x(common.x());
+            typename Curve_analysis_2::Status_line_1 cv_line = 
+                ca_2.status_line_for_x(common.x());
             CGAL_assertion(cv_line.is_event()); // ??
-            // we are not allowed to use get_number_of_incident_branches()
+            // we are not allowed to use number_of_incident_branches()
             // since the common point might be supported by different curve, 
             // and therefore its arcno might be not valid for *this arc
             Curve_kernel_2 kernel_2;
@@ -1469,14 +1469,14 @@ private:
         if(!c.is_identical(pt.curve())) {
             // -1 defines that no arcnos preconditions need to be established
             if(arcno_on_c != -1) {
-                typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
+                typename Curve_pair_analysis_2::Status_line_1
                     cpv_line;
                 Curve_pair_analysis_2 cpa_2((Curve_analysis_2(pt.curve())),
                     (Curve_analysis_2(c)));
                     
-                cpv_line = cpa_2.vertical_line_for_x(pt.x());
-                CGAL_precondition(cpv_line.get_event_of_curve(pt.arcno(), 0)
-                    == cpv_line.get_event_of_curve(arcno_on_c, 1));
+                cpv_line = cpa_2.status_line_for_x(pt.x());
+                CGAL_precondition(cpv_line.event_of_curve(pt.arcno(), 0)
+                    == cpv_line.event_of_curve(arcno_on_c, 1));
             } 
             std::vector<Curve_2> dummy[3]; // these are three dummies ?
             Curve_kernel_2 kernel_2;
@@ -1503,8 +1503,8 @@ private:
         Curve_analysis_2 ca_2(curve());
         if(is_vertical()) {
             X_coordinate_1 x0 = _minpoint().x();
-            typename Curve_analysis_2::Curve_vertical_line_1 cv_line;
-            cv_line = ca_2.vertical_line_for_x(x0);
+            typename Curve_analysis_2::Status_line_1 cv_line;
+            cv_line = ca_2.status_line_for_x(x0);
             CGAL_precondition(cv_line.is_event() && cv_line.covers_line());
             
             Curve_kernel_2 kernel_2;            
@@ -1531,17 +1531,17 @@ private:
             return;
         }
                 
-        typename Curve_analysis_2::Curve_vertical_line_1 src_line, tgt_line,
+        typename Curve_analysis_2::Status_line_1 src_line, tgt_line,
             tmp;
         bool inf_src = (boundary_in_x(CGAL::MIN_END) < CGAL::NO_BOUNDARY), 
              inf_tgt = (boundary_in_x(CGAL::MAX_END) > CGAL::NO_BOUNDARY);
-        src_line = (inf_src ? ca_2.vertical_line_of_interval(0) :
-            ca_2.vertical_line_for_x(_minpoint().x()));
-        tgt_line = (inf_tgt ? ca_2.vertical_line_of_interval(
-            ca_2.number_of_vertical_lines_with_event()) :
-            ca_2.vertical_line_for_x(_maxpoint().x()));
+        src_line = (inf_src ? ca_2.status_line_of_interval(0) :
+            ca_2.status_line_for_x(_minpoint().x()));
+        tgt_line = (inf_tgt ? ca_2.status_line_of_interval(
+            ca_2.number_of_status_lines_with_event()) :
+            ca_2.status_line_for_x(_maxpoint().x()));
         
-        int src_idx = src_line.get_index(), tgt_idx = tgt_line.get_index(), 
+        int src_idx = src_line.index(), tgt_idx = tgt_line.index(),
             diff = tgt_idx - src_idx;
         bool no_events_between = true;
         // it's supposed that arcs are not degenerate but lexicographic
@@ -1563,9 +1563,9 @@ private:
                 std::swap(low, high);
             std::pair<int, int> ipair;
             for(i = low; i <= high; i++) {
-                tmp = ca_2.vertical_line_at_event(i);
+                tmp = ca_2.status_line_at_event(i);
                 for(j = 0; j < tmp.number_of_events(); j++) {
-                    ipair = tmp.get_number_of_incident_branches(j);
+                    ipair = tmp.number_of_incident_branches(j);
                     if(ipair.first != 1||ipair.second != 1)
                         break;
                 }
@@ -1618,19 +1618,19 @@ private:
         /////////////////////////////////////////////
         /// assume supporting curves are coprime here
         /////////////////////////////////////////////
-        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
+        typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         Curve_pair_analysis_2 cpa_2(
             (Curve_analysis_2(curve())), (Curve_analysis_2(g)));
         
         if(where == CGAL::NO_BOUNDARY) 
-            cpv_line = cpa_2.vertical_line_for_x(x0, perturb);                
+            cpv_line = cpa_2.status_line_for_x(x0, perturb);
         else
-            cpv_line = cpa_2.vertical_line_of_interval(
+            cpv_line = cpa_2.status_line_of_interval(
                 where < CGAL::NO_BOUNDARY ? 0 :
-                    cpa_2.number_of_vertical_lines_with_event());
+                    cpa_2.number_of_status_lines_with_event());
         
-        CGAL::Sign res = CGAL::sign(cpv_line.get_event_of_curve(arcno(), 0) - 
-                    cpv_line.get_event_of_curve(arcno_on_g, 1));
+        CGAL::Sign res = CGAL::sign(cpv_line.event_of_curve(arcno(), 0) -
+                    cpv_line.event_of_curve(arcno_on_g, 1));
         CERR("result: " << res << "\n");
         return res;
     }
@@ -1696,9 +1696,9 @@ private:
             return 0;
         Curve_analysis_2 ca_2(curve());
         // we are interested in interval "to the right"
-        typename Curve_analysis_2::Curve_vertical_line_1 cv_line = 
-            ca_2.vertical_line_for_x(_minpoint().x(), CGAL::POSITIVE); 
-        return cv_line.get_index();
+        typename Curve_analysis_2::Status_line_1 cv_line = 
+            ca_2.status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
+        return cv_line.index();
     }
     
     /*!\brief 
@@ -1746,8 +1746,8 @@ private:
         typename Curve_2::Poly_d f = curve().f();     
         CGAL_precondition_code(
              typename Curve_2::Poly_d mult =
-                    cpa_2.get_curve_analysis(0).get_polynomial_2().f() *
-                    cpa_2.get_curve_analysis(1).get_polynomial_2().f();
+                    cpa_2.curve_analysis(0).polynomial_2().f() *
+                    cpa_2.curve_analysis(1).polynomial_2().f();
         );
         // common parts and full parts
         CGAL_precondition(NiX::resultant(mult, f).is_zero());
@@ -1759,34 +1759,34 @@ private:
             // processing vertical arcs: search for supporting curve which has 
             // vertical line at this x0 (must be exactly 1 curve)
             x0 = curve_end_x(CGAL::MIN_END);
-            Curve_analysis_2 ca_2(cpa_2.get_curve_analysis(0));
-            if(ca_2.vertical_line_for_x(x0).covers_line())
-                this->ptr()->_m_support = ca_2.get_polynomial_2();
+            Curve_analysis_2 ca_2(cpa_2.curve_analysis(0));
+            if(ca_2.status_line_for_x(x0).covers_line())
+                this->ptr()->_m_support = ca_2.polynomial_2();
             else {
-                ca_2 = cpa_2.get_curve_analysis(1);
-                CGAL_assertion(ca_2.vertical_line_for_x(x0).covers_line());
-                this->ptr()->_m_support = ca_2.get_polynomial_2();
+                ca_2 = cpa_2.curve_analysis(1);
+                CGAL_assertion(ca_2.status_line_for_x(x0).covers_line());
+                this->ptr()->_m_support = ca_2.polynomial_2();
             }
             return;
         }
         
         // processing non-vertical arcs
-        typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 cpv_line;
+        typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         std::pair<int, int> ipair;
         Curve_2 orig_curve(curve()); // preserve original supporting curve
         bool inf1_x = (boundary_in_x(CGAL::MIN_END) < CGAL::NO_BOUNDARY);
         int curve_idx;  
         if(!inf1_x) {
             x0 = curve_end_x(CGAL::MIN_END); 
-            cpv_line = cpa_2.vertical_line_for_x(x0, CGAL::POSITIVE);   
+            cpv_line = cpa_2.status_line_for_x(x0, CGAL::POSITIVE);
         } else 
-            cpv_line = cpa_2.vertical_line_of_interval(0);
+            cpv_line = cpa_2.status_line_of_interval(0);
         
         CGAL_precondition_code(
             Curve_analysis_2 ca_2(orig_curve);
-            typename Curve_analysis_2::Curve_vertical_line_1 
-                cv_line = (inf1_x ? ca_2.vertical_line_of_interval(0) :
-                        ca_2.vertical_line_for_x(x0, CGAL::POSITIVE));
+            typename Curve_analysis_2::Status_line_1 
+                cv_line = (inf1_x ? ca_2.status_line_of_interval(0) :
+                        ca_2.status_line_for_x(x0, CGAL::POSITIVE));
         );
         CGAL_precondition(cpv_line.number_of_events() == 
             cv_line.number_of_events());
@@ -1794,26 +1794,26 @@ private:
         { // search for new supporting curve and new arcno
             // since supporting curve was decomposed in two parts, arcno
             // represents y-position here
-            ipair = cpv_line.get_curves_at_event(arcno());
+            ipair = cpv_line.curves_at_event(arcno());
             // this must be 1-curve event 
             CGAL_assertion(!(ipair.first != -1&&ipair.second != -1));
             this->ptr()->_m_arcno = (ipair.first != -1 ? ipair.first :
                 ipair.second);
             curve_idx = (ipair.first != -1 ? 0 : 1);
-            this->ptr()->_m_support = cpa_2.get_curve_analysis(curve_idx)
-                .get_polynomial_2();
+            this->ptr()->_m_support = cpa_2.curve_analysis(curve_idx)
+                .polynomial_2();
         }        
         { // search for source arcno
             if(!inf1_x) // otherwise use previous object
-                cpv_line = cpa_2.vertical_line_for_x(x0);
+                cpv_line = cpa_2.status_line_for_x(x0);
                                 
             CGAL_precondition_code(
                 if(!inf1_x) // otherwise use previous cv_line object
-                    cv_line = ca_2.vertical_line_for_x(x0);
+                    cv_line = ca_2.status_line_for_x(x0);
             );
             CGAL_precondition(cpv_line.number_of_events() == 
                     cv_line.number_of_events());              
-            ipair = cpv_line.get_curves_at_event(this->ptr()->_m_arcno_min);
+            ipair = cpv_line.curves_at_event(this->ptr()->_m_arcno_min);
             if(ipair.first != -1&&ipair.second != -1) 
                 // choose simpler supporting curve
                 this->ptr()->_m_arcno_min = (curve_idx == 0 ?
@@ -1829,20 +1829,20 @@ private:
                 CGAL::PLUS_INFINITY);
             if(!inf2_x) {
                 x0 = curve_end_x(CGAL::MAX_END); 
-                cpv_line = cpa_2.vertical_line_for_x(x0);                 
+                cpv_line = cpa_2.status_line_for_x(x0);
             } else 
-                cpv_line = cpa_2.vertical_line_of_interval(
-                    cpa_2.number_of_vertical_lines_with_event());
+                cpv_line = cpa_2.status_line_of_interval(
+                    cpa_2.number_of_status_lines_with_event());
             
             CGAL_precondition_code(
-                cv_line = (inf2_x ? ca_2.vertical_line_of_interval(
-                    ca_2.number_of_vertical_lines_with_event()) :
-                        ca_2.vertical_line_for_x(x0));
+                cv_line = (inf2_x ? ca_2.status_line_of_interval(
+                    ca_2.number_of_status_lines_with_event()) :
+                        ca_2.status_line_for_x(x0));
             );
             CGAL_precondition(cpv_line.number_of_events() == 
                     cv_line.number_of_events());  
                     
-            ipair = cpv_line.get_curves_at_event(this->ptr()->_m_arcno_max);
+            ipair = cpv_line.curves_at_event(this->ptr()->_m_arcno_max);
             if(ipair.first != -1&&ipair.second != -1) 
                 // choose simpler supporting curve (the one which matches
                 // with the interior arcno)
@@ -2035,16 +2035,16 @@ protected:
             (Curve_analysis_2(f)), (Curve_analysis_2(g)));
             
         int low_idx = 0,       
-            high_idx = cpa_2.number_of_vertical_lines_with_event()-1; 
+            high_idx = cpa_2.number_of_status_lines_with_event()-1;
         
         if(!inf_low) {
-            low_idx = cpa_2.vertical_line_for_x(low_x.x()).get_index();
+            low_idx = cpa_2.status_line_for_x(low_x.x()).index();
         }    
             
         if(!inf_high) {
-            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 tmp = 
-                cpa_2.vertical_line_for_x(high_x.x());
-            high_idx = tmp.get_index();
+            typename Curve_pair_analysis_2::Status_line_1 tmp = 
+                cpa_2.status_line_for_x(high_x.x());
+            high_idx = tmp.index();
             if(!tmp.is_event())
                 high_idx--;
         }
@@ -2058,8 +2058,8 @@ protected:
         bool which_curve = (NiX::total_degree(f) < NiX::total_degree(g));
         
         for(int i = low_idx; i <= high_idx; i++) {
-            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1 tmp = 
-                cpa_2.vertical_line_at_event(i);
+            typename Curve_pair_analysis_2::Status_line_1 tmp = 
+                cpa_2.status_line_at_event(i);
             if(!tmp.is_intersection()) 
                 continue;
             X_coordinate_1 x0 = tmp.x();
@@ -2072,11 +2072,11 @@ protected:
                 arcno2 = cv2.arcno();
                 mult = -1; // need to compute
             }
-            int pos = tmp.get_event_of_curve(arcno1, 0);
-            if(pos != tmp.get_event_of_curve(arcno2, 1)) 
+            int pos = tmp.event_of_curve(arcno1, 0);
+            if(pos != tmp.event_of_curve(arcno2, 1))
                 continue;
             if(mult == -1)
-                mult = tmp.get_multiplicity_of_intersection(pos);
+                mult = tmp.multiplicity_of_intersection(pos);
             // pick up the curve with lower degree   
             if(which_curve)
                 *oi++ = std::make_pair(Point_2(x0, curve(), arcno1), mult);

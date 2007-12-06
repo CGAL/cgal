@@ -32,7 +32,7 @@ namespace CGALi {
  *
  * For caching issues for each accessed \c Curve_2 object we store
  * \c Interval_arcno_map structure. In its turn, \c Interval_arcno_map
- * for each \c Curve_vertical_line_1 object stores the precomputed mapping
+ * for each \c Status_line_1 object stores the precomputed mapping
  * from interval arcnos (on left and right sides) to event arcnos 
  */
 template <class CurvedKernelViaAnalysis_2>
@@ -55,9 +55,9 @@ struct Curve_interval_arcno_cache {
     typedef typename Curved_kernel_via_analysis_2::X_coordinate_1
         X_coordinate_1;
     
-    //! type of vertical line
-    typedef typename Curve_analysis_2::Curve_vertical_line_1
-        Curve_vertical_line_1;
+    //! type of status line
+    typedef typename Curve_analysis_2::Status_line_1
+        Status_line_1;
     
     //! type of point on curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
@@ -69,7 +69,7 @@ struct Curve_interval_arcno_cache {
     //! end type (+/-oo or \c NO_BOUNDARY )
     typedef std::pair<int, CGAL::Boundary_type> Arcno_desc;
     
-    typedef Curve_vertical_line_1 first_argument_type;
+    typedef Status_line_1 first_argument_type;
     typedef bool                  second_argument_type;
     typedef int                   thirg_argument_type;
     
@@ -88,19 +88,19 @@ struct Curve_interval_arcno_cache {
     }
     
     //!\brief given arcno over an interval, this computes a corresponding event
-    //! arcno on vertical line \c cv_line lying on the given \c side w.r.t. the
+    //! arcno on status line \c cv_line lying on the given \c side w.r.t. the
     //! interval
     //!
     //! \c side = 0: left side; \c side = 1: right side
-    result_type operator()(const Curve_vertical_line_1& cv_line, bool side, 
+    result_type operator()(const Status_line_1& cv_line, bool side, 
         int interval_arcno) const {
         
         CGAL_precondition(interval_arcno >= 0);
         if(!cv_line.is_event()) // # of arcs over interval is constant
             return std::make_pair(interval_arcno, CGAL::NO_BOUNDARY);
         
-        Curve_analysis_2 ca_2 = cv_line.get_curve_analysis_2();
-        int curve_id = ca_2.get_curve_2().id();
+        Curve_analysis_2 ca_2 = cv_line.curve_analysis_2();
+        int curve_id = ca_2.curve_2().id();
         if(_m_last_curve_id != curve_id) {
             typename Curve_to_interval_arcno_map::iterator it;
             if(_m_last_curve_id != -1) { 
@@ -116,10 +116,10 @@ struct Curve_interval_arcno_cache {
             _m_last_interval_map = it->second;
             _m_last_curve_id = curve_id;
         }
-        // cache vertical lines by id(); shall we use x-coordinate instead of
+        // cache status lines by id(); shall we use x-coordinate instead of
         // id to ensure uniqueness ?
         typename Interval_arcno_map::const_iterator it = 
-            _m_last_interval_map.find(cv_line.x());
+            _m_last_interval_map.find(cv_line.x().id());
         if(it != _m_last_interval_map.end()) {
             const Arcno_vector_pair& tmp = it->second;
             // note: side index must be reversed 
@@ -129,15 +129,15 @@ struct Curve_interval_arcno_cache {
                 tmp.second[interval_arcno]);
         }
         
-        int n_left = ca_2.vertical_line_of_interval(
-                cv_line.get_index()).number_of_events(), // # arcs to the left
-            n_right = ca_2.vertical_line_of_interval( // # arcs to the right
-                cv_line.get_index()+1).number_of_events(); 
+        int n_left = ca_2.status_line_of_interval(
+                cv_line.index()).number_of_events(), // # arcs to the left
+            n_right = ca_2.status_line_of_interval( // # arcs to the right
+                cv_line.index()+1).number_of_events();
         std::pair<int, int> n_mininf, n_maxinf, ipair;
-        n_mininf = cv_line.get_number_of_branches_approaching_minus_infinity();
-        n_maxinf = cv_line.get_number_of_branches_approaching_plus_infinity();
+        n_mininf = cv_line.number_of_branches_approaching_minus_infinity();
+        n_maxinf = cv_line.number_of_branches_approaching_plus_infinity();
         // we must also account for the number of asymptotic arcs approaching
-        // this vertical line
+        // this status line
         Arcno_vector_pair vpair;
         vpair.first.resize(n_left); //+ n_mininf.first + n_maxinf.first);
         vpair.second.resize(n_right); //+ n_mininf.second + n_maxinf.second);
@@ -153,7 +153,7 @@ struct Curve_interval_arcno_cache {
                 
         // process all finite events over this vertical line
         for(_arcno = 0; _arcno < cv_line.number_of_events(); _arcno++) {
-            ipair = cv_line.get_number_of_incident_branches(_arcno);
+            ipair = cv_line.number_of_incident_branches(_arcno);
             for(i = 0; i < ipair.first; i++)
                 vpair.first[left_i++] = std::make_pair(_arcno,
                     CGAL::NO_BOUNDARY);
@@ -174,7 +174,7 @@ struct Curve_interval_arcno_cache {
         
         CGAL_precondition(left_i == static_cast<int>(vpair.first.size()) && 
             right_i == static_cast<int>(vpair.second.size()));
-        _m_last_interval_map.insert(std::make_pair(cv_line.x(), vpair));
+        _m_last_interval_map.insert(std::make_pair(cv_line.x().id(), vpair));
         CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
                 vpair.first.size() : vpair.second.size()));
         return (side == 1 ? vpair.first[interval_arcno] :
@@ -193,10 +193,10 @@ private:
     typedef std::pair<std::vector<Arcno_desc>, std::vector<Arcno_desc> >
         Arcno_vector_pair;
         
-    //! maps from \c Curve_vertical_line_1 id to a container of interval ->
+    //! maps from \c Status_line_1 id to a container of interval ->
     //! event arcnos 
-    // TODO: use hash instead ?? cache vertical lines by x-coordinate ?
-    typedef std::map<X_coordinate_1, Arcno_vector_pair> Interval_arcno_map;
+    // TODO: use hash instead ?? cache status lines by x-coordinate ?
+    typedef std::map<int, Arcno_vector_pair> Interval_arcno_map;
     
     //! maps from \c Curve_2 id to \c Interval_arcno_map
     typedef std::map<int, Interval_arcno_map> Curve_to_interval_arcno_map;

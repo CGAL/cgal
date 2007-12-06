@@ -74,8 +74,7 @@ struct Make_x_monotone_2 :
         Curve_analysis_2;
     
     //! type of vertical line
-    typedef typename Curve_analysis_2::Curve_vertical_line_1
-        Curve_vertical_line_1;
+    typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
     
     //! type of point on curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
@@ -101,9 +100,9 @@ struct Make_x_monotone_2 :
             return oi;
         
         Curve_analysis_2 ca_2(curve);
-        Curve_vertical_line_1 evt_line1, evt_line2, 
-            int_line = ca_2.vertical_line_of_interval(0);
-        int total_events = ca_2.number_of_vertical_lines_with_event();
+        Status_line_1 evt_line1, evt_line2, 
+            int_line = ca_2.status_line_of_interval(0);
+        int total_events = ca_2.number_of_status_lines_with_event();
         // handle special case of a curve without any events
         if(total_events == 0) {
             for(int k = 0; k < int_line.number_of_events(); k++) 
@@ -121,7 +120,7 @@ struct Make_x_monotone_2 :
         int i, k, n;
         Arc_2 arc;
         // first handle segments before first event
-        evt_line1 = ca_2.vertical_line_at_event(0);
+        evt_line1 = ca_2.status_line_at_event(0);
         max_x = evt_line1.x();
         
         for(k = 0; k < evt_line1.number_of_events(); k++) 
@@ -145,8 +144,8 @@ struct Make_x_monotone_2 :
                
         // next handle arcs between events, including isolated points
         for(i = 0; i < total_events-1; i++) {
-            evt_line1 = ca_2.vertical_line_at_event(i);
-            evt_line2 = ca_2.vertical_line_at_event(i+1);
+            evt_line1 = ca_2.status_line_at_event(i);
+            evt_line2 = ca_2.status_line_at_event(i+1);
             max_x = evt_line2.x();
             oi = _handle_vertical_and_isolated(evt_line1, min_x, min_pts, oi);
                                 
@@ -154,7 +153,7 @@ struct Make_x_monotone_2 :
             for(k = 0; k < n; k++) 
                 max_pts.push_back(Point_2(max_x, curve, k));
             
-            n = ca_2.vertical_line_of_interval(i+1).number_of_events();
+            n = ca_2.status_line_of_interval(i+1).number_of_events();
             CGAL::Curve_end inf1_end, inf2_end;
             for(k = 0; k < n; k++) {
                 
@@ -186,11 +185,11 @@ struct Make_x_monotone_2 :
         // here: min_x/min_pts hold information about the last event line
         // event_line2 - points to the last event line
         // vertical line or isolated points at last event?
-        evt_line2 = ca_2.vertical_line_at_event(total_events-1);
+        evt_line2 = ca_2.status_line_at_event(total_events-1);
         min_x = evt_line2.x();
         oi = _handle_vertical_and_isolated(evt_line2, min_x, min_pts, oi);
         
-        n = ca_2.vertical_line_of_interval(total_events).number_of_events();
+        n = ca_2.status_line_of_interval(total_events).number_of_events();
         for(k = 0; k < n; k++) {
         
             info1 = map_interval_arcno(evt_line2, 0, k); 
@@ -211,10 +210,9 @@ private:
     //!@{
     
     template <class OutputIterator>
-    OutputIterator _handle_vertical_and_isolated(Curve_vertical_line_1 cv_line,
+    OutputIterator _handle_vertical_and_isolated(Status_line_1 cv_line,
         X_coordinate_1 x, std::vector<Point_2> pts, OutputIterator oi) const {
         
-               
         int n = cv_line.number_of_events(), j;
         if(cv_line.covers_line()) { // look for vertical arcs
             if(n > 0) {
@@ -234,7 +232,7 @@ private:
         // look for isolated points
         std::pair<int, int> ipair;
         for(j = 0; j < n; j++) {
-            ipair = cv_line.get_number_of_incident_branches(j);
+            ipair = cv_line.number_of_incident_branches(j);
             if(ipair.first == 0&&ipair.second == 0) 
                 //std::cout << "isolated point found\n";
                 *oi++ = CGAL::make_object(Point_2(x, _m_curve, j));
